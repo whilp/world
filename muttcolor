@@ -1,0 +1,96 @@
+# -*-- colorrc --*-
+# 
+# By Hendrik Mangels <mangels@informatik.uni-bremen.de>
+# 
+# www.informatik.uni-bremen.de/~mangels
+#
+# Absolutely NO copyright (c) 2003 (Do with it whatever you like)
+#
+# vim: ft=muttrc
+# background colors set to "default" -- allows transparency. Set to black if
+# clashes with term. In vim: :%s/default/black/g
+
+
+color indicator default red
+mono  indicator bold
+color status default blue
+color message white default
+color error red default
+
+color normal white default
+color quoted brightgreen default
+mono  quoted bold
+color quoted1 brightcyan default
+mono  quoted1 underline
+color quoted2 brightmagenta default
+color quoted3 brightblue default
+color quoted4 blue default
+color quoted5 brightdefault default
+
+color tree green default
+color tilde brightdefault default 
+color markers brightdefault default
+color attachment red default
+color search default yellow
+color underline green default
+
+color hdrdefault green default
+color header brightred default ^From:
+mono  header bold ^From:
+color header red default ^Mail-Followup-To:
+color header red default ^Reply-To:
+color header brightwhite default ^To:
+color header white default ^Cc:
+color header brightyellow default ^Subject:
+color header brightmagenta default ^X-Mailer:
+color header brightdefault default ^X-Spam-Level:
+color header brightdefault default ^X-Spam-Status:
+color header brightmagenta default ^User-Agent:
+color header brightdefault default ^X-Operating-System:
+color header brightdefault default ^X-GPG-Key:
+color header brightdefault default ^X-GPG-ID:
+color header brightdefault default ^X-GPG-Fingerprint:
+color header brightdefault default ^X-Request-PGP:
+color header brightdefault default ^X-ICQ-UIN:
+color header brightdefault default ^X-JabberID:
+color header brightdefault default ^Organization:
+
+color body magenta default "(ftp|http)://[^ ]+" # point out URLs
+mono  body bold          "(ftp|http)://[^ ]+" 
+color body magenta default [-a-z_0-9.]+@[-a-z_0-9.]+  # e-mail addresses
+mono  body bold          [-a-z_0-9.]+@[-a-z_0-9.]+  
+color body brightwhite  default "(^|[[:space:]])_[^[:space:]]+_([[:space:]]|$)" # _Underlined_ text
+mono  body underline          "(^|[[:space:]])_[^[:space:]]+_([[:space:]]|$)" 
+color body brightwhite  default "(^|[[:space:]])\\*[^[:space:]]+\\*([[:space:]]|$)" # *Bold* text
+mono  body bold               "(^|[[:space:]])\\*[^[:space:]]+\\*([[:space:]]|$)" 
+color body brightwhite  default "(^|[[:space:]])/[^[:space:]]+/([[:space:]]|$)" # /Italic/ text
+mono  body bold               "(^|[[:space:]])/[^[:space:]]+/([[:space:]]|$)" 
+
+color signature brightdefault default
+
+## Some colors to mark status
+color index yellow		default	~F # Flagged
+color index green		default	~N # New
+mono  index bold                        ~N # New
+color index brightyellow	default	~O # Unread
+color index magenta		default	~T # Tagged
+mono  index reverse                     ~T # Tagged
+
+## This gives color to scored messages.
+color index blue default '(~n 1-1)'
+color index cyan default '(~n 2-2)'
+color index yellow default '(~n 3-3)'
+color index red default '(~n 4-4)'
+#color index red default '(~n 5-5)'
+#color index blue default '(~n 6-6)'
+#color index brightyellow default '(~n 7-7)'
+#color index white default '(~n 8-9)'
+#color index brightred default '(~n 10-99)'
+
+#lets paint those MAILER-MESSAGES a bit.
+color index yellow default ~fMAILER-DAEMON@*
+color index yellow default ~fMailer-Daemon@*
+
+#Should be last. So it gets the highest priority.
+color index blue		default	~D # Deleted
+mono  index reverse                     ~D # Deleted

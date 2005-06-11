@@ -1,0 +1,21 @@
+startup_message off
+defscrollback 1000
+setenv DISPLAY ":0.0"
+shelltitle $HOST
+allpartial off
+chdir
+vbell on
+vbellwait .2
+msgwait 1
+
+hardstatus alwayslastline "%w %=[ $USER@%H ]--[ %D, %d %M %Y @ %c ]"
+
+bind j focus down
+bind k focus up
+
+bind r resize =
+
+
+screen -t MAIL
+screen -t REMOTE
+screen -t REMOTE

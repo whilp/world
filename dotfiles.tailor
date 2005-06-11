@@ -1,0 +1,81 @@
+[DEFAULT]
+debug = True
+verbose = True
+
+[project]
+target = hg:target
+start-revision = INITIAL
+root-directory = /home/hg/repo/dotfiles
+state-file = tailor.state
+source = cvs:source
+subdir = .
+
+[hg:target]
+
+[cvs:source]
+module = dotfiles
+repository = /cvs
+
+08:40:39 [W] Forcing UTF-8 encoding instead of 646
+08:40:39 [I] Bootstrapping "project" in "/home/hg/repo/dotfiles"
+08:40:40 [I] Initializing new repository in '/home/hg/repo/dotfiles'...
+08:40:40 [I] $ cvs -f -d /cvs rlog -r:HEAD -b dotfiles
+08:40:41 [I] [Ok]
+08:40:43 [I] Cached information about 523 pending changesets
+08:40:43 [I] /home/hg/repo $ cvs -q -d /cvs checkout -d dotfiles -D "2005-06-11 16:26:33 UTC" dotfiles
+U dotfiles/Xsession
+U dotfiles/login
+U dotfiles/mailcap
+U dotfiles/muttalias
+U dotfiles/muttcolor
+U dotfiles/muttrc
+U dotfiles/nbsmtprc
+U dotfiles/profile
+U dotfiles/screenrc
+U dotfiles/torsmo
+U dotfiles/vimrc
+U dotfiles/zshrc
+? dotfiles/.hg
+? dotfiles/.hgignore
+? dotfiles/dotfiles.tailor
+? dotfiles/project.log
+? dotfiles/tailor.state
+U dotfiles/config/openbox/menu.xml
+U dotfiles/config/openbox/rc.xml
+U dotfiles/elinks/bookmarks
+U dotfiles/elinks/cookies
+U dotfiles/elinks/elinks.conf
+U dotfiles/elinks/globhist
+U dotfiles/elinks/gotohist
+U dotfiles/elinks/searchhist
+U dotfiles/ssh/authorized_keys
+U dotfiles/ssh/config
+08:40:44 [I] [Ok]
+08:40:44 [I] Forcing CVS sticky tag in /home/hg/repo/dotfiles
+08:40:44 [I] Working copy up to revision 2005-06-11 16:26:33 by will
+08:40:44 [I] 522 pending changesets in state file
+adding .hgignore
+adding Xsession
+adding config/openbox/menu.xml
+adding config/openbox/rc.xml
+adding dotfiles.tailor
+adding elinks/bookmarks
+adding elinks/cookies
+adding elinks/elinks.conf
+adding elinks/globhist
+adding elinks/gotohist
+adding elinks/searchhist
+adding login
+adding mailcap
+adding muttalias
+adding muttcolor
+adding muttrc
+adding nbsmtprc
+adding profile
+adding screenrc
+adding ssh/authorized_keys
+adding ssh/config
+adding torsmo
+adding vimrc
+adding zshrc
+08:40:44 [I] Committing u'[project @ 2005-06-11 16:26:33 by will]'...

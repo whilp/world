@@ -1,0 +1,73 @@
+# Will's muttrc / started 2005.03.06
+## Based on:
+## Phillip Hollenback's muttrc @ macdevcenter, for use with FastMail
+
+## IMAP SETTINGS ##
+set imap_user=willmaier@ml1.net		# obvious
+#set imap_pass=				# cleartext passwd? hmm...
+set imap_home_namespace="INBOX"				
+set folder="imaps://mail.messagingengine.com/INBOX"
+set copy=yes
+set record=+"Sent Items"		# copy all egress mail to Sent Items
+
+mailboxes =INBOX =CAE =Family =Law ="Junk Mail" =Lists =MCC =SJC =School =techpartners
+#set folder="imaps://mail.messagingengine.com/CAE"
+#set folder="imaps://mail.messagingengine.com/Details"
+#set folder="imaps://mail.messagingengine.com/Family"
+#set folder="imaps://mail.messagingengine.com/Law"
+#set folder="imaps://mail.messagingengine.com/Junk Mail"
+#set folder="imaps://mail.messagingengine.com/Lists"
+#set folder="imaps://mail.messagingengine.com/MCC"
+#set folder="imaps://mail.messagingengine.com/SJC"
+#set folder="imaps://mail.messagingengine.com/School"
+#set folder="imaps://mail.messagingengine.com/techpartners"
+set spoolfile="imaps://mail.messagingengine.com/INBOX"
+set alias_file="~/.muttalias
+set mask="."
+set imap_list_subscribed=yes
+bind index 'G' imap-fetch-mail
+bind index '<Tab>' previous-new-then-unread
+bind index '<Esc><Tab>' next-new-then-unread
+
+## SMTP SETTINGS ##
+set sendmail="/usr/local/bin/nbsmtp"		# use ESMTP for egress mail
+
+## PAGER SETTINGS ##
+set implicit_autoview
+set pager_stop				# don't jump to next message at end
+set sort=threads
+set sort_aux=reverse-date
+#set sort=reverse-date-sent
+source "~/.muttcolor"			# get color info
+source "~/.muttalias"
+set quit=yes
+set move=no
+set editor='/usr/bin/vim'
+
+## COMPOSITION SETTINGS ##
+set forward_format="Fwd: %s"		# traditional fwd: subj.
+set postpone=no
+set use_from=yes
+set from="Will Maier <willmaier@ml1.net>"
+
+
+## INDEX SETTINGS ##
+set arrow_cursor			# don't hilite the whole line
+set beep
+set beep_new
+set wrap_search
+set index_format="%4C %Z %-20[%d.%m.%y at %H:%M] %-22.22F %s"
+
+
+## EDIT SETTINGS ##
+set abort_unmodified=yes		# don't send if message unmodified
+set include=yes
+
+## HEADER SETTINGS ##
+ignore *				# default: ignore
+unignore from: date subject to cc reply-to:
+unignore x-mailer: user-agent
+
+#folder-hook * push 'T~=\n;d\n'
+#folder-hook =Lists push 'T~R\ ~r\ >1m\n\;s=Lists.ARK\n'
+#folder-hook =techpartners push 'T~R\ ~r\ >1m\n\;d\n'
