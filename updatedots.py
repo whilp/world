@@ -34,10 +34,7 @@ def copy(src, dst):
 	shutil.copy(src, dst)
 	
 for item in dirContents:
-    if item not in execList:
-	os.chmod(item, 0500)
-    else:
-	os.chmod(item, 0700)
+    os.chmod(item, 0700)
     dst = os.path.join(home, ''.join(('.', item)))
     if item in skipList or item.startswith('.'):
 	debug(item)
