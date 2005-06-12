@@ -13,7 +13,7 @@
     vbell on
     vbellwait .2
     msgwait 1
-    hardstatus alwayslastline "%w %=[ $USER@%H ]--[ %D, %d %M %Y @ %c ]"
+    hardstatus alwayslastline "%w %=[ %h ]--[ %D, %d %M %Y @ %c ]"
     startup_message off
 
 # --[ KEY BINDINGS
@@ -22,6 +22,7 @@
     bind r resize =
 
 # --[ CREATE ON STARTUP
-    screen -t MAIL
-    screen -t REMOTE
-    screen -t REMOTE
+    screen -t MAIL -M 0 mutt
+    screen -t SSH 1 
+    screen -t SSH 2
+    screen -t WWW 3 elinks

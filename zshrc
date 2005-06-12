@@ -27,6 +27,6 @@ bindkey '\e[2~' overwrite-mode	# ins
     case $TERM in
 	xterm*|Eterm*|screen)
 	precmd () { print -Pn "\e]0;$USER@$HOST - %~\a" }
-	preexec () { print -Pn "\e]0;$USER@$HOST- $1\a" }
+	preexec () { print -Pn "\e]0;$USER@$HOST - $1\a" }
 	;;
     esac
