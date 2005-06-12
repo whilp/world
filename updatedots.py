@@ -5,6 +5,7 @@ import shutil, os
 cwd = os.getcwd()
 home = os.getenv('HOME')
 skipList = ['updatedots.py', 'CVS']
+execList = ['updatedots.py']
 
 dirContents = os.listdir(cwd)
 
@@ -15,6 +16,7 @@ def debug(msg=False):
 	print "Debug:", msg
 
 def copy(src, dst):
+    os.umask(077)
     if os.path.exists(dst):
 	newName = ''.join((os.path.split(dst)[1], '.BAK'))
 	debug(newName)
@@ -30,8 +32,12 @@ def copy(src, dst):
 	shutil.copytree(src, dst)
     else:
 	shutil.copy(src, dst)
-
+	
 for item in dirContents:
+    if item not in execList:
+	os.chmod(item, 0500)
+    else:
+	os.chmod(item, 0700)
     dst = os.path.join(home, ''.join(('.', item)))
     if item in skipList or item.startswith('.'):
 	debug(item)
@@ -39,3 +45,4 @@ for item in dirContents:
     else:
 	print "Copying", item, "to", dst
 	copy(item, dst)
+
