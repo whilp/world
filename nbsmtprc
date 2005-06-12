@@ -3,7 +3,8 @@
 # 2005.06.11
 
 relayhost=mail.messagingengine.com
-fromaddr="Will Maier <willmaier@ml1.net>"
+fromaddr=willmaier@ml1.net
 auth_user=willmaier@ml1.net
 auth_pass=aymBuAtyad5
+auth_mech=login
 use_tls=true
