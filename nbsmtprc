@@ -1,3 +1,7 @@
+# ~/.nbsmtp
+# Will Maier <willmaier@ml1.net>
+# 2005.06.11
+
 relayhost=mail.messagingengine.com
 fromaddr=willmaier@ml1.net
 auth_user=willmaier@ml1.net

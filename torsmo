@@ -1,4 +1,6 @@
-# torsmo configuration
+# ~/.torsmorc
+# Will Maier <willmaier@ml1.net>
+# 2005.06.11
 
 # set to yes if you want tormo to be forked in the background
 background yes

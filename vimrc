@@ -1,112 +1,93 @@
-" Configuration file for vim
-"set runtimepath=~/.vim,/usr/local/share/vim/vim63/,/usr/local/share/vim/vim63/colors,/usr/local/share/vim/vim63/ftplugin,/usr/local/share/vim/vim63/indent,/usr/local/share/vim/vim63/keymap,/usr/local/share/vim/vim63/macros,/usr/local/share/vim/vim63/,/usr/local/share/vim/vim63/plugin,/usr/local/share/vim/vim63/syntax
-" Not sure if the following exist in bsd:
-" /usr/share/vimfiles,
+" ~/.vimrc
+" Will Maier <willmaier@ml1.net>
+" 2005.06.11
 
+" --[ SET OPTIONS
+    set nocompatible			" Use Vim defaults instead of 100% vi compatibility
+    set backspace=indent,eol,start	" more powerful backspacing
 
-" Normally we use vim-extensions. If you want true vi-compatibility
-" remove change the following statements
-set nocompatible	" Use Vim defaults instead of 100% vi compatibility
-set backspace=indent,eol,start	" more powerful backspacing
+    set autoindent			" always set autoindenting on
+    " set linebreak			" Don't wrap words by default
+    set textwidth=80			" Don't wrap lines by default 
+    set nobackup			" Don't keep a backup file
+    set viminfo='20,\"50		" read/write a .viminfo file, don't store more than
+					" 50 lines of registers
+    set history=50		    	" keep 50 lines of command line history
+    set ruler				" show the cursor position all the time
+    set number				" show line numbers
+    set tabstop=8
+    set softtabstop=4
+    set shiftwidth=4
+    set smartindent
+    set foldmethod=indent		" Fold based on line indent
 
+    " Suffixes that get lower priority when doing tab completion for filenames.
+    " These are files we are not likely to want to edit or read.
+    set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 
-" Now we set some defaults for the editor 
-set autoindent		" always set autoindenting on
-" set linebreak		" Don't wrap words by default
-set textwidth=80	" Don't wrap lines by default 
-set nobackup		" Don't keep a backup file
-set viminfo='20,\"50	" read/write a .viminfo file, don't store more than
-			" 50 lines of registers
-set history=50		" keep 50 lines of command line history
-set ruler		" show the cursor position all the time
-set number		" show line numbers
-set tabstop=8
-set softtabstop=4
-set shiftwidth=4
-set smartindent 
-set foldmethod=indent
-
-
-" Suffixes that get lower priority when doing tab completion for filenames.
-" These are files we are not likely to want to edit or read.
-" set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
-
-" We know xterm-debian is a color terminal
-if &term =~ "xterm-debian" || &term =~ "xterm-xfree86"
-  set t_Co=16
-  set t_Sf=[3%dm
-  set t_Sb=[4%dm
-endif
-
-" Some possible color schemes to use...
-" murphy, pablo, morning, shine, zellner
-"source /usr/local/share/vim/vim63/colors/zellner.vim
-
-" Make p in Visual mode replace the selected text with the "" register.
-vnoremap p <Esc>:let current_reg = @"<CR>gvdi<C-R>=current_reg<CR><Esc>
-
-" Vim5 and later versions support syntax highlighting. Uncommenting the next
-" line enables syntax highlighting by default.
-syntax on
-
-" If using a dark background within the editing area and syntax highlighting
-" turn on this option as well
- set background=dark
-
-if has("autocmd")
- " Enabled file type detection
- " Use the default filetype settings. If you also want to load indent files
- " to automatically do language-dependent indenting add 'indent' as well.
- filetype plugin indent on
- augroup gnupg
- au!
- autocmd BufReadPre,FileReadPre	   *.gpg,*.asc set viminfo=
- autocmd BufReadPre,FileReadPre	   *.gpg,*.asc set noswapfile
- autocmd BufReadPre,FileReadPre	   *.gpg,*.asc set foldclose=all
- autocmd BufReadPre,FileReadPre	   *.gpg,*.asc set foldmethod=indent
- autocmd BufReadPre,FileReadPre	   *.gpg,*.asc set
- autocmd BufReadPre,FileReadPre    *.gpg,*.asc set bin
- autocmd BufReadPre,FileReadPre    *.gpg,*.asc let ch_save = &ch|set ch=2
- autocmd BufReadPost,FileReadPost  *.gpg,*.asc 1;'[,']!gpg -d 2>/dev/null
- autocmd BufReadPost,FileReadPost  *.gpg,*.asc set nobin
- autocmd BufReadPost,FileReadPost  *.gpg,*.asc execute ":doautocmd BufReadPost " . expand("%:r")
- autocmd BufReadPost,FileReadPost  *.gpg,*.asc let &ch = ch_save|unlet ch_save
-
- autocmd BufWritePre,FileWritePre  *.gpg,*.asc set bin
- autocmd BufWritePre,FileWritePre  *.gpg 1;'[,']!gpg -o - -c --cipher-algo=blowfish --force-mdc
- autocmd BufWritePre,FileWritePre  *.asc 1;'[,']!gpg -a -o - -c --cipher-algo=blowfish --force-mdc
- autocmd BufWritePost,FileWritePost    *.gpg,*.asc set nobin
- autocmd BufWritePost,FileWritePost    *.gpg,*.asc undo
-
- autocmd FileAppendPre         *.gpg,*.asc !gpg -d <afile> 2>/dev/null > <afile>:r
- autocmd FileAppendPre         *.gpg,*.asc !mv <afile>:r <afile>
- autocmd FileAppendPost        *.gpg,*.asc !mv <afile> <afile>:r
- autocmd FileAppendPost        *.gpg !gpg -o <afile> -c --cipher-algo=blowfish --force-mdc <afile>:r 
- autocmd FileAppendPost        *.asc !gpg -a -o <afile> -c --cipher-algo=blowfish --force-mdc <afile>:r 
- autocmd FileAppendPost        *.gpg,*.asc !rm <afile>:r
-endif " has ("autocmd")
-
-" Set paper size from /etc/papersize if available (Debian-specific)
-try
-  if filereadable('/etc/papersize')
-    let s:papersize = matchstr(system('/bin/cat /etc/papersize'), '\p*')
-    if strlen(s:papersize)
-      let &printoptions = "paper:" . s:papersize
+    " We know xterm-debian is a color terminal
+    if &term =~ "xterm-debian" || &term =~ "xterm-xfree86"
+	set t_Co=16
+	set t_Sf=[3%dm
+	set t_Sb=[4%dm
     endif
-    unlet! s:papersize
-  endif
-catch /E145/
-endtry
 
-" The following are commented out as they cause vim to behave a lot
-" different from regular vi. They are highly recommended though.
-set showcmd		" Show (partial) command in status line.
-set showmatch		" Show matching brackets.
-set ignorecase		" Do case insensitive matching
-set incsearch		" Incremental search
-set autowrite		" Automatically save before commands like :next and :make
+    " Make p in Visual mode replace the selected text with the "" register.
+    vnoremap p <Esc>:let current_reg = @"<CR>gvdi<C-R>=current_reg<CR><Esc>
 
-" Source a global configuration file if available
-if filereadable("/etc/vim/vimrc.local")
-"  source /etc/vim/vimrc.local
-endif
+    " Vim5 and later versions support syntax highlighting. Uncommenting the next
+    " line enables syntax highlighting by default.
+    syntax on
+
+    " If using a dark background within the editing area and syntax highlighting
+    " turn on this option as well
+    set background=dark
+
+    " The following are commented out as they cause vim to behave a lot
+    " different from regular vi. They are highly recommended though.
+    set showcmd		" Show (partial) command in status line.
+    set showmatch		" Show matching brackets.
+    set ignorecase		" Do case insensitive matching
+    set incsearch		" Incremental search
+    set autowrite		" Automatically save before commands like :next and :make
+
+" --[ AUTOCMD
+    if has("autocmd")
+	" Enabled file type detection
+	" Use the default filetype settings. If you also want to load indent files
+	" to automatically do language-dependent indenting add 'indent' as well.
+	filetype plugin indent on
+
+" --[ AUTO-ENCRYPT FILES
+	augroup gnupg
+	    au!
+	    autocmd BufReadPre,FileReadPre	   *.gpg,*.asc set viminfo=
+	    autocmd BufReadPre,FileReadPre	   *.gpg,*.asc set noswapfile
+	    autocmd BufReadPre,FileReadPre	   *.gpg,*.asc set foldclose=all
+	    autocmd BufReadPre,FileReadPre	   *.gpg,*.asc set foldmethod=indent
+	    autocmd BufReadPre,FileReadPre	   *.gpg,*.asc set
+	    autocmd BufReadPre,FileReadPre    *.gpg,*.asc set bin
+	    autocmd BufReadPre,FileReadPre    *.gpg,*.asc let ch_save = &ch|set ch=2
+	    autocmd BufReadPost,FileReadPost  *.gpg,*.asc 1;'[,']!gpg -d 2>/dev/null
+	    autocmd BufReadPost,FileReadPost  *.gpg,*.asc set nobin
+	    autocmd BufReadPost,FileReadPost  *.gpg,*.asc execute ":doautocmd BufReadPost " . expand("%:r")
+	    autocmd BufReadPost,FileReadPost  *.gpg,*.asc let &ch = ch_save|unlet ch_save
+
+	    autocmd BufWritePre,FileWritePre  *.gpg,*.asc set bin
+	    autocmd BufWritePre,FileWritePre  *.gpg 1;'[,']!gpg -o - -c --cipher-algo=blowfish --force-mdc
+	    autocmd BufWritePre,FileWritePre  *.asc 1;'[,']!gpg -a -o - -c --cipher-algo=blowfish --force-mdc
+	    autocmd BufWritePost,FileWritePost    *.gpg,*.asc set nobin
+	    autocmd BufWritePost,FileWritePost    *.gpg,*.asc undo
+
+	    autocmd FileAppendPre         *.gpg,*.asc !gpg -d <afile> 2>/dev/null > <afile>:r
+	    autocmd FileAppendPre         *.gpg,*.asc !mv <afile>:r <afile>
+	    autocmd FileAppendPost        *.gpg,*.asc !mv <afile> <afile>:r
+	    autocmd FileAppendPost        *.gpg !gpg -o <afile> -c --cipher-algo=blowfish --force-mdc <afile>:r 
+	    autocmd FileAppendPost        *.asc !gpg -a -o <afile> -c --cipher-algo=blowfish --force-mdc <afile>:r 
+	    autocmd FileAppendPost        *.gpg,*.asc !rm <afile>:r
+	endif " has ("autocmd")
+
+    " Source a global configuration file if available
+    if filereadable("/etc/vim/vimrc.local")
+	"  source /etc/vim/vimrc.local
+    endif

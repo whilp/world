@@ -4,21 +4,23 @@
 
 # --[ ENVIRONMENT
     # Standard vars
-    LANG="C"
-    SHELL=/usr/bin/zsh
-    EDITOR=/usr/bin/vim
+    LANG='C'
+    SHELL='/usr/bin/zsh'
+    EDITOR='/usr/bin/vim'
     CVSEDITOR=$EDITOR
-    PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/X11R6/bin:/opt/:/usr/games/:/home/will/bin
+    PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/X11R6/bin:/opt/:/usr/games/:/home/will/bin'
+    PKG_PATH='ftp://openbsd.mirrors.tds.net/pub/openBSD/3.7/packages/i386/'
     # Set special vars for CAE machines
     case $HOST in
 	nacho,bender)
 	stty erase ^?
-	PATH=/opt/SUNWspro/bin:/usr/ccs/bin:/usr/bin:/bin:/usr/local/bin:/opt/sfw/bin:/usr/sfw/bin:/usr/afsws/bin:/usr/openwin/bin:/usr/X11R6/bin:/afs/engr.wisc.edu/oss/bin:/afs/engr.wisc.edu/apps/bin:/afs/engr.wisc.edu/common/scripts:/afs/engr.wisc.edu/local/bin:/usr/ucb:/usr/dt/bin
-	OSS=/afs/engr.wisc.edu/oss
-	LD_LIBRARY_PATH=/opt/SUNWspro/bin:/usr/ccs/bin:/usr/bin:/bin:/usr/local/bin:/opt/sfw/bin:/usr/sfw/bin:/usr/afsws/bin:/usr/openwin/bin:/usr/X11R6/bin:/afs/engr.wisc.edu/oss/bin:/afs/engr.wisc.edu/apps/bin:/afs/engr.wisc.edu/common/scripts:/afs/engr.wisc.edu/local/bin:/usr/ucb:/usr/dt/bin
-	MANPATH=/usr/share/man:usr/local/man:/opt/sfw/man:/usr/openwin/man/usr/X11R6/man:/afs/engr.wisc.edu/oss/man:/afs/engr.wisc.edu/apps/man
-	PYTHONPATH=$OSS/lib/python:$OSS/lib/python/lib-dynload:$OSS/lib/python/site-packages
-	export OSS PYTHONPATH LD_LIBRARY_PATH MANPATH
+	TERM=ansi
+	PATH="/opt/SUNWspro/bin:/usr/ccs/bin:/usr/bin:/bin:/usr/local/bin:/opt/sfw/bin:/usr/sfw/bin:/usr/afsws/bin:/usr/openwin/bin:/usr/X11R6/bin:/afs/engr.wisc.edu/oss/bin:/afs/engr.wisc.edu/apps/bin:/afs/engr.wisc.edu/common/scripts:/afs/engr.wisc.edu/local/bin:/usr/ucb:/usr/dt/bin"
+	OSS='/afs/engr.wisc.edu/oss'
+	LD_LIBRARY_PATH='/opt/SUNWspro/bin:/usr/ccs/bin:/usr/bin:/bin:/usr/local/bin:/opt/sfw/bin:/usr/sfw/bin:/usr/afsws/bin:/usr/openwin/bin:/usr/X11R6/bin:/afs/engr.wisc.edu/oss/bin:/afs/engr.wisc.edu/apps/bin:/afs/engr.wisc.edu/common/scripts:/afs/engr.wisc.edu/local/bin:/usr/ucb:/usr/dt/bin'
+	MANPATH='/usr/share/man:usr/local/man:/opt/sfw/man:/usr/openwin/man/usr/X11R6/man:/afs/engr.wisc.edu/oss/man:/afs/engr.wisc.edu/apps/man'
+	PYTHONPATH="$OSS/lib/python:$OSS/lib/python/lib-dynload:$OSS/lib/python/site-packages"
+	export OSS PYTHONPATH LD_LIBRARY_PATH MANPATH TERM
 	;;
     esac
 export LANG PATH SHELL EDITOR CVSEDITOR

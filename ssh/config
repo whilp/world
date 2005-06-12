@@ -1,3 +1,7 @@
+# ~/.ssh/config
+# Will Maier <willmaier@ml1.net>
+# 2005.06.11
+
 Host mess*
 # messenger - AMD64 desktop at home
     HostName	172.16.1.115

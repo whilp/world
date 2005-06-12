@@ -1,21 +1,27 @@
-startup_message off
-defscrollback 1000
-setenv DISPLAY ":0.0"
-shelltitle $HOST
-allpartial off
-chdir
-vbell on
-vbellwait .2
-msgwait 1
+# ~/.screenrc
+# Will Maier <willmaier@ml1.net>
+# 2005.06.11
+# NOTE: The meta key can be changed on the command line when starting screen
+# using the -e flag. Eg: `screen -e^Ee`
 
-hardstatus alwayslastline "%w %=[ $USER@%H ]--[ %D, %d %M %Y @ %c ]"
+# --[ SET OPTIONS
+    defscrollback 1000
+    setenv DISPLAY ":0.0"
+    shelltitle $HOST
+    allpartial off
+    chdir
+    vbell on
+    vbellwait .2
+    msgwait 1
+    hardstatus alwayslastline "%w %=[ $USER@%H ]--[ %D, %d %M %Y @ %c ]"
+    startup_message off
 
-bind j focus down
-bind k focus up
+# --[ KEY BINDINGS
+    bind j focus down
+    bind k focus up
+    bind r resize =
 
-bind r resize =
-
-
-screen -t MAIL
-screen -t REMOTE
-screen -t REMOTE
+# --[ CREATE ON STARTUP
+    screen -t MAIL
+    screen -t REMOTE
+    screen -t REMOTE
