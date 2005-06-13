@@ -2,6 +2,8 @@
 # Will Maier <willmaier@ml1.net>
 # 2005.06.11
 
+ARCH=`uname`
+
 # --[ ENVIRONMENT
     case $HOST in
 	nacho* | bender* )
@@ -22,17 +24,26 @@
 	PKG_PATH='ftp://openbsd.mirrors.tds.net/pub/openBSD/3.7/packages/i386/'
 	;;
     esac
+
     LANG='C'
     SHELL=`which zsh`
     EDITOR=`which vim`
     CVSEDITOR=$EDITOR
 export LANG PATH SHELL EDITOR CVSEDITOR
 
-# --[ ALIASES
-if [ "$TERM" != "dumb" ]; then
-    eval `dircolors -b`
+# arch-specific stuff.
+case $ARCH in
+    SunOS* )
+    # fix needed for solaris and BSD
+    alias ls='gls --color=auto'
+    alias zsh='/afs/engr.wisc.edu/oss/bin/zsh'
+    ;;
+    * )
     alias ls='ls --color=auto'
-fi
+    ;;
+esac
+
+# --[ ALIASES
 alias xlockb='xlock -mode blank'
 alias s='screen'
 alias zsource='source ~/.zshrc'
