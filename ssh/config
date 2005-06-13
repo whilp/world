@@ -37,3 +37,9 @@ Host nacho
     HostName	nacho.cae.wisc.edu
     User	wcmaier
     ForwardX11	yes
+
+Host bender
+# bender - CAE workstations
+    HostName	bender.cae.wisc.edu
+    User	wcmaier
+    ForwardX11	yes
