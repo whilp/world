@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-import shutil, os
+import shutil, os, sys
 
 cwd = os.getcwd()
 home = os.getenv('HOME')
-skipList = ['updatedots.py', 'CVS', '42.gpg', 'config', 'gaim', 'ion3', 'ssh']
+skipList = ['updatedots.py', 'CVS', '42.gpg', 'config', 'gaim', 'ion3']
 execList = ['updatedots.py']
 
 dirContents = os.listdir(cwd)

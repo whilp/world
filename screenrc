@@ -5,7 +5,7 @@
 # using the -e flag. Eg: `screen -e^Ee`
 
 # --[ SET OPTIONS
-    escape ^\\
+    escape ^Aa
     defscrollback 1000
     setenv DISPLAY ":0.0"
     shelltitle $HOST
@@ -22,3 +22,5 @@
     bind j focus down
     bind k focus up
     bind r resize =
+    bind c screen 1
+    bind 0 select 10

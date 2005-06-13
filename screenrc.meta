@@ -1,5 +1,6 @@
-sessionname meta
+source $HOME/.screenrc
 
+sessionname meta
 screen -t MAIL	    1 mutt
 screen -t SSH	    2
 screen -t SSH	    3
