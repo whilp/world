@@ -49,6 +49,7 @@ alias xlockb='xlock -mode blank'
 alias s='screen'
 alias zsource='source ~/.zshrc'
 alias psource='source ~/.profile'
+alias ogg123='ogg123 -d oss'
 
 # --[ CVS
     # Personal CVS
