@@ -1,0 +1,8 @@
+sessionname meta
+
+screen -t MAIL	    1 mutt
+screen -t SSH	    2
+screen -t SSH	    3
+screen -t WWW	    4 elinks
+screen -t LOCAL	    5
+screen -t LOCAL	    6

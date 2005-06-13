@@ -18,10 +18,10 @@ source ~/.profile
     bindkey '\e[1~' beginning-of-line	# home
     bindkey '\e[4~' end-of-line		# end
     bindkey '\e[3~' delete-char		# del
+    bindkey '\e[2~' overwrite-mode	# ins
     # Ensure tab completion works
     autoload -U compinit
-    compinit -C
-bindkey '\e[2~' overwrite-mode	# ins
+compinit -C
     
 # --[ PROMPT
     PS1='<%B%m%b %T> %~ %# '

@@ -18,6 +18,7 @@ ARCH=`uname`
 	alias python="/afs/engr.wisc.edu/oss/bin/python"
 	export OSS PYTHONPATH LD_LIBRARY_PATH MANPATH TERM
 	;;
+
 	* )
 	# Standard vars
 	PATH='/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/X11R6/bin:/opt/:/usr/games/:/home/will/bin'
@@ -55,6 +56,8 @@ alias psource='source ~/.profile'
     # CAE CVS
     # CVSROOT=/afs/engr.wisc.edu/common/repository
 export CVSROOT
+alias mycvs='export CVSROOT=":ext:will@phnx.ath.cx:/cvs"'
+alias caecvs='export CVSROOT=/afs/engr.wisc.edu/common/repository'
 
 # --[ PRINTING
     if [ -x /afs/engr.wisc.edu/common/scripts/default_printer ] ; then

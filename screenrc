@@ -5,10 +5,12 @@
 # using the -e flag. Eg: `screen -e^Ee`
 
 # --[ SET OPTIONS
+    escape ^\\
     defscrollback 1000
     setenv DISPLAY ":0.0"
     shelltitle $HOST
     allpartial off
+    activity "activity in %n (%t) [%w:%s]~"
     chdir
     vbell on
     vbellwait .2
@@ -20,9 +22,3 @@
     bind j focus down
     bind k focus up
     bind r resize =
-
-# --[ CREATE ON STARTUP
-    screen -t MAIL -M 0 mutt
-    screen -t SSH 1 
-    screen -t SSH 2
-    screen -t WWW 3 elinks
