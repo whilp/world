@@ -16,6 +16,7 @@ ARCH=`uname`
 	MANPATH='/usr/share/man:usr/local/man:/opt/sfw/man:/usr/openwin/man/usr/X11R6/man:/afs/engr.wisc.edu/oss/man:/afs/engr.wisc.edu/apps/man'
 	PYTHONPATH="$OSS/lib/python:$OSS/lib/python/lib-dynload:$OSS/lib/python/site-packages"
 	alias python="/afs/engr.wisc.edu/oss/bin/python"
+	alias dot="`/afs/engr.wisc.edu/common/scripts/dot`"
 	export OSS PYTHONPATH LD_LIBRARY_PATH MANPATH TERM
 	;;
 

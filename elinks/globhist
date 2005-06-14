@@ -1,10 +1,3 @@
-jabber.ccc.de - just another jabber server - New Users Page.	http://jabber.ccc.de/welcome.html	1113938867
-jabber.ccc.de - just another jabber server	http://jabber.ccc.de/doku/?do=privacy	1113938912
-jabber.ccc.de - just another jabber server	http://jabber.ccc.de/doku/?do=faq	1113938947
-jabber.ccc.de - just another jabber server	http://jabber.ccc.de/doku/?do=link	1113938965
-Software Training for Students Staff Site	http://www.doit.wisc.edu/training/student/staff2/main.asp	1113939780
-Google Search: linux command line jabber	http://www.google.com/search?q=%20linux%20command%20line%20jabber&btnG=Google+Search	1113939832
-Linux Links - The Linux Portal: Software/Internet/Communications/Messaging_Services/Jabber	http://www.linuxlinks.com/Software/Internet/Communications/Messaging_Services/Jabber/index.shtml	1113939844
 	http://imcom.floobin.cx/	1113939869
 Jabber: Open Instant Messaging and a Whole Lot More, Powered by XMPP	http://www.jabber.org/	1113939965
 	http://www.jabberstudio.org/projects/pJab/project/view.php	1113939971
@@ -231,7 +224,6 @@ Update ticket #91973 (make oldver - not)	https://rt.cae.wisc.edu/Ticket/Update.h
 Slashdot: News for nerds, stuff that matters	http://slashdot.org/index.pl?issue=20050421	1114183124
 Log for April, 2005	http://log.ometer.com/2005-04.html	1114183169
 #62258: common/howto cleanup	https://rt.cae.wisc.edu/Ticket/Display.html?id=62258	1114187122
-#89673: Setup MySQL	https://rt.cae.wisc.edu/Ticket/Display.html?id=89673	1114187154
 #52302: Virtual hosts - file permissions	https://rt.cae.wisc.edu/Ticket/Display.html?id=52302	1114187181
 FT.com / Comment & analysis / Columnists - James Boyle: Deconstructing stupidity	http://news.ft.com/cms/s/39b697dc-b25e-11d9-bcc6-00000e2511c8.html	1114187235
 Slashdot: News for nerds, stuff that matters	http://slashdot.org/index.pl?issue=20050423	1114383192
@@ -268,8 +260,6 @@ Python Refcard	http://www.schacherer.de/frank/tech/tools/python.html	1114457586
 Google Search: python dictionary	http://www.google.com/search?q=%20python%20dictionary&btnG=Google+Search	1114457621
 Learn to Program Using Python: Getting Started with Dictionaries	http://www.developer.com/lang/other/article.php/630721	1114457625
 #92010: Arc-GIS software	https://rt.cae.wisc.edu/Ticket/Display.html?id=92010	1114459596
-Assign Tickets	https://rt.cae.wisc.edu/Tools/AssignTickets.html	1114459707
-Assign Tickets	https://rt.cae.wisc.edu/Tools/AssignTickets.html?Queue=13	1114459724
 Update ticket #92346 (Problem with condor jobs)	https://rt.cae.wisc.edu/Ticket/Update.html?Action=Respond&id=92346	1114459811
 Modify ticket #92346	https://rt.cae.wisc.edu/Ticket/Modify.html?id=92346	1114459819
 #92346: Problem with condor jobs	https://rt.cae.wisc.edu/Ticket/Display.html?id=92346	1114459899
@@ -915,7 +905,6 @@ Modify ticket #100652	https://rt.cae.wisc.edu/Ticket/Modify.html?id=100652	11180
 #98669: Ports opened in Engr Firewall	https://rt.cae.wisc.edu/Ticket/Display.html?id=98669	1118083957
 #100721: Re: [SECURITY] Your laptop is infected with a Windows worm	https://rt.cae.wisc.edu/Ticket/Display.html?id=100721	1118085106
 #100724: Fwd: Computer Jack for 1542-8	https://rt.cae.wisc.edu/Ticket/Display.html?id=100724	1118088304
-Query Builder	https://rt.cae.wisc.edu/Search/Build.html	1118095084
 #62254: common/howto cleanup	https://rt.cae.wisc.edu/Ticket/Display.html?id=62254	1118095143
 Modify ticket #62254	https://rt.cae.wisc.edu/Ticket/Modify.html?id=62254	1118095148
 Link ticket #62254	https://rt.cae.wisc.edu/Ticket/ModifyLinks.html?id=62254	1118095171
@@ -956,7 +945,6 @@ Author Search Results - Project Gutenberg	http://www.gutenberg.org/author/wells	
 Browse By Author: W - Project Gutenberg	http://www.gutenberg.org/browse/authors/w	1118246858
 The World Set Free by H. G. Wells - Project Gutenberg	http://www.gutenberg.org/etext/8968	1118246930
 The World Set Free by H. G. Wells - Project Gutenberg	http://www.gutenberg.org/etext/1059	1118246943
-Computer-Aided Engineering	http://www.cae.wisc.edu/	1118250037
 Staff Only	https://www.cae.wisc.edu/site/staff/?title=staffonly	1118250047
 CAE Staff List	https://www.cae.wisc.edu/site/staff/?title=permstaff	1118250054
 Found 24 tickets	https://rt.cae.wisc.edu/Search/Results.html?Query=Queue%20%3D%20'network'%20AND%20(Status%20%3D%20'open'%20OR%20Status%20%3D%20'new')&Format=&HideResults=0&Rows=50&Page=1&OrderBy=LastUpdated&Order=DESC&TicketsRefreshInterval=600	1118260504
@@ -993,10 +981,8 @@ Modify ticket #101312	https://rt.cae.wisc.edu/Ticket/Modify.html?id=101312	11183
 #101312: Install Horde 3.0 and Imp 4.0	https://rt.cae.wisc.edu/Ticket/Display.html?id=101312	1118354719
 #101313: Fix up print accounting	https://rt.cae.wisc.edu/Ticket/Display.html?id=101313	1118354962
 Modify ticket #101313	https://rt.cae.wisc.edu/Ticket/Modify.html?id=101313	1118354986
-RT at a glance	https://rt.cae.wisc.edu/index.html	1118355021
 Found 1 ticket	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=%20Owner%20%3D%20%27531135%27%20AND%20%28%20Status%20%3D%20%27new%27%20OR%20Status%20%3D%20%27open%27%29&OrderBy=Priority	1118355026
 Query Builder	https://rt.cae.wisc.edu/Search/Build.html?Order=DESC&Query=%20Owner%20%3D%20%27531135%27%20AND%20%28%20Status%20%3D%20%27new%27%20OR%20Status%20%3D%20%27open%27%29&Rows=50&OrderBy=Priority&Format=	1118355045
-Areas	https://rt.cae.wisc.edu/Tools/Areas.html	1118355051
 Queue Contacts	https://rt.cae.wisc.edu/Tools/ContactView.html	1118355063
 #11028: Linux Documentation	https://rt.cae.wisc.edu/Ticket/Display.html?id=11028	1118355162
 #39807: Find Debian packages	https://rt.cae.wisc.edu/Ticket/Display.html?id=39807	1118355373
@@ -1004,16 +990,35 @@ Queue Contacts	https://rt.cae.wisc.edu/Tools/ContactView.html	1118355063
 #84044: webmail send error	https://rt.cae.wisc.edu/Ticket/Display.html?id=84044	1118355578
 #90192: Re: Host DOWN alert for ap1200-expot-1! (fwd)	https://rt.cae.wisc.edu/Ticket/Display.html?id=90192	1118359813
 #11456: wireless tailgating	https://rt.cae.wisc.edu/Ticket/Display.html?id=11456	1118359857
-Found 24 tickets	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=Queue%20%3D%20%27network%27%20AND%20%28Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27new%27%29&Rows=50&OrderBy=LastUpdated&Page=1	1118413330
-Queue Contacts	https://rt.cae.wisc.edu/Tools/ContactView.html?Queue=13	1118413334
-Found 41 tickets	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=Queue%20%3D%20%27security%27%20AND%20%28Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27new%27%29&Rows=50&OrderBy=LastUpdated&Page=1	1118413339
 #101302: UW CNTech: Re: New email server requirements on the UW-Madison campus	https://rt.cae.wisc.edu/Ticket/Display.html?id=101302	1118413366
 #101344: RE: New email server requirements on the UW-Madison campus	https://rt.cae.wisc.edu/Ticket/Display.html?id=101344	1118413369
 #101415: RE: New email server requirements on the UW-Madison campus	https://rt.cae.wisc.edu/Ticket/Display.html?id=101415	1118413373
 #101402: patch deepthought / oracle	https://rt.cae.wisc.edu/Ticket/Display.html?id=101402	1118413378
 Modify ticket #101402	https://rt.cae.wisc.edu/Ticket/Modify.html?id=101402	1118413428
 #87884: CNTech: Migration of dept mail server to Engr hosting?	https://rt.cae.wisc.edu/Ticket/Display.html?id=87884	1118421477
-RT at a glance	https://rt.cae.wisc.edu/index.html?HomeRefreshInterval=600	1118421480
 Modify ticket #101302	https://rt.cae.wisc.edu/Ticket/Modify.html?id=101302	1118421738
 Modify ticket #87884	https://rt.cae.wisc.edu/Ticket/Modify.html?id=87884	1118421749
-Found 115 tickets	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=Queue%20%3D%20%27unix%27%20AND%20%28Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27new%27%29&Rows=50&OrderBy=LastUpdated&Page=1	1118421765
+#101912: CAE Consultants	https://rt.cae.wisc.edu/Ticket/Display.html?id=101912	1118680715
+Areas	https://rt.cae.wisc.edu/Tools/Areas.html	1118702047
+Assign Tickets	https://rt.cae.wisc.edu/Tools/AssignTickets.html	1118702051
+Assign Tickets	https://rt.cae.wisc.edu/Tools/AssignTickets.html?Queue=13	1118702073
+#101938: video conferencing	https://rt.cae.wisc.edu/Ticket/Display.html?id=101938	1118705225
+Computer-Aided Engineering	http://www.cae.wisc.edu/	1118705279
+RT at a glance	https://rt.cae.wisc.edu/index.html	1118705287
+Query Builder	https://rt.cae.wisc.edu/Search/Build.html	1118705319
+#91108: Message not recorded (fwd)	https://rt.cae.wisc.edu/index.html?q=91108	1118705448
+#91108: Message not recorded (fwd)	https://rt.cae.wisc.edu/Ticket/Display.html?Action=Take&id=91108	1118705468
+Query Builder	https://rt.cae.wisc.edu/Search/Build.html?Order=DESC&Query=%20Queue%20%3D%20%27unix%27%20%20AND%20Owner%20%3D%20%27531135%27%20%20AND%20%28%20Status%20%3D%20%27open%27%20%20OR%20Status%20%3D%20%27new%27%20%29%20&Rows=50&OrderBy=LastUpdated&Format=%27%20%3Cb%3E%3Ca%20href%3D%22%2FTicket%2FDisplay.html%3Fid%3D__id__%22%3E__id__%3C%2Fa%3E%3Cb%3E%2FTITLE%3A%23%27%2C%20%0A%27%3Cb%3E%3Ca%20href%3D%22%2FTicket%2FDisplay.html%3Fid%3D__id__%22%3E__Subject__%3C%2Fa%3E%3C%2Fb%3E%2FTITLE%3ASubject%27%2C%20%0A%27%3Csmall%3E__CreatedRelative__%3C%2Fsmall%3E%27%2C%20%0A%27__QueueName__%27%2C%20%0A%27__OwnerName__%27%2C%20%0A%27__Priority__%27%2C%20%0A%27__NEWLINE__%27%2C%20%0A%27__Status__%27%2C%20%0A%27%3Csmall%3E__Requestors__%3C%2Fsmall%3E%27%2C%20%0A%27%3Csmall%3E__ToldRelative__%3C%2Fsmall%3E%27%2C%20%0A%27__Area__%27%2C%20%0A%27%3Csmall%3E__LastUpdatedRelative__%3C%2Fsmall%3E%27%2C%20%0A%27%3Csmall%3E__DueRelative__%3C%2Fsmall%3E%27	1118705747
+Queue Contacts	https://rt.cae.wisc.edu/Tools/ContactView.html?Queue=13	1118751886
+Found 24 tickets	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=Queue%20%3D%20%27network%27%20AND%20%28Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27new%27%29&Rows=50&OrderBy=LastUpdated&Page=1	1118751894
+Found 41 tickets	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=Queue%20%3D%20%27security%27%20AND%20%28Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27new%27%29&Rows=50&OrderBy=LastUpdated&Page=1	1118751899
+RT at a glance	https://rt.cae.wisc.edu/index.html?HomeRefreshInterval=600	1118754705
+Found 7 tickets	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=%20Queue%20%3D%20%27unix%27%20%20AND%20Owner%20%3D%20%27531135%27%20%20AND%20%28%20Status%20%3D%20%27open%27%20%20OR%20Status%20%3D%20%27new%27%20%29%20&Rows=50&OrderBy=LastUpdated&Page=1&Format=%27%20%3Cb%3E%3Ca%20href%3D%22%2FTicket%2FDisplay.html%3Fid%3D__id__%22%3E__id__%3C%2Fa%3E%3Cb%3E%2FTITLE%3A%23%27%2C%20%0A%27%3Cb%3E%3Ca%20href%3D%22%2FTicket%2FDisplay.html%3Fid%3D__id__%22%3E__Subject__%3C%2Fa%3E%3C%2Fb%3E%2FTITLE%3ASubject%27%2C%20%0A%27%3Csmall%3E__CreatedRelative__%3C%2Fsmall%3E%27%2C%20%0A%27__QueueName__%27%2C%20%0A%27__OwnerName__%27%2C%20%0A%27__Priority__%27%2C%20%0A%27__NEWLINE__%27%2C%20%0A%27__Status__%27%2C%20%0A%27%3Csmall%3E__Requestors__%3C%2Fsmall%3E%27%2C%20%0A%27%3Csmall%3E__ToldRelative__%3C%2Fsmall%3E%27%2C%20%0A%27__Area__%27%2C%20%0A%27%3Csmall%3E__LastUpdatedRelative__%3C%2Fsmall%3E%27%2C%20%0A%27%3Csmall%3E__DueRelative__%3C%2Fsmall%3E%27	1118754711
+Found 100 tickets	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=Queue%20%3D%20%27unix%27%20AND%20%28Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27new%27%29&Rows=50&OrderBy=LastUpdated&Page=1	1118754725
+#66823: Duplex to kfw-105-laser is not correctly charged	https://rt.cae.wisc.edu/Ticket/Display.html?id=66823	1118754739
+#87889: PHP 5	https://rt.cae.wisc.edu/Ticket/Display.html?id=87889	1118754741
+#89673: Setup MySQL	https://rt.cae.wisc.edu/Ticket/Display.html?id=89673	1118754743
+Google Search: php	http://www.google.com/search?q=%20php&btnG=Google+Search	1118755057
+PHP: Hypertext Preprocessor	http://www.php.net/	1118755061
+PHP: Downloads	http://www.php.net/downloads.php	1118755064
+PHP: Get Download	http://us4.php.net/get/php-5.0.4.tar.gz/from/a/mirror	1118755088
