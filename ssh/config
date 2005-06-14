@@ -22,6 +22,11 @@ Host vger
     HostName	172.16.1.110
     User	will
 
+Host cvger
+# vger - on CAE network
+    HostName	144.92.240.12
+    User	will
+
 Host sts
 # stslinux - STS linux server at office
     HostName	stslinux.doit.wisc.edu
