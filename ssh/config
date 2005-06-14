@@ -1,0 +1,45 @@
+# ~/.ssh/config
+# Will Maier <willmaier@ml1.net>
+# 2005.06.11
+
+Host mess*
+# messenger - AMD64 desktop at home
+    HostName	172.16.1.115
+    User	will
+
+Host miser*
+# misericor.de - webservice
+    HostName	misericor.de
+    User	wcmaier
+
+Host phnx*
+# phoenix - global IP
+    HostName	phnx.ath.cx
+    User	will
+
+Host vger
+# vger - laptop
+    HostName	172.16.1.110
+    User	will
+
+Host sts
+# stslinux - STS linux server at office
+    HostName	stslinux.doit.wisc.edu
+    User	will
+
+Host haya*
+# hayabusa - OBSD 3.6 local server
+    HostName	172.16.1.112
+    User	will
+
+Host nacho
+# nacho - CAE workstation
+    HostName	nacho.cae.wisc.edu
+    User	wcmaier
+    ForwardX11	yes
+
+Host bender
+# bender - CAE workstations
+    HostName	bender.cae.wisc.edu
+    User	wcmaier
+    ForwardX11	yes
