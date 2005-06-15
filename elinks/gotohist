@@ -1,4 +1,3 @@
-g: renderman defcon
 g: renderman defcon wireless
 g: renderman defcon runningman
 g: renderman hack
@@ -233,7 +232,6 @@ g: vim keybind
 g: vim key binds
 g: vim backspace delete
 g: clusterssh
-rt.cae.wisc.edu
 g: summer of code
 g: "gnu screen" move windows
 g: ubuntu upgrade to hoary
@@ -254,3 +252,5 @@ g: linux web browser
 mobile.wunderground.com
 gutenberg.org
 cae.wisc.edu
+rt.cae.wisc.edu
+g: php
