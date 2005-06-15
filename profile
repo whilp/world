@@ -16,6 +16,7 @@ ARCH=`uname`
 	PYTHONPATH="$OSS/lib/python:$OSS/lib/python/lib-dynload:$OSS/lib/python/site-packages"
 	alias python="/afs/engr.wisc.edu/oss/bin/python"
 	alias dot='`/afs/engr.wisc.edu/common/scripts/dot`'
+	alias klog='klog -setpag'
 	export OSS PYTHONPATH LD_LIBRARY_PATH MANPATH TERM
 	;;
 
