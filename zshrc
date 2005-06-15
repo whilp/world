@@ -21,6 +21,7 @@ source ~/.profile
     bindkey '\e[2~' overwrite-mode	# ins
     # Ensure tab completion works
     autoload -U compinit
+    stty erase ^?
 compinit -C
     
 # --[ PROMPT
