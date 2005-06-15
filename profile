@@ -39,6 +39,7 @@ case $ARCH in
     # fix needed for solaris and BSD
     alias ls='gls --color=auto'
     alias zsh='/afs/engr.wisc.edu/oss/bin/zsh'
+    alias tar='gtar'
     export SHELL='/afs/engr.wisc.edu/oss/bin/zsh'
     ;;
     * )
