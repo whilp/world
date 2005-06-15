@@ -1,0 +1,3 @@
+diff -c
+update -Pd
+cvs -q
