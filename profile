@@ -8,7 +8,7 @@ ARCH=`uname`
     case $HOST in
 	nacho* | bender* )
 	# Set special vars for CAE machines
-	#stty erase ^?
+	stty erase ^?
 	TERM=ansi
 	PATH="/opt/SUNWspro/bin:/usr/ccs/bin:/usr/bin:/bin:/usr/local/bin:/opt/sfw/bin:/usr/sfw/bin:/usr/afsws/bin:/usr/openwin/bin:/usr/X11R6/bin:/afs/engr.wisc.edu/oss/bin:/afs/engr.wisc.edu/apps/bin:/afs/engr.wisc.edu/common/scripts:/afs/engr.wisc.edu/local/bin:/usr/ucb:/usr/dt/bin"
 	OSS='/afs/engr.wisc.edu/oss'
