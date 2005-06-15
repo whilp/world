@@ -48,3 +48,8 @@ Host bender
     HostName	bender.cae.wisc.edu
     User	wcmaier
     ForwardX11	yes
+
+Host peon
+# peon - CAE user-cgi server
+    HostName	peon.cae.wisc.edu
+    User	wcmaier
