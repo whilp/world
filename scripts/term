@@ -1,0 +1,3 @@
+#!/bin/sh
+# Runs actual/preferred term command.
+aterm -rv -g 120x25 -bg green -tr -sh 20 -bw 0 +sb
