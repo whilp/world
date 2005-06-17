@@ -1,0 +1,52 @@
+# A list of questions and problems that I solve frequently and then forget about
+
+================================================================================
+
+Q: How do I make the computer recognize my funky keys (eg "Play CD", special
+Page Up/Page Down)?
+
+A: First, find out the scancode being sent by the keypress. To do this, run
+`showkey -s`:
+
+    <vger 17:57> ~ % showkey -s
+    kb mode was UNICODE
+
+    (Warning: Currently running in a pseudoterminal.)
+    The reported keycodes are probably wrong.
+
+    press any key (program terminates after 10s of last keypress)...
+    0x9c
+    0xe0 0x5d
+    0xe0 0xdd
+    0xe0 0x5c
+    0xe0 0xdc
+    
+The keypresses each result in a new line similar to '0xe0 0x5d'. For our
+purposes, this can be compressed and written as 'e05d'; this is the format that
+`setkeycodes` understands. Having determined the key's scancode, we need to
+associate a keycode with the scancode using `setkeycodes`:
+
+    <vger 17:57> ~ % setkeycodes e05d 127
+    
+In this case, we're setting the keypress event we discovered above to keycode
+127. The keycode must be unassigned -- check the output of `dumpkeys` to determine
+which are free. The keycode now needs to be associated with an action (like
+paging the screen):
+
+    <vger 17:57> ~ % echo "keycode 127 = Prior" | loadkeys
+
+Prior is an alias for PageUp; check the output of `dumpkeys -l` to find other
+aliases and action names.
+
+This process would obviously need to be run on every startup; indeed, some of
+the steps require root access. Ideally, if you administer the machine you're
+using, create a simple shell script to do all of the above and add that script
+to your machine's boot sequence. On Ubuntu 5.04 (Hoary), adding such a script to
+/etc/init.d/ and creating a symlink from your preferred runlevel (/etc/rc2.d/)
+works just fine:
+
+    <vger 17:57> ~ % sudo ln -s /etc/init.d/mykeys.sh /etc/rc2.d/S30mykeys
+
+Be sure to use the correct syntax for init scripts.
+
+================================================================================

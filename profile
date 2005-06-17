@@ -49,7 +49,7 @@ esac
 
 # --[ ALIASES
 alias xlockb='xlock -mode blank'
-alias s='screen'
+alias screen='screen -a'
 alias zsource='source ~/.zshrc'
 alias psource='source ~/.profile'
 alias ogg123='ogg123 -d oss'
