@@ -6,7 +6,7 @@
 
 # --[ SET OPTIONS
 #    escape ^Aa
-    defscrollback 1000
+    defscrollback 2000
     setenv DISPLAY ":0.0"
     shelltitle $HOST
     allpartial off
@@ -15,7 +15,8 @@
     vbell on
     vbellwait .2
     msgwait 1
-    hardstatus alwayslastline "%w %=[ %h ]--[ %D, %d %M %Y @ %c ]"
+    backtick 1 0 0 batt
+    hardstatus alwayslastline "%w %=[ %1` ]=[ %h ]=[ %Y.%m.%d @ %c ]"
     startup_message off
 
 # --[ KEY BINDINGS
