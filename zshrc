@@ -13,7 +13,6 @@ source ~/.profile
     HIST_IGNORE_ALL_DUPS=1
     HIST_IGNORE_SPACE=1
     NO_HIST_BEEP=1
-    unsetopt GLOB
     # Fix keys
     bindkey '\e[1~' beginning-of-line	# home
     bindkey '\e[4~' end-of-line		# end
