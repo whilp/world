@@ -27,7 +27,7 @@ compinit -C
     PS1='<%B%m%b %T> %~ %# '
     case $TERM in
 	xterm*|Eterm*|screen)
-	precmd () { print -Pn "\e]0;$USER@$HOST - %~\a" }
-	preexec () { print -Pn "\e]0;$USER@$HOST - $1\a" }
+	precmd () { print -Pn "\e]0;$HOST - %~\a" }
+	preexec () { print -Pn "\e]0;$HOST - $1\a" }
 	;;
     esac
