@@ -17,10 +17,9 @@
     vbellwait .5
     msgwait 1
     backtick 1 60 1 batt
-    hardstatus alwayslastline "%-Lw%{+b BG}%50>%n%f %t%{-}%+Lw%< %-=%{=d BW}%?[%{= BW}Batt: %1`%%%{-}].%?%?[%{= BW}%H%{-}].%?[%{= BW}%Y.%m.%d %c%{-}]"
-#   hardstatus alwayslastline "%?%F%{.R.}%?%3n %t%? [%h]%?"
+    hardstatus alwayslastline "%{= .W}%-Lw%{+b .K}%50>%n%f %t%{-}%+Lw%< %-=%{=d BW} %?[%{= BW}Batt: %1`%%%{-}].%?%?[%{= BW}%H%{-}].%?[%{= BW}%Y.%m.%d %0c%{-}]"
+
     startup_message off
-#    hardstatus alwayslastline "%w %-=%?[%{ =BW}Batt %1`%%%{-}]%?%?=[%H]%?%?=[%Y.%m.%d %c]%?"
 # A description of my hardstatus line
 # There are several fields in the hardstatus, from left to right:
 # WINDOW LIST: a list of open windows in screen
@@ -32,6 +31,11 @@
 # Other hardstati
 #hardstatus alwayslastline "\033[m\033[42;30m %m%d \033[m \033[42;30m%c\033[m \033[42;30m %w \033[m"
 #hardstatus alwayslastline "%-Lw%{= BW}%50>%n%f* %t%{-}%+Lw%<"
+#hardstatus alwayslastline "%?%F%{.R.}%?%3n %t%? [%h]%?"
+#hardstatus alwayslastline "%w %-=%?[%{ =BW}Batt %1`%%%{-}]%?%?=[%H]%?%?=[%Y.%m.%d %c]%?"
+#hardstatus alwayslastline "%{wk}%?%-Lw%?%{bw}%n*%f %t%?(%u)%?%{wk}%?%+Lw %= %{mk}@ %H %{ck}%Y%{wk}-%{ck}%m%{wk}-%{ck}%d %{yk}%D %{gk}%c"
+#hardstatus string "%{.bW}%-w%{.rW}%n %t%{-}%+w %=%{..G} %H %{..Y} %Y/%m/%d %0c:%s "
+#hardstatus alwayslastline "%{RY}%16=%H %33=%{YR}%50=%M%d %66=%{Gb}%80=%c%="
 
 
 # --[ KEY BINDINGS
