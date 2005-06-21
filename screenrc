@@ -17,7 +17,7 @@
     vbellwait .5
     msgwait 1
     backtick 1 60 1 batt
-    hardstatus alwayslastline "%{= .W}%-Lw%{+b .K}%50>%n%f %t%{-}%+Lw%< %-=%{=d BW} %?[%{= BW}Batt: %1`%%%{-}].%?%?[%{= BW}%H%{-}].%?[%{= BW}%Y.%m.%d %0c%{-}]"
+#    hardstatus alwayslastline "%{= .W}%-Lw%{+b .K}%50>%n%f %t%{-}%+Lw%< %-=%{=d BW} %?[%{= BW}Batt: %1`%%%{-}].%?%?[%{= BW}%H%{-}].%?[%{= BW}%Y.%m.%d %0c%{-}]"
 
     startup_message off
 # A description of my hardstatus line
