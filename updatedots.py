@@ -32,6 +32,8 @@ for item in dirContents:
     if item in skipList or item.startswith('.'):
 	debug(item)
 	pass
+    elif item in binList:
+	dst = os.path.join(home, 'bin', item)
     else:
 	print "Linking", item, "to", dst
 	link(src, dst)

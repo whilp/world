@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 
-import os
+from os.path import join
+from time import sleep
+from sys import exit
 
 batt = '/proc/acpi/battery/BAT0'
-info = os.path.join(batt, 'info')
-alarm = os.path.join(batt, 'alarm')
-state = os.path.join(batt, 'state')
+info = join(batt, 'info')
+state = join(batt, 'state')
 
 infoFile = open(info, 'r')
 infoContents = infoFile.readlines()
@@ -22,11 +23,15 @@ files = [stateContents, infoContents]
 
 for file in files:
     for line in file:
-	if line.find('last full capacity') > -1:
+	if line.find('charged') == 25:
+	    exit()
+	elif line.find('last full capacity') > -1:
 	    fullCapacity = line.split()[3]
 	elif line.find('remaining capacity') > -1:
 	    remainingCapacity = line.split()[2]
 
-percent = str(100 * (float(remainingCapacity)/float(fullCapacity)))
+percent = 100 * (float(remainingCapacity)/float(fullCapacity))
+percent = str(percent).split('.')[0]
 
-print "Current level:", percent[:4]
+if percent != '100':
+    print percent[:4]

@@ -16,10 +16,10 @@
     vbell on
     vbellwait .5
     msgwait 1
-   hardstatus alwayslastline "%-Lw%{= BG}%51>%n%f %t%{-}%+Lw%< %-=%{= BG}[%{= BW}Batt %1`%%%{-}]=[%{= BW}%H%{-}]=[%{= BW}%Y.%m.%d %c%{-}]"
+    backtick 1 60 1 batt
+    hardstatus alwayslastline "%-Lw%{+b BG}%50>%n%f %t%{-}%+Lw%< %-=%{=d BW}%?[%{= BW}Batt: %1`%%%{-}].%?%?[%{= BW}%H%{-}].%?[%{= BW}%Y.%m.%d %c%{-}]"
 #   hardstatus alwayslastline "%?%F%{.R.}%?%3n %t%? [%h]%?"
     startup_message off
-    backtick 1 60 0 batt
 #    hardstatus alwayslastline "%w %-=%?[%{ =BW}Batt %1`%%%{-}]%?%?=[%H]%?%?=[%Y.%m.%d %c]%?"
 # A description of my hardstatus line
 # There are several fields in the hardstatus, from left to right:
