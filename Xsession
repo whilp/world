@@ -1,0 +1,2 @@
+Esetroot -scale ~/.bkg
+exec openbox

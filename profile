@@ -53,6 +53,7 @@ alias screen='screen -a'
 alias zsource='source ~/.zshrc'
 alias psource='source ~/.profile'
 alias ogg123='ogg123 -d oss'
+alias tv='DISPLAY=:0.1'
 
 # --[ CVS
     # Personal CVS
