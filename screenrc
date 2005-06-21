@@ -10,14 +10,29 @@
     setenv DISPLAY ":0.0"
     shelltitle $HOST
     allpartial off
-    activity "activity in %n (%t) [%w:%s]~"
+    activity "activity in %n (%t)~"
+    sorendition 02 40	    # set colors; white on blue 
     chdir
     vbell on
-    vbellwait .2
+    vbellwait .5
     msgwait 1
-    backtick 1 0 0 batt
-    hardstatus alwayslastline "%w %=[ %1` ]=[ %h ]=[ %Y.%m.%d @ %c ]"
+   hardstatus alwayslastline "%-Lw%{= BG}%51>%n%f %t%{-}%+Lw%< %-=%{= BG}[%{= BW}Batt %1`%%%{-}]=[%{= BW}%H%{-}]=[%{= BW}%Y.%m.%d %c%{-}]"
+#   hardstatus alwayslastline "%?%F%{.R.}%?%3n %t%? [%h]%?"
     startup_message off
+    backtick 1 60 0 batt
+#    hardstatus alwayslastline "%w %-=%?[%{ =BW}Batt %1`%%%{-}]%?%?=[%H]%?%?=[%Y.%m.%d %c]%?"
+# A description of my hardstatus line
+# There are several fields in the hardstatus, from left to right:
+# WINDOW LIST: a list of open windows in screen
+# BATTERY STATUS: the output of a python script; this (and other fields
+#   surrounded by '%?...%?' are optional and rendered only if an escaped string
+#   within the pair of '%?' evaluates to a non-empty string.
+# DATE: format produces, eg: 2005.06.20 14:46. Rendered only if non-empty.
+
+# Other hardstati
+#hardstatus alwayslastline "\033[m\033[42;30m %m%d \033[m \033[42;30m%c\033[m \033[42;30m %w \033[m"
+#hardstatus alwayslastline "%-Lw%{= BW}%50>%n%f* %t%{-}%+Lw%<"
+
 
 # --[ KEY BINDINGS
     bind j focus down
