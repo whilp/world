@@ -97,3 +97,10 @@ smack
 ku
 hardstatus
 hardstatu
+disable viminfo
+vimfino
+disable .* viminfo
+viminfo
+pmwiki
+backtick
+arguments

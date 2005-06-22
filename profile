@@ -54,6 +54,7 @@ alias zsource='source ~/.zshrc'
 alias psource='source ~/.profile'
 alias ogg123='ogg123 -d oss'
 alias tv='DISPLAY=:0.1'
+alias mpdserv='mpd 6600 $HOME/Music $HOME/Music $HOME/Music/log $HOME/Music/error'
 
 # --[ CVS
     # Personal CVS
