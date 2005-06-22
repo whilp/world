@@ -27,6 +27,11 @@ Host cvger
     HostName	144.92.240.12
     User	will
 
+Host tick
+# tick.rz.uni-augsburg.de - OpenPower testbed at Uni Augsburg, DE
+    HostName	tick.rz.uni-augsburg.de
+    User	wcmaier
+
 Host sts
 # stslinux - STS linux server at office
     HostName	stslinux.doit.wisc.edu

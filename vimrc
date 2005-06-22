@@ -66,7 +66,7 @@
 " --[ AUTO-ENCRYPT FILES
 	augroup gnupg
 	    au!
-	    autocmd BufReadPre,FileReadPre	   *.gpg,*.asc set viminfo=
+	    autocmd BufReadPre,FileReadPre	   *.gpg,*.asc set viminfo=""
 	    autocmd BufReadPre,FileReadPre	   *.gpg,*.asc set noswapfile
 	    autocmd BufReadPre,FileReadPre	   *.gpg,*.asc set foldclose=all
 	    autocmd BufReadPre,FileReadPre	   *.gpg,*.asc set foldmethod=indent
