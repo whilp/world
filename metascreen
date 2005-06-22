@@ -10,5 +10,5 @@ screen -t LOCAL	    6
 
 select 1
 
-backtick 1 60 0 batt
+backtick 1 60 1 screenexec batt
 hardstatus alwayslastline "%{= .W}%-Lw%{= .G}%50>%n%f* %t%{-}%+Lw%< %-=%{= BW} %?[%{= BW}Batt: %1`%%%{-}].%?%?[%{= BW}%H%{-}].%?[%{= BW}%Y.%m.%d %c:%s%{-}]"
