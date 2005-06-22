@@ -1,7 +1,7 @@
 source $HOME/.screenrc
 
 sessionname meta
-screen -t MAIL -M   1 mutt 
+screen -t MAIL -M   1 
 screen -t SSH	    2
 screen -t SSH	    3
 screen -t WWW	    4 elinks
