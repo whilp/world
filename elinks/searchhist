@@ -24,7 +24,6 @@ multiple
 secure
 secur
 jabber
-curses
 term
 title
 region
@@ -46,7 +45,6 @@ retrieve
 java trap
 wrt
 version
-command
 vos remo
 rmmnt
 rm
@@ -104,3 +102,6 @@ viminfo
 pmwiki
 backtick
 arguments
+curses
+command
+laptop_mode
