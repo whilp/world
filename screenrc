@@ -44,6 +44,7 @@
 
 # --[ KEY BINDINGS
     bind T source .metascreen
+    bind H hardstatus ignore
     bind j focus down
     bind k focus up
     bind r resize =
