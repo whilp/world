@@ -50,3 +50,11 @@ works just fine:
 Be sure to use the correct syntax for init scripts.
 
 ================================================================================
+
+Q: How can I make DVD playback a bit smoother?
+
+A: Enable DMA on the DVD drive using hdparm.
+    
+    <vger 17:57> ~ % sudo hdparm -d 1 /dev/hdc
+
+================================================================================
