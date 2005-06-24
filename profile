@@ -4,11 +4,14 @@
 
 ARCH=`uname`
 
+
+
 # --[ ENVIRONMENT
 # host-specific
     case $HOST in
 	nacho* | bender* | anon* )
 	# Set special vars for CAE machines
+	alias screen='/afs/engr.wisc.edu/oss/bin/screen'
 	TERM=ansi
 	PATH="/opt/SUNWspro/bin:/usr/ccs/bin:/usr/bin:/bin:/usr/local/bin:/opt/sfw/bin:/usr/sfw/bin:/usr/afsws/bin:/usr/openwin/bin:/usr/X11R6/bin:/afs/engr.wisc.edu/oss/bin:/afs/engr.wisc.edu/apps/bin:/afs/engr.wisc.edu/common/scripts:/afs/engr.wisc.edu/local/bin:/usr/ucb:/usr/dt/bin:$HOME/bin"
 	OSS='/afs/engr.wisc.edu/oss'
@@ -20,17 +23,14 @@ ARCH=`uname`
 	alias klog='klog -setpag'
 	export OSS PYTHONPATH LD_LIBRARY_PATH MANPATH TERM
 	;;
-
 	vger* )
 	PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/X11R6/bin:/opt/:/usr/games/"
-	if test "${STY-set}" = set; then
-	    screen
-	fi
 	;;
 
 	* )
 # Standard vars
 	PKG_PATH='ftp://openbsd.mirrors.tds.net/pub/openBSD/3.7/packages/i386/'
+	ifscreen
 	;;
     esac
 
@@ -63,6 +63,10 @@ alias psource='source ~/.profile'
 alias ogg123='ogg123 -d oss'
 alias tv='DISPLAY=:0.1'
 alias mpdserv='mpd 6600 $HOME/Music $HOME/Music $HOME/Music/log $HOME/Music/error'
+SCREENCHECK=`screen -ls | grep Attach`
+if test "${SCREENCHECK-set}" != set; then
+    alias screen='screen -e^Ee'
+fi
 
 # --[ CVS
     # Personal CVS

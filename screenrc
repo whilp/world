@@ -44,10 +44,11 @@
 
 # --[ KEY BINDINGS
     bind T source .metascreen
-    bind H hardstatus ignore
+    bind H hardstatus message
     bind j focus down
     bind k focus up
     bind r resize =
     bind c screen 1
     bind ^c screen 1
     bind 0 select 10
+    bind K eval 'kill' 'stuff "y"'
