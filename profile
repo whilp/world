@@ -5,6 +5,7 @@
 ARCH=`uname`
 
 # --[ ENVIRONMENT
+# host-specific
     case $HOST in
 	nacho* | bender* | anon* )
 	# Set special vars for CAE machines
@@ -20,9 +21,15 @@ ARCH=`uname`
 	export OSS PYTHONPATH LD_LIBRARY_PATH MANPATH TERM
 	;;
 
-	* )
-	# Standard vars
+	vger* )
 	PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/X11R6/bin:/opt/:/usr/games/"
+	if test "${STY-set}" = set; then
+	    screen
+	fi
+	;;
+
+	* )
+# Standard vars
 	PKG_PATH='ftp://openbsd.mirrors.tds.net/pub/openBSD/3.7/packages/i386/'
 	;;
     esac
@@ -32,6 +39,7 @@ ARCH=`uname`
     EDITOR=`which vim`
     CVSEDITOR=$EDITOR
 export LANG PATH SHELL EDITOR CVSEDITOR
+
 
 # arch-specific stuff.
 case $ARCH in
