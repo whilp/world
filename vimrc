@@ -10,7 +10,7 @@
     " set linebreak			" Don't wrap words by default
     set textwidth=80			" Don't wrap lines by default 
     set nobackup			" Don't keep a backup file
-    set viminfo='20,\"50		" read/write a .viminfo file, don't store more than
+    set viminfo='200,f1,<500		" read/write a .viminfo file, don't store more than
 					" 50 lines of registers
     set history=50		    	" keep 50 lines of command line history
     set ruler				" show the cursor position all the time
