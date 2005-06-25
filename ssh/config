@@ -54,6 +54,12 @@ Host bender
     User	wcmaier
     ForwardX11	yes
 
+Host mace
+# mace - CAE workstation
+    HostName	mace.cae.wisc.edu
+    User	wcmaier
+    ForwardX11	yes
+
 Host anon
 # anon - CAE workstation
     HostName	anon.cae.wisc.edu
