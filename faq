@@ -58,3 +58,26 @@ A: Enable DMA on the DVD drive using hdparm.
     <vger 17:57> ~ % sudo hdparm -d 1 /dev/hdc
 
 ================================================================================
+
+================================================================================
+
+Q: How can I make MPD (Music Player Daemon) play my files at the right speed?
+They all seem really fast...
+
+A: Assuming you've configured MPD to use libao (ALSA output), you may need to
+adjust the period size for the driver...
+
+    <vger 17:57> ~ % 
+    # ALSA Audio Output
+    ao_driver               "alsa09"
+    ao_driver_options       "dev=hw:0,0"
+    ao_driver_options       "period_size=50000"
+
+The important part is the last line -- the period_size option. 50000 seems to be
+a good value, although it might be worth some experimenting to see if fudging it
+up or down makes playback any better. Either way, it seems to mostly affect the
+speed of playback.
+
+See also: http://mpd.wikicities.com/wiki/Troubleshooting_Libao#Speed_problems
+
+================================================================================
