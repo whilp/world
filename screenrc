@@ -44,8 +44,8 @@
 
 # --[ KEY BINDINGS
     bind T source .metascreen
-    bind H hardstatus ignore
-    bind h hardstatus alwayslastline
+    bind h hardstatus ignore
+    bind H hardstatus alwayslastline
     bind K eval 'kill' 'stuff "y"'
     bind j focus down
     bind k focus up
