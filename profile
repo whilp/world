@@ -4,12 +4,10 @@
 
 ARCH=`uname`
 
-
-
 # --[ ENVIRONMENT
 # host-specific
     case $HOST in
-	nacho* | bender* | anon* )
+	nacho* | bender* | anon* | mace* )
 	# Set special vars for CAE machines
 	TERM=ansi
 	PATH="/opt/SUNWspro/bin:/usr/ccs/bin:/usr/bin:/usr/sbin:/sbin:/bin:/usr/local/bin:/usr/local/sbin:/opt/sfw/bin:/usr/sfw/bin:/usr/afsws/bin:/usr/openwin/bin:/usr/X11R6/bin:/afs/engr.wisc.edu/oss/bin:/afs/engr.wisc.edu/apps/bin:/afs/engr.wisc.edu/common/scripts:/afs/engr.wisc.edu/local/bin:/usr/ucb:/usr/dt/bin:$HOME/bin"
