@@ -3,8 +3,7 @@ source $HOME/.screenrc
 sessionname meta
 screen -t MAIL -M   1 
 screen -t SSH -M    2 screen -e^\\~ -S ssh
-screen -t WWW	    3
-screen -t WWW	    4 elinks
+screen -t WWW	    4 screen -e^\\~ -S www
 screen -t AUDIO	    5
 screen -t CICQ -M   6 screen -e^\\~ -S cicq
 screen -t LOCAL	    7
