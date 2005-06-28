@@ -1,7 +1,7 @@
 source $HOME/.screenrc
 
 sessionname meta
-screen -t MAIL	    1 
+screen -M -t MAIL   1 
 screen -t SSH	    2 screen -R -DD -e'^\\\' -S ssh
 screen -t WWW	    3 screen -R -DD -e'^\\\' -S www
 screen -t AUDIO	    4
