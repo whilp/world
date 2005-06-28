@@ -1,5 +1,5 @@
 CAE		0	FE
-CAE RT		1	FE
+CAE RT		1	F
 RT - Main Queue	https://rt.cae.wisc.edu/index.html?HomeRefreshInterval=600	2	
 RT - Network Queue	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=Queue%20%3D%20%27network%27%20AND%20%28Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27new%27%29&Rows=50&OrderBy=LastUpdated&Page=1	2	
 RT - Security Queue	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=Queue%20%3D%20%27security%27%20AND%20%28Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27new%27%29&Rows=50&OrderBy=LastUpdated&Page=1	2	
