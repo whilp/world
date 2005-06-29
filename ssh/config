@@ -70,3 +70,8 @@ Host peon
 # peon - CAE user-cgi server
     HostName	peon.cae.wisc.edu
     User	wcmaier
+
+Host jawb*
+# jawbreaker - CAE RT server
+    HostName	jawbreaker.cae.wisc.edu
+    User	wcmaier
