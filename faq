@@ -81,3 +81,15 @@ speed of playback.
 See also: http://mpd.wikicities.com/wiki/Troubleshooting_Libao#Speed_problems
 
 ================================================================================
+
+================================================================================
+
+Q: How do I increase the console resolution? I know I need to use 'hwinfo', but
+the output's invisible.
+
+A: Here are some common modes:
+     Mode 0x0318: 1024x768 (+4096), 24 bits
+Add the part after "Mode" to your /boot/grub/menu.lst file in the kernel
+declaration section. Set 'vga' equal to the Mode (eg 0x0318) and reboot.
+
+================================================================================

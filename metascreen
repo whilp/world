@@ -5,7 +5,7 @@ screen -M -t MAIL   1
 screen -t SSH	    2 screen -R -DD -e'^\\\' -S ssh
 screen -t WWW	    3 screen -R -DD -e'^\\\' -S www
 screen -t AUDIO	    4
-screen -t CICQ	    5 screen -R -DD -e'^\\\' -S cicq
+screen -M -t CICQ   5 screen -R -DD -e'^\\\' -S cicq
 screen -t LOCAL	    6
 
 select 1

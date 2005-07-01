@@ -1,5 +1,5 @@
 CAE		0	FE
-CAE RT		1	F
+CAE RT		1	FE
 RT - Main Queue	https://rt.cae.wisc.edu/index.html?HomeRefreshInterval=600	2	
 RT - Network Queue	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=Queue%20%3D%20%27network%27%20AND%20%28Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27new%27%29&Rows=50&OrderBy=LastUpdated&Page=1	2	
 RT - Security Queue	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=Queue%20%3D%20%27security%27%20AND%20%28Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27new%27%29&Rows=50&OrderBy=LastUpdated&Page=1	2	
@@ -9,6 +9,7 @@ RT - My Tickets	https://rt.cae.wisc.edu/Search/Results.html?Order=ASC&Query=%20O
 AFS Commands	http://www-306.ibm.com/software/stormgmt/afs/manuals/Library/unix/en_US/HTML/AdminRef/auarf002.htm	1	
 AFS Manuals	http://www-306.ibm.com/software/stormgmt/afs/library/	1	
 Unixbook	http://homepages.cae.wisc.edu/~wcmaier/unixbook/	1	
+Open Source Development With CVS	http://cvsbook.red-bean.com/cvsbook.html	1	
 Interests		0	F
 Vim Tutorial, IRC-style	http://www.vi-improved.org/tutorial.php	1	
 The Feds can own your WLAN too : TomsNetworking	http://www.tomsnetworking.com/Sections-article111.php	1	

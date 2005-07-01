@@ -32,6 +32,12 @@ Host tick
     HostName	tick.rz.uni-augsburg.de
     User	wcmaier
 
+Host pku
+# ppclinux.pku.edu.cn - OpenPower testbed at Uni Peking, CN
+    HostName	ppclinux.pku.edu.cn
+    User	wcmaier
+    Port	2000
+
 Host sts
 # stslinux - STS linux server at office
     HostName	stslinux.doit.wisc.edu
