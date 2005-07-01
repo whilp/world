@@ -21,10 +21,7 @@
     set smartindent
     set foldmethod=indent		" Fold based on line indent
     set whichwrap=h,l,~,[,]		" Allow characters to wrap lines
-    noremap <Space> <PageDown>		" Allow space to page down
-    noremap <F1>			" Turn off the help dialog (I hope)
-    noremap <Ins> 2<C-Y>		" Scroll window without moving cursor
-    noremap <Del> 2<C-E>
+    
 
     " Suffixes that get lower priority when doing tab completion for filenames.
     " These are files we are not likely to want to edit or read.
@@ -55,6 +52,15 @@
     set ignorecase		" Do case insensitive matching
     set incsearch		" Incremental search
     set autowrite		" Automatically save before commands like :next and :make
+
+" --[ KEY BINDINGS
+    noremap <Space> <PageDown>		" Allow space to page down
+    noremap <F1>			" Turn off the help dialog (I hope)
+    noremap <Ins> 2<C-Y>		" Scroll window without moving cursor
+    noremap <Del> 2<C-E>
+    noremap <PageDown> <PageDown>
+    noremap <PageUp> <PageUp>
+
 
 " --[ AUTOCMD
     if has("autocmd")
