@@ -21,11 +21,11 @@ ARCH=`uname`
 	export OSS PYTHONPATH LD_LIBRARY_PATH MANPATH TERM
 	;;
 	vger* )
-	PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/X11R6/bin:/opt/:/usr/games/"
 	;;
 
 	* )
 # Standard vars
+	PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/X11R6/bin:/opt/:/usr/games/"
 	PKG_PATH='ftp://openbsd.mirrors.tds.net/pub/openBSD/3.7/packages/i386/'
 	;;
     esac
