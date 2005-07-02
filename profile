@@ -20,9 +20,6 @@ ARCH=`uname`
 	alias klog='klog -setpag'
 	export OSS PYTHONPATH LD_LIBRARY_PATH MANPATH TERM
 	;;
-	vger* )
-	;;
-
 	* )
 # Standard vars
 	PKG_PATH='ftp://openbsd.mirrors.tds.net/pub/openBSD/3.7/packages/i386/'
