@@ -93,3 +93,21 @@ Add the part after "Mode" to your /boot/grub/menu.lst file in the kernel
 declaration section. Set 'vga' equal to the Mode (eg 0x0318) and reboot.
 
 ================================================================================
+
+================================================================================
+Q: Why doesn't Kismet work?
+
+A: Kismet needs to be told which driver your wireless card uses. Assuming you
+know which driver you use, check the Kismet docs for the "Capture Sources"
+section. Your /etc/kismet/kismet.conf should have a line starting with
+'source'...
+
+    <vger 17:57> ~ % grep ^source /etc/kismet/kismet.conf
+    source=madwifi_g,ath0,ath
+
+In this case, we use a card supported by the madwifi driver; the network device
+is named 'ath0', and 'ath' is the lexical name we assign to this capture source.
+Save the file and give Kismet another try.
+
+================================================================================
+
