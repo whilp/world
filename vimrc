@@ -58,9 +58,8 @@
     noremap <F1>			" Turn off the help dialog (I hope)
     noremap <Ins> 2<C-Y>		" Scroll window without moving cursor
     noremap <Del> 2<C-E>
-    noremap <PageDown> <PageDown>
-    noremap <PageUp> <PageUp>
-
+"    noremap <PageDown>
+"    noremap <PageUp>
 
 " --[ AUTOCMD
     if has("autocmd")
