@@ -26,8 +26,9 @@ set alias_file="~/.muttalias
 set mask="."
 set imap_list_subscribed=yes
 bind index 'G' imap-fetch-mail
-bind index '<Esc><Tab>' previous-new-then-unread
-bind index '<Tab>' next-new-then-unread
+#bind index '<Esc><Tab>' previous-new-then-unread
+#bind index '<Tab>' next-new-then-unread
+bind index '.' buffy-list
 
 ## SMTP SETTINGS ##
 set sendmail="/usr/local/bin/nbsmtp"		# use ESMTP for egress mail
