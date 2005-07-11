@@ -4,6 +4,33 @@
 
 ARCH=`uname`
 
+
+# --[ ALIASES
+alias xlockb='xlock -mode blank'
+alias zsource='source ~/.zshrc'
+alias psource='source ~/.profile'
+alias ogg123='ogg123 -d oss'
+alias tv='DISPLAY=:0.1'
+alias mpdserv='mpd 6600 $HOME/Music $HOME/Music $HOME/Music/log $HOME/Music/error'
+alias vim='vim -X'
+
+# --[ CVS
+    # Personal CVS
+    CVSROOT=":ext:will@phnx.ath.cx:/cvs"
+    # CAE CVS
+    # CVSROOT=/afs/engr.wisc.edu/common/repository
+export CVSROOT
+alias mycvs='export CVSROOT=":ext:will@phnx.ath.cx:/cvs"'
+alias caecvs='export CVSROOT=/afs/engr.wisc.edu/common/repository'
+
+# --[ PRINTING
+    if [ -x /afs/engr.wisc.edu/common/scripts/default_printer ] ; then
+	PRINTER=`/afs/engr.wisc.edu/common/scripts/default_printer`
+    else
+	PRINTER=ps
+    fi
+export PRINTER
+
 # --[ ENVIRONMENT
 # host-specific
     case $HOST in
@@ -15,10 +42,12 @@ ARCH=`uname`
 	LD_LIBRARY_PATH='/opt/SUNWspro/bin:/usr/ccs/bin:/usr/bin:/bin:/usr/local/bin:/opt/sfw/bin:/usr/sfw/bin:/usr/afsws/bin:/usr/openwin/bin:/usr/X11R6/bin:/afs/engr.wisc.edu/oss/bin:/afs/engr.wisc.edu/apps/bin:/afs/engr.wisc.edu/common/scripts:/afs/engr.wisc.edu/local/bin:/usr/ucb:/usr/dt/bin'
 	MANPATH='/usr/share/man:usr/local/man:/opt/sfw/man:/usr/openwin/man/usr/X11R6/man:/afs/engr.wisc.edu/oss/man:/afs/engr.wisc.edu/apps/man'
 	PYTHONPATH="$OSS/lib/python:$OSS/lib/python/lib-dynload:$OSS/lib/python/site-packages"
+	SENDMAIL='sendmail'
 	alias python="/afs/engr.wisc.edu/oss/bin/python"
 	alias dot='`/afs/engr.wisc.edu/common/scripts/dot`'
 	alias klog='klog -setpag'
-	export OSS PYTHONPATH LD_LIBRARY_PATH MANPATH TERM
+	alias mutt='TERM=screen mutt'
+	export OSS PYTHONPATH LD_LIBRARY_PATH MANPATH TERM SENDMAIL
 	;;
 	* )
 # Standard vars
@@ -47,29 +76,3 @@ case $ARCH in
     alias ls='ls --color=auto'
     ;;
 esac
-
-# --[ ALIASES
-alias xlockb='xlock -mode blank'
-alias zsource='source ~/.zshrc'
-alias psource='source ~/.profile'
-alias ogg123='ogg123 -d oss'
-alias tv='DISPLAY=:0.1'
-alias mpdserv='mpd 6600 $HOME/Music $HOME/Music $HOME/Music/log $HOME/Music/error'
-alias vim='vim -X'
-
-# --[ CVS
-    # Personal CVS
-    CVSROOT=":ext:will@phnx.ath.cx:/cvs"
-    # CAE CVS
-    # CVSROOT=/afs/engr.wisc.edu/common/repository
-export CVSROOT
-alias mycvs='export CVSROOT=":ext:will@phnx.ath.cx:/cvs"'
-alias caecvs='export CVSROOT=/afs/engr.wisc.edu/common/repository'
-
-# --[ PRINTING
-    if [ -x /afs/engr.wisc.edu/common/scripts/default_printer ] ; then
-	PRINTER=`/afs/engr.wisc.edu/common/scripts/default_printer`
-    else
-	PRINTER=ps
-    fi
-export PRINTER

@@ -31,7 +31,7 @@ bind index 'G' imap-fetch-mail
 bind index '.' buffy-list
 
 ## SMTP SETTINGS ##
-set sendmail="/usr/local/bin/nbsmtp"		# use ESMTP for egress mail
+set sendmail=nbsmtp			# use ESMTP for egress mail
 
 ## PAGER SETTINGS ##
 set implicit_autoview
@@ -43,7 +43,7 @@ source "~/.muttcolor"			# get color info
 source "~/.muttalias"
 set quit=yes
 set move=no
-set editor='/usr/bin/vim'
+set editor=vim
 
 ## COMPOSITION SETTINGS ##
 set forward_format="Fwd: %s"		# traditional fwd: subj.
