@@ -4,16 +4,6 @@
 
 ARCH=`uname`
 
-
-# --[ ALIASES
-alias xlockb='xlock -mode blank'
-alias zsource='source ~/.zshrc'
-alias psource='source ~/.profile'
-alias ogg123='ogg123 -d oss'
-alias tv='DISPLAY=:0.1'
-alias mpdserv='mpd 6600 $HOME/Music $HOME/Music $HOME/Music/log $HOME/Music/error'
-alias vim='vim -X'
-
 # --[ CVS
     # Personal CVS
     CVSROOT=":ext:will@phnx.ath.cx:/cvs"
@@ -53,6 +43,7 @@ export PRINTER
 # Standard vars
 	PKG_PATH='ftp://openbsd.mirrors.tds.net/pub/openBSD/3.7/packages/i386/'
 	PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/X11R6/bin:/opt/:/usr/games/"
+	alias vman="man zshall | col -bp | iconv -c | view -c 'set ft=man nomod nolist nofoldenable' -"
 	;;
     esac
 
