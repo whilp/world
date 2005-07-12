@@ -17,6 +17,11 @@ Host phnx*
     HostName	phnx.ath.cx
     User	will
 
+Host magner*
+# CastleMagner - Maier family computer
+    HostName	swood.ath.cx
+    User	will
+
 Host vger
 # vger - laptop
     HostName	172.16.1.110
