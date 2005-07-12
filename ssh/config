@@ -21,6 +21,7 @@ Host magner*
 # CastleMagner - Maier family computer
     HostName	swood.ath.cx
     User	will
+    ForwardX11	yes
 
 Host vger
 # vger - laptop
