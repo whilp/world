@@ -1,52 +1,52 @@
-Aterm*background: black
-Aterm*foreground: white
+XTerm*background: black
+XTerm*foreground: white
 
-Aterm*scrollBar: false
-Aterm*loginShell: true
-Aterm*transparent: true
-Aterm*tintingType: true
-Aterm*tinting: #a07040
-Aterm*saveLines: 2000
-Aterm*shading: 35
-!Aterm*font: -misc-fixed-medium-r-normal-*-14-*-*-*-c-*-iso8859-15
-!aterm*font:*-*-fixed-medium-r-normal--*-140-*-*-*-*-iso8859-1
-!Aterm*font: -misc-fixed-medium-r-normal--18-120-100-100-c-90-iso10646-1
-aterm*boldFont:*-*-fixed-bold-r-normal--*-*-140-*-*-*-*-iso8859-1
-Aterm*charClass: 33:48,37:48,45-47:48,58:48,61:48,63-64:48,126:48
-Aterm*geometry: +80+24
+XTerm*scrollBar: false
+XTerm*loginShell: true
+XTerm*transparent: true
+XTerm*tintingType: true
+XTerm*tinting: #a07040
+XTerm*saveLines: 2000
+XTerm*shading: 35
+!XTerm*font: -misc-fixed-medium-r-normal-*-14-*-*-*-c-*-iso8859-15
+!XTerm*font:*-*-fixed-medium-r-normal--*-140-*-*-*-*-iso8859-1
+!XTerm*font: -misc-fixed-medium-r-normal--18-120-100-100-c-90-iso10646-1
+XTerm*boldFont:*-*-fixed-bold-r-normal--*-*-140-*-*-*-*-iso8859-1
+XTerm*charClass: 33:48,37:48,45-47:48,58:48,61:48,63-64:48,126:48
+XTerm*geometry: +80+24
 
-Aterm*color0: black
-Aterm*color1: #AA0000
-Aterm*color2: #00AA00
-Aterm*color3: #AA5500
-Aterm*color4: #0000AA
-Aterm*color5: #AA00AA
-Aterm*color6: #00AAAA
-Aterm*color7: #AAAAAA
-Aterm*color8: #555555
-Aterm*color9: #FF5555
-Aterm*color10: #55FF55
-Aterm*color11: #FFFF55
-Aterm*color12: #5555FF
-Aterm*color13: #FF55FF
-Aterm*color14: #55FFFF
-Aterm*color15: white
-Aterm*colorUL: #55FF55
-Aterm*colorBD: #5555FF
+XTerm*color0: black
+XTerm*color1: #AA0000
+XTerm*color2: #00AA00
+XTerm*color3: #AA5500
+XTerm*color4: #0000AA
+XTerm*color5: #AA00AA
+XTerm*color6: #00AAAA
+XTerm*color7: #AAAAAA
+XTerm*color8: #555555
+XTerm*color9: #FF5555
+XTerm*color10: #55FF55
+XTerm*color11: #FFFF55
+XTerm*color12: #5555FF
+XTerm*color13: #FF55FF
+XTerm*color14: #55FFFF
+XTerm*color15: white
+XTerm*colorUL: #55FF55
+XTerm*colorBD: #5555FF
 
-!Aterm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-c-0-iso10646-1
-!Aterm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-c-0-iso8859-1
-!Aterm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-c-0-iso8859-15
-!Aterm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-c-0-iso8859-9
-!Aterm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-m-0-iso10646-1
-!Aterm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-m-0-iso8859-1
-!Aterm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-m-0-iso8859-15
-!Aterm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-m-0-iso8859-9
-!Aterm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-c-0-iso10646-1
-!Aterm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-c-0-iso8859-1
-!Aterm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-c-0-iso8859-15
-!Aterm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-c-0-iso8859-9
-!Aterm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-m-0-iso10646-1
-!Aterm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-m-0-iso8859-1
-!Aterm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-m-0-iso8859-15
-!Aterm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-m-0-iso8859-9
+!XTerm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-c-0-iso10646-1
+!XTerm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-c-0-iso8859-1
+!XTerm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-c-0-iso8859-15
+!XTerm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-c-0-iso8859-9
+!XTerm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-m-0-iso10646-1
+!XTerm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-m-0-iso8859-1
+!XTerm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-m-0-iso8859-15
+!XTerm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-m-0-iso8859-9
+!XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-c-0-iso10646-1
+!XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-c-0-iso8859-1
+!XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-c-0-iso8859-15
+!XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-c-0-iso8859-9
+!XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-m-0-iso10646-1
+!XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-m-0-iso8859-1
+!XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-m-0-iso8859-15
+!XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-m-0-iso8859-9
