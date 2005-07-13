@@ -16,7 +16,6 @@
     defscrollback 2000
     password ZD55sCrqpRZlQ
     vbell on
-    setenv DISPLAY ":0.0"
     shelltitle $HOST
     allpartial off
     activity "activity in %n (%t)~"
