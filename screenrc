@@ -80,5 +80,6 @@
     bind \\ quit
     bind K kill
     bind I login on
+    bind i idle 60 windowlist -b
     bind O login off
     bind } history
