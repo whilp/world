@@ -41,7 +41,7 @@ export PRINTER
 	;;
 	* )
 # Standard vars
-	PKG_PATH='ftp://openbsd.mirrors.tds.net/pub/openBSD/3.7/packages/i386/'
+	PKG_PATH='ftp://openbsd.mirrors.tds.net/pub/OpenBSD/3.7/packages/i386/'
 	PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/X11R6/bin:/opt/:/usr/games/"
 	;;
     esac
