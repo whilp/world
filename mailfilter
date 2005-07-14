@@ -1,0 +1,101 @@
+# - maildrop mailinglist.
+#   http://lists.sourceforge.net/lists/listinfo/courier-maildrop
+
+# - Please browse the mailinglist archives for more examples.
+#   http://sourceforge.net/mailarchive/forum.php?forum=courier-maildrop
+
+# --[ SETTINGS
+HOME = '/home/will'
+MAILDIR = "$HOME/Maildir"
+LOG = "$MAILDIR/drop.log"
+DEFAULT = $MAILDIR/Inbox
+
+logfile $LOG
+
+# --[ CONFIGURATION
+
+# catch duplicates using reformail
+
+#`reformail -D 8000 $MAILDIR/.duplicate-cache`
+#if ( $RETURNCODE == 0 )
+#{
+#    to $MAILDIR/Questionable/
+#}
+
+if ( /^Subject:.*[Tt]est$/ )
+{
+    exception {
+	log "test mail"
+	to $MAILDIR/Questionable/
+    }
+}
+
+
+# filter based on addresses
+
+ME = "willmaier@ml1.net \
+	wcmaier@gmail.com"
+FAMILY = "jacobsonlaura@gmail.com \
+	linuxmaier@fastmail.fm \
+	maier@wi.rr.com \
+	mmaier@stewartpeterson.com"
+FRIENDS = "kafka@riseup.net \
+	hastings.cameron@gmail.com"
+CAE = "ballard@engr.wisc.edu "
+
+MADLUG = "madlug@madisonlinux.org"
+SCREEN = "screen-users@gnu.org "
+
+# --[ LISTS
+if ( /^to:.*$MADLUG/ \
+    || /^cc:.*$MADLUG/ )
+{
+    to $MAILDIR/Hack/Madlug
+}
+if ( /^to:.*$SCREEN.*/ \
+    || /^cc:.*$SCREEN.*/ )
+{
+    to $MAILDIR/Hack/Screen-users
+}
+
+# check if from me
+if ( /^From:.*willmaier@ml1.net/ \
+    || /^From:.*wcmaier@gmail.com/ )
+{
+    to $MAILDIR/Sent
+}
+
+# --[ FAMILY
+if ( /^From:.*jacobsonlaura@gmail.com/ \
+    || /^From:.*linuxmaier@fastmail.fm/ \
+    || /^From:.*pbroad@iopener.net/ \
+    || /^From:.*wegmann@sbcglobal.net/ \
+    || /^From:.*ajdj143@sbcglobal.net/ \
+    || /^From:.*maier@wi.rr.com/ \
+    || /^From:.*mmaier@stewart-peterson.com/ )
+{
+    to $MAILDIR/Personal/Family
+}
+
+# --[ FRIENDS
+if ( /^From:.*kafka@riseup.net/ \
+    || /^From:.*ejburnett@.*wisc.edu/ \
+    || /^From:.*butterflyschmid@yahoo.com/ \
+    || /^From:.*hastings.cameron@gmail.com/ \
+    || /^From:.*hitbyguitarz@yahoo.com/ \
+    || /^From:.*kwrosenb@wisc.edu/ \
+    || /^From:.*mbrunlieb@hotmail.com/ \
+    || /^From:.*rmainville@stewart-peterson.com/ )
+{
+    to $MAILDIR/Personal/Friend
+}
+
+# --[ WORK
+if ( /^From:.*cae.wisc.edu/ \
+    || /^From:.*engr.wisc.edu/ \
+    || /^To:.*unix@cae.wisc.edu/ )
+{
+    to $MAILDIR/Work/CAE
+}
+
+to $DEFAULT

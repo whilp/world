@@ -1,0 +1,75 @@
+# getmailrc - getmail configuration file
+
+# Will Maier <willmaier@ml1.net>
+
+[retriever]
+#type = SimpleIMAPSSLRetriever
+type = SimplePOP3SSLRetriever
+#server = mail.messagingengine.com
+server = pop.gmail.com
+#port = 465
+port = 995
+#username = willmaier@ml1.net
+username = wcmaier@gmail.com
+#password = aymBuAtyad5
+password = lesheros
+#mailboxes = ('INBOX', 'INBOX.CAE', 'INBOX.Details', 'INBOX.Family.ARK', 'INBOX.Family', 'INBOX.Law', 'INBOX.Junk Mail', 'INBOX.Lists', 'INBOX.MCC', 'INBOX.SJC', 'INBOX.School', 'INBOX.techpartners', 'INBOX.Sent Items')
+
+[destination]
+#type = Maildir
+#path = ~/Maildir/
+type = MDA_external
+path = /usr/local/bin/maildrop
+#type = MultiDestination
+#destinations = ('[default]')
+
+#[default]
+#type = Maildir
+#path = ~/Maildir/
+
+#[sort]
+#type = MultiGuesser
+#default = ~/Maildir/
+#locals = (
+#    ('techpartners@lists.wisc.edu', 'techpartners'),
+#    ('screen-users@gnu.org', 'screen-users'),
+#    ('cae.wisc.edu', 'cae'),
+#    ('madlug@madisonlinux.org', 'madlug'))
+
+[madlug]
+type = Maildir
+path = ~/Maildir/Madlug/
+
+[techpartners]
+type = Maildir
+path = ~/Maildir/Techpartners/
+
+[cae]
+type = Maildir
+path = ~/Maildir/CAE/
+
+[screen-users]
+type = Maildir
+path = ~/Maildir/Screen-users/
+
+[options]
+verbose = 0
+# 1; print messages
+read_all = 1
+# 1; get all available messages (if 0, only unseen messages)
+delete = 1
+# 0; delete after successful retrieval
+delete_after = 0
+# 0; delete after a period of days (integer)
+max_message_size = 20000
+# 0; get messages no larger than integer bytes
+max_messages_per_session = 100
+# 0; only process integer messages
+delivered_to = 1
+# 1; add a Delivered-to header
+received = 1
+# 1; add a Received header
+message_log = ~/.getmail/log	
+# ''; log to string
+message_log_syslog = 0
+# 0; log to syslog
