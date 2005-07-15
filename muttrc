@@ -2,33 +2,55 @@
 ## Based on:
 ## Phillip Hollenback's muttrc @ macdevcenter, for use with FastMail
 
-## IMAP SETTINGS ##
-set imap_user=willmaier@ml1.net		# obvious
-#set imap_pass=				# cleartext passwd? hmm...
-set imap_home_namespace="INBOX"				
-set folder="imaps://mail.messagingengine.com/INBOX"
+## MAILDIR SETTINGS ##
+set mbox_type=Maildir
+set folder=~/Maildir
 set copy=yes
-set record=+"Sent Items"		# copy all egress mail to Sent Items
+set record="+Sent"
+set postponed="+Drafts"
 
-mailboxes =INBOX =CAE =Family =Law ="Junk Mail" =Lists =MCC =SJC =School =techpartners
-#set folder="imaps://mail.messagingengine.com/CAE"
-#set folder="imaps://mail.messagingengine.com/Details"
-#set folder="imaps://mail.messagingengine.com/Family"
-#set folder="imaps://mail.messagingengine.com/Law"
-#set folder="imaps://mail.messagingengine.com/Junk Mail"
-#set folder="imaps://mail.messagingengine.com/Lists"
-#set folder="imaps://mail.messagingengine.com/MCC"
-#set folder="imaps://mail.messagingengine.com/SJC"
-#set folder="imaps://mail.messagingengine.com/School"
-#set folder="imaps://mail.messagingengine.com/techpartners"
-set spoolfile="imaps://mail.messagingengine.com/INBOX"
-set alias_file="~/.muttalias
-set mask="."
-set imap_list_subscribed=yes
-bind index 'G' imap-fetch-mail
+#set mask="!^\.[^.]"
+#mailboxes `\
+#files=~/Maildir/*; \
+#for file in $files; do \
+#    box=$(basename "$file"); \
+#    if [ ! "$box" = '.' -a \
+#	! "$box" = '..' -a \
+#	! "$box" = '.customflags' -a \
+#	! "$box" = '.subscriptions' -a \
+#	! "$box" = 'drop.log' ]; then \
+#	echo -n "\"=$box\" "; \
+#    fi; \
+#done`
+#	! "$box" = 'Hack' -a \
+#	! "$box" = 'Personal' -a \
+#	! "$box" = 'Work' -a \
+
+mailboxes =Inbox \
+	    =Sent \
+	    =Misc \
+	    =Hack/Screen-users \
+	    =Hack/Techpartners \
+	    =Hack/Madlug \
+	    =Personal/Family \
+	    =Personal/Friend \
+	    =Personal/Misc \
+	    =Personal/Legal \
+	    =Personal/School \
+	    =Personal/Details \
+	    =Work/CAE \
+	    =Work/Centprop \
+	    =Work/Misc \
+	    /var/mail/will
+
+set alias_file="~/.muttalias"
+#bind index 'G' imap-fetch-mail
 #bind index '<Esc><Tab>' previous-new-then-unread
 #bind index '<Tab>' next-new-then-unread
 bind index '.' buffy-list
+
+macro index C "<change-folder>?<toggle-mailboxes>" "open a different folder"
+macro pager C "<change-folder>?<toggle-mailboxes>" "open a different folder"
 
 ## SMTP SETTINGS ##
 set sendmail=nbsmtp			# use ESMTP for egress mail
