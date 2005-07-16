@@ -279,9 +279,9 @@ statusbar = {
 };
 settings = {
   core = {
-    real_name = "";
+    real_name = "will";
     user_name = "will";
-    nick = "toto";
+    nick = "emX";
     timestamp_format = "%H:%M:%S";
   };
   "fe-common/core" = {
