@@ -298,7 +298,10 @@ settings = {
   };
   "irc/core" = { alternate_nick = "xl0"; };
 };
-hilights = ( { text = "toto"; nick = "yes"; word = "yes"; } );
+hilights = (
+  { text = "toto"; nick = "yes"; word = "yes"; },
+  { text = "emX"; nick = "yes"; word = "yes"; }
+);
 keyboard = (
   { key = "^W"; id = "lower_window"; data = ""; },
   { key = "end"; id = "scroll_end"; data = ""; },
