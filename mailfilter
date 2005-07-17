@@ -16,11 +16,11 @@ logfile $LOG
 
 # catch duplicates using reformail
 
-#`reformail -D 8000 $MAILDIR/.duplicate-cache`
-#if ( $RETURNCODE == 0 )
-#{
-#    to $MAILDIR/Questionable/
-#}
+`reformail -D 8000 $MAILDIR/.duplicate-cache`
+if ( $RETURNCODE == 0 )
+{
+    to $MAILDIR/Questionable/
+}
 
 if ( /^Subject:.*[Tt]est$/ )
 {
@@ -33,29 +33,26 @@ if ( /^Subject:.*[Tt]est$/ )
 
 # filter based on addresses
 
-ME = "willmaier@ml1.net \
-	wcmaier@gmail.com"
-FAMILY = "jacobsonlaura@gmail.com \
-	linuxmaier@fastmail.fm \
-	maier@wi.rr.com \
-	mmaier@stewartpeterson.com"
-FRIENDS = "kafka@riseup.net \
-	hastings.cameron@gmail.com"
-CAE = "ballard@engr.wisc.edu "
-
-MADLUG = "madlug@madisonlinux.org"
-SCREEN = "screen-users@gnu.org "
-
 # --[ LISTS
-if ( /^to:.*$MADLUG/ \
-    || /^cc:.*$MADLUG/ )
+if ( /^to:.*madlug@madisonlinux.org.*/ \
+    || /^cc:.*madlug@madisonlinux.org.*/ )
 {
     to $MAILDIR/Hack/Madlug
 }
-if ( /^to:.*$SCREEN.*/ \
-    || /^cc:.*$SCREEN.*/ )
+if ( /^to:.*screen-users@gnu.org.*/ \
+    || /^cc:.*screen-users@gnu.org.*/ )
 {
     to $MAILDIR/Hack/Screen-users
+}
+if ( /^to:.*techpartners@lists.*wisc.edu.*/ \
+    || /^cc:.*techpartners@lists.*wisc.edu.*/ )
+{
+    to $MAILDIR/Hack/Techpartners
+}
+if ( /^to:.*vim@vim.org.*/ \
+    || /^cc:.*vim@vim.org.*/ )
+{
+    to $MAILDIR/Hack/Vim
 }
 
 # check if from me
@@ -98,4 +95,5 @@ if ( /^From:.*cae.wisc.edu/ \
     to $MAILDIR/Work/CAE
 }
 
+log "Dropping in DEFAULT"
 to $DEFAULT

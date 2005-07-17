@@ -228,6 +228,7 @@ statusbar = {
         act = { priority = "10"; };
         more = { priority = "-1"; alignment = "right"; };
         barend = { priority = "100"; alignment = "right"; };
+        usercount = { };
       };
     };
 
@@ -300,6 +301,8 @@ settings = {
 };
 hilights = (
   { text = "toto"; nick = "yes"; word = "yes"; },
+  { text = "emX"; nick = "yes"; word = "yes"; },
+  { text = "emX"; nick = "yes"; word = "yes"; },
   { text = "emX"; nick = "yes"; word = "yes"; }
 );
 keyboard = (
@@ -308,16 +311,18 @@ keyboard = (
   { key = "home"; id = "scroll_start"; data = ""; }
 );
 logs = { };
+ignores = ( { mask = "Tattoo"; level = "ALL"; } );
 windows = {
-  2 = {
+  3 = {
     items = (
       {
         type = "CHANNEL";
         chat_type = "IRC";
-        name = "#magrathea";
+        name = "#ubuntu";
         tag = "freenode";
       }
     );
+    sticky = "yes";
   };
   1 = { 
     immortal = "yes";
@@ -325,8 +330,20 @@ windows = {
     level = "ALL";
     sticky = "yes";
   };
+  2 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#ubuntu-offtopic";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+  };
 };
 mainwindows = {
-  2 = { first_line = "18"; lines = "37"; };
-  1 = { first_line = "1"; lines = "17"; };
+  1 = { first_line = "1"; lines = "14"; };
+  2 = { first_line = "62"; lines = "13"; };
+  3 = { first_line = "15"; lines = "47"; };
 };
