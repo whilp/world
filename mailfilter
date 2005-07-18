@@ -54,6 +54,16 @@ if ( /^to:.*vim@vim.org.*/ \
 {
     to $MAILDIR/Hack/Vim
 }
+if ( /^to:.*debian-security.*@lists.debian.org.*/ \
+    || /^cc:.*debian-security.*@lists.debian.org.*/ )
+{
+    to $MAILDIR/Hack/Debian-security
+}
+if ( /^to:.*@securityfocus.com.*/ \
+    || /^cc:.*@securityfocus.com.*/ )
+{
+    to $MAILDIR/Hack/Securityfocus
+}
 
 # check if from me
 if ( /^From:.*willmaier@ml1.net/ \

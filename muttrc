@@ -27,28 +27,36 @@ set postponed="+Drafts"
 #	! "$box" = 'Work' -a \
 
 mailboxes =Inbox \
-	    =Sent \
-	    =Misc \
-	    =Hack/Screen-users \
-	    =Hack/Techpartners \
+	    /var/mail/will \
+	    =Hack/Debian-security \
 	    =Hack/Madlug \
+	    =Hack/Screen-users \
+	    =Hack/Securityfocus \
+	    =Hack/Techpartners \
+	    =Hack/Vim \
+	    =Misc \
+	    =Personal/Details \
 	    =Personal/Family \
 	    =Personal/Friend \
-	    =Personal/Misc \
 	    =Personal/Legal \
+	    =Personal/Misc \
 	    =Personal/School \
-	    =Personal/Details \
+	    =Sent \
 	    =Work/CAE \
 	    =Work/Centprop \
 	    =Work/Misc \
-	    /var/mail/will
 
 set alias_file="~/.muttalias"
 #bind index 'G' imap-fetch-mail
 #bind index '<Esc><Tab>' previous-new-then-unread
 #bind index '<Tab>' next-new-then-unread
 bind index '.' buffy-list
+bind generic 'G' noop
 
+macro index G "<shell-escape>getmail<enter>" "Getmail"
+macro pager G "<shell-escape>getmail<enter>" "Getmail"
+macro index S "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
+macro pager S "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
 macro index C "<change-folder>?<toggle-mailboxes>" "open a different folder"
 macro pager C "<change-folder>?<toggle-mailboxes>" "open a different folder"
 
@@ -94,3 +102,11 @@ unignore x-mailer: user-agent
 #folder-hook * push 'T~=\n;d\n'
 #folder-hook =Lists push 'T~R\ ~r\ >1m\n\;s=Lists.ARK\n'
 #folder-hook =techpartners push 'T~R\ ~r\ >1m\n\;d\n'
+
+send-hook '~t jacobsonlaura.*@gmail.com' 'set signature='~/.signature-laura'
+send-hook '~t jacobsonlaura.*@gmail.com' 'unset sig_dashes'
+
+folder-hook =Personal/Family set strict_threads
+folder-hook =Personal/Family set hide_top_missing
+folder-hook =Personal/Family set hide_missing
+folder-hook =Personal/Family unset sig_dashes
