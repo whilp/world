@@ -12,6 +12,7 @@ Unixbook	http://homepages.cae.wisc.edu/~wcmaier/unixbook/	1
 Open Source Development With CVS	http://cvsbook.red-bean.com/cvsbook.html	1	
 Interests		0	F
 Vim Tutorial, IRC-style	http://www.vi-improved.org/tutorial.php	1	
+Updating and upgrading within an OpenBSD release	http://transform.to/~mjc42/openbsd/updating.html	1	
 The Feds can own your WLAN too : TomsNetworking	http://www.tomsnetworking.com/Sections-article111.php	1	
 EFF: Cooking with EFF: KnoppMyth R5a10 and pcHDTV for DTV Liberation	http://www.eff.org/broadcastflag/cookbook/guide.php	1	
 Easy Automated Snapshot-Style Backups with Rsync	http://www.mikerubel.org/computers/rsync_snapshots/	1	
@@ -30,6 +31,8 @@ Installing Xen	http://cosi.clarkson.edu/knowledge/workshops/sp05/installingxen/x
 Debian Administration :: How packages are added to the Debian distribution	http://www.debian-administration.org/articles/181	1	
 irssi	http://irssi.org/?page=docs&doc=startup-HOWTO	1	
 http://bzgirl.bakadigital.com/irssi.txt	http://bzgirl.bakadigital.com/irssi.txt	1	
+OpenBSD AnonCVS	http://www.openbsd.org/anoncvs.html	1	
+Building OpenBSD from Source	http://www.openbsd.org/faq/faq5.html	1	
 Security		0	F
 ISN: InfoSec News	http://www.c4i.org/isn.html	1	
 SANS - Internet Storm Center - Cooperative Cyber Threat Monitor And Alert System - Current Infosec News and Analysis	http://isc.sans.org/	1	

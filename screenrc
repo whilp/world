@@ -69,6 +69,7 @@
     bind h hardstatus ignore
     bind H hardstatus alwayslastline
     bind K eval 'kill' 'stuff "y"'
+    bind i eval 'idle 60 windowlist -b' 'sleep 65' 'idle 0'
     bind j focus down
     bind k focus up
     bind r resize =
@@ -80,6 +81,5 @@
     bind \\ quit
     bind K kill
     bind I login on
-    bind i idle 60 windowlist -b
     bind O login off
     bind } history
