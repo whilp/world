@@ -4762,3 +4762,19 @@
 2005-07-19 16:50:18 msg 1/2 (2831 bytes) msgid 1079297275.8549 from <ubuntu-users-bounces@lists.ubuntu.com> delivered to MDA_external command maildrop (), deleted
 2005-07-19 16:50:19 msg 2/2 (3497 bytes) msgid 1079297275.8550 from <ubuntu-users-bounces@lists.ubuntu.com> delivered to MDA_external command maildrop (), deleted
 2005-07-19 16:50:19 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-19 17:00:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-19 17:00:05 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-19 17:00:07 msg 1/2 (1900 bytes) msgid 1079297275.8551 from <jacobsonlaura@gmail.com> delivered to MDA_external command maildrop (), deleted
+2005-07-19 17:00:08 msg 2/2 (5381 bytes) msgid 1079297275.8552 from <bounce-1273181-779875@lists.wisc.edu> delivered to MDA_external command maildrop (), deleted
+2005-07-19 17:00:08 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-19 17:10:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-19 17:10:04 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-19 17:10:06 msg 1/1 (5709 bytes) msgid 1079297275.8553 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-19 17:10:06 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-19 17:12:53 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-19 17:12:54 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-19 17:12:55 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-19 17:20:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-19 17:20:04 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-19 17:20:06 msg 1/1 (4035 bytes) msgid 1079297275.8554 from <ubuntu-users-bounces@lists.ubuntu.com> delivered to MDA_external command maildrop (), deleted
+2005-07-19 17:20:06 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:

@@ -104,17 +104,22 @@ set include=yes
 ignore *				# default: ignore
 unignore from: date subject to cc reply-to:
 unignore x-mailer: user-agent
-set signature='~/.signature'
-set sig_dashes
 
 #folder-hook * push 'T~=\n;d\n'
 #folder-hook =Lists push 'T~R\ ~r\ >1m\n\;s=Lists.ARK\n'
 #folder-hook =techpartners push 'T~R\ ~r\ >1m\n\;d\n'
 
+send-hook . source ~/.muttrc
+
 send-hook '~t jacobsonlaura.*@gmail.com' 'set signature='~/.signature-laura'
 send-hook '~t jacobsonlaura.*@gmail.com' 'unset sig_dashes'
+
+set signature='~/.signature'
+set sig_dashes
 
 folder-hook =Personal/Family set strict_threads
 folder-hook =Personal/Family set hide_top_missing
 folder-hook =Personal/Family set hide_missing
 folder-hook =Personal/Family unset sig_dashes
+
+folder-hook =Hack/(Madlug.*|Techpartner.*|Debian.*|Ubuntu.*|Mutt.*) push 'D~m>300!~F~R<enter>'
