@@ -1,0 +1,36 @@
+# getmailrc - getmail configuration file
+
+# Will Maier <willmaier@ml1.net>
+
+[retriever]
+type = SimplePOP3SSLRetriever
+server = pop.gmail.com
+port = 995
+username = wcmaier@gmail.com
+password = lesheros
+
+[destination]
+type = MDA_external
+path = /usr/local/bin/maildrop
+
+[options]
+verbose = 0
+# 1; print messages
+read_all = 1
+# 1; get all available messages (if 0, only unseen messages)
+delete = 1
+# 0; delete after successful retrieval
+delete_after = 0
+# 0; delete after a period of days (integer)
+max_message_size = 1000000
+# 0; get messages no larger than integer bytes
+max_messages_per_session = 100
+# 0; only process integer messages
+delivered_to = 1
+# 1; add a Delivered-to header
+received = 1
+# 1; add a Received header
+message_log = ~/.getmail/log	
+# ''; log to string
+message_log_syslog = 0
+# 0; log to syslog
