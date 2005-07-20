@@ -59,10 +59,36 @@ if ( /^to:.*debian-security.*@lists.debian.org.*/ \
 {
     to $MAILDIR/Hack/Debian-security
 }
+if ( /^to:.*debian-legal.*@lists.debian.org.*/ \
+    || /^cc:.*debian-legal.*@lists.debian.org.*/ )
+{
+    to $MAILDIR/Hack/Debian-legal
+}
+if ( /^to:.*ubuntu-users@lists.ubuntu.com.*/ \
+    || /^cc:.*ubuntu-users@lists.ubuntu.com.*/ )
+{
+    to $MAILDIR/Hack/Ubuntu-users
+}
+if ( /^to:.*courier-maildrop@lists.sourceforge.net.*/ \
+    || /^cc:.*courier-maildrop@lists.sourceforge.net.*/ )
+{
+    to $MAILDIR/Hack/Maildrop
+}
+if ( /^to:.*mutt-users@mutt.org.*/ \
+    || /^cc:.*mutt-users@mutt.org.*/ )
+{
+    to $MAILDIR/Hack/Mutt
+}
 if ( /^to:.*@securityfocus.com.*/ \
     || /^cc:.*@securityfocus.com.*/ )
 {
     to $MAILDIR/Hack/Securityfocus
+}
+if ( /^to:.*sjcbod@yahoogroups.com.*/ \
+    || /^cc:.*sjcbod@yahoogroups.com.*/ )
+{
+    to /dev/null
+    log "Trashed a mail"
 }
 
 # check if from me
@@ -73,13 +99,19 @@ if ( /^From:.*willmaier@ml1.net/ \
 }
 
 # --[ FAMILY
-if ( /^From:.*jacobsonlaura@gmail.com/ \
-    || /^From:.*linuxmaier@fastmail.fm/ \
-    || /^From:.*pbroad@iopener.net/ \
-    || /^From:.*wegmann@sbcglobal.net/ \
-    || /^From:.*ajdj143@sbcglobal.net/ \
-    || /^From:.*maier@wi.rr.com/ \
-    || /^From:.*mmaier@stewart-peterson.com/ )
+if ( /^From:.*jacobsonlaura@gmail.com.*/ \
+    || /^From:.*jacobsonlaura@hotmail.com.*/ \
+    || /^From:.*linuxmaier@fastmail.fm.*/ \
+    || /^From:.*linuxmaier@fastmail.fm.*/ \
+    || /^From:.*maier1@wisc.edu.*/ \
+    || /^From:.*beachbumbutterfly@yahoo.com.*/ \
+    || /^From:.*pbroad@iopener.net.*/ \
+    || /^From:.*wegmann@sbcglobal.net.*/ \
+    || /^From:.*ginaryan@aol.com.*/ \
+    || /^From:.*ajdj143@sbcglobal.net.*/ \
+    || /^From:.*maier@wi.rr.com.*/ \
+    || /^From:.*maierfest@aol.com.*/ \
+    || /^From:.*mmaier@stewart-peterson.com.*/ )
 {
     to $MAILDIR/Personal/Family
 }

@@ -60,3 +60,4 @@ video/3gpp2;/usr/local/Realplayer/realplay %s
 
 # Mutt HTML mail hacks
 #text/html; elinks -dump -dump-charset iso-8859-15 -default-mime-type text/html %s; needsterminal; copiousoutput;
+text/html; lynx --dump %s; nametemplate=%s.html; copiousoutput

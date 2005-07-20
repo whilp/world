@@ -26,25 +26,31 @@ set postponed="+Drafts"
 #	! "$box" = 'Personal' -a \
 #	! "$box" = 'Work' -a \
 
-mailboxes =Inbox \
-	    /var/mail/will \
-	    =Hack/Debian-security \
-	    =Hack/Madlug \
-	    =Hack/Screen-users \
-	    =Hack/Securityfocus \
-	    =Hack/Techpartners \
-	    =Hack/Vim \
-	    =Misc \
-	    =Personal/Details \
-	    =Personal/Family \
-	    =Personal/Friend \
-	    =Personal/Legal \
-	    =Personal/Misc \
-	    =Personal/School \
-	    =Sent \
-	    =Work/CAE \
-	    =Work/Centprop \
-	    =Work/Misc \
+mailboxes ! `\
+    find ~/Maildir -type d | \
+    egrep -v 'cur$|tmp$|new$|Maildir$|Hack$|Work$|Personal$' | \
+    sed 's/.*\/Maildir\///' | \
+    xargs -I % echo -n ' =%'`
+
+#mailboxes =Inbox \
+#	    /var/mail/will \
+#	    =Hack/Debian-security \
+#	    =Hack/Madlug \
+#	    =Hack/Screen-users \
+#	    =Hack/Securityfocus \
+#	    =Hack/Techpartners \
+#	    =Hack/Vim \
+#	    =Misc \
+#	    =Personal/Details \
+#	    =Personal/Family \
+#	    =Personal/Friend \
+#	    =Personal/Legal \
+#	    =Personal/Misc \
+#	    =Personal/School \
+#	    =Sent \
+#	    =Work/CAE \
+#	    =Work/Centprop \
+#	    =Work/Misc \
 
 set alias_file="~/.muttalias"
 #bind index 'G' imap-fetch-mail
@@ -53,8 +59,8 @@ set alias_file="~/.muttalias"
 bind index '.' buffy-list
 bind generic 'G' noop
 
-macro index G "<shell-escape>getmail<enter>" "Getmail"
-macro pager G "<shell-escape>getmail<enter>" "Getmail"
+macro index G "<shell-escape>~/bin/getmail<enter>" "Getmail"
+macro pager G "<shell-escape>~/bin/getmail<enter>" "Getmail"
 macro index S "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
 macro pager S "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
 macro index C "<change-folder>?<toggle-mailboxes>" "open a different folder"
@@ -98,6 +104,8 @@ set include=yes
 ignore *				# default: ignore
 unignore from: date subject to cc reply-to:
 unignore x-mailer: user-agent
+set signature='~/.signature'
+set sig_dashes
 
 #folder-hook * push 'T~=\n;d\n'
 #folder-hook =Lists push 'T~R\ ~r\ >1m\n\;s=Lists.ARK\n'
