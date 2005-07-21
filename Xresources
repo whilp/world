@@ -50,3 +50,9 @@ XTerm*colorBD: #5555FF
 !XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-m-0-iso8859-1
 !XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-m-0-iso8859-15
 !XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-m-0-iso8859-9
+!XTerm*font:-windows-proggycleansz-medium-r-normal--0-0-96-96-c-0-iso8859-1
+XTerm*font:-windows-proggycleansz-medium-r-normal--13-80-96-96-c-70-iso8859-1
+!XTerm*font:-windows-proggycleanszbp-medium-r-normal--0-0-96-96-c-0-iso8859-1
+!XTerm*font:-windows-proggycleanszbp-medium-r-normal--13-80-96-96-c-70-iso8859-1
+!XTerm*font:-windows-proggytinysz-medium-r-normal--0-0-96-96-c-0-iso8859-1
+!XTerm*font:-windows-proggytinysz-medium-r-normal--10-80-96-96-c-60-iso8859-1

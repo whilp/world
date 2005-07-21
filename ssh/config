@@ -16,6 +16,7 @@ Host phnx*
 # phoenix - global IP
     HostName	phnx.ath.cx
     User	will
+    Port	222
 
 Host magner*
 # CastleMagner - Maier family computer

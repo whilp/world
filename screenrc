@@ -10,6 +10,8 @@
     nethack on
 
     defflow on
+    setenv DISPLAY :0.0
+    setenv TERM screen
     deflogin on
     autodetach on
 
