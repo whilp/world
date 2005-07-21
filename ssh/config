@@ -18,6 +18,11 @@ Host phnx*
     User	will
     Port	222
 
+Host stalker*
+# stalker - centprop sniffer/attacker/finder outer
+    HostName	172.16.0.197
+    User	will
+
 Host magner*
 # CastleMagner - Maier family computer
     HostName	swood.ath.cx
