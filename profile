@@ -22,6 +22,20 @@ alias caecvs='export CVSROOT=/afs/engr.wisc.edu/common/repository'
 export PRINTER
 
 # --[ ENVIRONMENT
+# arch-specific stuff.
+case $ARCH in
+    SunOS* )
+    # fix needed for solaris and BSD
+    alias ls='gls --color=auto -F'
+    alias zsh='/afs/engr.wisc.edu/oss/bin/zsh'
+    alias tar='gtar'
+    export SHELL='/afs/engr.wisc.edu/oss/bin/zsh'
+    ;;
+    * )
+    alias ls='ls --color=auto -F'
+    ;;
+esac
+
 # host-specific
     case $HOST in
 	nacho* | bender* | anon* | mace* )
@@ -39,6 +53,9 @@ export PRINTER
 	alias mutt='TERM=screen mutt'
 	export OSS PYTHONPATH LD_LIBRARY_PATH MANPATH TERM SENDMAIL
 	;;
+	haya* )
+	alias ls='ls -F'
+	;;
 	* )
 # Standard vars
 	PKG_PATH='ftp://openbsd.mirrors.tds.net/pub/OpenBSD/3.7/packages/i386/'
@@ -51,18 +68,3 @@ export PRINTER
     EDITOR=`which vim`
     CVSEDITOR=$EDITOR
 export LANG PATH SHELL EDITOR CVSEDITOR
-
-
-# arch-specific stuff.
-case $ARCH in
-    SunOS* )
-    # fix needed for solaris and BSD
-    alias ls='gls --color=auto'
-    alias zsh='/afs/engr.wisc.edu/oss/bin/zsh'
-    alias tar='gtar'
-    export SHELL='/afs/engr.wisc.edu/oss/bin/zsh'
-    ;;
-    * )
-    alias ls='ls --color=auto'
-    ;;
-esac

@@ -8,7 +8,7 @@
 HOME = '/home/will'
 MAILDIR = "$HOME/Maildir"
 LOG = "$MAILDIR/drop.log"
-DEFAULT = $MAILDIR/Inbox
+DEFAULT = '/var/mail/will'
 
 logfile $LOG
 
@@ -22,14 +22,11 @@ if ( $RETURNCODE == 0 )
     to $MAILDIR/Questionable/
 }
 
-if ( /^Subject:.*[Tt]est$/ )
+# catch spam
+if ( /^X-Spam-Flag:.*YES$/ )
 {
-    exception {
-	log "test mail"
-	to $MAILDIR/Questionable/
-    }
+    to $MAILDIR/Spam
 }
-
 
 # filter based on addresses
 
@@ -52,6 +49,10 @@ if ( /^to:.*techpartners@lists.*wisc.edu.*/ \
 if ( /^to:.*vim@vim.org.*/ \
     || /^cc:.*vim@vim.org.*/ )
 {
+    if ( /^subject:.*(w32|windows?).*/ )
+    {
+	to $MAILDIR/SPAM
+    }
     to $MAILDIR/Hack/Vim
 }
 if ( /^to:.*debian-security.*@lists.debian.org.*/ \
@@ -64,10 +65,10 @@ if ( /^to:.*debian-legal.*@lists.debian.org.*/ \
 {
     to $MAILDIR/Hack/Debian-legal
 }
-if ( /^to:.*ubuntu-users@lists.ubuntu.com.*/ \
-    || /^cc:.*ubuntu-users@lists.ubuntu.com.*/ )
+if ( /^to:.*ubuntu-(hardened|security).*@lists.ubuntu.com.*/ \
+    || /^cc:.*ubuntu-(hardened|security).*@lists.ubuntu.com.*/ )
 {
-    to $MAILDIR/Hack/Ubuntu-users
+    to $MAILDIR/Hack/Ubuntu-security
 }
 if ( /^to:.*courier-maildrop@lists.sourceforge.net.*/ \
     || /^cc:.*courier-maildrop@lists.sourceforge.net.*/ )

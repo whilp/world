@@ -280,10 +280,11 @@ statusbar = {
 };
 settings = {
   core = {
-    real_name = "will";
-    user_name = "will";
+    real_name = "emx";
+    user_name = "emx";
     nick = "emX";
     timestamp_format = "%H:%M:%S";
+    hostname = "wintermute";
   };
   "fe-common/core" = {
     beep_msg_level = "MSGS HILIGHT";
@@ -296,8 +297,14 @@ settings = {
     reuse_unused_windows = "yes";
     window_auto_change = "yes";
     autocreate_split_windows = "yes";
+    autolog = "yes";
   };
   "irc/core" = { alternate_nick = "xl0"; };
+  "perl/core/scripts" = {
+    maildir_mode = "yes";
+    mail_show_message = "yes";
+    mail_mailboxes = "1=/var/mail/will,Family=/home/will/Maildir/Personal/Family/,";
+  };
 };
 hilights = (
   { text = "toto"; nick = "yes"; word = "yes"; },
@@ -316,6 +323,18 @@ windows = {
     name = "status";
     level = "CRAP PUBLICS NOTICES SNOTES CTCPS ACTIONS JOINS PARTS QUITS KICKS MODES TOPICS WALLOPS INVITES NICKS DCC DCCMSGS CLIENTNOTICES CLIENTCRAP CLIENTERRORS HILIGHTS";
   };
+  2 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#ubuntu";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+  };
+  5 = { name = "hilight"; sticky = "yes"; };
   3 = {
     items = (
       {
@@ -336,18 +355,6 @@ windows = {
       }
     );
   };
-  2 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#ubuntu";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-  };
-  5 = { name = "hilight"; sticky = "yes"; };
 };
 mainwindows = {
   4 = { first_line = "44"; lines = "11"; };
