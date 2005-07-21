@@ -9,53 +9,13 @@ set copy=yes
 set record="+Sent"
 set postponed="+Drafts"
 
-#set mask="!^\.[^.]"
-#mailboxes `\
-#files=~/Maildir/*; \
-#for file in $files; do \
-#    box=$(basename "$file"); \
-#    if [ ! "$box" = '.' -a \
-#	! "$box" = '..' -a \
-#	! "$box" = '.customflags' -a \
-#	! "$box" = '.subscriptions' -a \
-#	! "$box" = 'drop.log' ]; then \
-#	echo -n "\"=$box\" "; \
-#    fi; \
-#done`
-#	! "$box" = 'Hack' -a \
-#	! "$box" = 'Personal' -a \
-#	! "$box" = 'Work' -a \
-
 mailboxes ! `\
     find ~/Maildir -type d | \
     egrep -v 'cur$|tmp$|new$|Maildir$|Hack$|Work$|Personal$' | \
     sed 's/.*\/Maildir\///' | \
     xargs -I % echo -n ' =%'`
 
-#mailboxes =Inbox \
-#	    /var/mail/will \
-#	    =Hack/Debian-security \
-#	    =Hack/Madlug \
-#	    =Hack/Screen-users \
-#	    =Hack/Securityfocus \
-#	    =Hack/Techpartners \
-#	    =Hack/Vim \
-#	    =Misc \
-#	    =Personal/Details \
-#	    =Personal/Family \
-#	    =Personal/Friend \
-#	    =Personal/Legal \
-#	    =Personal/Misc \
-#	    =Personal/School \
-#	    =Sent \
-#	    =Work/CAE \
-#	    =Work/Centprop \
-#	    =Work/Misc \
-
 set alias_file="~/.muttalias"
-#bind index 'G' imap-fetch-mail
-#bind index '<Esc><Tab>' previous-new-then-unread
-#bind index '<Tab>' next-new-then-unread
 bind index '.' buffy-list
 bind generic 'G' noop
 
@@ -74,7 +34,6 @@ set implicit_autoview
 set pager_stop				# don't jump to next message at end
 set sort=threads
 set sort_aux=reverse-date
-#set sort=reverse-date-sent
 source "~/.muttcolor"			# get color info
 source "~/.muttalias"
 set quit=yes
@@ -104,6 +63,8 @@ set include=yes
 ignore *				# default: ignore
 unignore from: date subject to cc reply-to:
 unignore x-mailer: user-agent
+unhdr_order *
+hdr_order From Date: From: To: Cc: Subject: X-mailer:
 
 #folder-hook * push 'T~=\n;d\n'
 #folder-hook =Lists push 'T~R\ ~r\ >1m\n\;s=Lists.ARK\n'
@@ -122,4 +83,4 @@ folder-hook =Personal/Family set hide_top_missing
 folder-hook =Personal/Family set hide_missing
 folder-hook =Personal/Family unset sig_dashes
 
-folder-hook =Hack/(Madlug.*|Techpartner.*|Debian.*|Ubuntu.*|Mutt.*) push 'D~m>300!~F~R<enter>'
+folder-hook =Hack/.* push 'D~m>300!~F~R<enter>'

@@ -5,6 +5,8 @@
 " --[ SET OPTIONS
     set nocompatible			" Use Vim defaults instead of 100% vi compatibility
     set backspace=indent,eol,start	" more powerful backspacing
+    set backup
+    set backupdir=$HOME/.vimfiles/
 
     set autoindent			" always set autoindenting on
     " set linebreak			" Don't wrap words by default
