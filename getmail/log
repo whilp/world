@@ -5727,3 +5727,57 @@
 2005-07-20 15:00:40 msg 91/91 (1347 bytes) msgid 42dd579a000000e8 from <unknown> delivered to MDA_external command maildrop (), deleted
 2005-07-20 15:00:40 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
 2005-07-20 15:00:41 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-20 15:10:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-20 15:10:07 msg  1/49 (1380 bytes) msgid 42dd579a000000e9 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:07 msg  2/49 (1390 bytes) msgid 42dd579a000000ea from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:07 msg  3/49 (1355 bytes) msgid 42dd579a000000eb from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:08 msg  4/49 (1582 bytes) msgid 42dd579a000000ec from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:08 msg  5/49 (1335 bytes) msgid 42dd579a000000ed from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:08 msg  6/49 (1343 bytes) msgid 42dd579a000000ee from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:09 msg  7/49 (1390 bytes) msgid 42dd579a000000ef from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:09 msg  8/49 (1392 bytes) msgid 42dd579a000000f0 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:10 msg  9/49 (1673 bytes) msgid 42dd579a000000f1 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:10 msg 10/49 (1367 bytes) msgid 42dd579a000000f2 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:10 msg 11/49 (1390 bytes) msgid 42dd579a000000f3 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:11 msg 12/49 (1343 bytes) msgid 42dd579a000000f4 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:11 msg 13/49 (2082 bytes) msgid 42dd579a000000f5 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:11 msg 14/49 (1362 bytes) msgid 42dd579a000000f6 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:12 msg 15/49 (1292 bytes) msgid 42dd579a000000f7 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:12 msg 16/49 (1237 bytes) msgid 42dd579a000000f8 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:13 msg 17/49 (1300 bytes) msgid 42dd579a000000f9 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:13 msg 18/49 (1371 bytes) msgid 42dd579a000000fa from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:13 msg 19/49 (1371 bytes) msgid 42dd579a000000fb from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:14 msg 20/49 (1371 bytes) msgid 42dd579a000000fc from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:14 msg 21/49 (2615 bytes) msgid 42dd579a000000fd from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:15 msg 22/49 (1317 bytes) msgid 42dd579a000000fe from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:15 msg 23/49 (1335 bytes) msgid 42dd579a000000ff from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:15 msg 24/49 (1413 bytes) msgid 42dd579a00000100 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:16 msg 25/49 (1334 bytes) msgid 42dd579a00000101 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:16 msg 26/49 (1343 bytes) msgid 42dd579a00000102 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:17 msg 27/49 (1347 bytes) msgid 42dd579a00000103 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:17 msg 28/49 (1404 bytes) msgid 42dd579a00000104 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:17 msg 29/49 (1343 bytes) msgid 42dd579a00000105 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:18 msg 30/49 (1329 bytes) msgid 42dd579a00000106 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:18 msg 31/49 (1413 bytes) msgid 42dd579a00000107 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:18 msg 32/49 (1862 bytes) msgid 42dd579a00000108 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:19 msg 33/49 (1413 bytes) msgid 42dd579a00000109 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:19 msg 34/49 (1322 bytes) msgid 42dd579a0000010a from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:19 msg 35/49 (1334 bytes) msgid 42dd579a0000010b from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:20 msg 36/49 (1339 bytes) msgid 42dd579a0000010c from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:20 msg 37/49 (1334 bytes) msgid 42dd579a0000010d from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:21 msg 38/49 (1343 bytes) msgid 42dd579a0000010e from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:21 msg 39/49 (1338 bytes) msgid 42dd579a0000010f from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:21 msg 40/49 (1198 bytes) msgid 42dd579a00000110 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:22 msg 41/49 (1206 bytes) msgid 42dd579a00000111 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:22 msg 42/49 (1343 bytes) msgid 42dd579a00000112 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:23 msg 43/49 (1335 bytes) msgid 42dd579a00000113 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:23 msg 44/49 (1329 bytes) msgid 42dd579a00000114 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:24 msg 45/49 (1329 bytes) msgid 42dd579a00000115 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:25 msg 46/49 (1206 bytes) msgid 42dd579a00000116 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:25 msg 47/49 (1206 bytes) msgid 42dd579a00000117 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:26 msg 48/49 (1206 bytes) msgid 42dd579a00000118 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:27 msg 49/49 (1303 bytes) msgid 42dd579a00000119 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:27 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-20 15:10:32 msg 1/2 (12837 bytes) msgid 1079297275.8885 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:34 msg 2/2 (10488 bytes) msgid 1079297275.8886 from <bounce-1274923-779875@lists.wisc.edu> delivered to MDA_external command maildrop (), deleted
+2005-07-20 15:10:34 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
