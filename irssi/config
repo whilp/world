@@ -229,6 +229,7 @@ statusbar = {
         more = { priority = "-1"; alignment = "right"; };
         barend = { priority = "100"; alignment = "right"; };
         usercount = { };
+        chanact = { };
       };
     };
 
@@ -254,7 +255,7 @@ statusbar = {
       placement = "bottom";
       # we want to be at the bottom always
       position = "100";
-      visible = "always";
+      visible = "active";
       items = {
         prompt = { priority = "-1"; };
         prompt_empty = { priority = "-1"; };
@@ -280,8 +281,8 @@ statusbar = {
 };
 settings = {
   core = {
-    real_name = "will";
-    user_name = "will";
+    real_name = "lt_kije";
+    user_name = "emX";
     nick = "emX";
     timestamp_format = "%H:%M:%S";
   };
@@ -301,8 +302,6 @@ settings = {
 };
 hilights = (
   { text = "toto"; nick = "yes"; word = "yes"; },
-  { text = "emX"; nick = "yes"; word = "yes"; },
-  { text = "emX"; nick = "yes"; word = "yes"; },
   { text = "emX"; nick = "yes"; word = "yes"; }
 );
 keyboard = (
@@ -341,9 +340,21 @@ windows = {
     );
     sticky = "yes";
   };
+  4 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#magrathea";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+    parent = "2";
+  };
 };
 mainwindows = {
-  1 = { first_line = "1"; lines = "14"; };
-  2 = { first_line = "62"; lines = "13"; };
-  3 = { first_line = "15"; lines = "47"; };
+  2 = { first_line = "42"; lines = "14"; };
+  3 = { first_line = "13"; lines = "29"; };
+  1 = { first_line = "1"; lines = "12"; };
 };
