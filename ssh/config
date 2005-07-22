@@ -93,3 +93,5 @@ Host jawb*
 # jawbreaker - CAE RT server
     HostName	jawbreaker.cae.wisc.edu
     User	wcmaier
+
+ForwardAgent	yes
