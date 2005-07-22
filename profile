@@ -22,6 +22,8 @@ alias caecvs='export CVSROOT=/afs/engr.wisc.edu/common/repository'
 export PRINTER
 
 # --[ ENVIRONMENT
+    PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/X11R6/bin:/opt/:/usr/games/"
+    export PATH
 # arch-specific stuff.
 case $ARCH in
     SunOS* )
@@ -54,7 +56,7 @@ esac
 	export OSS PYTHONPATH LD_LIBRARY_PATH MANPATH TERM SENDMAIL
 	;;
 	vger* )
-	alias start='eval `ssh-agent -s`; ssh-add; screen'
+	alias agent='eval `ssh-agent -s`; ssh-add;'
 	;;
 	haya* )
 	alias ls='ls -F'
@@ -62,10 +64,10 @@ esac
     esac
 
     PKG_PATH='ftp://openbsd.mirrors.tds.net/pub/OpenBSD/3.7/packages/i386/'
-    PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/X11R6/bin:/opt/:/usr/games/"
 
     LANG='C'
+    MAIL=''
     SHELL=`which zsh`
     EDITOR=`which vim`
     CVSEDITOR=$EDITOR
-export LANG PATH SHELL EDITOR CVSEDITOR
+export LANG PATH SHELL EDITOR CVSEDITOR MAIL PKG_PATH
