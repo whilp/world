@@ -18,9 +18,12 @@ mailboxes ! `\
 set alias_file="~/.muttalias"
 bind index '.' buffy-list
 bind generic 'G' noop
+bind generic '\CG' noop
 
 macro index G "<shell-escape>~/bin/getmail<enter>" "Getmail"
 macro pager G "<shell-escape>~/bin/getmail<enter>" "Getmail"
+macro index \CG "<shell-escape>~/bin/getmail -v<enter>" "Getmail, verbose"
+macro pager \CG "<shell-escape>~/bin/getmail -v<enter>" "Getmail, verbose"
 macro index S "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
 macro pager S "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
 macro index C "<change-folder>?<toggle-mailboxes>" "open a different folder"
@@ -73,17 +76,15 @@ hdr_order From Date: From: To: Cc: Subject: X-mailer:
 send-hook . source ~/.muttrc
 
 send-hook '~t jacobsonlaura.*@gmail.com' 'set signature='~/.signatures/laura'
-send-hook '~t .*@(engr|cae).wisc.edu' 'set signature='~/.signatures/cae'
+send-hook '~t .*@\(engr\|cae\).wisc.edu' 'set signature='~/.signatures/cae'
 send-hook '~t jacobsonlaura.*@gmail.com' 'unset sig_dashes'
 
 set signature='~/.signatures/default'
 set sig_dashes
 
 folder-hook . unset strict_threads
-folder-hook . set collapse_unread
 folder-hook . set duplicate_threads
 folder-hook . set narrow_tree
-folder-hook . push '<collapse-all>'
 
 
 folder-hook =Personal/Family set strict_threads

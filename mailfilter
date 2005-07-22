@@ -44,6 +44,10 @@ if ( /^to:.*screen-users@gnu.org.*/ \
 if ( /^to:.*techpartners@lists.*wisc.edu.*/ \
     || /^cc:.*techpartners@lists.*wisc.edu.*/ )
 {
+    if ( /^subject:.*(windows|word|digital camera).*/ )
+    {
+	to $MAILDIR/Spam
+    }
     to $MAILDIR/Hack/Techpartners
 }
 if ( /^to:.*vim@vim.org.*/ \
