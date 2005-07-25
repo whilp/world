@@ -1,8 +1,15 @@
+# Filename	: $HOME/.mailfilter
+# Use		: configures routing of incoming mail
+# Author	: Will Maier <willmaier@ml1.net>
+# Updated	: 2005.07.25 11:46:19
+
 # - maildrop mailinglist.
 #   http://lists.sourceforge.net/lists/listinfo/courier-maildrop
 
 # - Please browse the mailinglist archives for more examples.
 #   http://sourceforge.net/mailarchive/forum.php?forum=courier-maildrop
+
+# vim: set ft=perl:
 
 # --[ SETTINGS
 HOME = '/home/will'
@@ -49,6 +56,11 @@ if ( /^to:.*techpartners@lists.*wisc.edu.*/ \
 	to $MAILDIR/Spam
     }
     to $MAILDIR/Hack/Techpartners
+}
+if ( /^to:.*rt-users@lists.bestpractical.com.*/ \
+    || /^cc:.*rt-users@lists.bestpractical.com.*/ )
+{
+    to $MAILDIR/Work/RT-users
 }
 if ( /^to:.*vim@vim.org.*/ \
     || /^cc:.*vim@vim.org.*/ )

@@ -1,3 +1,14 @@
+#####  BEGIN HEADERS
+# Filename	: $HOME/.muttrc
+# Use		: main configuration file for mutt, a command line mail reader
+# Author	: Will Maier <willmaier@ml1.net>
+# Updated	: 2005.07.25 11:50:32
+# Started	: 2005.03.06
+# Based on	: Phillip Hollenback's muttrc @ macdevcenter
+# Refers to	: $HOME/.muttalias
+#		  $HOME/.muttcolor
+#####  END HEADERS
+
 # Will's muttrc / started 2005.03.06
 ## Based on:
 ## Phillip Hollenback's muttrc @ macdevcenter, for use with FastMail
@@ -42,6 +53,7 @@ source "~/.muttalias"
 set quit=yes
 set move=no
 set editor=vim
+set ispell=
 
 ## COMPOSITION SETTINGS ##
 set forward_format="Fwd: %s"		# traditional fwd: subj.

@@ -1,3 +1,8 @@
+# Filename	: $HOME/.mailcap
+# Use		: associates filetypes and applications
+# Author	: Will Maier <willmaier@ml1.net>
+# Updated	: 2005.07.25 11:45:35
+
 application/x-ogg;/usr/local/Realplayer/realplay %s
 application/ogg;/usr/local/Realplayer/realplay %s
 text/vnd.rn-realtext;/usr/local/Realplayer/realplay %s

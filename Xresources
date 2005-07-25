@@ -1,3 +1,10 @@
+!!!!!  BEGIN HEADERS
+! Filename	: $HOME/.Xresources
+! Use		: configures X fonts and colors
+! Author	: Will Maier <willmaier@ml1.net>
+! Updated	: 2005.07.25 11:51:44
+!!!!!  END HEADERS
+
 XTerm*background: black
 XTerm*foreground: white
 

@@ -1,6 +1,7 @@
-" ~/.vimrc
-" Will Maier <willmaier@ml1.net>
-" 2005.06.11
+" Filename	: $HOME/.vimrc
+" Use		: configuration file for vim text editor
+" Author	: Will Maier <willmaier@ml1.net>
+" Updated	: 2005.07.25 11:42:26
 
 " --[ SET OPTIONS
     set nocompatible			" Use Vim defaults instead of 100% vi compatibility
@@ -22,6 +23,7 @@
     set shiftwidth=4
     set smartindent
     set foldmethod=indent		" Fold based on line indent
+    set nofoldenable
     set whichwrap=h,l,~,[,]		" Allow characters to wrap lines
     
 
@@ -69,6 +71,23 @@
 	" Use the default filetype settings. If you also want to load indent files
 	" to automatically do language-dependent indenting add 'indent' as well.
 	filetype plugin indent on
+
+augroup date
+    au!
+    au BufWrite         *      silent! execute '1,5g/^.\? Updated.*:/s/:.*/: ' . strftime("%Y.%m.%d %H:%M:%S") . '/'
+augroup END
+
+if !exists("*s:VimUpdate")
+    function! s:VimUpdate()
+	let restorepos = line(".") . "normal!" . virtcol(".") . "|"
+	normal H
+	let restoretop = line(".") . "normal!zt"
+
+
+	execute restoretop
+	execute restorepos
+    endfunction
+endif
 
 " --[ AUTO-ENCRYPT FILES
 	augroup gnupg

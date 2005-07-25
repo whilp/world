@@ -94,4 +94,5 @@ Host jawb*
     HostName	jawbreaker.cae.wisc.edu
     User	wcmaier
 
-ForwardAgent	yes
+Host *
+    ForwardAgent    no

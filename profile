@@ -1,6 +1,8 @@
-# ~/.profile
-# Will Maier <willmaier@ml1.net>
-# 2005.06.11
+# Filename	: $HOME/.profile
+# Use		: configures default shell environment
+# Author	: Will Maier <willmaier@ml1.net>
+# Updated	: 
+# @DATE
 
 ARCH=`uname`
 

@@ -1,6 +1,7 @@
-# $OpenBSD: dot.login,v 1.3 2002/06/09 06:15:15 todd Exp $
-#
-# csh login file
+# Filename	: $HOME/.login
+# Use		: configures environment on shell login
+# Author	: Will Maier <willmaier@ml1.net>
+# Updated	: 2005.07.25 11:44:45
 
 if ( ! $?TERMCAP ) then
 	tset -Q  '-mdialup:?vt100' $TERM
