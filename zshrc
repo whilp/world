@@ -1,7 +1,7 @@
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: Mon Jul 25 10:58:36 CDT 2005
+# Updated	: 2005.07.26 18:16:46
 
 source ~/.profile
 
@@ -38,8 +38,8 @@ if (( EUID != 0 )); then
     # If not root...
     autoload -U promptinit && promptinit
     PS1='<%B%m%b %T> %~ %# '
-    precmd () { print -Pn "\e]0;$HOST - %~\a" }
-    preexec () { print -Pn "\e]0;$HOST - $1\a" }
+#    precmd () { print -Pn "\e]0;$HOST - %~\a" }
+#    preexec () { print -Pn "\e]0;$HOST - $1\a" }
 else
     local RED="%{.[1;31m%}"
     local NO_COLOUR="%{.[0m%}"
@@ -60,28 +60,33 @@ NO_HIST_BEEP=1
 LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;34;01:ex=01;32:*.tar=01;34:*.tgz=01;34:*.gz=01;34:*.bz2=01;34:*.jpg=01;35:*.sh=103;34:*.ogg=01;31:*.mp3=01;31:*.avi=01;34:*.mpg=01;34:*.mpeg=01;34:*.wmv=01;34:*.asf=01;34'
 
 # --[ OPTIONS
-setopt correct		    # try to correct first word spelling
+setopt NO_beep
+setopt NO_check_jobs	    # don't notify re: jobs when shell exits
+setopt NO_hup
+setopt NO_nullglob
+setopt NO_singlelinezle
+setopt always_last_prompt   # req'd by menu selection
+setopt alwaystoend	    # move cursor to end of word when completing
+setopt auto_cd		    # zsh adds 'cd ' when you enter a dir name
 setopt autolist
+setopt bsd_echo
 setopt complete_aliases
+setopt completeinword	    # internal word completion
+setopt correct		    # try to correct first word spelling
+setopt correct_all	    # correct all words
+setopt extended_glob
+setopt globdots		    # include dotfiles in globs
+setopt histignoredups	    # don't duplicate entires in command history
+setopt histverify	    # prompt when using history commands
+setopt listpacked	    # compact completion lists
+setopt nobeep
+setopt noclobber	    # don't overwrite files on redirect
+setopt nohup		    # don't kill jobs when shell exits
+setopt nolisttypes	    # show types in completion
 setopt notify
 setopt path_dirs
-setopt NO_singlelinezle
-setopt NO_hup
-setopt NO_beep
-setopt NO_nullglob
-setopt extended_glob
-setopt NO_check_jobs	    # don't notify re: jobs when shell exits
-setopt listpacked	    # compact completion lists
-setopt nolisttypes	    # show types in completion
-setopt completeinword	    # internal word completion
-setopt alwaystoend	    # move cursor to end of word when completing
-setopt histverify	    # prompt when using history commands
-setopt bsd_echo
-setopt always_last_prompt   # req'd by menu selection
-setopt auto_cd		    # zsh adds 'cd ' when you enter a dir name
-setopt nohup		    # don't kill jobs when shell exits
-setopt nobeep
 #setopt pushignoredups	    # don't duplicate entries in dir history
+setopt rcquotes		    # elegant quoting of quotes ('"' -> ')
 
 # --[ ENVIRONMENT
 

@@ -1,7 +1,7 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 
+# Updated	: 2005.07.25 12:29:14
 # @DATE
 
 ARCH=`uname`
@@ -66,6 +66,7 @@ esac
     esac
 
     PKG_PATH='ftp://openbsd.mirrors.tds.net/pub/OpenBSD/3.7/packages/i386/'
+    alias key='source $HOME/.keychain/$HOST-sh'
 
     LANG='C'
     MAIL=''
