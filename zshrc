@@ -1,7 +1,8 @@
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.07.26 18:16:46
+# Updated	: 2005.07.27 13:26:19
+# Updated	: 2005.07.27 13:26:19
 
 source ~/.profile
 

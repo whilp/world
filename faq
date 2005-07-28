@@ -1,9 +1,9 @@
-#####  BEGIN HEADERS
+##################  BEGIN HEADERS
 # Filename	: $HOME/.faq
 # Use		: collection of questions (and answers) I consistently forget
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.07.25 11:52:09
-#####  END HEADERS
+# Updated	: 2005.07.27 12:18:15
+##################  END HEADERS
 
 ================================================================================
 
@@ -114,5 +114,19 @@ In this case, we use a card supported by the madwifi driver; the network device
 is named 'ath0', and 'ath' is the lexical name we assign to this capture source.
 Save the file and give Kismet another try.
 
+================================================================================
+
+================================================================================
+Q: What's a super way to debug my .mailfilter?
+
+A: If there's a particular mail that's giving you grief, get a full copy of it
+(including headers) and save it locally. Then, run the following:
+
+    <vger 17:57> ~ % maildrop -V8 -d $USER < test.msg
+
+This will run the message through maildrop using your filters; the verbose
+output should indicate the problem. Coincidentally, this is also a handy way to
+gauge the efficiency of your filterset as well.
+    
 ================================================================================
 
