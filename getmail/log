@@ -10559,3 +10559,683 @@
 2005-07-27 14:10:19 msg 2/3 (14037 bytes) msgid 1079297275.9927 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
 2005-07-27 14:10:20 msg 3/3 (2717 bytes) msgid 1079297275.9928 from <jacobsonlaura@gmail.com> delivered to MDA_external command maildrop (), deleted
 2005-07-27 14:10:21 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 14:20:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 14:20:04 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 14:20:09 msg 1/2 (4872 bytes) msgid 1079297275.9929 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 14:20:10 msg 2/2 (3305 bytes) msgid 1079297275.9930 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 14:20:10 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 14:30:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 14:30:09 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 14:30:20 msg 1/8 (3321 bytes) msgid 1079297275.9931 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 14:30:21 msg 2/8 (3982 bytes) msgid 1079297275.9932 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 14:30:23 msg 3/8 (3693 bytes) msgid 1079297275.9933 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 14:30:27 msg 4/8 (4040 bytes) msgid 1079297275.9934 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 14:30:28 msg 5/8 (3161 bytes) msgid 1079297275.9935 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 14:30:29 msg 6/8 (4335 bytes) msgid 1079297275.9936 from <owner-mutt-users-M2106@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 14:30:32 msg 7/8 (6420 bytes) msgid 1079297275.9937 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 14:30:33 msg 8/8 (3190 bytes) msgid 1079297275.9938 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 14:30:33 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 14:40:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 14:40:03 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 14:40:06 msg 1/1 (3802 bytes) msgid 1079297275.9939 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 14:40:07 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 14:50:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 14:50:04 msg 1/1 (2896 bytes) msgid 42dd579a000002ec from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-27 14:50:04 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 14:50:09 msg 1/2 (7110 bytes) msgid 1079297275.9940 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 14:50:10 msg 2/2 (5136 bytes) msgid 1079297275.9941 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 14:50:11 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 15:00:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 15:00:09 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 15:00:15 msg 1/7 (35038 bytes) msgid 1079297275.9942 from <deals-owner+M31@list.compuplus.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:00:18 msg 2/7 (11198 bytes) msgid 1079297275.9943 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:00:18 msg 3/7 (2376 bytes) msgid 1079297275.9944 from <jacobsonlaura@gmail.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:00:19 msg 4/7 (3471 bytes) msgid 1079297275.9945 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:00:20 msg 5/7 (4804 bytes) msgid 1079297275.9946 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:00:20 msg 6/7 (3673 bytes) msgid 1079297275.9947 from <vim-return-56201-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:00:24 msg 7/7 (15683 bytes) msgid 1079297275.9948 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:00:24 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 15:10:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 15:10:16 msg 1/1 (8238 bytes) msgid 42dd579a000002ed from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:10:16 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 15:10:19 msg 1/3 (3666 bytes) msgid 1079297275.9949 from <vim-return-56202-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:10:21 msg 2/3 (11792 bytes) msgid 1079297275.9950 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:10:22 msg 3/3 (4654 bytes) msgid 1079297275.9951 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:10:22 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 15:20:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 15:20:03 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 15:20:06 msg 1/2 (4543 bytes) msgid 1079297275.9952 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:20:12 msg 2/2 (18603 bytes) msgid 1079297275.9953 from <xpyxby@hotmail.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:20:12 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 15:30:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 15:30:05 msg 1/1 (1546 bytes) msgid 42dd579a000002ee from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:30:05 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 15:30:07 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 15:40:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 15:40:07 msg 1/2 (14150 bytes) msgid 42dd579a000002ef from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:40:12 msg 2/2 (17098 bytes) msgid 42dd579a000002f0 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:40:13 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 15:40:21 msg 1/3 (8962 bytes) msgid 1079297275.9954 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:40:22 msg 2/3 (7164 bytes) msgid 1079297275.9955 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:40:24 msg 3/3 (3224 bytes) msgid 1079297275.9956 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:40:24 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 15:50:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 15:50:04 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 15:50:10 msg 1/3 (4546 bytes) msgid 1079297275.9957 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:50:11 msg 2/3 (4853 bytes) msgid 1079297275.9958 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:50:14 msg 3/3 (4459 bytes) msgid 1079297275.9959 from <vim-return-56203-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 15:50:14 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 16:00:04 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 16:00:05 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 16:00:07 msg 1/3 (4946 bytes) msgid 1079297275.9960 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 16:00:08 msg 2/3 (3370 bytes) msgid 1079297275.9961 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 16:00:09 msg 3/3 (2040 bytes) msgid 1079297275.9962 from <jacobsonlaura@gmail.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 16:00:09 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 16:10:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 16:10:04 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 16:10:06 msg 1/3 (4873 bytes) msgid 1079297275.9963 from <vim-return-56204-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 16:10:08 msg 2/3 (3506 bytes) msgid 1079297275.9964 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 16:10:09 msg 3/3 (5193 bytes) msgid 1079297275.9965 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 16:10:09 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 16:20:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 16:20:06 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 16:20:12 msg 1/2 (4137 bytes) msgid 1079297275.9966 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 16:20:14 msg 2/2 (2212 bytes) msgid 1079297275.9967 from <jacobsonlaura@gmail.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 16:20:14 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 16:30:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 16:30:14 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 16:30:23 msg 1/3 (4688 bytes) msgid 1079297275.9968 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 16:30:25 msg 2/3 (5009 bytes) msgid 1079297275.9969 from <vim-return-56205-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 16:30:27 msg 3/3 (3209 bytes) msgid 1079297275.9970 from <vim-return-56206-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 16:30:27 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 16:40:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 16:40:10 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 16:40:15 msg 1/3 (3597 bytes) msgid 1079297275.9971 from <vim-return-56207-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 16:40:16 msg 2/3 (8311 bytes) msgid 1079297275.9972 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 16:40:17 msg 3/3 (2700 bytes) msgid 1079297275.9973 from <owner-mutt-users-M2107@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 16:40:18 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 16:50:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 16:50:05 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 16:50:13 msg 1/1 (6940 bytes) msgid 1079297275.9974 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 16:50:13 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 17:00:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 17:00:09 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 17:00:13 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 17:05:36 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 17:05:38 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 17:06:14 msg 1/1 (4249 bytes) msgid 1079297275.9975 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 17:06:14 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 17:10:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 17:10:17 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 17:11:03 msg 1/1 (19187 bytes) msgid 1079297275.9976 from <Amato@brasilia.net> delivered to MDA_external command maildrop (), deleted
+2005-07-27 17:11:03 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 17:20:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 17:20:08 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 17:20:10 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 17:30:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 17:30:34 msg 1/1 (1533 bytes) msgid 42dd579a000002f1 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-27 17:30:35 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 17:31:11 msg 1/1 (17926 bytes) msgid 1079297275.9977 from <Stanich@nameplanet.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 17:31:12 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 17:40:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 17:40:05 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 17:40:37 msg 1/1 (3589 bytes) msgid 1079297275.9978 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 17:40:37 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 17:50:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 17:50:05 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 17:50:09 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 18:00:04 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 18:00:06 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 18:02:27 msg 1/1 (4227 bytes) msgid 1079297275.9979 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 18:02:28 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 18:10:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 18:10:19 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 18:10:52 msg 1/2 (2240 bytes) msgid 1079297275.9980 from <linuxmaier@fastmail.fm> delivered to MDA_external command maildrop (), deleted
+2005-07-27 18:11:38 msg 2/2 (11644 bytes) msgid 1079297275.9981 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 18:11:38 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 18:20:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 18:20:10 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 18:20:47 msg 1/1 (4434 bytes) msgid 1079297275.9982 from <owner-mutt-users-M2108@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 18:20:47 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 18:30:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 18:30:09 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 18:31:02 msg 1/1 (2427 bytes) msgid 1079297275.9983 from <linuxmaier@fastmail.fm> delivered to MDA_external command maildrop (), deleted
+2005-07-27 18:31:02 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 18:40:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 18:40:15 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 18:40:56 msg 1/4 (15244 bytes) msgid 1079297275.9984 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 18:41:28 msg 2/4 (4617 bytes) msgid 1079297275.9985 from <owner-mutt-users-M2109@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 18:41:57 msg 3/4 (2844 bytes) msgid 1079297275.9986 from <bounce-debian-security=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 18:42:30 msg 4/4 (3898 bytes) msgid 1079297275.9987 from <vim-return-56208-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 18:42:30 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 18:50:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 18:50:13 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 18:50:49 msg 1/3 (2422 bytes) msgid 1079297275.9988 from <owner-mutt-users-M2110@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 18:51:19 msg 2/3 (2972 bytes) msgid 1079297275.9989 from <owner-mutt-users-M2111@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 18:51:49 msg 3/3 (2538 bytes) msgid 1079297275.9990 from <owner-mutt-users-M2112@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 18:51:50 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 19:00:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 19:00:10 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 19:00:44 msg 1/3 (4086 bytes) msgid 1079297275.9991 from <owner-mutt-users-M2113@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 19:01:18 msg 2/3 (4430 bytes) msgid 1079297275.9992 from <owner-mutt-users-M2114@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 19:01:48 msg 3/3 (3274 bytes) msgid 1079297275.9993 from <owner-mutt-users-M2115@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 19:01:48 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 19:10:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 19:10:32 msg 1/1 (1476 bytes) msgid 42dd579a000002f2 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-27 19:10:33 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 19:11:03 msg 1/2 (2934 bytes) msgid 1079297275.9994 from <owner-mutt-users-M2116@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 19:11:33 msg 2/2 (3985 bytes) msgid 1079297275.9995 from <vim-return-56209-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 19:11:33 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 19:20:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 19:20:07 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 19:20:15 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 19:30:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 19:30:54 msg 1/1 (7272 bytes) msgid 42dd579a000002f3 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-27 19:30:55 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 19:31:29 msg 1/2 (4086 bytes) msgid 1079297275.9996 from <owner-mutt-users-M2117@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 19:31:59 msg 2/2 (4095 bytes) msgid 1079297275.9997 from <vim-return-56210-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 19:31:59 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 19:40:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 19:40:04 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 19:40:07 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 19:50:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 19:50:06 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 19:50:42 msg 1/2 (1799 bytes) msgid 1079297275.9998 from <jacobsonlaura@gmail.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 19:51:12 msg 2/2 (2442 bytes) msgid 1079297275.9999 from <owner-mutt-users-M2118@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 19:51:12 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 20:00:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 20:00:08 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 20:00:10 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 20:10:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 20:10:05 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 20:10:09 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 20:20:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 20:20:09 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 20:20:12 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 20:30:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 20:30:05 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 20:30:40 msg 1/1 (5034 bytes) msgid 1079297275.10000 from <bounce-debian-security=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 20:30:40 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 20:40:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 20:40:08 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 20:40:12 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 20:50:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 20:50:04 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 20:50:08 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 21:00:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 21:00:11 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 21:00:16 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 21:10:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 21:10:07 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 21:10:11 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 21:20:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 21:20:07 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 21:20:13 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 21:30:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 21:30:05 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 21:30:38 msg 1/1 (5005 bytes) msgid 1079297275.10001 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 21:30:39 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 21:40:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 21:40:12 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 21:40:15 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 21:50:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 21:50:04 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 21:50:07 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 22:00:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 22:00:03 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 22:00:05 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 22:10:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 22:10:07 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 22:10:11 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 22:20:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 22:20:04 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 22:20:08 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 22:30:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 22:30:04 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 22:30:06 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 22:40:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 22:40:34 msg 1/2 (16675 bytes) msgid 42dd579a000002f4 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-27 22:41:03 msg 2/2 (16637 bytes) msgid 42dd579a000002f5 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-27 22:41:04 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 22:41:05 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 22:50:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 22:50:37 msg 1/1 (19663 bytes) msgid 42dd579a000002f6 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-27 22:50:38 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 22:50:42 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 23:00:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 23:00:06 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 23:00:36 msg 1/1 (5707 bytes) msgid 1079297275.10002 from <vim-return-56211-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 23:00:37 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 23:10:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 23:10:03 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 23:10:36 msg 1/5 (32380 bytes) msgid 1079297275.10003 from <bounce-debian-security=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 23:11:05 msg 2/5 (4668 bytes) msgid 1079297275.10004 from <morris@yahoo.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 23:11:35 msg 3/5 (5675 bytes) msgid 1079297275.10005 from <morris@yahoo.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 23:12:05 msg 4/5 (3960 bytes) msgid 1079297275.10006 from <morris@yahoo.com> delivered to MDA_external command maildrop (), deleted
+2005-07-27 23:12:34 msg 5/5 (4461 bytes) msgid 1079297275.10007 from <vim-return-56212-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 23:12:35 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 23:20:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 23:20:03 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 23:20:07 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 23:30:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 23:30:08 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 23:30:13 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 23:40:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 23:40:42 msg 1/1 (8885 bytes) msgid 42dd579a000002f7 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-27 23:40:43 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 23:40:47 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-27 23:50:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-27 23:50:04 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-27 23:50:37 msg 1/1 (3147 bytes) msgid 1079297275.10008 from <vim-return-56213-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-27 23:50:38 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 00:00:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 00:00:06 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 00:00:09 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 00:10:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 00:10:35 msg 1/5 (1341 bytes) msgid 42dd579a000002f8 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 00:11:05 msg 2/5 (1349 bytes) msgid 42dd579a000002f9 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 00:11:34 msg 3/5 (1385 bytes) msgid 42dd579a000002fa from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 00:12:03 msg 4/5 (1125 bytes) msgid 42dd579a000002fb from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 00:12:31 msg 5/5 (1435 bytes) msgid 42dd579a000002fc from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 00:12:32 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 00:13:06 msg 1/1 (6515 bytes) msgid 1079297275.10009 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 00:13:07 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 00:20:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 00:20:08 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 00:20:44 msg 1/2 (4502 bytes) msgid 1079297275.10010 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 00:21:13 msg 2/2 (3324 bytes) msgid 1079297275.10011 from <vim-return-56214-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 00:21:15 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 00:30:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 00:30:12 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 00:30:46 msg 1/1 (4257 bytes) msgid 1079297275.10012 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 00:30:47 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 00:40:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 00:40:07 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 00:40:41 msg 1/1 (4097 bytes) msgid 1079297275.10013 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 00:40:42 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 00:50:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 00:51:06 msg 1/1 (1324 bytes) msgid 42dd579a000002fd from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 00:51:06 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 00:51:12 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 01:00:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 01:00:11 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 01:00:20 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 01:10:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 01:10:34 msg 1/2 (1361 bytes) msgid 42dd579a000002fe from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 01:11:05 msg 2/2 (1167 bytes) msgid 42dd579a000002ff from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 01:11:05 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 01:11:10 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 01:20:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 01:20:13 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 01:20:27 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 01:30:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 01:30:05 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 01:30:55 msg 1/1 (4961 bytes) msgid 1079297275.10014 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 01:30:56 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 01:40:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 01:40:07 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 01:40:43 msg 1/1 (4193 bytes) msgid 1079297275.10015 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 01:40:44 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 01:50:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 01:50:06 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 01:50:11 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 02:00:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 02:00:06 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 02:00:15 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 02:10:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 02:10:38 msg 1/1 (18280 bytes) msgid 42dd579a00000300 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 02:10:39 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 02:10:45 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 02:20:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 02:20:36 msg 1/1 (5300 bytes) msgid 42dd579a00000301 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 02:20:36 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 02:21:10 msg 1/1 (3309 bytes) msgid 1079297275.10016 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 02:21:10 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 02:30:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 02:30:06 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 02:30:11 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 02:40:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 02:40:06 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 02:40:13 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 02:50:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 02:50:05 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 02:50:39 msg 1/1 (4988 bytes) msgid 1079297275.10017 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 02:50:39 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 03:00:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 03:00:02 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 03:00:04 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 03:10:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 03:10:03 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 03:10:04 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 03:20:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 03:20:13 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 03:20:23 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 03:30:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 03:30:13 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 03:30:20 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 03:40:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 03:41:08 msg 1/1 (1209 bytes) msgid 42dd579a00000302 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 03:41:09 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 03:41:16 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 03:50:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 03:50:21 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 03:50:31 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 04:00:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 04:00:18 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 04:00:28 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 04:10:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 04:10:25 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 04:10:44 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 04:20:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 04:20:24 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 04:21:33 msg 1/1 (28517 bytes) msgid 1079297275.10018 from <dotnews@mkt.dotster.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 04:21:33 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 04:30:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 04:30:28 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 04:36:58 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 04:40:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 04:40:24 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 04:40:40 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 04:50:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 04:50:23 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 04:50:44 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 05:00:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 05:00:32 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 05:01:24 msg 1/2 (5321 bytes) msgid 1079297275.10019 from <vim-return-56215-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 05:02:04 msg 2/2 (4732 bytes) msgid 1079297275.10020 from <bounce-debian-security=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 05:02:04 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 05:10:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 05:11:32 msg 1/1 (51606 bytes) msgid 42dd579a00000303 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 05:11:33 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 05:12:16 msg 1/3 (4924 bytes) msgid 1079297275.10021 from <vim-return-56216-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 05:12:46 msg 2/3 (3841 bytes) msgid 1079297275.10022 from <vim-return-56217-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 05:13:17 msg 3/3 (2757 bytes) msgid 1079297275.10023 from <security-review-bounces@lists.ubuntu.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 05:13:17 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 05:20:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 05:20:36 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 05:20:44 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 05:30:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 05:30:36 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 05:30:46 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 05:40:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 05:40:48 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 05:46:11 msg 1/1 (109076 bytes) msgid 1079297275.10024 from <markande@whitedust.net> delivered to MDA_external command maildrop (), deleted
+2005-07-28 05:46:11 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 05:50:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 05:50:15 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 05:51:02 msg 1/2 (14816 bytes) msgid 1079297275.10025 from <ubuntu-security-announce-bounces@lists.ubuntu.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 05:52:13 msg 2/2 (14953 bytes) msgid 1079297275.10026 from <gbqyekczf@yahoo.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 05:52:13 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 06:00:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 06:00:53 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 06:01:14 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 06:10:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 06:10:14 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 06:10:58 msg 1/1 (5461 bytes) msgid 1079297275.10027 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 06:10:58 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 06:20:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 06:21:07 msg 1/1 (1213 bytes) msgid 42dd579a00000304 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 06:21:08 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 06:21:54 msg 1/1 (5691 bytes) msgid 1079297275.10028 from <vim-return-56218-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 06:21:55 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 06:30:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 06:30:48 msg 1/2 (1235 bytes) msgid 42dd579a00000305 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 06:31:23 msg 2/2 (18777 bytes) msgid 42dd579a00000306 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 06:31:24 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 06:31:42 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 06:40:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 06:40:18 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 06:40:29 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 06:50:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 06:50:15 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 06:51:08 msg 1/1 (4267 bytes) msgid 1079297275.10029 from <bounce-debian-security=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 06:51:08 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 07:00:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 07:00:38 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 07:00:55 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 07:10:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 07:10:18 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 07:10:59 msg 1/1 (4324 bytes) msgid 1079297275.10030 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 07:11:00 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 07:20:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 07:20:28 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 07:22:07 msg 1/2 (2568 bytes) msgid 1079297275.10031 from <owner-mutt-users-M2119@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 07:22:52 msg 2/2 (8906 bytes) msgid 1079297275.10032 from <vim-return-56219-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 07:22:52 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 07:30:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 07:30:31 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 07:30:40 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 07:40:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 07:40:48 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 07:42:04 msg 1/2 (3078 bytes) msgid 1079297275.10033 from <vim-return-56220-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 07:42:35 msg 2/2 (3564 bytes) msgid 1079297275.10034 from <owner-mutt-users-M2120@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 07:42:36 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 07:50:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 07:50:18 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 07:50:32 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 08:00:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 08:00:26 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 08:01:08 msg 1/2 (3782 bytes) msgid 1079297275.10035 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 08:01:40 msg 2/2 (4358 bytes) msgid 1079297275.10036 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 08:01:40 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 08:10:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 08:10:39 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 08:13:40 msg 1/1 (79291 bytes) msgid 1079297275.10037 from <mmaier@stewart-peterson.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 08:13:40 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 08:20:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 08:20:18 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 08:20:29 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 08:21:05 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 08:21:18 getmailOperationError error (POP error (-ERR Re-Authentication Failure))
+2005-07-28 08:21:18 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 08:21:35 msg 1/1 (4956 bytes) msgid 1079297275.10038 from <owner-mutt-users-M2121@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 08:21:35 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 08:23:52 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 08:24:02 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 08:24:12 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 08:30:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 08:30:18 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 08:31:19 msg 1/3 (3586 bytes) msgid 1079297275.10039 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 08:32:00 msg 2/3 (4252 bytes) msgid 1079297275.10040 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 08:32:40 msg 3/3 (3751 bytes) msgid 1079297275.10041 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 08:32:40 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 08:40:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 08:40:22 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 08:41:29 msg 1/1 (4281 bytes) msgid 1079297275.10042 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 08:41:30 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 08:50:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 08:50:12 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 08:50:49 msg 1/5 (5487 bytes) msgid 1079297275.10043 from <vim-return-56221-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 08:51:19 msg 2/5 (2172 bytes) msgid 1079297275.10044 from <owner-mutt-users-M2122@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 08:51:50 msg 3/5 (6022 bytes) msgid 1079297275.10045 from <owner-mutt-users-M2123@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 08:52:21 msg 4/5 (3243 bytes) msgid 1079297275.10046 from <bounce-debian-security=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 08:52:51 msg 5/5 (3890 bytes) msgid 1079297275.10047 from <owner-mutt-users-M2124@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 08:52:51 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 09:00:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 09:00:06 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 09:00:40 msg 1/1 (3564 bytes) msgid 1079297275.10048 from <owner-mutt-users-M2125@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:00:40 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 09:10:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 09:10:40 msg 1/1 (18136 bytes) msgid 42dd579a00000307 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:10:40 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 09:11:15 msg 1/5 (4278 bytes) msgid 1079297275.10049 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:11:46 msg 2/5 (3821 bytes) msgid 1079297275.10050 from <bounce-1290066-779875@lists.wisc.edu> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:12:16 msg 3/5 (2762 bytes) msgid 1079297275.10051 from <vim-return-56222-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:12:47 msg 4/5 (4220 bytes) msgid 1079297275.10052 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:13:17 msg 5/5 (4784 bytes) msgid 1079297275.10053 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:13:17 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 09:20:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 09:20:07 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 09:20:46 msg 1/4 (3993 bytes) msgid 1079297275.10054 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:21:16 msg 2/4 (6744 bytes) msgid 1079297275.10055 from <vim-return-56223-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:21:46 msg 3/4 (3601 bytes) msgid 1079297275.10056 from <owner-mutt-users-M2126@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:22:16 msg 4/4 (2727 bytes) msgid 1079297275.10057 from <owner-mutt-users-M2127@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:22:16 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 09:30:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 09:30:36 msg 1/1 (1994 bytes) msgid 42dd579a00000308 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:30:36 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 09:31:10 msg 1/8 (5272 bytes) msgid 1079297275.10058 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:31:40 msg 2/8 (4536 bytes) msgid 1079297275.10059 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:32:09 msg 3/8 (2940 bytes) msgid 1079297275.10060 from <jacobsonlaura@gmail.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:32:39 msg 4/8 (4027 bytes) msgid 1079297275.10061 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:33:09 msg 5/8 (4468 bytes) msgid 1079297275.10062 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:33:39 msg 6/8 (10377 bytes) msgid 1079297275.10063 from <vim-return-56224-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:34:09 msg 7/8 (4217 bytes) msgid 1079297275.10064 from <vim-return-56225-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:34:39 msg 8/8 (4576 bytes) msgid 1079297275.10065 from <bounce-1290123-779875@lists.wisc.edu> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:34:39 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 09:40:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 09:40:39 msg 1/2 (18104 bytes) msgid 42dd579a00000309 from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:41:10 msg 2/2 (18026 bytes) msgid 42dd579a0000030a from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:41:11 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 09:41:52 msg 1/3 (5277 bytes) msgid 1079297275.10066 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:42:23 msg 2/3 (4008 bytes) msgid 1079297275.10067 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:42:53 msg 3/3 (3922 bytes) msgid 1079297275.10068 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 09:42:53 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 09:50:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 09:50:08 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 09:50:11 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 09:51:52 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 09:52:00 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 09:52:15 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 10:00:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 10:00:11 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 10:00:51 msg 1/1 (5319 bytes) msgid 1079297275.10069 from <vim-return-56226-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 10:00:51 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 10:10:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 10:10:08 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 10:10:46 msg 1/1 (3328 bytes) msgid 1079297275.10070 from <screen-users-bounces+willmaier=ml1.net@gnu.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 10:10:47 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 10:20:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 10:20:09 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 10:20:45 msg 1/3 (4622 bytes) msgid 1079297275.10071 from <bounce-1290200-779875@lists.wisc.edu> delivered to MDA_external command maildrop (), deleted
+2005-07-28 10:21:16 msg 2/3 (4099 bytes) msgid 1079297275.10072 from <screen-users-bounces+willmaier=ml1.net@gnu.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 10:21:47 msg 3/3 (3584 bytes) msgid 1079297275.10073 from <screen-users-bounces+willmaier=ml1.net@gnu.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 10:21:48 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 10:30:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 10:30:10 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 10:30:46 msg 1/1 (5809 bytes) msgid 1079297275.10074 from <bounce-1290223-779875@lists.wisc.edu> delivered to MDA_external command maildrop (), deleted
+2005-07-28 10:30:46 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 10:40:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 10:40:07 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 10:40:44 msg 1/2 (3737 bytes) msgid 1079297275.10075 from <jacobsonlaura@gmail.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 10:41:14 msg 2/2 (5020 bytes) msgid 1079297275.10076 from <bounce-1290245-779875@lists.wisc.edu> delivered to MDA_external command maildrop (), deleted
+2005-07-28 10:41:14 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 10:50:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 10:50:04 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 10:50:38 msg 1/1 (2814 bytes) msgid 1079297275.10077 from <owner-mutt-users-M2128@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 10:50:39 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 11:00:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 11:00:08 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 11:00:42 msg 1/2 (2397 bytes) msgid 1079297275.10078 from <jacobsonlaura@gmail.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 11:01:12 msg 2/2 (4623 bytes) msgid 1079297275.10079 from <screen-users-bounces+willmaier=ml1.net@gnu.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 11:01:12 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 11:10:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 11:10:03 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 11:10:34 msg 1/4 (4317 bytes) msgid 1079297275.10080 from <screen-users-bounces+willmaier=ml1.net@gnu.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 11:11:04 msg 2/4 (4566 bytes) msgid 1079297275.10081 from <vim-return-56227-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 11:11:33 msg 3/4 (4462 bytes) msgid 1079297275.10082 from <owner-mutt-users-M2129@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 11:12:03 msg 4/4 (9159 bytes) msgid 1079297275.10083 from <bounce-1290298-779875@lists.wisc.edu> delivered to MDA_external command maildrop (), deleted
+2005-07-28 11:12:03 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 11:20:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 11:20:04 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 11:20:05 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 11:30:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 11:30:03 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 11:30:35 msg 1/3 (4006 bytes) msgid 1079297275.10084 from <bounce-1290331-779875@lists.wisc.edu> delivered to MDA_external command maildrop (), deleted
+2005-07-28 11:31:05 msg 2/3 (3630 bytes) msgid 1079297275.10085 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 11:31:35 msg 3/3 (4097 bytes) msgid 1079297275.10086 from <bounce-1290344-779875@lists.wisc.edu> delivered to MDA_external command maildrop (), deleted
+2005-07-28 11:31:36 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 11:40:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 11:40:03 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 11:40:34 msg 1/3 (4548 bytes) msgid 1079297275.10087 from <vim-return-56228-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 11:41:04 msg 2/3 (4524 bytes) msgid 1079297275.10088 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 11:41:33 msg 3/3 (3931 bytes) msgid 1079297275.10089 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 11:41:33 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 11:50:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 11:50:32 msg 1/1 (7149 bytes) msgid 42dd579a0000030b from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 11:50:32 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 11:51:04 msg 1/4 (9349 bytes) msgid 1079297275.10090 from <vim-return-56229-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 11:51:34 msg 2/4 (11006 bytes) msgid 1079297275.10091 from <bounce-1290407-779875@lists.wisc.edu> delivered to MDA_external command maildrop (), deleted
+2005-07-28 11:52:04 msg 3/4 (4805 bytes) msgid 1079297275.10092 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 11:52:34 msg 4/4 (4651 bytes) msgid 1079297275.10093 from <bounce-debian-security=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 11:52:34 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 12:00:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 12:00:05 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 12:00:37 msg 1/4 (2096 bytes) msgid 1079297275.10094 from <owner-mutt-users-M2130@mutt.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 12:01:06 msg 2/4 (10215 bytes) msgid 1079297275.10095 from <sentto-4601248-1472-1122569312-willmaier=ml1.net@returns.groups.yahoo.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 12:01:36 msg 3/4 (4113 bytes) msgid 1079297275.10096 from <jacobsonlaura@gmail.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 12:02:05 msg 4/4 (4876 bytes) msgid 1079297275.10097 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 12:02:06 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 12:10:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 12:10:04 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 12:10:35 msg 1/2 (10309 bytes) msgid 1079297275.10098 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 12:11:05 msg 2/2 (3378 bytes) msgid 1079297275.10099 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 12:11:06 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 12:20:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 12:20:04 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 12:20:36 msg 1/5 (4774 bytes) msgid 1079297275.10100 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 12:21:07 msg 2/5 (6975 bytes) msgid 1079297275.10101 from <sentto-4601248-1473-1122570543-willmaier=ml1.net@returns.groups.yahoo.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 12:21:37 msg 3/5 (6194 bytes) msgid 1079297275.10102 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 12:22:06 msg 4/5 (3592 bytes) msgid 1079297275.10103 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 12:22:35 msg 5/5 (3966 bytes) msgid 1079297275.10104 from <bounce-1290475-779875@lists.wisc.edu> delivered to MDA_external command maildrop (), deleted
+2005-07-28 12:22:36 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 12:30:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 12:30:02 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 12:30:32 msg 1/1 (2929 bytes) msgid 1079297275.10105 from <mbrunlieb@hotmail.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 12:30:33 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 12:40:01 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 12:40:03 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 12:40:33 msg 1/3 (5264 bytes) msgid 1079297275.10106 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 12:41:02 msg 2/3 (3768 bytes) msgid 1079297275.10107 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 12:41:32 msg 3/3 (4651 bytes) msgid 1079297275.10108 from <bounce-1290518-779875@lists.wisc.edu> delivered to MDA_external command maildrop (), deleted
+2005-07-28 12:41:32 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 12:50:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 12:50:02 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 12:50:32 msg 1/2 (7029 bytes) msgid 1079297275.10109 from <bounce-debian-security=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 12:51:02 msg 2/2 (5184 bytes) msgid 1079297275.10110 from <bounce-1290542-779875@lists.wisc.edu> delivered to MDA_external command maildrop (), deleted
+2005-07-28 12:51:02 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 13:00:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 13:00:02 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 13:00:33 msg 1/2 (4122 bytes) msgid 1079297275.10111 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 13:01:02 msg 2/2 (2551 bytes) msgid 1079297275.10112 from <vim-return-56230-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 13:01:02 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 13:10:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 13:10:32 msg 1/1 (1580 bytes) msgid 42dd579a0000030c from <unknown> delivered to MDA_external command maildrop (), deleted
+2005-07-28 13:10:32 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 13:11:07 msg 1/1 (7154 bytes) msgid 1079297275.10113 from <butterflyschmid@yahoo.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 13:11:08 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 13:20:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 13:20:02 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 13:20:33 msg 1/1 (3263 bytes) msgid 1079297275.10114 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 13:20:33 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 13:30:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 13:30:03 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 13:30:04 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 13:40:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 13:40:03 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 13:40:33 msg 1/3 (2893 bytes) msgid 1079297275.10115 from <bounce-1290632-779875@lists.wisc.edu> delivered to MDA_external command maildrop (), deleted
+2005-07-28 13:41:03 msg 2/3 (7065 bytes) msgid 1079297275.10116 from <sentto-4601248-1474-1122575565-willmaier=ml1.net@returns.groups.yahoo.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 13:41:33 msg 3/3 (3479 bytes) msgid 1079297275.10117 from <bounce-debian-legal=willmaier=ml1.net@lists.debian.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 13:41:33 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 13:50:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 13:50:04 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 13:50:05 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 13:52:35 socket error ((22, 'Invalid argument'))
+2005-07-28 14:00:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 14:00:03 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 14:00:35 msg 1/1 (3335 bytes) msgid 1079297275.10118 from <vim-return-56231-willmaier=ml1.net@vim.org> delivered to MDA_external command maildrop (), deleted
+2005-07-28 14:00:36 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 14:10:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 14:10:03 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 14:10:34 msg 1/2 (4379 bytes) msgid 1079297275.10119 from <bounce-1290686-779875@lists.wisc.edu> delivered to MDA_external command maildrop (), deleted
+2005-07-28 14:11:03 msg 2/2 (2933 bytes) msgid 1079297275.10120 from <linuxmaier@fastmail.fm> delivered to MDA_external command maildrop (), deleted
+2005-07-28 14:11:03 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 14:20:02 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 14:20:02 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 14:20:37 msg 1/2 (3770 bytes) msgid 1079297275.10121 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 14:21:08 msg 2/2 (4139 bytes) msgid 1079297275.10122 from <bounce-1290698-779875@lists.wisc.edu> delivered to MDA_external command maildrop (), deleted
+2005-07-28 14:21:08 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:
+2005-07-28 14:30:03 Initializing SimplePOP3SSLRetriever:wcmaier@cae.wisc.edu:995:
+2005-07-28 14:30:04 Initializing SimplePOP3SSLRetriever:willmaier@ml1.net@mail.messagingengine.com:995:
+2005-07-28 14:30:36 msg 1/1 (5351 bytes) msgid 1079297275.10123 from <rt-users-bounces@lists.bestpractical.com> delivered to MDA_external command maildrop (), deleted
+2005-07-28 14:30:36 Initializing SimplePOP3SSLRetriever:wcmaier@gmail.com@pop.gmail.com:995:

@@ -6,7 +6,7 @@
 # Started	: 2005.06.15
 # Info		: http://lists.sourceforge.net/lists/listinfo/courier-maildrop
 #		  http://sourceforge.net/mailarchive/forum.php?forum=courier-maildrop
-# Updated	: 2005.07.27 12:33:36
+# Updated	: 2005.07.28 14:29:39
 ##################  END HEADERS
 
 # --[ SETTINGS
@@ -16,20 +16,20 @@ LOG = "$MAILDIR/drop.log"
 DEFAULT = '/var/mail/will'
 
 # --[ FOLDERS
-VIM = "$MAILDIR/Vim/"
-SPAM = "$MAILDIR/Spam/"
+CAE = "$MAILDIR/CAE/"
+FAMILY = "$MAILDIR/Family/"
+FRIEND = "$MAILDIR/Friend/"
 MADLUG = "$MAILDIR/Madlug/"
-SCREENUSERS = "$MAILDIR/Screen-users/"
-TECHPARTNERS = "$MAILDIR/Techpartners/"
-RTUSERS	= "$MAILDIR/RT-users/"
 MAILDROP = "$MAILDIR/Maildrop/"
 SECURITYFOCUS = "$MAILDIR/Securityfocus/"
 SENT = "$MAILDIR/Sent/"
-FAMILY = "$MAILDIR/Family/"
-FRIEND = "$MAILDIR/Friend/"
-CAE = "$MAILDIR/CAE/"
+SPAM = "$MAILDIR/Spam/"
+TECHPARTNERS = "$MAILDIR/Techpartners/"
 
 logfile $LOG
+
+`find $MAILDIR -type d | xargs -I% chmod 700 %`
+`find $MAILDIR -type f | xargs -I% chmod 600 %`
 
 # --[ CONFIGURATION
 
@@ -48,61 +48,73 @@ if ( /^X-Spam-Flag:.*YES$/ )
 }
 
 # --[ CATCH VACATION NOTICES
-if ( /^Subject:.*(autoreply|out of office|abwesenheitsnotiz).*/ )
+if ( /^Subject:.*(autoreply|out of office|abwesenheitsnotiz|est absent)/ )
 {
     to $SPAM
 }
 
 # --[ LISTS
-if ( /^(to|cc):.*madlug@madisonlinux.org/ )
+if ( /^(to|cc):.*madlug@madisonlinux\.org/ )
 {
     to $MADLUG
 }
-if ( /^(to|cc):.*screen-users@gnu.org/ )
+if ( /^(to|cc):.*screen!(-?[a-zA-Z0-9]*)!@gnu\.org/ )
 {
-    to $SCREENUSERS
+    MATCH=tolower($MATCH2)
+    `test -d $MAILDIR/Screen$MATCH || mkdir -p $MAILDIR/Screen$MATCH/{cur,tmp,new}`
+    to $MAILDIR/Screen$MATCH
 }
-if ( /^(to|cc):.*techpartners@lists.*wisc.edu/ )
+if ( /^(to|cc):.*techpartners@lists.*wisc\.edu/ )
 {
-    if ( /^subject:.*(windows|word|digital camera)/ )
+    if ( /^subject:.*(windows|word|digital camera|.exe)/ )
     {
 	to $SPAM
     }
     to $TECHPARTNERS
 }
-if ( /^(to|cc):.*rt-?!([a-zA-Z0-9]+)!@lists.bestpractical.com/ )
+if ( /^(to|cc):.*rt!(-?[a-zA-Z0-9]*)!@lists\.bestpractical\.com/ )
 {
-    to $RTUSERS
+    MATCH=tolower($MATCH2)
+    `test -d $MAILDIR/RT$MATCH || mkdir -p $MAILDIR/RT$MATCH/{cur,tmp,new}`
+    to $MAILDIR/RT$MATCH
 }
-if ( /^(to|cc):.*vim@vim.org/ )
+if ( /^(to|cc):.*vim!(-?[a-zA-Z0-9]*)!@vim\.org/ )
 {
     if ( /^subject:.*(w32|windows?)/ )
     {
 	to $SPAM
     }
-    to $VIM
+    MATCH=tolower($MATCH2)
+    `test -d $MAILDIR/Vim$MATCH || mkdir -p $MAILDIR/Vim$MATCH/{cur,tmp,new}`
+    to $MAILDIR/Vim$MATCH
 }
-if ( /^(to|cc):.*debian-?!([a-zA-Z0-9]+)!@lists.debian.org/ )
+if ( /^(to|cc):.*debian!(-?[a-zA-Z0-9]*)!@lists\.debian\.org/ )
 {
-    to $MAILDIR/Debian-$MATCH2/
+    MATCH=tolower($MATCH2)
+    `test -d $MAILDIR/Debian$MATCH || mkdir -p $MAILDIR/Debian$MATCH/{cur,tmp,new}`
+    to $MAILDIR/Debian$MATCH/
 }
-if ( /^(to|cc):.*ubuntu-?!([a-zA-Z0-9]+)!@lists.ubuntu.com/ )
+if ( /^(to|cc):.*ubuntu!(-?[a-zA-Z0-9]*)!@lists\.ubuntu\.com/ )
 {
-    to $MAILDIR/Ubuntu-$MATCH2/
+    MATCH=tolower($MATCH2)
+    `test -d $MAILDIR/Ubuntu$MATCH || mkdir -p $MAILDIR/Ubuntu$MATCH/{cur,tmp,new}`
+    to $MAILDIR/Ubuntu$MATCH/
 }
-if ( /^(to|cc):.*mutt-?!(a-zA-Z0-9)!@mutt.org/ )
+if ( /^(to|cc):.*mutt!(-?[a-zA-Z0-9]*)!@mutt\.org/ )
 {
-    to $MAILDIR/Mutt-$MATCH2/
+    MATCH=tolower($MATCH2)
+    `test -d $MAILDIR/Mutt$MATCH || mkdir -p $MAILDIR/Mutt$MATCH/{cur,tmp,new}`
+    to $MAILDIR/Mutt$MATCH/
 }
-if ( /^(to|cc):.*courier-maildrop@lists.sourceforge.net/ )
+if ( /^(to|cc):.*courier-maildrop@lists\.sourceforge\.net/ )
 {
     to $MAILDROP
 }
-if ( /^(to|cc):.*@securityfocus.com/ )
+if ( /^(to|cc):.*@securityfocus\.com/ )
 {
     to $SECURITYFOCUS
 }
-if ( /^(to|cc):.*sjcbod@yahoogroups.com/ )
+if ( /^(to|cc):.*sjcbod@yahoogroups\.com/ )
 {
     to /dev/null
     log "Trashed a mail"
@@ -117,38 +129,38 @@ if ( /^From:.*willmaier@ml1\.net/ \
 }
 
 # --[ FAMILY
-if ( /^From:.*jacobsonlaura@gmail.com/ \
-    || /^From:.*jacobsonlaura@hotmail.com/ \
-    || /^From:.*linuxmaier@fastmail.fm/ \
-    || /^From:.*linuxmaier@fastmail.fm/ \
-    || /^From:.*maier1@wisc.edu/ \
-    || /^From:.*beachbumbutterfly@yahoo.com/ \
-    || /^From:.*pbroad@iopener.net/ \
-    || /^From:.*wegmann@sbcglobal.net/ \
-    || /^From:.*ginaryan@aol.com/ \
-    || /^From:.*ajdj143@sbcglobal.net/ \
-    || /^From:.*maier@wi.rr.com/ \
-    || /^From:.*maierfest@aol.com/ \
-    || /^From:.*mmaier@stewart-peterson.com/ )
+if ( /^From:.*jacobsonlaura@gmail\.com/ \
+    || /^From:.*jacobsonlaura@hotmail\.com/ \
+    || /^From:.*linuxmaier@fastmail\.fm/ \
+    || /^From:.*linuxmaier@yahoo\.com/ \
+    || /^From:.*maier1@wisc\.edu/ \
+    || /^From:.*beachbumbutterfly@yahoo\.com/ \
+    || /^From:.*pbroad@iopener\.net/ \
+    || /^From:.*wegmann@sbcglobal\.net/ \
+    || /^From:.*ginaryan@aol\.com/ \
+    || /^From:.*ajdj143@sbcglobal\.net/ \
+    || /^From:.*maier@wi\.rr\.com/ \
+    || /^From:.*maierfest@aol\.com/ \
+    || /^From:.*mmaier@stewart-peterson\.com/ )
 {
     to $FAMILY
 }
 
 # --[ FRIENDS
-if ( /^From:.*kafka@riseup.net/ \
-    || /^From:.*ejburnett@.*wisc.edu/ \
-    || /^From:.*butterflyschmid@yahoo.com/ \
-    || /^From:.*hastings.cameron@gmail.com/ \
-    || /^From:.*hitbyguitarz@yahoo.com/ \
-    || /^From:.*kwrosenb@wisc.edu/ \
-    || /^From:.*mbrunlieb@hotmail.com/ \
-    || /^From:.*rmainville@stewart-peterson.com/ )
+if ( /^From:.*kafka@riseup\.net/ \
+    || /^From:.*ejburnett@.*wisc\.edu/ \
+    || /^From:.*butterflyschmid@yahoo\.com/ \
+    || /^From:.*hastings.cameron@gmail\.com/ \
+    || /^From:.*hitbyguitarz@yahoo\.com/ \
+    || /^From:.*kwrosenb@wisc\.edu/ \
+    || /^From:.*mbrunlieb@hotmail\.com/ \
+    || /^From:.*rmainville@stewart-peterson\.com/ )
 {
     to $FRIEND
 }
 
 # --[ WORK
-if ( /^(From|to):.*(unix@)?(engr|cae).wisc.edu/ )
+if ( /^(From|to):.*(unix@)?(engr|cae).wisc\.edu/ )
 {
     to $CAE
 }

@@ -1,12 +1,12 @@
 ##################  BEGIN HEADERS
-# Filename	: $HOME/.muttrc
-# Use		: main configuration file for mutt, a command line mail reader
+# Filename	: $HOME/.muttrc (or $HOME/.muttngrc)
+# Use		: main configuration file for mutt(-ng), a command line mail reader
 # Author	: Will Maier <willmaier@ml1.net>
 # Started	: 2005.03.06
 # Based on	: Phillip Hollenback's muttrc @ macdevcenter
 # Refers to	: $HOME/.muttalias
 #		  $HOME/.muttcolor
-# Updated	: 2005.07.25 11:50:32
+# Updated	: 2005.07.28 13:48:20
 ##################  END HEADERS
 
 ## MAILDIR SETTINGS ##
@@ -26,6 +26,9 @@ set alias_file="~/.muttalias"
 bind index '.' buffy-list
 bind generic 'G' noop
 bind generic '\CG' noop
+bind index zt current-top
+bind index zz current-middle
+bind index zb current-bottom
 
 macro index G "<shell-escape>~/bin/getmail<enter>" "Getmail"
 macro pager G "<shell-escape>~/bin/getmail<enter>" "Getmail"
@@ -46,6 +49,7 @@ set sort=threads
 set sort_aux=reverse-last-date
 source "~/.muttcolor"			# get color info
 source "~/.muttalias"
+set nomark_old
 set quit=yes
 set move=no
 set editor=vim
@@ -56,6 +60,8 @@ set forward_format="Fwd: %s"		# traditional fwd: subj.
 set postpone=no
 set use_from=yes
 set from="Will Maier <willmaier@ml1.net>"
+set quote_empty=no
+set strip_was=yes
 
 
 ## INDEX SETTINGS ##
