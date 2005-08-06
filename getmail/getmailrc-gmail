@@ -11,7 +11,7 @@ password = lesheros
 
 [destination]
 type = MDA_external
-path = /usr/local/bin/maildrop
+path = /usr/bin/maildrop
 
 [options]
 verbose = 0

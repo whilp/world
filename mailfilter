@@ -6,7 +6,7 @@
 # Started	: 2005.06.15
 # Info		: http://lists.sourceforge.net/lists/listinfo/courier-maildrop
 #		  http://sourceforge.net/mailarchive/forum.php?forum=courier-maildrop
-# Updated	: 2005.07.28 14:29:39
+# Updated	: 2005.08.05 13:33:58
 ##################  END HEADERS
 
 # --[ SETTINGS
@@ -28,9 +28,6 @@ TECHPARTNERS = "$MAILDIR/Techpartners/"
 
 logfile $LOG
 
-`find $MAILDIR -type d | xargs -I% chmod 700 %`
-`find $MAILDIR -type f | xargs -I% chmod 600 %`
-
 # --[ CONFIGURATION
 
 # catch duplicates using reformail
@@ -48,7 +45,13 @@ if ( /^X-Spam-Flag:.*YES$/ )
 }
 
 # --[ CATCH VACATION NOTICES
-if ( /^Subject:.*(autoreply|out of office|abwesenheitsnotiz|est absent)/ )
+if ( /^Subject:.*(autoreply|out of office|ist au..?er haus|abwesenheitsnotiz|har semester|est absent)/ )
+{
+    to $SPAM
+}
+
+# --[ CATCH OTHER STUFF
+if ( /^Subject:.(unsubscribe|$)/ )
 {
     to $SPAM
 }
@@ -58,7 +61,7 @@ if ( /^(to|cc):.*madlug@madisonlinux\.org/ )
 {
     to $MADLUG
 }
-if ( /^(to|cc):.*screen!(-?[a-zA-Z0-9]*)!@gnu\.org/ )
+if ( /^(to|cc):.*screen!(-?[a-zA-Z0-9\-]*)!@gnu\.org/ )
 {
     MATCH=tolower($MATCH2)
     `test -d $MAILDIR/Screen$MATCH || mkdir -p $MAILDIR/Screen$MATCH/{cur,tmp,new}`
@@ -66,21 +69,34 @@ if ( /^(to|cc):.*screen!(-?[a-zA-Z0-9]*)!@gnu\.org/ )
 }
 if ( /^(to|cc):.*techpartners@lists.*wisc\.edu/ )
 {
-    if ( /^subject:.*(windows|word|digital camera|.exe)/ )
+    if ( /^subject:.*(win ?(dows|XP|98|2000|2k|ME)|word|digital camera|.exe)/ )
     {
 	to $SPAM
     }
     to $TECHPARTNERS
 }
-if ( /^(to|cc):.*rt!(-?[a-zA-Z0-9]*)!@lists\.bestpractical\.com/ )
+if ( /^(to|cc):.*rt!(-?[a-zA-Z0-9\-]*)!@lists\.bestpractical\.com/ )
 {
     MATCH=tolower($MATCH2)
     `test -d $MAILDIR/RT$MATCH || mkdir -p $MAILDIR/RT$MATCH/{cur,tmp,new}`
     to $MAILDIR/RT$MATCH
 }
-if ( /^(to|cc):.*vim!(-?[a-zA-Z0-9]*)!@vim\.org/ )
+if ( /^(to|cc):.(freebsd)?!(-?[a-zA-Z0-9\-]*)!@freebsd\.org/ )
 {
-    if ( /^subject:.*(w32|windows?)/ )
+    MATCH=tolower($MATCH2)
+    `test -d $MAILDIR/FreeBSD$MATCH || mkdir -p $MAILDIR/FreeBSD$MATCH/{cur,tmp,new}`
+    to $MAILDIR/FreeBSD$MATCH
+}
+if ( /^(to|cc):.*grml!(-?[a-zA-Z0-9\-]*)!@mur\.at/ )
+{
+    MATCH=tolower($MATCH2)
+    LIST=Grml
+    `test -d $MAILDIR/$LIST$MATCH || mkdir -p $MAILDIR/$LIST$MATCH/{cur,tmp,new}`
+    to $MAILDIR/$LIST$MATCH
+}
+if ( /^(to|cc):.*vim!(-?[a-zA-Z0-9\-]*)!@vim\.org/ )
+{
+    if ( /^subject:.*(w32|windows?|OLE)/ )
     {
 	to $SPAM
     }
@@ -88,19 +104,31 @@ if ( /^(to|cc):.*vim!(-?[a-zA-Z0-9]*)!@vim\.org/ )
     `test -d $MAILDIR/Vim$MATCH || mkdir -p $MAILDIR/Vim$MATCH/{cur,tmp,new}`
     to $MAILDIR/Vim$MATCH
 }
-if ( /^(to|cc):.*debian!(-?[a-zA-Z0-9]*)!@lists\.debian\.org/ )
+if ( /^(to|cc):.*!(debian|utnubu)!(-?[a-zA-Z0-9\-]*)!@lists\.[a-z.]*debian\.org/ )
 {
-    MATCH=tolower($MATCH2)
+    if ( $MATCH2 =~ /utnubu/ )
+    {
+	MATCH="-$MATCH2$MATCH3"
+	MATCH=tolower($MATCH)
+    }
+    else
+    {
+	MATCH=tolower($MATCH3)
+    }
     `test -d $MAILDIR/Debian$MATCH || mkdir -p $MAILDIR/Debian$MATCH/{cur,tmp,new}`
     to $MAILDIR/Debian$MATCH/
 }
-if ( /^(to|cc):.*ubuntu!(-?[a-zA-Z0-9]*)!@lists\.ubuntu\.com/ )
+if ( /^(to|cc):.*!linux-fai@uni-koeln\.de/ )
+{
+    to $MAILDIR/Debian-fai
+}
+if ( /^(to|cc):.*ubuntu!(-?[a-zA-Z0-9\-]*)!@lists\.ubuntu\.com/ )
 {
     MATCH=tolower($MATCH2)
     `test -d $MAILDIR/Ubuntu$MATCH || mkdir -p $MAILDIR/Ubuntu$MATCH/{cur,tmp,new}`
     to $MAILDIR/Ubuntu$MATCH/
 }
-if ( /^(to|cc):.*mutt!(-?[a-zA-Z0-9]*)!@mutt\.org/ )
+if ( /^(to|cc):.*mutt!(-?[a-zA-Z0-9\-]*)!@(mutt\.org|lists\.berlios\.de)/ )
 {
     MATCH=tolower($MATCH2)
     `test -d $MAILDIR/Mutt$MATCH || mkdir -p $MAILDIR/Mutt$MATCH/{cur,tmp,new}`
@@ -140,6 +168,7 @@ if ( /^From:.*jacobsonlaura@gmail\.com/ \
     || /^From:.*ginaryan@aol\.com/ \
     || /^From:.*ajdj143@sbcglobal\.net/ \
     || /^From:.*maier@wi\.rr\.com/ \
+    || /^From:.*tanyamohn@aol\.com/ \
     || /^From:.*maierfest@aol\.com/ \
     || /^From:.*mmaier@stewart-peterson\.com/ )
 {
@@ -154,6 +183,7 @@ if ( /^From:.*kafka@riseup\.net/ \
     || /^From:.*hitbyguitarz@yahoo\.com/ \
     || /^From:.*kwrosenb@wisc\.edu/ \
     || /^From:.*mbrunlieb@hotmail\.com/ \
+    || /^From:.*mbrunlieb@gmail\.com/ \
     || /^From:.*rmainville@stewart-peterson\.com/ )
 {
     to $FRIEND

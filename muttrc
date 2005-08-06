@@ -6,7 +6,7 @@
 # Based on	: Phillip Hollenback's muttrc @ macdevcenter
 # Refers to	: $HOME/.muttalias
 #		  $HOME/.muttcolor
-# Updated	: 2005.07.28 13:48:20
+# Updated	: 2005.08.05 16:14:01
 ##################  END HEADERS
 
 ## MAILDIR SETTINGS ##
@@ -16,11 +16,16 @@ set copy=yes
 set record="+Sent"
 set postponed="+Drafts"
 
-mailboxes ! `\
+mailboxes !
+mailboxes `\
     find ~/Maildir -type d | \
     egrep -v 'cur$|tmp$|new$|Maildir$|Hack$|Work$|Personal$' | \
     sed 's/.*\/Maildir\///' | \
-    xargs -I % echo -n ' =%'`
+    xargs -i% echo -n ' =%'`
+
+subscribe debian-?.*@lists\.debian\.org
+subscribe ubuntu-?.*@lists\.ubuntu\.com
+subscribe mutt-?.*@mutt\.org
 
 set alias_file="~/.muttalias"
 bind index '.' buffy-list
@@ -52,7 +57,7 @@ source "~/.muttalias"
 set nomark_old
 set quit=yes
 set move=no
-set editor=vim
+set editor='vim'
 set ispell=
 
 ## COMPOSITION SETTINGS ##
@@ -60,8 +65,8 @@ set forward_format="Fwd: %s"		# traditional fwd: subj.
 set postpone=no
 set use_from=yes
 set from="Will Maier <willmaier@ml1.net>"
-set quote_empty=no
-set strip_was=yes
+set followup_to
+set honor_followup_to=yes
 
 
 ## INDEX SETTINGS ##
@@ -101,9 +106,9 @@ folder-hook . set duplicate_threads
 folder-hook . set narrow_tree
 
 
-folder-hook =Personal/Family set strict_threads
-folder-hook =Personal/Family set hide_top_missing
-folder-hook =Personal/Family set hide_missing
-folder-hook =Personal/Family unset sig_dashes
+folder-hook =Family set strict_threads
+folder-hook =Family set hide_top_missing
+folder-hook =Family set hide_missing
+folder-hook =Family unset sig_dashes
 
-folder-hook =Hack/.* push 'D~m>300!~F~R<enter>'
+folder-hook =\(Debian-.*|Ubuntu-.*|FreeBSD-.*|Vim.*|Madlug-.*|Maildrop-.*|Mutt-.*|Screen-.*|Techpartners-.*\) push 'D~m>300!~F~R<enter>'
