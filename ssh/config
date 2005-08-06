@@ -89,6 +89,11 @@ Host peon
     HostName	peon.cae.wisc.edu
     User	wcmaier
 
+Host port*
+# portkey - CAE jabber/smtp-auth server
+    Hostname	portkey.cae.wisc.edu
+    User	wcmaier
+
 Host jawb*
 # jawbreaker - CAE RT server
     HostName	jawbreaker.cae.wisc.edu

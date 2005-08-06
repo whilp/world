@@ -1,7 +1,7 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.07.25 12:29:14
+# Updated	: 2005.07.28 07:34:43
 # @DATE
 
 ARCH=`uname`
@@ -58,7 +58,7 @@ esac
 	export OSS PYTHONPATH LD_LIBRARY_PATH MANPATH TERM SENDMAIL
 	;;
 	vger* )
-	alias agent='eval `ssh-agent -s`; ssh-add;'
+	alias agent='keychain ~/.ssh/id_rsa; key'
 	;;
 	haya* )
 	alias ls='ls -F'
