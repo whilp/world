@@ -6,7 +6,7 @@
 # Started	: 2005.06.15
 # Info		: http://lists.sourceforge.net/lists/listinfo/courier-maildrop
 #		  http://sourceforge.net/mailarchive/forum.php?forum=courier-maildrop
-# Updated	: 2005.08.05 13:33:58
+# Updated	: 2005.08.09 12:26:49
 ##################  END HEADERS
 
 # --[ SETTINGS
@@ -94,6 +94,13 @@ if ( /^(to|cc):.*grml!(-?[a-zA-Z0-9\-]*)!@mur\.at/ )
     `test -d $MAILDIR/$LIST$MATCH || mkdir -p $MAILDIR/$LIST$MATCH/{cur,tmp,new}`
     to $MAILDIR/$LIST$MATCH
 }
+if ( /^(to|cc):.*zsh!(-?[a-zA-Z0-9\-]*)!@sunsite\.dk/ )
+{
+    MATCH=tolower($MATCH2)
+    LIST=Zsh
+    `test -d $MAILDIR/$LIST$MATCH || mkdir -p $MAILDIR/$LIST$MATCH/{cur,tmp,new}`
+    to $MAILDIR/$LIST$MATCH
+}
 if ( /^(to|cc):.*vim!(-?[a-zA-Z0-9\-]*)!@vim\.org/ )
 {
     if ( /^subject:.*(w32|windows?|OLE)/ )
@@ -118,7 +125,7 @@ if ( /^(to|cc):.*!(debian|utnubu)!(-?[a-zA-Z0-9\-]*)!@lists\.[a-z.]*debian\.org/
     `test -d $MAILDIR/Debian$MATCH || mkdir -p $MAILDIR/Debian$MATCH/{cur,tmp,new}`
     to $MAILDIR/Debian$MATCH/
 }
-if ( /^(to|cc):.*!linux-fai@uni-koeln\.de/ )
+if ( /^(to|cc):.*!linux-fai@\(rrz\.\)uni-koeln\.de/ )
 {
     to $MAILDIR/Debian-fai
 }

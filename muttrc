@@ -6,7 +6,7 @@
 # Based on	: Phillip Hollenback's muttrc @ macdevcenter
 # Refers to	: $HOME/.muttalias
 #		  $HOME/.muttcolor
-# Updated	: 2005.08.05 16:14:01
+# Updated	: 2005.08.06 11:50:21
 ##################  END HEADERS
 
 ## MAILDIR SETTINGS ##
@@ -16,6 +16,7 @@ set copy=yes
 set record="+Sent"
 set postponed="+Drafts"
 
+set spoolfile='/var/mail/will'
 mailboxes !
 mailboxes `\
     find ~/Maildir -type d | \
@@ -95,8 +96,9 @@ hdr_order From Date: From: To: Cc: Subject: X-mailer:
 send-hook . source ~/.muttrc
 
 send-hook '~t jacobsonlaura.*@gmail.com' 'set signature='~/.signatures/laura'
-send-hook '~t .*@\(engr\|cae\).wisc.edu' 'set signature='~/.signatures/cae'
 send-hook '~t jacobsonlaura.*@gmail.com' 'unset sig_dashes'
+send-hook '~t .*@\(engr\|cae\).wisc.edu' 'set signature='~/.signatures/cae'
+send-hook '~l'				 'set signature='~/.signatures/list'
 
 set signature='~/.signatures/default'
 set sig_dashes

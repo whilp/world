@@ -319,11 +319,36 @@ keyboard = (
 logs = { };
 ignores = ( { mask = "Tattoo"; level = "ALL"; } );
 windows = {
-  4 = {
+  5 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#bitlbee";
+        tag = "localhost";
+      }
+    );
+    sticky = "yes";
+  };
+  3 = {
     name = "status";
     level = "CRAP PUBLICS NOTICES SNOTES CTCPS ACTIONS JOINS PARTS QUITS KICKS MODES TOPICS WALLOPS INVITES NICKS DCC DCCMSGS CLIENTNOTICES CLIENTCRAP CLIENTERRORS HILIGHTS";
+    sticky = "yes";
+    parent = "5";
   };
   2 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#ubuntu-offtopic";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+    parent = "5";
+  };
+  1 = {
     items = (
       {
         type = "CHANNEL";
@@ -334,30 +359,11 @@ windows = {
     );
     sticky = "yes";
   };
-  5 = { name = "hilight"; sticky = "yes"; };
-  3 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#ubuntu-offtopic";
-        tag = "freenode";
-      }
-    );
-  };
-  1 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#magrathea";
-        tag = "freenode";
-      }
-    );
-  };
+  6 = { sticky = "yes"; parent = "1"; };
+  4 = { name = "hilight"; sticky = "yes"; };
 };
 mainwindows = {
-  4 = { first_line = "44"; lines = "11"; };
-  2 = { first_line = "7"; lines = "37"; };
-  5 = { first_line = "1"; lines = "6"; };
+  5 = { first_line = "51"; lines = "22"; };
+  4 = { first_line = "1"; lines = "6"; };
+  1 = { first_line = "7"; lines = "44"; };
 };

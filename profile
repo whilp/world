@@ -1,7 +1,7 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.08.09 12:42:08
+# Updated	: 2005.08.09 13:07:43
 
 ARCH=`uname`
 ISSUE=`awk '{print $1}' /etc/issue`
@@ -56,6 +56,9 @@ esac
 	alias klog='klog -setpag'
 	export OSS PYTHONPATH LD_LIBRARY_PATH MANPATH TERM SENDMAIL
 	;;
+	merkur* )
+	alias agent='keychain --timeout 120 ~/.ssh/id_rsa; key'
+	;;
 	vger* )
 	alias agent='keychain ~/.ssh/id_rsa; key'
 	;;
@@ -74,7 +77,6 @@ esac
     esac
 
     alias key='source $HOME/.keychain/$HOST-sh'
-    alias agent='keychain ~/.ssh/id_rsa'
 
     LANG='C'
     MAIL=''

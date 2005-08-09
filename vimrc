@@ -2,7 +2,7 @@
 " Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: 2005.08.08 17:20:27
+" Updated	: 2005.08.09 12:55:31
 """"""""""""""""""  END HEADERS
 
 " --[ SET OPTIONS
@@ -13,7 +13,7 @@
 
     set autoindent			" always set autoindenting on
     " set linebreak			" Don't wrap words by default
-    set textwidth=80			" Don't wrap lines by default 
+    set textwidth=78			" Don't wrap lines by default 
     set nobackup			" Don't keep a backup file
     set viminfo='200,f1			" read/write a .viminfo file, don't store more than
 					" 50 lines of registers
@@ -81,17 +81,11 @@ augroup date
     au BufWrite         *      silent! execute '1,10g/^.\? Updated.*:/s/:.*/: ' . strftime("%Y.%m.%d %H:%M:%S") . '/'
 augroup END
 
-if !exists("*s:VimUpdate")
-    function! s:VimUpdate()
-	let restorepos = line(".") . "normal!" . virtcol(".") . "|"
-	normal H
-	let restoretop = line(".") . "normal!zt"
-
-
-	execute restoretop
-	execute restorepos
-    endfunction
-endif
+" --[ LATEX-SPECIFIC
+augroup latex
+    au!
+    au BufReadPre,FileReadPre	    *.tex   set fo=tcqwal
+augroup END
 
 " --[ AUTO-ENCRYPT FILES
 	augroup gnupg
