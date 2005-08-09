@@ -16,11 +16,11 @@
     autodetach on
 
     defscrollback 2000
-    password ZD55sCrqpRZlQ
+#    password ZD55sCrqpRZlQ
     vbell on
     shelltitle $HOST
     allpartial off
-    activity "activity in %n (%t)~"
+    activity "^Gactivity in %n (%t)~"
     sorendition  BW			    # set colors; white on blue 
     chdir
     vbellwait .5

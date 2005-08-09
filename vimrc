@@ -2,7 +2,7 @@
 " Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: 2005.07.27 08:34:40
+" Updated	: 2005.08.08 17:20:27
 """"""""""""""""""  END HEADERS
 
 " --[ SET OPTIONS
@@ -26,6 +26,8 @@
     set smartindent
     set foldmethod=indent		" Fold based on line indent
     set nofoldenable
+    set wildmenu			" tab completed menus
+    set wildmode=full
     set whichwrap=h,l,~,[,]		" Allow characters to wrap lines
     
 

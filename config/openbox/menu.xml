@@ -7,7 +7,7 @@
 
 <menu id="root-menu" label="vger">
   <item label="eterm">
-    <action name="Execute"><execute>Eterm --trans --scrollbar false --buttonbar false -c yellow -f rgb:0/ffff/0 --cmod 40 -g 140x24 -v</execute></action>
+    <action name="Execute"><execute>aterm</execute></action>
   </item>
   <item label="firefox">
     <action name="Execute"><execute>/usr/bin/firefox</execute></action>

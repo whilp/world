@@ -1,9 +1,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.08.05 15:32:33
+# Updated	: 2005.08.09 12:42:08
 
 ARCH=`uname`
+ISSUE=`awk '{print $1}' /etc/issue`
 
 # --[ CVS
     # Personal CVS
@@ -53,7 +54,6 @@ esac
 	alias python="/afs/engr.wisc.edu/oss/bin/python"
 	alias dot='`/afs/engr.wisc.edu/common/scripts/dot`'
 	alias klog='klog -setpag'
-	alias mutt='TERM=screen mutt'
 	export OSS PYTHONPATH LD_LIBRARY_PATH MANPATH TERM SENDMAIL
 	;;
 	vger* )
@@ -64,7 +64,15 @@ esac
 	;;
     esac
 
-    PKG_PATH='ftp://openbsd.mirrors.tds.net/pub/OpenBSD/3.7/packages/i386/'
+# os-specific
+    case $ISSUE in
+	Ubuntu* )
+	alias upgrade='sudo apt-get update; sudo apt-get dist-upgrade'
+	;;
+	*BSD* )
+	PKG_PATH='ftp://openbsd.mirrors.tds.net/pub/OpenBSD/3.7/packages/i386/'
+    esac
+
     alias key='source $HOME/.keychain/$HOST-sh'
     alias agent='keychain ~/.ssh/id_rsa'
 
