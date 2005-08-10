@@ -2,7 +2,7 @@
 # Filename	: $HOME/.faq
 # Use		: collection of questions (and answers) I consistently forget
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.07.27 12:18:15
+# Updated	: 2005.08.09 15:49:34
 ##################  END HEADERS
 
 ================================================================================
@@ -130,3 +130,11 @@ gauge the efficiency of your filterset as well.
     
 ================================================================================
 
+================================================================================
+Q: How do I set up a (dynamic) SOCKS proxy using SSH?
+
+A: Not hard. Use the following:
+
+    <vger 17:57> ~ % ssh -D $PORT $USER@$HOST
+
+================================================================================
