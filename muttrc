@@ -6,6 +6,7 @@
 # Based on	: Phillip Hollenback's muttrc @ macdevcenter
 # Refers to	: $HOME/.muttalias
 #		  $HOME/.muttcolor
+# Referred to by: $HOME/.muttngrc
 # Updated	: 2005.08.06 11:50:21
 ##################  END HEADERS
 
