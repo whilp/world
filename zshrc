@@ -1,8 +1,8 @@
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.07.27 13:26:19
-# Updated	: 2005.07.27 13:26:19
+# Updated	: 2005.08.10 09:36:38
+# Updated	: 2005.08.10 09:36:38
 
 source ~/.profile
 
@@ -42,9 +42,7 @@ if (( EUID != 0 )); then
 #    precmd () { print -Pn "\e]0;$HOST - %~\a" }
 #    preexec () { print -Pn "\e]0;$HOST - $1\a" }
 else
-    local RED="%{.[1;31m%}"
-    local NO_COLOUR="%{.[0m%}"
-    PROMPT="$RED%n$NO_COLOUR@%m %40<...<%B%~%b%<< # "
+    PS1='<%B%m%b %T> %~ %# '
 fi
 
 # --[ IMPORTANT VARIABLES

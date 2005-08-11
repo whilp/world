@@ -1,8 +1,8 @@
-""""""""""""""""""  BEGIN HEADERS
+"#################  BEGIN HEADERS
 " Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: 2005.08.09 12:55:31
+" Updated	: 2005.07.16 14:42:15
 """"""""""""""""""  END HEADERS
 
 " --[ SET OPTIONS
