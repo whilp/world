@@ -1,8 +1,9 @@
+##################  BEGIN HEADERS
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.08.10 09:36:38
-# Updated	: 2005.08.10 09:36:38
+# Updated	: 2005.08.11 01:49:23
+##################  END HEADERS
 
 source ~/.profile
 
@@ -73,6 +74,7 @@ setopt complete_aliases
 setopt completeinword	    # internal word completion
 setopt correct		    # try to correct first word spelling
 setopt correct_all	    # correct all words
+setopt complete_in_word	    # complete even within words. nice.
 setopt extended_glob
 setopt globdots		    # include dotfiles in globs
 setopt histignoredups	    # don't duplicate entires in command history

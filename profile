@@ -1,7 +1,9 @@
+##################  BEGIN HEADERS
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.08.09 13:07:43
+# Updated	: 2005.08.11 01:49:48
+##################  END HEADERS
 
 ARCH=`uname`
 ISSUE=`awk '{print $1}' /etc/issue`
@@ -77,6 +79,9 @@ esac
     esac
 
     alias key='source $HOME/.keychain/$HOST-sh'
+    alias agent='keychain ~/.ssh/id_rsa'
+    alias pource='source $HOME/.profile'
+    alias zource='source $HOME/.zshrc'
 
     LANG='C'
     MAIL=''
