@@ -32,7 +32,7 @@
 					    # argument is an executable in the
 					    # user's PATH. If so, it runs it;
 					    # if no, it fails silently.
-    hardstatus alwayslastline "%{= .W}%-Lw%{= .G}%50>%n%f* %t%{-}%+Lw%< %-=%{= BW} %?[%{= BW}Batt: %1`%%%{-}].%?%?[%{= BW}%H%{-}].%?[%{= BW}%Y.%m.%d %c:%s%{-}]"
+    hardstatus alwayslastline "%{= .W}%{[%n: %t] %-Lw%{= .G}%50>%n%f* %t%{-}%+Lw%< %-=%{= BW} %?[%{= BW}Batt: %1`%%%{-}].%?%?[%{= BW}%H%{-}].%?[%{= BW}%Y.%m.%d %c:%s%{-}]"
 #    caption always 
 #    caption string "%{= .W}%-Lw%{= .G}%50>%n%f* %t%{-}%+Lw%< %-=%{= BW} %?[%{= BW}Batt: %1`%%%{-}].%?%?[%{= BW}%H%{-}].%?[%{= BW}%Y.%m.%d %c:%s%{-}]"
     
