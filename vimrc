@@ -1,9 +1,9 @@
 "#################  BEGIN HEADERS
-" Filename	: $HOME/.vimrc
-" Use		: configuration file for vim text editor
-" Author	: Will Maier <willmaier@ml1.net>
-" Updated	: 2005.07.16 14:42:15
-""""""""""""""""""  END HEADERS
+"# Filename	: $HOME/.vimrc
+"# Use		: configuration file for vim text editor
+"# Author	: Will Maier <willmaier@ml1.net>
+"# Updated	: 2005.07.27 08:34:40
+"#################  END HEADERS
 
 " --[ SET OPTIONS
     set nocompatible			" Use Vim defaults instead of 100% vi compatibility
