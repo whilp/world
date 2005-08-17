@@ -1,8 +1,8 @@
 "#################  BEGIN HEADERS
-"# Filename	: $HOME/.vimrc
-"# Use		: configuration file for vim text editor
-"# Author	: Will Maier <willmaier@ml1.net>
-"# Updated	: 2005.07.27 08:34:40
+" Filename	: $HOME/.vimrc
+" Use		: configuration file for vim text editor
+" Author	: Will Maier <willmaier@ml1.net>
+" Updated	: 2005.08.13 13:14:19
 "#################  END HEADERS
 
 " --[ SET OPTIONS
@@ -68,6 +68,7 @@
     noremap <Del> 2<C-E>
 "    noremap <PageDown>
 "    noremap <PageUp>
+    noremap Y y$
 
 " --[ AUTOCMD
     if has("autocmd")
@@ -79,6 +80,7 @@
 augroup date
     au!
     au BufWrite         *      silent! execute '1,10g/^.\? Updated.*:/s/:.*/: ' . strftime("%Y.%m.%d %H:%M:%S") . '/'
+    au BufWrite		*      silent! execute 'g;'
 augroup END
 
 " --[ LATEX-SPECIFIC
