@@ -16,9 +16,9 @@
     autodetach on
 
     defscrollback 2000
-#    password ZD55sCrqpRZlQ
+    password ZD55sCrqpRZlQ
     vbell on
-    shelltitle $HOST
+#    shelltitle $HOST
     allpartial off
     activity "^Gactivity in %n (%t)~"
     sorendition  BW			    # set colors; white on blue 
@@ -32,9 +32,10 @@
 					    # argument is an executable in the
 					    # user's PATH. If so, it runs it;
 					    # if no, it fails silently.
-    hardstatus alwayslastline "%{= .W}%{[%n: %t] %-Lw%{= .G}%50>%n%f* %t%{-}%+Lw%< %-=%{= BW} %?[%{= BW}Batt: %1`%%%{-}].%?%?[%{= BW}%H%{-}].%?[%{= BW}%Y.%m.%d %c:%s%{-}]"
+    hardstatus alwayslastline "%{= .W}[%n: %t] %-Lw%{= .G}%50>%n%f* %t%{-}%+Lw%< %-=%{= BW} %?[%{= BW}Batt: %1`%%%{-}].%?%?[%{= BW}%H%{-}].%?[%{= BW}%Y.%m.%d %c:%s%{-}]"
 #    caption always 
-#    caption string "%{= .W}%-Lw%{= .G}%50>%n%f* %t%{-}%+Lw%< %-=%{= BW} %?[%{= BW}Batt: %1`%%%{-}].%?%?[%{= BW}%H%{-}].%?[%{= BW}%Y.%m.%d %c:%s%{-}]"
+#    caption string "%{= .W}[%n: %t] %-Lw%{= .G}%50>%n%f* %t%{-}%+Lw%< %-=%{= BW} %?[%{= BW}Batt: %1`%%%{-}].%?%?[%{= BW}%H%{-}].%?[%{= BW}%Y.%m.%d %c:%s%{-}]"
+
     
 
 # A description of my hardstatus line
