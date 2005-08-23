@@ -1,12 +1,8 @@
-elinks/cookies
-elinks/globhist
-elinks/gotohist
-elinks/searchhist
+signatures/.signature-cae.swp
 ion3/default-session--0.*
 irssi/scripts/autorun
 ssh/id*
 gnome2
 *BAK
-*swp
+.*swp
 42.gpg
-
