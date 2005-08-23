@@ -78,6 +78,11 @@ Host mace
     User	wcmaier
     ForwardX11	yes
 
+Host benji
+# benji - CAE web/mail/jabber server
+    HostName	benji.cae.wisc.edu
+    User	wcmaier
+
 Host anon
 # anon - CAE workstation
     HostName	anon.cae.wisc.edu
