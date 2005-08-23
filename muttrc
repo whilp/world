@@ -7,7 +7,9 @@
 # Refers to	: $HOME/.muttalias
 #		  $HOME/.muttcolor
 # Referred to by: $HOME/.muttngrc
-# Updated	: 2005.08.11 01:49:27
+# Updated	: 2005.08.23 07:54:57 -0500
+# Copyright	: Copyright (c) 2005 Will Maier
+# License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
 
 ## MAILDIR SETTINGS ##
@@ -28,6 +30,8 @@ mailboxes `\
 subscribe debian-?.*@lists\.debian\.org
 subscribe ubuntu-?.*@lists\.ubuntu\.com
 subscribe mutt-?.*@mutt\.org
+subscribe vim-?.*@vim\.org
+subscribe techpartners@lists.services.wisc.edu
 
 set alias_file="~/.muttalias"
 bind index '.' buffy-list
@@ -47,7 +51,6 @@ macro index C "<change-folder>?<toggle-mailboxes>" "open a different folder"
 macro pager C "<change-folder>?<toggle-mailboxes>" "open a different folder"
 
 ## SMTP SETTINGS ##
-set sendmail="/usr/local/bin/nbsmtp -D"			# use ESMTP for egress mail
 
 ## PAGER SETTINGS ##
 set implicit_autoview
@@ -61,6 +64,8 @@ set quit=yes
 set move=no
 set editor='vim'
 set ispell=
+#set alternates "(wcmaier@cae.wisc.edu|wcmaier@gmail.com|willmaier@ml1.net)"
+set mail_check=60
 
 ## COMPOSITION SETTINGS ##
 set forward_format="Fwd: %s"		# traditional fwd: subj.
@@ -69,7 +74,6 @@ set use_from=yes
 set from="Will Maier <willmaier@ml1.net>"
 set followup_to
 set honor_followup_to=yes
-
 
 ## INDEX SETTINGS ##
 set arrow_cursor			# don't hilite the whole line
@@ -82,6 +86,8 @@ set index_format="%4C %Z %-20[%d.%m.%y at %H:%M] %-22.22F %s"
 ## EDIT SETTINGS ##
 set abort_unmodified=yes		# don't send if message unmodified
 set include=yes
+set reverse_name=yes
+set hdrs=yes
 
 ## HEADER SETTINGS ##
 ignore *				# default: ignore
@@ -90,16 +96,17 @@ unignore x-mailer: user-agent
 unhdr_order *
 hdr_order From Date: From: To: Cc: Subject: X-mailer:
 
-#folder-hook * push 'T~=\n;d\n'
-#folder-hook =Lists push 'T~R\ ~r\ >1m\n\;s=Lists.ARK\n'
-#folder-hook =techpartners push 'T~R\ ~r\ >1m\n\;d\n'
-
 send-hook . source ~/.muttrc
+send-hook . "set sendmail='/usr/local/bin/nbsmtp -D'"
 
-send-hook '~t jacobsonlaura.*@gmail.com' 'set signature='~/.signatures/laura'
-send-hook '~t jacobsonlaura.*@gmail.com' 'unset sig_dashes'
-send-hook '~t .*@\(engr\|cae\).wisc.edu' 'set signature='~/.signatures/cae'
-send-hook '~l'				 'set signature='~/.signatures/list'
+send-hook '~t jacobsonlaura.*@gmail.com' "set signature='~/.signatures/laura'"
+send-hook '~t jacobsonlaura.*@gmail.com' "unset sig_dashes"
+
+send-hook '~t .*@\(engr\|cae\).wisc.edu' "set signature='~/.signatures/cae'"
+send-hook '~t .*@\(engr\|cae\).wisc.edu' "set sendmail='/usr/local/bin/nbsmtp -D -c ~/.nbsmtprc-cae'"
+send-hook '~t .*@\(engr\|cae\).wisc.edu' my_hdr From: Will Maier <wcmaier@cae.wisc.edu>
+
+send-hook '~l'				 "set signature='~/.signatures/list'"
 
 set signature='~/.signatures/default'
 set sig_dashes

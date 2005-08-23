@@ -2,7 +2,7 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.08.11 01:49:48
+# Updated	: 2005.08.18 13:20:46
 ##################  END HEADERS
 
 ARCH=`uname`
@@ -71,7 +71,7 @@ esac
 
 # os-specific
     case $ISSUE in
-	Ubuntu* )
+	*Ubuntu* )
 	alias upgrade='sudo apt-get update; sudo apt-get dist-upgrade'
 	;;
 	*BSD* )

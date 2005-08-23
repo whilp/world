@@ -2,7 +2,7 @@
 " Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: 2005.08.13 13:14:19
+" Updated	: 2005.08.19 09:45:05
 "#################  END HEADERS
 
 " --[ SET OPTIONS
@@ -79,7 +79,7 @@
 
 augroup date
     au!
-    au BufWrite         *      silent! execute '1,10g/^.\? Updated.*:/s/:.*/: ' . strftime("%Y.%m.%d %H:%M:%S") . '/'
+    au BufWrite         *      silent! execute '1,10g/^.\? Updated.*:/s/:.*/: ' . strftime("%Y.%m.%d %H:%M:%S %z") . '/'
     au BufWrite		*      silent! execute 'g;'
 augroup END
 

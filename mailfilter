@@ -6,7 +6,9 @@
 # Started	: 2005.06.15
 # Info		: http://lists.sourceforge.net/lists/listinfo/courier-maildrop
 #		  http://sourceforge.net/mailarchive/forum.php?forum=courier-maildrop
-# Updated	: 2005.08.17 10:10:51
+# Updated	: 2005.08.22 14:49:47 -0500
+# Copyright	: Copyright (c) 2005 Will Maier
+# License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
 
 # --[ SETTINGS
@@ -46,13 +48,13 @@ if ( /^X-Spam-Flag:.*YES$/ )
 }
 
 # --[ CATCH VACATION NOTICES
-if ( /^Subject:.*(autoreply|out of office|ist au..?er haus|abwesenheitsnotiz|har semester|est absent)/ )
+if ( /^Subject:.*(autoreply|out of (the)?[\t ]*office|ist au..?er haus|abwesenheitsnotiz|har semester|est absent)/ )
 {
     to $SPAM
 }
 
 # --[ CATCH OTHER STUFF
-if ( /^Subject:.(unsubscribe|$)/ )
+if ( /^Subject:.*(unsubscribe|$)/ )
 {
     to $SPAM
 }
@@ -70,19 +72,19 @@ if ( /^(to|cc):.*screen!(-?[a-zA-Z0-9\-]*)!@gnu\.org/ )
 }
 if ( /^(to|cc):.*techpartners@lists.*wisc\.edu/ )
 {
-    if ( /^subject:.*(win ?(dows|XP|98|2000|2k|ME)|word|digital camera|.exe)/ )
+    if ( /^subject:.*(win ?(dows|doze|XP|98|2000|2k|ME)|word|digital camera|.exe)/ )
     {
 	to $SPAM
     }
     to $TECHPARTNERS
 }
-if ( /^(to|cc):.*rt!(-?[a-zA-Z0-9\-]*)!@lists\.bestpractical\.com/ )
+if ( /^(to|cc):.*rt!(-?[a-zA-Z0-9\-]*)!@lists\.(bestpractical|fsck)\.com/ )
 {
     MATCH=tolower($MATCH2)
     `test -d $MAILDIR/RT$MATCH || mkdir -p $MAILDIR/RT$MATCH/{cur,tmp,new}`
     to $MAILDIR/RT$MATCH
 }
-if ( /^(to|cc):.(freebsd)?!(-?[a-zA-Z0-9\-]*)!@freebsd\.org/ )
+if ( /^(to|cc):.*freebsd!(-?[a-zA-Z0-9\-]*)!@freebsd\.org/ )
 {
     MATCH=tolower($MATCH2)
     `test -d $MAILDIR/FreeBSD$MATCH || mkdir -p $MAILDIR/FreeBSD$MATCH/{cur,tmp,new}`
@@ -95,6 +97,13 @@ if ( /^(to|cc):.*grml!(-?[a-zA-Z0-9\-]*)!@mur\.at/ )
     `test -d $MAILDIR/$LIST$MATCH || mkdir -p $MAILDIR/$LIST$MATCH/{cur,tmp,new}`
     to $MAILDIR/$LIST$MATCH
 }
+if ( /^(to|cc):.*!jadmin!@jabber\.org/ )
+{
+    MATCH=tolower($MATCH2)
+    LIST=Jabber-
+    `test -d $MAILDIR/$LIST$MATCH || mkdir -p $MAILDIR/$LIST$MATCH/{cur,tmp,new}`
+    to $MAILDIR/$LIST$MATCH
+}
 if ( /^(to|cc):.*zsh!(-?[a-zA-Z0-9\-]*)!@sunsite\.dk/ )
 {
     MATCH=tolower($MATCH2)
@@ -104,13 +113,19 @@ if ( /^(to|cc):.*zsh!(-?[a-zA-Z0-9\-]*)!@sunsite\.dk/ )
 }
 if ( /^(to|cc):.*vim!(-?[a-zA-Z0-9\-]*)!@vim\.org/ )
 {
-    if ( /^subject:.*(w(in)?32|windows?|OLE)/ )
+    if ( /^subject:.*(w(in)?32|windows?|windoze|OLE)/ )
     {
 	to $SPAM
     }
     MATCH=tolower($MATCH2)
     `test -d $MAILDIR/Vim$MATCH || mkdir -p $MAILDIR/Vim$MATCH/{cur,tmp,new}`
     to $MAILDIR/Vim$MATCH
+}
+if ( /^(to|cc):.*!ports[a-zA-Z0-9\-]*!@openbsd\.org/ )
+{
+    MATCH=tolower($MATCH2)
+    `test -d $MAILDIR/OpenBSD-$MATCH || mkdir -p $MAILDIR/OpenBSD-$MATCH/{cur,tmp,new}`
+    to $MAILDIR/OpenBSD-$MATCH
 }
 if ( /^(to|cc):.*!(debian|utnubu)!(-?[a-zA-Z0-9\-]*)!@lists\.[a-z.]*debian\.org/ )
 {
@@ -130,19 +145,17 @@ if ( /^(to|cc):.*!linux-fai@(rrz\.)?uni-koeln\.de/ )
 {
     to $MAILDIR/Debian-fai
 }
-if ( /^(to|cc):.*(ubuntu)?!(-?[a-zA-Z0-9\-]*)!@lists\.ubuntu\.com/ )
+if ( /^(to|cc):.*ubuntu!(-?[a-zA-Z0-9\-]*)!@lists\.ubuntu\.com/ )
 {
-    if ( $MATCH == '' )
-    {
-	if ( /^(to|cc):.*!security-review!@lists\.ubuntu\.com/ )
-	{
-	    MATCH2="-$MATCH2"
-	    MATCH=tolower($MATCH2)
-	}
-    }
     MATCH=tolower($MATCH2)
     `test -d $MAILDIR/Ubuntu$MATCH || mkdir -p $MAILDIR/Ubuntu$MATCH/{cur,tmp,new}`
-    echo "Ubuntu$MATCH"
+    to $MAILDIR/Ubuntu$MATCH/
+}
+if ( /^(to|cc):.*!security-review!@lists\.ubuntu\.com/ )
+{
+    MATCH2="-$MATCH2"
+    MATCH=tolower($MATCH2)
+    `test -d $MAILDIR/Ubuntu$MATCH || mkdir -p $MAILDIR/Ubuntu$MATCH/{cur,tmp,new}`
     to $MAILDIR/Ubuntu$MATCH/
 }
 if ( /^(to|cc):.*mutt!(-?[a-zA-Z0-9\-]*)!@(mutt\.org|lists\.berlios\.de)/ )
@@ -163,6 +176,16 @@ if ( /^(to|cc):.*sjcbod@yahoogroups\.com/ )
 {
     to /dev/null
     log "Trashed a mail"
+}
+
+# --[ WORK
+if ( /^(From|to):.*(unix@)?(engr|cae).wisc\.edu/ )
+{
+    to $CAE
+}
+if ( /^(from|to):.*kenkinsley@hotmail\.com/ )
+{
+    to $CENTPROP
 }
 
 # check if from me
@@ -205,16 +228,6 @@ if ( /^From:.*kafka@riseup\.net/ \
     || /^From:.*rmainville@stewart-peterson\.com/ )
 {
     to $FRIEND
-}
-
-# --[ WORK
-if ( /^(From|to):.*(unix@)?(engr|cae).wisc\.edu/ )
-{
-    to $CAE
-}
-if ( /^(from|to):.*kenkinsley@hotmail\.com/ )
-{
-    to $CENTPROP
 }
 
 log "Dropping in DEFAULT"
