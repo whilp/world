@@ -2,7 +2,7 @@
 " Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: 2005.08.19 09:45:05
+" Updated	: 2005.09.27 12:00:21 -0500
 "#################  END HEADERS
 
 " --[ SET OPTIONS
@@ -45,6 +45,21 @@
     " Make p in Visual mode replace the selected text with the "" register.
     vnoremap p <Esc>:let current_reg = @"<CR>gvdi<C-R>=current_reg<CR><Esc>
 
+    " spellcheck
+    noremap <C-S> :so `vimspell.sh %`<CR><CR>
+    noremap <C-A> :syntax clear SpellErrors<CR>
+
+    " use for notetaking
+    map <silent> <C-E> :s/*/ / <CR>$
+    imap <silent> <C-E> <Esc>:s/*/ / <CR>A
+
+    " save shortcut
+    imap <C-W> <Esc>:w<CR>a
+
+    " Fix my shitty typing
+    abbr hte the
+    abbr teh the
+
     " Vim5 and later versions support syntax highlighting. Uncommenting the next
     " line enables syntax highlighting by default.
     syntax on
@@ -62,10 +77,10 @@
     set autowrite		" Automatically save before commands like :next and :make
 
 " --[ KEY BINDINGS
-    noremap <Space> <PageDown>		" Allow space to page down
+"    noremap <Space> <PageDown>		" Allow space to page down
     noremap <F1>			" Turn off the help dialog (I hope)
-    noremap <Ins> 2<C-Y>		" Scroll window without moving cursor
-    noremap <Del> 2<C-E>
+"    noremap <Ins> 2<C-Y>		" Scroll window without moving cursor
+"    noremap <Del> 2<C-E>
 "    noremap <PageDown>
 "    noremap <PageUp>
     noremap Y y$

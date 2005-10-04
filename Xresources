@@ -1,16 +1,16 @@
-!!!!!  BEGIN HEADERS
+!#################  BEGIN HEADERS
 ! Filename	: $HOME/.Xresources
 ! Use		: configures X fonts and colors
 ! Author	: Will Maier <willmaier@ml1.net>
-! Updated	: 2005.07.25 11:51:44
-!!!!!  END HEADERS
+! Updated	: 2005.10.04 10:04:24 -0500
+!#################  END HEADERS
 
 XTerm*background: black
 XTerm*foreground: white
 
 XTerm*scrollBar: false
 XTerm*loginShell: true
-XTerm*transparent: true
+!XTerm*transparent: true
 XTerm*tintingType: true
 XTerm*tinting: #a07040
 XTerm*saveLines: 2000
@@ -58,7 +58,9 @@ XTerm*colorBD: #5555FF
 !XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-m-0-iso8859-15
 !XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-m-0-iso8859-9
 !XTerm*font:-windows-proggycleansz-medium-r-normal--0-0-96-96-c-0-iso8859-1
-XTerm*font:-windows-proggycleansz-medium-r-normal--13-80-96-96-c-70-iso8859-1
+!XTerm*font:-windows-proggysquaresz-medium-r-normal--13-80-96-96-c-70-iso8859-1
+XTerm*font:-windows-proggysquaresz-medium-r-normal-*-11-80-96-96-c-70-iso8859-1
+!XTerm*font:-windows-proggycleansz-medium-r-normal--13-80-96-96-c-70-iso8859-1
 !XTerm*font:-windows-proggycleanszbp-medium-r-normal--0-0-96-96-c-0-iso8859-1
 !XTerm*font:-windows-proggycleanszbp-medium-r-normal--13-80-96-96-c-70-iso8859-1
 !XTerm*font:-windows-proggytinysz-medium-r-normal--0-0-96-96-c-0-iso8859-1

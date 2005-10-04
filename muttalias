@@ -1,24 +1,28 @@
-alias granny Peggy Broad <pbroad@iopener.net>
-alias greg Greg Keltner <kafka@riseup.net>
-alias ejburnett Ed Burnett <ejburnett@students.wisc.edu>
-alias mburke Mike Burke <mburke@pncg.com>
-alias hastings Hastings Cameron <hastings.cameron@gmail.com>
-alias self Will Maier <willmaier@ml1.net>
-alias steph Stephanie Schmid <butterflyschmid@yahoo.com>
-alias nell Nell Wegmann <wegmann@sbcglobal.net>
-alias mike Mike Brunlieb <mbrunlieb@gmail.com>
-alias kurt Kurt Ellison <aquaranger@hotmail.com>
-alias ken.rosenberg Ken Rosenberg <kwrosenb@wisc.edu>
-alias ken.kinsley Kenneth Kinsley <kenkinsley@hotmail.com>
+alias RT <unix-request@cae.wisc.edu>
+alias andy.maier Andy Maier <linuxmaier@fastmail.fm>
 alias david.jacobson David L Jacobson <ajdj143@sbcglobal.net>
-alias laura Laura Jacobson <jacobsonlaura@gmail.com>
-alias andy Andy Maier <linuxmaier@fastmail.fm>
-alias trev Trevor Gruehn <hitbyguitarz@yahoo.com>
-alias ma Sharon Maier <maier@wi.rr.com>
-alias pa Mickey Maier <mmaier@stewart-peterson.com>
-
-alias ryan.mainville Ryan Mainville <rmainville@stewart-peterson.com>
-alias jeff.ballard Jeff Ballard <ballard@engr.wisc.edu>
+alias ed.burnett Ed Burnett <ejburnett@students.wisc.edu>
 alias gasmith Gregory Andrew Smith <gasmith@cae.wisc.edu>
+alias granny Peggy Broad <pbroad@iopener.net>
+alias greg.keltner Greg Keltner <kafka@riseup.net>
+alias greg.smith Gregory Andrew Smith <gasmith@cae.wisc.edu>
+alias hastings.cameron Hastings Cameron <hastings.cameron@gmail.com>
+alias jeff.ballard Jeff Ballard <ballard@engr.wisc.edu>
+alias ken.kinsley Kenneth Kinsley <kenkinsley@hotmail.com>
+alias ken.rosenberg Ken Rosenberg <kwrosenb@wisc.edu>
+alias kurt.ellison Kurt Ellison <aquaranger@hotmail.com>
+alias laura Laura Jacobson <jacobsonlaura@gmail.com>
+alias ma Sharon Maier <sharonmaier@gmail.com>
+alias mark.kenoyer Jonathan Mark Kenoyer <jkenoyer@wisc.edu>
+alias mickey.maier Mickey Maier <mmaier@stewart-peterson.com>
+alias mike.brunlieb Mike Brunlieb <mbrunlieb@gmail.com>
+alias mike.burke Mike Burke <mburke@pncg.com>
+alias nell.wegmann Nell Wegmann <wegmann@sbcglobal.net>
+alias pa Mickey Maier <mmaier@stewart-peterson.com>
+alias ross.oldenburg Ross Oldenburg <rosso@cae.wisc.edu>
 alias rosso Ross Oldenburg <rosso@cae.wisc.edu>
-alias jkenoyer Jonathan Mark Kenoyer <jkenoyer@wisc.edu>
+alias ryan.mainville Ryan Mainville <rmainville@stewart-peterson.com>
+alias self Will Maier <willmaier@ml1.net>
+alias sharon.maier Sharon Maier <sharonmaier@gmail.com>
+alias steph.schmid Stephanie Schmid <butterflyschmid@yahoo.com>
+alias trev Trevor Gruehn <hitbyguitarz@yahoo.com>

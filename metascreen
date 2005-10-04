@@ -1,11 +1,12 @@
 source $HOME/.screenrc
 
 sessionname meta
-screen -t MAIL -M   1 
+screen -t COMMS -M  1 
 screen -t SSH	    2 screen -R -DD -e'^\\\' -S ssh
 screen -t WWW	    3 screen -R -DD -e'^\\\' -S www
 screen -t AUDIO	    4
-screen -t COMM -M   5 screen -R -DD -e'^\\\' -S cicq
-screen -t LOCAL	    6 screen -R -DD -e'^\\\' -S local
+screen -t LOCAL	    5 screen -R -DD -e'^\\\' -S local
+screen -t TODO	    6 $HOME/.todo.sh
 
-select 1
+
+select 6

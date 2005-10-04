@@ -1,21 +1,23 @@
 # ~/.screenrc
 # Will Maier <willmaier@ml1.net>
 # 2005.06.11
+# vim:set tw=0:
 # NOTE: The meta key can be changed on the command line when starting screen
 # using the -e flag. Eg: `screen -e^Ee`
 
 # --[ SET OPTIONS
 #    escape ^Aa
+#    screen -t ROOT	0 sudo -s
     startup_message off
     nethack on
 
     defflow on
-    setenv DISPLAY :0.0
+#    setenv DISPLAY :0.0
     setenv TERM screen
     deflogin on
     autodetach on
 
-    defscrollback 2000
+    defscrollback 5000
     password ZD55sCrqpRZlQ
     vbell on
 #    shelltitle $HOST
@@ -28,12 +30,11 @@
     zombie dl
 
 # --[ SET HARDSTATUS/CAPTION
-    backtick 1 60 1 screenexec batt	    # screenexec simply checks if its
+    backtick 1 60 1 screenexec bsdbatt	    # screenexec simply checks if its
 					    # argument is an executable in the
 					    # user's PATH. If so, it runs it;
 					    # if no, it fails silently.
     hardstatus alwayslastline "%{= .W}[%n: %t] %-Lw%{= .G}%50>%n%f* %t%{-}%+Lw%< %-=%{= BW} %?[%{= BW}Batt: %1`%%%{-}].%?%?[%{= BW}%H%{-}].%?[%{= BW}%Y.%m.%d %c:%s%{-}]"
-#    caption always 
 #    caption string "%{= .W}[%n: %t] %-Lw%{= .G}%50>%n%f* %t%{-}%+Lw%< %-=%{= BW} %?[%{= BW}Batt: %1`%%%{-}].%?%?[%{= BW}%H%{-}].%?[%{= BW}%Y.%m.%d %c:%s%{-}]"
 
     
@@ -58,13 +59,13 @@
 # --[ TERMINAL SETTINGS
 
 # Set the hardstatus prop on gui terms to set the titlebar/icon title
-    termcapinfo xterm*|rxvt*|kterm*|Eterm* hs:ts=\E]0;:fs=\007:ds=\E]0;\007
+#    termcapinfo xterm*|rxvt*|kterm*|Eterm* hs:ts=\E]0;:fs=\007:ds=\E]0;\007
 # set these terminals up to be 'optimal' instead of vt100
-    termcapinfo xterm*|linux*|rxvt*|Eterm* OP
+#    termcapinfo xterm*|linux*|rxvt*|Eterm* OP
 # Change the xterm initialization string from is2=\E[!p\E[?3;4l\E[4l\E>
 # (This fixes the "Aborted because of window size change" konsole symptoms found
 #  in bug #134198)
-    termcapinfo xterm 'is=\E[r\E[m\E[2J\E[H\E[?7h\E[?1;4;6l'
+#    termcapinfo xterm 'is=\E[r\E[m\E[2J\E[H\E[?7h\E[?1;4;6l'
 
 
 # --[ KEY BINDINGS

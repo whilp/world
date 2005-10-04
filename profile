@@ -2,15 +2,15 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.08.18 13:20:46
+# Updated	: 2005.10.04 10:07:48 -0500
 ##################  END HEADERS
 
 ARCH=`uname`
-ISSUE=`awk '{print $1}' /etc/issue`
+#ISSUE=`awk '{print $1}' /etc/issue || echo "unknown"`
 
 # --[ CVS
     # Personal CVS
-    CVSROOT=":ext:will@phnx.ath.cx:/cvs"
+    CVSROOT=":ext:will@merk:/cvs"
     # CAE CVS
     # CVSROOT=/afs/engr.wisc.edu/common/repository
 export CVSROOT
@@ -36,6 +36,11 @@ case $ARCH in
     alias zsh='/afs/engr.wisc.edu/oss/bin/zsh'
     alias tar='gtar'
     export SHELL='/afs/engr.wisc.edu/oss/bin/zsh'
+    ;;
+    *BSD )
+    alias ls='gnuls --color=auto -F'
+    alias tar='gtar'
+    stty erase 
     ;;
     * )
     alias ls='ls --color=auto -F'
@@ -70,22 +75,27 @@ esac
     esac
 
 # os-specific
-    case $ISSUE in
-	*Ubuntu* )
-	alias upgrade='sudo apt-get update; sudo apt-get dist-upgrade'
-	;;
-	*BSD* )
-	PKG_PATH='ftp://openbsd.mirrors.tds.net/pub/OpenBSD/3.7/packages/i386/'
-    esac
+#    case $ISSUE in
+#	*Ubuntu* )
+#	alias upgrade='sudo apt-get update; sudo apt-get dist-upgrade'
+#	;;
+#	*BSD* )
+#	PKG_PATH='ftp://openbsd.mirrors.tds.net/pub/OpenBSD/3.7/packages/i386/'
+#    esac
 
     alias key='source $HOME/.keychain/$HOST-sh'
     alias agent='keychain ~/.ssh/id_rsa'
     alias pource='source $HOME/.profile'
     alias zource='source $HOME/.zshrc'
+    alias todo='grep -v DONE $HOME/TODO'
+    alias etodo='vim $HOME/TODO'
 
+    TODO=$HOME/TODO
     LANG='C'
     MAIL=''
     SHELL=`which zsh`
+    CLUSTER=$HOME/.dsh/config
+    RCMD_CMD=ssh
     EDITOR=`which vim`
     CVSEDITOR=$EDITOR
-export LANG PATH SHELL EDITOR CVSEDITOR MAIL PKG_PATH
+export LANG PATH SHELL EDITOR CVSEDITOR MAIL PKG_PATH TODO CLUSTER RCMD_CMD

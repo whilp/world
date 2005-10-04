@@ -7,7 +7,7 @@
 # Refers to	: $HOME/.muttalias
 #		  $HOME/.muttcolor
 # Referred to by: $HOME/.muttngrc
-# Updated	: 2005.08.23 07:54:57 -0500
+# Updated	: 2005.08.24 08:53:32 -0500
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -18,6 +18,7 @@ set folder=~/Maildir
 set copy=yes
 set record="+Sent"
 set postponed="+Drafts"
+set recall=no
 
 set spoolfile='/var/mail/will'
 mailboxes !
@@ -37,6 +38,7 @@ set alias_file="~/.muttalias"
 bind index '.' buffy-list
 bind generic 'G' noop
 bind generic '\CG' noop
+bind pager 'x' noop
 bind index zt current-top
 bind index zz current-middle
 bind index zb current-bottom
@@ -81,6 +83,7 @@ set beep
 set beep_new
 set wrap_search
 set index_format="%4C %Z %-20[%d.%m.%y at %H:%M] %-22.22F %s"
+set resolve=yes
 
 
 ## EDIT SETTINGS ##
@@ -88,11 +91,13 @@ set abort_unmodified=yes		# don't send if message unmodified
 set include=yes
 set reverse_name=yes
 set hdrs=yes
+set edit_headers=yes
 
 ## HEADER SETTINGS ##
 ignore *				# default: ignore
 unignore from: date subject to cc reply-to:
 unignore x-mailer: user-agent
+unignore RT-Ticket: RT-Originator
 unhdr_order *
 hdr_order From Date: From: To: Cc: Subject: X-mailer:
 
@@ -105,6 +110,7 @@ send-hook '~t jacobsonlaura.*@gmail.com' "unset sig_dashes"
 send-hook '~t .*@\(engr\|cae\).wisc.edu' "set signature='~/.signatures/cae'"
 send-hook '~t .*@\(engr\|cae\).wisc.edu' "set sendmail='/usr/local/bin/nbsmtp -D -c ~/.nbsmtprc-cae'"
 send-hook '~t .*@\(engr\|cae\).wisc.edu' my_hdr From: Will Maier <wcmaier@cae.wisc.edu>
+send-hook '~t .*-request@cae\.wisc\.edu' "set signature='~/.signatures/cae-rt'"
 
 send-hook '~l'				 "set signature='~/.signatures/list'"
 

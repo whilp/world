@@ -1,2 +1,3 @@
-Esetroot -scale ~/.bkg
-exec openbox
+#Esetroot -scale ~/.bkg
+#exec openbox
+exec ion3
