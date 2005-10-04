@@ -2,7 +2,7 @@
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.10.04 13:41:52 -0500
+# Updated	: 2005.10.04 13:58:22 -0500
 ##################  END HEADERS
 
 source ~/.profile
@@ -61,6 +61,9 @@ if [[ "$SCREEN" == "$HOSTNAME" ]]; then
 fi
 if [[ -z "$WINDOW" ]]; then
     CURWINDOW=$(tty | sed 's/.*\/\(.*\)\(.$\)/\1[\2]/')
+    if [[ "$(echo ${CURWINDOW} | wc -c)" -le "5" ]]; then
+	CURWINDOW=$(tty | sed 's/\/dev\/\(.*\)\/\(.$\)/\1[\2]/')
+    fi
 else
     CURWINDOW=[${WINDOW}]
 fi
