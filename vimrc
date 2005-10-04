@@ -2,7 +2,7 @@
 " Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: 2005.10.04 11:41:40 -0500
+" Updated	: 2005.10.04 12:50:14 -0500
 "#################  END HEADERS
 
 " --[ SET OPTIONS
@@ -84,6 +84,7 @@
 "    noremap <PageDown>
 "    noremap <PageUp>
     noremap Y y$
+    noremap <silent> <C-R> :s/^\([^ ]\+ \)\(#\d\{6\}\):\(.*\)/\1Re: [CAE \2]\3/<CR>
 
 " --[ AUTOCMD
     if has("autocmd")

@@ -2,7 +2,7 @@
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.10.04 12:12:31 -0500
+# Updated	: 2005.10.04 12:55:39 -0500
 ##################  END HEADERS
 
 source ~/.profile

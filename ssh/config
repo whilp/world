@@ -2,6 +2,11 @@
 # Will Maier <willmaier@ml1.net>
 # 2005.06.11
 
+Host merk
+    Hostname	merk.ath.cx
+    Port	222
+    User	will
+
 Host mess*
 # messenger - AMD64 desktop at home
     HostName	172.16.1.115

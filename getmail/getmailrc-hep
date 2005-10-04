@@ -3,9 +3,9 @@
 # Will Maier <willmaier@ml1.net>
 
 [retriever]
-type = SimplePOP3SSLRetriever
-server = cae.wisc.edu
-port = 995
+type = SimpleIMAPSSLRetriever
+server = hep.wisc.edu
+port = 993
 username = wcmaier
 password = VojNirzyev2
 
@@ -14,7 +14,7 @@ type = MDA_external
 path = /usr/bin/maildrop
 
 [options]
-verbose = 1
+verbose = 0
 # 1; print messages
 read_all = 1
 # 1; get all available messages (if 0, only unseen messages)

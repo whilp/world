@@ -68,6 +68,17 @@ mono  body bold               "(^|[[:space:]])/[^[:space:]]+/([[:space:]]|$)"
 
 color signature brightdefault default
 
+
+# Highlight Request Tracker and req messages
+color index brightyellow default "(CAE|req) #\[[0-9]+\]"
+#color index yellow default '(~n 3-3)'
+#color index red default '(~n 4-4)'
+#color index red default '(~n 5-5)'
+#color index blue default '(~n 6-6)'
+#color index brightyellow default '(~n 7-7)'
+#color index white default '(~n 8-9)'
+#color index brightred default '(~n 10-99)'
+
 ## Some colors to mark status
 color index yellow		default	~F # Flagged
 color index green		default	~N # New
@@ -75,17 +86,6 @@ mono  index bold                        ~N # New
 color index brightyellow	default	~O # Unread
 color index magenta		default	~T # Tagged
 mono  index reverse                     ~T # Tagged
-
-## This gives color to scored messages.
-color index blue default '(~n 1-1)'
-color index cyan default '(~n 2-2)'
-color index yellow default '(~n 3-3)'
-color index red default '(~n 4-4)'
-#color index red default '(~n 5-5)'
-#color index blue default '(~n 6-6)'
-#color index brightyellow default '(~n 7-7)'
-#color index white default '(~n 8-9)'
-#color index brightred default '(~n 10-99)'
 
 #lets paint those MAILER-MESSAGES a bit.
 color index yellow default ~fMAILER-DAEMON@*

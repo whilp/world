@@ -1,28 +1,32 @@
-alias RT <unix-request@cae.wisc.edu>
-alias andy.maier Andy Maier <linuxmaier@fastmail.fm>
-alias david.jacobson David L Jacobson <ajdj143@sbcglobal.net>
-alias ed.burnett Ed Burnett <ejburnett@students.wisc.edu>
+alias RQ HEP Request <req@ginseng.hep.wisc.edu>
+alias RT Unix Request Tracker <unix-request@cae.wisc.edu>
+alias ballard.jeff Jeff Ballard <ballard@engr.wisc.edu>
+alias brunlieb.mike Mike Brunlieb <mbrunlieb@gmail.com>
+alias burke.mike Mike Burke <mburke@pncg.com>
+alias burnett.ed Ed Burnett <ejburnett@students.wisc.edu>
+alias cameron.hastings Hastings Cameron <hastings.cameron@gmail.com>
+alias dasu.sridhara Sridhara Dasu <dasu@hep.wisc.edu>
+alias ellison.kurt Kurt Ellison <aquaranger@hotmail.com>
 alias gasmith Gregory Andrew Smith <gasmith@cae.wisc.edu>
 alias granny Peggy Broad <pbroad@iopener.net>
-alias greg.keltner Greg Keltner <kafka@riseup.net>
-alias greg.smith Gregory Andrew Smith <gasmith@cae.wisc.edu>
-alias hastings.cameron Hastings Cameron <hastings.cameron@gmail.com>
-alias jeff.ballard Jeff Ballard <ballard@engr.wisc.edu>
-alias ken.kinsley Kenneth Kinsley <kenkinsley@hotmail.com>
-alias ken.rosenberg Ken Rosenberg <kwrosenb@wisc.edu>
-alias kurt.ellison Kurt Ellison <aquaranger@hotmail.com>
+alias gruehn.trev Trevor Gruehn <hitbyguitarz@yahoo.com>
+alias jacobson.david David L Jacobson <ajdj143@sbcglobal.net>
+alias keltner.greg Greg Keltner <kafka@riseup.net>
+alias kenoyer.mark Jonathan Mark Kenoyer <jkenoyer@wisc.edu>
+alias kinsley.ken Kenneth Kinsley <kenkinsley@hotmail.com>
 alias laura Laura Jacobson <jacobsonlaura@gmail.com>
+alias lefkow.aimee Aimee Lefkow <lefkow@hep.wisc.edu>
 alias ma Sharon Maier <sharonmaier@gmail.com>
-alias mark.kenoyer Jonathan Mark Kenoyer <jkenoyer@wisc.edu>
-alias mickey.maier Mickey Maier <mmaier@stewart-peterson.com>
-alias mike.brunlieb Mike Brunlieb <mbrunlieb@gmail.com>
-alias mike.burke Mike Burke <mburke@pncg.com>
-alias nell.wegmann Nell Wegmann <wegmann@sbcglobal.net>
+alias maier.andy Andy Maier <linuxmaier@fastmail.fm>
+alias maier.mickey Mickey Maier <mmaier@stewart-peterson.com>
+alias maier.sharon Sharon Maier <sharonmaier@gmail.com>
+alias mainville.ryan Ryan Mainville <rmainville@stewart-peterson.com>
+alias oldenburg.ross Ross Oldenburg <rosso@cae.wisc.edu>
 alias pa Mickey Maier <mmaier@stewart-peterson.com>
-alias ross.oldenburg Ross Oldenburg <rosso@cae.wisc.edu>
+alias rader.steve Steve Rader <rader@ginseng.hep.wisc.edu>
+alias rosenberg.ken Ken Rosenberg <kwrosenb@wisc.edu>
 alias rosso Ross Oldenburg <rosso@cae.wisc.edu>
-alias ryan.mainville Ryan Mainville <rmainville@stewart-peterson.com>
+alias schmid.steph Stephanie Schmid <butterflyschmid@yahoo.com>
 alias self Will Maier <willmaier@ml1.net>
-alias sharon.maier Sharon Maier <sharonmaier@gmail.com>
-alias steph.schmid Stephanie Schmid <butterflyschmid@yahoo.com>
-alias trev Trevor Gruehn <hitbyguitarz@yahoo.com>
+alias smith.greg Gregory Andrew Smith <gasmith@cae.wisc.edu>
+alias wegmann.nell Nell Wegmann <wegmann@sbcglobal.net>

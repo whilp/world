@@ -7,7 +7,7 @@
 # Refers to	: $HOME/.muttalias
 #		  $HOME/.muttcolor
 # Referred to by: $HOME/.muttngrc
-# Updated	: 2005.08.24 08:53:32 -0500
+# Updated	: 2005.10.04 12:43:42 -0500
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -29,15 +29,20 @@ mailboxes `\
     xargs -i% echo -n ' =%'`
 
 subscribe debian-?.*@lists\.debian\.org
+subscribe madlug@madisonlinux\.org
 subscribe ubuntu-?.*@lists\.ubuntu\.com
+subscribe freebsd-?.*@freebsd\.org
 subscribe mutt-?.*@mutt\.org
 subscribe vim-?.*@vim\.org
-subscribe techpartners@lists.services.wisc.edu
+subscribe zsh-?.*@sunsite\.dk
+subscribe techpartners@[a-zA-Z0-9\.]*wisc.edu
 
 set alias_file="~/.muttalias"
 bind index '.' buffy-list
 bind generic 'G' noop
 bind generic '\CG' noop
+bind generic 'x' noop
+bind index 'x' noop
 bind pager 'x' noop
 bind index zt current-top
 bind index zz current-middle
@@ -47,26 +52,30 @@ macro index G "<shell-escape>~/bin/getmail<enter>" "Getmail"
 macro pager G "<shell-escape>~/bin/getmail<enter>" "Getmail"
 macro index \CG "<shell-escape>~/bin/getmail -v<enter>" "Getmail, verbose"
 macro pager \CG "<shell-escape>~/bin/getmail -v<enter>" "Getmail, verbose"
-macro index S "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
-macro pager S "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
+macro index <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
+macro pager <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
 macro index C "<change-folder>?<toggle-mailboxes>" "open a different folder"
 macro pager C "<change-folder>?<toggle-mailboxes>" "open a different folder"
+#macro index S "<toggle-new><previous-entry><save-message>=Spam<enter><enter>" "Spam a message"
+#macro pager S "<toggle-new><previous-entry><save-message>=Spam<enter><enter>" "Spam a message"
+macro index S "<clear-flag>N<previous-entry><save-message>=Spam<enter><enter>" "Spam a message"
+macro pager S "<clear-flag>N<previous-entry><save-message>=Spam<enter><enter>" "Spam a message"
 
 ## SMTP SETTINGS ##
 
 ## PAGER SETTINGS ##
-set implicit_autoview
+#set implicit_autoview
 set pager_stop				# don't jump to next message at end
 set sort=threads
 set sort_aux=reverse-last-date
 source "~/.muttcolor"			# get color info
 source "~/.muttalias"
 set nomark_old
-set quit=yes
+set quit=ask-no
 set move=no
-set editor='vim'
+set editor='vim "+set tw=68" "+/^$" -X'
 set ispell=
-#set alternates "(wcmaier@cae.wisc.edu|wcmaier@gmail.com|willmaier@ml1.net)"
+alternates "(wcmaier@wisc.edu|wcmaier@cae.wisc.edu|wcmaier@gmail.com|willmaier@ml1.net)"
 set mail_check=60
 
 ## COMPOSITION SETTINGS ##
@@ -85,6 +94,16 @@ set wrap_search
 set index_format="%4C %Z %-20[%d.%m.%y at %H:%M] %-22.22F %s"
 set resolve=yes
 
+## GNUPG ##
+#set pgp_default_version=gpg
+#set pgp_key_version=default
+#set pgp_receive_version=default
+#set pgp_send_version=default
+#set pgp_sign_micalg=pgp-sha1
+#set pgp_gpg=/usr/bin/gpg
+#set pgp_gpg_pubring=~/.gnupg/pubring.gpg
+#set pgp_gpg_secring=~/.gnupg/secring.gpg
+
 
 ## EDIT SETTINGS ##
 set abort_unmodified=yes		# don't send if message unmodified
@@ -101,18 +120,26 @@ unignore RT-Ticket: RT-Originator
 unhdr_order *
 hdr_order From Date: From: To: Cc: Subject: X-mailer:
 
-send-hook . source ~/.muttrc
-send-hook . "set sendmail='/usr/local/bin/nbsmtp -D'"
+send-hook .					source ~/.muttrc
+send-hook .					"my_hdr From: Will Maier <willmaier@ml1.net>"
+send-hook .					"set sendmail='/usr/local/bin/nbsmtp -D'"
 
-send-hook '~t jacobsonlaura.*@gmail.com' "set signature='~/.signatures/laura'"
-send-hook '~t jacobsonlaura.*@gmail.com' "unset sig_dashes"
+send-hook '~t \(jacobsonlaura.*@gmail\.com\|ljacobson@biochem\.wisc\.edu\)' "set signature='~/.signatures/laura'"
+send-hook '~t \(jacobsonlaura.*@gmail\.com\|ljacobson@biochem\.wisc\.edu\)' "unset sig_dashes"
 
-send-hook '~t .*@\(engr\|cae\).wisc.edu' "set signature='~/.signatures/cae'"
-send-hook '~t .*@\(engr\|cae\).wisc.edu' "set sendmail='/usr/local/bin/nbsmtp -D -c ~/.nbsmtprc-cae'"
-send-hook '~t .*@\(engr\|cae\).wisc.edu' my_hdr From: Will Maier <wcmaier@cae.wisc.edu>
-send-hook '~t .*-request@cae\.wisc\.edu' "set signature='~/.signatures/cae-rt'"
+send-hook '~t .*@\(doit\|engr\|cae\)\.wisc\.edu'	"set signature='~/.signatures/cae'"
+send-hook '~t .*@\(doit\|engr\|cae\)\.wisc\.edu'	"set sendmail='/usr/local/bin/nbsmtp -D -c ~/.nbsmtprc-cae'"
+send-hook '~t .*@\(doit\|engr\|cae\)\.wisc\.edu'	"my_hdr From: Will Maier <wcmaier@cae.wisc.edu>"
+send-hook '~t .*-request@cae\.wisc\.edu'	"set signature='~/.signatures/cae-rt'"
+send-hook '~t .*techpartners'			"set signature='~/.signatures/cae-rt'"
 
-send-hook '~l'				 "set signature='~/.signatures/list'"
+send-hook '~t .*@[a-zA-Z0-9\.\-]*hep\.wisc\.edu'	"set signature='~/.signatures/hep'"
+send-hook '~t .*@[a-zA-Z0-9\.\-]*hep\.wisc\.edu'	"set sendmail='/usr/local/bin/nbsmtp -D -c ~/.nbsmtprc-hep'"
+send-hook '~t .*@[a-zA-Z0-9\.\-]*hep\.wisc\.edu'	"my_hdr From: Will Maier <wcmaier@hep.wisc.edu>"
+
+send-hook '~L .*@\(lists\.\)?debian\.org'	"set signature='~/.signatures/list-debian'"
+send-hook '~L .*@[a-z0-9\.\-]*bsd[a-z0-9\.\-]*'	"set signature='~/.signatures/list-bsd'"
+send-hook '~L .*@mutt\.org'			"set signature='~/.signatures/list-bsd'"
 
 set signature='~/.signatures/default'
 set sig_dashes
@@ -126,5 +153,8 @@ folder-hook =Family set strict_threads
 folder-hook =Family set hide_top_missing
 folder-hook =Family set hide_missing
 folder-hook =Family unset sig_dashes
+
+#folder-hook =CAE push "T~N~f'via RT'<enter>;F"
+#folder-hook =CAE push "~T<enter>"
 
 folder-hook =\(Debian-.*|Ubuntu-.*|FreeBSD-.*|Vim.*|Madlug-.*|Maildrop-.*|Mutt-.*|Screen-.*|Techpartners-.*\) push 'D~m>300!~F~R<enter>'

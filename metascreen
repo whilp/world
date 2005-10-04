@@ -1,4 +1,5 @@
-source $HOME/.screenrc
+source $HOME/.screenrc		# read the real screenrc; that has all the
+				# config stuff, etc
 
 sessionname meta
 screen -t COMMS -M  1 

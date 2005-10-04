@@ -2,7 +2,7 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.10.04 10:07:48 -0500
+# Updated	: 2005.10.04 12:54:41 -0500
 ##################  END HEADERS
 
 ARCH=`uname`
@@ -65,6 +65,9 @@ esac
 	;;
 	merkur* )
 	alias agent='keychain --timeout 120 ~/.ssh/id_rsa; key'
+	alias mym='screen -x mail'
+	alias myc='screen -x comms'
+	source $HOME/.functions
 	;;
 	vger* )
 	alias agent='keychain ~/.ssh/id_rsa; key'
