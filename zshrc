@@ -2,7 +2,7 @@
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.08.12 07:49:37
+# Updated	: 2005.10.04 10:27:49 -0500
 ##################  END HEADERS
 
 source ~/.profile
@@ -20,6 +20,10 @@ zmodload -i zsh/complist	    # for completion
 alias -s tex=$EDITOR		    # eg 'unixbook.tex<CR>' opens unixbook in
 				    # vim
 alias -s html='elinks'		    # html -> www browser
+alias mv='nocorrect mv'		    # no spelling correction on mv
+alias cp='nocorrect cp'		    # no spelling correction on cp
+alias mkdir='nocorrect mkdir'	    # no spelling correction on mkdir
+alias grep=egrep
 
 # --[ TERM MAGIC
 case $TERM in
@@ -39,12 +43,24 @@ stty erase '^?'
 if (( EUID != 0 )); then
     # If not root...
     autoload -U promptinit && promptinit
-    PS1='<%B%m%b %T> %~ %# '
+#    PS1='<%B%m%b %T> %~ %# '
+    PS1="%B%~%b %#%b "
 #    precmd () { print -Pn "\e]0;$HOST - %~\a" }
-#    preexec () { print -Pn "\e]0;$HOST - $1\a" }
+#    preexec () { echo "OK" }
 else
     PS1='<%B%m%b %T> %~ %# '
+    PS1="%B%~%b %#%b "
 fi
+# works on FBSD
+HOSTNAME=$(hostname -s)
+if [[ "$HOSTNAME" == "localhost" ]]; then
+    HOSTNAME=$(hostname)
+fi
+SCREEN="$(echo $STY | sed 's/.*\.\(.*\)/\1/')"
+if [[ "$SCREEN" == "$HOSTNAME" ]]; then
+    SCREEN="screen"
+fi
+RPS1="%B ${WINDOW:+${SCREEN}[$WINDOW] on} ${HOSTNAME} %(0?,,E[%?])%b"
 
 # --[ IMPORTANT VARIABLES
 export ZSHDIR=$HOME/.zsh
@@ -90,4 +106,3 @@ setopt path_dirs
 setopt rcquotes		    # elegant quoting of quotes ('"' -> ')
 
 # --[ ENVIRONMENT
-

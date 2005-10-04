@@ -4,7 +4,7 @@ import shutil, os, sys
 
 cwd = os.getcwd()
 home = os.getenv('HOME')
-skipList = ['updatedots.py', 'CVS', '42.gpg', 'notes', 'scripts', 'gnome2']
+skipList = ['updatedots.py', 'CVS', '42.gpg', 'notes', 'scripts', 'gnome2', 'ssh']
 execList = ['updatedots.py']
 
 dirContents = os.listdir(cwd)
