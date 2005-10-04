@@ -2,7 +2,7 @@
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.10.04 12:55:39 -0500
+# Updated	: 2005.10.04 13:06:03 -0500
 ##################  END HEADERS
 
 source ~/.profile
@@ -60,11 +60,11 @@ if [[ "$SCREEN" == "$HOSTNAME" ]]; then
     SCREEN="screen"
 fi
 if [[ -z "$WINDOW" ]]; then
-    WINDOW=$(tty | sed 's/.*\(tty.*\)/\1/')
+    WINDOW=$(tty | sed 's/.*\/\(.*\)\(.$\)/\1[\2]/')
 else
     WINDOW=[${WINDOW}]
 fi
-RPS1="%B ${WINDOW:+${SCREEN}$WINDOW on} ${HOSTNAME} %(0?,,E[%?])%b"
+RPS1="%B ${WINDOW:+${SCREEN}$WINDOW @} ${HOSTNAME} %(0?,,E[%?])%b"
 
 # --[ IMPORTANT VARIABLES
 export ZSHDIR=$HOME/.zsh
