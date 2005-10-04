@@ -2,7 +2,7 @@
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.10.04 10:27:49 -0500
+# Updated	: 2005.10.04 12:12:31 -0500
 ##################  END HEADERS
 
 source ~/.profile
@@ -51,7 +51,6 @@ else
     PS1='<%B%m%b %T> %~ %# '
     PS1="%B%~%b %#%b "
 fi
-# works on FBSD
 HOSTNAME=$(hostname -s)
 if [[ "$HOSTNAME" == "localhost" ]]; then
     HOSTNAME=$(hostname)
@@ -60,7 +59,12 @@ SCREEN="$(echo $STY | sed 's/.*\.\(.*\)/\1/')"
 if [[ "$SCREEN" == "$HOSTNAME" ]]; then
     SCREEN="screen"
 fi
-RPS1="%B ${WINDOW:+${SCREEN}[$WINDOW] on} ${HOSTNAME} %(0?,,E[%?])%b"
+if [[ -z "$WINDOW" ]]; then
+    WINDOW=$(tty | sed 's/.*\(tty.*\)/\1/')
+else
+    WINDOW=[${WINDOW}]
+fi
+RPS1="%B ${WINDOW:+${SCREEN}$WINDOW on} ${HOSTNAME} %(0?,,E[%?])%b"
 
 # --[ IMPORTANT VARIABLES
 export ZSHDIR=$HOME/.zsh
