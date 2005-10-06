@@ -1,9 +1,10 @@
 "#################  BEGIN HEADERS
 " Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
+" Version	: $Revision: 1.24 $ by $Author: will $
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: 2005.10.06 07:55:33 -0500
-" CVS		: $Id: vimrc,v 1.22 2005/10/06 12:55:49 will Exp $
+" Updated	: 2005.10.06 08:04:00 -0500
+" CVS		: $Id: vimrc,v 1.24 2005/10/06 13:04:07 will Exp $
 "#################  END HEADERS
 
 " --[ SET OPTIONS
@@ -96,11 +97,11 @@
 	" to automatically do language-dependent indenting add 'indent' as well.
 	filetype plugin indent on
 
-augroup date
-    au!
-    au BufWrite         *      silent! execute '1,10g/^.\? Updated.*:/s/:.*/: ' . strftime("%Y.%m.%d %H:%M:%S %z") . '/'
-    au BufWrite		*      silent! execute 'g;'
-augroup END
+"augroup date
+"    au!
+"    au BufWrite         *      silent! execute '1,10g/^.\? Updated.*:/s/:.*/: ' . strftime("%Y.%m.%d %H:%M:%S %z") . '/'
+"    au BufWrite		*      silent! execute 'g;'
+"augroup END
 
 " --[ LATEX-SPECIFIC
 augroup latex
