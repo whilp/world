@@ -2,7 +2,7 @@
 " Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: 2005.10.04 12:50:14 -0500
+" Updated	: 2005.10.04 15:21:47 -0500
 "#################  END HEADERS
 
 " --[ SET OPTIONS
@@ -52,6 +52,8 @@
     " use for notetaking
     map <silent> <C-E> :s/*/ / <CR>$
     imap <silent> <C-E> <Esc>:s/*/ / <CR>A
+    map <silent> <C-D> <lt><lt>
+    map <silent> <C-T> >>
 
     " save shortcut
     imap <C-W> <Esc>:w<CR>a

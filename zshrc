@@ -2,7 +2,7 @@
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.10.04 14:04:32 -0500
+# Updated	: 2005.10.04 17:25:21 -0500
 ##################  END HEADERS
 
 source ~/.profile
@@ -55,21 +55,41 @@ HOSTNAME=$(hostname -s)
 if [[ "$HOSTNAME" == "localhost" ]]; then
     HOSTNAME=$(hostname)
 fi
-SCREEN="$(echo $STY | sed 's/.*\.\(.*\)/\1/')"
-if [[ "$SCREEN" == "$HOSTNAME" ]]; then
-    SCREEN="screen"
-fi
-if [[ -z "$WINDOW" ]]; then
-    CURWINDOW=$(tty | sed 's/.*\/\(.*\)\(.$\)/\1[\2]/')
-    if [[ "$(echo ${CURWINDOW} | wc -c)" -le "5" ]]; then
-	CURWINDOW=$(tty | sed 's/\/dev\/\(.*\)\/\(.$\)/\1[\2]/')
+
+# Set the right prompt based on the screen sessionname and window number, or,
+# if not running in screen, the (pseudo) TTY.
+if [ -n "${STY}" ]; then
+    # GNU screen sets $STY; if it's non-zero, assume we're in screen.
+
+    # Determine the name of the current screen session from $STY
+    SESSIONNAME="${STY##*.}"
+    if [ "${SESSIONNAME}" = "${HOSTNAME}" ]; then
+	SESSIONNAME="screen"
     fi
-elif [[ -z "$(echo ${CURWINDOW} | grep '\[')" ]]; then
-    CURWINDOW=[${WINDOW}]
+
+    NAME=${SESSIONNAME}
+    NUMBER=${WINDOW}
 else
-    CURWINDOW=${WINDOW}
+    # We're not in screen; let's figure out what TTY we're on instead.
+
+    TTYOUT="$(tty)"
+    TTYNODEV="${TTYOUT##*/}"
+    TTYNAME="${TTYNODEV%?}"
+    TTYINC="$(echo "${TTYNODEV}" | sed "s/${TTYNAME}//")"
+
+    if [ "${#TTYNAME}" -lt "1" ]; then
+	# If it doesn't work...the above seems fine for FreeBSD; Linux
+	# prefers the following.
+	TTYNODEV="${TTYOUT#*/*/}"
+	TTYNAME="${TTYNODEV%/*}"
+	TTYINC="${TTYNODEV##*/}"
+    fi
+
+    NAME=${TTYNAME}
+    NUMBER=${TTYINC}
 fi
-RPS1="%B ${CURWINDOW:+${SCREEN}$CURWINDOW @} ${HOSTNAME} %(0?,,E[%?])%b"
+# Assemble the prompt
+RPS1="%B ${NAME}[$NUMBER] @ ${HOSTNAME} %(0?,,E[%?])%b"
 
 # --[ IMPORTANT VARIABLES
 export ZSHDIR=$HOME/.zsh

@@ -4,7 +4,7 @@
 # Use		: manage the port update process
 # Author	: Will Maier <willmaier@ml1.net>
 # Started	: 2005.09.28
-# Updated	: 2005.09.30 18:51:26 -0500
+# Updated	: 2005.10.05 16:45:00 -0500
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -40,14 +40,7 @@ if [ -z "$(echo $SNAPF | ${GREP} 'No updates needed')" ]; then
     else
 	echo "====> The following ports need to be upgraded. Please run"
 	echo '====> `portupgrade -varR`' "to compile the new versions."
-	for line in ${VERSION}; do
-	    # Output of portversion looks like:
-	    # keychain-2.5.4.1 < needs updating (port has 2.5.5)
-	    PACKAGE="$(echo ${line} | ${SED} 's/^\([^ ]*\) .*/\1/')"
-	    AVAIL="$(echo ${line} | ${SED} 's/.*(port has \([^ ]*\))/\1/')"
-	    echo "      ${PACKAGE} -> ${AVAIL}"
-	done
-	echo "====> Ports tree up to date."
+	echo ${VERSION}
     fi
 else
     echo "====> Ports tree up to date."
