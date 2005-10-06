@@ -2,7 +2,7 @@
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.10.04 17:25:21 -0500
+# Updated	: 2005.10.05 22:06:25 -0500
 ##################  END HEADERS
 
 source ~/.profile
@@ -75,7 +75,7 @@ else
     TTYOUT="$(tty)"
     TTYNODEV="${TTYOUT##*/}"
     TTYNAME="${TTYNODEV%?}"
-    TTYINC="$(echo "${TTYNODEV}" | sed "s/${TTYNAME}//")"
+    TTYINC="$(echo "${TTYNODEV}" | sed -e "s/${TTYNAME}//" 2>/dev/null)"
 
     if [ "${#TTYNAME}" -lt "1" ]; then
 	# If it doesn't work...the above seems fine for FreeBSD; Linux
