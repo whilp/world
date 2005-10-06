@@ -2,7 +2,8 @@
 " Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: 2005.10.04 15:21:47 -0500
+" Updated	: 2005.10.06 07:55:33 -0500
+" CVS		: $Id: vimrc,v 1.22 2005/10/06 12:55:49 will Exp $
 "#################  END HEADERS
 
 " --[ SET OPTIONS

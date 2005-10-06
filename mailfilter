@@ -6,7 +6,7 @@
 # Started	: 2005.06.15
 # Info		: http://lists.sourceforge.net/lists/listinfo/courier-maildrop
 #		  http://sourceforge.net/mailarchive/forum.php?forum=courier-maildrop
-# Updated	: 2005.09.30 18:35:14 -0500
+# Updated	: 2005.10.04 16:20:48 -0500
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -58,6 +58,7 @@ if ( /^Subject:.*autoreply/ || \
     /^Subject:.*abwesenheit(snotiz)?/ || \
     /^Subject:.*i am out of contact/ || \
     /^Subject:.*away from my mail/ || \
+    /^Subject:.*nie ma mnie w pracy/ || \
     /^Subject:.*har semester/ || \
     /^Subject:.*Risposta automatica/ || \
     /^Subject:.*est absent/ )
