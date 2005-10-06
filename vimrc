@@ -1,10 +1,11 @@
 "#################  BEGIN HEADERS
 " Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
-" Version	: $Revision: 1.24 $ by $Author: will $
+" Version	: $Revision: 1.26 $ by $Author: will $
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: 2005.10.06 08:04:00 -0500
-" CVS		: $Id: vimrc,v 1.24 2005/10/06 13:04:07 will Exp $
+" Updated	: $Date: 2005/10/06 13:05:37 $
+" CVS		: $Id: vimrc,v 1.26 2005/10/06 13:05:37 will Exp $
+" TEST
 "#################  END HEADERS
 
 " --[ SET OPTIONS
