@@ -1,0 +1,18 @@
+##################  BEGIN HEADERS
+# Filename	: $HOME/.nbsmptrc-fm
+# Use		: configuration file for nbsmtp, a secure mail transfer client
+#		    and relay; this file includes options specific to the
+#		    fastmail.fm mail service
+# Author	: Will Maier <willmaier@ml1.net>
+# Started	: 2005.08.12
+# Referred to by: $HOME/.muttrc
+# Updated	: 2005.08.12 13:44:10
+##################  END HEADERS
+
+relayhost=mail.messagingengine.com
+fromaddr=willmaier@ml1.net
+auth_user=willmaier@ml1.net
+auth_pass=aymBuAtyad5
+auth_mech=login
+port=26
+#use_tls=true
