@@ -1,7 +1,13 @@
+##################  BEGIN HEADERS
 # Filename	: $HOME/.login
 # Use		: configures environment on shell login
+# Version	: $Revision: 1.3 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.07.25 11:44:45
+# Updated	: $Date: 2005/10/06 21:20:55 $
+# CVS		: $Id: login,v 1.3 2005/10/06 21:20:55 will Exp $
+# Copyright	: Copyright (c) 2005 Will Maier
+# License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
+##################  END HEADERS
 
 if ( ! $?TERMCAP ) then
 	tset -Q  '-mdialup:?vt100' $TERM

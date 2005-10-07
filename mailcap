@@ -1,7 +1,11 @@
+##################  BEGIN HEADERS
 # Filename	: $HOME/.mailcap
 # Use		: associates filetypes and applications
+# Version	: $Revision: 1.5 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.07.25 11:45:35
+# Updated	: $Date: 2005/10/06 21:20:55 $
+# CVS		: $Id: mailcap,v 1.5 2005/10/06 21:20:55 will Exp $
+##################  END HEADERS
 
 application/x-ogg;/usr/local/Realplayer/realplay %s
 application/ogg;/usr/local/Realplayer/realplay %s

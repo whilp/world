@@ -1,8 +1,10 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
+# Version	: $Revision: 1.29 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.10.05 22:06:25 -0500
+# Updated	: $Date: 2005/10/06 21:20:55 $
+# CVS		: $Id: zshrc,v 1.29 2005/10/06 21:20:55 will Exp $
 ##################  END HEADERS
 
 source ~/.profile
