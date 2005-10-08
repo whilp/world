@@ -1,5 +1,7 @@
 #!/bin/sh
 
+
+
 for file in $(echo /home/will/CVS/dotfiles/nbsmtp/*); do
     filebase=$(basename ${file})
     if [ -e $HOME/.${filebase} ]; then

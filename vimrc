@@ -1,10 +1,12 @@
 "#################  BEGIN HEADERS
 " Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
-" Version	: $Revision: 1.27 $
+" Version	: $Revision: 1.28 $
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: $Date: 2005/10/06 21:20:55 $
-" CVS		: $Id: vimrc,v 1.27 2005/10/06 21:20:55 will Exp $
+" Updated	: $Date: 2005/10/07 20:42:51 $
+" CVS		: $Id: vimrc,v 1.28 2005/10/07 20:42:51 will Exp $
+" Copyright	: Copyright (c) 2005 Will Maier
+" License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 "#################  END HEADERS
 
 " --[ SET OPTIONS
@@ -63,6 +65,10 @@
     " Fix my shitty typing
     abbr hte the
     abbr teh the
+
+    " Fix my fat fingers
+    cabbrev Wq wq
+    cabbrev Q q
 
     " Vim5 and later versions support syntax highlighting. Uncommenting the next
     " line enables syntax highlighting by default.
