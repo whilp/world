@@ -1,10 +1,10 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
-# Version	: $Revision: 1.30 $
+# Version	: $Revision: 1.31 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2005/10/07 20:42:51 $
-# CVS		: $Id: zshrc,v 1.30 2005/10/07 20:42:51 will Exp $
+# Updated	: $Date: 2005/10/10 14:55:30 $
+# CVS		: $Id: zshrc,v 1.31 2005/10/10 14:55:30 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -12,7 +12,7 @@
 source ~/.profile
 
 # --[ LOAD FUNCTIONS
-autoload -U compinit && compinit    # new tab completion
+autoload -U compinit && compinit -i # new tab completion
 autoload -U colors && colors	    # color stuff
 autoload -U edit-command-line
 autoload -U zed			    # shell text editing

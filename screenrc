@@ -13,7 +13,7 @@
 
     defflow on
 #    setenv DISPLAY :0.0
-    setenv TERM screen
+#    setenv TERM screen
     deflogin on
     autodetach on
 
@@ -21,7 +21,7 @@
     password ZD55sCrqpRZlQ
     vbell on
 #    shelltitle $HOST
-    shell /bin/zsh
+    shell   zsh
     allpartial off
     activity "^Gactivity in %n (%t)~"
     sorendition  BW			    # set colors; white on blue 
