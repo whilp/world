@@ -1,3 +1,14 @@
+##################  BEGIN HEADERS
+# Filename	: $HOME/.muttalias
+# Use		: defines mail aliases for the mutt mail user agent
+# Version	: $Revision: 1.6 $
+# Author	: Will Maier <willmaier@ml1.net>
+# Updated	: $Date: 2005/10/10 12:59:59 $
+# CVS		: $Id: muttalias,v 1.6 2005/10/10 12:59:59 will Exp $
+# Copyright	: Copyright (c) 2005 Will Maier
+# License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
+##################  END HEADERS
+
 alias RQ HEP Request <req@ginseng.hep.wisc.edu>
 alias RT Unix Request Tracker <unix-request@cae.wisc.edu>
 alias ballard.jeff Jeff Ballard <ballard@engr.wisc.edu>
