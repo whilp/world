@@ -2,7 +2,7 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.10.04 12:54:41 -0500
+# Updated	: 2005.10.05 07:50:58 -0500
 ##################  END HEADERS
 
 ARCH=`uname`
@@ -13,7 +13,8 @@ ARCH=`uname`
     CVSROOT=":ext:will@merk:/cvs"
     # CAE CVS
     # CVSROOT=/afs/engr.wisc.edu/common/repository
-export CVSROOT
+    CVS_RSH=ssh
+export CVSROOT CVS_RSH
 alias mycvs='export CVSROOT=":ext:will@phnx.ath.cx:/cvs"'
 alias caecvs='export CVSROOT=/afs/engr.wisc.edu/common/repository'
 
