@@ -2,14 +2,14 @@
 # Filename	: $HOME/.muttrc (or $HOME/.muttngrc)
 # Use		: main configuration file for mutt(-ng), a command line mail reader
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.23 $
+# Version	: $Revision: 1.24 $
 # Started	: 2005.03.06
 # Based on	: Phillip Hollenback's muttrc @ macdevcenter
 # Refers to	: $HOME/.muttalias
 #		  $HOME/.muttcolor
 # Referred to by: $HOME/.muttngrc
-# Updated	: $Date: 2005/10/07 20:42:51 $
-# CVS		: $Id: muttrc,v 1.23 2005/10/07 20:42:51 will Exp $
+# Updated	: $Date: 2005/10/11 17:09:41 $
+# CVS		: $Id: muttrc,v 1.24 2005/10/11 17:09:41 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -134,6 +134,7 @@ send-hook '~t .*@\(doit\|engr\|cae\)\.wisc\.edu'	"set sendmail='/usr/local/bin/n
 send-hook '~t .*@\(doit\|engr\|cae\)\.wisc\.edu'	"my_hdr From: Will Maier <wcmaier@cae.wisc.edu>"
 send-hook '~t .*-request@cae\.wisc\.edu'	"set signature='~/.signatures/cae-rt'"
 send-hook '~t .*techpartners'			"set signature='~/.signatures/cae-rt'"
+send-hook '~s .*techpartners'			"set signature='~/.signatures/cae-rt'"
 
 send-hook '~t .*@[a-zA-Z0-9\.\-]*hep\.wisc\.edu'	"set signature='~/.signatures/hep'"
 send-hook '~t .*@[a-zA-Z0-9\.\-]*hep\.wisc\.edu'	"set sendmail='/usr/local/bin/nbsmtp -D -c ~/.nbsmtprc-hep'"
