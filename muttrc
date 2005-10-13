@@ -2,14 +2,14 @@
 # Filename	: $HOME/.muttrc (or $HOME/.muttngrc)
 # Use		: main configuration file for mutt(-ng), a command line mail reader
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.24 $
+# Version	: $Revision: 1.25 $
 # Started	: 2005.03.06
 # Based on	: Phillip Hollenback's muttrc @ macdevcenter
 # Refers to	: $HOME/.muttalias
 #		  $HOME/.muttcolor
 # Referred to by: $HOME/.muttngrc
-# Updated	: $Date: 2005/10/11 17:09:41 $
-# CVS		: $Id: muttrc,v 1.24 2005/10/11 17:09:41 will Exp $
+# Updated	: $Date: 2005/10/12 20:51:13 $
+# CVS		: $Id: muttrc,v 1.25 2005/10/12 20:51:13 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -21,6 +21,7 @@ set copy=yes
 set record="+Sent"
 set postponed="+Drafts"
 set recall=no
+set crypt_verify_sig=no
 
 set spoolfile='/var/mail/will'
 mailboxes !

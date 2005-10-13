@@ -1,10 +1,10 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
-# Version	: $Revision: 1.31 $
+# Version	: $Revision: 1.32 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2005/10/10 14:55:30 $
-# CVS		: $Id: zshrc,v 1.31 2005/10/10 14:55:30 will Exp $
+# Updated	: $Date: 2005/10/12 20:50:32 $
+# CVS		: $Id: zshrc,v 1.32 2005/10/12 20:50:32 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -25,6 +25,7 @@ alias -s tex=$EDITOR		    # eg 'unixbook.tex<CR>' opens unixbook in
 				    # vim
 alias -s html='elinks'		    # html -> www browser
 alias mv='nocorrect mv'		    # no spelling correction on mv
+alias man='nocorrect man'	    # no spelling correction on man
 alias cp='nocorrect cp'		    # no spelling correction on cp
 alias mkdir='nocorrect mkdir'	    # no spelling correction on mkdir
 alias grep=egrep
@@ -41,7 +42,7 @@ bindkey '\e[1~' beginning-of-line       # Home
 bindkey '\e[4~' end-of-line             # End
 bindkey '\e[3~' delete-char             # Del
 bindkey '\e[2~' overwrite-mode          # Insert
-stty erase '^?'
+stty erase '^H'
 
 # --[ PROMPT
 if (( EUID != 0 )); then

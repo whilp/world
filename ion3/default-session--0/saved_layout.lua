@@ -21,12 +21,6 @@ return {
                                         ["type"] = "WFrame",
                                         ["name"] = "WFrame<5>",
                                         ["subs"] = {
-                                            [1] = {
-                                                ["type"] = "WClientWin",
-                                                ["windowid"] = 16777221,
-                                                ["switchto"] = true,
-                                                ["checkcode"] = 1,
-                                            },
                                         },
                                         ["frame_style"] = "frame-tiled-ionws",
                                     },
@@ -74,14 +68,9 @@ return {
                                 ["subs"] = {
                                     [1] = {
                                         ["type"] = "WClientWin",
-                                        ["windowid"] = 10485860,
+                                        ["windowid"] = 10485824,
                                         ["switchto"] = true,
-                                        ["checkcode"] = 2,
-                                    },
-                                    [2] = {
-                                        ["checkcode"] = 3,
-                                        ["type"] = "WClientWin",
-                                        ["windowid"] = 12582916,
+                                        ["checkcode"] = 1,
                                     },
                                 },
                                 ["frame_style"] = "frame-tiled-ionws",
@@ -102,7 +91,7 @@ return {
                                     ["type"] = "WClientWin",
                                     ["windowid"] = 8388622,
                                     ["switchto"] = true,
-                                    ["checkcode"] = 4,
+                                    ["checkcode"] = 2,
                                 },
                             },
                             ["frame_style"] = "frame-tiled-ionws",
