@@ -7,13 +7,13 @@ return {
                 ["name"] = "WIonWS<2>",
                 ["switchto"] = true,
                 ["split_tree"] = {
-                    ["tls"] = 747,
+                    ["tls"] = 749,
                     ["tl"] = {
                         ["tls"] = 801,
                         ["tl"] = {
                             ["tls"] = 221,
                             ["tl"] = {
-                                ["tls"] = 526,
+                                ["tls"] = 522,
                                 ["tl"] = {
                                     ["type"] = "WSplitRegion",
                                     ["regparams"] = {
@@ -26,7 +26,7 @@ return {
                                     },
                                 },
                                 ["dir"] = "vertical",
-                                ["brs"] = 221,
+                                ["brs"] = 227,
                                 ["br"] = {
                                     ["type"] = "WSplitRegion",
                                     ["regparams"] = {
@@ -66,12 +66,6 @@ return {
                                 ["type"] = "WFrame",
                                 ["name"] = "WFrame<3>",
                                 ["subs"] = {
-                                    [1] = {
-                                        ["type"] = "WClientWin",
-                                        ["windowid"] = 10485824,
-                                        ["switchto"] = true,
-                                        ["checkcode"] = 1,
-                                    },
                                 },
                                 ["frame_style"] = "frame-tiled-ionws",
                             },
@@ -87,12 +81,6 @@ return {
                             ["type"] = "WFrame",
                             ["name"] = "WFrame<4>",
                             ["subs"] = {
-                                [1] = {
-                                    ["type"] = "WClientWin",
-                                    ["windowid"] = 8388622,
-                                    ["switchto"] = true,
-                                    ["checkcode"] = 2,
-                                },
                             },
                             ["frame_style"] = "frame-tiled-ionws",
                         },

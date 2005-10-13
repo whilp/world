@@ -24,7 +24,7 @@
     shell   zsh
     allpartial off
     activity "^Gactivity in %n (%t)~"
-    sorendition  Wb			    # set colors; white on blue 
+    sorendition  +b Wb			    # set colors; white on blue 
     chdir
     vbellwait .5
     msgwait 1
