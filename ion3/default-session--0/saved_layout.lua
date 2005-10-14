@@ -13,7 +13,7 @@ return {
                         ["tl"] = {
                             ["tls"] = 221,
                             ["tl"] = {
-                                ["tls"] = 522,
+                                ["tls"] = 517,
                                 ["tl"] = {
                                     ["type"] = "WSplitRegion",
                                     ["regparams"] = {
@@ -26,7 +26,7 @@ return {
                                     },
                                 },
                                 ["dir"] = "vertical",
-                                ["brs"] = 227,
+                                ["brs"] = 232,
                                 ["br"] = {
                                     ["type"] = "WSplitRegion",
                                     ["regparams"] = {
@@ -81,6 +81,12 @@ return {
                             ["type"] = "WFrame",
                             ["name"] = "WFrame<4>",
                             ["subs"] = {
+                                [1] = {
+                                    ["type"] = "WClientWin",
+                                    ["windowid"] = 8388622,
+                                    ["switchto"] = true,
+                                    ["checkcode"] = 1,
+                                },
                             },
                             ["frame_style"] = "frame-tiled-ionws",
                         },
