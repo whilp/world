@@ -103,3 +103,11 @@ esac
     EDITOR=`which vim`
     CVSEDITOR=$EDITOR
 export LANG PATH SHELL EDITOR CVSEDITOR MAIL PKG_PATH TODO CLUSTER RCMD_CMD
+
+# functions
+lookup () {
+    grep $1 /usr/share/dict/words
+}
+net () {
+    lsof -Pni
+}

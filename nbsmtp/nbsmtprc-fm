@@ -14,5 +14,5 @@ fromaddr=willmaier@ml1.net
 auth_user=willmaier@ml1.net
 auth_pass=aymBuAtyad5
 auth_mech=login
-port=26
-#use_tls=true
+port=465
+use_tls=true

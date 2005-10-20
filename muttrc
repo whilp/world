@@ -2,14 +2,14 @@
 # Filename	: $HOME/.muttrc (or $HOME/.muttngrc)
 # Use		: main configuration file for mutt(-ng), a command line mail reader
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.25 $
+# Version	: $Revision: 1.26 $
 # Started	: 2005.03.06
 # Based on	: Phillip Hollenback's muttrc @ macdevcenter
 # Refers to	: $HOME/.muttalias
 #		  $HOME/.muttcolor
 # Referred to by: $HOME/.muttngrc
-# Updated	: $Date: 2005/10/12 20:51:13 $
-# CVS		: $Id: muttrc,v 1.25 2005/10/12 20:51:13 will Exp $
+# Updated	: $Date: 2005/10/20 16:27:52 $
+# CVS		: $Id: muttrc,v 1.26 2005/10/20 16:27:52 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -78,7 +78,7 @@ set quit=ask-no
 set move=no
 set editor='vim "+set tw=68" "+/^$" -X'
 set ispell=
-alternates "(wcmaier@wisc.edu|wcmaier@cae.wisc.edu|wcmaier@gmail.com|willmaier@ml1.net)"
+alternates "(wcmaier@wisc\.edu|wcmaier@hep\.wisc\.edu|wcmaier@cae\.wisc\.edu|wcmaier@gmail\.com|willmaier@ml1\.net)"
 set mail_check=60
 
 ## COMPOSITION SETTINGS ##
@@ -131,15 +131,15 @@ send-hook '~t \(jacobsonlaura.*@gmail\.com\|ljacobson@biochem\.wisc\.edu\)' "set
 send-hook '~t \(jacobsonlaura.*@gmail\.com\|ljacobson@biochem\.wisc\.edu\)' "unset sig_dashes"
 
 send-hook '~t .*@\(doit\|engr\|cae\)\.wisc\.edu'	"set signature='~/.signatures/cae'"
-send-hook '~t .*@\(doit\|engr\|cae\)\.wisc\.edu'	"set sendmail='/usr/local/bin/nbsmtp -D -c ~/.nbsmtprc-cae'"
+send-hook '~t .*@\(doit\|engr\|cae\)\.wisc\.edu'	"set sendmail='/usr/local/bin/nbsmtp -D -c /home/will/.nbsmtprc-cae'"
 send-hook '~t .*@\(doit\|engr\|cae\)\.wisc\.edu'	"my_hdr From: Will Maier <wcmaier@cae.wisc.edu>"
 send-hook '~t .*-request@cae\.wisc\.edu'	"set signature='~/.signatures/cae-rt'"
 send-hook '~t .*techpartners'			"set signature='~/.signatures/cae-rt'"
 send-hook '~s .*techpartners'			"set signature='~/.signatures/cae-rt'"
 
-send-hook '~t .*@[a-zA-Z0-9\.\-]*hep\.wisc\.edu'	"set signature='~/.signatures/hep'"
-send-hook '~t .*@[a-zA-Z0-9\.\-]*hep\.wisc\.edu'	"set sendmail='/usr/local/bin/nbsmtp -D -c ~/.nbsmtprc-hep'"
-send-hook '~t .*@[a-zA-Z0-9\.\-]*hep\.wisc\.edu'	"my_hdr From: Will Maier <wcmaier@hep.wisc.edu>"
+send-hook '~t .*@[a-zA-Z0-9\.\-]*\(cs\|hep\)\.wisc\.edu'	"set signature='~/.signatures/hep'"
+send-hook '~t .*@[a-zA-Z0-9\.\-]*\(cs\|hep\)\.wisc\.edu'	"set sendmail='/usr/local/bin/nbsmtp -D -c /home/will/.nbsmtprc-hep'"
+send-hook '~t .*@[a-zA-Z0-9\.\-]*\(cs\|hep\)\.wisc\.edu'	"my_hdr From: Will Maier <wcmaier@hep.wisc.edu>"
 
 send-hook '~L .*@\(lists\.\)?debian\.org'	"set signature='~/.signatures/list-debian'"
 send-hook '~L .*@[a-z0-9\.\-]*bsd[a-z0-9\.\-]*'	"set signature='~/.signatures/list-bsd'"

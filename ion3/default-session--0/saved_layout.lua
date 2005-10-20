@@ -9,9 +9,9 @@ return {
                 ["split_tree"] = {
                     ["tls"] = 749,
                     ["tl"] = {
-                        ["tls"] = 801,
+                        ["tls"] = 1171,
                         ["tl"] = {
-                            ["tls"] = 221,
+                            ["tls"] = 323,
                             ["tl"] = {
                                 ["tls"] = 517,
                                 ["tl"] = {
@@ -43,7 +43,7 @@ return {
                                 ["type"] = "WSplitSplit",
                             },
                             ["dir"] = "horizontal",
-                            ["brs"] = 580,
+                            ["brs"] = 848,
                             ["br"] = {
                                 ["type"] = "WSplitRegion",
                                 ["regparams"] = {
@@ -58,7 +58,7 @@ return {
                             ["type"] = "WSplitSplit",
                         },
                         ["dir"] = "horizontal",
-                        ["brs"] = 993,
+                        ["brs"] = 1453,
                         ["br"] = {
                             ["type"] = "WSplitRegion",
                             ["regparams"] = {
@@ -66,12 +66,6 @@ return {
                                 ["type"] = "WFrame",
                                 ["name"] = "WFrame<3>",
                                 ["subs"] = {
-                                    [1] = {
-                                        ["type"] = "WClientWin",
-                                        ["windowid"] = 10485824,
-                                        ["switchto"] = true,
-                                        ["checkcode"] = 1,
-                                    },
                                 },
                                 ["frame_style"] = "frame-tiled-ionws",
                             },
@@ -85,14 +79,8 @@ return {
                         ["regparams"] = {
                             ["flags"] = 0,
                             ["type"] = "WFrame",
-                            ["name"] = "WFrame<4>",
+                            ["name"] = "WFrame<1>",
                             ["subs"] = {
-                                [1] = {
-                                    ["type"] = "WClientWin",
-                                    ["windowid"] = 8388622,
-                                    ["switchto"] = true,
-                                    ["checkcode"] = 2,
-                                },
                             },
                             ["frame_style"] = "frame-tiled-ionws",
                         },

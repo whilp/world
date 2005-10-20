@@ -10,12 +10,12 @@
 # Updated	: 2005.09.20 07:20:14 -0500
 ##################  END HEADERS
 
-relayhost=hep.wisc.edu
+relayhost=smtpauth.cae.wisc.edu
 fromaddr=wcmaier@cae.wisc.edu
 auth_user=wcmaier
 auth_pass=VojNirzyev2
 auth_mech=login
-port=587
+port=25
 use_starttls=true
 use_tls=true
 debug=1

@@ -1,12 +1,12 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.mailfilter
 # Use		: configures routing of incoming mail
-# Version	: $Revision: 1.18 $
+# Version	: $Revision: 1.19 $
 # Author	: Will Maier <willmaier@ml1.net>
 # Started	: 2005.06.15
-# Updated	: $Date: 2005/10/14 00:01:45 $
+# Updated	: $Date: 2005/10/20 16:27:52 $
 # Vim		: vim: set ft=perl:
-# CVS		: $Id: mailfilter,v 1.18 2005/10/14 00:01:45 will Exp $
+# CVS		: $Id: mailfilter,v 1.19 2005/10/20 16:27:52 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -164,7 +164,8 @@ if ( /^(to|cc):.*!linux-fai@(rrz\.)?uni-koeln\.de/ )
 {
     to $MAILDIR/Debian-fai
 }
-if ( /^(to|cc):.*wmi!(-?[a-zA-Z0-9\-]*)!@berlios\.de/ )
+if ( /^(to|cc):.*wmii!(-?[a-zA-Z0-9\-]*)!@wmii\.de/ )
+wmii@wmii.de
 {
     MATCH=tolower($MATCH2)
     `test -d $MAILDIR/Wmi$MATCH || mkdir -p $MAILDIR/Wmi$MATCH/{cur,tmp,new}`
