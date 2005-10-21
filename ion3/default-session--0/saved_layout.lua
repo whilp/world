@@ -9,9 +9,9 @@ return {
                 ["split_tree"] = {
                     ["tls"] = 749,
                     ["tl"] = {
-                        ["tls"] = 1171,
+                        ["tls"] = 911,
                         ["tl"] = {
-                            ["tls"] = 323,
+                            ["tls"] = 282,
                             ["tl"] = {
                                 ["tls"] = 517,
                                 ["tl"] = {
@@ -43,7 +43,7 @@ return {
                                 ["type"] = "WSplitSplit",
                             },
                             ["dir"] = "horizontal",
-                            ["brs"] = 848,
+                            ["brs"] = 629,
                             ["br"] = {
                                 ["type"] = "WSplitRegion",
                                 ["regparams"] = {
@@ -58,7 +58,7 @@ return {
                             ["type"] = "WSplitSplit",
                         },
                         ["dir"] = "horizontal",
-                        ["brs"] = 1453,
+                        ["brs"] = 998,
                         ["br"] = {
                             ["type"] = "WSplitRegion",
                             ["regparams"] = {
@@ -81,6 +81,12 @@ return {
                             ["type"] = "WFrame",
                             ["name"] = "WFrame<1>",
                             ["subs"] = {
+                                [1] = {
+                                    ["type"] = "WClientWin",
+                                    ["windowid"] = 12582926,
+                                    ["switchto"] = true,
+                                    ["checkcode"] = 1,
+                                },
                             },
                             ["frame_style"] = "frame-tiled-ionws",
                         },

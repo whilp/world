@@ -35,7 +35,9 @@
 					    # argument is an executable in the
 					    # user's PATH. If so, it runs it;
 					    # if no, it fails silently.
-    hardstatus alwayslastline "%{= bW}[%{+b}%n: %t%{-}] [%{+b}%-Lw%50>%n%f* %t%+Lw%<%{-}]%-= %?[%{+b}Batt: %1`%%%{-}].%?%?[%{+b}%H%{-}].%?[%{+b}%Y.%m.%d %c:%s%{-}]"
+#    hardstatus alwayslastline "%{= bW}[%{+b}%n: %t%{-}] [%{+b}%-Lw%50>%n%f* %t%+Lw%<%{-}]%-= %?[%{+b}Batt: %1`%%%{-}].%?%?[%{+b}%H%{-}].%?[%{+b}%Y.%m.%d %c:%s%{-}]"
+    caption always "%{= bW}[%{+b}%n: %t%{-}] [%{+b}%-Lw%50>%n%f* %t%+Lw%<%{-}]%-= %?[%{+b}Batt: %1`%%%{-}].%?%?[%{+b}%H%{-}].%?[%{+b}%Y.%m.%d %c:%s%{-}]"
+    hardstatus on
 #    hardstatus alwayslastline "%{+ WK}[%n: %t] %-Lw%{= WB}%50>%n%f  %t%{-}%+Lw%< %-=%{= BW} %?[%{= WB}Batt: %1`%%%{-}].%?%?[%{= WB}%H%{-}].%?[%{= BW}%Y.%m.%d %c:%s%{-}]"
 #    hardstatus alwayslastline "%{+B BW}TEST"
 #    hardstatus alwayslastline "%{= bW}[%n: %t] %-Lw%{= WB}%50>%n%f  %t%{-}%+Lw%< %-=%{= bW} %?[%{= bW}Batt: %1`%%%{-}].%?%?[%{= bW}%H%{-}].%?[%{= Wb}%Y.%m.%d %c:%s%{-}]"
@@ -61,7 +63,8 @@
 # --[ TERMINAL SETTINGS
 
 # Set the hardstatus prop on gui terms to set the titlebar/icon title
-#    termcapinfo xterm*|rxvt*|kterm*|Eterm* hs:ts=\E]0;:fs=\007:ds=\E]0;\007
+    termcapinfo xterm* hs:ts=\E]2;:fs=\007:ds=\E]2;screen\007
+#    termcapinfo xterm* hs:ts=\E]0;:fs=\007:ds=\E]0;\007
 # set these terminals up to be 'optimal' instead of vt100
 #    termcapinfo xterm*|linux*|rxvt*|Eterm* OP
 # Change the xterm initialization string from is2=\E[!p\E[?3;4l\E[4l\E>

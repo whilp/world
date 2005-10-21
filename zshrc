@@ -1,10 +1,10 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
-# Version	: $Revision: 1.32 $
+# Version	: $Revision: 1.33 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2005/10/12 20:50:32 $
-# CVS		: $Id: zshrc,v 1.32 2005/10/12 20:50:32 will Exp $
+# Updated	: $Date: 2005/10/21 14:58:58 $
+# CVS		: $Id: zshrc,v 1.33 2005/10/21 14:58:58 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -49,7 +49,7 @@ if (( EUID != 0 )); then
     # If not root...
     autoload -U promptinit && promptinit
 #    PS1='<%B%m%b %T> %~ %# '
-    PS1="%B%~%b %#%b "
+    PS1="%B%~%b %#%b "		    # real prompt
 #    precmd () { print -Pn "\e]0;$HOST - %~\a" }
 #    preexec () { echo "OK" }
 else
@@ -95,6 +95,17 @@ else
 fi
 # Assemble the prompt
 RPS1="%B ${NAME}[$NUMBER] @ ${HOSTNAME} %(0?,,E[%?])%b"
+
+# xterm titles
+RUNNING=shell
+PREEXECCMD='print -Pn "\e]0;${NAME}[${NUMBER}] @ ${HOSTNAME} - $RUNNING\a"'
+eval ${PREEXECCMD}
+preexec () {
+    if [ -n "$1" ]; then
+	RUNNING=$1
+    fi
+    eval ${PREEXECCMD}
+}
 
 # --[ IMPORTANT VARIABLES
 export ZSHDIR=$HOME/.zsh
