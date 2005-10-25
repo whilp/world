@@ -1,12 +1,12 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.mailfilter
 # Use		: configures routing of incoming mail
-# Version	: $Revision: 1.19 $
+# Version	: $Revision: 1.20 $
 # Author	: Will Maier <willmaier@ml1.net>
 # Started	: 2005.06.15
-# Updated	: $Date: 2005/10/20 16:27:52 $
+# Updated	: $Date: 2005/10/25 09:21:09 $
 # Vim		: vim: set ft=perl:
-# CVS		: $Id: mailfilter,v 1.19 2005/10/20 16:27:52 will Exp $
+# CVS		: $Id: mailfilter,v 1.20 2005/10/25 09:21:09 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -165,7 +165,6 @@ if ( /^(to|cc):.*!linux-fai@(rrz\.)?uni-koeln\.de/ )
     to $MAILDIR/Debian-fai
 }
 if ( /^(to|cc):.*wmii!(-?[a-zA-Z0-9\-]*)!@wmii\.de/ )
-wmii@wmii.de
 {
     MATCH=tolower($MATCH2)
     `test -d $MAILDIR/Wmi$MATCH || mkdir -p $MAILDIR/Wmi$MATCH/{cur,tmp,new}`
@@ -206,7 +205,7 @@ if ( /^(to|cc):.*sjcbod@yahoogroups\.com/ )
 
 # --[ SCHOOL
 if ( /^(From|to):.*@geology\.wisc\.edu/ || \
-    /(^From|to):.*jwseitx@wisc\.edu/ || \
+    /(^From|to):.*jwseitz@wisc\.edu/ || \
     /(^From|to):.*mhshank@wisc\.edu/ )
 {
     to $SCHOOL

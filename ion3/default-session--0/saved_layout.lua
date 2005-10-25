@@ -21,6 +21,12 @@ return {
                                         ["type"] = "WFrame",
                                         ["name"] = "WFrame<5>",
                                         ["subs"] = {
+                                            [1] = {
+                                                ["type"] = "WClientWin",
+                                                ["windowid"] = 14680069,
+                                                ["switchto"] = true,
+                                                ["checkcode"] = 1,
+                                            },
                                         },
                                         ["frame_style"] = "frame-tiled-ionws",
                                     },
@@ -83,9 +89,9 @@ return {
                             ["subs"] = {
                                 [1] = {
                                     ["type"] = "WClientWin",
-                                    ["windowid"] = 12582926,
+                                    ["windowid"] = 8388622,
                                     ["switchto"] = true,
-                                    ["checkcode"] = 1,
+                                    ["checkcode"] = 2,
                                 },
                             },
                             ["frame_style"] = "frame-tiled-ionws",

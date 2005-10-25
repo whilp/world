@@ -1,10 +1,10 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
-# Version	: $Revision: 1.33 $
+# Version	: $Revision: 1.34 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2005/10/21 14:58:58 $
-# CVS		: $Id: zshrc,v 1.33 2005/10/21 14:58:58 will Exp $
+# Updated	: $Date: 2005/10/25 09:20:24 $
+# CVS		: $Id: zshrc,v 1.34 2005/10/25 09:20:24 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -98,7 +98,7 @@ RPS1="%B ${NAME}[$NUMBER] @ ${HOSTNAME} %(0?,,E[%?])%b"
 
 # xterm titles
 RUNNING=shell
-PREEXECCMD='print -Pn "\e]0;${NAME}[${NUMBER}] @ ${HOSTNAME} - $RUNNING\a"'
+PREEXECCMD='print -Pn "\e]0;${NAME}[${NUMBER}] @ ${HOSTNAME} | $RUNNING\a"'
 eval ${PREEXECCMD}
 preexec () {
     if [ -n "$1" ]; then

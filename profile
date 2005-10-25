@@ -66,7 +66,7 @@ esac
 	;;
 	merkur* )
 	alias agent='keychain --timeout 120 ~/.ssh/id_rsa; key'
-	alias mym='screen -x mail'
+	alias mail='screen -x mail'
 	alias myc='screen -x comms'
 	source $HOME/.functions
 	;;
@@ -93,6 +93,7 @@ esac
     alias zource='source $HOME/.zshrc'
     alias todo='grep -v DONE $HOME/TODO'
     alias etodo='vim $HOME/TODO'
+    alias mtr='mtr -t'
 
     TODO=$HOME/TODO
     LANG='C'
