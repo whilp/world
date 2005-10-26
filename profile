@@ -112,3 +112,22 @@ lookup () {
 net () {
     lsof -Pni
 }
+mdc () {
+    FINDCMD="find $HOME/Maildir -regex '.*/[a-zA-Z-]+/new/.*' -type f" 
+    for i in $*; do
+	case $i in
+	    -n)
+	    FINDCMD="${FINDCMD} -newer $HOME/Maildir/marker"
+	    ;;
+	esac
+    done
+
+    eval ${FINDCMD} |\
+	 sed 's/.*Maildir\/\([^/]\+\)\/new\/.*/\1/' |\
+	 sort |\
+	 uniq -c
+    touch $HOME/Maildir/marker
+}
+mnt () {
+    mdc -n
+}
