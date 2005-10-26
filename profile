@@ -30,7 +30,6 @@ export PRINTER
     PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/X11R6/bin:/opt/:/usr/games/"
     export PATH
 # arch-specific stuff.
-stty erase 
 case $ARCH in
     SunOS* )
     # fix needed for solaris and BSD
@@ -42,7 +41,6 @@ case $ARCH in
     *BSD )
     alias ls='gnuls --color=auto -F'
     alias tar='gtar'
-    stty erase 
     ;;
     * )
     alias ls='ls --color=auto -F'
@@ -126,7 +124,7 @@ mdc () {
     for i in $*; do
 	case $i in
 	    -n)
-	    FINDCMD="${FINDCMD} -newer $HOME/Maildir/marker"
+	    FINDCMD="${FINDCMD} -newer $HOME/Maildir/.marker"
 	    ;;
 	esac
     done
@@ -135,7 +133,7 @@ mdc () {
 	 sed 's/.*Maildir\/\([^/]\+\)\/new\/.*/\1/' |\
 	 sort |\
 	 uniq -c
-    touch $HOME/Maildir/marker
+    touch $HOME/Maildir/.marker
 }
 mnt () {
     mdc -n

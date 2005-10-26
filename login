@@ -1,10 +1,10 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.login
 # Use		: configures environment on shell login
-# Version	: $Revision: 1.4 $
+# Version	: $Revision: 1.5 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2005/10/26 02:03:20 $
-# CVS		: $Id: login,v 1.4 2005/10/26 02:03:20 will Exp $
+# Updated	: $Date: 2005/10/26 12:55:18 $
+# CVS		: $Id: login,v 1.5 2005/10/26 12:55:18 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -14,6 +14,7 @@ if ( ! $?TERMCAP ) then
 endif
 
 stty	newcrt crterase
+stty	erase 
 
 set	savehist=100
 set	ignoreeof
