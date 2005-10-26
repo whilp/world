@@ -10,6 +10,6 @@ xmodmap -e "add Control = Control_L"
 
 #exec enlightenment
 unclutter -idle 5 -jitter 20&
-sleep 1 && rxvt&
+sleep 2 && rxvt&
 exec ion3
 #exec wmii

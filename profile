@@ -97,6 +97,8 @@ esac
     alias mtr='mtr -t'
     alias xterm='rxvt'
     alias grep='grep -IHn'
+    alias mdcs='mdc | sort -rn'
+    alias mnts='mnt | sort -rn'
 
     TODO=$HOME/TODO
     LANG='C'
@@ -116,15 +118,19 @@ net () {
     lsof -Pni
 }
 mdc () {
+    if [ "${HOST}" != "merkur" ]; then
+	ssh merk "source .profile && $0 $1"
+	return 0
+    fi
     if [ ! -d "$HOME/Maildir" ]; then
 	return 0
     fi
 
-    FINDCMD="find $HOME/Maildir -regex '.*/[a-zA-Z-]+/new/.*' -type f" 
+    local FINDCMD="find $HOME/Maildir -regex '.*/[a-zA-Z-]+/new/.*' -type f" 
     for i in $*; do
 	case $i in
 	    -n)
-	    FINDCMD="${FINDCMD} -newer $HOME/Maildir/.marker"
+	    local FINDCMD="${FINDCMD} -newer $HOME/Maildir/marker"
 	    ;;
 	esac
     done
