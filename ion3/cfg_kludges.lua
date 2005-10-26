@@ -2,6 +2,35 @@
 -- Options to get some programs work more nicely (or at all)
 --
 
+-- Me props
+-- Gajim chat window
+defwinprop{
+    name = ".*account:.*",
+    target = "im-chat",
+}
+
+-- Gajim History window
+
+-- Gajim main window
+defwinprop{
+    class = "Gajim.py",
+    target = "im-main"
+}
+
+-- Firefox
+defwinprop{
+    class = "Firefox-bin",
+    target = "www"
+}
+
+-- Main shell
+defwinprop{
+    class = "XTerm",
+    name = "rxvt",
+    target = "term",
+    switchto = "true",
+    jumpto = "true"
+}
 
 defwinprop{
     class = "AcroRead",

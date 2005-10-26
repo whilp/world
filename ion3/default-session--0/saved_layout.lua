@@ -19,14 +19,8 @@ return {
                                     ["regparams"] = {
                                         ["flags"] = 0,
                                         ["type"] = "WFrame",
-                                        ["name"] = "WFrame<5>",
+                                        ["name"] = "im-main",
                                         ["subs"] = {
-                                            [1] = {
-                                                ["type"] = "WClientWin",
-                                                ["windowid"] = 14680069,
-                                                ["switchto"] = true,
-                                                ["checkcode"] = 1,
-                                            },
                                         },
                                         ["frame_style"] = "frame-tiled-ionws",
                                     },
@@ -55,8 +49,14 @@ return {
                                 ["regparams"] = {
                                     ["flags"] = 0,
                                     ["type"] = "WFrame",
-                                    ["name"] = "WFrame<2>",
+                                    ["name"] = "im-chat",
                                     ["subs"] = {
+                                        [1] = {
+                                            ["type"] = "WClientWin",
+                                            ["windowid"] = 8388622,
+                                            ["switchto"] = true,
+                                            ["checkcode"] = 1,
+                                        },
                                     },
                                     ["frame_style"] = "frame-tiled-ionws",
                                 },
@@ -70,7 +70,7 @@ return {
                             ["regparams"] = {
                                 ["flags"] = 0,
                                 ["type"] = "WFrame",
-                                ["name"] = "WFrame<3>",
+                                ["name"] = "web",
                                 ["subs"] = {
                                 },
                                 ["frame_style"] = "frame-tiled-ionws",
@@ -85,11 +85,11 @@ return {
                         ["regparams"] = {
                             ["flags"] = 0,
                             ["type"] = "WFrame",
-                            ["name"] = "WFrame<1>",
+                            ["name"] = "term",
                             ["subs"] = {
                                 [1] = {
                                     ["type"] = "WClientWin",
-                                    ["windowid"] = 8388622,
+                                    ["windowid"] = 10485764,
                                     ["switchto"] = true,
                                     ["checkcode"] = 2,
                                 },

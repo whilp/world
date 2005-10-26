@@ -65,10 +65,12 @@ esac
 	export OSS PYTHONPATH LD_LIBRARY_PATH MANPATH TERM SENDMAIL
 	;;
 	merkur* )
+	CVSROOT=/cvs
 	alias agent='keychain --timeout 120 ~/.ssh/id_rsa; key'
 	alias mail='screen -x mail'
 	alias myc='screen -x comms'
 	source $HOME/.functions
+	export CVSROOT
 	;;
 	vger* )
 	alias agent='keychain ~/.ssh/id_rsa; key'
@@ -94,6 +96,8 @@ esac
     alias todo='grep -v DONE $HOME/TODO'
     alias etodo='vim $HOME/TODO'
     alias mtr='mtr -t'
+    alias xterm='rxvt'
+    alias grep='grep -IHn'
 
     TODO=$HOME/TODO
     LANG='C'
