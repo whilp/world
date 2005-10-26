@@ -30,6 +30,7 @@ export PRINTER
     PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/X11R6/bin:/opt/:/usr/games/"
     export PATH
 # arch-specific stuff.
+stty erase 
 case $ARCH in
     SunOS* )
     # fix needed for solaris and BSD
@@ -117,6 +118,10 @@ net () {
     lsof -Pni
 }
 mdc () {
+    if [ ! -d "$HOME/Maildir" ]; then
+	return 0
+    fi
+
     FINDCMD="find $HOME/Maildir -regex '.*/[a-zA-Z-]+/new/.*' -type f" 
     for i in $*; do
 	case $i in

@@ -51,12 +51,6 @@ return {
                                     ["type"] = "WFrame",
                                     ["name"] = "im-chat",
                                     ["subs"] = {
-                                        [1] = {
-                                            ["type"] = "WClientWin",
-                                            ["windowid"] = 8388622,
-                                            ["switchto"] = true,
-                                            ["checkcode"] = 1,
-                                        },
                                     },
                                     ["frame_style"] = "frame-tiled-ionws",
                                 },
@@ -89,9 +83,9 @@ return {
                             ["subs"] = {
                                 [1] = {
                                     ["type"] = "WClientWin",
-                                    ["windowid"] = 10485764,
+                                    ["windowid"] = 8388611,
                                     ["switchto"] = true,
-                                    ["checkcode"] = 2,
+                                    ["checkcode"] = 1,
                                 },
                             },
                             ["frame_style"] = "frame-tiled-ionws",
