@@ -66,6 +66,17 @@ return {
                                 ["type"] = "WFrame",
                                 ["name"] = "web",
                                 ["subs"] = {
+                                    [1] = {
+                                        ["type"] = "WClientWin",
+                                        ["windowid"] = 12582976,
+                                        ["switchto"] = true,
+                                        ["checkcode"] = 1,
+                                    },
+                                    [2] = {
+                                        ["checkcode"] = 2,
+                                        ["type"] = "WClientWin",
+                                        ["windowid"] = 10485764,
+                                    },
                                 },
                                 ["frame_style"] = "frame-tiled-ionws",
                             },
@@ -81,6 +92,12 @@ return {
                             ["type"] = "WFrame",
                             ["name"] = "term",
                             ["subs"] = {
+                                [1] = {
+                                    ["type"] = "WClientWin",
+                                    ["windowid"] = 8388611,
+                                    ["switchto"] = true,
+                                    ["checkcode"] = 3,
+                                },
                             },
                             ["frame_style"] = "frame-tiled-ionws",
                         },
