@@ -23,7 +23,7 @@ for DIR in $DIRS; do
 
     if [[ $CUR_RECORDS < "1" && $TMP_RECORDS < "1" ]]; then
 	case `basename $PARENT` in
-	    Draft*|Inbox|News)
+	    Questionable|Draft*|Inbox|News)
 	    shift
 	    ;;
 	    *)

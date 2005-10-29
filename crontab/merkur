@@ -28,3 +28,6 @@
 
 # back this crontab up
 45	*	*	*	*	/usr/bin/crontab -l > /home/will/CVS/dotfiles/crontab/`/bin/hostname`
+
+# todo list alerts
+0	3	*/14	*	1	cd /home/will && /usr/bin/tdl add "[UW] Timesheets due at noon"

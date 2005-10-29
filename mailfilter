@@ -1,12 +1,12 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.mailfilter
 # Use		: configures routing of incoming mail
-# Version	: $Revision: 1.21 $
+# Version	: $Revision: 1.22 $
 # Author	: Will Maier <willmaier@ml1.net>
 # Started	: 2005.06.15
-# Updated	: $Date: 2005/10/26 02:03:20 $
+# Updated	: $Date: 2005/10/29 16:53:20 $
 # Vim		: vim: set ft=perl:
-# CVS		: $Id: mailfilter,v 1.21 2005/10/26 02:03:20 will Exp $
+# CVS		: $Id: mailfilter,v 1.22 2005/10/29 16:53:20 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -37,11 +37,11 @@ logfile $LOG
 
 # catch duplicates using reformail
 
-`reformail -D 8000 $MAILDIR/.duplicate-cache`
-if ( $RETURNCODE == 0 )
-{
-    to $MAILDIR/Questionable/
-}
+# `reformail -D 8000 $MAILDIR/.duplicate-cache`
+# if ( $RETURNCODE == 0 )
+# {
+#     to $MAILDIR/Questionable/
+# }
 
 # --[ CATCH SPAM
 if ( /^X-Spam-Flag:.*YES$/ )
@@ -197,7 +197,8 @@ if ( /^(to|cc):.*@securityfocus\.com/ )
 {
     to $SECURITYFOCUS
 }
-if ( /^(to|cc):.*sjcbod@yahoogroups\.com/ )
+if ( /^(to|cc):.*sjcbod@yahoogroups\.com/ || \
+    /(^From|to):.*brendakonkel@yahoo\.com/ )
 {
     to /dev/null
     log "Trashed a mail"

@@ -144,3 +144,40 @@ mdc () {
 mnt () {
     mdc -n
 }
+# tdl (todo list) functions
+TDL_DATABASE=$HOME/.tdldb
+export TDL_DATABASE
+
+cae () { 
+    if [ $# -eq 0 ]; then 
+	echo "CAE todo for $(date)"
+	tdl ls '/[cae]' 
+    else 
+	tdl $* 
+    fi 
+}
+hep () { 
+    if [ $# -eq 0 ]; then 
+	echo "HEP todo for $(date)"
+	tdl ls '/[hep]' 
+    else 
+	tdl $* 
+    fi 
+}
+hepa () {
+    tdl add "[HEP] $*"
+}
+caea () {
+    tdl add "[CAE] $*"
+}
+mus () { 
+    if [ $# -eq 0 ]; then 
+	echo "Music todo for $(date)"
+	tdl ls '/[mus]' 
+    else 
+	tdl $* 
+    fi 
+}
+musa () {
+    tdl add "[MUS] $*"
+}
