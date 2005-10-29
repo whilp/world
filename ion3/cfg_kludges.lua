@@ -10,10 +10,32 @@ defwinprop{
 }
 
 -- Gajim History window
+defwinprop{
+    name = ".*account:.*",
+    target = "im-chat"
+}
+
+-- Gajim Preferences window
+defwinprop{
+    name = ".*Preferences:.*",
+    target = "im-chat"
+}
+
+-- Gajim Contact Info window
+defwinprop{
+    name = ".*Contact Information.*",
+    target = "im-chat"
+}
+
+-- Gajim Contact History window
+defwinprop{
+    name = ".*Conversation History.*",
+    target = "im-chat"
+}
 
 -- Gajim main window
 defwinprop{
-    class = "Gajim.py",
+    name = "Gajim",
     target = "im-main"
 }
 

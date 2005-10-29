@@ -1,10 +1,10 @@
 "#################  BEGIN HEADERS
 " Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
-" Version	: $Revision: 1.30 $
+" Version	: $Revision: 1.31 $
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: $Date: 2005/10/26 12:55:18 $
-" CVS		: $Id: vimrc,v 1.30 2005/10/26 12:55:18 will Exp $
+" Updated	: $Date: 2005/10/29 16:38:45 $
+" CVS		: $Id: vimrc,v 1.31 2005/10/29 16:38:45 will Exp $
 " Copyright	: Copyright (c) 2005 Will Maier
 " License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 "#################  END HEADERS
@@ -66,6 +66,8 @@
     abbr hte the
     abbr teh the
     abbr iwth with
+    abbr wiht with
+    abbr hteir their
 
     " Fix my fat fingers
     cabbrev W w

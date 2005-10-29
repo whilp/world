@@ -1,11 +1,11 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.metascreen
 # Use		: 
-# Version	: $Revision: 1.21 $
+# Version	: $Revision: 1.22 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2005/10/06 21:20:55 $
+# Updated	: $Date: 2005/10/29 16:38:45 $
 # Vim		: vim: set ft=sh:
-# CVS		: $Id: metascreen,v 1.21 2005/10/06 21:20:55 will Exp $
+# CVS		: $Id: metascreen,v 1.22 2005/10/29 16:38:45 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -19,7 +19,6 @@ screen -t SSH	    2 screen -R -DD -e'^\\\' -S ssh
 screen -t WWW	    3 screen -R -DD -e'^\\\' -S www
 screen -t AUDIO	    4
 screen -t LOCAL	    5 screen -R -DD -e'^\\\' -S local
-screen -t TODO	    6 $HOME/.todo.sh
 
 
 select 6
