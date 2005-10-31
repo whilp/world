@@ -97,8 +97,6 @@ esac
     alias mtr='mtr -t'
     alias xterm='rxvt'
     alias grep='grep -IHn'
-    alias mdcs='mdc | sort -rn'
-    alias mnts='mnt | sort -rn'
 
     TODO=$HOME/TODO
     LANG='C'
@@ -126,24 +124,38 @@ mdc () {
 	return 0
     fi
 
+    echo "Checking mail at $(date)."
+
     local FINDCMD="find $HOME/Maildir -regex '.*/[a-zA-Z-]+/new/.*' -type f" 
+    local SORTCMD="uniq -c"
     for i in $*; do
 	case $i in
 	    -n)
-	    local FINDCMD="${FINDCMD} -newer $HOME/Maildir/marker"
+	    FINDCMD="${FINDCMD} -newer $HOME/Maildir/.marker"
 	    ;;
+	    -s)
+	    SORTCMD="${SORTCMD} | sort -rn"
 	esac
     done
 
+    local NUMBER=0
     eval ${FINDCMD} |\
 	 sed 's/.*Maildir\/\([^/]\+\)\/new\/.*/\1/' |\
 	 sort |\
-	 uniq -c
+	 eval ${SORTCMD} |\
+	while read i; do
+	    echo "      $i"
+	    local NEW=$(echo $i | awk '{print $1}')
+	    local NUMBER=$((NUMBER + NEW))
+	done
+
+    echo "===>  $NUMBER new mails."
+
     touch $HOME/Maildir/.marker
 }
-mnt () {
-    mdc -n
-}
+alias mdcs='mdc -s'
+alias mnt='mdc -n'
+alias mnts='mdc -n -s'
 # tdl (todo list) functions
 TDL_DATABASE=$HOME/.tdldb
 export TDL_DATABASE
