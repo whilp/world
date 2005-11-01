@@ -75,8 +75,8 @@
 
 # --[ KEY BINDINGS
     bind T source .metascreen
-    bind h hardstatus ignore
-    bind H hardstatus alwayslastline
+    bind h caption splitonly
+    bind H caption always
     bind K eval 'kill' 'stuff "y"'
     bind i eval 'idle 60 windowlist -b' 'sleep 65' 'idle 0'
     bind j focus down
