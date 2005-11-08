@@ -2,8 +2,22 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: 2005.10.05 07:50:58 -0500
+# Version	: $Revision: 1.66 $
+# Updated	: $Date: 2005/11/08 15:19:58 $
+# Vim		: :vim: set ft=sh:
+# CVS		: $Id: profile,v 1.66 2005/11/08 15:19:58 will Exp $
+# Copyright	: Copyright (c) 2005 Will Maier
+# License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
+
+# profile-ng:
+#source $HOME/.profile-ng/environment	    # general environment variables
+#source $HOME/.profile-ng/functions	    # general shell functions
+#source $HOME/.profile-ng/aliases	    # general aliases
+#source $HOME/.profile-ng/arch-specific	    # functions, aliases and variables assigned by
+#					    # architecture
+#source $HOME/.profile-ng/host-specific	    # functions, aliases and variables assigned by
+					    # host
 
 ARCH=`uname`
 #ISSUE=`awk '{print $1}' /etc/issue || echo "unknown"`
@@ -193,3 +207,37 @@ mus () {
 musa () {
     tdl add "[MUS] $*"
 }
+notes () {
+    # Determine date/time; used to guess the appropriate class
+    DATE=$(date "+%Y.%m.%d") 
+    DAY=$(date "+%A") 
+    HOUR=$(date "+%H") 
+    NOTEPATH=$HOME/School
+
+    case ${DAY} in
+	Tuesday|Thursday)
+	    case ${HOUR} in
+		11|12)
+		    CLASS=HS323
+		;;
+		14|15)
+		    CLASS=HS561
+		;;
+	    esac
+	;;
+	Monday|Wednesday|Friday)
+	    case ${HOUR} in
+		08|09)
+		    CLASS=HS322
+		;;
+	    esac
+	;;
+    esac
+    if [ -z ${CLASS} ]; then
+	echo "Could not determine class."
+	return 1
+    fi
+    NOTEPATH=${NOTEPATH}/${CLASS}/${DATE}
+    vim ${NOTEPATH}
+}
+alias wiki='ruby $HOME/bin/instiki/instiki.rb --storage $HOME/bin/instiki/storage'

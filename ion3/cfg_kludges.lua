@@ -7,6 +7,8 @@
 defwinprop{
     name = ".*account:.*",
     target = "im-chat",
+    switchto = "true",
+    jumpto = "true"
 }
 
 -- Gajim History window
