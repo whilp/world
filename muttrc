@@ -2,14 +2,14 @@
 # Filename	: $HOME/.muttrc (or $HOME/.muttngrc)
 # Use		: main configuration file for mutt(-ng), a command line mail reader
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.28 $
+# Version	: $Revision: 1.29 $
 # Started	: 2005.03.06
 # Based on	: Phillip Hollenback's muttrc @ macdevcenter
 # Refers to	: $HOME/.muttalias
 #		  $HOME/.muttcolor
 # Referred to by: $HOME/.muttngrc
-# Updated	: $Date: 2005/10/29 16:53:20 $
-# CVS		: $Id: muttrc,v 1.28 2005/10/29 16:53:20 will Exp $
+# Updated	: $Date: 2005/11/11 14:46:45 $
+# CVS		: $Id: muttrc,v 1.29 2005/11/11 14:46:45 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -22,6 +22,7 @@ set record="+Sent"
 set postponed="+Drafts"
 set recall=no
 set crypt_verify_sig=no
+set charset="us-ascii//TRANSLIT"	    # translate to straight us-ascii
 
 set spoolfile='/var/mail/will'
 mailboxes !
@@ -50,6 +51,11 @@ bind pager 'x' noop
 bind index zt current-top
 bind index zz current-middle
 bind index zb current-bottom
+bind index '\CU' previous-page
+bind pager '\CU' previous-page
+bind index '\CF' next-page
+bind pager '\CF' next-page
+
 
 macro index G "<shell-escape>~/bin/getmail<enter>" "Getmail"
 macro pager G "<shell-escape>~/bin/getmail<enter>" "Getmail"
@@ -166,3 +172,6 @@ folder-hook =Sent set sort=reverse-date
 #folder-hook =CAE push "~T<enter>"
 
 folder-hook =\(Debian-.*|Ubuntu-.*|FreeBSD-.*|Vim.*|Madlug-.*|Maildrop-.*|Mutt-.*|Screen-.*|Techpartners-.*\) push 'D~m>300!~F~R<enter>'
+
+#folder-hook =RT-users push 'T~m>300~R<enter>;<save-message>=RT-users-ARK<enter>'
+#folder-hook =FreeBSD-questions$ "push '<tag-pattern>~m>300<enter><tag-prefix><save-message>=FreeBSD-questions-ARK<enter>'"
