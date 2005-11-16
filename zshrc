@@ -1,10 +1,10 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
-# Version	: $Revision: 1.35 $
+# Version	: $Revision: 1.36 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2005/10/26 12:55:18 $
-# CVS		: $Id: zshrc,v 1.35 2005/10/26 12:55:18 will Exp $
+# Updated	: $Date: 2005/11/16 17:14:35 $
+# CVS		: $Id: zshrc,v 1.36 2005/11/16 17:14:35 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -103,12 +103,12 @@ if [ -z "${DISPLAY}" -a -z "${STY}" ]; then
     PREEXECCMD=''
 fi
 eval ${PREEXECCMD}
-preexec () {
-    if [ -n "$1" ]; then
-	RUNNING=$1
-    fi
-    eval ${PREEXECCMD}
-}
+# preexec () {
+#     if [ -n "$1" ]; then
+# 	RUNNING=$1
+#     fi
+#     eval ${PREEXECCMD}
+# }
 
 # --[ IMPORTANT VARIABLES
 export ZSHDIR=$HOME/.zsh

@@ -12,3 +12,4 @@ xmodmap -e "add Control = Control_L"
 unclutter -idle 5 -jitter 20&
 exec ion3
 #exec wmii
+#exec twm

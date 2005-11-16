@@ -2,9 +2,9 @@
 ! Filename	: $HOME/.Xresources
 ! Use		: configures X fonts and colors
 ! Author	: Will Maier <willmaier@ml1.net>
-! Version	: $Revision: 1.7 $
-! Updated	: $Date: 2005/10/13 17:07:28 $
-! CVS		: $Id: Xresources,v 1.7 2005/10/13 17:07:28 will Exp $
+! Version	: $Revision: 1.8 $
+! Updated	: $Date: 2005/11/16 17:14:35 $
+! CVS		: $Id: Xresources,v 1.8 2005/11/16 17:14:35 will Exp $
 ! Copyright	: Copyright (c) 2005 Will Maier
 ! License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 !#################  END HEADERS
@@ -47,8 +47,8 @@ XTerm*colorBD: #5555FF
 
 ! gives me nice, big fonts to start; see /usr/X11R6/lib/X11/app-defaults/XTerm
 !XTerm*font:-misc-fixed-medium-r-normal--18-120-100-100-c-90-iso10646-1
-XTerm*font:-misc-fixed-medium-r-normal--13-120-75-75-c-80-iso10646-1
-!XTerm*font:-windows-proggysquaresz-medium-r-normal-*-11-80-96-96-c-70-iso8859-1
+!XTerm*font:-misc-fixed-medium-r-normal--13-120-75-75-c-80-iso10646-1
+XTerm*font:-windows-proggysquaresz-medium-r-normal-*-11-80-96-96-c-70-iso8859-1
 !XTerm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-c-0-iso10646-1
 !XTerm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-c-0-iso8859-1
 !XTerm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-c-0-iso8859-15

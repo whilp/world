@@ -16,40 +16,57 @@ PORTAUDIT=/usr/local/sbin/portaudit
 GREP=/usr/bin/grep
 SED=/usr/bin/sed
 
-echo "====> Checking for updates to the ports tree."
+NEEDUPDATE='0'
+
+echo "====> Downloading updates to the ports tree."
 
 # Check to see if there are new versions of the ports available
-SNAPF=$(${PORTSNAP} fetch | tail -1)
-
-if [ -z "$(echo $SNAPF | ${GREP} 'No updates needed')" ]; then
-    # If we got updated ports above, extract those updates
-    echo "====> Downloading..."
-    SNAPU=$(${PORTSNAP} update)
-
-    if [ -n "$(echo ${SNAPU} | ${GREP} 'UPDATING')" ]; then
-	# If, in extracting the new ports, we also got a new /u/ports/UPDATING
-	# file, prompt the user to read it
-	echo "====> Please read /usr/ports/UPDATING before running portupgrade."
-    fi
-    ${PORTSDB} -Fu 2> /dev/null
-    
-    VERSION=$(${PORTVERSION} -v -l "<")
-    
-    if [ -z "${VERSION}" ]; then
-	echo "====> All installed ports are up to date."
+${PORTSNAP} fetch | tail -1 |\
+while read LINE; do
+    echo ${LINE}
+    if [ -z "$(echo ${LINE} | ${GREP} 'No updates needed')" ]; then
+	NEEDUPDATE=1
     else
-	echo "====> The following ports need to be upgraded. Please run"
-	echo '====> `portupgrade -varR`' "to compile the new versions."
-	echo ${VERSION}
+	echo "====> Ports tree up to date. Verifying installed packages are fresh and secure."
     fi
+done
+
+if [ "${NEEDUPDATE}" -eq "1" ]; then
+    # If we got updated ports above, extract those updates
+    echo "====> Extracting updates."
+fi
+
+SNAPU=$(${PORTSNAP} update)
+
+if [ -n "$(echo ${SNAPU} | ${GREP} '(MOV|UPDATING)')" ]; then
+    # If, in extracting the new ports, we also got a new /u/ports/UPDATING
+    # file, prompt the user to read it
+    echo "====> Please read /usr/ports/UPDATING and /usr/ports/MOVED"
+    echo "====> before running portmanager."
+fi
+
+echo "====> Updating packages databse."
+${PORTSDB} -Fu 2> /dev/null
+
+    
+echo "====> Comparing available and installed packages."
+VERSION=$(${PORTVERSION} -l "<")
+    
+if [ -z "${VERSION}" ]; then
+    echo "====> All installed ports are up to date."
 else
-    echo "====> Ports tree up to date."
+    echo "====> The following ports need to be upgraded. Please run"
+    echo '====> `portmanager -u`' "to compile the new versions."
+    echo ${VERSION} |\
+    while read LINE; do
+	echo ${LINE} | ${SED} -E 's/[^a-z0-9-]//g'
+    done
 fi
 
 echo "====> Fetching new database of port security vulnerabilities."
 
 # Check ports for security vulnerabilities
-${PORTAUDIT} -Fd 2>&1 > /dev/null
+${PORTAUDIT} -Fdq 2>&1 > /dev/null
 
 echo "====> Checking ports tree for known vulnerabilities."
 ${PORTAUDIT} -a
