@@ -1,10 +1,10 @@
 "#################  BEGIN HEADERS
 " Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
-" Version	: $Revision: 1.33 $
+" Version	: $Revision: 1.35 $
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: $Date: 2005/11/16 17:14:35 $
-" CVS		: $Id: vimrc,v 1.33 2005/11/16 17:14:35 will Exp $
+" Updated	: $Date: 2005/11/28 20:30:51 $
+" CVS		: $Id: vimrc,v 1.35 2005/11/28 20:30:51 will Exp $
 " Copyright	: Copyright (c) 2005 Will Maier
 " License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 "#################  END HEADERS
@@ -61,11 +61,12 @@
     map <silent> <C-T> >>
 
     " save shortcut
-    imap <C-W> <Esc>:w<CR>a
+    imap <C-W> <Esc>:w<CR>
 
     " Fix my shitty typing
     abbr hte the
     abbr teh the
+    abbr th the
     abbr iwth with
     abbr wiht with
     abbr hteir their
@@ -100,6 +101,8 @@
 "    noremap <PageDown>
 "    noremap <PageUp>
     noremap Y y$
+    inoremap <C-K> <Up>
+    inoremap <C-J> <Down>
     noremap <silent> <C-R> :s/^\([^ ]\+ \)\(#\d\{6\}\):\(.*\)/\1Re: [CAE \2]\3/<CR>
 
 " --[ AUTOCMD

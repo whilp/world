@@ -1,0 +1,18 @@
+smartfeed:/newitems|||
+http://www.frsirt.com/advisorieseng.xml|FrSIRT Advisories|Security|
+http://www.frsirt.com/exploits.xml|FrSIRT Exploits|Security|
+http://www.freebsd.org/security/advisories.rdf||BSD,Security|
+http://www.vuxml.org/freebsd/rss.xml|FreeBSD Ports Advisories|BSD,Security|
+http://www.debian.org/security/dsa-long|Debian Security Advisories|Linux,Security|
+http://undeadly.org/cgi?action=rss||BSD,OS|
+http://www.debian-administration.org/articles.rdf|Debian Administration|Linux,OS|
+http://www.securityfocus.com/rss/news.xml||OS,Security|
+http://www.freebsddiary.org/news.php||BSD,OS|
+http://www.oreillynet.com/pub/feed/10?format=rss2||BSD|
+http://www.oreillynet.com/pub/feed/18?format=rss2||BSD,Linux|
+http://syndication.sdmediagroup.com/feeds/public/sys_admin_magazine.xml||OS|
+http://feeds.feedburner.com/Taosecurity||BSD,Security|
+http://www.schneier.com/blog/index.xml||Security|
+http://www.networkcomputing.com/rss/rss-allstories.jhtml|||
+http://rss.slashdot.org/Slashdot/slashdot|||
+http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/world/rss.xml|BBC News||

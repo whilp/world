@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.67 $
-# Updated	: $Date: 2005/11/16 17:14:35 $
+# Version	: $Revision: 1.69 $
+# Updated	: $Date: 2005/11/28 20:30:51 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.67 2005/11/16 17:14:35 will Exp $
+# CVS		: $Id: profile,v 1.69 2005/11/28 20:30:51 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -53,7 +53,7 @@ case $ARCH in
     export SHELL='/afs/engr.wisc.edu/oss/bin/zsh'
     ;;
     *BSD )
-    alias ls='gnuls --color=auto -F'
+    alias ls='gls --color=auto -F'
     alias tar='gtar'
     ;;
     * )
@@ -80,7 +80,7 @@ esac
 	merkur* )
 	CVSROOT=/cvs
 	alias agent='keychain --timeout 120 ~/.ssh/id_rsa; key'
-	alias mail='screen -x mail'
+	#alias mail='screen -x mail'
 	alias myc='screen -x comms'
 	source $HOME/.functions
 	export CVSROOT
@@ -99,8 +99,9 @@ esac
 #	alias upgrade='sudo apt-get update; sudo apt-get dist-upgrade'
 #	;;
 #	*BSD* )
-#	PKG_PATH='ftp://openbsd.mirrors.tds.net/pub/OpenBSD/3.7/packages/i386/'
 #    esac
+    PKG_PATH='ftp://openbsd.mirrors.tds.net/pub/OpenBSD/3.8/packages/i386/'
+    export PKG_PATH
 
     alias key='source $HOME/.keychain/$HOST-sh'
     alias agent='keychain ~/.ssh/id_rsa'
@@ -174,39 +175,16 @@ alias mnts='mdc -n -s'
 TDL_DATABASE=$HOME/.tdldb
 export TDL_DATABASE
 
-cae () { 
-    if [ $# -eq 0 ]; then 
-	echo "CAE todo for $(date)"
-	tdl ls '/[cae]' 
-    else 
-	tdl $* 
-    fi 
-}
-hep () { 
-    if [ $# -eq 0 ]; then 
-	echo "HEP todo for $(date)"
-	tdl ls '/[hep]' 
-    else 
-	tdl $* 
-    fi 
-}
-hepa () {
-    tdl add "[HEP] $*"
-}
-caea () {
-    tdl add "[CAE] $*"
-}
-mus () { 
-    if [ $# -eq 0 ]; then 
-	echo "Music todo for $(date)"
-	tdl ls '/[mus]' 
-    else 
-	tdl $* 
-    fi 
-}
-musa () {
-    tdl add "[MUS] $*"
-}
+alias cae="TDL_DATABASE=$HOME/.tdldb-cae tdl"
+alias caea="TDL_DATABASE=$HOME/.tdldb-cae tdla"
+alias caed="TDL_DATABASE=$HOME/.tdldb-cae tdld"
+alias caeg="TDL_DATABASE=$HOME/.tdldb-cae tdlg"
+alias cael="TDL_DATABASE=$HOME/.tdldb-cae tdll"
+alias hep="TDL_DATABASE=$HOME/.tdldb-hep tdl"
+alias hepa="TDL_DATABASE=$HOME/.tdldb-hep tdla"
+alias hepd="TDL_DATABASE=$HOME/.tdldb-hep tdld"
+alias hepg="TDL_DATABASE=$HOME/.tdldb-hep tdlg"
+alias hepl="TDL_DATABASE=$HOME/.tdldb-hep tdll"
 notes () {
     # Determine date/time; used to guess the appropriate class
     DATE=$(date "+%Y.%m.%d") 
@@ -245,3 +223,7 @@ alias portmanager='portmanager --log'
 alias elinks="DISPLAY='' elinks"
 alias vim="DISPLAY='' vim"
 alias calendar="calendar -f /home/will/.calendar"
+alias ci="ci -l"
+alias co="co -l"
+CVSROOT=anoncvs@mirror.sg.depaul.edu:/cvs
+export CVSROOT

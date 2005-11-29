@@ -1,12 +1,12 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.mailfilter
 # Use		: configures routing of incoming mail
-# Version	: $Revision: 1.23 $
+# Version	: $Revision: 1.24 $
 # Author	: Will Maier <willmaier@ml1.net>
 # Started	: 2005.06.15
-# Updated	: $Date: 2005/11/11 14:46:45 $
+# Updated	: $Date: 2005/11/28 20:30:51 $
 # Vim		: vim: set ft=perl:
-# CVS		: $Id: mailfilter,v 1.23 2005/11/11 14:46:45 will Exp $
+# CVS		: $Id: mailfilter,v 1.24 2005/11/28 20:30:51 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -199,6 +199,7 @@ if ( /^(to|cc):.*@securityfocus\.com/ )
 }
 if ( /^(to|cc):.*sjcbod@yahoogroups\.com/ || \
     /(^From|to):.*brendakonkel@yahoo\.com/ || \
+    /(^From|to):.*info@tgdde\.com/ || \
     /^From:.*bugmaster@freebsd\.org/ )
 {
     to /dev/null

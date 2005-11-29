@@ -11,7 +11,7 @@ password = VojNirzyev2
 
 [destination]
 type = MDA_external
-path = /usr/bin/maildrop
+path = /usr/local/bin/maildrop
 
 [options]
 verbose = 0
