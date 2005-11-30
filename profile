@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.69 $
-# Updated	: $Date: 2005/11/28 20:30:51 $
+# Version	: $Revision: 1.70 $
+# Updated	: $Date: 2005/11/29 20:25:10 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.69 2005/11/28 20:30:51 will Exp $
+# CVS		: $Id: profile,v 1.70 2005/11/29 20:25:10 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -227,3 +227,31 @@ alias ci="ci -l"
 alias co="co -l"
 CVSROOT=anoncvs@mirror.sg.depaul.edu:/cvs
 export CVSROOT
+sued () {
+    if [ "$(rcsdiff -q -kk $1)" ]; then
+	rcsdiff -kk  $1
+	read INPUT\?"Commit changes? [Y/n] "
+	case ${REPLY} in 
+	    y|Y|yes|YES)
+	    sudo rcs -l $1
+	    sudo ci -u $1
+	    ;;
+	esac
+    fi
+    sudo rcs -l $1
+    sudo vim $1
+    sudo ci -u $1
+}
+#xpdf () {
+#    if [ ! "$1" ]; then 
+#	xpdf
+#	return 0
+#    elif [ "$(echo $1 | egrep "^(http|ftp)")" ]; then
+#	FILE=/tmp/xpdf-$(basename $1)
+#	ftp -o $FILE $1
+#	xpdf $FILE
+#	rm $FILE
+#    else
+#	xpdf $1
+#    fi
+#}

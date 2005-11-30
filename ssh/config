@@ -3,7 +3,8 @@
 # 2005.06.11
 
 Host merk
-    Hostname	merkur.atekomi.net
+    #Hostname	merkur.atekomi.net
+    Hostname	192.168.1.50
     Port	222
     User	will
 
