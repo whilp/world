@@ -2,7 +2,7 @@
 # Main menu bindings
 add feed:a
 delete feed:d
-reload all feeds:R
+reload all feeds:.
 change default browser:B
 move item up:P
 move item down:N

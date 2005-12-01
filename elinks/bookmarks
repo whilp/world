@@ -1,250 +1,254 @@
-16. SMTP Authentication for Mail servers	http://postfix.state-of-mind.de/patrick.koetter/smtpauth/smtp_auth_mailservers.html	0	
-3. Basic configuration	http://modeemi.cs.tut.fi/~tuomov/ion/doc-3/ionconf/node4.html#SECTION00450000000000000000	0	
-wikipedia	http://www.wikipedia.org/wiki/%s	0	
+CAE		0	FE
 webdaemons (dot) org - Jabber2: Finally, Solaris!	http://webdaemons.org/webdaemons/2005/01/02/1104672842870.html	1	
-uw-madison writing center writer's handbook	http://www.wisc.edu/writetest/Handbook/Documentation.html	0	
-thttpd	http://www.acme.com/software/thttpd/	1	
-rec.arts.int-fiction competition	http://www.wurb.com/if/award/1	0	
-pintday.org: Saga of an OpenBSD Upgrade - 2.7 to 3.0	http://pintday.org/hack/docs/remote-upgrade-howto.shtml	0	
-pfSense >> Introduction	http://www.pfsense.com/	0	
-open.itworld.com - Finding Text in Context	http://open.itworld.com/5040/nls_unixfindingtext050728/page_1.html	0	
-nmap	http://www.insecure.org/nmap/data/nmap_manpage.html	1	
-mimoland - Running Debian inside qemu using console	http://mimo.gn.apc.org/index.php/Running%20Debian%20inside%20qemu%20using%20console	2	
-lucky.openbsd.misc - keeping OBSD up to date	http://groups.google.com/group/lucky.openbsd.misc/browse_thread/thread/87ab297a035a453e/25f654555f5a061c%2325f654555f5a061c?sa=X&oi=groupsr&start=0&num=3	2	
-irssi	http://irssi.org/?page=docs&doc=startup-HOWTO	2	
-http://www.dirty.org/underworld/	http://www.dirty.org/underworld/	0	
-http://putmail.sourceforge.net/FAQ (sendmail stunnel)	http://putmail.sourceforge.net/FAQ	1	
-http://edwin.adsl.barnet.com.au/~edwin/ports/	http://edwin.adsl.barnet.com.au/~edwin/ports/	0	
-http://bzgirl.bakadigital.com/irssi.txt	http://bzgirl.bakadigital.com/irssi.txt	2	
-ezUnix.org :: It's All So Simple. - NetBSD live CD	http://ezunix.org/modules.php?op=modload&name=Sections&file=index&req=viewarticle&artid=88&page=1	0	
-ethernet taps	http://www.snort.org/docs/100Mb_tapping1.pdf	0	
-emorangers.com	http://www.emorangers.com/	1	
-eRacks Open Source Systems: Custom BSD and Linux Rackmount Servers and Systems.	http://eracks.com/	0	
-bsdforums.org - best way to keep OBSD up to date	http://www.bsdforums.org/forums/archive/index.php/t-1724.html	0	
-XS-HTTPD	http://www.stack.nl/~johans/xs-httpd/	0	
-World of Warcraft Strategy Compendium	http://strategy.worldofwar.net/news.php?id=44	1	
-WoW Technical Support -can'tinstall patch	http://forums.worldofwarcraft.com/thread.aspx?fn=wow-tech-support&t=525269&p=1&tmp=1#post525269	0	
-WoW Technical Support - patch install problems	http://forums.worldofwarcraft.com/thread.aspx?fn=wow-tech-support&t=525260&p=1&tmp=1#post525260	0	
-WoW Technical Support - manually patching 1.7	http://forums.worldofwarcraft.com/thread.aspx?fn=wow-tech-support&t=524879&p=1&tmp=1#post524879	0	
-WoW Technical Support - Patch Workaround	http://forums.worldofwarcraft.com/thread.aspx?fn=wow-tech-support&t=521752&p=1&tmp=1#post521752	0	
-Wiktionary	http://en.wiktionary.org/wiki/%s	0	
-Welcome to PyFlag.sourceforge.net	http://pyflag.sourceforge.net/index.html	0	
-Vim Tutorial, IRC-style	http://www.vi-improved.org/tutorial.php	2	
-Using the Ruby Development Tools plug-in for Eclipse	http://www-128.ibm.com/developerworks/opensource/library/os-rubyeclipse/?ca=dgr-lnxw01Ruby4Eclipse	0	
-Updating and upgrading within an OpenBSD release	http://transform.to/~mjc42/openbsd/updating.html	2	
+CAE RT		1	FE
+RT - Main Queue	https://rt.cae.wisc.edu/index.html?HomeRefreshInterval=600	2	
+RT - Network Queue	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=Queue%20%3D%20%27network%27%20AND%20%28Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27new%27%29&Rows=50&OrderBy=LastUpdated&Page=1	2	
+RT - Security Queue	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=Queue%20%3D%20%27security%27%20AND%20%28Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27new%27%29&Rows=50&OrderBy=LastUpdated&Page=1	2	
+RT - Unix Queue	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=Queue%20%3D%20%27unix%27%20AND%20%28Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27new%27%29&Rows=50&OrderBy=LastUpdated&Page=1	2	
+RT - Queue Contacts	https://rt.cae.wisc.edu/Tools/ContactView.html?Queue=13	2	
+RT - My Tickets	https://rt.cae.wisc.edu/Search/Results.html?Order=ASC&Query=%20Owner%20%3D%20%27531135%27%20&Rows=50&OrderBy=Status&Page=1&Format=%27%09%3Cb%3E%3Ca%20href%3D%22%2FTicket%2FDisplay.html%3Fid%3D__id__%22%3E__id__%3C%2Fa%3E%3Cb%3E%2FTITLE%3A%23%27%2C%20%0A%27%3Cb%3E%3Ca%20href%3D%22%2FTicket%2FDisplay.html%3Fid%3D__id__%22%3E__Subject__%3C%2Fa%3E%3C%2Fb%3E%2FTITLE%3ASubject%27%2C%20%0A%27%3Csmall%3E__CreatedRelative__%3C%2Fsmall%3E%27%2C%20%0A%27__QueueName__%27%2C%20%0A%27__OwnerName__%27%2C%20%0A%27__Priority__%27%2C%20%0A%27__NEWLINE__%27%2C%20%0A%27__Status__%27%2C%20%0A%27%3Csmall%3E__Requestors__%3C%2Fsmall%3E%27%2C%20%0A%27%3Csmall%3E__ToldRelative__%3C%2Fsmall%3E%27%2C%20%0A%27__Area__%27%2C%20%0A%27%3Csmall%3E__LastUpdatedRelative__%3C%2Fsmall%3E%27%2C%20%0A%27%3Csmall%3E__DueRelative__%3C%2Fsmall%3E%27	2	
+AFS Commands	http://www-306.ibm.com/software/stormgmt/afs/manuals/Library/unix/en_US/HTML/AdminRef/auarf002.htm	1	
+AFS Manuals	http://www-306.ibm.com/software/stormgmt/afs/library/	1	
 Unixbook	http://homepages.cae.wisc.edu/~wcmaier/unixbook/	1	
-Unix Review &gt; The Open Road: Nagios	http://www.unixreview.com/documents/s=9602/ur0503l/ur0503l.html	0	
-Unix Review &gt; Extending Nagios	http://www.unixreview.com/documents/s=9823/ur0507l/ur0507l.html	0	
+Open Source Development With CVS	http://cvsbook.red-bean.com/cvsbook.html	1	
+ONLamp.com: Implementing Hardware RAID on FreeBSD	http://www.onlamp.com/pub/a/bsd/2004/12/09/raid.html?page=last&x-showcontent=text	1	
+Interests		0	F
+Baf's Guide to the Interactive Fiction Archive	http://www.wurb.com/if/	1	
+emorangers.com	http://www.emorangers.com/	1	
+Marcus J. Ranum's Blog	http://www.ranum.com/	1	
+The Traveler's Lunchbox - Recipe Index	http://www.travelerslunchbox.com/recipe-index/	1	
+World of Warcraft Strategy Compendium	http://strategy.worldofwar.net/news.php?id=44	1	
+Personal Observations on the Reliability of the Shuttle (Feynman)	http://www.ranum.com/security/computer_security/editorials/dumb/feynman.html	1	
+BrickJournal - the magazine for Adult Fans of LEGO	http://www.legofan.org/brickjournal/	1	
+The Darth Side: Memoirs of a Monster	http://www.darthside.blogspot.com/	1	
+Simon of Space	http://simonofspace.blogspot.com/	1	
+NIX		0	F
+ACM Queue - Comments Are More ImportCommenting Code	http://acmqueue.com/modules.php?name=Content&pa=showpage&pid=290	1	
+CoreWar Info	http://www.koth.org/info.html	1	
+Rackmout Servers at ABMX.Com	http://www.abmx.com/	1	
+The Network Observer	http://polaris.gseis.ucla.edu/pagre/tno.html	1	
+EFF "Net Culture -- Gender Issues" Archive	http://www.eff.org//Net_culture/Gender_issues/	1	
+EFF: miniLinks	http://www.eff.org/minilinks/	1	
+thttpd	http://www.acme.com/software/thttpd/	1	
+List of keyword searches - MozillaZine Knowledge Base	http://kb.mozillazine.org/List_of_keyword_searches	1	
+HelpOnInstalling/BasicInstallation - MoinMoin	http://moinmoin.wikiwikiweb.de/HelpOnInstalling/BasicInstallation	1	
+Cambridge University Engineering Department - Text Processing using LaTeX	http://www-h.eng.cam.ac.uk/help/tpl/textprocessing/LaTeX_intro.html	1	
+PXE Boot server	http://www.linux-sxs.org/internet_serving/pxeboot.html	1	
+The Slack World, Issue 2, 2005. Slack Classes -  GNU Find	http://slackworld.berlios.de/02/classes.html	1	
+Cacti: The Complete RRDTool-based Graphing Solution	http://www.cacti.net/	1	
+LXer: Comment of the Day - October 25, 2005 Calculate the Optimal Size of a New Disk Drive	http://lxer.com/module/newswire/view/46144/index.html	1	
+Linux.com | CLI Magic: netcat	http://www.linux.com/article.pl?sid=05/11/07/182200	1	
+Be Your Own Hotspot - Popular Science	http://www.popsci.com/popsci/how2/article/0,20967,1076525,00.html	1	
+BSD		1	F
+The FreeBSD Diary -- Cross compiling on AMD64 - the teaser	http://www.freebsddiary.org/cross-compiling-teaser.php	2	
+TaoSecurity: Keeping FreeBSD Up-To-Date	http://www.taosecurity.com/keeping_freebsd_up-to-date.html	2	
+lucky.openbsd.misc - keeping OBSD up to date	http://groups.google.com/group/lucky.openbsd.misc/browse_thread/thread/87ab297a035a453e/25f654555f5a061c%2325f654555f5a061c?sa=X&oi=groupsr&start=0&num=3	2	
+MagicPoint presentation foils OpenBSD	http://cvs.openbsd.org/papers/auug04/	2	
+ONLamp.com: Using FreeBSD's ACLs	http://www.onlamp.com/pub/a/bsd/2005/09/22/FreeBSD_Basics.html	2	
+ONLamp.com: Using Software RAID-1 with FreeBSD	http://www.onlamp.com/pub/a/bsd/2005/11/10/FreeBSD_Basics.html?CMP=OTC-3W3B95036222	2	
+Exploit  Mitigation in OBSD	http://www.openbsd.org/papers/ven05-deraadt/index.html	2	
+TaoSecurity - VMware player	http://taosecurity.blogspot.com/2005/10/vmware-player-changes-everything-in.html	2	
+TaoSecurity - FreeBSD 6 VMWare Guest Problems	http://taosecurity.blogspot.com/2005/11/problems-with-freebsd-6.html	2	
+OpenCON 2005 :: OpenBSD Conference :: San Servolo Island (Venice)	http://www.opencon.org/	2	
+TaoSecurity - Freebsd Upgrading with Packages	http://taosecurity.blogspot.com/2005/08/updating-freebsd-perl-using-packages-i.html	2	
+TaoSecurity - Freebsd fastestcvsup	http://taosecurity.blogspot.com/2003/11/using-fastestcvsup-and-freebsd-update.html	2	
+TaoSecurity - FreeBSD ports vs packages	http://taosecurity.blogspot.com/2004/11/ports-vs-packages-on-freebsd-many.html	2	
+TaoSecurity - FreeBSD updated packages	http://taosecurity.blogspot.com/2004/11/trying-to-add-updated-packages-on.html	2	
+TaoSecurity - FreeBSD: using portaudit	http://taosecurity.blogspot.com/2004/04/using-portaudit-to-improve-freebsd.html	2	
+TaoSecurity - FreeBSD update	http://taosecurity.blogspot.com/2004/11/using-freebsd-update-to-patch-freebsd.html	2	
+FreeBSD: Using the Ports Collection	http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/ports-using.html	2	
+Updating and upgrading within an OpenBSD release	http://transform.to/~mjc42/openbsd/updating.html	2	
+OpenBSD AnonCVS	http://www.openbsd.org/anoncvs.html	2	
+Building OpenBSD from Source	http://www.openbsd.org/faq/faq5.html	2	
+Linux		1	F
+Debian Administration :: Reusing existing OpenSSH v4 connections	http://www.debian-administration.org/articles/290	2	
+HantsLUG Wiki: LinuxHints/QemuEmulation	http://www.hants.lug.org.uk/cgi-bin/wiki.pl?LinuxHints/QemuEmulation	2	
+The Ging FAQ	http://glibc-bsd.alioth.debian.org/ging/	2	
+Debian Administration :: Perl Packages - the return	http://www.debian-administration.org/articles/281	2	
+Linux.com | Hardware emulation with QEMU	http://www.linux.com/article.pl?sid=05/10/24/1845248	2	
+Debian Administration :: Logging the right way	http://www.debian-administration.org/articles/278	2	
+Linux.com | Advanced Squid	http://www.linux.com/article.pl?sid=05/10/11/1441255	2	
+USB Wireless		2	F
 Ubuntu Forums - HOWTO: Get your DWL-122 Wifi Adapter working in Hoary	http://ubuntuforums.org/showthread.php?t=25676&highlight=usb+wifi	3	
 Ubuntu Forums - Can't recognize belkin fd5060 wireless USB adapter	http://ubuntuforums.org/showthread.php?t=5164&highlight=usb+wifi	3	
-UW D2L	https://uwmad.courses.wisconsin.edu/	0	
-USB Wireless		2	F
-Tips and Toys for the Hardworking Admin	http://www.enterprisenetworkingplanet.com/netos/article.php/3553111	0	
-The Web Vector: Exploiting Human and Browser Vulnerabilities	http://www.websensesecuritylabs.com/resource/PDF/toorcon_sep2005.pdf	0	
-The Two Towers: Home	http://t2tmud.org/	0	
-The Traveler's Lunchbox - Recipe Index	http://www.travelerslunchbox.com/recipe-index/	1	
-The Slack World, Issue 2, 2005. Slack Classes -  GNU Find	http://slackworld.berlios.de/02/classes.html	1	
-The Six Dumbest Ideas in Computer Security	http://www.ranum.com/security/computer_security/editorials/dumb/index.html	1	
-The QEMU forum :: View topic - OpenBSD Host How To	http://qemu.dad-answers.com/viewtopic.php?t=78&highlight=openbsd	0	
-The Network Observer	http://polaris.gseis.ucla.edu/pagre/tno.html	1	
-The Ging FAQ	http://glibc-bsd.alioth.debian.org/ging/	2	
-The GNU Privacy Handbook	http://www.gnupg.org/gph/en/manual.html#AEN329	1	
-The FreeBSD Diary -- Cross compiling on AMD64 - the teaser	http://www.freebsddiary.org/cross-compiling-teaser.php	2	
-The FreeBSD Diary -- Build world on your fast box, install on your slow box	http://www.freebsddiary.org/makeworld-2boxes.php	0	
-The Feds can own your WLAN too : TomsNetworking	http://www.tomsnetworking.com/Sections-article111.php	1	
-The Darth Side: Memoirs of a Monster	http://www.darthside.blogspot.com/	1	
-The 'Security Digest' Archives	http://securitydigest.org/	1	
-TeX Frequently Asked Questions -- question label &quot;conditional&quot;	http://www.tex.ac.uk/cgi-bin/texfaq2html?label=conditional	0	
-TaoSecurity: Keeping FreeBSD Up-To-Date	http://www.taosecurity.com/keeping_freebsd_up-to-date.html	2	
-TaoSecurity - VMware player	http://taosecurity.blogspot.com/2005/10/vmware-player-changes-everything-in.html	2	
-TaoSecurity - Useful Nmap Documentation	http://taosecurity.blogspot.com/2005/10/useful-nmap-documentation-today.html	1	
-TaoSecurity - Freebsd fastestcvsup	http://taosecurity.blogspot.com/2003/11/using-fastestcvsup-and-freebsd-update.html	2	
-TaoSecurity - Freebsd Upgrading with Packages	http://taosecurity.blogspot.com/2005/08/updating-freebsd-perl-using-packages-i.html	2	
-TaoSecurity - FreeBSD: using portaudit	http://taosecurity.blogspot.com/2004/04/using-portaudit-to-improve-freebsd.html	2	
-TaoSecurity - FreeBSD updated packages	http://taosecurity.blogspot.com/2004/11/trying-to-add-updated-packages-on.html	2	
-TaoSecurity - FreeBSD update	http://taosecurity.blogspot.com/2004/11/using-freebsd-update-to-patch-freebsd.html	2	
-TaoSecurity - FreeBSD ports vs packages	http://taosecurity.blogspot.com/2004/11/ports-vs-packages-on-freebsd-many.html	2	
-TaoSecurity - FreeBSD 6 VMWare Guest Problems	http://taosecurity.blogspot.com/2005/11/problems-with-freebsd-6.html	2	
-Tao	http://taosecurity.blogspot.com/	0	
-TA600R Access Router w/Built-In T1+DSX-1 (Adtran-4213600L1TDM) - PriceGrabber.com	http://www.pricegrabber.com/search_getprod.php/masterid=706910/search=adtran+t1+router	0	
-Sun Microsystems: Sun Enterprise 250 Server	http://www.sun.com/products-n-solutions/hardware/docs/Servers/Workgroup_Servers/Sun_Enterprise_250/index.html	0	
-Sun Microsystems - BigAdmin Scripts: Apps and Utilities	http://www.sun.com/bigadmin/scripts/	0	
-Star Wars: Episodes I-VI - The greatest postmodern art film ever. By Aidan Wasley	http://www.slate.com/id/2129225/	0	
-Snort - the de facto standard for intrusion detection/prevention	http://www.snort.org/docs/tap/	0	
-Simon of Space	http://simonofspace.blogspot.com/	1	
-Serenity - Uncle Orson Reviews Everything	http://www.hatrack.com/osc/reviews/everything/2005-09-30-extra.shtml	0	
-SeekingFire: The Tool Shed: ClusterIt	http://www.seekingfire.com/documents/toolshed/clusterit.html	0	
-SecurityFocus	http://www.securityfocus.com/	1	
-Security Pipeline	http://www.securitypipeline.com/	1	
-Security		0	F
-Secrets of Network Cartography: A Comprehensive Guide to nmap	http://www.networkuptime.com/nmap/index.shtml	0	
-SANS - Internet Storm Center - Cooperative Cyber Threat Monitor And Alert System - Current Infosec News and Analysis	http://isc.sans.org/	1	
-SAMAG	http://www.samag.com/	0	
-SA	http://www.oreillynet.com/sysadmin/	0	
-Ruby Guides	http://rubyforge.org/pipermail/poignant-stiffs/2004-May/000070.html	0	
-Remote Upgrading Of OpenBSD  - cocoa village publishing	http://www.webengr.com/development/tools/openbsd/tips/upgrading/	0	
-Re: xterm title/screen title+hardstatus	http://www.zsh.org/mla/workers/2000/msg03993.html	0	
-RadRails - A Ruby on Rails IDE	http://www.radrails.org/	0	
-Rackmout Servers at ABMX.Com	http://www.abmx.com/	1	
-RT3 contributions screenshots - FU-Berlin	http://page.mi.fu-berlin.de/~pape/rt3screenshots/	0	
-RT - Unix Queue	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=Queue%20%3D%20%27unix%27%20AND%20%28Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27new%27%29&Rows=50&OrderBy=LastUpdated&Page=1	2	
-RT - Security Queue	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=Queue%20%3D%20%27security%27%20AND%20%28Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27new%27%29&Rows=50&OrderBy=LastUpdated&Page=1	2	
-RT - Queue Contacts	https://rt.cae.wisc.edu/Tools/ContactView.html?Queue=13	2	
-RT - Network Queue	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=Queue%20%3D%20%27network%27%20AND%20%28Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27new%27%29&Rows=50&OrderBy=LastUpdated&Page=1	2	
-RT - My Tickets	https://rt.cae.wisc.edu/Search/Results.html?Order=ASC&Query=%20Owner%20%3D%20%27531135%27%20&Rows=50&OrderBy=Status&Page=1&Format=%27%09%3Cb%3E%3Ca%20href%3D%22%2FTicket%2FDisplay.html%3Fid%3D__id__%22%3E__id__%3C%2Fa%3E%3Cb%3E%2FTITLE%3A%23%27%2C%20%0A%27%3Cb%3E%3Ca%20href%3D%22%2FTicket%2FDisplay.html%3Fid%3D__id__%22%3E__Subject__%3C%2Fa%3E%3C%2Fb%3E%2FTITLE%3ASubject%27%2C%20%0A%27%3Csmall%3E__CreatedRelative__%3C%2Fsmall%3E%27%2C%20%0A%27__QueueName__%27%2C%20%0A%27__OwnerName__%27%2C%20%0A%27__Priority__%27%2C%20%0A%27__NEWLINE__%27%2C%20%0A%27__Status__%27%2C%20%0A%27%3Csmall%3E__Requestors__%3C%2Fsmall%3E%27%2C%20%0A%27%3Csmall%3E__ToldRelative__%3C%2Fsmall%3E%27%2C%20%0A%27__Area__%27%2C%20%0A%27%3Csmall%3E__LastUpdatedRelative__%3C%2Fsmall%3E%27%2C%20%0A%27%3Csmall%3E__DueRelative__%3C%2Fsmall%3E%27	2	
-RT - Main Queue	https://rt.cae.wisc.edu/index.html?HomeRefreshInterval=600	2	
-Quick reStructuredText	http://docutils.sourceforge.net/docs/user/rst/quickref.html	0	
-QEMU on OpenBSD	http://141.48.37.144/OpenBSD/qemu_en.html	0	
-Q2 LNX stuff	http://icculus.org/quake2/	0	
-PyNcurses Home Page	http://pyncurses.sourceforge.net/	0	
-Postfix 2nd Instance for Sender-based Routing: Multiple Gmail and Comcast Accounts	http://souptonuts.sourceforge.net/postfix_sbr.html	0	
-Phil!'s ZSH Prompt	http://aperiodic.net/phil/prompt/	0	
-Personal Observations on the Reliability of the Shuttle (Feynman)	http://www.ranum.com/security/computer_security/editorials/dumb/feynman.html	1	
-Page layout in LTEX	http://www.ctan.org/tex-archive/macros/latex/contrib/fancyhdr/fancyhdr.pdf	0	
-Packet forensics using TCP	http://www.securityfocus.com/infocus/1845?ref=rss	0	
-PXE Boot server	http://www.linux-sxs.org/internet_serving/pxeboot.html	1	
-PMC based Performance Measurement in FreeBSD	http://people.freebsd.org/~jkoshy/projects/perf-measurement/	0	
-OpenCON 2005 :: OpenBSD Conference :: San Servolo Island (Venice)	http://www.opencon.org/	2	
-OpenBSD Users Documentations projects	http://www.openbsdsupport.org/	0	
-OpenBSD Ports and Packages Presentation	http://www.openbsd.org/papers/ven05-espie/index.html	0	
-OpenBSD Ports and Packages	http://www.openbsd.org/ports.html	0	
-OpenBSD Patch Branches	http://www.openbsd.org/stable.html	0	
-OpenBSD Networking Update Presentation	http://www.openbsd.org/papers/ven05-henning/index.html	0	
-OpenBSD AnonCVS	http://www.openbsd.org/anoncvs.html	2	
-OpenBSD AnonCVS	http://www.openbsd.org/anoncvs.html	0	
-Open Source Development With CVS	http://cvsbook.red-bean.com/cvsbook.html	1	
-ONLamp.com: What Is Ruby on Rails	http://www.onlamp.com/pub/a/onlamp/2005/10/13/what_is_rails.html	0	
-ONLamp.com: Visualizing Network Traffic with Netflow and FlowScan	http://www.onlamp.com/pub/a/bsd/2005/09/15/Big_Scary_Daemons.html	1	
-ONLamp.com: Using Software RAID-1 with FreeBSD	http://www.onlamp.com/pub/a/bsd/2005/11/10/FreeBSD_Basics.html?CMP=OTC-3W3B95036222	2	
-ONLamp.com: Using FreeBSD's ACLs	http://www.onlamp.com/pub/a/bsd/2005/09/22/FreeBSD_Basics.html	2	
-ONLamp.com: Tales of Rescuing Old Hardware	http://www.onlamp.com/pub/a/bsd/2005/05/05/hardware_rescue.html	0	
-ONLamp.com: OpenBSD 3.8: Hackers of the Lost RAID	http://www.onlamp.com/lpt/a/6270	0	
-ONLamp.com: Monitoring RAID with NetSaint	http://www.onlamp.com/pub/a/bsd/2005/03/17/netsaint_raid.html	0	
-ONLamp.com: Monitoring Network Traffic with Netflow	http://www.onlamp.com/pub/a/bsd/2005/08/18/Big_Scary_Daemons.html	0	
-ONLamp.com: Lightweight Web Serving with thttpd	http://www.onlamp.com/pub/a/bsd/2005/10/13/thttpd.html?CMP=OTC-3W3B95036222	0	
-ONLamp.com: Implementing Hardware RAID on FreeBSD	http://www.onlamp.com/pub/a/bsd/2004/12/09/raid.html?page=last&x-showcontent=text	1	
-ONLamp.com: Building an OpenBSD Live CD	http://www.onlamp.com/pub/a/bsd/2005/07/14/openbsd_live.html	0	
-ONLamp.com: Building Detailed Network Reports with Netflow	http://www.onlamp.com/pub/a/bsd/2005/10/27/Big_Scary_Daemons.html?CMP=OTC-3W3B95036222	0	
-OBSDJ	http://undeadly.org/	0	
-NsswitchAndCachingFinalReport - FreeBSD-Wiki	http://wikitest.freebsd.org/moin.cgi/NsswitchAndCachingFinalReport	0	
-NewsForge | Project management with Trac	http://software.newsforge.com/software/05/10/12/1425223.shtml?tid=74	0	
-Network		0	F
-Need to Know	http://www.ntk.net/text.cgi	1	
-NWC	http://www.nwc.com/	0	
-NIX		0	F
-Multiple parameter keyword searches - MozillaZine Knowledge Base	http://kb.mozillazine.org/Multiple_parameter_keyword_searches	0	
-Marcuscom Tinderbox	http://tinderbox.marcuscom.com/	0	
-Marcus J. Ranum's Blog	http://www.ranum.com/	1	
-Marcus J. Ranum - Farewell Dossier	http://www.ranum.com/security/homeland_security/editorials/Farewell_Dossier/index.html	0	
-MagicPoint presentation foils OpenBSD	http://cvs.openbsd.org/papers/auug04/	2	
-Madison, Wisconsin (53703) Forecast	http://mobile.wunderground.com/cgi-bin/findweather/getForecast?brand=mobile&query=53703	0	
-MU-Conference	http://mu-conference.jabberstudio.org/docs/jabber-solaris.php	0	
-MIT IS&amp;T: Request Tracker (RT) Project Notebook	http://web.mit.edu/tooltime/	0	
-List of keyword searches - MozillaZine Knowledge Base	http://kb.mozillazine.org/List_of_keyword_searches	1	
-LinuxKiosk &lt; Linux &lt; TWiki	http://www.eng.uwaterloo.ca/twiki/bin/view/Linux/LinuxKiosk	0	
-Linux.ie :: GPG and mutt	http://www.linux.ie/articles/tutorials/gpgandmutt.php	0	
-Linux.com | Hardware emulation with QEMU	http://www.linux.com/article.pl?sid=05/10/24/1845248	2	
-Linux.com | Enhancing kernel security with grsecurity	http://www.linux.com/article.pl?sid=05/10/21/1715251	0	
-Linux.com | Condor: Building a Linux cluster on a budget	http://www.linux.com/article.pl?sid=05/11/08/1940210	0	
-Linux.com | CLI Magic: netcat	http://www.linux.com/article.pl?sid=05/11/07/182200	1	
-Linux.com | CLI Magic: lsof	http://www.linux.com/article.pl?sid=05/10/21/004255	0	
-Linux.com | Advanced Squid	http://www.linux.com/article.pl?sid=05/10/11/1441255	2	
-Linux.com | Advanced Linux LDAP authentication	http://www.linux.com/article.pl?sid=05/10/18/1732231	0	
-Linux.Ars	http://arstechnica.com/columns/linux.ars	0	
+mimoland - Running Debian inside qemu using console	http://mimo.gn.apc.org/index.php/Running%20Debian%20inside%20qemu%20using%20console	2	
+EFF: Cooking with EFF: KnoppMyth R5a10 and pcHDTV for DTV Liberation	http://www.eff.org/broadcastflag/cookbook/guide.php	2	
 Linux USB Wifi and Antenna Notes	http://www.fuw.edu.pl/~pliszka/hints/wireless.html	2	
-Linux		1	F
-LaTeX Tips: Bibliographies	http://www.math.uiuc.edu/~hildebr/tex/bibliographies.html	0	
-LaTeX Style Tips	http://www.ics.mq.edu.au/~rdale/resources/writingnotes/latexstyle.html	0	
-LaTeX Notes: Structuring Large Documents	http://www.ics.mq.edu.au/~rdale/resources/writingnotes/latexstruct.html	0	
-LXer: Comment of the Day - October 25, 2005 Calculate the Optimal Size of a New Disk Drive	http://lxer.com/module/newswire/view/46144/index.html	1	
-Kernel Stress Test Suite	http://people.freebsd.org/~pho/stress/	0	
-Ion FAQ	http://modeemi.cs.tut.fi/~tuomov/ion/faq.html	0	
-Introducing LaTeX	http://www.cs.cornell.edu/Info/Misc/LaTeX-Tutorial/Introduction.html	0	
-Intergalactic Medicine Show	http://www.intergalacticmedicineshow.com/cgi-bin/mag.cgi?do=content&article=home	0	
-Interests		0	F
-Interactive Fiction FAQ	http://nickm.com/if/faq.html	0	
 Installing Xen	http://cosi.clarkson.edu/knowledge/workshops/sp05/installingxen/xen-tutorial.html	2	
-Informatik 3 - FAUmachine	http://www3.informatik.uni-erlangen.de/Research/FAUmachine/	0	
-Implementing Networks Taps with Network Intrusion Detection Systems	http://online.securityfocus.com/infocus/1594	0	
-ISN: InfoSec News	http://www.c4i.org/isn.html	1	
-How a Linux Distro Saved Hard Disk Data | Linux Journal	http://www.linuxjournal.com/article/8661	0	
+Debian Administration :: How packages are added to the Debian distribution	http://www.debian-administration.org/articles/181	2	
+CLI		1	F
 How To Become A Hacker	http://www.catb.org/~esr/faqs/hacker-howto.html	2	
-Homepage of ZABBIX :: Open Source Application and Network Monitoring Solution	http://www.zabbix.com/features.php	0	
-Home of jurabib	http://www.berger-on.net/jurabib/	0	
-High-performance Linux clustering, Part 1: Clustering fundamentals	http://www-128.ibm.com/developerworks/linux/library/l-cluster1/	0	
-HelpOnInstalling/BasicInstallation - MoinMoin	http://moinmoin.wikiwikiweb.de/HelpOnInstalling/BasicInstallation	1	
-Harti's SNMP implementation	http://people.freebsd.org/~harti/bsnmp/index.html	0	
-HantsLUG Wiki: LinuxHints/QemuEmulation	http://www.hants.lug.org.uk/cgi-bin/wiki.pl?LinuxHints/QemuEmulation	2	
-Hacks From Pax: SELinux Administration - The Community's Center for Security	http://www.linuxsecurity.com/content/view/120700	0	
+irssi	http://irssi.org/?page=docs&doc=startup-HOWTO	2	
+http://bzgirl.bakadigital.com/irssi.txt	http://bzgirl.bakadigital.com/irssi.txt	2	
+Vim Tutorial, IRC-style	http://www.vi-improved.org/tutorial.php	2	
+Easy Automated Snapshot-Style Backups with Rsync	http://www.mikerubel.org/computers/rsync_snapshots/	2	
+Security		0	F
+The Six Dumbest Ideas in Computer Security	http://www.ranum.com/security/computer_security/editorials/dumb/index.html	1	
+TaoSecurity - Useful Nmap Documentation	http://taosecurity.blogspot.com/2005/10/useful-nmap-documentation-today.html	1	
+http://putmail.sourceforge.net/FAQ (sendmail stunnel)	http://putmail.sourceforge.net/FAQ	1	
+nmap	http://www.insecure.org/nmap/data/nmap_manpage.html	1	
+The GNU Privacy Handbook	http://www.gnupg.org/gph/en/manual.html#AEN329	1	
+FrSIRTA	http://www.frsirt.com/english/	1	
+Debian Administration :: Creating and Using a self signed SSL Certificates in debian	http://www.debian-administration.org/articles/284	1	
+The Feds can own your WLAN too : TomsNetworking	http://www.tomsnetworking.com/Sections-article111.php	1	
+Need to Know	http://www.ntk.net/text.cgi	1	
+ISN: InfoSec News	http://www.c4i.org/isn.html	1	
+SANS - Internet Storm Center - Cooperative Cyber Threat Monitor And Alert System - Current Infosec News and Analysis	http://isc.sans.org/	1	
+SecurityFocus	http://www.securityfocus.com/	1	
+.:[ packet storm ]:. - http://packetstormsecurity.org/	http://packetstormsecurity.org/	1	
+Security Pipeline	http://www.securitypipeline.com/	1	
+Fyodor's Good Reading List	http://www.insecure.org/reading.html	1	
+The 'Security Digest' Archives	http://securitydigest.org/	1	
+CULT OF THE DEAD COW	http://www.cultdeadcow.com/cms/main.php3	1	
+Network		0	F
+ONLamp.com: Visualizing Network Traffic with Netflow and FlowScan	http://www.onlamp.com/pub/a/bsd/2005/09/15/Big_Scary_Daemons.html	1	
+Madison, Wisconsin (53703) Forecast	http://mobile.wunderground.com/cgi-bin/findweather/getForecast?brand=mobile&query=53703	0	
+BS	http://www.schneier.com/	0	
+ONLamp.com: Lightweight Web Serving with thttpd	http://www.onlamp.com/pub/a/bsd/2005/10/13/thttpd.html?CMP=OTC-3W3B95036222	0	
+Linux.com | Enhancing kernel security with grsecurity	http://www.linux.com/article.pl?sid=05/10/21/1715251	0	
+ONLamp.com: Monitoring RAID with NetSaint	http://www.onlamp.com/pub/a/bsd/2005/03/17/netsaint_raid.html	0	
+WoW Technical Support -can'tinstall patch	http://forums.worldofwarcraft.com/thread.aspx?fn=wow-tech-support&t=525269&p=1&tmp=1#post525269	0	
+Debian Firewalls :: cyberdogtech.com	http://www.cyberdogtech.com/firewalls/	0	
+Debian Administration :: Running Microsoft Windows inside Debian: qemu	http://www.debian-administration.org/articles/40	0	
 Gnu Privacy Guard (GnuPG) Mini Howto (English)	http://webber.dewinter.com/gnupg_howto/english/GPGMiniHowto.html#toc3	0	
+FreeRADIUS and Linux for Your WLAN	http://www.enterprisenetworkingplanet.com/netsecur/article.php/3557251	0	
+SAMAG	http://www.samag.com/	0	
+MU-Conference	http://mu-conference.jabberstudio.org/docs/jabber-solaris.php	0	
+Sun Microsystems: Sun Enterprise 250 Server	http://www.sun.com/products-n-solutions/hardware/docs/Servers/Workgroup_Servers/Sun_Enterprise_250/index.html	0	
+Ion FAQ	http://modeemi.cs.tut.fi/~tuomov/ion/faq.html	0	
+Gentoo Forums :: View topic - Set your xterm/konsole/other terminal title	http://forums.gentoo.org/viewtopic.php?t=18106	0	
+LaTeX Style Tips	http://www.ics.mq.edu.au/~rdale/resources/writingnotes/latexstyle.html	0	
+Multiple parameter keyword searches - MozillaZine Knowledge Base	http://kb.mozillazine.org/Multiple_parameter_keyword_searches	0	
+Page layout in LTEX	http://www.ctan.org/tex-archive/macros/latex/contrib/fancyhdr/fancyhdr.pdf	0	
+TeX Frequently Asked Questions -- question label &quot;conditional&quot;	http://www.tex.ac.uk/cgi-bin/texfaq2html?label=conditional	0	
+Homepage of ZABBIX :: Open Source Application and Network Monitoring Solution	http://www.zabbix.com/features.php	0	
+Darik's Boot and Nuke	http://dban.sourceforge.net/	0	
+Re: xterm title/screen title+hardstatus	http://www.zsh.org/mla/workers/2000/msg03993.html	0	
+UW D2L	https://uwmad.courses.wisconsin.edu/	0	
+Debian Administration :: Setting up your own APT repository with upload support	http://www.debian-administration.org/articles/286	0	
+Welcome to PyFlag.sourceforge.net	http://pyflag.sourceforge.net/index.html	0	
+ONLamp.com: Tales of Rescuing Old Hardware	http://www.onlamp.com/pub/a/bsd/2005/05/05/hardware_rescue.html	0	
+OpenBSD Ports and Packages Presentation	http://www.openbsd.org/papers/ven05-espie/index.html	0	
+Q2 LNX stuff	http://icculus.org/quake2/	0	
+SeekingFire: The Tool Shed: ClusterIt	http://www.seekingfire.com/documents/toolshed/clusterit.html	0	
+ONLamp.com: Building Detailed Network Reports with Netflow	http://www.onlamp.com/pub/a/bsd/2005/10/27/Big_Scary_Daemons.html?CMP=OTC-3W3B95036222	0	
+The QEMU forum :: View topic - OpenBSD Host How To	http://qemu.dad-answers.com/viewtopic.php?t=78&highlight=openbsd	0	
+Unix Review &gt; The Open Road: Nagios	http://www.unixreview.com/documents/s=9602/ur0503l/ur0503l.html	0	
+pintday.org: Saga of an OpenBSD Upgrade - 2.7 to 3.0	http://pintday.org/hack/docs/remote-upgrade-howto.shtml	0	
+Buy and Sell all SuperMicro servers, Sun servers, IBM servers, HP/Compaq servers, and all other computer hardware at ANTOnline.com	http://www.antonline.com/index.htm	0	
+Linux.Ars	http://arstechnica.com/columns/linux.ars	0	
+NWC	http://www.nwc.com/	0	
+http://www.dirty.org/underworld/	http://www.dirty.org/underworld/	0	
+Debian Administration :: Unattended, Encrypted, Incremental Network Backups: Part 1	http://www.debian-administration.org/articles/209	0	
+Tips and Toys for the Hardworking Admin	http://www.enterprisenetworkingplanet.com/netos/article.php/3553111	0	
+Intergalactic Medicine Show	http://www.intergalacticmedicineshow.com/cgi-bin/mag.cgi?do=content&article=home	0	
+Interactive Fiction FAQ	http://nickm.com/if/faq.html	0	
+Bus Stop 0887 (CAE)	http://www.ci.madison.wi.us/metro/BusStopDepartures/0883-1695/0887.pdf	0	
+RadRails - A Ruby on Rails IDE	http://www.radrails.org/	0	
+High-performance Linux clustering, Part 1: Clustering fundamentals	http://www-128.ibm.com/developerworks/linux/library/l-cluster1/	0	
+Code-modifications for RT at UiO	http://www.usit.uio.no/it/rt/modifications.html	0	
+Firewalling with OpenBSD's PF packet filter	http://www.bgnett.no/~peter/pf/en/	0	
+LaTeX Tips: Bibliographies	http://www.math.uiuc.edu/~hildebr/tex/bibliographies.html	0	
+Linux.com | Condor: Building a Linux cluster on a budget	http://www.linux.com/article.pl?sid=05/11/08/1940210	0	
+The Web Vector: Exploiting Human and Browser Vulnerabilities	http://www.websensesecuritylabs.com/resource/PDF/toorcon_sep2005.pdf	0	
+Hacks From Pax: SELinux Administration - The Community's Center for Security	http://www.linuxsecurity.com/content/view/120700	0	
+BSD DC	http://www.onlamp.com/bsd/	0	
+WoW Technical Support - Patch Workaround	http://forums.worldofwarcraft.com/thread.aspx?fn=wow-tech-support&t=521752&p=1&tmp=1#post521752	0	
+OpenBSD Networking Update Presentation	http://www.openbsd.org/papers/ven05-henning/index.html	0	
+XS-HTTPD	http://www.stack.nl/~johans/xs-httpd/	0	
+Using the Ruby Development Tools plug-in for Eclipse	http://www-128.ibm.com/developerworks/opensource/library/os-rubyeclipse/?ca=dgr-lnxw01Ruby4Eclipse	0	
 Gmail on Home Linux Box using Postfix and Fetchmail LG #115	http://linuxgazette.net/115/chirico1.html	0	
+The FreeBSD Diary -- Build world on your fast box, install on your slow box	http://www.freebsddiary.org/makeworld-2boxes.php	0	
+Linux.ie :: GPG and mutt	http://www.linux.ie/articles/tutorials/gpgandmutt.php	0	
+3. Basic configuration	http://modeemi.cs.tut.fi/~tuomov/ion/doc-3/ionconf/node4.html#SECTION00450000000000000000	0	
+Debian Administration :: Denying access to your web server by IP address	http://www.debian-administration.org/articles/283	0	
+Secrets of Network Cartography: A Comprehensive Guide to nmap	http://www.networkuptime.com/nmap/index.shtml	0	
+OBSDJ	http://undeadly.org/	0	
+DA	http://www.debian-administration.org/	0	
+Home of jurabib	http://www.berger-on.net/jurabib/	0	
+Snort - the de facto standard for intrusion detection/prevention	http://www.snort.org/docs/tap/	0	
+Serenity - Uncle Orson Reviews Everything	http://www.hatrack.com/osc/reviews/everything/2005-09-30-extra.shtml	0	
+Implementing Networks Taps with Network Intrusion Detection Systems	http://online.securityfocus.com/infocus/1594	0	
+Star Wars: Episodes I-VI - The greatest postmodern art film ever. By Aidan Wasley	http://www.slate.com/id/2129225/	0	
+bsdforums.org - best way to keep OBSD up to date	http://www.bsdforums.org/forums/archive/index.php/t-1724.html	0	
+NewsForge | Project management with Trac	http://software.newsforge.com/software/05/10/12/1425223.shtml?tid=74	0	
+ONLamp.com: Monitoring Network Traffic with Netflow	http://www.onlamp.com/pub/a/bsd/2005/08/18/Big_Scary_Daemons.html	0	
+Forgotten Password - Good Guy Box Cracking	http://www.linux-sxs.org/administration/cracking.html	0	
+FBSDD	http://www.freebsddiary.org/chronological.php	0	
+Debian Administration :: Backing Up/Restoring Package Information?	http://www.debian-administration.org/articles/282	0	
+All about Linux: Make your files immutable which even root can't delete	http://linuxhelp.blogspot.com/2005/11/make-your-files-immutable-which-even.html	0	
+Debian Administration :: Simple CD-ROM &amp; ISO image cookbook.	http://www.debian-administration.org/articles/273	0	
+Introducing LaTeX	http://www.cs.cornell.edu/Info/Misc/LaTeX-Tutorial/Introduction.html	0	
+(IN)SECURE Magazine	http://www.insecuremag.com/	0	
+ONLamp.com: What Is Ruby on Rails	http://www.onlamp.com/pub/a/onlamp/2005/10/13/what_is_rails.html	0	
+rec.arts.int-fiction competition	http://www.wurb.com/if/award/1	0	
+DRBL - Diskless Remote Boot on Linux	http://drbl.sourceforge.net/	0	
+Tao	http://taosecurity.blogspot.com/	0	
+uw-madison writing center writer's handbook	http://www.wisc.edu/writetest/Handbook/Documentation.html	0	
+WoW Technical Support - manually patching 1.7	http://forums.worldofwarcraft.com/thread.aspx?fn=wow-tech-support&t=524879&p=1&tmp=1#post524879	0	
+Linux.com | Advanced Linux LDAP authentication	http://www.linux.com/article.pl?sid=05/10/18/1732231	0	
+QEMU on OpenBSD	http://141.48.37.144/OpenBSD/qemu_en.html	0	
+ONLamp.com: Building an OpenBSD Live CD	http://www.onlamp.com/pub/a/bsd/2005/07/14/openbsd_live.html	0	
+Phil!'s ZSH Prompt	http://aperiodic.net/phil/prompt/	0	
+wikipedia	http://www.wikipedia.org/wiki/%s	0	
+Games of the 11th Annual Interactive Fiction Competition	http://www.ifcomp.org/comp05/games.php	0	
+ezUnix.org :: It's All So Simple. - NetBSD live CD	http://ezunix.org/modules.php?op=modload&name=Sections&file=index&req=viewarticle&artid=88&page=1	0	
+RT3 contributions screenshots - FU-Berlin	http://page.mi.fu-berlin.de/~pape/rt3screenshots/	0	
+Advanced LaTeX Posters	http://homepages.inf.ed.ac.uk/robert/posters/advanced.html	0	
+Wiktionary	http://en.wiktionary.org/wiki/%s	0	
+Forever For Now - Apache 2 mod_deflate Benchmark	http://www.ffnn.nl/pages/articles/linux/apache-2-mod_deflate-benchmark.php	0	
 Get-E.org	http://www.get-e.org/User_Guide/English/_pages/3.1.html	0	
+Linux.com | CLI Magic: lsof	http://www.linux.com/article.pl?sid=05/10/21/004255	0	
+Informatik 3 - FAUmachine	http://www3.informatik.uni-erlangen.de/Research/FAUmachine/	0	
+Quick reStructuredText	http://docutils.sourceforge.net/docs/user/rst/quickref.html	0	
+Debian Administration :: Installing Debian onto USB flash media with everything encrypted.	http://www.debian-administration.org/articles/179	0	
+open.itworld.com - Finding Text in Context	http://open.itworld.com/5040/nls_unixfindingtext050728/page_1.html	0	
+LaTeX Notes: Structuring Large Documents	http://www.ics.mq.edu.au/~rdale/resources/writingnotes/latexstruct.html	0	
+Sun Microsystems - BigAdmin Scripts: Apps and Utilities	http://www.sun.com/bigadmin/scripts/	0	
+:: lighttpd :: my home	http://www.lighttpd.net/	0	
+WoW Technical Support - patch install problems	http://forums.worldofwarcraft.com/thread.aspx?fn=wow-tech-support&t=525260&p=1&tmp=1#post525260	0	
+Marcus J. Ranum - Farewell Dossier	http://www.ranum.com/security/homeland_security/editorials/Farewell_Dossier/index.html	0	
+E-mail security using Mutt and GPG	http://www.freeos.com/articles/2927/	0	
+Remote Upgrading Of OpenBSD  - cocoa village publishing	http://www.webengr.com/development/tools/openbsd/tips/upgrading/	0	
+LinuxKiosk &lt; Linux &lt; TWiki	http://www.eng.uwaterloo.ca/twiki/bin/view/Linux/LinuxKiosk	0	
+How a Linux Distro Saved Hard Disk Data | Linux Journal	http://www.linuxjournal.com/article/8661	0	
+GPG/PGP Basics	http://aplawrence.com/Basics/gpg.html	0	
+Ruby Guides	http://rubyforge.org/pipermail/poignant-stiffs/2004-May/000070.html	0	
+ONLamp.com: OpenBSD 3.8: Hackers of the Lost RAID	http://www.onlamp.com/lpt/a/6270	0	
+SA	http://www.oreillynet.com/sysadmin/	0	
+The Two Towers: Home	http://t2tmud.org/	0	
+MIT IS&amp;T: Request Tracker (RT) Project Notebook	http://web.mit.edu/tooltime/	0	
+Packet forensics using TCP	http://www.securityfocus.com/infocus/1845?ref=rss	0	
+/.	http://slashdot.org/	0	
+TA600R Access Router w/Built-In T1+DSX-1 (Adtran-4213600L1TDM) - PriceGrabber.com	http://www.pricegrabber.com/search_getprod.php/masterid=706910/search=adtran+t1+router	0	
+Unix Review &gt; Extending Nagios	http://www.unixreview.com/documents/s=9823/ur0507l/ur0507l.html	0	
+AAUT - ASCII unreal	http://icculus.org/~chunky/ut/aaut/	0	
+ethernet taps	http://www.snort.org/docs/100Mb_tapping1.pdf	0	
+PMC based Performance Measurement in FreeBSD	http://people.freebsd.org/~jkoshy/projects/perf-measurement/	0	
+Kernel Stress Test Suite	http://people.freebsd.org/~pho/stress/	0	
+Marcuscom Tinderbox	http://tinderbox.marcuscom.com/	0	
+FreeBSD ports monitoring	http://portsmon.freebsd.org/index.html	0	
+http://edwin.adsl.barnet.com.au/~edwin/ports/	http://edwin.adsl.barnet.com.au/~edwin/ports/	0	
+FreeBSD Ports distfiles survey	http://people.freebsd.org/~fenner/portsurvey/	0	
+FreeBSD for the Xbox - not a hoax	http://www.xbox-bsd.nl/	0	
+pfSense >> Introduction	http://www.pfsense.com/	0	
+NsswitchAndCachingFinalReport - FreeBSD-Wiki	http://wikitest.freebsd.org/moin.cgi/NsswitchAndCachingFinalReport	0	
+Harti's SNMP implementation	http://people.freebsd.org/~harti/bsnmp/index.html	0	
+Fuse for FreeBSD	http://fuse4bsd.creo.hu/	0	
+Csup, a rewrite of CVSup in C	http://mu.org/~mux/csup.html	0	
+PyNcurses Home Page	http://pyncurses.sourceforge.net/	0	
+Curses Programming with Python	http://www.amk.ca/python/howto/curses/	0	
+Charming Python: Curses programming	http://www-128.ibm.com/developerworks/linux/library/l-python6.html?dwzone=linux	0	
+OpenBSD Patch Branches	http://www.openbsd.org/stable.html	0	
+OpenBSD Ports and Packages	http://www.openbsd.org/ports.html	0	
+OpenBSD AnonCVS	http://www.openbsd.org/anoncvs.html	0	
 GeodSoft How-To: Hardening OpenBSD Internet Servers	http://geodsoft.com/howto/harden/bsdhardn.htm	0	
 GeodSoft How-To Harden OpenBSD Check List	http://geodsoft.com/howto/harden/OpenBSD/checklist.htm	0	
-Gentoo Forums :: View topic - Set your xterm/konsole/other terminal title	http://forums.gentoo.org/viewtopic.php?t=18106	0	
-Games of the 11th Annual Interactive Fiction Competition	http://www.ifcomp.org/comp05/games.php	0	
-GPG/PGP Basics	http://aplawrence.com/Basics/gpg.html	0	
-Fyodor's Good Reading List	http://www.insecure.org/reading.html	1	
-Fuse for FreeBSD	http://fuse4bsd.creo.hu/	0	
-FreeRADIUS and Linux for Your WLAN	http://www.enterprisenetworkingplanet.com/netsecur/article.php/3557251	0	
-FreeBSD: Using the Ports Collection	http://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/ports-using.html	2	
-FreeBSD ports monitoring	http://portsmon.freebsd.org/index.html	0	
-FreeBSD for the Xbox - not a hoax	http://www.xbox-bsd.nl/	0	
-FreeBSD Ports distfiles survey	http://people.freebsd.org/~fenner/portsurvey/	0	
-FrSIRTA	http://www.frsirt.com/english/	1	
-Forgotten Password - Good Guy Box Cracking	http://www.linux-sxs.org/administration/cracking.html	0	
-Forever For Now - Apache 2 mod_deflate Benchmark	http://www.ffnn.nl/pages/articles/linux/apache-2-mod_deflate-benchmark.php	0	
-Firewalling with OpenBSD's PF packet filter	http://www.bgnett.no/~peter/pf/en/	0	
-FBSDD	http://www.freebsddiary.org/chronological.php	0	
-Exploit  Mitigation in OBSD	http://www.openbsd.org/papers/ven05-deraadt/index.html	2	
-Easy Automated Snapshot-Style Backups with Rsync	http://www.mikerubel.org/computers/rsync_snapshots/	2	
-EFF: miniLinks	http://www.eff.org/minilinks/	1	
-EFF: Cooking with EFF: KnoppMyth R5a10 and pcHDTV for DTV Liberation	http://www.eff.org/broadcastflag/cookbook/guide.php	2	
-EFF "Net Culture -- Gender Issues" Archive	http://www.eff.org//Net_culture/Gender_issues/	1	
-E-mail security using Mutt and GPG	http://www.freeos.com/articles/2927/	0	
-Debian Firewalls :: cyberdogtech.com	http://www.cyberdogtech.com/firewalls/	0	
-Debian Administration :: Unattended, Encrypted, Incremental Network Backups: Part 1	http://www.debian-administration.org/articles/209	0	
-Debian Administration :: Simple CD-ROM &amp; ISO image cookbook.	http://www.debian-administration.org/articles/273	0	
-Debian Administration :: Setting up your own APT repository with upload support	http://www.debian-administration.org/articles/286	0	
-Debian Administration :: Running Microsoft Windows inside Debian: qemu	http://www.debian-administration.org/articles/40	0	
-Debian Administration :: Reusing existing OpenSSH v4 connections	http://www.debian-administration.org/articles/290	2	
-Debian Administration :: Perl Packages - the return	http://www.debian-administration.org/articles/281	2	
-Debian Administration :: Logging the right way	http://www.debian-administration.org/articles/278	2	
-Debian Administration :: Installing Debian onto USB flash media with everything encrypted.	http://www.debian-administration.org/articles/179	0	
-Debian Administration :: How packages are added to the Debian distribution	http://www.debian-administration.org/articles/181	2	
-Debian Administration :: Denying access to your web server by IP address	http://www.debian-administration.org/articles/283	0	
-Debian Administration :: Creating and Using a self signed SSL Certificates in debian	http://www.debian-administration.org/articles/284	1	
-Debian Administration :: Backing Up/Restoring Package Information?	http://www.debian-administration.org/articles/282	0	
-Darik's Boot and Nuke	http://dban.sourceforge.net/	0	
-DRBL - Diskless Remote Boot on Linux	http://drbl.sourceforge.net/	0	
-DA	http://www.debian-administration.org/	0	
-Curses Programming with Python	http://www.amk.ca/python/howto/curses/	0	
-Csup, a rewrite of CVSup in C	http://mu.org/~mux/csup.html	0	
-CoreWar Info	http://www.koth.org/info.html	1	
-Code-modifications for RT at UiO	http://www.usit.uio.no/it/rt/modifications.html	0	
-Charming Python: Curses programming	http://www-128.ibm.com/developerworks/linux/library/l-python6.html?dwzone=linux	0	
-Cambridge University Engineering Department - Text Processing using LaTeX	http://www-h.eng.cam.ac.uk/help/tpl/textprocessing/LaTeX_intro.html	1	
-Cacti: The Complete RRDTool-based Graphing Solution	http://www.cacti.net/	1	
-CULT OF THE DEAD COW	http://www.cultdeadcow.com/cms/main.php3	1	
-CLI		1	F
-CAE RT		1	F
-CAE		0	FE
-Buy and Sell all SuperMicro servers, Sun servers, IBM servers, HP/Compaq servers, and all other computer hardware at ANTOnline.com	http://www.antonline.com/index.htm	0	
-Bus Stop 0887 (CAE)	http://www.ci.madison.wi.us/metro/BusStopDepartures/0883-1695/0887.pdf	0	
-Building OpenBSD from Source	http://www.openbsd.org/faq/faq5.html	2	
-BrickJournal - the magazine for Adult Fans of LEGO	http://www.legofan.org/brickjournal/	1	
-Be Your Own Hotspot - Popular Science	http://www.popsci.com/popsci/how2/article/0,20967,1076525,00.html	1	
-Baf's Guide to the Interactive Fiction Archive	http://www.wurb.com/if/	1	
-BSD DC	http://www.onlamp.com/bsd/	0	
-BSD		1	F
-BS	http://www.schneier.com/	0	
-All about Linux: Make your files immutable which even root can't delete	http://linuxhelp.blogspot.com/2005/11/make-your-files-immutable-which-even.html	0	
-Advanced LaTeX Posters	http://homepages.inf.ed.ac.uk/robert/posters/advanced.html	0	
-AFS Manuals	http://www-306.ibm.com/software/stormgmt/afs/library/	1	
-AFS Commands	http://www-306.ibm.com/software/stormgmt/afs/manuals/Library/unix/en_US/HTML/AdminRef/auarf002.htm	1	
-ACM Queue - Comments Are More ImportCommenting Code	http://acmqueue.com/modules.php?name=Content&pa=showpage&pid=290	1	
-AAUT - ASCII unreal	http://icculus.org/~chunky/ut/aaut/	0	
-:: lighttpd :: my home	http://www.lighttpd.net/	0	
-/.	http://slashdot.org/	0	
-.:[ packet storm ]:. - http://packetstormsecurity.org/	http://packetstormsecurity.org/	1	
-(IN)SECURE Magazine	http://www.insecuremag.com/	0	
+eRacks Open Source Systems: Custom BSD and Linux Rackmount Servers and Systems.	http://eracks.com/	0	
+OpenBSD Users Documentations projects	http://www.openbsdsupport.org/	0	
+Postfix 2nd Instance for Sender-based Routing: Multiple Gmail and Comcast Accounts	http://souptonuts.sourceforge.net/postfix_sbr.html	0	
+16. SMTP Authentication for Mail servers	http://postfix.state-of-mind.de/patrick.koetter/smtpauth/smtp_auth_mailservers.html	0	
+Sys Admin > Integrit for File Verification	http://www.samag.com/documents/s=1147/sam0108l/0108l.htm	0	
+Integrit File Verification System	http://integrit.sourceforge.net/texinfo/integrit.html	0	
+Debian Linux Vserver	http://www.5dollarwhitebox.org/wiki/index.php/Howtos_Linux-Vserver_Debian_Sarge	0	
+Debian Administration :: Producing and using website statistics	http://www.debian-administration.org/articles/85	0	

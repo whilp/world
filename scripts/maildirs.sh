@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/sh
 ##################  BEGIN HEADERS
 # Filename	: $HOME/bin/maildirs
 # Use		: finds mail folders within a Maildir that are unused and
@@ -13,22 +13,28 @@
 MAILDIR=$HOME/Maildir
 
 # find folders
-DIRS=`find $MAILDIR -type d -regex '.*cur$'`
+DIRS=$(find $MAILDIR -type d -name "*cur")
+#DIRS=$(find $MAILDIR -type d -regex '.*cur$')
+echo $DIRS
+exit
 
 # if cur AND new are empty, delete parent, unless parent is on a special list
 for DIR in $DIRS; do
-    PARENT=`dirname $DIR`
-    CUR_RECORDS=`ls $DIR | wc -l`
-    NEW_RECORDS=`ls $PARENT/new | wc -l`
+    echo $DIR
+    PARENT=$(dirname $DIR)
+    CUR_RECORDS=$(ls $PARENT/cur | wc -l)
+    TMP_RECORDS=$(ls $PARENT/tmp | wc -l)
+    NEW_RECORDS=$(ls $PARENT/new | wc -l)
 
-    if [[ $CUR_RECORDS < "1" && $TMP_RECORDS < "1" ]]; then
-	case `basename $PARENT` in
+    if [ $(( CUR_RECORDS + NEW_RECORDS + TMP_RECORDS )) -eq "0" ]; then
+    #if [[ $CUR_RECORDS < "1" && $NEW_RECORDS < "1" ]]; then
+	case $(basename $PARENT) in
 	    Questionable|Draft*|Inbox|News)
-	    shift
+	    break
 	    ;;
 	    *)
 	    echo "Deleting $PARENT..."
-	    rm -rf $PARENT
+	    #rm -rf $PARENT
 	    ;;
 	esac
     fi

@@ -7,4 +7,6 @@ fi
 /usr/local/bin/getmail $FLAGS \
 	--rcfile getmailrc-cae \
 	--rcfile getmailrc-fm  \
+	--rcfile getmailrc-hep  \
+	--rcfile getmailrc-uw  \
 	--rcfile getmailrc-gmail
