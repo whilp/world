@@ -1,0 +1,16 @@
+#!/bin/sh
+
+INTEGRIT=/usr/local/sbin/integrit
+CKSUM=/bin/cksum
+CUT=/usr/bin/cut
+CAT=/bin/cat
+
+SUMDIR=/root/sums/
+
+if [ ! -r "${SUMDIR}/integrit.sum" ]; then
+    echo "====> Could not find a cached checksum for the integrit binary."
+    echo "====> One can be generated as follows:"
+    echo "
+if [ "$(${CKSUM} -a sha256 ${INTEGRIT} | ${CUT} -d ' ' -f 4)" !=
+    "$(${CAT} ${SUMDIR}/integrit.sum)" ]; then
+    echo "

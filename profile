@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.70 $
-# Updated	: $Date: 2005/11/29 20:25:10 $
+# Version	: $Revision: 1.71 $
+# Updated	: $Date: 2005/12/01 18:16:07 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.70 2005/11/29 20:25:10 will Exp $
+# CVS		: $Id: profile,v 1.71 2005/12/01 18:16:07 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -20,6 +20,7 @@
 					    # host
 
 ARCH=`uname`
+HOST=$(hostname -s)
 #ISSUE=`awk '{print $1}' /etc/issue || echo "unknown"`
 
 # --[ CVS
@@ -107,11 +108,9 @@ esac
     alias agent='keychain ~/.ssh/id_rsa'
     alias pource='source $HOME/.profile'
     alias zource='source $HOME/.zshrc'
-    alias todo='grep -v DONE $HOME/TODO'
-    alias etodo='vim $HOME/TODO'
     alias mtr='mtr -t'
     alias xterm='rxvt'
-    alias grep='grep -IHn'
+    alias grep='egrep -IHn'
 
     TODO=$HOME/TODO
     LANG='C'
@@ -141,7 +140,7 @@ mdc () {
 
     echo "Checking mail at $(date)."
 
-    local FINDCMD="find $HOME/Maildir -regex '.*/[a-zA-Z-]+/new/.*' -type f" 
+    local FINDCMD="gfind $HOME/Maildir -regex '.*/[a-zA-Z-]+/new/.*' -type f" 
     local SORTCMD="uniq -c"
     for i in $*; do
 	case $i in
@@ -155,8 +154,9 @@ mdc () {
 
     local NUMBER=0
     eval ${FINDCMD} |\
-	 sed 's/.*Maildir\/\([^/]\+\)\/new\/.*/\1/' |\
-	 sort |\
+	 sed 's/.*Maildir\///' |\
+	 cut -d '/' -f 1 |\
+#	 sed 's/.*Maildir\/\([^/]\+\)\/new\/.*/\1/' |\
 	 eval ${SORTCMD} |\
 	while read i; do
 	    echo "      $i"

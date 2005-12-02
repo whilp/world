@@ -15,20 +15,34 @@ MAILDIR=$HOME/Maildir
 # find folders
 DIRS=$(find $MAILDIR -type d -name "*cur")
 #DIRS=$(find $MAILDIR -type d -regex '.*cur$')
-echo $DIRS
-exit
+
+echo "Cleaning unused maildirs on $(date)"
 
 # if cur AND new are empty, delete parent, unless parent is on a special list
 for DIR in $DIRS; do
-    echo $DIR
     PARENT=$(dirname $DIR)
     CUR_RECORDS=$(ls $PARENT/cur | wc -l)
     TMP_RECORDS=$(ls $PARENT/tmp | wc -l)
     NEW_RECORDS=$(ls $PARENT/new | wc -l)
+    MAILSUM=$((NEW_RECORDS + TMP_RECORDS + CUR_RECORDS))
+    if [ "${MAILSUM}" -eq "0" ]; then
+	case $(basename ${PARENT}) in
+	    Questionable|Draft*|Inbox|News)
+	    # I seem to need something harmless here...
+	    ;;
+	    *)
+	    echo "Delete $PARENT"
+	    rm -rf $PARENT
+	    ;;
+	esac
+    fi
+done
+exit
 
     if [ $(( CUR_RECORDS + NEW_RECORDS + TMP_RECORDS )) -eq "0" ]; then
     #if [[ $CUR_RECORDS < "1" && $NEW_RECORDS < "1" ]]; then
 	case $(basename $PARENT) in
+	    echo $_
 	    Questionable|Draft*|Inbox|News)
 	    break
 	    ;;
