@@ -9,14 +9,15 @@
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
 
+MAIL=/usr/bin/mail
 
 MAILDIR=$HOME/Maildir
 
 # find folders
 DIRS=$(find $MAILDIR -type d -name "*cur")
 #DIRS=$(find $MAILDIR -type d -regex '.*cur$')
+MESSAGE=''
 
-echo "Cleaning unused maildirs on $(date)"
 
 # if cur AND new are empty, delete parent, unless parent is on a special list
 for DIR in $DIRS; do
@@ -31,27 +32,17 @@ for DIR in $DIRS; do
 	    # I seem to need something harmless here...
 	    ;;
 	    *)
-	    echo "Delete $PARENT"
+	    MESSAGE="${MESSAGE} ${PARENT}"
 	    rm -rf $PARENT
 	    ;;
 	esac
     fi
-done
-exit
+done 
 
-    if [ $(( CUR_RECORDS + NEW_RECORDS + TMP_RECORDS )) -eq "0" ]; then
-    #if [[ $CUR_RECORDS < "1" && $NEW_RECORDS < "1" ]]; then
-	case $(basename $PARENT) in
-	    echo $_
-	    Questionable|Draft*|Inbox|News)
-	    break
-	    ;;
-	    *)
-	    echo "Deleting $PARENT..."
-	    #rm -rf $PARENT
-	    ;;
-	esac
-    fi
-done
-
-exit 0
+if [ -n "${MESSAGE}" ]; then
+    MAILMSG="The following mailboxes were deleted at $(date):"
+    for i in ${MESSAGE}; do
+	MAILMSG="   ${MAILMSG}\n$i"
+    done
+    echo $MAILMSG | ${MAIL} -s "Reaping empty mailboxes" will
+fi

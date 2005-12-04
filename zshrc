@@ -1,10 +1,10 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
-# Version	: $Revision: 1.36 $
+# Version	: $Revision: 1.37 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2005/11/16 17:14:35 $
-# CVS		: $Id: zshrc,v 1.36 2005/11/16 17:14:35 will Exp $
+# Updated	: $Date: 2005/12/04 04:38:54 $
+# CVS		: $Id: zshrc,v 1.37 2005/12/04 04:38:54 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -132,6 +132,7 @@ setopt NO_singlelinezle
 setopt always_last_prompt   # req'd by menu selection
 setopt alwaystoend	    # move cursor to end of word when completing
 setopt auto_cd		    # zsh adds 'cd ' when you enter a dir name
+setopt autopushd	    # type ~-<Tab> for dirs you've been to
 setopt autolist
 setopt bsd_echo
 setopt complete_aliases
