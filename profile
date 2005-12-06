@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.71 $
-# Updated	: $Date: 2005/12/01 18:16:07 $
+# Version	: $Revision: 1.72 $
+# Updated	: $Date: 2005/12/05 22:01:19 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.71 2005/12/01 18:16:07 will Exp $
+# CVS		: $Id: profile,v 1.72 2005/12/05 22:01:19 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -216,7 +216,7 @@ notes () {
 	return 1
     fi
     NOTEPATH=${NOTEPATH}/${CLASS}/${DATE}
-    vim ${NOTEPATH}
+    vim "+set ft=tex" ${NOTEPATH}
 }
 alias wiki='ruby $HOME/bin/instiki/instiki.rb --storage $HOME/bin/instiki/storage'
 alias portmanager='portmanager --log'

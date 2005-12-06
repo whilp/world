@@ -55,7 +55,7 @@ defbindings("WScreen", {
     kpress(MOD2.."F9", "ioncore.create_ws(_, 'WIonWS')"),
 
     bdoc("Create a new workspace of chosen default type."),
-    kpress(MOD1.."F9", "ioncore.create_ws(_, 'WFloatWS')"),
+    kpress(MOD1.."F9", "ioncore.create_ws(_)"),
 
     bdoc("Display the main menu."),
     kpress(MOD1.."F1", "mod_menu.bigmenu(_, _sub, 'mainmenu')"),
