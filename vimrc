@@ -1,10 +1,10 @@
 "#################  BEGIN HEADERS
 " Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
-" Version	: $Revision: 1.35 $
+" Version	: $Revision: 1.36 $
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: $Date: 2005/11/28 20:30:51 $
-" CVS		: $Id: vimrc,v 1.35 2005/11/28 20:30:51 will Exp $
+" Updated	: $Date: 2005/12/06 21:51:26 $
+" CVS		: $Id: vimrc,v 1.36 2005/12/06 21:51:26 will Exp $
 " Copyright	: Copyright (c) 2005 Will Maier
 " License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 "#################  END HEADERS
@@ -46,6 +46,9 @@
 	set t_Sf=[3%dm
 	set t_Sb=[4%dm
     endif
+
+    " Call man from within vim
+    runtime ftplugin/man.vim
 
     " Make p in Visual mode replace the selected text with the "" register.
     vnoremap p <Esc>:let current_reg = @"<CR>gvdi<C-R>=current_reg<CR><Esc>

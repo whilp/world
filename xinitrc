@@ -1,5 +1,7 @@
 #gajim&
 
+xsetroot -solid black
+
 # switch caps and control
 xmodmap -e "remove Lock = Caps_Lock"
 xmodmap -e "remove Control = Control_L"
