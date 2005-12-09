@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.73 $
-# Updated	: $Date: 2005/12/08 16:32:21 $
+# Version	: $Revision: 1.74 $
+# Updated	: $Date: 2005/12/09 15:17:34 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.73 2005/12/08 16:32:21 will Exp $
+# CVS		: $Id: profile,v 1.74 2005/12/09 15:17:34 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -251,3 +251,4 @@ sued () {
 #	xpdf $1
 #    fi
 #}
+alias mplayer='/usr/bin/mplayer -nobps -display localhost.localdomain:0 -fs -zoom'
