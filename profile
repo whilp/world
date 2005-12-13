@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.76 $
-# Updated	: $Date: 2005/12/12 19:47:31 $
+# Version	: $Revision: 1.78 $
+# Updated	: $Date: 2005/12/13 17:53:32 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.76 2005/12/12 19:47:31 will Exp $
+# CVS		: $Id: profile,v 1.78 2005/12/13 17:53:32 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -254,5 +254,7 @@ sued () {
 alias ss="ssh-agent screen -e'^Xx' -S main"
 alias sm="screen -x main"
 alias out="clear && exit"
-alias mplayer='/usr/bin/mplayer -nobps -display localhost.localdomain:0 -fs -zoom'
-
+if [ $(hostname -s) = "messenger" ]; then
+    alias mplayer='/usr/bin/mplayer -nobps -display localhost.localdomain:0 -fs -zoom'
+fi
+alias commit="cvs ci -m ''"
