@@ -2,6 +2,7 @@
 
 SRCDIR=/usr/src
 PORTSDIR=/usr/ports
+CVSROOT=anoncvs@mirror.sg.depaul.edu:/cvs
 
 DIRS="${SRCDIR} ${PORTSDIR}"
 
