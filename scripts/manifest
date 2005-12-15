@@ -6,7 +6,7 @@ grepmail.sh
 less.sh
 maildirs.sh
 makemaildir.sh
-mycvsup.sh
+cvsup.sh
 randlist.sh
 screenexec.sh
 sterm
