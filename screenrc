@@ -92,3 +92,5 @@
     bind I login on
     bind O login off
     bind } history
+    bind - exec vol -d -i 30
+    bind = exec vol -u -i 30

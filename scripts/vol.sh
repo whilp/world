@@ -3,10 +3,10 @@
 # Filename	: vol.sh
 # Use		: adjust the volume on an OpenBSD (3.8+) machine
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.1 $
-# Updated	: $Date: 2005/12/14 21:39:13 $
+# Version	: $Revision: 1.2 $
+# Updated	: $Date: 2005/12/14 23:06:37 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: vol.sh,v 1.1 2005/12/14 21:39:13 will Exp $
+# CVS		: $Id: vol.sh,v 1.2 2005/12/14 23:06:37 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -60,7 +60,6 @@ while [ "$#" -gt 0 ]; do
 	# produce some interesting results.
 	shift
 	INCREMENT=$1
-	echo $INCREMENT
 	shift
 	;;
 	x-v|--verbose)
