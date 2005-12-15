@@ -39,6 +39,7 @@ for i in $(${SEQ} 1 ${ITEMS}); do
     ${SED} "${i}s/^/${NUMBER}:::/" ${PLAYLIST} > ${PLAYLIST}.new
 done
 
+exit
 ${RM} ${PLAYLIST}
 
 # Sort the playlist based on those randomish numbers, hopefully
