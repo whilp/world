@@ -1,6 +1,10 @@
 smartfeed:/newitems|||
-http://www.frsirt.com/advisorieseng.xml|FrSIRT Advisories|Security|
+http://www.djeaux.com/rss/insecure-bugtraq.rss||Security|
+http://www.us-cert.gov/channels/techalerts.rdf||Security|
+http://www.us-cert.gov/current/index.rdf||Security|
 http://www.frsirt.com/exploits.xml|FrSIRT Exploits|Security|
+http://www.sans.org/newsletters/newsbites/rss/||Security|
+http://www.sans.org/newsletters/risk/rss/||Security|
 http://www.freebsd.org/security/advisories.rdf||BSD,Security|
 http://www.vuxml.org/freebsd/rss.xml|FreeBSD Ports Advisories|BSD,Security|
 http://www.debian.org/security/dsa-long|Debian Security Advisories|Linux,Security|
@@ -12,8 +16,11 @@ http://www.oreillynet.com/pub/feed/10?format=rss2||BSD|
 http://www.oreillynet.com/pub/feed/18?format=rss2||BSD,Linux|
 http://syndication.sdmediagroup.com/feeds/public/sys_admin_magazine.xml||OS|
 http://feeds.feedburner.com/Taosecurity||BSD,Security|
-http://www.schneier.com/blog/index.xml||Security|
 http://www.networkcomputing.com/rss/rss-allstories.jhtml|||
+http://www.schneier.com/blog/index.xml||Security|
+http://www.eff.org/minilinks/index.xml||Freedom|
+http://www.eff.org/deeplinks/index.xml||Freedom|
+http://www.eff.org/news/index.xml||Freedom|
 http://rss.slashdot.org/Slashdot/slashdot|||
 http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/world/rss.xml|BBC News||
 http://www.rssweather.com/zipcode/53703/rss.php|||
