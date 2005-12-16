@@ -228,7 +228,6 @@ statusbar = {
         more = { priority = "-1"; alignment = "right"; };
         barend = { priority = "100"; alignment = "right"; };
         usercount = { };
-        act = { };
       };
     };
 
@@ -276,6 +275,13 @@ statusbar = {
         topicbarend = { priority = "100"; alignment = "right"; };
       };
     };
+    awl_0 = {
+      items = {
+        barstart = { priority = "100"; };
+        awl_0 = { };
+        barend = { priority = "100"; alignment = "right"; };
+      };
+    };
   };
 };
 settings = {
@@ -304,6 +310,11 @@ settings = {
     maildir_mode = "yes";
     mail_show_message = "yes";
     mail_mailboxes = "1=/var/mail/will,Family=/home/will/Maildir/Personal/Family/,";
+    chanact_show_all = "yes";
+    chanact_display = "$H$N:$M.$S$C";
+    awl_display_key = "$Q%K|%n$H$C$S";
+    awl_separator = "\\  ";
+    awl_sort = "-last-line";
   };
   "fe-common/irc" = { show_away_once = "yes"; };
 };
