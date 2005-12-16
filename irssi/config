@@ -305,6 +305,7 @@ settings = {
     mail_show_message = "yes";
     mail_mailboxes = "1=/var/mail/will,Family=/home/will/Maildir/Personal/Family/,";
   };
+  "fe-common/irc" = { show_away_once = "yes"; };
 };
 hilights = (
   { text = "toto"; nick = "yes"; word = "yes"; },
@@ -319,3 +320,21 @@ keyboard = (
 );
 logs = { };
 ignores = ( { mask = "Tattoo"; level = "ALL"; } );
+windows = {
+  2 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#openbsd";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+  };
+  1 = { immortal = "yes"; name = "(status)"; level = "ALL"; };
+};
+mainwindows = {
+  1 = { first_line = "40"; lines = "7"; };
+  2 = { first_line = "1"; lines = "39"; };
+};
