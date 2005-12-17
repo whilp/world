@@ -3,10 +3,10 @@
 # Filename	: vol.sh
 # Use		: adjust the volume on an OpenBSD (3.8+) machine
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.2 $
-# Updated	: $Date: 2005/12/14 23:06:37 $
+# Version	: $Revision: 1.3 $
+# Updated	: $Date: 2005/12/16 20:55:33 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: vol.sh,v 1.2 2005/12/14 23:06:37 will Exp $
+# CVS		: $Id: vol.sh,v 1.3 2005/12/16 20:55:33 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -14,15 +14,28 @@
 # Programs used
 BC=/usr/bin/bc
 CUT=/usr/bin/cut
+GREP=/usr/bin/grep
 MIXERCTL=/usr/bin/mixerctl
 SED=/usr/bin/sed
 
 # Influential variables
+AMOUNT=0
 CHANGE=0
-CURVOL=$(${MIXERCTL} outputs.master | ${SED} 's/.*=//' | ${CUT} -d ',' -f 1)
+CURVOL=$(${MIXERCTL} outputs.master |\
+    ${SED} 's/.*=//' |\
+    ${CUT} -d ',' -f 1)
 INCREMENT=20
 MAXVOL=255
+MIXERCTLCONF=/etc/mixerctl.conf
+MUTE=
+NORMALVOL=$(${GREP} 'outputs.master=' ${MIXERCTLCONF} |\
+    ${CUT} -d ',' -f 2)
 VERBOSE=
+
+changeVol () {
+    # Apply changes to the volume
+    ${MIXERCTL} -q outputs.master=${NEWVOL},${NEWVOL}
+}
 
 percentVol () {
     # Returns the percentage volume left of the decimal point. bc(1)
@@ -49,12 +62,12 @@ while [ "$#" -gt 0 ]; do
 	CHANGE=$((CHANGE + INCREMENT))
 	shift
 	;;
-	x-d|--down)
+	x-d|x--down)
 	# Decrease the amount to change the volume; see above.
 	CHANGE=$((CHANGE - INCREMENT))
 	shift
 	;;
-	x-i|--increment)
+	x-i|x--increment)
 	# Define the amount by which to increment the volume;
 	# passing this to us later in the chain of arguments might
 	# produce some interesting results.
@@ -62,7 +75,30 @@ while [ "$#" -gt 0 ]; do
 	INCREMENT=$1
 	shift
 	;;
-	x-v|--verbose)
+	x-n|x--normal)
+	NORMAL=1
+	shift
+	;;
+	x-m|--mute)
+	# Fade sounds to a (near) mute
+	MUTE=1
+	shift
+	;;
+	x-t|--toggle)
+	# Fade from low to high or vice versa
+	if [ "${CURVOL}" -lt "$((NORMALVOL - 20))" ]; then
+	    NORMAL=1
+	else
+	    MUTE=1
+	fi
+	shift
+	;;
+	x-m|x--mute)
+	# Fade sounds all the way out
+	MUTEOFF=1
+	shift
+	;;
+	x-v|x--verbose)
 	# Allow reporting of statuses and whatnot.
 	VERBOSE=1
 	shift
@@ -84,6 +120,24 @@ if [ ${CHANGE} -gt 0 -a "${VERBOSE}" ]; then
     echo "Raising master volume to $(percentVol ${NEWVOL})%"
 elif [ ${CHANGE} -lt 0 -a "${VERBOSE}" ]; then
     echo "Lowering master volume to $(percentVol ${NEWVOL})%"
+elif [ "${MUTE}" ]; then
+    # Do a fancy fade out and quit
+    while [ "${NEWVOL}" -gt "30" ]; do
+	AMOUNT=$((AMOUNT + 10))
+	NEWVOL=$((CURVOL - AMOUNT))
+	changeVol
+	sleep .1
+    done
+    exit
+elif [ "${NORMAL}" ]; then
+    # Do a fancy fade in and quit
+    while [ "${NEWVOL}" -lt "${NORMALVOL}" ]; do
+	AMOUNT=$((AMOUNT + 10))
+	NEWVOL=$((CURVOL + AMOUNT))
+	changeVol
+	sleep .1
+    done
+    exit
 elif [ ${CHANGE} -eq 0 -a "${VERBOSE}" ]; then
     echo "Maintaining volume at $(percentVol ${NEWVOL})%"
     exit
@@ -91,4 +145,4 @@ fi
 
 # Finally, apply the new volume. mixerctl(1) wants the '-q' flag to
 # not output a bunch of junk when it changes the variable.
-${MIXERCTL} -q outputs.master=${NEWVOL},${NEWVOL}
+changeVol
