@@ -164,6 +164,7 @@ aliases = {
   SBAR = "STATUSBAR";
   INVITELIST = "mode $C +I";
   Q = "QUERY";
+  lasttv = "lastlog \"TV Shows\"";
 };
 
 statusbar = {
@@ -347,11 +348,25 @@ windows = {
         tag = "freenode";
       }
     );
+  };
+  3 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#mininova";
+        tag = "EFNet";
+      }
+    );
+  };
+  1 = { 
+    immortal = "yes";
+    name = "(status)";
+    level = "ALL";
     sticky = "yes";
   };
-  1 = { immortal = "yes"; name = "(status)"; level = "ALL"; };
 };
 mainwindows = {
-  1 = { first_line = "40"; lines = "7"; };
-  2 = { first_line = "1"; lines = "39"; };
+  1 = { first_line = "39"; lines = "16"; };
+  2 = { first_line = "1"; lines = "38"; };
 };

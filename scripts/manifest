@@ -9,6 +9,7 @@ makemaildir.sh
 cvsup.sh
 randlist.sh
 screenexec.sh
+screenmchk.sh
 sterm
 term
 update.sh
