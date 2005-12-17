@@ -304,7 +304,7 @@ settings = {
     autoclose_windows = "no";
     reuse_unused_windows = "yes";
     window_auto_change = "yes";
-    autocreate_split_windows = "yes";
+    autocreate_split_windows = "no";
     autolog = "yes";
   };
   "irc/core" = { alternate_nick = "xl0"; };
