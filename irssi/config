@@ -1,6 +1,6 @@
 servers = (
   { address = "irc.stealth.net"; chatnet = "IRCnet"; port = "6668"; },
-  { address = "irc.efnet.net"; chatnet = "EFNet"; port = "6667"; },
+  { address = "irc.efnet.net"; chatnet = "EFNet"; autoconnect = "yes"; port = "6667"; },
   { 
     address = "irc.undernet.org";
     chatnet = "Undernet";
@@ -11,6 +11,7 @@ servers = (
     address = "irc.freenode.net";
     chatnet = "freenode";
     port = "6667";
+    autoconnect = "yes";
   },
   { address = "irc.gnome.org"; chatnet = "GIMPNet"; port = "6667"; },
   { address = "irc.ptlink.net"; chatnet = "PTlink"; port = "6667"; },
@@ -30,7 +31,7 @@ servers = (
     chatnet = "AzzurraNET";
     port = "6667";
   },
-  { address = "silc.silcnet.org"; chatnet = "SILC"; port = "706"; }
+  { address = "silc.silcnet.org"; chatnet = "SILC"; port = "706"; },
 );
 
 chatnets = {
@@ -65,9 +66,10 @@ chatnets = {
   };
   freenode = {
     type = "IRC";
+    autosendcmd = "/^msg nickserv ident lesheros;wait -freenode 2000";
     max_kicks = "4";
-    max_modes = "4";
     max_msgs = "1";
+    max_modes = "4";
     max_whois = "1";
   };
   GIMPNet = {
@@ -117,7 +119,10 @@ chatnets = {
 channels = (
   { name = "#irssi"; chatnet = "ircnet"; autojoin = "No"; },
   { name = "#irssi"; chatnet = "freenode"; autojoin = "No"; },
-  { name = "silc"; chatnet = "silc"; autojoin = "No"; }
+  { name = "silc"; chatnet = "silc"; autojoin = "No"; },
+  { name = "#openbsd"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#grml"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#mininova"; chatnet = "efnet"; autojoin = "yes"; }
 );
 
 aliases = {
@@ -314,7 +319,7 @@ settings = {
     mail_mailboxes = "1=/var/mail/will,Family=/home/will/Maildir/Personal/Family/,";
     chanact_show_all = "yes";
     chanact_display = "$H$N:$M.$S$C";
-    awl_display_key = "$Q%K|%n$H$C$S";
+    awl_display_key = "$Q%K %n$H$C$S";
     awl_separator = "\\  ";
     awl_sort = "-last-line";
   };
@@ -327,19 +332,39 @@ hilights = (
   { text = "TV Show"; nick = "yes"; word = "yes"; }
 );
 keyboard = (
-  { key = "^W"; id = "lower_window"; data = ""; },
   { key = "end"; id = "scroll_end"; data = ""; },
   { key = "home"; id = "scroll_start"; data = ""; },
   { key = "^[W"; id = "command"; data = "echo works"; },
   { key = "meta-h"; id = "left_window"; data = ""; },
   { key = "meta-l"; id = "right_window"; data = ""; },
   { key = "meta-j"; id = "upper_window"; data = ""; },
-  { key = "meta-k"; id = "upper_window"; data = ""; }
+  { key = "meta-k"; id = "upper_window"; data = ""; },
+  { key = "^W^W"; id = "lower_window"; data = ""; },
+  { key = "^Wj"; id = "lower_window"; data = ""; },
+  { key = "^Wk"; id = "upper_window"; data = ""; },
+  { key = "^W^J"; id = "lower_window"; data = ""; },
+  { key = "^W^K"; id = "upper_window"; data = ""; },
+  { key = "^Wl"; id = "next_window"; data = ""; },
+  { key = "^W^L"; id = "next_window"; data = ""; },
+  { key = "^Wh"; id = "previous_window"; data = ""; },
+  { key = "^W^H"; id = "previous_window"; data = ""; },
+  { key = "^W"; id = "key"; data = "window"; },
+  { key = "window-h"; id = "previous_window"; data = ""; },
+  { key = "window-^H"; id = "previous_window"; data = ""; },
+  { key = "window-^L"; id = "next_window"; data = ""; },
+  { key = "window-l"; id = "next_window"; data = ""; },
+  { key = "window-^K"; id = "upper_window"; data = ""; },
+  { key = "window-k"; id = "upper_window"; data = ""; },
+  { key = "window-^W"; id = "lower_window"; data = ""; },
+  { key = "window-j"; id = "lower_window"; data = ""; },
+  { key = "window-^J"; id = "lower_window"; data = ""; },
+  { key = "window-c"; id = "command"; data = "window new hide"; },
+  { key = "window-^C"; id = "command"; data = "window new hide"; }
 );
 logs = { };
 ignores = ( { mask = "Tattoo"; level = "ALL"; } );
 windows = {
-  2 = {
+  3 = {
     items = (
       {
         type = "CHANNEL";
@@ -349,7 +374,7 @@ windows = {
       }
     );
   };
-  3 = {
+  2 = {
     items = (
       {
         type = "CHANNEL";
@@ -365,8 +390,18 @@ windows = {
     level = "ALL";
     sticky = "yes";
   };
+  4 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#grml";
+        tag = "freenode";
+      }
+    );
+  };
 };
 mainwindows = {
-  1 = { first_line = "39"; lines = "16"; };
-  2 = { first_line = "1"; lines = "38"; };
+  1 = { first_line = "34"; lines = "12"; };
+  3 = { first_line = "1"; lines = "33"; };
 };
