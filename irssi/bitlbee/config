@@ -1,133 +1,25 @@
 servers = (
-  { address = "irc.stealth.net"; chatnet = "IRCnet"; port = "6668"; },
   {
-    address = "irc.efnet.net";
-    chatnet = "EFNet";
+    address = "localhost";
+    chatnet = "bitl";
     autoconnect = "yes";
     port = "6667";
-  },
-  { 
-    address = "irc.undernet.org";
-    chatnet = "Undernet";
-    port = "6667";
-  },
-  { address = "irc.dal.net"; chatnet = "DALnet"; port = "6667"; },
-  {
-    address = "irc.freenode.net";
-    chatnet = "freenode";
-    port = "6667";
-    autoconnect = "yes";
-  },
-  { address = "irc.gnome.org"; chatnet = "GIMPNet"; port = "6667"; },
-  { address = "irc.ptlink.net"; chatnet = "PTlink"; port = "6667"; },
-  { 
-    address = "irc.sorcery.net";
-    chatnet = "SorceryNet";
-    port = "6667";
-  },
-  { 
-    address = "irc.hashmark.net";
-    chatnet = "Hashmark";
-    port = "6667";
-  },
-  { address = "irc.ptnet.org"; chatnet = "PTnet"; port = "6667"; },
-  { 
-    address = "irc.azzurra.org";
-    chatnet = "AzzurraNET";
-    port = "6667";
-  },
-  { address = "silc.silcnet.org"; chatnet = "SILC"; port = "706"; }
+  }
 );
 
 chatnets = {
-  IRCnet = {
-    type = "IRC";
-    max_kicks = "4";
-    max_modes = "3";
-    max_msgs = "5";
-    max_whois = "4";
-    max_query_chans = "5";
-  };
-  EFNet = {
+  bitl = {
     type = "IRC";
     max_kicks = "4";
     max_modes = "4";
     max_msgs = "3";
     max_whois = "1";
+    autosendcmd = "/^say identify lesheros";
   };
-  Undernet = {
-    type = "IRC";
-    max_kicks = "4";
-    max_modes = "3";
-    max_msgs = "3";
-    max_whois = "30";
-  };
-  DALnet = {
-    type = "IRC";
-    max_kicks = "4";
-    max_modes = "6";
-    max_msgs = "3";
-    max_whois = "30";
-  };
-  freenode = {
-    type = "IRC";
-    autosendcmd = "/^msg nickserv ident lesheros;wait -freenode 2000";
-    max_kicks = "4";
-    max_msgs = "1";
-    max_modes = "4";
-    max_whois = "1";
-  };
-  GIMPNet = {
-    type = "IRC";
-    max_kicks = "4";
-    max_modes = "4";
-    max_msgs = "3";
-    max_whois = "1";
-  };
-  PTlink = {
-    type = "IRC";
-    max_kicks = "1";
-    max_modes = "6";
-    max_msgs = "30";
-    max_whois = "1";
-  };
-  SorceryNet = {
-    type = "IRC";
-    max_kicks = "30";
-    max_modes = "6";
-    max_msgs = "30";
-    max_whois = "30";
-  };
-  Hashmark = {
-    type = "IRC";
-    max_kicks = "4";
-    max_modes = "3";
-    max_msgs = "3";
-    max_whois = "30";
-  };
-  PTnet = {
-    type = "IRC";
-    max_kicks = "30";
-    max_modes = "13";
-    max_msgs = "10";
-    max_whois = "30";
-  };
-  AzzurraNET = {
-    type = "IRC";
-    max_kicks = "4";
-    max_modes = "6";
-    max_msgs = "3";
-  };
-  SILC = { type = "SILC"; };
 };
 
-channels = (
-  { name = "#irssi"; chatnet = "ircnet"; autojoin = "No"; },
-  { name = "#irssi"; chatnet = "freenode"; autojoin = "No"; },
-  { name = "silc"; chatnet = "silc"; autojoin = "No"; },
-  { name = "#openbsd"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#grml"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#mininova"; chatnet = "efnet"; autojoin = "yes"; }
+channels = ( 
+  { name = "#bitlbee"; chatnet = "bitl"; autojoin = "yes"; }
 );
 
 aliases = {
@@ -175,6 +67,7 @@ aliases = {
   INVITELIST = "mode $C +I";
   Q = "QUERY";
   lasttv = "lastlog \"TV Shows\"";
+  blist = "/say blist all";
 };
 
 statusbar = {
@@ -301,7 +194,7 @@ settings = {
   core = {
     real_name = "emx";
     user_name = "emx";
-    nick = "lt_kije";
+    nick = "will";
     timestamp_format = "%H:%M:%S";
     hostname = "wintermute";
     quit_message = ":wq";
@@ -383,23 +276,13 @@ keyboard = (
 logs = { };
 ignores = ( { mask = "Tattoo"; level = "ALL"; } );
 windows = {
-  3 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#openbsd";
-        tag = "freenode";
-      }
-    );
-  };
   2 = {
     items = (
       {
         type = "CHANNEL";
         chat_type = "IRC";
-        name = "#mininova";
-        tag = "EFNet";
+        name = "#bitlbee";
+        tag = "bitl";
       }
     );
   };
@@ -409,18 +292,8 @@ windows = {
     level = "ALL";
     sticky = "yes";
   };
-  4 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#grml";
-        tag = "freenode";
-      }
-    );
-  };
 };
 mainwindows = {
   1 = { first_line = "34"; lines = "12"; };
-  3 = { first_line = "1"; lines = "33"; };
+  2 = { first_line = "1"; lines = "33"; };
 };
