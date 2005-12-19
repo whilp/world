@@ -67,7 +67,8 @@ aliases = {
   INVITELIST = "mode $C +I";
   Q = "QUERY";
   lasttv = "lastlog \"TV Shows\"";
-  blist = "/say blist all";
+  gone = "/away \"Life...\"";
+  back = "/away";
 };
 
 statusbar = {
@@ -276,6 +277,16 @@ keyboard = (
 logs = { };
 ignores = ( { mask = "Tattoo"; level = "ALL"; } );
 windows = {
+  3 = {
+    items = (
+      { 
+        type = "QUERY";
+        chat_type = "IRC";
+        name = "amaier";
+        tag = "bitl";
+      }
+    );
+  };
   2 = {
     items = (
       {
@@ -285,6 +296,7 @@ windows = {
         tag = "bitl";
       }
     );
+    sticky = "yes";
   };
   1 = { 
     immortal = "yes";
@@ -294,6 +306,7 @@ windows = {
   };
 };
 mainwindows = {
-  1 = { first_line = "34"; lines = "12"; };
-  2 = { first_line = "1"; lines = "33"; };
+  1 = { first_line = "39"; lines = "7"; };
+  3 = { first_line = "12"; lines = "27"; };
+  2 = { first_line = "1"; lines = "11"; };
 };

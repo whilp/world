@@ -175,6 +175,8 @@ aliases = {
   INVITELIST = "mode $C +I";
   Q = "QUERY";
   lasttv = "lastlog \"TV Shows\"";
+  back = "/away";
+  gone = "/away \"Life...\"";
 };
 
 statusbar = {
@@ -310,7 +312,7 @@ settings = {
     beep_msg_level = "MSGS HILIGHT";
     bell_beeps = "yes";
     beep_when_away = "yes";
-    beep_when_window_active = "yes";
+    beep_when_window_active = "no";
     use_status_window = "yes";
     autocreate_own_query = "yes";
     autoclose_windows = "no";
