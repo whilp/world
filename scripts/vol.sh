@@ -3,13 +3,18 @@
 # Filename	: vol.sh
 # Use		: adjust the volume on an OpenBSD (3.8+) machine
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.3 $
-# Updated	: $Date: 2005/12/16 20:55:33 $
+# Version	: $Revision: 1.4 $
+# Updated	: $Date: 2005/12/19 21:28:58 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: vol.sh,v 1.3 2005/12/16 20:55:33 will Exp $
+# CVS		: $Id: vol.sh,v 1.4 2005/12/19 21:28:58 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
+
+# Die if mixerctl is already running
+if [ -n "$(pgrep mixerctl)" ]; then
+    return 1
+fi
 
 # Programs used
 BC=/usr/bin/bc

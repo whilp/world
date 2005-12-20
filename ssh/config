@@ -2,6 +2,16 @@
 # Will Maier <willmaier@ml1.net>
 # 2005.06.11
 
+Host proxjaw
+    Hostname	jawbreaker.cae.wisc.edu
+    User	wcmaier
+    ProxyCommand    ssh wcmaier@burrito.cae.wisc.edu nc -w 1 jawbreaker.cae.wisc.edu 22
+
+Host proxnoc
+    Hostname	noc.hep.wisc.edu
+    User	wcmaier
+    ProxyCommand    ssh wcmaier@login.hep.wisc.edu nc -w 1 noc.hep.wisc.edu 22
+
 Host localmerk
     Hostname	192.168.1.50
     Port	222
