@@ -22,7 +22,7 @@ Personal Observations on the Reliability of the Shuttle (Feynman)	http://www.ran
 BrickJournal - the magazine for Adult Fans of LEGO	http://www.legofan.org/brickjournal/	1	
 The Darth Side: Memoirs of a Monster	http://www.darthside.blogspot.com/	1	
 Simon of Space	http://simonofspace.blogspot.com/	1	
-NIX		0	F
+NIX		0	FE
 ACM Queue - Comments Are More ImportCommenting Code	http://acmqueue.com/modules.php?name=Content&pa=showpage&pid=290	1	
 CoreWar Info	http://www.koth.org/info.html	1	
 Rackmout Servers at ABMX.Com	http://www.abmx.com/	1	
@@ -39,7 +39,7 @@ Cacti: The Complete RRDTool-based Graphing Solution	http://www.cacti.net/	1
 LXer: Comment of the Day - October 25, 2005 Calculate the Optimal Size of a New Disk Drive	http://lxer.com/module/newswire/view/46144/index.html	1	
 Linux.com | CLI Magic: netcat	http://www.linux.com/article.pl?sid=05/11/07/182200	1	
 Be Your Own Hotspot - Popular Science	http://www.popsci.com/popsci/how2/article/0,20967,1076525,00.html	1	
-BSD		1	F
+BSD		1	FE
 The FreeBSD Diary -- Cross compiling on AMD64 - the teaser	http://www.freebsddiary.org/cross-compiling-teaser.php	2	
 TaoSecurity: Keeping FreeBSD Up-To-Date	http://www.taosecurity.com/keeping_freebsd_up-to-date.html	2	
 lucky.openbsd.misc - keeping OBSD up to date	http://groups.google.com/group/lucky.openbsd.misc/browse_thread/thread/87ab297a035a453e/25f654555f5a061c%2325f654555f5a061c?sa=X&oi=groupsr&start=0&num=3	2	
@@ -267,3 +267,9 @@ Irssi quickstart guide (Linux Reviews)	http://linuxreviews.org/software/irc/irss
 A Guide to Efficiently Using Irssi and Screen :: f0rked.com	http://f0rked.com/articles/irssi	0	
 cool features of irssi	http://www.garion.org/irssi/features.php	0	
 ONLamp.com: Building an OpenBSD Live CD	http://www.onlamp.com/lpt/a/6029	0	
+DspamFromMaildrop	http://dspamwiki.woozle.org/DspamFromMaildrop	0	
+MPlayer - The Movie Player	http://www.mplayerhq.hu/homepage/design7/news-archive.html	0	
+OpenSSH cutting edge	http://www.securityfocus.com/columnists/375	0	
+ONLamp.com: NAT with pf	http://www.onlamp.com/pub/a/bsd/2003/03/06/ssn_openbsd.html	0	
+http://splodge.fluff.org/docs/dspam-for-sa-users	http://splodge.fluff.org/docs/dspam-for-sa-users	0	
+Arla AFS for FreeBSD	http://crib.eecs.umich.edu/howto/arla.html	0	

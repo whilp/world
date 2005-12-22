@@ -275,7 +275,7 @@ keyboard = (
   { key = "window-9"; id = "change_window"; data = "9"; }
 );
 logs = { };
-ignores = ( { mask = "Tattoo"; level = "ALL"; } );
+ignores = ( );
 windows = {
   3 = {
     items = (

@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.81 $
-# Updated	: $Date: 2005/12/18 04:12:49 $
+# Version	: $Revision: 1.82 $
+# Updated	: $Date: 2005/12/22 15:53:58 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.81 2005/12/18 04:12:49 will Exp $
+# CVS		: $Id: profile,v 1.82 2005/12/22 15:53:58 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -260,3 +260,7 @@ if [ $(hostname -s) = "messenger" ]; then
 fi
 alias commit="cvs ci -m ''"
 alias bitl="irc --home=~/.irssi/bitlbee"
+pkg_grep () {
+    /usr/bin/grep $1 /usr/ports/INDEX-pkg
+}
+alias exit="clear && exit"

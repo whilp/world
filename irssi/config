@@ -36,7 +36,8 @@ servers = (
     chatnet = "AzzurraNET";
     port = "6667";
   },
-  { address = "silc.silcnet.org"; chatnet = "SILC"; port = "706"; }
+  { address = "silc.silcnet.org"; chatnet = "SILC"; port = "706"; },
+  { address = "irc.bitlbee.org"; chatnet = "bitlbee"; port = "6667"; }
 );
 
 chatnets = {
@@ -55,6 +56,7 @@ chatnets = {
     max_msgs = "3";
     max_whois = "1";
   };
+  bitlbee = { type = "IRC"; };
   Undernet = {
     type = "IRC";
     max_kicks = "4";
@@ -127,7 +129,8 @@ channels = (
   { name = "silc"; chatnet = "silc"; autojoin = "No"; },
   { name = "#openbsd"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "#grml"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#mininova"; chatnet = "efnet"; autojoin = "yes"; }
+  { name = "#mininova"; chatnet = "efnet"; autojoin = "no"; },
+  { name = "#bitlbee"; chatnet = "bitlbee"; autojoin = "yes"; }
 );
 
 aliases = {
@@ -383,7 +386,11 @@ keyboard = (
   { key = "window-9"; id = "change_window"; data = "9"; }
 );
 logs = { };
-ignores = ( { mask = "Tattoo"; level = "ALL"; } );
+ignores = (
+  { mask = "Tattoo"; level = "ALL"; },
+  { mask = "@mininova"; level = "ALL"; exception = "yes"; },
+  { level = "ALL"; channels = ( "#mininova" ); }
+);
 windows = {
   3 = {
     items = (
