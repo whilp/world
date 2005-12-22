@@ -370,7 +370,7 @@ keyboard = (
   { key = "window-l"; id = "next_window"; data = ""; },
   { key = "window-^K"; id = "upper_window"; data = ""; },
   { key = "window-k"; id = "upper_window"; data = ""; },
-  { key = "window-^W"; id = "lower_window"; data = ""; },
+  { key = "window-^W"; id = "command"; data = "window last"; },
   { key = "window-j"; id = "lower_window"; data = ""; },
   { key = "window-^J"; id = "lower_window"; data = ""; },
   { key = "window-c"; id = "command"; data = "window new hide"; },
@@ -383,7 +383,8 @@ keyboard = (
   { key = "window-6"; id = "change_window"; data = "6"; },
   { key = "window-7"; id = "change_window"; data = "7"; },
   { key = "window-8"; id = "change_window"; data = "8"; },
-  { key = "window-9"; id = "change_window"; data = "9"; }
+  { key = "window-9"; id = "change_window"; data = "9"; },
+  { key = "window-^w"; id = "command"; data = "window last"; }
 );
 logs = { };
 ignores = (
