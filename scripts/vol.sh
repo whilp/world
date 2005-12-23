@@ -3,10 +3,10 @@
 # Filename	: vol.sh
 # Use		: adjust the volume on an OpenBSD (3.8+) machine
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.4 $
-# Updated	: $Date: 2005/12/19 21:28:58 $
+# Version	: $Revision: 1.5 $
+# Updated	: $Date: 2005/12/23 16:11:58 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: vol.sh,v 1.4 2005/12/19 21:28:58 will Exp $
+# CVS		: $Id: vol.sh,v 1.5 2005/12/23 16:11:58 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -127,7 +127,7 @@ elif [ ${CHANGE} -lt 0 -a "${VERBOSE}" ]; then
     echo "Lowering master volume to $(percentVol ${NEWVOL})%"
 elif [ "${MUTE}" ]; then
     # Do a fancy fade out and quit
-    while [ "${NEWVOL}" -gt "30" ]; do
+    while [ "${NEWVOL}" -gt "50" ]; do
 	AMOUNT=$((AMOUNT + 10))
 	NEWVOL=$((CURVOL - AMOUNT))
 	changeVol
