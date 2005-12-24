@@ -1,6 +1,8 @@
 # :vim: set ft=sh:
 source $HOME/.screen/screenrc
 sessionname info
+screen -t SNOWNEWS  1 snownews
+screen -t WWW	    1 elinks -session-ring 1 -no-connect -touch-files
 screen -t LOG	    1 tail -f /var/log/messages
-screen -t TOP	    2 top 
-screen -t TODO	    3 tdll
+screen -t TOP	    1 top 
+screen -t TODO	    1 tdll
