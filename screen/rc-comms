@@ -1,0 +1,6 @@
+# :vim: set ft=sh:
+source $HOME/.screen/screenrc
+sessionname comms
+screen -t IRC	    1 irssi
+screen -t IM -M	    2 irssi --home=~/.irssi/bitlbee
+caption splitonly

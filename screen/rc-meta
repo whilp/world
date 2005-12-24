@@ -1,0 +1,44 @@
+## Here's what it should look like
+# META
+#     MAIL
+# 	mutt
+#     SSH
+#	HEP
+#	    ssh hep
+#	CAE
+#	    ssh cae
+#	MESS
+#	    ssh mess
+#	SOY
+#	    ssh soyuz
+#     WWW
+# 	WEB
+# 	    elinks -no-connect -touch-files
+# 	CAE
+# 	    elinks -no-connect -touch-files
+# 	HEP
+# 	    elinks -no-connect -touch-files
+#     COMMS
+# 	IRC
+# 	    irssi
+# 	IM
+# 	    irssi --home=/home/will/.irssi/bitlbee
+#     SHELLS
+# 	SH
+# 	    zsh
+#     INFO
+#	LOG
+#	    tail -f /var/log/messages
+#	TOP
+#	    top
+
+source $HOME/.screen/screenrc
+sessionname meta
+screen -t MAIL -M   1 mutt
+screen -t SSH	    2 screen -RDD -e'^\\\' -S ssh -c /home/will/.screen/rc-ssh
+screen -t WWW	    3 screen -RDD -e'^\\\' -S www -c /home/will/.screen/rc-www
+screen -t COMMS	-M  4 screen -RDD -e'^\\\' -S comms -c /home/will/.screen/rc-comms
+screen -t SHELLS    5 screen -RDD -e'^\\\' -S shells -c /home/will/.screen/rc-shells
+screen -t INFO	    6 screen -RDD -e'^\\\' -S info -c /home/will/.screen/rc-info
+
+select 1

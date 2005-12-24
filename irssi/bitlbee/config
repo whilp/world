@@ -278,16 +278,6 @@ keyboard = (
 logs = { };
 ignores = ( );
 windows = {
-  3 = {
-    items = (
-      { 
-        type = "QUERY";
-        chat_type = "IRC";
-        name = "amaier";
-        tag = "bitl";
-      }
-    );
-  };
   2 = {
     items = (
       {
@@ -307,7 +297,6 @@ windows = {
   };
 };
 mainwindows = {
-  1 = { first_line = "39"; lines = "7"; };
-  3 = { first_line = "12"; lines = "27"; };
-  2 = { first_line = "1"; lines = "11"; };
+  1 = { first_line = "43"; lines = "11"; };
+  2 = { first_line = "1"; lines = "42"; };
 };

@@ -1,0 +1,6 @@
+# :vim: set ft=sh:
+source $HOME/.screen/screenrc
+sessionname info
+screen -t LOG	    1 tail -f /var/log/messages
+screen -t TOP	    2 top 
+screen -t TODO	    3 tdll

@@ -1,7 +1,7 @@
 servers = (
   { address = "irc.stealth.net"; chatnet = "IRCnet"; port = "6668"; },
   {
-    address = "irc.efnet.net";
+    address = "irc.blessed.net";
     chatnet = "EFNet";
     autoconnect = "yes";
     port = "6667";
@@ -124,13 +124,14 @@ chatnets = {
 };
 
 channels = (
+  { name = "#openbsd"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#grml"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#freebsdhelp"; chatnet = "efnet"; autojoin = "yes"; },
+  { name = "#bitlbee"; chatnet = "bitlbee"; autojoin = "yes"; },
   { name = "#irssi"; chatnet = "ircnet"; autojoin = "No"; },
   { name = "#irssi"; chatnet = "freenode"; autojoin = "No"; },
   { name = "silc"; chatnet = "silc"; autojoin = "No"; },
-  { name = "#openbsd"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#grml"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#mininova"; chatnet = "efnet"; autojoin = "no"; },
-  { name = "#bitlbee"; chatnet = "bitlbee"; autojoin = "yes"; }
+  { name = "#mininova"; chatnet = "efnet"; autojoin = "no"; }
 );
 
 aliases = {
@@ -393,7 +394,18 @@ ignores = (
   { level = "ALL"; channels = ( "#mininova" ); }
 );
 windows = {
-  3 = {
+  4 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#irssi";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+  };
+  2 = {
     items = (
       {
         type = "CHANNEL";
@@ -402,16 +414,8 @@ windows = {
         tag = "freenode";
       }
     );
-  };
-  2 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#mininova";
-        tag = "EFNet";
-      }
-    );
+    sticky = "yes";
+    parent = "4";
   };
   1 = { 
     immortal = "yes";
@@ -419,7 +423,7 @@ windows = {
     level = "ALL";
     sticky = "yes";
   };
-  4 = {
+  3 = {
     items = (
       {
         type = "CHANNEL";
@@ -428,9 +432,11 @@ windows = {
         tag = "freenode";
       }
     );
+    sticky = "yes";
+    parent = "1";
   };
 };
 mainwindows = {
-  1 = { first_line = "34"; lines = "12"; };
-  3 = { first_line = "1"; lines = "33"; };
+  1 = { first_line = "46"; lines = "9"; };
+  4 = { first_line = "1"; lines = "45"; };
 };

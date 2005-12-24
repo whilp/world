@@ -1,0 +1,7 @@
+# :vim: set ft=sh:
+source $HOME/.screen/screenrc
+sessionname shells
+screen -t SH	    1 zsh
+
+bind c screen -t SH 1 zsh
+bind ^c screen -t SH 1 zsh

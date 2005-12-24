@@ -1,3 +1,4 @@
+script exec \$ENV{'TZ'}='UTC'\;
 bind ^W key window
 bind window-h previous_window
 bind window-^H previous_window
