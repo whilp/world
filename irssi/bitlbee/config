@@ -14,7 +14,7 @@ chatnets = {
     max_modes = "4";
     max_msgs = "3";
     max_whois = "1";
-    autosendcmd = "/^say identify lesheros";
+    autosendcmd = "/^msg bitlbee identify lesheros";
   };
 };
 
@@ -69,6 +69,7 @@ aliases = {
   lasttv = "lastlog \"TV Shows\"";
   gone = "/away \"Life...\"";
   back = "/away";
+  marco = "clear; say blist";
 };
 
 statusbar = {
@@ -212,6 +213,7 @@ settings = {
     window_auto_change = "yes";
     autocreate_split_windows = "no";
     autolog = "yes";
+    autolog_path = "= ~/.irssi/logs/$tag/$0.log";
   };
   "irc/core" = { alternate_nick = "xl0"; };
   "perl/core/scripts" = {
@@ -273,7 +275,11 @@ keyboard = (
   { key = "window-7"; id = "change_window"; data = "7"; },
   { key = "window-8"; id = "change_window"; data = "8"; },
   { key = "window-9"; id = "change_window"; data = "9"; },
-  { key = "window-^w"; id = "command"; data = "window last"; }
+  { key = "window-^w"; id = "command"; data = "window last"; },
+  { key = "window-p"; id = "previous_window"; data = ""; },
+  { key = "window-^P"; id = "previous_window"; data = ""; },
+  { key = "window-n"; id = "next_window"; data = ""; },
+  { key = "window-^N"; id = "next_window"; data = ""; }
 );
 logs = { };
 ignores = ( );
@@ -297,6 +303,6 @@ windows = {
   };
 };
 mainwindows = {
-  1 = { first_line = "43"; lines = "11"; };
-  2 = { first_line = "1"; lines = "42"; };
+  1 = { first_line = "62"; lines = "13"; };
+  2 = { first_line = "1"; lines = "61"; };
 };

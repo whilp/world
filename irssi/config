@@ -1,11 +1,30 @@
 servers = (
-  { address = "irc.stealth.net"; chatnet = "IRCnet"; port = "6668"; },
   {
-    address = "irc.blessed.net";
+    address = "irc.nac.net";
     chatnet = "EFNet";
     autoconnect = "yes";
     port = "6667";
   },
+  {
+    address = "moo.slashnet.org";
+    chatnet = "slashnet";
+    autoconnect = "yes";
+    port = "6667";
+  },
+  {
+    address = "irc.freenode.net";
+    chatnet = "freenode";
+    port = "6667";
+    autoconnect = "yes";
+  },
+  {
+    address = "irc.milwaukeelug.org";
+    chatnet = "mkeirc";
+    port = "6667";
+  },
+  #autoconnect = "yes";
+  { address = "irc.stealth.net"; chatnet = "IRCnet"; port = "6668"; },
+  { address = "hub.efnet.us"; chatnet = "EFNet"; port = "6667"; },
   { 
     address = "irc.undernet.org";
     chatnet = "Undernet";
@@ -13,10 +32,14 @@ servers = (
   },
   { address = "irc.dal.net"; chatnet = "DALnet"; port = "6667"; },
   {
-    address = "irc.freenode.net";
-    chatnet = "freenode";
+    address = "area51.slashnet.org";
+    chatnet = "slashnet";
     port = "6667";
-    autoconnect = "yes";
+  },
+  {
+    address = "radon.slashnet.org";
+    chatnet = "slashnet";
+    port = "6667";
   },
   { address = "irc.gnome.org"; chatnet = "GIMPNet"; port = "6667"; },
   { address = "irc.ptlink.net"; chatnet = "PTlink"; port = "6667"; },
@@ -39,6 +62,7 @@ servers = (
   { address = "silc.silcnet.org"; chatnet = "SILC"; port = "706"; },
   { address = "irc.bitlbee.org"; chatnet = "bitlbee"; port = "6667"; }
 );
+# { address = "irc.blessed.net"; chatnet = "EFNet"; port = "6667"; },
 
 chatnets = {
   IRCnet = {
@@ -57,6 +81,8 @@ chatnets = {
     max_whois = "1";
   };
   bitlbee = { type = "IRC"; };
+  slashnet = { type = "IRC"; };
+  mkeirc = { type = "IRC"; };
   Undernet = {
     type = "IRC";
     max_kicks = "4";
@@ -125,6 +151,10 @@ chatnets = {
 
 channels = (
   { name = "#openbsd"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#zsh"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#vim"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#madlug"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#screen"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "#grml"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "#freebsdhelp"; chatnet = "efnet"; autojoin = "yes"; },
   { name = "#bitlbee"; chatnet = "bitlbee"; autojoin = "yes"; },
@@ -324,6 +354,7 @@ settings = {
     window_auto_change = "yes";
     autocreate_split_windows = "no";
     autolog = "yes";
+    autolog_path = "= ~/irclogs/$tag/$0.log";
   };
   "irc/core" = { alternate_nick = "xl0"; };
   "perl/core/scripts" = {
@@ -335,18 +366,11 @@ settings = {
     awl_display_key = "$Q%K %n$H$C$S";
     awl_separator = "\\  ";
     awl_sort = "-last-line";
+    awl_prefer_name = "yes";
   };
   "fe-common/irc" = { show_away_once = "yes"; };
 };
-hilights = (
-  {
-    text = "\"[Vv]eronica [Mm]ars\"";
-    nick = "yes";
-    word = "yes";
-    regexp = "yes";
-  },
-  { text = "mike"; nick = "yes"; word = "yes"; }
-);
+hilights = ( );
 keyboard = (
   { key = "end"; id = "scroll_end"; data = ""; },
   { key = "home"; id = "scroll_start"; data = ""; },
@@ -385,7 +409,11 @@ keyboard = (
   { key = "window-7"; id = "change_window"; data = "7"; },
   { key = "window-8"; id = "change_window"; data = "8"; },
   { key = "window-9"; id = "change_window"; data = "9"; },
-  { key = "window-^w"; id = "command"; data = "window last"; }
+  { key = "window-^w"; id = "command"; data = "window last"; },
+  { key = "window-p"; id = "previous_window"; data = ""; },
+  { key = "window-^P"; id = "previous_window"; data = ""; },
+  { key = "window-n"; id = "next_window"; data = ""; },
+  { key = "window-^N"; id = "next_window"; data = ""; }
 );
 logs = { };
 ignores = (
@@ -394,17 +422,6 @@ ignores = (
   { level = "ALL"; channels = ( "#mininova" ); }
 );
 windows = {
-  4 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#irssi";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-  };
   2 = {
     items = (
       {
@@ -415,13 +432,18 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "4";
   };
-  1 = { 
-    immortal = "yes";
-    name = "(status)";
-    level = "ALL";
+  6 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#madlug";
+        tag = "freenode";
+      }
+    );
     sticky = "yes";
+    parent = "2";
   };
   3 = {
     items = (
@@ -433,10 +455,52 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "1";
+    parent = "2";
+  };
+  5 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#screen";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+    parent = "2";
+  };
+  4 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#freebsdhelp";
+        tag = "EFNet";
+      }
+    );
+    sticky = "yes";
+    parent = "2";
+  };
+  7 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#mlug";
+        tag = "mkeirc";
+      }
+    );
+    sticky = "yes";
+    parent = "2";
+  };
+  1 = { 
+    immortal = "yes";
+    name = "(status)";
+    level = "ALL";
+    sticky = "yes";
   };
 };
 mainwindows = {
-  1 = { first_line = "46"; lines = "9"; };
-  4 = { first_line = "1"; lines = "45"; };
+  1 = { first_line = "62"; lines = "13"; };
+  2 = { first_line = "1"; lines = "61"; };
 };

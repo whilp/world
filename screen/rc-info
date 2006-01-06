@@ -2,7 +2,7 @@
 source $HOME/.screen/screenrc
 sessionname info
 screen -t SNOWNEWS  1 snownews
-screen -t WWW	    1 elinks -session-ring 1 -no-connect -touch-files
+screen -t WWW	    1 /usr/local/bin/elinks -session-ring 1 -touch-files
 screen -t LOG	    1 tail -f /var/log/messages
 screen -t TOP	    1 top 
 screen -t TODO	    1 tdll

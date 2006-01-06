@@ -32,13 +32,13 @@
 #	TOP
 #	    top
 
-source $HOME/.screen/screenrc
+source /home/will/.screen/screenrc
 sessionname meta
 screen -t MAIL -M   1 mutt
-screen -t SSH	    2 screen -RDD -e'^Ee' -c /home/will/.screen/rc-ssh
-screen -t WWW	    3 screen -RDD -e'^Ee' -c /home/will/.screen/rc-www
-screen -t COMMS	-M  4 screen -RDD -e'^Ee' -c /home/will/.screen/rc-comms
-screen -t SHC	    5 screen -RDD -e'^Ee' -c /home/will/.screen/rc-shells
-screen -t INFO	    6 screen -RDD -e'^Ee' -c /home/will/.screen/rc-info
+screen -t SSH	    2 screen -RRD -e'^Ee' -S ssh -c /home/will/.screen/rc-ssh
+screen -t WWW	    3 screen -RRD -e'^Ee' -S www -c /home/will/.screen/rc-www
+screen -t COMMS	-M  4 screen -RRD -e'^Ee' -S comms -c /home/will/.screen/rc-comms
+screen -t SHC	    5 screen -RRD -e'^Ee' -S shells -c /home/will/.screen/rc-shells
+screen -t INFO	    6 screen -RRD -e'^Ee' -S info -c /home/will/.screen/rc-info
 
 select 1

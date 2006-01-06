@@ -1,10 +1,10 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.muttalias
 # Use		: defines mail aliases for the mutt mail user agent
-# Version	: $Revision: 1.7 $
+# Version	: $Revision: 1.8 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2005/10/20 16:27:52 $
-# CVS		: $Id: muttalias,v 1.7 2005/10/20 16:27:52 will Exp $
+# Updated	: $Date: 2006/01/05 22:29:48 $
+# CVS		: $Id: muttalias,v 1.8 2006/01/05 22:29:48 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -31,6 +31,7 @@ alias ma Sharon Maier <sharonmaier@gmail.com>
 alias maier.andy Andy Maier <linuxmaier@fastmail.fm>
 alias maier.mickey Mickey Maier <mmaier@stewart-peterson.com>
 alias maier.sharon Sharon Maier <sharonmaier@gmail.com>
+alias maier.louis3 Louis A Maier III <lmaieriii@wi.rr.com>
 alias mainville.ryan Ryan Mainville <rmainville@stewart-peterson.com>
 alias oldenburg.ross Ross Oldenburg <rosso@cae.wisc.edu>
 alias pa Mickey Maier <mmaier@stewart-peterson.com>

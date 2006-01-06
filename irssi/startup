@@ -2,8 +2,12 @@ script exec \$ENV{'TZ'}='UTC'\;
 bind ^W key window
 bind window-h previous_window
 bind window-^H previous_window
-bind window-^L next_window
+bind window-p previous_window
+bind window-^P previous_window
 bind window-l next_window
+bind window-^L next_window
+bind window-n next_window
+bind window-^N next_window
 bind window-^K upper_window
 bind window-k upper_window
 bind window-^W /window last
@@ -23,3 +27,4 @@ bind window-^C /window new hide
 
 run awl
 run usercount
+run nickcolor

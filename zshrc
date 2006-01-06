@@ -1,10 +1,10 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
-# Version	: $Revision: 1.38 $
+# Version	: $Revision: 1.39 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2005/12/16 20:00:38 $
-# CVS		: $Id: zshrc,v 1.38 2005/12/16 20:00:38 will Exp $
+# Updated	: $Date: 2006/01/05 22:29:48 $
+# CVS		: $Id: zshrc,v 1.39 2006/01/05 22:29:48 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -153,6 +153,8 @@ setopt notify
 setopt path_dirs
 #setopt pushignoredups	    # don't duplicate entries in dir history
 setopt rcquotes		    # elegant quoting of quotes ('"' -> ')
+
+zstyle ':completion:*' menu select=1
 
 # --[ ENVIRONMENT
 stty erase 
