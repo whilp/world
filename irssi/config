@@ -341,6 +341,7 @@ settings = {
     timestamp_format = "%H:%M:%S";
     hostname = "wintermute";
     quit_message = ":wq";
+    log_create_mode = "600";
   };
   "fe-common/core" = {
     beep_msg_level = "MSGS HILIGHT";
@@ -422,28 +423,11 @@ ignores = (
   { level = "ALL"; channels = ( "#mininova" ); }
 );
 windows = {
-  2 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#openbsd";
-        tag = "freenode";
-      }
-    );
+  1 = { 
+    immortal = "yes";
+    name = "(status)";
+    level = "ALL";
     sticky = "yes";
-  };
-  6 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#madlug";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "2";
   };
   3 = {
     items = (
@@ -455,7 +439,6 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "2";
   };
   5 = {
     items = (
@@ -467,8 +450,53 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "2";
+    parent = "3";
   };
+  6 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#madlug";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+    parent = "3";
+  };
+  9 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#vim";
+        tag = "freenode";
+      }
+    );
+  };
+  8 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#zsh";
+        tag = "freenode";
+      }
+    );
+  };
+  2 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#openbsd";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+    parent = "3";
+  };
+  7 = { sticky = "yes"; parent = "3"; };
   4 = {
     items = (
       {
@@ -479,28 +507,10 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "2";
-  };
-  7 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#mlug";
-        tag = "mkeirc";
-      }
-    );
-    sticky = "yes";
-    parent = "2";
-  };
-  1 = { 
-    immortal = "yes";
-    name = "(status)";
-    level = "ALL";
-    sticky = "yes";
+    parent = "3";
   };
 };
 mainwindows = {
-  1 = { first_line = "62"; lines = "13"; };
-  2 = { first_line = "1"; lines = "61"; };
+  1 = { first_line = "60"; lines = "13"; };
+  3 = { first_line = "1"; lines = "59"; };
 };

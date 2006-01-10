@@ -200,6 +200,7 @@ settings = {
     timestamp_format = "%H:%M:%S";
     hostname = "wintermute";
     quit_message = ":wq";
+    log_create_mode = "600";
   };
   "fe-common/core" = {
     beep_msg_level = "MSGS HILIGHT";
@@ -213,7 +214,7 @@ settings = {
     window_auto_change = "yes";
     autocreate_split_windows = "no";
     autolog = "yes";
-    autolog_path = "= ~/.irssi/logs/$tag/$0.log";
+    autolog_path = "~/.irssi/logs/IM/$tag/$0.log";
   };
   "irc/core" = { alternate_nick = "xl0"; };
   "perl/core/scripts" = {
