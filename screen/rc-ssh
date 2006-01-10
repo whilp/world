@@ -1,5 +1,9 @@
 # :vim: set ft=sh:
 source $HOME/.screen/screenrc
+
+caption always "%{= bW}[%{+b}%n: %t%{-}] [%{+b}%-Lw%50>%n%f* %t%+Lw%<%{-}]%-="
+
+
 sessionname ssh
 screen -t HEP	    1 ssh wcmaier@login.hep.wisc.edu 
 screen -t CAE	    2 ssh wcmaier@burrito.cae.wisc.edu

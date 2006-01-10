@@ -1,5 +1,9 @@
 # :vim: set ft=sh:
 source $HOME/.screen/screenrc
+
+caption always "%{= bW}[%{+b}%n: %t%{-}] [%{+b}%-Lw%50>%n%f* %t%+Lw%<%{-}]%-="
+
+
 sessionname info
 screen -t SNOWNEWS  1 snownews
 screen -t WWW	    1 /usr/local/bin/elinks -session-ring 1 -touch-files

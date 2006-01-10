@@ -33,6 +33,10 @@
 #	    top
 
 source /home/will/.screen/screenrc
+
+caption always "%{= bW}[%{+b}%n: %t%{-}] [%{+b}%-Lw%50>%n%f* %t%+Lw%<%{-}]%-="
+
+
 sessionname meta
 screen -t MAIL -M   1 mutt
 screen -t SSH	    2 screen -RRD -e'^Ee' -S ssh -c /home/will/.screen/rc-ssh

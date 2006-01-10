@@ -10,3 +10,4 @@ fi
 	--rcfile getmailrc-hep  \
 	--rcfile getmailrc-uw  \
 	--rcfile getmailrc-gmail
+/home/will/bin/mailcheck > /home/will/Maildir/.count
