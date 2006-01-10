@@ -11,6 +11,7 @@ xmodmap -e "add Lock = Caps_Lock"
 xmodmap -e "add Control = Control_L"
 
 #exec enlightenment
+xset b off
 unclutter -idle 5 -jitter 20&
 exec ion3
 #exec wmii
