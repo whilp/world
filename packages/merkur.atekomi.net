@@ -1,0 +1,79 @@
+apg-2.2.3           automated password generator
+aspell-0.50.5p1     spell checker designed to eventually replace Ispell
+aspell-uk-0.51_0    aspell dictionary for Ukrainian
+autoconf-2.13p0     automatically configure source code on many Un*x platforms
+autoconf-2.59       automatically configure source code on many Un*x platforms
+automake-1.4-p6p2   GNU Standards-compliant Makefile generator
+bitlbee-0.91p2      IRC proxy to connect to AIM, ICQ, Jabber, MSN and Yahoo
+bsdiff-4.2          binary patch tools
+bzip2-1.0.3         block-sorting file compressor, unencumbered
+curl-7.15.0         get files from FTP, Gopher, HTTP or HTTPS servers
+cyrus-sasl-2.1.20p4 RFC 2222 SASL (Simple Authentication and Security Layer)
+ddclient-3.6.3      Dynamic DNS service update client
+dspam-3.2.6-sqlite  anti-spam filter
+elinks-0.10.5-no_x11 full-featured text WWW browser
+findutils-4.1p0     finds and then operates on files
+gdbm-1.8.3p0        GNU dbm
+getmail-4.4.2p0     POP3 mail retriever
+gettext-0.10.40p3   GNU gettext
+ggrep-2.5.1p1       GNU versions of grep pattern matching utilities
+ghostscript-fonts-6.0 35 standard PostScript fonts with Adobe name aliases
+glib-1.2.10p0       useful routines for C programming
+glib2-2.6.4         general-purpose utility library
+gmake-3.80p1        GNU make
+gnuls-4.1p0         colorized GNU 'ls'
+gnutls-1.0.25       GNU Transport Layer Security library
+grepmail-4.80       search mailboxes for a particular email
+gtar-1.15.1p2       GNU version of the traditional tar archiver
+help2man-1.29       GNU help2man
+integrit-3.02.00p0  file integrity checker
+irssi-0.8.9         modular IRC client with many features (ipv6,socks,proxy)
+jasper-1.701.0      reference implementation of JPEG-2000
+jbigkit-1.5         lossless image compression library
+jpeg-6bp2           IJG's JPEG compression utilities
+lcms-1.12p0         color management library
+libgcrypt-1.2.0     crypto library based on code used in GnuPG
+libgpg-error-0.7    error codes for GnuPG related software
+libgsf-1.11.1p0     GNOME Structured File library
+libiconv-1.9.2p1    character set conversion library
+libltdl-1.5.18      GNU libtool system independent dlopen wrapper
+libtool-1.5.18p2    generic shared library support script
+libungif-4.1.0b1    tools and library routines for working with GIF images
+libxml-2.6.16p5     XML parsing library
+lsof-4.75           list information about open files
+lua-5.0.2p1         powerful, light-weight programming language
+maildrop-1.7.0      local mail delivery agent with filtering abilities
+metaauto-0.5        wrapper for gnu auto*
+mpeg-lib-1.3.1p0    collection of C routines to decode MPEG movies
+msmtp-1.4.1         SMTP plugin for MUAs
+mtr-0.67-no_x11     Matt's traceroute - network diagnostic tool
+multitail-3.6.0     multi-window tail(1) utility
+mutt-1.5.9i-hcache  tty-based e-mail client, development version
+netpbm-9.24p3       toolkit for converting images between different formats
+ngrep-1.44          network grep
+nmap-3.81-no_x11    scan ports and fingerprint stack of network hosts
+opencdk-0.5.5       Open Crypto Development Kit
+p5-DateManip-5.42a  manipulate dates in perl
+p5-Time-TimeDate-1.16 library for parsing and formatting dates and times
+pcre-4.5p1          perl-compatible regular expression library
+png-1.2.8           library for manipulating PNG images
+postfix-2.3.20050716-sasl2 fast, secure sendmail replacement
+python-2.3.5p2      interpreted object-oriented programming language
+python-2.4.1p0      interpreted object-oriented programming language
+rsync-2.6.6         mirroring/synchronization over low bandwidth links
+sc-7.15p1           curses spreadsheet-calculator program
+screen-4.0.2        multi-screen window manager
+snownews-1.5.4      text mode rss newsreader
+sqlite-2.8.16       Embedded SQL implementation
+t1lib-5.0.0         Type 1 rasterizer library for UNIX/X11
+tcl-8.4.7p1         Tool Command Language
+tdl-1.5.2p0         to-do list manager
+teTeX_base-3.0p3-no_x11 TeX distribution, executables
+teTeX_base-fmt-3.0  format files
+teTeX_texmf-3.0     TeX distribution, common support files
+texi2html-1.64      texinfo to HTML converter
+tiff-3.7.3          tools and library routines for working with TIFF images
+vim-6.3.85p0-no_x11 vi clone, many additional features
+wget-1.10.2         retrieve files from the 'net via HTTP and FTP
+wv2-0.2.1           library providing routines to access Microsoft Word/Excel files
+zsh-4.2.5           Z shell, Bourne shell-compatible, release flavor

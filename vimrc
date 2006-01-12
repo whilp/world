@@ -1,10 +1,10 @@
 "#################  BEGIN HEADERS
-" Filename	: $HOME/.vimrc
+e Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
-" Version	: $Revision: 1.36 $
+" Version	: $Revision: 1.37 $
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: $Date: 2005/12/06 21:51:26 $
-" CVS		: $Id: vimrc,v 1.36 2005/12/06 21:51:26 will Exp $
+" Updated	: $Date: 2006/01/12 02:01:10 $
+" CVS		: $Id: vimrc,v 1.37 2006/01/12 02:01:10 will Exp $
 " Copyright	: Copyright (c) 2005 Will Maier
 " License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 "#################  END HEADERS
@@ -52,6 +52,9 @@
 
     " Make p in Visual mode replace the selected text with the "" register.
     vnoremap p <Esc>:let current_reg = @"<CR>gvdi<C-R>=current_reg<CR><Esc>
+    
+    vnoremap ; :
+    nnoremap ; :
 
     " spellcheck
     noremap <C-S> :so `vimspell.sh %`<CR><CR>
