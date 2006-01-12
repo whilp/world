@@ -11,6 +11,7 @@ cvsup.sh
 randlist.sh
 screenexec.sh
 screenmchk.sh
+soma.sh
 sterm
 term
 update.sh

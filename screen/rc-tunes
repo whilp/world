@@ -1,7 +1,7 @@
 # :vim: set ft=sh:
 source $HOME/.screen/screenrc
 
-backtick 1 60 1 screenexec soma.sh
+backtick 1 60 1 screenexec soma
 
 caption always "%{= bW}[%{+b}%9`%{-}]%-="
 
