@@ -1,7 +1,9 @@
 # :vim: set ft=sh:
 source $HOME/.screen/screenrc
 
-caption always "%{= bW}[%{+b}%n: %t%{-}] [%{+b}%-Lw%50>%n%f* %t%+Lw%<%{-}]%-="
+backtick 1 60 1 screenexec soma.sh
+
+caption always "%{= bW}[%{+b}%9`%{-}]%-="
 
 sessionname comms
 screen -t IRC	    1 irssi

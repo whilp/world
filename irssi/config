@@ -417,12 +417,7 @@ keyboard = (
   { key = "window-n"; id = "next_window"; data = ""; },
   { key = "window-^N"; id = "next_window"; data = ""; }
 );
-logs = {
-  "~/madlug-log" = {
-    level = "ALL";
-    items = ( { type = "target"; name = "#madlug"; } );
-  };
-};
+logs = { };
 ignores = (
   { mask = "Tattoo"; level = "ALL"; },
   { mask = "@mininova"; level = "ALL"; exception = "yes"; },

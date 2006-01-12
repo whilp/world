@@ -1,10 +1,10 @@
 "#################  BEGIN HEADERS
-e Filename	: $HOME/.vimrc
+" e Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
-" Version	: $Revision: 1.37 $
+" Version	: $Revision: 1.38 $
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: $Date: 2006/01/12 02:01:10 $
-" CVS		: $Id: vimrc,v 1.37 2006/01/12 02:01:10 will Exp $
+" Updated	: $Date: 2006/01/12 06:29:31 $
+" CVS		: $Id: vimrc,v 1.38 2006/01/12 06:29:31 will Exp $
 " Copyright	: Copyright (c) 2005 Will Maier
 " License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 "#################  END HEADERS
