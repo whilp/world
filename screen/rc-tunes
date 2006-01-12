@@ -5,7 +5,5 @@ backtick 1 60 1 screenexec soma.sh
 
 caption always "%{= bW}[%{+b}%9`%{-}]%-="
 
-sessionname comms
-screen -t IRC	    1 irssi
-screen -t IM -M	    2 irssi --home=~/.irssi/bitlbee
-caption splitonly
+sessionname tunes
+screen -t AUDIO	    1 zsh
