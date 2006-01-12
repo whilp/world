@@ -26,6 +26,7 @@
     sorendition  +b Wb			    # set colors; white on blue 
     chdir
     vbellwait .5
+    bell_msg 'Bell in %t [%n]'
     msgwait 1
     zombie dl
 

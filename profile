@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.84 $
-# Updated	: $Date: 2006/01/05 22:29:48 $
+# Version	: $Revision: 1.85 $
+# Updated	: $Date: 2006/01/11 19:43:57 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.84 2006/01/05 22:29:48 will Exp $
+# CVS		: $Id: profile,v 1.85 2006/01/11 19:43:57 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -268,3 +268,4 @@ alias sc="TERM=xterm sc"
 calc () {
     bc -l -e "$*" -e quit
 }
+alias hours="sc hours.sc"

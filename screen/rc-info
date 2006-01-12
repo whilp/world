@@ -7,6 +7,7 @@ caption always "%{= bW}[%{+b}%n: %t%{-}] [%{+b}%-Lw%50>%n%f* %t%+Lw%<%{-}]%-="
 sessionname info
 screen -t SNOWNEWS  1 snownews
 screen -t WWW	    1 /usr/local/bin/elinks -session-ring 1 -touch-files
-screen -t LOG	    1 tail -f /var/log/messages
+screen -t LOG	    1 /usr/bin/sudo /usr/local/bin/multitail -Cs -f -i /var/log/messages -I /var/log/secure -I /var/log/authlog -I /var/log/daemon -I /var/log/failedlogin
 screen -t TOP	    1 top 
 screen -t TODO	    1 tdll
+
