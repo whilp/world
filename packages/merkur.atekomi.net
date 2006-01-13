@@ -6,6 +6,7 @@ autoconf-2.59       automatically configure source code on many Un*x platforms
 automake-1.4-p6p2   GNU Standards-compliant Makefile generator
 bitlbee-0.91p2      IRC proxy to connect to AIM, ICQ, Jabber, MSN and Yahoo
 bsdiff-4.2          binary patch tools
+bwm-ng-0.5          realtime bandwidth monitoring of interfaces
 bzip2-1.0.3         block-sorting file compressor, unencumbered
 curl-7.15.0         get files from FTP, Gopher, HTTP or HTTPS servers
 cyrus-sasl-2.1.20p4 RFC 2222 SASL (Simple Authentication and Security Layer)
