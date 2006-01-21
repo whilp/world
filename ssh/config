@@ -2,10 +2,6 @@
 # Will Maier <willmaier@ml1.net>
 # 2005.06.11
 
-Host *
-    ControlPath ~/.ssh/ctl-%r-%h-%p
-    ControlMaster auto
-
 Host localmerk
     Hostname	192.168.1.50
     Port	222

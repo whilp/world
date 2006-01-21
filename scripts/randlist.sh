@@ -16,12 +16,12 @@ MV=/bin/mv
 # Find files and put them in a text file playlist; remove the
 # existing playlist, if any.
 # TODO: check that the file is a media file I can play
-${RM} -f ${PLAYLIST} ${PLAYLIST}.bak ${PLAYLIST}.new
+${RM} -f ${PLAYLIST}
 
 ${FIND} ${VIDDIR} -type f -name "*" > ${PLAYLIST}
 
 # DEBUG
-#${CP} ${PLAYLIST} ${PLAYLIST}.bak
+${CP} ${PLAYLIST} ${PLAYLIST}.bak
 
 # Get a head count of the files to play.
 ITEMS=$(wc -l ${PLAYLIST} | ${CUT} -d ' ' -f 1)
@@ -31,9 +31,9 @@ for i in $(${SEQ} 1 ${ITEMS}); do
     NUMBER=$(( RANDOM % ITEMS ))
     # Keep generating it until we have a number we haven't had
     # before.
-    while [ $(${GREP} -c "^${NUMBER}:::" ${PLAYLIST}) -gt 0 ]; do
-	NUMBER=$(( RANDOM % ITEMS ))
-    done
+    # while [ $(${GREP} -c "^${NUMBER}:::" ${PLAYLIST}) -gt 0 ]; do
+    #     NUMBER=$(( RANDOM % ITEMS ))
+    # done
     # Add the randomish index number to the front of every line of
     # the playlist.
     ${SED} "${i}s/^/${NUMBER}:::/" ${PLAYLIST} > ${PLAYLIST}.new
