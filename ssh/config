@@ -2,51 +2,22 @@
 # Will Maier <willmaier@ml1.net>
 # 2005.06.11
 
+# Nice one-liner to propogate keys:
+# cat .ssh/id_dsa.pub | ssh merk "(mv .ssh/authorized_keys .ssh/authorized_keys-old; > .ssh/authorized_keys)"
+
+Host *
+    ControlPath ~/.ssh/ctl-%r-%h-%p
+    ControlMaster auto
+
+# PERSONAL
 Host localmerk
     Hostname	192.168.1.50
     Port	222
     User	will
     
-Host merk
+Host merk*
     Hostname	merkur.atekomi.net
     Port	222
-    User	will
-
-Host mess*
-# messenger - AMD64 desktop at home
-    HostName	172.16.1.115
-    User	will
-
-Host miser*
-# misericor.de - webservice
-    HostName	misericor.de
-    User	wcmaier
-
-Host phnx*
-# phoenix - global IP
-    HostName	phnx.ath.cx
-    User	will
-    Port	222
-
-Host stalker*
-# stalker - centprop sniffer/attacker/finder outer
-    HostName	172.16.0.197
-    User	will
-
-Host magner*
-# CastleMagner - Maier family computer
-    HostName	swood.ath.cx
-    User	will
-    ForwardX11	yes
-
-Host vger
-# vger - laptop
-    HostName	172.16.1.110
-    User	will
-
-Host cvger
-# vger - on CAE network
-    HostName	144.92.240.12
     User	will
 
 Host tick
@@ -60,44 +31,37 @@ Host pku
     User	wcmaier
     Port	2000
 
-Host sts
-# stslinux - STS linux server at office
-    HostName	stslinux.doit.wisc.edu
-    User	will
+# HEP
+Host *hep.wisc.edu
+    User	wcmaier
 
-Host haya*
-# hayabusa - OBSD 3.6 local server
-    HostName	172.16.1.112
-    User	will
+Host hep-login
+    User	wcmaier
+    Host	login.hep.wisc.edu
 
-Host nacho
-# nacho - CAE workstation
-    HostName	nacho.cae.wisc.edu
+Host ginseng-bounce
+    HostName	ginseng.hep.wisc.edu
+    User	wcmaier
+    ProxyCommand    ssh wcmaier@login.hep.wisc.edu nc -w 1 %h 22
+
+# CAE
+Host *cae.wisc.edu
+    User	wcmaier
+
+Host cae-linux
+    HostName	burrito.cae.wisc.edu
     User	wcmaier
     ForwardX11	yes
 
-Host bender
-# bender - CAE workstations
-    HostName	bender.cae.wisc.edu
-    User	wcmaier
-    ForwardX11	yes
-
-Host mace
-# mace - CAE workstation
+Host cae-sun
     HostName	mace.cae.wisc.edu
     User	wcmaier
     ForwardX11	yes
 
-Host benji
-# benji - CAE web/mail/jabber server
-    HostName	benji.cae.wisc.edu
+Host jawbreaker-bounce
+    HostName	jawbreaker.cae.wisc.edu
     User	wcmaier
-
-Host anon
-# anon - CAE workstation
-    HostName	anon.cae.wisc.edu
-    User	wcmaier
-    ForwardX11	yes
+    ProxyCommand    ssh wcmaier@burrito.cae.wisc.edu nc -w 1 %h 22
 
 Host peon
 # peon - CAE user-cgi server
@@ -114,5 +78,51 @@ Host jawb*
     HostName	jawbreaker.cae.wisc.edu
     User	wcmaier
 
-Host *
-    ForwardAgent    no
+# DEPRECATED
+# Host mess*
+# # messenger - AMD64 desktop at home
+#     HostName	172.16.1.115
+#     User	will
+# 
+# Host miser*
+# # misericor.de - webservice
+#     HostName	misericor.de
+#     User	wcmaier
+# 
+# Host phnx*
+# # phoenix - global IP
+#     HostName	phnx.ath.cx
+#     User	will
+#     Port	222
+# 
+# Host stalker*
+# # stalker - centprop sniffer/attacker/finder outer
+#     HostName	172.16.0.197
+#     User	will
+# 
+# Host magner*
+# # CastleMagner - Maier family computer
+#     HostName	swood.ath.cx
+#     User	will
+#     ForwardX11	yes
+# 
+# Host vger
+# # vger - laptop
+#     HostName	172.16.1.110
+#     User	will
+# 
+# Host cvger
+# # vger - on CAE network
+#     HostName	144.92.240.12
+#     User	will
+# 
+# Host sts
+# # stslinux - STS linux server at office
+#     HostName	stslinux.doit.wisc.edu
+#     User	will
+# 
+# Host haya*
+# # hayabusa - OBSD 3.6 local server
+#     HostName	172.16.1.112
+#     User	will
+# 

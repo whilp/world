@@ -1,5 +1,5 @@
 # :vim: set ft=sh:
-source $HOME/.screen/screenrc
+source /home/will/.screen/screenrc
 
 backtick 9 60 1 /home/will/bin/soma
 

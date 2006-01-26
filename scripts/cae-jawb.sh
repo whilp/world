@@ -1,7 +1,7 @@
 #!/bin/sh
 
 USER_SSH=wcmaier
-HOST_SSH=jawbreaker.cae.wisc.edu
+HOST_SSH=jawbreaker-bounce
 
 # Start a master ssh connection in the background; remember to kill
 # it later.
