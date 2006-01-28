@@ -1,2 +1,4 @@
 ignore autorun
 away*
+*logs
+.scripts
