@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.86 $
-# Updated	: $Date: 2006/01/20 18:08:25 $
+# Version	: $Revision: 1.87 $
+# Updated	: $Date: 2006/01/27 22:55:48 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.86 2006/01/20 18:08:25 will Exp $
+# CVS		: $Id: profile,v 1.87 2006/01/27 22:55:48 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -110,7 +110,6 @@ esac
     alias zource='source $HOME/.zshrc'
     alias mtr='mtr -t'
     alias xterm='rxvt'
-    alias grep='egrep -IHn'
 
     TODO=$HOME/TODO
     LANG='C'
@@ -269,3 +268,15 @@ calc () {
     bc -l -e "$*" -e quit
 }
 alias hours="sc hours.sc"
+alias calendar="wyrd 2>/dev/null"
+alias agent="source ~/.ssh/agent"
+scp-key () {
+    # Like: scp-key wcmaier@burrito.cae.wisc.edu "SSH-OPTIONS"
+    TARGET=$1
+    shift
+    SSH_OPTS=$*
+    SSH_AUTHFILE='~/.ssh/authorized_keys'
+    for PUBKEY in ~/.ssh/id*pub; do
+	ssh ${SSH_OPTS} $TARGET "(chmod 600 ${SSH_AUTHFILE}; sh -c \"cat - >> ${SSH_AUTHFILE}\")" < ${PUBKEY}
+    done
+}

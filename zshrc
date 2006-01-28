@@ -1,13 +1,15 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
-# Version	: $Revision: 1.40 $
+# Version	: $Revision: 1.41 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2006/01/12 23:51:36 $
-# CVS		: $Id: zshrc,v 1.40 2006/01/12 23:51:36 will Exp $
+# Updated	: $Date: 2006/01/27 22:55:48 $
+# CVS		: $Id: zshrc,v 1.41 2006/01/27 22:55:48 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
+
+# Look at http://www.xs4all.nl/~hanb/configs/dot-zshrc
 
 source ~/.profile
 

@@ -8,6 +8,7 @@
 Host *
     ControlPath ~/.ssh/ctl-%r-%h-%p
     ControlMaster auto
+    ForwardAgent yes
 
 # PERSONAL
 Host localmerk

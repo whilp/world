@@ -4,9 +4,9 @@ CAE RT		1	FE
 RT - Main Queue	https://rt.cae.wisc.edu/index.html?HomeRefreshInterval=600	2	
 RT - Network Queue	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=Queue%20%3D%20%27network%27%20AND%20%28Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27new%27%29&Rows=50&OrderBy=LastUpdated&Page=1	2	
 RT - Security Queue	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=Queue%20%3D%20%27security%27%20AND%20%28Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27new%27%29&Rows=50&OrderBy=LastUpdated&Page=1	2	
-RT - Unix Queue	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=Queue%20%3D%20%27unix%27%20AND%20%28Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27new%27%29&Rows=50&OrderBy=LastUpdated&Page=1	2	
 RT - Queue Contacts	https://rt.cae.wisc.edu/Tools/ContactView.html?Queue=13	2	
 RT - My Tickets	https://rt.cae.wisc.edu/Search/Results.html?Order=ASC&Query=%20Owner%20%3D%20%27531135%27%20&Rows=50&OrderBy=Status&Page=1&Format=%27%09%3Cb%3E%3Ca%20href%3D%22%2FTicket%2FDisplay.html%3Fid%3D__id__%22%3E__id__%3C%2Fa%3E%3Cb%3E%2FTITLE%3A%23%27%2C%20%0A%27%3Cb%3E%3Ca%20href%3D%22%2FTicket%2FDisplay.html%3Fid%3D__id__%22%3E__Subject__%3C%2Fa%3E%3C%2Fb%3E%2FTITLE%3ASubject%27%2C%20%0A%27%3Csmall%3E__CreatedRelative__%3C%2Fsmall%3E%27%2C%20%0A%27__QueueName__%27%2C%20%0A%27__OwnerName__%27%2C%20%0A%27__Priority__%27%2C%20%0A%27__NEWLINE__%27%2C%20%0A%27__Status__%27%2C%20%0A%27%3Csmall%3E__Requestors__%3C%2Fsmall%3E%27%2C%20%0A%27%3Csmall%3E__ToldRelative__%3C%2Fsmall%3E%27%2C%20%0A%27__Area__%27%2C%20%0A%27%3Csmall%3E__LastUpdatedRelative__%3C%2Fsmall%3E%27%2C%20%0A%27%3Csmall%3E__DueRelative__%3C%2Fsmall%3E%27	2	
+RT - Unix Queue	https://rt.cae.wisc.edu/Search/Results.html?Order=DESC&Query=Queue%20%3D%20%27unix%27%20AND%20%28Status%20%3D%20%27open%27%20OR%20Status%20%3D%20%27new%27%29&Rows=50&OrderBy=LastUpdated&Page=1	2	
 AFS Commands	http://www-306.ibm.com/software/stormgmt/afs/manuals/Library/unix/en_US/HTML/AdminRef/auarf002.htm	1	
 AFS Manuals	http://www-306.ibm.com/software/stormgmt/afs/library/	1	
 Unixbook	http://homepages.cae.wisc.edu/~wcmaier/unixbook/	1	
@@ -297,3 +297,19 @@ ONLamp.com: Keeping Your Life in Subversion	http://www.onlamp.com/pub/a/onlamp/2
 subversion: Subversion FAQ (putting /etc under subversion control)	http://subversion.tigris.org/faq.html#in-place-import	0	
 Debian Administration :: Removing annoying console beeps	http://www.debian-administration.org/articles/110	0	
 Debian Administration :: Monitoring your bandwidth usage with vnstat	http://www.debian-administration.org/articles/330	0	
+ONLamp.com: Running Commercial Linux Software on FreeBSD	http://www.onlamp.com/pub/a/bsd/2006/01/12/Big_Scary_Daemons.html?CMP=OTC-3W3B95036222&ATT=Running+Commercial+Linux+Software+on+FreeBSD	0	
+O'Reilly: Building My MythTV Box, Part 1: Hardware	http://digitalmedia.oreilly.com/pub/a/oreilly/digitalmedia/2005/06/22/myth_tv.html	0	
+LinuxDevCenter.com: Building a Linux Media PC	http://www.linuxdevcenter.com/pub/a/linux/2004/05/27/linux_media_pc.html	0	
+LinuxDevCenter.com: Clever Tricks with MythTV	http://www.linuxdevcenter.com/pub/a/linux/2004/12/29/mythtv_hacks.html	0	
+about kaos.theory	http://theory.kaos.to/projects.html	0	
+http://theory.kaos.to/projects/strong_egress_ruleset_pf.conf.txt	http://theory.kaos.to/projects/strong_egress_ruleset_pf.conf.txt	0	
+Linux.com | CLI Magic: Learn to talk awk	http://www.linux.com/article.pl?sid=06/01/10/2211211	0	
+Sebek 3: tracking the attackers, part one	http://www.securityfocus.com/infocus/1855?ref=rss	0	
+TaoSecurity - Simple Local Rsync Use	http://taosecurity.blogspot.com/2006/01/simple-local-rsync-use-earlier-this.html	0	
+Debian Administration :: CD burning with a 2.6 kernel (IDE)	http://www.debian-administration.org/articles/333	0	
+TaoSecurity - DVD Burning on FreeBSD	http://taosecurity.blogspot.com/2006/01/burning-dvds-in-freebsd-here-are-steps.html	0	
+TaoSecurity - Fixing stale dependencies in FBSD	http://taosecurity.blogspot.com/2006/01/fixing-freebsd-stale-package.html	0	
+Xen Virtualization and Linux Clustering, Part 1 | Linux Journal	http://www.linuxjournal.com/article/8812	0	
+Hack 29 Make IRC Talk	http://www.resultspk.net/hackirc/irchks-chp-4-sect-14.html	0	
+Debian Administration :: use and abuse of pipes with audio data	http://www.debian-administration.org/articles/145	0	
+The National Security Archive	http://www.gwu.edu/~nsarchiv/	0	
