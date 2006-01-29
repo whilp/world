@@ -6,8 +6,8 @@
 # cat .ssh/id_dsa.pub | ssh merk "(mv .ssh/authorized_keys .ssh/authorized_keys-old; > .ssh/authorized_keys)"
 
 Host *
-    ControlPath ~/.ssh/ctl-%r-%h-%p
-    ControlMaster auto
+#     ControlPath ~/.ssh/ctl-%r-%h-%p
+#     ControlMaster auto
     ForwardAgent yes
 
 # PERSONAL

@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.87 $
-# Updated	: $Date: 2006/01/27 22:55:48 $
+# Version	: $Revision: 1.88 $
+# Updated	: $Date: 2006/01/29 04:11:38 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.87 2006/01/27 22:55:48 will Exp $
+# CVS		: $Id: profile,v 1.88 2006/01/29 04:11:38 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -80,14 +80,12 @@ esac
 	;;
 	merkur* )
 	CVSROOT=/cvs
-	alias agent='keychain --timeout 120 ~/.ssh/id_rsa; key'
 	#alias mail='screen -x mail'
 	alias myc='screen -x comms'
 	source $HOME/.functions
 	export CVSROOT
 	;;
 	vger* )
-	alias agent='keychain ~/.ssh/id_rsa; key'
 	;;
 	haya* )
 	alias ls='ls -F'
@@ -105,7 +103,6 @@ esac
     export PKG_PATH
 
     alias key='source $HOME/.keychain/$HOST-sh'
-    alias agent='keychain ~/.ssh/id_rsa'
     alias pource='source $HOME/.profile'
     alias zource='source $HOME/.zshrc'
     alias mtr='mtr -t'
@@ -269,7 +266,6 @@ calc () {
 }
 alias hours="sc hours.sc"
 alias calendar="wyrd 2>/dev/null"
-alias agent="source ~/.ssh/agent"
 scp-key () {
     # Like: scp-key wcmaier@burrito.cae.wisc.edu "SSH-OPTIONS"
     TARGET=$1
@@ -279,4 +275,10 @@ scp-key () {
     for PUBKEY in ~/.ssh/id*pub; do
 	ssh ${SSH_OPTS} $TARGET "(chmod 600 ${SSH_AUTHFILE}; sh -c \"cat - >> ${SSH_AUTHFILE}\")" < ${PUBKEY}
     done
+}
+agent () {
+    if [ ! -f ~/.ssh/agent ]; then
+	ssh-agent > ~/.ssh/agent
+    fi
+    source ~/.ssh/agent
 }
