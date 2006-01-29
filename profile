@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.89 $
-# Updated	: $Date: 2006/01/29 04:35:28 $
+# Version	: $Revision: 1.90 $
+# Updated	: $Date: 2006/01/29 05:14:23 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.89 2006/01/29 04:35:28 will Exp $
+# CVS		: $Id: profile,v 1.90 2006/01/29 05:14:23 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -277,7 +277,7 @@ scp-key () {
     done
 }
 agent () {
-    AGENTPID=$(pgrep ssh-agent)
+    AGENTPID=$(pgrep -u $USER ssh-agent)
     AGENTFILE=~/.ssh/agent
     if [ ! ${AGENTPID} ]; then
 	rm -f ${AGENTFILE}
@@ -285,7 +285,7 @@ agent () {
 	echo -n "Creating new agent; "
 	source ${AGENTFILE}
     elif [ "${AGENTPID}" -ne "$(sed -e '2!d' ${AGENTFILE} | sed -e 's/[^0-9]//g')" ]; then
-	pkill ssh-agent
+	pkill -u $USER ssh-agent
 	echo -n "Starting new agent; "
 	ssh-agent > ${AGENTFILE}
 	source ${AGENTFILE}
