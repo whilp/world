@@ -44,6 +44,7 @@ libltdl-1.5.18      GNU libtool system independent dlopen wrapper
 libtool-1.5.18p2    generic shared library support script
 libungif-4.1.4      tools and library routines for working with GIF images
 libxml-2.6.16p5     XML parsing library
+libxslt-1.1.12p1    XSLT C Library for GNOME
 lighttpd-1.3.16p1   secure, fast, compliant, and very flexible web-server
 lsof-4.75           list information about open files
 lua-5.0.2p1         powerful, light-weight programming language

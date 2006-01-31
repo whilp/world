@@ -167,7 +167,8 @@ channels = (
   { name = "silc"; chatnet = "silc"; autojoin = "No"; },
   { name = "#mininova"; chatnet = "efnet"; autojoin = "no"; },
   { name = "#ion"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#lighttpd"; chatnet = "freenode"; autojoin = "yes"; }
+  { name = "#lighttpd"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#wilug"; chatnet = "freenode"; autojoin = "yes"; }
 );
 
 aliases = {

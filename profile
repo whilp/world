@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.90 $
-# Updated	: $Date: 2006/01/29 05:14:23 $
+# Version	: $Revision: 1.91 $
+# Updated	: $Date: 2006/01/31 00:31:11 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.90 2006/01/29 05:14:23 will Exp $
+# CVS		: $Id: profile,v 1.91 2006/01/31 00:31:11 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -279,15 +279,19 @@ scp-key () {
 agent () {
     AGENTPID=$(pgrep -u $USER ssh-agent)
     AGENTFILE=~/.ssh/agent
+    while [ "$(echo ${AGENTPID} | wc -l)" -gt 1 ]; do
+	kill $(echo ${AGENTPID} | tail -1)
+	AGENTPID=$(pgrep -u $USER ssh-agent)
+    done
     if [ ! ${AGENTPID} ]; then
 	rm -f ${AGENTFILE}
-	ssh-agent > ${AGENTFILE}
+	ssh-agent -t 1800 > ${AGENTFILE}
 	echo -n "Creating new agent; "
 	source ${AGENTFILE}
     elif [ "${AGENTPID}" -ne "$(sed -e '2!d' ${AGENTFILE} | sed -e 's/[^0-9]//g')" ]; then
 	pkill -u $USER ssh-agent
 	echo -n "Starting new agent; "
-	ssh-agent > ${AGENTFILE}
+	ssh-agent -t 1800 > ${AGENTFILE}
 	source ${AGENTFILE}
     else
 	echo -n "Using existing agent; "
