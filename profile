@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.91 $
-# Updated	: $Date: 2006/01/31 00:31:11 $
+# Version	: $Revision: 1.93 $
+# Updated	: $Date: 2006/02/01 20:30:44 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.91 2006/01/31 00:31:11 will Exp $
+# CVS		: $Id: profile,v 1.93 2006/02/01 20:30:44 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -42,8 +42,9 @@ alias caecvs='export CVSROOT=/afs/engr.wisc.edu/common/repository'
 export PRINTER
 
 # --[ ENVIRONMENT
-    PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/X11R6/bin:/opt/:/usr/games/"
-    export PATH
+    PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/X11R6/bin:/opt/:/usr/games/:/usr/pkg/bin/:/usr/pkg/sbin"
+    MANPATH="$MANPATH:/usr/pkg/man"
+    export PATH MANPATH
 # arch-specific stuff.
 case $ARCH in
     SunOS* )
@@ -99,8 +100,7 @@ esac
 #	;;
 #	*BSD* )
 #    esac
-    PKG_PATH='ftp://openbsd.mirrors.tds.net/pub/OpenBSD/3.8/packages/i386/'
-    export PKG_PATH
+    # PKG_PATH='ftp://openbsd.mirrors.tds.net/pub/OpenBSD/3.8/packages/i386/'
 
     alias key='source $HOME/.keychain/$HOST-sh'
     alias pource='source $HOME/.profile'
@@ -279,7 +279,7 @@ scp-key () {
 agent () {
     AGENTPID=$(pgrep -u $USER ssh-agent)
     AGENTFILE=~/.ssh/agent
-    while [ "$(echo ${AGENTPID} | wc -l)" -gt 1 ]; do
+    while [ "$(echo ${AGENTPID} | wc -w | sed -e 's/[^0-9]//g')" -gt 1 ]; do
 	kill $(echo ${AGENTPID} | tail -1)
 	AGENTPID=$(pgrep -u $USER ssh-agent)
     done
@@ -287,14 +287,15 @@ agent () {
 	rm -f ${AGENTFILE}
 	ssh-agent -t 1800 > ${AGENTFILE}
 	echo -n "Creating new agent; "
-	source ${AGENTFILE}
+	. ${AGENTFILE}
     elif [ "${AGENTPID}" -ne "$(sed -e '2!d' ${AGENTFILE} | sed -e 's/[^0-9]//g')" ]; then
 	pkill -u $USER ssh-agent
 	echo -n "Starting new agent; "
+	rm -f ${AGENTFILE}
 	ssh-agent -t 1800 > ${AGENTFILE}
-	source ${AGENTFILE}
+	. ${AGENTFILE}
     else
 	echo -n "Using existing agent; "
-	source ${AGENTFILE}
+	. ${AGENTFILE}
     fi
 }

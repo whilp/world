@@ -28,7 +28,7 @@ for DIR in $DIRS; do
     MAILSUM=$((NEW_RECORDS + TMP_RECORDS + CUR_RECORDS))
     if [ "${MAILSUM}" -eq "0" ]; then
 	case $(basename ${PARENT}) in
-	    Questionable|Draft*|Inbox|News)
+	    OpenBSD-cvs|Questionable|Draft*|Inbox|News)
 	    # I seem to need something harmless here...
 	    ;;
 	    *)
