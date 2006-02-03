@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.93 $
-# Updated	: $Date: 2006/02/01 20:30:44 $
+# Version	: $Revision: 1.94 $
+# Updated	: $Date: 2006/02/03 02:10:00 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.93 2006/02/01 20:30:44 will Exp $
+# CVS		: $Id: profile,v 1.94 2006/02/03 02:10:00 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -298,4 +298,15 @@ agent () {
 	echo -n "Using existing agent; "
 	. ${AGENTFILE}
     fi
+    AGENTLIST=$(ssh-add -l)
+    case ${AGENTLIST} in
+	The\ agent\ has\ no\ identities*)
+	    echo "No keys in agent ${AGENTPID}."
+	    ssh-add
+	    ;;
+	*)
+	    echo "Agent ${AGENTPID} represents the following keys:"
+	    ssh-add -l
+	    ;;
+    esac
 }
