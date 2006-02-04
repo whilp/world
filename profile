@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.94 $
-# Updated	: $Date: 2006/02/03 02:10:00 $
+# Version	: $Revision: 1.95 $
+# Updated	: $Date: 2006/02/03 18:38:39 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.94 2006/02/03 02:10:00 will Exp $
+# CVS		: $Id: profile,v 1.95 2006/02/03 18:38:39 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -43,8 +43,7 @@ export PRINTER
 
 # --[ ENVIRONMENT
     PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/X11R6/bin:/opt/:/usr/games/:/usr/pkg/bin/:/usr/pkg/sbin"
-    MANPATH="$MANPATH:/usr/pkg/man"
-    export PATH MANPATH
+    export PATH
 # arch-specific stuff.
 case $ARCH in
     SunOS* )
@@ -247,7 +246,7 @@ sued () {
 #	xpdf $1
 #    fi
 #}
-alias ss="ssh-agent screen -e'^Xx' -S main"
+alias ss="screen -e'^Xx' -S main"
 alias sm="screen -x main"
 alias out="clear && exit"
 alias irc="TZ=UTC irssi"
@@ -288,13 +287,16 @@ agent () {
 	ssh-agent -t 1800 > ${AGENTFILE}
 	echo -n "Creating new agent; "
 	. ${AGENTFILE}
+	ssh-add
     elif [ "${AGENTPID}" -ne "$(sed -e '2!d' ${AGENTFILE} | sed -e 's/[^0-9]//g')" ]; then
+	chmod 600 ${AGENTFILE}
 	pkill -u $USER ssh-agent
 	echo -n "Starting new agent; "
 	rm -f ${AGENTFILE}
 	ssh-agent -t 1800 > ${AGENTFILE}
 	. ${AGENTFILE}
     else
+	chmod 600 ${AGENTFILE}
 	echo -n "Using existing agent; "
 	. ${AGENTFILE}
     fi
