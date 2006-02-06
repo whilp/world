@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.99 $
-# Updated	: $Date: 2006/02/06 12:04:30 $
+# Version	: $Revision: 1.100 $
+# Updated	: $Date: 2006/02/06 13:28:14 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.99 2006/02/06 12:04:30 will Exp $
+# CVS		: $Id: profile,v 1.100 2006/02/06 13:28:14 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -285,16 +285,16 @@ agent () {
     done
     if [ ! ${AGENTPID} ]; then
 	rm -f ${AGENTFILE}
-	ssh-agent -t 1800 > ${AGENTFILE}
+	ssh-agent > ${AGENTFILE}
 	echo -n "Creating new agent; "
 	. ${AGENTFILE}
-	ssh-add
+	ssh-add -t 1800
     elif [ "${AGENTPID}" -ne "$(sed -e '2!d' ${AGENTFILE} | sed -e 's/[^0-9]//g')" ]; then
 	chmod 600 ${AGENTFILE}
 	pkill -u $USER ssh-agent
 	echo -n "Starting new agent; "
 	rm -f ${AGENTFILE}
-	ssh-agent -t 1800 > ${AGENTFILE}
+	ssh-agent > ${AGENTFILE}
 	. ${AGENTFILE}
     else
 	chmod 600 ${AGENTFILE}
@@ -305,7 +305,7 @@ agent () {
     case ${AGENTLIST} in
 	The\ agent\ has\ no\ identities*)
 	    echo "No keys in agent ${AGENTPID}."
-	    ssh-add
+	    ssh-add -t 1800
 	    ;;
 	*)
 	    echo "Agent ${AGENTPID} represents the following keys:"
