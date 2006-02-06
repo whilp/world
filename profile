@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.98 $
-# Updated	: $Date: 2006/02/05 22:19:46 $
+# Version	: $Revision: 1.99 $
+# Updated	: $Date: 2006/02/06 12:04:30 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.98 2006/02/05 22:19:46 will Exp $
+# CVS		: $Id: profile,v 1.99 2006/02/06 12:04:30 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -322,4 +322,6 @@ pkgin () {
 CLUSTER=~/.cluster
 RCMD_CMD=ssh
 alias lsof="sudo lsof"
-agent
+if [ $UID -gt 0 ]; then
+    agent
+fi

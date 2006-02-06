@@ -321,3 +321,5 @@ N55	http://www.n55.dk/	0
 Kurt Seifried - OAG - OpenBSD Administrator's Guide / Using ports	http://www.seifried.org/oag/using-ports/	0	
 erdelynet.com >> Configure OpenBSD Mail Gateway	http://erdelynet.com/2005/03/26/openbsd/configure-openbsd-mail-gateway/#more-57	0	
 Automatic OpenBSD Installation	http://people.cs.uchicago.edu/~brendan/howtos/openbsd_install/	0	
+Guide to OpenBSD Packet Filtering Firewalls || kuro5hin.org	http://www.kuro5hin.org/story/2002/11/23/14927/477	0	
+PF: Example: Firewall for Home or Small Office	http://www.openbsd.org/faq/pf/example1.html	0	
