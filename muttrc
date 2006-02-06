@@ -2,14 +2,14 @@
 # Filename	: $HOME/.muttrc (or $HOME/.muttngrc)
 # Use		: main configuration file for mutt(-ng), a command line mail reader
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.39 $
+# Version	: $Revision: 1.40 $
 # Started	: 2005.03.06
 # Based on	: Phillip Hollenback's muttrc @ macdevcenter
 # Refers to	: $HOME/.muttalias
 #		  $HOME/.muttcolor
 # Referred to by: $HOME/.muttngrc
-# Updated	: $Date: 2006/02/03 02:36:23 $
-# CVS		: $Id: muttrc,v 1.39 2006/02/03 02:36:23 will Exp $
+# Updated	: $Date: 2006/02/05 18:59:27 $
+# CVS		: $Id: muttrc,v 1.40 2006/02/05 18:59:27 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -165,8 +165,7 @@ send-hook '~t .*@\(doit\|engr\|cae\)\.wisc\.edu'	"set signature='~/.signatures/c
 send-hook '~t .*@\(doit\|engr\|cae\)\.wisc\.edu'	"set sendmail='/usr/local/bin/msmtp -a cae'"
 send-hook '~t .*@\(doit\|engr\|cae\)\.wisc\.edu'	"my_hdr From: Will Maier <wcmaier@cae.wisc.edu>"
 send-hook '~t .*-request@cae\.wisc\.edu'	"set signature='~/.signatures/cae-rt'"
-send-hook '~t .*techpartners'			"set signature='~/.signatures/cae-rt'"
-send-hook '~s .*techpartners'			"set signature='~/.signatures/cae-rt'"
+
 send-hook '~t .*@[a-zA-Z0-9\.\-]*bestpractical\.com'	"set signature='~/.signatures/cae'"
 send-hook '~t .*@[a-zA-Z0-9\.\-]*bestpractical\.com'	"set sendmail='/usr/local/bin/msmtp -a cae'"
 send-hook '~t .*@[a-zA-Z0-9\.\-]*bestpractical\.com'	"my_hdr From: Will Maier <wcmaier@cae.wisc.edu>"
@@ -181,6 +180,10 @@ send-hook '~t .*@kingstarusa.com'				"my_hdr From: Will Maier <wcmaier@hep.wisc.
 send-hook '~L .*@\(lists\.\)?debian\.org'	"set signature='~/.signatures/list-debian'"
 send-hook '~L .*@[a-z0-9\.\-]*bsd[a-z0-9\.\-]*'	"set signature='~/.signatures/list-bsd'"
 send-hook '~L .*@mutt\.org'			"set signature='~/.signatures/list-bsd'"
+
+send-hook '~t techpartners@[a-zA-Z0-9\.\-]*wisc.edu'	"set signature='~/.signatures/cae-rt'"
+send-hook '~t techpartners@[a-zA-Z0-9\.\-]*wisc.edu'	"set sendmail='/usr/local/bin/msmtp'
+send-hook '~t techpartners@[a-zA-Z0-9\.\-]*wisc.edu'	"my_hdr From: Will Maier <willmaier@ml1.net>"
 
 set signature='~/.signatures/default'
 set sig_dashes
