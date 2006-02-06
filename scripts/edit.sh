@@ -11,6 +11,7 @@ warn () {
     fi
 }
 
+EDITOR=vim
 FILE=$1
 FILEPATH="${FILE%/*}"
 FILENAME="${FILE##*/}"
