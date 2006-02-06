@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.100 $
-# Updated	: $Date: 2006/02/06 13:28:14 $
+# Version	: $Revision: 1.101 $
+# Updated	: $Date: 2006/02/06 14:09:03 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.100 2006/02/06 13:28:14 will Exp $
+# CVS		: $Id: profile,v 1.101 2006/02/06 14:09:03 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -288,7 +288,7 @@ agent () {
 	ssh-agent > ${AGENTFILE}
 	echo -n "Creating new agent; "
 	. ${AGENTFILE}
-	ssh-add -t 1800
+	ssh-add -t 1800 2>&1 > /dev/null
     elif [ "${AGENTPID}" -ne "$(sed -e '2!d' ${AGENTFILE} | sed -e 's/[^0-9]//g')" ]; then
 	chmod 600 ${AGENTFILE}
 	pkill -u $USER ssh-agent
@@ -305,7 +305,7 @@ agent () {
     case ${AGENTLIST} in
 	The\ agent\ has\ no\ identities*)
 	    echo "No keys in agent ${AGENTPID}."
-	    ssh-add -t 1800
+	    ssh-add -t 1800 2>&1 > /dev/null
 	    ;;
 	*)
 	    echo "Agent ${AGENTPID} represents the following keys:"
@@ -325,3 +325,9 @@ alias lsof="sudo lsof"
 if [ $UID -gt 0 ]; then
     agent
 fi
+ssh-rmkey () {
+    LINE=$1
+    TMPFILE=$(mktemp -q ~/.ssh/known_hosts.XXXX || exit 1)
+    sed -e "${LINE}d" ~/.ssh/known_hosts > ${TMPFILE}
+    mv ${TMPFILE} ~/.ssh/known_hosts
+}
