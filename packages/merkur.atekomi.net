@@ -69,6 +69,8 @@ python-2.3.5p2      interpreted object-oriented programming language
 python-2.4.1p0      interpreted object-oriented programming language
 remind-3.0.23       scripting language for reminders, with a Tk front end
 rsync-2.6.6         mirroring/synchronization over low bandwidth links
+ruby-1.8.1p0        object oriented script language with threads
+ruby-ncurses-0.8    Ruby interface to ncurses
 sc-7.15p1           curses spreadsheet-calculator program
 screen-4.0.2        multi-screen window manager
 snownews-1.5.4      text mode rss newsreader
