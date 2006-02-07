@@ -4,6 +4,7 @@
 
 SOMA_SITE='http://www.somafm.com'
 FEED='cliqhop'
+# FEED='secretagent'
 RECENT="${SOMA_SITE}/recent/?${FEED}"
 MESSAGE=
 
