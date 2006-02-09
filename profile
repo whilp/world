@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.101 $
-# Updated	: $Date: 2006/02/06 14:09:03 $
+# Version	: $Revision: 1.102 $
+# Updated	: $Date: 2006/02/09 11:55:08 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.101 2006/02/06 14:09:03 will Exp $
+# CVS		: $Id: profile,v 1.102 2006/02/09 11:55:08 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -262,7 +262,8 @@ pkg_grep () {
 alias exit="clear && exit"
 alias sc="TERM=xterm sc"
 calc () {
-    bc -l -e "$*" -e quit
+    echo "$*" | bc -l
+    #bc -l -e "$*" -e quit
 }
 alias hours="sc hours.sc"
 alias calendar="wyrd 2>/dev/null"
@@ -288,7 +289,7 @@ agent () {
 	ssh-agent > ${AGENTFILE}
 	echo -n "Creating new agent; "
 	. ${AGENTFILE}
-	ssh-add -t 1800 2>&1 > /dev/null
+	ssh-add -t 3600 2>&1 > /dev/null
     elif [ "${AGENTPID}" -ne "$(sed -e '2!d' ${AGENTFILE} | sed -e 's/[^0-9]//g')" ]; then
 	chmod 600 ${AGENTFILE}
 	pkill -u $USER ssh-agent
@@ -305,7 +306,7 @@ agent () {
     case ${AGENTLIST} in
 	The\ agent\ has\ no\ identities*)
 	    echo "No keys in agent ${AGENTPID}."
-	    ssh-add -t 1800 2>&1 > /dev/null
+	    ssh-add -t 3600 2>&1 > /dev/null
 	    ;;
 	*)
 	    echo "Agent ${AGENTPID} represents the following keys:"

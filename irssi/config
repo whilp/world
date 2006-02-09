@@ -376,6 +376,9 @@ settings = {
     awl_separator = "\\  ";
     awl_sort = "-last-line";
     awl_prefer_name = "yes";
+    autoaway_msg = "\"^z\"";
+    autoaway_sec = "600";
+    autoaway_verbose = "0";
   };
   "fe-common/irc" = { show_away_once = "yes"; };
 };

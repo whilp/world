@@ -70,6 +70,8 @@ aliases = {
   gone = "/away \"Life...\"";
   back = "/away";
   marco = "clear; say blist";
+  blist = "join #bitlbee; clear; say blist";
+  test = "join #bitlbee; clear; say blist";
 };
 
 statusbar = {
@@ -227,6 +229,9 @@ settings = {
     awl_display_key = "$Q%K %n$H$C$S";
     awl_separator = "\\  ";
     awl_sort = "-last-line";
+    autoaway_msg = "\"^z\"";
+    autoaway_sec = "600";
+    autoaway_verbose = "0";
   };
   "fe-common/irc" = { show_away_once = "yes"; };
 };
