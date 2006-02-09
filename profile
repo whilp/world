@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.102 $
-# Updated	: $Date: 2006/02/09 11:55:08 $
+# Version	: $Revision: 1.103 $
+# Updated	: $Date: 2006/02/09 13:28:52 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.102 2006/02/09 11:55:08 will Exp $
+# CVS		: $Id: profile,v 1.103 2006/02/09 13:28:52 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -36,8 +36,6 @@ alias caecvs='export CVSROOT=/afs/engr.wisc.edu/common/repository'
 # --[ PRINTING
     if [ -x /afs/engr.wisc.edu/common/scripts/default_printer ] ; then
 	PRINTER=`/afs/engr.wisc.edu/common/scripts/default_printer`
-    else
-	PRINTER=ps
     fi
 export PRINTER
 
