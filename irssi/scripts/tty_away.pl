@@ -9,6 +9,9 @@
 #	autoaway_verbose
 #		verbosity level: currently, an integer on the range [0,2], where 2 is
 #		very verbose, and 0 is silent.
+#	autoaway_poll
+#		polling interval -- number of miliseconds between
+#		stats of the system ttys.
 
 use strict;
 use Irssi;
@@ -26,18 +29,18 @@ our %IRSSI = (
 );
 
 # internal state vars & constants
-my ($wait_time, $is_idle, $is_away, $override, $tout_ptr, $away_msg, $verbose);
+my ($wait_time, $is_idle, $is_away, $override, $tout_ptr, $away_msg,
+    $verbose, $poll_int);
 
-my $poll_int = 5000;		# default polling interval = 5 sec;
 my $user     = getlogin();
 my $my_uid   = getpwnam($user) or die;
 my $tty_gid  = getgrnam("tty") or die;
-my $crontext_keyword	= "autoaway_crontext";
 
 # ----------------------------------------------- launch 
 Irssi::settings_add_str("misc", "autoaway_msg", "I'm away from the terminal. (autoaway)");
 Irssi::settings_add_int("misc", "autoaway_sec", 0);
 Irssi::settings_add_int("misc", "autoaway_verbose", 0);
+Irssi::settings_add_int("misc", "autoaway_poll", 5000);
 Irssi::signal_add("setup changed" => \&ta_checkconf);
 Irssi::command_bind("safeaway", "ta_setsafeaway");
 
@@ -48,17 +51,8 @@ sub ta_checkconf {
 	$away_msg  = Irssi::settings_get_str("autoaway_msg");
 	$wait_time = Irssi::settings_get_int("autoaway_sec");
 	$verbose   = Irssi::settings_get_int("autoaway_verbose");
+	$poll_int  = Irssi::settings_get_int("autoaway_poll");
 	ta_set_timer();
-}
-
-sub context_msg {
-	if ( $away_msg == $crontext_keyword ) {
-		# If the user supplies a special default autoaway message,
-		# set the away message based on time(). For example, a user
-		# could modify this script to set them as "off to lunch"
-		# Mon - Fri 11:00-13:00 and "at dinner" * 17:00-18:30.
-		# Syntax is similar to Vixie cron (maybe).
-	} 
 }
 
 sub ta_set_timer {
@@ -76,7 +70,7 @@ sub ta_wanted {
 		$atime,$mtime,$ctime,$blksize,$blocks) = lstat($_);
 	my $tty_name = $File::Find::name;
 	
-	if (($uid == $my_uid) and ($tty_name =~ /\/dev\/tty.*|pts\/.*/) {
+	if (($uid == $my_uid) and ($tty_name =~ /\/dev\/tty.*|pts\/.*/)) {
 		if ((time() - $atime) < $wait_time) {
 			$is_idle = 0;
 			my $idle = time() - $atime;
