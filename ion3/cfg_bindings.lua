@@ -52,7 +52,8 @@ defbindings("WScreen", {
 --    kpress(MOD1.."F1", "ioncore.show_manual()"),
     
     bdoc("Create a new workspace of chosen default type."),
-    kpress(MOD2.."F9", "ioncore.create_ws(_, 'WIonWS')"),
+--  kpress(MOD2.."F9", "ioncore.create_ws(_, 'WIonWS')"),
+    kpress(MOD2.."F9", "mod_query.query_workspace(_)"),
 
     bdoc("Create a new workspace of chosen default type."),
     kpress(MOD1.."F9", "ioncore.create_ws(_)"),
