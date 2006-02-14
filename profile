@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.105 $
-# Updated	: $Date: 2006/02/13 21:09:56 $
+# Version	: $Revision: 1.107 $
+# Updated	: $Date: 2006/02/14 14:45:44 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.105 2006/02/13 21:09:56 will Exp $
+# CVS		: $Id: profile,v 1.107 2006/02/14 14:45:44 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -107,7 +107,7 @@ esac
     alias mtr='mtr -t'
     alias xterm='rxvt'
 
-    TODO=$HOME/.todo
+    TODO=$HOME/.brain/todo
     LANG='C'
     MAIL=''
     SHELL=`which zsh`
@@ -340,14 +340,4 @@ ssh-rmkey () {
     sed -e "${LINE}d" ~/.ssh/known_hosts > ${TMPFILE}
     mv ${TMPFILE} ~/.ssh/known_hosts
 }
-todo () {
-    if [ $# -lt 1 ]; then
-        warn "Must specify a category."
-        return 1
-    else
-        FILE=~/.todo
-        DATE=$(date "+%Y%m%d.%H%M")
-        echo "$1:${DATE}:" >> ${FILE}
-        vim ${FILE} "+g/:$/normal A"
-    fi
-}
+# find /dev -user $USER -wholename "*/tty*" -o -wholename "*/pts/*" 2>/dev/null | while read FILE; do stat -c "%Z" $FILE; done
