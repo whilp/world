@@ -7,16 +7,7 @@ servers = (
   }
 );
 
-chatnets = {
-  bitl = {
-    type = "IRC";
-    max_kicks = "4";
-    max_modes = "4";
-    max_msgs = "3";
-    max_whois = "1";
-    autosendcmd = "/^msg bitlbee identify lesheros";
-  };
-};
+chatnets = { bitl = { type = "IRC"; }; };
 
 channels = ( 
   { name = "#bitlbee"; chatnet = "bitl"; autojoin = "yes"; }
@@ -70,8 +61,6 @@ aliases = {
   gone = "/away \"Life...\"";
   back = "/away";
   marco = "clear; say blist";
-  blist = "join #bitlbee; clear; say blist";
-  test = "join #bitlbee; clear; say blist";
 };
 
 statusbar = {
@@ -229,9 +218,10 @@ settings = {
     awl_display_key = "$Q%K %n$H$C$S";
     awl_separator = "\\  ";
     awl_sort = "-last-line";
-    autoaway_msg = "\"^z\"";
-    autoaway_sec = "600";
+    autoaway_sec = "900";
     autoaway_verbose = "0";
+    autoaway_msg = "\"^z\"";
+    autoaway_poll = "30000";
   };
   "fe-common/irc" = { show_away_once = "yes"; };
 };
@@ -291,6 +281,12 @@ keyboard = (
 logs = { };
 ignores = ( );
 windows = {
+  1 = { 
+    immortal = "yes";
+    name = "(status)";
+    level = "ALL";
+    sticky = "yes";
+  };
   2 = {
     items = (
       {
@@ -302,14 +298,8 @@ windows = {
     );
     sticky = "yes";
   };
-  1 = { 
-    immortal = "yes";
-    name = "(status)";
-    level = "ALL";
-    sticky = "yes";
-  };
 };
 mainwindows = {
-  1 = { first_line = "42"; lines = "11"; };
-  2 = { first_line = "1"; lines = "41"; };
+  1 = { first_line = "78"; lines = "11"; };
+  2 = { first_line = "1"; lines = "77"; };
 };

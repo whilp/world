@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.104 $
-# Updated	: $Date: 2006/02/10 18:52:25 $
+# Version	: $Revision: 1.105 $
+# Updated	: $Date: 2006/02/13 21:09:56 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.104 2006/02/10 18:52:25 will Exp $
+# CVS		: $Id: profile,v 1.105 2006/02/13 21:09:56 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -21,6 +21,7 @@
 
 ARCH=`uname`
 HOST=$(hostname -s)
+VERBOSE=1
 #ISSUE=`awk '{print $1}' /etc/issue || echo "unknown"`
 
 # --[ CVS
@@ -106,7 +107,7 @@ esac
     alias mtr='mtr -t'
     alias xterm='rxvt'
 
-    TODO=$HOME/TODO
+    TODO=$HOME/.todo
     LANG='C'
     MAIL=''
     SHELL=`which zsh`
@@ -117,6 +118,14 @@ esac
 export LANG PATH SHELL EDITOR CVSEDITOR MAIL PKG_PATH TODO CLUSTER RCMD_CMD
 
 # functions
+warn () {
+    echo "=!=> $1"
+}
+notify () {
+    if [ ${VERBOSE} -ge $1 ]; then
+        echo "===> $2"
+    fi
+}
 lookup () {
     grep $1 /usr/share/dict/words
 }
@@ -330,4 +339,15 @@ ssh-rmkey () {
     TMPFILE=$(mktemp -q ~/.ssh/known_hosts.XXXX || exit 1)
     sed -e "${LINE}d" ~/.ssh/known_hosts > ${TMPFILE}
     mv ${TMPFILE} ~/.ssh/known_hosts
+}
+todo () {
+    if [ $# -lt 1 ]; then
+        warn "Must specify a category."
+        return 1
+    else
+        FILE=~/.todo
+        DATE=$(date "+%Y%m%d.%H%M")
+        echo "$1:${DATE}:" >> ${FILE}
+        vim ${FILE} "+g/:$/normal A"
+    fi
 }

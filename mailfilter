@@ -1,12 +1,12 @@
 #################  BEGIN HEADERS
 # Filename	: $HOME/.mailfilter
 # Use		: configures routing of incoming mail
-# Version	: $Revision: 1.28 $
+# Version	: $Revision: 1.29 $
 # Author	: Will Maier <willmaier@ml1.net>
 # Started	: 2005.06.15
-# Updated	: $Date: 2006/02/07 14:37:53 $
+# Updated	: $Date: 2006/02/13 21:09:56 $
 # Vim		: vim: set ft=perl:
-# CVS		: $Id: mailfilter,v 1.28 2006/02/07 14:37:53 will Exp $
+# CVS		: $Id: mailfilter,v 1.29 2006/02/13 21:09:56 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -23,6 +23,7 @@ CENTPROP = "$MAILDIR/Centprop/"
 FAMILY = "$MAILDIR/Family/"
 FRIEND = "$MAILDIR/Friend/"
 HEP = "$MAILDIR/HEP/"
+HEP-NAGIOS = "$MAILDIR/HEP-NAGIOS/"
 MADLUG = "$MAILDIR/Madlug/"
 MAILDROP = "$MAILDIR/Maildrop/"
 SCHOOL = "$MAILDIR/School/"
@@ -288,10 +289,9 @@ if ( /^(from|to):.*kenkinsley@hotmail\.com/ )
 {
     to $CENTPROP
 }
-if ( /^subject: (PROBLEM|UP|DOWN|RECOVERY):/ && \
-    /^from:.*@[a-zA-Z0-9\.\-]*hep.wisc.edu/ )
+if ( /^subject: (PROBLEM|UP|DOWN|RECOVERY):/ && /^from:.*@[a-zA-Z0-9\.\-]*hep.wisc.edu/ )
 {
-    to $HEP-nagios
+    to $HEP-NAGIOS
 }
 if ( /^(from|to):.*@[a-zA-Z0-9\.\-]*(hep|cs)\.wisc\.edu/ )
 {

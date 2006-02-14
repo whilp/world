@@ -1,0 +1,16 @@
+# vim: set tw=0:
+# [DONE:][DATE_DONE:]PRIO:CATEGORY:DATE: TASK
+0:UNI:20060213.0518: check out 5 books from library re: HS555; see email
+1:HEP:20060213.0518: get unclutter rpm for steve
+1:HEP:20060213.0659: setup polyot DNS (see steve)
+1:HEP:20060213.0726: set Xserve RAIDs to auto-power on [req 2686]
+1:HEP:20060213.1448: install x-lib/dev rpms on g9n32
+1:PER:20060213.0518: put clothes away
+2:HEP:20060213.0659: AFS setup notes (test cell)
+2:HEP:20060213.0659: cilantro CDROM
+3:HEP:20060213.0518: make a clusterit tarball (/u/local overlay, etc)
+DONE:20060213.0708:5:HEP:20060213.0518: fix g4n10 
+DONE:20060213.0743:0:HEP:20060213.0518: resolve open reqs [ #2682 #2686 #2747 #2749 #2751 2812 2816 ] 
+DONE:20060213.1447:1:HEP:20060213.0518: request x-dev package on g9n32 [ mailed on 20060210? ] asdf
+DONE:20060213.1447:2:HEP:20060213.0659: reprogram mr1 KVM
+DONE:20060213.1448:0:WOR:20060213.0742: do timesheet!

@@ -9,4 +9,5 @@ screen -t HEP	    1 ssh -o "ProxyCommand ssh wcmaier@login.hep.wisc.edu nc ginse
 screen -t CAE	    2 ssh wcmaier@burrito.cae.wisc.edu
 screen -t MESS	    3 ssh will@192.168.1.30
 screen -t SOY	    4 ssh will@192.168.1.40
+screen -t POLY	    4 ssh will@polyot.atekomi.net
 

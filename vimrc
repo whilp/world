@@ -1,10 +1,10 @@
 "#################  BEGIN HEADERS
 " e Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
-" Version	: $Revision: 1.39 $
+" Version	: $Revision: 1.40 $
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: $Date: 2006/02/07 14:37:53 $
-" CVS		: $Id: vimrc,v 1.39 2006/02/07 14:37:53 will Exp $
+" Updated	: $Date: 2006/02/13 21:09:56 $
+" CVS		: $Id: vimrc,v 1.40 2006/02/13 21:09:56 will Exp $
 " Copyright	: Copyright (c) 2005 Will Maier
 " License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 "#################  END HEADERS
@@ -70,6 +70,9 @@
     " save shortcut
     imap <C-W> <Esc>:w<CR>
 
+    " Date sub
+    iab daTE <C-R>=strftime("%Y%m%d.%H%M")<CR>
+
     " Fix my shitty typing
     abbr hte the
     abbr teh the
@@ -110,7 +113,8 @@
     noremap Y y$
     inoremap <C-K> <Up>
     inoremap <C-J> <Down>
-    noremap <silent> <C-R> :s/^\([^ ]\+ \)\(#\d\{6\}\):\(.*\)/\1Re: [CAE \2]\3/<CR>
+    "noremap <silent> <C-R> :s/^\([^ ]\+ \)\(#\d\{6\}\):\(.*\)/\1Re: [CAE \2]\3/<CR>
+    "noremap \S :1,
 
 " --[ AUTOCMD
     if has("autocmd")
@@ -125,6 +129,11 @@
 "    au BufWrite		*      silent! execute 'g;'
 "augroup END
 
+" --[ My todo thing
+augroup TODO
+    au!
+    au BufWritePre,FileWritePre     .todo  3,$!sort 
+augroup END
 " --[ LATEX-SPECIFIC
 augroup latex
     au!
