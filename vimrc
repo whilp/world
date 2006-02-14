@@ -1,10 +1,10 @@
 "#################  BEGIN HEADERS
 " e Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
-" Version	: $Revision: 1.41 $
+" Version	: $Revision: 1.42 $
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: $Date: 2006/02/14 17:31:44 $
-" CVS		: $Id: vimrc,v 1.41 2006/02/14 17:31:44 will Exp $
+" Updated	: $Date: 2006/02/14 17:50:11 $
+" CVS		: $Id: vimrc,v 1.42 2006/02/14 17:50:11 will Exp $
 " Copyright	: Copyright (c) 2005 Will Maier
 " License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 "#################  END HEADERS
@@ -72,6 +72,12 @@
 
     " Date sub
     iab daTE <C-R>=strftime("%Y%m%d.%H%M")<CR>
+
+    " Dr Chip's engspchk
+    helptags $HOME/.vim/doc
+    let g:spchkaltright = 20
+    let g:spchkdialect = "usa"
+    let g:spchkacronym = 1
 
     " Fix my shitty typing
     abbr hte the

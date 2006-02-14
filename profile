@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.108 $
-# Updated	: $Date: 2006/02/14 17:31:44 $
+# Version	: $Revision: 1.109 $
+# Updated	: $Date: 2006/02/14 17:50:31 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.108 2006/02/14 17:31:44 will Exp $
+# CVS		: $Id: profile,v 1.109 2006/02/14 17:50:31 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -108,6 +108,7 @@ esac
     alias xterm='rxvt'
 
     TODO=$HOME/.brain/todo
+    MUSIC=$HOME/.brain/music
     FAQ=$HOME/.brain/faq
     LANG='C'
     MAIL=''
