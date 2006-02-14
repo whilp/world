@@ -1,13 +1,36 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.faq
 # Use		: collection of questions (and answers) I consistently forget
-# Version	: $Revision: 1.1 $
+# Vim           : vim: set tw=80:
+# Version	: $Revision: 1.2 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2006/02/13 21:09:56 $
-# CVS		: $Id: faq,v 1.1 2006/02/13 21:09:56 will Exp $
-# Copyright	: Copyright (c) 2005 Will Maier
+# Updated	: $Date: 2006/02/14 17:31:44 $
+# CVS		: $Id: faq,v 1.2 2006/02/14 17:31:44 will Exp $
+# Copyright	: Copyright (c) 2005-2006 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
+
+
+================================================================================
+
+Q: How do I add TTF and PCF fonts using X?
+
+A: Download the fonts and place them somewhere in the /usr/X11[R6]/lib/fonts/
+file hierarchy. ./misc is a good place.
+
+For TTF fonts, place the .ttf file in eg /usr/X11[R6]/lib/fonts/TTF/. Then run
+the following command:
+
+    <vger 17:57> ~ % cd /usr/X11/lib/fonts/TTF
+    <vger 17:57> ~ % mkfontscale
+    <vger 17:57> ~ % mkfontdir
+    <vger 17:57> ~ % xset fp rehash
+
+That'll create the necessary files in the current dir and notify the X server
+that there are new fonts.
+
+For PCF fonts, do all of the above, but omit the 'mkfontscale' command.
+
 
 ================================================================================
 

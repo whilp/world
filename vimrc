@@ -1,10 +1,10 @@
 "#################  BEGIN HEADERS
 " e Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
-" Version	: $Revision: 1.40 $
+" Version	: $Revision: 1.41 $
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: $Date: 2006/02/13 21:09:56 $
-" CVS		: $Id: vimrc,v 1.40 2006/02/13 21:09:56 will Exp $
+" Updated	: $Date: 2006/02/14 17:31:44 $
+" CVS		: $Id: vimrc,v 1.41 2006/02/14 17:31:44 will Exp $
 " Copyright	: Copyright (c) 2005 Will Maier
 " License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 "#################  END HEADERS
@@ -132,7 +132,7 @@
 " --[ My todo thing
 augroup TODO
     au!
-    au BufWritePre,FileWritePre     .todo  3,$!sort 
+    au BufWritePre,FileWritePre     *brain/todo  3,$!sort 
 augroup END
 " --[ LATEX-SPECIFIC
 augroup latex

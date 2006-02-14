@@ -1,6 +1,12 @@
 # vim: set tw=0:
 # [DONE:][DATE_DONE:]PRIO:CATEGORY:DATE: TASK
+# grep -Ev '^(DONE|#)' /home/will/.brain/todo | sort -t ':' -k 1
 0:UNI:20060213.0518: check out 5 books from library re: HS555; see email
+0:UNI:20060213.1601: mail professor Stalye with UNI ID#
+0:UNI:20060213.1602: drop astro and HS350
+1:CAE:20060213.1648: unsubscribe bplevitt from future-uw mailing list [rt #133234]
+1:CAE:20060213.1659: ping drews re: condor question [rt #132726]
+1:CAE:20060213.1701: ping gjertson re: web mail hierarchies [rt #132116]
 1:HEP:20060213.0518: get unclutter rpm for steve
 1:HEP:20060213.0659: setup polyot DNS (see steve)
 1:HEP:20060213.0726: set Xserve RAIDs to auto-power on [req 2686]

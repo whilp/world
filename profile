@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.107 $
-# Updated	: $Date: 2006/02/14 14:45:44 $
+# Version	: $Revision: 1.108 $
+# Updated	: $Date: 2006/02/14 17:31:44 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.107 2006/02/14 14:45:44 will Exp $
+# CVS		: $Id: profile,v 1.108 2006/02/14 17:31:44 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -108,6 +108,7 @@ esac
     alias xterm='rxvt'
 
     TODO=$HOME/.brain/todo
+    FAQ=$HOME/.brain/faq
     LANG='C'
     MAIL=''
     SHELL=`which zsh`
@@ -115,7 +116,7 @@ esac
     RCMD_CMD=ssh
     EDITOR=`which vim`
     CVSEDITOR=$EDITOR
-export LANG PATH SHELL EDITOR CVSEDITOR MAIL PKG_PATH TODO CLUSTER RCMD_CMD
+export LANG PATH SHELL EDITOR CVSEDITOR MAIL PKG_PATH TODO CLUSTER RCMD_CMD FAQ
 
 # functions
 warn () {
@@ -339,5 +340,11 @@ ssh-rmkey () {
     TMPFILE=$(mktemp -q ~/.ssh/known_hosts.XXXX || exit 1)
     sed -e "${LINE}d" ~/.ssh/known_hosts > ${TMPFILE}
     mv ${TMPFILE} ~/.ssh/known_hosts
+}
+todo () {
+    vim $TODO
+}
+faq () {
+    vim $FAQ
 }
 # find /dev -user $USER -wholename "*/tty*" -o -wholename "*/pts/*" 2>/dev/null | while read FILE; do stat -c "%Z" $FILE; done
