@@ -1,3 +1,3 @@
-diff -c
+diff -u
 update -P -d
 cvs -q
