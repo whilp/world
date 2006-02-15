@@ -1,9 +1,10 @@
 # vim: set tw=0:
-# [DONE:][DATE_DONE:]PRIO:CATEGORY:DATE: TASK
-# grep -Ev '^(DONE|#)' /home/will/.brain/todo | sort -t ':' -k 1
+# [COMPL:][DATE_COMPL:]PRIO:CATEGORY:DATE: TASK
+# tron () { grep -Ev '^(COMPL|#)' $TODO | sort -t ':' -k 1 | sed -e 's/.*\.[0-9]\{4\}://' | while read LINE; do echo -n " - "; echo "$LINE" | fmt -68; done }
 0:UNI:20060213.0518: check out 5 books from library re: HS555; see email
-0:UNI:20060213.1601: mail professor Stalye with UNI ID#
 0:UNI:20060213.1602: drop astro and HS350
+0:UNI:20060214.1421: mail jhawks@wisc ANTHRO304 paper
+0:UNI:20060214.1422: mail eschatzb@wisc HS555 topic/resources
 1:CAE:20060213.1648: unsubscribe bplevitt from future-uw mailing list [rt #133234]
 1:CAE:20060213.1659: ping drews re: condor question [rt #132726]
 1:CAE:20060213.1701: ping gjertson re: web mail hierarchies [rt #132116]
@@ -20,3 +21,4 @@ COMPL:20060213.0743:0:HEP:20060213.0518: resolve open reqs [ #2682 #2686 #2747 #
 COMPL:20060213.1447:1:HEP:20060213.0518: request x-dev package on g9n32 [ mailed on 20060210? ] asdf
 COMPL:20060213.1447:2:HEP:20060213.0659: reprogram mr1 KVM
 COMPL:20060213.1448:0:WOR:20060213.0742: do timesheet!
+COMPL:20060214.1421:0:UNI:20060213.1601: mail professor Staley with UNI ID#
