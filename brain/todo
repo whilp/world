@@ -1,15 +1,16 @@
 # vim: set tw=0 ft=text:
 # [COMPL:][DATE_COMPL:]PRIO:CATEGORY:DATE: TASK
-# tron () { grep -Ev '^(COMPL|#)' $TODO | sort -t ':' -k 1 | sed -e 's/.*\.[0-9]\{4\}://' | while read LINE; do echo -n " - "; echo "$LINE" | fmt -68; done }
-0:PER:20060214.1646: copy three discs of 24 before Laura leaves
-0:UNI:20060213.0518: check out 5 books from library re: HS555; see email
-0:UNI:20060214.1421: mail jhawks@wisc ANTHRO304 paper
-0:UNI:20060214.1422: mail eschatzb@wisc HS555 topic/resources
+# tron () { grep -Ev '^#)' $TODO | sort -t ':' -k 1 | sed -e 's/.*\.[0-9]\{4\}://' | while read LINE; do echo -n " - "; echo "$LINE" | fmt -68; done }
+0:CAE:20060215.1713: build a minimal debian for the mr [rt 129474]
+0:HEP:20060215.0757: come up with an office rewiring plan -- then rewire
+0:HEP:20060215.0932: add keyinfo to offce wiring list
 1:CAE:20060213.1648: unsubscribe bplevitt from future-uw mailing list [rt 133234]
 1:CAE:20060213.1659: ping drews re: condor question [rt 132726]
 1:CAE:20060213.1701: ping gjertson re: web mail hierarchies [rt 132116]
+1:CAE:20060215.1712: hack on global shell rcs
+1:CAE:20060215.1713: check on linux unigraphics support
+1:CAE:20060215.1713: read chapter 11
 1:HEP:20060213.0659: setup polyot DNS (see steve)
-1:PER:20060213.0518: put clothes away
 1:PER:20060214.1646: copy and send back the netflix
 2:HEP:20060213.0659: cilantro CDROM
 3:HEP:20060213.0518: get unclutter rpm for steve
@@ -17,10 +18,3 @@
 4:HEP:20060213.0659: AFS setup notes (test cell)
 4:HEP:20060213.0726: make Xserve RAIDs auto-power on [req 2686]
 5:HEP:20060213.0518: make a clusterit tarball (/u/local overlay, etc) [ superceded by sww that steve's working on? ]
-COMPL:20060213.0708:5:HEP:20060213.0518: fix g4n10 
-COMPL:20060213.0743:0:HEP:20060213.0518: resolve open reqs [ #2682 #2686 #2747 #2749 #2751 2812 2816 ] 
-COMPL:20060213.1447:1:HEP:20060213.0518: request x-dev package on g9n32 [ mailed on 20060210? ] asdf
-COMPL:20060213.1447:2:HEP:20060213.0659: reprogram mr1 KVM
-COMPL:20060213.1448:0:WOR:20060213.0742: do timesheet!
-COMPL:20060214.1421:0:UNI:20060213.1601: mail professor Staley with UNI ID#
-COMPL:20060214.1619:0:UNI:20060213.1602: drop astro and HS350 and HS512
