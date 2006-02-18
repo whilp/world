@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.113 $
-# Updated	: $Date: 2006/02/17 22:26:41 $
+# Version	: $Revision: 1.114 $
+# Updated	: $Date: 2006/02/17 22:30:11 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.113 2006/02/17 22:26:41 will Exp $
+# CVS		: $Id: profile,v 1.114 2006/02/17 22:30:11 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -289,8 +289,9 @@ agent () {
     if [ $(find $HOME/.ssh -follow -name "id_[dr]sa" | wc -l | sed -e 's/[^0-9]//g') -lt 1 ]; then
         # There don't appear to be any keys on this host; kill all
         # agents and quit.
-        notify 2 "No keys found in $HOME/.ssh."
+        notify 1 "No keys found in $HOME/.ssh."
         pkill -U wcmaier ssh-agent
+        return 0
     fi
     SSH_AGENT_FILE=~/.ssh/agent
     if [ -f ${SSH_AGENT_FILE} ]; then
