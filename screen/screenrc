@@ -20,7 +20,7 @@
     defscrollback 5000
     vbell on
 #    shelltitle $HOST
-    shell   zsh
+#    shell   zsh
     allpartial off
     activity "^Gactivity in %n (%t)~"
     sorendition  +b Wb			    # set colors; white on blue 

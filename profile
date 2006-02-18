@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.111 $
-# Updated	: $Date: 2006/02/17 21:23:55 $
+# Version	: $Revision: 1.112 $
+# Updated	: $Date: 2006/02/17 21:35:54 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.111 2006/02/17 21:23:55 will Exp $
+# CVS		: $Id: profile,v 1.112 2006/02/17 21:35:54 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -48,13 +48,13 @@ export PRINTER
 case $ARCH in
     SunOS* )
     # fix needed for solaris and BSD
-    alias ls='gls --color=auto -F'
+    alias ls='ls -F'
     alias zsh='/afs/engr.wisc.edu/oss/bin/zsh'
     alias tar='gtar'
     export SHELL='/afs/engr.wisc.edu/oss/bin/zsh'
     ;;
     *BSD )
-    alias ls='gls --color=auto -F'
+    alias ls='ls -F'
     alias tar='gtar'
     ;;
     * )
@@ -385,7 +385,7 @@ pkgin () {
 CLUSTER=~/.cluster
 RCMD_CMD=ssh
 alias lsof="sudo lsof"
-if [ $UID -gt 0 ]; then
+if [ "$UID" -gt "0" ]; then
     agent
 fi
 ssh-rmkey () {

@@ -102,8 +102,8 @@ defbindings("WMPlex", {
     }),
 
     bdoc("Run a terminal emulator."),
-    kpress(MOD2.."F2", "ioncore.exec_on(_, '/usr/local/bin/rxvt')"),
-    kpress(MOD1.."F2", "ioncore.exec_on(_, '/usr/local/bin/rxvt')"),
+    kpress(MOD2.."F2", "ioncore.exec_on(_, 'xterm')"),
+    kpress(MOD1.."F2", "ioncore.exec_on(_, 'xterm')"),
 
     bdoc("Query for command line to execute."),
     kpress(MOD2.."F3", "mod_query.query_exec(_)"),
