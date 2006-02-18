@@ -9,6 +9,7 @@ Host *
 #     ControlPath ~/.ssh/ctl-%r-%h-%p
 #     ControlMaster auto
     ForwardAgent yes
+    Protocol    2
 
 # PERSONAL
 Host localmerk
