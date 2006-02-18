@@ -300,6 +300,6 @@ windows = {
   };
 };
 mainwindows = {
-  1 = { first_line = "78"; lines = "11"; };
-  2 = { first_line = "1"; lines = "77"; };
+  1 = { first_line = "45"; lines = "6"; };
+  2 = { first_line = "1"; lines = "44"; };
 };

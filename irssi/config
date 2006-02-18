@@ -432,43 +432,18 @@ logs = { };
 ignores = (
   { mask = "Tattoo"; level = "ALL"; },
   { mask = "@mininova"; level = "ALL"; exception = "yes"; },
-  { level = "ALL"; channels = ( "#mininova" ); }
+  { 
+    level = "ACTIONS";
+    pattern = "is (away|gone|back)";
+    regexp = "yes";
+  }
 );
 windows = {
-  4 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#madlug";
-        tag = "freenode";
-      }
-    );
+  1 = { 
+    immortal = "yes";
+    name = "(status)";
+    level = "ALL";
     sticky = "yes";
-  };
-  8 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#lighttpd";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "4";
-  };
-  7 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#ion";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "4";
   };
   3 = {
     items = (
@@ -480,31 +455,18 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "4";
   };
-  6 = {
+  4 = {
     items = (
       {
         type = "CHANNEL";
         chat_type = "IRC";
-        name = "#vim";
+        name = "#madlug";
         tag = "freenode";
       }
     );
     sticky = "yes";
-    parent = "4";
-  };
-  5 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#zsh";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "4";
+    parent = "3";
   };
   2 = {
     items = (
@@ -516,17 +478,58 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "4";
+    parent = "3";
   };
-  1 = {
-    immortal = "yes";
-    name = "(status)";
-    level = "ALL";
+  6 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#vim";
+        tag = "freenode";
+      }
+    );
     sticky = "yes";
-    parent = "2";
+    parent = "3";
+  };
+  7 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#ion";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+    parent = "3";
+  };
+  8 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#irssi";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+    parent = "3";
+  };
+  5 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#zsh";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+    parent = "3";
   };
 };
 mainwindows = {
-  2 = { first_line = "75"; lines = "14"; };
-  4 = { first_line = "1"; lines = "74"; };
+  1 = { first_line = "45"; lines = "6"; };
+  3 = { first_line = "1"; lines = "44"; };
 };

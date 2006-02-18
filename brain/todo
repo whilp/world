@@ -1,20 +1,25 @@
 # vim: set tw=0 ft=text:
 # [COMPL:][DATE_COMPL:]PRIO:CATEGORY:DATE: TASK
 # tron () { grep -Ev '^#)' $TODO | sort -t ':' -k 1 | sed -e 's/.*\.[0-9]\{4\}://' | while read LINE; do echo -n " - "; echo "$LINE" | fmt -68; done }
-0:CAE:20060215.1713: build a minimal debian for the mr [rt 129474]
-0:HEP:20060215.0757: come up with an office rewiring plan -- then rewire
-0:HEP:20060215.0932: add keyinfo to offce wiring list
-1:CAE:20060213.1648: unsubscribe bplevitt from future-uw mailing list [rt 133234]
-1:CAE:20060213.1659: ping drews re: condor question [rt 132726]
-1:CAE:20060213.1701: ping gjertson re: web mail hierarchies [rt 132116]
-1:CAE:20060215.1712: hack on global shell rcs
-1:CAE:20060215.1713: check on linux unigraphics support
-1:CAE:20060215.1713: read chapter 11
-1:HEP:20060213.0659: setup polyot DNS (see steve)
-1:PER:20060214.1646: copy and send back the netflix
-2:HEP:20060213.0659: cilantro CDROM
-3:HEP:20060213.0518: get unclutter rpm for steve
-3:HEP:20060213.1448: install x-lib/dev rpms on g9n32
-4:HEP:20060213.0659: AFS setup notes (test cell)
-4:HEP:20060213.0726: make Xserve RAIDs auto-power on [req 2686]
-5:HEP:20060213.0518: make a clusterit tarball (/u/local overlay, etc) [ superceded by sww that steve's working on? ]
+5:20060217.1251:PER: return ross's bedarned  DVD
+5:20060216.1704:HEP: set up roundup on g9n32
+5:20060215.1713:CAE: build a minimal debian for the mr [rt 129474]
+5:20060215.0932:HEP: add keyinfo to offce wiring list
+5:20060215.0757:HEP: come up with an office rewiring plan -- then rewire
+4:20060217.0930:HEP: desktop for terrance figy [req 2835]
+4:20060216.1704:HEP: bug steve about netdisco.org (looks cool!)
+4:20060215.1845:PER: ping mom about her firefox issue (remove lock)
+4:20060215.1712:CAE: hack on global shell rcs
+4:20060214.1646:PER: copy and send back the netflix
+4:20060213.1701:CAE: ping gjertson re: web mail hierarchies [rt 132116]
+4:20060213.0659:HEP: setup polyot DNS (see steve)
+3:20060213.1659:CAE: ping drews re: condor question [rt 132726]
+3:20060213.1648:CAE: unsubscribe bplevitt from future-uw mailing list [rt 133234]
+3:20060213.0659:HEP: cilantro CDROM
+2:20060215.1713:CAE: read chapter 11
+2:20060215.1713:CAE: check on linux unigraphics support
+2:20060213.1448:HEP: install x-lib/dev rpms on g9n32
+2:20060213.0518:HEP: get unclutter rpm for steve
+1:20060213.0659:HEP: AFS setup notes (test cell)
+0:20060213.0726:HEP: make Xserve RAIDs auto-power on [req 2686]
+0:20060213.0518:HEP: install clusterit using steve's sww

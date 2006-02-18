@@ -2,14 +2,14 @@
 # Filename	: $HOME/.muttrc (or $HOME/.muttngrc)
 # Use		: main configuration file for mutt(-ng), a command line mail reader
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.44 $
+# Version	: $Revision: 1.45 $
 # Started	: 2005.03.06
 # Based on	: Phillip Hollenback's muttrc @ macdevcenter
 # Refers to	: $HOME/.muttalias
 #		  $HOME/.muttcolor
 # Referred to by: $HOME/.muttngrc
-# Updated	: $Date: 2006/02/15 12:48:00 $
-# CVS		: $Id: muttrc,v 1.44 2006/02/15 12:48:00 will Exp $
+# Updated	: $Date: 2006/02/17 21:23:55 $
+# CVS		: $Id: muttrc,v 1.45 2006/02/17 21:23:55 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -94,7 +94,7 @@ macro pager S "<clear-flag>N<previous-entry><save-message>=Spam<enter><enter>" "
 ## SMTP SETTINGS ##
 
 ## PAGER SETTINGS ##
-#set implicit_autoview
+set implicit_autoview
 set pager_stop				# don't jump to next message at end
 set ascii_chars
 set sort=threads

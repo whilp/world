@@ -1,10 +1,10 @@
 "#################  BEGIN HEADERS
 " e Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
-" Version	: $Revision: 1.43 $
+" Version	: $Revision: 1.44 $
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: $Date: 2006/02/15 12:47:51 $
-" CVS		: $Id: vimrc,v 1.43 2006/02/15 12:47:51 will Exp $
+" Updated	: $Date: 2006/02/17 21:23:55 $
+" CVS		: $Id: vimrc,v 1.44 2006/02/17 21:23:55 will Exp $
 " Copyright	: Copyright (c) 2005 Will Maier
 " License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 "#################  END HEADERS
@@ -75,7 +75,7 @@
 
     " Dr Chip's engspchk
     "helptags $HOME/.vim/doc
-    let g:spchkaltright = 20
+    "let g:spchkaltright = 20
     let g:spchkdialect = "usa"
     let g:spchkacronym = 1
 
@@ -138,8 +138,9 @@
 " --[ My todo thing
 augroup TODO
     au!
-    au BufWritePre,FileWritePre     *brain/todo  3,$!sort 
+    au BufWritePre,FileWritePre     *brain/todo  4,$!sort -rn
 augroup END
+
 " --[ LATEX-SPECIFIC
 augroup latex
     au!
