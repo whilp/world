@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.112 $
-# Updated	: $Date: 2006/02/17 21:35:54 $
+# Version	: $Revision: 1.113 $
+# Updated	: $Date: 2006/02/17 22:26:41 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.112 2006/02/17 21:35:54 will Exp $
+# CVS		: $Id: profile,v 1.113 2006/02/17 22:26:41 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -286,20 +286,12 @@ scp-key () {
     done
 }
 agent () {
-    # if [ -f ~/.agent.env ]; then
-    #     . ~/.agent.env > /dev/null
-
-    #     if ! kill -0 $SSH_AGENT_PID > /dev/null 2>&1 then
-    #         echo "Stale agent file found. Spawning new agent..."
-    #         eval `ssh-agent | tee ~/.agent.env`
-    #         ssh-add
-    #     fi
-    # else
-    #     echo "Starting ssh-agent..."
-    #     eval `ssh-agent | tee ~/.agent.env`
-    #     ssh-add
-    # fi
-
+    if [ $(find $HOME/.ssh -follow -name "id_[dr]sa" | wc -l | sed -e 's/[^0-9]//g') -lt 1 ]; then
+        # There don't appear to be any keys on this host; kill all
+        # agents and quit.
+        notify 2 "No keys found in $HOME/.ssh."
+        pkill -U wcmaier ssh-agent
+    fi
     SSH_AGENT_FILE=~/.ssh/agent
     if [ -f ${SSH_AGENT_FILE} ]; then
         notify 2 "Found agent file ${SSH_AGENT_FILE}."
@@ -339,42 +331,6 @@ agent () {
         ssh-add -t 7200 > /dev/null 2>&1
     fi
     chmod 600 ${SSH_AGENT_FILE}
-
-    #AGENTPID=$(pgrep -u $USER ssh-agent)
-    #while [ "$(echo ${AGENTPID} | wc -w | sed -e 's/[^0-9]//g')" -gt 1 ]; do
-    #    kill $(echo ${AGENTPID} | tail -1)
-    #    AGENTPID=$(pgrep -u $USER ssh-agent)
-    #done
-    #if [ ! ${AGENTPID} ]; then
-    #    rm -f ${AGENTFILE}
-    #    ssh-agent -s > ${AGENTFILE}
-    #    chmod 600 ${AGENTFILE}
-    #    echo -n "Creating new agent; "
-    #    . ${AGENTFILE}
-    #    ssh-add -t 3600 2>&1 > /dev/null
-    #elif [ "${AGENTPID}" -ne "$(sed -e '2!d' ${AGENTFILE} | sed -e 's/[^0-9]//g')" ]; then
-    #    chmod 600 ${AGENTFILE}
-    #    pkill -u $USER ssh-agent
-    #    echo -n "Creating new agent; "
-    #    rm -f ${AGENTFILE}
-    #    ssh-agent -s > ${AGENTFILE}
-    #    . ${AGENTFILE}
-    #else
-    #    chmod 600 ${AGENTFILE}
-    #    echo -n "Using existing agent; "
-    #    . ${AGENTFILE}
-    #fi
-    #AGENTLIST=$(ssh-add -l)
-    #case ${AGENTLIST} in
-    #    The\ agent\ has\ no\ identities*)
-    #        echo "No keys in agent ${AGENTPID}."
-    #        ssh-add -t 3600 2>&1 > /dev/null
-    #            ;;
-    #        *)
-    #        echo "agent ${AGENTPID} represents the following keys:"
-    #        ssh-add -l
-    #        ;;
-    #esac
 }
 pkg_find () {
     grep -iE $1 /usr/ports/index.txt
