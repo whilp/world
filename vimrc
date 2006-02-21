@@ -1,10 +1,10 @@
 "#################  BEGIN HEADERS
 " e Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
-" Version	: $Revision: 1.44 $
+" Version	: $Revision: 1.45 $
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: $Date: 2006/02/17 21:23:55 $
-" CVS		: $Id: vimrc,v 1.44 2006/02/17 21:23:55 will Exp $
+" Updated	: $Date: 2006/02/20 20:50:35 $
+" CVS		: $Id: vimrc,v 1.45 2006/02/20 20:50:35 will Exp $
 " Copyright	: Copyright (c) 2005 Will Maier
 " License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 "#################  END HEADERS
@@ -138,7 +138,11 @@
 " --[ My todo thing
 augroup TODO
     au!
+    "au BufReadPre,FileReadPre       *brain/todo  4,$!sort -rn
+    au BufReadPre,FileReadPre       *brain/todo  set foldmethod=indent
+    au BufReadPre,FileReadPre       *brain/todo  set foldenable
     au BufWritePre,FileWritePre     *brain/todo  4,$!sort -rn
+    au BufWritePre,FileWritePre     *brain/todo  set foldmethod=indent
 augroup END
 
 " --[ LATEX-SPECIFIC
