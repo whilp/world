@@ -6,6 +6,7 @@
 5:20060216.1704:HEP: set up roundup on g9n32
 5:20060215.1713:CAE: build a minimal debian for the mr [rt 129474]
 5:20060215.0757:HEP: rewire; 4th and 5th todo, still plus ECAD/CMS lab
+4:20060220.1632:HEP: ask Sean to AFSize $HOME on nodes
 4:20060220.0948:PER: migrate hosts -> sendmail fr msmtp
 4:20060220.0947:PER: buy a sendmail book
 4:20060220.0947:HEP: ping sean/wu/dasu re: PSU for g nodes
@@ -14,6 +15,7 @@
 4:20060215.1712:CAE: hack on global shell rcs
 4:20060213.1701:CAE: ping gjertson re: web mail hierarchies [rt 132116]
 4:20060213.0659:HEP: setup polyot DNS (see steve)
+3:20060220.1704:HEP: generate some heat stats using condor -qal something or another
 3:20060220.1417:HEP: sweep/mop mr1
 3:20060220.1417:HEP: extend the PS/2 sensor thingies (cables on cart)
 3:20060219.1446:PER: file bugs with clusterit re: RCMD_CMD change crash, persist on down node
@@ -25,7 +27,6 @@
 2:20060213.0518:HEP: get unclutter rpm for steve
 1:20060213.0659:HEP: AFS setup notes (test cell)
 0:20060213.0726:HEP: make Xserve RAIDs auto-power on [req 2686]
-    -:20060220.1427:5:20060220.1427:TEST:!
     -:20060220.1423:4:20060220.1242:PER: make vim fold away done items in todo
     -:20060220.1241:0:20060213.0518:HEP: install clusterit using steve's sww
     -:20060220.1239:5:20060215.0932:HEP: add keyinfo to offce wiring list
