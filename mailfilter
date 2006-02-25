@@ -1,12 +1,12 @@
 #################  BEGIN HEADERS
 # Filename	: $HOME/.mailfilter
 # Use		: configures routing of incoming mail
-# Version	: $Revision: 1.30 $
+# Version	: $Revision: 1.31 $
 # Author	: Will Maier <willmaier@ml1.net>
 # Started	: 2005.06.15
-# Updated	: $Date: 2006/02/14 14:45:44 $
+# Updated	: $Date: 2006/02/24 19:02:11 $
 # Vim		: vim: set ft=perl:
-# CVS		: $Id: mailfilter,v 1.30 2006/02/14 14:45:44 will Exp $
+# CVS		: $Id: mailfilter,v 1.31 2006/02/24 19:02:11 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -25,6 +25,7 @@ FRIEND = "$MAILDIR/Friend/"
 HEP = "$MAILDIR/HEP/"
 HEPNAG = "$MAILDIR/HEP-nagios/"
 MADLUG = "$MAILDIR/Madlug/"
+MKELUG = "$MAILDIR/Mkelug/"
 MAILDROP = "$MAILDIR/Maildrop/"
 SCHOOL = "$MAILDIR/School/"
 SECURITYFOCUS = "$MAILDIR/Securityfocus/"
@@ -79,6 +80,10 @@ if ( /^Subject:.*(unsubscribe|$)/ || \
 if ( /^(to|cc):.*madlug@madisonlinux\.org/ )
 {
     to $MADLUG
+}
+if ( /^(to|cc):.*mlug-list@milwaukeelug\.org/ )
+{
+    to $MKELUG
 }
 if ( /^(to|cc):.*screen!(-?[a-zA-Z0-9\-]*)!@gnu\.org/ )
 {
