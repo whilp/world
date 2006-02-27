@@ -2,14 +2,14 @@
 # Filename	: $HOME/.muttrc (or $HOME/.muttngrc)
 # Use		: main configuration file for mutt(-ng), a command line mail reader
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.45 $
+# Version	: $Revision: 1.46 $
 # Started	: 2005.03.06
 # Based on	: Phillip Hollenback's muttrc @ macdevcenter
 # Refers to	: $HOME/.muttalias
 #		  $HOME/.muttcolor
 # Referred to by: $HOME/.muttngrc
-# Updated	: $Date: 2006/02/17 21:23:55 $
-# CVS		: $Id: muttrc,v 1.45 2006/02/17 21:23:55 will Exp $
+# Updated	: $Date: 2006/02/27 14:50:31 $
+# CVS		: $Id: muttrc,v 1.46 2006/02/27 14:50:31 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -187,6 +187,9 @@ send-hook '~t techpartners@[a-zA-Z0-9\.\-]*wisc.edu'	"set signature='~/.signatur
 send-hook '~t techpartners@[a-zA-Z0-9\.\-]*wisc.edu'	"set sendmail='/usr/local/bin/msmtp'
 send-hook '~t techpartners@[a-zA-Z0-9\.\-]*wisc.edu'	"my_hdr From: Will Maier <willmaier@ml1.net>"
 
+send-hook '~t madlug@madisonlinux.org'	"set signature='~/.signatures/list-bsd'"
+send-hook '~t madlug@madisonlinux.org'	"my_hdr From: Will Maier <willmaier@ml1.net>"
+
 set signature='~/.signatures/default'
 set sig_dashes
 
@@ -206,7 +209,7 @@ folder-hook =Sent set sort=reverse-date
 #folder-hook =CAE push "T~N~f'via RT'<enter>;F"
 #folder-hook =CAE push "~T<enter>"
 
-folder-hook =\(Debian-.*|Ubuntu-.*|OpenBSD-.*|FreeBSD-.*|Vim.*|Madlug-.*|Maildrop-.*|Mutt-.*|Screen-.*|Techpartners-.*\) push 'D~m>300!~F~R<enter>'
+folder-hook =\(HEP-nagios|Debian-.*|Ubuntu-.*|OpenBSD-.*|FreeBSD-.*|Vim.*|Madlug-.*|Maildrop-.*|Mutt-.*|Screen-.*|Techpartners-.*\) push 'D~m>300!~F~R<enter>'
 
 #folder-hook =RT-users push 'T~m>300~R<enter>;<save-message>=RT-users-ARK<enter>'
 #folder-hook =FreeBSD-questions$ "push '<tag-pattern>~m>300<enter><tag-prefix><save-message>=FreeBSD-questions-ARK<enter>'"

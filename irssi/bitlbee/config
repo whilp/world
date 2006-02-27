@@ -281,12 +281,6 @@ keyboard = (
 logs = { };
 ignores = ( );
 windows = {
-  1 = { 
-    immortal = "yes";
-    name = "(status)";
-    level = "ALL";
-    sticky = "yes";
-  };
   2 = {
     items = (
       {
@@ -298,8 +292,14 @@ windows = {
     );
     sticky = "yes";
   };
+  1 = { 
+    immortal = "yes";
+    name = "(status)";
+    level = "ALL";
+    sticky = "yes";
+  };
 };
 mainwindows = {
-  1 = { first_line = "45"; lines = "6"; };
-  2 = { first_line = "1"; lines = "44"; };
+  1 = { first_line = "47"; lines = "7"; };
+  2 = { first_line = "1"; lines = "46"; };
 };

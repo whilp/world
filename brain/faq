@@ -2,14 +2,33 @@
 # Filename	: $HOME/.faq
 # Use		: collection of questions (and answers) I consistently forget
 # Vim           : vim: set tw=80:
-# Version	: $Revision: 1.3 $
+# Version	: $Revision: 1.4 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2006/02/17 21:23:55 $
-# CVS		: $Id: faq,v 1.3 2006/02/17 21:23:55 will Exp $
+# Updated	: $Date: 2006/02/27 14:50:31 $
+# CVS		: $Id: faq,v 1.4 2006/02/27 14:50:31 will Exp $
 # Copyright	: Copyright (c) 2005-2006 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
 
+================================================================================
+
+Q: How do I listen to RealMedia streams using Mplayer?
+
+A: Download the necessary codecs, put them in the Right Place
+(/usr/local/lib/{codecs,live}), and compile Mplayer. If the PrincessLeia link is
+down, google for 'mplayer live.com' or similar -- certain Real streams need
+Live.com support in order to be playable.
+
+[Note: it seems that (according to live555.com), Live.com support _isn't_
+actually used to play RealMedia stuff. Still, most of the sources online suggest
+that it's useful, so what the heck.]
+
+Might as well download rp*bz2 from mplayerhq.hu, too.
+
+http://www.princessleia.com/MPlayer.php
+http://www1.mplayerhq.hu/MPlayer/releases/codecs/
+
+================================================================================
 
 ================================================================================
 
@@ -26,7 +45,6 @@ Then add the account in bitlbee as follows:
     [#bitlbee] account add jabber $USER@gmail.com $PASS ssl
 
 ================================================================================
-
 
 ================================================================================
 

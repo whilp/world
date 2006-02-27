@@ -1,29 +1,30 @@
 # vim: set tw=0 ft=text:
 # [-:][DATE_DONE:]PRIO:CATEGORY:DATE: TASK
 # tron () { grep -Ev '^#)' $TODO | sort -t ':' -k 1 | sed -e 's/.*\.[0-9]\{4\}://' | while read LINE; do echo -n " - "; echo "$LINE" | fmt -68; done }
+6:20060227.0837:UNI: HS555 argument description; see email -- due by 6:00PM
+6:20060227.0835:JOB: TIMESHEET! HOURS!
+5:20060227.0847:HEP: ping aimee re: letting MadLUG use some HEP/physics space in the evenings
+5:20060224.1334:HEP: pick up prox card from P&S (grep alefkow chat logs)
 5:20060220.1235:PER: make a nice binding for vim && quickfix/copen && todo
 5:20060216.1704:HEP: set up roundup mail on poly
 5:20060215.1713:CAE: build a minimal debian for the mr [rt 129474]
 5:20060215.0757:HEP: rewire; 4th and 5th todo, still plus ECAD/CMS lab
 4:20060222.0718:PER: make my mailcheck script display $NEW_MAILS/$DIRS_WITH_NEW_MAIL (ie 66/5)
-4:20060222.0707:PER: mail rose re: MKE weekend rides
 4:20060220.0948:PER: migrate hosts -> sendmail fr msmtp
-4:20060217.0930:HEP: desktop for terrance figy [req 2835]
-4:20060216.1704:HEP: bug steve about netdisco.org (looks cool!)
 4:20060215.1712:CAE: hack on global shell rcs
 4:20060213.1701:CAE: ping gjertson re: web mail hierarchies [rt 132116]
-4:20060213.0659:HEP: setup polyot DNS (see steve)
 3:20060220.1704:HEP: generate some heat stats using condor -qal something or another
 3:20060220.1417:HEP: sweep/mop mr1
 3:20060220.1417:HEP: extend the PS/2 sensor thingies (cables on cart)
 3:20060213.1659:CAE: ping drews re: condor question [rt 132726]
 3:20060213.1648:CAE: unsubscribe bplevitt from future-uw mailing list [rt 133234]
 3:20060213.0659:HEP: cilantro CDROM
-2:20060215.1713:CAE: read chapter 11
-2:20060215.1713:CAE: check on linux unigraphics support
-2:20060213.0518:HEP: get unclutter rpm for steve
 1:20060213.0659:HEP: AFS setup notes (test cell)
 0:20060213.0726:HEP: make Xserve RAIDs auto-power on [req 2686]
+    -:20060227.0849:4:20060216.1704:HEP: bug steve about netdisco.org (looks cool!)
+    -:20060227.0849:4:20060213.0659:HEP: setup polyot DNS (see steve)
+    -:20060227.0849:2:20060215.1713:CAE: read chapter 11
+    -:20060227.0848:4:20060217.0930:HEP: desktop for terrance figy [req 2835]
     -:20060222.0712:4:20060220.1632:HEP: ask Sean to AFSize $HOME on nodes
     -:20060222.0712:4:20060220.0947:HEP: ping sean/wu/dasu re: PSU for g nodes
     -:20060222.0710:5:20060217.1251:PER: return ross's bedarned  DVD
