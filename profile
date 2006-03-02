@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.117 $
-# Updated	: $Date: 2006/03/02 13:46:05 $
+# Version	: $Revision: 1.118 $
+# Updated	: $Date: 2006/03/02 14:18:13 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.117 2006/03/02 13:46:05 will Exp $
+# CVS		: $Id: profile,v 1.118 2006/03/02 14:18:13 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -323,7 +323,11 @@ agent () {
     fi
 
     # List keys represented by the agent; if none, add some keys
-    ssh-add -l
+    if [ ${VERBOSE} -ge 1 ]; then
+        ssh-add -l
+    else
+        ssh-add -l 2>&1 > /dev/null
+    fi
     if [ $? -gt 0 ]; then
         notify 2 "Don't appear to be any keys in the agent."
         notify 2 "ssh-add -t 7200 > /dev/null 2>&1"

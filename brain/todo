@@ -2,6 +2,7 @@
 # [-:][DATE_DONE:]PRIO:CATEGORY:DATE: TASK
 # tron () { grep -Ev '^#)' $TODO | sort -t ':' -k 1 | sed -e 's/.*\.[0-9]\{4\}://' | while read LINE; do echo -n " - "; echo "$LINE" | fmt -68; done }
 6:20060301.0752:PER: figger out UPS pickup (3pkgs)
+5:20060302.0748:HEP: send Sean part numbers for different gX PSUs
 5:20060302.0611:HEP: kick CMS lab wifi
 5:20060302.0609:HEP: g9 RMAs -> production
 5:20060302.0609:HEP: dust horizontal surfaces in mr1
