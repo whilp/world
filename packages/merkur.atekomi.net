@@ -42,6 +42,7 @@ libgpg-error-0.7    error codes for GnuPG related software
 libgsf-1.11.1p0     GNOME Structured File library
 libiconv-1.9.2p1    character set conversion library
 libltdl-1.5.18      GNU libtool system independent dlopen wrapper
+libslang-1.4.9p2    stack-based interpreter for terminal applications
 libtool-1.5.18p2    generic shared library support script
 libungif-4.1.4      tools and library routines for working with GIF images
 libxml-2.6.16p5     XML parsing library
@@ -74,6 +75,7 @@ ruby-1.8.1p0        object oriented script language with threads
 ruby-ncurses-0.8    Ruby interface to ncurses
 sc-7.15p1           curses spreadsheet-calculator program
 screen-4.0.2        multi-screen window manager
+slrn-0.9.8.1p1      SLang-based newsreader
 snownews-1.5.4      text mode rss newsreader
 sqlite-2.8.16       Embedded SQL implementation
 t1lib-5.0.0         Type 1 rasterizer library for UNIX/X11

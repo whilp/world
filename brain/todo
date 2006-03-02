@@ -1,26 +1,38 @@
 # vim: set tw=0 ft=text:
 # [-:][DATE_DONE:]PRIO:CATEGORY:DATE: TASK
 # tron () { grep -Ev '^#)' $TODO | sort -t ':' -k 1 | sed -e 's/.*\.[0-9]\{4\}://' | while read LINE; do echo -n " - "; echo "$LINE" | fmt -68; done }
-6:20060227.0837:UNI: HS555 argument description; see email -- due by 6:00PM
-6:20060227.0835:JOB: TIMESHEET! HOURS!
-5:20060227.0847:HEP: ping aimee re: letting MadLUG use some HEP/physics space in the evenings
+6:20060301.0752:PER: figger out UPS pickup (3pkgs)
+5:20060302.0611:HEP: kick CMS lab wifi
+5:20060302.0609:HEP: g9 RMAs -> production
+5:20060302.0609:HEP: dust horizontal surfaces in mr1
+5:20060227.1022:UNI: HS325 late paper...sigh
 5:20060224.1334:HEP: pick up prox card from P&S (grep alefkow chat logs)
-5:20060220.1235:PER: make a nice binding for vim && quickfix/copen && todo
 5:20060216.1704:HEP: set up roundup mail on poly
 5:20060215.1713:CAE: build a minimal debian for the mr [rt 129474]
-5:20060215.0757:HEP: rewire; 4th and 5th todo, still plus ECAD/CMS lab
+4:20060228.2040:HEP: rewire teleconf (21CN) (see mail from steve 2006.03.02)
+4:20060228.2037:HEP: build new wheat for pondrom
+4:20060228.2037:HEP: build new desktop for sunny
 4:20060222.0718:PER: make my mailcheck script display $NEW_MAILS/$DIRS_WITH_NEW_MAIL (ie 66/5)
 4:20060220.0948:PER: migrate hosts -> sendmail fr msmtp
 4:20060215.1712:CAE: hack on global shell rcs
 4:20060213.1701:CAE: ping gjertson re: web mail hierarchies [rt 132116]
+3:20060228.2039:HEP: get g3 rack ready to roll (to mr2)
 3:20060220.1704:HEP: generate some heat stats using condor -qal something or another
 3:20060220.1417:HEP: sweep/mop mr1
-3:20060220.1417:HEP: extend the PS/2 sensor thingies (cables on cart)
+3:20060220.1417:HEP: extend the netbotz PS/2 sensor thingies -> mr2 (cables on cart)
 3:20060213.1659:CAE: ping drews re: condor question [rt 132726]
 3:20060213.1648:CAE: unsubscribe bplevitt from future-uw mailing list [rt 133234]
 3:20060213.0659:HEP: cilantro CDROM
+2:20060220.1235:PER: make a nice binding for vim && quickfix/copen && todo
 1:20060213.0659:HEP: AFS setup notes (test cell)
 0:20060213.0726:HEP: make Xserve RAIDs auto-power on [req 2686]
+    -:20060301.1517:5:20060228.2038:HEP: run multimode fiber to mr1-west
+    -:20060301.1517:4:20060228.2039:HEP: run 4x cat5 to catnip in mr1
+    -:20060228.2047:5:20060215.0757:HEP: rewire; grep -v 'done$' ~/.notes/hep-office-rewiring
+    -:20060228.2046:5:20060227.1434:HEP: fix erwin's office
+    -:20060228.0812:5:20060227.1434:HEP: purchase a nice keyboard and mouse (Apple) from the Techstore for Don Reeder
+    -:20060228.0812:5:20060227.1434:HEP: buy 3-5 long cat5s (30'?)
+    -:20060228.0812:5:20060227.0847:HEP: ping aimee re: letting MadLUG use some HEP/physics space in the evenings
     -:20060227.0849:4:20060216.1704:HEP: bug steve about netdisco.org (looks cool!)
     -:20060227.0849:4:20060213.0659:HEP: setup polyot DNS (see steve)
     -:20060227.0849:2:20060215.1713:CAE: read chapter 11

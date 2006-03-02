@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.116 $
-# Updated	: $Date: 2006/02/25 06:41:03 $
+# Version	: $Revision: 1.117 $
+# Updated	: $Date: 2006/03/02 13:46:05 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.116 2006/02/25 06:41:03 will Exp $
+# CVS		: $Id: profile,v 1.117 2006/03/02 13:46:05 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -341,7 +341,7 @@ CLUSTER=~/.cluster
 RCMD_CMD=ssh
 alias lsof="sudo lsof"
 if [ "$UID" -gt "0" ]; then
-    agent
+    VERBOSE=0 agent
 fi
 ssh-rmkey () {
     LINE=$1
