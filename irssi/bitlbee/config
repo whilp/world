@@ -222,6 +222,7 @@ settings = {
     autoaway_verbose = "0";
     autoaway_msg = "\"^z\"";
     autoaway_poll = "30000";
+    nicklist_automode = "fifo";
   };
   "fe-common/irc" = { show_away_once = "yes"; };
 };
