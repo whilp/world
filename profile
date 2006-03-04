@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.118 $
-# Updated	: $Date: 2006/03/02 14:18:13 $
+# Version	: $Revision: 1.119 $
+# Updated	: $Date: 2006/03/03 18:47:48 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.118 2006/03/02 14:18:13 will Exp $
+# CVS		: $Id: profile,v 1.119 2006/03/03 18:47:48 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -350,7 +350,7 @@ fi
 ssh-rmkey () {
     LINE=$1
     TMPFILE=$(mktemp -q ~/.ssh/known_hosts.XXXX || exit 1)
-    sed -e "${LINE}d" ~/.ssh/known_hosts > ${TMPFILE}
+    sed -e "${LINE}d" ~/.ssh/known_hosts >| ${TMPFILE}
     mv ${TMPFILE} ~/.ssh/known_hosts
 }
 todo () {

@@ -382,6 +382,7 @@ settings = {
     autoaway_sec = "900";
     autoaway_verbose = "0";
     autoaway_poll = "30000";
+    nicklist_width = "14";
   };
   "fe-common/irc" = { show_away_once = "yes"; };
 };

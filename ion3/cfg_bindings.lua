@@ -29,10 +29,12 @@ defbindings("WScreen", {
     kpress(MOD1.."0", "WScreen.switch_nth(_, 9)"),
     
     bdoc("Switch to next/previous object within current screen."),
-    kpress(MOD1.."comma", "WScreen.switch_prev(_)"),
-    kpress(MOD1.."period", "WScreen.switch_next(_)"),
+    kpress(MOD1.."comma", "WFrame.switch_next(_)"),
+    kpress(MOD1.."period", "WFrame.switch_prev(_)"),
     
     submap(MOD1.."K", {
+        kpress(MOD1.."P", "WScreen.switch_prev(_)"),
+        kpress(MOD1.."N", "WScreen.switch_next(_)"),
         bdoc("Go to previous active object."),
         kpress("K", "ioncore.goto_previous()"),
         
@@ -146,6 +148,8 @@ defbindings("WMPlex", {
 defbindings("WFrame", {
     bdoc("Tag current object within the frame."),
     kpress(MOD1.."T", "WRegion.set_tagged(_sub, 'toggle')", "_sub:non-nil"),
+    kpress(MOD1.."period", "WFrame.switch_next(_)"),
+    kpress(MOD1.."comma", "WFrame.switch_prev(_)"),
 
     submap(MOD1.."K", {
         bdoc("Switch to n:th object within the frame."),
@@ -161,8 +165,8 @@ defbindings("WFrame", {
         kpress("0", "WFrame.switch_nth(_, 9)"),
         
         bdoc("Switch to next/previous object within the frame."),
-        kpress("N", "WFrame.switch_next(_)"),
-        kpress("P", "WFrame.switch_prev(_)"),
+--      kpress("N", "WFrame.switch_next(_)"),
+--      kpress("P", "WFrame.switch_prev(_)"),
         
         bdoc("Move current object within the frame left/right."),
         kpress("comma", "WFrame.dec_index(_, _sub)", "_sub:non-nil"),
