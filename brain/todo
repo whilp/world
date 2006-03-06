@@ -4,8 +4,10 @@
 6:20060301.0752:PER: figger out UPS pickup (3pkgs)
 5:20060302.0609:HEP: dust horizontal surfaces in mr1
 5:20060227.1022:UNI: HS325 late paper...sigh
+5:20060227.0847:HEP: ping aimee re: letting MadLUG use some HEP/physics space MAR 17
 5:20060216.1704:HEP: set up roundup mail on poly
 5:20060215.1713:CAE: build a minimal debian for the mr [rt 129474]
+4:20060303.1319:PER: make nicklist.pl only show eg #bitlbee, regardless of active_win
 4:20060302.0918:JOB: make a script to pretty print TODO with date headers, etc
 4:20060302.0918:JOB: make a latex filter for pretty printing TODO
 4:20060228.2037:HEP: build new wheat for pondrom
@@ -36,7 +38,6 @@
     -:20060228.2046:5:20060227.1434:HEP: fix erwin's office
     -:20060228.0812:5:20060227.1434:HEP: purchase a nice keyboard and mouse (Apple) from the Techstore for Don Reeder
     -:20060228.0812:5:20060227.1434:HEP: buy 3-5 long cat5s (30'?)
-    -:20060228.0812:5:20060227.0847:HEP: ping aimee re: letting MadLUG use some HEP/physics space in the evenings
     -:20060227.0849:4:20060216.1704:HEP: bug steve about netdisco.org (looks cool!)
     -:20060227.0849:4:20060213.0659:HEP: setup polyot DNS (see steve)
     -:20060227.0849:2:20060215.1713:CAE: read chapter 11

@@ -38,6 +38,7 @@ jbigkit-1.5         lossless image compression library
 jpeg-6bp2           IJG's JPEG compression utilities
 lcms-1.12p0         color management library
 libgcrypt-1.2.0     crypto library based on code used in GnuPG
+libghttp-1.0.9p0    GNOME http client library
 libgpg-error-0.7    error codes for GnuPG related software
 libgsf-1.11.1p0     GNOME Structured File library
 libiconv-1.9.2p1    character set conversion library
@@ -61,8 +62,20 @@ netpbm-9.24p3       toolkit for converting images between different formats
 ngrep-1.44          network grep
 nmap-3.81-no_x11    scan ports and fingerprint stack of network hosts
 opencdk-0.5.5       Open Crypto Development Kit
+p5-Compress-Zlib-1.35 perl interface to the zlib compression library
+p5-Crypt-SSLeay-0.51 library to provide LWP https support via OpenSSL
 p5-DateManip-5.42a  manipulate dates in perl
+p5-Digest-HMAC-1.01 interface to HMAC Message-Digest Algorithms
+p5-Digest-SHA1-2.10 module to calculate SHA1 digests
+p5-HTML-Parser-3.45 modules to parse and extract information from HTML
+p5-HTML-Tagset-3.04 data tables useful for parsing HTML
+p5-HTTP-GHTTP-1.07  perl interface to the Gnome GHTTP library
+p5-Net-DNS-0.53     module to interface the DNS resolver
+p5-Net-IP-1.23      perl module for IPv4 address parsing
+p5-Net-Whois-1.9    perl5 module for getting and parsing whois entries
 p5-Time-TimeDate-1.16 library for parsing and formatting dates and times
+p5-URI-1.35         library to parse Uniform Resource Identifiers
+p5-libwww-5.803     library for WWW access in Perl
 pcre-4.5p1          perl-compatible regular expression library
 php5-core-5.0.4p0   server-side HTML-embedded scripting language
 png-1.2.8           library for manipulating PNG images
