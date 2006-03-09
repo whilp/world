@@ -1,12 +1,12 @@
 # vim: set tw=0 ft=text:
 # [-:][DATE_DONE:]PRIO:CATEGORY:DATE: TASK
 # tron () { grep -Ev '^#)' $TODO | sort -t ':' -k 1 | sed -e 's/.*\.[0-9]\{4\}://' | while read LINE; do echo -n " - "; echo "$LINE" | fmt -68; done }
-6:20060301.0752:PER: figger out UPS pickup (3pkgs)
+6:20060301.0752:PER: figger out UPS pickup (1pkgs)
 5:20060302.0609:HEP: dust horizontal surfaces in mr1
 5:20060227.1022:UNI: HS325 late paper...sigh
-5:20060227.0847:HEP: ping aimee re: letting MadLUG use some HEP/physics space MAR 17
 5:20060216.1704:HEP: set up roundup mail on poly
 5:20060215.1713:CAE: build a minimal debian for the mr [rt 129474]
+4:20060308.0802:HEP: bring airport-cms-lab back up
 4:20060303.1319:PER: make nicklist.pl only show eg #bitlbee, regardless of active_win
 4:20060302.0918:JOB: make a script to pretty print TODO with date headers, etc
 4:20060302.0918:JOB: make a latex filter for pretty printing TODO

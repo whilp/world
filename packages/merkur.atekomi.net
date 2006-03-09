@@ -7,7 +7,7 @@ autoconf-2.13p0     automatically configure source code on many Un*x platforms
 autoconf-2.52p0     automatically configure source code on many Un*x platforms
 autoconf-2.59       automatically configure source code on many Un*x platforms
 automake-1.4-p6p2   GNU Standards-compliant Makefile generator
-bitlbee-0.91p2      IRC proxy to connect to AIM, ICQ, Jabber, MSN and Yahoo
+bitlbee-1.0.1       IRC proxy to connect to AIM, ICQ, Jabber, MSN and Yahoo
 bsdiff-4.2          binary patch tools
 bwm-ng-0.5          realtime bandwidth monitoring of interfaces
 bzip2-1.0.3         block-sorting file compressor, unencumbered
@@ -78,6 +78,7 @@ p5-URI-1.35         library to parse Uniform Resource Identifiers
 p5-libwww-5.803     library for WWW access in Perl
 pcre-4.5p1          perl-compatible regular expression library
 php5-core-5.0.4p0   server-side HTML-embedded scripting language
+pkgconfig-0.15.0p0  tool for managing library compile/link flags
 png-1.2.8           library for manipulating PNG images
 postfix-2.3.20050716-sasl2 fast, secure sendmail replacement
 python-2.3.5p2      interpreted object-oriented programming language

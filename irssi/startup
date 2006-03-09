@@ -28,3 +28,5 @@ bind window-^C /window new hide
 run awl
 run usercount
 run nickcolor
+run tty_away
+run nicklist

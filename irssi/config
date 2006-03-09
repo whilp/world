@@ -442,16 +442,27 @@ ignores = (
   }
 );
 windows = {
+  9 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#newlug";
+        tag = "freenode";
+      }
+    );
+  };
   10 = {
     items = (
       {
-        type = "QUERY";
+        type = "CHANNEL";
         chat_type = "IRC";
-        name = "chanserv";
+        name = "#wilug";
         tag = "freenode";
       }
     );
     sticky = "yes";
+    parent = "9";
   };
   8 = {
     items = (
@@ -463,17 +474,7 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "10";
-  };
-  9 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#wilug";
-        tag = "freenode";
-      }
-    );
+    parent = "9";
   };
   1 = { 
     immortal = "yes";
@@ -491,55 +492,7 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "10";
-  };
-  4 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#irssi";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "10";
-  };
-  3 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#screen";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "10";
-  };
-  6 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#vim";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "10";
-  };
-  5 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#zsh";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "10";
+    parent = "9";
   };
   2 = {
     items = (
@@ -551,10 +504,58 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "10";
+    parent = "9";
+  };
+  4 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#irssi";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+    parent = "9";
+  };
+  3 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#screen";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+    parent = "9";
+  };
+  6 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#vim";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+    parent = "9";
+  };
+  5 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#zsh";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+    parent = "9";
   };
 };
 mainwindows = {
-  1 = { first_line = "48"; lines = "6"; };
-  10 = { first_line = "1"; lines = "47"; };
+  1 = { first_line = "44"; lines = "6"; };
+  9 = { first_line = "1"; lines = "43"; };
 };
