@@ -1,10 +1,10 @@
 "#################  BEGIN HEADERS
 " e Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
-" Version	: $Revision: 1.46 $
+" Version	: $Revision: 1.47 $
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: $Date: 2006/02/27 14:50:31 $
-" CVS		: $Id: vimrc,v 1.46 2006/02/27 14:50:31 will Exp $
+" Updated	: $Date: 2006/03/10 22:46:03 $
+" CVS		: $Id: vimrc,v 1.47 2006/03/10 22:46:03 will Exp $
 " Copyright	: Copyright (c) 2005 Will Maier
 " License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 "#################  END HEADERS
@@ -12,8 +12,6 @@
 " --[ SET OPTIONS
     set nocompatible			" Use Vim defaults instead of 100% vi compatibility
     set backspace=indent,eol,start	" more powerful backspacing
-    set backup
-    set backupdir=$HOME/.vimfiles/
     set laststatus=2			" always show a statusline
 
     set autoindent			" always set autoindenting on
