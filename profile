@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.119 $
-# Updated	: $Date: 2006/03/03 18:47:48 $
+# Version	: $Revision: 1.120 $
+# Updated	: $Date: 2006/03/14 02:20:44 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.119 2006/03/03 18:47:48 will Exp $
+# CVS		: $Id: profile,v 1.120 2006/03/14 02:20:44 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -42,7 +42,7 @@ export PRINTER
 
 # --[ ENVIRONMENT
     PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/X11R6/bin:/opt/:/usr/games/:/usr/pkg/bin/:/usr/pkg/sbin"
-    PKG_PATH=ftp://openbsd.rt.fm/pub/OpenBSD/3.8/packages/i386
+    PKG_PATH="ftp://openbsd.mirrors.tds.net/pub/OpenBSD/$(uname -r)/packages/$(uname -m)"
     export PATH
 # arch-specific stuff.
 case $ARCH in
