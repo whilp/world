@@ -2,13 +2,34 @@
 # Filename	: $HOME/.faq
 # Use		: collection of questions (and answers) I consistently forget
 # Vim           : vim: set tw=80:
-# Version	: $Revision: 1.4 $
+# Version	: $Revision: 1.5 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2006/02/27 14:50:31 $
-# CVS		: $Id: faq,v 1.4 2006/02/27 14:50:31 will Exp $
+# Updated	: $Date: 2006/03/15 20:46:37 $
+# CVS		: $Id: faq,v 1.5 2006/03/15 20:46:37 will Exp $
 # Copyright	: Copyright (c) 2005-2006 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
+
+================================================================================
+
+Q: What's a crazy way to stream media files between two networks using ssh,
+mplayer and one's shell?
+
+A: Heh. First, create some fifos, one on each end:
+
+    remotebox % mkfifo ~/remote-fifo
+    localbox % mkfifo ~/local-fifo
+
+Now, start building the chain:
+
+    localbox % ssh me@remotebox 'cat ~/remote-fifo' > ~/local-fifo
+    localbox % mplayer ~/local-fifo
+    remotebox % cat /path/to/tunes/*ogg > ~/remote-fifo
+
+That should be it. It'd be interesting to measure the bandwidth used and,
+ultimately, fashion the above into a handy little script.
+
+================================================================================
 
 ================================================================================
 
