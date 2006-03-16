@@ -11,7 +11,6 @@
 
 user_pref("accessibility.typeaheadfind.enablesound", false);
 user_pref("accessibility.typeaheadfind.flashBar", 0);
-user_pref("app.update.autoUpdateEnabled", false);
 user_pref("app.update.lastUpdateDate", 1140209896);
 user_pref("browser.download.defaultFolder", "/home/will");
 user_pref("browser.download.manager.retention", 0);
@@ -21,13 +20,12 @@ user_pref("browser.link.open_external", 3);
 user_pref("browser.preferences.lastpanel", 4);
 user_pref("browser.search.selectedEngine", "Google");
 user_pref("browser.startup.homepage", "about:blank");
-user_pref("browser.startup.homepage_override.mstone", "rv:1.7.10");
+user_pref("browser.startup.homepage_override.mstone", "rv:1.7.12");
 user_pref("browser.tabs.autoHide", false);
 user_pref("browser.tabs.loadBookmarksInBackground", true);
 user_pref("browser.tabs.warnOnClose", false);
 user_pref("extensions.disabledObsolete", true);
 user_pref("extensions.lastAppVersion", "1.0");
-user_pref("extensions.update.autoUpdateEnabled", false);
 user_pref("extensions.update.lastUpdateDate", 1140209896);
 user_pref("general.open_location.last_url", "http://library.wisc.edu/");
 user_pref("general.open_location.last_window_choice", 0);
