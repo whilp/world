@@ -383,6 +383,7 @@ settings = {
     autoaway_verbose = "0";
     autoaway_poll = "30000";
     nicklist_width = "14";
+    url_file = "~/.irssi/urls.html";
   };
   "fe-common/irc" = { show_away_once = "yes"; };
 };

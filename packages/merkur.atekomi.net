@@ -32,6 +32,7 @@ grepmail-4.80       search mailboxes for a particular email
 gtar-1.15.1p2       GNU version of the traditional tar archiver
 help2man-1.29       GNU help2man
 integrit-3.02.00p0  file integrity checker
+ipv6calc-0.46       tool for manipulating IPv6 addresses
 irssi-0.8.9         modular IRC client with many features (ipv6,socks,proxy)
 jasper-1.701.0      reference implementation of JPEG-2000
 jbigkit-1.5         lossless image compression library

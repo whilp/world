@@ -30,3 +30,4 @@ run usercount
 run nickcolor
 run tty_away
 run nicklist
+run burl.pl
