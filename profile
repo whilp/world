@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.121 $
-# Updated	: $Date: 2006/03/16 03:38:52 $
+# Version	: $Revision: 1.122 $
+# Updated	: $Date: 2006/03/17 18:54:58 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.121 2006/03/16 03:38:52 will Exp $
+# CVS		: $Id: profile,v 1.122 2006/03/17 18:54:58 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -112,6 +112,7 @@ esac
     SHELL=`which zsh`
     CLUSTER=$HOME/.dsh/config
     RCMD_CMD=ssh
+    RCP_CMD=scp
     EDITOR=`which vim`
     CVSEDITOR=$EDITOR
 export LANG PATH SHELL EDITOR CVSEDITOR MAIL PKG_PATH TODO CLUSTER RCMD_CMD FAQ
