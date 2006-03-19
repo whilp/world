@@ -2,13 +2,27 @@
 # Filename	: $HOME/.faq
 # Use		: collection of questions (and answers) I consistently forget
 # Vim           : vim: set tw=80:
-# Version	: $Revision: 1.5 $
+# Version	: $Revision: 1.6 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2006/03/15 20:46:37 $
-# CVS		: $Id: faq,v 1.5 2006/03/15 20:46:37 will Exp $
+# Updated	: $Date: 2006/03/18 19:21:32 $
+# CVS		: $Id: faq,v 1.6 2006/03/18 19:21:32 will Exp $
 # Copyright	: Copyright (c) 2005-2006 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
+
+================================================================================
+
+Q: What are some interesting ways to manage a bundle of distributed systems?
+
+A: Well, there's cfengine[0], quattor[1], salad[2], elfms[3], lemon[3],
+vamos[5], wboom[6].
+
+[0]http://www.cfengine.org/
+[1]http://quattor.web.cern.ch/quattor/
+[2]http://www-it.desy.de/systems/services/salad/
+[3]http://elfms.web.cern.ch/elfms/
+
+================================================================================
 
 ================================================================================
 

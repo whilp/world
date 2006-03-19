@@ -1,7 +1,6 @@
 smartfeed:/newitems|||
 http://www.us-cert.gov/current/index.rdf||Security|
 http://www.us-cert.gov/channels/techalerts.rdf||Security|
-http://www.frsirt.com/exploits.xml|FrSIRT Exploits|Security|
 http://undeadly.org/cgi?action=errata|||
 http://www.freebsd.org/security/advisories.rdf||BSD,Security|
 http://www.vuxml.org/freebsd/rss.xml|FreeBSD Ports Advisories|BSD,Security|
