@@ -1,10 +1,10 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
-# Version	: $Revision: 1.42 $
+# Version	: $Revision: 1.43 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2006/03/03 18:47:48 $
-# CVS		: $Id: zshrc,v 1.42 2006/03/03 18:47:48 will Exp $
+# Updated	: $Date: 2006/03/20 20:23:52 $
+# CVS		: $Id: zshrc,v 1.43 2006/03/20 20:23:52 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -23,9 +23,9 @@ autoload -U zmv			    # a la mmv/rename
 zmodload -i zsh/complist	    # for completion
 
 # --[ SET ALIASES
-alias -s tex=$EDITOR		    # eg 'unixbook.tex<CR>' opens unixbook in
+#alias -s tex=$EDITOR		    # eg 'unixbook.tex<CR>' opens unixbook in
 				    # vim
-alias -s html='elinks'		    # html -> www browser
+#alias -s html='elinks'		    # html -> www browser
 alias mv='nocorrect mv'		    # no spelling correction on mv
 alias man='nocorrect man'	    # no spelling correction on man
 alias cp='nocorrect cp'		    # no spelling correction on cp

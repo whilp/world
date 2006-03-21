@@ -11,7 +11,7 @@ Host *
     ForwardAgent yes
     ForwardX11  no
     Protocol    2
-    HashKnownHosts yes
+#    HashKnownHosts yes
 
 # PERSONAL
 Host localmerk
