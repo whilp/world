@@ -1,20 +1,26 @@
 servers = (
   {
+    address = "localhost";
+    chatnet = "bitl";
+    autoconnect = "yes";
+    port = "6667";
+  },
+  {
     address = "ircd.nac.net";
     chatnet = "EFNet";
-    autoconnect = "yes";
+    autoconnect = "no";
     port = "6668";
   },
   {
     address = "irc.mzima.net";
     chatnet = "EFNet";
-    autoconnect = "yes";
+    autoconnect = "no";
     port = "6668";
   },
   {
     address = "moo.slashnet.org";
     chatnet = "slashnet";
-    autoconnect = "yes";
+    autoconnect = "no";
     port = "6668";
   },
   {
@@ -28,7 +34,6 @@ servers = (
     chatnet = "mkeirc";
     port = "6668";
   },
-  #autoconnect = "yes";
   { address = "irc.stealth.net"; chatnet = "IRCnet"; port = "6668"; },
   { address = "hub.efnet.us"; chatnet = "EFNet"; port = "6668"; },
   { 
@@ -71,6 +76,11 @@ servers = (
 # { address = "irc.blessed.net"; chatnet = "EFNet"; port = "6667"; },
 
 chatnets = {
+  bitl = {
+    type = "IRC";
+    autosendcmd = "/^msg bitlbee identify lesheros";
+    nick = "will";
+  };
   IRCnet = {
     type = "IRC";
     max_kicks = "4";
@@ -156,17 +166,16 @@ chatnets = {
 };
 
 channels = (
-  { name = "#openbsd"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#zsh"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#vim"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "&bitlbee"; chatnet = "bitl"; autojoin = "yes"; },
+  { name = "#openbsd"; chatnet = "freenode"; autojoin = "no"; },
+  { name = "#zsh"; chatnet = "freenode"; autojoin = "no"; },
+  { name = "#vim"; chatnet = "freenode"; autojoin = "no"; },
   { name = "#madlug"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#screen"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#bitlbee"; chatnet = "bitlbee"; autojoin = "yes"; },
-  { name = "#irssi"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#screen"; chatnet = "freenode"; autojoin = "no"; },
+  { name = "#bitlbee"; chatnet = "bitlbee"; autojoin = "no"; },
   { name = "#irssi"; chatnet = "freenode"; autojoin = "No"; },
-  { name = "silc"; chatnet = "silc"; autojoin = "No"; },
   { name = "#mininova"; chatnet = "efnet"; autojoin = "no"; },
-  { name = "#ion"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#ion"; chatnet = "freenode"; autojoin = "no"; },
   { name = "#lighttpd"; chatnet = "freenode"; },
   { name = "#gnu-kbsd"; chatnet = "freenode"; },
   { name = "#wilug"; chatnet = "freenode"; autojoin = "yes"; },
@@ -344,7 +353,7 @@ statusbar = {
 };
 settings = {
   core = {
-    real_name = "emx";
+    real_name = "lt_kije";
     user_name = "lt_kije";
     nick = "lt_kije";
     timestamp_format = "%H:%M:%S";
@@ -371,7 +380,6 @@ settings = {
   "perl/core/scripts" = {
     maildir_mode = "yes";
     mail_show_message = "yes";
-    mail_mailboxes = "1=/var/mail/will,Family=/home/will/Maildir/Personal/Family/,";
     chanact_show_all = "yes";
     chanact_display = "$H$N:$M.$S$C";
     awl_display_key = "$Q%K %n$H$C$S";
@@ -443,7 +451,43 @@ ignores = (
   }
 );
 windows = {
-  9 = {
+  5 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#wilug";
+        tag = "freenode";
+      }
+    );
+  };
+  3 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#madlug";
+        tag = "freenode";
+      }
+    );
+  };
+  2 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "&bitlbee";
+        tag = "bitl";
+      }
+    );
+  };
+  1 = { 
+    immortal = "yes";
+    name = "(status)";
+    level = "ALL";
+    sticky = "yes";
+  };
+  4 = {
     items = (
       {
         type = "CHANNEL";
@@ -453,110 +497,8 @@ windows = {
       }
     );
   };
-  10 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#wilug";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "9";
-  };
-  8 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#madlug";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "9";
-  };
-  1 = { 
-    immortal = "yes";
-    name = "(status)";
-    level = "ALL";
-    sticky = "yes";
-  };
-  7 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#ion";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "9";
-  };
-  2 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#openbsd";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "9";
-  };
-  4 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#irssi";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "9";
-  };
-  3 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#screen";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "9";
-  };
-  6 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#vim";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "9";
-  };
-  5 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#zsh";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "9";
-  };
 };
 mainwindows = {
   1 = { first_line = "44"; lines = "6"; };
-  9 = { first_line = "1"; lines = "43"; };
+  5 = { first_line = "1"; lines = "43"; };
 };
