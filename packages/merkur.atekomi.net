@@ -22,10 +22,12 @@ gdbm-1.8.3p0        GNU dbm
 getmail-4.4.2p0     POP3 mail retriever
 gettext-0.10.40p3   GNU gettext
 ggrep-2.5.1p1       GNU versions of grep pattern matching utilities
+ghc-6.2.2           compiler for the functional language Haskell
 ghostscript-fonts-6.0 35 standard PostScript fonts with Adobe name aliases
 glib-1.2.10p0       useful routines for C programming
 glib2-2.6.4         general-purpose utility library
 gmake-3.80p1        GNU make
+gmp-4.1.4           library for arbitrary precision arithmetic
 gnuls-4.1p0         colorized GNU 'ls'
 gnutls-1.0.25       GNU Transport Layer Security library
 grepmail-4.80       search mailboxes for a particular email

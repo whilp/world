@@ -1,10 +1,10 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
-# Version	: $Revision: 1.43 $
+# Version	: $Revision: 1.44 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2006/03/20 20:23:52 $
-# CVS		: $Id: zshrc,v 1.43 2006/03/20 20:23:52 will Exp $
+# Updated	: $Date: 2006/03/24 14:10:45 $
+# CVS		: $Id: zshrc,v 1.44 2006/03/24 14:10:45 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -46,6 +46,8 @@ bindkey '\e[3~' delete-char             # Del
 bindkey '\e[2~' overwrite-mode          # Insert
 bindkey -v
 stty erase '^H'
+
+watch=(notme root)
 
 # --[ PROMPT
 if (( EUID != 0 )); then

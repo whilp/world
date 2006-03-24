@@ -76,11 +76,7 @@ servers = (
 # { address = "irc.blessed.net"; chatnet = "EFNet"; port = "6667"; },
 
 chatnets = {
-  bitl = {
-    type = "IRC";
-    autosendcmd = "/^msg bitlbee identify lesheros";
-    nick = "will";
-  };
+  bitl = { type = "IRC"; nick = "will"; };
   IRCnet = {
     type = "IRC";
     max_kicks = "4";
@@ -451,16 +447,6 @@ ignores = (
   }
 );
 windows = {
-  5 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#wilug";
-        tag = "freenode";
-      }
-    );
-  };
   3 = {
     items = (
       {
@@ -481,12 +467,6 @@ windows = {
       }
     );
   };
-  1 = { 
-    immortal = "yes";
-    name = "(status)";
-    level = "ALL";
-    sticky = "yes";
-  };
   4 = {
     items = (
       {
@@ -497,8 +477,24 @@ windows = {
       }
     );
   };
+  1 = { 
+    immortal = "yes";
+    name = "(status)";
+    level = "ALL";
+    sticky = "yes";
+  };
+  5 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#wilug";
+        tag = "freenode";
+      }
+    );
+  };
 };
 mainwindows = {
-  1 = { first_line = "44"; lines = "6"; };
-  5 = { first_line = "1"; lines = "43"; };
+  1 = { first_line = "59"; lines = "9"; };
+  3 = { first_line = "1"; lines = "58"; };
 };
