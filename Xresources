@@ -2,13 +2,14 @@
 ! Filename	: $HOME/.Xresources
 ! Use		: configures X fonts and colors
 ! Author	: Will Maier <willmaier@ml1.net>
-! Version	: $Revision: 1.10 $
-! Updated	: $Date: 2006/02/14 17:31:44 $
-! CVS		: $Id: Xresources,v 1.10 2006/02/14 17:31:44 will Exp $
+! Version	: $Revision: 1.11 $
+! Updated	: $Date: 2006/03/27 20:47:36 $
+! CVS		: $Id: Xresources,v 1.11 2006/03/27 20:47:36 will Exp $
 ! Copyright	: Copyright (c) 2005 Will Maier
 ! License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 !#################  END HEADERS
 
+Aterm*transparent: true
 XTerm*background: black
 XTerm*foreground: white
 
@@ -24,7 +25,7 @@ XTerm*shading: 35
 !XTerm*font: -misc-fixed-medium-r-normal--18-120-100-100-c-90-iso10646-1
 XTerm*boldFont:*-*-fixed-bold-r-normal--*-*-140-*-*-*-*-iso8859-1
 XTerm*charClass: 33:48,37:48,45-47:48,58:48,61:48,63-64:48,126:48
-XTerm*geometry: +80+24
+!XTerm*geometry: +80+24
 
 XTerm*color0: black
 XTerm*color1: #AA0000

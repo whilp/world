@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.122 $
-# Updated	: $Date: 2006/03/17 18:54:58 $
+# Version	: $Revision: 1.123 $
+# Updated	: $Date: 2006/03/27 20:47:36 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.122 2006/03/17 18:54:58 will Exp $
+# CVS		: $Id: profile,v 1.123 2006/03/27 20:47:36 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -361,3 +361,13 @@ faq () {
     vim $FAQ
 }
 # find /dev -user $USER -wholename "*/tty*" -o -wholename "*/pts/*" 2>/dev/null | while read FILE; do stat -c "%Z" $FILE; done
+newpaper () {
+    BGPATH=$HOME/.backgrounds
+    IMAGECOUNT=$(ls $BGPATH/ | wc -l | sed -e 's/[^0-9]//g')
+    NUMBER=0
+    while [ $NUMBER = 0 ]; do
+        NUMBER=$((RANDOM%IMAGECOUNT))
+    done
+    IMAGE="$BGPATH/$(ls $BGPATH | sed -e $NUMBER!d)"
+    xsetbg -brighten 80 -fullscreen -onroot $IMAGE
+}
