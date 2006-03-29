@@ -117,24 +117,25 @@
   </Menu>
   <Merge/>
  </MenuBar>
- <ToolBar newline="true" name="mainToolBar" fullWidth="true" >
+ <ToolBar newline="true" noMerge="1" name="mainToolBar" fullWidth="true" >
   <text>Main Toolbar</text>
   <Action name="back" />
   <Action name="forward" />
   <Action name="up" />
   <Action name="home" />
-  <Separator/>
+  <Separator name="separator_2" />
   <Action name="reload" />
   <Action name="stop" />
-  <Separator/>
+  <Separator name="separator_1" />
   <Action name="print" />
   <WeakSeparator/>
   <Merge/>
-  <Separator/>
+  <Separator name="separator_0" />
   <ActionList name="viewmode_toolbar" />
   <ActionList name="fullscreen" />
   <WeakSeparator/>
   <Action name="animated_logo" />
+  <Action name="history" />
  </ToolBar>
  <ToolBar newline="false" hidden="true" index="1" name="extraToolBar" >
   <text>Extra Toolbar</text>
