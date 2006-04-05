@@ -104,8 +104,8 @@ defbindings("WMPlex", {
     }),
 
     bdoc("Run a terminal emulator."),
-    kpress(MOD2.."F2", "ioncore.exec_on(_, 'xterm')"),
-    kpress(MOD1.."F2", "ioncore.exec_on(_, 'xterm')"),
+    kpress(MOD2.."F2", "ioncore.exec_on(_, '~/bin/term')"),
+    kpress(MOD1.."F2", "ioncore.exec_on(_, '~/bin/term')"),
 
     bdoc("Query for command line to execute."),
     kpress(MOD2.."F3", "mod_query.query_exec(_)"),
@@ -117,13 +117,13 @@ defbindings("WMPlex", {
     kpress(MOD2.."F4", "mod_query.query_ssh(_)"),
     
     bdoc("Run a web browser."),
-    kpress(MOD2.."F5", "ioncore.exec_on(_, 'firefox')"),
+    kpress(MOD2.."F5", "ioncore.exec_on(_, '~/bin/browser')"),
 
-    bdoc("Run a messenging client."),
-    kpress(MOD2.."F6", "ioncore.exec_on(_, 'gajim')"),
+    bdoc("Run a music program."),
+    kpress(MOD2.."F6", "ioncore.exec_on(_, '~/bin/tunes')"),
 
     bdoc("Lock the screen."),
-    kpress(MOD2.."F10", "ioncore.exec_on(_, 'xlock -mode blank')"),
+    kpress(MOD2.."F10", "ioncore.exec_on(_, '~/bin/lock')"),
 
     bdoc("Restart."),
     kpress(MOD2.."F11", "ioncore.restart()"),

@@ -13,7 +13,7 @@ xmodmap -e "add Lock = Caps_Lock"
 xmodmap -e "add Control = Control_L"
 
 # choose a background
-if [ -x $(which xsetbg) ]; then
+if [ -x $(which xsetbg) && -e $HOME/.backgrounds ]; then
     BGPATH=$HOME/.backgrounds
     IMAGECOUNT=$(ls $BGPATH/ | wc -l | sed -e 's/[^0-9]//g')
     NUMBER=0
