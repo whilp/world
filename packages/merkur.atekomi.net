@@ -11,6 +11,7 @@ bitlbee-1.0.1       IRC proxy to connect to AIM, ICQ, Jabber, MSN and Yahoo
 bsdiff-4.2          binary patch tools
 bwm-ng-0.5          realtime bandwidth monitoring of interfaces
 bzip2-1.0.3         block-sorting file compressor, unencumbered
+crack-5.0p0         sensible unix password cracker
 curl-7.15.1         get files from FTP, Gopher, HTTP or HTTPS servers
 cyrus-sasl-2.1.20p4 RFC 2222 SASL (Simple Authentication and Security Layer)
 ddclient-3.6.3      Dynamic DNS service update client
@@ -38,6 +39,7 @@ ipv6calc-0.46       tool for manipulating IPv6 addresses
 irssi-0.8.9         modular IRC client with many features (ipv6,socks,proxy)
 jasper-1.701.0      reference implementation of JPEG-2000
 jbigkit-1.5         lossless image compression library
+john-1.6.38         extremely fast password cracker
 jpeg-6bp2           IJG's JPEG compression utilities
 lcms-1.12p0         color management library
 libgcrypt-1.2.0     crypto library based on code used in GnuPG

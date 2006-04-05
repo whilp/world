@@ -1,10 +1,10 @@
 "#################  BEGIN HEADERS
 " e Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
-" Version	: $Revision: 1.47 $
+" Version	: $Revision: 1.48 $
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: $Date: 2006/03/10 22:46:03 $
-" CVS		: $Id: vimrc,v 1.47 2006/03/10 22:46:03 will Exp $
+" Updated	: $Date: 2006/04/05 03:21:07 $
+" CVS		: $Id: vimrc,v 1.48 2006/04/05 03:21:07 will Exp $
 " Copyright	: Copyright (c) 2005 Will Maier
 " License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 "#################  END HEADERS
@@ -27,7 +27,7 @@
     set softtabstop=4
     set expandtab
     set shiftwidth=4
-    set smartindent
+"   set smartindent
     set foldmethod=indent		" Fold based on line indent
     set nofoldenable
     set wildmenu			" tab completed menus
