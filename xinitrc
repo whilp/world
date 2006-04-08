@@ -32,3 +32,4 @@ exec ion3
 #exec wmii
 #xterm&
 #exec twm
+#exec startkde

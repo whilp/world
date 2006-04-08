@@ -164,7 +164,9 @@
   <Action shortcut="Ctrl+Shift+F;F11" name="fullscreen" />
   <Action shortcut="" name="new_window" />
   <Action shortcut="" name="print" />
-  <Action shortcut="Backspace;Y" name="back" />
+  <Action shortcut="Y" name="back" />
   <Action shortcut="U;XF86Forward" name="forward" />
+  <Action shortcut="" name="open_location" />
+  <Action shortcut="" name="quit" />
  </ActionProperties>
 </gui>

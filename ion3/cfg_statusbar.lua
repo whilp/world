@@ -36,7 +36,7 @@ mod_statusbar.create{
     --
     --template="[ %date || load:% %>load || mail:% %>mail_new/%>mail_total ] %filler%systray",
     --template="[ %date || load: %05load_1min || mail: %02mail_new/%02mail_total ] %filler%systray",
-    template="[NP: %amarok][UP: %uptime][BATT: %laptopstatus_batterypercent][TEMP: %laptopstatus_temperature]%filler[merkur][%date]"
+    template="[UP: %uptime][BATT: %laptopstatus_batterypercent][TEMP: %laptopstatus_temperature][NP: %amarok]%filler[merkur][%date]"
 }
 
 
