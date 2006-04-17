@@ -5,7 +5,7 @@
 ## screen list - used when navigating with next-screen (tab) and 
 ## previous-screen (shift+tab) 
 ## names: playlist browse help artist clock
-screen-list = playlist artist clock
+#screen-list = playlist artist clock
 
 ## auto center (center the playing track in the playlist)
 #auto-center = no
@@ -20,7 +20,7 @@ wrap-around = no
 find-wrap = yes
 
 ## show last pattern when using find
-find-show-last = no
+#find-show-last = no
 
 ## list-format
 list-format = "%name%|[%artist% - ]%title%|%file%"

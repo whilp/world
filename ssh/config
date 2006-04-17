@@ -27,7 +27,7 @@ Host merk*
 Host poly*
     Hostname	polyot.atekomi.net
     Port	22
-    User	will
+    User	wcmaier
 
 Host tick
 # tick.rz.uni-augsburg.de - OpenPower testbed at Uni Augsburg, DE
