@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.126 $
-# Updated	: $Date: 2006/04/17 01:48:56 $
+# Version	: $Revision: 1.127 $
+# Updated	: $Date: 2006/04/18 22:02:36 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.126 2006/04/17 01:48:56 will Exp $
+# CVS		: $Id: profile,v 1.127 2006/04/18 22:02:36 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -21,7 +21,7 @@
 
 ARCH=`uname`
 HOST=$(hostname -s)
-VERBOSE=1
+VERBOSE=2
 #ISSUE=`awk '{print $1}' /etc/issue || echo "unknown"`
 
 # --[ CVS
@@ -318,6 +318,8 @@ agent () {
         # 'em.
         notify 2 "pkill -U ${USER} ssh-agent"
         pkill -U ${USER} ssh-agent
+        rm -f ${SSH_AGENT_FILE}
+        touch ${SSH_AGENT_FILE}
 
         # Make new agent
         notify 2 "eval $(ssh-agent -s | tee ${AGENTFILE})"

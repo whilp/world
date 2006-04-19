@@ -103,6 +103,7 @@ defbindings("WMPlex", {
        kpress("Q", "WClientWin.quote_next(_sub)", "_sub:WClientWin"),
     }),
 
+    -- Apps
     bdoc("Run a terminal emulator."),
     kpress(MOD2.."F2", "ioncore.exec_on(_, '~/bin/term')"),
     kpress(MOD1.."F2", "ioncore.exec_on(_, '~/bin/term')"),
@@ -113,14 +114,26 @@ defbindings("WMPlex", {
     bdoc("Query for Lua code to execute."),
     kpress(MOD1.."F3", "mod_query.query_lua(_)"),
 
-    bdoc("Query for host to connect to with SSH."),
-    kpress(MOD2.."F4", "mod_query.query_ssh(_)"),
-    
     bdoc("Run a web browser."),
-    kpress(MOD2.."F5", "ioncore.exec_on(_, '~/bin/browser')"),
+    kpress(MOD2.."F4", "ioncore.exec_on(_, '~/bin/browser')"),
 
     bdoc("Run a music program."),
-    kpress(MOD2.."F6", "ioncore.exec_on(_, '~/bin/tunes')"),
+    kpress(MOD2.."F5", "ioncore.exec_on(_, '~/bin/tunes')"),
+
+    bdoc("Toggle pause for a music program."),
+    kpress(MOD1.."F5", "ioncore.exec_on(_, '~/bin/tunes toggle')"),
+
+    bdoc("Decrease volume for a music program."),
+    kpress(MOD2.."F6", "ioncore.exec_on(_, '~/bin/tunes volume -8')"),
+
+    bdoc("Decrease volume for a music program to a set low point."),
+    kpress(MOD1.."F6", "ioncore.exec_on(_, '~/bin/tunes down')"),
+
+    bdoc("Increase volume for a music program."),
+    kpress(MOD2.."F7", "ioncore.exec_on(_, '~/bin/tunes volume +8')"),
+
+    bdoc("Increase volume for a music program to a set high point."),
+    kpress(MOD1.."F7", "ioncore.exec_on(_, '~/bin/tunes up')"),
 
     bdoc("Lock the screen."),
     kpress(MOD2.."F10", "ioncore.exec_on(_, '~/bin/lock')"),
