@@ -47,7 +47,4 @@
 1	6	*	*	1-6	TDL_DATABASE=/home/will/.tdldb-hep /usr/local/bin/tdl list | /usr/bin/mail -s "TODO: HEP" will
 1	6	*	*	1-6	TDL_DATABASE=/home/will/.tdldb /usr/local/bin/tdl list | /usr/bin/mail -s "TODO: Personal" will
 
-# HS55 Build
-*/2     *       *       *       *       cd /home/will/WS; VERBOSE=1 /home/will/bin/build-tex paper.tex >| /home/will/WS/build.log
-
 # vim: set tw=0:
