@@ -37,6 +37,7 @@ die () {
     exit "${EXIT}"
 }
 usage () {
+    echo "USAGE"
 }
 
 # Parse args
@@ -130,21 +131,21 @@ notify 2 "\tGenre: ${GENRE}"
 notify 2 "\tDate: ${DATE}"
 
 for FILE in $PWD/*.${EXTENSION}; do
-    echo $FILE
+    echo HERE $FILE
     notify 3 "Processing '$(basename ${FILE}).'"
     # This works, assuming you use cdparanoia's default naming
     # scheme: track##.cdda.wav
     notify 1 "Editing file '$(basename "$FILE")'"
     if [ "${NUMGLOB}" = 'default' ]; then
-        NUMGLOB='[^0-9]'
+        NUMGLOB='s/[^0-9]//g'
+        # NUMGLOB='s/\(..\).*/\1/g'
     fi
-    NUMBER=$(echo $(basename "$FILE") | sed -e "/${NUMGLOB}//g")
+    NUMBER=$(echo $(basename "$FILE") | sed -e "${NUMGLOB}")
+    echo HERE $NUMBER
     # Remove leading zeros, if any; this causes pdksh to whine about
     # 'bad numbers' when trying to access elements in the array.
     # Harrumph. This isn't a problem for, eg 0[1-7], but errors on
     # eg 08.
-    NUMBER="${NUMBER#0}"
-    TITLE="${TRACK[$NUMBER]}"
     notify 2 "\tTrack: ${NUMBER}\tTitle: ${TITLE}"
     case "${PROGRAM}" in
         metaflac)
