@@ -136,10 +136,7 @@ defbindings("WMPlex", {
     kpress(MOD1.."F7", "ioncore.exec_on(_, '~/bin/tunes next')"),
 
     bdoc("Increase volume for a music program to a set high point."),
-    kpress(MOD2.."F8", "ioncore.exec_on(_, '~/bin/tunes up')"),
-
-    bdoc("Decrease volume for a music program to a set low point."),
-    kpress(MOD1.."F8", "ioncore.exec_on(_, '~/bin/tunes down')"),
+    kpress(MOD2.."F8", "ioncore.exec_on(_, '~/bin/tunes slide')"),
 
     bdoc("Lock the screen."),
     kpress(MOD2.."F10", "ioncore.exec_on(_, '~/bin/lock')"),

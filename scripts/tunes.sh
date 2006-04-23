@@ -37,36 +37,38 @@ else
     case $1 in
         down)
             while [ ${CURVOL} -gt ${MINVOL} ]; do
-<<<<<<< tunes.sh
                 MPD_HOST=${MPD_HOST} mpc volume -${INCREMENT} >/dev/null 2>&1
                 CURVOL=$(MPD_HOST=${MPD_HOST} mpc volume | sed -e 's/[^0-9]//g')
-=======
-                MPD_HOST=${MPD_HOST} mpc volume -${INCREMENT}
-                CURVOL=$(MPD_HOST=${MPD_HOST} mpc volume | sed -e 's/[^0-9]//g')
->>>>>>> 1.2
             done
             ;;
         up)
             while [ ${CURVOL} -lt ${MAXVOL} ]; do
-<<<<<<< tunes.sh
                 MPD_HOST=${MPD_HOST} mpc volume +${INCREMENT} >/dev/null 2>&1
                 CURVOL=$(MPD_HOST=${MPD_HOST} mpc volume | sed -e 's/[^0-9]//g')
-=======
-                MPD_HOST=${MPD_HOST} mpc volume +${INCREMENT}
-                CURVOL=$(MPD_HOST=${MPD_HOST} mpc volume | sed -e 's/[^0-9]//g')
->>>>>>> 1.2
             done
             ;;
         slide)
+            INC=1
+            # The modulo bits are intended to smooth the slide;
+            # there may be a better method, but it seems rather
+            # efficient to do it this way.
             if [ ${CURVOL} -gt 50 ]; then
                 while [ ${CURVOL} -gt ${MINVOL} ]; do
-                    MPD_HOST=${MPD_HOST} mpc volume -${INCREMENT} >/dev/null 2>&1
+                    # Slide down
+                    MPD_HOST=${MPD_HOST} mpc volume -${INC} >/dev/null 2>&1
                     CURVOL=$(MPD_HOST=${MPD_HOST} mpc volume | sed -e 's/[^0-9]//g')
+                    if [ $((INC % 2)) -eq 0 ]; then
+                        INC=$((INC + 1))
+                    fi
                 done
             else
                 while [ ${CURVOL} -lt ${MAXVOL} ]; do
-                    MPD_HOST=${MPD_HOST} mpc volume +${INCREMENT} >/dev/null 2>&1
+                    # Slide up
+                    MPD_HOST=${MPD_HOST} mpc volume +${INC} >/dev/null 2>&1
                     CURVOL=$(MPD_HOST=${MPD_HOST} mpc volume | sed -e 's/[^0-9]//g')
+                    if [ $((INC % 2)) -eq 0 ]; then
+                        INC=$((INC + 1))
+                    fi
                 done
             fi
             ;;
