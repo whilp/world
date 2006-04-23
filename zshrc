@@ -1,10 +1,10 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
-# Version	: $Revision: 1.46 $
+# Version	: $Revision: 1.47 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2006/04/23 15:15:52 $
-# CVS		: $Id: zshrc,v 1.46 2006/04/23 15:15:52 will Exp $
+# Updated	: $Date: 2006/04/23 15:43:02 $
+# CVS		: $Id: zshrc,v 1.47 2006/04/23 15:43:02 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -47,6 +47,7 @@ alias man='nocorrect man'	    # no spelling correction on man
 alias cp='nocorrect cp'		    # no spelling correction on cp
 alias mkdir='nocorrect mkdir'	    # no spelling correction on mkdir
 alias cvs='nocorrect cvs'
+alias ln='nocorrect ln'
 
 # Shell prompt
 if [ "${EUID}" != "0" ]; then
