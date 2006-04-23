@@ -388,6 +388,7 @@ settings = {
     autoaway_poll = "30000";
     nicklist_width = "14";
     url_file = "~/.irssi/urls.html";
+    nicklist_prefix_mode_normal = "''";
   };
   "fe-common/irc" = { show_away_once = "yes"; };
 };
@@ -444,6 +445,11 @@ ignores = (
     level = "ACTIONS";
     pattern = "is (away|gone|back)";
     regexp = "yes";
+  },
+  {
+    mask = "CodeDragon";
+    level = "JOINS PARTS QUITS";
+    channels = ( "#madlug" );
   }
 );
 windows = {

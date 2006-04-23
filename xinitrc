@@ -1,8 +1,8 @@
 xsetroot -solid black
 
-if [ -x $(which kdeinit) ]; then
-    kdeinit&
-fi
+# if [ -x $(which kdeinit) ]; then
+#     kdeinit&
+# fi
 
 # switch caps and control
 xmodmap -e "remove Lock = Caps_Lock"
@@ -27,7 +27,7 @@ xterm&
 
 #exec enlightenment
 xset b off
-unclutter -idle 5 -jitter 20&
+#unclutter -idle 5 -jitter 20&
 exec ion3
 #exec wmii
 #xterm&
