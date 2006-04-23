@@ -1,0 +1,108 @@
+##################  BEGIN HEADERS
+# Filename	: $HOME/.profiles/openbsd
+# Use		: Universal shell functions
+# Author	: Will Maier <willmaier@ml1.net>
+# Version	: $Revision: 1.1 $
+# Updated	: $Date: 2006/04/23 15:26:54 $
+# Vim		: :vim: set ft=sh:
+# CVS		: $Id: functions,v 1.1 2006/04/23 15:26:54 will Exp $
+# Copyright	: Copyright (c) 2006 Will Maier
+# License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
+##################  END HEADERS
+
+# Paths
+DICT="/usr/share/dict/words"
+SSH_HOME="$HOME/.ssh"
+
+warn () {
+	MESSAGE=$1
+	echo "=!=> ${MESSAGE}"
+}
+notify () {
+	if [ "$#" -eq 1 ]; then
+		LEVEL=1
+		MESSAGE=$1
+	else
+		LEVEL=$1
+		MESSAGE=$2
+	fi
+
+	if [ "${LEVEL}" -le "${VERBOSE}" ]; then
+		echo "===> ${MESSAGE}"
+	fi
+}
+lookup () {
+	REGEX=$1
+	grep ${REGEX} 
+}
+calc () {
+	echo "$*" | bc -l
+}
+scp-key () {
+    # Like: scp-key wcmaier@burrito.cae.wisc.edu "SSH-OPTIONS"
+    TARGET=$1
+    shift
+    SSH_OPTS=$*
+    SSH_AUTHFILE="${SSH_HOME}/authorized_keys"
+    for PUBKEY in "${SSH_HOME}/id*pub"; do
+	ssh ${SSH_OPTS} $TARGET "(chmod 600 ${SSH_AUTHFILE}; sh -c \"cat - >> ${SSH_AUTHFILE}\")" < ${PUBKEY}
+    done
+}
+agent () {
+    SSH_AGENT_FILE=~/.ssh/agent
+    if [ $(find ${SSH_HOME} -follow -name "id_[dr]sa" | wc -l | sed -e 's/[^0-9]//g') -lt 1 ]; then
+        # There don't appear to be any keys on this host; kill all
+        # agents and quit.
+        notify 1 "No keys found in ${SSH_HOME}."
+        pkill -U ${USER} ssh-agent
+	rm -f ${SSH_AGENT_FILE}
+        return 0
+    elif [ -r ${SSH_AGENT_FILE} ]; then
+        notify 2 "Found agent file ${SSH_AGENT_FILE}."
+        chmod 600 ${SSH_AGENT_FILE}
+        . ${SSH_AGENT_FILE} > /dev/null
+
+        # See if old agent still exists.
+        kill -0 ${SSH_AGENT_PID} > /dev/null 2>&1
+        if [ $? -gt 0 ]; then
+            notify 2 "Agent ${SSH_AGENT_PID} doesn't appear to be running."
+            # Agent doesn't exist; make new agent.
+            rm -f ${SSH_AGENT_FILE}
+            eval $(ssh-agent -s | tee ${SSH_AGENT_FILE})
+        else
+            notify 2 "Agent ${SSH_AGENT_PID} exists."
+            # Agent does exist; kill all the other 'uns.
+            kill $(pgrep -U ${USER} ssh-agent | grep -v ${SSH_AGENT_PID}) > /dev/null 2>&1
+        fi
+    else
+        notify 2 "Didn't find an agent file."
+        # If we don't know about the agents floating around, kill
+        # 'em.
+        pkill -U ${USER} ssh-agent
+        rm -f ${SSH_AGENT_FILE}
+        touch ${SSH_AGENT_FILE}
+	chmod 600 ${SSH_AGENT_FILE}
+
+        # Make new agent
+	notify 2 "Creating a new agent."
+        eval $(ssh-agent -s | tee ${AGENTFILE})
+    fi
+
+    # List keys represented by the agent; if none, add some keys
+    if [ ${VERBOSE} -ge 1 ]; then
+        ssh-add -l
+    else
+        ssh-add -l 2>&1 > /dev/null
+    fi
+    if [ $? -gt 0 ]; then
+        notify 2 "Don't appear to be any keys in the agent."
+        ssh-add -t 24h > /dev/null 2>&1
+    fi
+    chmod 600 ${SSH_AGENT_FILE}
+}
+ssh-rmkey () {
+    LINE=$1
+    TMPFILE=$(mktemp -q ${SSH_HOME}/known_hosts.XXXX || exit 1)
+    sed -e "${LINE}d" ~/.ssh/known_hosts >| ${TMPFILE}
+    mv ${TMPFILE} ~/.ssh/known_hosts
+}

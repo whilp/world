@@ -1,0 +1,23 @@
+##################  BEGIN HEADERS
+# Filename	: $HOME/.profiles/openbsd
+# Use		: OpenBSD-specifc shell environment
+# Author	: Will Maier <willmaier@ml1.net>
+# Version	: $Revision: 1.1 $
+# Updated	: $Date: 2006/04/23 15:26:54 $
+# Vim		: :vim: set ft=sh:
+# CVS		: $Id: openbsd,v 1.1 2006/04/23 15:26:54 will Exp $
+# Copyright	: Copyright (c) 2006 Will Maier
+# License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
+##################  END HEADERS
+
+notify 2 "Configuring for OpenBSD."
+
+# Environment variables
+FTP_SERV=ftp://ftp5.usa.openbsd.org/
+PKG_PATH=${FTP_SERV}/pub/OpenBSD/snapshots/packages/$(machine)
+CVSROOT=anoncvs@rt.fm:/cvs
+PATH=${PATH}:/usr/X11R6/bin
+export CVSROOT FTP_SERV PKG_PATH PATH
+
+# Swap capslock and left control on the console
+wsconsctl keyboard.map+="keysym Caps_Lock = Control_L" > /dev/null 2>&1
