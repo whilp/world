@@ -1,38 +1,20 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
-# Version	: $Revision: 1.45 $
+# Version	: $Revision: 1.46 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2006/04/17 01:48:57 $
-# CVS		: $Id: zshrc,v 1.45 2006/04/17 01:48:57 will Exp $
+# Updated	: $Date: 2006/04/23 15:15:52 $
+# CVS		: $Id: zshrc,v 1.46 2006/04/23 15:15:52 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
 
-# Look at http://www.xs4all.nl/~hanb/configs/dot-zshrc
+# Grab general settings
+. "${HOME}/.profile"
 
-source ~/.profile
+# Terminal settings
+bindkey -v
 
-# --[ LOAD FUNCTIONS
-autoload -U compinit && compinit -i # new tab completion
-autoload -U colors && colors	    # color stuff
-autoload -U edit-command-line
-autoload -U zed			    # shell text editing
-autoload -U zmv			    # a la mmv/rename
-
-zmodload -i zsh/complist	    # for completion
-
-# --[ SET ALIASES
-#alias -s tex=$EDITOR		    # eg 'unixbook.tex<CR>' opens unixbook in
-				    # vim
-#alias -s html='elinks'		    # html -> www browser
-alias mv='nocorrect mv'		    # no spelling correction on mv
-alias man='nocorrect man'	    # no spelling correction on man
-alias cp='nocorrect cp'		    # no spelling correction on cp
-alias mkdir='nocorrect mkdir'	    # no spelling correction on mkdir
-alias cvs='nocorrect cvs'
-
-# --[ TERM MAGIC
 case $TERM in
     xterm*)
 	bindkey "^[[F" end-of-line
@@ -45,25 +27,34 @@ bindkey '\e[4~' end-of-line             # End
 bindkey '\e[3~' delete-char             # Del
 bindkey '\e[2~' overwrite-mode          # Insert
 bindkey -v
-stty erase '^H'
+# stty erase '^H'
+stty erase 
 
-watch=(notme root)
+# Load tricksy zsh functions
+autoload -U compinit && compinit -i # new tab completion
+autoload -U colors && colors	    # color stuff
+autoload -U edit-command-line
+autoload -U zed			    # shell text editing
+autoload -U zmv			    # a la mmv/rename
+zmodload -i zsh/complist	    # for completion
+zstyle ':completion:*' menu select=1
 
-# --[ PROMPT
-if (( EUID != 0 )); then
+watch=(notme root)		    # Note logins
+
+# zsh aliases
+alias mv='nocorrect mv'		    # no spelling correction on mv
+alias man='nocorrect man'	    # no spelling correction on man
+alias cp='nocorrect cp'		    # no spelling correction on cp
+alias mkdir='nocorrect mkdir'	    # no spelling correction on mkdir
+alias cvs='nocorrect cvs'
+
+# Shell prompt
+if [ "${EUID}" != "0" ]; then
     # If not root...
     autoload -U promptinit && promptinit
-#    PS1='<%B%m%b %T> %~ %# '
     PS1="%B%~%b %#%b "		    # real prompt
-#    precmd () { print -Pn "\e]0;$HOST - %~\a" }
-#    preexec () { echo "OK" }
 else
-    PS1='<%B%m%b %T> %~ %# '
     PS1="%B%~%b %#%b "
-fi
-HOSTNAME=$(hostname -s)
-if [[ "$HOSTNAME" == "localhost" ]]; then
-    HOSTNAME=$(hostname)
 fi
 
 # Set the right prompt based on the screen sessionname and window number, or,
@@ -98,12 +89,11 @@ else
     NAME=${TTYNAME}
     NUMBER=${TTYINC}
 fi
-# Assemble the prompt
-RPS1="%B ${NAME}[$NUMBER] @ ${HOSTNAME} %(0?,,E[%?])%b"
+# Assemble the right prompt
+RPS1="%B ${NAME}[${NUMBER}] @ ${HOSTNAME} %(0?,,E[%?])%b"
 
-# xterm titles
+# Dynamically set xterm titles
 RUNNING=shell
-#PREEXECCMD='print -Pn "\e]0;${NAME}[${NUMBER}] @ ${HOSTNAME} | $RUNNING\a"'
 PREEXECCMD='print -Pn "\e]0;${NAME}[${NUMBER}] @ ${HOSTNAME} | $1\a"'
 if [ -z "${DISPLAY}" -a -z "${STY}" ]; then
     PREEXECCMD=''
@@ -112,27 +102,8 @@ preexec () {
     eval ${PREEXECCMD}
 }
 preexec
-# preexec () {
-#     if [ -n "$1" ]; then
-# 	RUNNING=$1
-#     fi
-#     eval ${PREEXECCMD}
-# }
 
-# --[ IMPORTANT VARIABLES
-export ZSHDIR=$HOME/.zsh
-export VISUAL='vim'
-HISTSIZE=1000
-SAVEHIST=1000
-HISTFILE=$HOME/.history
-INC_APPEND_HISTORY=1
-SHARE_HISTORY=1
-HIST_IGNORE_ALL_DUPS=1
-HIST_IGNORE_SPACE=1
-NO_HIST_BEEP=1
-LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;34;01:ex=01;32:*.tar=01;34:*.tgz=01;34:*.gz=01;34:*.bz2=01;34:*.jpg=01;35:*.sh=103;34:*.ogg=01;31:*.mp3=01;31:*.avi=01;34:*.mpg=01;34:*.mpeg=01;34:*.wmv=01;34:*.asf=01;34'
-
-# --[ OPTIONS
+# Set zsh options
 setopt NO_beep
 setopt NO_check_jobs	    # don't notify re: jobs when shell exits
 setopt NO_hup
@@ -163,7 +134,15 @@ setopt path_dirs
 #setopt pushignoredups	    # don't duplicate entries in dir history
 setopt rcquotes		    # elegant quoting of quotes ('"' -> ')
 
-# zstyle ':completion:*' menu select=1
-
-# --[ ENVIRONMENT
-stty erase 
+# Set variables that zsh cares about
+export ZSHDIR=$HOME/.zsh
+export VISUAL='vim'
+HISTSIZE=1000
+SAVEHIST=1000
+HISTFILE=$HOME/.history
+INC_APPEND_HISTORY=1
+SHARE_HISTORY=1
+HIST_IGNORE_ALL_DUPS=1
+HIST_IGNORE_SPACE=1
+NO_HIST_BEEP=1
+LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;34;01:ex=01;32:*.tar=01;34:*.tgz=01;34:*.gz=01;34:*.bz2=01;34:*.jpg=01;35:*.sh=103;34:*.ogg=01;31:*.mp3=01;31:*.avi=01;34:*.mpg=01;34:*.mpeg=01;34:*.wmv=01;34:*.asf=01;34'
