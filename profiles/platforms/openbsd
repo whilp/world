@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profiles/openbsd
 # Use		: OpenBSD-specifc shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.2 $
-# Updated	: $Date: 2006/04/23 15:43:02 $
+# Version	: $Revision: 1.3 $
+# Updated	: $Date: 2006/04/23 20:36:55 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: openbsd,v 1.2 2006/04/23 15:43:02 will Exp $
+# CVS		: $Id: openbsd,v 1.3 2006/04/23 20:36:55 will Exp $
 # Copyright	: Copyright (c) 2006 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -15,7 +15,7 @@ notify 2 "Configuring for OpenBSD."
 # Environment variables
 OSVERSION="$(sysctl -n kern.osrelease)"
 FTP_SERV="ftp://ftp5.usa.openbsd.org/"
-[ -n "$(sysctl -n kern.version | grep 'current')" ] && PKG_PATH=${FTP_SERV}/pub/OpenBSD/snapshots/packages/$(machine) || \
+[ -n "$(sysctl -n kern.version | grep -E '(current|3.9)')" ] && PKG_PATH=${FTP_SERV}/pub/OpenBSD/snapshots/packages/$(machine) || \
 	PKG_PATH="${FTP_SERV}/pub/OpenBSD/${OSVERSION}/packages/$(machine)"
 CVSROOT=anoncvs@rt.fm:/cvs
 PATH=${PATH}:/usr/X11R6/bin
