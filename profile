@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.129 $
-# Updated	: $Date: 2006/04/23 15:15:52 $
+# Version	: $Revision: 1.130 $
+# Updated	: $Date: 2006/04/24 13:41:43 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.129 2006/04/23 15:15:52 will Exp $
+# CVS		: $Id: profile,v 1.130 2006/04/24 13:41:43 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -30,9 +30,6 @@ RCP_CMD="$(which scp)"
 VERBOSE="1"
 export CLUSTER CVSEDITOR CVS_RSH EDITOR HOSTNAME LANG MAIL PATH RCMD_CMD RCP_CMD SHELL VERBOSE
 
-# Shell configuration
-set -o vi		# vi-like history editing
-
 # Directory containing platform- and host-specific configuration
 PROFILES="${HOME}/.profiles"
 PLATFORMS="${PROFILES}/platforms"
@@ -44,7 +41,7 @@ PLATFORMS="${PROFILES}/platforms"
 [ -r "${PROFILES}/aliases" ] && . "${PROFILES}/aliases" || echo "=!=> ${PROFILES}/aliases not found!"
 
 # Platform-specific settings
-if [ "X$(sysctl -n kern.ostype)" = "XOpenBSD" -a -r "${PLATFORMS}/openbsd" ]; then
+if [ "X$(sysctl -n kern.ostype 2>/dev/null)" = "XOpenBSD" -a -r "${PLATFORMS}/openbsd" ]; then
 	# Get OpenBSD-specific settings
 	. ${PLATFORMS}/openbsd
 elif [ "X$(uname -s)" = "SunOS" -a -r "${PLATFORMS}/solaris" ]; then
