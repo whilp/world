@@ -2,13 +2,19 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.130 $
-# Updated	: $Date: 2006/04/24 13:41:43 $
+# Version	: $Revision: 1.131 $
+# Updated	: $Date: 2006/04/24 14:02:52 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.130 2006/04/24 13:41:43 will Exp $
+# CVS		: $Id: profile,v 1.131 2006/04/24 14:02:52 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
+
+if [ "${NEST}" ]; then
+    # This prevents ~/.profile from being executed in an infinite
+    # loop. Which sucks.
+    return 0
+fi
 
 # Environment variables
 EDITOR="$(which vim 2>/dev/null)" || \
@@ -55,3 +61,6 @@ fi
 if [ "${UID}" -gt "0" ]; then
 	VERBOSE=0 agent
 fi
+
+# Run preferred shell
+eval "NEST=1 exec ${SHELL}"
