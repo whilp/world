@@ -2,20 +2,21 @@
 # Filename	: $HOME/.profiles/aliases
 # Use		: Universal shell aliases
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.1 $
-# Updated	: $Date: 2006/04/23 15:26:54 $
+# Version	: $Revision: 1.2 $
+# Updated	: $Date: 2006/04/24 14:20:28 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: aliases,v 1.1 2006/04/23 15:26:54 will Exp $
+# CVS		: $Id: aliases,v 1.2 2006/04/24 14:20:28 will Exp $
 # Copyright	: Copyright (c) 2006 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
 
-alias ls="ls -F"
-alias klog="klog -setpag"
-alias pource=". $HOME/.profile"
-alias mtr="mtr -t"
-alias elinks="DISPLAY='' elinks -touch-files -no-connect"
 alias ci="ci -l"
 alias co="co -l"
 alias commit="cvs ci -m ''"
+alias elinks="DISPLAY='' elinks -touch-files -no-connect"
+alias klog="klog -setpag"
+alias ls="ls -F"
 alias lsof="sudo lsof"
+alias mail="MAIL=${MAIL_OLD} mail"
+alias mtr="mtr -t"
+alias pource=". $HOME/.profile"
