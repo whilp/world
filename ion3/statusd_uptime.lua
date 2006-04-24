@@ -30,7 +30,7 @@ local function get_uptime_info()
     f:close()
 
     s = string.gsub(s, ", +%d+ user.+", "")    -- unnecessary
-    s = string.gsub(s, "%d+:%d+:%d+ up +", "") -- time is unnecessary
+    s = string.gsub(s, ".+ up +", "") -- time is unnecessary
 
     statusd.inform("uptime", s)
 end
