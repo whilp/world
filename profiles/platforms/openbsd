@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profiles/openbsd
 # Use		: OpenBSD-specifc shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.3 $
-# Updated	: $Date: 2006/04/23 20:36:55 $
+# Version	: $Revision: 1.4 $
+# Updated	: $Date: 2006/04/26 23:47:27 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: openbsd,v 1.3 2006/04/23 20:36:55 will Exp $
+# CVS		: $Id: openbsd,v 1.4 2006/04/26 23:47:27 will Exp $
 # Copyright	: Copyright (c) 2006 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -13,12 +13,20 @@
 notify 2 "Configuring for OpenBSD."
 
 # Environment variables
-OSVERSION="$(sysctl -n kern.osrelease)"
-FTP_SERV="ftp://ftp5.usa.openbsd.org/"
-[ -n "$(sysctl -n kern.version | grep -E '(current|3.9)')" ] && PKG_PATH=${FTP_SERV}/pub/OpenBSD/snapshots/packages/$(machine) || \
-	PKG_PATH="${FTP_SERV}/pub/OpenBSD/${OSVERSION}/packages/$(machine)"
-CVSROOT=anoncvs@rt.fm:/cvs
-PATH=${PATH}:/usr/X11R6/bin
+
+MIRRORS="mirrors.tds.net ftp5.usa.openbsd.org"
+[ -n "$(sysctl -n kern.version | grep -E '(current|3.9)')" ] && OSVERSION="snapshots" || OSVERSION="$(sysctl -n kern.osrelease)"
+MACHINE="$(machine)"
+
+PKG_PATH=
+# This is aggravating; why can't I simply iterate on ${MIRRORS}? Why is the echo necessary?
+for MIRROR in $(echo ${MIRRORS}); do
+	PKG_PATH="${PKG_PATH}:ftp://${MIRROR}/pub/OpenBSD/${OSVERSION}/packages/${MACHINE}/"
+	PKG_PATH=${PKG_PATH#:}
+done
+#PKG_PATH="${FTP_SERV}/pub/OpenBSD/${OSVERSION}/packages/$(machine);ftp://mirrors.tds.net/pub/OpenBSD/${OSVERSION"
+CVSROOT="anoncvs@rt.fm:/cvs"
+PATH="${PATH}:/usr/X11R6/bin"
 export CVSROOT FTP_SERV PKG_PATH PATH
 
 # Swap capslock and left control on the console

@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.132 $
-# Updated	: $Date: 2006/04/24 14:20:22 $
+# Version	: $Revision: 1.133 $
+# Updated	: $Date: 2006/04/26 23:47:27 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.132 2006/04/24 14:20:22 will Exp $
+# CVS		: $Id: profile,v 1.133 2006/04/26 23:47:27 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -15,7 +15,7 @@ EDITOR="$(which vim 2>/dev/null)" || \
 	EDITOR="$(which vi)"
 SHELL_OLD="${SHELL}"
 SHELL="$(which zsh 2>/dev/null)" || \
-        SHELL="$(which tcsh 2>/dev/null)" || \
+        SHELL="$(which ksh 2>/dev/null)" || \
         SHELL="$(which bash 2>/dev/null)" || \
         SHELL="$(which sh)"
 
@@ -46,7 +46,7 @@ PLATFORMS="${PROFILES}/platforms"
 if [ "X$(sysctl -n kern.ostype 2>/dev/null)" = "XOpenBSD" -a -r "${PLATFORMS}/openbsd" ]; then
 	# Get OpenBSD-specific settings
 	. ${PLATFORMS}/openbsd
-elif [ "X$(uname -s)" = "SunOS" -a -r "${PLATFORMS}/solaris" ]; then
+elif [ "X$(uname -s)" = "XSunOS" -a -r "${PLATFORMS}/solaris" ]; then
 	# Get Solaris-specific settings
 	. ${PLATFORMS}/solaris
 fi
@@ -59,6 +59,6 @@ if [ "${UID}" -gt "0" ]; then
 fi
 
 # Run the preferred shell (unless we're already running it
-if [ "${SHELL}" != "${SHELL_OLD}" ]; then
+if [ "${SHELL##*/}" != "${SHELL_OLD##*/}" ]; then
     eval "exec ${SHELL}"
 fi
