@@ -453,6 +453,17 @@ ignores = (
   }
 );
 windows = {
+  6 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#openbsd";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+  };
   3 = {
     items = (
       {
@@ -462,6 +473,8 @@ windows = {
         tag = "freenode";
       }
     );
+    sticky = "yes";
+    parent = "6";
   };
   2 = {
     items = (
@@ -472,22 +485,20 @@ windows = {
         tag = "bitl";
       }
     );
+    sticky = "yes";
+    parent = "6";
   };
-  4 = {
+  7 = {
     items = (
       {
-        type = "CHANNEL";
+        type = "QUERY";
         chat_type = "IRC";
-        name = "#newlug";
-        tag = "freenode";
+        name = "ballard";
+        tag = "bitl";
       }
     );
-  };
-  1 = { 
-    immortal = "yes";
-    name = "(status)";
-    level = "ALL";
     sticky = "yes";
+    parent = "6";
   };
   5 = {
     items = (
@@ -498,9 +509,29 @@ windows = {
         tag = "freenode";
       }
     );
+    sticky = "yes";
+    parent = "6";
+  };
+  4 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#newlug";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+    parent = "6";
+  };
+  1 = { 
+    immortal = "yes";
+    name = "(status)";
+    level = "ALL";
+    sticky = "yes";
   };
 };
 mainwindows = {
-  1 = { first_line = "59"; lines = "9"; };
-  3 = { first_line = "1"; lines = "58"; };
+  1 = { first_line = "47"; lines = "6"; };
+  6 = { first_line = "1"; lines = "46"; };
 };
