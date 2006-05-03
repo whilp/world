@@ -1,11 +1,13 @@
-#!/bin/sh
+#!/bin/sh -x
 
-MPD_HOST=messenger
+
+MPD_HOST=localhost
 MPC_COMMAND=
 INCREMENT=7
 CURVOL=$(MPD_HOST=${MPD_HOST} mpc volume | sed -e 's/[^0-9]//g')
 MINVOL=30
 MAXVOL=80
+FORMAT="[[%artist% - ]%title%|%name%|%file%]"
 
 if [ $# -eq 0 ]; then
     # Just open ncmpc in a new window
@@ -13,25 +15,32 @@ if [ $# -eq 0 ]; then
 else
     case $1 in
         toggle)
-            MPC_COMMAND=toggle
+            MPC_COMMAND="toggle >/dev/null 2>&1"
             ;;
         volume)
-            MPC_COMMAND="volume $2"
+            MPC_COMMAND="volume $2 >/dev/null 2>&1"
             ;;
-        up|down)
+        up|down|query)
             # just ignore -- they're special
             ;;
         next)
-            MPC_COMMAND=next
+            MPC_COMMAND="next >/dev/null 2>&1"
             ;;
         prev)
-            MPC_COMMAND=prev
+            MPC_COMMAND="prev >/dev/null 2>&1"
             ;;
         *)
             echo "Bad command: $1."
+            exit 1
             ;;
     esac
-    MPD_HOST=${MPD_HOST} mpc ${MPC_COMMAND} >/dev/null 2>&1
+    MPD_HOST=${MPD_HOST} mpc "${MPC_COMMAND}"
+
+    case $1 in
+        query)
+            MPD_HOST=${MPD_HOST} mpc --format "${FORMAT}"
+            ;;
+    esac
 
     # Special tricky slides
     case $1 in

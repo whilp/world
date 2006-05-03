@@ -3,7 +3,7 @@ if not statusd_mpd then
 end
 
 local function get_mpd_status()
-  local f=io.popen('MPD_HOST=localhost mpc --format "[[%artist - ]%title%|%name%|%file%]" 2>/dev/null','r')
+  local f=io.popen('tunes query','r')
   local playing=f:read()
 
   if playing == nil then
