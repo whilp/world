@@ -1,10 +1,10 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
-# Version	: $Revision: 1.47 $
+# Version	: $Revision: 1.48 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2006/04/23 15:43:02 $
-# CVS		: $Id: zshrc,v 1.47 2006/04/23 15:43:02 will Exp $
+# Updated	: $Date: 2006/05/03 14:10:19 $
+# CVS		: $Id: zshrc,v 1.48 2006/05/03 14:10:19 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -36,6 +36,9 @@ autoload -U colors && colors	    # color stuff
 autoload -U edit-command-line
 autoload -U zed			    # shell text editing
 autoload -U zmv			    # a la mmv/rename
+autoload      edit-command-line     # press ESC-E to edit the comand
+zle -N        edit-command-line     # line in vi(1)
+bindkey '\ee' edit-command-line
 zmodload -i zsh/complist	    # for completion
 zstyle ':completion:*' menu select=1
 
