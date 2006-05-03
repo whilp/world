@@ -15,26 +15,26 @@ if [ $# -eq 0 ]; then
 else
     case $1 in
         toggle)
-            MPC_COMMAND="toggle >/dev/null 2>&1"
+            MPC_COMMAND="toggle"
             ;;
         volume)
-            MPC_COMMAND="volume $2 >/dev/null 2>&1"
+            MPC_COMMAND="volume $2"
             ;;
         up|down|query)
             # just ignore -- they're special
             ;;
         next)
-            MPC_COMMAND="next >/dev/null 2>&1"
+            MPC_COMMAND="next"
             ;;
         prev)
-            MPC_COMMAND="prev >/dev/null 2>&1"
+            MPC_COMMAND="prev"
             ;;
         *)
             echo "Bad command: $1."
             exit 1
             ;;
     esac
-    MPD_HOST=${MPD_HOST} mpc "${MPC_COMMAND}"
+    MPD_HOST=${MPD_HOST} mpc "${MPC_COMMAND}" >/dev/null 2>&1
 
     case $1 in
         query)
