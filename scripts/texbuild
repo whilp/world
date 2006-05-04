@@ -1,0 +1,17 @@
+#!/bin/sh
+
+FILE=final
+
+while :; do
+cksum -a sha256 "${FILE}.tex" | sed -e 's/.* = //' >| ".${FILE}.tex-sha256-new"
+if [ "$(diff ".${FILE}.tex-sha256" ".${FILE}.tex-sha256-new" 2>/dev/null)" ]; then
+    pdflatex -halt-on-error "${FILE}.tex" >/dev/null 2>&1 \
+        && scp "${FILE}.pdf" soyuz:/tmp/. >/dev/null 2>&1 \
+        && echo "$(date "+%Y.%m.%d %H:%M:%S") - Copied modified $FILE.pdf to soyuz." \
+        || echo "$(date "+%Y.%m.%d %H:%M:%S") - Build of $FILE.tex failed!"
+else
+    echo "$(date "+%Y.%m.%d %H:%M:%S") - Nothing to do."
+fi
+mv ".${FILE}.tex-sha256-new" ".${FILE}.tex-sha256"
+sleep 30
+done
