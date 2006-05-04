@@ -10,8 +10,13 @@ MAXVOL=80
 FORMAT="[[%artist% - ]%title%|%name%|%file%]"
 
 if [ $# -eq 0 ]; then
-    # Just open ncmpc in a new window
-    term -e "ncmpc --host ${MPD_HOST}"
+    # Open ncmpc in a new window if it's not running; otherwise,
+    # pause/resuem playback.
+    if [ $(pgrep -lf "ncmpc --host ${MPD_HOST}" >/dev/null 2>&1 || echo "1") ]; then
+        term -e "ncmpc --host ${MPD_HOST}"
+    else
+        MPD_HOST=${MPD_HOST} mpc toggle
+    fi
 else
     case $1 in
         toggle)
@@ -29,12 +34,15 @@ else
         prev)
             MPC_COMMAND="prev"
             ;;
+        stop)
+            MPC_COMMAND="stop"
+            ;;
         *)
             echo "Bad command: $1."
             exit 1
             ;;
     esac
-    MPD_HOST=${MPD_HOST} mpc "${MPC_COMMAND}" >/dev/null 2>&1
+    MPD_HOST=${MPD_HOST} mpc ${MPC_COMMAND} >/dev/null 2>&1
 
     case $1 in
         query)

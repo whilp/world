@@ -121,7 +121,7 @@ defbindings("WMPlex", {
     kpress(MOD2.."F5", "ioncore.exec_on(_, '~/bin/tunes')"),
 
     bdoc("Toggle pause for a music program."),
-    kpress(MOD1.."F5", "ioncore.exec_on(_, '~/bin/tunes toggle')"),
+    kpress(MOD1.."F5", "ioncore.exec_on(_, '~/bin/tunes stop')"),
 
     bdoc("Decrease volume for a music program."),
     kpress(MOD2.."F6", "ioncore.exec_on(_, '~/bin/tunes volume -8')"),
