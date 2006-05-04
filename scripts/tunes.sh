@@ -1,7 +1,13 @@
 #!/bin/sh -x
 
-
-MPD_HOST=localhost
+MPD_CONF=/etc/mpd.conf
+MPD_STATE=$(grep state ${MPD_CONF} | sed -e 's/.*"\(\/.*\)"$/\1/')
+if [ "$(pgrep -lf 'mpd .*mpd.conf')" ]; then
+    MPD_HOST="localhost"
+else
+    MPD_HOST="messenger"
+fi
+MPD_HOST="messenger"
 MPC_COMMAND=
 INCREMENT=7
 CURVOL=$(MPD_HOST=${MPD_HOST} mpc volume | sed -e 's/[^0-9]//g')
@@ -11,13 +17,14 @@ FORMAT="[[%artist% - ]%title%|%name%|%file%]"
 
 if [ $# -eq 0 ]; then
     # Open ncmpc in a new window if it's not running; otherwise,
-    # pause/resuem playback.
-    if [ $(pgrep -lf "ncmpc --host ${MPD_HOST}" >/dev/null 2>&1 || echo "1") ]; then
+    # pause/resume playback.
+    if [ ! $(pgrep -lf "ncmpc --host ${MPD_HOST}") ]; then
         term -e "ncmpc --host ${MPD_HOST}"
     else
         MPD_HOST=${MPD_HOST} mpc toggle
     fi
 else
+    # Twiddle a knob.
     case $1 in
         toggle)
             MPC_COMMAND="toggle"
