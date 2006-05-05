@@ -1,17 +1,54 @@
 #!/bin/sh
 
-FILE=final
+# TODO:
+# whick cksum || which other-sum-program || ...
+# only do bibtex if requested
+# only scp if requested (done?)
 
-while :; do
-cksum -a sha256 "${FILE}.tex" | sed -e 's/.* = //' >| ".${FILE}.tex-sha256-new"
-if [ "$(diff ".${FILE}.tex-sha256" ".${FILE}.tex-sha256-new" 2>/dev/null)" ]; then
-    pdflatex -halt-on-error "${FILE}.tex" >/dev/null 2>&1 \
-        && scp "${FILE}.pdf" soyuz:/tmp/. >/dev/null 2>&1 \
-        && echo "$(date "+%Y.%m.%d %H:%M:%S") - Copied modified $FILE.pdf to soyuz." \
-        || echo "$(date "+%Y.%m.%d %H:%M:%S") - Build of $FILE.tex failed!"
-else
-    echo "$(date "+%Y.%m.%d %H:%M:%S") - Nothing to do."
+notify () {
+    if [ "$#" -eq 1 ]; then
+        LEVEL=1
+        MESSAGE=$1
+    else
+        LEVEL=$1
+        MESSAGE=$2
+    fi 
+
+    if [ "${LEVEL}" -le "${VERBOSE}" ]; then
+        echo "===> ${MESSAGE}"
+    fi
+}
+warn () {
+    MESSAGE=$1
+    echo "=!=> ${MESSAGE}"
+}
+
+if [ "$#" -eq 0 ]; then
+    warn "Must specify a filename to process on the command line."
+    exit 1
 fi
-mv ".${FILE}.tex-sha256-new" ".${FILE}.tex-sha256"
-sleep 30
-done
+
+FILE="${1%%.tex}"
+FILET="${FILE}.tex"
+FILEP="${FILE}.pdf"
+SUM=$(which cksum)
+TARGET=soyuz
+TARGET_PATH=/tmp/.
+SCP=1
+BIB=1
+VERBOSE=1
+
+${SUM} -a sha256 "${FILET}" | sed -e 's/.* = //' >| ".${FILET}-sha256-new"
+if [ "$(diff ".${FILET}-sha256" ".${FILET}-sha256-new" 2>/dev/null)" ]; then
+    latex -halt-on-error "${FILE}" >/dev/null 2>&1 \
+        && bibtex -terse ${FILE} >/dev/null 2>&1 \
+        && latex -halt-on-error ${FILE} >/dev/null 2>&1 \
+        && latex -halt-on-error ${FILE} >/dev/null 2>&1 \
+        && pdflatex -halt-on-error ${FILE} >/dev/null 2>&1 \
+        && scp "${FILEP}" ${TARGET}:${TARGET_PATH} >/dev/null 2>&1 \
+        && notify "[$(date "+%Y.%m.%d %H:%M:%S")] Copied modified $FILE.pdf to ${TARGET}." \
+        || warn "[$(date "+%Y.%m.%d %H:%M:%S")] Build of $FILE.tex failed!"
+else
+    notify 2 "[$(date "+%Y.%m.%d %H:%M:%S")] Nothing to do."
+fi
+mv ".${FILET}-sha256-new" ".${FILET}-sha256"
