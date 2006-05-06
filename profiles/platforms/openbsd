@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profiles/openbsd
 # Use		: OpenBSD-specifc shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.4 $
-# Updated	: $Date: 2006/04/26 23:47:27 $
+# Version	: $Revision: 1.5 $
+# Updated	: $Date: 2006/05/05 20:17:15 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: openbsd,v 1.4 2006/04/26 23:47:27 will Exp $
+# CVS		: $Id: openbsd,v 1.5 2006/05/05 20:17:15 will Exp $
 # Copyright	: Copyright (c) 2006 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -26,8 +26,11 @@ for MIRROR in $(echo ${MIRRORS}); do
 done
 #PKG_PATH="${FTP_SERV}/pub/OpenBSD/${OSVERSION}/packages/$(machine);ftp://mirrors.tds.net/pub/OpenBSD/${OSVERSION"
 CVSROOT="anoncvs@rt.fm:/cvs"
+FETCH_PACKAGES=yes
 PATH="${PATH}:/usr/X11R6/bin"
 export CVSROOT FTP_SERV PKG_PATH PATH
+
+alias pkg_add='sudo pkg_add -iv'
 
 # Swap capslock and left control on the console
 wsconsctl keyboard.map+="keysym Caps_Lock = Control_L" > /dev/null 2>&1

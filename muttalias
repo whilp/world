@@ -1,10 +1,10 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.muttalias
 # Use		: defines mail aliases for the mutt mail user agent
-# Version	: $Revision: 1.14 $
+# Version	: $Revision: 1.15 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2006/03/20 22:02:12 $
-# CVS		: $Id: muttalias,v 1.14 2006/03/20 22:02:12 will Exp $
+# Updated	: $Date: 2006/05/05 20:15:21 $
+# CVS		: $Id: muttalias,v 1.15 2006/05/05 20:15:21 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -12,6 +12,7 @@
 alias RQ HEP Request <req@ginseng.hep.wisc.edu>
 alias RT Unix Request Tracker <unix-request@cae.wisc.edu>
 alias ballard.jeff Jeff Ballard <ballard@cae.wisc.edu>
+alias bradley.dan Dan Bradley <dan@hep.wisc.edu>
 alias brunlieb.mike Mike Brunlieb <mbrunlieb@gmail.com>
 alias burke.mike Mike Burke <mburke@pncg.com>
 alias burnett.ed Ed Burnett <ejburnett@students.wisc.edu>
@@ -19,6 +20,7 @@ alias cameron.hastings Hastings Cameron <hastings.cameron@gmail.com>
 alias dasu.sridhara Sridhara Dasu <dasu@hep.wisc.edu>
 alias ellison.kurt Kurt Ellison <aquaranger@hotmail.com>
 alias gasmith Gregory Andrew Smith <gasmith@cae.wisc.edu>
+alias gott George Ott <ott@hep.wisc.edu>
 alias granny Peggy Broad <pbroad@iopener.net>
 alias gruehn.trev Trevor Gruehn <hitbyguitarz@yahoo.com>
 alias jacobson.david David L Jacobson <ajdj143@sbcglobal.net>
@@ -28,11 +30,17 @@ alias kinsley.ken Kenneth Kinsley <kenkinsley@hotmail.com>
 alias laura Laura Jacobson <jacobsonlaura@gmail.com>
 alias lefkow.aimee Aimee Lefkow <lefkow@hep.wisc.edu>
 alias ma Sharon Maier <sharonmaier@gmail.com>
+alias madlug Madison Linux <madlug@madisonlinux.org>
 alias maier.andy Andy Maier <linuxmaier@fastmail.fm>
-alias maier.mickey Mickey Maier <mmaier@stewart-peterson.com>
-alias maier.sharon Sharon Maier <sharonmaier@gmail.com>
 alias maier.louis3 Louis A Maier III <lmaieriii@wi.rr.com>
+alias maier.mickey Mickey Maier <mmaier@stewart-peterson.com>
+alias maier.rose Rose Maier <maier1@wisc.edu>
+alias maier.sharon Sharon Maier <sharonmaier@gmail.com>
 alias mainville.ryan Ryan Mainville <rmainville@stewart-peterson.com>
+alias mkelug Milwaukee Linux <mlug-list@milwaukeelug.org>
+alias mohapatra.ajit Ajit Mohapatra <ajit@hep.wisc.edu>
+alias murphy.sean Sean Murphy <smurphy@cs.wisc.edu>
+alias nyhart.lynn \"Prof Lynn K. Nyhart\" <lknyhart@wisc.edu>
 alias oldenburg.ross Ross Oldenburg <rosso@cae.wisc.edu>
 alias pa Mickey Maier <mmaier@stewart-peterson.com>
 alias petro Matt Petro <petro@cae.wisc.edu>
@@ -42,11 +50,5 @@ alias rosso Ross Oldenburg <rosso@cae.wisc.edu>
 alias schmid.steph Stephanie Schmid <butterflyschmid@yahoo.com>
 alias self Will Maier <willmaier@ml1.net>
 alias smith.greg Gregory Andrew Smith <gasmith@cae.wisc.edu>
+alias tsherron Teresa Sherron <sherron@hep.wisc.edu>
 alias wegmann.nell Nell Wegmann <wegmann@sbcglobal.net>
-alias murphy.sean Sean Murphy <smurphy@cs.wisc.edu>
-alias maier.rose Rose Maier <maier1@wisc.edu>
-alias madlug Madison Linux <madlug@madisonlinux.org>
-alias mkelug Milwaukee Linux <mlug-list@milwaukeelug.org>
-alias nyhart.lynn \"Prof Lynn K. Nyhart\" <lknyhart@wisc.edu>
-alias bradley.dan Dan Bradley <dan@hep.wisc.edu>
-alias mohapatra.ajit Ajit Mohapatra <ajit@hep.wisc.edu>

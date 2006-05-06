@@ -1,10 +1,10 @@
 "#################  BEGIN HEADERS
 " e Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
-" Version	: $Revision: 1.48 $
+" Version	: $Revision: 1.49 $
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: $Date: 2006/04/05 03:21:07 $
-" CVS		: $Id: vimrc,v 1.48 2006/04/05 03:21:07 will Exp $
+" Updated	: $Date: 2006/05/05 20:15:21 $
+" CVS		: $Id: vimrc,v 1.49 2006/05/05 20:15:21 will Exp $
 " Copyright	: Copyright (c) 2005 Will Maier
 " License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 "#################  END HEADERS
@@ -69,7 +69,7 @@
     imap <C-W> <Esc>:w<CR>
 
     " Date sub
-    iab daTE <C-R>=strftime("%Y%m%d.%H%M")<CR>
+    iab daTE <C-R>=strftime("%Y.%m.%d")<CR>
 
     " Dr Chip's engspchk
     "helptags $HOME/.vim/doc

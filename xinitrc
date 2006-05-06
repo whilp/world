@@ -1,8 +1,6 @@
 xsetroot -solid black
 
-# if [ -x $(which kdeinit) ]; then
-#     kdeinit&
-# fi
+[ -x $(which konqueror) -a -x $(which kdeinit) ] && kdeinit&
 
 # switch caps and control
 xmodmap -e "remove Lock = Caps_Lock"
@@ -16,10 +14,9 @@ xterm&
 
 #exec enlightenment
 xset b off
-#unclutter -idle 5 -jitter 20&
+[ -x $(which unclutter 2>/dev/null) ] && unclutter -idle 5 -jitter 20&
 exec ion3
 #exec matchbox-session
 #exec wmii
-#xterm&
 #exec twm
 #exec startkde

@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.133 $
-# Updated	: $Date: 2006/04/26 23:47:27 $
+# Version	: $Revision: 1.135 $
+# Updated	: $Date: 2006/05/05 20:17:15 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.133 2006/04/26 23:47:27 will Exp $
+# CVS		: $Id: profile,v 1.135 2006/05/05 20:17:15 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -29,8 +29,10 @@ MAIL=""
 PATH="$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin:/usr/games"
 RCMD_CMD="${CVS_RSH}"
 RCP_CMD="$(which scp)"
+TODO=$HOME/TODO/
 VERBOSE="1"
-export CLUSTER CVSEDITOR CVS_RSH EDITOR HOSTNAME LANG MAIL PATH RCMD_CMD RCP_CMD SHELL VERBOSE
+TODO="$HOME/TODO"
+export CLUSTER CVSEDITOR CVS_RSH EDITOR HOSTNAME LANG MAIL PATH RCMD_CMD RCP_CMD SHELL VERBOSE TODO
 
 # Directory containing platform- and host-specific configuration
 PROFILES="${HOME}/.profiles"

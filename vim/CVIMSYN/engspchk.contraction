@@ -1,0 +1,29 @@
+" call Decho("handle contractions, etc for ".b:spchklang)
+" Note: *matches* need to follow the BadWord so that they take priority!
+" Abbreviations, Possessives, Etc.  For these to be recognized properly,
+" these contractions' word prior to the "'" has been removed from the
+" keyword dictionaries above and moved here.
+syn case ignore
+
+syn match GoodWord "\<\(you\|he\|it\|ne\|we\|a\|i\|o\)\>"
+syn match GoodWord "\<\(e'er\|he'd\|i'll\|i've\|must\|need\|o'er\|shan\|they\|what\|are\|can\|cap\|don\|i'm\|may\|she\|who\|won\)\>"
+syn match GoodWord "\<\(could\|don't\|haven\|isn't\|might\|ne'er\|ought\|shall\|there\|we'll\|we're\|we've\|where\|won't\|would\|you'd\)\>"
+syn match GoodWord "\<\(ch'ing\|didn't\|hasn't\|i'd\('ve\)\=\|may've\|should\|wasn't\|who've\|you'll\|you're\|you've\|ain't\|cap'n\)\>"
+syn match GoodWord "\<\(it'd've\|must've\|there'd\|they'll\|they're\|they've\|we'd\('ve\)\=\|weren't\|what'll\|what've\|aren't\)\>"
+syn match GoodWord "\<\(there'll\|there've\|where've\|won't've\|would've\|you'd've\|daren't\|doesn't\|haven't\|he'd've\|howe'er\)\>"
+syn match GoodWord "\<\(can't\('ve\)\=\|could've\|s\=he'll\('ve\)\=\|might've\|ought've\|oughtn't\|shall've\|she'd\('ve\)\=\)\>"
+syn match GoodWord "\<\(needn't\('ve\)\=\|hadn't\('ve\)\=\|mayn't\('ve\)\=\|shan't\('ve\)\=\|should've\|they'd\('ve\)\=\)\>"
+syn match GoodWord "\<\(shouldn't\('ve\)\=\|couldn't\('ve\)\=\|mightn't\('ve\)\=\|wouldn't\('ve\)\=\|mustn't\('ve\)\=\)\>"
+syn match GoodWord "\(et al\|ph\.d\|e\.g\|i\.e\|mrs\|dr\|ex\|jr\|mr\|ms\|mba\|pm\)\."
+syn match GoodWord "ex-"
+syn match GoodWord "'s\>"
+
+" for English, accept acronyms
+let b:spchkacronym= 1
+
+" These are proper English words but vim has assigned special meaning to them,
+" so they may not be used in keyword lists
+syn match GoodWord	"\<\(transparent\|contained\|contains\|conceal\|display\|extend\|fold\|skip\)\>"
+syn case match
+
+" vim: ft=vim

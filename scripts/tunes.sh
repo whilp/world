@@ -1,13 +1,13 @@
-#!/bin/sh -x
+#!/bin/sh
 
 MPD_CONF=/etc/mpd.conf
 MPD_STATE=$(grep state ${MPD_CONF} | sed -e 's/.*"\(\/.*\)"$/\1/')
-if [ "$(pgrep -lf 'mpd .*mpd.conf')" ]; then
+if [ "$(pgrep -lf 'bin/mpd')" ]; then
     MPD_HOST="localhost"
 else
     MPD_HOST="messenger"
 fi
-MPD_HOST="messenger"
+#MPD_HOST="messenger"
 MPC_COMMAND=
 INCREMENT=7
 CURVOL=$(MPD_HOST=${MPD_HOST} mpc volume | sed -e 's/[^0-9]//g')

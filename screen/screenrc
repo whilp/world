@@ -31,7 +31,7 @@
     zombie dl
 
 # --[ SET HARDSTATUS/CAPTION
-    backtick 1 60 1 screenexec bsdbatt	    # screenexec simply checks if its
+    #backtick 1 60 1 screenexec bsdbatt	    # screenexec simply checks if its
 					    # argument is an executable in the
 					    # user's PATH. If so, it runs it;
 					    # if no, it fails silently.
