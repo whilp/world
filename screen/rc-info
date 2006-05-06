@@ -8,5 +8,4 @@ sessionname info
 screen -t SNOWNEWS  1 snownews
 screen -t WWW	    1 /usr/local/bin/elinks -session-ring 1 -touch-files
 screen -t LOG	    1 /usr/bin/sudo /usr/local/bin/multitail -Cs -f -i /var/log/messages -I /var/log/secure -I /var/log/authlog -I /var/log/daemon -I /var/log/failedlogin -I /var/www/logs/lighttpd.access -I /var/www/logs/lighttpd.error
-screen -t TODO	    1 vim $HOME/TODO/HEP
-
+screen -t TODO	    1 vim -o $HOME/TODO/HEP $HOME/TODO/.HEP-done $HOME/TODO/MISC
