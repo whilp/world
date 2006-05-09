@@ -33,7 +33,7 @@ FILET="${FILE}.tex"
 FILEP="${FILE}.pdf"
 SUM=$(which cksum)
 TARGET=soyuz
-TARGET_PATH=/tmp/.
+TARGET_PATH=/tmp/tex/.
 SCP=1
 BIB=1
 VERBOSE=1
@@ -46,7 +46,7 @@ if [ "$(diff ".${FILET}-sha256" ".${FILET}-sha256-new" 2>/dev/null)" ]; then
         && latex -halt-on-error ${FILE} >/dev/null 2>&1 \
         && pdflatex -halt-on-error ${FILE} >/dev/null 2>&1 \
         && scp "${FILEP}" ${TARGET}:${TARGET_PATH} >/dev/null 2>&1 \
-        && notify "[$(date "+%Y.%m.%d %H:%M:%S")] Copied modified $FILE.pdf to ${TARGET}." \
+        && notify "[$(date "+%Y.%m.%d %H:%M:%S")] Build of $FILE.tex successful; copied modified $FILE.pdf to ${TARGET}." \
         || warn "[$(date "+%Y.%m.%d %H:%M:%S")] Build of $FILE.tex failed!"
 else
     notify 2 "[$(date "+%Y.%m.%d %H:%M:%S")] Nothing to do."

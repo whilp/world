@@ -1,13 +1,13 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.muttcolor
 # Use		: defines color settings for mutt, a mail user agent
-# Version	: $Revision: 1.4 $
+# Version	: $Revision: 1.5 $
 # Author	: Will Maier <willmaier@ml1.net>
 # Based on	: Hendrik Mangels' muttrc <mangels@informatik.uni-bremen.de>
 #		  www.informatik.uni-bremen.de/~mangels
 # Vim		: vim: set ft=muttrc:
-# Updated	: $Date: 2006/05/08 12:59:14 $
-# CVS		: $Id: muttcolor,v 1.4 2006/05/08 12:59:14 will Exp $
+# Updated	: $Date: 2006/05/09 04:58:27 $
+# CVS		: $Id: muttcolor,v 1.5 2006/05/09 04:58:27 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -74,11 +74,6 @@ mono  body bold               "(^|[[:space:]])/[^[:space:]]+/([[:space:]]|$)"
 color signature brightdefault default
 
 
-# Highlight Request Tracker and req messages
-color index brightyellow default "(CAE|req) #\[[0-9]+\]"
-color index brightyellow default ~f@cvs.openbsd.org~s'^CVS.*www'
-color index brightgreen default ~f@cvs.openbsd.org~s'^CVS.*src'
-color index brightblue default ~f@cvs.openbsd.org~s'^CVS.*ports'
 #color index yellow default '(~n 3-3)'
 #color index red default '(~n 4-4)'
 #color index red default '(~n 5-5)'
@@ -98,6 +93,12 @@ mono  index reverse                     ~T # Tagged
 #lets paint those MAILER-MESSAGES a bit.
 color index yellow default ~fMAILER-DAEMON@*
 color index yellow default ~fMailer-Daemon@*
+
+# Highlight Request Tracker and req messages
+color index brightyellow default "(CAE|req) #\[[0-9]+\]"
+color index brightyellow default ~f@cvs.openbsd.org~s'^CVS.*www'
+color index brightgreen default ~f@cvs.openbsd.org~s'^CVS.*src'
+color index brightblue default ~f@cvs.openbsd.org~s'^CVS.*ports'
 
 #Should be last. So it gets the highest priority.
 color index blue		default	~D # Deleted
