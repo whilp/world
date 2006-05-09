@@ -15,7 +15,7 @@ contents () {
         PLAYING="$(tunes query | sed -e '1!d')"
     fi
     [ "${PLAYING}" ] && CONTENTS="${CONTENTS}[MPD: ${PLAYING}]"
-    UPTIME="$(uptime | sed -e 's/.*up //' -e 's/,  [0-9]\+ users.*//')"
+    UPTIME="$(uptime | sed -e 's/.*up //' -e 's/, .* users.*//')"
     CONTENTS="${CONTENTS}[UP: ${UPTIME}]"
     CONTENTS="${CONTENTS}[$HOSTNAME]"
     CONTENTS="${CONTENTS}[$(date)]"

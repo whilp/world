@@ -10,13 +10,13 @@ xmodmap -e "keysym Caps_Lock = Control_L"
 xmodmap -e "add Lock = Caps_Lock"
 xmodmap -e "add Control = Control_L"
 
-xterm&
+term&
 
 #exec enlightenment
 xset b off
 [ -x $(which unclutter 2>/dev/null) ] && unclutter -idle 5 -jitter 20&
-exec ion3
+#exec ion3
 #exec matchbox-session
-#exec wmii
+exec wmii
 #exec twm
 #exec startkde
