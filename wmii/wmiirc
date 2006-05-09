@@ -21,7 +21,9 @@ cycleWs() {
             REVERSE='';;
     esac
     WSES=$(wmiir read /tags)
-    [ "${REVERSE}" ] && WSES=$(echo ${WSES} | sed -e 's/ /\n/g' | sort -rn)
+    # Need to use a real newline here instead of \n on OpenBSD
+    [ "${REVERSE}" ] && WSES=$(echo ${WSES} | sed -e 's/ /\
+        /g' | sort -rn)
     WSCUR=$(wmiir read /view/sel/sel/tags)
 
     # Double the WS list so that we can loop around, if needed.
