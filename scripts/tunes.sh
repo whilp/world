@@ -18,7 +18,7 @@ FORMAT="[[%artist% - ]%title%|%name%|%file%]"
 if [ $# -eq 0 ]; then
     # Open ncmpc in a new window if it's not running; otherwise,
     # pause/resume playback.
-    if [ ! $(pgrep -lf "ncmpc --host ${MPD_HOST}") ]; then
+    if [ ! "$(pgrep -lf "ncmpc --host ${MPD_HOST}")" ]; then
         term -e "ncmpc --host ${MPD_HOST}"
     else
         MPD_HOST=${MPD_HOST} mpc toggle
@@ -32,7 +32,7 @@ else
         volume)
             MPC_COMMAND="volume $2"
             ;;
-        up|down|query)
+        up|down|query|slide|ncmpc)
             # just ignore -- they're special
             ;;
         next)
@@ -49,11 +49,14 @@ else
             exit 1
             ;;
     esac
-    MPD_HOST=${MPD_HOST} mpc ${MPC_COMMAND} >/dev/null 2>&1
+    [ "${MPC_COMMAND}" ] && MPD_HOST=${MPD_HOST} mpc ${MPC_COMMAND} >/dev/null 2>&1 && exit
 
     case $1 in
         query)
             MPD_HOST=${MPD_HOST} mpc --format "${FORMAT}"
+            ;;
+        ncmpc)
+            term -e "ncmpc --host ${MPD_HOST}"
             ;;
     esac
 
@@ -98,4 +101,3 @@ else
             ;;
     esac
 fi
-
