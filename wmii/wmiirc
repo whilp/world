@@ -46,7 +46,8 @@ DOWN=j
 LEFT=h
 RIGHT=l
 
-WMII_FONT='fixed'
+WMII_FONT='-windows-proggysquare-medium-*-*-*-*-*-96-96-*-*-*-*'
+#WMII_FONT='fixed'
 WMII_SELCOLORS='#ffffff #285577 #4c7899'
 WMII_NORMCOLORS='#222222 #eeeeee #666666'
 # dark background
@@ -134,6 +135,9 @@ $MODKEY-Control-$UP
 # Personal Additions
 $MODKEY-comma
 $MODKEY-period
+$MODKEY-c
+$MODKEY-Shift-l
+$MODKEY-Shift-k
 F1
 F2
 f2
@@ -227,6 +231,11 @@ do
                 $MODKEY-period)
                         # Jump to next view
                         cycleWs next;;
+                $MODKEY-c)
+                        # Kill a client.
+			xwrite /view/sel/sel/ctl kill;;
+                $MODKEY-Shift-l)
+                        $HOME/bin/term &;;
                 F2)
                         $HOME/bin/term &;;
                 F4)

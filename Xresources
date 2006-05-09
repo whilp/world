@@ -2,9 +2,9 @@
 ! Filename	: $HOME/.Xresources
 ! Use		: configures X fonts and colors
 ! Author	: Will Maier <willmaier@ml1.net>
-! Version	: $Revision: 1.13 $
-! Updated	: $Date: 2006/05/05 20:17:15 $
-! CVS		: $Id: Xresources,v 1.13 2006/05/05 20:17:15 will Exp $
+! Version	: $Revision: 1.14 $
+! Updated	: $Date: 2006/05/09 15:49:43 $
+! CVS		: $Id: Xresources,v 1.14 2006/05/09 15:49:43 will Exp $
 ! Copyright	: Copyright (c) 2005 Will Maier
 ! License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 !#################  END HEADERS
@@ -48,7 +48,7 @@ XTerm*colorBD: #5555FF
 
 ! gives me nice, big fonts to start; see /usr/X11R6/lib/X11/app-defaults/XTerm
 !XTerm*font:-windows-proggysquare-medium-r-normal--11-80-96-96-c-70-iso8859-1
-!XTerm*font:-windows-pixelcarnage monospace-medium-r-normal--14-90-96-96-c-90-iso8859-1
+XTerm*font:-windows-pixelcarnage monospace-medium-r-normal--14-90-96-96-c-90-iso8859-1
 !XTerm*font:-misc-fixed-medium-r-semicondensed-*-13-*-*-*-*-*-iso10646-*
 !XTerm*font:-bitstream-bitstream vera sans mono-medium-r-*-*-0-*-*-*-*-*-iso8859-9
 !XTerm*font:-adobe-courier-medium-r-*-*-14-*-*-*-*-*-iso8859-*
