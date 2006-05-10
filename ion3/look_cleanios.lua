@@ -33,6 +33,7 @@ de.defstyle("frame-tiled", {
     highlight_pixels = 0,
     padding_pixels = 0,
     spacing = 1,
+    transparent_background = true,
 })
 
 de.defstyle("tab", {

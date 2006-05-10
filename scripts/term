@@ -1,4 +1,6 @@
 #!/bin/sh
 # Runs actual/preferred term command.
-#aterm -rv -g 120x25 -bg green -tr -sh 20 -bw 0 +sb
-xterm $*
+# aterm -tr -sh 100 -bw 0 +sb
+# aterm -rv -g 120x25 -bg green -tr -sh 60 -bw 0 +sb
+# xterm $*
+urxvt -ip +sb -rv -tn linux $*

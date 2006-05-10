@@ -2,14 +2,14 @@
 ! Filename	: $HOME/.Xresources
 ! Use		: configures X fonts and colors
 ! Author	: Will Maier <willmaier@ml1.net>
-! Version	: $Revision: 1.14 $
-! Updated	: $Date: 2006/05/09 15:49:43 $
-! CVS		: $Id: Xresources,v 1.14 2006/05/09 15:49:43 will Exp $
+! Version	: $Revision: 1.15 $
+! Updated	: $Date: 2006/05/10 16:47:47 $
+! CVS		: $Id: Xresources,v 1.15 2006/05/10 16:47:47 will Exp $
 ! Copyright	: Copyright (c) 2005 Will Maier
 ! License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 !#################  END HEADERS
 
-Aterm*transparent: true
+Xterm*transparent: true
 XTerm*background: black
 XTerm*foreground: white
 

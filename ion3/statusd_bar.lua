@@ -6,10 +6,6 @@ local function get_bar()
     local f=io.popen('bar','r')
     local bar_data=f:read()
 
-    if bar_data == nil then
-        return "No output from 'bar.sh'!"
-    end
-
     return bar_data
 end
 
