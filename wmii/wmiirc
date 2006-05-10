@@ -77,8 +77,12 @@ wmiir write /def/rules <<EOF
 /XMMS.*/ -> ~
 /Gimp.*/ -> ~
 /MPlayer.*/ -> ~
+/.*Konqueror$/ -> 2-web
+/^ncmpc/ -> 0-tunes
 /.*/ -> !
-/.*/ -> 1
+/.*/ -> 1-main
+/TEST/ -> 4-term
+/^pts/ -> 4-term
 EOF
 
 # MISC
@@ -194,14 +198,14 @@ do
 			xwrite /view/0/sel/geom 0 0 east south;;
 		$MODKEY-a)
 			PATH=$HOME/.wmii-3:/usr/local/etc/wmii-3:$PATH `proglist /usr/local/etc/wmii-3 $HOME/.wmii-3 | wmiimenu` &;;
-		$MODKEY-p)
-			`wmiimenu <$PROGS_FILE` &;;
+		# $MODKEY-p)
+		# 	`wmiimenu <$PROGS_FILE` &;;
 		$MODKEY-t)
 			xwrite /ctl view "`wmiir read /tags | wmiimenu`" &;;
 		$MODKEY-[0-9])
 			xwrite /ctl view `echo $1 | sed 's/.*-//'`;;
 		$MODKEY-Return)
-			$HOME/bin/term &;;
+			$HOME/bin/term -title "TEST" &;;
 		$MODKEY-Shift-$LEFT)
 			xwrite /view/sel/sel/ctl sendto prev;;
 		$MODKEY-Shift-$RIGHT)
@@ -240,6 +244,8 @@ do
                         $HOME/bin/term &;;
                 F2)
                         $HOME/bin/term &;;
+		F3)
+		 	`wmiimenu <$PROGS_FILE` &;;
                 F4)
                         $HOME/bin/browser &;;
                 F5)

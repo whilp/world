@@ -36,7 +36,8 @@ mod_statusbar.create{
     --
     --template="[ %date || load:% %>load || mail:% %>mail_new/%>mail_total ] %filler%systray",
     --template="[ %date || load: %05load_1min || mail: %02mail_new/%02mail_total ] %filler%systray",
-    template="[UP: %uptime][BATT: %laptopstatus_batterypercent][TEMP: %laptopstatus_temperature][NP: %mpd]%filler[vger][%date]"
+    -- template="[UP: %uptime][BATT: %laptopstatus_batterypercent][TEMP: %laptopstatus_temperature][NP: %mpd]%filler[vger][%date]"
+    template="%bar"
 }
 
 
@@ -45,9 +46,9 @@ mod_statusbar.create{
 mod_statusbar.launch_statusd{
     -- Date meter
     --[[
-    date={    
+    -- date={    
         -- ISO-8601 date format with additional abbreviated day name
-        date_format='%a %Y.%m.%d %H:%M:%S',
+        -- date_format='%a %Y.%m.%d %H:%M:%S',
         -- Finnish etc. date format
         --date_format='%a %d.%m.%Y %H:%M',
         	-- Locale date format (usually shows seconds, which would require
@@ -56,20 +57,20 @@ mod_statusbar.launch_statusd{
         
         -- Additional date formats. 
         --[[ 
-        formats={ 
-            time = '%H:%M', -- %date_time
-        }
+        -- formats={ 
+            -- time = '%H:%M', -- %date_time
+        -- }
         --]]
-    },      
+    -- },      
     --]]
 
     -- Load meter
     --[[
-    load={
-        update_interval=10*1000,
-        important_threshold=1.5,
-        critical_threshold=4.0
-    },
+    -- load={
+        -- update_interval=10*1000,
+        -- important_threshold=1.5,
+        -- critical_threshold=4.0
+    -- },
     --]]
 
     -- Mail meter

@@ -7,7 +7,7 @@ if [ "$(pgrep -lf 'bin/mpd')" ]; then
 else
     MPD_HOST="messenger"
 fi
-MPD_HOST="messenger"
+#MPD_HOST="messenger"
 MPC_COMMAND=
 INCREMENT=7
 CURVOL=$(MPD_HOST=${MPD_HOST} mpc volume | sed -e 's/[^0-9]//g')
