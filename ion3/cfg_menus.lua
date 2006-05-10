@@ -11,7 +11,7 @@ defmenu("mainmenu", {
     menuentry("Help",           "mod_query.query_man(_)"),
     menuentry("About Ion",      "mod_query.show_about_ion(_)"),
     submenu("Styles",           "stylemenu"),
-    submenu("Debian",           "Debian"),
+    -- submenu("Debian",           "Debian"),
     submenu("Session",          "sessionmenu"),
 })
 
@@ -34,6 +34,12 @@ defmenu("sessionmenu", {
     menuentry("Exit",           "ioncore.shutdown()"),
 })
 
+-- Nest workspaces inside Frames (Matthieu Moy)
+defmenu("menuattach", {
+           menuentry("WIonWS",   "_:attach_new({type=\"WIonWS\"  }):goto()"),           
+           menuentry("WFloatWS", "_:attach_new({type=\"WFloatWS\"}):goto()"),           
+           menuentry("WPaneWS",  "_:attach_new({type=\"WPaneWS\" }):goto()"),           
+        })
 
 -- Context menu (frame/client window actions)
 defctxmenu("WFrame", {
@@ -43,6 +49,7 @@ defctxmenu("WFrame", {
     menuentry("(Un)tag",        "WRegion.toggle_tag(_sub)",
                                 "_sub:non-nil"),
     menuentry("Attach tagged",  "WFrame.attach_tagged(_)"),
+    submenu("Attach",           "menuattach"),
     menuentry("Clear tags",     "ioncore.clear_tags()"),
     menuentry("Window info",    "mod_query.show_clientwin(_, _sub)",
                                 "_sub:WClientWin"),
