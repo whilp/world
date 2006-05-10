@@ -58,4 +58,4 @@ dopath("cfg_bindings")
 dopath("cfg_menus")
 
 dopath("cfg_user", true)
-dopath("autoprop.lua")
+-- dopath("autoprop.lua")

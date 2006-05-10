@@ -3,6 +3,8 @@
 -- Extended by Etan Reisner <deryni@gmail.com>
 
 
+kpress(MOD1.."W", "autoprop(_sub, _, true)", "_sub:WClientWin")
+kpress(MOD1.."F", "autoprop(_sub, _, false)", "_sub:WClientWin")
 -- submap(MOD1.."W", {
 --     kpress("T", "autoprop(_sub, _, true)", "_sub:WClientWin"),
 --     kpress("F", "autoprop(_sub, _, true)", "_sub:WClientWin"),
