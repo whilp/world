@@ -1,6 +1,6 @@
--- Query every 20 seconds
+-- Query every 10 seconds
 if not mpd then
-    statusd_mpd={ interval=20*1000 }
+    statusd_mpd={ interval=10*1000 }
 end
 
 local function updateMpd()
