@@ -71,7 +71,15 @@ servers = (
     port = "6667";
   },
   { address = "silc.silcnet.org"; chatnet = "SILC"; port = "706"; },
-  { address = "irc.bitlbee.org"; chatnet = "bitlbee"; port = "6667"; }
+  { address = "irc.bitlbee.org"; chatnet = "bitlbee"; port = "6667"; },
+  {
+    address = "irc.oftc.net";
+    chatnet = "oftc";
+    port = "6667";
+    use_ssl = "no";
+    ssl_verify = "no";
+    autoconnect = "yes";
+  }
 );
 # { address = "irc.blessed.net"; chatnet = "EFNet"; port = "6667"; },
 
@@ -112,6 +120,14 @@ chatnets = {
   freenode = {
     type = "IRC";
     autosendcmd = "/^msg nickserv ident lesheros;wait -freenode 2000";
+    max_kicks = "4";
+    max_msgs = "1";
+    max_modes = "4";
+    max_whois = "1";
+  };
+  oftc = {
+    type = "IRC";
+    autosendcmd = "/^msg nickserv identify lesheros;wait -oftc 2000";
     max_kicks = "4";
     max_msgs = "1";
     max_modes = "4";
@@ -163,7 +179,7 @@ chatnets = {
 
 channels = (
   { name = "&bitlbee"; chatnet = "bitl"; autojoin = "yes"; },
-  { name = "#openbsd"; chatnet = "freenode"; autojoin = "no"; },
+  { name = "#openbsd"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "#zsh"; chatnet = "freenode"; autojoin = "no"; },
   { name = "#vim"; chatnet = "freenode"; autojoin = "no"; },
   { name = "#madlug"; chatnet = "freenode"; autojoin = "yes"; },
@@ -453,17 +469,6 @@ ignores = (
   }
 );
 windows = {
-  6 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#openbsd";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-  };
   3 = {
     items = (
       {
@@ -474,31 +479,18 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "6";
   };
-  2 = {
+  6 = {
     items = (
       {
         type = "CHANNEL";
         chat_type = "IRC";
-        name = "&bitlbee";
-        tag = "bitl";
+        name = "#openbsd";
+        tag = "freenode";
       }
     );
     sticky = "yes";
-    parent = "6";
-  };
-  7 = {
-    items = (
-      {
-        type = "QUERY";
-        chat_type = "IRC";
-        name = "ballard";
-        tag = "bitl";
-      }
-    );
-    sticky = "yes";
-    parent = "6";
+    parent = "3";
   };
   5 = {
     items = (
@@ -510,7 +502,7 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "6";
+    parent = "3";
   };
   4 = {
     items = (
@@ -522,7 +514,19 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "6";
+    parent = "3";
+  };
+  2 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "&bitlbee";
+        tag = "bitl";
+      }
+    );
+    sticky = "yes";
+    parent = "3";
   };
   1 = { 
     immortal = "yes";
@@ -532,6 +536,6 @@ windows = {
   };
 };
 mainwindows = {
-  1 = { first_line = "47"; lines = "6"; };
-  6 = { first_line = "1"; lines = "46"; };
+  1 = { first_line = "56"; lines = "6"; };
+  3 = { first_line = "1"; lines = "55"; };
 };
