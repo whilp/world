@@ -2,17 +2,31 @@
 ! Filename	: $HOME/.Xresources
 ! Use		: configures X fonts and colors
 ! Author	: Will Maier <willmaier@ml1.net>
-! Version	: $Revision: 1.15 $
-! Updated	: $Date: 2006/05/10 16:47:47 $
-! CVS		: $Id: Xresources,v 1.15 2006/05/10 16:47:47 will Exp $
+! Version	: $Revision: 1.16 $
+! Updated	: $Date: 2006/05/10 19:55:55 $
+! CVS		: $Id: Xresources,v 1.16 2006/05/10 19:55:55 will Exp $
 ! Copyright	: Copyright (c) 2005 Will Maier
 ! License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 !#################  END HEADERS
 
+! URXVT
+URxvt*background: black
+URxvt*borderLess: false
+URxvt*fading: 40
+URxvt*visualBell: true
+URxvt*font: -sgi-screen-medium-r-normal--15-150-72-72-m-80-iso8859-1
+URxvt*cutchars: `"'()*,;<>[]{|}
+URxvt*boldFont: -sgi-screen-bold-r-normal--15-150-72-72-m-90-iso8859-1
+URxvt*foreground: white
+URxvt*backgroundPixmap: .backgrounds/current.xpm
+URxvt*loginShell: true
+URxvt*scrollBar: false
+!URxvt*termName: linux
+URxvt*tintColor: blue
+
 Xterm*transparent: true
 XTerm*background: black
 XTerm*foreground: white
-
 XTerm*scrollBar: false
 XTerm*loginShell: true
 XTerm*transparent: true
