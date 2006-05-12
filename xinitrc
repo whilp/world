@@ -10,7 +10,7 @@ xmodmap -e "keysym Caps_Lock = Control_L"
 xmodmap -e "add Lock = Caps_Lock"
 xmodmap -e "add Control = Control_L"
 
-term -T TEST &
+term &
 
 #exec enlightenment
 xset b off

@@ -7,8 +7,9 @@ local function updateUptime()
     local f=io.popen('uptime', 'r')
     local uptime=f:read()
     
+    -- 4:40PM  up 12 mins, 2 users, load averages: 0.69, 0.58, 0.32
     uptime = string.gsub(uptime, '^.+ up +', '')
-    uptime = string.gsub(uptime, ', [ 0-9]+ users,.*', '')
+    uptime = string.gsub(uptime, ', [ 0-9]+ user..*', '')
 
     if uptime ~= nil then 
         return string.format("[UP: %s]", uptime)
