@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profiles/openbsd
 # Use		: Universal shell functions
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.1 $
-# Updated	: $Date: 2006/04/23 15:26:54 $
+# Version	: $Revision: 1.2 $
+# Updated	: $Date: 2006/05/12 13:37:53 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: functions,v 1.1 2006/04/23 15:26:54 will Exp $
+# CVS		: $Id: functions,v 1.2 2006/05/12 13:37:53 will Exp $
 # Copyright	: Copyright (c) 2006 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -105,4 +105,8 @@ ssh-rmkey () {
     TMPFILE=$(mktemp -q ${SSH_HOME}/known_hosts.XXXX || exit 1)
     sed -e "${LINE}d" ~/.ssh/known_hosts >| ${TMPFILE}
     mv ${TMPFILE} ~/.ssh/known_hosts
+}
+xtitle () {
+    MESSAGE="$1"
+    print -Pn "\e]0;${NAME}[${NUMBER}] @ ${HOSTNAME} | ${MESSAGE}\a"
 }

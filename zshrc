@@ -1,10 +1,10 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
-# Version	: $Revision: 1.52 $
+# Version	: $Revision: 1.53 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2006/05/10 19:55:55 $
-# CVS		: $Id: zshrc,v 1.52 2006/05/10 19:55:55 will Exp $
+# Updated	: $Date: 2006/05/12 13:37:53 $
+# CVS		: $Id: zshrc,v 1.53 2006/05/12 13:37:53 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -97,16 +97,16 @@ fi
 RPS1="%B ${NAME}[${NUMBER}] @ ${HOSTNAME} %(0?,,E[%?])%b"
 
 # Dynamically set xterm titles
-if [ "${DISPLAY}" -a "$(env | grep -i colorterm)" ]; then
-    RUNNING=shell
-    PREEXECCMD='print -Pn "\e]0;${NAME}[${NUMBER}] @ ${HOSTNAME} | $1\a"'
-    preexec () {
-        eval ${PREEXECCMD}
-    }
-    preexec
-else
-    PREEXECCMD=''
-fi
+# if [ "${DISPLAY}" -a "$(env | grep -i term)" ]; then
+#     RUNNING=shell
+#     PREEXECCMD='print -Pn "\e]0;${NAME}[${NUMBER}] @ ${HOSTNAME} | $1\a"'
+#     preexec () {
+#         eval ${PREEXECCMD}
+#     }
+#     preexec
+# else
+#     PREEXECCMD=''
+# fi
 
 # Set zsh options
 setopt NO_beep

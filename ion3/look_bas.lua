@@ -19,6 +19,10 @@ de.defstyle("*", {
     transparent_background = true,
 })
 
+de.defstyle("stdisp", {
+    based_on = "*",
+})
+
 de.defstyle("frame", {
     based_on = "*",
     shadow_colour = "#404040",

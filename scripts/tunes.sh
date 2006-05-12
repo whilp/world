@@ -1,17 +1,15 @@
 #!/bin/sh
 
-ENVCACHE=${HOME}/.environment
-MPD_CONF=/etc/mpd.conf
-MPD_STATE=$(grep state ${MPD_CONF} | sed -e 's/.*"\(\/.*\)"$/\1/')
+ENVCACHE="${HOME}/.environment"
+# MPD_CONF=/etc/mpd.conf
+# MPD_STATE=$(grep state ${MPD_CONF} | sed -e 's/.*"\(\/.*\)"$/\1/')
 if [ -r "${ENVCACHE}" ]; then
     # If there's a file with cached environment variables on this
     # machine, look for relevant stuff and source it.
-    grep '^PREF_MPD_HOST=[^ ]\+$' "${ENVCACHE}" | while read SETTING; do
-        eval "${SETTING}"
-    done
+    PREF_MPD_HOST="$(sed -e '/PREF_MPD_HOST=/!d; s/PREF_MPD_HOST=//' "${ENVCACHE}")"
 fi
 
-HOSTS="${MPD_HOST} ${PREF_MPD_HOST} messenger localhost"
+HOSTS="${MPD_HOST} ${PREF_MPD_HOST} localhost messenger"
 
 for HOST in $HOSTS; do 
     # Work through the host list in order, testing connections to
