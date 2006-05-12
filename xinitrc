@@ -15,8 +15,8 @@ term -T TEST &
 #exec enlightenment
 xset b off
 [ -x $(which unclutter 2>/dev/null) ] && unclutter -idle 5 -jitter 20&
-#exec ion3
+exec ion3
 #exec matchbox-session
-exec wmii
+#exec wmii
 #exec twm
 #exec startkde
