@@ -51,6 +51,9 @@ else
         up|down|query|slide|ncmpc)
             # just ignore -- they're special
             ;;
+        stats)
+            MPC_COMMAND="stats"
+            ;;
         next)
             MPC_COMMAND="next"
             ;;
@@ -65,7 +68,7 @@ else
             exit 1
             ;;
     esac
-    [ "${MPC_COMMAND}" ] && MPD_HOST=${MPD_HOST} mpc ${MPC_COMMAND} >/dev/null 2>&1 && exit
+    [ "${MPC_COMMAND}" ] && MPD_HOST=${MPD_HOST} mpc ${MPC_COMMAND} 2>/dev/null 2>&1 && exit
 
     case $1 in
         query)
