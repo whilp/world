@@ -75,23 +75,23 @@ PASSES=2
 PASS=1
 
 notify "Beginning encoding session for '${TITLE}'."
-while [ ${PASS} -lt ${PASSES} ]; do
-    LOG="${BACKUPDIR}/$(date "+%Y%m%d-%H%M")-${FILE}-${PASS}.log"
-    notify "Session begun at $(date "+%Y.%m.%d %H:%M:%S")." >| ${LOG}
-    notify "FILENAME: ${FILENAME}" >> ${LOG}
-    notify "SOURCE: ${SOURCE}" >> ${LOG}
-    notify "VIDEO BITRATE: ${VBITRATE}" >> ${LOG}
-    notify "PASS: ${PASS}" >> ${LOG}
-    echo "" >> ${LOG}
-    notify "Encode command: TODO" >> ${LOG}
+LOG="${BACKUPDIR}/logs/$(date "+%Y%m%d-%H%M")-${FILE}-${PASS}.log"
+notify "Session begun at $(date "+%Y.%m.%d %H:%M:%S")." >| ${LOG}
+notify "FILENAME: ${FILENAME}" >> ${LOG}
+notify "SOURCE: ${SOURCE}" >> ${LOG}
+notify "VIDEO BITRATE: ${VBITRATE}" >> ${LOG}
+notify "PASS: ${PASS}" >> ${LOG}
+echo "" >> ${LOG}
+#notify "Encode command: TODO" >> ${LOG}
 
-    notify "Logs for pass ${PASS} of this encode are stored in '${LOG}'."
-    notify "Encode of '${TITLE}' started at $(date "+%Y.%m.%d %H:%M:%S")."
-
-    time encode ${SOURCE} ${PASS} ${VBITRATE} ${FILENAME} >> ${LOG} 2>&1
-    notify "Pass ${PASS} complete at $(date "+%Y.%m.%d %H:%M:%S)."
-    PASS=$((PASS + 1))
-done
+notify "Beginning of pass ${PASS} started at $(date "+%Y.%m.%d %H:%M:%S")."
+time encode ${SOURCE} ${PASS} ${VBITRATE} ${FILENAME} >> ${LOG} 2>&1
+notify "Pass ${PASS} complete at $(date "+%Y.%m.%d %H:%M:%S")."
+PASS=$((PASS + 1))
+notify "Beginning of pass ${PASS} started at $(date "+%Y.%m.%d %H:%M:%S")."
+time encode ${SOURCE} ${PASS} ${VBITRATE} ${FILENAME} >> ${LOG} 2>&1
+notify "Pass ${PASS} complete at $(date "+%Y.%m.%d %H:%M:%S")."
+notify "Encoding complete."
 
 
 # time $(mencoder dvd://1 -quiet -ovc lavc -lavcopts vcodec=mpeg4:vpass=1:vbitrate=5000 -oac copy -o ${FILENAME} && \
