@@ -6,7 +6,7 @@ ENVCACHE="${HOME}/.environment"
 if [ -r "${ENVCACHE}" ]; then
     # If there's a file with cached environment variables on this
     # machine, look for relevant stuff and source it.
-    PREF_MPD_HOST="$(sed -e '/PREF_MPD_HOST=/!d; s/PREF_MPD_HOST=//' "${ENVCACHE}")"
+    PREF_MPD_HOST="$(sed -e '/^PREF_MPD_HOST=/!d; s/PREF_MPD_HOST=//' "${ENVCACHE}")"
 fi
 
 HOSTS="${MPD_HOST} ${PREF_MPD_HOST} localhost messenger"
