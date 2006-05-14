@@ -42,26 +42,14 @@ if [ $# -eq 0 ]; then
 else
     # Twiddle a knob.
     case $1 in
-        toggle)
-            MPC_COMMAND="toggle"
+        toggle|stats|add|next|prev|stop)
+            MPC_COMMAND="$1"
             ;;
         volume)
             MPC_COMMAND="volume $2"
             ;;
         up|down|query|slide|ncmpc)
             # just ignore -- they're special
-            ;;
-        stats)
-            MPC_COMMAND="stats"
-            ;;
-        next)
-            MPC_COMMAND="next"
-            ;;
-        prev)
-            MPC_COMMAND="prev"
-            ;;
-        stop)
-            MPC_COMMAND="stop"
             ;;
         *)
             echo "Bad command: $1."
