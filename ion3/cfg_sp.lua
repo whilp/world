@@ -3,8 +3,13 @@
 --
 
 defbindings("WScreen", {
-    bdoc("Toggle scratchpad."),
-    kpress(MOD1.."j", "mod_sp.set_shown_on(_, 'toggle')"),
+    bdoc("Toggle scratchpad called 'scratch'."),
+    -- kpress(MOD1.."J", "toggle_named_scratchpad(_, 'scratch')"),
+    kpress(MOD1.."Shift+1", "toggle_named_scratchpad(_, 'scratch')"),
+
+    bdoc("Toggle scratchpad called 'tunes'."),
+    -- kpress(MOD1.."space", "toggle_named_scratchpad(_, 'tunes')"),
+    kpress(MOD1.."Shift+2", "toggle_named_scratchpad(_, 'tunes')"),
     
     -- A more ideal key for toggling the scratchpad would be the key left of
     -- the key for numeral 1. Unfortunately the symbols mapped to this key

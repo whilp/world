@@ -42,9 +42,9 @@ defbindings("WScreen", {
         kpress("T", "ioncore.clear_tags()"),
     }),
     
-    bdoc("Go to n:th screen on multihead setup."),
-    kpress(MOD1.."Shift+1", "ioncore.goto_nth_screen(0)"),
-    kpress(MOD1.."Shift+2", "ioncore.goto_nth_screen(1)"),
+    -- bdoc("Go to n:th screen on multihead setup."),
+    -- kpress(MOD1.."Shift+1", "ioncore.goto_nth_screen(0)"),
+    -- kpress(MOD1.."Shift+2", "ioncore.goto_nth_screen(1)"),
     
     bdoc("Go to next/previous screen on multihead setup."),
     kpress(MOD1.."Shift+Left", "ioncore.goto_next_screen()"),

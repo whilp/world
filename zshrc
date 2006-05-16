@@ -1,10 +1,10 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
-# Version	: $Revision: 1.55 $
+# Version	: $Revision: 1.56 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2006/05/13 07:13:28 $
-# CVS		: $Id: zshrc,v 1.55 2006/05/13 07:13:28 will Exp $
+# Updated	: $Date: 2006/05/16 15:41:27 $
+# CVS		: $Id: zshrc,v 1.56 2006/05/16 15:41:27 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -108,7 +108,9 @@ RPS1="%B ${NAME}[${NUMBER}] @ ${HOSTNAME} %(0?,,E[%?])%b"
 #     PREEXECCMD=''
 # fi
 
-# print -Pn "\e]0;${NAME}[${NUMBER}] @ ${HOSTNAME}\a"
+if [ "${DISPLAY}" ]; then
+    print -Pn "\e]0;${NAME}[${NUMBER}] @ ${HOSTNAME}\a"
+fi
 
 # Set zsh options
 setopt NO_beep

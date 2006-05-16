@@ -59,3 +59,4 @@ dopath("cfg_menus")
 
 dopath("cfg_user", true)
 -- dopath("autoprop.lua")
+dopath("toggle_named_scratchpad.lua")
