@@ -3,10 +3,13 @@
 TODODIR=${HOME}/CVS/todo
 
 cd ${TODODIR}
-cvs up >/dev/null 2>&1
+UPDATE="$(cvs -q up -Pd)"
 
-if [ $? ]; then
+if [ "${UPDATE}" ]; then
     DATE="$(date "+%Y.%m.%d %H:%M:%S")"
-    echo "Automated CVS commit in ${TODODIR} on ${DATE}."
-    cvs commit -m "CRON: Automated commit"
-fi
+    MESSAGE="Automated CVS commit in ${TODODIR} on ${DATE}."
+    MESSAGE="${MESSAGE}\n"
+    MESSAGE="$(cvs commit -m "CRON: Automated commit")"
+fi 
+
+[ "${MESSAGE}" ] && echo "${MESSAGE}" | mail -s 'Automated CVS commit in ~/CVS/todo' will
