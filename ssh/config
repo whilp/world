@@ -24,8 +24,8 @@ Host merk*
     Port	222
     User	will
 
-Host mad
-    Hostname    mad.lfod.us
+Host nak*
+    Hostname    nak.lfod.us
     Port        22
     User        will
 

@@ -1,0 +1,36 @@
+antiword-0.37       converts MSWord Documents to ASCII Text and PostScript
+aspell-0.50.5p4     spell checker designed to eventually replace Ispell
+bitlbee-1.0.2p0     IRC proxy to connect to AIM, ICQ, Jabber, MSN and Yahoo
+bsdiff-4.2          binary patch tools
+bzip2-1.0.3         block-sorting file compressor, unencumbered
+curl-7.15.3         get files from FTP, Gopher, HTTP or HTTPS servers
+dante-1.1.19        SOCKS client and server
+elinks-0.11.0       full-featured text WWW browser
+expat-2.0.0         XML 1.0 parser written in C
+gdbm-1.8.3p0        GNU dbm
+getmail-4.6.0       POP3 mail retriever
+gettext-0.14.5p1    GNU gettext
+glib2-2.8.4         general-purpose utility library
+hping-2.0.0rc3      TCP/UDP ping/traceroute tool
+irssi-0.8.10-socks  modular IRC client with many features (ipv6,socks,proxy)
+john-1.6.40         extremely fast password cracker
+libdnet-1.10p1      portable low-level networking library
+libiconv-1.9.2p3    character set conversion library
+libxml-2.6.23       XML parsing library
+maildrop-1.7.0      local mail delivery agent with filtering abilities
+msmtp-1.4.5         SMTP plugin for MUAs
+mtr-0.69-no_x11     Matt's traceroute - network diagnostic tool
+mutt-1.5.11p2-hcache tty-based e-mail client, development version
+nmap-4.03-no_x11    scan ports and fingerprint stack of network hosts
+pcre-6.4p1          perl-compatible regular expression library
+png-1.2.8           library for manipulating PNG images
+python-2.3.5p3      interpreted object-oriented programming language
+screen-4.0.2        multi-screen window manager
+snownews-1.5.7p0    text mode rss newsreader
+teTeX_base-3.0p3-no_x11 TeX distribution, executables
+teTeX_base-fmt-3.0p0 format files
+teTeX_texmf-3.0     TeX distribution, common support files
+texi2html-1.64      texinfo to HTML converter
+tor-0.1.0.17        anonymity service using onion routing
+vim-6.4.8-no_x11    vi clone, many additional features
+zsh-4.2.6p0         Z shell, Bourne shell-compatible
