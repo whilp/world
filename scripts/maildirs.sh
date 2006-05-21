@@ -11,7 +11,7 @@
 
 MAIL=/usr/bin/mail
 
-MAILDIR=$HOME/Maildir
+MAILDIR=$HOME/.maildir
 
 # find folders
 DIRS=$(find $MAILDIR -type d -name "*cur")

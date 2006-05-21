@@ -25,6 +25,7 @@ next item:j
 previous item:k
 return to previous menu:q
 reload feed:r
+force reload feed:T
 open url:O
 open item url in overview:o
 page up:b

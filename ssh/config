@@ -24,6 +24,11 @@ Host merk*
     Port	222
     User	will
 
+Host mad
+    Hostname    mad.lfod.us
+    Port        22
+    User        will
+
 Host poly*
     Hostname	polyot.atekomi.net
     Port	22
