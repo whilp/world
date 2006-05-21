@@ -24,7 +24,7 @@ Host merk*
     Port	222
     User	will
 
-Host nak*
+Host nak
     Hostname    nak.lfod.us
     Port        22
     User        will
@@ -32,7 +32,7 @@ Host nak*
 Host poly*
     Hostname	polyot.atekomi.net
     Port	22
-    User	wcmaier
+    User	will
 
 Host tick
 # tick.rz.uni-augsburg.de - OpenPower testbed at Uni Augsburg, DE
