@@ -106,7 +106,7 @@ defbindings("WMPlex", {
     -- Apps
     bdoc("Run a terminal emulator."),
     kpress(MOD2.."F2", "ioncore.exec_on(_, '~/bin/term')"),
-    kpress(MOD1.."F2", "ioncore.exec_on(_, '~/bin/term -T merkur -e ssh -t merk screen -RD meta')"),
+    kpress(MOD1.."F2", "ioncore.exec_on(_, '~/bin/term -T nak -e ssh -t nak.lfod.us screen -RD meta')"),
 
     bdoc("Query for command line to execute."),
     kpress(MOD2.."F3", "mod_query.query_exec(_)"),
