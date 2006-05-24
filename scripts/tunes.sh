@@ -42,7 +42,7 @@ if [ $# -eq 0 ]; then
 else
     # Twiddle a knob.
     case $1 in
-        toggle|stats|add|next|prev|stop)
+        toggle|stats|clear|add|next|prev|stop)
             MPC_COMMAND="$1"
             ;;
         volume)
