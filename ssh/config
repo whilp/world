@@ -14,13 +14,8 @@ Host *
     # HashKnownHosts yes
 
 # PERSONAL
-Host localmerk
-    Hostname	192.168.1.50
-    Port	222
-    User	will
-    
-Host merk*
-    Hostname	merkur.atekomi.net
+Host hale*
+    Hostname	hale.lfod.us
     Port	222
     User	will
 
@@ -28,11 +23,6 @@ Host nak
     Hostname    nak.lfod.us
     Port        22
     User        will
-
-Host poly*
-    Hostname	polyot.atekomi.net
-    Port	22
-    User	will
 
 Host tick
 # tick.rz.uni-augsburg.de - OpenPower testbed at Uni Augsburg, DE
