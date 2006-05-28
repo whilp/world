@@ -10,7 +10,7 @@ xmodmap -e "keysym Caps_Lock = Control_L"
 xmodmap -e "add Lock = Caps_Lock"
 xmodmap -e "add Control = Control_L"
 
-term -e 'screen -RD local' &
+term -e 'screen -c /etc/screenrc -RD local' &
 
 #exec enlightenment
 xset b off
