@@ -1,10 +1,10 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
-# Version	: $Revision: 1.56 $
+# Version	: $Revision: 1.57 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2006/05/16 15:41:27 $
-# CVS		: $Id: zshrc,v 1.56 2006/05/16 15:41:27 will Exp $
+# Updated	: $Date: 2006/05/28 15:27:36 $
+# CVS		: $Id: zshrc,v 1.57 2006/05/28 15:27:36 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -139,6 +139,7 @@ setopt noclobber	    # don't overwrite files on redirect
 setopt nohup		    # don't kill jobs when shell exits
 setopt nolisttypes	    # show types in completion
 setopt notify
+setopt shwordsplit          # Expand variables for iteration like sh
 setopt path_dirs
 #setopt pushignoredups	    # don't duplicate entries in dir history
 setopt rcquotes		    # elegant quoting of quotes ('"' -> ')
