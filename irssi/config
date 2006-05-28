@@ -1,11 +1,5 @@
 servers = (
   {
-    address = "localhost";
-    chatnet = "bitl";
-    autoconnect = "yes";
-    port = "6667";
-  },
-  {
     address = "ircd.nac.net";
     chatnet = "EFNet";
     autoconnect = "no";
@@ -79,6 +73,13 @@ servers = (
     use_ssl = "no";
     ssl_verify = "no";
     autoconnect = "yes";
+  },
+  {
+    address = "localhost";
+    chatnet = "bitl";
+    port = "6667";
+    use_ssl = "no";
+    ssl_verify = "no";
   }
 );
 # { address = "irc.blessed.net"; chatnet = "EFNet"; port = "6667"; },
@@ -119,6 +120,7 @@ chatnets = {
   };
   freenode = {
     type = "IRC";
+    host = "nak.lfod.us";
     autosendcmd = "/^msg nickserv ident lesheros;wait -freenode 2000";
     max_kicks = "4";
     max_msgs = "1";
@@ -127,6 +129,7 @@ chatnets = {
   };
   oftc = {
     type = "IRC";
+    host = "nak.lfod.us";
     autosendcmd = "/^msg nickserv identify lesheros;wait -oftc 2000";
     max_kicks = "4";
     max_msgs = "1";
@@ -187,11 +190,12 @@ channels = (
   { name = "#bitlbee"; chatnet = "bitlbee"; autojoin = "no"; },
   { name = "#irssi"; chatnet = "freenode"; autojoin = "No"; },
   { name = "#mininova"; chatnet = "efnet"; autojoin = "no"; },
-  { name = "#ion"; chatnet = "freenode"; autojoin = "no"; },
+  { name = "#ion"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "#lighttpd"; chatnet = "freenode"; },
   { name = "#gnu-kbsd"; chatnet = "freenode"; },
   { name = "#wilug"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#newlug"; chatnet = "freenode"; autojoin = "yes"; }
+  { name = "#newlug"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#tor"; chatnet = "freenode"; autojoin = "yes"; }
 );
 
 aliases = {
@@ -388,7 +392,7 @@ settings = {
     autolog = "yes";
     autolog_path = "~/.irssi/logs/$0/$tag-%y.%m.%U.log";
   };
-  "irc/core" = { alternate_nick = "xl0"; };
+  "irc/core" = { alternate_nick = "cmdr_kije"; };
   "perl/core/scripts" = {
     maildir_mode = "yes";
     mail_show_message = "yes";
@@ -466,7 +470,8 @@ ignores = (
     mask = "CodeDragon";
     level = "JOINS PARTS QUITS";
     channels = ( "#madlug" );
-  }
+  },
+  { level = "JOINS PARTS QUITS"; channels = ( "#openbsd" ); }
 );
 windows = {
   3 = {

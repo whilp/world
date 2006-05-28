@@ -1,4 +1,5 @@
 antiword-0.37       converts MSWord Documents to ASCII Text and PostScript
+apg-2.2.3p0         automated password generator
 aspell-0.50.5p4     spell checker designed to eventually replace Ispell
 bitlbee-1.0.2p0     IRC proxy to connect to AIM, ICQ, Jabber, MSN and Yahoo
 bsdiff-4.2          binary patch tools
@@ -10,14 +11,16 @@ expat-2.0.0         XML 1.0 parser written in C
 gdbm-1.8.3p0        GNU dbm
 getmail-4.6.0       POP3 mail retriever
 gettext-0.14.5p1    GNU gettext
+glib-1.2.10p1       useful routines for C programming
 glib2-2.8.4         general-purpose utility library
 hping-2.0.0rc3      TCP/UDP ping/traceroute tool
-irssi-0.8.10-socks  modular IRC client with many features (ipv6,socks,proxy)
+irssi-0.8.10        modular IRC client with many features (ipv6,socks,proxy)
 john-1.6.40         extremely fast password cracker
 libdnet-1.10p1      portable low-level networking library
 libiconv-1.9.2p3    character set conversion library
 libxml-2.6.23       XML parsing library
 maildrop-1.7.0      local mail delivery agent with filtering abilities
+mairix-0.17p0       program for indexing & searching email
 msmtp-1.4.5         SMTP plugin for MUAs
 mtr-0.69-no_x11     Matt's traceroute - network diagnostic tool
 mutt-1.5.11p2-hcache tty-based e-mail client, development version
@@ -26,6 +29,7 @@ pcre-6.4p1          perl-compatible regular expression library
 png-1.2.8           library for manipulating PNG images
 python-2.3.5p3      interpreted object-oriented programming language
 screen-4.0.2        multi-screen window manager
+silc-client-1.0.2p1 Secure Internet Live Conferencing (SILC) client
 snownews-1.5.7p0    text mode rss newsreader
 teTeX_base-3.0p3-no_x11 TeX distribution, executables
 teTeX_base-fmt-3.0p0 format files
