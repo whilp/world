@@ -26,7 +26,7 @@ mtr-0.69-no_x11     Matt's traceroute - network diagnostic tool
 mutt-1.5.11p2-hcache tty-based e-mail client, development version
 nmap-4.03-no_x11    scan ports and fingerprint stack of network hosts
 pcre-6.4p1          perl-compatible regular expression library
-png-1.2.8           library for manipulating PNG images
+png-1.2.10p0        library for manipulating PNG images
 python-2.3.5p3      interpreted object-oriented programming language
 screen-4.0.2        multi-screen window manager
 silc-client-1.0.2p1 Secure Internet Live Conferencing (SILC) client
