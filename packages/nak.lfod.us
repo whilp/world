@@ -14,11 +14,13 @@ gettext-0.14.5p1    GNU gettext
 glib-1.2.10p1       useful routines for C programming
 glib2-2.8.4         general-purpose utility library
 hping-2.0.0rc3      TCP/UDP ping/traceroute tool
+ion-20060326p0      light, keyboard friendly window manager
 irssi-0.8.10        modular IRC client with many features (ipv6,socks,proxy)
 john-1.6.40         extremely fast password cracker
 libdnet-1.10p1      portable low-level networking library
 libiconv-1.9.2p3    character set conversion library
 libxml-2.6.23       XML parsing library
+lua-5.0.2p6         powerful, light-weight programming language
 maildrop-1.7.0      local mail delivery agent with filtering abilities
 mairix-0.17p0       program for indexing & searching email
 msmtp-1.4.5         SMTP plugin for MUAs

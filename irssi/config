@@ -474,7 +474,8 @@ ignores = (
   { level = "JOINS PARTS QUITS"; channels = ( "#openbsd" ); },
   { level = "JOINS PARTS QUITS"; channels = ( "#tor" ); },
   { level = "JOINS PARTS QUITS"; channels = ( "#ubuntu" ); },
-  { level = "JOINS PARTS QUITS"; channels = ( "#ubuntu+1" ); }
+  { level = "JOINS PARTS QUITS"; channels = ( "#ubuntu+1" ); },
+  { level = "JOINS PARTS QUITS"; channels = ( "#ion" ); }
 );
 windows = {
   3 = {
