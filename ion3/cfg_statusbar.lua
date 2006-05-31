@@ -38,7 +38,8 @@ mod_statusbar.create{
     --template="[ %date || load: %05load_1min || mail: %02mail_new/%02mail_total ] %filler%systray",
     -- template="[UP: %uptime][BATT: %laptopstatus_batterypercent][TEMP: %laptopstatus_temperature][NP: %mpd]%filler[vger][%date]"
     -- template="%bar"
-    template="%mpd%uptime%hostname%date"
+    -- what's wrong with %mpd?
+    template="%uptime%hostname%date"
 }
 
 

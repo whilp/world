@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profiles/aliases
 # Use		: Universal shell aliases
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.5 $
-# Updated	: $Date: 2006/05/28 16:45:33 $
-# Vim		: :vim: set ft=sh tw=0:
-# CVS		: $Id: aliases,v 1.5 2006/05/28 16:45:33 will Exp $
+# Vim		: vim: set ft=sh tw=0:
+# Version	: $Revision: 1.6 $
+# Updated	: $Date: 2006/05/31 18:59:00 $
+# CVS		: $Id: aliases,v 1.6 2006/05/31 18:59:00 will Exp $
 # Copyright	: Copyright (c) 2006 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -22,3 +22,4 @@ alias mtr="mtr -t"
 alias pource=". $HOME/.profile"
 alias xinit="xinit -- -nolisten tcp"
 alias curl="curl -s"
+alias pysh="ipython -p pysh"

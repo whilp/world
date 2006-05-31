@@ -3,42 +3,10 @@
 --
 
 -- Me props
--- Gajim chat window
+-- Konqueror
 defwinprop{
-    name = ".*account:.*",
-    target = "im-chat",
-    switchto = "true",
-    jumpto = "true"
-}
-
--- Gajim History window
-defwinprop{
-    name = ".*account:.*",
-    target = "im-chat"
-}
-
--- Gajim Preferences window
-defwinprop{
-    name = ".*Preferences:.*",
-    target = "im-chat"
-}
-
--- Gajim Contact Info window
-defwinprop{
-    name = ".*Contact Information.*",
-    target = "im-chat"
-}
-
--- Gajim Contact History window
-defwinprop{
-    name = ".*Conversation History.*",
-    target = "im-chat"
-}
-
--- Gajim main window
-defwinprop{
-    name = "Gajim",
-    target = "im-main"
+    name = ".* - Konqueror",
+    target = "www",
 }
 
 -- Firefox
@@ -49,7 +17,7 @@ defwinprop{
 
 -- Main shell
 defwinprop{
-    class = "rxvt",
+    name = "screen",
     target = "term",
     switchto = "true",
     jumpto = "true"
@@ -57,60 +25,6 @@ defwinprop{
 
 --
 -- Options to get some programs work more nicely (or at all)
---
-
--- Me props
--- Gajim chat window
-defwinprop{
-    name = ".*account:.*",
-    target = "im-chat",
-    switchto = "true",
-    jumpto = "true"
-}
-
--- Gajim History window
-defwinprop{
-    name = ".*account:.*",
-    target = "im-chat"
-}
-
--- Gajim Preferences window
-defwinprop{
-    name = ".*Preferences:.*",
-    target = "im-chat"
-}
-
--- Gajim Contact Info window
-defwinprop{
-    name = ".*Contact Information.*",
-    target = "im-chat"
-}
-
--- Gajim Contact History window
-defwinprop{
-    name = ".*Conversation History.*",
-    target = "im-chat"
-}
-
--- Gajim main window
-defwinprop{
-    name = "Gajim",
-    target = "im-main"
-}
-
--- Firefox
-defwinprop{
-    class = "Firefox-bin",
-    target = "www"
-}
-
--- Main shell
-defwinprop{
-    class = "rxvt",
-    target = "term",
-    switchto = "true",
-    jumpto = "true"
-}
 
 defwinprop{
     class = "AcroRead",
