@@ -6,6 +6,11 @@
 # FONT="-windows-pixelcarnage monospace-*-*-*-*-*-*-*-*-*-*-*-*"
 # urxvt -ip -tint black +sb -rv -tn linux \
 #     -fn "$FONT" $*
-urxvt $*
+#urxvt $*
 # mlterm --bright=100 --ls --bel=visual --bg=black --fg=white \
 #     --sb=false --transbg=true --88591=true --noucsfont=true
+
+
+ARGS=$*
+ARGS="$(echo "${ARGS}" | sed -e "s/-T \([^ ]*\)/-T ${HOSTNAME}\[\1\]/")"
+rxvt -T "vger[LOCAL]" -tn linux ${ARGS}
