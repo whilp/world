@@ -5,7 +5,7 @@
 -- Me props
 -- Konqueror
 defwinprop{
-    name = ".* - Konqueror",
+    name = "http://.* - Konqueror",
     target = "www",
 }
 
@@ -15,12 +15,18 @@ defwinprop{
     target = "www"
 }
 
--- Main shell
+-- Shells
 defwinprop{
-    name = "screen",
+    name = "\[LOCAL\]$",
+    class = 'XTerm',
     target = "term",
     switchto = "true",
     jumpto = "true"
+}
+defwinprop{
+    name = "\[PY\]",
+    class = 'XTerm',
+    target = 'scratch',
 }
 
 --
