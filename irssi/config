@@ -459,23 +459,13 @@ keyboard = (
 );
 logs = { };
 ignores = (
-  { mask = "Tattoo"; level = "ALL"; },
   { mask = "@mininova"; level = "ALL"; exception = "yes"; },
-  { 
-    level = "ACTIONS";
-    pattern = "is (away|gone|back)";
-    regexp = "yes";
-  },
   {
     mask = "CodeDragon";
     level = "JOINS PARTS QUITS";
     channels = ( "#madlug" );
   },
-  { level = "JOINS PARTS QUITS"; channels = ( "#openbsd" ); },
-  { level = "JOINS PARTS QUITS"; channels = ( "#tor" ); },
-  { level = "JOINS PARTS QUITS"; channels = ( "#ubuntu" ); },
-  { level = "JOINS PARTS QUITS"; channels = ( "#ubuntu+1" ); },
-  { level = "JOINS PARTS QUITS"; channels = ( "#ion" ); }
+  { level = "JOINS PARTS QUITS"; servertag = "freenode"; }
 );
 windows = {
   3 = {

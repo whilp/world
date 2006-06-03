@@ -2,14 +2,14 @@
 # Filename	: $HOME/.muttrc (or $HOME/.muttngrc)
 # Use		: main configuration file for mutt(-ng), a command line mail reader
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.53 $
+# Version	: $Revision: 1.54 $
 # Started	: 2005.03.06
 # Based on	: Phillip Hollenback's muttrc @ macdevcenter
 # Refers to	: $HOME/.muttalias
 #		  $HOME/.muttcolor
 # Referred to by: $HOME/.muttngrc
-# Updated	: $Date: 2006/05/28 05:24:28 $
-# CVS		: $Id: muttrc,v 1.53 2006/05/28 05:24:28 will Exp $
+# Updated	: $Date: 2006/06/03 16:21:35 $
+# CVS		: $Id: muttrc,v 1.54 2006/06/03 16:21:35 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -54,6 +54,7 @@ subscribe mutt-?.*@mutt\.org
 subscribe vim-?.*@vim\.org
 subscribe zsh-?.*@sunsite\.dk
 subscribe ports@openbsd.org
+subscribe misc@openbsd.org
 subscribe techpartners@[a-zA-Z0-9\.]*wisc.edu
 
 set alias_file="~/.muttalias"
