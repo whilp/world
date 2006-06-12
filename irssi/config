@@ -194,8 +194,7 @@ channels = (
   { name = "#lighttpd"; chatnet = "freenode"; },
   { name = "#gnu-kbsd"; chatnet = "freenode"; },
   { name = "#wilug"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#newlug"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#tor"; chatnet = "freenode"; autojoin = "yes"; }
+  { name = "#newlug"; chatnet = "freenode"; autojoin = "yes"; }
 );
 
 aliases = {

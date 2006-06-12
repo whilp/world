@@ -8,6 +8,7 @@ bitlbee-1.0.2p0     IRC proxy to connect to AIM, ICQ, Jabber, MSN and Yahoo
 bsdiff-4.2          binary patch tools
 bzip2-1.0.3         block-sorting file compressor, unencumbered
 clearsilver-0.10.3-python fast, powerful, and language-neutral HTML template system
+clusterit-2.4       suite of clustering tools based on IBM's PSSP
 curl-7.15.3         get files from FTP, Gopher, HTTP or HTTPS servers
 dante-1.1.19        SOCKS client and server
 db-4.2.52p8         Berkeley DB package, revision 4
@@ -58,6 +59,8 @@ p5-XML-Simple-2.14  trivial perl API for reading/writing XML
 p5-YAML-0.58        YAML ain't a markup language
 pcre-6.4p1          perl-compatible regular expression library
 png-1.2.10p0        library for manipulating PNG images
+py-CherryPy-2.2.1p0 pythonic, object-oriented web development framework
+py-cheetah-2.0rc6   Python-powered template engine and code generator
 py-docutils-0.4p0   tools for converting plaintext documentation into other formats
 py-markdown-1.5     Python text-to-HTML conversion tool
 py-pexpect-0.999p0  pure Python Expect-like module

@@ -2,10 +2,10 @@
 # Filename	: $HOME/.profiles/openbsd
 # Use		: OpenBSD-specifc shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.9 $
-# Updated	: $Date: 2006/05/28 16:45:33 $
+# Version	: $Revision: 1.10 $
+# Updated	: $Date: 2006/06/12 01:41:51 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: openbsd,v 1.9 2006/05/28 16:45:33 will Exp $
+# CVS		: $Id: openbsd,v 1.10 2006/06/12 01:41:51 will Exp $
 # Copyright	: Copyright (c) 2006 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
@@ -27,7 +27,7 @@ for MIRROR in $(echo ${MIRRORS}); do
 	PKG_PATH="${PKG_PATH}:${MIRROR}"
 	PKG_PATH=${PKG_PATH#:}
 done
-CVSROOT="anoncvs@rt.fm:/cvs"
+CVSROOT="anoncvs@anoncvs1.usa.openbsd.org:/cvs"
 FETCH_PACKAGES=yes
 PATH="${PATH}:/usr/X11R6/bin"
 export CVSROOT FTP_SERV PKG_PATH PATH
