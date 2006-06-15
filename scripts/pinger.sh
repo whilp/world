@@ -20,7 +20,7 @@
 
 TARGET=$1       # Should fail if nothing's specified
 DURATION=
-INTERVAL=3
+INTERVAL=20
 VERBOSE=1
 STATE=
 CURRENT=

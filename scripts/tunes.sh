@@ -1,5 +1,7 @@
 #!/bin/sh -x
 
+# Works
+
 ENVCACHE="${HOME}/.environment"
 # MPD_CONF=/etc/mpd.conf
 # MPD_STATE=$(grep state ${MPD_CONF} | sed -e 's/.*"\(\/.*\)"$/\1/')
