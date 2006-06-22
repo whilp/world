@@ -1,12 +1,10 @@
 ##################  BEGIN HEADERS
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
-# Version	: $Revision: 1.58 $
 # Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2006/06/01 18:40:48 $
-# CVS		: $Id: zshrc,v 1.58 2006/06/01 18:40:48 will Exp $
-# Copyright	: Copyright (c) 2005 Will Maier
-# License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
+# CVS		: $Id: zshrc,v 1.59 2006/06/21 23:57:10 will Exp $
+# Copyright	: Copyright (c) 2005-2006 Will Maier
+# License	: BSD; see <http://www.lfod.us/copyright.html>
 ##################  END HEADERS
 
 # Grab general settings
@@ -15,6 +13,7 @@
 # Terminal settings
 bindkey -v
 
+# Make HOME and END work reasonably
 case $TERM in
     xterm*)
 	bindkey "^[[F" end-of-line
@@ -27,6 +26,8 @@ bindkey '\e[4~' end-of-line             # End
 bindkey '\e[3~' delete-char             # Del
 bindkey '\e[2~' overwrite-mode          # Insert
 bindkey -v
+
+# Set BACKSPACE
 # stty erase '^H'
 stty erase  2>/dev/null
 
@@ -46,9 +47,9 @@ watch=(notme root)		    # Note logins
 
 # zsh aliases
 alias mv='nocorrect mv'		    # no spelling correction on mv
-alias man='nocorrect man'	    # no spelling correction on man
-alias cp='nocorrect cp'		    # no spelling correction on cp
-alias mkdir='nocorrect mkdir'	    # no spelling correction on mkdir
+alias man='nocorrect man'	    # ...
+alias cp='nocorrect cp'		    
+alias mkdir='nocorrect mkdir'	    
 alias cvs='nocorrect cvs'
 alias ln='nocorrect ln'
 
@@ -96,27 +97,10 @@ fi
 # Assemble the right prompt
 RPS1="%B ${NAME}[${NUMBER}] @ ${HOSTNAME} %(0?,,E[%?])%b"
 
-# Dynamically set xterm titles
-# if [ "${DISPLAY}" -a "$(env | grep -i term)" ]; then
-#     RUNNING=shell
-#     PREEXECCMD='print -Pn "\e]0;${NAME}[${NUMBER}] @ ${HOSTNAME} | $1\a"'
-#     preexec () {
-#         eval ${PREEXECCMD}
-#     }
-#     preexec
-# else
-#     PREEXECCMD=''
-# fi
-
 xtitle () {
     MESSAGE="$1"
     print -Pn "\e]0;${HOSTNAME}[${MESSAGE}]\a"
-    # print -Pn "\e]0;${NAME}[${NUMBER}] @ ${HOSTNAME} ${MESSAGE}\a"
 }
-
-if [ "${DISPLAY}" ]; then
-    #print -Pn "\e]0;${NAME}[${NUMBER}] @ ${HOSTNAME}\a"
-fi
 
 # Set zsh options
 setopt NO_beep
