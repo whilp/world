@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 ENVCACHE="${HOME}/.environment"
 # MPD_CONF=/etc/mpd.conf
@@ -23,7 +23,7 @@ for HOST in $HOSTS; do
 done
 
 # If we don't have anything to talk to, die now.
-[ "${MPD_HOST}" ] || exit 1
+[ "${MPD_HOST}" ] || $(echo "Nothing" && exit 1)
 
 MPC_COMMAND=
 INCREMENT=7
