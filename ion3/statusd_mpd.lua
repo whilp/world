@@ -10,7 +10,7 @@ local function updateMpd()
     if string.find(playing, '^volume:.*repeat:.*random') ~= 1 then 
         return string.format("[MPD: %s]", playing)
     else
-        return ""
+        return "[MPD]"
     end
 end
 
