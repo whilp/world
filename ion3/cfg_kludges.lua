@@ -24,9 +24,8 @@ defwinprop{
     jumpto = "true"
 }
 defwinprop{
-    name = "\[PY\]",
-    class = 'XTerm',
-    target = 'scratch',
+    name = "^ncmpc",
+    target = 'tunes',
 }
 
 --
