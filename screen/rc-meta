@@ -36,6 +36,8 @@ source /home/will/.screen/screenrc
 
 caption always "%{= bW}[%{+b}%n: %t%{-}] [%{+b}%-Lw%50>%n%f* %t%+Lw%<%{-}]%-="
 
+zombie dl
+
 
 sessionname meta
 screen -t MAIL -M   1 mutt
