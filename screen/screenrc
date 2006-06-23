@@ -28,7 +28,7 @@
     vbellwait .5
     bell_msg 'Bell in %t [%n]'
     msgwait 1
-    zombie dl
+    #zombie dl
 
 # --[ SET HARDSTATUS/CAPTION
     #backtick 1 60 1 screenexec bsdbatt	    # screenexec simply checks if its
