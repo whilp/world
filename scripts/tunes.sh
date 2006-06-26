@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 
 ENVCACHE="${HOME}/.environment"
 # MPD_CONF=/etc/mpd.conf
