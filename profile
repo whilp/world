@@ -2,12 +2,10 @@
 # Filename	: $HOME/.profile
 # Use		: configures default shell environment
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.135 $
-# Updated	: $Date: 2006/05/05 20:17:15 $
 # Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.135 2006/05/05 20:17:15 will Exp $
+# CVS		: $Id: profile,v 1.136 2006/06/26 14:26:44 will Exp $
 # Copyright	: Copyright (c) 2005 Will Maier
-# License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
+# License	: BSD; see <http://www.lfod.us/copyright.html>
 ##################  END HEADERS
 
 # Environment variables
