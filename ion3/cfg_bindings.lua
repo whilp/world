@@ -117,6 +117,9 @@ defbindings("WMPlex", {
     bdoc("Run a web browser."),
     kpress(MOD2.."F4", "ioncore.exec_on(_, '~/bin/browser')"),
 
+    bdoc("Run a web browser."),
+    kpress(MOD1.."F4", "ioncore.exec_on(_, 'firefox')"),
+
     bdoc("Run a music program."),
     kpress(MOD2.."F5", "ioncore.exec_on(_, '~/bin/tunes')"),
 
