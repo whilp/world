@@ -15,6 +15,12 @@ defwinprop{
     target = "www"
 }
 
+-- Opera
+defwinprop{
+    class = "Opera",
+    target = "www"
+}
+
 -- Shells
 defwinprop{
     name = "\[LOCAL\]$",
