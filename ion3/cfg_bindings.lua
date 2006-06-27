@@ -144,6 +144,9 @@ defbindings("WMPlex", {
     bdoc("Lock the screen."),
     kpress(MOD2.."F10", "ioncore.exec_on(_, '~/bin/lock')"),
 
+    bdoc("Lock the screen."),
+    kpress(MOD1.."F10", "ioncore.exec_on(_, '~/bin/lock pause')"),
+
     bdoc("Restart."),
     kpress(MOD2.."F11", "ioncore.restart()"),
 
