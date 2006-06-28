@@ -1,0 +1,81 @@
+Opera Hotlist version 2.0
+Options: encoding = utf8, version=3
+
+#FOLDER
+	ID=11
+	NAME=Trash
+	TRASH FOLDER=YES
+
+-
+
+#FOLDER
+	ID=12
+	NAME=Opera
+	ACTIVE=YES
+	ON PERSONALBAR=YES
+	PERSONALBAR_POS=0
+
+#URL
+	ID=13
+	NAME=Download Opera
+	URL=http://www.opera.com/download/
+
+#URL
+	ID=14
+	NAME=Opera Community
+	URL=http://my.opera.com/
+	ICONFILE=my.opera.com.ico
+	ON PERSONALBAR=YES
+	PERSONALBAR_POS=1
+
+#URL
+	ID=15
+	NAME=Opera Web Mail
+	URL=http://www.operamail.com/
+	ON PERSONALBAR=YES
+	PERSONALBAR_POS=2
+
+#URL
+	ID=16
+	NAME=Support Desk
+	URL=http://www.opera.com/support/
+
+-
+
+#URL
+	ID=17
+	NAME=Download.com
+	URL=http://www.download.com/
+
+#URL
+	ID=18
+	NAME=Amazon.com
+	URL=http://www.amazon.com/exec/obidos/redirect-home/opera-20
+
+#URL
+	ID=19
+	NAME=PriceRunner
+	URL=http://www.pricerunner.com/ref-site=opera
+
+#URL
+	ID=20
+	NAME=eBay
+	URL=http://www.ebay.com/
+
+#URL
+	ID=21
+	NAME=BBC SPORT | Football | World Cup 2006
+	URL=http://news.bbc.co.uk/sport2/hi/football/world_cup_2006/default.stm
+	CREATED=1151086259
+	VISITED=1151096320
+	DESCRIPTION=Visit BBC Sport for all the action as it happens - up-to-the-minute news, results, breaking news, video, audio and feature stories. BBC Sport covers the major events and all the professional football clubs in the UK, plus cricket, rugby, golf, tennis, motorsport and all the main world sports.
+	ICONFILE=news.bbc.co.uk.ico
+
+#URL
+	ID=22
+	NAME=http://marriedtothesea.com/today.gif
+	URL=http://marriedtothesea.com/today.gif
+	CREATED=1151096368
+	VISITED=1151096722
+	ICONFILE=Bookmark Unvisited
+
