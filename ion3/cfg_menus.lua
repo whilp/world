@@ -54,12 +54,3 @@ defctxmenu("WFrame", {
     menuentry("Window info",    "mod_query.show_clientwin(_, _sub)",
                                 "_sub:WClientWin"),
 })
-
--- Auto-generated Debian menu definitions
-if os.execute("test -x /usr/bin/update-menus") == 0 then
-    if ioncore.is_i18n() then
-        dopath("debian-menu-i18n")
-    else
-        dopath("debian-menu")
-    end
-end
