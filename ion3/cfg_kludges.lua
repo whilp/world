@@ -17,7 +17,7 @@ defwinprop{
 
 -- Opera
 defwinprop{
-    name = ".* - Opera",
+    name = ".*Opera$",
     -- class = "Opera",
     target = "www"
 }
