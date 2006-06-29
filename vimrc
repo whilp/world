@@ -1,10 +1,10 @@
 "#################  BEGIN HEADERS
 " e Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
-" Version	: $Revision: 1.50 $
+" Version	: $Revision: 1.51 $
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: $Date: 2006/05/05 20:55:24 $
-" CVS		: $Id: vimrc,v 1.50 2006/05/05 20:55:24 will Exp $
+" Updated	: $Date: 2006/06/29 03:16:33 $
+" CVS		: $Id: vimrc,v 1.51 2006/06/29 03:16:33 will Exp $
 " Copyright	: Copyright (c) 2005 Will Maier
 " License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 "#################  END HEADERS
@@ -56,8 +56,12 @@
     nnoremap ; :
 
     " spellcheck
-    noremap <C-S> :so `vimspell.sh %`<CR><CR>
-    noremap <C-A> :syntax clear SpellErrors<CR>
+    if (v:version >= 700)
+        setlocal spell spelllang=en_us
+    else
+        noremap <C-S> :so `vimspell.sh %`<CR><CR>
+        noremap <C-A> :syntax clear SpellErrors<CR>
+    endif
 
     " use for notetaking
     map <silent> <C-E> :s/*/ / <CR>$
