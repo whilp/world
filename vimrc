@@ -1,10 +1,10 @@
 "#################  BEGIN HEADERS
 " e Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
-" Version	: $Revision: 1.51 $
+" Version	: $Revision: 1.52 $
 " Author	: Will Maier <willmaier@ml1.net>
-" Updated	: $Date: 2006/06/29 03:16:33 $
-" CVS		: $Id: vimrc,v 1.51 2006/06/29 03:16:33 will Exp $
+" Updated	: $Date: 2006/06/29 03:27:08 $
+" CVS		: $Id: vimrc,v 1.52 2006/06/29 03:27:08 will Exp $
 " Copyright	: Copyright (c) 2005 Will Maier
 " License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 "#################  END HEADERS
@@ -61,6 +61,13 @@
     else
         noremap <C-S> :so `vimspell.sh %`<CR><CR>
         noremap <C-A> :syntax clear SpellErrors<CR>
+    endif
+
+    " turn on omni-completion when available
+    if (v:version >= 700)
+        au Filetype * if exists('&omnifunc') && &omnifunc == "" |
+        \ set ofu=syntaxcomplete#Complete |
+        \ endif
     endif
 
     " use for notetaking
