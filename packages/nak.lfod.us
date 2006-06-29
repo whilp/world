@@ -4,6 +4,7 @@ apr-1.0.1p2         Apache Portable Runtime
 apr-util-1.0.1p3    companion library to APR
 aspell-0.50.5p4     spell checker designed to eventually replace Ispell
 autoconf-2.13p0     automatically configure source code on many Un*x platforms
+autoconf-2.59       automatically configure source code on many Un*x platforms
 bitlbee-1.0.2p0     IRC proxy to connect to AIM, ICQ, Jabber, MSN and Yahoo
 bsdiff-4.2          binary patch tools
 bzip2-1.0.3         block-sorting file compressor, unencumbered
@@ -12,17 +13,20 @@ curl-7.15.3         get files from FTP, Gopher, HTTP or HTTPS servers
 db-4.2.52p8         Berkeley DB package, revision 4
 elinks-0.11.1       full-featured text WWW browser
 expat-2.0.0         XML 1.0 parser written in C
+gd-2.0.33p2         library for dynamic creation of images
 gdbm-1.8.3p0        GNU dbm
 getmail-4.6.2       POP3 mail retriever
 gettext-0.14.5p1    GNU gettext
 glib-1.2.10p1       useful routines for C programming
 glib2-2.10.3        general-purpose utility library
 gmake-3.80p1        GNU make
+help2man-1.29       GNU help2man
 hping-2.0.0rc3p0    TCP/UDP ping/traceroute tool
 ion-20060326p0      light, keyboard friendly window manager
 ipython-0.7.2       enhanced interactive Python shell
 irssi-0.8.10p0      modular IRC client with many features (ipv6,socks,proxy)
 john-1.6.40         extremely fast password cracker
+jpeg-6bp3           IJG's JPEG compression utilities
 libdnet-1.10p1      portable low-level networking library
 libiconv-1.9.2p3    character set conversion library
 libidn-0.6.1        internationalized string handling
@@ -37,9 +41,10 @@ msmtp-1.4.5         SMTP plugin for MUAs
 mtr-0.69-no_x11     Matt's traceroute - network diagnostic tool
 mutt-1.5.11p2-hcache tty-based e-mail client, development version
 neon-0.24.7p0       HTTP and WebDAV client library, with C interface
+ngrep-1.44p0        network grep
 nmap-4.03p0-no_x11  scan ports and fingerprint stack of network hosts
 p5-Algorithm-Diff-1.1901 interface to compute differences between two objects
-p5-Archive-Tar-1.26p0 perl interface to tar archives
+p5-Archive-Tar-1.29 perl interface to tar archives
 p5-Compress-Zlib-1.41 perl interface to the zlib compression library
 p5-ExtUtils-CBuilder-0.18 compile and link C code for Perl modules
 p5-ExtUtils-ParseXS-2.15 converts Perl XS code into C code

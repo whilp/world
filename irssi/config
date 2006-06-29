@@ -1,6 +1,6 @@
 servers = (
   {
-    address = "ircd.nac.net";
+    address = "irc.nac.net";
     chatnet = "EFNet";
     autoconnect = "yes";
     port = "6668";
@@ -412,7 +412,10 @@ settings = {
   };
   "fe-common/irc" = { show_away_once = "yes"; };
 };
-hilights = ( { text = "lt_kije"; nick = "yes"; word = "yes"; } );
+hilights = (
+  { text = "lt_kije"; nick = "yes"; word = "yes"; },
+  { text = "maier"; nick = "yes"; word = "yes"; }
+);
 keyboard = (
   { key = "end"; id = "scroll_end"; data = ""; },
   { key = "home"; id = "scroll_start"; data = ""; },
