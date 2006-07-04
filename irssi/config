@@ -484,29 +484,11 @@ windows = {
     );
     sticky = "yes";
   };
-  6 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#openbsd";
-        tag = "freenode";
-      }
-    );
+  1 = { 
+    immortal = "yes";
+    name = "(status)";
+    level = "ALL";
     sticky = "yes";
-    parent = "8";
-  };
-  2 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "&bitlbee";
-        tag = "bitl";
-      }
-    );
-    sticky = "yes";
-    parent = "8";
   };
   7 = {
     items = (
@@ -517,13 +499,15 @@ windows = {
         tag = "EFNet";
       }
     );
+    sticky = "yes";
+    parent = "8";
   };
-  4 = {
+  6 = {
     items = (
       {
         type = "CHANNEL";
         chat_type = "IRC";
-        name = "#newlug";
+        name = "#openbsd";
         tag = "freenode";
       }
     );
@@ -542,6 +526,18 @@ windows = {
     sticky = "yes";
     parent = "8";
   };
+  4 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#newlug";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+    parent = "8";
+  };
   3 = {
     items = (
       {
@@ -554,15 +550,20 @@ windows = {
     sticky = "yes";
     parent = "8";
   };
-  1 = {
-    immortal = "yes";
-    name = "(status)";
-    level = "ALL";
+  2 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "&bitlbee";
+        tag = "bitl";
+      }
+    );
     sticky = "yes";
-    parent = "4";
+    parent = "8";
   };
 };
 mainwindows = {
-  4 = { first_line = "40"; lines = "5"; };
-  8 = { first_line = "1"; lines = "39"; };
+  1 = { first_line = "32"; lines = "30"; };
+  8 = { first_line = "1"; lines = "31"; };
 };

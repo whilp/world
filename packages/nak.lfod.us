@@ -1,37 +1,52 @@
+abcde-2.3.0         command-line utility to rip and encode audio cds
 antiword-0.37       converts MSWord Documents to ASCII Text and PostScript
 apg-2.2.3p0         automated password generator
 apr-1.0.1p2         Apache Portable Runtime
 apr-util-1.0.1p3    companion library to APR
 aspell-0.50.5p4     spell checker designed to eventually replace Ispell
+atk-1.10.3p1        accessibility toolkit used by gtk+
 autoconf-2.13p0     automatically configure source code on many Un*x platforms
 autoconf-2.59       automatically configure source code on many Un*x platforms
 bitlbee-1.0.2p0     IRC proxy to connect to AIM, ICQ, Jabber, MSN and Yahoo
+bmp-0.9.7.1         gtk+2 media player based on XMMS
 bsdiff-4.2          binary patch tools
 bzip2-1.0.3         block-sorting file compressor, unencumbered
+cairo-1.0.4p0       vector graphics library
+cdparanoia-3.a9.8p0 CDDA reading utility with extra data verification features
 clusterit-2.4       suite of clustering tools based on IBM's PSSP
 curl-7.15.3         get files from FTP, Gopher, HTTP or HTTPS servers
 db-4.2.52p8         Berkeley DB package, revision 4
 elinks-0.11.1       full-featured text WWW browser
+esound-0.2.34p0     sound library for Enlightenment
 expat-2.0.0         XML 1.0 parser written in C
+flac-1.1.2p1        free lossless audio codec
 gd-2.0.33p2         library for dynamic creation of images
 gdbm-1.8.3p0        GNU dbm
 getmail-4.6.2       POP3 mail retriever
 gettext-0.14.5p1    GNU gettext
 glib-1.2.10p1       useful routines for C programming
 glib2-2.10.3        general-purpose utility library
+glitz-0.4.4         OpenGL image compositing library
 gmake-3.80p1        GNU make
+gtk+2-2.8.18p1      multi-platform graphical toolkit
 help2man-1.29       GNU help2man
+hicolor-icon-theme-0.5p0 high-color icon theme shell for GNOME and KDE
 hping-2.0.0rc3p0    TCP/UDP ping/traceroute tool
 ion-20060326p0      light, keyboard friendly window manager
 ipython-0.7.2       enhanced interactive Python shell
 irssi-0.8.10p0      modular IRC client with many features (ipv6,socks,proxy)
 john-1.6.40         extremely fast password cracker
 jpeg-6bp3           IJG's JPEG compression utilities
+libao-0.8.5p2       portable audio output library
+libaudiofile-0.2.6p0 SGI audiofile library clone
 libdnet-1.10p1      portable low-level networking library
+libglade2-2.5.1p5   library for loading GLADE interface files at runtime
 libiconv-1.9.2p3    character set conversion library
 libidn-0.6.1        internationalized string handling
 libltdl-1.5.22p1    GNU libtool system independent dlopen wrapper
+libogg-1.1.3        Ogg bitstream library
 libtool-1.5.22      generic shared library support script
+libvorbis-1.1.2     audio compression codec library
 libxml-2.6.24       XML parsing library
 lua-5.0.2p6         powerful, light-weight programming language
 maildrop-1.7.0      local mail delivery agent with filtering abilities
@@ -62,7 +77,10 @@ p5-XML-Parser-2.34  perl module for parsing XML documents
 p5-XML-SAX-0.12     perl interface to the SAX2 XML Parser
 p5-XML-Simple-2.14  trivial perl API for reading/writing XML
 p5-YAML-0.58        YAML ain't a markup language
+pango-1.12.3        library for layout and rendering of text
 pcre-6.4p1          perl-compatible regular expression library
+phoon-20050629      displays the phase of the moon in ascii
+pkgconfig-0.19p0    tool for managing library compile/link flags
 png-1.2.10p0        library for manipulating PNG images
 py-cheetah-2.0rc6   Python-powered template engine and code generator
 py-docutils-0.4p0   tools for converting plaintext documentation into other formats
@@ -73,12 +91,15 @@ py-subversion-1.3.1p0 python interface to subversion
 python-2.4.3        interpreted object-oriented programming language
 screen-4.0.2        multi-screen window manager
 snownews-1.5.7p0    text mode rss newsreader
+speex-1.0.5p0       patent-free speech codec
 sqlite-2.8.17p1     Embedded SQL implementation
 subversion-1.3.1    subversion revision control system
 teTeX_base-3.0p3-no_x11 TeX distribution, executables
 teTeX_base-fmt-3.0p0 format files
 teTeX_texmf-3.0p0   TeX distribution, common support files
 texi2html-1.64      texinfo to HTML converter
+tiff-3.8.2p0        tools and library routines for working with TIFF images
 unzip-5.52          extract, list & test files in a ZIP archive
 vim-7.0.0p1-no_x11  vi clone, many additional features
+vorbis-tools-1.1.1  play, encode, and manage Ogg Vorbis files
 zsh-4.2.6p0         Z shell, Bourne shell-compatible
