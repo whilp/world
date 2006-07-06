@@ -49,6 +49,9 @@ else
         volume)
             MPC_COMMAND="volume $2"
             ;;
+        seek)
+            MPC_COMMAND="seek $2"
+            ;;
         up|down|query|slide|ncmpc)
             # just ignore -- they're special
             ;;
