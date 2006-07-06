@@ -24,6 +24,16 @@ Host nak
     Port        22
     User        will
 
+Host bfi
+    Hostname    bfi.lfod.us
+    Port        22
+    User        will
+
+Host b1ff
+    Hostname    b1ff.lfod.us
+    Port        22
+    User        will
+
 Host tick
 # tick.rz.uni-augsburg.de - OpenPower testbed at Uni Augsburg, DE
     HostName	tick.rz.uni-augsburg.de
