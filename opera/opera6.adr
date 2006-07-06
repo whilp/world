@@ -60,7 +60,7 @@ Options: encoding = utf8, version=3
 	NAME=BBC SPORT | Football | World Cup 2006
 	URL=http://news.bbc.co.uk/sport2/hi/football/world_cup_2006/default.stm
 	CREATED=1151086259
-	VISITED=1151457045
+	VISITED=1152209567
 	DESCRIPTION=Visit BBC Sport for all the action as it happens - up-to-the-minute news, results, breaking news, video, audio and feature stories. BBC Sport covers the major events and all the professional football clubs in the UK, plus cricket, rugby, golf, tennis, motorsport and all the main world sports.
 	ICONFILE=news.bbc.co.uk.ico
 	ACTIVE=YES
@@ -70,7 +70,7 @@ Options: encoding = utf8, version=3
 	NAME=MTTS
 	URL=http://marriedtothesea.com/today.gif
 	CREATED=1151096368
-	VISITED=1151096722
+	VISITED=1151854254
 	ICONFILE=Bookmark Visited
 
 #URL
@@ -78,6 +78,7 @@ Options: encoding = utf8, version=3
 	NAME=TPFD
 	URL=http://toothpastefordinner.com/today.gif
 	CREATED=1151456805
+	VISITED=1151799324
 	ICONFILE=Bookmark Unvisited
 
 #URL
@@ -85,14 +86,15 @@ Options: encoding = utf8, version=3
 	NAME=NOAA Radar
 	URL=http://radar.weather.gov/radar_lite.php?product=N0R&rid=MKX&loop=yes
 	CREATED=1151456880
-	VISITED=1151456947
+	VISITED=1151619057
 	DESCRIPTION=Latest weather radar image from the National Weather Service
-	ICONFILE=radar.weather.gov.ico
+	ICONFILE=radar.weather.gov.bmp
 
 #URL
 	ID=25
 	NAME=NOAA Forecast
 	URL=http://www.crh.noaa.gov/zones/WIZ063.php?zo=1&city=Dane+County
 	CREATED=1151456956
+	VISITED=1151804622
 	ICONFILE=www.crh.noaa.gov.bmp
 

@@ -120,7 +120,6 @@ chatnets = {
   };
   freenode = {
     type = "IRC";
-    host = "nak.lfod.us";
     autosendcmd = "/^msg nickserv ident lesheros;wait -freenode 2000";
     max_kicks = "4";
     max_msgs = "1";
@@ -129,7 +128,6 @@ chatnets = {
   };
   oftc = {
     type = "IRC";
-    host = "nak.lfod.us";
     autosendcmd = "/^msg nickserv identify lesheros;wait -oftc 2000";
     max_kicks = "4";
     max_msgs = "1";
