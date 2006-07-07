@@ -24,8 +24,8 @@ Host nak
     Port        22
     User        will
 
-Host bfi
-    Hostname    bfi.lfod.us
+Host tillie
+    Hostname    tillie.lfod.us
     Port        22
     User        will
 
