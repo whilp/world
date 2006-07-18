@@ -25,7 +25,7 @@ case "x$1" in
 	sudo cp /bsd /bsd.old
 	sudo cp /bsd.rd /bsd.rd.old
 	sudo cp bsd.rd /bsd.rd
-	sudo ln /bsd.rd /bsd        # In case the thing doesn't want to boot from bsd.rd.
+	sudo ln -f /bsd.rd /bsd        # In case the thing doesn't want to boot from bsd.rd.
 
 	# Reboot into the upgrade process. Follow the instructions (like an
 	# install).
