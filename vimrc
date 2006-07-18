@@ -1,12 +1,9 @@
 "#################  BEGIN HEADERS
 " e Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
-" Version	: $Revision: 1.52 $
-" Author	: Will Maier <willmaier@ml1.net>
-" Updated	: $Date: 2006/06/29 03:27:08 $
-" CVS		: $Id: vimrc,v 1.52 2006/06/29 03:27:08 will Exp $
-" Copyright	: Copyright (c) 2005 Will Maier
-" License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
+" CVS		: $Id: vimrc,v 1.53 2006/07/18 14:58:56 will Exp $
+" Copyright	: Copyright (c) 2005, 2006 Will Maier
+" License	: BSD; see <http://www.lfod.us/copyright.html>
 "#################  END HEADERS
 
 " --[ SET OPTIONS
@@ -143,6 +140,12 @@
 "    au BufWrite         *      silent! execute '1,10g/^.\? Updated.*:/s/:.*/: ' . strftime("%Y.%m.%d %H:%M:%S %z") . '/'
 "    au BufWrite		*      silent! execute 'g;'
 "augroup END
+
+
+" Markdown syntax
+augroup mkd
+    autocmd BufRead *.mdn  set ai formatoptions=tcroqn2 ft=mkd comments=n:>
+augroup END
 
 " --[ My todo thing
 augroup TODO
