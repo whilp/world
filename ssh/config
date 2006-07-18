@@ -11,6 +11,7 @@ Host *
     ForwardAgent yes
     ForwardX11  no
     Protocol    2
+    EscapeChar  !
     # HashKnownHosts yes
 
 # PERSONAL
