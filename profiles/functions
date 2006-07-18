@@ -2,10 +2,8 @@
 # Filename	: $HOME/.profiles/openbsd
 # Use		: Universal shell functions
 # Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.5 $
-# Updated	: $Date: 2006/06/01 18:40:48 $
-# Vim		: :vim: set ft=sh:
-# CVS		: $Id: functions,v 1.5 2006/06/01 18:40:48 will Exp $
+# Vim		: vim: set ft=sh:
+# CVS		: $Id: functions,v 1.6 2006/07/18 14:56:03 will Exp $
 # Copyright	: Copyright (c) 2006 Will Maier
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
