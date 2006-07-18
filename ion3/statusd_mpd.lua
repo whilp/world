@@ -7,7 +7,9 @@ local function updateMpd()
     local f=io.popen('tunes query 2>/dev/null', 'r')
     local playing=f:read()
 
-    if string.find(playing, '^volume:.*repeat:.*random') ~= 1 then 
+    if string.find(playing, '^@@Nothing@@$') then
+        return ""
+    elseif string.find(playing, '^volume:.*repeat:.*random') ~= 1 then 
         return string.format("[MPD: %s]", playing)
     else
         return "[MPD]"
