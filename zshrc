@@ -2,7 +2,8 @@
 # Filename	: $HOME/.zshrc
 # Use		: setup file for zsh (z shell)
 # Author	: Will Maier <willmaier@ml1.net>
-# CVS		: $Id: zshrc,v 1.59 2006/06/21 23:57:10 will Exp $
+# Vim           : vim: set ft=sh:
+# CVS		: $Id: zshrc,v 1.60 2006/07/18 14:54:25 will Exp $
 # Copyright	: Copyright (c) 2005-2006 Will Maier
 # License	: BSD; see <http://www.lfod.us/copyright.html>
 ##################  END HEADERS
@@ -101,6 +102,14 @@ xtitle () {
     MESSAGE="$1"
     print -Pn "\e]0;${HOSTNAME}[${MESSAGE}]\a"
 }
+ns () {
+    if [ "$(env | grep -E '(X|COLOR)TERM')" ]; then
+        UTITLE=$(echo $1 | tr '[:lower:]' '[:upper:]')
+        LTITLE=$(echo $1 | tr '[:upper:]' '[:lower:]')
+        print -Pn "\e]0;vger[${UTITLE}]\a"
+    fi
+    screen -S "${LTITLE}"
+}
 
 # Set zsh options
 setopt NO_beep
@@ -117,7 +126,7 @@ setopt bsd_echo
 setopt complete_aliases
 setopt completeinword	    # internal word completion
 setopt correct		    # try to correct first word spelling
-setopt correct_all	    # correct all words
+#setopt correct_all	    # correct all words
 setopt complete_in_word	    # complete even within words. nice.
 setopt extended_glob
 setopt globdots		    # include dotfiles in globs
