@@ -469,6 +469,10 @@ completions = {
   fbsd = { value = "FreeBSD"; auto = "yes"; };
   "obsd?" = { value = "OpenBSD?"; auto = "yes"; };
   "fbsd?" = { value = "FreeBSD?"; auto = "yes"; };
+  "gg:" = {
+    value = "http://www.google.com/search?rls=en&q=";
+    auto = "yes";
+  };
 };
 windows = {
   8 = {
