@@ -3,12 +3,14 @@ antiword-0.37       converts MSWord Documents to ASCII Text and PostScript
 apg-2.2.3p0         automated password generator
 apr-1.0.1p2         Apache Portable Runtime
 apr-util-1.0.1p3    companion library to APR
+arc-5.21op0         create & extract files from DOS .ARC files
 aspell-0.50.5p4     spell checker designed to eventually replace Ispell
 atk-1.10.3p1        accessibility toolkit used by gtk+
 autoconf-2.13p0     automatically configure source code on many Un*x platforms
 autoconf-2.59       automatically configure source code on many Un*x platforms
+bash-3.1.17         GNU Bourne Again Shell
 bitlbee-1.0.2p0     IRC proxy to connect to AIM, ICQ, Jabber, MSN and Yahoo
-bmp-0.9.7.1         gtk+2 media player based on XMMS
+bmp-0.9.7p7         gtk+2 media player based on XMMS
 bsdiff-4.2          binary patch tools
 bzip2-1.0.3         block-sorting file compressor, unencumbered
 cairo-1.0.4p0       vector graphics library
@@ -20,15 +22,16 @@ elinks-0.11.1       full-featured text WWW browser
 esound-0.2.34p0     sound library for Enlightenment
 expat-2.0.0         XML 1.0 parser written in C
 flac-1.1.2p1        free lossless audio codec
-gd-2.0.33p2         library for dynamic creation of images
+freeze-2.5          FREEZE / MELT compression program - often used in QNX
+gd-2.0.33p3         library for dynamic creation of images
 gdbm-1.8.3p0        GNU dbm
-getmail-4.6.2       POP3 mail retriever
+getmail-4.6.3       POP3 mail retriever
 gettext-0.14.5p1    GNU gettext
 glib-1.2.10p1       useful routines for C programming
 glib2-2.10.3        general-purpose utility library
 glitz-0.4.4         OpenGL image compositing library
 gmake-3.80p1        GNU make
-gtk+2-2.8.18p1      multi-platform graphical toolkit
+gtk+2-2.8.19        multi-platform graphical toolkit
 help2man-1.29       GNU help2man
 hicolor-icon-theme-0.5p0 high-color icon theme shell for GNOME and KDE
 hping-2.0.0rc3p0    TCP/UDP ping/traceroute tool
@@ -37,9 +40,11 @@ ipython-0.7.2       enhanced interactive Python shell
 irssi-0.8.10p0      modular IRC client with many features (ipv6,socks,proxy)
 john-1.6.40         extremely fast password cracker
 jpeg-6bp3           IJG's JPEG compression utilities
+lha-1.14i.ac20050924 archive files using LZW compression (.lzh files)
 libao-0.8.5p2       portable audio output library
 libaudiofile-0.2.6p0 SGI audiofile library clone
 libdnet-1.10p1      portable low-level networking library
+libghttp-1.0.9p1    GNOME http client library
 libglade2-2.5.1p5   library for loading GLADE interface files at runtime
 libiconv-1.9.2p3    character set conversion library
 libidn-0.6.1        internationalized string handling
@@ -47,41 +52,71 @@ libltdl-1.5.22p1    GNU libtool system independent dlopen wrapper
 libogg-1.1.3        Ogg bitstream library
 libtool-1.5.22      generic shared library support script
 libvorbis-1.1.2     audio compression codec library
-libxml-2.6.24       XML parsing library
-lua-5.0.2p6         powerful, light-weight programming language
+libxml-2.6.26       XML parsing library
+lua-5.0.3           powerful, light-weight programming language
+lzo-1.08p1          portable speedy lossless data compression library
+lzop-1.01           fast file compressor similar to gzip
 maildrop-1.7.0      local mail delivery agent with filtering abilities
 mairix-0.17p0       program for indexing & searching email
+mergemaster-1.46p2  aids with merging configuration files during an upgrade
 metaauto-0.5        wrapper for gnu auto*
 msmtp-1.4.5         SMTP plugin for MUAs
-mtr-0.69-no_x11     Matt's traceroute - network diagnostic tool
+mtr-0.71-no_x11     Matt's traceroute - network diagnostic tool
 mutt-1.5.11p2-hcache tty-based e-mail client, development version
 neon-0.24.7p0       HTTP and WebDAV client library, with C interface
 ngrep-1.44p0        network grep
 nmap-4.03p0-no_x11  scan ports and fingerprint stack of network hosts
 p5-Algorithm-Diff-1.1901 interface to compute differences between two objects
-p5-Archive-Tar-1.29 perl interface to tar archives
+p5-Archive-Tar-1.26p0 perl interface to tar archives
+p5-Archive-Zip-1.16 perl interface to ZIP files
 p5-Compress-Zlib-1.41 perl interface to the zlib compression library
+p5-Convert-BinHex-1.119 module to extract data from Macintosh BinHex files
+p5-Convert-TNEF-0.17 module to read TNEF files
+p5-Convert-UUlib-1.051 interface to the uulib library
+p5-Crypt-SSLeay-0.51 library to provide LWP https support via OpenSSL
+p5-Digest-HMAC-1.01 interface to HMAC Message-Digest Algorithms
+p5-Digest-SHA1-2.11 module to calculate SHA1 digests
 p5-ExtUtils-CBuilder-0.18 compile and link C code for Perl modules
 p5-ExtUtils-ParseXS-2.15 converts Perl XS code into C code
+p5-HTML-Parser-3.54 modules to parse and extract information from HTML
+p5-HTML-Tagset-3.10 data tables useful for parsing HTML
 p5-HTML-Template-2.6 use HTML Templates from CGI scripts
+p5-HTTP-GHTTP-1.07  perl interface to the Gnome GHTTP library
+p5-IO-INET6-2.01    object interface for AF_INET and AF_INET6 domain sockets
+p5-IO-Socket-SSL-0.97 perl interface to SSL sockets
 p5-IO-String-1.08   emulate IO::File interface for in-core strings
 p5-IO-Zlib-1.04     IO:: style interface to Compress::Zlib
+p5-IO-stringy-2.110 in-core objects like strings and arrays for I/O
+p5-MIME-Base64-3.05 Perl5 module for Base64 and Quoted-Printable encodings
+p5-MIME-tools-5.420 modules for parsing (and creating) MIME entities
+p5-Mail-SPF-Query-1.999.1 perl module to query Sender Policy Framework
+p5-Mail-Tools-1.67  modules for handling mail with perl
 p5-Module-Build-0.28 build and install Perl modules
+p5-Net-CIDR-Lite-0.18 Perl extension for merging IPv4 or IPv6 CIDR addresses
+p5-Net-DNS-0.54     module to interface the DNS resolver
+p5-Net-IP-1.25      perl module for IPv4/IPv6 address parsing
+p5-Net-SSLeay-1.30  perl module for using OpenSSL
+p5-Net-Server-0.90  extensible framework for Perl server engines
 p5-Pod-Escapes-1.04 library to resolve perl Pod escape sequences
-p5-Pod-Simple-3.02  framework for parsing the Perl Pod format
-p5-Test-Pod-1.20p0  check for POD errors in files
+p5-Pod-Simple-3.04  framework for parsing the Perl Pod format
+p5-Socket6-0.19     Perl defines relating to AF_INET6 sockets
+p5-Sys-Hostname-Long-1.4 perl module to get FQDN
+p5-Test-Pod-1.24    check for POD errors in files
 p5-Text-Diff-0.35   perform diffs on files and record sets
 p5-Text-Markdown-1.0.3 Perl text-to-HTML conversion tool
+p5-URI-1.35         library to parse Uniform Resource Identifiers
+p5-Unix-Syslog-0.100 interface to the UNIX system logger
 p5-XML-NamespaceSupport-1.09 perl module to the SAX2 NamespaceSupport class
 p5-XML-Parser-2.34  perl module for parsing XML documents
 p5-XML-SAX-0.12     perl interface to the SAX2 XML Parser
 p5-XML-Simple-2.14  trivial perl API for reading/writing XML
 p5-YAML-0.58        YAML ain't a markup language
+p5-libwww-5.803     library for WWW access in Perl
 pango-1.12.3        library for layout and rendering of text
 pcre-6.4p1          perl-compatible regular expression library
-phoon-20050629      displays the phase of the moon in ascii
+phoon-20030120      displays the phase of the moon in ascii
 pkgconfig-0.19p0    tool for managing library compile/link flags
-png-1.2.10p0        library for manipulating PNG images
+png-1.2.12          library for manipulating PNG images
 py-cheetah-2.0rc6   Python-powered template engine and code generator
 py-docutils-0.4p0   tools for converting plaintext documentation into other formats
 py-markdown-1.5     Python text-to-HTML conversion tool
@@ -99,7 +134,10 @@ teTeX_base-fmt-3.0p0 format files
 teTeX_texmf-3.0p0   TeX distribution, common support files
 texi2html-1.64      texinfo to HTML converter
 tiff-3.8.2p0        tools and library routines for working with TIFF images
+unarj-2.43          extract files from ARJ archives
+unrar-3.54p0        extract, list, and test RAR archives
 unzip-5.52          extract, list & test files in a ZIP archive
 vim-7.0.0p1-no_x11  vi clone, many additional features
 vorbis-tools-1.1.1  play, encode, and manage Ogg Vorbis files
+zoo-2.10.1p0        handle the old .ZOO archive format
 zsh-4.2.6p0         Z shell, Bourne shell-compatible

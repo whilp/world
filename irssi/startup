@@ -1,18 +1,11 @@
 script exec \$ENV{'TZ'}='UTC'\;
 bind ^W key window
 bind window-h previous_window
-bind window-^H previous_window
 bind window-p previous_window
-bind window-^P previous_window
 bind window-l next_window
-bind window-^L next_window
 bind window-n next_window
-bind window-^N next_window
-bind window-^K upper_window
 bind window-k upper_window
-bind window-^W /window last
 bind window-j lower_window
-bind window-^J lower_window
 bind window-1 change_window 1
 bind window-2 change_window 2
 bind window-3 change_window 3
@@ -23,7 +16,6 @@ bind window-7 change_window 7
 bind window-8 change_window 8
 bind window-9 change_window 9
 bind window-c /window new hide
-bind window-^C /window new hide
 
 run awl
 run usercount
