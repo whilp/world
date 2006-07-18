@@ -60,7 +60,7 @@ Options: encoding = utf8, version=3
 	NAME=BBC SPORT | Football | World Cup 2006
 	URL=http://news.bbc.co.uk/sport2/hi/football/world_cup_2006/default.stm
 	CREATED=1151086259
-	VISITED=1152209567
+	VISITED=1152899588
 	DESCRIPTION=Visit BBC Sport for all the action as it happens - up-to-the-minute news, results, breaking news, video, audio and feature stories. BBC Sport covers the major events and all the professional football clubs in the UK, plus cricket, rugby, golf, tennis, motorsport and all the main world sports.
 	ICONFILE=news.bbc.co.uk.ico
 	ACTIVE=YES
@@ -70,7 +70,7 @@ Options: encoding = utf8, version=3
 	NAME=MTTS
 	URL=http://marriedtothesea.com/today.gif
 	CREATED=1151096368
-	VISITED=1151854254
+	VISITED=1152800117
 	ICONFILE=Bookmark Visited
 
 #URL
@@ -97,4 +97,37 @@ Options: encoding = utf8, version=3
 	CREATED=1151456956
 	VISITED=1151804622
 	ICONFILE=www.crh.noaa.gov.bmp
+
+#URL
+	ID=26
+	NAME=Fußball - Bundesliga - Yahoo! Sport
+	URL=http://de.sports.yahoo.com/fo/bu/
+	CREATED=1152636167
+	VISITED=1152732958
+	DESCRIPTION=Nachrichten, Ergebnisse, Tabellen, Bilder, Statistiken der 1. Fußball Bundesliga. Mit Forum zum austauschen und diskutieren. Alle Spiele der 1. Bundesliga im Liveticker.
+	ICONFILE=de.sports.yahoo.com.ico
+
+#URL
+	ID=27
+	NAME=The Tales of Hans Christian Andersen
+	URL=https://uwmad.courses.wisconsin.edu/content/enforced/287825-scanstu375_001_su06/hca/lessons/5.html
+	CREATED=1152925194
+	VISITED=1152936022
+	ICONFILE=uwmad.courses.wisconsin.edu.ico
+
+#URL
+	ID=28
+	NAME=The Tales of Hans Christian Andersen: Glossary
+	URL=http://scandinavian.wisc.edu/mellor/hca/glossary/propp.html
+	CREATED=1152925201
+	VISITED=1152932428
+	ICONFILE=Bookmark Unvisited
+
+#URL
+	ID=29
+	NAME=Criticism of Hans Christian Andersen :: www.andersen.sdu.dk :: The Hans Christian Andersen Center
+	URL=http://www.andersen.sdu.dk/forskning/anmeldelser/kritik_e.html#brandes
+	CREATED=1152925206
+	DESCRIPTION=Hans Christian Andersen: life and works - research, texts and information
+	ICONFILE=www.andersen.sdu.dk.ico
 
