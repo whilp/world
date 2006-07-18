@@ -16,7 +16,7 @@ for HOST in $HOSTS; do
     # Work through the host list in order, testing connections to
     # the server for each. If we get something (_anything_) back on
     # stdin, set that host as MPD_HOST and break.
-    ping -c 1 -w 1 ${HOST} >/dev/null 2>&1
+    true
     [ "$?" -eq 0 ] && MPD_HOST=${HOST} mpc >/dev/null 2>&1
     [ "$?" -eq 0 ] && MPD_HOST=${HOST}
 done
