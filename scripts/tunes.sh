@@ -16,14 +16,16 @@ for HOST in $HOSTS; do
     # Work through the host list in order, testing connections to
     # the server for each. If we get something (_anything_) back on
     # stdin, set that host as MPD_HOST and break.
-    if [ -n "$(MPD_HOST="${HOST}" mpc 2>/dev/null)" ]; then
-        MPD_HOST=${HOST}
-        break
-    fi
+    ping -c 1 -w 1 ${HOST} >/dev/null 2>&1
+    [ "$?" -eq 0 ] && MPD_HOST=${HOST} mpc >/dev/null 2>&1
+    [ "$?" -eq 0 ] && MPD_HOST=${HOST}
 done
 
 # If we don't have anything to talk to, die now.
-[ "${MPD_HOST}" ] || $(echo "Nothing" && exit 1)
+if [ ! "${MPD_HOST}" ]; then
+    echo "@@Nothing@@" 
+    exit 1
+fi
 
 MPC_COMMAND=
 INCREMENT=7
@@ -36,7 +38,7 @@ if [ $# -eq 0 ]; then
     # Open ncmpc in a new window if it's not running; otherwise,
     # pause/resume playback.
     if [ ! "$(pgrep -lf "ncmpc --host ${MPD_HOST}")" ]; then
-        term -tn xterm-color -T MPD -e "ncmpc --host ${MPD_HOST}"
+        term -tn vt100 -T MPD -e "ncmpc --host ${MPD_HOST}"
     else
         MPD_HOST=${MPD_HOST} mpc toggle
     fi
