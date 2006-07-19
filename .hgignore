@@ -5,3 +5,9 @@
 ^tailor.state$
 ^tailor.state.old$
 ^tailor.state.journal$
+opera/cache.*$
+opera/global.dat
+opera/images.*
+opera/sessions.*
+opera/vlink4.dat
+ssh/known_hosts
