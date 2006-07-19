@@ -12,6 +12,27 @@
 
 ================================================================================
 
+Q: How do I get vi-like keybindings in Firefox?
+
+A: You have to unzip [firefox_dir]/chrome/toolkit.jar, edit the
+platformHTMLBindings.xml file to include the lines
+
+    <handler event="keypress" key="h" command="cmd_scrollLeft"/>
+    <handler event="keypress" key="j" command="cmd_scrollLineDown"/>
+    <handler event="keypress" key="k" command="cmd_scrollLineUp"/>
+    <handler event="keypress" key="l" command="cmd_scrollRight"/>
+    <handler event="keypress" key="u" command="cmd_scrollPageUp" />
+
+and then zip it back up again (keeping the old version for reference is probably
+wise).
+
+Then turn off accessibility:typeaheadfind in about:config.
+
+http://www.oreillynet.com/linux/blog/2006/04/firefox_with_vim_keybindings.html
+================================================================================
+
+================================================================================
+
 Q: What are some interesting ways to manage a bundle of distributed systems?
 
 A: Well, there's cfengine[0], quattor[1], salad[2], elfms[3], lemon[3],
