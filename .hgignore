@@ -22,5 +22,7 @@ opera/lock$
 opera/mail/.*
 opera/pluginpath.ini$
 opera/styles/.*
-ssh/agent
+ssh/agent$
 ssh/id.*
+ssh/known_hosts$
+ssh/authorized_keys$
