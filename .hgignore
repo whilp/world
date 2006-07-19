@@ -1,6 +1,7 @@
 (^|/)CVS($|/)
 (^|/)\.hg($|/)
 (^|/)\.hgtags($|/)
+.*.swp
 ^project.log$
 ^tailor.state$
 ^tailor.state.old$
@@ -11,8 +12,11 @@ opera/images.*
 opera/sessions.*
 opera/vlink4.dat$
 ssh/known_hosts$
-elinks/.*hist
-elinks/.*hist
+elinks/.*hist$
+elinks/.*hist$
+elinks/cookies$
+getmail/log$
+getmail/oldmail.*
 opera/browser.js
 opera/lock$
 opera/mail/.*
