@@ -86,7 +86,7 @@ Options: encoding = utf8, version=3
 	NAME=NOAA Radar
 	URL=http://radar.weather.gov/radar_lite.php?product=N0R&rid=MKX&loop=yes
 	CREATED=1151456880
-	VISITED=1151619057
+	VISITED=1153342173
 	DESCRIPTION=Latest weather radar image from the National Weather Service
 	ICONFILE=radar.weather.gov.bmp
 
@@ -95,7 +95,7 @@ Options: encoding = utf8, version=3
 	NAME=NOAA Forecast
 	URL=http://www.crh.noaa.gov/zones/WIZ063.php?zo=1&city=Dane+County
 	CREATED=1151456956
-	VISITED=1151804622
+	VISITED=1153327693
 	ICONFILE=www.crh.noaa.gov.bmp
 
 #URL

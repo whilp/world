@@ -16,7 +16,7 @@ bzip2-1.0.3         block-sorting file compressor, unencumbered
 cairo-1.0.4p0       vector graphics library
 cdparanoia-3.a9.8p0 CDDA reading utility with extra data verification features
 clusterit-2.4       suite of clustering tools based on IBM's PSSP
-curl-7.15.3         get files from FTP, Gopher, HTTP or HTTPS servers
+curl-7.15.4         get files from FTP, Gopher, HTTP or HTTPS servers
 db-4.2.52p8         Berkeley DB package, revision 4
 elinks-0.11.1       full-featured text WWW browser
 esound-0.2.34p0     sound library for Enlightenment
@@ -63,12 +63,12 @@ mergemaster-1.46p2  aids with merging configuration files during an upgrade
 metaauto-0.5        wrapper for gnu auto*
 msmtp-1.4.5         SMTP plugin for MUAs
 mtr-0.71-no_x11     Matt's traceroute - network diagnostic tool
-mutt-1.5.11p2-hcache tty-based e-mail client, development version
+mutt-1.5.11p3-hcache tty-based e-mail client, development version
 neon-0.24.7p0       HTTP and WebDAV client library, with C interface
 ngrep-1.44p0        network grep
-nmap-4.03p0-no_x11  scan ports and fingerprint stack of network hosts
+nmap-4.11-no_x11    scan ports and fingerprint stack of network hosts
 p5-Algorithm-Diff-1.1901 interface to compute differences between two objects
-p5-Archive-Tar-1.26p0 perl interface to tar archives
+p5-Archive-Tar-1.29 perl interface to tar archives
 p5-Archive-Zip-1.16 perl interface to ZIP files
 p5-Compress-Zlib-1.41 perl interface to the zlib compression library
 p5-Convert-BinHex-1.119 module to extract data from Macintosh BinHex files
@@ -115,7 +115,7 @@ p5-YAML-0.58        YAML ain't a markup language
 p5-libwww-5.803     library for WWW access in Perl
 pango-1.12.3        library for layout and rendering of text
 pcre-6.4p1          perl-compatible regular expression library
-phoon-20030120      displays the phase of the moon in ascii
+phoon-20050629      displays the phase of the moon in ascii
 pkgconfig-0.19p0    tool for managing library compile/link flags
 png-1.2.12          library for manipulating PNG images
 py-cheetah-2.0rc6   Python-powered template engine and code generator
@@ -123,14 +123,14 @@ py-docutils-0.4p0   tools for converting plaintext documentation into other form
 py-markdown-1.5     Python text-to-HTML conversion tool
 py-pexpect-2.1      pure Python Expect-like module
 py-sqlite-1.0p0     SQLite adapter for Python
-py-subversion-1.3.1p0 python interface to subversion
+py-subversion-1.3.2 python interface to subversion
 python-2.4.3        interpreted object-oriented programming language
 screen-4.0.2        multi-screen window manager
 snownews-1.5.7p0    text mode rss newsreader
 speex-1.0.5p0       patent-free speech codec
 sqlite-2.8.17p1     Embedded SQL implementation
-subversion-1.3.1    subversion revision control system
-tailor-0.9.23       convert one version control system to another
+subversion-1.3.2    subversion revision control system
+tailor-0.9.23       convert repositories from one version control system to another
 teTeX_base-3.0p3-no_x11 TeX distribution, executables
 teTeX_base-fmt-3.0p0 format files
 teTeX_texmf-3.0p0   TeX distribution, common support files
@@ -139,7 +139,7 @@ tiff-3.8.2p0        tools and library routines for working with TIFF images
 unarj-2.43          extract files from ARJ archives
 unrar-3.54p0        extract, list, and test RAR archives
 unzip-5.52          extract, list & test files in a ZIP archive
-vim-7.0.0p1-no_x11  vi clone, many additional features
+vim-7.0.35-no_x11   vi clone, many additional features
 vorbis-tools-1.1.1  play, encode, and manage Ogg Vorbis files
 zoo-2.10.1p0        handle the old .ZOO archive format
 zsh-4.2.6p0         Z shell, Bourne shell-compatible
