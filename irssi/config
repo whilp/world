@@ -388,7 +388,7 @@ settings = {
     window_auto_change = "yes";
     autocreate_split_windows = "no";
     autolog = "yes";
-    autolog_path = "~/.irssi/logs/$0/$tag-%y.%m.%U.log";
+    autolog_path = "~/.irclogs/$0/$tag-%y.%m.%U.log";
   };
   "irc/core" = { alternate_nick = "cmdr_kije"; };
   "perl/core/scripts" = {
