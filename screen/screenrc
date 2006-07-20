@@ -1,26 +1,27 @@
-# ~/.screenrc
-# Will Maier <willmaier@ml1.net>
-# 2005.06.11
-# vim:set tw=0:
+##################  BEGIN HEADERS
+# Filename	: $HOME/.screenrc
+# Use		: configures default screen environment
+# Author	: Will Maier <willmaier@ml1.net>
+# Vim		: :vim: set ft=screen:
+# CVS		: $Id$
+# Copyright	: Copyright (c) 2005, 2006 Will Maier
+# License	: BSD; see <http://www.lfod.us/copyright.html>
+##################  END HEADERS
+
 # NOTE: The meta key can be changed on the command line when starting screen
 # using the -e flag. Eg: `screen -e^Ee`
 
 # --[ SET OPTIONS
-#    escape ^Aa
-#    screen -t ROOT	0 sudo -s
+#   escape ^Aa
     startup_message off
     nethack on
 
     defflow on
-#    setenv DISPLAY :0.0
-#    setenv TERM screen
     deflogin on
     autodetach on
 
     defscrollback 5000
     vbell on
-#    shelltitle $HOST
-#    shell   zsh
     allpartial off
     activity "^Gactivity in %n (%t)~"
     sorendition  +b Wb			    # set colors; white on blue 
@@ -30,52 +31,15 @@
     msgwait 1
     #zombie dl
 
-# --[ SET HARDSTATUS/CAPTION
-    #backtick 1 60 1 screenexec bsdbatt	    # screenexec simply checks if its
-					    # argument is an executable in the
-					    # user's PATH. If so, it runs it;
-					    # if no, it fails silently.
-    backtick 2 10 10 cat /home/will/Maildir/.count
-#    hardstatus alwayslastline "%{= bW}[%{+b}%n: %t%{-}] [%{+b}%-Lw%50>%n%f* %t%+Lw%<%{-}]%-= %?[%{+b}Batt: %1`%%%{-}].%?%?[%{+b}%H%{-}].%?[%{+b}%Y.%m.%d %c:%s%{-}]"
+# Set the hardstatus/caption line.
     caption always "%{= bW}[%{+b}%n: %t%{-}][%{+b}%-Lw%50>%n%f*%t%+Lw%<%{-}]%-=%?[%{+b}Batt: %1`%%%{-}]%?%?[%{+b}Mail: %2`%{-}]%?%?[%{+b}%H%{-}]%?[%{+b}%Y.%m.%d %c:%s%{-}]"
-    hardstatus on
-#    hardstatus alwayslastline "%{+ WK}[%n: %t] %-Lw%{= WB}%50>%n%f  %t%{-}%+Lw%< %-=%{= BW} %?[%{= WB}Batt: %1`%%%{-}].%?%?[%{= WB}%H%{-}].%?[%{= BW}%Y.%m.%d %c:%s%{-}]"
-#    hardstatus alwayslastline "%{+B BW}TEST"
-#    hardstatus alwayslastline "%{= bW}[%n: %t] %-Lw%{= WB}%50>%n%f  %t%{-}%+Lw%< %-=%{= bW} %?[%{= bW}Batt: %1`%%%{-}].%?%?[%{= bW}%H%{-}].%?[%{= Wb}%Y.%m.%d %c:%s%{-}]"
-#    caption string "%{= .W}[%n: %t] %-Lw%{= .G}%50>%n%f* %t%{-}%+Lw%< %-=%{= BW} %?[%{= BW}Batt: %1`%%%{-}].%?%?[%{= BW}%H%{-}].%?[%{= BW}%Y.%m.%d %c:%s%{-}]"
-
-# A description of my hardstatus line
-# There are several fields in the hardstatus, from left to right:
-# WINDOW LIST: a list of open windows in screen
-# BATTERY STATUS: the output of a python script; this (and other fields
-#   surrounded by '%?...%?' are optional and rendered only if an escaped string
-#   within the pair of '%?' evaluates to a non-empty string.
-# DATE: format produces, eg: 2005.06.20 14:46. Rendered only if non-empty.
-
-# Other hardstati
-#hardstatus alwayslastline "\033[m\033[42;30m %m%d \033[m \033[42;30m%c\033[m \033[42;30m %w \033[m"
-#hardstatus alwayslastline "%-Lw%{= BW}%50>%n%f* %t%{-}%+Lw%<"
-#hardstatus alwayslastline "%?%F%{.R.}%?%3n %t%? [%h]%?"
-#hardstatus alwayslastline "%w %-=%?[%{ =BW}Batt %1`%%%{-}]%?%?=[%H]%?%?=[%Y.%m.%d %c]%?"
-#hardstatus alwayslastline "%{wk}%?%-Lw%?%{bw}%n*%f %t%?(%u)%?%{wk}%?%+Lw %= %{mk}@ %H %{ck}%Y%{wk}-%{ck}%m%{wk}-%{ck}%d %{yk}%D %{gk}%c"
-#hardstatus string "%{.bW}%-w%{.rW}%n %t%{-}%+w %=%{..G} %H %{..Y} %Y/%m/%d %0c:%s "
-#hardstatus alwayslastline "%{RY}%16=%H %33=%{YR}%50=%M%d %66=%{Gb}%80=%c%="
-
-# --[ TERMINAL SETTINGS
 
 # Set the hardstatus prop on gui terms to set the titlebar/icon title
     termcapinfo rxvt* hs:ts=\E]2;:fs=\007:ds=\E]2;screen\007
     termcapinfo rxvt-unicode* hs:ts=\E]2;:fs=\007:ds=\E]2;screen\007
     termcapinfo xterm* hs:ts=\E]0;:fs=\007:ds=\E]0;\007
-# set these terminals up to be 'optimal' instead of vt100
-#    termcapinfo xterm*|linux*|rxvt*|Eterm* OP
-# Change the xterm initialization string from is2=\E[!p\E[?3;4l\E[4l\E>
-# (This fixes the "Aborted because of window size change" konsole symptoms found
-#  in bug #134198)
-#    termcapinfo xterm 'is=\E[r\E[m\E[2J\E[H\E[?7h\E[?1;4;6l'
 
-
-# --[ KEY BINDINGS
+# Key bindings.
     bind T source .metascreen
     bind h caption splitonly
     bind H caption always
@@ -97,3 +61,17 @@
     bind - exec vol -d -i 30
     bind = exec vol -u -i 30
     bind + exec vol -t
+
+# Old hardstatuses.
+#    hardstatus alwayslastline "%{= bW}[%{+b}%n: %t%{-}] [%{+b}%-Lw%50>%n%f* %t%+Lw%<%{-}]%-= %?[%{+b}Batt: %1`%%%{-}].%?%?[%{+b}%H%{-}].%?[%{+b}%Y.%m.%d %c:%s%{-}]"
+#    hardstatus alwayslastline "%{+ WK}[%n: %t] %-Lw%{= WB}%50>%n%f  %t%{-}%+Lw%< %-=%{= BW} %?[%{= WB}Batt: %1`%%%{-}].%?%?[%{= WB}%H%{-}].%?[%{= BW}%Y.%m.%d %c:%s%{-}]"
+#    hardstatus alwayslastline "%{+B BW}TEST"
+#    hardstatus alwayslastline "%{= bW}[%n: %t] %-Lw%{= WB}%50>%n%f  %t%{-}%+Lw%< %-=%{= bW} %?[%{= bW}Batt: %1`%%%{-}].%?%?[%{= bW}%H%{-}].%?[%{= Wb}%Y.%m.%d %c:%s%{-}]"
+#    caption string "%{= .W}[%n: %t] %-Lw%{= .G}%50>%n%f* %t%{-}%+Lw%< %-=%{= BW} %?[%{= BW}Batt: %1`%%%{-}].%?%?[%{= BW}%H%{-}].%?[%{= BW}%Y.%m.%d %c:%s%{-}]"
+# hardstatus alwayslastline "\033[m\033[42;30m %m%d \033[m \033[42;30m%c\033[m \033[42;30m %w \033[m"
+# hardstatus alwayslastline "%-Lw%{= BW}%50>%n%f* %t%{-}%+Lw%<"
+# hardstatus alwayslastline "%?%F%{.R.}%?%3n %t%? [%h]%?"
+# hardstatus alwayslastline "%w %-=%?[%{ =BW}Batt %1`%%%{-}]%?%?=[%H]%?%?=[%Y.%m.%d %c]%?"
+# hardstatus alwayslastline "%{wk}%?%-Lw%?%{bw}%n*%f %t%?(%u)%?%{wk}%?%+Lw %= %{mk}@ %H %{ck}%Y%{wk}-%{ck}%m%{wk}-%{ck}%d %{yk}%D %{gk}%c"
+# hardstatus string "%{.bW}%-w%{.rW}%n %t%{-}%+w %=%{..G} %H %{..Y} %Y/%m/%d %0c:%s "
+# hardstatus alwayslastline "%{RY}%16=%H %33=%{YR}%50=%M%d %66=%{Gb}%80=%c%="
