@@ -17,6 +17,7 @@
 ^elinks/cookies$
 ^getmail/log$
 ^getmail/oldmail.*
+^ion3/default.*
 ^opera/browser.js
 ^opera/lock$
 ^opera/mail/.*
