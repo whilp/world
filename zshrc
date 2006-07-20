@@ -32,6 +32,9 @@ bindkey -v
 # stty erase '^H'
 stty erase  2>/dev/null
 
+# Load personal function stuff
+fpath=(~/.zsh $fpath)
+
 # Load tricksy zsh functions
 autoload -U compinit && compinit -i # new tab completion
 autoload -U colors && colors	    # color stuff
