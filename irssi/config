@@ -24,6 +24,11 @@ servers = (
     autoconnect = "yes";
   },
   {
+    address = "brown.freenode.net";
+    chatnet = "freenode";
+    port = "6667";
+  },
+  {
     address = "irc.milwaukeelug.org";
     chatnet = "mkeirc";
     port = "6668";
