@@ -56,6 +56,7 @@ alias cp='nocorrect cp'
 alias mkdir='nocorrect mkdir'	    
 alias cvs='nocorrect cvs'
 alias ln='nocorrect ln'
+alias zource=". ${HOME}/.zshrc"
 
 # Shell prompt
 if [ "${EUID}" != "0" ]; then
