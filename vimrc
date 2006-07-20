@@ -43,6 +43,10 @@
 	set t_Sb=[4%dm
     endif
 
+    " Use CSS and XHTML when printing
+    let use_xhtml = 1
+    let html_use_css = 1
+
     " Call man from within vim
     runtime ftplugin/man.vim
 
