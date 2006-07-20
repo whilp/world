@@ -29,6 +29,11 @@ wise).
 Then turn off accessibility:typeaheadfind in about:config.
 
 http://www.oreillynet.com/linux/blog/2006/04/firefox_with_vim_keybindings.html
+http://www.mozilla.org/unix/customizing.html#keys
+http://kb.mozillazine.org/Emacs_Keybindings_%28Firefox%29
+https://bugzilla.mozilla.org/show_bug.cgi?id=201011
+https://www.redhat.com/archives/fedora-list/2005-November/msg03046.html
+
 ================================================================================
 
 ================================================================================
