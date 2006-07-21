@@ -17,7 +17,9 @@ cairo-1.0.4p0       vector graphics library
 cdparanoia-3.a9.8p0 CDDA reading utility with extra data verification features
 clusterit-2.4       suite of clustering tools based on IBM's PSSP
 curl-7.15.4         get files from FTP, Gopher, HTTP or HTTPS servers
+darcs-1.0.8         advanced revision control system written in Haskell
 db-4.2.52p8         Berkeley DB package, revision 4
+dwm-0.2             compact, dynamic window manager for X11
 elinks-0.11.1       full-featured text WWW browser
 esound-0.2.34p0     sound library for Enlightenment
 expat-2.0.0         XML 1.0 parser written in C
@@ -27,10 +29,12 @@ gd-2.0.33p3         library for dynamic creation of images
 gdbm-1.8.3p0        GNU dbm
 getmail-4.6.3       POP3 mail retriever
 gettext-0.14.5p1    GNU gettext
+ghc-6.2.2           compiler for the functional language Haskell
 glib-1.2.10p1       useful routines for C programming
 glib2-2.10.3        general-purpose utility library
 glitz-0.4.4         OpenGL image compositing library
 gmake-3.80p1        GNU make
+gmp-4.1.4p0         library for arbitrary precision arithmetic
 gtk+2-2.8.19        multi-platform graphical toolkit
 help2man-1.29       GNU help2man
 hicolor-icon-theme-0.5p0 high-color icon theme shell for GNOME and KDE
