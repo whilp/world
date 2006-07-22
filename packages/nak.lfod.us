@@ -1,16 +1,14 @@
-abcde-2.3.0         command-line utility to rip and encode audio cds
 antiword-0.37       converts MSWord Documents to ASCII Text and PostScript
 apg-2.2.3p0         automated password generator
 apr-1.0.1p2         Apache Portable Runtime
 apr-util-1.0.1p3    companion library to APR
-arc-5.21op0         create & extract files from DOS .ARC files
 aspell-0.50.5p4     spell checker designed to eventually replace Ispell
 atk-1.10.3p1        accessibility toolkit used by gtk+
 autoconf-2.13p0     automatically configure source code on many Un*x platforms
 autoconf-2.59       automatically configure source code on many Un*x platforms
-bash-3.1.17         GNU Bourne Again Shell
 bitlbee-1.0.2p0     IRC proxy to connect to AIM, ICQ, Jabber, MSN and Yahoo
 bmp-0.9.7p7         gtk+2 media player based on XMMS
+boehm-gc-6.2p1      garbage collection and memory leak detection for C and C++
 bsdiff-4.2          binary patch tools
 bzip2-1.0.3         block-sorting file compressor, unencumbered
 cairo-1.0.4p0       vector graphics library
@@ -24,12 +22,10 @@ elinks-0.11.1       full-featured text WWW browser
 esound-0.2.34p0     sound library for Enlightenment
 expat-2.0.0         XML 1.0 parser written in C
 flac-1.1.2p1        free lossless audio codec
-freeze-2.5          FREEZE / MELT compression program - often used in QNX
 gd-2.0.33p3         library for dynamic creation of images
 gdbm-1.8.3p0        GNU dbm
 getmail-4.6.3       POP3 mail retriever
 gettext-0.14.5p1    GNU gettext
-ghc-6.2.2           compiler for the functional language Haskell
 glib-1.2.10p1       useful routines for C programming
 glib2-2.10.3        general-purpose utility library
 glitz-0.4.4         OpenGL image compositing library
@@ -58,13 +54,12 @@ libtool-1.5.22      generic shared library support script
 libvorbis-1.1.2     audio compression codec library
 libxml-2.6.26       XML parsing library
 lua-5.0.3           powerful, light-weight programming language
-lzo-1.08p1          portable speedy lossless data compression library
-lzop-1.01           fast file compressor similar to gzip
 maildrop-1.7.0      local mail delivery agent with filtering abilities
 mairix-0.17p0       program for indexing & searching email
 mercurial-0.9p0     fast, lightweight source control management
 mergemaster-1.46p2  aids with merging configuration files during an upgrade
 metaauto-0.5        wrapper for gnu auto*
+moinmoin-1.5.4      Python clone of WikiWiki
 msmtp-1.4.5         SMTP plugin for MUAs
 mtr-0.71-no_x11     Matt's traceroute - network diagnostic tool
 mutt-1.5.11p3-hcache tty-based e-mail client, development version
@@ -119,7 +114,6 @@ p5-YAML-0.58        YAML ain't a markup language
 p5-libwww-5.803     library for WWW access in Perl
 pango-1.12.3        library for layout and rendering of text
 pcre-6.4p1          perl-compatible regular expression library
-phoon-20050629      displays the phase of the moon in ascii
 pkgconfig-0.19p0    tool for managing library compile/link flags
 png-1.2.12          library for manipulating PNG images
 py-cheetah-2.0rc6   Python-powered template engine and code generator
