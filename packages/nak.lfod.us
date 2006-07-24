@@ -118,6 +118,7 @@ pkgconfig-0.19p0    tool for managing library compile/link flags
 png-1.2.12          library for manipulating PNG images
 py-cheetah-2.0rc6   Python-powered template engine and code generator
 py-docutils-0.4p0   tools for converting plaintext documentation into other formats
+py-feedparser-4.1p0 RSS and Atom feeds parser written in Python
 py-markdown-1.5     Python text-to-HTML conversion tool
 py-pexpect-2.1      pure Python Expect-like module
 py-sqlite-1.0p0     SQLite adapter for Python
