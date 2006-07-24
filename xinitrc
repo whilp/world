@@ -21,7 +21,7 @@ xset b off
 
 # Start kde crap; do this at the end to see if it increases
 # performance?
-[ -x $(which konqueror) -a -x $(which kdeinit) ] && kdeinit&
+#[ -x $(which konqueror) -a -x $(which kdeinit) ] && kdeinit&
 exec ion3
 #exec matchbox-session
 #exec wmii
