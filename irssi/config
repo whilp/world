@@ -479,6 +479,10 @@ completions = {
     value = "http://www.google.com/search?rls=en&q=";
     auto = "yes";
   };
+  "cvs:" = {
+    value = "http://www.openbsd.org/cgi-bin/cvsweb/";
+    auto = "yes";
+  };
 };
 windows = {
   3 = {
