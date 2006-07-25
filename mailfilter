@@ -152,6 +152,10 @@ if ( /^(to|cc):.*wmii@wmii\.de/ )
 {
     to $MAILDIR/Wmii/
 }
+if ( /^(to|cc):.*mercurial@selenic\.com/ )
+{
+    to $MAILDIR/Hg/
+}
 if ( /^(to|cc):.*openafs-info@openafs\.org/ )
 {
     to $MAILDIR/OpenAFS-info/
@@ -165,6 +169,10 @@ if ( /^(to|cc):.*!ports[a-zA-Z0-9\-]*!@openbsd\.org/ )
 if ( /^(to|cc):.*(ports|source)-changes@cvs\.openbsd\.org/ )
 {
     to $MAILDIR/OpenBSD-cvs
+}
+if ( /^(to|cc):.*tech@openbsd\.org/ )
+{
+    to $MAILDIR/OpenBSD-tech
 }
 if ( /^(to|cc):.*!misc!@openbsd\.org/ )
 {
