@@ -9,7 +9,7 @@
 ### username data to appear in comits
 ### it usually takes the form: Joe User <joe.user@host.com>
 
-# username = Joe User <j.user@example.com>
+username = Will Maier <willmaier@ml1.net>
 
 ### --- Extensions
 
@@ -61,7 +61,7 @@
 ### patchbomb - send changesets as a series of patch emails
 ### hg help email
 
-# hgext.patchbomb =
+hgext.patchbomb =
 
 ### win32text - line ending conversion filters for the Windows platform
 
@@ -90,7 +90,7 @@
 
 ### Your email address
 
-# from = user@example.com
+# from = Will Maier <willmaier@ml1.net>
 
 ### Method to send email - smtp or /usr/sbin/sendmail or other program name
 
