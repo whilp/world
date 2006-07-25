@@ -56,7 +56,7 @@ libxml-2.6.26       XML parsing library
 lua-5.0.3           powerful, light-weight programming language
 maildrop-1.7.0      local mail delivery agent with filtering abilities
 mairix-0.17p0       program for indexing & searching email
-mercurial-0.9p0     fast, lightweight source control management
+mercurial-0.9.1     fast, lightweight source control management
 mergemaster-1.46p2  aids with merging configuration files during an upgrade
 metaauto-0.5        wrapper for gnu auto*
 moinmoin-1.5.4      Python clone of WikiWiki
