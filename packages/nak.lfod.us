@@ -24,6 +24,7 @@ expat-2.0.0         XML 1.0 parser written in C
 flac-1.1.2p1        free lossless audio codec
 gd-2.0.33p3         library for dynamic creation of images
 gdbm-1.8.3p0        GNU dbm
+gdiff-2.8.1p0       GNU versions of the diff utilities
 getmail-4.6.3       POP3 mail retriever
 gettext-0.14.5p1    GNU gettext
 glib-1.2.10p1       useful routines for C programming
@@ -31,6 +32,7 @@ glib2-2.10.3        general-purpose utility library
 glitz-0.4.4         OpenGL image compositing library
 gmake-3.80p1        GNU make
 gmp-4.1.4p0         library for arbitrary precision arithmetic
+grcs-5.7            GNU versions of the rcs utilities
 gtk+2-2.8.19        multi-platform graphical toolkit
 help2man-1.29       GNU help2man
 hicolor-icon-theme-0.5p0 high-color icon theme shell for GNOME and KDE
