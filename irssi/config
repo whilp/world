@@ -198,7 +198,8 @@ channels = (
   { name = "#lighttpd"; chatnet = "freenode"; },
   { name = "#gnu-kbsd"; chatnet = "freenode"; },
   { name = "#wilug"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#newlug"; chatnet = "freenode"; autojoin = "yes"; }
+  { name = "#newlug"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#mercurial"; chatnet = "freenode"; autojoin = "yes"; }
 );
 
 aliases = {
@@ -485,7 +486,7 @@ windows = {
       {
         type = "CHANNEL";
         chat_type = "IRC";
-        name = "#ion";
+        name = "#mercurial";
         tag = "freenode";
       }
     );
@@ -496,42 +497,6 @@ windows = {
     name = "(status)";
     level = "ALL";
     sticky = "yes";
-  };
-  7 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#openbsd";
-        tag = "EFNet";
-      }
-    );
-    sticky = "yes";
-    parent = "8";
-  };
-  6 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#openbsd";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "8";
-  };
-  5 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#wilug";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "8";
   };
   4 = {
     items = (
@@ -557,6 +522,18 @@ windows = {
     sticky = "yes";
     parent = "8";
   };
+  6 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#openbsd";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+    parent = "8";
+  };
   2 = {
     items = (
       {
@@ -569,8 +546,32 @@ windows = {
     sticky = "yes";
     parent = "8";
   };
+  7 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#openbsd";
+        tag = "EFNet";
+      }
+    );
+    sticky = "yes";
+    parent = "8";
+  };
+  5 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#wilug";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+    parent = "8";
+  };
 };
 mainwindows = {
-  1 = { first_line = "32"; lines = "30"; };
-  8 = { first_line = "1"; lines = "31"; };
+  1 = { first_line = "51"; lines = "11"; };
+  8 = { first_line = "1"; lines = "50"; };
 };
