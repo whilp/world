@@ -194,7 +194,7 @@ channels = (
   { name = "#bitlbee"; chatnet = "bitlbee"; autojoin = "no"; },
   { name = "#irssi"; chatnet = "freenode"; autojoin = "No"; },
   { name = "#mininova"; chatnet = "efnet"; autojoin = "no"; },
-  { name = "#ion"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#ion"; chatnet = "freenode"; },
   { name = "#lighttpd"; chatnet = "freenode"; },
   { name = "#gnu-kbsd"; chatnet = "freenode"; },
   { name = "#wilug"; chatnet = "freenode"; autojoin = "yes"; },
@@ -481,35 +481,6 @@ completions = {
   };
 };
 windows = {
-  8 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#mercurial";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-  };
-  1 = { 
-    immortal = "yes";
-    name = "(status)";
-    level = "ALL";
-    sticky = "yes";
-  };
-  4 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#newlug";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "8";
-  };
   3 = {
     items = (
       {
@@ -520,7 +491,28 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "8";
+  };
+  9 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#ion";
+        tag = "freenode";
+      }
+    );
+  };
+  8 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#mercurial";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+    parent = "3";
   };
   6 = {
     items = (
@@ -532,7 +524,25 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "8";
+    parent = "3";
+  };
+  4 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#newlug";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+    parent = "3";
+  };
+  1 = { 
+    immortal = "yes";
+    name = "(status)";
+    level = "ALL";
+    sticky = "yes";
   };
   2 = {
     items = (
@@ -544,7 +554,7 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "8";
+    parent = "3";
   };
   7 = {
     items = (
@@ -556,7 +566,7 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "8";
+    parent = "3";
   };
   5 = {
     items = (
@@ -568,10 +578,10 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "8";
+    parent = "3";
   };
 };
 mainwindows = {
-  1 = { first_line = "51"; lines = "11"; };
-  8 = { first_line = "1"; lines = "50"; };
+  1 = { first_line = "37"; lines = "8"; };
+  3 = { first_line = "1"; lines = "36"; };
 };
