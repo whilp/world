@@ -36,7 +36,7 @@ username = Will Maier <willmaier@ml1.net>
 
 ### extdiff - Use external diff application instead of builtin one
 
-# hgext.extdiff =
+hgext.extdiff =
 
 ### gpg - GPG checks and signing
 ### hg help gpg
@@ -83,6 +83,10 @@ hgext.patchbomb =
 
 # incoming.notify = python:hgext.notify.hook
 # changegroup.notify = python:hgext.notify.hook
+#
+
+[extdiff]
+cmd.vimdiff = LC_ALL=C vim -f '+bdel 1 2' '+ execute "DirDiff ".argv(0)." ".argv(1)'
 
 ### Email configuration for the notify and patchbomb extensions
 
