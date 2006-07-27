@@ -142,5 +142,6 @@ unrar-3.54p0        extract, list, and test RAR archives
 unzip-5.52          extract, list & test files in a ZIP archive
 vim-7.0.35-no_x11   vi clone, many additional features
 vorbis-tools-1.1.1  play, encode, and manage Ogg Vorbis files
+w3m-0.5.1p1         pager/text-based web browser
 zoo-2.10.1p0        handle the old .ZOO archive format
 zsh-4.2.6p0         Z shell, Bourne shell-compatible
