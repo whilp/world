@@ -10,5 +10,14 @@ HEP		0	F
 Nagios		1	F
 Service Problems	http://noc.hep.wisc.edu/nagios/cgi-bin/status.cgi?host=all&servicestatustypes=248&hoststatustypes=15	2	
 OpenBSD		0	F
+Ports		1	F
+Maintainer		2	F
+ClusterIt	http://www.garbled.net/clusterit.html	3	
+IPython	http://ipython.scipy.org/	3	
+Mercurial	http://www.selenic.com/mercurial/wiki/index.cgi	3	
+Tailor	http://progetti.arstecnica.it/tailor	3	
+Checklist	http://www.openbsd.org/checklist.html	2	
+Testing Guide	http://www.openbsd.org/porttest.html	2	
 Official FAQ	http://www.openbsd.org/faq/	1	
 Channel FAQ	http://www.xs4all.nl/~hanb/documents/topic.html	1	
+CVSweb	http://www.openbsd.org/cgi-bin/cvsweb/	1	
