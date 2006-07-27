@@ -16,7 +16,8 @@ notify 2 "Configuring for OpenBSD."
 
 # MIRRORS="mirrors.tds.net"
 #MIRRORS="ftp5.usa.openbsd.org"
-MIRRORS="ftp://ftp5.usa.openbsd.org ftp://mirrors.tds.net"
+#MIRRORS="ftp://ftp5.usa.openbsd.org ftp://mirrors.tds.net"
+MIRRORS="ftp://mirrors.tds.net"
 [ -n "$(sysctl -n kern.version | grep -E '(current|3.9)')" ] && OSVERSION="snapshots" || OSVERSION="$(sysctl -n kern.osrelease)"
 MACHINE="$(machine)"
 
