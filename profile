@@ -20,6 +20,7 @@ SHELL="$(which zsh 2>/dev/null)" || \
 CLUSTER="${HOME}/.dsh/config"
 CVSEDITOR="${EDITOR}"
 CVS_RSH="$(which ssh)"
+HGEDITOR=$HOME/bin/hgeditor
 HOSTNAME="$(hostname -s)"
 LANG="C"
 MAIL_OLD="${MAIL}"
