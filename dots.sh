@@ -29,5 +29,8 @@ zsh
 zshrc'
 
 for DOT in ${MANIFEST}; do
-	ln -sf ${DOTSDIR}/${DOT} ${HOME}/.${DOT}
+    SRC="${DOTSDIR}/${DOT}"
+    DST="${HOME}/.${DOT}"
+    mv -f "${DST}" "${DST}.old"
+    ln -sf "${SRC}" "${DST}"
 done
