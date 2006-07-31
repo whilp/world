@@ -14,7 +14,7 @@ Service Problems	http://noc.hep.wisc.edu/nagios/cgi-bin/status.cgi?host=all&serv
 UW-HEP IT SeRB	http://www.hep.wisc.edu/computing/serb/	1	
 UW-HEP Computing	http://www.hep.wisc.edu/computing/	1	
 UW-HEP IT Blog	http://www.hep.wisc.edu/computing/blog/	1	
-OpenBSD		0	F
+OpenBSD		0	FE
 Ports		1	F
 Maintainer		2	F
 ClusterIt	http://www.garbled.net/clusterit.html	3	
@@ -27,3 +27,5 @@ Official FAQ	http://www.openbsd.org/faq/	1
 Channel FAQ	http://www.xs4all.nl/~hanb/documents/topic.html	1	
 CVSweb	http://www.openbsd.org/cgi-bin/cvsweb/	1	
 Bug Tracker	http://www.openbsd.org/query-pr.html	1	
+Search		0	FE
+Advanced Google Search Operators	http://www.google.com/help/operators.html	1	
