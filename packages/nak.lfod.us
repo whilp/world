@@ -102,7 +102,10 @@ p5-Net-Server-0.90  extensible framework for Perl server engines
 p5-Pod-Escapes-1.04 library to resolve perl Pod escape sequences
 p5-Pod-Simple-3.04  framework for parsing the Perl Pod format
 p5-Socket6-0.19     Perl defines relating to AF_INET6 sockets
+p5-Sub-Override-0.08 Perl extension for easily overriding subroutines
+p5-Sub-Uplevel-0.13 Perl library for manipulating frame stack
 p5-Sys-Hostname-Long-1.4 perl module to get FQDN
+p5-Test-Exception-0.21 test functions for exception based code
 p5-Test-Pod-1.24    check for POD errors in files
 p5-Text-Diff-0.35   perform diffs on files and record sets
 p5-Text-Markdown-1.0.3 Perl text-to-HTML conversion tool
@@ -126,6 +129,7 @@ py-pexpect-2.1      pure Python Expect-like module
 py-sqlite-1.0p0     SQLite adapter for Python
 py-subversion-1.3.2 python interface to subversion
 python-2.4.3        interpreted object-oriented programming language
+rrdtool-1.0.49p3    system to store and display time-series data
 screen-4.0.2        multi-screen window manager
 snownews-1.5.7p0    text mode rss newsreader
 speex-1.0.5p0       patent-free speech codec
