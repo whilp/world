@@ -67,6 +67,7 @@ mutt-1.5.11p3-hcache tty-based e-mail client, development version
 neon-0.24.7p0       HTTP and WebDAV client library, with C interface
 ngrep-1.44p0        network grep
 nmap-4.11-no_x11    scan ports and fingerprint stack of network hosts
+openmotif-2.1.30.5p1 Motif toolkit
 p5-Algorithm-Diff-1.1901 interface to compute differences between two objects
 p5-Archive-Tar-1.29 perl interface to tar archives
 p5-Archive-Zip-1.16 perl interface to ZIP files
