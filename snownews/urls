@@ -5,7 +5,7 @@ http://undeadly.org/cgi?action=errata|||
 http://www.freebsd.org/security/advisories.rdf||BSD,Security|
 http://www.vuxml.org/freebsd/rss.xml|FreeBSD Ports Advisories|BSD,Security|
 http://www.debian.org/security/dsa-long|Debian Security Advisories|Linux,Security|
-http://www.djeaux.com/rss/insecure-bugtraq.rss||Security|
+http://seclists.org/rss/bugtraq.rss||Security|
 http://helpdesk.wisc.edu/feed/active_alerts_doit.php|UW Security/Service Alerts||
 http://helpdesk.doit.wisc.edu/feed/open_impact1.php|UW Impact 1 Cases||
 http://www.cae.wisc.edu/rss/rss.php|||
