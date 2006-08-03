@@ -11,6 +11,13 @@
 ##################  END HEADERS
 
 ================================================================================
+Q: How do I get qemu running OpenBSD on OpenBSD?
+
+A: sudo qemu -m 64 -fda /path/to/floppy40.fs -net tap -net nic /path/to/vm.hd
+
+================================================================================
+
+================================================================================
 Q: How does one set up a PXE boot?
 
 A: http://dev.brantleyonline.com/wiki/index.php/General_Network_%28PXE%29_Booting
