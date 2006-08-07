@@ -17,6 +17,7 @@ clusterit-2.4       suite of clustering tools based on IBM's PSSP
 curl-7.15.4         get files from FTP, Gopher, HTTP or HTTPS servers
 darcs-1.0.8         advanced revision control system written in Haskell
 db-4.2.52p8         Berkeley DB package, revision 4
+dtach-0.7           tiny program emulating the detach feature of screen
 dwm-0.2             compact, dynamic window manager for X11
 elinks-0.11.1       full-featured text WWW browser
 esound-0.2.34p0     sound library for Enlightenment
@@ -61,6 +62,8 @@ mairix-0.17p0       program for indexing & searching email
 mercurial-0.9.1     fast, lightweight source control management
 mergemaster-1.46p2  aids with merging configuration files during an upgrade
 metaauto-0.5        wrapper for gnu auto*
+mod_fastcgi-2.4.2   Apache FastCGI module
+moinmoin-1.5.4      Python clone of WikiWiki
 msmtp-1.4.5         SMTP plugin for MUAs
 mtr-0.71-no_x11     Matt's traceroute - network diagnostic tool
 mutt-1.5.11p3-hcache tty-based e-mail client, development version
