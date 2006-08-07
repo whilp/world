@@ -8,6 +8,8 @@ WIKINAME="$2"
 WIKIFCGI="${WIKIROOT}/${WIKINAME}/cgi-bin/moin.fcg"
 WIKILOCK="${WIKIROOT}/.${WIKINAME}-lock"
 
+WIKIUSER="www"
+
 if [ ! -f ${WIKIFCGI} ]; then
     echo "=!=> ${WIKIFCGI} doesn't exist!"
     exit 1
