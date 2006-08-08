@@ -468,7 +468,8 @@ logs = { };
 ignores = (
   { level = "JOINS PARTS QUITS"; servertag = "efnet"; },
   { level = "JOINS PARTS QUITS"; servertag = "oftc"; },
-  { level = "JOINS PARTS QUITS"; servertag = "freenode"; }
+  { level = "JOINS PARTS QUITS"; servertag = "freenode"; },
+  { mask = "analyser"; level = "ALL"; }
 );
 completions = {
   obsd = { value = "OpenBSD"; auto = "yes"; };
