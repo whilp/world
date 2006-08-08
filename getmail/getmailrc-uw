@@ -22,7 +22,7 @@ delete = 1
 # 0; delete after successful retrieval
 delete_after = 0
 # 0; delete after a period of days (integer)
-max_message_size = 1000000
+max_message_size = 100000000
 # 0; get messages no larger than integer bytes
 max_messages_per_session = 100
 # 0; only process integer messages
