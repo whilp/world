@@ -2,6 +2,9 @@
 
 [ui]
 
+### set a default editor
+editor = ~/bin/hgeditor
+
 ### show changed files and be a bit more verbose if True
 
 # verbose = True
