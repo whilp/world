@@ -1,0 +1,35 @@
+# ex: set ft=remind:
+BANNER %y.%n.%r %# Reminders:
+INCLUDE /home/will/.remind/functions
+INCLUDE /home/will/.remind/holidays
+
+###################################################################
+### Plans.
+###################################################################
+REM 11 Aug 2006                 MSG %"***** Wu-Tang in MN with Mike and Trev.%"
+REM 15 Sep 2006                 MSG ***** %"A Tribe Called Quest in Chicago with Trev.%"
+REM 16 Sep 2006                 MSG ***** %"Laura @ WPT quilt show.%"
+REM 02 Jun 2006 *14 AT 19:00    MSG x%3 %"MadLUG social meeting (Memorial Union).%"
+REM 01 Wed AT 19:00             MSG x%3 %"MadMongers meeting (MPL).%"
+
+###################################################################
+### Home.
+###################################################################
+REM 01 +3                       MSG ***** %"Rent's due %b ($335, David Williams).%"
+
+###################################################################
+### Work.
+###################################################################
+REM 08 Aug 2006 AT 11:30 *7     MSG x%3 %"HEP staff meeting.%"
+REM 02 Tue AT 12:00             MSG x%3 %"GLOW meeting.%"
+REM 07 Aug 2006 *7 AT 14:30     MSG x%3 %"CAE Unix staff meeting.%"
+REM 17 Jul 2006 AT 12:00 *15 +3 MSG x%3 %"Time sheet due.%"
+REM 01 +3 AT 12:00              MSG x%3 %"Activity report due to dasu@.%"
+
+###################################################################
+### Birthdays.
+###################################################################
+REM 25 Aug MSG ***** %"My [_yr_num(1984)] birthday.%"
+REM 25 Jan MSG ***** %"Laura's [_yr_num(1980)] birthday.%"
+REM 04 Jul MSG ***** %"Ducky's [_yr_num(1993)] birthday.%"
+REM 25 Sep MSG ***** %"Eddie's [_yr_num(2004)] birthday.%"

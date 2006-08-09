@@ -17,6 +17,7 @@ mailcap
 nethackrc
 profile
 profiles
+remind
 screen
 snownews
 ssh

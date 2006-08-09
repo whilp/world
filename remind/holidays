@@ -1,0 +1,48 @@
+SET SaveTrig $NumTrig
+SET easter EASTERDATE(YEAR(TODAY()))
+REM  [TRIGGER(easter-46)] MSG %"Ash Wednesday%"
+REM  [TRIGGER(easter-7)]  MSG %"Palm Sunday%"
+OMIT [TRIGGER(easter-2)]  MSG %"Good Friday%"
+OMIT [TRIGGER(easter)]    MSG %"Easter%" Sunday
+REM  [TRIGGER(easter+39)] MSG %"Ascension Day%"
+REM  [TRIGGER(easter+49)] MSG %"Pentecost%"
+
+# Some holidays are omitted, some are not.  You may want to change
+# which ones are omitted - use the general forms shown below.
+# You'll need the _back() function and the Week_n variables defined
+# way up in the file.
+
+OMIT     Jan  1		MSG %"New Year's%" Day
+REM  Mon Jan [Week_3]	MSG Martin Luther King - %"MLK Day%"
+REM      Feb  2		MSG %"Ground Hog Day%"
+REM      Feb 14		MSG %"Valentine's%" Day
+REM  Mon Feb [Week_3]	SCANFROM [_back(7)] SATISFY 1
+			OMIT [_trig()] MSG %"President's Day%"
+REM      Mar 17		MSG %"St. Patrick's%" Day
+REM  Sun Apr  1 ++2	MSG Daylight Savings Time - %"DST starts%" %b
+REM      Apr  1		MSG %"April Fool's%" Day
+REM  Mon Tue Wed Thu Fri Sat 15 Apr MSG %"Income tax%" due
+REM      May  5		MSG %"Cinco de Mayo%"
+REM  Sat May [Week_1]	MSG %"Kentucky Derby%"
+REM  Sun May [Week_2]	MSG %"Mother's Day%"
+REM  Sat May [Week_3]	MSG %"Armed Forces Day%"
+REM  Mon [_last(May)]	SCANFROM [_back(7)] SATISFY 1
+			OMIT [_trig()] MSG %"Memorial Day%"
+REM      Jun 14		MSG %"Flag Day%"
+REM  Sun Jun [Week_3]	MSG %"Father's Day%"
+REM  Mon Sep [Week_1]	SCANFROM [_back(7)] SATISFY 1
+			OMIT [_trig()] MSG %"Labor Day%"
+REM  Mon Oct [Week_2]	MSG %"Columbus Day%"
+REM      Nov 11		MSG %"Veterans Day%"
+REM  Sun [_last(Oct)]	MSG Daylight Savings Time - %"DST over%"
+REM      Oct 30		MSG %"Mischief Night%"
+REM      Oct 31		MSG %"Halloween%"
+REM  Tue Nov  2		SCANFROM [_back(7)] \
+	SATISFY [(YEAR(TRIGDATE()) % 4) == 0] \
+	MSG %"Election%" Day
+REM  Thu Nov [Week_4]	SCANFROM [_back(7)] SATISFY 1
+			OMIT [_trig()] MSG %"Thanksgiving%" Day
+REM  Fri Nov [Week_4+1]	SCANFROM [_back(7)] SATISFY 1
+			OMIT [_trig()] MSG %"Thanksgiving%" (cont.)
+OMIT     Dec 24		MSG %"Christmas Eve%"
+OMIT     Dec 25		MSG %"Christmas%" Day
