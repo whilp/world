@@ -1,0 +1,13 @@
+#!/bin/sh
+# Print today's reminders.
+
+case ${0##*/} in
+    today)
+        remind ~/.reminders ${DAY} | sed -e 's/xat //; /^$/d'
+        ;;
+    week)
+        remind -q -b1 -s+ ~/.reminders ${DAY} |\
+            sed -e '/^$/d; s/^\(.\{4\}\).\(..\).\(..\) \* \* \* [*0-9]*/\1.\2.\3/;' |\
+            sort -k 12
+        ;;
+esac
