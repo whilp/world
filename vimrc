@@ -56,6 +56,10 @@
     vnoremap ; :
     nnoremap ; :
 
+    " Easy vimrc editing.
+    map ,v :sp $VIMRC_
+    map <silent> ,V :source ~/.vimrc:filetype detect:exe ":echo 'vimrc reloaded'"
+
     " spellcheck
     if (v:version >= 700)
         setlocal spell spelllang=en_us
