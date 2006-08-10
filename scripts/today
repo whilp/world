@@ -3,10 +3,10 @@
 
 case ${0##*/} in
     today)
-        remind ~/.reminders ${DAY} | sed -e 's/xat //; /^$/d'
+        remind -m -rm ~/.reminders ${DAY} | sed -e 's/xat //; /^$/d'
         ;;
     week)
-        remind -q -b1 -s+ ~/.reminders ${DAY} |\
+        remind -m -rq -b1 -s+ ~/.reminders ${DAY} |\
             sed -e '/^$/d; s/^\(.\{4\}\).\(..\).\(..\) \* \* \* [*0-9]*/\1.\2.\3/;' |\
             sort -k 12
         ;;
