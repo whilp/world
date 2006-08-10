@@ -9,7 +9,7 @@ fi
 
 MY_PP=ftp://ftp5.usa.openbsd.org/pub/OpenBSD/snapshots/packages/i386/:ftp://mirrors.tds.net/pub/OpenBSD/snapshots/packages/i386/
 PKG_PATH=${PKG_PATH:-${MY_PP}}
-VERSION=39
+VERSION=40
 WORKDIR="${HOME}/BSD"
 BACKUPDIR=/home/backup
 EXCLUDE_RE="/var/space"
@@ -48,8 +48,7 @@ case "x$1" in
 	sudo mkdir "${BACKUPDIR}" 2>/dev/null
 	DIRS="etc var root"
 	for DIR in ${DIRS}; do
-	    sudo sh -c "tar cvzf \"${BACKUPDIR}/${DIR}-$(date "+%Y%m%d-%H%M%S").tgz\" \
-                $(find /${DIR} -maxdepth 1 -mindepth 1 | grep -vE "${EXCLUDE_RE}")"
+	    sudo tar cvzf ${BACKUPDIR}/${DIR}-$(date "+%Y%m%d-%H%M%S").tgz $(sudo find /${DIR} -maxdepth 1 -mindepth 1 | grep -vE "${EXCLUDE_RE}")
 	    #sudo tar cvzf "${BACKUPDIR}/${DIR}-$(date "+%Y%m%d-%H%M%S").tgz" "/${DIR}"
 	done
         set +x
@@ -63,7 +62,7 @@ case "x$1" in
 
 	# Merge changes.
 	sudo pkg_add mergemaster
-	sudo IGNORE_MOTD=yes mergemaster -rt "${WORKDIR}/merge"
+	sudo mergemaster -rt "${WORKDIR}/merge"
 
 	# Rebuild the password databases (/etc/pwd.db and /etc/spwd.db).
 	# sudo pwd_mkdb /etc/master.passwd

@@ -14,11 +14,8 @@ notify 2 "Configuring for OpenBSD."
 
 # Environment variables
 
-# MIRRORS="mirrors.tds.net"
-#MIRRORS="ftp5.usa.openbsd.org"
-#MIRRORS="ftp://ftp5.usa.openbsd.org ftp://mirrors.tds.net"
-MIRRORS="ftp://mirrors.tds.net"
-[ -n "$(sysctl -n kern.version | grep -E '(current|3.9)')" ] && OSVERSION="snapshots" || OSVERSION="$(sysctl -n kern.osrelease)"
+MIRRORS="ftp://mirrors.tds.net ftp://rt.fm"
+[ -n "$(sysctl -n kern.version | grep -E '(current|4.0)')" ] && OSVERSION="snapshots" || OSVERSION="$(sysctl -n kern.osrelease)"
 MACHINE="$(machine)"
 
 # Loops like this require SH_WORD_SPLIT in zsh
@@ -37,3 +34,29 @@ alias pkg_add='pkg_add -iv'
 
 # Swap capslock and left control on the console
 wsconsctl keyboard.map+="keysym Caps_Lock = Control_L" > /dev/null 2>&1
+
+# Mirrors
+#ftp://ftp.openbsd.org
+#ftp://ftp5.usa.openbsd.org
+#ftp://ftp3.usa.openbsd.org
+#ftp://rt.fm
+#ftp://mirror.arcticnetwork.ca
+#ftp://ftp.ca.openbsd.org
+#ftp://mirror.sg.depaul.edu
+#ftp://osmirrors.cerias.purdue.edu
+#ftp://mirror.iawnet.sandia.gov
+#ftp://ftp.cse.buffalo.edu
+#ftp://ftp.nyc.openbsd.org
+#ftp://mirrors.24-7-solutions.net
+#ftp://openbsd.mirrors.pair.com/ftp
+#ftp://openbsd.secsup.org
+#ftp://ftp.tux.org/bsd/openbsd
+#ftp://openbsd.mirrors.tds.net
+##http://gulus.USherbrooke.ca/pub/distro/OpenBSD
+#http://mirror.sg.depaul.edu
+#http://osmirrors.cerias.purdue.edu
+#http://mirrors.24-7-solutions.net
+#http://openbsd.mirrors.pair.com
+#http://openbsd.secsup.org
+##http://www.tux.org/pub/bsd/openbsd
+#http://openbsd.mirrors.tds.net
