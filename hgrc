@@ -39,7 +39,7 @@ username = Will Maier <willmaier@ml1.net>
 
 ### extdiff - Use external diff application instead of builtin one
 
-hgext.extdiff =
+#hgext.extdiff =
 
 ### gpg - GPG checks and signing
 ### hg help gpg
@@ -64,7 +64,7 @@ hgext.extdiff =
 ### patchbomb - send changesets as a series of patch emails
 ### hg help email
 
-hgext.patchbomb =
+#hgext.patchbomb =
 
 ### win32text - line ending conversion filters for the Windows platform
 

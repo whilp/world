@@ -41,4 +41,4 @@ for DOT in ${DOTS}; do
 done
 
 # Clean up.
-rm -i $(find ${HOME} -maxdepth 1 -mindepth 1 -name "\.old$")
+rm -ri $(find ${HOME} -maxdepth 1 -mindepth 1 -name "*.old")
