@@ -21,5 +21,5 @@ run awl
 run usercount
 run nickcolor
 run tty_away
-run nicklist
-run burl.pl
+run trackbar.pl
+run queryresume.pl
