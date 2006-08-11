@@ -26,6 +26,8 @@ bindkey '\e[1~' beginning-of-line       # Home
 bindkey '\e[4~' end-of-line             # End
 bindkey '\e[3~' delete-char             # Del
 bindkey '\e[2~' overwrite-mode          # Insert
+bindkey "^[[A"  up-line-or-search       # cursor up
+bindkey "^[[B"  down-line-or-search     # <ESC>-
 bindkey -v
 
 # Set BACKSPACE
