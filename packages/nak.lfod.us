@@ -113,6 +113,7 @@ p5-Test-Exception-0.21 test functions for exception based code
 p5-Test-Pod-1.24    check for POD errors in files
 p5-Text-Diff-0.35   perform diffs on files and record sets
 p5-Text-Markdown-1.0.3 Perl text-to-HTML conversion tool
+p5-Time-TimeDate-1.16 library for parsing and formatting dates and times
 p5-URI-1.35         library to parse Uniform Resource Identifiers
 p5-Unix-Syslog-0.100 interface to the UNIX system logger
 p5-XML-NamespaceSupport-1.09 perl module to the SAX2 NamespaceSupport class
