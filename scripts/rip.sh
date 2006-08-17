@@ -32,11 +32,11 @@ echo 'cddb' | cdio 2>/dev/null | while read LINE; do
         # This is complicated by the fact that this entire while
         # loop runs in a subshell (due to the pipe), and so wait(1)
         # doesn't see the subshell's children. Boo.
-        cdparanoia -q ${TRACKNR} "${FILENAME}"
-        nice -n 10 flac --silent --best -T ARTIST="${ARTIST}" \
+        cdparanoia -q ${TRACKNR} "${FILENAME}" &&\
+        flac --silent --best -T ARTIST="${ARTIST}" \
             -T NUMBER="${TRACKNR}" \
             -T ALBUM="${ALBUM}" \
-            -T TITLE="${TITLE}" "${FILENAME}" &
+            -T TITLE="${TITLE}" "${FILENAME}"
     fi
     LINENR=$((LINENR + 1))
 done
