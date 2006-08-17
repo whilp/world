@@ -32,6 +32,6 @@ zshrc'
 for DOT in ${MANIFEST}; do
     SRC="${DOTSDIR}/${DOT}"
     DST="${HOME}/.${DOT}"
-    mv -f "${DST}" "${DST}.old"
+    mv -f "${DST}" "${DST}.old" 2>/dev/null
     ln -sf "${SRC}" "${DST}"
 done
