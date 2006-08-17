@@ -5,7 +5,8 @@ apr-util-1.0.1p3    companion library to APR
 aspell-0.50.5p4     spell checker designed to eventually replace Ispell
 atk-1.10.3p1        accessibility toolkit used by gtk+
 autoconf-2.13p0     automatically configure source code on many Un*x platforms
-autoconf-2.59       automatically configure source code on many Un*x platforms
+autoconf-2.57p0     automatically configure source code on many Un*x platforms
+autoconf-2.59p1     automatically configure source code on many Un*x platforms
 bitlbee-1.0.2p0     IRC proxy to connect to AIM, ICQ, Jabber, MSN and Yahoo
 bmp-0.9.7p7         gtk+2 media player based on XMMS
 boehm-gc-6.2p1      garbage collection and memory leak detection for C and C++
@@ -71,6 +72,7 @@ mutt-1.5.11p3-hcache tty-based e-mail client, development version
 neon-0.24.7p0       HTTP and WebDAV client library, with C interface
 ngrep-1.44p0        network grep
 nmap-4.11-no_x11    scan ports and fingerprint stack of network hosts
+nssl-005            netcat-like program with transparent Secure Socket Layer support
 openmotif-2.1.30.5p1 Motif toolkit
 p5-Algorithm-Diff-1.1901 interface to compute differences between two objects
 p5-Archive-Tar-1.29 perl interface to tar archives

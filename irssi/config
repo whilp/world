@@ -486,12 +486,18 @@ completions = {
   };
 };
 windows = {
-  6 = {
+  1 = { 
+    immortal = "yes";
+    name = "(status)";
+    level = "ALL";
+    sticky = "yes";
+  };
+  8 = {
     items = (
       {
         type = "CHANNEL";
         chat_type = "IRC";
-        name = "#openbsd";
+        name = "#mercurial";
         tag = "freenode";
       }
     );
@@ -507,25 +513,19 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "6";
+    parent = "8";
   };
-  4 = {
+  6 = {
     items = (
       {
         type = "CHANNEL";
         chat_type = "IRC";
-        name = "#newlug";
+        name = "#openbsd";
         tag = "freenode";
       }
     );
     sticky = "yes";
-    parent = "6";
-  };
-  1 = { 
-    immortal = "yes";
-    name = "(status)";
-    level = "ALL";
-    sticky = "yes";
+    parent = "8";
   };
   5 = {
     items = (
@@ -537,19 +537,19 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "6";
+    parent = "8";
   };
-  2 = {
+  4 = {
     items = (
       {
         type = "CHANNEL";
         chat_type = "IRC";
-        name = "&bitlbee";
-        tag = "bitl";
+        name = "#newlug";
+        tag = "freenode";
       }
     );
     sticky = "yes";
-    parent = "6";
+    parent = "8";
   };
   3 = {
     items = (
@@ -561,32 +561,22 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "6";
+    parent = "8";
   };
-  9 = {
-    items = (
-      {
-        type = "QUERY";
-        chat_type = "IRC";
-        name = "MilkmanDan";
-        tag = "freenode";
-      }
-    );
-  };
-  8 = {
+  2 = {
     items = (
       {
         type = "CHANNEL";
         chat_type = "IRC";
-        name = "#mercurial";
-        tag = "freenode";
+        name = "&bitlbee";
+        tag = "bitl";
       }
     );
     sticky = "yes";
-    parent = "6";
+    parent = "8";
   };
 };
 mainwindows = {
   1 = { first_line = "37"; lines = "8"; };
-  6 = { first_line = "1"; lines = "36"; };
+  8 = { first_line = "1"; lines = "36"; };
 };

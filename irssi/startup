@@ -23,3 +23,5 @@ run nickcolor
 run tty_away
 run trackbar.pl
 run queryresume.pl
+
+mode lt_kije +w

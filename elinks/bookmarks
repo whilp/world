@@ -1,9 +1,9 @@
-General		0	F
+General		0	FE
 RAFB Paste	http://rafb.net/paste/	1	
 NOAA Weather (MSN)	http://www.crh.noaa.gov/forecast/MapClick.php?CityName=Madison&state=WI&site=MKX	1	
 NOAA Weather (MKE)	http://www.crh.noaa.gov/forecast/MapClick.php?CityName=Milwaukee&state=WI&site=MKX	1	
 CAE		0	F
-RT		1	F
+RT		1	FE
 RT (Main)	https://rt.cae.wisc.edu/index.html?HomeRefreshInterval=600	2	
 RT (Queue Contacts)	https://rt.cae.wisc.edu/Tools/ContactView.html?Queue=13	2	
 RT (My Tickets)	https://rt.cae.wisc.edu/Search/Results.html?Order=ASC&Query=%20Owner%20%3D%20%27531135%27%20&Rows=50&OrderBy=Status&Page=1&Format=%27%09%3Cb%3E%3Ca%20href%3D%22%2FTicket%2FDisplay.html%3Fid%3D__id__%22%3E__id__%3C%2Fa%3E%3Cb%3E%2FTITLE%3A%23%27%2C%20%0A%27%3Cb%3E%3Ca%20href%3D%22%2FTicket%2FDisplay.html%3Fid%3D__id__%22%3E__Subject__%3C%2Fa%3E%3C%2Fb%3E%2FTITLE%3ASubject%27%2C%20%0A%27%3Csmall%3E__CreatedRelative__%3C%2Fsmall%3E%27%2C%20%0A%27__QueueName__%27%2C%20%0A%27__OwnerName__%27%2C%20%0A%27__Priority__%27%2C%20%0A%27__NEWLINE__%27%2C%20%0A%27__Status__%27%2C%20%0A%27%3Csmall%3E__Requestors__%3C%2Fsmall%3E%27%2C%20%0A%27%3Csmall%3E__ToldRelative__%3C%2Fsmall%3E%27%2C%20%0A%27__Area__%27%2C%20%0A%27%3Csmall%3E__LastUpdatedRelative__%3C%2Fsmall%3E%27%2C%20%0A%27%3Csmall%3E__DueRelative__%3C%2Fsmall%3E%27	2	
