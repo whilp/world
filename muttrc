@@ -179,11 +179,6 @@ send-hook '~t .*@.*\(doit\|engr\|cae\)\.wisc\.edu'	"set sendmail='/usr/local/bin
 send-hook '~t .*@.*\(doit\|engr\|cae\)\.wisc\.edu'	"my_hdr From: Will Maier <wcmaier@cae.wisc.edu>"
 send-hook '~t .*-request@cae\.wisc\.edu'	"set signature='~/.signatures/cae-rt'"
 
-send-hook '~t .*@[a-zA-Z0-9\.\-]*bestpractical\.com'	"set signature='~/.signatures/cae'"
-send-hook '~t .*@[a-zA-Z0-9\.\-]*bestpractical\.com'	"set sendmail='/usr/local/bin/msmtp -a cae'"
-send-hook '~t .*@[a-zA-Z0-9\.\-]*bestpractical\.com'	"my_hdr From: Will Maier <wcmaier@cae.wisc.edu>"
-
-
 send-hook '~L .*@\(lists\.\)?debian\.org'	"set signature='~/.signatures/list-debian'"
 send-hook '~L .*@[a-z0-9\.\-]*bsd[a-z0-9\.\-]*'	"set signature='~/.signatures/list-bsd'"
 send-hook '~L .*@mutt\.org'			"set signature='~/.signatures/list-bsd'"
