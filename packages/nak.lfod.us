@@ -8,7 +8,7 @@ autoconf-2.13p0     automatically configure source code on many Un*x platforms
 autoconf-2.57p0     automatically configure source code on many Un*x platforms
 autoconf-2.59p1     automatically configure source code on many Un*x platforms
 bitlbee-1.0.2p0     IRC proxy to connect to AIM, ICQ, Jabber, MSN and Yahoo
-bmp-0.9.7p7         gtk+2 media player based on XMMS
+bmp-0.9.7p8         gtk+2 media player based on XMMS
 boehm-gc-6.2p1      garbage collection and memory leak detection for C and C++
 bsdiff-4.2          binary patch tools
 bzip2-1.0.3         block-sorting file compressor, unencumbered
@@ -35,14 +35,14 @@ glitz-0.4.4         OpenGL image compositing library
 gmake-3.80p1        GNU make
 gmp-4.1.4p0         library for arbitrary precision arithmetic
 grcs-5.7            GNU versions of the rcs utilities
-gtk+2-2.8.19        multi-platform graphical toolkit
+gtk+2-2.8.20        multi-platform graphical toolkit
 help2man-1.29       GNU help2man
 hicolor-icon-theme-0.5p0 high-color icon theme shell for GNOME and KDE
 hping-2.0.0rc3p0    TCP/UDP ping/traceroute tool
-ion-20060326p0      light, keyboard friendly window manager
+ion-20060524p0      light, keyboard friendly window manager
 ipython-0.7.2       enhanced interactive Python shell
 irssi-0.8.10p0      modular IRC client with many features (ipv6,socks,proxy)
-john-1.6.40         extremely fast password cracker
+john-1.7.0.2        extremely fast password cracker
 jpeg-6bp3           IJG's JPEG compression utilities
 lha-1.14i.ac20050924 archive files using LZW compression (.lzh files)
 libao-0.8.5p2       portable audio output library
@@ -56,19 +56,20 @@ libltdl-1.5.22p1    GNU libtool system independent dlopen wrapper
 libogg-1.1.3        Ogg bitstream library
 librsync-0.9.7      implements the rsync remote-delta algorithm
 libtool-1.5.22      generic shared library support script
-libvorbis-1.1.2     audio compression codec library
+libungif-4.1.4      tools and library routines for working with GIF images
+libvorbis-1.1.2p0   audio compression codec library
 libxml-2.6.26       XML parsing library
-lua-5.0.3           powerful, light-weight programming language
+lua-5.1.1           powerful, light-weight programming language
 maildrop-1.7.0      local mail delivery agent with filtering abilities
 mairix-0.17p0       program for indexing & searching email
-mercurial-0.9.1     fast, lightweight source control management
+mercurial-0.9p0     fast, lightweight source control management
 mergemaster-1.46p2  aids with merging configuration files during an upgrade
 metaauto-0.5        wrapper for gnu auto*
 mod_fastcgi-2.4.2   Apache FastCGI module
 moinmoin-1.5.4      Python clone of WikiWiki
-msmtp-1.4.5         SMTP plugin for MUAs
+msmtp-1.4.6         SMTP plugin for MUAs
 mtr-0.71-no_x11     Matt's traceroute - network diagnostic tool
-mutt-1.5.11p3-hcache tty-based e-mail client, development version
+mutt-1.5.12-hcache  tty-based e-mail client, development version
 neon-0.24.7p0       HTTP and WebDAV client library, with C interface
 ngrep-1.44p0        network grep
 nmap-4.11-no_x11    scan ports and fingerprint stack of network hosts
@@ -91,11 +92,11 @@ p5-HTML-Tagset-3.10 data tables useful for parsing HTML
 p5-HTML-Template-2.6 use HTML Templates from CGI scripts
 p5-HTTP-GHTTP-1.07  perl interface to the Gnome GHTTP library
 p5-IO-INET6-2.01    object interface for AF_INET and AF_INET6 domain sockets
-p5-IO-Socket-SSL-0.97 perl interface to SSL sockets
+p5-IO-Socket-SSL-0.996 perl interface to SSL sockets
 p5-IO-String-1.08   emulate IO::File interface for in-core strings
 p5-IO-Zlib-1.04     IO:: style interface to Compress::Zlib
 p5-IO-stringy-2.110 in-core objects like strings and arrays for I/O
-p5-MIME-Base64-3.05 Perl5 module for Base64 and Quoted-Printable encodings
+p5-MIME-Base64-3.05p0 Perl5 module for Base64 and Quoted-Printable encodings
 p5-MIME-tools-5.420 modules for parsing (and creating) MIME entities
 p5-Mail-SPF-Query-1.999.1 perl module to query Sender Policy Framework
 p5-Mail-Tools-1.67  modules for handling mail with perl
@@ -103,7 +104,7 @@ p5-Module-Build-0.28 build and install Perl modules
 p5-Net-CIDR-Lite-0.18 Perl extension for merging IPv4 or IPv6 CIDR addresses
 p5-Net-DNS-0.54     module to interface the DNS resolver
 p5-Net-IP-1.25      perl module for IPv4/IPv6 address parsing
-p5-Net-SSLeay-1.30  perl module for using OpenSSL
+p5-Net-SSLeay-1.30p0 perl module for using OpenSSL
 p5-Net-Server-0.90  extensible framework for Perl server engines
 p5-Pod-Escapes-1.04 library to resolve perl Pod escape sequences
 p5-Pod-Simple-3.04  framework for parsing the Perl Pod format
@@ -121,7 +122,7 @@ p5-Unix-Syslog-0.100 interface to the UNIX system logger
 p5-XML-NamespaceSupport-1.09 perl module to the SAX2 NamespaceSupport class
 p5-XML-Parser-2.34  perl module for parsing XML documents
 p5-XML-SAX-0.12     perl interface to the SAX2 XML Parser
-p5-XML-Simple-2.14  trivial perl API for reading/writing XML
+p5-XML-Simple-2.14p0 trivial perl API for reading/writing XML
 p5-YAML-0.58        YAML ain't a markup language
 p5-libwww-5.803     library for WWW access in Perl
 pango-1.12.3        library for layout and rendering of text
@@ -133,14 +134,14 @@ py-docutils-0.4p0   tools for converting plaintext documentation into other form
 py-feedparser-4.1p0 RSS and Atom feeds parser written in Python
 py-markdown-1.5     Python text-to-HTML conversion tool
 py-pexpect-2.1      pure Python Expect-like module
-py-sqlite-1.0p0     SQLite adapter for Python
+py-sqlite-1.0p1     SQLite adapter for Python
 py-subversion-1.3.2 python interface to subversion
-python-2.4.3        interpreted object-oriented programming language
+python-2.4.3p0      interpreted object-oriented programming language
 rdiff-backup-1.0.4  backs up one directory to another, possibly over a network
 remind-3.0.23       scripting language for reminders, with a Tk front end
 screen-4.0.2        multi-screen window manager
 shared-mime-info-0.15p1 Shared mime database for desktops
-snownews-1.5.7p0    text mode rss newsreader
+snownews-1.5.7p1    text mode rss newsreader
 speex-1.0.5p0       patent-free speech codec
 sqlite-2.8.17p1     Embedded SQL implementation
 subversion-1.3.2    subversion revision control system
@@ -154,7 +155,7 @@ tiff-3.8.2p0        tools and library routines for working with TIFF images
 tk-8.4.7            graphical toolkit for Tcl
 unrar-3.54p0        extract, list, and test RAR archives
 unzip-5.52          extract, list & test files in a ZIP archive
-vim-7.0.35-no_x11   vi clone, many additional features
-vorbis-tools-1.1.1  play, encode, and manage Ogg Vorbis files
+vim-7.0.42-no_x11   vi clone, many additional features
+vorbis-tools-1.1.1p0 play, encode, and manage Ogg Vorbis files
 w3m-0.5.1p1         pager/text-based web browser
 zsh-4.2.6p0         Z shell, Bourne shell-compatible
