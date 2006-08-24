@@ -1,9 +1,11 @@
 #!/bin/sh
 # Print today's reminders.
 
+DAY=
+
 case ${0##*/} in
     today)
-        remind -m -rm ~/.reminders ${DAY} | sed -e 's/xat //; /^$/d'
+        remind -rm ~/.reminders ${DAY} | sed -e 's/xat //; /^$/d'
         ;;
     week)
         remind -m -rq -b1 -s+ ~/.reminders ${DAY} |\
