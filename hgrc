@@ -54,7 +54,7 @@ username = Will Maier <willmaier@ml1.net>
 ### mq - Mercurial patch queues
 ### hg help mq
 
-# hgext.mq =
+hgext.mq =
 
 ### notify - Template driven e-mail notifications
 ### hg help notify
