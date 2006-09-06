@@ -41,6 +41,7 @@ echo 'cddb' | cdio 2>/dev/null | while read LINE; do
     LINENR=$((LINENR + 1))
 done
 wait
+echo 'eject' | cdio
 exit
 
 # cd "${DIR}"
