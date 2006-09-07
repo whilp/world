@@ -1,6 +1,6 @@
 #!/bin/sh
 
-CVSDIR="${HOME}/CVS"
+CVSDIR="${HOME}/HG"
 DOTSDIR="${CVSDIR}/dotfiles"
 
 
