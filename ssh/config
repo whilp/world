@@ -30,8 +30,8 @@ Host tillie
     Port        22
     User        will
 
-Host b1ff
-    Hostname    b1ff.lfod.us
+Host lass
+    Hostname    lass.lfod.us
     Port        22
     User        will
 
