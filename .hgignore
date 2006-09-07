@@ -30,7 +30,6 @@
 ^irssi/away.log$
 ^snownews/cache/.*
 ^snownews/error.log$
-^snownews/browser$
 ^snownews/pid$
 ^snownews/updatecheck$
 ^snownews/urls.bak$
