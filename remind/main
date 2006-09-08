@@ -1,4 +1,4 @@
-# ex: set ft=remind:
+# ex: set ft=remind tw=0:
 BANNER %y.%n.%r %# Reminders:
 INCLUDE /home/will/.remind/functions
 INCLUDE /home/will/.remind/holidays
@@ -16,6 +16,11 @@ REM Sun                         MSG x%3 %"Backups.%"
 REM 01 Nov 2006 +7              MSG %"Is the ports tree unfrozen yet?%"
 
 ###################################################################
+### One-off stuff.
+###################################################################
+REM 28 Aug 2006                 MSG %"***** Get toothstuff and cell charger from Laura.%"
+
+###################################################################
 ### Home.
 ###################################################################
 REM 01 +3                       MSG %"***** Rent's due %b ($335, David Williams).%"
@@ -28,12 +33,15 @@ REM 02 Tue AT 12:00             MSG x%3 %"GLOW meeting.%"
 REM 01 +3 AT 12:00              MSG x%3 %"Activity report due to dasu@.%"
 
 ###################################################################
-### Birthdays.
+### Birthdays/anniversaries.
 ###################################################################
 REM 25 Aug MSG %"***** My [_yr_num(1984)] birthday.%"
 REM 25 Jan MSG %"***** Laura's [_yr_num(1980)] birthday.%"
 REM 04 Jul MSG %"***** Ducky's [_yr_num(1993)] birthday.%"
 REM 25 Sep MSG %"***** Eddie's [_yr_num(2004)] birthday.%"
+REM 10 Sep MSG %"***** Trevor's [_yr_num(1983)] birthday.%"
+
+REM 05 Sep MSG %"***** Our [_yr_num(2003)] anniversary.%"
 
 ###################################################################
 ### Old stuff.

@@ -26,6 +26,7 @@ ghostscript-fonts-6.0p0 35 standard PostScript fonts with Adobe name aliases
 glib-1.2.10p1       useful routines for C programming
 glib2-2.10.3        general-purpose utility library
 gmake-3.80p1        GNU make
+gmp-4.1.4p0         library for arbitrary precision arithmetic
 hping-2.0.0rc3p0    TCP/UDP ping/traceroute tool
 ion-20060524p0      light, keyboard friendly window manager
 ipython-0.7.2       enhanced interactive Python shell
@@ -118,6 +119,7 @@ pcre-6.4p1          perl-compatible regular expression library
 pkgconfig-0.19p0    tool for managing library compile/link flags
 png-1.2.12          library for manipulating PNG images
 py-cheetah-2.0rc6   Python-powered template engine and code generator
+py-crypto-2.0.1p2   cryptographic tools for Python
 py-docutils-0.4p0   tools for converting plaintext documentation into other formats
 py-feedparser-4.1p0 RSS and Atom feeds parser written in Python
 py-markdown-1.5     Python text-to-HTML conversion tool
@@ -139,5 +141,6 @@ tiff-3.8.2p0        tools and library routines for working with TIFF images
 tk-8.4.7            graphical toolkit for Tcl
 transfig-3.2.4p0    tools to convert Xfig's .fig files
 unzip-5.52          extract, list & test files in a ZIP archive
+uuid-1.5.0          ISO-C API and CLI for generating Universally Unique Identifiers
 vim-7.0.42-no_x11   vi clone, many additional features
 zsh-4.2.6p0         Z shell, Bourne shell-compatible
