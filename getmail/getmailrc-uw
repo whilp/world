@@ -7,7 +7,7 @@ type = SimplePOP3SSLRetriever
 server = wiscmail.wisc.edu
 port = 995
 username = wcmaier
-password = DidruHoad6
+password = H6am^DS~jmBiJgr\TAy%-jQ\Xay/=4+4Ytk$
 
 [destination]
 type = MDA_external
