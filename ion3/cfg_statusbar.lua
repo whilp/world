@@ -47,4 +47,3 @@ mod_statusbar.create{
 -- for necessary modules to be parsed from the templates.
 mod_statusbar.launch_statusd{
 }
-
