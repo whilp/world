@@ -27,23 +27,14 @@ set crypt_verify_sig=no
 set charset="//TRANSLIT"	            # translate to straight us-ascii
 set header_cache=~/.maildir/.cache
 
+set mask='!^(\.[^.]|Attic|.*log)'
+
 set spoolfile='/var/mail/will'
 mailboxes !
 mailboxes `\
-    find ~/.maildir -type d | \
-    egrep -v 'cur$|tmp$|new$|maildir$|Hack$|Work$|Personal$' | \
-    sed 's/.*\/.maildir\///' | \
+    find ~/.maildir -type d -path '*cur' | \
+    sed -e '/\/Attic\//d; s/^.*\.maildir\///; s/\/cur$//' | \
     xargs -I% echo -n ' =%'`
-
-# mailboxes `\
-#     for i in ~/Maildir/*; do \
-# 	case `basename $i` in \
-# 	    drop.log) \
-# 	    ;; \
-# 	    *) \
-# 	    echo ${BOX} \
-# 	esac \
-#     done`
 
 subscribe debian-?.*@lists\.debian\.org
 subscribe madlug@madisonlinux\.org
@@ -67,17 +58,20 @@ bind pager 'x' noop
 # bind index '\CF' noop
 # bind generic '\CU' noop
 # bind index '\CU' noop
-bind index zt current-top
-bind index zz current-middle
-bind index zb current-bottom
+bind generic zg first-entry
+bind generic zz current-middle
+bind generic zG last-entry
 bind index \CU previous-page
 bind pager \CU previous-page
+bind generic \CU previous-page
 bind index \CF next-page
 bind pager \CF next-page
-bind pager j next-line
-bind pager k previous-line
-bind pager J next-undeleted
-bind pager K previous-undeleted
+bind generic j next-line
+bind generic k previous-line
+bind browser j next-entry
+bind browser k previous-entry
+bind index J next-undeleted
+bind index K previous-undeleted
 
 
 macro index \CN "<shell-escape>~/bin/muttsearch<enter><change-folder>=Search<enter>" "Search with mairix"
@@ -88,8 +82,10 @@ macro index \CG "<shell-escape>~/bin/getmail -v<enter>" "Getmail, verbose"
 macro pager \CG "<shell-escape>~/bin/getmail -v<enter>" "Getmail, verbose"
 macro index <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
 macro pager <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
-macro index C "<change-folder>?<toggle-mailboxes>" "open a different folder"
-macro pager C "<change-folder>?<toggle-mailboxes>" "open a different folder"
+macro index C "<change-folder>?" "open a different folder"
+macro pager C "<change-folder>?" "open a different folder"
+#macro index C "<change-folder>?<toggle-mailboxes>" "open a different folder"
+#macro pager C "<change-folder>?<toggle-mailboxes>" "open a different folder"
 #macro index S "<toggle-new><previous-entry><save-message>=Spam<enter><enter>" "Spam a message"
 #macro pager S "<toggle-new><previous-entry><save-message>=Spam<enter><enter>" "Spam a message"
 macro index S "<clear-flag>N<previous-entry><save-message>=Spam<enter><enter>" "Spam a message"
@@ -113,7 +109,8 @@ set ispell=
 alternates "(wcmaier@wisc\.edu|wcmaier@hep\.wisc\.edu|wcmaier@cae\.wisc\.edu|wcmaier@gmail\.com|willmaier@ml1\.net)"
 set mail_check=30
 #set maildir_mtime=yes
-set sort_browser=reverse-date
+set sort_browser=alpha
+#set sort_browser=reverse-date
 set arrow_cursor=no
 set pager_index_lines=10
 
@@ -167,9 +164,9 @@ send-hook .					"set sendmail='/usr/local/bin/msmtp'"
 send-hook '~t \(jacobsonlaura.*@gmail\.com\|ljacobson@biochem\.wisc\.edu\)' "set signature='~/.signatures/laura'"
 send-hook '~t \(jacobsonlaura.*@gmail\.com\|ljacobson@biochem\.wisc\.edu\)' "unset sig_dashes"
 
-send-hook '~t .*@[a-zA-Z0-9\.\-]*(\.?wisc\.edu\|fnal\.gov\)'	"set signature='~/.signatures/hep'"
-send-hook '~t .*@[a-zA-Z0-9\.\-]*(\.?wisc\.edu\|fnal\.gov\)'	"set sendmail='/usr/local/bin/msmtp -a hep'"
-send-hook '~t .*@[a-zA-Z0-9\.\-]*(\.?wisc\.edu\|fnal\.gov\)'	"my_hdr From: Will Maier <wcmaier@hep.wisc.edu>"
+send-hook '~t .*@[a-zA-Z0-9\.\-]*(\.?wisc\.edu\|\.?fnal\.gov\)'	"set signature='~/.signatures/hep'"
+send-hook '~t .*@[a-zA-Z0-9\.\-]*(\.?wisc\.edu\|\.?fnal\.gov\)'	"set sendmail='/usr/local/bin/msmtp -a hep'"
+send-hook '~t .*@[a-zA-Z0-9\.\-]*(\.?wisc\.edu\|\.?fnal\.gov\)'	"my_hdr From: Will Maier <wcmaier@hep.wisc.edu>"
 send-hook '~t .*@kingstarusa.com'				"set signature='~/.signatures/hep'"
 send-hook '~t .*@kingstarusa.com'				"set sendmail='/usr/local/bin/msmtp -a hep'"
 send-hook '~t .*@kingstarusa.com'				"my_hdr From: Will Maier <wcmaier@hep.wisc.edu>"
