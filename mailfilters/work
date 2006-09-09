@@ -28,7 +28,7 @@ if ( /^(To|Cc):.*physics-all@physics\.wisc\.edu/ )
     to "$HEP/Department/"
 }
 
-if ( /^(From|To):.*@[:alnum:\.\-]*(hep|cs)\.wisc\.edu/ )
+if ( /^(From|To):.*@[:alnum:]*(hep|cs)\.wisc\.edu/ )
 {
     to "$HEP/Inbox"
 }
