@@ -12,6 +12,11 @@ if ( /^List-Id:.*glow-tech\.cs\.wisc\.edu/ )
     to "$HEP/GLOW/"
 }
 
+if ( /^List-Owner:.*CMS.*@LISTSERV\.FNAL\.GOV/ )
+{
+    to "$HEP/CMS/"
+}
+
 if ( /^Return-Path:.*rader@noc\.hep\.wisc\.edu/ || \
     /^From:.*nagios@cmssrv02\.fnal\.gov/ )
 {

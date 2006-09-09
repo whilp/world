@@ -15,14 +15,14 @@ DEFAULT = "$MAILDIR/Inbox/"
 
 # FOLDERS
 HEP     = "$MAILDIR/HEP"
-UW      = "$MAILDIR/UW"
+UW      = "$MAILDIR/UW/"
 LUG     = "$MAILDIR/LUG"
 FOSS    = "$MAILDIR/FOSS"
 OBSD    = "$MAILDIR/OBSD"
 LINUX   = "$MAILDIR/Linux"
-UBUNTU  = "$MAILDIR/Ubuntu"
+UBUNTU  = "$LINUX/Ubuntu"
 
-IN      = "$MAILDIR/Inbox/"
+IN      = "$DEFAULT"
 SENT    = "$MAILDIR/Sent/"
 SPAM    = "$MAILDIR/Spam/"
 JUNK    = "$MAILDIR/Junk/"

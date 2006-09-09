@@ -106,6 +106,10 @@ if ( /^Sender:.*owner-[a-z0-9\-\.]*@openbsd\.org/ )
     {
         to "$OBSD/Tech/"
     }
+    if ( /^Sender:.*-www@/ )
+    {
+        to "$OBSD/Tech/"
+    }
     to "$OBSD/General/"
 }
 
