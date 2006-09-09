@@ -1,7 +1,7 @@
 (^|/)CVS($|/)
 (^|/)\.hg($|/)
 (^|/)\.hgtags($|/)
-.*.swp
+.*.sw[nop]
 ^project.log$
 ^tailor.state$
 ^tailor.state.old$
