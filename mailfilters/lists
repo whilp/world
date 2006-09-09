@@ -84,7 +84,7 @@ if ( /^List-Id:.*freebsd-[:alnum:]*\.freebsd.org>/ )
     to "$JUNK"
 }
 
-if ( /^Sender:.*owner-[:alnum:]*@openbsd\.org/ )
+if ( /^Sender:.*owner-[a-z0-9\-\.]*@openbsd\.org/ )
 {
     if ( /^Sender:.*-misc@/ )
     {
