@@ -1,0 +1,125 @@
+#################  BEGIN HEADERS
+# Filename	: $HOME/.mailfilter
+# Use		: configures routing of incoming mail
+# Author	: Will Maier <willmaier@ml1.net>
+# Vim		: vim: set ft=perl:
+# Copyright	: Copyright (c) 2006 Will Maier
+# License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
+##################  END HEADERS
+
+# LUGS
+if ( /^List-Id:.*madlug\.madisonlinux\.org/ )
+{
+    to "$LUG/Madlug/"
+}
+
+if ( /^List-Id:.*mlug-list\.mail\.milwaukeelug\.org/ )
+{
+    to "$LUG/Mkelug/"
+}
+
+# FOSS
+if ( /List-Id:.*screen-?(users)?\.gnu\.org/ )
+{
+    to "$FOSS/Screen/"
+}
+
+if ( /^Mail-Followup-To:.*zsh-users@sunsite\.dk/ )
+{
+    to "$FOSS/Zsh/"
+}
+
+if ( /^Mailing-List:.*vim-help@vim\.org/ )
+{
+    if ( /^subject:.*(w(in)?32|windows|windoze|OLE)/ )
+    {
+	to /dev/null
+    }
+    to "$FOSS/Vim/"
+}
+
+if ( /^List-Id:.*mercurial\.selenic\.com/ )
+{
+    to "$FOSS/Hg/"
+}
+
+if ( /^List-Id:.*openafs-info\.openafs\.org/ )
+{
+    to "$FOSS/OpenAFS/"
+}
+
+if ( /^List-Id:.*ion-general\.lists\.berlios\.de/ )
+{
+    to "$FOSS/Ion/"
+}
+
+if ( /^Sender:.*owner-mutt-users@mutt.org/ )
+{
+    to "$FOSS/Mutt/"
+}
+
+if ( /^List-Id:.*courier-maildrop\.lists\.sourceforge\.net/ )
+{
+    to "$FOSS/Maildrop/"
+}
+
+if ( /^List-Id:.*roundup-users\.lists\.sourceforge\.net/ )
+{
+    to "$FOSS/Roundup/"
+}
+
+if ( /^List-Id:.*ipython-user\.scipy\.org/ )
+{
+    to "$FOSS/IPython/"
+}
+
+if ( /^List-Id:.*elinks-users\.linuxfromscratch\.org/ )
+{
+    to "$FOSS/Elinks/"
+}
+
+# OSes
+if ( /^List-Id:.*freebsd-[:alnum:]*\.freebsd.org>/ )
+{
+    to "$JUNK"
+}
+
+if ( /^Sender:.*owner-[:alnum:]*@openbsd\.org/ )
+{
+    if ( /^Sender:.*-misc@/ )
+    {
+        to "$OBSD/Misc/"
+    } 
+    if ( /^Sender:.*-ports@/ )
+    {
+        to "$OBSD/Ports/"
+    }
+    if ( /^Sender:.*-bugs@/ )
+    {
+        to "$OBSD/Bugs/"
+    }
+    if ( /^Sender:.*-changes@/ )
+    {
+        to "$OBSD/CVS/"
+    }
+    if ( /^Sender:.*-tech@/ )
+    {
+        to "$OBSD/Tech/"
+    }
+    to "$OBSD/General/"
+}
+
+if ( /^List-Id:.*ubuntu-[:alnum:]*\.lists\.ubuntu\.com/ )
+{
+    to "$LINUX/Ubuntu/"
+}
+
+# OTHER
+if ( /^(to|cc):.*techpartners@lists.*wisc\.edu/ )
+{
+    if ( /^subject:.*(win ?(dows|doze|XP|98|2000|2k|ME)|word|digital camera|.exe)/ )
+    {
+	to $JUNK
+    }
+    to "$UW/TP/"
+}

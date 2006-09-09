@@ -1,0 +1,351 @@
+#################  BEGIN HEADERS
+# Filename	: $HOME/.mailfilter
+# Use		: configures routing of incoming mail
+# Version	: $Revision: 1.45 $
+# Author	: Will Maier <willmaier@ml1.net>
+# Started	: 2005.06.15
+# Updated	: $Date: 2006/06/18 13:53:51 $
+# Vim		: vim: set ft=perl:
+# CVS		: $Id: mailfilter,v 1.45 2006/06/18 13:53:51 will Exp $
+# Copyright	: Copyright (c) 2005 Will Maier
+# License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
+##################  END HEADERS
+
+# --[ SETTINGS
+HOME = '/home/will'
+MAILDIR = "$HOME/.maildir"
+LOG = "$MAILDIR/drop.log"
+DEFAULT = '/var/mail/will'
+
+# --[ FOLDERS
+CAE = "$MAILDIR/CAE/"
+CENTPROP = "$MAILDIR/Centprop/"
+FAMILY = "$MAILDIR/Family/"
+FRIEND = "$MAILDIR/Friend/"
+HEP = "$MAILDIR/HEP/"
+HEPNAG = "$MAILDIR/HEP-nagios/"
+MADLUG = "$MAILDIR/Madlug/"
+MKELUG = "$MAILDIR/Mkelug/"
+MAILDROP = "$MAILDIR/Maildrop/"
+SCHOOL = "$MAILDIR/School/"
+SECURITYFOCUS = "$MAILDIR/Securityfocus/"
+SENT = "$MAILDIR/Sent/"
+SPAM = "$MAILDIR/Spam/"
+TECHPARTNERS = "$MAILDIR/Techpartners/"
+
+logfile $LOG
+
+# --[ CONFIGURATION
+
+# catch duplicates using reformail
+
+# `reformail -D 8000 $MAILDIR/.duplicate-cache`
+# if ( $RETURNCODE == 0 )
+# {
+#     to $MAILDIR/Questionable/
+# }
+
+# --[ CATCH SPAM
+if ( /^X-Spam-Flag:.*YES$/ )
+{
+    to $SPAM
+}
+
+# --[ CATCH VACATION NOTICES
+if ( /^Subject:.*autoreply/ || \
+    /^Subject:.*auto response/ || \
+    /^Subject:.*out of the office/ || \
+    /^Subject:.*out of (the)?[\t ]*office/ || \
+    /^Subject:.*=\?ISO-8859-1\?Q\?au=DFer_Haus=2E\?=/ || \
+    /^Subject:.*abwesenheit(snotiz)?/ || \
+    /^Subject:.*i am out of contact/ || \
+    /^Subject:.*away from my mail/ || \
+    /^Subject:.*nie ma mnie w pracy/ || \
+    /^Subject:.*har semester/ || \
+    /^Subject:.*Risposta automatica/ || \
+    /^Subject:.*est absent/ )
+{
+    to $SPAM
+}
+
+# --[ CATCH OTHER STUFF
+if ( /^Subject:.*(unsubscribe|$)/ || \
+    /^From:.*ta4@mfire\.com/ || \
+    /^From:.*gjiaccar@wisc\.edu/ )
+{
+    to $SPAM
+}
+
+# --[ LISTS
+if ( /^(to|cc):.*madlug@madisonlinux\.org/ )
+{
+    to $MADLUG
+}
+if ( /^(to|cc):.*mlug-list@(mail\.)?milwaukeelug\.org/ )
+{
+    to $MKELUG
+}
+if ( /^(to|cc):.*screen!(-?[a-zA-Z0-9\-]*)!@gnu\.org/ )
+{
+    MATCH=tolower($MATCH2)
+    `test -d $MAILDIR/Screen$MATCH || mkdir -p $MAILDIR/Screen$MATCH/{cur,tmp,new}`
+    to $MAILDIR/Screen$MATCH
+}
+if ( /^(to|cc):.*techpartners@lists.*wisc\.edu/ )
+{
+    if ( /^subject:.*(win ?(dows|doze|XP|98|2000|2k|ME)|word|digital camera|.exe)/ )
+    {
+	to $SPAM
+    }
+    to $TECHPARTNERS
+}
+if ( /^(to|cc):.*rt!(-?[a-zA-Z0-9\-]*)!@(lists\.)?(bestpractical|fsck)\.com/ )
+{
+    MATCH=tolower($MATCH2)
+    `test -d $MAILDIR/RT$MATCH || mkdir -p $MAILDIR/RT$MATCH/{cur,tmp,new}`
+    to $MAILDIR/RT$MATCH
+}
+if ( /^(to|cc):.*freebsd!(-?[a-zA-Z0-9\-]*)!@freebsd\.org/ )
+{
+    MATCH=tolower($MATCH2)
+    `test -d $MAILDIR/FreeBSD$MATCH || mkdir -p $MAILDIR/FreeBSD$MATCH/{cur,tmp,new}`
+    to $MAILDIR/FreeBSD$MATCH
+}
+if ( /^(to|cc):.* <?!([a-zA-Z0-9\-]+)!@freebsd\.org/ )
+{
+    MATCH=tolower(-$MATCH2)
+    `test -d $MAILDIR/FreeBSD$MATCH || mkdir -p $MAILDIR/FreeBSD$MATCH/{cur,tmp,new}`
+    to $MAILDIR/FreeBSD$MATCH
+}
+if ( /^(to|cc):.*grml!(-?[a-zA-Z0-9\-]*)!@mur\.at/ )
+{
+    MATCH=tolower($MATCH2)
+    LIST=Grml
+    `test -d $MAILDIR/$LIST$MATCH || mkdir -p $MAILDIR/$LIST$MATCH/{cur,tmp,new}`
+    to $MAILDIR/$LIST$MATCH
+}
+if ( /^(to|cc):.*!jadmin!@jabber\.org/ )
+{
+    MATCH=tolower($MATCH2)
+    LIST=Jabber-
+    `test -d $MAILDIR/$LIST$MATCH || mkdir -p $MAILDIR/$LIST$MATCH/{cur,tmp,new}`
+    to $MAILDIR/$LIST$MATCH
+}
+if ( /^(to|cc):.*zsh!(-?[a-zA-Z0-9\-]*)!@sunsite\.dk/ )
+{
+    MATCH=tolower($MATCH2)
+    LIST=Zsh
+    `test -d $MAILDIR/$LIST$MATCH || mkdir -p $MAILDIR/$LIST$MATCH/{cur,tmp,new}`
+    to $MAILDIR/$LIST$MATCH
+}
+if ( /^(to|cc):.*vim!(-?[a-zA-Z0-9\-]*)!@vim\.org/ )
+{
+    if ( /^subject:.*(w(in)?32|windows|windoze|OLE)/ )
+    {
+	to $SPAM
+    }
+    MATCH=tolower($MATCH2)
+    `test -d $MAILDIR/Vim$MATCH || mkdir -p $MAILDIR/Vim$MATCH/{cur,tmp,new}`
+    to $MAILDIR/Vim$MATCH
+}
+if ( /^(to|cc):.*wmii@wmii\.de/ )
+{
+    to $MAILDIR/Wmii/
+}
+if ( /^(to|cc):.*mercurial@selenic\.com/ )
+{
+    to $MAILDIR/Hg/
+}
+if ( /^(to|cc):.*openafs-info@openafs\.org/ )
+{
+    to $MAILDIR/OpenAFS-info/
+}
+if ( /^(to|cc):.*!ports[a-zA-Z0-9\-]*!@openbsd\.org/ )
+{
+    MATCH=tolower($MATCH2)
+    `test -d $MAILDIR/OpenBSD-$MATCH || mkdir -p $MAILDIR/OpenBSD-$MATCH/{cur,tmp,new}`
+    to $MAILDIR/OpenBSD-$MATCH
+}
+if ( /^(to|cc):.*(ports|source)-changes@cvs\.openbsd\.org/ )
+{
+    to $MAILDIR/OpenBSD-cvs
+}
+if ( /^(to|cc):.*tech@openbsd\.org/ )
+{
+    to $MAILDIR/OpenBSD-tech
+}
+if ( /^(to|cc):.*gnats@openbsd\.org/ || \
+    /^(to|cc):.*bugs@(cvs\.)?openbsd.org/ )
+{
+    to $MAILDIR/OpenBSD-bugs
+}
+if ( /^(to|cc):.*!misc!@openbsd\.org/ )
+{
+    MATCH=tolower($MATCH2)
+    `test -d $MAILDIR/OpenBSD-$MATCH || mkdir -p $MAILDIR/OpenBSD-$MATCH/{cur,tmp,new}`
+    to $MAILDIR/OpenBSD-$MATCH
+}
+if ( /^(to|cc):.*!(debian|utnubu)!(-?[a-zA-Z0-9\-]*)!@lists\.[a-z.]*debian\.org/ )
+{
+    if ( $MATCH2 =~ /utnubu/ )
+    {
+	MATCH="-$MATCH2$MATCH3"
+	MATCH=tolower($MATCH)
+    }
+    else
+    {
+	MATCH=tolower($MATCH3)
+    }
+    `test -d $MAILDIR/Debian$MATCH || mkdir -p $MAILDIR/Debian$MATCH/{cur,tmp,new}`
+    to $MAILDIR/Debian$MATCH/
+}
+if ( /^(to|cc):.*!linux-fai@(rrz\.)?uni-koeln\.de/ )
+{
+    to $MAILDIR/Debian-fai/
+}
+if ( /^(to|cc):.*ion!(-?[a-zA-Z0-9\-]*)!@lists\.berlios\.de/ )
+{
+    MATCH=tolower($MATCH2)
+    `test -d $MAILDIR/Ion$MATCH || mkdir -p $MAILDIR/Ion$MATCH/{cur,tmp,new}`
+    to $MAILDIR/Ion$MATCH/
+}
+if ( /^(to|cc):.*ubuntu!(-?[a-zA-Z0-9\-]*)!@lists\.ubuntu\.com/ )
+{
+    MATCH=tolower($MATCH2)
+    `test -d $MAILDIR/Ubuntu$MATCH || mkdir -p $MAILDIR/Ubuntu$MATCH/{cur,tmp,new}`
+    to $MAILDIR/Ubuntu$MATCH/
+}
+if ( /^(to|cc):.*!security-review!@lists\.ubuntu\.com/ )
+{
+    MATCH2="-$MATCH2"
+    MATCH=tolower($MATCH2)
+    `test -d $MAILDIR/Ubuntu$MATCH || mkdir -p $MAILDIR/Ubuntu$MATCH/{cur,tmp,new}`
+    to $MAILDIR/Ubuntu$MATCH/
+}
+if ( /^(to|cc):.*mutt!(-?[a-zA-Z0-9\-]*)!@(mutt\.org|lists\.berlios\.de)/ )
+{
+    MATCH=tolower($MATCH2)
+    `test -d $MAILDIR/Mutt$MATCH || mkdir -p $MAILDIR/Mutt$MATCH/{cur,tmp,new}`
+    to $MAILDIR/Mutt$MATCH/
+}
+if ( /^(to|cc):.*courier-maildrop@lists\.sourceforge\.net/ )
+{
+    to $MAILDROP
+}
+if ( /^(to|cc):.*roundup-users@lists\.sourceforge\.net/ )
+{
+    to $MAILDIR/Roundup-users/
+}
+if ( /^(to|cc):.*ipython-user@scipy\.net/ )
+{
+    to $MAILDIR/IPython-users/
+}
+if ( /^(to|cc):.*jurabib@yahoogroups\.com/ )
+{
+    to $MAILDIR/Jurabib/
+}
+if ( /^(to|cc):.*elinks-users@linuxfromscratch\.org/ )
+{
+    to $MAILDIR/Elinks-users/
+}
+if ( /^(to|cc):.*@securityfocus\.com/ )
+{
+    to $SECURITYFOCUS
+}
+if ( /^(to|cc):.*mythtv-users@mythtv\.org/ )
+{
+    to $MAILDIR/Mythtv-users/
+}
+if ( /^(to|cc):.*sjcbod@yahoogroups\.com/ || \
+    /(^From|to):.*brendakonkel@yahoo\.com/ || \
+    /(^From|to):.*rlopahle@gmail\.com/ || \
+    /(^From|to):.*info@tgdde\.com/ || \
+    /^From:.*noreply@whitedust\.net/ || \
+    /^From:.*bugmaster@freebsd\.org/ )
+{
+    to /dev/null
+    log "Trashed a mail"
+}
+
+# --[ SCHOOL
+if ( /^(From|to):.*@geology\.wisc\.edu/ || \
+    /(^From|to):.*jwseitz@wisc\.edu/ || \
+    /(^From|to):.*mhshank@wisc\.edu/ )
+{
+    to $SCHOOL
+}
+
+## check if from me
+#if ( /^From:.*willmaier@ml1\.net/ \
+#    || /^From:.*wcmaier@gmail\.com/ \
+#    || /^From:.*wcmaier@hep.wisc.edu/ \
+#    || /^From:.*will.maier@hep.wisc.edu/ \
+#    || /^From:.*<?wcmaier@cae\.wisc\.edu/ )
+#{
+#    to $SENT
+#}
+#
+# --[ FAMILY
+if ( \
+    /^From:.*ajdj143@sbcglobal\.net/ || \
+    /^From:.*beachbumbutterfly@yahoo\.com/ || \
+    /^From:.*ginaryan@aol\.com/ || \
+    /^From:.*jacobsonlaura@gmail\.com/ || \
+    /^From:.*ljacobson@biochem\.wisc\.edu/ || \
+    /^From:.*jacobsonlaura@hotmail\.com/ || \
+    /^From:.*linuxmaier@fastmail\.fm/ || \
+    /^From:.*adeepergrey@excite\.com/ || \
+    /^From:.*linuxmaier@yahoo\.com/ || \
+    /^From:.*maier1@wisc\.edu/ || \
+    /^From:.*maier@wi\.rr\.com/ || \
+    /^From:.*maierfest@aol\.com/ || \
+    /^From:.*mmaier@stewart-peterson\.com/ || \
+    /^From:.*jmaier7@wi\.rr\.com/ || \
+    /^From:.*pbroad@iopener\.net/ || \
+    /^From:.*sharonmaier@gmail\.com/ || \
+    /^From:.*tanyamohn@aol\.com/ || \
+    /^From:.*wegmann@sbcglobal\.net/ )
+{
+    to $FAMILY
+}
+
+# --[ FRIENDS
+if ( \
+    /^From:.*aquaranger@hotmail\.com/ || \
+    /^From:.*butterflyschmid@yahoo\.com/ || \
+    /^From:.*ejburnett@.*wisc\.edu/ || \
+    /^From:.*hastings.cameron@gmail\.com/ || \
+    /^From:.*hitbyguitarz@yahoo\.com/ || \
+    /^From:.*kafka@riseup\.net/ || \
+    /^From:.*katwodtke@wi\.rr\.com/ || \
+    /^From:.*kwrosenb@wisc\.edu/ || \
+    /^From:.*mbrunlieb@gmail\.com/ || \
+    /^From:.*mbrunlieb@hotmail\.com/ || \
+    /^From:.*rmainville@stewart-peterson\.com/ )
+{
+    to $FRIEND
+}
+
+# --[ WORK
+if ( /^(From|to):.*(unix@)?(engr|cae).wisc\.edu/ )
+{
+    to $CAE
+}
+if ( /^(from|to):.*kenkinsley@hotmail\.com/ )
+{
+    to $CENTPROP
+}
+if ( /^subject: (PROBLEM|UP|DOWN|RECOVERY):/ && \
+    /^from:.*@[a-zA-Z0-9\.\-]*hep.wisc.edu/ || \
+    /^from:.*nagios@cmssrv02\.fnal\.gov/ )
+{
+    to $HEPNAG
+}
+if ( /^(from|to):.*@[a-zA-Z0-9\.\-]*(hep|cs)\.wisc\.edu/ )
+{
+    to $HEP
+}
+
+
+log "Dropping in DEFAULT"
+to $DEFAULT

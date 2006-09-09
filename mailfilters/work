@@ -1,0 +1,34 @@
+#################  BEGIN HEADERS
+# Filename	: $HOME/.mailfilter
+# Use		: configures routing of incoming mail
+# Author	: Will Maier <willmaier@ml1.net>
+# Vim		: vim: set ft=perl:
+# Copyright	: Copyright (c) 2005, 2006 Will Maier
+# License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
+##################  END HEADERS
+
+if ( /^(From|to):.*(unix@)?(engr|cae).wisc\.edu/ )
+{
+    to $CAE
+}
+
+if ( /^List-Id:.*glow-tech\.cs\.wisc\.edu/ )
+{
+    to "$HEP/GLOW/"
+}
+
+if ( /^Return-Path:.*rader@noc\.hep\.wisc\.edu/ || \
+    /^From:.*nagios@cmssrv02\.fnal\.gov/ )
+{
+    to "$HEP/Nagios/"
+}
+
+if ( /^(To|Cc):.*physics-all@physics\.wisc\.edu/ )
+{
+    to "$HEP/Department/"
+}
+
+if ( /^(From|To):.*@[:alnum:\.\-]*(hep|cs)\.wisc\.edu/ )
+{
+    to "$HEP/Inbox"
+}
