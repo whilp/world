@@ -7,11 +7,6 @@
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
 
-if ( /^(From|to):.*(unix@)?(engr|cae).wisc\.edu/ )
-{
-    to $CAE
-}
-
 if ( /^List-Id:.*glow-tech\.cs\.wisc\.edu/ )
 {
     to "$HEP/GLOW/"
@@ -23,12 +18,22 @@ if ( /^Return-Path:.*rader@noc\.hep\.wisc\.edu/ || \
     to "$HEP/Nagios/"
 }
 
+if ( /^From:.*(root|cron)/ )
+{
+    to "$HEP/Root/"
+}
+
 if ( /^(To|Cc):.*physics-all@physics\.wisc\.edu/ )
 {
     to "$HEP/Department/"
 }
 
-if ( /^(From|To):.*@[:alnum:]*(hep|cs)\.wisc\.edu/ )
+if ( /^(From|To):.*(hep|cs)\.wisc\.edu/ )
 {
     to "$HEP/Inbox"
+}
+
+if ( /^(From|to):.*(unix@)?(engr|cae).wisc\.edu/ )
+{
+    to $CAE
 }
