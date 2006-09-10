@@ -37,4 +37,5 @@ for section in config.sections():
 
         # os.chmod() wants an octal.
         mode = int(config.get(section, option), 8)
-        os.chmod(path, mode)
+        if os.path.exists(path):
+            os.chmod(path, mode)
