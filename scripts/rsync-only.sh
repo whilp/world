@@ -8,7 +8,7 @@ case ${SSH_ORIGINAL_COMMAND} in
         echo "Connection refused."
         ;;
     rsync*)
-        ${SSH_ORIGINAL_COMMAND}
+        sudo ${SSH_ORIGINAL_COMMAND}
         ;;
     *)
         echo "Connection refused."
