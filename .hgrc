@@ -80,6 +80,9 @@ hgext.mq =
 
 ### --- Hook to Mercurial actions - See hgrc man page for avaliable hooks
 
+[encode]
+* = ~/.scripts/hgkeywords.py
+
 [hooks]
 commit = ~/.scripts/lockdown.py
 incoming = ~/.scripts/lockdown.py
