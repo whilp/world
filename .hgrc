@@ -81,6 +81,9 @@ hgext.mq =
 ### --- Hook to Mercurial actions - See hgrc man page for avaliable hooks
 
 [hooks]
+commit = ~/.scripts/lockdown.py
+incoming = ~/.scripts/lockdown.py
+update = ~/.scripts/lockdown.py
 
 ### Example notify hooks (load hgext.notify extension before use)
 
