@@ -23,10 +23,6 @@ if ( /^Return-Path:.*rader@noc\.hep\.wisc\.edu/ || \
     to "$HEP/Nagios/"
 }
 
-if ( /^From:.*(root|cron)/ )
-{
-    to "$HEP/Root/"
-}
 
 if ( /^(To|Cc):.*physics-all@physics\.wisc\.edu/ )
 {
@@ -35,6 +31,10 @@ if ( /^(To|Cc):.*physics-all@physics\.wisc\.edu/ )
 
 if ( /^(From|To):.*(hep|cs)\.wisc\.edu/ )
 {
+    if ( /^(From|To):.*(root|cron)/ )
+    {
+        to "$HEP/Root/"
+    }
     to "$HEP/Inbox"
 }
 
