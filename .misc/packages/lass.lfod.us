@@ -12,6 +12,7 @@ gdbm-1.8.3p0        GNU dbm
 getmail-4.6.3       POP3 mail retriever
 gettext-0.14.5p1    GNU gettext
 glib2-2.10.3        general-purpose utility library
+gmake-3.80p1        GNU make
 gmp-4.1.4p0         library for arbitrary precision arithmetic
 hping-2.0.0rc3p0    TCP/UDP ping/traceroute tool
 ipython-0.7.2       enhanced interactive Python shell
@@ -19,6 +20,9 @@ irssi-0.8.10p0      modular IRC client with many features (ipv6,socks,proxy)
 libdnet-1.10p1      portable low-level networking library
 libiconv-1.9.2p3    character set conversion library
 libidn-0.6.1        internationalized string handling
+libltdl-1.5.22p1    GNU libtool system independent dlopen wrapper
+librsync-0.9.7      implements the rsync remote-delta algorithm
+libtool-1.5.22p0    generic shared library support script
 libxml-2.6.26       XML parsing library
 maildrop-1.7.0      local mail delivery agent with filtering abilities
 mercurial-0.9p0     fast, lightweight source control management
@@ -34,6 +38,7 @@ pwsafe-0.2.0        program that manages encrypted password databases
 py-crypto-2.0.1p2   cryptographic tools for Python
 py-pexpect-2.1      pure Python Expect-like module
 python-2.4.3p0      interpreted object-oriented programming language
+rdiff-backup-1.0.4  backs up one directory to another, possibly over a network
 remind-3.0.23       scripting language for reminders, with a Tk front end
 rsync-2.6.8         mirroring/synchronization over low bandwidth links
 screen-4.0.2-static multi-screen window manager
