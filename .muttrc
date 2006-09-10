@@ -68,6 +68,8 @@ bind index \CF next-page
 bind pager \CF next-page
 bind generic j next-entry
 bind generic k previous-entry
+bind index j next-entry
+bind index k previous-entry
 bind index J next-undeleted
 bind index K previous-undeleted
 
