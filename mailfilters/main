@@ -41,7 +41,8 @@ include "$FILTERDIR/work"
 
 if ( /^List-Id:/ || \
     /^Sender:/ || \
-    /^Mail-Followup-To:.*zsh/ )
+    /^Mail-Followup-To:.*zsh/ || \
+    /^Mailing-List:.*vim/ )
 {
     include "$FILTERDIR/lists"
 }

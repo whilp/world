@@ -84,6 +84,18 @@ if ( /^List-Id:.*freebsd-[:alnum:]*\.freebsd.org>/ )
     to "$JUNK"
 }
 
+if ( /^List-Id:.*lists\.debian\.org/ ) {
+    if ( /^List-Id:.*security/ ) {
+        to "$LINUX/Debian/Security/"
+    }
+    if ( /^List-Id:.*announce/ ) {
+        to "$LINUX/Debian/Announce/"
+    }
+    if ( /^List-Id:.*news/ ) {
+        to "$LINUX/Debian/News/"
+    }
+}
+
 if ( /^Sender:.*owner-[a-z0-9\-\.]*@openbsd\.org/ )
 {
     if ( /^Sender:.*-misc@/ )
