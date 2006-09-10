@@ -17,6 +17,10 @@
 .login = 0600
 .mailcap = 0600
 .mailfilters/ = 0700
+.mailfilters/junk = 0600
+.mailfilters/lists = 0600
+.mailfilters/main = 0600
+.mailfilters/work = 0600
 .misc/ = 0700
 .msmtprc = 0600
 .muttalias = 0600
