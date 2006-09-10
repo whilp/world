@@ -66,13 +66,10 @@ bind pager \CU previous-page
 bind generic \CU previous-page
 bind index \CF next-page
 bind pager \CF next-page
-bind generic j next-line
-bind generic k previous-line
-bind browser j next-entry
-bind browser k previous-entry
+bind generic j next-entry
+bind generic k previous-entry
 bind index J next-undeleted
 bind index K previous-undeleted
-
 
 macro index \CN "<shell-escape>~/bin/muttsearch<enter><change-folder>=Search<enter>" "Search with mairix"
 macro pager \CN "<shell-escape>~/bin/muttsearch<enter><change-folder>=Search<enter>" "Search with mairix"

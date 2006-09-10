@@ -100,6 +100,9 @@ color index brightyellow default ~f@cvs.openbsd.org~s'^CVS.*www'
 color index brightgreen default ~f@cvs.openbsd.org~s'^CVS.*src'
 color index brightblue default ~f@cvs.openbsd.org~s'^CVS.*ports'
 
+# Highlight Debian Security Announcements
+color index brightyellow default ~s"^.SECURITY.*DSA"
+
 #Should be last. So it gets the highest priority.
 color index blue		default	~D # Deleted
 mono  index reverse                     ~D # Deleted
