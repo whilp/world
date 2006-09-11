@@ -11,14 +11,8 @@ REM 16 Sep 2006                 MSG %"***** Laura @ WPT quilt show.%"
 ### NIX.
 REM 02 Jun 2006 *14 AT 19:00    MSG x%3 %"MadLUG social meeting (Memorial Union).%"
 REM 01 Wed AT 19:00             MSG x%3 %"MadMongers meeting (MPL).%"
-REM Sun                         MSG x%3 %"Backups.%"
 ### OpenBSD.
 REM 01 Nov 2006 +7              MSG %"Is the ports tree unfrozen yet?%"
-
-###################################################################
-### One-off stuff.
-###################################################################
-REM 28 Aug 2006                 MSG %"***** Get toothstuff and cell charger from Laura.%"
 
 ###################################################################
 ### Home.
@@ -50,3 +44,4 @@ REM 05 Sep MSG %"***** Our [_yr_num(2003)] anniversary.%"
 #REM 07 Aug 2006 *7 AT 14:30     MSG x%3 %"CAE Unix staff meeting.%"
 #REM 17 Jul 2006 AT 12:00 *15 +3 MSG x%3 %"Time sheet due.%"
 #REM 10 August 2006 AT 11:30     MSG x%3 %"HEP/CMS meeting (rescheduled).%"
+#REM 28 Aug 2006                 MSG %"***** Get toothstuff and cell charger from Laura.%"
