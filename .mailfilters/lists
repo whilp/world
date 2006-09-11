@@ -141,5 +141,5 @@ if ( /^(to|cc):.*techpartners@lists.*wisc\.edu/ )
     {
 	to $JUNK
     }
-    to "$UW/TP/"
+    to "$MAILDIR/TP/"
 }
