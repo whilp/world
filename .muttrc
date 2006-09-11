@@ -66,12 +66,10 @@ bind pager \CU previous-page
 bind generic \CU previous-page
 bind index \CF next-page
 bind pager \CF next-page
-bind generic j next-entry
-bind generic k previous-entry
-bind index j next-entry
-bind index k previous-entry
-bind index J next-undeleted
-bind index K previous-undeleted
+bind pager j next-line
+bind pager k previous-line
+bind pager J next-undeleted
+bind pager K previous-undeleted
 
 macro index \CN "<shell-escape>~/bin/muttsearch<enter><change-folder>=Search<enter>" "Search with mairix"
 macro pager \CN "<shell-escape>~/bin/muttsearch<enter><change-folder>=Search<enter>" "Search with mairix"
@@ -109,7 +107,6 @@ alternates "(wcmaier@wisc\.edu|wcmaier@hep\.wisc\.edu|wcmaier@cae\.wisc\.edu|wcm
 set mail_check=30
 #set maildir_mtime=yes
 set sort_browser=alpha
-#set sort_browser=reverse-date
 set arrow_cursor=no
 set pager_index_lines=10
 
