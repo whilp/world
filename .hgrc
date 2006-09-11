@@ -1,3 +1,4 @@
+# $Hg$
 ### --- User interface
 
 [ui]
@@ -79,9 +80,6 @@ hgext.mq =
 # path = /home/user/hg/hg/contrib/hgk
 
 ### --- Hook to Mercurial actions - See hgrc man page for avaliable hooks
-
-[encode]
-* = ~/.scripts/hgkeywords.py
 
 [hooks]
 commit = ~/.scripts/lockdown.py
