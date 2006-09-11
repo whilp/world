@@ -6,6 +6,7 @@ INCLUDE /home/will/.remind/holidays
 ###################################################################
 ### Plans.
 ###################################################################
+REM 14 Sep 2006 AT 14:00        MSG %"Frank Petriello desktop upgrade.%"
 REM 15 Sep 2006                 MSG %"***** A Tribe Called Quest in Chicago with Trev.%"
 REM 16 Sep 2006                 MSG %"***** Laura @ WPT quilt show.%"
 ### NIX.
@@ -22,7 +23,7 @@ REM 01 +3                       MSG %"***** Rent's due %b ($335, David Williams)
 ###################################################################
 ### Work.
 ###################################################################
-REM 08 Aug 2006 *7 AT 11:30     MSG x%3 %"HEP/CMS meeting.%"
+REM 08 Aug 2006 *7 AT 13:00     MSG x%3 %"HEP/CMS meeting.%"
 REM 02 Tue AT 12:00             MSG x%3 %"GLOW meeting.%"
 REM 01 +3 AT 12:00              MSG x%3 %"Activity report due to dasu@.%"
 
