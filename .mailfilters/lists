@@ -24,7 +24,7 @@ if ( /List-Id:.*screen-?(users)?\.gnu\.org/ )
     to "$FOSS/Screen/"
 }
 
-if ( /^Mail-Followup-To:.*zsh-users@sunsite\.dk/ )
+if ( /^Mailing-List:.*zsh.*@sunsite.dk/ )
 {
     to "$FOSS/Zsh/"
 }
