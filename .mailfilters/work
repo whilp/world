@@ -9,6 +9,10 @@
 
 if ( /^List-Id:.*glow-tech\.cs\.wisc\.edu/ )
 {
+    if ( /^Subject: [glow-tech] GLOW Absent Report/ )
+    {
+        to "$HEP/Absent/"
+    }
     to "$HEP/GLOW/"
 }
 
@@ -17,16 +21,11 @@ if ( /^List-Owner:.*CMS.*@LISTSERV\.FNAL\.GOV/ )
     to "$HEP/CMS/"
 }
 
-if ( /^Return-Path:.*rader@noc\.hep\.wisc\.edu/ || \
-    /^From:.*nagios@cmssrv02\.fnal\.gov/ )
+if ( /^Subject: (UP|DOWN|RECOVERY|PROBLEM):/ )
 {
     to "$HEP/Nagios/"
 }
 
-if ( /^From:.*(root|cron)/ )
-{
-    to "$HEP/Root/"
-}
 
 if ( /^(To|Cc):.*physics-all@physics\.wisc\.edu/ )
 {
@@ -35,6 +34,14 @@ if ( /^(To|Cc):.*physics-all@physics\.wisc\.edu/ )
 
 if ( /^(From|To):.*(hep|cs)\.wisc\.edu/ )
 {
+    if ( /^Subject: UW-HEP Condor Absent Report/ )
+    {
+        to "$HEP/Absent/"
+    }
+    if ( /^(From|To):.*(root|cron)/ )
+    {
+        to "$HEP/Root/"
+    }
     to "$HEP/Inbox"
 }
 

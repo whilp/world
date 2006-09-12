@@ -32,3 +32,5 @@ distutils
 config
 stylesheet
 Debian
+Ubuntu
+librsync
