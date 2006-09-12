@@ -129,9 +129,13 @@ if ( /^Sender:.*owner-[a-z0-9\-\.]*@openbsd\.org/ )
     to "$OBSD/General/"
 }
 
-if ( /^List-Id:.*ubuntu-[:alnum:]*\.lists\.ubuntu\.com/ )
+if ( /^List-Id:.*ubuntu-.*\.lists\.ubuntu\.com/ )
 {
-    to "$LINUX/Ubuntu/"
+    if ( /^List-Id.*security/ )
+    {
+        to "$LINUX/Ubuntu/Security/"
+    }
+    to "$LINUX/Ubuntu/News/"
 }
 
 # OTHER
