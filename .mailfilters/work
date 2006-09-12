@@ -27,7 +27,7 @@ if ( /^Subject: (UP|DOWN|RECOVERY|PROBLEM):/ )
 }
 
 
-if ( /^(To|Cc):.*physics-all@physics\.wisc\.edu/ )
+if ( /^(To|Cc):.*@physics\.wisc\.edu/ )
 {
     to "$HEP/Department/"
 }
