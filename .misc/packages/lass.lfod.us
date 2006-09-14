@@ -58,6 +58,7 @@ postgresql-client-8.1.4 PostgreSQL RDBMS (client)
 pwsafe-0.2.0        program that manages encrypted password databases
 py-crypto-2.0.1p2   cryptographic tools for Python
 py-pexpect-2.1      pure Python Expect-like module
+py-xml-0.7.1p0      Python module for writing basic XML applications
 python-2.4.3p0      interpreted object-oriented programming language
 python-expat-2.4.3p0 expat module for Python
 python-tests-2.4.3p0 Python test suite
