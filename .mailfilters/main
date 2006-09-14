@@ -19,6 +19,7 @@ UW      = "$MAILDIR/UW/"
 LUG     = "$MAILDIR/LUG"
 FOSS    = "$MAILDIR/FOSS"
 OBSD    = "$MAILDIR/OBSD"
+BSD     = "$MAILDIR/BSD"
 LINUX   = "$MAILDIR/Linux"
 UBUNTU  = "$LINUX/Ubuntu"
 

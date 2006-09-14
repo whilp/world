@@ -138,6 +138,14 @@ if ( /^List-Id:.*ubuntu-.*\.lists\.ubuntu\.com/ )
     to "$LINUX/Ubuntu/News/"
 }
 
+if ( /^Sender:.*@NetBSD.org/ )
+{
+    if ( /^Sender:.*tech-security/ )
+    {
+        to "$BSD/Net/Security/"
+    }
+}
+
 # OTHER
 if ( /^(to|cc):.*techpartners@lists.*wisc\.edu/ )
 {
