@@ -34,9 +34,9 @@ wsconsctl keyboard.map+="keysym Caps_Lock = Control_L" > /dev/null 2>&1
 alias pkg_add='pkg_add -iv'
 
 # Functions
-fpkg () {
-    sed -e "/$1/!d; s/|.*$//" /usr/ports/INDEX
-}
+#fpkg () {
+#    sed -e "/$1/!d; s/|.*$//" /usr/ports/INDEX
+#}
 
 
 # Mirrors
