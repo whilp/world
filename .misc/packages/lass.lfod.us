@@ -39,7 +39,6 @@ libtool-1.5.22p0    generic shared library support script
 libxml-2.6.26       XML parsing library
 libxslt-1.1.17      XSLT C Library for GNOME
 maildrop-1.7.0      local mail delivery agent with filtering abilities
-mercurial-0.9p0     fast, lightweight source control management
 mergemaster-1.46p2  aids with merging configuration files during an upgrade
 metaauto-0.5        wrapper for gnu auto*
 mhash-0.9.1p1       strong hash library
