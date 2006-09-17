@@ -1,13 +1,21 @@
 antiword-0.37       converts MSWord Documents to ASCII Text and PostScript
 apg-2.2.3p0         automated password generator
+autoconf-2.52p1     automatically configure source code on many Un*x platforms
+autoconf-2.57p0     automatically configure source code on many Un*x platforms
 bitlbee-1.0.2p0     IRC proxy to connect to AIM, ICQ, Jabber, MSN and Yahoo
 bsdiff-4.2          binary patch tools
 bzip2-1.0.3         block-sorting file compressor, unencumbered
+c-client-4.61p0     University of Washington's c-client mail access routines
 clusterit-2.4-no_x11 suite of clustering tools based on IBM's PSSP
 curl-7.15.4         get files from FTP, Gopher, HTTP or HTTPS servers
+cyrus-sasl-2.1.21p2 RFC 2222 SASL (Simple Authentication and Security Layer)
+db-4.2.52p8         Berkeley DB package, revision 4
+diffstat-1.43       accumulates and displays statistics from a diff file
 dtach-0.7           tiny program emulating the detach feature of screen
 elinks-0.11.1       full-featured text WWW browser
 expat-2.0.0         XML 1.0 parser written in C
+fetchmail-6.3.4     mail retrieval utility for POP2, POP3, KPOP, IMAP and more
+freetds-0.63p0      project to document and implement the TDS protocol
 gdbm-1.8.3p0        GNU dbm
 getmail-4.6.3       POP3 mail retriever
 gettext-0.14.5p1    GNU gettext
@@ -15,34 +23,51 @@ glib2-2.10.3        general-purpose utility library
 gmake-3.80p1        GNU make
 gmp-4.1.4p0         library for arbitrary precision arithmetic
 hping-2.0.0rc3p0    TCP/UDP ping/traceroute tool
+iodbc-3.52.4        ODBC 3.x driver manager
 ipython-0.7.2       enhanced interactive Python shell
 irssi-0.8.10p0      modular IRC client with many features (ipv6,socks,proxy)
+jpeg-6bp3           IJG's JPEG compression utilities
 libdnet-1.10p1      portable low-level networking library
+libgcrypt-1.2.0p1   crypto library based on code used in GnuPG
+libgpg-error-1.1p0  error codes for GnuPG related software
 libiconv-1.9.2p3    character set conversion library
 libidn-0.6.1        internationalized string handling
 libltdl-1.5.22p1    GNU libtool system independent dlopen wrapper
+libmcrypt-2.5.7p1   interface to access block/stream encryption algorithms
 librsync-0.9.7      implements the rsync remote-delta algorithm
 libtool-1.5.22p0    generic shared library support script
 libxml-2.6.26       XML parsing library
+libxslt-1.1.17      XSLT C Library for GNOME
 maildrop-1.7.0      local mail delivery agent with filtering abilities
-mercurial-0.9p0     fast, lightweight source control management
 mergemaster-1.46p2  aids with merging configuration files during an upgrade
+metaauto-0.5        wrapper for gnu auto*
+mhash-0.9.1p1       strong hash library
 mod_fastcgi-2.4.2   Apache FastCGI module
 moinmoin-1.5.4      Python clone of WikiWiki
 msmtp-1.4.6         SMTP plugin for MUAs
 mtr-0.71-no_x11     Matt's traceroute - network diagnostic tool
 mutt-1.5.12-hcache  tty-based e-mail client, development version
+mysql-client-5.0.22 multithreaded SQL database (client)
+net-snmp-5.1.3p3    extendable SNMP implementation
 nmap-4.11-no_x11    scan ports and fingerprint stack of network hosts
+openldap-client-2.3.24 Open source LDAP software (client)
 pcre-6.4p1          perl-compatible regular expression library
+png-1.2.12          library for manipulating PNG images
+postgresql-client-8.1.4 PostgreSQL RDBMS (client)
 pwsafe-0.2.0        program that manages encrypted password databases
 py-crypto-2.0.1p2   cryptographic tools for Python
 py-pexpect-2.1      pure Python Expect-like module
+py-xml-0.7.1p0      Python module for writing basic XML applications
 python-2.4.3p0      interpreted object-oriented programming language
+python-expat-2.4.3p0 expat module for Python
+python-tests-2.4.3p0 Python test suite
 rdiff-backup-1.0.4  backs up one directory to another, possibly over a network
 remind-3.0.23       scripting language for reminders, with a Tk front end
 rsync-2.6.8         mirroring/synchronization over low bandwidth links
 screen-4.0.2-static multi-screen window manager
 snownews-1.5.7p1    text mode rss newsreader
+sqlite-2.8.17p1     Embedded SQL implementation
+t1lib-5.1.0p0       Type 1 rasterizer library for UNIX/X11
 tcl-8.4.7p1         Tool Command Language
 tk-8.4.7            graphical toolkit for Tcl
 uuid-1.5.0          ISO-C API and CLI for generating Universally Unique Identifiers
