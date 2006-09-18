@@ -2,7 +2,6 @@
 # vim: set nospell:
 
 from sys import argv,stderr,exit
-#from sre import search
 
 index = '/usr/ports/INDEX'
 
@@ -14,13 +13,7 @@ f = open(index, 'r')
 raw = f.readlines()
 f.close()
 
-def strip(line, upto='|'):
-    """Get rid of extra information in OpenBSD ports INDEX files.
-    """
-    index = line.find(upto)
-    return line[0:index]
-
 for line in raw:
-    line = strip(line)
+    line = line.split('|')[0]
     if str(argv[1]).lower() in line.lower():
         print line
