@@ -176,7 +176,7 @@ send-hook '~L .*@\(lists\.\)?debian\.org'	"set signature='~/.signatures/list-deb
 send-hook '~L .*@[a-z0-9\.\-]*bsd[a-z0-9\.\-]*'	"set signature='~/.signatures/list-bsd'"
 send-hook '~L .*@mutt\.org'			"set signature='~/.signatures/list-bsd'"
 
-send-hook '~t techpartners@[a-zA-Z0-9\.\-]*wisc.edu'	"set signature='~/.signatures/cae-rt'"
+send-hook '~t techpartners@[a-zA-Z0-9\.\-]*wisc.edu'	"set signature='~/.signatures/hep'"
 send-hook '~t techpartners@[a-zA-Z0-9\.\-]*wisc.edu'	"set sendmail='/usr/local/bin/msmtp'
 send-hook '~t techpartners@[a-zA-Z0-9\.\-]*wisc.edu'	"my_hdr From: Will Maier <willmaier@ml1.net>"
 
