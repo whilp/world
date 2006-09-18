@@ -1,7 +1,6 @@
 #!/bin/sh
 
-BROWSER="$(which opera 2>/dev/null)" || \
-    BROWSER="$(which konqueror 2>/dev/null)" || \
-    BROWSER="$(which firefox 2>/dev/null)"
+BROWSER="$(which firefox 2>/dev/null)" || \
+    BROWSER="$(which konqueror 2>/dev/null)"
 
 ${BROWSER} $*
