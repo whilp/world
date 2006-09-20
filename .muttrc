@@ -20,7 +20,6 @@ set folder=~/.maildir
 set copy=yes
 set record="+Sent"
 set postponed="+Drafts"
-set sort_re
 set recall=no
 set delete=yes
 set crypt_verify_sig=no
@@ -191,6 +190,7 @@ folder-hook . unset strict_threads
 folder-hook . set duplicate_threads
 folder-hook . set narrow_tree
 folder-hook . set sort=threads
+folder-hook . set sort_re
 
 
 folder-hook =Family set strict_threads
