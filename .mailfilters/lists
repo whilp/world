@@ -81,7 +81,19 @@ if ( /^List-Id:.*elinks-users\.linuxfromscratch\.org/ )
 # OSes
 if ( /^List-Id:.*freebsd-[:alnum:]*\.freebsd.org>/ )
 {
-    to "$JUNK"
+    if ( /^List-Id:.*security-notifications/ )
+    {
+        to "$BSD/Free/Security/"
+    }
+    if ( /^List-Id:.*freebsd-announce/ )
+    {
+        if ( /^Subject:.*FreeBSD Security Advisory FreeBSD-SA-/ )
+        {
+            # Duplicates.
+            to /dev/null
+        }
+        to "$BSD/Free/Announce/"
+    }
 }
 
 if ( /^List-Id:.*lists\.debian\.org/ )
