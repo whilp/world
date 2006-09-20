@@ -20,6 +20,7 @@ set folder=~/.maildir
 set copy=yes
 set record="+Sent"
 set postponed="+Drafts"
+set sort_re
 set recall=no
 set delete=yes
 set crypt_verify_sig=no
@@ -198,6 +199,10 @@ folder-hook =Family set hide_missing
 folder-hook =Family unset sig_dashes
 
 folder-hook =Sent set sort=reverse-date
+
+folder-hook =HEP/RQ set sort=threads
+folder-hook =HEP/RQ unset strict_threads
+folder-hook =HEP/RQ unset sort_re
 
 #folder-hook =CAE push "T~N~f'via RT'<enter>;F"
 #folder-hook =CAE push "~T<enter>"
