@@ -38,7 +38,8 @@ if ( /^(From|To):.*(hep|cs)\.wisc\.edu/ )
     {
         to "$HEP/Absent/"
     }
-    if ( /^From:.*help@nod.hep.wisc.edu/ )
+    if ( /^From:.*help@nod\.hep\.wisc\.edu/ || \
+        /^(From|To|Cc):req@ginseng\.hep\.wisc\.edu/ )
     {
         to "$HEP/RQ/"
     }
