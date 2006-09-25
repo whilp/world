@@ -10,6 +10,7 @@ bsdiff-4.2          binary patch tools
 bzip2-1.0.3         block-sorting file compressor, unencumbered
 c-client-4.61p0     University of Washington's c-client mail access routines
 clusterit-2.4-no_x11 suite of clustering tools based on IBM's PSSP
+crack-5.0p2         sensible unix password cracker
 curl-7.15.4         get files from FTP, Gopher, HTTP or HTTPS servers
 cyrus-sasl-2.1.21p2 RFC 2222 SASL (Simple Authentication and Security Layer)
 db-4.2.52p8         Berkeley DB package, revision 4
