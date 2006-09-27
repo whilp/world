@@ -21,6 +21,8 @@ http://lwn.net/headlines/newrss|||
 http://www.ntk.net/rss.php3|||
 http://www.oreillynet.com/pub/feed/10?format=rss2||BSD|
 http://www.freebsddiary.org/news.php||BSD,OS|
+http://blog.lighttpd.net/xml/rss20/feed.xml|||
+http://feeds.feedburner.com/Bsdtalk|||
 http://undeadly.org/cgi?action=rss||BSD,OS|
 http://iscxml.sans.org/rssfeed.xml|||
 http://www.schneier.com/blog/index.xml||Security|
@@ -28,6 +30,7 @@ http://blogs.securiteam.com/index.php/feed/|||
 http://feeds.feedburner.com/Taosecurity||BSD,Security|
 http://www.securityfocus.com/rss/news.xml||OS,Security|
 http://www.hackaday.com/rss.xml|||
+http://www.planetpython.org/rss20.xml|||
 http://syndication.sdmediagroup.com/feeds/public/unix_review.xml|||
 http://www.mindrot.org/~djm/weblog/index.rss20|||
 http://syndication.sdmediagroup.com/feeds/public/sys_admin_magazine.xml||OS|
