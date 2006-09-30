@@ -18,14 +18,18 @@ diffstat-1.43       accumulates and displays statistics from a diff file
 dtach-0.7           tiny program emulating the detach feature of screen
 elinks-0.11.1       full-featured text WWW browser
 expat-2.0.0         XML 1.0 parser written in C
+faad-2.0p4          MPEG2 and MPEG-4 AAC decoder
 fetchmail-6.3.4     mail retrieval utility for POP2, POP3, KPOP, IMAP and more
+flac-1.1.2p1        free lossless audio codec
 freetds-0.63p0      project to document and implement the TDS protocol
 gdbm-1.8.3p0        GNU dbm
 getmail-4.6.3       POP3 mail retriever
 gettext-0.14.5p1    GNU gettext
+glib-1.2.10p1       useful routines for C programming
 glib2-2.10.3        general-purpose utility library
 gmake-3.80p1        GNU make
 gmp-4.1.4p0         library for arbitrary precision arithmetic
+gtk+-1.2.10p4       General Toolkit for X11 GUI
 guile-1.6.7p2       GNU's Ubiquitous Intelligent Language for Extension
 help2man-1.29       GNU help2man
 hping-2.0.0rc3p0    TCP/UDP ping/traceroute tool
@@ -33,16 +37,26 @@ iodbc-3.52.4        ODBC 3.x driver manager
 ipython-0.7.2       enhanced interactive Python shell
 irssi-0.8.10p0      modular IRC client with many features (ipv6,socks,proxy)
 jpeg-6bp3           IJG's JPEG compression utilities
+lame-3.96.1p1       lame ain't an MP3 encoder
+libao-0.8.5p2       portable audio output library
+libaudiofile-0.2.6p0 SGI audiofile library clone
 libdnet-1.10p1      portable low-level networking library
 libgcrypt-1.2.0p1   crypto library based on code used in GnuPG
 libghttp-1.0.9p1    GNOME http client library
 libgpg-error-1.1p0  error codes for GnuPG related software
 libiconv-1.9.2p3    character set conversion library
+libid3tag-0.15.1bp0 library for reading ID3 tags
 libidn-0.6.1        internationalized string handling
 libltdl-1.5.22p1    GNU libtool system independent dlopen wrapper
+libmad-0.15.1bp1    high-quality MPEG audio decoder
 libmcrypt-2.5.7p1   interface to access block/stream encryption algorithms
+libmikmod-3.1.10p4  mikmod sound library
+libogg-1.1.3        Ogg bitstream library
 librsync-0.9.7      implements the rsync remote-delta algorithm
+libshout-2.2        library for communicating with an icecast server
+libtheora-1.0alpha7 open video codec
 libtool-1.5.22p0    generic shared library support script
+libvorbis-1.1.2p0   audio compression codec library
 libxml-2.6.26       XML parsing library
 libxslt-1.1.17      XSLT C Library for GNOME
 lighttpd-1.4.12     secure, fast, compliant, and very flexible web-server
@@ -82,6 +96,7 @@ p5-PerlIO-via-symlink-0.05 create symlink from IO handle
 p5-URI-1.35         library to parse Uniform Resource Identifiers
 p5-XML-Parser-2.34  perl module for parsing XML documents
 pcre-6.4p1          perl-compatible regular expression library
+pkgconfig-0.19p0    tool for managing library compile/link flags
 png-1.2.12          library for manipulating PNG images
 postgresql-client-8.1.4 PostgreSQL RDBMS (client)
 pwsafe-0.2.0        program that manages encrypted password databases
@@ -98,6 +113,7 @@ rsync-2.6.8         mirroring/synchronization over low bandwidth links
 ruby-1.8.4p4        object oriented script language with threads
 screen-4.0.2-static multi-screen window manager
 snownews-1.5.7p1    text mode rss newsreader
+speex-1.0.5p0       patent-free speech codec
 sqlite-2.8.17p1     Embedded SQL implementation
 t1lib-5.1.0p0       Type 1 rasterizer library for UNIX/X11
 tcl-8.4.7p1         Tool Command Language
