@@ -40,12 +40,17 @@ FILTERDIR = "$HOME/.mailfilters"
 include "$FILTERDIR/junk"
 include "$FILTERDIR/work"
 
+# Lists
 if ( /^List-Id:/ || \
     /^Sender:/ || \
     /^Mailing-List:.*zsh/ || \
     /^Mailing-List:.*vim/ )
 {
     include "$FILTERDIR/lists"
+}
+if ( /^From:.*sec-adv@secunia\.com/ )
+{
+    to "$MAILDIR/SEC/Secunia/"
 }
 
 # --[ FAMILY

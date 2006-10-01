@@ -79,7 +79,7 @@ if ( /^List-Id:.*elinks-users\.linuxfromscratch\.org/ )
 }
 
 # OSes
-if ( /^List-Id:.*freebsd-[:alnum:]*\.freebsd.org>/ )
+if ( /^List-Id:.*freebsd-.*\.freebsd.org>/ )
 {
     if ( /^List-Id:.*security-notifications/ )
     {
