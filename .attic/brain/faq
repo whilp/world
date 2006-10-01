@@ -69,6 +69,8 @@ vamos[5], wboom[6].
 Q: What's a crazy way to stream media files between two networks using ssh,
 mplayer and one's shell?
 
+A: ssh -p 2222 will@home.lfod.us 'for i in /tmp/lupe/*flac; do cat $i | oggenc -; done' > lmusic
+
 A: Heh. First, create some fifos, one on each end:
 
     remotebox % mkfifo ~/remote-fifo
