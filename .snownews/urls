@@ -1,46 +1,44 @@
 smartfeed:/newitems|||
-http://secunia.com/information_partner/anonymous/o.rss|||
-http://www.us-cert.gov/current/index.rdf||Security|
-http://www.us-cert.gov/channels/techalerts.rdf||Security|
-http://undeadly.org/cgi?action=errata|||
-http://www.freebsd.org/security/advisories.rdf||BSD,Security|
-http://www.vuxml.org/freebsd/rss.xml|FreeBSD Ports Advisories|BSD,Security|
-http://www.debian.org/security/dsa-long|Debian Security Advisories|Linux,Security|
+http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/world/rss.xml|BBC News||
+http://www.bitlbee.org/news.html.rss|||
+http://bramcohen.livejournal.com/data/rss|||
+http://www.oreillynet.com/pub/feed/10?format=rss2||BSD|
+http://feeds.feedburner.com/Bsdtalk|||
 http://seclists.org/rss/bugtraq.rss||Security|
-http://www.securityfocus.com/rss/vulnerabilities.xml|||
-http://backend.secwatch.org/be-advisories.rss|||
-http://helpdesk.wisc.edu/feed/active_alerts_doit.php|UW Security/Service Alerts||
-http://helpdesk.doit.wisc.edu/feed/open_impact1.php|UW Impact 1 Cases||
 http://www.cae.wisc.edu/rss/rss.php|||
+http://www.mindrot.org/~djm/weblog/index.rss20|||
+http://www.debian-administration.org/articles.rdf|Debian Administration|Linux,OS|
+http://www.debian.org/security/dsa-long|Debian Security Advisories|Linux,Security|
 http://www.eff.org/news/index.xml||Freedom|
 http://www.eff.org/deeplinks/index.xml||Freedom|
 http://www.eff.org/minilinks/index.xml||Freedom|
-http://www.debian-administration.org/articles.rdf|Debian Administration|Linux,OS|
-http://grml.supersized.org/feeds/index.rss2|||
-http://lwn.net/headlines/newrss|||
-http://www.ntk.net/rss.php3|||
-http://www.oreillynet.com/pub/feed/10?format=rss2||BSD|
 http://www.freebsddiary.org/news.php||BSD,OS|
+http://www.vuxml.org/freebsd/rss.xml|FreeBSD Ports Advisories|BSD,Security|
+http://www.freebsd.org/security/advisories.rdf||BSD,Security|
+http://gregorgregor.blogspot.com/rss.xml|||
+http://grml.supersized.org/feeds/index.rss2|||
+http://www.hackaday.com/rss.xml|||
+http://johnhawks.net/weblog/index.rss|||
+http://liflg.org/rss.php|||
 http://blog.lighttpd.net/xml/rss20/feed.xml|||
-http://feeds.feedburner.com/Bsdtalk|||
+http://lwn.net/headlines/newrss|||
+http://www.rssweather.com/zipcode/53703/rss.php|||
+http://undeadly.org/cgi?action=errata|||
 http://undeadly.org/cgi?action=rss||BSD,OS|
+http://today.reuters.co.uk/rss/worldFootballNews|||
 http://iscxml.sans.org/rssfeed.xml|||
+http://www.sans.org/newsletters/newsbites/rss/||Security|
 http://www.schneier.com/blog/index.xml||Security|
 http://blogs.securiteam.com/index.php/feed/|||
-http://feeds.feedburner.com/Taosecurity||BSD,Security|
 http://www.securityfocus.com/rss/news.xml||OS,Security|
-http://www.hackaday.com/rss.xml|||
-http://www.planetpython.org/rss20.xml|||
-http://syndication.sdmediagroup.com/feeds/public/unix_review.xml|||
-http://www.mindrot.org/~djm/weblog/index.rss20|||
-http://syndication.sdmediagroup.com/feeds/public/sys_admin_magazine.xml||OS|
-http://www.bitlbee.org/news.html.rss|||
-http://www.sans.org/newsletters/newsbites/rss/||Security|
-http://liflg.org/rss.php|||
-http://bramcohen.livejournal.com/data/rss|||
-http://johnhawks.net/weblog/index.rss|||
+http://www.securityfocus.com/rss/vulnerabilities.xml|||
+http://backend.secwatch.org/be-advisories.rss|||
 http://rss.slashdot.org/Slashdot/slashdot|||
-http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/world/rss.xml|BBC News||
-http://today.reuters.co.uk/rss/worldFootballNews|||
-http://www.rssweather.com/zipcode/53703/rss.php|||
-http://gregorgregor.blogspot.com/rss.xml|||
+http://syndication.sdmediagroup.com/feeds/public/sys_admin_magazine.xml||OS|
+http://feeds.feedburner.com/Taosecurity||BSD,Security|
+http://syndication.sdmediagroup.com/feeds/public/unix_review.xml|||
+http://www.planetpython.org/rss20.xml|||
+http://www.us-cert.gov/current/index.rdf||Security|
+http://www.us-cert.gov/channels/techalerts.rdf||Security|
+http://helpdesk.doit.wisc.edu/feed/open_impact1.php|UW Impact 1 Cases||
+http://helpdesk.wisc.edu/feed/active_alerts_doit.php|UW Security/Service Alerts||
