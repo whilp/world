@@ -94,7 +94,7 @@ agent () {
     fi
     if [ $? -gt 0 ]; then
         notify 2 "Don't appear to be any keys in the agent."
-        KEYS=$(find ${SSH_HOME} -follow -name "id_*" \! -name ".pub")
+        KEYS=$(find ${SSH_HOME} -follow -name "id_*" \! -name "*.pub")
         ssh-add -t 24h ${KEYS} > /dev/null 2>&1
     fi
     chmod 600 ${SSH_AGENT_FILE}
@@ -104,4 +104,7 @@ ssh-rmkey () {
     TMPFILE=$(mktemp -q ${SSH_HOME}/known_hosts.XXXX || exit 1)
     sed -e "${LINE}d" ~/.ssh/known_hosts >| ${TMPFILE}
     mv ${TMPFILE} ~/.ssh/known_hosts
+}
+unstamp () {
+    perl -e "print scalar(localtime($1))"; echo
 }
