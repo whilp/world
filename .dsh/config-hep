@@ -7,15 +7,18 @@ ginseng
 jasmine
 lobelia
 noc
+nod
 oregano
 rosemary
 saffron
 thyme
+
 GROUP:afs
 anise
 garlic
 rosemary
 thyme
+
 GROUP:desktops
 allium
 alyssum
@@ -56,15 +59,18 @@ vai
 wheat
 woodstock
 zephyranth
+
 GROUP:dns
 dns
 dns2
 dns3
 dns4
+
 GROUP:login
 login01
 login02
 login03
+
 GROUP:cmsdcache
 cmsdcache01
 cmsdcache01-new
@@ -73,6 +79,7 @@ cmsdcache03
 cmsdcache04
 cmsdcache05
 cmsdcache06
+
 GROUP:s5
 s5n01
 s5n02
@@ -83,6 +90,7 @@ s5n06
 s5n07
 s5n08
 s5n09
+
 GROUP:g3
 g3n01
 g3n02
@@ -117,6 +125,7 @@ g3n30
 g3n31
 g3n32
 g3n34
+
 GROUP:g4
 g4n01
 g4n02
@@ -138,6 +147,7 @@ g4n17
 g4n18
 g4n19
 g4n20
+
 GROUP:g5
 g5n01
 g5n02
@@ -159,6 +169,7 @@ g5n17
 g5n18
 g5n19
 g5n20
+
 GROUP:g6
 g6n01
 g6n02
@@ -180,6 +191,7 @@ g6n17
 g6n18
 g6n19
 g6n20
+
 GROUP:g7
 g7n01
 g7n02
@@ -208,6 +220,7 @@ g7n24
 g7n25
 g7n26
 g7n27
+
 GROUP:g8
 g8n01
 g8n02
@@ -215,6 +228,7 @@ g8n03
 g8n04
 g8n05
 g8n06
+
 GROUP:g9
 g9n01
 g9n02
@@ -263,6 +277,7 @@ g9n44
 g9n45
 g9n46
 g9n47
+
 GROUP:g10
 g10n01
 g10n02
@@ -288,6 +303,7 @@ g10n21
 g10n22
 g10n23
 g10n24
+
 LUMP:compute_nodes
 g10
 g3
