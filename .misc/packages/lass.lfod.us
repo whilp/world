@@ -36,6 +36,7 @@ hping-2.0.0rc3p0    TCP/UDP ping/traceroute tool
 iodbc-3.52.4        ODBC 3.x driver manager
 ipython-0.7.2       enhanced interactive Python shell
 irssi-0.8.10p0      modular IRC client with many features (ipv6,socks,proxy)
+jabberd-2.0s11-db   jabber server
 jpeg-6bp3           IJG's JPEG compression utilities
 lame-3.96.1p1       lame ain't an MP3 encoder
 libao-0.8.5p2       portable audio output library
@@ -117,6 +118,7 @@ speex-1.0.5p0       patent-free speech codec
 sqlite-2.8.17p1     Embedded SQL implementation
 t1lib-5.1.0p0       Type 1 rasterizer library for UNIX/X11
 tcl-8.4.7p1         Tool Command Language
+tcpflow-0.21p0      tool for capturing data from TCP connections
 tk-8.4.7            graphical toolkit for Tcl
 unzip-5.52          extract, list & test files in a ZIP archive
 uuid-1.5.0          ISO-C API and CLI for generating Universally Unique Identifiers
