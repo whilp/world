@@ -23,5 +23,7 @@ run nickcolor
 run tty_away
 run trackbar.pl
 run queryresume.pl
+run bitlbee_blist.pl
+run bitlbee_tab_completion.pl
 
 mode lt_kije +w
