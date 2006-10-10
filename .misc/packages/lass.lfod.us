@@ -59,7 +59,7 @@ libtool-1.5.22p0    generic shared library support script
 libvorbis-1.1.2p0   audio compression codec library
 libxml-2.6.26       XML parsing library
 libxslt-1.1.17      XSLT C Library for GNOME
-lighttpd-1.4.12     secure, fast, compliant, and very flexible web-server
+lighttpd-1.4.13     secure, fast, compliant, and very flexible web-server
 maildrop-1.7.0      local mail delivery agent with filtering abilities
 mergemaster-1.46p2  aids with merging configuration files during an upgrade
 metaauto-0.5        wrapper for gnu auto*
@@ -80,6 +80,7 @@ p5-Class-Autouse-1.26 run-time class loading on first method call
 p5-Clone-0.18p0     recursively copy Perl datatypes
 p5-Compress-Zlib-1.42 Perl interface to the zlib compression library
 p5-Crypt-SSLeay-0.51 library to provide LWP https support via OpenSSL
+p5-DBI-1.51         unified perl interface for database access
 p5-Data-Hierarchy-0.21 handle data in a hierarchical structure
 p5-File-Type-0.22   determine file type using magic
 p5-FreezeThaw-0.43  module for converting structures to strings and back
@@ -90,12 +91,18 @@ p5-IO-Digest-0.10   module for computing digests while reading or writing
 p5-IO-Pager-0.06    select a pager if destination is a TTY
 p5-Locale-Maketext-Lexicon-0.47 use other catalog formats in Locale::Maketext
 p5-Locale-Maketext-Simple-0.12 simple interface to Locale::Maketext::Lexicon
+p5-Net-Daemon-0.39  extension for portable daemons
 p5-PerlIO-eol-0.13  PerlIO layer for normalizing line endings
 p5-PerlIO-via-dynamic-0.12 create dynamic PerlIO layers
 p5-PerlIO-via-symlink-0.05 create symlink from IO handle
+p5-PlRPC-0.2018     module for writing rpc servers and clients
 p5-URI-1.35         library to parse Uniform Resource Identifiers
 p5-XML-Parser-2.34  perl module for parsing XML documents
 pcre-6.4p1          perl-compatible regular expression library
+php5-core-5.1.4p1   server-side HTML-embedded scripting language
+php5-gd-5.1.4       image manipulation extensions for php5
+php5-mbstring-5.1.4 multibyte characters extensions for php5
+physfs-1.0.0p1      library to provide abstract access to various archives
 pkgconfig-0.19p0    tool for managing library compile/link flags
 png-1.2.12          library for manipulating PNG images
 postgresql-client-8.1.4 PostgreSQL RDBMS (client)
@@ -103,6 +110,7 @@ pwsafe-0.2.0        program that manages encrypted password databases
 py-crypto-2.0.1p2   cryptographic tools for Python
 py-pexpect-2.1      pure Python Expect-like module
 py-setuptools-0.6c1 simplified packaging system for Python modules
+py-xmpp-0.4.0       library for handling XMPP with Python
 python-2.4.3p0      interpreted object-oriented programming language
 python-2.5c2        interpreted object-oriented programming language
 python-expat-2.4.3p0 expat module for Python
@@ -112,9 +120,14 @@ remind-3.0.23       scripting language for reminders, with a Tk front end
 rsync-2.6.8         mirroring/synchronization over low bandwidth links
 ruby-1.8.4p4        object oriented script language with threads
 screen-4.0.2-static multi-screen window manager
+sdl-1.2.9p1-sun     cross-platform multimedia library
+sdl-net-1.2.5p2     SDL cross-platform networking library
+sdl-sound-1.0.1p3   library that handles the decoding of sound file formats
+smpeg-0.4.4p2       mpeg video player library with sound support
 snownews-1.5.7p1    text mode rss newsreader
 speex-1.0.5p0       patent-free speech codec
 sqlite-2.8.17p1     Embedded SQL implementation
+swig-1.3.29         simplified wrapper and interface generator
 t1lib-5.1.0p0       Type 1 rasterizer library for UNIX/X11
 tcl-8.4.7p1         Tool Command Language
 tcpflow-0.21p0      tool for capturing data from TCP connections
