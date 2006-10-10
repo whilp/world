@@ -6,7 +6,6 @@ INCLUDE /home/will/.remind/holidays
 ###################################################################
 ### Plans.
 ###################################################################
-REM 03 Jan                      MSG %"***** Happy Birthday #madlug!%"
 ### NIX.
 REM 02 Jun 2006 *14 AT 19:00    MSG x%3 %"MadLUG social meeting (Memorial Union).%"
 REM 01 Wed AT 19:00             MSG x%3 %"MadMongers meeting (MPL).%"
@@ -33,6 +32,10 @@ REM 25 Sep MSG %"***** Eddie's [_yr_num(2004)] birthday.%"
 REM 10 Sep MSG %"***** Trevor's [_yr_num(1983)] birthday.%"
 
 REM 05 Sep MSG %"***** Our [_yr_num(2003)] anniversary.%"
+REM 29 Sep MSG %"***** [_yr_num(2006)] years since our engagement.%"
+
+REM 03 Jan MSG %"***** #madlug's [_yr_num(2006)] birthday!%"
+REM 05 Jan MSG %"***** #OpenBSD's [_yr_num(1999)] birthday!%"
 
 ###################################################################
 ### Old stuff.
