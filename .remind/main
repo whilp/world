@@ -6,7 +6,7 @@ INCLUDE /home/will/.remind/holidays
 ###################################################################
 ### Plans.
 ###################################################################
-REM 09 Oct 2006                 MSG %"***** Apple service tech to swap drives.%"
+REM 03 Jan                      MSG %"***** Happy Birthday #madlug!%"
 ### NIX.
 REM 02 Jun 2006 *14 AT 19:00    MSG x%3 %"MadLUG social meeting (Memorial Union).%"
 REM 01 Wed AT 19:00             MSG x%3 %"MadMongers meeting (MPL).%"
@@ -45,3 +45,4 @@ REM 05 Sep MSG %"***** Our [_yr_num(2003)] anniversary.%"
 #REM 14 Sep 2006 AT 14:00        MSG %"Frank Petriello desktop upgrade.%"
 #REM 15 Sep 2006                 MSG %"***** A Tribe Called Quest in Chicago with Trev.%"
 #REM 16 Sep 2006                 MSG %"***** Laura @ WPT quilt show.%"
+#REM 09 Oct 2006                 MSG %"***** Apple service tech to swap drives.%"
