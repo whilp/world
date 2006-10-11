@@ -108,3 +108,7 @@ ssh-rmkey () {
 unstamp () {
     perl -e "print scalar(localtime($1))"; echo
 }
+hsh () {
+    CLUSTER="$HOME/.dsh/config-hep" \
+    RCMD_USER="wcmaier" dsh $*
+}
