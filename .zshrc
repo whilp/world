@@ -47,7 +47,25 @@ autoload      edit-command-line     # press ESC-E to edit the comand
 zle -N        edit-command-line     # line in vi(1)
 bindkey '\ee' edit-command-line
 zmodload -i zsh/complist	    # for completion
-zstyle ':completion:*' menu select=1
+
+# Cache function results for compsys
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path ~/.zsh/cache
+
+# Completion customizations, adding nice menus, descriptions, etc
+zstyle -e ':completion:*:approximate:*' max-errors 'reply=( $(( ($#PREFIX + $#SUFFIX) / 3 )) )'
+zstyle ':completion:*:descriptions' format "- %d -"
+zstyle ':completion:*:corrections' format "- %d - (errors %e})"
+zstyle ':completion:*:default' list-prompt '%S%M matches%s'
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*:manuals' separate-sections true
+zstyle ':completion:*' menu select
+zstyle ':completion:*' verbose yes
+
+# Use ~/.ssh/ to determine hostnames
+[ -f ~/.ssh/config ] && : ${(A)ssh_config_hosts:=${${${${(@M)${(f)"$(<~/.ssh/config)"}:#Host *}#Host }:#*\**}:#*\?*}}
+[ -f ~/.ssh/known_hosts ] && : ${(A)ssh_known_hosts:=${${${(f)"$(<$HOME/.ssh/known_hosts)"}%%\ *}%%,*}}
+zstyle ':completion:*:*:*' hosts $ssh_config_hosts $ssh_known_hosts
 
 watch=(notme root)		    # Note logins
 
