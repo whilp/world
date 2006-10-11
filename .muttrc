@@ -44,7 +44,7 @@ subscribe freebsd-?.*@freebsd\.org
 subscribe mutt-?.*@mutt\.org
 subscribe vim-?.*@vim\.org
 subscribe zsh-?.*@sunsite\.dk
-subscribe (ports|misc|tech)@openbsd.org
+subscribe (ports|misc|tech|www|)@openbsd.org
 subscribe techpartners@[a-zA-Z0-9\.]*wisc.edu
 
 set alias_file="~/.muttalias"
