@@ -39,3 +39,5 @@ for section in config.sections():
         mode = int(config.get(section, option), 8)
         if os.path.exists(path):
             os.chmod(path, mode)
+        else:
+            error("%s does not exist." % path)
