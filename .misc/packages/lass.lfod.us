@@ -137,4 +137,4 @@ tk-8.4.7            graphical toolkit for Tcl
 unzip-5.52          extract, list & test files in a ZIP archive
 uuid-1.5.0          ISO-C API and CLI for generating Universally Unique Identifiers
 vim-7.0.42-no_x11   vi clone, many additional features
-zsh-4.2.6p0         Z shell, Bourne shell-compatible
+zsh-4.3.2           Z shell, Bourne shell-compatible
