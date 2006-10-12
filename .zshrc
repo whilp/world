@@ -9,7 +9,7 @@
 ##################  END HEADERS
 
 # Grab general settings
-. "${HOME}/.profile"
+[ -r "${HOME}/.profile" ] && . "${HOME}/.profile"
 
 # Terminal settings
 bindkey -v
