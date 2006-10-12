@@ -6,6 +6,7 @@ INCLUDE /home/will/.remind/holidays
 ###################################################################
 ### Plans.
 ###################################################################
+REM 08 Nov 2006 AT 19:00        MSG x%3 %"MadLUG: Applied Wireless presentation (HEP).%"
 ### NIX.
 REM 02 Jun 2006 *14 AT 19:00    MSG x%3 %"MadLUG social meeting (Memorial Union).%"
 REM 01 Wed AT 19:00             MSG x%3 %"MadMongers meeting (MPL).%"
