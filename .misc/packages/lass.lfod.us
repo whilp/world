@@ -32,6 +32,7 @@ gmake-3.80p1        GNU make
 gmp-4.1.4p0         library for arbitrary precision arithmetic
 gtk+-1.2.10p4       General Toolkit for X11 GUI
 guile-1.6.7p2       GNU's Ubiquitous Intelligent Language for Extension
+hackdata-3.4.3      common data for the nethack/slash ports
 help2man-1.29       GNU help2man
 hping-2.0.0rc3p0    TCP/UDP ping/traceroute tool
 iodbc-3.52.4        ODBC 3.x driver manager
@@ -62,6 +63,7 @@ libxml-2.6.26       XML parsing library
 libxslt-1.1.17      XSLT C Library for GNOME
 lighttpd-1.4.13     secure, fast, compliant, and very flexible web-server
 maildrop-1.7.0      local mail delivery agent with filtering abilities
+markdown-1.6a       text-to-HTML conversion tool
 mergemaster-1.46p2  aids with merging configuration files during an upgrade
 metaauto-0.5        wrapper for gnu auto*
 mhash-0.9.1p1       strong hash library
@@ -73,6 +75,7 @@ mutt-1.5.12-hcache  tty-based e-mail client, development version
 mysql-client-5.0.22 multithreaded SQL database (client)
 neon-0.24.7p0       HTTP and WebDAV client library, with C interface
 net-snmp-5.1.3p3    extendable SNMP implementation
+nethack-3.4.3p0-no_x11 dungeon explorin', hackin', game.  Piece of cake
 nmap-4.11-no_x11    scan ports and fingerprint stack of network hosts
 openldap-client-2.3.24 Open source LDAP software (client)
 p5-Algorithm-Annotate-0.10 represent a series of changes in annotate form
