@@ -127,19 +127,22 @@ defbindings("WMPlex", {
     kpress(MOD1.."F5", "ioncore.exec_on(_, '~/bin/tunes stop')"),
 
     bdoc("Decrease volume for a music program."),
-    kpress(MOD2.."F6", "ioncore.exec_on(_, '~/bin/tunes volume -8')"),
+    kpress(MOD2.."F6", "ioncore.exec_on(_, '~/bin/vol -d')"),
+    -- kpress(MOD2.."F6", "ioncore.exec_on(_, '~/bin/tunes volume -8')"),
 
     bdoc("Skip to the previous track in a music program."),
     kpress(MOD1.."F6", "ioncore.exec_on(_, '~/bin/tunes prev')"),
 
     bdoc("Increase volume for a music program."),
-    kpress(MOD2.."F7", "ioncore.exec_on(_, '~/bin/tunes volume +8')"),
+    kpress(MOD2.."F7", "ioncore.exec_on(_, '~/bin/vol -u')"),
+    -- kpress(MOD2.."F7", "ioncore.exec_on(_, '~/bin/tunes volume +8')"),
 
     bdoc("Skip to the next track in a music program."),
     kpress(MOD1.."F7", "ioncore.exec_on(_, '~/bin/tunes next')"),
 
     bdoc("Increase volume for a music program to a set high point."),
-    kpress(MOD2.."F8", "ioncore.exec_on(_, '~/bin/tunes slide')"),
+    kpress(MOD2.."F8", "ioncore.exec_on(_, '~/bin/vol -t')"),
+    -- kpress(MOD2.."F8", "ioncore.exec_on(_, '~/bin/tunes slide')"),
 
     bdoc("Lock the screen."),
     kpress(MOD2.."F10", "ioncore.exec_on(_, '~/bin/lock')"),

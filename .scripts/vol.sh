@@ -61,7 +61,7 @@ cleanUp () {
 fadeVol () {
     if [ "${MUTE}" ]; then
         # Do a fancy fade out and quit
-        while [ "${NEWVOL}" -gt "50" ]; do
+        while [ "${NEWVOL}" -gt "80" ]; do
             AMOUNT=$((AMOUNT + 10))
             NEWVOL=$((CURVOL - AMOUNT))
             changeVol
@@ -111,6 +111,7 @@ while [ "$#" -gt 0 ]; do
 	;;
 	x-n|x--normal)
 	NORMAL=1
+        FADE=1
 	shift
 	;;
 	x-m|--mute)
