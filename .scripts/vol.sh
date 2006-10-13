@@ -12,7 +12,9 @@
 ##################  END HEADERS
 
 # Die if mixerctl is already running
-if [ -n "$(pgrep mixerctl)" ]; then
+LOCKFILE="${HOME}/.vol-lock"
+if [ -e "${LOCKFILE}" ]; then
+    echo "Lockfile ${LOCKFILE} found; quitting."
     return 1
 fi
 
@@ -51,6 +53,33 @@ percentVol () {
     ${SED} 's/\..*//'
 }
 
+cleanUp () {
+    # Unset the lockfile.
+    rm -f "${LOCKFILE}" || echo "Couldn't clean up lockfile ${LOCKFILE}"
+}
+
+fadeVol () {
+    if [ "${MUTE}" ]; then
+        # Do a fancy fade out and quit
+        while [ "${NEWVOL}" -gt "50" ]; do
+            AMOUNT=$((AMOUNT + 10))
+            NEWVOL=$((CURVOL - AMOUNT))
+            changeVol
+            sleep .1
+        done
+    elif [ "${NORMAL}" ]; then
+        # Do a fancy fade in and quit
+        while [ "${NEWVOL}" -lt "${NORMALVOL}" ]; do
+            AMOUNT=$((AMOUNT + 10))
+            NEWVOL=$((CURVOL + AMOUNT))
+            changeVol
+            sleep .1
+        done
+    fi
+    cleanUp
+}
+
+
 # If we didn't get any arguments, simply report the current volume
 if [ "$#" -eq 0 ]; then
     echo "Current master volume: $(percentVol ${CURVOL})%"
@@ -86,11 +115,13 @@ while [ "$#" -gt 0 ]; do
 	;;
 	x-m|--mute)
 	# Fade sounds to a (near) mute
+        FADE=1
 	MUTE=1
 	shift
 	;;
 	x-t|--toggle)
 	# Fade from low to high or vice versa
+        FADE=1
 	if [ "${CURVOL}" -lt "$((NORMALVOL - 20))" ]; then
 	    NORMAL=1
 	else
@@ -100,6 +131,7 @@ while [ "$#" -gt 0 ]; do
 	;;
 	x-m|x--mute)
 	# Fade sounds all the way out
+        FADE=1
 	MUTEOFF=1
 	shift
 	;;
@@ -111,7 +143,14 @@ while [ "$#" -gt 0 ]; do
 	*)
 	# Return an error and suggest that the user read the code.
 	echo "Error: argument '$1' not recognized."
-	echo "Usage: $0 [-u] [-d] [-i] [-v]"
+	echo "Usage: $0 [-u] [-d] [-i NUM] [-n] [-m] [-t] [-v]"
+        echo "   -u       -- volume up"
+        echo "   -d       -- volume down"
+        echo "   -i NUM   -- set the change increment"
+        echo "   -n       -- return to the normal level"
+        echo "   -m       -- fade volume to a low level"
+        echo "   -t       -- fade from low to high (or vice versa)"
+        echo "   -v       -- be verbose"
 	return 1
 	;;
     esac
@@ -120,34 +159,26 @@ done
 # Determine the desired volume.
 NEWVOL=$((CURVOL + CHANGE))
 
+# Set the lockfile.
+touch "${LOCKFILE}"
+
 # If the user wants to hear it, tell them what we're doing.
 if [ ${CHANGE} -gt 0 -a "${VERBOSE}" ]; then
     echo "Raising master volume to $(percentVol ${NEWVOL})%"
 elif [ ${CHANGE} -lt 0 -a "${VERBOSE}" ]; then
     echo "Lowering master volume to $(percentVol ${NEWVOL})%"
-elif [ "${MUTE}" ]; then
-    # Do a fancy fade out and quit
-    while [ "${NEWVOL}" -gt "50" ]; do
-	AMOUNT=$((AMOUNT + 10))
-	NEWVOL=$((CURVOL - AMOUNT))
-	changeVol
-	sleep .1
-    done
-    exit
-elif [ "${NORMAL}" ]; then
-    # Do a fancy fade in and quit
-    while [ "${NEWVOL}" -lt "${NORMALVOL}" ]; do
-	AMOUNT=$((AMOUNT + 10))
-	NEWVOL=$((CURVOL + AMOUNT))
-	changeVol
-	sleep .1
-    done
+elif [ "${FADE}" ]; then
+    # Split this bit out into a function so we can background it.
+    fadeVol &
     exit
 elif [ ${CHANGE} -eq 0 -a "${VERBOSE}" ]; then
     echo "Maintaining volume at $(percentVol ${NEWVOL})%"
+    cleanUp
     exit
 fi
 
 # Finally, apply the new volume. mixerctl(1) wants the '-q' flag to
 # not output a bunch of junk when it changes the variable.
 changeVol
+
+cleanUp
