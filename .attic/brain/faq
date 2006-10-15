@@ -11,6 +11,13 @@
 ##################  END HEADERS
 
 ================================================================================
+Q: How do I name frames in ion?
+
+A: < tuomov> _:set_name('foobar') 
+
+================================================================================
+
+================================================================================
 Q: How do I get qemu running OpenBSD on OpenBSD?
 
 A: sudo qemu -m 64 -fda /path/to/floppy40.fs -net tap -net nic /path/to/vm.hd
