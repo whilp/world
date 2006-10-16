@@ -16,4 +16,3 @@ defbindings("WScreen", {
     -- and on UK and US layouts this should work:
     --kpress(META.."grave", "mod_sp.set_shown_on(_, 'toggle')"),
 })
-
