@@ -1,3 +1,4 @@
+a2ps-4.13bp3-letter format ascii files for printing on PostScript printers
 antiword-0.37       converts MSWord Documents to ASCII Text and PostScript
 apg-2.2.3p0         automated password generator
 apr-1.0.1p2         Apache Portable Runtime
@@ -18,6 +19,7 @@ db-4.2.52p8         Berkeley DB package, revision 4
 diffstat-1.43       accumulates and displays statistics from a diff file
 dtach-0.7           tiny program emulating the detach feature of screen
 elinks-0.11.1       full-featured text WWW browser
+enscript-1.6.3p1    convert ASCII files to PostScript
 expat-2.0.0         XML 1.0 parser written in C
 faad-2.0p4          MPEG2 and MPEG-4 AAC decoder
 fetchmail-6.3.4     mail retrieval utility for POP2, POP3, KPOP, IMAP and more
