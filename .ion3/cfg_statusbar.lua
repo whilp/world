@@ -39,7 +39,8 @@ mod_statusbar.create{
     -- template="[UP: %uptime][BATT: %laptopstatus_batterypercent][TEMP: %laptopstatus_temperature][NP: %mpd]%filler[vger][%date]"
     -- template="%bar"
     -- what's wrong with %mpd?
-    template="%mpd%uptime%hostname%date"
+    --template="%mpd%uptime%hostname%date"
+    template="%uptime%hostname%date"
 }
 
 
