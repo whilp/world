@@ -155,10 +155,10 @@ defbindings("WMPlex.toplevel", {
     kpress(META.."F4", "ioncore.exec_on(_, 'firefox')"),
 
     bdoc("Pause/unpause MPD."),
-    kpress(ALTMETA.."F5", "ioncore.exec_on(_, '~/bin/tunes stop')"),
+    kpress(ALTMETA.."F5", "ioncore.exec_on(_, '~/bin/tunes')"),
 
     bdoc("Start ncmpc."),
-    kpress(META.."F5", "ioncore.exec_on(_, '~/bin/tunes')"),
+    kpress(META.."F5", "ioncore.exec_on(_, '~/bin/tunes stop')"),
 
     bdoc("Decrease volume for a music program."),
     kpress(ALTMETA.."F6", "ioncore.exec_on(_, '~/bin/vol -d')"),
