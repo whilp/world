@@ -27,6 +27,10 @@ set crypt_verify_sig=no
 set charset="//TRANSLIT"	            # translate to straight us-ascii
 set header_cache=~/.maildir/.cache
 
+# Printing.
+set print_cmd="a2ps -r -q --columns=2 -j -C -2 -Email -o - | ssh wcmaier@login.hep.wisc.edu 'lpr -Plp3b'"
+set print_split=yes
+
 set mask='!^(\.[^.]|Attic|.*log)'
 
 set spoolfile='/var/mail/will'
@@ -160,9 +164,9 @@ send-hook .					"set sendmail='/usr/local/bin/msmtp'"
 send-hook '~t \(jacobsonlaura.*@gmail\.com\|ljacobson@biochem\.wisc\.edu\)' "set signature='~/.signatures/laura'"
 send-hook '~t \(jacobsonlaura.*@gmail\.com\|ljacobson@biochem\.wisc\.edu\)' "unset sig_dashes"
 
-send-hook '~t .*@[a-zA-Z0-9\.\-]*(\.?wisc\.edu\|\.?fnal\.gov\)'	"set signature='~/.signatures/hep'"
-send-hook '~t .*@[a-zA-Z0-9\.\-]*(\.?wisc\.edu\|\.?fnal\.gov\)'	"set sendmail='/usr/local/bin/msmtp -a hep'"
-send-hook '~t .*@[a-zA-Z0-9\.\-]*(\.?wisc\.edu\|\.?fnal\.gov\)'	"my_hdr From: Will Maier <wcmaier@hep.wisc.edu>"
+send-hook '~t .*@[a-zA-Z0-9\.\-]*(\.?wisc\.edu\|\.?fnal\.gov\|\.?cern\.ch\)'	"set signature='~/.signatures/hep'"
+send-hook '~t .*@[a-zA-Z0-9\.\-]*(\.?wisc\.edu\|\.?fnal\.gov\|\.?cern\.ch\)'	"set sendmail='/usr/local/bin/msmtp -a hep'"
+send-hook '~t .*@[a-zA-Z0-9\.\-]*(\.?wisc\.edu\|\.?fnal\.gov\|\.?cern\.ch\)'	"my_hdr From: Will Maier <wcmaier@hep.wisc.edu>"
 send-hook '~t .*@kingstarusa.com'				"set signature='~/.signatures/hep'"
 send-hook '~t .*@kingstarusa.com'				"set sendmail='/usr/local/bin/msmtp -a hep'"
 send-hook '~t .*@kingstarusa.com'				"my_hdr From: Will Maier <wcmaier@hep.wisc.edu>"

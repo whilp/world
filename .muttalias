@@ -17,6 +17,7 @@ alias brunlieb.mike Mike Brunlieb <mbrunlieb@gmail.com>
 alias burke.mike Mike Burke <mburke@pncg.com>
 alias burnett.ed Ed Burnett <ejburnett@students.wisc.edu>
 alias cameron.hastings Hastings Cameron <hastings.cameron@gmail.com>
+alias dasu Sridhara Dasu <dasu@hep.wisc.edu>
 alias dasu.sridhara Sridhara Dasu <dasu@hep.wisc.edu>
 alias ellison.kurt Kurt Ellison <aquaranger@hotmail.com>
 alias gasmith Gregory Andrew Smith <gasmith@cae.wisc.edu>
@@ -40,10 +41,11 @@ alias mainville.ryan Ryan Mainville <rmainville@stewart-peterson.com>
 alias mkelug Milwaukee Linux <mlug-list@milwaukeelug.org>
 alias mohapatra.ajit Ajit Mohapatra <ajit@hep.wisc.edu>
 alias murphy.sean Sean Murphy <smurphy@cs.wisc.edu>
-alias nyhart.lynn \"Prof Lynn K. Nyhart\" <lknyhart@wisc.edu>
+alias nyhart.lynn Prof Lynn K. Nyhart <lknyhart@wisc.edu>
 alias oldenburg.ross Ross Oldenburg <rosso@cae.wisc.edu>
 alias pa Mickey Maier <mmaier@stewart-peterson.com>
 alias petro Matt Petro <petro@cae.wisc.edu>
+alias rader Steve Rader <rader@ginseng.hep.wisc.edu>
 alias rader.steve Steve Rader <rader@ginseng.hep.wisc.edu>
 alias rosenberg.ken Ken Rosenberg <kwrosenb@wisc.edu>
 alias rosso Ross Oldenburg <rosso@cae.wisc.edu>
@@ -55,7 +57,8 @@ alias wegmann.nell Nell Wegmann <wegmann@sbcglobal.net>
 alias sherron.teresa Teresa Sherron <sherron@hep.wisc.edu>
 alias wu.john John Wu <john@kingstarusa.com>
 alias tregre.adam Adam Tregre <tregre@hep.wisc.edu>
-alias smith.wesley \"Wesley H. Smith\" <wsmith@hep.wisc.edu>
+alias smith.wesley Wesley H. Smith <wsmith@hep.wisc.edu>
+alias wsmith Wesley H. Smith <wsmith@hep.wisc.edu>
 alias erwin.albert Albert Erwin <erwin@hep.wisc.edu>
 alias decoster.dave David DeCoster <decoster@engr.wisc.edu>
 alias tobiasu Tobias Ulmer <tobiasu@tmux.org>

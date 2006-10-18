@@ -153,7 +153,7 @@ else
     ;;
   esac
   
-  _arguments "$args[@]" \
+  _arguments -s "$args[@]" \
     "(-e -f -u -n)-c[output a context diff]" \
     "(-c -f -u -n)-e[output an ed script]" \
     "(-c -e -u -n)-f[output a reversed ed script]" \

@@ -1,3 +1,4 @@
+-- $OpenBSD: nest-ws.lua,v 1.1 2005/09/29 22:19:39 pedro Exp $
 -- Nest workspaces inside Frames.
 -- Matthieu Moy <Matthieu.Moy@imag.fr>, February 15th 2005.
 -- Public domain.
