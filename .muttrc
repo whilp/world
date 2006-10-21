@@ -107,7 +107,7 @@ set quit=ask-no
 set move=no
 set editor='vim "+set tw=68" "+/^$" -X'
 set ispell=
-alternates "(wcmaier@wisc\.edu|wcmaier@hep\.wisc\.edu|wcmaier@cae\.wisc\.edu|wcmaier@gmail\.com|willmaier@ml1\.net)"
+alternates "(wcmaier@wisc\.edu|wcmaier@hep\.wisc\.edu|wcmaier@gmail\.com|willmaier@ml1\.net)"
 set mail_check=30
 #set maildir_mtime=yes
 set sort_browser=alpha
@@ -170,11 +170,6 @@ send-hook '~t .*@[a-zA-Z0-9\.\-]*(\.?wisc\.edu\|\.?fnal\.gov\|\.?cern\.ch\)'	"my
 send-hook '~t .*@kingstarusa.com'				"set signature='~/.signatures/hep'"
 send-hook '~t .*@kingstarusa.com'				"set sendmail='/usr/local/bin/msmtp -a hep'"
 send-hook '~t .*@kingstarusa.com'				"my_hdr From: Will Maier <wcmaier@hep.wisc.edu>"
-
-send-hook '~t .*@.*\(doit\|engr\|cae\)\.wisc\.edu'	"set signature='~/.signatures/cae'"
-send-hook '~t .*@.*\(doit\|engr\|cae\)\.wisc\.edu'	"set sendmail='/usr/local/bin/msmtp -a cae'"
-send-hook '~t .*@.*\(doit\|engr\|cae\)\.wisc\.edu'	"my_hdr From: Will Maier <wcmaier@cae.wisc.edu>"
-send-hook '~t .*-request@cae\.wisc\.edu'	"set signature='~/.signatures/cae-rt'"
 
 send-hook '~L .*@\(lists\.\)?debian\.org'	"set signature='~/.signatures/list-debian'"
 send-hook '~L .*@[a-z0-9\.\-]*bsd[a-z0-9\.\-]*'	"set signature='~/.signatures/list-bsd'"
