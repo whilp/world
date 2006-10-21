@@ -490,6 +490,10 @@ completions = {
     value = "http://www.openbsd.org/cgi-bin/cvsweb/";
     auto = "yes";
   };
+  faq_pkgvport = {
+    value = "http://www.openbsd.org/faq/faq15.html#PkgVsPorts";
+    auto = "yes";
+  };
 };
 windows = {
   1 = { 
