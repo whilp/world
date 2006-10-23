@@ -11,6 +11,15 @@
 ##################  END HEADERS
 
 ================================================================================
+Q: How can I do a network restore using OpenBSD's i386 bsd.rd?
+
+A: http://undeadly.org/cgi?action=article&sid=20061023122025
+
+In short, pipe output of ftp(1) to restore(1) (-rvf)
+
+================================================================================
+
+================================================================================
 Q: How do I name frames in ion?
 
 A: < tuomov> _:set_name('foobar') 
