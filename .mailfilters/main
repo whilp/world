@@ -58,9 +58,8 @@ if ( \
     /^From:.*ajdj143@sbcglobal\.net/ || \
     /^From:.*beachbumbutterfly@yahoo\.com/ || \
     /^From:.*ginaryan@aol\.com/ || \
-    /^From:.*jacobsonlaura@gmail\.com/ || \
-    /^From:.*ljacobson@biochem\.wisc\.edu/ || \
-    /^From:.*jacobsonlaura@hotmail\.com/ || \
+    /^From:.*jacobsonlaura@(hotmail|gmail)\.com/ || \
+    /^From:.*ljacobson@(biochem\.wisc\.edu|deltanoid.com)/ || \
     /^From:.*linuxmaier@fastmail\.fm/ || \
     /^From:.*adeepergrey@excite\.com/ || \
     /^From:.*linuxmaier@yahoo\.com/ || \
