@@ -116,8 +116,11 @@ png-1.2.12          library for manipulating PNG images
 postgresql-client-8.1.4 PostgreSQL RDBMS (client)
 pwsafe-0.2.0        program that manages encrypted password databases
 py-crypto-2.0.1p2   cryptographic tools for Python
+py-dnspython-1.4.0  DNS toolkit for Python
+py-libxml-2.6.26    Python bindings for libxml
 py-pexpect-2.1      pure Python Expect-like module
 py-setuptools-0.6c3 simplified packaging system for Python modules
+py-xmpp-1.0.0       Python XMPP and Jabber implementation
 python-2.4.4        interpreted object-oriented programming language
 rcsparse-20060714   RCS parsing library for Python
 rdiff-backup-1.0.4  backs up one directory to another, possibly over a network
