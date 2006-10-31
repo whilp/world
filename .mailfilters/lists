@@ -167,3 +167,13 @@ if ( /^(to|cc):.*techpartners@lists.*wisc\.edu/ )
     }
     to "$MAILDIR/TP/"
 }
+
+if ( /^List-Id:.*dailydave\.lists\.immunitysec\.com/ )
+{
+    to $MAILDIR/SEC/DailyDave/
+}
+
+if ( /^List-Id:.*bugtraq\.list-id\.securityfocus\.com/ )
+{
+    to $MAILDIR/SEC/BugTraq/
+}
