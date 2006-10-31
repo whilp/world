@@ -61,7 +61,7 @@ if ( \
     /^From:.*jacobsonlaura@(hotmail|gmail)\.com/ || \
     /^From:.*ljacobson@(biochem\.wisc\.edu|deltanoid.com)/ || \
     /^From:.*linuxmaier@fastmail\.fm/ || \
-    /^From:.*adeepergrey@excite\.com/ || \
+    /^From:.*adeepergrey@\(excite|gmail\)\.com/ || \
     /^From:.*linuxmaier@yahoo\.com/ || \
     /^From:.*maier1@wisc\.edu/ || \
     /^From:.*maier@wi\.rr\.com/ || \
