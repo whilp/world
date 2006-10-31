@@ -29,6 +29,10 @@ if ( /^Subject: (UP|DOWN|RECOVERY|PROBLEM):/ )
 
 if ( /^(To|Cc):.*@physics\.wisc\.edu/ )
 {
+    if ( /^(To|Cc):.*root@/ )
+    {
+        to "$HEP/Root/"
+    }
     to "$HEP/Department/"
 }
 
