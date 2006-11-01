@@ -29,7 +29,7 @@ if ( /^Subject: (UP|DOWN|RECOVERY|PROBLEM):/ )
 
 if ( /^(To|Cc):.*@physics\.wisc\.edu/ )
 {
-    if ( /^(To|Cc):.*root@/ )
+    if ( /^(To|Cc):.*(root|operator)@/ )
     {
         to "$HEP/Root/"
     }
