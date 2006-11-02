@@ -37,9 +37,6 @@ logfile $LOG
 
 FILTERDIR = "$HOME/.mailfilters"
 
-include "$FILTERDIR/junk"
-include "$FILTERDIR/work"
-
 # Lists
 if ( /^List-Id:/ || \
     /^Sender:/ || \
@@ -92,6 +89,9 @@ if ( \
 {
     to $FRIEND
 }
+
+include "$FILTERDIR/junk"
+include "$FILTERDIR/work"
 
 log "Dropping in DEFAULT"
 to $DEFAULT
