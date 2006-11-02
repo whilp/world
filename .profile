@@ -28,6 +28,7 @@ MAIL=""
 PATH="$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin:/usr/games"
 RCMD_CMD="${CVS_RSH}"
 RCP_CMD="$(which scp)"
+RSHPORT=22
 TODO=$HOME/TODO/
 VERBOSE="1"
 TODO="$HOME/TODO"
