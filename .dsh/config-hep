@@ -1,16 +1,29 @@
 GROUP:servers
 anise
 basil
+caraway
+cassia
+cayenne
+cdfgrid01
 cilantro
+clove
+cmsgrid01
+cmsgrid02
+condor
+cumin
 garlic
 ginseng
+hep
+itb
 jasmine
 lobelia
 noc
 nod
+phedex
 oregano
 rosemary
-saffron
+sesame
+web
 thyme
 
 GROUP:afs
@@ -26,16 +39,13 @@ amaryllis
 ammi
 azalea
 beebalm
-bluegrass
-buttercup
 cosmos
 daffodil
 dahlia
 dianthus
 egret
-eucharis
 flamingo
-hawk
+hay
 hellebore
 hosta
 iris
@@ -44,14 +54,14 @@ kingfisher
 kiwi
 liatris
 lily
-lotus
 mano
 mum
 nightshade
+owl
 pelican
 penguin
+peony
 primula
-quail
 shrike
 swift
 syringa
@@ -90,6 +100,9 @@ s5n06
 s5n07
 s5n08
 s5n09
+
+GROUP:s6
+s6n01
 
 GROUP:g3
 g3n01
@@ -304,6 +317,9 @@ g10n22
 g10n23
 g10n24
 
+GROUP:plasma
+plasma01
+
 LUMP:compute_nodes
 g10
 g3
@@ -313,3 +329,67 @@ g6
 g7
 g8
 g9
+
+## TO CHECK FOR BITROT:
+# BAD=''
+# USER=wcmaier
+# for HOST in $(dsh -qi | sed -e '1,3d; s/.*Host: //'); do
+#   ping -c 1 -w 1 $HOST >/dev/null 2>&1
+#   if [ $? -ne 0 ]; then
+#       echo "$HOST...BAD"
+#       BAD="$BAD $HOST"
+#   else
+#       ssh -o'StrictHostKeyChecking no' -o"BatchMode yes" $USER@$HOST 'sleep 1'
+#       if [ $? -ne 0 ]; then
+#           echo "$HOST...BAD"
+#           BAD="$BAD $HOST"
+#       else
+#           echo "$HOST...OK"
+#       fi
+#   fi
+# done
+# for HOST in $BAD; do echo "BAD: $HOST"; done
+
+## BAD NODES:
+#bluegrass
+#buttercup
+#eucharis
+#hawk
+#lotus
+#quail
+#syringa
+#vai
+#clover
+#cilantro-new
+#cdfgrid01
+#syringa
+#vai
+#s6n01
+#g3n05
+#g3n29
+#g3n31
+#g3n32
+#g4n16
+#g5n07
+#g6n11
+#g7n06
+#g7n07
+#g9n46
+#g9n47
+#g10n06
+#g10n07
+#g10n13
+#g10n19
+#g10n24
+
+## KEY UNFRIENDLY:
+#basil
+#ginseng
+#oregano
+#dns
+#dns2
+#all g4
+#all g5
+#all g6
+#all g7
+#all g8
