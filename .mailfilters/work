@@ -39,7 +39,8 @@ if ( /^(To|Cc):.*@physics\.wisc\.edu/ )
 if ( /^(From|To):.*(hep|cs)\.wisc\.edu/ )
 {
     if ( /^Subject: UW-HEP Condor Absent Report/ ||\
-        /^Subject: UW-HEP dCache.*Absent.*Report/ )
+        /^Subject: UW-HEP dCache.*Absent.*Report/ ||\
+        /^Subject: CFengine Absent Report/)
     {
         to "$HEP/Absent/"
     }
