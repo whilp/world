@@ -4,7 +4,7 @@ MUSIC=$HOME/Music
 DIR=
 
 LINENR=0
-echo 'cddb' | cdio 2>/dev/null | while read LINE; do
+echo 'cddb 1' | cdio 2>/dev/null | while read LINE; do
     LINENR=$((LINENR + 1))
     if [ ${LINENR} -eq 1 ]; then
         export ARTIST=${LINE%% / *}
@@ -33,7 +33,7 @@ echo 'cddb' | cdio 2>/dev/null | while read LINE; do
         # loop runs in a subshell (due to the pipe), and so wait(1)
         # doesn't see the subshell's children. Boo.
         cdparanoia -q ${TRACKNR} "${FILENAME}" &&\
-        flac --silent --best -T ARTIST="${ARTIST}" \
+        flac --replay-gain --silent --best -T ARTIST="${ARTIST}" \
             -T NUMBER="${TRACKNR}" \
             -T ALBUM="${ALBUM}" \
             -T TITLE="${TITLE}" "${FILENAME}"
