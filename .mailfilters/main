@@ -85,6 +85,8 @@ if ( \
     /^From:.*kwrosenb@wisc\.edu/ || \
     /^From:.*mbrunlieb@gmail\.com/ || \
     /^From:.*mbrunlieb@hotmail\.com/ || \
+    /^From:.*jolan@protection\.cx/ || \
+    /^From:.*digitek@charter\.net/ || \
     /^From:.*rmainville@stewart-peterson\.com/ )
 {
     to $FRIEND
