@@ -11,7 +11,7 @@ notify 2 "Configuring for OpenBSD."
 
 # Environment variables
 
-MIRRORS="http://mirrors.tds.net ftp://rt.fm"
+MIRRORS="http://mirrors.tds.net http://mirror.sg.depaul.edu http://mirror.planetunix.net"
 [ -n "$(sysctl -n kern.version | grep -E '(current|4.1)')" ] && OSVERSION="snapshots" || OSVERSION="$(sysctl -n kern.osrelease)"
 MACHINE="$(machine)"
 
