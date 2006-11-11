@@ -11,7 +11,9 @@ notify 2 "Configuring for OpenBSD."
 
 # Environment variables
 
-MIRRORS="http://mirrors.tds.net http://mirror.sg.depaul.edu http://mirror.planetunix.net"
+MIRRORS="http://mirrors.tds.net 
+http://mirror.sg.depaul.edu 
+http://mirror.planetunix.net"
 [ -n "$(sysctl -n kern.version | grep -E '(current|4.1)')" ] && OSVERSION="snapshots" || OSVERSION="$(sysctl -n kern.osrelease)"
 MACHINE="$(machine)"
 
@@ -22,6 +24,7 @@ for MIRROR in $(echo ${MIRRORS}); do
 	PKG_PATH="${PKG_PATH}:${MIRROR}"
 	PKG_PATH=${PKG_PATH#:}
 done
+PKG_PATH="${PKG_PATH}:scp://will@meta.lfod.us/usr/ports"
 CVSROOT="anoncvs@anoncvs3.usa.openbsd.org:/cvs"
 FETCH_PACKAGES=yes
 PATH="${PATH}:/usr/X11R6/bin"
