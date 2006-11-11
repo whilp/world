@@ -11,8 +11,8 @@ notify 2 "Configuring for OpenBSD."
 
 # Environment variables
 
-MIRRORS="ftp://mirrors.tds.net ftp://rt.fm"
-[ -n "$(sysctl -n kern.version | grep -E '(current|4.0)')" ] && OSVERSION="snapshots" || OSVERSION="$(sysctl -n kern.osrelease)"
+MIRRORS="http://mirrors.tds.net ftp://rt.fm"
+[ -n "$(sysctl -n kern.version | grep -E '(current|4.1)')" ] && OSVERSION="snapshots" || OSVERSION="$(sysctl -n kern.osrelease)"
 MACHINE="$(machine)"
 
 # Loops like this require SH_WORD_SPLIT in zsh
