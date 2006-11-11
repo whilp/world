@@ -1,0 +1,21 @@
+# This configuration should be suitable for a single host.
+
+ext_if = "ext0"
+int_if = "int0"
+
+tcp_svc = "{ bootps, ssh, www }"
+udp_svc = "{ domain }"
+
+block all
+
+# Just allow ICMP.
+pass quick proto icmp
+
+# Allow egress traffic.
+pass out on $ext_if proto tcp to any port $tcp_svc keep state
+pass on $ext_if proto udp to any port $udp_svc keep state
+
+# Allow ingress traffic.
+pass in on $ext_if proto tcp to any port ssh keep state
+
+#vim: set nospell ft=pf:
