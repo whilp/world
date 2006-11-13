@@ -1,21 +1,33 @@
 # This configuration should be suitable for a single host.
 
+# Macros.
 ext_if = "ext0"
 int_if = "int0"
 
-tcp_svc = "{ bootps, ssh, www }"
-udp_svc = "{ domain }"
+tcp_out = "{ bootps, ssh, www }"
+udp_out = "{ domain }"
+icmp_types = "{ echoreq }"
 
+# Options.
+set block-policy return
+set loginterface $ext_if
+set skip on lo
+
+# Normalization.
+scrub in
+
+# Filter rules.
 block all
 
-# Just allow ICMP.
-pass quick proto icmp
+pass in inet proto icmp all icmp-type $icmp_types keep state
 
-# Allow egress traffic.
-pass out on $ext_if proto tcp to any port $tcp_svc keep state
-pass on $ext_if proto udp to any port $udp_svc keep state
+antispoof quick for $ext_if
 
-# Allow ingress traffic.
-pass in on $ext_if proto tcp to any port ssh keep state
+# Ingress traffic.
+pass in on $ext_if inet proto tcp to any port ssh flags S/SA keep state
+
+# Egress traffic.
+pass out on $ext_if inet proto tcp to any port $tcp_out flags S/SA keep state
+pass out on $ext_if inet proto udp to any port $udp_out keep state
 
 #vim: set nospell ft=pf:
