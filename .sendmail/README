@@ -1,0 +1,8 @@
+OPENBSD:
+    .mc files live in /usr/share/sendmail/cf
+    To build: 
+        sudo sh -c 'm4 ../m4/cf.m4 lfod.us.mc > lfod.us.cf'
+    To install: 
+        sudo cp /etc/mail/sendmail.cf /etc/mail/sendmail.cf.bak
+        sudo cp /usr/share/sendmail/cf/lfod.us.cf /etc/mail/sendmail.cf
+    Change sendmail_flags in /etc/rc.conf.local, restart sendmail.
