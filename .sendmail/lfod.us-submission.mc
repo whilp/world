@@ -86,12 +86,11 @@ dnl Accept incoming connections on any IPv4 or IPv6 interface for ports
 dnl 25 (SMTP) and 587 (MSA).
 dnl
 FEATURE(`no_default_msa')dnl
-DAEMON_OPTIONS(`Family=inet, Address=0.0.0.0, Name=MTA')dnl
-DAEMON_OPTIONS(`Family=inet, Address=0.0.0.0, Port=587, Name=MSA, M=E')dnl
-dnl DAEMON_OPTIONS(`Family=inet, Address=128.104.28.221, Name=MTA')dnl
-dnl DAEMON_OPTIONS(`Family=inet, Address=128.104.28.221, Port=587, Name=MSA, M=E')dnl
-dnl DAEMON_OPTIONS(`Family=inet6, Address=::, Name=MTA6, M=O')dnl
-dnl DAEMON_OPTIONS(`Family=inet6, Address=::, Port=587, Name=MSA6, M=O, M=E')dnl
+dnl Only listen locally.
+DAEMON_OPTIONS(`Family=inet, address=127.0.0.1, Name=MTA')dnl
+DAEMON_OPTIONS(`Family=inet6, address=::1, Name=MTA6, M=O')dnl
+DAEMON_OPTIONS(`Family=inet, address=127.0.0.1, Port=587, Name=MSA, M=E')dnl
+DAEMON_OPTIONS(`Family=inet6, address=::1, Port=587, Name=MSA6, M=O, M=E')dnl
 dnl
 dnl Use either IPv4 or IPv6 for outgoing connections.
 dnl
