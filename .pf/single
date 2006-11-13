@@ -4,7 +4,7 @@
 ext_if = "ext0"
 int_if = "int0"
 
-tcp_out = "{ bootps, ssh, www }"
+tcp_out = "{ bootps, ntp, ssh, www }"
 udp_out = "{ domain }"
 icmp_types = "{ echoreq }"
 
