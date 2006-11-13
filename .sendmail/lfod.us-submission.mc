@@ -116,7 +116,7 @@ dnl Masquerading -- rewriting the From address to a specific domain.
 dnl Please see the "MASQUERADING AND RELAYING" section of
 dnl /usr/share/sendmail/README for details.
 dnl
-dnl MASQUERADE_AS(`lfod.us')dnl
+MASQUERADE_AS(`lfod.us')dnl
 dnl
 dnl Masquerade the envelope From in addition to the From: header.
 dnl
