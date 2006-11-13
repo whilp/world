@@ -86,8 +86,10 @@ dnl Accept incoming connections on any IPv4 or IPv6 interface for ports
 dnl 25 (SMTP) and 587 (MSA).
 dnl
 FEATURE(`no_default_msa')dnl
-DAEMON_OPTIONS(`Family=inet, Address=128.104.28.221, Name=MTA')dnl
-DAEMON_OPTIONS(`Family=inet, Address=128.104.28.221, Port=587, Name=MSA, M=E')dnl
+DAEMON_OPTIONS(`Family=inet, Name=MTA')dnl
+DAEMON_OPTIONS(`Family=inet, Port=587, Name=MSA, M=E')dnl
+dnl DAEMON_OPTIONS(`Family=inet, Address=128.104.28.249, Name=MTA')dnl
+dnl DAEMON_OPTIONS(`Family=inet, Address=128.104.28.249, Port=587, Name=MSA, M=E')dnl
 dnl DAEMON_OPTIONS(`Family=inet, Address=0.0.0.0, Name=MTA')dnl
 dnl DAEMON_OPTIONS(`Family=inet6, Address=::, Name=MTA6, M=O')dnl
 dnl DAEMON_OPTIONS(`Family=inet, Address=0.0.0.0, Port=587, Name=MSA, M=E')dnl
@@ -134,7 +136,7 @@ dnl
 dnl Rewrite addresses from user@othercompany.com when relayed in
 dnl addition to locally-generated messages.
 dnl
-MASQUERADE_DOMAIN(`othercompany.com')dnl
+dnl MASQUERADE_DOMAIN(`othercompany.com')dnl
 dnl
 dnl Specific hosts that should be excepted from MASQUERADE_DOMAIN.
 dnl
