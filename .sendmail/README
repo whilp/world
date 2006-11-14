@@ -6,3 +6,4 @@ OPENBSD:
         sudo cp /etc/mail/sendmail.cf /etc/mail/sendmail.cf.bak
         sudo cp /usr/share/sendmail/cf/lfod.us.cf /etc/mail/sendmail.cf
     Change sendmail_flags in /etc/rc.conf.local, restart sendmail.
+    Add lfod.us to /etc/mail/relay-domains and /etc/mail/local-host-names
