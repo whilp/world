@@ -494,6 +494,10 @@ completions = {
     value = "http://www.openbsd.org/faq/faq15.html#PkgVsPorts";
     auto = "yes";
   };
+  "man:" = {
+    value = "http://www.openbsd.org/cgi-bin/man.cgi?query=";
+    auto = "yes";
+  };
 };
 windows = {
   1 = { 

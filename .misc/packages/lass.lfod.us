@@ -113,6 +113,7 @@ physfs-1.0.0p1      library to provide abstract access to various archives
 pkgconfig-0.19p0    tool for managing library compile/link flags
 png-1.2.12          library for manipulating PNG images
 popt-1.7p0          getopt(3)-like library with a number of enhancements
+postfix-2.4.20061006p0-sasl2 fast, secure sendmail replacement
 postgresql-client-8.1.5 PostgreSQL RDBMS (client)
 pwsafe-0.2.0        program that manages encrypted password databases
 py-crypto-2.0.1p2   cryptographic tools for Python
