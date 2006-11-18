@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 
 ENVIRONMENT=${HOME}/.environment
 LOCK_VOL=''
