@@ -7,6 +7,7 @@ autoconf-2.52p1     automatically configure source code on many Un*x platforms
 autoconf-2.57p0     automatically configure source code on many Un*x platforms
 autoconf-2.59p1     automatically configure source code on many Un*x platforms
 bitlbee-1.0.2p0     IRC proxy to connect to AIM, ICQ, Jabber, MSN and Yahoo
+bmf-0.9.4p0         easy to use Bayesian spam filter
 bsdiff-4.2          binary patch tools
 bzip2-1.0.3         block-sorting file compressor, unencumbered
 c-client-4.64p0     University of Washington's c-client mail access routines
