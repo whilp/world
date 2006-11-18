@@ -22,6 +22,7 @@ elinks-0.11.1p1     full-featured text WWW browser
 enscript-1.6.3p1    convert ASCII files to PostScript
 expat-2.0.0         XML 1.0 parser written in C
 faad-2.0p4          MPEG2 and MPEG-4 AAC decoder
+fdm-0.5             fetches and delivers mail
 fetchmail-6.3.4     mail retrieval utility for POP2, POP3, KPOP, IMAP and more
 flac-1.1.2p1        free lossless audio codec
 freetds-0.63p0      project to document and implement the TDS protocol
