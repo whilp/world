@@ -1,0 +1,33 @@
+# Setup for a nullclient; all mail is relayed through a central
+# mail host.
+#
+# The local agent should also be commented out in master.cf
+
+queue_directory = /var/spool/postfix
+command_directory = /usr/local/sbin
+daemon_directory = /usr/local/libexec/postfix
+mail_owner = _postfix
+inet_protocols = all                                                       
+unknown_local_recipient_reject_code = 550
+
+myhostname = zeroth.lfod.us
+mydomain = lfod.us
+myorigin = $mydomain
+relayhost = $mydomain
+inet_interfaces = 127.0.0.1
+local_transport = error:local delivery is disabled
+
+smtp_sasl_auth_enable = yes
+smtp_sasl_mechanism_filter = plain, login
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_sasl_type = cyrus
+
+
+sendmail_path = /usr/local/sbin/sendmail
+newaliases_path = /usr/local/sbin/newaliases
+mailq_path = /usr/local/sbin/mailq
+setgid_group = _postdrop
+html_directory = /usr/local/share/doc/postfix/html
+manpage_directory = /usr/local/man
+sample_directory = /etc/postfix
+readme_directory = /usr/local/share/doc/postfix/readme

@@ -11,11 +11,12 @@ notify 2 "Configuring for OpenBSD."
 
 # Environment variables
 
-MIRRORS="http://mirrors.tds.net 
-http://mirror.sg.depaul.edu 
-http://mirror.planetunix.net"
+MIRRORS="
+ftp://mirror.arcticnetwork.ca
+ftp://mirror.sg.depaul.edu
+ftp://mirror.iawnet.sandia.gov"
 [ -n "$(sysctl -n kern.version | grep -E '(current|4.1)')" ] && OSVERSION="snapshots" || OSVERSION="$(sysctl -n kern.osrelease)"
-MACHINE="$(machine)"
+MACHINE="$(machine -a)"
 
 # Loops like this require SH_WORD_SPLIT in zsh
 PKG_PATH=''
@@ -25,7 +26,9 @@ for MIRROR in $(echo ${MIRRORS}); do
 	PKG_PATH=${PKG_PATH#:}
 done
 PKG_PATH="${PKG_PATH}:scp://will@meta.lfod.us/usr/ports"
-CVSROOT="anoncvs@anoncvs3.usa.openbsd.org:/cvs"
+# 2006.11.16: Down for maintenance
+#CVSROOT="anoncvs@anoncvs3.usa.openbsd.org:/cvs"
+CVSROOT=anoncvs@anoncvs1.ca.openbsd.org:/cvs
 FETCH_PACKAGES=yes
 PATH="${PATH}:/usr/X11R6/bin"
 export CVSROOT FTP_SERV PKG_PATH PATH

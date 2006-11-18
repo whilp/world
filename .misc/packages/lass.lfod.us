@@ -22,6 +22,7 @@ elinks-0.11.1p1     full-featured text WWW browser
 enscript-1.6.3p1    convert ASCII files to PostScript
 expat-2.0.0         XML 1.0 parser written in C
 faad-2.0p4          MPEG2 and MPEG-4 AAC decoder
+fdm-0.5             fetches and delivers mail
 fetchmail-6.3.4     mail retrieval utility for POP2, POP3, KPOP, IMAP and more
 flac-1.1.2p1        free lossless audio codec
 freetds-0.63p0      project to document and implement the TDS protocol
@@ -113,6 +114,7 @@ physfs-1.0.0p1      library to provide abstract access to various archives
 pkgconfig-0.19p0    tool for managing library compile/link flags
 png-1.2.12          library for manipulating PNG images
 popt-1.7p0          getopt(3)-like library with a number of enhancements
+postfix-2.4.20061006p0-sasl2 fast, secure sendmail replacement
 postgresql-client-8.1.5 PostgreSQL RDBMS (client)
 pwsafe-0.2.0        program that manages encrypted password databases
 py-crypto-2.0.1p2   cryptographic tools for Python

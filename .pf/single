@@ -4,8 +4,11 @@
 ext_if = "ext0"
 int_if = "int0"
 
-tcp_out = "{ bootps, ssh, www }"
+tcp_out = "{ bootps, ntp, ssh, www }"
 udp_out = "{ domain }"
+
+tcp_in = "{ ssh }"
+
 icmp_types = "{ echoreq }"
 
 # Options.
@@ -20,11 +23,12 @@ scrub in
 block all
 
 pass in inet proto icmp all icmp-type $icmp_types keep state
+pass out inet proto icmp
 
 antispoof quick for $ext_if
 
 # Ingress traffic.
-pass in on $ext_if inet proto tcp to any port ssh flags S/SA keep state
+pass in on $ext_if inet proto tcp to any port $tcp_in flags S/SA keep state
 
 # Egress traffic.
 pass out on $ext_if inet proto tcp to any port $tcp_out flags S/SA keep state

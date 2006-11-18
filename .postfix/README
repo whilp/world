@@ -1,0 +1,21 @@
+# vim: set ft=sh
+# Use the snapshot-sasl2 packages.
+# Edit main.cf
+# Create /e/postfix/mynetworks and add relay hosts in CIDR notation (/32).
+
+/etc/rc.conf.local
+    sendmail_flags='-bd'
+    syslogd_flags="-a /var/spool/postfix/dev/log" 
+
+/etc/rc.local
+    # Postfix
+    if [ -x /usr/local/sbin/postfix ]; then
+        echo -n ' postfix'
+        /usr/local/sbin/postfix start
+    fi
+
+pkill -x syslogd
+syslogd -a /var/empty/dev/log -a /var/spool/postfix/dev/log
+postfix start
+
+# Test mail locally and from relays.
