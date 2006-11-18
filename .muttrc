@@ -89,8 +89,12 @@ macro pager C "<change-folder>?" "open a different folder"
 #macro pager C "<change-folder>?<toggle-mailboxes>" "open a different folder"
 #macro index S "<toggle-new><previous-entry><save-message>=Spam<enter><enter>" "Spam a message"
 #macro pager S "<toggle-new><previous-entry><save-message>=Spam<enter><enter>" "Spam a message"
-macro index S "<clear-flag>N<previous-entry><save-message>=Spam<enter><enter>" "Spam a message"
-macro pager S "<clear-flag>N<previous-entry><save-message>=Spam<enter><enter>" "Spam a message"
+#macro index S "<clear-flag>N<previous-entry><save-message>=Spam<enter><enter>" "Spam a message"
+#macro pager S "<clear-flag>N<previous-entry><save-message>=Spam<enter><enter>" "Spam a message"
+macro index  S "|bmf -S<enter><save-message>=Spam<enter>" "SPAM"
+macro index  H "|bmf -N<enter>" "NOT SPAM"
+macro pager S "|bmf -S<enter><save-message>=Spam<enter>" "SPAM"
+macro pager H "|bmf -N<enter>" "NOT SPAM"
 
 ## SMTP SETTINGS ##
 
@@ -176,7 +180,7 @@ send-hook '~L .*@[a-z0-9\.\-]*bsd[a-z0-9\.\-]*'	"set signature='~/.signatures/li
 send-hook '~L .*@mutt\.org'			"set signature='~/.signatures/list-bsd'"
 
 send-hook '~t techpartners@[a-zA-Z0-9\.\-]*wisc.edu'	"set signature='~/.signatures/hep'"
-send-hook '~t techpartners@[a-zA-Z0-9\.\-]*wisc.edu'	"set sendmail='/usr/local/bin/msmtp'
+send-hook '~t techpartners@[a-zA-Z0-9\.\-]*wisc.edu'	"set sendmail='/usr/local/bin/msmtp'"
 send-hook '~t techpartners@[a-zA-Z0-9\.\-]*wisc.edu'	"my_hdr From: Will Maier <willmaier@ml1.net>"
 
 send-hook '~t madlug@madisonlinux.org'	"set signature='~/.signatures/list-bsd'"
@@ -185,11 +189,15 @@ send-hook '~t madlug@madisonlinux.org'	"my_hdr From: Will Maier <willmaier@ml1.n
 set signature='~/.signatures/default'
 set sig_dashes
 
-folder-hook . unset strict_threads
-folder-hook . set duplicate_threads
-folder-hook . set narrow_tree
-folder-hook . set sort=threads
-folder-hook . set sort_re
+folder-hook . "unset strict_threads"
+folder-hook . "set duplicate_threads"
+folder-hook . "set narrow_tree"
+folder-hook . "set sort=threads"
+folder-hook . "set sort_re"
+
+# Don't need to move files if we're already in the Spam dir.
+folder-hook =Spam 'macro index  S "|bmf -S<enter>" "SPAM"'
+folder-hook =Spam 'macro pager S "|bmf -S<enter>" "SPAM"'
 
 
 folder-hook =Family set strict_threads
