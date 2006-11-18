@@ -607,6 +607,21 @@ debugger_command =
 #	-dmS $process_name gdb $daemon_directory/$process_name
 #	$process_id & sleep 1
 
+# OTHER
+# Disable the SMTP VRFY command. This stops some techniques used to
+# harvest email addresses.
+#
+disable_vrfy_command = yes
+
+# Enable SASL support.
+smtpd_sasl_security_options = noanonymous
+broken_sasl_auth_clients = yes 
+
+# Enable TLS.
+smtp_tls_security_level = may
+smtpd_tls_cert_file = /etc/postfix/certs/server.pem
+smtpd_tls_key_file = $smtpd_tls_cert_file
+
 # INSTALL-TIME CONFIGURATION INFORMATION
 #
 # The following parameters are used when installing a new Postfix version.
