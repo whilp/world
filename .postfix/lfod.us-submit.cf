@@ -1,0 +1,16 @@
+# Setup for a nullclient; all mail is relayed through a central
+# mail host.
+#
+# The local agent should also be commented out in master.cf
+
+myhostname = zeroth.lfod.us
+mydomain = lfod.us
+myorigin = $mydomain
+relayhost = $mydomain
+inet_interfaces = 127.0.0.1
+local_transport = error:local delivery is disabled
+
+smtp_sasl_auth_enable = yes
+smtp_sasl_mechanism_filter = plain, login
+smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+smtp_sasl_type = cyrus
