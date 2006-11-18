@@ -24,6 +24,7 @@ Rxvt*loginShell: true
 Rxvt*scrollBar: false
 !URxvt*termName: linux
 Rxvt*tintColor: blue
+Rxvt*visualBell: false
 
 Xterm*transparent: true
 XTerm*background: black
