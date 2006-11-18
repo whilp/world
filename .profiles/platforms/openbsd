@@ -11,11 +11,12 @@ notify 2 "Configuring for OpenBSD."
 
 # Environment variables
 
-MIRRORS="http://mirrors.tds.net 
-http://mirror.sg.depaul.edu 
-http://mirror.planetunix.net"
+MIRRORS="
+ftp://mirror.arcticnetwork.ca
+ftp://mirror.sg.depaul.edu
+ftp://mirror.iawnet.sandia.gov"
 [ -n "$(sysctl -n kern.version | grep -E '(current|4.1)')" ] && OSVERSION="snapshots" || OSVERSION="$(sysctl -n kern.osrelease)"
-MACHINE="$(machine)"
+MACHINE="$(machine -a)"
 
 # Loops like this require SH_WORD_SPLIT in zsh
 PKG_PATH=''
