@@ -1,7 +1,6 @@
 # vim: set ft=sh
 # Use the snapshot-sasl2 packages.
 # Edit main.cf
-# Create /e/postfix/mynetworks and add relay hosts in CIDR notation (/32).
 
 /etc/rc.conf.local
     sendmail_flags='-bd'
@@ -14,8 +13,43 @@
         /usr/local/sbin/postfix start
     fi
 
+    # Cyrus SASL Daemon, providing SASL authentication for Postfix.
+    if [ -x /usr/local/sbin/saslauthd ] ; then
+            echo -n ' saslauthd'
+            /usr/local/sbin/saslauthd -a getpwent -m /var/spool/postfix/var/sasl2
+    fi
+
+/usr/local/lib/sasl2/smtpd.conf:
+    pwcheck_method: saslauthd
+    mech_list: plain login
+
+/etc/postfix/sasl_passwd:
+    lass.lfod.us        user:pass
+
 pkill -x syslogd
 syslogd -a /var/empty/dev/log -a /var/spool/postfix/dev/log
 postfix start
 
-# Test mail locally and from relays.
+##MAIL HUB:
+# Install postfix-2.4.20061006p0-sasl2 and cyrus-sasl-2.1.21p2
+# Create certs (CA.sh)
+# Edit /etc/rc.conf.local as above
+# Edit /etc/rc.local as above
+# Edit /usr/local/lib/sasl2/smtpd.conf as above
+# Install certs
+# Install lfod.us-hub.cf -> /etc/postfix/main.cf
+# Restart postfix, logging, saslauthd per /etc/rc.local.
+
+##NULL CLIENT (OBSD):
+# Install postfix-2.4.20061006p0-sasl2 and cyrus-sasl-2.1.21p2
+# Edit /etc/rc.conf.local as above
+# Edit /etc/rc.local as above (no saslauthd)
+# Create /etc/postfix/sasl_passwd as above
+# postmap /etc/postfix/sasl_passwd
+# Restart postfix, logging per /etc/rc.local
+
+##NULL CLIENT (DEB):
+# Install postfix and libsasl2
+# Create /etc/postfix/sasl_passwd as above
+# postmap /etc/postfix/sasl_passwd
+# Restart postfix, logging per /etc/rc.local
