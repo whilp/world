@@ -22,6 +22,7 @@ smtp_sasl_auth_enable = yes
 smtp_sasl_mechanism_filter = plain, login
 smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
 smtp_sasl_type = cyrus
+smtp_sasl_security_options = noanonymous
 
 # TLS.
 smtp_tls_security_level = encrypt
