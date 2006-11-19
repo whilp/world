@@ -11,7 +11,7 @@ REM 02 Jun 2006 *14 AT 19:00    MSG x%3 %"MadLUG social meeting (Memorial Union)
 REM 01 Wed AT 19:00             MSG x%3 %"MadMongers meeting (MPL).%"
 REM 15 Nov +3                   MSG %"***** 'Programming Jabber' is due at UW Library.%"
 ### Other.
-REM 17 Nov 2006 AT 16:00        MSG x%3 %"Biochem Art Show, Biochem Atrium.%"
+REM 20 Nov 2006 AT 19:00        MSG x%3 %"Dinner with Laura, Nici and Katie.%"
 REM 01 Dec 2006 AT 19:00        MSG x%3 %"Yoga Tea Party with Laura, Fitchburg (and Dane after?).%"
 REM 08 Dec 2006 AT 16:00        MSG x%3 %"DeLuca Holiday Party, Biochem Atrium.%"
 
@@ -57,3 +57,4 @@ REM 05 Jan MSG %"***** #OpenBSD's [_yr_num(1999)] birthday!%"
 #REM 16 Sep 2006                 MSG %"***** Laura @ WPT quilt show.%"
 #REM 09 Oct 2006                 MSG %"***** Apple service tech to swap drives.%"
 #REM 08 Nov 2006 AT 19:00        MSG x%3 %"MadLUG: Applied Wireless presentation (HEP).%"
+#REM 17 Nov 2006 AT 16:00        MSG x%3 %"Biochem Art Show, Biochem Atrium.%"
