@@ -15,10 +15,6 @@ masquerade_domains = $mydomain
 
 disable_vrfy_command = yes
 
-# Enable SASL support.
-smtpd_sasl_security_options = noanonymous
-broken_sasl_auth_clients = yes 
-
 # Enable TLS.
 smtp_tls_security_level = may
 smtpd_tls_cert_file = /etc/postfix/certs/server.pem
