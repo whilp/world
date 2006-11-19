@@ -41,6 +41,7 @@ mailboxes `\
     xargs -I% echo -n ' =%'`
 
 subscribe debian-?.*@lists\.debian\.org
+subscribe postfix-users@postfix\.org
 subscribe madlug@madisonlinux\.org
 subscribe ubuntu-?.*@lists\.ubuntu\.com
 subscribe linux-fai@rrz.uni-koeln.de
@@ -91,9 +92,9 @@ macro pager C "<change-folder>?" "open a different folder"
 #macro pager S "<toggle-new><previous-entry><save-message>=Spam<enter><enter>" "Spam a message"
 #macro index S "<clear-flag>N<previous-entry><save-message>=Spam<enter><enter>" "Spam a message"
 #macro pager S "<clear-flag>N<previous-entry><save-message>=Spam<enter><enter>" "Spam a message"
-macro index  S "|bmf -S<enter><save-message>=Spam<enter>" "SPAM"
+macro index  S "|bmf -S<enter><toggle-new><previous-entry><save-message>=Spam<enter><enter>" "SPAM"
 macro index  H "|bmf -N<enter>" "NOT SPAM"
-macro pager S "|bmf -S<enter><save-message>=Spam<enter>" "SPAM"
+macro pager S "|bmf -S<enter><toggle-new><previous-entry><save-message>=Spam<enter><enter>" "SPAM"
 macro pager H "|bmf -N<enter>" "NOT SPAM"
 
 ## SMTP SETTINGS ##
@@ -157,6 +158,7 @@ ignore *				# default: ignore
 unignore from: date subject to cc reply-to:
 unignore x-mailer: user-agent
 unignore RT-Ticket: RT-Originator
+unignore x-spam
 unhdr_order *
 hdr_order From Date: From: To: Cc: Subject: X-mailer:
 
