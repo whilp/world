@@ -48,8 +48,7 @@ color header brightwhite default ^To:
 color header white default ^Cc:
 color header brightyellow default ^Subject:
 color header brightmagenta default ^X-Mailer:
-color header brightdefault default ^X-Spam-Level:
-color header brightdefault default ^X-Spam-Status:
+color header brightdefault default ^X-Spam
 color header brightmagenta default ^User-Agent:
 color header brightdefault default ^X-Operating-System:
 color header brightdefault default ^X-GPG-Key:
