@@ -37,8 +37,27 @@ logfile $LOG
 
 FILTERDIR = "$HOME/.mailfilters"
 
+# Test for spam.
+exception {
+    # All mail gets run through relaydb(1), which builds a list of
+}
+exception {
+    # Filter through bmf(1).
+    xfilter "bmf -p"
+    if (/^X-Spam-Status: Yes/)
+    {
+        # This should be enabled when bmf is better at identifying
+        # spam.
+        #exception {
+        #    # Blacklist relays using relaydb(1).
+        #    xfilter "relaydb -b"
+        #}
+        to "$SPAM"
+    }
+}
+
 # Lists
-if ( /^List-Id:/ || \
+if ( /^List/ || \
     /^Sender:/ || \
     /^Mailing-List:.*zsh/ || \
     /^Mailing-List:.*vim/ )

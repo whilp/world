@@ -78,6 +78,11 @@ if ( /^List-Id:.*elinks-users\.linuxfromscratch\.org/ )
     to "$FOSS/Elinks/"
 }
 
+if ( /^List-Post:.*postfix-users@postfix.org/ )
+{
+    to "$FOSS/Postfix/"
+}
+
 # OSes
 if ( /^List-Id:.*freebsd-.*\.freebsd.org>/ )
 {
