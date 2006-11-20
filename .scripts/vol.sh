@@ -28,20 +28,21 @@ SED=/usr/bin/sed
 # Influential variables
 AMOUNT=0
 CHANGE=0
-CURVOL=$(${MIXERCTL} outputs.master |\
+CTL="outputs.green1b"
+CURVOL=$(${MIXERCTL} ${CTL} |\
     ${SED} 's/.*=//' |\
     ${CUT} -d ',' -f 1)
 INCREMENT=20
 MAXVOL=255
 MIXERCTLCONF=/etc/mixerctl.conf
 MUTE=
-NORMALVOL=$(${GREP} 'outputs.master=' ${MIXERCTLCONF} |\
+NORMALVOL=$(${GREP} "${CTL}=" ${MIXERCTLCONF} |\
     ${CUT} -d ',' -f 2)
 VERBOSE=
 
 changeVol () {
     # Apply changes to the volume
-    ${MIXERCTL} -q outputs.master=${NEWVOL},${NEWVOL}
+    ${MIXERCTL} -q ${CTL}=${NEWVOL},${NEWVOL}
 }
 
 percentVol () {
