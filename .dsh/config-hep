@@ -41,7 +41,6 @@ azalea
 beebalm
 cosmos
 daffodil
-dahlia
 dianthus
 egret
 flamingo
@@ -331,28 +330,29 @@ g8
 g9
 
 ## TO CHECK FOR BITROT:
-# BAD=''
-# USER=wcmaier
-# for HOST in $(dsh -qi | sed -e '1,3d; s/.*Host: //'); do
-#   ping -c 1 -w 1 $HOST >/dev/null 2>&1
-#   if [ $? -ne 0 ]; then
-#       echo "$HOST...BAD"
-#       BAD="$BAD $HOST"
-#   else
-#       ssh -o'StrictHostKeyChecking no' -o"BatchMode yes" $USER@$HOST 'sleep 1'
-#       if [ $? -ne 0 ]; then
-#           echo "$HOST...BAD"
-#           BAD="$BAD $HOST"
-#       else
-#           echo "$HOST...OK"
-#       fi
-#   fi
-# done
-# for HOST in $BAD; do echo "BAD: $HOST"; done
+#BAD=''                                                                                                        
+#USER=wcmaier
+#for HOST in $(hsh -qi | sed -e '1,3d; s/.*Host: //'); do
+#  ping -c 1 -w 1 $HOST >/dev/null 2>&1
+#  if [ $? -ne 0 ]; then
+#      echo "$HOST...OFFLINE"
+#      BAD="$BAD $HOST"
+#  else
+#      nc -w 1 $HOST 22 >/dev/null 2>&1 && ssh -o'StrictHostKeyChecking no' -o"BatchMode yes" $USER@$HOST 'sleep 1'
+#      if [ $? -ne 0 ]; then
+#          echo "$HOST...BAD"
+#          BAD="$BAD $HOST"
+#      else
+#          echo "$HOST...OK"
+#      fi
+#  fi
+#done
+#for HOST in $BAD; do echo "BAD: $HOST"; done
 
 ## BAD NODES:
 #bluegrass
 #buttercup
+#dahlia
 #eucharis
 #hawk
 #lotus
