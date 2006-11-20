@@ -130,7 +130,7 @@ ns () {
     if [ "$(env | grep -E '(X|COLOR)TERM')" ]; then
         UTITLE=$(echo $1 | tr '[:lower:]' '[:upper:]')
         LTITLE=$(echo $1 | tr '[:upper:]' '[:lower:]')
-        print -Pn "\e]0;vger[${UTITLE}]\a"
+        print -Pn "\e]0;${HOSTNAME}[${UTITLE}]\a"
     fi
     screen -S "${LTITLE}"
 }

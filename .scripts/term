@@ -13,4 +13,4 @@
 
 ARGS=$*
 ARGS="$(echo "${ARGS}" | sed -e "s/-T \([^ ]*\)/-T ${HOSTNAME}\[\1\]/")"
-rxvt -T "vger[LOCAL]" -tn linux ${ARGS}
+rxvt -T "${HOSTNAME}[LOCAL]" -tn linux ${ARGS}
