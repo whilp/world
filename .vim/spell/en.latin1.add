@@ -128,3 +128,8 @@ PLIST
 plist
 radmind's
 IPs
+WSGI
+FastCGI
+lighttpd
+SCGI
+lighttpd's
