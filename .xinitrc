@@ -14,7 +14,7 @@ term -T MAIN -e 'screen -c /etc/screenrc -RD main' &
 
 #exec enlightenment
 xset b off
-#[ -x $(which unclutter 2>/dev/null) ] && unclutter -idle 5 -jitter 20&
+[ -x $(which unclutter 2>/dev/null) ] && unclutter -idle 5 -jitter 40&
 
 # Uggh -- opera yaks if ~/.fonts-cache* is there after a reboot.
 [ -e $HOME/.fonts.cache-1 ] && rm -rf $HOME/.fonts.cache*
