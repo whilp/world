@@ -11,6 +11,7 @@ bmf-0.9.4p0         easy to use Bayesian spam filter
 bsdiff-4.2          binary patch tools
 bzip2-1.0.3         block-sorting file compressor, unencumbered
 c-client-4.64p0     University of Washington's c-client mail access routines
+cfengine-2.1.21     GNU system administration tool for networks
 clusterit-2.4-no_x11 suite of clustering tools based on IBM's PSSP
 crack-5.0p2         sensible unix password cracker
 curl-7.15.5         get files from FTP, Gopher, HTTP or HTTPS servers
