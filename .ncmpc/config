@@ -8,7 +8,7 @@
 #screen-list = playlist artist clock
 
 ## auto center (center the playing track in the playlist)
-#auto-center = no
+auto-center = yes
 
 ## wide_cursor - make the cursor as wide as the screen
 wide-cursor = yes
