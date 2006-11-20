@@ -12,9 +12,10 @@ notify 2 "Configuring for OpenBSD."
 # Environment variables
 
 MIRRORS="
-ftp://mirror.arcticnetwork.ca
-ftp://mirror.sg.depaul.edu
-ftp://mirror.iawnet.sandia.gov"
+http://mirror.planetunix.net
+http://openbsd.mirrors.tds.net
+http://mirrors.24-7-solutions.net
+"
 [ -n "$(sysctl -n kern.version | grep -E '(current|4.1)')" ] && OSVERSION="snapshots" || OSVERSION="$(sysctl -n kern.osrelease)"
 MACHINE="$(machine -a)"
 
@@ -25,7 +26,7 @@ for MIRROR in $(echo ${MIRRORS}); do
 	PKG_PATH="${PKG_PATH}:${MIRROR}"
 	PKG_PATH=${PKG_PATH#:}
 done
-PKG_PATH="${PKG_PATH}:scp://will@meta.lfod.us/usr/ports"
+#PKG_PATH="${PKG_PATH}:scp://will@meta.lfod.us/usr/ports"
 # 2006.11.16: Down for maintenance
 #CVSROOT="anoncvs@anoncvs3.usa.openbsd.org:/cvs"
 CVSROOT=anoncvs@anoncvs1.ca.openbsd.org:/cvs
