@@ -13,6 +13,7 @@ REM 15 Nov +3                   MSG %"***** 'Programming Jabber' is due at UW Li
 ### Other.
 REM 20 Nov 2006 AT 19:00        MSG x%3 %"Dinner with Laura, Nici and Katie.%"
 REM 01 Dec 2006 AT 19:00        MSG x%3 %"Yoga Tea Party with Laura, Fitchburg (and Dane after?).%"
+REM 07 Dec 2006 AT 12:00        MSG x%3 %"'Responding to Research Misconduct' talk, B1118 Biochem
 REM 08 Dec 2006 AT 16:00        MSG x%3 %"DeLuca Holiday Party, Biochem Atrium.%"
 
 ###################################################################
