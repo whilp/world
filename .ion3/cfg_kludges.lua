@@ -3,36 +3,32 @@
 --
 
 -- Me props
--- Konqueror
-defwinprop{
-    name = "http://.* - Konqueror",
-    target = "www",
-}
-
 -- Firefox
 defwinprop{
     class = "Firefox-bin",
     target = "www"
 }
 
--- Opera
-defwinprop{
-    name = ".*Opera$",
-    -- class = "Opera",
-    target = "www"
-}
-
 -- Shells
 defwinprop{
-    name = "\[LOCAL\]$",
-    class = 'XTerm',
-    target = "term",
+    name = "META",
+    target = "main",
     switchto = "true",
     jumpto = "true"
 }
 defwinprop{
-    name = "^ncmpc",
-    target = 'tunes',
+    name = "MAIN",
+    target = "main",
+}
+defwinprop{
+    name = "LOCAL",
+    target = "work",
+    switchto = "true",
+    jumpto = "true"
+}
+defwinprop{
+    name = "SYSTAT",
+    target = "monitor"
 }
 
 --
