@@ -15,7 +15,7 @@ de.defstyle("*", {
     shadow_pixels = 1,
     spacing = 0,
     border_style = "elevated",
-    font = "-sgi-screen-medium-r-normal--13-130-72-72-m-70-iso8859-1",
+    font = "-sgi-screen-medium-*-*-*-16-*-*-*-*-*-*-*",
     text_align = "center",
 })
 
@@ -38,7 +38,7 @@ de.defstyle("frame-tiled", {
 
 de.defstyle("tab", {
     based_on = "*",
-    font = "-sgi-screen-medium-r-normal--10-100-72-72-m-60-iso8859-1",
+    font = "-sgi-screen-medium-*-*-*-16-*-*-*-*-*-*-*",
     de.substyle("active-selected", {
         shadow_colour = "#f0f066",
         highlight_colour = "#f0f066",
@@ -96,7 +96,7 @@ dopath("lookcommon_clean")
 de.defstyle("stdisp", {
     shadow_pixels = 0,
     highlight_pixels = 0,
-    font = "-sgi-screen-medium-r-normal--12-120-72-72-m-70-iso8859-1",
+    font = "-sgi-screen-medium-*-*-*-16-*-*-*-*-*-*-*",
     background_colour = "#000000",
     -- transparent_background = true,
     de.substyle("important", {
