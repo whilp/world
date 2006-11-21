@@ -14,12 +14,14 @@ Rxvt*background: black
 Rxvt*borderLess: false
 Rxvt*fading: 40
 Rxvt*visualBell: true
-Rxvt*font: -sgi-screen-medium-r-normal--15-150-72-72-m-80-iso8859-1
+!Rxvt*font: -sgi-screen-medium-r-normal--18-150-72-72-m-80-iso8859-1
+Rxvt*font: -sgi-screen-medium-*-*-*-18-*-*-*-*-*-*-*
 Rxvt*cutchars: `"'()*,;<>[]{|}
-Rxvt*boldFont: -sgi-screen-bold-r-normal--15-150-72-72-m-90-iso8859-1
+Rxvt*boldFont: -sgi-screen-bold-*-*-*-18-*-*-*-*-*-*-*
+!Rxvt*boldFont: -sgi-screen-bold-r-normal--18-150-72-72-m-90-iso8859-1
 Rxvt*foreground: white
 !Rxvt*inheritPixmap: true
-Rxvt*backgroundPixmap: .backgrounds/current.xpm
+!Rxvt*backgroundPixmap: .backgrounds/current.xpm
 Rxvt*loginShell: true
 Rxvt*scrollBar: false
 !URxvt*termName: linux
