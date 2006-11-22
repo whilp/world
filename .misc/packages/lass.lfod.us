@@ -23,12 +23,10 @@ elinks-0.11.1p1     full-featured text WWW browser
 enscript-1.6.3p1    convert ASCII files to PostScript
 expat-2.0.0         XML 1.0 parser written in C
 faad-2.0p4          MPEG2 and MPEG-4 AAC decoder
-fdm-0.5             fetches and delivers mail
 fetchmail-6.3.4     mail retrieval utility for POP2, POP3, KPOP, IMAP and more
 flac-1.1.2p1        free lossless audio codec
 freetds-0.63p0      project to document and implement the TDS protocol
 gdbm-1.8.3p0        GNU dbm
-getmail-4.6.5       IMAP/POP3/SDPS mail retriever
 gettext-0.14.6      GNU gettext
 glib-1.2.10p1       useful routines for C programming
 glib2-2.10.3        general-purpose utility library
@@ -68,7 +66,6 @@ libxml-2.6.26       XML parsing library
 libxslt-1.1.17      XSLT C Library for GNOME
 lighttpd-1.4.13     secure, fast, compliant, and very flexible web-server
 lua-5.1.1p0         powerful, light-weight programming language
-maildrop-1.7.0      local mail delivery agent with filtering abilities
 markdown-1.6a       text-to-HTML conversion tool
 mergemaster-1.46p2  aids with merging configuration files during an upgrade
 metaauto-0.5        wrapper for gnu auto*
