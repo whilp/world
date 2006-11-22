@@ -30,6 +30,8 @@ REM 02 Tue AT 12:00             MSG x%3 %"GLOW meeting.%"
 REM 01 +3 AT 12:00              MSG x%3 %"Activity report due to dasu@.%"
 ### Floating.
 REM 06 Mar 2007 +14             MSG %"***** USCMS T2/T3 Meeting; UCSD%"
+### Library.
+REM 28 Nov 2006 +2              MSG %"***** CD 'The Charlie Parker Story' due at Mills library%"
 
 ###################################################################
 ### Birthdays/anniversaries.
