@@ -1,7 +1,6 @@
 [home]
 .ssh/ = 0700
 .attic/ = 0700
-.getmail/ = 0700
 .hgrc = 0600
 .hgtags = 0600
 .ion3/ = 0700
@@ -16,11 +15,6 @@
 .irssi/scripts/usercount.pl = 0700
 .login = 0600
 .mailcap = 0600
-.mailfilters/ = 0700
-.mailfilters/junk = 0600
-.mailfilters/lists = 0600
-.mailfilters/main = 0600
-.mailfilters/work = 0600
 .misc/ = 0700
 .msmtprc = 0600
 .muttalias = 0600
@@ -36,7 +30,6 @@
 .scripts/browser = 0700
 .scripts/browser.sh = 0700
 .scripts/dvd2disk.sh = 0700
-.scripts/getmail.sh = 0700
 .scripts/hgeditor = 0700
 .scripts/pinger.sh = 0700
 .scripts/today = 0700
