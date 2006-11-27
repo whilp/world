@@ -69,7 +69,7 @@ else
             MPD_HOST=${MPD_HOST} mpc --format "${FORMAT}"
             ;;
         ncmpc)
-            term -tn xterm-color -T MPD -e "ncmpc --host ${MPD_HOST}"
+            term -tn vt100 -T MPD -e "ncmpc --host ${MPD_HOST}"
             ;;
     esac
 

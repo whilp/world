@@ -20,12 +20,12 @@ defwinprop{
     name = "MAIN",
     target = "main",
 }
-defwinprop{
-    name = "LOCAL",
-    target = "work",
-    switchto = "true",
-    jumpto = "true"
-}
+-- defwinprop{
+--     name = "LOCAL",
+--     target = "work",
+--     switchto = "true",
+--     jumpto = "true"
+-- }
 defwinprop{
     name = "SYSTAT",
     target = "monitor"

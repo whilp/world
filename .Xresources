@@ -9,43 +9,17 @@
 ! License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 !#################  END HEADERS
 
-! URXVT
-Rxvt*background: black
-Rxvt*borderLess: false
-Rxvt*fading: 40
-Rxvt*visualBell: true
-!Rxvt*font: -sgi-screen-medium-r-normal--18-150-72-72-m-80-iso8859-1
-Rxvt*font: -sgi-screen-medium-*-*-*-18-*-*-*-*-*-*-*
-Rxvt*cutchars: `"'()*,;<>[]{|}
-Rxvt*boldFont: -sgi-screen-bold-*-*-*-18-*-*-*-*-*-*-*
-!Rxvt*boldFont: -sgi-screen-bold-r-normal--18-150-72-72-m-90-iso8859-1
-Rxvt*foreground: white
-!Rxvt*inheritPixmap: true
-!Rxvt*backgroundPixmap: .backgrounds/current.xpm
-Rxvt*loginShell: true
-Rxvt*scrollBar: false
-!URxvt*termName: linux
-Rxvt*tintColor: blue
-Rxvt*visualBell: false
-
-Xterm*transparent: true
 XTerm*background: black
-XTerm*foreground: white
-XTerm*scrollBar: false
-XTerm*loginShell: true
-XTerm*transparent: true
-XTerm*tintingType: true
-XTerm*tinting: #a07040
-XTerm*saveLines: 2000
-XTerm*shading: 35
-!XTerm*font: -misc-fixed-medium-r-normal-*-14-*-*-*-c-*-iso8859-15
-!XTerm*font:*-*-fixed-medium-r-normal--*-140-*-*-*-*-iso8859-1
-!XTerm*font: -misc-fixed-medium-r-normal--18-120-100-100-c-90-iso10646-1
-XTerm*boldFont:*-*-fixed-bold-r-normal--*-*-140-*-*-*-*-iso8859-1
+XTerm*boldFont: -sgi-screen-bold-*-*-*-18-*-*-*-*-*-*-*
+XTerm*borderLess: false
 XTerm*charClass: 33:48,37:48,45-47:48,58:48,61:48,63-64:48,126:48
-!XTerm*geometry: +80+24
-
 XTerm*color0: black
+XTerm*color10: #55FF55
+XTerm*color11: #FFFF55
+XTerm*color12: #5555FF
+XTerm*color13: #FF55FF
+XTerm*color14: #55FFFF
+XTerm*color15: white
 XTerm*color1: #AA0000
 XTerm*color2: #00AA00
 XTerm*color3: #AA5500
@@ -55,46 +29,16 @@ XTerm*color6: #00AAAA
 XTerm*color7: #AAAAAA
 XTerm*color8: #555555
 XTerm*color9: #FF5555
-XTerm*color10: #55FF55
-XTerm*color11: #FFFF55
-XTerm*color12: #5555FF
-XTerm*color13: #FF55FF
-XTerm*color14: #55FFFF
-XTerm*color15: white
-XTerm*colorUL: #55FF55
 XTerm*colorBD: #5555FF
-
-! gives me nice, big fonts to start; see /usr/X11R6/lib/X11/app-defaults/XTerm
-!XTerm*font:-windows-proggysquare-medium-r-normal--11-80-96-96-c-70-iso8859-1
-XTerm*font:-windows-pixelcarnage monospace-medium-r-normal--14-90-96-96-c-90-iso8859-1
-!XTerm*font:-misc-fixed-medium-r-semicondensed-*-13-*-*-*-*-*-iso10646-*
-!XTerm*font:-bitstream-bitstream vera sans mono-medium-r-*-*-0-*-*-*-*-*-iso8859-9
-!XTerm*font:-adobe-courier-medium-r-*-*-14-*-*-*-*-*-iso8859-*
-!XTerm*font:-adobe-courier-medium-r-*-*-12-*-*-*-*-*-iso8859-*
-!XTerm*font:-misc-fixed-medium-r-normal--18-120-100-100-c-90-iso10646-1
-!XTerm*font:-misc-fixed-medium-r-normal--13-120-75-75-c-80-iso10646-1
-!XTerm*font:-windows-proggysquaresz-medium-r-normal-*-11-80-96-96-c-70-iso8859-1
-!XTerm*font:-misc-fixed-medium-r-normal--18-120-100-100-c-90-iso10646-1
-!XTerm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-c-0-iso10646-1
-!XTerm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-c-0-iso8859-1
-!XTerm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-c-0-iso8859-15
-!XTerm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-c-0-iso8859-9
-!XTerm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-m-0-iso10646-1
-!XTerm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-m-0-iso8859-1
-!XTerm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-m-0-iso8859-15
-!XTerm*font:-bitstream-bitstream vera sans mono-medium-o-normal--0-0-0-0-m-0-iso8859-9
-!XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-c-0-iso10646-1
-!XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-c-0-iso8859-1
-!XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-c-0-iso8859-15
-!XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-c-0-iso8859-9
-!XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-m-0-iso10646-1
-!XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-m-0-iso8859-1
-!XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-m-0-iso8859-15
-!XTerm*font:-bitstream-bitstream vera sans mono-medium-r-normal--0-0-0-0-m-0-iso8859-9
-!XTerm*font:-windows-proggycleansz-medium-r-normal--0-0-96-96-c-0-iso8859-1
-!XTerm*font:-windows-proggysquaresz-medium-r-normal--13-80-96-96-c-70-iso8859-1
-!XTerm*font:-windows-proggycleansz-medium-r-normal--13-80-96-96-c-70-iso8859-1
-!XTerm*font:-windows-proggycleanszbp-medium-r-normal--0-0-96-96-c-0-iso8859-1
-!XTerm*font:-windows-proggycleanszbp-medium-r-normal--13-80-96-96-c-70-iso8859-1
-!XTerm*font:-windows-proggytinysz-medium-r-normal--0-0-96-96-c-0-iso8859-1
-!XTerm*font:-windows-proggytinysz-medium-r-normal--10-80-96-96-c-60-iso8859-1
+XTerm*colorUL: #55FF55
+XTerm*cutchars: `"'()*,;<>[]{|}
+XTerm*font: -sgi-screen-medium-*-*-*-18-*-*-*-*-*-*-*
+XTerm*foreground: white
+XTerm*loginShell: true
+XTerm*saveLines: 2000
+XTerm*scrollBar: false
+XTerm*shading: 35
+XTerm*tintColor: blue
+XTerm*tinting: #a07040
+XTerm*tintingType: true
+XTerm*visualBell: false
