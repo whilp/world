@@ -1,6 +1,7 @@
 [home]
 .ssh/ = 0700
 .attic/ = 0700
+.fdm.conf = 0700
 .hgrc = 0600
 .hgtags = 0600
 .ion3/ = 0700
