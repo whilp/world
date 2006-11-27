@@ -4,8 +4,8 @@
 ext_if = "ext0"
 int_if = "int0"
 
-tcp_out = "{ bootps, ntp, ssh, www }"
-udp_out = "{ domain }"
+tcp_out = "{ bootps, msa, ntp, ssh, www, cddb }"
+udp_out = "{ domain, ntp }"
 
 tcp_in = "{ ssh }"
 
@@ -20,7 +20,7 @@ set skip on lo
 scrub in
 
 # Filter rules.
-block all
+block log all
 
 pass in inet proto icmp all icmp-type $icmp_types keep state
 pass out inet proto icmp
