@@ -89,6 +89,8 @@ p5-Compress-Zlib-1.42 Perl interface to the zlib compression library
 p5-Crypt-SSLeay-0.51 library to provide LWP https support via OpenSSL
 p5-DBI-1.52         unified perl interface for database access
 p5-Data-Hierarchy-0.31 handle data in a hierarchical structure
+p5-ExtUtils-Depends-0.205 Easily build XS extensions that depend on XS extensions
+p5-ExtUtils-PkgConfig-1.07p0 simplistic perl interface to pkg-config
 p5-File-Type-0.22p0 determine file type using magic
 p5-FreezeThaw-0.43  module for converting structures to strings and back
 p5-HTML-Parser-3.54 modules to parse and extract information from HTML
