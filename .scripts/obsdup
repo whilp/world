@@ -8,7 +8,8 @@ if [ ! $1 ]; then
 fi
 
 MY_PP=ftp://ftp5.usa.openbsd.org/pub/OpenBSD/snapshots/packages/i386/:ftp://mirrors.tds.net/pub/OpenBSD/snapshots/packages/i386/
-PKG_PATH=${PKG_PATH:-${MY_PP}}
+#PKG_PATH=${PKG_PATH:-${MY_PP}}
+PKG_PATH=${MY_PP}
 VERSION=40
 WORKDIR="${HOME}/BSD"
 BACKUPDIR=/home/backup
