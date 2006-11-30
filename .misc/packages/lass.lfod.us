@@ -13,6 +13,7 @@ bzip2-1.0.3         block-sorting file compressor, unencumbered
 c-client-4.64p0     University of Washington's c-client mail access routines
 cfengine-2.1.21     GNU system administration tool for networks
 crack-5.0p2         sensible unix password cracker
+cups-1.2.7          Common Unix Printing System
 curl-7.15.5         get files from FTP, Gopher, HTTP or HTTPS servers
 cvs20hg-20060714    fast, incremental CVS to Mercurial conversion
 cyrus-sasl-2.1.21p2 RFC 2222 SASL (Simple Authentication and Security Layer)
@@ -32,6 +33,7 @@ glib-1.2.10p1       useful routines for C programming
 glib2-2.10.3        general-purpose utility library
 gmake-3.80p1        GNU make
 gmp-4.1.4p0         library for arbitrary precision arithmetic
+gnutls-1.0.25p0     GNU Transport Layer Security library
 gtk+-1.2.10p4       General Toolkit for X11 GUI
 guile-1.6.7p2       GNU's Ubiquitous Intelligent Language for Extension
 hackdata-3.4.3      common data for the nethack/slash ports
@@ -42,6 +44,7 @@ ipython-0.7.2       enhanced interactive Python shell
 irssi-0.8.10p0      modular IRC client with many features (ipv6,socks,proxy)
 jpeg-6bp3           IJG's JPEG compression utilities
 lame-3.96.1p1       lame ain't an MP3 encoder
+lcms-1.15           color management library
 libao-0.8.5p2       portable audio output library
 libaudiofile-0.2.6p0 SGI audiofile library clone
 libdnet-1.10p1      portable low-level networking library
@@ -55,6 +58,7 @@ libltdl-1.5.22p1    GNU libtool system independent dlopen wrapper
 libmad-0.15.1bp1    high-quality MPEG audio decoder
 libmcrypt-2.5.7p1   interface to access block/stream encryption algorithms
 libmikmod-3.1.10p4  mikmod sound library
+libmng-1.0.9p1      Multiple-image Network Graphics (MNG) reference library
 libmpcdec-1.2.2p0   musepack, high quality audio compression format
 libogg-1.1.3        Ogg bitstream library
 librsync-0.9.7      implements the rsync remote-delta algorithm
@@ -80,6 +84,7 @@ neon-0.24.7p0       HTTP and WebDAV client library, with C interface
 net-snmp-5.1.3p4    extendable SNMP implementation
 nethack-3.4.3p1-no_x11 dungeon explorin', hackin', game.  Piece of cake
 nmap-4.11-no_x11    scan ports and fingerprint stack of network hosts
+opencdk-0.5.5p0     Open Crypto Development Kit
 openldap-client-2.3.27 Open source LDAP software (client)
 p5-Algorithm-Annotate-0.10p0 represent a series of changes in annotate form
 p5-Algorithm-Diff-1.1902 interface to compute differences between two objects
@@ -116,6 +121,7 @@ png-1.2.12          library for manipulating PNG images
 popt-1.7p0          getopt(3)-like library with a number of enhancements
 postfix-2.4.20061006p0-sasl2 fast, secure sendmail replacement
 postgresql-client-8.1.5 PostgreSQL RDBMS (client)
+postgresql-server-8.1.5p4 PostgreSQL RDBMS (server)
 pwsafe-0.2.0        program that manages encrypted password databases
 py-crypto-2.0.1p2   cryptographic tools for Python
 py-genshi-0.3.4     Python toolkit for stream-based generation of output for the web
@@ -142,6 +148,7 @@ sqlite-2.8.17p1     Embedded SQL implementation
 t1lib-5.1.0p0       Type 1 rasterizer library for UNIX/X11
 tcl-8.4.7p3         Tool Command Language
 tcpflow-0.21p0      tool for capturing data from TCP connections
+tiff-3.8.2p0        tools and library routines for working with TIFF images
 tk-8.4.7p0          graphical toolkit for Tcl
 unzip-5.52          extract, list & test files in a ZIP archive
 uuid-1.5.0          ISO-C API and CLI for generating Universally Unique Identifiers
