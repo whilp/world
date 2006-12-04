@@ -9,7 +9,7 @@
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
 
-alias RQ HEP Request <req@ginseng.hep.wisc.edu>
+alias RQ HEP Request <req@hep.wisc.edu>
 alias RT Unix Request Tracker <unix-request@cae.wisc.edu>
 alias ballard.jeff Jeff Ballard <ballard@cae.wisc.edu>
 alias bradley.dan Dan Bradley <dan@hep.wisc.edu>
