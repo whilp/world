@@ -6,7 +6,7 @@ caption always "%{= bW}[%{+b}%n: %t%{-}] [%{+b}%-Lw%50>%n%f* %t%+Lw%<%{-}]%-="
 
 sessionname www
 screen -t WEB	    1 elinks -no-connect -touch-files
-screen -t CAE	    2 elinks -no-connect -touch-files
+screen -t RQ	    2 elinks -no-connect -touch-files
 screen -t HEP	    3 elinks -no-connect -touch-files
 caption splitonly
 select 1
