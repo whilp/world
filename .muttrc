@@ -59,10 +59,6 @@ bind generic '\CG' noop
 bind generic 'x' noop
 bind index 'x' noop
 bind pager 'x' noop
-# bind generic '\CF' noop
-# bind index '\CF' noop
-# bind generic '\CU' noop
-# bind index '\CU' noop
 bind generic zg first-entry
 bind generic zz current-middle
 bind generic zG last-entry
@@ -86,16 +82,10 @@ macro index <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuratio
 macro pager <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
 macro index C "<change-folder>?" "open a different folder"
 macro pager C "<change-folder>?" "open a different folder"
-#macro index C "<change-folder>?<toggle-mailboxes>" "open a different folder"
-#macro pager C "<change-folder>?<toggle-mailboxes>" "open a different folder"
-#macro index S "<toggle-new><previous-entry><save-message>=Spam<enter><enter>" "Spam a message"
-#macro pager S "<toggle-new><previous-entry><save-message>=Spam<enter><enter>" "Spam a message"
-#macro index S "<clear-flag>N<previous-entry><save-message>=Spam<enter><enter>" "Spam a message"
-#macro pager S "<clear-flag>N<previous-entry><save-message>=Spam<enter><enter>" "Spam a message"
-macro index  S "|bmf -S<enter><toggle-new><previous-entry><save-message>=Spam<enter><enter>" "SPAM"
-macro index  H "|bmf -N<enter>" "NOT SPAM"
-macro pager S "|bmf -S<enter><toggle-new><previous-entry><save-message>=Spam<enter><enter>" "SPAM"
-macro pager H "|bmf -N<enter>" "NOT SPAM"
+macro index S "|bmf -pS| fdm -ma stdin fetch<enter><delete-message>" "SPAM"
+macro index H "|bmf -pN| fdm -ma stdin fetch<enter><delete-message>" "NOT SPAM"
+macro pager S "|bmf -pS| fdm -ma stdin fetch<enter><delete-message>" "SPAM"
+macro pager H "|bmf -pN| fdm -ma stdin fetch<enter><delete-message>" "NOT SPAM"
 
 ## SMTP SETTINGS ##
 
@@ -134,17 +124,6 @@ set beep_new
 set wrap_search
 set index_format="%4C %Z %-20[%d.%m.%y at %H:%M] %-22.22F %s"
 set resolve=yes
-
-## GNUPG ##
-#set pgp_default_version=gpg
-#set pgp_key_version=default
-#set pgp_receive_version=default
-#set pgp_send_version=default
-#set pgp_sign_micalg=pgp-sha1
-#set pgp_gpg=/usr/bin/gpg
-#set pgp_gpg_pubring=~/.gnupg/pubring.gpg
-#set pgp_gpg_secring=~/.gnupg/secring.gpg
-
 
 ## EDIT SETTINGS ##
 set abort_unmodified=yes		# don't send if message unmodified
@@ -197,11 +176,6 @@ folder-hook . "set narrow_tree"
 folder-hook . "set sort=threads"
 folder-hook . "set sort_re"
 
-# Don't need to move files if we're already in the Spam dir.
-folder-hook =Spam 'macro index  S "|bmf -S<enter>" "SPAM"'
-folder-hook =Spam 'macro pager S "|bmf -S<enter>" "SPAM"'
-
-
 folder-hook =Family set strict_threads
 folder-hook =Family set hide_top_missing
 folder-hook =Family set hide_missing
@@ -213,10 +187,4 @@ folder-hook =HEP/RQ set sort=threads
 folder-hook =HEP/RQ unset strict_threads
 folder-hook =HEP/RQ unset sort_re
 
-#folder-hook =CAE push "T~N~f'via RT'<enter>;F"
-#folder-hook =CAE push "~T<enter>"
-
 folder-hook =\(HEP-nagios|Mythtv-users|Debian-.*|Ubuntu-.*|OpenBSD-.*|FreeBSD-.*|Vim.*|Madlug-.*|Maildrop-.*|Mutt-.*|Screen-.*|Techpartners-.*\) push 'D~m>300!~F~R<enter>'
-
-#folder-hook =RT-users push 'T~m>300~R<enter>;<save-message>=RT-users-ARK<enter>'
-#folder-hook =FreeBSD-questions$ "push '<tag-pattern>~m>300<enter><tag-prefix><save-message>=FreeBSD-questions-ARK<enter>'"
