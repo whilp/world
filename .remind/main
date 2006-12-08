@@ -11,10 +11,6 @@ REM 02 Jun 2006 *14 AT 19:00    MSG x%3 %"MadLUG social meeting (Memorial Union)
 REM 01 Wed AT 19:00             MSG x%3 %"MadMongers meeting (MPL).%"
 REM 15 Nov +3                   MSG %"***** 'Programming Jabber' is due at UW Library.%"
 ### Other.
-REM 20 Nov 2006 AT 19:00        MSG x%3 %"Dinner with Laura, Nici and Katie.%"
-REM 01 Dec 2006 AT 19:00        MSG x%3 %"Yoga Tea Party with Laura, Fitchburg (and Dane after?).%"
-REM 07 Dec 2006 AT 12:00        MSG x%3 %"'Responding to Research Misconduct' talk, B1118 Biochem
-REM 08 Dec 2006 AT 16:00        MSG x%3 %"DeLuca Holiday Party, Biochem Atrium.%"
 
 ###################################################################
 ### Home.
@@ -28,11 +24,9 @@ REM 01 +3                       MSG %"***** Rent's due %b ($335, David Williams)
 REM 08 Aug 2006 *7 AT 13:00     MSG x%3 %"HEP/CMS meeting.%"
 REM 02 Tue AT 12:00             MSG x%3 %"GLOW meeting.%"
 REM 01 +3 AT 12:00              MSG x%3 %"Activity report due to dasu@.%"
+REM 13 Dec 2006 *14 AT 14:00    MSG x%3 %"T2 Meeting (http://agenda.cern.ch/displayLevel.php?fid=354)%"
 ### Floating.
-REM 07 Dec 2006 AT 13:00        MSG x%3 %"CMSSW PROOF Meeting via VRVS with Ajit, Dan and Christos (http://indico.cern.ch/conferenceDisplay.py?confId=8814#18).%"
 REM 06 Mar 2007 +14             MSG %"***** USCMS T2/T3 Meeting; UCSD%"
-### Library.
-REM 28 Nov 2006 +2              MSG %"***** CD 'The Charlie Parker Story' due at Mills library%"
 
 ###################################################################
 ### Birthdays/anniversaries.
@@ -52,18 +46,3 @@ REM 29 Sep MSG %"***** [_yr_num(2006)] years since our engagement.%"
 
 REM 03 Jan MSG %"***** #madlug's [_yr_num(2006)] birthday!%"
 REM 05 Jan MSG %"***** #OpenBSD's [_yr_num(1999)] birthday!%"
-
-###################################################################
-### Old stuff.
-###################################################################
-#REM 11 Aug 2006                 MSG %"***** Wu-Tang in MN with Mike and Trev.%"
-#REM 07 Aug 2006 *7 AT 14:30     MSG x%3 %"CAE Unix staff meeting.%"
-#REM 17 Jul 2006 AT 12:00 *15 +3 MSG x%3 %"Time sheet due.%"
-#REM 10 August 2006 AT 11:30     MSG x%3 %"HEP/CMS meeting (rescheduled).%"
-#REM 28 Aug 2006                 MSG %"***** Get toothstuff and cell charger from Laura.%"
-#REM 14 Sep 2006 AT 14:00        MSG %"Frank Petriello desktop upgrade.%"
-#REM 15 Sep 2006                 MSG %"***** A Tribe Called Quest in Chicago with Trev.%"
-#REM 16 Sep 2006                 MSG %"***** Laura @ WPT quilt show.%"
-#REM 09 Oct 2006                 MSG %"***** Apple service tech to swap drives.%"
-#REM 08 Nov 2006 AT 19:00        MSG x%3 %"MadLUG: Applied Wireless presentation (HEP).%"
-#REM 17 Nov 2006 AT 16:00        MSG x%3 %"Biochem Art Show, Biochem Atrium.%"
