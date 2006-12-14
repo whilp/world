@@ -11,6 +11,7 @@ REM 02 Jun 2006 *14 AT 19:00    MSG x%3 %"MadLUG social meeting (Memorial Union)
 REM 01 Wed AT 19:00             MSG x%3 %"MadMongers meeting (MPL).%"
 REM 15 Nov +3                   MSG %"***** 'Programming Jabber' is due at UW Library.%"
 ### Other.
+REM 01 Feb 2007 +28             MSG %"***** wilug.org up for renewal.%"
 
 ###################################################################
 ### Home.
@@ -24,7 +25,7 @@ REM 01 +3                       MSG %"***** Rent's due %b ($335, David Williams)
 REM 08 Aug 2006 *7 AT 13:00     MSG x%3 %"HEP/CMS meeting.%"
 REM 02 Tue AT 12:00             MSG x%3 %"GLOW meeting.%"
 REM 01 +3 AT 12:00              MSG x%3 %"Activity report due to dasu@.%"
-REM 13 Dec 2006 *14 AT 14:00    MSG x%3 %"T2 Meeting (http://agenda.cern.ch/displayLevel.php?fid=354)%"
+REM 12 Dec 2006 *14 AT 14:00    MSG x%3 %"T2 Meeting (http://agenda.cern.ch/displayLevel.php?fid=354)%"
 ### Floating.
 REM 06 Mar 2007 +14             MSG %"***** USCMS T2/T3 Meeting; UCSD%"
 
