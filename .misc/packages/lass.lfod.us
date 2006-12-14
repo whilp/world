@@ -3,6 +3,7 @@ antiword-0.37       converts MSWord Documents to ASCII Text and PostScript
 apg-2.2.3p0         automated password generator
 apr-1.2.7           Apache Portable Runtime
 apr-util-1.2.7      companion library to APR
+asciidoc-8.1.0      text document format and converter
 autoconf-2.52p1     automatically configure source code on many Un*x platforms
 autoconf-2.57p0     automatically configure source code on many Un*x platforms
 autoconf-2.59p1     automatically configure source code on many Un*x platforms
