@@ -72,7 +72,7 @@ msmtp-1.4.6         SMTP plugin for MUAs
 mtr-0.71-no_x11     Matt's traceroute - network diagnostic tool
 mutt-1.5.12-hcache  tty-based e-mail client, development version
 nethack-3.4.3p1-no_x11 dungeon explorin', hackin', game.  Piece of cake
-nmap-4.11-no_x11    scan ports and fingerprint stack of network hosts
+nmap-4.20-no_x11    scan ports and fingerprint stack of network hosts
 openldap-client-2.3.27 Open source LDAP software (client)
 p5-Algorithm-Annotate-0.10p0 represent a series of changes in annotate form
 p5-Algorithm-Diff-1.1902 interface to compute differences between two objects
