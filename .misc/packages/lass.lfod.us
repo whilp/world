@@ -35,7 +35,7 @@ hackdata-3.4.3      common data for the nethack/slash ports
 help2man-1.29       GNU help2man
 hping-2.0.0rc3p0    TCP/UDP ping/traceroute tool
 iodbc-3.52.4        ODBC 3.x driver manager
-ipython-0.7.2       enhanced interactive Python shell
+ipython-0.7.3       enhanced interactive Python shell
 irssi-0.8.10p0      modular IRC client with many features (ipv6,socks,proxy)
 jpeg-6bp3           IJG's JPEG compression utilities
 lame-3.96.1p1       lame ain't an MP3 encoder
