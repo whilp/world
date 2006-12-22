@@ -10,7 +10,7 @@ fifo = "~/.dwm/fifo"
 f = open(os.path.expanduser(fifo), 'w')
 
 name = gethostname().split('.')[0]
-uptime = 'up'
+uptime = None
 
 # System-specific methods of figuring out when we booted.
 if 'openbsd' in sys.platform:
@@ -56,9 +56,17 @@ def calcUptime(boottime):
 
     return uptime
 
+i = 0
 while True:
+    if i >= 3600:
+        i = 0
+    i += 1
+
+    # Always recalculate the date.
     date = strftime('%a %d %b %H:%M:%S UTC%z %Y')
-    uptime = boot and calcUptime(boot) or ''
+    # Only recalculate the uptime once every minute.
+    if not uptime or not i % 60:
+        uptime = boot and calcUptime(boot) or ''
 
     f.write('[UP: %(uptime)s][%(name)s][%(date)s]' % locals())
     f.flush()
