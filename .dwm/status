@@ -1,0 +1,43 @@
+#!/usr/local/bin/python
+# vim: set nospell:
+
+#!/bin/sh
+#
+#exec > ~/.dwm/fifo
+#
+#while :; do
+#    date
+#    sleep 2
+#done
+
+import sys, os
+
+from time import strftime, sleep
+from socket import gethostname
+
+fifo = "~/.dwm/fifo"
+f = open(os.path.expanduser(fifo), 'w')
+
+name = gethostname().split('.')[0]
+uptime = 'up'
+
+# Calculate uptime.
+def uptime():
+    # System-specific methods of figuring out when we booted.
+    if sys.platfrom.startswith('openbsd'):
+        sysctl = os.popen('sysctl -n kern.boottime', 'r', 1)
+        boot = sysctl.read()
+        sysctl.close()
+    else:
+        return False
+
+    now = time()
+    up = now - boot
+
+while True:
+    date = strftime('%a %d %b %H:%M:%S UTC%z %Y')
+
+    f.write('[%(uptime)s][%(name)s][%(date)s]' % locals())
+    f.flush()
+    sleep(1)
+f.close()
