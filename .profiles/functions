@@ -112,3 +112,7 @@ hsh () {
     CLUSTER="$HOME/.dsh/config-hep" \
     RCMD_USER="wcmaier" dsh $*
 }
+sr () {
+    [ "${XAUTHORITY}" ] && xtitle $(echo $1 | tr "[:lower:]" "[:upper:]")
+    screen -RD $1
+}
