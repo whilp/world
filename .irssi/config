@@ -189,7 +189,7 @@ channels = (
   { name = "#openbsd"; chatnet = "efnet"; autojoin = "yes"; },
   { name = "#zsh"; chatnet = "freenode"; autojoin = "no"; },
   { name = "#vim"; chatnet = "freenode"; autojoin = "no"; },
-  { name = "#madlug"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#madlug"; chatnet = "freenode"; autojoin = "no"; },
   { name = "#screen"; chatnet = "freenode"; autojoin = "no"; },
   { name = "#bitlbee"; chatnet = "bitlbee"; autojoin = "no"; },
   { name = "#irssi"; chatnet = "freenode"; autojoin = "No"; },
@@ -198,7 +198,7 @@ channels = (
   { name = "#lighttpd"; chatnet = "freenode"; },
   { name = "#gnu-kbsd"; chatnet = "freenode"; },
   { name = "#wilug"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#newlug"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#newlug"; chatnet = "freenode"; autojoin = "no"; },
   { name = "#mercurial"; chatnet = "freenode"; autojoin = "yes"; }
 );
 
@@ -500,36 +500,7 @@ completions = {
   };
 };
 windows = {
-  1 = { 
-    immortal = "yes";
-    name = "(status)";
-    level = "ALL";
-    sticky = "yes";
-  };
-  8 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#mercurial";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-  };
-  7 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#openbsd";
-        tag = "EFNet";
-      }
-    );
-    sticky = "yes";
-    parent = "8";
-  };
-  6 = {
+  4 = {
     items = (
       {
         type = "CHANNEL";
@@ -539,9 +510,8 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "8";
   };
-  5 = {
+  3 = {
     items = (
       {
         type = "CHANNEL";
@@ -551,31 +521,7 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "8";
-  };
-  4 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#newlug";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "8";
-  };
-  3 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#madlug";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "8";
+    parent = "4";
   };
   2 = {
     items = (
@@ -587,10 +533,40 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "8";
+    parent = "4";
+  };
+  1 = { 
+    immortal = "yes";
+    name = "(status)";
+    level = "ALL";
+    sticky = "yes";
+  };
+  6 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#mercurial";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+    parent = "4";
+  };
+  5 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#openbsd";
+        tag = "EFNet";
+      }
+    );
+    sticky = "yes";
+    parent = "4";
   };
 };
 mainwindows = {
-  1 = { first_line = "37"; lines = "8"; };
-  8 = { first_line = "1"; lines = "36"; };
+  1 = { first_line = "45"; lines = "6"; };
+  4 = { first_line = "1"; lines = "44"; };
 };
