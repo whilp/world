@@ -77,7 +77,6 @@ static Rule rule[] = { \
 	{ "^XTerm:.*LOCAL.:.*META.$",	"META",		False }, \
 	{ "^XTerm:.*LOCAL.:.*MAIN.$",	"MAIN",		False }, \
 	{ "^XTerm:.*LOCAL.:.*SHELLS.$",	"SH",		False }, \
-	{ "^XTerm:.*LOCAL.:.*LOCAL.$",	"SH",		False }, \
 	{ "Firefox.*",			"WWW",		False }, \
 };
 /*
