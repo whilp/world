@@ -6,10 +6,10 @@
 const char *tags[] = { "META", "MAIN", "SH", "WWW", "INFO", NULL };
 
 #define DEFMODE			dotile /* dofloat */
-#define FLOATSYMBOL		"><>"
-#define TILESYMBOL		"[]="
+#define FLOATSYMBOL		"F"
+#define TILESYMBOL		"T"
 
-#define FONT			"-sgi-screen-medium-*-*-*-16-*-*-*-*-*-*-*"
+#define FONT			"-sgi-screen-bold-*-*-*-16-*-*-*-*-*-*-*"
 #define NORMBGCOLOR		"#333366"
 #define NORMFGCOLOR		"#cccccc"
 #define SELBGCOLOR		"#666699"
@@ -55,8 +55,7 @@ static Key key[] = { \
 	{ MODKEY|ControlMask|ShiftMask,	XK_4,		toggletag,	{ .i = 3 } }, \
 	{ MODKEY|ControlMask|ShiftMask,	XK_5,		toggletag,	{ .i = 4 } }, \
 	{ MODKEY,		        XK_c,		killclient,	{ 0 } }, \
-	{ MODKEY,			XK_space,	togglemode,	{ 0 } }, \
-	{ MODKEY|ShiftMask,		XK_space,	togglefloat,	{ 0 } }, \
+	{ MODKEY,			XK_space,	togglefloat,	{ 0 } }, \
 	{ MODKEY,			XK_0,		view,		{ .i = -1 } }, \
 	{ MODKEY,			XK_1,		view,		{ .i = 0 } }, \
 	{ MODKEY,			XK_2,		view,		{ .i = 1 } }, \
