@@ -1,53 +1,74 @@
 #!/bin/sh
 
+# Functions.
+checkmpd () {
+    MPD_RESP=$(echo 'currentsong' | nc ${MPD_HOST} ${MPD_PORT})
+    STRING=$(echo ${MPD_RESP} | sed -e 's/^.* Artist: \(.*\) Album: \(.*\) Title: \(.*\) Pos:.*$/\1 (\2) - \3/')
+    echo ${STRING}
+}
+checkdate () {
+    echo $(date "+%a %d %b %H:%M %Z %Y")
+}
+
+# Options.
 FIFO="${HOME}/.dwm/fifo"
-MPD_HOST="localhost"
+MPD_HOST=localhost
 MPD_PORT=6600
 NAME=$(hostname -s)
 
-#exec > ${FIFO}
+# Redirect stdout.
+exec > ~/.dwm/fifo
 
+# Seed MPD.
+MPD=$(checkmpd)
+MPD_LEN=$(echo ${MPD} | wc -c)
+
+# Seed date.
+DATE=$(checkdate)
+
+# For NP section.
+MAX_LEN=35
+L=0
+R=${MAX_LEN}
+
+# Main loop.
 i=0
-MAX_LEN=50
-LB=1
-RB=${MAX_LEN}
-SCROLL_SPEED=2
 while :; do
-    DATE=$(date "+%a %d %b %H:%M:%S UTC%z %Y")
+    # Increments.
+    L=$((L + 1))
+    R=$((R + 1))
+    i=$((i + 1))
 
-    OMPD="${MPD}"
-    # Only check MPD every 45 seconds.
-    if [ "${i}" -gt 45 -o ! "${OMPD}" ]; then
-        MPD_RESP=$(echo 'currentsong' | nc ${MPD_HOST} ${MPD_PORT})
-        MPD_RESP=$(echo ${MPD_RESP} | sed -e 's/. Title: \(.*\) Artist: \(.*\) Album: \(.*\) Pos:.*/\2 (\3) - \1/')
-        print 'Checking MPD'
+    MPD_OUT=$(echo ${MPD} | cut -c ${L}-${R})
+
+    # Save old MPD string.
+    if [ "$((R + 1))" -eq "${MPD_LEN}" ]; then
+        OMPD=${MPD}
+    fi
+
+    # Check date.
+    if [ $i -ge 60 ]; then
+        DATE=$(checkdate)
+        i=0
+    fi
+
+    # Reset MPD.
+    if [ "$((R + 1))" -eq "${MPD_LEN}" ]; then
+        L=0
+        R="${MAX_LEN}"
+        MPD=$(checkmpd)
+        MPD_LEN=$(echo ${MPD} | wc -c)
+    fi
+
+    # Pause for a bit if we're at the end or beginning of the NP
+    # string.
+    if [ "${L}" -le 1 ]; then
+        SLEEP=2
     else
-        MPD_RESP="${OMPD}"
+        SLEEP=.5
     fi
 
-    LEN=$(echo ${MPD_RESP} | wc -c)
-    if [ "${MPD_RESP}" = "${OMPD}" -a "${LEN}" -gt "${MAX_LEN}" ]; then
-        # We need to truncate and scroll.
-        if [ "${LB}" -gt "${MAX_LEN}" ]; then
-            LB=1
-            RB=${MAX_LEN}
-        else
-            LB=$((LB + SCROLL_SPEED))
-            RB=$((RB + SCROLL_SPEED))
-        fi
-        MPD_OUT="$(echo ${MPD_RESP} | cut -c ${LB}-${RB})..."
-        NEW_LEN=$(echo ${MPD_OUT} | wc -c)
-        if [ "${NEW_LEN}" -lt "${MAX_LEN}" ]; then
-            # Append whitespace to fill out the block.
-            j=0
-            while [ "$j" -lt "$((MAX_LEN - NEW_LEN))" ]; do
-                MPD="${MPD_OUT} "
-            done
-        fi
-    fi
+    echo "[$MPD_OUT][${DATE}]"
 
-    echo "[NP: ${MPD}][${NAME}][${DATE}]"
-
-    i=$((i+1))
-    sleep 1
+    sleep ${SLEEP}
 done
