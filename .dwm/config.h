@@ -26,7 +26,7 @@ static Key key[] = { \
 	/* modifier			key		function	argument */ \
 	{ NULL,		                XK_F2,	        spawn,		{ .cmd = "exec term" } }, \
 	{ MODKEY,		        XK_F2,	        spawn,		{ .cmd = "exec term -T META -e ssh -t will@meta.lfod.us screen -RD meta" } }, \
-	{ NULL,		                XK_F3,	        spawn,		{ .cmd = "exec `dmenu < ~/.dwm/menu`" } }, \
+	{ NULL,		                XK_F3,	        spawn,		{ .cmd = "exec `dmenu -b < ~/.dwm/menu`" } }, \
 	{ NULL,		                XK_F4,	        spawn,		{ .cmd = "exec browser" } }, \
 	{ MODKEY,	                XK_F4,	        spawn,		{ .cmd = "exec firefox" } }, \
 	{ NULL,		                XK_F5,	        spawn,		{ .cmd = "exec tunes" } }, \
