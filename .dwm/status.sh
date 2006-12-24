@@ -1,93 +1,95 @@
 #!/bin/sh
 
 # Functions.
-checkmpd () {
-    MPD_RESP=$(echo 'currentsong' | nc ${MPD_HOST} ${MPD_PORT})
-    STRING=$(echo ${MPD_RESP} | sed -e 's/^.* Artist: \(.*\) Album: \(.*\) Title: \(.*\) Pos:.*$/\1 (\2) - \3/')
-    echo ${STRING}
-}
 checkdate () {
     echo $(date "+%a %d %b %H:%M %Z %Y")
 }
+checkmpd () {
+    I=$(echo 'currentsong' | nc ${MPD_HOST} ${MPD_PORT})
+    O=$(echo ${I} | sed -e 's/^.* Artist: \(.*\) Album: \(.*\) Title: \(.*\) Pos:.*$/\1 (\2) - \3/')     
 
-# Options.
+    if [ "$(echo ${O} | grep '^OK.*OK$')" ]; then
+        O=
+    fi
+
+    echo ${O}
+}
+len () {
+    echo $1 | wc -c
+}
+
+# Settings.
 FIFO="${HOME}/.dwm/fifo"
+DATE_INTERVAL=100
+MPD_INTERVAL=100
+SLEEP=.5
 MPD_HOST=localhost
 MPD_PORT=6600
-NAME=$(hostname -s)
-NOMPD=
-SLEEP=
+CHECK_MPD=1
 
-# Redirect stdout.
-exec > ~/.dwm/fifo
+# Date counter.
+D=0
 
-# Seed MPD.
-MPD=$(checkmpd)
-MPD_LEN=$(echo ${MPD} | wc -c)
-
-# Seed date.
-DATE=$(checkdate)
-
-# For NP section.
-MAX_LEN=35
+# MPD counters.
+MPD_MAX=30
 L=0
-R=${MAX_LEN}
+R=${MPD_MAX}
+M=0
 
-# Main loop.
-i=0
+# Redirect stdout to the fifo dwm's listening to.
+exec > ${FIFO}
+
 while :; do
-    # Increments.
-    L=$((L + 1))
-    R=$((R + 1))
-    i=$((i + 1))
+    # Date stuff.
+    if [ -z "${DATE_OUT}" -o "$D" -ge "${DATE_INTERVAL}" ]; then
+        # check date
+        DATE_OUT="$(checkdate)"
+        D=0
+    else
+        D="$((D + 1))"
+    fi
+    OUT="[${DATE_OUT}]"
 
-
-    SLEEP=
-    if [ "${NOMPD}" ]; then
-        MPD=$(checkmpd)
-        MPD_LEN=$(echo ${MPD} | wc -c)
-        if [ "${MPD}" ]; then 
-            NOMPD=
-        else
-            SLEEP=30
+    # MPD stuff.
+    if [ -z "${MPD_IN}" -o "${L}" -eq "0" ]; then
+        if [ "${MPD_BAD}" -eq 0 -o "${MPD_BAD}" -ge 30 ]; then
+            MPD_BAD=0
+            MPD_IN=$(checkmpd)
         fi
     fi
-
-    MPD_OUT=$(echo ${MPD} | cut -c ${L}-${R})
-
-    # Save old MPD string.
-    if [ "$((R + 1))" -eq "${MPD_LEN}" ]; then
-        OMPD=${MPD}
+    if [ -z "${MPD_IN}" ]; then
+        # We've gotten two bad checks from MPD in a row.
+        MPD_BAD=$((MPD_BAD + 1))
     fi
-
-    # Check date.
-    if [ "$i" -ge 60 ]; then
-        DATE=$(checkdate)
-        i=0
+    # Handle scrolling if necessary.
+    if [ -n "${MPD_IN}" ]; then
+        MPD_LEN="$(len "${MPD_IN}")"
+        if [ -z "${MPD_PAUSE}" -a "${MPD_LEN}" -ge "${MPD_MAX}" ]; then
+            # Scroll.
+            L=$((L + 1))
+            R=$((R + 1))
+            MPD_OUT="$(echo ${MPD_IN} | cut -c "${L}-${R}")"
+            if [ "${L}" -le "1" ]; then
+                # We're at the beginning of the string.
+                MPD_PAUSE="${MPD_OUT}"
+            elif [ "$((R + 1))" -ge "${MPD_LEN}" ]; then
+                # We're at the end of the string.
+                L=0
+                R=${MPD_MAX}
+                MPD_PAUSE="${MPD_OUT}"
+                MPD_IN=
+            fi
+        else
+            MPD_OUT="${MPD_PAUSE}"
+            MPD_PAUSE=
+        fi
     fi
+    # Add to OUT only if we have anything to say.
+    [ "${MPD_OUT}" ] && OUT="[${MPD_OUT}]${OUT}"
 
-    # Reset MPD.
-    if [ "$((R + 1))" -eq "${MPD_LEN}" ]; then
-        L=0
-        R="${MAX_LEN}"
-        MPD=$(checkmpd)
-        MPD_LEN=$(echo ${MPD} | wc -c)
-    fi
+    # Print the final status message.
+    echo "${OUT}"
 
-    # Pause for a bit if we're at the end or beginning of the NP
-    # string.
-    if [ ! "${SLEEP}" -a "${L}" -le 1 ]; then
-        SLEEP=2
-    else
-        SLEEP=.5
-    fi
-
-    if [ "${MPD_OUT}" ]; then
-        echo "[$MPD_OUT][${DATE}]"
-    else
-        NOMPD=1
-        echo "[${DATE}]"
-    fi
-
+    # Sleep. 
     sleep ${SLEEP}
 done
