@@ -15,6 +15,8 @@ FIFO="${HOME}/.dwm/fifo"
 MPD_HOST=localhost
 MPD_PORT=6600
 NAME=$(hostname -s)
+NOMPD=
+SLEEP=
 
 # Redirect stdout.
 exec > ~/.dwm/fifo
@@ -39,6 +41,18 @@ while :; do
     R=$((R + 1))
     i=$((i + 1))
 
+
+    SLEEP=
+    if [ "${NOMPD}" ]; then
+        MPD=$(checkmpd)
+        MPD_LEN=$(echo ${MPD} | wc -c)
+        if [ "${MPD}" ]; then 
+            NOMPD=
+        else
+            SLEEP=30
+        fi
+    fi
+
     MPD_OUT=$(echo ${MPD} | cut -c ${L}-${R})
 
     # Save old MPD string.
@@ -47,7 +61,7 @@ while :; do
     fi
 
     # Check date.
-    if [ $i -ge 60 ]; then
+    if [ "$i" -ge 60 ]; then
         DATE=$(checkdate)
         i=0
     fi
@@ -62,13 +76,18 @@ while :; do
 
     # Pause for a bit if we're at the end or beginning of the NP
     # string.
-    if [ "${L}" -le 1 ]; then
+    if [ ! "${SLEEP}" -a "${L}" -le 1 ]; then
         SLEEP=2
     else
         SLEEP=.5
     fi
 
-    echo "[$MPD_OUT][${DATE}]"
+    if [ "${MPD_OUT}" ]; then
+        echo "[$MPD_OUT][${DATE}]"
+    else
+        NOMPD=1
+        echo "[${DATE}]"
+    fi
 
     sleep ${SLEEP}
 done
