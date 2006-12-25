@@ -2,7 +2,7 @@
 
 ENVIRONMENT=${HOME}/.environment
 LOCK_VOL=''
-if [ $1 -eq "pause" ]; then
+if [ "$1" -eq "pause" ]; then
     PAUSE=1
 else
     PAUSE=
