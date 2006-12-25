@@ -80,7 +80,7 @@ while :; do
                 MPD_IN=
             fi
         else
-            MPD_OUT="${MPD_PAUSE}"
+            MPD_OUT="${MPD_PAUSE:-${MPD_IN}}"
             MPD_PAUSE=
         fi
     fi
