@@ -5,8 +5,8 @@ checkdate () {
     echo $(date "+%a %d %b %H:%M %Z %Y")
 }
 checkmpd () {
-    I=$(echo 'currentsong' | nc -w 1 ${MPD_HOST} ${MPD_PORT})
-    O=$(echo ${I} | sed -e 's/^.* Artist: \(.*\) Album: \(.*\) Title: \(.*\) Pos:.*$/\1 (\2) - \3/')     
+    I=$(echo 'currentsong' | nc -w 1 ${MPD_HOST} ${MPD_PORT} | grep -E '^(Album|Artist|Title):' | sort)
+    O=$(echo ${I} | sed -e 's/^Album: \(.*\) Artist: \(.*\) Title: \(.*\)$/\2 (\1) - \3/')     
 
     if [ "$(echo ${O} | grep '^OK.*OK$')" ]; then
         O=
