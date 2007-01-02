@@ -38,7 +38,7 @@ http://blag.xkcd.com/feed/|||
 http://blogs.securiteam.com/index.php/feed/|||
 http://www.securityfocus.com/rss/news.xml||OS,Security|
 http://www.securityfocus.com/rss/vulnerabilities.xml|||
-http://backend.secwatch.org/be-advisories.rss|||
+http://rss.secwatch.org/?feedtype=rss&mode=advisories|||
 http://rss.slashdot.org/Slashdot/slashdot|||
 http://syndication.sdmediagroup.com/feeds/public/sys_admin_magazine.xml||OS|
 http://feeds.feedburner.com/Taosecurity||BSD,Security|
