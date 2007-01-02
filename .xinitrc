@@ -12,7 +12,7 @@ xmodmap -e "add Control = Control_L"
 [ -r "${HOME}/.xinitrc.local" ] && . ${HOME}/.xinitrc.local
 
 xset b off
-[ -x $(which unclutter 2>/dev/null) ] && unclutter -idle 5 -jitter 40&
+[ -x "$(which unclutter 2>/dev/null)" ] && unclutter -idle 5 -jitter 40&
 
 #exec ion3
 #exec matchbox-session
