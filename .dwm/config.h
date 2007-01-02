@@ -6,8 +6,9 @@
 const char *tags[] = { "META", "MAIN", "SH", "WWW", "INFO", NULL };
 
 #define DEFMODE			dotile /* dofloat */
+#define DFLTSTACKPOS		StackRight /* StackLeft StackBotPortrait StackBotLandscape */
 #define FLOATSYMBOL		"F"
-#define TILESYMBOL		"T"
+#define _TILESYMBOL_ const char *TILESYMBOL[] = { "SR", "SL", "BP", "BL", NULL };
 
 #define FONT			"-sgi-screen-bold-*-*-*-16-*-*-*-*-*-*-*"
 #define NORMBGCOLOR		"#333366"
@@ -56,6 +57,8 @@ static Key key[] = { \
 	{ MODKEY|ControlMask|ShiftMask,	XK_4,		toggletag,	{ .i = 3 } }, \
 	{ MODKEY|ControlMask|ShiftMask,	XK_5,		toggletag,	{ .i = 4 } }, \
 	{ MODKEY,		        XK_c,		killclient,	{ 0 } }, \
+	{ MODKEY,			XK_l,		togglestackpos,	{ 0 } }, \
+	{ MODKEY|ShiftMask,		XK_l,		togglestacklayout,	{ 0 } }, \
 	{ MODKEY,			XK_space,	togglefloat,	{ 0 } }, \
 	{ MODKEY,			XK_0,		view,		{ .i = -1 } }, \
 	{ MODKEY,			XK_1,		view,		{ .i = 0 } }, \
