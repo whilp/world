@@ -9,9 +9,7 @@ INCLUDE /home/will/.remind/holidays
 ### NIX.
 REM 02 Jun 2006 *14 AT 19:00    MSG x%3 %"MadLUG social meeting (Memorial Union).%"
 REM 01 Wed AT 19:00             MSG x%3 %"MadMongers meeting (MPL).%"
-REM 15 Nov +3                   MSG %"***** 'Programming Jabber' is due at UW Library.%"
-### Other.
-REM 01 Feb 2007 +28             MSG %"***** wilug.org up for renewal.%"
+REM 10 Jan 2007 AT 18:30        MSG x%3 %"LOPSA: Subversion for source code control @ Epic Systems on Tokay Rd.%"
 
 ###################################################################
 ### Home.
