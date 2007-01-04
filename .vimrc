@@ -119,7 +119,7 @@
     " different from regular vi. They are highly recommended though.
     set showcmd		" Show (partial) command in status line.
     set showmatch		" Show matching brackets.
-    set ignorecase		" Do case insensitive matching
+    set smartcase		" Do case insensitive matching unless uppercase is used in the search string.
     set incsearch		" Incremental search
     set autowrite		" Automatically save before commands like :next and :make
 
