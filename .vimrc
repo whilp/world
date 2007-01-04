@@ -20,7 +20,7 @@
     set history=50		    	" keep 50 lines of command line history
     set ruler				" show the cursor position all the time
     set number				" show line numbers
-    set tabstop=8
+    set tabstop=4
     set softtabstop=4
     set expandtab
     set shiftwidth=4
