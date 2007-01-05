@@ -523,12 +523,6 @@ windows = {
     sticky = "yes";
     parent = "3";
   };
-  1 = { 
-    immortal = "yes";
-    name = "(status)";
-    level = "ALL";
-    sticky = "yes";
-  };
   4 = {
     items = (
       {
@@ -553,6 +547,12 @@ windows = {
     sticky = "yes";
     parent = "3";
   };
+  1 = { 
+    immortal = "yes";
+    name = "(status)";
+    level = "ALL";
+    sticky = "yes";
+  };
   6 = {
     items = (
       {
@@ -567,6 +567,6 @@ windows = {
   };
 };
 mainwindows = {
-  1 = { first_line = "33"; lines = "5"; };
-  3 = { first_line = "1"; lines = "32"; };
+  1 = { first_line = "45"; lines = "17"; };
+  3 = { first_line = "1"; lines = "44"; };
 };

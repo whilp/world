@@ -113,6 +113,7 @@ pwsafe-0.2.0        program that manages encrypted password databases
 py-crypto-2.0.1p2   cryptographic tools for Python
 py-genshi-0.3.4     Python toolkit for stream-based generation of output for the web
 py-libxml-2.6.26    Python bindings for libxml
+py-mako-0.1.0       Python non-XML template library
 py-nose-0.9.1       discovery-based unittests for Python
 py-pexpect-2.1      pure Python Expect-like module
 py-setuptools-0.6c3 simplified packaging system for Python modules
