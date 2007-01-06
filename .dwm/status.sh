@@ -65,7 +65,7 @@ while :; do
     # Handle scrolling if necessary.
     if [ -n "${MPD_IN}" ]; then
         MPD_LEN="$(len "${MPD_IN}")"
-        if [ -z "${MPD_PAUSE}" -a "$((MPD_LEN - 1))" -ge "${MPD_MAX}" ]; then
+        if [ -z "${MPD_PAUSE}" -a "$(($MPD_LEN - 1))" -ge "${MPD_MAX}" ]; then
             # Scroll.
             L=$(($L + 1))
             R=$(($R + 1))
