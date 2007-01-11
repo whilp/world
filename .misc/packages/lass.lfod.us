@@ -76,7 +76,6 @@ mtr-0.72-no_x11     Matt's traceroute - network diagnostic tool
 mutt-1.5.12-hcache  tty-based e-mail client, development version
 nethack-3.4.3p1-no_x11 dungeon explorin', hackin', game.  Piece of cake
 nmap-4.20-no_x11    scan ports and fingerprint stack of network hosts
-nostromo-1.8.2      Nostromo webserver
 nsd-3.0.3           authoritative-only name server daemon
 openldap-client-2.3.27p1 Open source LDAP software (client)
 p5-Algorithm-Annotate-0.10p0 represent a series of changes in annotate form
