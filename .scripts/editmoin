@@ -290,7 +290,7 @@ def editfile(moinfile):
     filename = moinfile.write_raw()
     editor = os.environ.get("EDITOR", "vi")
     digest = md5.md5(open(filename).read()).digest()
-    os.system("%s %s" % (editor, filename))
+    os.system("%s +'set ft=moin' %s" % (editor, filename))
     if digest != md5.md5(open(filename).read()).digest():
         shutil.copyfile(filename, os.path.expanduser("~/.moin_lastedit"))
         edited = 1
