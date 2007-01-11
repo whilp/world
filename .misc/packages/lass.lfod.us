@@ -23,6 +23,7 @@ elinks-0.11.2       full-featured text WWW browser
 enscript-1.6.3p1    convert ASCII files to PostScript
 expat-2.0.0         XML 1.0 parser written in C
 faad-2.0p5          MPEG2 and MPEG-4 AAC decoder
+fdm-0.8a            fetches, filters and delivers mail
 flac-1.1.2p1        free lossless audio codec
 gdbm-1.8.3p0        GNU dbm
 gettext-0.14.6      GNU gettext
@@ -30,7 +31,7 @@ glib-1.2.10p1       useful routines for C programming
 glib2-2.10.3p0      general-purpose utility library
 gmake-3.80p1        GNU make
 gmp-4.2.1           library for arbitrary precision arithmetic
-gnupg-1.4.5p1       GNU privacy guard - a free PGP replacement
+gnupg-1.4.6         GNU privacy guard - a free PGP replacement
 gtk+-1.2.10p4       General Toolkit for X11 GUI
 hackdata-3.4.3      common data for the nethack/slash ports
 help2man-1.29       GNU help2man
