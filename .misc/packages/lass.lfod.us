@@ -115,8 +115,9 @@ postfix-2.4.20061221-sasl2 fast, secure sendmail replacement
 postgresql-client-8.1.5p1 PostgreSQL RDBMS (client)
 pwsafe-0.2.0        program that manages encrypted password databases
 py-crypto-2.0.1p2   cryptographic tools for Python
+py-docutils-0.4p0   tools for converting plaintext documentation into other formats
 py-flup-0.5.2306    Python WSGI implementation
-py-genshi-0.3.4     Python toolkit for stream-based generation of output for the web
+py-genshi-0.3.6     stream-based generation of web output in Python
 py-libxml-2.6.26p1  Python bindings for libxml
 py-mako-0.1.0       Python non-XML template library
 py-nose-0.9.1       discovery-based unittests for Python
@@ -134,6 +135,7 @@ sdl-1.2.9p2-sun     cross-platform multimedia library
 sdl-net-1.2.5p3     SDL cross-platform networking library
 sdl-sound-1.0.1p3   library that handles the decoding of sound file formats
 slct-0.04           simple logfile clustering tool
+slock-0.4           simple X screen locker
 smpeg-0.4.4p2       mpeg video player library with sound support
 snownews-1.5.7p1    text mode rss newsreader
 speex-1.0.5p0       patent-free speech codec
