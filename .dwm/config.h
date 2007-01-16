@@ -1,21 +1,22 @@
 /* (C)opyright MMVI Anselm R. Garbe <garbeam at gmail dot com>
  * See LICENSE file for license details.
+ * ex: set ts=8:
  */
 
 #define TAGS \
 const char *tags[] = { "META", "MAIN", "SH", "WWW", "INFO", NULL };
 
-#define DEFMODE			dotile /* dofloat */
+#define DEFMODE			dotile		/* dofloat */
 #define FLOATSYMBOL		"F"
 #define TILESYMBOL		"T"
 
 #define FONT			"-sgi-screen-bold-*-*-*-16-*-*-*-*-*-*-*"
-#define NORMBGCOLOR		"#333366"
-#define NORMFGCOLOR		"#cccccc"
-#define SELBGCOLOR		"#666699"
-#define SELFGCOLOR		"#eeeeee"
-#define STATUSBGCOLOR		"#dddddd"
-#define STATUSFGCOLOR		"#222222"
+#define NORMBORDERCOLOR		"#333"
+#define NORMBGCOLOR		"#222"
+#define NORMFGCOLOR		"#ccc"
+#define SELBORDERCOLOR		"#9cf"
+#define SELBGCOLOR		"#555"
+#define SELFGCOLOR		"#fff"
 
 #define MASTER			600		/* per thousand */
 #define MODKEY			Mod1Mask
@@ -82,6 +83,7 @@ static Rule rule[] = { \
 	{ "^XTerm:.*LOCAL.:.*MAIN.$",	"MAIN",		False }, \
 	{ "^XTerm:.*LOCAL.:.*SHELLS.$",	"SH",		False }, \
 	{ "Firefox.*",			"WWW",		False }, \
+	{ "MPlayer.*",			NULL,		True }, \
 };
 /*
 	{ "Gimp.*",			NULL,		True }, \
