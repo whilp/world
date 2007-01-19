@@ -113,6 +113,6 @@ hsh () {
     RCMD_USER="wcmaier" dsh $*
 }
 sr () {
-    [ "${XAUTHORITY}" ] && xtitle $(echo $1 | tr "[:lower:]" "[:upper:]")
+    [ "${XAUTHORITY}" -o "${DISPLAY}" ] && xtitle $(echo $1 | tr "[:lower:]" "[:upper:]")
     screen -RD $1
 }
