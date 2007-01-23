@@ -9,7 +9,7 @@ INCLUDE /home/will/.remind/holidays
 ### NIX.
 REM 02 Jun 2006 *14 AT 19:00    MSG x%3 %"MadLUG social meeting (Memorial Union).%"
 REM 01 Wed AT 19:00             MSG x%3 %"MadMongers meeting (MPL).%"
-REM 10 Jan 2007 AT 18:30        MSG x%3 %"LOPSA: Subversion for source code control @ Epic Systems on Tokay Rd.%"
+REM 09 Feb 2007 AT 11:30        MSG x%3 %"Subversion for source code control @ 3139, 1210 W Dayton.%"
 
 ###################################################################
 ### Home.

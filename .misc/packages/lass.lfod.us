@@ -143,6 +143,7 @@ sqlite-2.8.17p1     Embedded SQL implementation
 t1lib-5.1.0p0       Type 1 rasterizer library for UNIX/X11
 tcl-8.4.7p4         Tool Command Language
 tcpflow-0.21p0      tool for capturing data from TCP connections
+texi2html-1.64      texinfo to HTML converter
 tiff-3.8.2p0        tools and library routines for working with TIFF images
 tk-8.4.7p0          graphical toolkit for Tcl
 unzip-5.52          extract, list & test files in a ZIP archive
