@@ -123,6 +123,8 @@ py-mako-0.1.0       Python non-XML template library
 py-nose-0.9.1       discovery-based unittests for Python
 py-pexpect-2.1      pure Python Expect-like module
 py-setuptools-0.6c3 simplified packaging system for Python modules
+py-sqlalchemy-0.3.3 database toolkit for Python
+py-sqlite2-2.2.2p0  SQLite3 adapter for Python
 python-2.4.4p0      interpreted object-oriented programming language
 python-expat-2.4.4p0 expat module for Python
 rcsparse-20060714   RCS parsing library for Python
@@ -140,6 +142,7 @@ smpeg-0.4.4p2       mpeg video player library with sound support
 snownews-1.5.7p1    text mode rss newsreader
 speex-1.0.5p0       patent-free speech codec
 sqlite-2.8.17p1     Embedded SQL implementation
+sqlite3-3.3.7p0     Embedded SQL implementation
 t1lib-5.1.0p0       Type 1 rasterizer library for UNIX/X11
 tcl-8.4.7p4         Tool Command Language
 tcpflow-0.21p0      tool for capturing data from TCP connections
