@@ -6,7 +6,7 @@
 #define TAGS \
 const char *tags[] = { "META", "MAIN", "SH", "WWW", "INFO", NULL };
 
-#define BORDERPX		1
+#define BORDERPX		2
 #define DEFMODE			dotile		/* dofloat */
 #define FLOATSYMBOL		"F"
 #define TILESYMBOL		"T"
@@ -15,7 +15,7 @@ const char *tags[] = { "META", "MAIN", "SH", "WWW", "INFO", NULL };
 #define NORMBORDERCOLOR		"#333"
 #define NORMBGCOLOR		"#222"
 #define NORMFGCOLOR		"#ccc"
-#define SELBORDERCOLOR		"#69c"
+#define SELBORDERCOLOR		"#999"
 #define SELBGCOLOR		"#555"
 #define SELFGCOLOR		"#fff"
 
