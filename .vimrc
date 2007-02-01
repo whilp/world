@@ -30,6 +30,7 @@
     set wildmenu			" tab completed menus
     set wildmode=full
     set whichwrap=h,l,~,[,]		" Allow characters to wrap lines
+    set showtabline=2
     
 
     " Suffixes that get lower priority when doing tab completion for filenames.
@@ -86,6 +87,10 @@
 
     " Date sub
     iab daTE <C-R>=strftime("%Y.%m.%d")<CR>
+
+    " Tabs.
+    map <S-h> gT
+    map <S-l> gt
 
     " Dr Chip's engspchk
     "helptags $HOME/.vim/doc
