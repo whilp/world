@@ -21,7 +21,7 @@ const char *tags[] = { "META", "MAIN", "SH", "WWW", "INFO", NULL };
 
 #define MASTER			600		/* per thousand */
 #define MODKEY			Mod1Mask
-#define NMASTER			1		/* clients in master area */
+#define NMASTER			2		/* clients in master area */
 #define SNAP			20		/* pixel */
 
 #define KEYS \
@@ -40,7 +40,7 @@ static Key key[] = { \
 	{ MODKEY,	                XK_F7,	        spawn,		{ .cmd = "exec tunes next" } }, \
 	{ NULL,		                XK_F8,	        spawn,		{ .cmd = "exec vol -t" } }, \
 	{ MODKEY,	                XK_F8,	        spawn,		{ .cmd = "exec tunes stop" } }, \
-	{ NULL,		                XK_F10,	        spawn,		{ .cmd = "exec /home/will/bin/lock" } }, \
+	{ NULL,		                XK_F10,	        spawn,		{ .cmd = "sleep 1 && exec /home/will/bin/lock" } }, \
 	{ NULL,		                XK_F12,		quit,		{ 0 } }, \
 	{ MODKEY,			XK_Tab,		focusnext,	{ 0 } }, \
 	{ MODKEY|ShiftMask,		XK_Tab,		focusprev,	{ 0 } }, \
