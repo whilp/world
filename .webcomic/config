@@ -128,7 +128,7 @@ name = Dr. McNinja
 artist = Chris Hastings
 url = http://www.drmcninja.com/
 pattern = .*<a href="(http://\S+pageNum=\d+&issue=\d+).*images/frontpage_08.gif"
-mutator = s|(http\S+.com)/page.php\?pageNum=(\d+)&issue=(\d+)|\1/issue\3/\3p\2.gif|
+mutator = s|(http\S+.com)/page.php\?pageNum=(\d+)&issue=(\d+)|\1/issue\3/\3p\2.jpg|
 
 [minus]
 name = Minus
