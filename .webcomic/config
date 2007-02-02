@@ -1,0 +1,146 @@
+[main]
+seenFile = /var/www/vhost/www.lfod.us/files/wc/seen
+configDir = /home/will/.webcomic/
+cacheDir = /var/www/vhost/www.lfod.us/files/wc/
+htmlDir = /var/www/vhost/www.lfod.us/files/wc/
+
+[jtmm]
+name = Journey to Mt. Moriah
+artist = Scott
+home = http://www.journeytomtmoriah.com/
+url = http://www.journeytomtmoriah.com/jtmm_archives.html
+pattern = .*<a target="comic" href="jtmm_(\d+).html">.*</a><br>
+mutator = s|(.*)|http://www.journeytomtmoriah.com/comic_\1.jpg|
+
+[sticksandstones]
+name = Sticks and Stones
+artist = J. Neufeld
+url = http://www.sticksandstonescomic.com/
+pattern = .*<img src="(\d{4}-\d{2}-\d{2}.jpg)">
+mutator = s|^|http://www.sticksandstonescomic.com/|
+
+[dinocomics]
+name = Dinosaur Comics
+artist = Ryan North
+url = http://www.qwantz.com/
+pattern = .*<img src="(http://www.qwantz.com/comics/\S+.png)"
+
+[terrorisland]
+name = Terror Island
+artist = Ben Heaton and Lewis Powell
+url = http://www.terrorisland.net/
+pattern = .*src="(http\S+images/strips/\d{3}\.jpg)"
+
+[asofter]
+name = a softer world
+artist = emily and joey
+url = http://www.asofterworld.com/
+pattern = .*<IMG SRC="(http://www.asofterworld.com/\w+\.jpg)"
+
+[copper]
+name = Copper
+artist = Kazu Kibuishi
+url = http://www.boltcity.com/
+home = http://www.boltcity.com/copper/
+pattern = .*<a href="(copper/copper\S+\.htm)"
+mutator = s|^copper/(copper.*).htm|http://www.boltcity.com/copper/copperstrips/\1_web.gif|
+
+[vgcats]
+name = VGCats
+artist = Scott Ramsoomair
+url = http://www.vgcats.com/
+pattern = .*<a href="(http\S+/comics/\?strip_id=\d{3})"
+postPattern = .*<img src="(images/\d{6}.jpg)"
+postMutator = s|^|http://www.vgcats.com/comics/|
+
+[sinfest]
+name = SinFest
+artist = Tatsuya Ishida
+url = http://sinfest.net/
+pattern = .*<p align="center"><img src="(http\S+/comikaze/comics/\d{4}-\d\d-\d\d\.gif)"
+
+[eler]
+name = Everybody Loves Eric Raymond
+url = http://geekz.co.uk/lovesraymond/
+pattern = .*<p><img src="(http\S+\.jpg)"
+
+[mtts]
+name = Married to the Sea
+url = http://www.marriedtothesea.com/
+pattern = .*<a href="(\d{6}/\S+.gif)"
+mutator = s|^|http://www.marriedtothesea.com/|
+
+[tpfd]
+name = Toothpaste For Dinner
+url = http://www.toothpastefordinner.com/
+pattern = .*<a href="(\d{6}/\S+.gif)"
+mutator = s|^|http://www.toothpastefordinner.com/|
+
+[pbf]
+name = Perry Bible Fellowship
+artist = Nicholas Gurewitch
+url = http://pbfcomics.com/
+pattern = .*<a href="(http.*jpg)
+mutator = s|^(http://.*)\?cid=(.*)|\1/archive/\2|
+
+[wm]
+name = Wondermark
+artist = David Malki
+url = http://www.wondermark.com/
+pattern = .* src="(/comics.*gif)"
+mutator = s|^|http://www.wondermark.com|
+
+[xkcd]
+name = xkcd
+artist = Randall Munroe
+url = http://www.xkcd.com/
+pattern = .*<h3>URL for this image: (.*)</h3>
+
+[achewood]
+name = achewood
+artist = Chris Onstad
+url = http://www.achewood.com/
+pattern = .*<img src="(/comic.php\?date=\d{8})"
+mutator = s|^|http://www.achewood.com|
+
+[pirateandalien]
+name = Pirate and Alien
+artist = Tyson Smith
+url = http://pirateandalien.com/
+pattern = .*<img src="(strips/\d{3}\.png)"
+mutator = s|^|http://pirateandalien.com/|
+
+[thinkinlincoln]
+name = Thinkin' Lincoln
+artist = Miles Grover
+url = http://www.thinkin-lincoln.com/
+pattern = .*<img src="(istrip_files/strips/\d{8}\.gif)"
+mutator = s|^|http://www.thinkin-lincoln.com/|
+
+[catandgirl]
+name = Cat and Girl
+artist = Dorothy
+url = http://catandgirl.com/
+pattern = .*<img src="(http://\S+/archive/\w+\.gif)"
+
+[drmcninja]
+name = Dr. McNinja
+artist = Chris Hastings
+url = http://www.drmcninja.com/
+pattern = .*<a href="(http://\S+pageNum=\d+&issue=\d+).*images/frontpage_08.gif"
+mutator = s|(http\S+.com)/page.php\?pageNum=(\d+)&issue=(\d+)|\1/issue\3/\3p\2.gif|
+
+[minus]
+name = Minus
+artist = Ryan Armand
+url = http://www.kiwisbybeat.com/kiwifeed.xml
+pattern = .*img src="(http://\S+/minus/\S+\.jpg)"
+#mutator = s|^|http://www.kiwisbybeat.com/|
+
+[onion]
+name = Onion Editorial Cartoon
+artist = Kelly
+url = http://www.theonion.com/
+pattern = .*<a href="(/content/cartoon/\w+-\d{2}-\d{4})">Editorial Cartoon</a>
+mutator = s|(/content/cartoon/\w+-\d{2}-\d{4})|http://www.theonion.com/\1|
+postPattern = .*<img src="(http://www.theonion.com/content/files/images/Cartoon[^\.]+\.jpg)
