@@ -23,7 +23,7 @@ elinks-0.11.2       full-featured text WWW browser
 enscript-1.6.3p1    convert ASCII files to PostScript
 expat-2.0.0         XML 1.0 parser written in C
 faad-2.0p5          MPEG2 and MPEG-4 AAC decoder
-fdm-0.8a            fetches, filters and delivers mail
+fdm-0.9a            fetch, filter and deliver mail
 flac-1.1.2p1        free lossless audio codec
 gdbm-1.8.3p0        GNU dbm
 gettext-0.14.6      GNU gettext
@@ -106,7 +106,6 @@ p5-Sub-Uplevel-0.14 Perl library for manipulating frame stack
 p5-Test-Exception-0.24 test functions for exception based code
 p5-URI-1.35         library to parse Uniform Resource Identifiers
 p5-XML-Parser-2.34  perl module for parsing XML documents
-partial-libshout-2.2 library for communicating with an icecast server
 pcre-6.4p1          perl-compatible regular expression library
 physfs-1.0.0p1      library to provide abstract access to various archives
 png-1.2.14p0        library for manipulating PNG images
