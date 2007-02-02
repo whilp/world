@@ -6,6 +6,8 @@ INCLUDE /home/will/.remind/holidays
 ###################################################################
 ### Plans.
 ###################################################################
+### Other.
+REM 21 Mar 2007 AT 21:00        MSG x%3 %"Amiina @ Cafe Montmartre (http://virtuous.com/events/v/129229464/2007-03.html)%"
 ### NIX.
 REM 02 Jun 2006 *14 AT 19:00    MSG x%3 %"MadLUG social meeting (Memorial Union).%"
 REM 01 Wed AT 19:00             MSG x%3 %"MadMongers meeting (MPL).%"
