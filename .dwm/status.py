@@ -1,19 +1,28 @@
 #!/usr/local/bin/python
 # vim: set nospell:
 
+# http://www.weather.gov/data/current_obs/KMSN.xml
+
 import sys, os
 
 from time import strftime, sleep, time
-from socket import gethostname, socket
+from socket import socket
+
+lockfile = "~/.dwm/.status-lock"
+
+# Test for lockfile and die if found.
+if os.path.exists(os.path.expanduser(lockfile)):
+    sys.stderr.write("ERROR: Lockfile '%s' found" % lockfile)
+    sys.exit()
 
 fifo = "~/.dwm/fifo"
 f = open(os.path.expanduser(fifo), 'w')
 
-name = gethostname().split('.')[0]
-
 def nowPlaying(server='localhost', port=6600):
-    mpd = socket()
+    """ Query a running MPD server.
+    """
 
+    mpd = socket()
     mpd.connect((server, port))
 
     mpd.send('currentsong\n')
@@ -37,19 +46,21 @@ def nowPlaying(server='localhost', port=6600):
 
     return ' '.join(nowplaying)
 
-i = 0
-while True:
-    if i >= 3600:
-        i = 0
-    i += 1
+if __name__ == '__main__':
+    i = 0
+    mpd = False
+    while True:
+        if i >= 3600:
+            i = 0
+        i += 1
 
-    # Always recalculate the date.
-    date = strftime('%a %d %b %H:%M:%S UTC%z %Y')
-    if or not i % 60:
-        # Stuff to do once a minute.
-        mpd = nowPlaying()
+        # Always recalculate the date.
+        date = strftime('%a %d %b %H:%M %Z %Y')
+        if not mpd or not i % 60:
+            # Stuff to do once a minute.
+            mpd = nowPlaying()
 
-    f.write('[NP: %(mpd)s][%(name)s][%(date)s]' % locals())
-    f.flush()
-    sleep(1)
-f.close()
+        f.write('[%(mpd)s][%(date)s]' % locals())
+        f.flush()
+        sleep(1)
+    f.close()
