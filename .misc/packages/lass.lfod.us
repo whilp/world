@@ -74,6 +74,8 @@ mhash-0.9.1p1       strong hash library
 msmtp-1.4.9         SMTP plugin for MUAs
 mtr-0.72-no_x11     Matt's traceroute - network diagnostic tool
 mutt-1.5.12-hcache  tty-based e-mail client, development version
+mysql-client-5.0.27p1 multithreaded SQL database (client)
+neon-0.24.7p0       HTTP and WebDAV client library, with C interface
 nethack-3.4.3p1-no_x11 dungeon explorin', hackin', game.  Piece of cake
 nmap-4.20-no_x11    scan ports and fingerprint stack of network hosts
 nsd-3.0.3           authoritative-only name server daemon
@@ -140,8 +142,8 @@ slock-0.4           simple X screen locker
 smpeg-0.4.4p2       mpeg video player library with sound support
 snownews-1.5.7p1    text mode rss newsreader
 speex-1.0.5p0       patent-free speech codec
-sqlite-2.8.17p1     Embedded SQL implementation
-sqlite3-3.3.7p0     Embedded SQL implementation
+sqlite3-3.3.10      Embedded SQL implementation
+subversion-1.4.2    subversion revision control system
 t1lib-5.1.0p0       Type 1 rasterizer library for UNIX/X11
 tcl-8.4.7p4         Tool Command Language
 tcpflow-0.21p0      tool for capturing data from TCP connections
