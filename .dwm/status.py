@@ -31,15 +31,18 @@ def scroll(fetch, max, out=False):
     while True:
         if not out:
             # Fetch input.
+            print 'No output.'
             out = fetch()
 
         if len(out) <= max:
-            yield out, count
+            yield out
             count += 1
+            print 'Too small; looping.'
+            print '[%s]' % out
             if count > 30:
                 count = 0
-                print fetch()
         else:
+            print 'Scrolling.'
             if m >= len(out):
                 # Reset.
                 l = -1
@@ -49,7 +52,7 @@ def scroll(fetch, max, out=False):
                 # Increment values.
                 l += 1
                 m += 1
-                yield out[l:m], l, m
+                yield out[l:m]
 
 def nowPlaying(server='localhost', port=6600):
     """ Query a running MPD server.
@@ -61,6 +64,7 @@ def nowPlaying(server='localhost', port=6600):
     # Find out what's playing.
     mpd.send('currentsong\n')
     resp = mpd.recv(1000)
+    mpd.close()
     if 'OK MPD' not in resp:
         # Can't talk to the server.
         return None
@@ -81,23 +85,20 @@ def nowPlaying(server='localhost', port=6600):
     if title:
         nowplaying.append('- %s' % title)
 
+    print 'FETCHED!'
     return ' '.join(nowplaying)
 
 if __name__ == '__main__':
     i = 0
-    mpd = False
+    np = scroll(nowPlaying, 30)
     while True:
-        if i >= 3600:
-            i = 0
-        i += 1
-
         # Always recalculate the date.
         date = strftime('%a %d %b %H:%M %Z %Y')
-        if not mpd or not i % 60:
-            # Stuff to do once a minute.
-            mpd = nowPlaying()
+
+        # Check mpd.
+        mpd = np.next()
 
         f.write('[%(mpd)s][%(date)s]' % locals())
         f.flush()
-        sleep(1)
+        sleep(.5)
     f.close()
