@@ -8,6 +8,10 @@ INCLUDE /home/will/.remind/holidays
 ###################################################################
 ### Other.
 REM 21 Mar 2007 AT 21:00        MSG x%3 %"Amiina @ Cafe Montmartre (http://virtuous.com/events/v/129229464/2007-03.html)%"
+REM 16 Feb 2007 AT 20:00        MSG x%3 %"Arsenic and Old Lace (SHS)%"
+REM 17 Feb 2007 AT 20:00        MSG x%3 %"Arsenic and Old Lace (SHS)%"
+REM 23 Feb 2007 AT 20:00        MSG x%3 %"Arsenic and Old Lace (SHS)%"
+REM 24 Feb 2007 AT 20:00        MSG x%3 %"Arsenic and Old Lace (SHS)%"
 ### NIX.
 REM 02 Jun 2006 *14 AT 19:00    MSG x%3 %"MadLUG social meeting (Memorial Union).%"
 REM 01 Wed AT 19:00             MSG x%3 %"MadMongers meeting (MPL).%"
