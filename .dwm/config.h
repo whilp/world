@@ -87,7 +87,5 @@ static Rule rule[] = { \
 	{ "Konqueror.*",		"WWW",		False }, \
 	{ "MPlayer.*",			NULL,		True }, \
 	{ "KPDF.*",			NULL,		True }, \
-};
-/*
 	{ "Gimp.*",			NULL,		True }, \
-*/
+};
