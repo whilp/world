@@ -20,12 +20,20 @@ len () {
 
 # Settings.
 FIFO="${HOME}/.dwm/fifo"
+LOCK="${HOME}/.dwm/.status-lock"
 DATE_INTERVAL=100
 MPD_INTERVAL=100
 SLEEP=.5
 MPD_HOST=localhost
 MPD_PORT=6600
 CHECK_MPD=1
+
+if [ -e "${LOCK}" ]; then
+    exit 1
+else
+    echo $$ >| ${LOCK} 2>/dev/null
+    [ $? -eq 0 ] || exit 1
+fi
 
 # Date counter.
 D=0
