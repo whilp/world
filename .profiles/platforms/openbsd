@@ -46,6 +46,8 @@ alias pkg_add='pkg_add -iv'
 #    sed -e "/$1/!d; s/|.*$//" /usr/ports/INDEX
 #}
 
+# Process limits.
+ulimit -n 128
 
 # Mirrors
 #ftp://ftp.openbsd.org
