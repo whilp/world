@@ -124,7 +124,7 @@ py-mako-0.1.0       Python non-XML template library
 py-nose-0.9.1       discovery-based unittests for Python
 py-pexpect-2.1      pure Python Expect-like module
 py-setuptools-0.6c3 simplified packaging system for Python modules
-py-sqlalchemy-0.3.3 database toolkit for Python
+py-sqlalchemy-0.3.4 database toolkit for Python
 py-sqlite2-2.2.2p0  SQLite3 adapter for Python
 python-2.4.4p0      interpreted object-oriented programming language
 python-expat-2.4.4p0 expat module for Python
@@ -153,4 +153,5 @@ tk-8.4.7p0          graphical toolkit for Tcl
 unzip-5.52          extract, list & test files in a ZIP archive
 uuid-1.5.1          ISO-C API and CLI for generating Universally Unique Identifiers
 vim-7.0.145p1-no_x11 vi clone, many additional features
+webpy-0.2           simple web framework for Python
 zsh-4.2.6p2         Z shell, Bourne shell-compatible
