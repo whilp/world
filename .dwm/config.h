@@ -23,6 +23,7 @@ const char *tags[] = { "META", "MAIN", "SH", "WWW", "INFO", NULL };
 #define MODKEY			Mod1Mask
 #define NMASTER			2		/* clients in master area */
 #define SNAP			20		/* pixel */
+#define TOPBAR			True		/* False */
 
 #define KEYS \
 static Key key[] = { \
@@ -83,9 +84,9 @@ static Rule rule[] = { \
 	{ "^XTerm:.*LOCAL.:.*META.$",	"META",		False }, \
 	{ "^XTerm:.*LOCAL.:.*MAIN.$",	"MAIN",		False }, \
 	{ "^XTerm:.*LOCAL.:.*SHELLS.$",	"SH",		False }, \
-	{ "Firefox.*",			"WWW",		False }, \
-	{ "Konqueror.*",		"WWW",		False }, \
-	{ "MPlayer.*",			NULL,		True }, \
-	{ "KPDF.*",			NULL,		True }, \
-	{ "Gimp.*",			NULL,		True }, \
+	{ "Firefox",			"WWW",		False }, \
+	{ "Konqueror",		        "WWW",		False }, \
+	{ "MPlayer",			NULL,		True }, \
+	{ "KPDF",			NULL,		True }, \
+	{ "Gimp",			NULL,		True }, \
 };
