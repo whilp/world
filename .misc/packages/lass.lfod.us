@@ -117,6 +117,7 @@ postgresql-client-8.1.5p1 PostgreSQL RDBMS (client)
 pwsafe-0.2.0        program that manages encrypted password databases
 py-crypto-2.0.1p2   cryptographic tools for Python
 py-docutils-0.4p0   tools for converting plaintext documentation into other formats
+py-feedparser-4.1p0 RSS and Atom feeds parser written in Python
 py-flup-0.5.2306    Python WSGI implementation
 py-genshi-0.3.6     stream-based generation of web output in Python
 py-libxml-2.6.26p1  Python bindings for libxml
