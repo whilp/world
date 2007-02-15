@@ -86,6 +86,8 @@ static Rule rule[] = { \
 	{ "^XTerm:.*LOCAL.:.*SHELLS.$",	"SH",		False }, \
 	{ "Firefox.*",			"WWW",		False }, \
 	{ "Konqueror.*",		"WWW",		False }, \
+	{ "(Copying)$",		        "WWW",		True }, \
+	{ "^Warning - Konqueror$",	"WWW",		True }, \
 	{ "MPlayer",			NULL,		True }, \
 	{ "KPDF.*",			NULL,		True }, \
 	{ "Gimp",			NULL,		True }, \
