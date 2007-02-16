@@ -498,6 +498,7 @@ completions = {
     value = "http://www.openbsd.org/cgi-bin/man.cgi?query=";
     auto = "yes";
   };
+  zu = { value = "zuul"; auto = "yes"; };
 };
 windows = {
   3 = {
