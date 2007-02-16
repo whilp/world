@@ -80,7 +80,6 @@ mutator = s|^|http://www.toothpastefordinner.com/|
 name = Perry Bible Fellowship
 artist = Nicholas Gurewitch
 url = http://pbfcomics.com/
-#<a href="?cid=PBF210-Wishing_Well.gif#200">Wishing Well</a> <a name="199"> <br/> 
 pattern = <a href="\?cid=(PBF\d\d\d-\S+\.gif)#\d\d\d">
 mutator = s|^|http://pbfcomics.com/archive/|
 
