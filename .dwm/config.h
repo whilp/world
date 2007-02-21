@@ -3,14 +3,8 @@
  * ex: set ts=8:
  */
 
-#define TAGS \
-const char *tags[] = { "META", "MAIN", "SH", "WWW", "INFO", NULL };
-
+/* appearance */
 #define BORDERPX		2
-#define DEFMODE			dotile		/* dofloat */
-#define FLOATSYMBOL		"F"
-#define TILESYMBOL		"T"
-
 #define FONT			"-sgi-screen-bold-*-*-*-16-*-*-*-*-*-*-*"
 #define NORMBORDERCOLOR		"#333"
 #define NORMBGCOLOR		"#222"
@@ -18,13 +12,40 @@ const char *tags[] = { "META", "MAIN", "SH", "WWW", "INFO", NULL };
 #define SELBORDERCOLOR		"#999"
 #define SELBGCOLOR		"#555"
 #define SELFGCOLOR		"#fff"
-
-#define MASTER			600		/* per thousand */
-#define MODKEY			Mod1Mask
-#define NMASTER			2		/* clients in master area */
-#define SNAP			20		/* pixel */
 #define TOPBAR			True		/* False */
 
+
+/* behavior */
+#define SNAP			40		/* pixel */
+#define TAGS \
+const char *tags[] = { "META", "MAIN", "SH", "WWW", "X", NULL };
+#define RULES \
+static Rule rule[] = { \
+	/* class:instance:title regex	tags regex	isversatile */ \
+	{ "^XTerm:.*LOCAL.:.*META.$",	"META",		False }, \
+	{ "^XTerm:.*LOCAL.:.*MAIN.$",	"MAIN",		False }, \
+	{ "^XTerm:.*LOCAL.:.*SHELLS.$",	"SH",		False }, \
+	{ "Firefox.*",			"WWW",		False }, \
+	{ "Konqueror.*",		"WWW",		False }, \
+	{ ".Copying",	                NULL,		True }, \
+	{ "Warning - Konqueror",	NULL,		True }, \
+	{ "MPlayer",			NULL,		True }, \
+	{ "KPDF.*",			NULL,		True }, \
+	{ "Gimp",			NULL,		True }, \
+};
+
+/* layout(s) */
+#define LAYOUTS \
+static Layout layout[] = { \
+	/* symbol		function */ \
+	{ "T",		        tile }, /* first entry is default */ \
+	{ "F",		        versatile }, \
+};
+#define MASTER			600		/* per thousand */
+#define NMASTER			2		/* clients in master area */
+
+/* key definitions */
+#define MODKEY			Mod1Mask
 #define KEYS \
 static Key key[] = { \
 	/* modifier			key		function	argument */ \
@@ -43,13 +64,13 @@ static Key key[] = { \
 	{ MODKEY,	                XK_F8,	        spawn,		{ .cmd = "exec tunes stop" } }, \
 	{ NULL,		                XK_F10,	        spawn,		{ .cmd = "sleep 1 && exec /home/will/bin/lock" } }, \
 	{ NULL,		                XK_F12,		quit,		{ 0 } }, \
-	{ MODKEY,			XK_Tab,		focusnext,	{ 0 } }, \
-	{ MODKEY|ShiftMask,		XK_Tab,		focusprev,	{ 0 } }, \
+	{ MODKEY,			XK_period,	focusnext,	{ 0 } }, \
+	{ MODKEY,		        XK_comma,	focusprev,	{ 0 } }, \
 	{ MODKEY,			XK_Return,	zoom,		{ 0 } }, \
-	{ MODKEY,			XK_g,		resizemaster,	{ .i = 15 } }, \
-	{ MODKEY,			XK_s,		resizemaster,	{ .i = -15 } }, \
-	{ MODKEY,			XK_i,		incnmaster,	{ .i = 1 } }, \
-	{ MODKEY,			XK_d,		incnmaster,	{ .i = -1 } }, \
+	{ MODKEY,			XK_l,		resizemaster,	{ .i = 15 } }, \
+	{ MODKEY,			XK_h,		resizemaster,	{ .i = -15 } }, \
+	{ MODKEY,			XK_k,		incnmaster,	{ .i = 1 } }, \
+	{ MODKEY,			XK_j,		incnmaster,	{ .i = -1 } }, \
 	{ MODKEY|ShiftMask,		XK_0,		tag,		{ .i = -1 } }, \
 	{ MODKEY|ShiftMask,		XK_1,		tag,		{ .i = 0 } }, \
 	{ MODKEY|ShiftMask,		XK_2,		tag,		{ .i = 1 } }, \
@@ -62,7 +83,7 @@ static Key key[] = { \
 	{ MODKEY|ControlMask|ShiftMask,	XK_4,		toggletag,	{ .i = 3 } }, \
 	{ MODKEY|ControlMask|ShiftMask,	XK_5,		toggletag,	{ .i = 4 } }, \
 	{ MODKEY,		        XK_c,		killclient,	{ 0 } }, \
-	{ MODKEY,			XK_space,	togglefloat,	{ 0 } }, \
+	{ MODKEY,			XK_space,	toggleversatile,{ 0 } }, \
 	{ MODKEY,			XK_0,		view,		{ .i = -1 } }, \
 	{ MODKEY,			XK_1,		view,		{ .i = 0 } }, \
 	{ MODKEY,			XK_2,		view,		{ .i = 1 } }, \
@@ -74,21 +95,4 @@ static Key key[] = { \
 	{ MODKEY|ControlMask,		XK_3,		toggleview,	{ .i = 2 } }, \
 	{ MODKEY|ControlMask,		XK_4,		toggleview,	{ .i = 3 } }, \
 	{ MODKEY|ControlMask,		XK_5,		toggleview,	{ .i = 4 } }, \
-};
-
-/* Query class:instance:title for regex matching info with following command:
- * xprop | awk -F '"' '/^WM_CLASS/ { printf("%s:%s:",$4,$2) }; /^WM_NAME/ { printf("%s\n",$2) }' */
-#define RULES \
-static Rule rule[] = { \
-	/* class:instance:title regex	tags regex	isfloat */ \
-	{ "^XTerm:.*LOCAL.:.*META.$",	"META",		False }, \
-	{ "^XTerm:.*LOCAL.:.*MAIN.$",	"MAIN",		False }, \
-	{ "^XTerm:.*LOCAL.:.*SHELLS.$",	"SH",		False }, \
-	{ "Firefox.*",			"WWW",		False }, \
-	{ "Konqueror.*",		"WWW",		False }, \
-	{ ".Copying",	                NULL,		True }, \
-	{ "Warning - Konqueror",	NULL,		True }, \
-	{ "MPlayer",			NULL,		True }, \
-	{ "KPDF.*",			NULL,		True }, \
-	{ "Gimp",			NULL,		True }, \
 };
