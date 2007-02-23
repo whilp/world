@@ -64,8 +64,8 @@ static Key key[] = { \
 	{ MODKEY,	                XK_F8,	        spawn,		{ .cmd = "exec tunes stop" } }, \
 	{ NULL,		                XK_F10,	        spawn,		{ .cmd = "sleep 1 && exec /home/will/bin/lock" } }, \
 	{ NULL,		                XK_F12,		quit,		{ 0 } }, \
-	{ MODKEY,			XK_period,	focusnext,	{ 0 } }, \
-	{ MODKEY,		        XK_comma,	focusprev,	{ 0 } }, \
+	{ MODKEY,			XK_n,	        focusnext,	{ 0 } }, \
+	{ MODKEY,		        XK_p,	        focusprev,	{ 0 } }, \
 	{ MODKEY,			XK_Return,	zoom,		{ 0 } }, \
 	{ MODKEY,			XK_l,		resizemaster,	{ .i = 15 } }, \
 	{ MODKEY,			XK_h,		resizemaster,	{ .i = -15 } }, \
