@@ -73,7 +73,7 @@ static Key key[] = { \
 	{ MODKEY,			XK_m,		togglemax,	NULL }, \
 	{ MODKEY,			XK_Return,	zoom,		NULL }, \
 	{ MODKEY,			XK_space,	togglefloating,	NULL }, \
-	{ MODKEY|ShiftMask,		XK_c,		killclient,	NULL }, \
+	{ MODKEY,		        XK_c,		killclient,	NULL }, \
 	{ MODKEY,			XK_0,		view,		NULL }, \
 	{ MODKEY,			XK_1,		view,		"0" }, \
 	{ MODKEY,			XK_2,		view,		"1" }, \
