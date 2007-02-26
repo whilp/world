@@ -1,9 +1,0 @@
-#!/bin/sh
-IFS=:
-for dir in $PATH
-do
-        for file in "$dir"/*
-        do
-                test -x "$file" && echo "${file##*/}"
-        done
-done | sort -u

@@ -116,3 +116,11 @@ sr () {
     [ "${XAUTHORITY}" -o "${DISPLAY}" ] && xtitle $(echo $1 | tr "[:lower:]" "[:upper:]")
     screen -RD $1
 }
+lsx () {
+    IFS=:
+    for DIR in ${PATH}; do
+        for FILE in "${DIR}"/*; do
+            [ -x "${FILE}" ] && echo "${FILE##*/}"
+        done
+    done | sort -u
+}
