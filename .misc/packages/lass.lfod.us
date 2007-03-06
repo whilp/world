@@ -120,6 +120,7 @@ py-docutils-0.4p0   tools for converting plaintext documentation into other form
 py-feedparser-4.1p0 RSS and Atom feeds parser written in Python
 py-flup-0.5.2306    Python WSGI implementation
 py-genshi-0.3.6     stream-based generation of web output in Python
+py-irclib-0.4.6     Internet Relay Chat (IRC) protocol client library for Python
 py-libxml-2.6.26p1  Python bindings for libxml
 py-mako-0.1.0       Python non-XML template library
 py-nose-0.9.1       discovery-based unittests for Python
