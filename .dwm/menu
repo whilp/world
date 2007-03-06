@@ -1,0 +1,14 @@
+#!/bin/sh
+
+lsx () {
+        IFS=: 
+        for DIR in ${PATH}
+        do
+                for FILE in "${DIR}"/*
+                do
+                        [ -x "${FILE}" ] && echo "${FILE##*/}"
+                done
+        done | sort -u
+}
+
+lsx | dmenu -b

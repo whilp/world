@@ -50,7 +50,7 @@ static Key key[] = { \
 	/* modifier			key		function	argument */ \
 	{ NULL,				XK_F2,		spawn,		"exec term" }, \
 	{ MODKEY,			XK_F2,		spawn,		"exec term -T META -e ssh -t will@meta.lfod.us screen -RD meta" }, \
-	{ NULL,				XK_F3,		spawn,		"exec `dmenu -b < ~/.dwm/menu`" }, \
+	{ NULL,				XK_F3,		spawn,		"exec `/home/will/.dwm/menu`" }, \
 	{ NULL,				XK_F4,		spawn,		"exec browser" }, \
 	{ MODKEY,			XK_F4,		spawn,		"exec firefox" }, \
 	{ NULL,				XK_F5,		spawn,		"exec tunes" }, \
@@ -61,7 +61,7 @@ static Key key[] = { \
 	{ MODKEY,			XK_F7,		spawn,		"exec tunes next" }, \
 	{ NULL,				XK_F8,		spawn,		"exec vol -t" }, \
 	{ MODKEY,			XK_F8,		spawn,		"exec tunes stop" }, \
-	{ MODKEY,			XK_F9,		spawn,		"exec ~/.dwm/status -f" }, \
+	{ MODKEY,			XK_F9,		spawn,		"exec /home/will/.dwm/status -f" }, \
 	{ NULL,				XK_F10,		spawn,		"sleep 1 && exec /home/will/bin/lock" }, \
 	{ NULL,				XK_F12,		quit,		NULL }, \
 	{ MODKEY|ShiftMask,		XK_space,	setlayout,	NULL }, \
