@@ -1,12 +1,16 @@
 xsetroot -solid black
 
 # switch caps and control
-xmodmap -e "remove Lock = Caps_Lock"
-xmodmap -e "remove Control = Control_L"
-xmodmap -e "keysym Control_L = Caps_Lock"
-xmodmap -e "keysym Caps_Lock = Control_L"
-xmodmap -e "add Lock = Caps_Lock"
-xmodmap -e "add Control = Control_L"
+cat <<EOF | xmodmap -
+    remove Lock = Caps_Lock
+    remove Control = Control_L
+    keysym Control_L = Caps_Lock
+    keysym Caps_Lock = Control_L
+    add Lock = Caps_Lock
+    add Control = Control_L
+    keycode 234 = Page_Down
+    keycode 233 = Page_Up
+EOF
 
 # Terminals
 [ -r "${HOME}/.xinitrc.local" ] && . ${HOME}/.xinitrc.local
