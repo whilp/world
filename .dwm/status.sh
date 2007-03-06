@@ -28,7 +28,7 @@ MPD_HOST=localhost
 MPD_PORT=6600
 CHECK_MPD=1
 
-if [ -e "${LOCK}" ]; then
+if [ -e "${LOCK}" -a ! "x$1" = "x-f" ]; then
     exit 1
 else
     echo $$ >| ${LOCK} 2>/dev/null

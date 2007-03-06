@@ -61,6 +61,7 @@ static Key key[] = { \
 	{ MODKEY,			XK_F7,		spawn,		"exec tunes next" }, \
 	{ NULL,				XK_F8,		spawn,		"exec vol -t" }, \
 	{ MODKEY,			XK_F8,		spawn,		"exec tunes stop" }, \
+	{ MODKEY,			XK_F9,		spawn,		"exec ~/.dwm/status -f" }, \
 	{ NULL,				XK_F10,		spawn,		"sleep 1 && exec /home/will/bin/lock" }, \
 	{ NULL,				XK_F12,		quit,		NULL }, \
 	{ MODKEY|ShiftMask,		XK_space,	setlayout,	NULL }, \
