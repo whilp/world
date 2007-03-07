@@ -88,10 +88,6 @@
     " Date sub
     iab daTE <C-R>=strftime("%Y.%m.%d")<CR>
 
-    " Tabs.
-    map <S-h> gT
-    map <S-l> gt
-
     " Dr Chip's engspchk
     "helptags $HOME/.vim/doc
     "let g:spchkaltright = 20
