@@ -30,7 +30,7 @@ done
 # 2006.11.16: Down for maintenance
 #CVSROOT="anoncvs@anoncvs3.usa.openbsd.org:/cvs"
 CVSROOT=anoncvs@anoncvs1.ca.openbsd.org:/cvs
-FETCH_PACKAGES=yes
+FETCH_PACKAGES=Yes
 [ -e "${HOME}/bin/pkg_ftp" ] && FETCH_CMD="${HOME}/bin/pkg_ftp"
 PATH="${PATH}:/usr/X11R6/bin"
 export CVSROOT FTP_SERV PKG_PATH PATH
