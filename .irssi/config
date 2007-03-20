@@ -475,7 +475,8 @@ ignores = (
     mask = "rizzo";
     level = "JOINS PARTS QUITS MODES";
     servertag = "bitl";
-  }
+  },
+  { mask = "PAP-ION"; level = "ALL"; }
 );
 completions = {
   obsd = { value = "OpenBSD"; auto = "yes"; };
