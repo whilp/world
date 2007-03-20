@@ -24,13 +24,14 @@
     set softtabstop=4
     set expandtab
     set shiftwidth=4
-"   set smartindent
+    " set smartindent
     set foldmethod=indent		" Fold based on line indent
     set nofoldenable
     set wildmenu			" tab completed menus
     set wildmode=full
     set whichwrap=h,l,~,[,]		" Allow characters to wrap lines
     set showtabline=2
+    let loaded_matchparen = 1   " Don't do parenthesis matching.
     
 
     " Suffixes that get lower priority when doing tab completion for filenames.
