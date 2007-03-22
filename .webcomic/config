@@ -144,3 +144,11 @@ url = http://www.theonion.com/
 pattern = .*<a href="(/content/cartoon/\w+-\d{2}-\d{4})">Editorial Cartoon</a>
 mutator = s|(/content/cartoon/\w+-\d{2}-\d{4})|http://www.theonion.com/\1|
 postPattern = .*<img src="(http://www.theonion.com/content/files/images/Cartoon[^\.]+\.jpg)
+
+[orderofthestick]
+name = The Order of the Stick
+url = http://www.giantitp.com/Comics.html
+pattern = <B>Order of the Stick </B><A href="(/comics/oots\d{4}.html)"
+mutator = s|^|http://www.giantitp.com/|
+postPattern = <TD align="center"><IMG src="(/comics/images/\S+.gif)">
+postMutator = s|^|http://www.giantitp.com/|
