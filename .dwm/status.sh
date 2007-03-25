@@ -4,8 +4,13 @@
 checkdate () {
     echo $(date "+%a %d %b %H:%M %Z %Y")
 }
+checkmpdstatus() {
+    I=$(echo -e "status\nclose" | nc ${MPD_HOST} ${MPD_PORT} | grep -E 'state:')
+    S=$(echo ${I} | sed -e 's/state: //')
+    echo ${S}
+}
 checkmpd () {
-    I=$(echo 'currentsong' | nc -w 1 ${MPD_HOST} ${MPD_PORT} | grep -E '^(Album|Artist|Title):' | sort)
+    I=$(echo -e "currentsong\nclose" | nc ${MPD_HOST} ${MPD_PORT} | grep -E '^(Album|Artist|Title):' | sort)
     O=$(echo ${I} | sed -e 's/^Album: \(.*\) Artist: \(.*\) Title: \(.*\)$/\2 (\1) - \3/')     
 
     if [ "$(echo ${O} | grep '^OK.*OK$')" ]; then
@@ -15,14 +20,14 @@ checkmpd () {
     echo ${O}
 }
 len () {
-    echo $1 | wc -c
+    echo -n $1 | wc -c
 }
 
 # Settings.
 FIFO="${HOME}/.dwm/fifo"
 LOCK="${HOME}/.dwm/.status-lock"
 DATE_INTERVAL=100
-MPD_INTERVAL=100
+MPD_INTERVAL=10
 SLEEP=.5
 MPD_HOST=localhost
 MPD_PORT=6600
@@ -39,7 +44,7 @@ fi
 D=0
 
 # MPD counters.
-MPD_MAX=30
+MPD_MAX=40
 MPD_BAD=0
 L=0
 R=${MPD_MAX}
@@ -50,7 +55,7 @@ exec > ${FIFO}
 
 while :; do
     # Date stuff.
-    if [ -z "${DATE_OUT}" -o "$D" -ge "${DATE_INTERVAL}" ]; then
+    if [ -z "${DATE_OUT}" -o "${D}" -ge "${DATE_INTERVAL}" ]; then
         # check date
         DATE_OUT="$(checkdate)"
         D=0
@@ -60,12 +65,26 @@ while :; do
     OUT="[${DATE_OUT}]"
 
     # MPD stuff.
-    if [ -z "${MPD_IN}" -o "${L}" -eq "0" ]; then
+    if [ -z "${MPD_IN}" -o "${M}" -ge "${MPD_INTERVAL}" ]; then
         if [ "${MPD_BAD}" -eq 0 -o "${MPD_BAD}" -ge 30 ]; then
             MPD_BAD=0
-            MPD_IN=$(checkmpd)
+
+            # Check status and decide whether to poll currentsong.
+            MPD_STATUS=$(checkmpdstatus)
+
+            if [ "${MPD_STATUS}" = "play" ]; then
+                MPD_IN=$(checkmpd)
+            elif [ "${MPD_STATUS}" = "pause" ]; then
+                MPD_IN="$(checkmpd) <paused>"
+            else
+                MPD_IN="no song playing"
+            fi
         fi
+        M=0
+    else
+        M=$(($M + 1))
     fi
+
     if [ -z "${MPD_IN}" ]; then
         # We've gotten two bad checks from MPD in a row.
         MPD_BAD=$(($MPD_BAD + 1))
@@ -73,21 +92,35 @@ while :; do
     # Handle scrolling if necessary.
     if [ -n "${MPD_IN}" ]; then
         MPD_LEN="$(len "${MPD_IN}")"
-        if [ -z "${MPD_PAUSE}" -a "$(($MPD_LEN - 1))" -ge "${MPD_MAX}" ]; then
+
+        # Since updates to MPD_IN may happen while we're scrolling,
+        # check to see if MPD_IN has changed since we last saw it.
+        if [ ! "${MPD_IN}" = "${MPD_LAST_IN}" ]; then
+            L=1
+            R=${MPD_MAX}
+            MPD_LAST_IN=${MPD_IN}
+        fi
+
+        if [ -z "${MPD_PAUSE}" -a "${MPD_LEN}" -gt "${MPD_MAX}" ]; then
             # Scroll.
-            L=$(($L + 1))
-            R=$(($R + 1))
             MPD_OUT="$(echo ${MPD_IN} | cut -c "${L}-${R}")"
-            if [ "${L}" -le "1" ]; then
+
+            if [ "${L}" -eq "1" ]; then
                 # We're at the beginning of the string.
                 MPD_PAUSE="${MPD_OUT}"
-            elif [ "$(($R + 1))" -ge "${MPD_LEN}" ]; then
-                # We're at the end of the string.
-                L=0
+            fi
+
+            if [ "${R}" -eq "${MPD_LEN}" ]; then
+                # We're at the end of the string; reset counters.
+                L=1
                 R=${MPD_MAX}
                 MPD_PAUSE="${MPD_OUT}"
-                MPD_IN=
+            else
+                # We're not at the end of the string; increment counters.
+                L=$(($L + 1))
+                R=$(($R + 1))
             fi
+
         else
             MPD_OUT="${MPD_PAUSE:-${MPD_IN}}"
             MPD_PAUSE=
