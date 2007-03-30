@@ -16,7 +16,7 @@ fi
 if [ "${PAUSE}" ]; then
     [ "${LOCK_VOL}" ] && vol -m &
     #[ "${LOCK_VOL}" ] && tunes slide && tunes toggle &
-    xlock -mode blank
+    slock
     [ "${LOCK_VOL}" ] && vol -t &
     #[ "${LOCK_VOL}" ] && tunes toggle
     #[ "${LOCK_VOL}" ] && vol -t &
@@ -24,6 +24,6 @@ if [ "${PAUSE}" ]; then
 else
     [ "${LOCK_VOL}" ] && vol -m &
     #[ "${LOCK_VOL}" ] && tunes slide &
-    xlock -mode blank
+    slock
     [ "${LOCK_VOL}" ] && vol -t &
 fi
