@@ -31,6 +31,7 @@ MPD_INTERVAL=10
 SLEEP=.5
 MPD_HOST=localhost
 MPD_PORT=6600
+MPD_NOSONG=
 CHECK_MPD=1
 
 if [ -e "${LOCK}" -a ! "x$1" = "x-f" ]; then
@@ -77,7 +78,7 @@ while :; do
             elif [ "${MPD_STATUS}" = "pause" ]; then
                 MPD_IN="$(checkmpd) <paused>"
             else
-                MPD_IN="no song playing"
+                MPD_IN="${MPD_NOSONG}"
             fi
         fi
         M=0
