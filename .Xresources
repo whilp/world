@@ -10,7 +10,7 @@
 !#################  END HEADERS
 
 XTerm*background: black
-XTerm*boldFont: -sgi-screen-bold-*-*-*-18-*-*-*-*-*-*-*
+XTerm*boldFont: -xos4-terminus-bold-*-*-*-16-*-*-*-*-*-*-*
 XTerm*borderLess: false
 XTerm*charClass: 33:48,37:48,45-47:48,58:48,61:48,63-64:48,126:48
 XTerm*color0: black
@@ -32,7 +32,7 @@ XTerm*color9: #FF5555
 XTerm*colorBD: #5555FF
 XTerm*colorUL: #55FF55
 XTerm*cutchars: `"'()*,;<>[]{|}
-XTerm*font: -sgi-screen-medium-*-*-*-18-*-*-*-*-*-*-*
+XTerm*font: -xos4-terminus-medium-*-*-*-16-*-*-*-*-*-*-*
 XTerm*foreground: white
 XTerm*loginShell: true
 XTerm*saveLines: 2000
