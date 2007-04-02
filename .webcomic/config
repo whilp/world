@@ -140,10 +140,8 @@ pattern = .*img src="(http://\S+/minus/\S+\.jpg)"
 [onion]
 name = Onion Editorial Cartoon
 artist = Kelly
-url = http://www.theonion.com/
-pattern = .*<a href="(/content/cartoon/\w+-\d{2}-\d{4})">Editorial Cartoon</a>
-mutator = s|(/content/cartoon/\w+-\d{2}-\d{4})|http://www.theonion.com/\1|
-postPattern = .*<img src="(http://www.theonion.com/content/files/images/Cartoon[^\.]+\.jpg)
+url = http://www.theonion.com/content/topics/editorial_cartoon
+pattern = .*<img src="(http://www.theonion.com/content/files/images/Cartoon-\S+.jpg)"
 
 [orderofthestick]
 name = The Order of the Stick
