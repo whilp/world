@@ -5,7 +5,7 @@
 
 /* appearance */
 #define BORDERPX		2
-#define FONT			"-sgi-screen-bold-*-*-*-16-*-*-*-*-*-*-*"
+#define FONT			"-xos4-terminus-bold-*-*-*-28-*-*-*-*-*-*-*"
 #define NORMBORDERCOLOR		"#333"
 #define NORMBGCOLOR		"#222"
 #define NORMFGCOLOR		"#ccc"
