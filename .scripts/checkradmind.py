@@ -18,8 +18,11 @@ entries = {}
 hosts = ('vger.lfod.us', 'master.lfod.us', 'kammron.lfod.us',
         'zeroth.lfod.us')
 
+# These hosts are known to be AWOL.
+acknowledged = ('kammron.lfod.us') 
+
 # We care about hosts that haven't reported in the last hour.
-delta = timedelta(hours=1)
+delta = timedelta(minutes=1)
 
 # Syslog doesn't have a year in the log entries, so we'll assume
 # that the current year is correct.
@@ -32,6 +35,22 @@ radmind_re = re.compile(r"""
         report\ (\S+)\ ([0-9\.]+)\ (\S+)\  # hostname, IP, CN
         -\ (\S+)\ (.*)$                 # action, message
         """, re.VERBOSE)
+
+def timecmp(x,y):
+    """ Compare timedeltas; if x or y is set to None, consider it
+        less than any delta. We check _specifically_ for None.
+    """
+    # The second element is the datetime object.
+    x, y = x[1], y[1]
+    if x == y:
+        return 0
+    elif x == None:
+        return 1
+    elif y == None:
+        return -1
+    
+    return x > y and 1 or -1
+        
 
 messages = open(log, 'r')
 
@@ -51,9 +70,8 @@ for line in messages:
                 entries[cn] = date
 
 # Missing hosts.
-missing = [(None,h) for h in hosts if not h in entries]
-old = sorted([(d,h) for h,d in entries.items() if datetime.now() - d > delta])
-old.extend(missing)
+old = sorted([(h,d) for h,d in entries.items() if datetime.now() - d > delta])
+old = dict(old + [(h,None) for h in hosts if not h in entries])
 
 # Print a report.
 if old:
@@ -61,7 +79,7 @@ if old:
     print "in the last %s:" % delta
     print 
     print "  LAST SEEN            CERTIFICATE CN"
-    for date, host in old:
+    for host,date in sorted(old.items(), timecmp):
         if not date:
             print '  <no record found>    %s' % host
         else:
