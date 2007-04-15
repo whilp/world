@@ -20,7 +20,7 @@ checkmpd () {
     echo ${O}
 }
 len () {
-    echo -n $1 | wc -c
+    echo -n "$1" | wc -c
 }
 
 # Settings.
@@ -33,6 +33,7 @@ MPD_HOST=localhost
 MPD_PORT=6600
 MPD_NOSONG=
 CHECK_MPD=1
+SCR_DELIM=" // "
 
 if [ -e "${LOCK}" -a ! "x$1" = "x-f" ]; then
     exit 1
@@ -47,8 +48,6 @@ D=0
 # MPD counters.
 MPD_MAX=40
 MPD_BAD=0
-L=0
-R=${MPD_MAX}
 M=0
 
 # Redirect stdout to the fifo dwm's listening to.
@@ -92,7 +91,6 @@ while :; do
     fi
     # Handle scrolling if necessary.
     if [ -n "${MPD_IN}" ]; then
-        MPD_LEN="$(len "${MPD_IN}")"
 
         # Since updates to MPD_IN may happen while we're scrolling,
         # check to see if MPD_IN has changed since we last saw it.
@@ -100,22 +98,22 @@ while :; do
             L=1
             R=${MPD_MAX}
             MPD_LAST_IN=${MPD_IN}
+
+            # Calculate length and length with delimiter. This is
+            # the only time that these values need to be updated.
+            MPD_LEN="$(len "${MPD_IN}")"
+            MPD_DLEN="$(len "${MPD_IN}${SCR_DELIM}")"
         fi
 
-        if [ -z "${MPD_PAUSE}" -a "${MPD_LEN}" -gt "${MPD_MAX}" ]; then
-            # Scroll.
-            MPD_OUT="$(echo ${MPD_IN} | cut -c "${L}-${R}")"
+        # Scroll if (undelimited) length exceeds max.
+        if [ "${MPD_LEN}" -gt "${MPD_MAX}" ]; then
 
-            if [ "${L}" -eq "1" ]; then
-                # We're at the beginning of the string.
-                MPD_PAUSE="${MPD_OUT}"
-            fi
+            MPD_OUT="$(echo "${MPD_IN}${SCR_DELIM}${MPD_IN}" | cut -c "${L}-${R}")"
 
-            if [ "${R}" -eq "${MPD_LEN}" ]; then
+            if [ "${L}" -eq "${MPD_DLEN}" ]; then
                 # We're at the end of the string; reset counters.
                 L=1
                 R=${MPD_MAX}
-                MPD_PAUSE="${MPD_OUT}"
             else
                 # We're not at the end of the string; increment counters.
                 L=$(($L + 1))
@@ -123,8 +121,7 @@ while :; do
             fi
 
         else
-            MPD_OUT="${MPD_PAUSE:-${MPD_IN}}"
-            MPD_PAUSE=
+            MPD_OUT=${MPD_IN}
         fi
     fi
     # Add to OUT only if we have anything to say.
