@@ -100,8 +100,8 @@ pattern = .*<h3>URL for this image: (.*)</h3>
 name = achewood
 artist = Chris Onstad
 url = http://www.achewood.com/
-pattern = .*<img src="(/comic.php\?date=\d{8})"
-mutator = s|^|http://www.achewood.com|
+pattern = .*<img src="(http://m.assetbar.com/achewood/autaux.*)" title
+#mutator = s|^|http://www.achewood.com|
 
 [pirateandalien]
 name = Pirate and Alien
