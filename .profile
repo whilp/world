@@ -17,7 +17,6 @@ SHELL="$(which zsh 2>/dev/null)" || \
         SHELL="$(which bash 2>/dev/null)" || \
         SHELL="$(which sh)"
 
-CLUSTER="${HOME}/.dsh/config"
 CVSEDITOR="${EDITOR}"
 CVS_RSH="$(which ssh)"
 HGEDITOR=$HOME/bin/hgeditor
@@ -26,9 +25,6 @@ LANG="C"
 MAIL_OLD="${MAIL}"
 MAIL=""
 PATH="$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin:/usr/games"
-RCMD_CMD="${CVS_RSH}"
-RCP_CMD="$(which scp)"
-RSHPORT=22
 TERM=xterm
 TODO=$HOME/TODO/
 VERBOSE="1"
