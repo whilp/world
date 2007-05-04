@@ -516,22 +516,20 @@ windows = {
         tag = "bitl";
       }
     );
-    sticky = "yes";
-    parent = "3";
   };
-  4 = {
+  5 = {
     items = (
       {
         type = "CHANNEL";
         chat_type = "IRC";
-        name = "#openbsd";
+        name = "#metabug";
         tag = "freenode";
       }
     );
     sticky = "yes";
     parent = "3";
   };
-  5 = {
+  4 = {
     items = (
       {
         type = "CHANNEL";
@@ -549,20 +547,8 @@ windows = {
     level = "ALL";
     sticky = "yes";
   };
-  6 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#mercurial";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "3";
-  };
 };
 mainwindows = {
-  1 = { first_line = "45"; lines = "17"; };
-  3 = { first_line = "1"; lines = "44"; };
+  1 = { first_line = "27"; lines = "11"; };
+  3 = { first_line = "1"; lines = "26"; };
 };
