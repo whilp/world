@@ -64,14 +64,14 @@ fi
 
 # Set up environment.
 hep () {
-    CLUSTER="~/.dsh/config-hep"
+    CLUSTER=~/.dsh/config-hep
     RCMD_USER="wcmaier"
     export CLUSTER RCMD_USER
 
     alias ssh="ssh -l wcmaier"
 }
 lfod () {
-    CLUSTER="~/.dsh/config"
+    CLUSTER=~/.dsh/config
     RCMD_USER="will"
     export CLUSTER RCMD_USER
 }
