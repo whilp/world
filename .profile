@@ -19,12 +19,17 @@ SHELL="$(which zsh 2>/dev/null)" || \
 
 CVSEDITOR="${EDITOR}"
 CVS_RSH="$(which ssh)"
+FANOUT=8
 HGEDITOR=$HOME/bin/hgeditor
 HOSTNAME="$(hostname -s)"
 LANG="C"
 MAIL_OLD="${MAIL}"
 MAIL=""
 PATH="$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin:/usr/games"
+RCMD_CMD="ssh"
+RCP_CMD="scp"
+RSHPORT="22"
+RCMD_USER=${USER}
 TERM=xterm
 TODO=$HOME/TODO/
 VERBOSE="1"
@@ -56,6 +61,22 @@ fi
 if [ "${UID}" -gt "0" ]; then
 	VERBOSE=0 agent
 fi
+
+# Set up environment.
+hep () {
+    CLUSTER="~/.dsh/config-hep"
+    RCMD_USER="wcmaier"
+    export CLUSTER RCMD_USER
+
+    alias ssh="ssh -l wcmaier"
+}
+lfod () {
+    CLUSTER="~/.dsh/config"
+    RCMD_USER="will"
+    export CLUSTER RCMD_USER
+}
+
+lfod
 
 # Run the preferred shell (unless we're already running it
 if [ "${SHELL##*/}" != "${SHELL_OLD##*/}" ]; then

@@ -20,4 +20,5 @@ if [ ${0##*/} = 'hsh' ]; then
     RCMD_USER="wcmaier"
 fi
 
-dsh -t -o 2 -p 22 $*
+dsh -f ${FANOUT} -t -o 2 -p 22 $*
+#dsh $*
