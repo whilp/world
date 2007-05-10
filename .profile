@@ -76,6 +76,8 @@ lfod () {
     CLUSTER=~/.dsh/config
     RCMD_USER="will"
     export CLUSTER RCMD_USER
+
+    unalias ssh
 }
 
 lfod
