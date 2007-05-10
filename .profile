@@ -32,6 +32,7 @@ RCMD_TEST_TIMEOUT="3"
 RCP_CMD="scp"
 RSHPORT="22"
 RCMD_USER=${USER}
+SSH="$(which ssh)"
 TERM=xterm
 TODO=$HOME/TODO/
 VERBOSE="1"
@@ -68,16 +69,14 @@ fi
 hep () {
     CLUSTER=~/.dsh/config-hep
     RCMD_USER="wcmaier"
-    export CLUSTER RCMD_USER
-
-    alias ssh="ssh -l wcmaier"
+    SSH_USER="wcmaier"
+    export CLUSTER RCMD_USER SSH_USER
 }
 lfod () {
     CLUSTER=~/.dsh/config
     RCMD_USER="will"
-    export CLUSTER RCMD_USER
-
-    unalias ssh
+    SSH_USER="will"
+    export CLUSTER RCMD_USER SSH_USER
 }
 
 lfod
