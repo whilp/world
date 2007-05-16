@@ -23,7 +23,7 @@ mutator = s|^|http://www.sticksandstonescomic.com/|
 name = Dinosaur Comics
 artist = Ryan North
 url = http://www.qwantz.com/
-pattern = .*<img src="(http://www.qwantz.com/comics/\S+.png)"
+pattern = .*<img src="(http://www.qwantz.com/comics/\S+.(png|gif))"
 
 [terrorisland]
 name = Terror Island
@@ -94,7 +94,7 @@ mutator = s|^|http://www.wondermark.com|
 name = xkcd
 artist = Randall Munroe
 url = http://www.xkcd.com/
-pattern = .*<h3>URL for this image: (.*)</h3>
+pattern = .*<h3>Image URL \(for hotlinking/embedding\): (.*)</h3>
 
 [achewood]
 name = achewood
