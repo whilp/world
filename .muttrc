@@ -82,10 +82,8 @@ macro index <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuratio
 macro pager <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
 macro index C "<change-folder>?" "open a different folder"
 macro pager C "<change-folder>?" "open a different folder"
-macro index S "|bmf -pS| fdm -ma stdin fetch<enter><delete-message>" "SPAM"
-macro index H "|bmf -pN| fdm -ma stdin fetch<enter><delete-message>" "NOT SPAM"
-macro pager S "|bmf -pS| fdm -ma stdin fetch<enter><delete-message>" "SPAM"
-macro pager H "|bmf -pN| fdm -ma stdin fetch<enter><delete-message>" "NOT SPAM"
+macro index S "<toggle-new><previous-entry><save-message>=Spam/<enter><enter>" "SPAM"
+macro pager S "<toggle-new><previous-entry><save-message>=Spam/<enter><enter>" "SPAM"
 
 ## SMTP SETTINGS ##
 
