@@ -23,7 +23,7 @@ mutator = s|^|http://www.sticksandstonescomic.com/|
 name = Dinosaur Comics
 artist = Ryan North
 url = http://www.qwantz.com/
-pattern = .*<img src="(http://www.qwantz.com/comics/\S+.(png|gif))"
+pattern = .*<img src="(http://www.qwantz.com/comics/\S+.(png|gif|jpg))"
 
 [terrorisland]
 name = Terror Island
