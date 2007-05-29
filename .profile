@@ -19,7 +19,7 @@ SHELL="$(which zsh 2>/dev/null)" || \
 
 CVSEDITOR="${EDITOR}"
 CVS_RSH="$(which ssh)"
-FANOUT=8
+FANOUT=16
 HGEDITOR=$HOME/bin/hgeditor
 HOSTNAME="$(hostname -s)"
 LANG="C"
