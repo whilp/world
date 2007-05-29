@@ -1,10 +1,8 @@
 GROUP:servers
 anise
 basil
-caraway
 cassia
 cayenne
-cdfgrid01
 cilantro
 clove
 cmsgrid01
@@ -16,11 +14,9 @@ ginseng
 hep
 itb
 jasmine
-lobelia
 noc
 nod
 phedex
-oregano
 rosemary
 sesame
 web
@@ -38,14 +34,12 @@ alyssum
 amaryllis
 ammi
 azalea
-beebalm
 cosmos
 daffodil
 dianthus
 egret
 flamingo
 hay
-hellebore
 hosta
 iris
 ixia
@@ -55,7 +49,6 @@ liatris
 lily
 mano
 mum
-nightshade
 owl
 pelican
 penguin
@@ -63,14 +56,12 @@ peony
 primula
 shrike
 swift
-syringa
 vai
 wheat
 woodstock
 zephyranth
 
 GROUP:dns
-dns
 dns2
 dns3
 dns4
@@ -82,7 +73,6 @@ login03
 
 GROUP:cmsdcache
 cmsdcache01
-cmsdcache01-new
 cmsdcache02
 cmsdcache03
 cmsdcache04
@@ -99,9 +89,6 @@ s5n06
 s5n07
 s5n08
 s5n09
-
-GROUP:s6
-s6n01
 
 GROUP:g3
 g3n01
@@ -366,6 +353,10 @@ g8
 g9
 
 ## TO CHECK FOR BITROT:
+#for HOST in $(dsh -qi | sed -e '1,3d; s/.*Host: //' | sed -e '1,/g6n20/d'); do
+#ping -c 1 -w 1 ${HOST} >/dev/null 2>&1 && ssh -oStrictHostKeyChecking=no -oBatchMode=yes wcmaier@${HOST} echo >/dev/null || echo "DOWN: $HOST"
+#done
+
 #BAD=''                                                                                                        
 #USER=wcmaier
 #for HOST in $(hsh -qi | sed -e '1,3d; s/.*Host: //'); do
