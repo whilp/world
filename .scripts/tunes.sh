@@ -11,9 +11,13 @@ menu () {
 }
 
 lsmusic () {
-    for ITEM in "$1"/*; do
-        [ -d "${ITEM}" ] && echo "${ITEM##*/}/"
-        [ -f "${ITEM}" ] && echo "${ITEM##*/}"
+    for ITEM in "$1"/*
+    do
+            [ -d "${ITEM}" ] && echo "${ITEM##*/}/"
+    done
+    for ITEM in "$1"/*
+    do
+            [ -f "${ITEM}" ] && echo "${ITEM##*/}"
     done
 }
 
