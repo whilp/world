@@ -1,13 +1,21 @@
 #!/bin/sh
 
-DIR="/home/will/music"
+DIR=~/music
+CMDFIFO=~/.mplayer/fifo
+STATIONS="
+wefunk|http://www.wefunkradio.com/play/shoutcast.pls
+slayradio|http://sc.slayradio.org:8000/listen.pls"
 
 menu () {
     if [ -n "$1" ]; then
-        dmenu -b -p $1
+        dmenu -b -p "$1"
     else
         dmenu -b
     fi
+}
+
+play () {
+    echo "loadfile $1" >> "${CMDFIFO}"
 }
 
 lsmusic () {
@@ -21,6 +29,18 @@ lsmusic () {
     done
 }
 
+chooseradio () {
+    CHOICE=$(for S in $STATIONS; do echo "${S%%?http*}"; done | menu "Radio Stations:")
+    #CHOICE=$(printf "wefunk\nslayradio\n" | menu "Radio Stations:")
+    case "x${CHOICE}" in
+        xwefunk)
+            URL="http://www.wefunkradio.com/play/shoutcast.pls" ;;
+        xslayradio)
+            URL="http://sc.slayradio.org:8000/listen.pls" ;;
+    esac
+    echo "${URL}"
+}
+
 choosefile () {
     CHOICE=$(lsmusic "${DIR}" | menu "${DIR}:")
     if [ -z "${CHOICE}" ]; then
@@ -32,17 +52,30 @@ choosefile () {
         DIR="${DIR}/${CHOICE%%/*}"
         choosefile "${DIR}"
     else
-        FILE="${DIR}/${CHOICE}"
-        case "${FILE}" in
-            *.radio)
-                cat ${FILE}
-                ;;
-            *)
-                echo ${FILE}
-                ;;
-        esac
+        echo "${DIR}/${CHOICE}"
     fi
 }
 
-FILE=$(choosefile)
-echo loadfile $FILE >> ~/.mplayer/fifo
+choose () {
+    cat <<EOF | menu "Categories:"
+files
+radio
+EOF
+}
+
+CHOICE=$(choose | tr '[A-Z]' '[a-z]')
+case "x${CHOICE}" in
+    xfiles)
+        FILE=$(choosefile)
+        if [ -f "${FILE}" ]; then
+            play "${FILE}"
+        fi
+        ;;
+    xradio)
+        STREAM=$(chooseradio)
+        play "${STREAM}"
+        ;;
+    x)
+        exit
+        ;;
+esac
