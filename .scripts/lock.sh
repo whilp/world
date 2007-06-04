@@ -1,29 +1,62 @@
 #!/bin/sh
 
-ENVIRONMENT=${HOME}/.environment
-LOCK_VOL=''
-if [ "$1" -eq "pause" ]; then
-    PAUSE=1
-else
-    PAUSE=
+MAX=220
+LOCKFILE="~/.vol-lock"
+OUTPUT="outputs.headphones"
+SLEEP=.1
+AMOUNT=0
+INCREMENT=3
+
+if [ -e "${LOCKFILE}" ]; then
+    exit 1
 fi
 
+calc () {
+    cat <<EOF | bc -l
+    scale=0
+    $*
+EOF
+}
 
-if [ -x "$(which tunes)" -a "$(grep '^PREF_LOCK_VOL=1' ${ENVIRONMENT})" ]; then
-    LOCK_VOL=1
-fi
+changevol () {
+    mixerctl "${OUTPUT}=$1" >/dev/null
+}
 
-if [ "${PAUSE}" ]; then
-    [ "${LOCK_VOL}" ] && vol -m &
-    #[ "${LOCK_VOL}" ] && tunes slide && tunes toggle &
-    slock
-    [ "${LOCK_VOL}" ] && vol -t &
-    #[ "${LOCK_VOL}" ] && tunes toggle
-    #[ "${LOCK_VOL}" ] && vol -t &
-    #[ "${LOCK_VOL}" ] && tunes slide &
-else
-    [ "${LOCK_VOL}" ] && vol -m &
-    #[ "${LOCK_VOL}" ] && tunes slide &
-    slock
-    [ "${LOCK_VOL}" ] && vol -t &
-fi
+mute () {
+    mixerctl "${OUTPUT}.mute=$1" >/dev/null
+}
+
+checkvol () {
+    VOL=$(mixerctl "${OUTPUT}" | cut -d '=' -f 2)
+    LVOL=$(echo ${VOL} | cut -d ',' -f 1)
+    RVOL=$(echo ${VOL} | cut -d ',' -f 2)
+    echo $(calc "(${LVOL} + ${RVOL})/2")
+}
+
+fadeout () {
+    NEWVOL=$(checkvol)
+    OAMOUNT=${AMOUNT}
+    while [ "${NEWVOL}" -gt 0 ]; do
+        AMOUNT=$((AMOUNT + INCREMENT))
+        NEWVOL=$((NEWVOL - AMOUNT))
+        changevol ${NEWVOL}
+        sleep "${SLEEP}"
+    done
+    mute on
+    AMOUNT=${OAMOUNT}
+}
+
+fadein () {
+    NEWVOL=$(checkvol)
+    OAMOUNT=${AMOUNT}
+    mute off
+    while [ "${NEWVOL}" -lt ${MAX} ]; do
+        AMOUNT=$((AMOUNT + INCREMENT))
+        NEWVOL=$((NEWVOL + AMOUNT))
+        changevol ${NEWVOL}
+        sleep "${SLEEP}"
+    done
+    AMOUNT=${OAMOUNT}
+}
+
+fadeout && slock && fadein
