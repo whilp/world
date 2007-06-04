@@ -4,7 +4,7 @@ MAX=220
 LOCKFILE="~/.vol-lock"
 OUTPUT="outputs.headphones"
 SLEEP=.1
-AMOUNT=0
+AMOUNT=20
 INCREMENT=3
 
 if [ -e "${LOCKFILE}" ]; then
@@ -34,29 +34,34 @@ checkvol () {
 }
 
 fadeout () {
+    set -x
     NEWVOL=$(checkvol)
-    OAMOUNT=${AMOUNT}
+    AMT=0
     while [ "${NEWVOL}" -gt 0 ]; do
-        AMOUNT=$((AMOUNT + INCREMENT))
-        NEWVOL=$((NEWVOL - AMOUNT))
+        [ ${AMT} -lt ${AMOUNT} ] && AMT=$((AMT + 1))
+        #[ ${AMOUNT} -lt 10 ] && AMOUNT=$((AMOUNT + INCREMENT))
+        NEWVOL=$((NEWVOL - AMT))
         changevol ${NEWVOL}
         sleep "${SLEEP}"
     done
     mute on
-    AMOUNT=${OAMOUNT}
 }
 
 fadein () {
+    set -x
     NEWVOL=$(checkvol)
-    OAMOUNT=${AMOUNT}
+    AMT=${AMOUNT}
     mute off
     while [ "${NEWVOL}" -lt ${MAX} ]; do
-        AMOUNT=$((AMOUNT + INCREMENT))
-        NEWVOL=$((NEWVOL + AMOUNT))
+        [ ${AMT} -gt 1 ] && AMT=$((AMT - 1))
+        #[ ${AMOUNT} -lt 10 ] && AMOUNT=$((AMOUNT + INCREMENT))
+        NEWVOL=$((NEWVOL + AMT))
         changevol ${NEWVOL}
         sleep "${SLEEP}"
     done
-    AMOUNT=${OAMOUNT}
 }
 
-fadeout && slock && fadein
+fadeout &
+sleep 1
+slock 
+fadein &
