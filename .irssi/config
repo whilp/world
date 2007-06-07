@@ -234,7 +234,6 @@ aliases = {
   IG = "ignore";
   UNIG = "unignore";
   SB = "scrollback";
-  UMODE = "mode $N";
   WC = "window close";
   WN = "window new hide";
   SV = "say Irssi $J ($V) - http://irssi.org/";
@@ -395,6 +394,7 @@ settings = {
     autocreate_split_windows = "no";
     autolog = "yes";
     autolog_path = "~/.irclogs/$0/$tag-%y.%m.%U.log";
+    theme = "silc";
   };
   "irc/core" = { alternate_nick = "cmdr_kije"; };
   "perl/core/scripts" = {
