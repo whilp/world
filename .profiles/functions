@@ -34,7 +34,10 @@ lookup () {
 	grep ${REGEX} 
 }
 calc () {
-	echo "$*" | bc -l
+    cat <<EOF | bc -l
+    scale=2
+	$*
+EOF
 }
 scpkey () {
     # Like: scp-key wcmaier@burrito.cae.wisc.edu "SSH-OPTIONS"
