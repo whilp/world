@@ -62,6 +62,7 @@ fadein () {
 }
 
 fadeout &
-sleep 1
+sleep .2
 slock 
+sleep .5
 fadein &
