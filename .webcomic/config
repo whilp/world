@@ -93,18 +93,15 @@ mutator = s|^|http://www.wondermark.com|
 [xkcd]
 name = xkcd
 artist = Randall Munroe
-#<a href="http://imgs.xkcd.com/comics/electromagnetic_spectrum.png">
 url = http://www.xkcd.com/
-pattern = <a href="(http://imgs.xkcd.com/comics/\S+\.png)">
-#pattern = .*<h3>Image URL \(for hotlinking/embedding\): (.*)</h3>
+pattern = <h3>Image URL.*: (http://imgs.xkcd.com/comics/\S+\.png)</h3>
 
 [achewood]
 name = achewood
 artist = Chris Onstad
 url = http://www.achewood.com/
-pattern = .*<img src="(/comic.php\?date=\d{8})"
-#pattern = .*<img src="(http://m.assetbar.com/achewood/autaux.*)" title
-mutator = s|^|http://www.achewood.com|
+pattern = <a href="/index.php\?date=(\d{8})">permalink</a>
+mutator = s|(.*)|http://www.achewood.com/comic.php?date=\1|
 
 [pirateandalien]
 name = Pirate and Alien
