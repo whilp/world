@@ -29,7 +29,7 @@
     vbellwait .5
     bell_msg 'Bell in %t [%n]'
     msgwait 1
-    term vt200
+    term xterm-color
     #zombie dl
 
 # Set the hardstatus/caption line.
