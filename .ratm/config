@@ -1,0 +1,190 @@
+[main]
+deliverto = |/usr/local/bin/fdm -m -qa stdin fetch
+
+# Feeds.
+[noaa-msn]
+url = http://www.nws.noaa.gov/data/current_obs/KMSN.rss
+tag = weather
+
+[bbc-news]
+url = http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/world/rss.xml
+tag = news
+
+[bbc-football]
+url = http://newsrss.bbc.co.uk/rss/sportonline_world_edition/football/europe/rss.xml
+tag = football, news
+
+[bitlbee]
+url = http://www.bitlbee.org/news.html.rss
+tag = unix
+
+[bramcohen]
+url = http://bramcohen.livejournal.com/data/rss
+tag = python
+
+[bsddevcenter]
+url = http://www.oreillynet.com/pub/feed/10?format=rss2
+tag = unix
+
+[bsdtalk]
+url = http://feeds.feedburner.com/Bsdtalk
+tag = unix
+
+[djm@]
+url = http://www.mindrot.org/~djm/weblog/index.rss20
+tag = unix
+
+[debian-admin]
+url = http://www.debian-administration.org/articles.rdf
+tag = unix
+
+[debian-dsa]
+url = http://www.debian.org/security/dsa-long
+tag = unix, alerts
+
+[eff-news]
+url = http://www.eff.org/news/index.xml
+tag = rights
+
+[eff-deeplinks]
+url = http://www.eff.org/deeplinks/index.xml
+tag = rights
+
+[eff-minilinks]
+url = http://www.eff.org/minilinks/index.xml
+tag = rights
+
+[fbsd-diary]
+url = http://www.freebsddiary.org/news.php
+tag = unix
+
+[fbsd-vuxml]
+url = http://www.vuxml.org/freebsd/rss.xml
+tag = unix, alerts
+
+[fbsd-advisories]
+url = http://www.freebsd.org/security/advisories.rdf
+tag = unix, alerts
+
+[grml]
+url = http://grml.supersized.org/feeds/index.rss2
+tag = unix
+
+[hackaday]
+url = http://www.hackaday.com/rss.xml
+tag = unix
+
+[johnhawks]
+url = http://johnhawks.net/weblog/index.rss
+tag = science
+
+[lilfg]
+url = http://liflg.org/rss.php
+tag = unix
+
+[lighttpd]
+url = http://blog.lighttpd.net/xml/rss20/feed.xml
+tag = unix
+
+[lwn]
+url = http://lwn.net/headlines/newrss
+tag = unix
+
+[milw0rm]
+url = http://www.milw0rm.com/rss.php
+tag = alerts
+
+[unix-news]
+url = http://unix-news.blogspot.com/feeds/posts/default?alt=rss
+tag = unix
+
+[undeadly-errata]
+url = http://undeadly.org/cgi?action=errata
+tag = unix, alerts
+
+[undeadly]
+url = http://undeadly.org/cgi?action=rss
+tag = unix
+
+[osg-maint]
+url = http://www.grid.iu.edu/maintenance/feed.rss
+tag = alerts
+
+[evolvingthoughts]
+url = http://scienceblogs.com/evolvingthoughts/index.xml
+tag = science
+
+[guido]
+url = http://www.artima.com/weblogs/feeds/bloggers/guido.rss
+tag = python
+
+[pharyngula]
+url = http://scienceblogs.com/pharyngula/index.xml
+tag = science
+
+[reuters-football]
+url = http://today.reuters.co.uk/rss/worldFootballNews
+tag = football, news
+
+[sans]
+url = http://iscxml.sans.org/rssfeed.xml
+tag = infosec
+
+[schneier]
+url = http://www.schneier.com/blog/index.xml
+tag = infosec
+
+[sciam]
+url = http://blog.sciam.com/xmlsrv/rss2.php?blog=2
+tag = science
+
+[securiteam]
+url = http://blogs.securiteam.com/index.php/feed/
+tag = infosec
+
+[secfocus]
+url = http://www.securityfocus.com/rss/news.xml
+tag = infosec
+
+[scottaaronson]
+url = http://scottaaronson.com/blog/?feed=rss2
+tag = science
+
+[slashdot]
+url = http://rss.slashdot.org/Slashdot/slashdot
+tag = news
+
+[samag]
+url = http://syndication.sdmediagroup.com/feeds/public/sys_admin_magazine.xml
+tag = unix
+
+[taosecurity]
+url = http://feeds.feedburner.com/Taosecurity
+tag = infosec
+
+[unixreview]
+url = http://syndication.sdmediagroup.com/feeds/public/unix_review.xml
+tag = unix
+
+[uscert-alerts]
+url = http://www.us-cert.gov/current/index.rdf
+tag = vuln
+
+[uscert-techalerts]
+url = http://www.us-cert.gov/channels/techalerts.rdf
+tag = vuln
+
+[uw-open]
+url = http://helpdesk.doit.wisc.edu/feed/open_impact1.php
+tag = vuln, uw
+
+[uw-alerts]
+url = http://helpdesk.wisc.edu/feed/active_alerts_doit.php
+tag = vuln, uw
+
+[xkcd]
+url = http://blag.xkcd.com/feed/
+tag = comix
+
+[madisonlinux]
+url = http://www.madisonlinux.org/RecentChanges?action=rss_rc&ddiffs=1&unique=1
