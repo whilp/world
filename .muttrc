@@ -72,14 +72,9 @@ bind pager k previous-line
 bind pager J next-undeleted
 bind pager K previous-undeleted
 
-macro index \CN "<shell-escape>~/bin/muttsearch<enter><change-folder>=Search<enter>" "Search with mairix"
-macro pager \CN "<shell-escape>~/bin/muttsearch<enter><change-folder>=Search<enter>" "Search with mairix"
-macro index G "<shell-escape>~/bin/getmail<enter>" "Getmail"
-macro pager G "<shell-escape>~/bin/getmail<enter>" "Getmail"
-macro index \CG "<shell-escape>~/bin/getmail -v<enter>" "Getmail, verbose"
-macro pager \CG "<shell-escape>~/bin/getmail -v<enter>" "Getmail, verbose"
 macro index <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
 macro pager <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
+macro pager U "|~/bin/viewitem" "Open RATM item link in a browser"
 macro index C "<change-folder>?" "open a different folder"
 macro pager C "<change-folder>?" "open a different folder"
 macro index S "<toggle-new><previous-entry><save-message>=Spam/<enter><enter>" "SPAM"
