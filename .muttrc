@@ -74,7 +74,8 @@ bind pager K previous-undeleted
 
 macro index <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
 macro pager <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
-macro pager U "|~/bin/viewitem" "Open RATM item link in a browser"
+macro pager V "|~/bin/viewitem<enter>" "Open RATM item link in a browser"
+macro index V "|~/bin/viewitem<enter>" "Open RATM item link in a browser"
 macro index C "<change-folder>?" "open a different folder"
 macro pager C "<change-folder>?" "open a different folder"
 macro index S "<toggle-new><previous-entry><save-message>=Spam/<enter><enter>" "SPAM"
@@ -101,6 +102,7 @@ set mail_check=30
 set sort_browser=alpha
 set arrow_cursor=no
 set pager_index_lines=10
+set wait_key=no
 
 ## COMPOSITION SETTINGS ##
 set forward_format="Fwd: %s"		# traditional fwd: subj.
