@@ -41,10 +41,9 @@ zombie dl
 
 sessionname meta
 screen -t MAIL -M   1 mutt
-#screen -t SSH	    2 screen -RRD -e'^Ee' -S ssh -c /home/will/.screen/rc-ssh
-screen -t WWW	    3 screen -RRD -e'^Ee' -S www -c /home/will/.screen/rc-www
+screen -t WWW	    3 elinks -no-connect -touch-files
 screen -t COMMS	-M  4 screen -RRD -e'^Rr' -S irc -c /home/will/.screen/rc-comms
 screen -t SHC	    5 screen -RRD -e'^Ee' -S shells -c /home/will/.screen/rc-shells
-screen -t INFO	    6 screen -RRD -e'^Ee' -S info -c /home/will/.screen/rc-info
+screen -t INFO	    6 /usr/local/bin/elinks -session-ring 1
 
 select 1
