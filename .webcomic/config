@@ -103,13 +103,6 @@ url = http://www.achewood.com/
 pattern = <a href="/index.php\?date=(\d{8})">permalink</a>
 mutator = s|(.*)|http://www.achewood.com/comic.php?date=\1|
 
-[pirateandalien]
-name = Pirate and Alien
-artist = Tyson Smith
-url = http://pirateandalien.com/
-pattern = .*<img src="(strips/\d{3}\.png)"
-mutator = s|^|http://pirateandalien.com/|
-
 [thinkinlincoln]
 name = Thinkin' Lincoln
 artist = Miles Grover
