@@ -4,6 +4,7 @@
  */
 
 /* appearance */
+#define BARPOS			BarTop /* BarBot, BarOff */
 #define BORDERPX		2
 #define FONT			"-xos4-terminus-bold-*-*-*-28-*-*-*-*-*-*-*"
 #define NORMBORDERCOLOR		"#333"
