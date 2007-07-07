@@ -1,16 +1,1 @@
-bitlbee-1.0.3       IRC proxy to connect to AIM, ICQ, Jabber, MSN and Yahoo
-fdm-1.1             fetch, filter and deliver mail
-gdbm-1.8.3p0        GNU dbm
-gettext-0.14.6p0    GNU gettext
-glib2-2.12.12p0     general-purpose utility library
-libiconv-1.9.2p3    character set conversion library
-libidn-0.6.1        internationalized string handling
-lighttpd-1.4.15p0   secure, fast, compliant, and very flexible web-server
-lua-5.1.2           powerful, light-weight programming language
-msmtp-1.4.11        SMTP plugin for MUAs
-mutt-1.5.12p0-hcache tty-based e-mail client, development version
-nsd-3.0.5           authoritative-only name server daemon
-pcre-7.1            perl-compatible regular expression library
-pwsafe-0.2.0        program that manages encrypted password databases
-py-docutils-0.4p1   process plaintext documentation into other formats
-python-2.4.4p3      interpreted object-oriented programming language
+unzip-5.52          extract, list & test files in a ZIP archive
