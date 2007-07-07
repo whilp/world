@@ -172,7 +172,11 @@ export ZSHDIR=$HOME/.zsh
 export VISUAL='vim'
 HISTSIZE=1000
 SAVEHIST=1000
-HISTFILE=$HOME/.history
+if [ $(id -u) -eq 0 ]; then
+    HISTFILE=/root/.history
+else
+    HISTFILE=$HOME/.history
+fi
 INC_APPEND_HISTORY=1
 SHARE_HISTORY=1
 HIST_IGNORE_ALL_DUPS=1
