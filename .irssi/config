@@ -497,6 +497,17 @@ completions = {
   zu = { value = "zuul"; auto = "yes"; };
 };
 windows = {
+  7 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#mercurial";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+  };
   2 = {
     items = (
       {
@@ -507,24 +518,7 @@ windows = {
       }
     );
     sticky = "yes";
-  };
-  1 = {
-    immortal = "yes";
-    name = "(status)";
-    level = "ALL";
-    sticky = "yes";
-    parent = "2";
-  };
-  4 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#openbsd";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
+    parent = "7";
   };
   3 = {
     items = (
@@ -536,19 +530,19 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "4";
+    parent = "7";
   };
-  6 = {
+  4 = {
     items = (
       {
         type = "CHANNEL";
         chat_type = "IRC";
-        name = "#metabug";
-        tag = "EFNet";
+        name = "#openbsd";
+        tag = "freenode";
       }
     );
     sticky = "yes";
-    parent = "4";
+    parent = "7";
   };
   5 = {
     items = (
@@ -560,10 +554,28 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "4";
+    parent = "7";
+  };
+  1 = { 
+    immortal = "yes";
+    name = "(status)";
+    level = "ALL";
+    sticky = "yes";
+  };
+  6 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#metabug";
+        tag = "EFNet";
+      }
+    );
+    sticky = "yes";
+    parent = "7";
   };
 };
 mainwindows = {
-  2 = { first_line = "29"; lines = "13"; };
-  4 = { first_line = "1"; lines = "28"; };
+  1 = { first_line = "31"; lines = "11"; };
+  7 = { first_line = "1"; lines = "30"; };
 };
