@@ -74,8 +74,8 @@ bind pager K previous-undeleted
 
 macro index <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
 macro pager <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
-macro pager V "|~/bin/viewitem<enter>" "Open RATM item link in a browser"
-macro index V "|~/bin/viewitem<enter>" "Open RATM item link in a browser"
+macro pager o "|~/bin/viewitem<enter>" "Open RATM item link in a browser"
+macro index o "|~/bin/viewitem<enter>" "Open RATM item link in a browser"
 macro index C "<change-folder>?" "open a different folder"
 macro pager C "<change-folder>?" "open a different folder"
 macro index S "<toggle-new><previous-entry><save-message>=Spam/<enter><enter>" "SPAM"
