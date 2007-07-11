@@ -94,7 +94,7 @@ mutator = s|^|http://www.wondermark.com|
 name = xkcd
 artist = Randall Munroe
 url = http://www.xkcd.com/
-pattern = <h3>Image URL.*: (http://imgs.xkcd.com/comics/\S+\.png)</h3>
+pattern = <h3>Image URL.*: (http://imgs.xkcd.com/comics/\S+\.(png|jpg))</h3>
 
 [achewood]
 name = achewood
