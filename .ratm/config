@@ -188,3 +188,43 @@ tag = comix
 
 [madisonlinux]
 url = http://www.madisonlinux.org/RecentChanges?action=rss_rc&ddiffs=1&unique=1
+
+[titusbrown]
+url = http://ivory.idyll.org/blog/tags/python?flav=atom
+tag = python
+
+[doughellmann]
+url = http://feeds.feedburner.com/DougHellmann
+tag = python
+
+[glyf]
+url = http://glyf.livejournal.com/data/rss
+tag = python
+
+[ianbicking]
+url = http://blog.ianbicking.org/feeds/new_pages.xml
+tag = python
+
+[jamesgardner]
+url = http://jimmyg.org/feed/
+tag = python
+
+[jjshannon]
+url = http://jjinux.blogspot.com/feeds/posts/default
+tag = python
+
+[jonathansaggau]
+url = http://www.jonathansaggau.com/blog/atom.xml
+tag = python
+
+[ricky]
+url = http://pythonisito.blogspot.com/feeds/posts/default
+tag = python
+
+[gustavoniemeyer]
+url = http://blog.labix.org/feed/
+tag = python
+
+[jeremyjones]
+url = http://www.oreillynet.com/pub/feed/31?au=2118
+tag = python
