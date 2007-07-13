@@ -1,134 +1,20 @@
-# $Hg$
-### --- User interface
-
 [ui]
-
-### set a default editor
 editor = ~/bin/hgeditor
-
-### show changed files and be a bit more verbose if True
-
-# verbose = True
-
-### username data to appear in comits
-### it usually takes the form: Joe User <joe.user@host.com>
-
 username = Will Maier <willmaier@ml1.net>
 
-### --- Extensions
-
 [extensions]
-
-### each extension has its own 'extension_name=path' line
-### the default python library path is used when path is left blank
-### the hgext dir is used when 'hgext.extension_name=' is written
-
-### acl - Access control lists
-### hg help acl
-
-# hgext.acl =
-
-### bisect - binary search changesets to detect bugs
-### hg help bisect
-
-# hgext.hbisect =
-
-### bugzilla - update bugzilla bugs when changesets mention them
-### hg help bugzilla
-
-# hgext.bugzilla =
-
-### extdiff - Use external diff application instead of builtin one
-
-#hgext.extdiff =
-
-### gpg - GPG checks and signing
-### hg help gpg
-
-# hgext.gpg =
-
-### hgk - GUI repository browser
-### hg help view
-
-# hgk = /home/user/hg/hg/contrib/hgk.py
-
-### mq - Mercurial patch queues
-### hg help mq
-
 hgext.mq =
-
-### notify - Template driven e-mail notifications
-### hg help notify
-
-# hgext.notify =
-
-### patchbomb - send changesets as a series of patch emails
-### hg help email
-
-#hgext.patchbomb =
-
-### win32text - line ending conversion filters for the Windows platform
-
-# hgext.win32text =
-
-### --- hgk additional configuration
-
-[hgk]
-
-### set executable path
-
-# path = /home/user/hg/hg/contrib/hgk
-
-### --- Hook to Mercurial actions - See hgrc man page for avaliable hooks
+hgext.patchbomb =
 
 [hooks]
 commit = ~/.scripts/lockdown.py
 incoming = ~/.scripts/lockdown.py
 update = ~/.scripts/lockdown.py
 
-### Example notify hooks (load hgext.notify extension before use)
-
-# incoming.notify = python:hgext.notify.hook
-# changegroup.notify = python:hgext.notify.hook
-#
-
 [extdiff]
+# need to enable extdiff
 cmd.vimdiff = LC_ALL=C vim -f '+bdel 1 2' '+ execute "DirDiff ".argv(0)." ".argv(1)'
 
-### Email configuration for the notify and patchbomb extensions
-
 [email]
-
-### Your email address
-
-# from = Will Maier <willmaier@ml1.net>
-
-### Method to send email - smtp or /usr/sbin/sendmail or other program name
-
-# method = smtp
-
-### smtp server to send email to
-
-[smtp]
-
-# host = mail
-# port = 25
-# tls = false
-# username = user
-# password = blivet
-# local_hostname = myhost
-
-### --- Email notification hook for server
-
-[notify]
-### multiple sources can be specified as a whitespace or comma separated list
-
-# sources = serve push pull bundle
-
-### set this to False when you're ready for mail to start sending
-
-# test = True
-
-### path to config file with names of subscribers
-
-# config = /path/to/subscription/file
+from = Will Maier <willmaier@ml1.net>
+method = /usr/local/bin/msmtp
