@@ -67,14 +67,12 @@ pattern = .*<p><img src="(http\S+\.jpg)"
 [mtts]
 name = Married to the Sea
 url = http://www.marriedtothesea.com/
-pattern = .*<a href="(\d{6}/\S+.gif)"
-mutator = s|^|http://www.marriedtothesea.com/|
+pattern = .*<a href="(http://\S+.com/\d{6}/\S+.gif)"
 
 [tpfd]
 name = Toothpaste For Dinner
 url = http://www.toothpastefordinner.com/
-pattern = .*<a href="(\d{6}/\S+.gif)"
-mutator = s|^|http://www.toothpastefordinner.com/|
+pattern = .*<a href="(http://\S+.com/\d{6}/\S+.gif)"
 
 [pbf]
 name = Perry Bible Fellowship
