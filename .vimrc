@@ -80,30 +80,21 @@ cabbrev Wq wq
 cabbrev Q q
 
 " Auto-encrypt files.
-augroup gnupg
+augroup safe
     au!
-    autocmd BufReadPre,FileReadPre	   *.gpg,*.asc set viminfo=""
-    autocmd BufReadPre,FileReadPre	   *.gpg,*.asc set noswapfile
-    autocmd BufReadPre,FileReadPre	   *.gpg,*.asc set foldclose=all
-    autocmd BufReadPre,FileReadPre	   *.gpg,*.asc set foldmethod=indent
-    autocmd BufReadPre,FileReadPre	   *.gpg,*.asc set
-    autocmd BufReadPre,FileReadPre    *.gpg,*.asc set bin
-    autocmd BufReadPre,FileReadPre    *.gpg,*.asc let ch_save = &ch|set ch=2
-    autocmd BufReadPost,FileReadPost  *.gpg,*.asc 1;'[,']!gpg -d 2>/dev/null
-    autocmd BufReadPost,FileReadPost  *.gpg,*.asc set nobin
-    autocmd BufReadPost,FileReadPost  *.gpg,*.asc execute ":doautocmd BufReadPost " . expand("%:r")
-    autocmd BufReadPost,FileReadPost  *.gpg,*.asc let &ch = ch_save|unlet ch_save
+    au BufReadPre,FileReadPre *.safe set viminfo=
+    au BufReadPre,FileReadPre *.safe set noswapfile
 
-    autocmd BufWritePre,FileWritePre  *.gpg,*.asc set bin
-    autocmd BufWritePre,FileWritePre  *.gpg 1;'[,']!gpg -o - -c --cipher-algo=blowfish --force-mdc
-    autocmd BufWritePre,FileWritePre  *.asc 1;'[,']!gpg -a -o - -c --cipher-algo=blowfish --force-mdc
-    autocmd BufWritePost,FileWritePost    *.gpg,*.asc set nobin
-    autocmd BufWritePost,FileWritePost    *.gpg,*.asc undo
+    au BufReadPost,FileReadPost *.safe set bin
+    au BufReadPost,FileReadPost *.safe :%!openssl bf -d -a 2>/dev/null
+    au BufReadPost,FileReadPost *.safe |redraw!
+    au BufReadPost,FileReadPost *.safe set nobin
 
-    autocmd FileAppendPre         *.gpg,*.asc !gpg -d <afile> 2>/dev/null > <afile>:r
-    autocmd FileAppendPre         *.gpg,*.asc !mv <afile>:r <afile>
-    autocmd FileAppendPost        *.gpg,*.asc !mv <afile> <afile>:r
-    autocmd FileAppendPost        *.gpg !gpg -o <afile> -c --cipher-algo=blowfish --force-mdc <afile>:r 
-    autocmd FileAppendPost        *.asc !gpg -a -o <afile> -c --cipher-algo=blowfish --force-mdc <afile>:r 
-    autocmd FileAppendPost        *.gpg,*.asc !rm <afile>:r
+    au BufWritePre,FileWritePre *.safe set bin
+    au BufWritePre,FileWritePre *.safe :%!openssl bf -salt -a 2>/dev/null
+    au BufWritePre,FileWritePre *.safe set nobin
+    au BufWritePost,FileWritePost *.safe undo
+    au BufWritePost,FileWritePost *.safe |redraw!
+
+    au VimLeave *.safe :!clear
 augroup END
