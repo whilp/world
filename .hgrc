@@ -1,3 +1,7 @@
+[defaults]
+log = -f
+diff = --git
+
 [ui]
 editor = ~/bin/hgeditor
 username = Will Maier <willmaier@ml1.net>
