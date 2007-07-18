@@ -148,3 +148,9 @@ artist = Adam Herold
 url = http://www.choppingblock.org/
 pattern = SRC="(/comics/cb\d+\.jpg)"
 mutator = s|^|http://www.choppingblock.org|
+
+[badgods]
+name = BAD GODS
+artist = Lore Sjoeberg
+url = http://badgods.com/
+pattern = <img src="(http://www.badgods.com/images/\S+.png)"
