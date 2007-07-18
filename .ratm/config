@@ -228,3 +228,6 @@ tag = python
 [jeremyjones]
 url = http://www.oreillynet.com/pub/feed/31?au=2118
 tag = python
+
+[alttext]
+url = http://feeds.wired.com/wired/commentary/alttext
