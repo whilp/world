@@ -4,6 +4,7 @@ diff = --git
 
 [ui]
 editor = ~/bin/hgeditor
+merge = vimdiff
 username = Will Maier <willmaier@ml1.net>
 
 [extensions]
