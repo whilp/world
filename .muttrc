@@ -208,4 +208,4 @@ folder-hook =HEP/RQ set sort=threads
 folder-hook =HEP/RQ unset strict_threads
 folder-hook =HEP/RQ unset sort_re
 
-folder-hook =\(HEP-nagios|Mythtv-users|Debian-.*|Ubuntu-.*|OpenBSD-.*|FreeBSD-.*|Vim.*|Madlug-.*|Maildrop-.*|Mutt-.*|Screen-.*|Techpartners-.*\) push 'D~m>300!~F~R<enter>'
+#folder-hook =\(HEP-nagios|Mythtv-users|Debian-.*|Ubuntu-.*|OpenBSD-.*|FreeBSD-.*|Vim.*|Madlug-.*|Maildrop-.*|Mutt-.*|Screen-.*|Techpartners-.*\) push 'D~m>300!~F~R<enter>'
