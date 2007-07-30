@@ -10,6 +10,7 @@ username = Will Maier <willmaier@ml1.net>
 [extensions]
 hgext.mq =
 hgext.patchbomb =
+hgext.convert = 
 
 [hooks]
 commit = ~/.scripts/lockdown.py
