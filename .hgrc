@@ -1,6 +1,10 @@
 [defaults]
 log = -f
 diff = --git
+qrefresh = --git
+qdiff = --git
+email = --git
+export = --git
 
 [ui]
 editor = ~/bin/hgeditor
