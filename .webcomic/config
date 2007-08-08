@@ -154,3 +154,11 @@ name = BAD GODS
 artist = Lore Sjoeberg
 url = http://badgods.com/
 pattern = <img src="(http://www.badgods.com/images/\S+.png)"
+
+[whiteninja]
+name = White Ninja
+artist = Scott Bevan and Kent Earle
+home = http://www.whiteninjacomics.com/
+url = http://www.whiteninjacomics.com/comics.shtml
+pattern = <img src=(/images/comics/(?!t-)\S+\.(gif|png|jpe?g)) border=0>
+mutator = s|^|http://www.whiteninjacomics.com/|
