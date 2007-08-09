@@ -234,3 +234,6 @@ url = http://feeds.wired.com/wired/commentary/alttext
 
 [dailypython]
 url = http://www.pythonware.com/daily/rss.xml
+
+[ectomo]
+url = http://feeds.feedburner.com/ectomo/QlIJ
