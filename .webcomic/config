@@ -162,3 +162,9 @@ home = http://www.whiteninjacomics.com/
 url = http://www.whiteninjacomics.com/comics.shtml
 pattern = <img src=(/images/comics/(?!t-)\S+\.(gif|png|jpe?g)) border=0>
 mutator = s|^|http://www.whiteninjacomics.com/|
+
+[bladediary]
+name = Blade Diary
+artist = Posterchild
+url = http://www.bladediary.com/
+pattern = <img src="(http://www.bladediary.com/stencils/(?!b\+w)\S+\.(gif|png|jpe?g))"
