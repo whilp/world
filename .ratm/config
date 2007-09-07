@@ -147,7 +147,7 @@ url = http://www.securityfocus.com/rss/news.xml
 tag = infosec
 
 [scottaaronson]
-url = http://scottaaronson.com/blog/?feed=rss2
+url = http://www.technologyreview.com/rss/BlogRSS.aspx?rssid=633245765095400532&id=329
 tag = science
 
 [slashdot]
