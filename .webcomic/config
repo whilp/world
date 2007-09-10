@@ -142,13 +142,6 @@ mutator = s|^|http://www.giantitp.com/|
 postPattern = <TD align="center"><IMG src="(/comics/images/\S+.gif)">
 postMutator = s|^|http://www.giantitp.com/|
 
-[choppingblock]
-name = Chopping Block
-artist = Adam Herold
-url = http://www.choppingblock.org/
-pattern = SRC="(/comics/cb\d+\.jpg)"
-mutator = s|^|http://www.choppingblock.org|
-
 [badgods]
 name = BAD GODS
 artist = Lore Sjoeberg
