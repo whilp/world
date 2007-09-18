@@ -1,0 +1,9 @@
+/* vi: set sts=0 ts=4 noexpandtab tw=0: */
+LANG=C
+
+/*
+MM.DD	TIME  DESCR */
+FRI	11:00 HEP meeting
+FRI+1	12:00 GLOW meeting
+MON+1	      Leave report due
+MON+1	      CMS effort report due
