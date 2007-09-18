@@ -3,15 +3,6 @@ LANG=C
 
 #include <birthdays>
 #include <work>
-/*
-#include <calendar.fictional>
-#include <calendar.german>
-#include <calendar.openbsd>
-#include <calendar.space>
-#include <calendar.ushistory>
-#include <calendar.usholiday>
-#include <calendar.world>
-*/
 
 /*
 MM.DD	TIME  DESCR */
