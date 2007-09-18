@@ -1,0 +1,16 @@
+/* vi: set sts=0 ts=4 noexpandtab tw=0: */
+LANG=C
+
+#include <birthdays>
+#include <calendar.fictional>
+#include <calendar.german>
+#include <calendar.openbsd>
+#include <calendar.space>
+#include <calendar.ushistory>
+#include <calendar.usholiday>
+#include <calendar.world>
+
+/*
+MM.DD	TIME  DESCR */
+09.21	21:00 Redman @ Barrymore ($24.00)
+10.16	20:30 Atmosphere w/ Luckyiam @ Barrymore ($20.00 adv)
