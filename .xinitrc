@@ -25,5 +25,5 @@ xset b off
 #exec startkde
 
 [ -p ~/.dwm/fifo ] || mkfifo ~/.dwm/fifo 2>/dev/null
-[ -x ~/.dwm/status ] && ~/.dwm/status &
+[ -x ~/.dwm/status ] && ~/.dwm/status -f &
 exec dwm <> ~/.dwm/fifo
