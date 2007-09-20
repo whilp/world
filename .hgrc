@@ -27,4 +27,6 @@ cmd.vimdiff = LC_ALL=C vim -f '+bdel 1 2' '+ execute "DirDiff ".argv(0)." ".argv
 
 [email]
 from = Will Maier <willmaier@ml1.net>
-method = /usr/local/bin/msmtp
+
+[smtp]
+host = localhost
