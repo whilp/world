@@ -100,7 +100,7 @@ awesome:
             (("Mod1", "Shift"), "t", "settrans", "+5"),
             (("Mod1", "Control"), "Return", "zoom"),
             (("Mod1", "Control"), "space", "togglefloating"),
-            (("Mod1", "Shift"), "c", "killclient"),
+            (("Mod1"), "c", "killclient"),
             (("Null"), "F12", "quit"),
             (("Mod1"), "0", "view"),
             (("Mod1"), "1", "view", "META"),
