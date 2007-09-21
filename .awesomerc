@@ -1,0 +1,130 @@
+# Configuration file for awesome
+
+awesome:
+{
+    # Default bar position: top, bottom, off
+    barpos = "top";
+    # Window border size
+    borderpx = 1;
+    # Window snap pixels
+    snap = 32;
+    # Master window width factor (used by tile layouts)
+    mwfact = 0.6;
+    # Font
+    #font = "-*-fixed-medium-r-normal-*-13-*-*-*-*-*-*-*";
+    font = "-xos4-terminus-bold-*-*-*-28-*-*-*-*-*-*-*";
+    # Tags
+    tags = ( "META", "MAIN", "SH", "WWW", "X" );
+    # Colors
+    normal_border_color = "#333";
+    normal_bg_color = "#222";
+    normal_fg_color = "#ccc";
+    focus_border_color = "#999";
+    focus_bg_color = "#555";
+    focus_fg_color = "#ffffff";
+    opacity_unfocused = 70;
+
+    # Available layouts
+    layouts = (
+               ("T", "tile"),
+               ("L", "tileleft"),
+               ("F", "floating")
+              );
+
+    # Number of master windows (used by tile layouts)
+    nmaster = 2;
+    ncols = 1;
+
+    # Resize hints
+    resize_hints = true;
+
+    # Set of rules to put some windows floating
+    # or to tag them on launch
+    rules = ({ name = "^XTerm:.*LOCAL.:.*META.$";
+               tags = "META";
+               float = false;
+             },
+             { name = "^XTerm:.*LOCAL.:.*MAIN.$";
+               tags = "MAIN";
+               float = false;
+             },
+             { name = "^XTerm:.*LOCAL.:.*SHELLS.$";
+               tags = "SH";
+               float = false;
+             },
+             { name = "Firefox";
+               tags = "WWW";
+               float = false;
+             },
+             { name = "Konqueror";
+               tags = "WWW";
+               float = false;
+             },
+             { name = "Opera";
+               tags = "WWW";
+               float = false;
+             },
+             { name = "MPlayer";
+               tags = "";
+               float = true;
+             },
+             { name = "VLC";
+               tags = "";
+               float = true;
+             });
+    
+    # modkey for mouse actions
+    modkey = "Mod1";
+
+    # Keys binding
+    keys = ((("Null"), "F2", "spawn", "exec term"),
+            (("Mod1"), "F2", "spawn", "exec term -T META -e ssh -t will@meta.lfod.us screen -RD meta"),
+            (("Null"), "F3", "spawn", "exec ~/.dwm/menu"),
+            (("Null"), "F4", "spawn", "exec ~/bin/browser"),
+            (("Null"), "F10", "spawn", "exec ~/bin/lock"),
+            (("Mod1"), "space", "setlayout"),
+            (("Mod1"), "b", "togglebar"),
+            (("Mod1"), "j", "focusnext"),
+            (("Mod1"), "k", "focusprev"),
+            (("Mod1"), "h", "setmwfact", "-0.05"),
+            (("Mod1"), "l", "setmwfact", "+0.05"),
+            (("Mod1"), "p", "setborder", "+1"),
+            (("Mod1", "Shift"), "p", "setborder", "-1"),
+            (("Mod1", "Shift"), "h", "setnmaster", "+1"),
+            (("Mod1", "Shift"), "l", "setnmaster", "-1"),
+            (("Mod1", "Control"), "h", "setncols", "+1"),
+            (("Mod1", "Control"), "l", "setncols", "-1"),
+            (("Mod1"), "Escape", "viewprevtags"),
+            (("Mod1"), "m", "togglemax"),
+            (("Mod1"), "t", "settrans", "-5"),
+            (("Mod1", "Shift"), "t", "settrans", "+5"),
+            (("Mod1", "Control"), "Return", "zoom"),
+            (("Mod1", "Control"), "space", "togglefloating"),
+            (("Mod1", "Shift"), "c", "killclient"),
+            (("Null"), "F12", "quit"),
+            (("Mod1"), "0", "view"),
+            (("Mod1"), "1", "view", "META"),
+            (("Mod1"), "2", "view", "MAIN"),
+            (("Mod1"), "3", "view", "SH"),
+            (("Mod1"), "4", "view", "WWW"),
+            (("Mod1"), "5", "view", "X"),
+            (("Mod1", "Control"), "0", "toggleview"),
+            (("Mod1", "Control"), "1", "toggleview", "META"),
+            (("Mod1", "Control"), "2", "toggleview", "MAIN"),
+            (("Mod1", "Control"), "3", "toggleview", "SH"),
+            (("Mod1", "Control"), "4", "toggleview", "WWW"),
+            (("Mod1", "Control"), "5", "toggleview", "X"),
+            (("Mod1", "Shift"), "0", "tag"),
+            (("Mod1", "Shift"), "1", "tag", "META"),
+            (("Mod1", "Shift"), "2", "tag", "MAIN"),
+            (("Mod1", "Shift"), "3", "tag", "SH"),
+            (("Mod1", "Shift"), "4", "tag", "WWW"),
+            (("Mod1", "Shift"), "5", "tag", "X"),
+            (("Mod1", "Shift", "Control"), "0", "toggletag"),
+            (("Mod1", "Shift", "Control"), "1", "toggletag", "META"),
+            (("Mod1", "Shift", "Control"), "2", "toggletag", "MAIN"),
+            (("Mod1", "Shift", "Control"), "3", "toggletag", "SH"),
+            (("Mod1", "Shift", "Control"), "4", "toggletag", "WWW"),
+            (("Mod1", "Shift", "Control"), "5", "toggletag", "X"),
+           );
+};

@@ -26,4 +26,4 @@ xset b off
 
 [ -p ~/.dwm/fifo ] || mkfifo ~/.dwm/fifo 2>/dev/null
 [ -x ~/.dwm/status ] && ~/.dwm/status -f &
-exec dwm <> ~/.dwm/fifo
+exec awesome <> ~/.dwm/fifo
