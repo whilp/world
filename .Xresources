@@ -1,46 +1,42 @@
-!#################  BEGIN HEADERS
-! Filename	: $HOME/.Xresources
-! Use		: configures X fonts and colors
-! Author	: Will Maier <willmaier@ml1.net>
-! Version	: $Revision: 1.17 $
-! Updated	: $Date: 2006/05/12 13:37:53 $
-! CVS		: $Id: Xresources,v 1.17 2006/05/12 13:37:53 will Exp $
-! Copyright	: Copyright (c) 2005 Will Maier
-! License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
-!#################  END HEADERS
-
-XTerm*background: #000000
-XTerm*foreground: #FFFFFF
-XTerm*visualBell: false
-XTerm*font: -xos4-terminus-medium-*-*-*-24-*-*-*-*-*-*-*
-XTerm*boldFont: -xos4-terminus-bold-*-*-*-24-*-*-*-*-*-*-*
-XTerm*cutchars: `"'()*,;<>[]{|}
-XTerm*loginShell: true
-XTerm*saveLines: 2000
-XTerm*scrollBar: false
-
-XTerm*charClass: 33:48,37:48,45-47:48,58:48,61:48,63-64:48,126:48
-!XTerm*color0: #000000
-!XTerm*color1: #AA0000
-!XTerm*color2: #00AA00
-!XTerm*color3: #AA5500
-!XTerm*color4: #0000AA
-!XTerm*color5: #AA00AA
-!XTerm*color6: #00AAAA
-!XTerm*color7: #AAAAAA
-!XTerm*color8: #555555
-!XTerm*color9: #FF5555
-!XTerm*color10: #55FF55
-!XTerm*color11: #FFFF55
-!XTerm*color12: #5555FF
-!XTerm*color13: #FF55FF
-!XTerm*color13: #FFFFFF
-!XTerm*color14: #55FFFF
-!XTerm*color15: #FFFFFF
-!XTerm*colorBD: #5555FF
-!XTerm*colorUL: #55FF55
-!XTerm*shading: 35
-!XTerm*tintColor: blue
-!XTerm*tinting: #a07040
-!XTerm*tintingType: true
-!
+! xterm
+XTerm*scrollBar:	false
+XTerm*saveLines:	10000
+XTerm*vt100.metaSendsEscape: true
+XTerm.termName:		xterm
+XTerm*font:		    -xos4-terminus-medium-*-*-*-24-*-*-*-*-*-*-*
+XTerm*background:	#eeeeee
+XTerm*foreground:	#000000
+! black
+XTerm*color0:		#000000
+! red
+XTerm*color1:		#ff3300
+! green
+XTerm*color2:		#00ff66
+! yellow
+XTerm*color3:		#ffff33
+! blue
+XTerm*color4:		#0066cc
+! magenta
+XTerm*color5:		#993399
+! cyan
+XTerm*color6:		#009999
+! gray
+XTerm*color7:		#cccccc
+! darkgray
+XTerm*color8:		#333333
+! lightred
+XTerm*color9:		#ff9999
+! lightgreen
+XTerm*color10:		#99ff99
+! lightyellow
+XTerm*color11:		#ffff99
+! lightblue
+XTerm*color12:		#3399ff
+! lightmagenta
+XTerm*color13:		#cc66cc
+! lightcyan
+XTerm*color14:		#33cccc
+! white
+XTerm*color15:		#ffffff
+! misc
+Xft.dpi: 		75

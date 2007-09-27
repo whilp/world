@@ -7,7 +7,7 @@
 "#################  END HEADERS
 
 " UI settings.
-colorscheme zenburn
+colorscheme minimalblue
 
 set backspace=indent,eol,start
 set foldmethod=indent
