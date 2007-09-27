@@ -62,17 +62,3 @@
     bind - exec vol -d -i 30
     bind = exec vol -u -i 30
     bind + exec vol -t
-
-# Old hardstatuses.
-#    hardstatus alwayslastline "%{= bW}[%{+b}%n: %t%{-}] [%{+b}%-Lw%50>%n%f* %t%+Lw%<%{-}]%-= %?[%{+b}Batt: %1`%%%{-}].%?%?[%{+b}%H%{-}].%?[%{+b}%Y.%m.%d %c:%s%{-}]"
-#    hardstatus alwayslastline "%{+ WK}[%n: %t] %-Lw%{= WB}%50>%n%f  %t%{-}%+Lw%< %-=%{= BW} %?[%{= WB}Batt: %1`%%%{-}].%?%?[%{= WB}%H%{-}].%?[%{= BW}%Y.%m.%d %c:%s%{-}]"
-#    hardstatus alwayslastline "%{+B BW}TEST"
-#    hardstatus alwayslastline "%{= bW}[%n: %t] %-Lw%{= WB}%50>%n%f  %t%{-}%+Lw%< %-=%{= bW} %?[%{= bW}Batt: %1`%%%{-}].%?%?[%{= bW}%H%{-}].%?[%{= Wb}%Y.%m.%d %c:%s%{-}]"
-#    caption string "%{= .W}[%n: %t] %-Lw%{= .G}%50>%n%f* %t%{-}%+Lw%< %-=%{= BW} %?[%{= BW}Batt: %1`%%%{-}].%?%?[%{= BW}%H%{-}].%?[%{= BW}%Y.%m.%d %c:%s%{-}]"
-# hardstatus alwayslastline "\033[m\033[42;30m %m%d \033[m \033[42;30m%c\033[m \033[42;30m %w \033[m"
-# hardstatus alwayslastline "%-Lw%{= BW}%50>%n%f* %t%{-}%+Lw%<"
-# hardstatus alwayslastline "%?%F%{.R.}%?%3n %t%? [%h]%?"
-# hardstatus alwayslastline "%w %-=%?[%{ =BW}Batt %1`%%%{-}]%?%?=[%H]%?%?=[%Y.%m.%d %c]%?"
-# hardstatus alwayslastline "%{wk}%?%-Lw%?%{bw}%n*%f %t%?(%u)%?%{wk}%?%+Lw %= %{mk}@ %H %{ck}%Y%{wk}-%{ck}%m%{wk}-%{ck}%d %{yk}%D %{gk}%c"
-# hardstatus string "%{.bW}%-w%{.rW}%n %t%{-}%+w %=%{..G} %H %{..Y} %Y/%m/%d %0c:%s "
-# hardstatus alwayslastline "%{RY}%16=%H %33=%{YR}%50=%M%d %66=%{Gb}%80=%c%="
