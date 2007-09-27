@@ -1,17 +1,15 @@
 "#################  BEGIN HEADERS
-" e Filename	: $HOME/.vimrc
+" Filename	: $HOME/.vimrc
 " Use		: configuration file for vim text editor
 " CVS		: $Id: vimrc,v 1.53 2006/07/18 14:58:56 will Exp $
 " Copyright	: Copyright (c) 2005, 2006 Will Maier
 " License	: BSD; see <http://www.lfod.us/copyright.html>
 "#################  END HEADERS
 
-" Options.
-set autoindent
-set autowrite
-set background=dark
+" UI settings.
+colorscheme zenburn
+
 set backspace=indent,eol,start
-set expandtab
 set foldmethod=indent
 set history=50
 set incsearch
@@ -21,28 +19,31 @@ set nocompatible
 set nofoldenable
 set number
 set ruler
-set shiftwidth=4
 set showcmd
 set showmatch
-set showtabline=2
 set smartcase
-set softtabstop=4
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
-set tabstop=4
 set textwidth=68
 set viminfo='200,f1
 set whichwrap=h,l,~,[,]
 set wildmenu
 set wildmode=full
 
+" Don't do paren matching.
 let loaded_matchparen=1
-let use_xhtml = 1
-let html_use_css = 1
+
+" Tabs.
+set expandtab
+set shiftwidth=4
+set softtabstop=4
+set tabstop=4
+
+" Use syntax highlighting.
+syntax enable
 
 " Plugins.
 runtime ftplugin/man.vim
 filetype plugin indent on
-syntax on
 " Enable if we're using a version better than 7.0
 if (v:version >= 700)
     " Spellcheck
@@ -56,28 +57,24 @@ endif
 " Mappings.
 inoremap <C-J> <Down>
 inoremap <C-K> <Up>
-map ,v :sp $VIMRC_
-map <silent> ,V :source ~/.vimrc:filetype detect:exe ":echo 'vimrc reloaded'"
-map <silent> <C-D> <lt><lt>
-map <silent> <C-T> >>
 nnoremap ; :
 noremap Y y$
-vnoremap ; :
-vnoremap p <Esc>:let current_reg = @"<CR>gvdi<C-R>=current_reg<CR><Esc>
 
-" Fix my shitty typing
-abbr hte the
-abbr teh the
-abbr th the
-abbr iwth with
-abbr wiht with
-abbr hteir their
-abbr rae are
+" Source vimrc.
+map ,v :sp $VIMRC_
 
-" Fix my fat fingers
+" (De|Re)indent.
+map <silent> <C-D> <lt><lt>
+map <silent> <C-T> >>
+
+" Fix common mistakes on the command line.
 cabbrev W w
 cabbrev Wq wq
 cabbrev Q q
+
+" Use XHTML when generating HTML files.
+let use_xhtml = 1
+let html_use_css = 1
 
 " Auto-encrypt files.
 augroup safe
