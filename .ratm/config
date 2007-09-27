@@ -249,3 +249,11 @@ url = http://net.doit.wisc.edu/~net/notifications/wiscnet/maillist.rss
 
 [uw-boreas]
 url = http://net.doit.wisc.edu/~net/notifications/boreas/maillist.rss
+
+[charlesstross]
+url = http://www.antipope.org/charlie/blog-static/atom.xml
+tag = sf
+
+[kenmacleod]
+url = http://kenmacleod.blogspot.com/feeds/posts/default
+tag = sf
