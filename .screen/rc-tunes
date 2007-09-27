@@ -1,0 +1,9 @@
+# :vim: set ft=sh:
+source /home/will/.screen/screenrc
+
+backtick 9 60 1 /home/will/bin/soma
+
+caption always "%{= bW}[%{+b}NP: %9`%{-}]%-="
+
+sessionname tunes
+screen -t AUDIO	    1 zsh

@@ -13,4 +13,4 @@
 
 ARGS=$*
 ARGS="$(echo "${ARGS}" | sed -e "s/-T \([^ ]*\)/-T ${HOSTNAME}\[\1\]/")"
-aterm -name "${HOSTNAME}[LOCAL]" ${ARGS}
+xterm -name "${HOSTNAME}[LOCAL]" ${ARGS}

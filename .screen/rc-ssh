@@ -1,0 +1,13 @@
+# :vim: set ft=sh:
+source $HOME/.screen/screenrc
+
+caption always "%{= bW}[%{+b}%n: %t%{-}] [%{+b}%-Lw%50>%n%f* %t%+Lw%<%{-}]%-="
+
+
+sessionname ssh
+screen -t HEP	    1 ssh -o "ProxyCommand ssh wcmaier@login.hep.wisc.edu nc ginseng.hep.wisc.edu 22" wcmaier@ginseng.hep.wisc.edu
+screen -t CAE	    2 ssh wcmaier@burrito.cae.wisc.edu
+screen -t MESS	    3 ssh will@192.168.1.30
+screen -t SOY	    4 ssh will@192.168.1.40
+screen -t POLY	    4 ssh will@polyot.atekomi.net
+

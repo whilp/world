@@ -1,6 +1,43 @@
+## Here's what it should look like
+# META
+#     MAIL
+# 	mutt
+#     SSH
+#	HEP
+#	    ssh hep
+#	CAE
+#	    ssh cae
+#	MESS
+#	    ssh mess
+#	SOY
+#	    ssh soyuz
+#     WWW
+# 	WEB
+# 	    elinks -no-connect -touch-files
+# 	CAE
+# 	    elinks -no-connect -touch-files
+# 	HEP
+# 	    elinks -no-connect -touch-files
+#     COMMS
+# 	IRC
+# 	    irssi
+# 	IM
+# 	    irssi --home=/home/will/.irssi/bitlbee
+#     SHELLS
+# 	SH
+# 	    zsh
+#     INFO
+#	LOG
+#	    tail -f /var/log/messages
+#	TOP
+#	    top
+
 source /home/will/.screen/screenrc
 
+caption always "%{= bW}[%{+b}%n: %t%{-}] [%{+b}%-Lw%50>%n%f* %t%+Lw%<%{-}]%-="
+
 zombie dl
+
 
 sessionname meta
 screen -t MAIL -M   1 mutt

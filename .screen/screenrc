@@ -24,15 +24,21 @@ defscrollback 5000
 vbell on
 allpartial off
 activity "^Gactivity in %n (%t)~"
+sorendition  +b Wb			    # set colors; white on blue 
+chdir
 vbellwait .5
 bell_msg 'Bell in %t [%n]'
 msgwait 1
+term xterm-color
 #zombie dl
 
 # Set the hardstatus/caption line.
-hardstatus alwayslastline "%{kw} %{b}%H%{K}    < %-w%{Wb} %n %t %{-}%+w >"
+caption always "%{= bW}[%{+b}%n: %t%{-}][%{+b}%-Lw%50>%n%f*%t%+Lw%<%{-}]%-=%?[%{+b}Batt: %1`%%%{-}]%?%?[%{+b}Mail: %2`%{-}]%?%?[%{+b}%H%{-}]%?[%{+b}%Y.%m.%d %c:%s%{-}]"
 
-#sorendition  +b bg
+# Set the hardstatus prop on gui terms to set the titlebar/icon title
+termcapinfo rxvt* hs:ts=\E]2;:fs=\007:ds=\E]2;screen\007
+termcapinfo rxvt-unicode* hs:ts=\E]2;:fs=\007:ds=\E]2;screen\007
+termcapinfo xterm* hs:ts=\E]0;:fs=\007:ds=\E]0;\007
 
 # Key bindings.
 bind T source .metascreen

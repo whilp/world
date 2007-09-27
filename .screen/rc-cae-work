@@ -1,0 +1,11 @@
+# :vim: set ft=sh:
+source $HOME/.screen/screenrc
+
+caption always "%{= bW}[%{+b}%n: %t%{-}] [%{+b}%-Lw%50>%n%f* %t%+Lw%<%{-}]%-="
+
+
+sessionname CAE-WORK
+screen -t JAWB1	    1 ssh wcmaier@jawbreaker.cae.wisc.edu
+screen -t JAWB2	    2 ssh wcmaier@jawbreaker.cae.wisc.edu
+screen -t JAWB3	    3 ssh wcmaier@jawbreaker.cae.wisc.edu
+screen -t VIM	    4 vim sftp://wcmaier@jawbreaker.cae.wisc.edu/test
