@@ -1,4 +1,4 @@
-xsetroot -solid black
+xsetroot -solid white
 
 # switch caps and control
 cat <<EOF | xmodmap -

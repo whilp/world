@@ -16,12 +16,12 @@ awesome:
     # Tags
     tags = ( "META", "MAIN", "SH", "WWW", "X" );
     # Colors
-    normal_border_color = "#333";
-    normal_bg_color = "#222";
-    normal_fg_color = "#ccc";
-    focus_border_color = "#999";
-    focus_bg_color = "#555";
-    focus_fg_color = "#ffffff";
+    normal_border_color = "#ddd";
+    normal_bg_color = "#ddd";
+    normal_fg_color = "#333";
+    focus_border_color = "#06c";
+    focus_bg_color = "#06c";
+    focus_fg_color = "#fff";
     opacity_unfocused = 70;
 
     # Available layouts
