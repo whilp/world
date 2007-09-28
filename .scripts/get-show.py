@@ -89,6 +89,7 @@ if __name__ == '__main__':
         seenfile = open('seen', 'ra')
         seen = seenfile.readlines()
     except IOError:
+        seenfile = open('seen', 'w')
         seen = []
 
     shows = [x for x in parser.shows if x not in seen]
