@@ -1,4 +1,5 @@
 xsetroot -solid black
+[ -f ~/.bkg.png ] && xsetbg -background black -center -brighten 10 ~/.bkg.png
 
 # switch caps and control
 cat <<EOF | xmodmap -
