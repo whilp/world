@@ -33,12 +33,7 @@ term xterm-color
 #zombie dl
 
 # Set the hardstatus/caption line.
-caption always "%{= bW}[%{+b}%n: %t%{-}][%{+b}%-Lw%50>%n%f*%t%+Lw%<%{-}]%-=%?[%{+b}Batt: %1`%%%{-}]%?%?[%{+b}Mail: %2`%{-}]%?%?[%{+b}%H%{-}]%?[%{+b}%Y.%m.%d %c:%s%{-}]"
-
-# Set the hardstatus prop on gui terms to set the titlebar/icon title
-termcapinfo rxvt* hs:ts=\E]2;:fs=\007:ds=\E]2;screen\007
-termcapinfo rxvt-unicode* hs:ts=\E]2;:fs=\007:ds=\E]2;screen\007
-termcapinfo xterm* hs:ts=\E]0;:fs=\007:ds=\E]0;\007
+hardstatus alwayslastline "%{= bW}[%{+b}%n: %t%{-}][%{+b}%-Lw%50>%n%f*%t%+Lw%<%{-}]%-=%?[%{+b}Batt: %1`%%%{-}]%?%?[%{+b}Mail: %2`%{-}]%?%?[%{+b}%H%{-}]%?[%{+b}%Y.%m.%d %c:%s%{-}]"
 
 # Key bindings.
 bind T source .metascreen
