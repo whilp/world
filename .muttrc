@@ -72,8 +72,8 @@ bind pager k previous-line
 bind pager J next-undeleted
 bind pager K previous-undeleted
 
-macro index S "|/usr/local/bin/sb_filter.py -s >/dev/null<enter><save-message>=Spam<enter><enter>" "Mark as spam"
-macro pager S "|/usr/local/bin/sb_filter.py -s >/dev/null<enter><save-message>=Spam<enter><enter>" "Mark as spam"
+macro index S "|/usr/local/bin/sb_filter.py -s >/dev/null<enter><save-message>=Attic/Spam<enter><enter>" "Mark as spam"
+macro pager S "|/usr/local/bin/sb_filter.py -s >/dev/null<enter><save-message>=Attic/Spam<enter><enter>" "Mark as spam"
 macro index H "|/usr/local/bin/sb_filter.py -g | fdm -mqa stdin fetch<enter><delete-message>" "Mark as ham"
 macro pager H "|/usr/local/bin/sb_filter.py -g | fdm -mqa stdin fetch<enter><delete-message>" "Mark as ham"
 macro index <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
