@@ -51,7 +51,7 @@ messageinfo_storage_file: spambayes.messageinfo.db
 no_cache_bulk_ham: False
 no_cache_large_messages: 0
 persistent_storage_file: ~/.hammie.db
-persistent_use_database: pickle
+persistent_use_database: dbm
 spam_cache: pop3proxy-spam-cache
 unknown_cache: pop3proxy-unknown-cache
 
