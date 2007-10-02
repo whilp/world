@@ -86,7 +86,7 @@ if __name__ == '__main__':
     # file doesn't exist, consider all shows. If that file does
     # exist, only consider shows that aren't in that file.
     try:
-        seenfile = open('seen', 'ra')
+        seenfile = open('seen', 'r+')
         seen = seenfile.readlines()
     except IOError:
         seenfile = open('seen', 'w')
