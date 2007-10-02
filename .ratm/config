@@ -150,6 +150,10 @@ tag = infosec
 url = http://www.technologyreview.com/rss/BlogRSS.aspx?rssid=633245765095400532&id=329
 tag = science
 
+[shtetloptimized]
+url = http://scottaaronson.com/blog/?feed=rss2
+tag = science
+
 [slashdot]
 url = http://rss.slashdot.org/Slashdot/slashdot
 tag = news
