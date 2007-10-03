@@ -1,5 +1,5 @@
 [defaults]
-log = -f
+log = -fM
 diff = --git
 qrefresh = --git
 qdiff = --git
