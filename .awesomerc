@@ -79,7 +79,7 @@ awesome:
     # Keys binding
     keys = ((("Null"), "F2", "spawn", "exec term"),
             (("Mod1"), "F2", "spawn", "exec term -T META -e ssh -t will@meta.lfod.us screen -RD meta"),
-            (("Null"), "F3", "spawn", "exec ~/.dwm/menu"),
+            (("Null"), "F3", "spawn", "exec `~/.dwm/menu`"),
             (("Null"), "F4", "spawn", "exec ~/bin/browser"),
             (("Null"), "F10", "spawn", "exec ~/bin/lock"),
             (("Mod1"), "space", "setlayout"),
