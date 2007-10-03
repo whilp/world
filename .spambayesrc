@@ -1,5 +1,5 @@
 [Categorization]
-ham_cutoff: 0.2
+ham_cutoff: 0.35
 spam_cutoff: 0.9
 
 [Classifier]
