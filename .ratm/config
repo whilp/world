@@ -261,3 +261,10 @@ tag = sf
 [kenmacleod]
 url = http://kenmacleod.blogspot.com/feeds/posts/default
 tag = sf
+
+[jonbroad]
+url = http://www.relativepath.org/feed/atom.xml
+tag = family
+
+[madsec]
+url = http://madsec.blogspot.com/feeds/posts/default
