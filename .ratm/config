@@ -233,8 +233,8 @@ tag = python
 url = http://www.oreillynet.com/pub/feed/31?au=2118
 tag = python
 
-[alttext]
-url = http://feeds.wired.com/wired/commentary/alttext
+[loresjoberg]
+url = http://slumbering.lungfish.com/?feed=rss2
 
 [dailypython]
 url = http://www.pythonware.com/daily/rss.xml
