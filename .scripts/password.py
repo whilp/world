@@ -17,10 +17,14 @@ class RepetitionError(Exception):
 class PasswordGenerator(object):
     """Generates passwords."""
 
-    def __init__(self, length=12):
+    def __init__(self, length=12, filter=None):
         self.length = length
         self.chars = CHARACTERS
         self.max_attempts = MAX_ATTEMPTS
+        if filter is not None:
+            self.filter = filter
+        else:
+            self.filter = self.pass_isok
 
     def generate(self):
         """Generate a password."""
@@ -29,7 +33,7 @@ class PasswordGenerator(object):
         # policy.
         i = 0
         password = self._build_password()
-        while not self.pass_isok(password) and i < self.max_attempts:
+        while not self.filter(password) and i < self.max_attempts:
             password = self._build_password()
             i += 1
 
@@ -220,9 +224,14 @@ if __name__ == '__main__':
         pass
 
     log.debug("Generating passwords with a length of %d", LENGTH)
-    pgen = PasswordGenerator(LENGTH)
+    pgen = PasswordGenerator(LENGTH, uwcu_filter)
 
     # Generate the passwords.
     for i in range(NUM_PASSWORDS):
-        password = ''.join(pgen.generate())
-        print password
+        try:
+            password = ''.join(pgen.generate())
+        except RepetitionError:
+            sys.stderr.write('=!=> Failed to generate password -- check '
+                    'filter policy\n')
+            sys.exit(1)
+        sys.stdout.write(password + '\n')
