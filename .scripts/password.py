@@ -43,7 +43,7 @@ class PasswordGenerator(object):
         """Loop until we have an acceptable password."""
 
         password = []
-        while len(password) < self.length - 1:
+        while len(password) < self.length:
             char = random.choice(self.chars)
 
             if self.char_isok(char):
