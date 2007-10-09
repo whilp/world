@@ -24,20 +24,13 @@ class PasswordGenerator(object):
 
     def generate(self):
         """Generate a password."""
-        password = []
-
-        while len(password) < self.length - 1:
-            char = random.choice(self.chars)
-
-            if self.char_isok(char):
-                password.append(char)
 
         # Keep generating passwords until we get one that fits the
         # policy.
         i = 0
-        password = ''.join(password)
+        password = self._build_password()
         while not self.pass_isok(password) and i < self.max_attempts:
-            password = self.generate()
+            password = self._build_password()
             i += 1
 
         if i >= self.max_attempts:
@@ -45,6 +38,18 @@ class PasswordGenerator(object):
                     "fewer than %d steps" % self.max_attempts)
 
         return password
+
+    def _build_password(self):
+        """Loop until we have an acceptable password."""
+
+        password = []
+        while len(password) < self.length - 1:
+            char = random.choice(self.chars)
+
+            if self.char_isok(char):
+                password.append(char)
+
+        return ''.join(password)
 
     def char_isok(self, char):
         """Return True if the supplied character is 'OK'.
@@ -216,7 +221,6 @@ if __name__ == '__main__':
 
     log.debug("Generating passwords with a length of %d", LENGTH)
     pgen = PasswordGenerator(LENGTH)
-    pgen.pass_isok = uwcu_filter
 
     # Generate the passwords.
     for i in range(NUM_PASSWORDS):
