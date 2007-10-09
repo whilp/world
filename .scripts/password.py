@@ -35,11 +35,12 @@ class PasswordGenerator(object):
         # Keep generating passwords until we get one that fits the
         # policy.
         i = 0
+        password = ''.join(password)
         while not self.pass_isok(password) and i < self.max_attempts:
             password = self.generate()
             i += 1
 
-        if i == self.max_attempts:
+        if i >= self.max_attempts:
             raise RepetitionError("Failed to generate a password in"
                     "fewer than %d steps" % self.max_attempts)
 
@@ -171,6 +172,16 @@ def mq_filter(password):
     # We made it this far; looks good.
     return True
 
+def uwcu_filter(password):
+    """Filter for www.uwcu.org."""
+    if len(password) < 6 or len(password) > 10:
+        return False
+    elif password.startswith(' ') or password.endswith(' '):
+        return False
+
+    # Looks good.
+    return True
+
 def _test():
     import doctest
     doctest.testmod()
@@ -205,7 +216,7 @@ if __name__ == '__main__':
 
     log.debug("Generating passwords with a length of %d", LENGTH)
     pgen = PasswordGenerator(LENGTH)
-    pgen.pass_isok = mq_filter
+    pgen.pass_isok = uwcu_filter
 
     # Generate the passwords.
     for i in range(NUM_PASSWORDS):
