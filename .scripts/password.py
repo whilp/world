@@ -210,4 +210,4 @@ if __name__ == '__main__':
     # Generate the passwords.
     for i in range(NUM_PASSWORDS):
         password = ''.join(pgen.generate())
-        print password, mq_filter(password)
+        print password
