@@ -87,7 +87,7 @@ if __name__ == '__main__':
     # exist, only consider shows that aren't in that file.
     try:
         seenfile = open('seen', 'r+')
-        seen = seenfile.readlines()
+        seen = [x.strip() for x in seenfile.readlines()]
     except IOError:
         seenfile = open('seen', 'w')
         seen = []
