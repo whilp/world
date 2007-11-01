@@ -224,7 +224,7 @@ if __name__ == '__main__':
         pass
 
     log.debug("Generating passwords with a length of %d", LENGTH)
-    pgen = PasswordGenerator(LENGTH, uwcu_filter)
+    pgen = PasswordGenerator(LENGTH)
 
     # Generate the passwords.
     for i in range(NUM_PASSWORDS):
