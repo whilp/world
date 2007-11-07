@@ -274,3 +274,6 @@ url = http://www.warrenellis.com/?feed=rss2
 
 [cryptome]
 url = http://cryptome.org/cryptome.xml
+
+[bsdly]
+url = http://bsdly.blogspot.com/feeds/posts/default
