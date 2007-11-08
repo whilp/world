@@ -161,3 +161,9 @@ name = Blade Diary
 artist = Posterchild
 url = http://www.bladediary.com/
 pattern = <img src="(http://www.bladediary.com/stencils/(?!b\+w)\S+\.(gif|png|jpe?g))"
+
+[citrussoldier]
+name = Citrus Soldier
+artist = Norman da Gama
+url = http://citrussoldier.com/index.html
+pattern = <IMG SRC="(http://www.citrussoldier.com/Archive/citrussoldier-\d+.(jpg|png|jpe?g))"
