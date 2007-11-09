@@ -44,6 +44,7 @@ syntax enable
 " Plugins.
 runtime ftplugin/man.vim
 filetype plugin indent on
+filetype indent on
 " Enable if we're using a version better than 7.0
 if (v:version >= 700)
     " Spellcheck
