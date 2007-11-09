@@ -270,4 +270,10 @@ tag = family
 url = http://madsec.blogspot.com/feeds/posts/default
 
 [warrenellis]
-url = href="http://www.warrenellis.com/?feed=rss2
+url = http://www.warrenellis.com/?feed=rss2
+
+[cryptome]
+url = http://cryptome.org/cryptome.xml
+
+[bsdly]
+url = http://bsdly.blogspot.com/feeds/posts/default
