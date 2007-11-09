@@ -9,6 +9,10 @@ from time import strptime
 whitespace_re = re.compile('\S+')
 
 class ScheduleParser(HTMLParser):
+    in_sched_table = False
+    in_game_row = False
+    in_game_data = False
+    game_data = []
 
     def __init__(self):
         HTMLParser.__init__(self)
@@ -22,10 +26,6 @@ class ScheduleParser(HTMLParser):
         pass
 
 class BadgerSchedParser(ScheduleParser):
-    in_sched_table = False
-    in_game_row = False
-    in_game_data = False
-    game_data = []
     headers = ('date', 'opponent', 'city', 'location', 'media',
             'score', 'results')
 
@@ -92,7 +92,6 @@ class Game(object):
         else:
             pattern = '%m/%d/%Y %I:%M %p'
             return datetime(*strptime(datestr, pattern)[:6])
-
 
 if __name__ == '__main__':
     import sys
