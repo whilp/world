@@ -29,7 +29,7 @@ chdir
 vbellwait .5
 bell_msg 'Bell in %t [%n]'
 msgwait 1
-term xterm-color
+term screen
 #zombie dl
 
 # Set the hardstatus/caption line.
