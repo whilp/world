@@ -1,11 +1,13 @@
-/* vi: set sts=0 ts=4 noexpandtab tw=0: */
+/* vi: set sts=0 ts=8 noexpandtab tw=0: */
 LANG=C
 
 /*
 MM.DD	TIME  DESCR */
+MON	10:00 HEP IT meeting
 FRI	11:00 HEP meeting
 FRI+1	12:00 GLOW meeting
 MON+1	      Leave report due
 MON+1	      CMS effort report due
+
 
 11.28	11:00 OSG Security phone meeting
