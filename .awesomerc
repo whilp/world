@@ -125,6 +125,6 @@ awesome:
             (("Mod1", "Shift", "Control"), "2", "toggletag", "MAIN"),
             (("Mod1", "Shift", "Control"), "3", "toggletag", "SH"),
             (("Mod1", "Shift", "Control"), "4", "toggletag", "WWW"),
-            (("Mod1", "Shift", "Control"), "5", "toggletag", "X"),
+            (("Mod1", "Shift", "Control"), "5", "toggletag", "X")
            );
 };
