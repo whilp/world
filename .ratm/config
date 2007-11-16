@@ -277,3 +277,6 @@ url = http://cryptome.org/cryptome.xml
 
 [bsdly]
 url = http://bsdly.blogspot.com/feeds/posts/default
+
+[badgers]
+url = http://www.uwbadgers.com/rss/?deptid=116
