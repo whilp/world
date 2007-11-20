@@ -8,7 +8,7 @@ while read INPUT?"${PROMPT}"; do
             clear
             mpc status
             ;;
-        xclear)
+        xwipe)
             clear
             ;;
         xquit)
