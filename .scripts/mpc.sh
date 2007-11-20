@@ -4,6 +4,10 @@ PROMPT='mpc > '
 
 while read INPUT?"${PROMPT}"; do
     case "x${INPUT}" in
+        x)
+            clear
+            mpc status
+            ;;
         xclear)
             clear
             ;;
