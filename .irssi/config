@@ -418,6 +418,7 @@ settings = {
     queryresume_lines = "10";
   };
   "fe-common/irc" = { show_away_once = "yes"; };
+  "fe-text" = { actlist_sort = "refnum"; };
 };
 hilights = (
   { text = "lt_kije"; nick = "yes"; word = "yes"; },

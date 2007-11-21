@@ -34,6 +34,7 @@ term screen
 
 # Set the hardstatus/caption line.
 hardstatus alwayslastline "%{= bW}[%{+b}%n: %t%{-}][%{+b}%-Lw%50>%n%f*%t%+Lw%<%{-}]%-=%?[%{+b}Batt: %1`%%%{-}]%?%?[%{+b}Mail: %2`%{-}]%?%?[%{+b}%H%{-}]%?[%{+b}%Y.%m.%d %c:%s%{-}]"
+caption splitonly
 
 # Key bindings.
 bind T source .metascreen
