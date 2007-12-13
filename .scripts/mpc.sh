@@ -8,7 +8,7 @@ while read INPUT?"${PROMPT}"; do
             clear
             mpc status
             ;;
-        xwipe)
+        xx)
             clear
             ;;
         xquit)
@@ -21,21 +21,7 @@ while read INPUT?"${PROMPT}"; do
             mpc status
             ;;
         *)
-            CMD=${INPUT%% *}
-            RESULT=$(mpc help | grep "^mpc ${CMD}" | cut -d ' ' -f 2)
-            RESULTS=$(echo ${RESULT} | wc -w)
-            if [ ${RESULTS} -eq 1 ]; then
-                if [ $(echo ${INPUT} | wc -w) -eq 1 ]; then
-                    DO=${RESULT}
-                else
-                    DO=${RESULT} ${INPUT#* }
-                fi
-                mpc ${DO}
-            elif [ ${RESULTS} -gt 1 ]; then
-                echo Ambiguous: ${RESULT}
-            elif [ ${RESULTS} -lt 1 ]; then
-                echo "Command not found: ${CMD}"
-            fi
+            mpc $INPUT
             ;;
     esac
 done
