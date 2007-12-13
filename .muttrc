@@ -13,7 +13,6 @@ set edit_headers=yes
 set editor='vim "+set tw=68" "+/^$" -X'
 set folder=~/.maildir
 set forward_format="Fwd: %s"
-#set from="Will Maier <willmaier@ml1.net>"
 set header_cache=~/.maildir/.cache
 set implicit_autoview=yes
 set include=yes
