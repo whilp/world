@@ -17,5 +17,4 @@ EOF
 [ -r "${HOME}/.xinitrc.local" ] && . ${HOME}/.xinitrc.local
 
 xset b off
-
 exec cwm -s
