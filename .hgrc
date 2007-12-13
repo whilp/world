@@ -16,13 +16,7 @@ hgext.mq =
 hgext.patchbomb =
 hgext.convert = 
 
-[hooks]
-commit = ~/.scripts/lockdown.py
-incoming = ~/.scripts/lockdown.py
-update = ~/.scripts/lockdown.py
-
 [extdiff]
-# need to enable extdiff
 cmd.vimdiff = LC_ALL=C vim -f '+bdel 1 2' '+ execute "DirDiff ".argv(0)." ".argv(1)'
 
 [email]
