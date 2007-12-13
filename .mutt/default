@@ -1,0 +1,3 @@
+set sendmail='/usr/local/bin/msmtp'
+set signature='~/.signatures/default'
+my_hdr From: Will Maier <willmaier@ml1.net>
