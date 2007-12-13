@@ -27,3 +27,6 @@ run bitlbee_blist.pl
 run bitlbee_tab_completion.pl
 
 mode lt_kije +w
+
+load icb
+connect -icbnet openbsd-porters cvs.openbsd.org

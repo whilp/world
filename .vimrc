@@ -9,6 +9,7 @@
 " UI settings.
 colorscheme zenburn
 
+set autoindent
 set backspace=indent,eol,start
 set foldmethod=indent
 set history=50

@@ -1,58 +1,74 @@
-##################  BEGIN HEADERS
-# Filename	: $HOME/.muttrc (or $HOME/.muttngrc)
-# Use		: main configuration file for mutt(-ng), a command line mail reader
-# Author	: Will Maier <willmaier@ml1.net>
-# Version	: $Revision: 1.54 $
-# Started	: 2005.03.06
-# Based on	: Phillip Hollenback's muttrc @ macdevcenter
-# Refers to	: $HOME/.muttalias
-#		  $HOME/.muttcolor
-# Referred to by: $HOME/.muttngrc
-# Updated	: $Date: 2006/06/03 16:21:35 $
-# CVS		: $Id: muttrc,v 1.54 2006/06/03 16:21:35 will Exp $
-# Copyright	: Copyright (c) 2005 Will Maier
-# License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
-##################  END HEADERS
+# Other files.
+source "~/.mutt/color"
+source "~/.mutt/aliases"
 
-## MAILDIR SETTINGS ##
-set mbox_type=Maildir
-set folder=~/.maildir
+# Settings.
+set alias_file="~/.mutt/aliases"
+set ascii_chars=yes
+set beep_new=yes
+set charset="//TRANSLIT"
 set copy=yes
-set record="+Sent"
-set postponed="+Drafts"
-set recall=no
 set delete=yes
-set crypt_verify_sig=no
-#set charset="us-ascii//TRANSLIT"	    # translate to straight us-ascii
-set charset="//TRANSLIT"	            # translate to straight us-ascii
+set edit_headers=yes
+set editor='vim "+set tw=68" "+/^$" -X'
+set folder=~/.maildir
+set forward_format="Fwd: %s"
 set header_cache=~/.maildir/.cache
-
-# Printing.
+set implicit_autoview=yes
+set include=yes
+set index_format="%4C %Z %-20[%d.%m.%y at %H:%M] %-22.22F %s"
+set ispell=
+set mask='!^(\.[^.]|Attic|.*log)'
+set mbox_type=Maildir
+set move=no
+set mark_old=no
+set pager_index_lines=10
+set pager_stop=yes
+set pgp_auto_decode=yes
+set pgp_autoinline=yes
+set pgp_clearsign_command="gpg --no-verbose --batch --output - --passphrase-fd 0 --armor --textmode --clearsign %?a?-u %a? %f"
+set pgp_decode_command="gpg %?p?--passphrase-fd 0? --no-verbose --batch --output - %f"
+set pgp_decrypt_command="gpg --passphrase-fd 0 --no-verbose --batch --output - %f"
+set pgp_encrypt_only_command="pgpewrap gpg --batch --quiet --no-verbose --output - --encrypt --textmode --armor --always-trust --encrypt-to 0x43FCC84A -- -r %r -- %f"
+set pgp_encrypt_sign_command="pgpewrap gpg --passphrase-fd 0 --batch --quiet --no-verbose --textmode --output - --encrypt --sign %?a?-u %a? --armor --always-trust --encrypt-to 0x43FCC84A -- -r %r -- %f"
+set pgp_export_command="gpg --no-verbose --export --armor %r"
+set pgp_good_sign="^gpg: Good signature from"
+set pgp_import_command="gpg --no-verbose --import -v %f"
+set pgp_list_pubring_command="gpg --no-verbose --batch --with-colons --list-keys %r" 
+set pgp_list_secring_command="gpg --no-verbose --batch --with-colons --list-secret-keys %r" 
+set pgp_sign_as=0x43FCC84A
+set pgp_sign_command="gpg --no-verbose --batch --output - --passphrase-fd 0 --armor --detach-sign --textmode %?a?-u %a? %f"
+set pgp_timeout=1800
+set pgp_verify_command="gpg --no-verbose --batch --output - --verify %s %f"
+set pgp_verify_key_command="gpg --no-verbose --batch --fingerprint --check-sigs %r"
+set postpone=no
+set postponed="+Drafts"
 set print_cmd="a2ps -r -q --columns=2 -j -C -2 -Email -o - | ssh wcmaier@login.hep.wisc.edu 'lpr -Plp3b'"
 set print_split=yes
-
-set mask='!^(\.[^.]|Attic|.*log)'
-
+set quit=ask-no
+set recall=no
+set record="+Sent"
+set reverse_name=yes
+set sig_dashes=yes
+set signature='~/.signatures/default'
+set sort=threads
+set sort_aux=reverse-last-date
 set spoolfile='/var/mail/will'
-mailboxes !
-mailboxes `\
-    find ~/.maildir -type d -path '*cur' | \
-    sed -e '/\/Attic\//d; s/^.*\.maildir\///; s/\/cur$//' | \
-    xargs -I% echo -n ' =%'`
+set wait_key=no
 
-subscribe debian-?.*@lists\.debian\.org
-subscribe postfix-users@postfix\.org
-subscribe madlug@madisonlinux\.org
-subscribe ubuntu-?.*@lists\.ubuntu\.com
-subscribe linux-fai@rrz.uni-koeln.de
-subscribe freebsd-?.*@freebsd\.org
-subscribe mutt-?.*@mutt\.org
-subscribe vim-?.*@vim\.org
-subscribe zsh-?.*@sunsite\.dk
-subscribe (ports|misc|tech|www)@openbsd.org
-subscribe techpartners@[a-zA-Z0-9\.]*wisc.edu
+alternates "(wcmaier@wisc\.edu|wcmaier@hep\.wisc\.edu|wcmaier@gmail\.com|willmaier@ml1\.net)"
 
-set alias_file="~/.muttalias"
+# Macros.
+macro index S "|/usr/local/bin/sb_filter.py -s >/dev/null<enter><save-message>=Attic/Spam<enter><enter>" "Mark as spam"
+macro pager S "|/usr/local/bin/sb_filter.py -s >/dev/null<enter><save-message>=Attic/Spam<enter><enter>" "Mark as spam"
+macro index H "|/usr/local/bin/sb_filter.py -g | fdm -mqa stdin fetch<enter><delete-message>" "Mark as ham"
+macro pager H "|/usr/local/bin/sb_filter.py -g | fdm -mqa stdin fetch<enter><delete-message>" "Mark as ham"
+macro pager o "|~/bin/viewitem<enter>" "Open RATM item link in a browser"
+macro index o "|~/bin/viewitem<enter>" "Open RATM item link in a browser"
+macro index C "<change-folder>?" "open a different folder"
+macro pager C "<change-folder>?" "open a different folder"
+
+# Bindings.
 bind index '.' buffy-list
 bind generic 'G' noop
 bind generic '\CG' noop
@@ -72,124 +88,51 @@ bind pager k previous-line
 bind pager J next-undeleted
 bind pager K previous-undeleted
 
-macro index S "|/usr/local/bin/sb_filter.py -s >/dev/null<enter><save-message>=Attic/Spam<enter><enter>" "Mark as spam"
-macro pager S "|/usr/local/bin/sb_filter.py -s >/dev/null<enter><save-message>=Attic/Spam<enter><enter>" "Mark as spam"
-macro index H "|/usr/local/bin/sb_filter.py -g | fdm -mqa stdin fetch<enter><delete-message>" "Mark as ham"
-macro pager H "|/usr/local/bin/sb_filter.py -g | fdm -mqa stdin fetch<enter><delete-message>" "Mark as ham"
-macro index <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
-macro pager <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
-macro pager o "|~/bin/viewitem<enter>" "Open RATM item link in a browser"
-macro index o "|~/bin/viewitem<enter>" "Open RATM item link in a browser"
-macro index C "<change-folder>?" "open a different folder"
-macro pager C "<change-folder>?" "open a different folder"
+# Subscriptions.
+subscribe debian-?.*@lists\.debian\.org
+subscribe postfix-users@postfix\.org
+subscribe madlug@madisonlinux\.org
+subscribe ubuntu-?.*@lists\.ubuntu\.com
+subscribe linux-fai@rrz.uni-koeln.de
+subscribe freebsd-?.*@freebsd\.org
+subscribe mutt-?.*@mutt\.org
+subscribe vim-?.*@vim\.org
+subscribe zsh-?.*@sunsite\.dk
+subscribe (ports|misc|tech|www)@openbsd.org
+subscribe techpartners@[a-zA-Z0-9\.]*wisc.edu
 
-## SMTP SETTINGS ##
+# Mailboxes.
+mailboxes !
+mailboxes `\
+    find ~/.maildir -type d -path '*cur' | \
+    sed -e '/\/Attic\//d; s/^.*\.maildir\///; s/\/cur$//' | \
+    xargs -I% echo -n ' =%'`
 
-## PAGER SETTINGS ##
-set implicit_autoview
-set pager_stop				# don't jump to next message at end
-set ascii_chars
-set sort=threads
-set sort_aux=reverse-last-date
-source "~/.muttcolor"			# get color info
-source "~/.muttalias"
-set nomark_old
-set quit=ask-no
-set move=no
-set editor='vim "+set tw=68" "+/^$" -X'
-set ispell=
-alternates "(wcmaier@wisc\.edu|wcmaier@hep\.wisc\.edu|wcmaier@gmail\.com|willmaier@ml1\.net)"
-set mail_check=30
-#set maildir_mtime=yes
-set sort_browser=alpha
-set arrow_cursor=no
-set pager_index_lines=10
-set wait_key=no
-
-## COMPOSITION SETTINGS ##
-set forward_format="Fwd: %s"		# traditional fwd: subj.
-set postpone=no
-set use_from=yes
-set from="Will Maier <willmaier@ml1.net>"
-set envelope_from=yes
-set followup_to
-set honor_followup_to=yes
-
-## INDEX SETTINGS ##
-# set beep
-set beep_new
-set wrap_search
-set index_format="%4C %Z %-20[%d.%m.%y at %H:%M] %-22.22F %s"
-set resolve=yes
-
-## EDIT SETTINGS ##
-set abort_unmodified=yes		# don't send if message unmodified
-set include=yes
-set reverse_name=yes
-set hdrs=yes
-set edit_headers=yes
-
-## GNUPG ##
+# Headers.
 my_hdr X-PGP-Key: http://lass.lfod.us/will/pubkey.asc
-set pgp_decode_command="gpg %?p?--passphrase-fd 0? --no-verbose --batch --output - %f"
-set pgp_verify_command="gpg --no-verbose --batch --output - --verify %s %f"
-set pgp_decrypt_command="gpg --passphrase-fd 0 --no-verbose --batch --output - %f"
-set pgp_sign_command="gpg --no-verbose --batch --output - --passphrase-fd 0 --armor --detach-sign --textmode %?a?-u %a? %f"
-set pgp_clearsign_command="gpg --no-verbose --batch --output - --passphrase-fd 0 --armor --textmode --clearsign %?a?-u %a? %f"
-set pgp_encrypt_only_command="pgpewrap gpg --batch --quiet --no-verbose --output - --encrypt --textmode --armor --always-trust --encrypt-to 0x43FCC84A -- -r %r -- %f"
-set pgp_encrypt_sign_command="pgpewrap gpg --passphrase-fd 0 --batch --quiet --no-verbose --textmode --output - --encrypt --sign %?a?-u %a? --armor --always-trust --encrypt-to 0x43FCC84A -- -r %r -- %f"
-set pgp_import_command="gpg --no-verbose --import -v %f"
-set pgp_export_command="gpg --no-verbose --export --armor %r"
-set pgp_verify_key_command="gpg --no-verbose --batch --fingerprint --check-sigs %r"
-set pgp_list_pubring_command="gpg --no-verbose --batch --with-colons --list-keys %r" 
-set pgp_list_secring_command="gpg --no-verbose --batch --with-colons --list-secret-keys %r" 
-set pgp_autosign=no
-set pgp_sign_as=0x43FCC84A
-set pgp_replyencrypt=yes
-set pgp_timeout=1800
-set pgp_good_sign="^gpg: Good signature from"
-set pgp_check_exit=yes
-set crypt_verify_sig=yes
-set pgp_auto_decode=yes
-set pgp_autoinline=yes
-
-## HEADER SETTINGS ##
-ignore *				# default: ignore
+ignore *
 unignore from: date subject to cc reply-to:
 unignore x-mailer user-agent
-unignore RT-Ticket RT-Originator
 unignore x-spambayes X-PGP-Key
 unhdr_order *
 hdr_order From Date: From: To: Cc: Subject: X-mailer:
 
-send-hook .					source ~/.muttrc
-send-hook .					"my_hdr From: Will Maier <willmaier@ml1.net>"
-send-hook .					"set sendmail='/usr/local/bin/msmtp'"
+send-hook '~t .' "source ~/.mutt/default"
 
+send-hook '~t \(jacobsonlaura.*@gmail\.com\|ljacobson@(biochem\.wisc\.edu\|deltanoid\.com)\)' "source ~/.mutt/laura"
 
-send-hook '~t \(jacobsonlaura.*@gmail\.com\|ljacobson@(biochem\.wisc\.edu\|deltanoid\.com)\)' "set signature='~/.signatures/laura'"
-send-hook '~t \(jacobsonlaura.*@gmail\.com\|ljacobson@(biochem\.wisc\.edu\|deltanoid\.com)\)' "unset sig_dashes"
+send-hook '~t @kingstarusa\.com' "source ~/.mutt/hep"
+send-hook "~t @[[:graph:]]*\.edu" "source ~/.mutt/hep"
+send-hook '~t @[[:graph:]]*\.?fnal\.gov' "source ~/.mutt/hep"
+send-hook '~t @[[:graph:]]*\.?cern\.ch' "source ~/.mutt/hep"
+send-hook '~t @[[:graph:]]*\.?desy\.de' "source ~/.mutt/hep"
 
-send-hook '~t .*@[a-zA-Z0-9\.\-]*\.?(edu\|fnal\.gov\|cern\.ch\|desy\.de\)'	"set signature='~/.signatures/hep'"
-send-hook '~t .*@[a-zA-Z0-9\.\-]*\.?(edu\|fnal\.gov\|cern\.ch\|desy\.de\)'	"set sendmail='/usr/local/bin/msmtp -a hep'"
-send-hook '~t .*@[a-zA-Z0-9\.\-]*\.?(edu\|fnal\.gov\|cern\.ch\|desy\.de\)'	"my_hdr From: Will Maier <wcmaier@hep.wisc.edu>"
-send-hook '~t .*@kingstarusa.com'				"set signature='~/.signatures/hep'"
-send-hook '~t .*@kingstarusa.com'				"set sendmail='/usr/local/bin/msmtp -a hep'"
-send-hook '~t .*@kingstarusa.com'				"my_hdr From: Will Maier <wcmaier@hep.wisc.edu>"
+send-hook '~L .*@[[:graph:]]*bsd[[:graph:]]*'	"set signature='~/.signatures/list-bsd'"
 
-send-hook '~L .*@\(lists\.\)?debian\.org'	"set signature='~/.signatures/list-debian'"
-send-hook '~L .*@[a-z0-9\.\-]*bsd[a-z0-9\.\-]*'	"set signature='~/.signatures/list-bsd'"
-send-hook '~L .*@mutt\.org'			"set signature='~/.signatures/list-bsd'"
-
-send-hook '~t techpartners@[a-zA-Z0-9\.\-]*wisc.edu'	"set signature='~/.signatures/hep'"
-send-hook '~t techpartners@[a-zA-Z0-9\.\-]*wisc.edu'	"set sendmail='/usr/local/bin/msmtp'"
-send-hook '~t techpartners@[a-zA-Z0-9\.\-]*wisc.edu'	"my_hdr From: Will Maier <willmaier@ml1.net>"
+send-hook '~t techpartners@[[:graph:]]*wisc.edu'	"set sendmail='/usr/local/bin/msmtp'"
+send-hook '~t techpartners@[[:graph:]]*wisc.edu'	"my_hdr From: Will Maier <willmaier@ml1.net>"
 
 send-hook '~t madlug@madisonlinux.org'	"set signature='~/.signatures/list-bsd'"
-send-hook '~t madlug@madisonlinux.org'	"my_hdr From: Will Maier <willmaier@ml1.net>"
-
-set signature='~/.signatures/default'
-set sig_dashes
 
 folder-hook . "unset strict_threads"
 folder-hook . "set duplicate_threads"
@@ -207,5 +150,3 @@ folder-hook =Sent set sort=reverse-date
 folder-hook =HEP/RQ set sort=threads
 folder-hook =HEP/RQ unset strict_threads
 folder-hook =HEP/RQ unset sort_re
-
-#folder-hook =\(HEP-nagios|Mythtv-users|Debian-.*|Ubuntu-.*|OpenBSD-.*|FreeBSD-.*|Vim.*|Madlug-.*|Maildrop-.*|Mutt-.*|Screen-.*|Techpartners-.*\) push 'D~m>300!~F~R<enter>'

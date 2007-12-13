@@ -1,5 +1,12 @@
 servers = (
   {
+    address = "cvs.openbsd.org";
+    chatnet = "openbsd-porters";
+    port = "7326";
+    use_ssl = "no";
+    ssl_verify = "no";
+  },
+  {
     address = "irc.nac.net";
     chatnet = "EFNet";
     autoconnect = "yes";
@@ -90,6 +97,11 @@ servers = (
 # { address = "irc.blessed.net"; chatnet = "EFNet"; port = "6667"; },
 
 chatnets = {
+  "openbsd-porters" = {
+    type = "ICB";
+    username = "wcmaier";
+    nick = "wcmaier_p";
+  };
   bitl = { type = "IRC"; nick = "will"; };
   IRCnet = {
     type = "IRC";
@@ -201,7 +213,8 @@ channels = (
   { name = "#newlug"; chatnet = "freenode"; },
   { name = "#mercurial"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "#metabug"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#obsd"; chatnet = "freenode"; autojoin = "yes"; }
+  { name = "#obsd"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "porters"; chatnet = "openbsd-porters"; autojoin = "Yes"; }
 );
 
 aliases = {

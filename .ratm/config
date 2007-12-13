@@ -280,3 +280,6 @@ url = http://bsdly.blogspot.com/feeds/posts/default
 
 [badgers]
 url = http://www.uwbadgers.com/rss/?deptid=116
+
+[arxivblog]
+url = http://feeds.feedburner.com/arXivblog?format=xml
