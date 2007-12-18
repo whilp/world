@@ -409,7 +409,7 @@ settings = {
     autocreate_split_windows = "no";
     autolog = "yes";
     autolog_path = "~/.irclogs/$0/$tag-%y.%m.%U.log";
-    theme = "silc";
+    theme = "plugin";
   };
   "irc/core" = { alternate_nick = "cmdr_kije"; };
   "perl/core/scripts" = {
