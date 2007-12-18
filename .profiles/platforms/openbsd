@@ -12,7 +12,7 @@ notify 2 "Configuring for OpenBSD."
 # Environment variables
 
 MIRRORS="
-http://osmirrors.cerias.purdue.edu
+ftp://rt.fm
 "
 #http://openbsd.mirrors.tds.net
 #http://mirrors.24-7-solutions.net
