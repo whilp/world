@@ -424,7 +424,7 @@ settings = {
     autocreate_split_windows = "no";
     autolog = "yes";
     autolog_path = "~/.irclogs/$0/$tag-%y.%m.%U.log";
-    theme = "plugin";
+    theme = "default.theme";
   };
   "irc/core" = { alternate_nick = "cmdr_kije"; };
   "perl/core/scripts" = {
@@ -527,28 +527,11 @@ completions = {
   zu = { value = "zuul"; auto = "yes"; };
 };
 windows = {
-  6 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#obsd";
-        tag = "freenode";
-      }
-    );
+  1 = { 
+    immortal = "yes";
+    name = "(status)";
+    level = "ALL";
     sticky = "yes";
-  };
-  4 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "IRC";
-        name = "#openbsd";
-        tag = "freenode";
-      }
-    );
-    sticky = "yes";
-    parent = "6";
   };
   2 = {
     items = (
@@ -560,7 +543,6 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "6";
   };
   3 = {
     items = (
@@ -572,19 +554,19 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "6";
+    parent = "2";
   };
-  8 = {
+  4 = {
     items = (
       {
         type = "CHANNEL";
         chat_type = "IRC";
-        name = "#metabug";
+        name = "#openbsd";
         tag = "freenode";
       }
     );
     sticky = "yes";
-    parent = "6";
+    parent = "2";
   };
   5 = {
     items = (
@@ -596,7 +578,19 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "6";
+    parent = "2";
+  };
+  6 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#obsd";
+        tag = "freenode";
+      }
+    );
+    sticky = "yes";
+    parent = "2";
   };
   7 = {
     items = (
@@ -608,16 +602,58 @@ windows = {
       }
     );
     sticky = "yes";
-    parent = "6";
+    parent = "2";
   };
-  1 = { 
-    immortal = "yes";
-    name = "(status)";
-    level = "ALL";
+  8 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "IRC";
+        name = "#metabug";
+        tag = "freenode";
+      }
+    );
     sticky = "yes";
+    parent = "2";
+  };
+  9 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "ICB";
+        name = "porters";
+        tag = "openbsd-porters";
+      }
+    );
+    sticky = "yes";
+    parent = "2";
+  };
+  10 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "SILC";
+        name = "#porters";
+        tag = "silc";
+      }
+    );
+    sticky = "yes";
+    parent = "2";
+  };
+  11 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "SILC";
+        name = "#openbsd";
+        tag = "silc";
+      }
+    );
+    sticky = "yes";
+    parent = "2";
   };
 };
 mainwindows = {
-  1 = { first_line = "32"; lines = "13"; };
-  6 = { first_line = "1"; lines = "31"; };
+  1 = { first_line = "32"; lines = "14"; };
+  2 = { first_line = "1"; lines = "31"; };
 };
