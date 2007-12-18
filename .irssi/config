@@ -7,6 +7,12 @@ servers = (
     ssl_verify = "no";
   },
   {
+    address = "silc.tilderoot.com";
+    chatnet = "silc";
+    port = "706";
+    autoconnect = "yes";
+  },
+  {
     address = "irc.nac.net";
     chatnet = "EFNet";
     autoconnect = "yes";
@@ -102,6 +108,7 @@ chatnets = {
     username = "wcmaier";
     nick = "wcmaier_p";
   };
+  silc = { type = "SILC"; };
   bitl = { type = "IRC"; nick = "will"; };
   IRCnet = {
     type = "IRC";
@@ -192,7 +199,6 @@ chatnets = {
     max_modes = "6";
     max_msgs = "3";
   };
-  SILC = { type = "SILC"; };
 };
 
 channels = (
@@ -214,7 +220,9 @@ channels = (
   { name = "#mercurial"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "#metabug"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "#obsd"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "porters"; chatnet = "openbsd-porters"; autojoin = "Yes"; }
+  { name = "porters"; chatnet = "openbsd-porters"; autojoin = "Yes"; },
+  { name = "#openbsd"; chatnet = "silc"; autojoin = "yes"; },
+  { name = "#porters"; chatnet = "silc"; autojoin = "yes"; }
 );
 
 aliases = {
@@ -380,6 +388,13 @@ statusbar = {
       items = {
         barstart = { priority = "100"; };
         awl_0 = { };
+        barend = { priority = "100"; alignment = "right"; };
+      };
+    };
+    awl_1 = {
+      items = {
+        barstart = { priority = "100"; };
+        awl_1 = { };
         barend = { priority = "100"; alignment = "right"; };
       };
     };

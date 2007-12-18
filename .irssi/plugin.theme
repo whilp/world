@@ -321,3 +321,6 @@ abstracts = {
   ownmsgnick_signed = "{msgnick {flag_signed} $1-}";
   ownprivmsgnick_signed = "{msgnick {flag_signed} $*}";
 };
+formats = {
+  "fe-common/core" = { pubmsg = "{pubmsgnick $2 {pubnick \00302$0}}$1"; };
+};
