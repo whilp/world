@@ -165,10 +165,14 @@ settings = {
     user_name = "will";
     nick = "will";
     timestamp_format = "%H:%M:%S";
-    log_timestamp = "%H:%M:%S";
+    log_timestamp = "%Y.%m.%d %H:%M";
   };
   "fe-text" = { actlist_sort = "refnum"; };
-  "fe-common/core" = { theme = "plugin"; };
+  "fe-common/core" = {
+    theme = "plugin";
+    autolog_path = "~/.irclogs/$0/$tag-%y.%m.%U.log";
+    autolog = "yes";
+  };
   "irc/core" = { alternate_nick = "will_"; };
   "perl/core/scripts" = {
     awl_hide_data = "1";
