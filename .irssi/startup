@@ -17,17 +17,16 @@ bind window-8 change_window 8
 bind window-9 change_window 9
 bind window-c /window new hide
 
-run awl
 run usercount
 run nickcolor
 run tty_away
 run trackbar.pl
-run queryresume.pl
 run bitlbee_blist.pl
 run bitlbee_tab_completion.pl
-run silc.pl
 
 mode lt_kije +w
 
+load silc
 load icb
-connect -icbnet openbsd-porters cvs.openbsd.org
+
+run silc.pl
