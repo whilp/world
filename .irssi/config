@@ -160,10 +160,23 @@ completions = {
   };
 };
 settings = {
-  core = { real_name = "will"; user_name = "will"; nick = "will"; };
+  core = {
+    real_name = "will";
+    user_name = "will";
+    nick = "will";
+    timestamp_format = "%H:%M:%S";
+    log_timestamp = "%H:%M:%S";
+  };
   "fe-text" = { actlist_sort = "refnum"; };
   "fe-common/core" = { theme = "plugin"; };
   "irc/core" = { alternate_nick = "will_"; };
+  "perl/core/scripts" = {
+    awl_hide_data = "1";
+    awl_display_key = "$Q $H$C$S";
+    autoaway_sec = "600";
+    autoaway_msg = "NAK";
+    awl_sort = "-last_line";
+  };
 };
 keyboard = (
   { key = "^W"; id = "key"; data = "window"; },
@@ -256,9 +269,9 @@ statusbar = {
         window = { };
         window_empty = { };
         lag = { priority = "-1"; };
-        act = { priority = "10"; };
         more = { priority = "-1"; alignment = "right"; };
         barend = { priority = "100"; alignment = "right"; };
+        usercount = { };
       };
     };
 
@@ -306,6 +319,13 @@ statusbar = {
         topicbarend = { priority = "100"; alignment = "right"; };
       };
     };
+    awl_0 = {
+      items = {
+        barstart = { priority = "100"; };
+        awl_0 = { };
+        barend = { priority = "100"; alignment = "right"; };
+      };
+    };
   };
 };
 windows = {
@@ -331,6 +351,7 @@ windows = {
     );
   };
   4 = {
+    name = "openbsd-fn";
     items = (
       {
         type = "CHANNEL";
@@ -351,6 +372,7 @@ windows = {
     );
   };
   6 = {
+    name = "porters-icb";
     items = (
       {
         type = "CHANNEL";
@@ -361,6 +383,7 @@ windows = {
     );
   };
   7 = {
+    name = "openbsd-silc";
     items = (
       {
         type = "CHANNEL";
@@ -391,4 +414,4 @@ windows = {
     );
   };
 };
-mainwindows = { 1 = { first_line = "1"; lines = "51"; }; };
+mainwindows = { 7 = { first_line = "1"; lines = "45"; }; };

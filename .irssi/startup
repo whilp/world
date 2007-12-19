@@ -17,12 +17,13 @@ bind window-8 change_window 8
 bind window-9 change_window 9
 bind window-c /window new hide
 
+run awl
 run usercount
 run nickcolor
 run tty_away
-run trackbar.pl
-run bitlbee_blist.pl
-run bitlbee_tab_completion.pl
+run trackbar
+run bitlbee_blist
+run bitlbee_tab_completion
 
 mode lt_kije +w
 
