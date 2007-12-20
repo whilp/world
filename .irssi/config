@@ -272,7 +272,6 @@ statusbar = {
         user = { };
         window = { };
         window_empty = { };
-        lag = { priority = "-1"; };
         more = { priority = "-1"; alignment = "right"; };
         barend = { priority = "100"; alignment = "right"; };
         usercount = { };
