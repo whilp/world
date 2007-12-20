@@ -5,20 +5,20 @@ servers = (
     port = "7326";
     use_ssl = "no";
     ssl_verify = "no";
-    autoconnect = "yes";
+    autoconnect = "no";
   },
   {
     address = "silc.tilderoot.com";
     chatnet = "silc";
     port = "706";
-    autoconnect = "yes";
+    autoconnect = "no";
   },
   { address = "irc.bitlbee.org"; chatnet = "bitlbee"; port = "6667"; },
   {
     address = "irc.freenode.net";
     chatnet = "freenode";
     port = "6667";
-    autoconnect = "yes";
+    autoconnect = "no";
   },
   { address = "irc.efnet.org"; chatnet = "EFNet"; port = "6667"; },
   {
@@ -27,7 +27,7 @@ servers = (
     port = "6667";
     use_ssl = "no";
     ssl_verify = "no";
-    autoconnect = "yes";
+    autoconnect = "no";
   }
 );
 
@@ -41,7 +41,6 @@ chatnets = {
   bitl = { type = "IRC"; nick = "will"; };
   freenode = {
     type = "IRC";
-    autosendcmd = "/^msg nickserv ident lesheros;wait -freenode 2000";
     max_kicks = "4";
     max_msgs = "1";
     max_modes = "4";
@@ -49,11 +48,12 @@ chatnets = {
   };
   oftc = {
     type = "IRC";
-    autosendcmd = "/^msg nickserv identify lesheros;wait -oftc 2000";
     max_kicks = "4";
     max_msgs = "1";
     max_modes = "4";
     max_whois = "1";
+    nick = "lt_kije";
+    username = "lt_kije";
   };
   IRCnet = {
     type = "IRC";
@@ -72,14 +72,14 @@ chatnets = {
 };
 
 channels = (
-  { name = "&bitlbee"; chatnet = "bitl"; autojoin = "yes"; },
-  { name = "#openbsd"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#wilug"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#metabug"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "#obsd"; chatnet = "freenode"; autojoin = "yes"; },
-  { name = "porters"; chatnet = "openbsd-porters"; autojoin = "Yes"; },
-  { name = "#openbsd"; chatnet = "silc"; autojoin = "yes"; },
-  { name = "#porters"; chatnet = "silc"; autojoin = "yes"; }
+  { name = "&bitlbee"; chatnet = "bitl"; autojoin = "no"; },
+  { name = "#openbsd"; chatnet = "freenode"; autojoin = "no"; },
+  { name = "#wilug"; chatnet = "freenode"; autojoin = "no"; },
+  { name = "#metabug"; chatnet = "freenode"; autojoin = "no"; },
+  { name = "#obsd"; chatnet = "freenode"; autojoin = "no"; },
+  { name = "porters"; chatnet = "openbsd-porters"; autojoin = "no"; },
+  { name = "#openbsd"; chatnet = "silc"; autojoin = "no"; },
+  { name = "#porters"; chatnet = "silc"; autojoin = "no"; }
 );
 
 aliases = {
@@ -331,6 +331,7 @@ statusbar = {
     };
   };
 };
+logs = { };
 windows = {
   1 = { immortal = "yes"; name = "(status)"; level = "ALL"; };
   2 = {
@@ -354,7 +355,6 @@ windows = {
     );
   };
   4 = {
-    name = "openbsd-fn";
     items = (
       {
         type = "CHANNEL";
@@ -375,38 +375,6 @@ windows = {
     );
   };
   6 = {
-    name = "porters-icb";
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "ICB";
-        name = "porters";
-        tag = "openbsd-porters";
-      }
-    );
-  };
-  7 = {
-    name = "openbsd-silc";
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "SILC";
-        name = "#openbsd";
-        tag = "silc";
-      }
-    );
-  };
-  8 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "SILC";
-        name = "#porters";
-        tag = "silc";
-      }
-    );
-  };
-  9 = {
     items = (
       {
         type = "CHANNEL";
@@ -416,5 +384,15 @@ windows = {
       }
     );
   };
+  7 = {
+    items = (
+      {
+        type = "CHANNEL";
+        chat_type = "ICB";
+        name = "porters";
+        tag = "ICBnet";
+      }
+    );
+  };
 };
-mainwindows = { 7 = { first_line = "1"; lines = "45"; }; };
+mainwindows = { 1 = { first_line = "1"; lines = "45"; }; };
