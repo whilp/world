@@ -1,33 +1,19 @@
+load silc
+load icb
+
 script exec \$ENV{'TZ'}='UTC'\;
-bind ^W key window
-bind window-h previous_window
-bind window-p previous_window
-bind window-l next_window
-bind window-n next_window
-bind window-k upper_window
-bind window-j lower_window
-bind window-1 change_window 1
-bind window-2 change_window 2
-bind window-3 change_window 3
-bind window-4 change_window 4
-bind window-5 change_window 5
-bind window-6 change_window 6
-bind window-7 change_window 7
-bind window-8 change_window 8
-bind window-9 change_window 9
-bind window-c /window new hide
 
 run awl
 run usercount
 run nickcolor
 run tty_away
-run trackbar.pl
-run queryresume.pl
-run bitlbee_blist.pl
-run bitlbee_tab_completion.pl
+run trackbar
+run bitlbee_blist
+run bitlbee_tab_completion
 run silc.pl
 
-mode lt_kije +w
+connect -silcnet SILCNet silc.tilderoot.com wcmaier
+connect -icbnet ICBnet cvs.openbsd.org 7326
+connect freenode
 
-load icb
-connect -icbnet openbsd-porters cvs.openbsd.org
+mode lt_kije +w

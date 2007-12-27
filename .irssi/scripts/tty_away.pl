@@ -119,7 +119,12 @@ sub ta_setaway {
 		Irssi::print($status_msg);
 	}
 	@servers = Irssi::servers();
-	$servers[0]->command("AWAY $arg");
+	#$servers[0]->command("AWAY $arg");
+	for my $server (@servers) {
+		if ($server->{chat_type} !~ /^icb$/i) {
+			$server->command("AWAY $arg");
+		}
+	}
 }
 
 sub ta_setsafeaway {
@@ -141,7 +146,11 @@ sub ta_setsafeaway {
 		Irssi::print($status_msg);
 	}
 	@servers = Irssi::servers();
-	$servers[0]->command("AWAY $arg");
+	for my $server (@servers) {
+		if ($server->{chat_type} !~ /^icb$/i) {
+			$server->command("AWAY $arg");
+		}
+	}
 
 	ta_set_timer();		# will start/stop timer, depending on $override
 }
