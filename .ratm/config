@@ -286,3 +286,6 @@ url = http://feeds.feedburner.com/arXivblog?format=xml
 
 [sfnovelists]
 url = http://www.sfnovelists.com/feed/atom/
+
+[jonstumblr]
+url = http://madsimian.tumblr.com/rss
