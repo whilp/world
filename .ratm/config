@@ -289,3 +289,21 @@ url = http://www.sfnovelists.com/feed/atom/
 
 [jonstumblr]
 url = http://madsimian.tumblr.com/rss
+
+[colliderblog]
+url = http://muon.wordpress.com/feed/
+
+[cosmicvariance]
+url = http://cosmicvariance.com/feed/atom/
+
+[notevenwrong]
+url = http://www.math.columbia.edu/~woit/wordpress/?feed=rss2
+
+[symmetryfactor]
+url = http://apetrov.wordpress.com/feed/
+
+[charmetc]
+url = http://superweak.wordpress.com/feed/
+
+[quantumdiaries]
+url = http://dorigo.wordpress.com/feed/
