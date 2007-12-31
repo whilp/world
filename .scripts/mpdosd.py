@@ -246,5 +246,5 @@ if __name__ == '__main__':
 
     # XXX: it'd be nice to join with '\n' here, but pyosd doesn't
     # seem to like that.
-    osd.display(' '.join(output)
+    osd.display(' '.join(output))
     time.sleep(DELAY)
