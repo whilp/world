@@ -313,3 +313,6 @@ url = http://gordonwatts.wordpress.com/feed/
 
 [backreaction]
 url = http://backreaction.blogspot.com/atom.xml
+
+[recursivity]
+url = http://recursed.blogspot.com/feeds/posts/default
