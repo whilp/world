@@ -307,3 +307,9 @@ url = http://superweak.wordpress.com/feed/
 
 [quantumdiaries]
 url = http://dorigo.wordpress.com/feed/
+
+[gordonwatts]
+url = http://gordonwatts.wordpress.com/feed/
+
+[backreaction]
+url = http://backreaction.blogspot.com/atom.xml
