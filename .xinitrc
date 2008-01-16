@@ -11,7 +11,7 @@ cat <<EOF | xmodmap -
 EOF
 
 xsetroot -solid black
-[ -f ~/.bkg.png ] && xsetbg -background black -center -brighten 10 ~/.bkg.png
+[ -f ~/.bkg.png ] && xloadimage  -onroot -quiet -background black -center -brighten 10 ~/.bkg.png
 
 # Terminals
 [ -r "${HOME}/.xinitrc.local" ] && . ${HOME}/.xinitrc.local

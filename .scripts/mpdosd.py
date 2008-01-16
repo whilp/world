@@ -224,11 +224,16 @@ if __name__ == '__main__':
     status['song'] += 1
     status['elapsed'], status['total'] = \
             ['%d:%d' % divmod(x, 60) for x in (elapsed, total)]
-    status['pct'] = 100.0 * elapsed/total
+    try:
+        status['pct'] = 100.0 * elapsed/total
+    except ZeroDivisionError:
+        status['pct'] = '--'
 
+    if not 'artist' in np:
+        np['artist'] = np['name']
     output = ["%(artist)s - %(title)s" % np]
     output.append("[%(state)s] %(song)d/%(playlistlength)d "
-            "%(elapsed)s/%(total)s (%(pct)d%%)" % status)
+            "%(elapsed)s/%(total)s (%(pct)s%%)" % status)
 
     osd = pyosd.osd(
             timeout=DELAY,
