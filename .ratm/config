@@ -316,3 +316,6 @@ url = http://backreaction.blogspot.com/atom.xml
 
 [recursivity]
 url = http://recursed.blogspot.com/feeds/posts/default
+
+[languagelog]
+url = http://itre.cis.upenn.edu/~myl/languagelog/index.rdf
