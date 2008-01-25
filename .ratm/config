@@ -307,3 +307,15 @@ url = http://superweak.wordpress.com/feed/
 
 [quantumdiaries]
 url = http://dorigo.wordpress.com/feed/
+
+[gordonwatts]
+url = http://gordonwatts.wordpress.com/feed/
+
+[backreaction]
+url = http://backreaction.blogspot.com/atom.xml
+
+[recursivity]
+url = http://recursed.blogspot.com/feeds/posts/default
+
+[languagelog]
+url = http://itre.cis.upenn.edu/~myl/languagelog/index.rdf
