@@ -67,6 +67,7 @@ macro pager o "|~/bin/viewitem<enter>" "Open RATM item link in a browser"
 macro index o "|~/bin/viewitem<enter>" "Open RATM item link in a browser"
 macro index C "<change-folder>?" "open a different folder"
 macro pager C "<change-folder>?" "open a different folder"
+macro index <Backspace> "<reply>^UUW-HEP Help System <help@hep.wisc.edu><enter><enter>"
 
 # Bindings.
 bind index '.' buffy-list
