@@ -16,9 +16,6 @@ CLIENT_ID = 'tst'
 CLIENT_VER = 1.0
 USER_AGENT = 'dj_kije/0.1 +http://www.lfod.us/'
 
-indices_re = re.compile(r"""\[(?P<index>\d+)\]""")
-indices_repl = r"""_\g<index>_"""
-
 class Error(Exception):
     """Base error class."""
     pass
@@ -56,6 +53,7 @@ class SessionError(AudioScrobblerError):
     pass
 
 class HTTPClient(object):
+    debug = False
 
     def request(self, url, data=None, headers={}, debug=False):
         """Send a request for 'url' and return a file-like object."""
