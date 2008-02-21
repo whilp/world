@@ -24,6 +24,10 @@ class AudioScrobblerError(Error):
     """Base Audioscrobbler error class."""
     pass
 
+class SubmitError(Error):
+    """Raised when we fail to submit."""
+    pass
+
 class HandshakeError(AudioScrobblerError):
     """Raised when something goes wrong during the handshake."""
     pass
@@ -186,7 +190,10 @@ class Scrobbler(HTTPClient):
             'n[%d]' % index: tracknumber,
             'm[%d]' % index: mb_trackid}
 
-        response = self.request(self.session.submission, data).read()
+        try:
+            response = self.request(self.session.submission, data).read()
+        except:
+            raise SubmitError("Failed to submit to server.")
 
         return response
 
@@ -254,56 +261,98 @@ class Session(object):
         else:
             raise HardError("Handshake failed.")
 
+def query(artist, track):
+    """Send a query to MusicBrainz and return kwargs suitable for Scrobbler.submit()."""
+    kwargs = {'artist': artist, 'track': track}
+
+    # Prepare the track and artist fields.
+    if 'feat.' in artist:
+        artist, feat = [x.strip() for x in artist.split('feat.', 1)]
+
+    track = track.replace('(remix)', '')
+
+    q = Query()
+    f = TrackFilter(title=track, artistName=artist)
+
+    results = q.getTracks(f)
+    # MB wants us to sleep at least one second between queries.
+    time.sleep(1.5)
+
+    if results:
+        # Take the best result.
+        results = sorted(results, key=attrgetter('score'))
+        result = results[-1]
+        track = result.getTrack()
+        artist = track.getArtist()
+
+        # Update kwargs.
+        kwargs['track'] = track.title
+        kwargs['artist'] = artist.name
+        kwargs['mb_trackid'] = track.id
+        if track.duration:
+            kwargs['secs'] = track.duration
+    else:
+        kwargs['artist'], kwargs['track'] = \
+                [capwords(x.strip()) for x in (artist, track)]
+
+    return kwargs
+
 if __name__ == '__main__':
     import sys
     import time
 
+    from operator import attrgetter
     from string import capwords
 
-    scrobbler = Scrobbler('dj_kije', 'lesheros', debug=1)
+    try:
+        from musicbrainz2.webservice import Query, TrackFilter, WebServiceError
+    except ImportError:
+        query = False
+
+    scrobbler = Scrobbler('dj_kije', 'lesheros')
 
     tohear = open(sys.argv[1], 'r')
 
     # Submit one at a time; my mass submission thingy (below) didn't
     # really work.
-    songs = [[capwords(x) for x in line.split(' - ', 1)] for line in tohear]
+    songs = [[x for x in line.split(' - ', 1)] for line in tohear]
     tohear.close()
 
+    sys.stdout.write("Sending updates to last.fm\n")
     for artist, track in songs:
-        print ': '.join((artist, track))
-        scrobbler.submit(artist, track)
-        time.sleep(180)
+        try:
+            kwargs = query(artist, track)
+        except:
+            print artist, track
+            raise
 
-if False and __name__ == '__main__':
-    import sys
-    import time
+        char_map = {u'\xb0': '', u'\xea': 'e'}
+        ascii = lambda s: ''.join([char_map.get(x, x) for x in s])
 
-    from datetime import datetime, timedelta
-    from string import capwords
+        try:
+            kwargs['artist'] = ascii(kwargs['artist'])
+            kwargs['track'] = ascii(kwargs['track'])
+        except:
+            a = kwargs['artist']
+            t = kwargs['track']
+            raise
+        artist = ascii(kwargs['artist'])
+        track = ascii(kwargs['track'])
+        sys.stdout.write('  %s -- %s' % (artist, track))
+        if 'mb_trackid' in kwargs:
+            sys.stdout.write('*')
+        sys.stdout.write('\n')
 
-    scrobbler = Scrobbler('dj_kije', 'lesheros', debug=1)
+        tries = 0
+        while tries < 3:
+            try:
+                scrobbler.submit(**kwargs)
+                break
+            except SubmitError, e:
+                # Try again.
+                error = e
+                tries += 1
+        else:
+            raise SubmitError("Submission retries exceeded max (3): %s." % error)
 
-    last = datetime.now()
-    between = timedelta(minutes=5)
-
-    tohear = open(sys.argv[1], 'r')
-
-    songs = []
-    for line in tohear:
-        song = {}
-        artist, track = [capwords(x) for x in line.split(' - ', 1)]
-        song['artist'] = artist
-        song['track'] = track
-        song['time'] = str(int(time.mktime(last.utctimetuple())))
-        song['source'] = 'P'
-        song['secs'] = 180
-        song['rating'] = 'L'
-        song['album'] = ''
-        song['tracknumber'] = ''
-        song['mb_trackid'] = ''
-
-        last = last - between
-        songs.append(song)
-
-    # Submit songs.
-    scrobbler.submit_many(songs)
+        time.sleep(60)
