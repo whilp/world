@@ -190,10 +190,7 @@ class Scrobbler(HTTPClient):
             'n[%d]' % index: tracknumber,
             'm[%d]' % index: mb_trackid}
 
-        try:
-            response = self.request(self.session.submission, data).read()
-        except:
-            raise SubmitError("Failed to submit to server.")
+        response = self.request(self.session.submission, data).read()
 
         return response
 
@@ -306,53 +303,81 @@ if __name__ == '__main__':
 
     try:
         from musicbrainz2.webservice import Query, TrackFilter, WebServiceError
+        from musicbrainz2.model import Track
     except ImportError:
-        query = False
+        Query = False
 
-    scrobbler = Scrobbler('dj_kije', 'lesheros')
+    DELIMITER = ' - '
+    USER = 'dj_kije'
+    PASSWD = 'lesheros'
 
-    tohear = open(sys.argv[1], 'r')
+    if Query:
+        q = Query()
+    else:
+        sys.stderr.write("MusicBrainz support disabled.")
 
-    # Submit one at a time; my mass submission thingy (below) didn't
-    # really work.
-    songs = [[x for x in line.split(' - ', 1)] for line in tohear]
-    tohear.close()
+    submit = True
+    track = sys.argv[1]
 
-    sys.stdout.write("Sending updates to last.fm\n")
-    for artist, track in songs:
+    # If the user passed -n, don't actually submit results and look
+    # for the song info in argv[2].
+    if sys.argv[1] == '-n':
+        submit = False
+        track = sys.argv[2]
+
+    # If track is a MusicBrainz URL, extract the ID.
+    if track.startswith('http://'):
+        # MusicBrainz URL, like:
+        #   http://musicbrainz.org/track/fc1f032b-fe4c-4e9d-9b4e-144d8c6355b9.html
+        track = track.split('/')[-1]
+        track = track.split('.')[0]
+
+    if Query and len(track) == 36 and len(track.split('-')) == 5:
+        # MusicBrainz ID, like:
+        #   fc1f032b-fe4c-4e9d-9b4e-144d8c6355b9
+        mbid = track
+        track = q.getTrackById(mbid)
+    else:
+        # artist - track, like:
+        #   Ol' Dirty Bastard - Dirty Dancin' (feat. Method Man)
+        artist, track = track.split(DELIMITER, 1)
+        if Query:
+            f = TrackFilter(title=track, artistName=artist)
+            results = q.getTracks(f)
+
+        if Query and results:
+            # results is a list of results, sorted in order with the
+            # most likely match first.
+            result = results[0]
+            track = result.getTrack()
+
+    kwargs = {}
+    if isinstance(track, Track):
+        artist = track.getArtist()
+        kwargs['mb_trackid'] = track.id
+        kwargs['track'] = track.title
+        kwargs['artist'] = artist.name
+        if track.duration:
+            kwargs['secs'] = track.duration
+    else:
+        kwargs['artist'], kwargs['track'] = \
+                [capwords(x) for x in (artist, track)]
+
+    # Some tracks and artists have weird characters in them.
+    # Translate any such characters before submitting/printing.
+    char_map = {u'\xbf': ''}
+    ascii = lambda s: ''.join([char_map.get(x, x) for x in s])
+    kwargs['artist'] = ascii(kwargs['artist'])
+    kwargs['track'] = ascii(kwargs['track'])
+
+    if submit:
+        scrobbler = Scrobbler(USER, PASSWD)
         try:
-            kwargs = query(artist, track)
+            scrobbler.submit(**kwargs)
         except:
-            print artist, track
-            raise
-
-        char_map = {u'\xb0': '', u'\xea': 'e'}
-        ascii = lambda s: ''.join([char_map.get(x, x) for x in s])
-
-        try:
-            kwargs['artist'] = ascii(kwargs['artist'])
-            kwargs['track'] = ascii(kwargs['track'])
-        except:
-            a = kwargs['artist']
-            t = kwargs['track']
-            raise
-        artist = ascii(kwargs['artist'])
-        track = ascii(kwargs['track'])
-        sys.stdout.write('  %s -- %s' % (artist, track))
-        if 'mb_trackid' in kwargs:
-            sys.stdout.write('*')
-        sys.stdout.write('\n')
-
-        tries = 0
-        while tries < 3:
-            try:
-                scrobbler.submit(**kwargs)
-                break
-            except SubmitError, e:
-                # Try again.
-                error = e
-                tries += 1
-        else:
-            raise SubmitError("Submission retries exceeded max (3): %s." % error)
-
-        time.sleep(60)
+            sys.stderr.write("Submission failed; retrying in 5 seconds.")
+            time.sleep(5)
+            scrobbler = Scrobbler(USER, PASSWD, debug=2)
+            scrobbler.submit(**kwargs)
+    else:
+        sys.stdout.write("%s\n" % kwargs)
