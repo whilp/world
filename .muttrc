@@ -123,6 +123,8 @@ send-hook '~t .' "source ~/.mutt/default"
 send-hook '~t \(jacobsonlaura.*@gmail\.com\|ljacobson@(biochem\.wisc\.edu\|deltanoid\.com)\)' "source ~/.mutt/laura"
 
 send-hook '~t @kingstarusa\.com' "source ~/.mutt/hep"
+send-hook '~t @sun\.com' "source ~/.mutt/hep"
+send-hook '~t @laurustech\.com' "source ~/.mutt/hep"
 send-hook "~t @[[:graph:]]*\.edu" "source ~/.mutt/hep"
 send-hook '~t @[[:graph:]]*\.?fnal\.gov' "source ~/.mutt/hep"
 send-hook '~t @[[:graph:]]*\.?cern\.ch' "source ~/.mutt/hep"
