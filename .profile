@@ -39,6 +39,14 @@ VERBOSE="1"
 TODO="$HOME/TODO"
 export CLUSTER CVSEDITOR CVS_RSH EDITOR HOSTNAME LANG MAIL PATH RCMD_CMD RCP_CMD SHELL VERBOSE TODO
 
+# Add Python stuff.
+PYTHONDIR=~/lib/python
+if [ -d ${PYTHONDIR} ]; then
+    PATH=${PATH}:${PYTHONDIR}
+    PYTHONPATH=${PYTHONPATH}:${PYTHONDIR}
+    export PATH PYTHONDIR
+fi
+
 # Directory containing platform- and host-specific configuration
 PROFILES="${HOME}/.profiles"
 PLATFORMS="${PROFILES}/platforms"
