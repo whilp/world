@@ -176,7 +176,8 @@ class Scrobbler(HTTPClient):
             # Must be UTC.
             # XXX: but this causes 'in NN hours' thingies to show
             # up...
-            time = str(int(_time.mktime(_time.gmtime())))
+            #time = str(int(_time.mktime(_time.gmtime())))
+            time = str(int(_time.time()))
 
         data = {
             's': self.session.id,
