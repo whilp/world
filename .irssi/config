@@ -163,7 +163,7 @@ settings = {
   core = {
     real_name = "will";
     user_name = "will";
-    nick = "will";
+    nick = "wilma";
     timestamp_format = "%H:%M:%S";
     log_timestamp = "%Y.%m.%d %H:%M";
   };
@@ -179,7 +179,7 @@ settings = {
     awl_display_key = "$Q $H$C$S";
     autoaway_sec = "600";
     autoaway_msg = "NAK";
-    awl_sort = "-last_line";
+    awl_sort = "refnum";
   };
 };
 keyboard = (
