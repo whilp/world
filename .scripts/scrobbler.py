@@ -366,7 +366,7 @@ if __name__ == '__main__':
 
     # Some tracks and artists have weird characters in them.
     # Translate any such characters before submitting/printing.
-    char_map = {u'\xbf': ''}
+    char_map = {u'\xbf': '', u'\xf3': 'o'}
     ascii = lambda s: ''.join([char_map.get(x, x) for x in s])
     kwargs['artist'] = ascii(kwargs['artist'])
     kwargs['track'] = ascii(kwargs['track'])
