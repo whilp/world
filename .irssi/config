@@ -163,7 +163,7 @@ settings = {
   core = {
     real_name = "will";
     user_name = "will";
-    nick = "wilma";
+    nick = "will";
     timestamp_format = "%H:%M:%S";
     log_timestamp = "%Y.%m.%d %H:%M";
   };
