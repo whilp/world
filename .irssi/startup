@@ -12,9 +12,10 @@ run bitlbee_blist
 run bitlbee_tab_completion
 run silc.pl
 
-connect -silcnet SILCNet silc.comstyle.com wcmaier
-connect -silcnet SILCNet silc.metabug.org will
-connect -icbnet ICBnet cvs.openbsd.org 7326
-connect freenode
+#connect -silcnet SILCNet silc.comstyle.com wcmaier
+#connect -silcnet SILCNet silc.metabug.org will
+#connect -icbnet openbsd-hackers cvs.openbsd.org 7326
+#connect -icbnet openbsd-porters cvs.openbsd.org 7326
+#connect freenode
 
 mode lt_kije +w
