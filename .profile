@@ -18,7 +18,8 @@ SHELL="$(which zsh 2>/dev/null)" || \
         SHELL="$(which sh)"
 
 CVSEDITOR="${EDITOR}"
-CVS_RSH="$(which ssh)"
+CVS_RSH=/usr/bin/ssh
+OCVS=:ext:wcmaier@cvs.openbsd.org:/cvs
 FANOUT=16
 HGEDITOR=$HOME/bin/hgeditor
 HOSTNAME="$(hostname -s)"
