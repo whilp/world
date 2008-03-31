@@ -349,7 +349,7 @@ windows = {
         type = "CHANNEL";
         chat_type = "IRC";
         name = "&bitlbee";
-        tag = "localhost";
+        tag = "bitlbee";
       }
     );
   };
@@ -368,7 +368,7 @@ windows = {
       {
         type = "CHANNEL";
         chat_type = "IRC";
-        name = "#openbsd";
+        name = "#OpenBSD";
         tag = "freenode";
       }
     );
@@ -399,7 +399,7 @@ windows = {
         type = "CHANNEL";
         chat_type = "ICB";
         name = "porters";
-        tag = "ICBnet";
+        tag = "openbsd-porters";
       }
     );
   };
@@ -407,9 +407,9 @@ windows = {
     items = (
       {
         type = "CHANNEL";
-        chat_type = "SILC";
-        name = "#porters";
-        tag = "SILCNet";
+        chat_type = "ICB";
+        name = "hackers";
+        tag = "openbsd-hackers";
       }
     );
   };
@@ -419,9 +419,19 @@ windows = {
         type = "CHANNEL";
         chat_type = "SILC";
         name = "#openbsd";
-        tag = "SILCNet";
+        tag = "silc";
+      }
+    );
+  };
+  10 = {
+    items = (
+      {
+        type = "QUERY";
+        chat_type = "IRC";
+        name = "merdely";
+        tag = "freenode";
       }
     );
   };
 };
-mainwindows = { 1 = { first_line = "1"; lines = "45"; }; };
+mainwindows = { 1 = { first_line = "1"; lines = "50"; }; };
