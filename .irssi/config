@@ -29,7 +29,7 @@ servers = (
     autoconnect = "no";
   },
   {
-    address = "silc.comstyle.com";
+    address = "silc.peereboom.us";
     chatnet = "silc";
     port = "706";
     use_ssl = "no";
