@@ -18,7 +18,8 @@ SHELL="$(which zsh 2>/dev/null)" || \
         SHELL="$(which sh)"
 
 CVSEDITOR="${EDITOR}"
-CVS_RSH="$(which ssh)"
+CVS_RSH=/usr/bin/ssh
+OCVS=:ext:wcmaier@cvs.openbsd.org:/cvs
 FANOUT=16
 HGEDITOR=$HOME/bin/hgeditor
 HOSTNAME="$(hostname -s)"
@@ -40,11 +41,10 @@ TODO="$HOME/TODO"
 export CLUSTER CVSEDITOR CVS_RSH EDITOR HOSTNAME LANG MAIL PATH RCMD_CMD RCP_CMD SHELL VERBOSE TODO
 
 # Add Python stuff.
-PYTHONDIR=~/lib/python
+PYTHONDIR=~/lib/python2.5
 if [ -d ${PYTHONDIR} ]; then
-    PATH=${PYTHONDIR}/bin:${PATH}
-    PYTHONPATH=${PYTHONPATH}:${PYTHONDIR}
-    export PATH PYTHONDIR
+    PYTHONPATH=${PYTHONDIR}
+    export PYTHONDIR
 fi
 
 # Directory containing platform- and host-specific configuration

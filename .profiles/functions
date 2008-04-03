@@ -51,14 +51,7 @@ scpkey () {
 }
 agent () {
     SSH_AGENT_FILE=~/.ssh/agent
-    if [ $(find ${SSH_HOME} -follow -name "id_*" | wc -l | sed -e 's/[^0-9]//g') -lt 1 ]; then
-        # There don't appear to be any keys on this host; kill all
-        # agents and quit.
-        notify 1 "No keys found in ${SSH_HOME}."
-        pkill -U ${USER} ssh-agent
-	rm -f ${SSH_AGENT_FILE}
-        return 0
-    elif [ -r ${SSH_AGENT_FILE} ]; then
+    if [ -r ${SSH_AGENT_FILE} ]; then
         notify 2 "Found agent file ${SSH_AGENT_FILE}."
         chmod 600 ${SSH_AGENT_FILE}
         . ${SSH_AGENT_FILE} > /dev/null

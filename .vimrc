@@ -97,3 +97,8 @@ augroup safe
 
     au VimLeave *.safe :!clear
 augroup END
+
+augroup filetypes
+    au!
+    au BufRead,BufNewFile *		if &ft == 'make' | set ts=8 sts=0 noexpandtab | endif
+augroup END
