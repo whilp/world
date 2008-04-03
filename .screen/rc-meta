@@ -6,6 +6,7 @@ zombie dl
 
 sessionname meta
 screen -t MAIL -M   1 mutt
+screen -t CVS -M    2 ssh -t wcmaier@openbsd.org './ChangeLog'
 screen -t WWW	    3 elinks -no-connect -touch-files
 screen -t COMMS	-M  4 screen -RRD -e'^Rr' -S irc -c /home/will/.screen/rc-comms
 screen -t SHC	    5 screen -RRD -e'^Ee' -S shells -c /home/will/.screen/rc-shells
