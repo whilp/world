@@ -56,7 +56,7 @@ set sort_aux=reverse-last-date
 set spoolfile='/var/mail/will'
 set wait_key=no
 
-alternates "(wcmaier@wisc\.edu|wcmaier@hep\.wisc\.edu|wcmaier@gmail\.com|willmaier@ml1\.net)"
+alternates "(wcmaier@wisc\.edu|wcmaier@hep\.wisc\.edu|wcmaier@gmail\.com|willmaier@ml1\.net|wcmaier@openbsd.org)"
 
 # Macros.
 macro index S "|/usr/local/bin/sb_filter.py -s >/dev/null<enter><save-message>=Attic/Spam<enter><enter>" "Mark as spam"
