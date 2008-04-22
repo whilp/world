@@ -120,9 +120,14 @@ ssh () {
     ${SSH} -l "${SSH_USER:-${USER}}" $*
 }
 secret () {
-    sudo vnconfig -k svnd0 ~/.safe.img && \
-    sudo mount /dev/svnd0c ~/.safe && \
-    vim ~/.safe
-    sudo umount ~/.safe && \
-    sudo vnconfig -u svnd0
+    SAFEDIR="~/.safe"
+    SAFEIMG="~/.safe.img"
+    SVND="s$(sudo vnconfig -l |\
+        sed -e '/not in use$/!d; s/:.*$//' | head -1)"
+    [ "${SVND}" != 's' ] || ("no free (s)vnd devices"; return 1)
+    sudo vnconfig -k "${SVND}" "${SAFEIMG}" && \
+    sudo mount "/dev/${SVND}c" "${SAFEDIR}" && \
+    vim "${SAFEDIR}"
+    sudo umount "${SAFEDIR}" && \
+    sudo vnconfig -u "${SVND}"
 }
