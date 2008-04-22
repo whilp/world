@@ -202,7 +202,7 @@ url = http://feeds.feedburner.com/DougHellmann
 tag = python
 
 [glyf]
-url = http://glyf.livejournal.com/data/rss
+url = http://glyph.twistedmatrix.com/
 tag = python
 
 [ianbicking]
@@ -325,3 +325,6 @@ url = http://www.union.wisc.edu/rss/music.xml
 
 [asullivan]
 url = http://feeds.feedburner.com/andrewsullivan/rApM
+
+[xlr8r]
+url = http://feeds.xlr8r.com/xlr8rmp3
