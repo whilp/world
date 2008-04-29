@@ -120,8 +120,8 @@ ssh () {
     ${SSH} -l "${SSH_USER:-${USER}}" $*
 }
 secret () {
-    SAFEDIR="~/.safe"
-    SAFEIMG="~/.safe.img"
+    SAFEDIR="${HOME}/.safe"
+    SAFEIMG="${HOME}/.safe.img"
     SVND="s$(sudo vnconfig -l |\
         sed -e '/not in use$/!d; s/:.*$//' | head -1)"
     [ "${SVND}" != 's' ] || ("no free (s)vnd devices"; return 1)
