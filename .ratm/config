@@ -328,3 +328,15 @@ url = http://feeds.feedburner.com/andrewsullivan/rApM
 
 [xlr8r]
 url = http://feeds.xlr8r.com/xlr8rmp3
+
+[pontiff]
+url = http://scienceblogs.com/pontiff/index.xml
+
+[symmetry]
+url = http://www.symmetrymagazine.org/breaking/feed/
+
+[asymptotia]
+url = http://asymptotia.com/feed/atom/
+
+[uslhc]
+url = http://uslhc.us/blogs/?feed=atom
