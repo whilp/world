@@ -340,3 +340,6 @@ url = http://asymptotia.com/feed/atom/
 
 [uslhc]
 url = http://uslhc.us/blogs/?feed=atom
+
+[mbalmer]
+url = http://www.vnode.ch/rss.xml
