@@ -78,6 +78,10 @@ cabbrev Q q
 let use_xhtml = 1
 let html_use_css = 1
 
+" Stuff for ada.vim.
+let g:ada_default_compiler = 'gnat'
+let g:mapleader = "<F12>"
+
 " Auto-encrypt files.
 augroup safe
     au!
