@@ -145,6 +145,7 @@ folder-hook . "set narrow_tree"
 folder-hook . "set sort=threads"
 folder-hook . "set sort_re"
 folder-hook . "set sig_dashes"
+folder-hook . 'set record="^"'
 
 folder-hook =Family set strict_threads
 folder-hook =Family set hide_top_missing
