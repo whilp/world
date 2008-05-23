@@ -55,6 +55,7 @@ set sort=threads
 set sort_aux=reverse-last-date
 set spoolfile='/var/mail/will'
 set wait_key=no
+set from="Will Maier <willmaier@ml1.net>"
 
 alternates "(wcmaier@wisc\.edu|wcmaier@hep\.wisc\.edu|wcmaier@gmail\.com|willmaier@ml1\.net|wcmaier@openbsd.org)"
 
@@ -157,3 +158,4 @@ folder-hook =Sent set sort=reverse-date
 folder-hook =HEP/RQ set sort=threads
 folder-hook =HEP/RQ unset strict_threads
 folder-hook =HEP/RQ unset sort_re
+fcc-hook "~thelp@hep\.wisc\.edu" "Sent"
