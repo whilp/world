@@ -33,7 +33,9 @@ RCP_CMD="scp"
 RSHPORT="22"
 RCMD_USER=${USER}
 SSH="$(which ssh)"
-TERM=rxvt
+if [ "${TERM}" != "screen" ]; then
+    TERM=rxvt
+fi
 TODO=$HOME/TODO/
 VERBOSE="1"
 TODO="$HOME/TODO"
