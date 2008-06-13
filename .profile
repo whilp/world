@@ -19,7 +19,6 @@ SHELL="$(which zsh 2>/dev/null)" || \
 
 CVSEDITOR="${EDITOR}"
 CVS_RSH=/usr/bin/ssh
-OCVS=:ext:wcmaier@cvs.openbsd.org:/cvs
 FANOUT=16
 HGEDITOR=$HOME/bin/hgeditor
 HOSTNAME="$(hostname -s)"
@@ -34,7 +33,7 @@ RCP_CMD="scp"
 RSHPORT="22"
 RCMD_USER=${USER}
 SSH="$(which ssh)"
-TERM=${TERM:-rxvt}
+TERM=rxvt
 TODO=$HOME/TODO/
 VERBOSE="1"
 TODO="$HOME/TODO"
@@ -44,7 +43,7 @@ export CLUSTER CVSEDITOR CVS_RSH EDITOR HOSTNAME LANG MAIL PATH RCMD_CMD RCP_CMD
 PYTHONPATH=~/lib/python2.5/site-packages
 [ -d ~/bin ] || mkdir ~/bin
 [ -d ~/lib ] || mkdir ~/lib
-[ -d "${PYTHONPATH}" ] || mkdir "${PYTHONPATH}"
+[ -d "${PYTHONPATH}" ] || mkdir -p "${PYTHONPATH}"
 export PYTHONPATH
 
 # Directory containing platform- and host-specific configuration
