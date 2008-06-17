@@ -55,8 +55,9 @@ set sort=threads
 set sort_aux=reverse-last-date
 set spoolfile='/var/mail/will'
 set wait_key=no
+set from="Will Maier <willmaier@ml1.net>"
 
-alternates "(wcmaier@wisc\.edu|wcmaier@hep\.wisc\.edu|wcmaier@gmail\.com|willmaier@ml1\.net)"
+alternates "(wcmaier@wisc\.edu|wcmaier@hep\.wisc\.edu|wcmaier@gmail\.com|willmaier@ml1\.net|wcmaier@openbsd.org)"
 
 # Macros.
 macro index S "|/usr/local/bin/sb_filter.py -s >/dev/null<enter><save-message>=Attic/Spam<enter><enter>" "Mark as spam"
@@ -145,6 +146,7 @@ folder-hook . "set narrow_tree"
 folder-hook . "set sort=threads"
 folder-hook . "set sort_re"
 folder-hook . "set sig_dashes"
+folder-hook . 'set record="^"'
 
 folder-hook =Family set strict_threads
 folder-hook =Family set hide_top_missing
@@ -156,3 +158,4 @@ folder-hook =Sent set sort=reverse-date
 folder-hook =HEP/RQ set sort=threads
 folder-hook =HEP/RQ unset strict_threads
 folder-hook =HEP/RQ unset sort_re
+fcc-hook "~thelp@hep\.wisc\.edu" "Sent"

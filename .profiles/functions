@@ -119,3 +119,15 @@ lsx () {
 ssh () {
     ${SSH} -l "${SSH_USER:-${USER}}" $*
 }
+secret () {
+    SAFEDIR="${HOME}/.safe"
+    SAFEIMG="${HOME}/.safe.img"
+    SVND="s$(sudo vnconfig -l |\
+        sed -e '/not in use$/!d; s/:.*$//' | head -1)"
+    [ "${SVND}" != 's' ] || ("no free (s)vnd devices"; return 1)
+    sudo vnconfig -k "${SVND}" "${SAFEIMG}" && \
+    sudo mount "/dev/${SVND}c" "${SAFEDIR}" && \
+    vim "${SAFEDIR}"
+    sudo umount "${SAFEDIR}" && \
+    sudo vnconfig -u "${SVND}"
+}
