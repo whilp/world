@@ -98,8 +98,3 @@ spchkmouse	engspchk.txt	/*spchkmouse*
 spchknonhl	engspchk.txt	/*spchknonhl*
 spchkpunc	engspchk.txt	/*spchkpunc*
 spchksilent	engspchk.txt	/*spchksilent*
-xml-plugin-callbacks	xml-plugin.txt	/*xml-plugin-callbacks*
-xml-plugin-html	xml-plugin.txt	/*xml-plugin-html*
-xml-plugin-mappings	xml-plugin.txt	/*xml-plugin-mappings*
-xml-plugin-settings	xml-plugin.txt	/*xml-plugin-settings*
-xml-plugin.txt	xml-plugin.txt	/*xml-plugin.txt*
