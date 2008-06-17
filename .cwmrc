@@ -1,0 +1,9 @@
+fontname "-xos4-terminus-medium-*-*-*-24-*-*-*-*-*-*-*"
+
+sticky yes
+
+command firefox     firefox
+command pdf         epdfview
+
+bind CM-n            cyclegroup
+bind CM-p            rcyclegroup
