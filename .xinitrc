@@ -19,7 +19,7 @@ EOF
 [ -d "${TERMINUS}" ] && xset +fp "${TERMINUS}"
 
 xsetroot -solid black
-if [ -f "${BKG}" -a -x "${XLOADIMAGE}"]; then
+if [ -f "${BKG}" -a -x "${XLOADIMAGE}" ]; then
     "${XLOADIMAGE}" -onroot -quiet \
         -background black -center -brighten 10 "${BKG}"
 fi
