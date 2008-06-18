@@ -25,6 +25,7 @@ HOSTNAME="$(hostname -s)"
 LANG="C"
 MAIL_OLD="${MAIL}"
 MAIL=""
+OCVS=:ext:wcmaier@cvs.openbsd.org:/cvs
 PATH="$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin:/usr/games"
 RCMD_CMD="ssh"
 RCMD_TEST="yes"
