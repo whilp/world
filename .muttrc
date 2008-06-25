@@ -6,6 +6,7 @@ source "~/.mutt/aliases"
 set alias_file="~/.mutt/aliases"
 set ascii_chars=yes
 set beep_new=yes
+set certificate_file=~/.mutt.certificates
 set charset="//TRANSLIT"
 set copy=yes
 set delete=yes
@@ -13,15 +14,16 @@ set edit_headers=yes
 set editor='vim "+set tw=68" "+/^$" -X'
 set folder=~/.maildir
 set forward_format="Fwd: %s"
+set from="Will Maier <willmaier@ml1.net>"
 set header_cache=~/.maildir/.cache
 set implicit_autoview=yes
 set include=yes
 set index_format="%4C %Z %-20[%d.%m.%y at %H:%M] %-22.22F %s"
 set ispell=
+set mark_old=no
 set mask='!^(\.[^.]|Attic|.*log)'
 set mbox_type=Maildir
 set move=no
-set mark_old=no
 set pager_index_lines=10
 set pager_stop=yes
 set pgp_auto_decode=yes
@@ -54,8 +56,8 @@ set signature='~/.signatures/default'
 set sort=threads
 set sort_aux=reverse-last-date
 set spoolfile='/var/mail/will'
+set ssl_starttls
 set wait_key=no
-set from="Will Maier <willmaier@ml1.net>"
 
 alternates "(wcmaier@wisc\.edu|wcmaier@hep\.wisc\.edu|wcmaier@gmail\.com|willmaier@ml1\.net|wcmaier@openbsd.org)"
 
@@ -133,10 +135,11 @@ send-hook '~t @[[:graph:]]*\.?fnal\.gov' "source ~/.mutt/hep"
 send-hook '~t @[[:graph:]]*\.?cern\.ch' "source ~/.mutt/hep"
 send-hook '~t @[[:graph:]]*\.?desy\.de' "source ~/.mutt/hep"
 
+
 send-hook '~L .*@[[:graph:]]*bsd[[:graph:]]*'	"set signature='~/.signatures/list-bsd'"
 
-send-hook '~t techpartners@[[:graph:]]*wisc.edu'	"set sendmail='/usr/local/bin/msmtp'"
 send-hook '~t techpartners@[[:graph:]]*wisc.edu'	"my_hdr From: Will Maier <willmaier@ml1.net>"
+#send-hook '~t techpartners@[[:graph:]]*wisc.edu'	"set sendmail='/usr/local/bin/msmtp'"
 
 send-hook '~t madlug@madisonlinux.org'	"set signature='~/.signatures/list-bsd'"
 
@@ -159,3 +162,4 @@ folder-hook =HEP/RQ set sort=threads
 folder-hook =HEP/RQ unset strict_threads
 folder-hook =HEP/RQ unset sort_re
 fcc-hook "~thelp@hep\.wisc\.edu" "Sent"
+
