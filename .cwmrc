@@ -4,6 +4,8 @@ sticky yes
 
 command firefox     firefox
 command pdf         epdfview
+command meta        "xterm -tn rxvt -e \"ssh -t will@meta.lfod.us 'tmux a -dt meta'\""
 
-bind CM-n            cyclegroup
-bind CM-p            rcyclegroup
+bind CM-n           cyclegroup
+bind CM-p           rcyclegroup
+bind CM-m           "xterm -tn rxvt -e \"ssh -t will@meta.lfod.us 'tmux a -dt meta'\""
