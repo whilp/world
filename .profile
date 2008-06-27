@@ -79,13 +79,13 @@ fi
 hep () {
     CLUSTER=~/.dsh/config-hep
     RCMD_USER="wcmaier"
-    SSH_USER="wcmaier"
     export CLUSTER RCMD_USER SSH_USER
+    alias ssh="ssh -l ${RCMD_USER}"
 }
 lfod () {
     CLUSTER=~/.dsh/config
     RCMD_USER="will"
-    SSH_USER="will"
+    alias ssh >/dev/null && unalias ssh
     export CLUSTER RCMD_USER SSH_USER
 }
 

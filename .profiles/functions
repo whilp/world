@@ -116,9 +116,6 @@ lsx () {
         done
     done | sort -u
 }
-ssh () {
-    ${SSH} -l "${SSH_USER:-${USER}}" $*
-}
 secret () {
     SAFEDIR="${HOME}/.safe"
     SAFEIMG="${HOME}/.safe.img"
