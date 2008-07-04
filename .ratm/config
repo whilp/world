@@ -349,3 +349,9 @@ url = http://inversesquare.wordpress.com/feed/
 
 [twitter]
 url = http://twitter.com/statuses/friends_timeline/11125102.rss
+
+[offside]
+url = http://feeds.bootsnall.com/theoffside-global?format=xml
+
+[wmblog-de]
+url = http://germany.worldcupblog.org/feed
