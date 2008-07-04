@@ -1,8 +1,8 @@
 [main]
-seenFile = /var/www/vhost/www.lfod.us/files/wc/seen
+seenFile = /var/www/vhosts/lfod.us/files/wc/seen
 configDir = /home/will/.webcomic/
-cacheDir = /var/www/vhost/www.lfod.us/files/wc/
-htmlDir = /var/www/vhost/www.lfod.us/files/wc/
+cacheDir = /var/www/vhosts/lfod.us/files/wc/
+htmlDir = /var/www/vhosts/lfod.us/files/wc/
 
 [jtmm]
 name = Journey to Mt. Moriah
