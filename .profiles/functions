@@ -95,12 +95,6 @@ agent () {
     fi
     chmod 600 ${SSH_AGENT_FILE}
 }
-sshrmkey () {
-    LINE=$1
-    TMPFILE=$(mktemp -q ${SSH_HOME}/known_hosts.XXXX || exit 1)
-    sed -e "${LINE}d" ~/.ssh/known_hosts >| ${TMPFILE}
-    mv ${TMPFILE} ~/.ssh/known_hosts
-}
 unstamp () {
     perl -e "print scalar(localtime($1))"; echo
 }
