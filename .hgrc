@@ -15,6 +15,7 @@ username = Will Maier <willmaier@ml1.net>
 hgext.mq =
 hgext.patchbomb =
 hgext.convert = 
+record =
 
 [extdiff]
 cmd.vimdiff = LC_ALL=C vim -f '+bdel 1 2' '+ execute "DirDiff ".argv(0)." ".argv(1)'
