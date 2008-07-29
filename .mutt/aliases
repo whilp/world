@@ -1,54 +1,67 @@
-alias RQ HEP Request <help@hep.wisc.edu>
-alias RT Unix Request Tracker <unix-request@cae.wisc.edu>
+# vim: set noexpandtab nospell:
 
-alias jeff.ballard		Jeff Ballard		<ballard@cae.wisc.edu>
-alias dan.bradley		Dan Bradley			<dan@hep.wisc.edu>
-alias mike.brunlieb		Mike Brunlieb		<mbrunlieb@gmail.com>
-alias hastings.cameron	Hastings Cameron	<hastings.cameron@gmail.com>
-alias cmsops			CMS operations		<cmsops@hep.wisc.edu>
-alias sridhara.dasu		Sridhara Dasu		<dasu@hep.wisc.edu>
-alias kurt.ellison		Kurt Ellison		<aquaranger@hotmail.com>
-alias greg.smith		Greg Smith			<gasmith@cae.wisc.edu>
-alias peggy.broad		Peggy Broad			<pbroad@iopener.net>
-alias trevor.gruehn		Trevor Gruehn		<hitbyguitarz@yahoo.com>
-alias david.jacobson	David L Jacobson	<ajdj143@sbcglobal.net>
-alias laura.jacobson	Laura Jacobson		<jacobsonlaura@gmail.com>
+## HEP
+alias RQ				HEP Request			<help@hep.wisc.edu>
 alias aimee.lefkow		Aimee Lefkow		<lefkow@hep.wisc.edu>
-alias sharon.maier		Sharon Maier		<sharonmaier@gmail.com>
-alias madlug			Madison Linux		<madlug@madisonlinux.org>
-alias andy.maier		Andy Maier			<linuxmaier@fastmail.fm>
-alias terry.maier		Louis A Maier III	<lmaieriii@wi.rr.com>
-alias louis.maier		Louis A Maier III	<lmaieriii@wi.rr.com>
-alias mickey.maier		Mickey Maier		<mmaier@alpha-investment.com>
-alias rose.maier		Rose Maier			<maier1@wisc.edu>
-alias mkelug			Milwaukee Linux		<mlug-list@milwaukeelug.org>
 alias ajit.mohapatra	Ajit Mohapatra		<ajit@hep.wisc.edu>
-alias steve.rader		Steve Rader			<rader@hep.wisc.edu>
-alias steph.schmid		Stephanie Schmid	<butterflyschmid@yahoo.com>
-alias teresa.sherron	Teresa Sherron		<sherron@hep.wisc.edu>
-alias nell.wegmann		Nell Wegmann		<wegmann@sbcglobal.net>
-alias matt.radtke		Matt Radtke			<radtke@physics.wisc.edu>
-alias wesley.smith		Wesley H. Smith		<wsmith@hep.wisc.edu>
-alias tobias.ulmer		Tobias Ulmer		<tobiasu@tmux.org>
-alias frank.petriello	Frank Petriello		<frankjp@physics.wisc.edu>
-alias ken.hahn			Kenneth Hahn		<khahn@cs.wisc.edu>
-alias tanya.mohn		Tanya Mohn			<Tanyamohn@aol.com>
-alias nic.marriott		Nicholas Marriott	<nicm__@ntlworld.com>
+alias cmsops			CMS operations		<cmsops@hep.wisc.edu>
+alias dan.bradley		Dan Bradley			<dan@hep.wisc.edu>
 alias david.lockman		David Lockman		<dlockman@wisc.edu>
-alias ken.bloom			Ken Bloom			<kenbloom@unl.edu>
-alias ian.fisk			Ian Fisk			<ifisk@fnal.gov>
-alias brian.bockelman	Brian Bockelman		<bbockelm@cse.unl.edu>
-alias alex.kulyavtsev	Alex Kulyavtsev		<aik@fnal.gov>
-alias jon.bakken		Jon Bakken			<bakken@fnal.gov>
+alias frank.petriello	Frank Petriello		<frankjp@physics.wisc.edu>
+alias kevin.flood		Kevin Flood			<kflood@hep.wisc.edu>
+alias matt.radtke		Matt Radtke			<radtke@physics.wisc.edu>
+alias mike.anderson		Mike Anderson		<mbanderson@hep.wisc.edu>
 alias patrick.huber		Patrick Huber		<phuber@physics.wisc.edu>
+alias sridhara.dasu		Sridhara Dasu		<dasu@hep.wisc.edu>
+alias steve.rader		Steve Rader			<rader@hep.wisc.edu>
+alias teresa.sherron	Teresa Sherron		<sherron@hep.wisc.edu>
+alias wesley.smith		Wesley H. Smith		<wsmith@hep.wisc.edu>
+
+## CMS
+alias alex.kulyavtsev	Alex Kulyavtsev		<aik@fnal.gov>
+alias brian.bockelman	Brian Bockelman		<bbockelm@cse.unl.edu>
+alias ian.fisk			Ian Fisk			<ifisk@fnal.gov>
+alias jon.bakken		Jon Bakken			<bakken@fnal.gov>
+alias ken.bloom			Ken Bloom			<kenbloom@unl.edu>
+alias preston.smith		Preston Smith <psmith@purdue.edu>
+alias terrence.martin	Terrence Martin		<tmartin@physics.ucsd.edu>
+
+## UW
+alias greg.smith		Greg Smith			<gasmith@cae.wisc.edu>
+alias jeff.ballard		Jeff Ballard		<ballard@cae.wisc.edu>
+alias ken.hahn			Kenneth Hahn		<khahn@cs.wisc.edu>
+
+## Lists
+alias madlug			Madison Linux		<madlug@madisonlinux.org>
+alias madsec			madsec				<madsec@lfod.us>
+alias martin.brown		Martin Brown		<martin@linux-ip.net>
+alias mkelug			Milwaukee Linux		<mlug-list@milwaukeelug.org>
 alias thomas.blader		Thomas Blader		<digitek@charter.net>
 alias tim.schaab		Tim Schaab			<tschaab@gmail.com>
-alias terrence.martin	Terrence Martin		<tmartin@physics.ucsd.edu>
-alias kevin.christensen	Kevin Christensen	<thorubos@gmail.com>
-alias martin.brown		Martin Brown		<martin@linux-ip.net>
-alias madsec			madsec				<madsec@lfod.us>
-alias mike.erdely		Mike Erdely			<mike@erdelynet.com>
+
+## Friends
 alias dan.hooper		Dan Hooper			<dhooper@fnal.gov>
-alias mike.anderson		Mike Anderson		<mbanderson@hep.wisc.edu>
-alias kevin.flood		Kevin Flood			<kflood@hep.wisc.edu>
-alias preston.smith		Preston Smith <psmith@purdue.edu>
+alias hastings.cameron	Hastings Cameron	<hastings.cameron@gmail.com>
+alias kevin.christensen	Kevin Christensen	<thorubos@gmail.com>
+alias kurt.ellison		Kurt Ellison		<aquaranger@hotmail.com>
+alias mike.brunlieb		Mike Brunlieb		<mbrunlieb@gmail.com>
+alias steph.schmid		Stephanie Schmid	<butterflyschmid@yahoo.com>
+alias trevor.gruehn		Trevor Gruehn		<hitbyguitarz@yahoo.com>
+
+## Family
+alias andy.maier		Andy Maier			<linuxmaier@fastmail.fm>
+alias david.jacobson	David L Jacobson	<ajdj143@sbcglobal.net>
+alias laura.jacobson	Laura Jacobson		<jacobsonlaura@gmail.com>
+alias louis.maier		Louis A Maier III	<lmaieriii@wi.rr.com>
+alias mickey.maier		Mickey Maier		<mmaier@alpha-investment.com>
+alias nell.wegmann		Nell Wegmann		<wegmann@sbcglobal.net>
+alias peggy.broad		Peggy Broad			<pbroad@iopener.net>
+alias rose.maier		Rose Maier			<maier1@wisc.edu>
+alias sharon.maier		Sharon Maier		<sharonmaier@gmail.com>
+alias tanya.mohn		Tanya Mohn			<Tanyamohn@aol.com>
+alias terry.maier		Louis A Maier III	<lmaieriii@wi.rr.com>
+
+## OpenBSD
+alias nic.marriott		Nicholas Marriott	<nicm__@ntlworld.com>
+alias tobias.ulmer		Tobias Ulmer		<tobiasu@tmux.org>
+alias mike.erdely		Mike Erdely			<mike@erdelynet.com>
