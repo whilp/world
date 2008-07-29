@@ -8,7 +8,6 @@ alias cmsops			CMS operations		<cmsops@hep.wisc.edu>
 alias dan.bradley		Dan Bradley			<dan@hep.wisc.edu>
 alias david.lockman		David Lockman		<dlockman@wisc.edu>
 alias frank.petriello	Frank Petriello		<frankjp@physics.wisc.edu>
-alias john.wu			John Wu				<john@ntsca.com>
 alias kevin.flood		Kevin Flood			<kflood@hep.wisc.edu>
 alias matt.radtke		Matt Radtke			<radtke@physics.wisc.edu>
 alias mike.anderson		Mike Anderson		<mbanderson@hep.wisc.edu>
@@ -17,6 +16,10 @@ alias sridhara.dasu		Sridhara Dasu		<dasu@hep.wisc.edu>
 alias steve.rader		Steve Rader			<rader@hep.wisc.edu>
 alias teresa.sherron	Teresa Sherron		<sherron@hep.wisc.edu>
 alias wesley.smith		Wesley H. Smith		<wsmith@hep.wisc.edu>
+
+## Vendors
+alias anna.faybysh		Anna Faybysh		<Anna.Faybysh@Sun.COM>
+alias john.wu			John Wu				<john@ntsca.com>
 
 ## CMS
 alias alex.kulyavtsev	Alex Kulyavtsev		<aik@fnal.gov>
