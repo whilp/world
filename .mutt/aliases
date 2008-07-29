@@ -8,6 +8,7 @@ alias cmsops			CMS operations		<cmsops@hep.wisc.edu>
 alias dan.bradley		Dan Bradley			<dan@hep.wisc.edu>
 alias david.lockman		David Lockman		<dlockman@wisc.edu>
 alias frank.petriello	Frank Petriello		<frankjp@physics.wisc.edu>
+alias john.wu			John Wu				<john@ntsca.com>
 alias kevin.flood		Kevin Flood			<kflood@hep.wisc.edu>
 alias matt.radtke		Matt Radtke			<radtke@physics.wisc.edu>
 alias mike.anderson		Mike Anderson		<mbanderson@hep.wisc.edu>
@@ -19,11 +20,15 @@ alias wesley.smith		Wesley H. Smith		<wsmith@hep.wisc.edu>
 
 ## CMS
 alias alex.kulyavtsev	Alex Kulyavtsev		<aik@fnal.gov>
+alias andrea.sciaba		Andrea Sciaba		<Andrea.Sciaba@cern.ch>
 alias brian.bockelman	Brian Bockelman		<bbockelm@cse.unl.edu>
+alias burt.holzman		Burt Holzman		<burt@fnal.gov>
 alias ian.fisk			Ian Fisk			<ifisk@fnal.gov>
 alias jon.bakken		Jon Bakken			<bakken@fnal.gov>
 alias ken.bloom			Ken Bloom			<kenbloom@unl.edu>
 alias preston.smith		Preston Smith <psmith@purdue.edu>
+alias stefano.belforte	Stefano Belforte	<stefano.belforte@cern.ch>
+alias ted.hesselroth	Ted Hesselroth		<tdh@fnal.gov>
 alias terrence.martin	Terrence Martin		<tmartin@physics.ucsd.edu>
 
 ## UW
