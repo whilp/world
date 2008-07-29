@@ -36,7 +36,8 @@ alias greg.smith		Greg Smith			<gasmith@cae.wisc.edu>
 alias jeff.ballard		Jeff Ballard		<ballard@cae.wisc.edu>
 alias ken.hahn			Kenneth Hahn		<khahn@cs.wisc.edu>
 
-## Lists
+## LUGs
+alias digitek			thomas.blader
 alias madlug			Madison Linux		<madlug@madisonlinux.org>
 alias madsec			madsec				<madsec@lfod.us>
 alias martin.brown		Martin Brown		<martin@linux-ip.net>
@@ -56,15 +57,18 @@ alias trevor.gruehn		Trevor Gruehn		<hitbyguitarz@yahoo.com>
 ## Family
 alias andy.maier		Andy Maier			<linuxmaier@fastmail.fm>
 alias david.jacobson	David L Jacobson	<ajdj143@sbcglobal.net>
+alias granny			peggy.broad
 alias laura.jacobson	Laura Jacobson		<jacobsonlaura@gmail.com>
 alias louis.maier		Louis A Maier III	<lmaieriii@wi.rr.com>
+alias ma				sharon.maier
 alias mickey.maier		Mickey Maier		<mmaier@alpha-investment.com>
 alias nell.wegmann		Nell Wegmann		<wegmann@sbcglobal.net>
+alias pa				mickey.maier
 alias peggy.broad		Peggy Broad			<pbroad@iopener.net>
 alias rose.maier		Rose Maier			<maier1@wisc.edu>
 alias sharon.maier		Sharon Maier		<sharonmaier@gmail.com>
 alias tanya.mohn		Tanya Mohn			<Tanyamohn@aol.com>
-alias terry.maier		Louis A Maier III	<lmaieriii@wi.rr.com>
+alias terry.maier		louis.maier
 
 ## OpenBSD
 alias nic.marriott		Nicholas Marriott	<nicm__@ntlworld.com>
