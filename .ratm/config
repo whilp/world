@@ -358,3 +358,12 @@ url = http://www.metasploit.com/dev/trac/timeline?milestone=on&ticket=on&changes
 
 [muddup]
 url = http://wfmu.org/podcast/DR.xml
+
+[orwell]
+url = http://orwelldiaries.wordpress.com/feed/
+
+[nerdwisdom]
+url = http://nerdwisdom.com/feed/
+
+[seejanecompute]
+url = http://scienceblogs.com/seejanecompute/index.xml
