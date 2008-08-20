@@ -87,6 +87,7 @@ channels = (
   { name = "#metabug"; chatnet = "freenode"; autojoin = "no"; },
   { name = "#obsd"; chatnet = "freenode"; autojoin = "no"; },
   { name = "porters"; chatnet = "openbsd-porters"; autojoin = "no"; },
+  { name = "hackers"; chatnet = "openbsd-hackers"; autojoin = "no"; },
   { name = "#openbsd"; chatnet = "silc"; autojoin = "no"; },
   { name = "#porters"; chatnet = "silc"; autojoin = "no"; }
 );
