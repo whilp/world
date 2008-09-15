@@ -29,7 +29,7 @@ servers = (
     autoconnect = "no";
   },
   {
-    address = "silc.peereboom.us";
+    address = "silc.spacehopper.org";
     chatnet = "silc";
     port = "706";
     use_ssl = "no";
@@ -48,7 +48,7 @@ chatnets = {
     nick = "wcmaier";
     username = "wcmaier";
   };
-  silc = { type = "SILC"; nick = "wcmaier"; username = "wcmaier"; };
+  "silc" = { type = "SILC"; nick = "wcmaier"; username = "wcmaier"; };
   freenode = {
     type = "IRC";
     nick = "lt_kije";
