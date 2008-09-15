@@ -48,7 +48,7 @@ chatnets = {
     nick = "wcmaier";
     username = "wcmaier";
   };
-  "silc" = { type = "SILC"; nick = "wcmaier"; username = "wcmaier"; };
+  silc = { type = "SILC"; nick = "wcmaier"; username = "wcmaier"; };
   freenode = {
     type = "IRC";
     nick = "lt_kije";
@@ -330,6 +330,13 @@ statusbar = {
         topic = { };
         topic_empty = { };
         topicbarend = { priority = "100"; alignment = "right"; };
+      };
+    };
+    awl_0 = {
+      items = {
+        barstart = { priority = "100"; };
+        awl_0 = { };
+        barend = { priority = "100"; alignment = "right"; };
       };
     };
   };
