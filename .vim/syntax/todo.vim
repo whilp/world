@@ -22,3 +22,4 @@ endfunction
 
 setlocal foldmethod=expr
 setlocal foldexpr=todo#TodoFoldExpr(v:lnum)
+setlocal foldlevel=0
