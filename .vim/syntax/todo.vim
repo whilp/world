@@ -6,15 +6,25 @@ let b:did_ftplugin = 1
 
 " TODO foldexpr function.
 function todo#TodoFoldExpr(Line)
-    let l:ThisLine = getline(a:Line)
-    let l:NextLine = getline(a:Line + 1) 
+    let l:Level = ""
+    let l:PrevIndent = indent(a:Line - 1)
+    let l:ThisIndent = indent(a:Line)
+    let l:NextIndent = indent(a:Line + 1)
 
-    if indent(a:Line) > indent(a:Line - 1)
-        let l:Level = "="
-    elseif indent(a:Line + 1) > indent(a:Line)
-        let l:Level = indent(a:Line + 1)/&shiftwidth
+    if l:NextIndent > l:ThisIndent
+        " Fold starts here.
+        let l:Level = ">"
+    elseif l:NextIndent < l:ThisIndent
+        " Fold ends here.
+        let l:Level = "<"
+    endif
+
+    if l:ThisIndent > l:PrevIndent
+        let l:Level .= "="
+    elseif l:NextIndent > l:ThisIndent
+        let l:Level .= l:NextIndent/&shiftwidth
     else
-        let l:Level = indent(a:Line)/&shiftwidth
+        let l:Level .= l:ThisIndent/&shiftwidth
     endif
 
     return l:Level
