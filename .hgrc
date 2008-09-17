@@ -16,6 +16,7 @@ alias =
 hgext.mq =
 hgext.patchbomb =
 hgext.convert = 
+purge =
 record =
 
 [alias]
