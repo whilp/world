@@ -12,11 +12,12 @@ merge = vimdiff
 username = Will Maier <willmaier@ml1.net>
 
 [extensions]
+alias =
 hgext.mq =
 hgext.patchbomb =
 hgext.convert = 
+purge =
 record =
-alias =
 
 [alias]
 ppush = push -rqparent

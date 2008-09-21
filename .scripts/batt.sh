@@ -22,7 +22,9 @@ FULL=$(sysctln hw.sensors.acpibat0.watthour0)
 LOW=$(sysctln hw.sensors.acpibat0.watthour2)
 RATE=$(sysctln hw.sensors.acpibat0.raw1)
 
-MINUTES=$(calc "60 * ((1000 * ${REMAINING})/${RATE})")
+# Calculate the minutes with scale=2 and then drop the digits.
+MINUTES=$(calcl "60 * ((1000 * ${REMAINING})/${RATE})")
+MINUTES=${MINUTES%.*}
 
 if [ "${MINUTES}" -gt 60 ]; then
     HOURS=$(calc "${MINUTES} / 60")

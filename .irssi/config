@@ -29,7 +29,7 @@ servers = (
     autoconnect = "no";
   },
   {
-    address = "silc.peereboom.us";
+    address = "silc.spacehopper.org";
     chatnet = "silc";
     port = "706";
     use_ssl = "no";
