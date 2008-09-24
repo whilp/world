@@ -16,10 +16,11 @@ alias =
 hgext.mq =
 hgext.patchbomb =
 hgext.convert = 
+purge =
 record =
 
 [alias]
-nout = -R $(hg root/../null out)
+ppush = push -rqparent
 
 [extdiff]
 cmd.vimdiff = LC_ALL=C vim -f '+bdel 1 2' '+ execute "DirDiff ".argv(0)." ".argv(1)'

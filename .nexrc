@@ -1,0 +1,11 @@
+" vim: set noexpandtab:
+set autoindent
+set cedit=
+set extended
+set filec=	
+set iclower
+set ruler
+set shiftwidth=4
+set showmode
+set tabstop=4
+set verbose
