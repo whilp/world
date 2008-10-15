@@ -367,3 +367,12 @@ url = http://nerdwisdom.com/feed/
 
 [seejanecompute]
 url = http://scienceblogs.com/seejanecompute/index.xml
+
+[bensmith]
+url = http://www.politico.com/rss/bensmith_full.xml
+
+[jonathanmartin]
+url = http://www.politico.com/rss/jonathanmartin_full.xml
+
+[fivethirtyeight]
+url = http://www.fivethirtyeight.com/feeds/posts/default
