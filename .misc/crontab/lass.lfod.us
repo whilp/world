@@ -13,10 +13,6 @@ HOME=/home/will/
         
 #minute hour    mday    month   wday    command
 
-# retrieve mail (only get gmail once a day, cause it's slow)
-*/10	*	    *	    *	    *	    /usr/local/bin/fdm -q fetch 2>&1 | grep -v 'ignored$'
-10	    2	    *	    *	    *	    /usr/local/bin/fdm -qa gmail fetch  2>&1 | grep -v 'ignored$'
-
 # Get a list of current OpenBSD packages
 22      2       *       *       *       ftp -o $HOME/index.txt ftp://ftp3.usa.openbsd.org/pub/OpenBSD/snapshots/packages/i386/index.txt
 
