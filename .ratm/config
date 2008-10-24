@@ -368,3 +368,6 @@ url = http://www.politico.com/rss/jonathanmartin_full.xml
 
 [fivethirtyeight]
 url = http://www.fivethirtyeight.com/feeds/posts/default
+
+[bruceeckel]
+url = http://www.artima.com/weblogs/feeds/bloggers/beckel.rss
