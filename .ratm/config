@@ -22,10 +22,6 @@ tag = unix
 url = http://bramcohen.livejournal.com/data/rss
 tag = python
 
-[bsddevcenter]
-url = http://www.oreillynet.com/pub/feed/10?format=rss2
-tag = unix
-
 [bsdtalk]
 url = http://feeds.feedburner.com/Bsdtalk
 tag = unix
@@ -115,7 +111,7 @@ url = http://scienceblogs.com/evolvingthoughts/index.xml
 tag = science
 
 [guido]
-url = http://www.artima.com/weblogs/feeds/bloggers/guido.rss
+url = http://neopythonic.blogspot.com/feeds/posts/default
 tag = python
 
 [pharyngula]
@@ -227,10 +223,6 @@ tag = python
 
 [gustavoniemeyer]
 url = http://blog.labix.org/feed/
-tag = python
-
-[jeremyjones]
-url = http://www.oreillynet.com/pub/feed/31?au=2118
 tag = python
 
 [loresjoberg]
@@ -367,3 +359,18 @@ url = http://nerdwisdom.com/feed/
 
 [seejanecompute]
 url = http://scienceblogs.com/seejanecompute/index.xml
+
+[bensmith]
+url = http://www.politico.com/rss/bensmith_full.xml
+
+[jonathanmartin]
+url = http://www.politico.com/rss/jonathanmartin_full.xml
+
+[fivethirtyeight]
+url = http://www.fivethirtyeight.com/feeds/posts/default
+
+[bruceeckel]
+url = http://www.artima.com/weblogs/feeds/bloggers/beckel.rss
+
+[chicagoist]
+url = http://chicagoist.com/index.rdf
