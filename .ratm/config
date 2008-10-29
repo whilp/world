@@ -371,3 +371,6 @@ url = http://www.fivethirtyeight.com/feeds/posts/default
 
 [bruceeckel]
 url = http://www.artima.com/weblogs/feeds/bloggers/beckel.rss
+
+[chicagoist]
+url = http://chicagoist.com/index.rdf
