@@ -264,9 +264,6 @@ url = http://madsec.blogspot.com/feeds/posts/default
 [warrenellis]
 url = http://www.warrenellis.com/?feed=rss2
 
-[cryptome]
-url = http://cryptome.org/cryptome.xml
-
 [bsdly]
 url = http://bsdly.blogspot.com/feeds/posts/default
 
@@ -345,9 +342,6 @@ url = http://twitter.com/statuses/friends_timeline/11125102.rss
 [wmblog-de]
 url = http://germany.worldcupblog.org/feed
 
-[metasploit]
-url = http://www.metasploit.com/dev/trac/timeline?milestone=on&ticket=on&changeset=on&wiki=on&max=50&daysback=90&format=rss
-
 [muddup]
 url = http://wfmu.org/podcast/DR.xml
 
@@ -374,3 +368,12 @@ url = http://www.artima.com/weblogs/feeds/bloggers/beckel.rss
 
 [chicagoist]
 url = http://chicagoist.com/index.rdf
+
+[hendrikhertzberg]
+url = http://www.newyorker.com/online/blogs/hendrikhertzberg/rss.xml
+
+[georgepacker]
+url = http://www.newyorker.com/online/blogs/georgepacker/rss.xml
+
+[stevecoll]
+url = http://www.newyorker.com/online/blogs/stevecoll/rss.xml
