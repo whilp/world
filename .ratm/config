@@ -329,9 +329,6 @@ url = http://uslhc.us/blogs/?feed=atom
 [mbalmer]
 url = http://www.vnode.ch/rss.xml
 
-[inversesquare]
-url = http://inversesquare.wordpress.com/feed/
-
 [twitter]
 url = http://twitter.com/statuses/friends_timeline/11125102.rss
 
