@@ -29,10 +29,13 @@ fi
 
 
 xset b off
-exec /home/will/hg/dwm/dwm
-
-[ -p ~/.dwm/fifo ] || mkfifo ~/.dwm/fifo 2>/dev/null
-[ -x ~/.dwm/status ] && ~/.dwm/status -f &
-until exec dwm <> ~/.dwm/fifo; do
-    sleep 1
-done
+DWM=${HOME}/bin/dwm
+if [ -x ${DWM} ]; then
+    [ -p ~/.dwm/fifo ] || mkfifo ~/.dwm/fifo 2>/dev/null
+    [ -x ~/.dwm/status ] && ~/.dwm/status -f &
+    exec ${DWM} <> ~/.dwm/fifo
+else
+    until cwm; do
+        sleep 1
+    done
+fi
