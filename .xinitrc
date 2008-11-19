@@ -29,6 +29,10 @@ fi
 
 
 xset b off
-until cwm; do
+exec /home/will/hg/dwm/dwm
+
+[ -p ~/.dwm/fifo ] || mkfifo ~/.dwm/fifo 2>/dev/null
+[ -x ~/.dwm/status ] && ~/.dwm/status -f &
+until exec dwm <> ~/.dwm/fifo; do
     sleep 1
 done
