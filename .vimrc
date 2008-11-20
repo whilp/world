@@ -61,6 +61,8 @@ inoremap <C-J> <Down>
 inoremap <C-K> <Up>
 nnoremap ; :
 noremap Y y$
+noremap [[ :diffget<CR>
+noremap ]] :diffput<CR>
 
 " Source vimrc.
 map ,v :sp $VIMRC_
