@@ -18,12 +18,14 @@ hgext.patchbomb =
 hgext.convert = 
 purge =
 record =
+extdiff =
 
 [alias]
 ppush = push -rqparent
 
 [extdiff]
-cmd.vimdiff = LC_ALL=C vim -f '+bdel 1 2' '+ execute "DirDiff ".argv(0)." ".argv(1)'
+cmd.vimdiff = vim
+opts.vimdiff = -f '+next' '+execute "DirDiff" argv(0) argv(1)'
 
 [email]
 from = Will Maier <willmaier@ml1.net>
