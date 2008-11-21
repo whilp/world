@@ -142,10 +142,6 @@ tag = infosec
 url = http://www.securityfocus.com/rss/news.xml
 tag = infosec
 
-[scottaaronson]
-url = http://www.technologyreview.com/rss/BlogRSS.aspx?rssid=633245765095400532&id=329
-tag = science
-
 [shtetloptimized]
 url = http://scottaaronson.com/blog/?feed=rss2
 tag = science
@@ -333,9 +329,6 @@ url = http://uslhc.us/blogs/?feed=atom
 [mbalmer]
 url = http://www.vnode.ch/rss.xml
 
-[inversesquare]
-url = http://inversesquare.wordpress.com/feed/
-
 [twitter]
 url = http://twitter.com/statuses/friends_timeline/11125102.rss
 
@@ -377,3 +370,6 @@ url = http://www.newyorker.com/online/blogs/georgepacker/rss.xml
 
 [stevecoll]
 url = http://www.newyorker.com/online/blogs/stevecoll/rss.xml
+
+[marcambinder]
+url = http://marcambinder.theatlantic.com/index.xml
