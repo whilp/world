@@ -12,6 +12,7 @@
 XTerm*background: #000000
 XTerm*foreground: #FFFFFF
 XTerm*visualBell: false
+XTerm*bellIsUrgent: true
 XTerm*font: -xos4-terminus-medium-*-*-*-24-*-*-*-*-*-*-*
 XTerm*boldFont: -xos4-terminus-bold-*-*-*-24-*-*-*-*-*-*-*
 XTerm*cutchars: `"'()*,;<>[]{|}
