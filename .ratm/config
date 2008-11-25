@@ -373,3 +373,39 @@ url = http://www.newyorker.com/online/blogs/stevecoll/rss.xml
 
 [marcambinder]
 url = http://marcambinder.theatlantic.com/index.xml
+
+[nytimes-home]
+url = http://www.nytimes.com/services/xml/rss/nyt/HomePage.xml
+
+[nytimes-business]
+url = http://www.nytimes.com/services/xml/rss/nyt/Business.xml
+
+[nytimes-dining]
+url = http://www.nytimes.com/services/xml/rss/nyt/DiningandWine.xml
+
+[nytimes-world]
+url = http://www.nytimes.com/services/xml/rss/nyt/World.xml
+
+[nytimes-us]
+url = http://www.nytimes.com/services/xml/rss/nyt/US.xml
+
+[nytimes-magazine]
+url = http://www.nytimes.com/services/xml/rss/nyt/Magazine.xml
+
+[nytimes-weekinreview]
+url = http://www.nytimes.com/services/xml/rss/nyt/WeekinReview.xml
+
+[nytimes-science]
+url = http://www.nytimes.com/services/xml/rss/nyt/Science.xml
+
+[nytimes-collegebb]
+url = http://www.nytimes.com/services/xml/rss/nyt/CollegeBasketball.xml
+
+[nytimes-opinion]
+url = http://www.nytimes.com/services/xml/rss/nyt/Opinion.xml
+
+[nytimes-soccer]
+url = http://www.nytimes.com/services/xml/rss/nyt/Soccer.xml
+
+[nytimes-washington]
+url = http://www.nytimes.com/services/xml/rss/nyt/Washington.xml
