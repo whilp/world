@@ -46,10 +46,6 @@ tag = rights
 url = http://www.eff.org/deeplinks/index.xml
 tag = rights
 
-[eff-minilinks]
-url = http://www.eff.org/minilinks/index.xml
-tag = rights
-
 [fbsd-diary]
 url = http://www.freebsddiary.org/news.php
 tag = unix
