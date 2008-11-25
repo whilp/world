@@ -182,6 +182,8 @@ settings = {
     theme = "plugin";
     autolog_path = "~/.irclogs/$0/$tag-%y.%m.%U.log";
     autolog = "yes";
+    bell_beeps = "yes";
+    beep_msg_level = "MSGS HILIGHT";
   };
   "irc/core" = { alternate_nick = "will_"; };
   "perl/core/scripts" = {
