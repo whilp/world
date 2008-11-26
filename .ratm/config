@@ -110,6 +110,7 @@ nytimes-magazine = http://www.nytimes.com/services/xml/rss/nyt/Magazine.xml
 nytimes-weekinreview = http://www.nytimes.com/services/xml/rss/nyt/WeekinReview.xml
 nytimes-science = http://www.nytimes.com/services/xml/rss/nyt/Science.xml
 nytimes-collegebb = http://www.nytimes.com/services/xml/rss/nyt/CollegeBasketball.xml
+nytimes-movies = http://www.nytimes.com/services/xml/rss/nyt/Movies.xml
 nytimes-opinion = http://www.nytimes.com/services/xml/rss/nyt/Opinion.xml
 nytimes-soccer = http://www.nytimes.com/services/xml/rss/nyt/Soccer.xml
 nytimes-washington = http://www.nytimes.com/services/xml/rss/nyt/Washington.xml
