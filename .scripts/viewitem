@@ -5,6 +5,10 @@
 URL=
 while read LINE; do
     URL=$(echo ${LINE} | sed -e '/^X-Item-Link: /!d; s/^X-Item-Link: //')
+    case ${URL} in
+        *.nytimes.com*)
+            URL="${URL}&pagewanted=all";;
+    esac
     if [ -n "${URL}" ]; then
         /usr/local/bin/elinks -session-ring 1 -remote "openURL('${URL}', new-tab)"
     fi
