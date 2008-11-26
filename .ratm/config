@@ -23,7 +23,6 @@ cosmicvariance = http://cosmicvariance.com/feed/atom/
 dailypython = http://www.pythonware.com/daily/rss.xml
 debian-admin = http://www.debian-administration.org/articles.rdf
 debian-dsa = http://www.debian.org/security/dsa-long
-dimeadozen = http://lt_kije:dimepoke@bt.dimeadozen.org/rss/
 djm = http://www.mindrot.org/~djm/weblog/index.rss20
 doughellmann = http://feeds.feedburner.com/DougHellmann
 ectomo = http://feeds.feedburner.com/ectomo/QlIJ
@@ -51,7 +50,6 @@ jonbroad = http://www.relativepath.org/feed/atom.xml
 jonstumblr = http://madsimian.tumblr.com/rss
 kenmacleod = http://kenmacleod.blogspot.com/feeds/posts/default
 languagelog = http://languagelog.ldc.upenn.edu/nll/?feed=rss2
-lighttpd = http://blog.lighttpd.net/xml/rss20/feed.xml
 lilfg = http://liflg.org/rss.php
 loresjoberg = http://slumbering.lungfish.com/?feed=rss2
 lwn = http://lwn.net/headlines/newrss
@@ -62,7 +60,6 @@ mbalmer = http://www.vnode.ch/rss.xml
 milw0rm = http://www.milw0rm.com/rss.php
 muddup = http://wfmu.org/podcast/DR.xml
 nerdwisdom = http://nerdwisdom.com/feed/
-noaa-msn = http://www.nws.noaa.gov/data/current_obs/KMSN.rss
 notevenwrong = http://www.math.columbia.edu/~woit/wordpress/?feed=rss2
 orwell = http://orwelldiaries.wordpress.com/feed/
 osg-maint = http://www.grid.iu.edu/maintenance/feed.rss
@@ -87,7 +84,7 @@ symmetry = http://www.symmetrymagazine.org/breaking/feed/
 symmetryfactor = http://apetrov.wordpress.com/feed/
 taosecurity = http://feeds.feedburner.com/Taosecurity
 titusbrown = http://ivory.idyll.org/blog/tags/python?flav=atom
-twitter = http://twitter.com/statuses/friends_timeline/11125102.rss
+twitter = http://lt_kije:lesheros@twitter.com/statuses/friends_timeline/11125102.rss
 undeadly = http://undeadly.org/cgi?action=rss
 undeadly-errata = http://undeadly.org/cgi?action=errata
 unix-news = http://unix-news.blogspot.com/feeds/posts/default?alt=rss
