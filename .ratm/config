@@ -114,3 +114,4 @@ nytimes-movies = http://www.nytimes.com/services/xml/rss/nyt/Movies.xml
 nytimes-opinion = http://www.nytimes.com/services/xml/rss/nyt/Opinion.xml
 nytimes-soccer = http://www.nytimes.com/services/xml/rss/nyt/Soccer.xml
 nytimes-washington = http://www.nytimes.com/services/xml/rss/nyt/Washington.xml
+economist = http://www.economist.com/rss/full_print_edition_rss.xml
