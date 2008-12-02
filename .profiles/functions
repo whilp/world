@@ -124,10 +124,10 @@ secret () {
 }
 attach () {
     SESSION=$1
-    tmux has-session -t "${SESSION}" > /dev/null 2>&1
+    tmux -S "${TMUX_SOCK}" has-session -t "${SESSION}" > /dev/null 2>&1
     if [ $? -eq 0 ]; then
-        tmux attach-session -dt "${SESSION}"
+        tmux -S "${TMUX_SOCK}" attach-session -dt "${SESSION}"
     else
-        tmux new-session -s "${SESSION}"
+        tmux -S "${TMUX_SOCK}" new-session -s "${SESSION}"
     fi
 }
