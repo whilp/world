@@ -1,3 +1,4 @@
 # ex: set ft=remind tw=0:
 
-REM 02 Jun 2006 *14 AT 19:00    MSG %"MadLUG social meeting (Memorial Union)%"
+REM 28 Nov 2008 *14 AT 19:00     DURATION 01:30 \
+                                MSG %"%3 MadLUG social meeting (Memorial Union)%"%
