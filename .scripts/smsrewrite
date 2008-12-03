@@ -21,7 +21,7 @@ for line in sys.stdin:
         from_hdr = value
     elif header.lower() == 'subject':
         subject = value
-        value = ' from %s' % from_hdr.strip()
+        value = from_hdr.strip()
 
     message.append(':'.join((header, value)))
 
