@@ -122,13 +122,14 @@ secret () {
     sudo umount "${SAFEDIR}" && \
     sudo vnconfig -u "${SVND}"
 }
+TMUX="tmux -S ${TMUX_SOCK}"
 attach () {
     SESSION=$1
-    tmux -S "${TMUX_SOCK}" has-session -t "${SESSION}" > /dev/null 2>&1
+    ${TMUX} has-session -t "${SESSION}" > /dev/null 2>&1
     if [ $? -eq 0 ]; then
-        tmux -S "${TMUX_SOCK}" attach-session -dt "${SESSION}"
+        ${TMUX} attach-session -dt "${SESSION}"
     else
-        tmux -S "${TMUX_SOCK}" new-session -s "${SESSION}"
+        ${TMUX} new-session -s "${SESSION}"
     fi
 }
 meta () {
