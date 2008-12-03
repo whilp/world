@@ -1,23 +1,19 @@
 # ex: set ft=remind tw=0:
 
-###################################################################
-### Birthdays/anniversaries.
-###################################################################
-REM 25 Aug MSG %"***** My [_yr_num(1984)] birthday.%"
-REM 25 Jan MSG %"***** Laura's [_yr_num(1981)] birthday.%"
-REM 04 Jul MSG %"***** Ducky's [_yr_num(1993)] birthday.%"
-REM 10 Sep MSG %"***** Trevor Gruehn's [_yr_num(1983)] birthday.%"
-REM 15 Jan MSG %"***** Mike Brunlieb's [_yr_num(1983)] birthday.%"
-REM 08 Dec MSG %"***** Nicole's [_yr_num(1983)] birthday.%"
-REM 25 Sep MSG %"***** Eddie's [_yr_num(2004)] birthday.%"
-REM 19 Oct MSG %"***** Mom's [_yr_num(1952)] birthday.%"
-REM 06 Nov MSG %"***** Pop's [_yr_num(1953)] birthday.%"
-REM 29 Nov MSG %"***** Steve Olheiser's [_yr_num(1982)] birthday.%"
+REM 25 Aug MSG %"My [_yr_num(1984)] birthday%"
+REM 25 Jan MSG %"Laura's [_yr_num(1981)] birthday%"
+REM 04 Jul MSG %"Ducky's [_yr_num(1993)] birthday%"
+REM 10 Sep MSG %"Trevor Gruehn's [_yr_num(1983)] birthday%"
+REM 15 Jan MSG %"Mike Brunlieb's [_yr_num(1983)] birthday%"
+REM 08 Dec MSG %"Nicole's [_yr_num(1983)] birthday%"
+REM 25 Sep MSG %"Eddie's [_yr_num(2004)] birthday%"
+REM 19 Oct MSG %"Mom's [_yr_num(1952)] birthday%"
+REM 06 Nov MSG %"Pop's [_yr_num(1953)] birthday%"
+REM 29 Nov MSG %"Steve Olheiser's [_yr_num(1982)] birthday%"
 
-REM 05 Sep MSG %"***** Our [_yr_num(2003)] anniversary.%"
-REM 29 Sep MSG %"***** [_yr_num(2006)] years since our engagement.%"
+REM 05 Sep MSG %"Our [_yr_num(2003)] anniversary%"
+REM 29 Sep MSG %"[_yr_num(2006)] years since our engagement%"
 
-REM 30 Jan MSG %"***** #wilug's [_yr_num(2006)] birthday!%"
-REM 03 Jan MSG %"***** #madlug's [_yr_num(2006)] birthday!%"
-REM 04 Jan MSG %"***** #OpenBSD's [_yr_num(2000)] birthday!%"
-
+REM 30 Jan MSG %"#wilug's [_yr_num(2006)] birthday!%"
+REM 03 Jan MSG %"#madlug's [_yr_num(2006)] birthday!%"
+REM 04 Jan MSG %"#OpenBSD's [_yr_num(2000)] birthday!%"
