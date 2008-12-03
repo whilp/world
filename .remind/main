@@ -3,14 +3,14 @@
 ###################################################################
 ### Plans.
 ###################################################################
-REM 02 Jun 2006 *14 AT 19:00    MSG x%3 %"MadLUG social meeting (Memorial Union).%"
-REM 01 Wed AT 19:00             MSG x%3 %"MadMongers meeting (MPL).%"
+REM 02 Jun 2006 *14 AT 19:00    MSG x%3 %"MadLUG social meeting (Memorial Union)%"
+REM 01 Wed AT 19:00             MSG x%3 %"MadMongers meeting (MPL)%"
 
 ###################################################################
 ### Work.
 ###################################################################
 ### Regular.
-REM 08 Aug 2006 *7 AT 13:00     MSG x%3 %"HEP/CMS meeting.%"
-REM 02 Tue AT 12:00             MSG x%3 %"GLOW meeting.%"
-REM 01 +3 AT 12:00              MSG x%3 %"Activity report due to dasu@.%"
+REM 03 Dec 2008 *7 AT 10:30     MSG x%3 %"HEP/CMS computing meeting%"
+REM 02 Tue AT 12:00             MSG x%3 %"GLOW meeting%"
+REM 01 +3 AT 12:00              MSG x%3 %"Activity report due to dasu@%"
 REM 12 Dec 2006 *14 AT 14:00    MSG x%3 %"T2 Meeting (http://agenda.cern.ch/displayLevel.php?fid=354)%"
