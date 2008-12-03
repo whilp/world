@@ -5,6 +5,6 @@ REM 03 Dec 2008 *7  AT 10:30 +15 DURATION 01:00 \
 REM 01 Fri          AT 12:00 +15 DURATION 00:30 \
                                 MSG [m("GLOW meeting")]
 REM 25 Nov 2008 *14 AT 14:00 +15 DURATION 01:30 \
-                                MSG [m("T2 Meeting (http://agenda.cern.ch/displayLevel.php?fid=354)")]
+                                MSG [m("T2 Meeting (http://indico.cern.ch/categoryDisplay.py?categId=354)")]
 REM 01 +3           AT 09:00 +15 \
                                 MSG [m("Activity report due to dasu@")]
