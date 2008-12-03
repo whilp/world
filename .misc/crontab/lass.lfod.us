@@ -27,3 +27,6 @@ HOME=/home/will/
 
 # Send today's calendar.
 30      5       *       *       *       calendar; echo; calendar -f other
+
+# Send reminders.
+@reboot                                 remind -rz -k'echo "%s" | mail -s "reminder" will+text' ~/.reminders &
