@@ -2,6 +2,7 @@
 BANNER %y.%n.%r %# Reminders:
 INCLUDE /home/will/.remind/functions
 INCLUDE /home/will/.remind/holidays
+INCLUDE /home/will/.remind/todo
 
 ###################################################################
 ### Plans.
