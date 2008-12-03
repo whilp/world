@@ -55,7 +55,6 @@ madisonlinux = http://www.madisonlinux.org/RecentChanges?action=rss_rc&ddiffs=1&
 madsec = http://madsec.blogspot.com/feeds/posts/default
 marcambinder = http://marcambinder.theatlantic.com/index.xml
 mbalmer = http://www.vnode.ch/rss.xml
-milw0rm = http://www.milw0rm.com/rss.php
 muddup = http://wfmu.org/podcast/DR.xml
 nerdwisdom = http://nerdwisdom.com/feed/
 notevenwrong = http://www.math.columbia.edu/~woit/wordpress/?feed=rss2
@@ -114,3 +113,4 @@ nytimes-movies = http://www.nytimes.com/services/xml/rss/nyt/Movies.xml
 nytimes-opinion = http://www.nytimes.com/services/xml/rss/nyt/Opinion.xml
 nytimes-soccer = http://www.nytimes.com/services/xml/rss/nyt/Soccer.xml
 nytimes-washington = http://www.nytimes.com/services/xml/rss/nyt/Washington.xml
+economist = http://www.economist.com/rss/full_print_edition_rss.xml
