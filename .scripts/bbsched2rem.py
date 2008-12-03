@@ -25,4 +25,4 @@ for event in events:
     summary = event['SUMMARY'].replace('Basketball-M: ', '')
     description = ' '.join(event['DESCRIPTION'].split()).replace('Media: ', '')
 
-    print 'REM %s MSG %s %s' % (start, summary, description)
+    print 'REM %s MSG [a("%s %s")]' % (start, summary, description)
