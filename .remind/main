@@ -1,4 +1,6 @@
 # ex: set ft=remind tw=0:
 
+REM Thu             AT 06:00    MSG %"%3 Trash to street%"%
+REM 04 Dec 2008 *14 AT 06:00    MSG %"%3 Recycling to street%"%
 REM 28 Nov 2008 *14 AT 19:00     DURATION 01:30 \
                                 MSG %"%3 MadLUG social meeting (Memorial Union)%"%
