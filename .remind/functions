@@ -40,7 +40,11 @@ FSET _trig()		TRIGGER(TRIGDATE())
 FSET _back(days)	TRIGGER(TODAY()-days)
 
 # Macro for AT messages.
-FSET a(msg)     "%\"%3 " + msg + "%\"%"
+FSET a(msg)     iif($DontQueue>0, "%\"%3 " + msg + "%\"%", \
+                    "%\"" + msg + " in %4 min%p %\"%")
 
 # Macro for messages.
 FSET m(msg)     "%\"\         " + msg + "%\"%"
+
+# Scheduling macro.
+FSET remind(x)  choose(x, -30, -10)
