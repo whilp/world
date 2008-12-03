@@ -1,5 +1,5 @@
 # ex: set ft=remind tw=0:
-BANNER %y.%n.%r %# Reminders:
+BANNER %y.%n.%r %# Reminders:%
 INCLUDE /home/will/.remind/functions
 INCLUDE /home/will/.remind/main
 INCLUDE /home/will/.remind/holidays
