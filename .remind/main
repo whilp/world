@@ -3,21 +3,8 @@
 ###################################################################
 ### Plans.
 ###################################################################
-### Other.
-REM 21 Mar 2007 AT 21:00        MSG x%3 %"Amiina @ Cafe Montmartre (http://virtuous.com/events/v/129229464/2007-03.html)%"
-REM 16 Feb 2007 AT 20:00        MSG x%3 %"Arsenic and Old Lace (SHS)%"
-REM 17 Feb 2007 AT 20:00        MSG x%3 %"Arsenic and Old Lace (SHS)%"
-REM 23 Feb 2007 AT 20:00        MSG x%3 %"Arsenic and Old Lace (SHS)%"
-REM 24 Feb 2007 AT 20:00        MSG x%3 %"Arsenic and Old Lace (SHS)%"
-### NIX.
 REM 02 Jun 2006 *14 AT 19:00    MSG x%3 %"MadLUG social meeting (Memorial Union).%"
 REM 01 Wed AT 19:00             MSG x%3 %"MadMongers meeting (MPL).%"
-REM 09 Feb 2007 AT 11:30        MSG x%3 %"Subversion for source code control @ 3139, 1210 W Dayton.%"
-
-###################################################################
-### Home.
-###################################################################
-REM 01 +3                       MSG %"***** Rent's due %b ($335, David Williams).%"
 
 ###################################################################
 ### Work.
@@ -27,5 +14,3 @@ REM 08 Aug 2006 *7 AT 13:00     MSG x%3 %"HEP/CMS meeting.%"
 REM 02 Tue AT 12:00             MSG x%3 %"GLOW meeting.%"
 REM 01 +3 AT 12:00              MSG x%3 %"Activity report due to dasu@.%"
 REM 12 Dec 2006 *14 AT 14:00    MSG x%3 %"T2 Meeting (http://agenda.cern.ch/displayLevel.php?fid=354)%"
-### Floating.
-REM 06 Mar 2007 +14             MSG %"***** USCMS T2/T3 Meeting; UCSD%"
