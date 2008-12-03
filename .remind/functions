@@ -39,5 +39,8 @@ FSET _trig()		TRIGGER(TRIGDATE())
 # Handy function to provide SCANFROM dates...
 FSET _back(days)	TRIGGER(TODAY()-days)
 
+# Macro for AT messages.
+FSET a(msg)     "%\"%3 " + msg + "%\"%"
+
 # Macro for messages.
-FSET m(msg)     "%\"%3 " + msg + "%\"%"
+FSET m(msg)     "%\"\         " + msg + "%\"%"

@@ -1,6 +1,6 @@
 # ex: set ft=remind tw=0:
 
-REM Thu             AT 06:00    MSG [m("Trash to street")]
-REM 04 Dec 2008 *14 AT 06:00    MSG [m("Recycling to street")]
+REM Thu             AT 06:00    MSG [a("Trash to street")]
+REM 04 Dec 2008 *14 AT 06:00    MSG [a("Recycling to street")]
 REM 28 Nov 2008 *14 AT 19:00     DURATION 01:30 \
-                                MSG [m("MadLUG social meeting (Memorial Union)")]
+                                MSG [a("MadLUG social meeting (Memorial Union)")]
