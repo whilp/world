@@ -122,3 +122,33 @@ secret () {
     sudo umount "${SAFEDIR}" && \
     sudo vnconfig -u "${SVND}"
 }
+meta () {
+    SESSION=meta
+    tmux -S "${TMUX_SOCK}" new-session -d -s"${SESSION}"
+
+    tmux -S "${TMUX_SOCK}" new-window -d -t"${SESSION}:1" -nMAIL    'mutt'
+    tmux -S "${TMUX_SOCK}" new-window -d -t"${SESSION}:2" -nCOMMS   'irssi'
+    tmux -S "${TMUX_SOCK}" new-window -d -t"${SESSION}:3" -nCVS     'ssh -t cvs ./ChangeLog'
+    tmux -S "${TMUX_SOCK}" new-window -d -t"${SESSION}:5"
+    tmux -S "${TMUX_SOCK}" new-window -d -t"${SESSION}:6" -nWWW     '/usr/local/bin/elinks -session-ring 1'
+
+    tmux -S "${TMUX_SOCK}" set-option -t"${SESSION}:1"          remain-by-default on
+    tmux -S "${TMUX_SOCK}" set-window-option -t"${SESSION}:1"   monitor-activity on
+    tmux -S "${TMUX_SOCK}" set-window-option -t"${SESSION}:2"   monitor-activity on
+    tmux -S "${TMUX_SOCK}" set-window-option -t"${SESSION}:3"   monitor-activity on
+
+    tmux -S "${TMUX_SOCK}" kill-window -t"${SESSION}:0"
+}
+todo () {
+    SESSION=todo
+    tmux -S "${TMUX_SOCK}" new-session -d -s"${SESSION}"
+
+    tmux -S "${TMUX_SOCK}" new-window -d -t"${SESSION}:1" -nTODO    'remind -f -z ~/.remind/main'
+    tmux -S "${TMUX_SOCK}" new-window -d -t"${SESSION}:2" -nEDIT    'vim ~/.remind/'
+
+    tmux -S "${TMUX_SOCK}" set-option -t"${SESSION}:1"          remain-by-default on
+    tmux -S "${TMUX_SOCK}" set-window-option -t"${SESSION}:1"   monitor-activity on
+    tmux -S "${TMUX_SOCK}" set-window-option -t"${SESSION}:2"   monitor-activity on
+
+    tmux -S "${TMUX_SOCK}" kill-window -t"${SESSION}:0"
+}
