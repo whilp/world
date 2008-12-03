@@ -143,9 +143,9 @@ meta () {
     ${TMUX} new-window -d -t"${SESSION}:6" -nWWW     '/usr/local/bin/elinks -session-ring 1'
 
     ${TMUX} set-option -t"${SESSION}"            remain-by-default on
-    ${TMUX} set-window-option -t"${SESSION}:1"   monitor-activity on
-    ${TMUX} set-window-option -t"${SESSION}:2"   monitor-activity on
-    ${TMUX} set-window-option -t"${SESSION}:3"   monitor-activity on
+    ${TMUX} set-window-option -t"${SESSION}:1"   monitor-activity on >/dev/null
+    ${TMUX} set-window-option -t"${SESSION}:2"   monitor-activity on >/dev/null
+    ${TMUX} set-window-option -t"${SESSION}:3"   monitor-activity on >/dev/null
 
     ${TMUX} kill-window -t"${SESSION}:0"
 }
@@ -157,8 +157,8 @@ todo () {
     ${TMUX} new-window -d -t"${SESSION}:2" -nEDIT    'vim ~/.remind/'
 
     ${TMUX} set-option -t"${SESSION}"            remain-by-default on
-    ${TMUX} set-window-option -t"${SESSION}:1"   monitor-activity on
-    ${TMUX} set-window-option -t"${SESSION}:2"   monitor-activity on
+    ${TMUX} set-window-option -t"${SESSION}:1"   monitor-activity on >/dev/null
+    ${TMUX} set-window-option -t"${SESSION}:2"   monitor-activity on >/dev/null
 
     ${TMUX} kill-window -t"${SESSION}:0"
 }
