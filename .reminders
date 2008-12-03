@@ -4,3 +4,4 @@ INCLUDE /home/will/.remind/functions
 INCLUDE /home/will/.remind/main
 INCLUDE /home/will/.remind/holidays
 INCLUDE /home/will/.remind/todo
+INCLUDE /home/will/.remind/work
