@@ -142,7 +142,7 @@ meta () {
     ${TMUX} new-window -d -t"${SESSION}:5"
     ${TMUX} new-window -d -t"${SESSION}:6" -nWWW     '/usr/local/bin/elinks -session-ring 1'
 
-    ${TMUX} set-option -t"${SESSION}:1"          remain-by-default on
+    ${TMUX} set-option -t"${SESSION}"            remain-by-default on
     ${TMUX} set-window-option -t"${SESSION}:1"   monitor-activity on
     ${TMUX} set-window-option -t"${SESSION}:2"   monitor-activity on
     ${TMUX} set-window-option -t"${SESSION}:3"   monitor-activity on
