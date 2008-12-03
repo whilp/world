@@ -135,6 +135,7 @@ attach () {
 meta () {
     SESSION=meta
     ${TMUX} new-session -d -s"${SESSION}"
+    ${TMUX} set-option -t"${SESSION}"            remain-by-default on
 
     ${TMUX} new-window -d -t"${SESSION}:1" -nMAIL    'mutt'
     ${TMUX} new-window -d -t"${SESSION}:2" -nCOMMS   'irssi'
@@ -142,7 +143,6 @@ meta () {
     ${TMUX} new-window -d -t"${SESSION}:5"
     ${TMUX} new-window -d -t"${SESSION}:6" -nWWW     '/usr/local/bin/elinks -session-ring 1'
 
-    ${TMUX} set-option -t"${SESSION}"            remain-by-default on
     ${TMUX} set-window-option -t"${SESSION}:1"   monitor-activity on >/dev/null
     ${TMUX} set-window-option -t"${SESSION}:2"   monitor-activity on >/dev/null
     ${TMUX} set-window-option -t"${SESSION}:3"   monitor-activity on >/dev/null
@@ -152,11 +152,11 @@ meta () {
 todo () {
     SESSION=todo
     ${TMUX} new-session -d -s"${SESSION}"
+    ${TMUX} set-option -t"${SESSION}"            remain-by-default on
 
     ${TMUX} new-window -d -t"${SESSION}:1" -nTODO    'remind -f -z ~/.remind/main'
     ${TMUX} new-window -d -t"${SESSION}:2" -nEDIT    'vim ~/.remind/'
 
-    ${TMUX} set-option -t"${SESSION}"            remain-by-default on
     ${TMUX} set-window-option -t"${SESSION}:1"   monitor-activity on >/dev/null
     ${TMUX} set-window-option -t"${SESSION}:2"   monitor-activity on >/dev/null
 
