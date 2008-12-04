@@ -3,9 +3,9 @@
 REM 03 Dec 2008     AT 15:00 SCHED remind DURATION 01:00 \
                                 MSG [a("Coffee with Trevor")]
 
-REM Thu             AT 06:00    MSG [a("Trash to street")]
 REM Thu             AT 15:00 SCHED remind DURATION 01:30 \
                                 MSG [a("Go with Andy")]
-REM 04 Dec 2008 *14 AT 06:00    MSG [a("Recycling to street")]
 REM 28 Nov 2008 *14 AT 19:00     DURATION 01:30 \
                                 MSG [a("MadLUG social meeting (Memorial Union)")]
+REM Thu             AT 06:00    MSG [a("Trash to street")]
+REM 04 Dec 2008 *14 AT 06:00    MSG [a("Recycling to street")]
