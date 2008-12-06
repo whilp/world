@@ -5,7 +5,7 @@ REM 04 Dec 2008     AT 18:00 SCHED remind DURATION 02:00 \
 REM 03 Dec 2008     AT 15:00 SCHED remind DURATION 01:00 \
                                 MSG [a("Coffee with Trevor")]
 
-REM Thu             AT 15:00 SCHED remind DURATION 01:30 \
+REM Thu             AT 15:20 SCHED remind DURATION 01:30 \
                                 MSG [a("Go with Andy")]
 REM 28 Nov 2008 *14 AT 19:00     DURATION 01:30 \
                                 MSG [a("MadLUG social meeting (Memorial Union)")]
