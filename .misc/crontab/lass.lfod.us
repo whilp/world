@@ -29,4 +29,4 @@ HOME=/home/will/
 30      5       *       *       *       calendar; echo; calendar -f other
 
 # Send reminders.
-@reboot                                 remind -rz -k'mail -s "$(echo "%s" | sed -e s/\\\\//g)" will+text < /dev/null > /dev/null 2>&1' ~/.reminders &
+@reboot                                 remind -rz1 -k'mail -s "$(echo "%s" | sed -e s/\\\\//g)" will+text < /dev/null > /dev/null 2>&1' ~/.reminders &
