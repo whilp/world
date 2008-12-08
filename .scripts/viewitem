@@ -19,6 +19,10 @@ FILTERS = [
             lambda m: m.group() + 'pagemode=print'),
         ('^(.*//www\.nytimes\.com/.*?)\?',
             lambda m: m.group() + 'pagewanted=print'),
+        (r"""^(?P<domain>.*//www\.uwbadgers\.com)
+            /sport_news/\S+/story\.html\?
+            sportid=(?P<sport>\d+)&storyid=(?P<story>\d+)""",
+            lambda m: '%(domain)s/mobile/mobile_story.aspx?sportid=%(sport)s&storyID=%(story)s' % m.groupdict()),
 ]
 
 # Generic functions that make FP friendlier.
