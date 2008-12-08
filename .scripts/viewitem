@@ -1,25 +1,142 @@
-#!/bin/sh
+#!/usr/bin/env python
 
-# Read each line of the message, looking for a X-Item-Link header.
-# X-Item-Link: http://lwn.net/Articles/240638/rss
-URL=
-SUBST='perl -pi -e'
-while read LINE; do
-    URL=$(echo ${LINE} | sed -e '/^X-Item-Link: /!d; s/^X-Item-Link: //')
-    case ${URL} in
-        *economist.com*)
-            URL="${URL}#page-content";;
-        *news.bbc.co.uk*)
-            BBCPRINT="http://newsvote.bbc.co.uk/mpapps/pagetools/print/"
-            URL=$(echo "${URL}" | ${SUBST} "s|^http://(.*)|${BBCPRINT}\1|");;
-        *blogs.nytimes.com*)
-            URL=$(echo "${URL}" | ${SUBST} 's|\?.*$|?pagemode=print|');;
-        *.nytimes.com*)
-            URL=$(echo "${URL}" | ${SUBST} 's|\?.*$|?pagewanted=print|');;
-        *.newyorker.com/online/blogs/*)
-            URL="${URL}?printable=true";;
-    esac
-    if [ -n "${URL}" ]; then
-        /usr/local/bin/elinks -session-ring 1 -remote "openURL('${URL}', new-tab)"
-    fi
-done
+import re
+import sys
+
+from functools import partial
+from subprocess import Popen, PIPE
+
+ELINKS = '/usr/local/bin/elinks'
+FILTERS = [
+        ('^(.*(//|\.)economist\.com/.*)$',                  # PATTERN
+            lambda m: '#'.join(m.group(), 'page-content')), # REPL CALLABLE
+        ('^http://(news\.bbc\.co\.uk/.*)$', 
+            lambda m: "http://newsvote.bbc.co.uk/mpapps/pagetools/print/" + m.group()),
+        ('^(.*(//|\.)blogs\.nytimes\.com/.*)\??',
+            lambda m: '?'.join(m.group(), 'pagemode=print')),
+        ('^(.*(//|\.)nytimes\.com/.*)\??',
+            lambda m: '?'.join(m.group(), 'pagewanted=print')),
+        ('^(.*(//|\.)newyorker\.com/online/blogs/.*)\??',
+            lambda m: '?'.join(m.group(), 'printable=true')),
+]
+
+# Generic functions that make FP friendlier.
+def doc(f, docstring):
+    """Set function f's __doc__ attribute to 'docstring'."""
+    f.__doc__ = docstring
+    return f
+
+def compose_two(f, g, unpack=False):
+    """Compose two callables f and g.
+
+        >>> from operator import add
+        >>> square = lambda x: pow(x, 2)
+        >>> compose_two(square, mul)(2, 3) == square(mul(2, 3)) == 36
+        True
+    """
+    if unpack:
+        return lambda *a, **k: f(*g(*a, **k))
+    else:
+        return lambda *a, **k: f(g(*a, **k))
+
+compose = doc(lambda *fs: reduce(compose_two, fs),
+        """Cumulatively compose two or more callables 'fs', returning a single function.
+
+        'fs' proceeds from the outermost callable to the innermost, such that:
+
+            compose(f, g, h)(x) -> f(g(h(x)))
+        """)
+
+ucompose = doc(lambda *fs: reduce(partial(compose_two, unpack=True), fs),
+        """Cumulatively compose two or more callables 'fs', returning a single function.
+
+        'fs' proceeds from the outermost callable to the innermost expanding results 
+        as it goes, such that:
+            
+            ucompose(f, h, h)(x) -> f(*g(*h(x)))
+        """)
+
+nth = doc(lambda s, n, d=None: s.split(d, n + 1)[n],
+        """Return the nth element of 'string' when split using 'delim'.
+            >>> spamneggs = 'spam and eggs'
+            >>> nth(spamneggs, 2)
+            'eggs'
+        """)
+
+first = doc(partial(nth, n=1),
+        """Return the first element of string 'x'.
+            >>> spamneggs = 'spam and eggs'
+            >>> first(spamneggs)
+            'spam'
+        """)
+
+# Domain-specific functions.
+header_value = doc(lambda l, h: l.startswith(h) and nth(l, 1, ': ').strip(),
+        """If 'l' is a valid rfc822 message header 'h', return its value.
+        If 'l' is not a valid header, return None.
+
+            >>> line = 'X-Some-Header: Header Value'
+            >>> header_value(line, 'X-Some-Header')
+            'Header Value
+            >>> header_value(line, 'X-Not-This-Header')
+            None
+        """)
+
+def build_filter(p, r):
+    """Construct a filter function from pattern 'p' and callable 'r'.
+    """
+    p = re.compile(p, re.VERBOSE)
+    def filter(l):
+        """Filter link 'l'.
+
+        If 'l' matches a pattern, pass the resultant match object to
+        callable 'r', which may transform 'l' arbitrarily. Finally,
+        return 'l'.
+        """
+        m = p.match(l)
+        if m:
+            l = r(m)
+
+        return l
+
+    return filter
+
+filter_link = doc(compose(*(build_filter(p, r) for p, r in FILTERS)),
+        """Pass a link 'l' through a sequence of filters.
+
+        Each filter is composed of a pattern 'p' and replacement
+        callable 'r'. If 'l' matches 'p', the match object is passed to
+        'r', which may transform 'l'. 'l' then passes to the next
+        filter.
+        """)
+
+link = doc(partial(header_value, h='X-Item-Link'), 
+        """Return the value for an X-Item-Link header.
+            >>> line = 'X-Item-Link: http://blah.com/link.html'
+            >>> link(line)
+            'http://blah.com/link.html'
+        """)
+
+links = doc(lambda f: (filter_link(x) for x in (link(l) for l in f) if x),
+        """Generate valid X-Item-Links from a file-like object 'f'.
+        
+        Additionally, pass each link through a series of filter
+        functions. Each filter may modify the link before passing it to
+        the next filter.
+        """)
+
+do = doc(lambda c, *a: Popen([c,] + list(a), stdout=PIPE, stderr=PIPE),
+        """Return a Popen object with command string 'c' and args 'a'.""")
+
+elinks = lambda l: partial(do, ELINKS, '-session-ring', '1',
+        '-remote', 'openURL("%s", new-tab)' % l)
+
+print_links = lambda f: [sys.stdout.write(l + '\n') for l in links(f)]
+
+do_links = lambda f: [elinks(l)().wait() for l in links(f)]
+
+main = partial(print_links, f=sys.stdin)
+main = partial(do_links, f=sys.stdin)
+
+if __name__ == '__main__':
+    main()
