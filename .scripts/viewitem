@@ -7,24 +7,17 @@ from functools import partial
 from subprocess import Popen, PIPE
 from urllib2 import urlopen
 
-resolve_feedproxy = doc(lambda u: urlopen(u).url,
-        """Resolve a feedproxy URL.
-
-        Feedproxy places the real URL behind a 302 redirect.
-        """)
-resolve_economist = lambda u: '#'.join((resolve_feedproxy(u), 'page-content'))
-
 ELINKS = '/usr/local/bin/elinks'
 FILTERS = [
-        ('^(.*(//|\.)newyorker\.com/.*)\??',                    # PATTERN
+        ('^(.*//www\.newyorker\.com/.*)\??',                    # PATTERN
             lambda m: '?'.join((m.group(), 'printable=true'))), # REPL CALLABLE
         ('^(.*//feedproxy\.google\.com/~r/economist/.*)$',
             lambda m: resolve_economist(m.group())),
-        ('^http://(news\.bbc\.co\.uk/.*)$', 
+        ('^.*//(news\.bbc\.co\.uk/.*)$', 
             lambda m: "http://newsvote.bbc.co.uk/mpapps/pagetools/print/" + m.group()),
-        ('^(.*(//|\.)blogs\.nytimes\.com/.*)\??',
+        ('^(.*//\S+\.blogs\.nytimes\.com/.*)\??',
             lambda m: '?'.join((m.group(), 'pagemode=print'))),
-        ('^(.*(//|\.)nytimes\.com/.*?)\?',
+        ('^(.*//www\.nytimes\.com/.*?)\?',
             lambda m: m.group() + 'pagewanted=print'),
 ]
 
@@ -108,6 +101,14 @@ def build_filter(p, r):
         return l
 
     return filter
+
+resolve_feedproxy = doc(lambda u: urlopen(u).url,
+        """Resolve a feedproxy URL.
+
+        Feedproxy places the real URL behind a 302 redirect.
+        """)
+resolve_economist = lambda u: '#'.join((resolve_feedproxy(u), 'page-content'))
+
 
 filter_link = doc(compose(*(build_filter(p, r) for p, r in FILTERS)),
         """Pass a link 'l' through a sequence of filters.
