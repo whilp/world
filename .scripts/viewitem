@@ -3,11 +3,21 @@
 # Read each line of the message, looking for a X-Item-Link header.
 # X-Item-Link: http://lwn.net/Articles/240638/rss
 URL=
+SUBST='perl -pi -e'
 while read LINE; do
     URL=$(echo ${LINE} | sed -e '/^X-Item-Link: /!d; s/^X-Item-Link: //')
     case ${URL} in
+        *economist.com*)
+            URL="${URL}#page-content";;
+        *news.bbc.co.uk*)
+            BBCPRINT="http://newsvote.bbc.co.uk/mpapps/pagetools/print/"
+            URL=$(echo "${URL}" | ${SUBST} "s|^http://(.*)|${BBCPRINT}\1|");;
+        *blogs.nytimes.com*)
+            URL=$(echo "${URL}" | ${SUBST} 's|\?.*$|?pagemode=print|');;
         *.nytimes.com*)
-            URL="${URL}&pagewanted=all";;
+            URL=$(echo "${URL}" | ${SUBST} 's|\?.*$|?pagewanted=print|');;
+        *.newyorker.com/online/blogs/*)
+            URL="${URL}?printable=true";;
     esac
     if [ -n "${URL}" ]; then
         /usr/local/bin/elinks -session-ring 1 -remote "openURL('${URL}', new-tab)"
