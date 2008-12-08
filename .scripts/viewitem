@@ -5,19 +5,27 @@ import sys
 
 from functools import partial
 from subprocess import Popen, PIPE
+from urllib2 import urlopen
+
+resolve_feedproxy = doc(lambda u: urlopen(u).url,
+        """Resolve a feedproxy URL.
+
+        Feedproxy places the real URL behind a 302 redirect.
+        """)
+resolve_economist = lambda u: '#'.join((resolve_feedproxy(u), 'page-content'))
 
 ELINKS = '/usr/local/bin/elinks'
 FILTERS = [
-        ('^(.*(//|\.)economist\.com/.*)$',                  # PATTERN
-            lambda m: '#'.join(m.group(), 'page-content')), # REPL CALLABLE
+        ('^(.*(//|\.)newyorker\.com/.*)\??',                    # PATTERN
+            lambda m: '?'.join((m.group(), 'printable=true'))), # REPL CALLABLE
+        ('^(.*//feedproxy\.google\.com/~r/economist/.*)$',
+            lambda m: resolve_economist(m.group())),
         ('^http://(news\.bbc\.co\.uk/.*)$', 
             lambda m: "http://newsvote.bbc.co.uk/mpapps/pagetools/print/" + m.group()),
         ('^(.*(//|\.)blogs\.nytimes\.com/.*)\??',
             lambda m: '?'.join((m.group(), 'pagemode=print'))),
         ('^(.*(//|\.)nytimes\.com/.*?)\?',
             lambda m: m.group() + 'pagewanted=print'),
-        ('^(.*(//|\.)newyorker\.com/.*)\??',
-            lambda m: '?'.join((m.group(), 'printable=true'))),
 ]
 
 # Generic functions that make FP friendlier.
