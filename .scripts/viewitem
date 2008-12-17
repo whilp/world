@@ -9,8 +9,8 @@ from urllib2 import urlopen
 
 ELINKS = '/usr/local/bin/elinks'
 FILTERS = [
-        (r'^(.*//www\.newyorker\.com/.*)\?',                # PATTERN
-            lambda m: (m.group() + 'printable=true')),      # REPL CALLABLE
+        (r'^(.*//www\.newyorker\.com/.*)(\?|$)]',             # PATTERN
+            lambda m: m.group(1) + '?printable=true'),        # REPL CALLABLE
         (r'^(.*//feedproxy\.google\.com/~r/economist/.*)$',
             lambda m: resolve_economist(m.group(1))),
         (r'^.*//(news\.bbc\.co\.uk/.*)$', 

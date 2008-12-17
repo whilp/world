@@ -30,3 +30,6 @@ HOME=/home/will/
 
 # Send reminders.
 @reboot                                 remind -rz1 -k'mail -s "$(echo "%s" | sed -e s/\\\\//g)" will+text < /dev/null > /dev/null 2>&1' ~/.reminders &
+
+# Check mirror.
+45      9       *       *       *       /home/will/bin/checkmirror.sh
