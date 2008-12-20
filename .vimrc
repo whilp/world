@@ -40,7 +40,7 @@ set softtabstop=4
 set tabstop=4
 
 " Use syntax highlighting.
-syntax enable
+syntax on
 
 " Plugins.
 runtime ftplugin/man.vim
