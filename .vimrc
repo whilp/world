@@ -10,6 +10,7 @@
 colorscheme zenburn
 
 set autoindent
+set autoread
 set backspace=indent,eol,start
 set foldmethod=indent
 set history=50
