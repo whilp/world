@@ -116,3 +116,4 @@ nytimes-washington = http://www.nytimes.com/services/xml/rss/nyt/Washington.xml
 economist = http://www.economist.com/rss/full_print_edition_rss.xml
 newyorker = http://feeds.newyorker.com/services/rss/feeds/everything.xml
 surowiecki = http://feeds.newyorker.com/services/rss/feeds/financial.xml
+krugman = http://krugman.blogs.nytimes.com/feed/
