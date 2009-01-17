@@ -21,7 +21,7 @@ split_header = lambda line: fmt_header(*line.split(':', 1))
 get_headers = lambda stream: dict(split_header(x) for x in takewhile(is_header, stream))
 
 main = lambda instream, outstream: outstream.write(
-        "%(from)s: %(subject)s"[:135] % get_headers(instream) + '\n')
+        "Subject: from %(from)s\n\n%(subject)s"[:135] % get_headers(instream) + '\n')
 
 if __name__ == '__main__':
     import sys
