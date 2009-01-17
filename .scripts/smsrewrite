@@ -7,19 +7,16 @@ from_hdr = ''
 subject = ''
 
 def fmt_header(header, value=None):
-    if not value:
-        return header, ''
-
     header = header.lower()
     if header == "from":
         value = [x for x in value.split() if '@' in x][0]
         value = value.split('@', 1)[0].strip("\"'<>")
     elif header == "subject":
-        value = ' '.join(value.split())
+        value = ' '.join(value.split()).strip()
 
     return header, value
 
-is_header = lambda line: len(line.split(':')) >= 2
+is_header = lambda line: line != ''
 split_header = lambda line: fmt_header(*line.split(':', 1))
 get_headers = lambda stream: dict(split_header(x) for x in takewhile(is_header, stream))
 
