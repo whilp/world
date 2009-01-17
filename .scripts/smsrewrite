@@ -1,29 +1,31 @@
 #!/usr/bin/env python
 
-import sys
+from itertools import takewhile
 
 message = []
 from_hdr = ''
 subject = ''
 
-for line in sys.stdin:
-    # We've reached the payload.
-    if not line:
-        break
+def fmt_header(header, value=None):
+    if not value:
+        return header, ''
 
-    try:
-        header, value = line.split(':', 1)
-    except ValueError:
-        message.append(line)
-        continue
+    header = header.lower()
+    if header == "from":
+        value = [x for x in value.split() if '@' in x][0]
+        value = value.split('@', 1)[0].strip("\"'<>")
+    elif header == "subject":
+        value = ' '.join(value.split())
 
-    if header.lower() == 'from':
-        from_hdr = value
-    elif header.lower() == 'subject':
-        subject = value
-        value = from_hdr.strip()
+    return header, value
 
-    message.append(':'.join((header, value)))
+is_header = lambda line: len(line.split(':')) >= 2
+split_header = lambda line: fmt_header(*line.split(':', 1))
+get_headers = lambda stream: dict(split_header(x) for x in takewhile(is_header, stream))
 
-print ''.join(message)
-print subject.strip()
+main = lambda instream, outstream: outstream.write(
+        "%(from)s: %(subject)s"[:135] % get_headers(instream) + '\n')
+
+if __name__ == '__main__':
+    import sys
+    main(sys.stdin, sys.stdout)
