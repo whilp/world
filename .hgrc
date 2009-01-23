@@ -20,6 +20,7 @@ hgext.convert =
 purge =
 record =
 extdiff =
+branchrepo = /home/will/.hgext/branchrepo.py
 
 [alias]
 ppush = push -rqparent
