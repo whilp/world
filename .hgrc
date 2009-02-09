@@ -21,10 +21,13 @@ hgext.bookmarks =
 hgext.convert = 
 hgext.mq =
 hgext.patchbomb =
-branchrepo = /home/will/.hgext/branchrepo.py
+bookrepo = /home/will/.hgext/bookrepo.py
 
 [alias]
 ppush = push -rqparent
+
+[bookmarks]
+track.current = True
 
 [extdiff]
 cmd.vimdiff = vim

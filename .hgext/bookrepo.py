@@ -1,5 +1,6 @@
 from mercurial import cmdutil, commands
 from mercurial.i18n import gettext, _
+from hgext import bookmarks
 
 # XXX: should we decorate "in", too?
 delegated = ("outgoing", "pull", "push")
@@ -30,21 +31,20 @@ def decoratecmd(ui, cmd, table, delegate, *delegateoptions):
         decoratorentry[1].append(option)
     table[cmdkey] = decoratorentry
 
-def branchdelegate(kept, ui, repo, target=None, **opts):
-    branch = repo.dirstate.branch()
+def bookdelegate(kept, ui, repo, target=None, **opts):
+    bookmark = bookmarks.current(repo)
     paths = [name for name, path in ui.configitems("paths")]
-    rev = branch
 
-    if branch not in paths:
-        branch = "default"
+    if bookmark in paths:
+        rev = bookmark
 
-    if target is None:
-        target = branch
-    elif target != branch:
-        rev = branch
+        if target is None:
+            target = bookmark
+        elif target != bookmark:
+            rev = bookmark
 
-    if not opts["rev"]:
-        opts["rev"] = [rev]
+        if not opts["rev"]:
+            opts["rev"] = [rev]
 
     return kept(ui, repo, target, **opts)
 
@@ -52,4 +52,4 @@ def uisetup(ui):
     """Initialize the extension."""
     for delegatedcmd in delegated:
         #commands.table.pop(delegatedcmd)
-        decoratecmd(ui, delegatedcmd, commands.table, branchdelegate)
+        decoratecmd(ui, delegatedcmd, commands.table, bookdelegate)
