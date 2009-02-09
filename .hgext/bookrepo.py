@@ -34,11 +34,14 @@ def decoratecmd(ui, cmd, table, delegate, *delegateoptions):
 def bookdelegate(kept, ui, repo, target=None, **opts):
     bookmark = bookmarks.current(repo)
     paths = [name for name, path in ui.configitems("paths")]
+    paths.insert(0, "main")
 
     if bookmark in paths:
         rev = bookmark
 
-        if target is None:
+        if bookmark == "main":
+            target = "default"
+        elif target is None:
             target = bookmark
         elif target != bookmark:
             rev = bookmark
