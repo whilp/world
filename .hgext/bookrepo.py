@@ -23,6 +23,8 @@ def bookdelegate(kept, ui, repo, target=None, **opts):
 
         if not opts["rev"]:
             opts["rev"] = [rev]
+    elif target is None:
+        target = "default"
 
     return kept(ui, repo, target, **opts)
 
