@@ -14,12 +14,13 @@ ignore = ~/.hgignore-global
 
 [extensions]
 alias =
-hgext.mq =
-hgext.patchbomb =
-hgext.convert = 
+extdiff =
 purge =
 record =
-extdiff =
+hgext.bookmarks = 
+hgext.convert = 
+hgext.mq =
+hgext.patchbomb =
 branchrepo = /home/will/.hgext/branchrepo.py
 
 [alias]
