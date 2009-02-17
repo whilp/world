@@ -14,7 +14,7 @@ XTerm*foreground: #FFFFFF
 XTerm*visualBell: false
 XTerm*bellIsUrgent: true
 XTerm*faceName: DroidSansMono
-XTerm*faceSize: 15
+XTerm*faceSize: 13
 XTerm*cutchars: `"'()*,;<>[]{|}
 XTerm*loginShell: true
 XTerm*saveLines: 2000
