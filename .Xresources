@@ -13,7 +13,7 @@ XTerm*background: #000000
 XTerm*foreground: #FFFFFF
 XTerm*visualBell: false
 XTerm*bellIsUrgent: true
-XTerm*faceName: Inconsolata
+XTerm*faceName: DroidSansMono
 XTerm*faceSize: 15
 XTerm*cutchars: `"'()*,;<>[]{|}
 XTerm*loginShell: true
