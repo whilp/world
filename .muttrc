@@ -158,6 +158,9 @@ folder-hook =Family set hide_top_missing
 folder-hook =Family set hide_missing
 folder-hook =Family unset sig_dashes
 
+folder-hook =RATM push "<limit>~N<enter>"
+folder-hook =RATM set sort=date
+
 folder-hook =Sent set sort=reverse-date
 
 folder-hook =HEP/RQ set sort=threads
