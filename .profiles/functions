@@ -172,3 +172,13 @@ todo () {
 
     ${TMUX} kill-window -t"${SESSION}:0"
 }
+sleepuntil () {
+	DATE=$1 
+	INTERVAL=${2:-60} 
+	SECONDS=$(date -j "${DATE}" "+%s") 
+	echo "Sleeping until $(date -j "${DATE}")..."
+	while [ "$(date "+%s")" -lt "${SECONDS}" ]
+	do
+		sleep "${INTERVAL}"
+	done
+}
