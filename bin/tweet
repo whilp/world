@@ -11,5 +11,9 @@ if [ -z "${STATUS}" ]; then
     STATUS="$(echo -n | dmenu -p "${PROMPT}")"
 fi
 
-curl -u "${USERNAME}:${PASSWORD}" -d status=\'${STATUS}\' \
+if [ -z "${STATUS}" ]; then
+    exit 0
+fi
+
+echo curl -u "${USERNAME}:${PASSWORD}" -d status=\'${STATUS}\' \
     ${SERVICEURL}/statuses/update.json
