@@ -5,15 +5,24 @@ USERNAME=lt_kije
 PASSWORD="ndwp4Ym++bYDwF7eAcBApM+/1Bg"
 STATUS=$*
 SERVICEURL=http://twitter.com/
-PROMPT="tweet >"
+PROMPT="tweet>"
+
+# From dwm's config.h...
+FONT="-*-terminus-medium-r-normal-*-20-*-*-*-*-*-*-*"
+NORMBGCOLOR='#cccccc'
+NORMFGCOLOR='#000000'
+SELBGCOLOR='#0066ff'
+SELFGCOLOR='#ffffff'
+OPTS="-fn ${FONT} -nb ${NORMBGCOLOR} -nf ${NORMFGCOLOR}
+         -p ${PROMPT} -sb ${SELBGCOLOR} -sf ${SELFGCOLOR}"
 
 if [ -z "${STATUS}" ]; then
-    STATUS="$(echo -n | dmenu -p "${PROMPT}")"
+    STATUS="$(echo -n | dmenu ${OPTS})"
 fi
 
 if [ -z "${STATUS}" ]; then
     exit 0
 fi
 
-curl -u "${USERNAME}:${PASSWORD}" -d status=\'${STATUS}\' \
+curl -q -u "${USERNAME}:${PASSWORD}" -d status="${STATUS}" \
     ${SERVICEURL}/statuses/update.json >/dev/null
