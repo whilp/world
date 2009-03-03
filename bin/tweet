@@ -24,5 +24,5 @@ if [ -z "${STATUS}" ]; then
     exit 0
 fi
 
-curl -q -u "${USERNAME}:${PASSWORD}" -d status="${STATUS}" \
+curl -s -u "${USERNAME}:${PASSWORD}" -d status="${STATUS}" \
     ${SERVICEURL}/statuses/update.json >/dev/null
