@@ -17,6 +17,7 @@ SHELL="$(which zsh 2>/dev/null)" || \
         SHELL="$(which bash 2>/dev/null)" || \
         SHELL="$(which sh)"
 
+BBCRADIO=mms://livewmstream-ws.bbc.co.uk.edgestreams.net/reflector:43021
 CVSEDITOR="${EDITOR}"
 CVS_RSH=/usr/bin/ssh
 FANOUT=16
