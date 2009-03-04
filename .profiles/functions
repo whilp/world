@@ -175,9 +175,9 @@ todo () {
 sleepuntil () {
 	DATE=$1 
 	INTERVAL=${2:-60} 
-	SECONDS=$(date -j "${DATE}" "+%s") 
+	TARGET=$(date -j "${DATE}" "+%s") 
 	echo "Sleeping until $(date -j "${DATE}")..."
-	while [ "$(date "+%s")" -lt "${SECONDS}" ]
+	while [ "$(date "+%s")" -lt "${TARGET}" ]
 	do
 		sleep "${INTERVAL}"
 	done
