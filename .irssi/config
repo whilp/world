@@ -396,45 +396,28 @@ windows = {
       }
     );
   };
-  7 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "ICB";
-        name = "porters";
-        tag = "openbsd-porters";
-      }
-    );
-  };
-  8 = {
-    items = (
-      {
-        type = "CHANNEL";
-        chat_type = "ICB";
-        name = "hackers";
-        tag = "openbsd-hackers";
-      }
-    );
-  };
+  7 = { };
+  8 = { };
   9 = {
     items = (
       {
         type = "CHANNEL";
         chat_type = "SILC";
         name = "#openbsd";
-        tag = "silc";
+        tag = "SILCNet";
       }
     );
   };
   10 = {
     items = (
       {
-        type = "QUERY";
+        type = "CHANNEL";
         chat_type = "IRC";
-        name = "merdely";
-        tag = "freenode";
+        name = "&uscms-t2";
+        tag = "bitlbee";
       }
     );
   };
+  11 = { };
 };
-mainwindows = { 1 = { first_line = "1"; lines = "50"; }; };
+mainwindows = { 1 = { first_line = "1"; lines = "38"; }; };
