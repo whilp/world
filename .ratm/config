@@ -119,4 +119,4 @@ surowiecki = http://feeds.newyorker.com/services/rss/feeds/financial.xml
 krugman = http://krugman.blogs.nytimes.com/feed/
 bos = http://www.serpentine.com/blog/feed/
 hop = http://python-history.blogspot.com/feeds/posts/default
-osg-hadoop = https://twiki.grid.iu.edu/bin/view/Storage/WebAtom?search=Hadoop
+osg-hadoop = http://twiki.grid.iu.edu/bin/view/Storage/WebRss?search=Hadoop
