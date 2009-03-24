@@ -2,7 +2,7 @@
 
 CURL=/usr/local/bin/curl
 USERNAME=lt_kije
-PASSWORD="ndwp4Ym++bYDwF7eAcBApM+/1Bg"
+PASSWORD="ndwp4YmbYDwF7eAcBApM1Bg"
 STATUS=$*
 SERVICEURL=http://twitter.com/
 PROMPT="tweet>"
