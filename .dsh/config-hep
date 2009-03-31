@@ -415,13 +415,24 @@ pg1n36
 
 LUMP:compute_nodes
 g10
-g3
+g12
+g14
 g4
 g5
 g6
 g7
 g8
 g9
+
+LUMP:storage_nodes
+g7
+g8
+g9
+g10
+g12
+g14
+s5
+s15
 
 ## TO CHECK FOR BITROT:
 #for HOST in $(dsh -qi | sed -e '1,3d; s/.*Host: //' | sed -e '1,/g6n20/d'); do
