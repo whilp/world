@@ -7,8 +7,6 @@ asullivan = http://feeds.feedburner.com/andrewsullivan/rApM
 asymptotia = http://asymptotia.com/feed/atom/
 backreaction = http://backreaction.blogspot.com/atom.xml
 badgers = http://www.uwbadgers.com/rss/?deptid=116
-bbc-football = http://newsrss.bbc.co.uk/rss/sportonline_world_edition/football/europe/rss.xml
-bbc-news = http://newsrss.bbc.co.uk/rss/newsonline_uk_edition/world/rss.xml
 bensmith = http://www.politico.com/rss/bensmith_full.xml
 bitlbee = http://www.bitlbee.org/news.html.rss
 bramcohen = http://bramcohen.livejournal.com/data/rss
@@ -32,6 +30,7 @@ fbsd-advisories = http://www.freebsd.org/security/advisories.rdf
 fbsd-diary = http://www.freebsddiary.org/news.php
 fbsd-vuxml = http://www.vuxml.org/freebsd/rss.xml
 fivethirtyeight = http://www.fivethirtyeight.com/feeds/posts/default
+fr = http://rss.feedsportal.com/c/32252/f/438407/index.rss
 georgepacker = http://www.newyorker.com/online/blogs/georgepacker/rss.xml
 glyf = http://glyph.twistedmatrix.com/
 gordonwatts = http://gordonwatts.wordpress.com/feed/
@@ -82,7 +81,7 @@ symmetry = http://www.symmetrymagazine.org/breaking/feed/
 symmetryfactor = http://apetrov.wordpress.com/feed/
 taosecurity = http://feeds.feedburner.com/Taosecurity
 titusbrown = http://ivory.idyll.org/blog/tags/python?flav=atom
-twitter = http://lt_kije:ndwp4YmbYDwF7eAcBApM1Bg@twitter.com/statuses/friends_timeline/11125102.rss
+twitter = http://lt_kije:NwW13hBnEBb9bhW63TG9Y1Lkjc8@twitter.com/statuses/friends_timeline/11125102.rss
 undeadly = http://undeadly.org/cgi?action=rss
 undeadly-errata = http://undeadly.org/cgi?action=errata
 unix-news = http://unix-news.blogspot.com/feeds/posts/default?alt=rss
