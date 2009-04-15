@@ -53,13 +53,13 @@ if __name__ == "__main__":
     try:
         logfile = sys.argv[1]
     except IndexError:
-        logfile = "~/.elog"
+        logfile = "~/.triage"
 
     logfile = os.path.expanduser(logfile)
     logfile = os.path.abspath(logfile)
 
     # Set up logging.
-    log = logging.getLogger("elog")
+    log = logging.getLogger("triage")
     log.setLevel(LEVEL)
     handler = logging.FileHandler(logfile)
     handler.setLevel(LEVEL)
