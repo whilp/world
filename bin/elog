@@ -1,0 +1,71 @@
+#!/usr/bin/env python
+import logging
+import os
+import readline
+
+from cmd import Cmd
+from datetime import datetime
+
+DATE_FMT = "%Y-%m-%dT%H:%M:%S"
+LEVEL = logging.DEBUG
+MSG_FMT = "%(asctime)s\t %(message)s"
+PROMPT = "> "
+
+class Elog(Cmd):
+    prompt = PROMPT
+
+    def __init__(self, logger, logfile, out, *args, **kwargs):
+        Cmd.__init__(self, *args, **kwargs)
+        self.logger = logger
+        self.log = self.logger.log
+        self.logfile = logfile
+        self.out = out
+
+    def default(self, line):
+        self.log(logging.DEBUG, line)
+
+    def do_last(self, line):
+        n = int(line or 10)
+        f = open(self.logfile, 'r')
+
+        # Seek to a point either end-1K or the beginning of the
+        # file.
+        size = os.fstat(f.fileno()).st_size
+        index = size - 1024
+        index = index > 0 or 0
+        f.seek(index)
+
+        lines = [x.strip() for x in f.readlines()[-n:]]
+        f.close()
+
+        self.out.write('\n'.join(lines) + '\n')
+
+    # Exit and its synonyms.
+    def do_exit(self, line):
+        return True
+
+    do_EOF = do_exit
+    do_q = do_exit
+
+if __name__ == "__main__":
+    import sys
+
+    try:
+        logfile = sys.argv[1]
+    except IndexError:
+        logfile = "~/.elog"
+
+    logfile = os.path.expanduser(logfile)
+    logfile = os.path.abspath(logfile)
+
+    # Set up logging.
+    log = logging.getLogger("elog")
+    log.setLevel(LEVEL)
+    handler = logging.FileHandler(logfile)
+    handler.setLevel(LEVEL)
+    formatter = logging.Formatter(MSG_FMT, DATE_FMT)
+    handler.setFormatter(formatter)
+    log.addHandler(handler)
+
+    elog = Elog(log, logfile, sys.stdout)
+    elog.cmdloop()
