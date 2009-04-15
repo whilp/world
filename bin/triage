@@ -11,7 +11,7 @@ LEVEL = logging.DEBUG
 MSG_FMT = "%(asctime)s\t %(message)s"
 PROMPT = "> "
 
-class Elog(Cmd):
+class Triage(Cmd):
     prompt = PROMPT
 
     def __init__(self, logger, logfile, out, *args, **kwargs):
@@ -67,5 +67,5 @@ if __name__ == "__main__":
     handler.setFormatter(formatter)
     log.addHandler(handler)
 
-    elog = Elog(log, logfile, sys.stdout)
-    elog.cmdloop()
+    triage = Triage(log, logfile, sys.stdout)
+    triage.cmdloop()
