@@ -13,6 +13,7 @@ PROMPT = "> "
 
 class Triage(Cmd):
     prompt = PROMPT
+    ignore = '#'
 
     def __init__(self, logger, logfile, out, *args, **kwargs):
         Cmd.__init__(self, *args, **kwargs)
@@ -35,7 +36,8 @@ class Triage(Cmd):
         index = index > 0 or 0
         f.seek(index)
 
-        lines = [x.strip() for x in f.readlines()[-n:]]
+        lines = [x.strip() for x in f.readlines() if x and 
+                x[0] not in self.ignore][-n:]
         f.close()
 
         self.out.write('\n'.join(lines) + '\n')
