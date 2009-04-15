@@ -6,6 +6,11 @@ import readline
 from cmd import Cmd
 from datetime import datetime
 
+try:
+    import codecs
+except ImportError:
+    codecs = None
+
 DATE_FMT = "%Y-%m-%dT%H:%M:%S"
 LEVEL = logging.DEBUG
 MSG_FMT = "%(asctime)s\t %(message)s"
@@ -49,6 +54,33 @@ class Triage(Cmd):
     do_EOF = do_exit
     do_q = do_exit
 
+class ReloadingFileHandler(logging.FileHandler):
+
+    def __init__(self, filename, mode='a', encoding=None):
+        stream = self.open(filename, mode, encoding)
+        logging.StreamHandler.__init__(self, stream)
+        self.baseFilename = os.path.abspath(filename)
+        self.mode = mode
+        self.encoding = encoding
+        self.size = 0
+
+    def open(self, filename, mode='a', encoding=None):
+        if codecs is None:
+            encoding = None
+
+        if encoding is None:
+            stream = open(filename, mode)
+        else:
+            stream = codecs.open(filename, mode, encoding)
+
+        return stream
+
+    def emit(self, record):
+        # Reopen the stream each time. This is slightly paranoid,
+        # but useful.
+        self.stream = self.open(self.baseFilename, self.mode, self.encoding)
+        logging.FileHandler.emit(self, record)
+
 if __name__ == "__main__":
     import sys
 
@@ -63,7 +95,7 @@ if __name__ == "__main__":
     # Set up logging.
     log = logging.getLogger("triage")
     log.setLevel(LEVEL)
-    handler = logging.FileHandler(logfile)
+    handler = ReloadingFileHandler(logfile)
     handler.setLevel(LEVEL)
     formatter = logging.Formatter(MSG_FMT, DATE_FMT)
     handler.setFormatter(formatter)
