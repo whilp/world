@@ -24,14 +24,14 @@ HGTMP="${TMPDIR-/tmp}/hgeditor.$RANDOM.$RANDOM.$RANDOM.$$"
     done
 )
 
-CKSUM=$(cksum "$HGTMP/msg")
 
 sed -e '1,/^$/d' "$1" > "$HGTMP/msg"
 echo "HG: diff follows" >> "$HGTMP/msg"
 echo "" >> "$HGTMP/msg"
 cat $HGTMP/diff >> $HGTMP/msg
-$EDITOR "$HGTMP/msg" || exit $?
 
+CKSUM=$(cksum "$HGTMP/msg")
+$EDITOR "$HGTMP/msg" || exit $?
 (echo "$CKSUM" | cksum -c >/dev/null 2>&1 && exit 13)
 
 sed -e '/^HG: diff follows/,$d' "$HGTMP/msg" >| "$1"
