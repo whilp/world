@@ -4,6 +4,10 @@ cleanup_exit() {
     rm -rf "$HGTMP"
 }
 
+EDITOR=$(which nvi 2>/dev/null) || \
+	EDITOR=$(which vi 2>/dev/null) || \
+	EDITOR=$(which vim 2>/dev/null)
+
 # Remove temporary files even if we get interrupted
 trap "cleanup_exit" 0 # normal exit
 trap "exit 255" 1 2 3 6 15 # HUP INT QUIT ABRT TERM
@@ -26,7 +30,7 @@ sed -e '1,/^$/d' "$1" > "$HGTMP/msg"
 echo "HG: diff follows" >> "$HGTMP/msg"
 echo "" >> "$HGTMP/msg"
 cat $HGTMP/diff >> $HGTMP/msg
-vi "$HGTMP/msg" || exit $?
+$EDITOR "$HGTMP/msg" || exit $?
 
 (echo "$CKSUM" | cksum -c >/dev/null 2>&1 && exit 13)
 
