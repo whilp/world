@@ -21,7 +21,6 @@ hgext.bookmarks =
 hgext.convert = 
 hgext.mq =
 hgext.patchbomb =
-bookrepo = /home/will/.hgext/bookrepo.py
 
 [alias]
 ppush = push -rqparent
