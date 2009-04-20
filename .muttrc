@@ -11,7 +11,8 @@ set charset="//TRANSLIT"
 set copy=yes
 set delete=yes
 set edit_headers=yes
-set editor='vim "+set tw=68" "+/^$" -X'
+#set editor='vim "+set tw=68" "+/^$" -X'
+set editor=vi
 set folder=~/.maildir
 set forward_format="Fwd: %s"
 set from="Will Maier <willmaier@ml1.net>"
