@@ -31,14 +31,7 @@ class Triage(Cmd):
     def default(self, line):
         self.log(logging.DEBUG, line)
 
-    def do_last(self, line):
-        p = ''
-        try:
-            n = int(line or LAST_LINES)
-        except ValueError:
-			n = LAST_LINES
-			p = line
-
+    def read(self, includes, lines):
         f = open(self.logfile, 'r')
 
         # Seek to a point either end-1K or the beginning of the
@@ -50,8 +43,20 @@ class Triage(Cmd):
 
         lines = [x.strip() for x in f.readlines() if x and 
                 x[0] not in self.ignore and
-                p in x][-n:]
+                includes in x][-lines:]
         f.close()
+
+        return lines
+
+    def do_last(self, line):
+        p = ''
+        try:
+            n = int(line or LAST_LINES)
+        except ValueError:
+            n = LAST_LINES
+            p = line
+
+        lines = self.read(p, n)
 
         self.out.write('\n'.join(lines) + '\n')
 
