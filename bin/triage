@@ -41,11 +41,13 @@ class Triage(Cmd):
         index = index > 0 or 0
         f.seek(index)
 
-        lines = [x.strip() for x in f.readlines() if x and 
-                x[0] not in self.ignore and
-                includes in x][-lines:]
+        lines = [l.partition('\t') for l in f.readlines()
+				if l and
+                l[0] not in self.ignore and
+                includes in l][-lines:]
         f.close()
 
+        lines = [(datetime.strptime(d, DATE_FMT), m.strip()) for d, p, m in lines]
         return lines
 
     def do_last(self, line):
@@ -56,7 +58,7 @@ class Triage(Cmd):
             n = LAST_LINES
             p = line
 
-        lines = self.read(p, n)
+        lines = [' '.join((d.strftime(DATE_FMT), m)) for d, m in self.read(p, n)]
 
         self.out.write('\n'.join(lines) + '\n')
 
