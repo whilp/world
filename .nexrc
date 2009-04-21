@@ -17,8 +17,7 @@ map T 1G!Gexpand -t4
 map t 1G!Gunexpand
 
 " Format a paragraph.
-map F 1G!G}fmt
-map f 1G!G}fmt -mps
+map F !}fmt
 " XXX: Use textproc/par here eventually.
 
 " Go to top.
