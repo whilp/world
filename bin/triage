@@ -14,7 +14,7 @@ except ImportError:
 DATE_FMT = "%Y-%m-%dT%H:%M:%S"
 LAST_LINES = 10
 LEVEL = logging.DEBUG
-MSG_FMT = "%(asctime)s\t %(message)s"
+MSG_FMT = "%(asctime)s\t%(message)s"
 PROMPT = "> "
 
 class Triage(Cmd):
