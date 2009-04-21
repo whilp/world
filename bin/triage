@@ -12,6 +12,7 @@ except ImportError:
     codecs = None
 
 DATE_FMT = "%Y-%m-%dT%H:%M:%S"
+LAST_LINES = 10
 LEVEL = logging.DEBUG
 MSG_FMT = "%(asctime)s\t %(message)s"
 PROMPT = "> "
@@ -31,7 +32,13 @@ class Triage(Cmd):
         self.log(logging.DEBUG, line)
 
     def do_last(self, line):
-        n = int(line or 10)
+        p = ''
+        try:
+            n = int(line or LAST_LINES)
+        except ValueError:
+			n = LAST_LINES
+			p = line
+
         f = open(self.logfile, 'r')
 
         # Seek to a point either end-1K or the beginning of the
@@ -42,7 +49,8 @@ class Triage(Cmd):
         f.seek(index)
 
         lines = [x.strip() for x in f.readlines() if x and 
-                x[0] not in self.ignore][-n:]
+                x[0] not in self.ignore and
+                p in x][-n:]
         f.close()
 
         self.out.write('\n'.join(lines) + '\n')
