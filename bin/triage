@@ -65,7 +65,7 @@ class Triage(Cmd):
         self.out.write('\n'.join(lines) + '\n')
 
     def do_today(self, line):
-        today = datetime.today().date()
+        today = datetime(*datetime.today().date().timetuple()[:6])
         lines = [(d, m) for d, m in self.get_last(line) if d > today]
         self.write_lines(lines)
 
