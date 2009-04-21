@@ -52,17 +52,26 @@ class Triage(Cmd):
         lines = [(datetime.strptime(d, DATE_FMT), m.strip()) for d, m in lines]
         return lines
 
-    def do_last(self, line):
+    def get_last(self, line, n=LAST_LINES):
         p = ''
         try:
-            n = int(line or LAST_LINES)
+            n = int(line or n)
         except ValueError:
-            n = LAST_LINES
             p = line
 
-        lines = [' '.join((d.strftime(DATE_FMT), m)) for d, m in self.read(p, n)]
+        return [(d, m) for d, m in self.read() if p in m][-n:]
 
+    def write_lines(self, lines, out=None, format=DATE_FMT):
+        lines = [' '.join((d.strftime(format), m)) for d, m in lines]
         self.out.write('\n'.join(lines) + '\n')
+
+    def do_today(self, line):
+        today = datetime.today().date()
+        lines = [(d, m) for d, m in self.get_last(line) if d > today]
+        self.write_lines(lines)
+
+    def do_last(self, line):
+        self.write_lines(self.get_last(line))
 
     # Exit and its synonyms.
     def do_exit(self, line):
