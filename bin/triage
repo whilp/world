@@ -20,6 +20,7 @@ PROMPT = "> "
 class Triage(Cmd):
     prompt = PROMPT
     ignore = '#'
+    sep = '\t'
 
     def __init__(self, logger, logfile, out, *args, **kwargs):
         Cmd.__init__(self, *args, **kwargs)
@@ -31,7 +32,7 @@ class Triage(Cmd):
     def default(self, line):
         self.log(logging.DEBUG, line)
 
-    def read(self, includes='', lines=10):
+    def read(self):
         f = open(self.logfile, 'r')
 
         # Seek to a point either end-1K or the beginning of the
@@ -41,13 +42,14 @@ class Triage(Cmd):
         index = index > 0 or 0
         f.seek(index)
 
-        lines = [l.partition('\t') for l in f.readlines()
-				if l and
-                l[0] not in self.ignore and
-                includes in l][-lines:]
+        lines = [(h, t) for h, s, t in [l.partition(self.sep) for l in f.readlines()]
+                if s == sep 
+                and (h and t) 
+                and h[0] not in self.ignore]
+        print lines
         f.close()
 
-        lines = [(datetime.strptime(d, DATE_FMT), m.strip()) for d, p, m in lines]
+        lines = [(datetime.strptime(d, DATE_FMT), m.strip()) for d, m in lines]
         return lines
 
     def do_last(self, line):
