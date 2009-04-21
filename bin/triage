@@ -31,7 +31,7 @@ class Triage(Cmd):
     def default(self, line):
         self.log(logging.DEBUG, line)
 
-    def read(self, includes, lines):
+    def read(self, includes='', lines=10):
         f = open(self.logfile, 'r')
 
         # Seek to a point either end-1K or the beginning of the
