@@ -6,18 +6,19 @@ set filec=
 set iclower
 set ruler
 set shiftwidth=4
+set showmatch
 set showmode
 set tabstop=4
 set verbose
 set wraplen=72
 
 " (Un)expand tabs.
-map T !Gexpand -t4
-map t !Gunexpand
+map T 1G!Gexpand -t4
+map t 1G!Gunexpand
 
 " Format a paragraph.
-map F !}fmt
-map f !}fmt -mps
+map F 1G!G}fmt
+map f 1G!G}fmt -mps
 " XXX: Use textproc/par here eventually.
 
 " Go to top.
