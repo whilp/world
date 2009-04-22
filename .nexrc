@@ -12,13 +12,13 @@ set tabstop=4
 set verbose
 set wraplen=72
 
-" (Un)expand tabs.
-map T 1G!Gexpand -t4
-map t 1G!Gunexpand
-
-" Format a paragraph.
-map F !}fmt
-" XXX: Use textproc/par here eventually.
-
 " Go to top.
 map g 1G
+
+" (Un)expand tabs.
+map T g!Gexpand -t4
+map t g!Gunexpand
+
+" Format a paragraph.
+map F {!}par T4q1i1}
+map *F  {!}par 
