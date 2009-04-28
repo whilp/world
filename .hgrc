@@ -1,16 +1,14 @@
 [defaults]
 log = -fM
-diff = --git
-qrefresh = --git
-qdiff = --git
-email = --git
-export = --git
 
 [ui]
 editor = ~/bin/hgeditor
 merge = vimdiff
 username = Will Maier <willmaier@ml1.net>
 ignore = ~/.hgignore-global
+
+[diff]
+git=1
 
 [extensions]
 alias =
