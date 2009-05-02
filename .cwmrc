@@ -1,9 +1,19 @@
 gap 20 00 00 00
 sticky yes
 
+bind M-1        group1
+bind M-2        group2
+bind M-3        group3
+bind M-4        group4
+bind M-5        group5
+bind M-6        group6
+bind M-7        group7
+bind M-8        group8
+bind M-9        group9
+
 bind M-Return   grouptoggle
-bind MC-period   cyclegroup
-bind MC-comma    rcyclegroup
+bind M-period   cyclegroup
+bind M-comma    rcyclegroup
 bind M-j        cycle
 bind M-k        rcycle
 bind MC-l       lock
