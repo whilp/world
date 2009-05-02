@@ -1,11 +1,14 @@
-fontname "-xos4-terminus-medium-*-*-*-24-*-*-*-*-*-*-*"
-
+gap 20 00 00 00
 sticky yes
 
-command firefox     firefox
-command pdf         epdfview
-command meta        "xterm -tn rxvt -e \"ssh -t will@meta.lfod.us 'tmux a -dt meta'\""
-
-bind CM-n           cyclegroup
-bind CM-p           rcyclegroup
-bind CM-m           "xterm -tn rxvt -e \"ssh -t will@meta.lfod.us 'tmux a -dt meta'\""
+bind M-Return   grouptoggle
+bind MC-period   cyclegroup
+bind MC-comma    rcyclegroup
+bind M-j        cycle
+bind M-k        rcycle
+bind MC-l       lock
+bind M-m        maximize
+bind MC-m       vmaximize
+bind M-p        "dmenu_run"
+bind MC-r       reload
+bind MC-q       quit
