@@ -21,3 +21,5 @@ bind MC-m       vmaximize
 bind M-p        "dmenu_run"
 bind MC-r       reload
 bind MC-q       quit
+
+mousebind M-3  window_resize
