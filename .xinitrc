@@ -29,7 +29,7 @@ fi
 
 
 xset b off
-DWM=${DWM:-${HOME}/bin/dwm}
+DWM=_dwm
 if [ -x ${DWM} ]; then
     [ -p ~/.dwm/fifo ] || mkfifo ~/.dwm/fifo 2>/dev/null
     [ -x ~/.dwm/status ] && ~/.dwm/status -f &
