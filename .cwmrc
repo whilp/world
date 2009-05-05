@@ -1,5 +1,7 @@
 sticky yes
 
+autogroup 4     "Firefox"
+
 bind M-1        group1
 bind M-2        group2
 bind M-3        group3
