@@ -29,13 +29,6 @@ fi
 
 
 xset b off
-DWM=${DWM}
-if [ -x ${DWM} ]; then
-    [ -p ~/.dwm/fifo ] || mkfifo ~/.dwm/fifo 2>/dev/null
-    [ -x ~/.dwm/status ] && ~/.dwm/status -f &
-    exec ${DWM} <> ~/.dwm/fifo
-else
-    until cwm; do
-        sleep 1
-    done
-fi
+until cwm; do
+    sleep 1
+done
