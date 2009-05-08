@@ -21,7 +21,7 @@ set include=yes
 set index_format="%4C %Z %-20[%d.%m.%y at %H:%M] %-22.22F %s"
 set ispell=
 set mark_old=no
-set mask='!^(\.[^.]|Attic|.*log)'
+set mask='!^(\.[^.]|attic|.*log)'
 set mbox_type=Maildir
 set move=no
 set pager_index_lines=10
@@ -44,12 +44,12 @@ set pgp_timeout=1800
 set pgp_verify_command="gpg --no-verbose --batch --output - --verify %s %f"
 set pgp_verify_key_command="gpg --no-verbose --batch --fingerprint --check-sigs %r"
 set postpone=no
-set postponed="+Drafts"
+set postponed="+drafts"
 set print_cmd="a2ps -r -q --columns=2 -j -C -2 -Email -o - | ssh wcmaier@login.hep.wisc.edu 'lpr -Plp3b'"
 set print_split=yes
 set quit=ask-no
 set recall=no
-set record="+Sent"
+set record="+sent"
 set reverse_name=yes
 set sig_dashes=yes
 set signature='~/.signatures/default'
@@ -95,15 +95,7 @@ bind pager J next-undeleted
 bind pager K previous-undeleted
 
 # Subscriptions.
-subscribe debian-?.*@lists\.debian\.org
-subscribe postfix-users@postfix\.org
 subscribe madlug@madisonlinux\.org
-subscribe ubuntu-?.*@lists\.ubuntu\.com
-subscribe linux-fai@rrz.uni-koeln.de
-subscribe freebsd-?.*@freebsd\.org
-subscribe mutt-?.*@mutt\.org
-subscribe vim-?.*@vim\.org
-subscribe zsh-?.*@sunsite\.dk
 subscribe (ports|misc|tech|www)@openbsd.org
 subscribe techpartners@[a-zA-Z0-9\.]*wisc.edu
 
@@ -141,7 +133,6 @@ send-hook '~t @[[:graph:]]*\.?desy\.de' "source ~/.mutt/hep"
 send-hook '~L .*@[[:graph:]]*bsd[[:graph:]]*'	"set signature='~/.signatures/list-bsd'"
 
 send-hook '~t techpartners@[[:graph:]]*wisc.edu'	"my_hdr From: Will Maier <willmaier@ml1.net>"
-#send-hook '~t techpartners@[[:graph:]]*wisc.edu'	"set sendmail='/usr/local/bin/msmtp'"
 
 send-hook '~t madlug@madisonlinux.org'	"set signature='~/.signatures/list-bsd'"
 
@@ -153,18 +144,18 @@ folder-hook . "set sort_re"
 folder-hook . "set sig_dashes"
 folder-hook . 'set record="^"'
 
-folder-hook =Family set strict_threads
-folder-hook =Family set hide_top_missing
-folder-hook =Family set hide_missing
-folder-hook =Family unset sig_dashes
+folder-hook =family set strict_threads
+folder-hook =family set hide_top_missing
+folder-hook =family set hide_missing
+folder-hook =family unset sig_dashes
 
-folder-hook =RATM push "<limit>~N<enter>"
-folder-hook =RATM set sort=date
+folder-hook =news push "<limit>~N<enter>"
+folder-hook =news set sort=date
 
-folder-hook =Sent set sort=reverse-date
+folder-hook =sent set sort=reverse-date
 
-folder-hook =HEP/RQ set sort=threads
-folder-hook =HEP/RQ unset strict_threads
-folder-hook =HEP/RQ unset sort_re
+folder-hook =hep/req set sort=threads
+folder-hook =hep/req unset strict_threads
+folder-hook =hep/req unset sort_re
 fcc-hook "~thelp@hep\.wisc\.edu" "Sent"
 
