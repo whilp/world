@@ -1,6 +1,8 @@
 " 1.2 (created: 2008/08/16 18:51:52)
 " Mappings
 
+map R :reloadall<return>
+
 " Options
 set guioptions=m
 set editor="gvim"
