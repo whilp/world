@@ -1,6 +1,0 @@
-#!/bin/sh
-
-BROWSER="$(which firefox 2>/dev/null)" || \
-    BROWSER="$(which konqueror 2>/dev/null)"
-
-${BROWSER} $*

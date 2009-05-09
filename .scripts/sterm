@@ -1,2 +1,0 @@
-#!/bin/sh
-aterm -rv -g 120x25 -bg green -tr -sh 20 -bw 0 +sb -e screen -d -RR -c .metascreen
