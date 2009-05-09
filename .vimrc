@@ -13,6 +13,7 @@ set autoindent
 set backspace=indent,eol,start
 set foldmethod=indent
 set history=50
+set ignorecase
 set incsearch
 set laststatus=2
 set nobackup
