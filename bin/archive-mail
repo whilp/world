@@ -1,6 +1,6 @@
 #!/bin/sh
 
-MAILDIR=~/.maildir
+MAILDIR=${1-~/.maildir}
 ATTIC="${MAILDIR}/attic"
 
 fdm_do () {
