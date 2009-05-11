@@ -26,6 +26,7 @@ LANG="C"
 MAIL_OLD="${MAIL}"
 MAIL=""
 OCVS=:ext:cvs:/cvs
+PAGER=less
 PATH="$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin:/usr/games"
 RCMD_CMD="ssh"
 RCMD_TEST="yes"
@@ -42,7 +43,7 @@ VERBOSE="1"
 TODO="$HOME/TODO"
 TMUX_SOCK=~/.tmux.sock
 export CLUSTER CVSEDITOR CVS_RSH EDITOR HOSTNAME LANG MAIL PATH
-export RCMD_CMD RCP_CMD SHELL VERBOSE TODO TMUX_SOCK
+export PAGER RCMD_CMD RCP_CMD SHELL VERBOSE TODO TMUX_SOCK
 
 # Add Python stuff.
 PYTHONPATH=~/lib/python2.5/site-packages
