@@ -1,3 +1,5 @@
 mono index bold ~N
 mono indicator standout
 mono hdrdefault	bold
+mono bold bold
+mono underline underline
