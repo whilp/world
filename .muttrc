@@ -137,6 +137,7 @@ folder-hook =family unset sig_dashes
 
 folder-hook =news push "<limit>~N<enter>"
 folder-hook =news set sort=date
+folder-hook =twitter set sort=date
 
 folder-hook =sent set sort=reverse-date
 
