@@ -17,6 +17,8 @@ fdm_do () {
 echo "===> Archiving"
 cd "${ATTIC}"
 for MDIR in $(find . -name "*.gz"); do
+    cd "${ATTIC}"
+    chmod 600 "${MDIR}"
     cd "${MAILDIR}"
     fdm_do "${MDIR%.gz}" archive
 done
