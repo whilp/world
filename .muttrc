@@ -79,7 +79,6 @@ bind pager J next-undeleted
 bind pager K previous-undeleted
 
 # Mailboxes.
-mailboxes !
 mailboxes `\
     find ~/.maildir -type d -path '*cur' | \
     sed -e '/\/attic\//d; s/^.*\.maildir\///; s/\/cur$//' | \
