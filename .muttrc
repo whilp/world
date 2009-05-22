@@ -146,5 +146,5 @@ folder-hook =sent set sort=reverse-date
 folder-hook =hep/req set sort=threads
 folder-hook =hep/req unset strict_threads
 folder-hook =hep/req unset sort_re
-fcc-hook "~thelp@hep\.wisc\.edu" "Sent"
+fcc-hook "~thelp@hep\.wisc\.edu" "sent"
 
