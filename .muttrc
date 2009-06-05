@@ -46,6 +46,8 @@ set wait_key=no
 alternates "(wcmaier@wisc\.edu|wcmaier@hep\.wisc\.edu|wcmaier@gmail\.com|willmaier@ml1\.net|wcmaier@openbsd.org)"
 
 # Macros.
+macro index Q "<copy-message>=queue<enter><enter>" "Add message to the queue"
+macro pager Q "<copy-message>=queue<enter><enter>" "Add message to the queue"
 macro index S "|/usr/local/bin/sb_filter.py -s >/dev/null<enter><save-message>=attic/spam<enter><enter>" "Mark as spam"
 macro pager S "|/usr/local/bin/sb_filter.py -s >/dev/null<enter><save-message>=attic/spam<enter><enter>" "Mark as spam"
 macro index H "|/usr/local/bin/sb_filter.py -g | fdm -mqa stdin fetch<enter><delete-message>" "Mark as ham"
