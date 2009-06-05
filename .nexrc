@@ -8,7 +8,7 @@ set ruler
 set shiftwidth=4
 set showmatch
 set showmode
-set tabstop=4
+set tabstop=8
 set verbose
 set wraplen=72
 
