@@ -21,6 +21,8 @@ set whichwrap=h,l,~,[,]
 set wildmenu
 set wildmode=full
 
+colorscheme bw
+
 " Don't do paren matching.
 let loaded_matchparen=1
 
