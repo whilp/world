@@ -8,27 +8,3 @@ XTerm*saveLines: 2000
 XTerm*scrollBar: false
 
 XTerm*charClass: 33:48,37:48,45-47:48,58:48,61:48,63-64:48,126:48
-!XTerm*color0: #000000
-!XTerm*color1: #AA0000
-!XTerm*color2: #00AA00
-!XTerm*color3: #AA5500
-!XTerm*color4: #0000AA
-!XTerm*color5: #AA00AA
-!XTerm*color6: #00AAAA
-!XTerm*color7: #AAAAAA
-!XTerm*color8: #555555
-!XTerm*color9: #FF5555
-!XTerm*color10: #55FF55
-!XTerm*color11: #FFFF55
-!XTerm*color12: #5555FF
-!XTerm*color13: #FF55FF
-!XTerm*color13: #FFFFFF
-!XTerm*color14: #55FFFF
-!XTerm*color15: #FFFFFF
-!XTerm*colorBD: #5555FF
-!XTerm*colorUL: #55FF55
-!XTerm*shading: 35
-!XTerm*tintColor: blue
-!XTerm*tinting: #a07040
-!XTerm*tintingType: true
-!
