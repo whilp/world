@@ -1,11 +1,3 @@
-"#################  BEGIN HEADERS
-" Filename	: $HOME/.vimrc
-" Use		: configuration file for vim text editor
-" CVS		: $Id: vimrc,v 1.53 2006/07/18 14:58:56 will Exp $
-" Copyright	: Copyright (c) 2005, 2006 Will Maier
-" License	: BSD; see <http://www.lfod.us/copyright.html>
-"#################  END HEADERS
-
 set autoindent
 set background=light
 set backspace=indent,eol,start
