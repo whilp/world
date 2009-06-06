@@ -9,10 +9,10 @@ let g:colors_name="bw"
 hi Comment		cterm=bold				ctermfg=NONE	ctermbg=NONE
 hi Constant		cterm=NONE				ctermfg=NONE	ctermbg=NONE
 hi diffFile		cterm=NONE				ctermfg=NONE	ctermbg=NONE
-hi DiffAdd		cterm=NONE				ctermfg=NONE	ctermbg=NONE
+hi DiffAdd		cterm=reverse			ctermfg=NONE	ctermbg=NONE
 hi DiffChange	cterm=reverse			ctermfg=NONE	ctermbg=NONE
-hi DiffDelete	cterm=NONE				ctermfg=NONE	ctermbg=NONE
-hi DiffText		cterm=reverse,underline		ctermfg=NONE	ctermbg=NONE
+hi DiffDelete	cterm=reverse			ctermfg=NONE	ctermbg=NONE
+hi DiffText		cterm=reverse,underline	ctermfg=NONE	ctermbg=NONE
 hi Directory	cterm=bold				ctermfg=NONE	ctermbg=NONE
 hi Error		cterm=reverse			ctermfg=NONE	ctermbg=NONE
 hi ErrorMsg		cterm=standout			ctermfg=NONE	ctermbg=NONE
