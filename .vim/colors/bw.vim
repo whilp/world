@@ -6,38 +6,39 @@ if exists("syntax_on")
 endif
 let g:colors_name="bw"
 
-hi Comment		cterm=bold				ctermfg=NONE
-hi Constant		cterm=NONE				ctermfg=NONE
-hi DiffAdd		cterm=bold				ctermfg=NONE
-hi DiffChange	cterm=bold				ctermfg=NONE
-hi DiffDelete	cterm=bold				ctermfg=NONE
-hi DiffText		cterm=reverse			ctermfg=NONE
-hi Directory	cterm=bold				ctermfg=NONE
-hi Error		cterm=reverse			ctermfg=NONE
-hi ErrorMsg		cterm=standout			ctermfg=NONE
-hi FoldColumn	cterm=standout			ctermfg=NONE
-hi Folded		cterm=standout			ctermfg=NONE
-hi Identifier	cterm=underline			ctermfg=NONE
-hi Ignore		cterm=bold				ctermfg=NONE
-hi IncSearch	cterm=reverse			ctermfg=NONE
-hi LineNr		cterm=NONE				ctermfg=NONE
-hi ModeMsg		cterm=bold				ctermfg=NONE
-hi MoreMsg		cterm=bold				ctermfg=NONE
-hi NonText		cterm=bold				ctermfg=NONE
-hi PreProc		cterm=NONE				ctermfg=NONE
-hi Question		cterm=standout			ctermfg=NONE
-hi Search		cterm=reverse			ctermfg=NONE
-hi Special		cterm=bold				ctermfg=NONE
-hi SpecialKey	cterm=bold				ctermfg=NONE
-hi Statement	cterm=bold				ctermfg=NONE
-hi StatusLine	cterm=bold,reverse		ctermfg=NONE
-hi StatusLineNC	cterm=reverse			ctermfg=NONE
-hi Title		cterm=bold				ctermfg=NONE
-hi Todo			cterm=standout			ctermfg=NONE
-hi Type			cterm=NONE				ctermfg=NONE
-hi Underlined	cterm=underline			ctermfg=NONE
-hi VertSplit	cterm=reverse			ctermfg=NONE
-hi Visual		cterm=reverse			ctermfg=NONE
-hi VisualNOS	cterm=bold,underline	ctermfg=NONE
-hi WarningMsg	cterm=standout			ctermfg=NONE
-hi WildMenu		cterm=standout			ctermfg=NONE
+hi Comment		cterm=bold				ctermfg=NONE	ctermbg=NONE
+hi Constant		cterm=NONE				ctermfg=NONE	ctermbg=NONE
+hi diffFile		cterm=NONE				ctermfg=NONE	ctermbg=NONE
+hi DiffAdd		cterm=NONE				ctermfg=NONE	ctermbg=NONE
+hi DiffChange	cterm=reverse			ctermfg=NONE	ctermbg=NONE
+hi DiffDelete	cterm=NONE				ctermfg=NONE	ctermbg=NONE
+hi DiffText		cterm=reverse,underline		ctermfg=NONE	ctermbg=NONE
+hi Directory	cterm=bold				ctermfg=NONE	ctermbg=NONE
+hi Error		cterm=reverse			ctermfg=NONE	ctermbg=NONE
+hi ErrorMsg		cterm=standout			ctermfg=NONE	ctermbg=NONE
+hi FoldColumn	cterm=NONE				ctermfg=NONE	ctermbg=NONE
+hi Folded		cterm=NONE				ctermfg=NONE	ctermbg=NONE
+hi Identifier	cterm=underline			ctermfg=NONE	ctermbg=NONE
+hi Ignore		cterm=bold				ctermfg=NONE	ctermbg=NONE
+hi IncSearch	cterm=reverse			ctermfg=NONE	ctermbg=NONE
+hi LineNr		cterm=NONE				ctermfg=NONE	ctermbg=NONE
+hi ModeMsg		cterm=bold				ctermfg=NONE	ctermbg=NONE
+hi MoreMsg		cterm=bold				ctermfg=NONE	ctermbg=NONE
+hi NonText		cterm=bold				ctermfg=NONE	ctermbg=NONE
+hi PreProc		cterm=NONE				ctermfg=NONE	ctermbg=NONE
+hi Question		cterm=standout			ctermfg=NONE	ctermbg=NONE
+hi Search		cterm=reverse			ctermfg=NONE	ctermbg=NONE
+hi Special		cterm=bold				ctermfg=NONE	ctermbg=NONE
+hi SpecialKey	cterm=bold				ctermfg=NONE	ctermbg=NONE
+hi Statement	cterm=bold				ctermfg=NONE	ctermbg=NONE
+hi StatusLine	cterm=bold,reverse		ctermfg=NONE	ctermbg=NONE
+hi StatusLineNC	cterm=reverse			ctermfg=NONE	ctermbg=NONE
+hi Title		cterm=bold				ctermfg=NONE	ctermbg=NONE
+hi Todo			cterm=standout			ctermfg=NONE	ctermbg=NONE
+hi Type			cterm=NONE				ctermfg=NONE	ctermbg=NONE
+hi Underlined	cterm=underline			ctermfg=NONE	ctermbg=NONE
+hi VertSplit	cterm=reverse			ctermfg=NONE	ctermbg=NONE
+hi Visual		cterm=reverse			ctermfg=NONE	ctermbg=NONE
+hi VisualNOS	cterm=bold,underline	ctermfg=NONE	ctermbg=NONE
+hi WarningMsg	cterm=standout			ctermfg=NONE	ctermbg=NONE
+hi WildMenu		cterm=standout			ctermfg=NONE	ctermbg=NONE
