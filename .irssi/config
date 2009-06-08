@@ -140,6 +140,8 @@ aliases = {
   ATAG = "WINDOW SERVER";
   back = "/away";
   gone = "/away \"Life...\"";
+  next = "window next";
+  prev = "window prev";
 };
 hilights = (
   { text = "lt_kije"; nick = "yes"; word = "yes"; },
