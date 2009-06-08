@@ -56,6 +56,7 @@ nnoremap ; :
 noremap Y y$
 noremap [[ :diffget<CR>
 noremap ]] :diffput<CR>
+noremap F gw}
 
 " Source vimrc.
 map ,v :sp $VIMRC_
