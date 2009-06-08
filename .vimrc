@@ -27,10 +27,10 @@ colorscheme bw
 let loaded_matchparen=1
 
 " Tabs.
-set expandtab
+set noexpandtab
 set shiftwidth=4
 set softtabstop=4
-set tabstop=4
+set tabstop=8
 
 " Use syntax highlighting.
 syntax on
