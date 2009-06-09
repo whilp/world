@@ -1,3 +1,5 @@
+color normal default default
+
 mono index bold ~N
 mono indicator standout
 mono hdrdefault	bold
