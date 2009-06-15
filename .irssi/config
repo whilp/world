@@ -152,8 +152,8 @@ ignores = (
   { level = "JOINS PARTS QUITS"; servertag = "efnet"; },
   { level = "JOINS PARTS QUITS"; servertag = "oftc"; },
   { level = "JOINS PARTS QUITS"; servertag = "freenode"; },
-  { mask = "brandini"; level = "ALL"; },
-  { mask = "vieq"; level = "ALL"; }
+  { mask = "vieq"; level = "ALL"; },
+  { mask = "brandini"; level = "ALL"; }
 );
 completions = {
   obsd = { value = "OpenBSD"; auto = "yes"; };
@@ -342,6 +342,20 @@ statusbar = {
       items = {
         barstart = { priority = "100"; };
         awl_0 = { };
+        barend = { priority = "100"; alignment = "right"; };
+      };
+    };
+    awl_1 = {
+      items = {
+        barstart = { priority = "100"; };
+        awl_1 = { };
+        barend = { priority = "100"; alignment = "right"; };
+      };
+    };
+    awl_2 = {
+      items = {
+        barstart = { priority = "100"; };
+        awl_2 = { };
         barend = { priority = "100"; alignment = "right"; };
       };
     };
