@@ -110,3 +110,6 @@ jcs = http://jcs.org/rss/
 poirier = http://twitter.com/statuses/user_timeline/20002919.rss
 chitech = http://www.chi-tech.org/atom.xml
 newyorker = http://www.newyorker.com/online/blogs/newsdesk/rss.xml
+decider-msn = http://madison.decider.com/events/feed/latest/picks/
+decider-chi = http://chicago.decider.com/events/feed/latest/picks/
+decider-mke = http://milwaukee.decider.com/events/feed/latest/picks/
