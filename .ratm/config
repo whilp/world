@@ -113,3 +113,4 @@ newyorker = http://www.newyorker.com/online/blogs/newsdesk/rss.xml
 decider-msn = http://madison.decider.com/events/feed/latest/picks/
 decider-chi = http://chicago.decider.com/events/feed/latest/picks/
 decider-mke = http://milwaukee.decider.com/events/feed/latest/picks/
+chicagoemac = http://chicagoemac.org/feed/
