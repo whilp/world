@@ -133,7 +133,7 @@ attach () {
     elif [ -n "${CONFIG}" ]; then
         ${TMUX} ${CONFIG} attach-session -t "${SESSION}"
     else
-	${TMUX} new-session -t "${SESSION}"
+	${TMUX} new-session -s "${SESSION}"
     fi
 }
 meta () {
