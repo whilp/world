@@ -99,7 +99,6 @@ wud-music = http://www.union.wisc.edu/rss/music.xml
 xkcd = http://blag.xkcd.com/feed/
 xlr8r = http://feeds.xlr8r.com/xlr8rmp3
 nytimes = http://www.nytimes.com/timeswire/feeds/
-economist = http://www.economist.com/rss/full_print_edition_rss.xml
 surowiecki = http://feeds.newyorker.com/services/rss/feeds/financial.xml
 krugman = http://krugman.blogs.nytimes.com/feed/
 bos = http://www.serpentine.com/blog/feed/
