@@ -125,52 +125,28 @@ secret () {
 TMUX="tmux -S ${TMUX_SOCK}"
 attach () {
     SESSION=$1
+    CONFIG=
+    CONFIG="${TMUX_CONFIG:+"-f ${TMUX_CONFIG}"}"
     ${TMUX} has-session -t "${SESSION}" > /dev/null 2>&1
     if [ $? -eq 0 ]; then
         ${TMUX} attach-session -dt "${SESSION}"
+    elif [ -n "${CONFIG}" ]; then
+        ${TMUX} ${CONFIG} attach-session -t "${SESSION}"
     else
-        ${TMUX} new-session -s "${SESSION}"
+	${TMUX} new-session -t "${SESSION}"
     fi
 }
 meta () {
-    SESSION=meta
-    ${TMUX} has-session -t "${SESSION}" > /dev/null 2>&1
-    if [ $? -eq 0 ]; then
-        attach ${SESSION}
-        return
-    fi
-    ${TMUX} new-session -d -s"${SESSION}"
-    ${TMUX} set-option -t"${SESSION}"            remain-by-default on
-
-    ${TMUX} new-window -d -t"${SESSION}:1" -nMAIL    'mutt'
-    ${TMUX} new-window -d -t"${SESSION}:2" -nCOMMS   'irssi'
-    ${TMUX} new-window -d -t"${SESSION}:3" -nCVS     'ssh -t cvs ./ChangeLog'
-    ${TMUX} new-window -d -t"${SESSION}:5"
-    ${TMUX} new-window -d -t"${SESSION}:6" -nWWW     '/usr/local/bin/elinks -session-ring 1'
-
-    ${TMUX} set-window-option -t"${SESSION}:1"   monitor-activity on >/dev/null
-    ${TMUX} set-window-option -t"${SESSION}:2"   monitor-activity on >/dev/null
-    ${TMUX} set-window-option -t"${SESSION}:3"   monitor-activity on >/dev/null
-
-    ${TMUX} kill-window -t"${SESSION}:0"
+    TMUX_CONFIG=/home/will/.meta.conf
+    attach meta
 }
-todo () {
-    SESSION=todo
-    ${TMUX} has-session -t "${SESSION}" > /dev/null 2>&1
-    if [ $? -eq 0 ]; then
-        attach ${SESSION}
-        return
-    fi
-    ${TMUX} new-session -d -s"${SESSION}"
-    ${TMUX} set-option -t"${SESSION}"            remain-by-default on
-
-    ${TMUX} new-window -d -t"${SESSION}:1" -nTODO    'remind -f -z ~/.remind/main'
-    ${TMUX} new-window -d -t"${SESSION}:2" -nEDIT    'vim ~/.remind/'
-
-    ${TMUX} set-window-option -t"${SESSION}:1"   monitor-activity on >/dev/null
-    ${TMUX} set-window-option -t"${SESSION}:2"   monitor-activity on >/dev/null
-
-    ${TMUX} kill-window -t"${SESSION}:0"
+mobi () {
+    TMUX_CONFIG=/home/will/.mobi.conf
+    attach mobi
+}
+master () {
+    TMUX_CONFIG=/home/will/.master.conf
+    attach master
 }
 sleepuntil () {
 	DATE=$1 
