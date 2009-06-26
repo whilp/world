@@ -124,20 +124,15 @@ secret () {
 }
 TMUX="tmux -S ${TMUX_SOCK}"
 attach () {
-    set -x
     SESSION=$1
-    CONFIG=
-    CONFIG="${TMUX_CONFIG:+"-f ${TMUX_CONFIG}"}"
-    if [ -n "${CONFIG}" ]; then
-        ${TMUX} source-file ${CONFIG}
-    fi
     ${TMUX} has-session -t "${SESSION}" > /dev/null 2>&1
-    if [ $? -eq 0 ]; then
-        ${TMUX} attach-session -dt "${SESSION}"
-    else
-	${TMUX} new-session -s "${SESSION}"
+    if [ $? -ne 0 ]; then
+	${TMUX} new-session -ds "${SESSION}"
     fi
-    set +x
+    if [ -n "${TMUX_CONFIG}" ]; then
+        ${TMUX} source-file ${TMUX_CONFIG}
+    fi
+    ${TMUX} attach-session -dt "${SESSION}"
 }
 meta () {
     TMUX_CONFIG=/home/will/.meta.conf
