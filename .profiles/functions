@@ -128,9 +128,9 @@ attach () {
     ${TMUX} has-session -t "${SESSION}" > /dev/null 2>&1
     if [ $? -ne 0 ]; then
 	${TMUX} new-session -ds "${SESSION}"
-    fi
-    if [ -n "${TMUX_CONFIG}" ]; then
-        ${TMUX} source-file ${TMUX_CONFIG}
+    	if [ -n "${TMUX_CONFIG}" ]; then
+       	    ${TMUX} source-file ${TMUX_CONFIG}
+    	fi
     fi
     ${TMUX} attach-session -dt "${SESSION}"
 }
