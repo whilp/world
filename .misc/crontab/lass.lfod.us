@@ -30,3 +30,5 @@ HOME=/home/will/
 
 # Archive mail.
 40      2       *       *       0       /home/will/bin/archive-mail /home/will/.maildir
+
+*/5	*	*	*	*	/home/will/bin/smsenable
