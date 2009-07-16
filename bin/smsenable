@@ -1,6 +1,6 @@
 #!/bin/sh
 
-IDLETHRESHOLD=300   # five minutes
+IDLETHRESHOLD=600   # ten minutes
 SMSCACHE=~/.maildir/cache/sms
 KEY=send-sms
 
