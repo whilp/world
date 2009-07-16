@@ -1,0 +1,16 @@
+#!/bin/sh
+
+IDLETHRESHOLD=300   # five minutes
+SMSCACHE=~/.maildir/cache/sms
+KEY=send-sms
+
+TTYS=$(find /dev -type c -name "tty*" -user "${USER}")
+TTY=$(ls -t | head -1)
+MTIME=$(stat -t '%s' -f '%m' "${TTY}")
+NOW=$(date '+%s')
+
+if [ "$(($NOW - $MTIME))" -gt "${IDLETHRESHOLD}" ]; then
+    fdm cache add "${SMSCACHE}" "${KEY}"
+else
+    fdm cache remove "${SMSCACHE}" "${KEY}" 2>/dev/null
+fi
