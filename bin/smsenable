@@ -5,7 +5,7 @@ SMSCACHE=~/.maildir/cache/sms
 KEY=send-sms
 
 TTYS=$(find /dev -type c -name "tty*" -user "${USER}")
-TTY=$(ls -t | head -1)
+TTY=$(ls -t ${TTYS} | head -1)
 MTIME=$(stat -t '%s' -f '%m' "${TTY}")
 NOW=$(date '+%s')
 
