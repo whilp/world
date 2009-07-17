@@ -1,3 +1,5 @@
+include ".fdm/patterns"
+
 # Dump duplicates.
 $dupcache = "${cache}/msgid"
 match "^Message-Id: (.*)" in headers {
@@ -10,13 +12,6 @@ match account "local" and
     "From.*root@[^ ]*\\.lfod\\.us" action "lfod"
 
 # Drop stuff I don't care about.
-$useless = "@enews\\.buy\\.com|TigerDirect@promo\\.tigeronline\\.com|" +
-    "AtBattcom@|socialinnovation@conversationsnetwork\\.org|" +
-    "phil@windley\\.org|@newsletters\\.sdmediagroup\\.com|" +
-    "adidas@adidasusnews\\.com|newsletter@reply\\.ticketmaster\\.com|" +
-    "UnityDeals@unityelectronics\\.com|dotnews@mkt\\.dotster\\.com|" +
-    "cpservice@compuplus\\.com|technews@ACM\\.ORG|rlopahle@gmail\\.com|" +
-    "hob@email\\.livenationent\\.com|technews@HQ\\.ACM\\.ORG"
 match "^From:.*(${useless})" in headers action "drop"
 
 # RATM (Feed Fetcher).
@@ -36,17 +31,7 @@ match "^X-Feed-Parser.*RATM" in headers {
         match case "VIDEO:" in headers action drop
     }
     match "^X-Feed: NYT" in headers {
-    $ignore_blogs = "bats|carpetbagger|cityroom|dotearth|fifthdown|formulaone|" +
-        "fort-greene|globespotters|greeninc|happydays|laughlines|maplewood|" +
-        "realestateqa|runway|slapshot|thechoice|themoment|thequad|therail|" +
-        "timestraveler|travelqa|tvdecoder|well|wheels|wordplay"
-    $ignore_domains = "travel|(${ignore_blogs}\\.blogs)"
-    $ignore_sports = "baseball|football|golf|hockey|autoracing|rugby|cricket|opinion/l"
-    $ignore_arts = "dance"
-    $ignore_sections = "realestate|fashion|crosswords|nyregion|garden|greathomesanddestinations"
-    $ignore_articles = "(${ignore_sections}|sports/(${ignore_sports})/|arts/(${ignore_arts}))"
-
-        match "X-Item-Link: http://(${ignore_domains})\\.nytimes\\.com/[0-9/]+/(${ignore_articles})/" in headers action drop
+        match $ignore_nyt in headers action drop
         match "To the Editor:." in body action drop
     }
     match "friday.*squid.*blog" in headers action drop

@@ -15,3 +15,58 @@ $useless = "" +
     "hob@email\\.livenationent\\.com|" +
     "technews@HQ\\.ACM\\.ORG"
 
+# NYT feed blacklists.
+$nyt_blogs = "" +
+    "bats|" +
+    "carpetbagger|" +
+    "cityroom|" +
+    "dotearth|" +
+    "fifthdown|" +
+    "formulaone|" +
+    "fort-greene|" +
+    "globespotters|" +
+    "greeninc|" +
+    "happydays|" +
+    "laughlines|" +
+    "maplewood|" +
+    "realestateqa|" +
+    "runway|" +
+    "slapshot|" +
+    "thechoice|" +
+    "themoment|" +
+    "thequad|" +
+    "therail|" +
+    "timestraveler|" +
+    "travelqa|" +
+    "tvdecoder|" +
+    "well|" +
+    "wheels|" +
+    "wordplay"
+
+$nyt_domains = "" +
+    "travel|" + 
+    "(${nyt_blogs})\\.blogs"
+
+$nyt_sections = "" +
+    "crosswords|" +
+    "fashion|" +
+    "garden|" +
+    "greathomesanddestinations|" +
+    "nyregion|" +
+    "realestate"
+
+$nyt_sports = "" + 
+    "autoracing|" +
+    "baseball|" +
+    "cricket|" +
+    "football|" +
+    "golf|" +
+    "hockey|" +
+    "opinion/l|" +
+    "rugby"
+
+$nyt_arts = "dance"
+
+$nyt_articles = "((${nyt_sections})|sports/(${nyt_sports})/|arts/(${nyt_arts}))"
+
+$ignore_nyt = "X-Item-Link: http://(${nyt_domains})\\.nytimes\\.com/[0-9/]+/(${nyt_articles})/"
