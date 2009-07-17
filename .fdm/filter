@@ -142,20 +142,7 @@ match "^(From|To|Cc):.*@[^ ]*\\.?hep\\.wisc\\.edu" in headers {
 	match in-cache "${cache}/sms" key "send-sms" action "sms"
 	match all action drop
     }
-    match 
-        "^Subject: Wisconsin CMS Daily Condor Usage" or
-        "^Subject: UW-HEP Condor Absent Report" or
-        "^Subject: dCache daily disk usage by directory" or
-        "^Subject: dCache Absent Pools Report" or
-        "^Subject: Condor daily usage \\(HEP resources only\\)" or
-        "^Subject: CFengine Absent Report" or
-        "^Subject:.*dCache Health Report" or
-        "^Subject:.*dCache Active Transfers Report" or
-        "^Subject:.*Nagios .* Alert Report for" or
-        "^Subject:.*Tracker Ticket Report" or
-        "^Subject:.*check_failing_condor_jobs$" or
-        "^Subject: Staging Transfers$"
-        in headers action maildir "${hep}/monitor"
+    match "^Subject: (${hep_reports})" in headers action maildir "${hep}/monitor"
     match "^Subject: AIDE report" or "^Subject: .* file integrity .* report" in headers action maildir "${hep}/ids"
     # HEP root mail.
     match "^(From|To|Cc):.*(root|operator|cron)@[^ ]*\\.?hep" in headers action maildir "${hep}/root"

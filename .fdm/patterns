@@ -26,6 +26,39 @@ $family = "" +
     "theend1313@aol\\.com|" +
     "wegmann@sbcglobal\\.net"
 
+$friends = "" +
+    "aquaranger@hotmail\\.com|" +
+    "butterflyschmid@yahoo\\.com|" +
+    "digitek@charter\\.net|" +
+    "goonmcglynn@yahoo\\.com|" +
+    "greg\\.keltner@gmail\\.com|" +
+    "hastings\\.cameron@gmail\\.com|" +
+    "hitbyguitarz@yahoo\\.com|" +
+    "jolan@protection\\.cx|" +
+    "kafka@riseup\\.net|" +
+    "katwodtke@wi\\.rr\\.com|" +
+    "kavi.mehta@gmail\\.com|" +
+    "mbpledl@gmail\\.com|" +
+    "mbrunlieb@(gmail|hotmail)\\.com|" +
+    "preis23@gmail\\.com|" +
+    "rmainville@stewart-peterson\\.com|" +
+    "thorubos@gmail\\.com|" +
+    "wodtk005@umn\\.edu"
+
+$hep_reports = "" +
+    "Wisconsin CMS Daily Condor Usage|" +
+    "UW-HEP Condor Absent Report|" +
+    "dCache daily disk usage by directory|" +
+    "dCache Absent Pools Report|" +
+    "Condor daily usage \\(HEP resources only\\)|" +
+    "CFengine Absent Report|" +
+    ".*dCache Health Report|" +
+    ".*dCache Active Transfers Report|" +
+    ".*Nagios .* Alert Report for|" +
+    ".*Tracker Ticket Report|" +
+    ".*check_failing_condor_jobs$|" +
+    "Staging Transfers$"
+
 $useless = "" +
     "@enews\\.buy\\.com|" +
     "TigerDirect@promo\\.tigeronline\\.com|" +
