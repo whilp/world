@@ -31,4 +31,7 @@ HOME=/home/will/
 # Archive mail.
 40      2       *       *       0       /home/will/bin/archive-mail /home/will/.maildir
 
-*/5	*	*	*	*	/home/will/bin/smsenable
+# Enable/disable SMS forwarding.
+0	4	*	*	*	/home/will/bin/smsenable enable
+*/5	4-22	*	*	*	/home/will/bin/smsenable
+5	22	*	*	*	/home/will/bin/smsenable disable

@@ -4,13 +4,26 @@ IDLETHRESHOLD=600   # ten minutes
 SMSCACHE=~/.maildir/cache/sms
 KEY=send-sms
 
-TTYS=$(find /dev -type c -name "tty*" -user "${USER}")
-TTY=$(ls -t ${TTYS} | head -1)
-MTIME=$(stat -t '%s' -f '%m' "${TTY}")
-NOW=$(date '+%s')
+is_idle () {
+    TTYS=$(find /dev -type c -name "tty*" -user "${USER}")
+    TTY=$(ls -t ${TTYS} | head -1)
+    MTIME=$(stat -t '%s' -f '%m' "${TTY}")
+    NOW=$(date '+%s')
 
-if [ "$(($NOW - $MTIME))" -gt "${IDLETHRESHOLD}" ]; then
+    [[ "$(($NOW - $MTIME))" -gt "${IDLETHRESHOLD}" ]]
+    return $?
+}
+
+enable () {
     fdm cache add "${SMSCACHE}" "${KEY}"
-else
+}
+
+disable () {
     fdm cache remove "${SMSCACHE}" "${KEY}" 2>/dev/null
-fi
+}
+
+case $1 in
+    enable) enable;;
+    disable) disable;;
+    *) is_idle && enable || disable;;
+esac
