@@ -1,0 +1,19 @@
+ifdef ${archive}
+account "archive" maildir "${path}/${archive}"
+match account "archive" and age invalid or age > 30 days action mbox "${attic}/${archive}" compress
+match account "archive" action keep
+endif
+
+ifdef ${prune}
+account "prune" maildir "${path}/${prune}"
+#match account "prune" and age invalid or age > 1 month action drop
+match account "prune" action keep
+endif
+
+ifdef ${search}
+ifdef ${archive}
+account "search" mbox "${archive}" keep
+match account "search" and "${search}" action maildir "${path}/results"
+match account "search" action keep
+endif
+endif
