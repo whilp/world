@@ -130,4 +130,6 @@ $nyt_arts = "dance"
 
 $nyt_articles = "((${nyt_sections})|sports/(${nyt_sports})/|arts/(${nyt_arts}))"
 
-$ignore_nyt = "X-Item-Link: http://(${nyt_domains})\\.nytimes\\.com/[0-9/]+/(${nyt_articles})/"
+$nyt_header = "X-Item-Link"
+$ignore_nyt_domains = "${nyt_header}: http://(${nyt_domains})\\.nytimes\\.com/"
+$ignore_nyt_articles = "${nyt_header}: http://www.\\.nytimes\\.com/[0-9/]+/(${nyt_articles})/"
