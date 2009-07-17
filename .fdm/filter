@@ -1,0 +1,234 @@
+# Dump duplicates.
+$dupcache = "${cache}/msgid"
+match "^Message-Id: (.*)" in headers {
+    match in-cache "${dupcache}" key "%1" action drop
+    match all action to-cache "${dupcache}" key "%1" continue
+}
+
+# Shortcut local mail.
+match account "local" and
+    "From.*root@[^ ]*\\.lfod\\.us" action "lfod"
+
+# Drop stuff I don't care about.
+$useless = "@enews\\.buy\\.com|TigerDirect@promo\\.tigeronline\\.com|" +
+    "AtBattcom@|socialinnovation@conversationsnetwork\\.org|" +
+    "phil@windley\\.org|@newsletters\\.sdmediagroup\\.com|" +
+    "adidas@adidasusnews\\.com|newsletter@reply\\.ticketmaster\\.com|" +
+    "UnityDeals@unityelectronics\\.com|dotnews@mkt\\.dotster\\.com|" +
+    "cpservice@compuplus\\.com|technews@ACM\\.ORG|rlopahle@gmail\\.com|" +
+    "hob@email\\.livenationent\\.com|technews@HQ\\.ACM\\.ORG"
+match "^From:.*(${useless})" in headers action "drop"
+
+# RATM (Feed Fetcher).
+match "^X-Feed-Parser.*RATM" in headers {
+    match "^X-Feed: Chicagoist" in headers {
+        match "Subject: \\[Sponsored\\]" in headers action drop
+    }
+    match "^X-Feed: Twitter" in headers {
+        match "follow.*friday" in headers action drop
+        match "Atlantic Politics:" in headers action drop
+        match all action "twitter"
+    }
+    match "^X-Feed: The Daily Dish | By Andrew Sullivan" in headers {
+        match "(The View From Your Window|Cool Ad Watch|Faces? of the day)" action drop
+    }
+    match "^X-Feed: POLITICO" in headers {
+        match case "VIDEO:" in headers action drop
+    }
+    match "^X-Feed: NYT" in headers {
+    $ignore_blogs = "bats|carpetbagger|cityroom|dotearth|fifthdown|formulaone|" +
+        "fort-greene|globespotters|greeninc|happydays|laughlines|maplewood|" +
+        "realestateqa|runway|slapshot|thechoice|themoment|thequad|therail|" +
+        "timestraveler|travelqa|tvdecoder|well|wheels|wordplay"
+    $ignore_domains = "travel|(${ignore_blogs}\\.blogs)"
+    $ignore_sports = "baseball|football|golf|hockey|autoracing|rugby|cricket|opinion/l"
+    $ignore_arts = "dance"
+    $ignore_sections = "realestate|fashion|crosswords|nyregion|garden|greathomesanddestinations"
+    $ignore_articles = "(${ignore_sections}|sports/(${ignore_sports})/|arts/(${ignore_arts}))"
+
+        match "X-Item-Link: http://(${ignore_domains})\\.nytimes\\.com/[0-9/]+/(${ignore_articles})/" in headers action drop
+        match "To the Editor:." in body action drop
+    }
+    match "friday.*squid.*blog" in headers action drop
+    match all action "news"
+}
+
+# SPAM trap.
+match all action "spambayes" continue
+match "^X-Spambayes-Classification: spam" in headers action "spam"
+
+# LUGs.
+match "^List-Id:.*madlug\\.madisonlinux\\.org" in headers action maildir "${groups}/madlug"
+match "^List-Id:.*mlug-list\\.mail\\.milwaukeelug\\.org" in headers action maildir "${groups}/mkelug"
+match "^List-Id:.*lopsa-us-wi-mad\\.lopsa\\.org" in headers action maildir "${groups}/lopsa"
+match "^X-Mailinglist: talk@metabug\\.org$" in headers action maildir "${groups}/metabug"
+match "^List-Id: Mailing list for MadSec <madsec-foofus\\.net>" in headers action maildir "${groups}/madsec"
+
+# FOSS.
+match "^List-Id:.*mercurial\\.selenic\\.com" in headers action maildir "${foss}/hg"
+match "List-Id:.*<mercurial-devel\\.selenic\\.com>" in headers action maildir "${foss}/hg.dev"
+match "^List-Id:.*ipython-(user|dev)\\.(ipython\\.)?scipy\\.org" in headers action maildir "${foss}/ipython"
+match "^List-Id:.*Radmind Users <radmind-users\\.lists\\.sourceforge\\.net>" in headers action maildir "${foss}/radmind"
+match "^List-Id:.*roundup-users\\.lists\\.sourceforge\\.net" in headers action maildir "${foss}/roundup"
+
+# OpenBSD.
+match "^Sender:[ \t]*owner-([a-z-]*)@openbsd\\.org" in headers {
+    match string "%1" to "gnats" action maildir "${obsd}/bugs"
+    match string "%1" to "(ports|source)-changes" action maildir "${obsd}/cvs"
+    match all action maildir "${obsd}/%1"
+}
+
+# Techpartners.
+match "^(To|Cc):.*techpartners@lists\\.(services\\.)?wisc\\.edu" in headers action maildir "${uw}/techpartners"
+
+# Security.
+match "^List-Id:.*bugtraq\\.list-id\\.securityfocus\\.com" in headers action maildir "${sec}/bugtraq"
+match "^List-Id:.*dailydave\\.lists\\.immunitysec\\.com" in headers action maildir "${sec}/dailydave"
+match "^From:.*sec-adv@secunia\\.com" in headers {
+    match "^Subject: \\[SA[0-9]+\\] (apple|ubuntu|fedora|debian)" in headers action drop
+    match all action maildir "${sec}/secunia"
+}
+
+$urgent = "^((To|CC|Bcc).*(will|wcmaier)\\+(sms|text)@|Subject:.*(URGENT|IMPORTANT))"
+
+# Family.
+$family = "" +
+    "adeepergrey@(excite|gmail)\\.com|" +
+    "ajdj143@gmail\\.com|" +
+    "beachbumbutterfly@yahoo\\.com|" +
+    "bridgetcash@gmail\\.com|" +
+    "broadwm@aol\\.com|" +
+    "cbroad@comcast\.net|" +
+    "gina\\.ryan@mac\\.com|" +
+    "ginaryan@aol\\.com|" +
+    "jacobsonlaura@(hotmail|gmail)\\.com|" +
+    "jmaier7@wi\\.rr\\.com|" +
+    "linuxmaier@(fastmail\\.fm|yahoo\\.com)|" +
+    "ljacobson@(deltanoid\\.com|biochem\\.wisc\\.edu)|" +
+    "madsimian@gmail\\.com|" +
+    "maier1@wisc\\.edu|" +
+    "maier@wi\\.rr\\.com|" +
+    "maierfest@aol\\.com|" +
+    "marquisa@charter\\.net|" +
+    "mickey\\.maier@tmo\\.blackberry\\.net|" +
+    "mmaier@alpha-investment\\.com|" +
+    "mmaier@stewart-peterson\\.com|" +
+    "pbroad@iopener\\.net|" +
+    "rosie\\.maier@gmail\\.com|" +
+    "sharonmaier@gmail\\.com|" +
+    "tanyamohn@aol\\.com|" +
+    "theend1313@aol\\.com|" +
+    "wegmann@sbcglobal\\.net"
+match "List-Id:.*kids\\.m\\.aier\\.us" or "^From:.*(${family})" in headers {
+    match all action "family" continue
+    match $urgent in headers and in-cache "${cache}/sms" key "send-sms" action "sms"
+    match all action drop
+}
+
+# Friends.
+$friends = "" +
+    "aquaranger@hotmail\\.com|" +
+    "butterflyschmid@yahoo\\.com|" +
+    "digitek@charter\\.net|" +
+    "goonmcglynn@yahoo\\.com|" +
+    "greg\\.keltner@gmail\\.com|" +
+    "hastings\\.cameron@gmail\\.com|" +
+    "hitbyguitarz@yahoo\\.com|" +
+    "jolan@protection\\.cx|" +
+    "kafka@riseup\\.net|" +
+    "katwodtke@wi\\.rr\\.com|" +
+    "kavi.mehta@gmail\\.com|" +
+    "mbpledl@gmail\\.com|" +
+    "mbrunlieb@(gmail|hotmail)\\.com|" +
+    "preis23@gmail\\.com|" +
+    "rmainville@stewart-peterson\\.com|" +
+    "thorubos@gmail\\.com|" +
+    "wodtk005@umn\\.edu"
+
+match "From:.*(${friends})" in headers {
+	match all action "friend" continue
+	match $urgent in headers and in-cache "${cache}/sms" key "send-sms" action "sms"
+	match all action drop
+}
+
+match $urgent in headers and in-cache "${cache}/sms" key "send-sms" action "sms"
+
+# GLOW/CHTC/CS.
+match "^List-Id:.*glow-tech\\.cs\\.wisc\\.edu" in headers {
+    match "^Subject: \\[glow-tech\\] GLOW Absent Report$" in headers action maildir "${hep}/monitor"
+    match all action maildir "${hep}/glow"
+}
+match "From:.*chtc\\.wisc\\.edu" in headers {
+    match "Subject: \\[Chtc-users\\] Daily CHTC usage" in headers action maildir "${hep}/monitor"
+}
+match "List-Id: <cs-announce\\.cs\\.wisc\\.edu>" in headers action "hep"
+
+# CMS.
+match "^X-CMSLIST:" or
+    "^List-Owner:.*CMS.*@LISTSERV\\.FNAL\\.GOV" or
+    "^From:.*arsystem@fnal.gov" in headers action maildir "${cms}/uscms-t2"
+match "^List-Owner:.*OSG-STORAGE.*@LISTSERV\\.FNAL\\.GOV" in headers action maildir "${osg}/storage"
+match "^List-Owner:.*OSG-SITES.*@LISTSERV\\.FNAL\\.GOV" in headers action maildir "${osg}/sites"
+match "^List-Owner:.*OSG-HADOOP-request@LISTSERV\\.FNAL\\.GOV" in headers action maildir "${osg}/hadoop"
+match "^(To|Cc):.*project-indico-administrators@cern\\.ch" in headers action maildir "${cms}/indico"
+match "^(To|Cc):.*@(lists[0-9]+)?\\.?slac\\.stanford\\.edu" in headers {
+    match "^(To|Cc).*xrootd-l@" in headers action maildir "${cms}/xrootd"
+}
+match "^X-Hn-Forum:" in headers {
+    match "X-Hn-Forum:.*/HyperNews/CMS/get/sc4\\.html" in headers action maildir "${cms}/hn.facilities"
+    match "X-Hn-Forum:.*/HyperNews/CMS/get/t2\\.html" in headers action maildir "${cms}/hn.tier2"
+    match "X-Hn-Forum:.*/HyperNews/CMS/get/gridAnnounce\\.html" in headers action maildir "${cms}/hn.grid"
+}
+
+# HEP.
+match "^To:.*postmaster@hep.wisc.edu" in headers action "drop"
+match "^X-Savane-Server: savannah.cern.ch:443" in headers {
+    match all action maildir "${hep}/savannah" continue
+    match in-cache "${cache}/sms" key "send-sms" action "sms"
+    match all action drop
+}
+match "^List-Owner:.*JOBS-request@LISTSERV\\.FNAL\\.GOV" in headers {
+    match ": cs, ..." in body action "hep"
+    match all action "drop"
+}
+match "^From:.*cms-phedex-admins@cern\\.ch" in headers action maildir "${hep}/phedex"
+match "^(From|To|Cc):.*@[^ ]*\\.?hep\\.wisc\\.edu" in headers {
+    match "(From|To|Cc):.*(help|req)@(nod|ginseng)?\\.?hep\\.wisc\\.edu" in headers {
+	match all action maildir "${hep}/req" continue
+	match "X-Roundup-issue-status: unread" and in-cache "${cache}/sms" key "send-sms" action "sms"
+	match all action drop
+    }
+    match "^From:.*nagios@" and "^Subject: (UP|DOWN|RECOVERY|PROBLEM):" in headers { 
+	match all action maildir "${hep}/nagios" continue
+	match in-cache "${cache}/sms" key "send-sms" action "sms"
+	match all action drop
+    }
+    match 
+        "^Subject: Wisconsin CMS Daily Condor Usage" or
+        "^Subject: UW-HEP Condor Absent Report" or
+        "^Subject: dCache daily disk usage by directory" or
+        "^Subject: dCache Absent Pools Report" or
+        "^Subject: Condor daily usage \\(HEP resources only\\)" or
+        "^Subject: CFengine Absent Report" or
+        "^Subject:.*dCache Health Report" or
+        "^Subject:.*dCache Active Transfers Report" or
+        "^Subject:.*Nagios .* Alert Report for" or
+        "^Subject:.*Tracker Ticket Report" or
+        "^Subject:.*check_failing_condor_jobs$" or
+        "^Subject: Staging Transfers$"
+        in headers action maildir "${hep}/monitor"
+    match "^Subject: AIDE report" or "^Subject: .* file integrity .* report" in headers action maildir "${hep}/ids"
+    # HEP root mail.
+    match "^(From|To|Cc):.*(root|operator|cron)@[^ ]*\\.?hep" in headers action maildir "${hep}/root"
+    match all action "hep"
+}
+match "^(To|Cc):.*(William\\.Maier|wcmaier)@cern\\.ch" in headers action "hep"
+
+# Physics.
+match "^(To|Cc):.*@[^ ]*\\.?physics\\.wisc\\.edu" in headers {
+    match "^(To|Cc):.*(root|operator|cron)@" in headers action maildir "${hep}/root"
+    match unmatched action maildir "${hep}/department"
+}
+
+# Default filter.
+match all action "default"
