@@ -3,7 +3,7 @@ include ".fdm/patterns"
 # Dump duplicates.
 $dupcache = "${cache}/msgid"
 match "^Message-Id: (.*)" in headers {
-    #match in-cache "${dupcache}" key "%1" action drop
+    match in-cache "${dupcache}" key "%1" action drop
     match all action to-cache "${dupcache}" key "%1" continue
 }
 
