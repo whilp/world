@@ -153,7 +153,7 @@ match "^(To|Cc):.*(William\\.Maier|wcmaier)@cern\\.ch" in headers action "hep"
 # Physics.
 match "^(To|Cc):.*@[^ ]*\\.?physics\\.wisc\\.edu" in headers {
     match "^(To|Cc):.*(root|operator|cron)@" in headers action maildir "${hep}/root"
-    match unmatched action maildir "${hep}/department"
+    match all action maildir "${hep}/department"
 }
 
 # Default filter.
