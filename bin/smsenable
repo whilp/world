@@ -14,12 +14,19 @@ is_idle () {
     return $?
 }
 
+replace () {
+    PATTERN=$1
+    FILE=$2
+    cp "${FILE}" "${FILE}.orig"
+    sed -e "${PATTERN}" "${FILE}.orig" >| "${FILE}"
+}
+
 enable () {
-    fdm cache add "${SMSCACHE}" "${KEY}"
+    replace 's/\$nosms/\$sms/' ~/.forward
 }
 
 disable () {
-    fdm cache remove "${SMSCACHE}" "${KEY}" 2>/dev/null
+    replace 's/\$sms/\$nosms/' ~/.forward
 }
 
 case $1 in

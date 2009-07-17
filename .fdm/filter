@@ -79,18 +79,16 @@ $urgent = "^((To|CC|Bcc).*(will|wcmaier)\\+(sms|text)@|Subject:.*(URGENT|IMPORTA
 # Family.
 match "List-Id:.*kids\\.m\\.aier\\.us" or "^From:.*(${family})" in headers {
     match all action "family" continue
-    match $urgent in headers and in-cache "${cache}/sms" key "send-sms" action "sms"
+    match $urgent in headers action "sms"
     match all action drop
 }
 
 # Friends.
 match "From:.*(${friends})" in headers {
 	match all action "friend" continue
-	match $urgent in headers and in-cache "${cache}/sms" key "send-sms" action "sms"
+	match $urgent in headers action "sms"
 	match all action drop
 }
-
-match $urgent in headers and in-cache "${cache}/sms" key "send-sms" action "sms"
 
 # GLOW/CHTC/CS.
 match "^List-Id:.*glow-tech\\.cs\\.wisc\\.edu" in headers {
@@ -123,8 +121,7 @@ match "^X-Hn-Forum:" in headers {
 match "^To:.*postmaster@hep.wisc.edu" in headers action "drop"
 match "^X-Savane-Server: savannah.cern.ch:443" in headers {
     match all action maildir "${hep}/savannah" continue
-    match in-cache "${cache}/sms" key "send-sms" action "sms"
-    match all action drop
+    match all action "sms"
 }
 match "^List-Owner:.*JOBS-request@LISTSERV\\.FNAL\\.GOV" in headers {
     match ": cs, ..." in body action "hep"
@@ -134,13 +131,12 @@ match "^From:.*cms-phedex-admins@cern\\.ch" in headers action maildir "${hep}/ph
 match "^(From|To|Cc):.*@[^ ]*\\.?hep\\.wisc\\.edu" in headers {
     match "(From|To|Cc):.*(help|req)@(nod|ginseng)?\\.?hep\\.wisc\\.edu" in headers {
 	match all action maildir "${hep}/req" continue
-	match "X-Roundup-issue-status: unread" and in-cache "${cache}/sms" key "send-sms" action "sms"
+	match "X-Roundup-issue-status: unread" action "sms"
 	match all action drop
     }
     match "^From:.*nagios@" and "^Subject: (UP|DOWN|RECOVERY|PROBLEM):" in headers { 
 	match all action maildir "${hep}/nagios" continue
-	match in-cache "${cache}/sms" key "send-sms" action "sms"
-	match all action drop
+	match all action "sms"
     }
     match "^Subject: (${hep_reports})" in headers action maildir "${hep}/monitor"
     match "^Subject: AIDE report" or "^Subject: .* file integrity .* report" in headers action maildir "${hep}/ids"
