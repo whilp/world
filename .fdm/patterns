@@ -113,6 +113,7 @@ $nyt_domains = "" +
     "(${nyt_blogs})\\.blogs"
 
 $nyt_sections = "" +
+    "automobiles|" +
     "crosswords|" +
     "fashion|" +
     "garden|" +
@@ -132,8 +133,8 @@ $nyt_sports = "" +
 
 $nyt_arts = "dance"
 
-$nyt_articles = "((${nyt_sections})|sports/(${nyt_sports})/|arts/(${nyt_arts})|opinion/\d+iht-old)"
+$nyt_articles = "(${nyt_sections})|sports/(${nyt_sports})/|arts/(${nyt_arts})|opinion/\d+iht-old"
 
 $nyt_header = "X-Item-Link"
 $ignore_nyt_domains = "${nyt_header}: http://(${nyt_domains})\\.nytimes\\.com/"
-$ignore_nyt_articles = "${nyt_header}: http://www.\\.nytimes\\.com/[0-9/]+/(${nyt_articles})/"
+$ignore_nyt_articles = "${nyt_header}: http://www\\.nytimes\\.com/[0-9/]+/(${nyt_articles})/"
