@@ -143,6 +143,8 @@ aliases = {
   next = "window next";
   prev = "window prev";
   active = "window goto active";
+  2 = "win 2";
+  1 = "win 1";
 };
 hilights = (
   { text = "lt_kije"; nick = "yes"; word = "yes"; },
@@ -343,6 +345,13 @@ statusbar = {
       items = {
         barstart = { priority = "100"; };
         awl_0 = { };
+        barend = { priority = "100"; alignment = "right"; };
+      };
+    };
+    awl_1 = {
+      items = {
+        barstart = { priority = "100"; };
+        awl_1 = { };
         barend = { priority = "100"; alignment = "right"; };
       };
     };
