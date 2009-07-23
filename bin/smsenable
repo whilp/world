@@ -3,14 +3,34 @@
 IDLETHRESHOLD=600   # ten minutes
 SMSCACHE=~/.maildir/cache/sms
 KEY=send-sms
+LOG=~/.smsenable.log
+
+exec >>"${LOG}" 2>&1
+
+find_tty () {
+    USER=$1
+    TTYS=$(find /dev -maxdepth 1 -type c -name "tty*" -user "${USER}")
+    TTY=$(ls -ut ${TTYS} | head -1)
+
+    echo "${TTY}"
+}
+
+find_tty () {
+    USER=$1
+    TTY=$(w -hi "${USER}" | awk "{if (/${USER}/ && NR == 2) print \$2}")
+
+    echo "/dev/tty${TTY}"
+}
 
 is_idle () {
-    TTYS=$(find /dev -type c -name "tty*" -user "${USER}")
-    TTY=$(ls -t ${TTYS} | head -1)
-    MTIME=$(stat -t '%s' -f '%m' "${TTY}")
-    NOW=$(date '+%s')
+    USER=$1
+    IDLE=0
 
-    [[ "$(($NOW - $MTIME))" -gt "${IDLETHRESHOLD}" ]]
+    TTY=$(find_tty "${USER}")
+    [ -n "${TTY}" -a -e "${TTY}" ] || return 0
+    TIME=$(stat -t '%s' -f '%a' "${TTY}")
+    NOW=$(date '+%s')
+    [[ "$(($NOW - $TIME))" -gt "${IDLETHRESHOLD}" ]]
     return $?
 }
 
@@ -22,15 +42,17 @@ replace () {
 }
 
 enable () {
+    echo "===> $(date) enabling"
     replace 's/\$nosms/\$sms/' ~/.forward
 }
 
 disable () {
+    echo "===> $(date) disabling"
     replace 's/\$sms/\$nosms/' ~/.forward
 }
 
 case $1 in
     enable) enable;;
     disable) disable;;
-    *) is_idle && enable || disable;;
+    *) is_idle "${USER}" && enable || disable;;
 esac
