@@ -3,17 +3,6 @@
 IDLETHRESHOLD=300   # five minutes
 SMSCACHE=~/.maildir/cache/sms
 KEY=send-sms
-LOG=~/.smsenable.log
-
-exec >>"${LOG}" 2>&1
-
-find_tty () {
-    USER=$1
-    TTYS=$(find /dev -maxdepth 1 -type c -name "tty*" -user "${USER}")
-    TTY=$(ls -ut ${TTYS} | head -1)
-
-    echo "${TTY}"
-}
 
 find_tty () {
     USER=$1
