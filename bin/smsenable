@@ -29,12 +29,10 @@ replace () {
 }
 
 enable () {
-    echo "===> $(date) enabling"
     replace 's/\$nosms/\$sms/' ~/.forward
 }
 
 disable () {
-    echo "===> $(date) disabling"
     replace 's/\$sms/\$nosms/' ~/.forward
 }
 
