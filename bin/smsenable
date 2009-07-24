@@ -1,8 +1,6 @@
 #!/bin/sh
 
 IDLETHRESHOLD=300   # five minutes
-SMSCACHE=~/.maildir/cache/sms
-KEY=send-sms
 
 find_tty () {
     USER=$1
