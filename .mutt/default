@@ -5,6 +5,6 @@ set smtp_authenticators="plain"
 set my_smtp_server="mail.messagingengine.com"
 set my_user="willmaier@ml1.net"
 set smtp_pass="aymBuAtyad5"
-set my_port=26
+set my_port=587
 
 set smtp_url="smtp://$my_user@$my_smtp_server:$my_port/"
