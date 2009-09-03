@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 
 TMUX="tmux -S ${TMUX_SOCK}"
 do_attach () {
