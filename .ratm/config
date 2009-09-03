@@ -72,7 +72,6 @@ sciam = http://blog.sciam.com/xmlsrv/rss2.php?blog=2
 secfocus = http://www.securityfocus.com/rss/news.xml
 securiteam = http://blogs.securiteam.com/index.php/feed/
 seejanecompute = http://scienceblogs.com/seejanecompute/index.xml
-sfnovelists = http://www.sfnovelists.com/feed/atom/
 shtetloptimized = http://scottaaronson.com/blog/?feed=rss2
 slashdot = http://rss.slashdot.org/Slashdot/slashdot
 stevecoll = http://www.newyorker.com/online/blogs/stevecoll/rss.xml
@@ -117,3 +116,6 @@ telecommute-mke = http://milwaukee.craigslist.org/search/jjj?query=linux&addOne=
 telecommute-msn = http://chicago.craigslist.org/search/jjj?query=linux&addOne=telecommuting&format=rss
 telecommute-chi = http://madison.craigslist.org/search/jjj?query=linux&addOne=telecommuting&format=rss
 amiest = http://feeds.feedburner.com/amie-street-blog
+grubstreet-chi = http://chicago.grubstreet.com/index.xml
+debug-pods = http://de-bug.de/pod/feed/atom
+disquiet-listen = http://disquiet.com/category/listen/feed/
