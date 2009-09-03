@@ -1,23 +1,36 @@
 TERMINUS=/usr/local/lib/X11/fonts/terminus
 BKG="${HOME}/.bkg.png"
 XLOADIMAGE="$(which xloadimage)"
-LOCALTERMS="${HOME}/.xinitrc.local"
-
-switch-caps
+LOCALXINIT="${HOME}/.xinitrc.local"
+HOSTXINIT="${HOME}/.xinitrc.$(hostname -s)"
+HOSTNAME=$(hostname)
+WM=i3
+DOCKED=0
 
 # Fonts.
 [ -d "${TERMINUS}" ] && xset +fp "${TERMINUS}"
 
+xset b off
 xsetroot -solid black
 if [ -f "${BKG}" -a -x "${XLOADIMAGE}" ]; then
     "${XLOADIMAGE}" -onroot -quiet \
         -background black -center -brighten 10 "${BKG}"
 fi
 
-# Terminals
-[ -r "${LOCALTERMS}" ] && . "${LOCALTERMS}"
+if dmesg | grep -q 'acpidock.*docked'; then
+    DOCKED=1
+fi
 
-xset b off
-while i3; do
-    sleep 3
-done
+init_zipser () {
+    if [ "${DOCKED}" -eq 1 ]; then
+        xrandr --output VGA --auto --output LVDS --off
+    fi
+    xterm -e master &
+    firefox &
+}
+
+case "${HOSTNAME}" in
+   zipser.*) init_zipser;;
+esac
+
+${WM}
