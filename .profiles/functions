@@ -129,30 +129,6 @@ secret () {
     sudo umount "${SAFEDIR}" && \
     sudo vnconfig -u "${SVND}"
 }
-TMUX="tmux -S ${TMUX_SOCK}"
-attach () {
-    SESSION=$1
-    ${TMUX} has-session -t "${SESSION}" > /dev/null 2>&1
-    if [ $? -ne 0 ]; then
-	${TMUX} new-session -ds "${SESSION}"
-    	if [ -n "${TMUX_CONFIG}" ]; then
-       	    ${TMUX} source-file ${TMUX_CONFIG}
-    	fi
-    fi
-    ${TMUX} attach-session -dt "${SESSION}"
-}
-meta () {
-    TMUX_CONFIG=/home/will/.meta.conf
-    attach meta
-}
-mobi () {
-    TMUX_CONFIG=/home/will/.mobi.conf
-    attach mobi
-}
-master () {
-    TMUX_CONFIG=/home/will/.master.conf
-    attach master
-}
 sleepuntil () {
 	DATE=$1 
 	INTERVAL=${2:-60} 
