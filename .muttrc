@@ -92,6 +92,7 @@ ignore *
 unignore from: date subject to cc reply-to:
 unignore x-mailer user-agent
 unignore x-spambayes X-PGP-Key
+unignore X-Item-Link
 unhdr_order *
 hdr_order From Date: From: To: Cc: Subject: X-mailer:
 
