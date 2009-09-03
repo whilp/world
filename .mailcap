@@ -74,7 +74,7 @@ text/x-patch;           cat %s ; copiousoutput
 text/x-patch;           edit=vim '+set ft=patch' %s ; needsterminal
 
 # Mutt HTML mail hacks
-text/html; elinks -dump -dump-charset iso-8859-15 -default-mime-type text/html %s; needsterminal; copiousoutput;
+text/html; elinks -dump -dump-charset iso-8859-15 -no-references -no-numbering -default-mime-type text/html %s; needsterminal; copiousoutput;
 # text/html; lynx --dump %s; nametemplate=%s.html; copiousoutput
 # text/html; elinks -default-mime-type text/html %s; needsterminal;
 text/html; elinks -dump -dump-charset iso-8859-15 -default-mime-type text/html %s; needsterminal; copiousoutput;
