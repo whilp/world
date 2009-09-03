@@ -145,11 +145,14 @@ aliases = {
   active = "window goto active";
   2 = "win 2";
   1 = "win 1";
+  a = "active";
 };
 hilights = (
   { text = "lt_kije"; nick = "yes"; word = "yes"; },
   { text = "maier"; nick = "yes"; word = "yes"; },
-  { text = "jacobsonlaura"; level = "2944"; nick = "yes"; word = "yes"; }
+  { text = "jacobsonlaura"; level = "2944"; nick = "yes"; word = "yes"; },
+  { text = "#et"; nick = "yes"; word = "yes"; },
+  { text = "#games"; nick = "yes"; word = "yes"; }
 );
 ignores = (
   { level = "JOINS PARTS QUITS"; servertag = "efnet"; },
