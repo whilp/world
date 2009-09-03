@@ -31,6 +31,12 @@ bindsym Mod1+Shift+Space t
 # the current window is tiling / floating (Mod1+t)
 bindsym Mod1+t focus ft
 
+# Don't show window title (Mod1+y)
+bindsym Mod1+y bp
+
+# Show window title (Mod1+u)
+bindsym Mod1+u bn
+
 # Focus (Mod1+h/j/k/l)
 bindsym Mod1+h h
 bindsym Mod1+j j
