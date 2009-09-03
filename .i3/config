@@ -16,50 +16,50 @@ floating_modifier Mod1
 assign Navigator 2
 
 # Fullscreen (Mod1+f)
-bind Mod1+41 f
+bindsym Mod1+f f
 
 # Stacking (Mod1+s)
-bind Mod1+39 s
+bindsym Mod1+s s
 
 # Default (Mod1+d)
-bind Mod1+40 d
+bindsym Mod1+d d
 
 # Toggle tiling/floating of the current window (Mod1+Shift+Space)
-bind Mod1+Shift+65 t
+bindsym Mod1+Shift+Space t
 
 # Go into the tiling layer / floating layer, depending on whether
 # the current window is tiling / floating (Mod1+t)
-bind Mod1+28 focus ft
+bindsym Mod1+t focus ft
 
 # Focus (Mod1+h/j/k/l)
-bind Mod1+43 h
-bind Mod1+44 j
-bind Mod1+45 k
-bind Mod1+46 l
+bindsym Mod1+h h
+bindsym Mod1+j j
+bindsym Mod1+k k
+bindsym Mod1+l l
 
 # Focus Container (Mod3+h/j/k/l)
-bind Mod3+43 wch
-bind Mod3+44 wcj
-bind Mod3+45 wck
-bind Mod3+46 wcl
+bindsym Mod3+h wch
+bindsym Mod3+j wcj
+bindsym Mod3+k wck
+bindsym Mod3+l wcl
 
 # Snap (Mod1+Control+h/j/k/l)
-bind Mod1+Control+43 sh
-bind Mod1+Control+44 sj
-bind Mod1+Control+45 sk
-bind Mod1+Control+46 sl
+bindsym Mod1+Control+h sh
+bindsym Mod1+Control+j sj
+bindsym Mod1+Control+k sk
+bindsym Mod1+Control+l sl
 
 # Move (Mod1+Shift+h/j/k/l)
-bind Mod1+Shift+43 mh
-bind Mod1+Shift+44 mj
-bind Mod1+Shift+45 mk
-bind Mod1+Shift+46 ml
+bindsym Mod1+Shift+h mh
+bindsym Mod1+Shift+j mj
+bindsym Mod1+Shift+k mk
+bindsym Mod1+Shift+l ml
 
 # Move Container (Mod3+Shift+h/j/k/l)
-bind Mod3+Shift+43 wcmh
-bind Mod3+Shift+44 wcmj
-bind Mod3+Shift+45 wcmk
-bind Mod3+Shift+46 wcml
+bindsym Mod3+Shift+h wcmh
+bindsym Mod3+Shift+j wcmj
+bindsym Mod3+Shift+k wcmk
+bindsym Mod3+Shift+l wcml
 
 # Workspaces (Mod1+1/2/…)
 bind Mod1+10 1
@@ -86,17 +86,17 @@ bind Mod1+Shift+18 m9
 bind Mod1+Shift+19 m10
 
 # Mod1+Enter starts a new terminal
-bind Mod1+Control+36 exec /usr/X11R6/bin/xterm
+bindsym Mod1+Control+Return exec /usr/X11R6/bin/xterm
 
 # Mod1+Shift+q kills the current client
-bind Mod1+Shift+24 kill
+bindsym Mod1+Shift+q kill
 
 # Mod1+p starts dmenu and launches the selected application
 # for now, we don’t have an own launcher
-bind Mod1+33 exec /usr/local/bin/dmenu_run
+bindsym Mod1+p exec /usr/local/bin/dmenu_run
 
 # Mod1+Shift+e exits i3
-bind Mod1+Shift+26 exit
+bindsym Mod1+Shift+e exit
 
 # Mod1+Shift+r restarts i3 inplace
-bind Mod1+Shift+27 restart
+bindsym Mod1+Shift+r restart
