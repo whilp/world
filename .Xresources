@@ -1,7 +1,7 @@
 XTerm*visualBell: false
 XTerm*bellIsUrgent: true
-XTerm*faceName: DroidSansMono
-XTerm*faceSize: 11
+XTerm*faceName: Inconsolata
+XTerm*faceSize: 12
 XTerm*cutchars: `"'()*,;<>[]{|}
 XTerm*loginShell: true
 XTerm*saveLines: 2000
