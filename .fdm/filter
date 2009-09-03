@@ -43,6 +43,7 @@ match all action "spambayes" continue
 match "^X-Spambayes-Classification: spam" in headers action "spam"
 
 # LUGs.
+match "^List-Id:.*video-game-church\\.googlegroups\\.com" in headers action maildir "${groups}/vgc"
 match "^List-Id:.*madlug\\.madisonlinux\\.org" in headers action maildir "${groups}/madlug"
 match "^List-Id:.*mlug-list\\.mail\\.milwaukeelug\\.org" in headers action maildir "${groups}/mkelug"
 match "^List-Id:.*lopsa-us-wi-mad\\.lopsa\\.org" in headers action maildir "${groups}/lopsa"
@@ -138,12 +139,16 @@ match "^(From|To|Cc):.*@[^ ]*\\.?hep\\.wisc\\.edu" in headers {
 	match all action maildir "${hep}/nagios" continue
 	match "^Subject: (UP|DOWN): [gs][0-9]+n[0-9]+$" action drop
 	match "^Subject: (PROBLEM|RECOVERY): .*(dCache|Condor|Slash)" action drop
+	match "^Subject: .*(NetWorker|DESY)" action drop
 	match all action "sms"
     }
     match "^Subject: (${hep_reports})" in headers action maildir "${hep}/monitor"
     match "^Subject: AIDE report" or "^Subject: .* file integrity .*report" in headers action maildir "${hep}/ids"
     # HEP root mail.
-    match "^(From|To|Cc):.*(root|operator|cron)@[^ ]*\\.?hep" in headers action maildir "${hep}/root"
+    match "^(From|To|Cc):.*(root|operator|cron)@[^ ]*\\.?hep" in headers {
+	match "^Subject: IDS CRITICAL: intrusion detected" in headers action drop
+	match all action maildir "${hep}/root"
+    }
     match all action "hep"
 }
 match "^(To|Cc):.*(William\\.Maier|wcmaier)@cern\\.ch" in headers action "hep"
