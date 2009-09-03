@@ -26,3 +26,5 @@ bind MC-q       lock
 bind MCS-q      quit
 
 mousebind M-3  window_resize
+
+gap		0 96 0 0

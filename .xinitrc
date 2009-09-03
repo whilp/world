@@ -17,8 +17,7 @@ fi
 # Terminals
 [ -r "${LOCALTERMS}" ] && . "${LOCALTERMS}"
 
-
 xset b off
-until cwm; do
-    sleep 1
+while i3; do
+    sleep 3
 done
