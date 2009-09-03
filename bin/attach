@@ -14,14 +14,17 @@ do_attach () {
 }
 do_meta () {
     TMUX_CONFIG=/home/will/.meta.conf
+    export TMUX_CONFIG
     attach meta
 }
 do_mobi () {
     TMUX_CONFIG=/home/will/.mobi.conf
+    export TMUX_CONFIG
     attach mobi
 }
 do_master () {
     TMUX_CONFIG=/home/will/.master.conf
+    export TMUX_CONFIG
     attach master
 }
 
