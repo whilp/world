@@ -12,6 +12,9 @@ font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
 # Use Mouse+Mod1 to drag floating windows to their wanted position
 floating_modifier Mod1
 
+# Workspace assignments.
+assign Navigator 2
+
 # Fullscreen (Mod1+f)
 bind Mod1+41 f
 
@@ -90,7 +93,7 @@ bind Mod1+Shift+24 kill
 
 # Mod1+p starts dmenu and launches the selected application
 # for now, we don’t have an own launcher
-bind Mod1+55 exec /usr/local/bin/dmenu_run
+bind Mod1+33 exec /usr/local/bin/dmenu_run
 
 # Mod1+Shift+e exits i3
 bind Mod1+Shift+26 exit
