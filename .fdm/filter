@@ -137,6 +137,7 @@ match "^(From|To|Cc):.*@[^ ]*\\.?hep\\.wisc\\.edu" in headers {
     match "^From:.*nagios@" and "^Subject: (UP|DOWN|RECOVERY|PROBLEM):" in headers { 
 	match all action maildir "${hep}/nagios" continue
 	match "^Subject: (UP|DOWN): [gs][0-9]+n[0-9]+$" action drop
+	match "^Subject: (PROBLEM|RECOVERY): .*(dCache|Condor|Slash)" action drop
 	match all action "sms"
     }
     match "^Subject: (${hep_reports})" in headers action maildir "${hep}/monitor"
