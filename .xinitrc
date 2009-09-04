@@ -4,7 +4,7 @@ XLOADIMAGE="$(which xloadimage)"
 LOCALXINIT="${HOME}/.xinitrc.local"
 HOSTXINIT="${HOME}/.xinitrc.$(hostname -s)"
 HOSTNAME=$(hostname)
-WM=i3
+WM="i3 >> ${HOME}/.i3/log 2>&1"
 DOCKED=0
 
 # Fonts.
@@ -17,7 +17,7 @@ if [ -f "${BKG}" -a -x "${XLOADIMAGE}" ]; then
         -background black -center -brighten 10 "${BKG}"
 fi
 
-if dmesg | grep -q 'acpidock.*docked'; then
+if dmesg | grep -q 'acpidock.*GDCK docked'; then
     DOCKED=1
 fi
 
