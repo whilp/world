@@ -103,8 +103,8 @@ bindsym Mod1+Control+x kill
 # for now, we don’t have an own launcher
 bindsym Mod1+p exec /usr/local/bin/dmenu_run
 
-# Lock the screen (Mod1+q)
-bindsym Mod1+q exec /usr/X11R6/bin/xlock
+# Lock the screen (Mod1+Control+q)
+bindsym Mod1+Control+q exec /usr/X11R6/bin/xlock
 
 # Mod1+Shift+q exits i3
 bindsym Mod1+Shift+q exit
