@@ -25,7 +25,7 @@ init_zipser () {
     if [ "${DOCKED}" -eq 1 ]; then
         xrandr --output VGA --auto --output LVDS --off
     fi
-    xterm -e master &
+    xterm -T master -e master &
     firefox &
 }
 
