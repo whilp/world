@@ -94,15 +94,18 @@ bind Mod1+Shift+19 m10
 # Mod1+Enter starts a new terminal
 bindsym Mod1+Control+Return exec /usr/X11R6/bin/xterm
 
-# Mod1+Shift+q kills the current client
-bindsym Mod1+Shift+q kill
+# Mod1+Control+x kills the current client
+bindsym Mod1+Control+x kill
 
 # Mod1+p starts dmenu and launches the selected application
 # for now, we don’t have an own launcher
 bindsym Mod1+p exec /usr/local/bin/dmenu_run
 
-# Mod1+Shift+e exits i3
-bindsym Mod1+Shift+e exit
+# Lock the screen (Mod1+q)
+bindsym Mod1+q exec /usr/X11R6/bin/xlock
+
+# Mod1+Shift+q exits i3
+bindsym Mod1+Shift+q exit
 
 # Mod1+Shift+r restarts i3 inplace
 bindsym Mod1+Shift+r restart
