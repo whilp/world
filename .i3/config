@@ -13,7 +13,9 @@ font -misc-fixed-medium-r-normal--13-120-75-75-C-70-iso10646-1
 floating_modifier Mod1
 
 # Workspace assignments.
+assign xterm/master 1
 assign Navigator 2
+assign xterm 3
 
 # Fullscreen (Mod1+f)
 bindsym Mod1+f f
