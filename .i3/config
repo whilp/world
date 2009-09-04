@@ -106,8 +106,8 @@ bindsym Mod1+p exec /usr/local/bin/dmenu_run
 # Lock the screen (Mod1+Control+q)
 bindsym Mod1+Control+q exec /usr/X11R6/bin/xlock
 
-# Mod1+Shift+q exits i3
-bindsym Mod1+Shift+q exit
+# Mod1+Control+Shift+q exits i3
+bindsym Mod1+Control+Shift+q exit
 
 # Mod1+Shift+r restarts i3 inplace
 bindsym Mod1+Shift+r restart
