@@ -1,6 +1,8 @@
 sticky yes
 
-autogroup 4     "Firefox"
+autogroup 1     xterm,master
+autogroup 2     Firefox
+autogroup 3     xterm
 
 bind M-1        group1
 bind M-2        group2
@@ -27,4 +29,4 @@ bind MCS-q      quit
 
 mousebind M-3  window_resize
 
-gap		0 96 0 0
+gap             0 96 0 0
