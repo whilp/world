@@ -4,7 +4,7 @@ XLOADIMAGE="$(which xloadimage)"
 LOCALXINIT="${HOME}/.xinitrc.local"
 HOSTXINIT="${HOME}/.xinitrc.$(hostname -s)"
 HOSTNAME=$(hostname)
-WM="i3 >> ${HOME}/.i3/log 2>&1"
+WM=cwm
 DOCKED=0
 
 export PATH=/sbin:${HOME}/bin:/usr/X11R6/bin:${PATH}
@@ -24,11 +24,10 @@ if dmesg | grep -q 'acpidock.*GDCK docked'; then
 fi
 
 init_zipser () {
-    WM=cwm
     if [ "${DOCKED}" -eq 1 ]; then
         xrandr --output VGA --auto --output LVDS --off
     else
-	switch-caps
+        switch-caps
     fi
     xterm -T master &
     firefox &
