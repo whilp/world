@@ -3,6 +3,7 @@
 TMUX="tmux -S ${TMUX_SOCK}"
 do_attach () {
     SESSION=$1
+    TMUX_CONFIG=$2
     ${TMUX} has-session -t "${SESSION}" > /dev/null 2>&1
     if [ $? -ne 0 ]; then
 	${TMUX} new-session -ds "${SESSION}"
@@ -13,23 +14,17 @@ do_attach () {
     ${TMUX} attach-session -dt "${SESSION}"
 }
 do_meta () {
-    TMUX_CONFIG=/home/will/.meta.conf
-    export TMUX_CONFIG
-    attach meta
+    attach meta /home/will/.meta.conf
 }
 do_mobi () {
-    TMUX_CONFIG=/home/will/.mobi.conf
-    export TMUX_CONFIG
-    attach mobi
+    attach mobi /home/will/.mobi.conf
 }
 do_master () {
-    TMUX_CONFIG=/home/will/.master.conf
-    export TMUX_CONFIG
-    attach master
+    attach master /home/will/.master.conf
 }
 
 case "$(basename $0)" in
-    attach) TMUX_CONFIG=; do_attach $*;;
+    attach) do_attach $*;;
     master) do_master $*;;
     meta) do_meta $*;;
     mobi) do_mobi $*;;
