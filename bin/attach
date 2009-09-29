@@ -6,7 +6,7 @@ do_attach () {
     ${TMUX} has-session -t "${SESSION}" > /dev/null 2>&1
     if [ $? -ne 0 ]; then
 	${TMUX} new-session -ds "${SESSION}"
-    	if [ -n "${TMUX_CONFIG}" ]; then
+    	if [ -n "${TMUX_CONFIG}" -a -r "${TMUX_CONFIG}" ]; then
        	    ${TMUX} source-file ${TMUX_CONFIG}
     	fi
     fi
@@ -29,7 +29,7 @@ do_master () {
 }
 
 case "$(basename $0)" in
-    attach) do_attach $*;;
+    attach) TMUX_CONFIG=; do_attach $*;;
     master) do_master $*;;
     meta) do_meta $*;;
     mobi) do_mobi $*;;
