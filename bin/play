@@ -1,0 +1,44 @@
+#!/bin/sh
+
+MPLAYER=~/.mplayer
+CMDFIFO=${MPLAYER}/fifo
+PLAYLISTS=${MPLAYER}/playlists
+ARGS=
+
+print_line () {
+	LINE=$*
+	echo -n "$(date)  "
+	echo $LINE
+}
+
+filter_output () {
+	while read LINE; do
+			case "$LINE" in 
+				Playing*) print_line ${LINE#Playing };;
+			esac; 
+	done
+}
+
+do_play () {
+	MUSICDIRS=$*
+
+	PLAYLIST=$(mktemp -p "${PLAYLISTS}" playlist.$(date "+%Y-%m-%d").XXXX)
+	trap "rm -f ${PLAYLIST}" EXIT ERR
+	[ -p "${CMDFIFO}" ] || mkfifo "${CMDFIFO}"
+	find "${MUSICDIRS}" -type f | egrep ".*(mp3|flac|ogg)" >| "${PLAYLIST}"
+	mplayer ${ARGS} -quiet -playlist "${PLAYLIST}" -input file="${CMDFIFO}" 2>&1 |\
+		filter_output
+}
+
+do_cmd () {
+	echo $* > "${CMDFIFO}"
+}
+
+while [ $# -gt 0 ]; do
+	case $1 in
+		-*) ARGS="${ARGS} $1"; shift;;
+		*) break;;
+	esac
+done
+
+do_play $*
