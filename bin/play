@@ -3,7 +3,10 @@
 MPLAYER=~/.mplayer
 CMDFIFO=${MPLAYER}/fifo
 PLAYLISTS=${MPLAYER}/playlists
+MUSICDIRS=
 ARGS=
+EXTENSIONS="mp3 flac ogg"
+EXTENSION_RE="$(echo "${EXTENSIONS}" | tr ' ' '|')"
 
 print_line () {
 	LINE=$*
@@ -11,22 +14,46 @@ print_line () {
 	echo $LINE
 }
 
+filter_playing () {
+	LINE=$1
+	LINE=${LINE#Playing }
+	LINE=${LINE%.}
+
+	for MDIR in ${MUSICDIRS}; do
+		NEWLINE="${LINE#${MDIR}}"
+		if [ "${NEWLINE}" != "${LINE}" ]; then
+			LINE="${NEWLINE}"
+			break
+		fi
+	done
+	for EXTENSION in ${EXTENSIONS}; do
+		NEWLINE="${LINE%.${EXTENSION}}"
+		if [ "${NEWLINE}" != "${LINE}" ]; then
+			LINE="${NEWLINE}"
+			break
+		fi
+	done
+
+	print_line "${LINE}"
+}
+
 filter_output () {
 	while read LINE; do
 			case "$LINE" in 
-				Playing*) print_line ${LINE#Playing };;
+				Playing*) filter_playing "${LINE}";;
 			esac; 
 	done
 }
 
 do_play () {
 	MUSICDIRS=$*
+	export MUSICDIRS
 
 	PLAYLIST=$(mktemp -p "${PLAYLISTS}" playlist.$(date "+%Y-%m-%d").XXXX)
 	trap "rm -f ${PLAYLIST}" EXIT ERR
 	[ -p "${CMDFIFO}" ] || mkfifo "${CMDFIFO}"
-	find "${MUSICDIRS}" -type f | egrep ".*(mp3|flac|ogg)" >| "${PLAYLIST}"
-	mplayer ${ARGS} -quiet -playlist "${PLAYLIST}" -input file="${CMDFIFO}" 2>&1 |\
+	find "${MUSICDIRS}" -type f | egrep ".*(${EXTENSION_RE})" >| "${PLAYLIST}"
+	mplayer ${ARGS} -quiet -playlist "${PLAYLIST}" -input file="${CMDFIFO}" >&1 |\
 		filter_output
 }
 
