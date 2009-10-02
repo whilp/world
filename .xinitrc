@@ -24,6 +24,7 @@ if dmesg | grep -q 'acpidock.*GDCK docked'; then
 fi
 
 init_zipser () {
+    pgrep -x aucat || aucat -l &
     if [ "${DOCKED}" -eq 1 ]; then
         xrandr --output VGA --auto --output LVDS --off
     else
