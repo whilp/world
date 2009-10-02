@@ -52,8 +52,9 @@ do_play () {
 	PLAYLIST=$(mktemp -p "${PLAYLISTS}" playlist.$(date "+%Y-%m-%d").XXXX)
 	trap "rm -f ${PLAYLIST}" EXIT ERR
 	[ -p "${CMDFIFO}" ] || mkfifo "${CMDFIFO}"
-	find "${MUSICDIRS}" -type f | egrep ".*(${EXTENSION_RE})" >| "${PLAYLIST}"
-	mplayer ${ARGS} -quiet -playlist "${PLAYLIST}" -input file="${CMDFIFO}" >&1 |\
+	find "${MUSICDIRS}" -type f | egrep ".*(${EXTENSION_RE})" |\
+		sort >| "${PLAYLIST}"
+	mplayer ${ARGS} -quiet -playlist "${PLAYLIST}" -input file="${CMDFIFO}" 2>&1 |\
 		filter_output
 }
 
