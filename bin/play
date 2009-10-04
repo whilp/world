@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 
 MPLAYER=~/.mplayer
 CMDFIFO=${MPLAYER}/fifo
