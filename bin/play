@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 MPLAYER=~/.mplayer
 CMDFIFO=${MPLAYER}/fifo
@@ -50,7 +50,7 @@ do_play () {
 	export MUSICDIRS
 
 	PLAYLIST=$(mktemp -p "${PLAYLISTS}" playlist.$(date "+%Y-%m-%d").XXXX)
-	trap "rm -f ${PLAYLIST}" EXIT ERR
+	trap "rm -f ${PLAYLIST}" EXIT
 	[ -p "${CMDFIFO}" ] || mkfifo "${CMDFIFO}"
 	find "${MUSICDIRS}" -type f | egrep ".*(${EXTENSION_RE})" |\
 		sort >| "${PLAYLIST}"
