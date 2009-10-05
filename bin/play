@@ -16,7 +16,7 @@ realpath () {
 		TARGET="$(dirname "${TARGET}")"
 	fi
 	cd "${TARGET}"
-	REALPATH="${PWD}"
+	REALPATH="${PWD}/"
 	cd "${OPWD}"
 	if [ -n "${FILE}" ]; then
 		REALPATH="${REALPATH}/${FILE}"
