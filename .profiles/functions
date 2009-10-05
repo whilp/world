@@ -139,3 +139,9 @@ sleepuntil () {
 		sleep "${INTERVAL}"
 	done
 }
+remove-key () {
+    HOST=$1
+    host $1 | awk '{print $1 " " $4}' | read FQDN IP
+    ssh-keygen -qR "${HOST}"
+    ssh-keygen -qR "${IP}"
+}

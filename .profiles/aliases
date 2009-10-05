@@ -13,7 +13,7 @@
 alias ci="ci -l"
 alias co="co -l"
 alias commit="cvs ci -m ''"
-alias dsh="DISPLAY='' dsh -t -o ${RCMD_TEST_TIMEOUT} -p ${RSHPORT} -f ${FANOUT}"
+alias dsh="DISPLAY='' dsh -e -t -o ${RCMD_TEST_TIMEOUT} -p ${RSHPORT} -f ${FANOUT}"
 alias elinks="DISPLAY='' elinks -touch-files -no-connect"
 alias igs="nc igs.joyjoy.net 7777"
 alias klog="klog -setpag"
