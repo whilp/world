@@ -3,8 +3,9 @@
 MPLAYER=~/.mplayer
 CMDFIFO=${MPLAYER}/fifo
 PLAYLISTS=${MPLAYER}/playlists
+PLAYLOG=${MPLAYER}/playlog
 MUSICDIR=
-ARGS=
+ARGS="-af volnorm"
 EXTENSIONS="mp3 flac ogg"
 EXTENSION_RE="$(echo "${EXTENSIONS}" | tr ' ' '|')"
 
@@ -76,6 +77,10 @@ filter_output () {
 	done
 }
 
+log_output () {
+	tee -a "${PLAYLOG}"
+}
+
 do_play () {
 	MUSICDIR=$(realpath "$*")
 	export MUSICDIR
@@ -86,8 +91,9 @@ do_play () {
 	[ -p "${CMDFIFO}" ] || mkfifo "${CMDFIFO}"
 	find "${MUSICDIR}" -type f | egrep ".*(${EXTENSION_RE})" |\
 		sort >| "${PLAYLIST}"
+	echo "$(date) MUSICDIR=${MUSICDIR}" >> "${PLAYLOG}"
 	mplayer ${ARGS} -quiet -playlist "${PLAYLIST}" -input file="${CMDFIFO}" 2>&1 |\
-		filter_output
+		filter_output | log_output
 }
 
 do_cmd () {
