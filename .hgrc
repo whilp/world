@@ -1,5 +1,5 @@
 [defaults]
-log = -fM
+log = -M
 
 [ui]
 editor = ~/bin/hgeditor
@@ -16,6 +16,7 @@ purge =
 record =
 hgext.bookmarks = 
 hgext.convert = 
+hgext.graphlog =
 hgext.mq =
 hgext.patchbomb =
 
