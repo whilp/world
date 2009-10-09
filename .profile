@@ -45,13 +45,6 @@ TMUX_SOCK=~/.tmux.sock
 export CLUSTER CVSEDITOR CVS_RSH EDITOR HOSTNAME LANG MAIL PATH
 export PAGER RCMD_CMD RCP_CMD SHELL VERBOSE TODO TMUX_SOCK
 
-# Add Python stuff.
-PYTHONPATH=~/lib/python2.5/site-packages
-[ -d ~/bin ] || mkdir ~/bin
-[ -d ~/lib ] || mkdir ~/lib
-[ -d "${PYTHONPATH}" ] || mkdir -p "${PYTHONPATH}"
-export PYTHONPATH
-
 # Directory containing platform- and host-specific configuration
 PROFILES="${HOME}/.profiles"
 PLATFORMS="${PROFILES}/platforms"
@@ -72,6 +65,9 @@ elif [ "X$(uname -s)" = "XSunOS" -a -r "${PLATFORMS}/solaris" ]; then
 fi
 
 # Host-specific settings
+if [ -r "${HOME}/bin/activate" ]; then
+	. "${HOME}/bin/activate"
+fi
 
 # Initialize environment
 if [ "${UID}" -gt "0" ]; then
