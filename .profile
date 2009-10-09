@@ -65,9 +65,11 @@ elif [ "X$(uname -s)" = "XSunOS" -a -r "${PLATFORMS}/solaris" ]; then
 fi
 
 # Host-specific settings
+OLDPS1="${PS1}"
 if [ -r "${HOME}/bin/activate" ]; then
 	. "${HOME}/bin/activate"
 fi
+export PS1="${OLDPS1}"
 
 # Initialize environment
 if [ "${UID}" -gt "0" ]; then
