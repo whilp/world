@@ -31,6 +31,7 @@ def download_pages(start=1, end=10, perpage=250, notdled=True):
 downloadable = lambda link: "download/album" in link.absolute_url
 
 def amie(app, url=None):
+    """[-hqsv] [command] [url]"""
     downloads = set()
 
     null = open(os.devnull, 'w')
