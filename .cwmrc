@@ -24,7 +24,7 @@ bind MC-m       vmaximize
 bind M-p        "dmenu_run"
 bind MC-r       reload
 bind MC-q       lock
-bind MCS-q      quit
+bind MCS-q      "sudo shutdown -hp now"
 
 mousebind M-3  window_resize
 
