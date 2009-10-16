@@ -30,20 +30,12 @@ def download_pages(start=1, end=10, perpage=250, notdled=True):
 
 downloadable = lambda link: "download/album" in link.absolute_url
 
-def amie(app, url=None):
-    """[-hqsv] [-al] [url]"""
+def list_download(app):
     downloads = set()
-
-    null = open(os.devnull, 'w')
-    twill.set_output(null)
-
-    browser = get_browser()
-    browser.links = browser._browser.links
-    browser.set_agent_string(USER_AGENT)
 
     signin = "https://amiestreet.com/auth/login?ssl=1"
     app.log.debug("Signing in at %s", signin)
-    browser.go(signin)
+    app.browser.go(signin)
 
     # Login.
     app.log.debug("Logging in as user '%s'", USERNAME)
@@ -56,8 +48,8 @@ def amie(app, url=None):
     for page in download_pages():
         if page == last:
             break
-        browser.go(page)
-        albums = set([link.absolute_url for link in browser.links() if downloadable(link)])
+        app.browser.go(page)
+        albums = set([link.absolute_url for link in app.browser.links() if downloadable(link)])
         if albums:
             app.log.debug("Discovered %d download links on %s",
                 len(albums), page)
@@ -66,13 +58,16 @@ def amie(app, url=None):
             break
         last = page
 
+    return downloads
+
+def download(app, urls, sleep=300):
     # Prepare for downloading.
-    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(browser.cj))
+    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(app.browser.cj))
     urllib2.install_opener(opener)
     headers = {"User-Agent": USER_AGENT}
 
     # Fetch files.
-    for url in downloads:
+    for url in urls:
         target = os.path.basename(url)
         if os.path.exists(target):
             app.log.debug("Skipping %s; already exists", url)
@@ -97,7 +92,34 @@ def amie(app, url=None):
 
         # Be polite/devious and sleep a little bit before moving on
         # to the next file.
-        randsleep(300)
+        if sleep > 0:
+            randsleep(sleep)
+
+    return 0
+
+def find_samples(app, url):
+    pass
+
+def amie(app, url=None):
+    """[-hqsv] [-al] [url]"""
+    null = open(os.devnull, 'w')
+    twill.set_output(null)
+
+    browser = get_browser()
+    browser.links = browser._browser.links
+    browser.set_agent_string(USER_AGENT)
+
+    app.browser = browser
+
+    if app.params.download:
+        downloads = list_downloads(app)
+        download(app, downloads)
+    elif app.params.list_sample:
+        if url is None:
+            app.log.critical("Must specify a URL")
+            return 1
+        for url in find_samples(app, url):
+            app.stdout.write(url + '\n')
 
     return 0
 
