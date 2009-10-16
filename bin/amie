@@ -1,8 +1,22 @@
 #!/usr/bin/env python
 
+import logging
+import os
+import sys
 import time
+import urllib2
 
 from random import randint
+
+import twill
+
+from twill import get_browser
+from twill.commands import formvalue, submit
+
+USERNAME = "lt_kije"
+PASSWORD = "lesheros"
+USER_AGENT = "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; " \
+    "rv:1.9.1b2) Gecko/20081127 Firefox/3.1b1"
 
 def randsleep(max=300):
     time.sleep(max/2 + randint(max/2, max))
@@ -16,33 +30,7 @@ def download_pages(start=1, end=10, perpage=250, notdled=True):
 
 downloadable = lambda link: "download/album" in link.absolute_url
 
-if __name__ == "__main__":
-    import logging
-    import os
-    import sys
-    import urllib2
-
-    sys.path.extend([
-        '/scratch/wcmaier/lib/python2.5/site-packages',
-        '/scratch/wcmaier/lib/python2.5'
-    ])
-
-    import twill
-
-    from twill import get_browser
-    from twill.commands import formvalue, submit
-
-    USERNAME = "lt_kije"
-    PASSWORD = "lesheros"
-    USER_AGENT = "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; " \
-        "rv:1.9.1b2) Gecko/20081127 Firefox/3.1b1"
-    LOG_FMT = "%(asctime)s %(message)s"
-    LOG_LEVEL = logging.DEBUG
-
-    # Configure logging.
-    logging.basicConfig(level=LOG_LEVEL, format=LOG_FMT)
-    log = logging.getLogger('.')
-
+def amie(app, url=None):
     downloads = set()
 
     null = open(os.devnull, 'w')
@@ -53,11 +41,11 @@ if __name__ == "__main__":
     browser.set_agent_string(USER_AGENT)
 
     signin = "https://amiestreet.com/auth/login?ssl=1"
-    log.debug("Signing in at %s", signin)
+    app.log.debug("Signing in at %s", signin)
     browser.go(signin)
 
     # Login.
-    log.debug("Logging in as user '%s'", USERNAME)
+    app.log.debug("Logging in as user '%s'", USERNAME)
     formvalue('1', "login-username", USERNAME)
     formvalue('1', "login-password", PASSWORD)
     submit()
@@ -70,7 +58,7 @@ if __name__ == "__main__":
         browser.go(page)
         albums = set([link.absolute_url for link in browser.links() if downloadable(link)])
         if albums:
-            log.debug("Discovered %d download links on %s",
+            app.log.debug("Discovered %d download links on %s",
                 len(albums), page)
             downloads.update(albums)
         else:
@@ -86,22 +74,22 @@ if __name__ == "__main__":
     for url in downloads:
         target = os.path.basename(url)
         if os.path.exists(target):
-            log.debug("Skipping %s; already exists", url)
+            app.log.debug("Skipping %s; already exists", url)
             continue
 
-        log.debug("Fetching %s", url)
+        app.log.debug("Fetching %s", url)
         try:
             req = urllib2.Request(url, headers=headers)
             handle = urllib2.urlopen(req)
         except Exception, e:
-            log.warn("Failed to fetch %s: %s", url, e)
+            app.log.warn("Failed to fetch %s: %s", url, e)
             continue
 
         try:
             f = open(target, 'w')
             f.write(handle.read())
         except:
-            log.warn("Failed to write %s (%s)", target, url)
+            app.log.warn("Failed to write %s (%s)", target, url)
 
         f.close()
         handle.close()
@@ -109,3 +97,11 @@ if __name__ == "__main__":
         # Be polite/devious and sleep a little bit before moving on
         # to the next file.
         randsleep(300)
+
+    return 0
+
+if __name__ == "__main__":
+    from cli.app import App
+
+    app = App(amie)
+    app.run()
