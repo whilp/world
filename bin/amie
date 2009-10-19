@@ -28,7 +28,7 @@ def download_pages(start=1, end=10, perpage=250, notdled=True):
 
 downloadable = lambda link: "download/album" in link.absolute_url
 
-def list_download(app):
+def list_downloads(app):
     downloads = set()
 
     signin = "https://amiestreet.com/auth/login?ssl=1"
