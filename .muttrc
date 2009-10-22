@@ -75,6 +75,8 @@ bind pager \CU previous-page
 bind generic \CU previous-page
 bind index \CF next-page
 bind pager \CF next-page
+bind index \CY noop
+bind pager \CY noop
 bind pager j next-line
 bind pager k previous-line
 bind pager J next-undeleted
