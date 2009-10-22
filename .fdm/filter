@@ -78,6 +78,7 @@ match "^From:.*sec-adv@secunia\\.com" in headers {
 $urgent = "^((To|CC|Bcc).*(will|wcmaier)\\+(sms|text)@|Subject:.*(URGENT|IMPORTANT))"
 
 # Family.
+match "List-Id: <weekend-reading\\.m\\.aier\\.us>" in headers action maildir "${groups}/wr"
 match "List-Id:.*kids\\.m\\.aier\\.us" or "^From:.*(${family})" in headers {
     match all action "family" continue
     match $urgent in headers action "sms"
