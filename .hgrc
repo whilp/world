@@ -16,6 +16,7 @@ purge =
 record =
 hgext.bookmarks = 
 hgext.convert = 
+hgext.graphlog =
 hgext.mq =
 hgext.patchbomb =
 

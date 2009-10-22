@@ -3,29 +3,53 @@
 MPLAYER=~/.mplayer
 CMDFIFO=${MPLAYER}/fifo
 PLAYLISTS=${MPLAYER}/playlists
-MUSICDIRS=
-ARGS=
+PLAYLOG=${MPLAYER}/playlog
+MUSICDIR=
+ARGS="-af volnorm"
 EXTENSIONS="mp3 flac ogg"
 EXTENSION_RE="$(echo "${EXTENSIONS}" | tr ' ' '|')"
 
+realpath () {
+	TARGET="$*"
+	FILE=
+	if [ ! -d "${TARGET}" ]; then
+		FILE="$(basename "${TARGET}")"
+		TARGET="$(dirname "${TARGET}")"
+	fi
+	cd "${TARGET}"
+	REALPATH="${PWD}/"
+	cd "${OPWD}"
+	if [ -n "${FILE}" ]; then
+		REALPATH="${REALPATH}/${FILE}"
+	fi
+	echo "${REALPATH}"
+}
+
+len_lines () {
+	FILE=$1
+	wc -l "${FILE}" | awk '{print $1}'
+}
+
+len () {
+	echo -n $* | wc -c | awk '{print $1}'
+}
+
 print_line () {
 	LINE=$*
-	echo -n "$(date)  "
+	echo -n "$(date) "
 	echo $LINE
 }
 
 filter_playing () {
-	LINE=$1
+	POS=$1; shift
+	LINE="$*"
 	LINE=${LINE#Playing }
 	LINE=${LINE%.}
 
-	for MDIR in ${MUSICDIRS}; do
-		NEWLINE="${LINE#${MDIR}}"
-		if [ "${NEWLINE}" != "${LINE}" ]; then
-			LINE="${NEWLINE}"
-			break
-		fi
-	done
+	NEWLINE="${LINE#${MUSICDIR}}"
+	if [ "${NEWLINE}" != "${LINE}" ]; then
+		LINE="${NEWLINE}"
+	fi
 	for EXTENSION in ${EXTENSIONS}; do
 		NEWLINE="${LINE%.${EXTENSION}}"
 		if [ "${NEWLINE}" != "${LINE}" ]; then
@@ -33,29 +57,43 @@ filter_playing () {
 			break
 		fi
 	done
+	LINE=${LINE#/}
 
-	print_line "${LINE}"
+	print_line "[${POS}] ${LINE}"
 }
 
 filter_output () {
+	TOTAL=$(len_lines "${PLAYLIST}")
+	WIDTH=$(len "${TOTAL}")
+	i=0
 	while read LINE; do
 			case "$LINE" in 
-				Playing*) filter_playing "${LINE}";;
-			esac; 
+				Playing*) 
+					i=$(($i + 1))
+					POS="$(printf "%0${WIDTH}d" $i)/${TOTAL}"
+					filter_playing "${POS}" "${LINE}"
+					;;
+			esac
 	done
 }
 
+log_output () {
+	tee -a "${PLAYLOG}"
+}
+
 do_play () {
-	MUSICDIRS=$*
-	export MUSICDIRS
+	MUSICDIR=$(realpath "$*")
+	export MUSICDIR
 
 	PLAYLIST=$(mktemp -p "${PLAYLISTS}" playlist.$(date "+%Y-%m-%d").XXXX)
-	trap "rm -f ${PLAYLIST}" EXIT ERR
+	export PLAYLIST
+	trap "rm -f ${PLAYLIST}" EXIT
 	[ -p "${CMDFIFO}" ] || mkfifo "${CMDFIFO}"
-	find "${MUSICDIRS}" -type f | egrep ".*(${EXTENSION_RE})" |\
+	find "${MUSICDIR}" -type f | egrep ".*(${EXTENSION_RE})" |\
 		sort >| "${PLAYLIST}"
+	echo "$(date) MUSICDIR=${MUSICDIR}" >> "${PLAYLOG}"
 	mplayer ${ARGS} -quiet -playlist "${PLAYLIST}" -input file="${CMDFIFO}" 2>&1 |\
-		filter_output
+		filter_output | log_output
 }
 
 do_cmd () {
