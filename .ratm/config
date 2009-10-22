@@ -120,3 +120,16 @@ grubstreet-chi = http://chicago.grubstreet.com/index.xml
 debug-pods = http://de-bug.de/pod/feed/atom
 disquiet-listen = http://disquiet.com/category/listen/feed/
 dia = http://www.economist.com/blogs/democracyinamerica/index.xml
+nytimes-bill = http://topics.nytimes.com/topics/reference/timestopics/people/b/william_j_broad/index.html?scp=1-spot&sq=william%20j%20broad&st=cse&rss=1
+amie-mp = http://amiestreet.com/label/mille-plateaux/albums.rss
+amie-bpc = http://amiestreet.com/label/bpitch-control/albums.rss
+amie-az = http://amiestreet.com/label/ant-zen/albums.rss
+amie-hymen = http://amiestreet.com/label/hymen-records/albums.rss
+amie-dfa = http://amiestreet.com/label/dfa/albums.rss
+amie-st = http://amiestreet.com/label/stones-throw-records/albums.rss
+amie-moodgadget = http://amiestreet.com/label/moodgadget-records/albums.rss
+amie-mowax = http://amiestreet.com/label/mo-wax/albums.rss
+amie-daptones = http://amiestreet.com/label/daptone-records/albums.rss
+amie-bigdada = http://amiestreet.com/label/big-dada/albums.rss
+amie-xl = http://amiestreet.com/label/xl/albums.rss
+amie-xl = http://amiestreet.com/label/caural/albums.rss
