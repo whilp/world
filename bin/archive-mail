@@ -23,9 +23,9 @@ for MDIR in $(find . -name "*.gz"); do
     fdm_do "${MDIR%.gz}" archive
 done
 
-#echo
-#echo "===> Pruning"
-#cd "${MAILDIR}"
-#for MDIR in $(find . -type d -path "*/cur" | head -2); do
-#    fdm_do "${MDIR%/cur}" prune
-#done
+echo
+echo "===> Pruning"
+cd "${MAILDIR}"
+for MDIR in $(find . -type d -path "*/cur" | head -2); do
+    fdm_do "${MDIR%/cur}" prune
+done
