@@ -1,8 +1,8 @@
 #!/bin/sh
 
-PATH=${HOME}/bin:${PATH}
-
+PATH="${HOME}/bin:${PATH}"
 TMUX="tmux -S ${TMUX_SOCK}"
+
 do_attach () {
     SESSION=$1
     TMUX_CONFIG=$2
@@ -18,7 +18,7 @@ do_attach () {
 do_meta () {
     case $(hostname) in
         lass.*) attach meta /home/will/.meta.conf;;
-        *) ssh -t meta 'meta';;
+        *) ssh -t meta '~/bin/meta';;
     esac
 }
 do_mobi () {
