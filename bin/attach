@@ -1,7 +1,7 @@
 #!/bin/sh
 
 PATH="${HOME}/bin:${PATH}"
-TMUX="tmux -S ${TMUX_SOCK}"
+TMUX="tmux -S ${HOME}/.tmux.sock"
 
 do_attach () {
     SESSION=$1
