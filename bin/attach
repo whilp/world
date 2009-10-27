@@ -1,20 +1,25 @@
 #!/bin/sh
 
+PATH=${HOME}/bin:${PATH}
+
 TMUX="tmux -S ${TMUX_SOCK}"
 do_attach () {
     SESSION=$1
     TMUX_CONFIG=$2
     ${TMUX} has-session -t "${SESSION}" > /dev/null 2>&1
     if [ $? -ne 0 ]; then
-	${TMUX} new-session -ds "${SESSION}"
-    	if [ -n "${TMUX_CONFIG}" -a -r "${TMUX_CONFIG}" ]; then
-       	    ${TMUX} source-file ${TMUX_CONFIG}
-    	fi
+        ${TMUX} new-session -ds "${SESSION}"
+        if [ -n "${TMUX_CONFIG}" -a -r "${TMUX_CONFIG}" ]; then
+            ${TMUX} source-file ${TMUX_CONFIG}
+        fi
     fi
     ${TMUX} attach-session -dt "${SESSION}"
 }
 do_meta () {
-    attach meta /home/will/.meta.conf
+    case $(hostname) in
+        lass.*) attach meta /home/will/.meta.conf;;
+        *) ssh -t meta 'meta';;
+    esac
 }
 do_mobi () {
     attach mobi /home/will/.mobi.conf
