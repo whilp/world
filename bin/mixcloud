@@ -14,7 +14,8 @@ def mix_to_mp3(url, api='1'):
     cloudcast = ("/api/%s/cloudcast" % API_VERSION) + spliturl[2]
     splitcast = [x for x in cloudcast.split('/')[:-1] if x]
     if splitcast and splitcast[-1] == "player":
-        cloudcast = '/'.join(splitcast[:-1])
+        splitcast = splitcast[:-1]
+    cloudcast = '/'.join(splitcast)
     if not cloudcast.endswith(".json"):
         cloudcast += ".json"
     spliturl[2] = cloudcast
