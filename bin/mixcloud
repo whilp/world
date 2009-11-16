@@ -1,0 +1,48 @@
+#!/usr/bin/env python
+
+import urllib
+import urlparse
+
+import simplejson
+
+from cli import App
+
+API_VERSION = '1'
+
+def mix_to_mp3(url, api='1'):
+    spliturl = list(urlparse.urlparse(url))
+    cloudcast = ("/api/%s/cloudcast" % API_VERSION) + spliturl[2]
+    splitcast = [x for x in cloudcast.split('/')[:-1] if x]
+    if splitcast and splitcast[-1] == "player":
+        cloudcast = '/'.join(splitcast[:-1])
+    if not cloudcast.endswith(".json"):
+        cloudcast += ".json"
+    spliturl[2] = cloudcast
+    jsonurl = urlparse.urlunparse(spliturl)
+
+    json = simplejson.loads(urllib.urlopen(jsonurl).read())
+
+    return json["mp3_url"]
+
+def mixcloud(app, *urls):
+    """[-hsqv] [-a API] <mix-url> ...
+
+    mixcloud discovers the MP3 URL for a mix hosted at mixcloud.com. Mix
+    URLs look like:
+
+        http://www.mixcloud.com/BPitchControl/modeselektor-ra173-podcast-210909/
+
+    The intermediate URL where the mix's metadata is stored looks like:
+
+        http://www.mixcloud.com/api/1/cloudcast/BPitchControl/modeselektor-ra173-podcast-210909.json
+
+    The MP3 URL itself is long and points to Amazon's S3 storage cloud.
+    """
+    for url in urls:
+        app.stdout.write(mix_to_mp3(url, API_VERSION) + '\n')
+
+app = App(mixcloud)
+app.add_param("api", API_VERSION, "mixcloud.com API version (default: %s)" % API_VERSION)
+
+if __name__ == '__main__':
+    app.run()
