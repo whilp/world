@@ -6,7 +6,7 @@ endif
 
 ifdef ${prune}
 account "prune" maildir "${path}/${prune}"
-#match account "prune" and age invalid or age > 1 month action drop
+match account "prune" and age invalid or age > 1 month action drop
 match account "prune" action keep
 endif
 
