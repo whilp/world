@@ -1,0 +1,104 @@
+#!/usr/bin/env python
+
+import os
+import shutil
+import tempfile
+import urllib
+
+from Queue import Empty, Queue
+from itertools import chain
+from threading import Thread
+from urlparse import urlparse
+
+import feedparser
+
+from cli import App
+
+def enclosures(url):
+    feed = feedparser.parse(url)
+    enclosures = chain(*(e.enclosures for e in feed.entries \
+        if hasattr(e, "enclosures")))
+    # XXX: use mimeparse
+    mpegs = (e.href for e in enclosures if e.type == "audio/mpeg")
+
+    return mpegs
+
+class Worker(Thread):
+
+    def __init__(self, name, log, input, basedir, overwrite=False):
+        self.name = name
+        self.log = log
+        self.input = input
+        self.basedir = basedir
+		self.overwite = overwrite
+        super(Worker, self).__init__()
+    
+    def run(self):
+        while True:
+            self.log.debug("%s fetching task", self.name)
+            try:
+                item = self.input.get(timeout=10)
+            except Empty:
+                break
+            self.work(item)
+            self.log.debug("%s task completed", self.name)
+
+        self.log.debug("%s found no more tasks", self.name)
+
+    def work(self, url):
+        self.log.debug("Fetching %s", url)
+        scheme, netloc, path, params, query, fragment = urlparse(url)
+        localfile = os.path.join(self.basedir, os.path.split(path)[1])
+
+		if not self.overwrite and os.path.exists(localfile):
+			self.log.warn("Not overwriting %s", localfile)
+			return
+		elif self.overwrite:
+			self.log.debug("Overwriting %s", localfile)
+
+		tmpname, headers = urllib.urlretrieve(url)
+        shutil.move(tmpname, localfile)
+    
+        self.log.info("Fetched %s to %s", url, localfile)
+    
+        return localfile
+    
+def podfetch(app, *urls):
+    """[-hqsv] [-d DOWNLOADS] [-w WORKERS] <url> ...
+    """
+    downloads = os.path.abspath(app.params.downloads)
+    try:
+        os.makedirs(downloads)
+    except OSError, e:
+        if e.errno == 17:
+            pass
+        else:
+            raise
+
+    tempfile.tempdir = app.params.downloads
+
+    mpegs = Queue()
+    app.log.debug("Parsing feeds")
+    for url in urls:
+        mpegs.queue.extend(enclosures(url))
+    app.log.debug("Found %d media enclosures", mpegs.qsize())
+
+    workers = Queue()
+    for i in range(app.params.workers):
+        name = "worker-%s" % i
+        worker = Worker(name, app.log, mpegs, downloads)
+        worker.start()
+        workers.put(worker)
+
+    app.log.debug("Spawned %d workers", len(workers))
+    workers.join()
+    app.log.debug("All workers are finished")
+
+app = App(podfetch)
+workers = 4
+downloads = os.path.abspath(os.path.join(os.getcwd(), "downloads"))
+app.add_param("workers", workers, "number of worker threads (default: %s)" % workers)
+app.add_param("downloads", downloads, "download directory (default: %s)" % downloads)
+
+if __name__ == "__main__":
+    app.run()
