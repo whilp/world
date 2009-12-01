@@ -16,12 +16,6 @@ error () {
 	echo "=!=> $*"
 }
 
-if [ "`id -u`" -ne 0 ]; then
-	error "need root privileges to run this script"
-	usage
-	exit 1
-fi
-
 while getopts H:hs:u: ARG; do
 	case "${ARG}" in
 		H) CHROOTHOST="${OPTARG}";;
@@ -75,6 +69,11 @@ build_chroot () {
 	
 	say "Updating system configuration"
 	update_files
+
+	CHROOTUID=$(id -u "${CHROOTUSER}")
+	say "Adding user ${CHROOTUSER}/${CHROOTUID}"
+	echo "${CHROOTUSER}   ALL=(ALL) NOPASSWD: SETENV: ALL" >> "${CHROOTDIR}/etc/sudoers"
+	chroot "${CHROOTDIR}" useradd -md "/home/${CHROOTUSER}" -u "${CHROOTUID}" "${CHROOTUSER}"
 	
 	say "Updating dev.db and ld.so.hints"
 	chroot "${CHROOTDIR}" dev_mkdb
@@ -84,5 +83,10 @@ build_chroot () {
 if [ -z "${SETROOT}" ]; then
 	enter_chroot
 else
+	if [ "`id -u`" -ne 0 ]; then
+		error "need root privileges to run this script"
+		usage
+		exit 1
+	fi
 	build_chroot
 fi
