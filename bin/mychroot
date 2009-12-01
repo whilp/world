@@ -1,0 +1,89 @@
+#!/bin/sh -e
+
+CHROOTHOST=localhost
+CHROOTUSER=$(whoami)
+unset SETROOT
+
+usage () {
+	echo "mychroot [-H CHROOTHOST] [-s SETROOT] [-u CHROOTUSER] CHROOTDIR"
+}
+
+say () {
+	echo "===> $*"
+}
+
+error () {
+	echo "=!=> $*"
+}
+
+if [ "`id -u`" -ne 0 ]; then
+	error "need root privileges to run this script"
+	usage
+	exit 1
+fi
+
+while getopts H:hs:u: ARG; do
+	case "${ARG}" in
+		H) CHROOTHOST="${OPTARG}";;
+		s) SETROOT="${OPTARG}";;
+		u) CHROOTUSER="${OPTARG}";;
+		*) usage; exit 1;;
+	esac
+done
+
+shift $(($OPTIND - 1))
+CHROOTDIR="$1"
+
+update_files () {
+	cat <<-EOF >> $1/root/profile
+	set -o vi
+
+	plog () {
+		/usr/ports/infrastructure/build/portslogger /usr/ports/logs/.
+	}
+EOF
+	
+	cat <<-EOF >> $1/etc/mk.conf
+	SUDO=/usr/bin/sudo
+	FETCH_PACKAGES=Yes
+	PLIST_DB=/var/db/plists
+	WRKOBJDIR=/usr/obj/ports
+EOF
+}
+
+enter_chroot () {
+	ssh "${CHROOTUSER}@${CHROOTHOST}"
+}
+
+build_chroot () {
+	set -x
+	mkdir -p "${CHROOTDIR}"
+	cd "${CHROOTDIR}"
+	for FILESET in "${SETROOT}"/*.tgz; do
+		say "Extracting $(basename ${FILESET})"
+		tar xzpf "${FILESET}"
+	done
+	
+	say "Installing kernels and ramdisk"
+	cp "${SETROOT}"/bsd* "${CHROOTDIR}/"
+	
+	say "Running MAKEDEV"
+	cd "${CHROOTDIR}/dev"
+	./MAKEDEV all >/dev/null
+	
+	say "Updating /etc/localtime"
+	ln -sf "$(readlink /etc/localtime)" "${CHROOTDIR}/etc/localtime"
+	
+	say "Updating system configuration"
+	update_files
+	
+	say "Updating dev.db and ld.so.hints"
+	chroot "${CHROOTDIR}" dev_mkdb
+	chroot "${CHROOTDIR}" ldconfig /usr/lib /usr/local/lib /usr/X11R6/lib
+}
+
+if [ -z "${SETROOT}" ]; then
+	enter_chroot
+else
+	build_chroot
+fi
