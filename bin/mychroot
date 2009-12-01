@@ -56,7 +56,6 @@ enter_chroot () {
 }
 
 build_chroot () {
-	set -x
 	mkdir -p "${CHROOTDIR}"
 	cd "${CHROOTDIR}"
 	for FILESET in "${SETROOT}"/*.tgz; do
