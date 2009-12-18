@@ -64,8 +64,9 @@ build_chroot () {
 	cd "${CHROOTDIR}/dev"
 	./MAKEDEV all >/dev/null
 	
-	say "Updating /etc/localtime"
+	say "Updating /etc/{localtime,resolv.conf}"
 	ln -sf "$(readlink /etc/localtime)" "${CHROOTDIR}/etc/localtime"
+	cp "/etc/resolv.conf" "${CHROOTDIR}/etc/resolv.conf"
 	
 	say "Updating system configuration"
 	update_files
