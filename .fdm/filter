@@ -8,8 +8,7 @@ match "^Message-Id: (.*)" in headers {
 }
 
 # Shortcut local mail.
-match account "local" and
-    "From.*root@[^ ]*\\.lfod\\.us" action "lfod"
+match "From.*root@[^ ]*\\.lfod\\.us" action "lfod"
 
 # Drop stuff I don't care about.
 match "^From:.*(${useless})" in headers action "drop"
