@@ -37,7 +37,11 @@ init_zipser () {
 init_zwicky () {
     switch-caps
     xterm -T master &
-    WM="evilwm -term xterm"
+    EVILWM="evilwm -term xterm"
+    case $(uname) in
+	OpenBSD) continue;;
+	Linux) WM=$EVILWM;;
+    esac
 }
 
 case "${HOSTNAME}" in
