@@ -34,8 +34,15 @@ init_zipser () {
     firefox &
 }
 
+init_zwicky () {
+    switch-caps
+    xterm -T master &
+    WM="evilwm -term xterm"
+}
+
 case "${HOSTNAME}" in
    zipser.*) init_zipser;;
+   zwicky.*) init_zwicky;;
 esac
 
 exec ${WM}
