@@ -27,6 +27,11 @@ REMAINING=$6
 RAW=$7
 RATE=$8
 
+if [ "${RATE}" -eq 0 ]; then
+    printf "full\n"
+    exit 0
+fi
+
 # Calculate the minutes with scale=2 and then drop the digits.
 MINUTES=$(calcl "60 * ((1000 * ${REMAINING})/${RATE})")
 MINUTES=${MINUTES%.*}
