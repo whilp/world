@@ -7,13 +7,13 @@ sysctln () {
 calcl () {
     cat <<EOF | bc -l
     scale=2
-	$*
+    $*
 EOF
 }
 
 calc () {
     cat <<EOF | bc
-	$*
+    $*
 EOF
 }
 
