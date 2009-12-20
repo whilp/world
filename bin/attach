@@ -18,7 +18,7 @@ do_attach () {
 do_meta () {
     case $(hostname) in
         lass.*) attach meta /home/will/.meta.conf;;
-        *) ssh -t meta '~/bin/meta';;
+        *) ssh -t meta.lfod.us '~/bin/meta';;
     esac
 }
 do_mobi () {
