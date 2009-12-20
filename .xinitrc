@@ -4,6 +4,8 @@ XLOADIMAGE="$(which xloadimage)"
 LOCALXINIT="${HOME}/.xinitrc.local"
 HOSTXINIT="${HOME}/.xinitrc.$(hostname -s)"
 HOSTNAME=$(hostname)
+OSNAME=$(uname)
+EVILWM="evilwm -term xterm"
 WM=cwm
 DOCKED=0
 
@@ -23,6 +25,12 @@ if dmesg | grep -q 'acpidock.*GDCK docked'; then
     DOCKED=1
 fi
 
+init_messenger () {
+    switch-caps
+    xterm -T master &
+    WM=${EVILWM}
+}
+
 init_zipser () {
     pgrep -x aucat || aucat -l &
     if [ "${DOCKED}" -eq 1 ]; then
@@ -37,14 +45,14 @@ init_zipser () {
 init_zwicky () {
     switch-caps
     xterm -T master &
-    EVILWM="evilwm -term xterm"
-    case $(uname) in
-	OpenBSD) continue;;
-	Linux) WM=$EVILWM;;
+    case "${OSNAME}" in
+        OpenBSD) continue;;
+        Linux) WM=${EVILWM};;
     esac
 }
 
 case "${HOSTNAME}" in
+   messenger.*) init_messenger;;
    zipser.*) init_zipser;;
    zwicky.*) init_zwicky;;
 esac
