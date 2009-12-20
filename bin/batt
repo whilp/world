@@ -17,10 +17,15 @@ calc () {
 EOF
 }
 
-REMAINING=$(sysctln hw.sensors.acpibat0.watthour3)
-FULL=$(sysctln hw.sensors.acpibat0.watthour0)
-LOW=$(sysctln hw.sensors.acpibat0.watthour2)
-RATE=$(sysctln hw.sensors.acpibat0.raw1)
+set -- $(sysctln hw.sensors.acpibat0)
+VOLTAGE=$1
+CURRENT=$2
+FULL=$3
+WARN=$4
+LOW=$5
+REMAINING=$6
+RAW=$7
+RATE=$8
 
 # Calculate the minutes with scale=2 and then drop the digits.
 MINUTES=$(calcl "60 * ((1000 * ${REMAINING})/${RATE})")
