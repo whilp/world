@@ -1,0 +1,8 @@
+pgrep -x aucat || aucat -l &
+if [ "${DOCKED}" -eq 1 ]; then
+    xrandr --output VGA --auto --output LVDS --off
+else
+    switch-caps
+fi
+xterm -T master &
+firefox &
