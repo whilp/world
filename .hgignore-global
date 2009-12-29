@@ -1,4 +1,4 @@
 \.sw[nop]$
-\.pyc$
+\.(pyc|orig|o)$
 CVS/
 pobj
