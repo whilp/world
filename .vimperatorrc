@@ -4,7 +4,7 @@
 map R :reloadall<return>
 
 " Options
-set guioptions=m
+set guioptions-=m
 set editor="gvim"
 set focuscontent
 set defsearch=gg
