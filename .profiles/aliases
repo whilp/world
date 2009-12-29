@@ -17,7 +17,6 @@ alias dsh="DISPLAY='' dsh -e -t -o ${RCMD_TEST_TIMEOUT} -p ${RSHPORT} -f ${FANOU
 alias elinks="DISPLAY='' elinks -touch-files -no-connect"
 alias igs="nc igs.joyjoy.net 7777"
 alias klog="klog -setpag"
-alias less="less -X"
 alias ls="ls -F"
 alias lsof="sudo lsof"
 alias mail="MAIL=${MAIL_OLD} mail"
