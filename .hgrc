@@ -33,3 +33,6 @@ from = Will Maier <willmaier@ml1.net>
 
 [smtp]
 host = localhost
+
+[trusted]
+users = root
