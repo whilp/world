@@ -1,0 +1,6 @@
+switch-caps
+xterm -T master &
+case "${OSNAME}" in
+    OpenBSD) continue;;
+    Linux) WM=${EVILWM};;
+esac
