@@ -6,6 +6,7 @@ HOSTXINIT="${HOME}/.xinitrc.$(hostname -s)"
 HOSTNAME=$(hostname)
 WM=cwm
 DOCKED=0
+EXTSCREEN=0
 
 export PATH=/sbin:${HOME}/bin:/usr/X11R6/bin:${PATH}
 
@@ -22,6 +23,9 @@ fi
 if dmesg | grep -q 'acpidock.*GDCK docked'; then
     DOCKED=1
 fi
+if xrandr | grep -q "VGA connected"; then
+    EXTSCREEN=1
+fi
 
 init_zipser () {
     pgrep -x aucat || aucat -l &
@@ -35,7 +39,11 @@ init_zipser () {
 }
 
 init_zwicky () {
-    switch-caps
+    if [ "${EXTSCREEN}" -eq 1 ]; then
+        xrandr --output VGA --auto --output LVDS --auto
+    else
+        switch-caps
+    fi
     xterm -T master &
     EVILWM="evilwm -term xterm"
     case $(uname) in
