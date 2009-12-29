@@ -1,0 +1,7 @@
+#!/bin/sh
+
+if [ -z "$*" ]; then
+	set -- -ProfileManager
+fi
+
+/usr/local/bin/firefox -no-remote $*
