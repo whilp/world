@@ -1,42 +1,31 @@
-##################  BEGIN HEADERS
-# Filename	: $HOME/.profiles/openbsd
-# Use		: Universal shell functions
-# Author	: Will Maier <willmaier@ml1.net>
-# Vim		: vim: set ft=sh:
-# CVS		: $Id: functions,v 1.6 2006/07/18 14:56:03 will Exp $
-# Copyright	: Copyright (c) 2006 Will Maier
-# License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
-##################  END HEADERS
-
 # Paths
-DICT="/usr/share/dict/words"
 SSH_HOME="$HOME/.ssh"
 
 warn () {
-	MESSAGE=$1
-	echo "=!=> ${MESSAGE}"
+    MESSAGE=$1
+    echo "=!=> ${MESSAGE}"
 }
 notify () {
-	if [ "$#" -eq 1 ]; then
-		LEVEL=1
-		MESSAGE=$1
-	else
-		LEVEL=$1
-		MESSAGE=$2
-	fi
+    if [ "$#" -eq 1 ]; then
+        LEVEL=1
+        MESSAGE=$1
+    else
+        LEVEL=$1
+        MESSAGE=$2
+    fi
 
-	if [ "${LEVEL}" -le "${VERBOSE}" ]; then
-		echo "===> ${MESSAGE}"
-	fi
+    if [ "${LEVEL}" -le "${VERBOSE}" ]; then
+        echo "===> ${MESSAGE}"
+    fi
 }
 lookup () {
-	REGEX=$1
-	grep ${REGEX} 
+    REGEX=$1
+    grep ${REGEX} 
 }
 calc () {
     cat <<EOF | bc -l
     scale=2
-	$*
+    $*
 EOF
 }
 scpkey () {
@@ -46,7 +35,7 @@ scpkey () {
     SSH_OPTS=$*
     SSH_AUTHFILE="${SSH_HOME}/authorized_keys"
     for PUBKEY in "${SSH_HOME}/id*pub"; do
-	ssh ${SSH_OPTS} $TARGET "(chmod 600 ${SSH_AUTHFILE}; sh -c \"cat - >> ${SSH_AUTHFILE}\")" < ${PUBKEY}
+    ssh ${SSH_OPTS} $TARGET "(chmod 600 ${SSH_AUTHFILE}; sh -c \"cat - >> ${SSH_AUTHFILE}\")" < ${PUBKEY}
     done
 }
 agent () {
@@ -75,10 +64,10 @@ agent () {
         pkill -U ${USER} ssh-agent
         rm -f ${SSH_AGENT_FILE}
         touch ${SSH_AGENT_FILE}
-	chmod 600 ${SSH_AGENT_FILE}
+    chmod 600 ${SSH_AGENT_FILE}
 
         # Make new agent
-	notify 2 "Creating a new agent."
+    notify 2 "Creating a new agent."
         eval $(ssh-agent -s | tee ${AGENTFILE})
     fi
 
@@ -112,10 +101,10 @@ lsx () {
 }
 secret () {
     cleanup () {
-	SVND=$1
-	MOUNT=$2
-	sudo vnconfig -u "${SVND}" > /dev/null 2>&1
-	sudo umount "${UMOUNT}" > /dev/null 2>&1
+    SVND=$1
+    MOUNT=$2
+    sudo vnconfig -u "${SVND}" > /dev/null 2>&1
+    sudo umount "${UMOUNT}" > /dev/null 2>&1
     }
     SAFEDIR="${HOME}/.safe"
     SAFEIMG="${HOME}/.safe.img"
@@ -130,30 +119,30 @@ secret () {
     sudo vnconfig -u "${SVND}"
 }
 sleepuntil () {
-	DATE=$1 
-	INTERVAL=${2:-60} 
-	TARGET=$(date -j "${DATE}" "+%s") 
-	echo "Sleeping until $(date -j "${DATE}")..."
-	while [ "$(date "+%s")" -lt "${TARGET}" ]
-	do
-		sleep "${INTERVAL}"
-	done
+    DATE=$1 
+    INTERVAL=${2:-60} 
+    TARGET=$(date -j "${DATE}" "+%s") 
+    echo "Sleeping until $(date -j "${DATE}")..."
+    while [ "$(date "+%s")" -lt "${TARGET}" ]
+    do
+        sleep "${INTERVAL}"
+    done
 }
 rmkey () {
-	HOST=$1
-	RESULT=$(ssh-keygen -F "${HOST}")
-	[[ -n "${RESULT}" ]] || return 0 >/dev/null || return 0
+    HOST=$1
+    RESULT=$(ssh-keygen -F "${HOST}")
+    [[ -n "${RESULT}" ]] || return 0 >/dev/null || return 0
 
     host "${HOST}" | while read LINE; do set -- ${LINE}; break; done
-    [[ -n $5 ]] && return 1	# error field
+    [[ -n $5 ]] && return 1 # error field
 
     HOST=$1
     IP=$4
-	prepend () {
-		while read LINE; do
-			echo $* ${LINE}
-		done
-	}
+    prepend () {
+        while read LINE; do
+            echo $* ${LINE}
+        done
+    }
     ssh-keygen -qR "${HOST}" 2>&1 | prepend "${HOST}: "
     ssh-keygen -qR "${IP}" 2>&1 | prepend "${IP}: "
 }
