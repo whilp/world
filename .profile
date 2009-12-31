@@ -9,7 +9,10 @@
 ##################  END HEADERS
 
 # Environment variables
-EDITOR=/usr/bin/vi
+EDITOR="$(which nvi 2>/dev/null)" || \
+	EDITOR="$(which vi)" || \
+	EDITOR="$(which vim)"
+VISUAL=${EDITOR}
 SHELL_OLD="${SHELL}"
 SHELL="$(which zsh 2>/dev/null)" || \
         SHELL="$(which ksh 2>/dev/null)" || \
