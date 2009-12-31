@@ -139,9 +139,21 @@ sleepuntil () {
 		sleep "${INTERVAL}"
 	done
 }
-remove-key () {
+rmkey () {
+	HOST=$1
+	RESULT=$(ssh-keygen -F "${HOST}")
+	[[ -n "${RESULT}" ]] || return 0 >/dev/null || return 0
+
+    host "${HOST}" | while read LINE; do set -- ${LINE}; break; done
+    [[ -n $5 ]] && return 1	# error field
+
     HOST=$1
-    host $1 | awk '{print $1 " " $4}' | read FQDN IP
-    ssh-keygen -qR "${HOST}"
-    ssh-keygen -qR "${IP}"
+    IP=$4
+	prepend () {
+		while read LINE; do
+			echo $* ${LINE}
+		done
+	}
+    ssh-keygen -qR "${HOST}" 2>&1 | prepend "${HOST}: "
+    ssh-keygen -qR "${IP}" 2>&1 | prepend "${IP}: "
 }
