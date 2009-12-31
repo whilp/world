@@ -1,11 +1,13 @@
 TERMINUS=/usr/local/lib/X11/fonts/terminus
 BKG="${HOME}/.bkg.png"
 XLOADIMAGE="$(which xloadimage)"
-LOCALXINIT="${HOME}/.xinitrc.local"
-HOSTXINIT="${HOME}/.xinitrc.$(hostname -s)"
+HOSTXINIT="${HOME}/.xinit.d/$(hostname -s)"
 HOSTNAME=$(hostname)
+OSNAME=$(uname)
+EVILWM="evilwm -term xterm"
 WM=cwm
 DOCKED=0
+EXTSCREEN=0
 
 export PATH=/sbin:${HOME}/bin:/usr/X11R6/bin:${PATH}
 
@@ -22,20 +24,10 @@ fi
 if dmesg | grep -q 'acpidock.*GDCK docked'; then
     DOCKED=1
 fi
+if xrandr | grep -q "VGA connected"; then
+    EXTSCREEN=1
+fi
 
-init_zipser () {
-    pgrep -x aucat || aucat -l &
-    if [ "${DOCKED}" -eq 1 ]; then
-        xrandr --output VGA --auto --output LVDS --off
-    else
-        switch-caps
-    fi
-    xterm -T master &
-    firefox &
-}
-
-case "${HOSTNAME}" in
-   zipser.*) init_zipser;;
-esac
+[[ -s "${HOSTXINIT}" ]] && . "${HOSTXINIT}"
 
 exec ${WM}

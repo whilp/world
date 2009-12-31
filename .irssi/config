@@ -157,6 +157,11 @@ hilights = (
     text = "trevor JOINS PARTS QUITS MODES";
     nick = "yes";
     word = "yes";
+  },
+  { 
+    text = "laura JOINS PARTS QUITS MODES";
+    nick = "yes";
+    word = "yes";
   }
 );
 ignores = (

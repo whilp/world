@@ -250,16 +250,16 @@ abstracts = {
 
   # default background for all statusbars. You can also give
   # the default foreground color for statusbar items.
-  sb_background = "%4%w";
+  sb_background = "%7%w";
 
   # default backround for "default" statusbar group
-  #sb_default_bg = "%4";
+  #sb_default_bg = "%7";
   # background for prompt / input line
   sb_prompt_bg = "%n";
   # background for info statusbar
   sb_info_bg = "%8";
   # background for topicbar (same default)
-  #sb_topic_bg = "%4";
+  #sb_topic_bg = "%7";
 
   # text at the beginning of statusbars. sb-item already puts
   # space there,so we don't use anything by default.
@@ -287,9 +287,9 @@ abstracts = {
   # public message
   sb_act_msg = "%W$*";
   # hilight
-  sb_act_hilight = "%M$*";
+  sb_act_hilight = "%_$*%n";
   # hilight with specified color, $0 = color, $1 = text
-  sb_act_hilight_color = "$0$1-%n";
+  sb_act_hilight_color = "%_$1-%n";
 
   # signed messages
   # the following formats fit the Irssi default theme:
@@ -322,5 +322,5 @@ abstracts = {
   ownprivmsgnick_signed = "{msgnick {flag_signed} $*}";
 };
 formats = {
-  "fe-common/core" = { pubmsg = "{pubmsgnick $2 {pubnick \00307$0}}$1"; };
+  "fe-common/core" = { pubmsg = "{pubmsgnick $2 {pubnick \00305$0}}$1"; };
 };

@@ -25,7 +25,7 @@ set mark_old=no
 set mask='!^(\.[^.]|attic|.*log)'
 set mbox_type=Maildir
 set move=no
-set pager_index_lines=10
+set pager_index_lines=4
 set pager_stop=yes
 set postpone=no
 set postponed="+drafts"
@@ -48,10 +48,10 @@ alternates "(wcmaier@wisc\.edu|wcmaier@hep\.wisc\.edu|wcmaier@gmail\.com|willmai
 # Macros.
 macro index Q "<copy-message>=queue<enter><enter>" "Add message to the queue"
 macro pager Q "<copy-message>=queue<enter><enter>" "Add message to the queue"
-macro index S "|/usr/local/bin/sb_filter.py -s >/dev/null<enter><save-message>=attic/spam<enter><enter>" "Mark as spam"
-macro pager S "|/usr/local/bin/sb_filter.py -s >/dev/null<enter><save-message>=attic/spam<enter><enter>" "Mark as spam"
-macro index H "|/usr/local/bin/sb_filter.py -g | fdm -mqa stdin fetch<enter><delete-message>" "Mark as ham"
-macro pager H "|/usr/local/bin/sb_filter.py -g | fdm -mqa stdin fetch<enter><delete-message>" "Mark as ham"
+macro index S "|sb_filter.py -s >/dev/null<enter><save-message>=attic/spam<enter><enter>" "Mark as spam"
+macro pager S "|sb_filter.py -s >/dev/null<enter><save-message>=attic/spam<enter><enter>" "Mark as spam"
+macro index H "|sb_filter.py -g | fdm -mqa stdin fetch<enter><delete-message>" "Mark as ham"
+macro pager H "|sb_filter.py -g | fdm -mqa stdin fetch<enter><delete-message>" "Mark as ham"
 macro pager o "|~/bin/viewitem<enter>" "Open RATM item link in a browser"
 macro index o "|~/bin/viewitem<enter>" "Open RATM item link in a browser"
 macro index C "<change-folder>?" "open a different folder"
@@ -111,6 +111,7 @@ send-hook '~t .' "source ~/.mutt/default"
 send-hook '~t \(jacobsonlaura.*@gmail\.com\|ljacobson@(biochem\.wisc\.edu\|deltanoid\.com)\)' "source ~/.mutt/laura"
 
 send-hook '~t @kingstarusa\.com' "source ~/.mutt/hep"
+send-hook '~t @trincotech\.com' "source ~/.mutt/hep"
 send-hook '~t @dell\.com' "source ~/.mutt/hep"
 send-hook '~t @us\.ibm\.com' "source ~/.mutt/hep"
 send-hook '~t @sun\.com' "source ~/.mutt/hep"

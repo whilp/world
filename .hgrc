@@ -14,6 +14,7 @@ git=1
 extdiff =
 purge =
 record =
+rebase =
 hgext.bookmarks = 
 hgext.convert = 
 hgext.graphlog =
@@ -32,3 +33,6 @@ from = Will Maier <willmaier@ml1.net>
 
 [smtp]
 host = localhost
+
+[trusted]
+users = root

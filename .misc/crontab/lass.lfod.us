@@ -34,3 +34,6 @@ HOME=/home/will/
 # Enable/disable SMS forwarding.
 */5	5-20	*	*	*	/home/will/bin/smsenable
 5	21	*	*	*	/home/will/bin/smsenable disable
+
+# backup mail
+10	2	*	*	0	/home/will/bin/tarsnap --exclude ".maildir/.*" --keyfile /home/will/tarsnap/lass.key --cachedir /home/will/tarsnap/cache -vc -f maildir .maildir

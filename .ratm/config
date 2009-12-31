@@ -78,7 +78,7 @@ symmetry = http://www.symmetrymagazine.org/breaking/feed/
 symmetryfactor = http://apetrov.wordpress.com/feed/
 taosecurity = http://feeds.feedburner.com/Taosecurity
 titusbrown = http://ivory.idyll.org/blog/tags/python?flav=atom
-twitter = http://lt_kije:NwW13hBnEBb9bhW63TG9Y1Lkjc8@twitter.com/statuses/friends_timeline/11125102.rss
+#twitter = http://lt_kije:NwW13hBnEBb9bhW63TG9Y1Lkjc8@twitter.com/statuses/friends_timeline/11125102.rss
 undeadly = http://undeadly.org/cgi?action=rss
 undeadly-errata = http://undeadly.org/cgi?action=errata
 unix-news = http://unix-news.blogspot.com/feeds/posts/default?alt=rss
@@ -104,7 +104,6 @@ hop = http://python-history.blogspot.com/feeds/posts/default
 osg-hadoop = http://twiki.grid.iu.edu/bin/view/Storage/WebRss?search=Hadoop
 mpm = http://www.selenic.com/blog/index.rss20
 jcs = http://jcs.org/rss/
-poirier = http://twitter.com/statuses/user_timeline/20002919.rss
 chitech = http://www.chi-tech.org/atom.xml
 newyorker = http://www.newyorker.com/online/blogs/newsdesk/rss.xml
 decider-msn = http://madison.decider.com/events/feed/latest/picks/
@@ -131,5 +130,6 @@ amie-mowax = http://amiestreet.com/label/mo-wax/albums.rss
 amie-daptones = http://amiestreet.com/label/daptone-records/albums.rss
 amie-bigdada = http://amiestreet.com/label/big-dada/albums.rss
 amie-xl = http://amiestreet.com/label/xl/albums.rss
-amie-xl = http://amiestreet.com/label/caural/albums.rss
+amie-caural = http://amiestreet.com/label/caural/albums.rss
+amie-ninja = http://amiestreet.com/label/ninja-tune/albums.rss
 cjr = http://www.cjr.org/atom.xml

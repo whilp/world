@@ -8,8 +8,7 @@ match "^Message-Id: (.*)" in headers {
 }
 
 # Shortcut local mail.
-match account "local" and
-    "From.*root@[^ ]*\\.lfod\\.us" action "lfod"
+match "From.*root@[^ ]*\\.lfod\\.us" action "lfod"
 
 # Drop stuff I don't care about.
 match "^From:.*(${useless})" in headers action "drop"
@@ -153,6 +152,7 @@ match "^(From|To|Cc):.*@[^ ]*\\.?hep\\.wisc\\.edu" in headers {
     match all action "hep"
 }
 match "^(To|Cc):.*(William\\.Maier|wcmaier)@cern\\.ch" in headers action "hep"
+match "^From:.*@cern\\.ch" in headers action "hep"
 
 # Physics.
 match "^(To|Cc):.*@[^ ]*\\.?physics\\.wisc\\.edu" in headers {

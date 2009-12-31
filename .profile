@@ -86,7 +86,7 @@ hep () {
 lfod () {
     CLUSTER=~/.dsh/config
     RCMD_USER="will"
-    alias ssh >/dev/null && unalias ssh
+    alias | grep -q '^ssh' && unalias ssh
     export CLUSTER RCMD_USER SSH_USER
 }
 

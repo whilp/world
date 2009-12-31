@@ -1,0 +1,10 @@
+if [ "${EXTSCREEN}" -eq 1 ]; then
+    xrandr --output VGA --auto --output LVDS --auto
+else
+    switch-caps
+fi
+xterm -T master &
+case "${OSNAME}" in
+    OpenBSD) continue;;
+    Linux) WM=$EVILWM;;
+esac
