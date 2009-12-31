@@ -18,25 +18,11 @@ notify () {
         echo "===> ${MESSAGE}"
     fi
 }
-lookup () {
-    REGEX=$1
-    grep ${REGEX} 
-}
 calc () {
     cat <<EOF | bc -l
     scale=2
     $*
 EOF
-}
-scpkey () {
-    # Like: scp-key wcmaier@burrito.cae.wisc.edu "SSH-OPTIONS"
-    TARGET=$1
-    shift
-    SSH_OPTS=$*
-    SSH_AUTHFILE="${SSH_HOME}/authorized_keys"
-    for PUBKEY in "${SSH_HOME}/id*pub"; do
-    ssh ${SSH_OPTS} $TARGET "(chmod 600 ${SSH_AUTHFILE}; sh -c \"cat - >> ${SSH_AUTHFILE}\")" < ${PUBKEY}
-    done
 }
 agent () {
     AGENT_SOCK="${SSH_HOME}/agent.sock"
@@ -90,10 +76,6 @@ agent () {
 }
 unstamp () {
     perl -e "print scalar(localtime($1))"; echo
-}
-sr () {
-    [ "${XAUTHORITY}" -o "${DISPLAY}" ] && xtitle $(echo $1 | tr "[:lower:]" "[:upper:]")
-    screen -RD $1
 }
 lsx () {
     IFS=:
