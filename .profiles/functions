@@ -1,6 +1,3 @@
-# Paths
-SSH_HOME="$HOME/.ssh"
-
 warn () {
     MESSAGE=$1
     echo "=!=> ${MESSAGE}"
@@ -24,56 +21,6 @@ calc () {
     $*
 EOF
 }
-agent () {
-    AGENT_SOCK="${SSH_HOME}/agent.sock"
-    SSH_AGENT_FILE="${SSH_HOME}/agent"
-    create_agent () {
-        ssh-agent -s -a "${AGENT_SOCK}" | tee "${SSH_AGENT_FILE}"
-    }
-    if [ -r ${SSH_AGENT_FILE} ]; then
-        notify 2 "Found agent file ${SSH_AGENT_FILE}."
-        chmod 600 ${SSH_AGENT_FILE}
-        . ${SSH_AGENT_FILE} > /dev/null
-
-        # See if old agent still exists.
-        kill -0 ${SSH_AGENT_PID} > /dev/null 2>&1
-        if [ $? -gt 0 ]; then
-            notify 2 "Agent ${SSH_AGENT_PID} doesn't appear to be running."
-            # Agent doesn't exist; make new agent.
-            rm -f ${SSH_AGENT_FILE}
-            eval `create_agent`
-        else
-            notify 2 "Agent ${SSH_AGENT_PID} exists."
-            # Agent does exist; kill all the other 'uns.
-            kill $(pgrep -U ${USER} -x ssh-agent | grep -v ${SSH_AGENT_PID}) > /dev/null 2>&1
-        fi
-    else
-        notify 2 "Didn't find an agent file."
-        # If we don't know about the agents floating around, kill
-        # 'em.
-        pkill -U ${USER} -x ssh-agent
-        rm -f ${SSH_AGENT_FILE}
-        touch ${SSH_AGENT_FILE}
-    chmod 600 ${SSH_AGENT_FILE}
-
-        # Make new agent
-    notify 2 "Creating a new agent."
-        eval `create_agent`
-    fi
-
-    # List keys represented by the agent; if none, add some keys
-    if [ ${VERBOSE} -ge 1 ]; then
-        ssh-add -l
-    else
-        ssh-add -l 2>&1 > /dev/null
-    fi
-    if [ $? -gt 0 ]; then
-        notify 2 "Don't appear to be any keys in the agent."
-        KEYS=$(find ${SSH_HOME} -follow -name "id_*" \! -name "*.pub")
-        ssh-add -t 7d ${KEYS} > /dev/null 2>&1
-    fi
-    chmod 600 ${SSH_AGENT_FILE}
-}
 unstamp () {
     perl -e "print scalar(localtime($1))"; echo
 }
@@ -85,25 +32,6 @@ lsx () {
         done
     done | sort -u
 }
-secret () {
-    cleanup () {
-    SVND=$1
-    MOUNT=$2
-    sudo vnconfig -u "${SVND}" > /dev/null 2>&1
-    sudo umount "${UMOUNT}" > /dev/null 2>&1
-    }
-    SAFEDIR="${HOME}/.safe"
-    SAFEIMG="${HOME}/.safe.img"
-    SVND="s$(sudo vnconfig -l |\
-        sed -e '/not in use$/!d; s/:.*$//' | head -1)"
-    trap "cleanup ${SVND} ${SAFEDIR}" EXIT
-    [ "${SVND}" != 's' ] || (echo "no free (s)vnd devices"; return 1)
-    sudo vnconfig -k "${SVND}" "${SAFEIMG}" && \
-    sudo mount "/dev/${SVND}c" "${SAFEDIR}" && \
-    vim "${SAFEDIR}"
-    sudo umount "${SAFEDIR}" && \
-    sudo vnconfig -u "${SVND}"
-}
 sleepuntil () {
     DATE=$1 
     INTERVAL=${2:-60} 
@@ -113,22 +41,4 @@ sleepuntil () {
     do
         sleep "${INTERVAL}"
     done
-}
-rmkey () {
-    HOST=$1
-    RESULT=$(ssh-keygen -F "${HOST}")
-    [[ -n "${RESULT}" ]] || return 0 >/dev/null || return 0
-
-    host "${HOST}" | while read LINE; do set -- ${LINE}; break; done
-    [[ -n $5 ]] && return 1 # error field
-
-    HOST=$1
-    IP=$4
-    prepend () {
-        while read LINE; do
-            echo $* ${LINE}
-        done
-    }
-    ssh-keygen -qR "${HOST}" 2>&1 | prepend "${HOST}: "
-    ssh-keygen -qR "${IP}" 2>&1 | prepend "${IP}: "
 }
