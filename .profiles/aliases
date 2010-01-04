@@ -22,6 +22,7 @@ alias ls="ls -F"
 alias mtr="mtr -t"
 alias pource=". $HOME/.profile"
 alias rmagent="ssh-add -D; agent"
+alias sudo='A=`alias` /usr/bin/sudo '
 alias tmux="tmux -S ${TMUX_SOCK}"
 alias vi="${VISUAL}"
 alias xinit="xinit -- -nolisten tcp"
