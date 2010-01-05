@@ -9,3 +9,4 @@ XTerm*scrollBar: false
 XTerm*charClass: 33:48,37:48,45-47:48,58:48,61:48,63-64:48,126:48
 XTerm*background: #FFF
 XTerm*foreground: #000
+XTerm*pointerMode: 1
