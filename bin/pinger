@@ -6,9 +6,8 @@ INTERVAL=20
 WAIT=1
 
 pinger () {
-    NOW=$(date '+%Y.%m.%dT%H:%M:%S')
-
     while [[ -n "$*" ]]; do
+        NOW=$(date '+%Y.%m.%dT%H:%M:%S')
         STATE=${1##*!}
         TARGET=${1%%!*}
         shift
