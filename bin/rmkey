@@ -1,18 +1,27 @@
 #!/bin/sh
 
 HOST=$1
+
+prepend () {
+    while read LINE; do
+    echo $* ${LINE}
+    done
+}
+
+rmkey () {
+    HOST=$1
+    IP=$4
+
+    ssh-keygen -qR "${HOST}" 2>&1 | prepend "${HOST}: "
+    ssh-keygen -qR "${IP}" 2>&1 | prepend "${IP}: "
+}
+
 RESULT=$(ssh-keygen -F "${HOST}")
 [[ -n "${RESULT}" ]] || return 0 >/dev/null || return 0
 
-host "${HOST}" | while read LINE; do set -- ${LINE}; break; done
-[[ -n $5 ]] && return 1 # error field
-
-HOST=$1
-IP=$4
-prepend () {
-    while read LINE; do
-	echo $* ${LINE}
-    done
-}
-ssh-keygen -qR "${HOST}" 2>&1 | prepend "${HOST}: "
-ssh-keygen -qR "${IP}" 2>&1 | prepend "${IP}: "
+host "${HOST}" | while read LINE; do
+    set -- ${LINE}
+    [[ -n $5 ]] && exit 1 # error field
+    rmkey $*
+    break
+done
