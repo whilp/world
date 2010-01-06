@@ -1,13 +1,3 @@
-##################  BEGIN HEADERS
-# Filename	: $HOME/.profile
-# Use		: configures default shell environment
-# Author	: Will Maier <willmaier@ml1.net>
-# Vim		: :vim: set ft=sh:
-# CVS		: $Id: profile,v 1.136 2006/06/26 14:26:44 will Exp $
-# Copyright	: Copyright (c) 2005 Will Maier
-# License	: BSD; see <http://www.lfod.us/copyright.html>
-##################  END HEADERS
-
 # Environment variables
 EDITOR="$(which nvi 2>/dev/null)" || \
 	EDITOR="$(which vi)" || \
