@@ -1,3 +1,13 @@
+addto () {
+    STRING=$1
+    NEW=$2
+    AFTER=$3
+    case "${STRING}" in 
+        ${NEW}|${NEW}:*|*:${NEW}|*:${NEW}:*);;
+        *) [ "${AFTER}" = "after" ] && STRING="${STRING}:${NEW}" || STRING="${NEW}:${STRING}" ;; 
+    esac
+    echo ${STRING}
+}
 warn () {
     MESSAGE=$1
     echo "=!=> ${MESSAGE}"
