@@ -10,6 +10,7 @@
 # License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
 ##################  END HEADERS
 
+alias beep="printf '\a'"
 alias ci="ci -l"
 alias co="co -l"
 alias curl="curl -s"
