@@ -5,7 +5,7 @@ alias curl="curl -s"
 alias dsh="DISPLAY='' dsh -e -t -o ${RCMD_TEST_TIMEOUT} -p ${RSHPORT} -f ${FANOUT}"
 alias elinks="DISPLAY='' elinks -touch-files -no-connect"
 alias klog="klog -setpag"
-alias less="less -X"
+alias less=${PAGER}
 alias list="tmux ls"
 alias ls="ls -F"
 alias mtr="mtr -t"
