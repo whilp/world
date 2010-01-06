@@ -1,15 +1,3 @@
-##################  BEGIN HEADERS
-# Filename	: $HOME/.profiles/aliases
-# Use		: Universal shell aliases
-# Author	: Will Maier <willmaier@ml1.net>
-# Vim		: vim: set ft=sh tw=0:
-# Version	: $Revision: 1.6 $
-# Updated	: $Date: 2006/05/31 18:59:00 $
-# CVS		: $Id: aliases,v 1.6 2006/05/31 18:59:00 will Exp $
-# Copyright	: Copyright (c) 2006 Will Maier
-# License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
-##################  END HEADERS
-
 alias beep="printf '\a'"
 alias ci="ci -l"
 alias co="co -l"
