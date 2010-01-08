@@ -1,19 +1,4 @@
-##################  BEGIN HEADERS
-# Filename	: $HOME/.profiles/openbsd
-# Use		: OpenBSD-specifc shell environment
-# Author	: Will Maier <willmaier@ml1.net>
-# Vim		: vim: set ft=sh:
-# Copyright	: Copyright (c) 2006 Will Maier
-# License	: Expat; see <http://www.opensource.org/licenses/mit-license.php>
-##################  END HEADERS
-
-notify 2 "Configuring for OpenBSD."
-
 # Environment variables
-[ -n "$(sysctl -n kern.version | grep -E '(current|4.1)')" ] && OSVERSION="snapshots" || OSVERSION="$(sysctl -n kern.osrelease)"
-MACHINE="$(machine -a)"
-
-#PKG_PATH="scp://will@nak.lfod.us//srv/mirror/snap/current/packages/i386"
 #PKG_PATH="ftp://obsd.cec.mtu.edu/pub/OpenBSD/snapshots/packages/i386"
 PKG_PATH=scp://will@nak.lfod.us/srv/mirror/snap/current/packages/i386
 CVSROOT=anoncvs@anoncvs1.ca.openbsd.org:/cvs
@@ -24,5 +9,5 @@ export CVSROOT FTP_SERV PKG_PATH PATH
 # Swap capslock and left control on the console
 wsconsctl keyboard.map+="keysym Caps_Lock = Control_L" > /dev/null 2>&1
 
-# Aliases
-alias pkg_add='pkg_add -iv'
+# Aliases.
+alias pkg_add='pkg_add -i'
