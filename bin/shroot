@@ -31,7 +31,7 @@ build_chroot () {
     mkdir -p "${CHROOTDIR}"
     for FILESET in "${SETROOT}"/*.tgz; do
         say "Extracting $(basename ${FILESET})"
-        tar xzpf "${FILESET}"
+        tar xzpf "${FILESET}" -C"${CHROOTDIR}"
     done
     
     say "Installing kernels and ramdisk"
