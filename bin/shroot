@@ -16,6 +16,13 @@ error () {
     echo "=!=> $*"
 }
 
+makeabs () {
+    OPWD="${PWD}"
+    cd "$1"
+    echo $PWD
+    cd "${OPWD}"
+}
+
 enter_chroot () {
     ssh "${CHROOTUSER}@${CHROOTHOST}"
 }
@@ -51,15 +58,14 @@ build_chroot () {
 while getopts H:hs:u: ARG; do
     case "${ARG}" in
         H) CHROOTHOST="${OPTARG}";;
-        s) SETROOT="${OPTARG}";;
+        s) SETROOT=$(makeabs "${OPTARG}");;
         u) CHROOTUSER="${OPTARG}";;
         *) usage; exit 1;;
     esac
 done
 
 shift $(($OPTIND - 1))
-CHROOTDIR="$1"
-
+CHROOTDIR=$(makeabs "$1")
 
 if [ -z "${SETROOT}" ]; then
     enter_chroot
