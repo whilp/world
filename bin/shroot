@@ -5,68 +5,68 @@ CHROOTUSER=$(whoami)
 unset SETROOT
 
 usage () {
-	echo "mychroot [-H CHROOTHOST] [-s SETROOT] [-u CHROOTUSER] CHROOTDIR"
+    echo "mychroot [-H CHROOTHOST] [-s SETROOT] [-u CHROOTUSER] CHROOTDIR"
 }
 
 say () {
-	echo "===> $*"
+    echo "===> $*"
 }
 
 error () {
-	echo "=!=> $*"
+    echo "=!=> $*"
 }
 
 while getopts H:hs:u: ARG; do
-	case "${ARG}" in
-		H) CHROOTHOST="${OPTARG}";;
-		s) SETROOT="${OPTARG}";;
-		u) CHROOTUSER="${OPTARG}";;
-		*) usage; exit 1;;
-	esac
+    case "${ARG}" in
+        H) CHROOTHOST="${OPTARG}";;
+        s) SETROOT="${OPTARG}";;
+        u) CHROOTUSER="${OPTARG}";;
+        *) usage; exit 1;;
+    esac
 done
 
 shift $(($OPTIND - 1))
 CHROOTDIR="$1"
 
 enter_chroot () {
-	ssh "${CHROOTUSER}@${CHROOTHOST}"
+    ssh "${CHROOTUSER}@${CHROOTHOST}"
 }
 
 build_chroot () {
-	mkdir -p "${CHROOTDIR}"
-	for FILESET in "${SETROOT}"/*.tgz; do
-		say "Extracting $(basename ${FILESET})"
-		tar xzpf "${FILESET}"
-	done
-	
-	say "Installing kernels and ramdisk"
-	cp "${SETROOT}"/bsd* "${CHROOTDIR}/"
-	
-	say "Running MAKEDEV"
-	cd "${CHROOTDIR}/dev"
-	./MAKEDEV all >/dev/null
-	
-	say "Updating /etc/{localtime,resolv.conf}"
-	ln -sf "$(readlink /etc/localtime)" "${CHROOTDIR}/etc/localtime"
-	cp "/etc/resolv.conf" "${CHROOTDIR}/etc/resolv.conf"
+    mkdir -p "${CHROOTDIR}"
+    for FILESET in "${SETROOT}"/*.tgz; do
+        say "Extracting $(basename ${FILESET})"
+        tar xzpf "${FILESET}"
+    done
+    
+    say "Installing kernels and ramdisk"
+    cp "${SETROOT}"/bsd* "${CHROOTDIR}/"
+    
+    say "Running MAKEDEV"
+    cd "${CHROOTDIR}/dev"
+    ./MAKEDEV all >/dev/null
+    
+    say "Updating /etc/{localtime,resolv.conf}"
+    ln -sf "$(readlink /etc/localtime)" "${CHROOTDIR}/etc/localtime"
+    cp "/etc/resolv.conf" "${CHROOTDIR}/etc/resolv.conf"
 
-	CHROOTUID=$(id -u "${CHROOTUSER}")
-	say "Adding user ${CHROOTUSER}/${CHROOTUID}"
-	echo "${CHROOTUSER}   ALL=(ALL) NOPASSWD: SETENV: ALL" >> "${CHROOTDIR}/etc/sudoers"
-	chroot "${CHROOTDIR}" useradd -md "/home/${CHROOTUSER}" -u "${CHROOTUID}" "${CHROOTUSER}"
-	
-	say "Updating dev.db and ld.so.hints"
-	chroot "${CHROOTDIR}" dev_mkdb
-	chroot "${CHROOTDIR}" ldconfig /usr/lib /usr/local/lib /usr/X11R6/lib
+    CHROOTUID=$(id -u "${CHROOTUSER}")
+    say "Adding user ${CHROOTUSER}/${CHROOTUID}"
+    echo "${CHROOTUSER}   ALL=(ALL) NOPASSWD: SETENV: ALL" >> "${CHROOTDIR}/etc/sudoers"
+    chroot "${CHROOTDIR}" useradd -md "/home/${CHROOTUSER}" -u "${CHROOTUID}" "${CHROOTUSER}"
+    
+    say "Updating dev.db and ld.so.hints"
+    chroot "${CHROOTDIR}" dev_mkdb
+    chroot "${CHROOTDIR}" ldconfig /usr/lib /usr/local/lib /usr/X11R6/lib
 }
 
 if [ -z "${SETROOT}" ]; then
-	enter_chroot
+    enter_chroot
 else
-	if [ "`id -u`" -ne 0 ]; then
-		error "need root privileges to run this script"
-		usage
-		exit 1
-	fi
-	build_chroot
+    if [ "`id -u`" -ne 0 ]; then
+        error "need root privileges to run this script"
+        usage
+        exit 1
+    fi
+    build_chroot
 fi
