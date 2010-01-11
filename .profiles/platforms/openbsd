@@ -1,9 +1,10 @@
 # Environment variables
-#PKG_PATH="ftp://obsd.cec.mtu.edu/pub/OpenBSD/snapshots/packages/i386"
-PKG_PATH=scp://will@nak.lfod.us/srv/mirror/snap/current/packages/i386
+PKG_PATH="http://mirror.lfod.us/pub/OpenBSD/snapshots/packages/i386"
 CVSROOT=anoncvs@anoncvs1.ca.openbsd.org:/cvs
 FETCH_PACKAGES=yes
 PATH="${PATH}:/usr/X11R6/bin"
+LOCATE_PATH=/var/db/pkglocate.database:/var/db/locate.database
+
 export CVSROOT FTP_SERV PKG_PATH PATH
 
 # Swap capslock and left control on the console
