@@ -16,18 +16,6 @@ error () {
     echo "=!=> $*"
 }
 
-while getopts H:hs:u: ARG; do
-    case "${ARG}" in
-        H) CHROOTHOST="${OPTARG}";;
-        s) SETROOT="${OPTARG}";;
-        u) CHROOTUSER="${OPTARG}";;
-        *) usage; exit 1;;
-    esac
-done
-
-shift $(($OPTIND - 1))
-CHROOTDIR="$1"
-
 enter_chroot () {
     ssh "${CHROOTUSER}@${CHROOTHOST}"
 }
@@ -59,6 +47,19 @@ build_chroot () {
     chroot "${CHROOTDIR}" dev_mkdb
     chroot "${CHROOTDIR}" ldconfig /usr/lib /usr/local/lib /usr/X11R6/lib
 }
+
+while getopts H:hs:u: ARG; do
+    case "${ARG}" in
+        H) CHROOTHOST="${OPTARG}";;
+        s) SETROOT="${OPTARG}";;
+        u) CHROOTUSER="${OPTARG}";;
+        *) usage; exit 1;;
+    esac
+done
+
+shift $(($OPTIND - 1))
+CHROOTDIR="$1"
+
 
 if [ -z "${SETROOT}" ]; then
     enter_chroot
