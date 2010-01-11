@@ -15,9 +15,6 @@ MAIL=""
 PAGER="less -iX"
 PATH="$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin:/usr/games"
 SSH="$(which ssh)"
-if [ "${TERM}" != "screen" ]; then
-    TERM=vt220
-fi
 VERBOSE="1"
 TMUX_SOCK=~/.tmux.sock
 export EDITOR HOSTNAME LANG MAIL PATH PAGER SHELL VERBOSE TODO TMUX_SOCK
