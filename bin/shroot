@@ -28,30 +28,12 @@ done
 shift $(($OPTIND - 1))
 CHROOTDIR="$1"
 
-update_files () {
-	cat <<-EOF >> $1/root/profile
-	set -o vi
-
-	plog () {
-		/usr/ports/infrastructure/build/portslogger /usr/ports/logs/.
-	}
-EOF
-	
-	cat <<-EOF >> $1/etc/mk.conf
-	SUDO=/usr/bin/sudo
-	FETCH_PACKAGES=Yes
-	PLIST_DB=/var/db/plists
-	WRKOBJDIR=/usr/obj/ports
-EOF
-}
-
 enter_chroot () {
 	ssh "${CHROOTUSER}@${CHROOTHOST}"
 }
 
 build_chroot () {
 	mkdir -p "${CHROOTDIR}"
-	cd "${CHROOTDIR}"
 	for FILESET in "${SETROOT}"/*.tgz; do
 		say "Extracting $(basename ${FILESET})"
 		tar xzpf "${FILESET}"
@@ -67,9 +49,6 @@ build_chroot () {
 	say "Updating /etc/{localtime,resolv.conf}"
 	ln -sf "$(readlink /etc/localtime)" "${CHROOTDIR}/etc/localtime"
 	cp "/etc/resolv.conf" "${CHROOTDIR}/etc/resolv.conf"
-	
-	say "Updating system configuration"
-	update_files
 
 	CHROOTUID=$(id -u "${CHROOTUSER}")
 	say "Adding user ${CHROOTUSER}/${CHROOTUID}"
