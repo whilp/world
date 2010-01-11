@@ -1,16 +1,3 @@
-##################  BEGIN HEADERS
-# Filename	: $HOME/.zshrc
-# Use		: setup file for zsh (z shell)
-# Author	: Will Maier <willmaier@ml1.net>
-# Vim           : vim: set ft=sh:
-# CVS		: $Id: zshrc,v 1.60 2006/07/18 14:54:25 will Exp $
-# Copyright	: Copyright (c) 2005-2006 Will Maier
-# License	: BSD; see <http://www.lfod.us/copyright.html>
-##################  END HEADERS
-
-# Grab general settings
-[ -r "${HOME}/.profile" ] && . "${HOME}/.profile"
-
 # Terminal settings
 bindkey -v
 
@@ -62,11 +49,6 @@ zstyle ':completion:*:manuals' separate-sections true
 zstyle ':completion:*' menu select
 zstyle ':completion:*' verbose yes
 
-# Use ~/.ssh/ to determine hostnames
-[ -f ~/.ssh/config ] && : ${(A)ssh_config_hosts:=${${${${(@M)${(f)"$(<~/.ssh/config)"}:#Host *}#Host }:#*\**}:#*\?*}}
-[ -f ~/.ssh/known_hosts ] && : ${(A)ssh_known_hosts:=${${${(f)"$(<$HOME/.ssh/known_hosts)"}%%\ *}%%,*}}
-zstyle ':completion:*:*:*' hosts $ssh_config_hosts $ssh_known_hosts
-
 watch=(notme root)		    # Note logins
 
 # zsh aliases
@@ -87,22 +69,19 @@ else
     PS1="%B%~%b %#%b "
 fi
 
-# Set the right prompt based on the screen sessionname and window number, or,
-# if not running in screen, the (pseudo) TTY.
+# Set the right prompt based on the tmux sessionname and window number, or,
+# if not running in tmux, the (pseudo) TTY.
 if [ -n "${STY}" ]; then
-    # GNU screen sets $STY; if it's non-zero, assume we're in screen.
-
-    # Determine the name of the current screen session from $STY
+    # Determine the name of the current tmux session from $STY
     SESSIONNAME="${STY##*.}"
     if [ "${SESSIONNAME}" = "${HOSTNAME}" ]; then
-	SESSIONNAME="screen"
+	SESSIONNAME="tmux"
     fi
 
     NAME=${SESSIONNAME}
     NUMBER=${WINDOW}
 else
-    # We're not in screen; let's figure out what TTY we're on instead.
-
+    # We're not in tmux; let's figure out what TTY we're on instead.
     TTYOUT="$(tty)"
     TTYNODEV="${TTYOUT##*/}"
     TTYNAME="${TTYNODEV%?}"
@@ -121,19 +100,6 @@ else
 fi
 # Assemble the right prompt
 RPS1="%B ${NAME}[${NUMBER}] @ ${HOSTNAME} %(0?,,E[%?])%b"
-
-xtitle () {
-    MESSAGE="$1"
-    print -Pn "\e]0;${HOSTNAME}[${MESSAGE}]\a"
-}
-ns () {
-    if [ "$(env | grep -E '(X|COLOR)TERM')" ]; then
-        UTITLE=$(echo $1 | tr '[:lower:]' '[:upper:]')
-        LTITLE=$(echo $1 | tr '[:upper:]' '[:lower:]')
-        print -Pn "\e]0;${HOSTNAME}[${UTITLE}]\a"
-    fi
-    screen -S "${LTITLE}"
-}
 
 # Set zsh options
 setopt NO_beep

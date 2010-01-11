@@ -31,7 +31,7 @@ build_chroot () {
     mkdir -p "${CHROOTDIR}"
     for FILESET in "${SETROOT}"/*.tgz; do
         say "Extracting $(basename ${FILESET})"
-        tar xzpf "${FILESET}" -C"${CHROOTDIR}"
+        tar -xzp -C "${CHROOTDIR}" -f "${FILESET}"
     done
     
     say "Installing kernels and ramdisk"
@@ -41,14 +41,13 @@ build_chroot () {
     cd "${CHROOTDIR}/dev"
     ./MAKEDEV all >/dev/null
     
+    say "Installing passwd and group files"
+    cp /etc/master.passwd /etc/group "${CHROOTDIR}"/etc/.
+    chroot "${CHROOTDIR}" pwd_mkdb -p /etc/master.passwd
+
     say "Updating /etc/{localtime,resolv.conf}"
     ln -sf "$(readlink /etc/localtime)" "${CHROOTDIR}/etc/localtime"
     cp "/etc/resolv.conf" "${CHROOTDIR}/etc/resolv.conf"
-
-    CHROOTUID=$(id -u "${CHROOTUSER}")
-    say "Adding user ${CHROOTUSER}/${CHROOTUID}"
-    echo "${CHROOTUSER}   ALL=(ALL) NOPASSWD: SETENV: ALL" >> "${CHROOTDIR}/etc/sudoers"
-    chroot "${CHROOTDIR}" useradd -md "/home/${CHROOTUSER}" -u "${CHROOTUID}" "${CHROOTUSER}"
     
     say "Updating dev.db and ld.so.hints"
     chroot "${CHROOTDIR}" dev_mkdb
@@ -59,7 +58,6 @@ while getopts H:hs:u: ARG; do
     case "${ARG}" in
         H) CHROOTHOST="${OPTARG}";;
         s) SETROOT=$(makeabs "${OPTARG}");;
-        u) CHROOTUSER="${OPTARG}";;
         *) usage; exit 1;;
     esac
 done
