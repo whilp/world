@@ -28,6 +28,6 @@ if xrandr | grep -q "VGA connected"; then
     EXTSCREEN=1
 fi
 
-[[ -s "${HOSTXINIT}" ]] && . "${HOSTXINIT}"
+[ -s "${HOSTXINIT}" ] && . "${HOSTXINIT}"
 
 exec ${WM}

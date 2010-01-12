@@ -18,8 +18,10 @@ SSH="$(which ssh)"
 if [ "${TERM}" != "screen" ]; then
     TERM=vt220
 fi
-VERBOSE="1"
 TMUX_SOCK=~/.tmux.sock
+UID=${UID:-$(id -u)}
+VERBOSE="1"
+
 export EDITOR HOSTNAME LANG MAIL PATH PAGER SHELL VERBOSE TODO TMUX_SOCK
 
 # CVS.
@@ -57,11 +59,11 @@ case "${UNAME}" in
     OpenBSD)    PLATFORM="${PLATFORMS}/openbsd";;
     Linux)      PLATFORM="${PLATFORMS}/linux";;
 esac
-[[ -r "${PLATFORM}" ]] && . "${PLATFORM}"
+[ -r "${PLATFORM}" ] && . "${PLATFORM}"
 
 # Host settings.
 FQDN=$(hostname)
-[[ -r "${HOSTS}/${FQDN}" ]] && . "${HOSTS}/${FQDN}"
+[ -r "${HOSTS}/${FQDN}" ] && . "${HOSTS}/${FQDN}"
     
 # Virtualenv.
 OLDPS1="${PS1}"
