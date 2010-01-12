@@ -1,3 +1,5 @@
+. ~/.profile
+
 # Terminal settings
 bindkey -v
 
