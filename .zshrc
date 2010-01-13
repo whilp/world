@@ -137,7 +137,6 @@ setopt rcquotes		    # elegant quoting of quotes ('"' -> ')
 
 # Set variables that zsh cares about
 export ZSHDIR=$HOME/.zsh
-export VISUAL='vim'
 HISTSIZE=1000
 SAVEHIST=1000
 if [ $(id -u) -eq 0 ]; then
