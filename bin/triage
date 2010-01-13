@@ -106,25 +106,30 @@ class ReloadingFileHandler(logging.FileHandler):
         self.stream = self.open(self.baseFilename, self.mode, self.encoding)
         logging.FileHandler.emit(self, record)
 
+class RotatingFileHandler(logging.FileHandler):
+
+    def __init__(self, basedir, mode='a', encoding=None):
+        stream = .
+
 if __name__ == "__main__":
     import sys
 
     try:
-        logfile = sys.argv[1]
+        logdir = sys.argv[1]
     except IndexError:
-        logfile = "~/.triage"
+        logdir = "~/share/doc/log"
 
-    logfile = os.path.expanduser(logfile)
-    logfile = os.path.abspath(logfile)
+    logdir = os.path.expanduser(logdir)
+    logdir = os.path.abspath(logdir)
 
     # Set up logging.
     log = logging.getLogger("triage")
     log.setLevel(LEVEL)
-    handler = ReloadingFileHandler(logfile)
+    handler = ReloadingFileHandler(logdir)
     handler.setLevel(LEVEL)
     formatter = logging.Formatter(MSG_FMT, DATE_FMT)
     handler.setFormatter(formatter)
     log.addHandler(handler)
 
-    triage = Triage(log, logfile, sys.stdout)
+    triage = Triage(log, logdir, sys.stdout)
     triage.cmdloop()

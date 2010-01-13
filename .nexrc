@@ -16,9 +16,9 @@ set wraplen=72
 map g 1G
 
 " (Un)expand tabs.
-map *T g!Gexpand -t4
-map *t g!Gunexpand
+map *e g!Ge
+map *u g!Gu
 
 " Format a paragraph.
-map *F  {!}par 
-map *f {!}par T4q1i1}
+map *F  {!}f
+map *f {!}F}
