@@ -1,13 +1,14 @@
+WHICH=$(/usr/bin/env which which)
 # Environment variables
-EDITOR="$(which nvi 2>/dev/null)" || \
-    EDITOR="$(which vi)" || \
-    EDITOR="$(which vim)"
+EDITOR="$($WHICH nvi 2>/dev/null)" || \
+    EDITOR="$($WHICH vi)" || \
+    EDITOR="$($WHICH vim)"
 VISUAL=${EDITOR}
 SHELL_OLD="${SHELL}"
-SHELL="$(which zsh 2>/dev/null)" || \
-        SHELL="$(which ksh 2>/dev/null)" || \
-        SHELL="$(which bash 2>/dev/null)" || \
-        SHELL="$(which sh)"
+SHELL="$($WHICH zsh 2>/dev/null)" || \
+        SHELL="$($WHICH ksh 2>/dev/null)" || \
+        SHELL="$($WHICH bash 2>/dev/null)" || \
+        SHELL="$($WHICH sh)"
 HOSTNAME="$(hostname -s)"
 LANG="C"
 OLDMAIL="${MAIL}"
