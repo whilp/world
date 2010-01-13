@@ -28,4 +28,4 @@ bind MCS-q      "sudo shutdown -hp now"
 
 mousebind M-3  window_resize
 
-gap 0 75 0 0
+gap 0 93 0 0
