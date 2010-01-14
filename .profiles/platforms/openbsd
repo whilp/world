@@ -1,11 +1,11 @@
 # Environment variables
-PKG_PATH="http://mirror.lfod.us/pub/OpenBSD/snapshots/packages/i386"
 CVSROOT=anoncvs@anoncvs1.ca.openbsd.org:/cvs
 FETCH_PACKAGES=yes
-PATH="${PATH}:/usr/X11R6/bin"
 LOCATE_PATH=/var/db/pkglocate.database::/var/db/locate.database
+PATH="${PATH}:/usr/X11R6/bin"
+PKG_PATH="http://mirror.lfod.us/pub/OpenBSD/snapshots/packages/i386"
 
-export CVSROOT FTP_SERV PKG_PATH PATH
+export CVSROOT FETCH_PACKAGES LOCATE_PATH PATH PKG_PATH 
 
 # Swap capslock and left control on the console
 wsconsctl keyboard.map+="keysym Caps_Lock = Control_L" > /dev/null 2>&1
