@@ -1,13 +1,12 @@
-GROUP:openbsd
-nak.lfod.us
-lass.lfod.us
-vger.lfod.us
-bill.lfod.us
-zeroth.lfod.us
+GROUP:servers
+bel.lfod.us
+bray.lfod.us
+burko.lfod.us
 
-GROUP:ubuntu
-soyuz.lfod.us
-messenger.lfod.us
+GROUP:workstations
+wheeler.lfod.us
+witten.lfod.us
+zipser.lfod.us
 
 GROUP:servers
 hg.lfod.us
