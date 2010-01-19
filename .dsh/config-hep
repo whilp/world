@@ -1,6 +1,5 @@
 GROUP:servers
 anise
-basil
 cassia
 cayenne
 cilantro
@@ -16,9 +15,7 @@ itb
 jasmine
 noc
 nod
-phedex
 rosemary
-sesame
 web
 thyme
 
@@ -31,10 +28,8 @@ zeus
 fennel
 
 GROUP:desktops
-allium
 alyssum
 amaryllis
-ammi
 azalea
 bellis
 calpurnia
@@ -54,9 +49,7 @@ kiwi
 liatris
 lily
 mano
-mum
 owl
-pelican
 penguin
 peony
 primula
@@ -69,8 +62,6 @@ zephyranth
 
 GROUP:dns
 dns2
-dns3
-dns4
 
 GROUP:login
 login01
@@ -83,8 +74,6 @@ cmsdcache01
 cmsdcache02
 cmsdcache03
 cmsdcache04
-cmsdcache05
-cmsdcache06
 
 GROUP:s5
 s5n01
@@ -96,21 +85,6 @@ s5n06
 s5n07
 s5n08
 s5n09
-
-GROUP:g3
-g3n01
-g3n02
-g3n03
-g3n04
-g3n05
-g3n06
-g3n07
-g3n08
-g3n09
-g3n10
-g3n11
-g3n12
-g3n13
 
 GROUP:g4
 g4n01
@@ -288,10 +262,6 @@ g10n22
 g10n23
 g10n24
 
-GROUP:g11
-g11n01
-g11n02
-
 GROUP:g12
 g12n01
 g12n02
@@ -372,6 +342,64 @@ s15n08
 s15n09
 s15n10
 
+GROUP:g16
+g16n01
+g16n02
+g16n03
+g16n04
+g16n05
+g16n06
+g16n07
+g16n08
+g16n09
+g16n10
+g16n11
+g16n12
+g16n13
+g16n14
+g16n15
+g16n16
+g16n17
+g16n18
+g16n19
+g16n20
+g16n21
+g16n22
+g16n23
+g16n24
+g16n25
+g16n26
+g16n27
+g16n28
+g16n29
+g16n30
+g16n31
+g16n32
+g16n33
+g16n34
+g16n35
+g16n36
+g16n37
+g16n38
+g16n39
+g16n40
+g16n41
+g16n42
+g16n43
+g16n44
+g16n45
+g16n46
+g16n47
+g16n48
+g16n49
+g16n50
+g16n51
+g16n52
+g16n53
+g16n54
+g16n55
+g16n56
+
 GROUP:plasma
 plasma01
 pg1n01
@@ -432,71 +460,11 @@ g14
 s5
 s15
 
-## TO CHECK FOR BITROT:
-#for HOST in $(dsh -qi | sed -e '1,3d; s/.*Host: //' | sed -e '1,/g6n20/d'); do
-#ping -c 1 -w 1 ${HOST} >/dev/null 2>&1 && ssh -oStrictHostKeyChecking=no -oBatchMode=yes wcmaier@${HOST} echo >/dev/null || echo "DOWN: $HOST"
-#done
-
-#BAD=''                                                                                                        
-#USER=wcmaier
-#for HOST in $(hsh -qi | sed -e '1,3d; s/.*Host: //'); do
-#  ping -c 1 -w 1 $HOST >/dev/null 2>&1
-#  if [ $? -ne 0 ]; then
-#      echo "$HOST...OFFLINE"
-#      BAD="$BAD $HOST"
-#  else
-#      nc -w 1 $HOST 22 >/dev/null 2>&1 && ssh -o'StrictHostKeyChecking no' -o"BatchMode yes" $USER@$HOST 'sleep 1'
-#      if [ $? -ne 0 ]; then
-#          echo "$HOST...BAD"
-#          BAD="$BAD $HOST"
-#      else
-#          echo "$HOST...OK"
-#      fi
-#  fi
-#done
-#for HOST in $BAD; do echo "BAD: $HOST"; done
-
-## BAD NODES:
-#bluegrass
-#buttercup
-#dahlia
-#eucharis
-#hawk
-#lotus
-#quail
-#syringa
-#vai
-#clover
-#cilantro-new
-#cdfgrid01
-#syringa
-#vai
-#s6n01
-#g3n05
-#g3n29
-#g3n31
-#g3n32
-#g4n16
-#g5n07
-#g6n11
-#g7n06
-#g7n07
-#g9n46
-#g9n47
-#g10n06
-#g10n07
-#g10n13
-#g10n19
-#g10n24
-
 ## KEY UNFRIENDLY:
-#basil
 #ginseng
 #oregano
 #dns
 #dns2
-#all g4
-#all g5
-#all g6
-#all g7
-#all g8
+
+# To clean up:
+# (dsh -qi | awk '{if (/^$/ !~ $8) {print $8}}' | sort -u | while read h; do rmkey -c $h; ssh-keyscan -HT1 $h >> ~/.ssh/known_hosts; done ) 2>&1 | grep -v '^#'
