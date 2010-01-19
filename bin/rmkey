@@ -1,27 +1,52 @@
 #!/bin/sh
 
-HOST=$1
+CHECK=1
+VERBOSE=
 
-prepend () {
+emit () {
     while read LINE; do
-    echo $* ${LINE}
+        [ -n "${VERBOSE}" ] && echo $* ${LINE}
     done
 }
 
 rmkey () {
     HOST=$1
-    IP=$5
 
-    ssh-keygen -qR "${HOST}" 2>&1 | prepend "${HOST}: "
-    ssh-keygen -qR "${IP}" 2>&1 | prepend "${IP}: "
+    if [ -n "${CHECK}" ]; then
+        RESULT=$(ssh-keygen -F "${HOST}")
+        [ -n "${RESULT}" ] || return 0 >/dev/null
+    fi
+
+    HOSTOUT=$(host "${HOST}")
+    if [ $? -ne 0 -o -z "${HOSTOUT}" ]; then
+        return 1
+    fi
+
+    ssh-keygen -qR "${HOST}" 2>&1 | emit "${HOST}: "
+    echo "${HOSTOUT}" | while read LINE; do
+        set -- ${LINE}
+        [ -n "$5" ] && continue
+        [ "$2 $3" != "has address" ] && continue
+        IP="$4"
+        ssh-keygen -qR "${IP}" 2>&1 | emit "${IP}: "
+    done
 }
 
-RESULT=$(ssh-keygen -F "${HOST}")
-[[ -n "${RESULT}" ]] || return 0 >/dev/null || return 0
+usage () {
+    echo "Usage: $0 [-ch] HOST"
+}
 
-host "${HOST}" | while read LINE; do
-    set -- ${LINE}
-    [[ -n $5 ]] && exit 1 # error field
-    rmkey ${HOST} $*
-    break
+while getopts chv ARG; do
+    case "${ARG}" in
+        c) CHECK=;;
+        h) usage; exit 0;;
+        v) VERBOSE=1;;
+        *) usage; exit 1;;
+    esac
 done
+shift $(($OPTIND - 1))
+
+for HOST in $*; do
+    rmkey "${HOST}"
+done
+exit $?
