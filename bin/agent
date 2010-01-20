@@ -1,0 +1,59 @@
+REMOVE=
+VERBOSE=
+SSH_HOME="$HOME/.ssh"
+AGENT_SOCK="${SSH_HOME}/agent.sock"
+SSH_AGENT_FILE="${SSH_HOME}/agent"
+SSH_AGENT_PID=
+
+agent () {
+    . "${SSH_AGENT_FILE}" >/dev/null 2>&1
+    ssh-add -l >/dev/null 2>&1
+    RET=$?
+
+    if [ "${RET}" -eq 0 -a -n "${VERBOSE}" ]; then
+        ssh-add -l
+    fi
+    if [ "${RET}" -eq 2 ]; then
+        # Try to kill off the running agent (if present).
+        kill -9 "${SSH_AGENT_PID}" >/dev/null 2>&1
+
+        # Create an agent.
+        TMPFILE=$(mktemp)
+        trap "rm -f ${TMPFILE}" 0 1 15
+        ssh-agent -t7d -s -a "${AGENT_SOCK}" >| "${TMPFILE}"
+        chmod 600 "${TMPFILE}"
+        mv "${TMPFILE}" "${SSH_AGENT_FILE}"
+        . "${SSH_AGENT_FILE}"
+        RET=1
+    fi
+    if [ "${RET}" -eq 1 ]; then
+        # Add keys to the agent.
+        for ID in "${SSH_HOME}"/id_*; do
+            case "${ID}" in
+                *.pub) continue;;
+                *)  ssh-add "${ID}" 2>/dev/null;;
+            esac
+        done
+    fi
+}
+
+usage () {
+    echo "Usage: $0"
+}
+
+while getopts hrv ARG; do
+    case "${ARG}" in
+        h) usage; exit 0;;
+        r) REMOVE=1;;
+        v) VERBOSE=1;;
+        *) usage; exit 1;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+if [ -n "${REMOVE}" ]; then
+    ssh-add -D >/dev/null 2>&1
+fi
+
+agent
+unset -f agent
