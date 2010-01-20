@@ -1,0 +1,44 @@
+#!/bin/sh
+
+# Do a bit of a dance to avoid a possible shell builtin.
+SSH_CMD=/usr/bin/ssh
+DSH_CMD=/usr/local/bin/dsh
+
+# dsh environment.
+FANOUT=16
+RCMD_CMD="ssh"
+RCMD_TEST="yes"
+RCMD_TEST_TIMEOUT="3"
+RCMD_USER="${USER}"
+RCP_CMD="scp"
+RSHPORT="22"
+
+# Set the default site if not present.
+SITE="${SITE:-lfod}"
+
+# Site-specific environment.
+hep () {
+    CLUSTER=~/.dsh/config-hep
+    RCMD_USER="wcmaier"
+}
+lfod () {
+    CLUSTER=~/.dsh/config
+    RCMD_USER="will"
+}
+
+CMD=${0##*/}
+
+case "${SITE}" in
+    lfod)  lfod;;
+    hep)   hep;;
+esac
+
+export CLUSTER RCMD_USER FANOUT RCMD_CMD RCMD_TEST RCMD_TEST_TIMEOUT RCMD_USER RCP_CMD RSHPORT
+
+case "${CMD}" in
+    dsh)    CMD="${DSH_CMD}";;
+    ssh)    CMD="${SSH_CMD} -l ${RCMD_USER}";;
+esac
+
+agent
+${CMD} $*
