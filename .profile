@@ -35,10 +35,63 @@ PLATFORMS="${PROFILES}/platforms"
 HOSTS="${PROFILES}/hosts"
 
 # Functions.
-[ -r "${PROFILES}/functions" ] && . "${PROFILES}/functions"
+addto () {
+    STRING=$1
+    NEW=$2
+    AFTER=$3
+    case "${STRING}" in 
+        ${NEW}|${NEW}:*|*:${NEW}|*:${NEW}:*);;
+        *) [ "${AFTER}" = "after" ] && STRING="${STRING}:${NEW}" || STRING="${NEW}:${STRING}" ;; 
+    esac
+    echo ${STRING}
+}
+calc () {
+    cat <<EOF | bc -l
+    scale=2
+    $*
+EOF
+}
+unstamp () {
+    perl -e "print scalar(localtime($1))"; echo
+}
+lsx () {
+    IFS=:
+    for DIR in ${PATH}; do
+        for FILE in "${DIR}"/*; do
+            [ -x "${FILE}" ] && echo "${FILE##*/}"
+        done
+    done | sort -u
+}
+sleepuntil () {
+    DATE=$1 
+    INTERVAL=${2:-60} 
+    TARGET=$(date -j "${DATE}" "+%s") 
+    echo "Sleeping until $(date -j "${DATE}")..."
+    while [ "$(date "+%s")" -lt "${TARGET}" ]
+    do
+        sleep "${INTERVAL}"
+    done
+}
+agent () {
+    . "${HOME}"/bin/agent
+}
 
 # Aliases.
-[ -r "${PROFILES}/aliases" ] && . "${PROFILES}/aliases"
+alias beep="printf '\a'"
+alias ci="ci -l"
+alias co="co -l"
+alias curl="curl -s"
+alias dsh="DISPLAY='' dsh -e -t -o ${RCMD_TEST_TIMEOUT} -p ${RSHPORT} -f ${FANOUT}"
+alias elinks="DISPLAY='' elinks -touch-files -no-connect"
+alias klog="klog -setpag"
+alias less="${PAGER}"
+alias list="tmux ls"
+alias ls="ls -F"
+alias mtr="mtr -t"
+alias sudo='A=`alias` /usr/bin/sudo '
+alias tmux="tmux -S ${TMUX_SOCK}"
+alias vi="${VISUAL}"
+alias xinit="xinit -- -nolisten tcp"
 
 # Platform settings.
 UNAME=$(uname)
