@@ -17,10 +17,8 @@ PAGER="less -iX"
 PATH="$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin:/usr/games"
 SSH="$(which ssh)"
 TMUX_SOCK=~/.tmux.sock
-UID=${UID:-$(id -u)}
-VERBOSE="1"
 
-export EDITOR HOSTNAME LANG MAIL PATH PAGER SHELL VERBOSE TODO TMUX_SOCK
+export EDITOR HOSTNAME LANG MAIL PATH PAGER SHELL TODO TMUX_SOCK
 
 # CVS.
 CVSEDITOR="${EDITOR}"
@@ -74,6 +72,13 @@ sleepuntil () {
 }
 agent () {
     . "${HOME}"/bin/agent
+}
+site () {
+    if [ -z "$1" ]; then
+        echo "${SITE}"
+    else
+        SITE=$1; export SITE
+    fi
 }
 
 # Aliases.
