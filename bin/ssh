@@ -12,9 +12,9 @@ RCMD_TEST_TIMEOUT="3"
 RCMD_USER="${USER}"
 RCP_CMD="scp"
 RSHPORT="22"
+DISPLAY=
 
-# Set the default site if not present.
-SITE="${SITE:-lfod}"
+DSH_CMD="${DSH_CMD} -e -t"
 
 # Site-specific environment.
 hep () {
