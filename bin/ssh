@@ -20,6 +20,7 @@ SITE="${SITE:-lfod}"
 hep () {
     CLUSTER=~/.dsh/config-hep
     RCMD_USER="wcmaier"
+    SSH_CMD="${SSH_CMD} -l ${RCMD_USER}"
 }
 lfod () {
     CLUSTER=~/.dsh/config
@@ -37,7 +38,7 @@ export CLUSTER RCMD_USER FANOUT RCMD_CMD RCMD_TEST RCMD_TEST_TIMEOUT RCMD_USER R
 
 case "${CMD}" in
     dsh)    CMD="${DSH_CMD}";;
-    ssh)    CMD="${SSH_CMD} -l ${RCMD_USER}";;
+    ssh)    CMD="${SSH_CMD}";;
 esac
 
 agent
