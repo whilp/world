@@ -14,7 +14,7 @@ RCP_CMD="scp"
 RSHPORT="22"
 DISPLAY=
 
-DSH_CMD="${DSH_CMD} -e -t"
+DSH_CMD="${DSH_CMD} -e -t -o ${RCMD_TEST_TIMEOUT} -p ${RSHPORT} -f ${FANOUT}"
 
 # Site-specific environment.
 hep () {
@@ -41,5 +41,4 @@ case "${CMD}" in
     ssh)    CMD="${SSH_CMD}";;
 esac
 
-agent
 ${CMD} $*
