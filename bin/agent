@@ -6,6 +6,7 @@ SSH_AGENT_FILE="${SSH_HOME}/agent"
 SSH_AGENT_PID=
 
 agent () {
+    [ -r "${SSH_AGENT_FILE}" ] || touch "${SSH_AGENT_FILE}"
     . "${SSH_AGENT_FILE}" >/dev/null 2>&1
     ssh-add -l >/dev/null 2>&1
     RET=$?
