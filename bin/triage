@@ -39,7 +39,7 @@ class Triage(Cmd):
         # file.
         size = os.fstat(f.fileno()).st_size
         index = size - 1024
-        index = index > 0 or 0
+        index = index > 0 and index or 0
         f.seek(index)
 
         lines = [(h, t) for h, s, t in [l.partition(self.sep) for l in f.readlines()]
@@ -105,11 +105,6 @@ class ReloadingFileHandler(logging.FileHandler):
         # but useful.
         self.stream = self.open(self.baseFilename, self.mode, self.encoding)
         logging.FileHandler.emit(self, record)
-
-class RotatingFileHandler(logging.FileHandler):
-
-    def __init__(self, basedir, mode='a', encoding=None):
-        stream = .
 
 if __name__ == "__main__":
     import sys

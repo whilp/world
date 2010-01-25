@@ -110,6 +110,9 @@ send-hook '~t .' "source ~/.mutt/default"
 
 send-hook '~t \(jacobsonlaura.*@gmail\.com\|ljacobson@(biochem\.wisc\.edu\|deltanoid\.com)\)' "source ~/.mutt/laura"
 
+send-hook '~t post@posterous\.com' 'unset signature'
+fcc-hook '~t post@posterous\.com' 'posterous'
+
 send-hook '~t @kingstarusa\.com' "source ~/.mutt/hep"
 send-hook '~t @trincotech\.com' "source ~/.mutt/hep"
 send-hook '~t @dell\.com' "source ~/.mutt/hep"
