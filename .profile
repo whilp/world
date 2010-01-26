@@ -116,6 +116,8 @@ if [ -r "${HOME}/bin/activate" ]; then
 fi
 export PS1="${OLDPS1}"
 
+agent
+
 # Run the preferred shell (unless we're already running it).
 if [ "${SHELL##*/}" != "${SHELL_OLD##*/}" ]; then
     eval "exec ${SHELL}"
