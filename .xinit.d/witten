@@ -1,4 +1,4 @@
-xset -dpms
+xset s off
 pgrep -x aucat || aucat -l &
 xterm -T master &
 firefox &
