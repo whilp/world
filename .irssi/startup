@@ -11,6 +11,7 @@ run trackbar
 run bitlbee_blist
 run bitlbee_tab_completion
 run silc.pl
+run bottom
 
 #connect -silcnet SILCNet silc.comstyle.com wcmaier
 #connect -silcnet SILCNet silc.metabug.org will
