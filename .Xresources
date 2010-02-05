@@ -2,7 +2,7 @@ XTerm*visualBell: false
 XTerm*bellIsUrgent: true
 XTerm*faceName: Inconsolata
 XTerm*faceSize: 12
-XTerm*charClass: 33-43:48,45-47:48,58:48,61:48,63-64:48,126:48
+XTerm*charClass: 33-39:48,42-43:48,45-47:48,58:48,61:48,63-64:48,126:48
 XTerm*loginShell: true
 XTerm*saveLines: 2000
 XTerm*scrollBar: false
