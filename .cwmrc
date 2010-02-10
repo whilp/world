@@ -1,7 +1,7 @@
 sticky yes
 
 autogroup 2     Firefox
-autogroup 3     xterm
+autogroup 3     Chrome
 
 bind M-1        group1
 bind M-2        group2
