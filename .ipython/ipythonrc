@@ -146,7 +146,7 @@ cache_size 1000
 # but that's your choice! Classic 1 -> same as IPython -classic.
 # Note that this is _not_ the normal python interpreter, it's simply
 # IPython emulating most of the classic interpreter's behavior.
-classic 0
+classic 1
 
 # colors - Coloring option for prompts and traceback printouts.
 
