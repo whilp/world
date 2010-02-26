@@ -170,7 +170,10 @@ ignores = (
   { level = "JOINS PARTS QUITS"; servertag = "freenode"; },
   { mask = "vieq"; level = "ALL"; },
   { mask = "brandini"; level = "ALL"; },
-  { mask = "brian"; level = "JOINS PARTS QUITS"; }
+  { mask = "brian"; level = "JOINS PARTS QUITS"; },
+  { level = "JOINS PARTS QUITS"; servertag = "SILCNet"; },
+  { level = "JOINS PARTS QUITS"; servertag = "openbsd-porters"; },
+  { level = "JOINS PARTS QUITS"; servertag = "openbsd-hackers"; }
 );
 completions = {
   obsd = { value = "OpenBSD"; auto = "yes"; };
