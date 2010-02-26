@@ -21,6 +21,12 @@ do_meta () {
         *) ssh -t meta.lfod.us '~/bin/meta';;
     esac
 }
+do_comms () {
+    case $(hostname) in
+        burko.*) attach comms /home/will/.comms.conf;;
+        *) ssh -t meta.lfod.us '~/bin/comms';;
+    esac
+}
 do_mobi () {
     attach mobi /home/will/.mobi.conf
 }
@@ -31,6 +37,7 @@ do_master () {
 case "$(basename $0)" in
     attach) do_attach $*;;
     master) do_master $*;;
+    comms) do_comms $*;;
     meta) do_meta $*;;
     mobi) do_mobi $*;;
 esac
