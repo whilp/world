@@ -30,4 +30,6 @@ fi
 
 [ -s "${HOSTXINIT}" ] && . "${HOSTXINIT}"
 
-exec ${WM}
+while :; do
+    ${WM}
+done
