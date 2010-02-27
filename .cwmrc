@@ -32,8 +32,8 @@ mousebind M-3   window_resize
 # unmap all of the defaults
 bind M-Down     unmap
 bind M-Up       unmap
-bind M-/        unmap
-bind C-/        unmap
+bind M-slash    unmap
+bind C-slash    unmap
 bind CM-n       unmap
 bind M-Tab      unmap
 bind MS-Tab     unmap
@@ -52,8 +52,11 @@ bind CM-g       unmap
 bind M-Right    unmap
 bind M-Left     unmap
 bind CM-f       unmap
-bind M-?        unmap
-bind M-.        unmap
+bind M-slash    unmap
+bind M-equal    unmap
+bind M-minus    unmap
+bind M-period   unmap
+bind M-comma    unmap
 bind CM-w       unmap
 bind CMS-r      unmap
 bind CMS-q      unmap
