@@ -19,7 +19,6 @@ set from="Will Maier <willmaier@ml1.net>"
 set header_cache=~/.maildir/.cache
 set implicit_autoview=yes
 set include=yes
-set index_format="%4C %[%y.%m.%dT%H:%M] %-23.23F  %Z %s"
 set ispell="aspell -e -c"
 set mark_old=no
 set mask='!^(\.[^.]|attic|.*log)'
@@ -142,6 +141,7 @@ folder-hook . "set sort=threads"
 folder-hook . "set sort_re"
 folder-hook . "set sig_dashes"
 folder-hook . 'set record="^"'
+folder-hook . 'set index_format="%4C %[%y.%m.%dT%H:%M] %-8.8u  %Z %s"'
 
 folder-hook =family set strict_threads
 folder-hook =family set hide_top_missing
@@ -157,5 +157,6 @@ folder-hook =sent set sort=reverse-date
 folder-hook =hep/req set sort=threads
 folder-hook =hep/req unset strict_threads
 folder-hook =hep/req unset sort_re
+folder-hook =hep/req 'set index_format="%4C %[%y.%m.%dT%H:%M] %-15.15n  %Z %s"'
 fcc-hook "~thelp@hep\.wisc\.edu" "sent"
 

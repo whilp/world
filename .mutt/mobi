@@ -1,6 +1,6 @@
 source "~/.muttrc"
 
-set index_format="%[%H:%M] %-10.10F  %Z %s"
+set index_format="%[%H:%M] %-8.8u  %Z %s"
 set pager_index_lines=0
 ignore *
 unignore from: date subject to cc reply-to:
