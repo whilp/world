@@ -24,8 +24,8 @@ bind M-l        lock
 bind M-m        maximize
 bind MC-m       hmaximize
 bind MS-m       vmaximize
+bind MCS-q      "sudo shutdown -hp now"
 bind M-r        reload
-bind MS-Backspace      "sudo shutdown -hp now"
 
 mousebind M-3   window_resize
 
@@ -60,3 +60,15 @@ bind M-comma    unmap
 bind CM-w       unmap
 bind CMS-r      unmap
 bind CMS-q      unmap
+bind MS-h       unmap
+bind MS-j       unmap
+bind MS-k       unmap
+bind MS-l       unmap
+bind CM-h       unmap
+bind CM-j       unmap
+bind CM-k       unmap
+bind CM-l       unmap
+bind CMS-h      unmap
+bind CMS-j      unmap
+bind CMS-k      unmap
+bind CMS-l      unmap
