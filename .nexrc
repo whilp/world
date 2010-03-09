@@ -15,9 +15,9 @@ set wraplen=72
 " Go to top.
 map g 1G
 
-" (Un)expand tabs.
-map *e g!Ge
-map *u g!Gu
+" (Un)expand a screenful of tabs.
+map *e z.H!LeMj
+map *u z.H!LuMj
 
 " Format a paragraph.
 map *F  {!}f
