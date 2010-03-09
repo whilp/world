@@ -20,12 +20,12 @@ bind MC-Return  "dmenu_run"
 bind M-h        delete
 bind M-j        cycle
 bind M-k        rcycle
+bind M-l        lock
 bind M-m        maximize
 bind MC-m       hmaximize
 bind MS-m       vmaximize
-bind M-q        lock
-bind MCS-q      "sudo shutdown -hp now"
 bind M-r        reload
+bind MS-Backspace      "sudo shutdown -hp now"
 
 mousebind M-3   window_resize
 
