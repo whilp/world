@@ -16,9 +16,14 @@ set wraplen=72
 map g 1G
 
 " (Un)expand a screenful of tabs.
+map *E H!LeMj
 map *e z.H!LeMj
 map *u z.H!LuMj
 
 " Format a paragraph.
 map *F  {!}f
 map *f {!}F}
+
+abbreviate W w
+abbreviate X x
+abbreviate Q q
