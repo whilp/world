@@ -4,8 +4,8 @@ CMD=${0##*/}
 
 # Makes things easier for vi.
 case "${CMD}" in
-    F)      par T4q1i1s0;;
-    f)      par;;
+    F)      par T4q1i1s0 80;;
+    f)      par 80;;
     e)      expand -t4;;
     u)      unexpand;;
 esac
