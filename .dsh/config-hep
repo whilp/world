@@ -400,44 +400,17 @@ g16n54
 g16n55
 g16n56
 
-GROUP:plasma
-plasma01
-pg1n01
-pg1n02
-pg1n03
-pg1n04
-pg1n05
-pg1n06
-pg1n07
-pg1n08
-pg1n09
-pg1n10
-pg1n11
-pg1n12
-pg1n13
-pg1n14
-pg1n15
-pg1n16
-pg1n17
-pg1n18
-pg1n19
-pg1n20
-pg1n21
-pg1n22
-pg1n23
-pg1n24
-pg1n25
-pg1n26
-pg1n27
-pg1n28
-pg1n29
-pg1n30
-pg1n31
-pg1n32
-pg1n33
-pg1n34
-pg1n35
-pg1n36
+GROUP:s17
+s17n01
+s17n02
+s17n03
+s17n04
+s17n05
+s17n06
+s17n07
+s17n08
+s17n09
+s17n10
 
 LUMP:compute_nodes
 g10
@@ -459,6 +432,7 @@ g12
 g14
 s5
 s15
+s17
 
 ## KEY UNFRIENDLY:
 #ginseng
@@ -467,4 +441,4 @@ s15
 #dns2
 
 # To clean up:
-# (dsh -qi | awk '{if (/^$/ !~ $8) {print $8}}' | sort -u | while read h; do rmkey -c $h; ssh-keyscan -HT1 $h >> ~/.ssh/known_hosts; done ) 2>&1 | grep -v '^#'
+# (dsh -qi | awk '{if (/^$/ !~ $8) {print $8".hep.wisc.edu"}}' | sort -u | while read h; do i=$(dig +short $h); echo -e "$i\t${h%%.*}\n$i\t$h"; done) | ssh-keyscan -HT1 -f - >| .ssh/known_hosts

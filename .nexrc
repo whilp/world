@@ -8,17 +8,24 @@ set ruler
 set shiftwidth=4
 set showmatch
 set showmode
-set tabstop=8
+set tabstop=4
 set verbose
-set wraplen=72
+set wraplen=80
 
 " Go to top.
 map g 1G
 
-" (Un)expand tabs.
-map *e g!Ge
-map *u g!Gu
+" (Un)expand a screenful of tabs.
+map ** H!LeMj
+map *e z.H!LeMj
+map *u z.H!LuMj
 
 " Format a paragraph.
 map *F  {!}f
 map *f {!}F}
+
+abbreviate W w
+abbreviate X x
+abbreviate Q q
+abbreviate Wq wq
+abbreviate WQ wq

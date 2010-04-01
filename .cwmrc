@@ -1,31 +1,74 @@
 sticky yes
 
+autogroup 1     xterm
 autogroup 2     Firefox
 autogroup 3     Chrome
 
-bind M-1        group1
-bind M-2        group2
-bind M-3        group3
-bind M-4        group4
-bind M-5        group5
-bind M-6        group6
-bind M-7        group7
-bind M-8        group8
-bind M-9        group9
+# Groups.
+bind M-u        group1
+bind M-i        group2
+bind M-o        group3
+bind M-p        group4
+bind MC-u       movetogroup1
+bind MC-i       movetogroup2
+bind MC-o       movetogroup3
+bind MC-p       movetogroup4
 
-bind M-Return   grouptoggle
-bind M-period   cyclegroup
-bind M-comma    rcyclegroup
+# Other bindings.
+bind M-Return   terminal
+bind MC-Return  "dmenu_run"
+bind M-h        delete
 bind M-j        cycle
 bind M-k        rcycle
-bind MC-l       lock
+bind M-l        lock
 bind M-m        maximize
-bind MC-m       vmaximize
-bind M-p        "dmenu_run"
-bind MC-r       reload
-bind MC-q       lock
+bind MC-m       hmaximize
+bind MS-m       vmaximize
 bind MCS-q      "sudo shutdown -hp now"
+bind M-r        reload
 
-mousebind M-3  window_resize
+mousebind M-3   window_resize
 
-gap 0 93 0 0
+# unmap all of the defaults
+bind M-Down     unmap
+bind M-Up       unmap
+bind M-slash    unmap
+bind C-slash    unmap
+bind CM-n       unmap
+bind M-Tab      unmap
+bind MS-Tab     unmap
+bind CM-x       unmap
+bind CM-0       unmap
+bind CM-1       unmap
+bind CM-2       unmap
+bind CM-3       unmap
+bind CM-4       unmap
+bind CM-5       unmap
+bind CM-6       unmap
+bind CM-7       unmap
+bind CM-8       unmap
+bind CM-9       unmap
+bind CM-g       unmap
+bind M-Right    unmap
+bind M-Left     unmap
+bind CM-f       unmap
+bind M-slash    unmap
+bind M-equal    unmap
+bind M-minus    unmap
+bind M-period   unmap
+bind M-comma    unmap
+bind CM-w       unmap
+bind CMS-r      unmap
+bind CMS-q      unmap
+bind MS-h       unmap
+bind MS-j       unmap
+bind MS-k       unmap
+bind MS-l       unmap
+bind CM-h       unmap
+bind CM-j       unmap
+bind CM-k       unmap
+bind CM-l       unmap
+bind CMS-h      unmap
+bind CMS-j      unmap
+bind CMS-k      unmap
+bind CMS-l      unmap

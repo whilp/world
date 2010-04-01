@@ -5,6 +5,6 @@ else
 fi
 xterm -T master &
 case "${OSNAME}" in
-    OpenBSD) continue;;
+    OpenBSD) ;;
     Linux) WM=$EVILWM;;
 esac
