@@ -28,7 +28,7 @@ set pager_index_lines=4
 set pager_stop=yes
 set postpone=no
 set postponed="+drafts"
-set print_cmd="a2ps -r -q --columns=2 -j -C -2 -Email -o - | ssh wcmaier@login.hep.wisc.edu 'lpr -Plp3b'"
+set print_cmd="a2ps -r -q --columns=2 -j -C -2 -Email -o - | ssh wcmaier@luma.hep.wisc.edu 'lpr -Plp3b'"
 set print_split=yes
 set quit=ask-no
 set recall=no
