@@ -1,3 +1,4 @@
 \.sw[nop]$
 \.(pyc|orig|o|egg-info)$
 (CVS|pobj)$
+^(build|dist|docs/_build)$
