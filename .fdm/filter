@@ -55,6 +55,7 @@ match "List-Id:.*<mercurial-devel\\.selenic\\.com>" in headers action maildir "$
 match "^List-Id:.*ipython-(user|dev)\\.(ipython\\.)?scipy\\.org" in headers action maildir "${foss}/ipython"
 match "^List-Id:.*Radmind Users <radmind-users\\.lists\\.sourceforge\\.net>" in headers action maildir "${foss}/radmind"
 match "^List-Id:.*roundup-users\\.lists\\.sourceforge\\.net" in headers action maildir "${foss}/roundup"
+match "^List-Id:.*<redis-db\\.googlegroups\\.com>" in headers action maildir "${foss}/redis"
 
 # OpenBSD.
 match "^Sender:[ \t]*owner-([a-z-]*)@openbsd\\.org" in headers {
