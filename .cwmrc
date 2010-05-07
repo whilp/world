@@ -4,6 +4,8 @@ autogroup 1     xterm
 autogroup 2     Firefox
 autogroup 3     Chrome
 
+gap 0 459 0 0
+
 # Groups.
 bind M-u        group1
 bind M-i        group2
