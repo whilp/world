@@ -1,3 +1,4 @@
+pgrep -x aucat || aucat -l &
 if [ "${EXTSCREEN}" -eq 1 ]; then
     xrandr --output VGA --auto --output LVDS --auto
 else
