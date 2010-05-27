@@ -19,6 +19,7 @@ map g 1G
 map ** H!LeMj
 map *e z.H!LeMj
 map *u z.H!LuMj
+map *x 1G!Gexpand -t4:wq
 
 " Format a paragraph.
 map *F  {!}f

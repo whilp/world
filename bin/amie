@@ -3,10 +3,15 @@
 import os
 import time
 import urllib2
+import warnings
 
 from random import randint
 
-import twill
+import cli
+
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    import twill
 
 from twill import get_browser
 from twill.commands import formvalue, submit
@@ -104,6 +109,7 @@ def find_samples(app, url):
 
     return samples
 
+@cli.LoggingApp
 def amie(app, url=None):
     """[-hqsv] [-al] [url]"""
     null = open(os.devnull, 'w')
@@ -127,10 +133,8 @@ def amie(app, url=None):
 
     return 0
 
-if __name__ == "__main__":
-    from cli.app import App
+amie.add_param("-d", "--download", default=False, help="download albums", action="store_true")
+amie.add_param("-L", "--list-sample", default=False, help="list sample MP3s", action="store_true")
 
-    app = App(amie)
-    app.add_param("download", False, "download albums", action="store_true")
-    app.add_param("list_sample", False, "list sample MP3s", action="store_true")
-    app.run()
+if __name__ == "__main__":
+    amie.run()
