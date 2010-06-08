@@ -24,6 +24,7 @@ bind M-j        cycle
 bind M-k        rcycle
 bind M-l        lock
 bind M-m        maximize
+bind M-s        hide
 bind MC-m       hmaximize
 bind MS-m       vmaximize
 bind MCS-q      "sudo shutdown -hp now"
