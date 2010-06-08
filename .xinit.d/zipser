@@ -5,4 +5,3 @@ else
     switch-caps
 fi
 xterm -T master &
-firefox &
