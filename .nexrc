@@ -19,8 +19,8 @@ map g 1G
 map ** H!LeMj
 map *e z.H!LeMj
 map *u z.H!LuMj
-map *w H!LeMj:w
-map *x H!LeMj:x
+map *w H!Le:wMj
+map *x H!Le:xMj
 
 " Format a paragraph.
 map *F  {!}f
