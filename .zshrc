@@ -30,6 +30,7 @@ fpath=(~/.zsh $fpath)
 autoload -U compinit && compinit -i # new tab completion
 autoload -U colors && colors	    # color stuff
 autoload -U edit-command-line
+autoload -U promptinit && promptinit
 autoload -U zed			    # shell text editing
 autoload -U zmv			    # a la mmv/rename
 autoload      edit-command-line     # press ESC-E to edit the comand
@@ -62,14 +63,7 @@ alias cvs='nocorrect cvs'
 alias ln='nocorrect ln'
 alias zource=". ${HOME}/.zshrc"
 
-# Shell prompt
-if [ "${EUID}" != "0" ]; then
-    # If not root...
-    autoload -U promptinit && promptinit
-    PS1="%B%~%b %#%b "		    # real prompt
-else
-    PS1="%B%~%b %#%b "
-fi
+PS1=$'%{\e\a%}%B%~%b %#%b '
 
 # Set the right prompt based on the tmux sessionname and window number, or,
 # if not running in tmux, the (pseudo) TTY.
