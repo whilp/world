@@ -16,7 +16,7 @@ MAIL=""
 PAGER="less -iX"
 PATH="$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin:/usr/games"
 SSH="$(which ssh)"
-TMUX_SOCK=~/.tmux.sock
+TMUX_SOCK=~/.tmux/sock
 
 export EDITOR HOSTNAME LANG MAIL PATH PAGER SHELL TODO TMUX_SOCK
 
