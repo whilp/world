@@ -1,9 +1,11 @@
 #!/bin/sh
 
+CONFDIR=~/.tmux
 PATH="${HOME}/bin:${PATH}"
-TMUX="tmux -S ${HOME}/.tmux.sock"
+TMUX="tmux -S ${HOME}/.tmux/sock"
 
 do_attach () {
+    mkdir -p "${CONFDIR}" >/dev/null 2>&1
     SESSION=$1
     TMUX_CONFIG=$2
     ${TMUX} has-session -t "${SESSION}" > /dev/null 2>&1
@@ -17,27 +19,24 @@ do_attach () {
 }
 do_meta () {
     case $(hostname) in
-        burko.*) attach meta /home/will/.meta.conf;;
+        burko.*) attach meta ${CONFDIR}/meta.conf;;
         *) ssh -t meta.lfod.us '~/bin/meta';;
     esac
 }
 do_comms () {
     case $(hostname) in
-        burko.*) attach comms /home/will/.comms.conf;;
+        burko.*) attach comms ${CONFDIR}/comms.conf;;
         *) ssh -t meta.lfod.us '~/bin/comms';;
     esac
-}
-do_mobi () {
-    attach mobi /home/will/.mobi.conf
-}
-do_master () {
-    attach master /home/will/.master.conf
 }
 
 case "$(basename $0)" in
     attach) do_attach $*;;
-    master) do_master $*;;
     comms) do_comms $*;;
     meta) do_meta $*;;
-    mobi) do_mobi $*;;
+    master) attach master ${CONFDIR}/master.conf $*;;
+    mobi) attach mobi ${CONFDIR}/mobi.conf $*;;
+    logs) attach logs ${CONFDIR}/logs.conf $*;;
+    files) attach files ${CONFDIR}/files.conf $*;;
+    pools) attach pools ${CONFDIR}/pools.conf $*;;
 esac

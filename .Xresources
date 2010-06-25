@@ -1,3 +1,4 @@
+XTerm*metaSendsEscape: true
 XTerm*visualBell: false
 XTerm*bellIsUrgent: true
 XTerm*faceName: Inconsolata
