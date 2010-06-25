@@ -29,21 +29,14 @@ do_comms () {
         *) ssh -t meta.lfod.us '~/bin/comms';;
     esac
 }
-do_logs () {
-    attach logs ${CONFDIR}/logs.conf
-}
-do_mobi () {
-    attach mobi ${CONFDIR}/mobi.conf
-}
-do_master () {
-    attach master ${CONFDIR}/master.conf
-}
 
 case "$(basename $0)" in
     attach) do_attach $*;;
-    master) do_master $*;;
     comms) do_comms $*;;
-    logs) do_logs $*;;
     meta) do_meta $*;;
-    mobi) do_mobi $*;;
+    master) attach master ${CONFDIR}/master.conf $*;;
+    mobi) attach mobi ${CONFDIR}/mobi.conf $*;;
+    logs) attach logs ${CONFDIR}/logs.conf $*;;
+    files) attach files ${CONFDIR}/files.conf $*;;
+    pools) attach pools ${CONFDIR}/pools.conf $*;;
 esac
