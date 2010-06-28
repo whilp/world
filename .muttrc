@@ -161,3 +161,5 @@ folder-hook =hep/req unset sort_re
 folder-hook =hep/req 'set index_format="%4C %[%y.%m.%dT%H:%M] %-15.15n  %Z %s"'
 fcc-hook "~thelp@hep\.wisc\.edu" "sent"
 
+folder-hook =osg/goc set sort_re=no
+folder-hook =osg/goc set strict_threads=no
