@@ -85,8 +85,9 @@ bind index \CW buffy-list
 
 # Mailboxes.
 mailboxes `\
-    find ~/.maildir -type d -path '*cur' | \
-    sed -e '/\/attic\//d; s/^.*\.maildir\///; s/\/cur$//' | \
+    find ~/.maildir -type d -path '*cur' \
+		\! \( -path "*/attic/*" -or -path "*/system/*" -or -path "*/drafts/*" \) | \
+    sed -e 's/^.*\.maildir\///; s/\/cur$//' | \
     xargs -I% echo -n ' =%'`
 
 # Headers.
