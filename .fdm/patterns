@@ -53,7 +53,7 @@ $hep_reports = "" +
     "dCache Absent Pools Report|" +
     "Condor daily usage \\(HEP resources only\\)|" +
     "CFengine Absent Report|" +
-    ".*dCache Health Report|" +
+    ".*dCache Health (Report|Check)|" +
     ".*dCache Active Transfers Report|" +
     ".*Nagios .* Alert Report for|" +
     ".*Tracker Ticket Report|" +

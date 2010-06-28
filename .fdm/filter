@@ -129,6 +129,7 @@ match "^List-Owner:.*JOBS-request@LISTSERV\\.FNAL\\.GOV" in headers {
     match ": cs, ..." in body action "hep"
     match all action "drop"
 }
+match "^From:.*osg@goc\\.tick\\.globalnoc\\.iu\\.edu" in headers action maildir "${hep}/goc"
 match "^From:.*cms-phedex-admins@cern\\.ch" in headers action maildir "${hep}/phedex"
 match "List-Id: <cms-physics\\.physics\\.wisc\\.edu>" in headers action maildir "${hep}/cms.physics"
 match "^(From|To|Cc):.*@[^ ]*\\.?hep\\.wisc\\.edu" in headers {
