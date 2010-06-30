@@ -135,6 +135,7 @@ match "^From:.*cms-phedex-admins@cern\\.ch" in headers action maildir "${hep}/ph
 match "List-Id: <cms-physics\\.physics\\.wisc\\.edu>" in headers action maildir "${hep}/cms.physics"
 match "From:.*postmaster@hep\\.wisc\\.edu" in headers and "Subject: Quarantined spam" in headers action drop
 match "^(From|To|Cc):.*@[^ ]*\\.?hep\\.wisc\\.edu" in headers {
+    match "^Subject:.*fetch-crl" in headers and "From: Cron Daemon" in headers action drop
     match "(From|To|Cc):.*(help|req)@(nod|ginseng)?\\.?hep\\.wisc\\.edu" in headers {
         match all action maildir "${hep}/req" continue
         match "X-Roundup-issue-status: unread" action "sms"
