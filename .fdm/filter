@@ -97,9 +97,9 @@ match "^List-Id:.*glow-tech\\.cs\\.wisc\\.edu" in headers {
     match "^Subject: \\[glow-tech\\] GLOW Absent Report$" in headers action maildir "${hep}/monitor"
     match all action maildir "${hep}/glow"
 }
-match "List-Id: <chtc-users\\.cs\\.wisc\\.edu>" in headers action maildir "${hep}/chtc"
-match "From:.*chtc\\.wisc\\.edu" in headers {
+match "List-Id: <chtc-users\\.cs\\.wisc\\.edu>" in headers {
     match "Subject: \\[Chtc-users\\] Daily CHTC usage" in headers action maildir "${hep}/monitor"
+	match all action maildir "${hep}/chtc"
 }
 match "List-Id: <cs-announce\\.cs\\.wisc\\.edu>" in headers action "hep"
 
@@ -111,6 +111,8 @@ match "^List-Owner:.*OSG-STORAGE.*@LISTSERV\\.FNAL\\.GOV" in headers action mail
 match "^List-Owner:.*OSG-SITES.*@LISTSERV\\.FNAL\\.GOV" in headers action maildir "${osg}/sites"
 match "^List-Owner:.*OSG-HADOOP-request@LISTSERV\\.FNAL\\.GOV" in headers action maildir "${osg}/hadoop"
 match "^(To|Cc):.*project-indico-administrators@cern\\.ch" in headers action maildir "${cms}/indico"
+match "From: Gratia Operation" in headers and "Subject: OSG site metrics" in headers action maildir "${hep}/monitor"
+match "From: RSV Reporting System" in headers action maildir "${hep}/monitor"
 match "^(To|Cc):.*@(lists[0-9]+)?\\.?slac\\.stanford\\.edu" in headers {
     match "^(To|Cc).*xrootd-l@" in headers action maildir "${cms}/xrootd"
 }
@@ -134,8 +136,9 @@ match "^From:.*osg@tick\\.globalnoc\\.iu\\.edu" in headers action maildir "${osg
 match "^From:.*cms-phedex-admins@cern\\.ch" in headers action maildir "${hep}/phedex"
 match "List-Id: <cms-physics\\.physics\\.wisc\\.edu>" in headers action maildir "${hep}/cms.physics"
 match "From:.*postmaster@hep\\.wisc\\.edu" in headers and "Subject: Quarantined spam" in headers action drop
+match "^Subject: glow.*cp_afs_ca problems" in headers action drop
+match "^Subject:.*fetch-crl" in headers and "^From: root" in headers action drop
 match "^(From|To|Cc):.*@[^ ]*\\.?hep\\.wisc\\.edu" in headers {
-    match "^Subject:.*fetch-crl" in headers and "From: Cron Daemon" in headers action drop
     match "(From|To|Cc):.*(help|req)@(nod|ginseng)?\\.?hep\\.wisc\\.edu" in headers {
         match all action maildir "${hep}/req" continue
         match "X-Roundup-issue-status: unread" action "sms"
@@ -149,7 +152,7 @@ match "^(From|To|Cc):.*@[^ ]*\\.?hep\\.wisc\\.edu" in headers {
         match all action "sms"
     }
     match "^Subject: (${hep_reports})" in headers action maildir "${hep}/monitor"
-    match "^Subject: AIDE report" or "^Subject: .* file integrity .*report" in headers action maildir "${hep}/ids"
+    match "^Subject: AIDE report" or "^Subject: .* file integrity .*report" in headers action drop
     # HEP root mail.
     match "^(From|To|Cc):.*(root|operator|cron)@[^ ]*\\.?hep" in headers {
         match "^Subject: IDS CRITICAL: intrusion detected" in headers action drop
