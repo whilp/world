@@ -39,4 +39,5 @@ case "$(basename $0)" in
     logs) attach logs ${CONFDIR}/logs.conf $*;;
     files) attach files ${CONFDIR}/files.conf $*;;
     pools) attach pools ${CONFDIR}/pools.conf $*;;
+    logins) attach logins ${CONFDIR}/logins.conf $*;;
 esac
