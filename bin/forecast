@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 # http://www.weather.gov/mdl/XML/Design/MDL_XML_Design.htm
 
+import json
+
 from calendar import timegm
 from time import strptime
 from urllib import urlencode
 
 import lxml.etree
+import ptemplate
 
 service = "http://forecast.weather.gov/MapClick.php?lat=43.07980&lon=-89.38750&FcstType=digitalDWML"
 service = "http://forecast.weather.gov/MapClick.php"
@@ -23,7 +26,10 @@ root = tree.getroot()
 xdata = root.xpath("data")[0]
 data = {
     "created": root.xpath("//product/creation-date/text()")[0],
-    "city": xdata.xpath("location/city/text()")[0]
+    "city": xdata.xpath("location/city/text()")[0],
+    "latitude": float(xdata.xpath("location/point/@latitude")[0]),
+    "longitude": float(xdata.xpath("location/point/@longitude")[0]),
+    "height": int(xdata.xpath("location/height/text()")[0]),
 }
 
 values = lambda e, p: [int(x) for x in e.xpath("%s/value/text()" % p)]
@@ -41,16 +47,17 @@ def values(element, path, vtype=int):
 
 params = xdata.xpath("parameters")[0]
 
-parsetime(timestr):
+def parsetime(timestr):
     stamp = timegm(strptime(timestr[:-6], "%Y-%m-%dT%H:%M:%S"))
     offset = timestr[-6:]
     sign = 1
     if offset[0] == "-":
         sign = -1
-    hours, minutes = [int(x) for x in offset.partition(':')]
+    hours, minutes = [int(x) for x in offset.split(':')]
     return stamp + (sign * ((60 * minutes) + (3600 * hours)))
 
-times = [parsetime(x) for x in xdata.xpath("time-layout/start-valid-time/text()")]
+data["times"] = [parsetime(x) for x in 
+    xdata.xpath("time-layout/start-valid-time/text()")]
 data["temp-hourly"] = values(params, "temperature[@type='hourly']")
 data["temp-dewpoint"] = values(params, "temperature[@type='dew point']")
 data["pop"] = values(params, "probability-of-precipitation")
@@ -60,13 +67,18 @@ data["wind-speed-gust"] = values(params, "wind-speed[@type='gust']")
 data["wind-direction"] = values(params, "direction[@type='wind']")
 data["cloud"] = values(params, "cloud-amount[@type='total']")
 data["relative-humidity"] = values(params, "humidity[@type='relative']")
-#data["weather"] = vlaues(params, "humidity[@type='relative']")
-
 data["weather"] = []
-for conditions in params.xpath("weather-conditions"):
+for conditions in params.xpath("weather/weather-conditions"):
     if conditions.xpath("@xsi:nil", namespaces=conditions.nsmap) == ["true"]:
         data["weather"].append(None)
-    el
+        weather = None
+    else:
+        weather = []
+        for value in conditions.xpath("value"):
+            additive = value.get("additive")
+            if additive:
+                weather.append(additive)
+            weather.append("%(coverage)s %(weather-type)s" % value.attrib)
+        data["weather"].append(' '.join(weather))
 
-
-print data
+print json.dumps(data)
