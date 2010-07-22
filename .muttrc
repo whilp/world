@@ -20,6 +20,7 @@ set header_cache=~/.maildir/.cache
 set implicit_autoview=yes
 set include=yes
 set ispell="aspell -e -c"
+set mail_check=2
 set mark_old=no
 set mask='!^(\.[^.]|attic|.*log)'
 set mbox_type=Maildir
@@ -40,6 +41,8 @@ set sort=threads
 set sort_aux=reverse-last-date
 set spoolfile='/var/mail/will'
 set ssl_starttls
+set timeout=60
+set time_inc=100
 set wait_key=no
 
 alternates "(wcmaier@wisc\.edu|wcmaier@hep\.wisc\.edu|wcmaier@gmail\.com|willmaier@ml1\.net|wcmaier@openbsd.org)"
