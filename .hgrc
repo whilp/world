@@ -26,6 +26,9 @@ hggit =
 [bookmarks]
 track.current = True
 
+[alias]
+rec = record
+
 [extdiff]
 cmd.vimdiff = vim
 opts.vimdiff = -f '+next' '+execute "DirDiff" argv(0) argv(1)'

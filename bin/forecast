@@ -1,0 +1,72 @@
+#!/usr/bin/env python
+# http://www.weather.gov/mdl/XML/Design/MDL_XML_Design.htm
+
+from calendar import timegm
+from time import strptime
+from urllib import urlencode
+
+import lxml.etree
+
+service = "http://forecast.weather.gov/MapClick.php?lat=43.07980&lon=-89.38750&FcstType=digitalDWML"
+service = "http://forecast.weather.gov/MapClick.php"
+query = {
+    "FcstType": "digitalDWML",
+    "lat": "43.0798",
+    "lon": "-89.3875",
+}
+
+url = '?'.join((service, urlencode(query)))
+url = "file:///tmp/noaa"
+tree = lxml.etree.parse(url)
+root = tree.getroot()
+
+xdata = root.xpath("data")[0]
+data = {
+    "created": root.xpath("//product/creation-date/text()")[0],
+    "city": xdata.xpath("location/city/text()")[0]
+}
+
+values = lambda e, p: [int(x) for x in e.xpath("%s/value/text()" % p)]
+
+def values(element, path, vtype=int):
+    values = []
+    for value in element.xpath("%s/value" % path):
+        nil = value.xpath("@xsi:nil", namespaces=element.nsmap)
+        if nil == ["true"]:
+            values.append(None)
+        else:
+            values.append(vtype(value.xpath("text()")[0]))
+
+    return values
+
+params = xdata.xpath("parameters")[0]
+
+parsetime(timestr):
+    stamp = timegm(strptime(timestr[:-6], "%Y-%m-%dT%H:%M:%S"))
+    offset = timestr[-6:]
+    sign = 1
+    if offset[0] == "-":
+        sign = -1
+    hours, minutes = [int(x) for x in offset.partition(':')]
+    return stamp + (sign * ((60 * minutes) + (3600 * hours)))
+
+times = [parsetime(x) for x in xdata.xpath("time-layout/start-valid-time/text()")]
+data["temp-hourly"] = values(params, "temperature[@type='hourly']")
+data["temp-dewpoint"] = values(params, "temperature[@type='dew point']")
+data["pop"] = values(params, "probability-of-precipitation")
+# knots
+data["wind-speed-sustained"] = values(params, "wind-speed[@type='sustained']")
+data["wind-speed-gust"] = values(params, "wind-speed[@type='gust']")
+data["wind-direction"] = values(params, "direction[@type='wind']")
+data["cloud"] = values(params, "cloud-amount[@type='total']")
+data["relative-humidity"] = values(params, "humidity[@type='relative']")
+#data["weather"] = vlaues(params, "humidity[@type='relative']")
+
+data["weather"] = []
+for conditions in params.xpath("weather-conditions"):
+    if conditions.xpath("@xsi:nil", namespaces=conditions.nsmap) == ["true"]:
+        data["weather"].append(None)
+    el
+
+
+print data

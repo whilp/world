@@ -19,7 +19,7 @@ pinger () {
             STATE="DOWN"
         [[ "${STATE}" != "${OLDSTATE}" ]] && \
 
-        echo "${NOW} ${TARGET} -> ${STATE}"
+        printf "${NOW} ${TARGET} -> ${STATE}\a\n"
         set -- $* ${TARGET}!${STATE}
         sleep "${INTERVAL}"
     done
