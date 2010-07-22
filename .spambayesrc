@@ -1,3 +1,6 @@
+[CV Driver]
+build_each_classifier_from_scratch: False
+
 [Categorization]
 ham_cutoff: 0.35
 spam_cutoff: 0.9
@@ -7,8 +10,9 @@ max_discriminators: 150
 minimum_prob_strength: 0.1
 unknown_word_prob: 0.5
 unknown_word_strength: 0.45
-use_bigrams: False
 use_chi_squared_combining: True
+x-experimental_ham_spam_imbalance_adjustment: False
+x-use_bigrams: False
 
 [Hammie]
 train_on_filter: False
@@ -34,26 +38,40 @@ score_header_name: X-Spambayes-Spam-Probability
 thermostat_header_name: X-Spambayes-Level
 trained_header_name: X-Spambayes-Trained
 
-[Plugin]
-xmlrpc_host: localhost
-xmlrpc_path: /sbrpc
-xmlrpc_port: 8001
-
 [Storage]
 cache_expiry_days: 7
 cache_messages: True
 cache_use_gzip: False
-core_ham_cache: core-ham-cache
-core_spam_cache: core-spam-cache
-core_unknown_cache: core-unknown-cache
 ham_cache: pop3proxy-ham-cache
 messageinfo_storage_file: spambayes.messageinfo.db
 no_cache_bulk_ham: False
 no_cache_large_messages: 0
-persistent_storage_file: ~/.hammie.db
+persistent_storage_file: /home/will/.hammie.db
 persistent_use_database: dbm
 spam_cache: pop3proxy-spam-cache
 unknown_cache: pop3proxy-unknown-cache
+
+[TestDriver]
+best_cutoff_fn_weight: 1.0
+best_cutoff_fp_weight: 10.0
+best_cutoff_unsure_weight: 0.2
+compute_best_cutoffs_from_histograms: True
+ham_directories: Data/Ham/Set%d
+nbuckets: 200
+percentiles: 5 25 75 95
+pickle_basename: class
+save_histogram_pickles: False
+save_trained_pickles: False
+show_charlimit: 3000
+show_false_negatives: False
+show_false_positives: True
+show_ham_hi: 0.0
+show_ham_lo: 1.0
+show_histograms: True
+show_spam_hi: 0.0
+show_spam_lo: 1.0
+show_unsure: False
+spam_directories: Data/Spam/Set%d
 
 [Tokenizer]
 address_headers: from to cc sender reply-to
@@ -62,16 +80,8 @@ basic_header_tokenize: False
 basic_header_tokenize_only: False
 check_octets: False
 count_all_header_lines: False
-crack_image_cache: 
-crack_images: False
 generate_long_skips: True
-image_size: False
-lookup_ip_cache: 
-max_image_size: 100000
 mine_received_headers: False
-ocr_engine: 
-ocrad_charset: ascii
-ocrad_scale: 2
 octet_prefix_size: 5
 record_header_absence: False
 replace_nonascii_chars: False
@@ -79,12 +89,12 @@ safe_headers: abuse-reports-to date errors-to from importance in-reply-to messag
 skip_max_word_size: 12
 summarize_email_prefixes: False
 summarize_email_suffixes: False
+x-extract_dow: False
 x-fancy_url_recognition: False
-x-lookup_ip: False
+x-generate_time_buckets: False
 x-pick_apart_urls: False
 x-reduce_habeas_headers: False
 x-search_for_habeas_headers: False
-x-short_runs: False
 
 [URLRetriever]
 x-cache_directory: url-cache
@@ -104,8 +114,58 @@ zeo_addr:
 
 [globals]
 dbm_type: best
-language: en_US
 proxy_password: 
 proxy_server: 
 proxy_username: 
 verbose: False
+
+[html_ui]
+allow_remote_connections: localhost
+default_ham_action: ham
+default_spam_action: spam
+default_unsure_action: defer
+display_adv_find: False
+display_headers: Subject From
+display_received_time: False
+display_score: False
+ham_discard_level: 0.0
+http_authentication: None
+http_password: admin
+http_user_name: admin
+launch_browser: False
+port: 8880
+rows_per_section: 10000
+spam_discard_level: 100.0
+
+[imap]
+expunge: False
+filter_folders: INBOX
+ham_train_folders: 
+move_trained_ham_to_folder: 
+move_trained_spam_to_folder: 
+password: 
+server: 
+spam_folder: 
+spam_train_folders: 
+unsure_folder: 
+use_ssl: False
+username: 
+
+[imapserver]
+password: 
+port: 143
+username: 
+
+[pop3proxy]
+allow_remote_connections: localhost
+listen_ports: 
+remote_servers: 
+
+[smtpproxy]
+allow_remote_connections: localhost
+ham_address: spambayes_ham@localhost
+listen_ports: 
+remote_servers: 
+spam_address: spambayes_spam@localhost
+use_cached_message: False
+

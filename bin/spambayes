@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SBFILTER=/home/will/bin/sb_filter.py
+SBFILTER=/home/will/share/venv/2.6/bin/sb_filter.py
 
 # Pipe sb_filter.py and drop stupid stderr cruft.
 ${SBFILTER} 2>/dev/null
