@@ -94,7 +94,8 @@ match "From:.*(${friends})" in headers {
 
 # GLOW/CHTC/CS.
 match "^List-Id:.*glow-tech\\.cs\\.wisc\\.edu" in headers {
-    match "^Subject: \\[glow-tech\\] GLOW Absent Report$" in headers action maildir "${hep}/monitor"
+    match "^Subject: .* GLOW Absent Report$" in headers action maildir "${hep}/monitor"
+	match "^Subject: .* Daily GLOW usage" in headers action maildir "${hep}/monitor"
     match all action maildir "${hep}/glow"
 }
 match "List-Id: <chtc-users\\.cs\\.wisc\\.edu>" in headers {
@@ -108,6 +109,7 @@ match "^X-CMSLIST:" or
     "^List-Owner:.*CMS.*@LISTSERV\\.FNAL\\.GOV" or
     "^From:.*arsystem@fnal.gov" in headers action maildir "${cms}/uscms-t2"
 match "^List-Owner:.*OSG-STORAGE.*@LISTSERV\\.FNAL\\.GOV" in headers action maildir "${osg}/storage"
+match "^From: RSV Reporting System" in headers action maildir "${hep}/monitor"
 match "^List-Owner:.*OSG-SITES.*@LISTSERV\\.FNAL\\.GOV" in headers action maildir "${osg}/sites"
 match "^List-Owner:.*OSG-HADOOP-request@LISTSERV\\.FNAL\\.GOV" in headers action maildir "${osg}/hadoop"
 match "^(To|Cc):.*project-indico-administrators@cern\\.ch" in headers action maildir "${cms}/indico"
