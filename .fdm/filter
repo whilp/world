@@ -111,6 +111,7 @@ match "^X-CMSLIST:" or
 match "^List-Owner:.*OSG-STORAGE.*@LISTSERV\\.FNAL\\.GOV" in headers action maildir "${osg}/storage"
 match "^From: RSV Reporting System" in headers action maildir "${hep}/monitor"
 match "^List-Owner:.*OSG-SITES.*@LISTSERV\\.FNAL\\.GOV" in headers action maildir "${osg}/sites"
+match "^List-Owner:.*XROOTD-DEMONSTRATOR.*@LISTSERV\\.FNAL\\.GOV" in headers action maildir "${osg}/xrootd-demo"
 match "^List-Owner:.*OSG-HADOOP-request@LISTSERV\\.FNAL\\.GOV" in headers action maildir "${osg}/hadoop"
 match "^(To|Cc):.*project-indico-administrators@cern\\.ch" in headers action maildir "${cms}/indico"
 match "From: Gratia Operation" in headers and "Subject: OSG site metrics" in headers action maildir "${hep}/monitor"
