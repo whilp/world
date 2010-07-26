@@ -17,6 +17,7 @@ map g 1G
 
 " (Un)expand a screenful of tabs.
 map ** H!LeMj
+map *2 H!Lexpand -t2Mj
 map *e z.H!LeMj
 map *u z.H!LuMj
 map *w H!Le:wMj
