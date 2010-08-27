@@ -15,7 +15,8 @@ PATH="$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr
 SSH="$(which ssh)"
 TMUX_SOCK=~/.tmux/sock
 
-export EDITOR HOSTNAME LANG MAIL PATH PAGER SHELL TODO TMUX_SOCK
+export EDITOR ENV HOSTNAME LANG MAIL OLDMAIL PATH PAGER SHELL TMUX_SOCK
+unset WHICH
 
 # CVS.
 CVSEDITOR="${EDITOR}"
@@ -24,16 +25,11 @@ OCVS=:ext:cvs:/cvs
 
 export CVSEDITOR CVS_RSH OCVS
 
-# Platform- and host-specific configuration directories.
-PROFILES="${HOME}/.profiles"
-PLATFORMS="${PROFILES}/platforms"
-HOSTS="${PROFILES}/hosts"
-
 # Functions.
 addto () {
-    STRING=$1
-    NEW=$2
-    AFTER=$3
+    typeset STRING=$1
+    typeset NEW=$2
+    typeset AFTER=$3
     case "${STRING}" in 
         ${NEW}|${NEW}:*|*:${NEW}|*:${NEW}:*);;
         *) [ "${AFTER}" = "after" ] && STRING="${STRING}:${NEW}" || STRING="${NEW}:${STRING}" ;; 
@@ -41,9 +37,9 @@ addto () {
     echo ${STRING}
 }
 sleepuntil () {
-    DATE=$1 
-    INTERVAL=${2:-60} 
-    TARGET=$(date -j "${DATE}" "+%s") 
+    typeset DATE=$1 
+    typeset INTERVAL=${2:-60} 
+    typeset TARGET=$(date -j "${DATE}" "+%s") 
     echo "Sleeping until $(date -j "${DATE}")..."
     while [ "$(date "+%s")" -lt "${TARGET}" ]
     do
@@ -76,6 +72,11 @@ alias tmux="tmux -S ${TMUX_SOCK}"
 alias vi="${VISUAL}"
 alias xinit="xinit -- -nolisten tcp"
 
+# Platform- and host-specific configuration directories.
+PROFILES="${HOME}/.profiles"
+PLATFORMS="${PROFILES}/platforms"
+HOSTS="${PROFILES}/hosts"
+
 # Platform settings.
 UNAME=$(uname)
 case "${UNAME}" in
@@ -94,6 +95,7 @@ while [ -n "$f" -a $max -ge 0 ]; do
     [ -r "${SETTINGS}" ] && . "${SETTINGS}"
     max=$(($max - 1))
 done
+unset f max PLATFORM SETTINGS
     
 # Virtualenv.
 OLDPS1="${PS1}"
