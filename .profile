@@ -5,7 +5,12 @@ EDITOR="$($WHICH nvi 2>/dev/null)" || \
     EDITOR="$($WHICH vi)" || \
     EDITOR="$($WHICH vim)"
 VISUAL=${EDITOR}
-SHELL="/bin/ksh"
+SHELL_OLD="${SHELL}"
+SHELL="$($WHICH mksh 2>/dev/null)" || \
+    SHELL="$($WHICH ksh 2>/dev/null)" || \
+    SHELL="$($WHICH zsh 2>/dev/null)" || \
+    SHELL="$($WHICH bash 2>/dev/null)" || \
+    SHELL="$($WHICH sh)"
 HOSTNAME="$(hostname -s)"
 LANG="C"
 OLDMAIL="${MAIL}"
@@ -105,3 +110,8 @@ fi
 export PS1="${OLDPS1}"
 
 agent
+
+# Run the preferred shell (unless we're already running it).
+if [ "${SHELL##*/}" != "${SHELL_OLD##*/}" ]; then
+    eval "exec ${SHELL}"
+fi
