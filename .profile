@@ -13,6 +13,7 @@ SHELL="$($WHICH mksh 2>/dev/null)" || \
     SHELL="$($WHICH sh)"
 HOSTNAME="$(hostname -s)"
 LANG="C"
+LESSHISTFILE=
 OLDMAIL="${MAIL}"
 MAIL=""
 PAGER="less -iX"
@@ -20,7 +21,7 @@ PATH="$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr
 SSH="$(which ssh)"
 TMUX_SOCK=~/.tmux/sock
 
-export EDITOR ENV HOSTNAME LANG MAIL OLDMAIL PATH PAGER SHELL TMUX_SOCK
+export EDITOR ENV HOSTNAME LANG LESSHISTFILE MAIL OLDMAIL PATH PAGER SHELL TMUX_SOCK
 unset WHICH
 
 # CVS.
