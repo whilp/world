@@ -1,0 +1,78 @@
+dud () { 
+    sudo du -xks \
+        $(find "$1" -xdev -mindepth 2 -maxdepth 2 -print0 2>/dev/null |\
+            xargs -r0 -n1 dirname | sort -u) \
+        | sort -rn
+}
+
+duf () {
+    find "$1" -xdev -maxdepth 1 -type f -print0 | xargs -r0 sudo du -k | sort -rn
+}
+
+PATHS="
+    $HOME/bin
+    /usr/kerberos/bin
+    /usr/kerberos/sbin
+    /cms/sw/python/2.6/bin
+	/sbin
+    /usr/sbin
+"
+for PATHDIR in ${PATHS}; do
+    [ -d "${PATHDIR}" ] && PATH=$(addto "${PATH}" "${PATHDIR}")
+done
+
+SCRATCH=/scratch
+MYSCRATCH=${SCRATCH}/wcmaier
+
+if [ -d "${SCRATCH}" -a ! -d "${MYSCRATCH}" ]; then
+    mkdir "${MYSCRATCH}" 2>/dev/null
+fi
+TMUXDIR="${MYSCRATCH}"
+if [ ! -d "${TMUXDIR}" ]; then
+    TMUXDIR="${TMPDIR}"
+fi
+TMUXSOCK="${TMUXDIR}/.tmux-$UID.sock"
+
+export INPUTRC LANG LC_ALL PATH PS1 TMUXSOCK
+unset USERNAME
+
+unalias vi 2>/dev/null
+unalias ls 2>/dev/null
+
+srv () {
+	sudo /sbin/service $*
+}
+start () {
+	SERVICE=$1; shift
+	srv ${SERVICE} start $*
+}
+stop () {
+	SERVICE=$1; shift
+	srv ${SERVICE} stop $*
+}
+restart () {
+	SERVICE=$1; shift
+	srv ${SERVICE} restart $*
+}
+status () {
+	SERVICE=$1; shift
+	srv ${SERVICE} status $*
+}
+
+alias da="dcache_absent_pools -Hhttp://cmsdcache02.hep.wisc.edu:2288/ -d /cms/sw/dcache/cftree"
+
+pfmlogs () {
+    for i in zero_replica_files-$(date '+%Y%m')*; do
+        printf "$i "; grep '^/' $i | wc -l
+    done
+}
+
+export SRMURL=srm://cmssrm.hep.wisc.edu:8443/srm/managerv2?SFN=
+export DCAPURL=...
+
+# Python virtualenv.
+OLDPS1="${PS1}"
+#if [ -r "${HOME}/bin/activate" ]; then
+#   . "${HOME}/bin/activate"
+#fi
+#export PS1="${OLDPS1}"
