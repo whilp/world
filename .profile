@@ -47,7 +47,7 @@ sleepuntil () {
     done
 }
 agent () {
-    . "${HOME}"/bin/agent
+    [ -r "${HOME}"/bin/agent ] && . "${HOME}"/bin/agent
 }
 site () {
     if [ -z "$1" ]; then
