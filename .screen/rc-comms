@@ -1,4 +1,0 @@
-# :vim: set ft=sh:
-
-sessionname irc
-screen -M -t IRC    1 irssi
