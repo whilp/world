@@ -59,6 +59,10 @@ morina
 GROUP:dns
 dns2
 
+GROUP:cf
+ginseng
+anise
+
 GROUP:login
 login01
 login02
@@ -408,6 +412,40 @@ s17n08
 s17n09
 s17n10
 
+GROUP:g18
+g18n01
+g18n02
+g18n03
+g18n04
+g18n05
+g18n06
+g18n07
+g18n08
+g18n09
+g18n10
+g18n11
+g18n12
+g18n13
+g18n14
+g18n15
+g18n16
+g18n17
+g18n18
+g18n19
+g18n20
+g18n21
+g18n22
+g18n23
+g18n24
+g18n25
+g18n26
+g18n27
+g18n28
+g18n29
+g18n30
+g18n31
+g18n32
+
 GROUP:gridftp
 g7n20
 g7n21
@@ -468,4 +506,4 @@ s17
 #dns2
 
 # To clean up:
-# (dsh -qi | awk '{if (/^$/ !~ $8) {print $8".hep.wisc.edu"}}' | sort -u | while read h; do i=$(dig +short $h); echo -e "$i\t${h%%.*}\n$i\t$h"; done) | ssh-keyscan -HT1 -f - >| .ssh/known_hosts
+# (dsh -qi | awk '{if (/^$/ !~ $8) {print $8".hep.wisc.edu"}}' | sort -u | while read h; do i=$(dig +short $h); echo -e "$i\t${h%%.*}\n$i\t$h\n$i"; done) | ssh-keyscan -HT1 -trsa,dsa -f - >| .ssh/known_hosts

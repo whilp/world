@@ -169,7 +169,6 @@ ignores = (
   { level = "JOINS PARTS QUITS"; servertag = "oftc"; },
   { level = "JOINS PARTS QUITS"; servertag = "freenode"; },
   { mask = "vieq"; level = "ALL"; },
-  { mask = "brandini"; level = "ALL"; },
   { mask = "brian"; level = "JOINS PARTS QUITS"; },
   { level = "JOINS PARTS QUITS"; servertag = "SILCNet"; },
   { level = "JOINS PARTS QUITS"; servertag = "openbsd-porters"; },

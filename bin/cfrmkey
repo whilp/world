@@ -1,0 +1,12 @@
+DOMAIN="hep.wisc.edu"
+KEYSDIR=/var/cfengine/ppkeys
+CFHOSTS="ginseng anise"
+SUDO=/usr/bin/sudo
+
+CMD="${SUDO} rm -f"
+for NAME in $*; do
+    ADDR=$(dig +short "${NAME}.${DOMAIN}" 2>/dev/null)
+    [ -z "${ADDR}" ] && continue
+    CMD="${CMD} ${KEYSDIR}/root-${ADDR}.pub"
+done
+dsh -gcf "${CMD}"

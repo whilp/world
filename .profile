@@ -1,14 +1,11 @@
 WHICH=$(/usr/bin/env which which)
 # Environment variables
+ENV="~/.kshrc"
 EDITOR="$($WHICH nvi 2>/dev/null)" || \
     EDITOR="$($WHICH vi)" || \
     EDITOR="$($WHICH vim)"
 VISUAL=${EDITOR}
-SHELL_OLD="${SHELL}"
-SHELL="$($WHICH zsh 2>/dev/null)" || \
-        SHELL="$($WHICH ksh 2>/dev/null)" || \
-        SHELL="$($WHICH bash 2>/dev/null)" || \
-        SHELL="$($WHICH sh)"
+SHELL="/bin/ksh"
 HOSTNAME="$(hostname -s)"
 LANG="C"
 OLDMAIL="${MAIL}"
@@ -43,23 +40,6 @@ addto () {
     esac
     echo ${STRING}
 }
-calc () {
-    cat <<EOF | bc -l
-    scale=2
-    $*
-EOF
-}
-unstamp () {
-    perl -e "print scalar(localtime($1))"; echo
-}
-lsx () {
-    IFS=:
-    for DIR in ${PATH}; do
-        for FILE in "${DIR}"/*; do
-            [ -x "${FILE}" ] && echo "${FILE##*/}"
-        done
-    done | sort -u
-}
 sleepuntil () {
     DATE=$1 
     INTERVAL=${2:-60} 
@@ -82,9 +62,6 @@ site () {
 }
 
 # Aliases.
-alias beep="printf '\a'"
-alias ci="ci -l"
-alias co="co -l"
 alias curl="curl -s"
 alias elinks="DISPLAY='' elinks -touch-files -no-connect"
 alias hep="site hep"
@@ -119,8 +96,3 @@ fi
 export PS1="${OLDPS1}"
 
 agent
-
-# Run the preferred shell (unless we're already running it).
-if [ "${SHELL##*/}" != "${SHELL_OLD##*/}" ]; then
-    eval "exec ${SHELL}"
-fi
