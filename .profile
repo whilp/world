@@ -4,6 +4,7 @@ EDITOR="$($WHICH nvi 2>/dev/null)" || \
     EDITOR="$($WHICH vi)" || \
     EDITOR="$($WHICH vim)"
 VISUAL=${EDITOR}
+ENV="~/.kshrc"
 SHELL_OLD="${SHELL}"
 SHELL="$($WHICH mksh 2>/dev/null)" || \
     SHELL="$($WHICH ksh 2>/dev/null)" || \
