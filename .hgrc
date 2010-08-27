@@ -29,6 +29,8 @@ track.current = True
 
 [alias]
 rec = record
+dpush = push -b default
+dout = out -b default
 
 [extdiff]
 cmd.vimdiff = vim
