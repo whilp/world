@@ -36,9 +36,6 @@ TMUXSOCK="${TMUXDIR}/.tmux-$UID.sock"
 export INPUTRC LANG LC_ALL PATH PS1 TMUXSOCK
 unset USERNAME
 
-unalias vi 2>/dev/null
-unalias ls 2>/dev/null
-
 srv () {
 	sudo /sbin/service $*
 }

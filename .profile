@@ -1,6 +1,5 @@
 WHICH=$(/usr/bin/env which which)
 # Environment variables
-ENV="~/.kshrc"
 EDITOR="$($WHICH nvi 2>/dev/null)" || \
     EDITOR="$($WHICH vi)" || \
     EDITOR="$($WHICH vim)"
@@ -114,5 +113,5 @@ agent
 
 # Run the preferred shell (unless we're already running it).
 if [ "${SHELL##*/}" != "${SHELL_OLD##*/}" ]; then
-    eval "exec ${SHELL}"
+    eval "exec ${SHELL} -l"
 fi
