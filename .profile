@@ -84,9 +84,16 @@ case "${UNAME}" in
 esac
 [ -r "${PLATFORM}" ] && . "${PLATFORM}"
 
-# Host settings.
-FQDN=$(hostname)
-[ -r "${HOSTS}/${FQDN}" ] && . "${HOSTS}/${FQDN}"
+# Domain and host settings.
+FQDN=.$(hostname)
+f=${FQDN}
+max=5
+while [ -n "$f" -a $max -ge 0 ]; do
+    f=${f%.*}
+    SETTINGS="${HOSTS}/${FQDN#$f.}"
+    [ -r "${SETTINGS}" ] && . "${SETTINGS}"
+    max=$(($max - 1))
+done
     
 # Virtualenv.
 OLDPS1="${PS1}"
