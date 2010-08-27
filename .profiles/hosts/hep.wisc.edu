@@ -14,7 +14,7 @@ PATHS="
     /usr/kerberos/bin
     /usr/kerberos/sbin
     /cms/sw/python/2.6/bin
-	/sbin
+    /sbin
     /usr/sbin
 "
 for PATHDIR in ${PATHS}; do
@@ -41,22 +41,6 @@ unalias ls 2>/dev/null
 
 srv () {
 	sudo /sbin/service $*
-}
-start () {
-	SERVICE=$1; shift
-	srv ${SERVICE} start $*
-}
-stop () {
-	SERVICE=$1; shift
-	srv ${SERVICE} stop $*
-}
-restart () {
-	SERVICE=$1; shift
-	srv ${SERVICE} restart $*
-}
-status () {
-	SERVICE=$1; shift
-	srv ${SERVICE} status $*
 }
 
 alias da="dcache_absent_pools -Hhttp://cmsdcache02.hep.wisc.edu:2288/ -d /cms/sw/dcache/cftree"
