@@ -1,6 +1,3 @@
-[defaults]
-log = -fM
-
 [ui]
 editor = ~/bin/hgeditor
 merge = vimdiff
@@ -29,6 +26,8 @@ track.current = True
 
 [alias]
 rec = record
+dpush = push -b default
+dout = out -b default
 
 [extdiff]
 cmd.vimdiff = vim

@@ -1,13 +1,20 @@
 WHICH=$(/usr/bin/env which which)
 # Environment variables
-ENV="~/.kshrc"
 EDITOR="$($WHICH nvi 2>/dev/null)" || \
     EDITOR="$($WHICH vi)" || \
     EDITOR="$($WHICH vim)"
 VISUAL=${EDITOR}
-SHELL="/bin/ksh"
+ENV="~/.kshrc"
+SHELL_OLD="${SHELL}"
+SHELL="$($WHICH mksh 2>/dev/null)" || \
+    SHELL="$($WHICH ksh 2>/dev/null)" || \
+    SHELL="$($WHICH zsh 2>/dev/null)" || \
+    SHELL="$($WHICH bash 2>/dev/null)" || \
+    SHELL="$($WHICH sh)"
+HISTORY="~/.history"
 HOSTNAME="$(hostname -s)"
 LANG="C"
+LESSHISTFILE=
 OLDMAIL="${MAIL}"
 MAIL=""
 PAGER="less -iX"
@@ -15,7 +22,7 @@ PATH="$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr
 SSH="$(which ssh)"
 TMUX_SOCK=~/.tmux/sock
 
-export EDITOR ENV HOSTNAME LANG MAIL OLDMAIL PATH PAGER SHELL TMUX_SOCK
+export EDITOR ENV HISTORY HOSTNAME LANG LESSHISTFILE MAIL OLDMAIL PATH PAGER SHELL TMUX_SOCK
 unset WHICH
 
 # CVS.
@@ -47,7 +54,7 @@ sleepuntil () {
     done
 }
 agent () {
-    . "${HOME}"/bin/agent
+    [ -r "${HOME}"/bin/agent ] && . "${HOME}"/bin/agent
 }
 site () {
     if [ -z "$1" ]; then
@@ -105,3 +112,8 @@ fi
 export PS1="${OLDPS1}"
 
 agent
+
+# Run the preferred shell (unless we're already running it).
+if [ "${SHELL##*/}" != "${SHELL_OLD##*/}" ]; then
+    eval "exec ${SHELL} -l"
+fi
