@@ -47,7 +47,6 @@ class Loop(cmd.Cmd):
         return time.strftime(self.datefmt)
 
     def complete(self, text, state):
-        #print "complete %r, %r" % (text, line)
         matches = ["#" + x.lstrip("./") for x in 
             glob.glob(os.path.join(self.dir, text) + "*")]
 
