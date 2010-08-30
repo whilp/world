@@ -21,12 +21,13 @@ class Loop(cmd.Cmd):
     settable = ("dir", "datefmt", "msgfmt", "sep")
 
     def __init__(self, dir=".", datefmt="%Y-%m-%d", msgfmt="%(message)s", 
-            sep="\t", *args, **kwargs):
+            sep="\t", prompt="> ", *args, **kwargs):
         cmd.Cmd.__init__(self, *args, **kwargs)
         self.dir = dir
         self.datefmt = datefmt
         self.msgfmt = msgfmt
         self.sep = sep
+        self.prompt = prompt
 
     def default(self, line):
         try:
@@ -48,6 +49,12 @@ class Loop(cmd.Cmd):
         }
         message = self.msgfmt % data
         fname = os.path.join(self.dir, fname)
+        try:
+            os.makedirs(self.dir)
+        except OSError, e:
+            if e.errno != 17:
+                raise
+                
         if not fname.startswith(self.dir):
             return
         with open(fname, 'a') as f:
