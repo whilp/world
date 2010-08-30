@@ -7,7 +7,7 @@ TMUX="tmux -S ${HOME}/.tmux/sock"
 do_attach () {
     mkdir -p "${CONFDIR}" >/dev/null 2>&1
     SESSION=$1
-    TMUX_CONFIG=$2
+    TMUX_CONFIG=${2:-~/.tmux.conf}
     ${TMUX} has-session -t "${SESSION}" > /dev/null 2>&1
     if [ $? -ne 0 ]; then
         ${TMUX} new-session -ds "${SESSION}"
