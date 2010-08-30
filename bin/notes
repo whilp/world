@@ -1,9 +1,9 @@
 #!/usr/bin/env python
+import cmd
 import logging
 import os
 import readline
 
-from cmd import Cmd
 from datetime import datetime
 
 try:
@@ -17,60 +17,23 @@ LEVEL = logging.DEBUG
 MSG_FMT = "%(asctime)s\t%(message)s"
 PROMPT = "> "
 
-class Triage(Cmd):
+class Loop(cmd.Cmd):
     prompt = PROMPT
     ignore = '#'
     sep = '\t'
 
     def __init__(self, logger, logfile, out, *args, **kwargs):
-        Cmd.__init__(self, *args, **kwargs)
+        cmd.Cmd.__init__(self, *args, **kwargs)
         self.logger = logger
         self.log = self.logger.log
-        self.logfile = logfile
         self.out = out
 
     def default(self, line):
         self.log(logging.DEBUG, line)
 
-    def read(self):
-        f = open(self.logfile, 'r')
-
-        # Seek to a point either end-1K or the beginning of the
-        # file.
-        size = os.fstat(f.fileno()).st_size
-        index = size - 1024
-        index = index > 0 and index or 0
-        f.seek(index)
-
-        lines = [(h, t) for h, s, t in [l.partition(self.sep) for l in f.readlines()]
-                if s == self.sep 
-                and (h and t) 
-                and h[0] not in self.ignore]
-        f.close()
-
-        lines = [(datetime.strptime(d, DATE_FMT), m.strip()) for d, m in lines]
-        return lines
-
-    def get_last(self, line, n=LAST_LINES):
-        p = ''
-        try:
-            n = int(line or n)
-        except ValueError:
-            p = line
-
-        return [(d, m) for d, m in self.read() if p in m][-n:]
-
     def write_lines(self, lines, out=None, format=DATE_FMT):
         lines = [' '.join((d.strftime(format), m)) for d, m in lines]
         self.out.write('\n'.join(lines) + '\n')
-
-    def do_today(self, line):
-        today = datetime(*datetime.today().date().timetuple()[:6])
-        lines = [(d, m) for d, m in self.get_last(line) if d > today]
-        self.write_lines(lines)
-
-    def do_last(self, line):
-        self.write_lines(self.get_last(line))
 
     # Exit and its synonyms.
     def do_exit(self, line):
