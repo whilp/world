@@ -112,6 +112,7 @@ class notes(LoggingApp):
             prompt=self.params.prompt,
             sep=self.params.sep)
         loop.cmdloop()
+        self.stdout.write('\n')
 
     def setup(self):
         LoggingApp.setup(self)
