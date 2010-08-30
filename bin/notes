@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import cmd
-import glob
+import fnmatch
 import logging
 import os
 import readline
@@ -34,6 +34,7 @@ class Loop(cmd.Cmd):
         self.tagchar = tagchar
         self._prompt = prompt
         self.lasttag = ""
+        self.matches = []
 
     @property
     def prompt(self):
@@ -48,12 +49,17 @@ class Loop(cmd.Cmd):
     def date(self):
         return time.strftime(self.datefmt)
 
+    @property
+    def tags(self):
+        return os.listdir(self.dir)
+
     def complete(self, text, state):
-        matches = [self.tagchar + x.lstrip("./") for x in 
-            glob.glob(os.path.join(self.dir, text) + "*")]
+        if state == 0:
+            self.matches = fnmatch.filter(self.tags, text.lstrip(self.tagchar) + "*")
+            tag = lambda x: self.tagchar + x.lstrip(self.tagchar + "./")
 
         try:
-            return matches[state]
+            return self.tagchar + self.matches[state]
         except IndexError:
             return None
 
