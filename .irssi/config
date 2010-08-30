@@ -162,7 +162,8 @@ hilights = (
     text = "laura JOINS PARTS QUITS MODES";
     nick = "yes";
     word = "yes";
-  }
+  },
+  { text = "trevor"; nick = "yes"; word = "yes"; }
 );
 ignores = (
   { level = "JOINS PARTS QUITS"; servertag = "efnet"; },
