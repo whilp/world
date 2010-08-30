@@ -79,6 +79,7 @@ class notes(LoggingApp):
             dir=self.params.dir[0],
             datefmt=self.params.datefmt,
             msgfmt=self.params.msgfmt,
+            prompt=self.params.prompt,
             sep=self.params.sep)
         loop.cmdloop()
 
