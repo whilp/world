@@ -3,37 +3,60 @@ import cmd
 import logging
 import os
 import readline
+import time
 
 from datetime import datetime
+
+from cli.log import LoggingApp
 
 try:
     import codecs
 except ImportError:
     codecs = None
 
-DATE_FMT = "%Y-%m-%dT%H:%M:%S"
 LAST_LINES = 10
 LEVEL = logging.DEBUG
-MSG_FMT = "%(asctime)s\t%(message)s"
-PROMPT = "> "
 
 class Loop(cmd.Cmd):
-    prompt = PROMPT
-    ignore = '#'
-    sep = '\t'
+    settable = ("dir", "datefmt", "msgfmt", "sep")
 
-    def __init__(self, logger, logfile, out, *args, **kwargs):
+    def __init__(self, dir=".", datefmt="%Y-%m-%d", msgfmt="%(message)s", 
+            sep="\t", *args, **kwargs):
         cmd.Cmd.__init__(self, *args, **kwargs)
-        self.logger = logger
-        self.log = self.logger.log
-        self.out = out
+        self.dir = dir
+        self.datefmt = datefmt
+        self.msgfmt = msgfmt
+        self.sep = sep
 
     def default(self, line):
-        self.log(logging.DEBUG, line)
+        try:
+            tag, rest = line.split(None, 1)
+        except ValueError:
+            tag, rest = "", line
+        if tag.startswith("$"):
+            tag = tag.lstrip("$")
+            line = rest
+        else:
+            tag = "default"
+        self.append(tag, line)
 
-    def write_lines(self, lines, out=None, format=DATE_FMT):
-        lines = [' '.join((d.strftime(format), m)) for d, m in lines]
-        self.out.write('\n'.join(lines) + '\n')
+    def append(self, fname, line):
+        data = {
+            "message": line,
+            "date": time.strftime(self.datefmt),
+            "sep": self.sep,
+        }
+        message = self.msgfmt % data
+        fname = os.path.join(self.dir, fname)
+        if not fname.startswith(self.dir):
+            return
+        with open(fname, 'a') as f:
+            f.write(message)
+
+    def do_set(self, line):
+        name, rest = line.split(None, 1)
+        if name in self.settable:
+            setattr(self, name, rest)
 
     # Exit and its synonyms.
     def do_exit(self, line):
@@ -42,52 +65,37 @@ class Loop(cmd.Cmd):
     do_EOF = do_exit
     do_q = do_exit
 
-class ReloadingFileHandler(logging.FileHandler):
+class notes(LoggingApp):
+    defaults = {
+        "prompt": "> ",
+        "dir": ".",
+        "sep": "\t",
+        "datefmt": "%Y-%m-%dT%H:%M:%S",
+        "msgfmt": "%(date)s%(sep)s%(message)s\n",
+    }
+    
+    def main(self):
+        loop = Loop(
+            dir=self.params.dir[0],
+            datefmt=self.params.datefmt,
+            msgfmt=self.params.msgfmt,
+            sep=self.params.sep)
+        loop.cmdloop()
 
-    def __init__(self, filename, mode='a', encoding=None):
-        stream = self.open(filename, mode, encoding)
-        logging.StreamHandler.__init__(self, stream)
-        self.baseFilename = os.path.abspath(filename)
-        self.mode = mode
-        self.encoding = encoding
-        self.size = 0
-
-    def open(self, filename, mode='a', encoding=None):
-        if codecs is None:
-            encoding = None
-
-        if encoding is None:
-            stream = open(filename, mode)
-        else:
-            stream = codecs.open(filename, mode, encoding)
-
-        return stream
-
-    def emit(self, record):
-        # Reopen the stream each time. This is slightly paranoid,
-        # but useful.
-        self.stream = self.open(self.baseFilename, self.mode, self.encoding)
-        logging.FileHandler.emit(self, record)
+    def setup(self):
+        LoggingApp.setup(self)
+        self.add_param("-d", "--datefmt", default=self.defaults["datefmt"],
+            help="strftime(3) date format (default: %r)" % 
+                self.defaults["datefmt"].replace("%", "%%"))
+        self.add_param("-m", "--msgfmt", default=self.defaults["msgfmt"],
+            help="logging.Formatter message format (default: %r)" % 
+                self.defaults["msgfmt"].replace("%", "%%"))
+        self.add_param("-p", "--prompt", default=self.defaults["prompt"],
+            help="interpreter prompt (default: %(prompt)r)" % self.defaults)
+        self.add_param("-S", "--sep", default=self.defaults["sep"],
+            help="record separator (default: %(sep)r)" % self.defaults)
+        self.add_param("dir", nargs=1, default=self.defaults["dir"],
+            help="notes working directory (default: %(dir)s)" % self.defaults)
 
 if __name__ == "__main__":
-    import sys
-
-    try:
-        logdir = sys.argv[1]
-    except IndexError:
-        logdir = "~/share/doc/log"
-
-    logdir = os.path.expanduser(logdir)
-    logdir = os.path.abspath(logdir)
-
-    # Set up logging.
-    log = logging.getLogger("triage")
-    log.setLevel(LEVEL)
-    handler = ReloadingFileHandler(logdir)
-    handler.setLevel(LEVEL)
-    formatter = logging.Formatter(MSG_FMT, DATE_FMT)
-    handler.setFormatter(formatter)
-    log.addHandler(handler)
-
-    triage = Triage(log, logdir, sys.stdout)
-    triage.cmdloop()
+    notes().run()
