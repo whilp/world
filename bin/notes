@@ -45,7 +45,7 @@ class Loop(cmd.Cmd):
 
     def default(self, line):
         try:
-            tag, rest = line.split(None, 1)
+            tag, _ = line.split(None, 1)
         except ValueError:
             return
         tag = tag.lstrip("#")
