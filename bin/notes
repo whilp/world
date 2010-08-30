@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import cmd
+import glob
 import logging
 import os
 import readline
@@ -45,9 +46,20 @@ class Loop(cmd.Cmd):
     def date(self):
         return time.strftime(self.datefmt)
 
+    def complete(self, text, state):
+        #print "complete %r, %r" % (text, line)
+        matches = ["#" + x.lstrip("./") for x in 
+            glob.glob(os.path.join(self.dir, text) + "*")]
+
+        try:
+            return matches[state]
+        except IndexError:
+            return None
+
     def default(self, line):
         fields = line.split()
-        tags = list(takewhile(lambda x: x.startswith("#"), 
+        tags = [fields.pop(0)]
+        tags.extend(takewhile(lambda x: x.startswith("#"), 
             [f for f in fields if f]))
         if not tags:
             return
