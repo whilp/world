@@ -6,6 +6,7 @@ import readline
 import time
 
 from datetime import datetime
+from itertools import takewhile
 
 from cli.log import LoggingApp
 
@@ -20,9 +21,10 @@ LEVEL = logging.DEBUG
 class Loop(cmd.Cmd):
     settable = ("dir", "datefmt", "msgfmt", "sep")
 
-    def __init__(self, dir=".", datefmt="%Y-%m-%d", msgfmt="%(message)s", 
-            sep="\t", prompt="> ", *args, **kwargs):
+    def __init__(self, all=False, dir=".", datefmt="%Y-%m-%d", 
+            msgfmt="%(message)s", sep="\t", prompt="> ", *args, **kwargs):
         cmd.Cmd.__init__(self, *args, **kwargs)
+        self.all = all
         self.dir = dir
         self.datefmt = datefmt
         self.msgfmt = msgfmt
@@ -44,14 +46,22 @@ class Loop(cmd.Cmd):
         return time.strftime(self.datefmt)
 
     def default(self, line):
-        try:
-            tag, _ = line.split(None, 1)
-        except ValueError:
+        fields = line.split()
+        tags = list(takewhile(lambda x: x.startswith("#"), 
+            [f for f in fields if f]))
+        if not tags:
             return
-        tag = tag.lstrip("#")
-        self.lasttag = tag
-        self.lastdate = self.date
-        self.append(tag, line)
+        elif not self.all:
+            tags = tags[:1]
+
+        updatelast = True
+        for tag in tags:
+            tag = tag.lstrip("#")
+            if updatelast:
+                self.lasttag = tag
+                self.lastdate = self.date
+                updatelast = False
+            self.append(tag, line)
 
     def append(self, fname, line):
         data = {
@@ -95,6 +105,7 @@ class notes(LoggingApp):
     
     def main(self):
         loop = Loop(
+            all=self.params.all,
             dir=self.params.dir[0],
             datefmt=self.params.datefmt,
             msgfmt=self.params.msgfmt,
@@ -104,6 +115,9 @@ class notes(LoggingApp):
 
     def setup(self):
         LoggingApp.setup(self)
+        self.add_param("-a", "--all", default=False, action="store_true",
+            help="log note to separate files for each tag "
+                "(default: only the first tag)")
         self.add_param("-d", "--datefmt", default=self.defaults["datefmt"],
             help="strftime(3) date format (default: %r)" % 
                 self.defaults["datefmt"].replace("%", "%%"))
