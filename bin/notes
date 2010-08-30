@@ -111,7 +111,8 @@ class notes(LoggingApp):
             help="logging.Formatter message format (default: %r)" % 
                 self.defaults["msgfmt"].replace("%", "%%"))
         self.add_param("-p", "--prompt", default=self.defaults["prompt"],
-            help="interpreter prompt (default: %(prompt)r)" % self.defaults)
+            help="interpreter prompt (default: %r)" % 
+                self.defaults["prompt"].replace("%", "%%"))
         self.add_param("-S", "--sep", default=self.defaults["sep"],
             help="record separator (default: %(sep)r)" % self.defaults)
         self.add_param("dir", nargs=1, default=self.defaults["dir"],
