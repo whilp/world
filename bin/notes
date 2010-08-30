@@ -52,12 +52,21 @@ class Loop(cmd.Cmd):
             return None
 
     def default(self, line):
-        if not line.startswith(self.tagchar):
-            line = self.tagchar + line
         fields = line.split()
-        tags = [fields.pop(0)]
-        tags.extend(takewhile(lambda x: x.startswith(self.tagchar), 
-            [f for f in fields if f]))
+        tags = []
+        if not fields:
+            return
+        elif not fields[0].startswith(self.tagchar):
+            if not self.lasttag:
+                return
+            last = self.tagchar + self.lasttag
+            tags = [last]
+            line = ' '.join((last, line))
+        else:
+            tags = [fields.pop(0)]
+        tags.extend(takewhile(lambda x: x.startswith(self.tagchar), fields))
+        tags = [t for t in tags if t]
+
         if not tags:
             return
         elif not self.all:
