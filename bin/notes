@@ -56,7 +56,6 @@ class Loop(cmd.Cmd):
     def complete(self, text, state):
         if state == 0:
             self.matches = fnmatch.filter(self.tags, text.lstrip(self.tagchar) + "*")
-            tag = lambda x: self.tagchar + x.lstrip(self.tagchar + "./")
 
         try:
             return self.tagchar + self.matches[state]
