@@ -28,7 +28,7 @@ class Loop(cmd.Cmd):
         self.msgfmt = msgfmt
         self.sep = sep
         self._prompt = prompt
-        self.lasttag = "default"
+        self.lasttag = ""
 
     @property
     def prompt(self):
@@ -47,12 +47,8 @@ class Loop(cmd.Cmd):
         try:
             tag, rest = line.split(None, 1)
         except ValueError:
-            tag, rest = "", line
-        if tag.startswith("$"):
-            tag = tag.lstrip("$")
-            line = rest
-        else:
-            tag = self.lasttag
+            return
+        tag = tag.lstrip("#")
         self.lasttag = tag
         self.lastdate = self.date
         self.append(tag, line)
@@ -90,7 +86,7 @@ class Loop(cmd.Cmd):
 
 class notes(LoggingApp):
     defaults = {
-        "prompt": "%(lasttag)s > ",
+        "prompt": "%(lastdate)s %(lasttag)s > ",
         "dir": ".",
         "sep": "\t",
         "datefmt": "%Y-%m-%dT%H:%M:%S",
