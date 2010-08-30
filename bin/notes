@@ -23,13 +23,15 @@ class Loop(cmd.Cmd):
     settable = ("dir", "datefmt", "msgfmt", "sep")
 
     def __init__(self, all=False, dir=".", datefmt="%Y-%m-%d", 
-            msgfmt="%(message)s", sep="\t", prompt="> ", *args, **kwargs):
+            msgfmt="%(message)s", sep="\t", tagchar="#", prompt="> ", 
+                *args, **kwargs):
         cmd.Cmd.__init__(self, *args, **kwargs)
         self.all = all
         self.dir = dir
         self.datefmt = datefmt
         self.msgfmt = msgfmt
         self.sep = sep
+        self.tagchar = tagchar
         self._prompt = prompt
         self.lasttag = ""
 
@@ -47,7 +49,7 @@ class Loop(cmd.Cmd):
         return time.strftime(self.datefmt)
 
     def complete(self, text, state):
-        matches = ["#" + x.lstrip("./") for x in 
+        matches = [self.tagchar + x.lstrip("./") for x in 
             glob.glob(os.path.join(self.dir, text) + "*")]
 
         try:
@@ -58,7 +60,7 @@ class Loop(cmd.Cmd):
     def default(self, line):
         fields = line.split()
         tags = [fields.pop(0)]
-        tags.extend(takewhile(lambda x: x.startswith("#"), 
+        tags.extend(takewhile(lambda x: x.startswith(self.tagchar), 
             [f for f in fields if f]))
         if not tags:
             return
@@ -67,7 +69,7 @@ class Loop(cmd.Cmd):
 
         updatelast = True
         for tag in tags:
-            tag = tag.lstrip("#")
+            tag = tag.lstrip(self.tagchar)
             if updatelast:
                 self.lasttag = tag
                 self.lastdate = self.date
