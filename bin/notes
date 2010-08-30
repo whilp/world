@@ -58,11 +58,13 @@ class Loop(cmd.Cmd):
             self.matches = fnmatch.filter(self.tags, text.lstrip(self.tagchar) + "*")
 
         try:
-            return self.tagchar + self.matches[state]
+            return self.matches[state]
         except IndexError:
             return None
 
     def default(self, line):
+        if not line.startswith(self.tagchar):
+            line = self.tagchar + line
         fields = line.split()
         tags = [fields.pop(0)]
         tags.extend(takewhile(lambda x: x.startswith(self.tagchar), 
@@ -123,12 +125,15 @@ class notes(LoggingApp):
     
     def main(self):
         loop = Loop(
+            stdin=self.stdin,
+            stdout=self.stdout,
             all=self.params.all,
             dir=self.params.dir[0],
             datefmt=self.params.datefmt,
             msgfmt=self.params.msgfmt,
             prompt=self.params.prompt,
             sep=self.params.sep)
+        loop.log = self.log
         loop.cmdloop()
         self.stdout.write('\n')
 
