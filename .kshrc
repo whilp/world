@@ -10,4 +10,4 @@ ps1 () {
 PS1="\$(ps1) "
 export PS1
 
-set -o vi
+set -o vi-tabcomplete
