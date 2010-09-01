@@ -32,6 +32,11 @@ OCVS=:ext:cvs:/cvs
 
 export CVSEDITOR CVS_RSH OCVS
 
+# Miscellaneous.
+BBCURL=mms://a279.l3944048278.c39440.g.lm.akamaistream.net/D/279/39440/v0001/reflector:48278
+
+export BBCURL
+
 # Functions.
 addto () {
     typeset STRING=$1
