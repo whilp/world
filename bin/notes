@@ -12,7 +12,7 @@ class Loop(cmd.Cmd):
     settable = ("dir", "datefmt", "msgfmt", "sep")
 
     def __init__(self, all=False, dir=".", datefmt="%Y-%m-%d", 
-            msgfmt="%(message)s", sep="\t", tagchar="#", prompt="> ", 
+            msgfmt="%(message)s", sep="\t", tagchar="#", prompt="> ", user="", 
                 *args, **kwargs):
         cmd.Cmd.__init__(self, *args, **kwargs)
         self.all = all
@@ -22,6 +22,7 @@ class Loop(cmd.Cmd):
         self.sep = sep
         self.tagchar = tagchar
         self._prompt = prompt
+        self.user = user
         self.lasttag = ""
         self.matches = []
 
@@ -31,6 +32,7 @@ class Loop(cmd.Cmd):
             "lasttag": getattr(self, "lasttag", ""),
             "lastdate": getattr(self, "lastdate", ""),
             "date": self.date,
+            "user": self.user,
         }
         return self._prompt % data
 
@@ -86,6 +88,7 @@ class Loop(cmd.Cmd):
             "message": line,
             "date": self.date,
             "sep": self.sep,
+            "user": self.user,
         }
         message = self.msgfmt % data
         fname = os.path.join(self.dir, fname)
@@ -118,7 +121,8 @@ class notes(LoggingApp):
         "dir": ".",
         "sep": "\t",
         "datefmt": "%Y-%m-%dT%H:%M:%S",
-        "msgfmt": "%(date)s%(sep)s%(message)s\n",
+        "msgfmt": "%(sep)s".join(("%(date)s", "%(user)s", "%(message)s\n")),
+        "user": os.getlogin(),
     }
     
     def main(self):
@@ -130,7 +134,8 @@ class notes(LoggingApp):
             datefmt=self.params.datefmt,
             msgfmt=self.params.msgfmt,
             prompt=self.params.prompt,
-            sep=self.params.sep)
+            sep=self.params.sep,
+            user=self.params.user)
         loop.log = self.log
         try:
             loop.cmdloop()
@@ -154,6 +159,8 @@ class notes(LoggingApp):
                 self.defaults["prompt"].replace("%", "%%"))
         self.add_param("-S", "--sep", default=self.defaults["sep"],
             help="record separator (default: %(sep)r)" % self.defaults)
+        self.add_param("-u", "--user", default=self.defaults["user"],
+            help="user name (default: %(user)r)" % self.defaults)
         self.add_param("dir", nargs=1, default=self.defaults["dir"],
             help="notes working directory (default: %(dir)s)" % self.defaults)
 
