@@ -29,7 +29,10 @@ track.current = True
 rec = record
 dpush = push -b default
 dout = out -b default
-last = log -l7 --style compact
+shortlog = log --template '{rev} {node|short} | {date|isodatesec} | {author|user}: {desc|strip|firstline}\n'
+last = shortlog -l7
+patchn = import --no-commit
+cm = commit --message
 
 [extdiff]
 cmd.vimdiff = vim
