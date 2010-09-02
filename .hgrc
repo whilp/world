@@ -33,6 +33,8 @@ shortlog = log --template '{rev} {node|short} | {date|isodatesec} | {author|user
 last = shortlog -l7
 patchn = import --no-commit
 cm = commit --message
+bpush = push --remotecmd=hg
+bpull = pull --remotecmd=hg
 
 [extdiff]
 cmd.vimdiff = vim
