@@ -34,7 +34,7 @@ dpush = push -b default
 patchn = import --no-commit
 rec = record
 
-shortheads = heads --template '{rev} {node|short} | {date|isodatesec} | {author|user}: {desc|strip|firstline}\n'
+shortheads = heads --template ~/.mercurial/short.style
 shead = shortheads
 
 shortlog = log --style ~/.mercurial/short.style
