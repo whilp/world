@@ -26,19 +26,19 @@ hggit =
 track.current = True
 
 [alias]
-rec = record
-dpush = push -b default
-dout = out -b default
-shortheads = heads --template '{rev} {node|short} | {date|isodatesec} | {author|user}: {desc|strip|firstline}\n'
-shead = shortheads
-shortlog = log --template '{rev} {node|short} | {date|isodatesec} | {author|user}: {desc|strip|firstline}\n'
-shlog = shortlog
-last = shortlog -l7
-sh = shortlog
-patchn = import --no-commit
-cm = commit --message
-bpush = push --remotecmd=hg
 bpull = pull --remotecmd=hg
+bpush = push --remotecmd=hg
+cm = commit --message
+dout = out -b default
+dpush = push -b default
+last = shortlog -l7
+patchn = import --no-commit
+rec = record
+sh = shortlog
+shead = shortheads
+shlog = shortlog
+shortheads = heads --template '{rev} {node|short} | {date|isodatesec} | {author|user}: {desc|strip|firstline}\n'
+shortlog = log --template '{rev} {node|short} | {date|isodatesec} | {author|user}: {desc|strip|firstline}\n'
 
 [extdiff]
 cmd.vimdiff = vim
