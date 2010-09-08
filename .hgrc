@@ -32,6 +32,7 @@ dout = out -b default
 shortheads = heads --template '{rev} {node|short} | {date|isodatesec} | {author|user}: {desc|strip|firstline}\n'
 shead = shortheads
 shortlog = log --template '{rev} {node|short} | {date|isodatesec} | {author|user}: {desc|strip|firstline}\n'
+shlog = shortlog
 last = shortlog -l7
 sh = shortlog
 patchn = import --no-commit
