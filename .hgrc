@@ -31,6 +31,7 @@ dpush = push -b default
 dout = out -b default
 shortlog = log --template '{rev} {node|short} | {date|isodatesec} | {author|user}: {desc|strip|firstline}\n'
 last = shortlog -l7
+sh = shortlog
 patchn = import --no-commit
 cm = commit --message
 bpush = push --remotecmd=hg
