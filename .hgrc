@@ -2,7 +2,7 @@
 editor = ~/bin/hgeditor
 merge = vimdiff
 username = Will Maier <willmaier@ml1.net>
-ignore = ~/.hgignore-global
+ignore = ~/.mercurial/ignores
 remotecmd = ~/bin/hg
 
 [diff]
