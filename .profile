@@ -118,6 +118,9 @@ export PS1="${OLDPS1}"
 
 agent
 
+# Jump back to $HOME; helps unconfuse ps1 when $HOME is symlinked.
+cd 
+
 # Run the preferred shell (unless we're already running it).
 if [ "${SHELL##*/}" != "${SHELL_OLD##*/}" ]; then
     eval "exec ${SHELL} -l"
