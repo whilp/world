@@ -31,14 +31,16 @@ bpush = push --remotecmd=hg
 cm = commit --message
 dout = out -b default
 dpush = push -b default
-last = shortlog -l7
 patchn = import --no-commit
 rec = record
-sh = shortlog
-shead = shortheads
-shlog = shortlog
+
 shortheads = heads --template '{rev} {node|short} | {date|isodatesec} | {author|user}: {desc|strip|firstline}\n'
+shead = shortheads
+
 shortlog = log --style ~/.mercurial/short.style
+last = shortlog -l7
+sh = shortlog
+shlog = shortlog
 
 [extdiff]
 cmd.vimdiff = vim
