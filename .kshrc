@@ -8,14 +8,24 @@ ps1 () {
         *) PS1PWD="${PWD}";;
     esac
 
+    local OLDPS1PWD=${PS1PWD}
     IFS=/ set -A PWDCOMPONENTS ${PS1PWD}
     PS1PWD=
     local i=0
     local COMPONENT=
+    local MAX="${MAXPS1PWDCOMP:-5}"
     for COMPONENT in ${PWDCOMPONENTS}; do
         i=$(($i + 1))
-        if [ $i -gt "${MAXPS1PWDCOMP:-5}" ]; then
-            PS1PWD="${PS1PWD}..."; break
+        if [ $i -ge "${MAX}" ]; then
+            local OLDLAST="${OLDPS1PWD#${PS1PWD}}"
+            local LAST=${OLDLAST##*/}
+            case "${LAST}" in
+                "") COMPONENT="";;
+                "${OLDLAST}") COMPONENT="${LAST}";;
+                *) COMPONENT=".../${LAST}";;
+            esac
+            PS1PWD="${PS1PWD}${COMPONENT}/"
+            break
         fi
         PS1PWD="${PS1PWD}${COMPONENT}/"
     done
