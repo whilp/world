@@ -7,7 +7,7 @@ import warnings
 
 from random import randint
 
-import cli
+from cli.log import LoggingApp
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
@@ -109,7 +109,7 @@ def find_samples(app, url):
 
     return samples
 
-@cli.LoggingApp
+@LoggingApp
 def amie(app, url=None):
     """[-hqsv] [-al] [url]"""
     null = open(os.devnull, 'w')
