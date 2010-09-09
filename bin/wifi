@@ -1,0 +1,30 @@
+#!/bin/sh
+
+SUDO=/usr/bin/sudo
+WLAN=wlan
+IFCONFIG="${SUDO} /sbin/ifconfig"
+INTERFACE=$(${IFCONFIG} ${WLAN} 2>/dev/null | (IFS=:; read INT REST; echo $INT))
+
+[ -z "${INTERFACE}" ] && (echo "===> No ${WLAN} interface found"; exit 1)
+IFCONFIG="${IFCONFIG} ${INTERFACE}"
+DHCLIENT="${SUDO} /sbin/dhclient ${INTERFACE}"
+
+set -e
+case $1 in
+    manna*)
+        ${IFCONFIG} nwid Manna nwkey mannanet;;
+    mike*)  
+        ${IFCONFIG} nwid linksys_SES_42378 \
+            wpa wpapsk `wpa-psk linksys_SES_42378 m2guwzabgw78f04x`
+        ${DHCLIENT};;
+    pop*)   
+        ${IFCONFIG} nwid home wpa wpapsk `wpa-psk 'home' NTK6m4w7my`
+        ${DHCLIENT};;
+    radi*) 
+        ${IFCONFIG} nwid radical_edward; ${DHCLIENT};;
+    uw*)
+        ${DHCLIENT};;
+    *)
+        echo "===> Unknown network: $1"; exit 1;;
+esac
+set +e
