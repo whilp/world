@@ -11,8 +11,12 @@ DHCLIENT="${SUDO} /sbin/dhclient ${INTERFACE}"
 
 set -e
 case $1 in
+    ap*)
+        ${IFCONFIG} nwid apnet3.0 wpa wpapsk `wpa-psk apnet3.0 1409badgers`
+        ${DHCLIENT};;
     manna*)
         ${IFCONFIG} nwid Manna nwkey mannanet;;
+        ${DHCLIENT};;
     mike*)  
         ${IFCONFIG} nwid linksys_SES_42378 \
             wpa wpapsk `wpa-psk linksys_SES_42378 m2guwzabgw78f04x`
@@ -21,7 +25,14 @@ case $1 in
         ${IFCONFIG} nwid home wpa wpapsk `wpa-psk 'home' NTK6m4w7my`
         ${DHCLIENT};;
     radi*) 
-        ${IFCONFIG} nwid radical_edward; ${DHCLIENT};;
+        ${IFCONFIG} nwid radical_edward
+        ${DHCLIENT};;
+    rosie*)
+        ${IFOCNFIG} nwid Apt4 wpa wpapsk `wpa-psk Apt4 Jordan23`
+        ${DHCLIENT};;
+    trev*)
+        ${IFCONFIG} nwid '/:House:\' wpa wpapsk `wpa-psk '/:House:\' rust1cc0ff33`
+        ${DHCLIENT};;
     uw*)
         ${DHCLIENT};;
     *)
