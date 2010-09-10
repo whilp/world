@@ -15,7 +15,7 @@ case $1 in
         ${IFCONFIG} nwid apnet3.0 wpa wpapsk `wpa-psk apnet3.0 1409badgers`
         ${DHCLIENT};;
     manna*)
-        ${IFCONFIG} nwid Manna nwkey mannanet;;
+        ${IFCONFIG} nwid Manna nwkey mannanet
         ${DHCLIENT};;
     mike*)  
         ${IFCONFIG} nwid linksys_SES_42378 \
