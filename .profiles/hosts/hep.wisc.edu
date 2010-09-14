@@ -16,6 +16,7 @@ PATHS="
     /condor/bin
     /condor/sbin
     /cms/sw/python/2.6/bin
+    /cms/sw/python/bin
     /sbin
     /usr/sbin
 "
