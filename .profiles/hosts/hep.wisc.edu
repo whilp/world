@@ -16,6 +16,7 @@ PATHS="
     /condor/bin
     /condor/sbin
     /cms/sw/python/2.6/bin
+    /cms/sw/python/bin
     /sbin
     /usr/sbin
 "
@@ -59,3 +60,8 @@ OLDPS1="${PS1}"
 #   . "${HOME}/bin/activate"
 #fi
 #export PS1="${OLDPS1}"
+
+case "${KSH_VERSION}" in
+    "@(#)PD KSH v5.2.14 99/07/13.2") set -o vi-tabcomplete;;
+    *) set -o vi;;
+esac

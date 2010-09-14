@@ -11,7 +11,7 @@ SHELL="$($WHICH mksh 2>/dev/null)" || \
     SHELL="$($WHICH zsh 2>/dev/null)" || \
     SHELL="$($WHICH bash 2>/dev/null)" || \
     SHELL="$($WHICH sh)"
-HISTORY="~/.history"
+HISTFILE="~/.history"
 HOSTNAME="$(hostname -s)"
 LANG="C"
 LESSHISTFILE=
@@ -23,7 +23,7 @@ PATH="$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr
 SSH="$(which ssh)"
 TMUX_SOCK=~/.tmux/sock
 
-export EDITOR ENV HISTORY HOSTNAME LANG LESSHISTFILE 
+export EDITOR ENV HISTFILE HOSTNAME LANG LESSHISTFILE 
 export MAIL MAXPS1PWDCOMP OLDMAIL PATH PAGER SHELL TMUX_SOCK
 unset WHICH
 

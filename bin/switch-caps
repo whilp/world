@@ -4,10 +4,7 @@
 
 cat <<EOF | xmodmap -
     remove Lock = Caps_Lock
-    remove Control = Control_L
-    keysym Control_L = Caps_Lock
     keysym Caps_Lock = Control_L
-    add Lock = Caps_Lock
     add Control = Control_L
     keycode 234 = Page_Down
     keycode 233 = Page_Up
