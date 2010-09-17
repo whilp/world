@@ -29,8 +29,12 @@ ps1 () {
         fi
         PS1PWD="${PS1PWD}${COMPONENT}/"
     done
+    case "${USER}" in
+        root) DOLLAR="#";;
+        *) DOLLAR="$";;
+    esac
 
-    printf "${PS1PWD%/}$(tput sgr0) $"
+    printf "${PS1PWD%/}$(tput sgr0) ${DOLLAR}"
 }
 
 PS1="\$(ps1) "
