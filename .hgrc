@@ -34,6 +34,12 @@ dpush = push -b default
 patchn = import --no-commit
 rec = record
 
+shortin = in --style ~/.mercurial/short.style
+shin = shortin
+
+shortout = out --style ~/.mercurial/short.style
+shout = shortout
+
 shortheads = heads --template ~/.mercurial/short.style
 shead = shortheads
 
