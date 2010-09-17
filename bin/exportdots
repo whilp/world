@@ -1,5 +1,0 @@
-#!/bin/sh
-
-TARGET=${1:-.}
-
-hg archive -p. ${TARGET}/dotfiles.tgz
