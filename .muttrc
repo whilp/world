@@ -86,6 +86,15 @@ bind pager K previous-undeleted
 bind pager \CW buffy-list
 bind index \CW buffy-list
 
+bind pager <Right> next-new-then-unread
+bind index <Right> next-new-then-unread
+bind pager <Left> previous-new-then-unread
+bind index <Left> previous-new-then-unread
+bind pager x sync-mailbox
+bind index x sync-mailbox
+bind pager R read-thread
+bind index R read-thread
+
 # Mailboxes.
 mailboxes `\
     find ~/.maildir -type d -path '*cur' \
