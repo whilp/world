@@ -169,7 +169,7 @@ class notes(LoggingApp):
             help="record separator (default: %(sep)r)" % self.defaults)
         self.add_param("-u", "--user", default=self.defaults["user"],
             help="user name (default: %(user)r)" % self.defaults)
-        self.add_param("dir", nargs=1, default=self.defaults["dir"],
+        self.add_param("dir", nargs="?", default=self.defaults["dir"],
             help="notes working directory (default: %(dir)s)" % self.defaults)
 
 if __name__ == "__main__":
