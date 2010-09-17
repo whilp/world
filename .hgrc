@@ -54,9 +54,7 @@ opts.vimdiff = -f '+next' '+execute "DirDiff" argv(0) argv(1)'
 
 [email]
 from = Will Maier <willmaier@ml1.net>
-
-[smtp]
-host = localhost
+method = sendmail
 
 [trusted]
 users = root
