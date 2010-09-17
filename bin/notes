@@ -138,6 +138,11 @@ class notes(LoggingApp):
             sep=self.params.sep,
             user=self.params.user)
         loop.log = self.log
+
+        if self.params.message is not None:
+            loop.default(self.params.message)
+            return 0
+
         try:
             loop.cmdloop()
         except KeyboardInterrupt:
@@ -152,7 +157,9 @@ class notes(LoggingApp):
         self.add_param("-d", "--datefmt", default=self.defaults["datefmt"],
             help="strftime(3) date format (default: %r)" % 
                 self.defaults["datefmt"].replace("%", "%%"))
-        self.add_param("-m", "--msgfmt", default=self.defaults["msgfmt"],
+        self.add_param("-m", "--message", default=None,
+            help="message to log")
+        self.add_param("-M", "--msgfmt", default=self.defaults["msgfmt"],
             help="logging.Formatter message format (default: %r)" % 
                 self.defaults["msgfmt"].replace("%", "%%"))
         self.add_param("-p", "--prompt", default=self.defaults["prompt"],
