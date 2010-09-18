@@ -9,4 +9,5 @@ unignore from: date subject to cc reply-to:
 
 unmailboxes *
 mailboxes =inbox =friend =family \
-    =hep/inbox =hep/req =hep/nagios =hep/root =hep/monitor =hep/savannah
+    =hep/inbox =hep/req =hep/nagios =hep/root =hep/monitor =hep/savannah \
+	=osg/goc
