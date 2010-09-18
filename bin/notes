@@ -2,6 +2,7 @@
 import cmd
 import fnmatch
 import os
+import pwd
 import time
 
 from itertools import takewhile
@@ -122,7 +123,7 @@ class notes(LoggingApp):
         "sep": "\t",
         "datefmt": "%Y-%m-%dT%H:%M:%S",
         "msgfmt": "%(sep)s".join(("%(date)s", "%(user)s", "%(message)s\n")),
-        "user": os.getlogin(),
+        "user": pwd.getpwuid(os.geteuid()).pw_name,
     }
     
     def main(self):
@@ -137,6 +138,11 @@ class notes(LoggingApp):
             sep=self.params.sep,
             user=self.params.user)
         loop.log = self.log
+
+        if self.params.message is not None:
+            loop.default(self.params.message)
+            return 0
+
         try:
             loop.cmdloop()
         except KeyboardInterrupt:
@@ -151,7 +157,9 @@ class notes(LoggingApp):
         self.add_param("-d", "--datefmt", default=self.defaults["datefmt"],
             help="strftime(3) date format (default: %r)" % 
                 self.defaults["datefmt"].replace("%", "%%"))
-        self.add_param("-m", "--msgfmt", default=self.defaults["msgfmt"],
+        self.add_param("-m", "--message", default=None,
+            help="message to log")
+        self.add_param("-M", "--msgfmt", default=self.defaults["msgfmt"],
             help="logging.Formatter message format (default: %r)" % 
                 self.defaults["msgfmt"].replace("%", "%%"))
         self.add_param("-p", "--prompt", default=self.defaults["prompt"],
@@ -161,7 +169,7 @@ class notes(LoggingApp):
             help="record separator (default: %(sep)r)" % self.defaults)
         self.add_param("-u", "--user", default=self.defaults["user"],
             help="user name (default: %(user)r)" % self.defaults)
-        self.add_param("dir", nargs=1, default=self.defaults["dir"],
+        self.add_param("dir", nargs="?", default=self.defaults["dir"],
             help="notes working directory (default: %(dir)s)" % self.defaults)
 
 if __name__ == "__main__":
