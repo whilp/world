@@ -11,35 +11,35 @@ DHCLIENT="${SUDO} /sbin/dhclient ${INTERFACE}"
 
 set -e
 case $1 in
-    ap*)
+    a*) # ap
         ${IFCONFIG} nwid apnet3.0 wpa wpapsk `wpa-psk apnet3.0 1409badgers`
         ${DHCLIENT};;
-    manna*)
+    ma*) # manna
         ${IFCONFIG} nwid Manna nwkey mannanet
         ${DHCLIENT};;
-    mike*)  
+    mi*) # mike
         ${IFCONFIG} nwid linksys_SES_42378 \
             wpa wpapsk `wpa-psk linksys_SES_42378 m2guwzabgw78f04x`
         ${DHCLIENT};;
-    pop*)   
+    p*) # pop
         ${IFCONFIG} nwid home wpa wpapsk `wpa-psk 'home' NTK6m4w7my`
         ${DHCLIENT};;
-    radi*) 
+    ra*) # radical_edward
         ${IFCONFIG} nwid radical_edward
         ${DHCLIENT};;
-    rosie*)
+    ro*) # rosie
         ${IFCONFIG} nwid Apt4 wpa wpapsk `wpa-psk Apt4 Jordan23`
         ${DHCLIENT};;
-    three*)
+    s*) # scan
+        ${IFCONFIG} scan;;
+    th*) # three lakes
         ${IFCONFIG} nwid 'CastleMagner' wpa wpapsk `wpa-psk 'CastleMagner' llennoco46`
         ${DHCLIENT};;
-    trev*)
+    tr*) # trev
         ${IFCONFIG} nwid '/:House:\' wpa wpapsk `wpa-psk '/:House:\' rust1cc0ff33`
         ${DHCLIENT};;
-    uw*)
+    u*) # UW
         ${DHCLIENT};;
-    scan)
-        ${IFCONFIG} scan;;
     *)
         echo "===> Unknown network: $1"; exit 1;;
 esac
