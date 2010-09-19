@@ -28,7 +28,7 @@ case $1 in
         ${IFCONFIG} nwid radical_edward
         ${DHCLIENT};;
     rosie*)
-        ${IFOCNFIG} nwid Apt4 wpa wpapsk `wpa-psk Apt4 Jordan23`
+        ${IFCONFIG} nwid Apt4 wpa wpapsk `wpa-psk Apt4 Jordan23`
         ${DHCLIENT};;
     trev*)
         ${IFCONFIG} nwid '/:House:\' wpa wpapsk `wpa-psk '/:House:\' rust1cc0ff33`
