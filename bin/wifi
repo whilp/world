@@ -30,6 +30,9 @@ case $1 in
     rosie*)
         ${IFCONFIG} nwid Apt4 wpa wpapsk `wpa-psk Apt4 Jordan23`
         ${DHCLIENT};;
+    three*)
+        ${IFCONFIG} nwid 'CastleMagner' wpa wpapsk `wpa-psk 'CastleMagner' llennoco46`
+        ${DHCLIENT};;
     trev*)
         ${IFCONFIG} nwid '/:House:\' wpa wpapsk `wpa-psk '/:House:\' rust1cc0ff33`
         ${DHCLIENT};;
