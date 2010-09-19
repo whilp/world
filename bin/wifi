@@ -35,6 +35,8 @@ case $1 in
         ${DHCLIENT};;
     uw*)
         ${DHCLIENT};;
+    scan)
+        ${IFCONFIG} scan;;
     *)
         echo "===> Unknown network: $1"; exit 1;;
 esac
