@@ -44,7 +44,7 @@ remote () {
 SESSION="$(basename $0)"
 case "${SESSION}" in
     master) connect master -S "${TMUXDIR}/master.sock";;
-    comms|meta) remote "burko.*" "meta.lfod.us" "${SESSION}" $*;;
+    comms|logs|meta) remote "burko.*" "meta.lfod.us" "${SESSION}" $*;;
     attach) connect $*;;
     *) connect "${SESSION}" $*;;
 esac
