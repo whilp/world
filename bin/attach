@@ -9,7 +9,7 @@ mkdir -p "${TMUXDIR}" >/dev/null 2>&1
 
 connect () {
     typeset SESSION=$1; shift
-    typeset TMUX="${TMUX} -f "${TMUXDIR}/${SESSION}.conf $*"
+    typeset TMUX="${TMUX} -f ${TMUXDIR}/${SESSION}.conf $*"
 
     # Call the callback if we create a new session and the callback is defined.
     if ${TMUX} new-session -ds "${SESSION}" >/dev/null 2>&1; then
@@ -27,7 +27,7 @@ remote () {
     case $(hostname) in
         "${TARGETPAT}") connect "${SESSION}";;
         *) ssh -t "${TARGET}" '~/bin/'"${SESSION}";;
-    case
+    esac
 }
 
 # If called as something other than 'attach', use ${PROG} as the session name.
