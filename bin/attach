@@ -42,9 +42,10 @@ remote () {
 }
 
 # If called as something other than 'attach', use ${PROG} as the session name.
-PROG="$(basename $0)"
-case "${PROG}" in
-    comms|meta) remote "burko.*" "meta.lfod.us" $0 $*;;
+SESSION="$(basename $0)"
+case "${SESSION}" in
+    master) connect master -S "${TMUXDIR}/master.sock";;
+    comms|meta) remote "burko.*" "meta.lfod.us" "${SESSION}" $*;;
     attach) connect $*;;
-    *) connect $0 $*;;
+    *) connect "${SESSION}" $*;;
 esac
