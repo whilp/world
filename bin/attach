@@ -1,43 +1,50 @@
 #!/bin/sh
 
-CONFDIR=~/.tmux
-PATH="${HOME}/bin:${PATH}"
-TMUX="tmux -S ${HOME}/.tmux/sock"
+TMUXDIR=~/.tmux
+# Later instances of -S will override the first, so it's safe to specify it
+# here.
+TMUX="tmux -S ${TMUXDIR}/sock"
 
-do_attach () {
-    mkdir -p "${CONFDIR}" >/dev/null 2>&1
-    SESSION=$1
-    TMUX_CONFIG=${2:-~/.tmux.conf}
-    ${TMUX} has-session -t "${SESSION}" > /dev/null 2>&1
-    if [ $? -ne 0 ]; then
-        ${TMUX} new-session -ds "${SESSION}"
-        if [ -n "${TMUX_CONFIG}" -a -r "${TMUX_CONFIG}" ]; then
-            ${TMUX} source-file ${TMUX_CONFIG}
-        fi
+mkdir -p "${TMUXDIR}" >/dev/null 2>&1
+
+connect () {
+    typeset SESSION=$1; shift
+    if [ -r "${CONFIG}" ]; then
+        typeset TMUX="${TMUX} -f ${CONFIG}"
     fi
+    typeset TMUX="${TMUX} $*"
+
+    # Call the callback if we create a new session and the callback is defined.
+    typeset CONFIGS="${TMUXDIR}/${SESSION}.conf"
+    typeset CONFIG
+    if ${TMUX} new-session -ds "${SESSION}" >/dev/null 2>&1; then
+        CONFIGS="${CONFIGS} ${TMUXDIR}/${SESSION}-new.conf"
+    fi
+
+    for CONFIG in ${CONFIGS}; do
+        [ -r "${CONFIG}" ] && ${TMUX} source-file "${CONFIG}"
+    done
+
     ${TMUX} attach-session -dt "${SESSION}"
 }
-do_meta () {
+
+remote () {
+    typeset TARGETPAT=$1
+    typeset TARGET=$2
+    typeset SESSION=$3
+    shift; shift; shift
+
     case $(hostname) in
-        burko.*) attach meta ${CONFDIR}/meta.conf;;
-        *) ssh -t meta.lfod.us '~/bin/meta';;
-    esac
-}
-do_comms () {
-    case $(hostname) in
-        burko.*) attach comms ${CONFDIR}/comms.conf;;
-        *) ssh -t meta.lfod.us '~/bin/comms';;
+        "${TARGETPAT}") connect "${SESSION}";;
+        *) ssh -t "${TARGET}" '~/bin/'"${SESSION}";;
     esac
 }
 
-case "$(basename $0)" in
-    attach) do_attach $*;;
-    comms) do_comms $*;;
-    meta) do_meta $*;;
-    master) attach master ${CONFDIR}/master.conf $*;;
-    mobi) attach mobi ${CONFDIR}/mobi.conf $*;;
-    logs) attach logs ${CONFDIR}/logs.conf $*;;
-    files) attach files ${CONFDIR}/files.conf $*;;
-    pools) attach pools ${CONFDIR}/pools.conf $*;;
-    logins) attach logins ${CONFDIR}/logins.conf $*;;
+# If called as something other than 'attach', use ${PROG} as the session name.
+SESSION="$(basename $0)"
+case "${SESSION}" in
+    master) connect master -S "${TMUXDIR}/master.sock";;
+    comms|logs|meta) remote "burko.*" "meta.lfod.us" "${SESSION}" $*;;
+    attach) connect $*;;
+    *) connect "${SESSION}" $*;;
 esac
