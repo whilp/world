@@ -17,13 +17,12 @@ connect () {
     # Call the callback if we create a new session and the callback is defined.
     typeset CONFIGS="${TMUXDIR}/${SESSION}.conf"
     typeset CONFIG
-    if ${TMUX} new-session -ds "${SESSION}" >/dev/null 2>&1 && \
-        [ -r "${TMUXDIR}/${SESSION}-new.conf" ]; then
+    if ${TMUX} new-session -ds "${SESSION}" >/dev/null 2>&1; then
         CONFIGS="${CONFIGS} ${TMUXDIR}/${SESSION}-new.conf"
     fi
 
     for CONFIG in ${CONFIGS}; do
-        ${TMUX} source-file "${CONFIG}"
+        [ -r "${CONFIG}" ] && ${TMUX} source-file "${CONFIG}"
     done
 
     ${TMUX} attach-session -dt "${SESSION}"
