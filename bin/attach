@@ -3,7 +3,7 @@
 TMUXDIR=~/.tmux
 # Later instances of -S will override the first, so it's safe to specify it
 # here.
-TMUX="tmux -S ${TMUXDIR}/tmp"
+TMUX="tmux -S ${TMUXDIR}/sock"
 
 mkdir -p "${TMUXDIR}" >/dev/null 2>&1
 
