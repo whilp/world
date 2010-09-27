@@ -35,7 +35,7 @@ remote () {
     shift; shift; shift
 
     case $(hostname) in
-        "${TARGETPAT}") connect "${SESSION}";;
+        ${TARGETPAT}) connect "${SESSION}";;
         *) ssh -t "${TARGET}" '~/bin/'"${SESSION}";;
     esac
 }
