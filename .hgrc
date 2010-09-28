@@ -50,7 +50,7 @@ shlog = shortlog
 
 [extdiff]
 cmd.vimdiff = vim
-opts.vimdiff = -f '+next' '+execute "DirDiff" argv(0) argv(1)'
+opts.vimdiff = -o
 
 [email]
 from = Will Maier <willmaier@ml1.net>
