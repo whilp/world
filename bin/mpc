@@ -218,10 +218,6 @@ EOF
 }
 
 _mpc () {
-    typeset HOST=$1
-    typeset PORT=$2
-    shift; shift
-    printf "$*\n" | nc "${HOST}" "${PORT}"
 }
 
 _filter () {
@@ -252,8 +248,10 @@ _filter () {
 }
 
 mpc () {
-
-    _mpc $* | _filter
+    typeset HOST=$1
+    typeset PORT=$2
+    shift; shift
+    printf "$*\n" | nc "${HOST}" "${PORT}" | _filter
 
     return $?
 }
@@ -273,5 +271,5 @@ HOST=${SERVER%:*}
 PORT=${SERVER#*:}
 PORT=${PORT:-6600}
 
-mpc ${HOST} ${PORT} $*
+mpc ${HOST} ${PORT} "$*"
 exit $?
