@@ -1,11 +1,12 @@
 #!/bin/sh
 
+QUIET=
 SERVER=localhost:6600
 
 # http://mpd.wikia.com/wiki/Protocol_Reference
 
 usage () {
-    echo "Usage: $0 [-h] [-s HOST:PORT] [...]"
+    echo "Usage: $0 [-hq] [-s HOST:PORT] [...]"
     echo "Protocol commands:"
     cat <<EOF
     add <string path>
@@ -219,12 +220,17 @@ mpc () {
     typeset HOST=$1
     typeset PORT=$2
     shift; shift
-    printf "$*\n" | nc "${HOST}" "${PORT}"
+    if [ -n "${QUIET}" ]; then
+        (printf "$*\n" | nc "${HOST}" "${PORT}") >/dev/null 2>&1
+    else
+        printf "$*\n" | nc "${HOST}" "${PORT}"
+    fi
 }
 
-while getopts hs: ARG; do
+while getopts hqs: ARG; do
     case "${ARG}" in
         h) usage; exit 0;;
+        q) QUIET=1;;
         s) SERVER=${ARG};;
         *) usage; exit 1;;
     esac
