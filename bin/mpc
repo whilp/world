@@ -2,6 +2,7 @@
 
 QUIET=
 SERVER=localhost:6600
+VERBOSE=
 
 # http://mpd.wikia.com/wiki/Protocol_Reference
 
@@ -216,22 +217,53 @@ usage () {
 EOF
 }
 
-mpc () {
+_mpc () {
     typeset HOST=$1
     typeset PORT=$2
     shift; shift
-    if [ -n "${QUIET}" ]; then
-        (printf "$*\n" | nc "${HOST}" "${PORT}") >/dev/null 2>&1
-    else
-        printf "$*\n" | nc "${HOST}" "${PORT}"
-    fi
+    printf "$*\n" | nc "${HOST}" "${PORT}"
 }
 
-while getopts hqs: ARG; do
+_filter () {
+    typeset STATE=
+    while read LINE; do
+
+        typeset LINETYPE="PROTOCOL"
+        case ${LINE} in
+            OK\ MPD*) STATE="RETURNOK";;
+            OK) STATE="FINISHOK";;
+            ACK\ *) STATE="ERROR"; LINETYPE="ERROR";;
+            *) LINETYPE=;;
+        esac
+        [ -n "${QUIET}" ] && continue
+        if [ "${LINETYPE}" == "ERROR" ]; then
+            echo "${LINE#*\} }"
+        elif [ -n "${VERBOSE}" ]; then
+            echo "${LINE}"
+        elif [ "${LINETYPE}" != "PROTOCOL" ]; then
+            echo "${LINE}"
+        fi
+    done
+    typeset RET=0
+    if [ -z "${STATE}" -o "${STATE}" = "ERROR" ]; then
+        RET=1
+    fi
+    return ${RET}
+}
+
+mpc () {
+
+    _mpc $* | _filter
+
+    return $?
+}
+
+while getopts hqs:v ARG; do
     case "${ARG}" in
         h) usage; exit 0;;
         q) QUIET=1;;
         s) SERVER=${ARG};;
+        v) VERBOSE=1;;
         *) usage; exit 1;;
     esac
 done
@@ -242,3 +274,4 @@ PORT=${SERVER#*:}
 PORT=${PORT:-6600}
 
 mpc ${HOST} ${PORT} $*
+exit $?
