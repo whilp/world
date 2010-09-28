@@ -29,6 +29,13 @@ bind MC-m      	hmaximize
 bind MS-m       vmaximize
 bind MCS-q      "sudo shutdown -hp now"
 bind M-r        reload
+bind F5         "mpc -q pause"
+bind F6         "mpc -q previous"
+bind F7         "mpc -q next"
+bind F8         "mpc -q toggleplay"
+bind F10        "mixerctl -q outputs.master.mute=toggle"
+bind F11        "mixerctl -q outputs.master=-12"
+bind F12        "mixerctl -q outputs.master=+12"
 
 mousebind M-3   window_resize
 
