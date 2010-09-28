@@ -5,7 +5,7 @@ SERVER=localhost:6600
 # http://mpd.wikia.com/wiki/Protocol_Reference
 
 usage () {
-    echo "Usage: $0 [-h] [...]"
+    echo "Usage: $0 [-h] [-s HOST:PORT] [...]"
     echo "Protocol commands:"
     cat <<EOF
     add <string path>
