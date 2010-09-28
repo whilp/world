@@ -248,13 +248,34 @@ _filter () {
 }
 
 mpc () {
-    typeset HOST=$1
-    typeset PORT=$2
-    shift; shift
     printf "$*\n" | nc "${HOST}" "${PORT}" | _filter
 
     return $?
 }
+
+state () {
+    typeset VERBOSE=
+    typeset QUIET=
+    mpc status | while read LINE; do
+        case "${LINE}" in "state: "*) echo "${LINE#state: }"; break;; esac
+    done
+}
+
+toggleplay () {
+    CMD=
+    case $(state) in
+        play) CMD=stop;;
+        pause) CMD=play;;
+        stop) CMD=play;;
+    esac
+    if [ -z "${CMD}" ]; then
+        return 1
+    else
+        mpc ${CMD}
+        return $?
+    fi
+}
+
 
 while getopts hqs:v ARG; do
     case "${ARG}" in
@@ -271,5 +292,9 @@ HOST=${SERVER%:*}
 PORT=${SERVER#*:}
 PORT=${PORT:-6600}
 
-mpc ${HOST} ${PORT} "$*"
+case "$*" in
+    state|toggleplay) $*;;
+    *) mpc "$*";;
+esac
+
 exit $?
