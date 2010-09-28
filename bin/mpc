@@ -265,17 +265,14 @@ toggleplay () {
     CMD=
     case $(state) in
         play) CMD=stop;;
-        pause) CMD=play;;
         stop) CMD=play;;
+        pause) CMD=play;;
+        "") return 1;;
     esac
-    if [ -z "${CMD}" ]; then
-        return 1
-    else
-        mpc ${CMD}
-        return $?
-    fi
-}
 
+    mpc ${CMD}
+    return $?
+}
 
 while getopts hqs:v ARG; do
     case "${ARG}" in
