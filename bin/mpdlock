@@ -1,0 +1,13 @@
+#!/bin/sh
+
+STATE=$(mpc state)
+case ${STATE} in
+    play) STATE=play;;
+    *) STATE=;;
+esac
+
+[ -n "${STATE}" ] && mpc pause 1
+
+xlock
+
+[ -n "${STATE}" ] && mpc pause 0
