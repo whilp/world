@@ -6,7 +6,7 @@ CMD=${1}
 case "${CMD}" in
 	4)	expand -t4;;
 	2)	expand -t2;;
-	E)	unexpand -t4;;
+	E)	unexpand;;
 	e)	expand -t4;;
 	F)	par 80;;
     f)	par T4q1i1s0 80;;
