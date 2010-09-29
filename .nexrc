@@ -16,16 +16,13 @@ set wraplen=80
 map g 1G
 
 " (Un)expand a screenful of tabs.
-map ** H!LeMj
-map *2 H!Lexpand -t2Mj
-map *e z.H!LeMj
-map *u z.H!LuMj
-map *w H!Le:wMj
-map *x H!Le:xMj
-
-" Format a paragraph.
-map *F  {!}f
-map *f {!}F}
+map ;4 H!Lvh 4Mj
+map ;2 H!Lvh 2Mj
+map ;E H!Lvh EMj
+map ;e H!Lvh eMj
+map ;F {!}vh f
+map ;f {!}vh f}
+map ;s !lvh s
 
 abbreviate W w
 abbreviate X x

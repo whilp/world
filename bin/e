@@ -1,1 +1,19 @@
-vihelper
+#!/bin/sh
+
+CMD=${1}
+
+# Makes things easier for vi.
+case "${CMD}" in
+	4)	expand -t4;;
+	2)	expand -t2;;
+	E)	unexpand -t4;;
+	e)	expand -t4;;
+	f)	par 80;;
+
+    F)      par T4q1i1s0 80;;
+    f)      par 80;;
+    e)      expand -t4;;
+    s)      sparkup;;
+    u)      unexpand -t4;;
+    U)      unexpand -t4;;
+esac
