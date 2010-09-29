@@ -16,13 +16,13 @@ set wraplen=80
 map g 1G
 
 " (Un)expand a screenful of tabs.
-map ;4 H!Lvh 4Mj
-map ;2 H!Lvh 2Mj
-map ;E H!Lvh EMj
-map ;e H!Lvh eMj
-map ;F {!}vh f
-map ;f {!}vh f}
-map ;s !lvh s
+map ;4 H!Lv 4Mj
+map ;2 H!Lv 2Mj
+map ;E H!Lv EMj
+map ;e H!Lv eMj
+map ;F {!}v f
+map ;f {!}v f}
+map ;s !lv s
 
 abbreviate W w
 abbreviate X x
