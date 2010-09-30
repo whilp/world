@@ -35,6 +35,10 @@ case $1 in
         ifclear
         wpa linksys_SES_42378 m2guwzabgw78f04x
         ${DHCLIENT};;
+    mo*) # mom
+        ifclear
+        ${IFCONFIG} nwid linksys chan 6 bssid 00:14:bf:79:a4:ec
+        ${DHCLIENT};;
     p*) # pop
         ifclear
         wpa home NTK6m4w7my
