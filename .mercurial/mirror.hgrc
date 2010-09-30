@@ -1,0 +1,14 @@
+# Mirror repos should have a .hg/hgrc that defines at least the following:
+# 
+#   paths.bitbucket (like ssh://bitbucket/wcmaier/<repo>)
+#   paths.github (like git+ssh://github/wcmaier<repo>)
+#
+# Then, they can include this file like:
+#
+#   %include ~/share/mirror.hgrc
+
+[hooks]
+changegroup.updatemaster = hg bookmark -fr default master
+changegroup.updatestable = hg bookmark -fr stable stable
+changegroup.bitbucket = hg bpush bitbucket
+changegroup.github = hg push github
