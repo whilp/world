@@ -49,7 +49,7 @@ sh = shortlog
 shlog = shortlog
 
 [extdiff]
-cmd.vimdiff = vim
+cmd.vimdiff = vimdiff
 opts.vimdiff = -o
 
 [email]
