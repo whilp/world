@@ -10,4 +10,5 @@ case "${CMD}" in
 	e)	expand -t4;;
 	F)	par 80;;
     f)	par T4q1i1s0 80;;
+	s)	sparkup --indent-spaces=2;;
 esac
