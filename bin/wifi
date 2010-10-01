@@ -45,7 +45,7 @@ case $1 in
         ${DHCLIENT};;
     ra*) # radical_edward
         ifclear
-        ${IFCONFIG} nwid radical_edward
+        ${IFCONFIG} nwid radical_edward chan 6 bssid 00:0f:66:8e:ba:3f
         ${DHCLIENT};;
     ro*) # rosie
         ifclear
