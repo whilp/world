@@ -29,6 +29,7 @@ bind MC-m       hmaximize
 bind MS-m       vmaximize
 bind MCS-q      "sudo shutdown -hp now"
 bind M-r        reload
+bind F1         "mpdlock"
 bind F5         "mpc -q pause"
 bind F6         "mpc -q previous"
 bind F7         "mpc -q next"
