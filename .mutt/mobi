@@ -2,10 +2,13 @@ source "~/.muttrc"
 
 set beep_new=yes
 set mail_check=2
-set index_format="%[%H:%M] %-8.8u  %Z %s"
+#set index_format="%[%H:%M] %-8.8u  %Z %s"
 set pager_index_lines=0
 ignore *
 unignore from: date subject to cc reply-to:
+
+macro pager <esc>s "<enter-command>source ~/.mutt/mobi<enter>" "Reload configuration"
+macro index <esc>s "<enter-command>source ~/.mutt/mobi<enter>" "Reload configuration"
 
 unmailboxes *
 mailboxes =inbox =friend =family \

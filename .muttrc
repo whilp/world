@@ -48,27 +48,23 @@ set wait_key=no
 alternates "(wcmaier@wisc\.edu|wcmaier@hep\.wisc\.edu|wcmaier@gmail\.com|willmaier@ml1\.net|wcmaier@openbsd.org)"
 
 # Macros.
-macro index Q "<copy-message>=queue<enter><enter>" "Add message to the queue"
-macro pager Q "<copy-message>=queue<enter><enter>" "Add message to the queue"
 macro index S "|spambayes -s >/dev/null<enter><save-message>=attic/spam<enter><enter>" "Mark as spam"
 macro pager S "|spambayes -s >/dev/null<enter><save-message>=attic/spam<enter><enter>" "Mark as spam"
 macro index H "|spambayes -g | fdm -mqa stdin fetch<enter><delete-message>" "Mark as ham"
 macro pager H "|spambayes -g | fdm -mqa stdin fetch<enter><delete-message>" "Mark as ham"
-macro pager o "|~/bin/viewitem<enter>" "Open RATM item link in a browser"
-macro index o "|~/bin/viewitem<enter>" "Open RATM item link in a browser"
 macro index C "<change-folder>?" "open a different folder"
 macro pager C "<change-folder>?" "open a different folder"
-macro index <Backspace> "<reply>^UUW-HEP Help System <help@hep.wisc.edu><enter><enter>"
 macro pager <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
 macro index <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
-macro index x "<sync-mailbox><change-folder><enter>"
-macro pager x "<sync-mailbox><change-folder><enter>"
+macro index x "<sync-mailbox><next-unread-mailbox>"
+macro pager x "<sync-mailbox><next-unread-mailbox>"
+macro index r "<read-thread><next-new>"
+macro pager r "<read-thread><next-new>"
 
 # Bindings.
 bind index '.' buffy-list
 bind generic 'G' noop
 bind generic '\CG' noop
-bind generic 'x' noop
 bind generic zg first-entry
 bind generic zz current-middle
 bind generic zG last-entry
@@ -90,8 +86,8 @@ bind pager <Right> next-new-then-unread
 bind index <Right> next-new-then-unread
 bind pager <Left> previous-new-then-unread
 bind index <Left> previous-new-then-unread
-bind pager R read-thread
-bind index R read-thread
+bind pager R reply
+bind index R reply
 
 # Mailboxes.
 mailboxes `\
