@@ -61,14 +61,14 @@ macro pager C "<change-folder>?" "open a different folder"
 macro index <Backspace> "<reply>^UUW-HEP Help System <help@hep.wisc.edu><enter><enter>"
 macro pager <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
 macro index <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
+macro index x "<sync-mailbox><change-folder><enter>"
+macro pager x "<sync-mailbox><change-folder><enter>"
 
 # Bindings.
 bind index '.' buffy-list
 bind generic 'G' noop
 bind generic '\CG' noop
 bind generic 'x' noop
-bind index 'x' noop
-bind pager 'x' noop
 bind generic zg first-entry
 bind generic zz current-middle
 bind generic zG last-entry
@@ -90,8 +90,6 @@ bind pager <Right> next-new-then-unread
 bind index <Right> next-new-then-unread
 bind pager <Left> previous-new-then-unread
 bind index <Left> previous-new-then-unread
-bind pager x sync-mailbox
-bind index x sync-mailbox
 bind pager R read-thread
 bind index R read-thread
 
