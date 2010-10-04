@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+
+import os
+import sys
+import time
+
+from itertools import dropwhile
+
+fname = sys.argv[1]
+f = None
+
+def shortpath(path, width=60, ellipsis="...", sep='/',
+        prefix="/pnfs/hep.wisc.edu"):
+    path = os.path.abspath(path)
+    if "store" in path:
+        path = dropwhile(lambda x: x != "store", path.split(sep))
+        path = sep.join(list(path)[1:-1])
+    elif path.startswith(prefix):
+        path = path[len(prefix):]
+
+    extra = (width - len(ellipsis)) - len(path)
+    if extra < 0:
+        path = path[:extra] + ellipsis
+
+    return path
+
+while True:
+    if f is None or f.name != fname:
+        try:
+            f = open(fname)
+        except (OSError, IOError):
+            time.sleep(1)
+            continue
+            
+        f.seek(0, 2)
+
+    line = f.readline()
+    if not line:
+        time.sleep(1)
+    if "Replicating" in line:
+        pnfsid, _, _, path = line.split('; ')
+        fields = dict(zip("date time _ _ pnfsid".split(), pnfsid.split()))
+        fields["path"] = shortpath(path, width=68)
+        fields["message"] = "Replicating %(path)s" % fields
+    #elif "Total number of replications" in line:
+    #    fields = dict(zip("date time _ message".split(), line.split(None, 3)))
+    elif "Reducing  " in line:
+        pnfsid, current, target, path = line.split("; ")
+        fields = dict(zip("date time _ _ pnfsid".split(), pnfsid.split()))
+        fields["current"] = current.split()[-1]
+        fields["target"] = target.split()[-1]
+        fields["path"] = shortpath(path, width=40)
+        fields["message"] = "Reducing %(path)s (%(current)s/%(target)s)" % fields
+    else:
+        continue
+
+    fields["time"] = fields["time"].strip('.')
+    out = "%(date)8s %(time)8s %(message)-72s" % fields
+    print out
