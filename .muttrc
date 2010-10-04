@@ -60,6 +60,8 @@ macro index x "<sync-mailbox><next-unread-mailbox>"
 macro pager x "<sync-mailbox><next-unread-mailbox>"
 macro index r "<read-thread><next-new>"
 macro pager r "<read-thread><next-new>"
+macro index d "<delete-message><next-new>"
+macro pager d "<delete-message><next-new>"
 
 # Bindings.
 bind index '.' buffy-list
