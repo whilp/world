@@ -34,6 +34,7 @@ set print_split=yes
 set quit=ask-no
 set recall=no
 set record="+sent"
+set resolve=no
 set reverse_name=yes
 set sig_dashes=yes
 set signature='~/.signatures/default'
