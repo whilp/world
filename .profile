@@ -73,6 +73,7 @@ site () {
 
 # Aliases.
 alias curl="curl -s"
+alias dc="cd"
 alias elinks="DISPLAY='' elinks -touch-files -no-connect"
 alias hep="site hep"
 alias klog="klog -setpag"
