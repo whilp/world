@@ -1,0 +1,126 @@
+import logging
+import optparse
+import os
+import sys
+import time
+
+from itertools import dropwhile
+from optparse import Option
+
+try:
+    from logging import NullHandler
+except ImportError:
+    class NullHandler(logging.Handler):
+        
+        def emit(self, record):
+            pass
+
+logname = __name__
+if __name__ == "__main__":
+	logname = os.path.splitext(os.path.basename(sys.argv[0]))
+logging.getLogger(logname).addHandler(NullHandler())
+
+def getlogger(name, level, stream,
+        fmt="%(asctime)s %(name)s %(message)s",
+        datefmt="%Y-%m-%dT%H:%M:%S%z"):
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+
+    handler = logging.StreamHandler(stream)
+    formatter = Formatter(fmt, datefmt)
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
+    return logger
+
+def getcmd(name, commands):
+    """Resolve *name* to a command registered in *commands*.
+
+    *name* should be a string; *commands* is a dictionary mapping full command
+    names to information about each command (help text, usage, etc). If *name*
+    isn't found in *commands* but one (and only one) entry in the dictionary
+    starts with *name*, use that entry as the command. If more or less than one
+    entry matches, raise ValueError.
+
+    Returns a tuple (name, command), where *name* and *command* are the matching
+    key and value from *commands*.
+    """
+    command = commands.get(name, None)
+    if command is not None:
+        return (name, command)
+
+    matches = [c for c in commands if c.startswith(name)]
+    (name,) = matches
+    return (name, commands[name])
+
+def parseargs(args, commands={}, needsargs=False):
+    parser = optparse.OptionParser()
+    parser.allow_interspersed_args = False
+
+    # Global options.
+    parser.add_option("-q", "--quiet", dest="quiet",
+        default=0, action="count",
+        help="decrease the logging verbosity")
+    parser.add_option("-s", "--silent", dest="silent",
+        default=False, action="store_true",
+        help="silence the logger")
+    parser.add_option("-v", "--verbose", dest="verbose",
+        default=0, action="count",
+        help="increase the logging verbosity")
+
+    (opts, args) = parser.parse_args()
+    if not args and needsargs:
+        parser.print_help()
+        sys.exit(0)
+    else:
+        return (opts, args)
+
+class BaseWatcher(object):
+    
+    def __init__(self, interval=1):
+        self.interval = interval
+        self.log = logging.getLogger("%s.%s" % 
+            (logname, self.__class__.__name__))
+
+    def getline(self, fileobj, parse):
+        line = fileobj.readline()
+        if not line:
+            return
+        return  parse(line)
+    
+    def tail(self, fname, parse, interval=1):
+        f = None
+        while True:
+            if f is None or f.name != fname:
+                f = open(fname)
+                f.seek(0, 2)
+
+            line = getline(f, parse)
+            if not line:
+                time.sleep(interval)
+                continue
+
+            yield line
+
+    def watch(self, fname):
+        for line in self.tail(fname, self.parse, self.interval):
+            self.log.info(self.format, line)
+
+def main():
+    (opts, args) = parseargs(sys.argv[1:], commands, needsargs=True)
+    level = logging.WARNING - ((opts.verbose - opts.quiet) * 10)
+    if opts.silent:
+        level = logging.CRITICAL + 1
+
+    logger = getlogger(logname, level, sys.stderr)
+            
+    watcher = Watcher()
+    try:
+        watcher.watch(args[0])
+    except (KeyboardInterrupt,), e:
+        returned = None
+
+    sys.exit(returned and returned or 0)
+
+if __name__ == "__main__":
+    main()
