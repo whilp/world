@@ -119,7 +119,7 @@ def main():
     if opts.silent:
         level = logging.CRITICAL + 1
 
-    logger = getlogger(name, level, sys.stderr)
+    logger = getlogger(logname, level, sys.stderr)
 
     try:
         returned = command.dispatch(opts, cmdopts, args)
