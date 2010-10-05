@@ -64,6 +64,8 @@ macro index r "<read-thread><next-new>"
 macro pager r "<read-thread><next-new>"
 macro index d "<delete-message><next-new>"
 macro pager d "<delete-message><next-new>"
+macro index = "<delete-pattern>~=<enter>"
+macro pager = "<delete-pattern>~=<enter>"
 
 # Bindings.
 bind index '.' buffy-list
@@ -92,6 +94,8 @@ bind pager <Left> previous-new-then-unread
 bind index <Left> previous-new-then-unread
 bind pager R reply
 bind index R reply
+bind pager \CR recall-message
+bind index \CR recall-message
 
 # Mailboxes.
 mailboxes `\
