@@ -11,3 +11,4 @@ XTerm*background: #FFF
 XTerm*foreground: #000
 XTerm*pointerMode: 1
 XTerm*termName: xterm
+XTerm*geometry: 199x70+0+0
