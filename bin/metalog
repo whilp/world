@@ -99,7 +99,16 @@ class BaseWatcher(object):
 
     def watch(self, fname):
         for line in self.tail(fname, self.parse, self.interval):
-            self.log.info(self.format, line)
+            self.log.info(self.format, line.strip())
+
+class SeekWatcher(BaseWatcher):
+    pass
+
+class PollWatcher(BaseWatcher):
+    pass
+
+class KqueueWatcher(BaseWatcher):
+    pass
 
 def main():
     (opts, args) = parseargs(sys.argv[1:], needsargs=True)
