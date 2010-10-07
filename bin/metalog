@@ -15,7 +15,7 @@ except ImportError:
         def emit(self, record):
             pass
 
-logname = "logwatch"
+logname = "metalog"
 logging.getLogger(logname).addHandler(NullHandler())
 
 def getlogger(name, level, stream,
