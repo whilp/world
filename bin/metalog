@@ -72,9 +72,14 @@ class BaseWatcher(object):
     def tail(self, fname, parse, interval=1):
         f = None
         while True:
-            if f is None or f.name != fname:
+            if f is None:
                 f = open(fname)
                 f.seek(0, 2)
+
+            size = os.fstat(f.fileno()).st_size
+            if f.tell() > size:
+                f = None
+                continue
 
             line = self.getline(f, parse)
             if not line:
