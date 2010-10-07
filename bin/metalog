@@ -70,14 +70,20 @@ class BaseWatcher(object):
         return  parse(line)
     
     def tail(self, fname, parse, interval=1):
-        f = None
+        f, stat, truncated, replaced = None, None, False, False
         while True:
             if f is None:
                 f = open(fname)
-                f.seek(0, 2)
+                whence = 2
+                if truncated or replaced:
+                    whence = 0
+                f.seek(0, whence)
 
-            size = os.fstat(f.fileno()).st_size
-            if f.tell() > size:
+            nstat = os.stat(fname)
+            truncated = stat and (nstat.st_size < stat.st_size)
+            replaced = stat and (nstat.st_ino != stat.st_ino)
+            stat = nstat
+            if truncated or replaced:
                 f = None
                 continue
 
