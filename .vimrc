@@ -9,7 +9,6 @@ set laststatus=2
 set nobackup
 set nocompatible
 set nofoldenable
-set nospell
 set number
 set ruler
 set showcmd
