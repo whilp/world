@@ -63,13 +63,26 @@ class BaseWatcher(object):
         self.log = logging.getLogger("%s.%s" % 
             (logname, self.__class__.__name__))
 
+    def watch(self, fname):
+        for line in self.tail(fname, self.parse):
+            self.log.info(self.format, line.strip())
+
+    def tail(self, fname, parse):
+        pass
+    
+    def parse(self, line):
+        return line
+
+class SeekWatcher(BaseWatcher):
+    interval = .2
+
     def getline(self, fileobj, parse):
         line = fileobj.readline()
         if not line or not line.endswith("\n"):
             return
         return  parse(line)
-    
-    def tail(self, fname, parse, interval=1):
+
+    def tail(self, fname, parse):
         f, stat, truncated, replaced = None, None, False, False
         while True:
             if f is None:
@@ -89,20 +102,10 @@ class BaseWatcher(object):
 
             line = self.getline(f, parse)
             if not line:
-                time.sleep(interval)
+                time.sleep(self.interval)
                 continue
 
             yield line
-
-    def parse(self, line):
-        return line
-
-    def watch(self, fname):
-        for line in self.tail(fname, self.parse, self.interval):
-            self.log.info(self.format, line.strip())
-
-class SeekWatcher(BaseWatcher):
-    pass
 
 class PollWatcher(BaseWatcher):
     pass
@@ -118,7 +121,7 @@ def main():
 
     logger = getlogger(logname, level, sys.stderr)
             
-    Watcher = BaseWatcher
+    Watcher = SeekWatcher
     watcher = Watcher()
     fname = args[0]
     try:
