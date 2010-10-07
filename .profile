@@ -85,6 +85,7 @@ alias mtr="mtr -t"
 alias sudo='A=`alias` /usr/bin/sudo '
 alias tmux="tmux -S ${TMUX_SOCK}"
 alias vi="${VISUAL}"
+alias vimdiff="vimdiff -o"
 alias xinit="xinit -- -nolisten tcp"
 
 # Platform- and host-specific configuration directories.
