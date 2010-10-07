@@ -15,9 +15,7 @@ except ImportError:
         def emit(self, record):
             pass
 
-logname = __name__
-if __name__ == "__main__":
-	logname = os.path.splitext(os.path.basename(sys.argv[0]))
+logname = "logwatch"
 logging.getLogger(logname).addHandler(NullHandler())
 
 def getlogger(name, level, stream,
@@ -32,26 +30,6 @@ def getlogger(name, level, stream,
     logger.addHandler(handler)
 
     return logger
-
-def getcmd(name, commands):
-    """Resolve *name* to a command registered in *commands*.
-
-    *name* should be a string; *commands* is a dictionary mapping full command
-    names to information about each command (help text, usage, etc). If *name*
-    isn't found in *commands* but one (and only one) entry in the dictionary
-    starts with *name*, use that entry as the command. If more or less than one
-    entry matches, raise ValueError.
-
-    Returns a tuple (name, command), where *name* and *command* are the matching
-    key and value from *commands*.
-    """
-    command = commands.get(name, None)
-    if command is not None:
-        return (name, command)
-
-    matches = [c for c in commands if c.startswith(name)]
-    (name,) = matches
-    return (name, commands[name])
 
 def parseargs(args, commands={}, needsargs=False):
     parser = optparse.OptionParser()
