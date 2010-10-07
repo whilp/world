@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import logging
 import optparse
 import os
@@ -20,18 +22,18 @@ logging.getLogger(logname).addHandler(NullHandler())
 
 def getlogger(name, level, stream,
         fmt="%(asctime)s %(name)s %(message)s",
-        datefmt="%Y-%m-%dT%H:%M:%S%z"):
+        datefmt="%Y-%m-%dT%H:%M:%S"):
     logger = logging.getLogger(name)
     logger.setLevel(level)
 
     handler = logging.StreamHandler(stream)
-    formatter = Formatter(fmt, datefmt)
+    formatter = logging.Formatter(fmt, datefmt)
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
     return logger
 
-def parseargs(args, commands={}, needsargs=False):
+def parseargs(args, needsargs=False):
     parser = optparse.OptionParser()
     parser.allow_interspersed_args = False
 
@@ -54,6 +56,7 @@ def parseargs(args, commands={}, needsargs=False):
         return (opts, args)
 
 class BaseWatcher(object):
+    format = "%s"
     
     def __init__(self, interval=1):
         self.interval = interval
@@ -62,7 +65,7 @@ class BaseWatcher(object):
 
     def getline(self, fileobj, parse):
         line = fileobj.readline()
-        if not line:
+        if not line or not line.endswith("\n"):
             return
         return  parse(line)
     
@@ -73,28 +76,33 @@ class BaseWatcher(object):
                 f = open(fname)
                 f.seek(0, 2)
 
-            line = getline(f, parse)
+            line = self.getline(f, parse)
             if not line:
                 time.sleep(interval)
                 continue
 
             yield line
 
+    def parse(self, line):
+        return line
+
     def watch(self, fname):
         for line in self.tail(fname, self.parse, self.interval):
             self.log.info(self.format, line)
 
 def main():
-    (opts, args) = parseargs(sys.argv[1:], commands, needsargs=True)
+    (opts, args) = parseargs(sys.argv[1:], needsargs=True)
     level = logging.WARNING - ((opts.verbose - opts.quiet) * 10)
     if opts.silent:
         level = logging.CRITICAL + 1
 
     logger = getlogger(logname, level, sys.stderr)
             
+    Watcher = BaseWatcher
     watcher = Watcher()
+    fname = args[0]
     try:
-        watcher.watch(args[0])
+        watcher.watch(fname)
     except (KeyboardInterrupt,), e:
         returned = None
 
