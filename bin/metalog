@@ -66,7 +66,9 @@ class BaseWatcher(object):
 
     def watch(self, fname):
         for line in self.tail(fname, self.parse):
-            self.log.info(self.format, line.strip())
+            line = self.parse(line)
+            if line is not None:
+                self.log.info(self.format, line.strip())
 
     def tail(self, fname, parse):
         pass
@@ -77,13 +79,13 @@ class BaseWatcher(object):
 class SeekWatcher(BaseWatcher):
     interval = .2
 
-    def getline(self, fileobj, parse):
+    def getline(self, fileobj):
         line = fileobj.readline()
         if not line or not line.endswith("\n"):
             return
-        return  parse(line)
+        return line
 
-    def tail(self, fname, parse):
+    def tail(self, fname):
         f, stat, truncated, replaced = None, None, False, False
         while True:
             if f is None:
@@ -101,7 +103,7 @@ class SeekWatcher(BaseWatcher):
                 f = None
                 continue
 
-            line = self.getline(f, parse)
+            line = self.getline(f)
             if not line:
                 time.sleep(self.interval)
                 continue
