@@ -9,6 +9,7 @@ import time
 
 from itertools import dropwhile
 from optparse import Option
+from select import *
 
 try:
     from logging import NullHandler
@@ -105,7 +106,35 @@ class SeekWatcher(BaseWatcher):
             yield line
 
 class PollWatcher(BaseWatcher):
-    pass
+    timeout = 1000
+    bufsize = 1024
+
+    def getlines(self, fd):
+        data = []
+        chunk = os.read(fd, self.bufsize)
+        while chunk:
+            data.append(chunk)
+            chunk = os.read(fd, self.bufsize)
+
+        return ''.join(data).splitlines()
+
+    def tail(self, fname):
+
+        fd = open(fname)
+        pollster = poll()
+        pollster.register(fd, POLLIN)
+
+        while True:
+            events = pollster.poll(self.timeout)
+            if not events:
+                continue
+
+            for event in events:
+                (efd, event) = event
+                if not event & POLLIN:
+                    continue
+                for line in self.getlines(efd):
+                    yield line
 
 def main():
     (opts, args) = parseargs(sys.argv[1:], needsargs=True)
@@ -115,7 +144,7 @@ def main():
 
     logger = getlogger(logname, level, sys.stderr)
             
-    Watcher = SeekWatcher
+    Watcher = PollWatcher
     watcher = Watcher()
     fname = args[0]
     try:
