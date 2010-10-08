@@ -111,26 +111,6 @@ class SeekWatcher(BaseWatcher):
 class PollWatcher(BaseWatcher):
     pass
 
-class KqueueWatcher(BaseWatcher):
-
-    def tail(self, fname, parse):
-        from select import *
-        KQ_NOTE_TRUNCATE = 0x0080
-
-        fd = open(fname)
-        queue = kqueue()
-
-		events = queue.control([kevent(fd, KQ_FILTER_READ,
-			KQ_EV_ENABLE | KQ_EV_ADD | KQ_EV_CLEAR), 0)
-
-
-        queue.control([kevent(fd, KQ_FILTER_VNODE,
-            KQ_EV_ENABLE | KQ_EV_ADD | KQ_EV_CLEAR,
-            KQ_NOTE_DELETE | KQ_NOTE_RENAME | KQ_NOTE_TRUNCATE)])
-
-        while True:
-            events = queue.control(None, 1, 1)
-
 def main():
     (opts, args) = parseargs(sys.argv[1:], needsargs=True)
     level = logging.WARNING - ((opts.verbose - opts.quiet) * 10)
