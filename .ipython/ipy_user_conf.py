@@ -54,7 +54,7 @@ def main():
     #o.autocall = 1
     o.system_verbose = 0
     
-    #import_all("os sys")
+    import_all("os sys")
     #execf('~/_ipython/ns.py')
 
 
@@ -69,11 +69,11 @@ def main():
     # Try one of these color settings if you can't read the text easily
     # autoexec is a list of IPython commands to execute on startup
     #o.autoexec.append('%colors LightBG')
-    #o.autoexec.append('%colors NoColor')
+    o.autoexec.append('%colors NoColor')
     #o.autoexec.append('%colors Linux')
     
     # for sane integer division that converts to float (1/2 == 0.5)
-    #o.autoexec.append('from __future__ import division')
+    o.autoexec.append('from __future__ import division')
     
     # For %tasks and %kill
     #import jobctrl 
@@ -90,15 +90,15 @@ def main():
     # Tab completer that is not quite so picky (i.e. 
     # "foo".<TAB> and str(2).<TAB> will work). Complete 
     # at your own risk!
-    #import ipy_greedycompleter
+    import ipy_greedycompleter
     
     # If you are on Linux, you may be annoyed by
     # "Display all N possibilities? (y or n)" on tab completion,
     # as well as the paging through "more". Uncomment the following
     # lines to disable that behaviour
-    #import readline
-    #readline.parse_and_bind('set completion-query-items 1000')
-    #readline.parse_and_bind('set page-completions no')
+    import readline
+    readline.parse_and_bind('set completion-query-items 1000')
+    readline.parse_and_bind('set page-completions no')
 
 
 # some config helper functions you can use 
