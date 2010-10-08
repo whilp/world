@@ -22,7 +22,7 @@ import IPython.ipapi
 ip = IPython.ipapi.get()
 
 # You probably want to uncomment this if you did %upgrade -nolegacy
-# import ipy_defaults    
+import ipy_defaults    
 
 import os   
 
@@ -53,6 +53,7 @@ def main():
     # An example on how to set options
     #o.autocall = 1
     o.system_verbose = 0
+    o.confirm_exit = False
     
     import_all("os sys")
     #execf('~/_ipython/ns.py')
