@@ -65,7 +65,7 @@ class BaseWatcher(object):
             (logname, self.__class__.__name__))
 
     def watch(self, fname):
-        for line in self.tail(fname, self.parse):
+        for line in self.tail(fname):
             line = self.parse(line)
             if line is not None:
                 self.log.info(self.format, line.strip())
