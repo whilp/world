@@ -79,12 +79,6 @@ class BaseWatcher(object):
 class SeekWatcher(BaseWatcher):
     interval = .2
 
-    def getline(self, fileobj):
-        line = fileobj.readline()
-        if not line or not line.endswith("\n"):
-            return
-        return line
-
     def tail(self, fname):
         f, stat, truncated, replaced = None, None, False, False
         while True:
@@ -103,8 +97,8 @@ class SeekWatcher(BaseWatcher):
                 f = None
                 continue
 
-            line = self.getline(f)
-            if not line:
+            line = fileobj.readline()
+            if not line or not line.endswith("\n"):
                 time.sleep(self.interval)
                 continue
 
