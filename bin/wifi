@@ -27,6 +27,10 @@ case $1 in
         ifclear
         wap apnet3.0 1409badgers
         ${DHCLIENT};;
+    b*) # bradbury's
+        ifclear
+        ${IFCONFIG} nwid bradbury\'s chan 6 bssid 00:1c:10:a0:43:bd
+        ${DHCLIENT};;
     ma*) # manna
         ifclear
         wep Manna mannanet
