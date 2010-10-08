@@ -77,28 +77,33 @@ class BaseWatcher(object):
     def parse(self, line):
         return line
 
+    def reopen(self, fname, stat=None):
+        nstat = os.stat(fname)
+        truncated = stat and (nstat.st_size < stat.st_size)
+        replaced = stat and (nstat.st_ino != stat.st_ino)
+        reopen = truncated or replaced
+        stat = nstat
+        return (reopen, nstat)
+
 class SeekWatcher(BaseWatcher):
     interval = .2
 
     def tail(self, fname):
-        f, stat, truncated, replaced = None, None, False, False
+        f, stat, reopen = None, None, False
         while True:
             if f is None:
                 f = open(fname)
                 whence = 2
-                if truncated or replaced:
+                if reopen:
                     whence = 0
                 f.seek(0, whence)
 
-            nstat = os.stat(fname)
-            truncated = stat and (nstat.st_size < stat.st_size)
-            replaced = stat and (nstat.st_ino != stat.st_ino)
-            stat = nstat
-            if truncated or replaced:
+            (reopen, stat) = self.reopen(fname, stat)
+            if reopen:
                 f = None
                 continue
 
-            line = fileobj.readline()
+            line = f.readline()
             if not line or not line.endswith("\n"):
                 time.sleep(self.interval)
                 continue
