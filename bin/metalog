@@ -124,12 +124,24 @@ class PollWatcher(BaseWatcher):
         return ''.join(data).splitlines()
 
     def tail(self, fname):
-
-        fd = open(fname)
+        f, stat, reopen = None, None, False
         pollster = poll()
-        pollster.register(fd, POLLIN)
 
         while True:
+            if f is None:
+                f = open(fname)
+                pollster.register(f, POLLIN)
+                whence = 2
+                if reopen:
+                    whence = 0
+                f.seek(0, whence)
+
+            (reopen, stat) = self.reopen(fname, stat)
+            if reopen:
+                pollster.unregister(f)
+                f = None
+                continue
+
             events = pollster.poll(self.timeout)
             if not events:
                 continue
