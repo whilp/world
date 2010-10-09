@@ -13,56 +13,53 @@ ifclear () {
     ${IFCONFIG} -nwid -nwkey -wpa -wpapsk
 }
 
+plain () {
+    ifclear
+    ${IFCONFIG} $*
+}
+
 wep () {
+    ifclear
     ${IFCONFIG} nwid "$1" nwkey "$2"
 }
 
 wpa () {
+    ifclear
     ${IFCONFIG} nwid "$1" wpa wpapsk `wpa-psk "$1" "$2"`
 }
 
 set -e
 case $1 in
     a*) # ap
-        ifclear
         wap apnet3.0 1409badgers
         ${DHCLIENT};;
     b*) # bradbury's
-        ifclear
-        ${IFCONFIG} nwid bradbury\'s chan 6 bssid 00:1c:10:a0:43:bd
+        plain nwid bradbury\'s chan 6 bssid 00:1c:10:a0:43:bd
         ${DHCLIENT};;
     ma*) # manna
-        ifclear
         wep Manna mannanet
         ${DHCLIENT};;
     mi*) # mike
-        ifclear
         wpa linksys_SES_42378 m2guwzabgw78f04x
         ${DHCLIENT};;
     mo*) # mom
-        ifclear
-        ${IFCONFIG} nwid linksys chan 6 bssid 00:14:bf:79:a4:ec
+        plain nwid linksys chan 6 bssid 00:14:bf:79:a4:ec
         ${DHCLIENT};;
     p*) # pop
-        ifclear
         wpa home NTK6m4w7my
         ${DHCLIENT};;
     ra*) # radical_edward
-        ifclear
-        ${IFCONFIG} nwid radical_edward chan 6 bssid 00:0f:66:8e:ba:3f
+        plain nwid radical_edward chan 6 bssid 00:0f:66:8e:ba:3f
         ${DHCLIENT};;
     ro*) # rosie
-        ifclear
         wpa Apt4 Jordan23
         ${DHCLIENT};;
     s*) # scan
         ${IFCONFIG} scan;;
     th*) # three lakes
-        ifclear
         wpa CastleMagner llennoco46
         ${DHCLIENT};;
     tr*) # trev
-        ifclear
         wpa '/:House:\' rust1cc0ff33
         ${DHCLIENT};;
     u*) # UW
