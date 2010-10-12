@@ -291,11 +291,14 @@ nowplaying () {
         esac
         case "${KEY%:}" in
             Artist|Title) STATUS="${STATUS} - ${VALUE}";;
+            file) FILE="${VALUE}";;
         esac
     done
     [ -n "${STATE}" ] && MODE="${MODE}:${STATE}"
     STATUS="${STATUS# - }"
-    echo "${MODE}|${STATUS}"
+    [ -z "${STATUS}" ] && STATUS="${FILE}"
+    [ -n "${STATUS}" ] && STATUS="|${STATUS}"
+    echo "${MODE}${STATUS}"
     )
 }
 
