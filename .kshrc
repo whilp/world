@@ -46,7 +46,7 @@ ps1 () {
         *) DOLLAR="$";;
     esac
 
-    printf "$(shorten 20 ${PS1PWD%/})$(tput sgr0) ${DOLLAR}"
+    printf "$(shorten 20 "${PS1PWD%/}")$(tput sgr0) ${DOLLAR}"
 }
 
 PS1="\$(ps1) "
