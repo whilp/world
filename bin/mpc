@@ -303,7 +303,7 @@ nowplaying () {
             file) FILE="${VALUE}";;
         esac
     done
-    [ -n "${STATE}" ] && MODE="${MODE}:${STATE}"
+    [ -n "${STATE}" ] && MODE="${MODE}|${STATE}"
     STATUS="${STATUS# - }"
     [ -z "${STATUS}" ] && STATUS="${FILE}"
     if [ -n "${STATUS}" ]; then
