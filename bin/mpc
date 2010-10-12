@@ -1,5 +1,6 @@
 #!/bin/sh
 
+LENGTH=80
 QUIET=
 SERVER=localhost:6600
 VERBOSE=
@@ -9,10 +10,10 @@ VERBOSE=
 shorten () {
     LENGTH=$1; shift
     STRING="$*"
-    typeset -L$((${LENGTH} - 3)) NEW="${STRING}"
+    typeset -L "$((${LENGTH} - 3))" NEW="${STRING}"
     NEWSTRING="${NEW}"
     [ "${NEW}" = "${STRING}" ] || NEWSTRING="${NEW}..."
-    echo "${NEWSTRING}"
+    echo "${NEWSTRING# *}"
 }
 
 usage () {
@@ -307,15 +308,16 @@ nowplaying () {
     STATUS="${STATUS# - }"
     [ -z "${STATUS}" ] && STATUS="${FILE}"
     if [ -n "${STATUS}" ]; then
-        STATUS="|$(shorten 30 "${STATUS}")"
+        STATUS="|$(shorten 70 "${STATUS}")"
     fi
-    echo "${MODE}${STATUS}"
+    echo "[$(shorten "$((${LENGTH} - 2))" "${MODE}${STATUS}")]"
     )
 }
 
-while getopts hqs:v ARG; do
+while getopts hl:qs:v ARG; do
     case "${ARG}" in
         h) usage; exit 0;;
+        l) LENGTH=${OPTARG};;
         q) QUIET=1;;
         s) SERVER=${OPTARG};;
         v) VERBOSE=1;;
