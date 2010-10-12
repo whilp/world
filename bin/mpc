@@ -317,7 +317,7 @@ while getopts hqs:v ARG; do
     case "${ARG}" in
         h) usage; exit 0;;
         q) QUIET=1;;
-        s) SERVER=${ARG};;
+        s) SERVER=${OPTARG};;
         v) VERBOSE=1;;
         *) usage; exit 1;;
     esac
