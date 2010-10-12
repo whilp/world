@@ -6,6 +6,15 @@ VERBOSE=
 
 # http://mpd.wikia.com/wiki/Protocol_Reference
 
+shorten () {
+    LENGTH=$1; shift
+    STRING="$*"
+    typeset -L$((${LENGTH} - 3)) NEW="${STRING}"
+    NEWSTRING="${NEW}"
+    [ "${NEW}" = "${STRING}" ] || NEWSTRING="${NEW}..."
+    echo "${NEWSTRING}"
+}
+
 usage () {
     echo "Usage: $0 [-hq] [-s HOST:PORT] [...]"
     echo "Protocol commands:"
@@ -297,7 +306,9 @@ nowplaying () {
     [ -n "${STATE}" ] && MODE="${MODE}:${STATE}"
     STATUS="${STATUS# - }"
     [ -z "${STATUS}" ] && STATUS="${FILE}"
-    [ -n "${STATUS}" ] && STATUS="|${STATUS}"
+    if [ -n "${STATUS}" ]; then
+        STATUS="|$(shorten 30 "${STATUS}")"
+    fi
     echo "${MODE}${STATUS}"
     )
 }
