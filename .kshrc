@@ -9,7 +9,7 @@ ps1 () {
     esac
 
     typeset OLDPS1PWD=${PS1PWD}
-    IFS=/ set -A PWDCOMPONENTS ${PS1PWD}
+    IFS=/ set -A PWDCOMPONENTS "${PS1PWD}"
     PS1PWD=
     typeset i=0
     typeset COMPONENT=
