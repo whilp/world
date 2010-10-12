@@ -10,10 +10,12 @@ VERBOSE=
 shorten () {
     LENGTH=$1; shift
     STRING="$*"
-    typeset -L "$((${LENGTH} - 3))" NEW="${STRING}"
+    typeset -L "$((${LENGTH} - 4))" NEW="${STRING}^"
     NEWSTRING="${NEW}"
-    [ "${NEW}" = "${STRING}" ] || NEWSTRING="${NEW}..."
-    echo "${NEWSTRING# *}"
+    NEWSTRING="${NEWSTRING%%^ *}"
+    NEWSTRING="${NEWSTRING%^}"
+    [ "${NEWSTRING}" = "${STRING}" ] || NEWSTRING="${NEWSTRING}..."
+    echo "${NEWSTRING}"
 }
 
 usage () {
@@ -308,7 +310,7 @@ nowplaying () {
     STATUS="${STATUS# - }"
     [ -z "${STATUS}" ] && STATUS="${FILE}"
     if [ -n "${STATUS}" ]; then
-        STATUS="|$(shorten 70 "${STATUS}")"
+        STATUS="|${STATUS}"
     fi
     echo "[$(shorten "$((${LENGTH} - 2))" "${MODE}${STATUS}")]"
     )
