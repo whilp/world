@@ -11,12 +11,6 @@ calcl () {
 EOF
 }
 
-calc () {
-    cat <<EOF | bc
-    $*
-EOF
-}
-
 set -- $(sysctln hw.sensors.acpibat0)
 VOLTAGE=$1
 CURRENT=$2
@@ -28,33 +22,22 @@ RAW=$7
 RATE=$8
 
 if [ "${RATE}" -eq 0 ]; then
-    printf "full\n"
+    echo "full"
     exit 0
 fi
 
 # Calculate the minutes with scale=2 and then drop the digits.
-MINUTES=$(calcl "60 * ((1000 * ${REMAINING})/${RATE})")
+MINUTES=$(calcl "60 * ((1000 * ${REMAINING})/(0.2 + ${RATE}))")
 MINUTES=${MINUTES%.*}
 
+OUT=""
+typeset -Z2 HOURS=0
 if [ "${MINUTES}" -gt 60 ]; then
-    HOURS=$(calc "${MINUTES} / 60")
-    MINUTES=$(calc "${MINUTES} % 60")
-    if [ "${MINUTES}" -eq 0 ]; then
-        printf "%dh" "${HOURS}"
-    else
-        printf "%dh %dm" "${HOURS}" "${MINUTES}"
-    fi
-else
-    printf "%dm" "${MINUTES}"
+    HOURS=$((${MINUTES} / 60))
+    MINUTES=$((${MINUTES} % 60))
 fi
+typeset -Z2 MINUTES
 
-
-PERCENT=$(calcl "100 * ${REMAINING}/${FULL}")
-
-printf " (%.02f%%)" "${PERCENT}"
-
-if [ $(calcl "${REMAINING} < ${LOW}") -eq 1 ]; then
-    printf "  LOW"
+if [ -n "${HOURS}" -o -n "${MINUTES}" ]; then
+    echo "${HOURS}:${MINUTES}"
 fi
-
-printf "\n"
