@@ -25,6 +25,7 @@ map ;f {!}v f}
 map ;s !lv s
 map ;w :w
 map ;x :x
+map ;q :q
 
 abbreviate W w
 abbreviate X x
