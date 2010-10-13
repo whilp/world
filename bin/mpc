@@ -315,7 +315,8 @@ nowplaying () {
     if [ -n "${STATUS}" ]; then
         STATUS="|${STATUS}"
     fi
-    echo "[$(shorten "$((${LENGTH} - 2))" "${MODE}${STATUS}")]"
+    OUT="${OUT#\|}"
+    [ -n "${OUT}" ] && echo "[$(shorten "$((${LENGTH} - 2))" "${OUT}")]"
     )
 }
 
