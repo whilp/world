@@ -1,6 +1,6 @@
 [ui]
 editor = ~/bin/hgeditor
-merge = vimdiff
+merge = vimdiff -o
 username = Will Maier <willmaier@ml1.net>
 ignore = ~/.mercurial/ignores
 remotecmd = ~/bin/hg

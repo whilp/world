@@ -308,12 +308,14 @@ nowplaying () {
             Pos) ID="${VALUE}";;
         esac
     done
-    [ -n "${ID}" ] && MODE="${MODE}|#${ID}"
-    [ -n "${STATE}" ] && MODE="${MODE}|${STATE}"
+    OUT=""
+    [ -n "${MODE}" ] && OUT="${OUT}${MODE}"
+    [ -n "${STATE}" ] && OUT="${OUT}|${STATE}"
+    [ -n "${ID}" ] && OUT="${OUT}|#${ID}"
     STATUS="${STATUS# - }"
     [ -z "${STATUS}" ] && STATUS="${FILE}"
     if [ -n "${STATUS}" ]; then
-        STATUS="|${STATUS}"
+        OUT="${OUT}|${STATUS}"
     fi
     OUT="${OUT#\|}"
     [ -n "${OUT}" ] && echo "[$(shorten "$((${LENGTH} - 2))" "${OUT}")]"
