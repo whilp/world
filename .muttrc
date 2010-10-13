@@ -100,11 +100,7 @@ bind pager \CR recall-message
 bind index \CR recall-message
 
 # Mailboxes.
-mailboxes `\
-    find ~/.maildir -type d -path '*cur' \
-		\! \( -path "*/attic/*" -or -path "*/system/*" -or -path "*/drafts/*" \) | \
-    sed -e 's/^.*\.maildir\///; s/\/cur$//' | \
-    xargs -I% echo -n ' =%'`
+mailboxes `mailboxes`
 
 # Headers.
 my_hdr X-PGP-Key: http://lass.lfod.us/will/pubkey.asc
