@@ -42,6 +42,7 @@ match all action "spambayes" continue
 match "^X-Spambayes-Classification: spam" in headers action "spam"
 
 # LUGs.
+match "^List-Id:.*hacker-within\\.googlegroups\\.com" in headers action maildir "${groups}/hackerwithin"
 match "^List-Id:.*video-game-church\\.googlegroups\\.com" in headers action maildir "${groups}/vgc"
 match "^List-Id:.*madlug\\.madisonlinux\\.org" in headers action maildir "${groups}/madlug"
 match "^List-Id:.*mlug-list\\.mail\\.milwaukeelug\\.org" in headers action maildir "${groups}/mkelug"
