@@ -62,12 +62,14 @@ macro pager <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuratio
 macro index <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
 macro index x "<sync-mailbox><next-unread-mailbox>"
 macro pager x "<sync-mailbox><next-unread-mailbox>"
-macro index r "<read-thread><next-new>"
-macro pager r "<read-thread><next-new>"
 macro index d "<delete-message><next-new>"
 macro pager d "<delete-message><next-new>"
 macro index = "<delete-pattern>~=<enter>"
 macro pager = "<delete-pattern>~=<enter>"
+macro index r "<read-thread><next-new>"
+macro pager r "<read-thread><next-new>"
+macro index \CR "<read-thread><next-new>"
+macro pager \CR "<read-thread><next-new>"
 
 # Bindings.
 bind index '.' buffy-list
@@ -94,10 +96,8 @@ bind pager <Right> next-new-then-unread
 bind index <Right> next-new-then-unread
 bind pager <Left> previous-new-then-unread
 bind index <Left> previous-new-then-unread
-bind pager R reply
-bind index R reply
-bind pager \CR recall-message
-bind index \CR recall-message
+bind pager \CE recall-message
+bind index \CE recall-message
 
 # Mailboxes.
 mailboxes `mailboxes`
