@@ -291,6 +291,7 @@ nowplaying () {
     MODE=""
     STATE=""
     STATUS=""
+    ID=""
     while read KEY VALUE; do
         case "${KEY}${VALUE}" in
             random:1) MODE="${MODE}r";;
@@ -304,8 +305,10 @@ nowplaying () {
         case "${KEY%:}" in
             Artist|Title) STATUS="${STATUS} - ${VALUE}";;
             file) FILE="${VALUE}";;
+            Pos) ID="${VALUE}";;
         esac
     done
+    [ -n "${ID}" ] && MODE="${MODE}|#${ID}"
     [ -n "${STATE}" ] && MODE="${MODE}|${STATE}"
     STATUS="${STATUS# - }"
     [ -z "${STATUS}" ] && STATUS="${FILE}"

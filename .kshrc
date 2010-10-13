@@ -1,3 +1,14 @@
+shorten () {
+    typeset LENGTH=$1; shift
+    typeset STRING="$*"
+    typeset -L "$((${LENGTH} - 4))" NEW="${STRING}^"
+    typeset NEWSTRING="${NEW}"
+    NEWSTRING="${NEWSTRING%%^ *}"
+    NEWSTRING="${NEWSTRING%^}"
+    [ "${NEWSTRING}" = "${STRING}" ] || NEWSTRING="${NEWSTRING}..."
+    echo "${NEWSTRING}"
+}
+
 ps1 () {
     typeset PS1PWD=
     typeset PWDCOMPONENTS=
@@ -9,7 +20,7 @@ ps1 () {
     esac
 
     typeset OLDPS1PWD=${PS1PWD}
-    IFS=/ set -A PWDCOMPONENTS ${PS1PWD}
+    IFS=/ set -A PWDCOMPONENTS "${PS1PWD}"
     PS1PWD=
     typeset i=0
     typeset COMPONENT=
@@ -29,12 +40,13 @@ ps1 () {
         fi
         PS1PWD="${PS1PWD}${COMPONENT}/"
     done
+
     case "${USER}" in
         root) DOLLAR="#";;
         *) DOLLAR="$";;
     esac
 
-    printf "${PS1PWD%/}$(tput sgr0) ${DOLLAR}"
+    printf "$(shorten 20 "${PS1PWD%/}")$(tput sgr0) ${DOLLAR}"
 }
 
 PS1="\$(ps1) "
