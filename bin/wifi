@@ -10,7 +10,7 @@ IFCONFIG="${IFCONFIG} ${INTERFACE}"
 DHCLIENT="${SUDO} /sbin/dhclient ${INTERFACE}"
 
 ifclear () {
-    ${IFCONFIG} -nwid -nwkey -wpa -wpapsk
+    ${IFCONFIG} -nwid -nwkey -wpa -wpapsk -chan -bssid media autoselect
 }
 
 plain () {
