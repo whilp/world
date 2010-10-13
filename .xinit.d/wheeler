@@ -4,7 +4,7 @@ if [ "${EXTSCREEN}" -eq 1 ]; then
 else
     switch-caps
 fi
-xterm -T master &
+xterm -T master -e master &
 case "${OSNAME}" in
     OpenBSD) ;;
     Linux) WM=$EVILWM;;

@@ -1,5 +1,5 @@
 switch-caps
 xset s off
 pgrep -x aucat || aucat -l &
-xterm -T master &
+xterm -T master -e master &
 #firefox &
