@@ -164,7 +164,8 @@ hilights = (
     word = "yes";
   },
   { text = "trevor"; nick = "yes"; word = "yes"; },
-  { text = "jered"; nick = "yes"; word = "yes"; }
+  { text = "jered"; nick = "yes"; word = "yes"; },
+  { text = "mbrunlieb"; nick = "yes"; word = "yes"; }
 );
 ignores = (
   { level = "JOINS PARTS QUITS"; servertag = "efnet"; },
