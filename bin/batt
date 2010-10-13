@@ -26,6 +26,10 @@ if [ "${RATE}" -eq 0 ]; then
     exit 0
 fi
 
+if [ "${RAW}" -eq 2 ]; then
+    REMAINING=$(calcl "${FULL} - ${REMAINING}")
+fi
+
 # Calculate the minutes with scale=2 and then drop the digits.
 MINUTES=$(calcl "60 * ((1000 * ${REMAINING})/(0.2 + ${RATE}))")
 MINUTES=${MINUTES%.*}
@@ -39,5 +43,7 @@ fi
 typeset -Z2 MINUTES
 
 if [ -n "${HOURS}" -o -n "${MINUTES}" ]; then
-    echo "${HOURS}:${MINUTES}"
+    SIGN=-
+    [ "${RAW}" -eq 2 ] && SIGN=+
+    echo "${SIGN}${HOURS}:${MINUTES}"
 fi
