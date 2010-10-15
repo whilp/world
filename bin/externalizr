@@ -6,7 +6,6 @@ LOG=~/share/notes/log
 MSG="$(dmenu -nf black -nb white -sf white -sb black -fn "${FONT}" -p "externalizr:" < /dev/null)"
 [ $? -ne 0 -o -z "${MSG}" ] && exit 0
 
-typeset -L10 HOSTNAME=$(hostname -s)
 DATE="$(date '+%Y-%m-%dT%H:%M:%S%z')"
 
-echo "${DATE} ${HOSTNAME} ${MSG}" >> "${LOG}"
+echo "${DATE}  ${MSG}" >> "${LOG}"
