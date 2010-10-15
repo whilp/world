@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 FONT="'-misc-fixed-*-*-*-*-18-*-*-*-*-*-*-*'"
 LOG=~/share/notes/log
 [ -d "${LOG%/*}" ] || mkdir -p "${LOG%/*}"
