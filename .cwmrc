@@ -17,7 +17,7 @@ bind MCS-o      movetogroup3
 bind MCS-p      movetogroup4
 
 # Other bindings.
-bind M-Return   terminal
+bind M-Return   "externalizr"
 bind MC-Return  "dmenu_run"
 bind MC-h       delete
 bind MC-j       cycle
