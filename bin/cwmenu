@@ -1,0 +1,5 @@
+#!/bin/sh
+FONT="'-misc-fixed-*-*-*-*-18-*-*-*-*-*-*-*'"
+DMENU="dmenu -nf #000 -nb #fff -sf #fff -sb #000 -fn '${FONT}' -p run:"
+
+exe=`dmenu_path | ${DMENU} ${1+"$@"}` && [ $? -eq 0 -a -n "$exe" ] && exec $exe

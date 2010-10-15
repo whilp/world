@@ -18,7 +18,7 @@ bind MCS-p      movetogroup4
 
 # Other bindings.
 bind M-space    "externalizr"
-bind M-Return   "dmenu_run"
+bind M-Return   "cwmenu"
 bind MC-h       delete
 bind MC-j       cycle
 bind MC-k       rcycle
