@@ -1,11 +1,12 @@
 #!/bin/sh -x
-DATE="$(date '+%Y-%m-%dT%H:%M:%S%z')"
-typeset -L10 HOSTNAME=$(hostname -s)
 FONT="'-misc-fixed-*-*-*-*-18-*-*-*-*-*-*-*'"
 LOG=~/share/notes/log
 [ -d "${LOG%/*}" ] || mkdir -p "${LOG%/*}"
-(
-echo -n "${DATE} ${HOSTNAME}"
-dmenu -nf black -nb white -sf white -sb black -fn "${FONT}" -p "externalizr:" < /dev/null
-echo
-) >> "${LOG}"
+
+MSG="$(dmenu -nf black -nb white -sf white -sb black -fn "${FONT}" -p "externalizr:" < /dev/null)"
+[ $? -ne 0 -o -z "${MSG}" ] && exit 0
+
+typeset -L10 HOSTNAME=$(hostname -s)
+DATE="$(date '+%Y-%m-%dT%H:%M:%S%z')"
+
+echo "${DATE} ${HOSTNAME} ${MSG}" >> "${LOG}"
