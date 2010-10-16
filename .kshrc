@@ -1,3 +1,6 @@
+BOLD=$(tput bold)
+UNBOLD=$(tput sgr0)
+
 shorten () {
     typeset LENGTH=$1; shift
     typeset STRING="$*"
@@ -11,42 +14,45 @@ shorten () {
 
 ps1 () {
     typeset PS1PWD=
-    typeset PWDCOMPONENTS=
-    printf "\a${PS1SESSION:-${HOSTNAME}}:$(tput bold)"
+    typeset PS1SESSION="${PS1SESSION:-${HOSTNAME}}"
+    typeset MAXPS1LEN=$((${MAXPS1LEN:-20} - 5 - ${#PS1SESSION}))
     case "${PWD}" in
         "${HOME}") PS1PWD='~';;
         "${HOME}"/*) PS1PWD='~'"${PWD#${HOME}}";;
         *) PS1PWD="${PWD}";;
     esac
 
-    typeset OLDPS1PWD=${PS1PWD}
-    IFS=/ set -A PWDCOMPONENTS "${PS1PWD}"
-    PS1PWD=
-    typeset i=0
-    typeset COMPONENT=
-    typeset MAX="${MAXPS1PWDCOMP:-5}"
-    for COMPONENT in ${PWDCOMPONENTS}; do
-        i=$(($i + 1))
-        if [ $i -ge "${MAX}" ]; then
-            typeset OLDLAST="${OLDPS1PWD#${PS1PWD}}"
-            typeset LAST=${OLDLAST##*/}
-            case "${LAST}" in
-                "") COMPONENT="";;
-                "${OLDLAST}") COMPONENT="${LAST}";;
-                *) COMPONENT=".../${LAST}";;
-            esac
-            PS1PWD="${PS1PWD}${COMPONENT}/"
-            break
+    typeset TILDE=
+    if [ -z "${PS1PWD%%~*}" ]; then
+        TILDE="~"
+        PS1PWD="${PS1PWD#~}"
+        MAXPS1LEN=$((${MAXPS1LEN} - 1))
+    fi
+    typeset LAST="${PS1PWD##*/}"
+    typeset TRUNCATE=
+    if [ "${#LAST}" -gt "${MAXPS1LEN}" ]; then
+        # Truncate.
+        typeset -R"$((${MAXPS1LEN} + 1))" TMPLAST="${LAST}"
+        TRUNCATE=1
+        LAST="${TMPLAST#?}"
+    else
+        while [ -n "${PS1PWD}" -a "${#LAST}" -lt "${MAXPS1LEN}" ]; do
+            PS1PWD="${PS1PWD%/*}"
+            LAST="${PS1PWD##*/}/${LAST#/}"
+        done
+        typeset -R"${MAXPS1LEN}" TMPLAST="${LAST}"
+        if [ -n "${PS1PWD}" ]; then
+            LAST="${TMPLAST}"
+            TRUNCATE=1
         fi
-        PS1PWD="${PS1PWD}${COMPONENT}/"
-    done
+    fi
+    if [ -n "${TRUNCATE}" ]; then
+        TRUNCATE="${UNBOLD}<${BOLD}"
+        TILDE=
+    fi
+    PS1PWD="${TRUNCATE}${TILDE}${LAST%/}"
 
-    case "${USER}" in
-        root) DOLLAR="#";;
-        *) DOLLAR="$";;
-    esac
-
-    printf "$(shorten 20 "${PS1PWD%/}")$(tput sgr0) ${DOLLAR}"
+    echo -ne "\a${PS1SESSION}:${BOLD}${PS1PWD}${UNBOLD} \$"
 }
 
 PS1="\$(ps1) "
