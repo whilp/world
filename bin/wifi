@@ -20,12 +20,18 @@ plain () {
 
 wep () {
     ifclear
-    ${IFCONFIG} nwid "$1" nwkey "$2"
+    typeset NWID="$1"
+    typeset PASSWORD="$2"
+    shift 2
+    ${IFCONFIG} nwid "${NWID}" nwkey "${PASSWORD}" $*
 }
 
 wpa () {
     ifclear
-    ${IFCONFIG} nwid "$1" wpa wpapsk `wpa-psk "$1" "$2"`
+    typeset NWID="$1"
+    typeset PASSWORD="$2"
+    shift 2
+    ${IFCONFIG} nwid "${NWID}" wpa wpapsk `wpa-psk "${NWID}" "${PASSWORD}"` $*
 }
 
 set -e
