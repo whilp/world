@@ -12,7 +12,7 @@ shorten () {
 ps1 () {
     typeset PS1PWD=
     typeset PWDCOMPONENTS=
-    printf "\a${HOSTNAME}:$(tput bold)"
+    printf "\a${PS1SESSION:-${HOSTNAME}}:$(tput bold)"
     case "${PWD}" in
         "${HOME}") PS1PWD='~';;
         "${HOME}"/*) PS1PWD='~'"${PWD#${HOME}}";;
