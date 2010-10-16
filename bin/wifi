@@ -69,7 +69,6 @@ case $1 in
         wpa '/:House:\' rust1cc0ff33
         ${DHCLIENT};;
     tru*) # truly spoken cycles
-        typeset -tf wep
         wep 2WIRE765 4648578387 chan 6 bssid 00:21:7c:d2:d6:81
         ${DHCLIENT};;
     u*) # UW
