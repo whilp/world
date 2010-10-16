@@ -36,7 +36,12 @@ wpa () {
 
 set -e
 case $1 in
-    a*) # ap
+    al*) # alterra humboldt
+        plain nwid alterra chan 11 bssid 00:1f:1f:5b:8c:58
+        ${DHCLIENT}
+        curl -daccept="I have read and agree to the above." http://192.168.1.1:8000/
+        ;;
+    ap) # ap
         wap apnet3.0 1409badgers
         ${DHCLIENT};;
     b*) # bradbury's
