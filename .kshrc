@@ -1,17 +1,6 @@
 BOLD=$(tput bold)
 UNBOLD=$(tput sgr0)
 
-shorten () {
-    typeset LENGTH=$1; shift
-    typeset STRING="$*"
-    typeset -L "$((${LENGTH} - 4))" NEW="${STRING}^"
-    typeset NEWSTRING="${NEW}"
-    NEWSTRING="${NEWSTRING%%^ *}"
-    NEWSTRING="${NEWSTRING%^}"
-    [ "${NEWSTRING}" = "${STRING}" ] || NEWSTRING="${NEWSTRING}..."
-    echo "${NEWSTRING}"
-}
-
 ps1 () {
     typeset PS1PWD=
     typeset PS1SESSION="${PS1SESSION:-${HOSTNAME}}"
