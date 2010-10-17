@@ -34,6 +34,7 @@ dout = out -b default
 dpush = push -b default
 patchn = import --no-commit
 rec = record
+relocal = rebase --keepbranches -s local -d default
 
 shortin = in --style ~/.mercurial/short.style
 shin = shortin
