@@ -20,18 +20,32 @@ plain () {
 
 wep () {
     ifclear
-    ${IFCONFIG} nwid "$1" nwkey "$2"
+    typeset NWID="$1"
+    typeset PASSWORD="$2"
+    shift 2
+    ${IFCONFIG} nwid "${NWID}" nwkey "${PASSWORD}" $*
 }
 
 wpa () {
     ifclear
-    ${IFCONFIG} nwid "$1" wpa wpapsk `wpa-psk "$1" "$2"`
+    typeset NWID="$1"
+    typeset PASSWORD="$2"
+    shift 2
+    ${IFCONFIG} nwid "${NWID}" wpa wpapsk `wpa-psk "${NWID}" "${PASSWORD}"` $*
 }
 
 set -e
 case $1 in
-    a*) # ap
+    al*) # alterra humboldt
+        plain nwid alterra chan 11 bssid 00:1f:1f:5b:8c:58
+        ${DHCLIENT}
+        curl -daccept="I have read and agree to the above." http://192.168.1.1:8000/
+        ;;
+    ap) # ap
         wap apnet3.0 1409badgers
+        ${DHCLIENT};;
+    ay*) # aytan's
+        wpa 3humans2cats1dog 'TheSma11estCh0w!' chan 6 bssid 68:7f:74:8a:b2:a1
         ${DHCLIENT};;
     b*) # bradbury's
         plain nwid bradbury\'s chan 6 bssid 00:1c:10:a0:43:bd
@@ -59,8 +73,11 @@ case $1 in
     th*) # three lakes
         wpa CastleMagner llennoco46
         ${DHCLIENT};;
-    tr*) # trev
+    tre*) # trev
         wpa '/:House:\' rust1cc0ff33
+        ${DHCLIENT};;
+    tru*) # truly spoken cycles
+        wep 2WIRE765 4648578387 chan 6 bssid 00:21:7c:d2:d6:81
         ${DHCLIENT};;
     u*) # UW
         ifclear

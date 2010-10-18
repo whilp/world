@@ -2,9 +2,5 @@ set signature='~/.signatures/hep'
 my_hdr From: Will Maier <wcmaier@hep.wisc.edu>
 
 unset smtp_authenticators
-set my_smtp_server="hep.wisc.edu"
-set my_user="wcmaier"
-set smtp_pass="VojNirzyev2"
-set my_port=587
-
-set smtp_url="smtp://$my_user@$my_smtp_server:$my_port/"
+set smtp_pass="$my_hep_smtp_pass"
+set smtp_url="$my_hep_smtp_url"

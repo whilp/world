@@ -2,6 +2,7 @@
 source "~/.mutt/aliases"
 source "~/.mutt/color"
 source "~/.mutt/pgp"
+source "~/.mutt/smtp"
 
 # Settings.
 set alias_file="~/.mutt/aliases"

@@ -41,6 +41,7 @@ bind F12        "mixerctl -q outputs.master=+12"
 mousebind M-3   window_resize
 
 # unmap all of the defaults
+bind MC-Return  unmap
 bind M-Down     unmap
 bind M-Up       unmap
 bind M-slash    unmap
