@@ -29,9 +29,19 @@ done
 
 SCRATCH=/scratch
 MYSCRATCH=${SCRATCH}/wcmaier
+RPMTMP="${MYSCRATCH}/rpmbuild/tmp"
+IPYTHONDIR=/scratch/wcmaier/.ipython
 
-if [ -d "${SCRATCH}" -a ! -d "${MYSCRATCH}" ]; then
-    mkdir "${MYSCRATCH}" 2>/dev/null
+if [ -d "${SCRATCH}" ]; then
+    [ -d "${MYSCRATCH}" ] || mkdir -p "${MYSCRATCH}" 2>/dev/null
+    [ -d "${RPMTMP}" ] || mkdir -p "${RPMTMP}" 2>/dev/null
+    if [ ! -d "${IPYTHONDIR}" ]; then
+        (mkdir -p "${IPYTHONDIR}"
+        touch "${IPYTHONDIR}"/{ipythonrc,__init__.py}
+        rm -f "${IPYTHONDIR}/ipy_user_conf.py"
+        ln -s ~/.ipython/ipy_user_conf.py "${IPYTHONDIR}/ipy_user_conf.py"
+        ) > /dev/null 2>&1
+    fi
 fi
 TMUXDIR="${MYSCRATCH}"
 if [ ! -d "${TMUXDIR}" ]; then
@@ -39,7 +49,7 @@ if [ ! -d "${TMUXDIR}" ]; then
 fi
 TMUXSOCK="${TMUXDIR}/.tmux-$UID.sock"
 
-export INPUTRC LANG LC_ALL PATH PS1 TMUXSOCK
+export IPYTHONDIR INPUTRC LANG LC_ALL PATH PS1 TMUXSOCK
 unset USERNAME
 
 srv () {
