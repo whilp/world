@@ -309,8 +309,7 @@ nowplaying () {
         esac
     done
     OUT=""
-    [ -n "${MODE}" ] && OUT="${OUT}${MODE}"
-    [ -n "${STATE}" ] && OUT="${OUT}|${STATE}"
+    [ -n "${MODE}${STATE}" ] && OUT="${OUT}${MODE}${STATE}"
     [ -n "${ID}" ] && OUT="${OUT}|#${ID}"
     STATUS="${STATUS# - }"
     [ -z "${STATUS}" ] && STATUS="${FILE}"
