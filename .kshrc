@@ -52,8 +52,10 @@ ps1 () {
         TILDE=
     fi
     PS1PWD="${TRUNCATE}${TILDE}${LAST%/}"
+    typeset DOLLAR="$"
+    case "${USER}" in root) DOLLAR="#";; esac
 
-    echo -ne "\a${PS1SESSION}:${BOLD}${PS1PWD}${UNBOLD} \$"
+    echo -ne "\a${PS1SESSION}:${BOLD}${PS1PWD}${UNBOLD} ${DOLLAR}"
 }
 
 PS1="\$(ps1) "
