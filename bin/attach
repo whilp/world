@@ -14,6 +14,8 @@ connect () {
     fi
     typeset TMUX="${TMUX} $*"
 
+    typeset _TMUX_SESSION="${TMUX_SESSION}"
+    export TMUX_SESSION="${SESSION}"
     # Call the callback if we create a new session and the callback is defined.
     typeset CONFIGS="${TMUXDIR}/${SESSION}.conf"
     typeset CONFIG
@@ -26,6 +28,7 @@ connect () {
     done
 
     ${TMUX} attach-session -dt "${SESSION}"
+    export TMUX_SESSION="${_TMUX_SESSION}"
 }
 
 remote () {
