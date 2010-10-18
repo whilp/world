@@ -2,6 +2,18 @@ BOLD=$(tput bold)
 UNBOLD=$(tput sgr0)
 
 ps1 () {
+    if [ -n "$*" ]; then
+        ARG=$1; OPTARG=$2
+        case "${ARG}" in
+            -s) export PS1SESSION="${OPTARG}";;
+            -l) case "${OPTARG}" in
+                    [+-]*) MAXPS1LEN="$((${MAXPS1LEN:-0} + ${OPTARG}))";;
+                    *) MAXPS1LEN="${OPTARG}";;
+                esac;;
+        esac
+        return 0
+    fi
+
     typeset PS1PWD=
     typeset PS1SESSION="${PS1SESSION:-${HOSTNAME}}"
     typeset MAXPS1LEN=$((${MAXPS1LEN:-20} - 5 - ${#PS1SESSION}))
