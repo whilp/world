@@ -24,9 +24,9 @@ ps1 () {
     esac
 
     typeset TILDE=
-    if [ -z "${PS1PWD%%~*}" ]; then
+    if [ -z "${PS1PWD%%\~*}" ]; then
         TILDE="~"
-        PS1PWD="${PS1PWD#~}"
+        PS1PWD="${PS1PWD#\~}"
         MAXPS1LEN=$((${MAXPS1LEN} - 1))
     fi
     typeset LAST="${PS1PWD##*/}"
