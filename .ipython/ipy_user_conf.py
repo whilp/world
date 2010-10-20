@@ -55,7 +55,7 @@ def main():
     o.system_verbose = 0
     o.confirm_exit = False
     
-    import_all("os sys")
+    #import_all("os sys")
     #execf('~/_ipython/ns.py')
 
 
