@@ -321,6 +321,20 @@ nowplaying () {
     )
 }
 
+forward () {
+    HOST=$1
+    REALHOST="${HOST#-}"
+    CMD="/usr/bin/ssh -nfN -o HostName=${REALHOST} -S none"
+    CMD="${CMD} -L6600:localhost:6600 -L8600:localhost:8600"
+    CMD="${CMD} mpc-forward-${REALHOST}"
+    case "${HOST}" in
+        -*) pkill -x -f -U "${USER}" \
+            "^${CMD}\$";;
+            #"^${SSH} .* ${FAKEHOST}\$";;
+        *) ${CMD};;
+    esac
+}
+
 while getopts hl:qs:v ARG; do
     case "${ARG}" in
         h) usage; exit 0;;
@@ -338,7 +352,7 @@ PORT=${SERVER#*:}
 PORT=${PORT:-6600}
 
 case "$1" in
-    nowplaying|state|toggleplay) CMD=$1; shift; ${CMD} $*;;
+    forward|nowplaying|state|toggleplay) CMD=$1; shift; ${CMD} $*;;
     *) mpc "$*";;
 esac
 
