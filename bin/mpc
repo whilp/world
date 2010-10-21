@@ -337,8 +337,8 @@ HOST=${SERVER%:*}
 PORT=${SERVER#*:}
 PORT=${PORT:-6600}
 
-case "$*" in
-    nowplaying|state|toggleplay) $*;;
+case "$1" in
+    nowplaying|state|toggleplay) CMD=$1; shift; ${CMD} $*;;
     *) mpc "$*";;
 esac
 
