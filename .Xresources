@@ -12,3 +12,4 @@ XTerm*foreground: #000
 XTerm*pointerMode: 1
 XTerm*termName: xterm
 XTerm*geometry: 199x70+0+0
+XTerm*VT100.translations: #override <Btn1Up>: select-end(PRIMARY, CLIPBOARD, CUT_BUFFER0)
