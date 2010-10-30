@@ -53,7 +53,11 @@ addto () {
 sleepuntil () {
     typeset DATE=$1 
     typeset INTERVAL=${2:-60} 
-    typeset TARGET=$(date -j "${DATE}" "+%s") 
+    typeset TARGET=$(date -j "${DATE}" "+%s" 2>/dev/null) 
+    if [ -z "${TARGET}" ]; then
+        echo "bad date '$DATE'"
+        return 1
+    fi
     echo "Sleeping until $(date -j "${DATE}")..."
     while [ "$(date "+%s")" -lt "${TARGET}" ]
     do
