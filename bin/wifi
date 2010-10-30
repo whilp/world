@@ -50,6 +50,9 @@ case $1 in
     b*) # bradbury's
         plain nwid bradbury\'s chan 6 bssid 00:1c:10:a0:43:bd
         ${DHCLIENT};;
+    f*) # fnal
+        plain nwid fgz
+        ${DHCLIENT};;
     ma*) # manna
         wep Manna mannanet
         ${DHCLIENT};;
