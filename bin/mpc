@@ -18,6 +18,20 @@ shorten () {
     echo "${NEWSTRING}"
 }
 
+sectotime () {
+    typeset SECONDS="$1"
+
+    typeset -ZR 2 MINUTES=$((${SECONDS}/60))
+    typeset -ZR 2 HOURS=$((${SECONDS}/3600))
+    typeset -ZR 2 SECONDS=$((${SECONDS}%60))
+    OUT=""
+    for CHUNK in "${SECONDS}" "${MINUTES}" "${HOURS}"; do
+        [ "${CHUNK}" -gt 0 ] && OUT="${CHUNK}:${OUT}"
+    done
+
+    echo "${OUT%:}"
+}
+
 usage () {
     echo "Usage: $0 [-hq] [-s HOST:PORT] [...]"
     echo "Protocol commands:"
@@ -292,6 +306,7 @@ nowplaying () {
     STATE=""
     STATUS=""
     ID=""
+    TIME=""
     while read KEY VALUE; do
         case "${KEY}${VALUE}" in
             random:1) MODE="${MODE}r";;
@@ -301,6 +316,10 @@ nowplaying () {
             xfade:1) MODE="${MODE}x";;
             state:stop) STATE="${STATE}s";;
             state:pause) STATE="${STATE}p";;
+            time:*) 
+                ELAPSED="${VALUE%:*}"; TOTAL="${VALUE##*:}"
+                TIME=$(sectotime $((${TOTAL} - ${ELAPSED})))
+                ;;
         esac
         case "${KEY%:}" in
             Artist|Title) STATUS="${STATUS} - ${VALUE}";;
@@ -310,6 +329,7 @@ nowplaying () {
     done
     OUT=""
     [ -n "${MODE}${STATE}" ] && OUT="${OUT}${MODE}${STATE}"
+    [ -n "${TIME}" ] && OUT="${OUT}|${TIME}"
     [ -n "${ID}" ] && OUT="${OUT}|#${ID}"
     STATUS="${STATUS# - }"
     [ -z "${STATUS}" ] && STATUS="${FILE}"
