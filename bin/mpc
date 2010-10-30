@@ -353,7 +353,7 @@ PORT=${PORT:-6600}
 
 case "$1" in
     forward|nowplaying|state|toggleplay) CMD=$1; shift; ${CMD} $*;;
-    *) mpc "$*";;
+    *) mpc $*;;
 esac
 
 exit $?
