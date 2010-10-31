@@ -21,13 +21,11 @@ shorten () {
 sectotime () {
     typeset SECONDS="$1"
 
-    typeset -ZR 2 MINUTES=$((${SECONDS}/60))
     typeset -ZR 2 HOURS=$((${SECONDS}/3600))
+    SECONDS=$((${SECONDS}%3600))
+    typeset -ZR 2 MINUTES=$((${SECONDS}/60))
     typeset -ZR 2 SECONDS=$((${SECONDS}%60))
-    OUT=""
-    for CHUNK in "${SECONDS}" "${MINUTES}" "${HOURS}"; do
-        [ "${CHUNK}" -gt 0 ] && OUT="${CHUNK}:${OUT}"
-    done
+    OUT="${HOURS}:${MINUTES}:${SECONDS}"
 
     echo "${OUT%:}"
 }
