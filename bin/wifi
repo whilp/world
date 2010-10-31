@@ -71,8 +71,12 @@ case $1 in
     ro*) # rosie
         wpa Apt4 Jordan23
         ${DHCLIENT};;
-    s*) # scan
-        ${IFCONFIG} scan;;
+    sh*) # ma's
+        plain nwid linksys chan 6 bssid 00:14:bf:79:a4:ec
+        ${DHCLIENT};;
+    sl*) # slater
+        wpa 'slater' presario
+        ${DHCLIENT};;
     th*) # three lakes
         wpa CastleMagner llennoco46
         ${DHCLIENT};;
@@ -86,6 +90,7 @@ case $1 in
         ifclear
         ${DHCLIENT};;
     *)
-        echo "===> Unknown network: $1"; exit 1;;
+        ${IFCONFIG} scan
+        ${DHCLIENT};;
 esac
 set +e
