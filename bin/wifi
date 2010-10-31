@@ -68,29 +68,17 @@ case $1 in
     ra*) # radical_edward
         plain nwid radical_edward chan 6 bssid 00:0f:66:8e:ba:3f
         ${DHCLIENT};;
-    ro*) # rosie
-        wpa Apt4 Jordan23
-        ${DHCLIENT};;
-    sh*) # ma's
-        plain nwid linksys chan 6 bssid 00:14:bf:79:a4:ec
-        ${DHCLIENT};;
-    sl*) # slater
+    s*) # slater
         wpa 'slater' presario
         ${DHCLIENT};;
     th*) # three lakes
         wpa CastleMagner llennoco46
         ${DHCLIENT};;
-    tre*) # trev
-        wpa '/:House:\' rust1cc0ff33
-        ${DHCLIENT};;
-    tru*) # truly spoken cycles
+    tr*) # truly spoken cycles
         wep 2WIRE765 4648578387 chan 6 bssid 00:21:7c:d2:d6:81
         ${DHCLIENT};;
-    u*) # UW
-        ifclear
-        ${DHCLIENT};;
     *)
-        ${IFCONFIG} scan
+        plain scan
         ${DHCLIENT};;
 esac
 set +e
