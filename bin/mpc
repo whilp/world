@@ -10,11 +10,11 @@ VERBOSE=
 shorten () {
     LENGTH=$1; shift
     STRING="$*"
-    typeset -L "$((${LENGTH} - 4))" NEW="${STRING}^"
+    typeset -L "$((${LENGTH} - 1))" NEW="${STRING}^"
     NEWSTRING="${NEW}"
     NEWSTRING="${NEWSTRING%%^ *}"
     NEWSTRING="${NEWSTRING%^}"
-    [ "${NEWSTRING}" = "${STRING}" ] || NEWSTRING="${NEWSTRING}..."
+    [ "${NEWSTRING}" = "${STRING}" ] || NEWSTRING="${NEWSTRING}>"
     echo "${NEWSTRING}"
 }
 
