@@ -4,6 +4,10 @@ from SimpleHTTPServer import (
     SimpleHTTPRequestHandler,
     BaseHTTPServer)
 
+SimpleHTTPRequestHandler.extensions_map.update({
+    ".svg": "image/svg+xml",
+})
+
 try:
     BaseHTTPServer.test(
         SimpleHTTPRequestHandler,
