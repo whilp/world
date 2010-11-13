@@ -70,7 +70,9 @@ case $1 in
     ra*) # radical_edward
         plain nwid radical_edward chan 6 bssid 00:0f:66:8e:ba:3f
         ${DHCLIENT};;
-    s*) # slater
+    sc*) # scan
+        plain scan;;
+    sl*) # slater
         wpa 'slater' presario
         ${DHCLIENT};;
     th*) # three lakes
@@ -79,8 +81,8 @@ case $1 in
     tr*) # truly spoken cycles
         wep 2WIRE765 4648578387 chan 6 bssid 00:21:7c:d2:d6:81
         ${DHCLIENT};;
-    *)
-        plain scan
+    *) # whatever
+        plain $*
         ${DHCLIENT};;
 esac
 set +e
