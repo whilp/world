@@ -4,13 +4,16 @@ from SimpleHTTPServer import (
     SimpleHTTPRequestHandler,
     BaseHTTPServer)
 
-SimpleHTTPRequestHandler.extensions_map.update({
+Handler = SimpleHTTPRequestHandler
+Server = BaseHTTPServer.HTTPServer
+
+Handler.protocol_version = "HTTP/1.0"
+Handler.extensions_map.update({
     ".svg": "image/svg+xml",
 })
 
-SimpleHTTPRequestHandler.protocol_version = "HTTP/1.0"
 address = ("127.0.0.1", 8000)
-server = BaseHTTPServer.HTTPServer(address, SimpleHTTPRequestHandler)
+server = Server(address, Handler)
 print "Serving on http://%s:%s/" % address
 try:
     server.serve_forever()
