@@ -10,6 +10,7 @@ Server = BaseHTTPServer.HTTPServer
 Handler.protocol_version = "HTTP/1.0"
 Handler.extensions_map.update({
     ".svg": "image/svg+xml",
+    ".xhtml": "application/xhtml+xml",
 })
 
 address = ("127.0.0.1", 8000)
