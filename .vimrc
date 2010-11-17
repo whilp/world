@@ -65,6 +65,7 @@ abbreviate X x
 abbreviate Q q
 abbreviate Wq wq
 abbreviate WQ wq
+abbreviate E new
 
 augroup filetypes
     au!
