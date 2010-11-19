@@ -15,7 +15,7 @@ set showcmd
 set showmatch
 set smartcase
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
-set textwidth=68
+set textwidth=80
 set viminfo='200,f1
 set whichwrap=h,l,~,[,]
 set wildmenu
