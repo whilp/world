@@ -15,9 +15,8 @@ include "%L"
 <Multi_key> <v> <period> <period>	: "⋮"	U22EE		# VERTICAL ELLIPSIS
 <Multi_key> <c> <period> <period>	: "⋯"	U22EF		# MIDLINE HORIZONTAL ELLIPSIS
 <Multi_key> <period> <slash> <period>	: "⁒"	U2052		# COMMERCIAL MINUS SIGN
-# These two are already present for me:
-# <Multi_key> <minus> <minus> <minus>	: "—"	U2014		# EM DASH
-# <Multi_key> <minus> <minus> <period>	: "–"	U2013		# EN DASH
+<Multi_key> <minus> <minus> <minus>	: "—"	U2014		# EM DASH
+<Multi_key> <minus> <minus> <period>	: "–"	U2013		# EN DASH
 <Multi_key> <minus> <minus> <space>	: "– "			# EN DASH (followed by space)
 <Multi_key> <minus> <asciitilde> <minus> : "―" U2015 # HORIZONTAL BAR
 <Multi_key> <backslash> <minus>		: "­"	U00AD		# SOFT HYPHEN
@@ -32,7 +31,7 @@ include "%L"
 # By default <Multi_key> <period> <period> does this, but we broke that with the ... binding.
 <Multi_key> <o> <comma>			: "·"	periodcentered	# MIDDLE DOT
 # Already present for me:
-# <Multi_key> <space> <space>		: " "	U00A0		# NO-BREAK SPACE
+<Multi_key> <space> <space>		: " "	U00A0		# NO-BREAK SPACE
 # Do we want/need these?
 <Multi_key> <d> <a> <g>			: "†"	U2020		# DAGGER
 <Multi_key> <d> <d> <a> <g>		: "‡"	U2021		# DOUBLE DAGGER
