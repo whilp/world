@@ -21,6 +21,8 @@ if [ -f "${BKG}" -a -x "${XLOADIMAGE}" ]; then
         -background black -center -brighten 10 "${BKG}"
 fi
 
+setxkbmap -layout us -option compose:ralt -option ctrl:nocaps
+
 if dmesg | grep -q 'acpidock.*GDCK docked'; then
     DOCKED=1
 fi

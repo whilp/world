@@ -1,3 +1,2 @@
-switch-caps
 xterm -T master &
 WM=${EVILWM}
