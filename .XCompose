@@ -1,1 +1,11 @@
+include "%L"
 include "%S/en_US.UTF-8/Compose"
+
+<Multi_key> <n>                     : "–" U2013 # en dash
+<Multi_key> <m>                     : "—" U2014 # em dash
+<Multi_key> <asciitilde>            : "∼" U223C # tilde operator/varies with/similar to 
+<Multi_key> <asciitilde> <equals>   : "≅" U2245 # congruent to
+<Multi_key> <asciitilde> <asciitilde> : "≈" U2248 # almost equal to/asmptotic to
+<Multi_key> <minus> <less>          : "←" 2190 # left arrow
+<Multi_key> <minus> <greater>       : "→" U2192 # right arrow
+<Multi_key> <bar> <less>            : "↵" U21B5 # carriage return
