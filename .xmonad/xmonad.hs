@@ -1,3 +1,6 @@
 import XMonad
+import XMonad.Hooks.DynamicLog
 
-main = xmonad $ defaultConfig
+main = xmonad =<< xmobar conf
+
+conf = defaultConfig
