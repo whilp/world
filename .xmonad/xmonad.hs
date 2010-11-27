@@ -2,5 +2,4 @@ import XMonad
 import XMonad.Hooks.DynamicLog
 
 main = xmonad =<< xmobar conf
-
-conf = defaultConfig
+conf = defaultConfig { modMask = mod4Mask }
