@@ -4,6 +4,6 @@ if [ "${EXTSCREEN}" -eq 1 ]; then
 fi
 xterm -T master &
 case "${OSNAME}" in
-    OpenBSD) ;;
+    OpenBSD) WM=xmonad;;
     Linux) WM=$EVILWM;;
 esac
