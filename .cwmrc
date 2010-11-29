@@ -6,6 +6,37 @@ autogroup 3     Chrome
 
 gap 0 424 0 0
 
+# Binding reset; see below for actual bindings.
+bind CM-Return unmap
+bind CM-Delete unmap
+bind M-Return unmap
+bind M-Down unmap
+bind M-Up unmap
+bind M-/ unmap
+bind C-/ unmap
+bind CM-n unmap
+bind M-Tab unmap
+bind MS-Tab unmap
+bind CM-x unmap
+bind CM-[n] unmap
+bind CM-0 unmap
+bind CM-g unmap
+bind M-Right unmap
+bind M-Left unmap
+bind CM-f unmap
+bind CM-= unmap
+bind CMS-= unmap
+bind M-? unmap
+bind M-. unmap
+bind CM-w unmap
+bind CMS-r unmap
+bind CMS-q unmap
+bind M-M1 unmap
+bind CM-M1 unmap
+bind M-M2 unmap
+bind M-M3 unmap
+bind CMS-M3 unmap
+
 # Groups.
 bind 4C-u       group1
 bind 4C-i       group2
@@ -17,7 +48,6 @@ bind 4CS-o      movetogroup3
 bind 4CS-p      movetogroup4
 
 # Other bindings.
-bind 4-space    "externalizr"
 bind 4-Return   "cwmenu"
 bind 4-x        delete
 bind 4-j        cycle
@@ -37,6 +67,7 @@ bind 4-10       "mixerctl -q outputs.master.mute=toggle"
 bind 4-11       "mixerctl -q outputs.master=-12"
 bind 4-12       "mixerctl -q outputs.master=+12"
 
+mousebind 4-2   window_lower
 mousebind 4-3   window_resize
 
 # unmap all of the defaults
