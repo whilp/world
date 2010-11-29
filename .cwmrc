@@ -38,14 +38,14 @@ bind M-M3 unmap
 bind CMS-M3 unmap
 
 # Groups.
-bind 4C-u       group1
-bind 4C-i       group2
-bind 4C-o       group3
-bind 4C-p       group4
-bind 4CS-u      movetogroup1
-bind 4CS-i      movetogroup2
-bind 4CS-o      movetogroup3
-bind 4CS-p      movetogroup4
+bind 4-u       group1
+bind 4-i       group2
+bind 4-o       group3
+bind 4-p       group4
+bind 4C-u      movetogroup1
+bind 4C-i      movetogroup2
+bind 4C-o      movetogroup3
+bind 4C-p      movetogroup4
 
 # Other bindings.
 bind 4-Return   "cwmenu"
