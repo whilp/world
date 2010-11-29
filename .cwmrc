@@ -7,28 +7,27 @@ autogroup 3     Chrome
 gap 0 424 0 0
 
 # Groups.
-bind MC-u       group1
-bind MC-i       group2
-bind MC-o       group3
-bind MC-p       group4
-bind MCS-u      movetogroup1
-bind MCS-i      movetogroup2
-bind MCS-o      movetogroup3
-bind MCS-p      movetogroup4
+bind 4C-u       group1
+bind 4C-i       group2
+bind 4C-o       group3
+bind 4C-p       group4
+bind 4CS-u      movetogroup1
+bind 4CS-i      movetogroup2
+bind 4CS-o      movetogroup3
+bind 4CS-p      movetogroup4
 
 # Other bindings.
-bind M-space    "externalizr"
-bind M-Return   "cwmenu"
-bind MC-h       delete
-bind MC-j       cycle
-bind MC-k       rcycle
-bind MC-l       "mpdlock"
-bind M-m        maximize
-bind M-s        hide
-bind MC-m       hmaximize
-bind MS-m       vmaximize
-bind MCS-q      "sudo shutdown -hp now"
-bind M-r        reload
+bind 4-space    "externalizr"
+bind 4-Return   "cwmenu"
+bind 4-x        delete
+bind 4-j        cycle
+bind 4-k        rcycle
+bind 4-q        "mpdlock"
+bind 4-m        maximize
+bind 4-s        hide
+bind 4C-m       hmaximize
+bind 4S-m       vmaximize
+bind 4-r        reload
 bind F1         "mpdlock"
 bind F5         "mpc -q pause"
 bind F6         "mpc -q previous"
@@ -38,7 +37,7 @@ bind F10        "mixerctl -q outputs.master.mute=toggle"
 bind F11        "mixerctl -q outputs.master=-12"
 bind F12        "mixerctl -q outputs.master=+12"
 
-mousebind M-3   window_resize
+mousebind 4-3   window_resize
 
 # unmap all of the defaults
 bind MC-Return  unmap
