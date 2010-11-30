@@ -64,6 +64,7 @@ bind M-H unmap
 bind M-J unmap
 bind M-K unmap
 bind M-L unmap
+bind M-M1 unmap
 
 # Groups.
 bind 4-u       group1
@@ -94,5 +95,6 @@ bind 4-10       "mixerctl -q outputs.master.mute=toggle"
 bind 4-11       "mixerctl -q outputs.master=-12"
 bind 4-12       "mixerctl -q outputs.master=+12"
 
+mousebind 4-1   window_move
 mousebind 4-2   window_lower
 mousebind 4-3   window_resize
