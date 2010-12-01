@@ -79,8 +79,8 @@ bind 4C-p      movetogroup4
 # Other bindings.
 bind 4-Return   "cwmenu"
 bind 4-period   delete
-bind 4-j        cycle
-bind 4-k        rcycle
+bind M-j        cycle
+bind M-k        rcycle
 bind 4-q        "mpdlock"
 bind 4-m        maximize
 bind 4C-m       hmaximize
