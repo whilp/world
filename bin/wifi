@@ -36,8 +36,8 @@ wpa () {
 
 set -e
 case $1 in
-    al*) # alterra humboldt
-        plain nwid alterra chan 11 bssid 00:1f:1f:5b:8c:58
+    al*) # alterra
+        plain nwid alterra
         ${DHCLIENT}
         curl -daccept="I have read and agree to the above." http://192.168.1.1:8000/
         ;;
@@ -49,6 +49,11 @@ case $1 in
         ${DHCLIENT};;
     b*) # bradbury's
         plain nwid bradbury\'s chan 6 bssid 00:1c:10:a0:43:bd
+        ${DHCLIENT};;
+    down|off)
+        plain down;;
+    f*) # fnal
+        plain nwid fgz
         ${DHCLIENT};;
     ma*) # manna
         wep Manna mannanet
@@ -65,24 +70,22 @@ case $1 in
     ra*) # radical_edward
         plain nwid radical_edward chan 6 bssid 00:0f:66:8e:ba:3f
         ${DHCLIENT};;
-    ro*) # rosie
-        wpa Apt4 Jordan23
+    sc*) # scan
+        plain scan;;
+    sl*) # slater
+        wpa 'slater' presario
         ${DHCLIENT};;
-    s*) # scan
-        ${IFCONFIG} scan;;
     th*) # three lakes
         wpa CastleMagner llennoco46
         ${DHCLIENT};;
-    tre*) # trev
-        wpa '/:House:\' rust1cc0ff33
+    tre*)
+        wpa Windigo 99xBetterkarma chan 11 bssid 00:0f:b3:15:ef:c3
         ${DHCLIENT};;
     tru*) # truly spoken cycles
         wep 2WIRE765 4648578387 chan 6 bssid 00:21:7c:d2:d6:81
         ${DHCLIENT};;
-    u*) # UW
-        ifclear
+    *) # whatever
+        plain $*
         ${DHCLIENT};;
-    *)
-        echo "===> Unknown network: $1"; exit 1;;
 esac
 set +e

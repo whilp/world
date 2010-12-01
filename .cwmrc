@@ -4,85 +4,97 @@ autogroup 1     xterm
 autogroup 2     Firefox
 autogroup 3     Chrome
 
-gap 0 424 0 0
+gap 0 50 0 0
+
+# Binding reset; see below for actual bindings.
+bind C-Down unmap
+bind C-Left unmap
+bind C-Right unmap
+bind C-Up unmap
+bind C-slash unmap
+bind CM-0 unmap
+bind CM-1 unmap
+bind CM-2 unmap
+bind CM-3 unmap
+bind CM-4 unmap
+bind CM-5 unmap
+bind CM-6 unmap
+bind CM-7 unmap
+bind CM-8 unmap
+bind CM-9 unmap
+bind CM-Delete unmap
+bind CM-M1 unmap
+bind CM-Return unmap
+bind CM-equal unmap
+bind CM-f unmap
+bind CM-g unmap
+bind CM-h unmap
+bind CM-j unmap
+bind CM-k unmap
+bind CM-l unmap
+bind CM-n unmap
+bind CM-w unmap
+bind CM-x unmap
+bind CMS-M3 unmap
+bind CM-equal unmap
+bind CM-Q unmap
+bind CM-R unmap
+bind CS-Down unmap
+bind CS-Left unmap
+bind CS-Right unmap
+bind CS-Up unmap
+bind M-Down unmap
+bind M-Left unmap
+bind M-M1 unmap
+bind M-M2 unmap
+bind M-M3 unmap
+bind M-Return unmap
+bind M-Right unmap
+bind M-Tab unmap
+bind M-Up unmap
+bind M-h unmap
+bind M-j unmap
+bind M-k unmap
+bind M-l unmap
+bind M-period unmap
+bind M-question unmap
+bind M-slash unmap
+bind MS-Tab unmap
+bind M-H unmap
+bind M-J unmap
+bind M-K unmap
+bind M-L unmap
+bind M-M1 unmap
 
 # Groups.
-bind MC-u       group1
-bind MC-i       group2
-bind MC-o       group3
-bind MC-p       group4
-bind MCS-u      movetogroup1
-bind MCS-i      movetogroup2
-bind MCS-o      movetogroup3
-bind MCS-p      movetogroup4
+bind 4-u       group1
+bind 4-i       group2
+bind 4-o       group3
+bind 4-p       group4
+bind 4C-u      movetogroup1
+bind 4C-i      movetogroup2
+bind 4C-o      movetogroup3
+bind 4C-p      movetogroup4
 
 # Other bindings.
-bind M-space    "externalizr"
-bind M-Return   "cwmenu"
-bind MC-h       delete
-bind MC-j       cycle
-bind MC-k       rcycle
-bind MC-l       "mpdlock"
-bind M-m        maximize
-bind M-s        hide
-bind MC-m       hmaximize
-bind MS-m       vmaximize
-bind MCS-q      "sudo shutdown -hp now"
-bind M-r        reload
-bind F1         "mpdlock"
-bind F5         "mpc -q pause"
-bind F6         "mpc -q previous"
-bind F7         "mpc -q next"
-bind F8         "mpc -q toggleplay"
-bind F10        "mixerctl -q outputs.master.mute=toggle"
-bind F11        "mixerctl -q outputs.master=-12"
-bind F12        "mixerctl -q outputs.master=+12"
+bind 4-Return   "cwmenu"
+bind 4-period   delete
+bind 4-j        cycle
+bind 4-k        rcycle
+bind 4-q        "mpdlock"
+bind 4-m        maximize
+bind 4C-m       hmaximize
+bind 4-M        vmaximize
+bind 4-r        reload
+bind 4-1        "mpdlock"
+bind 4-5        "mpc -q pause"
+bind 4-6        "mpc -q previous"
+bind 4-7        "mpc -q next"
+bind 4-8        "mpc -q toggleplay"
+bind 4-10       "mixerctl -q outputs.master.mute=toggle"
+bind 4-11       "mixerctl -q outputs.master=-12"
+bind 4-12       "mixerctl -q outputs.master=+12"
 
-mousebind M-3   window_resize
-
-# unmap all of the defaults
-bind MC-Return  unmap
-bind M-Down     unmap
-bind M-Up       unmap
-bind M-slash    unmap
-bind C-slash    unmap
-bind M-n        unmap
-bind M-p        unmap
-bind MC-n       unmap
-bind M-Tab      unmap
-bind MS-Tab     unmap
-bind MC-x       unmap
-bind MC-0       unmap
-bind MC-1       unmap
-bind MC-2       unmap
-bind MC-3       unmap
-bind MC-4       unmap
-bind MC-5       unmap
-bind MC-6       unmap
-bind MC-7       unmap
-bind MC-8       unmap
-bind MC-9       unmap
-bind MC-g       unmap
-bind M-Right    unmap
-bind M-Left     unmap
-bind MC-f       unmap
-bind M-slash    unmap
-bind M-equal    unmap
-bind M-minus    unmap
-bind M-period   unmap
-bind M-comma    unmap
-bind MC-w       unmap
-bind MCS-r      unmap
-bind MCS-q      unmap
-bind M-h        unmap
-bind M-j        unmap
-bind M-k        unmap
-bind M-l        unmap
-bind MS-h       unmap
-bind MS-j       unmap
-bind MS-k       unmap
-bind MS-l       unmap
-bind MCS-h      unmap
-bind MCS-j      unmap
-bind MCS-k      unmap
-bind MCS-l      unmap
+mousebind 4-1   window_move
+mousebind 4-2   window_lower
+mousebind 4-3   window_resize

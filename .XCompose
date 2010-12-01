@@ -1,0 +1,3 @@
+#include "%S/en_US.UTF-8/Compose"
+include "/usr/X11R6/share/X11/locale/en_US.UTF-8/Compose"
+#<Multi_key> <n> <minus> : Agrave # en dash

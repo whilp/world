@@ -10,12 +10,24 @@ VERBOSE=
 shorten () {
     LENGTH=$1; shift
     STRING="$*"
-    typeset -L "$((${LENGTH} - 4))" NEW="${STRING}^"
+    typeset -L "$((${LENGTH} - 1))" NEW="${STRING}^"
     NEWSTRING="${NEW}"
     NEWSTRING="${NEWSTRING%%^ *}"
     NEWSTRING="${NEWSTRING%^}"
-    [ "${NEWSTRING}" = "${STRING}" ] || NEWSTRING="${NEWSTRING}..."
+    [ "${NEWSTRING}" = "${STRING}" ] || NEWSTRING="${NEWSTRING}>"
     echo "${NEWSTRING}"
+}
+
+sectotime () {
+    typeset SECONDS="$1"
+
+    typeset -ZR 2 HOURS=$((${SECONDS}/3600))
+    SECONDS=$((${SECONDS}%3600))
+    typeset -ZR 2 MINUTES=$((${SECONDS}/60))
+    typeset -ZR 2 SECONDS=$((${SECONDS}%60))
+    OUT="${HOURS}:${MINUTES}:${SECONDS}"
+
+    echo "${OUT%:}"
 }
 
 usage () {
@@ -292,6 +304,7 @@ nowplaying () {
     STATE=""
     STATUS=""
     ID=""
+    TIME=""
     while read KEY VALUE; do
         case "${KEY}${VALUE}" in
             random:1) MODE="${MODE}r";;
@@ -301,6 +314,10 @@ nowplaying () {
             xfade:1) MODE="${MODE}x";;
             state:stop) STATE="${STATE}s";;
             state:pause) STATE="${STATE}p";;
+            time:*) 
+                ELAPSED="${VALUE%:*}"; TOTAL="${VALUE##*:}"
+                TIME=$(sectotime $((${TOTAL} - ${ELAPSED})))
+                ;;
         esac
         case "${KEY%:}" in
             Artist|Title) STATUS="${STATUS} - ${VALUE}";;
@@ -310,14 +327,16 @@ nowplaying () {
     done
     OUT=""
     [ -n "${MODE}${STATE}" ] && OUT="${OUT}${MODE}${STATE}"
+    [ -n "${TIME}" ] && OUT="${OUT}|${TIME}"
     [ -n "${ID}" ] && OUT="${OUT}|#${ID}"
     STATUS="${STATUS# - }"
     [ -z "${STATUS}" ] && STATUS="${FILE}"
     if [ -n "${STATUS}" ]; then
+        STATUS=$(shorten "$((${LENGTH} - 2 - 10))" "${STATUS}")
         OUT="${OUT}|${STATUS}"
     fi
     OUT="${OUT#\|}"
-    [ -n "${OUT}" ] && echo "[$(shorten "$((${LENGTH} - 2))" "${OUT}")]"
+    [ -n "${OUT}" ] && echo "[${OUT}]"
     )
 }
 
