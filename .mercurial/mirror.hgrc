@@ -8,7 +8,7 @@
 #   %include ~/share/mirror.hgrc
 
 [hooks]
-changegroup.updatemaster = hg bookmark -fr default master
-changegroup.updatestable = hg bookmark -fr stable stable
-changegroup.bitbucket = hg bpush bitbucket
-changegroup.github = hg push github
+changegroup.updatemaster = hg bookmark -fr 'branch(default)' master
+changegroup.updatestable = hg bookmark -fr 'branch(stable)' stable
+changegroup.bitbucket = hg bpush -f bitbucket
+changegroup.github = hg push -f github
