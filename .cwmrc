@@ -23,7 +23,6 @@ bind CM-7 unmap
 bind CM-8 unmap
 bind CM-9 unmap
 bind CM-Delete unmap
-bind CM-M1 unmap
 bind CM-Return unmap
 bind CM-equal unmap
 bind CM-f unmap
@@ -35,7 +34,6 @@ bind CM-l unmap
 bind CM-n unmap
 bind CM-w unmap
 bind CM-x unmap
-bind CMS-M3 unmap
 bind CM-equal unmap
 bind CM-Q unmap
 bind CM-R unmap
@@ -45,9 +43,6 @@ bind CS-Right unmap
 bind CS-Up unmap
 bind M-Down unmap
 bind M-Left unmap
-bind M-M1 unmap
-bind M-M2 unmap
-bind M-M3 unmap
 bind M-Return unmap
 bind M-Right unmap
 bind M-Tab unmap
@@ -64,7 +59,12 @@ bind M-H unmap
 bind M-J unmap
 bind M-K unmap
 bind M-L unmap
-bind M-M1 unmap
+
+mousebind CM-M1 unmap
+mousebind CMS-M3 unmap
+mousebind M-M1 unmap
+mousebind M-M2 unmap
+mousebind M-M3 unmap
 
 # Groups.
 bind 4-u       group1
