@@ -4,7 +4,7 @@ autogroup 1     xterm
 autogroup 2     Firefox
 autogroup 3     Chrome
 
-gap 0 50 0 0
+gap 0 100 0 0
 
 # Binding reset; see below for actual bindings.
 bind C-Down unmap
