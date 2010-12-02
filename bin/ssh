@@ -2,6 +2,7 @@
 
 # Do a bit of a dance to avoid a possible shell builtin.
 SSH_CMD=/usr/bin/ssh
+SCP_CMD=/usr/bin/scp
 DSH_CMD=/usr/local/bin/dsh
 
 # dsh environment.
@@ -19,13 +20,14 @@ DSH_CMD="${DSH_CMD} -e -t -o ${RCMD_TEST_TIMEOUT} -p ${RSHPORT} -f ${FANOUT}"
 # Site-specific environment.
 hep () {
     CLUSTER=~/.dsh/config-hep
-    RCMD_USER="wcmaier"
-    SSH_CMD="${SSH_CMD} -l ${RCMD_USER}"
+    SSHUSER="wcmaier"
 }
 lfod () {
     CLUSTER=~/.dsh/config
-    RCMD_USER="will"
+    SSHUSER="will"
 }
+
+RCMD_USER="${SSHUSER}"
 
 CMD=${0##*/}
 
@@ -39,6 +41,7 @@ export CLUSTER RCMD_USER FANOUT RCMD_CMD RCMD_TEST RCMD_TEST_TIMEOUT RCMD_USER R
 case "${CMD}" in
     dsh)    CMD="${DSH_CMD}";;
     ssh)    CMD="${SSH_CMD}";;
+    scp)    CMD="${SCP_CMD}";;
 esac
 
-${CMD} $*
+${CMD} -oUser="${SSHUSER}" $*
