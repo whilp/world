@@ -81,19 +81,18 @@ bind 4-Return   "cwmenu"
 bind 4-period   delete
 bind M-j        cycle
 bind M-k        rcycle
-bind 4-q        "mpdlock"
 bind 4-m        maximize
 bind 4C-m       hmaximize
 bind 4-M        vmaximize
 bind 4-r        reload
-bind 4-1        "mpdlock"
-bind 4-5        "mpc -q pause"
-bind 4-6        "mpc -q previous"
-bind 4-7        "mpc -q next"
-bind 4-8        "mpc -q toggleplay"
-bind 4-10       "mixerctl -q outputs.master.mute=toggle"
-bind 4-11       "mixerctl -q outputs.master=-12"
-bind 4-12       "mixerctl -q outputs.master=+12"
+bind F1         "mpdlock"
+bind F5         "mpc -q pause"
+bind F6         "mpc -q previous"
+bind F7         "mpc -q next"
+bind F8         "mpc -q toggleplay"
+bind F10        "mixerctl -q outputs.master.mute=toggle"
+bind F11        "mixerctl -q outputs.master=-12"
+bind F12        "mixerctl -q outputs.master=+12"
 
 mousebind 4-1   window_move
 mousebind 4-2   window_lower
