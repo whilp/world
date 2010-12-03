@@ -27,8 +27,6 @@ lfod () {
     SSHUSER="will"
 }
 
-RCMD_USER="${SSHUSER}"
-
 CMD=${0##*/}
 
 case "${SITE}" in
@@ -36,12 +34,15 @@ case "${SITE}" in
     hep)   hep;;
 esac
 
+SSHARGS="-oUser=${SSHUSER}"
+RCMD_USER="${SSHUSER}"
+
 export CLUSTER RCMD_USER FANOUT RCMD_CMD RCMD_TEST RCMD_TEST_TIMEOUT RCMD_USER RCP_CMD RSHPORT
 
 case "${CMD}" in
     dsh)    CMD="${DSH_CMD}";;
-    ssh)    CMD="${SSH_CMD}";;
-    scp)    CMD="${SCP_CMD}";;
+    ssh)    CMD="${SSH_CMD} ${SSHARGS}";;
+    scp)    CMD="${SCP_CMD} ${SSHARGS}";;
 esac
 
-${CMD} -oUser="${SSHUSER}" $*
+${CMD} $*
