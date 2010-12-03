@@ -14,4 +14,5 @@ XTerm*termName: xterm
 XTerm*geometry: 199x70+0+0
 XTerm*VT100.translations: #override \n\
     <Btn1Up>: select-end(PRIMARY, CLIPBOARD, CUT_BUFFER0) \n\
-    Ctrl<KeyPress>Y: insert-selection(SELECT, PRIMARY, CLIPBOARD, CUT_BUFFER0) \
+    Ctrl<KeyPress>V: insert-selection(SELECT, PRIMARY, CLIPBOARD, CUT_BUFFER0) \n\
+    Ctrl<KeyPress>Y: string("") \
