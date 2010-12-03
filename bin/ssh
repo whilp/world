@@ -30,8 +30,8 @@ lfod () {
 CMD=${0##*/}
 
 case "${SITE}" in
-    lfod)  lfod;;
     hep)   hep;;
+    *)  lfod;;
 esac
 
 SSHARGS="-oUser=${SSHUSER}"
