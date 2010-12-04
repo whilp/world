@@ -10,7 +10,7 @@ IFCONFIG="${IFCONFIG} ${INTERFACE}"
 DHCLIENT="${SUDO} /sbin/dhclient ${INTERFACE}"
 
 ifclear () {
-    ${IFCONFIG} -nwid -nwkey -wpa -wpapsk -chan -bssid media autoselect
+    ${IFCONFIG} -nwid -nwkey -wpa -chan -bssid media autoselect
 }
 
 plain () {
@@ -31,7 +31,7 @@ wpa () {
     typeset NWID="$1"
     typeset PASSWORD="$2"
     shift 2
-    ${IFCONFIG} nwid "${NWID}" wpa wpapsk `wpa-psk "${NWID}" "${PASSWORD}"` $*
+    ${IFCONFIG} wpa nwid "${NWID}" wpakey "${PASSWORD}" $*
 }
 
 set -e
