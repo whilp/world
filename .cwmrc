@@ -86,6 +86,7 @@ bind 4C-m       hmaximize
 bind 4-M        vmaximize
 bind 4-r        reload
 bind F1         "mpdlock"
+bind C-F1       "mpdlock -startCmd /usr/sbin/zzz"
 bind F5         "mpc -q pause"
 bind F6         "mpc -q previous"
 bind F7         "mpc -q next"
