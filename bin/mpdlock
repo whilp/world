@@ -8,6 +8,6 @@ esac
 
 [ -n "${STATE}" ] && mpc pause 1
 
-xlock
+xlock $*
 
 [ -n "${STATE}" ] && mpc pause 0
