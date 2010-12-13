@@ -1,0 +1,99 @@
+#!/usr/bin/env python
+
+import base64
+import getpass
+import hashlib
+import logging
+import optparse
+import sys
+import time
+
+global master
+
+try:
+    NullHandler = logging.NullHandler
+except AttributeError:
+    class NullHandler(logging.Handler):
+        def emit(self, record): pass
+
+log = logging.getLogger("safe")
+log.addHandler(NullHandler())
+
+def hash(data, hash=hashlib.sha256, rounds=1000):
+    start = time.time()
+    hashed = hash(data)
+
+    i = 0
+    while i < rounds:
+        i += 1
+        hashed.update(hashed.digest())
+
+    seconds = time.time() - start
+    log.debug("Hashed %d B (%d rounds) in %g seconds", len(data), rounds, seconds)
+    return hashed
+
+def parseargs(args):
+    usage = "safe"
+    parser = optparse.OptionParser()
+    parser.allow_interspersed_args = False
+
+    defaults = {
+        "rounds": 10**5,
+        "encoding": "urlsafe_b64",
+        "length": 20,
+    }
+
+    # Global options.
+    parser.add_option("-e", "--encoding", dest="encoding",
+        default=defaults["encoding"],
+        help="encoding (default % %(encoding)s)" % defaults)
+    parser.add_option("-l", "--length", dest="length",
+        default=defaults["length"],
+        help="length (default % %(length)s)" % defaults)
+    parser.add_option("-r", "--rounds", dest="rounds",
+        default=defaults["rounds"],
+        help="number of rounds (default % %(rounds)s)" % defaults)
+    parser.add_option("-q", "--quiet", dest="quiet",
+        default=0, action="count",
+        help="decrease the logging verbosity")
+    parser.add_option("-s", "--silent", dest="silent",
+        default=False, action="store_true",
+        help="silence the logger")
+    parser.add_option("-v", "--verbose", dest="verbose",
+        default=0, action="count",
+        help="increase the logging verbosity")
+
+    (opts, args) = parser.parse_args()
+    return (opts, args)
+
+def main():
+    (opts, args) = parseargs(sys.argv[1:])
+    level = logging.WARNING - ((opts.verbose - opts.quiet) * 10)
+    if opts.silent:
+        level = logging.CRITICAL + 1
+
+    format = "%(message)s"
+    logger = logging.getLogger("safe")
+    handler = logging.StreamHandler(sys.stderr)
+    handler.setFormatter(logging.Formatter(format))
+    logger.addHandler(handler)
+    logger.setLevel(level)
+
+    encoding = opts.encoding
+    length = opts.length
+    rounds = opts.rounds
+
+    encode = getattr(base64, encoding + "encode")
+    master = hash(getpass.getpass("Master password: "), rounds=rounds).digest()
+
+    prompt = "> "
+    while True:
+        account = raw_input(prompt)
+        sys.stdout.write("%30s\t" % account)
+        sys.stdout.flush()
+        hashed = hash(master + account, rounds=rounds).digest()
+        encoded = encode(hashed)
+        sys.stdout.write("%s\n" % encoded[:length])
+
+if __name__ == "__main__":
+    main()
