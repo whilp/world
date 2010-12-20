@@ -96,4 +96,7 @@ def main():
         sys.stdout.write("%s\n" % encoded[:length])
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        pass
