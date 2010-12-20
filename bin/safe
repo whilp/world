@@ -85,6 +85,13 @@ def main():
 
     encode = getattr(base64, encoding + "encode")
     master = hash(getpass.getpass("Master password: "), rounds=rounds).digest()
+    confirm = ""
+    i = 0
+    while confirm != master and i < 5:
+        confirm = hash(getpass.getpass("Confirm master password: "), rounds=rounds).digest()
+    if confirm != master:
+        sys.stdout.write("Could not confirm master password\n")
+        sys.exit(1)
 
     prompt = "> "
     while True:
