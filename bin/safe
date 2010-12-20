@@ -105,5 +105,7 @@ def main():
 if __name__ == "__main__":
     try:
         main()
-    except KeyboardInterrupt:
+    except (EOFError, KeyboardInterrupt):
+        sys.stdout.write('\n')
+        sys.stdout.flush()
         pass
