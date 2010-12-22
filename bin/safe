@@ -111,10 +111,10 @@ def parseargs(args):
         help="increase the logging verbosity")
 
     (opts, args) = parser.parse_args()
-    return (opts, args)
+    return (parser, opts, args)
 
 def main(argv):
-    (opts, args) = parseargs(argv)
+    (parser, opts, args) = parseargs(argv)
     level = logging.WARNING - ((opts.verbose - opts.quiet) * 10)
     if opts.silent:
         level = logging.CRITICAL + 1
@@ -125,6 +125,10 @@ def main(argv):
     handler.setFormatter(logging.Formatter(format))
     logger.addHandler(handler)
     logger.setLevel(level)
+
+    if opts.test:
+        unittest.main(argv=[parser.get_prog_name()] + args)
+        return
 
     encoding = opts.encoding
     length = opts.length
