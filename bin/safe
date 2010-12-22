@@ -82,6 +82,7 @@ def parseargs(args):
         "rounds": 10**5,
         "encoding": "urlsafe_b64",
         "length": 20,
+        "test": False,
     }
 
     # Global options.
@@ -100,6 +101,9 @@ def parseargs(args):
     parser.add_option("-s", "--silent", dest="silent",
         default=False, action="store_true",
         help="silence the logger")
+    parser.add_option("-t", "--test", dest="test",
+        default=defaults["test"], action="store_true",
+        help="run tests")
     parser.add_option("-v", "--verbose", dest="verbose",
         default=0, action="count",
         help="increase the logging verbosity")
@@ -119,6 +123,10 @@ def main():
     handler.setFormatter(logging.Formatter(format))
     logger.addHandler(handler)
     logger.setLevel(level)
+
+    if opts.test:
+        unittest.main()
+        return
 
     encoding = opts.encoding
     length = opts.length
