@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
+import array
 import base64
+import functools
 import getpass
 import hashlib
 import logging
+import math
 import optparse
 import sys
 import time
@@ -18,6 +21,45 @@ except AttributeError:
 
 log = logging.getLogger("safe")
 log.addHandler(NullHandler())
+
+def xor(a, b, array=array.array):
+    A = array('B', a)
+    for i, x in enumerate(array('B', b)):
+        A[i] ^= x
+    return A.tostring()
+
+def block(prf, password, salt, count, index, pack=struct.pack, xor=xor):
+    u = block = salt + pack(">i", index)
+    for i in range(count):
+        u = prf(password, u)
+        block = xor(block, u)
+
+    return block
+
+def pbkdf2(password, salt, count, klen, hash=hashlib.sha256, hmac=hmac.HMAC):
+    """Derive a key.
+
+    This function implements the PBKDF2 function described in RFC 2898.
+
+    :param password: password, string
+    :param salt: salt, string
+    :param count: iteration count, positive integer
+    :param klen: desired length of derived key, positive integer no greater than
+        (2^32 -1 ) * (8 * prf().digest_size)
+    """
+    hlen = 8 * hash.digest_size
+    maxklen = (2**32 - 1) * hlen
+    if klen > maxklen:
+        raise ValueError("derived key too long (klen %d greater than max %d)" %
+                (klen, maxklen), klen, maxklen)
+
+    def prf(key, message, hash):
+        return hmac(key, msg=message, digestmod=hash).digest()
+
+    nblocks = math.ceil(klen/hlen)
+    blocks = (block(prf, password, salt, count, i) for i in xrange(1, nblocks + 1))
+
+    return ''.join(blocks)[:klen]
 
 def hash(data, hash=hashlib.sha256, rounds=1000):
     start = time.time()
