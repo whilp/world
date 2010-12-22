@@ -24,6 +24,18 @@ log = logging.getLogger("safe")
 log.addHandler(NullHandler())
 
 def xor(a, b, array=array.array):
+    """Produce the exclusive-or of the characters in strings *a* and *b*.
+
+    The input strings are converted to :type:`array.array`s of unsigned integers
+    and each character of *a* is XORed with the character of *b* at the same
+    index. The output is truncated to the length of the shorter of *a* and *b*.
+
+    Returns a string.
+
+    :param a: string
+    :param b: string
+    :param array: optional array type
+    """
     A = array('B', a)
     alen = len(A)
     for i, x in enumerate(array('B', b)):
