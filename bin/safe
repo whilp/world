@@ -5,9 +5,11 @@ import base64
 import functools
 import getpass
 import hashlib
+import hmac
 import logging
 import math
 import optparse
+import struct
 import sys
 import time
 import unittest
