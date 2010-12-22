@@ -10,8 +10,7 @@ import math
 import optparse
 import sys
 import time
-
-global master
+import unittest
 
 try:
     NullHandler = logging.NullHandler
