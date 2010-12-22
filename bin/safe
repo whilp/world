@@ -25,7 +25,9 @@ log.addHandler(NullHandler())
 
 def xor(a, b, array=array.array):
     A = array('B', a)
+    alen = len(A)
     for i, x in enumerate(array('B', b)):
+        if i >= alen: break
         A[i] ^= x
     return A.tostring()
 
@@ -152,3 +154,23 @@ if __name__ == "__main__":
         sys.stdout.write('\n')
         sys.stdout.flush()
         pass
+
+class TestXor(unittest.TestCase):
+
+    def test_simple(self):
+        """xor() on two strings of equal length should return a similarly sized string."""
+        result = xor("spam", "eggs")
+
+        self.assertEqual(result, '\x16\x17\x06\x1e')
+
+    def test_shorta(self):
+        """xor() with short 'a' truncates to a."""
+        result = xor("spam", "foo")
+
+        self.assertEqual(result, '\x15\x1f\x0em')
+
+    def test_shortb(self):
+        """xor() with short 'a' truncates to a."""
+        result = xor("foo", "spam")
+
+        self.assertEqual(result, '\x15\x1f\x0e')
