@@ -185,7 +185,7 @@ class TestXor(unittest.TestCase):
         """xor() with short 'b' truncates a to b."""
         result = xor("spam", "foo")
 
-        self.assertEqual(result, '\x15\x1f\x0em')
+        self.assertEqual(result, '\x15\x1f\x0e')
 
     def test_shortb(self):
         """xor() with short 'a' truncates b to a."""
