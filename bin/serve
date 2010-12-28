@@ -56,10 +56,10 @@ def parseargs(args):
 
     # Global options.
     parser.add_option("-q", "--quiet", dest="quiet",
-        default=defalts["quiet"], action="count",
+        default=defaults["quiet"], action="count",
         help="decrease the logging verbosity")
     parser.add_option("-s", "--silent", dest="silent",
-        default=defalts["silent"], action="store_true",
+        default=defaults["silent"], action="store_true",
         help="silence the logger")
     parser.add_option("-v", "--verbose", dest="verbose",
         default=defaults["verbose"], action="count",
