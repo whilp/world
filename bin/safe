@@ -264,7 +264,7 @@ class TestVectors(unittest.TestCase):
              "65 a4 29 c1 "             # (20 octets)
         self.assertVector(P, S, c, dkLen, DK)
 
-    def test_vector_josefsson_4(self):
+    def slowtest_vector_josefsson_4(self):
         P = "password" # (8 octets)
         S = "salt" # (4 octets)
         c = 16777216
