@@ -68,9 +68,8 @@ def pbkdf2(password, salt, count, klen, hash=hashlib.sha256, hmac=hmac.HMAC):
     try:
         digest_size = hash.digest_size
     except AttributeError:
-        hash = hash()
-        digest_size = hash.digest_size
-    hlen = 8 * hash.digest_size
+        digest_size = hash().digest_size
+    hlen = 8 * digest_size
     maxklen = (2**32 - 1) * hlen
     if klen > maxklen:
         raise ValueError("derived key too long (klen %d greater than max %d)" %
