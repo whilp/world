@@ -79,6 +79,7 @@ def pbkdf2(password, salt, count, klen, hash=hashlib.sha256, hmac=hmac.HMAC):
         return hmac(key, msg=message, digestmod=hash).digest()
 
     nblocks = int(math.ceil(klen/hlen))
+    log.debug("Computing %d blocks with digest size %d, hlen %d, klen %d and maxklen %d", nblocks, digest_size, hlen, klen, maxklen)
     blocks = (block(prf, password, salt, count, i) for i in xrange(1, nblocks + 1))
 
     return ''.join(blocks)[:klen]
