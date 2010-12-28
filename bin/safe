@@ -217,7 +217,7 @@ class TestBlock(unittest.TestCase):
             return HMAC(key, msg, digestmod=sha256).digest()
         result = block(prf, "password", "salt", 10, 1)
 
-        self.assertEqual(result, '')
+        self.assertEqual(result, '\x16]\xa4\xfc\xd97\xef\xe3')
 
 class TestVectors(unittest.TestCase):
     """Test vectors for PBKDF2.
