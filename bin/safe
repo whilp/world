@@ -68,7 +68,7 @@ def pbkdf2(password, salt, count, klen, hash=hashlib.sha256, hmac=hmac.HMAC):
         raise ValueError("derived key too long (klen %d greater than max %d)" %
                 (klen, maxklen), klen, maxklen)
 
-    def prf(key, message, hash):
+    def prf(key, message, hash=hash):
         return hmac(key, msg=message, digestmod=hash).digest()
 
     nblocks = math.ceil(klen/hlen)
@@ -186,3 +186,28 @@ class TestXor(unittest.TestCase):
         result = xor("foo", "spam")
 
         self.assertEqual(result, '\x15\x1f\x0e')
+
+class TestBlock(unittest.TestCase):
+
+    def setUp(self):
+        self.prf = lambda k, m: k + m
+        self.pack = lambda f, *v: ''.join(str(x) for x in v)
+        self.xor = lambda a, b: a + b
+
+    def test_simple(self):
+        """Generate a dummy block."""
+        result = block(self.prf, "password", "salt", 10, 0, pack=self.pack, xor=self.xor)
+
+        self.assertEquals(len(result), 495)
+        self.assertEquals(result[18:30], 'passwordpass')
+
+    def test_real(self):
+        """Generate a real block."""
+        from hmac import HMAC
+        from hashlib import sha256
+
+        def prf(key, msg):
+            HMAC(key, msg, digestmod=sha256).digest()
+        result = block(prf, "password", "salt", 10, 1)
+
+        self.assertEqual(result, '')
