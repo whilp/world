@@ -231,7 +231,7 @@ class TestVectors(unittest.TestCase):
 
         self.assertEqual(result, binascii.unhexlify(''.join(DK.split())))
 
-    def test_vector_2898_1(self):
+    def test_vector_josefsson_1(self):
         P = "password" # (8 octets)
         S = "salt" # (4 octets)
         c = 1
@@ -242,7 +242,7 @@ class TestVectors(unittest.TestCase):
              "2f e0 37 a6"              # (20 octets)
         self.assertVector(P, S, c, dkLen, DK)
 
-    def test_vector_2898_2(self):
+    def test_vector_josefsson_2(self):
         P = "password" # (8 octets)
         S = "salt" # (4 octets)
         c = 2
@@ -253,7 +253,7 @@ class TestVectors(unittest.TestCase):
              "d8 de 89 57"              # (20 octets)
         self.assertVector(P, S, c, dkLen, DK)
 
-    def test_vector_2898_3(self):
+    def test_vector_josefsson_3(self):
         P = "password" # (8 octets)
         S = "salt" # (4 octets)
         c = 4096
@@ -264,7 +264,7 @@ class TestVectors(unittest.TestCase):
              "65 a4 29 c1 "             # (20 octets)
         self.assertVector(P, S, c, dkLen, DK)
 
-    def test_vector_2898_4(self):
+    def test_vector_josefsson_4(self):
         P = "password" # (8 octets)
         S = "salt" # (4 octets)
         c = 16777216
@@ -275,7 +275,7 @@ class TestVectors(unittest.TestCase):
              "26 34 e9 84"              # (20 octets)
         self.assertVector(P, S, c, dkLen, DK)
 
-    def test_vector_2898_5(self):
+    def test_vector_josefsson_5(self):
         P = "passwordPASSWORDpassword" # (24 octets)
         S = "saltSALTsaltSALTsaltSALTsaltSALTsalt" # (36 octets)
         c = 4096
@@ -287,7 +287,7 @@ class TestVectors(unittest.TestCase):
              "38"                       # (25 octets)
         self.assertVector(P, S, c, dkLen, DK)
 
-    def test_vector_2898_6(self):
+    def test_vector_josefsson_6(self):
         P = "pass\0word" # (9 octets)
         S = "sa\0lt" # (5 octets)
         c = 4096
