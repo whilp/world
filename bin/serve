@@ -79,9 +79,8 @@ def main(argv):
     log.addHandler(handler)
     log.setLevel(level)
 
-    address = ("127.0.0.1", 0)
-    server = Server(address, Handler)
-    print "Serving on http://%s:%s/" % server.server_address
+    server = Server(("127.0.0.1", 0), Handler)
+    log.info("Serving on http://%s:%s/", *server.server_address)
     try:
         server.serve_forever()
     except (KeyboardInterrupt):
