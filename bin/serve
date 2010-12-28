@@ -49,7 +49,7 @@ def parseargs(args):
 
     defaults = {
         "quiet": 0,
-        "silent": False
+        "silent": False,
         "verbose": 0,
     }
 
