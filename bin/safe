@@ -77,7 +77,7 @@ def pbkdf2(password, salt, count, klen, hash=hashlib.sha256, hmac=hmac.HMAC):
     def prf(key, message, hash=hash):
         return hmac(key, msg=message, digestmod=hash).digest()
 
-    nblocks = math.ceil(klen/hlen)
+    nblocks = int(math.ceil(klen/hlen))
     blocks = (block(prf, password, salt, count, i) for i in xrange(1, nblocks + 1))
 
     return ''.join(blocks)[:klen]
