@@ -3,6 +3,7 @@
 import logging
 import optparse
 import os
+import urlparse
 
 from SimpleHTTPServer import (
     SimpleHTTPRequestHandler,
@@ -43,8 +44,19 @@ Handler.extensions_map.update({
     ".xhtml": "application/xhtml+xml",
 })
 
+def parse_address(address, addr="localhost", port=0):
+    try:
+        port = int(address.lstrip(":"))
+        address = addr
+    except ValueError:
+        parsed = urlparse.urlparse(address)
+        address = parsed.netloc or addr
+        if ':' in address:
+            address, delim, port = address.partition(':')
+    return address, int(port)
+
 def parseargs(args):
-    usage = "serve [-p PORT]"
+    usage = "serve [ADDRESS]"
     parser = optparse.OptionParser()
     parser.allow_interspersed_args = False
 
@@ -80,7 +92,11 @@ def main(argv):
     log.addHandler(handler)
     log.setLevel(level)
 
-    server = Server(("127.0.0.1", 0), Handler)
+    if args:
+        address = parse_address(args[0])
+    else:
+        address = ("127.0.0.1", 0)
+    server = Server(address, Handler)
     log.info("Serving on http://%s:%s/", *server.server_address)
     try:
         server.serve_forever()
@@ -90,3 +106,25 @@ def main(argv):
 if __name__ == "__main__":
     import sys
     sys.exit(main(sys.argv))
+
+import unittest
+
+class TestAddress(unittest.TestCase):
+
+    def test_parse_address1(self):
+        self.assertEqual(parse_address("8000"), ("localhost", 8000))
+
+    def test_parse_address2(self):
+        self.assertEqual(parse_address(":8000"), ("localhost", 8000))
+
+    def test_parse_address3(self):
+        self.assertEqual(parse_address("localhost"), ("localhost", 0))
+
+    def test_parse_address4(self):
+        self.assertEqual(parse_address("http://localhost"), ("localhost", 0))
+
+    def test_parse_address5(self):
+        self.assertEqual(parse_address("http://localhost/"), ("localhost", 0))
+
+    def test_parse_address6(self):
+        self.assertEqual(parse_address("http://localhost:8000/"), ("localhost", 8000))
