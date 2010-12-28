@@ -32,9 +32,9 @@ Handler.extensions_map.update({
     ".xhtml": "application/xhtml+xml",
 })
 
-address = ("127.0.0.1", 8000)
+address = ("127.0.0.1", 0)
 server = Server(address, Handler)
-print "Serving on http://%s:%s/" % address
+print "Serving on http://%s:%s/" % server.server_address
 try:
     server.serve_forever()
 except (KeyboardInterrupt):
