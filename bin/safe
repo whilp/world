@@ -214,7 +214,7 @@ class TestBlock(unittest.TestCase):
         from hashlib import sha256
 
         def prf(key, msg):
-            HMAC(key, msg, digestmod=sha256).digest()
+            return HMAC(key, msg, digestmod=sha256).digest()
         result = block(prf, "password", "salt", 10, 1)
 
         self.assertEqual(result, '')
