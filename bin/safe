@@ -190,6 +190,7 @@ class TestXor(unittest.TestCase):
 class TestBlock(unittest.TestCase):
 
     def setUp(self):
+        unittest.TestCase.setUp(self)
         self.prf = lambda k, m: k + m
         self.pack = lambda f, *v: ''.join(str(x) for x in v)
         self.xor = lambda a, b: a + b
