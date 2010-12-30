@@ -40,11 +40,9 @@ def xor(a, b, array=array.array):
     :param array: optional array type
     """
     A = array('B', a)
-    alen = len(A)
-    for i, x in enumerate(array('B', b)):
-        if i >= alen: break
-        A[i] ^= x
-    return A.tostring()
+    B = array('B', b)
+    C = array('B', [x ^ y for (x, y) in zip(A, B)])
+    return C.tostring()
 
 def block(prf, password, salt, count, index, pack=struct.pack, xor=xor):
     u = block = salt + pack(">i", index)
