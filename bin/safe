@@ -227,6 +227,7 @@ class TestVectors(unittest.TestCase):
     def assertVector(self, P, S, c, dkLen, DK):
         result = pbkdf2(P, S, c, dkLen)
 
+        self.assertEqual(len(result), dkLen)
         self.assertEqual(result, binascii.unhexlify(''.join(DK.split())))
 
     def test_vector_josefsson_1(self):
