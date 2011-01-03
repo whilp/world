@@ -176,7 +176,9 @@ ignores = (
   { level = "JOINS PARTS QUITS"; servertag = "SILCNet"; },
   { level = "JOINS PARTS QUITS"; servertag = "openbsd-porters"; },
   { level = "JOINS PARTS QUITS"; servertag = "openbsd-hackers"; },
-  { level = "NICKS"; pattern = "rackIT"; }
+  { level = "NICKS"; pattern = "rackIT"; },
+  { mask = "hypnagogic"; level = "NICKS"; },
+  { mask = "ashedryden"; level = "NICKS"; }
 );
 completions = {
   obsd = { value = "OpenBSD"; auto = "yes"; };

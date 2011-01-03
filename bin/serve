@@ -1,10 +1,22 @@
 #!/usr/bin/env python
 
+import logging
+import optparse
 import os
+import urlparse
 
 from SimpleHTTPServer import (
     SimpleHTTPRequestHandler,
     BaseHTTPServer)
+
+try:
+    NullHandler = logging.NullHandler
+except AttributeError:
+    class NullHandler(logging.Handler):
+        def emit(self, record): pass
+
+log = logging.getLogger("serve")
+log.addHandler(NullHandler())
 
 Server = BaseHTTPServer.HTTPServer
 class Handler(SimpleHTTPRequestHandler):
@@ -32,10 +44,87 @@ Handler.extensions_map.update({
     ".xhtml": "application/xhtml+xml",
 })
 
-address = ("127.0.0.1", 8000)
-server = Server(address, Handler)
-print "Serving on http://%s:%s/" % address
-try:
-    server.serve_forever()
-except (KeyboardInterrupt):
-    pass
+def parse_address(address, addr="localhost", port=0):
+    try:
+        port = int(address.lstrip(":"))
+        address = addr
+    except ValueError:
+        parsed = urlparse.urlparse(address)
+        address = parsed.netloc or addr
+        if ':' in address:
+            address, delim, port = address.partition(':')
+    return address, int(port)
+
+def parseargs(args):
+    usage = "serve [ADDRESS]"
+    parser = optparse.OptionParser()
+    parser.allow_interspersed_args = False
+
+    defaults = {
+        "quiet": 0,
+        "silent": False,
+        "verbose": 0,
+    }
+
+    # Global options.
+    parser.add_option("-q", "--quiet", dest="quiet",
+        default=defaults["quiet"], action="count",
+        help="decrease the logging verbosity")
+    parser.add_option("-s", "--silent", dest="silent",
+        default=defaults["silent"], action="store_true",
+        help="silence the logger")
+    parser.add_option("-v", "--verbose", dest="verbose",
+        default=defaults["verbose"], action="count",
+        help="increase the logging verbosity")
+
+    (opts, args) = parser.parse_args()
+    return (opts, args)
+
+def main(argv):
+    (opts, args) = parseargs(argv[1:])
+    level = logging.WARNING - ((opts.verbose - opts.quiet) * 10)
+    if opts.silent:
+        level = logging.CRITICAL + 1
+
+    format = "%(message)s"
+    handler = logging.StreamHandler()
+    handler.setFormatter(logging.Formatter(format))
+    log.addHandler(handler)
+    log.setLevel(level)
+
+    if args:
+        address = parse_address(args[0])
+    else:
+        address = ("127.0.0.1", 0)
+    server = Server(address, Handler)
+    log.info("Serving on http://%s:%s/", *server.server_address)
+    try:
+        server.serve_forever()
+    except (KeyboardInterrupt):
+        pass
+
+if __name__ == "__main__":
+    import sys
+    sys.exit(main(sys.argv))
+
+import unittest
+
+class TestAddress(unittest.TestCase):
+
+    def test_parse_address1(self):
+        self.assertEqual(parse_address("8000"), ("localhost", 8000))
+
+    def test_parse_address2(self):
+        self.assertEqual(parse_address(":8000"), ("localhost", 8000))
+
+    def test_parse_address3(self):
+        self.assertEqual(parse_address("localhost"), ("localhost", 0))
+
+    def test_parse_address4(self):
+        self.assertEqual(parse_address("http://localhost"), ("localhost", 0))
+
+    def test_parse_address5(self):
+        self.assertEqual(parse_address("http://localhost/"), ("localhost", 0))
+
+    def test_parse_address6(self):
+        self.assertEqual(parse_address("http://localhost:8000/"), ("localhost", 8000))
