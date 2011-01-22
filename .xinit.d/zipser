@@ -1,5 +1,2 @@
 pgrep -x aucat || aucat -l &
-if [ "${DOCKED}" -eq 1 ]; then
-    xrandr --output VGA --auto --output LVDS --off
-fi
 xterm -T master &
