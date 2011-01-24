@@ -1,0 +1,2 @@
+pgrep -x aucat || aucat -l &
+xterm -T master &
