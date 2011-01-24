@@ -261,10 +261,10 @@ audio_output {
 #
 ## Default libao output:
 #
-audio_output {
-	type			"ao"
-	name			"Libao Audio Device"
-}
+#audio_output {
+#	type			"ao"
+#	name			"Libao Audio Device"
+#}
 #
 # This setting will change all decoded audio to be converted to the specified
 # format before being passed to the audio outputs. By default, this setting is
