@@ -79,6 +79,7 @@ site () {
 alias curl="curl -s"
 alias dc="cd"
 alias elinks="DISPLAY='' elinks -touch-files -no-connect"
+alias h="todo -f ~/share/todo/hep.txt -p hep"
 alias hep="site hep"
 alias less="${PAGER}"
 alias lfod="site lfod"
@@ -86,6 +87,7 @@ alias list="tmux ls"
 alias ls="ls -F"
 alias mtr="mtr -t"
 alias sudo='A=`alias` /usr/bin/sudo '
+alias t="todo -f ~/.todo -p todo"
 alias tmux="tmux -S ${TMUX_SOCK}"
 alias vi="${VISUAL}"
 alias vimdiff="vimdiff -o"
@@ -124,9 +126,6 @@ fi
 export PS1="${OLDPS1}"
 
 agent
-
-# Jump back to $HOME; helps unconfuse ps1 when $HOME is symlinked.
-cd 
 
 # Run the preferred shell (unless we're already running it).
 if [ "${SHELL##*/}" != "${SHELL_OLD##*/}" ]; then
