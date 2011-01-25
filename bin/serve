@@ -38,6 +38,9 @@ class Handler(SimpleHTTPRequestHandler):
 
         return path
 
+    def log_message(self, format, *args):
+        log.info(format, *args)
+
 Handler.protocol_version = "HTTP/1.0"
 Handler.extensions_map.update({
     ".svg": "image/svg+xml",
@@ -86,9 +89,10 @@ def main(argv):
     if opts.silent:
         level = logging.CRITICAL + 1
 
-    format = "%(message)s"
+    format = "localhost - - [%(asctime)s] %(message)s"
+    datefmt = "%d/%b/%Y %H:%M:%S"
     handler = logging.StreamHandler()
-    handler.setFormatter(logging.Formatter(format))
+    handler.setFormatter(logging.Formatter(fmt=format, datefmt=datefmt))
     log.addHandler(handler)
     log.setLevel(level)
 
