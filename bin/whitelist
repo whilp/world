@@ -1,0 +1,10 @@
+#!/bin/sh
+
+COMMAND="${1:-add}"
+SUDO=${SUDO:-/usr/bin/sudo}
+
+set -- ${SSH_CONNECTION}
+CLIENT="$1"
+[ -z "${CLIENT}" ] && exit 0
+
+${SUDO} /sbin/pfctl -t whitelist -T "${COMMAND}" "${CLIENT}"
