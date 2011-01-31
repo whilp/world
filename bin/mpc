@@ -342,9 +342,9 @@ nowplaying () {
 
 forward () {
     HOST=$1
-    if [ -z "${HOST}" ]; then
+    if [ -z "${HOST}" -o "${HOST}" = "-" ]; then
         set -- ${SSH_CONNECTION}
-        HOST="$1"
+        HOST="${HOST}$1"
     fi
     REALHOST="${HOST#-}"
     CMD="/usr/bin/ssh -nfN -o HostName=${REALHOST} -S none"
