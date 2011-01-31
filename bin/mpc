@@ -342,6 +342,10 @@ nowplaying () {
 
 forward () {
     HOST=$1
+    if [ -z "${HOST}" ]; then
+        set -- ${SSH_CONNECTION}
+        HOST="$1"
+    fi
     REALHOST="${HOST#-}"
     CMD="/usr/bin/ssh -nfN -o HostName=${REALHOST} -S none"
     CMD="${CMD} -L6600:localhost:6600 -L8600:localhost:8600"

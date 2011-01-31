@@ -51,6 +51,7 @@ set time_inc=100
 set wait_key=no
 
 alternates "(wcmaier@wisc\.edu|wcmaier@hep\.wisc\.edu|wcmaier@gmail\.com|willmaier@ml1\.net|wcmaier@openbsd.org)"
+alternative_order text/plain
 
 # Macros.
 # Function list: http://www.mutt.org/doc/manual/manual-6.html#functions
