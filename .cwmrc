@@ -1,6 +1,6 @@
 sticky yes
 
-autogroup 1     xterm
+autogroup 1     uxterm
 autogroup 2     Firefox
 autogroup 3     Chrome
 
