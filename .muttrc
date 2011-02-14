@@ -71,6 +71,8 @@ macro index = "<delete-pattern>~=<enter>"
 macro pager = "<delete-pattern>~=<enter>"
 macro index r "<read-thread><next-new>"
 macro pager r "<read-thread><next-new>"
+macro index R "<reply>"
+macro pager R "<reply>"
 macro index \CR "<read-thread><next-new>"
 macro pager \CR "<read-thread><next-new>"
 
