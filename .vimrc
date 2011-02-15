@@ -7,6 +7,7 @@ set foldmethod=indent
 set history=50
 set ignorecase
 set incsearch
+set indentexpr="-1"
 set laststatus=2
 set nobackup
 set nocompatible
