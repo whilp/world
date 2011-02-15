@@ -1,81 +1,8 @@
-##################  BEGIN HEADERS
-# Filename	: $HOME/.mailcap
-# Use		: associates filetypes and applications
-# Version	: $Revision: 1.6 $
-# Author	: Will Maier <willmaier@ml1.net>
-# Updated	: $Date: 2006/01/27 22:55:48 $
-# CVS		: $Id: mailcap,v 1.6 2006/01/27 22:55:48 will Exp $
-##################  END HEADERS
-
-application/x-ogg;/usr/local/Realplayer/realplay %s
-application/ogg;/usr/local/Realplayer/realplay %s
-text/vnd.rn-realtext;/usr/local/Realplayer/realplay %s
-image/vnd.rn-realpix;/usr/local/Realplayer/realplay %s
-application/smil;/usr/local/Realplayer/realplay %s
-audio/mp3;/usr/local/Realplayer/realplay %s
-audio/x-mp3;/usr/local/Realplayer/realplay %s
-audio/mpeg;/usr/local/Realplayer/realplay %s
-audio/mpg;/usr/local/Realplayer/realplay %s
-audio/x-mpeg;/usr/local/Realplayer/realplay %s
-audio/x-mpg;/usr/local/Realplayer/realplay %s
-audio/mpegurl;/usr/local/Realplayer/realplay %s
-audio/x-mpegurl;/usr/local/Realplayer/realplay %s
-audio/wav;/usr/local/Realplayer/realplay %s
-audio/x-wav;/usr/local/Realplayer/realplay %s
-audio/x-pn-wav;/usr/local/Realplayer/realplay %s
-audio/x-pn-windows-acm;/usr/local/Realplayer/realplay %s
-audio/x-pn-windows-pcm;/usr/local/Realplayer/realplay %s
-application/vnd.rn-realmedia-secure;/usr/local/Realplayer/realplay %s
-application/vnd.rn-realaudio-secure;/usr/local/Realplayer/realplay %s
-audio/x-realaudio-secure;/usr/local/Realplayer/realplay %s
-video/vnd.rn-realvideo-secure;/usr/local/Realplayer/realplay %s
-audio/vnd.rn-realaudio;/usr/local/Realplayer/realplay %s
-audio/x-realaudio;/usr/local/Realplayer/realplay %s
-application/vnd.rn-realmedia;/usr/local/Realplayer/realplay %s
-application/vnd.rn-realmedia-vbr;/usr/local/Realplayer/realplay %s
-image/vnd.rn-realpix;/usr/local/Realplayer/realplay %s
-audio/x-pn-realaudio;/usr/local/Realplayer/realplay %s
-video/vnd.rn-realvideo;/usr/local/Realplayer/realplay %s
-application/vnd.rn-realsystem-rmj;/usr/local/Realplayer/realplay %s
-application/vnd.rn-realsystem-rmx;/usr/local/Realplayer/realplay %s
-audio/aac;/usr/local/Realplayer/realplay %s
-audio/m4a;/usr/local/Realplayer/realplay %s
-audio/mp2;/usr/local/Realplayer/realplay %s
-audio/mp1;/usr/local/Realplayer/realplay %s
-audio/rn-mpeg;/usr/local/Realplayer/realplay %s
-audio/scpls;/usr/local/Realplayer/realplay %s
-audio/x-scpls;/usr/local/Realplayer/realplay %s
-application/streamingmedia;/usr/local/Realplayer/realplay %s
-application/sdp;/usr/local/Realplayer/realplay %s
-application/x-sdp;/usr/local/Realplayer/realplay %s
-audio/basic;/usr/local/Realplayer/realplay %s
-audio/x-pn-au;/usr/local/Realplayer/realplay %s
-audio/aiff;/usr/local/Realplayer/realplay %s
-audio/x-aiff;/usr/local/Realplayer/realplay %s
-audio/x-pn-aiff;/usr/local/Realplayer/realplay %s
-video/3gpp;/usr/local/Realplayer/realplay %s
-video/3gpp-encrypted;/usr/local/Realplayer/realplay %s
-audio/3gpp;/usr/local/Realplayer/realplay %s
-audio/3gpp-encrypted;/usr/local/Realplayer/realplay %s
-audio/amr;/usr/local/Realplayer/realplay %s
-audio/amr-encrypted;/usr/local/Realplayer/realplay %s
-audio/amr-wb;/usr/local/Realplayer/realplay %s
-audio/amr-wb-encrypted;/usr/local/Realplayer/realplay %s
-audio/x-rn-3gpp-amr;/usr/local/Realplayer/realplay %s
-audio/x-rn-3gpp-amr-encrypted;/usr/local/Realplayer/realplay %s
-audio/x-rn-3gpp-amr-wb;/usr/local/Realplayer/realplay %s
-audio/x-rn-3gpp-amr-wb-encrypted;/usr/local/Realplayer/realplay %s
-video/3gpp2;/usr/local/Realplayer/realplay %s
-
-# Patches and diffs
-text/x-diff;            cat %s ; copiousoutput
-text/x-diff;            edit=vim '+set ft=patch' %s ; needsterminal
-text/x-patch;           cat %s ; copiousoutput
-text/x-patch;           edit=vim '+set ft=patch' %s ; needsterminal
-
-# Mutt HTML mail hacks
-text/html; elinks -dump -dump-charset iso-8859-15 -no-references -no-numbering -default-mime-type text/html %s; needsterminal; copiousoutput;
-# text/html; lynx --dump %s; nametemplate=%s.html; copiousoutput
-# text/html; elinks -default-mime-type text/html %s; needsterminal;
-text/html; elinks -dump -dump-charset iso-8859-15 -default-mime-type text/html %s; needsterminal; copiousoutput;
-application/msword; antiword -t -i 1 -w 72 %s; copiousoutput
+text/x-diff;            /bin/cat ; copiousoutput
+text/x-patch;           /bin/cat ; copiousoutput
+text/html;              /usr/bin/lynx -stdin -force_html -dump ; copiousoutput
+application/msword;     /usr/local/bin/antiword -t -i 1 -w 72 - ; copiousoutput
+application/pdf;        /usr/local/bin/pdftotext %s - ; copiousoutput
+application/x-pdf;      /usr/local/bin/pdftotext %s - ; copiousoutput
+application/x-shellscript; /bin/cat ; copiousoutput
+text/rtf;               /usr/local/bin/unrtf --nopict --text %s ; copiousoutput

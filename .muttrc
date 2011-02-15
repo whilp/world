@@ -71,6 +71,8 @@ macro index = "<delete-pattern>~=<enter>"
 macro pager = "<delete-pattern>~=<enter>"
 macro index r "<read-thread><next-new>"
 macro pager r "<read-thread><next-new>"
+macro index R "<reply>"
+macro pager R "<reply>"
 macro index \CR "<read-thread><next-new>"
 macro pager \CR "<read-thread><next-new>"
 
@@ -142,6 +144,7 @@ send-hook "~t @[[:graph:]]*\.edu" "source ~/.mutt/hep"
 send-hook '~t @[[:graph:]]*\.?fnal\.gov' "source ~/.mutt/hep"
 send-hook '~t @[[:graph:]]*\.?cern\.ch' "source ~/.mutt/hep"
 send-hook '~t @[[:graph:]]*\.?desy\.de' "source ~/.mutt/hep"
+send-hook '~t @[[:graph:]]*\.?hadoop\.apache\.org' "source ~/.mutt/hep"
 
 
 send-hook '~L .*@[[:graph:]]*bsd[[:graph:]]*'	"set signature='~/.signatures/list-bsd'"

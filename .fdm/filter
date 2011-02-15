@@ -108,6 +108,14 @@ match "List-Id: <chtc-users\\.cs\\.wisc\\.edu>" in headers {
 }
 match "List-Id: <cs-announce\\.cs\\.wisc\\.edu>" in headers action "hep"
 
+# Hadoop.
+match "^List-Post: <mailto:(.*)@hadoop\\.apache\\.org>" in headers {
+    match all action maildir "${hadoop}/%1"
+}
+match "^List-ID: <(.*)\\.cloudera\\.org>" in headers {
+    match all action maildir "${hadoop}/%1"
+}
+
 # CMS.
 match "^X-CMSLIST:" or
     "^List-Owner:.*CMS.*@LISTSERV\\.FNAL\\.GOV" or
