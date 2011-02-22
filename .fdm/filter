@@ -46,7 +46,7 @@ match "^List-Id:.*hacker-within\\.googlegroups\\.com" in headers action maildir 
 match "^List-Id:.*video-game-church\\.googlegroups\\.com" in headers action maildir "${groups}/vgc"
 match "^List-Id:.*madlug\\.madisonlinux\\.org" in headers action maildir "${groups}/madlug"
 match "^List-Id:.*mlug-list\\.mail\\.milwaukeelug\\.org" in headers action maildir "${groups}/mkelug"
-match "^List-Id:.*lopsa-us-wi-mad\\.lopsa\\.org" in headers action maildir "${groups}/lopsa"
+match "^List-Id:.*<lopsa-us-wi-mad\\.lists\\.lopsa\\.org>" in headers action maildir "${groups}/lopsa"
 match "^X-Mailinglist: talk@metabug\\.org$" in headers action maildir "${groups}/metabug"
 match "^List-Id: Mailing list for MadSec <madsec-foofus\\.net>" in headers action maildir "${groups}/madsec"
 match "^List-ID:.*<madlug-book-club\\.googlegroups\\.com>" in headers action maildir "${groups}/madbook"
