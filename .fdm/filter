@@ -70,6 +70,7 @@ match "^Sender:[ \t]*owner-([a-z-]*)@openbsd\\.org" in headers {
 
 # Techpartners.
 match "^(To|Cc):.*techpartners@lists\\.(services\\.)?wisc\\.edu" in headers action maildir "${uw}/techpartners"
+match "^(To|Cc):.*researchdata@lists\\.wisc\\.edu" in headers action maildir "${uw}/researchdata"
 
 # Security.
 match "^List-Id:.*bugtraq\\.list-id\\.securityfocus\\.com" in headers action maildir "${sec}/bugtraq"
