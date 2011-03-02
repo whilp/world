@@ -9,6 +9,7 @@
 
 [hooks]
 changegroup.updatemaster = hg bookmark -fr 'limit(heads(branch(default)), 1)' master
+changegroup.updatemaster = hg bookmark -fr default master
 changegroup.updatestable = hg bookmark -fr 'limit(heads(branch(stable)), 1)' stable
 changegroup.bitbucket = hg bpush -f bitbucket
 changegroup.github = hg push -f github
