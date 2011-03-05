@@ -37,10 +37,6 @@ set shiftwidth=4
 set softtabstop=4
 set tabstop=4
 
-" Plugins.
-filetype plugin indent on
-filetype indent on
-
 " Mappings.
 inoremap <C-J> <Down>
 inoremap <C-K> <Up>
