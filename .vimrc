@@ -24,6 +24,8 @@ set whichwrap=h,l,~,[,]
 set wildmenu
 set wildmode=full
 
+syntax off
+
 colorscheme bw
 
 " Don't do paren matching.
