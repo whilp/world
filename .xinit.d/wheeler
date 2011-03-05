@@ -2,7 +2,7 @@ pgrep -x aucat || aucat -l &
 if [ "${EXTSCREEN}" -eq 1 ]; then
     xrandr --output VGA --auto --output LVDS --auto
 fi
-xterm -T master &
+uxterm -T master &
 case "${OSNAME}" in
     OpenBSD) ;;
     Linux) WM=$EVILWM;;
