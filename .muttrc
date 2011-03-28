@@ -71,6 +71,8 @@ macro index = "<delete-pattern>~=<enter>"
 macro pager = "<delete-pattern>~=<enter>"
 macro index r "<read-thread><next-new>"
 macro pager r "<read-thread><next-new>"
+macro index R "<reply>"
+macro pager R "<reply>"
 macro index \CR "<read-thread><next-new>"
 macro pager \CR "<read-thread><next-new>"
 
@@ -130,6 +132,7 @@ send-hook '~t \(jacobsonlaura.*@gmail\.com\|ljacobson@(biochem\.wisc\.edu\|delta
 send-hook '~t post@posterous\.com' 'unset signature'
 fcc-hook '~t post@posterous\.com' 'posterous'
 
+send-hook '~t hacker-within@googlegroups\.com' "source ~/.mutt/gmail"
 send-hook '~t @kingstarusa\.com' "source ~/.mutt/hep"
 send-hook '~t @trincotech\.com' "source ~/.mutt/hep"
 send-hook '~t @dell\.com' "source ~/.mutt/hep"
@@ -142,6 +145,7 @@ send-hook "~t @[[:graph:]]*\.edu" "source ~/.mutt/hep"
 send-hook '~t @[[:graph:]]*\.?fnal\.gov' "source ~/.mutt/hep"
 send-hook '~t @[[:graph:]]*\.?cern\.ch' "source ~/.mutt/hep"
 send-hook '~t @[[:graph:]]*\.?desy\.de' "source ~/.mutt/hep"
+send-hook '~t @[[:graph:]]*\.?hadoop\.apache\.org' "source ~/.mutt/hep"
 
 
 send-hook '~L .*@[[:graph:]]*bsd[[:graph:]]*'	"set signature='~/.signatures/list-bsd'"

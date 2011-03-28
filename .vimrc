@@ -7,6 +7,7 @@ set foldmethod=indent
 set history=50
 set ignorecase
 set incsearch
+set indentexpr="-1"
 set laststatus=2
 set nobackup
 set nocompatible
@@ -23,6 +24,8 @@ set whichwrap=h,l,~,[,]
 set wildmenu
 set wildmode=full
 
+syntax off
+
 colorscheme bw
 
 " Don't do paren matching.
@@ -33,10 +36,6 @@ set expandtab
 set shiftwidth=4
 set softtabstop=4
 set tabstop=4
-
-" Plugins.
-filetype plugin indent on
-filetype indent on
 
 " Mappings.
 inoremap <C-J> <Down>

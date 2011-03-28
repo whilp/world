@@ -46,7 +46,7 @@ match "^List-Id:.*hacker-within\\.googlegroups\\.com" in headers action maildir 
 match "^List-Id:.*video-game-church\\.googlegroups\\.com" in headers action maildir "${groups}/vgc"
 match "^List-Id:.*madlug\\.madisonlinux\\.org" in headers action maildir "${groups}/madlug"
 match "^List-Id:.*mlug-list\\.mail\\.milwaukeelug\\.org" in headers action maildir "${groups}/mkelug"
-match "^List-Id:.*lopsa-us-wi-mad\\.lopsa\\.org" in headers action maildir "${groups}/lopsa"
+match "^List-Id:.*<lopsa-us-wi-mad\\.lists\\.lopsa\\.org>" in headers action maildir "${groups}/lopsa"
 match "^X-Mailinglist: talk@metabug\\.org$" in headers action maildir "${groups}/metabug"
 match "^List-Id: Mailing list for MadSec <madsec-foofus\\.net>" in headers action maildir "${groups}/madsec"
 match "^List-ID:.*<madlug-book-club\\.googlegroups\\.com>" in headers action maildir "${groups}/madbook"
@@ -70,6 +70,7 @@ match "^Sender:[ \t]*owner-([a-z-]*)@openbsd\\.org" in headers {
 
 # Techpartners.
 match "^(To|Cc):.*techpartners@lists\\.(services\\.)?wisc\\.edu" in headers action maildir "${uw}/techpartners"
+match "^(To|Cc):.*researchdata@lists\\.wisc\\.edu" in headers action maildir "${uw}/researchdata"
 
 # Security.
 match "^List-Id:.*bugtraq\\.list-id\\.securityfocus\\.com" in headers action maildir "${sec}/bugtraq"
@@ -107,6 +108,14 @@ match "List-Id: <chtc-users\\.cs\\.wisc\\.edu>" in headers {
 	match all action maildir "${hep}/chtc"
 }
 match "List-Id: <cs-announce\\.cs\\.wisc\\.edu>" in headers action "hep"
+
+# Hadoop.
+match "^List-Post: <mailto:(.*)@hadoop\\.apache\\.org>" in headers {
+    match all action maildir "${hadoop}/%1"
+}
+match "^List-ID: <(.*)\\.cloudera\\.org>" in headers {
+    match all action maildir "${hadoop}/%1"
+}
 
 # CMS.
 match "^X-CMSLIST:" or
