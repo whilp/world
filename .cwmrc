@@ -1,6 +1,6 @@
 sticky yes
 
-autogroup 1     xterm
+autogroup 1     uxterm
 autogroup 2     Firefox
 autogroup 3     Chrome
 
@@ -87,6 +87,7 @@ bind M-M        vmaximize
 bind M-r        reload
 bind F1         "mpdlock"
 bind C-F1       "mpdlock -startCmd /usr/sbin/zzz"
+bind F2         "xrandr --output LVDS --auto --output VGA --off"
 bind F5         "mpc -q pause"
 bind F6         "mpc -q previous"
 bind F7         "mpc -q next"
