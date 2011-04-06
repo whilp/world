@@ -1,7 +1,2 @@
-color normal default default
-
-mono index bold ~N
-mono indicator standout
-mono hdrdefault	bold
-mono bold bold
-mono underline underline
+source mutt-colors-solarized-dark-16.muttrc
+source mutt-colors-solarized-light-16.muttrc
