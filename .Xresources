@@ -7,8 +7,6 @@ UXTerm*charClass: 33:48,35-39:48,42-43:48,45-47:48,58:48,61:48,63-64:48,126:48
 UXTerm*loginShell: true
 UXTerm*saveLines: 2000
 UXTerm*scrollBar: false
-UXTerm*background: #FFF
-UXTerm*foreground: #000
 UXTerm*pointerMode: 1
 UXTerm*termName: xterm
 UXTerm*geometry: 159x56+0+0
