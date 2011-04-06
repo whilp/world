@@ -1,5 +1,5 @@
 set autoindent
-set background=light
+set background=dark
 set backspace=indent,eol,start
 set encoding=utf-8
 set fileencodings=
@@ -24,9 +24,9 @@ set whichwrap=h,l,~,[,]
 set wildmenu
 set wildmode=full
 
-syntax off
-
-colorscheme bw
+syntax on
+let w:solarized_style="dark"
+colorscheme solarized
 
 " Don't do paren matching.
 let loaded_matchparen=1
@@ -72,3 +72,15 @@ augroup filetypes
     au!
     au BufRead,BufNewFile *		if &ft == 'make' | set ts=8 sts=0 noexpandtab | endif
 augroup END
+
+function! ToggleBackground()
+    if (w:solarized_style=="dark")
+    let w:solarized_style="light"
+    colorscheme solarized
+else
+    let w:solarized_style="dark"
+    colorscheme solarized
+endif
+endfunction
+command! Togbg call ToggleBackground()
+map ;c :call ToggleBackground()<CR>
