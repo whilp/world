@@ -172,6 +172,7 @@ match "^(From|To|Cc):.*@[^ ]*\\.?hep\\.wisc\\.edu" in headers {
     # HEP root mail.
     match "^(From|To|Cc):.*(root|operator|cron)@[^ ]*\\.?hep" in headers {
         match "^Subject: IDS CRITICAL: intrusion detected" in headers action drop
+        match "^From: .*coffee\\.hep\\.wisc\\.edu" in headers action drop
         match all action maildir "${hep}/root"
     }
     match all action "hep"
