@@ -165,7 +165,11 @@ ignores = (
   { level = "NICKS"; pattern = "rackIT"; },
   { mask = "hypnagogic"; level = "NICKS"; },
   { mask = "ashedryden"; level = "NICKS"; },
-  { mask = "puffette"; level = "ALL"; }
+  { mask = "puffette"; level = "ALL"; },
+  { mask = "*away*"; level = "NICKS"; },
+  { mask = "*zzz*"; level = "NICKS"; },
+  { mask = "*afk*"; level = "NICKS"; },
+  { mask = "*_"; level = "NICKS"; }
 );
 completions = {
   obsd = { value = "OpenBSD"; auto = "yes"; };
