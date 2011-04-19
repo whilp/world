@@ -163,13 +163,8 @@ ignores = (
   { level = "JOINS PARTS QUITS"; servertag = "openbsd-porters"; },
   { level = "JOINS PARTS QUITS"; servertag = "openbsd-hackers"; },
   { level = "NICKS"; pattern = "rackIT"; },
-  { mask = "hypnagogic"; level = "NICKS"; },
-  { mask = "ashedryden"; level = "NICKS"; },
-  { mask = "puffette"; level = "ALL"; },
-  { mask = "*away*"; level = "NICKS"; },
-  { mask = "*zzz*"; level = "NICKS"; },
-  { mask = "*afk*"; level = "NICKS"; },
-  { mask = "*_"; level = "NICKS"; }
+  { mask = "NICKS"; level = "ALL"; servertag = "freenode"; },
+  { mask = "NICKS"; level = "ALL"; }
 );
 completions = {
   obsd = { value = "OpenBSD"; auto = "yes"; };
