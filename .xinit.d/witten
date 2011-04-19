@@ -1,4 +1,4 @@
 xset s off
 pgrep -x aucat || aucat -l &
-xterm -T master &
+uxterm -T master &
 #firefox &
