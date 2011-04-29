@@ -8,8 +8,8 @@ UXTerm*loginShell: true
 UXTerm*saveLines: 2000
 UXTerm*scrollBar: false
 UXTerm*pointerMode: 1
-UXTerm*termName: xterm
-UXTerm*geometry: 159x56+0+0
+UXTerm*termName: UXTerm
+UXTerm*geometry: 127x45+0+0
 UXTerm*VT100.translations: #override \n\
      <Btn1Up>: select-end(PRIMARY, CLIPBOARD, CUT_BUFFER0) \n\
      Ctrl<KeyPress>V: insert-selection(SELECT, PRIMARY, CLIPBOARD, CUT_BUFFER0) \n\
