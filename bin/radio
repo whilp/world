@@ -4,6 +4,9 @@ MPLAYER="mplayer -really-quiet"
 CURL="curl -s"
 
 case $1 in
+    aje)
+        # http://www.islamicity.com/multimedia/radio/?AspxAutoDetectCookieSupport=1
+		URL="http://mediaserver2.islamicity.com:8000/AljazeeraEnglish";;
     bbc)
         # http://www.bbc.co.uk/worldservice/institutional/2009/03/000000_mobile.shtml
         URL="http://mp33.bbc.streamuk.com:80/";;
