@@ -56,7 +56,8 @@ case $1 in
         plain nwid fgz
         ${DHCLIENT};;
     jph) # johnson public house
-        wpa "The Johnson Public House" johnson01 chan 11 bssid 90:27:e4:5d:9b:09
+        wpa "The Johnson Public House" pourover chan 8 bssid 90:27:e4:5d:9b:09
+        #wpa "The Johnson Public House" chan 149 bssid 90:27:e4:5d:9b:0a
         ${DHCLIENT};;
     ma*) # manna
         wep Manna mannanet
