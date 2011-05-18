@@ -51,6 +51,8 @@ match "^X-Mailinglist: talk@metabug\\.org$" in headers action maildir "${groups}
 match "^List-Id: Mailing list for MadSec <madsec-foofus\\.net>" in headers action maildir "${groups}/madsec"
 match "^List-ID:.*<madlug-book-club\\.googlegroups\\.com>" in headers action maildir "${groups}/madbook"
 match "^List-Id:.*<chicago\\.python\\.org>" in headers action maildir "${groups}/chipy"
+match "^List-ID:.*<devops-toolchain\\.googlegroups\\.com>" in headers action maildir "${groups}/devops.toolchain"
+match "^List-ID: <chicagolinux-discuss\\.googlegroups\\.com>" in headers action maildir "${groups}/chilug"
 
 # FOSS.
 match "^List-Id:.*mercurial\\.selenic\\.com" in headers action maildir "${foss}/hg"
