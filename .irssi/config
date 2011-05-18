@@ -165,7 +165,9 @@ ignores = (
   { level = "NICKS"; pattern = "rackIT"; },
   { mask = "NICKS"; level = "ALL"; servertag = "freenode"; },
   { mask = "NICKS"; level = "ALL"; },
-  { level = "NICKS"; channels = ( "##infra-talk" ); }
+  { level = "NICKS"; channels = ( "##infra-talk" ); },
+  { level = "JOINS PARTS QUITS"; channels = ( "&twitter_wcmaier" ); },
+  { level = "ALL"; channels = ( "&bitlbee" ); }
 );
 completions = {
   obsd = { value = "OpenBSD"; auto = "yes"; };
