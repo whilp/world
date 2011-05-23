@@ -167,7 +167,7 @@ ignores = (
   { mask = "NICKS"; level = "ALL"; },
   { level = "NICKS"; channels = ( "##infra-talk" ); },
   { level = "JOINS PARTS QUITS"; channels = ( "&twitter_wcmaier" ); },
-  { level = "ALL"; channels = ( "&bitlbee" ); }
+  { level = "JOINS PARTS QUITS MODES"; channels = ( "&bitlbee" ); }
 );
 completions = {
   obsd = { value = "OpenBSD"; auto = "yes"; };
