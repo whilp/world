@@ -86,6 +86,7 @@ bind MC-m       hmaximize
 bind M-M        vmaximize
 bind M-r        reload
 bind F1         "mpdlock"
+bind F2         "xinput toggle-pointer 6"
 bind C-F1       "mpdlock -startCmd /usr/sbin/zzz"
 bind F5         "mpc -q pause"
 bind F6         "mpc -q previous"

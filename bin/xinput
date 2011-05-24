@@ -1,0 +1,14 @@
+#!/bin/sh
+
+XINPUT=/usr/X11R6/bin/xinput
+
+do_toggle () {
+    value=1
+    ${XINPUT} list-props $1 | grep -q 'Enabled.*1$' && value=0
+    ${XINPUT} set-prop 6 138 $value
+}
+
+case "$1" in
+    toggle-pointer) shift; do_toggle $*;;
+    *) exec ${XINPUT} $*;;
+esac
