@@ -1,0 +1,22 @@
+#!/bin/sh
+
+MPLAYER="mplayer -really-quiet"
+CURL="curl -s"
+
+case $1 in
+    aje)
+        # http://www.islamicity.com/multimedia/radio/?AspxAutoDetectCookieSupport=1
+		URL="http://mediaserver2.islamicity.com:8000/AljazeeraEnglish";;
+    bbc)
+        # http://www.bbc.co.uk/worldservice/institutional/2009/03/000000_mobile.shtml
+        URL="http://mp33.bbc.streamuk.com:80/";;
+    wern)
+        # http://www.wpr.org/webcasting/live.cfm
+        # http://wpr-ice.streamguys.net/wpr-music-hd2.m3u
+        URL="http://wpr-ice.streamguys.net:80/wpr-music-hd2";;
+    wuwm)
+        # http://www.wuwm.com/media/stream_player/streaming.php?channel=HD1
+        URL=$(${CURL} http://www.wuwm.com/m3u/live.pls | sed -Ee '/^File/!d; s/.*=//');;
+esac
+
+${MPLAYER} "$URL"

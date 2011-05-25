@@ -30,6 +30,7 @@ colorscheme bw
 
 " Don't do paren matching.
 let loaded_matchparen=1
+let mapleader=","
 
 " Tabs.
 set expandtab
