@@ -4,9 +4,7 @@ cleanup_exit() {
     rm -rf "$HGTMP"
 }
 
-EDITOR=$(which nvi 2>/dev/null) || \
-	EDITOR=$(which vi 2>/dev/null) || \
-	EDITOR=$(which vim 2>/dev/null)
+EDITOR=${EDITOR:-$(which vi)}
 
 # Remove temporary files even if we get interrupted
 trap "cleanup_exit" 0 # normal exit

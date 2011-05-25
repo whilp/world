@@ -1,8 +1,8 @@
 WHICH=$(/usr/bin/env which which)
 # Environment variables
-EDITOR="$($WHICH nvi 2>/dev/null)" || \
-    EDITOR="$($WHICH vi)" || \
-    EDITOR="$($WHICH vim)"
+EDITOR="$($WHICH vim 2>/dev/null)" || \
+    EDITOR="$($WHICH nvi)" || \
+    EDITOR="$($WHICH vi)"
 VISUAL=${EDITOR}
 ENV="~/.kshrc"
 SHELL_OLD="${SHELL}"
