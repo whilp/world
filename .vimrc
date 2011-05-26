@@ -12,6 +12,7 @@ set laststatus=2
 set nobackup
 set nocompatible
 set nofoldenable
+set nohls
 set number
 set ruler
 set showcmd
