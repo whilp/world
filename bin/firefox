@@ -1,5 +1,7 @@
 #!/bin/sh
 
+ulimit -n 512
+
 if [ -z "$*" ]; then
 	set -- -P CMS
 fi
