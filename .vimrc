@@ -46,6 +46,7 @@ noremap Y y$
 noremap [[ :diffget<CR>
 noremap ]] :diffput<CR>
 noremap F gw}
+noremap <Leader>p :set invpaste paste?<CR>
 
 " Source vimrc.
 map ,v :sp $VIMRC_
