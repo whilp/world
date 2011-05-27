@@ -126,6 +126,7 @@ fi
 export PS1="${OLDPS1}"
 
 agent
+ulimit -n 1023
 
 # Run the preferred shell (unless we're already running it).
 if [ "${SHELL##*/}" != "${SHELL_OLD##*/}" ]; then
