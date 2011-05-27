@@ -164,10 +164,7 @@ ignores = (
   { level = "JOINS PARTS QUITS"; servertag = "openbsd-hackers"; },
   { level = "NICKS"; pattern = "rackIT"; },
   { mask = "NICKS"; level = "ALL"; servertag = "freenode"; },
-  { mask = "NICKS"; level = "ALL"; },
-  { level = "NICKS"; channels = ( "##infra-talk" ); },
-  { level = "JOINS PARTS QUITS"; channels = ( "&twitter_wcmaier" ); },
-  { level = "JOINS PARTS QUITS MODES"; channels = ( "&bitlbee" ); }
+  { mask = "NICKS"; level = "ALL"; }
 );
 completions = {
   obsd = { value = "OpenBSD"; auto = "yes"; };
