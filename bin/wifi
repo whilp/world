@@ -56,7 +56,7 @@ case $1 in
         plain nwid fgz
         ${DHCLIENT};;
     jph) # johnson public house
-        wpa "In the Company of Thieves Cafe" kickapoo chan 11 bssid 90:27:e4:5d:9b:09
+        wpa "Johnson Public House" pourover chan 1 bssid 90:27:e4:5d:9b:09
         ${DHCLIENT};;
     ma*) # manna
         wep Manna mannanet
