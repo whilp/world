@@ -3,6 +3,13 @@ source "~/.mutt/aliases"
 source "~/.mutt/color"
 source "~/.mutt/pgp"
 source "~/.mutt/smtp"
+source "~/.mutt/smime"
+
+set crypt_autosign = no
+set crypt_replyencrypt = no
+set crypt_replysign = no
+set crypt_replysignencrypted = no
+set smime_sign_as = "33e3e0cc.0"
 
 # Settings.
 set alias_file="~/.mutt/aliases"
