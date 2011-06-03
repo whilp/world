@@ -1,6 +1,6 @@
 #!/bin/sh
 
-MPLAYER="mplayer -really-quiet"
+MPLAYER="mplayer -really-quiet -volume 100"
 CURL="curl -s"
 
 case $1 in
