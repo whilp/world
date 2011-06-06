@@ -55,6 +55,9 @@ case $1 in
     f*) # fnal
         plain nwid fgz
         ${DHCLIENT};;
+    je) # j and e
+        wpa CordlessBaby 8G3C4XTM09 chan 9 bssid 00:18:e7:e5:c2:6c 
+        ${DHCLIENT};;
     jph) # johnson public house
         wpa "Johnson Public House" pourover chan 6 bssid 90:27:e4:5d:9b:09 
         ${DHCLIENT};;
