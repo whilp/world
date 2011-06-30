@@ -152,7 +152,14 @@ hilights = (
   { text = "maier"; nick = "yes"; word = "yes"; },
   { text = "#et"; nick = "yes"; word = "yes"; },
   { text = "#games"; nick = "yes"; word = "yes"; },
-  { text = "trevor"; nick = "yes"; word = "yes"; }
+  { text = "trevor"; nick = "yes"; word = "yes"; },
+  {
+    text = ".";
+    nick = "yes";
+    word = "yes";
+    regexp = "yes";
+    channels = ( "#cmsops" );
+  }
 );
 ignores = (
   { level = "JOINS PARTS QUITS"; servertag = "efnet"; },
