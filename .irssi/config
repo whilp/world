@@ -159,22 +159,25 @@ hilights = (
     word = "yes";
     regexp = "yes";
     channels = ( "#cmsops" );
+  },
+  {
+    text = ".";
+    nick = "yes";
+    word = "yes";
+    regexp = "yes";
+    channels = ( "#uscms-t2" );
+  },
+  {
+    text = ".";
+    nick = "yes";
+    word = "yes";
+    regexp = "yes";
+    channels = ( "#phys-it-staff" );
   }
 );
 ignores = (
-  { level = "JOINS PARTS QUITS"; servertag = "efnet"; },
-  { level = "JOINS PARTS QUITS"; servertag = "oftc"; },
-  { level = "JOINS PARTS QUITS"; servertag = "freenode"; },
-  { mask = "brian"; level = "JOINS PARTS QUITS"; },
-  { level = "JOINS PARTS QUITS"; servertag = "SILCNet"; },
-  { level = "JOINS PARTS QUITS"; servertag = "openbsd-porters"; },
-  { level = "JOINS PARTS QUITS"; servertag = "openbsd-hackers"; },
-  { level = "NICKS"; pattern = "rackIT"; },
-  { mask = "NICKS"; level = "ALL"; servertag = "freenode"; },
-  { mask = "NICKS"; level = "ALL"; },
-  { level = "NICKS"; channels = ( "##infra-talk" ); },
-  { level = "JOINS PARTS QUITS"; channels = ( "&twitter_wcmaier" ); },
-  { level = "JOINS PARTS QUITS MODES"; channels = ( "&bitlbee" ); }
+  { level = "JOINS PARTS QUITS NICKS"; },
+  { level = "MODES"; channels = ( "&bitlbee" ); }
 );
 completions = {
   obsd = { value = "OpenBSD"; auto = "yes"; };
