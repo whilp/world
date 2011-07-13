@@ -124,7 +124,6 @@ match "^List-ID: <(.*)\\.cloudera\\.org>" in headers {
 match "^X-CMSLIST:" or
     "^List-Owner:.*CMS.*@LISTSERV\\.FNAL\\.GOV" or
     "^From:.*arsystem@fnal.gov" in headers action maildir "${cms}/uscms-t2"
-match "^List-Owner:.*OSG-STORAGE.*@LISTSERV\\.FNAL\\.GOV" in headers action maildir "${osg}/storage"
 match "^From: RSV Reporting System" in headers action maildir "${hep}/monitor"
 match "^List-Owner:.*OSG-SITES.*@LISTSERV\\.FNAL\\.GOV" in headers action maildir "${osg}/sites"
 match "^List-Owner:.*XROOTD-DEMONSTRATOR.*@LISTSERV\\.FNAL\\.GOV" in headers action maildir "${osg}/xrootd-demo"
@@ -141,6 +140,12 @@ match "^X-Hn-Forum:" in headers {
     match "X-Hn-Forum:.*/HyperNews/CMS/get/gridAnnounce\\.html" in headers action maildir "${cms}/hn.grid"
 }
 
+# OSG
+match "^From:.*osg@tick\\.globalnoc\\.iu\\.edu" in headers action maildir "${osg}/goc"
+match "^(To|Cc):.*osg-([a-z-]*)@opensciencegrid.org" in headers {
+    match all action maildir "${osg}/%1"
+}
+
 # HEP.
 match "^To:.*postmaster@hep.wisc.edu" in headers action "drop"
 match "^X-Savane-Server: savannah.cern.ch:443" in headers {
@@ -151,7 +156,6 @@ match "^List-Owner:.*JOBS-request@LISTSERV\\.FNAL\\.GOV" in headers {
     match ": cs, ..." in body action "hep"
     match all action "drop"
 }
-match "^From:.*osg@tick\\.globalnoc\\.iu\\.edu" in headers action maildir "${osg}/goc"
 match "^From:.*cms-phedex-admins@cern\\.ch" in headers action maildir "${hep}/phedex"
 match "List-Id: <cms-physics\\.physics\\.wisc\\.edu>" in headers action maildir "${hep}/cms.physics"
 match "From:.*postmaster@hep\\.wisc\\.edu" in headers and "Subject: Quarantined spam" in headers action drop
