@@ -131,7 +131,7 @@ subscribe (ports|misc|tech|www)@openbsd.org
 subscribe techpartners@[a-zA-Z0-9\.]*wisc.edu
 subscribe hn-cms-[[:graph:]]+@cern.ch
 subscribe it-staff@physics.wisc.edu
-subscribe osg-hadoop@OPENSCIENCEGRID.ORG
+subscribe osg-[[:graph:]]+@OPENSCIENCEGRID.ORG
 
 send-hook '~t .' "source ~/.mutt/default"
 
