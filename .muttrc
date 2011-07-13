@@ -132,6 +132,7 @@ subscribe techpartners@[a-zA-Z0-9\.]*wisc.edu
 subscribe hn-cms-[[:graph:]]+@cern.ch
 subscribe it-staff@physics.wisc.edu
 subscribe cmsops@hep.wisc.edu
+subscribe cdh-[[:graph:]]+@cloudera.org
 subscribe osg-[[:graph:]]+@OPENSCIENCEGRID.ORG
 
 send-hook '~t .' "source ~/.mutt/default"
