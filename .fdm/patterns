@@ -58,6 +58,7 @@ $hep_reports = "" +
     ".*Nagios .* Alert Report for|" +
     ".*Tracker Ticket Report|" +
     ".*check_failing_condor_jobs$|" +
+    "Daily CMS (Fast|Express) Queue Usage|" +
     "Staging Transfers$"
 
 $useless = "" +

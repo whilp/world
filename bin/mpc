@@ -272,7 +272,7 @@ _filter () {
 }
 
 mpc () {
-    printf "$*\n" | nc "${HOST}" "${PORT}" | _filter
+    printf "$*\n" | nc -w 1 "${HOST}" "${PORT}" | _filter
 
     return $?
 }
