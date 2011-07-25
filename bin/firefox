@@ -1,9 +1,5 @@
 #!/bin/sh
 
-ulimit -n 512
-
-if [ -z "$*" ]; then
-	set -- -P CMS
-fi
+ulimit -n 1023
 
 /usr/local/bin/firefox -no-remote $*
