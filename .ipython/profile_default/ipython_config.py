@@ -29,7 +29,7 @@ c = get_config()
 # c.TerminalIPythonApp.pylab = None
 
 # Suppress warning messages about legacy config files
-# c.TerminalIPythonApp.ignore_old_config = False
+c.TerminalIPythonApp.ignore_old_config = True
 
 # If a command or file is given via the command-line, e.g. 'ipython foo.py
 # c.TerminalIPythonApp.force_interact = False
@@ -174,7 +174,7 @@ c = get_config()
 # Use colors for displaying information about objects. Because this information
 # is passed through a pager (like 'less'), and some pagers get confused with
 # color codes, this capability can be turned off.
-# c.TerminalInteractiveShell.color_info = True
+c.TerminalInteractiveShell.color_info = False
 
 # 
 # c.TerminalInteractiveShell.history_length = 10000
@@ -183,7 +183,7 @@ c = get_config()
 # c.TerminalInteractiveShell.separate_in = '\n'
 
 # Set the color scheme (NoColor, Linux, or LightBG).
-# c.TerminalInteractiveShell.colors = 'Linux'
+c.TerminalInteractiveShell.colors = 'NoColor'
 
 # Autoindent IPython code entered interactively.
 # c.TerminalInteractiveShell.autoindent = True
@@ -240,6 +240,10 @@ c = get_config()
 
 # 
 # c.TerminalInteractiveShell.readline_parse_and_bind = ['tab: complete', '"\\C-l": clear-screen', 'set show-all-if-ambiguous on', '"\\C-o": tab-insert', '"\\C-r": reverse-search-history', '"\\C-s": forward-search-history', '"\\C-p": history-search-backward', '"\\C-n": history-search-forward', '"\\e[A": history-search-backward', '"\\e[B": history-search-forward', '"\\C-k": kill-line', '"\\C-u": unix-line-discard']
+c.TerminalInteractiveShell.readline_parse_and_bind = [
+    "set completion-query-items 1000",
+    "set page-completions no",
+]
 
 # The part of the banner to be printed after the profile
 # c.TerminalInteractiveShell.banner2 = ''
@@ -256,7 +260,7 @@ c = get_config()
 # Set to confirm when you try to exit IPython with an EOF (Control-D in Unix,
 # Control-Z/Enter in Windows). By typing 'exit' or 'quit', you can force a
 # direct exit without any confirmation.
-# c.TerminalInteractiveShell.confirm_exit = True
+c.TerminalInteractiveShell.confirm_exit = False
 
 # 
 # c.TerminalInteractiveShell.ipython_dir = ''
@@ -362,7 +366,7 @@ c = get_config()
 # c.PlainTextFormatter.float_precision = ''
 
 # 
-# c.PlainTextFormatter.verbose = False
+c.PlainTextFormatter.verbose = False
 
 # 
 # c.PlainTextFormatter.deferred_printers = {}
