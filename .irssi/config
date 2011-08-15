@@ -177,7 +177,9 @@ hilights = (
 );
 ignores = (
   { level = "JOINS PARTS QUITS NICKS"; },
-  { level = "MODES"; channels = ( "&bitlbee" ); }
+  { level = "MODES"; channels = ( "&bitlbee" ); },
+  { mask = "maryrosecoeqi"; level = "ALL"; },
+  { mask = "vonciledonvanup"; level = "ALL"; }
 );
 completions = {
   obsd = { value = "OpenBSD"; auto = "yes"; };

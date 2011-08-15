@@ -9,6 +9,7 @@ $family = "" +
     "gina\\.ryan@mac\\.com|" +
     "ginaryan@aol\\.com|" +
     "jacobsonlaura@(hotmail|gmail)\\.com|" +
+    "joshuajhartman@gmail\\.com|" +
     "jmaier7@wi\\.rr\\.com|" +
     "linuxmaier@(fastmail\\.fm|yahoo\\.com)|" +
     "ljacobson@(deltanoid\\.com|biochem\\.wisc\\.edu)|" +
@@ -22,6 +23,7 @@ $family = "" +
     "mmaier@stewart-peterson\\.com|" +
     "pbroad@iopener\\.net|" +
     "rosie\\.maier@gmail\\.com|" +
+    "ruftedwaves@hotmail\\.com|" +
     "sharonmaier@gmail\\.com|" +
     "tanyamohn@aol\\.com|" +
     "theend1313@aol\\.com|" +
@@ -44,6 +46,7 @@ $friends = "" +
     "preis23@gmail\\.com|" +
     "rmainville@stewart-peterson\\.com|" +
     "thorubos@gmail\\.com|" +
+    "tgruehn@gmail\\.com|" +
     "wodtk005@umn\\.edu"
 
 $hep_reports = "" +
