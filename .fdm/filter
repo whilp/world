@@ -140,7 +140,7 @@ match "^X-Hn-Forum:" in headers {
 
 # OSG
 match "^From:.*osg@tick\\.globalnoc\\.iu\\.edu" in headers action maildir "${osg}/goc"
-match "^(To|Cc):.*osg-([a-z-]*)@opensciencegrid.org" in headers {
+match "^(To|Cc):.*osg-([a-z-]*)@(fnal.gov|opensciencegrid.org)" in headers {
     match all action maildir "${osg}/%2"
 }
 
