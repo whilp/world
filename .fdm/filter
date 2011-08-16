@@ -133,9 +133,7 @@ match "^(To|Cc):.*@(lists[0-9]+)?\\.?slac\\.stanford\\.edu" in headers {
     match "^(To|Cc).*xrootd-l@" in headers action maildir "${cms}/xrootd"
 }
 match "^X-Hn-Forum:" in headers {
-    match "X-Hn-Forum:.*/HyperNews/CMS/get/sc4\\.html" in headers action maildir "${cms}/hn.facilities"
-    match "X-Hn-Forum:.*/HyperNews/CMS/get/t2\\.html" in headers action maildir "${cms}/hn.tier2"
-    match "X-Hn-Forum:.*/HyperNews/CMS/get/gridAnnounce\\.html" in headers action maildir "${cms}/hn.grid"
+    match "X-Hn-Forum:.*/HyperNews/CMS/get/([a-zA-Z0-9-]+)\\.html" in headers action maildir "${cms}/hn.%1"
 }
 
 # OSG
