@@ -173,7 +173,8 @@ hilights = (
     word = "yes";
     regexp = "yes";
     channels = ( "#phys-it-staff" );
-  }
+  },
+  { text = ". #osg"; nick = "yes"; word = "yes"; regexp = "yes"; }
 );
 ignores = (
   { level = "JOINS PARTS QUITS NICKS"; },
