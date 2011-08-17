@@ -1,6 +1,6 @@
 set signature='~/.signatures/default'
-my_hdr From: Will Maier <willmaier@ml1.net>
 
+set from="willmaier@ml1.net"
 set smtp_authenticators="plain"
 set smtp_pass="$my_ml1_smtp_pass"
 set smtp_url="$my_ml1_smtp_url"
