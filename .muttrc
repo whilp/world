@@ -146,7 +146,7 @@ subscribe (ports|misc|tech|www)@openbsd.org
 subscribe techpartners@[a-zA-Z0-9\.]*wisc.edu
 subscribe hn-cms-[[:graph:]]+@cern.ch
 subscribe it-staff@physics.wisc.edu
-subscribe cmsops@hep.wisc.edu
+subscribe (cmsops|help)@hep.wisc.edu
 subscribe cdh-[[:graph:]]+@cloudera.org
 subscribe osg-[[:graph:]]+@OPENSCIENCEGRID.ORG
 subscribe osg-[[:graph:]]+@fnal.gov
