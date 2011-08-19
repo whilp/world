@@ -4,6 +4,7 @@ source "~/.mutt/color"
 source "~/.mutt/pgp"
 source "~/.mutt/smtp"
 source "~/.mutt/smime"
+source "~/.mutt/default"
 
 set crypt_autosign = no
 set crypt_replyencrypt = no
@@ -42,6 +43,7 @@ set postponed="+drafts"
 set print_cmd="a2ps -r -q --columns=2 -j -C -2 -Email -o - | ssh wcmaier@luma.hep.wisc.edu 'lpr -Plp3b'"
 set print_split=yes
 set quit=ask-no
+set realname="Will Maier"
 set recall=no
 set record="+sent"
 set resolve=no
@@ -56,13 +58,25 @@ set ssl_starttls
 set status_format="mutt: %f [Msgs:%?M?%M/?%m%?n? New:%n?%?o? Old:%o?%?d? Del:%d?%?F? Flag:%F?%?t? Tag:%t?%?p? Post:%p?%?b? Inc:%b?%?l? %l?]---(%s/%S)-%>-(%P)---"
 set timeout=60
 set time_inc=100
+set use_from=yes
 set wait_key=no
 
-alternates "(wcmaier@wisc\.edu|wcmaier@hep\.wisc\.edu|wcmaier@gmail\.com|willmaier@ml1\.net|wcmaier@openbsd.org)"
+alternates "(William.Maier|wcmaier)@cern\.ch"
+alternates "wcmaier@fnal\.gov"
+alternates "wcmaier@gmail.com"
+alternates "wcmaier@hep.wisc.edu"
+alternates "wcmaier@openbsd.org"
+alternates "wcmaier@wisc.edu"
 alternative_order text/plain
 
 # Macros.
 # Function list: http://www.mutt.org/doc/manual/manual-6.html#functions
+macro index <esc>h "<enter-command>source ~/.mutt/hep<enter>" "HEP SMTP configuration"
+macro pager <esc>h "<enter-command>source ~/.mutt/hep<enter>" "HEP SMTP configuration"
+macro index <esc>d "<enter-command>source ~/.mutt/default<enter>" "HEP SMTP configuration"
+macro pager <esc>d "<enter-command>source ~/.mutt/default<enter>" "HEP SMTP configuration"
+macro index <esc>g "<enter-command>source ~/.mutt/gmail<enter>" "GMail SMTP configuration"
+macro pager <esc>g "<enter-command>source ~/.mutt/gmail<enter>" "GMail SMTP configuration"
 macro index S "|spambayes -s >/dev/null<enter><save-message>=attic/spam<enter><enter>" "Mark as spam"
 macro pager S "|spambayes -s >/dev/null<enter><save-message>=attic/spam<enter><enter>" "Mark as spam"
 macro index H "|spambayes -g | fdm -mqa stdin fetch<enter><delete-message>" "Mark as ham"
@@ -127,41 +141,21 @@ hdr_order From Date: From: To: Cc: Subject: X-mailer:
 
 # Lists.
 subscribe madlug@madisonlinux\.org
+subscribe .*@googlegroups.com
 subscribe (ports|misc|tech|www)@openbsd.org
 subscribe techpartners@[a-zA-Z0-9\.]*wisc.edu
 subscribe hn-cms-[[:graph:]]+@cern.ch
 subscribe it-staff@physics.wisc.edu
-subscribe cmsops@hep.wisc.edu
+subscribe (afs-folks|cmsops|help)@hep.wisc.edu
 subscribe cdh-[[:graph:]]+@cloudera.org
 subscribe osg-[[:graph:]]+@OPENSCIENCEGRID.ORG
+subscribe osg-[[:graph:]]+@fnal.gov
 subscribe cms-t2@fnal.gov
 
-send-hook '~t .' "source ~/.mutt/default"
-
-send-hook '~t \(jacobsonlaura.*@gmail\.com\|ljacobson@(biochem\.wisc\.edu\|deltanoid\.com)\)' "source ~/.mutt/laura"
-
-send-hook '~t @posterous\.com' 'source ~/.mutt/hep; unset signature'
+send-hook '~t @posterous\.com' 'unset signature'
 fcc-hook '~t @posterous\.com' 'posterous'
 
-send-hook '~t hacker-within@googlegroups\.com' "source ~/.mutt/gmail"
-send-hook '~t @kingstarusa\.com' "source ~/.mutt/hep"
-send-hook '~t @trincotech\.com' "source ~/.mutt/hep"
-send-hook '~t @dell\.com' "source ~/.mutt/hep"
-send-hook '~t @us\.ibm\.com' "source ~/.mutt/hep"
-send-hook '~t @sun\.com' "source ~/.mutt/hep"
-send-hook '~t @laurustech\.com' "source ~/.mutt/hep"
-send-hook '~t @opensciencegrid\.org' "source ~/.mutt/hep"
-send-hook '~t @[[:graph:]]*\.?ibm\.com' "source ~/.mutt/hep"
-send-hook "~t @[[:graph:]]*\.edu" "source ~/.mutt/hep"
-send-hook '~t @[[:graph:]]*\.?fnal\.gov' "source ~/.mutt/hep"
-send-hook '~t @[[:graph:]]*\.?cern\.ch' "source ~/.mutt/hep"
-send-hook '~t @[[:graph:]]*\.?desy\.de' "source ~/.mutt/hep"
-send-hook '~t @[[:graph:]]*\.?hadoop\.apache\.org' "source ~/.mutt/hep"
-
-
 send-hook '~L .*@[[:graph:]]*bsd[[:graph:]]*'	"set signature='~/.signatures/list-bsd'"
-
-send-hook '~t techpartners@[[:graph:]]*wisc.edu'	"my_hdr From: Will Maier <willmaier@ml1.net>"
 
 send-hook '~t madlug@madisonlinux.org'	"set signature='~/.signatures/list-bsd'"
 

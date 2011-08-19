@@ -20,6 +20,7 @@ hgext.convert =
 hgext.graphlog =
 hgext.mq =
 hgext.patchbomb =
+hgext.schemes = 
 # pip install hg-git
 hggit = 
 
@@ -35,6 +36,9 @@ dpush = push -b default
 patchn = import --no-commit
 rec = record
 relocal = rebase --keepbranches -s local -d default
+mergelocal = !$HG --config ui.merge=internal:local merge $@
+mergeother = !$HG --config ui.merge=internal:other merge $@
+mergefail = !$HG --config ui.merge=internal:fail merge $@
 
 shortin = in --style ~/.mercurial/short.style
 shin = shortin
@@ -60,3 +64,6 @@ method = sendmail
 
 [trusted]
 users = root
+
+[schemes]
+meta = ssh://meta.lfod.us/share/

@@ -1,4 +1,4 @@
-set pgp_auto_decode=yes
+set pgp_auto_decode=no
 set pgp_autoinline=yes
 set pgp_clearsign_command="gpg --no-verbose --batch --output - --passphrase-fd 0 --armor --textmode --clearsign %?a?-u %a? %f"
 set pgp_decode_command="gpg %?p?--passphrase-fd 0? --no-verbose --batch --output - %f"
