@@ -43,6 +43,7 @@ set tabstop=4
 inoremap <C-J> <Down>
 inoremap <C-K> <Up>
 nnoremap ; :
+nnoremap K <Nop>
 noremap Y y$
 noremap [[ :diffget<CR>
 noremap ]] :diffput<CR>
