@@ -59,7 +59,7 @@ case $1 in
         wpa CordlessBaby 8G3C4XTM09 chan 4 bssid 00:18:e7:e5:c2:6c 
         ${DHCLIENT};;
     jph) # johnson public house
-        wpa "Johnson Public House" sugarglider
+        wpa "Johnson Public House" directtrade
         ${DHCLIENT};;
     ma*) # manna
         wep Manna mannanet
