@@ -4,6 +4,7 @@ merge = vimdiff -o
 username = Will Maier <willmaier@ml1.net>
 ignore = ~/.mercurial/ignores
 remotecmd = ~/bin/hg
+style = compact
 
 [diff]
 git=yes
