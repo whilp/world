@@ -50,6 +50,7 @@ noremap ]] :diffput<CR>
 noremap F gw}
 noremap <Leader>p :set invpaste paste?<CR>
 noremap <Leader>s :sp $VIMRC_
+noremap <Leader>c :w<Enter>:silent !hg ci<Enter><C-L>
 
 abbreviate W w
 abbreviate X x
