@@ -4,6 +4,7 @@ set backspace=indent,eol,start
 set encoding=utf-8
 set fileencodings=
 set foldmethod=indent
+set formatoptions+=2l
 set history=50
 set ignorecase
 set incsearch
