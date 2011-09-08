@@ -50,6 +50,8 @@ noremap [[ :diffget<CR>
 noremap ]] :diffput<CR>
 noremap F gw}
 noremap <Leader>p :set invpaste paste?<CR>
+noremap <Leader>s :source ~/.vimrc<Enter>
+noremap <Leader>x :x<Enter>
 noremap <Leader>hc :w<Enter>:silent !hg ci<Enter><C-L>
 noremap <Leader>hr :w<Enter>:silent !hg rec<Enter><C-L>
 
