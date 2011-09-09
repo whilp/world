@@ -118,6 +118,9 @@ while [ -n "$f" -a $max -ge 0 ]; do
 done
 unset f max PLATFORM SETTINGS
 
+# SSH directories.
+mkdir -p .ssh .ssh/controls .ssh/callbacks 2>/dev/null
+
 # Set SSH_CLIENT_NAME after host has set up callback, if necessary.
 SSH_CLIENT_NAME="${HOSTNAME}"
 export SSH_CLIENT_NAME
