@@ -1,10 +1,10 @@
 #!/bin/sh
 
-CALLBACK=$1
+CALLBACK=$1; shift
 PORT=$(cat ~/.ssh/callbacks/${CALLBACK} 2>/dev/null)
 
 if [ -z "${PORT}" ]; then
     exit 1
 fi
 
-exec ssh -oHostKeyAlias=${CALLBACK} -p ${PORT} localhost
+exec ssh -oHostKeyAlias=${CALLBACK} -p ${PORT} localhost $*
