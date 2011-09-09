@@ -1,4 +1,4 @@
-set -x
+(
 CALLBACK=
 case ${UNAME} in
     OpenBSD)
@@ -9,4 +9,4 @@ if [ -n "${CALLBACK}" -a -n "${SSH_CLIENT_NAME}" ]; then
     mkdir -p ~/.ssh/callbacks
     echo "${CALLBACK}" >| ".ssh/callbacks/${SSH_CLIENT_NAME}"
 fi
-set +x
+) > /dev/null 2>&1
