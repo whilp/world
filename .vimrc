@@ -4,6 +4,7 @@ set backspace=indent,eol,start
 set encoding=utf-8
 set fileencodings=
 set foldmethod=indent
+set formatoptions+=2l
 set history=50
 set ignorecase
 set incsearch
@@ -49,7 +50,10 @@ noremap [[ :diffget<CR>
 noremap ]] :diffput<CR>
 noremap F gw}
 noremap <Leader>p :set invpaste paste?<CR>
-noremap <Leader>s :sp $VIMRC_
+noremap <Leader>s :source ~/.vimrc<Enter>
+noremap <Leader>x :x<Enter>
+noremap <Leader>hc :w<Enter>:silent !hg ci<Enter><C-L>
+noremap <Leader>hr :w<Enter>:silent !hg rec<Enter><C-L>
 
 abbreviate W w
 abbreviate X x
