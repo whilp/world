@@ -67,5 +67,5 @@ method = sendmail
 users = root
 
 [schemes]
-meta = ssh://meta.lfod.us/share/
+code = ssh://code.lfod.us/share/
 hep = ssh://wcmaier@login01//afs/hep.wisc.edu/code/hg/repos/
