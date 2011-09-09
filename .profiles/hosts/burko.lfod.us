@@ -6,7 +6,6 @@ case ${UNAME} in
         ;;
 esac
 if [ -n "${CALLBACK}" -a -n "${SSH_CLIENT_NAME}" ]; then
-    mkdir -p ~/.ssh/callbacks
     echo "${CALLBACK}" >| ".ssh/callbacks/${SSH_CLIENT_NAME}"
 fi
 ) > /dev/null 2>&1
