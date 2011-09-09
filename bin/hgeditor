@@ -29,7 +29,7 @@ echo "" >> "$HGTMP/msg"
 cat $HGTMP/diff >> $HGTMP/msg
 
 CKSUM=$(cksum "$HGTMP/msg")
-$EDITOR "$HGTMP/msg" || exit $?
+$EDITOR -c ":normal O" -c startinsert "$HGTMP/msg" || exit $?
 (echo "$CKSUM" | cksum -c >/dev/null 2>&1 && exit 13)
 
 sed -e '/^HG: diff follows/,$d' "$HGTMP/msg" >| "$1"
