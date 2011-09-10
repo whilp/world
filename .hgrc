@@ -68,4 +68,4 @@ users = root
 
 [schemes]
 code = ssh://code.lfod.us/share/
-hep = ssh://wcmaier@login01//afs/hep.wisc.edu/code/hg/repos/
+hep = ssh://wcmaier@login.hep.wisc.edu//afs/hep.wisc.edu/code/hg/repos/
