@@ -1,35 +1,23 @@
 #!/bin/sh
-HGTMP=""
-cleanup_exit() {
-    rm -rf "$HGTMP"
-}
 
-# Remove temporary files even if we get interrupted
-trap "cleanup_exit" 0 # normal exit
-trap "exit 255" 1 2 3 6 15 # HUP INT QUIT ABRT TERM
+tmp=$(umask 077 && mktemp -td .hgeditor-XXXXXXXX)
+trap "rm -rf $tmp" 0 1 2 3 6 15
 
-HGTMP="${TMPDIR-/tmp}/hgeditor.$RANDOM.$RANDOM.$RANDOM.$$"
-(umask 077 && mkdir "$HGTMP") || {
-    echo "Could not create temporary directory! Exiting." 1>&2
-    exit 1
-}
+sed -re '1,/^HG: --/d' < "$1" > "$tmp/diff"
+echo "" >> "$tmp/diff"
+sed -nre "s/^HG: changed (.*)/\1/p" < "$1" | xargs hg diff >> "$tmp/diff"
 
 (
-    grep '^HG: changed' "$1" | cut -b 13- | while read changed; do
-        hg diff "$changed" >> "$HGTMP/diff"
-    done
+cd "$tmp"
+touch msg
+vim \
+    "+startinsert" \
+    "+e diff" \
+    "+set buftype=help filetype=diff" \
+    "+split msg" \
+    "+resize 5" || exit $?
 )
+[ -s "$tmp/msg" ] || exit 1
 
-
-sed -e '1,/^$/d' "$1" > "$HGTMP/msg"
-echo "HG: diff follows" >> "$HGTMP/msg"
-echo "" >> "$HGTMP/msg"
-cat $HGTMP/diff >> $HGTMP/msg
-
-CKSUM=$(cksum "$HGTMP/msg")
-vim -c ":normal O" -c startinsert "$HGTMP/msg" || exit $?
-(echo "$CKSUM" | cksum -c >/dev/null 2>&1 && exit 13)
-
-sed -e '/^HG: diff follows/,$d' "$HGTMP/msg" >| "$1"
-
+mv "$tmp/msg" "$1"
 exit $?
