@@ -4,8 +4,6 @@ cleanup_exit() {
     rm -rf "$HGTMP"
 }
 
-EDITOR=${EDITOR:-$(which vi)}
-
 # Remove temporary files even if we get interrupted
 trap "cleanup_exit" 0 # normal exit
 trap "exit 255" 1 2 3 6 15 # HUP INT QUIT ABRT TERM
@@ -29,7 +27,7 @@ echo "" >> "$HGTMP/msg"
 cat $HGTMP/diff >> $HGTMP/msg
 
 CKSUM=$(cksum "$HGTMP/msg")
-$EDITOR -c ":normal O" -c startinsert "$HGTMP/msg" || exit $?
+vim -c ":normal O" -c startinsert "$HGTMP/msg" || exit $?
 (echo "$CKSUM" | cksum -c >/dev/null 2>&1 && exit 13)
 
 sed -e '/^HG: diff follows/,$d' "$HGTMP/msg" >| "$1"
