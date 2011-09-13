@@ -1,5 +1,5 @@
 OSNAME=$(uname)
-WM=cwm
+WM=~/bin/dwm
 
 export PATH=/sbin:${HOME}/bin:/usr/X11R6/bin:${PATH}
 
@@ -10,6 +10,4 @@ setxkbmap -layout us -option compose:ralt -option ctrl:nocaps
 (pgrep -x aucat || aucat -l &) >/dev/null 2>&1
 uxterm -T master &
 
-while :; do
-    ${WM}
-done
+exec ${WM}
