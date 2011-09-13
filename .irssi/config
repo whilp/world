@@ -214,6 +214,7 @@ settings = {
     autolog = "yes";
     bell_beeps = "yes";
     beep_msg_level = "MSGS HILIGHT";
+    autoclose_query = "3600";
   };
   "irc/core" = { alternate_nick = "will_"; };
   "perl/core/scripts" = {
@@ -281,7 +282,7 @@ statusbar = {
     window_empty = "{sb $winref{sbservertag $tag}}";
     prompt = "{prompt $[.15]itemname}";
     prompt_empty = "{prompt $winname}";
-    topic = " $topic";
+    topic = "";
     topic_empty = " Irssi v$J - http://irssi.org/help/";
 
     # all of these treated specially, they're only displayed when needed
@@ -363,6 +364,7 @@ statusbar = {
         topic_empty = { };
         topicbarend = { priority = "100"; alignment = "right"; };
       };
+      disabled = "yes";
     };
     awl_0 = {
       items = {
