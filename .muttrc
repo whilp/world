@@ -27,6 +27,7 @@ set folder=~/.maildir
 set forward_format="Fwd: %s"
 set from="Will Maier <willmaier@ml1.net>"
 set header_cache=~/.maildir/.cache
+set help=no
 set implicit_autoview=yes
 set include=yes
 set ispell="aspell -e -c"
