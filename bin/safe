@@ -102,6 +102,7 @@ def parseargs(args):
         "rounds": 10**5,
         "encoding": "urlsafe_b64",
         "length": 20,
+        "test": False,
     }
 
     # Global options.
@@ -120,15 +121,18 @@ def parseargs(args):
     parser.add_option("-s", "--silent", dest="silent",
         default=False, action="store_true",
         help="silence the logger")
+    parser.add_option("-t", "--test", dest="test",
+        default=defaults["test"], action="store_true",
+        help="run tests")
     parser.add_option("-v", "--verbose", dest="verbose",
         default=0, action="count",
         help="increase the logging verbosity")
 
     (opts, args) = parser.parse_args()
-    return (opts, args)
+    return (parser, opts, args)
 
-def main():
-    (opts, args) = parseargs(sys.argv[1:])
+def main(argv):
+    (parser, opts, args) = parseargs(argv)
     level = logging.WARNING - ((opts.verbose - opts.quiet) * 10)
     if opts.silent:
         level = logging.CRITICAL + 1
@@ -139,6 +143,10 @@ def main():
     handler.setFormatter(logging.Formatter(format))
     logger.addHandler(handler)
     logger.setLevel(level)
+
+    if opts.test:
+        unittest.main(argv=[parser.get_prog_name()] + args)
+        return
 
     encoding = opts.encoding
     length = opts.length
@@ -165,7 +173,7 @@ def main():
 
 if __name__ == "__main__":
     try:
-        main()
+        main(sys.argv[1:])
     except (EOFError, KeyboardInterrupt):
         sys.stdout.write('\n')
         sys.stdout.flush()
