@@ -1,5 +1,5 @@
 OSNAME=$(uname)
-WM=cwm
+WM=~/bin/dwm
 
 export PATH=/sbin:${HOME}/bin:/usr/X11R6/bin:${PATH}
 
