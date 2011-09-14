@@ -219,7 +219,7 @@ settings = {
     autolog = "yes";
     bell_beeps = "yes";
     beep_msg_level = "MSGS HILIGHT";
-    autoclose_query = "3600";
+    autoclose_query = "86400";
     activity_hide_targets = "#openbsd #obsd #metabug hackers porters #osg-software ##infra-talk";
   };
   "irc/core" = { alternate_nick = "will_"; };
