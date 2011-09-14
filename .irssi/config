@@ -93,7 +93,8 @@ channels = (
   { name = "#metabug"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "#obsd"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "porters"; chatnet = "obsd-porters"; autojoin = "yes"; },
-  { name = "hackers"; chatnet = "obsd-hackers"; autojoin = "yes"; }
+  { name = "hackers"; chatnet = "obsd-hackers"; autojoin = "yes"; },
+  { name = "#infratalk"; chatnet = "freenode"; autojoin = "yes"; }
 );
 
 aliases = {
