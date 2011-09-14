@@ -94,7 +94,7 @@ channels = (
   { name = "#obsd"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "porters"; chatnet = "obsd-porters"; autojoin = "yes"; },
   { name = "hackers"; chatnet = "obsd-hackers"; autojoin = "yes"; },
-  { name = "#infratalk"; chatnet = "freenode"; autojoin = "yes"; }
+  { name = "##infra-talk"; chatnet = "freenode"; autojoin = "yes"; }
 );
 
 aliases = {
@@ -220,6 +220,7 @@ settings = {
     bell_beeps = "yes";
     beep_msg_level = "MSGS HILIGHT";
     autoclose_query = "3600";
+    activity_hide_targets = "#openbsd #obsd #metabug hackers porters #osg-software ##infra-talk";
   };
   "irc/core" = { alternate_nick = "will_"; };
   "perl/core/scripts" = {
