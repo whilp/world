@@ -8,5 +8,6 @@ setxkbmap -layout us -option compose:ralt -option ctrl:nocaps
 
 (pgrep -x aucat || aucat -l &) >/dev/null 2>&1
 uxterm -T master &
+dzen-wrapper &
 
 exec ${WM}

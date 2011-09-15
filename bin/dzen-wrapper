@@ -1,0 +1,22 @@
+#!/bin/sh
+
+which ddzen2 >/dev/null 2>&1 || exit 1
+
+interval=1
+
+draw () {
+    date +%Y-%m-%dT%H:%M%z
+}
+
+while :; do
+    draw
+    sleep $interval
+done |\
+dzen2 \
+    -fn 'DejaVu Mono' \
+    -h 20 \
+    -x 500 \
+    -fg '#ffffff' \
+    -bg '#000000' \
+    -ta right \
+    -p
