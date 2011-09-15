@@ -1,6 +1,6 @@
 #!/bin/sh
 
-which ddzen2 >/dev/null 2>&1 || exit 1
+which dzen2 >/dev/null 2>&1 || exit 1
 
 interval=1
 
