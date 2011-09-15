@@ -1,7 +1,7 @@
 UXTerm*metaSendsEscape: true
 UXTerm*visualBell: false
 UXTerm*bellIsUrgent: true
-UXTerm*faceName: DejaVu Mono
+UXTerm*faceName: DejaVu Sans Mono
 UXTerm*faceSize: 10
 UXTerm*charClass: 33:48,35-39:48,42-43:48,45-47:48,58:48,61:48,63-64:48,126:48
 UXTerm*loginShell: true
