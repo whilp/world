@@ -14,3 +14,7 @@ UXTerm*VT100.translations: #override \n\
      <Btn1Up>: select-end(PRIMARY, CLIPBOARD, CUT_BUFFER0) \n\
      Ctrl<KeyPress>V: insert-selection(SELECT, PRIMARY, CLIPBOARD, CUT_BUFFER0) \n\
      Ctrl<KeyPress>Y: string("")
+
+dzen2*font: DejaVu Sans Mono
+dzen2*foreground: #ffffff
+dzen2*background: #000000

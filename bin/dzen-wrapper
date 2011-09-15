@@ -13,10 +13,7 @@ while :; do
     sleep $interval
 done |\
 dzen2 \
-    -fn 'DejaVu Sans Mono' \
     -h 20 \
     -x 500 \
-    -fg '#ffffff' \
-    -bg '#000000' \
     -ta right \
     -p
