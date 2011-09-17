@@ -154,7 +154,7 @@ match "^List-Owner:.*JOBS-request@LISTSERV\\.FNAL\\.GOV" in headers {
     match all action "drop"
 }
 match "^From:.*cms-phedex-admins@cern\\.ch" in headers action maildir "${hep}/phedex"
-match "List-Id: <cms-physics\\.physics\\.wisc\\.edu>" in headers action maildir "${hep}/cms.physics"
+match "List-Id: .* <cms-physics\\.physics\\.wisc\\.edu>" in headers action maildir "${hep}/cms.physics"
 match "From:.*postmaster@hep\\.wisc\\.edu" in headers and "Subject: Quarantined spam" in headers action drop
 match "^Subject: glow.*cp_afs_ca problems" in headers action drop
 match "^Subject:.*fetch-crl" in headers and "^From: root" in headers action drop
