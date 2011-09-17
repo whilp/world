@@ -157,7 +157,8 @@ hilights = (
   { text = "maier"; nick = "yes"; word = "yes"; },
   { text = "#et"; nick = "yes"; word = "yes"; },
   { text = "#games"; nick = "yes"; word = "yes"; },
-  { text = "trevor"; nick = "yes"; word = "yes"; }
+  { text = "trevor"; nick = "yes"; word = "yes"; },
+  { text = "wisc"; nick = "yes"; word = "yes"; }
 );
 ignores = (
   { level = "JOINS PARTS QUITS NICKS"; },
