@@ -122,9 +122,8 @@ match "^List-ID: <(.*)\\.cloudera\\.org>" in headers {
 }
 
 # CMS.
-match "^X-CMSLIST:" or
-    "^List-Owner:.*CMS.*@LISTSERV\\.FNAL\\.GOV" or
-    "^From:.*arsystem@fnal.gov" in headers action maildir "${cms}/uscms-t2"
+match "List-Owner: <mailto:USCMS-ALL-request@LISTSERV\\.FNAL\\.GOV>" in headers action maildir "${cms}/uscms-all"
+match "List-Owner: <mailto:CMS-T2-request@LISTSERV\\.FNAL\\.GOV>" in headers action maildir "${cms}/uscms-t2"
 match "^From: RSV Reporting System" in headers action maildir "${hep}/monitor"
 match "^List-Owner:.*XROOTD-DEMONSTRATOR.*@LISTSERV\\.FNAL\\.GOV" in headers action maildir "${osg}/xrootd-demo"
 match "^(To|Cc):.*project-indico-administrators@cern\\.ch" in headers action maildir "${cms}/indico"
