@@ -87,7 +87,6 @@ alias list="tmux ls"
 alias ls="ls -F"
 alias mtr="mtr -t"
 alias sudo='A=`alias` /usr/bin/sudo '
-alias t="todo -f ~/.todo -p todo"
 alias tmux="tmux -S ${TMUX_SOCK}"
 alias vi="${VISUAL}"
 alias vimdiff="vimdiff -o"
