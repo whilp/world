@@ -3,6 +3,7 @@ WM=~/bin/dwm
 export PATH=/sbin:${HOME}/bin:/usr/X11R6/bin:${PATH}
 
 xset b off
+xrdb -merge ~/.Xresources
 xsetroot -solid black
 setxkbmap -layout us -option compose:ralt -option ctrl:nocaps
 
