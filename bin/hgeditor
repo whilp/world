@@ -5,7 +5,7 @@ trap "rm -rf $tmp" 0 1 2 3 6 15
 
 sed -re '1,/^HG: --/d' < "$1" > "$tmp/diff"
 echo "" >> "$tmp/diff"
-sed -nre "s/^HG: changed (.*)/\1/p" < "$1" | xargs hg diff >> "$tmp/diff"
+sed -nre "s/^HG: changed (.*)/\1/p" < "$1" | xargs -r hg diff >> "$tmp/diff"
 
 (
 cd "$tmp"
