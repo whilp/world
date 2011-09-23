@@ -131,7 +131,6 @@ bind index \CE recall-message
 mailboxes `mailboxes`
 
 # Headers.
-my_hdr X-PGP-Key: http://lass.lfod.us/will/pubkey.asc
 ignore *
 unignore from: date subject to cc reply-to: message-id
 unignore x-mailer user-agent
