@@ -133,12 +133,12 @@ mailboxes `mailboxes`
 # Headers.
 my_hdr X-PGP-Key: http://lass.lfod.us/will/pubkey.asc
 ignore *
-unignore from: date subject to cc reply-to:
+unignore from: date subject to cc reply-to: message-id
 unignore x-mailer user-agent
 unignore x-spambayes X-PGP-Key
 unignore X-Item-Link
 unhdr_order *
-hdr_order From Date: From: To: Cc: Subject: X-mailer:
+hdr_order From Date: From: To: Cc: Subject: message-id: X-mailer:
 
 # Lists.
 subscribe madlug@madisonlinux\.org
