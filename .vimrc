@@ -27,6 +27,8 @@ set viminfo='200,f1
 set whichwrap=h,l,~,[,]
 set wildmenu
 set wildmode=full
+set winheight=8
+set winminheight=8
 
 syntax off
 
@@ -43,8 +45,8 @@ set softtabstop=4
 set tabstop=4
 
 " Mappings.
-inoremap <C-J> <Down>
-inoremap <C-K> <Up>
+noremap <C-J> <C-W>j<C-W>_
+noremap <C-K> <C-W>k<C-W>_
 nnoremap ; :
 nnoremap K <Nop>
 noremap Y y$
