@@ -1,6 +1,8 @@
 set autoindent
 set background=light
 set backspace=indent,eol,start
+set directory-=.
+set directory+=.
 set encoding=utf-8
 set fileencodings=
 set foldmethod=indent
