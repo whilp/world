@@ -88,7 +88,7 @@ case $1 in
         wpa CastleMagner llennoco46
         ${DHCLIENT};;
     tre*)
-        wpa Windigo 99xBetterkarma chan 11 bssid 00:0f:b3:15:ef:c3
+        wpa Johnson moneytrain
         ${DHCLIENT};;
     tru*) # truly spoken cycles
         wep 2WIRE765 4648578387 chan 6 bssid 00:21:7c:d2:d6:81
