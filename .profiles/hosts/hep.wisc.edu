@@ -29,19 +29,20 @@ done
 
 SCRATCH=/scratch
 MYSCRATCH=${SCRATCH}/wcmaier
+MYTMP=${MYSCRATCH}/tmp
 RPMTMP="${MYSCRATCH}/rpmbuild/tmp"
 IPYTHONDIR=/scratch/wcmaier/.ipython
 
-if [ -d "${SCRATCH}" ]; then
-    [ -d "${MYSCRATCH}" ] || mkdir -p "${MYSCRATCH}" 2>/dev/null
-    [ -d "${RPMTMP}" ] || mkdir -p "${RPMTMP}" 2>/dev/null
-    if [ ! -d "${IPYTHONDIR}" ]; then
-        (mkdir -p "${IPYTHONDIR}"
-        touch "${IPYTHONDIR}"/{ipythonrc,__init__.py}
-        rm -f "${IPYTHONDIR}/ipy_user_conf.py"
-        ln -s ~/.ipython/ipy_user_conf.py "${IPYTHONDIR}/ipy_user_conf.py"
-        ) > /dev/null 2>&1
-    fi
+for dir in ${MYTMP} ${RPMTMP}; do
+    /bin/mkdir -p "$dir" >/dev/null 2>&1
+done
+
+if [ ! -d "${IPYTHONDIR}" ]; then
+    (mkdir -p "${IPYTHONDIR}"
+    touch "${IPYTHONDIR}"/{ipythonrc,__init__.py}
+    rm -f "${IPYTHONDIR}/ipy_user_conf.py"
+    ln -s ~/.ipython/ipy_user_conf.py "${IPYTHONDIR}/ipy_user_conf.py"
+    ) > /dev/null 2>&1
 fi
 TMUXDIR="${MYSCRATCH}"
 if [ ! -d "${TMUXDIR}" ]; then
