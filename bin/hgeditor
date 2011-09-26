@@ -4,8 +4,9 @@ tmp=$(umask 077 && mktemp -td .hgeditor-XXXXXXXX)
 trap "rm -rf $tmp" 0 1 2 3 6 15
 
 sed -re '1,/^HG: --/d' < "$1" > "$tmp/diff"
-echo "" >> "$tmp/diff"
-sed -nre "s/^HG: changed (.*)/\1/p" < "$1" | xargs -r hg diff >> "$tmp/diff"
+
+(echo; sed -nre "s/^HG: changed (.*)/\1/p" < "$1" | xargs -r hg diff --stat) >> "$tmp/diff"
+(echo; sed -nre "s/^HG: changed (.*)/\1/p" < "$1" | xargs -r hg diff; echo) >> "$tmp/diff"
 
 (
 cd "$tmp"
