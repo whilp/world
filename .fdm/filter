@@ -159,6 +159,7 @@ match "^Subject: glow.*cp_afs_ca problems" in headers action drop
 match "^Subject:.*fetch-crl" in headers and "^From: root" in headers action drop
 match "From: nagios <nagios@red-mon\\.unl\\.edu>" in headers action maildir "${hep}/nagios"
 match "^(From|To|Cc):.*@[^ ]*\\.?hep\\.wisc\\.edu" in headers {
+    match "From:.* Mercurial Hosting" in headers action maildir "${hep}/code"
     match "(From|To|Cc):.*(help|req)@(nod|ginseng)?\\.?hep\\.wisc\\.edu" in headers {
         match all action maildir "${hep}/req" continue
         match "X-Roundup-issue-status: unread" action "sms"
