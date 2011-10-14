@@ -57,8 +57,8 @@ noremap F gw}
 noremap <Leader>p :set invpaste paste?<CR>
 noremap <Leader>s :source ~/.vimrc<Enter>
 noremap Q :x<Enter>
-noremap <Leader>hc :w<Enter>:silent !hg ci<Enter><C-L>
-noremap <Leader>hr :w<Enter>:silent !hg rec<Enter><C-L>
+noremap <Leader>ci :w<Enter>:silent !hg ci<Enter><C-L>
+noremap <Leader>cr :w<Enter>:silent !hg rec<Enter><C-L>
 
 abbreviate W w
 abbreviate X x
