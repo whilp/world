@@ -48,7 +48,7 @@ case $1 in
         wpa 3humans2cats1dog 'TheSma11estCh0w!' chan 6 bssid 68:7f:74:8a:b2:a1
         ${DHCLIENT};;
     b*) # bradbury's
-        plain nwid bradbury\'s chan 6 bssid 00:1c:10:a0:43:bd
+        plain nwid bradbury\'s
         ${DHCLIENT};;
     c*) # chamberlin
         plain nwid UWNet-Chamberlin
@@ -62,7 +62,7 @@ case $1 in
         wpa CordlessBaby 8G3C4XTM09 chan 4 bssid 00:18:e7:e5:c2:6c 
         ${DHCLIENT};;
     jph) # johnson public house
-        wpa "Johnson Public House" directtrade
+        wpa "Johnson Public House" oaxaca1337
         ${DHCLIENT};;
     ma*) # manna
         wep Manna mannanet
