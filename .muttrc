@@ -37,7 +37,6 @@ set mark_old=no
 set mask='!^(\.[^.]|attic|.*log)'
 set mbox_type=Maildir
 set move=no
-set pager_index_lines=4
 set pager_stop=yes
 set postpone=no
 set postponed="+drafts"
