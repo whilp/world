@@ -11,7 +11,7 @@ set crypt_replyencrypt = no
 set crypt_replysign = no
 set crypt_replysignencrypted = no
 set smime_sign_as = "33e3e0cc.0"
-set smime_timeout = "3600"
+set smime_timeout = "28800"
 
 # Settings.
 set alias_file="~/.mutt/aliases"
