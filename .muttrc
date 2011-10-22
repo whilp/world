@@ -2,7 +2,6 @@
 source "~/.mutt/aliases"
 source "~/.mutt/color"
 source "~/.mutt/pgp"
-source "~/.mutt/smtp"
 source "~/.mutt/smime"
 source "~/.mutt/default"
 
@@ -155,3 +154,8 @@ subscribe cdh-[[:graph:]]+@cloudera.org
 subscribe osg-[[:graph:]]+@OPENSCIENCEGRID.ORG
 subscribe osg-[[:graph:]]+@fnal.gov
 subscribe cms-t2@fnal.gov
+
+source "~/.mutt/smtp"
+send-hook ~fwillmaier@ml1.net "source ~/.mutt/default"
+send-hook ~fwcmaier@hep.wisc.edu "source ~/.mutt/hep"
+send-hook ~fwcmaier@gmail.com "source ~/.mutt/gmail"
