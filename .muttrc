@@ -125,6 +125,8 @@ bind pager J next-undeleted
 bind pager K previous-undeleted
 bind pager \CW buffy-list
 bind index \CW buffy-list
+bind index x collapse-thread
+bind index X collapse-all
 
 bind pager <Right> next-new-then-unread
 bind index <Right> next-new-then-unread
