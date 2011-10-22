@@ -67,12 +67,13 @@ set timeout=60
 set use_from=yes
 set wait_key=no
 
-alternates "(William.Maier|wcmaier)@cern\.ch"
-alternates "wcmaier@fnal\.gov"
+alternates -group hep "(William.Maier|wcmaier)@cern\.ch"
+alternates -group hep "wcmaier@fnal\.gov"
+alternates -group hep "wcmaier@hep.wisc.edu"
+alternates -group hep "wcmaier@wisc.edu"
+alternates -group hep "wcmaier@wisc.edu"
 alternates "wcmaier@gmail.com"
-alternates "wcmaier@hep.wisc.edu"
 alternates "wcmaier@openbsd.org"
-alternates "wcmaier@wisc.edu"
 alternative_order text/plain
 
 # Macros.
@@ -147,15 +148,16 @@ subscribe madlug@madisonlinux\.org
 subscribe .*@googlegroups.com
 subscribe (ports|misc|tech|www)@openbsd.org
 subscribe techpartners@[a-zA-Z0-9\.]*wisc.edu
-subscribe hn-cms-[[:graph:]]+@cern.ch
-subscribe it-staff@physics.wisc.edu
-subscribe (afs-folks|cmsops|help)@hep.wisc.edu
-subscribe cdh-[[:graph:]]+@cloudera.org
-subscribe osg-[[:graph:]]+@OPENSCIENCEGRID.ORG
-subscribe osg-[[:graph:]]+@fnal.gov
-subscribe cms-t2@fnal.gov
+subscribe -group hep hn-cms-[[:graph:]]+@cern.ch
+subscribe -group hep it-staff@physics.wisc.edu
+subscribe -group hep "root@[[:graph:]]*hep.wisc.edu"
+subscribe -group hep (afs-folks|cmsops|help)@hep.wisc.edu
+subscribe -group hep cdh-[[:graph:]]+@cloudera.org
+subscribe -group hep osg-[[:graph:]]+@OPENSCIENCEGRID.ORG
+subscribe -group hep osg-[[:graph:]]+@fnal.gov
+subscribe -group hep cms-t2@fnal.gov
 
 source "~/.mutt/smtp"
-send-hook ~fwillmaier@ml1.net "source ~/.mutt/default"
-send-hook ~fwcmaier@hep.wisc.edu "source ~/.mutt/hep"
-send-hook ~fwcmaier@gmail.com "source ~/.mutt/gmail"
+send-hook ~t. "source ~/.mutt/default"
+send-hook %Chep "source ~/.mutt/hep"
+send-hook ~twisc.edu|~tcern.ch|~tdesy.de|~tfnal.gov "source ~/.mutt/hep"
