@@ -49,7 +49,6 @@ set print_split=yes
 set quit=ask-no
 set realname="Will Maier"
 set recall=no
-set record="+sent"
 set record="^"
 set resolve=no
 set reverse_name=yes
@@ -156,24 +155,3 @@ subscribe cdh-[[:graph:]]+@cloudera.org
 subscribe osg-[[:graph:]]+@OPENSCIENCEGRID.ORG
 subscribe osg-[[:graph:]]+@fnal.gov
 subscribe cms-t2@fnal.gov
-
-
-folder-hook =family set strict_threads
-folder-hook =family set hide_top_missing
-folder-hook =family set hide_missing
-folder-hook =family unset sig_dashes
-
-folder-hook =news push "<limit>~N<enter>"
-folder-hook =news set sort=date
-folder-hook =twitter set sort=date
-
-folder-hook =sent set sort=reverse-date
-
-folder-hook =hep/req set sort=threads
-folder-hook =hep/req unset strict_threads
-folder-hook =hep/req unset sort_re
-folder-hook =hep/req 'set index_format="%4C %[%y.%m.%dT%H:%M] %-15.15n  %Z %s"'
-fcc-hook "~thelp@hep\.wisc\.edu" "sent"
-
-folder-hook =osg/goc set sort_re=no
-folder-hook =osg/goc set strict_threads=no
