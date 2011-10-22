@@ -101,6 +101,9 @@ macro index R "<reply>"
 macro pager R "<reply>"
 macro index \CR "<read-thread><next-new>"
 macro pager \CR "<read-thread><next-new>"
+macro index ,h "l~N(%Chep|%Ccms|%Cosg)<enter>"
+macro index ,u "l~N(%yurgent)<enter>"
+macro index ,p "l~N(~p)<enter>"
 
 # Bindings.
 bind index '.' buffy-list
