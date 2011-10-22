@@ -142,7 +142,7 @@ hdr_order date from to cc subject message-id x-mailer user-agent
 
 # Lists.
 subscribe -group bsd (ports|misc|tech|www)@openbsd.org
-subscribe -group cms cms-t2@fnal.gov
+subscribe -group cms cms-[[:graph:]]+@fnal.gov
 subscribe -group cms hn-cms-[[:graph:]]+@cern.ch
 subscribe -group hep "root@[[:graph:]]*hep.wisc.edu"
 subscribe -group hep (afs-folks|cmsops|help)@hep.wisc.edu
