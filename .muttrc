@@ -17,7 +17,6 @@ set alias_file="~/.mutt/aliases"
 set ascii_chars=yes
 set beep_new=no
 set certificate_file=~/.mutt.certificates
-set charset="us-ascii//TRANSLIT"
 set copy=yes
 set delete=yes
 set duplicate_threads
