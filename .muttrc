@@ -133,7 +133,7 @@ mailboxes `mailboxes`
 # Headers.
 ignore *
 unignore from date subject to cc reply-to message-id
-unignore x-mailer user-agent
+unignore x-label x-mailer user-agent
 unhdr_order *
 hdr_order date from to cc subject message-id x-mailer user-agent
 
