@@ -157,6 +157,7 @@ subscribe -group hep osg-[[:graph:]]+@fnal.gov
 subscribe -group hep cms-t2@fnal.gov
 
 source "~/.mutt/smtp"
+fcc-hook . "~/.maildir"
 send-hook ~t. "source ~/.mutt/default"
 send-hook %Chep "source ~/.mutt/hep"
 send-hook ~twisc.edu|~tcern.ch|~tdesy.de|~tfnal.gov "source ~/.mutt/hep"
