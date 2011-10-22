@@ -32,7 +32,7 @@ set implicit_autoview=yes
 set include=yes
 set index_format="%4C %[%y.%m.%dT%H:%M] %-8.8u  %Z %s"
 set ispell="aspell -e -c"
-set mail_check=0
+set mail_check=5
 set mark_old=no
 set markers=no
 set mask='!^(\.[^.]|attic|.*log)'
@@ -55,7 +55,6 @@ set sig_dashes
 set sig_dashes=yes
 set signature='~/.signatures/default'
 set smart_wrap=yes
-set sort=threads
 set sort=threads
 set sort_aux=reverse-last-date
 set sort_re
