@@ -56,7 +56,7 @@ set sig_dashes=yes
 set signature='~/.signatures/default'
 set smart_wrap=yes
 set sort=threads
-set sort_aux=reverse-last-date
+set sort_aux=last-date
 set sort_re
 set spoolfile='/var/mail/will'
 set ssl_starttls
@@ -158,6 +158,7 @@ subscribe madlug@madisonlinux\.org
 subscribe techpartners@[a-zA-Z0-9\.]*wisc.edu
 
 source "~/.mutt/smtp"
+folder-hook . "exec collapse-all"
 fcc-hook . "~/.maildir"
 send-hook ~t. "source ~/.mutt/default"
 send-hook %Chep "source ~/.mutt/hep"
