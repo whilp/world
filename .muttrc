@@ -143,18 +143,18 @@ unhdr_order *
 hdr_order date from to cc subject message-id x-mailer user-agent
 
 # Lists.
-subscribe madlug@madisonlinux\.org
-subscribe .*@googlegroups.com
-subscribe (ports|misc|tech|www)@openbsd.org
-subscribe techpartners@[a-zA-Z0-9\.]*wisc.edu
-subscribe -group hep hn-cms-[[:graph:]]+@cern.ch
-subscribe -group hep it-staff@physics.wisc.edu
+subscribe -group bsd (ports|misc|tech|www)@openbsd.org
+subscribe -group cms cms-t2@fnal.gov
+subscribe -group cms hn-cms-[[:graph:]]+@cern.ch
 subscribe -group hep "root@[[:graph:]]*hep.wisc.edu"
 subscribe -group hep (afs-folks|cmsops|help)@hep.wisc.edu
-subscribe -group hep cdh-[[:graph:]]+@cloudera.org
-subscribe -group hep osg-[[:graph:]]+@OPENSCIENCEGRID.ORG
-subscribe -group hep osg-[[:graph:]]+@fnal.gov
-subscribe -group hep cms-t2@fnal.gov
+subscribe -group hep it-staff@physics.wisc.edu
+subscribe -group osg osg-[[:graph:]]+@OPENSCIENCEGRID.ORG
+subscribe -group osg osg-[[:graph:]]+@fnal.gov
+subscribe .*@googlegroups.com
+subscribe cdh-[[:graph:]]+@cloudera.org
+subscribe madlug@madisonlinux\.org
+subscribe techpartners@[a-zA-Z0-9\.]*wisc.edu
 
 source "~/.mutt/smtp"
 fcc-hook . "~/.maildir"
