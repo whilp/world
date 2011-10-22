@@ -21,6 +21,7 @@ set certificate_file=~/.mutt.certificates
 set charset="us-ascii//TRANSLIT"
 set copy=yes
 set delete=yes
+set duplicate_threads
 set edit_headers=yes
 set editor='vim "+/^$"'
 set folder=~/.maildir
@@ -30,13 +31,15 @@ set header_cache=~/.maildir/.cache
 set help=no
 set implicit_autoview=yes
 set include=yes
+set index_format="%4C %[%y.%m.%dT%H:%M] %-8.8u  %Z %s"
 set ispell="aspell -e -c"
 set mail_check=0
-set markers=no
 set mark_old=no
+set markers=no
 set mask='!^(\.[^.]|attic|.*log)'
 set mbox_type=Maildir
 set move=no
+set narrow_tree
 set pager_format="%a %> %e,%E %C,%m %P"
 set pager_stop=yes
 set postpone=no
@@ -47,18 +50,22 @@ set quit=ask-no
 set realname="Will Maier"
 set recall=no
 set record="+sent"
+set record="^"
 set resolve=no
 set reverse_name=yes
+set sig_dashes
 set sig_dashes=yes
 set signature='~/.signatures/default'
 set smart_wrap=yes
 set sort=threads
+set sort=threads
 set sort_aux=reverse-last-date
+set sort_re
 set spoolfile='/var/mail/will'
 set ssl_starttls
-set status_format="%f%> %n,%m %P"
-set timeout=60
+set status_format="%> %n,%m %P"
 set time_inc=100
+set timeout=60
 set use_from=yes
 set wait_key=no
 
@@ -128,7 +135,7 @@ bind pager \CE recall-message
 bind index \CE recall-message
 
 # Mailboxes.
-mailboxes `mailboxes`
+mailboxes ~/.maildir
 
 # Headers.
 ignore *
@@ -150,21 +157,6 @@ subscribe osg-[[:graph:]]+@OPENSCIENCEGRID.ORG
 subscribe osg-[[:graph:]]+@fnal.gov
 subscribe cms-t2@fnal.gov
 
-send-hook '~t @posterous\.com' 'unset signature'
-fcc-hook '~t @posterous\.com' 'posterous'
-
-send-hook '~L .*@[[:graph:]]*bsd[[:graph:]]*'	"set signature='~/.signatures/list-bsd'"
-
-send-hook '~t madlug@madisonlinux.org'	"set signature='~/.signatures/list-bsd'"
-
-folder-hook . "unset strict_threads"
-folder-hook . "set duplicate_threads"
-folder-hook . "set narrow_tree"
-folder-hook . "set sort=threads"
-folder-hook . "set sort_re"
-folder-hook . "set sig_dashes"
-folder-hook . 'set record="^"'
-folder-hook . 'set index_format="%4C %[%y.%m.%dT%H:%M] %-8.8u  %Z %s"'
 
 folder-hook =family set strict_threads
 folder-hook =family set hide_top_missing
