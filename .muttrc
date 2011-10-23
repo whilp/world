@@ -105,7 +105,7 @@ macro index ,u "l~N(~yurgent)<enter>"
 macro index ,p "l~N(~p)<enter>"
 
 # Bindings.
-bind index '.' buffy-list
+bind index '.' last-entry
 bind generic 'G' noop
 bind generic '\CG' noop
 bind generic zg first-entry
