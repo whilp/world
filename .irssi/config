@@ -164,7 +164,12 @@ ignores = (
   { level = "JOINS PARTS QUITS NICKS"; },
   { level = "MODES"; channels = ( "&bitlbee" ); },
   { mask = "maryrosecoeqi"; level = "ALL"; },
-  { mask = "vonciledonvanup"; level = "ALL"; }
+  { mask = "vonciledonvanup"; level = "ALL"; },
+  {
+    level = "ALL";
+    pattern = "From conference server: ";
+    regexp = "yes";
+  }
 );
 completions = {
   obsd = { value = "OpenBSD"; auto = "yes"; };

@@ -2,7 +2,6 @@
 source "~/.mutt/aliases"
 source "~/.mutt/color"
 source "~/.mutt/pgp"
-source "~/.mutt/smtp"
 source "~/.mutt/smime"
 source "~/.mutt/default"
 
@@ -11,16 +10,16 @@ set crypt_replyencrypt = no
 set crypt_replysign = no
 set crypt_replysignencrypted = no
 set smime_sign_as = "33e3e0cc.0"
-set smime_timeout = "3600"
+set smime_timeout = "28800"
 
 # Settings.
 set alias_file="~/.mutt/aliases"
 set ascii_chars=yes
 set beep_new=no
 set certificate_file=~/.mutt.certificates
-set charset="us-ascii//TRANSLIT"
 set copy=yes
 set delete=yes
+set duplicate_threads
 set edit_headers=yes
 set editor='vim "+/^$"'
 set folder=~/.maildir
@@ -30,14 +29,16 @@ set header_cache=~/.maildir/.cache
 set help=no
 set implicit_autoview=yes
 set include=yes
+set index_format="%4C %[%y.%m.%dT%H:%M] %M%Z %s %*    %L"
 set ispell="aspell -e -c"
-set mail_check=0
-set markers=no
+set mail_check=5
 set mark_old=no
+set markers=no
 set mask='!^(\.[^.]|attic|.*log)'
 set mbox_type=Maildir
 set move=no
-set pager_index_lines=4
+set narrow_tree
+set pager_format="%a %> %e,%E %C,%m %P"
 set pager_stop=yes
 set postpone=no
 set postponed="+drafts"
@@ -46,28 +47,31 @@ set print_split=yes
 set quit=ask-no
 set realname="Will Maier"
 set recall=no
-set record="+sent"
+set record="^"
 set resolve=no
 set reverse_name=yes
+set sig_dashes
 set sig_dashes=yes
 set signature='~/.signatures/default'
 set smart_wrap=yes
 set sort=threads
-set sort_aux=reverse-last-date
+set sort_aux=last-date
+set sort_re
 set spoolfile='/var/mail/will'
 set ssl_starttls
-set status_format="mutt: %f [Msgs:%?M?%M/?%m%?n? New:%n?%?o? Old:%o?%?d? Del:%d?%?F? Flag:%F?%?t? Tag:%t?%?p? Post:%p?%?b? Inc:%b?%?l? %l?]---(%s/%S)-%>-(%P)---"
-set timeout=60
+set status_format="%> %n,%m %P"
 set time_inc=100
+set timeout=60
 set use_from=yes
 set wait_key=no
 
-alternates "(William.Maier|wcmaier)@cern\.ch"
-alternates "wcmaier@fnal\.gov"
+alternates -group hep "(William.Maier|wcmaier)@cern\.ch"
+alternates -group hep "wcmaier@fnal\.gov"
+alternates -group hep "wcmaier@hep.wisc.edu"
+alternates -group hep "wcmaier@wisc.edu"
+alternates -group hep "wcmaier@wisc.edu"
 alternates "wcmaier@gmail.com"
-alternates "wcmaier@hep.wisc.edu"
 alternates "wcmaier@openbsd.org"
-alternates "wcmaier@wisc.edu"
 alternative_order text/plain
 
 # Macros.
@@ -78,16 +82,14 @@ macro index <esc>d "<enter-command>source ~/.mutt/default<enter>" "HEP SMTP conf
 macro pager <esc>d "<enter-command>source ~/.mutt/default<enter>" "HEP SMTP configuration"
 macro index <esc>g "<enter-command>source ~/.mutt/gmail<enter>" "GMail SMTP configuration"
 macro pager <esc>g "<enter-command>source ~/.mutt/gmail<enter>" "GMail SMTP configuration"
-macro index S "|spambayes -s >/dev/null<enter><save-message>=attic/spam<enter><enter>" "Mark as spam"
-macro pager S "|spambayes -s >/dev/null<enter><save-message>=attic/spam<enter><enter>" "Mark as spam"
-macro index H "|spambayes -g | fdm -mqa stdin fetch<enter><delete-message>" "Mark as ham"
-macro pager H "|spambayes -g | fdm -mqa stdin fetch<enter><delete-message>" "Mark as ham"
+macro index S "|spambayes -s >/dev/null<enter>" "Mark as spam"
+macro pager S "|spambayes -s >/dev/null<enter>" "Mark as spam"
+macro index H "|spambayes -g" "Mark as ham"
+macro pager H "|spambayes -g" "Mark as ham"
 macro index C "<change-folder>?" "open a different folder"
 macro pager C "<change-folder>?" "open a different folder"
 macro pager <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
 macro index <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
-macro index x "<sync-mailbox><next-unread-mailbox>"
-macro pager x "<sync-mailbox><next-unread-mailbox>"
 macro index d "<delete-message><next-new>"
 macro pager d "<delete-message><next-new>"
 macro index = "<delete-pattern>~=<enter>"
@@ -98,9 +100,13 @@ macro index R "<reply>"
 macro pager R "<reply>"
 macro index \CR "<read-thread><next-new>"
 macro pager \CR "<read-thread><next-new>"
+macro index ,h "l~N(%Chep|%Ccms|%Cosg)<enter>"
+macro index ,u "l~N(~yurgent)<enter>"
+macro index ,p "l~N(~p)<enter>"
+macro index ,n "l~N<enter>"
 
 # Bindings.
-bind index '.' buffy-list
+bind index '.' last-entry
 bind generic 'G' noop
 bind generic '\CG' noop
 bind generic zg first-entry
@@ -119,6 +125,8 @@ bind pager J next-undeleted
 bind pager K previous-undeleted
 bind pager \CW buffy-list
 bind index \CW buffy-list
+bind index x collapse-thread
+bind index X collapse-all
 
 bind pager <Right> next-new-then-unread
 bind index <Right> next-new-then-unread
@@ -128,60 +136,32 @@ bind pager \CE recall-message
 bind index \CE recall-message
 
 # Mailboxes.
-mailboxes `mailboxes`
+mailboxes ~/.maildir
 
 # Headers.
 ignore *
 unignore from date subject to cc reply-to message-id
-unignore x-mailer user-agent
+unignore x-label x-mailer user-agent
 unhdr_order *
 hdr_order date from to cc subject message-id x-mailer user-agent
 
 # Lists.
-subscribe madlug@madisonlinux\.org
+subscribe -group bsd (ports|misc|tech|www)@openbsd.org
+subscribe -group cms cms-[[:graph:]]+@fnal.gov
+subscribe -group cms hn-cms-[[:graph:]]+@cern.ch
+subscribe -group hep "root@[[:graph:]]*hep.wisc.edu"
+subscribe -group hep (afs-folks|cmsops|help)@hep.wisc.edu
+subscribe -group hep it-staff@physics.wisc.edu
+subscribe -group osg osg-[[:graph:]]+@OPENSCIENCEGRID.ORG
+subscribe -group osg osg-[[:graph:]]+@fnal.gov
 subscribe .*@googlegroups.com
-subscribe (ports|misc|tech|www)@openbsd.org
-subscribe techpartners@[a-zA-Z0-9\.]*wisc.edu
-subscribe hn-cms-[[:graph:]]+@cern.ch
-subscribe it-staff@physics.wisc.edu
-subscribe (afs-folks|cmsops|help)@hep.wisc.edu
 subscribe cdh-[[:graph:]]+@cloudera.org
-subscribe osg-[[:graph:]]+@OPENSCIENCEGRID.ORG
-subscribe osg-[[:graph:]]+@fnal.gov
-subscribe cms-t2@fnal.gov
+subscribe madlug@madisonlinux\.org
+subscribe techpartners@[a-zA-Z0-9\.]*wisc.edu
 
-send-hook '~t @posterous\.com' 'unset signature'
-fcc-hook '~t @posterous\.com' 'posterous'
-
-send-hook '~L .*@[[:graph:]]*bsd[[:graph:]]*'	"set signature='~/.signatures/list-bsd'"
-
-send-hook '~t madlug@madisonlinux.org'	"set signature='~/.signatures/list-bsd'"
-
-folder-hook . "unset strict_threads"
-folder-hook . "set duplicate_threads"
-folder-hook . "set narrow_tree"
-folder-hook . "set sort=threads"
-folder-hook . "set sort_re"
-folder-hook . "set sig_dashes"
-folder-hook . 'set record="^"'
-folder-hook . 'set index_format="%4C %[%y.%m.%dT%H:%M] %-8.8u  %Z %s"'
-
-folder-hook =family set strict_threads
-folder-hook =family set hide_top_missing
-folder-hook =family set hide_missing
-folder-hook =family unset sig_dashes
-
-folder-hook =news push "<limit>~N<enter>"
-folder-hook =news set sort=date
-folder-hook =twitter set sort=date
-
-folder-hook =sent set sort=reverse-date
-
-folder-hook =hep/req set sort=threads
-folder-hook =hep/req unset strict_threads
-folder-hook =hep/req unset sort_re
-folder-hook =hep/req 'set index_format="%4C %[%y.%m.%dT%H:%M] %-15.15n  %Z %s"'
-fcc-hook "~thelp@hep\.wisc\.edu" "sent"
-
-folder-hook =osg/goc set sort_re=no
-folder-hook =osg/goc set strict_threads=no
+source "~/.mutt/smtp"
+folder-hook . "exec collapse-all"
+fcc-hook . "~/.maildir"
+send-hook ~t. "source ~/.mutt/default"
+send-hook %Chep "source ~/.mutt/hep"
+send-hook ~twisc.edu|~tcern.ch|~tdesy.de|~tfnal.gov "source ~/.mutt/hep"

@@ -55,11 +55,17 @@ case $1 in
         ${DHCLIENT};;
     down|off)
         plain down;;
-    f*) # fnal
+    fn*) # fnal
         plain nwid fgz
+        ${DHCLIENT};;
+    fu*) # fuel, wallingford, WA
+        wpa "Fuel Coffee" fuelcoffee
         ${DHCLIENT};;
     je) # j and e
         wpa CordlessBaby 8G3C4XTM09 chan 4 bssid 00:18:e7:e5:c2:6c 
+        ${DHCLIENT};;
+    jo*) # josh
+        wpa Hogswaddle w1sconsinwiscons1n
         ${DHCLIENT};;
     jph) # johnson public house
         wpa "Johnson Public House" oaxaca1337

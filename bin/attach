@@ -8,17 +8,17 @@ TMUX="tmux -S ${TMUXDIR}/sock"
 mkdir -p "${TMUXDIR}" >/dev/null 2>&1
 
 connect () {
-    typeset SESSION=$1; shift
+    local SESSION=$1; shift
     if [ -r "${CONFIG}" ]; then
-        typeset TMUX="${TMUX} -f ${CONFIG}"
+        local TMUX="${TMUX} -f ${CONFIG}"
     fi
-    typeset TMUX="${TMUX} $*"
+    local TMUX="${TMUX} $*"
 
-    typeset _TMUX_SESSION="${TMUX_SESSION}"
+    local _TMUX_SESSION="${TMUX_SESSION}"
     export TMUX_SESSION="${SESSION}"
     # Call the callback if we create a new session and the callback is defined.
-    typeset CONFIGS="${TMUXDIR}/${SESSION}.conf"
-    typeset CONFIG
+    local CONFIGS="${TMUXDIR}/${SESSION}.conf"
+    local CONFIG
     if ${TMUX} new-session -ds "${SESSION}" >/dev/null 2>&1; then
         CONFIGS="${CONFIGS} ${TMUXDIR}/${SESSION}-new.conf"
     fi
@@ -32,9 +32,9 @@ connect () {
 }
 
 remote () {
-    typeset TARGETPAT=$1
-    typeset TARGET=$2
-    typeset SESSION=$3
+    local TARGETPAT=$1
+    local TARGET=$2
+    local SESSION=$3
     shift; shift; shift
 
     case $(hostname) in

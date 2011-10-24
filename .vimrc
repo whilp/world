@@ -7,17 +7,19 @@ set encoding=utf-8
 set fileencodings=
 set foldmethod=indent
 set formatoptions+=2l
-set history=50
+set hidden
+set history=1000
 set ignorecase
 set incsearch
 set indentexpr="-1"
 set laststatus=2
+set listchars=tab:>-,trail:·,eol:$
 set nobackup
 set nocompatible
 set nofoldenable
 set nohls
-set number
 set ruler
+set scrolloff=3
 set showcmd
 set showmatch
 set smartcase
@@ -26,7 +28,7 @@ set textwidth=80
 set viminfo='200,f1
 set whichwrap=h,l,~,[,]
 set wildmenu
-set wildmode=full
+set wildmode=list:longest,full
 set winheight=8
 set winminheight=8
 
@@ -57,8 +59,9 @@ noremap F gw}
 noremap <Leader>p :set invpaste paste?<CR>
 noremap <Leader>s :source ~/.vimrc<Enter>
 noremap Q :x<Enter>
-noremap <Leader>hc :w<Enter>:silent !hg ci<Enter><C-L>
-noremap <Leader>hr :w<Enter>:silent !hg rec<Enter><C-L>
+noremap <Leader>ci :w<Enter>:silent !hg ci<Enter><C-L>
+noremap <Leader>cr :w<Enter>:silent !hg rec<Enter><C-L>
+nmap <silent> <leader>s :set nolist!<CR>
 
 abbreviate W w
 abbreviate X x

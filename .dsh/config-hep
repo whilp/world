@@ -25,6 +25,13 @@ cmsgrid02
 osggrid01
 itb
 
+GROUP:vm
+vmhost01
+vmhost02
+vmhost03
+vmhost04
+vmhost05
+
 GROUP:afs
 anise
 garlic
@@ -515,6 +522,25 @@ g20n07
 g20n08
 g20n09
 g20n10
+
+GROUP:g22
+g22n01
+g22n02
+g22n03
+g22n04
+g22n05
+g22n06
+g22n07
+g22n08
+g22n09
+g22n10
+g22n11
+g22n12
+g22n13
+g22n14
+g22n15
+g22n16
+g22n17
 
 GROUP:gridftp
 g7n20
