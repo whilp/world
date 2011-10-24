@@ -5,7 +5,7 @@ which dzen2 >/dev/null 2>&1 || exit 1
 interval=60
 
 draw () {
-    date +%a\ %Y-%m-%dT%H:%M
+    date +%a\ %Y-%m-%dT%H:%M%z
 }
 
 while :; do
