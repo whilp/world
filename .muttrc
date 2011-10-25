@@ -102,12 +102,12 @@ macro index ,h "l~(~N(%Chep|%Ccms|%Cosg))<enter>"
 macro index ,u "l~(~N(~yurgent))<enter>"
 macro index ,p "l~(~N(~p))<enter>"
 macro index ,n "l~(~N)<enter>"
+macro index . "l~(~N)<enter>"
 macro index ,d "l~(~d<1d)<enter>"
 macro index ,f "l~(~F)<enter>"
 
 # Bindings.
-bind index '.' last-entry
-bind generic 'G' noop
+bind index 'G' last-entry
 bind generic '\CG' noop
 bind generic zg first-entry
 bind generic zz current-middle
