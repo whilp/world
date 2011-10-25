@@ -151,7 +151,7 @@ subscribe -group cms cms-[[:graph:]]+@fnal.gov
 subscribe -group cms hn-cms-[[:graph:]]+@cern.ch
 subscribe -group hep "root@[[:graph:]]*hep.wisc.edu"
 subscribe -group hep (afs-folks|cmsops|help)@hep.wisc.edu
-subscribe -group hep it-staff@physics.wisc.edu
+subscribe -group hep (it-staff|physics-all)@physics.wisc.edu
 subscribe -group osg osg-[[:graph:]]+@OPENSCIENCEGRID.ORG
 subscribe -group osg osg-[[:graph:]]+@fnal.gov
 subscribe .*@googlegroups.com
