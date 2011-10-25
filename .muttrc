@@ -60,7 +60,7 @@ set sort_re
 set spoolfile='/var/mail/will'
 set ssl_starttls
 set status_format="%> %n,%m %P"
-set time_inc=100
+set time_inc=500
 set timeout=60
 set use_from=yes
 set wait_key=no
