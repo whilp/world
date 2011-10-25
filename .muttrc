@@ -15,7 +15,7 @@ set smime_timeout = "28800"
 # Settings.
 set alias_file="~/.mutt/aliases"
 set ascii_chars=yes
-set beep_new=no
+set beep_new=yes
 set certificate_file=~/.mutt.certificates
 set copy=yes
 set delete=yes
