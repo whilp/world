@@ -32,6 +32,7 @@ set include=yes
 set index_format="%4C %[%y-%m-%dT%H:%M] %M%Z %s %*    %L"
 set ispell="aspell -e -c"
 set mail_check=5
+set maildir_header_cache_verify=no
 set mark_old=no
 set markers=no
 set mask='!^(\.[^.]|attic|.*log)'
