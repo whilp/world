@@ -1,8 +1,8 @@
 # Other files.
 source "~/.mutt/aliases"
 source "~/.mutt/color"
-source "~/.mutt/pgp"
 source "~/.mutt/smime"
+source "~/.mutt/pgp"
 source "~/.mutt/default"
 
 set crypt_autosign = no
