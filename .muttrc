@@ -66,10 +66,7 @@ set use_from=yes
 set wait_key=no
 
 alternates -group hep "(William.Maier|wcmaier)@cern\.ch"
-alternates -group hep "wcmaier@fnal\.gov"
-alternates -group hep "wcmaier@hep.wisc.edu"
-alternates -group hep "wcmaier@wisc.edu"
-alternates -group hep "wcmaier@wisc.edu"
+alternates -group hep "wcmaier@(fnal.gov|hep.wisc.edu|wisc.edu)"
 alternates "wcmaier@gmail.com"
 alternates "wcmaier@openbsd.org"
 alternative_order text/plain
