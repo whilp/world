@@ -146,7 +146,7 @@ unhdr_order *
 hdr_order date from to cc subject message-id x-mailer user-agent
 
 # Lists.
-subscribe -group bsd (hackers|ports|misc|tech|www)@openbsd.org
+subscribe -group bsd (hackers|ports|misc|tech|www|bugs)@openbsd.org
 subscribe -group bsd (source|ports)-changes@cvs.openbsd.org
 subscribe -group cms cms-[[:graph:]]+@fnal.gov
 subscribe -group cms hn-cms-[[:graph:]]+@cern.ch
