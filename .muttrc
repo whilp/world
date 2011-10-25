@@ -157,6 +157,8 @@ subscribe -group osg osg-[[:graph:]]+@fnal.gov
 subscribe .*@googlegroups.com
 subscribe cdh-[[:graph:]]+@cloudera.org
 subscribe hdfs-[[:graph:]]+@hadoop.apache.org
+subscribe mercurial(-devel)?@selenic.com
+subscribe project-indico-[[:graph:]]+@cern.ch
 subscribe madlug@madisonlinux\.org
 subscribe techpartners@[a-zA-Z0-9\.]*wisc.edu
 
