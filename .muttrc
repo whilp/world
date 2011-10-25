@@ -146,7 +146,8 @@ unhdr_order *
 hdr_order date from to cc subject message-id x-mailer user-agent
 
 # Lists.
-subscribe -group bsd (ports|misc|tech|www)@openbsd.org
+subscribe -group bsd (hackers|ports|misc|tech|www)@openbsd.org
+subscribe -group bsd (source|ports)-changes@cvs.openbsd.org
 subscribe -group cms cms-[[:graph:]]+@fnal.gov
 subscribe -group cms hn-cms-[[:graph:]]+@cern.ch
 subscribe -group hep "root@[[:graph:]]*hep.wisc.edu"
@@ -154,6 +155,8 @@ subscribe -group hep (afs-folks|cmsops|help)@hep.wisc.edu
 subscribe -group hep (it-staff|physics-all)@physics.wisc.edu
 subscribe -group osg osg-[[:graph:]]+@OPENSCIENCEGRID.ORG
 subscribe -group osg osg-[[:graph:]]+@fnal.gov
+subscribe bugtraq@securityfocus.com
+subscribe .*@googlegroups.com
 subscribe .*@googlegroups.com
 subscribe cdh-[[:graph:]]+@cloudera.org
 subscribe hdfs-[[:graph:]]+@hadoop.apache.org
