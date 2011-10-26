@@ -50,8 +50,11 @@ case $1 in
     b*) # bradbury's
         plain nwid bradbury\'s
         ${DHCLIENT};;
-    c*) # chamberlin
+    ch*) # chamberlin
         plain nwid UWNet-Chamberlin
+        ${DHCLIENT};;
+    co*) # Coast Plaza, Vancouver, BC
+        plain nwid Coast chan 3 bssid 00:03:52:e5:6b:d1
         ${DHCLIENT};;
     down|off)
         plain down;;
@@ -87,6 +90,9 @@ case $1 in
         ${DHCLIENT};;
     sc*) # scan
         plain scan;;
+    sf*) # SFU
+        plain nwid SFUNET chan 1 bssid 00:1f:45:64:17:78
+        ${DHCLIENT};;
     sl*) # slater
         wpa 'slater' presario
         ${DHCLIENT};;
