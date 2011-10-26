@@ -162,6 +162,7 @@ subscribe madlug@madisonlinux\.org
 subscribe mercurial(-devel)?@selenic.com
 subscribe project-indico-[[:graph:]]+@cern.ch
 subscribe techpartners@[a-zA-Z0-9\.]*wisc.edu
+subscribe ipython-[[:graph:]]+@scipy.org
 
 source "~/.mutt/smtp"
 folder-hook . "exec collapse-all"
