@@ -58,7 +58,7 @@ set smart_wrap=yes
 set sort=threads
 set sort_aux=last-date
 set sort_re
-set spoolfile='/var/mail/will'
+set spoolfile='~/.maildir'
 set ssl_starttls
 set status_format="%> %n,%m %P"
 set time_inc=500
