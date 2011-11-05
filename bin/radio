@@ -10,6 +10,9 @@ case $1 in
     bbc)
         # http://www.bbc.co.uk/worldservice/institutional/2009/03/000000_mobile.shtml
         URL="http://mp33.bbc.streamuk.com:80/";;
+    kcsm)
+        # http://kcsm.org/jazz91/listen.php 
+        URL="http://www.abacast.com/media/pls/kcsm/kcsm-kcsm-sc64.pls";;
     wern)
         # http://www.wpr.org/webcasting/live.cfm
         # http://wpr-ice.streamguys.net/wpr-music-hd2.m3u
