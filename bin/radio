@@ -17,6 +17,9 @@ case $1 in
         # http://www.wpr.org/webcasting/live.cfm
         # http://wpr-ice.streamguys.net/wpr-music-hd2.m3u
         URL="http://wpr-ice.streamguys.net:80/wpr-music-hd2";;
+    wmse)
+        # http://www.wmse.org/index.php
+        URL="http://www.wmse.org/wmse128kMP3.pls";;
     wuwm)
         # http://www.wuwm.com/media/stream_player/streaming.php?channel=HD1
         URL=$(${CURL} http://www.wuwm.com/m3u/live.pls | sed -Ee '/^File/!d; s/.*=//');;
