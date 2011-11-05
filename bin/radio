@@ -1,8 +1,5 @@
 #!/bin/sh
 
-MPLAYER="mplayer -really-quiet -volume 100"
-CURL="curl -s"
-
 case $1 in
     aje)
         # http://www.islamicity.com/multimedia/radio/?AspxAutoDetectCookieSupport=1
@@ -22,7 +19,8 @@ case $1 in
         URL="http://www.wmse.org/wmse128kMP3.pls";;
     wuwm)
         # http://www.wuwm.com/media/stream_player/streaming.php?channel=HD1
-        URL=$(${CURL} http://www.wuwm.com/m3u/live.pls | sed -Ee '/^File/!d; s/.*=//');;
+        # http://www.wuwm.com/m3u/live.pls
+        URL="http://129.89.70.125/";;
 esac
 
-${MPLAYER} "$URL"
+mplayer -really-quiet -volume 100 "$URL"
