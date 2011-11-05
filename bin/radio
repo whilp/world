@@ -23,4 +23,4 @@ case $1 in
         URL="http://129.89.70.125/";;
 esac
 
-mplayer -really-quiet -volume 100 "$URL"
+mplayer -really-quiet -volume 100 "$URL" 2>/dev/null
