@@ -113,6 +113,10 @@ macro index L "<enter-command>source ~/.mutt/default<enter><list-reply>"
 macro pager L "<enter-command>source ~/.mutt/default<enter><list-reply>"
 macro index \'L "<enter-command>source ~/.mutt/hep<enter><list-reply>"
 macro pager \'L "<enter-command>source ~/.mutt/hep<enter><list-reply>"
+macro index g "<enter-command>source ~/.mutt/default<enter><group-reply>"
+macro pager g "<enter-command>source ~/.mutt/default<enter><group-reply>"
+macro index \'g "<enter-command>source ~/.mutt/hep<enter><group-reply>"
+macro pager \'g "<enter-command>source ~/.mutt/hep<enter><group-reply>"
 
 # Bindings.
 bind index 'G' last-entry
@@ -178,7 +182,3 @@ subscribe ipython-[[:graph:]]+@scipy.org
 source "~/.mutt/smtp"
 folder-hook . "exec collapse-all"
 fcc-hook . "~/.maildir"
-send-hook !(%Chep|%fhep|%Lhep) "source ~/.mutt/default"
-reply-hook !(%Chep|%fhep|%Lhep) "source ~/.mutt/default"
-send-hook %Chep|%fhep|%Lhep "source ~/.mutt/hep"
-reply-hook %Chep|%fhep|%Lhep "source ~/.mutt/hep"
