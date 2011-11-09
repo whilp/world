@@ -1,8 +1,12 @@
 text/x-diff;            /bin/cat ; copiousoutput
+application/x-diff;     /bin/cat ; copiousoutput
 text/x-patch;           /bin/cat ; copiousoutput
+application/x-patch;    /bin/cat ; copiousoutput
 text/html;              /usr/bin/lynx -stdin -force_html -dump ; copiousoutput
 application/msword;     /usr/local/bin/antiword -t -i 1 -w 72 - ; copiousoutput
-application/pdf;        /usr/local/bin/pdftotext %s - ; copiousoutput
-application/x-pdf;      /usr/local/bin/pdftotext %s - ; copiousoutput
 application/x-shellscript; /bin/cat ; copiousoutput
-text/rtf;               /usr/local/bin/unrtf --nopict --text %s ; copiousoutput
+application/x-gunzip;   /usr/bin/gzcat; copiousoutput
+application/x-tar-gz;   /bin/tar tvzf - ; copiousoutput
+application/postscript; /usr/local/bin/ps2ascii; copiousoutput
+application/pdf;        /usr/local/bin/pdf2ps - - | /usr/local/bin/ps2ascii; copiousoutput
+application/x-pdf;      /usr/local/bin/pdf2ps - - | /usr/local/bin/ps2ascii; copiousoutput
