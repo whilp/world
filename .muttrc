@@ -66,6 +66,11 @@ set timeout=60
 set use_from=yes
 set wait_key=no
 
+auto_view text/html
+auto_view */x-diff */x-patch */x-shellscript
+auto_view */x-gunzip */x-tar-gz
+auto_view application/msword
+
 alternates -group hep "(William.Maier|wcmaier)@cern\.ch"
 alternates -group hep "wcmaier@(fnal.gov|hep.wisc.edu|wisc.edu)"
 alternates "wcmaier@gmail.com"
