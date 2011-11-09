@@ -27,7 +27,6 @@ set forward_format="Fwd: %s"
 set from="Will Maier <willmaier@ml1.net>"
 set header_cache=~/.maildir/.cache
 set help=no
-set implicit_autoview=yes
 set include=yes
 set index_format="%4C %[%y-%m-%dT%H:%M] %M%Z %s %*    %L"
 set ispell="aspell -e -c"
