@@ -147,6 +147,8 @@ bind index x collapse-thread
 bind index X collapse-all
 bind generic N search-opposite
 bind index N search-opposite
+bind generic ? search-reverse
+bind index ? search-reverse
 bind index \CN toggle-new
 
 bind pager <Right> next-new-then-unread
