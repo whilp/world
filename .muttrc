@@ -81,13 +81,13 @@ alternative_order text/plain
 macro index,pager <esc>h "<enter-command>source ~/.mutt/hep<enter>" "HEP SMTP configuration"
 macro index,pager <esc>d "<enter-command>source ~/.mutt/default<enter>" "HEP SMTP configuration"
 macro index,pager <esc>g "<enter-command>source ~/.mutt/gmail<enter>" "GMail SMTP configuration"
+macro index,pager <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
 macro index,pager <esc>f "|fdm -a stdin fetch<enter>" "Refilter"
 
 macro index,pager S "|spambayes -s >/dev/null<enter>" "Mark as spam"
 macro index,pager H "|spambayes -g" "Mark as ham"
 macro index,pager C "<change-folder>?" "open a different folder"
-macro index,pager <esc>s "<enter-command>source ~/.muttrc<enter>" "Reload configuration"
-macro index,pager d "<delete-message><toggle-new><next-new>"
+macro index,pager d "<delete-message><next-new>"
 macro index,pager = "<delete-pattern>~=<enter>"
 macro index,pager w "<read-thread><next-new>"
 
@@ -116,6 +116,8 @@ macro index,pager f "<enter-command>source ~/.mutt/default<enter><forward-messag
 macro index,pager \'f "<enter-command>source ~/.mutt/hep<enter><forward-message>"
 
 # Bindings.
+bind generic,pager < first-entry
+bind generic,pager > last-entry
 bind generic,pager \CU previous-page
 bind generic,pager \CF next-page
 bind generic,pager j next-line
