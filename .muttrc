@@ -116,20 +116,17 @@ macro index,pager f "<enter-command>source ~/.mutt/default<enter><forward-messag
 macro index,pager \'f "<enter-command>source ~/.mutt/hep<enter><forward-message>"
 
 # Bindings.
-bind generic zg first-entry
-bind generic zz current-middle
-bind generic zG last-entry
-bind index,pager,generic \CU previous-page
-bind index,pager,generic \CF next-page
-bind pager j next-line
-bind pager k previous-line
+bind generic,pager \CU previous-page
+bind generic,pager \CF next-page
+bind generic,pager j next-line
+bind generic,pager k previous-line
 bind index,pager J next-undeleted
 bind index,pager K previous-undeleted
 bind index x collapse-thread
 bind index X collapse-all
 bind index,generic N search-opposite
 bind index,generic ? search-reverse
-bind index,pager \CN toggle-new
+bind index \CN toggle-new
 bind index,pager \CE recall-message
 
 # Mailboxes.
