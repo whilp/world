@@ -116,8 +116,10 @@ macro index,pager f "<enter-command>source ~/.mutt/default<enter><forward-messag
 macro index,pager \'f "<enter-command>source ~/.mutt/hep<enter><forward-message>"
 
 # Bindings.
-bind generic,pager < first-entry
-bind generic,pager > last-entry
+bind index,pager E recall-message
+bind index,pager R read-thread
+bind generic < first-entry
+bind generic > last-entry
 bind generic,pager \CU previous-page
 bind generic,pager \CF next-page
 bind generic,pager j next-line
