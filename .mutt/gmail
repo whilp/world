@@ -1,4 +1,8 @@
+source ~/.mutt/edit
+
+set signature='~/.signatures/default'
+
 unset smtp_authenticators
-set from="wcmaier@gmail.com"
+my_hdr From: Will Maier <wcmaier@gmail.com>
 set smtp_pass="$my_gmail_smtp_pass"
 set smtp_url="$my_gmail_smtp_url"
