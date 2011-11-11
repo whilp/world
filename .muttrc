@@ -110,8 +110,8 @@ bind generic < first-entry
 bind generic > last-entry
 bind generic,pager \CU previous-page
 bind generic,pager \CF next-page
-bind generic,pager j next-line
-bind generic,pager k previous-line
+bind index,generic,pager j next-entry
+bind index,generic,pager k previous-entry
 bind index q sync-mailbox
 bind index,pager J next-undeleted
 bind index,pager K previous-undeleted
