@@ -24,6 +24,7 @@ set showcmd
 set showmatch
 set smartcase
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
+set tags+=./.tags;~/
 set textwidth=80
 set viminfo='200,f1
 set whichwrap=h,l,~,[,]
@@ -47,6 +48,8 @@ set softtabstop=4
 set tabstop=4
 
 " Mappings.
+map <C-]> :tab split<CR>:exec("tjump ".expand("<cword>"))<CR>
+map gf :tabnew <cfile><CR>
 noremap <C-J> <C-W>j<C-W>_
 noremap <C-K> <C-W>k<C-W>_
 nnoremap ; :
@@ -73,4 +76,5 @@ abbreviate E new
 augroup filetypes
     au!
     au BufRead,BufNewFile *		if &ft == 'make' | set ts=8 sts=0 noexpandtab | endif
+    au BufWritePost       ~/share/notes/** :silent !ctags --exclude=.tags -f ~/share/notes/.tags --language-force=notes -R ~/share/notes
 augroup END

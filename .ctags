@@ -1,0 +1,3 @@
+--langdef=notes
+--langmap=notes:.txt
+--regex-notes=/#([a-zA-Z0-9-]+)/\1/d,definition/
