@@ -77,4 +77,5 @@ augroup filetypes
     au!
     au BufRead,BufNewFile *		if &ft == 'make' | set ts=8 sts=0 noexpandtab | endif
     au BufWritePost       ~/share/notes/** :silent !ctags --exclude=.tags -f ~/share/notes/.tags --language-force=notes -R ~/share/notes
+    au BufWritePost       ~/share/todo/** :silent !ctags --exclude=.tags -f ~/share/todo/.tags --language-force=notes -R ~/share/todo
 augroup END
