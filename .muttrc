@@ -69,6 +69,7 @@ auto_view application/msword
 
 alternates -group hep "(William.Maier|wcmaier)@cern\.ch"
 alternates -group hep "wcmaier@(fnal.gov|hep.wisc.edu|wisc.edu)"
+alternates willmaier@ml1.net
 alternates "wcmaier@gmail.com"
 alternates "wcmaier@openbsd.org"
 alternative_order text/plain
