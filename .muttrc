@@ -109,8 +109,8 @@ bind index,pager E recall-message
 bind index,pager R read-thread
 bind generic < first-entry
 bind generic > last-entry
-bind generic,pager \CU previous-page
-bind generic,pager \CF next-page
+bind index,generic,pager \CU previous-page
+bind index,generic,pager \CF next-page
 bind index,generic j next-entry
 bind index,generic k previous-entry
 bind pager j next-line
