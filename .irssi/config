@@ -94,7 +94,8 @@ channels = (
   { name = "#obsd"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "porters"; chatnet = "obsd-porters"; autojoin = "yes"; },
   { name = "hackers"; chatnet = "obsd-hackers"; autojoin = "yes"; },
-  { name = "##infra-talk"; chatnet = "freenode"; autojoin = "yes"; }
+  { name = "##infra-talk"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#osg"; chatnet = "bitlbee"; autojoin = "yes"; }
 );
 
 aliases = {
