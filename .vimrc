@@ -33,8 +33,7 @@ set wildmode=list:longest,full
 set winheight=8
 set winminheight=8
 
-syntax off
-
+syntax enable
 colorscheme bw
 
 " Don't do paren matching.
