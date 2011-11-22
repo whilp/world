@@ -65,12 +65,12 @@ noremap <Leader>ci :w<Enter>:silent !hg ci<Enter><C-L>
 noremap <Leader>cr :w<Enter>:silent !hg rec<Enter><C-L>
 nmap <silent> <leader>s :set nolist!<CR>
 
-abbreviate W w
-abbreviate X x
-abbreviate Q q
-abbreviate Wq wq
-abbreviate WQ wq
-abbreviate E new
+cabbrev W w
+cabbrev X x
+cabbrev Q q
+cabbrev Wq wq
+cabbrev WQ wq
+cabbrev E new
 
 augroup filetypes
     au!
