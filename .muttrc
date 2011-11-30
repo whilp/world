@@ -92,17 +92,17 @@ macro index,pager = "<delete-pattern>~=<enter>"
 macro index,pager w "<read-thread><next-new>"
 
 macro index . "l~(~N)<enter><search>~N<enter>"
-macro pager . "<exit>l~(~N)<enter><search>~N<enter>"
+macro pager . "<exit>."
 macro index ,h "l~(~N(%Chep|%Ccms|%Cosg))<enter>"
-macro pager ,h "<exit>l~(~N(%Chep|%Ccms|%Cosg))<enter>"
+macro pager ,h "<exit>,h"
 macro index ,u "l~(~N(~yurgent))<enter>"
-macro pager ,u "<exit>l~(~N(~yurgent))<enter>"
+macro pager ,u "<exit>,u"
 macro index ,p "l~(~N(~p))<enter>"
-macro pager ,p "<exit>l~(~N(~p))<enter>"
+macro pager ,p "<exit>,p"
 macro index ,d "l~(~d<2d)<enter>"
-macro pager ,d "<exit>l~(~d<2d)<enter>"
+macro pager ,d "<exit>,d"
 macro index ,f "l~(~F)<enter>"
-macro pager ,f "<exit>l~(~F)<enter>"
+macro pager ,f "<exit>,f"
 
 # Bindings.
 bind index,pager E recall-message
