@@ -78,9 +78,9 @@ alternative_order text/plain
 # Function list: http://www.mutt.org/doc/manual/manual-6.html#functions
 
 # Profiles.
-macro index,pager \'d "<enter-command>set editor=\"tmux split-window 'mutt -F ~/.mutt/default -H %s'; sleep .1\"<enter>"
-macro index,pager \'h "<enter-command>set editor=\"tmux split-window 'mutt -F ~/.mutt/hep -H %s'; sleep .1\"<enter>"
-macro index,pager \'g "<enter-command>set editor=\"tmux split-window 'mutt -F ~/.mutt/gmail -H %s'; sleep .1\"<enter>"
+macro index,pager \'d "<enter-command>set editor=\"tmux split-window 'mutt -F ~/.mutt/default -H %s'; sleep .3\"<enter>"
+macro index,pager \'h "<enter-command>set editor=\"tmux split-window 'mutt -F ~/.mutt/hep -H %s'; sleep .3\"<enter>"
+macro index,pager \'g "<enter-command>set editor=\"tmux split-window 'mutt -F ~/.mutt/gmail -H %s'; sleep .3\"<enter>"
 
 macro index,pager <esc>f "|fdm -a stdin fetch<enter>" "Refilter"
 
