@@ -85,7 +85,7 @@ macro index,pager \'g "<enter-command>set editor=\"tmux split-window 'mutt -F ~/
 macro index,pager <esc>f "|fdm -a stdin fetch<enter>" "Refilter"
 
 macro index,pager S "|spambayes -s >/dev/null<enter>" "Mark as spam"
-macro index,pager H "|spambayes -g" "Mark as ham"
+macro index,pager H "|spambayes -g<enter>" "Mark as ham"
 macro index,pager C "<change-folder>?" "open a different folder"
 macro index,pager d "<delete-message><next-new>"
 macro index,pager = "<delete-pattern>~=<enter>"
