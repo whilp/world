@@ -1,3 +1,0 @@
-#!/bin/sh
-
-exec /usr/X11R6/bin/uxterm -e vim $*
