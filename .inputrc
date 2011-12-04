@@ -1,8 +1,8 @@
 set editing-mode vi
 set keymap vi-command
 # For vi-command mode
-"j": history-search-backward
-"k": history-search-forward
+"j": history-search-forward
+"k": history-search-backward
 set keymap vi-insert
 # For vi-insert mode
 "\e[A": history-search-backward
