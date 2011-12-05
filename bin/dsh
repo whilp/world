@@ -1,1 +1,42 @@
-ssh
+#!/bin/sh
+
+usage () {
+}
+
+master () {
+    XARGS=${DSH_XARGS:-xargs}
+    REPLSTR=${DSH_REPLSTR:-"^"}
+    PARALLEL=${DSH_PARALLEL:-16}
+    SSH=${DSH_SSH:-ssh}
+    _ROLE=client
+
+    while getopts hI:P:t: arg; do
+        case "$arg" in
+            h) usage; exit 0;;
+            I) REPLSTR="${OPTARG}";;
+            P) PARALLEL="${OPTARG}";;
+            *) usage; exit 1;;
+        esac
+    done
+    shift $(($OPTIND - 1))
+
+    export _ROLE
+    exec ${XARGS} -n1 -P${PARALLEL} -I${REPLSTR} $0 ${SSH} ^ $* 
+}
+
+client () {
+    $*
+    ret=$?
+    case $ret in
+        255) ret=1;;
+    esac
+    return $ret
+}
+
+case $_ROLE in
+    client)   role=client;;
+    master|*) role=master;;
+esac
+
+$role $*
+exit $?

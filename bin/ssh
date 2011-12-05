@@ -1,47 +1,8 @@
 #!/bin/sh
 
-# Do a bit of a dance to avoid a possible shell builtin.
-SSH_CMD=/usr/bin/ssh
-SCP_CMD=/usr/bin/scp
-DSH_CMD=/usr/local/bin/dsh
-
-# dsh environment.
-FANOUT=16
-RCMD_CMD="ssh"
-RCMD_TEST="yes"
-RCMD_TEST_TIMEOUT="3"
-RCP_CMD="scp"
-RSHPORT="22"
-DISPLAY=
-
-DSH_CMD="${DSH_CMD} -e -t -o ${RCMD_TEST_TIMEOUT} -p ${RSHPORT} -f ${FANOUT}"
-
-# Site-specific environment.
-hep () {
-    CLUSTER=~/.dsh/config-hep
-    SSHARGS="-o User=wcmaier"
-}
-lfod () {
-    CLUSTER=~/.dsh/config
-}
-
-CMD=${0##*/}
-
-SSHARGS=
-case "${SITE}" in
-    hep)   hep;;
-    *)  lfod;;
+case ${SITE} in
+    hep)    args="-oUser=wcmaier";;
+    *)      args=;;
 esac
 
-unset RCMD_USER
-RCMD_CMD_ARGS="${SSHARGS}"
-
-export CLUSTER FANOUT RCMD_CMD RCMD_TEST RCMD_TEST_TIMEOUT RCP_CMD RSHPORT
-
-case "${CMD}" in
-    dsh)    CMD="${DSH_CMD}";;
-    ssh)    CMD="${SSH_CMD} ${SSHARGS}";;
-    scp)    CMD="${SCP_CMD} ${SSHARGS}";;
-esac
-
-${CMD} $*
+exec /usr/bin/${0##*/} $args $*
