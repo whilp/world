@@ -56,8 +56,8 @@ nnoremap K <Nop>
 noremap Y y$
 noremap [[ :diffget<CR>
 noremap ]] :diffput<CR>
-noremap f :FufFile<CR>
-noremap F gw}
+noremap <silent> <Leader>f :FufFile<CR>
+noremap <silent> <Leader>F :FufRenewCache<CR>:FufFile<CR>
 noremap <Leader>p :set invpaste paste?<CR>
 noremap <Leader>s :source ~/.vimrc<Enter>
 noremap Q :x<Enter>
