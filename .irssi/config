@@ -170,7 +170,9 @@ ignores = (
     level = "ALL";
     pattern = "From conference server: ";
     regexp = "yes";
-  }
+  },
+  { mask = "babyxbrittxo2"; level = "ALL"; },
+  { mask = "xpinkyash1"; level = "ALL"; }
 );
 completions = {
   obsd = { value = "OpenBSD"; auto = "yes"; };
