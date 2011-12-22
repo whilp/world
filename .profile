@@ -141,6 +141,11 @@ if [ -r "${HOME}/bin/activate" ]; then
 fi
 export PS1="${OLDPS1}"
 
+# Local::lib
+if [ -d "${HOME}/perl5/lib/perl5" ]; then
+    eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)
+fi
+
 agent
 ulimit -n 1023
 
