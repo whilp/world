@@ -72,6 +72,7 @@ site () {
         echo "${SITE}"
     else
         SITE=$1; export SITE
+        . ~/.profile
     fi
 }
 
@@ -117,6 +118,15 @@ while [ -n "$f" -a $max -ge 0 ]; do
 done
 unset f max PLATFORM SETTINGS
 
+# Apply site-specific settings.
+case "${SITE}" in
+    hep)    HGUSER="Will Maier <wcmaier@hep.wisc.edu>"
+            ;;
+    *)      HGUSER="Will Maier <willmaier@ml1.net>"
+            ;;
+esac
+export HGUSER
+
 # SSH directories.
 (cd ~/; mkdir -p .ssh .ssh/controls .ssh/callbacks) 2>/dev/null
 
@@ -130,6 +140,11 @@ if [ -r "${HOME}/bin/activate" ]; then
     . "${HOME}/bin/activate"
 fi
 export PS1="${OLDPS1}"
+
+# Local::lib
+if [ -d "${HOME}/perl5/lib/perl5" ]; then
+    eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)
+fi
 
 agent
 ulimit -n 1023
