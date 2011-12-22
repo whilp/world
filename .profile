@@ -72,6 +72,7 @@ site () {
         echo "${SITE}"
     else
         SITE=$1; export SITE
+        . ~/.profile
     fi
 }
 
@@ -116,6 +117,15 @@ while [ -n "$f" -a $max -ge 0 ]; do
     max=$(($max - 1))
 done
 unset f max PLATFORM SETTINGS
+
+# Apply site-specific settings.
+case "${SITE}" in
+    hep)    HGUSER="Will Maier <wcmaier@hep.wisc.edu>"
+            ;;
+    *)      HGUSER="Will Maier <willmaier@ml1.net>"
+            ;;
+esac
+export HGUSER
 
 # SSH directories.
 (cd ~/; mkdir -p .ssh .ssh/controls .ssh/callbacks) 2>/dev/null
