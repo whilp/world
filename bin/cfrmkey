@@ -10,4 +10,4 @@ for NAME in $*; do
     CMD="${CMD} ${KEYSDIR}/root-${ADDR}.pub"
 done
 
-echo ${CFHOSTS} | exec xsh "${CMD}"
+echo ${CFHOSTS} | exec dsh "${CMD}"
