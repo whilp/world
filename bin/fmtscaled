@@ -1,12 +1,22 @@
 #!/usr/bin/env python
 # coding: utf-8
+"""%prog [options] value
+"""
 
 import math
 import sys
 
+from optparse import OptionParser, make_option as Opt
+
 def main():
+    optparser = OptionParser(option_list=options, usage=__doc__)
+    (opts, args) = optparser.parse_args()
+
     value = sys.argv[1]
     sys.stdout.write(fmtscaled(value) + "\n")
+
+options = [
+]
 
 SIEXPONENTS = range(24, 2, -3) + range(2, 0, -1)
 SIEXPONENTS += [0] + [-x for x in SIEXPONENTS[::-1]]
