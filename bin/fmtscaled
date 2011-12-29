@@ -1,6 +1,17 @@
 #!/usr/bin/env python
 # coding: utf-8
-"""%prog [options] value
+"""%prog [options] <value> [unit]
+
+Format *value* for display using a loosely human-readable format. The --format
+option accepts Python format strings:
+
+    http://docs.python.org/library/string.html#formatstrings
+
+*unit* may be specified as the optional second positional argument or using the
+--unit option. For example:
+
+    $ fmtscaled -f "{scaled:.2f}{prefix}{unit}" 1024000000000 B
+    1.02TB
 """
 
 import math
@@ -25,12 +36,15 @@ def main():
     format = opts.format
     unit = opts.unit
 
-    (value,) = args
+    try:
+        (value, unit) = args
+    except ValueError:
+        (value,) = args
+        
     sys.stdout.write(fmtscaled(value, format=format, unit=unit) + "\n")
 
 options = [
-    Opt("-f", "--format", default=SIFORMAT,
-        help="format string (for Python's `str.format`)"),
+    Opt("-f", "--format", default=SIFORMAT, help="format string"),
     Opt("-u", "--unit", default="", help="unit (eg 'B')"),
 ]
 
