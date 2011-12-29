@@ -8,16 +8,7 @@ import sys
 
 from optparse import OptionParser, make_option as Opt
 
-def main():
-    optparser = OptionParser(option_list=options, usage=__doc__)
-    (opts, args) = optparser.parse_args()
-
-    value = sys.argv[1]
-    sys.stdout.write(fmtscaled(value) + "\n")
-
-options = [
-]
-
+SIFORMAT = "{scaled:0.1f} {prefix}{unit}"
 SIEXPONENTS = range(24, 2, -3) + range(2, 0, -1)
 SIEXPONENTS += [0] + [-x for x in SIEXPONENTS[::-1]]
 SIPREFIXES = (
@@ -27,7 +18,23 @@ SIPREFIXES = (
 )
 SI = zip(SIEXPONENTS, SIPREFIXES)
 
-def fmtscaled(number, format="{scaled:0.1f} {prefix}{unit}", unit=""):
+def main():
+    optparser = OptionParser(option_list=options, usage=__doc__)
+    (opts, args) = optparser.parse_args()
+
+    format = opts.format
+    unit = opts.unit
+
+    (value,) = args
+    sys.stdout.write(fmtscaled(value, format=format, unit=unit) + "\n")
+
+options = [
+    Opt("-f", "--format", default=SIFORMAT,
+        help="format string (for Python's `str.format`)"),
+    Opt("-u", "--unit", default="", help="unit (eg 'B')"),
+]
+
+def fmtscaled(number, format=SIFORMAT, unit=""):
     number = float(number)
     l10 = math.log10(number) if number != 0 else 0
     for exponent, prefix in SI:
