@@ -1,0 +1,35 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+import math
+import sys
+
+def main():
+    value = sys.argv[1]
+    sys.stdout.write(fmtscaled(value) + "\n")
+
+SIEXPONENTS = range(24, 2, -3) + range(2, 0, -1)
+SIEXPONENTS += [0] + [-x for x in SIEXPONENTS[::-1]]
+SIPREFIXES = (
+    "Y", "Z", "E", "P", "T", "G", "M", "k", "h", "da",
+    "",
+    "d", "c", "m", "μ", "n", "p", "f", "a", "z", "y"
+)
+SI = zip(SIEXPONENTS, SIPREFIXES)
+
+def fmtscaled(number, format="{scaled:0.1f} {prefix}{unit}", unit=""):
+    number = float(number)
+    l10 = math.log10(number) if number != 0 else 0
+    for exponent, prefix in SI:
+        if exponent <= l10:
+            break
+    scaled = number/(10.0**exponent)
+
+    return format.format(number=number, scaled=scaled, prefix=prefix, unit=unit)
+
+if __name__ == "__main__":
+    try:
+        ret = main()
+    except KeyboardInterrupt:
+        ret = None
+    sys.exit(ret)
