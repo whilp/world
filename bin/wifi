@@ -71,7 +71,7 @@ case $1 in
         wpa Hogswaddle w1sconsinwiscons1n
         ${DHCLIENT};;
     jph) # johnson public house
-        wpa "Johnson Public House" anjilanaka
+        wpa "Johnson Public House" easypassword101
         ${DHCLIENT};;
     ma*) # manna
         wep Manna mannanet
