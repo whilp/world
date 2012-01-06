@@ -1,4 +1,4 @@
-# vim: set noexpandtab nospell:
+# vim: set noexpandtab ts=8 sts=8 sw=8 nospell:
 
 ## HEP
 alias RQ			HEP Request		<help@hep.wisc.edu>
@@ -38,7 +38,9 @@ alias andrea.sciaba		Andrea Sciaba		<Andrea.Sciaba@cern.ch>
 alias bockjoo.kim		Bockjoo Kim		<bockjoo@phys.ufl.edu>
 alias brian.bockelman		Brian Bockelman		<bbockelm@cse.unl.edu>
 alias burt.holzman		Burt Holzman		<burt@fnal.gov>
+alias carl.lundstedt		Carl Lundstedt		<clundst@unlserve.unl.edu>
 alias evan.friis		Evan Friis		<evan.klose.friis@cern.ch>
+alias garhan.attebury		Garhan Attebury		<attebury@cse.unl.edu>
 alias ian.fisk			Ian Fisk		<ifisk@fnal.gov>
 alias jeff.haas			Jeff Haas		<jdhaas@gmail.com>
 alias jeff.klukas		Jeff Klukas		<klukas@wisc.edu>
