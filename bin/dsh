@@ -21,7 +21,7 @@ master () {
     shift $(($OPTIND - 1))
 
     export _ROLE
-    exec ${XARGS} -n1 -P${PARALLEL} -I${REPLSTR} $0 ${SSH} ^ $* 
+    exec ${XARGS} -n1 -P${PARALLEL} -I${REPLSTR} $0 ${SSH} ${REPLSTR} $* 
 }
 
 client () {
