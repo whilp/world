@@ -45,7 +45,7 @@ case $1 in
         wap apnet3.0 1409badgers
         ${DHCLIENT};;
     ay*) # aytan's
-        wpa 3humans2cats1dog 'TheSma11estCh0w!' chan 6 bssid 68:7f:74:8a:b2:a1
+        wpa 420partyhaus '694201337' chan 6 bssid c0:c1:c0:d3:89:75
         ${DHCLIENT};;
     b*) # bradbury's
         plain nwid bradbury\'s
