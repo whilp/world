@@ -59,7 +59,7 @@ cmd.vimdiff = vimdiff
 opts.vimdiff = -o
 
 [email]
-from = Will Maier <willmaier@ml1.net>
+from = Will Maier <wcmaier@m.aier.us>
 method = sendmail
 
 [trusted]

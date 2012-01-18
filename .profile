@@ -122,7 +122,7 @@ unset f max PLATFORM SETTINGS
 case "${SITE}" in
     hep)    HGUSER="Will Maier <wcmaier@hep.wisc.edu>"
             ;;
-    *)      HGUSER="Will Maier <willmaier@ml1.net>"
+    *)      HGUSER="Will Maier <wcmaier@m.aier.us>"
             ;;
 esac
 export HGUSER
