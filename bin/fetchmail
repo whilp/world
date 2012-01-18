@@ -1,8 +1,15 @@
 #!/bin/sh
 
 LOG=~/.fdm/errors
+FDM="/usr/local/bin/fdm -q
+    -a system
+    -a wcmaier@m.aier.us
+    -a wcmaier@gmail.com
+    -a wcmaier@hep.wisc.edu
+    -a willmaier@ml1.net
+    fetch"
 chmod go-rwx ~/.fdm.conf ~/.fdm/*
-/usr/local/bin/fdm -qa system fetch 2>&1 | while read LINE; do
+${FDM} 2>&1 | while read LINE; do
     DATE=$(date '+%Y.%m.%dT%H:%M:%S-%Z')
     echo "${DATE} ${LINE}" >> "${LOG}"
 done
