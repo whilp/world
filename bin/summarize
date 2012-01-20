@@ -6,16 +6,20 @@ def main():
     input = sys.stdin
     data = [intorfloat(x) for x in input]
     n = len(data)
-    stats = (
+    stats = [(key, data[index]) for key, index in (
         ("min", 0),
-        ("25th", n/4),
-        ("med", n/2),
-        ("75th", 3*n/4),
+        ("q1", n/4),
+        ("q2", n/2),
+        ("q3", 3*n/4),
         ("max", -1),
-    )
+    )]
+    statsd = dict(stats)
 
-    chunks = ["n %d" % n]
-    chunks.extend("%s %s" % (key, data[index]) for key, index in stats)
+    chunks = [
+        "n %d" % n,
+        "iqr %s" % abs(statsd["q1"] - statsd["q3"]),
+        ]
+    chunks.extend("%s %s" % (key, value) for key, value in stats)
 
     sys.stdout.write("; ".join(chunks) + "\n")
 
