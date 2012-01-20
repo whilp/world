@@ -1,0 +1,32 @@
+#!/usr/bin/env python
+
+import sys
+
+def main():
+    input = sys.stdin
+    data = [intorfloat(x) for x in input]
+    n = len(data)
+    stats = (
+        ("min", 0),
+        ("25th", n/4),
+        ("med", n/2),
+        ("75th", 3*n/4),
+        ("max", -1),
+    )
+
+    chunks = ["n %d" % n]
+    chunks.extend("%s %s" % (key, data[index]) for key, index in stats)
+
+    sys.stdout.write("; ".join(chunks) + "\n")
+
+def intorfloat(value):
+    try:
+        return int(value)
+    except ValueError:
+        return float(value)
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except KeyboardInterrupt:
+        sys.exit(None)
