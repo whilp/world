@@ -6,37 +6,36 @@ _vi () {
 }
 
 _vim () {
-	msg="$1"
-
-    sed -re '1,/^HG: --/d' < "$msg" > diff
-
-    (echo; sed -nre "s/^HG: changed (.*)/\1/p" < "$msg" | xargs -r $hg diff --stat) >> diff
-    (echo; sed -nre "s/^HG: changed (.*)/\1/p" < "$msg" | xargs -r $hg diff; echo) >> diff
-
-    touch msg
     ${EDITOR} \
         "+startinsert" \
         "+e diff" \
         "+set buftype=help filetype=diff" \
-        "+split msg" \
+        "+split $1" \
         "+resize 5" || return $?
-    [ -s msg ] || return 1
+    [ -s $1 ] || return 1
 
-    mv msg "$msg"
     return $?
 }
 
 msg=$(readlink -f "$1")
 tmp=$(umask 077 && mktemp -td .hgeditor-XXXXXXXX)
+pwd="$PWD"
 trap "rm -rf $tmp" 0 1 2 3 6 15
-hg="hg -R $PWD"
-
-fn=_$(basename ${EDITOR})
 
 (
 cd "$tmp"
-$fn "$msg"
-return $?
-)
+touch msg
+sed -re '1,/^HG: --/d' < "$msg" > msg
+sed -nre "s/^HG: changed //p" < "$msg" > paths
 
+(cd "$pwd"; xargs hg diff --stat) < paths > stat
+(cd "$pwd"; xargs hg diff) < paths > diffs
+
+(cat stat; echo; cat diffs) > diff
+
+fn=_$(basename ${EDITOR})
+
+$fn msg
+mv msg "$msg"
+)
 exit $?
