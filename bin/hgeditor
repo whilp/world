@@ -24,8 +24,8 @@ trap "rm -rf $tmp" 0 1 2 3 6 15
 
 (
 cd "$tmp"
-touch msg
-sed -re '1,/^HG: --/d' < "$msg" > msg
+echo "" > msg
+sed -re '1,/^HG: --/d' < "$msg" >> msg
 sed -nre "s/^HG: changed //p" < "$msg" > paths
 
 (cd "$pwd"; xargs hg diff --stat) < paths > stat
