@@ -378,6 +378,7 @@ CMD=mpc
 case "$1" in
     forward|nowplaying|state|toggleplay) CMD=$1; shift;;
     playlist) shift; set -- playlistinfo $*;;
+    ls) shift; set -- listall $*;;
 esac
 
 ${CMD} $*
