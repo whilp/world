@@ -374,9 +374,11 @@ HOST=${SERVER%:*}
 PORT=${SERVER#*:}
 PORT=${PORT:-6600}
 
+CMD=mpc
 case "$1" in
-    forward|nowplaying|state|toggleplay) CMD=$1; shift; ${CMD} $*;;
-    *) mpc $*;;
+    forward|nowplaying|state|toggleplay) CMD=$1; shift;;
+    playlist) shift; set -- playlistinfo $*;;
 esac
 
+${CMD} $*
 exit $?
