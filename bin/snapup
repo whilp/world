@@ -32,5 +32,9 @@ main () {
     return $?
 }
 
+if [ `id -u` != 0 ]; then
+    exec sudo $0 $*
+fi
+
 main 2>&1 | tee upgrade.log
 exit $?
