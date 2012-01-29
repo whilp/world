@@ -48,7 +48,7 @@ case $1 in
         wpa 420partyhaus '694201337' chan 6 bssid c0:c1:c0:d3:89:75
         ${DHCLIENT};;
     b*) # bradbury's
-        plain nwid bradbury\'s
+        plain nwid Bradbury\'s
         ${DHCLIENT};;
     ch*) # chamberlin
         plain nwid UWNet-Chamberlin
