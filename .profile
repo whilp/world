@@ -75,6 +75,9 @@ site () {
         . ~/.profile
     fi
 }
+screenshot () {
+    xwd -root | xwdtopnm | pnmtopng "$1"
+}
 
 # Aliases.
 alias curl="curl -s"
