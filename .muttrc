@@ -69,7 +69,7 @@ auto_view */x-gunzip */x-tar-gz
 auto_view application/msword
 
 alternates -group hep "(William.Maier|wcmaier)@cern\.ch"
-alternates -group hep "wcmaier@(fnal.gov|hep.wisc.edu|wisc.edu)"
+alternates -group hep "wcmaier@(fnal.gov|physics.wisc.edu|hep.wisc.edu|wisc.edu)"
 alternates willmaier@ml1.net
 alternates wcmaier@m.aier.us
 alternates will@m.aier.us
@@ -83,6 +83,7 @@ alternative_order text/plain
 # Profiles.
 macro index,pager \'d "<enter-command>set editor=\"tmux new-window 'mutt -F ~/.mutt/default -H %s'; sleep .3\"<enter>"
 macro index,pager \'h "<enter-command>set editor=\"tmux new-window 'mutt -F ~/.mutt/hep -H %s'; sleep .3\"<enter>"
+macro index,pager \'p "<enter-command>set editor=\"tmux new-window 'mutt -F ~/.mutt/physics -H %s'; sleep .3\"<enter>"
 macro index,pager \'g "<enter-command>set editor=\"tmux new-window 'mutt -F ~/.mutt/gmail -H %s'; sleep .3\"<enter>"
 macro index,pager e "<enter-command>set editor=\"tmux new-window 'vim %s'; sleep .3\"<enter><edit>'d"
 
@@ -147,7 +148,7 @@ hdr_order date from to cc subject message-id x-mailer user-agent
 subscribe -group bsd (source|ports|hackers|ports|misc|tech|www|bugs)@(cvs.)?openbsd.org
 subscribe -group cms cms-[[:graph:]]+@fnal.gov
 subscribe -group cms hn-cms-[[:graph:]]+@cern.ch
-subscribe -group hep "root@[[:graph:]]*hep.wisc.edu"
+subscribe -group hep "root@[[:graph:]]*(hep|physics).wisc.edu"
 subscribe -group hep (afs-folks|cmsops|help)@hep.wisc.edu
 subscribe -group hep (it-staff|physics-all)@physics.wisc.edu
 subscribe -group osg osg-[[:graph:]]+@OPENSCIENCEGRID.ORG
