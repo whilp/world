@@ -6,6 +6,7 @@ FDM="/usr/local/bin/fdm -q
     -a wcmaier@m.aier.us
     -a wcmaier@gmail.com
     -a wcmaier@hep.wisc.edu
+    -a wcmaier@physics.wisc.edu
     -a willmaier@ml1.net
     fetch"
 chmod go-rwx ~/.fdm.conf ~/.fdm/*
