@@ -95,6 +95,7 @@ alias tmux="tmux -S ${TMUX_SOCK}"
 alias vi="${VISUAL}"
 alias vimdiff="vimdiff -o"
 alias xinit="xinit -- -nolisten tcp"
+alias gist="(cd ~/share/gist && ./gist)"
 
 # Platform- and host-specific configuration directories.
 PROFILES="${HOME}/.profiles"
