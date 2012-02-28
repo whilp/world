@@ -18,6 +18,7 @@ set ascii_chars=yes
 set autoedit=yes
 set beep_new=yes
 set certificate_file=~/.mutt.certificates
+set charset=utf-8
 set copy=yes
 set delete=yes
 set duplicate_threads
@@ -29,6 +30,7 @@ set help=no
 set include=yes
 set index_format="%4C %[%y-%m-%dT%H:%M] %M%Z %s %*    %L"
 set ispell="aspell -e -c"
+set locale=en_US.UTF-8
 set mail_check=5
 set maildir_header_cache_verify=no
 set mark_old=no
