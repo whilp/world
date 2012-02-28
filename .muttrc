@@ -96,7 +96,7 @@ macro index,pager d "<delete-message><next-new>"
 macro index,pager = "<delete-pattern>~=<enter>"
 macro index,pager w "<read-thread><next-new>"
 
-macro index . "l~(~N)<enter><search>~N<enter><collapse-all>"
+macro index . "l~(~N)<enter><search>~N<enter>"
 macro pager . "<exit>."
 macro index ,h "l~(~N(%Chep|%Ccms|%Cosg))<enter><collapse-all>"
 macro pager ,h "<exit>,h"
