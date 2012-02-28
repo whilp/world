@@ -13,6 +13,7 @@ set ignorecase
 set incsearch
 set indentexpr="-1"
 set laststatus=2
+set lbr
 set listchars=tab:>-,trail:·,eol:$
 set nobackup
 set nocompatible
