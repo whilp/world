@@ -87,6 +87,7 @@ macro index,pager \'d "<enter-command>set editor=\"tmux new-window 'mutt -F ~/.m
 macro index,pager \'h "<enter-command>set editor=\"tmux new-window 'mutt -F ~/.mutt/hep -H %s'; sleep .3\"<enter>"
 macro index,pager \'p "<enter-command>set editor=\"tmux new-window 'mutt -F ~/.mutt/physics -H %s'; sleep .3\"<enter>"
 macro index,pager \'g "<enter-command>set editor=\"tmux new-window 'mutt -F ~/.mutt/gmail -H %s'; sleep .3\"<enter>"
+macro index,pager \'m "<enter-command>set editor=\"tmux new-window 'mutt -F ~/.mutt/ml1 -H %s'; sleep .3\"<enter>"
 macro index,pager e "<enter-command>set editor=\"tmux new-window 'vim %s'; sleep .3\"<enter><edit>'d"
 
 macro index,pager <esc>f "|fdm -a stdin fetch<enter>" "Refilter"
