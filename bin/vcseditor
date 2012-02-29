@@ -40,7 +40,6 @@ _giteditor () {
     (cd "$pwd"; xargs git diff HEAD^) < paths > diffs
 
     (cat stat; echo; cat diffs) > diff
-    cat diff
 }
 
 (
