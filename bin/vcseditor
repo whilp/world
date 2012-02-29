@@ -18,10 +18,11 @@ _vim () {
 }
 
 msg=$(readlink -f "$1")
-tmp=$(umask 077 && mktemp -td .hgeditor-XXXXXXXX)
+tmp=$(umask 077 && mktemp -td .vcseditor-XXXXXXXX)
 pwd="$PWD"
 trap "rm -rf $tmp" 0 1 2 3 6 15
 
+_hgeditor () {
 (
 cd "$tmp"
 echo "" > msg
@@ -38,4 +39,10 @@ fn=_$(basename ${EDITOR})
 $fn msg
 mv msg "$msg"
 )
+}
+
+case "$0" in
+    *hgeditor) _hgeditor $*;;
+esac
+
 exit $?
