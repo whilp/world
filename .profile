@@ -123,13 +123,18 @@ done
 unset f max PLATFORM SETTINGS
 
 # Apply site-specific settings.
+GIT_COMMITTER_NAME="Will Maier"
 case "${SITE}" in
     hep)    HGUSER="Will Maier <wcmaier@hep.wisc.edu>"
+            GIT_COMMITTER_EMAIL="wcmaier@hep.wisc.edu"
             ;;
     *)      HGUSER="Will Maier <wcmaier@m.aier.us>"
+            GIT_COMMITTER_EMAIL="wcmaier@m.aier.us"
             ;;
 esac
-export HGUSER
+GIT_AUTHOR_NAME=$GIT_COMMITTER_NAME
+GIT_AUTHOR_EMAIL=$GIT_COMMITTER_EMAIL
+export HGUSER GIT_AUTHOR_NAME GIT_AUTHOR_EMAIL GIT_COMMITTER_NAME GIT_COMMITTER_EMAIL
 
 # SSH directories.
 (cd ~/; mkdir -p .ssh .ssh/controls .ssh/callbacks) 2>/dev/null
