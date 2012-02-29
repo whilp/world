@@ -1,6 +1,8 @@
 [alias]
 	st = status -s
 	ci = commit
+	glog = log --oneline --decorate --graph
+	tags = tag -l
 [format]
 	pretty = format:"%h:%p %d %ai %ce%n  %s%n"
 [core]
