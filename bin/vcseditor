@@ -23,7 +23,6 @@ pwd="$PWD"
 trap "rm -rf $tmp" 0 1 2 3 6 15
 
 _hgeditor () {
-    echo "" > msg
     sed -re '1,/^HG: --/d' < "$msg" >> msg
     sed -nre "s/^HG: changed //p" < "$msg" > paths
 
@@ -34,10 +33,21 @@ _hgeditor () {
 }
 
 _giteditor () {
+    sed -re '1,3d; 5,7d; $d' < "$msg" >> msg
+    sed -nre "s/^.*modified: *//p" < "$msg" > paths
+
+    (cd "$pwd"; xargs git diff --stat HEAD^) < paths > stat
+    (cd "$pwd"; xargs git diff HEAD^) < paths > diffs
+
+    (cat stat; echo; cat diffs) > diff
+    cat diff
 }
 
 (
 cd "$tmp"
+
+echo "" > msg
+echo "" > diff
 
 case "$0" in
     *hgeditor) _hgeditor $*;;
