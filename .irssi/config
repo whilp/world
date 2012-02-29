@@ -209,6 +209,7 @@ settings = {
     beep_msg_level = "MSGS HILIGHT";
     autoclose_query = "86400";
     activity_hide_targets = "#openbsd #obsd #metabug hackers porters #osg-software ##infra-talk";
+    term_charset = "utf-8";
   };
   "irc/core" = { alternate_nick = "will_"; };
   "perl/core/scripts" = {
