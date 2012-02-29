@@ -1,5 +1,5 @@
 [alias]
-	st = status
+	st = status -s
 	ci = commit
 [format]
 	pretty = format:"%h:%p %d %ai %ce%n  %s%n"
