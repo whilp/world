@@ -1,0 +1,7 @@
+[alias]
+	st = status
+	ci = commit
+[format]
+	pretty = format:"%h:%p %d %ai %ce%n  %s%n"
+[core]
+	editor = giteditor
