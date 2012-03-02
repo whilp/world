@@ -35,7 +35,6 @@ set mail_check=5
 set maildir_header_cache_verify=no
 set mark_old=no
 set markers=no
-set mask='!^(\.[^.]|attic|.*log)'
 set mbox_type=Maildir
 set move=no
 set narrow_tree
