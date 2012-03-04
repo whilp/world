@@ -13,6 +13,7 @@ set smime_default_key = "33e3e0cc.0"
 set smime_timeout = "28800"
 
 # Settings.
+set abort_unmodified=no
 set alias_file="~/.mutt/aliases"
 set ascii_chars=yes
 set autoedit=yes
