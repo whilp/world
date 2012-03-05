@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -x
 
 _vi () {
     ${EDITOR} "$1"
@@ -17,14 +17,14 @@ _vim () {
     return $?
 }
 
-msg=$(readlink -f "$1")
-tmp=$(umask 077 && mktemp -td .vcseditor-XXXXXXXX)
 pwd="$PWD"
+msg="$1"
+tmp=$(umask 077 && mktemp -dt .vcseditor)
 trap "rm -rf $tmp" 0 1 2 3 6 15
 
 _hgeditor () {
-    sed -re '1,/^HG: --/d' < "$msg" >> msg
-    sed -nre "s/^HG: changed //p" < "$msg" > paths
+    sed -Ee '1,/^HG: --/d' < "$msg" >> msg
+    sed -nEe "s/^HG: changed //p" < "$msg" > paths
 
     (cd "$pwd"; xargs hg diff --stat) < paths > stat
     (cd "$pwd"; xargs hg diff) < paths > diffs
@@ -33,8 +33,8 @@ _hgeditor () {
 }
 
 _giteditor () {
-    sed -re '1,3d; 5,7d; $d' < "$msg" >> msg
-    sed -nre "s/^.*modified: *//p" < "$msg" > paths
+    sed -Ee '1,3d; 5,7d; $d' < "$msg" >> msg
+    sed -nEe "s/^.*modified: *//p" < "$msg" > paths
 
     (cd "$pwd"; xargs git diff --stat HEAD) < paths > stat
     (cd "$pwd"; xargs git diff HEAD) < paths > diffs
