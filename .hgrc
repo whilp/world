@@ -2,7 +2,7 @@
 editor = ~/bin/hgeditor
 merge = vimdiff -o
 ignore = ~/.mercurial/ignores
-remotecmd = ~/bin/hg
+remotecmd = bin/hg
 style = compact
 
 [diff]
