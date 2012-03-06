@@ -91,6 +91,7 @@ macro index,pager e "<enter-command>set editor=\"tmux new-window 'vim %s'; sleep
 
 macro index,pager <esc>f "|fdm -a stdin fetch<enter>" "Refilter"
 
+macro index,pager d "<delete-message><next-entry>"
 macro index,pager H "<pipe-message>dspam --user will --class=innocent --source=error<enter>"
 macro index,pager S "<pipe-message>dspam --user will --class=spam --source=error<enter><save-message>+Spam<enter><enter>"
 macro index,pager C "<change-folder>?" "open a different folder"
