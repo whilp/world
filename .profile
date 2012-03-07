@@ -4,12 +4,9 @@ EDITOR="$($WHICH vim 2>/dev/null)" || \
     EDITOR="$($WHICH nvi 2>/dev/null)" || \
     EDITOR="$($WHICH vi)"
 VISUAL=${EDITOR}
-ENV="~/.kshrc"
 SHELL_OLD="${SHELL}"
-SHELL="$($WHICH mksh 2>/dev/null)" || \
+SHELL="$($WHICH bash 2>/dev/null)" || \
     SHELL="$($WHICH ksh 2>/dev/null)" || \
-    SHELL="$($WHICH zsh 2>/dev/null)" || \
-    SHELL="$($WHICH bash 2>/dev/null)" || \
     SHELL="$($WHICH sh)"
 HISTFILE=~/.history
 HOSTNAME="$(hostname -s)"
@@ -17,14 +14,13 @@ LANG="en_US.UTF-8"
 LESSHISTFILE=
 OLDMAIL="${MAIL}"
 MAIL=""
-MAXPS1LEN=30
 PAGER="less -iX"
 PATH="$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin:/usr/games"
 SSH="$(which ssh)"
 TMUX_SOCK=~/.tmux/sock
 
 export EDITOR ENV HISTFILE HOSTNAME LANG LESSHISTFILE 
-export MAIL MAXPS1LEN OLDMAIL PATH PAGER SHELL TMUX_SOCK
+export MAIL OLDMAIL PATH PAGER SHELL TMUX_SOCK
 unset WHICH
 
 # CVS.
@@ -157,6 +153,69 @@ fi
 
 agent
 ulimit -n 1023
+
+BOLD=$(tput bold)
+UNBOLD=$(tput sgr0)
+
+ps1 () {
+    if [ -n "$*" ]; then
+        ARG=$1; OPTARG=$2
+        case "${ARG}" in
+            -s) export PS1SESSION="${OPTARG}";;
+            -l) case "${OPTARG}" in
+                    [+-]*) MAXPS1LEN="$((${MAXPS1LEN:-0} + ${OPTARG}))";;
+                    *) MAXPS1LEN="${OPTARG}";;
+                esac;;
+        esac
+        return 0
+    fi
+
+    typeset PS1PWD=
+    typeset PS1SESSION="${PS1SESSION:-${HOSTNAME}}"
+    typeset MAXPS1LEN=$((${MAXPS1LEN:-20} - 5 - ${#PS1SESSION}))
+    case "${PWD}" in
+        "${HOME}") PS1PWD='~';;
+        "${HOME}"/*) PS1PWD='~'"${PWD#${HOME}}";;
+        *) PS1PWD="${PWD}";;
+    esac
+
+    typeset TILDE=
+    if [ -z "${PS1PWD%%\~*}" ]; then
+        TILDE="~"
+        PS1PWD="${PS1PWD#\~}"
+        MAXPS1LEN=$((${MAXPS1LEN} - 1))
+    fi
+    typeset LAST="${PS1PWD##*/}"
+    typeset TRUNCATE=
+    if [ "${#LAST}" -gt "${MAXPS1LEN}" ]; then
+        # Truncate.
+        typeset -R"$((${MAXPS1LEN} + 1))" TMPLAST="${LAST}"
+        TRUNCATE=1
+        LAST="${TMPLAST#?}"
+    else
+        while [ -n "${PS1PWD}" -a "${#LAST}" -lt "${MAXPS1LEN}" ]; do
+            PS1PWD="${PS1PWD%/*}"
+            LAST="${PS1PWD##*/}/${LAST#/}"
+        done
+        typeset -R"${MAXPS1LEN}" TMPLAST="${LAST}"
+        if [ -n "${PS1PWD}" ]; then
+            LAST="${TMPLAST}"
+            TRUNCATE=1
+        fi
+    fi
+    if [ -n "${TRUNCATE}" ]; then
+        TRUNCATE="${UNBOLD}<${BOLD}"
+        TILDE=
+    fi
+    PS1PWD="${TRUNCATE}${TILDE}${LAST%/}"
+    typeset DOLLAR="$"
+    case "${USER}" in root) DOLLAR="#";; esac
+
+    echo -ne "\a${PS1SESSION}:${BOLD}${PS1PWD}${UNBOLD} ${DOLLAR}"
+}
+
+PS1="\$(ps1) "
+export PS1
 
 # Run the preferred shell (unless we're already running it).
 if [ "${SHELL##*/}" != "${SHELL_OLD##*/}" ]; then
