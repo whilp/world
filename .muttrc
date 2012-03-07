@@ -13,7 +13,6 @@ set smime_default_key = "33e3e0cc.0"
 set smime_timeout = "28800"
 
 # Settings.
-set abort_unmodified=no
 set alias_file="~/.mutt/aliases"
 set ascii_chars=yes
 set autoedit=yes
@@ -92,25 +91,12 @@ macro index,pager e "<enter-command>set editor=\"tmux new-window 'vim %s'; sleep
 
 macro index,pager <esc>f "|fdm -a stdin fetch<enter>" "Refilter"
 
+macro index,pager d "<delete-message><next-entry>"
 macro index,pager H "<pipe-message>dspam --user will --class=innocent --source=error<enter>"
-macro index,pager S "<pipe-message>dspam --user will --class=spam --source=error<enter><delete-message>"
+macro index,pager S "<pipe-message>dspam --user will --class=spam --source=error<enter><save-message>+Spam<enter><enter>"
 macro index,pager C "<change-folder>?" "open a different folder"
-macro index,pager d "<delete-message><next-new>"
 macro index,pager = "<delete-pattern>~=<enter>"
 macro index,pager w "<read-thread><next-new>"
-
-macro index . "l~(~N)<enter><search>~N<enter>"
-macro pager . "<exit>."
-macro index ,h "l~(~N(%Chep|%Ccms|%Cosg))<enter><collapse-all>"
-macro pager ,h "<exit>,h"
-macro index ,u "l~(~N(~yurgent))<enter><collapse-all>"
-macro pager ,u "<exit>,u"
-macro index ,p "l~(~N(~p))<enter><collapse-all>"
-macro pager ,p "<exit>,p"
-macro index ,d "l~(~d<2d)<enter><collapse-all>"
-macro pager ,d "<exit>,d"
-macro index ,f "l~(~F)<enter><collapse-all>"
-macro pager ,f "<exit>,f"
 
 # Bindings.
 bind index,pager E recall-message
@@ -138,7 +124,12 @@ bind index \CN toggle-new
 bind index,pager \CE recall-message
 
 # Mailboxes.
-mailboxes ~/.maildir
+set folder=~/.maildir
+set spoolfile="+INBOX"
+set mbox="+All Mail"
+set postponed="+Drafts"
+mailboxes "+INBOX" "+Drafts" "+Follow up" "+Misc" \
+        "+Priority" "+Sent Mail" "+Starred" "+Trash"
 
 # Headers.
 ignore *
@@ -168,4 +159,4 @@ subscribe ipython-[[:graph:]]+@scipy.org
 
 source "~/.mutt/smtp"
 folder-hook . "exec collapse-all"
-fcc-hook . "~/.maildir"
+fcc-hook . "+Sent Mail"

@@ -8,3 +8,4 @@ set smtp_pass="$my_maierus_smtp_pass"
 set smtp_url="$my_maierus_smtp_url"
 set crypt_autosign=no
 set hostname="m.aier.us"
+unset record
