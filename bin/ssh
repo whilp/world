@@ -2,7 +2,7 @@
 
 case ${SITE} in
     hep)    args="-oUser=wcmaier";;
-    *)      args=;;
+    *)      args="-oUser=will";;
 esac
 
 exec /usr/bin/${0##*/} $args $*
