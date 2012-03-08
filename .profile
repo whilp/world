@@ -5,9 +5,14 @@ EDITOR="$($WHICH vim 2>/dev/null)" || \
     EDITOR="$($WHICH vi)"
 VISUAL=${EDITOR}
 SHELL_OLD="${SHELL}"
-SHELL="$($WHICH bash 2>/dev/null)" || \
-    SHELL="$($WHICH ksh 2>/dev/null)" || \
-    SHELL="$($WHICH sh)"
+
+for s in /bin/bash /bin/ksh /usr/local/bin/bash /bin/sh; do
+    if [ -x $s ]; then
+        SHELL=$s
+        break
+    fi
+done
+
 HISTFILE=~/.history
 HOSTNAME="$(hostname -s)"
 LANG="en_US.UTF-8"
@@ -19,7 +24,7 @@ PATH="$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr
 SSH="$(which ssh)"
 TMUX_SOCK=~/.tmux/sock
 
-export EDITOR ENV HISTFILE HOSTNAME LANG LESSHISTFILE 
+export EDITOR HISTFILE HOSTNAME LANG LESSHISTFILE 
 export MAIL OLDMAIL PATH PAGER SHELL TMUX_SOCK
 unset WHICH
 
@@ -151,3 +156,5 @@ fi
 
 agent
 ulimit -n 1023
+
+export PS1="\a\h:$(tput bold)\w$(tput sgr0) \$ "
