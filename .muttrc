@@ -47,7 +47,7 @@ set print_split=yes
 set quit=yes
 set realname="Will Maier"
 set recall=no
-set record="^"
+set record="!"
 set resolve=no
 set reverse_name=yes
 set sig_dashes
@@ -161,4 +161,4 @@ subscribe ipython-[[:graph:]]+@scipy.org
 
 source "~/.mutt/smtp"
 folder-hook . "exec collapse-all"
-fcc-hook . "+Sent Mail"
+fcc-hook . "+INBOX"
