@@ -41,12 +41,6 @@ colorscheme bw
 let loaded_matchparen=1
 let mapleader=","
 
-" Tabs.
-set expandtab
-set shiftwidth=4
-set softtabstop=4
-set tabstop=4
-
 " Mappings.
 map <C-]> :tab split<CR>:exec("tjump ".expand("<cword>"))<CR>
 map gf :tabnew <cfile><CR>
@@ -73,9 +67,5 @@ cabbrev Wq wq
 cabbrev WQ wq
 cabbrev E new
 
-augroup filetypes
-    au!
-    au BufRead,BufNewFile *		if &ft == 'make' | set ts=8 sts=0 noexpandtab | endif
-    au BufWritePost       ~/share/notes/** :silent !ctags --exclude=.tags -f ~/share/notes/.tags --language-force=notes -R ~/share/notes
-    au BufWritePost       ~/share/todo/** :silent !ctags --exclude=.tags -f ~/share/todo/.tags --language-force=notes -R ~/share/todo
-augroup END
+au FileType python  setl sw=4 sts=4 ts=4 tw=79 ff=unix et
+au FileType make    setl ts=8 sts=0 noet
