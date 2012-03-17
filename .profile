@@ -176,4 +176,6 @@ fi
 agent
 ulimit -n 1023
 
-export PS1="\a\h:$(tput bold)\w$(tput sgr0) \$ "
+bold="\[\033[1m\]"
+off="\[\033[m\]"
+export PS1="\a\h:$bold\w$off \$ "
