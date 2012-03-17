@@ -99,6 +99,7 @@ alias gist="(cd ~/share/gist && ./gist)"
 
 path="
 $HOME/bin
+$HOME/Library/Haskell/bin
 /bin
 /sbin
 /usr/bin
