@@ -20,12 +20,11 @@ LESSHISTFILE=
 OLDMAIL="${MAIL}"
 MAIL=""
 PAGER="less -iX"
-PATH="$HOME/bin:/bin:/sbin:/usr/bin:/usr/sbin:/usr/X11R6/bin:/usr/local/bin:/usr/local/sbin:/usr/games"
 SSH="$(which ssh)"
 TMUX_SOCK=~/.tmux/sock
 
 export EDITOR HISTFILE HOSTNAME LANG LESSHISTFILE 
-export MAIL OLDMAIL PATH PAGER SHELL TMUX_SOCK
+export MAIL OLDMAIL PAGER SHELL TMUX_SOCK
 unset WHICH
 
 # CVS.
@@ -44,6 +43,12 @@ addto () {
         *) [ "${AFTER}" = "after" ] && STRING="${STRING}:${NEW}" || STRING="${NEW}:${STRING}" ;; 
     esac
     echo ${STRING}
+}
+
+addtopath () {
+    local item="$1"
+    [ -d "$item" -a -x "$item" ] || return
+    export PATH=$(addto "$item" "$PATH")
 }
 
 sleepuntil () {
@@ -91,6 +96,19 @@ alias tmux="tmux -S ${TMUX_SOCK}"
 alias vi="${VISUAL}"
 alias vimdiff="vimdiff -o"
 alias gist="(cd ~/share/gist && ./gist)"
+
+path="
+$HOME/bin
+/bin
+/sbin
+/usr/bin
+/usr/sbin
+/usr/X11R6/bin
+/usr/local/bin
+/usr/local/sbin
+/usr/games
+"
+for d in $path; do addtopath $d; done
 
 # Platform- and host-specific configuration directories.
 PROFILES="${HOME}/.profiles"
