@@ -8,3 +8,7 @@
 	pretty = format:"%h:%p %d %ai %ce%n  %s%n"
 [core]
 	editor = giteditor
+[url "git@github.com:"]
+	insteadOf = gh:
+[url "will@meta.lfod.us:share/"]
+	insteadOf = code:
