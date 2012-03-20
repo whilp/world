@@ -1,5 +1,9 @@
 #!/bin/sh
 
+abspath () {
+    cd -P -- "$(dirname -- "$1")" && echo "$(pwd -P)/$(basename -- "$1")"
+}
+
 _vi () {
     ${EDITOR} "$1"
     return $?
@@ -18,7 +22,7 @@ _vim () {
 }
 
 pwd="$PWD"
-msg="$1"
+msg="$(abspath $1)"
 tmp=$(umask 077 && \
     mktemp -dt .vcseditor >/dev/null 2>&1 || \
     mktemp -td .vcseditor-XXXXXXXX)
