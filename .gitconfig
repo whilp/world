@@ -1,6 +1,7 @@
 [alias]
 	st = status -s
 	ci = commit
+	ca = commit -a
 	glog = log --oneline --decorate --graph
 	tags = tag -l
 [format]
