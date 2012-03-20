@@ -19,7 +19,10 @@ _vim () {
 
 pwd="$PWD"
 msg="$1"
-tmp=$(umask 077 && mktemp -dt .vcseditor)
+tmp=$(umask 077 && \
+    mktemp -dt .vcseditor >/dev/null 2>&1 || \
+    mktemp -td .vcseditor-XXXXXXXX)
+
 trap "rm -rf $tmp" 0 1 2 3 6 15
 
 _hgeditor () {
