@@ -4,6 +4,7 @@
 	ca = commit -a
 	glog = log --oneline --decorate --graph
 	tags = tag -l
+	man = ls-files
 [format]
 	pretty = format:"%h:%p %d %ai %ce%n  %s%n"
 [core]
