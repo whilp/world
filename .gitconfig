@@ -5,6 +5,7 @@
 	glog = log --oneline --decorate --graph
 	tags = tag -l
 	man = ls-files
+	bare = config --bool core.bare true
 [format]
 	pretty = format:"%h:%p %d %ai %ce%n  %s%n"
 [core]
