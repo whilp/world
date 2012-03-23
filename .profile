@@ -86,7 +86,6 @@ screenshot () {
 # Aliases.
 alias curl="curl -s"
 alias dc="cd"
-alias hep="site hep"
 alias less="${PAGER}"
 alias lfod="site lfod"
 alias list="tmux ls"
@@ -140,9 +139,6 @@ unset f max PLATFORM SETTINGS
 # Apply site-specific settings.
 GIT_COMMITTER_NAME="Will Maier"
 case "${SITE}" in
-    hep)    HGUSER="Will Maier <wcmaier@hep.wisc.edu>"
-            GIT_COMMITTER_EMAIL="wcmaier@hep.wisc.edu"
-            ;;
     *)      HGUSER="Will Maier <wcmaier@m.aier.us>"
             GIT_COMMITTER_EMAIL="wcmaier@m.aier.us"
             ;;
