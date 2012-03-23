@@ -43,8 +43,8 @@ _giteditor () {
     sed -Ee '1,3d; 5,7d; $d' < "$msg" >> msg
     sed -nEe "s/^.*modified: *//p" < "$msg" > paths
 
-    (cd "$pwd"; xargs git diff --stat HEAD) < paths > stat
-    (cd "$pwd"; xargs git diff HEAD) < paths > diffs
+    (cd "$pwd"; xargs git diff --cached --stat) < paths > stat
+    (cd "$pwd"; xargs git diff --cached) < paths > diffs
 
     (cat stat; echo; cat diffs) > diff
 }
