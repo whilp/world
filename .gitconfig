@@ -6,6 +6,11 @@
 	tags = tag -l
 	man = ls-files
 	bare = config --bool core.bare true
+[mergetool]
+	prompt = false
+[merge]
+	tool = vimdiff
+	conflictstyle = diff3
 [format]
 	pretty = format:"%h:%p %d %ai %ce%n  %s%n"
 [core]
