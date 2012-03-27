@@ -17,5 +17,7 @@
 	editor = giteditor
 [url "git@github.com:"]
 	insteadOf = gh:
+[url "git@github.banksimple.com:"]
+	insteadOf = bh:
 [url "will@meta.lfod.us:share/git/"]
 	insteadOf = code:
