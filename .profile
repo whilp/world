@@ -90,6 +90,7 @@ alias less="${PAGER}"
 alias lfod="site lfod"
 alias list="tmux ls"
 alias ls="ls -F"
+alias simple='site simple'
 alias sudo='A=`alias` /usr/bin/sudo '
 alias tmux="tmux -S ${TMUX_SOCK}"
 alias vi="${VISUAL}"
@@ -139,6 +140,9 @@ unset f max PLATFORM SETTINGS
 # Apply site-specific settings.
 GIT_COMMITTER_NAME="Will Maier"
 case "${SITE}" in
+    simple) HGUSER="Will Maier <will@simple.com>"
+            GIT_COMMITTER_EMAIL="will@simple.com"
+            ;;
     *)      HGUSER="Will Maier <wcmaier@m.aier.us>"
             GIT_COMMITTER_EMAIL="wcmaier@m.aier.us"
             ;;
