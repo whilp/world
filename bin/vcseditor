@@ -24,7 +24,7 @@ _vim () {
 pwd="$PWD"
 msg="$(abspath $1)"
 tmp=$(umask 077 && \
-    mktemp -dt .vcseditor >/dev/null 2>&1 || \
+    mktemp -dt .vcseditor 2>/dev/null || \
     mktemp -td .vcseditor-XXXXXXXX)
 
 trap "rm -rf $tmp" 0 1 2 3 6 15
