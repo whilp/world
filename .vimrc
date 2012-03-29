@@ -20,7 +20,7 @@ set nocompatible
 set nofoldenable
 set nohls
 set ruler
-set scrolloff=3
+set scrolloff=2
 set showcmd
 set showmatch
 set smartcase
