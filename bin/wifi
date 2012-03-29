@@ -45,19 +45,33 @@ case $1 in
         wap apnet3.0 1409badgers
         ${DHCLIENT};;
     ay*) # aytan's
-        wpa 3humans2cats1dog 'TheSma11estCh0w!' chan 6 bssid 68:7f:74:8a:b2:a1
+        wpa 420partyhaus '694201337' chan 6 bssid c0:c1:c0:d3:89:75
         ${DHCLIENT};;
     b*) # bradbury's
-        plain nwid bradbury\'s chan 6 bssid 00:1c:10:a0:43:bd
+        plain nwid Bradbury\'s
+        ${DHCLIENT};;
+    ch*) # chamberlin
+        plain nwid UWNet-Chamberlin
+        ${DHCLIENT};;
+    co*) # Coast Plaza, Vancouver, BC
+        plain nwid Coast chan 3 bssid 00:03:52:e5:6b:d1
         ${DHCLIENT};;
     down|off)
         plain down;;
-    f*) # fnal
+    fn*) # fnal
         plain nwid fgz
         ${DHCLIENT};;
+    fu*) # fuel, wallingford, WA
+        wpa "Fuel Coffee" fuelcoffee
+        ${DHCLIENT};;
+    je) # j and e
+        wpa CordlessBaby 8G3C4XTM09 chan 4 bssid 00:18:e7:e5:c2:6c 
+        ${DHCLIENT};;
+    jo*) # josh
+        wpa Hogswaddle w1sconsinwiscons1n
+        ${DHCLIENT};;
     jph) # johnson public house
-        wpa "The Johnson Public House" pourover chan 8 bssid 90:27:e4:5d:9b:09
-        #wpa "The Johnson Public House" chan 149 bssid 90:27:e4:5d:9b:0a
+        wpa "Johnson Public House" easypassword101
         ${DHCLIENT};;
     ma*) # manna
         wep Manna mannanet
@@ -76,6 +90,9 @@ case $1 in
         ${DHCLIENT};;
     sc*) # scan
         plain scan;;
+    sf*) # SFU
+        plain nwid SFUNET chan 1 bssid 00:1f:45:64:17:78
+        ${DHCLIENT};;
     sl*) # slater
         wpa 'slater' presario
         ${DHCLIENT};;
@@ -83,7 +100,7 @@ case $1 in
         wpa CastleMagner llennoco46
         ${DHCLIENT};;
     tre*)
-        wpa Windigo 99xBetterkarma chan 11 bssid 00:0f:b3:15:ef:c3
+        wpa Johnson moneytrain
         ${DHCLIENT};;
     tru*) # truly spoken cycles
         wep 2WIRE765 4648578387 chan 6 bssid 00:21:7c:d2:d6:81

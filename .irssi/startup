@@ -20,3 +20,4 @@ run bottom
 #connect freenode
 
 mode lt_kije +w
+set term_charset utf-8

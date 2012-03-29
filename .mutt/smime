@@ -10,7 +10,7 @@ set smime_is_default
 # unset smime_ask_cert_label
 
 # Passphrase expiration
-set smime_timeout=300
+set smime_timeout=12400
 
 # Global crypto options -- these affect PGP operations as well.
 set crypt_autosign = yes

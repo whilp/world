@@ -9,4 +9,5 @@ for NAME in $*; do
     [ -z "${ADDR}" ] && continue
     CMD="${CMD} ${KEYSDIR}/root-${ADDR}.pub"
 done
-SITE=hep dsh -gcf "${CMD}"
+
+echo ${CFHOSTS} | exec dsh "${CMD}"
