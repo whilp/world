@@ -1,3 +1,4 @@
 \.(a|egg-info|o|orig|pyc|so|sw[nop])$
 ^(build|dist|pobj)$
 (_(build|static)|\.(svn|coverage|tox)|CVS|venv)$
+^\.tags$

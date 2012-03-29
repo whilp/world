@@ -1,32 +1,35 @@
 servers = (
   {
-    address = "cvs.openbsd.org";
-    chatnet = "openbsd-porters";
+    address = "localhost";
+    chatnet = "obsd-porters";
     port = "7326";
     use_ssl = "no";
     ssl_verify = "no";
+    autoconnect = "yes";
   },
   {
-    address = "cvs.openbsd.org";
-    chatnet = "openbsd-hackers";
+    address = "localhost";
+    chatnet = "obsd-hackers";
     port = "7326";
     use_ssl = "no";
     ssl_verify = "no";
+    autoconnect = "yes";
   },
-  { address = "localhost"; chatnet = "bitlbee"; port = "6667"; },
-  { 
+  {
+    address = "localhost";
+    chatnet = "bitlbee";
+    port = "6667";
+    use_ssl = "no";
+    ssl_verify = "no";
+    autoconnect = "yes";
+  },
+  {
     address = "irc.freenode.net";
     chatnet = "freenode";
     port = "6667";
-  },
-  { address = "irc.efnet.org"; chatnet = "EFNet"; port = "6667"; },
-  {
-    address = "irc.oftc.net";
-    chatnet = "oftc";
-    port = "6667";
     use_ssl = "no";
     ssl_verify = "no";
-    autoconnect = "no";
+    autoconnect = "yes";
   },
   {
     address = "silc.peereboom.us";
@@ -34,20 +37,32 @@ servers = (
     port = "706";
     use_ssl = "no";
     ssl_verify = "no";
+  },
+  {
+    address = "localhost";
+    chatnet = "obsd-porters";
+    port = "7326";
+    use_ssl = "no";
+    ssl_verify = "no";
+    autoconnect = "yes";
+  },
+  {
+    address = "localhost";
+    chatnet = "obsd-hackers";
+    port = "7326";
+    use_ssl = "no";
+    ssl_verify = "no";
+    autoconnect = "yes";
   }
 );
 
 chatnets = {
-  "openbsd-porters" = {
-    type = "ICB";
+  "obsd-porters" = { 
+    type = "IRC";
     nick = "wcmaier_p";
     username = "wcmaier";
   };
-  "openbsd-hackers" = {
-    type = "ICB";
-    nick = "wcmaier";
-    username = "wcmaier";
-  };
+  "obsd-hackers" = { type = "IRC"; nick = "wcmaier"; username = "wcmaier"; };
   silc = { type = "SILC"; nick = "wcmaier"; username = "wcmaier"; };
   freenode = {
     type = "IRC";
@@ -58,13 +73,6 @@ chatnets = {
     max_msgs = "1";
     max_modes = "4";
     max_whois = "1";
-  };
-  IRCnet = {
-    type = "IRC";
-    max_kicks = "4";
-    max_msgs = "5";
-    max_whois = "4";
-    max_query_chans = "5";
   };
   EFNet = { 
     type = "IRC";
@@ -77,19 +85,17 @@ chatnets = {
     nick = "will";
     autosendcmd = "wait 2000; /msg &bitlbee identify lesheros";
   };
-  oftc = { type = "IRC"; };
 };
 
 channels = (
-  { name = "&bitlbee"; chatnet = "bitl"; autojoin = "no"; },
-  { name = "#openbsd"; chatnet = "freenode"; autojoin = "no"; },
-  { name = "#wilug"; chatnet = "freenode"; autojoin = "no"; },
-  { name = "#metabug"; chatnet = "freenode"; autojoin = "no"; },
-  { name = "#obsd"; chatnet = "freenode"; autojoin = "no"; },
-  { name = "porters"; chatnet = "openbsd-porters"; autojoin = "no"; },
-  { name = "hackers"; chatnet = "openbsd-hackers"; autojoin = "no"; },
-  { name = "#openbsd"; chatnet = "silc"; autojoin = "no"; },
-  { name = "#porters"; chatnet = "silc"; autojoin = "no"; }
+  { name = "#openbsd"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#wilug"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#metabug"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#obsd"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "porters"; chatnet = "obsd-porters"; autojoin = "yes"; },
+  { name = "hackers"; chatnet = "obsd-hackers"; autojoin = "yes"; },
+  { name = "##infra-talk"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "#osg"; chatnet = "bitlbee"; autojoin = "yes"; }
 );
 
 aliases = {
@@ -108,7 +114,7 @@ aliases = {
   WI = "whois";
   WII = "whois $0 $0";
   WW = "whowas";
-  W = "who";
+  W = "/window goto";
   N = "names";
   M = "msg";
   T = "topic";
@@ -153,33 +159,20 @@ hilights = (
   { text = "#et"; nick = "yes"; word = "yes"; },
   { text = "#games"; nick = "yes"; word = "yes"; },
   { text = "trevor"; nick = "yes"; word = "yes"; },
-  {
-    text = ".";
-    nick = "yes";
-    word = "yes";
-    regexp = "yes";
-    channels = ( "#cmsops" );
-  },
-  {
-    text = ".";
-    nick = "yes";
-    word = "yes";
-    regexp = "yes";
-    channels = ( "#uscms-t2" );
-  },
-  {
-    text = ".";
-    nick = "yes";
-    word = "yes";
-    regexp = "yes";
-    channels = ( "#osg" );
-  }
+  { text = "wisc"; nick = "yes"; word = "yes"; }
 );
 ignores = (
   { level = "JOINS PARTS QUITS NICKS"; },
   { level = "MODES"; channels = ( "&bitlbee" ); },
   { mask = "maryrosecoeqi"; level = "ALL"; },
-  { mask = "vonciledonvanup"; level = "ALL"; }
+  { mask = "vonciledonvanup"; level = "ALL"; },
+  {
+    level = "ALL";
+    pattern = "From conference server: ";
+    regexp = "yes";
+  },
+  { mask = "babyxbrittxo2"; level = "ALL"; },
+  { mask = "xpinkyash1"; level = "ALL"; }
 );
 completions = {
   obsd = { value = "OpenBSD"; auto = "yes"; };
@@ -214,6 +207,9 @@ settings = {
     autolog = "yes";
     bell_beeps = "yes";
     beep_msg_level = "MSGS HILIGHT";
+    autoclose_query = "86400";
+    activity_hide_targets = "#openbsd #obsd #metabug hackers porters #osg-software ##infra-talk";
+    term_charset = "utf-8";
   };
   "irc/core" = { alternate_nick = "will_"; };
   "perl/core/scripts" = {
@@ -281,7 +277,7 @@ statusbar = {
     window_empty = "{sb $winref{sbservertag $tag}}";
     prompt = "{prompt $[.15]itemname}";
     prompt_empty = "{prompt $winname}";
-    topic = " $topic";
+    topic = "";
     topic_empty = " Irssi v$J - http://irssi.org/help/";
 
     # all of these treated specially, they're only displayed when needed
@@ -363,6 +359,7 @@ statusbar = {
         topic_empty = { };
         topicbarend = { priority = "100"; alignment = "right"; };
       };
+      disabled = "yes";
     };
     awl_0 = {
       items = {
@@ -451,3 +448,4 @@ windows = {
   11 = { };
 };
 mainwindows = { 1 = { first_line = "1"; lines = "38"; }; };
+

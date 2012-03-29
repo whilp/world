@@ -1,9 +1,8 @@
 [ui]
 editor = ~/bin/hgeditor
 merge = vimdiff -o
-username = Will Maier <willmaier@ml1.net>
 ignore = ~/.mercurial/ignores
-remotecmd = ~/bin/hg
+remotecmd = bin/hg
 style = compact
 
 [diff]
@@ -60,12 +59,14 @@ cmd.vimdiff = vimdiff
 opts.vimdiff = -o
 
 [email]
-from = Will Maier <willmaier@ml1.net>
+from = Will Maier <wcmaier@m.aier.us>
 method = sendmail
 
 [trusted]
 users = root
 
 [schemes]
-code = ssh://code.lfod.us/share/
-hep = ssh://wcmaier@login.hep.wisc.edu//afs/hep.wisc.edu/code/hg/repos/
+me = ssh://code.lfod.us/share/
+code = ssh://wcmaier@login.hep.wisc.edu//afs/hep.wisc.edu/code/hg/repos/
+bb = ssh://hg@bitbucket.org/
+gh = git+ssh://git@github.com/

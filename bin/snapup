@@ -1,0 +1,40 @@
+#!/bin/sh
+# http://www.openbsd.org/faq/upgrade??.html
+
+main () {
+    set -x
+
+    printf "+ *.tgz\n+ bsd*\n- *\n" |\
+    rsync -av --filter ". -" rsync://ftp5.usa.openbsd.org/snapshots/i386/ ./
+
+    [ -f bsd ] || exit 1
+
+    ncpu=`sysctl -n hw.ncpufound`
+
+    if [ "$ncpu" -eq 1 ]; then
+        kern=bsd
+    else
+        kern=bsd.mp
+    fi
+
+    rm -f /obsd && ln /bsd /obsd && cp $kern /nbsd && mv /nbsd /bsd &&\
+    cp bsd.rd bsd.mp / &&\
+    cp bsd /bsd.sp &&\
+    cp /sbin/reboot /sbin/oreboot &&\
+    tar -C / -xzphf xserv??.tgz &&\
+    tar -C / -xzphf xfont??.tgz &&\
+    tar -C / -xzphf xshare??.tgz &&\
+    tar -C / -xzphf xbase??.tgz &&\
+    tar -C / -xzphf game??.tgz &&\
+    tar -C / -xzphf comp??.tgz &&\
+    tar -C / -xzphf man??.tgz &&\
+    tar -C / -xzphf base??.tgz
+    return $?
+}
+
+if [ `id -u` != 0 ]; then
+    exec sudo $0 $*
+fi
+
+main 2>&1 | tee upgrade.log
+exit $?

@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+
+import sys
+
+def main():
+    input = sys.stdin
+    data = [intorfloat(x) for x in input]
+    n = len(data)
+    stats = [(key, data[index]) for key, index in (
+        ("min", 0),
+        ("q1", n/4),
+        ("q2", n/2),
+        ("q3", 3*n/4),
+        ("max", -1),
+    )]
+    statsd = dict(stats)
+
+    chunks = [
+        "n %d" % n,
+        "iqr %s" % abs(statsd["q1"] - statsd["q3"]),
+        ]
+    chunks.extend("%s %s" % (key, value) for key, value in stats)
+
+    sys.stdout.write("; ".join(chunks) + "\n")
+
+def intorfloat(value):
+    try:
+        return int(value)
+    except ValueError:
+        return float(value)
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except KeyboardInterrupt:
+        sys.exit(None)
