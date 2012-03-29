@@ -5,7 +5,7 @@ QUIET=
 SERVER=localhost:6600
 VERBOSE=
 
-# http://mpd.wikia.com/wiki/Protocol_Reference
+# http://www.musicpd.org/doc/protocol/
 
 shorten () {
     LENGTH=$1; shift
@@ -272,7 +272,7 @@ _filter () {
 }
 
 mpc () {
-    printf "$*\n" | nc "${HOST}" "${PORT}" | _filter
+    printf "$*\n" | nc -w 1 "${HOST}" "${PORT}" | _filter
 
     return $?
 }
@@ -374,9 +374,12 @@ HOST=${SERVER%:*}
 PORT=${SERVER#*:}
 PORT=${PORT:-6600}
 
+CMD=mpc
 case "$1" in
-    forward|nowplaying|state|toggleplay) CMD=$1; shift; ${CMD} $*;;
-    *) mpc $*;;
+    forward|nowplaying|state|toggleplay) CMD=$1; shift;;
+    playlist) shift; set -- playlistinfo $*;;
+    ls) shift; set -- listall $*;;
 esac
 
+${CMD} $*
 exit $?

@@ -1,9 +1,9 @@
 [ui]
 editor = ~/bin/hgeditor
 merge = vimdiff -o
-username = Will Maier <willmaier@ml1.net>
 ignore = ~/.mercurial/ignores
-remotecmd = ~/bin/hg
+remotecmd = bin/hg
+style = compact
 
 [diff]
 git=yes
@@ -20,6 +20,7 @@ hgext.convert =
 hgext.graphlog =
 hgext.mq =
 hgext.patchbomb =
+hgext.schemes = 
 # pip install hg-git
 hggit = 
 
@@ -35,6 +36,9 @@ dpush = push -b default
 patchn = import --no-commit
 rec = record
 relocal = rebase --keepbranches -s local -d default
+mergelocal = !$HG --config ui.merge=internal:local merge $@
+mergeother = !$HG --config ui.merge=internal:other merge $@
+mergefail = !$HG --config ui.merge=internal:fail merge $@
 
 shortin = in --style ~/.mercurial/short.style
 shin = shortin
@@ -55,8 +59,14 @@ cmd.vimdiff = vimdiff
 opts.vimdiff = -o
 
 [email]
-from = Will Maier <willmaier@ml1.net>
+from = Will Maier <wcmaier@m.aier.us>
 method = sendmail
 
 [trusted]
 users = root
+
+[schemes]
+me = ssh://code.lfod.us/share/
+code = ssh://wcmaier@login.hep.wisc.edu//afs/hep.wisc.edu/code/hg/repos/
+bb = ssh://hg@bitbucket.org/
+gh = git+ssh://git@github.com/

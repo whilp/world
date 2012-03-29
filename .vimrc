@@ -1,74 +1,74 @@
 set autoindent
 set background=light
 set backspace=indent,eol,start
+set directory-=.
+set directory+=.
 set encoding=utf-8
 set fileencodings=
 set foldmethod=indent
-set history=50
+set formatoptions+=2l
+set hidden
+set history=1000
 set ignorecase
 set incsearch
 set indentexpr="-1"
 set laststatus=2
+set lbr
+set listchars=tab:>-,trail:·,eol:$
 set nobackup
 set nocompatible
 set nofoldenable
-set number
+set nohls
 set ruler
+set scrolloff=3
 set showcmd
 set showmatch
 set smartcase
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
+set tags+=./.tags;~/
 set textwidth=80
 set viminfo='200,f1
 set whichwrap=h,l,~,[,]
 set wildmenu
-set wildmode=full
+set wildmode=list:longest,full
+set winheight=8
+set winminheight=8
 
-syntax off
-
+syntax enable
 colorscheme bw
 
 " Don't do paren matching.
 let loaded_matchparen=1
-
-" Tabs.
-set expandtab
-set shiftwidth=4
-set softtabstop=4
-set tabstop=4
+let mapleader=","
 
 " Mappings.
-inoremap <C-J> <Down>
-inoremap <C-K> <Up>
+map <C-]> :tab split<CR>:exec("tjump ".expand("<cword>"))<CR>
+map gf :tabnew <cfile><CR>
+noremap <C-J> <C-W>j<C-W>_
+noremap <C-K> <C-W>k<C-W>_
 nnoremap ; :
+nnoremap K <Nop>
 noremap Y y$
 noremap [[ :diffget<CR>
 noremap ]] :diffput<CR>
-noremap F gw}
+noremap <silent> f :FufFile<CR>
+noremap <silent> F :FufRenewCache<CR>:FufFile<CR>
+noremap <Leader>p :set invpaste paste?<CR>
+noremap <Leader>s :source ~/.vimrc<Enter>
+noremap Q :x<Enter>
+noremap <Leader>ci :w<Enter>:silent !hg ci<Enter><C-L>
+noremap <Leader>cr :w<Enter>:silent !hg rec<Enter><C-L>
+nmap <silent> <leader>s :set nolist!<CR>
 
-" (Un)expand a screenful of tabs.
-map ;4 H!Lv 4Mj
-map ;2 H!Lv 2Mj
-map ;E H!Lv EMj
-map ;e H!Lv eMj
-map ;F {!}v f
-map ;f {!}v f}
-map ;s !lv s
-map ;w :w
-map ;x :x
-map ;q :q
+cabbrev W w
+cabbrev X x
+cabbrev Q q
+cabbrev Wq wq
+cabbrev WQ wq
+cabbrev E new
 
-" Source vimrc.
-map ,v :sp $VIMRC_
-
-abbreviate W w
-abbreviate X x
-abbreviate Q q
-abbreviate Wq wq
-abbreviate WQ wq
-abbreviate E new
-
-augroup filetypes
-    au!
-    au BufRead,BufNewFile *		if &ft == 'make' | set ts=8 sts=0 noexpandtab | endif
-augroup END
+au FileType python  	setl sw=4 sts=4 ts=4 tw=79 ff=unix et
+au FileType make    	setl ts=8 sts=0 noet
+au FileType sshconfig 	setl sw=4 sts=4 ts=4 et
+au FileType vim         setl sw=4 sts=4 ts=4 et
+au FileType ruby        setl sw=4 sts=4 ts=4 et

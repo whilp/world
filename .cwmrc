@@ -1,6 +1,6 @@
 sticky yes
 
-autogroup 1     uxterm
+autogroup 1     xterm
 autogroup 2     Firefox
 autogroup 3     Chrome
 
@@ -77,7 +77,7 @@ bind MC-o      movetogroup3
 bind MC-p      movetogroup4
 
 # Other bindings.
-bind M-Return   "cwmenu"
+bind M-Return   "uxterm"
 bind M-period   delete
 bind M-j        cycle
 bind M-k        rcycle
@@ -87,7 +87,7 @@ bind M-M        vmaximize
 bind M-r        reload
 bind F1         "mpdlock"
 bind C-F1       "mpdlock -startCmd /usr/sbin/zzz"
-bind F2         "xrandr --output LVDS --auto --output VGA --off"
+bind F2         "xinput toggle-pointer 6"
 bind F5         "mpc -q pause"
 bind F6         "mpc -q previous"
 bind F7         "mpc -q next"

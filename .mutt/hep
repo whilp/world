@@ -1,6 +1,11 @@
+source ~/.mutt/edit
+
 set signature='~/.signatures/hep'
-my_hdr From: Will Maier <wcmaier@hep.wisc.edu>
 
 unset smtp_authenticators
+my_hdr From: Will Maier <wcmaier@hep.wisc.edu>
 set smtp_pass="$my_hep_smtp_pass"
 set smtp_url="$my_hep_smtp_url"
+set crypt_autosign=yes
+set hostname="hep.wisc.edu"
+set record="+Sent Mail"

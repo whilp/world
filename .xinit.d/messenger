@@ -1,2 +1,0 @@
-xterm -T master &
-WM=${EVILWM}
