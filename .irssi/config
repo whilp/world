@@ -1,4 +1,13 @@
-servers = ( );
+servers = (
+  {
+    address = "localhost";
+    chatnet = "banksimple";
+    port = "6697";
+    use_ssl = "yes";
+    ssl_verify = "no";
+    own_host = "localhost";
+  }
+);
 
 chatnets = {
   banksimple = { type = "IRC"; nick = "wcmaier"; host = "localhost"; };
