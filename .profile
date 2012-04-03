@@ -104,6 +104,8 @@ $HOME/Library/Haskell/bin
 "
 for d in $path; do addtopath $d; done
 
+[ -d "$HOME/lib" ] && export LD_LIBRARY_PATH=$(addto "$LD_LIBRARY_PATH" "$HOME/lib")
+
 # Platform- and host-specific configuration directories.
 PROFILES="${HOME}/.profiles"
 PLATFORMS="${PROFILES}/platforms"
