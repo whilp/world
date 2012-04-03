@@ -4,14 +4,6 @@ EDITOR="$($WHICH vim 2>/dev/null)" || \
     EDITOR="$($WHICH nvi 2>/dev/null)" || \
     EDITOR="$($WHICH vi)"
 VISUAL=${EDITOR}
-SHELL_OLD="${SHELL}"
-
-for s in /bin/bash /bin/ksh /usr/local/bin/bash /bin/sh; do
-    if [ -x $s ]; then
-        SHELL=$s
-        break
-    fi
-done
 
 HISTFILE=~/.history
 HOSTNAME="$(hostname -s)"
@@ -24,7 +16,7 @@ SSH="$(which ssh)"
 TMUX_SOCK=~/.tmux/sock
 
 export EDITOR HISTFILE HOSTNAME LANG LESSHISTFILE 
-export MAIL OLDMAIL PAGER SHELL TMUX_SOCK
+export MAIL OLDMAIL PAGER TMUX_SOCK
 unset WHICH
 
 # CVS.
@@ -180,3 +172,7 @@ ulimit -n 1023
 bold="\[\033[1m\]"
 off="\[\033[m\]"
 export PS1="\a\h:$bold\w$off \$ "
+
+case "$SHELL" in
+	*ksh*) export ENV=~/.kshrc;;
+esac
