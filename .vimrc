@@ -41,6 +41,9 @@ colorscheme bw
 let loaded_matchparen=1
 let mapleader=","
 
+" In netrw, edit files in a new tab.
+let g:netrw_browse_split=3
+
 " Mappings.
 map <C-]> :tab split<CR>:exec("tjump ".expand("<cword>"))<CR>
 map gf :tabnew <cfile><CR>
