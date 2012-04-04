@@ -41,12 +41,11 @@ _hgeditor () {
 }
 
 _giteditor () {
-    root=$(cd "$root"; git rev-parse --show-toplevel)
     sed -Ee '1,3d; 5,7d; $d' < "$msg" >> msg
-    sed -nEe "s/^.*modified: *//p" < "$msg" > paths
+    sed -nEe "s/^.*modified: *[\./]*//p" < "$msg" > paths
 
-    (cd "$root"; xargs git diff --cached --stat) < paths > stat
-    (cd "$root"; xargs git diff --cached) < paths > diffs
+    (cd "$root"; xargs git diff --cached --stat --) < paths > stat
+    (cd "$root"; xargs git diff --cached --) < paths > diffs
 
     (cat stat; echo; cat diffs) > diff
 }
