@@ -1,6 +1,3 @@
-load silc
-load icb
-
 script exec \$ENV{'TZ'}='UTC'\;
 
 run awl
@@ -13,11 +10,4 @@ run bitlbee_tab_completion
 run silc.pl
 run bottom
 
-#connect -silcnet SILCNet silc.comstyle.com wcmaier
-#connect -silcnet SILCNet silc.metabug.org will
-#connect -icbnet openbsd-hackers cvs.openbsd.org 7326
-#connect -icbnet openbsd-porters cvs.openbsd.org 7326
-#connect freenode
-
-mode lt_kije +w
 set term_charset utf-8
