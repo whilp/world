@@ -26,22 +26,9 @@ servers = (
 );
 
 chatnets = {
-  banksimple = { type = "IRC"; nick = "wcmaier"; host = "localhost"; };
-  freenode = {
-    type = "IRC";
-    nick = "lt_kije";
-    username = "lt_kije";
-    autosendcmd = "wait 2000; /msg NickServ identify lesheros";
-    max_kicks = "4";
-    max_msgs = "1";
-    max_modes = "4";
-    max_whois = "1";
-  };
-  bitlbee = {
-    type = "IRC";
-    nick = "will";
-    autosendcmd = "wait 2000; /msg &bitlbee identify lesheros";
-  };
+  banksimple = { type = "IRC"; nick = "will"; host = "localhost"; };
+  freenode = { type = "IRC"; nick = "lt_kije"; };
+  bitlbee = { type = "IRC"; nick = "will"; };
 };
 
 channels = (
@@ -133,7 +120,15 @@ hilights = (
   { text = "#et"; nick = "yes"; word = "yes"; },
   { text = "#games"; nick = "yes"; word = "yes"; },
   { text = "trevor"; nick = "yes"; word = "yes"; },
-  { text = "wisc"; nick = "yes"; word = "yes"; }
+  { text = "wisc"; nick = "yes"; word = "yes"; },
+  {
+    text = ".*";
+    nick = "yes";
+    word = "yes";
+    regexp = "yes";
+    channels = ( "#ops" );
+  },
+  { text = "ops"; nick = "yes"; word = "yes"; }
 );
 ignores = (
   { level = "JOINS PARTS QUITS NICKS"; },
