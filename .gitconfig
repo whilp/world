@@ -6,21 +6,12 @@
 	tags = tag -l
 	man = ls-files
 	bare = config --bool core.bare true
-[mergetool]
-	prompt = false
-[merge]
-	tool = vimdiff
-	conflictstyle = diff3
 [format]
 	pretty = format:"%h:%p %d %ai %ce%n  %s%n"
 [core]
 	editor = giteditor
 [url "git@github.com:"]
 	insteadOf = gh:
-[url "git@github.banksimple.com:"]
-	insteadOf = bh:
-[url "git@github.banksimple.com:BankSimple/"]
-	insteadOf = bs:
 [url "will@meta.lfod.us:share/git/"]
 	insteadOf = code:
 [diff]

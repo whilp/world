@@ -24,7 +24,7 @@ _vim () {
 pwd="$PWD"
 msg="$(abspath $1)"
 tmp=$(umask 077 && \
-    mktemp -dt .vcseditor 2>/dev/null || \
+    mktemp -dt .vcseditor >/dev/null 2>&1 || \
     mktemp -td .vcseditor-XXXXXXXX)
 
 trap "rm -rf $tmp" 0 1 2 3 6 15
@@ -43,8 +43,8 @@ _giteditor () {
     sed -Ee '1,3d; 5,7d; $d' < "$msg" >> msg
     sed -nEe "s/^.*modified: *//p" < "$msg" > paths
 
-    (cd "$pwd"; xargs git diff --cached --stat) < paths > stat
-    (cd "$pwd"; xargs git diff --cached) < paths > diffs
+    (cd "$pwd"; xargs git diff --stat HEAD) < paths > stat
+    (cd "$pwd"; xargs git diff HEAD) < paths > diffs
 
     (cat stat; echo; cat diffs) > diff
 }

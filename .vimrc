@@ -20,7 +20,7 @@ set nocompatible
 set nofoldenable
 set nohls
 set ruler
-set scrolloff=2
+set scrolloff=3
 set showcmd
 set showmatch
 set smartcase
@@ -67,8 +67,5 @@ cabbrev Wq wq
 cabbrev WQ wq
 cabbrev E new
 
-au FileType python  	setl sw=4 sts=4 ts=4 tw=79 ff=unix et
-au FileType make    	setl ts=8 sts=0 noet
-au FileType sshconfig 	setl sw=4 sts=4 ts=4 et
-au FileType vim         setl sw=4 sts=4 ts=4 et
-au FileType ruby        setl sw=4 sts=4 ts=4 et
+au FileType python  setl sw=4 sts=4 ts=4 tw=79 ff=unix et
+au FileType make    setl ts=8 sts=0 noet
