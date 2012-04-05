@@ -1,8 +1,10 @@
 #!/bin/sh
 
 case ${SITE} in
-    hep)    args="-oUser=wcmaier";;
+    simple)    args="-oUser=will";;
     *)      args="-oUser=will";;
 esac
 
+for arg in $*; do host=$arg; done
+printf '\033k'$host'\033\\'
 exec /usr/bin/${0##*/} $args $*

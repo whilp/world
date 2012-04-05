@@ -89,6 +89,7 @@ alias vi="${VISUAL}"
 alias vimdiff="vimdiff -o"
 alias gist="(cd ~/share/gist && ./gist)"
 
+PATH=
 path="
 $HOME/bin
 $HOME/Library/Haskell/bin
@@ -104,7 +105,10 @@ $HOME/Library/Haskell/bin
 "
 for d in $path; do addtopath $d; done
 
-[ -d "$HOME/lib" ] && export LD_LIBRARY_PATH=$(addto "$LD_LIBRARY_PATH" "$HOME/lib")
+libs="
+$HOME/lib
+"
+for d in $libs; do [ -d "$d" ] && export LD_LIBRARY_PATH=$(addto "$LD_LIBRARY_PATH" "$d"); done
 
 # Platform- and host-specific configuration directories.
 PROFILES="${HOME}/.profiles"

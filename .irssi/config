@@ -1,4 +1,21 @@
+<<<<<<< HEAD
 servers = (
+  {
+    address = "localhost";
+    chatnet = "bitlbee";
+    port = "6667";
+    use_ssl = "no";
+    ssl_verify = "no";
+    autoconnect = "yes";
+  },
+  {
+    address = "irc.freenode.net";
+    chatnet = "freenode";
+    port = "6667";
+    use_ssl = "no";
+    ssl_verify = "no";
+    autoconnect = "yes";
+  },
   {
     address = "localhost";
     chatnet = "banksimple";
@@ -11,9 +28,26 @@ servers = (
 
 chatnets = {
   banksimple = { type = "IRC"; nick = "wcmaier"; host = "localhost"; };
+  freenode = {
+    type = "IRC";
+    nick = "lt_kije";
+    username = "lt_kije";
+    autosendcmd = "wait 2000; /msg NickServ identify lesheros";
+    max_kicks = "4";
+    max_msgs = "1";
+    max_modes = "4";
+    max_whois = "1";
+  };
+  bitlbee = {
+    type = "IRC";
+    nick = "will";
+    autosendcmd = "wait 2000; /msg &bitlbee identify lesheros";
+  };
 };
 
 channels = (
+  { name = "#wilug"; chatnet = "freenode"; autojoin = "yes"; },
+  { name = "##infra-talk"; chatnet = "freenode"; autojoin = "yes"; },
   { name = "#ops"; chatnet = "banksimple"; autojoin = "yes"; },
   { name = "#simple"; chatnet = "banksimple"; autojoin = "yes"; },
   { name = "#engineering"; chatnet = "banksimple"; autojoin = "yes"; },
