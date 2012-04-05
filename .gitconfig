@@ -23,3 +23,5 @@
 	insteadOf = bs:
 [url "will@meta.lfod.us:share/git/"]
 	insteadOf = code:
+[diff]
+	tool = vimdiff
