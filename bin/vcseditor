@@ -21,31 +21,30 @@ _vim () {
     return $?
 }
 
-root="$PWD"
+pwd="$PWD"
 msg="$(abspath $1)"
 tmp=$(umask 077 && \
-    mktemp -dt .vcseditor 2>/dev/null || \
+    mktemp -dt .vcseditor >/dev/null 2>&1 || \
     mktemp -td .vcseditor-XXXXXXXX)
 
 trap "rm -rf $tmp" 0 1 2 3 6 15
 
 _hgeditor () {
-    root=$(cd "$root"; hg root)
     sed -Ee '1,/^HG: --/d' < "$msg" >> msg
     sed -nEe "s/^HG: changed //p" < "$msg" > paths
 
-    (cd "$root"; xargs hg diff --stat) < paths > stat
-    (cd "$root"; xargs hg diff) < paths > diffs
+    (cd "$pwd"; xargs hg diff --stat) < paths > stat
+    (cd "$pwd"; xargs hg diff) < paths > diffs
 
     (cat stat; echo; cat diffs) > diff
 }
 
 _giteditor () {
     sed -Ee '1,3d; 5,7d; $d' < "$msg" >> msg
-    sed -nEe "s/^.*modified: *[\./]*//p" < "$msg" > paths
+    sed -nEe "s/^.*modified: *//p" < "$msg" > paths
 
-    (cd "$root"; xargs git diff --cached --stat --) < paths > stat
-    (cd "$root"; xargs git diff --cached --) < paths > diffs
+    (cd "$pwd"; xargs git diff --stat HEAD) < paths > stat
+    (cd "$pwd"; xargs git diff HEAD) < paths > diffs
 
     (cat stat; echo; cat diffs) > diff
 }

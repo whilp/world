@@ -1,5 +1,5 @@
-#load silc
-#load icb
+load silc
+load icb
 
 script exec \$ENV{'TZ'}='UTC'\;
 
@@ -8,8 +8,8 @@ run usercount
 run nickcolor
 run tty_away
 run trackbar
-#run bitlbee_blist
-#run bitlbee_tab_completion
+run bitlbee_blist
+run bitlbee_tab_completion
 run silc.pl
 run bottom
 

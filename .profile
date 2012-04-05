@@ -4,6 +4,14 @@ EDITOR="$($WHICH vim 2>/dev/null)" || \
     EDITOR="$($WHICH nvi 2>/dev/null)" || \
     EDITOR="$($WHICH vi)"
 VISUAL=${EDITOR}
+SHELL_OLD="${SHELL}"
+
+for s in /bin/bash /bin/ksh /usr/local/bin/bash /bin/sh; do
+    if [ -x $s ]; then
+        SHELL=$s
+        break
+    fi
+done
 
 HISTFILE=~/.history
 HOSTNAME="$(hostname -s)"
@@ -16,7 +24,7 @@ SSH="$(which ssh)"
 TMUX_SOCK=~/.tmux/sock
 
 export EDITOR HISTFILE HOSTNAME LANG LESSHISTFILE 
-export MAIL OLDMAIL PAGER TMUX_SOCK
+export MAIL OLDMAIL PAGER SHELL TMUX_SOCK
 unset WHICH
 
 # CVS.
@@ -78,11 +86,11 @@ screenshot () {
 # Aliases.
 alias curl="curl -s"
 alias dc="cd"
+alias hep="site hep"
 alias less="${PAGER}"
 alias lfod="site lfod"
 alias list="tmux ls"
 alias ls="ls -F"
-alias simple='site simple'
 alias sudo='A=`alias` /usr/bin/sudo '
 alias tmux="tmux -S ${TMUX_SOCK}"
 alias vi="${VISUAL}"
@@ -132,8 +140,8 @@ unset f max PLATFORM SETTINGS
 # Apply site-specific settings.
 GIT_COMMITTER_NAME="Will Maier"
 case "${SITE}" in
-    simple) HGUSER="Will Maier <will@simple.com>"
-            GIT_COMMITTER_EMAIL="will@simple.com"
+    hep)    HGUSER="Will Maier <wcmaier@hep.wisc.edu>"
+            GIT_COMMITTER_EMAIL="wcmaier@hep.wisc.edu"
             ;;
     *)      HGUSER="Will Maier <wcmaier@m.aier.us>"
             GIT_COMMITTER_EMAIL="wcmaier@m.aier.us"
@@ -168,11 +176,3 @@ fi
 
 agent
 ulimit -n 1023
-
-bold="\[\033[1m\]"
-off="\[\033[m\]"
-export PS1="\a\h:$bold\w$off \$ "
-
-case "$SHELL" in
-	*ksh*) export ENV=~/.kshrc;;
-esac
