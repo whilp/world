@@ -25,3 +25,5 @@
 	insteadOf = code:
 [diff]
 	tool = vimdiff
+[push]
+	default = current
