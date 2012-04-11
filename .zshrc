@@ -144,3 +144,5 @@ HIST_IGNORE_ALL_DUPS=1
 HIST_IGNORE_SPACE=1
 NO_HIST_BEEP=1
 LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;34;01:ex=01;32:*.tar=01;34:*.tgz=01;34:*.gz=01;34:*.bz2=01;34:*.jpg=01;35:*.sh=103;34:*.ogg=01;31:*.mp3=01;31:*.avi=01;34:*.mpg=01;34:*.mpeg=01;34:*.wmv=01;34:*.asf=01;34'
+
+PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
