@@ -6,13 +6,14 @@
 	tags = tag -l
 	man = ls-files
 	bare = config --bool core.bare true
+	review = merge --no-commit
 [mergetool]
 	prompt = false
 [merge]
 	tool = vimdiff
 	conflictstyle = diff3
 [format]
-	pretty = format:"%h:%p %d %ai %ce%n  %s%n"
+	pretty = format:"%h %p %d %ai %ce%n  %s%n"
 [core]
 	editor = giteditor
 [url "git@github.com:"]
@@ -25,5 +26,6 @@
 	insteadOf = code:
 [diff]
 	tool = vimdiff
+	noprefix = true
 [push]
 	default = current
