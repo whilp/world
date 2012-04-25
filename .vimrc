@@ -76,3 +76,4 @@ au FileType sshconfig 	setl sw=4 sts=4 ts=4 et
 au FileType vim         setl sw=4 sts=4 ts=4 et
 au FileType sh          setl sw=4 sts=4 ts=4 et
 au FileType ruby        setl sw=2 sts=2 ts=2 et
+au FileType markdown    setl sw=2 sts=2 ts=2 et
