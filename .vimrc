@@ -1,3 +1,5 @@
+call pathogen#infect()
+
 set autoindent
 set background=light
 set backspace=indent,eol,start
@@ -35,7 +37,7 @@ set winheight=8
 set winminheight=8
 
 syntax enable
-colorscheme bw
+colorscheme solarized
 
 " Don't do paren matching.
 let loaded_matchparen=1
