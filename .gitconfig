@@ -6,7 +6,7 @@
 	tags = tag -l
 	man = ls-files
 	bare = config --bool core.bare true
-	review = merge --no-commit
+	review = merge --no-ff --no-commit
 [mergetool]
 	prompt = false
 [merge]
