@@ -44,7 +44,7 @@ let loaded_matchparen=1
 let mapleader=","
 
 " In netrw, edit files in a new tab.
-let g:netrw_browse_split=3
+let g:netrw_browse_split=2
 
 " Mappings.
 map <C-]> :tab split<CR>:exec("tjump ".expand("<cword>"))<CR>
@@ -79,3 +79,4 @@ au FileType vim         setl sw=4 sts=4 ts=4 et
 au FileType sh          setl sw=4 sts=4 ts=4 et
 au FileType ruby        setl sw=2 sts=2 ts=2 et
 au FileType markdown    setl sw=2 sts=2 ts=2 et
+au FileType yaml        setl sw=2 sts=2 ts=2 et
