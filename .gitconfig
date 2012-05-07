@@ -10,7 +10,7 @@
 [mergetool]
 	prompt = false
 [merge]
-	tool = vimdiff
+	tool = fugitive
 	conflictstyle = diff3
 [format]
 	pretty = format:"%h %p %d %ai %ce%n  %s%n"
@@ -29,3 +29,5 @@
 	noprefix = true
 [push]
 	default = current
+[mergetool "fugitive"]
+	cmd = vim -f -c \"Gdiff\" \"$MERGED\"
