@@ -89,7 +89,6 @@ alias vi="${VISUAL}"
 alias vimdiff="vimdiff -o"
 alias gist="(cd ~/share/gist && ./gist)"
 
-PATH=
 path="
 $HOME/bin
 $HOME/Library/Haskell/bin
