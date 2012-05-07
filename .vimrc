@@ -26,6 +26,7 @@ set scrolloff=2
 set showcmd
 set showmatch
 set smartcase
+set statusline=%{fugitive#statusline()}\ %<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set tags+=./.tags;~/
 set textwidth=80
