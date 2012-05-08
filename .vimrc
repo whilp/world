@@ -28,6 +28,7 @@ set showmatch
 set smartcase
 set statusline=%{fugitive#statusline()}\ %<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
+set switchbuf=usetab
 set tags+=./.tags;~/
 set textwidth=80
 set viminfo='200,f1
@@ -48,7 +49,6 @@ let mapleader=","
 let g:netrw_browse_split=2
 
 " Mappings.
-map <C-]> :tab split<CR>:exec("tjump ".expand("<cword>"))<CR>
 map gf :tabnew <cfile><CR>
 noremap <C-J> <C-W>j<C-W>_
 noremap <C-K> <C-W>k<C-W>_
@@ -57,14 +57,11 @@ nnoremap K <Nop>
 noremap Y y$
 noremap [[ :diffget<CR>
 noremap ]] :diffput<CR>
-noremap <silent> f :FufFile<CR>
-noremap <silent> F :FufRenewCache<CR>:FufFile<CR>
+nnoremap <Leader>f :F<Space>
+nnoremap <Leader>t :F */
 noremap <Leader>p :set invpaste paste?<CR>
 noremap <Leader>s :source ~/.vimrc<Enter>
 noremap Q :x<Enter>
-noremap <Leader>ci :w<Enter>:silent !hg ci<Enter><C-L>
-noremap <Leader>cr :w<Enter>:silent !hg rec<Enter><C-L>
-nmap <silent> <leader>s :set nolist!<CR>
 
 cabbrev W w
 cabbrev X x
