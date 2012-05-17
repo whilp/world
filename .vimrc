@@ -17,6 +17,8 @@ set indentexpr="-1"
 set laststatus=2
 set lbr
 set listchars=tab:>-,trail:·,eol:$
+set modeline
+set modelines=1
 set nobackup
 set nocompatible
 set nofoldenable
