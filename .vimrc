@@ -65,6 +65,8 @@ noremap <Leader>p :set invpaste paste?<CR>
 noremap <Leader>s :source ~/.vimrc<Enter>
 noremap Q :x<Enter>
 
+call togglebg#map("<Leader>b")
+
 cabbrev W w
 cabbrev X x
 cabbrev Q q
