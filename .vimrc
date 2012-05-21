@@ -1,7 +1,7 @@
 call pathogen#infect()
 
 set autoindent
-set background=light
+set background=dark
 set backspace=indent,eol,start
 set directory-=.
 set directory+=.
