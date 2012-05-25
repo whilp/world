@@ -59,6 +59,7 @@ nnoremap K <Nop>
 noremap Y y$
 noremap [[ :diffget<CR>
 noremap ]] :diffput<CR>
+nnoremap <Leader>f :F<Space>
 nnoremap <Leader>s :FS<Space>
 nnoremap <Leader>t :FT<Space>
 nnoremap <Leader>v :FV<Space>
@@ -74,6 +75,7 @@ cabbrev Q q
 cabbrev Wq wq
 cabbrev WQ wq
 cabbrev E new
+cabbrev cw botright cwindow
 
 au FileType python  	setl sw=4 sts=4 ts=4 tw=79 ff=unix et
 au FileType make    	setl ts=8 sts=0 noet
