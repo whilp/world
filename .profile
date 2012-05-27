@@ -166,6 +166,9 @@ else
     unset PS1
 fi
 
+# rbenv
+which rbenv > /dev/null 2>&1 && eval "$(rbenv init -)"
+
 # Local::lib
 if [ -d "${HOME}/perl5/lib/perl5" ]; then
     eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)
