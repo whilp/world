@@ -1,6 +1,9 @@
 call pathogen#infect()
 call pathogen#helptags()
 
+let g:Powerline_symbols = 'unicode'
+let g:Powerline_colorscheme = 'skwp'
+
 set autoindent
 set background=dark
 set backspace=indent,eol,start
