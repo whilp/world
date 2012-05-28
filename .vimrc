@@ -41,7 +41,7 @@ set switchbuf=usetab
 set tags+=./.tags;~/
 set textwidth=80
 set ttyfast
-set viminfo='200,f1
+set viminfo='200,f1,n~/.vim/info
 set whichwrap=h,l,~,[,]
 set wildmenu
 set wildmode=list:longest,full
