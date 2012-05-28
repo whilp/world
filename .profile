@@ -123,9 +123,6 @@ GIT_AUTHOR_NAME=$GIT_COMMITTER_NAME
 GIT_AUTHOR_EMAIL=$GIT_COMMITTER_EMAIL
 export HGUSER GIT_AUTHOR_NAME GIT_AUTHOR_EMAIL GIT_COMMITTER_NAME GIT_COMMITTER_EMAIL
 
-# SSH directories.
-(cd ~/; mkdir -p .ssh .ssh/controls .ssh/callbacks) 2>/dev/null
-
 # Set SSH_CLIENT_NAME after host has set up callback, if necessary.
 SSH_CLIENT_NAME="${HOSTNAME}"
 export SSH_CLIENT_NAME
