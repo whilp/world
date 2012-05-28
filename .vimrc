@@ -28,6 +28,7 @@ set nofoldenable
 set nohls
 set ruler
 set scrolloff=2
+set shortmess=aOtsT
 set showcmd
 set showmatch
 set smartcase
@@ -56,8 +57,10 @@ let g:netrw_browse_split=2
 
 " Mappings.
 map gf :tabnew <cfile><CR>
+noremap <C-H> <C-W>h<C-W>_
 noremap <C-J> <C-W>j<C-W>_
 noremap <C-K> <C-W>k<C-W>_
+noremap <C-L> <C-W>l<C-W>_
 nnoremap ; :
 nnoremap K <Nop>
 noremap Y y$
