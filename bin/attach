@@ -3,7 +3,7 @@
 TMUXDIR=~/.tmux
 # Later instances of -S will override the first, so it's safe to specify it
 # here.
-TMUX="tmux -S ${TMUXDIR}/sock"
+TMUX="tmux -S ${TMUXDIR}/socks/default"
 
 mkdir -p "${TMUXDIR}" >/dev/null 2>&1
 
@@ -46,7 +46,7 @@ remote () {
 # If called as something other than 'attach', use ${PROG} as the session name.
 SESSION="$(basename $0)"
 case "${SESSION}" in
-    master) connect master -S "${TMUXDIR}/master.sock";;
+    master) connect master -S "${TMUXDIR}/socks/master";;
     meta) remote "burko.*" "meta.lfod.us" master $*;;
     attach) connect $*;;
     *) connect "${SESSION}" $*;;
