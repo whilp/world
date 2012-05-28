@@ -1,4 +1,5 @@
 call pathogen#infect()
+call pathogen#helptags()
 
 set autoindent
 set background=dark
