@@ -109,31 +109,6 @@ $HOME/lib
 "
 for d in $libs; do [ -d "$d" ] && export LD_LIBRARY_PATH=$(addto "$LD_LIBRARY_PATH" "$d"); done
 
-# Platform- and host-specific configuration directories.
-PROFILES="${HOME}/.profiles"
-PLATFORMS="${PROFILES}/platforms"
-HOSTS="${PROFILES}/hosts"
-
-# Platform settings.
-UNAME=$(uname)
-case "${UNAME}" in
-    OpenBSD)    PLATFORM="${PLATFORMS}/openbsd";;
-    Linux)      PLATFORM="${PLATFORMS}/linux";;
-esac
-[ -r "${PLATFORM}" ] && . "${PLATFORM}"
-
-# Domain and host settings.
-FQDN=.$(hostname)
-f=${FQDN}
-max=5
-while [ -n "$f" -a $max -ge 0 ]; do
-    f=${f%.*}
-    SETTINGS="${HOSTS}/${FQDN#$f.}"
-    [ -r "${SETTINGS}" ] && . "${SETTINGS}"
-    max=$(($max - 1))
-done
-unset f max PLATFORM SETTINGS
-
 # Apply site-specific settings.
 GIT_COMMITTER_NAME="Will Maier"
 case "${SITE}" in
