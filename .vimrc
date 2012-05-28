@@ -4,6 +4,7 @@ call pathogen#helptags()
 set autoindent
 set background=dark
 set backspace=indent,eol,start
+set clipboard+=unnamed
 set cursorline
 set directory-=.
 set directory+=.
@@ -35,6 +36,7 @@ set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.i
 set switchbuf=usetab
 set tags+=./.tags;~/
 set textwidth=80
+set ttyfast
 set viminfo='200,f1
 set whichwrap=h,l,~,[,]
 set wildmenu
@@ -79,9 +81,9 @@ cabbrev WQ wq
 cabbrev E new
 cabbrev cw botright cwindow
 
-au FileType python  	setl sw=4 sts=4 ts=4 tw=79 ff=unix et
-au FileType make    	setl ts=8 sts=0 noet
-au FileType sshconfig 	setl sw=4 sts=4 ts=4 et
+au FileType python      setl sw=4 sts=4 ts=4 tw=79 ff=unix et
+au FileType make        setl ts=8 sts=0 noet
+au FileType sshconfig   setl sw=4 sts=4 ts=4 et
 au FileType vim         setl sw=4 sts=4 ts=4 et
 au FileType sh          setl sw=4 sts=4 ts=4 et
 au FileType ruby        setl sw=2 sts=2 ts=2 et
