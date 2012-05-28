@@ -28,7 +28,7 @@ set nofoldenable
 set nohls
 set ruler
 set scrolloff=2
-set shortmess=aOtsT
+set shortmess=aoOstTWAI
 set showcmd
 set showmatch
 set smartcase
