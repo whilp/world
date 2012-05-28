@@ -1,5 +1,0 @@
-#!/bin/sh
-
-ulimit -n 1023
-
-/usr/local/bin/firefox -no-remote $*
