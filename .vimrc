@@ -59,6 +59,7 @@ nnoremap K <Nop>
 noremap Y y$
 noremap [[ :diffget<CR>
 noremap ]] :diffput<CR>
+nnoremap <Leader>f :F<Space>
 nnoremap <Leader>s :FS<Space>
 nnoremap <Leader>t :FT<Space>
 nnoremap <Leader>v :FV<Space>
