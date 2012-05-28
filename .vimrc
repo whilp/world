@@ -66,13 +66,16 @@ nnoremap K <Nop>
 noremap Y y$
 noremap [[ :diffget<CR>
 noremap ]] :diffput<CR>
+
+nnoremap <Leader>S :source ~/.vimrc<Enter>
+nnoremap <Leader>c :Gco<CR>
+nnoremap <Leader>d :Gdiff<CR>
 nnoremap <Leader>f :F<Space>
+nnoremap <Leader>p :set invpaste paste?<CR>
+nnoremap <Leader>q :x<CR>
 nnoremap <Leader>s :FS<Space>
 nnoremap <Leader>t :FT<Space>
 nnoremap <Leader>v :FV<Space>
-noremap <Leader>p :set invpaste paste?<CR>
-noremap <Leader>S :source ~/.vimrc<Enter>
-noremap Q :x<Enter>
 
 call togglebg#map("<Leader>b")
 
