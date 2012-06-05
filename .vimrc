@@ -4,6 +4,8 @@ call pathogen#helptags()
 let g:Powerline_symbols = 'unicode'
 let g:Powerline_colorscheme = 'skwp'
 
+runtime ftplugin/man.vim
+
 set autoindent
 set background=dark
 set backspace=indent,eol,start
