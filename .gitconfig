@@ -33,3 +33,5 @@
 	cmd = vim -f -c \"Gdiff\" \"$MERGED\"
 [init]
 	templatedir = ~/.gitconf/init
+[help]
+	autocorrect = 10
