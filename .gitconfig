@@ -31,3 +31,5 @@
 	default = current
 [mergetool "fugitive"]
 	cmd = vim -f -c \"Gdiff\" \"$MERGED\"
+[init]
+	templatedir = ~/.gitconf/init
