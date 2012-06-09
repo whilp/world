@@ -59,6 +59,7 @@ let mapleader=","
 
 " In netrw, edit files in a new tab.
 let g:netrw_browse_split=2
+let g:netrw_liststyle=3
 
 " Mappings.
 map gf :tabnew <cfile><CR>
