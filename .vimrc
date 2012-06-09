@@ -116,3 +116,16 @@ function! s:ExecuteInShell(command)
   echo 'Shell command ' . command . ' executed.'
 endfunction
 command! -complete=shellcmd -nargs=+ Shell call s:ExecuteInShell(<q-args>)
+
+augroup Git
+  autocmd!
+  autocmd FileType git set fdm=syntax
+  " fold each file in a gitcommit used with the -v flag
+  autocmd FileType gitcommit
+        \ set fdm=expr foldexpr=getline(v:lnum)=~'^diff\\s--git'?'>1':'='
+  " view the output of `git diff` in a vertical split
+  command! -nargs=0 Gddiff
+        \ vnew | exec "r!git diff --cached" | set ft=git
+  " git status in a vertical split
+  command! -nargs=0 Gsv Gst | wincmd H
+augroup END
