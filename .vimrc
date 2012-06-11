@@ -74,7 +74,7 @@ noremap [[ :diffget<CR>
 noremap ]] :diffput<CR>
 
 nnoremap <Leader>S :source ~/.vimrc<Enter>
-nnoremap <Leader>c :Gco<CR>
+nnoremap <Leader>c :Gco -v<CR>
 nnoremap <Leader>d :Gdiff<CR>
 nnoremap <Leader>f :F<Space>
 nnoremap <Leader>p :set invpaste paste?<CR>
