@@ -93,6 +93,8 @@ cabbrev WQ wq
 cabbrev E new
 cabbrev cw botright cwindow
 
+au BufRead,BufNewFile *.md		set filetype=markdown
+
 au FileType python      setl sw=4 sts=4 ts=4 tw=79 ff=unix et
 au FileType make        setl ts=8 sts=0 noet
 au FileType sshconfig   setl sw=4 sts=4 ts=4 et
