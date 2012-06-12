@@ -82,6 +82,7 @@ alias less="${PAGER}"
 alias lfod="site lfod"
 alias list="tmux ls"
 alias ls="ls -F"
+alias pydoc="python -m pydoc"
 alias simple='site simple'
 alias sudo='A=`alias` /usr/bin/sudo '
 alias tmux="tmux -S ${TMUX_SOCK}"
