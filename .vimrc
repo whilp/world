@@ -83,6 +83,8 @@ nnoremap <Leader>s :FS<Space>
 nnoremap <Leader>t :FT<Space>
 nnoremap <Leader>v :FV<Space>
 
+inoremap <C-B> <C-X>
+
 call togglebg#map("<Leader>b")
 
 cabbrev W w
