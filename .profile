@@ -90,17 +90,18 @@ alias vi="${VISUAL}"
 alias vimdiff="vimdiff -o"
 alias gist="(cd ~/share/gist && ./gist)"
 
+PATH=""
 path="
 $HOME/bin
 $HOME/Library/Haskell/bin
 /usr/texbin
+/usr/local/bin
+/usr/local/sbin
 /bin
 /sbin
 /usr/bin
 /usr/sbin
 /usr/X11R6/bin
-/usr/local/bin
-/usr/local/sbin
 /usr/games
 "
 for d in $path; do addtopath $d; done
