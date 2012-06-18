@@ -99,10 +99,13 @@ $HOME/Library/Haskell/bin
 /usr/local/sbin
 /bin
 /sbin
-/usr/bin
-/usr/sbin
+/usr/X11/bin
 /usr/X11R6/bin
+/usr/bin
 /usr/games
+/usr/local/bin
+/usr/sbin
+/usr/texbin
 "
 for d in $path; do addtopath $d; done
 
