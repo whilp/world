@@ -97,7 +97,7 @@ cabbrev cw botright cwindow
 au BufRead,BufNewFile *.md		set filetype=markdown
 au BufRead,BufNewFile *.ru		set filetype=ruby
 
-au FileType python      setl sw=4 sts=4 ts=4 tw=79 ff=unix et
+au FileType python      setl sw=4 sts=4 ts=4 tw=79 ff=unix et omnifunc=pythoncomplete#Complete
 au FileType make        setl ts=8 sts=0 noet
 au FileType sshconfig   setl sw=4 sts=4 ts=4 et
 au FileType vim         setl sw=4 sts=4 ts=4 et
