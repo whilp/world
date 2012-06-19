@@ -146,6 +146,9 @@ fi
 # rbenv
 which rbenv > /dev/null 2>&1 && eval "$(rbenv init -)"
 
+# gems
+export GEM_HOME=~/gems; mkdir -p $GEM_HOME; addtopath $GEM_HOME/bin
+
 # Local::lib
 if [ -d "${HOME}/perl5/lib/perl5" ]; then
     eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)
