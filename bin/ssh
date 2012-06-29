@@ -4,5 +4,6 @@ case ${SITE} in
     simple)    args="-oUser=will";;
     *)      args="-oUser=will";;
 esac
+case "$@" in *@*) args=""; esac
 
 exec /usr/bin/${0##*/} $args $*
