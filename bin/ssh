@@ -1,11 +1,9 @@
 #!/bin/sh
 
-case ${SITE} in
-    simple)    args="-oUser=will";;
-    *)      args="-oUser=will";;
-esac
-case "$@" in *@*) args=""; esac
+# inorite?
+opts="1246AaCfgKkMNnqsTtVvXxYyb:c:D:e:F:I:i:L:l:m:O:o:p:R:S:W:w:"
+while getopts $opts ARG; do continue; done
+eval host=\$$OPTIND
 
-for arg in $*; do host=$arg; done
-#printf '\033k'$host'\033\\'
-exec /usr/bin/${0##*/} $args $*
+printf '\033k'$host'\033\\'
+exec /usr/bin/${0##*/} $*
