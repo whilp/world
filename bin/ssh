@@ -5,5 +5,5 @@ opts="1246AaCfgKkMNnqsTtVvXxYyb:c:D:e:F:I:i:L:l:m:O:o:p:R:S:W:w:"
 while getopts $opts ARG; do continue; done
 eval host=\$$OPTIND
 
-printf '\033k'$host'\033\\'
+printf '\033k'$host'\033\\' 1>&2
 exec /usr/bin/${0##*/} $*
