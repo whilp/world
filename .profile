@@ -161,6 +161,8 @@ bold="\[\033[1m\]"
 off="\[\033[m\]"
 export PS1="\a\h:$bold\w$off \$ "
 
+printf '\033k'$HOSTNAME'\033\\'
+
 case "$SHELL" in
 	*ksh*) export ENV=~/.kshrc;;
 esac
