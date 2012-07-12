@@ -13,7 +13,7 @@ OLDMAIL="${MAIL}"
 MAIL=""
 PAGER="less -iX"
 SSH="$(which ssh)"
-TMUX_SOCK=~/.tmux/sock
+TMUX_SOCK=~/.tmux/socks/default
 
 export EDITOR HISTFILE HOSTNAME LANG LESSHISTFILE 
 export MAIL OLDMAIL PAGER TMUX_SOCK
