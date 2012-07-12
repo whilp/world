@@ -105,6 +105,8 @@ au FileType sh          setl sw=4 sts=4 ts=4 et
 au FileType ruby        setl sw=2 sts=2 ts=2 et
 au FileType markdown    setl sw=2 sts=2 ts=2 et
 au FileType yaml        setl sw=2 sts=2 ts=2 et
+au FileType javascript  setl sw=2 sts=2 ts=2 et
+au FileType html        setl sw=2 sts=2 ts=2 et
 
 function! s:ExecuteInShell(command)
   let command = join(map(split(a:command), 'expand(v:val)'))
