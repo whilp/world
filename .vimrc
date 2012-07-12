@@ -62,6 +62,8 @@ let g:netrw_liststyle=3
 
 " Mappings.
 map gf :tabnew <cfile><CR>
+cnoremap s/ s/\v
+
 noremap <C-H> <C-W>h<C-W>_
 noremap <C-J> <C-W>j<C-W>_
 noremap <C-K> <C-W>k<C-W>_
