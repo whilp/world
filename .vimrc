@@ -48,6 +48,8 @@ set wildmenu
 set wildmode=list:longest,full
 set winheight=8
 set winminheight=8
+set winminwidth=8
+set winwidth=8
 
 syntax enable
 colorscheme solarized
