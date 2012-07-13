@@ -49,8 +49,8 @@ set wildmenu
 set wildmode=list:longest,full
 set winheight=8
 set winminheight=8
-set winminwidth=8
-set winwidth=8
+set winminwidth=16
+set winwidth=16
 
 syntax enable
 colorscheme solarized
@@ -66,10 +66,10 @@ let g:netrw_liststyle=3
 " Mappings.
 map gf :tabnew <cfile><CR>
 
-noremap <C-H> <C-W>h<C-W>_
+noremap <C-H> <C-W>h<C-W>\|
 noremap <C-J> <C-W>j<C-W>_
 noremap <C-K> <C-W>k<C-W>_
-noremap <C-L> <C-W>l<C-W>_
+noremap <C-L> <C-W>l<C-W>\|
 nnoremap ; :
 nnoremap K <Nop>
 noremap Y y$
