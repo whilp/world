@@ -1,3 +1,4 @@
 ipython
 autojenkins
 requests
+virtualenv
