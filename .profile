@@ -62,6 +62,12 @@ sshagent () {
     . "${HOME}"/bin/sshagent
 }
 
+gpgagent () {
+    set -x
+    . "${HOME}"/bin/gpgagent
+    set +x
+}
+
 site () {
     if [ -z "$1" ]; then
         echo "${SITE}"
@@ -155,6 +161,8 @@ if [ -d "${HOME}/perl5/lib/perl5" ]; then
 fi
 
 sshagent
+gpgagent
+
 ulimit -n 1023
 
 bold="\[\033[1m\]"

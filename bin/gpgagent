@@ -1,0 +1,23 @@
+GPG_HOME="${HOME}/.gnupg"
+GPG_ENV="${GPG_HOME}/agent.env"
+GPG_AGENT=$(which gpg-agent 2>/dev/null)
+[ -r "$GPG_ENV" ] && . "$GPG_ENV"
+export GPG_AGENT_INFO
+
+if [ -n "$GPG_AGENT_INFO" ]; then
+    oldifs="$IFS"
+    IFS=:
+    set -- $GPG_AGENT_INFO
+    IFS="$oldifs"
+    GPG_AGENT_PATH="$1"
+    GPG_AGENT_PID="$2"
+    GPG_AGENT_JUNK="$3"
+    kill -0 "$GPG_AGENT_PID" > /dev/null 2>&1 ||\
+        GPG_AGENT_PID=""
+fi
+
+if ! [ -w "$GPG_AGENT_PATH" -a -n "$GPG_AGENT_PID" ]; then
+    export GPG_TTY=`tty`
+    eval $($GPG_AGENT --daemon --write-env-file "$GPG_ENV")
+    export GPG_AGENT_INFO
+fi
