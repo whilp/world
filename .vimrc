@@ -4,6 +4,7 @@ call pathogen#helptags()
 let g:Powerline_symbols = 'unicode'
 let g:Powerline_colorscheme = 'skwp'
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files']
+let g:GPGPreferArmor=1
 
 runtime ftplugin/man.vim
 
