@@ -63,9 +63,7 @@ sshagent () {
 }
 
 gpgagent () {
-    set -x
     . "${HOME}"/bin/gpgagent
-    set +x
 }
 
 site () {
