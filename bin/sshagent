@@ -5,7 +5,7 @@ AGENT_SOCK="${SSH_HOME}/agent.sock"
 SSH_AGENT_FILE="${SSH_HOME}/agent"
 SSH_AGENT_PID=
 
-agent () {
+sshagent () {
     [ -r "${SSH_AGENT_FILE}" ] || touch "${SSH_AGENT_FILE}"
     . "${SSH_AGENT_FILE}" >/dev/null 2>&1
     ssh-add -l >/dev/null 2>&1
@@ -56,5 +56,5 @@ if [ -n "${REMOVE}" ]; then
     ssh-add -D >/dev/null 2>&1
 fi
 
-agent
-unset -f agent
+sshagent
+unset -f sshagent
