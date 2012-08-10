@@ -58,8 +58,8 @@ sleepuntil () {
     done
 }
 
-agent () {
-    [ -r "${HOME}"/bin/agent ] && . "${HOME}"/bin/agent
+sshagent () {
+    . "${HOME}"/bin/sshagent
 }
 
 site () {
@@ -154,7 +154,7 @@ if [ -d "${HOME}/perl5/lib/perl5" ]; then
     eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)
 fi
 
-agent
+sshagent
 ulimit -n 1023
 
 bold="\[\033[1m\]"
