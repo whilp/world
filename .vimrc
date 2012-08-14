@@ -1,8 +1,6 @@
 call pathogen#infect()
 call pathogen#helptags()
 
-let g:Powerline_symbols = 'unicode'
-let g:Powerline_colorscheme = 'skwp'
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files']
 let g:ctrlp_extensions = ['tag', 'buffertag', 'quickfix', 'dir', 'undo', 'line', 'changes']
 let g:GPGPreferArmor=1
