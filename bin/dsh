@@ -1,6 +1,7 @@
 #!/bin/sh
 
 usage () {
+    continue
 }
 
 master () {
@@ -21,7 +22,7 @@ master () {
     shift $(($OPTIND - 1))
 
     export _ROLE
-    exec ${XARGS} -r -n1 -P${PARALLEL} -I${REPLSTR} $0 ${SSH} ${REPLSTR} $* 
+    exec ${XARGS} -n1 -P${PARALLEL} -I${REPLSTR} $0 ${SSH} -oBatchMode=yes ${REPLSTR} $* 
 }
 
 client () {
