@@ -1,3 +1,7 @@
+numpy
+scipy
+matplotlib
+h5py
 boto
 ipython
 autojenkins
