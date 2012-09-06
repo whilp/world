@@ -15,6 +15,7 @@ set directory-=.
 set directory+=.
 set encoding=utf-8
 set fileencodings=
+set filetype=markdown
 set foldmethod=indent
 set formatoptions+=2l
 set hidden
