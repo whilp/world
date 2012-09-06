@@ -53,7 +53,9 @@ set winminwidth=16
 set winwidth=16
 
 syntax enable
-colorscheme solarized
+set background=dark
+let g:lucius_contrast="low"
+colorscheme lucius
 
 " Don't do paren matching.
 let loaded_matchparen=1
