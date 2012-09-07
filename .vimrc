@@ -55,7 +55,7 @@ set winwidth=16
 
 syntax enable
 set background=dark
-let g:lucius_contrast="low"
+let g:lucius_contrast="high"
 colorscheme lucius
 
 " Don't do paren matching.
