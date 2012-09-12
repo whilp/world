@@ -8,7 +8,6 @@ let g:GPGPreferArmor=1
 runtime ftplugin/man.vim
 
 set autoindent
-set background=dark
 set backspace=indent,eol,start
 set cursorline
 set directory-=.
@@ -54,7 +53,7 @@ set winminwidth=16
 set winwidth=16
 
 syntax enable
-set background=dark
+set background=light
 let g:lucius_contrast="high"
 colorscheme lucius
 
