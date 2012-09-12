@@ -7,6 +7,8 @@ let g:GPGPreferArmor=1
 
 runtime ftplugin/man.vim
 
+filetype plugin indent on
+
 set autoindent
 set backspace=indent,eol,start
 set cursorline
