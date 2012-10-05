@@ -1,6 +1,7 @@
 GPG_HOME="${HOME}/.gnupg"
 GPG_ENV="${GPG_HOME}/agent.env"
 GPG_AGENT=$(which gpg-agent 2>/dev/null)
+[ -n "$GPG_AGENT" ] && exit 0
 [ -r "$GPG_ENV" ] && . "$GPG_ENV"
 export GPG_TTY=`tty`
 export GPG_AGENT_INFO
