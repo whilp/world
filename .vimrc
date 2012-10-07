@@ -55,7 +55,7 @@ set winminwidth=16
 set winwidth=16
 
 syntax enable
-set background=light
+set background=dark
 let g:lucius_contrast="high"
 colorscheme lucius
 
