@@ -30,9 +30,9 @@ addto () {
     local STRING=$1
     local NEW=$2
     local AFTER=$3
-    case "${STRING}" in 
+    case "${STRING}" in
         ${NEW}|${NEW}:*|*:${NEW}|*:${NEW}:*);;
-        *) [ "${AFTER}" = "after" ] && STRING="${STRING}:${NEW}" || STRING="${NEW}:${STRING}" ;; 
+        *) [ "${AFTER}" = "after" ] && STRING="${STRING}:${NEW}" || STRING="${NEW}:${STRING}" ;;
     esac
     echo ${STRING}
 }
@@ -44,9 +44,9 @@ addtopath () {
 }
 
 sleepuntil () {
-    local DATE=$1 
-    local INTERVAL=${2:-60} 
-    local TARGET=$(date -j "${DATE}" "+%s" 2>/dev/null) 
+    local DATE=$1
+    local INTERVAL=${2:-60}
+    local TARGET=$(date -j "${DATE}" "+%s" 2>/dev/null)
     if [ -z "${TARGET}" ]; then
         echo "bad date '$DATE'"
         return 1
