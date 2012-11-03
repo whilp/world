@@ -40,7 +40,7 @@ addto () {
 addtopath () {
     local item="$1"
     [ -d "$item" -a -x "$item" ] || return
-    export PATH=$(addto "$item" "$PATH")
+    export PATH="$(addto "$item" "$PATH")"
 }
 
 sleepuntil () {
