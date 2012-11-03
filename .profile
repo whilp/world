@@ -93,6 +93,7 @@ alias vi="${VISUAL}"
 alias vimdiff="vimdiff -o"
 
 alias add="git add"
+alias branch="git branch"
 alias ca="git ca"
 alias ci="git commit"
 alias clone="git clone"
