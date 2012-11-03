@@ -1,3 +1,4 @@
+echo .bash_profile
 . ~/.profile
 
 shopt -s histappend

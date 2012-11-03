@@ -27,9 +27,9 @@ export CVSEDITOR CVS_RSH
 
 # Functions.
 addto () {
-    local STRING=$1
-    local NEW=$2
-    local AFTER=$3
+    local STRING="$1"
+    local NEW="$2"
+    local AFTER="$3"
     case "${STRING}" in
         ${NEW}|${NEW}:*|*:${NEW}|*:${NEW}:*);;
         *) [ "${AFTER}" = "after" ] && STRING="${STRING}:${NEW}" || STRING="${NEW}:${STRING}" ;;
@@ -176,10 +176,7 @@ gpgagent
 
 ulimit -n 1023
 
-bold="\[\033[1m\]"
-off="\[\033[m\]"
-export PS1="\a\h:$bold\w$off \$ "
-
 case "$SHELL" in
-	*ksh*) export ENV=~/.kshrc;;
+    *ksh*) export ENV=~/.kshrc;;
+    *zsh*) export ENV=~/.zshrc;;
 esac
