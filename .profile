@@ -1,8 +1,5 @@
 WHICH=$(/usr/bin/env which which)
-# Environment variables
-EDITOR="$($WHICH vim 2>/dev/null)" || \
-    EDITOR="$($WHICH nvi 2>/dev/null)" || \
-    EDITOR="$($WHICH vi)"
+EDITOR=editor
 VISUAL=${EDITOR}
 
 HISTFILE=~/.history
