@@ -1,6 +1,0 @@
-#!/bin/sh
-
-hub=/usr/local/bin/hub 
-[ -x $hub ] && exec $hub $*
-
-exec git $*
