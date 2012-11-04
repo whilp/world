@@ -40,21 +40,6 @@ addtopath () {
     export PATH="$(addto "$item" "$PATH")"
 }
 
-sleepuntil () {
-    local DATE=$1
-    local INTERVAL=${2:-60}
-    local TARGET=$(date -j "${DATE}" "+%s" 2>/dev/null)
-    if [ -z "${TARGET}" ]; then
-        echo "bad date '$DATE'"
-        return 1
-    fi
-    echo "Sleeping until $(date -j "${DATE}")..."
-    while [ "$(date "+%s")" -lt "${TARGET}" ]
-    do
-        sleep "${INTERVAL}"
-    done
-}
-
 sshagent () {
     . "${HOME}"/bin/sshagent
 }
