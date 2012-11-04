@@ -57,10 +57,6 @@ site () {
     fi
 }
 
-screenshot () {
-    xwd -root | xwdtopnm | pnmtopng "$1"
-}
-
 # Aliases.
 alias curl="curl -s"
 alias dc="cd"
