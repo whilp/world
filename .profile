@@ -92,7 +92,7 @@ alias tmux="tmux -S ${TMUX_SOCK}"
 alias vi="${VISUAL}"
 alias vimdiff="vimdiff -o"
 
-alias git="hub"
+eval "$(hub alias -s)"
 alias add="git add"
 alias branch="git branch"
 alias ca="git ca"
