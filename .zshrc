@@ -27,7 +27,6 @@ autoload -U zed
 autoload -U zmv
 autoload edit-command-line
 zle -N edit-command-line
-bindkey '\ee' edit-command-line
 zmodload -i zsh/complist
 
 zstyle ':completion:*' use-cache on
