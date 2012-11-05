@@ -54,6 +54,10 @@ _giteditor () {
     (cat stat; echo; cat diffs) > diff
 }
 
+case "$msg" in
+    *.git/PULLREQ_EDITMSG) exec vim;;
+esac
+
 (
 cd "$tmp"
 
