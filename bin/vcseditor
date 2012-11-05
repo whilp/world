@@ -21,6 +21,10 @@ _vim () {
     return $?
 }
 
+_editor () {
+    _vim $*
+}
+
 root="$PWD"
 msg="$(abspath $1)"
 tmp=$(umask 077 && \
