@@ -70,7 +70,8 @@ alias tmux="tmux -S ${TMUX_SOCK}"
 alias vi="${VISUAL}"
 alias vimdiff="vimdiff -o"
 
-eval "$(hub alias -s)"
+#eval "$(hub alias -s)"
+alias git=~/bin/hub
 alias add="git add"
 alias branch="git branch"
 alias ca="git ca"
@@ -111,6 +112,7 @@ $HOME/lib
 for d in $libs; do [ -d "$d" ] && export LD_LIBRARY_PATH=$(addto "$LD_LIBRARY_PATH" "$d"); done
 
 # Apply site-specific settings.
+export GIT_EDITOR=vim
 GIT_COMMITTER_NAME="Will Maier"
 case "${SITE}" in
     simple) HGUSER="Will Maier <will@simple.com>"
