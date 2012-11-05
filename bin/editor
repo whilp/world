@@ -5,6 +5,6 @@ nvi
 vi
 mg"
 
-for editor in editors; do
+for editor in $editors; do
     which $editor >/dev/null 2>&1 && exec $editor $*
-end
+done
