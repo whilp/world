@@ -9,6 +9,7 @@ case $TERM in
     xterm*) bindkey "^[[F" end-of-line; bindkey "^[[H" beginning-of-line;;
 esac
 
+bindkey -M vicmd v edit-command-line
 bindkey '\e[1~' beginning-of-line
 bindkey '\e[4~' end-of-line
 bindkey '\e[3~' delete-char
