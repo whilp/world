@@ -6,4 +6,4 @@ while getopts $opts ARG; do continue; done
 eval host=\$$OPTIND
 
 printf '\033k'$host'\033\\' 1>&2
-exec /usr/bin/${0##*/} $*
+exec /usr/local/bin/${0##*/} $*
