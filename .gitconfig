@@ -23,6 +23,10 @@
 	insteadOf = bh:
 [url "git@github.banksimple.com:BankSimple/"]
 	insteadOf = bs:
+[url "git@github.banksimple.com:backend/"]
+	insteadOf = backend:
+[url "git@github.banksimple.com:ops/"]
+	insteadOf = ops:
 [url "will@meta.lfod.us:share/git/"]
 	insteadOf = code:
 [diff]
