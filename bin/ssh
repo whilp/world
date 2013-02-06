@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # inorite?
-opts="1246AaCfgKkMNnqsTtVvXxYyb:c:D:e:F:I:i:L:l:m:O:o:p:R:S:W:w:"
+opts="1246AaCfgKkMNnqrsTtVvXxYyb:c:D:e:F:I:i:L:l:m:O:o:p:R:S:W:w:"
 while getopts $opts ARG; do continue; done
 eval host=\$$OPTIND
 
