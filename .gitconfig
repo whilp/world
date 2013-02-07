@@ -1,4 +1,5 @@
 [alias]
+	pr = pull-request
 	st = status -s
 	ci = commit
 	ca = commit -a
