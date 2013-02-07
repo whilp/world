@@ -27,6 +27,8 @@
 	insteadOf = backend:
 [url "git@github.banksimple.com:ops/"]
 	insteadOf = ops:
+[url "git@github.banksimple.com:ops/chef-"]
+	insteadOf = chef:
 [url "will@meta.lfod.us:share/git/"]
 	insteadOf = code:
 [diff]
