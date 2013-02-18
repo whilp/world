@@ -40,3 +40,5 @@
 (setq deft-extension "org")
 (setq deft-directory "~/notes")
 (setq deft-text-mode 'org-mode)
+
+(set-default-font "Source Code Pro")
