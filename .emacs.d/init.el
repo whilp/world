@@ -27,6 +27,10 @@
 (global-set-key [remap eval-expression] 'pp-eval-expression)
 (global-set-key [remap eval-last-sexp] 'pp-eval-last-sexp)
 
+;; windows.
+(global-set-key (kbd "M-RET") 'ns-toggle-fullscreen)
+(global-set-key (kbd "C-o") 'other-window)
+
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 
