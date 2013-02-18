@@ -11,6 +11,10 @@
 (setq confirm-nonexistent-file-or-buffer nil)
 (fset 'yes-or-no-p 'y-or-n-p)
 
+;; syntax highlighting.
+(global-font-lock-mode t)
+(transient-mark-mode 1)
+
 ;; ido matching.
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
