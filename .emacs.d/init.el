@@ -10,3 +10,4 @@
 (ido-mode 1)
 
 (autoload 'magit-status' "magit" nil t)
+(global-set-key (kbd "C-x C-g") 'magit-status)
