@@ -27,8 +27,6 @@
 	insteadOf = chef:
 [url "will@meta.lfod.us:share/git/"]
 	insteadOf = code:
-[diff]
-	noprefix = true
 [push]
 	default = current
 [pull]
