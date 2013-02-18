@@ -35,7 +35,7 @@
 (require 'org)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 
-;; deft.
+;; http://jblevins.org/projects/deft/
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/deft"))
 (require 'deft)
 (setq deft-extension "org")
