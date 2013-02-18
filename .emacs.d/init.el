@@ -37,6 +37,12 @@
 (global-set-key "\C-x\C-m" 'execute-extended-command)
 (global-set-key "\C-c\C-m" 'execute-extended-command)
 
+;; command-as-meta.
+(setq mac-option-key-is-meta nil)       
+(setq mac-command-key-is-meta t)
+(setq mac-command-modifier 'meta)
+(setq mac-option-modifier 'super)
+
 ;; whitespace.
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
