@@ -41,6 +41,11 @@
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 
+;; easier backward-kill-word.
+(global-set-key "\C-w" 'backward-kill-word)
+(global-set-key "\C-x\C-k" 'kill-region)
+(global-set-key "\C-c\C-k" 'kill-region)
+
 ;; magit.
 (autoload 'magit-status' "magit" nil t)
 (global-set-key (kbd "C-x C-g") 'magit-status)
