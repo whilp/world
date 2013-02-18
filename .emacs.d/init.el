@@ -13,12 +13,12 @@
 
 ;; syntax highlighting.
 (global-font-lock-mode t)
-(transient-mark-mode 1)
+(transient-mark-mode t)
 
 ;; ido matching.
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
-(ido-mode 1)
+(ido-mode t)
 
 ;; backups.
 (setq backup-directory-alist `(("." . "~/.saves")))
@@ -26,6 +26,9 @@
 ;; pretty-print expression evals.
 (global-set-key [remap eval-expression] 'pp-eval-expression)
 (global-set-key [remap eval-last-sexp] 'pp-eval-last-sexp)
+
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 2)
 
 ;; magit.
 (autoload 'magit-status' "magit" nil t)
@@ -41,10 +44,5 @@
 (setq deft-extension "org")
 (setq deft-directory "~/notes")
 (setq deft-text-mode 'org-mode)
-
-;; git@github.com:bbatsov/solarized-emacs
-(add-to-list 'load-path "~/.emacs.d/solarized-emacs")
-(add-to-list 'custom-theme-load-path "~/.emacs.d/solarized-emacs")
-(load-theme 'solarized-dark t)
 
 (set-default-font "Source Code Pro")
