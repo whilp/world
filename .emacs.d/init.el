@@ -42,4 +42,9 @@
 (setq deft-directory "~/notes")
 (setq deft-text-mode 'org-mode)
 
+;; git@github.com:bbatsov/solarized-emacs
+(add-to-list 'load-path "~/.emacs.d/solarized-emacs")
+(add-to-list 'custom-theme-load-path "~/.emacs.d/solarized-emacs")
+(load-theme 'solarized-dark t)
+
 (set-default-font "Source Code Pro")
