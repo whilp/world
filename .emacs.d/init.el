@@ -37,3 +37,7 @@
 ;; magit.
 (autoload 'magit-status' "magit" nil t)
 (global-set-key (kbd "C-x C-g") 'magit-status)
+
+;; org-mode.
+(require 'org)
+(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
