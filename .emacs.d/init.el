@@ -3,6 +3,10 @@
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
 
+;; no splash.
+(setq inhibit-startup-message t
+  inhibit-startup-echo-area-message t)
+
 ;; ido matching.
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
