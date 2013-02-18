@@ -12,6 +12,13 @@
 (global-set-key [remap eval-expression] 'pp-eval-expression)
 (global-set-key [remap eval-last-sexp] 'pp-eval-last-sexp)
 
+;; packages.
+(require 'package)
+(add-to-list 'package-archives 
+    '("marmalade" .
+      "http://marmalade-repo.org/packages/"))
+(package-initialize)
+
 ;; magit.
 (autoload 'magit-status' "magit" nil t)
 (global-set-key (kbd "C-x C-g") 'magit-status)
