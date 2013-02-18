@@ -7,6 +7,10 @@
 (setq inhibit-startup-message t
   inhibit-startup-echo-area-message t)
 
+;; no prompts.
+(setq confirm-nonexistent-file-or-buffer nil)
+(fset 'yes-or-no-p 'y-or-n-p)
+
 ;; ido matching.
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
