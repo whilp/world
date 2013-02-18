@@ -47,6 +47,9 @@
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
 
+;; wrap.
+(global-visual-line-mode 1)
+
 ;; easier backward-kill-word.
 (global-set-key "\C-w" 'backward-kill-word)
 (global-set-key "\C-x\C-k" 'kill-region)
