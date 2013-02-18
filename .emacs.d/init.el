@@ -34,3 +34,9 @@
 ;; org-mode.
 (require 'org)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/deft"))
+(require 'deft)
+(setq deft-extension "org")
+(setq deft-directory "~/notes")
+(setq deft-text-mode 'org-mode)
