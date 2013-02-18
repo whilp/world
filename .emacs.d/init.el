@@ -33,6 +33,10 @@
 (global-set-key (kbd "M-RET") 'ns-toggle-fullscreen)
 (global-set-key (kbd "C-o") 'other-window)
 
+;; s/meta/c/
+(global-set-key "\C-x\C-m" 'execute-extended-command)
+(global-set-key "\C-c\C-m" 'execute-extended-command)
+
 ;; whitespace.
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
