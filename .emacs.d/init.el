@@ -22,6 +22,8 @@
 
 ;; backups.
 (setq backup-directory-alist `(("." . "~/.saves")))
+(setq backup-directory-alist `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
 ;; pretty-print expression evals.
 (global-set-key [remap eval-expression] 'pp-eval-expression)
