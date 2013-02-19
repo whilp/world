@@ -1,3 +1,6 @@
+;; environment.
+(setq exec-path (append exec-path '("~/bin")))
+
 ;; no bars.
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
@@ -67,6 +70,7 @@
 
 ;; magit.
 (autoload 'magit-status' "magit" nil t)
+(setq magit-git-executable "hub")
 (global-set-key (kbd "C-x C-g") 'magit-status)
 
 ;; org-mode.
