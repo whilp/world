@@ -45,6 +45,7 @@
 (setq mac-command-key-is-meta t)
 (setq mac-command-modifier 'meta)
 (setq mac-option-modifier 'super)
+(setq kill-read-only-ok)
 
 ;; whitespace.
 (setq-default indent-tabs-mode nil)
@@ -83,6 +84,7 @@
 (setq deft-extension "org")
 (setq deft-directory "~/notes")
 (setq deft-text-mode 'org-mode)
+(setq deft-use-filename-as-title t)
 
 (set-default-font "Source Code Pro-15")
 
