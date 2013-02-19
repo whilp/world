@@ -55,6 +55,10 @@
 (global-set-key "\C-x\C-k" 'kill-region)
 (global-set-key "\C-c\C-k" 'kill-region)
 
+;; erc.
+(require 'tls)
+(require 'erc)
+
 ;; magit.
 (autoload 'magit-status' "magit" nil t)
 (global-set-key (kbd "C-x C-g") 'magit-status)
