@@ -23,6 +23,12 @@
 (setq ido-everywhere t)
 (ido-mode t)
 
+;; GC buffers, uniquify buffer names, ibuffer.
+(require 'midnight)
+(require 'uniquify)
+(require 'ibuffer)
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+
 ;; backups.
 (setq backup-directory-alist `(("." . "~/.saves")))
 (setq backup-directory-alist `((".*" . ,temporary-file-directory)))
