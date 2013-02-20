@@ -1,5 +1,10 @@
 ;; environment.
-(setq exec-path (append exec-path '("~/bin")))
+(setq exec-path (append '(
+                          "~/bin"
+                          "/usr/local/sbin"
+                          "/usr/local/bin"
+                          )
+                        exec-path))
 
 ;; no bars.
 (tool-bar-mode -1)
@@ -28,6 +33,10 @@
 (require 'uniquify)
 (require 'ibuffer)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
+
+;; GPG.
+(require 'epa-file)
+(epa-file-enable)
 
 ;; backups.
 (setq backup-directory-alist `(("." . "~/.saves")))
