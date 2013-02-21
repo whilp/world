@@ -1,8 +1,5 @@
 WHICH=$(/usr/bin/env which which)
-# Environment variables
-EDITOR="$($WHICH vim 2>/dev/null)" || \
-    EDITOR="$($WHICH nvi 2>/dev/null)" || \
-    EDITOR="$($WHICH vi)"
+EDITOR=editor
 VISUAL=${EDITOR}
 
 HISTFILE=~/.history
@@ -43,21 +40,6 @@ addtopath () {
     export PATH="$(addto "$item" "$PATH")"
 }
 
-sleepuntil () {
-    local DATE=$1
-    local INTERVAL=${2:-60}
-    local TARGET=$(date -j "${DATE}" "+%s" 2>/dev/null)
-    if [ -z "${TARGET}" ]; then
-        echo "bad date '$DATE'"
-        return 1
-    fi
-    echo "Sleeping until $(date -j "${DATE}")..."
-    while [ "$(date "+%s")" -lt "${TARGET}" ]
-    do
-        sleep "${INTERVAL}"
-    done
-}
-
 sshagent () {
     . "${HOME}"/bin/sshagent
 }
@@ -75,10 +57,6 @@ site () {
     fi
 }
 
-screenshot () {
-    xwd -root | xwdtopnm | pnmtopng "$1"
-}
-
 # Aliases.
 alias curl="curl -s"
 alias dc="cd"
@@ -92,6 +70,8 @@ alias tmux="tmux -S ${TMUX_SOCK}"
 alias vi="${VISUAL}"
 alias vimdiff="vimdiff -o"
 
+#eval "$(hub alias -s)"
+alias git=~/bin/hub
 alias add="git add"
 alias branch="git branch"
 alias ca="git ca"
@@ -132,6 +112,7 @@ $HOME/lib
 for d in $libs; do [ -d "$d" ] && export LD_LIBRARY_PATH=$(addto "$LD_LIBRARY_PATH" "$d"); done
 
 # Apply site-specific settings.
+export GIT_EDITOR=emacs
 GIT_COMMITTER_NAME="Will Maier"
 case "${SITE}" in
     simple) HGUSER="Will Maier <will@simple.com>"

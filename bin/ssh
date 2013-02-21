@@ -1,9 +1,9 @@
 #!/bin/sh
 
 # inorite?
-opts="1246AaCfgKkMNnqsTtVvXxYyb:c:D:e:F:I:i:L:l:m:O:o:p:R:S:W:w:"
+opts="1246AaCfgKkMNnqrsTtVvXxYyb:c:D:e:F:I:i:L:l:m:O:o:p:R:S:W:w:"
 while getopts $opts ARG; do continue; done
 eval host=\$$OPTIND
 
 printf '\033k'$host'\033\\' 1>&2
-exec /usr/bin/${0##*/} $*
+exec /usr/local/bin/${0##*/} $*

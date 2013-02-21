@@ -3,19 +3,7 @@ setopt SH_WORD_SPLIT
 . ~/.profile
 unsetopt SH_WORD_SPLIT
 
-bindkey -v
-
-case $TERM in
-    xterm*) bindkey "^[[F" end-of-line; bindkey "^[[H" beginning-of-line;;
-esac
-
-bindkey '\e[1~' beginning-of-line
-bindkey '\e[4~' end-of-line
-bindkey '\e[3~' delete-char
-bindkey '\e[2~' overwrite-mode
-bindkey "^[[A"  up-line-or-search
-bindkey "^[[B"  down-line-or-search
-bindkey -v
+set -o emacs
 
 stty erase  2>/dev/null
 
@@ -27,7 +15,6 @@ autoload -U zed
 autoload -U zmv
 autoload edit-command-line
 zle -N edit-command-line
-bindkey '\ee' edit-command-line
 zmodload -i zsh/complist
 
 zstyle ':completion:*' use-cache on

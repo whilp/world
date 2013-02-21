@@ -61,7 +61,7 @@ colorscheme lucius
 
 " Don't do paren matching.
 let loaded_matchparen=1
-let mapleader=","
+" let mapleader=","
 
 " In netrw, edit files in a new tab.
 let g:netrw_browse_split=2
@@ -80,10 +80,12 @@ noremap Y y$
 noremap [[ :diffget<CR>
 noremap ]] :diffput<CR>
 
+nnoremap <Leader>P :set invpaste paste?<CR>
 nnoremap <Leader>S :source ~/.vimrc<Enter>
 nnoremap <Leader>c :Gco %<CR>i
 nnoremap <Leader>d :Gdiff<CR>
-nnoremap <Leader>p :set invpaste paste?<CR>
+nnoremap <Leader>p :Git push<CR>
+nnoremap <Leader>s :Gstatus<CR>
 nnoremap <Leader>q :x<CR>
 
 inoremap <C-B> <C-X>

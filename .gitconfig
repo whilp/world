@@ -1,4 +1,5 @@
 [alias]
+	pr = pull-request
 	st = status -s
 	ci = commit
 	ca = commit -a
@@ -10,32 +11,29 @@
 	ctags = "!sh -c '[ -f .git/hooks/ctags ] || git init; .git/hooks/ctags' git-ctags"
 [mergetool]
 	prompt = false
-[merge]
-	ff = false
-	tool = fugitive
-	conflictstyle = diff3
 [format]
 	pretty = format:"%h %p %d %ai %ce%n  %s%n"
-[core]
-	editor = giteditor
 [url "git@github.com:"]
 	insteadOf = gh:
 [url "git@github.banksimple.com:"]
 	insteadOf = bh:
 [url "git@github.banksimple.com:BankSimple/"]
 	insteadOf = bs:
+[url "git@github.banksimple.com:backend/"]
+	insteadOf = backend:
+[url "git@github.banksimple.com:ops/"]
+	insteadOf = ops:
+[url "git@github.banksimple.com:ops/chef-"]
+	insteadOf = chef:
 [url "will@meta.lfod.us:share/git/"]
 	insteadOf = code:
-[diff]
-	tool = vimdiff
-	noprefix = true
 [push]
 	default = current
-[mergetool "fugitive"]
-	cmd = vim -f -c \"Gdiff\" \"$MERGED\"
+[pull]
+	fast-forward = true
 [init]
 	templatedir = ~/.gitconf/init
-[help]
-	autocorrect = 10
 [remote "origin"]
 	fetch = +refs/pull/*/head:refs/remotes/origin/pr/*
+[hub]
+	host = github.banksimple.com

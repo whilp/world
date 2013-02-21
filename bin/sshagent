@@ -19,11 +19,11 @@ sshagent () {
         kill -9 "${SSH_AGENT_PID}" >/dev/null 2>&1
 
         # Create an agent.
-        TMPFILE=$(mktemp)
-        trap "rm -f ${TMPFILE}" 0 1 15
-        ssh-agent -t7d -s -a "${AGENT_SOCK}" >| "${TMPFILE}"
-        chmod 600 "${TMPFILE}"
-        mv "${TMPFILE}" "${SSH_AGENT_FILE}"
+        tmp=$(mktemp -d sshagent)
+        trap "rm -rf ${tmp}" 0 1 15
+        ssh-agent -t7d -s -a "${AGENT_SOCK}" >| "${tmp}/agent"
+        chmod 600 "${tmp}/agent"
+        mv "${tmp}/agent" "${SSH_AGENT_FILE}"
         . "${SSH_AGENT_FILE}"
         RET=1
     fi

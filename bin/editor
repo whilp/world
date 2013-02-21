@@ -1,0 +1,9 @@
+#!/bin/sh
+
+editors="emacs
+mg
+"
+
+for editor in $editors; do
+    which $editor >/dev/null 2>&1 && exec $editor $*
+done
