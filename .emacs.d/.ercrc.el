@@ -5,6 +5,8 @@
 (erc-ring-mode t)
 (erc-button-mode nil)
 (erc-fill-disable)
+(setq erc-modules (delq 'fill erc-modules))
+(erc-track-enable)
 
 (setq erc-keywords '(
                      "\\b#ops\\b"
@@ -19,8 +21,9 @@
                      "\\bmaier\\b"
                      ))
 
-(add-to-list 'erc-modules 'autoaway)
+(require 'erc-autoaway)
 (setq erc-autoaway-use-emacs-idle t)
+(erc-autoaway-enable)
 
 (erc-timestamp-mode t)
 (setq erc-timestamp-format "%Y-%m-%d %H:%M:%S ")
