@@ -29,26 +29,37 @@
 (setq erc-timestamp-format "%Y-%m-%d %H:%M:%S ")
 
 (add-to-list 'erc-modules 'log)
-;; '(erc-enable-logging 'erc-log-all-but-server-buffers)
+(defun erc-generate-log-file-name-perfect (buffer target nick server port)
+  (convert-standard-filename
+   (concat
+    (or (with-current-buffer buffer (erc-network-name)) server)
+    "." (buffer-name buffer))))
+
 (defun erc-generate-log-directory-name ()
   (format-time-string "~/logs/%Y/%m/%d"))
+
 (defun erc-generate-log-channels-directory (buffer target nick server port)
   (erc-generate-log-directory-name))
+
 (defun erc-mkdir-log-channels-directory (&optional buffer)
   (make-directory (erc-generate-log-directory-name) t))
+
 (add-hook 'erc-insert-post-hook 'erc-mkdir-log-channels-directory)
+
 (setq erc-log-channels t
       erc-hide-timestamps nil
+      erc-enable-logging `erc-log-all-but-server-buffers
       erc-log-insert-log-on-open nil
       erc-log-write-after-send t
       erc-log-write-after-insert t
       erc-log-file-coding-system 'utf-8
-      erc-generate-log-file-name-function 'erc-generate-log-file-name-long
+      erc-generate-log-file-name-function 'erc-generate-log-file-name-perfect
       erc-log-channels-directory 'erc-generate-log-channels-directory)
 
 (setq erc-auto-query 'bury
       erc-save-buffer-on-part nil
       erc-save-queries-on-quit nil
+      erc-hide-list '("JOIN" "PART" "QUIT")
       erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT")
       erc-track-exclude-server-buffer t
       erc-format-query-as-channel-p t
@@ -68,7 +79,7 @@
       '(
         ("irc.oftc.net"
          )
-        ("irc.freenode.net"
+        ("freenode.net"
          "##infra-talk"
          "##welp"
          "#OpsSchool"
