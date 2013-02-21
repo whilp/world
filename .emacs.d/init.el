@@ -58,7 +58,6 @@
 
 ;; windows.
 (global-set-key (kbd "M-RET") 'ns-toggle-fullscreen)
-(global-set-key (kbd "C-o") 'other-window)
 
 ;; s/meta/c/
 (global-set-key "\C-x\C-m" 'execute-extended-command)
