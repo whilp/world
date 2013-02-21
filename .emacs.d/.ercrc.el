@@ -1,20 +1,12 @@
 ;; (load "~/.emacs.d/.erc-auth")
 
-(setq erc-log-channels-directory "~/logs/")
+(erc-match-mode)
+(erc-track-mode t)
+(erc-ring-mode t)
+(erc-button-mode nil)
+(erc-fill-disable)
 
-(setq erc-save-buffer-on-part nil
-      erc-save-queries-on-quit nil
-      erc-log-write-after-send t
-      erc-log-write-after-insert t
-      erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT")
-      erc-track-exclude-server-buffer t
-      erc-format-query-as-channel-p t
-      erc-track-priority-faces-only 'all
-      erc-current-nick-highlight-type 'nick
-      erc-track-use-faces t
-      erc-track-faces-priority-list
-          '(erc-current-nick-face erc-keyword-face)
-      erc-keywords '(
+(setq erc-keywords '(
                      "\\b#ops\\b"
                      "\\bops\\b"
                      "\\bchef\\b"
@@ -25,9 +17,42 @@
                      "\\bmilwaukee\\b"
                      "\\bwcmaier\\b"
                      "\\bmaier\\b"
-                     )
+                     ))
+
+(add-to-list 'erc-modules 'autoaway)
+(setq erc-autoaway-use-emacs-idle t)
+
+(erc-timestamp-mode t)
+(setq erc-timestamp-format "%Y-%m-%d %H:%M:%S ")
+
+(add-to-list 'erc-modules 'log)
+;; '(erc-enable-logging 'erc-log-all-but-server-buffers)
+(setq erc-log-channels t
+      erc-hide-timestamps nil
+      erc-log-insert-log-on-open nil
+      erc-log-write-after-send t
+      erc-log-write-after-insert t
+      erc-generate-log-file-name-function 'erc-generate-log-file-name-with-date
+      erc-log-channels-directory "~/logs/")
+
+(setq erc-auto-query 'bury
+      erc-save-buffer-on-part nil
+      erc-save-queries-on-quit nil
+      erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT")
+      erc-track-exclude-server-buffer t
+      erc-format-query-as-channel-p t
+      erc-prompt ">"
+      erc-timestamp-only-if-changed-flag nil
+      erc-insert-timestamp-function 'erc-insert-timestamp-left
+      erc-track-priority-faces-only 'all
+      erc-log-matches-flag nil
+      erc-current-nick-highlight-type 'nick
+      erc-track-use-faces t
+      erc-track-faces-priority-list
+          '(erc-current-nick-face erc-keyword-face)
       )
 
+(erc-autojoin-mode t)
 (setq erc-autojoin-channels-alist
       '(
         ("irc.oftc.net"
@@ -117,4 +142,3 @@
   "Connect to bitlbee."
   (interactive)
   (erc :server "127.0.0.1" :port 16667 :nick "will" :full-name "Will Maier"))
-
