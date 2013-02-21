@@ -28,12 +28,12 @@
 (erc-timestamp-mode t)
 (setq erc-timestamp-format "%Y-%m-%d %H:%M:%S ")
 
+(set-face-foreground 'erc-keyword-face "slateblue")
+
 (add-to-list 'erc-modules 'log)
 (defun erc-generate-log-file-name-perfect (buffer target nick server port)
   (convert-standard-filename
-   (concat
-    (or (with-current-buffer buffer (erc-network-name)) server)
-    "." (buffer-name buffer))))
+   (concat server "!" (buffer-name buffer))))
 
 (defun erc-generate-log-directory-name ()
   (format-time-string "~/logs/%Y/%m/%d"))
@@ -66,7 +66,9 @@
       erc-prompt ">"
       erc-timestamp-only-if-changed-flag nil
       erc-insert-timestamp-function 'erc-insert-timestamp-left
-      erc-track-priority-faces-only 'all
+      erc-track-priority-faces-only '("&bitlbee" "#chef" "##infra-talk" "#onboarding_support")
+      erc-join-buffer 'bury
+      erc-flood-protect nil
       erc-log-matches-flag nil
       erc-current-nick-highlight-type 'nick
       erc-track-use-faces t
@@ -116,6 +118,7 @@
          "#nagios"
          "#notifications"
          "#onboarding"
+         "#onboarding_support"
          "#ops"
          "#overflow"
          "#politics"
