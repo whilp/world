@@ -42,6 +42,7 @@
       erc-log-insert-log-on-open nil
       erc-log-write-after-send t
       erc-log-write-after-insert t
+      erc-log-file-coding-system 'utf-8
       erc-generate-log-file-name-function 'erc-generate-log-file-name-long
       erc-log-channels-directory 'erc-generate-log-channels-directory)
 
