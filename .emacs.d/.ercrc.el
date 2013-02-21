@@ -30,13 +30,20 @@
 
 (add-to-list 'erc-modules 'log)
 ;; '(erc-enable-logging 'erc-log-all-but-server-buffers)
+(defun erc-generate-log-directory-name ()
+  (format-time-string "~/logs/%Y/%m/%d"))
+(defun erc-generate-log-channels-directory (buffer target nick server port)
+  (erc-generate-log-directory-name))
+(defun erc-mkdir-log-channels-directory (&optional buffer)
+  (make-directory (erc-generate-log-directory-name) t))
+(add-hook 'erc-insert-post-hook 'erc-mkdir-log-channels-directory)
 (setq erc-log-channels t
       erc-hide-timestamps nil
       erc-log-insert-log-on-open nil
       erc-log-write-after-send t
       erc-log-write-after-insert t
-      erc-generate-log-file-name-function 'erc-generate-log-file-name-with-date
-      erc-log-channels-directory "~/logs/")
+      erc-generate-log-file-name-function 'erc-generate-log-file-name-long
+      erc-log-channels-directory 'erc-generate-log-channels-directory)
 
 (setq erc-auto-query 'bury
       erc-save-buffer-on-part nil
