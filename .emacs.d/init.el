@@ -33,6 +33,15 @@
 (require 'uniquify)
 (require 'ibuffer)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
+(setq ibuffer-expert t)
+(setq ibuffer-show-empty-filter-groups nil)
+(setq ibuffer-saved-filter-groups
+      '(("default"
+         ("erc" (mode . erc-mode)))))
+(add-hook 'ibuffer-mode-hook
+          '(lambda ()
+             (ibuffer-auto-mode t)
+             (ibuffer-switch-to-saved-filter-groups "default")))
 
 ;; GPG.
 (require 'epa-file)
