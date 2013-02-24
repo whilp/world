@@ -9,7 +9,8 @@
 	bare = config --bool core.bare true
 	review = merge --no-ff --no-commit
 	ctags = "!sh -c '[ -f .git/hooks/ctags ] || git init; .git/hooks/ctags' git-ctags"
-
+[core]
+  editor = emacsclient -s master
 [format]
 	pretty = format:"%h %p %d %ai %ce%n  %s%n"
 [url "git@github.com:"]
