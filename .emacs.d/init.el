@@ -105,6 +105,7 @@
 
 ;; org-mode.
 (require 'org)
+(setq auto-indent-start-org-indent t)
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 
 ;; http://jblevins.org/projects/deft/
