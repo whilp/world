@@ -7,6 +7,7 @@
 (erc-fill-disable)
 (setq erc-modules (delq 'fill erc-modules))
 (erc-track-enable)
+(erc-scrolltobottom-enable)
 
 (setq erc-keywords '(
                      "\\b#ops\\b"
