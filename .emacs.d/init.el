@@ -5,6 +5,7 @@
                           "/usr/local/bin"
                           )
                         exec-path))
+(setq explicit-shell-file-name "/bin/bash")
 
 ;; no bars.
 (tool-bar-mode -1)
