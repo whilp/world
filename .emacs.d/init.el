@@ -32,7 +32,7 @@
 ;; GC buffers, uniquify buffer names, ibuffer.
 (require 'midnight)
 (require 'uniquify)
-(setq uniquify-buffer-name-style "forward")
+(setq uniquify-buffer-name-style 'forward)
 (require 'ibuffer)
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (setq ibuffer-expert t)
