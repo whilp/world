@@ -22,10 +22,6 @@
                      "\\bmaier\\b"
                      ))
 
-(require 'erc-autoaway)
-(setq erc-autoaway-use-emacs-idle t)
-(erc-autoaway-enable)
-
 (erc-timestamp-mode t)
 (setq erc-timestamp-format "%Y-%m-%d %H:%M:%S ")
 
