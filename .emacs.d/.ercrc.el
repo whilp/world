@@ -82,6 +82,7 @@
         ("freenode.net"
          "##infra-talk"
          "##welp"
+         "##buried"
          "#OpsSchool"
          "#chef"
          "#hangops"
