@@ -12,6 +12,10 @@
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
 
+;; modeline.
+(setq display-time-format "%a %Y-%m-%d %H:%M")
+(display-time-mode t)
+
 ;; no splash.
 (setq inhibit-startup-message t
   inhibit-startup-echo-area-message t)
