@@ -91,6 +91,7 @@
          "#pdxchef"
          )
         ("chat.banksimple.com"
+         "#/b/anksimple"
          "#Buttram"
          "#achewood"
          "#analytics"
