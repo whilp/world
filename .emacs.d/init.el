@@ -124,4 +124,7 @@
 (setq deft-text-mode 'org-mode)
 (setq deft-use-filename-as-title t)
 
+;; inf-ruby
+(require 'inf-ruby)
+
 (set-default-font "Source Code Pro-15")
