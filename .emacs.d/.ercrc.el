@@ -10,6 +10,7 @@
 (erc-scrolltobottom-enable)
 
 (setq erc-keywords '(
+                     "\\bwhilp\\b"
                      "\\b#ops\\b"
                      "\\bops\\b"
                      "\\bchef\\b"
