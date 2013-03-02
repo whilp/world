@@ -12,6 +12,10 @@
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
 
+;; modeline.
+(setq display-time-format "%a %Y-%m-%d %H:%M")
+(display-time-mode t)
+
 ;; no splash.
 (setq inhibit-startup-message t
   inhibit-startup-echo-area-message t)
@@ -119,5 +123,8 @@
 (setq deft-directory "~/notes")
 (setq deft-text-mode 'org-mode)
 (setq deft-use-filename-as-title t)
+
+;; inf-ruby
+(require 'inf-ruby)
 
 (set-default-font "Source Code Pro-15")

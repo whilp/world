@@ -10,6 +10,7 @@
 (erc-scrolltobottom-enable)
 
 (setq erc-keywords '(
+                     "\\bwhilp\\b"
                      "\\b#ops\\b"
                      "\\bops\\b"
                      "\\bchef\\b"
@@ -26,6 +27,11 @@
 (setq erc-timestamp-format "%Y-%m-%d %H:%M:%S ")
 
 (set-face-foreground 'erc-keyword-face "slateblue")
+
+(defadvice erc-track-find-face (around erc-track-find-face-promote-query activate)
+  (if (erc-query-buffer-p) 
+      (setq ad-return-value (intern "erc-current-nick-face"))
+    ad-do-it))
 
 (add-to-list 'erc-modules 'log)
 (defun erc-generate-log-file-name-perfect (buffer target nick server port)
@@ -82,6 +88,7 @@
         ("freenode.net"
          "##infra-talk"
          "##welp"
+         "##buried"
          "#OpsSchool"
          "#chef"
          "#hangops"
@@ -90,6 +97,7 @@
          "#pdxchef"
          )
         ("chat.banksimple.com"
+         "#/b/anksimple"
          "#Buttram"
          "#achewood"
          "#analytics"
