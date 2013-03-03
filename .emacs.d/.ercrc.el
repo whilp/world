@@ -5,9 +5,31 @@
 (erc-ring-mode t)
 (erc-button-mode nil)
 (erc-fill-disable)
-(setq erc-modules (delq 'fill erc-modules))
 (erc-track-enable)
 (erc-scrolltobottom-enable)
+
+(setq erc-modules '(
+                    autojoin
+                    button
+                    completion
+                    irccontrols
+                    keep-place
+                    list
+                    log
+                    match
+                    menu
+                    move-to-prompt
+                    netsplit
+                    networks
+                    noncommands
+                    readonly
+                    ring
+                    scrolltobottom
+                    stamp
+                    track
+                    truncate
+                    ))
+(erc-update-modules)
 
 (setq erc-keywords '(
                      "\\bwhilp\\b"
