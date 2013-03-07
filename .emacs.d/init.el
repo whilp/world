@@ -51,7 +51,8 @@
 
 ;; GPG.
 (require 'epa-file)
-(setq epa-file-name-regexp "\\.\\(gpg\\|asc\\)$")
+(setq epa-file-name-regexp "\\.\\(gpg\\|asc\\)$"
+      epa-armor t)
 (epa-file-name-regexp-update)
 (epa-file-enable)
 
