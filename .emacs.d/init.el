@@ -6,6 +6,7 @@
                           )
                         exec-path))
 (setq explicit-shell-file-name "/bin/bash")
+(setenv "PAGER" "cat")
 
 ;; no bars.
 (tool-bar-mode -1)
