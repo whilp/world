@@ -93,6 +93,7 @@
       erc-insert-timestamp-function 'erc-insert-timestamp-left
       erc-track-priority-faces-only '("&bitlbee" "#chef" "##infra-talk" "#onboarding_support")
       erc-mode-line-format "%t"
+      erc-header-line-format "%n at %S"
       erc-join-buffer 'bury
       erc-flood-protect nil
       erc-log-matches-flag nil
