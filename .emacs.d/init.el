@@ -52,6 +52,12 @@
              (ibuffer-auto-mode t)
              (ibuffer-switch-to-saved-filter-groups "default")))
 
+;; tramp.
+(add-to-list 'tramp-default-proxies-alist
+             '(nil "\\`root\\'" "/ssh:%h:"))
+(add-to-list 'tramp-default-proxies-alist
+             '((regexp-quote (system-name)) nil nil))
+
 ;; GPG.
 (require 'epa-file)
 (setq epa-file-name-regexp "\\.\\(gpg\\|asc\\)$"
