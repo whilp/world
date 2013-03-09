@@ -52,6 +52,10 @@
              (ibuffer-auto-mode t)
              (ibuffer-switch-to-saved-filter-groups "default")))
 
+;; comint.
+(remove-hook 'comint-output-filter-functions
+             'comint-postoutput-scroll-to-bottom)
+
 ;; tramp.
 (add-to-list 'tramp-default-proxies-alist
              '(nil "\\`root\\'" "/ssh:%h:"))
