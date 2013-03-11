@@ -38,6 +38,7 @@
 
 ;; GC buffers, uniquify buffer names, ibuffer.
 (require 'midnight)
+(add-to-list 'clean-buffer-list-kill-never-regexps "^#.*")
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'forward)
 (require 'ibuffer)
