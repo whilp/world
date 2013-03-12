@@ -115,6 +115,11 @@
              '("melpa" . "http://melpa.milkbox.net/packages/") t)
 (package-initialize)
 
+(defun install-package-unless (pkg)
+  "Install or refresh a package."
+  (unless (package-installed-p pkg)
+    (package-refresh-contents) (package-install pkg)))
+
 ;; erc.
 (require 'tls)
 (require 'erc)
