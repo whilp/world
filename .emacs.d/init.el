@@ -147,7 +147,8 @@
 (setq deft-text-mode 'org-mode)
 (setq deft-use-filename-as-title t)
 
-;; inf-ruby
+;; languages.
 (require 'inf-ruby)
+(install-package-unless scala-mode2)
 
 (set-default-font "Source Code Pro-15")
