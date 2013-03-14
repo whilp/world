@@ -32,17 +32,16 @@
 (erc-update-modules)
 
 (setq erc-keywords '(
-                     "\\bwhilp\\b"
-                     "\\b#ops\\b"
+                     "whilp"
+                     "#ops"
+                     "maier"
+                     "mke"
+                     "madison"
+                     "milwaukee"
+                     "wisconsin"
                      "\\bops\\b"
                      "\\bchef\\b"
                      "\\bmsn\\b"
-                     "\\bwisconsin\\b"
-                     "\\bmke\\b"
-                     "\\bmadison\\b"
-                     "\\bmilwaukee\\b"
-                     "\\bwcmaier\\b"
-                     "\\bmaier\\b"
                      ))
 
 (erc-timestamp-mode t)
