@@ -31,6 +31,8 @@
                     ))
 (erc-update-modules)
 
+(define-key erc-mode-map (kbd "C-c C-c") 'end-of-buffer)
+
 (setq erc-keywords '(
                      "whilp"
                      "#ops"
