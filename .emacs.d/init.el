@@ -153,5 +153,7 @@
 ;; languages.
 (require 'inf-ruby)
 (install-package-unless scala-mode2)
+(install-package-unless 'markdown-mode)
+(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
 (set-default-font "Source Code Pro-15")
