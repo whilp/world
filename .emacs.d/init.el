@@ -127,6 +127,10 @@
 (require 'tls)
 (require 'erc)
 
+;; vc
+(eval-after-load "vc-hooks"
+         '(define-key vc-prefix-map "=" 'ediff-revision))
+
 ;; magit.
 (autoload 'magit-status' "magit" nil t)
 (setq magit-git-executable "hub")
