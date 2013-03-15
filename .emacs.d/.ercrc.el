@@ -97,6 +97,8 @@
       erc-flood-protect nil
       erc-log-matches-flag nil
       erc-current-nick-highlight-type 'nick
+      erc-interpret-controls-p 'remove
+      erc-interpret-mirc-color t
       erc-track-use-faces t
       erc-track-faces-priority-list
           '(erc-current-nick-face erc-keyword-face)
