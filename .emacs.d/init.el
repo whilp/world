@@ -150,6 +150,15 @@
 (setq deft-text-mode 'org-mode)
 (setq deft-use-filename-as-title t)
 
+;; tags.
+(install-package-unless 'etags-select)
+(install-package-unless 'etags-table)
+(require 'etags-select)
+(require 'etags-table)
+(setq etags-table-search-up-depth 8)
+(global-set-key "\M-?" 'etags-select-find-tag-at-point)
+(global-set-key "\M-." 'etags-select-find-tag)
+
 ;; languages.
 (require 'inf-ruby)
 (install-package-unless scala-mode2)
