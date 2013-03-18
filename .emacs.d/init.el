@@ -101,6 +101,7 @@
 ;; whitespace.
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
+(global-set-key (kbd "<backtab>") 'indent-relative)
 
 ;; wrap.
 (global-visual-line-mode 1)
