@@ -18,7 +18,7 @@
 
 ;; modeline.
 (setq display-time-format "%a %Y-%m-%d %H:%M")
-(display-time-mode t)
+(display-time-mode 1)
 
 ;; no splash.
 (setq inhibit-startup-message t
@@ -43,6 +43,7 @@
 (require 'uniquify)
 (setq uniquify-buffer-name-style 'forward)
 (require 'ibuffer)
+
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (setq ibuffer-expert t)
 (setq ibuffer-show-empty-filter-groups nil)
