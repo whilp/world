@@ -7,6 +7,7 @@
                         exec-path))
 (setq explicit-shell-file-name "/bin/bash")
 (setenv "PAGER" "cat")
+(setenv "EDITOR" "emacsclient")
 (setenv "PROMPT_COMMAND" "")
 (setenv "PS1" "${debian_chroot:+($debian_chroot)}\u@\h:\w\$")
 
