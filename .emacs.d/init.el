@@ -9,7 +9,7 @@
 (setenv "PAGER" "cat")
 (setenv "EDITOR" "emacsclient")
 (setenv "PROMPT_COMMAND" "")
-(setenv "PS1" "${debian_chroot:+($debian_chroot)}\u@\h:\w\$")
+(setenv "PS1" "${debian_chroot:+($debian_chroot)}\\u@\\h:\\w\\$")
 
 ;; no bars.
 (tool-bar-mode -1)
@@ -130,8 +130,7 @@
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.milkbox.net/packages/")
-             '("marmalade" . "http://marmalade-repo.org/packages/") t)
-             t)
+             '("marmalade" . "http://marmalade-repo.org/packages/"))
              
 (package-initialize)
 
@@ -171,18 +170,9 @@
 (setq deft-text-mode 'org-mode)
 (setq deft-use-filename-as-title t)
 
-;; tags.
-(install-package-unless 'etags-select)
-(install-package-unless 'etags-table)
-(require 'etags-select)
-(require 'etags-table)
-(setq etags-table-search-up-depth 8)
-(global-set-key "\M-?" 'etags-select-find-tag-at-point)
-(global-set-key "\M-." 'etags-select-find-tag)
-
 ;; languages.
 (require 'inf-ruby)
-(install-package-unless scala-mode2)
+(install-package-unless 'scala-mode2)
 (install-package-unless 'markdown-mode)
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
