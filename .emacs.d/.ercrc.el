@@ -92,7 +92,7 @@
       erc-prompt ">"
       erc-timestamp-only-if-changed-flag nil
       erc-insert-timestamp-function 'erc-insert-timestamp-left
-      erc-track-priority-faces-only '("&bitlbee" "#chef" "##infra-talk" "#onboarding_support" "#OpsSchool")
+      erc-track-priority-faces-only '("&bitlbee" "#chef" "##infra-talk" "#onboarding_support" "#nagios" "#sensu" "#OpsSchool")
       erc-mode-line-format "%t"
       erc-header-line-format "%n at %S"
       erc-join-buffer 'bury
