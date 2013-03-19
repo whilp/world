@@ -36,6 +36,7 @@
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
 (ido-mode t)
+(icomplete-mode t)
 
 ;; GC buffers, uniquify buffer names, ibuffer.
 (require 'midnight)
@@ -66,6 +67,7 @@
 (add-to-list 'tramp-default-proxies-alist
              '((regexp-quote (system-name)) nil nil))
 
+(global-set-key (kbd "C-x m") 'shell)
 (defun remote-shell (&optional host)
   "Open a remote shell to a host."
   (interactive)
