@@ -16,11 +16,6 @@
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
 
-;; line numbers.
-(setq linum-format "%3d ")
-(global-linum-mode 1)
-(global-hl-line-mode 1)
-
 ;; modeline.
 (setq display-time-format "%a %Y-%m-%d %H:%M")
 (display-time-mode 1)
