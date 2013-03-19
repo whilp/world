@@ -165,10 +165,10 @@
 ;; http://jblevins.org/projects/deft/
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/deft"))
 (require 'deft)
-(setq deft-extension "txt")
-(setq deft-directory "~/notes")
-(setq deft-text-mode 'org-mode)
-(setq deft-use-filename-as-title t)
+(setq deft-extension "txt"
+      deft-directory "~/notes"
+      deft-text-mode 'org-mode
+      deft-use-filename-as-title t)
 
 ;; languages.
 (require 'inf-ruby)
