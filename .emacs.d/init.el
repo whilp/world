@@ -62,6 +62,7 @@
              'comint-postoutput-scroll-to-bottom)
 
 ;; tramp.
+(require 'tramp)
 (add-to-list 'tramp-default-proxies-alist
              '(nil "\\`root\\'" "/ssh:%h:"))
 (add-to-list 'tramp-default-proxies-alist
