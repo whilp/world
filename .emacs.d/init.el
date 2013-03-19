@@ -113,6 +113,8 @@
 (global-set-key "\C-x\C-k" 'kill-region)
 (global-set-key "\C-c\C-k" 'kill-region)
 
+(global-set-key (kbd "C-_") 'dabbrev-expand)
+
 ;; packages.
 (require 'package)
 (add-to-list 'package-archives
