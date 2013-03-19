@@ -160,7 +160,7 @@
       org-default-notes-file "~/notes/todo.org")
 (define-key global-map "\C-ca" 'org-agenda)
 (define-key global-map "\C-cc" 'org-capture)
-(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+(add-to-list 'auto-mode-alist '("\\.(txt|org)$" . org-mode))
 
 ;; http://jblevins.org/projects/deft/
 (add-to-list 'load-path (expand-file-name "~/.emacs.d/deft"))
