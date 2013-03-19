@@ -66,6 +66,14 @@
 (add-to-list 'tramp-default-proxies-alist
              '((regexp-quote (system-name)) nil nil))
 
+(defun remote-shell (&optional host)
+  "Open a remote shell to a host."
+  (interactive)
+  (with-temp-buffer
+    (let ((host (if host host (read-string "Host: "))))
+      (cd (concat "/" host ":"))
+      (shell (concat "*" host "*")))))
+
 ;; GPG.
 (require 'epa-file)
 (setq epa-file-name-regexp "\\.\\(gpg\\|asc\\)$"
