@@ -190,6 +190,11 @@
          )
         ))
 
+(defun erc-track-mode-reset ()
+  (interactive)
+  (setq erc-modified-channels-alist nil)
+  (erc-modified-channels-update))
+
 (defun erc-oftc ()
   "Connect to OFTC."
   (interactive)
