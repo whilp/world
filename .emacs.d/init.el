@@ -82,10 +82,10 @@
 (epa-file-enable)
 
 ;; backups.
-(setq make-backup-files nil)
-(setq backup-directory-alist `(("." . "~/.saves")))
-(setq backup-directory-alist `((".*" . ,temporary-file-directory)))
-(setq auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+(setq make-backup-files nil
+      backup-directory-alist `(("." . "~/.saves"))
+      backup-directory-alist `((".*" . ,temporary-file-directory))
+      auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
 ;; pretty-print expression evals.
 (global-set-key [remap eval-expression] 'pp-eval-expression)
