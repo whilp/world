@@ -164,6 +164,7 @@
          "#onboarding_support"
          "#ops"
          "#overflow"
+         "#physics"
          "#politics"
          "#portland"
          "#pr"
