@@ -1,6 +1,7 @@
 ;; (load "~/.emacs.d/.erc-auth")
 
-(erc-match-mode)
+(erc-match-mode t)
+(erc-readonly-mode t)
 (erc-track-mode t)
 (erc-ring-mode t)
 (erc-button-mode nil)
