@@ -1,6 +1,7 @@
 ;; (load "~/.emacs.d/.erc-auth")
 
-(erc-match-mode)
+(erc-match-mode t)
+(erc-readonly-mode t)
 (erc-track-mode t)
 (erc-ring-mode t)
 (erc-button-mode nil)
@@ -92,7 +93,6 @@
       erc-prompt ">"
       erc-timestamp-only-if-changed-flag nil
       erc-insert-timestamp-function 'erc-insert-timestamp-left
-      erc-track-priority-faces-only '("&bitlbee" "#chef" "##infra-talk" "#onboarding_support" "#nagios" "#sensu" "#OpsSchool")
       erc-mode-line-format "%t"
       erc-header-line-format "%n at %S"
       erc-join-buffer 'bury
@@ -106,6 +106,16 @@
           '(erc-current-nick-face erc-keyword-face)
       )
 
+(setq erc-track-priority-faces-only '(
+                                      "&bitlbee"
+                                      "#chef"
+                                      "##infra-talk"
+                                      "#foodfightshow"
+                                      "#onboarding_support"
+                                      "#nagios"
+                                      "#sensu"
+                                      "#OpsSchool"))
+
 (erc-autojoin-mode t)
 (setq erc-autojoin-channels-alist
       '(
@@ -113,6 +123,7 @@
          )
         ("freenode.net"
          "##infra-talk"
+         "#foodfightshow"
          "##welp"
          "##buried"
          "#OpsSchool"
@@ -153,6 +164,7 @@
          "#onboarding_support"
          "#ops"
          "#overflow"
+         "#physics"
          "#politics"
          "#portland"
          "#pr"
@@ -179,6 +191,11 @@
         ("localhost"
          )
         ))
+
+(defun erc-track-mode-reset ()
+  (interactive)
+  (setq erc-modified-channels-alist nil)
+  (erc-modified-channels-update))
 
 (defun erc-oftc ()
   "Connect to OFTC."
