@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ -n "$SSH_AUTH_SOCK" -a -f "$SSH_AUTH_SOCK" ]; then
+    ln -sf $SSH_AUTH_SOCK ~/.ssh/auth.sock
+    export SSH_AUTH_SOCK=~/.ssh/auth.sock
+fi
+
+exec emacsclient -nw -t -s master
