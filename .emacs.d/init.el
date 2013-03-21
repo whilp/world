@@ -9,7 +9,7 @@
 (setenv "PAGER" "cat")
 (setenv "EDITOR" "emacsclient")
 (setenv "PROMPT_COMMAND" "")
-(setenv "SSH_AUTH_SOCK" "~/.ssh/auth.sock")
+(setenv "SSH_AUTH_SOCK" "/home/will/.ssh/auth.sock")
 (setenv "PS1" "${debian_chroot:+($debian_chroot)}\\u@\\h:\\w\\$")
 
 ;; no bars.
