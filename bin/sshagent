@@ -1,3 +1,5 @@
+#!/bin/sh
+
 REMOVE=
 VERBOSE=
 SSH_HOME="$HOME/.ssh"
