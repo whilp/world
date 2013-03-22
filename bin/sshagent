@@ -60,8 +60,8 @@ fi
 
 master_sock=~/.ssh/agent.sock
 if [ -n "$SSH_AUTH_SOCK" -a "$SSH_AUTH_SOCK" != "$master_sock" ]; then
-   ln -sf "$SSH_AUTH_SOCK" "$master_sock"
-   export SSH_AUTH_SOCK=$master_sock
+    ln -sf "$SSH_AUTH_SOCK" "$master_sock"
+    export SSH_AUTH_SOCK=$master_sock
 else
     sshagent
     unset -f sshagent
