@@ -9,8 +9,9 @@
 (setenv "PAGER" "cat")
 (setenv "EDITOR" "emacsclient")
 (setenv "PROMPT_COMMAND" "")
-(setenv "SSH_AUTH_SOCK" "/home/will/.ssh/auth.sock")
-(setenv "PS1" "${debian_chroot:+($debian_chroot)}\\u@\\h:\\w\\$")
+(setenv "GPG_AGENT_INFO" nil)
+(setenv "SSH_AUTH_SOCK" (expand-file-name "~/.ssh/agent.sock"))
+(setenv "PS1" "${debian_chroot:+($debian_chroot)}\\u@\\h:\\w \\$ ")
 
 ;; no bars.
 (tool-bar-mode -1)
