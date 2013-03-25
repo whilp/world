@@ -40,6 +40,7 @@
 (setq ido-everywhere t)
 (ido-mode t)
 (icomplete-mode t)
+(load "~/.emacs.d/ido.el")
 
 ;; GC buffers, uniquify buffer names, ibuffer.
 (require 'midnight)
