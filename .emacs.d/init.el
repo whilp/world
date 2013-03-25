@@ -160,6 +160,7 @@
 (require 'org)
 (setq auto-indent-start-org-indent t
       org-startup-indented t
+      org-agenda-restore-windows-after-quit t
       org-agenda-files (list "~/notes/todo.txt")
       org-default-notes-file "~/notes/todo.txt")
 (define-key global-map "\C-ca" 'org-agenda)
