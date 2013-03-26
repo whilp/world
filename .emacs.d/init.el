@@ -41,6 +41,7 @@
 (ido-mode t)
 (icomplete-mode t)
 (load "~/.emacs.d/ido.el")
+(ido-init-completion-maps)
 
 ;; GC buffers, uniquify buffer names, ibuffer.
 (require 'midnight)
