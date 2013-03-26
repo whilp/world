@@ -173,6 +173,11 @@
       deft-text-mode 'org-mode
       deft-use-filename-as-title t)
 
+;; golden-ratio
+(install-package-unless 'golden-ratio)
+(require 'golden-ratio)
+(golden-ratio-enable)
+
 ;; languages.
 (require 'inf-ruby)
 (install-package-unless 'scala-mode2)
