@@ -8,6 +8,7 @@
 (setq explicit-shell-file-name "/bin/bash")
 (setenv "PAGER" "cat")
 (setenv "EDITOR" "emacsclient")
+(setenv "ALTERNATE_EDITOR" "emacs")
 (setenv "PROMPT_COMMAND" "")
 (setenv "GPG_AGENT_INFO" nil)
 (setenv "SSH_AUTH_SOCK" (expand-file-name "~/.ssh/agent.sock"))
@@ -39,6 +40,7 @@
 (setq ido-everywhere t)
 (ido-mode t)
 (icomplete-mode t)
+(load "~/.emacs.d/ido.el")
 
 ;; GC buffers, uniquify buffer names, ibuffer.
 (require 'midnight)
@@ -159,8 +161,10 @@
 (require 'org)
 (setq auto-indent-start-org-indent t
       org-startup-indented t
-      org-agenda-files (list "~/notes/todo.org")
-      org-default-notes-file "~/notes/todo.org")
+      org-agenda-restore-windows-after-quit t
+      org-agenda-file-regexp "\\`[^.].*\\.\\(txt\\|org\\)\\'"
+      org-agenda-files (list "~/notes")
+      org-default-notes-file "~/notes/todo.txt")
 (define-key global-map "\C-ca" 'org-agenda)
 (define-key global-map "\C-cc" 'org-capture)
 (add-to-list 'auto-mode-alist '("\\.\\(txt\\|org\\)$" . org-mode))
