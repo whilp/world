@@ -129,6 +129,7 @@
          "#OpsSchool"
          "#chef"
          "#hangops"
+         "#monitorama"
          "#monitoringlove"
          "#monitoringsucks"
          "#pdxchef"
