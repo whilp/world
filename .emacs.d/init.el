@@ -81,6 +81,7 @@
     (let ((host (if host host (read-string "Host: "))))
       (cd (concat "/" host ":"))
       (shell (concat "*" host "*")))))
+(global-set-key (kbd "C-x s") 'remote-shell)
 
 ;; GPG.
 (require 'epa-file)
