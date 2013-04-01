@@ -170,6 +170,7 @@
          "#politics"
          "#portland"
          "#pr"
+         "#product"
          "#puns"
          "#remotecontrol"
          "#review"
