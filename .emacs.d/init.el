@@ -41,6 +41,7 @@
 (ido-mode t)
 (icomplete-mode t)
 (load "~/.emacs.d/ido.el")
+(ido-init-completion-maps)
 
 ;; GC buffers, uniquify buffer names, ibuffer.
 (require 'midnight)
@@ -80,6 +81,7 @@
     (let ((host (if host host (read-string "Host: "))))
       (cd (concat "/" host ":"))
       (shell (concat "*" host "*")))))
+(global-set-key (kbd "C-x s") 'remote-shell)
 
 ;; GPG.
 (require 'epa-file)
