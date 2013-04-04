@@ -29,6 +29,8 @@
 	insteadOf = ops:
 [url "git@github.banksimple.com:ops/chef-"]
 	insteadOf = chef:
+[url "git@github.banksimple.com:cookbooks/"]
+  insteadOf = cook:
 [url "will@meta.lfod.us:share/git/"]
 	insteadOf = code:
 [push]
@@ -41,3 +43,5 @@
 	fetch = +refs/pull/*/head:refs/remotes/origin/pr/*
 [hub]
 	host = github.banksimple.com
+[merge]
+	tool = emerge
