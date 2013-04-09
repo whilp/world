@@ -187,6 +187,7 @@
 ;; languages.
 (require 'inf-ruby)
 (install-package-unless 'scala-mode2)
+(install-package-unless 'clojure-mode)
 (install-package-unless 'markdown-mode)
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
