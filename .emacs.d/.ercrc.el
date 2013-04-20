@@ -133,6 +133,7 @@
          "#monitoringlove"
          "#monitoringsucks"
          "#pdxchef"
+         "#netflixoss"
          )
         ("chat.banksimple.com"
          "#/b/anksimple"
