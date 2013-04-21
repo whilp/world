@@ -112,7 +112,7 @@ $HOME/lib
 for d in $libs; do [ -d "$d" ] && export LD_LIBRARY_PATH=$(addto "$LD_LIBRARY_PATH" "$d"); done
 
 # Apply site-specific settings.
-export GIT_EDITOR=emacs
+export GIT_EDITOR=emacsclient
 GIT_COMMITTER_NAME="Will Maier"
 case "${SITE}" in
     simple) HGUSER="Will Maier <will@simple.com>"
@@ -152,7 +152,7 @@ if [ -d "${HOME}/perl5/lib/perl5" ]; then
     eval $(perl -I$HOME/perl5/lib/perl5 -Mlocal::lib)
 fi
 
-sshagent
+#sshagent
 gpgagent
 
 ulimit -n 1023
