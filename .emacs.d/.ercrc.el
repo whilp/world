@@ -174,6 +174,7 @@
          "#music"
          "##music"
          "#nagios"
+         "##nighters"
          "#notifications"
          "#onboarding"
          "#onboarding_support"
