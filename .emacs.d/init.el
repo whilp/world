@@ -175,6 +175,9 @@
                   (:name ipython)
                   (:name markdown-mode)
                   (:name scala-mode2)
+                  (:name color-theme-solarized
+                         :after (progn
+                                  (load-theme 'solarized-light t)))
 
                   (:name deft
                          :after (progn
