@@ -178,7 +178,7 @@
  el-get-user-package-directory "~/.emacs.d"
  el-get-sources '(
                   (:name deft
-                         :after (lambda ()
+                         :after (progn
                                   (setq
                                    deft-extension "txt"
                                    deft-directory "~/notes"
@@ -186,21 +186,21 @@
                                    deft-use-filename-as-title t)))
 
                   (:name golden-ratio
-                         :after (lambda ()
+                         :after (progn
                                   (golden-ratio-enable)))
 
                   (:name magit
-                         :after (lambda ()
+                         :after (progn
                                   (autoload 'magit-status' "magit" nil t)
                                   (setq magit-git-executable "hub")
                                   (global-set-key (kbd "C-x C-g") 'magit-status)))
 
                   (:name markdown-mode
-                         :after (lambda ()
+                         :after (progn
                                   (add-to-list 'auto-mode-alist '("\\.md\\'" .markdown-mode))))
 
                   (:name smex
-                         :after (lambda ()
+                         :after (progn
                                   (global-set-key (kbd "C-x C-m") 'smex)
                                   (global-set-key (kbd "M-x") 'smex)
                                   (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
