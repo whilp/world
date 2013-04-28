@@ -190,5 +190,6 @@
 (install-package-unless 'clojure-mode)
 (install-package-unless 'markdown-mode)
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+(load "~/.emacs.d/ipython.el")
 
 (set-default-font "Source Code Pro-15")
