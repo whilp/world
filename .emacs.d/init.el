@@ -36,12 +36,6 @@
 (transient-mark-mode t)
 
 ;; ido matching.
-(setq ido-enable-flex-matching t)
-(setq ido-everywhere t)
-(ido-mode t)
-(icomplete-mode t)
-(load "~/.emacs.d/ido.el")
-(ido-init-completion-maps)
 
 ;; GC buffers, uniquify buffer names, ibuffer.
 (require 'midnight)
@@ -134,17 +128,6 @@
 (global-set-key (kbd "C-_") 'dabbrev-expand)
 
 ;; packages.
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/")
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
-             
-(package-initialize)
-
-(defun install-package-unless (pkg)
-  "Install or refresh a package."
-  (unless (package-installed-p pkg)
-    (package-refresh-contents) (package-install pkg)))
 
 ;; erc.
 (require 'tls)
@@ -190,11 +173,19 @@
                         (setq magit-git-executable "hub")
                         (global-set-key (kbd "C-x C-g") 'magit-status)))
         (:name deft
-               :after (lambda () (setq
-                                  deft-extension "txt"
-                                  deft-directory "~/notes"
-                                  deft-text-mode 'org-mode
-                                  deft-use-filename-as-title t)))
+               :after (lambda ()
+                        (setq
+                         deft-extension "txt"
+                         deft-directory "~/notes"
+                         deft-text-mode 'org-mode
+                         deft-use-filename-as-title t)))
+        (:name ido
+               :after (lambda ()
+                        (setq ido-enable-flex-matching t)
+                        (setq ido-everywhere t)
+                        (ido-mode t)
+                        (icomplete-mode t)
+                        (ido-init-completion-maps)))
         (:name golden-ratio
                :after (lambda ()
                         (golden-ratio-enable)))
@@ -206,4 +197,5 @@
                         (global-set-key (kbd "M-x") 'smex)
                         (global-set-key (kbd "M-X") 'semx-major-mode-commands)))
         ))
+
 (el-get 'sync)
