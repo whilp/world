@@ -8,6 +8,7 @@
 (setq explicit-shell-file-name "/bin/bash")
 (setenv "PAGER" "cat")
 (setenv "EDITOR" "emacsclient")
+(setenv "GIT_EDITOR" "emacsclient")
 (setenv "ALTERNATE_EDITOR" "emacs")
 (setenv "PROMPT_COMMAND" "")
 (setenv "GPG_AGENT_INFO" nil)
