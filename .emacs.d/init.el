@@ -6,6 +6,8 @@
                           )
                         exec-path))
 (setq explicit-shell-file-name "/bin/bash")
+(setenv "PATH"
+        (mapconcat 'identity exec-path path-separator))
 (setenv "PAGER" "cat")
 (setenv "EDITOR" "emacsclient")
 (setenv "ALTERNATE_EDITOR" "emacs")
