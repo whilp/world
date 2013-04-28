@@ -131,6 +131,8 @@
 (require 'erc)
 
 ;; ido
+;; https://gist.github.com/timcharper/493269/raw/72d9063b8aef61a851026f3acb1d27a4b7c17eca/ido-other-window.el
+(load-file "~/.emacs.d/ido-other-window.el")
 (setq
  ido-enable-flex-matching t
  ido-everywhere t)
