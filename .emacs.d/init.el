@@ -8,12 +8,15 @@
 (setq explicit-shell-file-name "/bin/bash")
 (setenv "PAGER" "cat")
 (setenv "EDITOR" "emacsclient")
-(setenv "GIT_EDITOR" "emacsclient")
 (setenv "ALTERNATE_EDITOR" "emacs")
 (setenv "PROMPT_COMMAND" "")
 (setenv "GPG_AGENT_INFO" nil)
 (setenv "SSH_AUTH_SOCK" (expand-file-name "~/.ssh/agent.sock"))
 (setenv "PS1" "${debian_chroot:+($debian_chroot)}\\u@\\h:\\w \\$ ")
+
+(setenv "GIT_EDITOR" "emacsclient")
+(setenv "GIT_COMMITTER_NAME" "Will Maier")
+(setenv "GIT_COMMITTER_EAMIL" "wcmaier@m.aier.us")
 
 ;; no bars.
 (tool-bar-mode -1)
