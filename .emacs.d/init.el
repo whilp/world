@@ -102,8 +102,6 @@
 (global-set-key (kbd "M-l") 'windmove-right)
 
 ;; s/meta/c/
-(global-set-key "\C-x\C-m" 'execute-extended-command)
-(global-set-key "\C-c\C-m" 'execute-extended-command)
 
 ;; command-as-meta.
 (setq mac-option-key-is-meta nil)       
@@ -127,11 +125,17 @@
 
 (global-set-key (kbd "C-_") 'dabbrev-expand)
 
-;; packages.
-
 ;; erc.
 (require 'tls)
 (require 'erc)
+
+;; ido
+(setq
+ ido-enable-flex-matching t
+ ido-everywhere t)
+(ido-mode t)
+(icomplete-mode t)
+(ido-init-completion-maps)
 
 ;; vc
 (eval-after-load "vc-hooks"
@@ -151,51 +155,71 @@
 
 (set-default-font "Source Code Pro-15")
 
+;; (setq el-get-sources
+;;       '(
+;;         ipython
+;;         python-mode
+
+;;         ))
+
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
 (unless (require 'el-get nil 'noerror)
   (with-current-buffer
       (url-retrieve-synchronously
        "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
-    (goto-char (point-max))
-    (eval-print-last-sexp)))
+    (let (el-get-master-branch)
+      (goto-char (point-max))
+      (eval-print-last-sexp))))
 
-(setq el-get-sources
-      '(
-        el-get
-        ipython
-        python-mode
-        scala-mode2
-        clojure-mode
-        (:name magit
-               :after (lambda ()
-                        (autoload 'magit-status' "magit" nil t)
-                        (setq magit-git-executable "hub")
-                        (global-set-key (kbd "C-x C-g") 'magit-status)))
-        (:name deft
-               :after (lambda ()
-                        (setq
-                         deft-extension "txt"
-                         deft-directory "~/notes"
-                         deft-text-mode 'org-mode
-                         deft-use-filename-as-title t)))
-        (:name ido
-               :after (lambda ()
-                        (setq ido-enable-flex-matching t)
-                        (setq ido-everywhere t)
-                        (ido-mode t)
-                        (icomplete-mode t)
-                        (ido-init-completion-maps)))
-        (:name golden-ratio
-               :after (lambda ()
-                        (golden-ratio-enable)))
-        (:name markdown-mode
-               :after (lambda ()
-                        (add-to-list 'auto-mode-alist '("\\.md\\'" .markdown-mode))))
-        (:name smex
-               :after (lambda ()
-                        (global-set-key (kbd "M-x") 'smex)
-                        (global-set-key (kbd "M-X") 'semx-major-mode-commands)))
-        ))
+(setq
+ el-get-byte-compile t
+ el-get-user-package-directory "~/.emacs.d"
+ el-get-sources '(
+                  (:name deft
+                         :after (lambda ()
+                                  (setq
+                                   deft-extension "txt"
+                                   deft-directory "~/notes"
+                                   deft-text-mode 'org-mode
+                                   deft-use-filename-as-title t)))
 
-(el-get 'sync)
+                  (:name golden-ratio
+                         :after (lambda ()
+                                  (golden-ratio-enable)))
+
+                  (:name magit
+                         :after (lambda ()
+                                  (autoload 'magit-status' "magit" nil t)
+                                  (setq magit-git-executable "hub")
+                                  (global-set-key (kbd "C-x C-g") 'magit-status)))
+
+                  (:name markdown-mode
+                         :after (lambda ()
+                                  (add-to-list 'auto-mode-alist '("\\.md\\'" .markdown-mode))))
+
+                  (:name smex
+                         :after (lambda ()
+                                  (global-set-key (kbd "C-x C-m") 'smex)
+                                  (global-set-key (kbd "M-x") 'smex)
+                                  (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
+
+                  )
+ )
+
+(setq my-packages
+      (append
+       '(
+         clojure-mode
+         deft
+         find-file-in-project
+         golden-ratio
+         ipython
+         magit
+         markdown-mode
+         scala-mode2
+         smex
+         )
+       (mapcar 'el-get-source-name el-get-sources)))
+
+(el-get 'sync my-packages)
