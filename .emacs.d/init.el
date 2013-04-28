@@ -155,13 +155,6 @@
 
 (set-default-font "Source Code Pro-15")
 
-;; (setq el-get-sources
-;;       '(
-;;         ipython
-;;         python-mode
-
-;;         ))
-
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
 (unless (require 'el-get nil 'noerror)
