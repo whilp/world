@@ -193,6 +193,7 @@
 
                   (:name golden-ratio
                          :after (progn
+                                  (require 'golden-ratio)
                                   (golden-ratio-enable)))
 
                   (:name magit
