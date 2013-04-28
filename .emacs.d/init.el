@@ -177,6 +177,12 @@
  el-get-git-shallow-clone t
  el-get-user-package-directory "~/.emacs.d"
  el-get-sources '(
+                  (:name clojure-mode)
+                  (:name find-file-in-project)
+                  (:name ipython)
+                  (:name markdown-mode)
+                  (:name scala-mode2)
+
                   (:name deft
                          :after (progn
                                   (setq
@@ -208,19 +214,4 @@
                   )
  )
 
-(setq my-packages
-      (append
-       '(
-         clojure-mode
-         deft
-         find-file-in-project
-         golden-ratio
-         ipython
-         magit
-         markdown-mode
-         scala-mode2
-         smex
-         )
-       (mapcar 'el-get-source-name el-get-sources)))
-
-(el-get 'sync my-packages)
+(el-get 'sync (mapcar 'el-get-source-name el-get-sources))
