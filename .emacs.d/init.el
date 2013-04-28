@@ -154,11 +154,6 @@
 (eval-after-load "vc-hooks"
          '(define-key vc-prefix-map "=" 'ediff-revision))
 
-;; magit.
-(autoload 'magit-status' "magit" nil t)
-(setq magit-git-executable "hub")
-(global-set-key (kbd "C-x C-g") 'magit-status)
-
 ;; org-mode.
 (require 'org)
 (setq auto-indent-start-org-indent t
@@ -171,25 +166,44 @@
 (define-key global-map "\C-cc" 'org-capture)
 (add-to-list 'auto-mode-alist '("\\.\\(txt\\|org\\)$" . org-mode))
 
-;; http://jblevins.org/projects/deft/
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/deft"))
-(require 'deft)
-(setq deft-extension "txt"
-      deft-directory "~/notes"
-      deft-text-mode 'org-mode
-      deft-use-filename-as-title t)
-
-;; golden-ratio
-(install-package-unless 'golden-ratio)
-(require 'golden-ratio)
-(golden-ratio-enable)
-
-;; languages.
-(require 'inf-ruby)
-(install-package-unless 'scala-mode2)
-(install-package-unless 'clojure-mode)
-(install-package-unless 'markdown-mode)
-(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
-(load "~/.emacs.d/ipython.el")
-
 (set-default-font "Source Code Pro-15")
+
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+
+(unless (require 'el-get nil 'noerror)
+  (with-current-buffer
+      (url-retrieve-synchronously
+       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
+    (goto-char (point-max))
+    (eval-print-last-sexp)))
+
+(setq el-get-sources
+      '(
+        el-get
+        ipython
+        python-mode
+        scala-mode2
+        clojure-mode
+        (:name magit
+               :after (lambda ()
+                        (autoload 'magit-status' "magit" nil t)
+                        (setq magit-git-executable "hub")
+                        (global-set-key (kbd "C-x C-g") 'magit-status)))
+        (:name deft
+               :after (lambda () (setq
+                                  deft-extension "txt"
+                                  deft-directory "~/notes"
+                                  deft-text-mode 'org-mode
+                                  deft-use-filename-as-title t)))
+        (:name golden-ratio
+               :after (lambda ()
+                        (golden-ratio-enable)))
+        (:name markdown-mode
+               :after (lambda ()
+                        (add-to-list 'auto-mode-alist '("\\.md\\'" .markdown-mode))))
+        (:name smex
+               :after (lambda ()
+                        (global-set-key (kbd "M-x") 'smex)
+                        (global-set-key (kbd "M-X") 'semx-major-mode-commands)))
+        ))
+(el-get 'sync)
