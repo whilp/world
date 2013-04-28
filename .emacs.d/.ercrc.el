@@ -42,6 +42,9 @@
                      "madison"
                      "milwaukee"
                      "wisconsin"
+                     "ops[\\?!]"
+                     "backend[\\?!]"
+                     "eng[\\?!]"
                      "\\bops\\b"
                      "\\bchef\\b"
                      "\\bmsn\\b"
@@ -133,6 +136,7 @@
          "#monitoringlove"
          "#monitoringsucks"
          "#pdxchef"
+         "#netflixoss"
          )
         ("chat.banksimple.com"
          "#/b/anksimple"
