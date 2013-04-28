@@ -174,6 +174,7 @@
 
 (setq
  el-get-byte-compile t
+ el-get-git-shallow-clone t
  el-get-user-package-directory "~/.emacs.d"
  el-get-sources '(
                   (:name deft
