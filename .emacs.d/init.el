@@ -153,8 +153,6 @@
 (define-key global-map "\C-cc" 'org-capture)
 (add-to-list 'auto-mode-alist '("\\.\\(txt\\|org\\)$" . org-mode))
 
-(set-default-font "Source Code Pro-15")
-
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
 (unless (require 'el-get nil 'noerror)
