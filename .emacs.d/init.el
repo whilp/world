@@ -207,6 +207,8 @@
                                   (setq magit-git-executable "hub")
                                   (global-set-key (kbd "C-x C-g") 'magit-status)))
 
+                  (:name magithub)
+
                   (:name markdown-mode
                          :after (progn
                                   (add-to-list 'auto-mode-alist '("\\.md\\'" .markdown-mode))))
