@@ -181,6 +181,7 @@
  el-get-sources '(
                   (:name clojure-mode)
                   (:name find-file-in-project)
+                  (:name inf-ruby)
                   (:name ipython)
                   (:name markdown-mode)
                   (:name scala-mode2)
