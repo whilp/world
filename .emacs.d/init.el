@@ -33,7 +33,7 @@
 
 ;; no splash.
 (setq inhibit-startup-message t
-  inhibit-startup-echo-area-message t)
+      inhibit-startup-echo-area-message t)
 
 ;; no prompts.
 (setq confirm-nonexistent-file-or-buffer nil)
