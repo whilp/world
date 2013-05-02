@@ -147,6 +147,7 @@
 (ido-init-completion-maps)
 
 ;; vc
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
 (eval-after-load "vc-hooks"
          '(define-key vc-prefix-map "=" 'ediff-revision))
 
