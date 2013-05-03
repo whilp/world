@@ -64,6 +64,9 @@
              (ibuffer-auto-mode t)
              (ibuffer-switch-to-saved-filter-groups "default")))
 
+;; I'm an adult.
+(put 'downcase-region 'disabled nil)
+
 ;; comint.
 (setq comint-scroll-show-maximum-output nil)
 (remove-hook 'comint-output-filter-functions
