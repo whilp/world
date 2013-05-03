@@ -113,8 +113,6 @@
 (global-set-key (kbd "M-k") 'windmove-up)
 (global-set-key (kbd "M-l") 'windmove-right)
 
-;; s/meta/c/
-
 ;; command-as-meta.
 (setq mac-option-key-is-meta nil)       
 (setq mac-command-key-is-meta t)
