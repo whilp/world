@@ -22,10 +22,11 @@
 (setenv "GIT_AUTHOR_NAME" "Will Maier")
 (setenv "GIT_AUTHOR_EMAIL" "wcmaier@m.aier.us")
 
-;; no bars.
+;; no bars, bells.
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
+(setq ring-bell-function 'ignore)
 
 ;; modeline.
 (setq display-time-format "%a %Y-%m-%d %H:%M")
