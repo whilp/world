@@ -158,6 +158,14 @@
 (require 'org)
 (setq auto-indent-start-org-indent t
       org-startup-indented t
+      org-todo-keywords '(
+                          ;; regular stuff
+                          (sequence "TODO(t)" "|" "DONE(d)")
+                          ;; hiring
+                          (sequence "REVIEW(r)" "SCHEDULE(s)" "INTERVIEW(i)" "|" "PASS(p)" "HIRE(h)")
+                          ;; work
+                          (sequence "WISH(w)" "BACKLOG(b)" "INPROGRESS(p)" "|" "DONE(d)")
+                          )
       org-agenda-restore-windows-after-quit t
       org-agenda-file-regexp "\\`[^.].*\\.\\(txt\\|org\\)\\'"
       org-agenda-files (list "~/notes")
