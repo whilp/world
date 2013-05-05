@@ -18,7 +18,7 @@
 
 (setenv "GIT_EDITOR" "emacsclient")
 (setenv "GIT_COMMITTER_NAME" "Will Maier")
-(setenv "GIT_COMMITTER_EAMIL" "wcmaier@m.aier.us")
+(setenv "GIT_COMMITTER_EMAIL" "wcmaier@m.aier.us")
 (setenv "GIT_AUTHOR_NAME" "Will Maier")
 (setenv "GIT_AUTHOR_EMAIL" "wcmaier@m.aier.us")
 
