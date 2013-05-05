@@ -217,7 +217,10 @@
                   (:name magit
                          :after (progn
                                   (autoload 'magit-status' "magit" nil t)
-                                  (setq magit-git-executable "hub")
+                                  (setq
+                                   magit-git-executable "hub"
+                                   magit-save-some-buffers 'dontask
+                                   )
                                   (global-set-key (kbd "C-x C-g") 'magit-status)))
 
                   (:name magithub)
