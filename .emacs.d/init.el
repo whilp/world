@@ -139,8 +139,10 @@
 
 ;; ido
 ;; https://gist.github.com/timcharper/493269/raw/72d9063b8aef61a851026f3acb1d27a4b7c17eca/ido-other-window.el
+(setq confirm-nonexistent-file-or-buffer nil)
 (load-file "~/.emacs.d/ido-other-window.el")
 (setq
+ ido-create-new-buffer 'always
  ido-enable-flex-matching t
  ido-everywhere t)
 (ido-mode t)
