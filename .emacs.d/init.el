@@ -45,8 +45,6 @@
 (global-font-lock-mode t)
 (transient-mark-mode t)
 
-;; ido matching.
-
 ;; GC buffers, uniquify buffer names, ibuffer.
 (require 'midnight)
 (add-to-list 'clean-buffer-list-kill-never-regexps "^#.*")
