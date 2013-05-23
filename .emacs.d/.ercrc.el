@@ -169,6 +169,7 @@
          "#happyplace"
          "#ideas"
          "#infosec"
+         "#internal"
          "#marketing"
          "#mobile"
          "#music"
