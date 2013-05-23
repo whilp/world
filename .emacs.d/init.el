@@ -6,6 +6,8 @@
                           )
                         exec-path))
 (setq explicit-shell-file-name "/bin/bash")
+(setenv "PATH"
+        (mapconcat 'identity exec-path path-separator))
 (setenv "PAGER" "cat")
 (setenv "EDITOR" "emacsclient")
 (setenv "ALTERNATE_EDITOR" "emacs")
@@ -14,10 +16,18 @@
 (setenv "SSH_AUTH_SOCK" (expand-file-name "~/.ssh/agent.sock"))
 (setenv "PS1" "${debian_chroot:+($debian_chroot)}\\u@\\h:\\w \\$ ")
 
-;; no bars.
+(setenv "GIT_EDITOR" "emacsclient")
+(setenv "GIT_COMMITTER_NAME" "Will Maier")
+(setenv "GIT_COMMITTER_EMAIL" "wcmaier@m.aier.us")
+(setenv "GIT_AUTHOR_NAME" "Will Maier")
+(setenv "GIT_AUTHOR_EMAIL" "wcmaier@m.aier.us")
+
+;; no bars, bells.
 (tool-bar-mode -1)
-(scroll-bar-mode -1)
 (menu-bar-mode -1)
+(setq ring-bell-function 'ignore
+      scroll-bar-mode nil
+      visible-bell t)
 
 ;; modeline.
 (setq display-time-format "%a %Y-%m-%d %H:%M")
@@ -25,7 +35,7 @@
 
 ;; no splash.
 (setq inhibit-startup-message t
-  inhibit-startup-echo-area-message t)
+      inhibit-startup-echo-area-message t)
 
 ;; no prompts.
 (setq confirm-nonexistent-file-or-buffer nil)
@@ -34,14 +44,6 @@
 ;; syntax highlighting.
 (global-font-lock-mode t)
 (transient-mark-mode t)
-
-;; ido matching.
-(setq ido-enable-flex-matching t)
-(setq ido-everywhere t)
-(ido-mode t)
-(icomplete-mode t)
-(load "~/.emacs.d/ido.el")
-(ido-init-completion-maps)
 
 ;; GC buffers, uniquify buffer names, ibuffer.
 (require 'midnight)
@@ -60,6 +62,9 @@
           '(lambda ()
              (ibuffer-auto-mode t)
              (ibuffer-switch-to-saved-filter-groups "default")))
+
+;; I'm an adult.
+(put 'downcase-region 'disabled nil)
 
 ;; comint.
 (setq comint-scroll-show-maximum-output nil)
@@ -101,15 +106,10 @@
 (global-set-key [remap eval-last-sexp] 'pp-eval-last-sexp)
 
 ;; windows.
-(global-set-key (kbd "M-RET") 'ns-toggle-fullscreen)
 (global-set-key (kbd "M-i") 'windmove-left)
 (global-set-key (kbd "M-j") 'windmove-down)
 (global-set-key (kbd "M-k") 'windmove-up)
 (global-set-key (kbd "M-l") 'windmove-right)
-
-;; s/meta/c/
-(global-set-key "\C-x\C-m" 'execute-extended-command)
-(global-set-key "\C-c\C-m" 'execute-extended-command)
 
 ;; command-as-meta.
 (setq mac-option-key-is-meta nil)       
@@ -133,36 +133,39 @@
 
 (global-set-key (kbd "C-_") 'dabbrev-expand)
 
-;; packages.
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "http://melpa.milkbox.net/packages/")
-             '("marmalade" . "http://marmalade-repo.org/packages/"))
-             
-(package-initialize)
-
-(defun install-package-unless (pkg)
-  "Install or refresh a package."
-  (unless (package-installed-p pkg)
-    (package-refresh-contents) (package-install pkg)))
-
 ;; erc.
 (require 'tls)
 (require 'erc)
 
+;; ido
+;; https://gist.github.com/timcharper/493269/raw/72d9063b8aef61a851026f3acb1d27a4b7c17eca/ido-other-window.el
+(setq confirm-nonexistent-file-or-buffer nil)
+(load-file "~/.emacs.d/ido-other-window.el")
+(setq
+ ido-create-new-buffer 'always
+ ido-enable-flex-matching t
+ ido-everywhere t)
+(ido-mode t)
+(icomplete-mode t)
+(ido-init-completion-maps)
+
 ;; vc
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
 (eval-after-load "vc-hooks"
          '(define-key vc-prefix-map "=" 'ediff-revision))
-
-;; magit.
-(autoload 'magit-status' "magit" nil t)
-(setq magit-git-executable "hub")
-(global-set-key (kbd "C-x C-g") 'magit-status)
 
 ;; org-mode.
 (require 'org)
 (setq auto-indent-start-org-indent t
       org-startup-indented t
+      org-todo-keywords '(
+                          ;; regular stuff
+                          (sequence "TODO(t)" "|" "DONE(d)")
+                          ;; hiring
+                          (sequence "REVIEW(r)" "SCHEDULE(s)" "INTERVIEW(v)" "|" "PASS(p)" "HIRE(h)")
+                          ;; work
+                          (sequence "WISH(w)" "BACKLOG(b)" "INPROGRESS(i)" "|" "DONE(d)")
+                          )
       org-agenda-restore-windows-after-quit t
       org-agenda-file-regexp "\\`[^.].*\\.\\(txt\\|org\\)\\'"
       org-agenda-files (list "~/notes")
@@ -171,24 +174,68 @@
 (define-key global-map "\C-cc" 'org-capture)
 (add-to-list 'auto-mode-alist '("\\.\\(txt\\|org\\)$" . org-mode))
 
-;; http://jblevins.org/projects/deft/
-(add-to-list 'load-path (expand-file-name "~/.emacs.d/deft"))
-(require 'deft)
-(setq deft-extension "txt"
-      deft-directory "~/notes"
-      deft-text-mode 'org-mode
-      deft-use-filename-as-title t)
+(set-face-attribute 'default nil :font "Monaco-18")
 
-;; golden-ratio
-(install-package-unless 'golden-ratio)
-(require 'golden-ratio)
-(golden-ratio-enable)
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
-;; languages.
-(require 'inf-ruby)
-(install-package-unless 'scala-mode2)
-(install-package-unless 'clojure-mode)
-(install-package-unless 'markdown-mode)
-(add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+(unless (require 'el-get nil 'noerror)
+  (with-current-buffer
+      (url-retrieve-synchronously
+       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
+    (let (el-get-master-branch)
+      (goto-char (point-max))
+      (eval-print-last-sexp))))
 
-(set-default-font "Source Code Pro-15")
+(setq
+ el-get-byte-compile t
+ el-get-git-shallow-clone t
+ el-get-user-package-directory "~/.emacs.d"
+ el-get-sources '(
+                  (:name clojure-mode)
+                  (:name find-file-in-project)
+                  (:name inf-ruby)
+                  (:name ipython)
+                  (:name markdown-mode)
+                  (:name scala-mode2)
+                  (:name color-theme-solarized
+                         :after (progn
+                                  (load-theme 'solarized-light t)))
+
+                  (:name deft
+                         :after (progn
+                                  (setq
+                                   deft-extension "txt"
+                                   deft-directory "~/notes"
+                                   deft-text-mode 'org-mode
+                                   deft-use-filename-as-title t)))
+
+                  (:name golden-ratio
+                         :after (progn
+                                  (require 'golden-ratio)
+                                  (golden-ratio-enable)))
+
+                  (:name magit
+                         :after (progn
+                                  (autoload 'magit-status' "magit" nil t)
+                                  (setq
+                                   magit-git-executable "hub"
+                                   magit-save-some-buffers 'dontask
+                                   )
+                                  (global-set-key (kbd "C-x C-g") 'magit-status)))
+
+                  (:name magithub)
+
+                  (:name markdown-mode
+                         :after (progn
+                                  (add-to-list 'auto-mode-alist '("\\.md\\'" .markdown-mode))))
+
+                  (:name smex
+                         :after (progn
+                                  (global-set-key (kbd "C-x C-m") 'smex)
+                                  (global-set-key (kbd "M-x") 'smex)
+                                  (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
+
+                  )
+ )
+
+(el-get 'sync (mapcar 'el-get-source-name el-get-sources))

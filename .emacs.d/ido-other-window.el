@@ -1,5 +1,3 @@
-;; https://gist.github.com/timcharper/493269/raw/72d9063b8aef61a851026f3acb1d27a4b7c17eca/ido-other-window.el
-
 ;; This makes ido-find-file-other-window,
 ;; ido-switch-buffer-other-window, et. al obsolete. It’s a much better
 ;; abstraction, and I believe it should become apart of ido mode,
