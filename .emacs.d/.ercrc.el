@@ -137,6 +137,7 @@
          "#monitoringsucks"
          "#pdxchef"
          "#netflixoss"
+         "##remotes"
          )
         ("chat.banksimple.com"
          "#/b/anksimple"
