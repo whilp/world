@@ -228,6 +228,7 @@
                                   (setq
                                    magit-git-executable "hub"
                                    magit-save-some-buffers 'dontask
+                                   magit-status-buffer-switch-function 'switch-to-buffer
                                    )
                                   (global-set-key (kbd "C-x C-g") 'magit-status)))
 
