@@ -144,8 +144,9 @@ fi
 # rbenv
 which rbenv > /dev/null 2>&1 && eval "$(rbenv init -)"
 
-# gems
-export GEM_HOME=~/gems; mkdir -p $GEM_HOME; addtopath $GEM_HOME/bin
+source /usr/local/opt/chruby/share/chruby/chruby.sh
+source /usr/local/opt/chruby/share/chruby/auto.sh
+chruby 1.9.3-p194
 
 # Local::lib
 if [ -d "${HOME}/perl5/lib/perl5" ]; then
