@@ -25,8 +25,9 @@
 ;; no bars, bells.
 (tool-bar-mode -1)
 (menu-bar-mode -1)
+(scroll-bar-mode -1)
+(fringe-mode 0)
 (setq ring-bell-function 'ignore
-      scroll-bar-mode nil
       visible-bell t)
 
 ;; modeline.
