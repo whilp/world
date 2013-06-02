@@ -204,6 +204,7 @@
                   (:name inf-ruby)
                   (:name ipython)
                   (:name markdown-mode)
+                  (:name nginx-mode)
                   (:name scala-mode2)
                   (:name color-theme-solarized
                          :after (progn
