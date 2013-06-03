@@ -208,6 +208,7 @@
          "##swiper"
          "#tea"
          "##tea"
+         "##television"
          "#tourettes"
          "##tourettes"
          "#twitter"
