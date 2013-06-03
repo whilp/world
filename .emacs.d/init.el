@@ -37,6 +37,7 @@
      (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
 (global-set-key (kbd "M-RET") 'toggle-fullscreen)
 (global-set-key (kbd "M-`") 'other-frame)
+(global-set-key (kbd "M-w") 'delete-frame)
 
 ;; modeline.
 (setq display-time-format "%a %Y-%m-%d %H:%M")
