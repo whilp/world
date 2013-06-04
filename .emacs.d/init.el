@@ -249,6 +249,6 @@
                                   (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
 
                   )
- )
+)
 
 (el-get 'sync (mapcar 'el-get-source-name el-get-sources))
