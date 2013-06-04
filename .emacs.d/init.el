@@ -201,6 +201,7 @@
  el-get-git-shallow-clone t
  el-get-user-package-directory "~/.emacs.d"
  el-get-sources '(
+                  (:name apache-mode)
                   (:name clojure-mode)
                   (:name find-file-in-project)
                   (:name inf-ruby)
