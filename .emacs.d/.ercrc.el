@@ -106,7 +106,14 @@
       erc-interpret-mirc-color t
       erc-track-use-faces t
       erc-track-faces-priority-list
-          '(erc-current-nick-face erc-keyword-face)
+          '(
+            erc-current-nick-face
+            erc-keyword-face
+            erc-prompt-face
+            erc-nick-msg-face
+            erc-direct-msg-face
+            erc-notice-face
+            )
       )
 
 (setq erc-track-priority-faces-only '(
