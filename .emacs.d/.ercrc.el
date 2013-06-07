@@ -75,6 +75,10 @@
 
 (add-hook 'erc-insert-post-hook 'erc-mkdir-log-channels-directory)
 
+(setq erc-log-matches-types-alist
+      '((keyword . "&activity")
+        (current-nick . "&activity")))
+
 (setq erc-log-channels t
       erc-hide-timestamps nil
       erc-enable-logging `erc-log-all-but-server-buffers
@@ -82,6 +86,7 @@
       erc-log-write-after-send t
       erc-log-write-after-insert t
       erc-log-file-coding-system 'utf-8
+      erc-log-matches-flag t
       erc-generate-log-file-name-function 'erc-generate-log-file-name-perfect
       erc-log-channels-directory 'erc-generate-log-channels-directory)
 
