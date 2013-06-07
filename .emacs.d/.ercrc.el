@@ -35,16 +35,15 @@
 (define-key erc-mode-map (kbd "C-c C-c") 'end-of-buffer)
 
 (setq erc-keywords '(
-                     "whilp"
-                     "#ops"
-                     "maier"
-                     "mke"
-                     "madison"
-                     "milwaukee"
-                     "wisconsin"
-                     "ops[\\?!]"
-                     "backend[\\?!]"
-                     "eng[\\?!]"
+                     "\\bwhilp\\b"
+                     "\\b#ops\\b"
+                     "\\bmaier\\b"
+                     "\\bmke\\b"
+                     "\\bmadison\\b"
+                     "\\bmilwaukee\\b"
+                     "\\bwisconsin\\b"
+                     "\\bbackend[\\?!]"
+                     "\\beng\\b"
                      "\\bops\\b"
                      "\\bchef\\b"
                      "\\bmsn\\b"
@@ -89,7 +88,7 @@
 (setq erc-auto-query 'bury
       erc-save-buffer-on-part nil
       erc-save-queries-on-quit nil
-      erc-hide-list '("JOIN" "PART" "QUIT")
+      erc-hide-list '("JOIN" "NICK" "PART" "QUIT")
       erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT")
       erc-track-exclude-server-buffer t
       erc-format-query-as-channel-p t
@@ -106,7 +105,14 @@
       erc-interpret-mirc-color t
       erc-track-use-faces t
       erc-track-faces-priority-list
-          '(erc-current-nick-face erc-keyword-face)
+          '(
+            erc-current-nick-face
+            erc-keyword-face
+            erc-prompt-face
+            erc-nick-msg-face
+            erc-direct-msg-face
+            erc-notice-face
+            )
       )
 
 (setq erc-track-priority-faces-only '(
@@ -137,6 +143,7 @@
          "#monitoringsucks"
          "#pdxchef"
          "#netflixoss"
+         "##remotes"
          )
         ("chat.banksimple.com"
          "#/b/anksimple"
@@ -144,13 +151,16 @@
          "#Buttram"
          "#ASL"
          "##ASL"
+         "##adorbs"
          "#achewood"
          "##achewood"
          "#analytics"
+         "#appreciate"
          "#backend"
          "#bananastand"
          "#belvedere"
          "#biz"
+         "##books"
          "#booze"
          "##booze"
          "#brooklyn"
@@ -169,6 +179,8 @@
          "#happyplace"
          "#ideas"
          "#infosec"
+         "#internal"
+         "##literature"
          "#marketing"
          "#mobile"
          "#music"
@@ -189,6 +201,7 @@
          "#pr"
          "#product"
          "#puns"
+         "##reading"
          "#remotecontrol"
          "#review"
          "#ruby"
@@ -201,6 +214,7 @@
          "##swiper"
          "#tea"
          "##tea"
+         "##television"
          "#tourettes"
          "##tourettes"
          "#twitter"

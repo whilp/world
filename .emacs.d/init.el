@@ -25,9 +25,19 @@
 ;; no bars, bells.
 (tool-bar-mode -1)
 (menu-bar-mode -1)
+(scroll-bar-mode -1)
+(fringe-mode 0)
 (setq ring-bell-function 'ignore
-      scroll-bar-mode nil
       visible-bell t)
+(defun toggle-fullscreen ()
+  "Toggle full screen"
+  (interactive)
+  (set-frame-parameter
+     nil 'fullscreen
+     (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
+(global-set-key (kbd "M-RET") 'toggle-fullscreen)
+(global-set-key (kbd "M-`") 'other-frame)
+(global-set-key (kbd "M-w") 'delete-frame)
 
 ;; modeline.
 (setq display-time-format "%a %Y-%m-%d %H:%M")
@@ -174,7 +184,9 @@
 (define-key global-map "\C-cc" 'org-capture)
 (add-to-list 'auto-mode-alist '("\\.\\(txt\\|org\\)$" . org-mode))
 
-(set-face-attribute 'default nil :font "Monaco-18")
+(cond
+ ((string-equal system-type "darwin")
+  (set-face-attribute 'default nil :font "Monaco-18")))
 
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
@@ -191,11 +203,13 @@
  el-get-git-shallow-clone t
  el-get-user-package-directory "~/.emacs.d"
  el-get-sources '(
+                  (:name apache-mode)
                   (:name clojure-mode)
                   (:name find-file-in-project)
                   (:name inf-ruby)
                   (:name ipython)
                   (:name markdown-mode)
+                  (:name nginx-mode)
                   (:name scala-mode2)
                   (:name color-theme-solarized
                          :after (progn
@@ -220,6 +234,7 @@
                                   (setq
                                    magit-git-executable "hub"
                                    magit-save-some-buffers 'dontask
+                                   magit-status-buffer-switch-function 'switch-to-buffer
                                    )
                                   (global-set-key (kbd "C-x C-g") 'magit-status)))
 
