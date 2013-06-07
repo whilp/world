@@ -45,7 +45,6 @@
                      "\\bbackend[\\?!]"
                      "\\beng\\b"
                      "\\bops\\b"
-                     "\\bchef\\b"
                      "\\bmsn\\b"
                      ))
 
