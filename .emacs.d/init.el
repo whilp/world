@@ -184,7 +184,9 @@
 (define-key global-map "\C-cc" 'org-capture)
 (add-to-list 'auto-mode-alist '("\\.\\(txt\\|org\\)$" . org-mode))
 
-(set-face-attribute 'default nil :font "Monaco-18")
+(cond
+ ((string-equal system-type "darwin")
+  (set-face-attribute 'default nil :font "Monaco-18")))
 
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
