@@ -92,7 +92,7 @@
       erc-save-buffer-on-part nil
       erc-save-queries-on-quit nil
       erc-hide-list '("JOIN" "NICK" "PART" "QUIT")
-      erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT")
+      erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE")
       erc-track-exclude-server-buffer t
       erc-format-query-as-channel-p t
       erc-prompt ">"
