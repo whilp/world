@@ -135,6 +135,7 @@
         ("freenode.net"
          "##infra-talk"
          "#foodfightshow"
+         "#heavywater"
          "##welp"
          "##buried"
          "#OpsSchool"
