@@ -1,6 +1,7 @@
 GPG_HOME="${HOME}/.gnupg"
 GPG_ENV="${GPG_HOME}/agent.env"
 GPG_AGENT=$(which gpg-agent 2>/dev/null)
+GPG_AGENT_SECONDS=$((60 * 60 * 24 * 7))
 if [ -n "$GPG_AGENT" ]; then
 [ -r "$GPG_ENV" ] && . "$GPG_ENV"
 export GPG_TTY=`tty`
@@ -19,7 +20,7 @@ if [ -n "$GPG_AGENT_INFO" ]; then
 fi
 
 if ! [ -w "$GPG_AGENT_PATH" -a -n "$GPG_AGENT_PID" ]; then
-    eval $($GPG_AGENT --daemon --write-env-file "$GPG_ENV")
+    eval $($GPG_AGENT --default-cache-ttl $GPG_AGENT_SECONDS --daemon --write-env-file "$GPG_ENV")
     export GPG_AGENT_INFO
 fi
 fi
