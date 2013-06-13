@@ -21,8 +21,6 @@ hgext.graphlog =
 hgext.mq =
 hgext.patchbomb =
 hgext.schemes = 
-# pip install hg-git
-hggit = 
 
 [bookmarks]
 track.current = True
