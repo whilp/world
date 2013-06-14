@@ -145,6 +145,7 @@
          "#monitoringlove"
          "#monitoringsucks"
          "#pdxchef"
+         "#pdxdevopsdays"
          "#netflixoss"
          "##remotes"
          "##simple"
