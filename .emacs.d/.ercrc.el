@@ -187,6 +187,7 @@
          "#internal"
          "##literature"
          "#marketing"
+         "##math"
          "#mobile"
          "#music"
          "##music"
