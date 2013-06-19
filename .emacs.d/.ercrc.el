@@ -37,6 +37,7 @@
 (setq erc-keywords '(
                      "\\b#ops\\b"
                      "\\bmaier\\b"
+                     "\\bSimpleFinance\\b"
                      "\\bmke\\b"
                      "\\bmadison\\b"
                      "\\bmilwaukee\\b"
