@@ -211,6 +211,7 @@
                   (:name apache-mode)
                   (:name clojure-mode)
                   (:name find-file-in-project)
+                  (:name gist)
                   (:name inf-ruby)
                   (:name ipython)
                   (:name markdown-mode)
