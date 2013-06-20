@@ -38,10 +38,9 @@
      nil 'fullscreen
      (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
 
-
-(global-set-key (kbd "M-RET") 'toggle-fullscreen)
-(global-set-key (kbd "M-`") 'other-frame)
-(global-set-key (kbd "M-w") 'delete-frame)
+(define-key whilp/bindings-map (kbd "M-RET") 'toggle-fullscreen)
+(define-key whilp/bindings-map (kbd "M-`") 'other-frame)
+(define-key whilp/bindings-map (kbd "M-w") 'delete-frame)
 
 ;; modeline.
 (setq display-time-format "%a %Y-%m-%d %H:%M")
@@ -66,7 +65,7 @@
 (setq uniquify-buffer-name-style 'forward)
 (require 'ibuffer)
 
-(global-set-key (kbd "C-x C-b") 'ibuffer)
+(define-key whilp/bindings-map (kbd "C-x C-b") 'ibuffer)
 (setq ibuffer-expert t)
 (setq ibuffer-show-empty-filter-groups nil)
 (setq ibuffer-saved-filter-groups
@@ -77,8 +76,7 @@
              (ibuffer-auto-mode t)
              (ibuffer-switch-to-saved-filter-groups "default")))
 
-(global-set-key (kbd "C-c C-o") 'occur)
-(next-error-follow-minor-mode)
+(define-key whilp/bindings-map (kbd "C-c C-o") 'occur)
 
 ;; I'm an adult.
 (put 'downcase-region 'disabled nil)
@@ -95,7 +93,7 @@
 (add-to-list 'tramp-default-proxies-alist
              '((regexp-quote (system-name)) nil nil))
 
-(global-set-key (kbd "C-x m") 'shell)
+(define-key whilp/bindings-map (kbd "C-x m") 'shell)
 (defun remote-shell (&optional host)
   "Open a remote shell to a host."
   (interactive)
@@ -103,7 +101,7 @@
     (let ((host (if host host (read-string "Host: "))))
       (cd (concat "/" host ":"))
       (shell (concat "*" host "*")))))
-(global-set-key (kbd "C-x s") 'remote-shell)
+(define-key whilp/bindings-map (kbd "C-x s") 'remote-shell)
 
 ;; GPG.
 (require 'epa-file)
@@ -123,10 +121,10 @@
 (global-set-key [remap eval-last-sexp] 'pp-eval-last-sexp)
 
 ;; windows.
-(global-set-key (kbd "M-i") 'windmove-left)
-(global-set-key (kbd "M-j") 'windmove-down)
-(global-set-key (kbd "M-k") 'windmove-up)
-(global-set-key (kbd "M-l") 'windmove-right)
+(define-key whilp/bindings-map (kbd "M-i") 'windmove-left)
+(define-key whilp/bindings-map (kbd "M-j") 'windmove-down)
+(define-key whilp/bindings-map (kbd "M-k") 'windmove-up)
+(define-key whilp/bindings-map (kbd "M-l") 'windmove-right)
 
 ;; command-as-meta.
 (setq mac-option-key-is-meta nil)       
@@ -138,17 +136,17 @@
 ;; whitespace.
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
-(global-set-key (kbd "<backtab>") 'indent-relative)
+(define-key whilp/bindings-map (kbd "<backtab>") 'indent-relative)
 
 ;; wrap.
 (global-visual-line-mode 1)
 
 ;; easier backward-kill-word.
-(global-set-key "\C-w" 'backward-kill-word)
-(global-set-key "\C-x\C-k" 'kill-region)
-(global-set-key "\C-c\C-k" 'kill-region)
+(define-key whilp/bindings-map "\C-w" 'backward-kill-word)
+(define-key whilp/bindings-map "\C-x\C-k" 'kill-region)
+(define-key whilp/bindings-map "\C-c\C-k" 'kill-region)
 
-(global-set-key (kbd "C-_") 'dabbrev-expand)
+(define-key whilp/bindings-map (kbd "C-_") 'dabbrev-expand)
 
 ;; erc.
 (require 'tls)
@@ -243,7 +241,7 @@
                                    magit-save-some-buffers 'dontask
                                    magit-status-buffer-switch-function 'switch-to-buffer
                                    )
-                                  (global-set-key (kbd "C-x C-g") 'magit-status)))
+                                  (define-key whilp/bindings-map (kbd "C-x C-g") 'magit-status)))
 
                   (:name magithub)
 
@@ -253,9 +251,9 @@
 
                   (:name smex
                          :after (progn
-                                  (global-set-key (kbd "C-x C-m") 'smex)
-                                  (global-set-key (kbd "M-x") 'smex)
-                                  (global-set-key (kbd "M-X") 'smex-major-mode-commands)))
+                                  (define-key whilp/bindings-map (kbd "C-x C-m") 'smex)
+                                  (define-key whilp/bindings-map (kbd "M-x") 'smex)
+                                  (define-key whilp/bindings-map (kbd "M-X") 'smex-major-mode-commands)))
 
                   )
 )
