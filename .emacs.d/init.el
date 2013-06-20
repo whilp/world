@@ -22,6 +22,8 @@
 (setenv "GIT_AUTHOR_NAME" "Will Maier")
 (setenv "GIT_AUTHOR_EMAIL" "wcmaier@m.aier.us")
 
+(define-minor-mode whilp/bindings "My global bindings" t nil (make-sparse-keymap))
+
 ;; no bars, bells.
 (tool-bar-mode -1)
 (menu-bar-mode -1)
@@ -35,6 +37,8 @@
   (set-frame-parameter
      nil 'fullscreen
      (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
+
+
 (global-set-key (kbd "M-RET") 'toggle-fullscreen)
 (global-set-key (kbd "M-`") 'other-frame)
 (global-set-key (kbd "M-w") 'delete-frame)
