@@ -142,9 +142,9 @@
 (global-visual-line-mode 1)
 
 ;; easier backward-kill-word.
-(define-key whilp/bindings-map "\C-w" 'backward-kill-word)
-(define-key whilp/bindings-map "\C-x\C-k" 'kill-region)
-(define-key whilp/bindings-map "\C-c\C-k" 'kill-region)
+(define-key whilp/bindings-map (kbd "C-w") 'backward-kill-word)
+(define-key whilp/bindings-map (kbd "C-x C-k") 'kill-region)
+(define-key whilp/bindings-map (kbd "C-c C-k") 'kill-region)
 
 (define-key whilp/bindings-map (kbd "C-_") 'dabbrev-expand)
 
@@ -185,8 +185,8 @@
       org-agenda-file-regexp "\\`[^.].*\\.\\(txt\\|org\\)\\'"
       org-agenda-files (list "~/notes")
       org-default-notes-file "~/notes/todo.txt")
-(define-key global-map "\C-ca" 'org-agenda)
-(define-key global-map "\C-cc" 'org-capture)
+(define-key global-map (kbd "C-c a") 'org-agenda)
+(define-key global-map (kbd "C-c c") 'org-capture)
 (add-to-list 'auto-mode-alist '("\\.\\(txt\\|org\\)$" . org-mode))
 
 (cond
