@@ -73,6 +73,9 @@
              (ibuffer-auto-mode t)
              (ibuffer-switch-to-saved-filter-groups "default")))
 
+(global-set-key (kbd "C-c C-o") 'occur)
+(next-error-follow-minor-mode)
+
 ;; I'm an adult.
 (put 'downcase-region 'disabled nil)
 
