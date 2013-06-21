@@ -212,6 +212,7 @@
                   (:name clojure-mode)
                   (:name find-file-in-project)
                   (:name gist)
+                  (:name helm)
                   (:name inf-ruby)
                   (:name ipython)
                   (:name markdown-mode)
