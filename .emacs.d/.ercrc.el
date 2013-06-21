@@ -198,6 +198,7 @@
          "#onboarding"
          "#onboarding_support"
          "#ops"
+         "##optional-review"
          "#overflow"
          "#physics"
          "##physics"
