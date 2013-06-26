@@ -15,6 +15,8 @@
 	pretty = format:"%h %p %d %ai %ce%n  %s%n"
 [url "git@github.com:"]
 	insteadOf = gh:
+[url "git@gist.github.com:"]
+  insteadOf = gist:
 [url "git@github.com:monitorama/"]
   insteadOf = monitorama:
 [url "git@github.com:monitorama-eu/"]
