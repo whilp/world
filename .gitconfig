@@ -1,6 +1,6 @@
 [alias]
 	pr = pull-request
-	st = status -s
+	st = status -sb --porcelain
 	ci = commit
 	ca = commit -a
 	glog = log --oneline --decorate --graph
