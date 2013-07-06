@@ -212,11 +212,13 @@
                   (:name clojure-mode)
                   (:name find-file-in-project)
                   (:name gist)
+                  (:name go-mode)
                   (:name helm)
                   (:name inf-ruby)
                   (:name ipython)
                   (:name markdown-mode)
                   (:name nginx-mode)
+                  (:name notmuch)
                   (:name scala-mode2)
                   (:name color-theme-solarized
                          :after (progn
