@@ -166,6 +166,7 @@
          "#bananastand"
          "#belvedere"
          "#biz"
+         "##bikes"
          "##books"
          "#booze"
          "##booze"
