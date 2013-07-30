@@ -45,6 +45,14 @@
 
 ;; remember.
 (winner-mode 1)
+(desktop-save-mode 1)
+(setq savehist-file "~/.emacs.d/savehist"
+      savehist-additional-variables '(
+                                      search-ring
+                                      regexp-search-ring
+                                      ))
+(savehist-mode 1)
+
 ;; modeline.
 (setq display-time-format "%a %Y-%m-%d %H:%M")
 (display-time-mode 1)
