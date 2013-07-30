@@ -31,6 +31,7 @@
 (fringe-mode 0)
 (setq ring-bell-function 'ignore
       visible-bell t)
+(winner-mode 1)
 (defun toggle-fullscreen ()
   "Toggle full screen"
   (interactive)
