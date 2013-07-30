@@ -43,6 +43,8 @@
 (define-key whilp/bindings-map (kbd "M-`") 'other-frame)
 (define-key whilp/bindings-map (kbd "M-w") 'delete-frame)
 
+;; remember.
+(winner-mode 1)
 ;; modeline.
 (setq display-time-format "%a %Y-%m-%d %H:%M")
 (display-time-mode 1)
