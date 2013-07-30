@@ -242,7 +242,7 @@
                          :after (progn
                                   (autoload 'magit-status' "magit" nil t)
                                   (setq
-                                   magit-git-executable "hub"
+                                   magit-git-executable "git"
                                    magit-save-some-buffers 'dontask
                                    magit-status-buffer-switch-function 'switch-to-buffer
                                    )
