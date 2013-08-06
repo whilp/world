@@ -229,7 +229,6 @@
                   (:name ipython)
                   (:name markdown-mode)
                   (:name nginx-mode)
-                  (:name notmuch)
                   (:name scala-mode2)
                   (:name color-theme-solarized
                          :after (progn
