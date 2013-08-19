@@ -175,6 +175,10 @@
 (icomplete-mode t)
 (ido-init-completion-maps)
 
+;; shell-here
+(load-file "~/.emacs.d/shell-here.el")
+(define-key whilp/bindings-map (kbd "C-x m") 'shell-here)
+
 ;; vc
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 (eval-after-load "vc-hooks"
