@@ -152,6 +152,7 @@
          "##simple"
          )
         ("chat.banksimple.com"
+         "##@"
          "#/b/anksimple"
          "##/b/anksimple"
          "#Buttram"
@@ -172,6 +173,7 @@
          "##booze"
          "#brooklyn"
          "##brooklyn"
+         "#c2c"
          "#cats"
          "##cats"
          "#commits"
@@ -213,6 +215,7 @@
          "##reading"
          "#remotecontrol"
          "#review"
+         "#risk"
          "#ruby"
          "#security"
          "#sensu"
