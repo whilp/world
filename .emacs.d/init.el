@@ -194,7 +194,7 @@
       org-agenda-search-headline-for-time nil
       org-extend-today-until 6
       org-agenda-file-regexp "\\`[^.].*\\.\\(txt\\|org\\)\\'"
-      org-agenda-files (list "~/notes")
+      org-agenda-files (list "~/notes" "~/notes/projects" "~/notes/ops")
       org-default-notes-file "~/notes/todo.txt")
 (define-key global-map (kbd "C-c a") 'org-agenda)
 (define-key global-map (kbd "C-c c") 'org-capture)
