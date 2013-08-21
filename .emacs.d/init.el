@@ -193,6 +193,7 @@
       org-agenda-restore-windows-after-quit t
       org-agenda-search-headline-for-time nil
       org-extend-today-until 6
+      org-agenda-start-with-follow-mode t
       org-agenda-file-regexp "\\`[^.].*\\.\\(txt\\|org\\)\\'"
       org-agenda-files (list "~/notes" "~/notes/projects" "~/notes/ops")
       org-default-notes-file "~/notes/todo.txt")
