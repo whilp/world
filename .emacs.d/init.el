@@ -274,16 +274,3 @@
 )
 
 (el-get 'sync (mapcar 'el-get-source-name el-get-sources))
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(org-agenda-files (quote ("~/notes/projects/vpc-platform.txt" "/Users/wcmaier/notes/callcenter.txt" "~/notes/ops/mwhooker.txt" "/Users/wcmaier/notes/Chef NWO.org" "/Users/wcmaier/notes/Coffee.txt" "/Users/wcmaier/notes/Document 4.txt" "/Users/wcmaier/notes/Groceries.txt" "/Users/wcmaier/notes/Monitorama.eu.txt" "/Users/wcmaier/notes/On-conferences.txt" "/Users/wcmaier/notes/Ops-pivot.txt" "/Users/wcmaier/notes/Sea-food.txt" "/Users/wcmaier/notes/Service Conversion.txt" "/Users/wcmaier/notes/Standup.txt" "/Users/wcmaier/notes/Twitter.txt" "/Users/wcmaier/notes/availability.org" "/Users/wcmaier/notes/availability.txt" "/Users/wcmaier/notes/avro-thrift.txt" "/Users/wcmaier/notes/bcp.txt" "/Users/wcmaier/notes/c2c.txt" "/Users/wcmaier/notes/devopsdayspdx.txt" "/Users/wcmaier/notes/distributed-tracing.txt" "/Users/wcmaier/notes/election.txt" "/Users/wcmaier/notes/hiring.txt.txt" "/Users/wcmaier/notes/ibm-mq.txt" "/Users/wcmaier/notes/journal-club.txt" "/Users/wcmaier/notes/liene.org" "/Users/wcmaier/notes/monitorama.txt" "/Users/wcmaier/notes/ops.txt" "/Users/wcmaier/notes/pci.org" "/Users/wcmaier/notes/request-tracing.txt" "/Users/wcmaier/notes/route53.txt" "/Users/wcmaier/notes/today.txt" "/Users/wcmaier/notes/todo-old.txt" "/Users/wcmaier/notes/todo.txt" "/Users/wcmaier/notes/txvia-upgrade.txt" "/Users/wcmaier/notes/whilp-dot-com-2.txt" "/Users/wcmaier/notes/whilp-dot-com.txt"))))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
