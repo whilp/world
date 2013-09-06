@@ -231,6 +231,7 @@
                   (:name markdown-mode)
                   (:name nginx-mode)
                   (:name nrepl)
+                  (:name request)
                   (:name scala-mode2)
                   (:name color-theme-solarized
                          :after (progn
