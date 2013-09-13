@@ -30,6 +30,8 @@
 	insteadOf = bs:
 [url "git@github.banksimple.com:backend/"]
 	insteadOf = backend:
+[url "git@github.banksimple.com:internal/"]
+	insteadOf = internal:
 [url "git@github.banksimple.com:sec/"]
 	insteadOf = sec:
 [url "git@github.banksimple.com:ops/"]
