@@ -11,6 +11,7 @@
 	ctags = "!sh -c '[ -f .git/hooks/ctags ] || git init; .git/hooks/ctags' git-ctags"
 [core]
   editor = emacsclient -s master
+  excludesfile = ~/.gitconf/ignore
 [format]
 	pretty = format:"%h %p %d %ai %ce%n  %s%n"
 [url "git@github.com:"]

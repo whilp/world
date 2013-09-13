@@ -1,0 +1,5 @@
+/.*
+/*.lock
+/cookbooks
+/tmp
+/vendor
