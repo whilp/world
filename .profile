@@ -142,7 +142,7 @@ else
 fi
 
 # rbenv
-which rbenv > /dev/null 2>&1 && eval "$(rbenv init -)"
+#which rbenv > /dev/null 2>&1 && eval "$(rbenv init -)"
 
 source /usr/local/opt/chruby/share/chruby/chruby.sh
 source /usr/local/opt/chruby/share/chruby/auto.sh

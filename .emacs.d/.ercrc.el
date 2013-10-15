@@ -103,7 +103,7 @@
       erc-header-line-format "%n at %S"
       erc-join-buffer 'bury
       erc-flood-protect nil
-      erc-current-nick-highlight-type 'nick
+      erc-current-nick-highlight-type 'all
       erc-interpret-controls-p 'remove
       erc-interpret-mirc-color t
       erc-track-use-faces t
