@@ -91,6 +91,8 @@
 
 ;; I'm an adult.
 (put 'downcase-region 'disabled nil)
+(put 'narrow-to-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
 
 ;; comint.
 (setq comint-scroll-show-maximum-output nil)
