@@ -106,7 +106,6 @@
 (add-to-list 'tramp-default-proxies-alist
              '((regexp-quote (system-name)) nil nil))
 
-(define-key whilp/bindings-map (kbd "C-x m") 'shell)
 (defun remote-shell (&optional host)
   "Open a remote shell to a host."
   (interactive)
