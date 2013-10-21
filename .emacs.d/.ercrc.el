@@ -35,6 +35,7 @@
 (define-key erc-mode-map (kbd "C-c C-c") 'end-of-buffer)
 
 (setq erc-keywords '(
+                     "\\bcowboy\\b"
                      "\\bmaier\\b"
                      "\\bSimpleFinance\\b"
                      "\\bmke\\b"
