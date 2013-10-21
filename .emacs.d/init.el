@@ -182,6 +182,8 @@
 
 ;; vc
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+(add-hook 'ediff-before-setup-hook 'golden-ratio-disable)
+(add-hook 'ediff-after-setup-windows-hook 'golden-ratio-enable 'delete-frame)
 (eval-after-load "vc-hooks"
          '(define-key vc-prefix-map "=" 'ediff-revision))
 
