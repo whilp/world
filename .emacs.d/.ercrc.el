@@ -176,6 +176,7 @@
          "#c2c"
          "#cats"
          "##cats"
+         "#checks"
          "#commits"
          "#deployments"
          "#emacs"
