@@ -107,7 +107,7 @@
       erc-interpret-mirc-color t
       erc-track-when-inactive nil
       erc-track-visibility nil
-      erc-track-use-faces nil
+      erc-track-use-faces t
       erc-track-switch-direction 'newest
       erc-track-showcount nil
       erc-track-exclude-types '(
