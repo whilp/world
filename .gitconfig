@@ -54,3 +54,6 @@
 	host = github.banksimple.com
 [merge]
 	tool = emerge
+[github]
+	user = whilp
+	oauth-token = b4b5954062f82307bc2704acb23865aee0dbe40d

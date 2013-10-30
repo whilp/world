@@ -93,7 +93,6 @@
       erc-save-buffer-on-part nil
       erc-save-queries-on-quit nil
       erc-hide-list '("JOIN" "NICK" "PART" "QUIT")
-      erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE")
       erc-track-exclude-server-buffer t
       erc-format-query-as-channel-p t
       erc-prompt ">"
@@ -106,7 +105,19 @@
       erc-current-nick-highlight-type 'all
       erc-interpret-controls-p 'remove
       erc-interpret-mirc-color t
-      erc-track-use-faces t
+      erc-track-when-inactive nil
+      erc-track-visibility nil
+      erc-track-use-faces nil
+      erc-track-switch-direction 'newest
+      erc-track-showcount nil
+      erc-track-exclude-types '(
+                                "JOIN"
+                                "PART"
+                                "TOPIC"
+                                "NICK"
+                                "333"
+                                "353"
+                                )
       erc-track-faces-priority-list
       '(
         erc-current-nick-face
