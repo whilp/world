@@ -115,6 +115,7 @@
                                 "PART"
                                 "TOPIC"
                                 "NICK"
+                                "MODE"
                                 "333"
                                 "353"
                                 )
