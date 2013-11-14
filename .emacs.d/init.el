@@ -251,7 +251,7 @@
                   (:name golden-ratio
                          :after (progn
                                   (require 'golden-ratio)
-                                  (golden-ratio-enable)))
+                                  (golden-ratio-mode)))
 
                   (:name magit
                          :after (progn
