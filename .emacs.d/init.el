@@ -226,14 +226,12 @@
                   (:name apache-mode)
                   (:name clojure-mode)
                   (:name find-file-in-project)
+                  (:name flycheck)
                   (:name gist)
                   (:name go-mode)
-                  (:name helm)
                   (:name inf-ruby)
-                  (:name ipython)
                   (:name markdown-mode)
                   (:name nginx-mode)
-                  (:name nrepl)
                   (:name request)
                   (:name scala-mode2)
                   (:name color-theme-solarized
@@ -251,7 +249,7 @@
                   (:name golden-ratio
                          :after (progn
                                   (require 'golden-ratio)
-                                  (golden-ratio-mode)))
+                                  (golden-ratio-enable)))
 
                   (:name magit
                          :after (progn
