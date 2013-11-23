@@ -38,6 +38,8 @@
 	insteadOf = sec:
 [url "git@github.banksimple.com:ops/"]
 	insteadOf = ops:
+[url "git@github.banksimple.com:partners/"]
+	insteadOf = partners:
 [url "git@github.banksimple.com:ops/chef-"]
 	insteadOf = chef:
 [url "git@github.banksimple.com:cookbooks/"]
