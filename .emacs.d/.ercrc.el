@@ -195,6 +195,7 @@
          "##emacs"
          "#engineering"
          "#finance"
+         "#fiserv"
          "#food"
          "#fowler"
          "#frontend"
