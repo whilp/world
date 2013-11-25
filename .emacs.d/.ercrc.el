@@ -103,6 +103,7 @@
       erc-mode-line-format "%t"
       erc-header-line-format "%n at %S"
       erc-join-buffer 'bury
+      erc-query-display 'bury
       erc-flood-protect nil
       erc-current-nick-highlight-type 'all
       erc-interpret-controls-p 'remove
