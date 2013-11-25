@@ -30,12 +30,16 @@
 	insteadOf = bs:
 [url "git@github.banksimple.com:backend/"]
 	insteadOf = backend:
+[url "git@github.banksimple.com:projects/"]
+	insteadOf = projects:
 [url "git@github.banksimple.com:internal/"]
 	insteadOf = internal:
 [url "git@github.banksimple.com:sec/"]
 	insteadOf = sec:
 [url "git@github.banksimple.com:ops/"]
 	insteadOf = ops:
+[url "git@github.banksimple.com:partners/"]
+	insteadOf = partners:
 [url "git@github.banksimple.com:ops/chef-"]
 	insteadOf = chef:
 [url "git@github.banksimple.com:cookbooks/"]
@@ -54,3 +58,6 @@
 	host = github.banksimple.com
 [merge]
 	tool = emerge
+[github]
+	user = whilp
+	oauth-token = b4b5954062f82307bc2704acb23865aee0dbe40d

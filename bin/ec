@@ -1,2 +1,2 @@
 #!/bin/sh
-exec ssh -oConnectTimeout=100 -t jumpbox.ec2 ssh -t interactive1 ./bin/ec
+exec ssh -oConnectTimeout=100 -t interactive1 ./bin/ec

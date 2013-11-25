@@ -35,7 +35,7 @@
 (define-key erc-mode-map (kbd "C-c C-c") 'end-of-buffer)
 
 (setq erc-keywords '(
-                     "\\b#ops\\b"
+                     "\\bcowboy\\b"
                      "\\bmaier\\b"
                      "\\bSimpleFinance\\b"
                      "\\bmke\\b"
@@ -93,7 +93,6 @@
       erc-save-buffer-on-part nil
       erc-save-queries-on-quit nil
       erc-hide-list '("JOIN" "NICK" "PART" "QUIT")
-      erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE")
       erc-track-exclude-server-buffer t
       erc-track-switch-direction 'newest
       erc-format-query-as-channel-p t
@@ -108,7 +107,20 @@
       erc-current-nick-highlight-type 'all
       erc-interpret-controls-p 'remove
       erc-interpret-mirc-color t
+      erc-track-when-inactive nil
+      erc-track-visibility nil
       erc-track-use-faces t
+      erc-track-switch-direction 'newest
+      erc-track-showcount nil
+      erc-track-exclude-types '(
+                                "JOIN"
+                                "PART"
+                                "TOPIC"
+                                "NICK"
+                                "MODE"
+                                "333"
+                                "353"
+                                )
       erc-track-faces-priority-list
       '(
         erc-current-nick-face
@@ -178,6 +190,7 @@
          "#c2c"
          "#cats"
          "##cats"
+         "#checks"
          "#commits"
          "#deployments"
          "#emacs"

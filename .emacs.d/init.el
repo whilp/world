@@ -91,6 +91,8 @@
 
 ;; I'm an adult.
 (put 'downcase-region 'disabled nil)
+(put 'narrow-to-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
 
 ;; comint.
 (setq comint-scroll-show-maximum-output nil)
@@ -104,7 +106,6 @@
 (add-to-list 'tramp-default-proxies-alist
              '((regexp-quote (system-name)) nil nil))
 
-(define-key whilp/bindings-map (kbd "C-x m") 'shell)
 (defun remote-shell (&optional host)
   "Open a remote shell to a host."
   (interactive)
@@ -181,6 +182,8 @@
 
 ;; vc
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+(add-hook 'ediff-before-setup-hook 'golden-ratio-disable)
+(add-hook 'ediff-after-setup-windows-hook 'golden-ratio-enable 'delete-frame)
 (eval-after-load "vc-hooks"
          '(define-key vc-prefix-map "=" 'ediff-revision))
 
@@ -223,14 +226,12 @@
                   (:name apache-mode)
                   (:name clojure-mode)
                   (:name find-file-in-project)
+                  (:name flycheck)
                   (:name gist)
                   (:name go-mode)
-                  (:name helm)
                   (:name inf-ruby)
-                  (:name ipython)
                   (:name markdown-mode)
                   (:name nginx-mode)
-                  (:name nrepl)
                   (:name request)
                   (:name scala-mode2)
                   (:name color-theme-solarized
