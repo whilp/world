@@ -95,6 +95,7 @@
       erc-hide-list '("JOIN" "NICK" "PART" "QUIT")
       erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE")
       erc-track-exclude-server-buffer t
+      erc-track-switch-direction 'newest
       erc-format-query-as-channel-p t
       erc-prompt ">"
       erc-timestamp-only-if-changed-flag nil
