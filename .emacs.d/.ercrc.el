@@ -135,6 +135,7 @@
 (setq erc-track-priority-faces-only '(
                                       "&bitlbee"
                                       "#chef"
+                                      "#graphite"
                                       "##infra-talk"
                                       "#foodfightshow"
                                       "#onboarding_support"
@@ -155,6 +156,8 @@
          "##buried"
          "#OpsSchool"
          "#chef"
+         "#graphite"
+         "#securitycanbefriends"
          "#hangops"
          "#monitorama"
          "#monitoringlove"
