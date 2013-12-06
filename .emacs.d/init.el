@@ -261,7 +261,6 @@
                                    )
                                   (define-key whilp/bindings-map (kbd "C-x C-g") 'magit-status)))
 
-                  (:name magithub)
 
                   (:name markdown-mode
                          :after (progn
