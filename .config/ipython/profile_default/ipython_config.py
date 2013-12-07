@@ -9,3 +9,5 @@ c.PromptManager.in_template  = '>>> '
 c.PromptManager.in2_template = '   .\D.: '
 c.PromptManager.out_template = ''
 c.PromptManager.justify = True
+c.InteractiveShellApp.extensions = ['autoreload']
+c.InteractiveShellApp.exec_lines = ['%autoreload 2']
