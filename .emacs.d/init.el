@@ -204,28 +204,29 @@
  el-get-byte-compile t
  el-get-git-shallow-clone t
  el-get-user-package-directory "~/.emacs.d/el-get-init"
+ el-get-sources '()
  my-el-get-packages (append
                      '(
                        apache-mode
                        clojure-mode
+                       color-theme-solarized
+                       deft
                        find-file-in-project
                        flycheck
                        gist
                        go-mode
+                       golden-ratio
                        inf-ruby
+                       magit
+                       markdown-mode
                        markdown-mode
                        minitest-mode
                        nginx-mode
+                       org-mode
                        request
-                       scala-mode2
-                       color-theme-solarized
-                       deft
-                       golden-ratio
-                       magi
-                       markdown-mode
                        smex
                        )
                      (mapcar 'el-get-source-name el-get-sources))
  )
 
- (el-get 'sync)
+(el-get 'sync my-el-get-packages)
