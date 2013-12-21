@@ -1,0 +1,5 @@
+(:name mintest-mode
+       :type github
+       :pkgname "arthurnn/minitest-emacs"
+       :description "A minitest mode for emacs"
+       :website "https://github.com/arthurnn/minitest-emacs")

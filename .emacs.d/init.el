@@ -215,6 +215,7 @@
     (let (el-get-master-branch)
       (goto-char (point-max))
       (eval-print-last-sexp))))
+(add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-recipes")
 
 (setq
  el-get-byte-compile t
@@ -229,6 +230,7 @@
                   (:name go-mode)
                   (:name inf-ruby)
                   (:name markdown-mode)
+                  (:name minitest-mode)
                   (:name nginx-mode)
                   (:name request)
                   (:name scala-mode2)
