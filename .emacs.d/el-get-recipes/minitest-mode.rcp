@@ -1,4 +1,4 @@
-(:name mintest-mode
+(:name minitest-mode
        :type github
        :pkgname "arthurnn/minitest-emacs"
        :description "A minitest mode for emacs"
