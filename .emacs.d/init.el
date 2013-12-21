@@ -220,7 +220,7 @@
 (setq
  el-get-byte-compile t
  el-get-git-shallow-clone t
- el-get-user-package-directory "~/.emacs.d"
+ el-get-user-package-directory "~/.emacs.d/el-get-init"
  el-get-sources '(
                   (:name apache-mode)
                   (:name clojure-mode)
