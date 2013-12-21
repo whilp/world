@@ -224,6 +224,7 @@
                        nginx-mode
                        org-mode
                        request
+                       rubocop-mode
                        smex
                        )
                      (mapcar 'el-get-source-name el-get-sources))
