@@ -221,58 +221,28 @@
  el-get-byte-compile t
  el-get-git-shallow-clone t
  el-get-user-package-directory "~/.emacs.d/el-get-init"
- el-get-sources '(
-                  (:name apache-mode)
-                  (:name clojure-mode)
-                  (:name find-file-in-project)
-                  (:name flycheck)
-                  (:name gist)
-                  (:name go-mode)
-                  (:name inf-ruby)
-                  (:name markdown-mode)
-                  (:name minitest-mode)
-                  (:name nginx-mode)
-                  (:name request)
-                  (:name scala-mode2)
-                  (:name color-theme-solarized
-                         :after (progn
-                                  (load-theme 'solarized-light t)))
+ my-el-get-packages (append
+                     '(
+                       apache-mode
+                       clojure-mode
+                       find-file-in-project
+                       flycheck
+                       gist
+                       go-mode
+                       inf-ruby
+                       markdown-mode
+                       minitest-mode
+                       nginx-mode
+                       request
+                       scala-mode2
+                       color-theme-solarized
+                       deft
+                       golden-ratio
+                       magi
+                       markdown-mode
+                       smex
+                       )
+                     (mapcar 'el-get-source-name el-get-sources))
+ )
 
-                  (:name deft
-                         :after (progn
-                                  (setq
-                                   deft-extension "txt"
-                                   deft-directory "~/notes"
-                                   deft-text-mode 'org-mode
-                                   deft-use-filename-as-title t)))
-
-                  (:name golden-ratio
-                         :after (progn
-                                  (require 'golden-ratio)
-                                  (golden-ratio-mode)))
-
-                  (:name magit
-                         :after (progn
-                                  (autoload 'magit-status' "magit" nil t)
-                                  (setq
-                                   magit-git-executable "git"
-                                   magit-save-some-buffers 'dontask
-                                   magit-status-buffer-switch-function 'switch-to-buffer
-                                   )
-                                  (define-key whilp/bindings-map (kbd "C-x C-g") 'magit-status)))
-
-
-                  (:name markdown-mode
-                         :after (progn
-                                  (add-to-list 'auto-mode-alist '("\\.md\\'" .markdown-mode))))
-
-                  (:name smex
-                         :after (progn
-                                  (define-key whilp/bindings-map (kbd "C-x C-m") 'smex)
-                                  (define-key whilp/bindings-map (kbd "M-x") 'smex)
-                                  (define-key whilp/bindings-map (kbd "M-X") 'smex-major-mode-commands)))
-
-                  )
-)
-
-(el-get 'sync (mapcar 'el-get-source-name el-get-sources))
+ (el-get 'sync)
