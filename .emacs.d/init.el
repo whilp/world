@@ -225,7 +225,6 @@
                        inf-ruby
                        magit
                        markdown-mode
-                       markdown-mode
                        minitest-mode
                        nginx-mode
                        org-mode
