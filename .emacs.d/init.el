@@ -230,6 +230,7 @@
                        org-mode
                        request
                        rubocop-mode
+                       scala-mode2
                        smex
                        )
                      (mapcar 'el-get-source-name el-get-sources))
