@@ -105,6 +105,10 @@
              '(nil "\\`root\\'" "/ssh:%h:"))
 (add-to-list 'tramp-default-proxies-alist
              '((regexp-quote (system-name)) nil nil))
+(setq tramp-password-prompt-regexp
+      (concat "^.*"
+              (regexp-opt '("[pP]assword" "[pP]assphrase" "Verification code") t)
+              ".*:? *"))
 
 (defun remote-shell (&optional host)
   "Open a remote shell to a host."
