@@ -1,7 +1,19 @@
 GPG_HOME="${HOME}/.gnupg"
 GPG_ENV="${GPG_HOME}/agent.env"
+GPG_SOCKET="${GPG_HOME}/S.gpg-agent::1"
 GPG_AGENT=$(which gpg-agent 2>/dev/null)
+GPG_PINENTRY=$(which pinentry 2>/dev/null)
+MAC_GPG_AGENT=/usr/local/MacGPG2/bin/gpg-agent
+if [ -x $MAC_GPG_AGENT ]; then
+   GPG_AGENT=$MAC_GPG_AGENT
+   GPG_PINENTRY=/usr/local/MacGPG2/libexec/pinentry-mac.app/Contents/MacOS/pinentry-mac
+fi
 GPG_AGENT_SECONDS=$((60 * 60 * 24 * 7))
+GPG_ARGS="--use-standard-socket \
+          --default-cache-ttl $GPG_AGENT_SECONDS \
+          --pinentry-program $GPG_PINENTRY
+          --daemon
+          --write-env-file $GPG_ENV"
 if [ -n "$GPG_AGENT" ]; then
 [ -r "$GPG_ENV" ] && . "$GPG_ENV"
 export GPG_TTY=`tty`
@@ -20,7 +32,7 @@ if [ -n "$GPG_AGENT_INFO" ]; then
 fi
 
 if ! [ -w "$GPG_AGENT_PATH" -a -n "$GPG_AGENT_PID" ]; then
-    eval $($GPG_AGENT --default-cache-ttl $GPG_AGENT_SECONDS --daemon --write-env-file "$GPG_ENV")
+    eval $($GPG_AGENT $GPG_ARGS)
     export GPG_AGENT_INFO
 fi
 fi
