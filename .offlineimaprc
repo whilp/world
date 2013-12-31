@@ -2,10 +2,12 @@
 accounts = wcmaier@m.aier.us,will@simple.com
 maxsyncaccounts = 3
 pythonfile = ~/.authinfo.py
+fsync = False
 
 [Account wcmaier@m.aier.us]
 localrepository = local-wcmaier@m.aier.us
 remoterepository = remote-wcmaier@m.aier.us
+status_backend = sqlite
 
 [Repository local-wcmaier@m.aier.us]
 type = Maildir
@@ -25,6 +27,7 @@ realdelete = no
 [Account will@simple.com]
 localrepository = local-will@simple.com
 remoterepository = remote-will@simple.com
+status_backend = sqlite
 
 [Repository local-will@simple.com]
 type = Maildir
