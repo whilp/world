@@ -76,7 +76,8 @@
 (setq uniquify-buffer-name-style 'forward)
 (require 'ibuffer)
 
-(define-key whilp/bindings-map (kbd "C-x C-b") 'ibuffer)
+;; Unbind C-x C-b.
+(define-key whilp/bindings-map (kbd "C-x C-b") '(lambda () "" (interactive)))
 (setq ibuffer-expert t)
 (setq ibuffer-show-empty-filter-groups nil)
 (setq ibuffer-saved-filter-groups
