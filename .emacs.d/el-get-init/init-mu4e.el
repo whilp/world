@@ -7,11 +7,13 @@
  mu4e-compose-signature-auto-include nil
  mu4e-show-images t
  mu4e-headers-skip-duplicates t
+ mu4e-use-fancy-chars t
  mu4e-get-mail-command "offlineimap -q -f INBOX"
  mu4e-update-interval 120)
 
 (require 'smtpmail)
 (setq
+ mail-user-agent 'mu4e-user-agent
  send-mail-function 'smtpmail-send-it
  message-send-mail-function 'smtpmail-send-it
  message-kill-buffer-on-exit t
