@@ -14,9 +14,11 @@
  message-kill-buffer-on-exit t
  message-signature nil
  starttls-use-gnutls t
- smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
  smtpmail-debug-info t
  smtpmail-stream-type 'starttls
+ smtpmail-starttls-credentials '(
+   ("smtp.gmail.com" 587 "will@simple.com" nil)
+   ("smtp.gmail.com" 587 "wcmaier@m.aier.us" nil))
  smtpmail-default-smtp-server "smtp.gmail.com"
  smtpmail-smtp-server "smtp.gmail.com"
  smtpmail-smtp-service 587)
@@ -29,11 +31,16 @@
      (mu4e-drafts-folder "/will@simple.com/[Gmail].Drafts")
      (mu4e-sent-folder   "/will@simple.com/[Gmail].Sent Mail")
      (mu4e-trash-folder  "/will@simple.com/[Gmail].Trash")
+     (smtpmail-smtp-user "will@simple.com")
+     (user-full-name     "Will Maier")
      (user-mail-address  "will@simple.com"))
     ("wcmaier@m.aier.us"
      (mu4e-drafts-folder "/wcmaier@m.aier.us/[Gmail].Drafts")
      (mu4e-sent-folder   "/wcmaier@m.aier.us/[Gmail].Sent Mail")
      (mu4e-trash-folder  "/wcmaier@m.aier.us/[Gmail].Trash")
+
+     (smtpmail-smtp-user "wcmaier@m.aier.us")
+     (user-full-name     "Will Maier")
      (user-mail-address  "wcmaier@m.aier.us"))))
 
 (setq my-mu4e-default-account "wcmaier@m.aier.us")
