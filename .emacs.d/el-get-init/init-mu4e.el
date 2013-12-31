@@ -24,7 +24,7 @@
 
 (defalias 'org-mail 'org-mu4e-compose-org-mode)
 
-(defvar my-mu4e-account-alist
+(setq my-mu4e-account-alist
   '(
     ("will@simple.com"
      (mu4e-drafts-folder "/will@simple.com/[Gmail].Drafts")
