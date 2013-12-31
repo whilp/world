@@ -8,6 +8,8 @@
 
 (require 'smtpmail)
 (setq
+ send-mail-function 'smtpmail-send-it
+ message-send-mail-function 'smtpmail-send-it
  message-kill-buffer-on-exit t
  starttls-use-gnutls t
  smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
