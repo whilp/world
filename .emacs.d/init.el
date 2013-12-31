@@ -217,6 +217,7 @@
                        clojure-mode
                        color-theme-solarized
                        deft
+                       emacs-async
                        find-file-in-project
                        flycheck
                        gist
@@ -226,6 +227,7 @@
                        magit
                        markdown-mode
                        minitest-mode
+                       mu4e
                        nginx-mode
                        org-mode
                        request

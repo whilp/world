@@ -1,0 +1,40 @@
+[general]
+accounts = wcmaier@m.aier.us,will@simple.com
+maxsyncaccounts = 3
+pythonfile = ~/.authinfo.py
+
+[Account wcmaier@m.aier.us]
+localrepository = local-wcmaier@m.aier.us
+remoterepository = remote-wcmaier@m.aier.us
+
+[Repository local-wcmaier@m.aier.us]
+type = Maildir
+localfolders = ~/Maildir/wcmaier@m.aier.us
+
+[Repository remote-wcmaier@m.aier.us]
+type = IMAP
+remotehost = imap.gmail.com
+remoteuser = wcmaier@m.aier.us
+remotepasseval = get_password_emacs("imap.gmail.com", "wcmaier@m.aier.us", "993")
+cert_fingerprint = 89091347184d41768bfc0da9fad94bfe882dd358
+ssl = yes
+maxconnections = 1
+realdelete = no
+
+[Account will@simple.com]
+localrepository = local-will@simple.com
+remoterepository = remote-will@simple.com
+
+[Repository local-will@simple.com]
+type = Maildir
+localfolders = ~/Maildir/will@simple.com
+
+[Repository remote-will@simple.com]
+type = IMAP
+remotehost = imap.gmail.com
+remoteuser = will@simple.com
+remotepasseval = get_password_emacs("imap.gmail.com", "will@simple.com", "993")
+cert_fingerprint = 89091347184d41768bfc0da9fad94bfe882dd358
+ssl = yes
+maxconnections = 1
+realdelete = no
