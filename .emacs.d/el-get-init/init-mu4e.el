@@ -15,7 +15,6 @@
  message-signature nil
  starttls-use-gnutls t
  smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
- smtpmail-auth-credentials (expand-file-name "~/.authinfo.gpg")
  smtpmail-debug-info t
  smtpmail-stream-type 'starttls
  smtpmail-default-smtp-server "smtp.gmail.com"
