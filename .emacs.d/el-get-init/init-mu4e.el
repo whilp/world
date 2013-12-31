@@ -4,6 +4,7 @@
 (setq
  mu4e-maildir "~/Maildir"
  mu4e-sent-messages-behavior 'delete
+ mu4e-compose-signature-auto-include nil
  mu4e-show-images t)
 
 (require 'smtpmail)
@@ -11,6 +12,7 @@
  send-mail-function 'smtpmail-send-it
  message-send-mail-function 'smtpmail-send-it
  message-kill-buffer-on-exit t
+ message-signature nil
  starttls-use-gnutls t
  smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
  smtpmail-auth-credentials (expand-file-name "~/.authinfo.gpg")
