@@ -5,9 +5,11 @@
  mu4e-maildir "~/Maildir"
  mu4e-sent-messages-behavior 'delete
  mu4e-compose-signature-auto-include nil
+ mu4e-compose-complete-only-personal t
  mu4e-show-images t
  mu4e-headers-skip-duplicates t
  mu4e-headers-include-related t
+ mu4e-headers-show-target nil
  mu4e-hide-index-messages t
  mu4e-use-fancy-chars t
  mu4e-get-mail-command "offlineimap -q -f INBOX"
@@ -21,6 +23,8 @@
  message-kill-buffer-on-exit t
  message-signature nil
  starttls-use-gnutls t
+ smtpmail-queue-mail nil
+ smtpmail-queue-dir "~/Maildir/queue/cur"
  smtpmail-debug-info t
  smtpmail-stream-type 'starttls
  smtpmail-starttls-credentials '(
@@ -50,6 +54,14 @@
      (user-full-name     "Will Maier")
      (user-mail-address  "wcmaier@m.aier.us"))))
 
+(setq
+ mu4e-user-mail-address-list '(
+                              "wcmaier@m.aier.us"
+                              "will@simple.com"
+                              "wcmaier@openbsd.org"
+                              "wcmaier@hep.wisc.edu"
+                              "willmaier@ml1.net"
+                              "wcmaier@wisc.edu"))
 (setq my-mu4e-default-account "wcmaier@m.aier.us")
 (defun my-mu4e-set-account ()
   "Set the account for composing a message."
