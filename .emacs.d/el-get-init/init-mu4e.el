@@ -11,7 +11,7 @@
  mu4e-headers-include-related t
  mu4e-headers-show-target nil
  mu4e-hide-index-messages t
- mu4e-use-fancy-chars t
+ mu4e-use-fancy-chars nil
  mu4e-get-mail-command "offlineimap -q -f INBOX"
  mu4e-update-interval 120)
 
@@ -86,7 +86,7 @@
 
 (setq mu4e-bookmarks
       '(("flag:unread AND NOT flag:trashed" "unread" ?u)
-        ("date:today..now flag:unread AND NOT flag:trashed" "new" ?n)
+        ("date:7d..now flag:unread AND NOT flag:trashed" "new" ?n)
         ("date:today..now" "today" ?t)
         ("date:7d..now" "week" ?w)))
 
