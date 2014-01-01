@@ -84,5 +84,11 @@
 (mapc #'(lambda (var) (set (car var) (cadr var)))
       (cdr (assoc my-mu4e-default-account my-mu4e-account-alist)))
 
+(setq mu4e-bookmarks
+      '(("flag:unread AND NOT flag:trashed" "unread" ?u)
+        ("date:today..now flag:unread AND NOT flag:trashed" "new" ?n)
+        ("date:today..now" "today" ?t)
+        ("date:7d..now" "week" ?w)))
+
 (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
 (add-hook 'mu4e-compose-mode-hook 'mml-secure-message-sign-pgpmime)
