@@ -239,6 +239,7 @@
                        rubocop-mode
                        scala-mode2
                        smex
+                       twittering-mode
                        )
                      (mapcar 'el-get-source-name el-get-sources))
  )
