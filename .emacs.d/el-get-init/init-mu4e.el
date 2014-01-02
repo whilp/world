@@ -6,11 +6,14 @@
  mu4e-sent-messages-behavior 'delete
  mu4e-compose-signature-auto-include nil
  mu4e-compose-complete-only-personal nil
+ mu4e-compose-dont-reply-to-self t
  mu4e-show-images t
  mu4e-headers-skip-duplicates t
  mu4e-headers-include-related t
  mu4e-headers-show-target nil
  mu4e-hide-index-messages t
+ mu4e-confirm-quit nil
+ mu4e-headers-leave-behavior 'apply
  mu4e-use-fancy-chars nil
  mu4e-get-mail-command "offlineimap -q"
  mu4e-update-interval 180)
