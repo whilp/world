@@ -12,7 +12,7 @@
  mu4e-headers-show-target nil
  mu4e-hide-index-messages t
  mu4e-use-fancy-chars nil
- mu4e-get-mail-command "offlineimap -q -f INBOX"
+ mu4e-get-mail-command "offlineimap -q"
  mu4e-update-interval 180)
 
 (require 'smtpmail)
