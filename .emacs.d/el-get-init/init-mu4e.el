@@ -5,7 +5,7 @@
  mu4e-maildir "~/Maildir"
  mu4e-sent-messages-behavior 'delete
  mu4e-compose-signature-auto-include nil
- mu4e-compose-complete-only-personal t
+ mu4e-compose-complete-only-personal nil
  mu4e-show-images t
  mu4e-headers-skip-duplicates t
  mu4e-headers-include-related t
@@ -54,6 +54,7 @@
      (user-full-name     "Will Maier")
      (user-mail-address  "wcmaier@m.aier.us"))))
 
+(setq user-mail-address "wcmaier@m.aier.us")
 (setq
  mu4e-user-mail-address-list '(
                               "wcmaier@m.aier.us"
