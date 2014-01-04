@@ -3,11 +3,14 @@ accounts = wcmaier@m.aier.us,will@simple.com
 maxsyncaccounts = 3
 pythonfile = ~/.authinfo.py
 fsync = False
+ui = basic
 
 [Account wcmaier@m.aier.us]
 localrepository = local-wcmaier@m.aier.us
 remoterepository = remote-wcmaier@m.aier.us
 status_backend = sqlite
+autorefresh = 3
+quick = 5
 
 [Repository local-wcmaier@m.aier.us]
 type = Maildir
@@ -23,11 +26,15 @@ folderfilter = lambda foldername: foldername not in ['[Gmail]/Spam', '[Gmail]/Al
 maxconnections = 3
 ssl = yes
 realdelete = no
+keepalive = 80
+holdconnectionsopen = yes
 
 [Account will@simple.com]
 localrepository = local-will@simple.com
 remoterepository = remote-will@simple.com
 status_backend = sqlite
+autorefresh = 3
+quick = 5
 
 [Repository local-will@simple.com]
 type = Maildir
@@ -43,3 +50,5 @@ folderfilter = lambda foldername: foldername not in ['Nagios', 'Root', '[Gmail]/
 maxconnections = 3
 ssl = yes
 realdelete = no
+keepalive = 80
+holdconnectionsopen = yes
