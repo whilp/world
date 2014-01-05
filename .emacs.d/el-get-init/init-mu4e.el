@@ -8,15 +8,28 @@
  mu4e-compose-complete-only-personal nil
  mu4e-compose-dont-reply-to-self t
  mu4e-show-images t
+ mu4e-headers-date-format "%Y-%m-%d"
+ mu4e-view-date-format "%Y-%m-%d %H:%M:%S"
+ mu4e-view-show-addresses t
  mu4e-headers-skip-duplicates t
  mu4e-headers-include-related t
  mu4e-headers-show-target nil
  mu4e-hide-index-messages t
+ mu4e-split-view nil
  mu4e-confirm-quit nil
  mu4e-headers-leave-behavior 'apply
+ mu4e-headers-fields
+ '(
+   (:human-date . 13)
+   (:flags . 6)
+   (:mailing-list . 10)
+   (:from . 22)
+   (:subject . nil)
+   )
  mu4e-use-fancy-chars nil
  mu4e-get-mail-command "true"
  mu4e-update-interval 120
+ )
 
 (require 'smtpmail)
 (setq
