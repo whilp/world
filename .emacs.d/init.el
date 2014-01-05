@@ -240,6 +240,7 @@
                        scala-mode2
                        smex
                        twittering-mode
+                       web-mode
                        )
                      (mapcar 'el-get-source-name el-get-sources))
  )
