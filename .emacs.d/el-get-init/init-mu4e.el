@@ -15,8 +15,8 @@
  mu4e-confirm-quit nil
  mu4e-headers-leave-behavior 'apply
  mu4e-use-fancy-chars nil
- mu4e-get-mail-command "offlineimap -q"
- mu4e-update-interval 180)
+ mu4e-get-mail-command "true"
+ mu4e-update-interval 120
 
 (require 'smtpmail)
 (setq
