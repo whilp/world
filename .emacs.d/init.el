@@ -187,8 +187,10 @@
 (define-key whilp/bindings-map (kbd "C-x m") 'shell-here)
 
 ;; vc
-(setq compilation-ask-about-save nil)
-(setq compilation-save-buffers-predicate '(lambda () nil))
+(setq
+ compilation-scroll-output t
+ compilation-ask-about-save nil
+ compilation-save-buffers-predicate '(lambda () nil))
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 (eval-after-load "vc-hooks"
          '(define-key vc-prefix-map "=" 'ediff-revision))
