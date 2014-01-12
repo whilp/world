@@ -75,6 +75,7 @@
  mu4e-user-mail-address-list '(
                               "wcmaier@m.aier.us"
                               "will@simple.com"
+                              "whilp@simple.com"
                               "wcmaier@openbsd.org"
                               "wcmaier@hep.wisc.edu"
                               "willmaier@ml1.net"
