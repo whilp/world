@@ -1,4 +1,5 @@
 (require 'auth-source)
+(require 'gh-profile)
 (require 'url)
 
 (defun* my-gh-profile (url user)
