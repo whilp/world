@@ -8,7 +8,8 @@
       org-extend-today-until 6
       org-agenda-start-with-follow-mode t
       org-agenda-file-regexp "\\`[^.].*\\.\\(txt\\|org\\)\\'"
-      org-agenda-files (list "~/notes" "~/notes/projects" "~/notes/ops")
+      org-agenda-files '("~/notes/todo.txt")
+      org-bookmark-names-plist '()
       org-default-notes-file "~/notes/todo.txt")
 (define-key global-map (kbd "C-c a") 'org-agenda)
 (define-key global-map (kbd "C-c c") 'org-capture)
