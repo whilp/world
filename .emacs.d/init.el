@@ -132,7 +132,7 @@
 (setq make-backup-files nil
       backup-directory-alist `(("." . "~/.saves"))
       backup-directory-alist `((".*" . ,temporary-file-directory))
-      auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+      auto-save-file-name-transforms `((".*" "~/.saves")))
 
 ;; pretty-print expression evals.
 (global-set-key [remap eval-expression] 'pp-eval-expression)
