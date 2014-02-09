@@ -223,6 +223,7 @@
                        apache-mode
                        clojure-mode
                        color-theme-solarized
+                       csv-mode
                        deft
                        emacs-async
                        find-file-in-project
