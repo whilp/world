@@ -1,6 +1,7 @@
 (require 'org)
 (setq auto-indent-start-org-indent t
       org-startup-indented t
+      org-src-fontify-natively t
       org-use-tag-inheritance t
       org-todo-keywords '((sequence "TODO" "DONE"))
       org-agenda-restore-windows-after-quit t
