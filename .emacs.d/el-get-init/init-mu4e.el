@@ -18,6 +18,7 @@
  mu4e-split-view nil
  mu4e-confirm-quit nil
  mu4e-headers-leave-behavior 'apply
+ mu4e-html2text-command "textutil -convert txt -stdin -stdout"
  mu4e-headers-fields
  '(
    (:human-date . 13)
