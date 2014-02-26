@@ -1,5 +1,0 @@
-[defaults]
-incoming = --remotecmd=hg
-outgoing = --remotecmd=hg
-push = --remotecmd=hg
-pull = --remotecmd=hg

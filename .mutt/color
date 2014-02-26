@@ -1,7 +1,0 @@
-color normal default default
-
-mono index bold !(~yspam|~ybulk)(~p|~yurgent)
-mono indicator standout
-mono hdrdefault	bold
-mono bold bold
-mono underline underline
