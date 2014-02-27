@@ -151,6 +151,10 @@
 (setq mac-option-modifier 'super)
 (setq kill-read-only-ok)
 
+;; speling
+(add-hook 'text-mode-hook 'flyspell-mode)
+(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+
 ;; whitespace.
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
