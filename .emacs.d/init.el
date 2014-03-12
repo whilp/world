@@ -185,6 +185,8 @@
 (ido-mode t)
 (icomplete-mode t)
 (ido-init-completion-maps)
+(ffap-bindings)
+(setq ffap-require-prefix t)
 
 ;; shell-here
 (load-file "~/.emacs.d/shell-here.el")
