@@ -105,7 +105,8 @@
 
 (setq mu4e-bookmarks
       '(("flag:unread AND NOT flag:trashed" "unread" ?u)
-        ("date:7d..now flag:unread AND NOT flag:trashed" "new" ?n)
+        ("maildir:/will@simple.com/INBOX OR maildir:/wcmaier@m.aier.us/INBOX" "new" ?n)
+        ("maildir:/will@simple.com/[Mailbox].Later OR maildir:/wcmaier@m.aier.us/[Mailbox].Later" "later" ?l)
         ("date:today..now" "today" ?t)
         ("date:7d..now" "week" ?w)))
 
