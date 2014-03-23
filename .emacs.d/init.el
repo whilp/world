@@ -130,6 +130,7 @@
 
 ;; backups.
 (setq make-backup-files nil
+      auto-save-default nil
       backup-directory-alist `(("." . "~/.saves"))
       backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" "~/.saves")))
