@@ -244,6 +244,7 @@
                        smex
                        twittering-mode
                        web-mode
+                       znc
                        )
                      (mapcar 'el-get-source-name el-get-sources))
  )
