@@ -163,11 +163,6 @@
 ;; wrap.
 (global-visual-line-mode 1)
 
-;; easier backward-kill-word.
-(define-key whilp/bindings-map (kbd "C-w") 'backward-kill-word)
-(define-key whilp/bindings-map (kbd "C-x C-k") 'kill-region)
-(define-key whilp/bindings-map (kbd "C-c C-k") 'kill-region)
-
 (define-key whilp/bindings-map (kbd "C-_") 'dabbrev-expand)
 
 ;; erc.
