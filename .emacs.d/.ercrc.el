@@ -143,149 +143,15 @@
                                       "#sensu"
                                       "#OpsSchool"))
 
-(erc-autojoin-mode t)
-(setq erc-autojoin-channels-alist
-      '(
-        ("irc.oftc.net"
-         )
-        ("freenode.net"
-         "##infra-talk"
-         "#foodfightshow"
-         "#heavywater"
-         "##welp"
-         "##buried"
-         "#OpsSchool"
-         "#chef"
-         "#graphite"
-         "#securitycanbefriends"
-         "#hangops"
-         "#monitorama"
-         "#monitoringlove"
-         "#monitoringsucks"
-         "#pdxchef"
-         "#pdxdevopsdays"
-         "#netflixoss"
-         "##remotes"
-         "##simple"
-         )
-        ("chat.banksimple.com"
-         "##@"
-         "#/b/anksimple"
-         "##/b/anksimple"
-         "#Buttram"
-         "#ASL"
-         "##ASL"
-         "##adorbs"
-         "#achewood"
-         "##achewood"
-         "#analytics"
-         "#appreciate"
-         "#backend"
-         "#bananastand"
-         "#belvedere"
-         "#biz"
-         "##bikes"
-         "##books"
-         "#booze"
-         "##booze"
-         "#brooklyn"
-         "##brooklyn"
-         "#c2c"
-         "#cats"
-         "##cats"
-         "#checks"
-         "#commits"
-         "#deployments"
-         "#emacs"
-         "##emacs"
-         "#engineering"
-         "#finance"
-         "#fiserv"
-         "#food"
-         "#fowler"
-         "#frontend"
-         "#github"
-         "#happyplace"
-         "#ideas"
-         "#infosec"
-         "#internal"
-         "##literature"
-         "#marketing"
-         "##math"
-         "#mobile"
-         "#music"
-         "##music"
-         "#nagios"
-         "##nighters"
-         "#notifications"
-         "#onboarding"
-         "#onboarding_support"
-         "#ops"
-         "##optional-review"
-         "#overflow"
-         "#physics"
-         "##physics"
-         "#politics"
-         "##politics"
-         "#portland"
-         "##portland"
-         "#pr"
-         "#processor"
-         "#product"
-         "#puns"
-         "##reading"
-         "#remotecontrol"
-         "#review"
-         "#risk"
-         "#ruby"
-         "#security"
-         "#sensu"
-         "#sign_ups"
-         "#simple"
-         "#statements"
-         "#support"
-         "#swiper"
-         "##swiper"
-         "#tea"
-         "##tea"
-         "##television"
-         "#tourettes"
-         "##tourettes"
-         "#twitter"
-         "#txvia"
-         "#ux"
-         "#vim"
-         "##vim"
-         "#warroom"
-         "#website"
-         "#weekenders"
-         "##weekenders"
-         )
-        ("localhost"
-         )
-        ))
+(defun erc-channel-cleanup ()
+  "Kill any buffer whose server is not alive"
+  (interactive)
+  (erc-buffer-list
+   (lambda ()
+     (when (not (erc-server-process-alive))
+       (kill-buffer)))))
 
 (defun erc-track-mode-reset ()
   (interactive)
   (setq erc-modified-channels-alist nil)
   (erc-modified-channels-update))
-
-(defun erc-oftc ()
-  "Connect to OFTC."
-  (interactive)
-  (erc-tls :server "irc.oftc.net" :port 6697 :nick "whilp" :full-name "Will Maier"))
-
-(defun erc-freenode ()
-  "Connect to Freenode."
-  (interactive)
-  (erc-tls :server "irc.freenode.net" :port 6697 :nick "whilp" :full-name "Will Maier"))
-
-(defun erc-simple ()
-  "Connect to Simple."
-  (interactive)
-  (erc-tls :server "chat.banksimple.com" :port 6697 :nick "whilp" :full-name "Will Maier"))
-
-(defun erc-bitlbee ()
-  "Connect to bitlbee."
-  (interactive)
-  (erc :server "127.0.0.1" :port 16667 :nick "will" :full-name "Will Maier"))

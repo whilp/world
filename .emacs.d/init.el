@@ -130,6 +130,7 @@
 
 ;; backups.
 (setq make-backup-files nil
+      auto-save-default nil
       backup-directory-alist `(("." . "~/.saves"))
       backup-directory-alist `((".*" . ,temporary-file-directory))
       auto-save-file-name-transforms `((".*" "~/.saves")))
@@ -162,11 +163,6 @@
 
 ;; wrap.
 (global-visual-line-mode 1)
-
-;; easier backward-kill-word.
-(define-key whilp/bindings-map (kbd "C-w") 'backward-kill-word)
-(define-key whilp/bindings-map (kbd "C-x C-k") 'kill-region)
-(define-key whilp/bindings-map (kbd "C-c C-k") 'kill-region)
 
 (define-key whilp/bindings-map (kbd "C-_") 'dabbrev-expand)
 
@@ -206,7 +202,7 @@
   (progn
     (setenv "GPG_AGENT_INFO" (expand-file-name "~/.gnupg/S.gpg-agent::1"))
     (setq epg-gpg-program "gpg2"))
-  (set-face-attribute 'default nil :font "Monaco-18")))
+  (set-face-attribute 'default nil :font "Monaco-16")))
 
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
@@ -251,6 +247,7 @@
                        twittering-mode
                        web-mode
                        yaml-mode
+                       znc
                        )
                      (mapcar 'el-get-source-name el-get-sources))
  )

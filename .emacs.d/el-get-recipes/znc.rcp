@@ -1,0 +1,5 @@
+(:name znc
+       :type github
+       :pkgname "sshirokov/ZNC.el"
+       :description "Make ERC and ZNC get along more goodest"
+       :website "https://github.com/sshirokov/ZNC.el")
