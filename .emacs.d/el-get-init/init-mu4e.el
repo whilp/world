@@ -43,13 +43,13 @@
  smtpmail-queue-mail nil
  smtpmail-queue-dir "~/Maildir/queue/cur"
  smtpmail-debug-info t
- smtpmail-stream-type 'starttls
+ smtpmail-stream-type 'ssl
  smtpmail-starttls-credentials '(
-   ("smtp.gmail.com" 587 "will@simple.com" nil)
-   ("smtp.gmail.com" 587 "wcmaier@m.aier.us" nil))
+   ("smtp.gmail.com" 465 "will@simple.com" nil)
+   ("smtp.gmail.com" 465 "wcmaier@m.aier.us" nil))
  smtpmail-default-smtp-server "smtp.gmail.com"
  smtpmail-smtp-server "smtp.gmail.com"
- smtpmail-smtp-service 587)
+ smtpmail-smtp-service 465)
 
 (defalias 'org-mail 'org-mu4e-compose-org-mode)
 
