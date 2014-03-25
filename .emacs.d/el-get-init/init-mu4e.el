@@ -12,7 +12,7 @@
  mu4e-view-date-format "%Y-%m-%d %H:%M:%S"
  mu4e-view-show-addresses t
  mu4e-headers-skip-duplicates t
- mu4e-headers-include-related t
+ mu4e-headers-include-related nil
  mu4e-headers-show-target nil
  mu4e-hide-index-messages t
  mu4e-split-view nil
