@@ -5,3 +5,4 @@
  magit-status-buffer-switch-function 'switch-to-buffer
  )
 (define-key whilp/bindings-map (kbd "C-x C-g") 'magit-status)
+(define-key whilp/bindings-map (kbd "C-c C-p") 'magit-push)
