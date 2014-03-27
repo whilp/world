@@ -118,8 +118,12 @@
                                 "TOPIC"
                                 "NICK"
                                 "MODE"
+                                "324"
+                                "329"
+                                "332"
                                 "333"
                                 "353"
+                                "477"
                                 )
       erc-track-faces-priority-list
       '(
