@@ -1,0 +1,5 @@
+(require 'delight)
+(delight '((golden-ratio-mode nil "golden-ratio")
+           (visual-line-mode nil "simple")
+           (magit-auto-revert-mode "" "magit")
+           (flyspell-mode nil "flyspell")))

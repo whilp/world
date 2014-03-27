@@ -231,6 +231,7 @@
                        color-theme-solarized
                        csv-mode
                        deft
+                       delight
                        emacs-async
                        find-file-in-project
                        flycheck
