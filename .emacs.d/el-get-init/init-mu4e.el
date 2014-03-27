@@ -15,7 +15,7 @@
  mu4e-headers-include-related nil
  mu4e-headers-show-target nil
  mu4e-hide-index-messages t
- mu4e-split-view nil
+ mu4e-split-view 'horizontal
  mu4e-confirm-quit nil
  mu4e-headers-leave-behavior 'apply
  mu4e-html2text-command "textutil -convert txt -stdin -stdout"
