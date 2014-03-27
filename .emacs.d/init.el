@@ -57,6 +57,10 @@
 ;; modeline.
 (setq display-time-format "%a %Y-%m-%d %H:%M")
 (display-time-mode 1)
+(line-number-mode 0)
+(column-number-mode 0)
+(size-indication-mode 0)
+(display-battery-mode 0)
 
 ;; no splash.
 (setq inhibit-startup-message t
