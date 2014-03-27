@@ -48,6 +48,8 @@
                      "\\bmsn\\b"
                      ))
 
+(put 'erc-quit-server 'disabled t)
+
 (erc-timestamp-mode t)
 (setq erc-timestamp-format "%Y-%m-%d %H:%M:%S ")
 
