@@ -15,4 +15,6 @@
       org-default-notes-file "~/notes/todo.txt")
 (define-key global-map (kbd "C-c a") 'org-agenda)
 (define-key global-map (kbd "C-c c") 'org-capture)
+(define-key global-map (kbd "C-c C-x C-o") 'org-clock-out)
+(define-key global-map (kbd "C-c C-x C-x") 'org-clock-in-last)
 (add-to-list 'auto-mode-alist '("\\.\\(txt\\|org\\)$" . org-mode))
