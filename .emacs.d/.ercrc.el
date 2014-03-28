@@ -33,6 +33,7 @@
 (erc-update-modules)
 
 (define-key erc-mode-map (kbd "C-c C-c") 'end-of-buffer)
+(define-key erc-mode-map (kbd "C-c C-x") nil)
 
 (setq erc-keywords '(
                      "\\bcowboy\\b"
