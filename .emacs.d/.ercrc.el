@@ -47,6 +47,8 @@
                      "\\beng\\b"
                      "\\bops\\b"
                      "\\bmsn\\b"
+                     "\\bchemex\\b"
+                     "\\bcoffee\\b"
                      ))
 
 (put 'erc-quit-server 'disabled t)
