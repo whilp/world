@@ -30,6 +30,8 @@
 [url "git@github.banksimple.com:"]
 	insteadOf = bh:
   pushInsteadOf = https://github.banksimple.com/
+[url "git@github.banksimple.com:"]
+	insteadOf = https://github.banksimple.com/
 [url "git@github.banksimple.com:BankSimple/"]
 	insteadOf = bs:
 [url "git@github.banksimple.com:backend/"]
