@@ -12,7 +12,8 @@
       org-agenda-file-regexp "\\`[^.].*\\.\\(txt\\|org\\)\\'"
       org-agenda-files '("~/notes/todo.txt")
       org-bookmark-names-plist '()
-      org-default-notes-file "~/notes/todo.txt")
+      org-default-notes-file "~/notes/todo.txt"
+      org-clock-mode-line-total 'today)
 (define-key global-map (kbd "C-c a") 'org-agenda)
 (define-key global-map (kbd "C-c c") 'org-capture)
 (define-key global-map (kbd "C-c C-x C-o") 'org-clock-out)
