@@ -35,8 +35,6 @@
 (require 'smtpmail)
 (setq
  mail-user-agent 'mu4e-user-agent
- send-mail-function 'smtpmail-send-it
- message-send-mail-function 'smtpmail-send-it
  message-kill-buffer-on-exit t
  message-signature nil
  starttls-use-gnutls t
