@@ -1,4 +1,5 @@
 ;; environment.
+(setq explicit-shell-file-name "/bin/bash")
 (setq exec-path (append '(
                           "~/bin"
                           "/usr/local/sbin"
@@ -6,7 +7,6 @@
                           "/usr/local/MacGPG2/bin"
                           )
                         exec-path))
-(setq explicit-shell-file-name "/bin/bash")
 (setenv "PATH"
         (mapconcat 'identity exec-path path-separator))
 (setenv "PAGER" "cat")
