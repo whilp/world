@@ -40,7 +40,6 @@
      nil 'fullscreen
      (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
 
-(define-key whilp/bindings-map (kbd "M-RET") 'toggle-fullscreen)
 (define-key whilp/bindings-map (kbd "M-`") 'other-frame)
 (define-key whilp/bindings-map (kbd "M-w") 'delete-frame)
 
