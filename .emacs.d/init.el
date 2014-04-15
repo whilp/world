@@ -43,6 +43,11 @@
 (define-key whilp/bindings-map (kbd "M-`") 'other-frame)
 (define-key whilp/bindings-map (kbd "M-w") 'delete-frame)
 
+(defun yank-pop-forwards (arg)
+  (interactive "p")
+  (yank-pop (- arg)))
+(define-key whilp/bindings-map (kbd "M-S-Y") 'yank-pop-forwards)
+
 ;; remember.
 (winner-mode 1)
 (desktop-save-mode 1)
