@@ -194,7 +194,10 @@
 
 ;; shell-here
 (load-file "~/.emacs.d/shell-here.el")
-(define-key whilp/bindings-map (kbd "C-x m") 'shell-here)
+(defun whilp-shell-here ()
+  (interactive)
+  (shell-here '-))
+(define-key whilp/bindings-map (kbd "C-x m") 'whilp-shell-here)
 
 ;; vc
 (setq
