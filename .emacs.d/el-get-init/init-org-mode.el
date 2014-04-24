@@ -5,6 +5,7 @@
       org-src-fontify-natively t
       org-use-tag-inheritance t
       org-todo-keywords '((sequence "TODO" "DONE"))
+      org-agenda-skip-scheduled-if-done t
       org-agenda-restore-windows-after-quit t
       org-agenda-search-headline-for-time nil
       org-extend-today-until 6
