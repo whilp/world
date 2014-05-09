@@ -149,6 +149,7 @@
                                       "#foodfightshow"
                                       "#onboarding_support"
                                       "#nagios"
+                                      "#dev"
                                       "#sensu"
                                       "#OpsSchool"))
 
