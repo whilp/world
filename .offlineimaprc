@@ -1,3 +1,4 @@
+# curl http://curl.haxx.se/ca/cacert.pem > ~/.offlineimap/cacert.pem
 [general]
 accounts = wcmaier@m.aier.us,will@simple.com
 maxsyncaccounts = 3
@@ -21,7 +22,7 @@ type = IMAP
 remotehost = imap.gmail.com
 remoteuser = wcmaier@m.aier.us
 remotepasseval = get_password_emacs("imap.gmail.com", "wcmaier@m.aier.us", "993")
-cert_fingerprint = 89091347184d41768bfc0da9fad94bfe882dd358
+sslcacertfile = ~/.offlineimap/cacert.pem
 folderfilter = lambda foldername: foldername not in ['[Gmail]/Spam', '[Gmail]/Starred', '[Gmail]/Important']
 maxconnections = 3
 ssl = yes
@@ -45,7 +46,7 @@ type = IMAP
 remotehost = imap.gmail.com
 remoteuser = will@simple.com
 remotepasseval = get_password_emacs("imap.gmail.com", "will@simple.com", "993")
-cert_fingerprint = 89091347184d41768bfc0da9fad94bfe882dd358
+sslcacertfile = ~/.offlineimap/cacert.pem
 folderfilter = lambda foldername: foldername not in ['Nagios', 'Root', '[Gmail]/Spam', '[Gmail]/Starred', '[Gmail]/Important']
 maxconnections = 3
 ssl = yes
