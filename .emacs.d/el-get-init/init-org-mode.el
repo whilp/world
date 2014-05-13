@@ -3,7 +3,10 @@
       org-startup-indented t
       org-return-follows-link t
       org-src-fontify-natively t
+      org-completion-use-ido t
+      org-return-follows-link t
       org-use-tag-inheritance t
+      org-agenda-start-on-weekday 1
       org-todo-keywords '((sequence "TODO" "DONE"))
       org-agenda-skip-scheduled-if-done t
       org-agenda-restore-windows-after-quit t
@@ -22,3 +25,6 @@
 (define-key global-map (kbd "C-c C-x C-x") 'org-clock-in-last)
 (define-key global-map (kbd "C-c C-x C-i") 'org-clock-in)
 (add-to-list 'auto-mode-alist '("\\.\\(txt\\|org\\)$" . org-mode))
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/notes/todo.txt" "Tasks")
+         "* TODO %^{prompt} [/]\n  %T\n  %a\n  %?")))
