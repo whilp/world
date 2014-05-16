@@ -104,6 +104,32 @@
 (put 'narrow-to-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 
+;; term.
+(defun term-send-function-key ()
+  (interactive)
+  (let* ((char last-input-event)
+         (output (cdr (assoc char term-function-key-alist))))
+    (term-send-raw-string output)))
+
+(defconst term-function-key-alist '((f1 . "\e[11~")
+                                    (f2 . "\e[12~")
+                                    (f3 . "\e[13~")
+                                    (f4 . "\e[14~")
+                                    (f5 . "\e[15~")
+                                    (f6 . "\e[17~")
+                                    (f7 . "\e[18~")
+                                    (f8 . "\e[19~")
+                                    (f9 . "\e[20~")
+                                    (f10 . "\e[21~")
+                                    (f11 . "\e[23~")
+                                    (f12 . "\e[24~")
+                                    ))
+
+(dolist (spec term-function-key-alist)
+  (define-key term-raw-map
+    (read-kbd-macro (format "<%s>" (car spec)))
+    'term-send-function-key))
+
 ;; comint.
 (setq comint-scroll-show-maximum-output nil)
 (remove-hook 'comint-output-filter-functions
