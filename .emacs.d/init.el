@@ -225,6 +225,9 @@
   (shell-here '-))
 (define-key whilp/bindings-map (kbd "C-x m") 'whilp-shell-here)
 
+;; nssh
+(load-file "~/.emacs.d/nssh.el")
+
 ;; vc
 (setq
  compilation-scroll-output t
