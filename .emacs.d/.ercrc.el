@@ -46,6 +46,8 @@
                      "\\bbackend[\\?!]"
                      "\\beng\\b"
                      "\\bops\\b"
+                     "github.banksimple.com/it"
+                     "github.banksimple.com/ops"
                      "\\bmsn\\b"
                      "\\bchemex\\b"
                      "\\bcoffee\\b"
