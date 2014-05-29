@@ -29,4 +29,4 @@
 (add-to-list 'auto-mode-alist '("\\.\\(txt\\|org\\)$" . org-mode))
 (setq org-capture-templates
       '(("t" "Todo" entry (file+headline "~/notes/todo.txt" "Tasks")
-         "* TODO %^{prompt} [/]\n  %T\n  %a\n  %?")))
+         "* TODO %? [/]")))
