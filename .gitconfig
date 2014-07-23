@@ -38,6 +38,8 @@
 	insteadOf = https://github.banksimple.com/
 [url "git@github.banksimple.com:BankSimple/"]
 	insteadOf = bs:
+[url "git@github.banksimple.com:BankSimple/"]
+	insteadOf = git@github.banksimple.com:banksimple/
 [url "git@github.banksimple.com:backend/"]
 	insteadOf = backend:
 [url "git@github.banksimple.com:projects/"]
