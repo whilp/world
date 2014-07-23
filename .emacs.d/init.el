@@ -36,6 +36,7 @@
 (fringe-mode 0)
 (setq ring-bell-function 'ignore
       visible-bell t)
+(global-hl-line-mode)
 (winner-mode 1)
 (defun toggle-fullscreen ()
   "Toggle full screen"
@@ -276,6 +277,7 @@
                        deft
                        delight
                        emacs-async
+                       erc-highlight-nicknames
                        find-file-in-project
                        flycheck
                        gist
