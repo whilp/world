@@ -276,6 +276,7 @@
                        find-file-in-project
                        flycheck
                        gist
+                       go-oracle
                        go-mode
                        golden-ratio
                        inf-ruby
