@@ -7,6 +7,7 @@
 (erc-button-mode nil)
 (erc-fill-disable)
 (erc-track-enable)
+(erc-highlight-nicknames-enable)
 (erc-scrolltobottom-enable)
 
 (setq erc-modules '(
