@@ -103,6 +103,7 @@
       erc-hide-list '("JOIN" "NICK" "PART" "QUIT")
       erc-track-exclude-server-buffer t
       erc-track-switch-direction 'newest
+      erc-track-position-in-mode-line 'after-modes
       erc-format-query-as-channel-p t
       erc-prompt ">"
       erc-timestamp-only-if-changed-flag nil
