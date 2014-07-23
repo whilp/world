@@ -133,11 +133,6 @@
                                     (f12 . "\e[24~")
                                     ))
 
-(dolist (spec term-function-key-alist)
-  (define-key term-raw-map
-    (read-kbd-macro (format "<%s>" (car spec)))
-    'term-send-function-key))
-
 ;; comint.
 (setq comint-scroll-show-maximum-output nil)
 (remove-hook 'comint-output-filter-functions
