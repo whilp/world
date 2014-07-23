@@ -82,6 +82,9 @@
 (global-font-lock-mode t)
 (transient-mark-mode t)
 
+;; javascript
+(setq js-indent-level 2)
+
 ;; GC buffers, uniquify buffer names, ibuffer.
 (require 'midnight)
 (add-to-list 'clean-buffer-list-kill-never-regexps "^#.*")
