@@ -145,6 +145,7 @@ fi
 #which rbenv > /dev/null 2>&1 && eval "$(rbenv init -)"
 
 source /usr/local/share/chruby/chruby.sh
+chruby ruby-1.9
 
 # Local::lib
 if [ -d "${HOME}/perl5/lib/perl5" ]; then
