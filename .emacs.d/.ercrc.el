@@ -37,6 +37,7 @@
 (define-key erc-mode-map (kbd "C-c C-x") nil)
 
 (setq erc-keywords '(
+                     "\\bwhilip\\b"
                      "\\bcowboy\\b"
                      "\\bmaier\\b"
                      "\\bSimpleFinance\\b"
@@ -53,6 +54,9 @@
                      "\\bchemex\\b"
                      "\\bcoffee\\b"
                      ))
+
+;; https://news.ycombinator.com/item?id=1654487
+(setq Buffer-menu-use-frame-buffer-list nil)
 
 (put 'erc-quit-server 'disabled t)
 
