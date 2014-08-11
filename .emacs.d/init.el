@@ -266,16 +266,20 @@
  my-el-get-packages (append
                      '(
                        apache-mode
+                       auto-complete
                        clojure-mode
                        color-theme-solarized
                        csv-mode
                        deft
                        delight
                        emacs-async
+                       emms
                        erc-highlight-nicknames
                        find-file-in-project
                        flycheck
                        gist
+                       go-autocomplete
+                       go-eldoc
                        go-oracle
                        go-mode
                        golden-ratio
