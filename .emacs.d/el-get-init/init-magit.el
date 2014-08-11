@@ -6,3 +6,4 @@
  )
 (define-key whilp/bindings-map (kbd "C-x C-g") 'magit-status)
 (define-key whilp/bindings-map (kbd "C-c C-p") 'magit-push)
+(define-key whilp/bindings-map (kbd "C-x C-c") 'magit-commit)
