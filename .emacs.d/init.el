@@ -3,6 +3,7 @@
 (setq exec-path (append '(
                           "~/bin"
                           "~/go/bin"
+                          "~/homebrew/Cellar/go/1.3/libexec/bin"
                           "/usr/local/sbin"
                           "/usr/local/bin"
                           "/usr/local/MacGPG2/bin"
