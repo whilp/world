@@ -204,6 +204,11 @@
 
 (define-key whilp/bindings-map (kbd "C-_") 'dabbrev-expand)
 
+;; browse in the background.
+(defun browse-url-default-macosx-browser (url &optional _new-window)
+  (interactive (browse-url-interactive-arg "URL: "))
+  (start-process (concat "open -g" url) nil "open" "-g" url))
+
 ;; erc.
 (require 'tls)
 (require 'erc)
