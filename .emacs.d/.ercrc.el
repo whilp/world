@@ -51,6 +51,7 @@
                      "github.banksimple.com/it"
                      "github.banksimple.com/ops"
                      "\\bmsn\\b"
+                     "\\brum club\\b"
                      "\\bchemex\\b"
                      "\\bcoffee\\b"
                      ))
