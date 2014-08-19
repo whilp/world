@@ -213,6 +213,10 @@
 (add-hook 'text-mode-hook 'flyspell-mode)
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 
+;; fills
+(add-hook 'text-mode-hook 'auto-fill-mode)
+(add-hook 'prog-mode-hook 'auto-fill-mode)
+
 ;; whitespace.
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
