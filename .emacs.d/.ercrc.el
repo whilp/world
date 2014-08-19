@@ -38,6 +38,7 @@
 
 (setq erc-keywords '(
                      "\\bwhilip\\b"
+                     "\\bopa\\b"
                      "\\bcowboy\\b"
                      "\\bmaier\\b"
                      "\\bSimpleFinance\\b"
