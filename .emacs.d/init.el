@@ -19,6 +19,7 @@
 (setenv "SSH_AUTH_SOCK" (expand-file-name "~/.ssh/agent.sock"))
 (setenv "PS1" "${debian_chroot:+($debian_chroot)}\\u@\\h:\\w \\$ ")
 (setenv "_JAVA_OPTIONS" "-Djava.awt.headless=true")
+(setenv "MAN_WIDTH" "72")
 
 (setenv "GIT_EDITOR" "emacsclient")
 (setenv "GIT_COMMITTER_NAME" "Will Maier")
