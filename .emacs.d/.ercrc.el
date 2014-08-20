@@ -54,6 +54,7 @@
                      "\\bmsn\\b"
                      "\\brum club\\b"
                      "\\bchemex\\b"
+                     "\\bpolish merge\\b"
                      "\\bcoffee\\b"
                      ))
 
