@@ -112,7 +112,7 @@ Project root is determined with `ffip-project-root', if available."
          (base-name
           (format "*shell%s*"
                   (if root (format " %s" (file-name-nondirectory root)) "")))
-         (buf (pop-to-buffer
+         (buf (pop-to-buffer-same-window
                (let ((default-directory (format "%s/" target)))
                  (cond
                   (new (generate-new-buffer base-name))
