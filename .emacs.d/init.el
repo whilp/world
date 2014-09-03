@@ -1,14 +1,18 @@
 ;; environment.
 (setq explicit-shell-file-name "/bin/bash")
-(setq exec-path (append '(
-                          "~/bin"
-                          "~/go/bin"
-                          "~/homebrew/Cellar/go/1.3/libexec/bin"
-                          "/usr/local/sbin"
-                          "/usr/local/bin"
-                          "/usr/local/MacGPG2/bin"
-                          )
-                        exec-path))
+(setq exec-path
+      (append
+       (mapcar
+        'expand-file-name
+        '(
+          "~/bin"
+          "~/go/bin"
+          "~/homebrew/Cellar/go/1.3/libexec/bin"
+          "/usr/local/sbin"
+          "/usr/local/bin"
+          "/usr/local/MacGPG2/bin"
+          ))
+        exec-path))
 (setenv "PATH"
         (mapconcat 'identity exec-path path-separator))
 (setenv "PAGER" "cat")
