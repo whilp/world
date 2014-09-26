@@ -72,3 +72,5 @@
 	tool = emerge
 [github]
 	user = whilp
+[gh]
+	host = github.banksimple.com
