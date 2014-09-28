@@ -327,6 +327,7 @@
                        request
                        rubocop-mode
                        scala-mode2
+                       sclang-extensions
                        smex
                        twittering-mode
                        web-mode

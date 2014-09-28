@@ -1,0 +1,4 @@
+(:name sclang-extensions
+       :type github
+       :pkgname "chrisbarrett/sclang-extensions"
+       :description "Creature comforts for the SuperCollider mode for Emacs")
