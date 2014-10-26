@@ -1,6 +1,6 @@
 (autoload 'magit-status' "magit" nil t)
 (setq
- magit-git-executable "git"
+ magit-git-executable "gh"
  magit-save-some-buffers nil
  magit-status-buffer-switch-function 'switch-to-buffer
  )
