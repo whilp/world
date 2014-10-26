@@ -109,8 +109,6 @@
              (ibuffer-auto-mode t)
              (ibuffer-switch-to-saved-filter-groups "default")))
 
-(define-key whilp/bindings-map (kbd "C-c C-o") 'occur)
-
 (eval-when-compile
   (require 'cl))
  
