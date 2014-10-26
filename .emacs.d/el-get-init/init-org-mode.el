@@ -1,12 +1,14 @@
 (require 'org)
 (setq auto-indent-start-org-indent t
       org-startup-indented t
+      org-enforce-todo-dependencies t
       org-return-follows-link t
       org-src-fontify-natively t
       org-completion-use-ido t
       org-return-follows-link t
       org-use-tag-inheritance t
       org-agenda-start-on-weekday 1
+      org-agenda-dim-blocked-tasks t
       org-todo-keywords '((sequence "TODO" "DONE"))
       org-agenda-skip-scheduled-if-done t
       org-agenda-restore-windows-after-quit nil
