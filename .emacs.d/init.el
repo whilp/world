@@ -324,6 +324,7 @@
                        mu4e
                        nginx-mode
                        org-mode
+                       projectile
                        request
                        rubocop-mode
                        scala-mode2
