@@ -154,6 +154,13 @@
                                     (f12 . "\e[24~")
                                     ))
 
+;; parens trap.
+(setq
+ show-paren-delay 0
+ show-paren-style 'expression
+ )
+(show-paren-mode t)
+
 ;; comint.
 (setq comint-scroll-show-maximum-output nil)
 (remove-hook 'comint-output-filter-functions
