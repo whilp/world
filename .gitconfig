@@ -74,3 +74,4 @@
 	user = whilp
 [gh]
 	host = github.banksimple.com
+	autoUpdate = never
