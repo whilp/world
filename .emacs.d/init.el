@@ -182,6 +182,7 @@
       (cd (concat "/" host ":"))
       (shell (concat "*" host "*")))))
 (define-key whilp/bindings-map (kbd "C-x s") 'remote-shell)
+(define-key whilp/bindings-map (kbd "s-s") 'remote-shell)
 
 ;; GPG.
 (require 'epa-file)
