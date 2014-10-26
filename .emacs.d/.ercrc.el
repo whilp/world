@@ -102,6 +102,7 @@
       erc-log-write-after-insert t
       erc-log-file-coding-system 'utf-8
       erc-log-matches-flag t
+      erc-match-exclude-server-buffer t
       erc-generate-log-file-name-function 'erc-generate-log-file-name-perfect
       erc-log-channels-directory 'erc-generate-log-channels-directory)
 
