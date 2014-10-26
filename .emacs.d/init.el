@@ -52,9 +52,6 @@
      nil 'fullscreen
      (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
 
-(define-key whilp/bindings-map (kbd "M-`") 'other-frame)
-(define-key whilp/bindings-map (kbd "M-w") 'delete-frame)
-
 (defun yank-pop-forwards (arg)
   (interactive "p")
   (yank-pop (- arg)))
