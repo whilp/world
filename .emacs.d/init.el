@@ -13,6 +13,7 @@
           "/usr/local/MacGPG2/bin"
           ))
         exec-path))
+(setenv "TMPDIR" "/tmp")
 (setenv "PATH"
         (mapconcat 'identity exec-path path-separator))
 (setenv "PAGER" "cat")
