@@ -203,15 +203,23 @@
 
 ;; windows.
 (define-key whilp/bindings-map (kbd "M-i") 'windmove-left)
+(define-key whilp/bindings-map (kbd "s-i") 'windmove-left)
 (define-key whilp/bindings-map (kbd "M-j") 'windmove-down)
+(define-key whilp/bindings-map (kbd "s-j") 'windmove-down)
 (define-key whilp/bindings-map (kbd "M-k") 'windmove-up)
+(define-key whilp/bindings-map (kbd "s-k") 'windmove-up)
 (define-key whilp/bindings-map (kbd "M-l") 'windmove-right)
+(define-key whilp/bindings-map (kbd "s-l") 'windmove-right)
+(define-key whilp/bindings-map (kbd "s-1") 'delete-other-windows)
+(define-key whilp/bindings-map (kbd "s-2") 'split-window-below)
+(define-key whilp/bindings-map (kbd "s-3") 'split-window-right)
 
 ;; command-as-meta.
 (setq mac-option-key-is-meta nil)       
 (setq mac-command-key-is-meta t)
 (setq mac-command-modifier 'meta)
 (setq mac-option-modifier 'super)
+(setq ns-function-modifier 'hyper)
 (setq kill-read-only-ok)
 
 ;; speling
@@ -261,6 +269,7 @@
   (interactive)
   (shell-here '-))
 (define-key whilp/bindings-map (kbd "C-x m") 'whilp-shell-here)
+(define-key whilp/bindings-map (kbd "s-m") 'whilp-shell-here)
 
 ;; nssh
 (load-file "~/.emacs.d/nssh.el")
