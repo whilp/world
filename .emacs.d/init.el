@@ -301,11 +301,13 @@
                      '(
                        apache-mode
                        auto-complete
+                       cider
                        clojure-mode
                        color-theme-solarized
                        csv-mode
                        deft
                        delight
+                       ein
                        emacs-async
                        emms
                        erc-highlight-nicknames
