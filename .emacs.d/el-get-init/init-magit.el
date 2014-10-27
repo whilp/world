@@ -5,6 +5,5 @@
  magit-status-buffer-switch-function 'switch-to-buffer
  magit-set-upstream-on-push 'dontask
  )
-(define-key whilp/bindings-map (kbd "C-x C-g") 'magit-status)
 (define-key whilp/bindings-map (kbd "C-c g p") 'magit-push)
-(define-key whilp/bindings-map (kbd "C-x C-c") 'magit-commit)
+(define-key whilp/bindings-map (kbd "C-c g c") 'magit-commit)
