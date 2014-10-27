@@ -90,6 +90,11 @@
 ;; javascript
 (setq js-indent-level 2)
 
+;; python
+(setq python-shell-interpreter "ipython"
+      python-shell-interpreter-args "-i")
+
+
 ;; GC buffers, uniquify buffer names, ibuffer.
 (require 'midnight)
 (add-to-list 'clean-buffer-list-kill-never-regexps "^#.*")
