@@ -93,6 +93,7 @@
 ;; python
 (setq python-shell-interpreter "ipython"
       python-shell-interpreter-args "-i")
+(define-key whilp/bindings-map (kbd "C-c y r") 'run-python)
 
 
 ;; GC buffers, uniquify buffer names, ibuffer.
