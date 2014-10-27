@@ -1,3 +1,4 @@
+(require 'projectile)
 (projectile-global-mode)
 
 (setq
@@ -11,4 +12,4 @@
 (define-key projectile-mode-map [?\s-p] 'projectile-switch-project)
 (define-key projectile-mode-map [?\s-f] 'projectile-find-file)
 (define-key projectile-mode-map [?\s-g] 'projectile-grep)
-
+(define-key projectile-mode-map [?\s-v] 'projectile-vc)
