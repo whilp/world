@@ -1,5 +1,5 @@
 (require 'mu4e)
-(require 'org-mu4e)
+;; (require 'org-mu4e)
 
 (setq
  mu4e-maildir "~/Maildir"
@@ -49,7 +49,7 @@
  smtpmail-smtp-server "smtp.gmail.com"
  smtpmail-smtp-service 465)
 
-(defalias 'org-mail 'org-mu4e-compose-org-mode)
+;; (defalias 'org-mail 'org-mu4e-compose-org-mode)
 
 (setq my-mu4e-account-alist
   '(
