@@ -6,4 +6,5 @@
  magit-set-upstream-on-push 'dontask
  )
 (define-key whilp/bindings-map (kbd "C-c g p") 'magit-push)
+(define-key whilp/bindings-map (kbd "C-c g g") 'magit-grep)
 (define-key whilp/bindings-map (kbd "C-c g c") 'magit-commit)
