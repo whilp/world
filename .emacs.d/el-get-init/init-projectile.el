@@ -5,7 +5,7 @@
  projectile-mode-line '(
                         :eval (format " [%s]"
                                       (projectile-project-name)))
- projectile-switch-project-action 'projectile-vc
+ projectile-switch-project-action 'projectile-find-file
  )
 (define-key whilp/bindings-map (kbd "s-p") 'projectile-command-map)
 (define-key projectile-mode-map [?\s-d] 'projectile-find-dir)
