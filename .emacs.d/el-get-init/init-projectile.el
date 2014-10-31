@@ -13,7 +13,8 @@
                                            "_darcs"
                                            ".tox"
                                            ".svn"
-                                           "build")
+                                           "build"
+                                           "_workspace")
  projectile-ignored-file-extensions '("class" "o" "so" "elc" "test")
  projectile-mode-line '(
                         :eval (format " [%s]"
