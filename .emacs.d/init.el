@@ -255,14 +255,6 @@
 (require 'tls)
 (require 'erc)
 
-;; shell-here
-(load-file "~/.emacs.d/shell-here.el")
-(defun whilp-shell-here ()
-  (interactive)
-  (shell-here '-))
-(define-key whilp/bindings-map (kbd "C-x m") 'whilp-shell-here)
-(define-key whilp/bindings-map (kbd "s-m") 'whilp-shell-here)
-
 ;; nssh
 (load-file "~/.emacs.d/nssh.el")
 
