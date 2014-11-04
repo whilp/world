@@ -24,7 +24,8 @@
 [url "git@github.com:"]
   insteadOf = https://github.com/
 [url "git@gist.github.com:"]
-  insteadOf = gist:
+	insteadOf = gist:
+	insteadOf = https://gist.github.com/
 [url "git@github.com:monitorama/"]
   insteadOf = monitorama:
 [url "git@github.com:monitorama-eu/"]
@@ -33,9 +34,9 @@
   insteadOf = sf:
 [url "git@github.banksimple.com:"]
 	insteadOf = bh:
-  pushInsteadOf = https://github.banksimple.com/
-[url "git@github.banksimple.com:"]
 	insteadOf = https://github.banksimple.com/
+  insteadOf = git://github.banksimple.com/
+  pushInsteadOf = https://github.banksimple.com/
 [url "git@github.banksimple.com:BankSimple/"]
 	insteadOf = bs:
 [url "git@github.banksimple.com:BankSimple/"]
