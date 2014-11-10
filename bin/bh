@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 export GITHUB_HOST=github.banksimple.com
 exec gh "$@"
