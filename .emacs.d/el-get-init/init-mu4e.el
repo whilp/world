@@ -101,6 +101,14 @@
 (mapc #'(lambda (var) (set (car var) (cadr var)))
       (cdr (assoc my-mu4e-default-account my-mu4e-account-alist)))
 
+(defun my-mu4e-refile-folder-function (msg)
+  "Set the refile folder for MSG."
+  (let* ((maildir (mu4e-message-field msg :maildir))
+         (account (nth 1 (split-string maildir "/"))))
+    (format "/%s/[Gmail].All Mail" account)))
+
+(setq mu4e-refile-folder 'my-mu4e-refile-folder-function)
+
 (setq mu4e-bookmarks
       '(("flag:unread AND NOT flag:trashed" "unread" ?u)
         ("maildir:/will@simple.com/INBOX OR maildir:/wcmaier@m.aier.us/INBOX" "new" ?n)
