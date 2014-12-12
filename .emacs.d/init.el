@@ -320,6 +320,7 @@
                        mu4e
                        nginx-mode
                        org-mode
+                       ;; org-trello
                        projectile
                        request
                        rubocop-mode
