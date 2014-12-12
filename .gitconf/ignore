@@ -4,3 +4,4 @@
 /cookbooks
 /tmp
 /vendor
+*.test
