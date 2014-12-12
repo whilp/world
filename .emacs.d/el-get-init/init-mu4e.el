@@ -54,16 +54,16 @@
 (setq my-mu4e-account-alist
   '(
     ("will@simple.com"
-     (mu4e-drafts-folder "/will@simple.com/[Gmail].Drafts")
-     (mu4e-sent-folder   "/will@simple.com/[Gmail].Sent Mail")
-     (mu4e-trash-folder  "/will@simple.com/[Gmail].Trash")
+     (mu4e-drafts-folder "/will@simple.com/[Gmail]/Drafts")
+     (mu4e-sent-folder   "/will@simple.com/[Gmail]/Sent Mail")
+     (mu4e-trash-folder  "/will@simple.com/[Gmail]/Trash")
      (smtpmail-smtp-user "will@simple.com")
      (user-full-name     "Will Maier")
      (user-mail-address  "will@simple.com"))
     ("wcmaier@m.aier.us"
-     (mu4e-drafts-folder "/wcmaier@m.aier.us/[Gmail].Drafts")
-     (mu4e-sent-folder   "/wcmaier@m.aier.us/[Gmail].Sent Mail")
-     (mu4e-trash-folder  "/wcmaier@m.aier.us/[Gmail].Trash")
+     (mu4e-drafts-folder "/wcmaier@m.aier.us/[Gmail]/Drafts")
+     (mu4e-sent-folder   "/wcmaier@m.aier.us/[Gmail]/Sent Mail")
+     (mu4e-trash-folder  "/wcmaier@m.aier.us/[Gmail]/Trash")
 
      (smtpmail-smtp-user "wcmaier@m.aier.us")
      (user-full-name     "Will Maier")
@@ -105,7 +105,7 @@
   "Set the refile folder for MSG."
   (let* ((maildir (mu4e-message-field msg :maildir))
          (account (nth 1 (split-string maildir "/"))))
-    (format "/%s/[Gmail].All Mail" account)))
+    (format "/%s/[Gmail]/All Mail" account)))
 
 (setq mu4e-refile-folder 'my-mu4e-refile-folder-function)
 
