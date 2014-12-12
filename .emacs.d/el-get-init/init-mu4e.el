@@ -29,7 +29,7 @@
    )
  mu4e-use-fancy-chars nil
  mu4e-get-mail-command "true"
- mu4e-update-interval 600
+ mu4e-update-interval nil
  )
 
 (require 'smtpmail)
