@@ -18,7 +18,7 @@
  znc-servers
  (list
   (my-znc-profile 'simple "chat.banksimple.com" "whilp" 9999)
-  (my-znc-profile 'furnance "furnace.firrre.com" "whilp" 9090)
+  (my-znc-profile 'furnace "furnace.firrre.com" "whilp" 9090)
   ))
 
 ;; buffers from the day i killed everything https://github.banksimple.com/gist/1c622769aee278dc2aad
