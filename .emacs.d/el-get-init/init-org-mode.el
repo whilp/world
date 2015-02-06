@@ -30,7 +30,8 @@
       org-default-notes-file "~/notes/todo.txt"
       org-clock-mode-line-total 'today
       org-clock-history-length 50
-      org-agenda-repeating-timestamp-show-all nil)
+      org-agenda-repeating-timestamp-show-all nil
+      org-log-into-drawer "LOGBOOK")
 
 (define-key global-map (kbd "C-c a") 'org-agenda)
 (define-key global-map (kbd "C-c c") 'org-capture)
