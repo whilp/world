@@ -7,6 +7,7 @@
  mu4e-compose-signature-auto-include nil
  mu4e-compose-complete-only-personal nil
  mu4e-compose-dont-reply-to-self t
+ mu4e-view-prefer-html nil
  mu4e-show-images t
  mu4e-headers-date-format "%Y-%m-%d"
  mu4e-view-date-format "%Y-%m-%d %H:%M:%S"
