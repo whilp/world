@@ -1,0 +1,6 @@
+#!/bin/sh
+
+while :; do
+      mbsync will@simple.com wcmaier@m.aier.us
+      sleep 30
+done

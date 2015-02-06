@@ -1,0 +1,9 @@
+#!/bin/sh -x
+
+# https://my.anuson.com/knowledgebase/1/OpenVPN-error-write-UDPv4-Cant-assign-requested-address-codeequals49.html
+sudo pkill -9 -f Viscosity
+sudo ifconfig en0 down
+sleep 3
+sudo route -n flush
+sleep 2
+sudo ifconfig en0 up
