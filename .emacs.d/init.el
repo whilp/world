@@ -304,6 +304,7 @@
                        emacs-async
                        emms
                        erc-highlight-nicknames
+                       expand-region
                        find-file-in-project
                        flx
                        flycheck
