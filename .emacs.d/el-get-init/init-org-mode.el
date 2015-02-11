@@ -25,7 +25,7 @@
       org-agenda-tags-todo-honor-ignore-options t
       org-agenda-follow-mode nil
       org-agenda-file-regexp "\\`[^.].*\\.\\(txt\\|org\\)\\'"
-      org-agenda-files '("~/src/github.banksimple.com/whilp/plan/plan.txt")
+      org-agenda-files '("~/src/github.banksimple.com/whilp/notes/plan.txt")
       org-bookmark-names-plist '()
       org-default-notes-file "~/notes/todo.txt"
       org-clock-mode-line-total 'today
