@@ -183,6 +183,12 @@
               (regexp-opt '("[pP]assword" "[pP]assphrase" "Verification code") t)
               ".*:? *"))
 
+;; from @tom, to fix CM shiz
+;; '(tramp-default-proxies-alist (quote ((nil "\\`root\\'" "/ssh:%h:"))))
+;; '(tramp-ssh-controlmaster-options
+;;  "-o ControlPath=%t.%%r@%%h:%%p -o ControlMaster=auto -o ControlPersist=no" t)
+;; '(tramp-use-ssh-controlmaster-options nil)
+
 (defun remote-shell (&optional host)
   "Open a remote shell to a host."
   (interactive)
