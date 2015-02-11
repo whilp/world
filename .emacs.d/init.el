@@ -292,6 +292,7 @@
  el-get-sources '()
  my-el-get-packages (append
                      '(
+                       ace-jump-mode
                        apache-mode
                        auto-complete
                        cider
