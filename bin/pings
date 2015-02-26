@@ -1,0 +1,6 @@
+#!/bin/sh
+
+while :; do
+    printf "%s %s\n" $(date +%s) $(nc -vzw1 github.banksimple.com 443 > /dev/null 2>&1; echo $?)
+    sleep 5
+done
