@@ -57,6 +57,8 @@
   (yank-pop (- arg)))
 (define-key whilp/bindings-map (kbd "M-S-Y") 'yank-pop-forwards)
 
+(setq redisplay-dont-pause t)
+
 ;; remember.
 (winner-mode 1)
 (desktop-save-mode 1)
