@@ -188,6 +188,7 @@
 ;; '(tramp-ssh-controlmaster-options
 ;;  "-o ControlPath=%t.%%r@%%h:%%p -o ControlMaster=auto -o ControlPersist=no" t)
 ;; '(tramp-use-ssh-controlmaster-options nil)
+;; 2015-02-12 18:29:50 <ieure> (eval-after-load "tramp" '(progn (setq tramp-use-ssh-controlmaster-options nil)))
 
 (defun remote-shell (&optional host)
   "Open a remote shell to a host."
