@@ -70,7 +70,9 @@
 (savehist-mode 1)
 
 ;; modeline.
-(setq display-time-format "%a %Y-%m-%d %H:%M")
+(setq display-time-format "%a %Y-%m-%d %H:%M"
+      display-time-default-load-average nil
+      )
 (display-time-mode 1)
 (line-number-mode 0)
 (column-number-mode 0)
