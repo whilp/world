@@ -6,6 +6,8 @@
  mu4e-sent-messages-behavior 'delete
  mu4e-compose-signature-auto-include nil
  mu4e-compose-complete-only-personal nil
+ mu4e-compose-complete-ignore-address-regexp "\(no-?reply\|gitlab@gitlab\.com\|@docs\.google\.com\)"
+ mu4e-compose-complete-only-after "2010-01-01"
  mu4e-compose-dont-reply-to-self t
  mu4e-view-prefer-html nil
  mu4e-show-images t
