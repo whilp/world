@@ -5,6 +5,7 @@
  magit-status-buffer-switch-function 'switch-to-buffer
  magit-set-upstream-on-push 'dontask
  magit-completing-read-function 'magit-ido-completing-read
+ magit-use-overlays nil
  )
 (define-key whilp/bindings-map (kbd "C-c g p") 'magit-push)
 (define-key whilp/bindings-map (kbd "C-c g g") 'magit-grep)
