@@ -1,3 +1,10 @@
+;; themes
+(custom-set-variables
+ '(custom-safe-themes
+   (quote
+    ("c74e83f8aa4c78a121b52146eadb792c9facc5b1f02c917e3dbb454fca931223" default))))
+(custom-set-faces)
+
 ;; environment.
 (setq explicit-shell-file-name "/bin/bash")
 (setq exec-path
