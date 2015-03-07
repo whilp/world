@@ -1,3 +1,4 @@
+;; channels: https://github.banksimple.com/gist/8d3925a06a568a704bfb
 ;; (load "~/.emacs.d/.erc-auth")
 
 (erc-match-mode t)
