@@ -339,6 +339,7 @@
                        auto-complete
                        cider
                        clojure-mode
+                       color-theme-solarized
                        csv-mode
                        deft
                        delight
@@ -370,7 +371,6 @@
                        scala-mode2
                        smart-mode-line
                        smex
-                       solarized-emacs
                        twittering-mode
                        web-mode
                        yaml-mode
