@@ -43,7 +43,6 @@
 (fringe-mode 0)
 (setq ring-bell-function 'ignore
       visible-bell t)
-(global-hl-line-mode -1)
 (winner-mode 1)
 (defun toggle-fullscreen ()
   "Toggle full screen"
@@ -189,6 +188,9 @@
  show-paren-style 'expression
  )
 (show-paren-mode t)
+;; disable hl-line-mode because it conflicts with show-paren when
+;; using solarized colors.
+(global-hl-line-mode -1)
 
 ;; comint.
 (setq comint-scroll-show-maximum-output nil)
