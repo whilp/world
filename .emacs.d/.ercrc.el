@@ -129,7 +129,7 @@
       erc-track-when-inactive nil
       erc-track-visibility nil
       erc-track-use-faces t
-      erc-track-switch-direction 'newest
+      erc-track-switch-direction 'importance
       erc-track-showcount nil
       erc-track-exclude-types '(
                                 "JOIN"
@@ -146,12 +146,14 @@
                                 )
       erc-track-faces-priority-list
       '(
+        erc-error-face
         erc-current-nick-face
         erc-keyword-face
-        erc-prompt-face
         erc-nick-msg-face
         erc-direct-msg-face
+        erc-dangerous-host-face
         erc-notice-face
+        erc-prompt-face
         )
       )
 
