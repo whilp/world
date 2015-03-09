@@ -367,7 +367,6 @@
 
 (el-get 'sync my-el-get-packages)
 
-
 ;; browse in the background.
 (defun browse-url-default-macosx-browser (url &optional _new-window)
   (interactive (browse-url-interactive-arg "URL: "))
