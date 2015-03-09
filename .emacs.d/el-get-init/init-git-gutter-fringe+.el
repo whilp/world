@@ -1,6 +1,7 @@
 (require 'git-gutter-fringe+)
 (global-git-gutter+-mode t)
 (git-gutter-fr+-minimal)
+(setq git-gutter+-lighter "")
 
 (define-key git-gutter+-mode-map (kbd "C-x n") 'git-gutter+-next-hunk)
 (define-key git-gutter+-mode-map (kbd "C-x p") 'git-gutter+-previous-hunk)
