@@ -56,7 +56,7 @@
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
-(fringe-mode 0)
+(fringe-mode 1)
 (setq ring-bell-function 'ignore
       visible-bell t)
 (winner-mode 1)
@@ -354,6 +354,7 @@
                        flx
                        flycheck
                        gist
+                       git-gutter-fringe+
                        go-autocomplete
                        go-eldoc
                        go-oracle
