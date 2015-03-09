@@ -354,6 +354,7 @@
                        flx
                        flycheck
                        gist
+                       git-commit-mode
                        git-gutter-fringe+
                        go-autocomplete
                        go-eldoc
