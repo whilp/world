@@ -4,7 +4,6 @@
       sml/shorten-directory t
       sml/name-width '(12 . 18))
 
-
 (setq-default mode-line-format
               '(
                 "%e"
