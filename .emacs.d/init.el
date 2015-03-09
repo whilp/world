@@ -56,7 +56,7 @@
 (tool-bar-mode -1)
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
-(fringe-mode nil)
+(fringe-mode '(nil . -1))
 (setq ring-bell-function 'ignore
       visible-bell t)
 (winner-mode 1)
