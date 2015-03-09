@@ -93,7 +93,7 @@
 (column-number-mode 0)
 (size-indication-mode 0)
 (display-battery-mode 0)
-(which-function-mode)
+(which-function-mode 0)
 
 ;; no splash.
 (setq inhibit-startup-message t
