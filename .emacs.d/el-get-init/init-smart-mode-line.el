@@ -5,7 +5,13 @@
       sml/use-projectile-p nil
       sml/name-width '(12 . 18))
 
-(setq-default mode-line-format
+(setq-default global-mode-string
+              '(
+                ""
+                emms-mode-line-string
+                emms-playing-time-string
+                erc-modified-channels-object)
+              mode-line-format
               '(
                 "%e"
                 display-time-string
