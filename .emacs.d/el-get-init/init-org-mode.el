@@ -40,5 +40,5 @@
 (define-key global-map (kbd "C-c C-x C-i") 'org-clock-in)
 (add-to-list 'auto-mode-alist '("\\.\\(txt\\|org\\)$" . org-mode))
 (setq org-capture-templates
-      '(("t" "Todo" entry (file+headline "~/notes/todo.txt" "Tasks")
-         "* TODO %? [/]")))
+      '(("t" "Todo" entry (file "~/src/github.banksimple.com/whilp/notes/plan.txt")
+         "* TODO %?\nDEADLINE: %^t")))
