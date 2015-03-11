@@ -2,6 +2,7 @@
 (sml/setup)
 (setq sml/mode-width 'right
       sml/shorten-directory t
+      sml/use-projectile-p nil
       sml/name-width '(12 . 18))
 
 (setq-default mode-line-format
