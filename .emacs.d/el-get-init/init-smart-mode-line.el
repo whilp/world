@@ -3,6 +3,8 @@
 (setq sml/mode-width 'right
       sml/shorten-directory t
       sml/use-projectile-p nil
+      sml/full-mode-string ""
+      sml/shorten-mode-string ""
       sml/name-width '(12 . 18))
 
 (setq-default global-mode-string
