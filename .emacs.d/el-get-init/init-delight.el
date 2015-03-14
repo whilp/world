@@ -4,5 +4,6 @@
            (magit-auto-revert-mode "" "magit")
            (org-indent-mode "" "org-indent")
            (auto-fill-mode "" "Fill")
+           (company-mode "" "company")
            (flyspell-mode nil "flyspell")
            (git-gutter+-mode "" nil)))
