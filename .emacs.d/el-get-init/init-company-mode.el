@@ -3,4 +3,4 @@
 (define-key company-active-map (kbd "\C-d") 'company-show-doc-buffer)
 (define-key company-active-map (kbd "<tab>") 'company-complete)
 (setq company-echo-delay 0
-      company-idle-delay .3)
+      company-idle-delay .7)
