@@ -319,11 +319,14 @@
  my-el-get-packages (append
                      '(
                        ace-jump-mode
+                       anaconda-mode
                        apache-mode
-                       auto-complete
                        cider
                        clojure-mode
                        color-theme-solarized
+                       company-mode
+                       company-anaconda
+                       company-inf-ruby
                        csv-mode
                        deft
                        delight
@@ -338,7 +341,7 @@
                        gist
                        git-commit-mode
                        git-gutter-fringe+
-                       go-autocomplete
+                       go-company
                        go-eldoc
                        go-oracle
                        go-mode
@@ -352,7 +355,10 @@
                        org-mode
                        ;; org-trello
                        projectile
+                       pyenv
                        request
+                       restclient
+                       robe-mode
                        rubocop-mode
                        scala-mode2
                        smart-mode-line
