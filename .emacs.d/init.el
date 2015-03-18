@@ -356,7 +356,6 @@
                        ;; org-trello
                        projectile
                        pyenv
-                       readline-complete
                        request
                        restclient
                        robe-mode
