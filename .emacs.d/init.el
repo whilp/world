@@ -339,7 +339,7 @@
                        flx
                        flycheck
                        gist
-                       git-commit-mode
+                       git-modes
                        git-gutter-fringe+
                        go-company
                        go-eldoc
