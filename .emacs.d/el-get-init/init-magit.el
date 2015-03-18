@@ -7,6 +7,8 @@
  magit-completing-read-function 'magit-ido-completing-read
  magit-use-overlays nil
  )
-(define-key whilp/bindings-map (kbd "C-c g p") 'magit-push)
-(define-key whilp/bindings-map (kbd "C-c g g") 'magit-grep)
-(define-key whilp/bindings-map (kbd "C-c g c") 'magit-commit)
+
+(define-key whilp/bindings-map (kbd "s-g g") 'magit-status)
+(define-key whilp/bindings-map (kbd "s-g u") 'magit-push)
+(define-key whilp/bindings-map (kbd "s-g p") 'magit-grep)
+(define-key whilp/bindings-map (kbd "s-g c") 'magit-commit)

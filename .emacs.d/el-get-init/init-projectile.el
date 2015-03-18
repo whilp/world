@@ -40,8 +40,6 @@
 
 (define-key whilp/bindings-map (kbd "s-p") 'projectile-command-map)
 (define-key projectile-mode-map [?\s-f] 'projectile-find-file)
-(define-key projectile-mode-map [?\s-g] 'projectile-vc-grep)
-(define-key projectile-mode-map [?\s-v] 'projectile-vc)
 
 (define-key whilp/bindings-map (kbd "C-x m") 'projectile-run-shell)
 (define-key whilp/bindings-map (kbd "s-m") 'projectile-run-shell)
