@@ -24,6 +24,7 @@
           "~/bin"
           "~/go/bin"
           "~/homebrew/Cellar/go/1.3/libexec/bin"
+          "/usr/local/opt/go/libexec/bin/godoc"
           "/usr/local/sbin"
           "/usr/local/bin"
           "/usr/local/MacGPG2/bin"
