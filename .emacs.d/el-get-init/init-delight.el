@@ -5,5 +5,6 @@
            (org-indent-mode "" "org-indent")
            (auto-fill-mode "" "Fill")
            (company-mode "" "company")
+           (abbrev-mode "" "Abbrev")
            (flyspell-mode nil "flyspell")
            (git-gutter+-mode "" nil)))
