@@ -1,3 +1,4 @@
+(require 'git-commit-mode)
 (require 'git-gutter-fringe+)
 (global-git-gutter+-mode t)
 (git-gutter-fr+-minimal)
