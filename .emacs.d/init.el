@@ -274,6 +274,8 @@
 ;; wrap.
 (global-visual-line-mode 1)
 
+;; fix myself.
+(setq default-abbrev-mode t)
 (define-key whilp/bindings-map (kbd "C-_") 'dabbrev-expand)
 
 
