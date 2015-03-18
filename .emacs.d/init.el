@@ -330,7 +330,6 @@
                        csv-mode
                        deft
                        delight
-                       ein
                        emacs-async
                        emms
                        erc-highlight-nicknames
@@ -353,9 +352,7 @@
                        mu4e
                        nginx-mode
                        org-mode
-                       ;; org-trello
                        projectile
-                       pyenv
                        request
                        restclient
                        robe-mode
