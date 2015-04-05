@@ -353,6 +353,7 @@
                        go-oracle
                        go-mode
                        golden-ratio
+                       ibuffer-projectile
                        inf-ruby
                        magit
                        markdown-mode
