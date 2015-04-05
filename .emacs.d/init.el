@@ -124,6 +124,8 @@
 (setq uniquify-buffer-name-style 'forward)
 (require 'ibuffer)
 
+(setq completion-cycle-threshold 10)
+
 ;; Unbind C-x C-b.
 (define-key whilp/bindings-map (kbd "C-x C-b") 'switch-to-buffer)
 (setq ibuffer-expert t)
