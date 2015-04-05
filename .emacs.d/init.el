@@ -282,11 +282,6 @@
 (setq default-abbrev-mode t)
 (define-key whilp/bindings-map (kbd "C-_") 'dabbrev-expand)
 
-
-;; erc.
-(require 'tls)
-(require 'erc)
-
 ;; nssh
 (load-file "~/.emacs.d/nssh.el")
 
