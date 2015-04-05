@@ -1,1 +1,3 @@
-;; (eval-after-load 'rcirc '(require 'rcirc-color))
+(eval-after-load 'rcirc '(require 'rcirc-color))
+
+(setq rcirc-color-is-deterministic t)

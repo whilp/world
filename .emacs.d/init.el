@@ -289,7 +289,7 @@
 ;; nssh
 (load-file "~/.emacs.d/nssh.el")
 
-(load-file "rcirc.el")
+(load-file "~/.emacs.d/rcirc.el")
 
 ;; vc
 (setq
@@ -335,6 +335,7 @@
                        company-anaconda
                        company-inf-ruby
                        csv-mode
+                       deferred
                        deft
                        delight
                        emacs-async
@@ -361,6 +362,7 @@
                        ;; TODO: origami-mode
                        org-mode
                        projectile
+                       rcirc-color
                        request
                        restclient
                        robe-mode
