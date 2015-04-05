@@ -287,6 +287,8 @@
 ;; nssh
 (load-file "~/.emacs.d/nssh.el")
 
+(load-file "rcirc.el")
+
 ;; vc
 (setq
  compilation-scroll-output t
