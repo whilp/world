@@ -9,7 +9,7 @@
 
 (setq
  mu4e-maildir "~/Maildir"
- mu4e-sent-messages-behavior 'delete
+ mu4e-sent-messages-behavior 'trash
  mu4e-compose-signature-auto-include nil
  mu4e-compose-complete-only-personal nil
  mu4e-compose-complete-ignore-address-regexp "\(no-?reply\|gitlab@gitlab\.com\|@docs\.google\.com\)"
