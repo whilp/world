@@ -131,8 +131,9 @@
 (setq ibuffer-expert t)
 (setq ibuffer-show-empty-filter-groups nil)
 (setq ibuffer-saved-filter-groups
-      '(("default"
-         ("erc" (mode . erc-mode)))))
+      (quote
+      '("default"
+        ("rcirc" (mode . rcirc-mode)))))
 (add-hook 'ibuffer-mode-hook
           '(lambda ()
              (ibuffer-auto-mode t)
