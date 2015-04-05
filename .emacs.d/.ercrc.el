@@ -110,7 +110,7 @@
 (setq erc-auto-query 'bury
       erc-save-buffer-on-part nil
       erc-save-queries-on-quit nil
-      erc-hide-list '("JOIN" "NICK" "PART" "QUIT" "353"))
+      erc-hide-list '("JOIN" "NICK" "PART" "QUIT" "324" "329" "332" "333" "353" "477" "353")
       erc-track-exclude-server-buffer t
       erc-track-position-in-mode-line t
       erc-format-query-as-channel-p t
