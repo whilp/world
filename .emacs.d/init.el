@@ -358,6 +358,7 @@
                        minitest-mode
                        mu4e
                        nginx-mode
+                       ;; TODO: origami-mode
                        org-mode
                        projectile
                        request
