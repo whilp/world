@@ -9,13 +9,45 @@
       rcirc-log-flag t
       rcirc-log-directory (expand-file-name "~/.irclogs"))
 ;; rcirc-timeout-seconds
-(setq rcirc-keywords '())
+
+(setq rcirc-keywords
+      '(
+        "\\bSimpleFinance\\b"
+        "\\bbackend[\\?!]"
+        "\\bbackend\\b"
+        "\\bchemex\\b"
+        "\\bcoffee\\b"
+        "\\bcowboy\\b"
+        "\\beng\\b"
+        "\\bmadison\\b"
+        "\\bmaier\\b"
+        "\\bmilwaukee\\b"
+        "\\bmke\\b"
+        "\\bmsn\\b"
+        "\\bopa\\b"
+        "\\bops\\b"
+        "\\bpolish merge\\b"
+        "\\brum club\\b"
+        "\\bwhilip\\b"
+        "\\bwisconsin\\b"
+        "github.banksimple.com/it"
+        "github.banksimple.com/ops"
+        ))
+
 (setq rcirc-omit-responses
       '(
+        "324"
+        "329"
+        "332"
+        "333"
+        "353"
+        "353"
+        "477"
         "JOIN"
-        "PART"
         "NICK"
-        "QUIT"))
+        "PART"
+        "QUIT"
+        ))
 
 (defun my-rcirc-mode-setup ()
   "Sets things up for channel and query buffers spawned by rcirc."
