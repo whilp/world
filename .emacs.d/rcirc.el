@@ -72,7 +72,7 @@
     (list
      host
      :nick user
-     :password (format "%s:%s" user password)
+     :password password
      :full-name user
      :port port
      :encryption 'tls)))
