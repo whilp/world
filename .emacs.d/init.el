@@ -128,6 +128,7 @@
 
 ;; Unbind C-x C-b.
 (define-key whilp/bindings-map (kbd "C-x C-b") 'switch-to-buffer)
+(define-key whilp/bindings-map (kbd "s-b") 'ibuffer)
 (setq ibuffer-expert t)
 (setq ibuffer-show-empty-filter-groups nil)
 (setq ibuffer-saved-filter-groups
