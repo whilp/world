@@ -79,5 +79,7 @@
 
 (setq rcirc-server-alist
       (list
-;;       (my-rcirc-profile "chat.banksimple.com" "whilp" 9999)
-       (my-rcirc-profile "furnace.firrre.com" "whilp" 9090)))
+       (my-rcirc-profile "chat.banksimple.com" "whilp" 9999)
+       (my-rcirc-profile "furnace.firrre.com" "whilp" 9090)
+       (my-rcirc-profile "humans-and-cats.irc.slack.com" "whilp" 6667)
+       ))
