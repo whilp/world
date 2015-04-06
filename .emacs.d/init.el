@@ -29,15 +29,18 @@
 
 (require 'whilp-const)
 (require 'init-environment)
+(require 'whilp-ui)
 (require 'init-whilp)
 
 (use-package yasnippet
   :ensure t
+  :defer t
   :diminish yas-minor-mode
   :config (yas-global-mode))
 
 (use-package flycheck
   :ensure t
+  :defer t
   :config
   (progn
     (setq-default flycheck-emacs-lisp-load-path load-path)
@@ -47,7 +50,7 @@
   :config
   (progn
     (setq epa-file-name-regexp "\\.\\(gpg\\|asc\\)$"
-          epa-armor t)
+          epan-armor t)
     (epa-file-name-regexp-update)
     (epa-file-enable)))
 
