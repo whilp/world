@@ -1,3 +1,8 @@
+;;; init --- Emacs initialization
+;;; Commentary:
+;;; User configuration
+;;; Code:
+
 ;; customize
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -400,3 +405,8 @@
 (defun browse-url-default-macosx-browser (url &optional _new-window)
   (interactive (browse-url-interactive-arg "URL: "))
   (start-process (concat "open -g" url) nil "open" "-g" url))
+
+
+
+(provide 'init)
+;;; init ends here
