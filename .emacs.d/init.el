@@ -19,6 +19,7 @@
   (package-install 'use-package))
 
 (eval-when-compile
+  (require 'cl)
   (require 'use-package))
 
 (require 'bind-key)
@@ -41,6 +42,14 @@
   (progn
     (setq-default flycheck-emacs-lisp-load-path load-path)
     (global-flycheck-mode)))
+
+(use-package epa-file
+  :config
+  (progn
+    (setq epa-file-name-regexp "\\.\\(gpg\\|asc\\)$"
+      epa-armor t)
+    (epa-file-name-regexp-update)
+    (epa-file-enable)))
 
 (provide 'init)
 ;;; init ends here

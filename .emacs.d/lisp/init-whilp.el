@@ -35,27 +35,10 @@
 
 (define-minor-mode whilp/bindings "My global bindings" t nil (make-sparse-keymap))
 
-;; no bars, bells.
-(tool-bar-mode -1)
-(menu-bar-mode -1)
-(scroll-bar-mode -1)
-(fringe-mode '(nil . -1))
-(setq ring-bell-function 'ignore
-      visible-bell t)
-(winner-mode 1)
-(defun toggle-fullscreen ()
-  "Toggle full screen"
-  (interactive)
-  (set-frame-parameter
-     nil 'fullscreen
-     (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
-
 (defun yank-pop-forwards (arg)
   (interactive "p")
   (yank-pop (- arg)))
 (define-key whilp/bindings-map (kbd "M-S-Y") 'yank-pop-forwards)
-
-(setq redisplay-dont-pause t)
 
 ;; remember.
 (winner-mode 1)
@@ -67,28 +50,6 @@
                                       ))
 (savehist-mode 1)
 
-;; modeline.
-(setq display-time-format "%a %Y-%m-%d %H:%M"
-      display-time-default-load-average nil
-      )
-(display-time-mode 1)
-(line-number-mode 0)
-(column-number-mode 0)
-(size-indication-mode 0)
-(display-battery-mode 0)
-(which-function-mode 0)
-
-;; no splash.
-(setq inhibit-startup-message t
-      inhibit-startup-echo-area-message t)
-
-;; no prompts.
-(setq confirm-nonexistent-file-or-buffer nil)
-(fset 'yes-or-no-p 'y-or-n-p)
-
-;; syntax highlighting.
-(global-font-lock-mode t)
-(transient-mark-mode t)
 
 ;; javascript
 (setq js-indent-level 2)
@@ -97,7 +58,6 @@
 (setq python-shell-interpreter "ipython"
       python-shell-interpreter-args "-i")
 (define-key whilp/bindings-map (kbd "C-c y r") 'run-python)
-
 
 ;; GC buffers, uniquify buffer names, ibuffer.
 (require 'midnight)
@@ -122,9 +82,6 @@
              (ibuffer-auto-mode t)
              (ibuffer-switch-to-saved-filter-groups "default")))
 
-(eval-when-compile
-  (require 'cl))
- 
 (defun get-buffers-matching-mode (mode)
   "Returns a list of buffers where their major-mode is equal to MODE"
   (let ((buffer-mode-matches '()))
@@ -209,13 +166,6 @@
       (shell (concat "*" host "*")))))
 (define-key whilp/bindings-map (kbd "C-x s") 'remote-shell)
 (define-key whilp/bindings-map (kbd "s-s") 'remote-shell)
-
-;; GPG.
-(require 'epa-file)
-(setq epa-file-name-regexp "\\.\\(gpg\\|asc\\)$"
-      epa-armor t)
-(epa-file-name-regexp-update)
-(epa-file-enable)
 
 (setq recenter-positions '(top middle bottom))
 
