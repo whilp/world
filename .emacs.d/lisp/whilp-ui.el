@@ -18,12 +18,6 @@
 (setq ring-bell-function 'ignore
       visible-bell t)
 (winner-mode 1)
-(defun toggle-fullscreen ()
-  "Toggle full screen."
-  (interactive)
-  (set-frame-parameter
-     nil 'fullscreen
-     (when (not (frame-parameter nil 'fullscreen)) 'fullboth)))
 
 ;; modeline.
 (setq display-time-format "%a %Y-%m-%d %H:%M"
