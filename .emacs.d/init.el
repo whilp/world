@@ -1,6 +1,8 @@
 ;;; init --- Emacs initialization
+
 ;;; Commentary:
 ;;; User configuration
+
 ;;; Code:
 
 ;; customize
