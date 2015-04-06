@@ -59,44 +59,7 @@
       python-shell-interpreter-args "-i")
 (define-key whilp/bindings-map (kbd "C-c y r") 'run-python)
 
-;; GC buffers, uniquify buffer names, ibuffer.
-(require 'midnight)
-(add-to-list 'clean-buffer-list-kill-never-regexps "^#.*")
-(require 'uniquify)
-(setq uniquify-buffer-name-style 'forward)
-(require 'ibuffer)
-
 (setq completion-cycle-threshold 10)
-
-;; Unbind C-x C-b.
-(define-key whilp/bindings-map (kbd "C-x C-b") 'switch-to-buffer)
-(define-key whilp/bindings-map (kbd "s-b") 'ibuffer)
-(setq ibuffer-expert t)
-(setq ibuffer-show-empty-filter-groups nil)
-(setq ibuffer-saved-filter-groups
-      (quote
-      '("default"
-        ("rcirc" (mode . rcirc-mode)))))
-(add-hook 'ibuffer-mode-hook
-          '(lambda ()
-             (ibuffer-auto-mode t)
-             (ibuffer-switch-to-saved-filter-groups "default")))
-
-(defun get-buffers-matching-mode (mode)
-  "Returns a list of buffers where their major-mode is equal to MODE"
-  (let ((buffer-mode-matches '()))
-   (dolist (buf (buffer-list))
-     (with-current-buffer buf
-       (if (eq mode major-mode)
-           (add-to-list 'buffer-mode-matches buf))))
-   buffer-mode-matches))
- 
-(defun multi-occur-in-this-mode ()
-  "Show all lines matching REGEXP in buffers with this major mode."
-  (interactive)
-  (multi-occur
-   (get-buffers-matching-mode major-mode)
-   (car (occur-read-primary-args))))
 
 ;; I'm an adult.
 (put 'downcase-region 'disabled nil)
@@ -166,8 +129,6 @@
       (shell (concat "*" host "*")))))
 (define-key whilp/bindings-map (kbd "C-x s") 'remote-shell)
 (define-key whilp/bindings-map (kbd "s-s") 'remote-shell)
-
-(setq recenter-positions '(top middle bottom))
 
 ;; backups.
 (setq make-backup-files nil

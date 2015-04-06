@@ -32,6 +32,10 @@
 (require 'whilp-ui)
 (require 'init-whilp)
 
+(use-package whilp-buffers
+  :bind (("C-x C-b" . switch-to-buffer)
+         ("s-b" . ibuffer)))
+
 (use-package yasnippet
   :ensure t
   :defer t
@@ -50,7 +54,7 @@
   :config
   (progn
     (setq epa-file-name-regexp "\\.\\(gpg\\|asc\\)$"
-          epan-armor t)
+          epa-armor t)
     (epa-file-name-regexp-update)
     (epa-file-enable)))
 

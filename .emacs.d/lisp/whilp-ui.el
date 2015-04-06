@@ -8,34 +8,32 @@
 
 (require 'time)
 
-(setq redisplay-dont-pause t)
+(setq confirm-nonexistent-file-or-buffer nil
+      display-time-default-load-average nil
+      display-time-format "%a %Y-%m-%d %H:%M"
+      inhibit-startup-echo-area-message t
+      inhibit-startup-message t
+      recenter-positions '(top middle bottom)
+      ring-bell-function 'ignore
+      visible-bell t
+      redisplay-dont-pause t)
 
 ;; no bars, bells.
-(tool-bar-mode -1)
+(fringe-mode '(nil . -1))
 (menu-bar-mode -1)
 (scroll-bar-mode -1)
-(fringe-mode '(nil . -1))
-(setq ring-bell-function 'ignore
-      visible-bell t)
+(tool-bar-mode -1)
 (winner-mode 1)
 
 ;; modeline.
-(setq display-time-format "%a %Y-%m-%d %H:%M"
-      display-time-default-load-average nil
-      )
+(column-number-mode 0)
+(display-battery-mode 0)
 (display-time-mode 1)
 (line-number-mode 0)
-(column-number-mode 0)
 (size-indication-mode 0)
-(display-battery-mode 0)
 (which-function-mode 0)
 
-;; no splash.
-(setq inhibit-startup-message t
-      inhibit-startup-echo-area-message t)
-
 ;; no prompts.
-(setq confirm-nonexistent-file-or-buffer nil)
 (fset 'yes-or-no-p 'y-or-n-p)
 
 ;; syntax highlighting.
