@@ -36,5 +36,12 @@
   :diminish yas-minor-mode
   :config (yas-global-mode))
 
+(use-package flycheck
+  :ensure t
+  :config
+  (progn
+    (setq-default flycheck-emacs-lisp-load-path load-path)
+    (global-flycheck-mode)))
+
 (provide 'init)
 ;;; init ends here
