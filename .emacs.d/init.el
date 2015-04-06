@@ -47,7 +47,7 @@
   :config
   (progn
     (setq epa-file-name-regexp "\\.\\(gpg\\|asc\\)$"
-      epa-armor t)
+          epa-armor t)
     (epa-file-name-regexp-update)
     (epa-file-enable)))
 
