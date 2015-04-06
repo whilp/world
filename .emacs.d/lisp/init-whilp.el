@@ -325,7 +325,6 @@
                        expand-region
                        find-file-in-project
                        flx
-                       flycheck
                        gist
                        git-modes
                        ace-jump-buffer
