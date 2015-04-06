@@ -14,6 +14,16 @@
  ;; If there is more than one, they won't work right.
  )
 
+;; check out https://github.com/jwiegley/use-package
+;; and do this: http://www.lunaryorn.com/2015/01/06/my-emacs-configuration-with-use-package.html
+;; eval-in-repl https://github.com/kaz-yos/eval-in-repl
+;; https://github.com/svend/emacs-essh
+;; http://ess.r-project.org/
+;; https://github.com/uk-ar/key-combo
+;; https://github.com/capitaomorte/yasnippet
+;; https://github.com/abo-abo/lispy
+;; https://github.com/purcell/unfill
+
 ;; environment.
 (setq explicit-shell-file-name "/bin/bash")
 (setq exec-path
@@ -235,6 +245,8 @@
 (epa-file-name-regexp-update)
 (epa-file-enable)
 
+(setq recenter-positions '(top middle bottom))
+
 ;; backups.
 (setq make-backup-files nil
       auto-save-default nil
@@ -344,7 +356,13 @@
                        flycheck
                        gist
                        git-modes
+                       ace-jump-buffer
+                       ace-jump-zap
+                       ace-window
                        git-gutter-fringe+
+                       git-timemachine
+                       swiper
+                       anzu
                        go-company
                        go-eldoc
                        go-oracle
