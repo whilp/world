@@ -5,20 +5,6 @@
 
 ;;; Code:
 
-(setq load-prefer-newer t)
-
-(require 'package)
-(setq package-enable-at-startup nil)
-(add-to-list 'package-archives
-             '("melpa-stable" . "http://melpa-stable.milkbox.net/packages/") t)
-
-(package-initialize)
-
-;; Bootstrap `use-package'
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-
 ;; customize
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
