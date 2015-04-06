@@ -6,7 +6,9 @@
 
 ;;; Code:
 
-(setq explicit-shell-file-name "/bin/bash")
+(require 'whilp-const)
+
+(defvar explicit-shell-file-name "/bin/bash")
 (setq exec-path
       (append
        (mapcar
@@ -37,7 +39,7 @@
 (setenv "GIT_EDITOR" "emacsclient")
 (setenv "GIT_COMMITTER_NAME" whilp-full-name)
 (setenv "GIT_COMMITTER_EMAIL" whilp-email)
-(setenv "GIT_AUTHOR_NAME" whilp-full-name
+(setenv "GIT_AUTHOR_NAME" whilp-full-name)
 (setenv "GIT_AUTHOR_EMAIL" whilp-email)
 
 (setenv "GOPATH" (expand-file-name "~/go"))
