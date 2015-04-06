@@ -28,6 +28,7 @@
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 
 (use-package whilp-environment)
+(use-package whilp-rcirc)
 (use-package whilp-ui)
 
 (use-package whilp-buffers

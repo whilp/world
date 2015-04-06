@@ -1,3 +1,11 @@
+;;; whilp-rcirc --- rcirc settings
+
+;;; Commentary:
+
+;;; rcirc
+
+;;; Code:
+
 (require 'rcirc)
 (require 'auth-source)
 
@@ -50,7 +58,7 @@
         ))
 
 (defun my-rcirc-mode-setup ()
-  "Sets things up for channel and query buffers spawned by rcirc."
+  "Set things up for channel and query buffers spawned by rcirc."
   ;; rcirc-omit-mode always *toggles*, so we first 'disable' it
   ;; and then let the function toggle it *and* set things up.
   (setq rcirc-omit-mode nil)
@@ -58,7 +66,8 @@
 
 (add-hook 'rcirc-mode-hook 'my-rcirc-mode-setup)
 
-(defun* my-rcirc-profile (host user port)
+(defun my-rcirc-profile (host user port)
+  "Search auth-info for an entry matching HOST, USER, and PORT."
   (let* (
          (auth-info
           (car
@@ -83,3 +92,6 @@
        (my-rcirc-profile "furnace.firrre.com" "whilp" 9090)
        (my-rcirc-profile "humans-and-cats.irc.slack.com" "whilp" 6667)
        ))
+
+(provide 'whilp-rcirc)
+;;; whilp-rcirc ends here

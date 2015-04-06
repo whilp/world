@@ -181,8 +181,6 @@
 ;; nssh
 (load-file "~/.emacs.d/nssh.el")
 
-(load-file "~/.emacs.d/rcirc.el")
-
 ;; vc
 (setq
  compilation-scroll-output t
