@@ -4,8 +4,10 @@
 # binding: direct-keybinding
 # --
 ;;; $1 --- $2
+
 ;;; Commentary:
 ;;; $3
+
 ;;; Code:
 
 $0
