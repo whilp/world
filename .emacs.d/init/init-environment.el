@@ -35,10 +35,10 @@
 (setenv "MAN_WIDTH" "72")
 
 (setenv "GIT_EDITOR" "emacsclient")
-(setenv "GIT_COMMITTER_NAME" "Will Maier")
-(setenv "GIT_COMMITTER_EMAIL" "wcmaier@m.aier.us")
-(setenv "GIT_AUTHOR_NAME" "Will Maier")
-(setenv "GIT_AUTHOR_EMAIL" "wcmaier@m.aier.us")
+(setenv "GIT_COMMITTER_NAME" whilp-full-name)
+(setenv "GIT_COMMITTER_EMAIL" whilp-email)
+(setenv "GIT_AUTHOR_NAME" whilp-full-name
+(setenv "GIT_AUTHOR_EMAIL" whilp-email)
 
 (setenv "GOPATH" (expand-file-name "~/go"))
 

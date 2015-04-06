@@ -27,9 +27,7 @@
 (add-to-list 'load-path (expand-file-name "init" user-emacs-directory))
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 
-(defconst whilp-full-name "Will Maier"
-  "My name.")
-
+(require 'whilp-const)
 (require 'init-environment)
 (require 'init-whilp)
 
