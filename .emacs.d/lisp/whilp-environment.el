@@ -1,4 +1,4 @@
-;;; init-environment --- environment configuration
+;;; whilp-environment --- environment configuration
 
 ;;; Commentary:
 
@@ -44,6 +44,6 @@
 
 (setenv "GOPATH" (expand-file-name "~/go"))
 
-(provide 'init-environment)
-;;; init-environment ends here
+(provide 'whilp-environment)
+;;; whilp-environment ends here
 

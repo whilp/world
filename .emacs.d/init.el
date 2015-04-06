@@ -27,10 +27,8 @@
 
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 
-(require 'whilp-const)
-(require 'init-environment)
-(require 'whilp-ui)
-(require 'init-whilp)
+(use-package whilp-environment)
+(use-package whilp-ui)
 
 (use-package whilp-buffers
   :bind (("C-x C-b" . switch-to-buffer)
@@ -57,6 +55,9 @@
           epa-armor t)
     (epa-file-name-regexp-update)
     (epa-file-enable)))
+
+;; TODO: migrate all these bits to separate libraries.
+(require 'init-whilp)
 
 (provide 'init)
 ;;; init ends here
