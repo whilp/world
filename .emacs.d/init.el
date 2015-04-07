@@ -209,6 +209,25 @@
           ido-everywhere t
           ido-enable-flex-matching t
           ido-use-faces nil)))
+
+(use-package magit
+  :ensure t
+  :defer t
+  :config
+  (progn
+    (bind-keys :prefix-map whilp-magit-map
+               :prefix "s-p"
+               ("g" . magit-status)
+               ("u" . magit-push)
+               ("p" . magit-grep)
+               ("c" . magit-commit))
+    (autoload 'magit-status' "magit" nil t)
+    (setq magit-git-executable "gh"
+          magit-save-some-buffers nil
+          magit-status-buffer-switch-function 'switch-to-buffer
+          magit-set-upstream-on-push 'dontask
+          magit-completing-read-function 'magit-ido-completing-read
+          magit-use-overlays nil)))
   
 (use-package yasnippet
   :ensure t
