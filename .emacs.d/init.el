@@ -37,6 +37,7 @@
 (use-package whilp-ui)
 
 (use-package whilp-buffers
+  :demand t
   :bind (("C-x C-b" . switch-to-buffer)
          ("s-b" . ibuffer)))
 
@@ -186,7 +187,6 @@
 
 (use-package async
   :ensure t
-  :defer t
   :config
   (progn
     (require 'smtpmail-async)
@@ -203,7 +203,6 @@
 
 (use-package flx
   :ensure t
-  :defer t
   :config
   (progn
     (ido-mode 1)
@@ -264,7 +263,6 @@
 
 (use-package golden-ratio
   :ensure t
-  :defer t
   :diminish golden-ratio-mode
   :config (golden-ratio-mode))
 
