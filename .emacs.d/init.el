@@ -10,7 +10,8 @@
 (require 'package)
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives
-             '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+;;             '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+             '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
 
 ;; Bootstrap `use-package'
@@ -20,6 +21,7 @@
 
 (eval-when-compile
   (require 'cl)
+  (require 'color-theme)
   (require 'use-package))
 
 (require 'bind-key)
@@ -82,6 +84,132 @@
         (projectile-with-default-dir (projectile-project-root)
           (vc-git-grep regexp "\\*" (projectile-project-root)))))))
 
+;; TODO
+;; http://blog.danielgempesaw.com/post/79353633199/installing-mu4e-with-homebrew-with-emacs-from
+;; (use-package mu4e
+;;   :ensure t
+;;   :defer t)
+
+(use-package color-theme-solarized
+  :ensure t
+  :bind (("s-`" . whilp-toggle-solarized))
+  :config
+  (progn
+    (require 'frame)
+    (load-theme 'solarized t)
+    (enable-theme 'solarized)
+
+    (defun whilp-toggle-solarized ()
+      "Toggles between solarized light and dark."
+      (interactive)
+      (let ((mode (if (equal (frame-parameter nil 'background-mode) 'dark) 'light 'dark)))
+        (set-frame-parameter nil 'background-mode mode)
+        (enable-theme 'solarized)))))
+
+(use-package lispy
+  :ensure t
+  :defer t
+  :config
+  (progn
+    (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))))
+
+(use-package ace-jump-mode
+  :ensure t
+  :defer t
+  :bind (("C-c SPC" . ace-jump-mode)))
+
+(use-package deft
+  :ensure t
+  :defer t
+  :bind (("s-d" . deft))
+  :config
+  (progn
+    (setq deft-extension "txt"
+          deft-directory "~/src/github.banksimple.com/whilp/notes"
+          deft-text-mode 'org-mode
+          deft-use-filename-as-title t)))
+
+(use-package anaconda-mode
+  :ensure t
+  :defer t
+  :config
+  (progn
+    (add-hook 'python-mode-hook 'anaconda-mode)
+    (add-hook 'python-mode-hook 'eldoc-mode)))
+
+(use-package cider
+  :ensure t
+  :defer t)
+
+(use-package clojure-mode
+  :ensure t
+  :defer t)
+
+(use-package company
+  :ensure t
+  :defer t
+  :diminish company-mode
+  :config
+  (progn
+    (global-company-mode)
+    (bind-keys :map company-active-map
+               ("\C-d" . company-show-doc-buffer)
+               ("<tab>" . company-complete))
+    (setq company-echo-delay 0
+          company-tooltip-minimum-width 30
+          company-idle-delay .7)))
+
+(use-package company-go
+  :ensure t
+  :defer t
+  :config
+  (progn
+    (add-hook 'go-mode-hook
+              (lambda ()
+                (set (make-local-variable 'company-backends) '(company-go))
+                (company-mode)))))
+
+(use-package company-restclient
+  :ensure t
+  :defer t)
+
+(use-package company-inf-ruby
+  :ensure t
+  :defer t)
+
+(use-package deferred
+  :ensure t
+  :defer t)
+
+;; TODO
+;; (use-package emacs-async
+;;   :ensure t
+;;   :defer t)
+
+(use-package expand-region
+  :ensure t
+  :defer t
+  :bind (("C-=" . er/expand-region)))
+
+(use-package flx
+  :ensure t
+  :defer t
+  :config
+  (progn
+    (ido-mode 1)
+    (ido-everywhere 1)
+    (flx-ido-mode 1)
+    (icomplete-mode t)
+    (ido-init-completion-maps)
+    (ffap-bindings)
+    (setq ffap-require-prefix t
+          confirm-nonexistent-file-or-buffer nil
+          ido-create-new-buffer 'always
+          ido-enable-flex-matching t
+          ido-everywhere t
+          ido-enable-flex-matching t
+          ido-use-faces nil)))
+  
 (use-package yasnippet
   :ensure t
   :defer t

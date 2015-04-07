@@ -215,25 +215,25 @@
  el-get-sources '()
  my-el-get-packages (append
                      '(
-                       ace-jump-mode
-                       anaconda-mode
-                       apache-mode
-                       cider
-                       clojure-mode
-                       color-theme-solarized
-                       company-mode
-                       company-anaconda
-                       company-inf-ruby
+;;                       ace-jump-mode
+;;                       anaconda-mode
+;; punt                       apache-mode
+;;                       cider
+;;                       clojure-mode
+;;                       color-theme-solarized
+;;                       company-mode
+;;                       company-anaconda
+;;                       company-inf-ruby
                        csv-mode
-                       deferred
-                       deft
-                       delight
+;;                       deferred
+;;                       deft
+;; check this                       delight
                        emacs-async
-                       emms
-                       erc-highlight-nicknames
-                       expand-region
-                       find-file-in-project
-                       flx
+;; punt                       emms
+;; punt                       erc-highlight-nicknames
+;;                       expand-region
+;; punt                       find-file-in-project
+;;                       flx
                        gist
                        git-modes
                        ace-jump-buffer
@@ -243,7 +243,7 @@
                        git-timemachine
                        swiper
                        anzu
-                       go-company
+;;                       go-company
                        go-eldoc
                        go-oracle
                        go-mode
