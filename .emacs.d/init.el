@@ -1,7 +1,10 @@
 ;;; init --- Emacs initialization
 
 ;;; Commentary:
-;;; User configuration
+
+;;; My personal configuration.
+;;; TODO:
+;;;  - convert explicit (bind-keys) calls to :bind (after updating use-package)
 
 ;;; Code:
 
