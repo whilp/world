@@ -257,7 +257,7 @@
                        nginx-mode
                        ;; TODO: origami-mode
                        org-mode
-                       projectile
+;;                       projectile
                        rcirc-color
                        request
                        restclient

@@ -35,6 +35,53 @@
   :bind (("C-x C-b" . switch-to-buffer)
          ("s-b" . ibuffer)))
 
+(use-package projectile
+  :ensure t
+  :init (setq projectile-keymap-prefix (kbd "s-p"))
+  :config
+  (progn
+    (bind-keys :map projectile-command-map
+               ("f" . projectile-find-file)
+               ("g" . projectile-vc-grep)
+               ("!" . projectile-run-shell))
+
+    (projectile-global-mode)
+
+    (setq projectile-switch-project-action 'projectile-run-shell
+          projectile-globally-ignored-directories
+          (quote
+           (
+            ".idea"
+            ".eunit"
+            ".git"
+            ".hg"
+            ".fslckout"
+            ".bzr"
+            "_darcs"
+            ".tox"
+            ".svn"
+            "build"
+            "_workspace"))
+          projectile-mode-line
+          (quote
+           (:eval (format " [%s]" (projectile-project-name)))))
+
+    (defun projectile-run-shell (&optional buffer)
+      "Start a shell in the project's root."
+      (interactive "P")
+      (projectile-with-default-dir (projectile-project-root)
+        (shell (format "*shell %s*" (projectile-project-name)))))
+
+    (defun projectile-vc-grep ()
+      "Start a shell in the project's root."
+      (interactive)
+      (let ((regexp (if (and transient-mark-mode mark-active)
+                        (buffer-substring (region-beginning) (region-end))
+                      (read-string (projectile-prepend-project-name "Grep for: ")
+                                   (projectile-symbol-at-point)))))
+        (projectile-with-default-dir (projectile-project-root)
+          (vc-git-grep regexp "\\*" (projectile-project-root)))))))
+
 (use-package yasnippet
   :ensure t
   :defer t
