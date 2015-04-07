@@ -9,7 +9,7 @@
 
 (setq
  mu4e-maildir "~/Maildir"
- mu4e-sent-messages-behavior 'trash
+ mu4e-sent-messages-behavior 'sent
  mu4e-compose-signature-auto-include nil
  mu4e-compose-complete-only-personal nil
  mu4e-compose-complete-ignore-address-regexp "\(no-?reply\|gitlab@gitlab\.com\|@docs\.google\.com\)"
@@ -127,6 +127,10 @@
 
 (add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
 (add-hook 'mu4e-compose-mode-hook 'mml-secure-message-sign-pgpmime)
+(defun no-auto-fill ()
+  "Turn off auto-fill-mode."
+  (auto-fill-mode -1))
+(add-hook 'mu4e-compose-mode-hook #'no-auto-fill)
 (setq mu4e-view-actions
       '(("capture message" . mu4e-action-capture-message)
         ("pdf" . mu4e-action-view-as-pdf)
