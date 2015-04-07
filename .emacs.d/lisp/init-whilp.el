@@ -247,7 +247,7 @@
                        go-eldoc
                        go-oracle
                        go-mode
-                       golden-ratio
+;;                       golden-ratio
                        ibuffer-projectile
                        inf-ruby
                        magit

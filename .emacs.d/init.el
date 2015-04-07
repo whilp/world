@@ -215,6 +215,7 @@
 
 (use-package magit
   :ensure t
+  :diminish magit-auto-revert-mode
   :config
   (progn
     (bind-keys :prefix-map whilp-magit-map
@@ -253,6 +254,21 @@
           epa-armor t)
     (epa-file-name-regexp-update)
     (epa-file-enable)))
+
+(use-package golden-ratio
+  :ensure t
+  :defer t
+  :diminish golden-ratio-mode
+  :config (golden-ratio-mode))
+
+(use-package flyspell
+  :diminish flyspell-mode)
+
+(use-package simple
+  :diminish visual-line-mode)
+
+(use-package abbrev
+  :diminish abbrev-mode)
 
 ;; TODO: migrate all these bits to separate libraries.
 (require 'init-whilp)
