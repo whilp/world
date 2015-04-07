@@ -190,10 +190,10 @@
   :config
   (progn
     (require 'smtpmail-async)
-    (setq send-mail-function 'smtpmail-send-it
-          message-send-mail-function 'message-send-mail-with-sendmail
-          ;; send-mail-function 'async-smtpmail-send-it
-          ;; message-send-mail-function 'async-smtpmail-send-it
+    (setq ;;send-mail-function 'smtpmail-send-it
+          ;;message-send-mail-function 'message-send-mail-with-sendmail
+          send-mail-function 'async-smtpmail-send-it
+          message-send-mail-function 'async-smtpmail-send-it
           )))
 
 (use-package expand-region
