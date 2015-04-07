@@ -212,11 +212,10 @@
 
 (use-package magit
   :ensure t
-  :defer t
   :config
   (progn
     (bind-keys :prefix-map whilp-magit-map
-               :prefix "s-p"
+               :prefix "s-g"
                ("g" . magit-status)
                ("u" . magit-push)
                ("p" . magit-grep)
@@ -227,6 +226,7 @@
           magit-status-buffer-switch-function 'switch-to-buffer
           magit-set-upstream-on-push 'dontask
           magit-completing-read-function 'magit-ido-completing-read
+          magit-last-seen-setup-instructions "1.4.0"
           magit-use-overlays nil)))
   
 (use-package yasnippet
