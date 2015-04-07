@@ -228,7 +228,7 @@
 ;;                       deferred
 ;;                       deft
 ;; check this                       delight
-                       emacs-async
+;;                       emacs-async
 ;; punt                       emms
 ;; punt                       erc-highlight-nicknames
 ;;                       expand-region
