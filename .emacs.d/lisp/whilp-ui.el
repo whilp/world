@@ -8,6 +8,8 @@
 
 (require 'time)
 
+(bind-key "C-x C-c" nil)
+
 (setq confirm-nonexistent-file-or-buffer nil
       display-time-default-load-average nil
       display-time-format "%a %Y-%m-%d %H:%M"
