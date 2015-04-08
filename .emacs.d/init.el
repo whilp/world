@@ -241,7 +241,7 @@
   
 (use-package yasnippet
   :ensure t
-  :defer t
+  :defer 60
   :diminish yas-minor-mode
   :config (yas-global-mode))
 
