@@ -212,39 +212,14 @@
  el-get-byte-compile t
  el-get-git-shallow-clone t
  el-get-user-package-directory "~/.emacs.d/el-get-init"
- el-get-sources '()
- my-el-get-packages (append
-                     '(
-                       csv-mode
-                       gist
-                       git-modes
-                       ace-jump-buffer
-                       ace-jump-zap
-                       ace-window
-                       git-timemachine
-                       swiper
-                       anzu
-                       go-oracle
-                       minitest-mode
-                       mu4e
-                       nginx-mode
-                       ;; TODO: origami-mode
-                       request
-                       scala-mode2
-                       web-mode
-                       yaml-mode
-                       )
-                     (mapcar 'el-get-source-name el-get-sources))
- )
+ el-get-sources '())
 
-(el-get 'sync my-el-get-packages)
+(el-get 'sync '(mu4e))
 
 ;; browse in the background.
 (defun browse-url-default-macosx-browser (url &optional _new-window)
   (interactive (browse-url-interactive-arg "URL: "))
   (start-process (concat "open -g" url) nil "open" "-g" url))
-
-
 
 (provide 'init-whilp)
 ;;; init ends here
