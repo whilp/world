@@ -475,7 +475,9 @@
 
 (use-package ace-jump-zap
   :ensure t
-  :defer t)
+  :bind (("M-z" . ace-jump-zap-up-to-char-dwim)
+         ("C-M-z" . ace-jump-zap-to-char-dwim)))
+
 (use-package magit
   :ensure t
   :diminish magit-auto-revert-mode
