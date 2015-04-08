@@ -23,8 +23,10 @@
   (package-install 'use-package))
 
 (eval-when-compile
+  (require 'auth-source)
   (require 'cl)
   (require 'color-theme)
+  (require 'url)
   (require 'use-package))
 
 (require 'bind-key)
@@ -218,6 +220,38 @@
           ido-everywhere t
           ido-enable-flex-matching t
           ido-use-faces nil)))
+
+(use-package gh
+  :ensure t
+  :defer t
+  :config
+  (progn
+    (defun* whilp-gh-profile (url user)
+      (let* (
+             (urlobj (url-generic-parse-url url))
+             (host (url-host urlobj))
+             (auth-info
+              (car
+               (auth-source-search
+                :max 1
+                :host host
+                :user user
+                :port 443
+                :create nil)))
+             (token (funcall (plist-get auth-info :secret))))
+        (list
+         :url url
+         :username user
+         :token token
+         :remote-regexp (gh-profile-remote-regexp host))))
+
+    (setq
+     gh-profile-default-profile "bh"
+     gh-profile-current-profile nil
+     gh-profile-alist
+     (list
+      (cons "bh" (whilp-gh-profile "https://github.banksimple.com/api/v3" "whilp"))
+      (cons "gh" (whilp-gh-profile "https://api.github.com" "whilp"))))))
 
 (use-package magit
   :ensure t
