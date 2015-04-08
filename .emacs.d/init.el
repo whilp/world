@@ -332,6 +332,9 @@
   :ensure t
   :bind (("M-s o" . helm-swoop)))
 
+(use-package helm-descbinds
+  :ensure t)
+
 (use-package rcirc-color
   :ensure t
   :config
