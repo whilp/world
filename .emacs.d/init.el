@@ -212,8 +212,12 @@
   :defer t
   :config (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode)))
 
-(use-package org-mode
+(use-package js2-mode
+  :ensure t
   :defer t
+  :config (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode)))
+
+(use-package org-mode
   :bind (("C-c a" . org-agenda)
          ("C-c c" . org-capture)
          ("C-c C-x C-o" . org-clock-out)
