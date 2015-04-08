@@ -215,61 +215,24 @@
  el-get-sources '()
  my-el-get-packages (append
                      '(
-;;                       ace-jump-mode
-;;                       anaconda-mode
-;; punt                       apache-mode
-;;                       cider
-;;                       clojure-mode
-;;                       color-theme-solarized
-;;                       company-mode
-;;                       company-anaconda
-;;                       company-inf-ruby
                        csv-mode
-;;                       deferred
-;;                       deft
-;; check this                       delight
-;;                       emacs-async
-;; punt                       emms
-;; punt                       erc-highlight-nicknames
-;;                       expand-region
-;; punt                       find-file-in-project
-;;                       flx
                        gist
                        git-modes
                        ace-jump-buffer
                        ace-jump-zap
                        ace-window
-;;                       git-gutter-fringe+
                        git-timemachine
                        swiper
                        anzu
-;;                       go-company
-;;                       go-eldoc
                        go-oracle
-;;                       go-mode
-;;                       golden-ratio
-;;                       ibuffer-projectile
-;;                       inf-ruby
-;;                       magit
-;;                       markdown-mode
                        minitest-mode
                        mu4e
                        nginx-mode
                        ;; TODO: origami-mode
-;;                       org-mode
-;;                       projectile
-;;                       rcirc-color
                        request
-;;                       restclient
-;;                       robe-mode
-;;                       rubocop-mode
                        scala-mode2
-;;                       smart-mode-line
-;;                       smex
-;;                       twittering-mode
                        web-mode
                        yaml-mode
-;;                       znc
                        )
                      (mapcar 'el-get-source-name el-get-sources))
  )
