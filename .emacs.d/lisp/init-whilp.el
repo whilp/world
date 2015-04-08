@@ -258,18 +258,18 @@
                        ;; TODO: origami-mode
 ;;                       org-mode
 ;;                       projectile
-                       rcirc-color
+;;                       rcirc-color
                        request
-                       restclient
-                       robe-mode
-                       rubocop-mode
+;;                       restclient
+;;                       robe-mode
+;;                       rubocop-mode
                        scala-mode2
-                       smart-mode-line
-                       smex
-                       twittering-mode
+;;                       smart-mode-line
+;;                       smex
+;;                       twittering-mode
                        web-mode
                        yaml-mode
-                       znc
+;;                       znc
                        )
                      (mapcar 'el-get-source-name el-get-sources))
  )

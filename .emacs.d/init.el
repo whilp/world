@@ -295,7 +295,6 @@
   (progn
     (ido-mode 1)
     (ido-everywhere 1)
-    (flx-ido-mode 1)
     (icomplete-mode t)
     (ido-init-completion-maps)
     (ffap-bindings)
@@ -307,9 +306,87 @@
           ido-enable-flex-matching t
           ido-use-faces nil)))
 
+(use-package flx-ido
+  :config (flx-ido-mode 1))
+
+(use-package rcirc-color
+  :ensure t
+  :defer t
+  :config
+  (progn
+    (eval-after-load 'rcirc '(require 'rcirc-color))
+    (setq rcirc-color-is-deterministic t)))
+
+(use-package rcirc-controls
+  :ensure t
+  :defer t)
+
+(use-package restclient
+  :ensure t
+  :defer t)
+
+(use-package robe
+  :ensure t
+  :defer t
+  :config
+  (progn
+    (add-hook 'ruby-mode-hook 'robe-mode)
+    (eval-after-load 'company
+      '(push 'company-robe company-backends))))
+
+(use-package rubocop
+  :ensure t
+  :defer t
+  :config
+  (progn
+    (add-hook 'ruby-mode-hook 'rubocop-mode)
+    (eval-after-load 'flycheck
+      (flycheck-add-next-checker 'chef-foodcritic 'ruby-rubocop))))
+
+(use-package smart-mode-line
+  :ensure t
+  :defer t
+  :config
+  (progn
+    (sml/setup)
+    (setq sml/mode-width 'right
+          sml/shorten-directory t
+          sml/use-projectile-p nil
+          sml/full-mode-string ""
+          sml/shorten-mode-string ""
+          sml/name-width '(12 . 18))
+
+    (setq-default global-mode-string
+                  '(
+                    ""
+                    emms-mode-line-string
+                    emms-playing-time-string
+                    erc-modified-channels-object)
+                  mode-line-format
+                  '(
+                    "%e"
+                    display-time-string
+                    mode-line-front-space
+                    mode-line-mule-info
+                    mode-line-client
+                    mode-line-remote
+                    mode-line-frame-identification
+                    mode-line-buffer-identification
+                    (vc-mode vc-mode)
+                    "  " mode-line-modes
+                    mode-line-misc-info
+                    mode-line-end-spaces))
+    ))
+
+(use-package smex
+  :ensure t
+  :defer t
+  :bind (("C-x C-m" . smex)
+         ("M-x" . smex)
+         ("M-X" . smex-major-mode-commands)))
+
 (use-package git-gutter-fringe+
   :ensure t
-  :defer 60
   :config
   (progn
     (bind-keys :map git-gutter+-mode-map
