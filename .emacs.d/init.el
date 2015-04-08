@@ -169,7 +169,6 @@
 
 (use-package company
   :ensure t
-  :defer t
   :diminish company-mode
   :config
   (progn
@@ -183,7 +182,6 @@
 
 (use-package company-go
   :ensure t
-  :defer t
   :config
   (progn
     (add-hook 'go-mode-hook
