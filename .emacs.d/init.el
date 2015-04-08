@@ -309,6 +309,14 @@
           helm-move-to-line-cycle-in-source t
           helm-ff-search-library-in-sexp t
           helm-scroll-amount 8
+          helm-M-x-fuzzy-match t
+          helm-buffers-fuzzy-matching t
+          helm-recentf-fuzzy-match t
+          helm-semantic-fuzzy-match t
+          helm-imenu-fuzzy-match t
+          helm-locate-fuzzy-match t
+          helm-apropos-fuzzy-match t
+          helm-lisp-fuzzy-completion t
           helm-ff-file-name-history-use-recentf t)
     (helm-mode 1)))
 
@@ -316,7 +324,8 @@
   :ensure t
   :config
   (progn
-    (setq projectile-completion-system 'helm)
+    (setq projectile-completion-system 'helm
+          helm-projectile-fuzzy-match t)
     (helm-projectile-on)))
 
 (use-package helm-swoop
