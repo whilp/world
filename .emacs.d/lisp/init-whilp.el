@@ -239,24 +239,24 @@
                        ace-jump-buffer
                        ace-jump-zap
                        ace-window
-                       git-gutter-fringe+
+;;                       git-gutter-fringe+
                        git-timemachine
                        swiper
                        anzu
 ;;                       go-company
-                       go-eldoc
+;;                       go-eldoc
                        go-oracle
-                       go-mode
+;;                       go-mode
 ;;                       golden-ratio
-                       ibuffer-projectile
-                       inf-ruby
-                       magit
-                       markdown-mode
+;;                       ibuffer-projectile
+;;                       inf-ruby
+;;                       magit
+;;                       markdown-mode
                        minitest-mode
                        mu4e
                        nginx-mode
                        ;; TODO: origami-mode
-                       org-mode
+;;                       org-mode
 ;;                       projectile
                        rcirc-color
                        request

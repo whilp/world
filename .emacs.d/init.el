@@ -43,6 +43,22 @@
   :bind (("C-x C-b" . switch-to-buffer)
          ("s-b" . ibuffer)))
 
+(use-package ibuffer-projectile
+  :ensure t
+  :defer t
+  :config
+  (progn
+    (defun whilp-ibuffer-projectile ()
+      "Add projectile buffers to `ibuffer-filter-groups`."
+      (setq ibuffer-filter-groups
+            (append
+             ibuffer-filter-groups
+             (ibuffer-projectile-generate-filter-groups)))
+      (unless (eq ibuffer-sorting-mode 'alphabetic)
+        (ibuffer-do-sort-by-alphabetic)))
+
+    (add-hook 'ibuffer-hook 'whilp-ibuffer-projectile)))
+
 (use-package projectile
   :ensure t
   :init (setq projectile-keymap-prefix (kbd "s-p"))
@@ -183,6 +199,76 @@
   :ensure t
   :defer t)
 
+(use-package inf-ruby
+  :ensure t
+  :defer t
+  :config
+  (progn
+    (setq ruby-deep-indent-paren nil
+          ruby-deep-arglist nil)))
+
+(use-package markdown-mode
+  :ensure t
+  :defer t
+  :config (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode)))
+
+(use-package org-mode
+  :defer t
+  :bind (("C-c a" . org-agenda)
+         ("C-c c" . org-capture)
+         ("C-c C-x C-o" . org-clock-out)
+         ("C-c C-x C-x" . org-clock-in-last)
+         ("C-c C-x C-i" . org-clock-in))
+  :config
+  (progn
+    (setq auto-indent-start-org-indent t
+          org-startup-indented t
+          org-enforce-todo-dependencies t
+          org-return-follows-link t
+          org-src-fontify-natively t
+          org-completion-use-ido t
+          org-return-follows-link t
+          org-use-tag-inheritance t
+          org-agenda-start-on-weekday 1
+          org-agenda-dim-blocked-tasks t
+          org-todo-keywords '((sequence "TODO" "DONE"))
+          org-agenda-skip-scheduled-if-done t
+          org-agenda-restore-windows-after-quit nil
+          org-agenda-window-setup 'current-window
+          org-agenda-search-headline-for-time nil
+          org-extend-today-until 6
+          org-agenda-start-with-follow-mode nil
+          org-agenda-todo-ignore-deadlines 'past
+          org-agenda-todo-ignore-with-date t
+          org-agenda-skip-scheduled-if-deadline-is-shown t
+          org-agenda-todo-ignore-timestamp 'all
+          org-agenda-todo-ignore-scheduled 'all
+          org-agenda-skip-deadline-if-done t
+          org-agenda-tags-todo-honor-ignore-options t
+          org-agenda-follow-mode nil
+          org-agenda-file-regexp "\\`[^.].*\\.\\(txt\\|org\\)\\'"
+          org-agenda-files '("~/src/github.banksimple.com/whilp/notes/plan.txt")
+          org-bookmark-names-plist '()
+          org-default-notes-file "~/notes/todo.txt"
+          org-clock-mode-line-total 'today
+          org-clock-history-length 50
+          org-agenda-repeating-timestamp-show-all nil
+          org-log-into-drawer "LOGBOOK")
+
+    (add-to-list 'auto-mode-alist '("\\.\\(txt\\|org\\)$" . org-mode))
+    (setq org-capture-templates
+          '(("t" "Todo" entry (file "~/src/github.banksimple.com/whilp/notes/plan.txt")
+             "* TODO %?\nDEADLINE: %^t")))))
+
+(use-package go-mode
+  :ensure t
+  :defer t
+  :config
+  (progn
+    (setq gofmt-command "goimports")
+    (add-hook 'go-mode-hook (lambda ()
+                              (local-set-key (kbd "M-.") #'godef-jump)))))
+
 (use-package deferred
   :ensure t
   :defer t)
@@ -220,6 +306,31 @@
           ido-everywhere t
           ido-enable-flex-matching t
           ido-use-faces nil)))
+
+(use-package git-gutter-fringe+
+  :ensure t
+  :defer 60
+  :config
+  (progn
+    (bind-keys :map git-gutter+-mode-map
+               ("C-x n" . git-gutter+-next-hunk)
+               ("C-x p" . git-gutter+-previous-hunk)
+               ("C-x v =" . git-gutter+-show-hunk)
+               ("C-x r" . git-gutter+-revert-hunks)
+               ("C-x t" . git-gutter+-stage-hunks)
+               ("C-x c" . git-gutter+-commit)
+               ("C-x C" . git-gutter+-stage-and-commit)
+               ("C-x C-y" . git-gutter+-stage-and-commit-whole-buffer)
+               ("C-x U" . git-gutter+-unstage-whole-buffer))
+
+    (global-git-gutter+-mode t)
+    (git-gutter-fr+-minimal)
+    (setq git-gutter+-lighter "")))
+
+(use-package go-eldoc
+  :ensure t
+  :defer t
+  :config ((add-hook 'go-mode-hook 'go-eldoc-setup)))
 
 (use-package gh
   :ensure t
