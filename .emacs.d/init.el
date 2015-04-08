@@ -264,6 +264,9 @@
           '(("t" "Todo" entry (file "~/src/github.banksimple.com/whilp/notes/plan.txt")
              "* TODO %?\nDEADLINE: %^t")))))
 
+;; TODO
+;; (use-package go-oracle)
+
 (use-package go-mode
   :ensure t
   :defer t
@@ -315,17 +318,23 @@
 
 (use-package rcirc-color
   :ensure t
-  :defer t
   :config
   (progn
     (eval-after-load 'rcirc '(require 'rcirc-color))
     (setq rcirc-color-is-deterministic t)))
 
 (use-package rcirc-controls
+  :ensure t)
+
+(use-package restclient
   :ensure t
   :defer t)
 
-(use-package restclient
+(use-package minitest
+  :ensure t
+  :defer t)
+
+(use-package scala-mode2
   :ensure t
   :defer t)
 
@@ -349,7 +358,6 @@
 
 (use-package smart-mode-line
   :ensure t
-  :defer t
   :config
   (progn
     (sml/setup)
@@ -445,6 +453,29 @@
       (cons "bh" (whilp-gh-profile "https://github.banksimple.com/api/v3" "whilp"))
       (cons "gh" (whilp-gh-profile "https://api.github.com" "whilp"))))))
 
+(use-package gist
+  :ensure t
+  :defer t)
+
+(use-package git-timemachine
+  :ensure t
+  :defer t)
+
+(use-package git-link
+  :ensure t
+  :defer t)
+
+(use-package ace-jump-buffer
+  :ensure t
+  :defer t)
+
+(use-package ace-jump-mode
+  :ensure t
+  :defer t)
+
+(use-package ace-jump-zap
+  :ensure t
+  :defer t)
 (use-package magit
   :ensure t
   :diminish magit-auto-revert-mode
@@ -473,7 +504,6 @@
 
 (use-package flycheck
   :ensure t
-  :defer t
   :config
   (progn
     (setq-default flycheck-emacs-lisp-load-path load-path)
