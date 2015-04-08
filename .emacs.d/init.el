@@ -71,7 +71,7 @@
 
     (projectile-global-mode)
 
-    (setq projectile-switch-project-action 'projectile-run-shell
+    (setq projectile-switch-project-action 'helm-projectile
           projectile-globally-ignored-directories
           (quote
            (
@@ -296,25 +296,32 @@
   :defer t
   :bind (("C-=" . er/expand-region)))
 
-(use-package flx
+(use-package helm
+  :ensure t
+  :diminish helm-mode
+  :bind (("M-y" . helm-show-kill-ring)
+         ("M-x" . helm-M-x))
+  :config
+  (progn 
+    (global-set-key (kbd "C-c h") 'helm-command-prefix)
+    (global-unset-key (kbd "C-x c"))
+    (setq helm-split-window-in-side-p t
+          helm-move-to-line-cycle-in-source t
+          helm-ff-search-library-in-sexp t
+          helm-scroll-amount 8
+          helm-ff-file-name-history-use-recentf t)
+    (helm-mode 1)))
+
+(use-package helm-projectile
   :ensure t
   :config
   (progn
-    (ido-mode 1)
-    (ido-everywhere 1)
-    (icomplete-mode t)
-    (ido-init-completion-maps)
-    (ffap-bindings)
-    (setq ffap-require-prefix t
-          confirm-nonexistent-file-or-buffer nil
-          ido-create-new-buffer 'always
-          ido-enable-flex-matching t
-          ido-everywhere t
-          ido-enable-flex-matching t
-          ido-use-faces nil)))
+    (setq projectile-completion-system 'helm)
+    (helm-projectile-on)))
 
-(use-package flx-ido
-  :config (flx-ido-mode 1))
+(use-package helm-swoop
+  :ensure t
+  :bind (("M-s o" . helm-swoop)))
 
 (use-package rcirc-color
   :ensure t
@@ -389,13 +396,6 @@
                     mode-line-misc-info
                     mode-line-end-spaces))
     ))
-
-(use-package smex
-  :ensure t
-  :defer t
-  :bind (("C-x C-m" . smex)
-         ("M-x" . smex)
-         ("M-X" . smex-major-mode-commands)))
 
 (use-package git-gutter-fringe+
   :ensure t
@@ -492,7 +492,7 @@
           magit-save-some-buffers nil
           magit-status-buffer-switch-function 'switch-to-buffer
           magit-set-upstream-on-push 'dontask
-          magit-completing-read-function 'magit-ido-completing-read
+          magit-completing-read-function 'magit-builtin-completing-read
           magit-last-seen-setup-instructions "1.4.0"
           magit-use-overlays nil)))
   
