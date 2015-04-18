@@ -215,7 +215,9 @@
   :defer t
   :config (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode)))
 
+;; TODO: this isn't loading actually.
 (use-package org-mode
+  :demand t
   :bind (("C-c a" . org-agenda)
          ("C-c c" . org-capture)
          ("C-c C-x C-o" . org-clock-out)
