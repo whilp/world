@@ -215,9 +215,9 @@
   :defer t
   :config (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode)))
 
-;; TODO: this isn't loading actually.
-(use-package org-mode
+(use-package org
   :demand t
+  :mode ("\\.\\(txt\\|org\\)$" . org-mode)
   :bind (("C-c a" . org-agenda)
          ("C-c c" . org-capture)
          ("C-c C-x C-o" . org-clock-out)
@@ -259,7 +259,6 @@
           org-agenda-repeating-timestamp-show-all nil
           org-log-into-drawer "LOGBOOK")
 
-    (add-to-list 'auto-mode-alist '("\\.\\(txt\\|org\\)$" . org-mode))
     (setq org-capture-templates
           '(("t" "Todo" entry (file "~/src/github.banksimple.com/whilp/notes/plan.txt")
              "* TODO %?\nDEADLINE: %^t")))))
