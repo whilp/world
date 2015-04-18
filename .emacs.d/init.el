@@ -434,7 +434,7 @@
 
 (use-package gh
   :ensure t
-  :defer t
+  :demand t
   :config
   (progn
     (defun* whilp-gh-profile (url user)
