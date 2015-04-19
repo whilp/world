@@ -35,17 +35,60 @@
 
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 
-(use-package init-environment)
-(use-package init-rcirc)
-(use-package init-ui)
-
-(use-package init-el-get)
-
 ;; TODO
 ;; http://blog.danielgempesaw.com/post/79353633199/installing-mu4e-with-homebrew-with-emacs-from
 ;; (use-package mu4e
 ;;   :ensure t
 ;;   :defer t)
+
+(defconst whilp-full-name "Will Maier"
+  "My name.")
+
+(defconst whilp-email "wcmaier@gmail.com"
+  "My preferred email.")
+
+(use-package shell
+  :demand t
+  :config (setq explicit-shell-file-name "/bin/bash"))
+
+(setq exec-path
+      (append
+       (mapcar
+        'expand-file-name
+        (list
+         "~/bin"
+         "~/go/bin"
+         "~/homebrew/Cellar/go/1.3/libexec/bin"
+         "/usr/local/opt/go/libexec/bin/godoc"
+         "/usr/local/sbin"
+         "/usr/local/bin"
+         "/usr/local/MacGPG2/bin"
+         ))
+        exec-path))
+(setenv "TMPDIR" "/tmp")
+(setenv "PATH"
+        (mapconcat 'identity exec-path path-separator))
+(setenv "PAGER" "cat")
+(setenv "EDITOR" "emacsclient")
+(setenv "ALTERNATE_EDITOR" "emacs")
+(setenv "PROMPT_COMMAND" "")
+(setenv "GPG_AGENT_INFO" nil)
+(setenv "SSH_AUTH_SOCK" (expand-file-name "~/.ssh/agent.sock"))
+(setenv "PS1" "${debian_chroot:+($debian_chroot)}\\u@\\h:\\w \\$ ")
+(setenv "_JAVA_OPTIONS" "-Djava.awt.headless=true")
+(setenv "MAN_WIDTH" "72")
+
+(setenv "GIT_EDITOR" "emacsclient")
+(setenv "GIT_COMMITTER_NAME" whilp-full-name)
+(setenv "GIT_COMMITTER_EMAIL" whilp-email)
+(setenv "GIT_AUTHOR_NAME" whilp-full-name)
+(setenv "GIT_AUTHOR_EMAIL" whilp-email)
+
+(setenv "GOPATH" (expand-file-name "~/go"))
+
+(use-package init-rcirc)
+(use-package init-ui)
+(use-package init-el-get)
 
 (use-package color-theme-solarized
   :ensure t
