@@ -611,6 +611,15 @@
 (use-package abbrev
   :diminish abbrev-mode)
 
+(use-package midnight
+  :demand t
+  :config (add-to-list 'clean-buffer-list-kill-never-regexps "^#.*"))
+
+(use-package uniquify
+  :demand t
+  :config
+  (setq uniquify-buffer-name-style 'forward))
+
 ;; TODO: migrate all these bits to separate libraries.
 (require 'init-whilp)
 
