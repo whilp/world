@@ -340,6 +340,10 @@
     (bind-keys :map isearch-mode-map ("C-c g" . helm-git-grep-from-isearch))
     (eval-after-load 'helm
       (bind-keys :map helm-map ("C-c g" . helm-git-grep-from-helm)))))
+;; TODO
+;; (use-package helm-dash
+;;   :ensure t
+;;   :demand t)
 
 (use-package rcirc-color
   :ensure t
