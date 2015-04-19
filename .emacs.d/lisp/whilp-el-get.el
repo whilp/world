@@ -1,0 +1,28 @@
+;;; whilp-el-get --- Legacy el-get setup
+
+;;; Commentary:
+
+;;; el-get is still needed for mu4e.
+
+;;; Code:
+
+(add-to-list 'load-path "~/.emacs.d/el-get/el-get")
+
+(unless (require 'el-get nil 'noerror)
+  (with-current-buffer
+      (url-retrieve-synchronously
+       "https://raw.github.com/dimitri/el-get/master/el-get-install.el")
+    (let (el-get-master-branch)
+      (goto-char (point-max))
+      (eval-print-last-sexp))))
+
+(setq
+ el-get-byte-compile t
+ el-get-git-shallow-clone t
+ el-get-user-package-directory "~/.emacs.d/lisp"
+ el-get-sources '())
+
+(el-get 'sync '(mu4e))
+
+(provide 'whilp-el-get)
+;;; whilp-el-get ends here

@@ -39,6 +39,8 @@
 (use-package whilp-rcirc)
 (use-package whilp-ui)
 
+(use-package whilp-el-get)
+
 ;; TODO
 ;; http://blog.danielgempesaw.com/post/79353633199/installing-mu4e-with-homebrew-with-emacs-from
 ;; (use-package mu4e
