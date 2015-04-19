@@ -49,6 +49,7 @@
 
 (use-package color-theme-solarized
   :ensure t
+  :demand t
   :bind (("s-`" . whilp-toggle-solarized))
   :config
   (progn
@@ -422,22 +423,20 @@
 
 (use-package smart-mode-line
   :ensure t
+  :demand t
   :config
   (progn
-    (sml/setup)
     (setq sml/mode-width 'right
+          sml/theme 'respectful
           sml/shorten-directory t
           sml/use-projectile-p nil
           sml/full-mode-string ""
           sml/shorten-mode-string ""
           sml/name-width '(12 . 18))
 
-    (setq-default global-mode-string
-                  '(
-                    ""
-                    emms-mode-line-string
-                    emms-playing-time-string
-                    erc-modified-channels-object)
+    (sml/setup)
+    
+    (setq-default global-mode-string '("")
                   mode-line-format
                   '(
                     "%e"
@@ -608,7 +607,11 @@
     (setq
      display-time-default-load-average nil
      display-time-format "%a %Y-%m-%d %H:%M")
-    (display-time-mode 1)))
+    ;; display-time-mode appends the time string to global-mode-string
+    ;; by default, so we set global-mode-string back to zero after
+    ;; calling it.
+    (display-time-mode 1)
+    (setq global-mode-string '(""))))
 
 (use-package abbrev
   :diminish abbrev-mode)
