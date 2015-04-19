@@ -90,23 +90,6 @@
 (use-package init-ui)
 (use-package init-el-get)
 
-(use-package color-theme-solarized
-  :ensure t
-  :demand t
-  :bind (("s-`" . whilp-toggle-solarized))
-  :config
-  (progn
-    (require 'frame)
-    (load-theme 'solarized t)
-    (enable-theme 'solarized)
-
-    (defun whilp-toggle-solarized ()
-      "Toggles between solarized light and dark."
-      (interactive)
-      (let ((mode (if (equal (frame-parameter nil 'background-mode) 'dark) 'light 'dark)))
-        (set-frame-parameter nil 'background-mode mode)
-        (enable-theme 'solarized)))))
-
 (use-package clojure-mode
   :ensure t
   :demand t)
@@ -474,38 +457,6 @@
     (add-hook 'ruby-mode-hook 'rubocop-mode)
     (eval-after-load 'flycheck
       (flycheck-add-next-checker 'chef-foodcritic 'ruby-rubocop))))
-
-(use-package smart-mode-line
-  :ensure t
-  :demand t
-  :config
-  (progn
-    (setq sml/mode-width 'right
-          sml/theme 'respectful
-          sml/shorten-directory t
-          sml/use-projectile-p nil
-          sml/full-mode-string ""
-          sml/shorten-mode-string ""
-          sml/name-width '(12 . 18))
-
-    (sml/setup)
-    
-    (setq-default global-mode-string '("")
-                  mode-line-format
-                  '(
-                    "%e"
-                    display-time-string
-                    mode-line-front-space
-                    mode-line-mule-info
-                    mode-line-client
-                    mode-line-remote
-                    mode-line-frame-identification
-                    mode-line-buffer-identification
-                    (vc-mode vc-mode)
-                    "  " mode-line-modes
-                    mode-line-misc-info
-                    mode-line-end-spaces))
-    ))
 
 (use-package git-gutter-fringe+
   :ensure t
