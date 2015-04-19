@@ -326,7 +326,8 @@
 
 (use-package helm-swoop
   :ensure t
-  :bind (("M-s o" . helm-swoop)))
+  :bind (("C-s" . helm-swoop)
+         ("C-r" . helm-swoop)))
 
 (use-package helm-descbinds
   :ensure t)
