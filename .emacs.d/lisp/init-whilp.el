@@ -88,13 +88,9 @@
                                     ))
 
 ;; parens trap.
-(setq
- show-paren-delay 0
- show-paren-style 'parenthesis
- )
+(setq show-paren-delay 0
+      show-paren-style 'parenthesis)
 (show-paren-mode t)
-;; disable hl-line-mode because it conflicts with show-paren when
-;; using solarized colors.
 (global-hl-line-mode t)
 
 ;; comint.
@@ -148,12 +144,12 @@
            ("s-3" . split-window-right))
 
 ;; command-as-meta.
-(setq mac-option-key-is-meta nil)       
-(setq mac-command-key-is-meta t)
-(setq mac-command-modifier 'meta)
-(setq mac-option-modifier 'super)
-(setq ns-function-modifier 'hyper)
-(setq kill-read-only-ok)
+(setq mac-option-key-is-meta nil       
+      mac-command-key-is-meta t
+      mac-command-modifier 'meta
+      mac-option-modifier 'super
+      ns-function-modifier 'hyper
+      kill-read-only-ok)
 
 ;; speling
 (add-hook 'text-mode-hook 'flyspell-mode)
