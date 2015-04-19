@@ -113,12 +113,27 @@
         (set-frame-parameter nil 'background-mode mode)
         (enable-theme 'solarized)))))
 
-(use-package lispy
+(use-package clojure-mode
   :ensure t
-  :defer t
-  :config
+  :demand t)
+
+(use-package paredit
+  :ensure t
+  :demand t
+  :diminish paredit-mode
+  :init
   (progn
-    (add-hook 'emacs-lisp-mode-hook (lambda () (lispy-mode 1)))))
+    (add-hook 'clojure-mode-hook 'enable-paredit-mode)
+    (add-hook 'cider-repl-mode-hook 'enable-paredit-mode)
+    (add-hook 'lisp-mode-hook 'enable-paredit-mode)
+    (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
+    (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
+    (add-hook 'ielm-mode-hook 'enable-paredit-mode)
+    (add-hook 'json-mode-hook 'enable-paredit-mode))
+  :config
+  (bind-keys :map clojure-mode-map
+             ("M-[" . paredit-wrap-square)
+             ("M-{" . paredit-wrap-curly)))
 
 (use-package ace-jump-mode
   :ensure t
@@ -145,10 +160,6 @@
     (add-hook 'python-mode-hook 'eldoc-mode)))
 
 (use-package cider
-  :ensure t
-  :defer t)
-
-(use-package clojure-mode
   :ensure t
   :defer t)
 
