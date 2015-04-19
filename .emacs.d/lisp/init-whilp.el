@@ -6,10 +6,12 @@
 ;;; Code:
 
 (require 'use-package)
+(require 'browse-url)
 
 ;; remember.
-(winner-mode 1)
-(desktop-save-mode 1)
+(use-package desktop
+  :demand t
+  :config (desktop-save-mode 1))
 
 (use-package savehist
   :demand t
@@ -51,9 +53,10 @@
           show-paren-style 'parenthesis)
     (show-paren-mode t)))
 
-(global-hl-line-mode t)
+(use-package hl-line
+  :demand t
+  :config (global-hl-line-mode t))
 
-;; comint.
 (use-package comint
   :demand t
   :config
@@ -62,8 +65,6 @@
     (remove-hook 'comint-output-filter-functions
                  'comint-postoutput-scroll-to-bottom)))
 
-
-;; tramp.
 (use-package tramp
   :demand t
   :config
@@ -77,58 +78,48 @@
                   (regexp-opt '("[pP]assword" "[pP]assphrase" "Verification code") t)
                   ".*:? *"))))
 
-;; from @tom, to fix CM shiz
-;; '(tramp-default-proxies-alist (quote ((nil "\\`root\\'" "/ssh:%h:"))))
-;; '(tramp-ssh-controlmaster-options
-;;  "-o ControlPath=%t.%%r@%%h:%%p -o ControlMaster=auto -o ControlPersist=no" t)
-;; '(tramp-use-ssh-controlmaster-options nil)
-;; 2015-02-12 18:29:50 <ieure> (eval-after-load "tramp" '(progn (setq tramp-use-ssh-controlmaster-options nil)))
-
-(defun remote-shell (&optional host)
-  "Open a remote shell to HOST."
-  (interactive)
-  (with-temp-buffer
-    (let ((host (if host host (read-string "Host: "))))
-      (cd (concat "/" host ":"))
-      (shell (concat "*" host "*")))))
-
-;; backups.
-(setq make-backup-files nil
-      auto-save-default nil
-      backup-directory-alist `(("." . "~/.saves"))
-      backup-directory-alist `((".*" . ,temporary-file-directory))
-      auto-save-file-name-transforms `((".*" "~/.saves")))
-
 ;; pretty-print expression evals.
-(global-set-key [remap eval-expression] 'pp-eval-expression)
-(global-set-key [remap eval-last-sexp] 'pp-eval-last-sexp)
+(use-package pp
+  :demand t
+  :config
+  (progn
+    (global-set-key [remap eval-expression] 'pp-eval-expression)
+    (global-set-key [remap eval-last-sexp] 'pp-eval-last-sexp)))
 
-;; windows.
-(bind-keys ("s-SPC" . other-window)
-           ("s-1" . delete-other-windows)
-           ("s-2" . split-window-below)
-           ("s-3" . split-window-right))
 
 ;; command-as-meta.
-(setq mac-command-modifier 'meta
-      mac-option-modifier 'super
-      ;; TODO: these aren't defined in ns-win -- are they actually used anywhere?
-      ;; mac-option-key-is-meta nil       
-      ;; mac-command-key-is-meta t
-      ns-function-modifier 'hyper
-      kill-read-only-ok)
+(use-package ns-win
+  :demand t
+  :config
+  (setq mac-command-modifier 'meta
+        mac-option-modifier 'super
+        ns-function-modifier 'hyper
+        ;; TODO: these aren't defined in ns-win -- are they actually used anywhere?
+        ;; mac-option-key-is-meta nil
+        ;; mac-command-key-is-meta t
+        ))
+
 
 ;; speling
-(add-hook 'text-mode-hook 'flyspell-mode)
-(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+(use-package flyspell
+  :demand t
+  :config
+  (progn
+    (add-hook 'text-mode-hook 'flyspell-mode)
+    (add-hook 'prog-mode-hook 'flyspell-prog-mode)))
 
 ;; whitespace.
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 2)
-(bind-keys ("<backtab>" . indent-relative))
+(use-package indent
+  :demand t
+  :bind ("<backtab>" . indent-relative)
+  :config
+  (setq-default indent-tabs-mode nil
+                tab-width 2))
 
-;; wrap.
-(global-visual-line-mode 1)
+(use-package wrap
+  :demand t
+  :config
+  (global-visual-line-mode 1))
 
 ;; fix myself.
 (use-package dabbrev
@@ -142,8 +133,7 @@
   :config
   (setq compilation-scroll-output t
       compilation-ask-about-save nil
-      compilation-save-buffers-predicate '(lambda () nil)
-))
+      compilation-save-buffers-predicate '(lambda () nil)))
 
 (use-package ediff
   :demand t
@@ -162,10 +152,13 @@
     (setq epg-gpg-program "gpg2"))
   (set-face-attribute 'default nil :font "Monaco-16")))
 
-;; browse in the background.
-(defun browse-url-default-macosx-browser (url &optional _new-window)
-  (interactive (browse-url-interactive-arg "URL: "))
-  (start-process (concat "open -g" url) nil "open" "-g" url))
+(use-package browse-url
+  :demand t
+  :config
+  (defun browse-url-default-macosx-browser (url &optional new-window)
+    "Browse URL in the background. (NEW-WINDOW is ignored)."
+    (interactive (browse-url-interactive-arg "URL: "))
+    (start-process (concat "open -g" url) nil "open" "-g" url)))
 
 (provide 'init-whilp)
 ;;; init-whilp ends here

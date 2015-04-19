@@ -595,6 +595,8 @@
     (line-number-mode 0)
     (size-indication-mode 0)
 
+    (setq kill-read-only-ok nil)
+
     (defun yank-pop-forwards (arg)
       (interactive "p")
       (yank-pop (- arg)))))

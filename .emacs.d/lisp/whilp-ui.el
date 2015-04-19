@@ -28,7 +28,13 @@
 
 (use-package files
   :demand t
-  :config (setq confirm-nonexistent-file-or-buffer nil))
+  :config
+  (setq make-backup-files nil
+        auto-save-default nil
+        backup-directory-alist `(("." . "~/.saves"))
+        backup-directory-alist `((".*" . ,temporary-file-directory))
+        auto-save-file-name-transforms `((".*" "~/.saves"))
+        confirm-nonexistent-file-or-buffer nil))
 
 (use-package startup
   :demand t
@@ -38,6 +44,10 @@
 
 (use-package window
   :demand t
+  :bind (("s-SPC" . other-window)
+         ("s-1" . delete-other-windows)
+         ("s-2" . split-window-below)
+         ("s-3" . split-window-right))
   :config (setq recenter-positions '(top middle bottom)))
 
 (setq ring-bell-function 'ignore
