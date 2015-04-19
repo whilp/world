@@ -142,17 +142,7 @@
 (global-set-key [remap eval-last-sexp] 'pp-eval-last-sexp)
 
 ;; windows.
-(define-key whilp/bindings-map (kbd "M-i") 'windmove-left)
-(define-key whilp/bindings-map (kbd "s-i") 'windmove-left)
-(define-key whilp/bindings-map (kbd "M-j") 'windmove-down)
-(define-key whilp/bindings-map (kbd "s-j") 'windmove-down)
-(define-key whilp/bindings-map (kbd "M-k") 'windmove-up)
-(define-key whilp/bindings-map (kbd "s-k") 'windmove-up)
-(define-key whilp/bindings-map (kbd "M-l") 'windmove-right)
-(define-key whilp/bindings-map (kbd "s-l") 'windmove-right)
-(define-key whilp/bindings-map (kbd "s-1") 'delete-other-windows)
-(define-key whilp/bindings-map (kbd "s-2") 'split-window-below)
-(define-key whilp/bindings-map (kbd "s-3") 'split-window-right)
+(bind-keys ("s-SPC" . other-window))
 
 ;; command-as-meta.
 (setq mac-option-key-is-meta nil)       
