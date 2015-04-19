@@ -589,9 +589,24 @@
   :demand t
   :bind (("M-S-Y" . yank-pop-forwards))
   :config
-  (defun yank-pop-forwards (arg)
-    (interactive "p")
-    (yank-pop (- arg))))
+  (progn
+    (transient-mark-mode t)
+    (column-number-mode 0)
+    (line-number-mode 0)
+    (size-indication-mode 0)
+
+    (defun yank-pop-forwards (arg)
+      (interactive "p")
+      (yank-pop (- arg)))))
+
+(use-package time
+  :demand t
+  :config
+  (progn
+    (setq
+     display-time-default-load-average nil
+     display-time-format "%a %Y-%m-%d %H:%M")
+    (display-time-mode 1)))
 
 (use-package abbrev
   :diminish abbrev-mode)

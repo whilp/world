@@ -6,9 +6,10 @@
 
 ;;; Code:
 
-(require 'time)
+(require 'use-package)
 
-(bind-key "C-x C-c" nil)
+;; TODO
+;; (bind-key "C-x C-c" nil)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -25,36 +26,60 @@
  ;; If there is more than one, they won't work right.
  )
 
-(setq confirm-nonexistent-file-or-buffer nil
-      display-time-default-load-average nil
-      display-time-format "%a %Y-%m-%d %H:%M"
-      inhibit-startup-echo-area-message t
-      inhibit-startup-message t
-      recenter-positions '(top middle bottom)
-      ring-bell-function 'ignore
+(use-package files
+  :demand t
+  :config (setq confirm-nonexistent-file-or-buffer nil))
+
+(use-package startup
+  :demand t
+  :config
+  (setq inhibit-startup-echo-area-message t
+        inhibit-startup-message t))
+
+(use-package window
+  :demand t
+  :config (setq recenter-positions '(top middle bottom)))
+
+(setq ring-bell-function 'ignore
       visible-bell t)
 
-;; no bars, bells.
-(fringe-mode '(nil . -1))
-(menu-bar-mode -1)
-(scroll-bar-mode -1)
-(tool-bar-mode -1)
-(winner-mode 1)
+(use-package fringe
+  :demand t
+  :config (fringe-mode '(nil . -1)))
 
-;; modeline.
-(column-number-mode 0)
-(display-battery-mode 0)
-(display-time-mode 1)
-(line-number-mode 0)
-(size-indication-mode 0)
-(which-function-mode 0)
+(use-package menu-bar
+  :demand t
+  :config (menu-bar-mode -1))
+
+(use-package scroll-bar
+  :demand t
+  :config (scroll-bar-mode -1))
+
+(use-package tool-bar
+  :demand t
+  :config (tool-bar-mode -1))
+
+(use-package winner
+  :demand t
+  :config (winner-mode 1))
+
+(use-package battery
+  :demand t
+  :config (display-battery-mode 0))
+
+(use-package which-func
+  :demand t
+  :config (which-function-mode 0))
 
 ;; no prompts.
-(fset 'yes-or-no-p 'y-or-n-p)
+(use-package subr
+  :demand t
+  :config (fset 'yes-or-no-p 'y-or-n-p))
 
 ;; syntax highlighting.
-(global-font-lock-mode t)
-(transient-mark-mode t)
+(use-package font-core
+  :demand t
+  :config (global-font-lock-mode t))
 
 (provide 'whilp-ui)
 ;;; whilp-ui ends here
