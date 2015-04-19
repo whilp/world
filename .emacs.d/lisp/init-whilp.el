@@ -90,12 +90,12 @@
 ;; parens trap.
 (setq
  show-paren-delay 0
- show-paren-style 'expression
+ show-paren-style 'parenthesis
  )
 (show-paren-mode t)
 ;; disable hl-line-mode because it conflicts with show-paren when
 ;; using solarized colors.
-(global-hl-line-mode -1)
+(global-hl-line-mode t)
 
 ;; comint.
 (setq comint-scroll-show-maximum-output nil)
