@@ -45,12 +45,13 @@
 
 (use-package projectile
   :ensure t
+  :demand t
   :init (setq projectile-keymap-prefix (kbd "s-p"))
   :config
   (progn
     (bind-keys :map projectile-command-map
                ("f" . projectile-find-file)
-               ("g" . projectile-vc-grep)
+               ("g" . helm-git-grep)
                ("!" . projectile-run-shell))
 
     (projectile-global-mode)
@@ -317,6 +318,16 @@
 
 (use-package helm-descbinds
   :ensure t)
+
+(use-package helm-git-grep
+  :ensure t
+  :demand t
+  :bind (("C-c g" . helm-git-grep))
+  :config
+  (progn
+    (bind-keys :map isearch-mode-map ("C-c g" . helm-git-grep-from-isearch))
+    (eval-after-load 'helm
+      (bind-keys :map helm-map ("C-c g" . helm-git-grep-from-helm)))))
 
 (use-package rcirc-color
   :ensure t
