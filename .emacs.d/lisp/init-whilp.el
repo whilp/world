@@ -142,7 +142,10 @@
 (global-set-key [remap eval-last-sexp] 'pp-eval-last-sexp)
 
 ;; windows.
-(bind-keys ("s-SPC" . other-window))
+(bind-keys ("s-SPC" . other-window)
+           ("s-1" . delete-other-windows)
+           ("s-2" . split-window-below)
+           ("s-3" . split-window-right))
 
 ;; command-as-meta.
 (setq mac-option-key-is-meta nil)       
