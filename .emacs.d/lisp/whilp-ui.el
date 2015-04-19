@@ -36,19 +36,16 @@
         auto-save-file-name-transforms `((".*" "~/.saves"))
         confirm-nonexistent-file-or-buffer nil))
 
-(use-package startup
-  :demand t
-  :config
-  (setq inhibit-startup-echo-area-message t
-        inhibit-startup-message t))
+;; startup
+(setq inhibit-startup-echo-area-message t
+      inhibit-startup-message t)
 
-(use-package window
-  :demand t
-  :bind (("s-SPC" . other-window)
-         ("s-1" . delete-other-windows)
-         ("s-2" . split-window-below)
-         ("s-3" . split-window-right))
-  :config (setq recenter-positions '(top middle bottom)))
+;; window
+(bind-keys ("s-SPC" . other-window)
+	   ("s-1" . delete-other-windows)
+	   ("s-2" . split-window-below)
+	   ("s-3" . split-window-right))
+(setq recenter-positions '(top middle bottom))
 
 (setq ring-bell-function 'ignore
       visible-bell t)
@@ -82,9 +79,7 @@
   :config (which-function-mode 0))
 
 ;; no prompts.
-(use-package subr
-  :demand t
-  :config (fset 'yes-or-no-p 'y-or-n-p))
+(fset 'yes-or-no-p 'y-or-n-p)
 
 ;; syntax highlighting.
 (use-package font-core

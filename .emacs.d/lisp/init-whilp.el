@@ -109,17 +109,12 @@
     (add-hook 'prog-mode-hook 'flyspell-prog-mode)))
 
 ;; whitespace.
-(use-package indent
-  :demand t
-  :bind ("<backtab>" . indent-relative)
-  :config
-  (setq-default indent-tabs-mode nil
-                tab-width 2))
+(bind-keys ("<backtab>" . indent-relative))
+(setq-default indent-tabs-mode nil
+	      tab-width 2)
 
-(use-package wrap
-  :demand t
-  :config
-  (global-visual-line-mode 1))
+;; wrap
+(global-visual-line-mode 1)
 
 ;; fix myself.
 (use-package dabbrev
