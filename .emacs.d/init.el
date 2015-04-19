@@ -102,6 +102,9 @@
           deft-text-mode 'org-mode
           deft-use-filename-as-title t)))
 
+(use-package json-rpc
+  :ensure t)
+
 (use-package anaconda-mode
   :ensure t
   :defer t
@@ -116,6 +119,7 @@
 
 (use-package company
   :ensure t
+  :demand t
   :diminish company-mode
   :config
   (progn
@@ -126,6 +130,15 @@
     (setq company-echo-delay 0
           company-tooltip-minimum-width 30
           company-idle-delay .7)))
+
+(use-package eldoc
+  :demand t
+  :diminish eldoc-mode
+  :config
+  (progn
+    (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+    (add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
+    (add-hook 'ielm-mode-hook 'eldoc-mode)))
 
 (use-package company-go
   :ensure t
