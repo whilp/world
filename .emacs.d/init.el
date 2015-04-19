@@ -39,11 +39,6 @@
 (use-package whilp-rcirc)
 (use-package whilp-ui)
 
-(use-package whilp-buffers
-  :demand t
-  :bind (("C-x C-b" . switch-to-buffer)
-         ("s-b" . ibuffer)))
-
 ;; TODO
 ;; http://blog.danielgempesaw.com/post/79353633199/installing-mu4e-with-homebrew-with-emacs-from
 ;; (use-package mu4e
