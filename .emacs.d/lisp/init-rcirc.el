@@ -1,4 +1,4 @@
-;;; whilp-rcirc --- rcirc settings
+;;; init-rcirc --- rcirc settings
 
 ;;; Commentary:
 
@@ -103,5 +103,5 @@
 (use-package rcirc-controls
   :ensure t)
 
-(provide 'whilp-rcirc)
-;;; whilp-rcirc ends here
+(provide 'init-rcirc)
+;;; init-rcirc ends here

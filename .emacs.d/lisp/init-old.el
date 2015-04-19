@@ -1,4 +1,4 @@
-;;; init-whilp --- Emacs initialization
+;;; init-old --- Emacs initialization
 
 ;;; Commentary:
 ;;; User configuration
@@ -155,5 +155,5 @@
     (interactive (browse-url-interactive-arg "URL: "))
     (start-process (concat "open -g" url) nil "open" "-g" url)))
 
-(provide 'init-whilp)
-;;; init-whilp ends here
+(provide 'init-old)
+;;; init-old ends here

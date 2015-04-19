@@ -1,4 +1,4 @@
-;;; whilp-const --- Personal constants.
+;;; init-const --- Personal constants.
 
 ;;; Commentary:
 
@@ -12,5 +12,5 @@
 (defconst whilp-email "wcmaier@gmail.com"
   "My preferred email.")
 
-(provide 'whilp-const)
-;;; whilp-const ends here
+(provide 'init-const)
+;;; init-const ends here

@@ -1,4 +1,4 @@
-;;; whilp-ui --- My preferred UI settings.
+;;; init-ui --- My preferred UI settings.
 
 ;;; Commentary:
 
@@ -86,5 +86,5 @@
   :demand t
   :config (global-font-lock-mode t))
 
-(provide 'whilp-ui)
-;;; whilp-ui ends here
+(provide 'init-ui)
+;;; init-ui ends here

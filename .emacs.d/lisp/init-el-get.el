@@ -1,4 +1,4 @@
-;;; whilp-el-get --- Legacy el-get setup
+;;; init-el-get --- Legacy el-get setup
 
 ;;; Commentary:
 
@@ -24,5 +24,5 @@
 
 (el-get 'sync '(mu4e))
 
-(provide 'whilp-el-get)
-;;; whilp-el-get ends here
+(provide 'init-el-get)
+;;; init-el-get ends here

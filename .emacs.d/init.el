@@ -35,11 +35,11 @@
 
 (add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
 
-(use-package whilp-environment)
-(use-package whilp-rcirc)
-(use-package whilp-ui)
+(use-package init-environment)
+(use-package init-rcirc)
+(use-package init-ui)
 
-(use-package whilp-el-get)
+(use-package init-el-get)
 
 ;; TODO
 ;; http://blog.danielgempesaw.com/post/79353633199/installing-mu4e-with-homebrew-with-emacs-from
@@ -639,7 +639,7 @@
   (setq uniquify-buffer-name-style 'forward))
 
 ;; TODO: migrate all these bits to separate libraries.
-(require 'init-whilp)
+(require 'init-old)
 
 (provide 'init)
 ;;; init ends here
