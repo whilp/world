@@ -5,6 +5,8 @@
 
 ;;; Code:
 
+(require 'use-package)
+
 ;; customize
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -33,78 +35,76 @@
 
 ;; environment.
 
-(defun yank-pop-forwards (arg)
-  (interactive "p")
-  (yank-pop (- arg)))
-(bind-keys ("M-S-Y" . yank-pop-forwards))
-
 ;; remember.
 (winner-mode 1)
 (desktop-save-mode 1)
-(setq savehist-file "~/.emacs.d/savehist"
-      savehist-additional-variables '(
-                                      search-ring
-                                      regexp-search-ring
-                                      ))
-(savehist-mode 1)
 
+(use-package savehist
+  :demand t
+  :config
+  (progn
+    (setq savehist-file "~/.emacs.d/savehist"
+          savehist-additional-variables
+          (append search-ring
+                  regexp-search-ring))
+    (savehist-mode 1)))
 
 ;; javascript
-(setq js-indent-level 2)
+(use-package js
+  :demand t
+  :config (setq js-indent-level 2))
 
 ;; python
-(setq python-shell-interpreter "ipython"
-      python-shell-interpreter-args "-i")
+(use-package python
+  :demand t
+  :config
+  (setq python-shell-interpreter "ipython"
+        python-shell-interpreter-args "-i"))
 
-(setq completion-cycle-threshold 10)
+(use-package minibuffer
+  :demand t
+  :config
+  (setq completion-cycle-threshold 10))
 
 ;; I'm an adult.
 (put 'downcase-region 'disabled nil)
 (put 'narrow-to-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 
-;; term.
-(defun term-send-function-key ()
-  (interactive)
-  (let* ((char last-input-event)
-         (output (cdr (assoc char term-function-key-alist))))
-    (term-send-raw-string output)))
-
-(defconst term-function-key-alist '((f1 . "\e[11~")
-                                    (f2 . "\e[12~")
-                                    (f3 . "\e[13~")
-                                    (f4 . "\e[14~")
-                                    (f5 . "\e[15~")
-                                    (f6 . "\e[17~")
-                                    (f7 . "\e[18~")
-                                    (f8 . "\e[19~")
-                                    (f9 . "\e[20~")
-                                    (f10 . "\e[21~")
-                                    (f11 . "\e[23~")
-                                    (f12 . "\e[24~")
-                                    ))
-
 ;; parens trap.
-(setq show-paren-delay 0
-      show-paren-style 'parenthesis)
-(show-paren-mode t)
+(use-package paren
+  :demand t
+  :config
+  (progn
+    (setq show-paren-delay 0
+          show-paren-style 'parenthesis)
+    (show-paren-mode t)))
+
 (global-hl-line-mode t)
 
 ;; comint.
-(setq comint-scroll-show-maximum-output nil)
-(remove-hook 'comint-output-filter-functions
-             'comint-postoutput-scroll-to-bottom)
+(use-package comint
+  :demand t
+  :config
+  (progn
+    (setq comint-scroll-show-maximum-output nil)
+    (remove-hook 'comint-output-filter-functions
+                 'comint-postoutput-scroll-to-bottom)))
+
 
 ;; tramp.
-(require 'tramp)
-(add-to-list 'tramp-default-proxies-alist
-             '(nil "\\`root\\'" "/ssh:%h:"))
-(add-to-list 'tramp-default-proxies-alist
-             '((regexp-quote (system-name)) nil nil))
-(setq tramp-password-prompt-regexp
-      (concat "^.*"
-              (regexp-opt '("[pP]assword" "[pP]assphrase" "Verification code") t)
-              ".*:? *"))
+(use-package tramp
+  :demand t
+  :config
+  (progn
+    (add-to-list 'tramp-default-proxies-alist
+                 '(nil "\\`root\\'" "/ssh:%h:"))
+    (add-to-list 'tramp-default-proxies-alist
+                 '((regexp-quote (system-name)) nil nil))
+    (setq tramp-password-prompt-regexp
+          (concat "^.*"
+                  (regexp-opt '("[pP]assword" "[pP]assphrase" "Verification code") t)
+                  ".*:? *"))))
 
 ;; from @tom, to fix CM shiz
 ;; '(tramp-default-proxies-alist (quote ((nil "\\`root\\'" "/ssh:%h:"))))
@@ -114,7 +114,7 @@
 ;; 2015-02-12 18:29:50 <ieure> (eval-after-load "tramp" '(progn (setq tramp-use-ssh-controlmaster-options nil)))
 
 (defun remote-shell (&optional host)
-  "Open a remote shell to a host."
+  "Open a remote shell to HOST."
   (interactive)
   (with-temp-buffer
     (let ((host (if host host (read-string "Host: "))))
@@ -139,10 +139,11 @@
            ("s-3" . split-window-right))
 
 ;; command-as-meta.
-(setq mac-option-key-is-meta nil       
-      mac-command-key-is-meta t
-      mac-command-modifier 'meta
+(setq mac-command-modifier 'meta
       mac-option-modifier 'super
+      ;; TODO: these aren't defined in ns-win -- are they actually used anywhere?
+      ;; mac-option-key-is-meta nil       
+      ;; mac-command-key-is-meta t
       ns-function-modifier 'hyper
       kill-read-only-ok)
 
@@ -159,20 +160,32 @@
 (global-visual-line-mode 1)
 
 ;; fix myself.
-(setq default-abbrev-mode t)
-(bind-keys ("C-_" . dabbrev-expand))
+(use-package dabbrev
+  :demand t
+  :bind ("C-_" . dabbrev-expand)
+  :config (setq abbrev-mode t))
 
 ;; nssh
 (load-file "~/.emacs.d/nssh.el")
 
 ;; vc
-(setq
- compilation-scroll-output t
- compilation-ask-about-save nil
- compilation-save-buffers-predicate '(lambda () nil))
-(setq ediff-window-setup-function 'ediff-setup-windows-plain)
-(eval-after-load "vc-hooks"
-         '(define-key vc-prefix-map "=" 'ediff-revision))
+(use-package compile
+  :demand t
+  :config
+  (setq compilation-scroll-output t
+      compilation-ask-about-save nil
+      compilation-save-buffers-predicate '(lambda () nil)
+))
+
+(use-package ediff
+  :demand t
+  :config
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain))
+
+(use-package vc-hooks
+  :demand t
+  :config
+  (bind-keys :map vc-prefix-map ("=" . ediff-revision)))
 
 (cond
  ((string-equal system-type "darwin")
@@ -190,6 +203,7 @@
     (let (el-get-master-branch)
       (goto-char (point-max))
       (eval-print-last-sexp))))
+
 (add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-recipes")
 
 (setq
@@ -206,4 +220,4 @@
   (start-process (concat "open -g" url) nil "open" "-g" url))
 
 (provide 'init-whilp)
-;;; init ends here
+;;; init-whilp ends here

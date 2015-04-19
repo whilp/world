@@ -600,7 +600,13 @@
   :diminish flyspell-mode)
 
 (use-package simple
-  :diminish visual-line-mode)
+  :diminish visual-line-mode
+  :demand t
+  :bind (("M-S-Y" . yank-pop-forwards))
+  :config
+  (defun yank-pop-forwards (arg)
+    (interactive "p")
+    (yank-pop (- arg))))
 
 (use-package abbrev
   :diminish abbrev-mode)
