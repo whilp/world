@@ -284,7 +284,8 @@
   :ensure t
   :diminish helm-mode
   :bind (("M-y" . helm-show-kill-ring)
-         ("M-x" . helm-M-x))
+         ("M-x" . helm-M-x)
+         ("C-x C-f" . helm-find-files))
   :config
   (progn 
     (global-set-key (kbd "C-c h") 'helm-command-prefix)
