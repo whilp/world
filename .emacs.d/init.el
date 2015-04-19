@@ -326,8 +326,6 @@
   :config
   (progn
     (bind-keys :map projectile-command-map
-               ("f" . projectile-find-file)
-               ("g" . helm-git-grep)
                ("!" . projectile-run-shell))
 
     (projectile-global-mode)
@@ -355,25 +353,19 @@
       "Start a shell in the project's root."
       (interactive "P")
       (projectile-with-default-dir (projectile-project-root)
-        (shell (format "*shell %s*" (projectile-project-name)))))
-
-    (defun projectile-vc-grep ()
-      "Start a shell in the project's root."
-      (interactive)
-      (let ((regexp (if (and transient-mark-mode mark-active)
-                        (buffer-substring (region-beginning) (region-end))
-                      (read-string (projectile-prepend-project-name "Grep for: ")
-                                   (projectile-symbol-at-point)))))
-        (projectile-with-default-dir (projectile-project-root)
-          (vc-git-grep regexp "\\*" (projectile-project-root)))))))
+        (shell (format "*shell %s*" (projectile-project-name)))))))
 
 (use-package helm-projectile
   :ensure t
+  :demand t
   :config
   (progn
     (setq projectile-completion-system 'helm
           helm-projectile-fuzzy-match t)
-    (helm-projectile-on)))
+    (helm-projectile-on)
+    (bind-keys :map projectile-command-map
+               ("f" . helm-projectile-find-file-dwim)
+               ("g" . helm-git-grep))))
 
 (use-package helm-swoop
   :ensure t
