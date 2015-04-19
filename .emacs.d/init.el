@@ -385,13 +385,11 @@
 
 (use-package helm-swoop
   :ensure t
-  :bind (("C-s" . helm-swoop)
-         ("C-r" . helm-swoop))
+  :bind (("M-i" . helm-swoop))
   :config
   (progn
     (defun whilp-helm-pre-input ()
-      (if (boundp 'helm-swoop-pattern)
-          helm-swoop-pattern ""))
+      "")
     (setq helm-swoop-pre-input-function 'whilp-helm-pre-input)))
 
 (use-package helm-descbinds
