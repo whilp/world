@@ -166,9 +166,6 @@
   :bind ("C-_" . dabbrev-expand)
   :config (setq abbrev-mode t))
 
-;; nssh
-(load-file "~/.emacs.d/nssh.el")
-
 ;; vc
 (use-package compile
   :demand t
