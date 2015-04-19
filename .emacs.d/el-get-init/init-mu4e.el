@@ -5,7 +5,7 @@
   (interactive)
   (let ((query (mu4e-get-bookmark-query (string-to-char "n"))))
     (mu4e-headers-search-bookmark query)))
-(define-key whilp/bindings-map (kbd "s-m") 'my-mu4e-new)
+(bind-keys ("s-m" . my-mu4e-new))
 
 (setq
  mu4e-maildir "~/Maildir"

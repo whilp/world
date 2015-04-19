@@ -33,12 +33,10 @@
 
 ;; environment.
 
-(define-minor-mode whilp/bindings "My global bindings" t nil (make-sparse-keymap))
-
 (defun yank-pop-forwards (arg)
   (interactive "p")
   (yank-pop (- arg)))
-(define-key whilp/bindings-map (kbd "M-S-Y") 'yank-pop-forwards)
+(bind-keys ("M-S-Y" . yank-pop-forwards))
 
 ;; remember.
 (winner-mode 1)
@@ -57,7 +55,6 @@
 ;; python
 (setq python-shell-interpreter "ipython"
       python-shell-interpreter-args "-i")
-(define-key whilp/bindings-map (kbd "C-c y r") 'run-python)
 
 (setq completion-cycle-threshold 10)
 
@@ -123,8 +120,6 @@
     (let ((host (if host host (read-string "Host: "))))
       (cd (concat "/" host ":"))
       (shell (concat "*" host "*")))))
-(define-key whilp/bindings-map (kbd "C-x s") 'remote-shell)
-(define-key whilp/bindings-map (kbd "s-s") 'remote-shell)
 
 ;; backups.
 (setq make-backup-files nil
@@ -158,14 +153,14 @@
 ;; whitespace.
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 2)
-(define-key whilp/bindings-map (kbd "<backtab>") 'indent-relative)
+(bind-keys ("<backtab>" . indent-relative))
 
 ;; wrap.
 (global-visual-line-mode 1)
 
 ;; fix myself.
 (setq default-abbrev-mode t)
-(define-key whilp/bindings-map (kbd "C-_") 'dabbrev-expand)
+(bind-keys ("C-_" . dabbrev-expand))
 
 ;; nssh
 (load-file "~/.emacs.d/nssh.el")
