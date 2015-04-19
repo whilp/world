@@ -6,22 +6,26 @@
 
 ;;; Code:
 
+(require 'use-package)
 (require 'whilp-const)
 
-(defvar explicit-shell-file-name "/bin/bash")
+(use-package shell
+  :demand t
+  :config (setq explicit-shell-file-name "/bin/bash"))
+
 (setq exec-path
       (append
        (mapcar
         'expand-file-name
-        '(
-          "~/bin"
-          "~/go/bin"
-          "~/homebrew/Cellar/go/1.3/libexec/bin"
-          "/usr/local/opt/go/libexec/bin/godoc"
-          "/usr/local/sbin"
-          "/usr/local/bin"
-          "/usr/local/MacGPG2/bin"
-          ))
+        (list
+         "~/bin"
+         "~/go/bin"
+         "~/homebrew/Cellar/go/1.3/libexec/bin"
+         "/usr/local/opt/go/libexec/bin/godoc"
+         "/usr/local/sbin"
+         "/usr/local/bin"
+         "/usr/local/MacGPG2/bin"
+         ))
         exec-path))
 (setenv "TMPDIR" "/tmp")
 (setenv "PATH"
