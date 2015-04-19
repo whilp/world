@@ -43,54 +43,6 @@
   :bind (("C-x C-b" . switch-to-buffer)
          ("s-b" . ibuffer)))
 
-(use-package projectile
-  :ensure t
-  :demand t
-  :init (setq projectile-keymap-prefix (kbd "s-p"))
-  :config
-  (progn
-    (bind-keys :map projectile-command-map
-               ("f" . projectile-find-file)
-               ("g" . helm-git-grep)
-               ("!" . projectile-run-shell))
-
-    (projectile-global-mode)
-
-    (setq projectile-switch-project-action 'helm-projectile
-          projectile-globally-ignored-directories
-          (quote
-           (
-            ".idea"
-            ".eunit"
-            ".git"
-            ".hg"
-            ".fslckout"
-            ".bzr"
-            "_darcs"
-            ".tox"
-            ".svn"
-            "build"
-            "_workspace"))
-          projectile-mode-line
-          (quote
-           (:eval (format " [%s]" (projectile-project-name)))))
-
-    (defun projectile-run-shell (&optional buffer)
-      "Start a shell in the project's root."
-      (interactive "P")
-      (projectile-with-default-dir (projectile-project-root)
-        (shell (format "*shell %s*" (projectile-project-name)))))
-
-    (defun projectile-vc-grep ()
-      "Start a shell in the project's root."
-      (interactive)
-      (let ((regexp (if (and transient-mark-mode mark-active)
-                        (buffer-substring (region-beginning) (region-end))
-                      (read-string (projectile-prepend-project-name "Grep for: ")
-                                   (projectile-symbol-at-point)))))
-        (projectile-with-default-dir (projectile-project-root)
-          (vc-git-grep regexp "\\*" (projectile-project-root)))))))
-
 ;; TODO
 ;; http://blog.danielgempesaw.com/post/79353633199/installing-mu4e-with-homebrew-with-emacs-from
 ;; (use-package mu4e
@@ -293,6 +245,7 @@
 
 (use-package helm
   :ensure t
+  :demand t
   :diminish helm-mode
   :bind (("M-y" . helm-show-kill-ring)
          ("M-x" . helm-M-x)
@@ -316,6 +269,65 @@
           helm-ff-file-name-history-use-recentf t)
     (helm-mode 1)))
 
+(use-package helm-git-grep
+  :ensure t
+  :demand t
+  :bind (("C-c g" . helm-git-grep))
+  :config
+  (progn
+    (bind-keys :map isearch-mode-map ("C-c g" . helm-git-grep-from-isearch))
+    (eval-after-load 'helm
+      (bind-keys :map helm-map ("C-c g" . helm-git-grep-from-helm)))
+    ))
+
+(use-package projectile
+  :ensure t
+  :demand t
+  :init (setq projectile-keymap-prefix (kbd "s-p"))
+  :config
+  (progn
+    (bind-keys :map projectile-command-map
+               ("f" . projectile-find-file)
+               ("g" . helm-git-grep)
+               ("!" . projectile-run-shell))
+
+    (projectile-global-mode)
+
+    (setq projectile-switch-project-action 'helm-projectile
+          projectile-globally-ignored-directories
+          (quote
+           (
+            ".idea"
+            ".eunit"
+            ".git"
+            ".hg"
+            ".fslckout"
+            ".bzr"
+            "_darcs"
+            ".tox"
+            ".svn"
+            "build"
+            "_workspace"))
+          projectile-mode-line
+          (quote
+           (:eval (format " [%s]" (projectile-project-name)))))
+
+    (defun projectile-run-shell (&optional buffer)
+      "Start a shell in the project's root."
+      (interactive "P")
+      (projectile-with-default-dir (projectile-project-root)
+        (shell (format "*shell %s*" (projectile-project-name)))))
+
+    (defun projectile-vc-grep ()
+      "Start a shell in the project's root."
+      (interactive)
+      (let ((regexp (if (and transient-mark-mode mark-active)
+                        (buffer-substring (region-beginning) (region-end))
+                      (read-string (projectile-prepend-project-name "Grep for: ")
+                                   (projectile-symbol-at-point)))))
+        (projectile-with-default-dir (projectile-project-root)
+          (vc-git-grep regexp "\\*" (projectile-project-root)))))))
+
 (use-package helm-projectile
   :ensure t
   :config
@@ -332,15 +344,6 @@
 (use-package helm-descbinds
   :ensure t)
 
-(use-package helm-git-grep
-  :ensure t
-  :demand t
-  :bind (("C-c g" . helm-git-grep))
-  :config
-  (progn
-    (bind-keys :map isearch-mode-map ("C-c g" . helm-git-grep-from-isearch))
-    (eval-after-load 'helm
-      (bind-keys :map helm-map ("C-c g" . helm-git-grep-from-helm)))))
 ;; TODO
 ;; (use-package helm-dash
 ;;   :ensure t
