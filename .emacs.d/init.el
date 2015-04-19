@@ -388,16 +388,6 @@
   :config
   (setq helm-dash-browser-func 'eww))
 
-(use-package rcirc-color
-  :ensure t
-  :config
-  (progn
-    (eval-after-load 'rcirc '(require 'rcirc-color))
-    (setq rcirc-color-is-deterministic t)))
-
-(use-package rcirc-controls
-  :ensure t)
-
 (use-package restclient
   :ensure t
   :defer t)

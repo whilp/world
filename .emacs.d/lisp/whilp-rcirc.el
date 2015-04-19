@@ -8,6 +8,7 @@
 
 (require 'rcirc)
 (require 'auth-source)
+(require 'use-package)
 
 (rcirc-track-minor-mode 1)
 
@@ -92,6 +93,15 @@
        (my-rcirc-profile "furnace.firrre.com" "whilp" 9090)
        (my-rcirc-profile "humans-and-cats.irc.slack.com" "whilp" 6667)
        ))
+
+(use-package rcirc-color
+  :ensure t
+  :demand t
+  :init
+  (setq rcirc-color-is-deterministic t))
+
+(use-package rcirc-controls
+  :ensure t)
 
 (provide 'whilp-rcirc)
 ;;; whilp-rcirc ends here
