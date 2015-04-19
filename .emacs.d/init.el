@@ -26,6 +26,7 @@
   (require 'auth-source)
   (require 'cl)
   (require 'color-theme)
+  (require 'message)
   (require 'url)
   (require 'use-package))
 
@@ -163,53 +164,68 @@
   :defer t
   :config (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode)))
 
+(use-package auto-indent-mode
+  :ensure t
+  :demand t
+  :config
+  (setq auto-indent-start-org-indent t))
+
 (use-package org
   :demand t
   :mode ("\\.\\(txt\\|org\\)$" . org-mode)
-  :bind (("C-c a" . org-agenda)
-         ("C-c c" . org-capture)
-         ("C-c C-x C-o" . org-clock-out)
-         ("C-c C-x C-x" . org-clock-in-last)
-         ("C-c C-x C-i" . org-clock-in))
   :config
   (progn
-    (setq auto-indent-start-org-indent t
-          org-startup-indented t
+    (setq org-startup-indented t
           org-enforce-todo-dependencies t
           org-return-follows-link t
           org-src-fontify-natively t
           org-completion-use-ido t
           org-return-follows-link t
           org-use-tag-inheritance t
-          org-agenda-start-on-weekday 1
-          org-agenda-dim-blocked-tasks t
-          org-todo-keywords '((sequence "TODO" "DONE"))
-          org-agenda-skip-scheduled-if-done t
-          org-agenda-restore-windows-after-quit nil
-          org-agenda-window-setup 'current-window
-          org-agenda-search-headline-for-time nil
-          org-extend-today-until 6
-          org-agenda-start-with-follow-mode nil
-          org-agenda-todo-ignore-deadlines 'past
-          org-agenda-todo-ignore-with-date t
-          org-agenda-skip-scheduled-if-deadline-is-shown t
-          org-agenda-todo-ignore-timestamp 'all
-          org-agenda-todo-ignore-scheduled 'all
-          org-agenda-skip-deadline-if-done t
-          org-agenda-tags-todo-honor-ignore-options t
-          org-agenda-follow-mode nil
-          org-agenda-file-regexp "\\`[^.].*\\.\\(txt\\|org\\)\\'"
-          org-agenda-files '("~/src/github.banksimple.com/whilp/notes/plan.txt")
           org-bookmark-names-plist '()
           org-default-notes-file "~/notes/todo.txt"
-          org-clock-mode-line-total 'today
-          org-clock-history-length 50
-          org-agenda-repeating-timestamp-show-all nil
-          org-log-into-drawer "LOGBOOK")
+          org-extend-today-until 6
+          org-todo-keywords '((sequence "TODO" "DONE"))
+          org-log-into-drawer "LOGBOOK")))
 
-    (setq org-capture-templates
-          '(("t" "Todo" entry (file "~/src/github.banksimple.com/whilp/notes/plan.txt")
-             "* TODO %?\nDEADLINE: %^t")))))
+(use-package org-capture
+  :demand t
+  :bind (("C-c c" . org-capture))
+  :config
+  (setq org-capture-templates
+        '(("t" "Todo" entry (file "~/src/github.banksimple.com/whilp/notes/plan.txt")
+           "* TODO %?\nDEADLINE: %^t"))))
+
+(use-package org-agenda
+  :demand t
+  :bind (("C-c a" . org-agenda))
+  :config
+  (setq org-agenda-dim-blocked-tasks t
+        org-agenda-file-regexp "\\`[^.].*\\.\\(txt\\|org\\)\\'"
+        org-agenda-files '("~/src/github.banksimple.com/whilp/notes/plan.txt")
+        org-agenda-follow-mode nil
+        org-agenda-repeating-timestamp-show-all nil
+        org-agenda-restore-windows-after-quit nil
+        org-agenda-search-headline-for-time nil
+        org-agenda-skip-deadline-if-done t
+        org-agenda-skip-scheduled-if-deadline-is-shown t
+        org-agenda-skip-scheduled-if-done t
+        org-agenda-start-on-weekday 1
+        org-agenda-start-with-follow-mode nil
+        org-agenda-tags-todo-honor-ignore-options t
+        org-agenda-todo-ignore-deadlines 'past
+        org-agenda-todo-ignore-scheduled 'all
+        org-agenda-todo-ignore-timestamp 'all
+        org-agenda-todo-ignore-with-date t
+        org-agenda-window-setup 'current-window))
+
+(use-package org-clock
+  :bind (("C-c C-x C-o" . org-clock-out)
+         ("C-c C-x C-x" . org-clock-in-last)
+         ("C-c C-x C-i" . org-clock-in))
+  :config
+  (setq org-clock-history-length 50
+        org-clock-mode-line-total 'today))
 
 ;; TODO
 ;; (use-package go-oracle)
@@ -251,23 +267,51 @@
          ("M-x" . helm-M-x)
          ("C-x C-f" . helm-find-files))
   :config
-  (progn 
+  (progn
     (global-set-key (kbd "C-c h") 'helm-command-prefix)
     (global-unset-key (kbd "C-x c"))
     (setq helm-split-window-in-side-p t
           helm-move-to-line-cycle-in-source t
-          helm-ff-search-library-in-sexp t
-          helm-scroll-amount 8
-          helm-M-x-fuzzy-match t
-          helm-buffers-fuzzy-matching t
-          helm-recentf-fuzzy-match t
-          helm-semantic-fuzzy-match t
-          helm-imenu-fuzzy-match t
-          helm-locate-fuzzy-match t
-          helm-apropos-fuzzy-match t
-          helm-lisp-fuzzy-completion t
-          helm-ff-file-name-history-use-recentf t)
+          helm-scroll-amount 8)
     (helm-mode 1)))
+
+(use-package helm-semantic
+  :demand t
+  :config
+  (setq helm-semantic-fuzzy-match t))
+
+(use-package helm-command
+  :demand t
+  :config
+  (setq helm-M-x-fuzzy-match t))
+
+(use-package helm-buffers
+  :demand t
+  :config
+  (setq helm-buffers-fuzzy-matching t))
+
+(use-package helm-imenu
+  :demand t
+  :config
+  (setq helm-imenu-fuzzy-match t))
+
+(use-package helm-elisp
+  :demand t
+  :config
+  (setq helm-apropos-fuzzy-match t
+        helm-lisp-fuzzy-completion t))
+
+(use-package helm-locate
+  :demand t
+  :config
+  (setq helm-locate-fuzzy-match t))
+
+(use-package helm-files
+  :demand t
+  :config
+  (setq helm-ff-search-library-in-sexp t
+        helm-recentf-fuzzy-match t
+        helm-ff-file-name-history-use-recentf t))
 
 (use-package helm-git-grep
   :ensure t
@@ -345,9 +389,11 @@
   :ensure t)
 
 ;; TODO
-;; (use-package helm-dash
-;;   :ensure t
-;;   :demand t)
+(use-package helm-dash
+  :ensure t
+  :demand t
+  :config
+  (setq helm-dash-browser-func 'eww))
 
 (use-package rcirc-color
   :ensure t
