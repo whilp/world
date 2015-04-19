@@ -43,22 +43,6 @@
   :bind (("C-x C-b" . switch-to-buffer)
          ("s-b" . ibuffer)))
 
-(use-package ibuffer-projectile
-  :ensure t
-  :defer t
-  :config
-  (progn
-    (defun whilp-ibuffer-projectile ()
-      "Add projectile buffers to `ibuffer-filter-groups`."
-      (setq ibuffer-filter-groups
-            (append
-             ibuffer-filter-groups
-             (ibuffer-projectile-generate-filter-groups)))
-      (unless (eq ibuffer-sorting-mode 'alphabetic)
-        (ibuffer-do-sort-by-alphabetic)))
-
-    (add-hook 'ibuffer-hook 'whilp-ibuffer-projectile)))
-
 (use-package projectile
   :ensure t
   :init (setq projectile-keymap-prefix (kbd "s-p"))
