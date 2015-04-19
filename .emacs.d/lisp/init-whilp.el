@@ -45,8 +45,9 @@
   (progn
     (setq savehist-file "~/.emacs.d/savehist"
           savehist-additional-variables
-          (append search-ring
-                  regexp-search-ring))
+          (mapcar 'make-symbol
+                  (append search-ring
+                          regexp-search-ring)))
     (savehist-mode 1)))
 
 ;; javascript
