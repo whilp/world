@@ -32,8 +32,7 @@
       inhibit-startup-message t
       recenter-positions '(top middle bottom)
       ring-bell-function 'ignore
-      visible-bell t
-      redisplay-dont-pause t)
+      visible-bell t)
 
 ;; no bars, bells.
 (fringe-mode '(nil . -1))
