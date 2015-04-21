@@ -42,9 +42,10 @@
 
 ;; window
 (bind-keys ("s-SPC" . other-window)
-	   ("s-1" . delete-other-windows)
-	   ("s-2" . split-window-below)
-	   ("s-3" . split-window-right))
+           ("s-0" . delete-window)
+           ("s-1" . delete-other-windows)
+           ("s-2" . split-window-below)
+           ("s-3" . split-window-right))
 (setq recenter-positions '(top middle bottom))
 
 (setq ring-bell-function 'ignore
@@ -110,6 +111,7 @@
   (progn
     (setq sml/mode-width 'right
           sml/theme 'respectful
+          sml/use-projectile-p nil
           sml/shorten-directory t
           sml/full-mode-string ""
           sml/shorten-mode-string ""
