@@ -86,10 +86,10 @@
 
 (setenv "GOPATH" (expand-file-name "~/go"))
 
-(use-package init-rcirc)
-(use-package init-ui)
-(use-package init-el-get)
-(use-package init-dev)
+(use-package init-rcirc :demand t)
+(use-package init-ui :demand t)
+(use-package init-el-get :demand t)
+(use-package init-dev :demand t)
 
 (use-package ace-jump-mode
   :ensure t
