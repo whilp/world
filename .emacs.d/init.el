@@ -26,7 +26,6 @@
   (require 'auth-source)
   (require 'cl)
   (require 'color-theme)
-  (require 'message)
   (require 'url)
   (require 'use-package))
 
@@ -94,57 +93,11 @@
 (use-package init-helm :demand t)
 (use-package init-git :demand t)
 (use-package init-ace :demand t)
-
-(use-package markdown-mode
-  :ensure t
-  :defer t
-  :config (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode)))
-
-(use-package auto-indent-mode
-  :ensure t
-  :demand t
-  :config
-  (setq auto-indent-start-org-indent t))
+(use-package init-text :demand t)
+(use-package init-emacs :demand t)
 
 ;; TODO
 ;; (use-package go-oracle)
-
-(use-package deferred
-  :ensure t
-  :defer t)
-
-(use-package async
-  :ensure t
-  :config
-  (progn
-    (require 'smtpmail-async)
-    (setq ;;send-mail-function 'smtpmail-send-it
-          ;;message-send-mail-function 'message-send-mail-with-sendmail
-          send-mail-function 'async-smtpmail-send-it
-          message-send-mail-function 'async-smtpmail-send-it
-          )))
-
-(use-package expand-region
-  :ensure t
-  :defer t
-  :bind (("C-=" . er/expand-region)))
-
-(use-package yasnippet
-  :ensure t
-  :defer 60
-  :diminish yas-minor-mode
-  :config (yas-global-mode))
-
-(use-package epa-file
-  :config
-  (progn
-    (setq epa-file-name-regexp "\\.\\(gpg\\|asc\\)$"
-          epa-armor t)
-    (epa-file-name-regexp-update)
-    (epa-file-enable)))
-
-(use-package flyspell
-  :diminish flyspell-mode)
 
 ;; TODO: migrate all these bits to separate libraries.
 (require 'init-old)
