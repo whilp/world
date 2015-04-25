@@ -40,12 +40,17 @@
 (setq inhibit-startup-echo-area-message t
       inhibit-startup-message t)
 
+(defun whilp-last-buffer ()
+  (interactive)
+  (switch-to-buffer (other-buffer (current-buffer) 1)))
+
 ;; window
 (bind-keys ("s-SPC" . other-window)
            ("s-0" . delete-window)
            ("s-1" . delete-other-windows)
            ("s-2" . split-window-below)
-           ("s-3" . split-window-right))
+           ("s-3" . split-window-right)
+           ("s--" . whilp-last-buffer))
 (setq recenter-positions '(top middle bottom))
 
 (setq ring-bell-function 'ignore
