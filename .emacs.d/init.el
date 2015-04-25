@@ -93,11 +93,7 @@
 (use-package init-org :demand t)
 (use-package init-helm :demand t)
 (use-package init-git :demand t)
-
-(use-package ace-jump-mode
-  :ensure t
-  :defer t
-  :bind (("C-c SPC" . ace-jump-mode)))
+(use-package init-ace :demand t)
 
 (use-package markdown-mode
   :ensure t
@@ -132,20 +128,6 @@
   :ensure t
   :defer t
   :bind (("C-=" . er/expand-region)))
-
-
-(use-package ace-jump-buffer
-  :ensure t
-  :defer t)
-
-(use-package ace-jump-mode
-  :ensure t
-  :defer t)
-
-(use-package ace-jump-zap
-  :ensure t
-  :bind (("M-z" . ace-jump-zap-up-to-char-dwim)
-         ("C-M-z" . ace-jump-zap-to-char-dwim)))
 
 (use-package yasnippet
   :ensure t
