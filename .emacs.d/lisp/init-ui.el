@@ -41,6 +41,7 @@
       inhibit-startup-message t)
 
 (defun whilp-last-buffer ()
+  "Flip to last buffer."
   (interactive)
   (switch-to-buffer (other-buffer (current-buffer) 1)))
 
@@ -139,6 +140,54 @@
                     "  " mode-line-modes
                     mode-line-misc-info
                     mode-line-end-spaces))))
+
+(use-package golden-ratio
+  :ensure t
+  :diminish golden-ratio-mode
+  :config (golden-ratio-mode))
+
+
+(use-package simple
+  :diminish visual-line-mode
+  :demand t
+  :bind (("M-S-Y" . yank-pop-forwards))
+  :config
+  (progn
+    (transient-mark-mode t)
+    (column-number-mode 0)
+    (line-number-mode 0)
+    (size-indication-mode 0)
+
+    (setq kill-read-only-ok nil)
+
+    (defun yank-pop-forwards (arg)
+      (interactive "p")
+      (yank-pop (- arg)))))
+
+(use-package time
+  :demand t
+  :config
+  (progn
+    (setq
+     display-time-default-load-average nil
+     display-time-format "%a %Y-%m-%d %H:%M")
+    ;; display-time-mode appends the time string to global-mode-string
+    ;; by default, so we set global-mode-string back to zero after
+    ;; calling it.
+    (display-time-mode 1)
+    (setq global-mode-string '(""))))
+
+(use-package abbrev
+  :diminish abbrev-mode)
+
+(use-package midnight
+  :demand t
+  :config (add-to-list 'clean-buffer-list-kill-never-regexps "^#.*"))
+
+(use-package uniquify
+  :demand t
+  :config
+  (setq uniquify-buffer-name-style 'forward))
 
 (provide 'init-ui)
 ;;; init-ui ends here
