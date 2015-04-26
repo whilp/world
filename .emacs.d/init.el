@@ -23,10 +23,6 @@
   (package-install 'use-package))
 
 (eval-when-compile
-  (require 'auth-source)
-  (require 'cl)
-  (require 'color-theme)
-  (require 'url)
   (require 'use-package))
 
 (require 'bind-key)
