@@ -7,11 +7,14 @@
 ;;; Code:
 
 (require 'use-package)
+(require 'auth-source)
+(require 'url-parse)
 
 (use-package git-gutter-fringe+
   :ensure t
   :config
   (progn
+    (require 'git-gutter-fringe+)
     (bind-keys :map git-gutter+-mode-map
                ("C-x n" . git-gutter+-next-hunk)
                ("C-x p" . git-gutter+-previous-hunk)
@@ -32,6 +35,7 @@
   :demand t
   :config
   (progn
+    
     (defun* whilp-gh-profile (url user)
       (let* (
              (urlobj (url-generic-parse-url url))

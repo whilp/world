@@ -26,5 +26,23 @@
           message-send-mail-function 'async-smtpmail-send-it
           )))
 
+(use-package ns-win
+  :demand t
+  :config
+  (setq mac-command-modifier 'meta
+        mac-option-modifier 'super
+        ns-function-modifier 'hyper
+        ;; TODO: these aren't defined in ns-win -- are they actually used anywhere?
+        ;; mac-option-key-is-meta nil
+        ;; mac-command-key-is-meta t
+        ))
+
+(cond
+ ((string-equal system-type "darwin")
+  (progn
+    (setenv "GPG_AGENT_INFO" (expand-file-name "~/.gnupg/S.gpg-agent::1"))
+    (setq epg-gpg-program "gpg2"))
+  (set-face-attribute 'default nil :font "Monaco-16")))
+
 (provide 'init-emacs)
 ;;; init-emacs ends here

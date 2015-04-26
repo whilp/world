@@ -7,6 +7,7 @@
 ;;; Code:
 
 (require 'use-package)
+(require 'browse-url)
 
 ;; TODO
 ;; (bind-key "C-x C-c" nil)
@@ -189,6 +190,45 @@
   :demand t
   :config
   (setq uniquify-buffer-name-style 'forward))
+
+(use-package desktop
+  :demand t
+  :config (desktop-save-mode 1))
+
+(use-package savehist
+  :demand t
+  :config
+  (progn
+    (setq savehist-file "~/.emacs.d/savehist"
+          savehist-additional-variables
+          (mapcar 'make-symbol
+                  (append search-ring
+                          regexp-search-ring)))
+    (savehist-mode 1)))
+
+(use-package minibuffer
+  :demand t
+  :config
+  (setq completion-cycle-threshold 10))
+
+;; I'm an adult.
+(put 'downcase-region 'disabled nil)
+(put 'narrow-to-region 'disabled nil)
+(put 'upcase-region 'disabled nil)
+
+(use-package hl-line
+  :demand t
+  :config (global-hl-line-mode t))
+
+(global-visual-line-mode 1)
+
+(use-package browse-url
+  :demand t
+  :config
+  (defun browse-url-default-macosx-browser (url &optional new-window)
+    "Browse URL in the background. (NEW-WINDOW is ignored)."
+    (interactive (browse-url-interactive-arg "URL: "))
+    (start-process (concat "open -g" url) nil "open" "-g" url)))
 
 (provide 'init-ui)
 ;;; init-ui ends here

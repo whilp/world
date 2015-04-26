@@ -40,6 +40,20 @@
 
 (use-package flyspell
   :diminish flyspell-mode)
+  :demand t
+  :config
+  (progn
+    (add-hook 'text-mode-hook 'flyspell-mode)
+    (add-hook 'prog-mode-hook 'flyspell-prog-mode))
+
+(bind-keys ("<backtab>" . indent-relative))
+(setq-default indent-tabs-mode nil
+              tab-width 2)
+
+(use-package dabbrev
+  :demand t
+  :bind ("C-_" . dabbrev-expand)
+  :config (setq abbrev-mode t))
 
 (provide 'init-text)
 ;;; init-text ends here

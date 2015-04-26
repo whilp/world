@@ -8,9 +8,7 @@
 
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
-(eval-when-compile
-  (require 'comint)
-  (require 'el-get))
+(require 'comint)
 
 (unless (require 'el-get nil 'noerror)
   (with-current-buffer
@@ -19,6 +17,8 @@
     (let (el-get-master-branch)
       (goto-char (point-max))
       (eval-print-last-sexp))))
+
+(require 'el-get)
 
 (setq
  el-get-byte-compile t

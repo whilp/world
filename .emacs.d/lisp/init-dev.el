@@ -38,6 +38,7 @@
   :mode "\\.json\\'"
   :config
   (progn
+    (use-package js :demand t)
     (defun whilp-json-mode-hook ()
       (interactive)
       (setq js-indent-level 2)
@@ -113,6 +114,9 @@
     (add-hook 'go-mode-hook (lambda ()
                               (local-set-key (kbd "M-.") #'godef-jump)))))
 
+;; TODO
+;; (use-package go-oracle)
+
 (use-package restclient
   :ensure t
   :defer t)
@@ -174,11 +178,15 @@
   :ensure t
   :mode (("\\.py\\'" . python-mode))
   :config
-  (use-package elpy
-    :ensure t
-    :init
-    (elpy-enable)
-    (elpy-use-ipython)))
+  (progn
+    (setq python-shell-interpreter "ipython"
+          python-shell-interpreter-args "-i"))
+
+    (use-package elpy
+      :ensure t
+      :init
+      (elpy-enable)
+      (elpy-use-ipython))))
 
 (use-package ruby-mode
   :ensure t
@@ -234,6 +242,37 @@
                 (lambda ()
                   (unless (derived-mode-p 'prog-mode)
                     (run-hooks 'prog-mode-hook))))))
+(use-package pp
+  :demand t
+  :config
+  (progn
+    (global-set-key [remap eval-expression] 'pp-eval-expression)
+    (global-set-key [remap eval-last-sexp] 'pp-eval-last-sexp)))
+
+(use-package paren
+  :demand t
+  :config
+  (progn
+    (setq show-paren-delay 0
+          show-paren-style 'parenthesis)
+    (show-paren-mode t)))
+
+(use-package compile
+  :demand t
+  :config
+  (setq compilation-scroll-output t
+        compilation-ask-about-save nil
+        compilation-save-buffers-predicate '(lambda () nil)))
+
+(use-package vc-hooks
+  :demand t
+  :config
+  (bind-keys :map vc-prefix-map ("=" . ediff-revision)))
+
+(use-package ediff
+  :demand t
+  :config
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain))
 
 (provide 'init-dev)
 ;;; init-dev ends here
