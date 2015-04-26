@@ -6,6 +6,7 @@
 
 ;;; Code:
 
+(require 'color-theme)
 (require 'use-package)
 (require 'browse-url)
 

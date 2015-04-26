@@ -28,7 +28,10 @@
 (require 'bind-key)
 (require 'diminish)
 
-(add-to-list 'load-path (expand-file-name "lisp" user-emacs-directory))
+(defconst whilp-lisp
+  (expand-file-name "lisp" user-emacs-directory)
+  "My configurations.")
+(add-to-list 'load-path whilp-lisp)
 
 ;; TODO
 ;; http://blog.danielgempesaw.com/post/79353633199/installing-mu4e-with-homebrew-with-emacs-from

@@ -41,8 +41,7 @@
     (use-package js :demand t)
     (defun whilp-json-mode-hook ()
       (interactive)
-      (setq js-indent-level 2)
-      (rainbow-delimiters-mode))
+      (setq js-indent-level 2))
 
     (add-hook 'json-mode-hook 'whilp-json-mode-hook)))
 
@@ -150,6 +149,7 @@
   :defer t
   :config
   (progn
+    (require 'flycheck)
     (add-hook 'ruby-mode-hook 'rubocop-mode)
     (eval-after-load 'flycheck
       (flycheck-add-next-checker 'chef-foodcritic 'ruby-rubocop))))
@@ -186,7 +186,7 @@
       :ensure t
       :init
       (elpy-enable)
-      (elpy-use-ipython))))
+      (elpy-use-ipython)))
 
 (use-package ruby-mode
   :ensure t
