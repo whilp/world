@@ -73,6 +73,9 @@
       (bind-keys :map helm-map ("C-c g" . helm-git-grep-from-helm)))
     ))
 
+(use-package helm-company
+  :ensure t)
+
 (use-package projectile
   :ensure t
   :demand t

@@ -33,6 +33,18 @@
 (use-package json-rpc
   :ensure t)
 
+(use-package json-mode
+  :ensure t
+  :mode "\\.json\\'"
+  :config
+  (progn
+    (defun whilp-json-mode-hook ()
+      (interactive)
+      (setq js-indent-level 2)
+      (rainbow-delimiters-mode))
+
+    (add-hook 'json-mode-hook 'whilp-json-mode-hook)))
+
 (use-package anaconda-mode
   :ensure t
   :defer t
@@ -56,34 +68,27 @@
 
 (use-package company
   :ensure t
-  :demand t
   :diminish company-mode
+  :init (global-company-mode 1)
+
   :config
   (progn
-    (global-company-mode)
+    (dolist ((package '(company-go
+                        company-inf-ruby
+                        company-tern
+                        company-restclient)))
+      (use-package package :ensure t :init
+        (add-to-list 'company-backends package)))
+
+    ;; Use Helm to complete suggestions
     (bind-keys :map company-active-map
                ("\C-d" . company-show-doc-buffer)
-               ("<tab>" . company-complete))
+               ("C-:" . helm-company))
+    (bind-keys :map company-mode-map
+               ("C-:" . helm-company))
     (setq company-echo-delay 0
           company-tooltip-minimum-width 30
           company-idle-delay .7)))
-
-(use-package company-go
-  :ensure t
-  :config
-  (progn
-    (add-hook 'go-mode-hook
-              (lambda ()
-                (set (make-local-variable 'company-backends) '(company-go))
-                (company-mode)))))
-
-(use-package company-restclient
-  :ensure t
-  :defer t)
-
-(use-package company-inf-ruby
-  :ensure t
-  :defer t)
 
 (use-package inf-ruby
   :ensure t
@@ -104,6 +109,7 @@
   :config
   (progn
     (setq gofmt-command "goimports")
+    (add-hook 'before-save-hook #'gofmt-before-save)
     (add-hook 'go-mode-hook (lambda ()
                               (local-set-key (kbd "M-.") #'godef-jump)))))
 
@@ -148,6 +154,86 @@
   :ensure t
   :defer t
   :config (add-hook 'go-mode-hook 'go-eldoc-setup))
+
+(use-package mmm-mode
+  :ensure t
+  :commands mmm-mode
+  :config
+  (progn
+    (setq mmm-global-mode 'buffers-with-submode-classes
+          mmm-submode-decoration-level 0)
+    (use-package mmm-auto)))
+
+(use-package csv-mode
+  :ensure t
+  :mode "\\.[Cc][Ss][Vv]\\'"
+  :init (setq csv-separators '("," ";" "|" " "))
+  :config (use-package csv-nav :ensure t))
+
+(use-package python
+  :ensure t
+  :mode (("\\.py\\'" . python-mode))
+  :config
+  (use-package elpy
+    :ensure t
+    :init
+    (elpy-enable)
+    (elpy-use-ipython)))
+
+(use-package ruby-mode
+  :ensure t
+  :commands ruby-mode
+  :mode (("Gemfile\\'" . ruby-mode)
+         ("\\.builder\\'" . ruby-mode)
+         ("\\.gemspec\\'" . ruby-mode)
+         ("\\.irbrc\\'" . ruby-mode)
+         ("\\.pryrc\\'" . ruby-mode)
+         ("\\.rake\\'" . ruby-mode)
+         ("\\.ru\\'" . ruby-mode)
+         ("\\.rxml\\'" . ruby-mode))
+  :init
+  (setq ruby-use-encoding-map nil)
+  :config
+  (progn
+    (use-package inf-ruby :ensure t)
+    (use-package ruby-hash-syntax :ensure t)
+
+    (eval-after-load 'ruby-mode
+      (bind-keys :map ruby-mode-map
+                 ("RET" . reindent-then-newline-and-indent)
+                 ("TAB" . indent-for-tab-command)))
+
+    (add-hook 'ruby-mode-hook 'subword-mode)
+
+      (use-package robe
+        :ensure t
+        :config (add-hook 'ruby-mode-hook 'robe-mode))
+
+      (use-package ruby-compilation
+        :ensure t)
+
+      (use-package yari
+        :ensure t
+        :init (defalias 'ri 'yari))
+
+      (use-package rinari
+        :ensure t
+        :init
+        (global-rinari-mode))
+
+      (use-package rspec-mode
+        :ensure t
+        :config (rspec-mode 1))
+
+      (use-package bundler
+        :ensure t)
+
+      ;; Stupidly the non-bundled ruby-mode isn't a derived mode of
+      ;; prog-mode: we run the latter's hooks anyway in that case.
+      (add-hook 'ruby-mode-hook
+                (lambda ()
+                  (unless (derived-mode-p 'prog-mode)
+                    (run-hooks 'prog-mode-hook))))))
 
 (provide 'init-dev)
 ;;; init-dev ends here

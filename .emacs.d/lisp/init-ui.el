@@ -115,6 +115,7 @@
   :demand t
   :config
   (progn
+    (require 'smart-mode-line)
     (setq sml/mode-width 'right
           sml/theme 'respectful
           sml/use-projectile-p nil
