@@ -40,17 +40,17 @@
 ;;   :ensure t
 ;;   :defer t)
 
-(use-package init-shell :demand t)
-(use-package init-rcirc :demand t)
-(use-package init-ui :demand t)
+(use-package init-shell  :demand t)
+(use-package init-rcirc  :demand t)
+(use-package init-ui     :demand t)
 (use-package init-el-get :demand t)
-(use-package init-dev :demand t)
-(use-package init-org :demand t)
-(use-package init-helm :demand t)
-(use-package init-git :demand t)
-(use-package init-ace :demand t)
-(use-package init-text :demand t)
-(use-package init-emacs :demand t)
+(use-package init-dev    :demand t)
+(use-package init-org    :demand t)
+(use-package init-helm   :demand t)
+(use-package init-git    :demand t)
+(use-package init-ace    :demand t)
+(use-package init-text   :demand t)
+(use-package init-emacs  :demand t)
 
 (provide 'init)
 ;;; init ends here
