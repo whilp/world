@@ -8,6 +8,10 @@
 
 (add-to-list 'load-path "~/.emacs.d/el-get/el-get")
 
+(eval-when-compile
+  (require 'comint)
+  (require 'el-get))
+
 (unless (require 'el-get nil 'noerror)
   (with-current-buffer
       (url-retrieve-synchronously
@@ -23,6 +27,12 @@
  el-get-sources '())
 
 (el-get 'sync '(mu4e))
+
+(defun whilp-mbsync ()
+  "Run mbsync (via sync-mail)."
+  (let ((buf "*mbsync*"))
+    (shell buf)
+    (comint-send-string (get-buffer-process buf) "sync-mail\n")))
 
 (provide 'init-el-get)
 ;;; init-el-get ends here
