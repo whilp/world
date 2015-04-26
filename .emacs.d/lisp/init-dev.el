@@ -71,15 +71,15 @@
   :ensure t
   :diminish company-mode
   :init (global-company-mode 1)
-
   :config
   (progn
-    (dolist ((package '(company-go
-                        company-inf-ruby
-                        company-tern
-                        company-restclient)))
-      (use-package package :ensure t :init
-        (add-to-list 'company-backends package)))
+    (dolist (package '(company-go
+                       company-inf-ruby
+                       company-tern
+                       company-restclient))
+      (use-package package
+        :ensure t
+        :init (add-to-list 'company-backends package)))
 
     ;; Use Helm to complete suggestions
     (bind-keys :map company-active-map
