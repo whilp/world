@@ -75,9 +75,11 @@
     (dolist (package '(company-go
                        company-inf-ruby
                        company-tern
+                       company-math
                        company-restclient))
       (use-package package
         :ensure t
+        :demand t
         :init (add-to-list 'company-backends package)))
 
     ;; Use Helm to complete suggestions
