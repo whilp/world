@@ -14,7 +14,7 @@
  mu4e-compose-complete-only-personal nil
  mu4e-completing-read-function 'completing-read
  mu4e-compose-complete-ignore-address-regexp "\(no-?reply\|gitlab@gitlab\.com\|@docs\.google\.com\)"
- mu4e-compose-complete-only-after "2010-01-01"
+ mu4e-compose-complete-only-after nil
  mu4e-compose-dont-reply-to-self t
  mu4e-view-prefer-html nil
  mu4e-show-images t
@@ -136,3 +136,7 @@
       '(("capture message" . mu4e-action-capture-message)
         ("pdf" . mu4e-action-view-as-pdf)
         ("browser" . mu4e-action-view-in-browser)))
+
+;; (mu4e~fill-contacts)
+;; (mu4e~request-contacts)
+
