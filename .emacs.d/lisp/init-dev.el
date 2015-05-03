@@ -12,23 +12,14 @@
   :ensure t
   :demand t)
 
-(use-package paredit
+(use-package smartparens
   :ensure t
   :demand t
-  :diminish paredit-mode
+  :diminish smartparens-mode
   :init
   (progn
-    (add-hook 'clojure-mode-hook 'enable-paredit-mode)
-    (add-hook 'cider-repl-mode-hook 'enable-paredit-mode)
-    (add-hook 'lisp-mode-hook 'enable-paredit-mode)
-    (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
-    (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
-    (add-hook 'ielm-mode-hook 'enable-paredit-mode)
-    (add-hook 'json-mode-hook 'enable-paredit-mode))
-  :config
-  (bind-keys :map clojure-mode-map
-             ("M-[" . paredit-wrap-square)
-             ("M-{" . paredit-wrap-curly)))
+    (require 'smartparens-config)
+    (smartparens-global-mode t)))
 
 (use-package json-rpc
   :ensure t)
