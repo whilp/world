@@ -17,14 +17,32 @@
          ("C-x C-f" . helm-find-files))
   :config
   (progn
+    (bind-keys :prefix-map helm-command-map
+               :prefix "s-h")
+
+    (use-package helm-unicode
+      :init
+      (bind-keys :map helm-command-map
+                 ("u" . helm-unicode)))
+
     (use-package helm-c-yasnippet
+      :ensure t
+      :init
+      (progn
+        (setq helm-yas-display-key-on-candidate t)
+        (bind-keys :map helm-command-map
+                   ("y" . helm-yas-complete))))
+
+    (use-package helm-git-grep
+      :ensure t
       :demand t
-      :ensure t)
+      :bind (("C-c g" . helm-git-grep))
+      :config
+      (progn
+        (bind-keys :map isearch-mode-map ("C-c g" . helm-git-grep-from-isearch))
+        (bind-keys :map helm-map ("C-c g" . helm-git-grep-from-helm))))
 
     (global-unset-key (kbd "C-x c"))
-    (bind-keys :prefix-map helm-command-map
-               :prefix "s-h"
-               ("y" . helm-yas-complete))
     (setq helm-split-window-in-side-p t
           helm-move-to-line-cycle-in-source t
           helm-scroll-amount 8)
@@ -67,17 +85,6 @@
   (setq helm-ff-search-library-in-sexp t
         helm-recentf-fuzzy-match t
         helm-ff-file-name-history-use-recentf t))
-
-(use-package helm-git-grep
-  :ensure t
-  :demand t
-  :bind (("C-c g" . helm-git-grep))
-  :config
-  (progn
-    (bind-keys :map isearch-mode-map ("C-c g" . helm-git-grep-from-isearch))
-    (eval-after-load 'helm
-      (bind-keys :map helm-map ("C-c g" . helm-git-grep-from-helm)))
-    ))
 
 (use-package helm-company
   :ensure t)
