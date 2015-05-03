@@ -280,5 +280,16 @@
   :config
   (setq ediff-window-setup-function 'ediff-setup-windows-plain))
 
+(use-package multiple-cursors
+  :ensure t
+  :demand t
+  :init
+  (bind-keys :prefix-map whilp-multiple-cursors-map
+             :prefix "s-c"
+             ("e" . mc/edit-lines)
+             ("n" . mc/mark-next-like-this)
+             ("p" . mc/mark-previous-like-this)
+             ("a" . mc/mark-all-like-this)))
+
 (provide 'init-dev)
 ;;; init-dev ends here
