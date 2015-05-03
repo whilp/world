@@ -17,8 +17,14 @@
          ("C-x C-f" . helm-find-files))
   :config
   (progn
-    (global-set-key (kbd "C-c h") 'helm-command-prefix)
+    (use-package helm-c-yasnippet
+      :demand t
+      :ensure t)
+
     (global-unset-key (kbd "C-x c"))
+    (bind-keys :prefix-map helm-command-map
+               :prefix "s-h"
+               ("y" . helm-yas-complete))
     (setq helm-split-window-in-side-p t
           helm-move-to-line-cycle-in-source t
           helm-scroll-amount 8)
