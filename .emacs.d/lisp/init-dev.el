@@ -155,7 +155,7 @@
                ("C-c" . nil)
                ("c" . flycheck-compile)
                ("C-w" . nil)
-               ("w" . fflycheck-copy-errors-as-kill)
+               ("w" . flycheck-copy-errors-as-kill)
                ("d" . flycheck-describe-checker))
     
     (setq-default flycheck-emacs-lisp-load-path load-path)
