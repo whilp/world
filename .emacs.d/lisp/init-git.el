@@ -15,16 +15,17 @@
   :config
   (progn
     (require 'git-gutter-fringe+)
-    (bind-keys :map git-gutter+-mode-map
-               ("C-x n" . git-gutter+-next-hunk)
-               ("C-x p" . git-gutter+-previous-hunk)
-               ("C-x v =" . git-gutter+-show-hunk)
-               ("C-x r" . git-gutter+-revert-hunks)
-               ("C-x t" . git-gutter+-stage-hunks)
-               ("C-x c" . git-gutter+-commit)
-               ("C-x C" . git-gutter+-stage-and-commit)
-               ("C-x C-y" . git-gutter+-stage-and-commit-whole-buffer)
-               ("C-x U" . git-gutter+-unstage-whole-buffer))
+    (bind-keys :prefix-map git-gutter+-mode-map
+               :prefix "s-g"
+               ("n" . git-gutter+-next-hunk)
+               ("p" . git-gutter+-previous-hunk)
+               ("=" . git-gutter+-show-hunk)
+               ("r" . git-gutter+-revert-hunks)
+               ("t" . git-gutter+-stage-hunks)
+               ("c" . git-gutter+-commit)
+               ("C" . git-gutter+-stage-and-commit)
+               ("G" . git-gutter+-stage-and-commit-whole-buffer)
+               ("U" . git-gutter+-unstage-whole-buffer))
 
     (global-git-gutter+-mode t)
     (git-gutter-fr+-minimal)
@@ -81,7 +82,7 @@
   :config
   (progn
     (bind-keys :prefix-map whilp-magit-map
-               :prefix "s-g"
+               :prefix "s-m"
                ("g" . magit-status)
                ("u" . magit-push)
                ("p" . magit-grep)
