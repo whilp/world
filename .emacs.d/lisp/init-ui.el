@@ -49,6 +49,7 @@
 
 ;; window
 (bind-keys ("s-SPC" . other-window)
+           ("M-SPC" . other-window)
            ("s-0" . delete-window)
            ("s-1" . delete-other-windows)
            ("s-2" . split-window-below)
