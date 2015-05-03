@@ -30,6 +30,7 @@
 
 (defun whilp-mbsync ()
   "Run mbsync (via sync-mail)."
+  (interactive)
   (let ((buf "*mbsync*"))
     (shell buf)
     (comint-send-string (get-buffer-process buf) "sync-mail\n")))
