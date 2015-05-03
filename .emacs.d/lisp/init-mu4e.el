@@ -137,6 +137,13 @@
         ("pdf" . mu4e-action-view-as-pdf)
         ("browser" . mu4e-action-view-in-browser)))
 
+(defun whilp-mbsync ()
+  "Run mbsync (via sync-mail)."
+  (interactive)
+  (let ((buf "*mbsync*"))
+    (shell buf)
+    (comint-send-string (get-buffer-process buf) "sync-mail\n")))
+
 ;; (mu4e~fill-contacts)
 ;; (mu4e~request-contacts)
 

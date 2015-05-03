@@ -28,12 +28,5 @@
 
 (el-get 'sync '(mu4e))
 
-(defun whilp-mbsync ()
-  "Run mbsync (via sync-mail)."
-  (interactive)
-  (let ((buf "*mbsync*"))
-    (shell buf)
-    (comint-send-string (get-buffer-process buf) "sync-mail\n")))
-
 (provide 'init-el-get)
 ;;; init-el-get ends here
