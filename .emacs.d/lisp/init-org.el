@@ -7,9 +7,12 @@
 ;;; Code:
 
 (require 'use-package)
+(eval-when-compile
+  (require 'org))
 
-(use-package org
+(use-package org-plus-contrib
   :demand t
+  :ensure t
   :mode ("\\.\\(txt\\|org\\)$" . org-mode)
   :config
   (progn

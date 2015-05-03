@@ -11,10 +11,12 @@
 (setq load-prefer-newer t)
 
 (require 'package)
-(setq package-enable-at-startup nil)
-(add-to-list 'package-archives
-;;             '("melpa-stable" . "http://stable.melpa.org/packages/") t)
-             '("melpa" . "http://melpa.org/packages/") t)
+(setq package-enable-at-startup nil
+      package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+                        ;; ("melpa-stable" . "http://stable.melpa.org/packages/")
+                        ("org" . "http://orgmode.org/elpa/")
+                        ("melpa" . "http://melpa.org/packages/")))
+
 (package-initialize)
 
 ;; Bootstrap `use-package'
