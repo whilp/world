@@ -49,41 +49,27 @@
     (helm-mode 1)))
 
 (use-package helm-semantic
-  :demand t
-  :config
-  (setq helm-semantic-fuzzy-match t))
+  :demand t)
 
 (use-package helm-command
-  :demand t
-  :config
-  (setq helm-M-x-fuzzy-match t))
+  :demand t)
 
 (use-package helm-buffers
-  :demand t
-  :config
-  (setq helm-buffers-fuzzy-matching t))
+  :demand t)
 
 (use-package helm-imenu
-  :demand t
-  :config
-  (setq helm-imenu-fuzzy-match t))
+  :demand t)
 
 (use-package helm-elisp
-  :demand t
-  :config
-  (setq helm-apropos-fuzzy-match t
-        helm-lisp-fuzzy-completion t))
+  :demand t)
 
 (use-package helm-locate
-  :demand t
-  :config
-  (setq helm-locate-fuzzy-match t))
+  :demand t)
 
 (use-package helm-files
   :demand t
   :config
   (setq helm-ff-search-library-in-sexp t
-        helm-recentf-fuzzy-match t
         helm-ff-file-name-history-use-recentf t))
 
 (use-package helm-company
@@ -130,8 +116,7 @@
   :demand t
   :config
   (progn
-    (setq projectile-completion-system 'helm
-          helm-projectile-fuzzy-match t)
+    (setq projectile-completion-system 'helm)
     (helm-projectile-on)
     (bind-keys :map projectile-command-map
                ("f" . helm-projectile-find-file-dwim)
