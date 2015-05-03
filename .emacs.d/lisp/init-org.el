@@ -34,6 +34,11 @@
         '(("t" "Todo" entry (file "~/src/github.banksimple.com/whilp/notes/plan.txt")
            "* TODO %?\nDEADLINE: %^t"))))
 
+(use-package org-context
+  :ensure t
+  :demand t
+  :init (org-context-activate))
+
 (use-package org-agenda
   :demand t
   :bind (("C-c a" . org-agenda))
