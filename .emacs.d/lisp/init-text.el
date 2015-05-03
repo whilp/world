@@ -28,7 +28,18 @@
   :ensure t
   :defer 60
   :diminish yas-minor-mode
-  :config (yas-global-mode))
+  :config
+  (progn
+    (use-package auto-yasnippet
+      :ensure t
+      :bind ("C-o" . aya-open-line)
+      :init
+      (bind-keys :prefix-map aya-map
+                 :prefix "s-a"
+                 ("c" . aya-create)
+                 ("e" . aya-expand)
+                 ("o" . aya-open-line)))
+    (yas-global-mode)))
 
 (use-package epa-file
   :config
