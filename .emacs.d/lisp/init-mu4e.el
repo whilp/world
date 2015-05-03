@@ -7,6 +7,8 @@
     (mu4e-headers-search-bookmark query)))
 
 (define-key global-map (kbd "s-m") mu4e-main-mode-map)
+(bind-keys :map mu4e-main-mode-map
+           ("u" . mu4e-update-mail-and-index))
 
 (setq
  mu4e-maildir "~/Maildir"
