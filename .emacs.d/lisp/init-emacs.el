@@ -13,6 +13,7 @@
 
 (use-package guru-mode
   :ensure t
+  :diminish guru-mode
   :init (guru-global-mode +1))
 
 (use-package deferred
