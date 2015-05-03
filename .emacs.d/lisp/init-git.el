@@ -10,19 +10,20 @@
 (require 'auth-source)
 (require 'url-parse)
 
+(bind-keys :prefix-map whilp-git-map
+           :prefix "s-g")
+
 (use-package git-gutter-fringe+
   :ensure t
   :config
   (progn
     (require 'git-gutter-fringe+)
-    (bind-keys :prefix-map git-gutter+-mode-map
-               :prefix "s-g"
+    (bind-keys :map whilp-git-map
                ("n" . git-gutter+-next-hunk)
                ("p" . git-gutter+-previous-hunk)
                ("=" . git-gutter+-show-hunk)
                ("r" . git-gutter+-revert-hunks)
                ("t" . git-gutter+-stage-hunks)
-               ("c" . git-gutter+-commit)
                ("C" . git-gutter+-stage-and-commit)
                ("G" . git-gutter+-stage-and-commit-whole-buffer)
                ("U" . git-gutter+-unstage-whole-buffer))
@@ -81,11 +82,9 @@
   :diminish magit-auto-revert-mode
   :config
   (progn
-    (bind-keys :prefix-map whilp-magit-map
-               :prefix "s-m"
+    (bind-keys :map whilp-git-map
                ("g" . magit-status)
                ("u" . magit-push)
-               ("p" . magit-grep)
                ("c" . magit-commit))
     (autoload 'magit-status' "magit" nil t)
     (setq magit-git-executable "gh"
