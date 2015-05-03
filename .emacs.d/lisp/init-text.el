@@ -11,7 +11,7 @@
 (use-package markdown-mode
   :ensure t
   :defer t
-  :config (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode)))
+  :config (add-to-list 'auto-mode-alist '("\\.md\\'" . gfm-mode)))
 
 (use-package auto-indent-mode
   :ensure t
