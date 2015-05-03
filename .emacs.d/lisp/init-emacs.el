@@ -11,6 +11,10 @@
 (eval-when-compile
     (require 'message))
 
+(use-package guru-mode
+  :ensure t
+  :init (guru-global-mode +1))
+
 (use-package deferred
   :ensure t
   :defer t)
