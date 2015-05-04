@@ -15,8 +15,7 @@
 (use-package smartparens
   :ensure t
   :demand t
-  :diminish (smartparens-mode
-             paredit-mode)
+  :diminish (smartparens-mode)
   :init
   (setq sp-base-key-bindings 'sp)
   :config
