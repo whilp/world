@@ -15,11 +15,19 @@
 (use-package smartparens
   :ensure t
   :demand t
-  :diminish smartparens-mode
+  :diminish (smartparens-mode
+             paredit-mode)
   :init
+  (setq sp-base-key-bindings 'sp)
+  :config
   (progn
     (require 'smartparens-config)
-    (smartparens-global-mode t)))
+    (bind-keys :map smartparens-mode-map
+               ("C-)" . sp-forward-slurp-sexp)
+               ("C-(" . sp-backward-barf-sexp)
+               ("C-M-)" . sp-backward-slurp-sexp)
+               ("C-M-(" . sp-backward-barf-sexp))
+    (smartparens-global-strict-mode t)))
 
 (use-package json-rpc
   :ensure t)
