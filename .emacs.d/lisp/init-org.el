@@ -36,16 +36,22 @@
 
 (use-package org-capture
   :demand t
+  :functions (whilp-capture)
   :config
   (progn
+    (defun whilp-capture (&optional GOTO KEYS)
+      "Call org-capture with extend-today-until as 0."
+      (interactive)
+      (let ((org-extend-today-until 0))
+        (org-capture GOTO KEYS)))
     (defun org-capture-todo ()
       "Capture a todo."
       (interactive)
-      (org-capture nil "t"))
+      (whilp-capture nil "t"))
     (defun org-capture-journal ()
       "Capture a journal entry."
       (interactive)
-      (org-capture nil "j"))
+      (whilp-capture nil "j"))
     (bind-keys :map whilp-org-map
                ("c" . org-capture)
                ("t" . org-capture-todo)
