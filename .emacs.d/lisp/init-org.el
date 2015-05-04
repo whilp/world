@@ -13,7 +13,9 @@
 (bind-keys :prefix-map whilp-org-map
            :prefix "s-o")
 
-(use-package org-plus-contrib
+(use-package org-plus-contrib :ensure t)
+
+(use-package org
   :demand t
   :ensure t
   :mode ("\\.\\(txt\\|org\\)$" . org-mode)
@@ -27,7 +29,7 @@
           org-return-follows-link t
           org-use-tag-inheritance t
           org-bookmark-names-plist '()
-          org-default-notes-file "~/notes/todo.txt"
+          org-default-notes-file "~/src/github.banksimple.com/whilp/notes/notes.org"
           org-extend-today-until 6
           org-todo-keywords '((sequence "TODO" "DONE"))
           org-log-into-drawer "LOGBOOK")))
@@ -49,8 +51,8 @@
                ("t" . org-capture-todo)
                ("j" . org-capture-journal))
     (setq org-capture-templates
-          '(("j" "Journal" entry (file "~/src/github.banksimple.com/whilp/notes/journal.org")
-             "** %U %^ %^g\n%?")
+          '(("j" "Journal" entry (file+datetree "~/src/github.banksimple.com/whilp/notes/journal.org")
+             "* %U %^{Title} %^g\n%?")
             ("t" "Todo" entry (file "~/src/github.banksimple.com/whilp/notes/plan.org")
              "* TODO %?\nDEADLINE: %^t")))))
 
@@ -67,7 +69,7 @@
                ("a" . org-agenda))
     (setq org-agenda-dim-blocked-tasks t
           org-agenda-file-regexp "\\`[^.].*\\.\\(txt\\|org\\)\\'"
-          org-agenda-files '("~/src/github.banksimple.com/whilp/notes/plan.txt")
+          org-agenda-files '("~/src/github.banksimple.com/whilp/notes/plan.org")
           org-agenda-follow-mode nil
           org-agenda-repeating-timestamp-show-all nil
           org-agenda-restore-windows-after-quit nil
