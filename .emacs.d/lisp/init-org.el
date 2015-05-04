@@ -40,7 +40,7 @@
                ("c" . org-capture))
     (setq org-capture-templates
           '(("j" "Journal" entry (file "~/src/github.banksimple.com/whilp/notes/journal.org")
-             "* %U %?")
+             "** %U %?")
             ("t" "Todo" entry (file "~/src/github.banksimple.com/whilp/notes/plan.org")
              "* TODO %?\nDEADLINE: %^t")))))
 
