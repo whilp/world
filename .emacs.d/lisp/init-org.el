@@ -36,11 +36,21 @@
   :demand t
   :config
   (progn
+    (defun org-capture-todo ()
+      "Capture a todo."
+      (interactive)
+      (org-capture nil "t"))
+    (defun org-capture-journal ()
+      "Capture a journal entry."
+      (interactive)
+      (org-capture nil "j"))
     (bind-keys :map whilp-org-map
-               ("c" . org-capture))
+               ("c" . org-capture)
+               ("t" . org-capture-todo)
+               ("j" . org-capture-journal))
     (setq org-capture-templates
           '(("j" "Journal" entry (file "~/src/github.banksimple.com/whilp/notes/journal.org")
-             "** %U %?")
+             "** %U %^ %^g\n%?")
             ("t" "Todo" entry (file "~/src/github.banksimple.com/whilp/notes/plan.org")
              "* TODO %?\nDEADLINE: %^t")))))
 
