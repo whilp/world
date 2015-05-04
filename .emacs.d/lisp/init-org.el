@@ -7,13 +7,11 @@
 ;;; Code:
 
 (require 'use-package)
-(eval-when-compile
-  (require 'org))
 
 (bind-keys :prefix-map whilp-org-map
            :prefix "s-o")
 
-(use-package org-plus-contrib :ensure t)
+(use-package-ensure-elpa 'org-plus-contrib)
 
 (use-package org
   :demand t
