@@ -58,7 +58,7 @@
           '(("j" "Journal" entry (file+datetree "~/src/github.banksimple.com/whilp/notes/journal.org")
              "* %U %^{Title} %^g\n%?")
             ("t" "Todo" entry (file "~/src/github.banksimple.com/whilp/notes/plan.org")
-             "* TODO %?\nDEADLINE: %^t")))))
+             "* TODO %^{Title} %^g\n%?")))))
 
 (use-package org-context
   :ensure t
