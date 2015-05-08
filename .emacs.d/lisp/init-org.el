@@ -71,11 +71,13 @@
   (progn
     (bind-keys :map whilp-org-map
                ("a" . org-agenda))
-    (setq org-agenda-dim-blocked-tasks t
+    (setq org-agenda-dim-blocked-tasks nil
           org-agenda-file-regexp "\\`[^.].*\\.\\(txt\\|org\\)\\'"
-          org-agenda-files '("~/src/github.banksimple.com/whilp/notes/plan.org")
+          org-agenda-files '( "~/src/github.banksimple.com/whilp/notes/")
           org-agenda-follow-mode nil
           org-agenda-repeating-timestamp-show-all nil
+          org-agenda-inhibit-startup t
+          org-agenda-ignore-drawer-properties '(effort appt category)
           org-agenda-restore-windows-after-quit nil
           org-agenda-search-headline-for-time nil
           org-agenda-skip-deadline-if-done t
