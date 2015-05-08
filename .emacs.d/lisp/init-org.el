@@ -26,6 +26,7 @@
           org-completion-use-ido t
           org-return-follows-link t
           org-use-tag-inheritance t
+          org-agenda-show-inherited-tags 'always
           org-bookmark-names-plist '()
           org-default-notes-file "~/src/github.banksimple.com/whilp/notes/notes.org"
           org-extend-today-until 6
