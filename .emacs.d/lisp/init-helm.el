@@ -14,7 +14,9 @@
   :diminish helm-mode
   :bind (("M-y" . helm-show-kill-ring)
          ("M-x" . helm-M-x)
-         ("C-x C-f" . helm-find-files))
+         ("C-x C-f" . helm-find-files)
+         ("C-x b" . helm-mini)
+         ("C-x C-b" . helm-mini))
   :config
   (progn
     (bind-keys :prefix-map helm-command-map
