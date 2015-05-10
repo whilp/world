@@ -34,6 +34,13 @@
                ("M-o" . ace-link-org))
     (ace-link-setup-default)))
 
+(use-package ace-jump-helm-line
+  :ensure t
+  :init
+  (with-eval-after-load 'helm
+    (bind-keys :map helm-map
+               ("C-'" . ace-jump-helm-line))))
+
 (use-package ace-jump-zap
   :ensure t
   :bind (("M-z" . ace-jump-zap-up-to-char-dwim)
