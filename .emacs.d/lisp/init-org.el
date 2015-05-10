@@ -28,7 +28,7 @@
           org-use-tag-inheritance t
           org-agenda-show-inherited-tags 'always
           org-bookmark-names-plist '()
-          org-default-notes-file "~/src/github.banksimple.com/whilp/notes/notes.org"
+          org-default-notes-file "~/src/github.banksimple.com/whilp/notes/log.org"
           org-extend-today-until 6
           org-todo-keywords '((sequence "TODO" "DONE"))
           org-log-into-drawer "LOGBOOK")))
@@ -56,10 +56,8 @@
                ("t" . org-capture-todo)
                ("j" . org-capture-journal))
     (setq org-capture-templates
-          '(("j" "Journal" entry (file+datetree "~/src/github.banksimple.com/whilp/notes/journal.org")
-             "* %U %^{Title} %^g\n%?")
-            ("t" "Todo" entry (file "~/src/github.banksimple.com/whilp/notes/plan.org")
-             "* TODO %^{Title} %^g\n%?")))))
+          '(("j" "Journal" entry (file+datetree "~/src/github.banksimple.com/whilp/notes/log.org")
+             "* %^{Title} %^g\n- filed %U\n%?")))))
 
 (use-package org-context
   :ensure t
@@ -74,7 +72,7 @@
                ("a" . org-agenda))
     (setq org-agenda-dim-blocked-tasks nil
           org-agenda-file-regexp "\\`[^.].*\\.\\(txt\\|org\\)\\'"
-          org-agenda-files '( "~/src/github.banksimple.com/whilp/notes/")
+          org-agenda-files '( "~/src/github.banksimple.com/whilp/notes/log.org")
           org-agenda-follow-mode nil
           org-agenda-repeating-timestamp-show-all nil
           org-agenda-inhibit-startup t
