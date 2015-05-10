@@ -36,6 +36,8 @@
         backup-directory-alist `(("." . "~/.saves"))
         backup-directory-alist `((".*" . ,temporary-file-directory))
         auto-save-file-name-transforms `((".*" "~/.saves"))
+        ;; brew install coreutils
+        insert-directory-program (executable-find "gls")
         confirm-nonexistent-file-or-buffer nil))
 
 ;; startup
