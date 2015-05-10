@@ -26,6 +26,9 @@
           org-completion-use-ido t
           org-return-follows-link t
           org-use-tag-inheritance t
+          org-highest-priority ?A
+          org-lowest-priority ?E
+          org-default-priority ?C
           org-bookmark-names-plist '()
           org-default-notes-file "~/src/github.banksimple.com/whilp/notes/log.org"
           org-extend-today-until 6
@@ -76,6 +79,7 @@
           org-agenda-repeating-timestamp-show-all nil
           org-agenda-show-inherited-tags 'always
           org-agenda-inhibit-startup t
+          org-agenda-sorting-strategy '(priority-down deadline-down scheduled-down)
           org-agenda-ignore-drawer-properties '(effort appt category)
           org-agenda-restore-windows-after-quit nil
           org-agenda-search-headline-for-time nil
