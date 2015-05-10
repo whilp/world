@@ -8,18 +8,31 @@
 
 (require 'use-package)
 
-(use-package ace-jump-mode
-  :ensure t
-  :defer t
-  :bind (("C-c SPC" . ace-jump-mode)))
+(eval-when-compile
+  (require 'avy-jump)
+  (require 'org))
 
-(use-package ace-jump-buffer
+(use-package avy
   :ensure t
-  :defer t)
+  :bind ("M-`" . avy-goto-word-1)
+  :config
+  (setq avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
+        avy-style 'at))
 
-(use-package ace-jump-mode
+(use-package ace-window
   :ensure t
-  :defer t)
+  :bind (("M-SPC" . ace-window)
+         ("s-SPC" . ace-window))
+  :config
+  (setq aw-keys avy-keys))
+
+(use-package ace-link
+  :ensure t
+  :init
+  (progn
+    (bind-keys :map org-mode-map
+               ("M-o" . ace-link-org))
+    (ace-link-setup-default)))
 
 (use-package ace-jump-zap
   :ensure t
