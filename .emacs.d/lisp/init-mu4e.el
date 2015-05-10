@@ -147,6 +147,5 @@
     (shell buf)
     (comint-send-string (get-buffer-process buf) "sync-mail\n")))
 
-;; (mu4e~fill-contacts)
-;; (mu4e~request-contacts)
+(mu4e~request-contacts)
 
