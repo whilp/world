@@ -84,11 +84,13 @@
           org-agenda-skip-scheduled-if-done t
           org-agenda-start-on-weekday 1
           org-agenda-start-with-follow-mode nil
+          org-scheduled-delay-days 1
           org-agenda-tags-todo-honor-ignore-options t
           org-agenda-todo-ignore-deadlines 'past
-          org-agenda-todo-ignore-scheduled 'all
+          org-agenda-todo-ignore-scheduled 'future
           org-agenda-todo-ignore-timestamp 'all
           org-agenda-todo-ignore-with-date t
+          org-agenda-tags-todo-honor-ignore-options t
           org-agenda-window-setup 'current-window)))
 
 (use-package org-clock
