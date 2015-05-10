@@ -26,7 +26,6 @@
           org-completion-use-ido t
           org-return-follows-link t
           org-use-tag-inheritance t
-          org-agenda-show-inherited-tags 'always
           org-bookmark-names-plist '()
           org-default-notes-file "~/src/github.banksimple.com/whilp/notes/log.org"
           org-extend-today-until 6
@@ -75,6 +74,7 @@
           org-agenda-files '( "~/src/github.banksimple.com/whilp/notes/log.org")
           org-agenda-follow-mode nil
           org-agenda-repeating-timestamp-show-all nil
+          org-agenda-show-inherited-tags 'always
           org-agenda-inhibit-startup t
           org-agenda-ignore-drawer-properties '(effort appt category)
           org-agenda-restore-windows-after-quit nil
