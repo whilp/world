@@ -88,7 +88,7 @@
                ("C-:" . helm-company))
     (setq company-echo-delay 0
           company-tooltip-minimum-width 30
-          company-idle-delay .7)))
+          company-idle-delay 2)))
 
 (use-package inf-ruby
   :ensure t
