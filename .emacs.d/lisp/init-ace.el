@@ -14,10 +14,16 @@
 
 (use-package avy
   :ensure t
-  :bind ("M-`" . avy-goto-word-1)
-  :config
+  :bind ("C-c SPC" . avy-goto-word-1)
+  :init
   (setq avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
-        avy-style 'at))
+        avy-style 'at)
+  :config
+  (progn
+    (avy-setup-default)
+    (with-eval-after-load 'org
+      (bind-keys :map org-mode-map
+                 ("C-c SPC" . avy-goto-word-1)))))
 
 (use-package ace-window
   :ensure t
