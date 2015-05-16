@@ -101,9 +101,11 @@
 
 (use-package js2-mode
   :ensure t
-  :defer t
-  :config (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode)))
-
+  :defer 1
+  :mode ("\\.(json|js)$" . js-mode)
+  :config
+  (add-hook 'js2-mode-hook (lambda () (setq js2-basic-offset 2))))
+            
 (use-package go-mode
   :ensure t
   :defer t
