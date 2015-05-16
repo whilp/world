@@ -39,7 +39,7 @@
           org-use-tag-inheritance t
           org-highest-priority ?A
           org-lowest-priority ?E
-          org-default-priority ?C
+          org-default-priority ?A
           org-bookmark-names-plist '()
           org-default-notes-file "~/src/github.banksimple.com/whilp/notes/log.org"
           org-extend-today-until 6
