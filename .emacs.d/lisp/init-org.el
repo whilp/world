@@ -19,6 +19,17 @@
   :mode ("\\.\\(txt\\|org\\)$" . org-mode)
   :config
   (progn
+    (bind-keys :map org-mode-map
+               ("C-M-e" . org-forward-heading-same-level)
+               ("C-M-a" . org-backward-heading-same-level)
+               ("C-M-f" . outline-next-visible-heading)
+               ("C-M-b" . outline-previous-visible-heading)
+               ("C-)" . org-do-demote)
+               ("C-(" . org-do-promote)
+               ("C-M-)" . org-demote-subtree)
+               ("C-M-(" . org-promote-subtree)
+               ("C-M-u" . org-move-subtree-up)
+               ("C-M-d" . org-move-subtree-down))
     (setq org-startup-indented t
           org-enforce-todo-dependencies t
           org-return-follows-link t
