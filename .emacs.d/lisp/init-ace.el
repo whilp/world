@@ -9,7 +9,6 @@
 (require 'use-package)
 
 (eval-when-compile
-  (require 'avy-jump)
   (require 'org))
 
 (use-package avy
@@ -30,7 +29,21 @@
   :bind (("M-SPC" . ace-window)
          ("s-SPC" . ace-window))
   :config
-  (setq aw-keys avy-keys))
+  (progn
+    (setq aw-keys avy-keys
+          aw-dispatch-always t
+          aw-dispatch-alist
+          '((?x aw-delete-window " Ace - Delete Window")
+            (?c aw-swap-window " Ace - Swap Window")
+            (?n aw-flip-window)
+            (?v aw-split-window-vert " Ace - Split Vert Window")
+            (?b aw-split-window-horz " Ace - Split Horz Window")
+            (?i delete-other-windows " Ace - Maximize Window")
+            (?o delete-other-windows)
+            (?b balance-windows)
+            (?u winner-undo)
+            (?r winner-redo)))
+    (ace-window-display-mode t)))
 
 (use-package ace-link
   :ensure t
