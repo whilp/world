@@ -17,7 +17,8 @@
   :demand t
   :diminish (smartparens-mode)
   :init
-  (setq sp-base-key-bindings 'sp)
+  (setq sp-base-key-bindings 'sp
+        sp-ignore-modes-list '(org-mode))
   :config
   (progn
     (require 'smartparens-config)
