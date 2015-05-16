@@ -40,7 +40,7 @@
             (?b aw-split-window-horz " Ace - Split Horz Window")
             (?i delete-other-windows " Ace - Maximize Window")
             (?o delete-other-windows)
-            (?b balance-windows)
+            (?p balance-windows)
             (?u winner-undo)
             (?r winner-redo)))
     (ace-window-display-mode t)))
