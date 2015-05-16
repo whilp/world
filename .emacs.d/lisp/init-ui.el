@@ -6,9 +6,11 @@
 
 ;;; Code:
 
-(require 'color-theme)
-(require 'use-package)
-(require 'browse-url)
+(eval-when-compile
+  (require 'color-theme)
+  (require 'use-package)
+  (require 'browse-url)
+  (require 'ediff))
 
 ;; TODO
 ;; (bind-key "C-x C-c" nil)
@@ -148,8 +150,20 @@
 (use-package golden-ratio
   :ensure t
   :diminish golden-ratio-mode
-  :config (golden-ratio-mode))
+  :config
+  (progn
+    (setq golden-ratio-exclude-modes '("ediff-mode")
+          golden-ratio-inhibit-functions
+          '(pl/ediff-comparison-buffer-p
+            pl/helm-alive-p))
+    
+    (defun pl/ediff-comparison-buffer-p ()
+      ediff-this-buffer-ediff-sessions)
 
+    (defun pl/helm-alive-p ()
+      (if (boundp 'helm-alive-p)
+          (symbol-value 'helm-alive-p)))
+    (golden-ratio-mode)))
 
 (use-package simple
   :diminish visual-line-mode
