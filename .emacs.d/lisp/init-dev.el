@@ -204,6 +204,9 @@
       (elpy-enable)
       (elpy-use-ipython)))
 
+(use-package ein
+  :ensure t)
+
 (use-package ruby-mode
   :ensure t
   :commands ruby-mode
