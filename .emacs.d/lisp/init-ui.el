@@ -152,10 +152,12 @@
   :diminish golden-ratio-mode
   :config
   (progn
-    (setq golden-ratio-exclude-modes '("ediff-mode")
+    (setq golden-ratio-auto-scale t
+          golden-ratio-exclude-modes '("ediff-mode")
           golden-ratio-inhibit-functions
           '(pl/ediff-comparison-buffer-p
             pl/helm-alive-p))
+    (add-to-list 'golden-ratio-extra-commands 'ace-window)
     
     (defun pl/ediff-comparison-buffer-p ()
       ediff-this-buffer-ediff-sessions)
