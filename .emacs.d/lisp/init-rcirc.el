@@ -35,13 +35,13 @@
         "\\bmsn\\b"
         "\\bopa\\b"
         "\\bops\\b"
+        "\\b(ELT|elt)\\b"
         "\\bpolish merge\\b"
         "\\brum club\\b"
         "\\bwhilip\\b"
         "\\bwisconsin\\b"
         "github.banksimple.com/it"
-        "github.banksimple.com/ops"
-        ))
+        "github.banksimple.com/ops"))
 
 (setq rcirc-omit-responses
       '(
