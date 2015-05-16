@@ -30,7 +30,8 @@
                ("C-M-(" . org-promote-subtree)
                ("C-M-u" . org-move-subtree-up)
                ("C-M-d" . org-move-subtree-down))
-    (setq org-startup-indented t
+    (setq org-use-speed-commands t
+          org-startup-indented t
           org-enforce-todo-dependencies t
           org-return-follows-link t
           org-src-fontify-natively t
