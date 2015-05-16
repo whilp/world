@@ -30,6 +30,7 @@
          ("s-SPC" . ace-window))
   :config
   (progn
+    (set-face-attribute 'aw-mode-line-face nil :inherit 'mode-line-buffer-id :foreground "lawn green")
     (setq aw-keys avy-keys
           aw-dispatch-always t
           aw-dispatch-alist
