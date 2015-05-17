@@ -7,6 +7,18 @@
 ;;; Code:
 
 (require 'use-package)
+(require 'hydra)
+
+;; For the compiler's benefit.
+(require 'projectile nil t)
+(require 'helm nil t)
+
+(bind-key
+ "s-h"
+ (defhydra hydra-helm () "helm"
+   ("e" helm-flycheck "errors")
+   ("g" helm-git-grep "git-grep")
+   ("u" helm-unicode "unicode")))
 
 (use-package helm
   :ensure t
@@ -19,30 +31,25 @@
          ("C-x C-b" . helm-mini))
   :config
   (progn
-    (bind-keys :prefix-map helm-command-map
-               :prefix "s-h")
-
     (use-package helm-unicode
-      :init
-      (bind-keys :map helm-command-map
-                 ("u" . helm-unicode)))
+      :ensure t)
 
     (use-package helm-c-yasnippet
       :ensure t
       :init
-      (progn
-        (setq helm-yas-display-key-on-candidate t)
-        (bind-keys :map helm-command-map
-                   ("y" . helm-yas-complete))))
+      (setq helm-yas-display-key-on-candidate t))
 
     (use-package helm-git-grep
       :ensure t
       :demand t
-      :bind (("C-c g" . helm-git-grep))
       :config
       (progn
         (bind-keys :map isearch-mode-map ("C-c g" . helm-git-grep-from-isearch))
         (bind-keys :map helm-map ("C-c g" . helm-git-grep-from-helm))))
+
+    (use-package helm-flycheck
+      :ensure t
+      :commands helm-flycheck)
 
     (global-unset-key (kbd "C-x c"))
     (setq helm-split-window-in-side-p t
@@ -87,9 +94,6 @@
   :init (setq projectile-keymap-prefix (kbd "s-p"))
   :config
   (progn
-    (bind-keys :map projectile-command-map
-               ("!" . projectile-run-shell))
-
     (projectile-global-mode)
 
     (setq projectile-switch-project-action 'helm-projectile
@@ -115,7 +119,9 @@
       "Start a shell in the project's root."
       (interactive "P")
       (projectile-with-default-dir (projectile-project-root)
-        (shell (format "*shell %s*" (projectile-project-name)))))))
+        (shell (format "*shell %s*" (projectile-project-name)))))
+    (bind-keys :map projectile-command-map
+             ("!" . projectile-run-shell))))
 
 (use-package helm-projectile
   :ensure t
