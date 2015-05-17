@@ -63,6 +63,9 @@
 (setq ring-bell-function 'ignore
       visible-bell t)
 
+(use-package hydra
+  :ensure t)
+
 (use-package fringe
   :demand t
   :config (fringe-mode '(nil . -1)))

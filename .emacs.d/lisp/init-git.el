@@ -9,25 +9,31 @@
 (require 'use-package)
 (require 'auth-source)
 (require 'url-parse)
+(require 'hydra)
 
-(bind-keys :prefix-map whilp-git-map
-           :prefix "s-g")
+(eval-when-compile
+  (require 'git-gutter-fringe+)
+  (require 'magit))
+
+(bind-key
+ "s-g"
+ (defhydra hydra-git () "git"
+   ("g" magit-status :exit t)
+   ("c" magit-commit :exit t)
+   ("u" magit-push)
+   ("n" git-gutter+-next-hunk nil)
+   ("p" git-gutter+-previous-hunk nil)
+   ("=" git-gutter+-show-hunk nil)
+   ("r" git-gutter+-revert-hunks "revert")
+   ("s" git-gutter+-stage-hunks "stage")
+   ("C" git-gutter+-stage-and-commit "commit" :exit t)
+   ("G" git-gutter+-stage-and-commit-whole-buffer "commit buffer" :exit t)
+   ("U" git-gutter+-unstage-whole-buffer "unstage buffer")))
 
 (use-package git-gutter-fringe+
   :ensure t
   :config
   (progn
-    (require 'git-gutter-fringe+)
-    (bind-keys :map whilp-git-map
-               ("n" . git-gutter+-next-hunk)
-               ("p" . git-gutter+-previous-hunk)
-               ("=" . git-gutter+-show-hunk)
-               ("r" . git-gutter+-revert-hunks)
-               ("t" . git-gutter+-stage-hunks)
-               ("C" . git-gutter+-stage-and-commit)
-               ("G" . git-gutter+-stage-and-commit-whole-buffer)
-               ("U" . git-gutter+-unstage-whole-buffer))
-
     (global-git-gutter+-mode t)
     (git-gutter-fr+-minimal)
     (setq git-gutter+-lighter "")))
@@ -82,10 +88,6 @@
   :diminish magit-auto-revert-mode
   :config
   (progn
-    (bind-keys :map whilp-git-map
-               ("g" . magit-status)
-               ("u" . magit-push)
-               ("c" . magit-commit))
     (autoload 'magit-status' "magit" nil t)
     (setq magit-git-executable "gh"
           magit-save-some-buffers nil

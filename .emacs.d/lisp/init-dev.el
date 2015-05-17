@@ -7,6 +7,15 @@
 ;;; Code:
 
 (require 'use-package)
+(require 'hydra)
+
+(bind-key
+ "s-f"
+ (defhydra hydra-flycheck () "flycheck"
+   ("a" first-error "first")
+   ("c" flycheck-compile "compile")
+   ("n" next-error "next")
+   ("p" previous-error "previous")))
 
 (use-package clojure-mode
   :ensure t
@@ -148,17 +157,6 @@
   :ensure t
   :config
   (progn
-    (define-key flycheck-mode-map flycheck-keymap-prefix nil)
-    (setq flycheck-keymap-prefix (kbd "s-f"))
-    (define-key flycheck-mode-map flycheck-keymap-prefix flycheck-command-map)
-    (bind-keys :map flycheck-command-map
-               ("?" . describe-prefix-bindings)
-               ("C-c" . nil)
-               ("c" . flycheck-compile)
-               ("C-w" . nil)
-               ("w" . flycheck-copy-errors-as-kill)
-               ("d" . flycheck-describe-checker))
-    
     (setq-default flycheck-emacs-lisp-load-path load-path)
     (global-flycheck-mode)))
 
