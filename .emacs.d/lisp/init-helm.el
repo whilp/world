@@ -91,12 +91,10 @@
 (use-package projectile
   :ensure t
   :demand t
-  :init (setq projectile-keymap-prefix (kbd "s-p"))
   :config
   (progn
-    (projectile-global-mode)
-
-    (setq projectile-switch-project-action 'helm-projectile
+    (setq projectile-keymap-prefix (kbd "s-p")
+          projectile-switch-project-action 'helm-projectile
           projectile-globally-ignored-directories
           (quote
            (
@@ -114,6 +112,8 @@
           projectile-mode-line
           (quote
            (:eval (format " [%s]" (projectile-project-name)))))
+    (define-key projectile-mode-map projectile-keymap-prefix 'projectile-command-map)
+    (projectile-global-mode)
 
     (defun projectile-run-shell (&optional buffer)
       "Start a shell in the project's root."
