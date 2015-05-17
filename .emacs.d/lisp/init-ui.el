@@ -76,6 +76,17 @@
          ("s-5" . persp-switch-5))
   :config
   (progn
+    (bind-key
+     "s-SPC"
+     (defhydra hydra-persp () "persp"
+       ("1" persp-switch-1)
+       ("2" persp-switch-2)
+       ("3" persp-switch-3)
+       ("4" persp-switch-4)
+       ("5" persp-switch-5)
+       ("n" persp-next "next")
+       ("p" persp-prev "prev")
+       ("s" persp-switch "switch")))
     (setq persp-initial-frame-name "1"
           persp-modestring-dividers '("{" "}" "|")
           persp-mode-prefix-key (kbd "s-w"))
