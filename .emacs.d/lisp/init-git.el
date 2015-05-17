@@ -43,7 +43,6 @@
   :demand t
   :config
   (progn
-    
     (defun* whilp-gh-profile (url user)
       (let* (
              (urlobj (url-generic-parse-url url))
