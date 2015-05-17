@@ -15,8 +15,8 @@
   :ensure t
   :bind ("C-c SPC" . avy-goto-word-1)
   :init
-  (setq avy-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l)
-        avy-style 'at)
+  (setq avy-keys '(?a ?s ?d ?f ?j ?k ?l)
+        avy-style 'at-full)
   :config
   (progn
     (avy-setup-default)
@@ -26,13 +26,15 @@
 
 (use-package ace-window
   :ensure t
-  :bind (("M-SPC" . ace-window)
-         ("s-SPC" . ace-window))
+  :bind (("M-p" . ace-window))
   :config
   (progn
-    (set-face-attribute 'aw-mode-line-face nil :inherit 'mode-line-buffer-id :foreground "lawn green")
+    (set-face-attribute 'aw-mode-line-face nil
+                        :inherit 'mode-line-buffer-id
+                        :foreground "lawn green")
     (setq aw-keys avy-keys
           aw-dispatch-always t
+          aw-ignore-current nil
           aw-dispatch-alist
           '((?x aw-delete-window " Ace - Delete Window")
             (?c aw-swap-window " Ace - Swap Window")
