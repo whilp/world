@@ -66,6 +66,27 @@
 (use-package hydra
   :ensure t)
 
+(use-package perspective
+  :ensure t
+  :defer 1
+  :bind (("s-1" . persp-switch-1)
+         ("s-2" . persp-switch-2)
+         ("s-3" . persp-switch-3)
+         ("s-4" . persp-switch-4)
+         ("s-5" . persp-switch-5))
+  :config
+  (progn
+    (setq persp-initial-frame-name "1"
+          persp-modestring-dividers '("{" "}" "|")
+          persp-mode-prefix-key (kbd "s-w"))
+    (define-key persp-mode-map persp-mode-prefix-key 'perspective-map)
+    (defun persp-switch-1 () (interactive) (persp-switch "1"))
+    (defun persp-switch-2 () (interactive) (persp-switch "2"))
+    (defun persp-switch-3 () (interactive) (persp-switch "3"))
+    (defun persp-switch-4 () (interactive) (persp-switch "4"))
+    (defun persp-switch-5 () (interactive) (persp-switch "5"))
+    (persp-mode t)))
+
 (use-package fringe
   :demand t
   :config (fringe-mode '(nil . -1)))
