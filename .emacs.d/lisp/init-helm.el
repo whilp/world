@@ -48,6 +48,7 @@
     (setq helm-split-window-in-side-p t
           helm-autoresize-max-height 30
           helm-autoresize-min-height 10
+          helm-display-header-line nil
           helm-move-to-line-cycle-in-source t
           helm-scroll-amount 8)
     (helm-autoresize-mode 1)
