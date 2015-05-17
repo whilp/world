@@ -26,7 +26,7 @@
 
 (use-package ace-window
   :ensure t
-  :bind (("M-p" . ace-window))
+  :bind (("M-SPC" . ace-window))
   :config
   (progn
     (set-face-attribute 'aw-mode-line-face nil
