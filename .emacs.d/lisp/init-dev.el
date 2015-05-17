@@ -27,7 +27,8 @@
   :diminish (smartparens-mode)
   :init
   (setq sp-base-key-bindings 'sp
-        sp-ignore-modes-list '(org-mode))
+        sp-ignore-modes-list '(org-mode
+                               minibuffer-inactive-mode))
   :config
   (progn
     (require 'smartparens-config)
