@@ -57,7 +57,8 @@
            ("s-2" . split-window-below)
            ("s-3" . split-window-right)
            ("s--" . whilp-last-buffer))
-(setq recenter-positions '(top middle bottom))
+(setq recenter-positions '(top middle bottom)
+      scroll-preserve-screen-position 'always)
 
 (setq ring-bell-function 'ignore
       visible-bell t)
