@@ -26,17 +26,20 @@
   :demand t
   :diminish (smartparens-mode)
   :init
-  (setq sp-base-key-bindings 'sp
+  (setq sp-base-key-bindings 'paredit
+        sp-autoskip-closing-pair 'always
         sp-ignore-modes-list '(org-mode
                                minibuffer-inactive-mode))
   :config
   (progn
-    (require 'smartparens-config)
     (bind-keys :map smartparens-mode-map
                ("C-)" . sp-forward-slurp-sexp)
                ("C-(" . sp-backward-barf-sexp)
                ("C-M-)" . sp-backward-slurp-sexp)
                ("C-M-(" . sp-backward-barf-sexp))
+    (require 'smartparens-config)
+    (sp-use-paredit-bindings)
+    (show-smartparens-global-mode)
     (smartparens-global-strict-mode t)))
 
 (use-package json-rpc
