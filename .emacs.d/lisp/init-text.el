@@ -50,12 +50,12 @@
     (epa-file-enable)))
 
 (use-package flyspell
-  :diminish flyspell-mode)
+  :diminish flyspell-mode
   :demand t
   :config
   (progn
     (add-hook 'text-mode-hook 'flyspell-mode)
-    (add-hook 'prog-mode-hook 'flyspell-prog-mode))
+    (add-hook 'prog-mode-hook 'flyspell-prog-mode)))
 
 (bind-keys ("<backtab>" . indent-relative))
 (setq-default indent-tabs-mode nil
