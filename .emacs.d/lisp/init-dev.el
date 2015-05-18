@@ -28,8 +28,7 @@
   :init
   (setq sp-base-key-bindings 'paredit
         sp-autoskip-closing-pair 'always
-        sp-ignore-modes-list '(org-mode
-                               minibuffer-inactive-mode))
+        sp-ignore-modes-list '(minibuffer-inactive-mode))
   :config
   (progn
     (bind-keys :map smartparens-mode-map
