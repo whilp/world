@@ -52,6 +52,12 @@
       :commands helm-flycheck)
 
     (global-unset-key (kbd "C-x c"))
+    (add-to-list 'display-buffer-alist
+                 `(,(rx bos "*helm" (* not-newline) "*" eos)
+                   (display-buffer-in-side-window)
+                   (inhibit-same-window . t)
+                   (window-height . 0.4)))
+    
     (setq helm-split-window-in-side-p t
           helm-autoresize-max-height 30
           helm-autoresize-min-height 10
