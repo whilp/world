@@ -271,14 +271,6 @@
     (global-set-key [remap eval-expression] 'pp-eval-expression)
     (global-set-key [remap eval-last-sexp] 'pp-eval-last-sexp)))
 
-(use-package paren
-  :demand t
-  :config
-  (progn
-    (setq show-paren-delay 0
-          show-paren-style 'parenthesis)
-    (show-paren-mode t)))
-
 (use-package compile
   :demand t
   :config
