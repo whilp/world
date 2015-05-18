@@ -68,7 +68,6 @@
 
 (use-package perspective
   :ensure t
-  :defer 1
   :bind (("s-1" . persp-switch-1)
          ("s-2" . persp-switch-2)
          ("s-3" . persp-switch-3)
