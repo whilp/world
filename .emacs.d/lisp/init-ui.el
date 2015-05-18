@@ -213,7 +213,8 @@
     (line-number-mode 0)
     (size-indication-mode 0)
 
-    (setq kill-read-only-ok nil)
+    (setq kill-read-only-ok nil
+          blink-matching-paren nil)
 
     (defun yank-pop-forwards (arg)
       (interactive "p")
