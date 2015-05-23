@@ -21,14 +21,24 @@
          "~/bin"
          "~/go/bin"
          "/usr/local/go/bin/go"
+         "/usr/pkg/sbin"
+         "/usr/pkg/bin"
          "/usr/local/sbin"
          "/usr/local/bin"
-         "/usr/local/MacGPG2/bin"
-         ))
-        exec-path))
-(setenv "TMPDIR" "/tmp")
+         "/usr/local/MacGPG2/bin"))
+       exec-path))
 (setenv "PATH"
         (mapconcat 'identity exec-path path-separator))
+(setenv "MANPATH"
+        (mapconcat
+         'identity
+         (append
+          (mapcar
+           'expand-file-name
+           (list
+            "/usr/pkg/man")))
+         ":"))
+(setenv "TMPDIR" "/tmp")
 (setenv "PAGER" "cat")
 (setenv "EDITOR" "emacsclient")
 (setenv "SUDO_EDITOR" "emacsclient")
