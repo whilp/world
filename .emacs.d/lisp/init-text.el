@@ -52,6 +52,7 @@
 (use-package flyspell
   :diminish flyspell-mode
   :demand t
+  :bind ("s-:" . ispell-word)
   :config
   (progn
     (add-hook 'text-mode-hook 'flyspell-mode)
