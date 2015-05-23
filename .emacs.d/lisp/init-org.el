@@ -31,6 +31,10 @@
                ("C-M-u" . org-move-subtree-up)
                ("C-M-d" . org-move-subtree-down))
     (setq org-use-speed-commands t
+          org-speed-commands-user '(("I" org-insert-heading-respect-content)
+                                    ("s" call-interactively 'org-schedule)
+                                    ("k" org-cut-subtree)
+                                    ("w" org-copy-special))
           org-startup-indented t
           org-enforce-todo-dependencies t
           org-return-follows-link t
