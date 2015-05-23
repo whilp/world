@@ -36,7 +36,8 @@
           aw-dispatch-always t
           aw-ignore-current nil
           aw-dispatch-alist
-          '((?x aw-delete-window " Ace - Delete Window")
+          '((?X aw-delete-window " Ace - Delete Window")
+            (?x delete-window)
             (?c aw-swap-window " Ace - Swap Window")
             (?n aw-flip-window)
             (?V aw-split-window-vert " Ace - Split Vert Window")
