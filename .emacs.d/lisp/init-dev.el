@@ -160,6 +160,10 @@
   :ensure t
   :config
   (progn
+    ;; Move flycheck to a junk binding to avoid shadowing org's C-c !.
+    (define-key flycheck-mode-map flycheck-keymap-prefix nil)
+    (setq flycheck-keymap-prefix (kbd "s-0"))
+    (define-key flycheck-mode-map flycheck-keymap-prefix flycheck-command-map)
     (setq-default flycheck-emacs-lisp-load-path load-path)
     (global-flycheck-mode)))
 
