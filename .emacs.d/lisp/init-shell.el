@@ -31,6 +31,7 @@
         (mapconcat 'identity exec-path path-separator))
 (setenv "PAGER" "cat")
 (setenv "EDITOR" "emacsclient")
+(setenv "SUDO_EDITOR" "emacsclient")
 (setenv "ALTERNATE_EDITOR" "emacs")
 (setenv "PROMPT_COMMAND" "")
 (setenv "GPG_AGENT_INFO" nil)
