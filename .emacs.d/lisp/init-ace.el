@@ -46,7 +46,7 @@
             (?b split-window-horizontally)
             (?o delete-other-windows)
             (?O delete-other-windows " Ace - Maximize Window")
-            (?p balance-windows)
+            (?= balance-windows)
             (?u winner-undo)
             (?r winner-redo)))
     (ace-window-display-mode t)))
