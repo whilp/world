@@ -109,6 +109,7 @@
           org-agenda-todo-ignore-deadlines 'past
           org-agenda-todo-ignore-scheduled 'future
           org-agenda-todo-ignore-timestamp 'all
+          org-agenda-sticky t
           org-agenda-todo-ignore-with-date t
           org-agenda-tags-todo-honor-ignore-options t
           org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled
