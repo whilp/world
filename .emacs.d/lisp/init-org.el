@@ -85,6 +85,19 @@
   :demand t
   :init (org-context-activate))
 
+(use-package org-babel
+  :demand t
+  :init
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((dot . t)
+     (emacs-lisp . t))))
+
+(use-package org-src
+  :demand t
+  :init
+  (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot)))
+
 (use-package org-agenda
   :demand t
   :config
