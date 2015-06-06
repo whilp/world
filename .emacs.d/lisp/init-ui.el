@@ -214,7 +214,8 @@
     (size-indication-mode 0)
 
     (setq kill-read-only-ok nil
-          blink-matching-paren nil)
+          blink-matching-paren nil
+          set-mark-command-repeat-pop t)
 
     (defun yank-pop-forwards (arg)
       (interactive "p")
