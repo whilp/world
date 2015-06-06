@@ -35,7 +35,7 @@
         "\\bmsn\\b"
         "\\bopa\\b"
         "\\bops\\b"
-        "\\b(ELT|elt)\\b"
+        "\\b(ELT|elt)!?\\b"
         "\\bpolish merge\\b"
         "\\brum club\\b"
         "\\bwhilip\\b"
