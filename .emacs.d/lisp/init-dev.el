@@ -17,6 +17,9 @@
    ("n" next-error "next")
    ("p" previous-error "previous")))
 
+(use-package graphviz-dot-mode
+  :ensure t)
+
 (use-package clojure-mode
   :ensure t
   :demand t)
