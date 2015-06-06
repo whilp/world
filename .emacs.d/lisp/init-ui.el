@@ -66,6 +66,14 @@
 (use-package hydra
   :ensure t)
 
+(use-package shackle
+  :ensure t
+  :init
+  (setq shackle-rules
+        '(("*Help*" :align t :ratio 0.4 :select t)
+          ("\\`\\*helm.*?\\*\\'" :regexp t :align t :ratio 0.4)
+          (t :select t))))
+
 (use-package perspective
   :ensure t
   :bind (("s-1" . persp-switch-1)
