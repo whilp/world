@@ -30,6 +30,7 @@
                ("C-M-(" . org-promote-subtree)
                ("C-M-u" . org-move-subtree-up)
                ("C-M-d" . org-move-subtree-down))
+    ;; TODO: make a hydra that does these as well? (Both above and below)
     (setq org-use-speed-commands t
           org-speed-commands-user '(("I" org-insert-heading-respect-content)
                                     ("s" call-interactively 'org-schedule)

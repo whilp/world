@@ -24,6 +24,7 @@
   :ensure t
   :demand t)
 
+;; TODO: could be neat to make a hydra for sp motions.
 (use-package smartparens
   :ensure t
   :demand t
