@@ -49,6 +49,9 @@
           org-default-notes-file "~/src/github.banksimple.com/whilp/notes/log.org"
           org-extend-today-until 6
           org-todo-keywords '((sequence "TODO" "DONE"))
+          org-log-done 'time
+          org-log-reschedule 'time
+          org-log-redeadline 'time
           org-log-into-drawer "LOGBOOK")))
 
 (use-package org-capture
