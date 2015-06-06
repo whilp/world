@@ -22,7 +22,7 @@
 (setq rcirc-keywords
       '(
         "whilp"
-        "@channel"
+        "@(channel|group|everyone)"
         "\\bSimpleFinance\\b"
         "\\bbackend[\\?!]"
         "\\bbackend\\b"
