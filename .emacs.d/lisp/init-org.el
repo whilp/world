@@ -34,7 +34,7 @@
           org-speed-commands-user '(("I" org-insert-heading-respect-content)
                                     ("s" call-interactively 'org-schedule)
                                     ("k" org-cut-subtree)
-                                    ("w" org-copy-special))
+                                    ("w" org-copy-subtree))
           org-startup-indented t
           org-enforce-todo-dependencies t
           org-return-follows-link t
