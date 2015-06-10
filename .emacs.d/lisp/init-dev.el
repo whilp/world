@@ -168,15 +168,6 @@
   :ensure t
   :defer t)
 
-(use-package robe
-  :ensure t
-  :defer t
-  :config
-  (progn
-    (add-hook 'ruby-mode-hook 'robe-mode)
-    (eval-after-load 'company
-      '(push 'company-robe company-backends))))
-
 (use-package flycheck
   :ensure t
   :config
@@ -247,45 +238,44 @@
   (setq ruby-use-encoding-map nil)
   :config
   (progn
-    (use-package inf-ruby :ensure t)
-    (use-package ruby-hash-syntax :ensure t)
-
-    (eval-after-load 'ruby-mode
-      (bind-keys :map ruby-mode-map
-                 ("RET" . reindent-then-newline-and-indent)
-                 ("TAB" . indent-for-tab-command)))
-
+    (dolist (package '(inf-ruby
+                       ruby-hash-syntax
+                       ruby-compilation
+                       bundler))
+      (use-package package :ensure t))
+    (bind-keys :map ruby-mode-map
+               ("RET" . reindent-then-newline-and-indent)
+               ("TAB" . indent-for-tab-command)
+               (eir-key . eir-eval-in-ruby))
+    
     (add-hook 'ruby-mode-hook 'subword-mode)
+    
+    (use-package robe
+      :ensure t
+      :init
+      (progn
+        (with-eval-after-load 'company
+          (push 'company-robe company-backends))
+        (add-hook 'ruby-mode-hook 'robe-mode)))
 
-      (use-package robe
-        :ensure t
-        :config (add-hook 'ruby-mode-hook 'robe-mode))
+    (use-package yari
+      :ensure t
+      :init (defalias 'ri 'yari))
 
-      (use-package ruby-compilation
-        :ensure t)
+    (use-package rinari
+      :ensure t
+      :init (global-rinari-mode))
 
-      (use-package yari
-        :ensure t
-        :init (defalias 'ri 'yari))
+    (use-package rspec-mode
+      :ensure t
+      :config (rspec-mode 1))
 
-      (use-package rinari
-        :ensure t
-        :init
-        (global-rinari-mode))
-
-      (use-package rspec-mode
-        :ensure t
-        :config (rspec-mode 1))
-
-      (use-package bundler
-        :ensure t)
-
-      ;; Stupidly the non-bundled ruby-mode isn't a derived mode of
-      ;; prog-mode: we run the latter's hooks anyway in that case.
-      (add-hook 'ruby-mode-hook
-                (lambda ()
-                  (unless (derived-mode-p 'prog-mode)
-                    (run-hooks 'prog-mode-hook))))))
+    ;; Stupidly the non-bundled ruby-mode isn't a derived mode of
+    ;; prog-mode: we run the latter's hooks anyway in that case.
+    (add-hook 'ruby-mode-hook
+              (lambda ()
+                (unless (derived-mode-p 'prog-mode)
+                  (run-hooks 'prog-mode-hook))))))
 (use-package pp
   :demand t
   :config
