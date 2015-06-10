@@ -87,8 +87,8 @@
     (require 'info)
     (require 'lisp-mode)
     (dolist (map (list emacs-lisp-mode-map
-                  lisp-interaction-mode-map
-                  Info-mode-map))
+                       lisp-interaction-mode-map
+                       Info-mode-map))
       (bind-keys :map map
                  (eir-key . eir-eval-in-ielm)))))
 
