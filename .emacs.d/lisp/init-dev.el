@@ -271,7 +271,8 @@
 
     (use-package rspec-mode
       :ensure t
-      :config (rspec-mode 1))
+      :config
+      (add-hook 'ruby-mode-hook (lambda () (rspec-mode 1))))
 
     ;; Stupidly the non-bundled ruby-mode isn't a derived mode of
     ;; prog-mode: we run the latter's hooks anyway in that case.
