@@ -99,6 +99,10 @@
   :init
   (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot)))
 
+;; TODO: pending https://github.com/milkypostman/melpa/pull/2845
+;; (use-package ob-ipython
+;;   :ensure t)
+
 (use-package org-agenda
   :demand t
   :config

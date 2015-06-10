@@ -37,6 +37,7 @@
 
 ;; TODO
 ;; http://blog.danielgempesaw.com/post/79353633199/installing-mu4e-with-homebrew-with-emacs-from
+;; or https://github.com/edvorg/req-package#el-get
 ;; (use-package mu4e
 ;;   :ensure t
 ;;   :defer t)
