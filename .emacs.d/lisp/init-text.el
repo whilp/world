@@ -8,6 +8,9 @@
 
 (require 'use-package)
 
+(use-package unfill
+  :ensure t)
+
 (use-package corral
   :ensure t
   :bind (("M-9" . corral-parentheses-backward)
