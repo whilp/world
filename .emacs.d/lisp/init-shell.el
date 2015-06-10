@@ -9,6 +9,11 @@
 (require 'init-whilp)
 (require 'use-package)
 
+(defvar whilp-gopath
+  (file-name-as-directory
+   (expand-file-name "~/go"))
+  "GOPATH.")
+
 (use-package shell
   :demand t
   :config (setq explicit-shell-file-name "/bin/bash"))
@@ -19,7 +24,7 @@
         'expand-file-name
         (list
          "~/bin"
-         "~/go/bin"
+         (concat whilp-gopath "bin")
          "/usr/local/go/bin/go"
          "/usr/pkg/sbin"
          "/usr/pkg/bin"
@@ -56,7 +61,7 @@
 (setenv "GIT_AUTHOR_NAME" whilp-full-name)
 (setenv "GIT_AUTHOR_EMAIL" whilp-email)
 
-(setenv "GOPATH" (expand-file-name "~/go"))
+(setenv "GOPATH" whilp-gopath)
 
 (use-package comint
   :demand t
