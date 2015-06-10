@@ -7,7 +7,12 @@
 ;;; Code:
 
 (require 'use-package)
+(require 'init-shell)
 (require 'hydra)
+
+;; go get code.google.com/p/go.tools/cmd/oracle
+(add-to-list 'load-path
+             (concat whilp-gopath "src/code.google.com/p/go.tools/cmd/oracle/"))
 
 (bind-key
  "s-f"
@@ -146,15 +151,13 @@
     (use-package go-eldoc
       :ensure t
       :demand t
-      :init
-      (add-hook 'go-mode-hook 'go-eldoc-setup))
+      :init (add-hook 'go-mode-hook 'go-eldoc-setup))
+    (use-package go-oracle
+      :init (add-hook 'go-mode-hook 'go-oracle-mode))
     (setq gofmt-command "goimports")
     (add-hook 'before-save-hook #'gofmt-before-save)
     (add-hook 'go-mode-hook (lambda ()
                               (local-set-key (kbd "M-.") #'godef-jump)))))
-
-;; TODO
-;; (use-package go-oracle)
 
 (use-package restclient
   :ensure t
