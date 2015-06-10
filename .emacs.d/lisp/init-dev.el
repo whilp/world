@@ -64,9 +64,7 @@
   :ensure t
   :defer t
   :config
-  (progn
-    (add-hook 'python-mode-hook 'anaconda-mode)
-    (add-hook 'python-mode-hook 'eldoc-mode)))
+  (add-hook 'python-mode-hook 'anaconda-mode))
 
 (use-package cider
   :ensure t
@@ -76,10 +74,11 @@
   :demand t
   :diminish eldoc-mode
   :config
-  (progn
-    (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-    (add-hook 'lisp-interaction-mode-hook 'eldoc-mode)
-    (add-hook 'ielm-mode-hook 'eldoc-mode)))
+  (dolist (hook '(emacs-lisp-mode-hook
+                  lisp-interaction-mode-hook
+                  ielm-mode-hook
+                  python-mode-hook))
+    (add-hook (quote hook) 'eldoc-mode)))
 
 (use-package company
   :ensure t
@@ -180,11 +179,6 @@
     (add-hook 'ruby-mode-hook 'rubocop-mode)
     (eval-after-load 'flycheck
       (flycheck-add-next-checker 'chef-foodcritic 'ruby-rubocop))))
-
-(use-package go-eldoc
-  :ensure t
-  :defer t
-  :config (add-hook 'go-mode-hook 'go-eldoc-setup))
 
 (use-package mmm-mode
   :ensure t
