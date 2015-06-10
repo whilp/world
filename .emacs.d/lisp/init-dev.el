@@ -17,6 +17,12 @@
    ("n" next-error "next")
    ("p" previous-error "previous")))
 
+(defvar eir-key "C-<return>"
+  "Eval-in-REPL key.")
+
+(use-package eval-in-repl
+  :ensure t)
+
 (use-package graphviz-dot-mode
   :ensure t)
 
@@ -69,6 +75,17 @@
 (use-package cider
   :ensure t
   :defer t)
+
+(use-package ielm
+  :init
+  (progn
+    (require 'info)
+    (require 'lisp-mode)
+    (dolist (map (list emacs-lisp-mode-map
+                  lisp-interaction-mode-map
+                  Info-mode-map))
+      (bind-keys :map map
+                 (eir-key . eir-eval-in-ielm)))))
 
 (use-package eldoc
   :demand t
@@ -202,13 +219,15 @@
   :config
   (progn
     (setq python-shell-interpreter "ipython"
-          python-shell-interpreter-args "-i"))
-
+          python-shell-interpreter-args "-i")
+    (bind-keys :map python-mode-map
+               (eir-key . eir-eval-in-python))
+    
     (use-package elpy
       :ensure t
       :init
       (elpy-enable)
-      (elpy-use-ipython)))
+      (elpy-use-ipython))))
 
 (use-package ein
   :ensure t)
