@@ -207,7 +207,8 @@
     (defun pl/helm-alive-p ()
       (if (boundp 'helm-alive-p)
           (symbol-value 'helm-alive-p)))
-    (golden-ratio-mode)))
+    ;; (golden-ratio-mode)
+    ))
 
 (use-package simple
   :diminish visual-line-mode
