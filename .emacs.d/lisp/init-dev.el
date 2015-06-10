@@ -311,5 +311,15 @@
              ("p" . mc/mark-previous-like-this)
              ("a" . mc/mark-all-like-this)))
 
+(use-package know-your-http-well
+  :ensure t)
+
+(use-package aggressive-indent
+  :ensure t
+  :init
+  (progn
+    (global-aggressive-indent-mode 1)
+    (add-to-list 'aggressive-indent-excluded-modes 'html-mode)))
+
 (provide 'init-dev)
 ;;; init-dev ends here
