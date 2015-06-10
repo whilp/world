@@ -322,10 +322,11 @@
 
 (use-package aggressive-indent
   :ensure t
+  :diminish aggressive-indent-mode
   :init
   (progn
-    (global-aggressive-indent-mode 1)
-    (add-to-list 'aggressive-indent-excluded-modes 'html-mode)))
+    ;; (add-to-list 'aggressive-indent-excluded-modes ...) as needed.
+    (global-aggressive-indent-mode 1)))
 
 (provide 'init-dev)
 ;;; init-dev ends here

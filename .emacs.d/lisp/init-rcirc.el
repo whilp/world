@@ -9,6 +9,8 @@
 (require 'rcirc)
 (require 'auth-source)
 (require 'use-package)
+(eval-when-compile
+  (require 'aggressive-indent))
 
 (rcirc-track-minor-mode 1)
 
@@ -60,6 +62,8 @@
         "PART"
         "QUIT"
         ))
+
+(add-to-list 'aggressive-indent-excluded-modes 'rcirc-mode)
 
 (defun my-rcirc-mode-setup ()
   "Set things up for channel and query buffers spawned by rcirc."
