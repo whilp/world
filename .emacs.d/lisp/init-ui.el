@@ -12,8 +12,7 @@
   (require 'browse-url)
   (require 'ediff))
 
-;; TODO
-;; (bind-key "C-x C-c" nil)
+(bind-keys ("C-x C-c" . nil))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
