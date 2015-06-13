@@ -10,6 +10,7 @@
   (require 'color-theme)
   (require 'use-package)
   (require 'browse-url)
+  (require 'frame)
   (require 'ediff))
 
 (bind-keys ("C-x C-c" . nil))
@@ -146,7 +147,6 @@
   :bind (("s-`" . whilp-toggle-solarized))
   :config
   (progn
-    (require 'frame)
     (load-theme 'solarized t)
     (enable-theme 'solarized)
 
