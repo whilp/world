@@ -91,6 +91,7 @@
   :init
   (progn
     (setq org-confirm-babel-evaluate nil)
+    (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
     (org-babel-do-load-languages
      'org-babel-load-languages
      '((dot . t)
