@@ -89,10 +89,12 @@
 (use-package org-babel
   :demand t
   :init
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((dot . t)
-     (emacs-lisp . t))))
+  (progn
+    (setq org-confirm-babel-evaluate nil)
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((dot . t)
+       (emacs-lisp . t)))))
 
 (use-package org-src
   :demand t
