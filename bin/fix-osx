@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# http://www.dgkapps.com/blog/osx-tips/osx-tips-turn-off-disable-calendaragent-from-the-command-line/
+launchctl unload -w /System/Library/LaunchAgents/com.apple.CalendarAgent.plist
