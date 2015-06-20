@@ -97,6 +97,14 @@
      '((dot . t)
        (emacs-lisp . t)))))
 
+(use-package ox
+  :config
+  (progn
+    (setq org-export-with-toc nil)
+    (use-package ox-html
+      :config
+      (setq org-html-doctype "html5"))))
+
 (use-package org-src
   :demand t
   :init
