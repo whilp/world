@@ -12,7 +12,8 @@
 (require 'hydra)
 
 (eval-when-compile
-  (require 'git-gutter-fringe+)
+  ;; TODO: disabled because magit update
+  ;; (require 'git-gutter-fringe+)
   (require 'magit))
 
 (bind-key
@@ -21,22 +22,25 @@
    ("g" magit-status :exit t)
    ("c" magit-commit :exit t)
    ("u" magit-push)
-   ("n" git-gutter+-next-hunk nil)
-   ("p" git-gutter+-previous-hunk nil)
-   ("=" git-gutter+-show-hunk nil)
-   ("r" git-gutter+-revert-hunks "revert")
-   ("s" git-gutter+-stage-hunks "stage")
-   ("C" git-gutter+-stage-and-commit "commit" :exit t)
-   ("G" git-gutter+-stage-and-commit-whole-buffer "commit buffer" :exit t)
-   ("U" git-gutter+-unstage-whole-buffer "unstage buffer")))
+   ;; TODO: disabled because magit update.
+   ;; ("n" git-gutter+-next-hunk nil)
+   ;; ("p" git-gutter+-previous-hunk nil)
+   ;; ("=" git-gutter+-show-hunk nil)
+   ;; ("r" git-gutter+-revert-hunks "revert")
+   ;; ("s" git-gutter+-stage-hunks "stage")
+   ;; ("C" git-gutter+-stage-and-commit "commit" :exit t)
+   ;; ("G" git-gutter+-stage-and-commit-whole-buffer "commit buffer" :exit t)
+   ;; ("U" git-gutter+-unstage-whole-buffer "unstage buffer")
+   ))
 
-(use-package git-gutter-fringe+
-  :ensure t
-  :config
-  (progn
-    (global-git-gutter+-mode t)
-    (git-gutter-fr+-minimal)
-    (setq git-gutter+-lighter "")))
+;; TODO: disabled because magit update
+;; (use-package git-gutter-fringe+
+;;   :ensure t
+;;   :config
+;;   (progn
+;;     (global-git-gutter+-mode t)
+;;     (git-gutter-fr+-minimal)
+;;     (setq git-gutter+-lighter "")))
 
 (use-package gh
   :ensure t
@@ -84,7 +88,6 @@
 
 (use-package magit
   :ensure t
-  :diminish magit-auto-revert-mode
   :config
   (progn
     (autoload 'magit-status' "magit" nil t)
