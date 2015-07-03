@@ -59,6 +59,7 @@
                    (window-height . 0.4)))
     
     (setq helm-split-window-in-side-p t
+          helm-echo-input-in-header-line t
           helm-autoresize-max-height 30
           helm-autoresize-min-height 10
           helm-display-header-line nil
