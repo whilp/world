@@ -92,12 +92,9 @@
   (progn
     (autoload 'magit-status' "magit" nil t)
     (setq magit-git-executable "gh"
-          magit-save-some-buffers nil
+          magit-save-repository-buffers nil
           magit-status-buffer-switch-function 'switch-to-buffer
-          magit-set-upstream-on-push 'dontask
-          magit-completing-read-function 'magit-builtin-completing-read
-          magit-last-seen-setup-instructions "1.4.0"
-          magit-use-overlays nil)))
+          magit-completing-read-function 'magit-builtin-completing-read)))
 
 (provide 'init-git)
 ;;; init-git ends here
