@@ -8,6 +8,11 @@
 
 (require 'use-package)
 
+(prefer-coding-system 'utf-8)
+
+(use-package visual-fill-column
+  :ensure t)
+
 (use-package unfill
   :ensure t)
 
