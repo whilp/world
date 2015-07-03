@@ -14,6 +14,7 @@
 (eval-when-compile
   ;; TODO: disabled because magit update
   ;; (require 'git-gutter-fringe+)
+  (require 'cl)
   (require 'magit))
 
 (bind-key
