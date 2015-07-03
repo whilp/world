@@ -1,4 +1,5 @@
 (require 'mu4e)
+(require 'org-mu4e)
 ;; (require 'org-mu4e)
 
 (defun my-mu4e-new ()
@@ -135,6 +136,14 @@
   "Turn off auto-fill-mode."
   (auto-fill-mode -1))
 (add-hook 'mu4e-compose-mode-hook #'no-auto-fill)
+(defun whilp-flow ()
+  "Do the right things to make a message flow right."
+  ;; (auto-fill-mode t)
+  (setq fill-column 72)
+  (auto-fill-mode -1)
+  (visual-line-mode 1)
+  (visual-fill-column-mode 1))
+(remove-hook 'mu4e-compose-mode-hook #'whilp-flow)
 (setq mu4e-view-actions
       '(("capture message" . mu4e-action-capture-message)
         ("pdf" . mu4e-action-view-as-pdf)
@@ -148,4 +157,3 @@
     (comint-send-string (get-buffer-process buf) "sync-mail\n")))
 
 (mu4e~request-contacts)
-
