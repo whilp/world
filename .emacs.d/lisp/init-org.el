@@ -110,7 +110,12 @@
 (use-package org-src
   :demand t
   :init
-  (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot)))
+  (progn
+    (setq org-src-fontify-natively t)
+    (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))))
+
+(use-package org-mime
+  :demand t)
 
 (use-package ob-ipython
   :ensure t)
