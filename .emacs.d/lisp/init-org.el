@@ -19,6 +19,8 @@
   :mode ("\\.\\(txt\\|org\\)$" . org-mode)
   :config
   (progn
+    (bind-keys :map whilp-org-map
+               ("l" . org-store-link))
     (bind-keys :map org-mode-map
                ("C-M-e" . org-forward-heading-same-level)
                ("C-M-a" . org-backward-heading-same-level)
