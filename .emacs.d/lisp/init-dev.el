@@ -25,6 +25,12 @@
 (defvar eir-key "C-<return>"
   "Eval-in-REPL key.")
 
+(use-package ess
+  :ensure t)
+
+(use-package htmlize
+  :ensure t)
+
 (use-package eval-in-repl
   :ensure t)
 
@@ -43,7 +49,8 @@
   :init
   (setq sp-base-key-bindings 'paredit
         sp-autoskip-closing-pair 'always
-        sp-ignore-modes-list '(minibuffer-inactive-mode))
+        sp-ignore-modes-list '(minibuffer-inactive-mode
+                               shell-mode))
   :config
   (progn
     (bind-keys :map smartparens-mode-map
