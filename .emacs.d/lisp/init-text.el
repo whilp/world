@@ -46,16 +46,17 @@
   :diminish yas-minor-mode
   :config
   (progn
+    (yas-global-mode)
     (use-package auto-yasnippet
       :ensure t
       :bind ("C-o" . aya-open-line)
       :init
-      (bind-keys :prefix-map aya-map
-                 :prefix "s-a"
-                 ("c" . aya-create)
-                 ("e" . aya-expand)
-                 ("o" . aya-open-line)))
-    (yas-global-mode)))
+      (bind-key
+       "C-c a"
+       (defhydra hydra-aya () "aya"
+         ("c" . aya-create)
+         ("e" . aya-expand)
+         ("o" . aya-open-line))))))
 
 (use-package epa-file
   :config

@@ -14,14 +14,6 @@
 (add-to-list 'load-path
              (concat whilp-gopath "src/code.google.com/p/go.tools/cmd/oracle/"))
 
-(bind-key
- "s-f"
- (defhydra hydra-flycheck () "flycheck"
-   ("a" first-error "first")
-   ("c" flycheck-compile "compile")
-   ("n" next-error "next")
-   ("p" previous-error "previous")))
-
 (defvar eir-key "C-<return>"
   "Eval-in-REPL key.")
 
@@ -182,6 +174,13 @@
   :ensure t
   :config
   (progn
+    (bind-key
+     "C-c f"
+     (defhydra hydra-flycheck () "flycheck"
+       ("a" first-error "first")
+       ("c" flycheck-compile "compile")
+       ("n" next-error "next")
+       ("p" previous-error "previous")))
     ;; Move flycheck to a junk binding to avoid shadowing org's C-c !.
     (define-key flycheck-mode-map flycheck-keymap-prefix nil)
     (setq flycheck-keymap-prefix (kbd "s-0"))
@@ -317,12 +316,13 @@
   :ensure t
   :demand t
   :init
-  (bind-keys :prefix-map whilp-multiple-cursors-map
-             :prefix "s-c"
-             ("e" . mc/edit-lines)
-             ("n" . mc/mark-next-like-this)
-             ("p" . mc/mark-previous-like-this)
-             ("a" . mc/mark-all-like-this)))
+  (bind-key
+   "C-c c"
+   (defhydra hydra-multiple-cursors () "multiple-curors"
+     ("e" mc/edit-lines "edit")
+     ("n" mc/mark-next-like-this "next")
+     ("p" mc/mark-previous-like-this "previous")
+     ("a" mc/mark-all-like-this "all"))))
 
 (use-package know-your-http-well
   :ensure t)

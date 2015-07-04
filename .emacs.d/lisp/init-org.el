@@ -7,9 +7,7 @@
 ;;; Code:
 
 (require 'use-package)
-
-(bind-keys :prefix-map whilp-org-map
-           :prefix "s-o")
+(require 'hydra)
 
 (use-package-ensure-elpa 'org-plus-contrib)
 
@@ -19,8 +17,15 @@
   :mode ("\\.\\(txt\\|org\\)$" . org-mode)
   :config
   (progn
-    (bind-keys :map whilp-org-map
-               ("l" . org-store-link))
+    (bind-key
+     "C-c o"
+     (defhydra hyrda-org-mode () "org-mode"
+       ("l" org-store-link "store link")
+       ("L" org-insert-link "insert link")
+       ("a" org-agenda "agenda")
+       ("c" org-capture "capture")
+       ("t" org-capture-todo "todo")
+       ("j" org-capture-journal "journal")))
     (bind-keys :map org-mode-map
                ("C-M-e" . org-forward-heading-same-level)
                ("C-M-a" . org-backward-heading-same-level)
@@ -75,10 +80,6 @@
       "Capture a journal entry."
       (interactive)
       (whilp-capture nil "j"))
-    (bind-keys :map whilp-org-map
-               ("c" . org-capture)
-               ("t" . org-capture-todo)
-               ("j" . org-capture-journal))
     (setq org-capture-templates
           '(("j" "Journal" entry (file+datetree "~/src/github.banksimple.com/whilp/notes/log.org")
              "* %^{Title} %^g\n- filed %U\n%?")))))
@@ -124,8 +125,6 @@
   :demand t
   :config
   (progn
-    (bind-keys :map whilp-org-map
-               ("a" . org-agenda))
     (setq org-agenda-dim-blocked-tasks nil
           org-agenda-file-regexp "\\`[^.].*\\.\\(txt\\|org\\)\\'"
           org-agenda-files '( "~/src/github.banksimple.com/whilp/notes/log.org")

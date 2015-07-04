@@ -13,13 +13,6 @@
 (require 'projectile nil t)
 (require 'helm nil t)
 
-(bind-key
- "s-h"
- (defhydra hydra-helm () "helm"
-   ("e" helm-flycheck "errors")
-   ("g" helm-git-grep "git-grep")
-   ("u" helm-unicode "unicode")))
-
 (use-package helm
   :ensure t
   :demand t
@@ -31,6 +24,13 @@
          ("C-x C-b" . helm-mini))
   :config
   (progn
+    (bind-key
+     "C-c h"
+     (defhydra hydra-helm () "helm"
+       ("e" helm-flycheck "errors")
+       ("g" helm-git-grep "git-grep")
+       ("r" helm-resume "resume")
+       ("u" helm-unicode "unicode")))
     (use-package helm-unicode
       :ensure t)
 
@@ -100,7 +100,7 @@
   :demand t
   :config
   (progn
-    (setq projectile-keymap-prefix (kbd "s-p")
+    (setq projectile-keymap-prefix (kbd "C-c p")
           projectile-switch-project-action 'helm-projectile
           projectile-globally-ignored-directories
           (quote

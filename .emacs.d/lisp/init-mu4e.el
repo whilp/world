@@ -7,7 +7,7 @@
   (let ((query (mu4e-get-bookmark-query (string-to-char "n"))))
     (mu4e-headers-search-bookmark query)))
 
-(define-key global-map (kbd "s-m") mu4e-main-mode-map)
+(define-key global-map (kbd "C-c m") mu4e-main-mode-map)
 (bind-keys :map mu4e-main-mode-map
            ("u" . mu4e-update-mail-and-index))
 
