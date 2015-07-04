@@ -30,7 +30,30 @@
        ("e" helm-flycheck "errors")
        ("g" helm-git-grep "git-grep")
        ("r" helm-resume "resume")
+       ("x" whilp-run-external-command "run" :exit 1)
        ("u" helm-unicode "unicode")))
+
+    (use-package helm-external
+      :init
+      (progn
+        (defun whilp-run-external-command (arg)
+          (interactive "P")
+          (when arg
+            (setq helm-external-commands-list '()))
+          (let ((program (helm-comp-read
+                          "Run: "
+                          (helm-external-commands-list-1 'sort)
+                          :must-match nil
+                          :del-input nil
+                          :name "External Commands"
+                          :history helm-external-command-history)))
+            (helm-run-or-raise program)
+            (setq helm-external-command-history
+                  (cons program
+                        (delete program
+                                (cl-loop for i in helm-external-command-history
+                                         when (executable-find i) collect i))))))))
+
     (use-package helm-unicode
       :ensure t)
 
