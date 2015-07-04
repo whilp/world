@@ -94,6 +94,45 @@
     (autoload 'magit-status' "magit" nil t)
     (magit-wip-after-save-mode 1)
     (magit-wip-after-apply-mode 1)
+
+    (magit-define-popup-action
+      'magit-dispatch-popup ?h "Github" 'whilp-github-popup)
+    (magit-define-popup whilp-github-popup
+      "Popup console for Github interaction."
+      :actions  '((?p "Pull request" whilp-pull-request)
+                  (?f "Fork" whilp-fork))
+      :default-action 'whilp-pull-request)
+
+    (defun whilp-pull-request ()
+      "Open a Github pull request.
+
+Run `hub pull-request' asynchronously; see
+`whilp-pull-request-sentinel' for the interesting bits."
+      (interactive)
+      (set-process-sentinel
+       (magit-run-git-with-editor "pull-request")
+       'whilp-pull-request-sentinel))
+    (defun whilp-pull-request-sentinel (process event)
+      "Handle EVENT in PROCESS.
+
+After `hub pull-request' exits, check the output logged in the magit
+process log for a pattern that looks like a pull request URL and add
+it to the kill ring."
+      (magit-process-sentinel process event)
+      (when (eq (process-status process) 'exit)
+        (with-current-buffer (process-buffer process)
+          (let* ((section (process-get process 'section))
+                 (beg (marker-position (magit-section-content section)))
+                 (end (marker-position (magit-section-end section)))
+                 (content (buffer-substring beg end))
+                 (match (string-match "http.*/pull/.*" content))
+                 (url (match-string 0 content)))
+            (kill-new url)))))
+    (defun whilp-fork ()
+      "Fork a Github repository."
+      (interactive)
+      (magit-run-git-async "fork"))
+
     (setq magit-git-executable (expand-file-name "~/bin/hub")
           magit-save-repository-buffers 'dontask
           magit-status-buffer-switch-function 'switch-to-buffer
