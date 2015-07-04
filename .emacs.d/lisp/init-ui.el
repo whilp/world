@@ -13,7 +13,8 @@
   (require 'frame)
   (require 'ediff))
 
-(bind-keys ("C-x C-c" . nil))
+(bind-keys ("C-x C-c" . nil)
+           ("s-p" . nil))
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
