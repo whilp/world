@@ -17,23 +17,6 @@
   (require 'cl)
   (require 'magit))
 
-(bind-key
- "s-g"
- (defhydra hydra-git () "git"
-   ("g" magit-status :exit t)
-   ("c" magit-commit :exit t)
-   ("u" magit-push)
-   ;; TODO: disabled because magit update.
-   ;; ("n" git-gutter+-next-hunk nil)
-   ;; ("p" git-gutter+-previous-hunk nil)
-   ;; ("=" git-gutter+-show-hunk nil)
-   ;; ("r" git-gutter+-revert-hunks "revert")
-   ;; ("s" git-gutter+-stage-hunks "stage")
-   ;; ("C" git-gutter+-stage-and-commit "commit" :exit t)
-   ;; ("G" git-gutter+-stage-and-commit-whole-buffer "commit buffer" :exit t)
-   ;; ("U" git-gutter+-unstage-whole-buffer "unstage buffer")
-   ))
-
 ;; TODO: disabled because magit update
 ;; (use-package git-gutter-fringe+
 ;;   :ensure t
@@ -89,6 +72,7 @@
 
 (use-package magit
   :ensure t
+  :bind (("C-c C-g" . magit-dispatch-popup))
   :config
   (progn
     (autoload 'magit-status' "magit" nil t)
