@@ -25,7 +25,6 @@
         (list
          "~/bin"
          (concat whilp-gopath "bin")
-         "/usr/local/go/bin/go"
          "/usr/pkg/sbin"
          "/usr/pkg/bin"
          "/usr/local/sbin"
