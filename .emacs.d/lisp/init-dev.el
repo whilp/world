@@ -17,6 +17,12 @@
 (defvar eir-key "C-<return>"
   "Eval-in-REPL key.")
 
+(use-package eshell
+  :init
+  (add-hook 'eshell-mode-hook
+            #'(lambda ()
+                (define-key eshell-mode-map [remap pcomplete] 'helm-esh-pcomplete))))
+
 (use-package ess
   :ensure t)
 
