@@ -76,9 +76,7 @@
   :config
   (progn
     (autoload 'magit-status' "magit" nil t)
-    (magit-wip-after-save-mode 1)
-    (magit-wip-after-apply-mode 1)
-
+    
     (magit-define-popup-action
       'magit-dispatch-popup ?h "Github" 'whilp-github-popup)
     (magit-define-popup whilp-github-popup
@@ -124,8 +122,7 @@ it to the kill ring."
           ;; helm--completing-read-default
           magit-revert-buffers 1
           magit-delete-by-moving-to-trash nil
-          magit-diff-paint-whitespace nil
-          magit-no-confirm '(safe-with-wip))))
+          magit-diff-paint-whitespace nil)))
 
 (provide 'init-git)
 ;;; init-git ends here
