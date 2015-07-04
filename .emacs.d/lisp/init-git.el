@@ -125,7 +125,7 @@ it to the kill ring."
           magit-revert-buffers 1
           magit-delete-by-moving-to-trash nil
           magit-diff-paint-whitespace nil
-          magit-no-confirm '(safe-with-wip)))
+          magit-no-confirm '(safe-with-wip))))
 
 (provide 'init-git)
 ;;; init-git ends here
