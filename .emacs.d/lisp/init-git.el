@@ -92,10 +92,17 @@
   :config
   (progn
     (autoload 'magit-status' "magit" nil t)
-    (setq magit-git-executable "gh"
-          magit-save-repository-buffers nil
+    (magit-wip-after-save-mode 1)
+    (magit-wip-after-apply-mode 1)
+    (setq magit-git-executable (expand-file-name "~/bin/hub")
+          magit-save-repository-buffers 'dontask
           magit-status-buffer-switch-function 'switch-to-buffer
-          magit-completing-read-function 'magit-builtin-completing-read)))
+          magit-completing-read-function 'magit-builtin-completing-read
+          ;; helm--completing-read-default
+          magit-revert-buffers 1
+          magit-delete-by-moving-to-trash nil
+          magit-diff-paint-whitespace nil
+          magit-no-confirm '(safe-with-wip)))
 
 (provide 'init-git)
 ;;; init-git ends here
