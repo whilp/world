@@ -154,11 +154,6 @@
           org-agenda-window-setup 'current-window)))
 
 (use-package org-clock
-  :init
-  (bind-keys :map whilp-org-map
-             ("o" . org-clock-out)
-             ("x" . org-clock-in-last)
-             ("i" . org-clock-in))
   :config
   (setq org-clock-history-length 50
         org-clock-mode-line-total 'today))
