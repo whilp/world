@@ -228,7 +228,9 @@
       :ensure t
       :init
       (elpy-enable)
-      (elpy-use-ipython))))
+      (elpy-use-ipython))
+    (use-package pyenv-mode
+      :ensure t)))
 
 (use-package ein
   :ensure t)
