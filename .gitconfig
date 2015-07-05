@@ -66,7 +66,7 @@
 [init]
 	templatedir = ~/.gitconf/init
 [remote "origin"]
-	fetch = +refs/pull/*/head:refs/remotes/origin/pr/*
+fetch = +refs/pull/*/head:refs/pull/origin/*
 [hub]
 	host = github.banksimple.com
 [merge]
