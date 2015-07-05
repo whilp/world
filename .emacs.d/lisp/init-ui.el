@@ -11,6 +11,7 @@
   (require 'use-package)
   (require 'browse-url)
   (require 'frame)
+  (require 'midnight)
   (require 'ediff))
 
 (bind-keys ("C-x C-c" . nil)
@@ -248,7 +249,10 @@
 
 (use-package midnight
   :demand t
-  :config (add-to-list 'clean-buffer-list-kill-never-regexps "^#.*"))
+  :config
+  (progn
+    (setq clean-buffer-list-delay 1)
+    (add-to-list 'clean-buffer-list-kill-never-regexps "^#.*")))
 
 (use-package uniquify
   :demand t
