@@ -92,6 +92,7 @@
   :config
   (progn
     (autoload 'magit-status' "magit" nil t)
+    (add-hook 'git-commit-mode-hook 'turn-off-auto-fill)
     
     (magit-define-popup-action
       'magit-dispatch-popup ?h "Github" 'whilp-github-popup)
