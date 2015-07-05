@@ -1,0 +1,3 @@
+#!/bin/sh
+
+exec /Applications/Utilities/Activity\ Monitor.app/Contents/MacOS/Activity\ Monitor
