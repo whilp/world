@@ -3,6 +3,8 @@
 ;;; Commentary:
 
 ;;; My dev env
+;;; TODO:
+;;; - Add M-, / M-. for each runtime
 
 ;;; Code:
 
@@ -16,10 +18,9 @@
   "Eval-in-REPL key.")
 
 (use-package eshell
-  :init
-  (add-hook 'eshell-mode-hook
-            #'(lambda ()
-                (define-key eshell-mode-map [remap pcomplete] 'helm-esh-pcomplete))))
+  :config
+  (bind-keys :map eshell-mode-map
+             ("C-:" . helm-esh-pcomplete)))
 
 (use-package ess
   :ensure t)
@@ -226,9 +227,13 @@
     
     (use-package elpy
       :ensure t
-      :init
-      (elpy-enable)
-      (elpy-use-ipython))
+      :config
+      (progn
+        ;; Remove elpy company configuration; I like my own.
+        (setq elpy-modules
+              (remove 'elpy-module-company elpy-modules))
+        (elpy-enable)
+        (elpy-use-ipython)))
     (use-package pyenv-mode
       :ensure t)))
 
