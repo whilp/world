@@ -11,8 +11,6 @@
 (require 'hydra)
 
 ;; go get code.google.com/p/go.tools/cmd/oracle
-(add-to-list 'load-path
-             (concat whilp-gopath "src/code.google.com/p/go.tools/cmd/oracle/"))
 
 (defvar eir-key "C-<return>"
   "Eval-in-REPL key.")
@@ -150,20 +148,22 @@
   (add-hook 'js2-mode-hook (lambda () (setq js2-basic-offset 2))))
             
 (use-package go-mode
+  :mode "\\.go"
   :ensure t
-  :defer t
   :config
   (progn
+    (add-to-list 'load-path
+                 (concat whilp-gopath "src/code.google.com/p/go.tools/cmd/oracle/"))
+    (use-package go-oracle
+      :init (load "oracle")
+      :config (add-hook 'go-mode-hook 'go-oracle-mode))
     (use-package go-eldoc
       :ensure t
-      :demand t
-      :init (add-hook 'go-mode-hook 'go-eldoc-setup))
-    (use-package go-oracle
-      :init (add-hook 'go-mode-hook 'go-oracle-mode))
+      :config (add-hook 'go-mode-hook 'go-eldoc-setup))
     (setq gofmt-command "goimports")
     (add-hook 'before-save-hook #'gofmt-before-save)
-    (add-hook 'go-mode-hook (lambda ()
-                              (local-set-key (kbd "M-.") #'godef-jump)))))
+    (bind-keys :map go-mode-map
+               ("M-." . godef-jump))))
 
 (use-package restclient
   :ensure t
