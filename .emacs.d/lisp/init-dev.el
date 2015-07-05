@@ -104,8 +104,9 @@
   (dolist (hook '(emacs-lisp-mode-hook
                   lisp-interaction-mode-hook
                   ielm-mode-hook
-                  python-mode-hook))
-    (add-hook (quote hook) 'eldoc-mode)))
+                  python-mode-hook
+                  ))
+    (add-hook hook 'eldoc-mode)))
 
 (use-package company
   :ensure t
