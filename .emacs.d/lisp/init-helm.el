@@ -116,7 +116,8 @@
         helm-ff-file-name-history-use-recentf t))
 
 (use-package helm-company
-  :ensure t)
+  :ensure t
+  :bind ("C-:" . helm-company))
 
 (use-package projectile
   :ensure t

@@ -121,14 +121,8 @@
         :ensure t
         :demand t
         :init (add-to-list 'company-backends package)))
-
-    ;; Use Helm to complete suggestions
-    (bind-keys :map company-active-map
-               ("\C-d" . company-show-doc-buffer)
-               ("C-:" . helm-company))
-    (bind-keys :map company-mode-map
-               ("C-:" . helm-company))
-    (setq company-echo-delay 0
+    (setq company-auto-complete t
+          company-echo-delay 5
           company-tooltip-minimum-width 30
           company-idle-delay nil)))
 
