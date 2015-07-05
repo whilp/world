@@ -83,6 +83,9 @@
   :ensure t
   :defer t)
 
+(use-package orgit
+  :ensure t)
+
 (use-package magit
   :ensure t
   :bind (("C-c g" . magit-dispatch-popup))
