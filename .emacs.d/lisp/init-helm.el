@@ -124,35 +124,32 @@
   :demand t
   :config
   (progn
-    (setq projectile-keymap-prefix (kbd "C-c p")
-          projectile-switch-project-action 'helm-projectile
-          projectile-globally-ignored-directories
-          (quote
-           (
-            ".idea"
-            ".eunit"
-            ".git"
-            ".hg"
-            ".fslckout"
-            ".bzr"
-            "_darcs"
-            ".tox"
-            ".svn"
-            "build"
-            "_workspace"))
-          projectile-mode-line
-          (quote
-           (:eval (format " [%s]" (projectile-project-name)))))
-    (define-key projectile-mode-map projectile-keymap-prefix 'projectile-command-map)
-    (projectile-global-mode)
-
     (defun projectile-run-shell (&optional buffer)
       "Start a shell in the project's root."
       (interactive "P")
       (projectile-with-default-dir (projectile-project-root)
         (shell (format "*shell %s*" (projectile-project-name)))))
     (bind-keys :map projectile-command-map
-             ("!" . projectile-run-shell))))
+               ("!" . projectile-run-shell))
+    (setq projectile-keymap-prefix (kbd "C-c p")
+          projectile-switch-project-action 'helm-projectile
+          projectile-globally-ignored-directories
+          (quote (".idea"
+                  ".eunit"
+                  ".git"
+                  ".hg"
+                  ".fslckout"
+                  ".bzr"
+                  "_darcs"
+                  ".tox"
+                  ".svn"
+                  "build"
+                  "_workspace"))
+          projectile-mode-line
+          (quote
+           (:eval (format " [%s]" (projectile-project-name)))))
+    (define-key projectile-mode-map projectile-keymap-prefix 'projectile-command-map)
+    (projectile-global-mode)))
 
 (use-package helm-projectile
   :ensure t
