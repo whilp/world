@@ -124,6 +124,13 @@
   :demand t
   :config
   (progn
+    (defun projectile-ignore-project (name)
+      "Return nil if project NAME should be ignored."
+      (string-match
+       (rx
+        (or "/homebrew/"
+            "/.emacs.d/"))
+       name))
     (defun projectile-run-shell (&optional buffer)
       "Start a shell in the project's root."
       (interactive "P")
@@ -133,6 +140,7 @@
                ("!" . projectile-run-shell))
     (setq projectile-keymap-prefix (kbd "C-c p")
           projectile-switch-project-action 'helm-projectile
+          projectile-ignored-project-function 'projectile-ignore-project
           projectile-globally-ignored-directories
           (quote (".idea"
                   ".eunit"
