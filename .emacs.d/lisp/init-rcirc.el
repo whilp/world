@@ -47,7 +47,8 @@
         "github.banksimple.com/it"
         "github.banksimple.com/ops"))
 
-(setq rcirc-omit-responses
+(setq rcirc-omit-threshold 0
+      rcirc-omit-responses
       '(
         "324"
         "329"
