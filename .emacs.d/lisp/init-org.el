@@ -20,12 +20,12 @@
     (bind-key
      "C-c o"
      (defhydra hyrda-org-mode () "org-mode"
-       ("l" org-store-link "store link")
-       ("L" org-insert-link "insert link")
-       ("a" org-agenda "agenda")
-       ("c" org-capture "capture")
-       ("t" org-capture-todo "todo")
-       ("j" org-capture-journal "journal")))
+       ("l" org-store-link "store link" :exit t)
+       ("L" org-insert-link "insert link" :exit t)
+       ("a" org-agenda "agenda" :exit t)
+       ("c" org-capture "capture" :exit t)
+       ("t" org-capture-todo "todo" :exit t)
+       ("j" org-capture-journal "journal" :exit t)))
     (bind-keys :map org-mode-map
                ("C-M-e" . org-forward-heading-same-level)
                ("C-M-a" . org-backward-heading-same-level)
@@ -54,10 +54,11 @@
           org-lowest-priority ?E
           org-default-priority ?A
           org-bookmark-names-plist '()
+          org-use-fast-todo-selection nil
           org-default-notes-file "~/src/github.banksimple.com/whilp/notes/log.org"
           org-extend-today-until 6
-          org-todo-keywords '((sequence "TODO" "DONE"))
-          org-log-done 'time
+          org-todo-keywords '((sequence "TODO" "|" "DONE" "PUNTED"))
+          org-log-done 'note
           org-log-reschedule 'time
           org-log-redeadline 'time
           org-log-into-drawer "LOGBOOK")))
