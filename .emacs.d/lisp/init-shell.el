@@ -29,6 +29,7 @@
          "/usr/pkg/bin"
          "/usr/local/sbin"
          "/usr/local/bin"
+         "/usr/local/texlive/2015basic/bin/x86_64-darwin/"
          "/usr/local/MacGPG2/bin"))
        exec-path))
 (setenv "PATH"
