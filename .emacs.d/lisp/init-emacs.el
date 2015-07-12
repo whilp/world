@@ -33,10 +33,13 @@
 
 (use-package ns-win
   :demand t
+  :bind ("M-`" . toggle-frame-fullscreen)
   :config
   (setq mac-command-modifier 'meta
         mac-option-modifier 'super
         ns-function-modifier 'hyper
+        ns-auto-hide-menu-bar t
+        ns-use-native-fullscreen nil
         ;; TODO: these aren't defined in ns-win -- are they actually used anywhere?
         ;; mac-option-key-is-meta nil
         ;; mac-command-key-is-meta t
