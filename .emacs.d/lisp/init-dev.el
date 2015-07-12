@@ -17,6 +17,10 @@
 (defvar eir-key "C-<return>"
   "Eval-in-REPL key.")
 
+(use-package lua-mode
+  :ensure t
+  :mode "\\.lua\\'")
+
 (use-package eshell
   :config
   (bind-keys :map eshell-mode-map
