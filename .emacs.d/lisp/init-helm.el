@@ -166,6 +166,10 @@
   (progn
     (setq projectile-completion-system 'helm)
     (helm-projectile-on)
+    (helm-projectile-define-key helm-projectile-find-file-map
+      (kbd "M-g") 'helm-projectile-vc)
+    (helm-projectile-define-key helm-projectile-find-file-map
+      (kbd "M-b") 'helm-projectile-switch-to-buffer)
     (bind-keys :map projectile-command-map
                ("f" . helm-projectile-find-file-dwim)
                ("g" . helm-git-grep))))
