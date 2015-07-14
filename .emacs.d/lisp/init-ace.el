@@ -40,6 +40,7 @@
             (?x delete-window)
             (?c aw-swap-window " Ace - Swap Window")
             (?n aw-flip-window)
+            (?\s aw-flip-window)
             (?V aw-split-window-vert " Ace - Split Vert Window")
             (?v split-window-vertically)
             (?B aw-split-window-horz " Ace - Split Horz Window")
