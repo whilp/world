@@ -24,7 +24,7 @@
 (setq rcirc-keywords
       '(
         "whilp"
-        "@(channel|group|everyone)"
+        "@\\(channel\\|group\\|everyone\\)"
         "\\bSimpleFinance\\b"
         "\\bbackend[\\?!]"
         "\\bbackend\\b"
@@ -102,6 +102,7 @@
        (my-rcirc-profile "rands-leadership.irc.slack.com" "whilp" 6667)
        (my-rcirc-profile "dist-sys.irc.slack.com" "whilp" 6667)
        (my-rcirc-profile "monitorama.irc.slack.com" "whilp" 6667)
+       (my-rcirc-profile "banksimple.irc.slack.com" "whilp" 6667)
        ))
 
 (use-package rcirc-color
