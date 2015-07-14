@@ -73,7 +73,7 @@
      (mu4e-trash-folder  "/will@simple.com/[Gmail]/Trash")
      (smtpmail-smtp-user "will@simple.com")
      (user-full-name     "Will Maier")
-     (user-mail-address  "will@simple.com"))
+     (user-mail-address  "whilp@simple.com"))
     ("wcmaier@m.aier.us"
      (mu4e-drafts-folder "/wcmaier@m.aier.us/[Gmail]/Drafts")
      (mu4e-sent-folder   "/wcmaier@m.aier.us/[Gmail]/Sent Mail")
