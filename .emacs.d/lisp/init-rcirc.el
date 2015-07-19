@@ -24,7 +24,7 @@
 (setq rcirc-keywords
       '(
         "whilp"
-        "@\\(channel\\|group\\|everyone\\)"
+        "@\\(here\\|channel\\|group\\|everyone\\)"
         "\\bSimpleFinance\\b"
         "\\bbackend[\\?!]"
         "\\bbackend\\b"
