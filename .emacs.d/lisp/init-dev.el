@@ -259,11 +259,14 @@
   (setq ruby-use-encoding-map nil)
   :config
   (progn
-    (dolist (package '(inf-ruby
-                       ruby-hash-syntax
+    (dolist (package '(ruby-hash-syntax
                        ruby-compilation
                        bundler))
       (use-package package :ensure t))
+    (use-package inf-ruby
+      :ensure t
+      :config
+      (setq inf-ruby-default-implementation "pry"))
     (bind-keys :map ruby-mode-map
                ("RET" . reindent-then-newline-and-indent)
                ("TAB" . indent-for-tab-command)
@@ -298,6 +301,7 @@
               (lambda ()
                 (unless (derived-mode-p 'prog-mode)
                   (run-hooks 'prog-mode-hook))))))
+
 (use-package pp
   :demand t
   :config
