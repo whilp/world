@@ -10,6 +10,11 @@
 
 (prefer-coding-system 'utf-8)
 
+;; sudo pkgin install -y poppler poppler-glib poppler-includes zlib pkg-config
+;; (pdf-tools-install)
+(use-package pdf-tools
+  :ensure t)
+
 (use-package visual-fill-column
   :ensure t)
 
