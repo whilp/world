@@ -108,7 +108,7 @@
 (use-package rcirc-color
   :ensure t
   :demand t
-  :init
+  :config
   (setq rcirc-color-is-deterministic t))
 
 (use-package rcirc-controls
