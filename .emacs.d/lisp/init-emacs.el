@@ -9,7 +9,12 @@
 (require 'use-package)
 
 (eval-when-compile
-    (require 'message))
+  (require 'message))
+
+(use-package which-key
+  :ensure t
+  :diminish which-key-mode
+  :config (which-key-mode))
 
 (use-package guru-mode
   :ensure t
