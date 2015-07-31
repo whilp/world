@@ -12,8 +12,6 @@
 (require 'init-shell)
 (require 'hydra)
 
-;; go get code.google.com/p/go.tools/cmd/oracle
-
 (defvar eir-key "C-<return>"
   "Eval-in-REPL key.")
 
@@ -155,11 +153,15 @@
   :ensure t
   :config
   (progn
+    ;; go get code.google.com/p/go.tools/cmd/oracle
     (add-to-list 'load-path
                  (concat whilp-gopath "src/code.google.com/p/go.tools/cmd/oracle/"))
     (use-package go-oracle
       :init (load "oracle")
-      :config (add-hook 'go-mode-hook 'go-oracle-mode))
+      :config
+      (progn
+        (setq go-oracle-command (executable-find "oracle"))
+        (add-hook 'go-mode-hook 'go-oracle-mode)))
     (use-package go-eldoc
       :ensure t
       :config (add-hook 'go-mode-hook 'go-eldoc-setup))
