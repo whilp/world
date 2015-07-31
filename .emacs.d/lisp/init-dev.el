@@ -153,6 +153,8 @@
   :ensure t
   :config
   (progn
+    (bind-keys :map go-mode-map
+               ("C-c C-d" . godoc-at-point))
     ;; go get code.google.com/p/go.tools/cmd/oracle
     (add-to-list 'load-path
                  (concat whilp-gopath "src/code.google.com/p/go.tools/cmd/oracle/"))
