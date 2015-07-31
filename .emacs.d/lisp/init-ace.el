@@ -35,6 +35,7 @@
     (setq aw-keys avy-keys
           aw-dispatch-always t
           aw-ignore-current nil
+          aw-scope 'frame
           aw-dispatch-alist
           '((?X aw-delete-window " Ace - Delete Window")
             (?x delete-window)
