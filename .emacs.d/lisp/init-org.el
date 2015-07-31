@@ -83,7 +83,7 @@
       (whilp-capture nil "j"))
     (setq org-capture-templates
           '(("j" "Journal" entry (file+datetree "~/src/github.banksimple.com/whilp/notes/log.org")
-             "* %^{Title} %^g\n- filed %U\n%?")))))
+             "* %^{Title} %^g\n:PROPERTIES:\n:FILED: %U\n:LINK: %a\n:END:\n%?")))))
 
 (use-package org-context
   :ensure t
