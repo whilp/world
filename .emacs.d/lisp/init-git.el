@@ -82,7 +82,8 @@
 
 (use-package magit
   :ensure t
-  :bind (("C-c g" . magit-dispatch-popup))
+  :bind (("C-c g" . magit-dispatch-popup)
+         ("C-x g" . magit-status))
   :config
   (progn
     (autoload 'magit-status' "magit" nil t)
