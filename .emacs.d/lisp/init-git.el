@@ -31,12 +31,6 @@
   :init
   (progn
     (setq diff-hl-command-prefix (kbd "C-c d"))
-    (bind-key
-     "C-c d"
-     (defhydra hydra-diff-hl () "diff-hl"
-       ("r" diff-hl-revert-hunk "revert")
-       ("n" diff-hl-next-hunk "next")
-       ("p" diff-hl-previous-hunk "previous")))
     (global-diff-hl-mode 1)))
 
 (use-package gh
