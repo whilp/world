@@ -44,6 +44,9 @@
         insert-directory-program (executable-find "gls")
         confirm-nonexistent-file-or-buffer nil))
 
+(use-package frame
+  :bind ("M-`" . other-frame))
+
 ;; startup
 (setq inhibit-startup-echo-area-message t
       inhibit-startup-message t)
