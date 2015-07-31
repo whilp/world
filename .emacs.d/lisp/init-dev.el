@@ -17,6 +17,10 @@
 (defvar eir-key "C-<return>"
   "Eval-in-REPL key.")
 
+(use-package comment-dwim-2
+  :ensure t
+  :bind ("M-;" . comment-dwim-2))
+
 (use-package lua-mode
   :ensure t
   :mode "\\.lua\\'")
