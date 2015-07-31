@@ -33,7 +33,7 @@
 
 (use-package ns-win
   :demand t
-  :bind ("M-`" . toggle-frame-fullscreen)
+  :bind ("M-RET" . toggle-frame-fullscreen)
   :config
   (setq mac-command-modifier 'meta
         mac-option-modifier 'super
