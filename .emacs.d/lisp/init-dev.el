@@ -184,16 +184,8 @@
   :ensure t
   :config
   (progn
-    (bind-key
-     "C-c f"
-     (defhydra hydra-flycheck () "flycheck"
-       ("a" first-error "first")
-       ("c" flycheck-compile "compile")
-       ("n" next-error "next")
-       ("p" previous-error "previous")))
-    ;; Move flycheck to a junk binding to avoid shadowing org's C-c !.
     (define-key flycheck-mode-map flycheck-keymap-prefix nil)
-    (setq flycheck-keymap-prefix (kbd "s-0"))
+    (setq flycheck-keymap-prefix (kbd "C-c f"))
     (define-key flycheck-mode-map flycheck-keymap-prefix flycheck-command-map)
     (setq-default flycheck-emacs-lisp-load-path load-path)
     (global-flycheck-mode)))
