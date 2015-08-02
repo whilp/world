@@ -323,8 +323,9 @@
 (use-package compile
   :demand t
   :config
-  (setq compilation-scroll-output t
+  (setq compilation-scroll-output nil
         compilation-ask-about-save nil
+        compilation-auto-jump-to-first-error nil
         compilation-save-buffers-predicate '(lambda () nil)))
 
 (use-package vc-hooks
