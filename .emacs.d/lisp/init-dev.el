@@ -15,6 +15,15 @@
 (defvar eir-key "C-<return>"
   "Eval-in-REPL key.")
 
+(use-package prog-mode
+  :demand t
+  :config
+  (add-hook 'prog-mode-hook 'turn-on-auto-fill))
+
+(use-package newcomment
+  :config
+  (setq comment-auto-fill-only-comments t))
+
 (use-package comment-dwim-2
   :ensure t
   :bind ("M-;" . comment-dwim-2))
