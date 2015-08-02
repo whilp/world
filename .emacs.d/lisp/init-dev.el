@@ -167,6 +167,8 @@
     ;; go get code.google.com/p/go.tools/cmd/oracle
     (add-to-list 'load-path
                  (concat whilp-gopath "src/code.google.com/p/go.tools/cmd/oracle/"))
+    (setq compilation-error-regexp-alist
+          (cons 'go-test compilation-error-regexp-alist))
     (use-package go-oracle
       :init (load "oracle")
       :config
