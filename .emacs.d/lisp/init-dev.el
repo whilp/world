@@ -330,7 +330,7 @@
         compilation-read-command nil
         compilation-ask-about-save nil
         compilation-auto-jump-to-first-error nil
-        compilation-save-buffers-predicate '(lambda () nil)))
+        compilation-save-buffers-predicate nil))
 
 (use-package vc-hooks
   :demand t
