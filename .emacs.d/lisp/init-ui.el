@@ -32,6 +32,11 @@
  ;; If there is more than one, they won't work right.
  )
 
+(use-package easy-kill
+  :ensure t
+  :config
+  (global-set-key [remap kill-ring-save] 'easy-kill))
+
 (use-package files
   :demand t
   :config
