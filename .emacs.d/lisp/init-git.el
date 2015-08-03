@@ -132,6 +132,7 @@ it to the kill ring."
           magit-status-buffer-switch-function 'switch-to-buffer
           magit-completing-read-function 'magit-builtin-completing-read
           ;; helm--completing-read-default
+          magit-push-always-verify nil
           magit-revert-buffers 1
           magit-delete-by-moving-to-trash nil
           magit-diff-paint-whitespace nil)))
