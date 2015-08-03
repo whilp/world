@@ -17,6 +17,7 @@
 
 (use-package prog-mode
   :demand t
+  :diminish auto-fill-function
   :config
   (add-hook 'prog-mode-hook 'turn-on-auto-fill))
 
