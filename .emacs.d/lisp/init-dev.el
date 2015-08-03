@@ -327,6 +327,7 @@
   :demand t
   :config
   (setq compilation-scroll-output nil
+        compilation-read-command nil
         compilation-ask-about-save nil
         compilation-auto-jump-to-first-error nil
         compilation-save-buffers-predicate '(lambda () nil)))
