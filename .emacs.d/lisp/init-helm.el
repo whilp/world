@@ -137,7 +137,9 @@
       (projectile-with-default-dir (projectile-project-root)
         (shell (format "*shell %s*" (projectile-project-name)))))
     (bind-keys :map projectile-command-map
-               ("!" . projectile-run-shell))
+               ("!" . projectile-run-shell)
+               ("i" . projectile-compile-project)
+               ("o" . projectile-test-project))
     (setq projectile-keymap-prefix (kbd "C-c p")
           projectile-switch-project-action 'helm-projectile
           projectile-ignored-project-function 'projectile-ignore-project
@@ -167,12 +169,19 @@
     (setq projectile-completion-system 'helm)
     (helm-projectile-on)
     (helm-projectile-define-key helm-projectile-find-file-map
-      (kbd "M-g") 'helm-projectile-vc)
-    (helm-projectile-define-key helm-projectile-find-file-map
-      (kbd "M-b") 'helm-projectile-switch-to-buffer)
+      (kbd "M-v") #'helm-projectile-vc
+      (kbd "M-b") #'helm-projectile-switch-to-buffer
+      (kbd "M-g") #'helm-git-grep-2)
+
+    (defun helm-git-grep-2 (&optional arg)
+      "Throw away arg."
+      (helm-git-grep))
+    
+    ;; (helm-projectile-define-key helm-projectile)
     (bind-keys :map projectile-command-map
                ("f" . helm-projectile-find-file-dwim)
-               ("g" . helm-git-grep))))
+               ("g" . helm-git-grep))
+    ))
 
 (use-package helm-swoop
   :ensure t
