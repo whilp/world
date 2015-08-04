@@ -50,7 +50,12 @@
         confirm-nonexistent-file-or-buffer nil))
 
 (use-package frame
-  :bind ("M-`" . other-frame))
+  :bind ("M-`" . other-frame)
+  :config
+  (setq default-frame-alist '((fullscreen . fullscreen)
+                              (left-fringe)
+                              (right-fringe . -1)
+                              (vertical-scroll-bars))))
 
 ;; startup
 (setq inhibit-startup-echo-area-message t
