@@ -209,7 +209,6 @@
                   mode-line-format
                   '(
                     "%e"
-                    display-time-string
                     mode-line-front-space
                     mode-line-mule-info
                     mode-line-client
@@ -263,15 +262,22 @@
 
 (use-package time
   :demand t
+  :bind ("s-SPC" . message-time)
   :config
   (progn
+    (defun message-time ()
+      "Print the current time as a message."
+      (interactive)
+      (message "%s | %s"
+               (format-time-string display-time-format)
+               (battery-format "%L %B %t" (battery-pmset))))
     (setq
      display-time-default-load-average nil
      display-time-format "%a %Y-%m-%d %H:%M")
     ;; display-time-mode appends the time string to global-mode-string
     ;; by default, so we set global-mode-string back to zero after
     ;; calling it.
-    (display-time-mode 1)
+    (display-time-mode -1)
     (setq global-mode-string '(""))))
 
 (use-package abbrev
