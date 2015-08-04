@@ -82,13 +82,14 @@
 
 (use-package magit
   :ensure t
-  :bind (("C-c g" . magit-dispatch-popup)
-         ("C-x g" . magit-status))
+  :bind ("C-c g" . magit-dispatch-popup)
   :config
   (progn
     (autoload 'magit-status' "magit" nil t)
     (add-hook 'git-commit-mode-hook 'turn-off-auto-fill)
-    
+
+    (magit-define-popup-action
+      'magit-dispatch-popup ?. "Status" 'magit-status)
     (magit-define-popup-action
       'magit-dispatch-popup ?H "Github" 'whilp-github-popup)
     (magit-define-popup whilp-github-popup
