@@ -15,6 +15,9 @@
 (defvar eir-key "C-<return>"
   "Eval-in-REPL key.")
 
+(use-package cask
+  :ensure t)
+
 (use-package prog-mode
   :demand t
   :diminish auto-fill-function
