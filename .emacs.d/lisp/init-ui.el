@@ -65,7 +65,7 @@
          (inhibit-same-window . t)
          (side . bottom)
          (slot . 0))
-        (,(rx bos (| "*Help*" "*godoc"))
+        (,(rx bos (| "*Help*" "*godoc" "*Gofmt Errors*"))
          (display-buffer-in-side-window)
          (same-frame . nil)
          (side . right)
