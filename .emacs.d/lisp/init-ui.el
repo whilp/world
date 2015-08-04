@@ -58,8 +58,10 @@
                               (vertical-scroll-bars))))
 
 ;; startup
-(setq inhibit-startup-echo-area-message t
-      inhibit-startup-message t)
+(use-package startup
+  :config
+  (setq inhibit-startup-echo-area-message t
+        inhibit-startup-message t))
 
 (defun whilp-last-buffer ()
   "Flip to last buffer."
