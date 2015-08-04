@@ -124,6 +124,24 @@
   :demand t
   :config
   (progn
+    (defun project-compilation-buffer (prefix)
+      (format "*%s: %s*" prefix (projectile-project-root)))
+    (defun with-compilation-buffer-name-function-for (prefix orig args)
+      (let* ((compilation-buffer-name-function
+              (lambda (name-of-mode)
+                (format "*%s: %s*" prefix (projectile-project-root)))))
+        (apply orig args)))
+
+    (defun with-compile-project (orig &rest args)
+      (with-compilation-buffer-name-function-for "compile-project" orig args))
+    (defun with-test-project (orig &rest args)
+      (with-compilation-buffer-name-function-for "test-project" orig args))
+
+    (advice-add 'projectile-compile-project
+                :around #'with-compile-project)
+    (advice-add 'projectile-test-project
+                :around #'with-test-project)
+
     (defun projectile-ignore-project (name)
       "Return nil if project NAME should be ignored."
       (string-match
