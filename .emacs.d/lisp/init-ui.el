@@ -63,30 +63,34 @@
 
 (defvar window-side-width 0.3
   "Fractional width of the side window.")
-(setq window-sides-vertical t
+(setq window-sides-vertical nil
       display-buffer-alist
-      `((,(rx anything (| "*helm" "*Helm") anything)
-         (display-buffer-in-side-window)
-         (inhibit-same-window . t)
-         (side . bottom)
-         (slot . 0))
-        (,(rx bos (| "*Help*" "*godoc" "*Gofmt Errors*"))
+      `((,(rx bos (| "*Help*" "*godoc" "*Gofmt Errors*"))
          (display-buffer-in-side-window)
          (same-frame . nil)
          (side . right)
          (slot . -1)
          (window-width . window-side-width))
-        (,(rx bos "*test-project: " anything)
+        (,(rx bos "*test-project: ")
          (display-buffer-in-side-window)
          (side . right)
          (slot . 0)
          (window-width . window-side-width))
-        (,(rx bos "*compile-project: " anything)
+        (,(rx bos "*compile-project: ")
          (display-buffer-in-side-window)
          (side . right)
          (slot . 1)
          (window-width . window-side-width))
-        ))
+        (,(rx (| "*helm" "*Helm"))
+         (display-buffer-in-side-window)
+         (inhibit-same-window . t)
+         (side . right)
+         (slot . 1)
+         (window-width . window-side-width))
+        (,(rx anything)
+         (display-buffer-reuse-window
+          display-buffer-in-previous-window
+          display-buffer-same-window))))
 
 (setq inhibit-startup-echo-area-message t
       inhibit-startup-message t)
