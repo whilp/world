@@ -49,13 +49,18 @@
         insert-directory-program (executable-find "gls")
         confirm-nonexistent-file-or-buffer nil))
 
+(use-package fringe
+  :demand t
+  :config (fringe-mode '(4 . 0)))
+
 (use-package frame
   :bind ("M-`" . other-frame)
   :config
   (setq default-frame-alist '((fullscreen . fullscreen)
-                              (left-fringe)
+                              (vertical-scroll-bars)
                               (right-fringe . -1)
-                              (vertical-scroll-bars))))
+                              (left-fringe . 4))))
+
 (defvar window-side-width 0.3
   "Fractional width of the side window.")
 (setq window-sides-vertical t
@@ -136,10 +141,6 @@
     (defun persp-switch-4 () (interactive) (persp-switch "4"))
     (defun persp-switch-5 () (interactive) (persp-switch "5"))
     (persp-mode t)))
-
-(use-package fringe
-  :demand t
-  :config (fringe-mode '(nil . -1)))
 
 (use-package menu-bar
   :demand t
