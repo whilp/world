@@ -105,7 +105,9 @@
            ("s-1" . delete-other-windows)
            ("s-2" . split-window-below)
            ("s-3" . split-window-right)
-           ("s--" . whilp-last-buffer))
+           ("s--" . whilp-last-buffer)
+           ("s-n" . scroll-other-window)
+           ("s-p" . scroll-other-window-down))
 (setq recenter-positions '(top middle bottom)
       scroll-preserve-screen-position 'always)
 
