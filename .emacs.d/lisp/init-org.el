@@ -24,8 +24,7 @@
        ("L" org-insert-link "insert link" :exit t)
        ("a" org-agenda "agenda" :exit t)
        ("c" org-capture "capture" :exit t)
-       ("t" org-capture-todo "todo" :exit t)
-       ("j" org-capture-journal "journal" :exit t)))
+       ("j" whilp-capture-journal "journal" :exit t)))
     (bind-keys :map org-mode-map
                ("C-M-e" . org-forward-heading-same-level)
                ("C-M-a" . org-backward-heading-same-level)
@@ -65,22 +64,17 @@
 
 (use-package org-capture
   :demand t
-  :functions (whilp-capture)
+  :functions (whilp-capture-journal)
   :config
   (progn
-    (defun whilp-capture (&optional GOTO KEYS)
-      "Call org-capture with extend-today-until as 0."
-      (interactive)
-      (let ((org-extend-today-until 0))
-        (org-capture GOTO KEYS)))
-    (defun org-capture-todo ()
-      "Capture a todo."
-      (interactive)
-      (whilp-capture nil "t"))
-    (defun org-capture-journal ()
+    (defun whilp-capture-journal ()
       "Capture a journal entry."
       (interactive)
-      (whilp-capture nil "j"))
+      (cl-letf ((org-extend-today-until 0)
+                (completing-read-function #'completing-read-default)
+                ((symbol-function 'delete-other-windows) #'ignore)
+                ((symbol-function 'org-switch-to-buffer-other-window) #'switch-to-buffer-other-window))
+        (org-capture nil "j")))
     (setq org-capture-templates
           '(("j" "Journal" entry (file+datetree "~/src/github.banksimple.com/whilp/notes/log.org")
              "* %^{Title} %^g\n:PROPERTIES:\n:FILED: %U\n:LINK: %a\n:END:\n%?")))))

@@ -66,9 +66,8 @@
 (setq window-sides-vertical nil
       window-sides-slots '(nil nil nil nil)
       display-buffer-alist
-      `((,(rx bos (| "*Help*" "*godoc" "*Gofmt Errors*" "*magit-diff"))
+      `((,(rx bos (| "*Help*" "*godoc" "*Gofmt Errors*" "*magit-diff" "*Capture*" "CAPTURE-"))
          (display-buffer-in-side-window)
-         (same-frame . t)
          (side . right)
          (slot . -1)
          (window-width . window-side-width))
@@ -90,7 +89,6 @@
          (window-width . window-side-width))
         (,(rx anything)
          (display-buffer-reuse-window
-          display-buffer-in-previous-window
           display-buffer-same-window)
          (same-frame . t))))
 
