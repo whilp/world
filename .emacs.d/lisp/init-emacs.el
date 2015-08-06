@@ -55,7 +55,7 @@
   (progn
     (setenv "GPG_AGENT_INFO" (expand-file-name "~/.gnupg/S.gpg-agent::1"))
     (setq epg-gpg-program "gpg2"))
-  (set-face-attribute 'default nil :font "Monaco-16")))
+  (set-face-attribute 'default nil :font "Monaco-14")))
 
 (provide 'init-emacs)
 ;;; init-emacs ends here
