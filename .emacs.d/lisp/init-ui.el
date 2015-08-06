@@ -277,7 +277,7 @@
       (interactive)
       (message "%s | %s"
                (format-time-string display-time-format)
-               (battery-format "%L %B %t" (battery-pmset))))
+               (battery-format "%L %B %p%% %t" (battery-pmset))))
     (setq
      display-time-default-load-average nil
      display-time-format "%a %Y-%m-%d %H:%M")
