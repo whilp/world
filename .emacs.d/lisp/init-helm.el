@@ -75,20 +75,15 @@
       :commands helm-flycheck)
 
     (global-unset-key (kbd "C-x c"))
-    (add-to-list 'display-buffer-alist
-                 `(,(rx bos "*helm" (* not-newline) "*" eos)
-                   (display-buffer-in-side-window)
-                   (inhibit-same-window . t)
-                   (window-height . 0.4)))
     
     (setq helm-split-window-in-side-p t
           helm-echo-input-in-header-line t
-          helm-autoresize-max-height 30
-          helm-autoresize-min-height 10
+          helm-autoresize-max-height nil
+          helm-autoresize-min-height nil
           helm-display-header-line nil
           helm-move-to-line-cycle-in-source t
           helm-scroll-amount 8)
-    (helm-autoresize-mode 1)
+    (helm-autoresize-mode -1)
     (helm-mode 1)))
 
 (use-package helm-semantic
