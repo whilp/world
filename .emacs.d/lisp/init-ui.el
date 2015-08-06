@@ -66,7 +66,7 @@
 (setq window-sides-vertical nil
       window-sides-slots '(nil nil nil nil)
       display-buffer-alist
-      `((,(rx bos (| "*Help*" "*godoc" "*Gofmt Errors*" "*magit-diff" "*Capture*" "CAPTURE-"))
+      `((,(rx bos (| "*Help*" "*godoc" "*Gofmt Errors*" "*magit-diff" "*Capture*" "CAPTURE-" "#"))
          (display-buffer-in-side-window)
          (side . right)
          (slot . -1)
