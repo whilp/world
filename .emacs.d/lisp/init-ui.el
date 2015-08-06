@@ -64,10 +64,11 @@
 (defvar window-side-width 0.3
   "Fractional width of the side window.")
 (setq window-sides-vertical nil
+      window-sides-slots '(nil nil nil nil)
       display-buffer-alist
-      `((,(rx bos (| "*Help*" "*godoc" "*Gofmt Errors*"))
+      `((,(rx bos (| "*Help*" "*godoc" "*Gofmt Errors*" "*magit-diff"))
          (display-buffer-in-side-window)
-         (same-frame . nil)
+         (same-frame . t)
          (side . right)
          (slot . -1)
          (window-width . window-side-width))
@@ -85,12 +86,13 @@
          (display-buffer-in-side-window)
          (inhibit-same-window . t)
          (side . right)
-         (slot . 1)
+         (slot . 2)
          (window-width . window-side-width))
         (,(rx anything)
          (display-buffer-reuse-window
           display-buffer-in-previous-window
-          display-buffer-same-window))))
+          display-buffer-same-window)
+         (same-frame . t))))
 
 (setq inhibit-startup-echo-area-message t
       inhibit-startup-message t)
