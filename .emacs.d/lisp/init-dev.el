@@ -115,6 +115,11 @@
       (bind-keys :map map
                  (eir-key . eir-eval-in-ielm)))))
 
+(use-package lisp-mode
+  :config
+  (bind-keys :map emacs-lisp-mode-map
+             ("M-." . find-function-at-point)))
+
 (use-package eldoc
   :demand t
   :diminish eldoc-mode
