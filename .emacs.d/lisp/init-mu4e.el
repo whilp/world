@@ -7,9 +7,17 @@
   (let ((query (mu4e-get-bookmark-query (string-to-char "n"))))
     (mu4e-headers-search-bookmark query)))
 
+(defun mu4e-update-mail-and-index-quietly ()
+  "Run mu4e-update-mail-and-index in the background.
+
+Avoids undesirable window splittery."
+  (interactive)
+  (let ((current-prefix-arg '(4)))
+    (call-interactively 'mu4e-update-mail-and-index)))
+
 (define-key global-map (kbd "C-c m") mu4e-main-mode-map)
 (bind-keys :map mu4e-main-mode-map
-           ("u" . mu4e-update-mail-and-index))
+           ("u" . mu4e-update-mail-and-index-quietly))
 
 (setq
  mu4e-maildir "~/Maildir"
