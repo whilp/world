@@ -329,7 +329,7 @@
 (use-package compile
   :demand t
   :config
-  (setq compilation-scroll-output nil
+  (setq compilation-scroll-output t
         compilation-read-command nil
         compilation-ask-about-save nil
         compilation-auto-jump-to-first-error nil
