@@ -22,9 +22,9 @@
      (defhydra hyrda-org-mode () "org-mode"
        ("l" org-store-link "store link" :exit t)
        ("L" org-insert-link "insert link" :exit t)
-       ("a" org-agenda "agenda" :exit t)
+       ("a" (lambda () (interactive) (org-agenda nil "n")) "agenda" :exit t)
        ("c" org-capture "capture" :exit t)
-       ("j" whilp-capture-journal "journal" :exit t)))
+       ("j" (lambda () (interactive) (org-capture nil "j")) "journal" :exit t)))
     (bind-keys :map org-mode-map
                ("C-M-e" . org-forward-heading-same-level)
                ("C-M-a" . org-backward-heading-same-level)
@@ -64,17 +64,22 @@
 
 (use-package org-capture
   :demand t
-  :functions (whilp-capture-journal)
+  :functions (org-capture)
   :config
   (progn
-    (defun whilp-capture-journal ()
-      "Capture a journal entry."
+    (defun org-deal-with-it (orig &rest args)
+      "Run ORIG with ARGS and some hacks that make org Deal With It."
       (interactive)
       (cl-letf ((org-extend-today-until 0)
                 (completing-read-function #'completing-read-default)
                 ((symbol-function 'delete-other-windows) #'ignore)
-                ((symbol-function 'org-switch-to-buffer-other-window) #'switch-to-buffer-other-window))
-        (org-capture nil "j")))
+                ((symbol-function 'org-switch-to-buffer-other-window) #'switch-to-buffer-other-window)
+                ((symbol-function 'org-pop-to-buffer-same-window) #'pop-to-buffer-same-window))
+        (apply orig args)))
+    (advice-add 'org-capture :around #'org-deal-with-it)
+    (advice-add 'org-add-log-note :around #'org-deal-with-it)
+    (advice-add 'org-agenda :around #'org-deal-with-it)
+    ;; (advice-remove 'org-insert-link #'org-deal-with-it)
     (setq org-capture-templates
           '(("j" "Journal" entry (file+datetree "~/src/github.banksimple.com/whilp/notes/log.org")
              "* %^{Title} %^g\n:PROPERTIES:\n:FILED: %U\n:LINK: %a\n:END:\n%?")))))
@@ -145,7 +150,12 @@
           org-agenda-todo-ignore-with-date t
           org-agenda-tags-todo-honor-ignore-options t
           org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled
-          org-agenda-window-setup 'current-window)))
+          org-agenda-window-setup 'current-window
+          org-agenda-prefix-format '((agenda . "%?-12t% s")
+                                     (timeline . "  % s")
+                                     (todo . " %i %-12:c")
+                                     (tags . " %i %-12:c")
+                                     (search . " %i %-12:c")))))
 
 (use-package org-clock
   :config
