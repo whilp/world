@@ -104,12 +104,7 @@
   (switch-to-buffer (other-buffer (current-buffer) 1)))
 
 ;; window
-(bind-keys ("s-0" . delete-window)
-           ("s-1" . delete-other-windows)
-           ("s-2" . split-window-below)
-           ("s-3" . split-window-right)
-           ("s--" . whilp-last-buffer)
-           ("s-n" . scroll-other-window)
+(bind-keys ("s-n" . scroll-other-window)
            ("s-p" . scroll-other-window-down))
 (setq recenter-positions '(top middle bottom)
       scroll-preserve-screen-position 'always)
@@ -155,7 +150,6 @@
 (use-package color-theme-solarized
   :ensure t
   :demand t
-  :bind (("s-`" . whilp-toggle-solarized))
   :config
   (progn
     (load-theme 'solarized t)

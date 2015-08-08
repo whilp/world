@@ -56,7 +56,9 @@
             (?O delete-side-windows)
             (?= balance-windows)
             (?u winner-undo)
-            (?r winner-redo)))
+            (?r winner-redo)
+            (?1 toggle-frame-fullscreen)
+            (?2 whilp-toggle-solarized)))
     (ace-window-display-mode t)))
 
 (use-package ace-link
