@@ -66,8 +66,13 @@
 (setq window-sides-vertical nil
       window-sides-slots '(nil nil nil nil)
       display-buffer-alist
-      `((,(rx bos (| "*Help*" "*godoc" "*Gofmt Errors*" "*magit-diff" "*Capture*" "CAPTURE-" "#"))
-         (display-buffer-in-side-window)
+      `((,(rx bos (| "*Help*" "*magit-diff"
+                     "*Org Agenda" "*Org Note" "*Agenda" "*Org Links*"
+                     "*godoc" "*Gofmt Errors*"
+                     "*Capture*" "CAPTURE-"))
+         (display-buffer-in-side-window
+          display-buffer-use-some-window)
+         (same-frame . t)
          (side . right)
          (slot . -1)
          (window-width . window-side-width))
@@ -88,9 +93,7 @@
          (slot . 2)
          (window-width . window-side-width))
         (,(rx anything)
-         (display-buffer-reuse-window
-          display-buffer-same-window)
-         (same-frame . t))))
+         (display-buffer-use-some-window))))
 
 (setq inhibit-startup-echo-area-message t
       inhibit-startup-message t)
