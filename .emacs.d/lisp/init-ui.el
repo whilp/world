@@ -294,7 +294,7 @@
   :demand t
   :config
   (progn
-    (setq clean-buffer-list-delay 1)
+    (setq clean-buffer-list-delay-general 1)
     (add-to-list 'clean-buffer-list-kill-never-regexps "^#.*")))
 
 (use-package uniquify
