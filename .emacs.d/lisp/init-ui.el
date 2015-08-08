@@ -341,5 +341,16 @@
     (interactive (browse-url-interactive-arg "URL: "))
     (start-process (concat "open -g" url) nil "open" "-g" url)))
 
+(defun in-side-window (orig &rest args)
+  "Run ORIG with ARGS, monkeypatching SWITCH-TO-BUFFER to SWITCH-TO-BUFFER-OTHER-WINDOW."
+  (cl-letf ((display-buffer-overriding-action
+             (cons '(display-buffer-in-side-window
+                     display-buffer-use-some-window)
+                   '((side . right)
+                     (slot . 1)
+                     (window-width . window-side-width))))
+            ((symbol-function 'switch-to-buffer) #'switch-to-buffer-other-window))
+    (apply orig args)))
+
 (provide 'init-ui)
 ;;; init-ui ends here

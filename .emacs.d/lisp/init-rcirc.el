@@ -14,11 +14,7 @@
 
 (rcirc-track-minor-mode 1)
 
-(defun in-other-window (orig &rest args)
-  "Run ORIG with ARGS, monkeypatching SWITCH-TO-BUFFER to SWITCH-TO-BUFFER-OTHER-WINDOW."
-  (cl-letf (((symbol-function 'switch-to-buffer) #'switch-to-buffer-other-window))
-    (apply orig args)))
-(advice-add 'rcirc-next-active-buffer :around #'in-other-window)
+(advice-add 'rcirc-next-active-buffer :around #'in-side-window)
 
 (setq rcirc-fill-flag nil
       rcirc-fill-column nil
