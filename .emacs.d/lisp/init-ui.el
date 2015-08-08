@@ -120,37 +120,6 @@
 (use-package hydra
   :ensure t)
 
-(use-package perspective
-  :ensure t
-  :bind (("s-1" . persp-switch-1)
-         ("s-2" . persp-switch-2)
-         ("s-3" . persp-switch-3)
-         ("s-4" . persp-switch-4)
-         ("s-5" . persp-switch-5))
-  :config
-  (progn
-    (bind-key
-     "C-c w"
-     (defhydra hydra-persp () "persp"
-       ("1" persp-switch-1)
-       ("2" persp-switch-2)
-       ("3" persp-switch-3)
-       ("4" persp-switch-4)
-       ("5" persp-switch-5)
-       ("n" persp-next "next")
-       ("p" persp-prev "prev")
-       ("s" persp-switch "switch")))
-    (setq persp-initial-frame-name "1"
-          persp-modestring-dividers '("{" "}" "|")
-          persp-mode-prefix-key (kbd "C-c w"))
-    (define-key persp-mode-map persp-mode-prefix-key 'perspective-map)
-    (defun persp-switch-1 () (interactive) (persp-switch "1"))
-    (defun persp-switch-2 () (interactive) (persp-switch "2"))
-    (defun persp-switch-3 () (interactive) (persp-switch "3"))
-    (defun persp-switch-4 () (interactive) (persp-switch "4"))
-    (defun persp-switch-5 () (interactive) (persp-switch "5"))
-    (persp-mode t)))
-
 (use-package menu-bar
   :demand t
   :config (menu-bar-mode -1))
