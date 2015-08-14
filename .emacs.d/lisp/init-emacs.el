@@ -55,7 +55,15 @@
   (progn
     (setenv "GPG_AGENT_INFO" (expand-file-name "~/.gnupg/S.gpg-agent::1"))
     (setq epg-gpg-program "gpg2"))
-  (set-face-attribute 'default nil :font "Monaco-14")))
+  (dolist (face '(rcirc-url
+                  warning
+                  mode-line-buffer-id
+                  magit-diff-file-heading-highlight))
+    (set-face-attribute face nil :weight 'normal))
+  (set-face-attribute 'default nil
+                      :family "Source Code Pro"
+                      :height 145
+                      :weight 'light)))
 
 (provide 'init-emacs)
 ;;; init-emacs ends here
