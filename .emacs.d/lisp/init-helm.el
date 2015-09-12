@@ -208,12 +208,5 @@
 (use-package helm-descbinds
   :ensure t)
 
-;; TODO
-(use-package helm-dash
-  :ensure t
-  :demand t
-  :config
-  (setq helm-dash-browser-func 'eww))
-
 (provide 'init-helm)
 ;;; init-helm ends here
