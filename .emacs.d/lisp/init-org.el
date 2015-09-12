@@ -36,6 +36,21 @@
                ("C-M-(" . org-promote-subtree)
                ("C-M-u" . org-move-subtree-up)
                ("C-M-d" . org-move-subtree-down))
+    (defun whilp-insert-link ()
+      (interactive)
+      (let* ((types (mapcar (lambda (e) `(,e nil)) org-link-types))
+             (link-stored
+              (helm-build-sync-source "org-link-stored" :candidates 'org-stored-links))
+             ;; :candidates (cl-mapcar 'org-link-prettify org-stored-links)))
+             (link-types
+              (helm-build-sync-source "org-link-types" :candidates 'types))
+             (fallback
+              (helm-build-dummy-source "org-link-new"))
+             (link
+              (helm :sources '(link-stored link-types fallback)
+                    :buffer "*helm-org-links*")))
+        (org-insert-link nil (car link) (cdr link))))
+
     ;; TODO: make a hydra that does these as well? (Both above and below)
     (setq org-use-speed-commands t
           org-speed-commands-user '(("I" org-insert-heading-respect-content)
