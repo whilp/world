@@ -23,6 +23,9 @@
       rcirc-log-directory (expand-file-name "~/.irclogs"))
 ;; rcirc-timeout-seconds
 
+(defun rcirc-keepalive ()
+  "Disable rcirc keepalives")
+
 (setq rcirc-keywords
       '(
         "whilp"
