@@ -67,7 +67,7 @@
       window-sides-slots '(nil nil nil nil)
       display-buffer-alist
       `((,(rx bos (| "*Help*" "*magit-diff"
-                     "*Org Agenda" "*Org Note" "*Agenda" "*Org Links*"
+                     "*Org Agenda" "*Org Note" "*Agenda"
                      "*godoc" "*Gofmt Errors*"
                      "*Capture*" "CAPTURE-"))
          (display-buffer-in-side-window
@@ -76,6 +76,9 @@
          (side . right)
          (slot . -1)
          (window-width . window-side-width))
+        (,(rx "Org Links")
+         (display-buffer-no-window)
+         (allow-no-window . t))
         (,(rx bos "*test-project: ")
          (display-buffer-in-side-window)
          (side . right)
