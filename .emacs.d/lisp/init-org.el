@@ -133,7 +133,7 @@
           org-agenda-show-inherited-tags 'always
           org-agenda-inhibit-startup t
           org-agenda-sorting-strategy '(priority-down deadline-down scheduled-down)
-          org-agenda-ignore-drawer-properties '(effort appt category)
+          org-agenda-ignore-properties '(effort appt category)
           org-agenda-restore-windows-after-quit nil
           org-agenda-search-headline-for-time nil
           org-agenda-skip-deadline-if-done t
@@ -151,6 +151,7 @@
           org-agenda-tags-todo-honor-ignore-options t
           org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled
           org-agenda-window-setup 'current-window
+          org-agenda-remove-tags t
           org-agenda-prefix-format '((agenda . "%?-12t% s")
                                      (timeline . "  % s")
                                      (todo . " %i %-12:c")
