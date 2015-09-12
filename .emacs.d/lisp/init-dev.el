@@ -15,6 +15,20 @@
 (defvar eir-key "C-<return>"
   "Eval-in-REPL key.")
 
+(use-package edit-server-htmlize
+  :ensure t
+  :config
+  (progn
+    (setq edit-server-new-frame nil)
+    (edit-server-start)))
+
+(use-package yaml-mode
+  :ensure t)
+
+(use-package dockerfile-mode
+  :ensure t
+  :mode "Dockerfile\\'")
+
 (use-package cask
   :ensure t)
 
