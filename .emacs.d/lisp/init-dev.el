@@ -58,8 +58,8 @@
   :demand t)
 
 ;; TODO: could be neat to make a hydra for sp motions.
-(use-package smartparens
-  :ensure t
+(use-package smartparens-config
+  :ensure smartparens
   :demand t
   :diminish (smartparens-mode)
   :init
@@ -74,7 +74,6 @@
                ("C-(" . sp-backward-barf-sexp)
                ("C-M-)" . sp-backward-slurp-sexp)
                ("C-M-(" . sp-backward-barf-sexp))
-    (require 'smartparens-config)
     (sp-use-paredit-bindings)
     (show-smartparens-global-mode)
     (smartparens-global-strict-mode t)))
