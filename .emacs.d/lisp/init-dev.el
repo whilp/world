@@ -178,7 +178,8 @@
   :mode ("\\.(json|js)$" . js-mode)
   :config
   (add-hook 'js2-mode-hook (lambda () (setq js2-basic-offset 2))))
-            
+
+;; go get github.com/rogpeppe/godef
 (use-package go-mode
   :mode "\\.go"
   :ensure t
