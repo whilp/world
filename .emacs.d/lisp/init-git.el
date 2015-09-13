@@ -26,6 +26,10 @@
 ;;     (git-gutter-fr+-minimal)
 ;;     (setq git-gutter+-lighter "")))
 
+(use-package browse-at-remote
+  :ensure t
+  :bind ("C-c b" . browse-at-remote))
+
 (use-package diff-hl
   :ensure t
   :init
