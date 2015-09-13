@@ -113,6 +113,7 @@
     (org-babel-do-load-languages
      'org-babel-load-languages
      '((dot . t)
+       (gnuplot . t)
        (emacs-lisp . t)))))
 
 (use-package ox
