@@ -102,7 +102,6 @@
 
 (setq rcirc-server-alist
       (list
-       (my-rcirc-profile "chat.banksimple.com" "whilp" 9999)
        (my-rcirc-profile "furnace.firrre.com" "whilp" 9090)
        (my-rcirc-profile "rands-leadership.irc.slack.com" "whilp" 6697)
        (my-rcirc-profile "dist-sys.irc.slack.com" "whilp" 6697)
