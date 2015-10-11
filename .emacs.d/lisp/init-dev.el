@@ -105,7 +105,8 @@
       (interactive)
       (setq js-indent-level 2))
 
-    (add-hook 'json-mode-hook 'whilp-json-mode-hook)))
+    (add-hook 'json-mode-hook 'whilp-json-mode-hook)
+    (add-hook 'js-mode-hook 'whilp-json-mode-hook)))
 
 (use-package anaconda-mode
   :ensure t
