@@ -1,1 +1,3 @@
-/usr/local/go/bin/godoc
+#!/bin/bash
+
+exec go doc "$@"
