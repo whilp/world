@@ -256,7 +256,8 @@
 
 (use-package python
   :ensure t
-  :mode (("\\.py\\'" . python-mode))
+  :mode (("\\.py\\'" . python-mode)
+         ("BUILD.*" . python-mode))
   :config
   (progn
     (setq python-shell-interpreter "ipython"
