@@ -93,14 +93,14 @@
     (add-hook 'git-commit-mode-hook 'turn-off-auto-fill)
 
     (magit-define-popup-action
-     'magit-dispatch-popup ?. "Status" 'magit-status)
+      'magit-dispatch-popup ?. "Status" 'magit-status)
     (magit-define-popup-action
-     'magit-dispatch-popup ?H "Github" 'whilp-github-popup)
+      'magit-dispatch-popup ?H "Github" 'whilp-github-popup)
     (magit-define-popup whilp-github-popup
-                        "Popup console for Github interaction."
-                        :actions  '((?p "Pull request" whilp-pull-request)
-                                    (?f "Fork" whilp-fork))
-                        :default-action 'whilp-pull-request)
+      "Popup console for Github interaction."
+      :actions  '((?p "Pull request" whilp-pull-request)
+                  (?f "Fork" whilp-fork))
+      :default-action 'whilp-pull-request)
 
     (defun whilp-pull-request ()
       "Open a Github pull request.
