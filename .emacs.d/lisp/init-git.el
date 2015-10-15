@@ -111,15 +111,17 @@ it to the kill ring."
           magit-push-always-verify nil
           magit-revert-buffers nil
           magit-delete-by-moving-to-trash nil
-          magit-after-revert-hook '(magit-refresh-vc-mode-line)
           magit-diff-highlight-hunk-body t
-          magit-diff-highlight-indentation t
+          magit-diff-highlight-indentation nil
           magit-diff-highlight-trailing t
           magit-diff-paint-whitespace t
           magit-diff-refine-hunk nil
+          magit-after-revert-hook '(magit-refresh-vc-mode-line)
           magit-log-arguments '("-n256" "--graph" "--decorate")
           magit-log-select-arguments '("-n256" "--decorate")
-          magit-log-section-arguments '("--decorate"))))
+          magit-log-section-arguments '("--decorate"))
+          )
+    ))
 
 (provide 'init-git)
 ;;; init-git ends here
