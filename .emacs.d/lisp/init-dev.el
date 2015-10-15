@@ -10,7 +10,6 @@
 
 (require 'use-package)
 (require 'init-shell)
-(require 'hydra)
 
 (defvar eir-key "C-<return>"
   "Eval-in-REPL key.")
@@ -50,17 +49,6 @@
   :ensure t
   :mode "\\.lua\\'")
 
-(use-package eshell
-  :config
-  (bind-keys :map eshell-mode-map
-             ("C-:" . helm-esh-pcomplete)))
-
-(use-package ess
-  :ensure t)
-
-(use-package htmlize
-  :ensure t)
-
 (use-package eval-in-repl
   :ensure t)
 
@@ -70,30 +58,6 @@
 (use-package clojure-mode
   :ensure t
   :demand t)
-
-;; TODO: could be neat to make a hydra for sp motions.
-(use-package smartparens-config
-  :ensure smartparens
-  :demand t
-  :diminish (smartparens-mode)
-  :init
-  (setq sp-base-key-bindings 'paredit
-        sp-autoskip-closing-pair 'always
-        sp-ignore-modes-list '(minibuffer-inactive-mode
-                               shell-mode))
-  :config
-  (progn
-    (bind-keys :map smartparens-mode-map
-               ("C-)" . sp-forward-slurp-sexp)
-               ("C-(" . sp-backward-barf-sexp)
-               ("C-M-)" . sp-backward-slurp-sexp)
-               ("C-M-(" . sp-backward-barf-sexp))
-    (sp-use-paredit-bindings)
-    (show-smartparens-global-mode)
-    (smartparens-global-strict-mode t)))
-
-(use-package json-rpc
-  :ensure t)
 
 (use-package json-mode
   :ensure t
@@ -107,27 +71,6 @@
 
     (add-hook 'json-mode-hook 'whilp-json-mode-hook)
     (add-hook 'js-mode-hook 'whilp-json-mode-hook)))
-
-(use-package anaconda-mode
-  :ensure t
-  :defer t
-  :config
-  (add-hook 'python-mode-hook 'anaconda-mode))
-
-(use-package cider
-  :ensure t
-  :defer t)
-
-(use-package ielm
-  :init
-  (progn
-    (require 'info)
-    (require 'lisp-mode)
-    (dolist (map (list emacs-lisp-mode-map
-                       lisp-interaction-mode-map
-                       Info-mode-map))
-      (bind-keys :map map
-                 (eir-key . eir-eval-in-ielm)))))
 
 (use-package lisp-mode
   :config
@@ -151,11 +94,7 @@
   :init (global-company-mode 1)
   :config
   (progn
-    (dolist (package '(company-go
-                       company-inf-ruby
-                       company-tern
-                       company-math
-                       company-restclient))
+    (dolist (package '(company-go))
       (use-package package
         :ensure t
         :demand t
@@ -165,13 +104,13 @@
           company-tooltip-minimum-width 30
           company-idle-delay nil)))
 
-(use-package inf-ruby
-  :ensure t
-  :defer t
-  :config
-  (progn
-    (setq ruby-deep-indent-paren nil
-          ruby-deep-arglist nil)))
+;; (use-package inf-ruby
+;;   :ensure t
+;;   :defer t
+;;   :config
+;;   (progn
+;;     (setq ruby-deep-indent-paren nil
+;;           ruby-deep-arglist nil)))
 
 (use-package js2-mode
   :ensure t
@@ -211,9 +150,9 @@
   :ensure t
   :defer t)
 
-(use-package minitest
-  :ensure t
-  :defer t)
+;; (use-package minitest
+;;   :ensure t
+;;   :defer t)
 
 (use-package scala-mode2
   :ensure t
@@ -229,24 +168,24 @@
     (setq-default flycheck-emacs-lisp-load-path load-path)
     (global-flycheck-mode)))
 
-(use-package rubocop
-  :ensure t
-  :defer t
-  :config
-  (progn
-    (require 'flycheck)
-    (add-hook 'ruby-mode-hook 'rubocop-mode)
-    (eval-after-load 'flycheck
-      (flycheck-add-next-checker 'chef-foodcritic 'ruby-rubocop))))
+;; (use-package rubocop
+;;   :ensure t
+;;   :defer t
+;;   :config
+;;   (progn
+;;     (require 'flycheck)
+;;     (add-hook 'ruby-mode-hook 'rubocop-mode)
+;;     (eval-after-load 'flycheck
+;;       (flycheck-add-next-checker 'chef-foodcritic 'ruby-rubocop))))
 
-(use-package mmm-mode
-  :ensure t
-  :commands mmm-mode
-  :config
-  (progn
-    (setq mmm-global-mode 'buffers-with-submode-classes
-          mmm-submode-decoration-level 0)
-    (use-package mmm-auto)))
+;; (use-package mmm-mode
+;;   :ensure t
+;;   :commands mmm-mode
+;;   :config
+;;   (progn
+;;     (setq mmm-global-mode 'buffers-with-submode-classes
+;;           mmm-submode-decoration-level 0)
+;;     (use-package mmm-auto)))
 
 (use-package csv-mode
   :ensure t
@@ -265,20 +204,21 @@
     (bind-keys :map python-mode-map
                (eir-key . eir-eval-in-python))
     
-    (use-package elpy
-      :ensure t
-      :config
-      (progn
-        ;; Remove elpy company configuration; I like my own.
-        (setq elpy-modules
-              (remove 'elpy-module-company elpy-modules))
-        (elpy-enable)
-        (elpy-use-ipython)))
-    (use-package pyenv-mode
-      :ensure t)))
+    ;; (use-package elpy
+    ;;   :ensure t
+    ;;   :config
+    ;;   (progn
+    ;;     ;; Remove elpy company configuration; I like my own.
+    ;;     (setq elpy-modules
+    ;;           (remove 'elpy-module-company elpy-modules))
+    ;;     (elpy-enable)
+    ;;     (elpy-use-ipython)))
+    ;; (use-package pyenv-mode
+    ;;   :ensure t))
+    ))
 
-(use-package ein
-  :ensure t)
+;; (use-package ein
+;;   :ensure t)
 
 (use-package ruby-mode
   :ensure t
@@ -295,41 +235,41 @@
   (setq ruby-use-encoding-map nil)
   :config
   (progn
-    (dolist (package '(ruby-hash-syntax
-                       ruby-compilation
-                       bundler))
-      (use-package package :ensure t))
-    (use-package inf-ruby
-      :ensure t
-      :config
-      (setq inf-ruby-default-implementation "pry"))
-    (bind-keys :map ruby-mode-map
-               ("RET" . reindent-then-newline-and-indent)
-               ("TAB" . indent-for-tab-command)
-               (eir-key . eir-eval-in-ruby))
+    ;; (dolist (package '(ruby-hash-syntax
+    ;;                    ruby-compilation
+    ;;                    bundler))
+    ;;   (use-package package :ensure t))
+    ;; (use-package inf-ruby
+    ;;   :ensure t
+    ;;   :config
+    ;;   (setq inf-ruby-default-implementation "pry"))
+    ;; (bind-keys :map ruby-mode-map
+    ;;            ("RET" . reindent-then-newline-and-indent)
+    ;;            ("TAB" . indent-for-tab-command)
+    ;;            (eir-key . eir-eval-in-ruby))
     
     (add-hook 'ruby-mode-hook 'subword-mode)
     
-    (use-package robe
-      :ensure t
-      :init
-      (progn
-        (with-eval-after-load 'company
-          (push 'company-robe company-backends))
-        (add-hook 'ruby-mode-hook 'robe-mode)))
+    ;; (use-package robe
+    ;;   :ensure t
+    ;;   :init
+    ;;   (progn
+    ;;     (with-eval-after-load 'company
+    ;;       (push 'company-robe company-backends))
+    ;;     (add-hook 'ruby-mode-hook 'robe-mode)))
 
-    (use-package yari
-      :ensure t
-      :init (defalias 'ri 'yari))
+    ;; (use-package yari
+    ;;   :ensure t
+    ;;   :init (defalias 'ri 'yari))
 
-    (use-package rinari
-      :ensure t
-      :init (global-rinari-mode))
+    ;; (use-package rinari
+    ;;   :ensure t
+    ;;   :init (global-rinari-mode))
 
-    (use-package rspec-mode
-      :ensure t
-      :config
-      (add-hook 'ruby-mode-hook (lambda () (rspec-mode 1))))
+    ;; (use-package rspec-mode
+    ;;   :ensure t
+    ;;   :config
+    ;;   (add-hook 'ruby-mode-hook (lambda () (rspec-mode 1))))
 
     ;; Stupidly the non-bundled ruby-mode isn't a derived mode of
     ;; prog-mode: we run the latter's hooks anyway in that case.
@@ -365,29 +305,6 @@
   :demand t
   :config
   (setq ediff-window-setup-function 'ediff-setup-windows-plain))
-
-(use-package multiple-cursors
-  :ensure t
-  :demand t
-  :init
-  (bind-key
-   "C-c c"
-   (defhydra hydra-multiple-cursors () "multiple-curors"
-     ("e" mc/edit-lines "edit")
-     ("n" mc/mark-next-like-this "next")
-     ("p" mc/mark-previous-like-this "previous")
-     ("a" mc/mark-all-like-this "all"))))
-
-(use-package know-your-http-well
-  :ensure t)
-
-(use-package aggressive-indent
-  :ensure t
-  :diminish aggressive-indent-mode
-  :init
-  (progn
-    ;; (add-to-list 'aggressive-indent-excluded-modes ...) as needed.
-    (global-aggressive-indent-mode 1)))
 
 (provide 'init-dev)
 ;;; init-dev ends here

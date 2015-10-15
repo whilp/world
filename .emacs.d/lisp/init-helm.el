@@ -7,7 +7,6 @@
 ;;; Code:
 
 (require 'use-package)
-(require 'hydra)
 
 ;; For the compiler's benefit.
 (require 'projectile nil t)
@@ -24,15 +23,6 @@
          ("C-x C-b" . helm-mini))
   :config
   (progn
-    (bind-key
-     "C-c h"
-     (defhydra hydra-helm () "helm"
-       ("e" helm-flycheck "errors")
-       ("g" helm-git-grep "git-grep")
-       ("r" helm-resume "resume")
-       ("x" whilp-run-external-command "run" :exit 1)
-       ("u" helm-unicode "unicode")))
-
     (use-package helm-external
       :init
       (progn
@@ -56,11 +46,6 @@
 
     (use-package helm-unicode
       :ensure t)
-
-    (use-package helm-c-yasnippet
-      :ensure t
-      :init
-      (setq helm-yas-display-key-on-candidate t))
 
     (use-package helm-git-grep
       :ensure t
@@ -114,65 +99,7 @@
   :ensure t
   :bind ("C-:" . helm-company))
 
-(use-package projectile
-  :ensure t
-  :demand t
-  :config
-  (progn
-    (defun project-compilation-buffer (prefix)
-      (format "*%s: %s*" prefix (projectile-project-root)))
-    (defun with-compilation-buffer-name-function-for (prefix orig args)
-      (let* ((compilation-buffer-name-function
-              (lambda (name-of-mode)
-                (format "*%s: %s*" prefix (projectile-project-root)))))
-        (apply orig args)))
 
-    (defun with-compile-project (orig &rest args)
-      (with-compilation-buffer-name-function-for "compile-project" orig args))
-    (defun with-test-project (orig &rest args)
-      (with-compilation-buffer-name-function-for "test-project" orig args))
-
-    (advice-add 'projectile-compile-project
-                :around #'with-compile-project)
-    (advice-add 'projectile-test-project
-                :around #'with-test-project)
-
-    (defun projectile-ignore-project (name)
-      "Return nil if project NAME should be ignored."
-      (string-match
-       (rx
-        (or "/homebrew/"
-            "/.emacs.d/"))
-       name))
-    (defun projectile-run-shell (&optional buffer)
-      "Start a shell in the project's root."
-      (interactive "P")
-      (projectile-with-default-dir (projectile-project-root)
-        (shell (format "*shell %s*" (projectile-project-name)))))
-    (bind-keys :map projectile-command-map
-               ("!" . projectile-run-shell)
-               ("i" . projectile-compile-project)
-               ("o" . projectile-test-project))
-    (setq projectile-keymap-prefix (kbd "C-c p")
-          projectile-switch-project-action 'helm-projectile
-          projectile-ignored-project-function 'projectile-ignore-project
-          projectile-globally-ignored-directories
-          (quote (".idea"
-                  ".eunit"
-                  ".git"
-                  ".hg"
-                  ".fslckout"
-                  ".bzr"
-                  "_darcs"
-                  ".tox"
-                  ".svn"
-                  "build"
-                  "_workspace"))
-          projectile-mode-line
-          (quote
-           (:eval (format " [%s]" (projectile-project-name)))))
-    (define-key projectile-mode-map projectile-keymap-prefix 'projectile-command-map)
-    (projectile-global-mode)))
 
 (use-package helm-projectile
   :ensure t

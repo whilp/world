@@ -61,43 +61,6 @@
                               (right-fringe . -1)
                               (left-fringe . 4))))
 
-(defvar window-side-width 0.3
-  "Fractional width of the side window.")
-(setq window-sides-vertical nil
-      window-sides-slots '(nil nil nil nil)
-      display-buffer-alist
-      `((,(rx bos (| "*Help*" "*magit-diff"
-                     "*Org Agenda" "*Org Note" "*Agenda"
-                     "*godoc" "*Gofmt Errors*"
-                     "*Capture*" "CAPTURE-"))
-         (display-buffer-in-side-window
-          display-buffer-use-some-window)
-         (same-frame . t)
-         (side . right)
-         (slot . -1)
-         (window-width . window-side-width))
-        (,(rx "Org Links")
-         (display-buffer-no-window)
-         (allow-no-window . t))
-        (,(rx bos "*test-project: ")
-         (display-buffer-in-side-window)
-         (side . right)
-         (slot . 0)
-         (window-width . window-side-width))
-        (,(rx bos "*compile-project: ")
-         (display-buffer-in-side-window)
-         (side . right)
-         (slot . 1)
-         (window-width . window-side-width))
-        (,(rx (| "*helm" "*Helm"))
-         (display-buffer-in-side-window)
-         (inhibit-same-window . t)
-         (side . right)
-         (slot . 2)
-         (window-width . window-side-width))
-        (,(rx anything)
-         (display-buffer-use-some-window))))
-
 (setq inhibit-startup-echo-area-message t
       inhibit-startup-message t)
 
@@ -114,9 +77,6 @@
 
 (setq ring-bell-function 'ignore
       visible-bell t)
-
-(use-package hydra
-  :ensure t)
 
 (use-package menu-bar
   :demand t
@@ -195,27 +155,6 @@
                     "  " mode-line-modes
                     mode-line-misc-info
                     mode-line-end-spaces))))
-
-(use-package golden-ratio
-  :ensure t
-  :diminish golden-ratio-mode
-  :config
-  (progn
-    (setq golden-ratio-auto-scale t
-          golden-ratio-exclude-modes '("ediff-mode")
-          golden-ratio-inhibit-functions
-          '(pl/ediff-comparison-buffer-p
-            pl/helm-alive-p))
-    (add-to-list 'golden-ratio-extra-commands 'ace-window)
-    
-    (defun pl/ediff-comparison-buffer-p ()
-      ediff-this-buffer-ediff-sessions)
-
-    (defun pl/helm-alive-p ()
-      (if (boundp 'helm-alive-p)
-          (symbol-value 'helm-alive-p)))
-    ;; (golden-ratio-mode)
-    ))
 
 (use-package simple
   :diminish visual-line-mode
@@ -309,17 +248,6 @@
     "Browse URL in the background. (NEW-WINDOW is ignored)."
     (interactive (browse-url-interactive-arg "URL: "))
     (start-process (concat "open -g" url) nil "open" "-g" url)))
-
-(defun in-side-window (orig &rest args)
-  "Run ORIG with ARGS, monkeypatching SWITCH-TO-BUFFER to SWITCH-TO-BUFFER-OTHER-WINDOW."
-  (cl-letf ((display-buffer-overriding-action
-             (cons '(display-buffer-in-side-window
-                     display-buffer-use-some-window)
-                   '((side . right)
-                     (slot . 1)
-                     (window-width . window-side-width))))
-            ((symbol-function 'switch-to-buffer) #'switch-to-buffer-other-window))
-    (apply orig args)))
 
 (provide 'init-ui)
 ;;; init-ui ends here

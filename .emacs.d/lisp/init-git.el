@@ -9,26 +9,10 @@
 (require 'use-package)
 (require 'auth-source)
 (require 'url-parse)
-(require 'hydra)
 
 (eval-when-compile
-  ;; TODO: disabled because magit update
-  ;; (require 'git-gutter-fringe+)
   (require 'cl)
   (require 'magit))
-
-;; TODO: disabled because magit update
-;; (use-package git-gutter-fringe+
-;;   :ensure t
-;;   :config
-;;   (progn
-;;     (global-git-gutter+-mode t)
-;;     (git-gutter-fr+-minimal)
-;;     (setq git-gutter+-lighter "")))
-
-(use-package browse-at-remote
-  :ensure t
-  :bind ("C-c b" . browse-at-remote))
 
 (use-package diff-hl
   :ensure t
@@ -72,17 +56,6 @@
 (use-package gist
   :ensure t
   :defer t)
-
-(use-package git-timemachine
-  :ensure t
-  :defer t)
-
-(use-package git-link
-  :ensure t
-  :defer t)
-
-(use-package orgit
-  :ensure t)
 
 (use-package magit
   :ensure t
@@ -136,7 +109,6 @@ it to the kill ring."
           magit-save-repository-buffers 'dontask
           magit-status-buffer-switch-function 'switch-to-buffer
           magit-completing-read-function 'magit-builtin-completing-read
-          ;; helm--completing-read-default
           magit-push-always-verify nil
           magit-revert-buffers 1
           magit-delete-by-moving-to-trash nil

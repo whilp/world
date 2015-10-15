@@ -7,7 +7,6 @@
 ;;; Code:
 
 (require 'use-package)
-(require 'hydra)
 
 (use-package-ensure-elpa 'org-plus-contrib)
 
@@ -17,14 +16,6 @@
   :mode ("\\.\\(txt\\|org\\)$" . org-mode)
   :config
   (progn
-    (bind-key
-     "C-c o"
-     (defhydra hyrda-org-mode () "org-mode"
-       ("l" org-store-link "store link" :exit t)
-       ("L" org-insert-link "insert link" :exit t)
-       ("a" (lambda () (interactive) (org-agenda nil "n")) "agenda" :exit t)
-       ("c" org-capture "capture" :exit t)
-       ("j" (lambda () (interactive) (org-capture nil "j")) "journal" :exit t)))
     (bind-keys :map org-mode-map
                ("C-M-e" . org-forward-heading-same-level)
                ("C-M-a" . org-backward-heading-same-level)
@@ -36,22 +27,6 @@
                ("C-M-(" . org-promote-subtree)
                ("C-M-u" . org-move-subtree-up)
                ("C-M-d" . org-move-subtree-down))
-    (defun whilp-insert-link ()
-      (interactive)
-      (let* ((types (mapcar (lambda (e) `(,e nil)) org-link-types))
-             (link-stored
-              (helm-build-sync-source "org-link-stored" :candidates 'org-stored-links))
-             ;; :candidates (cl-mapcar 'org-link-prettify org-stored-links)))
-             (link-types
-              (helm-build-sync-source "org-link-types" :candidates 'types))
-             (fallback
-              (helm-build-dummy-source "org-link-new"))
-             (link
-              (helm :sources '(link-stored link-types fallback)
-                    :buffer "*helm-org-links*")))
-        (org-insert-link nil (car link) (cdr link))))
-
-    ;; TODO: make a hydra that does these as well? (Both above and below)
     (setq org-use-speed-commands t
           org-speed-commands-user '(("I" org-insert-heading-respect-content)
                                     ("s" call-interactively 'org-schedule)

@@ -54,16 +54,16 @@
   (progn
     (setenv "GPG_AGENT_INFO" (expand-file-name "~/.gnupg/S.gpg-agent::1"))
     (setq epg-gpg-program "gpg2"))
-  (dolist (face '(rcirc-url
-                  warning
-                  mode-line-buffer-id
-                  magit-diff-file-heading
-                  mu4e-header-key-face
-                  mu4e-header-highlight-face
-                  mu4e-unread-face
-                  org-agenda-structure
-                  org-warning))
-    (set-face-attribute face nil :weight 'normal))
+  ;; (dolist (face '(rcirc-url
+  ;;                 warning
+  ;;                 mode-line-buffer-id
+  ;;                 magit-diff-file-heading
+  ;;                 mu4e-header-key-face
+  ;;                 mu4e-header-highlight-face
+  ;;                 mu4e-unread-face
+  ;;                 org-agenda-structure
+  ;;                 org-warning))
+  ;;   (set-face-attribute face nil :weight 'normal))
   (set-face-attribute 'default nil
                       :family "Source Code Pro"
                       :width 'semi-condensed

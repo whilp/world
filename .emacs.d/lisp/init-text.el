@@ -45,24 +45,6 @@
   :defer t
   :bind (("C-=" . er/expand-region)))
 
-(use-package yasnippet
-  :ensure t
-  :defer 60
-  :diminish yas-minor-mode
-  :config
-  (progn
-    (yas-global-mode)
-    (use-package auto-yasnippet
-      :ensure t
-      :bind ("C-o" . aya-open-line)
-      :init
-      (bind-key
-       "C-c a"
-       (defhydra hydra-aya () "aya"
-         ("c" . aya-create)
-         ("e" . aya-expand)
-         ("o" . aya-open-line))))))
-
 (use-package epa-file
   :config
   (progn

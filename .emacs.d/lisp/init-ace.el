@@ -32,12 +32,6 @@
     (set-face-attribute 'aw-mode-line-face nil
                         :inherit 'mode-line-buffer-id
                         :foreground "lawn green")
-    (defun delete-side-windows ()
-      "Delete right side windows."
-      (interactive)
-      (dolist (window (window-at-side-list nil 'right))
-        (delete-window window)))
-
     (setq aw-keys avy-keys
           aw-dispatch-always t
           aw-ignore-current nil
@@ -53,7 +47,6 @@
             (?B aw-split-window-horz " Ace - Split Horz Window")
             (?b split-window-horizontally)
             (?o delete-other-windows)
-            (?O delete-side-windows)
             (?= balance-windows)
             (?u winner-undo)
             (?r winner-redo)
@@ -68,13 +61,6 @@
     (bind-keys :map org-mode-map
                ("M-o" . ace-link-org))
     (ace-link-setup-default)))
-
-(use-package ace-jump-helm-line
-  :ensure t
-  :init
-  (with-eval-after-load 'helm
-    (bind-keys :map helm-map
-               ("C-'" . ace-jump-helm-line))))
 
 (use-package ace-jump-zap
   :ensure t

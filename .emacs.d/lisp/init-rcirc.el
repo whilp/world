@@ -14,8 +14,6 @@
 
 (rcirc-track-minor-mode 1)
 
-(advice-add 'rcirc-next-active-buffer :around #'in-side-window)
-
 (setq rcirc-fill-flag nil
       rcirc-fill-column nil
       rcirc-time-format "%Y-%m-%dT%H:%M:%S "
