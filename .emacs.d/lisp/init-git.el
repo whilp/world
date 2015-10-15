@@ -107,12 +107,19 @@ it to the kill ring."
 
     (setq magit-git-executable (expand-file-name "~/bin/hub")
           magit-save-repository-buffers 'dontask
-          magit-status-buffer-switch-function 'switch-to-buffer
           magit-completing-read-function 'magit-builtin-completing-read
           magit-push-always-verify nil
-          magit-revert-buffers 1
+          magit-revert-buffers nil
           magit-delete-by-moving-to-trash nil
-          magit-diff-paint-whitespace nil)))
+          magit-after-revert-hook '(magit-refresh-vc-mode-line)
+          magit-diff-highlight-hunk-body t
+          magit-diff-highlight-indentation t
+          magit-diff-highlight-trailing t
+          magit-diff-paint-whitespace t
+          magit-diff-refine-hunk nil
+          magit-log-arguments '("-n256" "--graph" "--decorate")
+          magit-log-select-arguments '("-n256" "--decorate")
+          magit-log-section-arguments '("--decorate"))))
 
 (provide 'init-git)
 ;;; init-git ends here
