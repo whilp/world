@@ -110,6 +110,19 @@ it to the kill ring."
           magit-completing-read-function 'magit-builtin-completing-read
           magit-push-always-verify nil
           magit-revert-buffers nil
+          magit-after-revert-hook '(magit-refresh-vc-mode-line)
+          magit-not-reverted-hook '(magit-refresh-vc-mode-line)
+          magit-refresh-buffer-hook nil
+          magit-refs-sections-hook '(
+                                     ;; magit-insert-branch-description
+                                     ;; magit-insert-local-branches
+                                     ;; magit-insert-remote-branches
+                                     ;; magit-insert-tags
+                                     )
+          magit-status-refresh-hook nil
+          magit-wip-after-apply-mode nil
+          magit-wip-after-save-mode nil
+          magit-wip-before-change-mode nil
           magit-delete-by-moving-to-trash nil
           magit-diff-highlight-hunk-body t
           magit-diff-highlight-indentation nil
@@ -119,9 +132,7 @@ it to the kill ring."
           magit-after-revert-hook '(magit-refresh-vc-mode-line)
           magit-log-arguments '("-n256" "--graph" "--decorate")
           magit-log-select-arguments '("-n256" "--decorate")
-          magit-log-section-arguments '("--decorate"))
-          )
-    ))
+          magit-log-section-arguments '("--decorate"))))
 
 (provide 'init-git)
 ;;; init-git ends here
