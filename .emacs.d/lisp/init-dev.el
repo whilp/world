@@ -94,23 +94,36 @@
   :init (global-company-mode 1)
   :config
   (progn
-    (dolist (package '(company-go))
-      (use-package package
-        :ensure t
-        :demand t
-        :init (add-to-list 'company-backends package)))
+    (use-package company-go
+      :ensure t
+      :init (add-to-list 'company-backends 'company-go))
     (setq company-auto-complete t
           company-echo-delay 5
           company-tooltip-minimum-width 30
           company-idle-delay nil)))
 
-;; (use-package inf-ruby
-;;   :ensure t
-;;   :defer t
-;;   :config
-;;   (progn
-;;     (setq ruby-deep-indent-paren nil
-;;           ruby-deep-arglist nil)))
+(use-package paredit
+  :diminish paredit-mode
+  :config
+    (dolist (hook '(emacs-lisp-mode-hook
+                  lisp-interaction-mode-hook
+                  ielm-mode-hook
+                  python-mode-hook
+                  ))
+    (add-hook hook 'paredit-mode)))
+
+(use-package paredit-everywhere
+  :ensure t
+  :diminish paredit-everywhere-mode
+  :config
+  (progn
+    (add-hook 'prog-mode-hook 'paredit-everywhere-mode)))
+
+(use-package elec-pair
+  :init
+  (progn
+    (require 'elisp-mode)
+    (add-hook 'emacs-lisp-mode-hook 'electric-pair-mode)))
 
 (use-package js2-mode
   :ensure t
@@ -130,6 +143,7 @@
     ;; go get code.google.com/p/go.tools/cmd/oracle
     (add-to-list 'load-path
                  (concat whilp-gopath "src/code.google.com/p/go.tools/cmd/oracle/"))
+    (require 'compile)
     (setq compilation-error-regexp-alist
           (cons 'go-test compilation-error-regexp-alist))
     (use-package go-oracle
@@ -235,42 +249,7 @@
   (setq ruby-use-encoding-map nil)
   :config
   (progn
-    ;; (dolist (package '(ruby-hash-syntax
-    ;;                    ruby-compilation
-    ;;                    bundler))
-    ;;   (use-package package :ensure t))
-    ;; (use-package inf-ruby
-    ;;   :ensure t
-    ;;   :config
-    ;;   (setq inf-ruby-default-implementation "pry"))
-    ;; (bind-keys :map ruby-mode-map
-    ;;            ("RET" . reindent-then-newline-and-indent)
-    ;;            ("TAB" . indent-for-tab-command)
-    ;;            (eir-key . eir-eval-in-ruby))
-    
     (add-hook 'ruby-mode-hook 'subword-mode)
-    
-    ;; (use-package robe
-    ;;   :ensure t
-    ;;   :init
-    ;;   (progn
-    ;;     (with-eval-after-load 'company
-    ;;       (push 'company-robe company-backends))
-    ;;     (add-hook 'ruby-mode-hook 'robe-mode)))
-
-    ;; (use-package yari
-    ;;   :ensure t
-    ;;   :init (defalias 'ri 'yari))
-
-    ;; (use-package rinari
-    ;;   :ensure t
-    ;;   :init (global-rinari-mode))
-
-    ;; (use-package rspec-mode
-    ;;   :ensure t
-    ;;   :config
-    ;;   (add-hook 'ruby-mode-hook (lambda () (rspec-mode 1))))
-
     ;; Stupidly the non-bundled ruby-mode isn't a derived mode of
     ;; prog-mode: we run the latter's hooks anyway in that case.
     (add-hook 'ruby-mode-hook
