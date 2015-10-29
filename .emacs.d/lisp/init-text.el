@@ -56,9 +56,10 @@
 (use-package flyspell
   :diminish flyspell-mode
   :demand t
-  :bind ("s-:" . ispell-word)
   :config
   (progn
+    (setq ispell-program-name "aspell"
+          ispell-extra-args '("--sug-mode=ultra"))
     (add-hook 'text-mode-hook 'flyspell-mode)
     (add-hook 'prog-mode-hook 'flyspell-prog-mode)))
 
