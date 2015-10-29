@@ -79,11 +79,12 @@
   :demand t
   :init (org-context-activate))
 
-(use-package org-babel
+(use-package ob-tangle
   :demand t
   :init
   (progn
-    (setq org-confirm-babel-evaluate nil)
+    (setq org-confirm-babel-evaluate nil
+          org-src-fontify-natively t)
     (add-hook 'org-babel-after-execute-hook 'org-display-inline-images 'append)
     (org-babel-do-load-languages
      'org-babel-load-languages
@@ -98,13 +99,6 @@
     (use-package ox-html
       :config
       (setq org-html-doctype "html5"))))
-
-(use-package org-src
-  :demand t
-  :init
-  (progn
-    (setq org-src-fontify-natively t)
-    (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))))
 
 (use-package org-mime
   :demand t)
