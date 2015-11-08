@@ -83,6 +83,9 @@
 
 (setenv "GOPATH" whilp-gopath)
 
+(use-package eshell
+  :demand t)
+
 (use-package comint
   :demand t
   :config
