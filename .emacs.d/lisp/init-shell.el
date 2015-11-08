@@ -54,15 +54,16 @@
   "Shell PATH string.")
 (setenv "PATH" shell-path)
 
-(setenv "MANPATH"
-        (mapconcat
-         'identity
-         (append
-          (mapcar
-           'expand-file-name
-           (list
-            "/usr/pkg/man")))
-         ":"))
+(defvar man-path (mapcar
+                  'expand-file-name
+                  (list
+                   (concat nix-link "share/man")
+                   "/usr/pkg/man"
+                   "/usr/share/man"
+                   "/usr/local/share/man"))
+  "MANPATH.")
+
+(setenv "MANPATH" (mapconcat 'identity man-path path-separator))
 (setenv "TMPDIR" "/tmp")
 (setenv "PAGER" "cat")
 (setenv "EDITOR" "emacsclient")
