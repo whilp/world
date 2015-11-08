@@ -71,6 +71,7 @@ fetch = +refs/pull/*/head:refs/pull/origin/*
 	host = github.banksimple.com
 [merge]
 	tool = emerge
+  conflictstyle = diff3
 [github]
 	user = whilp
 [gh]
