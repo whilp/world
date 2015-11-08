@@ -14,6 +14,13 @@
 (defvar eir-key "C-<return>"
   "Eval-in-REPL key.")
 
+(use-package nix-mode
+  :ensure t)
+
+(use-package company-nixos-options
+  :ensure t
+  :config (add-to-list 'company-backends 'company-nixos-options))
+
 (use-package edit-server-htmlize
   :ensure t
   :config
@@ -290,6 +297,8 @@
   :demand t
   :config
   (progn
+    (eval-when-compile
+      (require 'counsel))
     (defun project-compilation-buffer (prefix)
       (format "*%s: %s*" prefix (projectile-project-root)))
     (defun with-compilation-buffer-name-function-for (prefix orig args)
@@ -319,12 +328,43 @@
       "Start a shell in the project's root."
       (interactive "P")
       (projectile-with-default-dir (projectile-project-root)
-        (shell (format "*shell %s*" (projectile-project-name)))))
+        (let ((eshell-buffer-name (format "*shell %s*" (projectile-project-name))))
+          (eshell))))
+
+    (defun ivy-switch-project ()
+      (interactive)
+      (ivy-read
+       "Switch to project: "
+       (if (projectile-project-p)
+           (cons (abbreviate-file-name (projectile-project-root))
+                 (projectile-relevant-known-projects))
+         projectile-known-projects)
+       :action #'projectile-switch-project-by-name))
+
+    (ivy-set-actions
+     'ivy-switch-project
+     '(("v" projectile-vc "Open project root in vc-dir or magit")
+       ("e"
+        (lambda (dir)
+          (projectile-with-default-dir dir
+            (let ((eshell-buffer-name (format "*shell %s*" (projectile-project-name))))
+              (eshell))))
+        "Shell in project")
+       ("g"
+        (lambda (dir)
+          (projectile-with-default-dir dir
+            (counsel-git-grep)))
+        "Grep in project")))
+        
     (bind-keys :map projectile-command-map
+               ("p" . ivy-switch-project)
                ("!" . projectile-run-shell)
                ("i" . projectile-compile-project)
-               ("o" . projectile-test-project))
+               ("o" . projectile-test-project)
+               ("g" . counsel-git-grep))
+
     (setq projectile-keymap-prefix (kbd "C-c p")
+          projectile-completion-system 'ivy
           projectile-ignored-project-function 'projectile-ignore-project
           projectile-globally-ignored-directories
           (quote (".idea"

@@ -113,6 +113,7 @@ it to the kill ring."
           magit-save-repository-buffers 'dontask
           magit-completing-read-function 'magit-builtin-completing-read
           magit-push-always-verify nil
+          magit-completing-read-function 'ivy-completing-read
           magit-revert-buffers nil
           magit-after-revert-hook '(magit-refresh-vc-mode-line)
           magit-not-reverted-hook '(magit-refresh-vc-mode-line)

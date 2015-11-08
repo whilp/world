@@ -22,14 +22,8 @@
   :diminish ivy-mode
   :init
   (progn
-    (eval-when-compile
-      (require 'magit)
-      (require 'projectile))
-
     (ivy-mode 1)
-    (setq ivy-use-virtual-buffers t
-          magit-completing-read-function 'ivy-completing-read
-          projectile-completion-system 'ivy)))
+    (setq ivy-use-virtual-buffers t)))
 
 (use-package swiper
   :ensure t
