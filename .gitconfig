@@ -10,7 +10,7 @@
 	review = merge --no-ff --no-commit
 	ctags = "!sh -c '[ -f .git/hooks/ctags ] || git init; .git/hooks/ctags' git-ctags"
 [core]
-  editor = /usr/local/bin/emacsclient
+  editor = emacsclient
   excludesfile = ~/.gitconf/ignore
 [format]
 	pretty = format:"%h %p %d %ai %ce%n  %s%n"
