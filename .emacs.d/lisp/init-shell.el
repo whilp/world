@@ -18,22 +18,42 @@
   :demand t
   :config (setq explicit-shell-file-name "/bin/bash"))
 
+(defvar nix-link (file-name-as-directory (expand-file-name "~/.nix-profile"))
+  "NIX_LINK.")
+
+(defvar nix-path (file-name-as-directory (expand-file-name "~/.nix-defexpr/nixpkgs")))
+
+(setenv "NIX_PATH" (format "%s:nixpkgs=%s" nix-path nix-path))
+
+(setenv "NIX_CONF_DIR" (file-name-as-directory (expand-file-name "~/.nix")))
+
+(setenv "SSL_CERT_FILE" (concat nix-link "etc/ca-bundle.crt"))
+
 (setq exec-path
-      (append
-       (mapcar
-        'expand-file-name
-        (list
-         "~/bin"
-         (concat whilp-gopath "bin")
-         "/usr/pkg/sbin"
-         "/usr/pkg/bin"
-         "/usr/local/sbin"
-         "/usr/local/bin"
-         "/usr/local/texlive/2015basic/bin/x86_64-darwin/"
-         "/usr/local/MacGPG2/bin"))
-       exec-path))
-(setenv "PATH"
-        (mapconcat 'identity exec-path path-separator))
+      (mapcar
+       'expand-file-name
+       (list
+        (concat nix-link "bin")
+        (concat nix-link "sbin")
+        "~/bin"
+        (concat whilp-gopath "bin")
+        "/usr/pkg/sbin"
+        "/usr/pkg/bin"
+        "/usr/local/sbin"
+        "/usr/local/bin"
+        "/usr/local/texlive/2015basic/bin/x86_64-darwin/"
+        "/usr/local/MacGPG2/bin"
+        "/usr/bin/"
+        "/bin/"
+        "/usr/sbin/"
+        "/sbin/"
+        "/Applications/Emacs.app/Contents/MacOS/bin-x86_64-10_9/"
+        "/Applications/Emacs.app/Contents/MacOS/libexec-x86_64-10_9/")))
+
+(defvar shell-path (mapconcat 'identity exec-path path-separator)
+  "Shell PATH string.")
+(setenv "PATH" shell-path)
+
 (setenv "MANPATH"
         (mapconcat
          'identity
