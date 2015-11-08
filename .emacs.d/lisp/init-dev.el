@@ -129,7 +129,7 @@
 (use-package elec-pair
   :init
   (progn
-    (require 'elisp-mode)
+    (require 'lisp-mode)
     (add-hook 'emacs-lisp-mode-hook 'electric-pair-mode)))
 
 (use-package js2-mode
