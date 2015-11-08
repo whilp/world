@@ -45,7 +45,6 @@
 (use-package init-shell  :demand t)
 (use-package init-rcirc  :demand t)
 (use-package init-ui     :demand t)
-;; (use-package init-el-get :demand t)
 (use-package init-org    :demand t)
 (use-package init-dev    :demand t)
 (use-package init-completion :demand t)

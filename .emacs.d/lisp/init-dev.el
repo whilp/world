@@ -35,8 +35,8 @@
   :ensure t
   :mode "Dockerfile\\'")
 
-(use-package cask
-  :ensure t)
+;; (use-package cask
+;;   :ensure t)
 
 (use-package prog-mode
   :demand t
