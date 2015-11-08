@@ -109,7 +109,7 @@ it to the kill ring."
       (interactive)
       (magit-run-git-async "fork"))
 
-    (setq magit-git-executable (expand-file-name "~/bin/hub")
+    (setq magit-git-executable "hub"
           magit-save-repository-buffers 'dontask
           magit-completing-read-function 'magit-builtin-completing-read
           magit-push-always-verify nil
