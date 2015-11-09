@@ -27,7 +27,7 @@
 
 (setenv "NIX_CONF_DIR" (file-name-as-directory (expand-file-name "~/.nix")))
 
-(setenv "SSL_CERT_FILE" (concat nix-link "etc/ca-bundle.crt"))
+(setenv "SSL_CERT_FILE" (concat nix-link "etc/ssl/certs/ca-bundle.crt"))
 
 (setq exec-path
       (mapcar
