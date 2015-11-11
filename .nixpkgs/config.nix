@@ -21,7 +21,7 @@
           # browse-at-remote
           # browse-url
           # clojure-mode
-          # color-theme-solarized
+          colorThemeSolarized
           # comint
           # comment-dwim-2
           company
@@ -54,6 +54,8 @@
           # fringe
           gh
           gist
+          gitModes
+          htmlize
           # go-eldoc
           # go-mode
           # go-oracle
@@ -62,7 +64,7 @@
           # hl-line
           swiper # swiper ivy counsel
           # js
-          # js2-mode
+          js2
           # json-mode
           # lisp-mode
           # lua-mode
@@ -98,6 +100,7 @@
           # ruby-mode
           # savehist
           # scala-mode2
+          scalaMode2
           # scroll-bar
           # shell
           # simple
@@ -107,6 +110,7 @@
           # tramp
           # unfill
           # uniquify
+          use-package
           # vc-hooks
           # visual-fill-column
           # which-func
