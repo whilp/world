@@ -115,24 +115,23 @@
   :config
   (progn
     (load-theme 'solarized t)
-    (enable-theme 'solarized)
+    (whilp-toggle-solarized 'dark)))
 
-    (defun whilp-toggle-solarized ()
-      "Toggles between solarized light and dark."
-      (interactive)
-      (let ((mode (if (equal (frame-parameter nil 'background-mode) 'dark) 'light 'dark)))
-        (set-frame-parameter nil 'background-mode mode)
-        (enable-theme 'solarized)))))
+(defun whilp-toggle-solarized (&optional mode)
+  "Set solarized to MODE, or toggle if not given."
+  (interactive)
+  (set-frame-parameter nil 'background-mode
+                       (or mode
+                           (if (equal (frame-parameter nil 'background-mode) 'dark) 'light 'dark)))
+  (enable-theme 'solarized))
 
 (use-package smart-mode-line
   :ensure t
   :demand t
   :config
   (progn
-    (require 'smart-mode-line)
     (setq sml/mode-width 'right
           sml/theme 'respectful
-          sml/use-projectile-p nil
           sml/shorten-directory t
           sml/full-mode-string ""
           sml/shorten-mode-string ""
