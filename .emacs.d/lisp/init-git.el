@@ -18,12 +18,13 @@
   :ensure t
   :bind ("C-c b" . browse-at-remote))
 
-(use-package diff-hl
+(use-package git-gutter-fringe
   :ensure t
-  :init
+  :diminish git-gutter-mode
+  :config
   (progn
-    (setq diff-hl-command-prefix (kbd "C-c d"))
-    (global-diff-hl-mode 1)))
+    (setq git-gutter:update-interval 2)
+    (global-git-gutter-mode t)))
 
 (use-package gh
   :ensure t
