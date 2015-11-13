@@ -7,6 +7,7 @@
 ;;; Code:
 
 (require 'use-package)
+(require 'init-shell)
 
 (prefer-coding-system 'utf-8)
 
@@ -56,7 +57,7 @@
 (use-package flyspell
   :diminish flyspell-mode
   :demand t
-  :config
+  :init (setenv "ASPELL_CONF" (format "dict-dir %slib/aspell" nix-link))
   (progn
     (setq ispell-program-name "aspell"
           ispell-extra-args '("--sug-mode=ultra"))
