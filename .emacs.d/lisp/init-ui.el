@@ -234,10 +234,6 @@
 (put 'narrow-to-region 'disabled nil)
 (put 'upcase-region 'disabled nil)
 
-(use-package hl-line
-  :demand t
-  :config (global-hl-line-mode t))
-
 (global-visual-line-mode 1)
 
 (use-package browse-url
