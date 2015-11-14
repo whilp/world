@@ -10,6 +10,11 @@
 
 (require 'use-package)
 (require 'init-shell)
+(require 'init-completion)
+(eval-when-compile
+  (require 'compile)
+  (require 'counsel)
+  (require 'ivy))
 
 (defvar eir-key "C-<return>"
   "Eval-in-REPL key.")
@@ -117,7 +122,7 @@
 (use-package paredit
   :diminish paredit-mode
   :config
-    (dolist (hook '(emacs-lisp-mode-hook
+  (dolist (hook '(emacs-lisp-mode-hook
                   lisp-interaction-mode-hook
                   ielm-mode-hook
                   python-mode-hook
