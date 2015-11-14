@@ -70,5 +70,19 @@
                       :height 140
                       :weight 'normal)))
 
+(use-package tls
+  :demand t
+  :config
+  (setq tls-checktrust t
+        tls-program
+        (list
+         (format "gnutls-cli --x509cafile %s -p %%p %%h" ssl-cert-file))))
+
+(use-package gnutls
+  :demand t
+  :config
+  (setq gnutls-verify-error t
+        gnutls-trustfiles (list ssl-cert-file)))
+
 (provide 'init-emacs)
 ;;; init-emacs ends here
