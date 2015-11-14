@@ -171,8 +171,8 @@
 
 ;; go get code.google.com/p/go.tools/cmd/oracle
 (defvar go-oracle-command)
+(add-to-list 'load-path (concat whilp-gopath "src/code.google.com/p/go.tools/cmd/oracle/"))
 (use-package go-oracle
-  :load-path (lambda () (concat whilp-gopath "src/code.google.com/p/go.tools/cmd/oracle/"))
   :config
   (progn
     (setq go-oracle-command (executable-find "oracle"))
@@ -368,6 +368,7 @@
 
 (defun projectile-run-shell (&optional buffer)
   "Start a shell in the project's root (ignoring BUFFER)."
+  (interactive "P")
   (projectile-with-default-dir (projectile-project-root)
     (let ((eshell-buffer-name (format "*shell %s*" (projectile-project-name))))
       (eshell))))

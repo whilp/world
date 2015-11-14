@@ -7,6 +7,7 @@
 ;;; Code:
 
 (require 'use-package)
+(require 'init-shell)
 
 (eval-when-compile
   (require 'message))
