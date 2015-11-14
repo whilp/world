@@ -6,6 +6,10 @@
 
 ;;; Code:
 
+(require 'battery)
+(require 'time)
+(require 'browse-url)
+(require 'use-package)
 (eval-when-compile
   (require 'color-theme)
   (require 'use-package)
@@ -109,6 +113,15 @@
   :demand t
   :config (global-font-lock-mode t))
 
+(defun whilp-toggle-solarized (&optional mode)
+  "Set solarized to MODE, or toggle if not given."
+  (interactive)
+  (let* ((current (frame-parameter nil 'background-mode))
+         (toggled (if (equal current 'dark) 'light 'dark))
+         (desired (or mode toggled)))
+    (set-frame-parameter nil 'background-mode desired)
+    (enable-theme 'solarized)))
+
 (use-package color-theme-solarized
   :ensure t
   :demand t
@@ -117,42 +130,36 @@
     (load-theme 'solarized t)
     (whilp-toggle-solarized 'dark)))
 
-(defun whilp-toggle-solarized (&optional mode)
-  "Set solarized to MODE, or toggle if not given."
-  (interactive)
-  (set-frame-parameter nil 'background-mode
-                       (or mode
-                           (if (equal (frame-parameter nil 'background-mode) 'dark) 'light 'dark)))
-  (enable-theme 'solarized))
+;; (defvar sml/use-projectile-p)
+;; (use-package smart-mode-line
+;;   :ensure t
+;;   :demand t
+;;   :config
+;;   (progn
+;;     (setq sml/mode-width 'right
+;;           sml/theme 'respectful
+;;           sml/use-projectile-p nil
+;;           sml/shorten-directory t
+;;           sml/full-mode-string ""
+;;           sml/shorten-mode-string ""
+;;           sml/name-width '(12 . 18))
 
-(use-package smart-mode-line
-  :ensure t
-  :demand t
-  :config
-  (progn
-    (setq sml/mode-width 'right
-          sml/theme 'respectful
-          sml/shorten-directory t
-          sml/full-mode-string ""
-          sml/shorten-mode-string ""
-          sml/name-width '(12 . 18))
-
-    (sml/setup)
+;;     (sml/setup)
     
-    (setq-default global-mode-string '("")
-                  mode-line-format
-                  '(
-                    "%e"
-                    mode-line-front-space
-                    mode-line-mule-info
-                    mode-line-client
-                    mode-line-remote
-                    mode-line-frame-identification
-                    mode-line-buffer-identification
-                    (vc-mode vc-mode)
-                    "  " mode-line-modes
-                    mode-line-misc-info
-                    mode-line-end-spaces))))
+;;     (setq global-mode-string '("")
+;;                   mode-line-format
+;;                   '(
+;;                     "%e"
+;;                     mode-line-front-space
+;;                     mode-line-mule-info
+;;                     mode-line-client
+;;                     mode-line-remote
+;;                     mode-line-frame-identification
+;;                     mode-line-buffer-identification
+;;                     (vc-mode vc-mode)
+;;                     "  " mode-line-modes
+;;                     mode-line-misc-info
+;;                     mode-line-end-spaces))))
 
 (use-package simple
   :diminish visual-line-mode
@@ -173,17 +180,18 @@
       (interactive "p")
       (yank-pop (- arg)))))
 
+(defun message-time ()
+  "Print the current time as a message."
+  (interactive)
+  (message "%s | %s"
+           (format-time-string display-time-format)
+           (battery-format "%L %B %p%% %t" (battery-pmset))))
+
 (use-package time
   :demand t
   :bind ("s-SPC" . message-time)
   :config
   (progn
-    (defun message-time ()
-      "Print the current time as a message."
-      (interactive)
-      (message "%s | %s"
-               (format-time-string display-time-format)
-               (battery-format "%L %B %p%% %t" (battery-pmset))))
     (setq
      display-time-default-load-average nil
      display-time-format "%a %Y-%m-%d %H:%M")
@@ -235,13 +243,10 @@
 
 (global-visual-line-mode 1)
 
-(use-package browse-url
-  :demand t
-  :config
-  (defun browse-url-default-macosx-browser (url &optional new-window)
-    "Browse URL in the background. (NEW-WINDOW is ignored)."
-    (interactive (browse-url-interactive-arg "URL: "))
-    (start-process (concat "open -g" url) nil "open" "-g" url)))
+(defun browse-url-default-macosx-browser (url &optional new-window)
+  "Browse URL in the background. (NEW-WINDOW is ignored)."
+  (interactive (browse-url-interactive-arg "URL: "))
+  (start-process (concat "open -g" url) nil "open" "-g" url))
 
 (provide 'init-ui)
 ;;; init-ui ends here
