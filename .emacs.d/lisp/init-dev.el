@@ -390,5 +390,34 @@
     (define-key projectile-mode-map projectile-keymap-prefix 'projectile-command-map)
     (projectile-global-mode)))
 
+(defun projectile-run-shell (&optional buffer)
+  "Start a shell in the project's root (ignoring BUFFER)."
+  (projectile-with-default-dir (projectile-project-root)
+    (let ((eshell-buffer-name (format "*shell %s*" (projectile-project-name))))
+      (eshell))))
+
+(defun with-compilation-buffer-name-function-for (prefix orig args)
+  "With a compilation buffer name beginning with PREFIX, apply ORIG and ARGS."
+  (let* ((compilation-buffer-name-function
+          (lambda (name-of-mode)
+            (format "*%s: %s*" prefix (projectile-project-root)))))
+    (apply orig args)))
+
+(defun with-compile-project (orig &rest args)
+  "Wrap ORIG with ARGS to compile a project in a dedicated buffer."
+  (with-compilation-buffer-name-function-for "compile-project" orig args))
+
+(defun with-test-project (orig &rest args)
+  "Wrap ORIG with ARGS to test a project in a dedicated buffer."
+  (with-compilation-buffer-name-function-for "test-project" orig args))
+
+(defun projectile-ignore-project (name)
+  "Return nil if project NAME should be ignored."
+  (string-match
+   (rx
+    (or "/homebrew/"
+        "/.emacs.d/"))
+   name))
+
 (provide 'init-dev)
 ;;; init-dev ends here
