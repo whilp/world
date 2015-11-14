@@ -9,6 +9,13 @@
       aspell
       aspellDicts.en
       gnutls
+      git
+      gitAndTools.hub
+      go
+      goPackages.godef
+      goPackages.godep
+      nix
+      openssh
       (emacsWithPackages
         (with emacsPackages; with emacsPackagesNg; [
           # ace-jump-zap
@@ -48,6 +55,7 @@
           # yaml-mode
           async
           avy
+          cask
           colorThemeSolarized
           company
           deferred
@@ -68,13 +76,6 @@
           swiper
           use-package
       ]))
-      git
-      gitAndTools.hub
-      go
-      goPackages.godef
-      goPackages.godep
-      nix
-      openssh
     ];
   };
 };}
