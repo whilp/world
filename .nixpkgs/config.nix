@@ -8,6 +8,7 @@
       diffutils
       aspell
       aspellDicts.en
+      gnutls
       (emacsWithPackages
         (with emacsPackages; with emacsPackagesNg; [
           # ace-jump-zap
