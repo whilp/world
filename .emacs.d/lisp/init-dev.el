@@ -152,25 +152,26 @@
   (progn
     (bind-keys :map go-mode-map
                ("C-c C-d" . godoc-at-point))
-    ;; go get code.google.com/p/go.tools/cmd/oracle
-    (add-to-list 'load-path
-                 (concat whilp-gopath "src/code.google.com/p/go.tools/cmd/oracle/"))
-    (require 'compile)
     (setq compilation-error-regexp-alist
           (cons 'go-test compilation-error-regexp-alist))
-    (use-package go-oracle
-      :init (load "oracle")
-      :config
-      (progn
-        (setq go-oracle-command (executable-find "oracle"))
-        (add-hook 'go-mode-hook 'go-oracle-mode)))
-    (use-package go-eldoc
-      :ensure t
-      :config (add-hook 'go-mode-hook 'go-eldoc-setup))
+
     (setq gofmt-command "goimports")
     (add-hook 'before-save-hook #'gofmt-before-save)
     (bind-keys :map go-mode-map
                ("M-." . godef-jump))))
+
+(use-package go-eldoc
+  :ensure t
+  :config (add-hook 'go-mode-hook 'go-eldoc-setup))
+
+;; go get code.google.com/p/go.tools/cmd/oracle
+(defvar go-oracle-command)
+(use-package go-oracle
+  :load-path (lambda () (concat whilp-gopath "src/code.google.com/p/go.tools/cmd/oracle/"))
+  :config
+  (progn
+    (setq go-oracle-command (executable-find "oracle"))
+    (add-hook 'go-mode-hook 'go-oracle-mode)))
 
 (use-package restclient
   :ensure t
