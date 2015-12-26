@@ -1,4 +1,9 @@
 #!/bin/bash
 
 # http://www.dgkapps.com/blog/osx-tips/osx-tips-turn-off-disable-calendaragent-from-the-command-line/
-launchctl unload -w /System/Library/LaunchAgents/com.apple.CalendarAgent.plist
+launchctl unload -w
+/System/Library/LaunchAgents/com.apple.CalendarAgent.plist
+
+# https://superuser.com/questions/326223/how-do-i-disable-the-command-control-d-word-definition-keyboard-shortcut-in-os-x
+# dear god
+defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 70 '<dict><key>enabled</key><false/></dict>'
