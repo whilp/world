@@ -13,10 +13,9 @@
 (require 'package)
 (setq package-enable-at-startup nil
       package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                        ;; ("melpa-stable" . "https://stable.melpa.org/packages/")
-                        ("melpa" . "https://melpa.org/packages/")))
-
-(package-initialize)
+                         ;; ("melpa-stable" . "https://stable.melpa.org/packages/")
+                         ("melpa" . "https://melpa.org/packages/")))
+(package-initialize nil)
 
 ;; Bootstrap `use-package'
 (unless (package-installed-p 'use-package)
