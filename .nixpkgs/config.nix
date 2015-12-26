@@ -9,13 +9,40 @@
       aspell
       aspellDicts.en
       gnutls
+      guile
       git
-      gitAndTools.hub
+      # gitAndTools.hub EFFED
       go
       goPackages.godef
       goPackages.godep
       nix
       openssh
+      m4
+      autoconf
+      automake
+      gettext
+      pkgconfig
+      libtool
+      clang
+      libgcrypt
+      gnupg
+      gnumake
+      racket # unsupported on darwin :/
+      cloc
+      libyaml
+      ncurses
+      readline
+      python27Full
+      # python27Packages.psycopg2
+      (with python27Packages; [
+        flake8
+        virtualenv
+        autopep8
+        ipython
+        readline
+        sqlite3
+        curses
+      ])
       (emacsWithPackages
         (with emacsPackages; with emacsPackagesNg; [
           # ace-jump-zap
