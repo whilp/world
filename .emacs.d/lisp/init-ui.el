@@ -50,7 +50,9 @@
         backup-directory-alist `((".*" . ,temporary-file-directory))
         auto-save-file-name-transforms `((".*" "~/.saves"))
         insert-directory-program (executable-find "ls")
-        confirm-nonexistent-file-or-buffer nil))
+        confirm-nonexistent-file-or-buffer nil
+        enable-local-variables nil
+        enable-local-eval nil))
 
 (use-package fringe
   :demand t
