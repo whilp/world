@@ -19,12 +19,23 @@
 (defvar eir-key "C-<return>"
   "Eval-in-REPL key.")
 
-(use-package nix-mode
+(use-package bpr
   :ensure t)
 
-(use-package company-nixos-options
-  :ensure t
-  :config (add-to-list 'company-backends 'company-nixos-options))
+(use-package racket-mode
+  :ensure t)
+
+(use-package geiser
+  :ensure t)
+
+(use-package scheme-complete
+  :ensure t)
+
+(use-package scribble-mode
+  :ensure t)
+
+(use-package nix-mode
+  :ensure t)
 
 (use-package edit-server-htmlize
   :ensure t
@@ -106,13 +117,14 @@
   :init (global-company-mode 1)
   :config
   (progn
-    (use-package company-go
-      :ensure t
-      :init (add-to-list 'company-backends 'company-go))
     (setq company-auto-complete t
           company-echo-delay 5
           company-tooltip-minimum-width 30
-          company-idle-delay nil)))
+          company-idle-delay 0.5)))
+
+(use-package company-go
+  :ensure t
+  :init (add-to-list 'company-backends 'company-go))
 
 (use-package rainbow-delimiters
   :ensure t
@@ -125,7 +137,6 @@
   (dolist (hook '(emacs-lisp-mode-hook
                   lisp-interaction-mode-hook
                   ielm-mode-hook
-                  python-mode-hook
                   ))
     (add-hook hook 'paredit-mode)))
 
@@ -200,6 +211,9 @@
     (setq-default flycheck-emacs-lisp-load-path load-path)
     (global-flycheck-mode)))
 
+(use-package flycheck-package
+  :ensure t)
+
 ;; (use-package rubocop
 ;;   :ensure t
 ;;   :defer t
@@ -248,6 +262,18 @@
     ;; (use-package pyenv-mode
     ;;   :ensure t))
     ))
+
+(use-package py-autopep8
+  :ensure t
+  :config
+  (add-hook 'python-mode-hook 'py-autopep8-enable-on-save))
+
+(use-package py-isort
+  :ensure t
+  :config
+  (add-hook 'python-mode-hook (lambda ()
+                                (interactive)
+                                (add-hook 'before-save-hook 'py-isort-buffer nil t))))
 
 ;; (use-package ein
 ;;   :ensure t)
