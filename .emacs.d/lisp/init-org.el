@@ -55,21 +55,25 @@
 (use-package org-capture
   :demand t
   :functions (org-capture)
+  :bind ("C-c j" . org-capture-journal)
   :config
   (progn
-    (defun org-deal-with-it (orig &rest args)
-      "Run ORIG with ARGS and some hacks that make org Deal With It."
-      (interactive)
-      (cl-letf ((org-extend-today-until 0)
-                (completing-read-function #'completing-read-default)
-                ((symbol-function 'delete-other-windows) #'ignore)
-                ((symbol-function 'org-switch-to-buffer-other-window) #'switch-to-buffer-other-window)
-                ((symbol-function 'org-pop-to-buffer-same-window) #'pop-to-buffer-same-window))
-        (apply orig args)))
-    (advice-add 'org-capture :around #'org-deal-with-it)
-    (advice-add 'org-add-log-note :around #'org-deal-with-it)
-    (advice-add 'org-agenda :around #'org-deal-with-it)
+    ;; (defun org-deal-with-it (orig &rest args)
+    ;;   "Run ORIG with ARGS and some hacks that make org Deal With It."
+    ;;   (interactive)
+    ;;   (cl-letf ((org-extend-today-until 0)
+    ;;             (completing-read-function #'completing-read-default)
+    ;;             ((symbol-function 'delete-other-windows) #'ignore)
+    ;;             ((symbol-function 'org-switch-to-buffer-other-window) #'switch-to-buffer-other-window)
+    ;;             ((symbol-function 'org-pop-to-buffer-same-window) #'pop-to-buffer-same-window))
+    ;;     (apply orig args)))
+    (advice-remove 'org-capture #'org-deal-with-it)
+    ;; (advice-add 'org-add-log-note :around #'org-deal-with-it)
+    ;; (advice-add 'org-agenda :around #'org-deal-with-it)
     ;; (advice-remove 'org-insert-link #'org-deal-with-it)
+    (defun org-capture-journal (&optional GOTO KEYS)
+      (interactive "P")
+      (org-capture nil "j"))
     (setq org-capture-templates
           '(("j" "Journal" entry (file+datetree "~/src/github.banksimple.com/whilp/notes/log.org")
              "* %^{Title} %^g\n:PROPERTIES:\n:FILED: %U\n:LINK: %a\n:END:\n%?")))))
