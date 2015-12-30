@@ -201,6 +201,15 @@ values."
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
 user code."
+  (setq user-full-name "Will Maier")
+  (defvar user-email-address "wcmaier@gmail.com"
+    "My email.")
+  (setenv "GIT_EDITOR" "emacsclient")
+  (setenv "GIT_COMMITTER_NAME" user-full-name)
+  (setenv "GIT_COMMITTER_EMAIL" user-email-address)
+  (setenv "GIT_AUTHOR_NAME" user-full-name)
+  (setenv "GIT_AUTHOR_EMAIL" user-email-address)
+
   (defvar nix-link (file-name-as-directory (expand-file-name "~/.nix-profile"))
     "NIX_LINK.")
 
