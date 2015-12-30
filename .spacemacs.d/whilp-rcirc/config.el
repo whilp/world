@@ -1,31 +1,6 @@
-(require 'rcirc)
-
-;; (add-to-list 'aggressive-indent-excluded-modes 'rcirc-mode)
-
-(defun rcirc-keepalive ()
-  "Disable rcirc keepalives")
-
-(defun rcirc-profile (host user port)
-  "Search auth-info for an entry matching HOST, USER, and PORT."
-  (let* (
-         (auth-info
-          (car
-           (auth-source-search
-            :max 1
-            :host host
-            :user user
-            :port port
-            :create nil)))
-         (password (funcall (plist-get auth-info :secret))))
-    (list
-     host
-     :nick user
-     :password password
-     :full-name user
-     :port port
-     :encryption 'tls)))
-
-(setq rcirc-fill-flag nil
+(spacemacs|use-package-add-hook rcirc
+  :post-config
+  (setq rcirc-fill-flag nil
       rcirc-fill-column nil
       rcirc-time-format "%Y-%m-%dT%H:%M:%S "
       rcirc-color-is-deterministic t
@@ -80,4 +55,29 @@
        ;; (my-rcirc-profile "monitorama.irc.slack.com" "whilp" 6697)
        ;; (my-rcirc-profile "remotes.irc.slack.com" "whilp" 6697)
        )
-      )
+      ))
+
+(defun rcirc-keepalive ()
+  "Disable rcirc keepalives")
+
+(defun rcirc-profile (host user port)
+  "Search auth-info for an entry matching HOST, USER, and PORT."
+  (let* (
+         (auth-info
+          (car
+           (auth-source-search
+            :max 1
+            :host host
+            :user user
+            :port port
+            :create nil)))
+         (password (funcall (plist-get auth-info :secret))))
+    (list
+     host
+     :nick user
+     :password password
+     :full-name user
+     :port port
+     :encryption 'tls)))
+
+
