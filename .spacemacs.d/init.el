@@ -314,8 +314,10 @@ layers configuration. You are free to put any user code."
     (start-process (concat "open -g" url) nil "open" "-g" url))
   )
 
-(defun configure-path ()
-    )
+(defun spacemacs//restore-powerline (buffer)
+  "Define a dummy restore-powerline.
+
+configuration-layer/package-usedp returns t for powerline no matter what.")
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
