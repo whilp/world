@@ -10,7 +10,7 @@ values."
    ;; Base distribution to use. This is a layer contained in the directory
    ;; `+distribution'. For now available distributions are `spacemacs-base'
    ;; or `spacemacs'. (default 'spacemacs)
-   dotspacemacs-distribution 'spacemacs-base
+   dotspacemacs-distribution 'spacemacs
    ;; List of additional paths where to look for configuration layers.
    ;; Paths must have a trailing slash (i.e. `~/.mycontribs/')
    dotspacemacs-configuration-layer-path '("~/.spacemacs.d/")
@@ -31,6 +31,10 @@ values."
      osx
      markdown
      org
+     (shell :variables
+            shell-default-shell 'eshell
+            shell-enable-smart-eshell t
+            )
      ;; (shell :variables
      ;;        shell-default-height 30
      ;;        shell-default-position 'bottom)
@@ -44,9 +48,15 @@ values."
    ;; wrapped in a layer. If you need some configuration for these
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
-   dotspacemacs-additional-packages '()
+   dotspacemacs-additional-packages '(
+                                      rich-minority
+                                      )
    ;; A list of packages and/or extensions that will not be install and loaded.
-   dotspacemacs-excluded-packages '()
+   dotspacemacs-excluded-packages '(
+                                    org-bullets
+                                    powerline
+                                    exec-path-from-shell
+                                    )
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    ;; are declared in a layer which is not a member of
    ;; the list `dotspacemacs-configuration-layers'. (default t)
@@ -191,19 +201,112 @@ values."
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
 user code."
-  ;; (setq ns-use-native-fullscreen nil)
+  (defvar nix-link (file-name-as-directory (expand-file-name "~/.nix-profile"))
+    "NIX_LINK.")
+
+  (defvar nix-path (file-name-as-directory (expand-file-name "~/.nix-defexpr/nixpkgs")))
+
+  (defvar ssl-cert-file (concat nix-link "etc/ssl/certs/ca-bundle.crt")
+    "SSL_CERT_FILE.")
+
+  (setq-default exec-path
+                (mapcar
+                 'expand-file-name
+                 (list
+                  (concat nix-link "bin")
+                  (concat nix-link "sbin")
+                  "~/bin"
+                  ;; (concat whilp-gopath "bin")
+                  "/usr/pkg/sbin"
+                  "/usr/pkg/bin"
+                  "/usr/local/sbin"
+                  "/usr/local/bin"
+                  "/usr/local/texlive/2015basic/bin/x86_64-darwin/"
+                  "/usr/local/MacGPG2/bin"
+                  "/usr/bin/"
+                  "/bin/"
+                  "/usr/sbin/"
+                  "/sbin/"
+                  "/Applications/Emacs.app/Contents/MacOS/bin-x86_64-10_9/"
+                  "/Applications/Emacs.app/Contents/MacOS/libexec-x86_64-10_9/")))
+
+  (defvar shell-path (mapconcat 'identity exec-path path-separator)
+    "Shell PATH string.")
+
+  (setenv "NIX_PATH" (format "%s:nixpkgs=%s" nix-path nix-path))
+  (setenv "NIX_CONF_DIR" (file-name-as-directory (expand-file-name "~/.nix")))
+  (setenv "SSL_CERT_FILE" ssl-cert-file)
+  (setenv "PATH" shell-path)
+
+  (spacemacs|use-package-add-hook flyspell
+    :pre-init (setenv "ASPELL_CONF" (format "dict-dir %slib/aspell" nix-link)))
+
+  (setq ns-use-native-fullscreen nil)
   )
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
  This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code."
+  (setq rm-whitelist "nothin")
+  (when (not rich-minority-mode)
+    (rich-minority-mode 1))
+
+  (add-hook 'before-save-hook 'whitespace-cleanup)
+
+  (setq default-frame-alist '((fullscreen . fullscreen)
+                              (vertical-scroll-bars)
+                              (right-fringe . 4)
+                              (left-fringe . 4)))
+  (sp-use-paredit-bindings)
+  (smartparens-global-strict-mode)
+
+  (setq magit-git-executable "git")
+
+  (setq solarized-scale-org-headlines nil
+        solarized-use-variable-pitch nil)
+  (setq solarized-height-minus-1 1)
+  (setq solarized-height-plus-1 1)
+  (setq solarized-height-plus-2 1)
+  (setq solarized-height-plus-3 1)
+  (setq solarized-height-plus-4 1)
+
+  (setq projectile-use-git-grep t)
+  (setq org-use-speed-commands t
+        org-speed-commands-user '(
+                                  ("I" org-insert-heading-respect-content)
+                                  ("s" call-interactively 'org-schedule)
+                                  ("k" org-cut-subtree)
+                                  ("w" org-copy-subtree)
+                                  )
+        org-startup-indented t
+        org-enforce-todo-dependencies t
+        org-return-follows-link t
+        org-src-fontify-natively t
+        org-completion-use-ido t
+        org-return-follows-link t
+        org-use-tag-inheritance t
+        org-highest-priority ?A
+        org-lowest-priority ?E
+        org-default-priority ?A
+        org-bookmark-names-plist '()
+        org-use-fast-todo-selection nil
+        org-default-notes-file "~/src/github.banksimple.com/whilp/notes/log.org"
+        org-extend-today-until 6
+        org-todo-keywords '((sequence "TODO" "|" "DONE" "PUNTED"))
+        org-log-done 'note
+        org-log-reschedule 'time
+        org-log-redeadline 'time
+        org-log-into-drawer "LOGBOOK")
 
   (defun browse-url-default-macosx-browser (url &optional new-window)
     "Browse URL in the background. (NEW-WINDOW is ignored)."
     (interactive (browse-url-interactive-arg "URL: "))
     (start-process (concat "open -g" url) nil "open" "-g" url))
   )
+
+(defun configure-path ()
+    )
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
