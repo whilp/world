@@ -56,6 +56,7 @@ values."
                                     org-bullets
                                     powerline
                                     exec-path-from-shell
+                                    vi-tilde-fringe
                                     )
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    ;; are declared in a layer which is not a member of
