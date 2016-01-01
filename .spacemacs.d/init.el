@@ -18,26 +18,19 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
-     ;; ----------------------------------------------------------------
-     ;; Example of useful layers you may want to use right away.
-     ;; Uncomment some layer names and press <SPC f e R> (Vim style) or
-     ;; <M-m f e R> (Emacs style) to install them.
-     ;; ----------------------------------------------------------------
      auto-completion
      better-defaults
      emacs-lisp
      git
-     ;; go
+     go
      osx
      markdown
+     yaml
      org
      (shell :variables
             shell-default-shell 'eshell
             shell-enable-smart-eshell t
             )
-     ;; (shell :variables
-     ;;        shell-default-height 30
-     ;;        shell-default-position 'bottom)
      spell-checking
      syntax-checking
      version-control
@@ -52,12 +45,12 @@ values."
    ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(
                                       rich-minority
+                                      comment-dwim-2
                                       )
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '(
                                     org-bullets
                                     powerline
-                                    exec-path-from-shell
                                     vi-tilde-fringe
                                     )
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
@@ -193,7 +186,7 @@ values."
    ;; List of search tool executable names. Spacemacs uses the first installed
    ;; tool of the list. Supported tools are `ag', `pt', `ack' and `grep'.
    ;; (default '("ag" "pt" "ack" "grep"))
-   dotspacemacs-search-tools '("grep")
+   dotspacemacs-search-tools '("pt" "grep")
    ;; The default package repository used if no explicit repository has been
    ;; specified with an installed package.
    ;; Not used for now. (default nil)
@@ -212,6 +205,10 @@ user code."
   (setenv "GIT_COMMITTER_EMAIL" user-email-address)
   (setenv "GIT_AUTHOR_NAME" user-full-name)
   (setenv "GIT_AUTHOR_EMAIL" user-email-address)
+
+  (defvar gopath (file-name-as-directory (expand-file-name "~/src"))
+    "GOPATH.")
+  (setenv "GOPATH" gopath)
 
   (defvar nix-link (file-name-as-directory (expand-file-name "~/.nix-profile"))
     "NIX_LINK.")
@@ -253,7 +250,31 @@ user code."
   (spacemacs|use-package-add-hook flyspell
     :pre-init (setenv "ASPELL_CONF" (format "dict-dir %slib/aspell" nix-link)))
 
+  (spacemacs|use-package-add-hook comment-dwim-2
+    :post-init (bind-keys ("M-;" . comment-dwim-2)))
+
+  (spacemacs|use-package-add-hook window-numbering
+    :post-config
+    (bind-keys ("s-1" . select-window-1)
+               ("s-2" . select-window-2)
+               ("s-3" . select-window-3)
+               ("s-4" . select-window-4)))
+
+  (spacemacs|use-package-add-hook ido
+    :post-config
+    (setq ido-use-url-at-point t))
+
+  (spacemacs|use-package-add-hook exec-path-from-shell
+    :pre-init
+    (setq exec-path-from-shell-variables '()))
+
+  (spacemacs|use-package-add-hook helm
+    :post-config
+    (bind-keys ("M-i" . helm-occur)))
+
   (setq ns-use-native-fullscreen nil)
+  (global-visual-line-mode 1)
+  ;; (global-evil-search-highlight-persist -1)
   )
 
 (defun dotspacemacs/user-config ()
@@ -270,6 +291,10 @@ layers configuration. You are free to put any user code."
                               (vertical-scroll-bars)
                               (right-fringe . 4)
                               (left-fringe . 4)))
+
+  (setq enable-local-variables nil
+        enable-local-eval nil)
+
   (sp-use-paredit-bindings)
   (smartparens-global-strict-mode)
 
@@ -314,8 +339,7 @@ layers configuration. You are free to put any user code."
   (defun browse-url-default-macosx-browser (url &optional new-window)
     "Browse URL in the background. (NEW-WINDOW is ignored)."
     (interactive (browse-url-interactive-arg "URL: "))
-    (start-process (concat "open -g" url) nil "open" "-g" url))
-  )
+    (start-process (concat "open -g" url) nil "open" "-g" url)))
 
 (defun spacemacs//restore-powerline (buffer)
   "Define a dummy restore-powerline.
