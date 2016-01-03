@@ -1,20 +1,27 @@
 (spacemacs|use-package-add-hook projectile
-  :post-init
+  :post-config
   (progn
-    (helm-projectile-define-key helm-projectile-projects-map
-      (kbd  "C-s") #'spacemacs/helm-project-smart-do-search)
-    (helm-projectile-define-key helm-projectile-find-file-map
-      (kbd "C-s") #'spacemacs/helm-project-smart-do-search)
+    (advice-add 'projectile-compile-project
+                :around #'with-compile-project)
+    (advice-add 'projectile-test-project
+                :around #'with-test-project)
     (bind-keys :map projectile-command-map
                ("!" . projectile-run-shell)
                ("i" . projectile-compile-project)
                ("o" . projectile-test-project)
-               ("g" . helm-projectile-grep)))
+               ("g" . helm-projectile-grep))
+    (setq projectile-completion-system 'helm
+          projectile-mode-line
+          (quote
+           (:eval (format " [%s]" (projectile-project-name)))))))
+
+(spacemacs|use-package-add-hook helm-projectile
   :post-config
-  (setq projectile-completion-system 'helm
-        projectile-mode-line
-        (quote
-         (:eval (format " [%s]" (projectile-project-name))))))
+  (progn
+    (helm-projectile-define-key helm-projectile-projects-map
+                                (kbd  "C-s") #'spacemacs/helm-project-smart-do-search)
+    (helm-projectile-define-key helm-projectile-find-file-map
+                                (kbd "C-s") #'spacemacs/helm-project-smart-do-search)))
 
 (defun projectile-run-shell (&optional buffer)
   "Start a shell in the project's root (ignoring BUFFER)."
