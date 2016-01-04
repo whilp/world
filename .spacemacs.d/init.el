@@ -343,7 +343,8 @@ layers configuration. You are free to put any user code."
   (defun browse-url-default-macosx-browser (url &optional new-window)
     "Browse URL in the background. (NEW-WINDOW is ignored)."
     (interactive (browse-url-interactive-arg "URL: "))
-    (start-process (concat "open -g" url) nil "open" "-g" url)))
+    (start-process (concat "open -g" url) nil "open" "-g" url))
+  (global-evil-search-highlight-persist -1))
 
 (defun spacemacs//restore-powerline (buffer)
   "Define a dummy restore-powerline.
