@@ -272,6 +272,10 @@ user code."
     :post-config
     (bind-keys ("M-i" . helm-occur)))
 
+  (spacemacs|use-package-add-hook go-mode
+    :post-config
+    (setq gofmt-command "goimports"))
+
   (setq ns-use-native-fullscreen nil)
   (global-visual-line-mode 1)
   ;; (global-evil-search-highlight-persist -1)
