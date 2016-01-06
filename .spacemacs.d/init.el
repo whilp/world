@@ -270,7 +270,8 @@ user code."
 
   (spacemacs|use-package-add-hook helm
     :post-config
-    (bind-keys ("M-i" . helm-occur)))
+    (bind-keys ("M-i" . helm-occur)
+               ("C-x C-f" . helm-find-files)))
 
   (spacemacs|use-package-add-hook go-mode
     :post-config
