@@ -276,6 +276,12 @@ user code."
     :post-config
     (setq gofmt-command "goimports"))
 
+  ;; go get -u github.com/golang/lint/golint
+  ;; go get -u golang.org/x/tools/cmd/cover
+  ;; go get -u golang.org/x/tools/cmd/oracle
+  (use-package golint
+    :ensure t)
+
   (setq ns-use-native-fullscreen nil)
   (global-visual-line-mode 1)
   (global-hl-line-mode -1)
