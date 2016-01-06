@@ -278,6 +278,7 @@ user code."
 
   (setq ns-use-native-fullscreen nil)
   (global-visual-line-mode 1)
+  (global-hl-line-mode -1)
   (add-hook 'text-mode-hook #'goto-address-mode)
   (add-hook 'prog-mode-hook #'goto-address-prog-mode)
 
