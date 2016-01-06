@@ -17,8 +17,8 @@
 Run `hub pull-request' asynchronously; see
 `magit-pull-request-sentinel' for the interesting bits."
   (interactive)
-  (set-process-sentinel
-   (let ((magit-git-executable "hub"))
+  (let ((magit-git-executable "hub"))
+    (set-process-sentinel
      (magit-run-git-with-editor "pull-request")
      'magit-pull-request-sentinel)))
 
