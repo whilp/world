@@ -273,6 +273,11 @@ user code."
     (bind-keys ("M-i" . helm-occur)
                ("C-x C-f" . helm-find-files)))
 
+  (spacemacs|use-package-add-hook ace-link
+    :post-config
+    (when (fboundp #'ace-link-addr)
+      (bind-keys ("M-o" . ace-link-addr))))
+
   (spacemacs|use-package-add-hook go-mode
     :post-config
     (setq gofmt-command "goimports"))
