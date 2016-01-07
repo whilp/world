@@ -35,6 +35,7 @@
   (spacemacs|use-package-add-hook rcirc
     :post-config
     (progn
+      (add-hook 'rcirc-mode-hook #'goto-address-mode)
       (setq rcirc-fill-flag nil
             rcirc-fill-column nil
             rcirc-time-format "%Y-%m-%dT%H:%M:%S "
