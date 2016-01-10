@@ -46,7 +46,6 @@ values."
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(
-                                      epa-file
                                       rich-minority
                                       comment-dwim-2
                                       flycheck-gometalinter
@@ -274,13 +273,11 @@ user code."
     :pre-init
     (setq exec-path-from-shell-variables '()))
 
-  (spacemacs|use-package-add-hook epa-file
-    :post-config
-    (progn
-      (setq epa-file-name-regexp "\\.\\(gpg\\|asc\\)$"
-            epa-armor t)
-      (epa-file-name-regexp-update)
-      (epa-file-enable)))
+  (require 'epa-file)
+  (setq epa-file-name-regexp "\\.\\(gpg\\|asc\\)$"
+        epa-armor t)
+  (epa-file-name-regexp-update)
+  (epa-file-enable)
 
   (spacemacs|use-package-add-hook magit
     :post-config
