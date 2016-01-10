@@ -278,6 +278,10 @@ user code."
       (epa-file-name-regexp-update)
       (epa-file-enable)))
 
+  (spacemacs|use-package-add-hook magit
+    :post-config
+    (setq magit-git-executable "git"))
+
   (spacemacs|use-package-add-hook helm
     :post-config
     (bind-keys ("M-i" . helm-occur)
@@ -333,8 +337,6 @@ layers configuration. You are free to put any user code."
 
   (sp-use-paredit-bindings)
   (smartparens-global-strict-mode)
-
-  (setq magit-git-executable "git")
 
   (setq solarized-scale-org-headlines nil
         solarized-use-variable-pitch nil)
