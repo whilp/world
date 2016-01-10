@@ -1,0 +1,10 @@
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  - docker build -t whilp/dotfiles .
+
+script:
+  - docker run --rm -it -v $PWD:/workdir -w /workdir whilp/dotfiles ./test.sh
