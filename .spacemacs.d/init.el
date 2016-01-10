@@ -49,6 +49,7 @@ values."
                                       rich-minority
                                       comment-dwim-2
                                       flycheck-gometalinter
+                                      golint
                                       )
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '(
@@ -302,8 +303,6 @@ user code."
   ;; go get -u github.com/golang/lint/golint
   ;; go get -u golang.org/x/tools/cmd/cover
   ;; go get -u golang.org/x/tools/cmd/oracle
-  (use-package golint
-    :ensure t)
 
   (setq ns-use-native-fullscreen nil)
   (global-visual-line-mode 1)
