@@ -18,6 +18,7 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
+     spacemacs-ivy
      auto-completion
      better-defaults
      emacs-lisp
@@ -54,7 +55,9 @@ values."
    dotspacemacs-excluded-packages '(
                                     org-bullets
                                     powerline
+                                    spaceline
                                     vi-tilde-fringe
+                                    persp-mode
                                     )
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    ;; are declared in a layer which is not a member of
@@ -283,10 +286,6 @@ user code."
     :post-config
     (setq magit-git-executable "git"))
 
-  (spacemacs|use-package-add-hook helm
-    :post-config
-    (bind-keys ("M-i" . helm-occur)
-               ("C-x C-f" . helm-find-files)))
 
   (spacemacs|use-package-add-hook ace-link
     :post-config

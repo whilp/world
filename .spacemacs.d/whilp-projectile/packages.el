@@ -15,7 +15,6 @@
 (setq whilp-projectile-packages
       '(
         projectile
-        helm-projectile
       ))
 
 ;; List of packages to exclude.
@@ -31,16 +30,8 @@
 ;; For more info on `use-package', see readme:
 ;; https://github.com/jwiegley/use-package
 
-(defun whilp-projectile/pre-init-helm-projectile ()
-  (spacemacs|use-package-add-hook helm-projectile
-    :post-config
-    (helm-projectile-define-key helm-projectile-find-file-map
-      (kbd "C-s") #'spacemacs/helm-project-smart-do-search)))
-    ;; (progn
-
-      ;; (helm-projectile-define-key helm-projectile-projects-map
-      ;;   (kbd "C-s") #')
-
+(defun whilp-projectile/pre-init-projectile ()
+  (bind-keys ("C-c p p" . projectile-switch-project)))
 
 (defun whilp-projectile/post-init-projectile ()
   (spacemacs|use-package-add-hook projectile
@@ -49,14 +40,14 @@
                ("!" . projectile-run-shell)
                ("i" . projectile-compile-project)
                ("o" . projectile-test-project)
-               ("g" . spacemacs/helm-project-smart-do-search)
-               ("p" . helm-projectile-switch-project)))
+               ("f" . projectile-find-file-dwim)
+               ("g" . counsel-git-grep)))
 
   (advice-add 'projectile-compile-project
               :around #'with-compile-project)
   (advice-add 'projectile-test-project
               :around #'with-test-project)
-  (setq projectile-completion-system 'helm
+  (setq projectile-completion-system 'ivy
         projectile-mode-line
         (quote
          (:eval (format " [%s]" (projectile-project-name)))))
