@@ -10,8 +10,8 @@
 	review = merge --no-ff --no-commit
 	ctags = "!sh -c '[ -f .git/hooks/ctags ] || git init; .git/hooks/ctags' git-ctags"
 [core]
-  editor = emacsclient
-  excludesfile = ~/.gitconf/ignore
+	editor = emacsclient
+	excludesfile = ~/.gitconf/ignore
 [format]
 	pretty = format:"%h %p %d %ai %ce%n  %s%n"
 [url "git@gitlab.com:"]
@@ -22,21 +22,21 @@
 	insteadOf = gh:
 	pushInsteadOf = https://github.com/
 [url "git@github.com:"]
-  insteadOf = https://github.com/
+	insteadOf = https://github.com/
 [url "git@gist.github.com:"]
 	insteadOf = gist:
 	insteadOf = https://gist.github.com/
 [url "git@github.com:monitorama/"]
-  insteadOf = monitorama:
+	insteadOf = monitorama:
 [url "git@github.com:monitorama-eu/"]
-  insteadOf = monitorama-eu:
+	insteadOf = monitorama-eu:
 [url "git@github.com:SimpleFinance/"]
-  insteadOf = sf:
+	insteadOf = sf:
 [url "git@github.banksimple.com:"]
 	insteadOf = bh:
 	insteadOf = https://github.banksimple.com/
-  insteadOf = git://github.banksimple.com/
-  pushInsteadOf = https://github.banksimple.com/
+	insteadOf = git://github.banksimple.com/
+	pushInsteadOf = https://github.banksimple.com/
 [url "git@github.banksimple.com:BankSimple/"]
 	insteadOf = bs:
 [url "git@github.banksimple.com:BankSimple/"]
@@ -56,7 +56,7 @@
 [url "git@github.banksimple.com:ops/chef-"]
 	insteadOf = chef:
 [url "git@github.banksimple.com:cookbooks/"]
-  insteadOf = cook:
+	insteadOf = cook:
 [url "will@meta.lfod.us:share/git/"]
 	insteadOf = code:
 [push]
@@ -72,7 +72,7 @@ fetch = +refs/pull/*/head:refs/pull/origin/*
 	host = github.banksimple.com
 [merge]
 	tool = emerge
-  conflictstyle = diff3
+	conflictstyle = diff3
 [github]
 	user = whilp
 [gh]
