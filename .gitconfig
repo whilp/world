@@ -63,6 +63,7 @@
 	default = current
 [pull]
 	fast-forward = true
+	rebase = true
 [init]
 	templatedir = ~/.gitconf/init
 [remote "origin"]
@@ -77,3 +78,5 @@ fetch = +refs/pull/*/head:refs/pull/origin/*
 [gh]
 	host = github.banksimple.com
 	autoUpdate = never
+[remote]
+	pushDefault = origin
