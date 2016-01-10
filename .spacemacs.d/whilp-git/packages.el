@@ -47,9 +47,11 @@
 Run `hub pull-request' asynchronously; see
 `magit-pull-request-sentinel' for the interesting bits."
   (interactive)
-  (let ((magit-git-executable "hub"))
+  (let ((magit-git-executable "hub")
+        (beg (last (split-string (magit-get-upstream-branch) "/")))
+        (end (last (split-string (magit-get-push-branch) "/"))))
     (set-process-sentinel
-     (magit-run-git-with-editor "pull-request")
+     (magit-run-git-with-editor "pull-request" "-b" beg "-h" end)
      'magit-pull-request-sentinel)))
 
 (defun magit-pull-request-sentinel (process event)
