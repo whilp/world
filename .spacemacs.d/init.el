@@ -24,6 +24,7 @@ values."
      git
      go
      osx
+     python
      markdown
      yaml
      org
