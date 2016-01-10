@@ -26,6 +26,7 @@ values."
      go
      osx
      python
+     sql
      markdown
      yaml
      org
@@ -284,6 +285,16 @@ user code."
     :post-config
     (setq magit-git-executable "git"))
 
+  (spacemacs|use-package-add-hook sql
+    :pre-init
+    (setq sql-connection-alist
+          `((redshift
+             ,(sql-profile
+               'postgres
+               "prod-data-pipeline.cuxrn97vbxid.us-east-1.redshift.amazonaws.com"
+               "will_20151109"
+               5439)))
+          ))
 
   (spacemacs|use-package-add-hook ace-link
     :post-config
@@ -380,6 +391,23 @@ layers configuration. You are free to put any user code."
   "Define a dummy restore-powerline.
 
 configuration-layer/package-usedp returns t for powerline no matter what.")
+
+(defun sql-profile (product host user port)
+  "Search auth-info for an entry matching HOST, USER, and PORT."
+  '(('sql-product product)
+    ('sql-port port)
+    ('sql-server host)
+    ('sql-user user)
+    ('sql-password (funcall
+                   (plist-get
+                    (car
+                     (auth-source-search
+                      :max 1
+                      :host host
+                      :user user
+                      :port port
+                      :create nil))
+                    :secret)))))
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
