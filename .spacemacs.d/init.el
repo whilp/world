@@ -47,6 +47,7 @@ values."
                                       epa-file
                                       rich-minority
                                       comment-dwim-2
+                                      flycheck-gometalinter
                                       )
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '(
@@ -290,6 +291,12 @@ user code."
   (spacemacs|use-package-add-hook go-mode
     :post-config
     (setq gofmt-command "goimports"))
+
+  (spacemacs|use-package-add-hook flycheck-gometalinter
+    :pre-init
+    (spacemacs|use-package-add-hook flycheck-mode-hook
+      :post-config
+      (add-hook 'flycheck-mode-hook #'flycheck-gometalinter-setup)))
 
   ;; go get -u github.com/golang/lint/golint
   ;; go get -u golang.org/x/tools/cmd/cover
