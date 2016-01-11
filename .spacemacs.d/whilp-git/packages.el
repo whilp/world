@@ -31,7 +31,7 @@
 ;; https://github.com/jwiegley/use-package
 
 (defun whilp-git/pre-init-magit ()
-  (spacemacs|use-package-add-hook magit-popup
+  (spacemacs|use-package-add-hook magit
     :pre-init
     (progn
       (require 'magit-popup)
