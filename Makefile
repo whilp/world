@@ -3,8 +3,10 @@ IMAGE := whilp/dotfiles
 build:
 	docker build -t $(IMAGE) .
 
-test:
-	docker run --rm -it -v $(PWD):$(PWD) -w $(PWD) $(IMAGE) make test-inner
+test-wrapper:
+	docker run --rm -it -e HOME=$(HOME) -v $(PWD):$(PWD) -w $(PWD) $(IMAGE) make test
 
-test-inner:
-	echo testing
+test: test-emacs
+
+test-emacs:
+	emacs -batch --script .emacs.d/init.el
