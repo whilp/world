@@ -31,15 +31,18 @@
 ;; https://github.com/jwiegley/use-package
 
 (defun whilp-git/pre-init-magit ()
-  (require 'magit-popup)
-  (magit-define-popup-action
-    'magit-dispatch-popup ?H "Github" 'magit-github-popup)
+  (spacemacs|use-package-add-hook magit-popup
+    :pre-init
+    (progn
+      (require 'magit-popup)
+      (magit-define-popup-action
+        'magit-dispatch-popup ?H "Github" 'magit-github-popup)
 
-  (magit-define-popup magit-github-popup
-    "Popup console for Github interaction."
-    :actions  '((?p "Pull request" magit-pull-request)
-                (?f "Fork" magit-fork))
-    :default-action 'magit-pull-request))
+      (magit-define-popup magit-github-popup
+        "Popup console for Github interaction."
+        :actions  '((?p "Pull request" magit-pull-request)
+                    (?f "Fork" magit-fork))
+        :default-action 'magit-pull-request))))
 
 (defun magit-pull-request ()
   "Open a Github pull request.

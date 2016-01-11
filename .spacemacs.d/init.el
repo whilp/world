@@ -29,7 +29,7 @@ values."
      sql
      markdown
      yaml
-     org
+     ;; org
      (shell :variables
             shell-default-shell 'eshell
             shell-enable-smart-eshell t
@@ -38,6 +38,7 @@ values."
      syntax-checking
      version-control
      rcirc
+     whilp
      whilp-rcirc
      whilp-projectile
      whilp-git
@@ -48,7 +49,6 @@ values."
    ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(
                                       rich-minority
-                                      comment-dwim-2
                                       flycheck-gometalinter
                                       golint
                                       )
@@ -78,7 +78,7 @@ values."
    ;; variable is `emacs' then the `holy-mode' is enabled at startup. `hybrid'
    ;; uses emacs key bindings for vim's insert mode, but otherwise leaves evil
    ;; unchanged. (default 'vim)
-   dotspacemacs-editing-style 'vim
+   dotspacemacs-editing-style 'emacs
    ;; If non nil output loading progress in `*Messages*' buffer. (default nil)
    dotspacemacs-verbose-loading t
    ;; Specify the startup banner. Default value is `official', it displays
@@ -95,8 +95,8 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(solarized-light
-                         solarized-dark)
+   dotspacemacs-themes '(solarized-dark
+                         solarized-light)
    ;; If non nil the cursor color matches the state color.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
@@ -254,23 +254,6 @@ user code."
   (setenv "SSL_CERT_FILE" ssl-cert-file)
   (setenv "PATH" shell-path)
 
-  (spacemacs|use-package-add-hook flyspell
-    :pre-init (setenv "ASPELL_CONF" (format "dict-dir %slib/aspell" nix-link)))
-
-  (spacemacs|use-package-add-hook comment-dwim-2
-    :post-init (bind-keys ("M-;" . comment-dwim-2)))
-
-  (spacemacs|use-package-add-hook window-numbering
-    :post-config
-    (bind-keys ("s-1" . select-window-1)
-               ("s-2" . select-window-2)
-               ("s-3" . select-window-3)
-               ("s-4" . select-window-4)))
-
-  (spacemacs|use-package-add-hook ido
-    :post-config
-    (setq ido-use-url-at-point t))
-
   (spacemacs|use-package-add-hook exec-path-from-shell
     :pre-init
     (setq exec-path-from-shell-variables '()))
@@ -281,11 +264,7 @@ user code."
   (epa-file-name-regexp-update)
   (epa-file-enable)
 
-  (spacemacs|use-package-add-hook magit
-    :post-config
-    (setq magit-git-executable "git"))
-
-  (spacemacs|use-package-add-hook sql
+    (spacemacs|use-package-add-hook sql
     :pre-init
     (setq sql-connection-alist
           `((redshift
@@ -296,26 +275,7 @@ user code."
                5439)))
           ))
 
-  (spacemacs|use-package-add-hook ace-link
-    :post-config
-    (when (fboundp #'ace-link-addr)
-      (bind-keys ("M-o" . ace-link-addr))))
-
-  (spacemacs|use-package-add-hook go-mode
-    :post-config
-    (setq gofmt-command "goimports"))
-
-  (spacemacs|use-package-add-hook flycheck-gometalinter
-    :pre-init
-    (spacemacs|use-package-add-hook flycheck-mode-hook
-      :post-config
-      (add-hook 'flycheck-mode-hook #'flycheck-gometalinter-setup)))
-
-  ;; go get -u github.com/golang/lint/golint
-  ;; go get -u golang.org/x/tools/cmd/cover
-  ;; go get -u golang.org/x/tools/cmd/oracle
-
-  (setq ns-use-native-fullscreen nil)
+    (setq ns-use-native-fullscreen nil)
   (global-visual-line-mode 1)
   (global-hl-line-mode -1)
   (add-hook 'text-mode-hook #'goto-address-mode)
@@ -339,7 +299,7 @@ layers configuration. You are free to put any user code."
                               (right-fringe . 4)
                               (left-fringe . 4)))
 
-  (setq enable-local-variables nil
+  (setq penable-local-variables nil
         enable-local-eval nil)
 
   (sp-use-paredit-bindings)
@@ -386,11 +346,6 @@ layers configuration. You are free to put any user code."
     (interactive (browse-url-interactive-arg "URL: "))
     (start-process (concat "open -g" url) nil "open" "-g" url))
   (global-evil-search-highlight-persist -1))
-
-(defun spacemacs//restore-powerline (buffer)
-  "Define a dummy restore-powerline.
-
-configuration-layer/package-usedp returns t for powerline no matter what.")
 
 (defun sql-profile (product host user port)
   "Search auth-info for an entry matching HOST, USER, and PORT."

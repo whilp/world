@@ -15,6 +15,7 @@
 (setq whilp-projectile-packages
       '(
         projectile
+        ivy
       ))
 
 ;; List of packages to exclude.
@@ -31,45 +32,65 @@
 ;; https://github.com/jwiegley/use-package
 
 (defun whilp-projectile/pre-init-projectile ()
-  (bind-keys ("C-c p p" . projectile-switch-project)))
+  (bind-keys ("C-c p p" . ivy-switch-project)))
 
 (defun whilp-projectile/post-init-projectile ()
   (spacemacs|use-package-add-hook projectile
     :post-config
     (bind-keys :map projectile-command-map
                ("!" . projectile-run-shell)
-               ("i" . projectile-compile-project)
-               ("o" . projectile-test-project)
+               ("i" . projectile-compile-a-project)
+               ("o" . projectile-test-a-project)
                ("f" . projectile-find-file-dwim)
+               ("p" . ivy-switch-project)
                ("g" . counsel-git-grep)))
 
-  (advice-add 'projectile-compile-project
-              :around #'with-compile-project)
-  (advice-add 'projectile-test-project
-              :around #'with-test-project)
   (setq projectile-completion-system 'ivy
         projectile-mode-line
         (quote
          (:eval (format " [%s]" (projectile-project-name)))))
 
-  (defun projectile-run-shell (&optional buffer)
-    "Start a shell in the project's root (ignoring BUFFER)."
+  (defun ivy-switch-project ()
+    (interactive)
+    (ivy-read
+     "Switch to project: "
+     (if (projectile-project-p)
+         (cons (abbreviate-file-name (projectile-project-root))
+               (projectile-relevant-known-projects))
+       projectile-known-projects)
+     :action #'projectile-switch-project-by-name))
+
+  (ivy-set-actions
+   'ivy-switch-project
+   '(("v" projectile-vc "vc")
+     ("s" projectile-run-shell "shell")
+     ("g" projectile-git-grep "grep")
+     ("c" projectile-compile-a-project "compile")
+     ("t" projectile-test-a-project "test")))
+
+  (defun projectile-run-shell (&optional root)
+    "Start a shell in a project's ROOT."
     (interactive "P")
-    (projectile-with-default-dir (projectile-project-root)
+    (projectile-with-default-dir (or root (projectile-project-root))
       (let ((eshell-buffer-name (format "*shell %s*" (projectile-project-name))))
         (eshell))))
 
-  (defun with-compilation-buffer-name-function-for (prefix orig args)
-    "With a compilation buffer name beginning with PREFIX, apply ORIG and ARGS."
-    (let* ((compilation-buffer-name-function
-            (lambda (name-of-mode)
-              (format "*%s: %s*" prefix (projectile-project-root)))))
-      (apply orig args)))
+  (defun projectile-git-grep (&optional root)
+    "Git grep in a project."
+    (interactive "P")
+    (projectile-with-default-dir (or root (proejctile-project-root))
+      (counsel-git-grep)))
 
-  (defun with-compile-project (orig &rest args)
-    "Wrap ORIG with ARGS to compile a project in a dedicated buffer."
-    (with-compilation-buffer-name-function-for "compile-project" orig args))
+  (defun projectile-test-a-project (&optional root)
+    (interactive "P")
+    (projectile-with-default-dir (or root (projectile-project-root))
+      (let* ((compilation-buffer-name-function
+              (lambda (mode) (projectile-prepend-project-name "test"))))
+        (projectile-test-project))))
 
-  (defun with-test-project (orig &rest args)
-    "Wrap ORIG with ARGS to test a project in a dedicated buffer."
-    (with-compilation-buffer-name-function-for "test-project" orig args)))
+  (defun projectile-compile-a-project (&optional root)
+    (interactive "P")
+    (projectile-with-default-dir (or root (projectile-project-root))
+      (let* ((compilation-buffer-name-function
+              (lambda (mode) (projectile-prepend-project-name "compile"))))
+        (projectile-compile-project)))))
