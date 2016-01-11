@@ -24,6 +24,16 @@
       ace-link
       go-mode
       flycheck-gometalinter
+      exec-path-from-shell
+      rich-minority
+      (files :location local)
+      (whitespace :location local)
+      (hl-line :location local)
+      (simple :location local)
+      (epa :location local)
+      (prog-mode :location local)
+      (text-mode :location local)
+      (goto-addr :location local)
       ))
 
 ;; List of packages to exclude.
@@ -96,3 +106,47 @@
 
 (defun whilp/init-flycheck-gometalinter ()
   (add-hook 'flycheck-mode-hook #'flycheck-gometalinter-setup))
+
+(defun whilp/pre-init-exec-path-from-shell ()
+  (spacemacs|use-package-add-hook exec-path-from-shell
+    :pre-init
+    (setq exec-path-from-shell-variables '())))
+
+(defun whilp/init-epa ()
+  (setq epa-armor t
+        epa-file-name-regexp "\\.\\(gpg\\|asc\\)$")
+  (epa-file-name-regexp-update)
+  (unless (memq epa-file-handler file-name-handler-alist)
+    (epa-file-enable)))
+
+(defun whilp/init-simple ()
+  (global-visual-line-mode 1))
+
+(defun whilp/init-hl-line ()
+  (global-hl-line-mode -1))
+
+(defun whilp/init-prog-mode ())
+
+(defun whilp/init-text-mode ())
+
+(defun whilp/init-goto-addr ()
+  (spacemacs|use-package-add-hook text-mode
+    :post-config
+    (add-hook 'text-mode-hook #'goto-address-mode))
+  (spacemacs|use-package-add-hook prog-mode
+    :post-config
+    (add-hook 'prog-mode-hook #'goto-address-prog-mode)))
+
+(defun whilp/init-rich-minority ()
+  (setq rm-whitelist "nothin")
+  (when (not rich-minority-mode)
+    (rich-minority-mode 1)))
+
+(defun whilp/pre-init-whitespace ()
+  (spacemacs|use-package-add-hook whitespace
+    :post-config
+    (add-hook 'before-save-hook 'whitespace-cleanup)))
+
+(defun whilp/init-files ()
+  (setq enable-local-variables nil
+        enable-local-eval nil))

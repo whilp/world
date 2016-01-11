@@ -204,6 +204,10 @@ values."
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
 user code."
+  (setq default-frame-alist '((fullscreen . fullscreen)
+                              (vertical-scroll-bars)
+                              (right-fringe . 4)
+                              (left-fringe . 4)))
   (setq user-full-name "Will Maier")
   (defvar user-email-address "wcmaier@gmail.com"
     "My email.")
@@ -254,17 +258,8 @@ user code."
   (setenv "SSL_CERT_FILE" ssl-cert-file)
   (setenv "PATH" shell-path)
 
-  (spacemacs|use-package-add-hook exec-path-from-shell
-    :pre-init
-    (setq exec-path-from-shell-variables '()))
 
-  (require 'epa-file)
-  (setq epa-file-name-regexp "\\.\\(gpg\\|asc\\)$"
-        epa-armor t)
-  (epa-file-name-regexp-update)
-  (epa-file-enable)
-
-    (spacemacs|use-package-add-hook sql
+  (spacemacs|use-package-add-hook sql
     :pre-init
     (setq sql-connection-alist
           `((redshift
@@ -275,31 +270,14 @@ user code."
                5439)))
           ))
 
-    (setq ns-use-native-fullscreen nil)
-  (global-visual-line-mode 1)
-  (global-hl-line-mode -1)
-  (add-hook 'text-mode-hook #'goto-address-mode)
-  (add-hook 'prog-mode-hook #'goto-address-prog-mode)
-
-  ;; (global-evil-search-highlight-persist -1)
+  (setq ns-use-native-fullscreen nil)
   )
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
  This function is called at the very end of Spacemacs initialization after
 layers configuration. You are free to put any user code."
-  (setq rm-whitelist "nothin")
-  (when (not rich-minority-mode)
-    (rich-minority-mode 1))
-
-  (add-hook 'before-save-hook 'whitespace-cleanup)
-
-  (setq default-frame-alist '((fullscreen . fullscreen)
-                              (vertical-scroll-bars)
-                              (right-fringe . 4)
-                              (left-fringe . 4)))
-
-  (setq penable-local-variables nil
+  (setq enable-local-variables nil
         enable-local-eval nil)
 
   (sp-use-paredit-bindings)
@@ -354,15 +332,15 @@ layers configuration. You are free to put any user code."
     ('sql-server host)
     ('sql-user user)
     ('sql-password (funcall
-                   (plist-get
-                    (car
-                     (auth-source-search
-                      :max 1
-                      :host host
-                      :user user
-                      :port port
-                      :create nil))
-                    :secret)))))
+                    (plist-get
+                     (car
+                      (auth-source-search
+                       :max 1
+                       :host host
+                       :user user
+                       :port port
+                       :create nil))
+                     :secret)))))
 
 ;; Do not write anything past this comment. This is where Emacs will
 ;; auto-generate custom variable definitions.
