@@ -1,4 +1,5 @@
 IMAGE := whilp/dotfiles
+export PATH := $(PATH):/cask/bin
 
 build:
 	docker build -t $(IMAGE) .
@@ -9,4 +10,5 @@ test-wrapper:
 test: test-emacs
 
 test-emacs:
-	emacs -batch --script .emacs.d/init.el
+	cask
+	cask exec buttercup -L .
