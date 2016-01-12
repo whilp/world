@@ -83,14 +83,18 @@
 
   (defun projectile-test-a-project (&optional root)
     (interactive "P")
-    (projectile-with-default-dir (or root (projectile-project-root))
-      (let* ((compilation-buffer-name-function
-              (lambda (mode) (projectile-prepend-project-name "test"))))
-        (projectile-test-project))))
+    (let* ((cmd (if (consp root) root nil))
+           (root (if (consp root) (projectile-project-root) root)))
+      (projectile-with-default-dir (or root (projectile-project-root))
+        (let* ((compilation-buffer-name-function
+                (lambda (mode) (projectile-prepend-project-name "test"))))
+          (projectile-test-project cmd)))))
 
   (defun projectile-compile-a-project (&optional root)
     (interactive "P")
-    (projectile-with-default-dir (or root (projectile-project-root))
-      (let* ((compilation-buffer-name-function
-              (lambda (mode) (projectile-prepend-project-name "compile"))))
-        (projectile-compile-project)))))
+    (let* ((cmd (if (consp root) root nil))
+           (root (if (consp root) (projectile-project-root) root)))
+      (projectile-with-default-dir (or root (projectile-project-root))
+        (let* ((compilation-buffer-name-function
+                (lambda (mode) (projectile-prepend-project-name "compile"))))
+          (projectile-compile-project cmd))))))
