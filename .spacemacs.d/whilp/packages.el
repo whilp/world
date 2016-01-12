@@ -31,6 +31,7 @@
       exec-path-from-shell
       rich-minority
       markdown-mode
+      (compile :location local)
       (files :location local)
       (whitespace :location local)
       (hl-line :location local)
@@ -174,3 +175,10 @@
     :post-config
     (setq ivy-initial-inputs-alist nil
           ivy-re-builders-alist '((t . ivy--regex-fuzzy)))))
+
+(defun whilp/init-compile ()
+  (setq compilation-scroll-output t
+        compilation-read-command nil
+        compilation-ask-about-save nil
+        compilation-auto-jump-to-first-error nil
+        compilation-save-buffers-predicate nil))
