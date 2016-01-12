@@ -32,6 +32,7 @@
       flycheck-gometalinter
       exec-path-from-shell
       rich-minority
+      markdown-mode
       (files :location local)
       (whitespace :location local)
       (hl-line :location local)
@@ -40,6 +41,8 @@
       (prog-mode :location local)
       (text-mode :location local)
       (goto-addr :location local)
+      browse-at-remote
+      flx
       ))
 
 ;; List of packages to exclude.
@@ -156,3 +159,20 @@
 (defun whilp/init-files ()
   (setq enable-local-variables nil
         enable-local-eval nil))
+
+(defun whilp/pre-init-markdown-mode ()
+  (spacemacs|use-package-add-hook markdown-mode
+    :post-config
+    (progn
+      (add-to-list 'auto-mode-alist '("\\.m[k]d" . gfm-mode))
+      (setq markdown-asymmetric-header t
+            markdown-list-indent-width 2))))
+
+(defun whilp/init-browse-at-remote ()
+  (bind-keys ("C-c b" . browse-at-remote)))
+
+(defun whilp/pre-init-flx ()
+  (spacemacs|use-package-add-hook ivy
+    :post-config
+    (setq ivy-initial-inputs-alist nil
+          ivy-re-builders-alist '((t . ivy--regex-fuzzy)))))
