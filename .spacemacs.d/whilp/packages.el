@@ -11,8 +11,6 @@
 ;;; License: GPLv3
 
 ;;; TODO:
-;;; - https://github.com/lewang/flx/blob/master/README.md
-;;; - http://oremacs.com/2016/01/06/ivy-flx/
 ;;; - http://irreal.org/blog/?p=4867
 ;;; - https://github.com/jorgenschaefer/emacs-buttercup/blob/master/README.md
 
