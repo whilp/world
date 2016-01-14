@@ -28,6 +28,7 @@
       swiper
       ace-link
       go-mode
+      golint
       flycheck-gometalinter
       exec-path-from-shell
       rich-minority
@@ -49,10 +50,10 @@
 (setq whilp-excluded-packages '(
                                 ido
                                 org-bullets
+                                persp-mode
                                 powerline
                                 spaceline
                                 vi-tilde-fringe
-                                persp-mode
                                 ))
 
 ;; For each package, define a function whilp/init-<package-name>
@@ -115,6 +116,8 @@
 
 (defun whilp/init-flycheck-gometalinter ()
   (add-hook 'flycheck-mode-hook #'flycheck-gometalinter-setup))
+
+(defun whilp/init-golint ())
 
 (defun whilp/pre-init-exec-path-from-shell ()
   (spacemacs|use-package-add-hook exec-path-from-shell

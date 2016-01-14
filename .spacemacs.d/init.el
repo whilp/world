@@ -29,7 +29,7 @@ values."
      sql
      markdown
      yaml
-     ;; org
+     org
      (shell :variables
             shell-default-shell 'eshell
             shell-enable-smart-eshell t
@@ -48,17 +48,9 @@ values."
    ;; packages then consider to create a layer, you can also put the
    ;; configuration in `dotspacemacs/config'.
    dotspacemacs-additional-packages '(
-                                      rich-minority
-                                      flycheck-gometalinter
-                                      golint
                                       )
    ;; A list of packages and/or extensions that will not be install and loaded.
    dotspacemacs-excluded-packages '(
-                                    org-bullets
-                                    powerline
-                                    spaceline
-                                    vi-tilde-fringe
-                                    persp-mode
                                     )
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    ;; are declared in a layer which is not a member of
