@@ -15,6 +15,8 @@
 (setq whilp-git-packages
     '(
       magit
+      gh
+      gist
       ))
 
 ;; List of packages to exclude.
@@ -42,7 +44,34 @@
         "Popup console for Github interaction."
         :actions  '((?p "Pull request" magit-pull-request)
                     (?f "Fork" magit-fork))
-        :default-action 'magit-pull-request))))
+        :default-action 'magit-pull-request))
+    :post-config
+    (setq magit-save-repository-buffers 'dontask
+          magit-push-always-verify nil
+          magit-revert-buffers nil
+          magit-after-revert-hook '(magit-refresh-vc-mode-line)
+          magit-not-reverted-hook '(magit-refresh-vc-mode-line)
+          magit-refresh-buffer-hook nil
+          magit-refs-sections-hook '(
+                                     ;; magit-insert-branch-description
+                                     ;; magit-insert-local-branches
+                                     ;; magit-insert-remote-branches
+                                     ;; magit-insert-tags
+                                     )
+          magit-status-refresh-hook nil
+          magit-wip-after-apply-mode nil
+          magit-wip-after-save-mode nil
+          magit-wip-before-change-mode nil
+          magit-delete-by-moving-to-trash nil
+          magit-diff-highlight-hunk-body t
+          magit-diff-highlight-indentation nil
+          magit-diff-highlight-trailing t
+          magit-diff-paint-whitespace t
+          magit-diff-refine-hunk nil
+          magit-after-revert-hook '(magit-refresh-vc-mode-line)
+          magit-log-arguments '("-n256" "--graph" "--decorate")
+          magit-log-select-arguments '("-n256" "--decorate")
+          magit-log-section-arguments '("--decorate"))))
 
 (defun magit-pull-request ()
   "Open a Github pull request.
@@ -79,3 +108,32 @@ it to the kill ring."
   (interactive)
   (let ((magit-git-executable "hub"))
     (magit-run-git-async "fork")))
+
+(defun whilp/init-gh ()
+  (defun* gh-profile (url user)
+    (let* (
+           (urlobj (url-generic-parse-url url))
+           (host (url-host urlobj))
+           (auth-info
+            (car
+             (auth-source-search
+              :max 1
+              :host host
+              :user user
+              :port 443
+              :create nil)))
+           (token (funcall (plist-get auth-info :secret))))
+      (list
+       :url url
+       :username user
+       :token token
+       :remote-regexp (gh-profile-remote-regexp host))))
+
+  (setq gh-profile-default-profile "bh"
+        gh-profile-current-profile nil
+        gh-profile-alist
+        (list
+         (cons "bh" (gh-profile "https://github.banksimple.com/api/v3" "whilp"))
+         (cons "gh" (gh-profile "https://api.github.com" "whilp")))))
+
+(defun whilp/init-gist ())
