@@ -19,6 +19,7 @@
 (setq whilp-packages
     '(
       ;; package names go here
+      gh
       ace-jump-zap
       comment-dwim-2
       flyspell
@@ -190,3 +191,30 @@
 (defun whilp/init-ace-jump-zap ()
   (bind-keys ("M-z" . ace-jump-zap-up-to-char-dwim)
              ("C-M-z" . ace-jump-zap-up-to-char-dwim)))
+
+(defun whilp/init-gh ()
+  (defun* gh-profile (url user)
+    (let* (
+           (urlobj (url-generic-parse-url url))
+           (host (url-host urlobj))
+           (auth-info
+            (car
+             (auth-source-search
+              :max 1
+              :host host
+              :user user
+              :port 443
+              :create nil)))
+           (token (funcall (plist-get auth-info :secret))))
+      (list
+       :url url
+       :username user
+       :token token
+       :remote-regexp (gh-profile-remote-regexp host))))
+
+  (setq gh-profile-default-profile "bh"
+        gh-profile-current-profile nil
+        gh-profile-alist
+        (list
+         (cons "bh" (gh-profile "https://github.banksimple.com/api/v3" "whilp"))
+         (cons "gh" (gh-profile "https://api.github.com" "whilp")))))
