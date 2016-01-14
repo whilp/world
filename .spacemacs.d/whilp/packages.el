@@ -19,6 +19,7 @@
 (setq whilp-packages
     '(
       ;; package names go here
+      ace-jump-zap
       comment-dwim-2
       flyspell
       window-numbering
@@ -182,3 +183,7 @@
         compilation-ask-about-save nil
         compilation-auto-jump-to-first-error nil
         compilation-save-buffers-predicate nil))
+
+(defun whilp/init-ace-jump-zap ()
+  (bind-keys ("M-z" . ace-jump-zap-up-to-char-dwim)
+             ("C-M-z" . ace-jump-zap-up-to-char-dwim)))
