@@ -43,6 +43,7 @@
       (prog-mode :location local)
       (text-mode :location local)
       (goto-addr :location local)
+      (browse-url :location local)
       browse-at-remote
       flx
       ))
@@ -218,3 +219,8 @@
         (list
          (cons "bh" (gh-profile "https://github.banksimple.com/api/v3" "whilp"))
          (cons "gh" (gh-profile "https://api.github.com" "whilp")))))
+(defun whilp/init-browse-url ()
+  (defun browse-url-default-macosx-browser (url &optional new-window)
+    "Browse URL in the background. (NEW-WINDOW is ignored)."
+    (interactive (browse-url-interactive-arg "URL: "))
+    (start-process (concat "open -g" url) nil "open" "-g" url)))

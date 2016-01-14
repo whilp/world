@@ -310,11 +310,7 @@ layers configuration. You are free to put any user code."
         org-log-reschedule 'time
         org-log-redeadline 'time
         org-log-into-drawer "LOGBOOK")
-
-  (defun browse-url-default-macosx-browser (url &optional new-window)
-    "Browse URL in the background. (NEW-WINDOW is ignored)."
-    (interactive (browse-url-interactive-arg "URL: "))
-    (start-process (concat "open -g" url) nil "open" "-g" url))
+ 
   (global-evil-search-highlight-persist -1))
 
 (defun sql-profile (product host user port)
