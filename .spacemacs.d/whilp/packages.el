@@ -19,6 +19,9 @@
 (setq whilp-packages
     '(
       ;; package names go here
+      tls
+      gnutls
+      async
       ace-jump-zap
       comment-dwim-2
       flyspell
@@ -197,3 +200,17 @@
     "Browse URL in the background. (NEW-WINDOW is ignored)."
     (interactive (browse-url-interactive-arg "URL: "))
     (start-process (concat "open -g" url) nil "open" "-g" url)))
+
+(defun whilp/init-async ()
+  (setq send-mail-function 'async-smtpmail-send-it
+        message-send-mail-function 'async-smtpmail-send-it))
+
+(defun whilp/init-tls ()
+  (setq tls-checktrust t
+        tls-program
+        (list
+         (format "gnutls-cli --x509cafile %s -p %%p %%h" ssl-cert-file))))
+
+(defun whilp/init-gnutls ()
+  (setq gnutls-verify-error t
+        gnutls-trustfiles (list ssl-cert-file)))
