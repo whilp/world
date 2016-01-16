@@ -19,6 +19,11 @@
 (setq whilp-packages
     '(
       ;; package names go here
+      uniquify
+      time
+      ns-win
+      easy-kill
+      makefile-mode
       tls
       gnutls
       async
@@ -214,3 +219,37 @@
 (defun whilp/init-gnutls ()
   (setq gnutls-verify-error t
         gnutls-trustfiles (list ssl-cert-file)))
+
+(defun whilp/init-unfill ())
+
+(defun whilp/init-makefile-mode ()
+  (defun makefile-mode-config ()
+    (setq tab-width 8))
+  (add-to-list 'makefile-mode-hook #'makefile-mode-config))
+
+(defun whilp/init-easy-kill ()
+  (global-set-key [remap kill-ring-save] 'easy-kill)
+  (global-set-key [remap mark-sexp] 'easy-mark))
+
+(defun whilp/init-ns-win ()
+  (bind-keys ("s-p" . nil)))
+
+(defun whilp/init-time ()
+  (setq display-time-default-load-average nil
+        display-time-format "%a %Y-%m-%d %H:%M")
+  (defun message-time ()
+    "Print the current time as a message."
+    (interactive)
+    (message
+     (mapconcat
+      #'identity
+      (list
+       (format-time-string display-time-format)
+       (battery-format "%L %B %p%% %t" (battery-pmset)))
+      " | ")))
+  (bind-keys ("s-SPC" . message-time)))
+
+(defun whilp/pre-init-uniquify ()
+  (spacemacs|use-package-add-hook uniquify
+    :post-config
+    (setq uniquify-buffer-name-style 'forward)))
