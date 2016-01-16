@@ -18,41 +18,40 @@
 ;; which require an initialization must be listed explicitly in the list.
 (setq whilp-packages
     '(
-      ;; package names go here
-      (uniquify :location local)
-      (time :location local)
-      (ns-win :location local)
-      easy-kill
-      makefile-mode
-      (tls :location local)
+      (browse-url :location local)
+      (compile :location local)
+      (epa :location local)
+      (files :location local)
       (gnutls :location local)
-      async
+      (goto-addr :location local)
+      (hl-line :location local)
+      (makefile-mode :location local)
+      (ns-win :location local)
+      (prog-mode :location local)
+      (simple :location local)
+      (text-mode :location local)
+      (time :location local)
+      (tls :location local)
+      (uniquify :location local)
+      (whitespace :location local)
       ace-jump-zap
-      comment-dwim-2
-      flyspell
-      window-numbering
-      counsel
-      ivy
-      swiper
       ace-link
+      async
+      browse-at-remote
+      comment-dwim-2
+      counsel
+      easy-kill
+      exec-path-from-shell
+      flx
+      flycheck-gometalinter
+      flyspell
       go-mode
       golint
-      flycheck-gometalinter
-      exec-path-from-shell
-      rich-minority
+      ivy
       markdown-mode
-      (compile :location local)
-      (files :location local)
-      (whitespace :location local)
-      (hl-line :location local)
-      (simple :location local)
-      (epa :location local)
-      (prog-mode :location local)
-      (text-mode :location local)
-      (goto-addr :location local)
-      (browse-url :location local)
-      browse-at-remote
-      flx
+      rich-minority
+      swiper
+      window-numbering
       ))
 
 ;; List of packages to exclude.
@@ -225,7 +224,9 @@
 (defun whilp/init-makefile-mode ()
   (defun makefile-mode-config ()
     (setq tab-width 8))
-  (add-to-list 'makefile-mode-hook #'makefile-mode-config))
+  (spacemacs|use-package-add-hook makefile-mode
+    :post-config
+    (add-to-list 'makefile-mode-hook #'makefile-mode-config)))
 
 (defun whilp/init-easy-kill ()
   (global-set-key [remap kill-ring-save] 'easy-kill)
