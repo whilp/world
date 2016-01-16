@@ -221,6 +221,9 @@ user code."
   (defvar ssl-cert-file (concat nix-link "etc/ssl/certs/ca-bundle.crt")
     "SSL_CERT_FILE.")
 
+  (defvar ssh-auth-sock (expand-file-name "~/.ssh/agent.sock"))
+  (setenv "SSH_AUTH_SOCK" ssh-auth-sock)
+
   (setq-default exec-path
                 (mapcar
                  'expand-file-name
