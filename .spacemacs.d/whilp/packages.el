@@ -19,13 +19,13 @@
 (setq whilp-packages
     '(
       ;; package names go here
-      uniquify
-      time
-      ns-win
+      (uniquify :location local)
+      (time :location local)
+      (ns-win :location local)
       easy-kill
       makefile-mode
-      tls
-      gnutls
+      (tls :location local)
+      (gnutls :location local)
       async
       ace-jump-zap
       comment-dwim-2
