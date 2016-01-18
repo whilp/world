@@ -197,6 +197,14 @@ values."
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
 user code."
+  (setq solarized-scale-org-headlines nil
+        solarized-use-variable-pitch nil
+        solarized-height-minus-1 1
+        solarized-height-plus-1 1
+        solarized-height-plus-2 1
+        solarized-height-plus-3 1
+        solarized-height-plus-4 1)
+
   (setq default-frame-alist '((fullscreen . fullscreen)
                               (vertical-scroll-bars)
                               (right-fringe . 4)
@@ -278,14 +286,6 @@ layers configuration. You are free to put any user code."
 
   (sp-use-paredit-bindings)
   (smartparens-global-strict-mode)
-
-  (setq solarized-scale-org-headlines nil
-        solarized-use-variable-pitch nil)
-  (setq solarized-height-minus-1 1)
-  (setq solarized-height-plus-1 1)
-  (setq solarized-height-plus-2 1)
-  (setq solarized-height-plus-3 1)
-  (setq solarized-height-plus-4 1)
 
   (setq projectile-use-git-grep t)
   (setq org-use-speed-commands t
