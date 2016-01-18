@@ -133,9 +133,9 @@ Each entry is either:
             notmuch-crypto-process-mime t
             notmuch-show-indent-messages-width 4
             notmuch-saved-searches
-            '((:name "inbox" :query "tag:inbox" :key "i" :sort-order newest-first)
-              (:name "maier" :query "tag:maier" :key "m" :sort-order newest-first)
-              (:name "simple" :query "tag:simple" :key "s" :sort-order newest-first)))
+            '((:name "inbox" :query "folder:wcmaier@m.aier.us/INBOX or folder:will@simple.com/INBOX" :key "i" :sort-order newest-first)
+              (:name "maier" :query "folder:wcmaier@m.aier.us/INBOX" :key "m" :sort-order newest-first)
+              (:name "simple" :query "folder:will@simple.com/INBOX" :key "s" :sort-order newest-first)))
       (with-eval-after-load 'swiper
         (add-to-list 'swiper-font-lock-exclude 'notmuch-show-mode)
         (add-to-list 'swiper-font-lock-exclude 'notmuch-search-mode)))))
