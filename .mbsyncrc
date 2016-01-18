@@ -37,7 +37,14 @@ MaildirStore will@simple.com-local
 Path ~/mail/will@simple.com/
 Inbox ~/mail/will@simple.com/INBOX
 
-Channel will@simple.com
-Master :will@simple.com-remote:
-Slave :will@simple.com-local:
-Patterns "INBOX"
+Channel will@simple.com-inbox
+Master :will@simple.com-remote:"INBOX"
+Slave :will@simple.com-local:INBOX
+
+Channel will@simple.com-sent
+Master :will@simple.com-remote:"[Gmail]/Sent Mail"
+Slave :will@simple.com-local:sent
+
+Group will@simple.com
+Channel will@simple.com-inbox
+Channel will@simple.com-sent
