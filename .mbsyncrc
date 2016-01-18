@@ -17,10 +17,22 @@ MaildirStore wcmaier@m.aier.us-local
 Path ~/mail/wcmaier@m.aier.us/
 Inbox ~/mail/wcmaier@m.aier.us/INBOX
 
-Channel wcmaier@m.aier.us
-Master :wcmaier@m.aier.us-remote:
-Slave :wcmaier@m.aier.us-local:
-Patterns "INBOX"
+Channel wcmaier@m.aier.us-inbox
+Master :wcmaier@m.aier.us-remote:"INBOX"
+Slave :wcmaier@m.aier.us-local:INBOX
+
+Channel wcmaier@m.aier.us-sent
+Master :wcmaier@m.aier.us-remote:"[Gmail]/Sent Mail"
+Slave :wcmaier@m.aier.us-local:sent
+
+Channel wcmaier@m.aier.us-drafts
+Master :wcmaier@m.aier.us-remote:"[Gmail]/Drafts"
+Slave :wcmaier@m.aier.us-local:drafts
+
+Group wcmaier@m.aier.us
+Channel wcmaier@m.aier.us-inbox
+Channel wcmaier@m.aier.us-sent
+Channel wcmaier@m.aier.us-drafts
 
 IMAPAccount will@simple.com
 Host imap.gmail.com
@@ -45,6 +57,11 @@ Channel will@simple.com-sent
 Master :will@simple.com-remote:"[Gmail]/Sent Mail"
 Slave :will@simple.com-local:sent
 
+Channel will@simple.com-drafts
+Master :will@simple.com-remote:"[Gmail]/Drafts"
+Slave :will@simple.com-local:drafts
+
 Group will@simple.com
 Channel will@simple.com-inbox
 Channel will@simple.com-sent
+Channel will@simple.com-drafts
