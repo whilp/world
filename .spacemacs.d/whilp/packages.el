@@ -251,8 +251,6 @@
       " | ")))
   (bind-keys ("s-SPC" . message-time)))
 
-(defun whilp/pre-init-uniquify ()
-  (spacemacs|use-package-add-hook uniquify
-    :post-config
-    (setq uniquify-buffer-name-style 'forward)))
+(defun whilp/post-init-uniquify ()
+  (setq uniquify-buffer-name-style 'forward))
 
