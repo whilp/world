@@ -25,9 +25,11 @@
       libtool
       clang
       libgcrypt
+      isyncUnstable
+      notmuch
       gnupg
       gnumake
-      racket # unsupported on darwin :/
+      # racket # unsupported on darwin :/
       cloc
       libyaml
       ncurses

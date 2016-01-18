@@ -1,8 +1,13 @@
+SyncState *
+Expunge Both
+Create Both
+MaxMessages 1024
 IMAPAccount wcmaier@m.aier.us
 Host imap.gmail.com
 User wcmaier@m.aier.us
 PassCmd "~/.authinfo.py imap.gmail.com wcmaier@m.aier.us 993"
-UseIMAPS yes
+SSLType IMAPS
+SSLVersions TLSv1.2
 CertificateFile "~/.certs/cacert.pem"
 
 IMAPStore wcmaier@m.aier.us-remote
@@ -12,25 +17,17 @@ MaildirStore wcmaier@m.aier.us-local
 Path ~/mail/wcmaier@m.aier.us/
 Inbox ~/mail/wcmaier@m.aier.us/INBOX
 
-Channel wcmaier@m.aier.us-all
-Master :wcmaier@m.aier.us-remote:
-Slave :wcmaier@m.aier.us-local:
-Patterns * ![Gmail]* "[Gmail]/Sent Mail" "[Gmail]/Starred" "[Gmail]/All Mail"
-Create Both
-SyncState *
-
 Channel wcmaier@m.aier.us
 Master :wcmaier@m.aier.us-remote:
 Slave :wcmaier@m.aier.us-local:
-Patterns "[Gmail]/Sent Mail" "INBOX"
-Create Both
-SyncState *
+Patterns "INBOX"
 
 IMAPAccount will@simple.com
 Host imap.gmail.com
 User will@simple.com
 PassCmd "~/.authinfo.py imap.gmail.com will@simple.com 993"
-UseIMAPS yes
+SSLType IMAPS
+SSLVersions TLSv1.2
 CertificateFile "~/.certs/cacert.pem"
 
 IMAPStore will@simple.com-remote
@@ -40,16 +37,7 @@ MaildirStore will@simple.com-local
 Path ~/mail/will@simple.com/
 Inbox ~/mail/will@simple.com/INBOX
 
-Channel will@simple.com-all
-Master :will@simple.com-remote:
-Slave :will@simple.com-local:
-Patterns * ![Gmail]* "[Gmail]/Sent Mail" "[Gmail]/Starred" "[Gmail]/All Mail"
-Create Both
-SyncState *
-
 Channel will@simple.com
 Master :will@simple.com-remote:
 Slave :will@simple.com-local:
-Patterns "[Gmail]/Sent Mail" "INBOX"
-Create Both
-SyncState *
+Patterns "INBOX"

@@ -206,8 +206,9 @@
     (start-process (concat "open -g" url) nil "open" "-g" url)))
 
 (defun whilp/init-async ()
-  (setq send-mail-function 'async-smtpmail-send-it
-        message-send-mail-function 'async-smtpmail-send-it))
+  (use-package async
+    :config
+    (async-bytecomp-package-mode 1)))
 
 (defun whilp/init-tls ()
   (setq tls-checktrust t
@@ -254,3 +255,4 @@
   (spacemacs|use-package-add-hook uniquify
     :post-config
     (setq uniquify-buffer-name-style 'forward)))
+

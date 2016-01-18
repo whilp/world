@@ -40,6 +40,7 @@ values."
      rcirc
      whilp
      whilp-rcirc
+     whilp-mail
      whilp-projectile
      whilp-git
      )

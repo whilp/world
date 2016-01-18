@@ -1,0 +1,4 @@
+#!/bin/sh
+
+notmuch search --format=text0 --output=files tag:deleted | xargs -0 rm -f
+exec mbsync -a
