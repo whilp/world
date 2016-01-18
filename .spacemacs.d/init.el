@@ -300,7 +300,7 @@ layers configuration. You are free to put any user code."
         org-return-follows-link t
         org-src-fontify-natively t
         org-completion-use-ido t
-        org-return-follows-link t
+        org-return-follows-link nil
         org-use-tag-inheritance t
         org-highest-priority ?A
         org-lowest-priority ?E
