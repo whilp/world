@@ -29,17 +29,18 @@ values."
      sql
      markdown
      yaml
-     org
      (shell :variables
             shell-default-shell 'eshell
             shell-enable-smart-eshell t
             )
+     org ;; needed in addition to whilp-org
      spell-checking
      syntax-checking
      version-control
      rcirc
      whilp
      whilp-rcirc
+     whilp-org
      whilp-mail
      whilp-projectile
      whilp-git
@@ -283,38 +284,9 @@ user code."
 layers configuration. You are free to put any user code."
   (setq enable-local-variables nil
         enable-local-eval nil)
-
   (sp-use-paredit-bindings)
   (smartparens-global-strict-mode)
-
   (setq projectile-use-git-grep t)
-  (setq org-use-speed-commands t
-        org-speed-commands-user '(
-                                  ("I" org-insert-heading-respect-content)
-                                  ("s" call-interactively 'org-schedule)
-                                  ("k" org-cut-subtree)
-                                  ("w" org-copy-subtree)
-                                  )
-        org-startup-indented t
-        org-enforce-todo-dependencies t
-        org-return-follows-link t
-        org-src-fontify-natively t
-        org-completion-use-ido t
-        org-return-follows-link nil
-        org-use-tag-inheritance t
-        org-highest-priority ?A
-        org-lowest-priority ?E
-        org-default-priority ?A
-        org-bookmark-names-plist '()
-        org-use-fast-todo-selection nil
-        org-default-notes-file "~/src/github.banksimple.com/whilp/notes/log.org"
-        org-extend-today-until 6
-        org-todo-keywords '((sequence "TODO" "|" "DONE" "PUNTED"))
-        org-log-done 'note
-        org-log-reschedule 'time
-        org-log-redeadline 'time
-        org-log-into-drawer "LOGBOOK")
- 
   (global-evil-search-highlight-persist -1))
 
 (defun sql-profile (product host user port)
