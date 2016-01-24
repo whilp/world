@@ -110,8 +110,7 @@
 (defun whilp/pre-init-ace-link ()
   (spacemacs|use-package-add-hook ace-link
     :post-config
-    (when (fboundp #'ace-link-addr)
-      (bind-keys ("M-o" . ace-link-addr)))))
+    (bind-keys ("M-o" . ace-link-addr))))
 
 ;; go get -u github.com/golang/lint/golint
 ;; go get -u golang.org/x/tools/cmd/cover
