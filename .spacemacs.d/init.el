@@ -37,7 +37,7 @@ values."
      spell-checking
      syntax-checking
      version-control
-     rcirc
+     rcirc ;; needed in addition to whilp-rcirc
      whilp
      whilp-rcirc
      whilp-org
