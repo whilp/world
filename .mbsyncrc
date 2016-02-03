@@ -1,7 +1,7 @@
 SyncState *
-Expunge Both
 Create Both
-MaxMessages 1024
+Expunge Both
+#MaxMessages 1024
 IMAPAccount wcmaier@m.aier.us
 Host imap.gmail.com
 User wcmaier@m.aier.us
@@ -29,10 +29,15 @@ Channel wcmaier@m.aier.us-drafts
 Master :wcmaier@m.aier.us-remote:"[Gmail]/Drafts"
 Slave :wcmaier@m.aier.us-local:drafts
 
+Channel wcmaier@m.aier.us-mail
+Master :wcmaier@m.aier.us-remote:"mail"
+Slave :wcmaier@m.aier.us-local:mail
+
 Group wcmaier@m.aier.us
 Channel wcmaier@m.aier.us-inbox
 Channel wcmaier@m.aier.us-sent
 Channel wcmaier@m.aier.us-drafts
+Channel wcmaier@m.aier.us-mail
 
 IMAPAccount will@simple.com
 Host imap.gmail.com
@@ -61,7 +66,21 @@ Channel will@simple.com-drafts
 Master :will@simple.com-remote:"[Gmail]/Drafts"
 Slave :will@simple.com-local:drafts
 
+Channel will@simple.com-mail
+Master :will@simple.com-remote:"mail"
+Slave :will@simple.com-local:mail
+
+Channel will@simple.com-trash
+Master :will@simple.com-remote:"[Gmail]/Trash"
+Slave :will@simple.com-local:trash
+
+Channel will@simple.com-all
+Master :will@simple.com-remote:
+Slave :will@simple.com-local:
+Patterns *
+
 Group will@simple.com
 Channel will@simple.com-inbox
 Channel will@simple.com-sent
 Channel will@simple.com-drafts
+Channel will@simple.com-mail
