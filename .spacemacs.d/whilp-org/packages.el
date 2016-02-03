@@ -33,6 +33,7 @@
   '(
     notmuch
     org
+    (ox-latex :location local)
     )
   "The list of Lisp packages required by the whilp-org layer.
 
@@ -85,6 +86,7 @@ Each entry is either:
               (todo todo-state-up priority-down category-keep)
               (tags priority-down category-keep)
               (search category-keep))
+            org-export-date-timestamp-format "%Y-%m-%d"
             ;; org-enforce-todo-dependencies t
             ;; org-return-follows-link t
             ;; org-src-fontify-natively t
@@ -108,5 +110,17 @@ Each entry is either:
   (spacemacs|use-package-add-hook notmuch
     :post-config
     (require 'org-notmuch nil 'noerror)))
+
+(defun whilp-org/init-ox-latex ()
+  (use-package ox-latex
+    :config
+    (progn
+      (add-to-list
+       'org-latex-classes
+       '("isodoc"
+         "\\documentclass{isodoc}
+          [NO-DEFAULT-PACKAGES]
+          [PACKAGES]
+          [EXTRA]")))))
 
 ;;; packages.el ends here
