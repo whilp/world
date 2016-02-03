@@ -65,6 +65,7 @@ Each entry is either:
   (spacemacs|use-package-add-hook org
     :post-init
     (progn
+      (spacemacs|disable-company org-mode)
       (bind-keys ("C-c C-l" . org-store-link)
                  ("s-a" . org-agenda-list))
       (setq org-startup-indented t
