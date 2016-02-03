@@ -152,6 +152,9 @@
   (spacemacs|use-package-add-hook text-mode
     :post-config
     (add-hook 'text-mode-hook #'goto-address-mode))
+  (spacemacs|use-package-add-hook org-mode
+    :post-config
+    (add-hook 'org-mode-hook #'goto-address-mode))
   (spacemacs|use-package-add-hook prog-mode
     :post-config
     (add-hook 'prog-mode-hook #'goto-address-prog-mode)))
