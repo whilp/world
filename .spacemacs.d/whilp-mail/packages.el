@@ -34,11 +34,13 @@
     (smtpmail :location built-in)
     (starttls :location built-in)
     (message :location built-in)
+    (sendmail :location built-in)
     async
     notmuch
     bbdb
     gnus-alias
     nm
+    bpr
     (mml-sec :location built-in)
     (mml2015 :location built-in)
     )
@@ -88,7 +90,13 @@ Each entry is either:
     :config
     (setq message-kill-buffer-on-exit t
           message-signature nil
-          mail-host-address "m.aier.us")))
+          mail-host-address "m.aier.us"
+          message-sendmail-envelope-from 'header)))
+
+(defun whilp-mail/init-sendmail ()
+  (use-package sendmail
+    :config
+    (setq mail-envelope-from 'header)))
 
 (defun whilp-mail/init-starttls ()
   (use-package starttls
@@ -98,13 +106,22 @@ Each entry is either:
 (defun whilp-mail/pre-init-async ()
   (use-package smtpmail-async
     :config
-    (setq send-mail-function 'async-smtpmail-send-it
-          message-send-mail-function 'async-smtpmail-send-it)))
+    (progn
+      (setq send-mail-function 'async-smtpmail-send-it
+            message-send-mail-function 'async-smtpmail-send-it)
+      (defalias 'message-smtpmail-send-it 'async-smtpmail-send-it))))
 
 (defun whilp-mail/init-notmuch ()
   (use-package notmuch
-    :bind ("s-m" . notmuch)
+    :bind (("s-m" . notmuch)
+           ("s-M" . notmuch-new))
     :defer t
+    :init
+    (defun notmuch-new ()
+      (interactive)
+      (let* ((bpr-show-progress nil)
+             (bpr-process-directory (expand-file-name "~/")))
+        (bpr-spawn "notmuch new")))
     :config
     (progn
       (defun compose-message ()
@@ -126,12 +143,16 @@ Each entry is either:
         (lambda ()
           "delete message"
           (interactive)
-          (notmuch-show-tag (list "+deleted" "-inbox"))))
+          (notmuch-show-tag (list "+deleted" "-inbox"))
+          (notmuch-show-next-thread-show)))
 
       (add-to-list 'notmuch-message-mode-hook #'compose-message)
       (setq notmuch-search-oldest-first nil
             notmuch-crypto-process-mime t
             notmuch-show-indent-messages-width 4
+            notmuch-fcc-dirs
+            '(("simple\\.com" . "will@simple.com/sent")
+              ("m\\.aier\\.us" . "wcmaier@m.aier.us/sent"))
             notmuch-saved-searches
             '((:name "inbox" :query "folder:wcmaier@m.aier.us/INBOX or folder:will@simple.com/INBOX" :key "i" :sort-order newest-first)
               (:name "maier" :query "folder:wcmaier@m.aier.us/INBOX" :key "m" :sort-order newest-first)
@@ -156,16 +177,25 @@ Each entry is either:
         ;; configure smtpmail
         (let ((from (cdr
                      (gnus-extract-address-components
-                      (message-fetch-field "From"))))))
-        (setq mml2015-signers (list from)))
+                      (message-fetch-field "From")))))
+          (setq mml2015-signers (list from))))
 
       (setq gnus-alias-default-identity "simple"
             gnus-alias-identity-rules
             '(("simple" ("any" "@simple\\.com" both) "simple")
+              ("delivered-simple" ("delivered-to" "@simple\\.com" both) "simple")
               ("maier" ("any" ".*" both) "maier"))
             gnus-alias-identity-alist
-            '(("maier" "" "Will Maier <wcmaier@gmail.com>")
-              ("simple" "" "Will Maier <whilp@simple.com>")))
+            '(("maier"
+               nil
+               "Will Maier <wcmaier@gmail.com>"
+               nil
+               (("X-Message-SMTP-Method" . "smtp smtp.gmail.com 465 wcmaier@m.aier.us")))
+              ("simple"
+               nil
+               "Will Maier <whilp@simple.com>"
+               nil
+               (("X-Message-SMTP-Method" . "smtp smtp.gmail.com 465 will@simple.com")))))
 
       (add-hook 'message-send-hook #'gnus-alias-configure-identity)
       (add-hook 'message-setup-hook #'gnus-alias-determine-identity))))
@@ -185,6 +215,10 @@ Each entry is either:
     (with-eval-after-load 'swiper
       (add-to-list 'swiper-font-lock-exclude 'nm-mode)))
   (use-package nm-company
+    :defer t))
+
+(defun whilp-mail/init-bpr ()
+  (use-package bpr
     :defer t))
 
 ;;; packages.el ends here
