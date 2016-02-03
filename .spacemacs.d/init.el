@@ -219,7 +219,7 @@ user code."
   (setenv "GIT_AUTHOR_NAME" user-full-name)
   (setenv "GIT_AUTHOR_EMAIL" user-email-address)
 
-  (defvar gopath (file-name-as-directory (expand-file-name "~/src"))
+  (defvar gopath (file-name-as-directory (expand-file-name "~"))
     "GOPATH.")
   (setenv "GOPATH" gopath)
 
