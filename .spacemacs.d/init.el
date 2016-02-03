@@ -28,6 +28,8 @@ values."
      python
      sql
      markdown
+     lua
+     javascript
      yaml
      (shell :variables
             shell-default-shell 'eshell
