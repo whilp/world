@@ -44,6 +44,7 @@
       exec-path-from-shell
       flx
       flycheck-gometalinter
+      (eshell :location local)
       flyspell
       go-mode
       golint
@@ -256,3 +257,7 @@
 (defun whilp/post-init-uniquify ()
   (setq uniquify-buffer-name-style 'forward))
 
+
+(defun whilp/post-init-eshell ()
+  (spacemacs|disable-company eshell-mode)
+  (remove-hook 'eshell-mode-hook #'spacemacs//init-eshell))
