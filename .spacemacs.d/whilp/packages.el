@@ -34,6 +34,7 @@
       (tls :location local)
       (uniquify :location local)
       (whitespace :location local)
+      git-auto-commit-mode
       ace-jump-zap
       ace-link
       async
@@ -257,6 +258,8 @@
 (defun whilp/post-init-uniquify ()
   (setq uniquify-buffer-name-style 'forward))
 
+
+(defun whilp/init-git-auto-commit-mode ())
 
 (defun whilp/post-init-eshell ()
   (spacemacs|disable-company eshell-mode)
