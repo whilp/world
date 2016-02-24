@@ -35,6 +35,7 @@
   (spacemacs|use-package-add-hook rcirc
     :post-config
     (progn
+      (spacemacs|disable-company rcirc-mode)
       (add-hook 'rcirc-mode-hook #'goto-address-mode)
       (setq rcirc-fill-flag nil
             rcirc-fill-column nil
