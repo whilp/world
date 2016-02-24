@@ -28,6 +28,7 @@ values."
      python
      sql
      markdown
+     scala
      lua
      javascript
      yaml
