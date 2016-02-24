@@ -6,3 +6,4 @@
 /vendor
 *.test
 savehist
+.DS_Store
