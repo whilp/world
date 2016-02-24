@@ -69,6 +69,9 @@ Each entry is either:
       (spacemacs|disable-company org-mode)
       (bind-keys ("C-c C-l" . org-store-link)
                  ("s-a" . org-agenda-list))
+      (spacemacs|use-package-add-hook message
+        :post-config
+        (add-hook 'message-mode-hook 'turn-on-orgstruct++))
       (setq org-startup-indented t
             org-use-speed-commands t
             org-speed-commands-user
