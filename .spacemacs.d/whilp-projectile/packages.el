@@ -32,30 +32,30 @@
 ;; https://github.com/jwiegley/use-package
 
 (defun whilp-projectile/pre-init-ivy ()
+  (defun ivy-switch-project ()
+    (interactive)
+    (ivy-read
+     "Switch to project: "
+     (if (projectile-project-p)
+         (cons (abbreviate-file-name (projectile-project-root))
+               (projectile-relevant-known-projects))
+       projectile-known-projects)
+     :action #'projectile-switch-project-by-name))
+
+  (ivy-set-actions
+   'ivy-switch-project
+   '(("v" projectile-vc "vc")
+     ("s" projectile-run-shell "shell")
+     ("g" projectile-git-grep "grep")
+     ("c" projectile-compile-a-project "compile")
+     ("t" projectile-test-a-project "test")))
+
+  (bind-keys ("C-c p p" . ivy-switch-project))
   (spacemacs|use-package-add-hook projectile
     :post-config
     (progn
-      (defun ivy-switch-project ()
-        (interactive)
-        (ivy-read
-         "Switch to project: "
-         (if (projectile-project-p)
-             (cons (abbreviate-file-name (projectile-project-root))
-                   (projectile-relevant-known-projects))
-           projectile-known-projects)
-         :action #'projectile-switch-project-by-name))
-
-      (ivy-set-actions
-       'ivy-switch-project
-       '(("v" projectile-vc "vc")
-         ("s" projectile-run-shell "shell")
-         ("g" projectile-git-grep "grep")
-         ("c" projectile-compile-a-project "compile")
-         ("t" projectile-test-a-project "test")))
-
-      (setq projectile-completion-system 'ivy)
       (bind-keys :map projectile-command-map ("p" . ivy-switch-project))
-      (bind-keys ("C-c p p" . ivy-switch-project)))))
+      (setq projectile-completion-system 'ivy))))
 
 (defun whilp-projectile/post-init-projectile ()
   (spacemacs|use-package-add-hook projectile
