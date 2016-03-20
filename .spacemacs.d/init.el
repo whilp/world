@@ -269,7 +269,6 @@ user code."
   (setenv "SSL_CERT_FILE" ssl-cert-file)
   (setenv "PATH" shell-path)
 
-
   (spacemacs|use-package-add-hook sql
     :pre-init
     (setq sql-connection-alist
@@ -281,8 +280,7 @@ user code."
                5439)))
           ))
 
-  (setq ns-use-native-fullscreen nil)
-  )
+  (setq ns-use-native-fullscreen nil))
 
 (defun dotspacemacs/user-config ()
   "Configuration function for user code.
