@@ -85,8 +85,8 @@ Each entry is either:
             org-refile-targets '((nil . (:maxlevel . 6)))
             org-agenda-search-headline-for-time nil
             org-agenda-sorting-strategy
-            '((agenda todo-state-down priority-down scheduled-up)
-              (todo todo-state-up priority-down category-keep)
+            '((agenda deadline-up todo-state-down priority-down scheduled-up)
+              (todo deadline-up todo-state-up priority-down category-keep)
               (tags priority-down category-keep)
               (search category-keep))
             org-export-date-timestamp-format "%Y-%m-%d"
