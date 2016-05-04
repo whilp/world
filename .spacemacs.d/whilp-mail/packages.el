@@ -109,12 +109,14 @@ Each entry is either:
     (progn
       (setq send-mail-function 'async-smtpmail-send-it
             message-send-mail-function 'async-smtpmail-send-it)
-      (defalias 'message-smtpmail-send-it 'async-smtpmail-send-it))))
+      (defalias 'message-smtpmail-send-it 'async-smtpmail-send-it)))
+  )
 
 (defun whilp-mail/init-notmuch ()
+  (spacemacs/set-leader-keys
+    "mm" 'notmuch
+    "mM" 'notmuch-new)
   (use-package notmuch
-    :bind (("s-m" . notmuch)
-           ("s-M" . notmuch-new))
     :defer t
     :init
     (defun notmuch-new ()

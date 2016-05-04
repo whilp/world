@@ -50,24 +50,24 @@
      ("c" projectile-compile-a-project "compile")
      ("t" projectile-test-a-project "test")))
 
-  (bind-keys ("C-c p p" . ivy-switch-project))
+  (spacemacs/set-leader-keys
+    "pp" 'ivy-switch-project)
+
   (spacemacs|use-package-add-hook projectile
     :post-config
     (progn
-      (bind-keys :map projectile-command-map ("p" . ivy-switch-project))
       (setq projectile-completion-system 'ivy))))
 
 (defun whilp-projectile/post-init-projectile ()
+  (spacemacs/set-leader-keys
+    "p!" 'projectile-run-shell
+    "pi" 'projectile-compile-a-project
+    "po" 'projectile-test-a-project
+    "pf" 'projectile-find-file-dwim
+    "pg" 'counsel-git-grep)
   (spacemacs|use-package-add-hook projectile
     :post-config
     (progn
-      (bind-keys :map projectile-command-map
-                 ("!" . projectile-run-shell)
-                 ("i" . projectile-compile-a-project)
-                 ("o" . projectile-test-a-project)
-                 ("f" . projectile-find-file-dwim)
-                 ("g" . counsel-git-grep))
-
       (setq projectile-mode-line
             (quote
              (:eval (format " [%s]" (projectile-project-name)))))

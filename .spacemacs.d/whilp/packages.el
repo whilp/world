@@ -37,14 +37,13 @@
       git-auto-commit-mode
       ace-jump-zap
       ace-link
-      async
+      ;; async
       browse-at-remote
       comment-dwim-2
       counsel
       easy-kill
       exec-path-from-shell
       flx
-      flycheck-gometalinter
       (eshell :location local)
       flyspell
       go-mode
@@ -123,9 +122,6 @@
   (spacemacs|use-package-add-hook go-mode
     :post-config
     (setq gofmt-command "goimports")))
-
-(defun whilp/init-flycheck-gometalinter ()
-  (add-hook 'flycheck-mode-hook #'flycheck-gometalinter-setup))
 
 (defun whilp/init-golint ())
 
@@ -209,11 +205,6 @@
     "Browse URL in the background. (NEW-WINDOW is ignored)."
     (interactive (browse-url-interactive-arg "URL: "))
     (start-process (concat "open -g" url) nil "open" "-g" url)))
-
-(defun whilp/init-async ()
-  (use-package async
-    :config
-    (async-bytecomp-package-mode 1)))
 
 (defun whilp/init-tls ()
   (setq tls-checktrust t

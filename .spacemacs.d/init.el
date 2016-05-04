@@ -63,6 +63,7 @@ values."
                                     spaceline-config
                                     org-bullets
                                     persp-mode
+                                    anaconda-mode
                                     )
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    ;; are declared in a layer which is not a member of
@@ -96,7 +97,7 @@ values."
    ;; with `:variables' keyword (similar to layers). Check the editing styles
    ;; section of the documentation for details on available variables.
    ;; (default 'vim)
-   dotspacemacs-editing-style 'vim
+   dotspacemacs-editing-style 'emacs
    ;; If non nil output loading progress in `*Messages*' buffer. (default nil)
    dotspacemacs-verbose-loading t
    ;; Specify the startup banner. Default value is `official', it displays
@@ -299,6 +300,7 @@ user code."
   (defvar ssh-auth-sock (expand-file-name "~/.ssh/agent.sock"))
   (setenv "SSH_AUTH_SOCK" ssh-auth-sock)
 
+  (setq delete-by-moving-to-trash nil)
   (setq-default exec-path
                 (mapcar
                  'expand-file-name
@@ -350,7 +352,8 @@ layers configuration. You are free to put any user code."
   (sp-use-paredit-bindings)
   (smartparens-global-strict-mode)
   (setq projectile-use-git-grep t)
-  (global-evil-search-highlight-persist -1))
+  ;; (global-evil-search-highlight-persist -1)
+  )
 
 (defun sql-profile (product host user port)
   "Search auth-info for an entry matching HOST, USER, and PORT."
