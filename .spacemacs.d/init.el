@@ -21,35 +21,35 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
-     spacemacs-ivy
-     auto-completion
-     better-defaults
-     emacs-lisp
-     git
-     go
-     osx
-     python
-     sql
-     markdown
-     scala
-     lua
-     javascript
-     yaml
-     (shell :variables
-            shell-default-shell 'eshell
-            shell-enable-smart-eshell t
-            )
-     org ;; needed in addition to whilp-org
-     spell-checking
-     syntax-checking
-     version-control
-     rcirc ;; needed in addition to whilp-rcirc
-     whilp
-     whilp-rcirc
-     whilp-org
-     whilp-mail
-     whilp-projectile
-     whilp-git
+     ivy
+     ;; auto-completion
+     ;; better-defaults
+     ;; emacs-lisp
+     ;; git
+     ;; go
+     ;; osx
+     ;; python
+     ;; sql
+     ;; markdown
+     ;; scala
+     ;; lua
+     ;; javascript
+     ;; yaml
+     ;; (shell :variables
+     ;;        shell-default-shell 'eshell
+     ;;        shell-enable-smart-eshell t
+     ;;        )
+     ;; org ;; needed in addition to whilp-org
+     ;; spell-checking
+     ;; syntax-checking
+     ;; version-control
+     ;; rcirc ;; needed in addition to whilp-rcirc
+     ;; whilp
+     ;; whilp-rcirc
+     ;; whilp-org
+     ;; whilp-mail
+     ;; whilp-projectile
+     ;; whilp-git
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -64,6 +64,7 @@ values."
                                     org-bullets
                                     persp-mode
                                     anaconda-mode
+vi-tilde-fringe
                                     )
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    ;; are declared in a layer which is not a member of
@@ -119,17 +120,17 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(solarized-dark
-                         solarized-light)
+   ;; dotspacemacs-themes '(solarized-dark
+   ;;                       solarized-light)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
    ;; size to make separators look not too crappy.
-   dotspacemacs-default-font '("Source Code Pro"
-                               :size 13
-                               :weight normal
-                               :width normal
-                               :powerline-scale 1.1)
+;;   dotspacemacs-default-font '("Source Code Pro"
+;;                               :size 13
+;;                               :weight normal
+;;                               :width normal
+;;                               :powerline-scale 1.1)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The leader key accessible in `emacs state' and `insert state'
@@ -272,10 +273,10 @@ user code."
         solarized-height-plus-3 1
         solarized-height-plus-4 1)
 
-  (setq default-frame-alist '((fullscreen . fullscreen)
-                              (vertical-scroll-bars)
-                              (right-fringe . 4)
-                              (left-fringe . 4)))
+;;  (setq default-frame-alist '((fullscreen . fullscreen)
+;;                              (vertical-scroll-bars)
+;;                              (right-fringe . 4)
+;;                              (left-fringe . 4)))
   (setq user-full-name "Will Maier")
   (defvar user-email-address "wcmaier@gmail.com"
     "My email.")
@@ -289,13 +290,13 @@ user code."
     "GOPATH.")
   (setenv "GOPATH" gopath)
 
-  (defvar nix-link (file-name-as-directory (expand-file-name "~/.nix-profile"))
-    "NIX_LINK.")
+  ;; (defvar nix-link (file-name-as-directory (expand-file-name "~/.nix-profile"))
+  ;;   "NIX_LINK.")
 
-  (defvar nix-path (file-name-as-directory (expand-file-name "~/.nix-defexpr/nixpkgs")))
+  ;; (defvar nix-path (file-name-as-directory (expand-file-name "~/.nix-defexpr/nixpkgs")))
 
-  (defvar ssl-cert-file (concat nix-link "etc/ssl/certs/ca-bundle.crt")
-    "SSL_CERT_FILE.")
+  ;; (defvar ssl-cert-file (concat nix-link "etc/ssl/certs/ca-bundle.crt")
+  ;;   "SSL_CERT_FILE.")
 
   (defvar ssh-auth-sock (expand-file-name "~/.ssh/agent.sock"))
   (setenv "SSH_AUTH_SOCK" ssh-auth-sock)
@@ -305,8 +306,8 @@ user code."
                 (mapcar
                  'expand-file-name
                  (list
-                  (concat nix-link "bin")
-                  (concat nix-link "sbin")
+                  ;; (concat nix-link "bin")
+                  ;; (concat nix-link "sbin")
                   "~/bin"
                   ;; (concat whilp-gopath "bin")
                   "/usr/pkg/sbin"
@@ -325,9 +326,9 @@ user code."
   (defvar shell-path (mapconcat 'identity exec-path path-separator)
     "Shell PATH string.")
 
-  (setenv "NIX_PATH" (format "%s:nixpkgs=%s" nix-path nix-path))
-  (setenv "NIX_CONF_DIR" (file-name-as-directory (expand-file-name "~/.nix")))
-  (setenv "SSL_CERT_FILE" ssl-cert-file)
+  ;; (setenv "NIX_PATH" (format "%s:nixpkgs=%s" nix-path nix-path))
+  ;; (setenv "NIX_CONF_DIR" (file-name-as-directory (expand-file-name "~/.nix")))
+  ;; (setenv "SSL_CERT_FILE" ssl-cert-file)
   (setenv "PATH" shell-path)
 
   (spacemacs|use-package-add-hook sql
