@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -eu
+set -eux
 
-gup -u ../.emacs.d ../.spacemacs.d/init.el
-emacs --batch -l ~/.emacs.d/init.el
+gup -u ../.emacs.d/init.el ../.spacemacs.d/init.el
+emacs --batch --eval "(setq package-user-dir \"$1\")" -l ../.emacs.d/init.el
