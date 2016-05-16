@@ -1,4 +1,4 @@
 #!/bin/sh -e
 
 gup -u init.el
-emacs --batch -l ~/.spacemacs.d/init.el
+emacs --batch -l ~/.emacs.d/init.el

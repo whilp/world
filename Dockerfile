@@ -1,6 +1,6 @@
 FROM alpine:edge
 
-ENV SHELL emacs /bin/sh emacs
+ENV SHELL /bin/sh emacs
 RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing \
     | tee -a /etc/apk/repositories
 
