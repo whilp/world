@@ -1,4 +1,6 @@
-#!/bin/sh -e
+#!/bin/sh
+
+set -eu
 
 gup -u init.el
 emacs --batch -l ~/.emacs.d/init.el || true
