@@ -8,6 +8,7 @@ RUN apk add --update \
     alpine-sdk \
     docker \
     emacs \
+    gnutls-utils \
     python \
     python-dev \
     python3 \
