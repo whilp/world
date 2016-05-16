@@ -5,6 +5,7 @@ RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing \
 
 RUN apk add --update \
     alpine-sdk \
+    aspell-en \
     docker \
     emacs \
     gnutls-utils \

@@ -77,9 +77,10 @@
 ;; https://github.com/jwiegley/use-package
 
 (defun whilp/pre-init-flyspell ()
-  (spacemacs|use-package-add-hook flyspell
-    :pre-init
-    (setenv "ASPELL_CONF" (format "dict-dir %slib/aspell" nix-link))))
+  ;; (spacemacs|use-package-add-hook flyspell
+  ;;   :pre-init
+  ;;   (setenv "ASPELL_CONF" (format "dict-dir %slib/aspell" nix-link))))
+  )
 
 (defun whilp/init-comment-dwim-2 ()
   (bind-keys ("M-;" . comment-dwim-2)))
@@ -208,13 +209,15 @@
 
 (defun whilp/init-tls ()
   (setq tls-checktrust t
-        tls-program
-        (list
-         (format "gnutls-cli --x509cafile %s -p %%p %%h" ssl-cert-file))))
+        ;; tls-program
+        ;; (list
+        ;;  (format "gnutls-cli --x509cafile %s -p %%p %%h" ssl-cert-file))
+        ))
 
 (defun whilp/init-gnutls ()
   (setq gnutls-verify-error t
-        gnutls-trustfiles (list ssl-cert-file)))
+        ;; gnutls-trustfiles (list ssl-cert-file)
+        ))
 
 (defun whilp/init-unfill ())
 

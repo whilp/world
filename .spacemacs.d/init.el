@@ -42,13 +42,13 @@ values."
      spell-checking
      syntax-checking
      version-control
-     rcirc ;; needed in addition to whilp-rcirc
-     ;; whilp
+     ;; rcirc ;; needed in addition to whilp-rcirc
+     whilp
      ;; whilp-rcirc
      ;; whilp-org
      ;; whilp-mail
      ;; whilp-projectile
-     ;; whilp-git
+     whilp-git
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -119,8 +119,7 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(spacemacs-light
-                         spacemacs-dark)
+   dotspacemacs-themes '(default)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
@@ -272,7 +271,7 @@ user code."
         solarized-height-plus-3 1
         solarized-height-plus-4 1)
 
-  (setq frame-background-mode 'light)
+  (setq frame-background-mode 'dark)
 ;;  (setq default-frame-alist '((fullscreen . fullscreen)
 ;;                              (vertical-scroll-bars)
 ;;                              (right-fringe . 4)
