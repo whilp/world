@@ -10,8 +10,4 @@ script:
   - make docker
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
   - docker push whilp/home
-
-env:
-  - secure: "Tv2XG+pbjBAStmANjPQrnrM2Qbr5LocyFVlyygOr5zFzEm49DHtOyki7dW3nUTNWc+iARoWr7s4tL8WCflDEVFyWUtq4U6m24MusVJ0Sx+9H+xHRMCaat5/qCuDKZ27A804b/gbLYIVt5scflPKkrDW/nqwTntYKeQvtiJeOx1k="
-  - secure: "JT5oBSGHaBprH+OHC8mM5VRzM5MCGDBEOqrAr2f/6nXoqfAt74JY6PJ3/5y2cm1N379Ig/bBTpm3mvUpUXyAo/X07U6Y7kn9Jn2aKregNSrdsdsklo24lNXZIFh1DhlpZf1QWe/cqP/3RKsTptvw1LJktDEOd80y4NY7sIU9uX4="
-  - secure: "GB7WCzB43Yj9omX9oOx3G13FKTffNRLKYbZqEl2GfcUQLU7BBhtPG+BPPLSDWQi9nApXvTuPMRtoKpIX3W+LZF0xYLvN7wno8Sx1HqdjOSzmxXCb939DR4ONDM562r7WMdc4oBIErrJgrTk2EgLqrfPdHWXL5ilIUim0fGxopJc="
+  
