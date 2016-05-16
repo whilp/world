@@ -3,7 +3,7 @@ sudo: required
 services:
   - docker
 
-lang: c
+language: c
 install: true
 
 script:
