@@ -1,6 +1,5 @@
 FROM alpine:edge
 
-ENV SHELL /bin/sh
 RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing \
     | tee -a /etc/apk/repositories
 
@@ -32,4 +31,6 @@ ADD . .
 RUN chmod 700 /home/whilp \
     && chown -R whilp:whilp /home/whilp /home/whilp/.*
 USER whilp
+
+ENV SHELL /bin/sh
 RUN make    
