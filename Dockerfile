@@ -29,6 +29,5 @@ WORKDIR /home/whilp
 ADD . .
 RUN chmod 700 /home/whilp \
     && chown -R whilp:whilp /home/whilp /home/whilp/.*
-RUN make    
-
 USER whilp
+RUN make    
