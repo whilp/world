@@ -2,5 +2,5 @@
 
 set -eu
 
-gup -u init.el
-emacs --batch -l ~/.emacs.d/init.el || true
+gup -u ../.emacs.d ../.spacemacs.d/init.el
+emacs --batch -l ~/.emacs.d/init.el
