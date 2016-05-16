@@ -33,4 +33,6 @@ RUN chmod 700 /home/whilp \
 USER whilp
 
 ENV SHELL /bin/sh
-RUN make    
+ENV TERM xterm-256color
+ENV LC_ALL en.UTF-8
+RUN make

@@ -22,28 +22,27 @@ values."
    dotspacemacs-configuration-layers
    '(
      ivy
-     ;; auto-completion
-     ;; better-defaults
-     ;; emacs-lisp
-     ;; git
-     ;; go
-     ;; osx
-     ;; python
-     ;; sql
-     ;; markdown
-     ;; scala
-     ;; lua
-     ;; javascript
-     ;; yaml
-     ;; (shell :variables
-     ;;        shell-default-shell 'eshell
-     ;;        shell-enable-smart-eshell t
-     ;;        )
-     ;; org ;; needed in addition to whilp-org
-     ;; spell-checking
-     ;; syntax-checking
-     ;; version-control
-     ;; rcirc ;; needed in addition to whilp-rcirc
+     auto-completion
+     better-defaults
+     emacs-lisp
+     git
+     go
+     python
+     sql
+     markdown
+     scala
+     lua
+     javascript
+     yaml
+     (shell :variables
+            shell-default-shell 'eshell
+            shell-enable-smart-eshell t
+            )
+     org ;; needed in addition to whilp-org
+     spell-checking
+     syntax-checking
+     version-control
+     rcirc ;; needed in addition to whilp-rcirc
      ;; whilp
      ;; whilp-rcirc
      ;; whilp-org
@@ -120,8 +119,8 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   ;; dotspacemacs-themes '(solarized-dark
-   ;;                       solarized-light)
+   dotspacemacs-themes '(spacemacs-light
+                         spacemacs-dark)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
@@ -273,6 +272,7 @@ user code."
         solarized-height-plus-3 1
         solarized-height-plus-4 1)
 
+  (setq frame-background-mode 'light)
 ;;  (setq default-frame-alist '((fullscreen . fullscreen)
 ;;                              (vertical-scroll-bars)
 ;;                              (right-fringe . 4)
