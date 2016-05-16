@@ -80,3 +80,6 @@ fetch = +refs/pull/*/head:refs/pull/origin/*
 	autoUpdate = never
 [remote]
 	pushDefault = origin
+[user]
+	email = wcmaier@gmail.com
+	name = Will Maier

@@ -1,18 +1,33 @@
-FROM ubuntu:15.10
+FROM alpine:edge
 
-RUN apt-get update && \
-    apt-get install -y openjdk-8-jdk pkg-config zip g++ zlib1g-dev unzip bash-completion curl && \
-    apt-get clean -yq
-RUN curl -Ls https://github.com/bazelbuild/bazel/releases/download/0.2.2b/bazel_0.2.2b-linux-x86_64.deb > bazel.deb &&\
-    echo 'f81ae985eb03f3236be7e197f3c862dbc70a9807090efe0f67ddc6d59b3364ca  bazel.deb' | sha256sum -c &&\
-    dpkg -i bazel.deb
+RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing \
+    | tee -a /etc/apk/repositories
 
-RUN useradd -r -U -u 1001 whilp
+RUN apk add --update \
+    alpine-sdk \
+    docker \
+    emacs \
+    python \
+    python-dev \
+    python3 \
+    python3-dev \
+    && rm -rf /var/cache/apk/*
+
+RUN mkdir -p /var/cache/distfiles \
+    && chgrp abuild /var/cache/distfiles \
+    && chmod g+w /var/cache/distfiles
+
+RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' \
+    | tee /etc/sudoers.d/wheel \
+    && chown root:root /etc/sudoers.d/wheel \
+    && chmod 400 /etc/sudoers.d/wheel
+
+RUN adduser -D -h /home/whilp -u 1001 whilp \
+    && addgroup whilp abuild \
+    && addgroup whilp wheel
 WORKDIR /home/whilp
 ADD . .
-RUN chown -R whilp /home/whilp
-USER whilp
+RUN chmod 700 /home/whilp \
+    && chown -R whilp:whilp /home/whilp /home/whilp/.*
 
-# Extract bazel installation.
-RUN bazel info > /dev/null 2>&1
-RUN bazel --batch build --color no --verbose_failures --genrule_strategy=standalone --spawn_strategy=standalone //emacs:all
+USER whilp

@@ -1,0 +1,6 @@
+#!/bin/sh -e
+
+gup -x -u \
+    Makefile \
+    tools/gup \
+    .emacs.d
