@@ -1,10 +1,10 @@
 #!/bin/sh -ex
 
+pwd
 name=.emacs.d.tar.gz
 sum=656385deaf388a22c38e8ee96c70fa94bbca4db91f136d35e31de9710e5208a4
 url=https://github.com/syl20bnr/spacemacs/archive/1ebbe18b478945b0c1eacfd6a3a82b22c3fdbd87.tar.gz
 curl -sLo "$name" "$url"
 echo "$sum *$name" | sha256sum -c -
-mkdir -p .emacs.d
-cat $name | (cd .emacs.d; tar xzf - --strip-components=1 )
+tar xzf "$name" --strip-components=1
 rm "$name"

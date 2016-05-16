@@ -1,0 +1,5 @@
+#!/bin/sh -e
+
+gup -u init.el
+mkdir -p elpa
+#emacs --batch --debug-init
