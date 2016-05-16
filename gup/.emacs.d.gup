@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -eux
+
+t=$(mktemp -dp .)
+f="$t/spacemacs.tar.gz"
+sum=3f69050cfdc9901a5b2426605ddec9c27e5a6da0f3b6016c626f1107975f048c
+url=https://github.com/syl20bnr/spacemacs/archive/1f993bddf69a902566aaa47c628dfa60d110a100.tar.gz
+curl -sLo "$f" "$url"
+echo "$sum *$f" | sha256sum -c -
+mkdir "$1"
+cat "$f" | (cd "$1"; tar xzf - --strip-components=1)
+rm -rf "$t"
