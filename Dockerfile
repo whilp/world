@@ -9,6 +9,7 @@ RUN apk add --update \
     docker \
     emacs \
     gnutls-utils \
+    openssh \
     python \
     python-dev \
     python3 \
