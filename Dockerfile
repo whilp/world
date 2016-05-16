@@ -9,11 +9,14 @@ RUN apk add --update \
     docker \
     emacs \
     gnutls-utils \
+    libffi-dev \
     openssh \
     python \
     python-dev \
     python3 \
     python3-dev \
+    ruby \
+    ruby-dev \
     && rm -rf /var/cache/apk/*
 
 RUN mkdir -p /var/cache/distfiles \
@@ -38,3 +41,4 @@ ENV SHELL /bin/sh
 ENV TERM xterm-256color
 ENV LC_ALL en.UTF-8
 RUN make
+# emacs -nw
