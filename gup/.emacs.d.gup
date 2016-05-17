@@ -11,3 +11,4 @@ echo "$sum *$f" | sha256sum -c -
 mkdir "$1"
 cat "$f" | (cd "$1"; tar xzf - --strip-components=1)
 rm -rf "$t"
+ln -s ../.elpa "$1/elpa"

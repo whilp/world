@@ -8,6 +8,9 @@ RUN apk add --update \
     aspell-en \
     docker \
     emacs \
+    go \
+    go-doc \
+    go-tools \
     gnutls-utils \
     libffi-dev \
     openssh \
