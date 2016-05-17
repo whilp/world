@@ -5,7 +5,10 @@ RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing \
 
 RUN apk add --update \
     alpine-sdk \
+    aspell \
     aspell-en \
+    chicken \
+    chicken-dev \
     docker \
     emacs \
     go \
@@ -16,11 +19,13 @@ RUN apk add --update \
     lua5.3 \
     luarocks5.3 \
     openssh \
+    py-pip \
     python \
     python-dev \
     python3 \
     python3-dev \
     ruby \
+    ruby-bundler \
     ruby-dev \
     && rm -rf /var/cache/apk/*
 
