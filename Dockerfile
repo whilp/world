@@ -13,6 +13,8 @@ RUN apk add --update \
     go-tools \
     gnutls-utils \
     libffi-dev \
+    lua5.3 \
+    luarocks5.3 \
     openssh \
     python \
     python-dev \
