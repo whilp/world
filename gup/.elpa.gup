@@ -2,6 +2,6 @@
 
 set -eux
 
-gup -u .emacs.d/init.el .spacemacs.d/init.el
+gup -u .emacs.d .spacemacs.d/init.el
 mkdir "$1"
 emacs --batch --eval "(setq package-user-dir \"$1\")" -l .emacs.d/init.el

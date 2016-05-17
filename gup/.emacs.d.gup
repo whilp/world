@@ -11,4 +11,7 @@ echo "$sum *$f" | sha256sum -c -
 mkdir "$1"
 cat "$f" | (cd "$1"; tar xzf - --strip-components=1)
 rm -rf "$t"
+
+# Create a link out to the external elpa directory. This solves for the fact
+# that both .emacs.d and .emacs.d/elpa are generated.
 ln -s ../.elpa "$1/elpa"
