@@ -4,4 +4,4 @@ gup -u \
     Makefile \
     tools/gup \
     .emacs.d \
-    .emacs.d/elpa
+    .elpa
