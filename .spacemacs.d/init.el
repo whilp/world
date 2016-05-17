@@ -45,9 +45,9 @@ values."
      ;; rcirc ;; needed in addition to whilp-rcirc
      whilp
      ;; whilp-rcirc
-     ;; whilp-org
+     whilp-org
      ;; whilp-mail
-     ;; whilp-projectile
+     whilp-projectile
      whilp-git
      )
    ;; List of additional packages that will be installed without being
@@ -63,7 +63,7 @@ values."
                                     org-bullets
                                     persp-mode
                                     anaconda-mode
-vi-tilde-fringe
+                                    vi-tilde-fringe
                                     )
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    ;; are declared in a layer which is not a member of
@@ -124,11 +124,11 @@ values."
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
    ;; size to make separators look not too crappy.
-;;   dotspacemacs-default-font '("Source Code Pro"
-;;                               :size 13
-;;                               :weight normal
-;;                               :width normal
-;;                               :powerline-scale 1.1)
+   ;; dotspacemacs-default-font '("Source Code Pro"
+   ;;                             :size 13
+   ;;                             :weight normal
+   ;;                             :width normal
+   ;;                             :powerline-scale 1.1)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The leader key accessible in `emacs state' and `insert state'
@@ -263,6 +263,7 @@ values."
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
 user code."
+  (setq confirm-kill-emacs 'yes-or-no-p)
   (setq solarized-scale-org-headlines nil
         solarized-use-variable-pitch nil
         solarized-height-minus-1 1
