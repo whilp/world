@@ -20,3 +20,10 @@ docker run -v /var/run/docker.sock:/var/run/docker.sock --rm -it whilp/home /usr
 - github/hub
 - magit hub not present
 - pastebuffer
+
+## agents
+
+- make an alpine package for spiped
+- exec with-ssh-agent with-gpg-agent emacs-nw
+- with-ssh-agent starts spipe client, creates sock, sets ENV vars, and execs next
+- same for with-gpg-agent
