@@ -290,17 +290,6 @@ user code."
     "GOPATH.")
   (setenv "GOPATH" gopath)
 
-  ;; (defvar nix-link (file-name-as-directory (expand-file-name "~/.nix-profile"))
-  ;;   "NIX_LINK.")
-
-  ;; (defvar nix-path (file-name-as-directory (expand-file-name "~/.nix-defexpr/nixpkgs")))
-
-  ;; (defvar ssl-cert-file (concat nix-link "etc/ssl/certs/ca-bundle.crt")
-  ;;   "SSL_CERT_FILE.")
-
-  (defvar ssh-auth-sock (expand-file-name "~/.ssh/agent.sock"))
-  (setenv "SSH_AUTH_SOCK" ssh-auth-sock)
-
   (setq delete-by-moving-to-trash nil)
   (setq-default exec-path
                 (mapcar
