@@ -1,6 +1,6 @@
 #!/bin/sh
 
 case "$1" in
-    emacs) exec ssh-agent gpg-agent --daemon /usr/bin/emacs -nw;;
+    emacs) exec /usr/bin/emacs -nw;;
     *) exec $@;;
 esac
