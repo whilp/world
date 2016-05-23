@@ -28,6 +28,7 @@ RUN apk add --update \
     ruby \
     ruby-bundler \
     ruby-dev \
+    runit \
     && rm -rf /var/cache/apk/*
 
 RUN mkdir -p /var/cache/distfiles \
