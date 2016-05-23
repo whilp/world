@@ -55,4 +55,3 @@ RUN make
 COPY tools/entrypoint /entrypoint
 ENTRYPOINT /entrypoint
 CMD emacs
-# emacs -nw
