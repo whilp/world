@@ -11,6 +11,7 @@ RUN apk add --update \
     chicken-dev \
     docker \
     emacs \
+    gnupg \
     go \
     go-doc \
     go-tools \
