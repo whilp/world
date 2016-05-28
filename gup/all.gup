@@ -4,4 +4,5 @@ gup -u \
     Makefile \
     tools/gup \
     .emacs.d \
-    .elpa
+    .elpa \
+    .ssh/config
