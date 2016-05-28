@@ -1,0 +1,8 @@
+#!/bin/sh -e
+
+gup -u \
+    Makefile \
+    tools/gup \
+    .emacs.d \
+    .elpa \
+    .ssh/config

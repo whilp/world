@@ -1,0 +1,12 @@
+#!/bin/sh
+
+cmd="$1"
+ssh_env="/ssh/env"
+gpg_env="/gpg/env"
+[ -d "${ssh_env}" ] && set -- chpst -e "${ssh_env}" "$@"
+[ -d "${gpg_env}" ] && set -- chpst -e "${gpg_env}" "$@"
+
+case "${cmd}" in
+    emacs|"") exec "$@" /usr/bin/emacs -nw;;
+    *) exec "$@";;
+esac

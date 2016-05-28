@@ -1,9 +1,66 @@
-FROM ubuntu:15.10
+FROM alpine:edge
 
-RUN apt-get update && \
-    apt-get install -y openjdk-8-jdk pkg-config zip g++ zlib1g-dev unzip bash-completion curl && \
-    apt-get clean -yq
-RUN curl -Ls https://github.com/bazelbuild/bazel/releases/download/0.2.2b/bazel_0.2.2b-linux-x86_64.deb > bazel.deb &&\
-    echo 'f81ae985eb03f3236be7e197f3c862dbc70a9807090efe0f67ddc6d59b3364ca  bazel.deb' | sha256sum -c &&\
-    dpkg -i bazel.deb
-RUN bazel
+RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing \
+    | tee -a /etc/apk/repositories
+
+RUN apk add --update \
+    alpine-doc \
+    alpine-sdk \
+    aspell \
+    aspell-doc \
+    aspell-en \
+    chicken \
+    chicken-dev \
+    docker \
+    emacs \
+    gnupg \
+    gnupg-doc \
+    go \
+    go-doc \
+    go-tools \
+    gnutls-utils \
+    gnutls-doc \
+    libffi-dev \
+    lua5.3 \
+    luarocks5.3 \
+    man \
+    openssh \
+    openssh-doc \
+    py-pip \
+    python \
+    python-dev \
+    python3 \
+    python3-dev \
+    ruby \
+    ruby-bundler \
+    ruby-dev \
+    runit \
+    runit-doc \
+    && rm -rf /var/cache/apk/*
+
+RUN mkdir -p /var/cache/distfiles \
+    && chgrp abuild /var/cache/distfiles \
+    && chmod g+w /var/cache/distfiles
+
+RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' \
+    | tee /etc/sudoers.d/wheel \
+    && chown root:root /etc/sudoers.d/wheel \
+    && chmod 400 /etc/sudoers.d/wheel
+
+RUN adduser -D -h /home/whilp -u 1001 whilp \
+    && addgroup whilp abuild \
+    && addgroup whilp wheel
+WORKDIR /home/whilp
+ADD . .
+RUN chmod 700 /home/whilp \
+    && chown -R whilp:whilp /home/whilp /home/whilp/.*
+VOLUME /home/whilp
+USER whilp
+
+ENV SHELL /bin/sh
+ENV TERM xterm-256color
+ENV LC_ALL en.UTF-8
+RUN make
+COPY tools/entrypoint /entrypoint
+ENTRYPOINT ["/entrypoint"]
+CMD ["emacs"]
