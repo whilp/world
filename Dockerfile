@@ -4,22 +4,28 @@ RUN echo http://dl-cdn.alpinelinux.org/alpine/edge/testing \
     | tee -a /etc/apk/repositories
 
 RUN apk add --update \
+    alpine-doc \
     alpine-sdk \
     aspell \
+    aspell-doc \
     aspell-en \
     chicken \
     chicken-dev \
     docker \
     emacs \
     gnupg \
+    gnupg-doc \
     go \
     go-doc \
     go-tools \
     gnutls-utils \
+    gnutls-doc \
     libffi-dev \
     lua5.3 \
     luarocks5.3 \
+    man \
     openssh \
+    openssh-doc \
     py-pip \
     python \
     python-dev \
@@ -29,6 +35,7 @@ RUN apk add --update \
     ruby-bundler \
     ruby-dev \
     runit \
+    runit-doc \
     && rm -rf /var/cache/apk/*
 
 RUN mkdir -p /var/cache/distfiles \
