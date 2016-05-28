@@ -1,6 +1,7 @@
 #!/bin/sh
 
-set -eux
+# Don't set -x here to avoid leaking DOCKER_PASSWORD.
+set -eu
 
 gup -u Dockerfile
 sudo docker build -t whilp/home .
