@@ -289,14 +289,6 @@ user code."
     "GOPATH.")
   (setenv "GOPATH" gopath)
 
-  (defvar nix-link (file-name-as-directory (expand-file-name "~/.nix-profile"))
-    "NIX_LINK.")
-
-  (defvar nix-path (file-name-as-directory (expand-file-name "~/.nix-defexpr/nixpkgs")))
-
-  (defvar ssl-cert-file (concat nix-link "etc/ssl/certs/ca-bundle.crt")
-    "SSL_CERT_FILE.")
-
   (defvar ssh-auth-sock (expand-file-name "~/.ssh/agent.sock"))
   (setenv "SSH_AUTH_SOCK" ssh-auth-sock)
 
@@ -305,8 +297,6 @@ user code."
                 (mapcar
                  'expand-file-name
                  (list
-                  (concat nix-link "bin")
-                  (concat nix-link "sbin")
                   "~/bin"
                   ;; (concat whilp-gopath "bin")
                   "/usr/pkg/sbin"
@@ -325,9 +315,6 @@ user code."
   (defvar shell-path (mapconcat 'identity exec-path path-separator)
     "Shell PATH string.")
 
-  (setenv "NIX_PATH" (format "%s:nixpkgs=%s" nix-path nix-path))
-  (setenv "NIX_CONF_DIR" (file-name-as-directory (expand-file-name "~/.nix")))
-  (setenv "SSL_CERT_FILE" ssl-cert-file)
   (setenv "PATH" shell-path)
 
   (spacemacs|use-package-add-hook sql

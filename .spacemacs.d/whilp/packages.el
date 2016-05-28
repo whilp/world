@@ -77,9 +77,7 @@
 ;; https://github.com/jwiegley/use-package
 
 (defun whilp/pre-init-flyspell ()
-  (spacemacs|use-package-add-hook flyspell
-    :pre-init
-    (setenv "ASPELL_CONF" (format "dict-dir %slib/aspell" nix-link))))
+  )
 
 (defun whilp/init-comment-dwim-2 ()
   (bind-keys ("M-;" . comment-dwim-2)))
@@ -207,14 +205,10 @@
     (start-process (concat "open -g" url) nil "open" "-g" url)))
 
 (defun whilp/init-tls ()
-  (setq tls-checktrust t
-        tls-program
-        (list
-         (format "gnutls-cli --x509cafile %s -p %%p %%h" ssl-cert-file))))
+  (setq tls-checktrust t))
 
 (defun whilp/init-gnutls ()
-  (setq gnutls-verify-error t
-        gnutls-trustfiles (list ssl-cert-file)))
+  (setq gnutls-verify-error t))
 
 (defun whilp/init-unfill ())
 
