@@ -21,13 +21,12 @@ values."
    ;; of a list then all discovered layers will be installed.
    dotspacemacs-configuration-layers
    '(
-     spacemacs-ivy
+     ivy
      auto-completion
      better-defaults
      emacs-lisp
      git
      go
-     osx
      python
      sql
      markdown
@@ -43,11 +42,11 @@ values."
      spell-checking
      syntax-checking
      version-control
-     rcirc ;; needed in addition to whilp-rcirc
+     ;; rcirc ;; needed in addition to whilp-rcirc
      whilp
-     whilp-rcirc
+     ;; whilp-rcirc
      whilp-org
-     whilp-mail
+     ;; whilp-mail
      whilp-projectile
      whilp-git
      )
@@ -64,6 +63,7 @@ values."
                                     org-bullets
                                     persp-mode
                                     anaconda-mode
+                                    vi-tilde-fringe
                                     )
    ;; If non-nil spacemacs will delete any orphan packages, i.e. packages that
    ;; are declared in a layer which is not a member of
@@ -119,17 +119,16 @@ values."
    ;; List of themes, the first of the list is loaded when spacemacs starts.
    ;; Press <SPC> T n to cycle to the next theme in the list (works great
    ;; with 2 themes variants, one dark and one light)
-   dotspacemacs-themes '(solarized-dark
-                         solarized-light)
+   dotspacemacs-themes '(default)
    ;; If non nil the cursor color matches the state color in GUI Emacs.
    dotspacemacs-colorize-cursor-according-to-state t
    ;; Default font. `powerline-scale' allows to quickly tweak the mode-line
    ;; size to make separators look not too crappy.
-   dotspacemacs-default-font '("Source Code Pro"
-                               :size 13
-                               :weight normal
-                               :width normal
-                               :powerline-scale 1.1)
+   ;; dotspacemacs-default-font '("Source Code Pro"
+   ;;                             :size 13
+   ;;                             :weight normal
+   ;;                             :width normal
+   ;;                             :powerline-scale 1.1)
    ;; The leader key
    dotspacemacs-leader-key "SPC"
    ;; The leader key accessible in `emacs state' and `insert state'
@@ -264,6 +263,7 @@ values."
   "Initialization function for user code.
 It is called immediately after `dotspacemacs/init'.  You are free to put any
 user code."
+  (setq confirm-kill-emacs 'yes-or-no-p)
   (setq solarized-scale-org-headlines nil
         solarized-use-variable-pitch nil
         solarized-height-minus-1 1
@@ -272,10 +272,7 @@ user code."
         solarized-height-plus-3 1
         solarized-height-plus-4 1)
 
-  (setq default-frame-alist '((fullscreen . fullscreen)
-                              (vertical-scroll-bars)
-                              (right-fringe . 4)
-                              (left-fringe . 4)))
+  (setq frame-background-mode 'dark)
   (setq user-full-name "Will Maier")
   (defvar user-email-address "wcmaier@gmail.com"
     "My email.")
@@ -288,9 +285,6 @@ user code."
   (defvar gopath (file-name-as-directory (expand-file-name "~"))
     "GOPATH.")
   (setenv "GOPATH" gopath)
-
-  (defvar ssh-auth-sock (expand-file-name "~/.ssh/agent.sock"))
-  (setenv "SSH_AUTH_SOCK" ssh-auth-sock)
 
   (setq delete-by-moving-to-trash nil)
   (setq-default exec-path

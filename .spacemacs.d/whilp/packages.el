@@ -76,8 +76,7 @@
 ;; For more info on `use-package', see readme:
 ;; https://github.com/jwiegley/use-package
 
-(defun whilp/pre-init-flyspell ()
-  )
+(defun whilp/pre-init-flyspell ())
 
 (defun whilp/init-comment-dwim-2 ()
   (bind-keys ("M-;" . comment-dwim-2)))
