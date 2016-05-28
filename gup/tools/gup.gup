@@ -1,0 +1,7 @@
+#!/bin/sh -ex
+
+sum=461aee8815f2a194e74162498bdc6dba2701e4c0a8159ee4ad828948e75c329b
+url=https://raw.githubusercontent.com/timbertson/gup/b6971b1977221457d7d4c08743981ee31c41feb0/python/bin/gup
+curl -sLo "$1" "$url"
+echo "$sum *$1" | sha256sum -c -
+chmod a+x "$1"
