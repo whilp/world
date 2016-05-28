@@ -1,0 +1,6 @@
+#!/bin/sh -ex
+
+sum=0777c373b1979b56f58c9aedc908d7da93076be3982b45ebe5bf86ddd4d44e68
+url="https://raw.githubusercontent.com/timbertson/gup/b6971b1977221457d7d4c08743981ee31c41feb0/resources/Makefile"
+curl -sLo "$1" "$url"
+echo "$sum *$1" | sha256sum -c -
