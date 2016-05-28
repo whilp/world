@@ -8,6 +8,4 @@ install: true
 
 script:
   - make docker
-  - [ "${TRAVIS_PULL_REQUEST}" = "false" ] && docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" -e "$DOCKER_EMAIL"
-  - [ "${TRAVIS_PULL_REQUEST}" = "false" ] && docker push whilp/home
   

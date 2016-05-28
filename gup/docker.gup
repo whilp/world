@@ -1,4 +1,10 @@
-#!/bin/sh -e
+#!/bin/sh
+
+set -eux
 
 gup -u Dockerfile
 sudo docker build -t whilp/home .
+if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
+    docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" -e "$DOCKER_EMAIL"
+    docker push whilp/home
+fi
