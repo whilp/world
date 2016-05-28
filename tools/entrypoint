@@ -7,6 +7,6 @@ gpg_env="/gpg/env"
 [ -d "${gpg_env}" ] && set -- chpst -e "${gpg_env}" "$@"
 
 case "${cmd}" in
-    "") exec "$@" /usr/bin/emacs -nw;;
+    emacs|"") exec "$@" /usr/bin/emacs -nw;;
     *) exec "$@";;
 esac

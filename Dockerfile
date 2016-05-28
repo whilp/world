@@ -56,4 +56,4 @@ ENV LC_ALL en.UTF-8
 RUN make
 COPY tools/entrypoint /entrypoint
 ENTRYPOINT ["/entrypoint"]
-CMD ["emacs", "-nw"]
+CMD ["emacs"]
