@@ -5,4 +5,5 @@ gup -u \
     tools/gup \
     .emacs.d \
     .elpa \
-    .ssh/config
+    .ssh/config \
+    bin/git-get
