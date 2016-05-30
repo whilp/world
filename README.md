@@ -8,6 +8,4 @@ docker run -v /var/run/docker.sock:/var/run/docker.sock --rm -it whilp/home /usr
 
 ## TODO
 
-- whilp/git-get
-- github/hub
 - magit hub not present
