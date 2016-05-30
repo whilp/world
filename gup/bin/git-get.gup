@@ -6,3 +6,4 @@ sum=28768e092d9b969c9d7e4e6a0dc6487d1253451a5f165cf802722a3e5bb70136
 url="https://github.com/whilp/git-get/releases/download/v0.7/git-get-linux-amd64"
 curl -sLo "$1" "$url"
 echo "$sum *$1" | sha256sum -c -
+chmod a+x "$1"
