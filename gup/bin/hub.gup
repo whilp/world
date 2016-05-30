@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -eux
+
+sum="54c35a459a4241b7ae4c28bcfea0ceef849dd2f8a9dd2b82ba2ba964a743e6bc"
+url="https://github.com/github/hub/releases/download/v2.2.3/hub-linux-amd64-2.2.3.tgz"
+tmp=$(mktemp -dp $PWD)
+curl -sLo "${tmp}/hub.tgz" "$url"
+echo "$sum *hub.tgz" "$url"
+(cd "$tmp"; tar xzf hub.tgz)
+mv "${tmp}/"hub*/bin/hub "$1"
+rm -rf "$tmp"
+chmod a+x "$1"
+
