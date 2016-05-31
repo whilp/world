@@ -6,4 +6,5 @@ gup -u \
     .emacs.d \
     .elpa \
     .ssh/config \
-    bin/git-get
+    bin/git-get \
+    bin/hub

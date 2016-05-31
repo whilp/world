@@ -2,8 +2,8 @@
 
 set -eux
 
-sum=28768e092d9b969c9d7e4e6a0dc6487d1253451a5f165cf802722a3e5bb70136
-url="https://github.com/whilp/git-get/releases/download/v0.7/git-get-linux-amd64"
+sum=b1f105caf7afabb27fe4ec1266522ab6e35c4ae047b88648cc0e7738a17af00b
+url="https://github.com/whilp/git-get/releases/download/v0.17/git-get-linux-amd64"
 curl -sLo "$1" "$url"
 echo "$sum *$1" | sha256sum -c -
 chmod a+x "$1"
