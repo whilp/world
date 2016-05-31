@@ -54,13 +54,13 @@ WORKDIR /home/whilp
 ADD . .
 RUN chmod 700 /home/whilp \
     && chown -R whilp:whilp /home/whilp /home/whilp/.*
-VOLUME /home/whilp
-USER whilp
+    USER whilp
 
 ENV SHELL /bin/sh
 ENV TERM xterm-256color
 ENV LC_ALL en.UTF-8
 RUN make
+VOLUME /home/whilp
 COPY tools/entrypoint /entrypoint
 ENTRYPOINT ["/entrypoint"]
 CMD ["emacs"]
