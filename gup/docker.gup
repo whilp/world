@@ -1,11 +1,7 @@
 #!/bin/sh
 
-# Don't set -x here to avoid leaking DOCKER_PASSWORD.
-set -eu
+set -eux
 
+gup --always
 gup -u Dockerfile
 sudo docker build -t whilp/home .
-if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then
-    docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" -e "$DOCKER_EMAIL"
-    docker push whilp/home
-fi

@@ -6,6 +6,11 @@ services:
 language: c
 install: true
 
-script:
-  - make docker
+script: make docker
+deploy:
+  provider: script
+  script: make release/docker
+  skip_cleanup: true
+  on:
+    branch: master
   
