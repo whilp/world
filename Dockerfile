@@ -57,7 +57,7 @@ WORKDIR /home/whilp
 ADD . .
 RUN chmod 700 /home/whilp \
     && chown -R whilp:whilp /home/whilp /home/whilp/.*
-    USER whilp
+USER whilp
 
 ENV SHELL /bin/sh
 ENV TERM xterm-256color
