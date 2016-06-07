@@ -26,6 +26,7 @@ RUN apk add --update \
     man \
     nodejs \
     nodejs-doc \
+    openjdk8 \
     openssh \
     openssh-doc \
     py-pip \
