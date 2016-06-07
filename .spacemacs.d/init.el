@@ -34,6 +34,7 @@ values."
      lua
      javascript
      yaml
+     terraform
      (shell :variables
             shell-default-shell 'eshell
             shell-enable-smart-eshell t
