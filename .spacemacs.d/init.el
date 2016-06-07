@@ -24,6 +24,8 @@ values."
      ivy
      auto-completion
      better-defaults
+     common-lisp
+     clojure
      emacs-lisp
      git
      go
@@ -32,9 +34,13 @@ values."
      markdown
      scala
      lua
+     java
+     elm
+     restclient
      javascript
      yaml
      terraform
+     dockerfile
      (shell :variables
             shell-default-shell 'eshell
             shell-enable-smart-eshell t
