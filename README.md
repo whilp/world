@@ -11,3 +11,8 @@ docker run -v /var/run/docker.sock:/var/run/docker.sock --rm -it whilp/home /usr
 - magit hub not present
 - make a vaultproject.io container
 - extend envcrypt to talk to vault
+- add apks
+  - clojure
+  - lein
+  - racket
+  - scala
