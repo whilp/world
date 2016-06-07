@@ -1,4 +1,9 @@
-#!/bin/sh -e
+#!/bin/sh
+
+set -eux
+
+chmod 700 .ssh
+chmod 700 .gnupg
 
 gup -u \
     Makefile \
@@ -6,5 +11,7 @@ gup -u \
     .emacs.d \
     .elpa \
     .ssh/config \
+    .gnupg/gpg.conf \
+    .gnupg/gpg-agent.conf \
     bin/git-get \
     bin/hub
