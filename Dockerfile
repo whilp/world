@@ -24,6 +24,8 @@ RUN apk add --update \
     lua5.3 \
     luarocks5.3 \
     man \
+    nodejs \
+    nodejs-doc \
     openssh \
     openssh-doc \
     py-pip \
