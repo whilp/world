@@ -48,6 +48,7 @@
       flyspell
       go-mode
       golint
+      hcl-mode
       ivy
       markdown-mode
       rich-minority
