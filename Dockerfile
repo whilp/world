@@ -8,6 +8,8 @@ RUN apk add --update \
     aspell \
     aspell-doc \
     aspell-en \
+    bash \
+    bash-doc \
     chicken \
     chicken-dev \
     docker \
@@ -38,6 +40,8 @@ RUN apk add --update \
     ruby-dev \
     runit \
     runit-doc \
+    zip \
+    zip-doc \
     && rm -rf /var/cache/apk/*
 
 RUN mkdir -p /var/cache/distfiles \
