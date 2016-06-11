@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -eux
+
+v="0.5.3"
+f="vault_${v}_linux_amd64.zip"
+sum="fddb97507f8b539534620882f3a46984160778950e4884831c0f7c2a82b65f52"
+url="https://releases.hashicorp.com/vault/${v}/${f}"
+tmp=$(mktemp -dp .)
+(
+    cd "$tmp"
+    curl -sLo "$f" "$url"
+    echo "$sum *$f" | sha256sum -c -
+    unzip "$f"
+    mv vault "$1"
+    chmod a+x "$1"
+)
+rm -rf "$tmp"
