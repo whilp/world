@@ -15,4 +15,4 @@ tmp=$(mktemp -dp .)
     mv glide "$1"
     chmod a+x "$1"
 )
-#rm -rf "$tmp"
+rm -rf "$tmp"
