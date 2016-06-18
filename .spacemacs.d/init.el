@@ -41,10 +41,7 @@ values."
      yaml
      terraform
      dockerfile
-     (shell :variables
-            shell-default-shell 'eshell
-            shell-enable-smart-eshell t
-            )
+     shell
      org ;; needed in addition to whilp-org
      spell-checking
      syntax-checking
@@ -307,8 +304,8 @@ user code."
                   "/usr/sbin/"
                   "/sbin/")))
 
-  (defvar shell-path (mapconcat 'identity exec-path path-separator)
-    "Shell PATH string.")
+  (defvar shell-path "" "Shell PATH string.")
+  (setq shell-path (mapconcat 'identity exec-path path-separator))
 
   (setenv "PATH" shell-path)
 

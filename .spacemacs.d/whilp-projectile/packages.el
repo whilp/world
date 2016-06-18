@@ -76,8 +76,8 @@
         "Start a shell in a project's ROOT."
         (interactive "P")
         (projectile-with-default-dir (or root (projectile-project-root))
-          (let ((eshell-buffer-name (format "*shell %s*" (projectile-project-name))))
-            (eshell))))
+          (let ((shell-buffer-name (format "*shell %s*" (projectile-project-name))))
+            (shell shell-buffer-name))))
 
       (defun projectile-git-grep (&optional root)
         "Git grep in a project."
