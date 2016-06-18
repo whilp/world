@@ -299,6 +299,7 @@ user code."
                  'expand-file-name
                  (list
                   "~/bin"
+                  "~/.python/bin"
                   "/usr/local/sbin"
                   "/usr/local/bin"
                   "/usr/bin/"
