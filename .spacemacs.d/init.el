@@ -299,19 +299,12 @@ user code."
                  'expand-file-name
                  (list
                   "~/bin"
-                  ;; (concat whilp-gopath "bin")
-                  "/usr/pkg/sbin"
-                  "/usr/pkg/bin"
                   "/usr/local/sbin"
                   "/usr/local/bin"
-                  "/usr/local/texlive/2015basic/bin/x86_64-darwin/"
-                  "/usr/local/MacGPG2/bin"
                   "/usr/bin/"
                   "/bin/"
                   "/usr/sbin/"
-                  "/sbin/"
-                  "/Applications/Emacs.app/Contents/MacOS/bin-x86_64-10_9/"
-                  "/Applications/Emacs.app/Contents/MacOS/libexec-x86_64-10_9/")))
+                  "/sbin/")))
 
   (defvar shell-path (mapconcat 'identity exec-path path-separator)
     "Shell PATH string.")
