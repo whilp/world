@@ -2,12 +2,6 @@
 
 set -eux
 
-exe=$(which hub 2>/dev/null || true)
-if [ "${exe:-x}" != x ]; then
-    ln -s "$exe" "$1"
-    exit 0
-fi
-
 sum="6595840911bd6bfcd6c9844746389c0b84e772c0caad6273a1b9547e90ec1dba"
 url="https://github.com/whilp/hub/releases/download/v2.2.0-232-ge84896f/hub-linux-amd64"
 curl -sLo "$1" "$url"
