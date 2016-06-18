@@ -21,6 +21,8 @@ RUN apk add --update \
     go-tools \
     gnutls-utils \
     gnutls-doc \
+    groff \
+    groff-doc \
     libffi-dev \
     lua5.3 \
     luarocks5.3 \
