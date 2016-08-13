@@ -4,5 +4,5 @@
 set -eu
 
 gup --always
-docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" -e "$DOCKER_EMAIL"
+docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
 docker push whilp/home
