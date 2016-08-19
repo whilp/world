@@ -185,7 +185,7 @@
   (spacemacs|use-package-add-hook ivy
     :post-config
     (setq ivy-initial-inputs-alist nil
-          ivy-re-builders-alist '((t . ivy--regex-fuzzy)))))
+          ivy-re-builders-alist '((t . ivy--regex-plus)))))
 
 (defun whilp/init-compile ()
   (setq compilation-scroll-output t
