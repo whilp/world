@@ -34,6 +34,7 @@ RUN apk add --update \
     openssh \
     openssh-doc \
     py2-pip \
+    py3-pip \
     python \
     python-dev \
     python3 \
