@@ -81,4 +81,4 @@ RUN make
 VOLUME /home/whilp
 COPY tools/entrypoint /entrypoint
 ENTRYPOINT ["/entrypoint"]
-CMD ["sh"]
+CMD ["shell"]

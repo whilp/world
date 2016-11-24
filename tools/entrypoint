@@ -8,4 +8,5 @@ gpg_env="/gpg/env"
 
 case "${cmd}" in
     *) exec "$@";;
+    shell) exec /bin/sh -l "$@";;
 esac
