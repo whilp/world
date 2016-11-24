@@ -33,7 +33,7 @@ RUN apk add --update \
     openjdk8 \
     openssh \
     openssh-doc \
-    py-pip \
+    py2-pip \
     python \
     python-dev \
     python3 \
