@@ -35,6 +35,8 @@ RUN apk add --update \
     openjdk8 \
     openssh \
     openssh-doc \
+    postgresql-client \
+    postgresql-dev \
     py2-pip \
     py3-pip \
     python \
