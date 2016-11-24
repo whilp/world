@@ -1,0 +1,7 @@
+#!/bin/sh
+
+self=$(readlink -f "$0")
+base=$(dirname "$self")
+echo -en travis_fold:start:"${GUP_TARGET}\r"
+"$base"/gup-real "$@"
+echo -en travis_fold:end:"${GUP_TARGET}\r"
