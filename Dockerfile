@@ -29,6 +29,7 @@ RUN apk add --update \
     lua5.3 \
     luarocks5.3 \
     man \
+    man-pages \
     nodejs \
     nodejs-doc \
     openjdk8 \
