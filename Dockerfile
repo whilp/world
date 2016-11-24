@@ -52,6 +52,8 @@ RUN apk add --update \
     tig-doc \
     tmux \
     tmux-doc \
+    util-linux \
+    util-linux-doc \
     vis \
     vis-doc \
     zip \
