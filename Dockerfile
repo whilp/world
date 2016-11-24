@@ -13,6 +13,7 @@ RUN apk add --update \
     chicken \
     chicken-dev \
     docker \
+    entr \
 #    emacs \
     gnupg \
     gnupg-doc \
