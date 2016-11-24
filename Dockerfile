@@ -13,7 +13,7 @@ RUN apk add --update \
     chicken \
     chicken-dev \
     docker \
-    emacs \
+#    emacs \
     gnupg \
     gnupg-doc \
     go \
@@ -42,6 +42,7 @@ RUN apk add --update \
     ruby-dev \
     runit \
     runit-doc \
+    vis \
     zip \
     zip-doc \
     && rm -rf /var/cache/apk/*
@@ -71,4 +72,4 @@ RUN make
 VOLUME /home/whilp
 COPY tools/entrypoint /entrypoint
 ENTRYPOINT ["/entrypoint"]
-CMD ["emacs"]
+CMD ["sh"]
