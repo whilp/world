@@ -14,7 +14,6 @@ RUN apk add --update \
     chicken-dev \
     docker \
     entr \
-#    emacs \
     gnupg \
     gnupg-doc \
     go \
@@ -44,6 +43,7 @@ RUN apk add --update \
     ruby-dev \
     runit \
     runit-doc \
+    tmux \
     vis \
     zip \
     zip-doc \
