@@ -12,6 +12,7 @@ RUN apk add --update \
     bash-doc \
     chicken \
     chicken-dev \
+    coreutils-doc \
     docker \
     entr \
     gnupg \
