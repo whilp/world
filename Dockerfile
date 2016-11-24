@@ -15,6 +15,7 @@ RUN apk add --update \
     coreutils-doc \
     docker \
     entr \
+    entr-doc \
     gnupg \
     gnupg-doc \
     go \
@@ -44,8 +45,12 @@ RUN apk add --update \
     ruby-dev \
     runit \
     runit-doc \
+    tig \
+    tig-doc \
     tmux \
+    tmux-doc \
     vis \
+    vis-doc \
     zip \
     zip-doc \
     && rm -rf /var/cache/apk/*
