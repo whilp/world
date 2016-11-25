@@ -15,4 +15,6 @@ gup -u \
     bin/git-get \
     bin/hub \
     bin/glide \
+    bin/pt \
+    bin/vis \
     bin/vault
