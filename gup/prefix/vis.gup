@@ -12,7 +12,7 @@ tmp=$(mktemp -dp .)
     curl -sLo "$f" "$url"
     echo "$sum *$f" | sha256sum -c -
     tar xzf "$f" --strip-components=1
-    ./configure --prefix=~/prefix/vis
+    ./configure --prefix=$HOME/prefix/vis
     make install
 )
 #rm -rf "$tmp"
