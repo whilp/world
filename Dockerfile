@@ -16,11 +16,14 @@ RUN apk add --update \
     docker \
     entr \
     entr-doc \
+    file \
+    file-doc \
     gnupg \
     gnupg-doc \
     go \
     go-doc \
     go-tools \
+    godep \
     gnutls-utils \
     gnutls-doc \
     groff \
