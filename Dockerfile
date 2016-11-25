@@ -29,10 +29,13 @@ RUN apk add --update \
     groff \
     groff-doc \
     libffi-dev \
+    libtermkey-dev \
     lua5.3 \
+    lua5.3-dev \
     luarocks5.3 \
     man \
     man-pages \
+    ncurses-dev \
     nodejs \
     nodejs-doc \
     openjdk8 \
