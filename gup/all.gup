@@ -16,5 +16,5 @@ gup -u \
     bin/hub \
     bin/glide \
     bin/pt \
-    bin/vis \
-    bin/vault
+    bin/vault \
+    prefix/vis
