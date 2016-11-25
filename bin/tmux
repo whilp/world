@@ -1,3 +1,0 @@
-#!/bin/sh
-
-exec script -qc /usr/bin/tmux /dev/null

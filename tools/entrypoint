@@ -6,7 +6,4 @@ gpg_env="/gpg/env"
 [ -d "${ssh_env}" ] && set -- chpst -e "${ssh_env}" "$@"
 [ -d "${gpg_env}" ] && set -- chpst -e "${gpg_env}" "$@"
 
-case "${cmd}" in
-    *) exec "$@";;
-    shell) exec /bin/sh -l "$@";;
-esac
+exec script -qc /usr/bin/tmux /dev/null
