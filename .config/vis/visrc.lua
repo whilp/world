@@ -4,6 +4,8 @@ require('vis')
 vis.events.start = function()
 	-- Your global configuration options e.g.
 	-- vis:command('map! normal j gj')
+	vis:command('set escdelay 0')
+	vis:command('set ai on')
 end
 
 vis.events.win_open = function(win)
