@@ -14,6 +14,7 @@ RUN apk add --update \
     chicken-dev \
     coreutils-doc \
     docker \
+    drill \
     entr \
     entr-doc \
     file \
