@@ -84,7 +84,8 @@ RUN adduser -D -h /home/whilp -u 1001 whilp \
 WORKDIR /home/whilp
 ADD . .
 RUN chmod 700 /home/whilp \
-    && chown -R whilp:whilp /home/whilp /home/whilp/.*
+    && chown -R whilp:whilp /home/whilp /home/whilp/.* \
+    && git checkout master
 USER whilp
 
 ENV SHELL /bin/sh
