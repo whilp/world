@@ -89,6 +89,6 @@ ENV TERM xterm-256color
 ENV LC_ALL en.UTF-8
 RUN make
 VOLUME /home/whilp
-COPY tools/entrypoint /entrypoint
+COPY bin/entrypoint /entrypoint
 ENTRYPOINT ["/entrypoint"]
 CMD ["shell"]
