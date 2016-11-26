@@ -6,8 +6,6 @@ chmod 700 .ssh
 chmod 700 .gnupg
 
 gup -u \
-    Makefile \
-    tools/gup \
     .ssh/config \
     .gnupg/gpg.conf \
     .gnupg/gpg-agent.conf \
