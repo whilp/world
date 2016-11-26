@@ -15,4 +15,4 @@ tmp=$(mktemp -dp .)
     ./configure --prefix=$HOME/prefix/vis
     make install
 )
-#rm -rf "$tmp"
+rm -rf "$tmp"
