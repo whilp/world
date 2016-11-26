@@ -31,6 +31,7 @@ RUN apk add --update \
     gnutls-doc \
     groff \
     groff-doc \
+    iproute2 \
     libffi-dev \
     libtermkey-dev \
     lua5.3 \
