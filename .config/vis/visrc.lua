@@ -15,3 +15,15 @@ vis.events.win_open = function(win)
 	-- Your per window configuration options e.g.
 	-- vis:command('set number')
 end
+
+local git_syntax = function (file, data)
+	name = 'COMMIT_EDITMSG'
+	fname = string.sub(file.name, -string.len(name), -1)
+	if fname == name then
+		return 'diff'
+	end
+end
+
+vis.ftdetect.customdetectors = {
+	git_syntax,
+}
