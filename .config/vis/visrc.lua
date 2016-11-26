@@ -6,6 +6,7 @@ vis.events.start = function()
 	-- vis:command('map! normal j gj')
 	vis:command('set escdelay 0')
 	vis:command('set ai on')
+	vis:command('map! insert jj <Escape>')
 end
 
 vis.events.win_open = function(win)
