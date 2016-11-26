@@ -65,8 +65,6 @@ RUN apk add --update \
     tmux-doc \
     util-linux \
     util-linux-doc \
-    vis \
-    vis-doc \
     zip \
     zip-doc \
     && rm -rf /var/cache/apk/*
