@@ -1,6 +1,6 @@
 # Modify this to point to your repository-local
 # gup exectable
-GUP=tools/gup
+GUP=bin/gup
 
 # Default to building the `all` target
 all: phony ${GUP}
