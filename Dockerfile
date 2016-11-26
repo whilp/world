@@ -18,6 +18,8 @@ RUN apk add --update \
     entr-doc \
     file \
     file-doc \
+    git \
+    git-doc \
     gnupg \
     gnupg-doc \
     go \
@@ -32,6 +34,7 @@ RUN apk add --update \
     libtermkey-dev \
     lua5.3 \
     lua5.3-dev \
+    lua5.3-lpeg \
     luarocks5.3 \
     man \
     man-pages \
