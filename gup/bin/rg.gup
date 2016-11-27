@@ -1,0 +1,18 @@
+#!/bin/sh
+
+set -eux
+
+v="0.3.1"
+f="ripgrep-${v}-x86_64-unknown-linux-musl.tar.gz"
+url="https://github.com/BurntSushi/ripgrep/releases/download/$v/$f"
+sum="1cad4a3b19cd78e1e73e7f273b49b6de2a067ec3e48d4d078aaa78296c50aaa3"
+tmp=$(mktemp -dp .)
+(
+    cd "$tmp"
+    curl -sLo "$f" "$url"
+    echo "$sum *$f" | sha256sum -c -
+    tar xzf "$f" --strip-components=1
+    mv rg "$1"
+    chmod a+x "$1"
+)
+rm -rf "$tmp"

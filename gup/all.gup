@@ -13,6 +13,6 @@ gup -u \
     bin/git-get \
     bin/hub \
     bin/glide \
-    bin/pt \
+    bin/rg \
     bin/vault \
     prefix/vis
