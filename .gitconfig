@@ -3,6 +3,7 @@
 	st = status -sb --porcelain
 	ci = commit
 	ca = commit -a
+	ce = "!git add -e . && git commit -v"
 	glog = log --oneline --decorate --graph
 	tags = tag -l
 	man = ls-files
