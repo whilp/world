@@ -18,6 +18,9 @@ vis.events.win_open = function(win)
 end
 
 local git_syntax = function (file, data)
+	if file.name == nil then
+		return nil
+	end
 	name = 'COMMIT_EDITMSG'
 	fname = string.sub(file.name, -string.len(name), -1)
 	if fname == name then
