@@ -91,7 +91,7 @@ USER whilp
 ENV SHELL /bin/sh
 ENV TERM xterm-256color
 ENV LC_ALL en.UTF-8
-RUN make
+RUN make -j 2
 VOLUME /home/whilp
 COPY bin/entrypoint /entrypoint
 ENTRYPOINT ["/entrypoint"]
