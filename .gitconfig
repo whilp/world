@@ -1,5 +1,7 @@
 [alias]
 	pr = pull-request
+	ph = push -q
+	pl = pull -q
 	st = status -sb --porcelain
 	ci = commit
 	ca = commit -a
