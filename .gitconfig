@@ -59,3 +59,5 @@
 	viewer = nobs
 [man "nobs"]
 	cmd = man -P nobs
+[color]
+	ui = false
