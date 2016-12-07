@@ -1,0 +1,14 @@
+#!/bin/sh
+
+export PLAN9=~/plan9port
+export PATH=$PATH:$PLAN9/bin
+export PAGER=nobs
+export SHELL=rc
+export TERM=dumb
+
+cd ~/
+
+pgrep -q fontsrv || fontsrv &
+pgrep -q plumber || plumber
+
+exec acme -f /mnt/font/Monaco/16a/font
