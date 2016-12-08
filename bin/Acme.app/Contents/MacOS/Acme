@@ -11,4 +11,4 @@ cd ~/
 pgrep -q fontsrv || fontsrv &
 pgrep -q plumber || plumber
 
-exec acme -f /mnt/font/Monaco/16a/font
+exec acme -f /mnt/font/Monaco/16a/font -a
