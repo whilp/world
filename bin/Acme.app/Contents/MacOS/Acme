@@ -3,7 +3,7 @@
 export PLAN9=~/plan9port
 export PATH=$PATH:$PLAN9/bin
 export PAGER=nobs
-export SHELL=rc
+export SHELL=~/bin/sh-rc
 export TERM=dumb
 
 cd ~/
