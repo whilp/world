@@ -7,5 +7,3 @@ export PATH=$HOME/bin:$PATH
 export PAGER=cat
 
 export GOPATH=$HOME
-
-set -o vi
