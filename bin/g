@@ -1,3 +1,4 @@
 #!/bin/sh
 
-exec git "$@" | cat
+d=$(cd $(dirname "$0"); pwd)
+exec git.bin "$@" | cat
