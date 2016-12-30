@@ -1,5 +1,5 @@
 #!/bin/sh
 
 case "$1" in
-	*.go) exec go build ./...;;
+	*.go) exec go build -i ./...;;
 esac

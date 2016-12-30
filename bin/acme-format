@@ -1,5 +1,5 @@
 #!/bin/sh
 
-case "$!" in
+case "$1" in
 	*.go) exec goreturns -w "$@";;
 esac
