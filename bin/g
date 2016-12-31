@@ -1,4 +1,3 @@
 #!/bin/sh
 
-d=$(cd $(dirname "$0"); pwd)
-exec git.bin "$@"
+exec rg -nH --column --color never --no-heading "$@"
