@@ -1,5 +1,0 @@
-#!/bin/sh
-
-case "$1" in
-	*.go) exec guru -modified describe "$1":"#$2";;
-esac

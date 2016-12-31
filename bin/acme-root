@@ -1,6 +1,0 @@
-#!/bin/sh
-
-case "$PWD" in
-	*/.git) echo ${PWD%/.git};;
-	*) exec git rev-parse --show-toplevel;;
-esac
