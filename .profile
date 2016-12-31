@@ -6,4 +6,12 @@ export PATH=$HOME/prefix/vis/bin:$PATH
 export PATH=$HOME/bin:$PATH
 export PAGER=cat
 
+export PS1="$ "
+export CDPATH=$(ls /src | tr '
+' ':')
+
 export GOPATH=$HOME
+
+cd () {
+	builtin cd "$@" && awd ""
+}

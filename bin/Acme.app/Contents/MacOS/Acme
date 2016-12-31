@@ -6,7 +6,7 @@ source ~/.profile
 export PLAN9=~/plan9port
 export PATH=$PATH:$PLAN9/bin
 export PAGER=nobs
-export SHELL=sh-rc
+export SHELL=bash
 export TERM=dumb
 
 pgrep -q fontsrv || fontsrv &
