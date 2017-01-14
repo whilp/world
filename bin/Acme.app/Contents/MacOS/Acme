@@ -12,4 +12,7 @@ export TERM=dumb
 pgrep -q fontsrv || fontsrv &
 pgrep -q plumber || plumber
 
-exec acme -f /mnt/font/Monaco/14a/font -a
+args=""
+dump=~/acme.dump
+[ -f "$dump" ] && args="-l $dump"
+exec acme -f /mnt/font/Monaco/14a/font -a $args
