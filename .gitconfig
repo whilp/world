@@ -13,7 +13,7 @@
 	review = merge --no-ff --no-commit
 	ctags = "!sh -c '[ -f .git/hooks/ctags ] || git init; .git/hooks/ctags' git-ctags"
 [core]
-	editor = Open
+	editor = acme-edit
 	excludesfile = ~/.gitconf/ignore
 	pager = nobs
 [format]
