@@ -3,45 +3,29 @@
 	ph = push -q
 	pl = pull -q
 	st = status -sb --porcelain
-	ci = commit
-	ca = commit -a
+	ci = commit -v
+	ca = commit -av
 	ce = "!git add -e . && git commit -v"
-	glog = log --oneline --decorate --graph
-	tags = tag -l
 	man = ls-files
-	bare = config --bool core.bare true
-	review = merge --no-ff --no-commit
-	ctags = "!sh -c '[ -f .git/hooks/ctags ] || git init; .git/hooks/ctags' git-ctags"
 [core]
-	editor = acme-edit
+	editor = ~/bin/e
 	excludesfile = ~/.gitconf/ignore
-	pager = nobs
+	pager = cat
 [format]
 	pretty = format:"%h %p %d %ai %ce%n  %s%n"
-[url "git@github.com:"]
+[url "https://github.com/"]
 	insteadOf = gh:
-	pushInsteadOf = https://github.com/
-[url "git@github.com:"]
-	insteadOf = https://github.com/
-[url "git@gist.github.com:"]
-	insteadOf = gist:
-	insteadOf = https://gist.github.com/
-[url "git@github.banksimple.com:"]
-	insteadOf = bh:
-	insteadOf = https://github.banksimple.com/
-	insteadOf = git://github.banksimple.com/
-	pushInsteadOf = https://github.banksimple.com/
 [push]
 	default = current
 [pull]
 	fast-forward = true
 	rebase = true
 [init]
-	templatedir = ~/.gitconf/init
+	#templatedir = ~/.gitconf/init
 [remote "origin"]
 	fetch = +refs/pull/*/head:refs/pull/origin/*
 [hub]
-	host = github.banksimple.com
+	host = github.com
 [merge]
 	tool = emerge
 	conflictstyle = diff3

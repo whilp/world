@@ -1,4 +1,0 @@
-#!/bin/sh
-
-. ~/.profile
-exec rc $*

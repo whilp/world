@@ -1,7 +1,0 @@
-#!/bin/sh
-
-set -eux
-
-gup -u requirements.txt
-
-pip install --log "$1" --user --require-hashes -r requirements.txt

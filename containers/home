@@ -1,8 +1,0 @@
-#!/bin/sh
-
-exec docker run --name=home -it -u 1001 \
-	-v /var/run/docker.sock:/var/run/docker.sock \
-	--volumes-from ssh \
-	--volumes-from src \
-	--volumes-from secrets \
-	whilp/home /bin/sh

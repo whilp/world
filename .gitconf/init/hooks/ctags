@@ -1,6 +1,0 @@
-#!/bin/sh
-
-export PATH="/usr/local/bin:$PATH"
-
-trap "rm -f .git/tags.$$" EXIT
-(git ls-files | ctags -L- --tag-relative -f.git/tags.$$ && mv .git/tags.$$ .git/tags) >/dev/null 2>&1 &

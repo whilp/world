@@ -1,8 +1,0 @@
-#!/bin/sh
-
-# Don't set -x here to avoid leaking secrets
-set -eu
-
-gup --always
-docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
-docker push whilp/home

@@ -1,3 +1,0 @@
-#!/bin/sh
-
-exec rg -nH --column --color never --no-heading "$@"
