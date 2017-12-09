@@ -42,3 +42,5 @@
 	cmd = man -P cat
 [color]
 	ui = false
+[credential]
+	helper = cache --timeout=86400
