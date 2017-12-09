@@ -31,17 +31,14 @@
 	conflictstyle = diff3
 [github]
 	user = whilp
-[gh]
-	host = github.banksimple.com
-	autoUpdate = never
 [remote]
 	pushDefault = origin
 [user]
 	email = wcmaier@gmail.com
 	name = Will Maier
 [man]
-	viewer = nobs
-[man "nobs"]
-	cmd = man -P nobs
+	viewer = cat
+[man "cat"]
+	cmd = man -P cat
 [color]
 	ui = false
