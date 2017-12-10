@@ -9,6 +9,5 @@ mkdir -p "$tmp/out"
 
 get-and-check "$url" "$tmp/tgz" "$sum"
 tar xzf "$tmp/tgz" --strip=1 -C "$tmp/out"
-find "$tmp/out"
 mv "$tmp/out/bin/hub" "$1"
 chmod a+x "$1"
