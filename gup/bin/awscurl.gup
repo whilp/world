@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -eux
+
+sum=d7cbcf0c717786884e5d553de0304f0abbabb42f19133e08a141d42bc6ec02b4
+url=https://github.com/allthings/awscurl/releases/download/1.0.0/awscurl-linux-amd64
+
+get-and-check "$url" "$1" "$sum"
+chmod a+x "$1"

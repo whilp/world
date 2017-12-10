@@ -9,4 +9,5 @@ gup -u \
     goreleaser \
     hub \
     git-get \
+    awscurl \
     bat
