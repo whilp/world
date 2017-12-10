@@ -1,0 +1,7 @@
+#!/bin/sh
+
+sum=b1f105caf7afabb27fe4ec1266522ab6e35c4ae047b88648cc0e7738a17af00b
+url=https://github.com/whilp/git-get/releases/download/v0.17/git-get-linux-amd64
+
+get-and-check "$url" "$1" "$sum"
+chmod a+x "$1"

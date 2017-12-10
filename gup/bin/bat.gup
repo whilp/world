@@ -1,0 +1,13 @@
+#!/bin/sh
+
+sum=3e38a1287d4dc327a10ecfe85226cf66f049fac34e7fc539abae10315179be4d
+url=https://github.com/whilp/bat/releases/download/v0.1.0/bat_0.1.0_linux_amd64.tar.gz
+
+tmp=$(mktemp -d)
+trap "rm -rf $tmp" EXIT
+
+get-and-check "$url" "$tmp/tgz" "$sum"
+
+tar xzf "$tmp/tgz" -C "$tmp"
+mv "$tmp/bat" "$1"
+chmod a+x "$1"

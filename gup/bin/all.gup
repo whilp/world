@@ -2,4 +2,11 @@
 
 set -eux
 
-gup -u c9
+gup -u \
+    c9 \
+    fzf \
+    rg \
+    goreleaser \
+    hub \
+    git-get \
+    bat

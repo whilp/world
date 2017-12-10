@@ -1,0 +1,14 @@
+#!/bin/sh
+
+sum=015297eb81e8fe11f3989d8f65c213111e508cecf0e9de8af1b7741de2077320
+url=https://github.com/github/hub/releases/download/v2.3.0-pre10/hub-linux-amd64-2.3.0-pre10.tgz
+
+tmp=$(mktemp -d)
+trap "rm -rf $tmp" EXIT
+mkdir -p "$tmp/out"
+
+get-and-check "$url" "$tmp/tgz" "$sum"
+tar xzf "$tmp/tgz" --strip=1 -C "$tmp/out"
+find "$tmp/out"
+mv "$tmp/out/bin/hub" "$1"
+chmod a+x "$1"
