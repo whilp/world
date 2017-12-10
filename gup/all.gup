@@ -4,3 +4,5 @@ set -eux
 
 chmod 700 .ssh
 chmod 700 .gnupg
+
+gup -u bin/all

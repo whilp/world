@@ -1,0 +1,5 @@
+#!/bin/sh
+
+set -eux
+
+gup -u c9
