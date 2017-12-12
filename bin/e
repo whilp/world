@@ -1,3 +1,4 @@
 #!/bin/sh
 
-exec c9 open --wait "$@"
+exec vis "$@"
+
