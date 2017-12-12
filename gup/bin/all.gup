@@ -3,7 +3,6 @@
 set -eux
 
 gup -u \
-    micro \
     fzf \
     rg \
     goreleaser \
