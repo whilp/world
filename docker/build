@@ -1,0 +1,9 @@
+#!/bin/sh
+
+apk --no-cache add \
+	vis \
+	outils-signify \
+	git
+
+addgroup -S me && adduser -S -g me me 
+chown -R me:me .
