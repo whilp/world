@@ -5,9 +5,8 @@ url=https://github.com/github/hub/releases/download/v2.3.0-pre10/hub-linux-amd64
 
 tmp=$(mktemp -d)
 trap "rm -rf $tmp" EXIT
-mkdir -p "$tmp/out"
 
 get-and-check "$url" "$tmp/tgz" "$sum"
-tar xzf "$tmp/tgz" --strip=1 -C "$tmp/out"
-mv "$tmp/out/bin/hub" "$1"
+tar xzf "$tmp/tgz" --strip-components=1 -C "$tmp"
+mv "$tmp/bin/hub" "$1"
 chmod a+x "$1"

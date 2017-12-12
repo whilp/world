@@ -7,8 +7,8 @@ url="https://github.com/BurntSushi/ripgrep/releases/download/0.7.1/ripgrep-0.7.1
 
 tmp=$(mktemp -d)
 trap "rm -rf $tmp" EXIT
-f="$tmp/rg.tgz"
-mkdir "$tmp/out"
+f="$tmp/tgz"
 get-and-check "$url" "$f" "$sum"
-tar xzf "$f" --strip=1 -C "$tmp/out"
-mv "$tmp/out/rg" "$1"
+tar -xzf "$f" --strip-components=1 -C "$tmp"
+mv "$tmp/rg" "$1"
+
