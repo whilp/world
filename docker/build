@@ -10,11 +10,12 @@ pkgs="\
 	file \
 	"
 docs=$(printf "%s-doc " $pkgs)
-allpkgs=$pkgs \
+allpkgs="$pkgs \
 	$docs \
 	man \
 	outils-signify \
-	outils-doc
+	outils-doc \
+	"
 
 apk --no-cache add $allpkgs
 
