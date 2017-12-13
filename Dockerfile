@@ -8,3 +8,5 @@ WORKDIR /home/me
 RUN ./docker/build
 
 USER me
+CMD ["ash", "-l"]
+
