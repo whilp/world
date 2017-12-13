@@ -14,6 +14,7 @@ export PATH=$HOME/.local/bin:$PATH
 export PATH=$GOPATH/bin:$PATH
 export PATH=$HOME/bin:$PATH
 
-source $HOME/.nvm/nvm.sh
+# TODO: install node
+# source $HOME/.nvm/nvm.sh
 
 alias git=hub
