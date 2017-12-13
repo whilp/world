@@ -1,12 +1,14 @@
 #!/bin/sh
 
-pkgs=	vis \
+pkgs="\
+	vis \
 	git \
 	make \
 	python3 \
 	docker \
 	curl \
-	file
+	file \
+	"
 docs=$(printf "%s-doc " $pkgs)
 allpkgs=$pkgs \
 	$docs \
