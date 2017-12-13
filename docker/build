@@ -3,7 +3,9 @@
 apk --no-cache add \
 	vis \
 	outils-signify \
-	git
+	git \
+	make \
+	man
 
 addgroup -S me && adduser -S -g me me 
 chown -R me:me .
