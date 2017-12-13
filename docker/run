@@ -3,5 +3,6 @@
 exec docker run \
 	-v $PWD/src:/home/me/src \
 	-v /var/run/docker.sock:/var/run/docker.sock \
+	"$@" \
 	-ti whilp/home
 
