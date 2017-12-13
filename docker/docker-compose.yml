@@ -8,9 +8,12 @@ services:
     volumes:
       - src:/src
       - cache:/cache
+      - "/var/run/docker.sock:/var/run/docker.sock"
   git-credential-cache:
     image: whilp/git-credential-cache:latest
     build: ./git-credential-cache
+    volumes:
+      - cache:/home/me/.cache
 
 volumes:
   src:
