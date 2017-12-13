@@ -1,0 +1,17 @@
+version: '3'
+services:
+  home:
+    image: whilp/home:latest
+    build:
+      context: ../
+      dockerfile: home/Dockerfile
+    volumes:
+      - src:/src
+      - cache:/cache
+  git-credential-cache:
+    image: whilp/git-credential-cache:latest
+    build: ./git-credential-cache
+
+volumes:
+  src:
+  cache:
