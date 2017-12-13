@@ -21,3 +21,5 @@ ln -s $(which pydoc3) /usr/bin/pydoc
 
 addgroup -S me && adduser -S -g me me 
 chown -R me:me .
+
+make
