@@ -22,7 +22,8 @@ apk --no-cache add $allpkgs
 ln -s $(which python3) /usr/bin/python
 ln -s $(which pydoc3) /usr/bin/pydoc
 
+make
+
 addgroup -S me && adduser -S -g me me 
 chown -R me:me .
 
-make
