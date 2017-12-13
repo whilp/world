@@ -2,10 +2,14 @@
 
 apk --no-cache add \
 	vis \
+	vis-doc \
 	outils-signify \
 	git \
+	git-doc \
 	make \
-	man
+	make-doc \
+	man \
+	man-doc
 
 addgroup -S me && adduser -S -g me me 
 chown -R me:me .
