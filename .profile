@@ -17,6 +17,8 @@ export PATH=$HOME/bin:$PATH
 # TODO: install node
 # source $HOME/.nvm/nvm.sh
 
+export FZF_DEFAULT_COMMAND=fnd
+
 if [ which hub >/dev/null 2>&1 ]; then
 	alias git=hub
 fi
