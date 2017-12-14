@@ -2,11 +2,11 @@ FROM alpine:edge
 
 ENV USER me
 ENV HOME /home/me
+ENV USER_ID 9001
 
-RUN apk --no-cache add git
-RUN addgroup -S me && adduser -S -g me me 
+RUN apk --no-cache add git su-exec
+COPY ./entrypoint /entrypoint
 
-USER me
-CMD ["--timeout", "86400"]
-ENTRYPOINT ["/usr/libexec/git-core/git-credential-cache--daemon"]
+CMD ["/home/me/.cache/git/credential/socket"]
+ENTRYPOINT ["/entrypoint"]
 

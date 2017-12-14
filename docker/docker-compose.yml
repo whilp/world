@@ -4,7 +4,7 @@ services:
     image: whilp/home:latest
     build:
       context: ../
-      dockerfile: home/Dockerfile
+      dockerfile: docker/home/Dockerfile
     volumes:
       - ~/src:/src
       - cache:/cache
