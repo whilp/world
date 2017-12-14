@@ -9,4 +9,6 @@ gup -u \
     hub \
     git-get \
     awscurl \
-    bat
+    bat \
+    fd
+
