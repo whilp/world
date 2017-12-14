@@ -8,6 +8,4 @@ ADD . /home/me
 WORKDIR /home/me
 RUN ./docker/home/build
 
-CMD ["ash", "-l"]
 ENTRYPOINT ["/home/me/docker/home/entrypoint"]
-
