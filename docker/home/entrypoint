@@ -1,0 +1,11 @@
+#!/bin/sh
+
+loop () {
+	while :; do sleep 1d; done
+}
+
+case "$@"x in
+	x) loop;;
+	*) exec $@;;
+esac
+
