@@ -7,6 +7,6 @@ RUN apk --no-cache add git
 RUN addgroup -S me && adduser -S -g me me 
 
 USER me
-CMD ["--timout", "86400"]
+CMD ["--timeout", "86400"]
 ENTRYPOINT ["/usr/libexec/git-core/git-credential-cache--daemon"]
 
