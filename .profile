@@ -9,12 +9,12 @@ mkdir -p $GITPATH
 export CDPATH=.:$GITPATH
 
 src () {
-	opwd=$PWD
 	base=~/
 	dst=$(cd $base; fd --no-ignore --hidden -td '\.git$' src/ | sed -e 's/\.git$//g' | ,fzf)
-	dst=${dst:-${opwd}}
-	echo $dst
-	cd $base/$dst
+	if [ -n "$dst" ]; then
+		echo $dst
+		cd $base/$dst
+	fi
 }
 
 export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
