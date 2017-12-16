@@ -16,6 +16,7 @@ allpkgs="$pkgs \
 	outils-signify \
 	outils-doc \
 	su-exec \
+	git-perl \
 	"
 
 apk --no-cache add $allpkgs
