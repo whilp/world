@@ -10,5 +10,6 @@ gup -u \
     git-get \
     awscurl \
     bat \
-    fd
+    fd \
+    vis
 
