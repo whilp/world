@@ -8,6 +8,7 @@ pkgs="\
 	docker \
 	curl \
 	file \
+	fish \
 	"
 docs=$(printf "%s-doc " $pkgs)
 allpkgs="$pkgs \
@@ -17,6 +18,9 @@ allpkgs="$pkgs \
 	outils-doc \
 	su-exec \
 	git-perl \
+	fish-tools \
+	mdocml-apropos \
+	ncurses \
 	"
 
 apk --no-cache add $allpkgs
