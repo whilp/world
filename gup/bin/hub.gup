@@ -1,8 +1,24 @@
 #!/bin/sh
+set -ex
 
-sum=0fc7d1a0faa261833e3e4647b6dbdfbf45207f54f68ee9096421ca9d03070370
-url=https://github.com/whilp/hub/releases/download/v2.3.1-release/hub
+sum=4096b95aea46f674e91ff0d83f86d876958024a02c50ffb1e3a4aac3e0536fc5
+url=https://github.com/github/hub/archive/v2.3.0-pre10.tar.gz
 
-get-and-check "$url" "$1" "$sum"
+ext=$PWD/../ext/$2
+gup -u $ext/Dockerfile
+
+t=$(mktemp -d)
+trap "rm -rf $t" EXIT
+
+(
+cd $t
+get-and-check "$url" "tgz" "$sum"
+mkdir src out
+tar xzf tgz --strip-components=1 -C src
+cp -r $ext/* src/.
+docker build -t hub:build src
+docker run --rm hub:build sh -c 'cd /go/bin && tar -c hub' | tar -xv -C out
+cp out/hub "$1"
 chmod a+x "$1"
+)
 
