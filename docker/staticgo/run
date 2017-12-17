@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# eg:
+# id=$(head /dev/urandom | sha1sum | cut -d\  -f 1)
+# trap "docker kill $id" EXIT
+# $staticgo/run $id github.com/github/hub $PWD/src/.
+# docker cp ${id}:/go/bin/hub "$1"
+
+set -ex
+
+# staticgo/run id /go/src/github.com/github/hub $PWD/src
+id="$1"
+package="$2"
+src="$3"
+workdir=/go/src/"$package"
+
+docker run -w $workdir --rm -d --name "$id" whilp/staticgo
+docker exec $id mkdir -p $workdir
+docker cp $src ${id}:$workdir
+docker exec $id /install
