@@ -1,7 +1,8 @@
 #!/bin/sh
 set -ex
 
-gup -u ../docker/staticgo
+staticgo=$PWD/../docker/staticgo
+gup -u $staticgo
 
 sum=69ffd085f33452139dd80107cac8820a5e121934ab88da3975c08c84c3a8e8ff
 url=https://github.com/astaxie/bat/archive/3c3881c862c2f4a0c3fbef675f36f72490b1c828.tar.gz
@@ -15,15 +16,10 @@ get-and-check "$url" "tgz" "$sum"
 mkdir src out
 tar xzf tgz --strip-components=1 -C src
 
-w=/go/src/github.com/astaxie/bat
-docker rm -f bat || true
-docker run -w $w --rm -d --name bat whilp/staticgo
-docker exec bat mkdir -p $w
-docker cp $PWD/src/. bat:$w
-docker exec bat /install
-docker cp bat:/go/bin/bat "$1"
-docker kill bat
-
+id=$(head /dev/urandom | sha1sum | cut -d\  -f 1)
+trap "docker kill $id" EXIT
+$staticgo/run $id github.com/astaxie/bat $PWD/src/.
+docker cp ${id}:/go/bin/bat "$1"
 chmod a+x "$1"
 )
 
