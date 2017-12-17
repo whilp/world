@@ -1,15 +1,24 @@
 #!/bin/sh
+set -ex
 
-# TODO: make release truly static (a la hub)
+sum=69ffd085f33452139dd80107cac8820a5e121934ab88da3975c08c84c3a8e8ff
+url=https://github.com/astaxie/bat/archive/3c3881c862c2f4a0c3fbef675f36f72490b1c828.tar.gz
 
-sum=3e38a1287d4dc327a10ecfe85226cf66f049fac34e7fc539abae10315179be4d
-url=https://github.com/whilp/bat/releases/download/v0.1.0/bat_0.1.0_linux_amd64.tar.gz
+ext=$PWD/../ext/$2
+gup -u $ext/Dockerfile
 
-tmp=$(mktemp -d)
-trap "rm -rf $tmp" EXIT
+t=$(mktemp -d)
+trap "rm -rf $t" EXIT
 
-get-and-check "$url" "$tmp/tgz" "$sum"
-
-tar xzf "$tmp/tgz" -C "$tmp"
-mv "$tmp/bat" "$1"
+(
+cd $t
+get-and-check "$url" "tgz" "$sum"
+mkdir src out
+tar xzf tgz --strip-components=1 -C src
+cp -r $ext/* src/.
+docker build -t bat:build src
+docker run --rm bat:build sh -c 'cd /go/bin && tar -c bat' | tar -xv -C out
+cp out/bat "$1"
 chmod a+x "$1"
+)
+
