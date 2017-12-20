@@ -5,7 +5,7 @@ services:
 - docker
 
 script:
-- make docker/home
+- cd docker && docker-compose build home
 
 after_success:
 - if [ "$TRAVIS_BRANCH" == "master" ]; then
