@@ -1,0 +1,7 @@
+#!/bin/sh
+
+gup -u \
+	bin/bat \
+	bin/hub \
+	bin/vis \
+	docker/home
