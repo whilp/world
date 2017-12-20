@@ -1,7 +1,12 @@
 #!/bin/sh
 
+set -x
+
+cd $(git rev-parse --show-toplevel)
+
 gup -u \
 	bin/bat \
 	bin/hub \
 	bin/vis \
 	docker/home
+
