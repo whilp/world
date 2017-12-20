@@ -1,2 +1,15 @@
+sudo: true
 language: c
-script: make
+
+services:
+- docker
+
+script:
+- make docker/home
+
+after_success:
+- if [ "$TRAVIS_BRANCH" == "master" ]; then
+    docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+    docker push whilp/home
+  fi
+
