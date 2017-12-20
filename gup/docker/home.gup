@@ -1,4 +1,5 @@
 #!/bin/sh
 
-cd ../
-docker build -t whilp/home .
+cd ..
+docker build -t whilp/home -f ./docker/home/Dockerfile .
+
