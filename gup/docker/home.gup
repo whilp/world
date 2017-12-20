@@ -1,5 +1,5 @@
 #!/bin/sh
 
 cd ..
-docker build -t whilp/home -f ./docker/home/Dockerfile .
+docker build -v /var/run/docker.sock:/var/run/docker.sock -t whilp/home -f ./docker/home/Dockerfile .
 
