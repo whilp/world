@@ -5,7 +5,6 @@ set -eux
 gup -u \
     fzf \
     rg \
-    goreleaser \
     hub \
     git-get \
     awscurl \
