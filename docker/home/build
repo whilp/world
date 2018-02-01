@@ -1,7 +1,8 @@
 #!/bin/sh
 
+set -ex
+
 pkgs="\
-	vis \
 	git \
 	make \
 	python3 \
@@ -13,6 +14,7 @@ pkgs="\
 docs=$(printf "%s-doc " $pkgs)
 allpkgs="$pkgs \
 	$docs \
+	vis \
 	man \
 	outils-signify \
 	outils-doc \
@@ -25,8 +27,12 @@ allpkgs="$pkgs \
 
 apk --no-cache add $allpkgs
 
-ln -s $(which python3) /usr/bin/python
-ln -s $(which pydoc3) /usr/bin/pydoc
+ln -fs /usr/bin/vis /usr/bin/vis-editor
 
+ln -fs /usr/bin/python3 /usr/bin/python
+ln -fs /usr/bin/pydoc3 /usr/bin/pydoc
+
+export GUP_XTRACE=1
+export GUP_VERBOSE=1
 make
 

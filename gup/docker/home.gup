@@ -1,5 +1,9 @@
 #!/bin/sh
 
+set -ex
+
+touch $2
 cd ..
+gup -u bin/all
 docker build -t whilp/home -f ./docker/home/Dockerfile .
 
