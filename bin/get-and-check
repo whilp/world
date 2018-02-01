@@ -4,7 +4,7 @@ src="$1"
 dst="$2"
 sum="$3"
 curl -sLo "$dst" "$src"
-got=$(sha256sum "$dst")
+got=$(shasum "$dst")
 got="${got%% *}"
 if [ "$got" != "$sum" ]; then
    echo "${dst}: expected SHA256 checksum '$sum', got '$got'" 

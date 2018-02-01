@@ -1,0 +1,9 @@
+#!/bin/sh
+
+shasum=/usr/bin/shasum
+if [ -x $shasum ]; then
+	exec $shasum -a 256 "$@"
+else
+	exec sha256sum "$@"
+fi
+

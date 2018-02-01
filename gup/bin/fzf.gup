@@ -9,5 +9,5 @@ tmp=$(mktemp -d)
 trap "rm -rf" EXIT
 f="$tmp/fzf"
 get-and-check "$url" "$f" "$sum"
-tar -xzf "$f" fzf -O > "$1"
+tar -x -zOf "$f" fzf > "$1"
 chmod a+x "$1"

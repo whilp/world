@@ -16,7 +16,7 @@ get-and-check "$url" "tgz" "$sum"
 mkdir src out
 tar xzf tgz --strip-components=1 -C src
 
-id=$(head /dev/urandom | sha1sum | cut -d\  -f 1)
+id=$(head /dev/urandom | shazam | cut -d\  -f 1)
 trap "docker kill $id" EXIT
 $staticgo/run $id github.com/astaxie/bat $PWD/src/.
 docker cp ${id}:/go/bin/bat "$1"
