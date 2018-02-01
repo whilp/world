@@ -1,4 +1,10 @@
 #!/bin/sh
 
-exec vis "$@"
+candidates="\
+	/usr/bin/vis-editor \
+	/usr/bin/vim \
+	"
+for candidate in $candidates; do
+	[ -x $candidate ] && exec $candidate "$@"
+done
 
