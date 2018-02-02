@@ -10,5 +10,6 @@ gup -u \
     awscurl \
     bat \
     fd \
-    vis
+    vis \
+    dep
 
