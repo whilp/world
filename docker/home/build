@@ -12,6 +12,7 @@ pkgs="\
 	fish \
 	tmux \
 	go \
+	bash \
 	"
 docs=$(printf "%s-doc " $pkgs)
 allpkgs="$pkgs \
