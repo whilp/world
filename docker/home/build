@@ -13,6 +13,7 @@ pkgs="\
 	tmux \
 	go \
 	bash \
+	coreutils \
 	"
 docs=$(printf "%s-doc " $pkgs)
 allpkgs="$pkgs \
