@@ -28,6 +28,11 @@ allpkgs="$pkgs \
 
 apk --no-cache add $allpkgs
 
+apk --no-cache add ca-certificates wget
+wget -q -O /etc/apk/keys/david@ostrovsky.org-5a0369d6.rsa.pub https://raw.githubusercontent.com/davido/bazel-alpine-package/master/david@ostrovsky.org-5a0369d6.rsa.pub
+wget https://github.com/davido/bazel-alpine-package/releases/download/0.10.0/bazel-0.10.0-r0.apk
+apk add bazel-0.10.0-r0.apk
+
 ln -fs /usr/bin/vis /usr/bin/vis-editor
 
 ln -fs /usr/bin/python3 /usr/bin/python
