@@ -27,6 +27,7 @@ allpkgs="$pkgs \
 	fish-tools \
 	mdocml-apropos \
 	ncurses \
+	musl-dev \
 	"
 
 apk --no-cache add $allpkgs
