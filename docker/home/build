@@ -11,11 +11,13 @@ pkgs="\
 	file \
 	fish \
 	tmux \
+	go \
 	"
 docs=$(printf "%s-doc " $pkgs)
 allpkgs="$pkgs \
 	$docs \
 	vis \
+	go-tools \
 	man \
 	outils-signify \
 	outils-doc \
