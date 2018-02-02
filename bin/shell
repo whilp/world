@@ -1,0 +1,11 @@
+#!/bin/sh
+
+shells="\
+	/usr/bin/fish \
+	/bin/ash \
+	/bin/sh \
+	"
+
+for shell in $shells; do
+	[ -x $shell ] && exec $shell "$@"
+done
