@@ -1,11 +1,13 @@
 #!/bin/sh
 
-addgroup -S me && adduser -u $USER_ID -S -g me me
-chown -R me:me /home/me
+useradd -MUu $USER_ID -d $HOME $USER
+chown -R $USER:$USER $HOME
+
+export PATH=$HOME/bin:$PATH
 
 case "$@"x in
 	x) while :; do sleep 1d; done;;
-	rootx) exec /bin/ash -l;;
-	mex) exec su-exec me /bin/ash -l;;
-	*) exec su-exec me "$@";;
+	rootx) exec /bin/sh -l;;
+	$USERx) exec su-exec $USER /bin/sh -l;;
+	*) exec su-exec $USER "$@";;
 esac
