@@ -29,6 +29,7 @@ allpkgs="$pkgs \
 	mdocml-apropos \
 	ncurses \
 	musl-dev \
+	openjdk8 \
 	"
 
 apk --no-cache add --force-overwrite $allpkgs
