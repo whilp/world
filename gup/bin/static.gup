@@ -4,5 +4,6 @@ set -e
 
 gup -u \
     vis \
-    fzf \
     hub \
+    bat
+

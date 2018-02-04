@@ -6,7 +6,7 @@ gup -u \
     rg \
     git-get \
     awscurl \
-    bat \
+    fzf \
     fd \
     dep \
     godef \
