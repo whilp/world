@@ -14,5 +14,6 @@ gup -u \
     dep \
     godef \
     goimports \
-    guru
+    guru \
+    gocode
 
