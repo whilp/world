@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -x
+set -eu
 
 cd $(git rev-parse --show-toplevel)
 

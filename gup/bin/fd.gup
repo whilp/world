@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -eux
+set -eu
 
 sum="95218c2d567a2f84a56853f09a225421321346a027f21f5e9b969c4ea7b0c58a"
 url="https://github.com/sharkdp/fd/releases/download/v6.1.0/fd-v6.1.0-x86_64-unknown-linux-musl.tar.gz"
