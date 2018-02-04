@@ -1,8 +1,0 @@
-#!/bin/sh
-
-set -eu
-
-ln -s /usr/bin/python3 /usr/bin/python
-
-make
-
