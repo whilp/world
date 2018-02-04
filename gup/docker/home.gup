@@ -4,6 +4,6 @@ set -ex
 
 touch $2
 cd ..
-gup -u bin/all
+gup -u bin/static
 docker build -t whilp/home -f ./docker/home/Dockerfile .
 

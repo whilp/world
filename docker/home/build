@@ -18,7 +18,6 @@ pkgs="\
 docs=$(printf "%s-doc " $pkgs)
 allpkgs="$pkgs \
 	$docs \
-	vis \
 	go-tools \
 	man \
 	outils-signify \
@@ -39,12 +38,9 @@ apk --no-cache add --force-overwrite $allpkgs
 #wget https://github.com/davido/bazel-alpine-package/releases/download/0.10.0/bazel-0.10.0-r0.apk
 #apk add bazel-0.10.0-r0.apk
 
-ln -fs /usr/bin/vis /usr/bin/vis-editor
-
 ln -fs /usr/bin/python3 /usr/bin/python
 ln -fs /usr/bin/pydoc3 /usr/bin/pydoc
+ln -fs /usr/bin/pip3 /usr/bin/pip
 
-export GUP_XTRACE=1
-export GUP_VERBOSE=1
 make
 
