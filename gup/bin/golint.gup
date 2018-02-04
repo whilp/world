@@ -1,4 +1,4 @@
 #!/bin/sh
 
-go get github.com/golang/lint/golint "$1"
+go-get github.com/golang/lint/golint "$1"
 
