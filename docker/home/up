@@ -1,0 +1,4 @@
+#!/bin/sh
+
+docker-compose -f docker/docker-compose.yml up -d home
+exec docker-compose -f docker/docker-compose.yml exec -u root home /usr/bin/tmux
