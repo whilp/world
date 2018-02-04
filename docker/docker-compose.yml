@@ -6,8 +6,8 @@ services:
       context: ../
       dockerfile: docker/home/Dockerfile
     volumes:
-      - ~/src:/home/me/src
-      - cache:/home/me/.cache
+      - ~/src:/home/me/src:cached
+      - cache:/home/me/.cache:cached
       - /var/run/docker.sock:/var/run/docker.sock
   git-credential-cache:
     image: whilp/git-credential-cache:latest
