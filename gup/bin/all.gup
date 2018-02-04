@@ -11,5 +11,8 @@ gup -u \
     bat \
     fd \
     vis \
-    dep
+    dep \
+    godef \
+    goimports \
+    guru
 

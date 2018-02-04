@@ -1,0 +1,9 @@
+#!/bin/sh
+
+export GOBIN=$(mktemp -d)
+trap "rm -rf $GOBIN" EXIT
+
+go get github.com/rogpeppe/godef
+mv "$GOBIN/godef" "$1"
+chmod a+x "$1"
+
