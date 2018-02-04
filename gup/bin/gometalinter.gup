@@ -1,10 +1,4 @@
 #!/bin/sh
 
-export GOBIN=$(mktemp -d)
-trap "rm -rf $GOBIN" EXIT
-
-go get gopkg.in/alecthomas/gometalinter.v2
-
-mv "$GOBIN/gometalinter.v2" "$1"
-chmod a+x "$1"
+go get gopkg.in/alecthomas/gometalinter.v2 "$1"
 

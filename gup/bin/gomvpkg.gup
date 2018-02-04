@@ -1,9 +1,4 @@
 #!/bin/sh
 
-export GOBIN=$(mktemp -d)
-trap "rm -rf $GOBIN" EXIT
-
-go get golang.org/x/tools/cmd/gomvpkg
-mv "$GOBIN/gomvpkg" "$1"
-chmod a+x "$1"
+go get golang.org/x/tools/cmd/gomvpkg "$1"
 

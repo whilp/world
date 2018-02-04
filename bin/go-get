@@ -1,0 +1,13 @@
+#!/bin/sh
+
+url="$1"
+target="$2"
+
+export GOPATH=$(mktemp -d)
+trap "rm -rf $GOPATH" EXIT
+
+go get "$url"
+
+mv "$GOPATH/bin/${url##*/}" "$target"
+chmod a+x "$target"
+
