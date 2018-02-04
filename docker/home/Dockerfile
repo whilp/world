@@ -22,6 +22,8 @@ RUN apt-get update &&\
 	man \
 	signify-openbsd \
 	musl-dev \
+	musl-tools \
+	libc6-dev \
 	gcc \
 	ca-certificates \
 	curl
