@@ -3,14 +3,11 @@
 set -eux
 
 gup -u \
-    fzf \
     rg \
-    hub \
     git-get \
     awscurl \
     bat \
     fd \
-    vis \
     dep \
     godef \
     goimports \

@@ -5,6 +5,6 @@ trap "rm -rf $GOBIN" EXIT
 
 go get gopkg.in/alecthomas/gometalinter.v2
 
-mv "$GOBIN/gometalinter" "$1"
+mv "$GOBIN/gometalinter.v2" "$1"
 chmod a+x "$1"
 
