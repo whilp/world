@@ -1,0 +1,9 @@
+#!/bin/sh
+
+export GOBIN=$(mktemp -d)
+trap "rm -rf $GOBIN" EXIT
+
+go get github.com/golang/lint/golint
+mv "$GOBIN/golint" "$1"
+chmod a+x "$1"
+

@@ -1,0 +1,9 @@
+#!/bin/sh
+
+export GOBIN=$(mktemp -d)
+trap "rm -rf $GOBIN" EXIT
+
+go get golang.org/x/tools/cmd/eg
+mv "$GOBIN/eg" "$1"
+chmod a+x "$1"
+

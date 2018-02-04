@@ -15,5 +15,14 @@ gup -u \
     godef \
     goimports \
     guru \
-    gocode
+    gocode \
+    gometalinter \
+    gotype \
+    eg \
+    godex \
+    gomvpkg \
+    gorename \
+    stringer \
+    golint \
+    goreturns
 
