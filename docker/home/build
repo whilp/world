@@ -2,45 +2,7 @@
 
 set -eu
 
-pkgs="\
-	git \
-	make \
-	python3 \
-	docker \
-	curl \
-	file \
-	fish \
-	tmux \
-	go \
-	bash \
-	coreutils \
-	"
-docs=$(printf "%s-doc " $pkgs)
-allpkgs="$pkgs \
-	$docs \
-	ca-certificates \
-	go-tools \
-	man \
-	outils-signify \
-	outils-doc \
-	su-exec \
-	git-perl \
-	fish-tools \
-	mdocml-apropos \
-	ncurses \
-	musl-dev \
-	openjdk8 \
-	"
-
-apk --no-cache add --force-overwrite $allpkgs
-
-curl -sLo /etc/apk/keys/david@ostrovsky.org-5a0369d6.rsa.pub https://raw.githubusercontent.com/davido/bazel-alpine-package/master/david@ostrovsky.org-5a0369d6.rsa.pub
-curl -sLo /tmp/bazel-0.10.0-r0.apk https://github.com/davido/bazel-alpine-package/releases/download/0.10.0/bazel-0.10.0-r0.apk
-apk add /tmp/bazel-0.10.0-r0.apk
-
-ln -fs /usr/bin/python3 /usr/bin/python
-ln -fs /usr/bin/pydoc3 /usr/bin/pydoc
-ln -fs /usr/bin/pip3 /usr/bin/pip
+ln -s /usr/bin/python3 /usr/bin/python
 
 make
 
