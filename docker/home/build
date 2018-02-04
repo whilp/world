@@ -18,6 +18,7 @@ pkgs="\
 docs=$(printf "%s-doc " $pkgs)
 allpkgs="$pkgs \
 	$docs \
+	ca-certificates \
 	go-tools \
 	man \
 	outils-signify \
@@ -33,10 +34,9 @@ allpkgs="$pkgs \
 
 apk --no-cache add --force-overwrite $allpkgs
 
-#apk --no-cache add ca-certificates wget
-#wget -q -O /etc/apk/keys/david@ostrovsky.org-5a0369d6.rsa.pub https://raw.githubusercontent.com/davido/bazel-alpine-package/master/david@ostrovsky.org-5a0369d6.rsa.pub
-#wget https://github.com/davido/bazel-alpine-package/releases/download/0.10.0/bazel-0.10.0-r0.apk
-#apk add bazel-0.10.0-r0.apk
+curl -sLo /etc/apk/keys/david@ostrovsky.org-5a0369d6.rsa.pub https://raw.githubusercontent.com/davido/bazel-alpine-package/master/david@ostrovsky.org-5a0369d6.rsa.pub
+curl -sLo /tmp/bazel-0.10.0-r0.apk https://github.com/davido/bazel-alpine-package/releases/download/0.10.0/bazel-0.10.0-r0.apk
+apk add /tmp/bazel-0.10.0-r0.apk
 
 ln -fs /usr/bin/python3 /usr/bin/python
 ln -fs /usr/bin/pydoc3 /usr/bin/pydoc
