@@ -1,7 +1,0 @@
-#!/bin/sh
-
-user=$1
-shift
-
-exec su-exec $user "$@*"
-
