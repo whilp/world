@@ -1,6 +1,0 @@
-#!/bin/sh
-
-set -x
-export GOPATH=$GOPATH:$PWD
-exec go install -v -ldflags '-d -s -w' -a -tags netgo -installsuffix netgo
-
