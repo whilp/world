@@ -3,6 +3,8 @@
 set -eu
 
 cd ..
-gup -u bin/docker-cp-image images/git-get
-docker-cp-image images/git-get /build/bin/git-get $1
+img=images/git-get
+path=/build/bin/git-get
+gup -u bin/docker-cp-image $img
+docker-cp-image $img $path $1
 
