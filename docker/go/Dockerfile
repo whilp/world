@@ -1,6 +1,6 @@
 FROM build:base
 
-RUN apk --no-cache add go musl-dev
+RUN apk --no-cache add go musl-dev git
 
 ENV GOPATH /build/
 RUN mkdir -p /build/go
