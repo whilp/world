@@ -1,4 +1,0 @@
-#!/bin/sh
-
-docker/home/down
-docker/home/up
