@@ -2,6 +2,11 @@
 
 set -eu
 
+cd ..
+img=images/awscurl
+path=/build/bin/awscurl
+gup -u bin/docker-cp-image $img
+docker-cp-image $img $path $1
 sum=d7cbcf0c717786884e5d553de0304f0abbabb42f19133e08a141d42bc6ec02b4
 url=https://github.com/allthings/awscurl/releases/download/1.0.0/awscurl-linux-amd64
 
