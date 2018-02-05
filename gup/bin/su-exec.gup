@@ -1,9 +1,14 @@
 #!/bin/sh
 
-set -eux
+set -eu
 
 sum=0fec76eaac6dfb961e4ee7ff4e227060fa26d84e4da55cbb6e1c62df3322f5d9
 url=https://github.com/ncopa/su-exec/archive/f85e5bde1afef399021fbc2a99c837cf851ceafa.tar.gz
+
+gup -u ../.images/go
+img=$(cut -d: -f2 < ../.images/go)
+
+docker run $img
 
 t=$(mktemp -d)
 trap "rm -rf $t" EXIT

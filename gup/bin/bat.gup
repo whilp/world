@@ -2,25 +2,9 @@
 
 set -eu
 
-staticgo=$PWD/../docker/staticgo
-gup -u $staticgo
-
-sum=69ffd085f33452139dd80107cac8820a5e121934ab88da3975c08c84c3a8e8ff
-url=https://github.com/astaxie/bat/archive/3c3881c862c2f4a0c3fbef675f36f72490b1c828.tar.gz
-
-t=$(mktemp -d)
-trap "rm -rf $t" EXIT
-
-(
-cd $t
-get-and-check "$url" "tgz" "$sum"
-mkdir src out
-tar xzf tgz --strip-components=1 -C src
-
-id=$(head /dev/urandom | shazam | cut -d\  -f 1)
-trap "docker kill $id" EXIT
-$staticgo/run $id github.com/astaxie/bat $PWD/src/.
-docker cp ${id}:/go/bin/bat "$1"
-chmod a+x "$1"
-)
+cd ..
+img=images/bat
+path=/build/bin/bat
+gup -u bin/docker-cp-image $img
+docker-cp-image $img $path $1
 

@@ -3,7 +3,7 @@
 set -e
 
 gup -u \
-    vis \
-    hub \
-    bat
+	git-get \
+	awscurl \
+	bat
 
