@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -eu
+
+export CGO_ENABLED=0
+mkdir -p /build/go
+
+exec go install -v -a \
+	-ldflags '-d -s -w -extldflags "-static"' \
+	-tags netgo \
+	-installsuffix netgo \
+	-pkgdir /build/go \
+	./...
+

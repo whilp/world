@@ -1,0 +1,8 @@
+#!/bin/sh
+
+f=docker/$2/Dockerfile
+gup -u $f
+docker build \
+	--tag build:$2 \
+	--file $f \
+	--iidfile "$1" .
