@@ -1,6 +1,0 @@
-#!/bin/sh
-
-addgroup -S me && adduser -u $USER_ID -S -g me me
-chown -R me:me /home/me
-su-exec me /usr/libexec/git-core/git-credential-cache--daemon "$@"
-
