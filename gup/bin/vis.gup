@@ -2,21 +2,8 @@
 
 set -eu
 
-sum=29eed5cb830d3ff44c83931380f6f067db03f904a088aa5b19b55c01a3803976
-url=https://github.com/martanne/vis/archive/69453a73fce015b9dd9deb6a9f6ab9aad104619b.tar.gz
-
-t=$(mktemp -d)
-trap "rm -rf $t" EXIT
-
-(
-cd $t
-get-and-check "$url" "tgz" "$sum"
-mkdir src out
-tar xzf tgz --strip-components=1 -C src
-
-cd src
-make docker
-cp vis "$1"
-chmod a+x "$1"
-)
-
+cd ..
+img=images/vis
+path=/build/bin/vis
+gup -u bin/docker-cp-image $img
+docker-cp-image $img $path $1
