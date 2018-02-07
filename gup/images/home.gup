@@ -1,0 +1,9 @@
+#!/bin/sh
+
+set -eu
+cd ..
+gup -u bin/static
+gup -u docker/build
+gup -u docker/$2/*
+docker/build "$1" "$2"
+
