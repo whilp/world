@@ -26,7 +26,15 @@ RUN apt-get update &&\
 	libc6-dev \
 	gcc \
 	ca-certificates \
-	curl
+	curl \
+	iptables \
+	libapparmor1 \
+	libdevmapper1.02.1 \
+	libltdl7
+
+RUN curl -sLo /tmp/docker.deb \
+	https://download.docker.com/linux/debian/dists/buster/pool/edge/amd64/docker-ce_17.12.0~ce-0~debian_amd64.deb && \
+	dpkg -i /tmp/docker.deb
 
 ADD . /home/me
 WORKDIR /home/me
