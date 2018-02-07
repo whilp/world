@@ -31,6 +31,4 @@ RUN apt-get update &&\
 ADD . /home/me
 WORKDIR /home/me
 
-RUN make
-
-ENTRYPOINT ["/home/me/docker/home/entrypoint"]
+#ENTRYPOINT ["/home/me/docker/home/entrypoint"]

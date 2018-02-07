@@ -4,7 +4,7 @@ set -eu
 
 export PATH=$HOME/bin:$PATH
 
-usermod -d $HOME root
+#usermod -d $HOME root
 
 case "$*"x in
 	x) su-exec $USER /bin/sh -l;;
