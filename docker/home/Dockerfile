@@ -33,7 +33,8 @@ RUN mkdir /usr/share/man/man1 && \
 	libdevmapper1.02.1 \
 	libltdl7 \
 	unzip \
-	openjdk-8-jdk
+	openjdk-8-jdk \
+	g++-multilib
 
 ADD bin/get-and-check /usr/bin/get-and-check
 ADD bin/shazam /usr/bin/shazam
