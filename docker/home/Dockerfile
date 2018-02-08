@@ -11,7 +11,7 @@ RUN mkdir /usr/share/man/man1 && \
 	git \
 	make \
 	python3 \
-	docker \
+	python3-pip \
 	curl \
 	file \
 	fish \
