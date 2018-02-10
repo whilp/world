@@ -6,7 +6,7 @@ iidfile="$1"
 src="$2"
 dst="$3"
 
-iid=$(cut -d: -f2 < "$iidfile")
+iid=$(cat "$iidfile")
 cid=$(docker create $iid)
 trap "docker rm $cid > /dev/null" EXIT
 
