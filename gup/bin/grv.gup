@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -eu
+
+cd ..
+img=images/grv
+path=/build/bin/grv
+gup -u bin/docker-cp-image $img
+docker-cp-image $img $path $1
+

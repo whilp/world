@@ -6,5 +6,6 @@ gup -u \
 	git-get \
 	bat \
 	vis \
-	aws-vault
+	aws-vault \
+	grv
 
