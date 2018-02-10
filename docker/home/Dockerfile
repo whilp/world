@@ -34,7 +34,8 @@ RUN mkdir /usr/share/man/man1 && \
 	libltdl7 \
 	unzip \
 	openjdk-8-jdk \
-	g++-multilib
+	g++-multilib \
+	less
 
 ADD bin/get-and-check /usr/bin/get-and-check
 ADD bin/shazam /usr/bin/shazam
