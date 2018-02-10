@@ -2,26 +2,9 @@
 
 set -eu
 
-sum=0fec76eaac6dfb961e4ee7ff4e227060fa26d84e4da55cbb6e1c62df3322f5d9
-url=https://github.com/ncopa/su-exec/archive/f85e5bde1afef399021fbc2a99c837cf851ceafa.tar.gz
-
-gup -u ../.images/go
-img=$(cut -d: -f2 < ../.images/go)
-
-docker run $img
-
-t=$(mktemp -d)
-trap "rm -rf $t" EXIT
-
-(
-cd $t
-get-and-check "$url" "tgz" "$sum"
-mkdir src out
-tar xzf tgz --strip-components=1 -C src
-
-cd src
-CC=musl-gcc make su-exec-static
-cp su-exec-static "$1"
-chmod a+x "$1"
-)
+cd ..
+img=images/su-exec
+path=/build/bin/su-exec
+gup -u bin/docker-cp-image $img
+docker-cp-image $img $path $1
 

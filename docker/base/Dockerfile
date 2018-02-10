@@ -1,6 +1,10 @@
 FROM alpine:latest
 
-RUN apk add --no-cache curl
+RUN apk add --no-cache \
+	curl \
+	make \
+	musl-dev \
+	gcc
 
 ADD bin/get-and-check /usr/bin/get-and-check
 ADD bin/shazam /usr/bin/shazam

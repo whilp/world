@@ -4,8 +4,6 @@ set -eu
 
 gup -u \
     rg \
-    git-get \
-    awscurl \
     fzf \
     fd \
     dep \
@@ -21,6 +19,5 @@ gup -u \
     gorename \
     stringer \
     golint \
-    goreturns \
-    su-exec
+    goreturns
 
