@@ -4,7 +4,6 @@ set -e
 
 gup -u \
 	git-get \
-	awscurl \
 	bat \
 	vis \
 	aws-vault
