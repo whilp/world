@@ -6,5 +6,6 @@ gup -u \
 	git-get \
 	awscurl \
 	bat \
-	vis
+	vis \
+	aws-vault
 

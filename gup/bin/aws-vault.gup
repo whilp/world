@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -eu
+
+cd ..
+img=images/aws-vault
+path=/build/bin/aws-vault
+gup -u bin/docker-cp-image $img
+docker-cp-image $img $path $1
+
