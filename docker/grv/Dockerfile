@@ -1,5 +1,9 @@
 FROM build:go
 
+ENV PACKAGE github.com/rgburke/grv
+ENV VERSION e80cb8c08753e7b0e785cacdda67ea1b7633d145
+ENV URL https://${PACKAGE}.git
+
 RUN apk --no-cache add \
 	ncurses5-widec-libs \
 	ncurses-dev \
@@ -16,10 +20,9 @@ RUN apk --no-cache add \
 
 USER build
 
-ENV PACKAGE github.com/rgburke/grv
-RUN mkdir -p src/$PACKAGE && \
-	git clone https://${PACKAGE}.git src/$PACKAGE && \
-	cd src/$PACKAGE && \
-	git reset --hard e80cb8c08753e7b0e785cacdda67ea1b7633d145 && \
-	make install
+RUN mkdir -p src/${PACKAGE} \
+	&& git clone ${URL} src/$PACKAGE \
+	&& cd src/${PACKAGE} \
+	&& git reset --hard ${VERSION} \
+	&& make install
 
