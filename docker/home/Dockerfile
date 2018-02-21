@@ -35,7 +35,8 @@ RUN mkdir /usr/share/man/man1 \
 	unzip \
 	openjdk-8-jdk \
 	g++-multilib \
-	less
+	less \
+	ldnsutils
 
 ADD bin/get-and-check /usr/bin/get-and-check
 ADD bin/shazam /usr/bin/shazam
