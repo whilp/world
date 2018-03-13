@@ -2,7 +2,7 @@
 	pr = pull-request
 	ph = push -q
 	pl = pull -q
-	st = status -sb --porcelain
+	st = status -sb --porcelain -uno
 	ci = commit -v
 	ca = commit -av
 	ce = "!git add -e . && git commit -v"
