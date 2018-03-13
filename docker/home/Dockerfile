@@ -3,10 +3,12 @@ FROM debian:unstable-slim
 ENV USER me
 ENV HOME /home/me
 ENV USER_ID 9001
+ENV DEBIAN_FRONTEND noninteractive
+ENV LC_ALL C.UTF-8
 
 RUN mkdir /usr/share/man/man1 \
 	&& apt-get update \
-	&& DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -yq \
+	&& apt-get install --no-install-recommends -yq \
 	apt-utils \
 	git \
 	make \
@@ -37,6 +39,11 @@ RUN mkdir /usr/share/man/man1 \
 	g++-multilib \
 	less \
 	ldnsutils
+
+RUN echo "\$LC_ALL UTF-8" > /etc/locale.gen \
+	&& locale-gen $LC_ALL \
+	&& dpkg-reconfigure locales \
+	&& /usr/sbin/update-locale LANG=$LC_ALL
 
 ADD bin/get-and-check /usr/bin/get-and-check
 ADD bin/shazam /usr/bin/shazam
