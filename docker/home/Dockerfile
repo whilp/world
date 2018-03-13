@@ -38,6 +38,10 @@ RUN mkdir /usr/share/man/man1 \
 	openjdk-8-jdk \
 	g++-multilib \
 	less \
+	locales \
+	pandoc \
+	texlive-latex-base \
+	fonts-roboto \
 	ldnsutils
 
 RUN echo "\$LC_ALL UTF-8" > /etc/locale.gen \
