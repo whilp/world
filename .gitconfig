@@ -3,7 +3,7 @@
 	ph = push -q
 	pl = pull -q
 	st = status -sb --porcelain -uno
-	ci = commit -v
+	ci = commit -v --status -uno
 	ca = commit -av
 	ce = "!git add -e . && git commit -v"
 	man = ls-files
