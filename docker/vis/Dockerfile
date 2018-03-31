@@ -30,7 +30,7 @@ RUN curl -sLo libuntar.tar.gz https://github.com/martanne/libuntar/tarball/3f5e9
 	&& make \
 	&& mkdir -p /usr/local/include \
 	&& cp lib/libuntar.h /usr/local/include \
-	cp lib/libuntar.a /usr/local/lib
+	&& cp lib/libuntar.a /usr/local/lib
 
 USER build
 RUN get-and-check \
