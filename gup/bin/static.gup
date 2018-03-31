@@ -7,6 +7,5 @@ gup -u \
 	bat \
 	vis \
 	aws-vault \
-	grv \
 	su-exec
 
