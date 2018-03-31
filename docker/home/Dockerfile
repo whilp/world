@@ -10,37 +10,37 @@ RUN mkdir /usr/share/man/man1 \
 	&& apt-get update \
 	&& apt-get install --no-install-recommends -yq \
 	apt-utils \
-	git \
-	make \
-	python3 \
-	python3-pip \
+	bash \
+	ca-certificates \
+	coreutils \
+	curl \
 	curl \
 	file \
 	fish \
-	tmux \
-	golang \
-	bash \
-	coreutils \
-	golang-golang-x-tools \
-	man \
-	signify-openbsd \
-	musl-dev \
-	musl-tools \
-	libc6-dev \
+	g++-multilib \
 	gcc \
-	ca-certificates \
-	curl \
+	git \
+	golang \
+	golang-golang-x-tools \
 	iptables \
+	ldnsutils \
+	less \
 	libapparmor1 \
+	libc6-dev \
 	libdevmapper1.02.1 \
 	libltdl7 \
-	unzip \
-	openjdk-8-jdk \
-	g++-multilib \
-	less \
 	locales \
-	zip \
-	ldnsutils
+	make \
+	man \
+	musl-dev \
+	musl-tools \
+	openjdk-8-jdk \
+	python3 \
+	python3-pip \
+	signify-openbsd \
+	tmux \
+	unzip \
+	zip
 
 RUN echo "\$LC_ALL UTF-8" > /etc/locale.gen \
 	&& locale-gen $LC_ALL \
