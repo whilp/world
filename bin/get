@@ -1,0 +1,5 @@
+#!/bin/sh
+
+url="$1"
+
+exec curl -sL -O "$url"
