@@ -1,9 +1,0 @@
-#!/bin/sh
-
-set -eu
-
-cd ..
-img=images/vis
-path=/build/bin/$2
-gup -u bin/docker-cp-image $img
-docker-cp-image $img $path $1
