@@ -39,9 +39,6 @@ RUN mkdir /usr/share/man/man1 \
 	g++-multilib \
 	less \
 	locales \
-	pandoc \
-	texlive-latex-base \
-	fonts-roboto \
 	zip \
 	ldnsutils
 
