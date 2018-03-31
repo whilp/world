@@ -3,6 +3,7 @@
 set -eu
 cd ..
 gup -u bin/static
+gup -u bin/all
 gup -u docker/build
 gup -u docker/$2/*
 docker/build "$1" "$2"
