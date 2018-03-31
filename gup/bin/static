@@ -1,10 +1,8 @@
 #!/bin/sh
 
 set -eu
-set -x
-pwd
 
-cd ..
+cd ../..
 img=images/$2
 path=/build/bin/$2
 gup -u bin/docker-cp-image $img
