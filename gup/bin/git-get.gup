@@ -1,10 +1,1 @@
-#!/bin/sh
-
-set -eu
-
-cd ..
-img=images/git-get
-path=/build/bin/git-get
-gup -u bin/docker-cp-image $img
-docker-cp-image $img $path $1
-
+static
