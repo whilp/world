@@ -42,6 +42,7 @@ RUN mkdir /usr/share/man/man1 \
 	pandoc \
 	texlive-latex-base \
 	fonts-roboto \
+	zip \
 	ldnsutils
 
 RUN echo "\$LC_ALL UTF-8" > /etc/locale.gen \
