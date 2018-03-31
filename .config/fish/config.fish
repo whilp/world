@@ -1,5 +1,8 @@
 fish_hybrid_key_bindings
 
+set -x TERM screen-256color-s
+set -x VIS_PATH ~/.config/vis
+
 set -x LANG en_US.UTF-8
 
 set -x CDPATH . ~/src/* $CDPATH
