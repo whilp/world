@@ -3,22 +3,22 @@
 set -eu
 
 gup -u \
-    rg \
-    fzf \
-    fd \
     dep \
-    godef \
-    goimports \
-    guru \
-    gocode \
-    gometalinter \
-    gotype \
     eg \
+    fd \
+    fzf \
+    gocode \
+    godef \
     godex \
+    goimports \
+    golint \
+    gometalinter \
     gomvpkg \
     gorename \
-    stringer \
-    golint \
     goreturns \
+    gotype \
+    guru \
+    rg \
+    stringer \
     watchexec
 
