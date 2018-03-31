@@ -1,5 +1,8 @@
 FROM build:base
 
+ENV VERSION 36b573a
+ENV CHECKSUM 92f99466bda833b6e5b4cc6ba8a3e3035de94653c476614c85482c96aefc7d11
+
 # https://github.com/martanne/vis/blob/5963289d0257c7bd422c3cf54866a846168f5c7a/Dockerfile
 RUN apk add --no-cache \
 	musl-dev \
@@ -31,9 +34,9 @@ RUN curl -sLo libuntar.tar.gz https://github.com/martanne/libuntar/tarball/3f5e9
 
 USER build
 RUN get-and-check \
-	https://github.com/martanne/vis/archive/5963289d0257c7bd422c3cf54866a846168f5c7a.tar.gz \
+	https://github.com/martanne/vis/archive/${VERSION}.tar.gz \
 	tgz \
-	eeb572b27094a2b2d0d2b6d94ab932bd8269888e4fcbdc061fa77774c5dc7b2d
+	${CHECKSUM}
 RUN mkdir -p bin src && \
 	tar xzf tgz --strip-components=1 -C src
 RUN cd src && \
