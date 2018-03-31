@@ -41,7 +41,6 @@ RUN mkdir -p bin src \
 	&& tar xzf tgz --strip-components=1 -C src
 RUN cd src \
 	&& ./configure CC='cc --static' \
-	&& make clean vis-single vis-menu vis-digraph \
+	&& make clean vis-single \
 	&& cp vis-single /build/bin/vis \
-	&& cp vis-clipboard vis-complete vis-open vis-menu vis-digraph /build/bin/.
 
