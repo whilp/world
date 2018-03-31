@@ -6,6 +6,11 @@ gup -u \
 	git-get \
 	bat \
 	vis \
+	vis-open \
+	vis-clipboard \
+	vis-complete \
+	vis-digraph \
+	vis-menu \
 	aws-vault \
 	grv \
 	su-exec
