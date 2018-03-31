@@ -19,5 +19,6 @@ gup -u \
     gorename \
     stringer \
     golint \
-    goreturns
+    goreturns \
+    watchexec
 
