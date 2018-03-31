@@ -2,7 +2,7 @@
 
 set -eu
 
-sum="ac595c2239b9a30e0e0744578afa6b73e32cdd8ae61d4f1c0ee5d6b55adbadcf"
+sum="63bf744ed4e03b1a925637ae029b796cec7f65e657fb203226a032dbb468598c"
 url="https://github.com/mattgreen/watchexec/releases/download/1.8.6/watchexec-1.8.6-x86_64-unknown-linux-gnu.tar.gz"
 
 tmp=$(mktemp -d)
