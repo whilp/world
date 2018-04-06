@@ -17,6 +17,7 @@ gup -u \
     gorename \
     goreturns \
     gotype \
+    gron \
     guru \
     rg \
     stringer \

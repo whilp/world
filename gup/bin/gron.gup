@@ -1,0 +1,4 @@
+#!/bin/sh
+
+go-get github.com/tomnomnom/gron "$1"
+
