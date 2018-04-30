@@ -6,7 +6,11 @@
 	ci = commit -v --status -uno
 	ca = commit -av
 	ce = "!git add -e . && git commit -v"
+	co = checkout
+	br = branch
 	man = ls-files
+	pushf = push --force-with-lease
+	fe = fetch -ap
 [core]
 	editor = ~/bin/e
 	excludesfile = ~/.gitconf/ignore
