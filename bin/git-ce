@@ -1,0 +1,3 @@
+#!/bin/sh
+
+git add -e . && exec git commit -v
