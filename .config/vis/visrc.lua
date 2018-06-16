@@ -24,6 +24,10 @@ vis.events.subscribe(vis.events.WIN_OPEN, function(win)
         vis:command("set et")
         vis:command("set tw 4")
     end
+    bazel = function()
+        vis:command("set syntax python")
+        python()
+    end
     local exts = {
         py = python,
         lua = function()
@@ -31,10 +35,8 @@ vis.events.subscribe(vis.events.WIN_OPEN, function(win)
             vis:command("set et")
             vis:command("set ai")
         end,
-        bazel = function()
-            vis:command("set syntax python")
-            python()
-        end,
+        bazel = bazel,
+        bzl = bazel,
     }
     fn = exts[ext(win.file.name)]
     if fn ~= nil then fn() end
