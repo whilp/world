@@ -36,12 +36,15 @@ RUN mkdir /usr/share/man/man1 \
 	musl-dev \
 	musl-tools \
 	openjdk-8-jdk \
+	pkg-config \
 	python3 \
 	python3-pip \
+	python3-distutils \
 	signify-openbsd \
 	tmux \
 	unzip \
-	zip
+	zip \
+	zlib1g-dev
 
 RUN echo "\$LC_ALL UTF-8" > /etc/locale.gen \
 	&& locale-gen $LC_ALL \
