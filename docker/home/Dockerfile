@@ -67,6 +67,9 @@ RUN get-and-check \
 	&& bash /tmp/bazel.sh \
 	&& bazel version
 
+RUN ln -s /bin/python3 /bin/python \
+	&& ln -s /bin/pip3 /bin/pip
+
 ADD . /home/me
 WORKDIR /home/me
 
