@@ -61,9 +61,9 @@ RUN get-and-check \
 	&& dpkg -i /tmp/docker.deb
 
 RUN get-and-check \
-	https://github.com/bazelbuild/bazel/releases/download/0.10.0/bazel-0.10.0-without-jdk-installer-linux-x86_64.sh \
+	https://github.com/bazelbuild/bazel/releases/download/0.14.0/bazel-0.14.0-installer-linux-x86_64.sh \
 	/tmp/bazel.sh \
-	ef4b224be7c620825a023c22b02144f39a62e7222e4825582ef3d79261d9d60a \
+	34488cd55f95668cfad45874d9d58a220ea8233beede60ade1b036ebc661c1d0 \
 	&& bash /tmp/bazel.sh \
 	&& bazel version
 
