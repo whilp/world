@@ -21,6 +21,7 @@ RUN mkdir /usr/share/man/man1 \
 	g++-multilib \
 	gcc \
 	git \
+	git-man \
 	golang \
 	golang-golang-x-tools \
 	iptables \
