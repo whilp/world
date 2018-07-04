@@ -15,6 +15,7 @@ RUN mkdir /usr/share/man/man1 \
 	coreutils \
 	curl \
 	curl \
+	daemontools \
 	entr \
 	file \
 	fish \
