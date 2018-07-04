@@ -12,6 +12,7 @@ RUN mkdir /usr/share/man/man1 \
 	apt-utils \
 	bash \
 	ca-certificates \
+	ca-certificates-java \
 	coreutils \
 	curl \
 	curl \
@@ -37,7 +38,8 @@ RUN mkdir /usr/share/man/man1 \
 	man \
 	musl-dev \
 	musl-tools \
-	openjdk-8-jdk \
+	openjdk-8-jdk-headless \
+	openjdk-8-jre-headless \
 	pkg-config \
 	python3 \
 	python3-pip \
