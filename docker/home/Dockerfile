@@ -41,9 +41,11 @@ RUN mkdir /usr/share/man/man1 \
 	openjdk-8-jdk-headless \
 	openjdk-8-jre-headless \
 	pkg-config \
+	python \
+	python2 \
 	python3 \
-	python3-pip \
 	python3-distutils \
+	python3-pip \
 	signify-openbsd \
 	tmux \
 	unzip \
@@ -70,9 +72,6 @@ RUN get-and-check \
 	34488cd55f95668cfad45874d9d58a220ea8233beede60ade1b036ebc661c1d0 \
 	&& bash /tmp/bazel.sh \
 	&& bazel version
-
-RUN ln -s /bin/python3 /bin/python \
-	&& ln -s /bin/pip3 /bin/pip
 
 ADD . /home/me
 WORKDIR /home/me
