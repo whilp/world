@@ -49,6 +49,7 @@ RUN mkdir /usr/share/man/man1 \
 	signify-openbsd \
 	tmux \
 	unzip \
+	xz-utils \
 	zip \
 	zlib1g-dev
 
