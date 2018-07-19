@@ -1,0 +1,5 @@
+sh_library(
+    name = "etc",
+    srcs = ["etc.sh"],
+    visibility = ["//visibility:public"],
+)
