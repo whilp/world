@@ -1,0 +1,37 @@
+load("@subpar//:subpar.bzl", "par_binary")
+load("@python//:requirements.bzl", "requirement", py_requirement="requirement")
+
+sh_binary(
+    name = "aws",
+    srcs = ["aws.sh"],
+    args = [
+        "$(location @aws_vault_runtime_linux//file)",
+        "$(location //etc)",
+        "$(location :configure)",
+    ],
+    data = [
+        "@aws_vault_runtime_linux//file",
+        "//etc",
+        ":configure",
+    ]
+)
+
+py_binary(
+    name = "configure",
+    srcs = ["configure.py"],
+    deps = [
+        requirement("boto3"),
+        requirement("six"),
+    ],
+)
+
+par_binary(
+    name = "awscli",
+    srcs = ["awscli.py"],
+    deps = [
+        requirement("awscli"),
+        requirement("six"),
+    ],
+    default_python_version = "PY3",
+    srcs_version = "PY3",
+)
