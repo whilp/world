@@ -1,11 +1,18 @@
+load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
+
 pkg_tar(
     name = "home",
     package_dir = "/home/me",
     mode = "0600",
     srcs = [":dotfiles"],
+    symlinks = {
+    	"src": "/src",
+	".cache": "/cache",
+    },
+    visibility = ["//visibility:public"],
 )
 
 filegroup(
     name = "dotfiles",
-    srcs = [glob(["*/**", ".*"])],
+    srcs = glob(["*/**", ".*"]),
 )
