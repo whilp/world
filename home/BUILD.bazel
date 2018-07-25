@@ -4,15 +4,72 @@ pkg_tar(
     name = "home",
     package_dir = "/home/me",
     mode = "0600",
-    srcs = [":dotfiles"],
+    deps = [
+        ":dotfiles",
+        ":dot_ssh",
+        ":dot_gitconf",
+        ":dot_config",
+        ":dot_gnupg",
+        ":dot_docker",
+        ":dot_python_bin",
+        ":dot_config_ipython",
+    ],
     symlinks = {
-    	"src": "/src",
-	".cache": "/cache",
+    	"/home/me/src": "/src",
+	"/home/me/.cache": "/cache",
+	"/home/me/.ipython": "/home/me/.config/ipython",
+        "/home/me/.local": "/home/me/.python",
+        "/home/me/.bashrc": "/home/me/.profile",
+        "/home/me/.bash_profile": "/home/me/.profile",
+        "/home/me/.awsvault": "/home/me/.cache/awsvault",
     },
     visibility = ["//visibility:public"],
 )
 
-filegroup(
+pkg_tar(
     name = "dotfiles",
-    srcs = glob(["*/**", ".*"]),
+    srcs = glob([".*"]),
+)
+
+pkg_tar(
+    name = "dot_ssh",
+    srcs = glob([".ssh/*"]),
+    package_dir = ".ssh",
+    mode = "0600",
+)
+
+pkg_tar(
+    name = "dot_gitconf",
+    srcs = glob([".gitconf/*"]),
+    package_dir = ".gitconf",
+)
+
+pkg_tar(
+    name = "dot_config",
+    srcs = glob([".config/*"]),
+    package_dir = ".config",
+)
+
+pkg_tar(
+    name = "dot_gnupg",
+    srcs = glob([".gnupg"]),
+    package_dir = ".gnupg",
+)
+
+pkg_tar(
+    name = "dot_docker",
+    srcs = glob([".docker"]),
+    package_dir = ".docker",
+)
+
+pkg_tar(
+    name = "dot_python_bin",
+    srcs = ["keep"],
+    package_dir = ".python/bin",
+)
+
+pkg_tar(
+    name = "dot_config_ipython",
+    srcs = ["keep"],
+    package_dir = ".config/ipython",
 )
