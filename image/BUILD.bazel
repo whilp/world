@@ -1,0 +1,101 @@
+load(":debs.bzl", "image_package_files")
+load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
+load(
+    "@io_bazel_rules_docker//container:container.bzl",
+    "container_image",
+)
+
+sh_binary(
+    name = "run",
+    srcs = ["run.sh"],
+    data = [
+    	":image",
+    ],
+)
+
+container_image(
+    name = "image",
+    base = "@ubuntu//image",
+    debs = image_package_files() + ["@docker//file"],
+    # Force rebuild when we observe new packages.
+    files = ["//image:debs.bzl"],
+    entrypoint = "/usr/bin/nvim",
+    workdir = "/home/me",
+    env = {
+    	"HOME": "/home/me",
+    },
+    tars = [
+	# Can't gen from this repo. http_archive? Or a local git repository?
+	#":home", 
+        ":nvim",
+        ":etc_ssl_certs",
+	":etc_apt",
+        ":usr_bin",
+    ],
+)
+
+pkg_tar(
+    name = "etc_ssl_certs",
+    package_dir = "/etc/ssl/certs",
+    srcs = [":ca_certificates_crt"],
+)
+
+genrule(
+    name = "ca_certificates_crt",
+    outs = ["ca-certificates.crt"],
+    cmd = "cp $(location @cacert//file) $@",
+    srcs = ["@cacert//file"],
+)
+
+# https://bugs.launchpad.net/ubuntu/+source/apt/+bug/1577926
+pkg_tar(
+    name = "etc_apt",
+    package_dir = "/etc/apt",
+    mode = "0644",
+    srcs = [
+    	"apt.conf",
+    ],
+)
+
+pkg_tar(
+    name = "usr_bin",
+    package_dir = "/usr/bin",
+    mode = "0755",
+    srcs = [
+    	":bazel",
+    ]
+)
+
+genrule(
+    name = "bazel_exe",
+    outs = ["bazel"],
+    executable = True,
+    cmd = "cp $(location @bazel//file) $@",
+    srcs = ["@bazel//file"],
+)
+
+genrule(
+    name = "nvim",
+    outs = ["nvim.tar"],
+    cmd = ("$(location @nvim//file) --appimage-extract &>/dev/null "
+	+ "&& mkdir clean "
+	+ "&& mv squashfs-root/usr clean/usr "
+        + "&& tar -C clean --sort=name --mtime='2018-01-01 00:00Z' --owner=0 --group=0 --numeric-owner -cf $@ ."
+    ),
+    tools = [
+        "@nvim//file",
+    ],
+)
+
+genrule(
+    name = "home",
+    outs = ["home.tar"],
+    cmd = "$(location :archive) $@",
+    tools = [":archive"],
+    stamp = True,
+)
+
+sh_binary(
+    name = "archive",
+    srcs = ["archive.sh"],
+)
