@@ -1,6 +1,0 @@
-#!/bin/sh
-
-set -eu
-
-touch "$2"
-exec docker build -t whilp/staticgo staticgo

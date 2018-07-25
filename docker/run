@@ -1,7 +1,0 @@
-#!/bin/sh
-
-exec docker run -ti \
-	-v ~/src:/home/me/src:cached \
-	-v cache:/home/me/.cache:cached \
-	-v /var/run/docker.sock:/var/run/docker.sock \
-	build:home /usr/bin/tmux

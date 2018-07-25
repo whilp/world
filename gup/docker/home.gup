@@ -1,9 +1,0 @@
-#!/bin/sh
-
-set -eu
-
-touch $2
-cd ..
-gup -u bin/static
-docker build -t whilp/home -f ./docker/home/Dockerfile .
-

@@ -1,4 +1,0 @@
-#!/bin/sh
-
-go-get sourcegraph.com/sqs/goreturns "$1"
-

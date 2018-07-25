@@ -1,8 +1,0 @@
-#!/bin/sh
-
-set -eu
-
-chmod 700 .ssh
-chmod 700 .gnupg
-
-gup images/home

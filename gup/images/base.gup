@@ -1,8 +1,0 @@
-#!/bin/sh
-
-set -eu
-cd ..
-gup -u docker/build bin/get-and-check bin/shazam
-gup -u docker/$2/*
-docker/build "$1" "$2"
-

@@ -1,9 +1,0 @@
-#!/bin/sh
-
-set -eu
-
-sum=9ccd06ae9032090e36702bc380d0785ee8a45fd827b84832730aa7c15ef01b1d
-url=https://github.com/jmespath/jp/releases/download/0.1.3/jp-linux-amd64
-
-get-and-check "$url" "$1" "$sum"
-chmod a+x "$1"

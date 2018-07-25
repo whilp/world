@@ -1,9 +1,0 @@
-#!/bin/sh
-
-toplevel=$(git rev-parse --show-toplevel 2>/dev/null)
-
-case "$toplevel"x in
-	x) exec fd "$@";;
-	*) exec git ls-files "$@";;
-esac
-
