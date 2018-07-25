@@ -77,7 +77,7 @@ genrule(
 genrule(
     name = "nvim",
     outs = ["nvim.tar"],
-    cmd = ("$(location @nvim//file) --appimage-extract &>/dev/null "
+    cmd = ("$(location @nvim//file) --appimage-extract >/dev/null 2>&1 "
 	+ "&& mkdir clean "
 	+ "&& mv squashfs-root/usr clean/usr "
         + "&& tar -C clean --sort=name --mtime='2018-01-01 00:00Z' --owner=0 --group=0 --numeric-owner -cf $@ ."

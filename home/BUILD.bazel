@@ -1,0 +1,11 @@
+pkg_tar(
+    name = "home",
+    package_dir = "/home/me",
+    mode = "0600",
+    srcs = [":dotfiles"],
+)
+
+filegroup(
+    name = "dotfiles",
+    srcs = [glob(["*/**", ".*"])],
+)

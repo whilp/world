@@ -4,3 +4,4 @@ bazel-genfiles
 bazel-me
 bazel-out
 bazel-testlogs
+.local/share
