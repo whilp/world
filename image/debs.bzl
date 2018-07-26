@@ -391,6 +391,11 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_libmpdec2",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/m/mpdecimal/libmpdec2_2.4.2-1ubuntu1_amd64.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_libmpfr6",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/m/mpfr4/libmpfr6_4.0.1-1_amd64.deb",
     )
@@ -421,18 +426,18 @@ def image_packages():
     )
 
     native.http_file(
-        name = "ubuntu_libpython2_7_minimal",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python2.7/libpython2.7-minimal_2.7.15~rc1-1_amd64.deb",
+        name = "ubuntu_libpython3_6_minimal",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/libpython3.6-minimal_3.6.5-3_amd64.deb",
     )
 
     native.http_file(
-        name = "ubuntu_libpython2_7_stdlib",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python2.7/libpython2.7-stdlib_2.7.15~rc1-1_amd64.deb",
+        name = "ubuntu_libpython3_6_stdlib",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/libpython3.6-stdlib_3.6.5-3_amd64.deb",
     )
 
     native.http_file(
-        name = "ubuntu_libpython_stdlib",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python-defaults/libpython-stdlib_2.7.15~rc1-1_amd64.deb",
+        name = "ubuntu_libpython3_stdlib",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3-defaults/libpython3-stdlib_3.6.5-3ubuntu1_amd64.deb",
     )
 
     native.http_file(
@@ -626,23 +631,23 @@ def image_packages():
     )
 
     native.http_file(
-        name = "ubuntu_python",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python-defaults/python_2.7.15~rc1-1_amd64.deb",
+        name = "ubuntu_python3",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3-defaults/python3_3.6.5-3ubuntu1_amd64.deb",
     )
 
     native.http_file(
-        name = "ubuntu_python2_7",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python2.7/python2.7_2.7.15~rc1-1_amd64.deb",
+        name = "ubuntu_python3_6",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/python3.6_3.6.5-3_amd64.deb",
     )
 
     native.http_file(
-        name = "ubuntu_python2_7_minimal",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python2.7/python2.7-minimal_2.7.15~rc1-1_amd64.deb",
+        name = "ubuntu_python3_6_minimal",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/python3.6-minimal_3.6.5-3_amd64.deb",
     )
 
     native.http_file(
-        name = "ubuntu_python_minimal",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python-defaults/python-minimal_2.7.15~rc1-1_amd64.deb",
+        name = "ubuntu_python3_minimal",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3-defaults/python3-minimal_3.6.5-3ubuntu1_amd64.deb",
     )
 
     native.http_file(
@@ -766,15 +771,16 @@ def image_package_files():
         '@ubuntu_libmagic1//file',
         '@ubuntu_libmagic_mgc//file',
         '@ubuntu_libmpc3//file',
+        '@ubuntu_libmpdec2//file',
         '@ubuntu_libmpfr6//file',
         '@ubuntu_libmpx2//file',
         '@ubuntu_libnghttp2_14//file',
         '@ubuntu_libnpth0//file',
         '@ubuntu_libperl5_26//file',
         '@ubuntu_libpsl5//file',
-        '@ubuntu_libpython2_7_minimal//file',
-        '@ubuntu_libpython2_7_stdlib//file',
-        '@ubuntu_libpython_stdlib//file',
+        '@ubuntu_libpython3_6_minimal//file',
+        '@ubuntu_libpython3_6_stdlib//file',
+        '@ubuntu_libpython3_stdlib//file',
         '@ubuntu_libquadmath0//file',
         '@ubuntu_libreadline7//file',
         '@ubuntu_libroken18_heimdal//file',
@@ -813,10 +819,10 @@ def image_package_files():
         '@ubuntu_pinentry_curses//file',
         '@ubuntu_pkg_config//file',
         '@ubuntu_publicsuffix//file',
-        '@ubuntu_python//file',
-        '@ubuntu_python2_7//file',
-        '@ubuntu_python2_7_minimal//file',
-        '@ubuntu_python_minimal//file',
+        '@ubuntu_python3//file',
+        '@ubuntu_python3_6//file',
+        '@ubuntu_python3_6_minimal//file',
+        '@ubuntu_python3_minimal//file',
         '@ubuntu_readline_common//file',
         '@ubuntu_shared_mime_info//file',
         '@ubuntu_unzip//file',

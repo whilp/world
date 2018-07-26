@@ -23,6 +23,29 @@ container_pull(
   digest = "sha256:30e04ddada6eb09c12330c7df72cad1573916c7100168c34076808169ff6d805"
 )
 
+http_archive(
+    name = "io_bazel_rules_python",
+    url = "https://github.com/bazelbuild/rules_python/archive/8b5d0683a7d878b28fffe464779c8a53659fc645.tar.gz",
+    strip_prefix = "rules_python-8b5d0683a7d878b28fffe464779c8a53659fc645",
+    sha256 = "8b32d2dbb0b0dca02e0410da81499eef8ff051dad167d6931a92579e3b2a1d48",
+)
+
+load("@io_bazel_rules_python//python:pip.bzl", "pip_import", "pip_repositories")
+
+pip_repositories() 
+ 
+pip_import(
+    name = "python",
+    requirements = "//python:requirements.txt",
+)
+ 
+load("@python//:requirements.bzl", "pip_install")
+pip_install()
+
+load("//home:files.bzl", "home_files")
+
+home_files()
+
 load("//image:debs.bzl", "image_packages")
 
 image_packages()

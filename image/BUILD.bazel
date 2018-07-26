@@ -4,6 +4,18 @@ load(
     "@io_bazel_rules_docker//container:container.bzl",
     "container_image",
 )
+load(
+    "@io_bazel_rules_python//python:python.bzl",
+    "py_binary", "requirement"
+)
+
+py_binary(
+    name = "pip",
+    srcs = ["pip/pip.py"],
+    deps = [
+    	requirement("pip"),
+    ],
+)
 
 sh_binary(
     name = "run",
@@ -25,7 +37,7 @@ container_image(
     	"HOME": "/home/me",
     },
     tars = [
-	"//home", 
+	"//home:tar", 
         ":nvim",
         ":etc_ssl_certs",
 	":etc_apt",

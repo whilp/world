@@ -1,75 +1,100 @@
 load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
 
 pkg_tar(
-    name = "home",
+    name = "tar",
     package_dir = "/home/me",
     mode = "0600",
     deps = [
         ":dotfiles",
         ":dot_ssh",
         ":dot_gitconf",
-        ":dot_config",
         ":dot_gnupg",
         ":dot_docker",
         ":dot_python_bin",
-        ":dot_config_ipython",
+        ":dot_config",
     ],
     symlinks = {
-    	"/home/me/src": "/src",
-	"/home/me/.cache": "/cache",
-	"/home/me/.ipython": "/home/me/.config/ipython",
-        "/home/me/.local": "/home/me/.python",
-        "/home/me/.bashrc": "/home/me/.profile",
-        "/home/me/.bash_profile": "/home/me/.profile",
-        "/home/me/.awsvault": "/home/me/.cache/awsvault",
+    	"./home/me/src": "/src",
+	"./home/me/.cache": "/cache",
+	"./home/me/.ipython": "/home/me/.config/ipython",
+        "./home/me/.local": "/home/me/.python",
+        "./home/me/.bashrc": "/home/me/.profile",
+        "./home/me/.bash_profile": "/home/me/.profile",
+        "./home/me/.awsvault": "/home/me/.cache/awsvault",
+	"./home/me/bin/python": "/usr/bin/python3",
+	"./home/me/bin/e": "/usr/bin/nvim",
     },
     visibility = ["//visibility:public"],
 )
 
 pkg_tar(
     name = "dotfiles",
-    srcs = glob([".*"]),
+    srcs = glob(["dots/*"]),
 )
 
 pkg_tar(
     name = "dot_ssh",
-    srcs = glob([".ssh/*"]),
-    package_dir = ".ssh",
+    srcs = glob(["ssh/*"]),
+    package_dir = "./.ssh",
     mode = "0600",
 )
 
 pkg_tar(
     name = "dot_gitconf",
-    srcs = glob([".gitconf/*"]),
-    package_dir = ".gitconf",
-)
-
-pkg_tar(
-    name = "dot_config",
-    srcs = glob([".config/*"]),
-    package_dir = ".config",
+    srcs = glob(["gitconf/*"]),
+    package_dir = "./.gitconf",
 )
 
 pkg_tar(
     name = "dot_gnupg",
-    srcs = glob([".gnupg"]),
-    package_dir = ".gnupg",
+    srcs = glob(["gnupg/*"]),
+    package_dir = "./.gnupg",
 )
 
 pkg_tar(
     name = "dot_docker",
-    srcs = glob([".docker"]),
-    package_dir = ".docker",
+    srcs = glob(["docker/*"]),
+    package_dir = "./.docker",
 )
 
 pkg_tar(
     name = "dot_python_bin",
     srcs = ["keep"],
-    package_dir = ".python/bin",
+    package_dir = "./.python/bin",
+)
+
+pkg_tar(
+    name = "dot_config",
+    deps = [
+        ":dot_config_ipython",
+	":dot_config_nvim",
+    ],
+    package_dir = "/.config",
 )
 
 pkg_tar(
     name = "dot_config_ipython",
     srcs = ["keep"],
-    package_dir = ".config/ipython",
+    package_dir = "ipython",
 )
+
+pkg_tar(
+    name = "dot_config_nvim",
+    package_dir = "nvim",
+    deps = [
+    	":dot_config_nvim_colors",
+    ],
+)
+
+pkg_tar(
+    name = "dot_config_nvim_colors",
+    package_dir = "colors",
+    srcs = [
+    	"@flattened_dark//file",
+	"@flattened_light//file",
+    ]
+)
+
+exports_files([
+    "files.bzl",
+])

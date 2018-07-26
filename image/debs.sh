@@ -12,6 +12,6 @@ docker run --rm -ti ubuntu:18.04 /bin/bash -c \
     g++ \
     zlib1g-dev \
     unzip \
-    python \
+    python3 \
     " \
     | python image/debs.py > image/debs.bzl
