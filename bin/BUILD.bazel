@@ -1,0 +1,5 @@
+load(
+  "@io_bazel_rules_python//python:python.bzl",
+  "py_binary", "py_library", "py_test",
+)
+load("@python//:requirements.bzl", "requirement")

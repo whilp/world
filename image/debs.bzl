@@ -36,6 +36,11 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_dh_python",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/d/dh-python/dh-python_3.20180325ubuntu2_all.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_dirmngr",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gnupg2/dirmngr_2.2.4-1ubuntu1.1_amd64.deb",
     )
@@ -236,6 +241,11 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_libexpat1_dev",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/e/expat/libexpat1-dev_2.2.5-3_amd64.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_libfakeroot",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/f/fakeroot/libfakeroot_1.22-2ubuntu1_amd64.deb",
     )
@@ -426,6 +436,16 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_libpython3_6",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/libpython3.6_3.6.5-3_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_libpython3_6_dev",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/libpython3.6-dev_3.6.5-3_amd64.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_libpython3_6_minimal",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/libpython3.6-minimal_3.6.5-3_amd64.deb",
     )
@@ -433,6 +453,11 @@ def image_packages():
     native.http_file(
         name = "ubuntu_libpython3_6_stdlib",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/libpython3.6-stdlib_3.6.5-3_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_libpython3_dev",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3-defaults/libpython3-dev_3.6.5-3ubuntu1_amd64.deb",
     )
 
     native.http_file(
@@ -641,13 +666,43 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_python3_6_dev",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/python3.6-dev_3.6.5-3_amd64.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_python3_6_minimal",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/python3.6-minimal_3.6.5-3_amd64.deb",
     )
 
     native.http_file(
+        name = "ubuntu_python3_dev",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3-defaults/python3-dev_3.6.5-3ubuntu1_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_python3_distutils",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3-stdlib-extensions/python3-distutils_3.6.5-3_all.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_python3_lib2to3",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3-stdlib-extensions/python3-lib2to3_3.6.5-3_all.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_python3_minimal",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3-defaults/python3-minimal_3.6.5-3ubuntu1_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_python3_pkg_resources",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python-setuptools/python3-pkg-resources_39.0.1-2_all.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_python3_setuptools",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python-setuptools/python3-setuptools_39.0.1-2_all.deb",
     )
 
     native.http_file(
@@ -700,6 +755,7 @@ def image_package_files():
         '@ubuntu_ca_certificates//file',
         '@ubuntu_cpp//file',
         '@ubuntu_cpp_7//file',
+        '@ubuntu_dh_python//file',
         '@ubuntu_dirmngr//file',
         '@ubuntu_dpkg_dev//file',
         '@ubuntu_fakeroot//file',
@@ -740,6 +796,7 @@ def image_package_files():
         '@ubuntu_libedit2//file',
         '@ubuntu_liberror_perl//file',
         '@ubuntu_libexpat1//file',
+        '@ubuntu_libexpat1_dev//file',
         '@ubuntu_libfakeroot//file',
         '@ubuntu_libfile_fcntllock_perl//file',
         '@ubuntu_libgcc_7_dev//file',
@@ -778,8 +835,11 @@ def image_package_files():
         '@ubuntu_libnpth0//file',
         '@ubuntu_libperl5_26//file',
         '@ubuntu_libpsl5//file',
+        '@ubuntu_libpython3_6//file',
+        '@ubuntu_libpython3_6_dev//file',
         '@ubuntu_libpython3_6_minimal//file',
         '@ubuntu_libpython3_6_stdlib//file',
+        '@ubuntu_libpython3_dev//file',
         '@ubuntu_libpython3_stdlib//file',
         '@ubuntu_libquadmath0//file',
         '@ubuntu_libreadline7//file',
@@ -821,8 +881,14 @@ def image_package_files():
         '@ubuntu_publicsuffix//file',
         '@ubuntu_python3//file',
         '@ubuntu_python3_6//file',
+        '@ubuntu_python3_6_dev//file',
         '@ubuntu_python3_6_minimal//file',
+        '@ubuntu_python3_dev//file',
+        '@ubuntu_python3_distutils//file',
+        '@ubuntu_python3_lib2to3//file',
         '@ubuntu_python3_minimal//file',
+        '@ubuntu_python3_pkg_resources//file',
+        '@ubuntu_python3_setuptools//file',
         '@ubuntu_readline_common//file',
         '@ubuntu_shared_mime_info//file',
         '@ubuntu_unzip//file',

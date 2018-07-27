@@ -1,21 +1,11 @@
 load(":debs.bzl", "image_package_files")
 load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
+load("@io_bazel_rules_docker//python:image.bzl", "py_image")
 load(
     "@io_bazel_rules_docker//container:container.bzl",
-    "container_image",
+    "container_image", "container_bundle",
 )
-load(
-    "@io_bazel_rules_python//python:python.bzl",
-    "py_binary", "requirement"
-)
-
-py_binary(
-    name = "pip",
-    srcs = ["pip/pip.py"],
-    deps = [
-    	requirement("pip"),
-    ],
-)
+load("@python//:requirements.bzl", "requirement")
 
 sh_binary(
     name = "run",
@@ -25,9 +15,18 @@ sh_binary(
     ],
 )
 
-container_image(
+container_bundle(
     name = "image",
-    base = "@ubuntu//image",
+    images = {
+	"bazel/image:base": "@ubuntu//image",
+        "bazel/image:home": ":home",
+	"bazel/image:pip": ":pip",
+	"bazel/image:nvr": ":nvr",
+    },
+)
+
+container_image(
+    name = "home",
     debs = image_package_files() + ["@docker//file"],
     # Force rebuild when we observe new packages.
     files = ["//image:debs.bzl"],
@@ -43,6 +42,28 @@ container_image(
 	":etc_apt",
         ":usr_bin",
     ],
+)
+
+py_image(
+    name = "pip",
+    srcs = ["_pip.py"],
+    main = "_pip.py",
+    deps = [
+    	requirement("pip"),
+    ],
+)
+
+py_image(
+    name = "nvr",
+    srcs = ["_nvr.py"],
+    main = "_nvr.py",
+    deps = [
+	requirement("psutil"),
+	requirement("greenlet"),
+	requirement("neovim"),
+	requirement("neovim-remote"),
+	requirement("msgpack"),
+    ]
 )
 
 pkg_tar(
@@ -96,14 +117,6 @@ genrule(
     tools = [
         "@nvim//file",
     ],
-)
-
-genrule(
-    name = "home",
-    outs = ["home.tar"],
-    cmd = "$(location :archive) $@",
-    tools = [":archive"],
-    stamp = True,
 )
 
 sh_binary(
