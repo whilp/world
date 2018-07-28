@@ -1,6 +1,13 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
+    name = "subpar",
+    sha256 = "a694bd35ff4be79a49fbb6e5fd6b1c9083ef05cd752409f5fe349f6d74432fd8",
+    strip_prefix = "subpar-07ff5feb7c7b113eea593eb6ec50b51099cf0261",
+    urls = ["https://github.com/google/subpar/archive/07ff5feb7c7b113eea593eb6ec50b51099cf0261.tar.gz"],
+)
+
+http_archive(
     name = "io_bazel_rules_docker",
     sha256 = "b4775b7c4fc76e3113dab643ee35eefbabca0b44908d0d1c85dcf29cab7c0638",
     strip_prefix = "rules_docker-c7a93454d27e09ef707dfca53887ed0ff4372f04",

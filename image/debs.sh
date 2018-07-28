@@ -16,5 +16,6 @@ docker run --rm -ti ubuntu:18.04 /bin/bash -c \
     python3 \
     python3-setuptools \
     python3-dev \
+    curl \
     " \
     | python image/debs.py > image/debs.bzl

@@ -36,6 +36,11 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_curl",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/c/curl/curl_7.58.0-2ubuntu3.2_amd64.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_dh_python",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/d/dh-python/dh-python_3.20180325ubuntu2_all.deb",
     )
@@ -218,6 +223,11 @@ def image_packages():
     native.http_file(
         name = "ubuntu_libcurl3_gnutls",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/c/curl/libcurl3-gnutls_7.58.0-2ubuntu3.2_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_libcurl4",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/c/curl/libcurl4_7.58.0-2ubuntu3.2_amd64.deb",
     )
 
     native.http_file(
@@ -433,6 +443,16 @@ def image_packages():
     native.http_file(
         name = "ubuntu_libpsl5",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/libp/libpsl/libpsl5_0.19.1-5build1_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_libpython2_7_minimal",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python2.7/libpython2.7-minimal_2.7.15~rc1-1_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_libpython2_7_stdlib",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python2.7/libpython2.7-stdlib_2.7.15~rc1-1_amd64.deb",
     )
 
     native.http_file(
@@ -656,6 +676,16 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_python2_7",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python2.7/python2.7_2.7.15~rc1-1_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_python2_7_minimal",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python2.7/python2.7-minimal_2.7.15~rc1-1_amd64.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_python3",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3-defaults/python3_3.6.5-3ubuntu1_amd64.deb",
     )
@@ -755,6 +785,7 @@ def image_package_files():
         '@ubuntu_ca_certificates//file',
         '@ubuntu_cpp//file',
         '@ubuntu_cpp_7//file',
+        '@ubuntu_curl//file',
         '@ubuntu_dh_python//file',
         '@ubuntu_dirmngr//file',
         '@ubuntu_dpkg_dev//file',
@@ -792,6 +823,7 @@ def image_package_files():
         '@ubuntu_libcc1_0//file',
         '@ubuntu_libcilkrts5//file',
         '@ubuntu_libcurl3_gnutls//file',
+        '@ubuntu_libcurl4//file',
         '@ubuntu_libdpkg_perl//file',
         '@ubuntu_libedit2//file',
         '@ubuntu_liberror_perl//file',
@@ -835,6 +867,8 @@ def image_package_files():
         '@ubuntu_libnpth0//file',
         '@ubuntu_libperl5_26//file',
         '@ubuntu_libpsl5//file',
+        '@ubuntu_libpython2_7_minimal//file',
+        '@ubuntu_libpython2_7_stdlib//file',
         '@ubuntu_libpython3_6//file',
         '@ubuntu_libpython3_6_dev//file',
         '@ubuntu_libpython3_6_minimal//file',
@@ -879,6 +913,8 @@ def image_package_files():
         '@ubuntu_pinentry_curses//file',
         '@ubuntu_pkg_config//file',
         '@ubuntu_publicsuffix//file',
+        '@ubuntu_python2_7//file',
+        '@ubuntu_python2_7_minimal//file',
         '@ubuntu_python3//file',
         '@ubuntu_python3_6//file',
         '@ubuntu_python3_6_dev//file',

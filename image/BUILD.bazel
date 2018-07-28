@@ -15,18 +15,9 @@ sh_binary(
     ],
 )
 
-container_bundle(
-    name = "image",
-    images = {
-	"bazel/image:base": "@ubuntu//image",
-        "bazel/image:home": ":home",
-	"bazel/image:pip": ":pip",
-	"bazel/image:nvr": ":nvr",
-    },
-)
-
 container_image(
-    name = "home",
+    name = "image",
+    base = "@ubuntu//image",
     debs = image_package_files() + ["@docker//file"],
     # Force rebuild when we observe new packages.
     files = ["//image:debs.bzl"],
@@ -42,28 +33,6 @@ container_image(
 	":etc_apt",
         ":usr_bin",
     ],
-)
-
-py_image(
-    name = "pip",
-    srcs = ["_pip.py"],
-    main = "_pip.py",
-    deps = [
-    	requirement("pip"),
-    ],
-)
-
-py_image(
-    name = "nvr",
-    srcs = ["_nvr.py"],
-    main = "_nvr.py",
-    deps = [
-	requirement("psutil"),
-	requirement("greenlet"),
-	requirement("neovim"),
-	requirement("neovim-remote"),
-	requirement("msgpack"),
-    ]
 )
 
 pkg_tar(
@@ -117,9 +86,4 @@ genrule(
     tools = [
         "@nvim//file",
     ],
-)
-
-sh_binary(
-    name = "archive",
-    srcs = ["archive.sh"],
 )
