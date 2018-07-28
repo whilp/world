@@ -1,0 +1,19 @@
+load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
+
+exports_files(["init.vim", "files.bzl"])
+
+pkg_tar(
+    name = "config",
+    package_dir = "/.config/nvim",
+    srcs = glob(["*.vim"]),
+    visibility = ["//visibility:public"],
+)
+
+pkg_tar(
+    name = "site",
+    package_dir = "/.local/share/nvim/site/pack/plugins/start",
+    visibility = ["//visibility:public"],
+    deps = [
+            "@vim_airline//:tar",
+    ],
+)

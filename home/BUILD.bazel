@@ -12,17 +12,16 @@ pkg_tar(
         ":dot_docker",
         ":dot_python_bin",
         ":dot_config",
+        "//nvim:config",
+        "//nvim:site",
     ],
     symlinks = {
     	"./home/me/src": "/src",
-	"./home/me/.cache": "/cache",
-	"./home/me/.ipython": "/home/me/.config/ipython",
-        "./home/me/.local": "/home/me/.python",
+        "./home/me/.cache": "/cache",
+        "./home/me/.ipython": "/home/me/.config/ipython",
         "./home/me/.bashrc": "/home/me/.profile",
         "./home/me/.bash_profile": "/home/me/.profile",
         "./home/me/.awsvault": "/home/me/.cache/awsvault",
-	"./home/me/bin/python": "/usr/bin/python3",
-	"./home/me/bin/e": "/usr/bin/nvim",
     },
     visibility = ["//visibility:public"],
 )
@@ -67,7 +66,6 @@ pkg_tar(
     name = "dot_config",
     deps = [
         ":dot_config_ipython",
-	":dot_config_nvim",
     ],
     package_dir = "/.config",
 )
@@ -76,23 +74,6 @@ pkg_tar(
     name = "dot_config_ipython",
     srcs = ["keep"],
     package_dir = "ipython",
-)
-
-pkg_tar(
-    name = "dot_config_nvim",
-    package_dir = "nvim",
-    deps = [
-    	":dot_config_nvim_colors",
-    ],
-)
-
-pkg_tar(
-    name = "dot_config_nvim_colors",
-    package_dir = "colors",
-    srcs = [
-    	"@flattened_dark//file",
-	"@flattened_light//file",
-    ]
 )
 
 exports_files([

@@ -64,7 +64,11 @@ pkg_tar(
     mode = "0755",
     srcs = [
     	":bazel",
-    ]
+        "@ripgrep//:rg",
+    ],
+    symlinks = {
+        "/usr/bin/python": "python2.7",
+    }
 )
 
 genrule(

@@ -1,6 +1,1 @@
-pip
-greenlet
-psutil
-msgpack
-neovim
-neovim-remote
+six

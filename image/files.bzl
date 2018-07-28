@@ -1,3 +1,5 @@
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
 def image_files():
     native.http_file(
         name = "nvim",
@@ -22,4 +24,12 @@ def image_files():
 	name = "docker",
 	url = "https://download.docker.com/linux/ubuntu/dists/bionic/pool/stable/amd64/docker-ce_18.06.0~ce~3-0~ubuntu_amd64.deb",
 	sha256 = "65fa0f3e62312612810dfde4ffec8eba309bf75614f3071b2c7aa7db624d1b96",
+    )
+
+    native.new_http_archive(
+        name = "ripgrep",
+	url = "https://github.com/BurntSushi/ripgrep/releases/download/0.8.1/ripgrep-0.8.1-x86_64-unknown-linux-musl.tar.gz",
+	sha256 = "08b1aa1440a23a88c94cff41a860340ecf38e9108817aff30ff778c00c63eb76",
+        build_file_content = """exports_files(["rg"])""",
+        strip_prefix = "ripgrep-0.8.1-x86_64-unknown-linux-musl/",
     )

@@ -67,3 +67,7 @@ image_packages()
 load("//image:files.bzl", "image_files")
 
 image_files()
+
+load("//nvim:files.bzl", "nvim_files")
+
+nvim_files()
