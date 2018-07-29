@@ -66,6 +66,8 @@ let g:mucomplete#delayed_completion = 1
 let g:signify_disable_by_default = 1
 let g:signify_vcs_list = ["git"]
 
+:highlight! link QuickFixLine Normal
+
 " https://github.com/BurntSushi/ripgrep/issues/425#issuecomment-381446152
 
 " TODO
