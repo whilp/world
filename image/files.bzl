@@ -28,8 +28,15 @@ def image_files():
 
     native.new_http_archive(
         name = "ripgrep",
-	url = "https://github.com/BurntSushi/ripgrep/releases/download/0.8.1/ripgrep-0.8.1-x86_64-unknown-linux-musl.tar.gz",
-	sha256 = "08b1aa1440a23a88c94cff41a860340ecf38e9108817aff30ff778c00c63eb76",
+        url = "https://github.com/BurntSushi/ripgrep/releases/download/0.8.1/ripgrep-0.8.1-x86_64-unknown-linux-musl.tar.gz",
+        sha256 = "08b1aa1440a23a88c94cff41a860340ecf38e9108817aff30ff778c00c63eb76",
         build_file_content = """exports_files(["rg"])""",
         strip_prefix = "ripgrep-0.8.1-x86_64-unknown-linux-musl/",
+    )
+
+    native.new_http_archive(
+        name = "fzf",
+        urls = ["https://github.com/junegunn/fzf-bin/releases/download/0.17.4/fzf-0.17.4-linux_amd64.tgz"],
+        build_file_content = """exports_files(["fzf"])""",
+        sha256 = "e0d3c40d4c4a33ded195d7db7a622c52db6300beddda0b9d4576f2380df8166f",
     )

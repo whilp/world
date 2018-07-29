@@ -11,6 +11,7 @@ set grepprg=rg\ --vimgrep\ --no-heading\ --smart-case
 set hidden
 set ignorecase
 set incsearch
+set nohlsearch
 set nomodeline
 set nowrap
 set scrollback=-1
@@ -20,37 +21,45 @@ set shiftwidth=4
 set showmatch
 set showtabline=0
 set smartcase
+set smarttab
 set softtabstop=4
+set splitbelow
+set splitright
 set tabstop=4
 set textwidth=79
 set visualbell
 set wildmenu
 set wildmode=list:longest
-set wrap
 let mapleader = " "
 
 inoremap jj <ESC>
-nnoremap ; :
-nnoremap <Leader>g :silent! grep<Space>
+nnoremap <Leader>g :Rg<CR>
+nnoremap <Leader>f :FZF<CR>
 nnoremap <Leader>q :bp\|bd #<CR>
-nnoremap <leader>s :noh<CR>
 nnoremap <silent> [f :lprevious<CR>
 nnoremap <silent> ]f :lnext<CR>
 tnoremap jj <C-\><C-n>
 
-autocmd BufRead,BufNewFile *.bzl,BUILD,*.BUILD,BUILD.*,WORKSPACE setfiletype bzl
+autocmd BufRead,BufNewFile *.bzl setfiletype bzl
+autocmd BufRead,BufNewFile BUILD setfiletype bzl
+autocmd BufRead,BufNewFile *.BUILD setfiletype bzl
+autocmd BufRead,BufNewFile BUILD.* setfiletype bzl
+autocmd BufRead,BufNewFile WORKSPACE setfiletype bzl
 
+" https://github.com/junegunn/fzf.vim#advanced-customization
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
+let $FZF_DEFAULT_COMMAND = 'rg --files --smart-case'
 
 " https://github.com/BurntSushi/ripgrep/issues/425#issuecomment-381446152
 
 " TODO
-" https://github.com/vim-airline/vim-airline
-" https://github.com/justinmk/vim-sneak
 " https://github.com/chriskempson/base16-vim
 " https://github.com/mhinz/vim-grepper
 " https://github.com/skywind3000/asyncrun.vim
-" https://github.com/vim-ctrlspace/vim-ctrlspace
-" https://github.com/jreybert/vimagit
-" https://github.com/w0rp/ale
 packloadall
 sil helptags ALL

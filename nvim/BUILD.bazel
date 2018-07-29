@@ -15,5 +15,27 @@ pkg_tar(
     visibility = ["//visibility:public"],
     deps = [
             "@vim_airline//:tar",
+            "@vim_ale//:tar",
+            "@vim_go//:tar",
+            "@vim_sneak//:tar",
+            "@vim_surround//:tar",
+            "@vim_repeat//:tar",
+            "@vim_fugitive//:tar",
+            "@vim_confirm_quit//:tar",
+            "@vim_unimpaired//:tar",
+            "@vim_fzf//:tar",
+            "@vim_fzf_vim//:tar",
+            ":languageclient",
     ],
+)
+
+pkg_tar(
+    name = "languageclient",
+    strip_prefix = ".",
+    deps = [
+        "@vim_language_client_neovim//:tar",
+    ],
+    files = {
+        "@language_client_neovim//file": "./vim_language_client_neovim/bin/languageclient",
+    },
 )
