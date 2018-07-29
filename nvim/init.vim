@@ -40,6 +40,7 @@ inoremap jj <ESC>
 nnoremap <Leader>g :Rg<CR>
 nnoremap <Leader>f :FZF<CR>
 nnoremap <Leader>q :bp\|bd #<CR>
+nnoremap <Leader>v :Gstatus<CR>
 nnoremap <silent> [f :lprevious<CR>
 nnoremap <silent> ]f :lnext<CR>
 tnoremap jj <C-\><C-n>
@@ -58,7 +59,6 @@ command! -bang -nargs=* Rg
   \           : fzf#vim#with_preview('right:50%:hidden', '?'),
   \   <bang>0)
 let $FZF_DEFAULT_COMMAND = 'rg --files --smart-case'
-
 
 let g:mucomplete#enable_auto_at_startup = 1
 let g:mucomplete#delayed_completion = 1
