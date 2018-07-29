@@ -136,3 +136,11 @@ def nvim_files():
         repo = "fzf",
         sha256 = "4ba9658b2815f87e044bc069ac0e1381f05bfa4e3eab213e19dc91eb2b18d99e",
     )
+
+    _github_tar(
+        name = "vim_mucomplete",
+        ref = "487bb3814070e47103a116cd012267af46925ab0",
+        owner = "lifepillar",
+        repo = "vim-mucomplete",
+        #sha256 = "4ba9658b2815f87e044bc069ac0e1381f05bfa4e3eab213e19dc91eb2b18d99e",
+    )

@@ -25,6 +25,7 @@ pkg_tar(
             "@vim_unimpaired//:tar",
             "@vim_fzf//:tar",
             "@vim_fzf_vim//:tar",
+            "@vim_mucomplete//:tar",
             ":languageclient",
     ],
 )

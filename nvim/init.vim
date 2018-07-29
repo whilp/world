@@ -30,6 +30,10 @@ set textwidth=79
 set visualbell
 set wildmenu
 set wildmode=list:longest
+set completeopt-=preview
+set completeopt+=longest,menuone,noselect
+set shortmess+=c
+set belloff+=ctrlg
 let mapleader = " "
 
 inoremap jj <ESC>
@@ -54,6 +58,10 @@ command! -bang -nargs=* Rg
   \           : fzf#vim#with_preview('right:50%:hidden', '?'),
   \   <bang>0)
 let $FZF_DEFAULT_COMMAND = 'rg --files --smart-case'
+
+
+let g:mucomplete#enable_auto_at_startup = 1
+let g:mucomplete#delayed_completion = 1
 
 " https://github.com/BurntSushi/ripgrep/issues/425#issuecomment-381446152
 
