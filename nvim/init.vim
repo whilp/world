@@ -74,5 +74,7 @@ let g:signify_vcs_list = ["git"]
 " https://github.com/chriskempson/base16-vim
 " https://github.com/mhinz/vim-grepper
 " https://github.com/skywind3000/asyncrun.vim
+" a command to re-run a terminal buffer.
+
 packloadall
 sil helptags ALL
