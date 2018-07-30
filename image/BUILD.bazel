@@ -1,9 +1,8 @@
 load(":debs.bzl", "image_package_files")
 load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
-load("@io_bazel_rules_docker//python:image.bzl", "py_image")
 load(
     "@io_bazel_rules_docker//container:container.bzl",
-    "container_image", "container_bundle",
+    "container_image"
 )
 load("@python//:requirements.bzl", "requirement")
 
