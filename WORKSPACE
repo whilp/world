@@ -1,5 +1,6 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+# DOCKER {{{1
 http_archive(
     name = "io_bazel_rules_docker",
     sha256 = "b4775b7c4fc76e3113dab643ee35eefbabca0b44908d0d1c85dcf29cab7c0638",
@@ -23,6 +24,7 @@ container_pull(
   digest = "sha256:30e04ddada6eb09c12330c7df72cad1573916c7100168c34076808169ff6d805"
 )
 
+# PYTHON {{{1
 http_archive(
     name = "io_bazel_rules_python",
     url = "https://github.com/bazelbuild/rules_python/archive/8b5d0683a7d878b28fffe464779c8a53659fc645.tar.gz",
@@ -42,6 +44,7 @@ pip_import(
 load("@python//:requirements.bzl", "pip_install")
 pip_install()
 
+# REPOS {{{1
 load("//home:files.bzl", "home_files")
 
 home_files()
