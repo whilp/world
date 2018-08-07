@@ -16,15 +16,15 @@ def image_files():
     )
 
     native.http_file(
-	name = "bazel",
-	url = "https://github.com/bazelbuild/bazel/releases/download/0.15.2/bazel-0.15.2-linux-x86_64",
-	sha256 = "3e18f78e194acc5d05968a0c1d7708bd6fb6b99a2bcc1a3cd46e642f51d0a277",
+        name = "bazel",
+        url = "https://github.com/bazelbuild/bazel/releases/download/0.15.2/bazel-0.15.2-linux-x86_64",
+        sha256 = "3e18f78e194acc5d05968a0c1d7708bd6fb6b99a2bcc1a3cd46e642f51d0a277",
     )
 
     native.http_file(
-	name = "docker",
-	url = "https://download.docker.com/linux/ubuntu/dists/bionic/pool/stable/amd64/docker-ce_18.06.0~ce~3-0~ubuntu_amd64.deb",
-	sha256 = "65fa0f3e62312612810dfde4ffec8eba309bf75614f3071b2c7aa7db624d1b96",
+        name = "docker",
+        url = "https://download.docker.com/linux/ubuntu/dists/bionic/pool/stable/amd64/docker-ce_18.06.0~ce~3-0~ubuntu_amd64.deb",
+        sha256 = "65fa0f3e62312612810dfde4ffec8eba309bf75614f3071b2c7aa7db624d1b96",
     )
 
     native.new_http_archive(
@@ -137,3 +137,39 @@ def image_files():
         strip_prefix = "gogetdoc-10095872a7c53aa605a7e6d9b3db2c636bd78f7a",
         sha256 = "49dc73300ee63c86e5c11ee4d64a86861f691ffc3cdfcc23337a56ee0df6a924",
 	)
+
+    # go_repository(
+    #     name = "com_github_bazelbuild_buildtools",
+    #     importpath = "github.com/bazelbuild/buildtools",
+    #     urls = ["https://github.com/bazelbuild/buildtools/archive/a90c3a9f00e27973d3e759d17f2e2e7d9702d91b.tar.gz"],
+    #     strip_prefix = "buildtools-a90c3a9f00e27973d3e759d17f2e2e7d9702d91b",
+    #     sha256 = "ea23bbec9e86205b71ef647e1755ae0ec400aa76aeb5d13913d3fc3a37afbb5f",
+    # )
+
+    # go_repository(
+    #     name = "com_github_bazelbuild_bazel_watcher",
+    #     importpath = "github.com/bazelbuild/bazel-watcher",
+    #     urls = ["https://github.com/bazelbuild/bazel-watcher/archive/1e74b9c46bc908cc27e5b1aa2200c4fdee571761.tar.gz"],
+    #     strip_prefix = "bazel-watcher-1e74b9c46bc908cc27e5b1aa2200c4fdee571761",
+    #     #sha256 = "49dc73300ee63c86e5c11ee4d64a86861f691ffc3cdfcc23337a56ee0df6a924",
+    # )
+
+    # # For ibazel.
+    # go_repository(
+    #     name = "com_github_fsnotify_fsnotify",
+    #     commit = "7d7316ed6e1ed2de075aab8dfc76de5d158d66e1",
+    #     importpath = "github.com/fsnotify/fsnotify",
+    # )
+
+    # # For ibazel.
+    # go_repository(
+    #     name = "com_github_golang_protobuf",
+    #     commit = "130e6b02ab059e7b717a096f397c5b60111cae74",
+    #     importpath = "github.com/golang/protobuf",
+    # )
+
+    native.http_file(
+        name = "go_1_10_3",
+        url = "https://dl.google.com/go/go1.10.3.linux-amd64.tar.gz"
+        #sha256 = "3e18f78e194acc5d05968a0c1d7708bd6fb6b99a2bcc1a3cd46e642f51d0a277",
+    )

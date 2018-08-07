@@ -80,6 +80,9 @@ pkg_tar(
         "@com_github_davidrjenni_reftools//cmd/fillstruct": "fillstruct",
         "@org_golang_x_lint//golint": "golint",
         "@com_github_zmb3_gogetdoc//:gogetdoc": "gogetdoc",
+        #"@com_github_bazelbuild_buildtools//buildifier": "buildifier",
+        #"@com_github_bazelbuild_buildtools//buildozer": "buildozer",
+        #"@com_github_bazelbuild_bazel_watcher//ibazel": "ibazel",
     },
     symlinks = {
         "./usr/bin/python": "python2.7",
