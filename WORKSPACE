@@ -1,5 +1,27 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
+# GO {{{1
+http_archive(
+    name = "io_bazel_rules_go",
+    urls = ["https://github.com/bazelbuild/rules_go/archive/80b649d56976c11930e27fae568034d703085637.tar.gz"],
+    sha256 = "2d01b05dff8e465e2496fb0ee5e449c562a7e784ec06a7c793c26e7cac3c69e8",
+    strip_prefix = "rules_go-80b649d56976c11930e27fae568034d703085637",
+)
+
+http_archive(
+    name = "bazel_gazelle",
+    urls = ["https://github.com/bazelbuild/bazel-gazelle/archive/bb3efb568f0d252059f064b35030a5afc8da7f7a.tar.gz"],
+    sha256 = "cced089a43ae3e7a72b3aceb23e73b172b6763a8ae20164ec36e27265505b3a5",
+    strip_prefix = "bazel-gazelle-bb3efb568f0d252059f064b35030a5afc8da7f7a",
+)
+
+load("@io_bazel_rules_go//go:def.bzl", "go_rules_dependencies", "go_register_toolchains")
+load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
+
+go_rules_dependencies()
+go_register_toolchains()
+gazelle_dependencies()
+
 # DOCKER {{{1
 http_archive(
     name = "io_bazel_rules_docker",

@@ -21,12 +21,12 @@ pkg_tar(
             "@vim_surround//:tar",
             "@vim_repeat//:tar",
             "@vim_fugitive//:tar",
-            "@vim_confirm_quit//:tar",
             "@vim_unimpaired//:tar",
             "@vim_fzf//:tar",
             "@vim_fzf_vim//:tar",
             "@vim_mucomplete//:tar",
             "@vim_signify//:tar",
+            "@vim_clipper//:tar",
             ":languageclient",
     ],
 )

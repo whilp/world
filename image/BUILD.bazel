@@ -6,11 +6,18 @@ load(
 )
 load("@python//:requirements.bzl", "requirement")
 
+# NOTE: :image must be built/run separately. We cannot use it
+# as data here because this target is expected to be built/run
+# in OSX. clipper should be built for OSX and various parts of the
+# image (namely nvim) are a PITA to build/extract on OSX.
 sh_binary(
     name = "run",
     srcs = ["run.sh"],
+    args = [
+        "$(location @com_github_wincent_clipper//:clipper)",
+    ],
     data = [
-    	":image",
+        "@com_github_wincent_clipper//:clipper",
     ],
 )
 
@@ -62,9 +69,21 @@ pkg_tar(
     ],
     files = {
         "@bazel//file": "bazel",
+        "@org_golang_x_tools//cmd/goimports": "goimports",
+        "@com_github_jstemmer_gotags//:gotags": "gotags",
+        "@com_github_nsf_gocode//:gocode": "gocode",
+        "@com_github_josharian_impl//:impl": "impl",
+        "@com_github_derekparker_delve//cmd/dlv": "dlv",
+        "@com_github_kisielk_errcheck//:errcheck": "errcheck",
+        "@com_github_fatih_motion//:motion": "motion",
+        "@com_github_rogpeppe_godef//:godef": "godef",
+        "@com_github_davidrjenni_reftools//cmd/fillstruct": "fillstruct",
+        "@org_golang_x_lint//golint": "golint",
+        "@com_github_zmb3_gogetdoc//:gogetdoc": "gogetdoc",
     },
     symlinks = {
         "./usr/bin/python": "python2.7",
+        "./bin/nc": "nc.openbsd",
     }
 )
 

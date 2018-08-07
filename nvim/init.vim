@@ -6,7 +6,7 @@ set autoindent
 set autoread
 set backspace=indent,eol,start
 set expandtab
-set formatoptions=qrn1
+set formatoptions=qrn1c
 set grepprg=rg\ --vimgrep\ --no-heading\ --smart-case
 set hidden
 set ignorecase
@@ -30,7 +30,7 @@ set tabstop=4
 set textwidth=79
 set visualbell
 set wildmenu
-set wildmode=list:longest
+set wildmode=list:full
 set completeopt-=preview
 set completeopt+=longest,menuone,noselect
 set shortmess+=c
@@ -52,6 +52,9 @@ autocmd BufRead,BufNewFile *.BUILD setfiletype bzl
 autocmd BufRead,BufNewFile BUILD.* setfiletype bzl
 autocmd BufRead,BufNewFile WORKSPACE setfiletype bzl
 
+command! -bar -nargs=1 Gbranch :Git checkout -q -B <q-args>
+command! -bar -nargs=1 Gco :Git checkout -q <q-args>
+
 " https://github.com/junegunn/fzf.vim#advanced-customization
 command! -bang -nargs=* Rg
   \ call fzf#vim#grep(
@@ -68,6 +71,19 @@ let g:signify_disable_by_default = 1
 let g:signify_vcs_list = ["git"]
 
 :highlight! link QuickFixLine Normal
+
+" https://docs.docker.com/docker-for-mac/networking/#i-want-to-connect-from-a-container-to-a-service-on-the-host
+let g:ClipperAddress="host.docker.internal"
+let g:ClipperAuto=0
+
+let g:go_fmt_command = "goimports"
+let g:go_auto_type_info = 1
+let g:go_auto_sameids = 0
+let g:go_updatetime = 500
+let g:go_def_mode = 'godef'
+let g:go_get_update = 0
+let g:go_decls_mode = 'fzf'
+" let g:go_echo_command_info = 0
 
 " https://github.com/BurntSushi/ripgrep/issues/425#issuecomment-381446152
 

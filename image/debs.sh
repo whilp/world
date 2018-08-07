@@ -12,6 +12,7 @@ docker run --rm -ti ubuntu:18.04 /bin/bash -c \
     g++ \
     zlib1g-dev \
     unzip \
+    netcat-openbsd \
     python2.7 \
     python3 \
     python3-setuptools \

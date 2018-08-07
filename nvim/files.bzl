@@ -83,10 +83,11 @@ def nvim_files():
 
     _github_tar(
         name = "vim_fugitive",
-        ref = "6eadff1107c7cc0d389793478141f02ab13e5a7a",
-        owner = "tpope",
+        # Forked for performance tweaks.
+        ref = "ba314564ff920351d2c8899877889e6c7e8131e0",
+        owner = "whilp",
         repo = "vim-fugitive",
-        sha256 = "a9bb9897abfb0b55cea5fa9d701a3d8ab2039d1696d76b0606a01ac6b2631a8f",
+        #sha256 = "a9bb9897abfb0b55cea5fa9d701a3d8ab2039d1696d76b0606a01ac6b2631a8f",
     )
 
     _github_tar(
@@ -103,14 +104,6 @@ def nvim_files():
         urls = ["https://github.com/autozimu/LanguageClient-neovim/releases/download/0.1.105/languageclient-0.1.105-x86_64-unknown-linux-musl"],
         sha256 = "da63dcb5c9cb7725f7e9be915247862a87f14043283f57944f441f6769f392b7",
         executable = True,
-    )
-
-    _github_tar(
-        name = "vim_confirm_quit",
-        ref = "7b5dc6b169f3a0d99878789949c83b7dff9b1b3b",
-        owner = "vim-scripts",
-        repo = "confirm-quit",
-        sha256 = "550f0a7a3890403a4e386fd53cca018ff2593d207739d27b715c17a7b654f9aa",
     )
 
     _github_tar(
@@ -151,4 +144,20 @@ def nvim_files():
         owner = "mhinz",
         repo = "vim-signify",
         sha256 = "b76e8dcdc11c59258bf48dbae4917992e81e9335098756adfba328aa4cfea348",
+    )
+
+    _github_tar(
+        name = "vim_clipper",
+        ref = "35d15d7a096db63f1afce36f3dc1ae28dde4da98",
+        owner = "wincent",
+        repo = "vim-clipper",
+        sha256 = "88d8b0037e0ed97f6cda6107bd987af022f12f831bfbb92423767c96cf102d5a",
+    )
+
+    _github_tar(
+        name = "vim_base16_neovim",
+        ref = "328724df7445d753640c5ba35ebd2e933d24cbae",
+        owner = "jlesquembre",
+        repo = "base16-neovim",
+        #sha256 = "88d8b0037e0ed97f6cda6107bd987af022f12f831bfbb92423767c96cf102d5a",
     )
