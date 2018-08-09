@@ -1,13 +1,19 @@
 load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
 
-exports_files(["init.vim", "files.bzl"])
+exports_files([
+    "init.vim",
+    "files.bzl",
+])
 
 pkg_tar(
     name = "config",
-        package_dir = "/.config/nvim/.",
-    srcs = glob(["**/*.vim", "*.vim"]),
-    visibility = ["//visibility:public"],
+    srcs = glob([
+        "**/*.vim",
+        "*.vim",
+    ]),
+    package_dir = "/.config/nvim/.",
     strip_prefix = ".",
+    visibility = ["//visibility:public"],
 )
 
 pkg_tar(
@@ -15,30 +21,30 @@ pkg_tar(
     package_dir = "/.local/share/nvim/site/pack/plugins/start",
     visibility = ["//visibility:public"],
     deps = [
-            "@vim_airline//:tar",
-            "@vim_ale//:tar",
-            "@vim_go//:tar",
-            "@vim_sneak//:tar",
-            "@vim_surround//:tar",
-            "@vim_repeat//:tar",
-            "@vim_fugitive//:tar",
-            "@vim_unimpaired//:tar",
-            "@vim_fzf//:tar",
-            "@vim_fzf_vim//:tar",
-            "@vim_mucomplete//:tar",
-            "@vim_signify//:tar",
-            "@vim_clipper//:tar",
-            ":languageclient",
+        ":languageclient",
+        "@vim_airline//:tar",
+        "@vim_ale//:tar",
+        "@vim_clipper//:tar",
+        "@vim_fugitive//:tar",
+        "@vim_fzf//:tar",
+        "@vim_fzf_vim//:tar",
+        "@vim_go//:tar",
+        "@vim_mucomplete//:tar",
+        "@vim_repeat//:tar",
+        "@vim_signify//:tar",
+        "@vim_sneak//:tar",
+        "@vim_surround//:tar",
+        "@vim_unimpaired//:tar",
     ],
 )
 
 pkg_tar(
     name = "languageclient",
+    files = {
+        "@language_client_neovim//file": "./vim_language_client_neovim/bin/languageclient",
+    },
     strip_prefix = ".",
     deps = [
         "@vim_language_client_neovim//:tar",
     ],
-    files = {
-        "@language_client_neovim//file": "./vim_language_client_neovim/bin/languageclient",
-    },
 )
