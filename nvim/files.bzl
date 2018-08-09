@@ -160,5 +160,13 @@ def nvim_files():
         owner = "jlesquembre",
         ref = "328724df7445d753640c5ba35ebd2e933d24cbae",
         repo = "base16-neovim",
-        #sha256 = "88d8b0037e0ed97f6cda6107bd987af022f12f831bfbb92423767c96cf102d5a",
+        sha256 = "37d9327666efd73a0dba66a8b59bdb55066be2c73209a4ec295187bdcbe5657b",
+    )
+
+    _github_tar(
+        name = "vim_airline_themes",
+        owner = "vim-airline",
+        ref = "6e798f9030d0853d484078043ddbb41e611ab7a6",
+        repo = "vim-airline-themes",
+        sha256 = "1c41f5ea66df7bffe7692540ce7b6eb9d9bacec0d474538dccc14a67b551c850",
     )

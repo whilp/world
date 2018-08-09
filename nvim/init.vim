@@ -2,9 +2,13 @@ filetype on
 filetype plugin indent on
 syntax on
 
+colorscheme base16-solarized-dark
+let g:airline_theme="base16_solarized"
+
 set autoindent
 set autoread
 set backspace=indent,eol,start
+set background=dark
 set expandtab
 set formatoptions=qrn1c
 set grepprg=rg\ --vimgrep\ --no-heading\ --smart-case
@@ -57,16 +61,23 @@ command! -bar -nargs=1 Gco :Git checkout -q <q-args>
 
 " https://github.com/junegunn/fzf.vim#advanced-customization
 command! -bang -nargs=* Rg
-  \ call fzf#vim#grep(
-  \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
-  \   <bang>0 ? fzf#vim#with_preview('up:60%')
-  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
-  \   <bang>0)
+            \ call fzf#vim#grep(
+            \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
+            \   <bang>0 ? fzf#vim#with_preview('up:60%')
+            \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+            \   <bang>0)
 let $FZF_DEFAULT_COMMAND = 'rg --files --smart-case'
+
+" https://github.com/nicodebo/base16-fzf/blob/master/bash/base16-solarized-dark.config
+let $FZF_DEFAULT_OPTS = '--color=bg+:#073642,bg:#002b36,spinner:#2aa198,hl:#268bd2'
+            \ + ' --color=fg:#839496,header:#268bd2,info:#b58900,pointer:#2aa198'
+            \ + ' --color=marker:#2aa198,fg+:#eee8d5,prompt:#b58900,hl+:#268bd2'
+
+" https://sw.kovidgoyal.net/kitty/faq.html#using-a-color-theme-with-a-background-color-does-not-work-well-in-vim
+let &t_ut=''
 
 let g:mucomplete#enable_auto_at_startup = 1
 let g:mucomplete#delayed_completion = 1
-
 let g:signify_disable_by_default = 1
 let g:signify_vcs_list = ["git"]
 
@@ -75,16 +86,10 @@ let g:signify_vcs_list = ["git"]
 " https://docs.docker.com/docker-for-mac/networking/#i-want-to-connect-from-a-container-to-a-service-on-the-host
 let g:ClipperAddress="host.docker.internal"
 let g:ClipperAuto=0
-
 let g:ale_fix_on_save = 1
 
-" https://github.com/BurntSushi/ripgrep/issues/425#issuecomment-381446152
-
-" TODO
-" https://github.com/chriskempson/base16-vim
-" https://github.com/mhinz/vim-grepper
-" https://github.com/skywind3000/asyncrun.vim
-" a command to re-run a terminal buffer.
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+set background=light
 
 packloadall
 sil helptags ALL

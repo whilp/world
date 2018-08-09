@@ -23,7 +23,9 @@ pkg_tar(
     deps = [
         ":languageclient",
         "@vim_airline//:tar",
+        "@vim_airline_themes//:tar",
         "@vim_ale//:tar",
+        "@vim_base16_neovim//:tar",
         "@vim_clipper//:tar",
         "@vim_fugitive//:tar",
         "@vim_fzf//:tar",
