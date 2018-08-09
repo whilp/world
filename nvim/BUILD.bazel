@@ -4,9 +4,10 @@ exports_files(["init.vim", "files.bzl"])
 
 pkg_tar(
     name = "config",
-    package_dir = "/.config/nvim",
-    srcs = glob(["*.vim"]),
+        package_dir = "/.config/nvim/.",
+    srcs = glob(["**/*.vim", "*.vim"]),
     visibility = ["//visibility:public"],
+    strip_prefix = ".",
 )
 
 pkg_tar(

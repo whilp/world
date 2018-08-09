@@ -2,21 +2,10 @@ load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
 
 pkg_tar(
     name = "tar",
-    package_dir = "/home/me",
     mode = "0600",
-    deps = [
-        ":dotfiles",
-        ":dot_ssh",
-        ":dot_gitconf",
-        ":dot_gnupg",
-        ":dot_docker",
-        ":dot_python_bin",
-        ":dot_config",
-        "//nvim:config",
-        "//nvim:site",
-    ],
+    package_dir = "/home/me",
     symlinks = {
-    	"./home/me/src": "/src",
+        "./home/me/src": "/src",
         "./home/me/.cache": "/cache",
         "./home/me/.ipython": "/home/me/.config/ipython",
         "./home/me/.bashrc": "/home/me/.profile",
@@ -24,6 +13,17 @@ pkg_tar(
         "./home/me/.awsvault": "/home/me/.cache/awsvault",
     },
     visibility = ["//visibility:public"],
+    deps = [
+        ":dot_config",
+        ":dot_docker",
+        ":dot_gitconf",
+        ":dot_gnupg",
+        ":dot_python_bin",
+        ":dot_ssh",
+        ":dotfiles",
+        "//nvim:config",
+        "//nvim:site",
+    ],
 )
 
 pkg_tar(
@@ -34,8 +34,8 @@ pkg_tar(
 pkg_tar(
     name = "dot_ssh",
     srcs = glob(["ssh/*"]),
-    package_dir = "./.ssh",
     mode = "0600",
+    package_dir = "./.ssh",
 )
 
 pkg_tar(
@@ -64,10 +64,10 @@ pkg_tar(
 
 pkg_tar(
     name = "dot_config",
+    package_dir = "/.config",
     deps = [
         ":dot_config_ipython",
     ],
-    package_dir = "/.config",
 )
 
 pkg_tar(

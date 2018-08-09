@@ -37,14 +37,14 @@ set shortmess+=c
 set belloff+=ctrlg
 let mapleader = " "
 
-inoremap jj <ESC>
+inoremap jk <ESC>
 nnoremap <Leader>g :Rg<CR>
 nnoremap <Leader>f :FZF<CR>
 nnoremap <Leader>q :bp\|bd #<CR>
 nnoremap <Leader>v :Gstatus<CR>
 nnoremap <silent> [f :lprevious<CR>
 nnoremap <silent> ]f :lnext<CR>
-tnoremap jj <C-\><C-n>
+tnoremap jk <C-\><C-n>
 
 autocmd BufRead,BufNewFile *.bzl setfiletype bzl
 autocmd BufRead,BufNewFile BUILD setfiletype bzl
@@ -76,14 +76,7 @@ let g:signify_vcs_list = ["git"]
 let g:ClipperAddress="host.docker.internal"
 let g:ClipperAuto=0
 
-let g:go_fmt_command = "goimports"
-let g:go_auto_type_info = 1
-let g:go_auto_sameids = 0
-let g:go_updatetime = 500
-let g:go_def_mode = 'godef'
-let g:go_get_update = 0
-let g:go_decls_mode = 'fzf'
-" let g:go_echo_command_info = 0
+let g:ale_fix_on_save = 1
 
 " https://github.com/BurntSushi/ripgrep/issues/425#issuecomment-381446152
 

@@ -1,11 +1,11 @@
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file", "http_archive")
 
 # GO {{{1
 http_archive(
     name = "io_bazel_rules_go",
-    urls = ["https://github.com/bazelbuild/rules_go/archive/80b649d56976c11930e27fae568034d703085637.tar.gz"],
-    sha256 = "2d01b05dff8e465e2496fb0ee5e449c562a7e784ec06a7c793c26e7cac3c69e8",
-    strip_prefix = "rules_go-80b649d56976c11930e27fae568034d703085637",
+    urls = ["https://github.com/bazelbuild/rules_go/archive/1cd1a773e6cc32f14d20ded1c0c1b34203354a2a.tar.gz"],
+    sha256 = "875728865fd3d9e1f8008fd5afbaac361363fa0d8816de6abd4a0db2baa35a4a",
+    strip_prefix = "rules_go-1cd1a773e6cc32f14d20ded1c0c1b34203354a2a",
 )
 
 http_archive(
@@ -21,6 +21,17 @@ load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
 go_rules_dependencies()
 go_register_toolchains()
 gazelle_dependencies()
+
+# BAZEL {{{1
+http_archive(
+    name = "com_github_bazelbuild_buildtools",
+    strip_prefix = "buildtools-651ea753927b42e601e5d2d40e1700d4a61e6705",
+    sha256 = "ad7625e1226f1ccd39cae1594b4fe5f1bb938142c3d28e88aaae1635d5e26969",
+    url = "https://github.com/bazelbuild/buildtools/archive/651ea753927b42e601e5d2d40e1700d4a61e6705.tar.gz",
+)
+
+load("@com_github_bazelbuild_buildtools//buildifier:deps.bzl", "buildifier_dependencies")
+buildifier_dependencies()
 
 # DOCKER {{{1
 http_archive(

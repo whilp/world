@@ -1,4 +1,6 @@
 load("@bazel_gazelle//:def.bzl", "gazelle")
 
 # gazelle:prefix github.com/whilp/dotfiles
-gazelle(name = "gazelle")
+gazelle(
+    name = "gazelle",
+)

@@ -2,7 +2,7 @@ load(":debs.bzl", "image_package_files")
 load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
 load(
     "@io_bazel_rules_docker//container:container.bzl",
-    "container_image"
+    "container_image",
 )
 load("@python//:requirements.bzl", "requirement")
 
@@ -25,47 +25,46 @@ container_image(
     name = "image",
     base = "@ubuntu//image",
     debs = image_package_files() + ["@docker//file"],
+    entrypoint = "/usr/bin/nvim",
+    env = {
+        "HOME": "/home/me",
+    },
     # Force rebuild when we observe new packages.
     files = ["//image:debs.bzl"],
-    entrypoint = "/usr/bin/nvim",
-    workdir = "/home/me",
-    env = {
-    	"HOME": "/home/me",
-    },
     tars = [
-        "//home:tar", 
+        "//home:tar",
         ":nvim",
         ":etc_ssl_certs",
         ":etc_apt",
         ":usr_bin",
+        ":usr_local",
     ],
+    workdir = "/home/me",
 )
 
 pkg_tar(
     name = "etc_ssl_certs",
-    package_dir = "/etc/ssl/certs",
     files = {
         "@cacert//file": "ca-certificates.crt",
     },
+    package_dir = "/etc/ssl/certs",
 )
 
 # https://bugs.launchpad.net/ubuntu/+source/apt/+bug/1577926
 pkg_tar(
     name = "etc_apt",
-    package_dir = "/etc/apt",
-    mode = "0644",
     srcs = [
-    	"apt.conf",
+        "apt.conf",
     ],
+    mode = "0644",
+    package_dir = "/etc/apt",
 )
 
 pkg_tar(
     name = "usr_bin",
-    package_dir = "/usr/bin",
-    mode = "0755",
     srcs = [
+        "@fzf",
         "@ripgrep//:rg",
-        "@fzf//:fzf",
     ],
     files = {
         "@bazel//file": "bazel",
@@ -80,23 +79,38 @@ pkg_tar(
         "@com_github_davidrjenni_reftools//cmd/fillstruct": "fillstruct",
         "@org_golang_x_lint//golint": "golint",
         "@com_github_zmb3_gogetdoc//:gogetdoc": "gogetdoc",
-        #"@com_github_bazelbuild_buildtools//buildifier": "buildifier",
-        #"@com_github_bazelbuild_buildtools//buildozer": "buildozer",
+        "@com_github_bazelbuild_buildtools//buildifier": "buildifier",
+        "@com_github_bazelbuild_buildtools//buildozer": "buildozer",
         #"@com_github_bazelbuild_bazel_watcher//ibazel": "ibazel",
+        "@bazel_gazelle//cmd/gazelle": "gazelle",
     },
+    mode = "0755",
+    package_dir = "/usr/bin",
     symlinks = {
         "./usr/bin/python": "python2.7",
         "./bin/nc": "nc.openbsd",
-    }
+    },
+)
+
+pkg_tar(
+    name = "usr_local",
+    package_dir = "/usr/local",
+    symlinks = {
+        "./usr/local/bin/go": "../go/bin/go",
+        "./usr/local/bin/godoc": "../go/bin/godoc",
+        "./usr/local/bin/gofmt": "../go/bin/gofmt",
+    },
+    deps = ["@org_golang_go//file"],
 )
 
 genrule(
     name = "nvim",
     outs = ["nvim.tar"],
-    cmd = ("$(location @nvim//file) --appimage-extract >/dev/null 2>&1 "
-	+ "&& mkdir clean "
-	+ "&& mv squashfs-root/usr clean/usr "
-        + "&& tar -C clean --sort=name --mtime='2018-01-01 00:00Z' --owner=0 --group=0 --numeric-owner -cf $@ ."
+    cmd = (
+        "$(location @nvim//file) --appimage-extract >/dev/null 2>&1 " +
+        "&& mkdir clean " +
+        "&& mv squashfs-root/usr clean/usr " +
+        "&& tar -C clean --sort=name --mtime='2018-01-01 00:00Z' --owner=0 --group=0 --numeric-owner -cf $@ ."
     ),
     tools = [
         "@nvim//file",

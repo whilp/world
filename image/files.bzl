@@ -1,41 +1,42 @@
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 load("@bazel_gazelle//:deps.bzl", "go_repository")
 
 def image_files():
-    native.http_file(
+    http_file(
         name = "nvim",
-        url = "https://github.com/neovim/neovim/releases/download/v0.3.1/nvim.appimage",
+        urls = ["https://github.com/neovim/neovim/releases/download/v0.3.1/nvim.appimage"],
         executable = True,
         sha256 = "ade95e2e2ba025827151c322bf28814f52260dbeafba7cf185d46511eceedbe9",
 	)
 
-    native.http_file(
+    http_file(
         name = "cacert",
-        url = "https://curl.haxx.se/ca/cacert.pem",
+        urls = ["https://curl.haxx.se/ca/cacert.pem"],
         sha256 = "238823cd92d3bcdd67c1c278536d6c282dd6b526ee6ee97efbf00ef31d8c5d79",
     )
 
-    native.http_file(
+    http_file(
         name = "bazel",
-        url = "https://github.com/bazelbuild/bazel/releases/download/0.15.2/bazel-0.15.2-linux-x86_64",
+        urls = ["https://github.com/bazelbuild/bazel/releases/download/0.15.2/bazel-0.15.2-linux-x86_64"],
         sha256 = "3e18f78e194acc5d05968a0c1d7708bd6fb6b99a2bcc1a3cd46e642f51d0a277",
     )
 
+    # For some reason, this does not work w/ the non-native http_file.
     native.http_file(
         name = "docker",
-        url = "https://download.docker.com/linux/ubuntu/dists/bionic/pool/stable/amd64/docker-ce_18.06.0~ce~3-0~ubuntu_amd64.deb",
+        urls = ["https://download.docker.com/linux/ubuntu/dists/bionic/pool/stable/amd64/docker-ce_18.06.0~ce~3-0~ubuntu_amd64.deb"],
         sha256 = "65fa0f3e62312612810dfde4ffec8eba309bf75614f3071b2c7aa7db624d1b96",
     )
 
-    native.new_http_archive(
+    http_archive(
         name = "ripgrep",
-        url = "https://github.com/BurntSushi/ripgrep/releases/download/0.8.1/ripgrep-0.8.1-x86_64-unknown-linux-musl.tar.gz",
+        urls = ["https://github.com/BurntSushi/ripgrep/releases/download/0.8.1/ripgrep-0.8.1-x86_64-unknown-linux-musl.tar.gz"],
         sha256 = "08b1aa1440a23a88c94cff41a860340ecf38e9108817aff30ff778c00c63eb76",
         build_file_content = """exports_files(["rg"])""",
         strip_prefix = "ripgrep-0.8.1-x86_64-unknown-linux-musl/",
     )
 
-    native.new_http_archive(
+    http_archive(
         name = "fzf",
         urls = ["https://github.com/junegunn/fzf-bin/releases/download/0.17.4/fzf-0.17.4-linux_amd64.tgz"],
         build_file_content = """exports_files(["fzf"])""",
@@ -138,38 +139,37 @@ def image_files():
         sha256 = "49dc73300ee63c86e5c11ee4d64a86861f691ffc3cdfcc23337a56ee0df6a924",
 	)
 
-    # go_repository(
-    #     name = "com_github_bazelbuild_buildtools",
-    #     importpath = "github.com/bazelbuild/buildtools",
-    #     urls = ["https://github.com/bazelbuild/buildtools/archive/a90c3a9f00e27973d3e759d17f2e2e7d9702d91b.tar.gz"],
-    #     strip_prefix = "buildtools-a90c3a9f00e27973d3e759d17f2e2e7d9702d91b",
-    #     sha256 = "ea23bbec9e86205b71ef647e1755ae0ec400aa76aeb5d13913d3fc3a37afbb5f",
-    # )
+    go_repository(
+        name = "com_github_bazelbuild_bazel_watcher",
+        importpath = "github.com/bazelbuild/bazel-watcher",
+        urls = ["https://github.com/bazelbuild/bazel-watcher/archive/1e74b9c46bc908cc27e5b1aa2200c4fdee571761.tar.gz"],
+        strip_prefix = "bazel-watcher-1e74b9c46bc908cc27e5b1aa2200c4fdee571761",
+        #sha256 = "49dc73300ee63c86e5c11ee4d64a86861f691ffc3cdfcc23337a56ee0df6a924",
+    )
 
-    # go_repository(
-    #     name = "com_github_bazelbuild_bazel_watcher",
-    #     importpath = "github.com/bazelbuild/bazel-watcher",
-    #     urls = ["https://github.com/bazelbuild/bazel-watcher/archive/1e74b9c46bc908cc27e5b1aa2200c4fdee571761.tar.gz"],
-    #     strip_prefix = "bazel-watcher-1e74b9c46bc908cc27e5b1aa2200c4fdee571761",
-    #     #sha256 = "49dc73300ee63c86e5c11ee4d64a86861f691ffc3cdfcc23337a56ee0df6a924",
-    # )
+    # For ibazel.
+    go_repository(
+        name = "com_github_fsnotify_fsnotify",
+        commit = "7d7316ed6e1ed2de075aab8dfc76de5d158d66e1",
+        importpath = "github.com/fsnotify/fsnotify",
+    )
 
-    # # For ibazel.
-    # go_repository(
-    #     name = "com_github_fsnotify_fsnotify",
-    #     commit = "7d7316ed6e1ed2de075aab8dfc76de5d158d66e1",
-    #     importpath = "github.com/fsnotify/fsnotify",
-    # )
-
-    # # For ibazel.
-    # go_repository(
-    #     name = "com_github_golang_protobuf",
-    #     commit = "130e6b02ab059e7b717a096f397c5b60111cae74",
-    #     importpath = "github.com/golang/protobuf",
-    # )
+    # For ibazel.
+    go_repository(
+        name = "com_github_golang_protobuf",
+        commit = "130e6b02ab059e7b717a096f397c5b60111cae74",
+        importpath = "github.com/golang/protobuf",
+    )
 
     native.http_file(
-        name = "go_1_10_3",
-        url = "https://dl.google.com/go/go1.10.3.linux-amd64.tar.gz"
-        #sha256 = "3e18f78e194acc5d05968a0c1d7708bd6fb6b99a2bcc1a3cd46e642f51d0a277",
+        name = "org_golang_go",
+        urls = ["https://dl.google.com/go/go1.10.3.linux-amd64.tar.gz"],
+        sha256 = "fa1b0e45d3b647c252f51f5e1204aba049cde4af177ef9f2181f43004f901035",
+    )
+
+    http_archive(
+        name = "io_bazel",
+        urls = ["https://github.com/bazelbuild/bazel/archive/c535ac28697d49f436a70f3aa7f1d1e938db5d3c.tar.gz"],
+        strip_prefix = "bazel-c535ac28697d49f436a70f3aa7f1d1e938db5d3c",
+        sha256 = "011d35e28f0953685a42ca4fc1513dfb7301675c269df50d79ae8318b90c5f08",
     )
