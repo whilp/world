@@ -4,7 +4,9 @@ load(
     "@io_bazel_rules_docker//container:container.bzl",
     "container_image",
 )
+load("@subpar//:subpar.bzl", "par_binary")
 load("@python//:requirements.bzl", "requirement")
+load("@io_bazel_rules_docker//python3:image.bzl", "py3_image")
 
 # NOTE: :image must be built/run separately. We cannot use it
 # as data here because this target is expected to be built/run
@@ -83,11 +85,12 @@ pkg_tar(
         "@com_github_bazelbuild_buildtools//buildozer": "buildozer",
         #"@com_github_bazelbuild_bazel_watcher//ibazel": "ibazel",
         "@bazel_gazelle//cmd/gazelle": "gazelle",
+        ":black.par": "black",
     },
     mode = "0755",
     package_dir = "/usr/bin",
     symlinks = {
-        "./usr/bin/python": "python2.7",
+        "./usr/bin/python": "python3.6",
         "./bin/nc": "nc.openbsd",
     },
 )
@@ -101,6 +104,19 @@ pkg_tar(
         "./usr/local/bin/gofmt": "../go/bin/gofmt",
     },
     deps = ["@org_golang_go//file"],
+)
+
+par_binary(
+    name = "black",
+    srcs = ["black.py"],
+    zip_safe = False,
+    deps = [
+        requirement("black"),
+        requirement("click"),
+        requirement("attrs"),
+        requirement("appdirs"),
+        requirement("toml"),
+    ],
 )
 
 genrule(
