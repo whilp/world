@@ -1,1 +1,4 @@
 build --workspace_status_command=tools/workspace_status.sh
+#build --force_python=PY3
+#build --python_path=python3
+#build --python_top=PY3
