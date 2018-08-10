@@ -16,13 +16,13 @@ setup_linux() {
 }
 
 setup_osx() {
-	brew update
+	brew update >/dev/null
 	brew install openssl readline
-	brew outdated pyenv || brew upgrade pyenv
+	brew outdated pyenv >/dev/null || brew upgrade pyenv
 	pyenv install "$PYTHON"
 	export PYENV_VERSION=$PYTHON
-	export PATH="$HOME/.pyenv/shims:${PATH}"
 
+	command -v python
 	python -m pip install -U pip
 	python -m easy_install -U setuptools
 	return 0

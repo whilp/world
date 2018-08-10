@@ -3,6 +3,7 @@
 set -euo pipefail
 
 main() {
+	command -v python
 	bazel \
 		--output_base=$"HOME/.cache/bazel" \
 		--host_jvm_args=-Xmx500m \
