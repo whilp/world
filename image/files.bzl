@@ -173,3 +173,22 @@ def image_files():
         strip_prefix = "bazel-c535ac28697d49f436a70f3aa7f1d1e938db5d3c",
         urls = ["https://github.com/bazelbuild/bazel/archive/c535ac28697d49f436a70f3aa7f1d1e938db5d3c.tar.gz"],
     )
+
+    http_archive(
+        name = "org_llvm_clang",
+        build_file_content = clang_build_file(),
+        sha256 = "7ea204ecd78c39154d72dfc0d4a79f7cce1b2264da2551bb2eef10e266d54d91",
+        strip_prefix = "clang+llvm-6.0.1-x86_64-linux-gnu-ubuntu-16.04",
+        urls = ["http://releases.llvm.org/6.0.1/clang+llvm-6.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz"],
+    )
+
+def clang_build_file():
+    return """
+load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
+pkg_tar(
+    name = "tar",
+    srcs = glob(["**/**"]),
+    strip_prefix = ".",
+    visibility = ["//visibility:public"],
+)
+"""
