@@ -38,6 +38,7 @@ pkg_tar(
         "@vim_signify//:tar",
         "@vim_sneak//:tar",
         "@vim_surround//:tar",
+        "@vim_unblevable_quick_scope//:tar",
         "@vim_unimpaired//:tar",
     ],
 )

@@ -194,3 +194,11 @@ def nvim_files():
         repo = "vim-json",
         #sha256 = "5d2cf4284d0e9db541ced130d403fb43080bc66e6a916186992405e18c4951c6",
     )
+
+    _github_tar(
+        name = "vim_unblevable_quick_scope",
+        owner = "unblevable",
+        ref = "e5501709e1d9cfc2b7e854e8fcffdef255658335",
+        repo = "quick-scope",
+        #sha256 = "5d2cf4284d0e9db541ced130d403fb43080bc66e6a916186992405e18c4951c6",
+    )
