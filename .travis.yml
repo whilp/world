@@ -1,0 +1,17 @@
+# trusty beta image has jdk8, gcc4.8.4
+dist: trusty
+sudo: required
+# xcode8 has jdk8
+osx_image: xcode8.3
+# Not technically required but suppresses 'Ruby' in Job status message.
+language: java
+
+os:
+  - linux
+  - osx
+
+before_install:
+  - ./tools/get-bazel.sh "${TRAVIS_OS_NAME}"
+
+script:
+  - ./tools/run-bazel.sh //...

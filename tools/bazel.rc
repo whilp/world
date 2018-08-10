@@ -1,4 +1,15 @@
 build --workspace_status_command=tools/workspace_status.sh
+
+build:check --all_incompatible_changes
+
+common:ci --color=no
+build:ci --verbose_failures
+build:ci --sandbox_debug
+build:ci --spawn_strategy=standalone
+build:ci --genrule_strategy=standalone
+test:ci --test_strategy=standalone
+test:ci --test_output=errors
+
 #build --force_python=PY3
 #build --python_path=python3
 #build --python_top=PY3
