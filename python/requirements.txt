@@ -1,6 +1,13 @@
 six
+# https://gitlab.com/pycqa/flake8/issues/406
+git+https://gitlab.com/pycqa/flake8.git@9631dac52aa6ed8a3de9d0983c3c7b0267ae7d6d#egg=flake8
 black
 click>=6.5
 attrs>=17.4.0
 appdirs
 toml>=0.9.4
+pyflakes>=2.0.0,<2.1.0
+pycodestyle>=2.4.0,<2.5.0
+mccabe>=0.6.0,<0.7.0
+setuptools>=30
+

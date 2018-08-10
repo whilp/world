@@ -86,6 +86,7 @@ pkg_tar(
         #"@com_github_bazelbuild_bazel_watcher//ibazel": "ibazel",
         "@bazel_gazelle//cmd/gazelle": "gazelle",
         ":black.par": "black",
+        ":flake8.par": "flake8",
     },
     mode = "0755",
     package_dir = "/usr/bin",
@@ -104,6 +105,18 @@ pkg_tar(
         "./usr/local/bin/gofmt": "../go/bin/gofmt",
     },
     deps = ["@org_golang_go//file"],
+)
+
+par_binary(
+    name = "flake8",
+    srcs = ["flake8.py"],
+    deps = [
+        requirement("flake8"),
+        requirement("pyflakes"),
+        requirement("pycodestyle"),
+        requirement("mccabe"),
+        requirement("setuptools"),
+    ],
 )
 
 par_binary(
