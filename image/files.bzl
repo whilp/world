@@ -182,6 +182,21 @@ def image_files():
         urls = ["http://releases.llvm.org/6.0.1/clang+llvm-6.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz"],
     )
 
+    http_archive(
+        name = "shellcheck",
+        #build_file_content = shellcheck_build_file("0.5.0"),
+        build_file_content = """exports_files(["shellcheck"])""",
+        sha256 = "7d4c073a0342cf39bdb99c32b4749f1c022cf2cffdfb080c12c106aa9d341708",
+        strip_prefix = "shellcheck-v0.5.0",
+        urls = ["https://shellcheck.storage.googleapis.com/shellcheck-v0.5.0.linux.x86_64.tar.xz"],
+    )
+
+    http_file(
+        name = "shfmt",
+        sha256 = "37fd1f66d7bf9c48130bbc50a3747750c6e3b202c404ca4a5941f81b9efd9b97",
+        urls = ["https://github.com/mvdan/sh/releases/download/v2.5.1/shfmt_v2.5.1_linux_amd64"],
+    )
+
 def clang_build_file():
     return """
 load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")

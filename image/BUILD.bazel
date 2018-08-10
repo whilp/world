@@ -67,9 +67,11 @@ pkg_tar(
     srcs = [
         "@fzf",
         "@ripgrep//:rg",
+        "@shellcheck",
     ],
     files = {
         "@bazel//file": "bazel",
+        "@shfmt//file": "shfmt",
         "@org_golang_x_tools//cmd/goimports": "goimports",
         "@com_github_jstemmer_gotags//:gotags": "gotags",
         "@com_github_nsf_gocode//:gocode": "gocode",
