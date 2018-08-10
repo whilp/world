@@ -1,20 +1,23 @@
 dotfiles
 ========
 
-[whilp/home](https://hub.docker.com/r/whilp/home/) on hub.docker.com.
+My dotfiles as a docker container.
 
+```bash
+# Build and load the container. 
+bazel run image
+
+# Run it.
+./image/run.sh
 ```
-docker run -v /var/run/docker.sock:/var/run/docker.sock --rm -it whilp/home /usr/bin/emacs -nw
+
+The container can build itself. Other linux systems can likely build it, too, though MacOSX cannot (see limitations). The colorscheme used here also works well with [kitty](https://github.com/kovidgoyal/kitty), which can toggle among schemes like:
+
+```bash
+kitty @ set-colors ~/.config/kitty/dark.conf
 ```
 
-TODO
-----
+Limitations
+-----------
 
--	magit hub not present
--	make a vaultproject.io container
--	extend envcrypt to talk to vault
--	add apks
-	-	clojure
-	-	lein
-	-	racket
-	-	scala
+1.	The neovim installation currently requires linux to convert its AppImage to a tar file.
