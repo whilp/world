@@ -197,6 +197,12 @@ def image_files():
         urls = ["https://github.com/mvdan/sh/releases/download/v2.5.1/shfmt_v2.5.1_linux_amd64"],
     )
 
+    go_repository(
+        name = "com_github_shurcooL_markdownfmt",
+        commit = "5ba28a0bf0048ea9b00cecd23688dcf6cfb23fe5",
+        importpath = "github.com/shurcooL/markdowmfmt",
+    )
+
 def clang_build_file():
     return """
 load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")

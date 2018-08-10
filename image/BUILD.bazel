@@ -87,6 +87,7 @@ pkg_tar(
         "@com_github_bazelbuild_buildtools//buildozer": "buildozer",
         #"@com_github_bazelbuild_bazel_watcher//ibazel": "ibazel",
         "@bazel_gazelle//cmd/gazelle": "gazelle",
+        "@com_github_shurcooL_markdownfmt//:markdownfmt": "markdownfmt",
         ":black.par": "black",
         ":flake8.par": "flake8",
     },
