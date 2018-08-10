@@ -36,12 +36,21 @@ check() {
 	linux) want="bdef5499ea21baa69e707391b463105b32c4a2fbf1ab045da53f4023c1a033be" ;;
 	esac
 
-	got_fields=$(sha256sum "$out")
-	got="${got_fields%% *}"
+	got=$(checksum "$out")
 	if [ "$want" != "$got" ]; then
 		echo "wanted SHA256 $want but got $got"
 		return 1
 	fi
+	return 0
+}
+
+checksum() {
+	got_fields=$(sha256sum "$out" 2>/dev/null || true)
+	if [ -z "$got_fields" ]; then
+		got_fields=$(shasum -a 256 "$out" 2>/dev/null || true)
+	fi
+	got="${got_fields%% *}"
+	echo "$got"
 	return 0
 }
 
