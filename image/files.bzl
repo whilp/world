@@ -200,7 +200,37 @@ def image_files():
     go_repository(
         name = "com_github_shurcooL_markdownfmt",
         commit = "5ba28a0bf0048ea9b00cecd23688dcf6cfb23fe5",
-        importpath = "github.com/shurcooL/markdowmfmt",
+        importpath = "github.com/shurcooL/markdownfmt",
+    )
+
+    go_repository(
+        name = "com_github_shurcool_go",
+        commit = "9e1955d9fb6e1ee2345ba1f5e71669263e719e27",
+        importpath = "github.com/shurcooL/go",
+    )
+
+    go_repository(
+        name = "com_github_russross_blackfriday",
+        commit = "46c73eb196baff5bb07288f245b223bd1a30fba6",
+        importpath = "github.com/russross/blackfriday",
+    )
+
+    go_repository(
+        name = "com_github_mattn_go_runewidth",
+        commit = "ce7b0b5c7b45a81508558cd1dba6bb1e4ddb51bb",
+        importpath = "github.com/mattn/go-runewidth",
+    )
+
+    go_repository(
+        name = "org_golang_x_crypto",
+        commit = "de0752318171da717af4ce24d0a2e8626afaeb11",
+        importpath = "golang.org/x/crypto",
+    )
+
+    go_repository(
+        name = "org_golang_x_sys",
+        commit = "f0d5e33068cb57c22a181f5df0ffda885309eb5a",
+        importpath = "golang.org/x/sys",
     )
 
 def clang_build_file():

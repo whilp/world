@@ -170,3 +170,27 @@ def nvim_files():
         repo = "vim-airline-themes",
         sha256 = "1c41f5ea66df7bffe7692540ce7b6eb9d9bacec0d474538dccc14a67b551c850",
     )
+
+    _github_tar(
+        name = "vim_godlygeek_tabular",
+        owner = "godlygeek",
+        ref = "00e1e7fcdbc6d753e0bc8043e0d2546fa81bf367",
+        repo = "tabular",
+        sha256 = "94155b7bcf892d1ed6eda6c125706d2f290b6cfdea4bdbac7b2db480aad79619",
+    )
+
+    _github_tar(
+        name = "vim_plasticboy_vim_markdown",
+        owner = "plasticboy",
+        ref = "f19506b1bfe5e60c39581dd53f6913a09385f5dd",
+        repo = "vim-markdown",
+        sha256 = "5d2cf4284d0e9db541ced130d403fb43080bc66e6a916186992405e18c4951c6",
+    )
+
+    _github_tar(
+        name = "vim_elzr_vim_json",
+        owner = "elzr",
+        ref = "3727f089410e23ae113be6222e8a08dd2613ecf2",
+        repo = "vim-json",
+        #sha256 = "5d2cf4284d0e9db541ced130d403fb43080bc66e6a916186992405e18c4951c6",
+    )

@@ -7,6 +7,7 @@ let g:airline_theme="base16_solarized"
 
 set autoindent
 set autoread
+set conceallevel=2
 set backspace=indent,eol,start
 set background=dark
 set expandtab
@@ -89,7 +90,8 @@ let g:ClipperAuto=0
 let g:ale_fix_on_save = 1
 
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-set background=light
+
+let g:vim_markdown_no_extensions_in_markdown = 1
 
 packloadall
 sil helptags ALL
