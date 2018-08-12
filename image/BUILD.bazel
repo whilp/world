@@ -122,6 +122,7 @@ par_binary(
         requirement("pycodestyle"),
         requirement("mccabe"),
         requirement("setuptools"),
+        requirement("configparser"),
     ],
 )
 
