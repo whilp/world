@@ -67,7 +67,7 @@ command! -bang -nargs=* Rg
             \   <bang>0 ? fzf#vim#with_preview('up:60%')
             \           : fzf#vim#with_preview('right:50%:hidden', '?'),
             \   <bang>0)
-let $FZF_DEFAULT_COMMAND = 'rg --files --smart-case'
+let $FZF_DEFAULT_COMMAND = 'rg --hidden --files --smart-case'
 
 " https://github.com/nicodebo/base16-fzf/blob/master/bash/base16-solarized-dark.config
 let $FZF_DEFAULT_OPTS = '--color=bg+:#073642,bg:#002b36,spinner:#2aa198,hl:#268bd2
@@ -92,6 +92,9 @@ let g:ale_fix_on_save = 1
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 
 let g:vim_markdown_no_extensions_in_markdown = 1
+
+" TODO: tab completion doesn't seem to care about this.
+let &cdpath = join(["", ""] + systemlist("~/bin/cdpath"), ",")
 
 packloadall
 sil helptags ALL

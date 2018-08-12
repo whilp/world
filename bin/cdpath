@@ -1,0 +1,13 @@
+#!/bin/bash
+
+set -euo pipefail
+
+main() {
+	ls -d /src/*/*/{*/.git,.git} |
+		xargs dirname |
+		xargs dirname |
+		sort -u
+}
+
+main "$@"
+exit $?
