@@ -25,6 +25,7 @@ clean() {
 	#kill -9 "$clipper_pid"
 	true
 }
+
 trap clean EXIT
 
 main "$@"

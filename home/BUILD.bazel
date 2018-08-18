@@ -2,6 +2,10 @@ load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
 
 pkg_tar(
     name = "tar",
+    files = {
+        "//bin:cdpath": "./bin/cdpath",
+        "//cmd/wormhole": "./bin/wormhole",
+    },
     mode = "0600",
     package_dir = "/home/me",
     symlinks = {

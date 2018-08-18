@@ -96,5 +96,23 @@ let g:vim_markdown_no_extensions_in_markdown = 1
 " TODO: tab completion doesn't seem to care about this.
 let &cdpath = join(["", ""] + systemlist("~/bin/cdpath"), ",")
 
+function! Wormhole()
+  if v:event["regname"] != "w"
+    return
+  en
+  let job = jobstart("wormhole")
+  chansend(job, v:event["regcontents"])
+endfunction
+
+augroup vimrc
+  autocmd!
+  au TextYankPost * call Wormhole()
+augroup END
+" au TextYankPost * let g:foo = deepcopy(v:event)
+" operator
+" regcontents
+" regname
+" regtype
+
 packloadall
 sil helptags ALL

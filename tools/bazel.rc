@@ -10,6 +10,6 @@ build:ci --genrule_strategy=standalone
 test:ci --test_strategy=standalone
 test:ci --test_output=errors
 
-#build --force_python=PY3
-#build --python_path=python3
-#build --python_top=PY3
+build --force_python=PY3
+build --python_path=tools/python3.sh
+build --python_top=//tools:python3
