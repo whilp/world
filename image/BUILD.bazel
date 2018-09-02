@@ -26,7 +26,6 @@ sh_binary(
 container_image(
     name = "image",
     base = "@ubuntu//image",
-    #entrypoint = "/usr/bin/nvim",
     cmd = [
         "/usr/sbin/sshd",
         "-D",
@@ -40,8 +39,7 @@ container_image(
     ports = ["22"],
     tars = [
         "//home:tar",
-        ":etc_ssl_certs",
-        ":etc_apt",
+        ":etc",
         ":usr_bin",
         ":usr_local",
     ],
@@ -49,21 +47,13 @@ container_image(
 )
 
 pkg_tar(
-    name = "etc_ssl_certs",
+    name = "etc",
     files = {
-        "@cacert//file": "ca-certificates.crt",
+        "@cacert//file": "/etc/ssl/certs/ca-certificates.crt",
+        # https://bugs.launchpad.net/ubuntu/+source/apt/+bug/1577926
+        "apt.conf": "/etc/apt/apt.conf",
     },
-    package_dir = "/etc/ssl/certs",
-)
-
-# https://bugs.launchpad.net/ubuntu/+source/apt/+bug/1577926
-pkg_tar(
-    name = "etc_apt",
-    srcs = [
-        "apt.conf",
-    ],
-    mode = "0644",
-    package_dir = "/etc/apt",
+    package_dir = "/etc",
 )
 
 pkg_tar(
