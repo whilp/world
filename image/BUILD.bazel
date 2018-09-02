@@ -26,13 +26,18 @@ sh_binary(
 container_image(
     name = "image",
     base = "@ubuntu//image",
+    #entrypoint = "/usr/bin/nvim",
+    cmd = [
+        "/usr/sbin/sshd",
+        "-D",
+    ],
     debs = image_package_files() + ["@docker//file"],
-    entrypoint = "/usr/bin/nvim",
     env = {
         "HOME": "/home/me",
     },
     # Force rebuild when we observe new packages.
     files = ["//image:debs.bzl"],
+    ports = ["22"],
     tars = [
         "//home:tar",
         ":etc_ssl_certs",

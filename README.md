@@ -16,8 +16,3 @@ The container can build itself. Other linux systems can likely build it, too, th
 ```bash
 kitty @ set-colors ~/.config/kitty/dark.conf
 ```
-
-Limitations
------------
-
-1.	The neovim installation currently requires linux to convert its AppImage to a tar file.

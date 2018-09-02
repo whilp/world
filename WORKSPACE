@@ -1,7 +1,4 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
-load("//deps:containerregistry.bzl", containerregistry = "repositories")
-
-containerregistry()
 
 # GO {{{1
 http_archive(
@@ -42,9 +39,9 @@ buildifier_dependencies()
 # DOCKER {{{1
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "27bd1005b09cdaf9f700defc8b36b4b9e3687cb5a89430f9df24935e8e6abfb5",
-    strip_prefix = "rules_docker-b4ff8d3e82f944789f9c4d19f4b96ff21774d7e5",
-    urls = ["https://github.com/bazelbuild/rules_docker/archive/b4ff8d3e82f944789f9c4d19f4b96ff21774d7e5.tar.gz"],
+    #sha256 = "27bd1005b09cdaf9f700defc8b36b4b9e3687cb5a89430f9df24935e8e6abfb5",
+    strip_prefix = "rules_docker-3a1826eab6a1a8707675c519167a40c4e2a1720e",
+    urls = ["https://github.com/bazelbuild/rules_docker/archive/3a1826eab6a1a8707675c519167a40c4e2a1720e.tar.gz"],
 )
 
 load(

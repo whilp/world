@@ -77,6 +77,8 @@ let $FZF_DEFAULT_OPTS = '--color=bg+:#073642,bg:#002b36,spinner:#2aa198,hl:#268b
 " https://sw.kovidgoyal.net/kitty/faq.html#using-a-color-theme-with-a-background-color-does-not-work-well-in-vim
 let &t_ut=''
 
+let $BAZEL_PYTHON = "/usr/bin/python2.7"
+
 let g:mucomplete#enable_auto_at_startup = 1
 let g:mucomplete#delayed_completion = 1
 let g:signify_disable_by_default = 1

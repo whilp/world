@@ -2,7 +2,7 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file"
 load("@bazel_gazelle//:deps.bzl", "go_repository")
 
 def image_files():
-    http_file(
+    native.http_file(
         name = "nvim",
         sha256 = "471ea13e68898ce9f1ccf1b16a1934e19e24daf05ccd73f3fb08432f887067b9",
         # upstream: https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz
