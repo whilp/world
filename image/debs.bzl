@@ -587,7 +587,7 @@ def image_packages():
 
     native.http_file(
         name = "ubuntu_libxml2",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/libx/libxml2/libxml2_2.9.4+dfsg1-6.1ubuntu1_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/libx/libxml2/libxml2_2.9.4+dfsg1-6.1ubuntu1.2_amd64.deb",
     )
 
     native.http_file(
@@ -597,7 +597,7 @@ def image_packages():
 
     native.http_file(
         name = "ubuntu_linux_libc_dev",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux-libc-dev_4.15.0-29.31_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux-libc-dev_4.15.0-32.35_amd64.deb",
     )
 
     native.http_file(
@@ -631,6 +631,11 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_netcat_openbsd",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/n/netcat-openbsd/netcat-openbsd_1.187-1ubuntu0.1_amd64.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_openssh_client",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/o/openssh/openssh-client_7.6p1-4_amd64.deb",
     )
@@ -648,11 +653,6 @@ def image_packages():
     native.http_file(
         name = "ubuntu_perl",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/p/perl/perl_5.26.1-6ubuntu0.2_amd64.deb",
-    )
-
-    native.http_file(
-        name = "ubuntu_perl_base",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/perl/perl-base_5.26.1-6ubuntu0.2_amd64.deb",
     )
 
     native.http_file(
@@ -904,11 +904,11 @@ def image_package_files():
         '@ubuntu_mime_support//file',
         '@ubuntu_multiarch_support//file',
         '@ubuntu_netbase//file',
+        '@ubuntu_netcat_openbsd//file',
         '@ubuntu_openssh_client//file',
         '@ubuntu_openssl//file',
         '@ubuntu_patch//file',
         '@ubuntu_perl//file',
-        '@ubuntu_perl_base//file',
         '@ubuntu_perl_modules_5_26//file',
         '@ubuntu_pinentry_curses//file',
         '@ubuntu_pkg_config//file',

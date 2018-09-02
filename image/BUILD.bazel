@@ -35,7 +35,6 @@ container_image(
     files = ["//image:debs.bzl"],
     tars = [
         "//home:tar",
-        ":nvim",
         ":etc_ssl_certs",
         ":etc_apt",
         ":usr_bin",
@@ -85,6 +84,7 @@ pkg_tar(
         "@com_github_zmb3_gogetdoc//:gogetdoc": "gogetdoc",
         "@com_github_bazelbuild_buildtools//buildifier": "buildifier",
         "@com_github_bazelbuild_buildtools//buildozer": "buildozer",
+        # TODO
         #"@com_github_bazelbuild_bazel_watcher//ibazel": "ibazel",
         "@bazel_gazelle//cmd/gazelle": "gazelle",
         "@com_github_shurcooL_markdownfmt//:markdownfmt": "markdownfmt",
@@ -108,6 +108,7 @@ pkg_tar(
         "./usr/local/bin/gofmt": "../go/bin/gofmt",
     },
     deps = [
+        "@nvim//file",
         "@org_golang_go//file",
         "@org_llvm_clang//:tar",
     ],
@@ -136,19 +137,5 @@ par_binary(
         requirement("attrs"),
         requirement("appdirs"),
         requirement("toml"),
-    ],
-)
-
-genrule(
-    name = "nvim",
-    outs = ["nvim.tar"],
-    cmd = (
-        "$(location @nvim//file) --appimage-extract >/dev/null 2>&1 " +
-        "&& mkdir clean " +
-        "&& mv squashfs-root/usr clean/usr " +
-        "&& tar -C clean --sort=name --mtime='2018-01-01 00:00Z' --owner=0 --group=0 --numeric-owner -cf $@ ."
-    ),
-    tools = [
-        "@nvim//file",
     ],
 )

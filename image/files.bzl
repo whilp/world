@@ -4,9 +4,9 @@ load("@bazel_gazelle//:deps.bzl", "go_repository")
 def image_files():
     http_file(
         name = "nvim",
-        executable = True,
-        sha256 = "ade95e2e2ba025827151c322bf28814f52260dbeafba7cf185d46511eceedbe9",
-        urls = ["https://github.com/neovim/neovim/releases/download/v0.3.1/nvim.appimage"],
+        sha256 = "471ea13e68898ce9f1ccf1b16a1934e19e24daf05ccd73f3fb08432f887067b9",
+        # upstream: https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz
+        urls = ["https://github.com/whilp/dotfiles/releases/download/2018.08.18/nvim-linux64.tar.gz"],
     )
 
     http_file(

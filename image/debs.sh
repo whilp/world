@@ -3,7 +3,7 @@
 set -euo pipefail
 
 docker run --rm -ti ubuntu:18.04 /bin/bash -c \
-    "apt-get update \
+	"apt-get update \
     && apt-get install --print-uris \
     libltdl7 \
     git \
@@ -17,6 +17,7 @@ docker run --rm -ti ubuntu:18.04 /bin/bash -c \
     python3 \
     python3-setuptools \
     python3-dev \
+    python3-venv \
     curl \
-    " \
-    | python image/debs.py > image/debs.bzl
+    " |
+	python image/debs.py >image/debs.bzl
