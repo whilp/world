@@ -1,0 +1,7 @@
+ChallengeResponseAuthentication no
+PasswordAuthentication no
+PermitRootLogin yes
+ChallengeResponseAuthentication no
+AcceptEnv LANG LC_*
+Subsystem	sftp	/usr/lib/openssh/sftp-server
+AuthorizedKeysFile .ssh/authorized_keys
