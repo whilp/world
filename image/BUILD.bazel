@@ -49,9 +49,10 @@ container_image(
 pkg_tar(
     name = "etc",
     files = {
-        "@cacert//file": "/etc/ssl/certs/ca-certificates.crt",
+        "@cacert//file": "./ssl/certs/ca-certificates.crt",
         # https://bugs.launchpad.net/ubuntu/+source/apt/+bug/1577926
-        "apt.conf": "/etc/apt/apt.conf",
+        "apt.conf": "./apt/apt.conf",
+        "sshd_config": "./ssh/sshd_config",
     },
     package_dir = "/etc",
 )
