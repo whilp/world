@@ -19,5 +19,6 @@ docker run --rm -ti ubuntu:18.04 /bin/bash -c \
     python3-dev \
     python3-venv \
     curl \
+    openssh-server \
     " |
 	python image/debs.py >image/debs.bzl

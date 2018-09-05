@@ -41,6 +41,11 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_dbus",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/d/dbus/dbus_1.12.2-1ubuntu1_amd64.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_dh_python",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/d/dh-python/dh-python_3.20180325ubuntu2_all.deb",
     )
@@ -48,6 +53,11 @@ def image_packages():
     native.http_file(
         name = "ubuntu_dirmngr",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gnupg2/dirmngr_2.2.4-1ubuntu1.1_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_dmsetup",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/l/lvm2/dmsetup_1.02.145-4.1ubuntu3_amd64.deb",
     )
 
     native.http_file(
@@ -88,6 +98,11 @@ def image_packages():
     native.http_file(
         name = "ubuntu_gcc_7_base",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/gcc-7-base_7.3.0-16ubuntu3_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_gir1_2_glib_2_0",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gobject-introspection/gir1.2-glib-2.0_1.56.1-1_amd64.deb",
     )
 
     native.http_file(
@@ -171,6 +186,16 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_libapparmor1",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/a/apparmor/libapparmor1_2.12-4ubuntu5_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_libargon2_0",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/a/argon2/libargon2-0_0~20161029-1.1_amd64.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_libasan4",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/libasan4_7.3.0-16ubuntu3_amd64.deb",
     )
@@ -211,6 +236,11 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_libcap2",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/libc/libcap2/libcap2_2.25-1.2_amd64.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_libcc1_0",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libcc1-0_8-20180414-1ubuntu2_amd64.deb",
     )
@@ -221,6 +251,11 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_libcryptsetup12",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/c/cryptsetup/libcryptsetup12_2.0.2-1ubuntu1_amd64.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_libcurl3_gnutls",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/c/curl/libcurl3-gnutls_7.58.0-2ubuntu3.2_amd64.deb",
     )
@@ -228,6 +263,16 @@ def image_packages():
     native.http_file(
         name = "ubuntu_libcurl4",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/c/curl/libcurl4_7.58.0-2ubuntu3.2_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_libdbus_1_3",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/d/dbus/libdbus-1-3_1.12.2-1ubuntu1_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_libdevmapper1_02_1",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/l/lvm2/libdevmapper1.02.1_1.02.145-4.1ubuntu3_amd64.deb",
     )
 
     native.http_file(
@@ -281,6 +326,11 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_libgirepository_1_0_1",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gobject-introspection/libgirepository-1.0-1_1.56.1-1_amd64.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_libglib2_0_0",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/g/glib2.0/libglib2.0-0_2.56.1-2ubuntu1_amd64.deb",
     )
@@ -331,6 +381,16 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_libidn11",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/libi/libidn/libidn11_1.33-2.1ubuntu1_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_libip4tc0",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/i/iptables/libip4tc0_1.6.1-2ubuntu2_amd64.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_libisl19",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/i/isl/libisl19_0.19-1_amd64.deb",
     )
@@ -341,6 +401,11 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_libjson_c3",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/j/json-c/libjson-c3_0.12.1-1.3_amd64.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_libk5crypto3",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/k/krb5/libk5crypto3_1.16-2build1_amd64.deb",
     )
@@ -348,6 +413,11 @@ def image_packages():
     native.http_file(
         name = "ubuntu_libkeyutils1",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/k/keyutils/libkeyutils1_1.5.9-9.2ubuntu2_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_libkmod2",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/k/kmod/libkmod2_24-1ubuntu3_amd64.deb",
     )
 
     native.http_file(
@@ -433,6 +503,16 @@ def image_packages():
     native.http_file(
         name = "ubuntu_libnpth0",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/n/npth/libnpth0_1.5-3_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_libnss_systemd",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/s/systemd/libnss-systemd_237-3ubuntu10.3_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_libpam_systemd",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/s/systemd/libpam-systemd_237-3ubuntu10.3_amd64.deb",
     )
 
     native.http_file(
@@ -556,13 +636,18 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_libwrap0",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/t/tcp-wrappers/libwrap0_7.6.q-27_amd64.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_libx11_6",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/libx/libx11/libx11-6_1.6.4-3_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/libx/libx11/libx11-6_1.6.4-3ubuntu0.1_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_libx11_data",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/libx/libx11/libx11-data_1.6.4-3_all.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/libx/libx11/libx11-data_1.6.4-3ubuntu0.1_all.deb",
     )
 
     native.http_file(
@@ -597,7 +682,7 @@ def image_packages():
 
     native.http_file(
         name = "ubuntu_linux_libc_dev",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux-libc-dev_4.15.0-32.35_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux-libc-dev_4.15.0-33.36_amd64.deb",
     )
 
     native.http_file(
@@ -626,6 +711,11 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_ncurses_term",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/n/ncurses/ncurses-term_6.1-1ubuntu1.18.04_all.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_netbase",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/n/netbase/netbase_5.4_all.deb",
     )
@@ -636,8 +726,23 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_networkd_dispatcher",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/n/networkd-dispatcher/networkd-dispatcher_1.7-0ubuntu3.2_all.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_openssh_client",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/o/openssh/openssh-client_7.6p1-4_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_openssh_server",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/o/openssh/openssh-server_7.6p1-4_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_openssh_sftp_server",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/o/openssh/openssh-sftp-server_7.6p1-4_amd64.deb",
     )
 
     native.http_file(
@@ -706,6 +811,26 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_python3_6_venv",
+        url = "http://archive.ubuntu.com/ubuntu/pool/universe/p/python3.6/python3.6-venv_3.6.5-3_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_python3_certifi",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python-certifi/python3-certifi_2018.1.18-2_all.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_python3_chardet",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/c/chardet/python3-chardet_3.0.4-1_all.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_python3_dbus",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/d/dbus-python/python3-dbus_1.2.6-1_amd64.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_python3_dev",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3-defaults/python3-dev_3.6.5-3ubuntu1_amd64.deb",
     )
@@ -713,6 +838,16 @@ def image_packages():
     native.http_file(
         name = "ubuntu_python3_distutils",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3-stdlib-extensions/python3-distutils_3.6.5-3_all.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_python3_gi",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/pygobject/python3-gi_3.26.1-2_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_python3_idna",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python-idna/python3-idna_2.6-1_all.deb",
     )
 
     native.http_file(
@@ -731,8 +866,33 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_python3_requests",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/r/requests/python3-requests_2.18.4-2_all.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_python3_setuptools",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python-setuptools/python3-setuptools_39.0.1-2_all.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_python3_six",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/s/six/python3-six_1.11.0-2_all.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_python3_urllib3",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python-urllib3/python3-urllib3_1.22-1_all.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_python3_venv",
+        url = "http://archive.ubuntu.com/ubuntu/pool/universe/p/python3-defaults/python3-venv_3.6.5-3ubuntu1_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_python_pip_whl",
+        url = "http://archive.ubuntu.com/ubuntu/pool/universe/p/python-pip/python-pip-whl_9.0.1-2.3~ubuntu1_all.deb",
     )
 
     native.http_file(
@@ -746,8 +906,33 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_ssh_import_id",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/s/ssh-import-id/ssh-import-id_5.7-0ubuntu1.1_all.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_systemd",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/s/systemd/systemd_237-3ubuntu10.3_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_systemd_sysv",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/s/systemd/systemd-sysv_237-3ubuntu10.3_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_ucf",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/u/ucf/ucf_3.0038_all.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_unzip",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/u/unzip/unzip_6.0-21ubuntu1_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_wget",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/w/wget/wget_1.19.4-1ubuntu2.1_amd64.deb",
     )
 
     native.http_file(
@@ -786,8 +971,10 @@ def image_package_files():
         '@ubuntu_cpp//file',
         '@ubuntu_cpp_7//file',
         '@ubuntu_curl//file',
+        '@ubuntu_dbus//file',
         '@ubuntu_dh_python//file',
         '@ubuntu_dirmngr//file',
+        '@ubuntu_dmsetup//file',
         '@ubuntu_dpkg_dev//file',
         '@ubuntu_fakeroot//file',
         '@ubuntu_file//file',
@@ -796,6 +983,7 @@ def image_package_files():
         '@ubuntu_gcc//file',
         '@ubuntu_gcc_7//file',
         '@ubuntu_gcc_7_base//file',
+        '@ubuntu_gir1_2_glib_2_0//file',
         '@ubuntu_git//file',
         '@ubuntu_git_man//file',
         '@ubuntu_gnupg//file',
@@ -812,6 +1000,8 @@ def image_package_files():
         '@ubuntu_libalgorithm_diff_perl//file',
         '@ubuntu_libalgorithm_diff_xs_perl//file',
         '@ubuntu_libalgorithm_merge_perl//file',
+        '@ubuntu_libapparmor1//file',
+        '@ubuntu_libargon2_0//file',
         '@ubuntu_libasan4//file',
         '@ubuntu_libasn1_8_heimdal//file',
         '@ubuntu_libassuan0//file',
@@ -820,10 +1010,14 @@ def image_package_files():
         '@ubuntu_libbsd0//file',
         '@ubuntu_libc6_dev//file',
         '@ubuntu_libc_dev_bin//file',
+        '@ubuntu_libcap2//file',
         '@ubuntu_libcc1_0//file',
         '@ubuntu_libcilkrts5//file',
+        '@ubuntu_libcryptsetup12//file',
         '@ubuntu_libcurl3_gnutls//file',
         '@ubuntu_libcurl4//file',
+        '@ubuntu_libdbus_1_3//file',
+        '@ubuntu_libdevmapper1_02_1//file',
         '@ubuntu_libdpkg_perl//file',
         '@ubuntu_libedit2//file',
         '@ubuntu_liberror_perl//file',
@@ -834,6 +1028,7 @@ def image_package_files():
         '@ubuntu_libgcc_7_dev//file',
         '@ubuntu_libgdbm5//file',
         '@ubuntu_libgdbm_compat4//file',
+        '@ubuntu_libgirepository_1_0_1//file',
         '@ubuntu_libglib2_0_0//file',
         '@ubuntu_libglib2_0_data//file',
         '@ubuntu_libgomp1//file',
@@ -844,10 +1039,14 @@ def image_package_files():
         '@ubuntu_libheimntlm0_heimdal//file',
         '@ubuntu_libhx509_5_heimdal//file',
         '@ubuntu_libicu60//file',
+        '@ubuntu_libidn11//file',
+        '@ubuntu_libip4tc0//file',
         '@ubuntu_libisl19//file',
         '@ubuntu_libitm1//file',
+        '@ubuntu_libjson_c3//file',
         '@ubuntu_libk5crypto3//file',
         '@ubuntu_libkeyutils1//file',
+        '@ubuntu_libkmod2//file',
         '@ubuntu_libkrb5_26_heimdal//file',
         '@ubuntu_libkrb5_3//file',
         '@ubuntu_libkrb5support0//file',
@@ -865,6 +1064,8 @@ def image_package_files():
         '@ubuntu_libmpx2//file',
         '@ubuntu_libnghttp2_14//file',
         '@ubuntu_libnpth0//file',
+        '@ubuntu_libnss_systemd//file',
+        '@ubuntu_libpam_systemd//file',
         '@ubuntu_libperl5_26//file',
         '@ubuntu_libpsl5//file',
         '@ubuntu_libpython2_7_minimal//file',
@@ -889,6 +1090,7 @@ def image_package_files():
         '@ubuntu_libtsan0//file',
         '@ubuntu_libubsan0//file',
         '@ubuntu_libwind0_heimdal//file',
+        '@ubuntu_libwrap0//file',
         '@ubuntu_libx11_6//file',
         '@ubuntu_libx11_data//file',
         '@ubuntu_libxau6//file',
@@ -903,9 +1105,13 @@ def image_package_files():
         '@ubuntu_manpages_dev//file',
         '@ubuntu_mime_support//file',
         '@ubuntu_multiarch_support//file',
+        '@ubuntu_ncurses_term//file',
         '@ubuntu_netbase//file',
         '@ubuntu_netcat_openbsd//file',
+        '@ubuntu_networkd_dispatcher//file',
         '@ubuntu_openssh_client//file',
+        '@ubuntu_openssh_server//file',
+        '@ubuntu_openssh_sftp_server//file',
         '@ubuntu_openssl//file',
         '@ubuntu_patch//file',
         '@ubuntu_perl//file',
@@ -919,15 +1125,31 @@ def image_package_files():
         '@ubuntu_python3_6//file',
         '@ubuntu_python3_6_dev//file',
         '@ubuntu_python3_6_minimal//file',
+        '@ubuntu_python3_6_venv//file',
+        '@ubuntu_python3_certifi//file',
+        '@ubuntu_python3_chardet//file',
+        '@ubuntu_python3_dbus//file',
         '@ubuntu_python3_dev//file',
         '@ubuntu_python3_distutils//file',
+        '@ubuntu_python3_gi//file',
+        '@ubuntu_python3_idna//file',
         '@ubuntu_python3_lib2to3//file',
         '@ubuntu_python3_minimal//file',
         '@ubuntu_python3_pkg_resources//file',
+        '@ubuntu_python3_requests//file',
         '@ubuntu_python3_setuptools//file',
+        '@ubuntu_python3_six//file',
+        '@ubuntu_python3_urllib3//file',
+        '@ubuntu_python3_venv//file',
+        '@ubuntu_python_pip_whl//file',
         '@ubuntu_readline_common//file',
         '@ubuntu_shared_mime_info//file',
+        '@ubuntu_ssh_import_id//file',
+        '@ubuntu_systemd//file',
+        '@ubuntu_systemd_sysv//file',
+        '@ubuntu_ucf//file',
         '@ubuntu_unzip//file',
+        '@ubuntu_wget//file',
         '@ubuntu_xauth//file',
         '@ubuntu_xdg_user_dirs//file',
         '@ubuntu_xz_utils//file',
