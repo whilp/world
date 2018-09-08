@@ -148,14 +148,6 @@ def nvim_files():
     )
 
     _github_tar(
-        name = "vim_clipper",
-        owner = "wincent",
-        ref = "35d15d7a096db63f1afce36f3dc1ae28dde4da98",
-        repo = "vim-clipper",
-        sha256 = "88d8b0037e0ed97f6cda6107bd987af022f12f831bfbb92423767c96cf102d5a",
-    )
-
-    _github_tar(
         name = "vim_base16_neovim",
         owner = "jlesquembre",
         ref = "328724df7445d753640c5ba35ebd2e933d24cbae",
@@ -202,3 +194,5 @@ def nvim_files():
         repo = "quick-scope",
         #sha256 = "5d2cf4284d0e9db541ced130d403fb43080bc66e6a916186992405e18c4951c6",
     )
+
+    https://github.com/chromium/hterm/blob/master/etc/osc52.vim

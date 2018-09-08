@@ -86,9 +86,6 @@ let g:signify_vcs_list = ["git"]
 
 :highlight! link QuickFixLine Normal
 
-" https://docs.docker.com/docker-for-mac/networking/#i-want-to-connect-from-a-container-to-a-service-on-the-host
-let g:ClipperAddress="host.docker.internal"
-let g:ClipperAuto=0
 let g:ale_fix_on_save = 1
 
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1

@@ -26,7 +26,6 @@ pkg_tar(
         "@vim_airline_themes//:tar",
         "@vim_ale//:tar",
         "@vim_base16_neovim//:tar",
-        "@vim_clipper//:tar",
         "@vim_fugitive//:tar",
         "@vim_fzf//:tar",
         "@vim_fzf_vim//:tar",

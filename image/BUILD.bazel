@@ -8,19 +8,10 @@ load("@subpar//:subpar.bzl", "par_binary")
 load("@python//:requirements.bzl", "requirement")
 load("@io_bazel_rules_docker//python3:image.bzl", "py3_image")
 
-# NOTE: :image must be built/run separately. We cannot use it
-# as data here because this target is expected to be built/run
-# in OSX. clipper should be built for OSX and various parts of the
-# image (namely nvim) are a PITA to build/extract on OSX.
 sh_binary(
     name = "run",
     srcs = ["run.sh"],
-    args = [
-        "$(location @com_github_wincent_clipper//:clipper)",
-    ],
-    data = [
-        "@com_github_wincent_clipper//:clipper",
-    ],
+    data = [":image"],
 )
 
 container_image(
