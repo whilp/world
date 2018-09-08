@@ -3,7 +3,7 @@
 set -euo pipefail
 
 main() {
-	docker run -ti -P \
+	docker run -P \
 		-v ~/src:/src:cached \
 		-v cache:/cache:cached \
 		-v /var/run/docker.sock:/var/run/docker.sock \

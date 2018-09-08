@@ -4,7 +4,6 @@ pkg_tar(
     name = "tar",
     files = {
         "//bin:cdpath": "./bin/cdpath",
-        "//cmd/wormhole": "./bin/wormhole",
     },
     mode = "0600",
     package_dir = "/home/me",
