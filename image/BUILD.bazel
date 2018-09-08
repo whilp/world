@@ -115,7 +115,7 @@ pkg_tar(
     name = "usr_local",
     package_dir = "/usr/local",
     symlinks = {
-        "./usr/local/bin/nvim": "./nvim-linux64/bin/nvim",
+        "./usr/local/bin/nvim": "../nvim-linux64/bin/nvim",
         "./usr/local/bin/go": "../go/bin/go",
         "./usr/local/bin/godoc": "../go/bin/godoc",
         "./usr/local/bin/gofmt": "../go/bin/gofmt",
