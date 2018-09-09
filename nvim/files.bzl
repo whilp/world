@@ -88,7 +88,7 @@ def nvim_files():
         # Forked for performance tweaks.
         ref = "ba314564ff920351d2c8899877889e6c7e8131e0",
         repo = "vim-fugitive",
-        #sha256 = "a9bb9897abfb0b55cea5fa9d701a3d8ab2039d1696d76b0606a01ac6b2631a8f",
+        sha256 = "055419369e55ad932caca2d9762169aba4720d8398f41ae670e85409a648472f",
     )
 
     _github_tar(
@@ -136,7 +136,7 @@ def nvim_files():
         owner = "lifepillar",
         ref = "487bb3814070e47103a116cd012267af46925ab0",
         repo = "vim-mucomplete",
-        #sha256 = "4ba9658b2815f87e044bc069ac0e1381f05bfa4e3eab213e19dc91eb2b18d99e",
+        sha256 = "2239cd7b65b44350fce59400edea97bc292b4b53295943a2f39e4551666b2405",
     )
 
     _github_tar(
@@ -192,5 +192,5 @@ def nvim_files():
         owner = "unblevable",
         ref = "e5501709e1d9cfc2b7e854e8fcffdef255658335",
         repo = "quick-scope",
-        #sha256 = "5d2cf4284d0e9db541ced130d403fb43080bc66e6a916186992405e18c4951c6",
+        sha256 = "e68965b12a691938c5ea59330ff5dc9b1490bb40cf423e3a7369be9c4175b370",
     )
