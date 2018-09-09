@@ -25,6 +25,7 @@ set sidescrolloff=5
 set shell=/bin/bash
 set shiftwidth=4
 set showmatch
+set noshowcmd
 set showtabline=0
 set smartcase
 set smarttab
