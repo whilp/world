@@ -8,11 +8,9 @@ My dotfiles as a docker container.
 bazel run image
 
 # Run it.
-./image/run.sh
+cid=$(./image/run.sh -d)
+port=$(docker port $cid 22)
+ssh "root@localhost:${port##*:}"
 ```
 
-The container can build itself. Other linux systems can likely build it, too, though MacOSX cannot (see limitations). The colorscheme used here also works well with [kitty](https://github.com/kovidgoyal/kitty), which can toggle among schemes like:
-
-```bash
-kitty @ set-colors ~/.config/kitty/dark.conf
-```
+Or connect using the [chrome secure shell app](https://chrome.google.com/webstore/detail/secure-shell-app/pnhechapfaindjhompbnflcldabbghjo?hl=en).
