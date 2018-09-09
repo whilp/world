@@ -4,6 +4,7 @@ pkg_tar(
     name = "tar",
     files = {
         "//bin:cdpath": "./bin/cdpath",
+        "//bin:osc52": "./bin/osc52",
     },
     mode = "0600",
     package_dir = "/home/me",

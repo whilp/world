@@ -86,8 +86,24 @@ let g:signify_vcs_list = ["git"]
 
 :highlight! link QuickFixLine Normal
 
-
 vmap <C-c> y:call osc52#SendViaOSC52(getreg('"'))<cr>
+vnoremap  <leader>y  "+y
+nnoremap  <leader>Y  "+yg_
+nnoremap  <leader>y  "+y
+
+let g:clipboard = {
+      \   'name': 'osc52',
+      \   'copy': {
+      \      '+': 'osc52',
+      \      '*': 'osc52',
+      \    },
+      \   'paste': {
+      \      '+': 'osc52',
+      \      '*': 'osc52',
+      \    },
+      \   'cache_enabled': 1,
+      \ }
+
 let g:ale_fix_on_save = 1
 
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1

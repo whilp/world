@@ -1,1 +1,4 @@
-exports_files(["cdpath"])
+exports_files([
+    "cdpath",
+    "osc52",
+])
