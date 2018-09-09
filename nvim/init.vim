@@ -87,7 +87,7 @@ let g:signify_vcs_list = ["git"]
 :highlight! link QuickFixLine Normal
 
 
-vmap <C-c> y:call SendViaOSC52(getreg('"'))<cr>
+vmap <C-c> y:call osc52#SendViaOSC52(getreg('"'))<cr>
 let g:ale_fix_on_save = 1
 
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1

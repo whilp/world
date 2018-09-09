@@ -23,7 +23,7 @@
 let g:max_osc52_sequence=100000
 
 " Send a string to the terminal's clipboard using the OSC 52 sequence.
-function! SendViaOSC52 (str)
+function! osc52#SendViaOSC52 (str)
   " Since tmux defaults to setting TERM=screen (ugh), we need to detect it here
   " specially.
   if !empty($TMUX)
