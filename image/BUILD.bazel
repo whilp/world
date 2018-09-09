@@ -53,13 +53,8 @@ pkg_tar(
         # https://bugs.launchpad.net/ubuntu/+source/apt/+bug/1577926
         "apt.conf": "./apt/apt.conf",
         "sshd_config": "./ssh/sshd_config",
-        ":host": "./ssh/ssh_host_rsa_key",
-        ":user.pub": "./ssh/authorized_keys",
         "passwd": "./passwd",
         "group": "./group",
-    },
-    modes = {
-        "./ssh/ssh_host_rsa_key": "0400",
     },
     package_dir = "/etc",
 )
@@ -142,24 +137,4 @@ par_binary(
         requirement("appdirs"),
         requirement("toml"),
     ],
-)
-
-genrule(
-    name = "hostkey",
-    outs = [
-        "host",
-        "host.pub",
-    ],
-    cmd = "ssh-keygen -q -h -f $(location :host) 2>/dev/null",
-    visibility = ["//visibility:public"],
-)
-
-genrule(
-    name = "userkey",
-    outs = [
-        "user",
-        "user.pub",
-    ],
-    cmd = "ssh-keygen -q -f $(location :user) 2> /dev/null",
-    visibility = ["//visibility:public"],
 )

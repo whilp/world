@@ -4,4 +4,4 @@ PermitRootLogin yes
 ChallengeResponseAuthentication no
 AcceptEnv LANG LC_*
 Subsystem	sftp	/usr/lib/openssh/sftp-server
-AuthorizedKeysFile /etc/ssh/authorized_keys
+AuthorizedKeysFile /secrets/ssh/user.pub
