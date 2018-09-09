@@ -5,3 +5,4 @@ ChallengeResponseAuthentication no
 AcceptEnv LANG LC_*
 Subsystem	sftp	/usr/lib/openssh/sftp-server
 AuthorizedKeysFile /secrets/ssh/user.pub
+HostKey /secrets/ssh/host
