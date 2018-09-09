@@ -194,5 +194,3 @@ def nvim_files():
         repo = "quick-scope",
         #sha256 = "5d2cf4284d0e9db541ced130d403fb43080bc66e6a916186992405e18c4951c6",
     )
-
-    https://github.com/chromium/hterm/blob/master/etc/osc52.vim

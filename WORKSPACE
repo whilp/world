@@ -89,10 +89,6 @@ load("@python//:requirements.bzl", "pip_install")
 pip_install()
 
 # REPOS {{{1
-load("//home:files.bzl", "home_files")
-
-home_files()
-
 load("//image:debs.bzl", "image_packages")
 
 image_packages()

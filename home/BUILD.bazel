@@ -78,7 +78,3 @@ pkg_tar(
     srcs = ["keep"],
     package_dir = "ipython",
 )
-
-exports_files([
-    "files.bzl",
-])
