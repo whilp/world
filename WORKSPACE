@@ -39,7 +39,7 @@ buildifier_dependencies()
 # DOCKER {{{1
 http_archive(
     name = "io_bazel_rules_docker",
-    #sha256 = "27bd1005b09cdaf9f700defc8b36b4b9e3687cb5a89430f9df24935e8e6abfb5",
+    sha256 = "1cea22e517a1a58af1dc7802aabec3e6bea3dd4bbfa493466932850cb8a0463e",
     strip_prefix = "rules_docker-3a1826eab6a1a8707675c519167a40c4e2a1720e",
     urls = ["https://github.com/bazelbuild/rules_docker/archive/3a1826eab6a1a8707675c519167a40c4e2a1720e.tar.gz"],
 )
@@ -63,7 +63,7 @@ container_pull(
 # PYTHON {{{1
 http_archive(
     name = "subpar",
-    #sha256 = "",
+    sha256 = "a694bd35ff4be79a49fbb6e5fd6b1c9083ef05cd752409f5fe349f6d74432fd8",
     strip_prefix = "subpar-07ff5feb7c7b113eea593eb6ec50b51099cf0261",
     urls = ["https://github.com/google/subpar/archive/07ff5feb7c7b113eea593eb6ec50b51099cf0261.tar.gz"],
 )
