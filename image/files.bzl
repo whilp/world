@@ -17,7 +17,7 @@ def image_files():
 
     http_file(
         name = "bazel",
-        #sha256 = "3e18f78e194acc5d05968a0c1d7708bd6fb6b99a2bcc1a3cd46e642f51d0a277",
+        sha256 = "f1a855ca35043cdb360bba96ca51998a6277797c096b3390e787fdee07398959  ",
         urls = ["https://github.com/bazelbuild/bazel/releases/download/0.16.1/bazel-0.16.1-linux-x86_64"],
     )
 
