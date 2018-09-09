@@ -64,10 +64,8 @@ command! -bar -nargs=1 Gco :Git checkout -q <q-args>
 " https://github.com/junegunn/fzf.vim#advanced-customization
 command! -bang -nargs=* Rg
             \ call fzf#vim#grep(
-            \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
-            \   <bang>0 ? fzf#vim#with_preview('up:60%')
-            \           : fzf#vim#with_preview('right:50%:hidden', '?'),
-            \   <bang>0)
+            \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 0,
+            \   {}, <bang>0)
 let $FZF_DEFAULT_COMMAND = 'rg --hidden --files --smart-case'
 
 " https://github.com/nicodebo/base16-fzf/blob/master/bash/base16-solarized-dark.config
