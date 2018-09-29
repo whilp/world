@@ -2,17 +2,17 @@ def image_packages():
 
     native.http_file(
         name = "ubuntu_binutils",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/b/binutils/binutils_2.30-20ubuntu2~18.04_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/b/binutils/binutils_2.30-21ubuntu1~18.04_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_binutils_common",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/b/binutils/binutils-common_2.30-20ubuntu2~18.04_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/b/binutils/binutils-common_2.30-21ubuntu1~18.04_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_binutils_x86_64_linux_gnu",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/b/binutils/binutils-x86-64-linux-gnu_2.30-20ubuntu2~18.04_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/b/binutils/binutils-x86-64-linux-gnu_2.30-21ubuntu1~18.04_amd64.deb",
     )
 
     native.http_file(
@@ -27,17 +27,17 @@ def image_packages():
 
     native.http_file(
         name = "ubuntu_cpp",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-defaults/cpp_7.3.0-3ubuntu2_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-defaults/cpp_7.3.0-3ubuntu2.1_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_cpp_7",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/cpp-7_7.3.0-16ubuntu3_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/cpp-7_7.3.0-27ubuntu1~18.04_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_curl",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/c/curl/curl_7.58.0-2ubuntu3.2_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/c/curl/curl_7.58.0-2ubuntu3.3_amd64.deb",
     )
 
     native.http_file(
@@ -77,27 +77,32 @@ def image_packages():
 
     native.http_file(
         name = "ubuntu_gPP",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-defaults/g++_7.3.0-3ubuntu2_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-defaults/g++_7.3.0-3ubuntu2.1_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_gPP_7",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/g++-7_7.3.0-16ubuntu3_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/g++-7_7.3.0-27ubuntu1~18.04_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_gcc",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-defaults/gcc_7.3.0-3ubuntu2_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-defaults/gcc_7.3.0-3ubuntu2.1_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_gcc_7",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/gcc-7_7.3.0-16ubuntu3_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/gcc-7_7.3.0-27ubuntu1~18.04_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_gcc_7_base",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/gcc-7-base_7.3.0-16ubuntu3_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/gcc-7-base_7.3.0-27ubuntu1~18.04_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_gcc_8_base",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/gcc-8-base_8.2.0-1ubuntu2~18.04_amd64.deb",
     )
 
     native.http_file(
@@ -197,7 +202,7 @@ def image_packages():
 
     native.http_file(
         name = "ubuntu_libasan4",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/libasan4_7.3.0-16ubuntu3_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/libasan4_7.3.0-27ubuntu1~18.04_amd64.deb",
     )
 
     native.http_file(
@@ -212,12 +217,12 @@ def image_packages():
 
     native.http_file(
         name = "ubuntu_libatomic1",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libatomic1_8-20180414-1ubuntu2_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libatomic1_8.2.0-1ubuntu2~18.04_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_libbinutils",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/b/binutils/libbinutils_2.30-20ubuntu2~18.04_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/b/binutils/libbinutils_2.30-21ubuntu1~18.04_amd64.deb",
     )
 
     native.http_file(
@@ -242,27 +247,27 @@ def image_packages():
 
     native.http_file(
         name = "ubuntu_libcc1_0",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libcc1-0_8-20180414-1ubuntu2_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libcc1-0_8.2.0-1ubuntu2~18.04_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_libcilkrts5",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/libcilkrts5_7.3.0-16ubuntu3_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/libcilkrts5_7.3.0-27ubuntu1~18.04_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_libcryptsetup12",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/c/cryptsetup/libcryptsetup12_2.0.2-1ubuntu1_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/c/cryptsetup/libcryptsetup12_2.0.2-1ubuntu1.1_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_libcurl3_gnutls",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/c/curl/libcurl3-gnutls_7.58.0-2ubuntu3.2_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/c/curl/libcurl3-gnutls_7.58.0-2ubuntu3.3_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_libcurl4",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/c/curl/libcurl4_7.58.0-2ubuntu3.2_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/c/curl/libcurl4_7.58.0-2ubuntu3.3_amd64.deb",
     )
 
     native.http_file(
@@ -311,8 +316,13 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_libgcc1",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libgcc1_8.2.0-1ubuntu2~18.04_amd64.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_libgcc_7_dev",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/libgcc-7-dev_7.3.0-16ubuntu3_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/libgcc-7-dev_7.3.0-27ubuntu1~18.04_amd64.deb",
     )
 
     native.http_file(
@@ -332,17 +342,17 @@ def image_packages():
 
     native.http_file(
         name = "ubuntu_libglib2_0_0",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/glib2.0/libglib2.0-0_2.56.1-2ubuntu1_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/glib2.0/libglib2.0-0_2.56.2-0ubuntu0.18.04.2_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_libglib2_0_data",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/glib2.0/libglib2.0-data_2.56.1-2ubuntu1_all.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/glib2.0/libglib2.0-data_2.56.2-0ubuntu0.18.04.2_all.deb",
     )
 
     native.http_file(
         name = "ubuntu_libgomp1",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libgomp1_8-20180414-1ubuntu2_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libgomp1_8.2.0-1ubuntu2~18.04_amd64.deb",
     )
 
     native.http_file(
@@ -397,7 +407,7 @@ def image_packages():
 
     native.http_file(
         name = "ubuntu_libitm1",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libitm1_8-20180414-1ubuntu2_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libitm1_8.2.0-1ubuntu2~18.04_amd64.deb",
     )
 
     native.http_file(
@@ -457,7 +467,7 @@ def image_packages():
 
     native.http_file(
         name = "ubuntu_liblsan0",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/liblsan0_8-20180414-1ubuntu2_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/liblsan0_8.2.0-1ubuntu2~18.04_amd64.deb",
     )
 
     native.http_file(
@@ -492,7 +502,7 @@ def image_packages():
 
     native.http_file(
         name = "ubuntu_libmpx2",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libmpx2_8-20180414-1ubuntu2_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libmpx2_8.2.0-1ubuntu2~18.04_amd64.deb",
     )
 
     native.http_file(
@@ -537,22 +547,22 @@ def image_packages():
 
     native.http_file(
         name = "ubuntu_libpython3_6",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/libpython3.6_3.6.5-3_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/libpython3.6_3.6.6-1~18.04_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_libpython3_6_dev",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/libpython3.6-dev_3.6.5-3_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/libpython3.6-dev_3.6.6-1~18.04_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_libpython3_6_minimal",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/libpython3.6-minimal_3.6.5-3_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/libpython3.6-minimal_3.6.6-1~18.04_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_libpython3_6_stdlib",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/libpython3.6-stdlib_3.6.5-3_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/libpython3.6-stdlib_3.6.6-1~18.04_amd64.deb",
     )
 
     native.http_file(
@@ -567,7 +577,7 @@ def image_packages():
 
     native.http_file(
         name = "ubuntu_libquadmath0",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libquadmath0_8-20180414-1ubuntu2_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libquadmath0_8.2.0-1ubuntu2~18.04_amd64.deb",
     )
 
     native.http_file(
@@ -616,18 +626,23 @@ def image_packages():
     )
 
     native.http_file(
+        name = "ubuntu_libstdcPP6",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libstdc++6_8.2.0-1ubuntu2~18.04_amd64.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_libstdcPP_7_dev",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/libstdc++-7-dev_7.3.0-16ubuntu3_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/libstdc++-7-dev_7.3.0-27ubuntu1~18.04_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_libtsan0",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libtsan0_8-20180414-1ubuntu2_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libtsan0_8.2.0-1ubuntu2~18.04_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_libubsan0",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/libubsan0_7.3.0-16ubuntu3_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/libubsan0_7.3.0-27ubuntu1~18.04_amd64.deb",
     )
 
     native.http_file(
@@ -682,7 +697,7 @@ def image_packages():
 
     native.http_file(
         name = "ubuntu_linux_libc_dev",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux-libc-dev_4.15.0-33.36_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux-libc-dev_4.15.0-34.37_amd64.deb",
     )
 
     native.http_file(
@@ -797,22 +812,22 @@ def image_packages():
 
     native.http_file(
         name = "ubuntu_python3_6",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/python3.6_3.6.5-3_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/python3.6_3.6.6-1~18.04_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_python3_6_dev",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/python3.6-dev_3.6.5-3_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/python3.6-dev_3.6.6-1~18.04_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_python3_6_minimal",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/python3.6-minimal_3.6.5-3_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/python3.6-minimal_3.6.6-1~18.04_amd64.deb",
     )
 
     native.http_file(
         name = "ubuntu_python3_6_venv",
-        url = "http://archive.ubuntu.com/ubuntu/pool/universe/p/python3.6/python3.6-venv_3.6.5-3_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/universe/p/python3.6/python3.6-venv_3.6.6-1~18.04_amd64.deb",
     )
 
     native.http_file(
@@ -983,6 +998,7 @@ def image_package_files():
         '@ubuntu_gcc//file',
         '@ubuntu_gcc_7//file',
         '@ubuntu_gcc_7_base//file',
+        '@ubuntu_gcc_8_base//file',
         '@ubuntu_gir1_2_glib_2_0//file',
         '@ubuntu_git//file',
         '@ubuntu_git_man//file',
@@ -1025,6 +1041,7 @@ def image_package_files():
         '@ubuntu_libexpat1_dev//file',
         '@ubuntu_libfakeroot//file',
         '@ubuntu_libfile_fcntllock_perl//file',
+        '@ubuntu_libgcc1//file',
         '@ubuntu_libgcc_7_dev//file',
         '@ubuntu_libgdbm5//file',
         '@ubuntu_libgdbm_compat4//file',
@@ -1086,6 +1103,7 @@ def image_package_files():
         '@ubuntu_libsqlite3_0//file',
         '@ubuntu_libssl1_0_0//file',
         '@ubuntu_libssl1_1//file',
+        '@ubuntu_libstdcPP6//file',
         '@ubuntu_libstdcPP_7_dev//file',
         '@ubuntu_libtsan0//file',
         '@ubuntu_libubsan0//file',
