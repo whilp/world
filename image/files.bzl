@@ -17,8 +17,8 @@ def image_files():
 
     http_file(
         name = "bazel",
-        sha256 = "f1a855ca35043cdb360bba96ca51998a6277797c096b3390e787fdee07398959",
-        urls = ["https://github.com/bazelbuild/bazel/releases/download/0.16.1/bazel-0.16.1-linux-x86_64"],
+        sha256 = "674757d40d4ac0f0175df7fe84cd7250cbf67ac7ebac565e905fdc7e24c0fac5",
+        urls = ["https://github.com/bazelbuild/bazel/releases/download/0.17.2/bazel-0.17.2-linux-x86_64"],
     )
 
     # For some reason, this does not work w/ the non-native http_file.
