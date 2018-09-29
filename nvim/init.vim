@@ -22,6 +22,7 @@ set nowrap
 set scrollback=-1
 set scrolloff=3
 set sidescrolloff=5
+set signcolumn=no
 set shell=/bin/bash
 set shiftwidth=4
 set showmatch
