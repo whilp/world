@@ -28,6 +28,7 @@ verify_sha256() {
 }
 
 checksum() {
+	out="$1"
 	got_fields=$(sha256sum "$out" 2>/dev/null || true)
 	if [ -z "$got_fields" ]; then
 		got_fields=$(shasum -a 256 "$out" 2>/dev/null || true)
