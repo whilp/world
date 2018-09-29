@@ -7,7 +7,7 @@ main() {
 	bazel="$1"
 	shift
 	$bazel \
-		--output_base=$"HOME/.cache/bazel" \
+		--output_base="$HOME/.cache/bazel" \
 		--host_jvm_args=-Xmx500m \
 		--host_jvm_args=-Xms500m \
 		test \
