@@ -3,7 +3,7 @@
 set -euo pipefail
 
 main() {
-	docker run -P \
+	docker run -dP \
 		-v src:/src:cached \
 		-v cache:/cache:cached \
 		-v secrets:/secrets:cached \
