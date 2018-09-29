@@ -10,7 +10,7 @@ main() {
 	sha256=$(./tools/get-status.sh stable STABLE_BAZEL_SHA256)
 
 	tmp=$(mktemp -d)
-	curl -sLo "$tmp/bazel" "$url"
+	curl -sSLfo "$tmp/bazel" "$url"
 	verify_sha256 "$tmp/bazel" "$sha256"
 	chmod a+x "$tmp/bazel"
 	mv "$tmp/bazel" "$target"
