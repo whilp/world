@@ -1,1 +1,15 @@
 exports_files(["requirements.txt"])
+
+py_runtime(
+    name = "py2",
+    files = [],
+    interpreter_path = "/usr/bin/python2",
+    visibility = ["//visibility:public"],
+)
+
+py_runtime(
+    name = "py3",
+    files = [],
+    interpreter_path = "/usr/bin/python3",
+    visibility = ["//visibility:public"],
+)
