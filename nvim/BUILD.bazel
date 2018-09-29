@@ -32,6 +32,7 @@ pkg_tar(
         "@vim_go//:tar",
         "@vim_godlygeek_tabular//:tar",
         "@vim_mucomplete//:tar",
+        "@vim_neomake_neomake//:tar",
         "@vim_plasticboy_vim_markdown//:tar",
         "@vim_repeat//:tar",
         "@vim_signify//:tar",

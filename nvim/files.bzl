@@ -194,3 +194,11 @@ def nvim_files():
         repo = "quick-scope",
         sha256 = "e68965b12a691938c5ea59330ff5dc9b1490bb40cf423e3a7369be9c4175b370",
     )
+
+    _github_tar(
+        name = "vim_neomake_neomake",
+        owner = "neomake",
+        ref = "1686a91cc4ea4b48152e314decb827946221b1ad",
+        repo = "neomake",
+        sha256 = "a487593ff95bb0d1363846c581c7ae4e55d96b9d01770d2b0a1856dea46f2900",
+    )
