@@ -2,15 +2,11 @@ build --workspace_status_command=tools/workspace_status.sh
 
 build:check --all_incompatible_changes
 
-common:ci --color=no
-build:ci --verbose_failures
+build:ci --genrule_strategy=standalone
 build:ci --sandbox_debug
 build:ci --spawn_strategy=standalone
-build:ci --genrule_strategy=standalone
+build:ci --verbose_failures
+common:ci --color=no
 common:ci --python_top=//python:py2
-test:ci --test_strategy=standalone
 test:ci --test_output=errors
-
-#build --force_python=PY2
-#build --python_path=/usr/bin/python3
-#build --python_top=//tools:python3
+test:ci --test_strategy=standalone
