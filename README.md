@@ -20,7 +20,7 @@ Date:   Sat Jun 11 21:26:33 2005 +0000
 bazel run image
 
 # Run it.
-cid=$(./image/run.sh -d)
+cid=$(./image/run.sh)
 port=$(docker port $cid 22)
 ssh "root@localhost:${port##*:}"
 ```
