@@ -11,6 +11,7 @@ git:
 before_install:
   - export PATH=$HOME/bin:$PATH
   - ./tools/get-bazel.sh $HOME/bin/bazel
+  - ln -s $(which python2) $HOME/bin/python
 
 script:
   - ./tools/run-bazel.sh "$HOME/bin/bazel" //...
