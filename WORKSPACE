@@ -1,4 +1,9 @@
+workspace(name = "whilp_dotfiles")
+
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
+load("//workspace:workspace.bzl", _workspace = "workspace")
+
+_workspace()
 
 # GO {{{1
 http_archive(
