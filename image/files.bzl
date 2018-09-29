@@ -1,6 +1,10 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 load("@bazel_gazelle//:deps.bzl", "go_repository")
 
+BAZEL_SHA256 = "674757d40d4ac0f0175df7fe84cd7250cbf67ac7ebac565e905fdc7e24c0fac5"
+
+BAZEL_URL = "https://github.com/bazelbuild/bazel/releases/download/0.17.2/bazel-0.17.2-linux-x86_64"
+
 def image_files():
     native.http_file(
         name = "nvim",
@@ -17,8 +21,8 @@ def image_files():
 
     http_file(
         name = "bazel",
-        sha256 = "674757d40d4ac0f0175df7fe84cd7250cbf67ac7ebac565e905fdc7e24c0fac5",
-        urls = ["https://github.com/bazelbuild/bazel/releases/download/0.17.2/bazel-0.17.2-linux-x86_64"],
+        sha256 = BAZEL_SHA256,
+        urls = [BAZEL_URL],
     )
 
     # For some reason, this does not work w/ the non-native http_file.

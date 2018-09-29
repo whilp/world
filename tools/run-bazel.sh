@@ -4,7 +4,9 @@ set -euo pipefail
 
 main() {
 	command -v python
-	bazel \
+	bazel="$1"
+	shift
+	$bazel \
 		--output_base=$"HOME/.cache/bazel" \
 		--host_jvm_args=-Xmx500m \
 		--host_jvm_args=-Xms500m \

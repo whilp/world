@@ -1,27 +1,17 @@
-# trusty beta image has jdk8, gcc4.8.4
+language: python
+python:
+  - "3.7"
 dist: trusty
 sudo: required
-osx_image: xcode9.4
-
 os:
   - linux
-  - osx
 git:
   depth: 3
   quiet: true
 
-matrix:
-  include:
-    - os: linux
-      python: 3.7-dev
-      language: python
-    - os: osx
-      language: generic
-      env: PYTHON=3.7-dev
-
 before_install:
-  - [[ "${TRAVIS_OS_NAME}" == "osx" ]] && ./tools/setup-osx.sh
-  - ./tools/get-bazel.sh "${TRAVIS_OS_NAME}"
+  - export PATH=$HOME/bin:$PATH
+  - ./tools/get-bazel.sh $HOME/bin/bazel
 
 script:
-  - ./tools/run-bazel.sh //...
+  - ./tools/run-bazel.sh "$HOME/bin/bazel" //...
