@@ -7,6 +7,7 @@ build:ci --verbose_failures
 build:ci --sandbox_debug
 build:ci --spawn_strategy=standalone
 build:ci --genrule_strategy=standalone
+common:ci --python_top=//python:py2
 test:ci --test_strategy=standalone
 test:ci --test_output=errors
 
