@@ -3,7 +3,13 @@ dist: trusty
 sudo: required
 osx_image: xcode9.4
 
-language: python
+os:
+  - linux
+  - osx
+git:
+  depth: 3
+  quiet: true
+
 matrix:
   include:
     - os: linux
@@ -11,14 +17,10 @@ matrix:
       language: python
     - os: osx
       language: generic
-      env: PATH="$HOME/.pyenv/shims:${PATH}"
-
-git:
-  depth: 3
-  quiet: true
+      env: PYTHON=3.7-dev
 
 before_install:
-  - ./tools/setup-travis.sh "${TRAVIS_OS_NAME}"
+  - [[ "${TRAVIS_OS_NAME}" == "osx" ]] && ./tools/setup-osx.sh
   - ./tools/get-bazel.sh "${TRAVIS_OS_NAME}"
 
 script:
