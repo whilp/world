@@ -102,6 +102,7 @@ let g:clipboard = {
       \ }
 
 let g:ale_fix_on_save = 1
+let g:ale_set_signs = 0
 
 let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 
