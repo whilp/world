@@ -8,5 +8,7 @@ build:ci --spawn_strategy=standalone
 build:ci --verbose_failures
 common:ci --color=no
 common:ci --python_top=//python:py2
+common:ci --noshow_loading_progress
+common:ci --show_result
 test:ci --test_output=errors
 test:ci --test_strategy=standalone
