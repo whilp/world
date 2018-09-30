@@ -1,4 +1,5 @@
 build --workspace_status_command=tools/workspace_status.sh
+common --show_progress_rate_limit=60
 
 build:check --all_incompatible_changes
 
@@ -8,7 +9,5 @@ build:ci --spawn_strategy=standalone
 build:ci --verbose_failures
 common:ci --color=no
 common:ci --python_top=//python:py2
-common:ci --noshow_loading_progress
-common:ci --show_progress
 test:ci --test_output=errors
 test:ci --test_strategy=standalone
