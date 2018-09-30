@@ -5,7 +5,6 @@ load(
     "container_image",
 )
 load("@subpar//:subpar.bzl", "par_binary")
-load("@python//:requirements.bzl", "requirement")
 load("@io_bazel_rules_docker//python3:image.bzl", "py3_image")
 
 sh_binary(
@@ -118,27 +117,22 @@ pkg_tar(
 
 par_binary(
     name = "flake8",
-    srcs = ["flake8.py"],
+    srcs = ["run-flake8.py"],
+    main = "run-flake8.py",
     deps = [
-        requirement("flake8"),
-        requirement("pyflakes"),
-        requirement("pycodestyle"),
-        requirement("mccabe"),
-        requirement("setuptools"),
-        requirement("configparser"),
+        "@py_flake8//:pkg",
+        "@py_pycodestyle//:pkg",
+        "@py_pyflakes//:pkg",
     ],
 )
 
 par_binary(
     name = "black",
-    srcs = ["black.py"],
+    srcs = ["@py_black//:black.py"],
+    main = "@py_black//:black.py",
     zip_safe = False,
     deps = [
-        requirement("black"),
-        requirement("click"),
-        requirement("attrs"),
-        requirement("appdirs"),
-        requirement("toml"),
+        "@py_black//:pkg",
     ],
 )
 

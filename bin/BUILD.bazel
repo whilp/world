@@ -3,3 +3,13 @@ exports_files([
     "osc52",
     "get",
 ])
+
+py_binary(
+    name = "foo",
+    srcs = ["foo.py"],
+    deps = [
+        "@pypi_numpy",
+        "@pypi_scipy",
+        "@pypi_six",
+    ],
+)
