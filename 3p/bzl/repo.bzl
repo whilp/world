@@ -29,28 +29,35 @@ def bzl():
         urls = ["https://github.com/google/subpar/archive/07ff5feb7c7b113eea593eb6ec50b51099cf0261.tar.gz"],
     )
 
-    http_archive(
+    _github_tar(
         name = "io_bazel_rules_docker",
+        owner = "bazelbuild",
+        ref = "4282829a554058401f7ff63004c8870c8d35e29c",
+        repo = "rules_docker",
         sha256 = "35c585261362a96b1fe777a7c4c41252b22fd404f24483e1c48b15d7eb2b55a5",
-        strip_prefix = "rules_docker-4282829a554058401f7ff63004c8870c8d35e29c",
-        urls = ["https://github.com/bazelbuild/rules_docker/archive/4282829a554058401f7ff63004c8870c8d35e29c.tar.gz"],
     )
 
-def _github_tar(name, owner, ref, **kwargs):
+def _github_tar(name, owner, ref, repo = None, **kwargs):
+    if repo in (None,):
+        repo = name
+
     url = "https://{host}/{owner}/{repo}/archive/{ref}.tar.gz".format(
         host = "github.com",
         owner = owner,
-        repo = name,
+        repo = repo,
         ref = ref,
     )
 
-    return _vcs_tar(name, owner, ref, url, **kwargs)
+    return _vcs_tar(name, owner, ref, url, repo, **kwargs)
 
-def _vcs_tar(name, owner, ref, url, **kwargs):
+def _vcs_tar(name, owner, ref, url, repo = None, **kwargs):
+    rule_name = name
+    if repo not in (None,):
+        rule_name = "_".join(["bzl", owner, name])
+
     return http_archive(
-        name = "bzl_%s" % name,
+        name = rule_name,
         urls = [url],
-        build_file = _build_file_label(name),
         strip_prefix = name + "-" + ref,
         **kwargs
     )

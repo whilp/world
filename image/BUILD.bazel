@@ -5,7 +5,6 @@ load(
     "container_image",
 )
 load("@subpar//:subpar.bzl", "par_binary")
-load("@io_bazel_rules_docker//python3:image.bzl", "py3_image")
 
 sh_binary(
     name = "run",
