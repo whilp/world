@@ -22,7 +22,6 @@ pkg_tar({})
 def _github_tar(name, owner, repo, ref, **kwargs):
     url = "https://github.com/{}/{}/archive/{}.tar.gz".format(owner, repo, ref)
 
-    #strip_prefix = kwargs.pop("strip_prefix", None)
     strip_prefix = repo + "-" + ref
     package_dir = name
     build_file_content = _build_file(strip_prefix, package_dir)

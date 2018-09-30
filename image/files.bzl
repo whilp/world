@@ -187,9 +187,9 @@ def image_files():
         urls = ["http://releases.llvm.org/7.0.0/clang+llvm-7.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz"],
     )
 
+    # https://github.com/koalaman/shellcheck
     http_archive(
         name = "shellcheck",
-        #build_file_content = shellcheck_build_file("0.5.0"),
         build_file_content = """exports_files(["shellcheck"])""",
         sha256 = "7d4c073a0342cf39bdb99c32b4749f1c022cf2cffdfb080c12c106aa9d341708",
         strip_prefix = "shellcheck-v0.5.0",
