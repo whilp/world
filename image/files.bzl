@@ -35,9 +35,9 @@ def image_files():
     http_archive(
         name = "ripgrep",
         build_file_content = """exports_files(["rg"])""",
-        sha256 = "08b1aa1440a23a88c94cff41a860340ecf38e9108817aff30ff778c00c63eb76",
-        strip_prefix = "ripgrep-0.8.1-x86_64-unknown-linux-musl/",
-        urls = ["https://github.com/BurntSushi/ripgrep/releases/download/0.8.1/ripgrep-0.8.1-x86_64-unknown-linux-musl.tar.gz"],
+        sha256 = "c76080aa807a339b44139885d77d15ad60ab8cdd2c2fdaf345d0985625bc0f97",
+        strip_prefix = "ripgrep-0.10.0-x86_64-unknown-linux-musl/",
+        urls = ["https://github.com/BurntSushi/ripgrep/releases/download/0.10.0/ripgrep-0.10.0-x86_64-unknown-linux-musl.tar.gz"],
     )
 
     http_archive(
