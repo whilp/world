@@ -1,3 +1,15 @@
-# Import the old rc file. In the future, remove it and migrate its contents
-# to this file. For now, we keep both for backwards compatibility.
-import %workspace%/tools/bazel.rc
+build --workspace_status_command=tools/workspace_status.sh
+common --show_progress
+common --show_loading_progress
+common --show_progress_rate_limit=60.0
+
+build:check --all_incompatible_changes
+
+build:ci --genrule_strategy=standalone
+build:ci --sandbox_debug
+build:ci --spawn_strategy=standalone
+build:ci --verbose_failures
+common:ci --color=no
+common:ci --python_top=//python:py2
+test:ci --test_output=errors
+test:ci --test_strategy=standalone
