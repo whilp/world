@@ -2,6 +2,8 @@
 
 set -euo pipefail
 
+export BAZEL_PYTHON=/usr/bin/python2.7
+
 main() {
     bazel="$1"
     shift
