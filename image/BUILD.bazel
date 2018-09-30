@@ -1,4 +1,4 @@
-load(":debs.bzl", "image_package_files")
+load("//3p/deb:repo.bzl", "deb_files")
 load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
 load(
     "@io_bazel_rules_docker//container:container.bzl",
@@ -19,12 +19,12 @@ container_image(
         "/usr/sbin/sshd",
         "-D",
     ],
-    debs = image_package_files(),
+    debs = deb_files(),
     env = {
         "HOME": "/home/me",
     },
     # Force rebuild when we observe new packages.
-    files = ["//image:debs.bzl"],
+    files = ["//3p/deb:repo.bzl"],
     ports = ["22"],
     tars = [
         "//home:tar",

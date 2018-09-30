@@ -77,10 +77,6 @@ container_pull(
     repository = "library/ubuntu",
 )
 
-load("//image:debs.bzl", "image_packages")
-
-image_packages()
-
 load("//image:files.bzl", "image_files")
 
 image_files()
