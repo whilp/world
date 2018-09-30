@@ -17,12 +17,11 @@ Date:   Sat Jun 11 21:26:33 2005 +0000
 
 ```bash
 # Build and load the container. 
-bazel run image
+$ bazel run image
 
 # Run it.
-cid=$(./image/run.sh)
-port=$(docker port $cid 22)
-ssh "root@localhost:${port##*:}"
+$ ./image/run.sh
+ssh://root@localhost:32779
 ```
 
-Or connect using the [chrome secure shell app](https://chrome.google.com/webstore/detail/secure-shell-app/pnhechapfaindjhompbnflcldabbghjo?hl=en).
+Then you can connect using the [chrome secure shell app](https://chrome.google.com/webstore/detail/secure-shell-app/pnhechapfaindjhompbnflcldabbghjo?hl=en).
