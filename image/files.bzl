@@ -178,12 +178,13 @@ def image_files():
         urls = ["https://github.com/bazelbuild/bazel/archive/050e0ff8307a249666d5e7f8a27357bc675a1df6.tar.gz"],
     )
 
+    # http://releases.llvm.org/download.html
     http_archive(
         name = "org_llvm_clang",
         build_file_content = clang_build_file(),
-        sha256 = "7ea204ecd78c39154d72dfc0d4a79f7cce1b2264da2551bb2eef10e266d54d91",
-        strip_prefix = "clang+llvm-6.0.1-x86_64-linux-gnu-ubuntu-16.04",
-        urls = ["http://releases.llvm.org/6.0.1/clang+llvm-6.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz"],
+        sha256 = "69b85c833cd28ea04ce34002464f10a6ad9656dd2bba0f7133536a9927c660d2",
+        strip_prefix = "clang+llvm-7.0.0-x86_64-linux-gnu-ubuntu-16.04",
+        urls = ["http://releases.llvm.org/7.0.0/clang+llvm-7.0.0-x86_64-linux-gnu-ubuntu-16.04.tar.xz"],
     )
 
     http_archive(
