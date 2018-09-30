@@ -167,8 +167,8 @@ def image_files():
 
     native.http_file(
         name = "org_golang_go",
-        urls = ["https://dl.google.com/go/go1.10.3.linux-amd64.tar.gz"],
-        sha256 = "fa1b0e45d3b647c252f51f5e1204aba049cde4af177ef9f2181f43004f901035",
+        urls = ["https://dl.google.com/go/go1.11.linux-amd64.tar.gz"],
+        sha256 = "b3fcf280ff86558e0559e185b601c9eade0fd24c900b4c63cd14d1d38613e499",
     )
 
     http_archive(
