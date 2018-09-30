@@ -173,9 +173,9 @@ def image_files():
 
     http_archive(
         name = "io_bazel",
-        sha256 = "011d35e28f0953685a42ca4fc1513dfb7301675c269df50d79ae8318b90c5f08",
-        strip_prefix = "bazel-c535ac28697d49f436a70f3aa7f1d1e938db5d3c",
-        urls = ["https://github.com/bazelbuild/bazel/archive/c535ac28697d49f436a70f3aa7f1d1e938db5d3c.tar.gz"],
+        sha256 = "9f98d3cadf5d8370d21ab20d11df72192e24cf5d96705e87e48f4c4dff3862e2",
+        strip_prefix = "bazel-050e0ff8307a249666d5e7f8a27357bc675a1df6",
+        urls = ["https://github.com/bazelbuild/bazel/archive/050e0ff8307a249666d5e7f8a27357bc675a1df6.tar.gz"],
     )
 
     http_archive(
