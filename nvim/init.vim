@@ -83,11 +83,6 @@ let g:signify_vcs_list = ["git"]
 
 :highlight! link QuickFixLine Normal
 
-vmap <C-c> y:call osc52#SendViaOSC52(getreg('"'))<cr>
-vnoremap  <leader>y  "+y
-nnoremap  <leader>Y  "+yg_
-nnoremap  <leader>y  "+y
-
 let g:clipboard = {
       \   'name': 'osc52',
       \   'copy': {
