@@ -139,3 +139,9 @@ par_binary(
         requirement("toml"),
     ],
 )
+
+sh_test(
+    name = "test",
+    srcs = ["test.sh"],
+    data = [":image"],
+)
