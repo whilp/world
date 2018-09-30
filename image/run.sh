@@ -3,6 +3,12 @@
 set -euo pipefail
 
 main() {
+	cid=$(run "$@")
+	port=$(docker port "$cid" 22)
+	echo "ssh://root@localhost:${port##*:}"
+}
+
+run() {
 	docker run -dP \
 		-v src:/src:cached \
 		-v cache:/cache:cached \
