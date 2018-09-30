@@ -9,6 +9,6 @@ build:ci --verbose_failures
 common:ci --color=no
 common:ci --python_top=//python:py2
 common:ci --noshow_loading_progress
-common:ci --show_result
+common:ci --show_progress
 test:ci --test_output=errors
 test:ci --test_strategy=standalone
