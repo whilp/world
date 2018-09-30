@@ -54,7 +54,7 @@ def py():
         abi = "none",
         platform = "any",
         python = "py2.py3",
-        #sha256 = "2335065e6395b9e67ca716de5f7526736bfa6ceead690adf616d925bdc622b13",
+        sha256 = "a7901919d3e4f92ffba7ff40a9d697e35bbbc8a8049fe8da742f34c83606d957",
         version = "0.9.6",
     )
 
@@ -72,7 +72,7 @@ def py():
         abi = "none",
         platform = "any",
         python = "py2.py3",
-        #sha256 = "817243426042db1d36617910df579a54f1afd659adb96fc5032fcf4b36209739",
+        sha256 = "ca4be454458f9dec299268d472aaa5a11f67a4ff70093396e1ceae9c76cf4bbb",
         version = "18.2.0",
     )
 
@@ -122,7 +122,7 @@ def _pypi_wheel(name, version, python, abi, platform, build = None, **kwargs):
     urls = kwargs.pop("urls", [url])
 
     http_archive(
-        name = "py_%s" % distribution,
+        name = "pypi_%s" % distribution,
         build_file = _build_file_label(distribution),
         type = "zip",
         urls = urls,

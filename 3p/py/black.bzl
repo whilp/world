@@ -8,10 +8,10 @@ py_library(
     imports = ["."],
     visibility = ["//visibility:public"],
     deps = [
-        "@py_Click//:pkg",
-        "@py_appdirs//:pkg",
-        "@py_attrs//:pkg",
-        "@py_toml//:pkg",
+        "@pypi_Click//:pkg",
+        "@pypi_appdirs//:pkg",
+        "@pypi_attrs//:pkg",
+        "@pypi_toml//:pkg",
     ],
 )
 

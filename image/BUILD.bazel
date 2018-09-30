@@ -119,19 +119,19 @@ par_binary(
     srcs = ["run-flake8.py"],
     main = "run-flake8.py",
     deps = [
-        "@py_flake8//:pkg",
-        "@py_pycodestyle//:pkg",
-        "@py_pyflakes//:pkg",
+        "@pypi_flake8//:pkg",
+        "@pypi_pycodestyle//:pkg",
+        "@pypi_pyflakes//:pkg",
     ],
 )
 
 par_binary(
     name = "black",
-    srcs = ["@py_black//:black.py"],
-    main = "@py_black//:black.py",
+    srcs = ["@pypi_black//:black.py"],
+    main = "@pypi_black//:black.py",
     zip_safe = False,
     deps = [
-        "@py_black//:pkg",
+        "@pypi_black//:pkg",
     ],
 )
 
