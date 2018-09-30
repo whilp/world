@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -euo pipefail
+
+main() {
+  curl -sSLfO "$@"
+  return $?
+}
+
+main "$@"
+exit $?
