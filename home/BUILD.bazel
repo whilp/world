@@ -5,11 +5,13 @@ pkg_tar(
     files = {
         "//bin:cdpath": "./bin/cdpath",
         "//bin:osc52": "./bin/osc52",
+        "//bin:get": "./bin/get",
     },
     mode = "0600",
     modes = {
         "./bin/osc52": "0755",
         "./bin/cdpath": "0755",
+        "./bin/get": "0755",
     },
     package_dir = "/home/me",
     symlinks = {
