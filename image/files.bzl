@@ -28,8 +28,8 @@ def image_files():
     # For some reason, this does not work w/ the non-native http_file.
     native.http_file(
         name = "docker",
-        urls = ["https://download.docker.com/linux/ubuntu/dists/bionic/pool/stable/amd64/docker-ce_18.06.0~ce~3-0~ubuntu_amd64.deb"],
-        sha256 = "65fa0f3e62312612810dfde4ffec8eba309bf75614f3071b2c7aa7db624d1b96",
+        urls = ["https://download.docker.com/linux/static/stable/x86_64/docker-18.06.1-ce.tgz"],
+        sha256 = "83be159cf0657df9e1a1a4a127d181725a982714a983b2bdcc0621244df93687",
     )
 
     http_archive(
