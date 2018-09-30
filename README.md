@@ -25,3 +25,11 @@ ssh://root@localhost:32779
 ```
 
 Then you can connect using the [chrome secure shell app](https://chrome.google.com/webstore/detail/secure-shell-app/pnhechapfaindjhompbnflcldabbghjo?hl=en).
+
+Chrome
+------
+
+Speaking of Chrome, if you're on OSX you'll probably want to set the following flags:
+
+1.	chrome://flags/#views-browser-windows (disabled, [here's](https://www.reddit.com/r/chrome/comments/9d1c9p/fullscreen_mode_tab_problem_chrome_69_for_mac/?sort=new) [why](https://productforums.google.com/forum/#!msg/chrome/29i65bB5VKM/lo8FfzkRGQAJ)\)
+2.	chrome://flags/#enable-fullscreen-toolbar-reveal (disabled)
