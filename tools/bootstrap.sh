@@ -2,8 +2,10 @@
 
 set -euo pipefail
 
+BIN="$HOME/bin"
+
 main() {
-    mode="$1"
+    mode="${1:-}"
     case "$mode" in
     __inner__) inner ;;
     *) outer ;;
@@ -21,14 +23,29 @@ outer() {
 }
 
 inner() {
-    export PATH="$HOME/bin:$PATH"
-    setup
+	install
+	setup
     bazel run image
 }
 
-setup() {
-    ln -s "$(command -v python2)" "$HOME/bin/python"
-    ./tools/get-bazel.sh "$HOME/bin/bazel"
+setup () {
+    mkdir -p "$BIN"
+    export PATH="$BIN:$PATH"
+    ln -s "$(command -v python2.7)" "$BIN/python"
+    ./tools/get-bazel.sh "$BIN/bazel"
+}
+
+install () {
+	apt-get update && apt-get install -y \
+		git \
+		zip \
+		unzip \
+		g++ \
+		python2.7 \
+		python3 \
+    python3-setuptools \
+    python3-dev \
+		curl
 }
 
 main "$@"
