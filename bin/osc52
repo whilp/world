@@ -15,9 +15,6 @@
 #   $ echo "hello world" | osc52.sh
 #
 
-exec 2>>~/clipboard-provider.out
-set -x
-
 : "${TTY:=$( (tty || tty </proc/$PPID/fd/0) 2>/dev/null | grep /dev/)}"
 
 # Max length of the OSC 52 sequence.  Sequences longer than this will not be
@@ -29,7 +26,7 @@ OSC_52_MAX_SEQUENCE="100000"
 #
 # This is appropriate when running on a raw terminal that supports OSC 52.
 get_osc52() {
-	printf "%b" "\\033]52;c;$(base64 | tr -d '\n')\\a\\n"
+    printf "%b" "\\033]52;c;$(base64 | tr -d '\n')\\a\\n"
 }
 
 # This function base64's the entire source as a single blob and wraps it in a
@@ -37,7 +34,7 @@ get_osc52() {
 #
 # This is for `tmux` sessions which filters OSC 52 locally.
 get_osc52_tmux() {
-	printf "%b" "\\033Ptmux;\\033\\033]52;c;$(base64 | tr -d '\n')\\a\\033\\"
+    printf "%b" "\\033Ptmux;\\033\\033]52;c;$(base64 | tr -d '\n')\\a\\033\\"
 }
 
 # This function base64's the entire source, wraps it in a single OSC 52,
@@ -49,46 +46,46 @@ get_osc52_tmux() {
 # It imposes a small max length to DCS sequences, so we send in chunks.  Chunks
 # is my dog.
 get_osc52_dsc() {
-	local b64
-	b64="$(base64)"
-	local chunk first_chunk=''
-	for chunk in ${b64}; do
-		if [ -z "${first_chunk}" ]; then
-			printf "%b" "\\033P\\033]52;c;${chunk}"
-			first_chunk="1"
-		else
-			printf "%b" "\\033\\0134\\033P${chunk}"
-		fi
-	done
-	printf "%b" "\\a\\033\\0134"
+    local b64
+    b64="$(base64)"
+    local chunk first_chunk=''
+    for chunk in ${b64}; do
+        if [ -z "${first_chunk}" ]; then
+            printf "%b" "\\033P\\033]52;c;${chunk}"
+            first_chunk="1"
+        else
+            printf "%b" "\\033\\0134\\033P${chunk}"
+        fi
+    done
+    printf "%b" "\\a\\033\\0134"
 }
 
 main() {
-	local str=''
-	case ${TERM} in
-	screen*)
-		# Since tmux defaults to setting TERM=screen (ugh), we need to detect
-		# it here specially.
-		if [ -n "${TMUX-}" ]; then
-			str="$(get_osc52_tmux)"
-		else
-			str="$(get_osc52_dsc)"
-		fi
-		;;
-	tmux*)
-		str="$(get_osc52_tmux)"
-		;;
-	*)
-		str="$(get_osc52)"
-		;;
-	esac
-	local len=${#str}
-	if [ "${len}" -lt "${OSC_52_MAX_SEQUENCE}" ]; then
-		printf '%s' "${str}" >"$TTY"
-	else
-		echo "ERROR: selection too long to send to terminal: ${len}" >&2
-		exit 1
-	fi
+    local str=''
+    case ${TERM} in
+    screen*)
+        # Since tmux defaults to setting TERM=screen (ugh), we need to detect
+        # it here specially.
+        if [ -n "${TMUX-}" ]; then
+            str="$(get_osc52_tmux)"
+        else
+            str="$(get_osc52_dsc)"
+        fi
+        ;;
+    tmux*)
+        str="$(get_osc52_tmux)"
+        ;;
+    *)
+        str="$(get_osc52)"
+        ;;
+    esac
+    local len=${#str}
+    if [ "${len}" -lt "${OSC_52_MAX_SEQUENCE}" ]; then
+        printf '%s' "${str}" >"$TTY"
+    else
+        echo "ERROR: selection too long to send to terminal: ${len}" >&2
+        exit 1
+    fi
 }
 
 main "$@"
