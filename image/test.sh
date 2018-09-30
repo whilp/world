@@ -3,7 +3,7 @@
 set -euo pipefail
 
 main() {
-	true
+    ./image/image
 }
 
 main "$@"
