@@ -23,29 +23,29 @@ outer() {
 }
 
 inner() {
-	install
-	setup
-    bazel run image
+    install
+    setup
+    ./tools/run-bazel.sh run image
 }
 
-setup () {
+setup() {
     mkdir -p "$BIN"
     export PATH="$BIN:$PATH"
     ln -s "$(command -v python2.7)" "$BIN/python"
     ./tools/get-bazel.sh "$BIN/bazel"
 }
 
-install () {
-	apt-get update && apt-get install -y \
-		git \
-		zip \
-		unzip \
-		g++ \
-		python2.7 \
-		python3 \
-    python3-setuptools \
-    python3-dev \
-		curl
+install() {
+    apt-get update && apt-get install -y \
+        git \
+        zip \
+        unzip \
+        g++ \
+        python2.7 \
+        python3 \
+        python3-setuptools \
+        python3-dev \
+        curl
 }
 
 main "$@"
