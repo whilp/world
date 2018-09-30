@@ -8,9 +8,9 @@ BAZEL_URL = "https://github.com/bazelbuild/bazel/releases/download/0.17.2/bazel-
 def image_files():
     native.http_file(
         name = "nvim",
-        sha256 = "471ea13e68898ce9f1ccf1b16a1934e19e24daf05ccd73f3fb08432f887067b9",
+        sha256 = "aa570bcbbc0af73f4114258569867b732b706eabb8cf6518527eb5ca1e8742c9",
         # upstream: https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz
-        urls = ["https://github.com/whilp/dotfiles/releases/download/2018.08.18/nvim-linux64.tar.gz"],
+        urls = ["https://github.com/whilp/dotfiles/releases/download/2018.09.29/nvim-linux64.tar.gz"],
     )
 
     http_file(
