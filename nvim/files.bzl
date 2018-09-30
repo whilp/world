@@ -44,9 +44,9 @@ def nvim_files():
     _github_tar(
         name = "vim_ale",
         owner = "w0rp",
-        ref = "a7b8cb4fe32b43dbeeadc8cb94f378b4e2112723",
+        ref = "04ed87c8829015ff3653a35fb4f6d7a71668d736",
         repo = "ale",
-        sha256 = "afa06b02aba70e9d1c91e9ef2961e7a13dde8665b7f1040c5f588b3cb549690a",
+        sha256 = "f2f7f2918e111f61344d9b7674f30ebc7c1c20a6b0371e42f9ba9fd86a0630a8",
     )
 
     _github_tar(
