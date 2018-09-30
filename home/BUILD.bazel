@@ -7,6 +7,10 @@ pkg_tar(
         "//bin:osc52": "./bin/osc52",
     },
     mode = "0600",
+    modes = {
+        "./bin/osc52": "0755",
+        "./bin/cdpath": "0755",
+    },
     package_dir = "/home/me",
     symlinks = {
         "./home/me/src": "/src",
