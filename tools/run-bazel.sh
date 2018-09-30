@@ -3,8 +3,6 @@
 set -euo pipefail
 
 main() {
-	command -v python
-	python --version
 	bazel="$1"
 	shift
 	$bazel \
