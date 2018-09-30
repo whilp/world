@@ -4,6 +4,13 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("//3p:github.bzl", "github_archive")
 load("//3p:repo.bzl", "repo")
 
+#http_archive(
+#    name = "bazel_skylib",
+#    sha256 = "b18e43a101d620af173b3504faf4204b4ee0b97e1d05679bd0fec90c31a91eb9",
+#    strip_prefix = "bazel-skylib-6e2d7e4a75b8ec0c307cf2ff2ca3d837633413ca",
+#    urls = ["https://github.com/bazelbuild/bazel-skylib/archive/6e2d7e4a75b8ec0c307cf2ff2ca3d837633413ca.tar.gz"],
+#)
+
 http_archive(
     name = "io_bazel_rules_docker",
     sha256 = "35c585261362a96b1fe777a7c4c41252b22fd404f24483e1c48b15d7eb2b55a5",
@@ -39,19 +46,19 @@ http_archive(
     urls = ["https://github.com/google/subpar/archive/07ff5feb7c7b113eea593eb6ec50b51099cf0261.tar.gz"],
 )
 
-repo()
-
 load(
     "@io_bazel_rules_docker//container:container.bzl",
     "container_pull",
     container_repositories = "repositories",
 )
-
-container_repositories()
-
-# GO {{{1
 load("@io_bazel_rules_go//go:def.bzl", "go_register_toolchains", "go_rules_dependencies")
 load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
+load("@com_github_bazelbuild_buildtools//buildifier:deps.bzl", "buildifier_dependencies")
+#load("@bazel_skylib//lib/versions.bzl", "versions")
+
+repo()
+
+container_repositories()
 
 go_rules_dependencies()
 
@@ -59,12 +66,7 @@ go_register_toolchains()
 
 gazelle_dependencies()
 
-# BAZEL {{{1
-load("@com_github_bazelbuild_buildtools//buildifier:deps.bzl", "buildifier_dependencies")
-
 buildifier_dependencies()
-
-# DOCKER {{{1
 
 container_repositories()
 
@@ -76,7 +78,6 @@ container_pull(
     repository = "library/ubuntu",
 )
 
-# REPOS {{{1
 load("//image:debs.bzl", "image_packages")
 
 image_packages()
@@ -89,12 +90,4 @@ load("//nvim:files.bzl", "nvim_files")
 
 nvim_files()
 
-#http_archive(
-#    name = "bazel_skylib",
-#    sha256 = "bbccf674aa441c266df9894182d80de104cabd19be98be002f6d478aaa31574d",
-#    strip_prefix = "bazel-skylib-2169ae1c374aab4a09aa90e65efe1a3aad4e279b",
-#    urls = ["https://github.com/bazelbuild/bazel-skylib/archive/2169ae1c374aab4a09aa90e65efe1a3aad4e279b.tar.gz"],
-#)
-#
-#load("@bazel_skylib//:lib.bzl", "versions")
 #versions.check(minimum_bazel_version = "0.17.2")
