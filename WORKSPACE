@@ -1,7 +1,6 @@
 workspace(name = "dotfiles")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-load("//3p:repo.bzl", "repo")
 
 #http_archive(
 #    name = "bazel_skylib",
@@ -9,13 +8,6 @@ load("//3p:repo.bzl", "repo")
 #    strip_prefix = "bazel-skylib-6e2d7e4a75b8ec0c307cf2ff2ca3d837633413ca",
 #    urls = ["https://github.com/bazelbuild/bazel-skylib/archive/6e2d7e4a75b8ec0c307cf2ff2ca3d837633413ca.tar.gz"],
 #)
-
-http_archive(
-    name = "io_bazel_rules_docker",
-    sha256 = "35c585261362a96b1fe777a7c4c41252b22fd404f24483e1c48b15d7eb2b55a5",
-    strip_prefix = "rules_docker-4282829a554058401f7ff63004c8870c8d35e29c",
-    urls = ["https://github.com/bazelbuild/rules_docker/archive/4282829a554058401f7ff63004c8870c8d35e29c.tar.gz"],
-)
 
 http_archive(
     name = "io_bazel_rules_go",
@@ -32,6 +24,13 @@ http_archive(
 )
 
 http_archive(
+    name = "io_bazel_rules_docker",
+    sha256 = "35c585261362a96b1fe777a7c4c41252b22fd404f24483e1c48b15d7eb2b55a5",
+    strip_prefix = "rules_docker-4282829a554058401f7ff63004c8870c8d35e29c",
+    urls = ["https://github.com/bazelbuild/rules_docker/archive/4282829a554058401f7ff63004c8870c8d35e29c.tar.gz"],
+)
+
+http_archive(
     name = "com_github_bazelbuild_buildtools",
     sha256 = "ad7625e1226f1ccd39cae1594b4fe5f1bb938142c3d28e88aaae1635d5e26969",
     strip_prefix = "buildtools-651ea753927b42e601e5d2d40e1700d4a61e6705",
@@ -45,17 +44,18 @@ http_archive(
     urls = ["https://github.com/google/subpar/archive/07ff5feb7c7b113eea593eb6ec50b51099cf0261.tar.gz"],
 )
 
+load("@io_bazel_rules_go//go:def.bzl", "go_register_toolchains", "go_rules_dependencies")
+load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
 load(
     "@io_bazel_rules_docker//container:container.bzl",
     "container_pull",
     container_repositories = "repositories",
 )
-load("@io_bazel_rules_go//go:def.bzl", "go_register_toolchains", "go_rules_dependencies")
-load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
 load("@com_github_bazelbuild_buildtools//buildifier:deps.bzl", "buildifier_dependencies")
+load("//3p:repo.bzl", "repo")
+load("//image:files.bzl", "image_files")
+load("//nvim:files.bzl", "nvim_files")
 #load("@bazel_skylib//lib/versions.bzl", "versions")
-
-repo()
 
 container_repositories()
 
@@ -77,12 +77,10 @@ container_pull(
     repository = "library/ubuntu",
 )
 
-load("//image:files.bzl", "image_files")
-
 image_files()
 
-load("//nvim:files.bzl", "nvim_files")
-
 nvim_files()
+
+repo()
 
 #versions.check(minimum_bazel_version = "0.17.2")

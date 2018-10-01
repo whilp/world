@@ -70,7 +70,7 @@ pkg_tar(
         "@org_golang_x_tools//cmd/goimports": "goimports",
         "@com_github_jstemmer_gotags//:gotags": "gotags",
         "@com_github_nsf_gocode//:gocode": "gocode",
-        "@com_github_josharian_impl//:impl": "impl",
+        "@github_josharian_impl//:impl": "impl",
         "@com_github_derekparker_delve//cmd/dlv": "dlv",
         "@com_github_kisielk_errcheck//:errcheck": "errcheck",
         "@com_github_fatih_motion//:motion": "motion",

@@ -48,14 +48,6 @@ def image_files():
     )
 
     go_repository(
-        name = "com_github_josharian_impl",
-        importpath = "github.com/josharian/impl",
-        sha256 = "1a12938f51264ba57886ece2316fe20e6c15eb95380efe69ed8fc4b9b29a30c5",
-        strip_prefix = "impl-3d0f908298c49598b6aa84f101c69670e15d1d03",
-        urls = ["https://github.com/josharian/impl/archive/3d0f908298c49598b6aa84f101c69670e15d1d03.tar.gz"],
-    )
-
-    go_repository(
         name = "com_github_jstemmer_gotags",
         importpath = "github.com/jstemmer/gotags",
         sha256 = "11ff754779563fa0f3da2127f554555afc1ce9d041f7eac1068d47375642708a",
