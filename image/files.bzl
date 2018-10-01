@@ -151,11 +151,11 @@ def image_files():
     )
 
     # For ibazel.
-    go_repository(
-        name = "com_github_golang_protobuf",
-        commit = "130e6b02ab059e7b717a096f397c5b60111cae74",
-        importpath = "github.com/golang/protobuf",
-    )
+    # go_repository(
+    #     name = "com_github_golang_protobuf",
+    #     commit = "130e6b02ab059e7b717a096f397c5b60111cae74",
+    #     importpath = "github.com/golang/protobuf",
+    # )
 
     native.http_file(
         name = "org_golang_go",
