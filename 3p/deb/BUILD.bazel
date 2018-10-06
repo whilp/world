@@ -1,12 +1,28 @@
+load(
+    "@io_bazel_rules_docker//container:container.bzl",
+    "container_image",
+)
+
 exports_files(glob(["*.bzl"]))
 
 sh_binary(
     name = "update",
     srcs = ["update.sh"],
-    data = [":write"],
+    data = [
+        ":uris",
+        ":uris.digest",
+        ":write",
+    ],
 )
 
 py_binary(
     name = "write",
     srcs = ["write.py"],
+)
+
+container_image(
+    name = "uris",
+    base = "@ubuntu//image",
+    cmd = ["/uris.sh"],
+    files = ["uris.sh"],
 )
