@@ -9,6 +9,7 @@ main() {
   shift
   (
     set -x
+    $bazel clean --expunge
     $bazel \
       --output_base="$HOME/.cache/bazel" \
       test \
