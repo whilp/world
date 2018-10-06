@@ -1,4 +1,4 @@
-def deb():
+def deb_files():
     native.http_file(
         name = "ubuntu_binutils",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/b/binutils/binutils_2.30-21ubuntu1~18.04_amd64.deb",
@@ -191,7 +191,7 @@ def deb():
 
     native.http_file(
         name = "ubuntu_libapparmor1",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/a/apparmor/libapparmor1_2.12-4ubuntu5_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/a/apparmor/libapparmor1_2.12-4ubuntu5.1_amd64.deb",
     )
 
     native.http_file(
@@ -635,6 +635,11 @@ def deb():
     )
 
     native.http_file(
+        name = "ubuntu_libsystemd0",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/s/systemd/libsystemd0_237-3ubuntu10.3_amd64.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_libtsan0",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libtsan0_8.2.0-1ubuntu2~18.04_amd64.deb",
     )
@@ -696,7 +701,7 @@ def deb():
 
     native.http_file(
         name = "ubuntu_linux_libc_dev",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux-libc-dev_4.15.0-34.37_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux-libc-dev_4.15.0-36.39_amd64.deb",
     )
 
     native.http_file(
@@ -772,6 +777,11 @@ def deb():
     native.http_file(
         name = "ubuntu_perl",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/p/perl/perl_5.26.1-6ubuntu0.2_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_perl_base",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/perl/perl-base_5.26.1-6ubuntu0.2_amd64.deb",
     )
 
     native.http_file(
@@ -974,7 +984,7 @@ def deb():
         url = "http://archive.ubuntu.com/ubuntu/pool/main/z/zlib/zlib1g-dev_1.2.11.dfsg-0ubuntu2_amd64.deb",
     )
 
-def deb_files():
+def deb():
     return [
         "@ubuntu_binutils//file",
         "@ubuntu_binutils_common//file",
@@ -1103,6 +1113,7 @@ def deb_files():
         "@ubuntu_libssl1_1//file",
         "@ubuntu_libstdcPP6//file",
         "@ubuntu_libstdcPP_7_dev//file",
+        "@ubuntu_libsystemd0//file",
         "@ubuntu_libtsan0//file",
         "@ubuntu_libubsan0//file",
         "@ubuntu_libwind0_heimdal//file",
@@ -1131,6 +1142,7 @@ def deb_files():
         "@ubuntu_openssl//file",
         "@ubuntu_patch//file",
         "@ubuntu_perl//file",
+        "@ubuntu_perl_base//file",
         "@ubuntu_perl_modules_5_26//file",
         "@ubuntu_pinentry_curses//file",
         "@ubuntu_pkg_config//file",

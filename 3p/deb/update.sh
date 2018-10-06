@@ -4,7 +4,7 @@ set -euo pipefail
 
 main() {
     buildifier="$1"
-    target="$BUILD_WORKSPACE_DIRECTORY"/3p/deb/debs.bzl
+    target="$BUILD_WORKSPACE_DIRECTORY"/3p/deb/repo.bzl
 
     # TODO: the digest here should work but it does not.
     #digest=$(cat ./3p/deb/uris.digest)
