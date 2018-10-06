@@ -4,6 +4,10 @@ import os
 import sys
 
 
+LABEL = 0
+URL = 1
+SHA256 = 2
+
 def main(args, env):
     return write_image_bzl(sys.stdin, sys.stdout)
 
@@ -29,32 +33,32 @@ def parse(f):
 
 
 def pkg(line):
-    first = line.split()[0]
-    unquoted = first.strip("'")
-    url = unquoted
-    last = url.split("/")[-1]
-    name = last.split("_")[0]
+    fields = line.split()
+    url = fields[0].strip("'")
+    name = url.split("/")[-1].split("_")[0]
     label = "ubuntu_" + (name.replace("-", "_").replace(".", "_").replace("+", "P"))
-    return (label, url)
+    _, sha256 = fields[-1].split(":")
+    return (label, url, sha256)
 
 
 def gen_image_package_files(pkgs):
-    lines = ["def deb():", "    return ["]
-    lines.extend("        '@{}//file',".format(label) for label, _ in pkgs)
+    lines = ["def deb_files():", "    return ["]
+    lines.extend("        '@{}//file',".format(pkg[LABEL]) for pkg in pkgs)
     lines.append("    ]")
     return "\n".join(lines)
 
 
 def gen_image_packages(pkgs):
-    lines = ["def deb_files():"]
-    lines.extend(http_file(*pkg) for pkg in pkgs)
+    lines = ["def deb():"]
+    lines.extend(http_file(pkg) for pkg in pkgs)
     return "\n".join(lines)
 
 
-def http_file(name, url):
-    return "\n    ".join(
-        ["", "native.http_file(", '    name = "{name}",', '    url = "{url}",', ")"]
-    ).format(name=name, url=url)
+def http_file(pkg):
+    return """    native.http_file(name = "{name}", sha256 = "{sha256}", url = "{url}")""".format(
+        sha256=pkg[SHA256],
+        name=pkg[LABEL],
+        url=pkg[URL])
 
 
 if __name__ == "__main__":

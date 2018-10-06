@@ -4,7 +4,7 @@ set -euo pipefail
 
 main() {
     apt-get update
-    apt-get install -qq --print-uris "${debs[@]}"
+    apt-get install -oAcquire::ForceHash=sha256 -qq --print-uris "${debs[@]}"
 }
 
 debs=(

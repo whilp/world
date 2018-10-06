@@ -11,7 +11,7 @@ main() {
     digest=bazel/3p/deb:uris
     # Help the loader find its runfiles.
     PYTHON_RUNFILES=${BASH_SOURCE[0]}.runfiles ./3p/deb/uris
-    docker run --rm -ti "$digest" |
+    docker run --rm -t "$digest" |
         ./3p/deb/write >"$target"
     $buildifier "$target"
 }
