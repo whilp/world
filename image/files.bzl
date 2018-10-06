@@ -113,10 +113,11 @@ def image_files():
 
     go_repository(
         name = "org_golang_x_tools",
-        importpath = "github.com/golang/tools",
-        sha256 = "d083129b31bb306a10972069cee75a9ff68d06216efa431f654238eae159fea9",
-        strip_prefix = "tools-3c07937fe18c27668fd78bbaed3d6b8b39e202ea",
-        urls = ["https://github.com/golang/tools/archive/3c07937fe18c27668fd78bbaed3d6b8b39e202ea.tar.gz"],
+        #importpath = "github.com/golang/tools",
+        importpath = "golang.org/x/tools",
+        sha256 = "60e2281291ba89b0d45e146bb9782479a09ea9352e16c5d58957239da918d93a",
+        strip_prefix = "tools-f60d9635b16a5a57b06eaa119614ba4df421966a",
+        urls = ["https://github.com/golang/tools/archive/f60d9635b16a5a57b06eaa119614ba4df421966a.tar.gz"],
     )
 
     go_repository(
