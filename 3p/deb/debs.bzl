@@ -636,6 +636,11 @@ def deb_files():
     )
 
     native.http_file(
+        name = "ubuntu_libsystemd0",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/s/systemd/libsystemd0_237-3ubuntu10.3_amd64.deb",
+    )
+
+    native.http_file(
         name = "ubuntu_libtsan0",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libtsan0_8.2.0-1ubuntu2~18.04_amd64.deb",
     )
@@ -773,6 +778,11 @@ def deb_files():
     native.http_file(
         name = "ubuntu_perl",
         url = "http://archive.ubuntu.com/ubuntu/pool/main/p/perl/perl_5.26.1-6ubuntu0.2_amd64.deb",
+    )
+
+    native.http_file(
+        name = "ubuntu_perl_base",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/p/perl/perl-base_5.26.1-6ubuntu0.2_amd64.deb",
     )
 
     native.http_file(
@@ -1105,6 +1115,7 @@ def deb():
         '@ubuntu_libssl1_1//file',
         '@ubuntu_libstdcPP6//file',
         '@ubuntu_libstdcPP_7_dev//file',
+        '@ubuntu_libsystemd0//file',
         '@ubuntu_libtsan0//file',
         '@ubuntu_libubsan0//file',
         '@ubuntu_libwind0_heimdal//file',
@@ -1133,6 +1144,7 @@ def deb():
         '@ubuntu_openssl//file',
         '@ubuntu_patch//file',
         '@ubuntu_perl//file',
+        '@ubuntu_perl_base//file',
         '@ubuntu_perl_modules_5_26//file',
         '@ubuntu_pinentry_curses//file',
         '@ubuntu_pkg_config//file',
