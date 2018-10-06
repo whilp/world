@@ -11,16 +11,16 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "io_bazel_rules_go",
-    sha256 = "875728865fd3d9e1f8008fd5afbaac361363fa0d8816de6abd4a0db2baa35a4a",
-    strip_prefix = "rules_go-1cd1a773e6cc32f14d20ded1c0c1b34203354a2a",
-    urls = ["https://github.com/bazelbuild/rules_go/archive/1cd1a773e6cc32f14d20ded1c0c1b34203354a2a.tar.gz"],
+    sha256 = "bb26e2318db0d8f9b98d471c7b7b2896085fa492f00774997b184d0d19ef74f2",
+    strip_prefix = "rules_go-40e2b78a314ebb91d0e690579ed3273683a3a1a1",
+    urls = ["https://github.com/bazelbuild/rules_go/archive/40e2b78a314ebb91d0e690579ed3273683a3a1a1.tar.gz"],
 )
 
 http_archive(
     name = "bazel_gazelle",
-    sha256 = "cced089a43ae3e7a72b3aceb23e73b172b6763a8ae20164ec36e27265505b3a5",
-    strip_prefix = "bazel-gazelle-bb3efb568f0d252059f064b35030a5afc8da7f7a",
-    urls = ["https://github.com/bazelbuild/bazel-gazelle/archive/bb3efb568f0d252059f064b35030a5afc8da7f7a.tar.gz"],
+    sha256 = "e4e2226881a54d1646cb8176fffd18d4f91aebc5d42fb1589950f8d4b73bd158",
+    strip_prefix = "bazel-gazelle-bc107b5e24000561e825056ca193b6745e5d2867",
+    urls = ["https://github.com/bazelbuild/bazel-gazelle/archive/bc107b5e24000561e825056ca193b6745e5d2867.tar.gz"],
 )
 
 http_archive(
