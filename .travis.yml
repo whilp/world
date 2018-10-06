@@ -15,3 +15,6 @@ before_install:
 
 script:
   - ./tools/run-bazel.sh "$HOME/bin/bazel" //...
+
+notifications:
+  email: false
