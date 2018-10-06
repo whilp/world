@@ -30,4 +30,5 @@ def github_repository(name, owner, ref, repo = None, **kwargs):
         importpath = importpath,
         strip_prefix = strip_prefix,
         urls = [url],
+        **kwargs
     )
