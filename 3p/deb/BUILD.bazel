@@ -8,10 +8,12 @@ exports_files(glob(["*.bzl"]))
 sh_binary(
     name = "update",
     srcs = ["update.sh"],
+    args = ["$(location @com_github_bazelbuild_buildtools//buildifier)"],
     data = [
         ":uris",
         ":uris.digest",
         ":write",
+        "@com_github_bazelbuild_buildtools//buildifier",
     ],
 )
 
