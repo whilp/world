@@ -2,8 +2,13 @@
 
 set -euo pipefail
 
-docker run --rm -ti ubuntu:18.04 /bin/bash -c \
-	"apt-get update \
+main() {
+    print_uris | ./3p/deb/write >"$BUILD_WORKSPACE_DIRECTORY"/3p/deb/debs.bzl
+}
+
+print_uris() {
+    docker run --rm -ti ubuntu:18.04 /bin/bash -c \
+        "apt-get update \
     && apt-get install --print-uris \
     libltdl7 \
     git \
@@ -20,5 +25,8 @@ docker run --rm -ti ubuntu:18.04 /bin/bash -c \
     python3-venv \
     curl \
     openssh-server \
-    " |
-	python image/debs.py >image/debs.bzl
+    "
+}
+
+main "$@"
+exit $?

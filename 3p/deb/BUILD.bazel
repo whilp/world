@@ -1,1 +1,12 @@
 exports_files(glob(["*.bzl"]))
+
+sh_binary(
+    name = "update",
+    srcs = ["update.sh"],
+    data = [":write"],
+)
+
+py_binary(
+    name = "write",
+    srcs = ["write.py"],
+)
