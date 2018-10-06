@@ -1,4 +1,4 @@
-def image_packages():
+def deb_files():
 
     native.http_file(
         name = "ubuntu_binutils",
@@ -192,7 +192,7 @@ def image_packages():
 
     native.http_file(
         name = "ubuntu_libapparmor1",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/a/apparmor/libapparmor1_2.12-4ubuntu5_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/a/apparmor/libapparmor1_2.12-4ubuntu5.1_amd64.deb",
     )
 
     native.http_file(
@@ -697,7 +697,7 @@ def image_packages():
 
     native.http_file(
         name = "ubuntu_linux_libc_dev",
-        url = "http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux-libc-dev_4.15.0-34.37_amd64.deb",
+        url = "http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux-libc-dev_4.15.0-36.39_amd64.deb",
     )
 
     native.http_file(
@@ -976,7 +976,7 @@ def image_packages():
     )
 
 
-def image_package_files():
+def deb():
     return [
         '@ubuntu_binutils//file',
         '@ubuntu_binutils_common//file',
