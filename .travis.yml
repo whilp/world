@@ -14,7 +14,7 @@ before_install:
   - ln -s "$(command -v python2)" "$HOME/bin/python"
 
 script:
-  - ./tools/run-bazel.sh "$HOME/bin/bazel" //...
+  - ./tools/run-bazel.sh "$HOME/bin/bazel" -s //...
 
 notifications:
   email: false
