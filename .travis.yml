@@ -16,7 +16,7 @@ before_install:
 script:
   - df -h
   - free -m
-  - ./tools/run-bazel.sh "$HOME/bin/bazel" -s //...
+  - ./tools/run-bazel.sh "$HOME/bin/bazel" //...
 
 notifications:
   email: false

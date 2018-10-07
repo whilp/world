@@ -3,10 +3,14 @@ build --show_progress --show_loading_progress --show_progress_rate_limit=60.0
 
 build:check --all_incompatible_changes
 
-build:ci --local_resources=14336,8.0,1.0
+build:ci --announce_rc
+build:ci --discard_analysis_cache
 build:ci --genrule_strategy=standalone
+build:ci --local_resources=4096,2.0,1.0
+build:ci --nouse_action_cache
 build:ci --sandbox_debug
 build:ci --spawn_strategy=standalone
+build:ci --subcommands=pretty_print
 build:ci --verbose_failures
 common:ci --color=no
 common:ci --python_top=//python:py2
