@@ -1,10 +1,10 @@
 /*.lock
-/cookbooks
 /tmp
 /vendor
+/bazel-*
+/.git
 *.test
 savehist
 *~
 \#*\#
-.*
 *.pyc

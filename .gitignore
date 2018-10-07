@@ -1,7 +1,0 @@
-bazel-bin
-bazel-dotfiles
-bazel-genfiles
-bazel-me
-bazel-out
-bazel-testlogs
-.local/share
