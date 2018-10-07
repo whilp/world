@@ -1,10 +1,10 @@
+*.pyc
+*.test
+*~
 /*.lock
+/.git
+/bazel-*
 /tmp
 /vendor
-/bazel-*
-/.git
-*.test
-savehist
-*~
 \#*\#
-*.pyc
+savehist
