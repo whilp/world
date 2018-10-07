@@ -7,28 +7,44 @@ export BAZEL_PYTHON=/usr/bin/python2.7
 main() {
     bazel="$1"
     shift
+
     pid="$("$bazel" info server_pid)"
     out="$("$bazel" info output_base)/server/jvm.out"
-    reap "$pid" "$out" &
-    (
-        set -x
-        "$bazel" \
-            --output_base="$HOME/.cache/bazel" \
-            test \
-            --config=ci \
-            "$@"
-    )
-    return $?
-}
 
-reap() {
-    pid="$1"
-    sleep 300
-    kill -3 "$pid"
-    sleep 5
-    echo "REAPED BAZEL; contents of $out"
-    cat "$out"
-    kill -9 "$pid"
+    report() {
+        (
+            set -x
+            free -m
+            df -h
+        )
+    }
+    trap report EXIT
+
+    reap() {
+        sleep 300
+        kill -3 "$pid"
+        sleep 5
+        echo "REAPED BAZEL; contents of $out"
+        cat "$out"
+        "$bazel" shutdown
+    }
+
+    run() {
+        (
+            set -x
+            "$bazel" \
+                --output_base="$HOME/.cache/bazel" \
+                test \
+                --config=ci \
+                "$@"
+        )
+    }
+
+    report
+    (sleep 300 && reap) &
+    run
+
+    return $?
 }
 
 main "$@"
