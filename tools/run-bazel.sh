@@ -23,11 +23,12 @@ main() {
 
 reap() {
     pid="$1"
-    sleep 200
+    sleep 300
     kill -3 "$pid"
     sleep 5
     echo "REAPED BAZEL; contents of $out"
     cat "$out"
+    kill -9 "$pid"
 }
 
 main "$@"
