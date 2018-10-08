@@ -146,5 +146,6 @@ sh_test(
         ":usr_bin",
         ":usr_local",
         "//home:tar",
-    ],
+        "//3p/deb:repo.bzl",
+    ] + deb_files(),
 )
