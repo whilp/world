@@ -20,20 +20,20 @@ container_image(
         "/usr/sbin/sshd",
         "-D",
     ],
-    #debs = deb_files(),
+    debs = deb_files(),
     env = {
         "HOME": "/home/me",
     },
     # Force rebuild when we observe new packages.
-    #files = ["//3p/deb:repo.bzl"],
+    files = ["//3p/deb:repo.bzl"],
     ports = ["22"],
-    # tars = [
-    #     "//home:tar",
-    #     ":etc",
-    #     ":usr_bin",
-    #     ":usr_local",
-    #     ":slash",
-    # ],
+    tars = [
+        "//home:tar",
+        ":etc",
+        ":usr_bin",
+        ":usr_local",
+        ":slash",
+    ],
     workdir = "/home/me",
 )
 
@@ -140,5 +140,11 @@ par_binary(
 sh_test(
     name = "test",
     srcs = ["test.sh"],
-    #data = [":image"],
+    data = [
+        ":etc",
+        ":slash",
+        ":usr_bin",
+        ":usr_local",
+        "//home:tar",
+    ],
 )
