@@ -4,6 +4,7 @@ set -euo pipefail
 
 main() {
     bin="$1"
+    shift
     set -x
     bins=(
         "$bin"
