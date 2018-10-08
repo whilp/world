@@ -10,12 +10,15 @@ main() {
 
     pid="$("$bazel" info server_pid)"
     out="$("$bazel" info output_base)/server/jvm.out"
+    explain="/tmp/explain.out"
 
     report() {
         (
             set -x
             free -m
             df -h
+            cat "$out"
+            cat "$explain"
         )
     }
     trap report EXIT
@@ -24,8 +27,7 @@ main() {
         sleep 300
         kill -3 "$pid"
         sleep 5
-        echo "REAPED BAZEL; contents of $out"
-        cat "$out"
+        echo "REAPED BAZEL"
         "$bazel" shutdown
     }
 
@@ -40,7 +42,6 @@ main() {
         )
     }
 
-    report
     (sleep 300 && reap) &
     run "$@"
 
