@@ -138,7 +138,7 @@ par_binary(
 
 pkg_tar(
     name = "hack",
-    srcs = deb_files() + ["//3p/deb:repo.bzl"],
+    #srcs = deb_files() + ["//3p/deb:repo.bzl"],
     deps = [
         ":etc",
         ":slash",
