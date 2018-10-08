@@ -7,6 +7,7 @@ main() {
     set -x
     bins=(
         "$bin"
+        # TODO
         #/usr/local/clang-5.0.0/bin
         /usr/local/sbin
         /usr/local/bin
