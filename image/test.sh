@@ -5,7 +5,8 @@ set -euo pipefail
 main() {
     # TODO: debug
     #./image/image
-    tar tvzf ./image/hack
+    ls ./image
+    tar tvzf ./image/hack.tar
     return 1
 }
 
