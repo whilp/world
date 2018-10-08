@@ -50,10 +50,10 @@ pkg_tar(
     files = {
         #"@cacert//file": "./ssl/certs/ca-certificates.crt",
         # https://bugs.launchpad.net/ubuntu/+source/apt/+bug/1577926
-        "apt.conf": "./apt/apt.conf",
-        "sshd_config": "./ssh/sshd_config",
-        "passwd": "./passwd",
-        "group": "./group",
+        #"apt.conf": "./apt/apt.conf",
+        #"sshd_config": "./ssh/sshd_config",
+        #"passwd": "./passwd",
+        #"group": "./group",
     },
     package_dir = "/etc",
 )
