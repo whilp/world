@@ -48,7 +48,7 @@ pkg_tar(
 pkg_tar(
     name = "etc",
     files = {
-        "@cacert//file": "./ssl/certs/ca-certificates.crt",
+        #"@cacert//file": "./ssl/certs/ca-certificates.crt",
         # https://bugs.launchpad.net/ubuntu/+source/apt/+bug/1577926
         "apt.conf": "./apt/apt.conf",
         "sshd_config": "./ssh/sshd_config",
@@ -140,8 +140,8 @@ pkg_tar(
     name = "hack",
     #srcs = deb_files() + ["//3p/deb:repo.bzl"],
     deps = [
-        #":etc",
-        ":slash",
+        ":etc",
+        #":slash",
         #":usr_bin",
         #":usr_local",
         #"//home:tar",
@@ -153,6 +153,6 @@ sh_test(
     name = "test",
     srcs = ["test.sh"],
     data = [
-        ":slash",
+        ":hack.tar",
     ],
 )
