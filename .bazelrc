@@ -1,5 +1,7 @@
+build --show_loading_progress
+build --show_progress
+build --show_progress_rate_limit=60.0
 build --workspace_status_command=tools/workspace_status.sh
-build --show_progress --show_loading_progress --show_progress_rate_limit=60.0
 
 build:check --all_incompatible_changes
 
