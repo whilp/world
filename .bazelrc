@@ -1,7 +1,9 @@
 build --show_loading_progress
 build --show_progress
 build --show_progress_rate_limit=60.0
+build --verbose_failures
 build --workspace_status_command=tools/workspace_status.sh
+test --test_output=errors
 
 build:check --all_incompatible_changes
 
@@ -13,8 +15,6 @@ build:ci --local_resources=1024,1.0,0.8
 build:ci --nouse_action_cache
 build:ci --sandbox_debug
 build:ci --spawn_strategy=standalone
-build:ci --verbose_failures
 common:ci --color=no
 common:ci --python_top=//python:py2
-test:ci --test_output=errors
 test:ci --test_strategy=standalone
