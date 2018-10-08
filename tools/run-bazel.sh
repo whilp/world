@@ -42,7 +42,7 @@ main() {
 
     report
     (sleep 300 && reap) &
-    run
+    run "$@"
 
     return $?
 }
