@@ -1,3 +1,4 @@
+common --python_top=//python
 build --show_loading_progress
 build --show_progress
 build --show_progress_rate_limit=60.0
@@ -16,5 +17,4 @@ build:ci --nouse_action_cache
 build:ci --sandbox_debug
 build:ci --spawn_strategy=standalone
 common:ci --color=no
-common:ci --python_top=//python:py2
 test:ci --test_strategy=standalone

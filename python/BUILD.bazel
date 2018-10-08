@@ -1,13 +1,13 @@
-py_runtime(
-    name = "py2",
-    files = [],
-    interpreter_path = "/usr/bin/python2",
-    visibility = ["//visibility:public"],
+load("@io_bazel_rules_go//go:def.bzl", "go_binary")
+
+go_binary(
+    name = "wrapper",
+    srcs = ["wrapper.go"],
 )
 
 py_runtime(
-    name = "py3",
+    name = "python",
     files = [],
-    interpreter_path = "/usr/bin/python3",
+    interpreter = ":wrapper",
     visibility = ["//visibility:public"],
 )
