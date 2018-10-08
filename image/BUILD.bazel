@@ -12,7 +12,6 @@ sh_binary(
     data = [":image"],
 )
 
-# TODO: debugged most of this, rebug
 container_image(
     name = "image",
     base = "@ubuntu//image",
@@ -136,23 +135,10 @@ par_binary(
     ],
 )
 
-pkg_tar(
-    name = "hack",
-    #srcs = deb_files() + ["//3p/deb:repo.bzl"],
-    deps = [
-        #":etc",
-        ":slash",
-        #":usr_bin",
-        #":usr_local",
-        #"//home:tar",
-    ],
-)
-
-# TODO: debug
 sh_test(
     name = "test",
     srcs = ["test.sh"],
     data = [
-        ":slash",
+        ":image",
     ],
 )

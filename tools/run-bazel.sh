@@ -5,30 +5,43 @@ set -euo pipefail
 export BAZEL_PYTHON=/usr/bin/python2.7
 
 main() {
-    bazel="$1"
-    shift
-    pid="$("$bazel" info server_pid)"
-    out="$("$bazel" info output_base)/server/jvm.out"
-    reap "$pid" "$out" &
-    (
-        set -x
-        "$bazel" \
-            --output_base="$HOME/.cache/bazel" \
-            test \
-            --config=ci \
-            "$@"
-    )
-    return $?
-}
+    pid="$(bazel info server_pid)"
+    out="$(bazel info output_base)/server/jvm.out"
+    explain="/tmp/explain.out"
 
-reap() {
-    pid="$1"
-    sleep 300
-    kill -3 "$pid"
-    sleep 5
-    echo "REAPED BAZEL; contents of $out"
-    cat "$out"
-    kill -9 "$pid"
+    report() {
+        (
+            set -x
+            free -m
+            df -h
+            cat "$out"
+            cat "$explain"
+        )
+    }
+    trap report EXIT
+
+    reap() {
+        kill -3 "$pid"
+        sleep 5
+        echo "REAPED BAZEL"
+        bazel shutdown
+    }
+
+    run() {
+        (
+            set -x
+            bazel \
+                --output_base="$HOME/.cache/bazel" \
+                test \
+                --config=ci \
+                "$@"
+        )
+    }
+
+    (sleep 900 && reap) &
+    run "$@"
+
+    return $?
 }
 
 main "$@"

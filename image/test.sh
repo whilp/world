@@ -3,11 +3,8 @@
 set -euo pipefail
 
 main() {
-    # TODO: debug
-    #./image/image
-    ls ./image
-    tar tvzf ./image/hack.tar
-    return 1
+    ./image/image
+    return $?
 }
 
 main "$@"
