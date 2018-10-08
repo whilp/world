@@ -136,8 +136,9 @@ par_binary(
     ],
 )
 
+# TODO: debug
 sh_test(
     name = "test",
     srcs = ["test.sh"],
-    data = [":image"],
+    #data = [":image"],
 )

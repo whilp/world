@@ -3,7 +3,9 @@
 set -euo pipefail
 
 main() {
-    ./image/image
+    # TODO: debug
+    #./image/image
+    true
 }
 
 main "$@"
