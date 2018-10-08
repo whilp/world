@@ -154,11 +154,6 @@ sh_test(
     name = "test",
     srcs = ["test.sh"],
     data = [
-        ":etc",
-        ":slash",
-        ":usr_bin",
-        ":usr_local",
-        "//home:tar",
-        "//3p/deb:repo.bzl",
-    ] + deb_files(),
+        ":hack",
+    ],
 )
