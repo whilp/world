@@ -140,11 +140,11 @@ pkg_tar(
     name = "hack",
     #srcs = deb_files() + ["//3p/deb:repo.bzl"],
     deps = [
-        ":etc",
-        #":slash",
-        #":usr_bin",
-        #":usr_local",
-        #"//home:tar",
+        #":etc",
+        ":slash",
+        ":usr_bin",
+        ":usr_local",
+        "//home:tar",
     ],
 )
 
