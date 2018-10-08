@@ -3,8 +3,7 @@
 set -euo pipefail
 
 main() {
-    # TODO: debug
-    tar tvzf ./image/image.tar
+    ./image/image
     return 1
 }
 

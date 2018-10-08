@@ -3,8 +3,6 @@ build --show_progress --show_loading_progress --show_progress_rate_limit=60.0
 
 build:check --all_incompatible_changes
 
-build:ci --incompatible_disable_deprecated_attr_params
-build:ci --all_incompatible_changes
 build:ci --announce_rc
 build:ci --discard_analysis_cache
 build:ci --genrule_strategy=standalone
