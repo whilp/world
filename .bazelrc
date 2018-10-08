@@ -7,6 +7,7 @@ build:ci --announce_rc
 build:ci --discard_analysis_cache
 build:ci --genrule_strategy=standalone
 #build:ci --local_resources=4096,2.0,1.0
+build:ci --jobs=1
 build:ci --local_resources=1024,1.0,0.8
 build:ci --nouse_action_cache
 build:ci --sandbox_debug
