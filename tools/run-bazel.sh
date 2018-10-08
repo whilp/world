@@ -5,11 +5,8 @@ set -euo pipefail
 export BAZEL_PYTHON=/usr/bin/python2.7
 
 main() {
-    bazel="$1"
-    shift
-
-    pid="$("$bazel" info server_pid)"
-    out="$("$bazel" info output_base)/server/jvm.out"
+    pid="$(bazel info server_pid)"
+    out="$(bazel info output_base)/server/jvm.out"
     explain="/tmp/explain.out"
 
     report() {
@@ -28,13 +25,13 @@ main() {
         kill -3 "$pid"
         sleep 5
         echo "REAPED BAZEL"
-        "$bazel" shutdown
+        bazel shutdown
     }
 
     run() {
         (
             set -x
-            "$bazel" \
+            bazel \
                 --output_base="$HOME/.cache/bazel" \
                 test \
                 --config=ci \

@@ -8,14 +8,10 @@ git:
   quiet: true
 
 before_install:
-  - export PATH="$HOME/bin:$PATH"
-  - ./tools/get-bazel.sh "$HOME/bin/bazel"
-  - ln -s "$(command -v python2)" "$HOME/bin/python"
+  - ./tools/install-travis.sh "$HOME/bin"
 
 script:
-  - env
-  - which python
-  - ./tools/run-bazel.sh "$HOME/bin/bazel" //image:test
+  - ./tools/run-travis.sh "$HOME/bin" //image:test
 
 notifications:
   email: false
