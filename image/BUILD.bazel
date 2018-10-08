@@ -136,6 +136,18 @@ par_binary(
     ],
 )
 
+pkg_tar(
+    name = "hack",
+    files = deb_files(),
+    deps = [
+        ":etc",
+        ":slash",
+        ":usr_bin",
+        ":usr_local",
+        "//home:tar",
+        "//3p/deb:repo.bzl",
+)
+
 # TODO: debug
 sh_test(
     name = "test",
