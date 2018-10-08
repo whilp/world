@@ -140,8 +140,8 @@ pkg_tar(
     name = "hack",
     #srcs = deb_files() + ["//3p/deb:repo.bzl"],
     deps = [
-        ":etc",
-        #":slash",
+        #":etc",
+        ":slash",
         #":usr_bin",
         #":usr_local",
         #"//home:tar",
@@ -153,6 +153,6 @@ sh_test(
     name = "test",
     srcs = ["test.sh"],
     data = [
-        ":etc.tar",
+        ":slash",
     ],
 )
