@@ -5,7 +5,6 @@ set -euo pipefail
 main() {
     bin="$1"
     shift
-    set -x
     bins=(
         "$bin"
         # TODO
@@ -18,6 +17,7 @@ main() {
         /bin
     )
     path="$(join : "${bins[@]}")"
+    set -x
     PATH="$path" ./tools/run-bazel.sh "$@"
 }
 

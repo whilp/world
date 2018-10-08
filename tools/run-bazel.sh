@@ -21,7 +21,6 @@ main() {
     trap report EXIT
 
     reap() {
-        sleep 300
         kill -3 "$pid"
         sleep 5
         echo "REAPED BAZEL"
@@ -39,7 +38,7 @@ main() {
         )
     }
 
-    (sleep 300 && reap) &
+    (sleep 900 && reap) &
     run "$@"
 
     return $?
