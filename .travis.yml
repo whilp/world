@@ -13,6 +13,8 @@ before_install:
   - ln -s "$(command -v python2)" "$HOME/bin/python"
 
 script:
+  - env
+  - which python
   - ./tools/run-bazel.sh "$HOME/bin/bazel" //image:test
 
 notifications:
