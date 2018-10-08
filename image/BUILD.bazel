@@ -141,10 +141,10 @@ pkg_tar(
     #srcs = deb_files() + ["//3p/deb:repo.bzl"],
     deps = [
         ":etc",
-        ":slash",
-        ":usr_bin",
-        ":usr_local",
-        "//home:tar",
+        #":slash",
+        #":usr_bin",
+        #":usr_local",
+        #"//home:tar",
     ],
 )
 
