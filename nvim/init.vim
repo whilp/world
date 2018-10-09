@@ -122,5 +122,15 @@ nmap <silent> <C-j> <Plug>(ale_next_wrap)
 " TODO: tab completion doesn't seem to care about this.
 let &cdpath = join(["", ""] + systemlist("~/bin/cdpath"), ",")
 
+nnoremap <Leader>t :Neomake!<CR>
+let g:neomake_open_list = 2
+let g:neomake_enabled_makers = ["bazel"]
+let g:neomake_bazel_maker = {
+    \ 'exe': 'bazel',
+    \ 'args': ['test', '//...'],
+    \ 'errorformat': '%f:%l:$c: %m',
+    \ 'append_file': 0,
+    \ }
+
 packloadall
 sil helptags ALL
