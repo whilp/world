@@ -11,7 +11,7 @@
 	pushf = push --force-with-lease
 	fe = fetch -ap
 [core]
-	editor = ~/bin/e
+	editor = nvr --remote-wait
 	excludesfile = ~/.gitconf/ignore
 	pager = cat
 [format]
@@ -31,9 +31,6 @@
 	fetch = +refs/pull/*/head:refs/pull/origin/*
 [hub]
 	host = github.com
-[merge]
-	tool = emerge
-	conflictstyle = diff3
 [github]
 	user = whilp
 [remote]
@@ -49,3 +46,14 @@
 	ui = false
 [credential]
 	helper = cache --timeout=86400
+[diff]
+    tool = nvr
+[difftool "nvr"]
+    cmd = nvr -s -d $LOCAL $REMOTE
+[merge]
+    tool = nvr
+	conflictstyle = diff3
+[mergetool "nvr"]
+    cmd = nvr -s -d $LOCAL $BASE $REMOTE $MERGED -c 'wincmd J | wincmd ='
+[commit]
+    verbose = true
