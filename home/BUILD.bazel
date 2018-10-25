@@ -23,7 +23,6 @@ pkg_tar(
     },
     visibility = ["//visibility:public"],
     deps = [
-        ":dot_config",
         ":dot_docker",
         ":dot_gitconf",
         ":dot_gnupg",
