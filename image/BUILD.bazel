@@ -5,6 +5,7 @@ load(
     "container_image",
 )
 load("@subpar//:subpar.bzl", "par_binary")
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_test")
 
 sh_binary(
     name = "run",
@@ -25,7 +26,9 @@ container_image(
     },
     # Force rebuild when we observe new packages.
     files = ["//3p/deb:repo.bzl"],
-    ports = ["22"],
+    ports = [
+        "22",
+    ],
     tars = [
         "//home:tar",
         ":etc",
@@ -40,6 +43,10 @@ pkg_tar(
     name = "slash",
     files = {
         ":empty": "/run/sshd/.keep",
+        "check.py": "/check",
+    },
+    modes = {
+        "./check": "0755",
     },
     package_dir = "/",
 )
@@ -84,8 +91,9 @@ pkg_tar(
         #"@com_github_bazelbuild_bazel_watcher//ibazel": "ibazel",
         "@bazel_gazelle//cmd/gazelle": "gazelle",
         "@com_github_shurcooL_markdownfmt//:markdownfmt": "markdownfmt",
-        ":black.par": "black",
-        ":flake8.par": "flake8",
+        # TODO
+        #":black.par": "black",
+        #":flake8.par": "flake8",
     },
     mode = "0755",
     package_dir = "/usr/bin",
@@ -136,10 +144,27 @@ par_binary(
     ],
 )
 
+py_binary(
+    name = "check",
+    srcs = ["check.py"],
+)
+
+go_test(
+    name = "image_test",
+    srcs = ["image_test.go"],
+)
+
+go_binary(
+    name = "image_run",
+    srcs = ["image_test.go"],
+)
+
 sh_test(
     name = "test",
     srcs = ["test.sh"],
     data = [
-        ":image",
+        ":check",
+        #":image",
+        #":image.digest",
     ],
 )
