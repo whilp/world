@@ -2,6 +2,7 @@ filetype on
 filetype plugin indent on
 syntax on
 
+set termguicolors
 colorscheme base16-solarized-dark
 let g:airline_theme="base16_solarized"
 
