@@ -16,6 +16,7 @@ debs=(
     openssh-server
     pkg-config
     python2.7
+    python2.7-dev
     python3
     python3-dev
     python3-setuptools
