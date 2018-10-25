@@ -47,7 +47,9 @@ let mapleader = " "
 
 inoremap jk <ESC>
 nnoremap <Leader>g :Rg<CR>
-nnoremap <Leader>f :FZF<CR>
+nnoremap <Leader>f :Files<CR>
+nnoremap <Leader>F :GFiles<CR>
+nnoremap <Leader>w :Buffers<CR>
 nnoremap <Leader>q :bp\|bd #<CR>
 nnoremap <Leader>v :Gstatus<CR>
 nnoremap <silent> [f :lprevious<CR>
