@@ -103,6 +103,15 @@ def py():
         version = "1.15.2",
     )
 
+    _pypi_wheel(
+        name = "neovim-remote",
+        abi = "none",
+        platform = "any",
+        python = "py3",
+        #sha256 = "a251570bb3cb04f1627f23c234ad09af0e54fc8194e026cf46178f2e5748d647",
+        version = "2.1.0",
+    )
+
 def _pypi_wheel(name, version, python, abi, platform, build = None, **kwargs):
     # https://www.python.org/dev/peps/pep-0427/#file-name-convention
     # https://github.com/pypa/warehouse/issues/1944#issuecomment-373490237

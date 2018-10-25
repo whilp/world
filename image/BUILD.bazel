@@ -135,6 +135,15 @@ par_binary(
 )
 
 par_binary(
+    name = "nvr",
+    srcs = ["run-nvr.py"],
+    main = "run-nvr.py",
+    deps = [
+        "@pypi_neovim_remote//:pkg",
+    ],
+)
+
+par_binary(
     name = "black",
     srcs = ["@pypi_black//:black.py"],
     main = "@pypi_black//:black.py",
