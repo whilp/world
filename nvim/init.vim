@@ -127,5 +127,7 @@ let g:neomake_bazel_maker = {
 let $LANG="C.UTF-8"
 let $LC_ALL="C.UTF-8"
 
+nnoremap zz :w\|bd<cr><cr>
+
 packloadall
 sil helptags ALL
