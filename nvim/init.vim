@@ -124,5 +124,8 @@ let g:neomake_bazel_maker = {
     \ 'append_file': 0,
     \ }
 
+let $LANG="C.UTF-8"
+let $LC_ALL="C.UTF-8"
+
 packloadall
 sil helptags ALL
