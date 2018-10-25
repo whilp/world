@@ -51,7 +51,7 @@ nnoremap <Leader>f :Files<CR>
 nnoremap <Leader>F :GFiles<CR>
 nnoremap <Leader>w :Buffers<CR>
 nnoremap <Leader>q :bp\|bd #<CR>
-nnoremap <Leader>v :Gstatus<CR>
+nnoremap <Leader>v :exe "pedit" fnamemodify('.git/index', ':p')<CR>
 nnoremap <silent> [f :lprevious<CR>
 nnoremap <silent> ]f :lnext<CR>
 tnoremap jk <C-\><C-n>
