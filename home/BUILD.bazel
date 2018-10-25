@@ -17,7 +17,6 @@ pkg_tar(
     symlinks = {
         "./home/me/src": "/src",
         "./home/me/.cache": "/cache",
-        "./home/me/.ipython": "/home/me/.config/ipython",
         "./home/me/.bashrc": "/home/me/.profile",
         "./home/me/.bash_profile": "/home/me/.profile",
         "./home/me/.awsvault": "/home/me/.cache/awsvault",
@@ -70,18 +69,4 @@ pkg_tar(
     name = "dot_python_bin",
     srcs = ["keep"],
     package_dir = "./.python/bin",
-)
-
-pkg_tar(
-    name = "dot_config",
-    package_dir = "/.config",
-    deps = [
-        ":dot_config_ipython",
-    ],
-)
-
-pkg_tar(
-    name = "dot_config_ipython",
-    srcs = ["keep"],
-    package_dir = "ipython",
 )
