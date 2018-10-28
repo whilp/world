@@ -16,6 +16,6 @@ def github_archive(name, owner, ref, repo = None, **kwargs):
     return http_archive(
         name = rule_name,
         urls = [url],
-        strip_prefix = name + "-" + ref,
+        strip_prefix = repo + "-" + ref,
         **kwargs
     )
