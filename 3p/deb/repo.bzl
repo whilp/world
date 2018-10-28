@@ -19,10 +19,9 @@ def deb():
     native.http_file(name = "ubuntu_gcc", sha256 = "3468339cf5e4fb303643feb5e34f257f342041745709b56b9ae2684c7d2d5518", url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-defaults/gcc_7.3.0-3ubuntu2.1_amd64.deb")
     native.http_file(name = "ubuntu_gcc_7", sha256 = "7d639297e4cf724ce723f48b07696f2d4ad55d0d677b9dc49a48a905f5c73af2", url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/gcc-7_7.3.0-27ubuntu1~18.04_amd64.deb")
     native.http_file(name = "ubuntu_gcc_7_base", sha256 = "0e120fbe843926b1a6187887326b61e384a15a43b4888dfc4f996193d5e14f47", url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/gcc-7-base_7.3.0-27ubuntu1~18.04_amd64.deb")
-    native.http_file(name = "ubuntu_gcc_8_base", sha256 = "9fe56126f52a5dd36bc9978e4e5cd30596a458cc842114328a0c9cedf599eae6", url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/gcc-8-base_8.2.0-1ubuntu2~18.04_amd64.deb")
     native.http_file(name = "ubuntu_gir1_2_glib_2_0", sha256 = "1dffd1d91b80785060c12661beeb551af46a0f0ccd42ab22a778548c5883a750", url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gobject-introspection/gir1.2-glib-2.0_1.56.1-1_amd64.deb")
-    native.http_file(name = "ubuntu_git", sha256 = "630f92975fe7d8f14488c525061b516947de39d4577c4b37fba5253bfa077af2", url = "http://archive.ubuntu.com/ubuntu/pool/main/g/git/git_2.17.1-1ubuntu0.1_amd64.deb")
-    native.http_file(name = "ubuntu_git_man", sha256 = "8916ba72d1af8f9a700ffb244dc271d6e359b798414eec70f8c46856289b3848", url = "http://archive.ubuntu.com/ubuntu/pool/main/g/git/git-man_2.17.1-1ubuntu0.1_all.deb")
+    native.http_file(name = "ubuntu_git", sha256 = "fe2da58d0dc70cf3224d58ec64ccad4bcc17d70723ce97cc6415228146b3cafa", url = "http://archive.ubuntu.com/ubuntu/pool/main/g/git/git_2.17.1-1ubuntu0.3_amd64.deb")
+    native.http_file(name = "ubuntu_git_man", sha256 = "a78f0f941932bab0c1d1ec8298a6113919f90a8527b079a2d07e4f47bb939f86", url = "http://archive.ubuntu.com/ubuntu/pool/main/g/git/git-man_2.17.1-1ubuntu0.3_all.deb")
     native.http_file(name = "ubuntu_gnupg", sha256 = "8ba2ff0e5c0e83a2fbb98cc7296f9e92a6c21bb38add257a7feba8f0b98b137b", url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gnupg2/gnupg_2.2.4-1ubuntu1.1_amd64.deb")
     native.http_file(name = "ubuntu_gnupg_l10n", sha256 = "a5b124f181810e4ee356c9856e0ce6ba67407590fb3feae1f70c4885a17fa4c1", url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gnupg2/gnupg-l10n_2.2.4-1ubuntu1.1_all.deb")
     native.http_file(name = "ubuntu_gnupg_utils", sha256 = "80ead54947c9c08ac606c5f70f3a6a90dc1cccdca37412c00d6061f8ccf13e31", url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gnupg2/gnupg-utils_2.2.4-1ubuntu1.1_amd64.deb")
@@ -62,7 +61,6 @@ def deb():
     native.http_file(name = "ubuntu_libexpat1_dev", sha256 = "a0ac6b9fd81e8b45569a98ee4d857d28b44bb44cc98589aa987b113156cfb69d", url = "http://archive.ubuntu.com/ubuntu/pool/main/e/expat/libexpat1-dev_2.2.5-3_amd64.deb")
     native.http_file(name = "ubuntu_libfakeroot", sha256 = "5c11c66e7e8b58aff352e9141661422b18beced513dbf2b923c17fc7ec5c5ee8", url = "http://archive.ubuntu.com/ubuntu/pool/main/f/fakeroot/libfakeroot_1.22-2ubuntu1_amd64.deb")
     native.http_file(name = "ubuntu_libfile_fcntllock_perl", sha256 = "138111d1f1e5969227633ff67e7279b31b8ff6a31d7c5b1ad2ad86f69e8ef2b4", url = "http://archive.ubuntu.com/ubuntu/pool/main/libf/libfile-fcntllock-perl/libfile-fcntllock-perl_0.22-3build2_amd64.deb")
-    native.http_file(name = "ubuntu_libgcc1", sha256 = "cd9f28a774fa052fb1524e02637f4367c05ef5e4800949ec9513a3e74771ffa9", url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libgcc1_8.2.0-1ubuntu2~18.04_amd64.deb")
     native.http_file(name = "ubuntu_libgcc_7_dev", sha256 = "d7a9e944b8de456eff7fd23a8cbedefedb712cd3ec42e0b7239df9f943d73fa2", url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/libgcc-7-dev_7.3.0-27ubuntu1~18.04_amd64.deb")
     native.http_file(name = "ubuntu_libgdbm5", sha256 = "d12d02c0d237e2ff766c02e31f4779a455c81d9f7a8ebbc7a083cc2d77d5cf13", url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gdbm/libgdbm5_1.14.1-6_amd64.deb")
     native.http_file(name = "ubuntu_libgdbm_compat4", sha256 = "fb66aa765ad0527762fa62b7536cc1b577a5ddaf3f856616f34b05b578f92664", url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gdbm/libgdbm-compat4_1.14.1-6_amd64.deb")
@@ -106,6 +104,8 @@ def deb():
     native.http_file(name = "ubuntu_libpam_systemd", sha256 = "1d6dfd0b7f8594c4117b199fa922d0433769c3c4cefc653941ef8b280fb0ac58", url = "http://archive.ubuntu.com/ubuntu/pool/main/s/systemd/libpam-systemd_237-3ubuntu10.3_amd64.deb")
     native.http_file(name = "ubuntu_libperl5_26", sha256 = "8d38855a40aea8dfb713c15e9eb1d21d5538478f0e2067a4b2dcb8d17e53414d", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/perl/libperl5.26_5.26.1-6ubuntu0.2_amd64.deb")
     native.http_file(name = "ubuntu_libpsl5", sha256 = "e629a5a55218956c4be5709b1afe0dc5e104dec6a5e6b7c4d12add4fd6c4f652", url = "http://archive.ubuntu.com/ubuntu/pool/main/libp/libpsl/libpsl5_0.19.1-5build1_amd64.deb")
+    native.http_file(name = "ubuntu_libpython2_7", sha256 = "ed75fc8db56f9c63bf0646f1d8263f8f2f4a777d5872d7c6e8178ba73f8e1f36", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python2.7/libpython2.7_2.7.15~rc1-1_amd64.deb")
+    native.http_file(name = "ubuntu_libpython2_7_dev", sha256 = "446e0dda0e694f73c90610c6884ca13e95246ce8a0859081c7e71d9c62562709", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python2.7/libpython2.7-dev_2.7.15~rc1-1_amd64.deb")
     native.http_file(name = "ubuntu_libpython2_7_minimal", sha256 = "68d9565c9dee6493d18e9b9446e32b5b49886f351a9dfc76c3b8a392687b542a", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python2.7/libpython2.7-minimal_2.7.15~rc1-1_amd64.deb")
     native.http_file(name = "ubuntu_libpython2_7_stdlib", sha256 = "d5a985d234b63e61d2cccfa01cda04e8813ad39b07da19ffaf5ee1fe89441dc4", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python2.7/libpython2.7-stdlib_2.7.15~rc1-1_amd64.deb")
     native.http_file(name = "ubuntu_libpython3_6", sha256 = "059d050ac118d423330279714f79b55299e5c166941205a24f8ecf579922a4a3", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/libpython3.6_3.6.6-1~18.04_amd64.deb")
@@ -124,9 +124,7 @@ def deb():
     native.http_file(name = "ubuntu_libsqlite3_0", sha256 = "4f3425ebf22f34f8e4d12958550993d82fa436eaa4a4b67ba35cc80491073580", url = "http://archive.ubuntu.com/ubuntu/pool/main/s/sqlite3/libsqlite3-0_3.22.0-1_amd64.deb")
     native.http_file(name = "ubuntu_libssl1_0_0", sha256 = "bf09a35c2defdb6aac1c7edca1487416e6fbcaf70cca7a2770aab33a758410a6", url = "http://archive.ubuntu.com/ubuntu/pool/main/o/openssl1.0/libssl1.0.0_1.0.2n-1ubuntu5.1_amd64.deb")
     native.http_file(name = "ubuntu_libssl1_1", sha256 = "3ee2903ce5258430f1e91202cf2a5e14e62d78ed30204dd64f1c203e44464b7b", url = "http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4.1_amd64.deb")
-    native.http_file(name = "ubuntu_libstdcPP6", sha256 = "453217a31904f58fe05a89c456ab9a50aac3f2ce877379b7613813e55a67e81f", url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libstdc++6_8.2.0-1ubuntu2~18.04_amd64.deb")
     native.http_file(name = "ubuntu_libstdcPP_7_dev", sha256 = "1115bed1fc3c248a5716f808ca1f3f8ee74e66b94c1ae925d567adc46abe7962", url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/libstdc++-7-dev_7.3.0-27ubuntu1~18.04_amd64.deb")
-    native.http_file(name = "ubuntu_libsystemd0", sha256 = "0ee67f5f4bf884941baa8d0537f160fcbcd7249902d9608803a7976b1bf240af", url = "http://archive.ubuntu.com/ubuntu/pool/main/s/systemd/libsystemd0_237-3ubuntu10.3_amd64.deb")
     native.http_file(name = "ubuntu_libtsan0", sha256 = "4282530214f41bb6c0d03c55a42d4d5dc4cb887a77d1f5f44b203184d34607b1", url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-8/libtsan0_8.2.0-1ubuntu2~18.04_amd64.deb")
     native.http_file(name = "ubuntu_libubsan0", sha256 = "9da9a34b2de8383c2feaca57d2783ac683e22afbe96f8ab0715943810ce252c2", url = "http://archive.ubuntu.com/ubuntu/pool/main/g/gcc-7/libubsan0_7.3.0-27ubuntu1~18.04_amd64.deb")
     native.http_file(name = "ubuntu_libwind0_heimdal", sha256 = "164be8ab5054197c7a94e7731f5fd11f1268a8286c0aa452595fa9bacb15191d", url = "http://archive.ubuntu.com/ubuntu/pool/main/h/heimdal/libwind0-heimdal_7.5.0+dfsg-1_amd64.deb")
@@ -139,7 +137,7 @@ def deb():
     native.http_file(name = "ubuntu_libxext6", sha256 = "05a861283b2aa54ee5f40e6844d0cc73f50c30440a28964da00302b7fbcecc9e", url = "http://archive.ubuntu.com/ubuntu/pool/main/libx/libxext/libxext6_1.3.3-1_amd64.deb")
     native.http_file(name = "ubuntu_libxml2", sha256 = "c2397b4af4388c34f19e6182abd05cc149775b1676bd999c3fef15d97f3242ff", url = "http://archive.ubuntu.com/ubuntu/pool/main/libx/libxml2/libxml2_2.9.4+dfsg1-6.1ubuntu1.2_amd64.deb")
     native.http_file(name = "ubuntu_libxmuu1", sha256 = "a9ed1eda3da60b95db804abea45d2aa882bfdd9edaa50974d292c2666b66fe0c", url = "http://archive.ubuntu.com/ubuntu/pool/main/libx/libxmu/libxmuu1_1.1.2-2_amd64.deb")
-    native.http_file(name = "ubuntu_linux_libc_dev", sha256 = "f7a3af3ffe711298898be6caa98b458a89a518d399a9caa71bbdc5366c74670b", url = "http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux-libc-dev_4.15.0-36.39_amd64.deb")
+    native.http_file(name = "ubuntu_linux_libc_dev", sha256 = "ec5f486e00a3e47a2bd447443f8bc7b59b87c1656b6a957c65e9f306c6d1198a", url = "http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux-libc-dev_4.15.0-38.41_amd64.deb")
     native.http_file(name = "ubuntu_make", sha256 = "6a7f7b7ad1f6ff6332099ed9ceaa4889a6ce56a7a48817ddccc0952126059d07", url = "http://archive.ubuntu.com/ubuntu/pool/main/m/make-dfsg/make_4.1-9.1ubuntu1_amd64.deb")
     native.http_file(name = "ubuntu_manpages", sha256 = "f937c30cf9b1474e699d0394ae1426d979be37f7443d3509c0e6bf22440e24d4", url = "http://archive.ubuntu.com/ubuntu/pool/main/m/manpages/manpages_4.15-1_all.deb")
     native.http_file(name = "ubuntu_manpages_dev", sha256 = "2ea36d0d91c2a649ea31ef382ce977775f297bbd9d80ba07606f4df7b3942a01", url = "http://archive.ubuntu.com/ubuntu/pool/main/m/manpages/manpages-dev_4.15-1_all.deb")
@@ -155,12 +153,12 @@ def deb():
     native.http_file(name = "ubuntu_openssl", sha256 = "76b504d89f7f2a83cb14caff40bff9a9b114c794cb6af8bc5f19dc87e34da6e0", url = "http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/openssl_1.1.0g-2ubuntu4.1_amd64.deb")
     native.http_file(name = "ubuntu_patch", sha256 = "4300fec65dfb63b67049cbcbc206938ce41dbe986deafc5930189e09838ca1db", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/patch/patch_2.7.6-2ubuntu1_amd64.deb")
     native.http_file(name = "ubuntu_perl", sha256 = "95f67212e6883f330b1eab40cde2c51e767875fa678e9aa925d18c310b238f21", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/perl/perl_5.26.1-6ubuntu0.2_amd64.deb")
-    native.http_file(name = "ubuntu_perl_base", sha256 = "706ac48ba172beb2e2b89ae7faa7bd0cea5498a597fa78a2744f264abb1f80a1", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/perl/perl-base_5.26.1-6ubuntu0.2_amd64.deb")
     native.http_file(name = "ubuntu_perl_modules_5_26", sha256 = "0913a1022863f546f07973261e63543d19c13725da52d44bc0a10449cf521c78", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/perl/perl-modules-5.26_5.26.1-6ubuntu0.2_all.deb")
     native.http_file(name = "ubuntu_pinentry_curses", sha256 = "18cd353bdf4ad53df6ea112d0477d1e4c1ceb3e140a6b083694f43d591ad9cad", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/pinentry/pinentry-curses_1.1.0-1_amd64.deb")
     native.http_file(name = "ubuntu_pkg_config", sha256 = "362e1f1573e97c5c2f5167721570fadfd5e23146472a293c002a62eca6417b07", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/pkg-config/pkg-config_0.29.1-0ubuntu2_amd64.deb")
     native.http_file(name = "ubuntu_publicsuffix", sha256 = "e7abd66c805a812e3c6b8d80f1221217cfb3f7675b5d260e579881d6cda0119d", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/publicsuffix/publicsuffix_20180223.1310-1_all.deb")
     native.http_file(name = "ubuntu_python2_7", sha256 = "3afa92b3c5813af7a8f4008d1bdfee1aea7d2da9135492f87a4c42ebae4a0f67", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python2.7/python2.7_2.7.15~rc1-1_amd64.deb")
+    native.http_file(name = "ubuntu_python2_7_dev", sha256 = "4f366d3986a384485128f2b984214e486cb90325e1fe156856c98a303c9515d8", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python2.7/python2.7-dev_2.7.15~rc1-1_amd64.deb")
     native.http_file(name = "ubuntu_python2_7_minimal", sha256 = "018cf986dbd030a175bfc27cda1a98416a713d247abf5696e528314e8cfb948d", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python2.7/python2.7-minimal_2.7.15~rc1-1_amd64.deb")
     native.http_file(name = "ubuntu_python3", sha256 = "acd7f997890e8253a7ebad0ccde45a6ee88a5e7d7dd705b7f79b6e16d7d80790", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3-defaults/python3_3.6.5-3ubuntu1_amd64.deb")
     native.http_file(name = "ubuntu_python3_6", sha256 = "b2d99a6b1b29deb53c466ee851d38cdb5e641e0dfb8d96276ba161c4359fee6b", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3.6/python3.6_3.6.6-1~18.04_amd64.deb")
@@ -177,7 +175,7 @@ def deb():
     native.http_file(name = "ubuntu_python3_lib2to3", sha256 = "da61799a4268583ec7ef6cda2230e6b9df27d4455783f9fa708900c4ca02179a", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3-stdlib-extensions/python3-lib2to3_3.6.5-3_all.deb")
     native.http_file(name = "ubuntu_python3_minimal", sha256 = "9fdb6f981280b2ded7f7af8df08e507ae9c95bae2238ffadd6f0013b9c4da15f", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python3-defaults/python3-minimal_3.6.5-3ubuntu1_amd64.deb")
     native.http_file(name = "ubuntu_python3_pkg_resources", sha256 = "7720964ebebfb65b8689b4d25ceda8eda300f856bc81158e33af1ae19cd2a996", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python-setuptools/python3-pkg-resources_39.0.1-2_all.deb")
-    native.http_file(name = "ubuntu_python3_requests", sha256 = "3c120f919e49c808a3a4a9d899d028f0521e7f8397ec9f164e0d296fcdd10805", url = "http://archive.ubuntu.com/ubuntu/pool/main/r/requests/python3-requests_2.18.4-2_all.deb")
+    native.http_file(name = "ubuntu_python3_requests", sha256 = "7bdf4213a239195f2da6e6d8032d2d44e8f43e21476f30493ee744d757e0e7c2", url = "http://archive.ubuntu.com/ubuntu/pool/main/r/requests/python3-requests_2.18.4-2ubuntu0.1_all.deb")
     native.http_file(name = "ubuntu_python3_setuptools", sha256 = "f342cdf67949f33faa0ecd3cef9d26dfb32ed0a7953b8cdebc2e0f92441065a7", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python-setuptools/python3-setuptools_39.0.1-2_all.deb")
     native.http_file(name = "ubuntu_python3_six", sha256 = "5c73f30a89f5906e84c66b38fcb0ea20b42c0376079beb6bcd35ba969befa6d7", url = "http://archive.ubuntu.com/ubuntu/pool/main/s/six/python3-six_1.11.0-2_all.deb")
     native.http_file(name = "ubuntu_python3_urllib3", sha256 = "7c43ae04cc2dc94f66fd03ac1dddc028970c0333e2aa05c297ff17591ab840ca", url = "http://archive.ubuntu.com/ubuntu/pool/main/p/python-urllib3/python3-urllib3_1.22-1_all.deb")
@@ -219,7 +217,6 @@ def deb_files():
         "@ubuntu_gcc//file",
         "@ubuntu_gcc_7//file",
         "@ubuntu_gcc_7_base//file",
-        "@ubuntu_gcc_8_base//file",
         "@ubuntu_gir1_2_glib_2_0//file",
         "@ubuntu_git//file",
         "@ubuntu_git_man//file",
@@ -262,7 +259,6 @@ def deb_files():
         "@ubuntu_libexpat1_dev//file",
         "@ubuntu_libfakeroot//file",
         "@ubuntu_libfile_fcntllock_perl//file",
-        "@ubuntu_libgcc1//file",
         "@ubuntu_libgcc_7_dev//file",
         "@ubuntu_libgdbm5//file",
         "@ubuntu_libgdbm_compat4//file",
@@ -306,6 +302,8 @@ def deb_files():
         "@ubuntu_libpam_systemd//file",
         "@ubuntu_libperl5_26//file",
         "@ubuntu_libpsl5//file",
+        "@ubuntu_libpython2_7//file",
+        "@ubuntu_libpython2_7_dev//file",
         "@ubuntu_libpython2_7_minimal//file",
         "@ubuntu_libpython2_7_stdlib//file",
         "@ubuntu_libpython3_6//file",
@@ -324,9 +322,7 @@ def deb_files():
         "@ubuntu_libsqlite3_0//file",
         "@ubuntu_libssl1_0_0//file",
         "@ubuntu_libssl1_1//file",
-        "@ubuntu_libstdcPP6//file",
         "@ubuntu_libstdcPP_7_dev//file",
-        "@ubuntu_libsystemd0//file",
         "@ubuntu_libtsan0//file",
         "@ubuntu_libubsan0//file",
         "@ubuntu_libwind0_heimdal//file",
@@ -355,12 +351,12 @@ def deb_files():
         "@ubuntu_openssl//file",
         "@ubuntu_patch//file",
         "@ubuntu_perl//file",
-        "@ubuntu_perl_base//file",
         "@ubuntu_perl_modules_5_26//file",
         "@ubuntu_pinentry_curses//file",
         "@ubuntu_pkg_config//file",
         "@ubuntu_publicsuffix//file",
         "@ubuntu_python2_7//file",
+        "@ubuntu_python2_7_dev//file",
         "@ubuntu_python2_7_minimal//file",
         "@ubuntu_python3//file",
         "@ubuntu_python3_6//file",

@@ -69,10 +69,10 @@ buildifier_dependencies()
 
 container_repositories()
 
+# docker pull ubuntu:18.04
 container_pull(
     name = "ubuntu",
-    # 18.04
-    digest = "sha256:30e04ddada6eb09c12330c7df72cad1573916c7100168c34076808169ff6d805",
+    digest = "sha256:29934af957c53004d7fb6340139880d23fb1952505a15d69a03af0d1418878cb",
     registry = "index.docker.io",
     repository = "library/ubuntu",
 )
