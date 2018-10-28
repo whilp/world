@@ -28,7 +28,7 @@
 [init]
 	#templatedir = ~/.gitconf/init
 [remote "origin"]
-	fetch = +refs/pull/*/head:refs/pull/origin/*
+	fetch = +refs/pull/*/head:refs/remotes/origin/pr/*
 [hub]
 	host = github.com
 [github]
