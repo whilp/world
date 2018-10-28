@@ -8,6 +8,7 @@ main() {
         -oAcquire::ForceHash=sha256 \
         -qq \
         --print-uris \
+        --no-install-recommends \
         "${debs[@]}"
 }
 
