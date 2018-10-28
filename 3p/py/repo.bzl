@@ -1,4 +1,5 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("//3p:github.bzl", "github_archive")
 
 def py():
     _pypi_wheel(
@@ -101,6 +102,24 @@ def py():
         python = "cp36",
         sha256 = "a251570bb3cb04f1627f23c234ad09af0e54fc8194e026cf46178f2e5748d647",
         version = "1.15.2",
+    )
+
+    _pypi_wheel(
+        name = "neovim-remote",
+        abi = "none",
+        platform = "any",
+        python = "py3",
+        #sha256 = "a251570bb3cb04f1627f23c234ad09af0e54fc8194e026cf46178f2e5748d647",
+        version = "2.1.0",
+    )
+
+    github_archive(
+        name = "neovim_remote",
+        build_file = _build_file_label("neovim-remote"),
+        owner = "mhinz",
+        ref = "9d84a9d6551ebd96caa3fe50d6b0754a1823052e",
+        repo = "neovim-remote",
+        sha256 = "7f24941057d7c69c42d780bfaa956576262fbc3a217ac4bbdce1a720d8f6eda8",
     )
 
 def _pypi_wheel(name, version, python, abi, platform, build = None, **kwargs):

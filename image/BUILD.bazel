@@ -86,6 +86,7 @@ pkg_tar(
         "@com_github_shurcooL_markdownfmt//:markdownfmt": "markdownfmt",
         ":black.par": "black",
         ":flake8.par": "flake8",
+        ":nvr.par": "nvr",
     },
     mode = "0755",
     package_dir = "/usr/bin",
@@ -123,6 +124,15 @@ par_binary(
         "@pypi_flake8//:pkg",
         "@pypi_pycodestyle//:pkg",
         "@pypi_pyflakes//:pkg",
+    ],
+)
+
+par_binary(
+    name = "nvr",
+    srcs = ["run-nvr.py"],
+    main = "run-nvr.py",
+    deps = [
+        "@github_mhinz_neovim_remote//:pkg",
     ],
 )
 
