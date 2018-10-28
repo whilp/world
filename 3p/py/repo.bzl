@@ -150,32 +150,3 @@ def _pypi_wheel(name, version, python, abi, platform, build = None, **kwargs):
 
 def _build_file_label(name):
     return "//3p/py:%s.bzl" % name
-
-def _gitlab_tar(name, owner, ref, **kwargs):
-    url = "https://{host}/{owner}/{repo}/-/archive/{ref}/{repo}-{ref}.tar.gz".format(
-        host = "gitlab.com",
-        owner = owner,
-        repo = name,
-        ref = ref,
-    )
-
-    return _vcs_tar(name, owner, ref, url, **kwargs)
-
-def _github_tar(name, owner, ref, **kwargs):
-    url = "https://{host}/{owner}/{repo}/archive/{ref}.tar.gz".format(
-        host = "github.com",
-        owner = owner,
-        repo = name,
-        ref = ref,
-    )
-
-    return _vcs_tar(name, owner, ref, url, **kwargs)
-
-def _vcs_tar(name, owner, ref, url, **kwargs):
-    return http_archive(
-        name = "py_%s" % name,
-        urls = [url],
-        build_file = _build_file_label(name),
-        strip_prefix = name + "-" + ref,
-        **kwargs
-    )
