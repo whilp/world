@@ -51,6 +51,7 @@ nnoremap <Leader>f :Files<CR>
 nnoremap <Leader>F :GFiles<CR>
 nnoremap <Leader>w :Buffers<CR>
 nnoremap <Leader>q :bp\|bd #<CR>
+nnoremap <Leader>c :Gcommit<CR>
 nnoremap <Leader>v :exe "pedit" fnamemodify('.git/index', ':p')<CR>
 nnoremap <silent> [f :lprevious<CR>
 nnoremap <silent> ]f :lnext<CR>
@@ -61,6 +62,8 @@ autocmd BufRead,BufNewFile BUILD setfiletype bzl
 autocmd BufRead,BufNewFile *.BUILD setfiletype bzl
 autocmd BufRead,BufNewFile BUILD.* setfiletype bzl
 autocmd BufRead,BufNewFile WORKSPACE setfiletype bzl
+
+autocmd TermOpen * call FugitiveDetect(fnamemodify(".git/index", "%p"))
 
 command! -bar -nargs=1 Gbranch :Git checkout -q -B <q-args>
 command! -bar -nargs=1 Gco :Git checkout -q <q-args>
