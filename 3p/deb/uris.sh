@@ -21,15 +21,12 @@ debs=(
     openssh-server
     pkg-config
     python-pip
-    python3-pip
-    python2.7
     python2.7-dev
-    python2.7-setuptools
-    python2.7-venv
-    python3
-    python3-dev
+    python2.7-minimal
+    python3-pip
     python3-setuptools
-    python3-venv
+    python3.7-dev
+    python3.7-minimal
     unzip
     zip
     zlib1g-dev
