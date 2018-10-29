@@ -97,6 +97,7 @@ func (g githubArchive) Rule() rule {
 			"name":         g.ruleName(),
 			"url":          g.url(),
 			"strip_prefix": g.stripPrefix(),
+			"sha256":       g.Sha256,
 		},
 	}
 }
