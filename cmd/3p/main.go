@@ -71,10 +71,7 @@ type githubArchive struct {
 }
 
 func (g githubArchive) ruleName() string {
-	if g.Repo == "" {
-		return g.Name
-	}
-	return fmt.Sprintf("github_%s_%s", g.Owner, g.Name)
+	return g.Name
 }
 
 // TODO: would be nice to support multiple URLs.
