@@ -1,7 +1,7 @@
 workspace(name = "dotfiles")
 
 # Load bzl deps first.
-load("//3p/bzl:repo.bzl", "bzl")
+load("//3p/bzl:repo.bzl", bzl = "repo")
 
 bzl()
 
