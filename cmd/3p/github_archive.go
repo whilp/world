@@ -1,7 +1,5 @@
 package main
 
-import "fmt"
-
 type githubArchive struct {
 	Name   string `json:"name"`
 	Owner  string `json:"owner"`
@@ -12,15 +10,6 @@ type githubArchive struct {
 
 func (g githubArchive) ruleName() string {
 	return g.Name
-}
-
-// TODO: would be nice to support multiple URLs.
-func (g githubArchive) url() string {
-	return fmt.Sprintf("https://github.com/%s/%s/archive/%s.tar.gz", g.Owner, g.repo(), g.Ref)
-}
-
-func (g githubArchive) stripPrefix() string {
-	return fmt.Sprintf("%s-%s", g.repo(), g.Ref)
 }
 
 func (g githubArchive) repo() string {
