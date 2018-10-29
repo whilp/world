@@ -52,6 +52,9 @@ func run() error {
 	for _, x := range r.GithubArchive {
 		b.Add(x)
 	}
+	for _, x := range r.GoRepository {
+		b.Add(x)
+	}
 
 	out, err := os.Create(outf)
 	if err != nil {
@@ -68,4 +71,5 @@ type repo struct {
 	// TODO: do something with this.
 	Version       string          `json:"version"`
 	GithubArchive []githubArchive `json:"github_archive"`
+	GoRepository  []goRepository  `json:"go_repository"`
 }
