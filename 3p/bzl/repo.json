@@ -1,0 +1,40 @@
+{
+    "github_archive": [
+        {
+            "name": "io_bazel_rules_go",
+            "owner": "bazelbuild",
+            "ref": "40e2b78a314ebb91d0e690579ed3273683a3a1a1",
+            "repo": "rules_go",
+            "sha256": "bb26e2318db0d8f9b98d471c7b7b2896085fa492f00774997b184d0d19ef74f2"
+        },
+        {
+            "name": "bazel_gazelle",
+            "owner": "bazelbuild",
+            "ref": "bc107b5e24000561e825056ca193b6745e5d2867",
+            "repo": "bazel-gazelle",
+            "sha256": "e4e2226881a54d1646cb8176fffd18d4f91aebc5d42fb1589950f8d4b73bd158"
+        },
+        {
+            "name": "io_bazel_rules_docker",
+            "owner": "bazelbuild",
+            "ref": "4282829a554058401f7ff63004c8870c8d35e29c",
+            "repo": "rules_docker",
+            "sha256": "35c585261362a96b1fe777a7c4c41252b22fd404f24483e1c48b15d7eb2b55a5"
+        },
+        {
+            "name": "com_github_bazelbuild_buildtools",
+            "owner": "bazelbuild",
+            "ref": "651ea753927b42e601e5d2d40e1700d4a61e6705",
+            "repo": "buildtools",
+            "sha256": "ad7625e1226f1ccd39cae1594b4fe5f1bb938142c3d28e88aaae1635d5e26969"
+        },
+        {
+            "name": "subpar",
+            "owner": "google",
+            "ref": "07ff5feb7c7b113eea593eb6ec50b51099cf0261",
+            "repo": "subpar",
+            "sha256": "a694bd35ff4be79a49fbb6e5fd6b1c9083ef05cd752409f5fe349f6d74432fd8"
+        }
+    ],
+    "version": "3p/1"
+}
