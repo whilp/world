@@ -11,11 +11,13 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path"
 	"text/template"
 )
 
 var fInput = flag.String("input", "", "path to input .json")
 var fOutput = flag.String("output", "", "path to output .bzl")
+var fPkg = flag.String("pkg", "", "path to package containing repo.json")
 
 func main() {
 	// read repo.json
@@ -30,7 +32,14 @@ func run() error {
 
 	flag.Parse()
 
-	input, err := ioutil.ReadFile(*fInput)
+	inf := *fInput
+	outf := *fOutput
+	if fPkg != nil {
+		inf = path.Join(*fPkg, "repo.json")
+		outf = path.Join(*fPkg, "repo.bzl")
+	}
+
+	input, err := ioutil.ReadFile(inf)
 	if err != nil {
 		return err
 	}
@@ -45,7 +54,7 @@ func run() error {
 		b.Add(x)
 	}
 
-	out, err := os.Create(*fOutput)
+	out, err := os.Create(outf)
 	if err != nil {
 		return err
 	}
