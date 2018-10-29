@@ -34,9 +34,11 @@ func (g githubArchive) Rule() rule {
 	return rule{
 		Name: "http_archive",
 		Load: "@bazel_tools//tools/build_defs/repo:http.bzl",
+		URLs: []string{
+			githubURL(g.Owner, g.repo(), g.Ref),
+		},
 		Parameters: map[string]string{
 			"name":         g.ruleName(),
-			"url":          githubURL(g.Owner, g.repo(), g.Ref),
 			"strip_prefix": githubPrefix(g.repo(), g.Ref),
 			"sha256":       g.Sha256,
 		},
