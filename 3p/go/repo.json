@@ -1,0 +1,11 @@
+{
+    "go_repository": [
+        {
+            "name": "impl",
+            "owner": "josharian",
+            "ref": "3d0f908298c49598b6aa84f101c69670e15d1d03",
+            "sha256": "1a12938f51264ba57886ece2316fe20e6c15eb95380efe69ed8fc4b9b29a30c5"
+        }
+    ],
+    "version": "3p/1"
+}
