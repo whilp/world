@@ -46,7 +46,9 @@ func run() error {
 		return err
 	}
 
-	b := bazel{}
+	b := bazel{loads: map[string]string{}}
+
+	// TODO: this is going to get tedious
 	for _, x := range r.GithubArchive {
 		b.Add(x)
 	}
