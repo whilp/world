@@ -2,7 +2,12 @@ load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
 
 go_library(
     name = "go_default_library",
-    srcs = ["main.go"],
+    srcs = [
+        "bazel.go",
+        "github.go",
+        "go.go",
+        "main.go",
+    ],
     importpath = "github.com/whilp/dotfiles/cmd/3p",
     visibility = ["//visibility:private"],
 )
