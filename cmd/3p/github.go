@@ -35,9 +35,17 @@ func (g githubArchive) Rule() rule {
 		Name: "http_archive",
 		Parameters: map[string]string{
 			"name":         g.ruleName(),
-			"url":          g.url(),
-			"strip_prefix": g.stripPrefix(),
+			"url":          githubURL(g.Owner, g.repo(), g.Ref),
+			"strip_prefix": githubPrefix(g.repo(), g.Ref),
 			"sha256":       g.Sha256,
 		},
 	}
+}
+
+func githubURL(owner, repo, ref string) string {
+	return fmt.Sprintf("https://github.com/%s/%s/archive/%s.tar.gz", owner, repo, ref)
+}
+
+func githubPrefix(repo, ref string) string {
+	return fmt.Sprintf("%s-%s", repo, ref)
 }
