@@ -1,0 +1,12 @@
+{
+    "version": "3p/1",
+    "vim_repository": [
+        {
+            "name": "vim_airline",
+            "owner": "vim-airline",
+            "ref": "c7fb175d3565159699885653767214a6aa583ea4",
+            "repo": "vim-airline",
+            "sha256": "64fbf3c9535195dcd3a739e5241391c0ab3b563e94dfd3e7a6877149ec0f55c9"
+        }
+    ]
+}

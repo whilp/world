@@ -8,11 +8,11 @@ def repo():
 
     go_repository(
         importpath = "github.com/josharian/impl",
-        name = "impl",
+        name = "github_josharian_impl",
         sha256 = "1a12938f51264ba57886ece2316fe20e6c15eb95380efe69ed8fc4b9b29a30c5",
         strip_prefix = "impl-3d0f908298c49598b6aa84f101c69670e15d1d03",
         urls = [
-	    "https://github.com/josharian/impl/archive/3d0f908298c49598b6aa84f101c69670e15d1d03.tar.gz",
+            "https://github.com/josharian/impl/archive/3d0f908298c49598b6aa84f101c69670e15d1d03.tar.gz",
 	],
     )
 
