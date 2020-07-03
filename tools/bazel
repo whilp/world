@@ -1,1 +1,34 @@
-../.local/bin/bazel
+#!/usr/bin/env python3
+
+import os
+import platform
+import stat
+import sys
+import urllib.request
+
+
+def main(args, env):
+    real = "tools/bazel-real"
+    if not executable(real):
+        fetch(real)
+    os.execve(real, args, env)
+
+
+def fetch(real):
+    with open(".bazelversion") as f:
+        version = f.read().strip()
+    plat = platform.system().lower()
+    url = f"https://github.com/bazelbuild/bazel/releases/download/{version}/bazel-{version}-{plat}-x86_64"
+    req = urllib.request.Request(url, method="GET")
+    with urllib.request.urlopen(req) as response:
+        with open(real, "wb") as f:
+            f.write(response.read())
+    os.chmod(real, stat.S_IRWXU)
+
+
+def executable(path):
+    return os.path.isfile(path) and os.access(path, os.X_OK)
+
+
+if __name__ == "__main__":
+    sys.exit(main(list(sys.argv), dict(os.environ)))
