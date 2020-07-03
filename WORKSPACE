@@ -2,7 +2,7 @@ workspace(
     name = "whilp_world",
 )
 
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
 
 http_archive(
     name = "build_bazel_rules_nodejs",
@@ -60,4 +60,33 @@ container_pull(
     registry = "docker.io",
     repository = "library/ubuntu",
     tag = "18.04",
+)
+
+http_file(
+    name = "bazel",
+    sha256 = "7d9e80bddd2cbfbd83da415373e75b9a77cf9f7c784f74382b8f9f8b412bde20",
+    urls = ["https://github.com/bazelbuild/bazel/releases/download/3.3.1/bazel-3.3.1-linux-x86_64"],
+    downloaded_file_path = "bazel",
+)
+
+http_file(
+    name = "buildifier",
+    sha256 = "8a27f46f8a94882ddf37eaf26e5a823a77f04a32c3d72ee2c3d4b5094eb29dc2",
+    urls = ["https://github.com/bazelbuild/buildtools/releases/download/3.3.0/buildifier"],
+    downloaded_file_path = "buildifier",
+)
+
+
+http_file(
+    name = "buildozer",
+    sha256 = "4a841ef0f4eb34f83ed27005468d6b5a254708eeaf90e1e3f1d861408a9da981",
+    urls = ["https://github.com/bazelbuild/buildtools/releases/download/3.3.0/buildozer"],
+    downloaded_file_path = "buildozer",
+)
+
+http_file(
+    name = "ibazel",
+    sha256 = "470abaa5dc5c93d20c22ab72cdd305e90c9b3ff7e765964836ed017b2a9aa2dc",
+    urls = ["https://github.com/bazelbuild/bazel-watcher/releases/download/v0.13.1/ibazel_linux_amd64"],
+    downloaded_file_path = "ibazel",
 )

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "2.0.0",
+  "commandTests": [
+    {
+      "name": "bazel",
+      "command": "bazel",
+      "args": ["--version"],
+      "expectedOutput": ["bazel"]
+    },
+    {
+      "name": "buildifier",
+      "command": "buildifier",
+      "args": ["--version"],
+      "expectedOutput": ["buildifier version"]
+    },
+    {
+      "name": "buildozer",
+      "command": "buildozer",
+      "args": ["--version"],
+      "expectedOutput": ["buildozer version"]
+    },
+    {
+      "name": "ibazel",
+      "command": "ibazel",
+      "args": ["--version"],
+      "exitCode": 2,
+      "expectedError": ["iBazel"]
+    }
+  ]
+}

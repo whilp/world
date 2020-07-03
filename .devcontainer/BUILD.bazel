@@ -1,0 +1,29 @@
+load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push", "container_layer")
+load("@io_bazel_rules_docker//docker/util:run.bzl", "container_run_and_commit")
+load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
+
+container_image(
+    name = "image",
+    base = "@ubuntu18.04//image",
+    layers = [
+      ":bins",
+    ]
+)
+
+container_layer(
+  name = "bins",
+  mode = "0o777",
+  directory = "/usr/local/bin",
+  files = [
+    "@bazel//file",
+    "@buildozer//file",
+    "@buildifier//file",
+    "@ibazel//file"
+  ]
+)
+
+container_test(
+    name = "test",
+    configs = ["test.json"],
+    image = ":image",
+)
