@@ -1,13 +1,72 @@
 load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push", "container_layer")
 load("@io_bazel_rules_docker//docker/util:run.bzl", "container_run_and_commit")
 load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
+load("@io_bazel_rules_docker//contrib:passwd.bzl", "passwd_entry", "passwd_file")
+load("@rules_pkg//:pkg.bzl", "pkg_tar")
+
+USER = "vscode"
 
 container_image(
     name = "image",
     base = "@ubuntu18.04//image",
+    user = USER,
+    tars = [":passwd_tar"],
     layers = [
       ":bins",
+      ":docker",
     ]
+)
+
+passwd_entry(
+    username = "root",
+    uid = 0,
+    gid = 0,
+    name = "root",
+)
+
+passwd_entry(
+    username = USER,
+    info = "user",
+    uid = 1002,
+    name = "user",
+)
+
+passwd_file(
+    name = "passwd",
+    entries = [
+        ":root",
+        ":user",
+    ],
+)
+
+pkg_tar(
+  name = "passwd_tar",
+  srcs = [":passwd"],
+  mode = "0o644",
+  package_dir = "etc",
+)
+
+container_layer(
+  name = "docker",
+  directory = "/usr/local",
+  tars = [
+    "@docker//file",
+    "@docker_rootless//file"
+  ],
+  symlinks = {
+    "/usr/local/bin/containerd-shim": "/usr/local/docker/containerd-shim",
+    "/usr/local/bin/containerd": "/usr/local/docker/containerd",
+    "/usr/local/bin/ctr": "/usr/local/docker/ctr",
+    "/usr/local/bin/docker-init": "/usr/local/docker/docker-init",
+    "/usr/local/bin/docker-proxy": "/usr/local/docker/docker-proxy",
+    "/usr/local/bin/docker": "/usr/local/docker/docker",
+    "/usr/local/bin/dockerd-rootless.sh": "/usr/local/docker-rootless-extras/dockerd-rootless.sh",
+    "/usr/local/bin/dockerd": "/usr/local/docker/dockerd",
+    "/usr/local/bin/rootlesskit-docker-proxy": "/usr/local/docker-rootless-extras/rootlesskit-docker-proxy",
+    "/usr/local/bin/rootlesskit": "/usr/local/docker-rootless-extras/rootlesskit",
+    "/usr/local/bin/runc": "/usr/local/docker/runc",
+    "/usr/local/bin/vpnkit": "/usr/local/docker-rootless-extras/vpnkit",
+  }
 )
 
 container_layer(
@@ -18,7 +77,8 @@ container_layer(
     "@bazel//file",
     "@buildozer//file",
     "@buildifier//file",
-    "@ibazel//file"
+    "@ibazel//file",
+    ":entrypoint.sh"
   ]
 )
 

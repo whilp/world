@@ -2,6 +2,24 @@
   "schemaVersion": "2.0.0",
   "commandTests": [
     {
+      "name": "docker",
+      "command": "docker",
+      "args": ["--version"],
+      "expectedOutput": ["Docker version"]
+    },
+    {
+      "name": "dockerd",
+      "command": "dockerd",
+      "args": ["--version"],
+      "expectedOutput": ["Docker version"]
+    },
+    {
+      "name": "rootlesskit",
+      "command": "rootlesskit",
+      "args": ["--version"],
+      "expectedOutput": ["rootlesskit version"]
+    },
+    {
       "name": "bazel",
       "command": "bazel",
       "args": ["--version"],
