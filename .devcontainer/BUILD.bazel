@@ -6,20 +6,43 @@ load("@rules_pkg//:pkg.bzl", "pkg_tar")
 
 container_image(
     name = "devcontainer",
-    base = "@ubuntu18.04//image",
+    base = "base",
     user = "user",
+    workdir = "/home/user",
+    entrypoint = ["/usr/local/bin/entrypoint.sh"],
     layers = [
       ":bins",
       ":docker",
       ":etc",
+      ":sudoersd",
     ]
+)
+
+PACKAGES = [
+  "sudo"
+]
+
+container_run_and_commit(
+  name = "base",
+  image = "@ubuntu18.04//image",
+  commands = [
+    "apt-get update",
+     "apt-get install --no-install-recommends -y " + " ".join(PACKAGES)
+      ]
+)
+
+container_layer(
+  name = "sudoersd",
+  directory = "/etc/sudoers.d",
+  files = ["sudoers"],
 )
 
 container_layer(
   name = "etc",
   directory = "/etc",
   files = [
-    "passwd"
+    "passwd",
+    "group"
   ]
 )
 
