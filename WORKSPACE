@@ -105,3 +105,18 @@ http_file(
     urls = ["https://download.docker.com/linux/static/stable/x86_64/docker-19.03.12.tgz"],
     downloaded_file_path = "docker.tgz",
 )
+
+http_archive(
+    name = "shellcheck",
+    sha256 = "64f17152d96d7ec261ad3086ed42d18232fcb65148b44571b564d688269d36c8",
+    urls = ["https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.linux.x86_64.tar.xz"],
+    strip_prefix = "shellcheck-v0.7.1",
+    build_file_content = """exports_files(["shellcheck"])""",
+)
+
+http_file(
+    name = "shfmt",
+    urls = ["https://github.com/mvdan/sh/releases/download/v3.1.2/shfmt_v3.1.2_linux_amd64"],
+    sha256 = "c5794c1ac081f0028d60317454fe388068ab5af7740a83e393515170a7157dce",
+    downloaded_file_path = "shfmt",
+)

@@ -96,6 +96,8 @@ container_layer(
     "@buildozer//file",
     "@buildifier//file",
     "@ibazel//file",
+    "@shfmt//file",
+    "@shellcheck//:shellcheck",
     ":entrypoint.sh"
   ]
 )
