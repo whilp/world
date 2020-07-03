@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
         with:
@@ -20,7 +20,7 @@ jobs:
         run: ./tools/bazel build --config=ci //...
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     needs: build
     if: ${{! github.event.pull_request.merged}}
     steps:
@@ -38,7 +38,7 @@ jobs:
         run: ./tools/bazel test --config=ci //...
 
   lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     needs: build
     if: ${{! github.event.pull_request.merged}}
     steps:
@@ -56,7 +56,7 @@ jobs:
         run: ./tools/bazel run --config=ci lint
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     needs: build
     if: ${{ github.event.pull_request.merged}}
     steps:
