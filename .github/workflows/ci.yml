@@ -2,12 +2,25 @@ name: CI
 
 on: [push]
 
+defaults:
+  runs-on: ubuntu-latest
+
 jobs:
   build:
-    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
+
       - name: bazel build
         run: ./tools/bazel build //...
+
+  test:
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - name: bazel test
+        run: ./tools/bazel test //...
