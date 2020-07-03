@@ -6,6 +6,12 @@
       "type": "process",
       "command": "${workspaceFolder}/tools/bazel",
       "args": ["build", "//..."]
+    },
+    {
+      "label": "test",
+      "type": "process",
+      "command": "${workspaceFolder}/tools/bazel",
+      "args": ["test", "//..."]
     }
   ]
 }
