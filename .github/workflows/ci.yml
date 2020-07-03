@@ -17,11 +17,12 @@ jobs:
           key: ${{ github.sha }}
 
       - name: bazel build
-        run: ./tools/bazel build //...
+        run: ./tools/bazel --config=ci build //...
 
   test:
     runs-on: ubuntu-latest
     needs: build
+    if: !github.event.pull_request.merged
     steps:
       - uses: actions/checkout@v2
         with:
@@ -34,4 +35,40 @@ jobs:
           key: ${{ github.sha }}
 
       - name: bazel test
-        run: ./tools/bazel test //...
+        run: ./tools/bazel --config=ci test //...
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: build
+    if: !github.event.pull_request.merged
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - name: cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/bazel
+          key: ${{ github.sha }}
+
+      - name: bazel lint
+        run: ./tools/bazel --config=ci run lint
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event.pull_request.merged
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      - name: cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/bazel
+          key: ${{ github.sha }}
+
+      - name: bazel deploy
+        run: ./tools/bazel --config=ci run deploy
