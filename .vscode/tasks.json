@@ -5,13 +5,23 @@
       "label": "build",
       "type": "process",
       "command": "${workspaceFolder}/tools/bazel",
-      "args": ["build", "//..."]
+      "args": ["build", "//..."],
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
     },
     {
       "label": "test",
       "type": "process",
       "command": "${workspaceFolder}/tools/bazel",
-      "args": ["test", "//..."]
+      "args": ["test", "//..."],
+      "problemMatcher": [],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      }
     }
   ]
 }
