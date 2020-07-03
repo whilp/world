@@ -17,7 +17,7 @@ jobs:
           key: ${{ github.sha }}
 
       - name: bazel build
-        run: ./tools/bazel --config=ci build //...
+        run: ./tools/bazel build --config=ci //...
 
   test:
     runs-on: ubuntu-latest
@@ -35,7 +35,7 @@ jobs:
           key: ${{ github.sha }}
 
       - name: bazel test
-        run: ./tools/bazel --config=ci test //...
+        run: ./tools/bazel test --config=ci //...
 
   lint:
     runs-on: ubuntu-latest
@@ -53,7 +53,7 @@ jobs:
           key: ${{ github.sha }}
 
       - name: bazel lint
-        run: ./tools/bazel --config=ci run lint
+        run: ./tools/bazel run --config=ci lint
 
   deploy:
     runs-on: ubuntu-latest
@@ -71,4 +71,4 @@ jobs:
           key: ${{ github.sha }}
 
       - name: bazel deploy
-        run: ./tools/bazel --config=ci run deploy
+        run: ./tools/bazel run --config=ci deploy
