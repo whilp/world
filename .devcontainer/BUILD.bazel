@@ -103,5 +103,5 @@ container_layer(
 container_test(
     name = "test",
     configs = ["test.json"],
-    image = ":image",
+    image = ":devcontainer",
 )
