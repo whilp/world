@@ -55,10 +55,10 @@ jobs:
       - name: bazel lint
         run: ./tools/bazel run --config=ci lint
 
-  deploy:
+  next:
     runs-on: ubuntu-18.04
     needs: build
-    if: ${{ github.event.pull_request.merged}}
+    if: ${{! github.event.pull_request.merged}}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -70,5 +70,10 @@ jobs:
           path: ~/.cache/bazel
           key: ${{ github.sha }}
 
-      - name: bazel deploy
-        run: ./tools/bazel run --config=ci deploy
+      - name: docker login
+        run: echo "$DOCKER" | docker login --password-stdin --username whilp
+        env:
+          DOCKER: ${{ secrets.DOCKER }}
+
+      - name: bazel run image/devcontainer:next
+        run: ./tools/bazel run --config=ci image/devcontainer:next
