@@ -2,11 +2,9 @@ name: CI
 
 on: [push]
 
-defaults:
-  runs-on: ubuntu-latest
-
 jobs:
   build:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
         with:
@@ -16,6 +14,7 @@ jobs:
         run: ./tools/bazel build //...
 
   test:
+    runs-on: ubuntu-latest
     needs: build
     steps:
       - uses: actions/checkout@v2
