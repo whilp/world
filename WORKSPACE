@@ -15,7 +15,6 @@ load("@rules_python//python:repositories.bzl", "py_repositories")
 
 py_repositories()
 
-# Only needed if using the packaging rules.
 load("@rules_python//python:pip.bzl", "pip_repositories")
 
 pip_repositories()
