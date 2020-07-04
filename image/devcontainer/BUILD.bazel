@@ -30,20 +30,21 @@ container_image(
         ":etc",
         ":sudoersd",
     ],
-    user = "user",
-    workdir = "/home/user",
     symlinks = {
         "/usr/bin/python": "/usr/bin/python3.7",
         "/usr/bin/python3": "/usr/bin/python3.7",
-    }
+    },
+    user = "user",
+    workdir = "/home/user",
 )
 
 PACKAGES = [
     "binutils",
     "ca-certificates",
-    "cpp", "g++",
+    "cpp",
+    "g++",
     "curl",
-    "gcc", 
+    "gcc",
     "git",
     "iproute2",
     "iptables",

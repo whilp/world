@@ -37,9 +37,10 @@ container_image(
 PACKAGES = [
     "binutils",
     "ca-certificates",
-    "cpp", "g++",
+    "cpp",
+    "g++",
     "curl",
-    "gcc", 
+    "gcc",
     "git",
     "iproute2",
     "iptables",
