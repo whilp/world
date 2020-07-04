@@ -40,7 +40,7 @@ jobs:
         with:
           path: ~/.cache/bazel
           key: ${{ needs.cache.outputs.key }}
-          restore-keys: ${{ needs.build.outputs.restore-key }}
+          restore-keys: ${{ needs.cache.outputs.restore-key }}
       - name: bazel test
         run: ./tools/bazel test --config=ci //...
 
@@ -57,7 +57,7 @@ jobs:
         with:
           path: ~/.cache/bazel
           key: ${{ needs.cache.outputs.key }}
-          restore-keys: ${{ needs.build.outputs.restore-key }}
+          restore-keys: ${{ needs.cache.outputs.restore-key }}
       - name: docker login
         run: echo "$DOCKER_TOKEN" | docker login --password-stdin --username "$DOCKER_USER"
         env:
@@ -79,7 +79,7 @@ jobs:
         with:
           path: ~/.cache/bazel
           key: ${{ needs.cache.outputs.key }}
-          restore-keys: ${{ needs.build.outputs.restore-key }}
+          restore-keys: ${{ needs.cache.outputs.restore-key }}
       - name: docker login
         run: echo "$DOCKER_TOKEN" | docker login --password-stdin --username "$DOCKER_USER"
         env:
@@ -101,7 +101,7 @@ jobs:
         with:
           path: ~/.cache/bazel
           key: ${{ needs.cache.outputs.key }}
-          restore-keys: ${{ needs.build.outputs.restore-key }}
+          restore-keys: ${{ needs.cache.outputs.restore-key }}
       - name: docker login
         run: echo "$DOCKER_TOKEN" | docker login --password-stdin --username "$DOCKER_USER"
         env:
