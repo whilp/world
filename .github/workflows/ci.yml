@@ -9,13 +9,11 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
-
       - name: cache
         uses: actions/cache@v2
         with:
           path: ~/.cache/bazel
           key: ${{ github.sha }}
-
       - name: bazel build
         run: ./tools/bazel build --config=ci //...
 
@@ -27,13 +25,11 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
-
       - name: cache
         uses: actions/cache@v2
         with:
           path: ~/.cache/bazel
           key: ${{ github.sha }}
-
       - name: bazel test
         run: ./tools/bazel test --config=ci //...
 
@@ -45,19 +41,16 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
-
       - name: cache
         uses: actions/cache@v2
         with:
           path: ~/.cache/bazel
           key: ${{ github.sha }}
-
       - name: docker login
         run: echo "$DOCKER_TOKEN" | docker login --password-stdin --username "$DOCKER_USER"
         env:
           DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
-
       - name: bazel run image/devcontainer:next
         run: ./tools/bazel run --config=ci image/devcontainer:next
 
@@ -69,23 +62,20 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
-
       - name: cache
         uses: actions/cache@v2
         with:
           path: ~/.cache/bazel
           key: ${{ github.sha }}
-
       - name: docker login
         run: echo "$DOCKER_TOKEN" | docker login --password-stdin --username "$DOCKER_USER"
         env:
           DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
-
       - name: bazel run image/devcontainer:next
         run: ./tools/bazel run --config=ci image/devcontainer:latest
 
-  devcontainer.latest:
+  buildifier.latest:
     runs-on: ubuntu-18.04
     needs: build
     if: ${{ github.event.pull_request.merged}}
@@ -106,29 +96,5 @@ jobs:
           DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
 
-      - name: bazel run image/devcontainer:next
-        run: ./tools/bazel run --config=ci image/devcontainer:latest
-
-  devcontainer.latest:
-    runs-on: ubuntu-18.04
-    needs: build
-    if: ${{ github.event.pull_request.merged}}
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-
-      - name: cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/bazel
-          key: ${{ github.sha }}
-
-      - name: docker login
-        run: echo "$DOCKER_TOKEN" | docker login --password-stdin --username "$DOCKER_USER"
-        env:
-          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-
-      - name: bazel run image/buildifier:next
+      - name: bazel run image/buildifier:latest
         run: ./tools/bazel run --config=ci image/buildifier:latest
