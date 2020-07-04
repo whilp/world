@@ -53,9 +53,10 @@ jobs:
           key: ${{ github.sha }}
 
       - name: docker login
-        run: echo "$DOCKER" | docker login --password-stdin --username whilp
+        run: echo "$DOCKER_TOKEN" | docker login --password-stdin --username "$DOCKER_USER"
         env:
-          DOCKER: ${{ secrets.DOCKER }}
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
 
       - name: bazel run image/devcontainer:next
         run: ./tools/bazel run --config=ci image/devcontainer:next
