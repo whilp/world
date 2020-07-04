@@ -35,11 +35,22 @@ container_image(
 )
 
 PACKAGES = [
-    "sudo",
-    "uidmap",
+    "binutils",
+    "ca-certificates",
+    "cpp", "g++",
+    "curl",
+    "gcc", 
+    "git",
     "iproute2",
     "iptables",
-    "ca-certificates",
+    "make",
+    "python3.7-distutil",
+    "python3.7-venv",
+    "python3.7",
+    "sudo",
+    "uidmap",
+    "unzip",
+    "wget",
 ]
 
 container_run_and_commit(
@@ -47,6 +58,9 @@ container_run_and_commit(
     commands = [
         "apt-get update",
         "apt-get install --no-install-recommends -y " + " ".join(PACKAGES),
+        "apt-get autoremove -y",
+        "apt-get clean -y",
+        "rm -rf /var/lib/apt/lists/*",
     ],
     image = "@ubuntu18.04//image",
 )
