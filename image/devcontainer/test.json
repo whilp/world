@@ -2,6 +2,24 @@
   "schemaVersion": "2.0.0",
   "commandTests": [
     {
+      "name": "python is python3.7",
+      "command": "python",
+      "args": ["--version"],
+      "expectedOutput": ["Python 3.7"]
+    },
+    {
+      "name": "python3 is python3.7",
+      "command": "python3",
+      "args": ["--version"],
+      "expectedOutput": ["Python 3.7"]
+    },
+    {
+      "name": "python3.7 is python3.7",
+      "command": "python3.7",
+      "args": ["--version"],
+      "expectedOutput": ["Python 3.7"]
+    },
+    {
       "name": "docker",
       "command": "docker",
       "args": ["--version"],
