@@ -1,6 +1,7 @@
 load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_layer", "container_push")
 load("@io_bazel_rules_docker//docker/util:run.bzl", "container_run_and_commit")
 load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
+load("@rules_pkg//:pkg.bzl", "pkg_tar")
 
 container_push(
     name = "latest",
@@ -24,11 +25,16 @@ container_image(
     name = "devcontainer",
     base = "base",
     entrypoint = ["/usr/local/bin/entrypoint.sh"],
+    env = {
+        "XDG_RUNTIME_DIR": "/home/user/.xdg",
+        "DOCKER_HOST": "unix:////home/user/.xdg/docker.sock",
+    },
     layers = [
         ":bins",
         ":docker",
         ":etc",
         ":sudoersd",
+        ":home",
     ],
     symlinks = {
         "/usr/bin/python": "/usr/bin/python3.7",
@@ -90,6 +96,22 @@ container_layer(
         "passwd",
         "subgid",
         "subuid",
+    ],
+)
+
+pkg_tar(
+    name = "home_tar",
+    package_dir = "user/.xdg",
+    owner = "1000.1000",
+    ownername = "user.user",
+    srcs = ["empty"],
+)
+
+container_layer(
+    name = "home",
+    directory = "/home",
+    tars = [
+        ":home_tar",
     ],
 )
 
