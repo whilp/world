@@ -3,17 +3,18 @@ name: CI
 on: [push]
 
 jobs:
-  build:
+  cache:
     runs-on: ubuntu-18.04
     steps:
-      - id: year-month-day-hour-env
-        run: echo "::set-env name=ymdh::$(/bin/date -u "+%Y%m%d%H")"
-      - id: year-month-day-env
-        run: echo "::set-env name=ymd::$(/bin/date -u "+%Y%m%d")"
-      - id: year-month-day-hour
-        run: echo "::set-output name=ymdh::$(/bin/date -u "+%Y%m%d%H")"
-      - id: year-month-day
-        run: echo "::set-output name=ymd::$(/bin/date -u "+%Y%m%d")"
+      - id: key
+        run: echo "::set-output name=key::$(/bin/date -u "+%Y%m%d%H")"
+      - id: restore-key
+        run: echo "::set-output name=restore-key::$(/bin/date -u "+%Y%m%d")"
+
+  build:
+    runs-on: ubuntu-18.04
+    needs: cache
+    steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
@@ -21,14 +22,14 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.cache/bazel
-          key: ${{ env.ymdh  }}
-          restore-keys: ${{ env.ymd }}
+          key: ${{ needs.cache.outputs.key }}
+          restore-keys: ${{ needs.build.outputs.restore-key }}
       - name: bazel build
         run: ./tools/bazel build --config=ci //...
 
   test:
     runs-on: ubuntu-18.04
-    needs: build
+    needs: cache
     if: ${{! github.event.pull_request.merged}}
     steps:
       - uses: actions/checkout@v2
@@ -38,14 +39,14 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.cache/bazel
-          key: ${{ needs.build.outputs.ymdh }}
-          restore-keys: ${{ needs.build.outputs.ymd }}
+          key: ${{ needs.cache.outputs.key }}
+          restore-keys: ${{ needs.build.outputs.restore-key }}
       - name: bazel test
         run: ./tools/bazel test --config=ci //...
 
   push_devcontainer_next:
     runs-on: ubuntu-18.04
-    needs: build
+    needs: cache
     if: ${{! github.event.pull_request.merged}}
     steps:
       - uses: actions/checkout@v2
@@ -55,8 +56,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.cache/bazel
-          key: ${{ needs.build.outputs.ymdh }}
-          restore-keys: ${{ needs.build.outputs.ymd }}
+          key: ${{ needs.cache.outputs.key }}
+          restore-keys: ${{ needs.build.outputs.restore-key }}
       - name: docker login
         run: echo "$DOCKER_TOKEN" | docker login --password-stdin --username "$DOCKER_USER"
         env:
@@ -67,7 +68,7 @@ jobs:
 
   push_devcontainer_latest:
     runs-on: ubuntu-18.04
-    needs: build
+    needs: cache
     if: ${{ github.event.pull_request.merged}}
     steps:
       - uses: actions/checkout@v2
@@ -77,8 +78,8 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ~/.cache/bazel
-          key: ${{ needs.build.outputs.ymdh }}
-          restore-keys: ${{ needs.build.outputs.ymd }}
+          key: ${{ needs.cache.outputs.key }}
+          restore-keys: ${{ needs.build.outputs.restore-key }}
       - name: docker login
         run: echo "$DOCKER_TOKEN" | docker login --password-stdin --username "$DOCKER_USER"
         env:
@@ -89,25 +90,22 @@ jobs:
 
   push_buildifier_latest:
     runs-on: ubuntu-18.04
-    needs: build
+    needs: cache
     if: ${{ github.event.pull_request.merged}}
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
-
       - name: cache
         uses: actions/cache@v2
         with:
           path: ~/.cache/bazel
-          key: ${{ needs.build.outputs.ymdh }}
-          restore-keys: ${{ needs.build.outputs.ymd }}
-
+          key: ${{ needs.cache.outputs.key }}
+          restore-keys: ${{ needs.build.outputs.restore-key }}
       - name: docker login
         run: echo "$DOCKER_TOKEN" | docker login --password-stdin --username "$DOCKER_USER"
         env:
           DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
-
       - name: bazel run image/buildifier:latest
         run: ./tools/bazel run --config=ci image/buildifier:latest
