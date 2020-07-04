@@ -1,110 +1,109 @@
-load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push", "container_layer")
+load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_layer", "container_push")
 load("@io_bazel_rules_docker//docker/util:run.bzl", "container_run_and_commit")
 load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
-load("@io_bazel_rules_docker//contrib:passwd.bzl", "passwd_entry", "passwd_file")
 
 container_push(
-   name = "latest",
-   image = ":devcontainer",
-   format = "Docker",
-   registry = "index.docker.io",
-   repository = "whilp/world",
-   tag = "latest",
+    name = "latest",
+    format = "Docker",
+    image = ":devcontainer",
+    registry = "index.docker.io",
+    repository = "whilp/world",
+    tag = "latest",
 )
 
 container_push(
-   name = "next",
-   image = ":devcontainer",
-   format = "Docker",
-   registry = "index.docker.io",
-   repository = "whilp/world",
-   tag = "next",
+    name = "next",
+    format = "Docker",
+    image = ":devcontainer",
+    registry = "index.docker.io",
+    repository = "whilp/world",
+    tag = "next",
 )
 
 container_image(
     name = "devcontainer",
     base = "base",
-    user = "user",
-    workdir = "/home/user",
     entrypoint = ["/usr/local/bin/entrypoint.sh"],
     layers = [
-      ":bins",
-      ":docker",
-      ":etc",
-      ":sudoersd",
-    ]
+        ":bins",
+        ":docker",
+        ":etc",
+        ":sudoersd",
+    ],
+    user = "user",
+    workdir = "/home/user",
 )
 
 PACKAGES = [
-  "sudo",
-  "uidmap",
-  "iproute2",
-  "iptables",
-  "ca-certificates",
+    "sudo",
+    "uidmap",
+    "iproute2",
+    "iptables",
+    "ca-certificates",
 ]
 
 container_run_and_commit(
-  name = "base",
-  image = "@ubuntu18.04//image",
-  commands = [
-    "apt-get update",
-     "apt-get install --no-install-recommends -y " + " ".join(PACKAGES)
-      ]
+    name = "base",
+    commands = [
+        "apt-get update",
+        "apt-get install --no-install-recommends -y " + " ".join(PACKAGES),
+    ],
+    image = "@ubuntu18.04//image",
 )
 
 container_layer(
-  name = "sudoersd",
-  directory = "/etc/sudoers.d",
-  files = ["sudoers"],
+    name = "sudoersd",
+    directory = "/etc/sudoers.d",
+    files = ["sudoers"],
 )
 
 container_layer(
-  name = "etc",
-  directory = "/etc",
-  files = [
-    "passwd",
-    "group",
-    "subuid",
-    "subgid",
-  ]
+    name = "etc",
+    directory = "/etc",
+    files = [
+        "group",
+        "passwd",
+        "subgid",
+        "subuid",
+    ],
 )
 
 container_layer(
-  name = "docker",
-  directory = "/usr/local",
-  tars = [
-    "@docker//file",
-    "@docker_rootless//file"
-  ],
-  symlinks = {
-    "/usr/local/bin/containerd-shim": "/usr/local/docker/containerd-shim",
-    "/usr/local/bin/containerd": "/usr/local/docker/containerd",
-    "/usr/local/bin/ctr": "/usr/local/docker/ctr",
-    "/usr/local/bin/docker-init": "/usr/local/docker/docker-init",
-    "/usr/local/bin/docker-proxy": "/usr/local/docker/docker-proxy",
-    "/usr/local/bin/docker": "/usr/local/docker/docker",
-    "/usr/local/bin/dockerd-rootless.sh": "/usr/local/docker-rootless-extras/dockerd-rootless.sh",
-    "/usr/local/bin/dockerd": "/usr/local/docker/dockerd",
-    "/usr/local/bin/rootlesskit-docker-proxy": "/usr/local/docker-rootless-extras/rootlesskit-docker-proxy",
-    "/usr/local/bin/rootlesskit": "/usr/local/docker-rootless-extras/rootlesskit",
-    "/usr/local/bin/runc": "/usr/local/docker/runc",
-    "/usr/local/bin/vpnkit": "/usr/local/docker-rootless-extras/vpnkit",
-  }
+    name = "docker",
+    directory = "/usr/local",
+    symlinks = {
+        "/usr/local/bin/containerd-shim": "/usr/local/docker/containerd-shim",
+        "/usr/local/bin/containerd": "/usr/local/docker/containerd",
+        "/usr/local/bin/ctr": "/usr/local/docker/ctr",
+        "/usr/local/bin/docker-init": "/usr/local/docker/docker-init",
+        "/usr/local/bin/docker-proxy": "/usr/local/docker/docker-proxy",
+        "/usr/local/bin/docker": "/usr/local/docker/docker",
+        "/usr/local/bin/dockerd-rootless.sh": "/usr/local/docker-rootless-extras/dockerd-rootless.sh",
+        "/usr/local/bin/dockerd": "/usr/local/docker/dockerd",
+        "/usr/local/bin/rootlesskit-docker-proxy": "/usr/local/docker-rootless-extras/rootlesskit-docker-proxy",
+        "/usr/local/bin/rootlesskit": "/usr/local/docker-rootless-extras/rootlesskit",
+        "/usr/local/bin/runc": "/usr/local/docker/runc",
+        "/usr/local/bin/vpnkit": "/usr/local/docker-rootless-extras/vpnkit",
+    },
+    tars = [
+        "@docker//file",
+        "@docker_rootless//file",
+    ],
 )
 
 container_layer(
-  name = "bins",
-  mode = "0o777",
-  directory = "/usr/local/bin",
-  files = [
-    "@bazel//file",
-    "@buildozer//file",
-    "@buildifier//file",
-    "@ibazel//file",
-    "@shfmt//file",
-    "@shellcheck//:shellcheck",
-    ":entrypoint.sh"
-  ]
+    name = "bins",
+    directory = "/usr/local/bin",
+    files = [
+        ":entrypoint.sh",
+        "@bazel//file",
+        "@buildifier//file",
+        "@buildozer//file",
+        "@ibazel//file",
+        "@shellcheck",
+        "@shfmt//file",
+    ],
+    mode = "0o777",
 )
 
 container_test(
