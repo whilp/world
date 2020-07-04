@@ -50,6 +50,13 @@ load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps = "deps")
 container_deps()
 
 load(
+    "@io_bazel_rules_docker//cc:image.bzl",
+    _cc_image_repos = "repositories",
+)
+
+_cc_image_repos()
+
+load(
     "@io_bazel_rules_docker//container:container.bzl",
     "container_pull",
 )

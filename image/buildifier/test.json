@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "2.0.0",
+  "commandTests": [
+    {
+      "name": "buildifier",
+      "command": "buildifier",
+      "args": ["--version"],
+      "expectedOutput": ["buildifier version"]
+    }
+  ]
+}
