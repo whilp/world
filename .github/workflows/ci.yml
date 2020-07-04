@@ -23,7 +23,7 @@ jobs:
         with:
           path: ~/.cache/bazel
           key: ${{ needs.cache.outputs.key }}
-          restore-keys: ${{ needs.build.outputs.restore-key }}
+          restore-keys: ${{ needs.cache.outputs.restore-key }}
       - name: bazel build
         run: ./tools/bazel build --config=ci //...
 
