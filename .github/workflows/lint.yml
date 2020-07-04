@@ -12,4 +12,5 @@ jobs:
           fetch-depth: 2
 
       - uses: docker://whilp/buildifier:latest
-        args: -r -v /github/workspace
+        with:
+          args: -r -v /github/workspace
