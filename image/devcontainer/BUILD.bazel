@@ -101,10 +101,10 @@ container_layer(
 
 pkg_tar(
     name = "home_tar",
-    package_dir = "user/.xdg",
+    srcs = ["empty"],
     owner = "1000.1000",
     ownername = "user.user",
-    srcs = ["empty"],
+    package_dir = "user/.xdg",
 )
 
 container_layer(
