@@ -3,7 +3,7 @@
   "commandTests": [
     {
       "name": "buildifier",
-      "command": "buildifier",
+      "command": "/buildifier",
       "args": ["--version"],
       "expectedOutput": ["buildifier version"]
     }
