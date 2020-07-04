@@ -1,7 +1,8 @@
 {
   "name": "whilp.world",
-  "dockerFile": "Dockerfile",
-  "remoteUser": "vscode",
+  "image": "whilp/world:latest",
+  "remoteUser": "user",
+  "runArgs": ["--privileged"],
   "mounts": [
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
   ]

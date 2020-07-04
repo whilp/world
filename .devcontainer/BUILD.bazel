@@ -37,7 +37,11 @@ container_image(
 )
 
 PACKAGES = [
-  "sudo"
+  "sudo",
+  "uidmap",
+  "iproute2",
+  "iptables",
+  "ca-certificates",
 ]
 
 container_run_and_commit(
@@ -60,7 +64,9 @@ container_layer(
   directory = "/etc",
   files = [
     "passwd",
-    "group"
+    "group",
+    "subuid",
+    "subgid",
   ]
 )
 
