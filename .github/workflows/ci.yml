@@ -5,7 +5,6 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-18.04
-    needs: cache
     steps:
       - uses: actions/checkout@v2
         with:
