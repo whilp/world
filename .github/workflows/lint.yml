@@ -13,4 +13,7 @@ jobs:
 
       - uses: docker://whilp/buildifier:latest
         with:
-          args: -r -v /github/workspace
+          args: -lint=fix -mode=fix -r -v /github/workspace
+
+      - name: check
+        run: git diff --exit-code
