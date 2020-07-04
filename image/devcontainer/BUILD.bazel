@@ -24,7 +24,6 @@ container_push(
 container_image(
     name = "devcontainer",
     base = "base",
-    entrypoint = ["/usr/local/bin/entrypoint.sh"],
     env = {
         "XDG_RUNTIME_DIR": "/home/user/.xdg",
         "DOCKER_HOST": "unix:////home/user/.xdg/docker.sock",
@@ -41,7 +40,6 @@ container_image(
         "/usr/bin/python3": "/usr/bin/python3.7",
     },
     user = "user",
-    workdir = "/home/user",
 )
 
 PACKAGES = [
