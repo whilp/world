@@ -1,19 +1,19 @@
 name: lint
 
-on: [push]
+on:
+  push:
+    branches-ignore:
+      - master
 
 jobs:
   lint:
     runs-on: ubuntu-18.04
-    if: ${{! github.event.pull_request.merged}}
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
-
       - uses: docker://whilp/linter:latest
         with:
           args: /buildifier -lint=fix -mode=fix -r -v /github/workspace
-
       - name: check
         run: git diff --exit-code

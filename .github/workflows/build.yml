@@ -1,0 +1,16 @@
+name: build
+
+on:
+  push:
+    branches-ignore:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: bazel build
+        run: ./tools/bazel build --config=ci //...

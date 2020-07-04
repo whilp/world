@@ -1,30 +1,13 @@
-name: CI
+name: push
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
-  build:
+  devcontainer_next:
     runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-      - name: bazel build
-        run: ./tools/bazel build --config=ci //...
-
-  test:
-    runs-on: ubuntu-18.04
-    if: ${{! github.event.pull_request.merged}}
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-      - name: bazel test
-        run: ./tools/bazel test --config=ci //...
-
-  push_devcontainer_next:
-    runs-on: ubuntu-18.04
-    if: ${{! github.event.pull_request.merged}}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -37,9 +20,8 @@ jobs:
       - name: bazel run image/devcontainer:next
         run: ./tools/bazel run --config=ci image/devcontainer:next
 
-  push_devcontainer_latest:
+  devcontainer_latest:
     runs-on: ubuntu-18.04
-    if: ${{ github.event.pull_request.merged}}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -52,7 +34,7 @@ jobs:
       - name: bazel run image/devcontainer:next
         run: ./tools/bazel run --config=ci image/devcontainer:latest
 
-  push_linter_latest:
+  linter_latest:
     runs-on: ubuntu-18.04
     if: ${{ github.event.pull_request.merged}}
     steps:

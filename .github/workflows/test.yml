@@ -1,0 +1,16 @@
+name: test
+
+on:
+  push:
+    branches-ignore:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: bazel test
+        run: ./tools/bazel test --config=ci //...
