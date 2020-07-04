@@ -3,14 +3,6 @@ name: CI
 on: [push]
 
 jobs:
-  cache:
-    runs-on: ubuntu-18.04
-    steps:
-      - id: key
-        run: echo "::set-output name=key::$(/bin/date -u "+%Y%m%d%H")"
-      - id: restore-key
-        run: echo "::set-output name=restore-key::$(/bin/date -u "+%Y%m%d")"
-
   build:
     runs-on: ubuntu-18.04
     needs: cache
@@ -18,46 +10,26 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
-      - name: cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/bazel
-          key: ${{ needs.cache.outputs.key }}
-          restore-keys: ${{ needs.cache.outputs.restore-key }}
       - name: bazel build
         run: ./tools/bazel build --config=ci //...
 
   test:
     runs-on: ubuntu-18.04
-    needs: cache
     if: ${{! github.event.pull_request.merged}}
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
-      - name: cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/bazel
-          key: ${{ needs.cache.outputs.key }}
-          restore-keys: ${{ needs.cache.outputs.restore-key }}
       - name: bazel test
         run: ./tools/bazel test --config=ci //...
 
   push_devcontainer_next:
     runs-on: ubuntu-18.04
-    needs: cache
     if: ${{! github.event.pull_request.merged}}
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
-      - name: cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/bazel
-          key: ${{ needs.cache.outputs.key }}
-          restore-keys: ${{ needs.cache.outputs.restore-key }}
       - name: docker login
         run: echo "$DOCKER_TOKEN" | docker login --password-stdin --username "$DOCKER_USER"
         env:
@@ -68,18 +40,11 @@ jobs:
 
   push_devcontainer_latest:
     runs-on: ubuntu-18.04
-    needs: cache
     if: ${{ github.event.pull_request.merged}}
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
-      - name: cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/bazel
-          key: ${{ needs.cache.outputs.key }}
-          restore-keys: ${{ needs.cache.outputs.restore-key }}
       - name: docker login
         run: echo "$DOCKER_TOKEN" | docker login --password-stdin --username "$DOCKER_USER"
         env:
@@ -90,18 +55,11 @@ jobs:
 
   push_buildifier_latest:
     runs-on: ubuntu-18.04
-    needs: cache
     if: ${{ github.event.pull_request.merged}}
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
-      - name: cache
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/bazel
-          key: ${{ needs.cache.outputs.key }}
-          restore-keys: ${{ needs.cache.outputs.restore-key }}
       - name: docker login
         run: echo "$DOCKER_TOKEN" | docker login --password-stdin --username "$DOCKER_USER"
         env:
