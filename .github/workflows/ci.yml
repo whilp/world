@@ -52,7 +52,7 @@ jobs:
       - name: bazel run image/devcontainer:next
         run: ./tools/bazel run --config=ci image/devcontainer:latest
 
-  push_buildifier_latest:
+  push_linter_latest:
     runs-on: ubuntu-18.04
     if: ${{ github.event.pull_request.merged}}
     steps:
@@ -64,5 +64,5 @@ jobs:
         env:
           DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
-      - name: bazel run image/buildifier:latest
-        run: ./tools/bazel run --config=ci image/buildifier:latest
+      - name: bazel run image/linter:latest
+        run: ./tools/bazel run --config=ci image/linter:latest

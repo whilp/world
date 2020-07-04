@@ -4,29 +4,30 @@ load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
 container_push(
     name = "latest",
     format = "Docker",
-    image = ":buildifier",
+    image = ":linter",
     registry = "index.docker.io",
-    repository = "whilp/buildifier",
+    repository = "whilp/linter",
     tag = "latest",
 )
 
 container_push(
     name = "next",
     format = "Docker",
-    image = ":buildifier",
+    image = ":linter",
     registry = "index.docker.io",
-    repository = "whilp/buildifier",
+    repository = "whilp/linter",
     tag = "next",
 )
 
 container_image(
-    name = "buildifier",
+    name = "linter",
     base = "@cc_image_base//image",
     empty_dirs = [
         "/work",
     ],
-    entrypoint = ["/buildifier"],
-    files = ["@buildifier//file"],
+    files = [
+        "@buildifier//file",
+    ],
     mode = "0o555",
     volumes = [
         "/work",
@@ -37,5 +38,5 @@ container_image(
 container_test(
     name = "test",
     configs = ["test.json"],
-    image = ":buildifier",
+    image = ":linter",
 )

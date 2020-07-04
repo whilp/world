@@ -3,7 +3,7 @@ name: lint
 on: [push]
 
 jobs:
-  buildifier:
+  lint:
     runs-on: ubuntu-18.04
     if: ${{! github.event.pull_request.merged}}
     steps:
@@ -11,9 +11,9 @@ jobs:
         with:
           fetch-depth: 2
 
-      - uses: docker://whilp/buildifier:latest
+      - uses: docker://whilp/linter:latest
         with:
-          args: -lint=fix -mode=fix -r -v /github/workspace
+          args: /buildifier -lint=fix -mode=fix -r -v /github/workspace
 
       - name: check
         run: git diff --exit-code
