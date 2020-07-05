@@ -27,12 +27,6 @@ module.exports = {
         'datasource = "(?<datasource>.*?)",\n.*name = "(?<depName>.*?)",\n.*version = "(?<currentValue>.*?)"',
       ],
     },
-    {
-      fileMatch: ".bazelversion",
-      matchStrings: ["(?<currentValue>.*)"],
-      datasourceTemplate: "github-releases",
-      depNameTemplate: "bazelbuild/bazel",
-    },
   ],
   packageRules: [
     {
