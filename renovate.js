@@ -23,12 +23,14 @@ module.exports = {
   regexManagers: [
     {
       fileMatch: "versions.bzl",
+      labels: ["dependencies", "bazel"],
       matchStrings: [
         'datasource = "(?<datasource>.*?)",\n.*name = "(?<depName>.*?)",\n.*version = "(?<currentValue>.*?)"',
       ],
     },
     {
       fileMatch: ".bazelversion",
+      labels: ["dependencies", "bazel"],
       matchStrings: ["^(?<currentValue>[0-9.]+)\\s"],
       datasourceTemplate: "github-releases",
       depNameTemplate: "bazelbuild/bazel",
