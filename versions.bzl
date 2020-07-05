@@ -9,7 +9,7 @@ def versions():
         node = version(
             datasource = "github-releases",
             name = "nodejs/node",
-            version = "12.13.0",
+            version = "v14.5.0",
         ),
         # https://github.com/bazelbuild/rules_nodejs/blob/d660ca109fcf86fe0dbfb9908faaefb0e30c25a0/internal/node/node_repositories.bzl#L204
         yarn = version(
