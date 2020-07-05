@@ -29,7 +29,7 @@ module.exports = {
     },
     {
       fileMatch: ".bazelversion",
-      matchStrings: ["^(?<currentValue>.*)$"],
+      matchStrings: ["^(?<currentValue>[0-9.]+)$"],
       datasourceTemplate: "github-releases",
       depNameTemplate: "bazelbuild/bazel",
     },
