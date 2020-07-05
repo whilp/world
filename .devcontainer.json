@@ -1,6 +1,6 @@
 {
   "name": "whilp.world",
-  // "image": "whilp/world:latest",
-  // "remoteUser": "user",
-  // "runArgs": ["--privileged"]
+  "image": "whilp/world:latest",
+  "remoteUser": "user",
+  "runArgs": ["--privileged"]
 }
