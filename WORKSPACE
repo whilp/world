@@ -3,7 +3,9 @@ workspace(
 )
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
-load("//:versions.bzl", "prefix", "sha256", "url", "version")
+load("//:versions.bzl", "versions")
+
+v = versions()
 
 http_archive(
     name = "rules_python",
@@ -39,8 +41,8 @@ http_archive(
 load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories", "yarn_install")
 
 node_repositories(
-    node_version = version("node"),
-    yarn_version = version("yarn"),
+    node_version = v.node.version,
+    yarn_version = v.yarn.version,
 )
 
 yarn_install(
@@ -99,60 +101,60 @@ http_file(
     name = "bazel",
     downloaded_file_path = "bazel",
     executable = True,
-    sha256 = sha256("bazel"),
-    urls = [url("bazel", "bazel-{version}-linux-x86_64")],
+    sha256 = v.bazel.sha256,
+    urls = [v.bazel.url],
 )
 
 http_file(
     name = "buildifier",
     downloaded_file_path = "buildifier",
     executable = True,
-    sha256 = sha256("buildifier"),
-    urls = [url("buildifier", "buildifier")],
+    sha256 = v.buildifier.sha256,
+    urls = [v.buildifier.url],
 )
 
 http_file(
     name = "buildozer",
     downloaded_file_path = "buildozer",
     executable = True,
-    sha256 = sha256("buildozer"),
-    urls = [url("buildozer", "buildozer")],
+    sha256 = v.buildozer.sha256,
+    urls = [v.buildozer.url],
 )
 
 http_file(
     name = "ibazel",
     downloaded_file_path = "ibazel",
     executable = True,
-    sha256 = sha256("ibazel"),
-    urls = [url("ibazel", "ibazel_linux_amd64")],
+    sha256 = v.ibazel.sha256,
+    urls = [v.ibazel.url],
 )
 
 http_file(
     name = "docker_rootless",
     downloaded_file_path = "docker-rootless.tgz",
-    sha256 = sha256("docker_rootless"),
-    urls = [url("docker_rootless")],
+    sha256 = v.docker_rootless.sha256,
+    urls = [v.docker_rootless.url],
 )
 
 http_file(
     name = "docker",
     downloaded_file_path = "docker.tgz",
-    sha256 = sha256("docker"),
-    urls = [url("docker")],
+    sha256 = v.docker.sha256,
+    urls = [v.docker.url],
 )
 
 http_archive(
     name = "shellcheck",
     build_file_content = """exports_files(["shellcheck"])""",
-    sha256 = sha256("shellcheck"),
-    strip_prefix = prefix("shellcheck"),
-    urls = [url("shellcheck", "shellcheck-{version}.linux.x86_64.tar.xz")],
+    sha256 = v.shellcheck.sha256,
+    strip_prefix = v.shellcheck.prefix,
+    urls = [v.shellcheck.url],
 )
 
 http_file(
     name = "shfmt",
     downloaded_file_path = "shfmt",
     executable = True,
-    sha256 = sha256("shfmt"),
-    urls = [url("shfmt", "shfmt_{version}_linux_amd64")],
+    sha256 = v.shfmt.sha256,
+    urls = [v.shfmt.url],
 )
