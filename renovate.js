@@ -42,8 +42,16 @@ module.exports = {
       versioning: "regex:^(?<compatibility>[a-z]+?)-(?<minor>\\d+)?$",
     },
     {
-      updateTypes: ["digest"],
-      schedule: ["before 3am on monday"],
+      // Keep in sync with rules_nodejs
+      // https://github.com/bazelbuild/rules_nodejs/blob/d660ca109fcf86fe0dbfb9908faaefb0e30c25a0/internal/node/node_repositories.bzl#L108-L112
+      packagePatterns: ["nodejs/node"],
+      allowedVersions: "<=12.13.0",
+    },
+    {
+      // Keep in sync with rules_nodejs
+      // https://github.com/bazelbuild/rules_nodejs/blob/d660ca109fcf86fe0dbfb9908faaefb0e30c25a0/internal/node/node_repositories.bzl#L204
+      packagePatterns: ["yarnpkg/yarn"],
+      allowedVersions: "<=1.22.4",
     },
   ],
 };
