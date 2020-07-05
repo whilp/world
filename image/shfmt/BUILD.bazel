@@ -3,10 +3,15 @@ load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
 
 container_image(
     name = "shfmt",
-    base = "@cc_image_base//image",
-    files = [
-        "@shfmt//file",
+    args = [
+        "-l",
+        "-w",
+        "-i2",
+        ".",
     ],
+    base = "@cc_image_base//image",
+    entrypoint = ["/shfmt"],
+    files = ["@shfmt//file"],
 )
 
 container_push(

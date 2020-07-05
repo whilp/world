@@ -3,10 +3,16 @@ load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
 
 container_image(
     name = "buildifier",
-    base = "@cc_image_base//image",
-    files = [
-        "@buildifier//file",
+    args = [
+        "-lint=fix",
+        "-mode=fix",
+        "-r",
+        "-v",
+        ".",
     ],
+    base = "@cc_image_base//image",
+    entrypoint = ["/buildifier"],
+    files = ["@buildifier//file"],
 )
 
 container_push(
