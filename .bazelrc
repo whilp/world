@@ -5,6 +5,7 @@ common --attempt_to_print_relative_paths
 build --incompatible_strict_action_env
 run --incompatible_strict_action_env
 test --incompatible_strict_action_env
+build --action_env=DOCKER_HOST
 
 common:ci --color=no
 common:ci --curses=no
