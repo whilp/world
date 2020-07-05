@@ -28,6 +28,6 @@ jobs:
       - name: shfmt
         uses: docker://whilp/linter:latest@sha256:12357fbb9cd5aad09c2d397f301a7624fa12d5d437bd9dbf567d3e075f7845aa
         with:
-          args: /shfmt -l -w .
+          args: /shfmt -l -w -i 2 .
       - name: check
         run: git diff --exit-code
