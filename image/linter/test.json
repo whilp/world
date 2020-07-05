@@ -6,6 +6,18 @@
       "command": "/buildifier",
       "args": ["--version"],
       "expectedOutput": ["buildifier version"]
+    },
+    {
+      "name": "shfmt",
+      "command": "/shfmt",
+      "args": ["--version"],
+      "expectedOutput": ["v"]
+    },
+    {
+      "name": "shellcheck",
+      "command": "/shellcheck",
+      "args": ["--version"],
+      "expectedOutput": ["ShellCheck"]
     }
   ]
 }

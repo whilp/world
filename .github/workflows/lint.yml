@@ -14,6 +14,18 @@ jobs:
           fetch-depth: 2
       - uses: docker://whilp/linter:latest@sha256:2c1e8a0116b0074857a22290783688bbb2d8e95813c4651e31b5a3c251caa180
         with:
-          args: /buildifier -lint=fix -mode=fix -r -v /github/workspace
+          args: /buildifier -lint=fix -mode=fix -r -v .
+      - name: check
+        run: git diff --exit-code
+
+  shfmt:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - uses: docker://whilp/linter:latest@sha256:2c1e8a0116b0074857a22290783688bbb2d8e95813c4651e31b5a3c251caa180
+        with:
+          args: /shfmt -l -w .
       - name: check
         run: git diff --exit-code

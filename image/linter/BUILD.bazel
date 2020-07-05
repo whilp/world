@@ -27,6 +27,8 @@ container_image(
     ],
     files = [
         "@buildifier//file",
+        "@shellcheck",
+        "@shfmt//file",
     ],
     mode = "0o555",
     volumes = [
