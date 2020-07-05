@@ -13,7 +13,7 @@ jobs:
         with:
           fetch-depth: 2
       - name: buildifier
-        uses: docker://whilp/linter:latest@sha256:12357fbb9cd5aad09c2d397f301a7624fa12d5d437bd9dbf567d3e075f7845aa
+        uses: docker://whilp/buildifier:latest@sha256:c9ba1b49077bf9053727596105260ce84d529131563e8a2b244a115b2fc934d6
         with:
           args: /buildifier -lint=fix -mode=fix -r -v .
       - name: check
@@ -26,7 +26,20 @@ jobs:
         with:
           fetch-depth: 2
       - name: shfmt
-        uses: docker://whilp/linter:latest@sha256:12357fbb9cd5aad09c2d397f301a7624fa12d5d437bd9dbf567d3e075f7845aa
+        uses: docker://whilp/shfmt:latest@sha256:d2724d3509ec77e18da37e471d6da1bd743804aff99c19c11a6ad3791e20a613
+        with:
+          args: /shfmt -l -w -i 2 .
+      - name: check
+        run: git diff --exit-code
+
+  black:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: shfmt
+        uses: docker://whilp/black:latest@sha256:ea9d253a1597d81bc180af2a2731daaa4f4d44ca16a28e0c9fea90b7e35c6793
         with:
           args: /shfmt -l -w -i 2 .
       - name: check
