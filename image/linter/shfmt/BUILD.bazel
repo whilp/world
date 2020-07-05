@@ -1,0 +1,25 @@
+load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
+load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
+
+container_image(
+    name = "shfmt",
+    base = "@cc_image_base//image",
+    files = [
+        "@shfmt//file",
+    ],
+)
+
+container_push(
+    name = "push",
+    format = "Docker",
+    image = ":shfmt",
+    registry = "index.docker.io",
+    repository = "whilp/linter",
+    tag = "shfmt",
+)
+
+container_test(
+    name = "test",
+    configs = ["test.json"],
+    image = ":shfmt",
+)

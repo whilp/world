@@ -20,7 +20,7 @@ jobs:
       - name: bazel run image/devcontainer:latest
         run: ./tools/bazel run --config=ci image/devcontainer:latest
 
-  linter:
+  shfmt:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
@@ -31,5 +31,33 @@ jobs:
         env:
           DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
-      - name: bazel run image/linter:latest
-        run: ./tools/bazel run --config=ci image/linter:latest
+      - name: bazel run image/linter/shfmt:push
+        run: ./tools/bazel run --config=ci image/linter/shfmt:push
+
+  black:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: docker login
+        run: echo "$DOCKER_TOKEN" | docker login --password-stdin --username "$DOCKER_USER"
+        env:
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+      - name: bazel run image/linter/black:push
+        run: ./tools/bazel run --config=ci image/linter/black:push
+
+  buildifier:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: docker login
+        run: echo "$DOCKER_TOKEN" | docker login --password-stdin --username "$DOCKER_USER"
+        env:
+          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+      - name: bazel run image/linter/buildifier:push
+        run: ./tools/bazel run --config=ci image/linter/buildifier:push

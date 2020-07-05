@@ -18,9 +18,18 @@ load("@rules_python//python:repositories.bzl", "py_repositories")
 
 py_repositories()
 
-load("@rules_python//python:pip.bzl", "pip_repositories")
+load("@rules_python//python:pip.bzl", "pip3_import", "pip_repositories")
 
 pip_repositories()
+
+pip3_import(
+    name = "pypi",
+    requirements = "//:requirements.txt",
+)
+
+load("@pypi//:requirements.bzl", "pip_install")
+
+pip_install()
 
 http_archive(
     name = "rules_pkg",
@@ -88,6 +97,21 @@ load(
     "@io_bazel_rules_docker//container:container.bzl",
     "container_pull",
 )
+load(
+    "@io_bazel_rules_docker//python3:image.bzl",
+    _py_image_repos = "repositories",
+)
+
+# Make sure we get a base image with python3.7.
+container_pull(
+    name = "py3_image_base",
+    digest = "sha256:f7d590fed7404ad6fcf6199012de4ea1dcefc93393c85d64783f8737009715b4",
+    registry = "gcr.io",
+    repository = "distroless/python3-debian10",
+    tag = "latest",
+)
+
+_py_image_repos()
 
 container_pull(
     name = "ubuntu18.04",
