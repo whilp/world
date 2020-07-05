@@ -4,21 +4,12 @@ load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
 load("@rules_pkg//:pkg.bzl", "pkg_tar")
 
 container_push(
-    name = "latest",
+    name = "push",
     format = "Docker",
     image = ":devcontainer",
     registry = "index.docker.io",
     repository = "whilp/world",
     tag = "latest",
-)
-
-container_push(
-    name = "next",
-    format = "Docker",
-    image = ":devcontainer",
-    registry = "index.docker.io",
-    repository = "whilp/world",
-    tag = "next",
 )
 
 container_image(

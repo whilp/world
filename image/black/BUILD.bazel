@@ -23,8 +23,8 @@ container_push(
     format = "Docker",
     image = ":black",
     registry = "index.docker.io",
-    repository = "whilp/linter",
-    tag = "black",
+    repository = "whilp/black",
+    tag = "latest",
 )
 
 container_test(

@@ -14,8 +14,8 @@ container_push(
     format = "Docker",
     image = ":shfmt",
     registry = "index.docker.io",
-    repository = "whilp/linter",
-    tag = "shfmt",
+    repository = "whilp/shfmt",
+    tag = "latest",
 )
 
 container_test(

@@ -14,8 +14,8 @@ container_push(
     format = "Docker",
     image = ":buildifier",
     registry = "index.docker.io",
-    repository = "whilp/linter",
-    tag = "buildifier",
+    repository = "whilp/buildifier",
+    tag = "latest",
 )
 
 container_test(
