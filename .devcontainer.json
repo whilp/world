@@ -2,5 +2,6 @@
   "name": "whilp.world",
   "image": "whilp/world:latest",
   "remoteUser": "user",
-  "runArgs": ["--privileged"]
+  "runArgs": ["--privileged"],
+  "postCreateCommand": "/usr/local/bin/post.sh"
 }

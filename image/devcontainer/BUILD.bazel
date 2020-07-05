@@ -140,7 +140,7 @@ container_layer(
     name = "bins",
     directory = "/usr/local/bin",
     files = [
-        ":entrypoint.sh",
+        ":post.sh",
         "@bazel//file",
         "@buildifier//file",
         "@buildozer//file",
