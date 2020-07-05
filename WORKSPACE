@@ -97,6 +97,14 @@ container_pull(
     tag = "18.04",
 )
 
+http_archive(
+    name = "shellcheck",
+    build_file_content = """exports_files(["shellcheck"])""",
+    sha256 = "64f17152d96d7ec261ad3086ed42d18232fcb65148b44571b564d688269d36c8",
+    strip_prefix = "shellcheck-v0.7.1",
+    urls = ["https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.linux.x86_64.tar.xz"],
+)
+
 http_file(
     name = "bazel",
     downloaded_file_path = "bazel",
@@ -141,14 +149,6 @@ http_file(
     downloaded_file_path = "docker.tgz",
     sha256 = v.docker.sha256,
     urls = [v.docker.url],
-)
-
-http_archive(
-    name = "shellcheck",
-    build_file_content = """exports_files(["shellcheck"])""",
-    sha256 = v.shellcheck.sha256,
-    strip_prefix = v.shellcheck.prefix,
-    urls = [v.shellcheck.url],
 )
 
 http_file(

@@ -65,15 +65,6 @@ def versions():
             url = DOCKER_DOWNLOAD,
             asset = "docker-{version}.tgz",
         ),
-        shellcheck = version(
-            datasource = "github-releases",
-            name = "koalaman/shellcheck",
-            version = "v0.7.1",
-            sha256 = "64f17152d96d7ec261ad3086ed42d18232fcb65148b44571b564d688269d36c8",
-            url = GITHUB_RELEASE,
-            prefix = "shellcheck-{version}",
-            asset = "shellcheck-{version}.linux.x86_64.tar.xz",
-        ),
         shfmt = version(
             datasource = "github-releases",
             name = "mvdan/sh",
