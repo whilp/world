@@ -1,0 +1,21 @@
+name: update
+
+on:
+  schedule:
+    - cron: "19 3 * * *"
+
+jobs:
+  renovate:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - name: renovate
+        uses: docker://renovate/renovate:latest@sha256:d4e3d15f2e353a894fd415f336f87beda0d27fd62cff4b1ae77a3291325a00c7
+        env:
+          RENOVATE_REPOSITORIES: whilp/world
+          RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          RENOVATE_ONBOARDING: false
+          RENOVATE_CONFIG_FILE: renovate.js
+          RENOVATE_LOGLEVEL: debug
