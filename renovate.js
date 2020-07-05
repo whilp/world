@@ -27,6 +27,14 @@ module.exports = {
         '# renovate (?<datasource>.*)\n.*"https://github.com/(?<depName>.*?)/releases/download/(?<currentValue>.*?)/.*"',
       ],
     },
+    {
+      fileMatch: "^versions.bzl$",
+      matchStrings: [
+        'datasource = "(?<datasource>.*)"',
+        'name = "(?<depName>.*)"',
+        'version = "(?<currentValue>.*)"',
+      ],
+    },
   ],
   packageRules: [
     {
