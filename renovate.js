@@ -24,7 +24,7 @@ module.exports = {
     {
       fileMatch: "versions.bzl",
       matchStrings: [
-        'datasource = "(?<datasource>.*?)".*name = "(?<depName>.*?)".*version = "(?<currentValue>.*?)"',
+        'datasource = "(?<datasource>.*?)",\n.*name = "(?<depName>.*?)",\n.*version = "(?<currentValue>.*?)"',
       ],
     },
   ],
