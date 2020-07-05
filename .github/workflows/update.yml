@@ -1,6 +1,9 @@
 name: update
 
 on:
+  push:
+    branches-ignore:
+      - master
   schedule:
     - cron: "19 3 * * *"
 
