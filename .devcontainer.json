@@ -3,5 +3,8 @@
   "image": "whilp/world:latest",
   "remoteUser": "user",
   "runArgs": ["--privileged"],
-  "postCreateCommand": "/usr/local/bin/post.sh"
+  "postCreateCommand": "/usr/local/bin/post.sh",
+  "settings": { 
+		"terminal.integrated.shell.linux": "/bin/bash"
+	},
 }
