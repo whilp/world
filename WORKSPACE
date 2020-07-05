@@ -100,7 +100,7 @@ http_file(
     downloaded_file_path = "bazel",
     executable = True,
     sha256 = sha256("bazel"),
-    urls = [url("bazel", "bazel-{version}-linux-x86-64")],
+    urls = [url("bazel", "bazel-{version}-linux-x86_64")],
 )
 
 http_file(
