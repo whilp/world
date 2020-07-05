@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
-      - name: buildifier
+      - name: lint
         uses: docker://whilp/buildifier:latest@sha256:c9ba1b49077bf9053727596105260ce84d529131563e8a2b244a115b2fc934d6
         with:
           args: /buildifier -lint=fix -mode=fix -r -v .
@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
-      - name: shfmt
+      - name: lint
         uses: docker://whilp/shfmt:latest@sha256:d2724d3509ec77e18da37e471d6da1bd743804aff99c19c11a6ad3791e20a613
         with:
           args: /shfmt -l -w -i 2 .
@@ -38,7 +38,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
-      - name: shfmt
+      - name: lint
         uses: docker://whilp/black:latest@sha256:ea9d253a1597d81bc180af2a2731daaa4f4d44ca16a28e0c9fea90b7e35c6793
         with:
           args: /shfmt -l -w -i 2 .
