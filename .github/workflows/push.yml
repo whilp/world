@@ -6,21 +6,7 @@ on:
       - master
 
 jobs:
-  devcontainer_next:
-    runs-on: ubuntu-18.04
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-      - name: docker login
-        run: echo "$DOCKER_TOKEN" | docker login --password-stdin --username "$DOCKER_USER"
-        env:
-          DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
-          DOCKER_USER: ${{ secrets.DOCKER_USER }}
-      - name: bazel run image/devcontainer:next
-        run: ./tools/bazel run --config=ci image/devcontainer:next
-
-  devcontainer_latest:
+  devcontainer:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
@@ -34,7 +20,7 @@ jobs:
       - name: bazel run image/devcontainer:next
         run: ./tools/bazel run --config=ci image/devcontainer:latest
 
-  linter_latest:
+  linter:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
