@@ -88,10 +88,10 @@ load(
 
 container_pull(
     name = "ubuntu18.04",
-    digest = "sha256:c32bd2e76e7688eeb1bb39754fff7cdfc571626fc1abfded4f82a90de79f8d10",
+    digest = "sha256:c95b7b93ccd48c3bfd97f8cac6d5ca8053ced584c9e8e6431861ca30b0d73114",
     registry = "docker.io",
     repository = "library/ubuntu",
-    tag = "18.04",
+    tag = "18.10",
 )
 
 http_file(
