@@ -3,31 +3,6 @@
 GITHUB_RELEASE = "https://github.com/{name}/releases/download/{version}/{asset}"
 DOCKER_DOWNLOAD = "https://download.docker.com/linux/static/stable/x86_64/{asset}"
 
-def version(
-        datasource = None,
-        name = None,
-        version = None,
-        url = None,
-        sha256 = None,
-        asset = None,
-        prefix = None):
-    params = dict(
-        datasource = datasource,
-        name = name,
-        version = version,
-        sha256 = sha256,
-        url = url,
-        asset = asset,
-        prefix = prefix,
-    )
-    if asset != None:
-        params["asset"] = asset.format(**params)
-    if url != None:
-        params["url"] = url.format(**params)
-    if prefix != None:
-        params["prefix"] = prefix.format(**params)
-    return struct(**params)
-
 def versions():
     return struct(
         # https://github.com/bazelbuild/rules_nodejs/blob/d660ca109fcf86fe0dbfb9908faaefb0e30c25a0/internal/node/node_repositories.bzl#L108-L112
@@ -108,3 +83,42 @@ def versions():
             asset = "shfmt_{version}_linux_amd64",
         ),
     )
+
+def version(
+        datasource = None,
+        name = None,
+        version = None,
+        url = None,
+        sha256 = None,
+        asset = None,
+        prefix = None):
+    """version returns a version struct.
+
+    Args:
+        datasource: TODO
+        name: TODO
+        version: TODO
+        url: TODO
+        sha256: TODO
+        asset: TODO
+        prefix: TODO
+
+    Returns:
+        version struct
+    """
+    params = dict(
+        datasource = datasource,
+        name = name,
+        version = version,
+        sha256 = sha256,
+        url = url,
+        asset = asset,
+        prefix = prefix,
+    )
+    if asset != None:
+        params["asset"] = asset.format(**params)
+    if url != None:
+        params["url"] = url.format(**params)
+    if prefix != None:
+        params["prefix"] = prefix.format(**params)
+    return struct(**params)
