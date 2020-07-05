@@ -78,7 +78,7 @@ def versions():
         ),
         shfmt = dict(
             datasource = "github-releases",
-            name = "mvdan/shfmt",
+            name = "mvdan/sh",
             version = "v3.1.2",
             sha256 = "c5794c1ac081f0028d60317454fe388068ab5af7740a83e393515170a7157dce",
         ),
