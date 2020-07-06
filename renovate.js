@@ -6,7 +6,7 @@ module.exports = {
   gitAuthor: "Renovate Bot <bot@renovateapp.com>",
   logLevel: "debug",
   pinDigests: true,
-  enabledManagers: ["github-actions", "bazel", "regex", "npm"],
+  enabledManagers: ["github-actions", "bazel", "regex", "npm", "python"],
   platform: "github",
   repositories: ["whilp/world"],
   "github-actions": {
