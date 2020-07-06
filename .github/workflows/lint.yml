@@ -14,11 +14,11 @@ jobs:
           - docker://whilp/shfmt:latest@sha256:90b0297cfeb3b93a8fb5b0ed0a2e5e228d2a97dccee6b0f381796040ed34afcd
           - docker://whilp/black:latest@sha256:c0d6d9688ca5d96789d8bf402c47fdae36c50426f7343044d5a3a27eebf83625
     runs-on: ubuntu-18.04
+    container: ${{ matrix.image }}
     steps:
       - uses: actions/checkout@v2.3.1
         with:
           fetch-depth: 2
       - name: lint
-        uses: ${{ matrix.image }}
       - name: check
         run: git diff --exit-code
