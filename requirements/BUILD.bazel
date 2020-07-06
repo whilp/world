@@ -1,0 +1,18 @@
+load("@rules_python//python:defs.bzl", "py_binary")
+load("@pypi//:requirements.bzl", "requirement")
+
+py_binary(
+    name = "compile",
+    srcs = ["compile.py"],
+    args = [
+        "--generate-hashes",
+        "--allow-unsafe",
+        "--no-header",
+    ],
+    data = ["//:requirements.in"],
+    deps = [
+        requirement("pip"),
+        requirement("pip_tools"),
+        requirement("setuptools"),
+    ],
+)

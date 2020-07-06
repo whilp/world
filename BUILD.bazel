@@ -2,4 +2,6 @@ exports_files([
     "package.json",
     "yarn.lock",
     "versions.bzl",
+    "requirements.txt",
+    "requirements.in",
 ])
