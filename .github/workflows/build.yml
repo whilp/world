@@ -15,7 +15,5 @@ jobs:
       - uses: actions/setup-python@v2.0.1
         with:
           python-version: "3.7"
-      - name: debug
-        run: command -v python && command -v python3 && command -v python3.7 && python --version && echo $PATH
       - name: bazel build
         run: ./tools/bazel build --config=ci //...
