@@ -1,18 +1,31 @@
-load("@rules_python//python:defs.bzl", "py_binary")
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
 load("@pypi//:requirements.bzl", "requirement")
+
+deps = [
+    requirement("pip"),
+    requirement("pip_tools"),
+    requirement("setuptools"),
+]
 
 py_binary(
     name = "compile",
     srcs = ["compile.py"],
-    args = [
-        "--generate-hashes",
-        "--allow-unsafe",
-        "--no-header",
-    ],
     data = ["//:requirements.in"],
-    deps = [
-        requirement("pip"),
-        requirement("pip_tools"),
-        requirement("setuptools"),
+    deps = deps,
+)
+
+py_library(
+    name = "lib",
+    srcs = ["compile.py"],
+    deps = deps,
+)
+
+py_test(
+    name = "test",
+    srcs = ["test.py"],
+    data = [
+        "//:requirements.in",
+        "//:requirements.txt",
     ],
+    deps = deps + [":lib"],
 )
