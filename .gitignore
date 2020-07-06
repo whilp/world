@@ -1,3 +1,4 @@
 /node_modules
 /bazel-*
 /tools/bazel-real
+/.venv
