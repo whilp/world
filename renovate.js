@@ -1,3 +1,6 @@
+/*eslint no-undef: "error"*/
+/*eslint-env node*/
+
 module.exports = {
   // $schema: "https://docs.renovatebot.com/renovate-schema.json",
   extends: ["config:base"],
