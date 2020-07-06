@@ -113,6 +113,13 @@ container_pull(
 
 _py_image_repos()
 
+load(
+    "@io_bazel_rules_docker//nodejs:image.bzl",
+    _nodejs_image_repos = "repositories",
+)
+
+_nodejs_image_repos()
+
 container_pull(
     name = "ubuntu18.04",
     digest = "sha256:c32bd2e76e7688eeb1bb39754fff7cdfc571626fc1abfded4f82a90de79f8d10",

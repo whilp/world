@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "2.0.0",
+  "commandTests": [
+    {
+      "name": "prettier",
+      "command": "/app/image/prettier/prettier.binary",
+      "args": ["--version"],
+      "expectedOutput": ["2"]
+    }
+  ]
+}
