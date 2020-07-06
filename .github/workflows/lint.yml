@@ -49,3 +49,14 @@ jobs:
         uses: docker://whilp/prettier:latest@sha256:c63d0f9272803e07b7b05ed220802ab65a4df77d787a35a71152f535157929ae
       - name: check
         run: git diff --exit-code
+
+  eslint:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2.3.1
+        with:
+          fetch-depth: 2
+      - name: lint
+        uses: docker://whilp/eslint:latest@sha256:c63d0f9272803e07b7b05ed220802ab65a4df77d787a35a71152f535157929ae
+      - name: check
+        run: git diff --exit-code

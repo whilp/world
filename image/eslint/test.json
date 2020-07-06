@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "2.0.0",
+  "commandTests": [
+    {
+      "name": "eslint",
+      "command": "/app/image/eslint/eslint.binary",
+      "args": ["--version"],
+      "expectedOutput": ["v"]
+    }
+  ]
+}
