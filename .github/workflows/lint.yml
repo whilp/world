@@ -6,19 +6,35 @@ on:
       - master
 
 jobs:
-  lint:
-    strategy:
-      matrix:
-        image:
-          - docker://whilp/buildifier:latest@sha256:488dbdd5cd951198a1876f2005a7f291745c574b46d2e12916981f0b49bb9494
-          - docker://whilp/shfmt:latest@sha256:90b0297cfeb3b93a8fb5b0ed0a2e5e228d2a97dccee6b0f381796040ed34afcd
-          - docker://whilp/black:latest@sha256:c0d6d9688ca5d96789d8bf402c47fdae36c50426f7343044d5a3a27eebf83625
+  buildifier:
     runs-on: ubuntu-18.04
-    container: ${{ matrix.image }}
     steps:
       - uses: actions/checkout@v2.3.1
         with:
           fetch-depth: 2
       - name: lint
+        uses: docker://whilp/buildifier:latest@sha256:488dbdd5cd951198a1876f2005a7f291745c574b46d2e12916981f0b49bb9494
+      - name: check
+        run: git diff --exit-code
+
+  black:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2.3.1
+        with:
+          fetch-depth: 2
+      - name: lint
+        uses: docker://whilp/black:latest@sha256:c0d6d9688ca5d96789d8bf402c47fdae36c50426f7343044d5a3a27eebf83625
+      - name: check
+        run: git diff --exit-code
+
+  shfmt:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2.3.1
+        with:
+          fetch-depth: 2
+      - name: lint
+        uses: docker://whilp/shfmt:latest@sha256:90b0297cfeb3b93a8fb5b0ed0a2e5e228d2a97dccee6b0f381796040ed34afcd
       - name: check
         run: git diff --exit-code
