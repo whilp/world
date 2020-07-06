@@ -8,4 +8,5 @@ sys.path.append(top)
 
 import black
 
-black.patched_main()
+if __name__ == "__main__":
+    black.patched_main()
