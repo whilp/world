@@ -1,10 +1,10 @@
 {
   "name": "whilp.world",
-  "image": "whilp/world:latest",
+  "image": "whilp/world:latest@sha256:cabe64d02912f9f83e0b4f92fa6defc627bf0d713c703816716d9da4a049008c",
   "remoteUser": "user",
   "runArgs": ["--privileged"],
   "postCreateCommand": "/usr/local/bin/post.sh",
-  "settings": { 
-		"terminal.integrated.shell.linux": "/bin/bash"
-	},
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  }
 }
