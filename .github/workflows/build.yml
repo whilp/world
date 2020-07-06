@@ -13,6 +13,6 @@ jobs:
         with:
           fetch-depth: 2
       - name: debug
-        run: command -v python && command -v python3 && command -v python3.7 && python --version
+        run: command -v python && command -v python3 && command -v python3.7 && python --version && echo $PATH
       - name: bazel build
         run: ./tools/bazel build --config=ci //...
