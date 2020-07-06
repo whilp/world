@@ -6,9 +6,9 @@ load("@pypi//:requirements.bzl", "requirement")
 py3_image(
     name = "black",
     srcs = ["black.py"],
-    #args = ["."],
     args = [
         "-v",
+        "-l120",
         ".",
     ],
     main = "black.py",
