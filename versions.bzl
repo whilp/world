@@ -52,18 +52,18 @@ def versions():
         docker_rootless = version(
             datasource = "github-releases",
             name = "moby/moby",
-            version = "19.03.12",
+            version = "v19.03.12",
             sha256 = "7b66da2c8ba6c0b04bfb054327f229ac82aa98c827b747693822f45ffd01e5de",
             url = DOCKER_DOWNLOAD_URL,
-            asset = "docker-rootless-extras-{version}.tgz",
+            asset = "docker-rootless-extras-{stripped_version}.tgz",
         ),
         docker = version(
             datasource = "github-releases",
             name = "moby/moby",
-            version = "19.03.12",
+            version = "v19.03.12",
             sha256 = "88de1b87b8a2582fe827154899475a72fb707c5793cfb39d2a24813ba1f31197",
             url = DOCKER_DOWNLOAD_URL,
-            asset = "docker-{version}.tgz",
+            asset = "docker-{stripped_version}.tgz",
         ),
         shfmt = version(
             datasource = "github-releases",
@@ -106,6 +106,7 @@ def version(
         asset = asset,
         prefix = prefix,
     )
+    params["stripped_version"] = version.strip("v")
     if asset != None:
         params["asset"] = asset.format(**params)
     if url != None:
