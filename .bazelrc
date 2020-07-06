@@ -7,6 +7,8 @@ run --incompatible_strict_action_env
 test --incompatible_strict_action_env
 build --action_env=DOCKER_HOST
 
+test --test_env=XDG_CACHE_HOME=cache
+
 common:ci --color=no
 common:ci --curses=no
 common:ci --show_timestamps
