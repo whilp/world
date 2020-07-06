@@ -30,3 +30,4 @@ jobs:
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
       - name: bazel run image/${{ matrix.image }}:push
         run: ./tools/bazel run --config=ci image/${{ matrix.image }}:push
+
