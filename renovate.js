@@ -22,6 +22,22 @@ module.exports = {
   },
   regexManagers: [
     {
+      fileMatch: [".devcontainer.json"],
+      labels: ["dependencies", "docker"],
+      matchStrings: [
+        "(?<depName>.*?):(?<currentValue>.*?)@(?<currentDigest>sha256:[a-f0-9]+)",
+      ],
+      datasourceTemplate: "docker",
+    },
+    {
+      fileMatch: [".github/workflow/.*.yml"],
+      labels: ["dependencies", "docker"],
+      matchStrings: [
+        "docker://(?<depName>.*?):(?<currentValue>.*?)@(?<currentDigest>sha256:[a-f0-9]+)",
+      ],
+      datasourceTemplate: "docker",
+    },
+    {
       fileMatch: "versions.bzl",
       labels: ["dependencies", "bazel"],
       matchStrings: [
