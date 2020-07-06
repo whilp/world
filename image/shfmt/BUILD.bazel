@@ -6,6 +6,7 @@ container_image(
     args = [
         "-l",
         "-w",
+        "-s",
         "-i2",
         ".",
     ],
