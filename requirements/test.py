@@ -1,8 +1,6 @@
 import os
 import unittest
 
-import compile
-
 
 class TestCase(unittest.TestCase):
     maxDiff = None
@@ -26,6 +24,8 @@ class TestCase(unittest.TestCase):
 
 
 def run(args, env):
+    import compile
+
     try:
         return compile.main(["test-prog"] + args, env)
     except SystemExit:
