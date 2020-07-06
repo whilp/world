@@ -12,6 +12,9 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.7"
       - name: debug
         run: command -v python && command -v python3 && command -v python3.7 && python --version && echo $PATH
       - name: bazel build
