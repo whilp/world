@@ -71,7 +71,7 @@ module.exports = {
     },
     {
       updateTypes: ["minor", "patch", "pin", "digest"],
-      automerge: true
+      automerge: true,
     },
     {
       // Keep in sync with rules_nodejs
