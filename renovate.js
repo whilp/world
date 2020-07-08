@@ -70,6 +70,10 @@ module.exports = {
       versioning: "regex:^(?<compatibility>[a-z]+?)-(?<minor>\\d+)?$",
     },
     {
+      updateTypes: ["minor", "patch", "pin", "digest"],
+      automerge: true
+    },
+    {
       // Keep in sync with rules_nodejs
       // https://github.com/bazelbuild/rules_nodejs/blob/d660ca109fcf86fe0dbfb9908faaefb0e30c25a0/internal/node/node_repositories.bzl#L108-L112
       packagePatterns: ["nodejs/node"],
