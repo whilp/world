@@ -5,7 +5,7 @@ on:
     paths:
       - renovate.js
   schedule:
-    - cron: "19 3 * * *"
+    - cron: "19 */3 * * *"
 
 jobs:
   renovate:
