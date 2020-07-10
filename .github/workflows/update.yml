@@ -15,7 +15,7 @@ jobs:
         with:
           fetch-depth: 2
       - name: renovate
-        uses: docker://renovate/renovate:latest@sha256:e11893c383f58f2f33c7b13c4d69b19b0f4a86f706c62d39eb5e7fffc0f20c7e
+        uses: docker://renovate/renovate:latest@sha256:ff2f8c76fcbb2343455752c37c672e5bf0e6e3eaeec0264cc08b3c1e2cc52c3f
         env:
           RENOVATE_REPOSITORIES: whilp/world
           RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
