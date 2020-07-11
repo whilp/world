@@ -1,5 +1,5 @@
 {
-  "name": "whilp.world",
+  "name": "world",
   "image": "whilp/world:latest@sha256:35aea4aca2b21bbb57f9a71e260185fbe3415937f6f99623ebcb25a9a8f49ef1",
   "remoteUser": "user",
   "runArgs": ["--privileged"],
