@@ -11,6 +11,7 @@ module.exports = {
   pinDigests: true,
   enabledManagers: ["github-actions", "bazel", "regex", "npm", "python"],
   platform: "github",
+  reviewersFromCodeOwners: true,
   repositories: ["whilp/world"],
   "github-actions": {
     fileMatch: ["^\\.github/workflows/[^/]+\\.ya?ml$"],
