@@ -1,7 +1,6 @@
 load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_layer", "container_push")
 load("@io_bazel_rules_docker//docker/util:run.bzl", "container_run_and_commit")
 load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
-load("@rules_pkg//:pkg.bzl", "pkg_tar")
 
 container_push(
     name = "push",
@@ -94,19 +93,11 @@ container_layer(
     ],
 )
 
-pkg_tar(
-    name = "home_tar",
-    srcs = ["empty"],
-    owner = "1000.1000",
-    ownername = "user.user",
-    package_dir = "user/.xdg",
-)
-
 container_layer(
     name = "home",
-    directory = "/home",
+    directory = "/home/user",
     tars = [
-        ":home_tar",
+        "//home",
     ],
 )
 

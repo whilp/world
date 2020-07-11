@@ -1,0 +1,16 @@
+load("@rules_pkg//:pkg.bzl", "pkg_tar")
+
+pkg_tar(
+    name = "home",
+    srcs = glob(
+        ["**/*"],
+        exclude = ["BUILD.bazel"],
+    ),
+    empty_dirs = [
+        ".xdg",
+    ],
+    owner = "1000.1000",
+    ownername = "user.user",
+    strip_prefix = ".",
+    visibility = ["//visibility:public"],
+)
