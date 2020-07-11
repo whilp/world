@@ -28,7 +28,7 @@ module.exports = {
       fileMatch: [".devcontainer.json"],
       labels: ["dependencies", "docker"],
       matchStrings: [
-        '"(?<depName>.*?):(?<currentValue>.*?)@(?<currentDigest>sha256:[a-f0-9]+)"',
+        '"image": "(?<depName>.*?):(?<currentValue>.*?)@(?<currentDigest>sha256:[a-f0-9]+)"',
       ],
       datasourceTemplate: "docker",
     },
