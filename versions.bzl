@@ -5,6 +5,11 @@ DOCKER_DOWNLOAD_URL = "https://download.docker.com/linux/static/stable/x86_64/{a
 
 def versions():
     return struct(
+        golang = version(
+            datasource = "github-releases",
+            name = "golang/go",
+            version = "1.13.12",
+        ),
         # https://github.com/bazelbuild/rules_nodejs/blob/d660ca109fcf86fe0dbfb9908faaefb0e30c25a0/internal/node/node_repositories.bzl#L108-L112
         node = version(
             datasource = "github-releases",
