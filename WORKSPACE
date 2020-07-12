@@ -22,7 +22,7 @@ go_rules_dependencies()
 
 go_register_toolchains(
     go_version = v.golang.version,
-    nogo = "@io_bazel_rules_go//:tools_nogo",
+    nogo = "@//nogo",
 )
 
 http_archive(
