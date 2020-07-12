@@ -57,6 +57,6 @@ jobs:
         with:
           fetch-depth: 2
       - name: lint
-        uses: docker://whilp/eslint:latest@sha256:66d757c66b76e2868c10a0d87658582d61dd637a63bae0626d6782ed762c59a7
+        uses: docker://whilp/eslint:latest@sha256:9346f2a6bf0e9f8eae3505520beb1127e49818ad5b210bb9eb506a8df1469ef0
       - name: check
         run: git diff --exit-code
