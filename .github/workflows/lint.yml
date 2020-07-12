@@ -46,7 +46,7 @@ jobs:
         with:
           fetch-depth: 2
       - name: lint
-        uses: docker://whilp/prettier:latest@sha256:c63d0f9272803e07b7b05ed220802ab65a4df77d787a35a71152f535157929ae
+        uses: docker://whilp/prettier:latest@sha256:7cae9f166b98cf5a5d7d58ed320c688c1916f5bbf34d52340805dbe2c8897e2f
       - name: check
         run: git diff --exit-code
 
