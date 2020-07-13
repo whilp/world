@@ -232,3 +232,10 @@ http_file(
     sha256 = v.shfmt.sha256,
     urls = [v.shfmt.url],
 )
+
+http_file(
+    name = "go_sdk_archive",
+    downloaded_file_path = "go-sdk.tar.gz",
+    sha256 = v.golang.sha256,
+    urls = [v.golang.url],
+)
