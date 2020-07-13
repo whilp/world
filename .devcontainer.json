@@ -1,6 +1,6 @@
 {
   "name": "world",
-  "image": "whilp/world:latest@sha256:285ecb303b096a0ab8da54e89a2fbffeaa4a00cf9db24877b7b34dd16ea88e4a",
+  "image": "whilp/world:latest@sha256:d4520533e3dda7c8676aa39a962487c2c535032c95a72f528f8cf2137be217c3",
   "remoteUser": "user",
   "runArgs": ["--privileged"],
   "postCreateCommand": "/usr/local/bin/post.sh",
