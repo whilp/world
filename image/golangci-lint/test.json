@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "2.0.0",
+  "commandTests": [
+    {
+      "name": "golangci-lint",
+      "command": "/golangci-lint",
+      "args": ["--version"],
+      "expectedOutput": ["v"]
+    }
+  ]
+}

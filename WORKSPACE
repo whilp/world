@@ -171,6 +171,14 @@ http_archive(
     urls = ["https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.linux.x86_64.tar.xz"],
 )
 
+http_archive(
+    name = "golangci-lint",
+    build_file_content = """exports_files(["golangci-lint"])""",
+    sha256 = "6f6eef6bbb1064d8170d0410d0ea9e4b9132c1c41f4596b915bd87f667982fb1",
+    strip_prefix = "golangci-lint-1.28.3-linux-amd64",
+    urls = ["https://github.com/golangci/golangci-lint/releases/download/v1.28.3/golangci-lint-1.28.3-linux-amd64.tar.gz"],
+)
+
 http_file(
     name = "bazel",
     downloaded_file_path = "bazel",
