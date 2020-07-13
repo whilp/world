@@ -15,10 +15,13 @@ jobs:
         with:
           fetch-depth: 2
       - name: renovate
-        uses: docker://renovate/renovate:latest@sha256:5da84981c8889fa965fc7230efa745738e23c611d520384f180fa11aae775243
+        uses: docker://renovate/renovate:latest@sha256:e12bff449994ef28ca372a5884890b8f45593cf63246ed7b845b7428985cc666
         env:
           RENOVATE_REPOSITORIES: whilp/world
           RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
           RENOVATE_ONBOARDING: false
           RENOVATE_CONFIG_FILE: renovate.js
           RENOVATE_LOGLEVEL: debug
+      - name: bazel versions
+        run: ./tools/bazel run --config=ci versions $PWD/versions/versions.bzl
+      - run: git push

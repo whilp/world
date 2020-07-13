@@ -1,0 +1,22 @@
+load("@rules_python//python:defs.bzl", "py_binary")
+load(":versions.bzl", "json_file", "versions")
+
+exports_files([
+    "versions.bzl",
+])
+
+py_binary(
+    name = "versions",
+    srcs = ["versions.py"],
+    args = [
+        "--versions_json=$(location :versions_json.json)",
+    ],
+    data = [
+        ":versions_json.json",
+    ],
+)
+
+json_file(
+    name = "versions_json",
+    content = versions().to_json(),
+)
