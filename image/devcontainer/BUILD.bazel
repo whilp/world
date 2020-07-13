@@ -49,6 +49,7 @@ PACKAGES = [
     "iproute2",
     "iptables",
     "make",
+    "patch",
     "python3.7-distutil",
     "python3.7-venv",
     "python3.7",
