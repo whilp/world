@@ -75,6 +75,22 @@ def versions():
         ),
     )
 
+def _json_file_impl(ctx):
+    ctx.actions.write(
+        output = ctx.outputs.out,
+        content = ctx.attr.content,
+    )
+
+json_file = rule(
+    implementation = _json_file_impl,
+    attrs = dict(
+        content = attr.string(),
+    ),
+    outputs = dict(
+        out = "%{name}.json",
+    ),
+)
+
 def version(
         datasource = None,
         name = None,

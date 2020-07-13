@@ -3,7 +3,7 @@ workspace(
 )
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive", "http_file")
-load("//:versions.bzl", "versions")
+load("//versions:versions.bzl", "versions")
 
 v = versions()
 
