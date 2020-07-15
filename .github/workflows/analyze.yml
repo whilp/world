@@ -1,0 +1,28 @@
+name: analyze
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 6 * * 6"
+
+jobs:
+  analyze:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+      - run: git checkout HEAD^2
+        if: ${{ github.event_name == 'pull_request' }}
+      - uses: github/codeql-action/init@v1
+        with:
+          languages: go, javascript, python
+      - uses: actions/setup-python@v2.0.1
+        with:
+          python-version: "3.7"
+      - name: bazel build
+        run: ./tools/bazel build --config=ci //...
+      - uses: github/codeql-action/analyze@v1
