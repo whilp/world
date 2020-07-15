@@ -19,7 +19,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
       - uses: github/codeql-action/init@v1
         with:
-          languages: go, javascript, python
+          languages: javascript, python
       - uses: actions/setup-python@v2.0.1
         with:
           python-version: "3.7"
