@@ -20,7 +20,7 @@ jobs:
       - uses: github/codeql-action/init@v1
         with:
           languages: javascript, python
-      - uses: actions/setup-python@v2.0.1
+      - uses: actions/setup-python@v2.0.2
         with:
           python-version: "3.7"
       - name: bazel build
