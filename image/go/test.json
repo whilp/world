@@ -5,7 +5,7 @@
       "name": "go",
       "command": "/usr/local/bin/go",
       "args": ["version"],
-      "expectedOutput": ["TK"]
+      "expectedOutput": ["go version"]
     }
   ]
 }
