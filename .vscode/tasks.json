@@ -22,6 +22,32 @@
         "kind": "test",
         "isDefault": true
       }
+    },
+    {
+      "label": "watch",
+      "type": "process",
+      "command": "ibazel",
+      "args": ["test", "//..."],
+      "problemMatcher": [
+        {
+          "owner": "cpp",
+          "fileLocation": ["relative", "${workspaceFolder}"],
+          "pattern": {
+            "regexp": "^([^\\s].*)\\((\\d+|\\d+,\\d+|\\d+,\\d+,\\d+,\\d+)\\):\\s+(error|warning|info)\\s+(TS\\d+)\\s*:\\s*(.*)$",
+            "file": 1,
+            "location": 2,
+            "severity": 3,
+            "code": 4,
+            "message": 5
+          },
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "^iBazel.*: Testing",
+            "endsPattern": "^Executed .* tests?:"
+          }
+        }
+      ],
+      "isBackground": true
     }
   ]
 }
