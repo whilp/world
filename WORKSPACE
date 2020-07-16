@@ -8,6 +8,37 @@ load("//versions:versions.bzl", "versions")
 v = versions()
 
 http_archive(
+    name = "io_bazel_rules_go",
+    sha256 = "a8d6b1b354d371a646d2f7927319974e0f9e52f73a2452d2b3877118169eb6bb",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.23.3/rules_go-v0.23.3.tar.gz",
+        "https://github.com/bazelbuild/rules_go/releases/download/v0.23.3/rules_go-v0.23.3.tar.gz",
+    ],
+)
+
+load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
+
+go_rules_dependencies()
+
+go_register_toolchains(
+    go_version = v.golang.version,
+    nogo = "@//nogo",
+)
+
+http_archive(
+    name = "bazel_gazelle",
+    sha256 = "cdb02a887a7187ea4d5a27452311a75ed8637379a1287d8eeb952138ea485f7d",
+    urls = [
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.21.1/bazel-gazelle-v0.21.1.tar.gz",
+        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.21.1/bazel-gazelle-v0.21.1.tar.gz",
+    ],
+)
+
+load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
+
+gazelle_dependencies()
+
+http_archive(
     name = "rules_python",
     sha256 = "b5668cde8bb6e3515057ef465a35ad712214962f0b3a314e551204266c7be90c",
     strip_prefix = "rules_python-0.0.2",
@@ -140,6 +171,14 @@ http_archive(
     urls = ["https://github.com/koalaman/shellcheck/releases/download/v0.7.1/shellcheck-v0.7.1.linux.x86_64.tar.xz"],
 )
 
+http_archive(
+    name = "golangci-lint",
+    build_file_content = """exports_files(["golangci-lint"])""",
+    sha256 = "6f6eef6bbb1064d8170d0410d0ea9e4b9132c1c41f4596b915bd87f667982fb1",
+    strip_prefix = "golangci-lint-1.28.3-linux-amd64",
+    urls = ["https://github.com/golangci/golangci-lint/releases/download/v1.28.3/golangci-lint-1.28.3-linux-amd64.tar.gz"],
+)
+
 http_file(
     name = "bazel",
     downloaded_file_path = "bazel",
@@ -192,4 +231,11 @@ http_file(
     executable = True,
     sha256 = v.shfmt.sha256,
     urls = [v.shfmt.url],
+)
+
+http_file(
+    name = "go_sdk_archive",
+    downloaded_file_path = "go-sdk.tar.gz",
+    sha256 = v.golang.sha256,
+    urls = [v.golang.url],
 )

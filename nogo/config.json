@@ -1,0 +1,12 @@
+{
+  "composites": {
+    "exclude_files": {
+      "/external/": "ignore third party code"
+    }
+  },
+  "shadow": {
+    "exclude_files": {
+      "/external/": "ignore third party code"
+    }
+  }
+}

@@ -14,6 +14,7 @@ test --test_env=XDG_CACHE_HOME=cache
 common:ci --color=no
 common:ci --curses=no
 common:ci --show_timestamps
+common:ci --noshow_progress
 build:ci --disk_cache=~/.cache/bazel
 #common:ci --@io_bazel_rules_go//go/config:pure
 test:ci --verbose_failures

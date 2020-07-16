@@ -1,0 +1,28 @@
+load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
+load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
+
+container_image(
+    name = "golangci-lint",
+    args = [
+        "run",
+    ],
+    base = "@cc_image_base//image",
+    entrypoint = ["/golangci-lint"],
+    files = ["@golangci-lint"],
+    layers = ["//image/go:layer"],
+)
+
+container_push(
+    name = "push",
+    format = "Docker",
+    image = ":golangci-lint",
+    registry = "index.docker.io",
+    repository = "whilp/golangci-lint",
+    tag = "latest",
+)
+
+container_test(
+    name = "test",
+    configs = ["test.json"],
+    image = ":golangci-lint",
+)

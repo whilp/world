@@ -3,9 +3,7 @@
 set -euo pipefail
 
 main() {
-  dockerd-rootless.sh --experimental >"$XDG_RUNTIME_DIR/docker.log" 2>&1 &
-
-  #sleep infinity
+  sudo chgrp /run/docker-host.sock
   exec "$@"
 }
 
