@@ -2,8 +2,16 @@
   "name": "world",
   "image": "whilp/world:latest@sha256:39b2adae7a67cde820f50ef25122f365e73a441c1b399313a756aba2f9b93875",
   "remoteUser": "user",
-  "runArgs": ["--privileged"],
+  "runArgs": [
+    "--privileged",
+    "--cap-add=SYS_PTRACE",
+    "--security-opt",
+    "seccomp=unconfined"
+  ],
   "postCreateCommand": "/usr/local/bin/post.sh",
+  "mounts": [
+    "source=/var/run/docker.sock,target=/var/run/docker-host.sock,type=bind"
+  ],
   "settings": {
     "terminal.integrated.shell.linux": "/bin/bash"
   }
