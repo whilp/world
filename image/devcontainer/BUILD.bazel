@@ -17,6 +17,7 @@ container_image(
     env = {
         "XDG_RUNTIME_DIR": "/home/user/.xdg",
         #"DOCKER_HOST": "unix:////home/user/.xdg/docker.sock",
+        "DEBIAN_FRONTEND": "noninteractive",
     },
     layers = [
         ":bins",
