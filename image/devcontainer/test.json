@@ -2,6 +2,12 @@
   "schemaVersion": "2.0.0",
   "commandTests": [
     {
+      "name": "go",
+      "command": "go",
+      "args": ["version"],
+      "expectedOutput": ["go version"]
+    },
+    {
       "name": "python is python3.7",
       "command": "python",
       "args": ["--version"],
