@@ -19,8 +19,7 @@ def fetch(real):
         version = f.read().strip()
     plat = platform.system().lower()
     url = "https://github.com/bazelbuild/bazel/releases/download/{version}/bazel-{version}-{plat}-x86_64".format(
-        version=version,
-        plat=plat,
+        version=version, plat=plat,
     )
     req = urllib.request.Request(url, method="GET")
     with urllib.request.urlopen(req) as response:
