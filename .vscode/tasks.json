@@ -4,7 +4,7 @@
     {
       "label": "build",
       "type": "process",
-      "command": "${workspaceFolder}/tools/bazel",
+      "command": "bazel",
       "args": ["build", "//..."],
       "problemMatcher": [],
       "group": {
@@ -15,7 +15,7 @@
     {
       "label": "test",
       "type": "process",
-      "command": "${workspaceFolder}/tools/bazel",
+      "command": "bazel",
       "args": ["test", "//..."],
       "problemMatcher": [],
       "group": {
