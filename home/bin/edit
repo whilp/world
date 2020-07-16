@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+editors=(
+  code-insiders
+  code
+  vim
+)
+
+main() {
+  for editor in "${editors[@]}"; do
+    (command -v "$editor" >/dev/null && exec "$editor" "$@") || true
+  done
+}
+
+main "$@"
