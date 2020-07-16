@@ -11,6 +11,7 @@ def main(args, env):
     real = "tools/bazel-real"
     if not executable(real):
         fetch(real)
+    env["PYTHONNOUSERSITE"] = "yes"
     os.execve(real, args, env)
 
 

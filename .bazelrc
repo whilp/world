@@ -10,6 +10,7 @@ build --action_env=DOCKER_HOST
 build --action_env=LC_ALL=C.UTF-8
 build --action_env=LANG=C.UTF-8
 test --test_env=XDG_CACHE_HOME=cache
+test --test_env=PYTHONNOUSERSITE=yes
 
 common:ci --color=no
 common:ci --curses=no
