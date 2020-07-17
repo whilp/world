@@ -60,3 +60,14 @@ jobs:
         uses: docker://whilp/eslint:latest@sha256:9346f2a6bf0e9f8eae3505520beb1127e49818ad5b210bb9eb506a8df1469ef0
       - name: check
         run: git diff --exit-code
+
+  golangci-lint:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2.3.1
+        with:
+          fetch-depth: 2
+      - name: lint
+        uses: docker://whilp/golangci-lint:latest@sha256:859e05bef36c419912600922574404b8798a6b5fad47c1fd3d3714c471ffb5ab
+      - name: check
+        run: git diff --exit-code
