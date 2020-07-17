@@ -36,6 +36,7 @@ plugdev:x:46:
 staff:x:50:
 games:x:60:
 users:x:100:
+docker:x:800:user
 wheel:x:900:user
 user:x:1000:
 nogroup:x:65534:
