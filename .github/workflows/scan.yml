@@ -2,7 +2,7 @@ name: scan
 
 on:
   schedule:
-    - cron: "0 6 * * 6"
+    - cron: "18 6 * * *"
 
 jobs:
   codeql:
