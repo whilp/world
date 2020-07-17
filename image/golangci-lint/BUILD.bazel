@@ -5,10 +5,12 @@ container_image(
     name = "golangci-lint",
     args = [
         "run",
+        "--fix",
+        "./...",
     ],
     base = "@cc_image_base//image",
     entrypoint = ["/golangci-lint"],
-    files = ["@golangci-lint"],
+    files = ["@golangcilint//:golangci-lint"],
     layers = ["//image/go:layer"],
 )
 

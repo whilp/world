@@ -172,7 +172,7 @@ http_archive(
 )
 
 http_archive(
-    name = "golangci-lint",
+    name = "golangcilint",
     build_file_content = """exports_files(["golangci-lint"])""",
     sha256 = "6f6eef6bbb1064d8170d0410d0ea9e4b9132c1c41f4596b915bd87f667982fb1",
     strip_prefix = "golangci-lint-1.28.3-linux-amd64",
