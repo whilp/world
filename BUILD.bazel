@@ -1,4 +1,6 @@
 exports_files([
+    "jest.config.js",
+    "tsconfig.json",
     "package.json",
     "yarn.lock",
     "requirements.txt",
