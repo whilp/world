@@ -25,6 +25,4 @@ jobs:
           RENOVATE_ONBOARDING: false
           RENOVATE_CONFIG_FILE: renovate.js
           RENOVATE_LOGLEVEL: debug
-      - name: bazel versions
-        run: ./tools/bazel run --config=ci versions $PWD/versions/versions.bzl
-      - run: git push
+          RENOVATE_TRUSTLEVEL: high

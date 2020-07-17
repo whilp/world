@@ -24,6 +24,11 @@ module.exports = {
   npm: {
     labels: ["dependencies", "javascript"],
   },
+  allowedPostUpgradeCommands: ["^./tools/bazel run"],
+  postUpgradeTasks: {
+    commands: ["./tools/bazel run --config=ci versions"],
+    fileFilters: ["versions.bzl"],
+  },
   regexManagers: [
     {
       fileMatch: [".devcontainer.json"],

@@ -10,6 +10,7 @@ py_binary(
     srcs = ["versions.py"],
     args = [
         "--versions_json=$(location :versions_json.json)",
+        "--versions_bzl=versions.bzl",
     ],
     data = [
         ":versions_json.json",
