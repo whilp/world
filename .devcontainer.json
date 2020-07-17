@@ -9,6 +9,19 @@
     "seccomp=unconfined"
   ],
   "postCreateCommand": "/usr/local/bin/post.sh",
+  "extensions": [
+    "bazelbuild.vscode-bazel",
+    "dbaeumer.vscode-eslint",
+    "eamodio.gitlens",
+    "esbenp.prettier-vscode",
+    "foxundermoon.shell-format",
+    "github.vscode-pull-request-github",
+    "golang.go",
+    "ms-azuretools.vscode-docker",
+    "ms-python.python",
+    "timonwong.shellcheck",
+    "visualstudioexptteam.vscodeintellicode"
+  ],
   "mounts": [
     "source=/var/run/docker.sock,target=/var/run/docker-host.sock,type=bind"
   ],
