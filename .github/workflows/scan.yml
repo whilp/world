@@ -21,3 +21,28 @@ jobs:
         with:
           languages: ${{ matrix.language }}
       - uses: github/codeql-action/analyze@v1
+
+  anchore:
+    strategy:
+      matrix:
+        image:
+          - devcontainer
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2.3.1
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v2.0.2
+        with:
+          python-version: "3.7"
+      - name: bazel run image/${{ matrix.image }}
+        run: ./tools/bazel run --config=ci image/${{ matrix.image }}
+      - uses: anchore/scan-action@v1
+        with:
+          image-reference: bazel/image/${{ matrix.image }}:${{ matrix.image }}
+          fail-build: true
+          include-app-packages: true
+          acs-report-enable: true
+      - uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: results.sarif
