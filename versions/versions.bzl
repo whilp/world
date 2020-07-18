@@ -1,6 +1,7 @@
 "versions"
 
 GITHUB_RELEASE_URL = "https://github.com/{name}/releases/download/{version}/{asset}"
+GITHUB_V_RELEASE_URL = "https://github.com/{name}/releases/download/v{version}/{asset}"
 DOCKER_DOWNLOAD_URL = "https://download.docker.com/linux/static/stable/x86_64/{asset}"
 
 def versions():
@@ -28,6 +29,10 @@ def versions():
             datasource = "github-releases",
             name = "yarnpkg/yarn",
             version = "1.22.4",
+            sha256 = "bc5316aa110b2f564a71a3d6e235be55b98714660870c5b6b2d2d3f12587fb58",
+            url = GITHUB_V_RELEASE_URL,
+            asset = "yarn-v{version}.tar.gz",
+            prefix = "yarn-v{version}",
         ),
         bazel = version(
             datasource = "github-releases",

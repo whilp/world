@@ -246,3 +246,10 @@ http_file(
     sha256 = v.node.sha256,
     urls = [v.node.url],
 )
+
+http_file(
+    name = "yarn_archive",
+    downloaded_file_path = "yarn.tar.gz",
+    sha256 = v.yarn.sha256,
+    urls = [v.yarn.url],
+)

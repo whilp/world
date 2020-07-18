@@ -11,9 +11,11 @@ container_layer(
         "/usr/local/bin/node": "/usr/local/{node}/bin/node".format(node = v.node.prefix),
         "/usr/local/bin/npm": "/usr/local/{node}/bin/npm".format(node = v.node.prefix),
         "/usr/local/bin/npx": "/usr/local/{node}/bin/npx".format(node = v.node.prefix),
+        "/usr/local/bin/yarn": "/usr/local/{yarn}/bin/yarn".format(yarn = v.yarn.prefix),
     },
     tars = [
         "@node_sdk_archive//file",
+        "@yarn_archive//file",
     ],
     visibility = ["//image:__subpackages__"],
 )
