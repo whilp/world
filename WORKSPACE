@@ -239,3 +239,10 @@ http_file(
     sha256 = v.golang.sha256,
     urls = [v.golang.url],
 )
+
+http_file(
+    name = "node_sdk_archive",
+    downloaded_file_path = "node-sdk.tar.gz",
+    sha256 = v.node.sha256,
+    urls = [v.node.url],
+)

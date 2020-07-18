@@ -18,6 +18,10 @@ def versions():
             datasource = "github-releases",
             name = "nodejs/node",
             version = "12.13.0",
+            sha256 = "c69671c89d0faa47b64bd5f37079e4480852857a9a9366ee86cdd8bc9670074a",
+            url = "https://nodejs.org/dist/v{version}/{asset}",
+            asset = "node-v{version}-linux-x64.tar.gz",
+            prefix = "node-v{version}-linux-x64",
         ),
         # https://github.com/bazelbuild/rules_nodejs/blob/d660ca109fcf86fe0dbfb9908faaefb0e30c25a0/internal/node/node_repositories.bzl#L204
         yarn = version(

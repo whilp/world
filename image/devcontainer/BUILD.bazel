@@ -25,6 +25,7 @@ container_image(
         ":sudoersd",
         ":home",
         "//image/go:layer",
+        "//image/node:layer",
     ],
     symlinks = {
         "/usr/bin/python": "/usr/bin/python3.7",
