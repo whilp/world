@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: "3.7"
       - name: renovate
-        uses: docker://renovate/renovate:latest@sha256:7da9198c3f97c7640ff0e85f513a040dd68277b555ba7cad6f56043afff2a966
+        uses: docker://renovate/renovate:latest@sha256:b56f64bd4ad975f3d5b3d0652544e7d93957e2e040205bb7186bc7987b38ec6f
         env:
           RENOVATE_REPOSITORIES: whilp/world
           RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
