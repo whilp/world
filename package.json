@@ -5,7 +5,7 @@
   "dependencies": {
     "@bazel/typescript": "1.7.0",
     "@types/jest": "26.0.5",
-    "@types/node": "14.0.23",
+    "@types/node": "14.0.24",
     "@typescript-eslint/eslint-plugin": "3.6.1",
     "@typescript-eslint/parser": "3.6.1",
     "eslint-config-prettier": "6.11.0",
