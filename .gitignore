@@ -2,3 +2,4 @@
 /bazel-*
 /tools/bazel-real
 /.venv
+*.code-workspace
