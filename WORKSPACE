@@ -91,13 +91,9 @@ yarn_install(
     yarn_lock = "//:yarn.lock",
 )
 
-load("@npm//:install_bazel_dependencies.bzl", rules_nodejs_dependencies = "install_bazel_dependencies")
+#load("@npm//@bazel/typescript:index.bzl", "ts_setup_workspace")
 
-rules_nodejs_dependencies()
-
-load("@npm_bazel_typescript//:index.bzl", "ts_setup_workspace")
-
-ts_setup_workspace()
+#ts_setup_workspace()
 
 http_archive(
     name = "io_bazel_rules_docker",
