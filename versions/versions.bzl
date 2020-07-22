@@ -45,7 +45,7 @@ def versions():
         buildifier = version(
             datasource = "github-releases",
             name = "bazelbuild/buildtools",
-            version = "3.3.0",
+            version = "3.4.0",
             sha256 = "8a27f46f8a94882ddf37eaf26e5a823a77f04a32c3d72ee2c3d4b5094eb29dc2",
             url = GITHUB_RELEASE_URL,
             asset = "buildifier",
@@ -53,7 +53,7 @@ def versions():
         buildozer = version(
             datasource = "github-releases",
             name = "bazelbuild/buildtools",
-            version = "3.3.0",
+            version = "3.4.0",
             sha256 = "4a841ef0f4eb34f83ed27005468d6b5a254708eeaf90e1e3f1d861408a9da981",
             url = GITHUB_RELEASE_URL,
             asset = "buildozer",
