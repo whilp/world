@@ -26,11 +26,12 @@ async function main() {
   const auth = await octo.apps.createInstallationAccessToken({
     installation_id: Number(env.BOT_INSTALLATION_ID),
   });
-  console.log(`::set-env name=BOT_TOKEN::${auth.data.token}`);
+
+  console.log(`::set-output name=token::${auth.data.token}`);
 }
 
 function handle() {
   return;
 }
 
-if (require.main === module) main().then(handle).catch(handle);
+main().then(handle).catch(handle);
