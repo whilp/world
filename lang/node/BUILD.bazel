@@ -17,7 +17,7 @@ container_layer(
         "@node_sdk_archive//file",
         "@yarn_archive//file",
     ],
-    visibility = ["//image:__subpackages__"],
+    visibility = ["//visibility:public"],
 )
 
 container_image(

@@ -9,7 +9,7 @@ container_image(
     base = "@cc_image_base//image",
     entrypoint = ["/golangci-lint"],
     files = ["@golangci-lint"],
-    layers = ["//image/go:layer"],
+    layers = ["//lang/go:layer"],
 )
 
 container_push(

@@ -10,7 +10,7 @@ container_layer(
     tars = [
         "@go_sdk_archive//file",
     ],
-    visibility = ["//image:__subpackages__"],
+    visibility = ["//visibility:public"],
 )
 
 container_image(
