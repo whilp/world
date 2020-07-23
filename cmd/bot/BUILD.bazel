@@ -2,14 +2,23 @@ load("@io_bazel_rules_docker//container:container.bzl", "container_image", "cont
 load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
 load("@io_bazel_rules_docker//nodejs:image.bzl", "nodejs_image")
 load("@npm//@bazel/typescript:index.bzl", "ts_library")
+load("@build_bazel_rules_nodejs//:index.bzl", "nodejs_binary")
+
+DATA = [":lib"]
+
+ENTRY_POINT = "index.ts"
+
+nodejs_binary(
+    name = "bot",
+    data = DATA,
+    entry_point = ENTRY_POINT,
+)
 
 nodejs_image(
-    name = "bot",
+    name = "image",
     base = ":base",
-    data = [
-        ":lib",
-    ],
-    entry_point = "index.ts",
+    data = DATA,
+    entry_point = ENTRY_POINT,
 )
 
 container_image(
@@ -36,7 +45,7 @@ ts_library(
 container_push(
     name = "push",
     format = "Docker",
-    image = ":bot",
+    image = ":image",
     registry = "index.docker.io",
     repository = "whilp/bot",
     tag = "latest",
@@ -45,5 +54,5 @@ container_push(
 container_test(
     name = "test",
     configs = ["test.json"],
-    image = ":bot",
+    image = ":image",
 )

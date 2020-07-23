@@ -1,24 +1,35 @@
 load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
 load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
+load("//cmd:wrapper.bzl", "wrap")
+
+FILE = "@buildifier//file"
+
+ARGS = [
+    "-lint=fix",
+    "-mode=fix",
+    "-r",
+    "-v",
+    ".",
+]
+
+wrap(
+    name = "buildifier",
+    args = ARGS,
+    file = FILE,
+)
 
 container_image(
-    name = "buildifier",
-    args = [
-        "-lint=fix",
-        "-mode=fix",
-        "-r",
-        "-v",
-        ".",
-    ],
+    name = "image",
+    args = ARGS,
     base = "@cc_image_base//image",
     entrypoint = ["/buildifier"],
-    files = ["@buildifier//file"],
+    files = [FILE],
 )
 
 container_push(
     name = "push",
     format = "Docker",
-    image = ":buildifier",
+    image = ":image",
     registry = "index.docker.io",
     repository = "whilp/buildifier",
     tag = "latest",
@@ -27,5 +38,5 @@ container_push(
 container_test(
     name = "test",
     configs = ["test.json"],
-    image = ":buildifier",
+    image = ":image",
 )

@@ -1,24 +1,36 @@
 load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
 load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
+load("//cmd:wrapper.bzl", "wrap")
+
+FILE = "@shfmt//file"
+
+ARGS = [
+    "-l",
+    "-w",
+    "-s",
+    "-i",
+    "2",
+    ".",
+]
+
+wrap(
+    name = "shfmt",
+    args = ARGS,
+    file = FILE,
+)
 
 container_image(
-    name = "shfmt",
-    args = [
-        "-l",
-        "-w",
-        "-s",
-        "-i2",
-        ".",
-    ],
+    name = "image",
+    args = ARGS,
     base = "@cc_image_base//image",
     entrypoint = ["/shfmt"],
-    files = ["@shfmt//file"],
+    files = [FILE],
 )
 
 container_push(
     name = "push",
     format = "Docker",
-    image = ":shfmt",
+    image = ":image",
     registry = "index.docker.io",
     repository = "whilp/shfmt",
     tag = "latest",
@@ -27,5 +39,5 @@ container_push(
 container_test(
     name = "test",
     configs = ["test.json"],
-    image = ":shfmt",
+    image = ":image",
 )
