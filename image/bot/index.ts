@@ -7,10 +7,16 @@ interface IEnv {
   BOT_INSTALLATION_ID: string;
   BOT_CLIENT_ID: string;
   BOT_CLIENT_SECRET: string;
+  CHECK: string;
 }
 
 async function main() {
   const env = (process.env as unknown) as IEnv;
+
+  if (env.CHECK === "yes") {
+    console.log("ok");
+    return;
+  }
 
   const octo = new Octokit({
     authStrategy: createAppAuth,
