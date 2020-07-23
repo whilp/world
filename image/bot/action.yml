@@ -1,5 +1,5 @@
-name: auth-bot
-description: "Authenticate as a bot"
+name: bot
+description: "Be a bot"
 inputs:
   bot-id:
     description: "Bot ID"
@@ -18,10 +18,10 @@ inputs:
     required: true
 outputs:
   token:
-    description: "Authentication token"
+    description: "An authentication token"
 runs:
   using: "docker"
-  image: docker://whilp/auth-bot:latest
+  image: docker://whilp/bot:latest
   env:
     BOT_ID: ${{ inputs.bot-id }}
     BOT_KEY: ${{ inputs.bot-key }}

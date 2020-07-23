@@ -17,11 +17,19 @@ jobs:
       - uses: actions/setup-python@v2.1.1
         with:
           python-version: "3.7"
+      - uses: /image/bot
+        id: bot
+        with:
+          bot-id: ${{ secrets.BOT_ID }}
+          bot-key: ${{ secrets.BOT_KEY }}
+          bot-installation-id: ${{ secrets.BOT_INSTALLATION_ID }}
+          bot-client-id: ${{ secrets.BOT_CLIENT_ID }}
+          bot-client-secret: ${{ secrets.BOT_CLIENT_SECRET }}
       - name: renovate
         uses: docker://renovate/renovate:latest@sha256:b56f64bd4ad975f3d5b3d0652544e7d93957e2e040205bb7186bc7987b38ec6f
         env:
           RENOVATE_REPOSITORIES: whilp/world
-          RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          RENOVATE_TOKEN: ${{ steps.bot.outputs.token }}
           RENOVATE_ONBOARDING: false
           RENOVATE_CONFIG_FILE: renovate.js
           RENOVATE_LOGLEVEL: debug

@@ -4,7 +4,7 @@ load("@io_bazel_rules_docker//nodejs:image.bzl", "nodejs_image")
 load("@npm//@bazel/typescript:index.bzl", "ts_library")
 
 nodejs_image(
-    name = "auth-bot",
+    name = "bot",
     base = ":base",
     data = [
         ":lib",
@@ -36,14 +36,14 @@ ts_library(
 container_push(
     name = "push",
     format = "Docker",
-    image = ":auth-bot",
+    image = ":bot",
     registry = "index.docker.io",
-    repository = "whilp/auth-bot",
+    repository = "whilp/bot",
     tag = "latest",
 )
 
 container_test(
     name = "test",
     configs = ["test.json"],
-    image = ":auth-bot",
+    image = ":bot",
 )
