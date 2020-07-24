@@ -91,10 +91,6 @@ yarn_install(
     yarn_lock = "//:yarn.lock",
 )
 
-#load("@npm//@bazel/typescript:index.bzl", "ts_setup_workspace")
-
-#ts_setup_workspace()
-
 http_archive(
     name = "io_bazel_rules_docker",
     sha256 = "4521794f0fba2e20f3bf15846ab5e01d5332e587e9ce81629c7f96c793bb7036",
