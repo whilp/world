@@ -32,7 +32,7 @@ nodejs_image(
 container_push(
     name = "push",
     format = "Docker",
-    image = ":eslint",
+    image = ":image",
     registry = "index.docker.io",
     repository = "whilp/eslint",
     tag = "latest",
@@ -41,5 +41,5 @@ container_push(
 container_test(
     name = "test",
     configs = ["test.json"],
-    image = ":eslint",
+    image = ":image",
 )
