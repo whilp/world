@@ -1,5 +1,0 @@
-name: black
-description: black
-runs:
-  using: "docker"
-  image: docker://whilp/black:latest@sha256:2a383a172fa80f822a8fa9666062f905e43f1a2496757a76b30215079f9b4a86
