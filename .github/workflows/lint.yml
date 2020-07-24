@@ -14,8 +14,7 @@ jobs:
           fetch-depth: 2
       - name: lint
         uses: docker://whilp/buildifier:latest@sha256:488dbdd5cd951198a1876f2005a7f291745c574b46d2e12916981f0b49bb9494
-      - name: check
-        run: git diff --exit-code
+      - run: git diff --exit-code
 
   black:
     runs-on: ubuntu-18.04
@@ -25,8 +24,7 @@ jobs:
           fetch-depth: 2
       - name: lint
         uses: docker://whilp/black:latest@sha256:2a383a172fa80f822a8fa9666062f905e43f1a2496757a76b30215079f9b4a86
-      - name: check
-        run: git diff --exit-code
+      - run: git diff --exit-code
 
   shfmt:
     runs-on: ubuntu-18.04
@@ -36,8 +34,7 @@ jobs:
           fetch-depth: 2
       - name: lint
         uses: docker://whilp/shfmt:latest@sha256:90b0297cfeb3b93a8fb5b0ed0a2e5e228d2a97dccee6b0f381796040ed34afcd
-      - name: check
-        run: git diff --exit-code
+      - run: git diff --exit-code
 
   prettier:
     runs-on: ubuntu-18.04
@@ -47,8 +44,7 @@ jobs:
           fetch-depth: 2
       - name: lint
         uses: docker://whilp/prettier:latest@sha256:7cae9f166b98cf5a5d7d58ed320c688c1916f5bbf34d52340805dbe2c8897e2f
-      - name: check
-        run: git diff --exit-code
+      - run: git diff --exit-code
 
   eslint:
     runs-on: ubuntu-18.04
@@ -58,8 +54,7 @@ jobs:
           fetch-depth: 2
       - name: lint
         uses: docker://whilp/eslint:latest@sha256:3c82dd8161a4cc88ed43662704760f7b45735e455952150e7d86608271648e48
-      - name: check
-        run: git diff --exit-code
+      - run: git diff --exit-code
 
   golangci-lint:
     runs-on: ubuntu-18.04
@@ -69,5 +64,4 @@ jobs:
           fetch-depth: 2
       - name: lint
         uses: docker://whilp/golangci-lint:latest@sha256:0fb5e8bc6a3dddf7d55d9d8b91bddfd9368b8ba3a36f602bf6a2b4cafd4e8cf3
-      - name: check
-        run: git diff --exit-code
+      - run: git diff --exit-code
