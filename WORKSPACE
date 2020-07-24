@@ -179,32 +179,32 @@ http_file(
     name = "bazel",
     downloaded_file_path = "bazel",
     executable = True,
-    sha256 = v.bazel.sha256,
-    urls = [v.bazel.url],
+    sha256 = "1a64c807716e10c872f1618852d95f4893d81667fe6e691ef696489103c9b460",
+    urls = ["https://github.com/bazelbuild/bazel/releases/download/3.4.1/bazel-3.4.1-linux-x86_64"],
 )
 
 http_file(
     name = "buildifier",
     downloaded_file_path = "buildifier",
     executable = True,
-    sha256 = v.buildifier.sha256,
-    urls = [v.buildifier.url],
+    sha256 = "8a27f46f8a94882ddf37eaf26e5a823a77f04a32c3d72ee2c3d4b5094eb29dc2",
+    urls = ["https://github.com/bazelbuild/buildtools/releases/download/3.3.0/buildifier"],
 )
 
 http_file(
     name = "buildozer",
     downloaded_file_path = "buildozer",
     executable = True,
-    sha256 = v.buildozer.sha256,
-    urls = [v.buildozer.url],
+    sha256 = "4a841ef0f4eb34f83ed27005468d6b5a254708eeaf90e1e3f1d861408a9da981",
+    urls = ["https://github.com/bazelbuild/buildtools/releases/download/3.3.0/buildozer"],
 )
 
 http_file(
     name = "ibazel",
     downloaded_file_path = "ibazel",
     executable = True,
-    sha256 = v.ibazel.sha256,
-    urls = [v.ibazel.url],
+    sha256 = "470abaa5dc5c93d20c22ab72cdd305e90c9b3ff7e765964836ed017b2a9aa2dc",
+    urls = ["https://github.com/bazelbuild/bazel-watcher/releases/download/v0.13.1/ibazel_linux_amd64"],
 )
 
 http_file(
@@ -225,8 +225,8 @@ http_file(
     name = "shfmt",
     downloaded_file_path = "shfmt",
     executable = True,
-    sha256 = v.shfmt.sha256,
-    urls = [v.shfmt.url],
+    sha256 = "c5794c1ac081f0028d60317454fe388068ab5af7740a83e393515170a7157dce",
+    urls = ["https://github.com/mvdan/sh/releases/download/v3.1.2/shfmt_v3.1.2_linux_amd64"],
 )
 
 http_file(
@@ -246,6 +246,6 @@ http_file(
 http_file(
     name = "yarn_archive",
     downloaded_file_path = "yarn.tar.gz",
-    sha256 = v.yarn.sha256,
-    urls = [v.yarn.url],
+    sha256 = "bc5316aa110b2f564a71a3d6e235be55b98714660870c5b6b2d2d3f12587fb58",
+    urls = ["https://github.com/yarnpkg/yarn/releases/download/v1.22.4/yarn-v1.22.4.tar.gz"],
 )

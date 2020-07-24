@@ -39,6 +39,7 @@ ts_library(
     deps = [
         "@npm//@octokit/auth-app",
         "@npm//@octokit/rest",
+        "@npm//@types/node",
     ],
 )
 
