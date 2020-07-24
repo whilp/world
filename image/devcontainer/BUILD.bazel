@@ -5,14 +5,14 @@ load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
 container_push(
     name = "push",
     format = "Docker",
-    image = ":devcontainer",
+    image = ":image",
     registry = "index.docker.io",
     repository = "whilp/world",
     tag = "latest",
 )
 
 container_image(
-    name = "devcontainer",
+    name = "image",
     base = "base",
     env = {
         "XDG_RUNTIME_DIR": "/home/user/.xdg",
@@ -147,5 +147,5 @@ container_layer(
 container_test(
     name = "test",
     configs = ["test.json"],
-    image = ":devcontainer",
+    image = ":image",
 )
