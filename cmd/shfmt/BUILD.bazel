@@ -30,7 +30,7 @@ container_push(
     name = "push",
     format = "Docker",
     image = ":image",
-    registry = "index.docker.io",
+    registry = "containers.pkg.github.com",
     repository = "whilp/shfmt",
     tag = "latest",
 )
