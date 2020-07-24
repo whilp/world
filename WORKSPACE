@@ -199,8 +199,8 @@ http_file(
     name = "buildifier",
     downloaded_file_path = "buildifier",
     executable = True,
-    sha256 = "8a27f46f8a94882ddf37eaf26e5a823a77f04a32c3d72ee2c3d4b5094eb29dc2",
-    urls = ["https://github.com/bazelbuild/buildtools/releases/download/3.3.0/buildifier"],
+    sha256 = "5d47f5f452bace65686448180ff63b4a6aaa0fb0ce0fe69976888fa4d8606940",
+    urls = ["https://github.com/bazelbuild/buildtools/releases/download/3.4.0/buildifier"],
 )
 
 http_file(
