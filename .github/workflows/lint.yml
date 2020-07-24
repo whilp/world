@@ -68,6 +68,6 @@ jobs:
         with:
           fetch-depth: 2
       - name: lint
-        uses: docker://whilp/golangci-lint:latest@sha256:859e05bef36c419912600922574404b8798a6b5fad47c1fd3d3714c471ffb5ab
+        uses: docker://whilp/golangci-lint:latest@sha256:0fb5e8bc6a3dddf7d55d9d8b91bddfd9368b8ba3a36f602bf6a2b4cafd4e8cf3
       - name: check
         run: git diff --exit-code

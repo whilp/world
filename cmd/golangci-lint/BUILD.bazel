@@ -2,21 +2,26 @@ load("@io_bazel_rules_docker//container:container.bzl", "container_image", "cont
 load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
 load("//cmd:wrapper.bzl", "wrap")
 
+FILE = "@golangcilint//:golangci-lint"
+
+ARGS = [
+    "run",
+    "--fix",
+    "./...",
+]
+
 wrap(
     name = "golangci-lint",
-    file = "@golangcilint//:golangci-lint",
+    args = ARGS,
+    file = FILE,
 )
 
 container_image(
     name = "image",
-    args = [
-        "run",
-        "--fix",
-        "./...",
-    ],
+    args = ARGS,
     base = "@cc_image_base//image",
     entrypoint = ["/golangci-lint"],
-    files = ["@golangcilint//:golangci-lint"],
+    files = [FILE],
     layers = ["//lang/go:layer"],
 )
 
