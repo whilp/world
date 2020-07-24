@@ -3,7 +3,7 @@
   "commandTests": [
     {
       "name": "prettier",
-      "command": "/app/cmd/prettier/prettier.binary",
+      "command": "/app/cmd/prettier/image.binary",
       "args": ["--version"],
       "expectedOutput": ["2"]
     }

@@ -3,8 +3,7 @@
   "commandTests": [
     {
       "name": "bot",
-      "command": "/app/cmd/bot/bot.binary",
-      "args": ["--version"],
+      "command": "/app/cmd/bot/image.binary",
       "envVars": [{ "key": "CHECK", "value": "yes" }],
       "expectedOutput": ["ok"]
     }
