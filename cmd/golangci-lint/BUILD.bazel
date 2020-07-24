@@ -4,7 +4,7 @@ load("//cmd:wrapper.bzl", "wrap")
 
 wrap(
     name = "golangci-lint",
-    file = "@golangci-lint",
+    file = "@golangcilint//:golangci-lint",
 )
 
 container_image(
@@ -16,7 +16,7 @@ container_image(
     ],
     base = "@cc_image_base//image",
     entrypoint = ["/golangci-lint"],
-    files = ["@golangci-lint"],
+    files = ["@golangcilint//:golangci-lint"],
     layers = ["//lang/go:layer"],
 )
 
