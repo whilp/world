@@ -7,7 +7,6 @@ FILE = "@golangcilint//:golangci-lint"
 ARGS = [
     "run",
     "--fix",
-    "./...",
 ]
 
 wrap(
@@ -18,7 +17,7 @@ wrap(
 
 container_image(
     name = "image",
-    args = ARGS,
+    args = ARGS + ["./..."],
     base = "@cc_image_base//image",
     entrypoint = ["/golangci-lint"],
     files = [FILE],

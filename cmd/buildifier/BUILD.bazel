@@ -9,7 +9,6 @@ ARGS = [
     "-mode=fix",
     "-r",
     "-v",
-    ".",
 ]
 
 wrap(
@@ -20,7 +19,7 @@ wrap(
 
 container_image(
     name = "image",
-    args = ARGS,
+    args = ARGS + ["."],
     base = "@cc_image_base//image",
     entrypoint = ["/buildifier"],
     files = [FILE],

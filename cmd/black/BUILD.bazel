@@ -11,7 +11,6 @@ SRCS = [MAIN]
 ARGS = [
     "-v",
     "-l120",
-    ".",
 ]
 
 DEPS = [
@@ -36,7 +35,7 @@ py_binary(
 py3_image(
     name = "image",
     srcs = SRCS,
-    args = ARGS,
+    args = ARGS + ["."],
     main = MAIN,
     deps = DEPS,
 )

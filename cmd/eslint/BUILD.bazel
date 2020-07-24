@@ -5,7 +5,6 @@ load("@io_bazel_rules_docker//nodejs:image.bzl", "nodejs_image")
 
 ARGS = [
     "--fix",
-    ".",
 ]
 
 DATA = [
@@ -24,7 +23,7 @@ nodejs_binary(
 
 nodejs_image(
     name = "image",
-    args = ARGS,
+    args = ARGS + ["."],
     data = DATA,
     entry_point = ENTRY_POINT,
 )

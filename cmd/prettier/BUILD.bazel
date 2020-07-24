@@ -6,7 +6,6 @@ load("@build_bazel_rules_nodejs//:index.bzl", "nodejs_binary")
 ARGS = [
     "--check",
     "--write",
-    ".",
 ]
 
 DATA = [
@@ -24,7 +23,7 @@ nodejs_binary(
 
 nodejs_image(
     name = "image",
-    args = ARGS,
+    args = ARGS + ["."],
     data = DATA,
     entry_point = ENTRY_POINT,
 )
