@@ -3,7 +3,7 @@
   "commandTests": [
     {
       "name": "eslint",
-      "command": "/app/image/eslint/eslint.binary",
+      "command": "/app/cmd/eslint/image.binary",
       "args": ["--version"],
       "expectedOutput": ["v"]
     }

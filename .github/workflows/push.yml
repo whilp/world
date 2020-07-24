@@ -10,19 +10,20 @@ jobs:
     strategy:
       matrix:
         image:
-          - devcontainer
-          - shfmt
-          - black
-          - buildifier
-          - prettier
-          - eslint
-          - golangci-lint
+          - image/devcontainer
+          - cmd/shfmt
+          - cmd/black
+          - cmd/buildifier
+          - cmd/prettier
+          - cmd/eslint
+          - cmd/bot
+          - cmd/golangci-lint
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2.3.1
         with:
           fetch-depth: 2
-      - uses: actions/setup-python@v2.0.2
+      - uses: actions/setup-python@v2.1.1
         with:
           python-version: "3.7"
       - name: docker login
@@ -30,5 +31,5 @@ jobs:
         env:
           DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
-      - name: bazel run image/${{ matrix.image }}:push
-        run: ./tools/bazel run --config=ci image/${{ matrix.image }}:push
+      - name: bazel run ${{ matrix.image }}:push
+        run: ./tools/bazel run --config=ci ${{ matrix.image }}:push

@@ -5,18 +5,17 @@ load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
 container_push(
     name = "push",
     format = "Docker",
-    image = ":devcontainer",
+    image = ":image",
     registry = "index.docker.io",
     repository = "whilp/world",
     tag = "latest",
 )
 
 container_image(
-    name = "devcontainer",
+    name = "image",
     base = "base",
     env = {
         "XDG_RUNTIME_DIR": "/home/user/.xdg",
-        "DOCKER_HOST": "unix:///run/docker-host.sock",
         "DEBIAN_FRONTEND": "noninteractive",
     },
     layers = [
@@ -25,7 +24,8 @@ container_image(
         ":etc",
         ":sudoersd",
         ":home",
-        "//image/go:layer",
+        "//lang/go:layer",
+        "//lang/node:layer",
     ],
     symlinks = {
         "/usr/bin/python": "/usr/bin/python3.7",
@@ -51,6 +51,7 @@ PACKAGES = [
     "iproute2",
     "iptables",
     "make",
+    "nvi",
     "patch",
     "python3.7-distutil",
     "python3.7-venv",
@@ -146,5 +147,5 @@ container_layer(
 container_test(
     name = "test",
     configs = ["test.json"],
-    image = ":devcontainer",
+    image = ":image",
 )

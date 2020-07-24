@@ -9,10 +9,10 @@ v = versions()
 
 http_archive(
     name = "io_bazel_rules_go",
-    sha256 = "e5de048e72612598c45f564202f6a3c74616be4ffd2dbd6f7bc75045f8ecbdce",
+    sha256 = "8663604808d2738dc615a2c3eb70eba54a9a982089dd09f6ffe5d0e75771bc4f",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.23.4/rules_go-v0.23.4.tar.gz",
-        "https://github.com/bazelbuild/rules_go/releases/download/v0.23.4/rules_go-v0.23.4.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.23.6/rules_go-v0.23.6.tar.gz",
+        "https://github.com/bazelbuild/rules_go/releases/download/v0.23.6/rules_go-v0.23.6.tar.gz",
     ],
 )
 
@@ -74,8 +74,8 @@ rules_pkg_dependencies()
 
 http_archive(
     name = "build_bazel_rules_nodejs",
-    sha256 = "84abf7ac4234a70924628baa9a73a5a5cbad944c4358cf9abdb4aab29c9a5b77",
-    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/1.7.0/rules_nodejs-1.7.0.tar.gz"],
+    sha256 = "5bf77cc2d13ddf9124f4c1453dd96063774d755d4fc75d922471540d1c9a8ea8",
+    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/2.0.0/rules_nodejs-2.0.0.tar.gz"],
 )
 
 load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories", "yarn_install")
@@ -91,13 +91,9 @@ yarn_install(
     yarn_lock = "//:yarn.lock",
 )
 
-load("@npm//:install_bazel_dependencies.bzl", rules_nodejs_dependencies = "install_bazel_dependencies")
+#load("@npm//@bazel/typescript:index.bzl", "ts_setup_workspace")
 
-rules_nodejs_dependencies()
-
-load("@npm_bazel_typescript//:index.bzl", "ts_setup_workspace")
-
-ts_setup_workspace()
+#ts_setup_workspace()
 
 http_archive(
     name = "io_bazel_rules_docker",
@@ -174,9 +170,9 @@ http_archive(
 http_archive(
     name = "golangcilint",
     build_file_content = """exports_files(["golangci-lint"])""",
-    sha256 = "6f6eef6bbb1064d8170d0410d0ea9e4b9132c1c41f4596b915bd87f667982fb1",
-    strip_prefix = "golangci-lint-1.28.3-linux-amd64",
-    urls = ["https://github.com/golangci/golangci-lint/releases/download/v1.28.3/golangci-lint-1.28.3-linux-amd64.tar.gz"],
+    sha256 = "98b1eb7c74766079e1deebc3388c13db9bfa9fa0769046d786cf8d1553d7d68b",
+    strip_prefix = "golangci-lint-1.29.0-linux-amd64",
+    urls = ["https://github.com/golangci/golangci-lint/releases/download/v1.29.0/golangci-lint-1.29.0-linux-amd64.tar.gz"],
 )
 
 http_file(
@@ -238,4 +234,18 @@ http_file(
     downloaded_file_path = "go-sdk.tar.gz",
     sha256 = v.golang.sha256,
     urls = [v.golang.url],
+)
+
+http_file(
+    name = "node_sdk_archive",
+    downloaded_file_path = "node-sdk.tar.gz",
+    sha256 = v.node.sha256,
+    urls = [v.node.url],
+)
+
+http_file(
+    name = "yarn_archive",
+    downloaded_file_path = "yarn.tar.gz",
+    sha256 = v.yarn.sha256,
+    urls = [v.yarn.url],
 )

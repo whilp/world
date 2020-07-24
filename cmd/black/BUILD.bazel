@@ -1,0 +1,57 @@
+load("@io_bazel_rules_docker//container:container.bzl", "container_push")
+load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
+load("@io_bazel_rules_docker//python3:image.bzl", "py3_image")
+load("@pypi//:requirements.bzl", "requirement")
+load("@rules_python//python:defs.bzl", "py_binary")
+
+MAIN = "black.py"
+
+SRCS = [MAIN]
+
+ARGS = [
+    "-v",
+    "-l120",
+    ".",
+]
+
+DEPS = [
+    requirement("black"),
+    requirement("regex"),
+    requirement("appdirs"),
+    requirement("attrs"),
+    requirement("click"),
+    requirement("toml"),
+    requirement("typed-ast"),
+    requirement("pathspec"),
+]
+
+py_binary(
+    name = "black",
+    srcs = SRCS,
+    args = ARGS,
+    main = MAIN,
+    deps = DEPS,
+)
+
+py3_image(
+    name = "image",
+    srcs = SRCS,
+    args = ARGS,
+    main = MAIN,
+    deps = DEPS,
+)
+
+container_push(
+    name = "push",
+    format = "Docker",
+    image = ":image",
+    registry = "index.docker.io",
+    repository = "whilp/black",
+    tag = "latest",
+)
+
+container_test(
+    name = "test",
+    configs = ["test.json"],
+    image = ":image",
+)

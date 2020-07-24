@@ -1,0 +1,30 @@
+name: bot
+description: "Be a bot"
+inputs:
+  bot-id:
+    description: "Bot ID"
+    required: true
+  bot-key:
+    description: "Bot private key"
+    required: true
+  bot-installation-id:
+    description: "Bot installation ID"
+    required: true
+  bot-client-id:
+    description: "Bot client ID"
+    required: true
+  bot-client-secret:
+    description: "Bot client secret"
+    required: true
+outputs:
+  token:
+    description: "An authentication token"
+runs:
+  using: "docker"
+  image: docker://whilp/bot:latest
+  env:
+    BOT_ID: ${{ inputs.bot-id }}
+    BOT_KEY: ${{ inputs.bot-key }}
+    BOT_INSTALLATION_ID: ${{ inputs.bot-installation-id }}
+    BOT_CLIENT_ID: ${{ inputs.bot-client-id }}
+    BOT_CLIENT_SECRET: ${{ inputs.bot-client-secret }}

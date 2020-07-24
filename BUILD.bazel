@@ -1,3 +1,5 @@
+load("@build_bazel_rules_nodejs//:index.bzl", "pkg_npm")
+
 exports_files([
     "jest.config.js",
     "tsconfig.json",
@@ -6,3 +8,8 @@ exports_files([
     "requirements.txt",
     "requirements.in",
 ])
+
+pkg_npm(
+    name = "world",
+    package_name = "world",
+)

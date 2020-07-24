@@ -1,0 +1,33 @@
+load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_layer")
+load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
+load("//versions:versions.bzl", "versions")
+
+v = versions()
+
+container_layer(
+    name = "layer",
+    directory = "/usr/local",
+    symlinks = {
+        "/usr/local/bin/node": "/usr/local/{node}/bin/node".format(node = v.node.prefix),
+        "/usr/local/bin/npm": "/usr/local/{node}/bin/npm".format(node = v.node.prefix),
+        "/usr/local/bin/npx": "/usr/local/{node}/bin/npx".format(node = v.node.prefix),
+        "/usr/local/bin/yarn": "/usr/local/{yarn}/bin/yarn".format(yarn = v.yarn.prefix),
+    },
+    tars = [
+        "@node_sdk_archive//file",
+        "@yarn_archive//file",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+container_image(
+    name = "node",
+    base = "@ubuntu18.04//image",
+    layers = [":layer"],
+)
+
+container_test(
+    name = "test",
+    configs = ["test.json"],
+    image = ":node",
+)

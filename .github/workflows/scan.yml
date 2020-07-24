@@ -1,0 +1,49 @@
+name: scan
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "18 6 * * *"
+
+jobs:
+  codeql:
+    strategy:
+      matrix:
+        language:
+          - javascript
+          - python
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2.3.1
+        with:
+          fetch-depth: 2
+      - uses: github/codeql-action/init@v1
+        with:
+          languages: ${{ matrix.language }}
+      - uses: github/codeql-action/analyze@v1
+
+  anchore:
+    strategy:
+      matrix:
+        image:
+          - image/devcontainer
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2.3.1
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v2.1.1
+        with:
+          python-version: "3.7"
+      - name: bazel run ${{ matrix.image }}
+        run: ./tools/bazel run --config=ci ${{ matrix.image }}
+      - uses: anchore/scan-action@v1
+        with:
+          image-reference: bazel/${{ matrix.image }}:image
+          fail-build: true
+          include-app-packages: true
+          acs-report-enable: true
+          debug: true
+      - uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: results.sarif

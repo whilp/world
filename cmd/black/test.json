@@ -4,7 +4,7 @@
     {
       "name": "black",
       "command": "/usr/bin/python",
-      "args": ["/app/image/black/black.binary", "--version"],
+      "args": ["/app/cmd/black/image.binary", "--version"],
       "expectedOutput": ["black.py"]
     }
   ]

@@ -6,18 +6,27 @@ import stat
 import sys
 import urllib.request
 
+DEFAULT_VERSION = "3.4.1"
+
 
 def main(args, env):
-    real = "tools/bazel-real"
-    if not executable(real):
+    real = None
+    candidates = ["tools/bazel-real", ".bazel/bin/bazel-real"]
+    for candidate in candidates:
+        if executable(candidate):
+            real = candidate
+            break
+
+    if real is None:
+        real = candidates[0]
         fetch(real)
+
     env["PYTHONNOUSERSITE"] = "yes"
     os.execve(real, args, env)
 
 
 def fetch(real):
-    with open(".bazelversion") as f:
-        version = f.read().strip()
+    version = bazelversion()
     plat = platform.system().lower()
     url = "https://github.com/bazelbuild/bazel/releases/download/{version}/bazel-{version}-{plat}-x86_64".format(
         version=version, plat=plat,
@@ -29,8 +38,22 @@ def fetch(real):
     os.chmod(real, stat.S_IRWXU)
 
 
+def real_executable():
+    for candidate in candidates:
+        if executable(candidate):
+            return candidate
+
+
 def executable(path):
     return os.path.isfile(path) and os.access(path, os.X_OK)
+
+
+def bazelversion():
+    try:
+        with open(".bazelversion") as f:
+            return f.read().strip()
+    except:
+        return DEFAULT_VERSION
 
 
 if __name__ == "__main__":

@@ -1,0 +1,29 @@
+{
+  "schemaVersion": "2.0.0",
+  "commandTests": [
+    {
+      "name": "yarn",
+      "command": "/usr/local/bin/yarn",
+      "args": ["--version"],
+      "expectedOutput": ["^1"]
+    },
+    {
+      "name": "node",
+      "command": "/usr/local/bin/node",
+      "args": ["--version"],
+      "expectedOutput": ["^v12"]
+    },
+    {
+      "name": "npm",
+      "command": "/usr/local/bin/npm",
+      "args": ["--version"],
+      "expectedOutput": ["^6"]
+    },
+    {
+      "name": "npx",
+      "command": "/usr/local/bin/npx",
+      "args": ["--version"],
+      "expectedOutput": ["^6"]
+    }
+  ]
+}

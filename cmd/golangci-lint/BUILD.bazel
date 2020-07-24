@@ -1,31 +1,36 @@
 load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
 load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
+load("//cmd:wrapper.bzl", "wrap")
+
+wrap(
+    name = "golangci-lint",
+    file = "@golangci-lint",
+)
 
 container_image(
-    name = "shfmt",
+    name = "image",
     args = [
-        "-l",
-        "-w",
-        "-s",
-        "-i2",
-        ".",
+        "run",
+        "--fix",
+        "./...",
     ],
     base = "@cc_image_base//image",
-    entrypoint = ["/shfmt"],
-    files = ["@shfmt//file"],
+    entrypoint = ["/golangci-lint"],
+    files = ["@golangci-lint"],
+    layers = ["//lang/go:layer"],
 )
 
 container_push(
     name = "push",
     format = "Docker",
-    image = ":shfmt",
+    image = ":image",
     registry = "index.docker.io",
-    repository = "whilp/shfmt",
+    repository = "whilp/golangci-lint",
     tag = "latest",
 )
 
 container_test(
     name = "test",
     configs = ["test.json"],
-    image = ":shfmt",
+    image = ":image",
 )
