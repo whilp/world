@@ -18,6 +18,9 @@ jobs:
       - uses: actions/setup-python@v2.1.1
         with:
           python-version: "3.7"
+      # Use appmode/app tokens.
+      # https://github.com/renovatebot/renovate/issues/6371
+      # https://github.com/renovatebot/renovate/pull/6454
       - name: renovate
         uses: docker://renovate/renovate:latest@sha256:b56f64bd4ad975f3d5b3d0652544e7d93957e2e040205bb7186bc7987b38ec6f
         env:
