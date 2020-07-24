@@ -83,7 +83,7 @@ module.exports = {
     {
       updateTypes: ["pin", "digest"],
       automerge: true,
-      schedule: ["on monday"],
+      schedule: ["on friday"],
     },
     {
       // Keep in sync with rules_nodejs
