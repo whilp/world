@@ -25,6 +25,12 @@ module.exports = {
   npm: {
     labels: ["dependencies", "javascript"],
   },
+  pip: {
+    labels: ["dependencies", "python"], 
+  },
+  pip_requirements: {
+    fileMatch: ["requirements.in", "requirements.txt"],
+  },
   allowedPostUpgradeCommands: ["^./tools/bazel run"],
   postUpgradeTasks: {
     commands: ["./tools/bazel run --config=ci versions"],
