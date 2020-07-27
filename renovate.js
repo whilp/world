@@ -10,7 +10,7 @@ module.exports = {
   logLevel: "debug",
   pinDigests: true,
   prHourlyLimit: 15,
-  enabledManagers: ["github-actions", "bazel", "regex", "npm", "python"],
+  enabledManagers: ["github-actions", "bazel", "regex", "npm", "pip"],
   platform: "github",
   reviewersFromCodeOwners: true,
   repositories: ["whilp/world"],
