@@ -26,7 +26,7 @@ module.exports = {
     labels: ["dependencies", "javascript"],
   },
   pip: {
-    labels: ["dependencies", "python"], 
+    labels: ["dependencies", "python"],
   },
   pip_requirements: {
     fileMatch: ["requirements.in", "requirements.txt"],
