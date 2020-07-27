@@ -1,7 +1,6 @@
 name: push
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
@@ -32,9 +31,5 @@ jobs:
         env:
           DOCKER_TOKEN: ${{ secrets.DOCKER_TOKEN }}
           DOCKER_USER: ${{ secrets.DOCKER_USER }}
-      - name: docker login containers.pkg.github.com
-        run: echo "$PACKAGES_TOKEN" | docker login https://containers.pkg.github.com -u "$GITHUB_ACTOR" --password-stdin
-        env:
-          PACKAGES_TOKEN: ${{ secrets.PACKAGES_TOKEN }}
       - name: bazel run ${{ matrix.image }}:push
         run: ./tools/bazel run --config=ci ${{ matrix.image }}:push
