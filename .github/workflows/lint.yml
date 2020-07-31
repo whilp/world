@@ -25,7 +25,7 @@ jobs:
         with:
           fetch-depth: 2
       - name: lint
-        uses: docker://whilp/black:latest@sha256:1290c3063a26f117a63fc5b930c06fe71e6083c547b1bc578cbf73db89e8243b
+        uses: docker://whilp/black:latest@sha256:a3e2b95401c85411c1ad78594ddb1618c4f8b9c19aeff82e5ec3633f4766d288
       - run: git diff --exit-code
 
   shfmt:
