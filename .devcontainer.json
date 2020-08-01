@@ -1,6 +1,6 @@
 {
   "name": "world",
-  "image": "whilp/world:latest@sha256:a00b50ccabfa25ee01fc98b2b283a33d7d1038dfd40d067d61426bdbdf0a4f9a",
+  "image": "whilp/world:latest@sha256:d8d8b1cc8c96f1f76ac42b72cffde21e2699203006ba3609ec0c99cb3be3f10e",
   "remoteUser": "user",
   "runArgs": [
     "--privileged",
