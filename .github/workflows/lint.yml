@@ -11,7 +11,7 @@ jobs:
   buildifier:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.1
+      - uses: actions/checkout@v2.3.2
         with:
           fetch-depth: 2
       - name: lint
@@ -21,7 +21,7 @@ jobs:
   black:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.1
+      - uses: actions/checkout@v2.3.2
         with:
           fetch-depth: 2
       - name: lint
@@ -31,7 +31,7 @@ jobs:
   shfmt:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.1
+      - uses: actions/checkout@v2.3.2
         with:
           fetch-depth: 2
       - name: lint
@@ -41,7 +41,7 @@ jobs:
   prettier:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.1
+      - uses: actions/checkout@v2.3.2
         with:
           fetch-depth: 2
       - name: lint
@@ -51,7 +51,7 @@ jobs:
   eslint:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.1
+      - uses: actions/checkout@v2.3.2
         with:
           fetch-depth: 2
       - name: lint
@@ -61,7 +61,7 @@ jobs:
   golangci-lint:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.1
+      - uses: actions/checkout@v2.3.2
         with:
           fetch-depth: 2
       - name: lint

@@ -14,7 +14,7 @@ jobs:
           - python
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.1
+      - uses: actions/checkout@v2.3.2
         with:
           fetch-depth: 2
       - uses: github/codeql-action/init@v1
@@ -29,7 +29,7 @@ jobs:
           - image/devcontainer
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.1
+      - uses: actions/checkout@v2.3.2
         with:
           fetch-depth: 2
       - uses: actions/setup-python@v2.1.1
