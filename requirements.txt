@@ -55,6 +55,6 @@ typed-ast==1.4.1 \
 pip==20.2.2 \
     --hash=sha256:5244e51494f5d1dfbb89da492d4250cb07f9246644736d10ed6c45deb1a48500 \
     --hash=sha256:58a3b0b55ee2278104165c7ee7bc8e2db6f635067f3c66cf637113ec5aa71584
-setuptools==49.3.2 \
-    --hash=sha256:a02a9dc226e11a1756f3b2409aa23ada12dc7f0b930b61ebd765a34fd89a1d79 \
-    --hash=sha256:c312ba1fcfaf9611ebafb9d65decdb7bb8ed07a715098685f490f4ce4bd2912f
+setuptools==49.4.0 \
+    --hash=sha256:967c4f532255deea2d1f0a4f534d2f230d0d9f2b1205521849b0225ecd0ee3eb \
+    --hash=sha256:da4e4d9c2f0355fbd642eab5546d07de72e684ee1cddf3ed14f829c1b5505308
