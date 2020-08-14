@@ -124,7 +124,7 @@ load(
 
 container_pull(
     name = "cc_image_base",
-    digest = "sha256:0f5177f34bfc3634d1b4b2209c26afe445ee790bc2ad987864b61b181ef23aa4",
+    digest = "sha256:fadabd2ab173bad2016a491f6f85db52cbe0108e296c44b0f5c9468e0cb972bd",
     registry = "gcr.io",
     repository = "distroless/cc",
     tag = "latest",
