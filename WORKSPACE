@@ -258,6 +258,6 @@ http_file(
 http_file(
     name = "yarn_archive",
     downloaded_file_path = "yarn.tar.gz",
-    sha256 = "bc5316aa110b2f564a71a3d6e235be55b98714660870c5b6b2d2d3f12587fb58",
-    urls = ["https://github.com/yarnpkg/yarn/releases/download/v1.22.4/yarn-v1.22.4.tar.gz"],
+    sha256 = "c664fb4692e4dfea750a37a533780834b40198c00cef4bbc5e8c14abab2ac141",
+    urls = ["https://github.com/yarnpkg/yarn/releases/download/v1.22.5/yarn-v1.22.5.tar.gz"],
 )
