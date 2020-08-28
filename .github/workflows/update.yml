@@ -22,7 +22,7 @@ jobs:
       # https://github.com/renovatebot/renovate/issues/6371
       # https://github.com/renovatebot/renovate/pull/6454
       - name: renovate
-        uses: docker://renovate/renovate:latest@sha256:72e7a23c27a5296953d78e0c74a56f20a28825f435e7fb3dc3be7dc4b7942a87
+        uses: docker://renovate/renovate:latest@sha256:10da61f9226b12b9d1d51a16383e4ba67516a0b284fed7071cf5728b4167df4e
         env:
           RENOVATE_REPOSITORIES: whilp/world
           RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
