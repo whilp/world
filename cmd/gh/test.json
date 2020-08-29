@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "2.0.0",
+  "commandTests": [
+    {
+      "name": "gh",
+      "command": "/app/cmd/gh/gh",
+      "envVars": [{ "key": "CHECK", "value": "yes" }],
+      "expectedError": ["ok"]
+    }
+  ]
+}

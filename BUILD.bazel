@@ -1,5 +1,7 @@
 load("@build_bazel_rules_nodejs//:index.bzl", "pkg_npm")
 
+# gazelle:prefix github.com/whilp/world
+
 exports_files([
     "jest.config.js",
     "tsconfig.json",

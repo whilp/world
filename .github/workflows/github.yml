@@ -1,0 +1,30 @@
+name: github
+
+on:
+  pull_request:
+    types:
+      - synchronize
+      - labeled
+      - unlabeled
+      - opened
+      - reopened
+
+jobs:
+  check:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: gh
+        # TODO: pin
+        uses: docker://whilp/gh:latest
+        env:
+          CONTEXT: lint / github
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LABEL_MAJOR: "type: major"
+          LABEL_BREAKING: "type: breaking"
+          LABEL_FEATURE: "type: feature"
+          LABEL_BUG: "type: bug"
+          LABEL_MAINTENANCE: "type: maintenance"
+          LABEL_ADMIN: "type: admin"
+          LABEL_DOCS: "type: docs"
+          LABEL_DEPENDENCIES: "type: dependencies"
+          LABEL_SECURITY: "type: security"
