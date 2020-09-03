@@ -37,7 +37,7 @@ def versions():
         bazel = version(
             datasource = "github-releases",
             name = "bazelbuild/bazel",
-            version = "3.4.1",
+            version = "3.5.0",
             sha256 = "1a64c807716e10c872f1618852d95f4893d81667fe6e691ef696489103c9b460",
             url = GITHUB_RELEASE_URL,
             asset = "bazel-{version}-linux-x86_64",
