@@ -76,8 +76,8 @@ go_repository(
 go_repository(
     name = "org_golang_x_crypto",
     importpath = "golang.org/x/crypto",
-    sum = "h1:psW17arqaxU48Z5kZ0CQnkZWQJsqcURM6tKiBApRjXI=",
-    version = "v0.0.0-20200622213623-75b288015ac9",
+    sum = "h1:DN0cp81fZ3njFcrLCytUHRSUkqBjfTo4Tx9RJTWs0EY=",
+    version = "v0.0.0-20201221181555-eec23a3978ad",
 )
 
 go_repository(
@@ -412,8 +412,8 @@ go_repository(
 go_repository(
     name = "org_golang_x_tools",
     importpath = "golang.org/x/tools",
-    sum = "h1:3/5GThpuWHBq2GFcurHBWuWlzdbln+Er+cyzGqQAPOs=",
-    version = "v0.0.0-20200913032122-97363e29fc9b",
+    sum = "h1:Imq6ZJ3mzzAkU1yzH1aHpiF3lTs3ySLzjH8SEfFdW0A=",
+    version = "v0.0.0-20201012192620-5bd05386311b",
 )
 
 go_repository(
@@ -813,6 +813,41 @@ go_repository(
     importpath = "go.starlark.net",
     sum = "h1:N4eRtIIYHZE5Mw/Km/orb+naLdwAe+lv2HCxRR5rEBw=",
     version = "v0.0.0-20200901195727-6e684ef5eeee",
+)
+
+go_repository(
+    name = "com_github_bradleyfalzon_ghinstallation",
+    importpath = "github.com/bradleyfalzon/ghinstallation",
+    sum = "h1:pmBXkxgM1WeF8QYvDLT5kuQiHMcmf+X015GI0KM/E3I=",
+    version = "v1.1.1",
+)
+
+go_repository(
+    name = "com_github_dgrijalva_jwt_go",
+    importpath = "github.com/dgrijalva/jwt-go",
+    sum = "h1:7qlOGliEKZXTDg6OTjfoBKDXWrumCAMpl/TFQ4/5kLM=",
+    version = "v3.2.0+incompatible",
+)
+
+go_repository(
+    name = "com_github_google_go_github_v29",
+    importpath = "github.com/google/go-github/v29",
+    sum = "h1:IktKCTwU//aFHnpA+2SLIi7Oo9uhAzgsdZNbcAqhgdc=",
+    version = "v29.0.3",
+)
+
+go_repository(
+    name = "org_golang_x_term",
+    importpath = "golang.org/x/term",
+    sum = "h1:/ZHdbVpdR/jk3g30/d4yUL0JU9kksj8+F/bnQUVLGDM=",
+    version = "v0.0.0-20201117132131-f5c789dd3221",
+)
+
+go_repository(
+    name = "com_github_google_go_github_v33",
+    importpath = "github.com/google/go-github/v33",
+    sum = "h1:qAf9yP0qc54ufQxzwv+u9H0tiVOnPJxo0lI/JXqw3ZM=",
+    version = "v33.0.0",
 )
 
 gazelle_dependencies()

@@ -20,7 +20,6 @@ jobs:
           - cmd/prettier
           - cmd/pyright
           - cmd/eslint
-          - cmd/bot
           - cmd/gh
           - cmd/golangci-lint
     runs-on: ubuntu-18.04
