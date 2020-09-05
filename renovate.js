@@ -13,6 +13,7 @@ module.exports = {
   enabledManagers: [
     "github-actions",
     "bazel",
+    "gomod",
     "regex",
     "npm",
     "pip_requirements",
@@ -27,6 +28,9 @@ module.exports = {
   },
   bazel: {
     labels: ["dependencies", "bazel"],
+  },
+  gomod: {
+    labels: ["dependencies", "go"],
   },
   npm: {
     labels: ["dependencies", "javascript"],
