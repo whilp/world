@@ -13,7 +13,12 @@ go_binary(
 
 go_library(
     name = "gh_lib",
-    srcs = ["main.go"],
+    srcs = [
+        "dump.go",
+        "env.go",
+        "main.go",
+        "pr.go",
+    ],
     importpath = "github.com/whilp/world/cmd/gh",
     visibility = ["//visibility:private"],
     deps = [

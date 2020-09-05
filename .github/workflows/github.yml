@@ -1,0 +1,23 @@
+name: github
+
+on:
+  pull_request:
+    types:
+      - synchronize
+      - labeled
+      - unlabeled
+      - opened
+      - reopened
+
+jobs:
+  check:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: gh
+        uses: docker://whilp/gh:latest
+        env:
+          CONTEXT: lint / github
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LABEL_DEPENDENCIES: dependencies
+          LABEL_FEAT: feat
+          LABEL_FIX: fix
