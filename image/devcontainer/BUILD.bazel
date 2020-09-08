@@ -1,6 +1,7 @@
 load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_layer", "container_push")
 load("@io_bazel_rules_docker//docker/util:run.bzl", "container_run_and_commit")
 load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
+load("//cmd:labels.bzl", "labels")
 
 container_push(
     name = "push",
@@ -18,6 +19,7 @@ container_image(
         "XDG_RUNTIME_DIR": "/home/user/.xdg",
         "DEBIAN_FRONTEND": "noninteractive",
     },
+    labels = labels({"org.opencontainers.image.description": "development environment"}),
     layers = [
         ":bins",
         ":docker",

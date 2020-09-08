@@ -1,8 +1,9 @@
-load("@io_bazel_rules_docker//container:container.bzl", "container_push")
+load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
 load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
 load("@io_bazel_rules_docker//python3:image.bzl", "py3_image")
 load("@pypi//:requirements.bzl", "requirement")
 load("@rules_python//python:defs.bzl", "py_binary")
+load("//cmd:labels.bzl", "labels")
 
 MAIN = "black.py"
 
@@ -36,8 +37,15 @@ py3_image(
     name = "image",
     srcs = SRCS,
     args = ARGS + ["."],
+    base = ":base",
     main = MAIN,
     deps = DEPS,
+)
+
+container_image(
+    name = "base",
+    base = "@py3_image_base//image",
+    labels = labels({"org.opencontainers.image.description": "black linter"}),
 )
 
 container_push(
