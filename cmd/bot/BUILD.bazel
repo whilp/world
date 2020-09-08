@@ -49,7 +49,7 @@ container_push(
     name = "push",
     format = "Docker",
     image = ":image",
-    registry = "index.docker.io",
+    registry = "ghcr.io",
     repository = "whilp/bot",
     tag = "latest",
 )
