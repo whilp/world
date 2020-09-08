@@ -421,7 +421,6 @@ gazelle_dependencies()
 http_archive(
     name = "rules_python",
     sha256 = "e46612e9bb0dae8745de6a0643be69e8665a03f63163ac6610c210e80d14c3e4",
-    strip_prefix = "rules_python-0.0.3",
     url = "https://github.com/bazelbuild/rules_python/releases/download/0.0.3/rules_python-0.0.3.tar.gz",
 )
 
