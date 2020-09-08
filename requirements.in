@@ -1,4 +1,4 @@
 black==19.10b0
 pip-tools==5.3.1
 setuptools==50.3.0
-pip==20.2.2
+pip==20.2.3
