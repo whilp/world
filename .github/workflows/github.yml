@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - name: gh
-        uses: docker://whilp/gh:latest
+        uses: docker://ghcr.io/whilp/gh:latest
         env:
           CONTEXT: lint / github
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

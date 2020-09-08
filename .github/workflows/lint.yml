@@ -15,7 +15,7 @@ jobs:
         with:
           fetch-depth: 2
       - name: lint
-        uses: docker://whilp/buildifier:latest@sha256:67da91fdddd40e9947153bc9157ab9103c141fcabcdbf646f040ba7a763bc531
+        uses: docker://ghcr.io/whilp/buildifier:latest@sha256:67da91fdddd40e9947153bc9157ab9103c141fcabcdbf646f040ba7a763bc531
       - run: git diff --exit-code
 
   black:
@@ -25,7 +25,7 @@ jobs:
         with:
           fetch-depth: 2
       - name: lint
-        uses: docker://whilp/black:latest@sha256:ec52447425927a68a9bddc9c3c0b7a38b25eff0907d4cffdafa1cc5bba6edfa7
+        uses: docker://ghcr.io/whilp/black:latest@sha256:ec52447425927a68a9bddc9c3c0b7a38b25eff0907d4cffdafa1cc5bba6edfa7
       - run: git diff --exit-code
 
   shfmt:
@@ -35,7 +35,7 @@ jobs:
         with:
           fetch-depth: 2
       - name: lint
-        uses: docker://whilp/shfmt:latest@sha256:8793614f57268d7104607450f59ddc6c4fe1c560a147689e277e1a90e4a6ed35
+        uses: docker://ghcr.io/whilp/shfmt:latest@sha256:8793614f57268d7104607450f59ddc6c4fe1c560a147689e277e1a90e4a6ed35
       - run: git diff --exit-code
 
   prettier:
@@ -45,7 +45,7 @@ jobs:
         with:
           fetch-depth: 2
       - name: lint
-        uses: docker://whilp/prettier:latest@sha256:4c8d8f22983098cd4df57d0268cf2f5cfea25dee44e29cd598419f3617a03342
+        uses: docker://ghcr.io/whilp/prettier:latest@sha256:4c8d8f22983098cd4df57d0268cf2f5cfea25dee44e29cd598419f3617a03342
       - run: git diff --exit-code
 
   eslint:
@@ -55,7 +55,7 @@ jobs:
         with:
           fetch-depth: 2
       - name: lint
-        uses: docker://whilp/eslint:latest@sha256:40877456323dc679a216c6167ad1e415c0b67bbea7854c81f786fd7f126089b3
+        uses: docker://ghcr.io/whilp/eslint:latest@sha256:40877456323dc679a216c6167ad1e415c0b67bbea7854c81f786fd7f126089b3
       - run: git diff --exit-code
 
   golangci-lint:
@@ -65,5 +65,5 @@ jobs:
         with:
           fetch-depth: 2
       - name: lint
-        uses: docker://whilp/golangci-lint:latest@sha256:6f446cb8ac2ce8411efbc16ab8319bab201a7cbc712322bb6c358c6b560d5172
+        uses: docker://ghcr.io/whilp/golangci-lint:latest@sha256:6f446cb8ac2ce8411efbc16ab8319bab201a7cbc712322bb6c358c6b560d5172
       - run: git diff --exit-code
