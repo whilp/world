@@ -27,7 +27,7 @@ jobs:
           bot-client-id: ${{ secrets.BOT_CLIENT_ID }}
           bot-client-secret: ${{ secrets.BOT_CLIENT_SECRET }}
       - name: renovate
-        uses: docker://renovate/renovate:latest@sha256:4052a5fd4ee3433a8e3b87bd94335d92239cac4a3bd401f635d50d1bc2b5add8
+        uses: docker://renovate/renovate:latest@sha256:3adc89268511fb75a1a29a40111af98ac06a705e77ee9261fcc8cd9a95d0363e
         env:
           RENOVATE_REPOSITORIES: whilp/world
           RENOVATE_GITAUTHOR: "Renovate Bot <bot@renovate.com>"
