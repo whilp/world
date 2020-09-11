@@ -45,7 +45,7 @@ jobs:
         with:
           fetch-depth: 2
       - name: lint
-        uses: docker://ghcr.io/whilp/prettier:latest@sha256:4111457b52e7f7efac4a8c522cdd37a478669e1e313127bb6fc99551928b0696
+        uses: docker://ghcr.io/whilp/prettier:latest@sha256:315c447d4e01b2875c7d846d0538fe22f03835456d9c71e25a1169ba56806312
       - run: git diff --exit-code
 
   eslint:
