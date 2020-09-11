@@ -55,7 +55,7 @@ jobs:
         with:
           fetch-depth: 2
       - name: lint
-        uses: docker://ghcr.io/whilp/eslint:latest@sha256:e138bac46f73c2d39ac665c3572e1e3e23fe7d57dbfbbd09174b7f2670eb0679
+        uses: docker://ghcr.io/whilp/eslint:latest@sha256:9ab264d5f91f0b8f0ffceae5994c4162346a149f36b8e9fb3dde24db7789a963
       - run: git diff --exit-code
 
   golangci-lint:
