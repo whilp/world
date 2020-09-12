@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import pathlib
 import platform
 import stat
 import sys
@@ -11,8 +12,14 @@ DEFAULT_VERSION = "3.4.1"
 
 def main(args, env):
     real = None
+    root = pathlib.Path(os.getcwd()).resolve()
+    workspace = get_workspace(root)
+    if workspace is None:
+        return
+
     candidates = ["tools/bazel-real", ".bazel/bin/bazel-real"]
     for candidate in candidates:
+        candidate = workspace/candidate
         if executable(candidate):
             real = candidate
             break
@@ -23,6 +30,14 @@ def main(args, env):
 
     env["PYTHONNOUSERSITE"] = "yes"
     os.execve(real, args, env)
+
+def get_workspace(root, last=None):
+    workspace = root / "WORKSPACE"
+    if workspace.exists():
+        return root
+    if root == last:
+        return None
+    return get_workspace(root.parent, root)
 
 
 def fetch(real):
