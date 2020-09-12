@@ -37,23 +37,22 @@ container_image(
 )
 
 PACKAGES = [
+    "apt-utils",
     "binutils",
     "ca-certificates",
     "cpp",
-    "g++",
     "curl",
-    "gcc",
-    "zlib1g",
-    "libkrb5-3",
-    "libicu60",
-    "apt-utils",
     "dialog",
-    "openssl",
+    "g++",
+    "gcc",
     "git",
     "iproute2",
     "iptables",
+    "libicu60",
+    "libkrb5-3",
     "make",
     "nvi",
+    "openssl",
     "patch",
     "python3.7-distutil",
     "python3.7-venv",
@@ -62,6 +61,7 @@ PACKAGES = [
     "uidmap",
     "unzip",
     "wget",
+    "zlib1g",
 ]
 
 REMOVE_PACKAGES = [
