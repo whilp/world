@@ -12,8 +12,6 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2.3.2
-        with:
-          fetch-depth: 2
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/buildifier:latest@sha256:c9801dbfb119bbbbfedaa43314b9d4cd27dfde7b0c9a5b93fe958e9d8e46d88c
@@ -23,8 +21,6 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2.3.2
-        with:
-          fetch-depth: 2
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/black:latest@sha256:aba7829a5d074b12a697ee21811e7c9b575795d5778d47b069e2b48d76e7b276
@@ -34,8 +30,6 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2.3.2
-        with:
-          fetch-depth: 2
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/shfmt:latest@sha256:d1e0aef522a005f61480a8f5e76fe1b7caaa8d9a38e0b527d42b39b4ef59554a
@@ -45,8 +39,6 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2.3.2
-        with:
-          fetch-depth: 2
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/prettier:latest@sha256:0c8d478396b9ba381fba2d302c6086f1469b06d00af2e2c3a995536b8d6534b8
@@ -56,8 +48,6 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2.3.2
-        with:
-          fetch-depth: 2
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/eslint:latest@sha256:9ab264d5f91f0b8f0ffceae5994c4162346a149f36b8e9fb3dde24db7789a963
@@ -67,8 +57,6 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2.3.2
-        with:
-          fetch-depth: 2
       - run: .github/matchers.sh
       - name: clean up
         run: mv cmd/tools /tmp/golangci-ignore-tools

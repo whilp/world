@@ -16,8 +16,6 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2.3.2
-        with:
-          fetch-depth: 2
       - run: .github/matchers.sh
       - uses: github/codeql-action/init@v1
         with:
@@ -32,8 +30,6 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2.3.2
-        with:
-          fetch-depth: 2
       - uses: actions/setup-python@v2.1.2
         with:
           python-version: "3.7"
