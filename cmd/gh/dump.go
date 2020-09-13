@@ -32,7 +32,6 @@ func (g Group) Dump(out io.Writer) error {
 }
 
 func dumpEnvironment(out io.Writer, env []string) {
-
 	group := &Group{"environment", &bytes.Buffer{}}
 
 	sort.Strings(env)
