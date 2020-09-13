@@ -75,6 +75,7 @@ REMOVE_PACKAGES = [
 container_run_and_commit(
     name = "base",
     commands = [
+        "export DEBIAN_FRONTEND=noninteractive",
         "apt-get update",
         "apt-get remove -y " + " ".join(REMOVE_PACKAGES),
         "apt-get install --no-install-recommends -y " + " ".join(PACKAGES),
