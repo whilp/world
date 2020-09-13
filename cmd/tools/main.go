@@ -3,6 +3,8 @@
 package main
 
 // https://github.com/golang/go/issues/25922#issuecomment-414677877
+// This file gets removed before lint runs (and then restored after) because Go
+// will fail to analyze these main imports.
 import (
 	_ "github.com/mdempsky/gocode"
 	_ "github.com/ramya-rao-a/go-outline"
