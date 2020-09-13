@@ -26,6 +26,15 @@ jobs:
         uses: docker://ghcr.io/whilp/black:latest@sha256:aba7829a5d074b12a697ee21811e7c9b575795d5778d47b069e2b48d76e7b276
       - run: git diff --exit-code
 
+  bandit:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2.3.2
+      - run: .github/matchers.sh
+      - name: lint
+        uses: docker://ghcr.io/whilp/bandit:latest@sha256:d84b88b9734eb3248c5e8b7f2b03f7ef28283e174291ad68fa864a52419f072c
+      - run: git diff --exit-code
+
   shfmt:
     runs-on: ubuntu-18.04
     steps:

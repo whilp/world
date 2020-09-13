@@ -13,6 +13,7 @@ jobs:
         image:
           - image/devcontainer
           - cmd/shfmt
+          - cmd/bandit
           - cmd/black
           - cmd/buildifier
           - cmd/prettier
