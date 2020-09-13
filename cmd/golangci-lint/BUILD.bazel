@@ -21,6 +21,9 @@ container_image(
     args = ARGS + ["./..."],
     base = "@cc_image_base//image",
     entrypoint = ["/golangci-lint"],
+    env = {
+        "CGO_ENABLED": "0",
+    },
     files = [FILE],
     labels = labels({"org.opencontainers.image.description": "golangci-lint"}),
     layers = ["//lang/go:layer"],
