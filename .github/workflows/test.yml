@@ -15,5 +15,7 @@ jobs:
       - uses: actions/setup-python@v2.1.2
         with:
           python-version: "3.7"
+      - run: wget -O lol.tgz https://github.com/FiloSottile/age/releases/download/v1.0.0-beta2/age-v1.0.0-beta2-linux-amd64.tar.gz
+      - run: tar tf lol.tgz
       - name: bazel test
         run: ./tools/bazel test --config=ci //...
