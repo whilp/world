@@ -15,5 +15,7 @@ jobs:
       - uses: actions/setup-python@v2.1.2
         with:
           python-version: "3.7"
+      - run: wget -O lol.tgz https://github.com/smallstep/cli/releases/download/v0.15.2/step_linux_0.15.2_amd64.tar.gz
+      - run: tar tf lol.tgz
       - name: bazel test
         run: ./tools/bazel test --config=ci //...
