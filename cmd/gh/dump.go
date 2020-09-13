@@ -37,14 +37,22 @@ func dumpEnvironment(out io.Writer, env []string) {
 
 	sort.Strings(env)
 	for _, e := range env {
-		io.WriteString(group, fmt.Sprintln(e))
+		if _, err := io.WriteString(group, fmt.Sprintln(e)); err != nil {
+			return
+		}
 	}
-	group.Dump(out)
+	if err := group.Dump(out); err != nil {
+		return
+	}
 }
 
 func dumpPayload(out io.Writer, src []byte) {
 	var buf bytes.Buffer
-	json.Indent(&buf, src, "", " ")
+	if err := json.Indent(&buf, src, "", " "); err != nil {
+		return
+	}
 	group := &Group{"payload", &buf}
-	group.Dump(out)
+	if err := group.Dump(out); err != nil {
+		return
+	}
 }
