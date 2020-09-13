@@ -18,8 +18,8 @@ wrap(
 
 container_image(
     name = "image",
-    args = ARGS + ["./..."],
     base = "@cc_image_base//image",
+    cmd = ARGS,
     entrypoint = ["/golangci-lint"],
     env = {
         "CGO_ENABLED": "0",
