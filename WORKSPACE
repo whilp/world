@@ -977,8 +977,8 @@ http_archive(
 
 http_archive(
     name = "smallstep",
-    build_file_content = """exports_files(["smallstep"])""",
-    sha256 = "9a5d47b51442d68b718af4c7350f4406cdc087e2236a5b9ae52f37aebede6cdd",
+    build_file_content = """exports_files(["step"])""",
+    sha256 = "385041af30080f28baac298f12c3b81f7f7ee21f60878a1caea4aa532329deda",
     urls = ["https://github.com/smallstep/cli/releases/download/v0.15.2/step_linux_0.15.2_amd64.tar.gz"],
 )
 
