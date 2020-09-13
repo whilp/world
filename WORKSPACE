@@ -975,6 +975,13 @@ http_archive(
     urls = ["https://github.com/golangci/golangci-lint/releases/download/v1.31.0/golangci-lint-1.31.0-linux-amd64.tar.gz"],
 )
 
+http_archive(
+    name = "smallstep",
+    build_file_content = """exports_files(["smallstep"])""",
+    sha256 = "9a5d47b51442d68b718af4c7350f4406cdc087e2236a5b9ae52f37aebede6cdd",
+    urls = ["https://github.com/smallstep/cli/releases/download/v0.15.2/step_linux_0.15.2_amd64.tar.gz"],
+)
+
 http_file(
     name = "bazel",
     downloaded_file_path = "bazel",

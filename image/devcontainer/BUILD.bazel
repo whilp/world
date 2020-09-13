@@ -152,6 +152,7 @@ container_layer(
         "@org_golang_x_tools//cmd/goimports",
         "@org_golang_x_tools//cmd/guru",
         "@shellcheck",
+        "@smallstep//:smallstep",
         "@shfmt//file",
     ],
     mode = "0o777",
