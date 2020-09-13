@@ -978,17 +978,24 @@ http_archive(
 http_archive(
     name = "age",
     build_file_content = """exports_files(["age", "age-keygen"])""",
-    strip_prefix = "age/",
     sha256 = "52572f12c3f54d2ec3f83adb716b160dd35d62fd282c9124dd79b6058b114349",
+    strip_prefix = "age/",
     urls = ["https://github.com/FiloSottile/age/releases/download/v1.0.0-beta2/age-v1.0.0-beta2-linux-amd64.tar.gz"],
 )
 
 http_archive(
     name = "smallstep",
     build_file_content = """exports_files(["step"])""",
-    strip_prefix = "step_0.15.2/bin",
     sha256 = "385041af30080f28baac298f12c3b81f7f7ee21f60878a1caea4aa532329deda",
+    strip_prefix = "step_0.15.2/bin",
     urls = ["https://github.com/smallstep/cli/releases/download/v0.15.2/step_linux_0.15.2_amd64.tar.gz"],
+)
+
+http_archive(
+    name = "deno",
+    build_file_content = """exports_files(["deno"])""",
+    sha256 = "bb53b392fd79bf58d6e99ef8abc3852bd19ecb5732a20b82d00f0bcf8f2b2b60",
+    urls = ["https://github.com/denoland/deno/releases/download/v1.4.0/deno-x86_64-unknown-linux-gnu.zip"],
 )
 
 http_file(

@@ -156,6 +156,7 @@ container_layer(
         "@age//:age-keygen",
         "@smallstep//:step",
         "@shfmt//file",
+        "@deno//:deno",
     ],
     mode = "0o777",
 )
