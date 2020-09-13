@@ -977,8 +977,9 @@ http_archive(
 
 http_archive(
     name = "age",
-    build_file_content = """exports_files(["age"])""",
-    sha256 = "9a5d47b51442d68b718af4c7350f4406cdc087e2236a5b9ae52f37aebede6cdd",
+    build_file_content = """exports_files(["age", "age-keygen"])""",
+    strip_prefix = "age/",
+    sha256 = "52572f12c3f54d2ec3f83adb716b160dd35d62fd282c9124dd79b6058b114349",
     urls = ["https://github.com/FiloSottile/age/releases/download/v1.0.0-beta2/age-v1.0.0-beta2-linux-amd64.tar.gz"],
 )
 
