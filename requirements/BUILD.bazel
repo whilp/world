@@ -5,6 +5,8 @@ deps = [
     requirement("pip"),
     requirement("pip_tools"),
     requirement("setuptools"),
+    requirement("click"),
+    requirement("six"),
 ]
 
 py_binary(
