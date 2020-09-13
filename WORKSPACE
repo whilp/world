@@ -983,6 +983,14 @@ http_archive(
     urls = ["https://github.com/FiloSottile/age/releases/download/v1.0.0-beta2/age-v1.0.0-beta2-linux-amd64.tar.gz"],
 )
 
+http_archive(
+    name = "smallstep",
+    build_file_content = """exports_files(["step"])""",
+    strip_prefix = "step_0.15.2/bin",
+    sha256 = "385041af30080f28baac298f12c3b81f7f7ee21f60878a1caea4aa532329deda",
+    urls = ["https://github.com/smallstep/cli/releases/download/v0.15.2/step_linux_0.15.2_amd64.tar.gz"],
+)
+
 http_file(
     name = "bazel",
     downloaded_file_path = "bazel",
