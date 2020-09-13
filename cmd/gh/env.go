@@ -10,9 +10,10 @@ type Env map[string]string
 
 func environ() Env {
 	env := make(Env)
+	n := 2
 	for _, e := range os.Environ() {
-		fields := strings.SplitN(e, "=", 2)
-		if len(fields) == 2 {
+		fields := strings.SplitN(e, "=", n)
+		if len(fields) == n {
 			env[fields[0]] = fields[1]
 		}
 	}
