@@ -146,9 +146,9 @@ container_layer(
         "@bazel//file",
         "@buildifier//file",
         "@buildozer//file",
-        "@com_github_mdempsky_gocode//:gocode",
         "@com_github_ramya_rao_a_go_outline//:go-outline",
         "@com_github_rogpeppe_godef//:godef",
+        "@com_github_stamblerre_gocode//:gocode",
         "@com_github_uudashr_gopkgs_v2//cmd/gopkgs",
         "@deno",
         "@golangcilint//:golangci-lint",
@@ -164,6 +164,7 @@ container_layer(
     mode = "0o777",
     symlinks = {
         "./usr/local/bin/gostarlark": "starlark",
+        "./usr/local/bin/gocode-gomod": "gocode",
     },
 )
 

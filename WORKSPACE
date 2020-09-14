@@ -606,13 +606,6 @@ go_repository(
 )
 
 go_repository(
-    name = "com_github_mdempsky_gocode",
-    importpath = "github.com/mdempsky/gocode",
-    sum = "h1:P8ngpzttYTqLj67Xt66V+2o5C53fGhXvkbqwFXMFvVI=",
-    version = "v0.0.0-20200405233807-4acdcbdea79d",
-)
-
-go_repository(
     name = "com_github_prometheus_client_model",
     importpath = "github.com/prometheus/client_model",
     sum = "h1:gQz4mCbXsO+nc9n1hCxHcGA3Zx3Eo+UHZoInFGUIXNM=",
@@ -823,6 +816,20 @@ go_repository(
 )
 
 gazelle_dependencies()
+
+go_repository(
+    name = "com_github_keegancsmith_rpc",
+    importpath = "github.com/keegancsmith/rpc",
+    sum = "h1:bXVRk3EzbtrEegTGKxNTc+St1lR7t/Z1PAO8misBnCc=",
+    version = "v1.1.0",
+)
+
+go_repository(
+    name = "com_github_stamblerre_gocode",
+    importpath = "github.com/stamblerre/gocode",
+    sum = "h1:5aTRgkRTOS8mELHoKatkwhfX44OdEV3iwu3FCXyvLzk=",
+    version = "v1.0.0",
+)
 
 http_archive(
     name = "rules_python",
