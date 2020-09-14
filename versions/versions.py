@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import sys
+import urllib.parse
 import urllib.request
 
 ARGS = argparse.ArgumentParser()
@@ -26,6 +27,12 @@ def main(raw_args, env):
             print(f"ignoring version without url: {name}")
             continue
 
+        # Validate URL to protect later check() call.
+        parsed = urllib.parse.urlparse(url)
+        if parsed.scheme != "https":
+            print(f"ignoring url with unexpected scheme for {name}: {url}")
+            continue
+
         old = version.get("sha256")
         print(f"checking version {name} at url {url}")
         new = check(url)
@@ -44,7 +51,10 @@ def replace(name, version, old, new):
 def check(url):
     m = hashlib.sha256()
     req = urllib.request.Request(url, method="GET")
-    with urllib.request.urlopen(req) as response:
+
+    # The caller must check that the URL meets expectations (and in particular,
+    # that its scheme makes sense).
+    with urllib.request.urlopen(req) as response:  # nosec
         m.update(response.read())
     return m.hexdigest()
 
