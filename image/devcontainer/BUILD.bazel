@@ -139,6 +139,8 @@ container_layer(
     directory = "/usr/local/bin",
     files = [
         ":post.sh",
+        "@age",
+        "@age//:age-keygen",
         "@bazel//file",
         "@buildifier//file",
         "@buildozer//file",
@@ -146,19 +148,21 @@ container_layer(
         "@com_github_ramya_rao_a_go_outline//:go-outline",
         "@com_github_rogpeppe_godef//:godef",
         "@com_github_uudashr_gopkgs_v2//cmd/gopkgs",
+        "@deno",
         "@golangcilint//:golangci-lint",
         "@ibazel//file",
+        "@net_starlark_go//cmd/starlark",
         "@org_golang_x_lint//golint",
         "@org_golang_x_tools//cmd/goimports",
         "@org_golang_x_tools//cmd/guru",
         "@shellcheck",
-        "@age//:age",
-        "@age//:age-keygen",
-        "@smallstep//:step",
         "@shfmt//file",
-        "@deno//:deno",
+        "@smallstep//:step",
     ],
     mode = "0o777",
+    symlinks = {
+        "./usr/local/bin/gostarlark": "starlark",
+    },
 )
 
 container_test(

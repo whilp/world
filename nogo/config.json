@@ -23,5 +23,10 @@
     "exclude_files": {
       "/external/": "ignore third party code"
     }
+  },
+  "stdmethods": {
+    "exclude_files": {
+      "/external/": "ignore third party code"
+    }
   }
 }

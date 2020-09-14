@@ -412,8 +412,8 @@ go_repository(
 go_repository(
     name = "org_golang_x_tools",
     importpath = "golang.org/x/tools",
-    sum = "h1:M8mz5B5dntyYZSIscpClTVyMIJbg6kKKIyysZM++kf8=",
-    version = "v0.0.0-20200911193555-6422fca01df9",
+    sum = "h1:3/5GThpuWHBq2GFcurHBWuWlzdbln+Er+cyzGqQAPOs=",
+    version = "v0.0.0-20200913032122-97363e29fc9b",
 )
 
 go_repository(
@@ -813,6 +813,13 @@ go_repository(
     importpath = "9fans.net/go",
     sum = "h1:OcHlKWkAMJEF1ndWLGxp5dnJQkYM/YImUOvsBoz6h5E=",
     version = "v0.0.0-20181112161441-237454027057",
+)
+
+go_repository(
+    name = "net_starlark_go",
+    importpath = "go.starlark.net",
+    sum = "h1:N4eRtIIYHZE5Mw/Km/orb+naLdwAe+lv2HCxRR5rEBw=",
+    version = "v0.0.0-20200901195727-6e684ef5eeee",
 )
 
 gazelle_dependencies()

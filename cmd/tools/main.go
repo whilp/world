@@ -10,6 +10,7 @@ import (
 	_ "github.com/ramya-rao-a/go-outline"
 	_ "github.com/rogpeppe/godef"
 	_ "github.com/uudashr/gopkgs/v2/cmd/gopkgs"
+	_ "go.starlark.net/cmd/starlark"
 	_ "golang.org/x/lint/golint"
 	_ "golang.org/x/tools/cmd/goimports"
 	_ "golang.org/x/tools/cmd/guru"
