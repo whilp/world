@@ -46,14 +46,6 @@ module.exports = {
   },
   regexManagers: [
     {
-      fileMatch: [".devcontainer.json"],
-      labels: ["dependencies", "docker"],
-      matchStrings: [
-        '"image": "(?<depName>.*?):(?<currentValue>.*?)@(?<currentDigest>sha256:[a-f0-9]+)"',
-      ],
-      datasourceTemplate: "docker",
-    },
-    {
       fileMatch: ["^\\.github/workflows/[^/]+\\.ya?ml$"],
       labels: ["dependencies", "docker"],
       matchStrings: [
