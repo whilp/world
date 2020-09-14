@@ -11,6 +11,8 @@ SRCS = [MAIN]
 
 ARGS = [
     "-r",
+    "--format=custom",
+    "--msg-template={relpath}: {line}: {test_id}: {severity} ({confidence} conf): {msg}",
     ".",
 ]
 

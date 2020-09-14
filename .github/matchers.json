@@ -15,6 +15,20 @@
       ]
     },
     {
+      "owner": "python-bandit",
+      "reference": "https://bandit.readthedocs.io/en/latest/formatters/custom.html",
+      "pattern": [
+        {
+          "forMessageTemplate": "{relpath}: {line}: {test_id}: {severity} ({confidence} conf): {msg}",
+          "regexp": "^(.+): (\\d+): (.+): (.+)$",
+          "file": 1,
+          "line": 2,
+          "group": 3,
+          "message": 4
+        }
+      ]
+    },
+    {
       "owner": "python",
       "source": "https://github.com/actions/setup-python/blob/a0a76c4ddb58b6507bfcae9f03a27bee4b305093/.github/python.json#L1-L18",
       "pattern": [
