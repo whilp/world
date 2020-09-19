@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 set -o vi
-export PS1='\w\$ '
+export PROMPT_DIRTRIM=2
+export PS1='\w\n ▶ '
 
 export PATH="$HOME/bin:$PATH"
 
