@@ -37,3 +37,4 @@ jobs:
           RENOVATE_CONFIG_FILE: renovate.js
           RENOVATE_LOGLEVEL: debug
           RENOVATE_TRUSTLEVEL: high
+          XDG_CACHE_HOME: /tmp/.cache
