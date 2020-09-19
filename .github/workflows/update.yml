@@ -26,13 +26,10 @@ jobs:
           bot-installation-id: ${{ secrets.BOT_INSTALLATION_ID }}
           bot-client-id: ${{ secrets.BOT_CLIENT_ID }}
           bot-client-secret: ${{ secrets.BOT_CLIENT_SECRET }}
-      - name: Prep
-        run: |
-          mkdir ~/.cache
-          chmod o+w ~/.cache
       - name: renovate
         uses: docker://renovate/renovate:latest@sha256:7cdd69a58a68682d6d038b35eba579eeaa73752cb57480d5c3bec7f82ab0abb2
         env:
+          GOCACHE: /tmp/go-build
           RENOVATE_REPOSITORIES: whilp/world
           RENOVATE_GITAUTHOR: "Renovate Bot <bot@renovate.com>"
           RENOVATE_USERNAME: renovatebot
