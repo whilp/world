@@ -11,7 +11,7 @@ jobs:
   buildifier:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.2
+      - uses: actions/checkout@v2.3.3
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/buildifier:latest@sha256:c9801dbfb119bbbbfedaa43314b9d4cd27dfde7b0c9a5b93fe958e9d8e46d88c
@@ -20,7 +20,7 @@ jobs:
   black:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.2
+      - uses: actions/checkout@v2.3.3
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/black:latest@sha256:aba7829a5d074b12a697ee21811e7c9b575795d5778d47b069e2b48d76e7b276
@@ -29,7 +29,7 @@ jobs:
   bandit:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.2
+      - uses: actions/checkout@v2.3.3
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/bandit:latest@sha256:d84b88b9734eb3248c5e8b7f2b03f7ef28283e174291ad68fa864a52419f072c
@@ -38,7 +38,7 @@ jobs:
   shfmt:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.2
+      - uses: actions/checkout@v2.3.3
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/shfmt:latest@sha256:d1e0aef522a005f61480a8f5e76fe1b7caaa8d9a38e0b527d42b39b4ef59554a
@@ -47,7 +47,7 @@ jobs:
   prettier:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.2
+      - uses: actions/checkout@v2.3.3
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/prettier:latest@sha256:0c828acaa151674c9ea43abded71a640c2a7a5a84e5491dad3c81061b2db249d
@@ -56,7 +56,7 @@ jobs:
   eslint:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.2
+      - uses: actions/checkout@v2.3.3
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/eslint:latest@sha256:03bfeccdc327304001c0245c1a4b6b3f4f345a1f364b716f03aac7fcdeac93c1
@@ -65,7 +65,7 @@ jobs:
   golangci-lint:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.2
+      - uses: actions/checkout@v2.3.3
       - run: .github/matchers.sh
       - name: clean up
         run: rm -rf cmd/tools
