@@ -1032,8 +1032,8 @@ http_file(
     name = "buildozer",
     downloaded_file_path = "buildozer",
     executable = True,
-    sha256 = "15bc5b638b56d618da378c35f07873221590a43814a8d10f21c0b1ffe5600283",
-    urls = ["https://github.com/bazelbuild/buildtools/releases/download/3.4.0/buildozer"],
+    sha256 = "0a5a33891dd467560d00e5d162972ab9e4eca6974f061b1b34225e5bc5e978f4",
+    urls = ["https://github.com/bazelbuild/buildtools/releases/download/3.5.0/buildozer"],
 )
 
 http_file(
