@@ -1008,8 +1008,8 @@ http_archive(
 http_archive(
     name = "deno",
     build_file_content = """exports_files(["deno"])""",
-    sha256 = "78ceea28bc692836f62423fd90f397daf1f6b49c0bee01cb1605da64e908b0f7",
-    urls = ["https://github.com/denoland/deno/releases/download/v1.4.1/deno-x86_64-unknown-linux-gnu.zip"],
+    sha256 = "8075a90662237eb0cef406bdb22b0774d25617627afb24e942f58ae21234fddb",
+    urls = ["https://github.com/denoland/deno/releases/download/v1.4.2/deno-x86_64-unknown-linux-gnu.zip"],
 )
 
 http_file(
