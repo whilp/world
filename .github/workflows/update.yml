@@ -31,7 +31,7 @@ jobs:
           mkdir ~/.cache
           chmod o+w ~/.cache
       - name: renovate
-        uses: docker://renovate/renovate:latest@sha256:67afc930374fef572c855ff989b99e143cfe74afed3a906eccdc02d70271b36b
+        uses: docker://renovate/renovate:latest@sha256:0594765cae2d3939fe0d3c89a63086c804efc8b7643ec5297e927fe0b8657c62
         env:
           RENOVATE_REPOSITORIES: whilp/world
           RENOVATE_GITAUTHOR: "Renovate Bot <bot@renovate.com>"
