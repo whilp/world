@@ -932,7 +932,7 @@ load(
 # Make sure we get a base image with python3.7.
 container_pull(
     name = "py3_image_base",
-    digest = "sha256:a56d922af3e76ce451921e03d40c1f77089e3075f4a8f0ae64cde0c7c814d138",
+    digest = "sha256:33ddd28c748279670ad4d7ca9ad088c233f2f7bef6daf0a6ed00fc89490dffce",
     registry = "gcr.io",
     repository = "distroless/python3-debian10",
     tag = "latest",
