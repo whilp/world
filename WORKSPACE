@@ -967,7 +967,7 @@ _nodejs_image_repos()
 
 container_pull(
     name = "ubuntu18.04",
-    digest = "sha256:6654ae91f6ffadc48279273becce4ceba3c8f7cd312230f28b3082ecb2d3dec5",
+    digest = "sha256:45c6f8f1b2fe15adaa72305616d69a6cd641169bc8b16886756919e7c01fa48b",
     registry = "docker.io",
     repository = "library/ubuntu",
     tag = "18.04",
