@@ -1016,8 +1016,8 @@ http_file(
     name = "bazel",
     downloaded_file_path = "bazel",
     executable = True,
-    sha256 = "7ecb6f51c02dad0c343aa8dca804cf07b42b56e5ce4521092d83fe1dbd6a6581",
-    urls = ["https://github.com/bazelbuild/bazel/releases/download/3.5.0/bazel-3.5.0-linux-x86_64"],
+    sha256 = "b2985c3ad1ec0284a66749b635ac11b323bc6b964d2cfcf33721746243a19530",
+    urls = ["https://github.com/bazelbuild/bazel/releases/download/3.6.0/bazel-3.6.0-linux-x86_64"],
 )
 
 http_file(
