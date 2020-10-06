@@ -9,6 +9,7 @@ on:
 jobs:
   push:
     strategy:
+      fail-fast: false
       matrix:
         image:
           - image/devcontainer
