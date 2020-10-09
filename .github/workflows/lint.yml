@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@v2.3.3
       - run: .github/matchers.sh
       - name: lint
-        uses: docker://ghcr.io/whilp/buildifier:latest@sha256:b6484379db673403315f677eaa31b8efcd85ad3b19eac9f721758336d75ee52f
+        uses: docker://ghcr.io/whilp/buildifier:latest@sha256:500fd3fd6c4b79f6995341a40f034bf4e4896d543a88173e2817d2ff462b3db5
       - run: git diff --exit-code
 
   black:
