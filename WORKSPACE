@@ -947,7 +947,7 @@ load(
 
 container_pull(
     name = "nodejs_image_base",
-    digest = "sha256:a0c09ed65e315c7afe200a28f94c5f9a1dff1d6417619df3786c9211670928ed",
+    digest = "sha256:442d363e5a61852d3e4efca5b503a1b448ffd82c15b75dfb843751bb82a66ed9",
     registry = "gcr.io",
     repository = "google-appengine/debian9",
     tag = "latest",
