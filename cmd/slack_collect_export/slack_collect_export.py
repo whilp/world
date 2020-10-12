@@ -63,10 +63,7 @@ class Message(t.NamedTuple):
         text = Text(message.get("text", "")).safe_substitute(mapping)
 
         return cls(
-            channel=channel,
-            text=text,
-            timestamp=to_timestamp(message.get("ts", "")),
-            user=mapping.get(user, user),
+            channel=channel, text=text, timestamp=to_timestamp(message.get("ts", "")), user=mapping.get(user, user),
         )
 
     def writerow(self, writer: csv.DictWriter):
