@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2.3.3
-      - uses: actions/setup-python@v2.1.2
+      - uses: actions/setup-python@v2.1.3
         with:
           python-version: "3.7"
       - run: .github/matchers.sh
@@ -31,7 +31,7 @@ jobs:
           mkdir ~/.cache
           chmod o+w ~/.cache
       - name: renovate
-        uses: docker://renovate/renovate:latest@sha256:0594765cae2d3939fe0d3c89a63086c804efc8b7643ec5297e927fe0b8657c62
+        uses: docker://renovate/renovate:latest@sha256:b6fcc78af0bfde5d8fa00c1774f3435a9b000d250852f4ab56026e876e5de627
         env:
           RENOVATE_REPOSITORIES: whilp/world
           RENOVATE_GITAUTHOR: "Renovate Bot <bot@renovate.com>"

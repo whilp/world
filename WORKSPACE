@@ -27,10 +27,10 @@ go_register_toolchains(
 
 http_archive(
     name = "bazel_gazelle",
-    sha256 = "72d339ff874a382f819aaea80669be049069f502d6c726a07759fdca99653c48",
+    sha256 = "b85f48fa105c4403326e9525ad2b2cc437babaa6e15a3fc0b1dbab0ab064bc7c",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.22.1/bazel-gazelle-v0.22.1.tar.gz",
-        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.22.1/bazel-gazelle-v0.22.1.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.22.2/bazel-gazelle-v0.22.2.tar.gz",
+        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.22.2/bazel-gazelle-v0.22.2.tar.gz",
     ],
 )
 
@@ -866,8 +866,8 @@ rules_pkg_dependencies()
 
 http_archive(
     name = "build_bazel_rules_nodejs",
-    sha256 = "4952ef879704ab4ad6729a29007e7094aef213ea79e9f2e94cbe1c9a753e63ef",
-    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/2.2.0/rules_nodejs-2.2.0.tar.gz"],
+    sha256 = "64a71a64ac58b8969bb19b1c9258a973b6433913e958964da698943fb5521d98",
+    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/2.2.1/rules_nodejs-2.2.1.tar.gz"],
 )
 
 load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories", "yarn_install")
@@ -916,7 +916,7 @@ load(
 
 container_pull(
     name = "cc_image_base",
-    digest = "sha256:fadabd2ab173bad2016a491f6f85db52cbe0108e296c44b0f5c9468e0cb972bd",
+    digest = "sha256:c4014bdecaede16f767f8cfc496f968736bc08632bf54a37c004820e85cd8209",
     registry = "gcr.io",
     repository = "distroless/cc",
     tag = "latest",
@@ -932,7 +932,7 @@ load(
 # Make sure we get a base image with python3.7.
 container_pull(
     name = "py3_image_base",
-    digest = "sha256:a56d922af3e76ce451921e03d40c1f77089e3075f4a8f0ae64cde0c7c814d138",
+    digest = "sha256:33ddd28c748279670ad4d7ca9ad088c233f2f7bef6daf0a6ed00fc89490dffce",
     registry = "gcr.io",
     repository = "distroless/python3-debian10",
     tag = "latest",
@@ -947,7 +947,7 @@ load(
 
 container_pull(
     name = "nodejs_image_base",
-    digest = "sha256:c78d7ef79a59ce0234b4268a235119621ed804498ed37ed589edf47ea9257f24",
+    digest = "sha256:442d363e5a61852d3e4efca5b503a1b448ffd82c15b75dfb843751bb82a66ed9",
     registry = "gcr.io",
     repository = "google-appengine/debian9",
     tag = "latest",
@@ -957,7 +957,7 @@ _nodejs_image_repos()
 
 container_pull(
     name = "go_image_static",
-    digest = "sha256:08cce4d65b19780e10b555578a0f9c9af51310308ec31e648577122d40e6922a",
+    digest = "sha256:f4050ae771417b5a91d3906d9a9d2e7d04ccf1096d8cf88812ff15097ffde67a",
     registry = "gcr.io",
     repository = "distroless/static",
     tag = "latest",
@@ -967,7 +967,7 @@ _nodejs_image_repos()
 
 container_pull(
     name = "ubuntu18.04",
-    digest = "sha256:6654ae91f6ffadc48279273becce4ceba3c8f7cd312230f28b3082ecb2d3dec5",
+    digest = "sha256:45c6f8f1b2fe15adaa72305616d69a6cd641169bc8b16886756919e7c01fa48b",
     registry = "docker.io",
     repository = "library/ubuntu",
     tag = "18.04",
@@ -1008,16 +1008,16 @@ http_archive(
 http_archive(
     name = "deno",
     build_file_content = """exports_files(["deno"])""",
-    sha256 = "8075a90662237eb0cef406bdb22b0774d25617627afb24e942f58ae21234fddb",
-    urls = ["https://github.com/denoland/deno/releases/download/v1.4.2/deno-x86_64-unknown-linux-gnu.zip"],
+    sha256 = "db69a4548cc31c093b96ed9c69a6a5b136285e84be315cbe95d8a3ad1caeea09",
+    urls = ["https://github.com/denoland/deno/releases/download/v1.4.6/deno-x86_64-unknown-linux-gnu.zip"],
 )
 
 http_file(
     name = "bazel",
     downloaded_file_path = "bazel",
     executable = True,
-    sha256 = "7ecb6f51c02dad0c343aa8dca804cf07b42b56e5ce4521092d83fe1dbd6a6581",
-    urls = ["https://github.com/bazelbuild/bazel/releases/download/3.5.0/bazel-3.5.0-linux-x86_64"],
+    sha256 = "b2985c3ad1ec0284a66749b635ac11b323bc6b964d2cfcf33721746243a19530",
+    urls = ["https://github.com/bazelbuild/bazel/releases/download/3.6.0/bazel-3.6.0-linux-x86_64"],
 )
 
 http_file(
