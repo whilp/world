@@ -106,6 +106,6 @@ module.exports = {
     {
       packagePatterns: ["buildifier", "buildozer"],
       versioning: "node",
-    }
+    },
   ],
 };
