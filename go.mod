@@ -12,5 +12,5 @@ require (
 	go.starlark.net v0.0.0-20200901195727-6e684ef5eeee
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b
 	golang.org/x/oauth2 v0.0.0-20200902213428-5d25da1a8d43
-	golang.org/x/tools v0.0.0-20200913032122-97363e29fc9b
+	golang.org/x/tools 5bd05386311b
 )
