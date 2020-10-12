@@ -1024,16 +1024,16 @@ http_file(
     name = "buildifier",
     downloaded_file_path = "buildifier",
     executable = True,
-    sha256 = "5d47f5f452bace65686448180ff63b4a6aaa0fb0ce0fe69976888fa4d8606940",
-    urls = ["https://github.com/bazelbuild/buildtools/releases/download/3.4.0/buildifier"],
+    sha256 = "f9a9c082b8190b9260fce2986aeba02a25d41c00178855a1425e1ce6f1169843",
+    urls = ["https://github.com/bazelbuild/buildtools/releases/download/3.5.0/buildifier"],
 )
 
 http_file(
     name = "buildozer",
     downloaded_file_path = "buildozer",
     executable = True,
-    sha256 = "15bc5b638b56d618da378c35f07873221590a43814a8d10f21c0b1ffe5600283",
-    urls = ["https://github.com/bazelbuild/buildtools/releases/download/3.4.0/buildozer"],
+    sha256 = "0a5a33891dd467560d00e5d162972ab9e4eca6974f061b1b34225e5bc5e978f4",
+    urls = ["https://github.com/bazelbuild/buildtools/releases/download/3.5.0/buildozer"],
 )
 
 http_file(
