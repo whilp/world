@@ -18,6 +18,7 @@ jobs:
           - cmd/black
           - cmd/buildifier
           - cmd/prettier
+          - cmd/pyright
           - cmd/eslint
           - cmd/bot
           - cmd/gh

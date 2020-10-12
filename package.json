@@ -16,6 +16,7 @@
     "eslint": "7.11.0",
     "jest": "26.5.3",
     "prettier": "2.1.2",
+    "pyright": "1.1.78",
     "source-map-support": "0.5.19",
     "typescript": "4.0.3"
   }

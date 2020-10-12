@@ -74,3 +74,12 @@ jobs:
       - name: restore
         run: git checkout cmd/tools
       - run: git diff --exit-code
+
+  pyright:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2.3.3
+      - run: .github/matchers.sh
+      - name: lint
+        uses: docker://ghcr.io/whilp/pyright:latest@sha256:38e4026262036c8a63246d368af782f5b27b974c315c0eef14f2e70a7bab8749
+      - run: git diff --exit-code
