@@ -101,9 +101,9 @@ typed-ast==1.4.1 \
     --hash=sha256:8c8aaad94455178e3187ab22c8b01a3837f8ee50e09cf31f1ba129eb293ec30b \
     --hash=sha256:bcd3b13b56ea479b3650b82cabd6b5343a625b0ced5429e4ccad28a8973f301b \
     # via black
-zipp==3.3.0 \
-    --hash=sha256:64ad89efee774d1897a58607895d80789c59778ea02185dd846ac38394a8642b \
-    --hash=sha256:eed8ec0b8d1416b2ca33516a37a08892442f3954dee131e92cfd92d8fe3e7066
+zipp==3.3.1 \
+    --hash=sha256:16522f69653f0d67be90e8baa4a46d66389145b734345d68a257da53df670903 \
+    --hash=sha256:c1532a8030c32fd52ff6a288d855fe7adef5823ba1d26a29a68fd6314aa72baa
 
 # The following packages are considered to be unsafe in a requirements file:
 pip==20.2.3 \
