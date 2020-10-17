@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@bazel/typescript": "2.2.1",
+    "@bazel/typescript": "2.2.2",
     "@octokit/auth-app": "2.6.0",
     "@octokit/rest": "18.0.6",
     "@types/jest": "26.0.14",
