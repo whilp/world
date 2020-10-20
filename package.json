@@ -6,7 +6,7 @@
     "@bazel/typescript": "2.2.2",
     "@octokit/auth-app": "2.6.0",
     "@octokit/rest": "18.0.9",
-    "@types/jest": "26.0.14",
+    "@types/jest": "26.0.15",
     "@types/node": "14.14.6",
     "@typescript-eslint/eslint-plugin": "4.4.1",
     "@typescript-eslint/parser": "4.4.1",
