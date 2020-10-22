@@ -1000,9 +1000,9 @@ http_archive(
 http_archive(
     name = "smallstep",
     build_file_content = """exports_files(["step"])""",
-    sha256 = "385041af30080f28baac298f12c3b81f7f7ee21f60878a1caea4aa532329deda",
-    strip_prefix = "step_0.15.2/bin",
-    urls = ["https://github.com/smallstep/cli/releases/download/v0.15.2/step_linux_0.15.2_amd64.tar.gz"],
+    sha256 = "5b2d244bc96cf33b8b69e5f46ec14d50691dca7cc559304a82d3da34c772fb0c",
+    strip_prefix = "step_0.15.3/bin",
+    urls = ["https://github.com/smallstep/cli/releases/download/v0.15.3/step_linux_0.15.3_amd64.tar.gz"],
 )
 
 http_archive(
