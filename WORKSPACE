@@ -1062,8 +1062,8 @@ http_file(
     name = "shfmt",
     downloaded_file_path = "shfmt",
     executable = True,
-    sha256 = "c5794c1ac081f0028d60317454fe388068ab5af7740a83e393515170a7157dce",
-    urls = ["https://github.com/mvdan/sh/releases/download/v3.1.2/shfmt_v3.1.2_linux_amd64"],
+    sha256 = "84cf01d220bfb606d52af983e1afdbf6e25aff4a8aff6d5cf053dad29a1740f1",
+    urls = ["https://github.com/mvdan/sh/releases/download/v3.2.0/shfmt_v3.2.0_linux_amd64"],
 )
 
 http_file(
