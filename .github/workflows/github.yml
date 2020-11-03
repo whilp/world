@@ -13,7 +13,7 @@ jobs:
   check:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.3
+      - uses: actions/checkout@v2.3.4
       - run: .github/matchers.sh
       - name: gh
         uses: docker://ghcr.io/whilp/gh:latest@sha256:249ea1483755b7f917b06da56e51251ed36baf1ae093e86239af83fdee1dffbf
