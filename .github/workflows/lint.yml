@@ -32,7 +32,7 @@ jobs:
       - uses: actions/checkout@v2.3.4
       - run: .github/matchers.sh
       - name: lint
-        uses: docker://ghcr.io/whilp/bandit:latest@sha256:60a9e0deed87833eea24495e15409931da9a9826eda078f1d4bb11182ada002a
+        uses: docker://ghcr.io/whilp/bandit:latest@sha256:d0d3adc7149b702e97e010bd8ed57fe7b7646b37afc4300d46bab57c24aaabc4
       - run: git diff --exit-code
 
   shfmt:
