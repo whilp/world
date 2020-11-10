@@ -833,26 +833,18 @@ go_repository(
 
 http_archive(
     name = "rules_python",
-    sha256 = "e46612e9bb0dae8745de6a0643be69e8665a03f63163ac6610c210e80d14c3e4",
-    url = "https://github.com/bazelbuild/rules_python/releases/download/0.0.3/rules_python-0.0.3.tar.gz",
+    sha256 = "b6d46438523a3ec0f3cead544190ee13223a52f6a6765a29eae7b7cc24cc83a0",
+    url = "https://github.com/bazelbuild/rules_python/releases/download/0.1.0/rules_python-0.1.0.tar.gz",
 )
 
-load("@rules_python//python:repositories.bzl", "py_repositories")
-
-py_repositories()
-
-load("@rules_python//python:pip.bzl", "pip3_import", "pip_repositories")
+load("@rules_python//python:pip.bzl", "pip_install", "pip_repositories")
 
 pip_repositories()
 
-pip3_import(
+pip_install(
     name = "pypi",
     requirements = "//:requirements.txt",
 )
-
-load("@pypi//:requirements.bzl", "pip_install")
-
-pip_install()
 
 http_archive(
     name = "rules_pkg",
