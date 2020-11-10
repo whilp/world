@@ -837,9 +837,7 @@ http_archive(
     url = "https://github.com/bazelbuild/rules_python/releases/download/0.1.0/rules_python-0.1.0.tar.gz",
 )
 
-load("@rules_python//python:pip.bzl", "pip_install", "pip_repositories")
-
-pip_repositories()
+load("@rules_python//python:pip.bzl", "pip_install")
 
 pip_install(
     name = "pypi",
@@ -892,10 +890,6 @@ container_repositories()
 load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps = "deps")
 
 container_deps()
-
-load("@io_bazel_rules_docker//repositories:pip_repositories.bzl", "pip_deps")
-
-pip_deps()
 
 load(
     "@io_bazel_rules_docker//container:container.bzl",
