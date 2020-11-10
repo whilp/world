@@ -10,6 +10,7 @@
   ],
   "postCreateCommand": "/usr/local/bin/post.sh",
   "extensions": [
+    "bierner.docs-view",
     "dbaeumer.vscode-eslint",
     "eamodio.gitlens",
     "esbenp.prettier-vscode",
