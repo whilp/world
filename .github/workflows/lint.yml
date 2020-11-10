@@ -11,7 +11,7 @@ jobs:
   buildifier:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.3
+      - uses: actions/checkout@v2.3.4
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/buildifier:latest@sha256:500fd3fd6c4b79f6995341a40f034bf4e4896d543a88173e2817d2ff462b3db5
@@ -20,25 +20,25 @@ jobs:
   black:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.3
+      - uses: actions/checkout@v2.3.4
       - run: .github/matchers.sh
       - name: lint
-        uses: docker://ghcr.io/whilp/black:latest@sha256:dcfeb3b8e6b1f8cba87a385974f5ca95173665be16896e969f1fcc99e0401c33
+        uses: docker://ghcr.io/whilp/black:latest@sha256:b00d2c66694310708337468a46a6d5e2cadfe433fd9d7b1afdba2f4e2a28e199
       - run: git diff --exit-code
 
   bandit:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.3
+      - uses: actions/checkout@v2.3.4
       - run: .github/matchers.sh
       - name: lint
-        uses: docker://ghcr.io/whilp/bandit:latest@sha256:8a9516881d1fe084541af7cc2bc4f11e911592ad9cc5c7b18ed0633e153f3a97
+        uses: docker://ghcr.io/whilp/bandit:latest@sha256:60a9e0deed87833eea24495e15409931da9a9826eda078f1d4bb11182ada002a
       - run: git diff --exit-code
 
   shfmt:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.3
+      - uses: actions/checkout@v2.3.4
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/shfmt:latest@sha256:b0b0ea60661140ff3b35da9b23ff9af51eb58db4f31daddaf8174e677dbc2825
@@ -47,25 +47,25 @@ jobs:
   prettier:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.3
+      - uses: actions/checkout@v2.3.4
       - run: .github/matchers.sh
       - name: lint
-        uses: docker://ghcr.io/whilp/prettier:latest@sha256:344802f4691019ce840b36e21db016eb2bb0f9a14089fe7c5893890a312cb948
+        uses: docker://ghcr.io/whilp/prettier:latest@sha256:a5d5289413f05933657ab7bdffa36046ae594792d01479b6c637358d4841cbac
       - run: git diff --exit-code
 
   eslint:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.3
+      - uses: actions/checkout@v2.3.4
       - run: .github/matchers.sh
       - name: lint
-        uses: docker://ghcr.io/whilp/eslint:latest@sha256:741af2f665299911cb6dd672a4e40386b133e86ae146b0d831046e8c594fd7a8
+        uses: docker://ghcr.io/whilp/eslint:latest@sha256:070960fc87c61374eeaaf4fb5adfdec5d5f09d798cb74368aba40c5c78a91372
       - run: git diff --exit-code
 
   golangci-lint:
     runs-on: ubuntu-18.04
     steps:
-      - uses: actions/checkout@v2.3.3
+      - uses: actions/checkout@v2.3.4
       - run: .github/matchers.sh
       - name: clean up
         run: rm -rf cmd/tools

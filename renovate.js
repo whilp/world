@@ -103,5 +103,9 @@ module.exports = {
       packagePatterns: ["yarnpkg/yarn"],
       allowedVersions: "<=1.22.4",
     },
+    {
+      packagePatterns: ["buildifier", "buildozer"],
+      versioning: "node",
+    },
   ],
 };

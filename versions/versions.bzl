@@ -45,7 +45,7 @@ def versions():
         buildifier = version(
             datasource = "github-releases",
             name = "bazelbuild/buildtools",
-            version = "3.4.0",
+            version = "3.5.0",
             sha256 = "5d47f5f452bace65686448180ff63b4a6aaa0fb0ce0fe69976888fa4d8606940",
             url = GITHUB_RELEASE_URL,
             asset = "buildifier",
@@ -53,7 +53,7 @@ def versions():
         buildozer = version(
             datasource = "github-releases",
             name = "bazelbuild/buildtools",
-            version = "3.4.0",
+            version = "3.5.0",
             sha256 = "15bc5b638b56d618da378c35f07873221590a43814a8d10f21c0b1ffe5600283",
             url = GITHUB_RELEASE_URL,
             asset = "buildozer",
@@ -61,7 +61,7 @@ def versions():
         ibazel = version(
             datasource = "github-releases",
             name = "bazelbuild/bazel-watcher",
-            version = "v0.13.2",
+            version = "v0.14.0",
             sha256 = "470abaa5dc5c93d20c22ab72cdd305e90c9b3ff7e765964836ed017b2a9aa2dc",
             url = GITHUB_RELEASE_URL,
             asset = "ibazel_linux_amd64",
@@ -85,7 +85,7 @@ def versions():
         shfmt = version(
             datasource = "github-releases",
             name = "mvdan/sh",
-            version = "v3.1.2",
+            version = "v3.2.0",
             sha256 = "c5794c1ac081f0028d60317454fe388068ab5af7740a83e393515170a7157dce",
             url = GITHUB_RELEASE_URL,
             asset = "shfmt_{version}_linux_amd64",
