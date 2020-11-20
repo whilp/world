@@ -36,9 +36,9 @@ jobs:
       - run: .github/matchers.sh
       - name: bazel run ${{ matrix.image }}:image
         run: ./tools/bazel run --config=ci ${{ matrix.image }}:image
-      - uses: anchore/scan-action@v2
+      - uses: anchore/scan-action@v2.0.2
         with:
-          image-reference: bazel/${{ matrix.image }}:image
+          image: bazel/${{ matrix.image }}:image
           fail-build: true
           include-app-packages: true
           acs-report-enable: true
