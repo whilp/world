@@ -85,7 +85,7 @@ def versions():
         shfmt = version(
             datasource = "github-releases",
             name = "mvdan/sh",
-            version = "v3.2.0",
+            version = "v3.2.1",
             sha256 = "c5794c1ac081f0028d60317454fe388068ab5af7740a83e393515170a7157dce",
             url = GITHUB_RELEASE_URL,
             asset = "shfmt_{version}_linux_amd64",
