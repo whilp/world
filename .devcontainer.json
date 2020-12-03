@@ -12,7 +12,7 @@
   "extensions": [
     "bierner.docs-view",
     "dbaeumer.vscode-eslint",
-    "eamodio.gitlens",
+    "eamodio.gitlens-insiders",
     "esbenp.prettier-vscode",
     "foxundermoon.shell-format",
     "github.vscode-pull-request-github",
