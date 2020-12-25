@@ -59,7 +59,7 @@ jobs:
       - uses: actions/checkout@v2.3.4
       - run: .github/matchers.sh
       - name: lint
-        uses: docker://ghcr.io/whilp/eslint:latest@sha256:e5940581c8009bb8df83dc328fd212ffe0eee6b6e4b605a1107cc9df85026c5b
+        uses: docker://ghcr.io/whilp/eslint:latest@sha256:e48222b2e26ccd34a5cfd820c735bf09ecd76dab72e7fe3a28adbb6e64f2b65b
       - run: git diff --exit-code
 
   golangci-lint:
