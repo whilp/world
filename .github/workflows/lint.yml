@@ -50,7 +50,7 @@ jobs:
       - uses: actions/checkout@v2.3.4
       - run: .github/matchers.sh
       - name: lint
-        uses: docker://ghcr.io/whilp/prettier:latest@sha256:4d7174c403ef0b7b6634ac63352cf8e29cafa5a0861b1d0c9f1076758982f7e5
+        uses: docker://ghcr.io/whilp/prettier:latest@sha256:680b4bb8987bbf91b33a9891a9ebb8056cc5c757eb2d8821fd590ef64e54ac40
       - run: git diff --exit-code
 
   eslint:
