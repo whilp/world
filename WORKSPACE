@@ -856,8 +856,8 @@ rules_pkg_dependencies()
 
 http_archive(
     name = "build_bazel_rules_nodejs",
-    sha256 = "452bef42c4b2fbe0f509a2699ffeb3ae2c914087736b16314dbd356f3641d7e5",
-    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/2.3.0/rules_nodejs-2.3.0.tar.gz"],
+    sha256 = "6142e9586162b179fdd570a55e50d1332e7d9c030efd853453438d607569721d",
+    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/3.0.0/rules_nodejs-3.0.0.tar.gz"],
 )
 
 load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories", "yarn_install")
@@ -902,7 +902,7 @@ load(
 
 container_pull(
     name = "cc_image_base",
-    digest = "sha256:0020aa5a3515c9af9ed64559a8e9b797630c3aed5ae00f98954f2274e6af9295",
+    digest = "sha256:0169cff13c4ff1c309c7481a876b4dc52e088ec1daa51e39aea4ee7a4242e3f7",
     registry = "gcr.io",
     repository = "distroless/cc",
     tag = "latest",
@@ -918,7 +918,7 @@ load(
 # Make sure we get a base image with python3.7.
 container_pull(
     name = "py3_image_base",
-    digest = "sha256:3e12ce5dbb61e15db6af8597c965cb337a714f6bff13eba880e4b3297f290f80",
+    digest = "sha256:7ddcc4ee5d620d49f20aa13f39cde5a32d2b9b2fd02c8d8ea900acb3f378f6a4",
     registry = "gcr.io",
     repository = "distroless/python3-debian10",
     tag = "latest",
@@ -994,16 +994,16 @@ http_archive(
 http_archive(
     name = "deno",
     build_file_content = """exports_files(["deno"])""",
-    sha256 = "ad0f694425d51b051e71d4027636dbad601283b7f695e7e0e8c7800fd1ea946c",
-    urls = ["https://github.com/denoland/deno/releases/download/v1.5.2/deno-x86_64-unknown-linux-gnu.zip"],
+    sha256 = "03c439ac146991a1ac48a4327ec4c332bef449a07e21e8e4d498e6eabf44cd7f",
+    urls = ["https://github.com/denoland/deno/releases/download/v1.6.2/deno-x86_64-unknown-linux-gnu.zip"],
 )
 
 http_file(
     name = "bazel",
     downloaded_file_path = "bazel",
     executable = True,
-    sha256 = "b7583eec83cc38302997098a40b8c870c37e0ab971a83cb3364c754a178b74ec",
-    urls = ["https://github.com/bazelbuild/bazel/releases/download/3.7.0/bazel-3.7.0-linux-x86_64"],
+    sha256 = "70dc0bee198a4c3d332925a32d464d9036a831977501f66d4996854ad4e4fc0d",
+    urls = ["https://github.com/bazelbuild/bazel/releases/download/3.7.2/bazel-3.7.2-linux-x86_64"],
 )
 
 http_file(
