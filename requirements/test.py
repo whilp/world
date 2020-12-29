@@ -26,7 +26,7 @@ class TestCase(unittest.TestCase):
 
 
 def run(args, env):
-    import compile
+    from . import compile
 
     try:
         return compile.main(["test-prog"] + args, env)
