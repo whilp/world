@@ -16,10 +16,10 @@ def main(args, env):
 
 
 def run(args, env):
-    import piptools.scripts.compile as pip_compile
+    import piptools.scripts.compile as pip_compile  # type: ignore
 
     try:
-        return pip_compile.cli(args)
+        return pip_compile.cli(args)  # type: ignore
     except SystemExit:
         pass
 

@@ -6,7 +6,7 @@ import sys
 top = sys.path.pop(0)
 sys.path.append(top)
 
-import black
+import black  # type: ignore
 
 if __name__ == "__main__":
-    black.patched_main()
+    black.patched_main()  # type: ignore
