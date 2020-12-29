@@ -10,6 +10,7 @@ module.exports = {
   logLevel: "debug",
   pinDigests: true,
   prHourlyLimit: 15,
+  rebaseWhen: "behind-base-branch",
   enabledManagers: [
     "github-actions",
     "bazel",
