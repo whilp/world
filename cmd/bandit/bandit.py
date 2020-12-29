@@ -6,7 +6,7 @@ import sys
 top = sys.path.pop(0)
 sys.path.append(top)
 
-import bandit.cli.main
+import bandit.cli.main  # type: ignore
 
 if __name__ == "__main__":
-    bandit.cli.main.main()
+    bandit.cli.main.main()  # type: ignore
