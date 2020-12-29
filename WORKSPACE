@@ -846,8 +846,8 @@ pip_install(
 
 http_archive(
     name = "rules_pkg",
-    sha256 = "aeca78988341a2ee1ba097641056d168320ecc51372ef7ff8e64b139516a4937",
-    url = "https://github.com/bazelbuild/rules_pkg/releases/download/0.2.6-1/rules_pkg-0.2.6.tar.gz",
+    sha256 = "6b5969a7acd7b60c02f816773b06fcf32fbe8ba0c7919ccdc2df4f8fb923804a",
+    url = "https://github.com/bazelbuild/rules_pkg/releases/download/0.3.0/rules_pkg-0.3.0.tar.gz",
 )
 
 load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
@@ -856,8 +856,8 @@ rules_pkg_dependencies()
 
 http_archive(
     name = "build_bazel_rules_nodejs",
-    sha256 = "452bef42c4b2fbe0f509a2699ffeb3ae2c914087736b16314dbd356f3641d7e5",
-    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/2.3.0/rules_nodejs-2.3.0.tar.gz"],
+    sha256 = "6142e9586162b179fdd570a55e50d1332e7d9c030efd853453438d607569721d",
+    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/3.0.0/rules_nodejs-3.0.0.tar.gz"],
 )
 
 load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories", "yarn_install")
@@ -902,7 +902,7 @@ load(
 
 container_pull(
     name = "cc_image_base",
-    digest = "sha256:0020aa5a3515c9af9ed64559a8e9b797630c3aed5ae00f98954f2274e6af9295",
+    digest = "sha256:0169cff13c4ff1c309c7481a876b4dc52e088ec1daa51e39aea4ee7a4242e3f7",
     registry = "gcr.io",
     repository = "distroless/cc",
     tag = "latest",
@@ -918,7 +918,7 @@ load(
 # Make sure we get a base image with python3.7.
 container_pull(
     name = "py3_image_base",
-    digest = "sha256:3e12ce5dbb61e15db6af8597c965cb337a714f6bff13eba880e4b3297f290f80",
+    digest = "sha256:7ddcc4ee5d620d49f20aa13f39cde5a32d2b9b2fd02c8d8ea900acb3f378f6a4",
     registry = "gcr.io",
     repository = "distroless/python3-debian10",
     tag = "latest",
@@ -953,7 +953,7 @@ _nodejs_image_repos()
 
 container_pull(
     name = "ubuntu18.04",
-    digest = "sha256:45c6f8f1b2fe15adaa72305616d69a6cd641169bc8b16886756919e7c01fa48b",
+    digest = "sha256:a7fa45fb43d471f4e66c5b53b1b9b0e02f7f1d37a889a41bbe1601fac70cb54e",
     registry = "docker.io",
     repository = "library/ubuntu",
     tag = "18.04",
@@ -970,9 +970,9 @@ http_archive(
 http_archive(
     name = "golangcilint",
     build_file_content = """exports_files(["golangci-lint"])""",
-    sha256 = "e7ab86d833bf9faed39801ab3b5cd294f026d26f9a7da63a42390943ead486cc",
-    strip_prefix = "golangci-lint-1.32.2-linux-amd64",
-    urls = ["https://github.com/golangci/golangci-lint/releases/download/v1.32.2/golangci-lint-1.32.2-linux-amd64.tar.gz"],
+    sha256 = "84c2ba1ee85a8a75b704a88ae2f34bf389ae48e26b601c6a105d0265fdfbcac6",
+    strip_prefix = "golangci-lint-1.34.0-linux-amd64",
+    urls = ["https://github.com/golangci/golangci-lint/releases/download/v1.34.0/golangci-lint-1.34.0-linux-amd64.tar.gz"],
 )
 
 http_archive(
@@ -994,16 +994,16 @@ http_archive(
 http_archive(
     name = "deno",
     build_file_content = """exports_files(["deno"])""",
-    sha256 = "ad0f694425d51b051e71d4027636dbad601283b7f695e7e0e8c7800fd1ea946c",
-    urls = ["https://github.com/denoland/deno/releases/download/v1.5.2/deno-x86_64-unknown-linux-gnu.zip"],
+    sha256 = "03c439ac146991a1ac48a4327ec4c332bef449a07e21e8e4d498e6eabf44cd7f",
+    urls = ["https://github.com/denoland/deno/releases/download/v1.6.2/deno-x86_64-unknown-linux-gnu.zip"],
 )
 
 http_file(
     name = "bazel",
     downloaded_file_path = "bazel",
     executable = True,
-    sha256 = "b7583eec83cc38302997098a40b8c870c37e0ab971a83cb3364c754a178b74ec",
-    urls = ["https://github.com/bazelbuild/bazel/releases/download/3.7.0/bazel-3.7.0-linux-x86_64"],
+    sha256 = "70dc0bee198a4c3d332925a32d464d9036a831977501f66d4996854ad4e4fc0d",
+    urls = ["https://github.com/bazelbuild/bazel/releases/download/3.7.2/bazel-3.7.2-linux-x86_64"],
 )
 
 http_file(
@@ -1048,8 +1048,8 @@ http_file(
     name = "shfmt",
     downloaded_file_path = "shfmt",
     executable = True,
-    sha256 = "84cf01d220bfb606d52af983e1afdbf6e25aff4a8aff6d5cf053dad29a1740f1",
-    urls = ["https://github.com/mvdan/sh/releases/download/v3.2.0/shfmt_v3.2.0_linux_amd64"],
+    sha256 = "43439b996942b53dfafa9b6ff084f394555d049c98fb7ec37978f7668b43e1be",
+    urls = ["https://github.com/mvdan/sh/releases/download/v3.2.1/shfmt_v3.2.1_linux_amd64"],
 )
 
 http_file(
