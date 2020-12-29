@@ -9,10 +9,10 @@ v = versions()
 
 http_archive(
     name = "io_bazel_rules_go",
-    sha256 = "b725e6497741d7fc2d55fcc29a276627d10e43fa5d0bb692692890ae30d98d00",
+    sha256 = "ac03931e56c3b229c145f1a8b2a2ad3e8d8f1af57e43ef28a26123362a1e3c7e",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.24.3/rules_go-v0.24.3.tar.gz",
-        "https://github.com/bazelbuild/rules_go/releases/download/v0.24.3/rules_go-v0.24.3.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.24.4/rules_go-v0.24.4.tar.gz",
+        "https://github.com/bazelbuild/rules_go/releases/download/v0.24.4/rules_go-v0.24.4.tar.gz",
     ],
 )
 
@@ -833,31 +833,21 @@ go_repository(
 
 http_archive(
     name = "rules_python",
-    sha256 = "e46612e9bb0dae8745de6a0643be69e8665a03f63163ac6610c210e80d14c3e4",
-    url = "https://github.com/bazelbuild/rules_python/releases/download/0.0.3/rules_python-0.0.3.tar.gz",
+    sha256 = "b6d46438523a3ec0f3cead544190ee13223a52f6a6765a29eae7b7cc24cc83a0",
+    url = "https://github.com/bazelbuild/rules_python/releases/download/0.1.0/rules_python-0.1.0.tar.gz",
 )
 
-load("@rules_python//python:repositories.bzl", "py_repositories")
+load("@rules_python//python:pip.bzl", "pip_install")
 
-py_repositories()
-
-load("@rules_python//python:pip.bzl", "pip3_import", "pip_repositories")
-
-pip_repositories()
-
-pip3_import(
+pip_install(
     name = "pypi",
     requirements = "//:requirements.txt",
 )
 
-load("@pypi//:requirements.bzl", "pip_install")
-
-pip_install()
-
 http_archive(
     name = "rules_pkg",
-    sha256 = "aeca78988341a2ee1ba097641056d168320ecc51372ef7ff8e64b139516a4937",
-    url = "https://github.com/bazelbuild/rules_pkg/releases/download/0.2.6-1/rules_pkg-0.2.6.tar.gz",
+    sha256 = "6b5969a7acd7b60c02f816773b06fcf32fbe8ba0c7919ccdc2df4f8fb923804a",
+    url = "https://github.com/bazelbuild/rules_pkg/releases/download/0.3.0/rules_pkg-0.3.0.tar.gz",
 )
 
 load("@rules_pkg//:deps.bzl", "rules_pkg_dependencies")
@@ -866,8 +856,8 @@ rules_pkg_dependencies()
 
 http_archive(
     name = "build_bazel_rules_nodejs",
-    sha256 = "64a71a64ac58b8969bb19b1c9258a973b6433913e958964da698943fb5521d98",
-    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/2.2.1/rules_nodejs-2.2.1.tar.gz"],
+    sha256 = "6142e9586162b179fdd570a55e50d1332e7d9c030efd853453438d607569721d",
+    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/3.0.0/rules_nodejs-3.0.0.tar.gz"],
 )
 
 load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories", "yarn_install")
@@ -885,9 +875,9 @@ yarn_install(
 
 http_archive(
     name = "io_bazel_rules_docker",
-    sha256 = "4521794f0fba2e20f3bf15846ab5e01d5332e587e9ce81629c7f96c793bb7036",
-    strip_prefix = "rules_docker-0.14.4",
-    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.14.4/rules_docker-v0.14.4.tar.gz"],
+    sha256 = "1698624e878b0607052ae6131aa216d45ebb63871ec497f26c67455b34119c80",
+    strip_prefix = "rules_docker-0.15.0",
+    urls = ["https://github.com/bazelbuild/rules_docker/releases/download/v0.15.0/rules_docker-v0.15.0.tar.gz"],
 )
 
 load(
@@ -901,10 +891,6 @@ load("@io_bazel_rules_docker//repositories:deps.bzl", container_deps = "deps")
 
 container_deps()
 
-load("@io_bazel_rules_docker//repositories:pip_repositories.bzl", "pip_deps")
-
-pip_deps()
-
 load(
     "@io_bazel_rules_docker//container:container.bzl",
     "container_pull",
@@ -916,7 +902,7 @@ load(
 
 container_pull(
     name = "cc_image_base",
-    digest = "sha256:c4014bdecaede16f767f8cfc496f968736bc08632bf54a37c004820e85cd8209",
+    digest = "sha256:0169cff13c4ff1c309c7481a876b4dc52e088ec1daa51e39aea4ee7a4242e3f7",
     registry = "gcr.io",
     repository = "distroless/cc",
     tag = "latest",
@@ -932,7 +918,7 @@ load(
 # Make sure we get a base image with python3.7.
 container_pull(
     name = "py3_image_base",
-    digest = "sha256:33ddd28c748279670ad4d7ca9ad088c233f2f7bef6daf0a6ed00fc89490dffce",
+    digest = "sha256:7ddcc4ee5d620d49f20aa13f39cde5a32d2b9b2fd02c8d8ea900acb3f378f6a4",
     registry = "gcr.io",
     repository = "distroless/python3-debian10",
     tag = "latest",
@@ -947,7 +933,7 @@ load(
 
 container_pull(
     name = "nodejs_image_base",
-    digest = "sha256:442d363e5a61852d3e4efca5b503a1b448ffd82c15b75dfb843751bb82a66ed9",
+    digest = "sha256:12b05554abb6d7905e025f6ea097a73c19169cd07f8e24ab89ed9e0e7c959f37",
     registry = "gcr.io",
     repository = "google-appengine/debian9",
     tag = "latest",
@@ -957,7 +943,7 @@ _nodejs_image_repos()
 
 container_pull(
     name = "go_image_static",
-    digest = "sha256:f4050ae771417b5a91d3906d9a9d2e7d04ccf1096d8cf88812ff15097ffde67a",
+    digest = "sha256:a7fbf4bc518870042021d9fff54b486da3c3182f880b52f91439d63895ec8423",
     registry = "gcr.io",
     repository = "distroless/static",
     tag = "latest",
@@ -967,7 +953,7 @@ _nodejs_image_repos()
 
 container_pull(
     name = "ubuntu18.04",
-    digest = "sha256:45c6f8f1b2fe15adaa72305616d69a6cd641169bc8b16886756919e7c01fa48b",
+    digest = "sha256:a7fa45fb43d471f4e66c5b53b1b9b0e02f7f1d37a889a41bbe1601fac70cb54e",
     registry = "docker.io",
     repository = "library/ubuntu",
     tag = "18.04",
@@ -984,9 +970,9 @@ http_archive(
 http_archive(
     name = "golangcilint",
     build_file_content = """exports_files(["golangci-lint"])""",
-    sha256 = "9a5d47b51442d68b718af4c7350f4406cdc087e2236a5b9ae52f37aebede6cb3",
-    strip_prefix = "golangci-lint-1.31.0-linux-amd64",
-    urls = ["https://github.com/golangci/golangci-lint/releases/download/v1.31.0/golangci-lint-1.31.0-linux-amd64.tar.gz"],
+    sha256 = "23e4a9d8f89729007c6d749c245f725c2dbcfb194f4099003f9b826f1d386ad1",
+    strip_prefix = "golangci-lint-1.34.1-linux-amd64",
+    urls = ["https://github.com/golangci/golangci-lint/releases/download/v1.34.1/golangci-lint-1.34.1-linux-amd64.tar.gz"],
 )
 
 http_archive(
@@ -1000,24 +986,24 @@ http_archive(
 http_archive(
     name = "smallstep",
     build_file_content = """exports_files(["step"])""",
-    sha256 = "385041af30080f28baac298f12c3b81f7f7ee21f60878a1caea4aa532329deda",
-    strip_prefix = "step_0.15.2/bin",
-    urls = ["https://github.com/smallstep/cli/releases/download/v0.15.2/step_linux_0.15.2_amd64.tar.gz"],
+    sha256 = "5b2d244bc96cf33b8b69e5f46ec14d50691dca7cc559304a82d3da34c772fb0c",
+    strip_prefix = "step_0.15.3/bin",
+    urls = ["https://github.com/smallstep/cli/releases/download/v0.15.3/step_linux_0.15.3_amd64.tar.gz"],
 )
 
 http_archive(
     name = "deno",
     build_file_content = """exports_files(["deno"])""",
-    sha256 = "db69a4548cc31c093b96ed9c69a6a5b136285e84be315cbe95d8a3ad1caeea09",
-    urls = ["https://github.com/denoland/deno/releases/download/v1.4.6/deno-x86_64-unknown-linux-gnu.zip"],
+    sha256 = "03c439ac146991a1ac48a4327ec4c332bef449a07e21e8e4d498e6eabf44cd7f",
+    urls = ["https://github.com/denoland/deno/releases/download/v1.6.2/deno-x86_64-unknown-linux-gnu.zip"],
 )
 
 http_file(
     name = "bazel",
     downloaded_file_path = "bazel",
     executable = True,
-    sha256 = "b2985c3ad1ec0284a66749b635ac11b323bc6b964d2cfcf33721746243a19530",
-    urls = ["https://github.com/bazelbuild/bazel/releases/download/3.6.0/bazel-3.6.0-linux-x86_64"],
+    sha256 = "70dc0bee198a4c3d332925a32d464d9036a831977501f66d4996854ad4e4fc0d",
+    urls = ["https://github.com/bazelbuild/bazel/releases/download/3.7.2/bazel-3.7.2-linux-x86_64"],
 )
 
 http_file(
@@ -1040,8 +1026,8 @@ http_file(
     name = "ibazel",
     downloaded_file_path = "ibazel",
     executable = True,
-    sha256 = "3c5e3aa892b545225a58931fc323673702695d9bce4668c5a9f61a3e77175b0f",
-    urls = ["https://github.com/bazelbuild/bazel-watcher/releases/download/v0.13.2/ibazel_linux_amd64"],
+    sha256 = "b43a92288df02827ebc18120065de8e9794fbfa2d19f4d79fd8d5f487efd931c",
+    urls = ["https://github.com/bazelbuild/bazel-watcher/releases/download/v0.14.0/ibazel_linux_amd64"],
 )
 
 http_file(
@@ -1062,8 +1048,8 @@ http_file(
     name = "shfmt",
     downloaded_file_path = "shfmt",
     executable = True,
-    sha256 = "c5794c1ac081f0028d60317454fe388068ab5af7740a83e393515170a7157dce",
-    urls = ["https://github.com/mvdan/sh/releases/download/v3.1.2/shfmt_v3.1.2_linux_amd64"],
+    sha256 = "43439b996942b53dfafa9b6ff084f394555d049c98fb7ec37978f7668b43e1be",
+    urls = ["https://github.com/mvdan/sh/releases/download/v3.2.1/shfmt_v3.2.1_linux_amd64"],
 )
 
 http_file(

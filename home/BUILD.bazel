@@ -6,9 +6,6 @@ pkg_tar(
         ["**/*"],
         exclude = ["BUILD.bazel"],
     ),
-    empty_dirs = [
-        ".xdg",
-    ],
     owner = "1000.1000",
     ownername = "user.user",
     strip_prefix = ".",

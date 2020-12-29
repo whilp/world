@@ -10,6 +10,7 @@ module.exports = {
   logLevel: "debug",
   pinDigests: true,
   prHourlyLimit: 15,
+  rebaseWhen: "behind-base-branch",
   enabledManagers: [
     "github-actions",
     "bazel",
@@ -90,6 +91,11 @@ module.exports = {
       updateTypes: ["pin", "digest"],
       automerge: true,
       schedule: ["on friday"],
+    },
+    {
+      packageNames: ["build_bazel_rules_nodejs"],
+      packagePatterns: ["^@bazel/"],
+      groupName: "rules_nodejs monorepo",
     },
     {
       // Keep in sync with rules_nodejs
