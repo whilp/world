@@ -29,6 +29,22 @@
       ]
     },
     {
+      "owner": "python-pyright",
+      "pattern": [
+        {
+          "regexp": "^(.+.py)$",
+          "file": 1
+        },
+        {
+          "regexp": " *(\\d+):(\\d+) - (error|warning): (.+)",
+          "line": 1,
+          "column": 2,
+          "severity": 3,
+          "message": 4
+        }
+      ]
+    },
+    {
       "owner": "python",
       "source": "https://github.com/actions/setup-python/blob/a0a76c4ddb58b6507bfcae9f03a27bee4b305093/.github/python.json#L1-L18",
       "pattern": [
@@ -42,7 +58,7 @@
           "message": 2
         }
       ]
-    },
+    }),
     {
       "owner": "go",
       "source": "https://github.com/actions/setup-go/blob/8e98458ff1256fa4ba1b822545630896aead5a5f/matchers.json#L1-L16",
