@@ -6,6 +6,7 @@ exports_files([
     "jest.config.js",
     "tsconfig.json",
     "package.json",
+    "pyrightconfig.json",
     "yarn.lock",
     "requirements.txt",
     "requirements.in",

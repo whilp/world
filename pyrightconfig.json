@@ -1,4 +1,5 @@
 {
+  "stubPath": "",
   "reportMissingImports": true,
   "reportMissingTypeStubs": false,
   "reportGeneralTypeIssues": false,

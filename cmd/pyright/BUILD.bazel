@@ -8,6 +8,7 @@ ARGS = []
 
 DATA = [
     "@npm//pyright",
+    "//:pyrightconfig.json",
 ]
 
 ENTRY_POINT = "@npm//:node_modules/pyright/dist/pyright.js"
@@ -21,7 +22,13 @@ nodejs_binary(
 
 nodejs_image(
     name = "image",
-    args = ARGS + ["."],
+    args = ARGS + [
+        "-p",
+        "pyrightconfig.json",
+        "-t",
+        "external/npm/node_modules/pyright/dist/typeshed-fallback",
+        ".",
+    ],
     base = ":base",
     data = DATA,
     entry_point = ENTRY_POINT,
