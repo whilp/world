@@ -11,8 +11,11 @@
   "postCreateCommand": "/usr/local/bin/post.sh",
   "extensions": [
     "bierner.docs-view",
+    "bierner.emojisense",
+    "bierner.markdown-mermaid",
+    "bierner.markdown-preview-github-styles",
     "dbaeumer.vscode-eslint",
-    "eamodio.gitlens",
+    "eamodio.gitlens-insiders",
     "esbenp.prettier-vscode",
     "foxundermoon.shell-format",
     "github.vscode-pull-request-github",
