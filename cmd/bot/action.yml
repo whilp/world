@@ -21,7 +21,7 @@ outputs:
     description: "An authentication token"
 runs:
   using: "docker"
-  image: docker://ghcr.io/whilp/bot:latest
+  image: docker://ghcr.io/whilp/bot:latest@sha256:e18c14f2d20b22aa97dd1d1dde09b707acb35ad2960c2d556283485a1dc36201
   env:
     BOT_ID: ${{ inputs.bot-id }}
     BOT_KEY: ${{ inputs.bot-key }}

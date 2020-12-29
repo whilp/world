@@ -3,20 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@bazel/typescript": "2.2.2",
-    "@octokit/auth-app": "2.6.0",
+    "@octokit/auth-app": "2.10.5",
+    "@bazel/typescript": "3.0.0",
     "@octokit/rest": "18.0.9",
-    "@types/jest": "26.0.14",
-    "@types/node": "14.14.6",
-    "@typescript-eslint/eslint-plugin": "4.4.1",
-    "@typescript-eslint/parser": "4.4.1",
+    "@types/jest": "26.0.19",
+    "@types/node": "14.14.16",
+    "@typescript-eslint/eslint-plugin": "4.11.0",
+    "@typescript-eslint/parser": "4.11.0",
     "eslint-config-prettier": "6.15.0",
     "eslint-plugin-import": "2.22.1",
-    "eslint": "7.12.1",
     "eslint-plugin-unused-imports": "1.0.0",
-    "jest": "26.6.0",
-    "prettier": "2.1.2",
+    "eslint": "7.16.0",
+    "jest": "26.6.3",
+    "prettier": "2.2.1",
     "source-map-support": "0.5.19",
-    "typescript": "4.0.5"
+    "typescript": "4.1.3"
   }
 }
