@@ -56,7 +56,7 @@ jobs:
   shellcheck:
     runs-on: ubuntu-18.04
     env:
-      MANIFEST: git-ls-files.txt
+      MANIFEST: .git/ls-files.txt
     steps:
       - uses: actions/checkout@v2.3.4
       - run: .github/matchers.sh
@@ -64,8 +64,6 @@ jobs:
         run: git ls-files -z > "${MANIFEST}"
       - name: lint
         uses: docker://ghcr.io/whilp/shellcheck:latest
-      - name: Clean up
-        run: rm -f git-ls-files.txt
       - run: git add -N . && git diff --exit-code
 
   prettier:
