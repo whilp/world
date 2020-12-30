@@ -144,6 +144,7 @@ container_layer(
         "@age",
         "@age//:age-keygen",
         "@bazel//file",
+        "@bazel_gazelle//cmd/gazelle",
         "@buildifier//file",
         "@buildozer//file",
         "@com_github_ramya_rao_a_go_outline//:go-outline",
