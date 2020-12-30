@@ -26,8 +26,8 @@ async function main() {
 
   const {
     data: { id: installationId },
-  } = await octo.request('GET /repos/{repository}/installation', {
-    repository: env.GITHUB_REPOSITORY
+  } = await octo.request("GET /repos/{repository}/installation", {
+    repository: env.GITHUB_REPOSITORY,
   });
 
   const auth = await octo.apps.createInstallationAccessToken({
