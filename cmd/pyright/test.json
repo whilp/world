@@ -5,7 +5,7 @@
       "name": "pyright",
       "command": "/app/cmd/pyright/image.binary",
       "args": ["--version"],
-      "expectedOutput": ["pyrigth 1"]
+      "expectedOutput": ["pyright 1"]
     }
   ]
 }
