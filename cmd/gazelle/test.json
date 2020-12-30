@@ -1,0 +1,11 @@
+{
+  "schemaVersion": "2.0.0",
+  "commandTests": [
+    {
+      "name": "gazelle",
+      "command": "/gazelle",
+      "args": ["help"],
+      "expectedError": ["usage: gazelle"]
+    }
+  ]
+}

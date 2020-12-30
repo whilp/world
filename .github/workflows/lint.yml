@@ -17,6 +17,15 @@ jobs:
         uses: docker://ghcr.io/whilp/buildifier:latest@sha256:b53aad50dbbb18f7e564f37268d342d7e81f39eee42ee2949992bf12376ffce4
       - run: git diff --exit-code
 
+  gazelle:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - run: .github/matchers.sh
+      - name: lint
+        uses: docker://ghcr.io/whilp/gazelle:latest
+      - run: git diff --exit-code
+
   black:
     runs-on: ubuntu-18.04
     steps:

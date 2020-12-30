@@ -79,6 +79,12 @@
       "args": ["--version"],
       "exitCode": 2,
       "expectedError": ["iBazel"]
+    },
+    {
+      "name": "gazelle",
+      "command": "gazelle",
+      "args": ["help"],
+      "expectedError": ["usage: gazelle"]
     }
   ]
 }
