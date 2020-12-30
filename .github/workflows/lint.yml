@@ -15,7 +15,7 @@ jobs:
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/buildifier:latest@sha256:b53aad50dbbb18f7e564f37268d342d7e81f39eee42ee2949992bf12376ffce4
-      - run: git diff --exit-code
+      - run: git add -N . && git diff --exit-code
 
   gazelle:
     runs-on: ubuntu-18.04
@@ -24,7 +24,7 @@ jobs:
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/gazelle:latest
-      - run: git diff --exit-code
+      - run: git add -N . && git diff --exit-code
 
   black:
     runs-on: ubuntu-18.04
@@ -33,7 +33,7 @@ jobs:
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/black:latest@sha256:45f3cb9635219eca8de2307703b43ab700dbb16967c281ed38f7866bf6ff7ec5
-      - run: git diff --exit-code
+      - run: git add -N . && git diff --exit-code
 
   bandit:
     runs-on: ubuntu-18.04
@@ -42,7 +42,7 @@ jobs:
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/bandit:latest@sha256:722c0192a917393ddb7aeaacf2f67905bdff1381a41606b579feb20b1650eb9a
-      - run: git diff --exit-code
+      - run: git add -N . && git diff --exit-code
 
   shfmt:
     runs-on: ubuntu-18.04
@@ -51,7 +51,7 @@ jobs:
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/shfmt:latest@sha256:246bcde2bb341abbadc9706171a1ae274707d7cc5432736c8f32d18ea375c6f6
-      - run: git diff --exit-code
+      - run: git add -N . && git diff --exit-code
 
   shellcheck:
     runs-on: ubuntu-18.04
@@ -66,7 +66,7 @@ jobs:
         uses: docker://ghcr.io/whilp/shellcheck:latest
       - name: Clean up
         run: rm -f git-ls-files.txt
-      - run: git diff --exit-code
+      - run: git add -N . && git diff --exit-code
 
   prettier:
     runs-on: ubuntu-18.04
@@ -75,7 +75,7 @@ jobs:
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/prettier:latest@sha256:680b4bb8987bbf91b33a9891a9ebb8056cc5c757eb2d8821fd590ef64e54ac40
-      - run: git diff --exit-code
+      - run: git add -N . && git diff --exit-code
 
   eslint:
     runs-on: ubuntu-18.04
@@ -84,7 +84,7 @@ jobs:
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/eslint:latest@sha256:e48222b2e26ccd34a5cfd820c735bf09ecd76dab72e7fe3a28adbb6e64f2b65b
-      - run: git diff --exit-code
+      - run: git add -N . && git diff --exit-code
 
   golangci-lint:
     runs-on: ubuntu-18.04
@@ -97,7 +97,7 @@ jobs:
         uses: docker://ghcr.io/whilp/golangci-lint:latest@sha256:73dcc80c782fe6cd8edd59a47d06ab105cbc815b2276264fb158641757ded68b
       - name: restore
         run: git checkout cmd/tools
-      - run: git diff --exit-code
+      - run: git add -N . && git diff --exit-code
 
   pyright:
     runs-on: ubuntu-18.04
@@ -106,4 +106,4 @@ jobs:
       - run: .github/matchers.sh
       - name: lint
         uses: docker://ghcr.io/whilp/pyright:latest
-      - run: git diff --exit-code
+      - run: git add -N . && git diff --exit-code
