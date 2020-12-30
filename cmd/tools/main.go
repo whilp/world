@@ -1,4 +1,5 @@
 // +build tools
+
 //nolint
 package main
 

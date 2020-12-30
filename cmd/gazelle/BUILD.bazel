@@ -12,7 +12,6 @@ container_image(
     name = "image",
     args = [
         "fix",
-        "-mode=print",
         ".",
     ],
     base = "@cc_image_base//image",

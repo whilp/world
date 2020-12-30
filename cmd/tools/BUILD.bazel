@@ -1,0 +1,24 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "tools_lib",
+    srcs = ["main.go"],
+    importpath = "github.com/whilp/world/cmd/tools",
+    visibility = ["//visibility:private"],
+    deps = [
+        "@com_github_ramya_rao_a_go_outline//:go-outline",
+        "@com_github_rogpeppe_godef//:godef",
+        "@com_github_stamblerre_gocode//:gocode",
+        "@com_github_uudashr_gopkgs_v2//cmd/gopkgs",
+        "@net_starlark_go//cmd/starlark",
+        "@org_golang_x_lint//golint",
+        "@org_golang_x_tools//cmd/goimports",
+        "@org_golang_x_tools//cmd/guru",
+    ],
+)
+
+go_binary(
+    name = "tools",
+    embed = [":tools_lib"],
+    visibility = ["//visibility:public"],
+)
