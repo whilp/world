@@ -4,10 +4,8 @@ import { Octokit } from "@octokit/rest";
 interface IEnv {
   BOT_ID: string;
   BOT_KEY: string;
-  BOT_INSTALLATION_ID: string;
-  BOT_CLIENT_ID: string;
-  BOT_CLIENT_SECRET: string;
   CHECK: string;
+  GITHUB_REPOSITORY: string;
 }
 
 async function main() {
@@ -23,14 +21,17 @@ async function main() {
     auth: {
       id: Number(env.BOT_ID),
       privateKey: env.BOT_KEY,
-      installationId: Number(env.BOT_INSTALLATION_ID),
-      clientId: env.BOT_CLIENT_ID,
-      clientSecret: env.BOT_CLIENT_SECRET,
     },
   });
 
+  const {
+    data: { id: installationId },
+  } = await octo.request('GET /repos/{repository}/installation', {
+    repository: env.GITHUB_REPOSITORY
+  });
+
   const auth = await octo.apps.createInstallationAccessToken({
-    installation_id: Number(env.BOT_INSTALLATION_ID),
+    installation_id: Number(installationId),
   });
 
   console.log(`::set-output name=token::${auth.data.token}`);

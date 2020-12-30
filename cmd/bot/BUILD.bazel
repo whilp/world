@@ -28,9 +28,6 @@ container_image(
     env = {
         "BOT_ID": "",
         "BOT_KEY": "",
-        "BOT_CLIENT_ID": "",
-        "BOT_CLIENT_SECRET": "",
-        "BOT_INSTALLATION_ID": "",
     },
     labels = labels({"org.opencontainers.image.description": "GitHub bot"}),
 )
