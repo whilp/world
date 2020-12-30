@@ -119,6 +119,20 @@
           "loop": true
         }
       ]
+    },
+    {
+      "owner": "shellcheck",
+      "eg": "image/devcontainer/post.sh:6:8: error: Double quote array expansions to avoid re-splitting elements. [SC2068]",
+      "pattern": [
+        {
+          "regexp": "^(.+):(\\d+):(\\d+):\\s*([^:]+):(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5
+        }
+      ]
     }
   ]
 }

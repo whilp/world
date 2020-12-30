@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "2.0.0",
+  "commandTests": [
+    {
+      "name": "shfmt",
+      "command": "/shfmt",
+      "args": ["--version"],
+      "expectedOutput": ["v"]
+    },
+    {
+      "name": "shellcheck",
+      "command": "/shellcheck",
+      "args": ["--version"],
+      "expectedOutput": ["v"]
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+load("@io_bazel_rules_docker//container:container.bzl", "container_image", "container_push")
+load("@io_bazel_rules_docker//contrib:test.bzl", "container_test")
+load("//cmd:labels.bzl", "labels")
+
+ARGS = [
+    "--",
+    "--check-sourced",
+    "--format=gcc",
+]
+
+DEPS = {
+    "shellcheck": "@shellcheck",
+    "shfmt": "@shfmt//file",
+}
+
+DATA = DEPS.values()
+
+container_image(
+    name = "image",
+    base = "@cc_image_base//image",
+    entrypoint = ["/entrypoint"] + ["-%s=/%s" % (name, name) for name, bin in DEPS.items()] + ARGS,
+    files = [
+        ":entrypoint",
+    ] + DATA,
+    labels = labels({"org.opencontainers.image.description": "shellcheck linter"}),
+)
+
+container_push(
+    name = "push",
+    format = "Docker",
+    image = ":image",
+    registry = "ghcr.io",
+    repository = "whilp/shellcheck",
+    tag = "latest",
+)
+
+container_test(
+    name = "test",
+    configs = ["test.json"],
+    image = ":image",
+)
+
+go_library(
+    name = "shellcheck_lib",
+    srcs = ["shellcheck.go"],
+    importpath = "github.com/whilp/world/cmd/shellcheck",
+    visibility = ["//visibility:private"],
+)
+
+BINARY_ARGS = ["-%s=$(location %s)" % (name, bin) for name, bin in DEPS.items()] + ARGS
+
+go_binary(
+    name = "shellcheck",
+    args = BINARY_ARGS,
+    data = DATA,
+    embed = [":shellcheck_lib"],
+    visibility = ["//visibility:public"],
+)
+
+go_binary(
+    name = "entrypoint",
+    args = BINARY_ARGS,
+    data = DATA,
+    embed = [":shellcheck_lib"],
+    goarch = "amd64",
+    goos = "linux",
+    pure = "on",
+    visibility = ["//visibility:private"],
+)
