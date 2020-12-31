@@ -9,7 +9,7 @@ interface IEnv {
   GITHUB_REPOSITORY: string;
 }
 
-async function main() {
+async function main(): Promise<string> {
   const env = (process.env as unknown) as IEnv;
 
   if (env.CHECK === "yes") {
