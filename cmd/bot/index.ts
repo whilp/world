@@ -36,11 +36,13 @@ async function main(): Promise<string> {
 }
 
 function succeed(token: string) {
+  console.log("ok!");
   core.setSecret(token);
   core.setOutput("token", token);
 }
 
 function fail(error: Error) {
+  console.log("failed", error.message);
   core.setFailed(error.message);
 }
 
