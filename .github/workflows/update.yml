@@ -23,9 +23,6 @@ jobs:
         with:
           bot-id: ${{ secrets.BOT_ID }}
           bot-key: ${{ secrets.BOT_KEY }}
-          bot-installation-id: ${{ secrets.BOT_INSTALLATION_ID }}
-          bot-client-id: ${{ secrets.BOT_CLIENT_ID }}
-          bot-client-secret: ${{ secrets.BOT_CLIENT_SECRET }}
       - name: renovate
         uses: docker://renovate/renovate:latest@sha256:7cdd69a58a68682d6d038b35eba579eeaa73752cb57480d5c3bec7f82ab0abb2
         env:
