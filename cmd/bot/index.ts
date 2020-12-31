@@ -37,7 +37,7 @@ async function main() {
 
 function succeed(token: string) {
   core.setSecret(token);
-  core.setOutput('token', token);
+  core.setOutput("token", token);
 }
 
 function fail(error: Error) {
