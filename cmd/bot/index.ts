@@ -1,5 +1,6 @@
 import { createAppAuth } from "@octokit/auth-app";
 import { Octokit } from "@octokit/rest";
+import * as core from "@actions/core";
 
 interface IEnv {
   BOT_ID: string;
@@ -8,37 +9,39 @@ interface IEnv {
   GITHUB_REPOSITORY: string;
 }
 
-async function main() {
+async function main(): Promise<string> {
   const env = (process.env as unknown) as IEnv;
 
   if (env.CHECK === "yes") {
     console.log("ok");
-    return;
+    return "ok";
   }
-
-  const octo = new Octokit({
-    authStrategy: createAppAuth,
-    auth: {
-      id: Number(env.BOT_ID),
-      privateKey: env.BOT_KEY,
-    },
+  const [owner, repo] = env.GITHUB_REPOSITORY.split("/");
+  const app = createAppAuth({ appId: env.BOT_ID, privateKey: env.BOT_KEY });
+  const authApp = await app({ type: "app" });
+  const appAuthOcto = new Octokit({
+    auth: authApp.token,
   });
 
   const {
     data: { id: installationId },
-  } = await octo.request("GET /repos/{repository}/installation", {
-    repository: env.GITHUB_REPOSITORY,
+  } = await appAuthOcto.request("GET /repos/{owner}/{repo}/installation", {
+    owner: owner,
+    repo: repo,
   });
 
-  const auth = await octo.apps.createInstallationAccessToken({
-    installation_id: Number(installationId),
-  });
+  const installationAuth = await app({ installationId, type: "installation" });
 
-  console.log(`::set-output name=token::${auth.data.token}`);
+  return installationAuth.token;
 }
 
-function handle() {
-  return;
+function succeed(token: string) {
+  core.setSecret(token);
+  core.setOutput("token", token);
 }
 
-main().then(handle).catch(handle);
+function fail(error: Error) {
+  core.setFailed(error.message);
+}
+
+main().then(succeed).catch(fail);

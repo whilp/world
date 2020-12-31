@@ -16,6 +16,3 @@ runs:
   env:
     BOT_ID: ${{ inputs.bot-id }}
     BOT_KEY: ${{ inputs.bot-key }}
-    BOT_INSTALLATION_ID: ${{ inputs.bot-installation-id }}
-    BOT_CLIENT_ID: ${{ inputs.bot-client-id }}
-    BOT_CLIENT_SECRET: ${{ inputs.bot-client-secret }}

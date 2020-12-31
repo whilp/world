@@ -36,6 +36,7 @@ ts_library(
     name = "lib",
     srcs = ["index.ts"],
     deps = [
+        "@npm//@actions/core",
         "@npm//@octokit/auth-app",
         "@npm//@octokit/rest",
         "@npm//@types/node",
