@@ -18,11 +18,11 @@ jobs:
         with:
           python-version: "3.7"
       - run: .github/matchers.sh
-      - uses: ./cmd/bot
+      - uses: docker://ghcr.io/whilp/bot:latest
         id: bot
-        with:
-          bot-id: ${{ secrets.BOT_ID }}
-          bot-key: ${{ secrets.BOT_KEY }}
+        env:
+          BOT_ID: ${{ secrets.BOT_ID }}
+          BOT_KEY: ${{ secrets.BOT_KEY }}
       # - name: renovate
       #   uses: docker://renovate/renovate:latest@sha256:7cdd69a58a68682d6d038b35eba579eeaa73752cb57480d5c3bec7f82ab0abb2
       #   env:
