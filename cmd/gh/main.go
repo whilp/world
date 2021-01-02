@@ -1,17 +1,16 @@
 package main
 
 import (
-	"context"
-	"io/ioutil"
+	"fmt"
 	"os"
 
 	"github.com/apex/log"
 	"github.com/apex/log/handlers/cli"
-	"github.com/google/go-github/v32/github"
-	"golang.org/x/oauth2"
 )
 
 var level = log.DebugLevel
+
+type dispatcher map[string]func(Env) error
 
 func main() {
 	if err := run(); err != nil {
@@ -21,46 +20,28 @@ func main() {
 }
 
 func run() error {
+	env := NewEnv(os.Environ())
+
 	log.SetLevel(level)
 	log.SetHandler(cli.New(os.Stderr))
 
-	if os.Getenv("CHECK") != "" {
-		log.Debug("we're ok!")
-		return nil
+	dispatch := dispatcher{
+		"check":          check,
+		"check-pr":       checkPr,
+		"auth":           auth,
+		"update-release": updateRelease,
 	}
 
-	token := os.Getenv("GITHUB_TOKEN")
-	eventPath := os.Getenv("GITHUB_EVENT_PATH")
-	eventName := os.Getenv("GITHUB_EVENT_NAME")
-
-	ctx := context.Background()
-	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: token},
-	)
-	tc := oauth2.NewClient(ctx, ts)
-	client := github.NewClient(tc)
-
-	payload, err := ioutil.ReadFile(eventPath)
-	if err != nil {
-		return err
+	rawCommand := env.Get("COMMAND")
+	command, ok := dispatch[rawCommand]
+	if !ok {
+		return fmt.Errorf("unexpected command: %v", rawCommand)
 	}
 
-	event, err := github.ParseWebHook(eventName, payload)
-	if err != nil {
-		return err
-	}
+	return command(env)
+}
 
-	if level == log.DebugLevel {
-		dumpEnvironment(os.Stderr, os.Environ())
-		dumpPayload(os.Stderr, payload)
-	}
-
-	env := environ()
-	switch e := event.(type) {
-	case *github.PullRequestEvent:
-		return handlePullRequest(ctx, client, env, e)
-	default:
-		log.Debug("handle unknown event type")
-		return nil
-	}
+func check(env Env) error {
+	log.Debug("we're ok!")
+	return nil
 }

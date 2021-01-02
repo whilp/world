@@ -3,11 +3,50 @@ package main
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/apex/log"
 	"github.com/google/go-github/v32/github"
+	"golang.org/x/oauth2"
 )
+
+func checkPr(env Env) error {
+	token := env.Get("GITHUB_TOKEN")
+	eventPath := env.Get("GITHUB_EVENT_PATH")
+	eventName := env.Get("GITHUB_EVENT_NAME")
+
+	ctx := context.Background()
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: token},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+	client := github.NewClient(tc)
+
+	payload, err := ioutil.ReadFile(eventPath)
+	if err != nil {
+		return err
+	}
+
+	event, err := github.ParseWebHook(eventName, payload)
+	if err != nil {
+		return err
+	}
+
+	if level == log.DebugLevel {
+		dumpEnvironment(os.Stderr, os.Environ())
+		dumpPayload(os.Stderr, payload)
+	}
+
+	switch e := event.(type) {
+	case *github.PullRequestEvent:
+		return handlePullRequest(ctx, client, env, e)
+	default:
+		log.Debug("handle unknown event type")
+		return nil
+	}
+}
 
 func handlePullRequest(ctx context.Context, client *github.Client, env Env, event *github.PullRequestEvent) error {
 	repo := event.GetRepo()
@@ -15,7 +54,7 @@ func handlePullRequest(ctx context.Context, client *github.Client, env Env, even
 	ownerName := owner.GetLogin()
 	repoName := repo.GetName()
 	sha := event.PullRequest.Head.GetSHA()
-	statusContext := getStatusContext(env)
+	statusContext := env.Get("CONTEXT", "lint / github")
 	runURL := getRunURL(env)
 
 	status := &github.RepoStatus{
@@ -64,14 +103,6 @@ func handlePullRequest(ctx context.Context, client *github.Client, env Env, even
 	return err
 }
 
-func getStatusContext(env Env) string {
-	statusContext, ok := env["CONTEXT"]
-	if !ok {
-		statusContext = "lint / github"
-	}
-	return statusContext
-}
-
 func getLabels(env Env) map[string]bool {
 	labels := make(map[string]bool)
 	for k, v := range env {
@@ -83,8 +114,8 @@ func getLabels(env Env) map[string]bool {
 }
 
 func getRunURL(env Env) string {
-	serverURL := env["GITHUB_SERVER_URL"]
-	repository := env["GITHUB_REPOSITORY"]
-	runID := env["GITHUB_RUN_ID"]
+	serverURL := env.Get("GITHUB_SERVER_URL")
+	repository := env.Get("GITHUB_REPOSITORY")
+	runID := env.Get("GITHUB_RUN_ID")
 	return fmt.Sprintf("%s/%s/actions/runs/%s", serverURL, repository, runID)
 }

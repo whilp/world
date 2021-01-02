@@ -1,0 +1,19 @@
+name: main
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  update-release:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2.3.4
+      - run: .github/matchers.sh
+      - name: gh
+        uses: docker://ghcr.io/whilp/gh:latest
+        env:
+          COMMAND: update-release
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

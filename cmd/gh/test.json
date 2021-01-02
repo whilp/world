@@ -4,7 +4,7 @@
     {
       "name": "gh",
       "command": "/app/cmd/gh/gh",
-      "envVars": [{ "key": "CHECK", "value": "yes" }],
+      "envVars": [{ "key": "COMMAND", "value": "check" }],
       "expectedError": ["ok"]
     }
   ]
