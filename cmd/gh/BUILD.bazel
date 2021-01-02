@@ -12,6 +12,16 @@ go_binary(
     visibility = ["//visibility:public"],
 )
 
+go_binary(
+    name = "entrypoint",
+    embed = [":gh_lib"],
+    goarch = "amd64",
+    goos = "linux",
+    pure = "on",
+    static = "on",
+    visibility = ["//visibility:public"],
+)
+
 go_library(
     name = "gh_lib",
     srcs = [
@@ -22,6 +32,7 @@ go_library(
         "main.go",
         "pr.go",
         "release.go",
+        "wrap.go",
     ],
     importpath = "github.com/whilp/world/cmd/gh",
     visibility = ["//visibility:private"],

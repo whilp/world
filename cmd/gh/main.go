@@ -29,6 +29,7 @@ func run() error {
 		"check":          check,
 		"check-pr":       checkPr,
 		"auth":           auth,
+		"wrap":           wrap,
 		"update-release": updateRelease,
 	}
 
