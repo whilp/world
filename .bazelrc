@@ -21,4 +21,7 @@ build:ci --disk_cache=~/.cache/bazel
 test:ci --verbose_failures
 test:ci --test_output=errors
 
+test:fast --test_size_filters=-large,-enormous
+test:fast --build_tests_only
+
 #build --workspace_status_command scripts/workspace-status
