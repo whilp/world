@@ -2,8 +2,6 @@ name: test
 
 on:
   push:
-    branches-ignore:
-      - main
 
 jobs:
   test:
@@ -15,4 +13,4 @@ jobs:
           python-version: "3.7"
       - run: .github/matchers.sh
       - name: bazel test
-        run: ./tools/bazel test --config=ci --config=fast //...
+        run: ./tools/bazel test --config=ci ${GITHUB_HEAD_REF:---config=fast} //...
