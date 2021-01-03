@@ -30,8 +30,6 @@ jobs:
         with:
           python-version: "3.7"
       - run: .github/matchers.sh
-      - name: bazel test
-        run: ./tools/bazel test --config=ci //...
       - name: docker login ghcr.io
         run: echo "$DOCKER_TOKEN" | docker login --password-stdin --username "$DOCKER_USER" ghcr.io
         env:
