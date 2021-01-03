@@ -171,6 +171,7 @@ container_layer(
 
 container_test(
     name = "test",
+    size = "large",
     configs = ["test.json"],
     image = ":image",
 )
