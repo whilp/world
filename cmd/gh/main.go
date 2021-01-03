@@ -30,7 +30,7 @@ func run() error {
 		"check-pr":       checkPr,
 		"auth":           auth,
 		"wrap":           wrap,
-		"update-release": updateRelease,
+		"update-release": createOrUpdateRelease,
 	}
 
 	rawCommand := env.Get("COMMAND")
