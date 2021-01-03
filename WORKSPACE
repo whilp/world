@@ -987,6 +987,14 @@ container_pull(
     tag = "18.04",
 )
 
+container_pull(
+    name = "renovate",
+    digest = "sha256:7cdd69a58a68682d6d038b35eba579eeaa73752cb57480d5c3bec7f82ab0abb2",
+    registry = "docker.io",
+    repository = "renovate/renovate",
+    tag = "latest",
+)
+
 http_archive(
     name = "shellcheck",
     build_file_content = """exports_files(["shellcheck"])""",

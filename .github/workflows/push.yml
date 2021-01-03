@@ -22,6 +22,7 @@ jobs:
           - cmd/eslint
           - cmd/gh
           - cmd/golangci-lint
+          - cmd/renovate
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2.3.4
