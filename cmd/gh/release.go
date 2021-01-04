@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"text/template"
 
 	"github.com/apex/log"
 	"github.com/google/go-github/v33/github"
@@ -22,12 +23,15 @@ func updateRelease(env Env) error {
 		"owner":   owner,
 		"repo":    repo,
 	}).Debug("running command")
+	
+	templateFile := env.Get("TEMPLATE_FILE")
+	log.WithField("templateFile", templateFile).Debug("parsing template")
+	tmpl, err := template.New("template").ParseFiles(templateFile)
+	if err != nil {
+		return err
+	}
 
 	latest, err := getLatestTag(env.Get("TAG_FILE"))
-	log.WithFields(&log.Fields{
-		"latest": latest,
-		"sha":    sha,
-	}).Debug("comparing commits")
 
 	ctx := context.Background()
 	ts := oauth2.StaticTokenSource(
@@ -36,40 +40,67 @@ func updateRelease(env Env) error {
 	tc := oauth2.NewClient(ctx, ts)
 	client := github.NewClient(tc)
 
+	log.WithFields(&log.Fields{
+		"latest": latest,
+		"sha":    sha,
+	}).Debug("comparing commits")
+
 	comparison, _, err := client.Repositories.CompareCommits(ctx, owner, repo, latest, sha)
 	if err != nil {
 		return err
 	}
-
-	notFound := 404
-	release, resp, err := client.Repositories.GetReleaseByTag(ctx, owner, repo, latest)
+	
+	body := &Body{
+		Comparison: comparison,
+		Latest: latest,
+		SHA: sha,
+	}
+	
+	log.Debug("drafting release body")
+	release := &github.RepositoryRelease{}
+	err := draftRelease(release, tmpl, body)
+	if err != nil {
+		return err
+	}
+	
 	fields := &log.Fields{
 		"sha": sha,
 		"latest": latest,
+		"commits": comparison.GetTotalCommits(),
 	}
-	if err != nil {
-		if resp.StatusCode != notFound {
-			return err
-		}
-		release = &github.RepositoryRelease{}
-		draftRelease(release, comparison, latest, sha)
+
+	notFound := 404
+	got, resp, err := client.Repositories.GetReleaseByTag(ctx, owner, repo, latest)
+	if err == nil {
+		id := got.GetID()
+		log.WithFields(fields).WithField("release", id).Debug("editing release")
+		_, _, err = client.Repositories.EditRelease(ctx, owner, repo, id, release)
+	} else if resp.StatusCode == notFound {
 		log.WithFields(fields).Debug("creating release")
 		_, _, err = client.Repositories.CreateRelease(ctx, owner, repo, release)
-		return err
 	}
-	draftRelease(release, comparison, latest, sha)
-	log.WithFields(fields).WithField("release", release.GetID()).Debug("editing release")
-	_, _, err = client.Repositories.EditRelease(ctx, owner, repo, release.GetID(), release)
 	return err
 }
 
-func draftRelease(release *github.RepositoryRelease, comparison *github.CommitsComparison, latest, sha string) {
-	body := fmt.Sprintf("%d commits!\n", comparison.GetTotalCommits())
-	release.Name = github.String(latest)
-	release.TagName = github.String(latest)
-	release.TargetCommitish = github.String(sha)
-	release.Body = github.String(body)
+type Body struct {
+	Comparison *github.CommitsComparison
+	Latest string
+	SHA string
+}
+
+func draftRelease(release *github.RepositoryRelease, tmpl *template.Template, body *Body) error {
+	release.Name = github.String(body.Latest)
+	release.TagName = github.String(body.Latest)
+	release.TargetCommitish = github.String(body.SHA)
 	release.Draft = github.Bool(true)
+	
+	var b bytes.Buffer
+	err := tmpl.Execute(b, body)
+	if err != nil {
+		return err
+	}
+	release.Body = github.String(b.String())
+	return nil
 }
 
 func getLatestTag(tagFile string) (string, error) {
