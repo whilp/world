@@ -23,21 +23,8 @@ func updateRelease(env Env) error {
 		"repo":    repo,
 	}).Debug("running command")
 
-	tags, err := listTags(env.Get("TAG_FILE"))
-	if err != nil {
-		return err
-	}
-	if len(tags) == 0 {
-		return fmt.Errorf("found no tags")
-	}
-	sortTags(tags)
-	latest := tags[len(tags)-1]
-	if !semver.IsValid(latest) {
-		return fmt.Errorf("latest tag is not valid semver")
-	}
-
+	latest, err := getLatestTag(env.Get("TAG_FILE"))
 	log.WithFields(&log.Fields{
-		"tags":   len(tags),
 		"latest": latest,
 		"sha":    sha,
 	}).Debug("comparing commits")
@@ -55,28 +42,54 @@ func updateRelease(env Env) error {
 	}
 
 	notFound := 404
-	isNotFound := false
-	var release *github.RepositoryRelease
+	shouldEdit := false
 	release, resp, err := client.Repositories.GetReleaseByTag(ctx, owner, repo, latest)
 	if err != nil {
-		isNotFound = resp.StatusCode == notFound
-		if !isNotFound {
+		shouldEdit = resp.StatusCode != notFound
+		if !shouldCreate {
 			return err
 		}
 		release = &github.RepositoryRelease{}
 	}
 
+	draftRelease(release, comparison, latest, sha)
+
+	log.WithFields(&log.Fields{
+		"create": shouldCreate,
+		"bytes":  len(release.GetBody()),
+		"tag":    latest,
+		"sha":    sha,
+	}).Debug("creating or updating release")
+
+	if shouldCreate {
+		_, _, err = client.Repositories.CreateRelease(ctx, owner, repo, release)
+	} else {
+		_, _, err = client.Repositories.EditRelease(ctx, owner, repo, release.GetID(), release)
+	}
+	return err
+}
+
+func draftRelease(release *github.RepositoryRelease, comparison *github.CommitsComparison, latest, sha string) {
 	body := fmt.Sprintf("%d commits!\n", comparison.GetTotalCommits())
 	release.Name = github.String(latest)
 	release.TagName = github.String(latest)
 	release.TargetCommitish = github.String(sha)
 	release.Body = github.String(body)
 	release.Draft = github.Bool(true)
+}
 
-	if isNotFound {
-		_, _, err = client.Repositories.CreateRelease(ctx, owner, repo, release)
-	} else {
-		_, _, err = client.Repositories.EditRelease(ctx, owner, repo, release.GetID(), release)
+func getLatestTag(tagFile string) (string, error) {
+	tags, err := listTags(tagFile)
+	if err != nil {
+		return "", err
 	}
-	return err
+	if len(tags) == 0 {
+		return "", fmt.Errorf("found no tags")
+	}
+	sortTags(tags)
+	latest := tags[len(tags)-1]
+	if !semver.IsValid(latest) {
+		return "", fmt.Errorf("latest tag is not valid semver")
+	}
+	return latest, nil
 }
