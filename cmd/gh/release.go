@@ -42,7 +42,6 @@ func updateRelease(env Env) error {
 	}
 
 	notFound := 404
-	shouldEdit := false
 	release, resp, err := client.Repositories.GetReleaseByTag(ctx, owner, repo, latest)
 	fields := &log.Fields{
 		"sha": sha,
