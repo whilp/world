@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"text/template"
@@ -58,8 +59,7 @@ func updateRelease(env Env) error {
 	
 	log.Debug("drafting release body")
 	release := &github.RepositoryRelease{}
-	err := draftRelease(release, tmpl, body)
-	if err != nil {
+	if err := draftRelease(release, tmpl, body); err != nil {
 		return err
 	}
 	
