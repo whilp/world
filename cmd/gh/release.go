@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"text/template"
+	"path"
 
 	"github.com/apex/log"
 	"github.com/google/go-github/v33/github"
@@ -26,8 +27,9 @@ func updateRelease(env Env) error {
 	}).Debug("running command")
 	
 	templateFile := env.Get("TEMPLATE_FILE")
+	base := path.Base(templateFile)
 	log.WithField("templateFile", templateFile).Debug("parsing template")
-	tmpl, err := template.New("template").ParseFiles(templateFile)
+	tmpl, err := template.New(base).ParseFiles(templateFile)
 	if err != nil {
 		return err
 	}
