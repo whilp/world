@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-18.04
     env:
       TAG_FILE: .git/tag-list.txt
-      TEMPLATE_FILE: .github/release.tmpl
+      TEMPLATE_GLOB: .github/release.tmpl
     steps:
       - uses: actions/checkout@v2.3.4
         with:

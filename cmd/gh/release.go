@@ -26,10 +26,9 @@ func updateRelease(env Env) error {
 		"repo":    repo,
 	}).Debug("running command")
 	
-	templateFile := env.Get("TEMPLATE_FILE")
-	base := path.Base(templateFile)
-	log.WithField("templateFile", templateFile).Debug("parsing template")
-	tmpl, err := template.New(base).ParseFiles(templateFile)
+	templateGlob := env.Get("TEMPLATE_GLOB")
+	log.WithField("templateGlob", templateGlob).Debug("parsing templates")
+	tmpl, err := template.ParseGlob(templateGlob)
 	if err != nil {
 		return err
 	}
