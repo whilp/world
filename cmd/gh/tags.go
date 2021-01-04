@@ -39,7 +39,7 @@ func splitTags(raw []byte) []string {
 	for _, chunk := range chunks {
 		tags = append(tags, string(chunk))
 	}
-	return tags
+	return validStrings(tags)
 }
 
 func listTagsGit() ([]byte, error) {
@@ -47,4 +47,15 @@ func listTagsGit() ([]byte, error) {
 	cmd.Stderr = os.Stderr
 	out, err := cmd.Output()
 	return out, err
+}
+
+func validStrings(candidates []string) []string {
+	got := []string{}
+	for _, candidate := range candidates {
+		if candidate != "" {
+			got = append(got, candidate)
+		}
+	}
+
+	return got
 }

@@ -30,8 +30,10 @@ func run() error {
 		"check-pr":       checkPr,
 		"auth":           auth,
 		"wrap":           wrap,
-		"update-release": createOrUpdateRelease,
+		"update-release": updateRelease,
 	}
+
+	os.Chdir(env.Get("BUILD_WORKSPACE_DIRECTORY", "."))
 
 	rawCommand := env.Get("COMMAND")
 	command, ok := dispatch[rawCommand]
