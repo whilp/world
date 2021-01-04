@@ -95,7 +95,7 @@ func draftRelease(release *github.RepositoryRelease, tmpl *template.Template, bo
 	release.Draft = github.Bool(true)
 	
 	var b bytes.Buffer
-	err := tmpl.Execute(b, body)
+	err := tmpl.Execute(&b, body)
 	if err != nil {
 		return err
 	}
