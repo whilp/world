@@ -59,7 +59,7 @@ func updateRelease(env Env) error {
 	
 	log.Debug("drafting release body")
 	release := &github.RepositoryRelease{}
-	if err := draftRelease(release, tmpl, body); err != nil {
+	if err = draftRelease(release, tmpl, body); err != nil {
 		return err
 	}
 	
