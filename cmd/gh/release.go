@@ -44,28 +44,24 @@ func updateRelease(env Env) error {
 	notFound := 404
 	shouldEdit := false
 	release, resp, err := client.Repositories.GetReleaseByTag(ctx, owner, repo, latest)
+	fields := &log.Fields{
+		"sha": sha,
+		"latest": latest,
+	}
 	if err != nil {
-		shouldEdit = resp.StatusCode != notFound
-		if !shouldCreate {
+		if resp.StatusCode != notFound {
 			return err
 		}
 		release = &github.RepositoryRelease{}
-	}
-
-	draftRelease(release, comparison, latest, sha)
-
-	log.WithFields(&log.Fields{
-		"create": shouldCreate,
-		"bytes":  len(release.GetBody()),
-		"tag":    latest,
-		"sha":    sha,
-	}).Debug("creating or updating release")
-
-	if shouldCreate {
+		draftRelease(release, comparison, latest, sha)
+		log.WithFields(fields).Debug("creating release")
 		_, _, err = client.Repositories.CreateRelease(ctx, owner, repo, release)
-	} else {
-		_, _, err = client.Repositories.EditRelease(ctx, owner, repo, release.GetID(), release)
+		return err
 	}
+	draftRelease(release, comparison, latest, sha)
+	fields["release"] = release.GetID()
+	log.WithFields(fields).Debug("editing release")
+	_, _, err = client.Repositories.EditRelease(ctx, owner, repo, release.GetID(), release)
 	return err
 }
 
