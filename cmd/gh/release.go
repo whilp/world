@@ -59,8 +59,7 @@ func updateRelease(env Env) error {
 		return err
 	}
 	draftRelease(release, comparison, latest, sha)
-	fields["release"] = release.GetID()
-	log.WithFields(fields).Debug("editing release")
+	log.WithFields(fields).WithField("release", release.GetID()).Debug("editing release")
 	_, _, err = client.Repositories.EditRelease(ctx, owner, repo, release.GetID(), release)
 	return err
 }
