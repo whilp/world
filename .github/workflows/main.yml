@@ -18,7 +18,8 @@ jobs:
       - run: .github/matchers.sh
       - run: git tag > "${TAG_FILE}"
       - name: gh
-        uses: docker://ghcr.io/whilp/gh:latest
+        run: ./tools/bazel run --config=ci cmd/gh
+        # uses: docker://ghcr.io/whilp/gh:latest
         env:
           COMMAND: update-release
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
