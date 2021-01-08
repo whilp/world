@@ -1,0 +1,31 @@
+{{define "changes"}}
+{{range .}}
+- `[.GetSHA]({{.GetURL}})` {{.GetCommit.GetMessage}} (@{{.GetCommit.GetCommitAuthor.GetLogin}}) {{/* pull request association*/}}
+{{else}}
+None.
+{{end}}
+{{end}}
+
+# {{.Tag}}
+
+## Changes
+
+{{template "changes" .Comparison.Commits}}
+
+## Breaking changes
+
+{{/* template "changes" .Changes.Breaking */}}
+
+## Features
+
+{{/* template "changes" .Changes.Features */}}
+
+## Fixes
+
+{{/* template "changes" .Changes.Fixes */}}
+
+## Dependency updates
+
+{{/* template "changes" .Changes.Dependencies */}}
+
+{{/* TK: assets */}}

@@ -3,17 +3,24 @@ name: main
 on:
   workflow_dispatch:
   push:
-    branches:
-      - main
+    # branches:
+    #   - main
 
 jobs:
   update-release:
     runs-on: ubuntu-18.04
+    env:
+      TAG_FILE: .git/tag-list.txt
+      TEMPLATE_GLOB: .github/release.tmpl
     steps:
       - uses: actions/checkout@v2.3.4
+        with:
+          fetch-depth: 0
       - run: .github/matchers.sh
+      - run: git tag > "${TAG_FILE}"
       - name: gh
-        uses: docker://ghcr.io/whilp/gh:latest
+        run: ./tools/bazel run --config=ci cmd/gh
+        # uses: docker://ghcr.io/whilp/gh:latest
         env:
           COMMAND: update-release
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

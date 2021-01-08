@@ -33,6 +33,8 @@ func run() error {
 		"update-release": updateRelease,
 	}
 
+	os.Chdir(env.Get("BUILD_WORKSPACE_DIRECTORY", "."))
+
 	rawCommand := env.Get("COMMAND")
 	command, ok := dispatch[rawCommand]
 	if !ok {
