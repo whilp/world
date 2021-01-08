@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v2.3.4
       - run: .github/matchers.sh
       - name: lint
-        uses: docker://ghcr.io/whilp/gazelle:latest
+        uses: docker://ghcr.io/whilp/gazelle:latest@sha256:8b4eb9b593a549284dbd507d92f63b4b480fc7ba321ef357b96120b9074456bb
       - run: git add -N . && git add -N . && git diff --exit-code
 
   black:
@@ -63,7 +63,7 @@ jobs:
       - name: Prep
         run: git ls-files -z > "${MANIFEST}"
       - name: lint
-        uses: docker://ghcr.io/whilp/shellcheck:latest
+        uses: docker://ghcr.io/whilp/shellcheck:latest@sha256:a49f960a52b8f99d6ac0a5a5a72cedc4e7b1a367d2af02f4bb294b6f0cb4666e
       - run: git add -N . && git diff --exit-code
 
   prettier:
@@ -103,5 +103,5 @@ jobs:
       - uses: actions/checkout@v2.3.4
       - run: .github/matchers.sh
       - name: lint
-        uses: docker://ghcr.io/whilp/pyright:latest
+        uses: docker://ghcr.io/whilp/pyright:latest@sha256:688b6c15f1f995baa39d5e67bfdb43cf48326d55763456898b9f85e27806c4e0
       - run: git add -N . && git diff --exit-code
