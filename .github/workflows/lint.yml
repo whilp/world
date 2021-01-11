@@ -41,7 +41,7 @@ jobs:
       - uses: actions/checkout@v2.3.4
       - run: .github/matchers.sh
       - name: lint
-        uses: docker://ghcr.io/whilp/bandit:latest@sha256:722c0192a917393ddb7aeaacf2f67905bdff1381a41606b579feb20b1650eb9a
+        uses: docker://ghcr.io/whilp/bandit:latest@sha256:2ed4b8046636dd3464368fa441230b8c5864f73702145c18e0e5ee51ecb299ae
       - run: git add -N . && git diff --exit-code
 
   shfmt:
