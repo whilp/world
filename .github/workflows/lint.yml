@@ -103,5 +103,5 @@ jobs:
       - uses: actions/checkout@v2.3.4
       - run: .github/matchers.sh
       - name: lint
-        uses: docker://ghcr.io/whilp/pyright:latest@sha256:688b6c15f1f995baa39d5e67bfdb43cf48326d55763456898b9f85e27806c4e0
+        uses: docker://ghcr.io/whilp/pyright:latest@sha256:df7befffae4643943d975673f07a3dc10fd994f7b70957e869e2ff1ecd55d849
       - run: git add -N . && git diff --exit-code
