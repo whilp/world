@@ -7,7 +7,6 @@ module.exports = {
   onboarding: false,
   requireConfig: false,
   gitAuthor: "Renovate Bot <bot@renovateapp.com>",
-  logLevel: "debug",
   pinDigests: true,
   prHourlyLimit: 15,
   rebaseWhen: "behind-base-branch",
@@ -42,10 +41,10 @@ module.exports = {
     fileMatch: ["requirements.in", "requirements.txt"],
   },
   allowedPostUpgradeCommands: ["^./tools/bazel run"],
-  postUpgradeTasks: {
-    commands: ["./tools/bazel run --config=ci versions"],
-    fileFilters: ["versions.bzl"],
-  },
+  // postUpgradeTasks: {
+  //   commands: ["./tools/bazel run --config=ci versions"],
+  //   fileFilters: ["versions.bzl"],
+  // },
   regexManagers: [
     {
       fileMatch: ["^\\.github/workflows/[^/]+\\.ya?ml$"],
