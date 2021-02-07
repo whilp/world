@@ -29,6 +29,7 @@ module.exports = {
   },
   bazel: {
     labels: ["dependencies", "bazel"],
+    ignoreUnstable: false,
   },
   gomod: {
     labels: ["dependencies", "go"],
