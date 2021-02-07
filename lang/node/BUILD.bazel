@@ -22,7 +22,7 @@ container_layer(
 
 container_image(
     name = "node",
-    base = "@ubuntu18.04//image",
+    base = "@amd64_ubuntu18.04//image",
     layers = [":layer"],
 )
 
