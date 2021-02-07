@@ -90,7 +90,7 @@ module.exports = {
     {
       updateTypes: ["pin", "digest"],
       automerge: true,
-      schedule: ["on friday"],
+      // schedule: ["on friday"],
     },
     {
       packageNames: ["build_bazel_rules_nodejs"],
