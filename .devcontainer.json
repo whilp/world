@@ -1,14 +1,14 @@
 {
   "name": "world",
-  "image": "ghcr.io/whilp/world:latest",
-  "remoteUser": "user",
+  "image": "ubuntu",
+  "TEMPremoteUser": "user",
   "runArgs": [
     "--privileged",
     "--cap-add=SYS_PTRACE",
     "--security-opt",
     "seccomp=unconfined"
   ],
-  "postCreateCommand": "/usr/local/bin/post.sh",
+  "TEMPpostCreateCommand": "/usr/local/bin/post.sh",
   "extensions": [
     "bierner.docs-view",
     "bierner.emojisense",
