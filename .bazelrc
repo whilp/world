@@ -25,3 +25,6 @@ test:fast --test_size_filters=-large,-enormous
 test:fast --build_tests_only
 
 #build --workspace_status_command scripts/workspace-status
+
+# TODO: remove after updating rules_docker
+build --incompatible_restrict_string_escapes=false
