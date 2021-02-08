@@ -971,7 +971,7 @@ _nodejs_image_repos()
 
 container_pull(
     name = "go_image_static",
-    digest = "sha256:359e0c5c9a1364d82f567db01e1419dead4dfc04d33271248f9c713007d0c22e",
+    digest = "sha256:3b3507aa7ce16b085215915d6334f140d8f50ef35bbf3251ee52d3102296f60e",
     registry = "gcr.io",
     repository = "distroless/static",
     tag = "latest",
