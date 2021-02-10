@@ -4,13 +4,17 @@ paths=(
   "$HOME/bin"
   "/Applications/Visual Studio Code - Insiders.app/Contents/Resources/app/bin"
   "/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+  "${BROWSER%/bin/*}/bin"
   /usr/local/bin
   /usr/bin
   /bin
   /usr/sbin
   /sbin
 )
-export PATH=$(IFS=:; echo "${paths[*]}")
+export PATH=$(
+  IFS=:
+  echo "${paths[*]}"
+)
 export PROMPT_DIRTRIM=2
 export PS1='${PWD##*/} ▶ '
 
@@ -27,4 +31,4 @@ export LANGUAGE=C.UTF-8
   mkdir -p ~/.ssh
   chmod 700 ~/.ssh
   chmod 400 ~/.ssh/config
-) >/dev/null 2>&1
+) > /dev/null 2>&1
