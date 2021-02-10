@@ -909,6 +909,26 @@ http_archive(
 )
 
 load(
+    "@io_bazel_rules_docker//toolchains/docker:toolchain.bzl",
+    docker_toolchain_configure = "toolchain_configure",
+)
+
+docker_toolchain_configure(
+    name = "docker_config",
+    # OPTIONAL: Path to a directory which has a custom docker client config.json.
+    # See https://docs.docker.com/engine/reference/commandline/cli/#configuration-files
+    # for more details.
+    #client_config="<enter absolute path to your docker config directory here>",
+    # OPTIONAL: Path to the docker binary.
+    # Should be set explicitly for remote execution.
+    docker_path = "/usr/local/bin/docker",
+    #docker_flags = [
+    #  "--tls",
+    #  "--log-level=info",
+    #],
+)
+
+load(
     "@io_bazel_rules_docker//repositories:repositories.bzl",
     container_repositories = "repositories",
 )
@@ -988,6 +1008,14 @@ container_pull(
 )
 
 container_pull(
+    name = "arm64_ubuntu18.04",
+    digest = "sha256:8ffb05b077b6498416f9d5fa5cdc81f03d58dcef24e46ad6f6837e8b33ad04de",
+    registry = "docker.io",
+    repository = "arm64v8/ubuntu",
+    tag = "18.04",
+)
+
+container_pull(
     name = "renovate",
     digest = "sha256:0440882b16eb3e2a0678e558c558c93c0277aca8d11d8b6d90dbb001f3ddefb0",
     registry = "docker.io",
@@ -1042,6 +1070,7 @@ http_file(
     urls = ["https://github.com/bazelbuild/bazel/releases/download/4.0.0/bazel-4.0.0-linux-x86_64"],
 )
 
+# TODO build
 http_file(
     name = "buildifier",
     downloaded_file_path = "buildifier",
@@ -1050,6 +1079,7 @@ http_file(
     urls = ["https://github.com/bazelbuild/buildtools/releases/download/4.0.0/buildifier"],
 )
 
+# TODO build
 http_file(
     name = "buildozer",
     downloaded_file_path = "buildozer",
@@ -1058,6 +1088,7 @@ http_file(
     urls = ["https://github.com/bazelbuild/buildtools/releases/download/3.5.0/buildozer"],
 )
 
+# TODO build
 http_file(
     name = "ibazel",
     downloaded_file_path = "ibazel",

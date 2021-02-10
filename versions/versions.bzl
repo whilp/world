@@ -3,6 +3,7 @@
 GITHUB_RELEASE_URL = "https://github.com/{name}/releases/download/{version}/{asset}"
 GITHUB_V_RELEASE_URL = "https://github.com/{name}/releases/download/v{version}/{asset}"
 DOCKER_DOWNLOAD_URL = "https://download.docker.com/linux/static/stable/x86_64/{asset}"
+ARCH = "arm64"
 
 def versions():
     return struct(
@@ -11,18 +12,18 @@ def versions():
             name = "golang/go",
             version = "1.15.8",
             url = "https://golang.org/dl/{asset}",
-            sha256 = "d3379c32a90fdf9382166f8f48034c459a8cc433730bc9476d39d9082c94583b",
-            asset = "go{version}.linux-amd64.tar.gz",
+            sha256 = "0e31ea4bf53496b0f0809730520dee98c0ae5c530f3701a19df0ba0a327bf3d2",
+            asset = "go{version}.linux-{arch}.tar.gz",
         ),
         # https://github.com/bazelbuild/rules_nodejs/blob/d660ca109fcf86fe0dbfb9908faaefb0e30c25a0/internal/node/node_repositories.bzl#L108-L112
         node = version(
             datasource = "github-releases",
             name = "nodejs/node",
             version = "12.13.0",
-            sha256 = "c69671c89d0faa47b64bd5f37079e4480852857a9a9366ee86cdd8bc9670074a",
+            sha256 = "92371c7f1edd384a8acb0d2b9f2deac76e911588669b71de9f6453012196c970",
             url = "https://nodejs.org/dist/v{version}/{asset}",
-            asset = "node-v{version}-linux-x64.tar.gz",
-            prefix = "node-v{version}-linux-x64",
+            asset = "node-v{version}-linux-{arch}.tar.gz",
+            prefix = "node-v{version}-linux-{arch}",
         ),
         # https://github.com/bazelbuild/rules_nodejs/blob/d660ca109fcf86fe0dbfb9908faaefb0e30c25a0/internal/node/node_repositories.bzl#L204
         yarn = version(
@@ -40,7 +41,7 @@ def versions():
             version = "4.0.0",
             sha256 = "b2985c3ad1ec0284a66749b635ac11b323bc6b964d2cfcf33721746243a19530",
             url = GITHUB_RELEASE_URL,
-            asset = "bazel-{version}-linux-x86_64",
+            asset = "bazel-{version}-linux-{arch}",
         ),
         buildifier = version(
             datasource = "github-releases",
@@ -88,7 +89,7 @@ def versions():
             version = "v3.2.2",
             sha256 = "43439b996942b53dfafa9b6ff084f394555d049c98fb7ec37978f7668b43e1be",
             url = GITHUB_RELEASE_URL,
-            asset = "shfmt_{version}_linux_amd64",
+            asset = "shfmt_{version}_linux_{arch}",
         ),
     )
 
@@ -115,7 +116,8 @@ def version(
         url = None,
         sha256 = None,
         asset = None,
-        prefix = None):
+        prefix = None,
+        arch = None):
     """version returns a version struct.
 
     Args:
@@ -126,6 +128,7 @@ def version(
         sha256: TODO
         asset: TODO
         prefix: TODO
+        arch: TODO
 
     Returns:
         version struct
@@ -138,8 +141,11 @@ def version(
         url = url,
         asset = asset,
         prefix = prefix,
+        arch = arch,
     )
     params["stripped_version"] = version.strip("v")
+    if arch == None:
+        params["arch"] = ARCH
     if asset != None:
         params["asset"] = asset.format(**params)
     if url != None:
