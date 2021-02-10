@@ -18,7 +18,7 @@ export PATH=$(
 export PROMPT_DIRTRIM=2
 export PS1='${PWD##*/} ▶ '
 
-export GIT_EDITOR="code -w"
+export GIT_EDITOR="edit -w"
 export GIT_AUTHOR_NAME="Will Maier"
 export GIT_AUTHOR_EMAIL="189851+whilp@users.noreply.github.com"
 
