@@ -10,7 +10,7 @@ main() {
     vi
   )
 
-  for editor in ${editors[@]}; do
+  for editor in "${editors[@]}"; do
     command -v "$editor" 2>&1 && exec "$editor" "$@"
   done
   return 1
