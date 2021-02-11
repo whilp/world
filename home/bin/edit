@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+main() {
+  editors=(
+    code-insiders
+    code
+    nvi
+    vi
+  )
+
+  for editor in "${editors[@]}"; do
+    command -v "$editor" 2>&1 && exec "$editor" "$@"
+  done
+  return 1
+}
+
+main "$@"
+exit $?
