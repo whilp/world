@@ -989,7 +989,7 @@ container_pull(
 
 container_pull(
     name = "renovate",
-    digest = "sha256:0440882b16eb3e2a0678e558c558c93c0277aca8d11d8b6d90dbb001f3ddefb0",
+    digest = "sha256:d40198c265541ef856be59b0e0327c791ee92fcd78b4eafddb56b2d5d4a4032b",
     registry = "docker.io",
     repository = "renovate/renovate",
     tag = "latest",
