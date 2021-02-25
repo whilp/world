@@ -92,7 +92,7 @@ jobs:
       - name: clean up
         run: rm -rf cmd/tools
       - name: lint
-        uses: docker://ghcr.io/whilp/golangci-lint:latest@sha256:59aa1f6a4bd1a9535080f5663d571d53958d8f7941e83e8405c4a22a42c78591
+        uses: docker://ghcr.io/whilp/golangci-lint:latest@sha256:643243af4234933d2c62a61c364534db2f5fbe2175cc26d13d890dbc2baf6321
       - name: restore
         run: git checkout cmd/tools
       - run: git add -N . && git diff --exit-code
