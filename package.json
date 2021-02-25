@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@bazel/typescript": "3.1.0",
+    "@bazel/typescript": "3.2.1",
     "@types/jest": "26.0.20",
     "@types/node": "14.14.26",
     "@typescript-eslint/eslint-plugin": "4.15.0",
