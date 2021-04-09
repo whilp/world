@@ -1,6 +1,10 @@
 [user]
 name = Will Maier
 email = 189851+whilp@users.noreply.github.com
+signingkey = 477B79086D235E65
 
 [init]
 defaultBranch = main
+
+[commit]
+gpgsign = true
