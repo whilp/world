@@ -930,10 +930,10 @@ load(
 
 container_pull(
     name = "cc_image_base",
-    digest = "sha256:28051e6b413a949a478915dab459e4f36ffa6d022e5e9e3e6d42913cfd7e5d6f",
+    digest = "sha256:c33fbcd3f924892f2177792bebc11f7a7e88ccbc247f0d0a01a812692259503a",
     registry = "gcr.io",
     repository = "distroless/cc",
-    tag = "latest",
+    tag = "latest-amd64",
 )
 
 _cc_image_repos()
@@ -946,10 +946,10 @@ load(
 # Make sure we get a base image with python3.7.
 container_pull(
     name = "py3_image_base",
-    digest = "sha256:15485ca0f7eaedfd8167ca153904d370cd3bad5cf43aa481f957dee0e08739fd",
+    digest = "sha256:80a90be7e33b931284194ba32c3af8fd8745017cfee18ba22c8269ae286f16f8",
     registry = "gcr.io",
     repository = "distroless/python3-debian10",
-    tag = "latest",
+    tag = "latest-amd64",
 )
 
 _py_image_repos()
@@ -989,7 +989,7 @@ container_pull(
 
 container_pull(
     name = "renovate",
-    digest = "sha256:ad517462f966d72d1529f38f2132027728eacb51c023f0f58a7b98b23edfc94e",
+    digest = "sha256:d50f047cf40413a4ea496d1205daa2ebc2dd316dd87a584cbc77b2f8690576c4",
     registry = "docker.io",
     repository = "renovate/renovate",
     tag = "latest",
@@ -1006,17 +1006,17 @@ http_archive(
 http_archive(
     name = "golangcilint",
     build_file_content = """exports_files(["golangci-lint"])""",
-    sha256 = "3a73aa7468087caa62673c8adea99b4e4dff846dc72707222db85f8679b40cbf",
-    strip_prefix = "golangci-lint-1.39.0-linux-amd64",
-    urls = ["https://github.com/golangci/golangci-lint/releases/download/v1.39.0/golangci-lint-1.39.0-linux-amd64.tar.gz"],
+    sha256 = "7c133b4b39c0a46cf8d67265da651f169079d137ae71aee9b5934e2281bd18d3",
+    strip_prefix = "golangci-lint-1.40.1-linux-amd64",
+    urls = ["https://github.com/golangci/golangci-lint/releases/download/v1.40.1/golangci-lint-1.40.1-linux-amd64.tar.gz"],
 )
 
 http_archive(
     name = "age",
     build_file_content = """exports_files(["age", "age-keygen"])""",
-    sha256 = "722a30e34e5763476b7610cfbd098b05e177fbc7abcf13c60b393a9f5c74e9e6",
+    sha256 = "73639a54f6e79a9575a66e68bd1de07b5d98dcc8c93f8de2c28d355b2dc7cd0c",
     strip_prefix = "age/",
-    urls = ["https://github.com/FiloSottile/age/releases/download/v1.0.0-rc.1/age-v1.0.0-rc.1-linux-amd64.tar.gz"],
+    urls = ["https://github.com/FiloSottile/age/releases/download/v1.0.0-rc.2/age-v1.0.0-rc.2-linux-amd64.tar.gz"],
 )
 
 http_archive(
@@ -1030,16 +1030,16 @@ http_archive(
 http_archive(
     name = "deno",
     build_file_content = """exports_files(["deno"])""",
-    sha256 = "8d85a7986491206df7966048ae01976bc07f8dc42db6ec93afba7806c45b00c1",
-    urls = ["https://github.com/denoland/deno/releases/download/v1.8.3/deno-x86_64-unknown-linux-gnu.zip"],
+    sha256 = "ec6f1e50df9dc32f493d53b3d5befe5d42e7eeba87ae9be75c331f900c3f2453",
+    urls = ["https://github.com/denoland/deno/releases/download/v1.10.2/deno-x86_64-unknown-linux-gnu.zip"],
 )
 
 http_file(
     name = "bazel",
     downloaded_file_path = "bazel",
     executable = True,
-    sha256 = "7bee349a626281fc8b8d04a7a0b0358492712377400ab12533aeb39c2eb2b901",
-    urls = ["https://github.com/bazelbuild/bazel/releases/download/4.0.0/bazel-4.0.0-linux-x86_64"],
+    sha256 = "0eb2e378d2782e7810753e2162245ad1179c1bb12f848c692b4a595b4edf779b",
+    urls = ["https://github.com/bazelbuild/bazel/releases/download/4.1.0/bazel-4.1.0-linux-x86_64"],
 )
 
 http_file(
@@ -1062,8 +1062,8 @@ http_file(
     name = "ibazel",
     downloaded_file_path = "ibazel",
     executable = True,
-    sha256 = "8c0386298deab2d3b2a569461a291332c030301145a8bf7a4388cd1789c10088",
-    urls = ["https://github.com/bazelbuild/bazel-watcher/releases/download/v0.15.7/ibazel_linux_amd64"],
+    sha256 = "606f959180664bfb2d36e636ae23840e0c55a14a7e025a7ee39a4be560270c40",
+    urls = ["https://github.com/bazelbuild/bazel-watcher/releases/download/v0.15.10/ibazel_linux_amd64"],
 )
 
 http_file(
