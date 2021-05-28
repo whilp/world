@@ -1062,8 +1062,8 @@ http_file(
     name = "ibazel",
     downloaded_file_path = "ibazel",
     executable = True,
-    sha256 = "8c0386298deab2d3b2a569461a291332c030301145a8bf7a4388cd1789c10088",
-    urls = ["https://github.com/bazelbuild/bazel-watcher/releases/download/v0.15.7/ibazel_linux_amd64"],
+    sha256 = "606f959180664bfb2d36e636ae23840e0c55a14a7e025a7ee39a4be560270c40",
+    urls = ["https://github.com/bazelbuild/bazel-watcher/releases/download/v0.15.10/ibazel_linux_amd64"],
 )
 
 http_file(
