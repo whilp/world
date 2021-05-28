@@ -9,9 +9,8 @@ def versions():
         golang = version(
             datasource = "github-releases",
             name = "golang/go",
-            version = "1.15.8",
+            version = "1.16.4",
             url = "https://golang.org/dl/{asset}",
-            sha256 = "d3379c32a90fdf9382166f8f48034c459a8cc433730bc9476d39d9082c94583b",
             asset = "go{version}.linux-amd64.tar.gz",
         ),
         # https://github.com/bazelbuild/rules_nodejs/blob/d660ca109fcf86fe0dbfb9908faaefb0e30c25a0/internal/node/node_repositories.bzl#L108-L112
