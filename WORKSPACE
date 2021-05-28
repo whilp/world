@@ -1006,9 +1006,9 @@ http_archive(
 http_archive(
     name = "golangcilint",
     build_file_content = """exports_files(["golangci-lint"])""",
-    sha256 = "3a73aa7468087caa62673c8adea99b4e4dff846dc72707222db85f8679b40cbf",
-    strip_prefix = "golangci-lint-1.39.0-linux-amd64",
-    urls = ["https://github.com/golangci/golangci-lint/releases/download/v1.39.0/golangci-lint-1.39.0-linux-amd64.tar.gz"],
+    sha256 = "7c133b4b39c0a46cf8d67265da651f169079d137ae71aee9b5934e2281bd18d3",
+    strip_prefix = "golangci-lint-1.40.1-linux-amd64",
+    urls = ["https://github.com/golangci/golangci-lint/releases/download/v1.40.1/golangci-lint-1.40.1-linux-amd64.tar.gz"],
 )
 
 http_archive(
