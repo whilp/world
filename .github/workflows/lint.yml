@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@v2.3.4
       - run: .github/matchers.sh
       - name: lint
-        uses: docker://ghcr.io/whilp/buildifier:latest@sha256:c28fbc843117c8ddc87091b6aea1054a754e252643ad6c740f307ce49a272daf
+        uses: docker://ghcr.io/whilp/buildifier:latest@sha256:27d5f1602ce41d7c7a73456f478a751701cdc02aa0110530b7e2b117cb20c75f
       - run: git add -N . && git diff --exit-code
 
   gazelle:
