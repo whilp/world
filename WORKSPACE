@@ -930,10 +930,10 @@ load(
 
 container_pull(
     name = "cc_image_base",
-    digest = "sha256:28051e6b413a949a478915dab459e4f36ffa6d022e5e9e3e6d42913cfd7e5d6f",
+    digest = "sha256:c33fbcd3f924892f2177792bebc11f7a7e88ccbc247f0d0a01a812692259503a",
     registry = "gcr.io",
     repository = "distroless/cc",
-    tag = "latest",
+    tag = "latest-amd64",
 )
 
 _cc_image_repos()
