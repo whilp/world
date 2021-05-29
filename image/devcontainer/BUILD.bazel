@@ -85,7 +85,7 @@ container_run_and_commit(
         "apt-get clean -y",
         "rm -rf /var/lib/apt/lists/*",
     ],
-    image = "@amd64_ubuntu18.04//image",
+    image = "@arm64_ubuntu18.04//image",
 )
 
 container_layer(
