@@ -1038,8 +1038,8 @@ http_file(
     name = "bazel",
     downloaded_file_path = "bazel",
     executable = True,
-    sha256 = "0eb2e378d2782e7810753e2162245ad1179c1bb12f848c692b4a595b4edf779b",
-    urls = ["https://github.com/bazelbuild/bazel/releases/download/4.1.0/bazel-4.1.0-linux-x86_64"],
+    sha256 = "c4fed178a415893505732fd924a5e40db1091bc4e7fc8c9a5ea9aa448862fcb1",
+    urls = ["https://github.com/bazelbuild/bazel/releases/download/5.0.0-pre.20210510.2.2/bazel-5.0.0-pre.20210510.2.2-linux-x86_64"],
 )
 
 http_file(
