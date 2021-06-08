@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/apex/log v1.9.0
-	github.com/bradleyfalzon/ghinstallation v1.1.1
+	github.com/bradleyfalzon/ghinstallation/v2 v2.0.1
 	github.com/google/go-github/v29 v29.0.3 // indirect
 	github.com/google/go-github/v33 v33.0.0
 	github.com/google/go-github/v35 v35.3.0
