@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v2.3.4
       - run: .github/matchers.sh
       - name: gh
-        uses: docker://ghcr.io/whilp/gh:latest@sha256:a7495ee6eb11ebdf9b2d8b295cbe3957e506cc066151e54d817ed4b3dead50eb
+        uses: docker://ghcr.io/whilp/gh:latest@sha256:d538e1d18128652320d255ffcd4e6435f24bcfdbb97cb1c14e1e519cab009e97
         env:
           COMMAND: check-pr
           CONTEXT: lint / github
