@@ -884,8 +884,8 @@ rules_pkg_dependencies()
 
 http_archive(
     name = "build_bazel_rules_nodejs",
-    sha256 = "4a5d654a4ccd4a4c24eca5d319d85a88a650edf119601550c95bf400c8cc897e",
-    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/3.5.1/rules_nodejs-3.5.1.tar.gz"],
+    sha256 = "8f5f192ba02319254aaf2cdcca00ec12eaafeb979a80a1e946773c520ae0a2c9",
+    urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/3.7.0/rules_nodejs-3.7.0.tar.gz"],
 )
 
 load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories", "yarn_install")
