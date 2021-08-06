@@ -3388,10 +3388,10 @@ punycode@^2.1.0, punycode@^2.1.1:
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
 
-pyright@1.1.147:
-  version "1.1.147"
-  resolved "https://registry.yarnpkg.com/pyright/-/pyright-1.1.147.tgz#ab23ae77f883a22b17370b3fda9d19883e99c2b5"
-  integrity sha512-xHfJWctf83cQF/F/PfgByknHUB0ydE9ChnQGdWZ+Hb2zjy/Qniq77xUZkCehl24RgQbk0M0nGxvMApO77PhIxw==
+pyright@1.1.160:
+  version "1.1.160"
+  resolved "https://registry.yarnpkg.com/pyright/-/pyright-1.1.160.tgz#3498c595ed0448d5a52e9844c10ee65a08e80d29"
+  integrity sha512-SBgUVitoBS+VvGEG1IoPJNgJ9PSjsjCqeJPZ7DWMz9s4SvYHeZz57VtWlGGGpgjT19nmH/zPe8Cxk4CLXmDhiA==
 
 react-is@^16.12.0:
   version "16.13.1"
