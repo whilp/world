@@ -1,5 +1,5 @@
 bandit==1.7.0
 black==19.10b0
 pip-tools==6.1.0
-setuptools==57.0.0
+setuptools==65.5.1
 pip==21.1.2
