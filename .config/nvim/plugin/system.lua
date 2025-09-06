@@ -4,5 +4,7 @@ local opt = vim.opt
 opt.autoread = true
 opt.hidden = true
 
--- Environment variables
+-- Shell configuration
+vim.o.shell = '/usr/bin/zsh'
+
 vim.env.NVIM_INVIM = "true"

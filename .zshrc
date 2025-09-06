@@ -1,3 +1,4 @@
+export COLORTERM=truecolor
 export PS1='%# '
 set -o vi
 

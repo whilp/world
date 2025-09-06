@@ -13,6 +13,11 @@
           "url": "https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz",
           "sha256": "SKIP_CHECKSUM",
           "executable_path": "nvim-linux64/bin/nvim"
+        },
+        "linux-x86_64": {
+          "url": "https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-x86_64.tar.gz",
+          "sha256": "SKIP_CHECKSUM",
+          "executable_path": "nvim-linux-x86_64/bin/nvim"
         }
       }
     },
@@ -27,6 +32,10 @@
         "linux-arm64": {
           "url": "https://github.com/biomejs/biome/releases/download/cli%2Fv1.9.4/biome-linux-arm64",
           "sha256": "SKIP_CHECKSUM"
+        },
+        "linux-x86_64": {
+          "url": "https://github.com/biomejs/biome/releases/download/cli%2Fv1.9.4/biome-linux-x64",
+          "sha256": "ce247fb644999ef52e5111dd6fd6e471019669fc9c4a44b5699721e39b7032c3"
         }
       }
     },
@@ -43,6 +52,11 @@
           "url": "https://github.com/astral-sh/ruff/releases/download/0.8.4/ruff-aarch64-unknown-linux-gnu.tar.gz",
           "sha256": "SKIP_CHECKSUM",
           "executable_path": "ruff-aarch64-unknown-linux-gnu/ruff"
+        },
+        "linux-x86_64": {
+          "url": "https://github.com/astral-sh/ruff/releases/download/0.8.4/ruff-x86_64-unknown-linux-gnu.tar.gz",
+          "sha256": "ce7b99797145b43d23b732d6050fbbd62e4f9059663cf24218810598753dfb90",
+          "executable_path": "ruff-x86_64-unknown-linux-gnu/ruff"
         }
       }
     },
@@ -59,6 +73,11 @@
           "url": "https://github.com/JohnnyMorganz/StyLua/releases/download/v2.0.1/stylua-linux-aarch64.zip",
           "sha256": "SKIP_CHECKSUM",
           "executable_path": "stylua"
+        },
+        "linux-x86_64": {
+          "url": "https://github.com/JohnnyMorganz/StyLua/releases/download/v2.0.1/stylua-linux-x86_64.zip",
+          "sha256": "3d2476596a4f7aa7c52fbf67ccd8a6ef208e7e89dfddf9aa2ceb6e195600ad98",
+          "executable_path": "stylua"
         }
       }
     },
@@ -73,6 +92,11 @@
         },
         "linux-arm64": {
           "url": "https://github.com/ast-grep/ast-grep/releases/download/0.28.0/app-aarch64-unknown-linux-gnu.zip",
+          "sha256": "SKIP_CHECKSUM",
+          "executable_path": "ast-grep"
+        },
+        "linux-x86_64": {
+          "url": "https://github.com/ast-grep/ast-grep/releases/download/0.28.0/app-x86_64-unknown-linux-gnu.zip",
           "sha256": "SKIP_CHECKSUM",
           "executable_path": "ast-grep"
         }
@@ -91,6 +115,11 @@
           "url": "https://github.com/quarylabs/sqruff/releases/download/v0.21.2/sqruff-linux-aarch64-musl.tar.gz",
           "sha256": "SKIP_CHECKSUM",
           "executable_path": "sqruff"
+        },
+        "linux-x86_64": {
+          "url": "https://github.com/quarylabs/sqruff/releases/download/v0.21.2/sqruff-linux-x86_64-musl.tar.gz",
+          "sha256": "ae09dfcb0d275bf5317769d6eff8aa62c05942369f63ea5e747164a7db9225d9",
+          "executable_path": "sqruff"
         }
       }
     },
@@ -105,6 +134,10 @@
         "linux-arm64": {
           "url": "https://github.com/mvdan/sh/releases/download/v3.10.0/shfmt_v3.10.0_linux_arm64",
           "sha256": "SKIP_CHECKSUM"
+        },
+        "linux-x86_64": {
+          "url": "https://github.com/mvdan/sh/releases/download/v3.10.0/shfmt_v3.10.0_linux_amd64",
+          "sha256": "1f57a384d59542f8fac5f503da1f3ea44242f46dff969569e80b524d64b71dbc"
         }
       }
     },
@@ -121,6 +154,11 @@
           "url": "https://github.com/astral-sh/uv/releases/download/0.5.7/uv-aarch64-unknown-linux-gnu.tar.gz",
           "sha256": "SKIP_CHECKSUM",
           "executable_path": "uv-aarch64-unknown-linux-gnu/uv"
+        },
+        "linux-x86_64": {
+          "url": "https://github.com/astral-sh/uv/releases/download/0.5.7/uv-x86_64-unknown-linux-gnu.tar.gz",
+          "sha256": "884e9aed698f57e6c56252025342214a9af5993ff8da4580157588726d71fa01",
+          "executable_path": "uv-x86_64-unknown-linux-gnu/uv"
         }
       }
     },
@@ -137,6 +175,11 @@
           "url": "https://github.com/kristoff-it/superhtml/releases/download/v0.5.3/aarch64-linux.tar.gz",
           "sha256": "SKIP_CHECKSUM",
           "executable_path": "aarch64-linux/superhtml"
+        },
+        "linux-x86_64": {
+          "url": "https://github.com/kristoff-it/superhtml/releases/download/v0.5.3/x86_64-linux-musl.tar.gz",
+          "sha256": "SKIP_CHECKSUM",
+          "executable_path": "x86_64-linux-musl/superhtml"
         }
       }
     },
@@ -153,6 +196,11 @@
           "url": "https://github.com/tree-sitter/tree-sitter/releases/download/v0.25.8/tree-sitter-linux-arm64.gz",
           "sha256": "SKIP_CHECKSUM",
           "executable_path": "tree-sitter"
+        },
+        "linux-x86_64": {
+          "url": "https://github.com/tree-sitter/tree-sitter/releases/download/v0.25.8/tree-sitter-linux-x64.gz",
+          "sha256": "c9d46697e3e5ae6900a39ad4483667d2ba14c8ffb12c3f863bcf82a9564ee19f",
+          "executable_path": "tree-sitter"
         }
       }
     },
@@ -166,6 +214,10 @@
         },
         "linux-arm64": {
           "url": "https://github.com/artempyanykh/marksman/releases/download/2024-12-18/marksman-linux-arm64",
+          "sha256": "SKIP_CHECKSUM"
+        },
+        "linux-x86_64": {
+          "url": "https://github.com/artempyanykh/marksman/releases/download/2024-12-18/marksman-linux-x64",
           "sha256": "SKIP_CHECKSUM"
         }
       }
@@ -181,6 +233,10 @@
         "linux-arm64": {
           "url": "https://github.com/kivikakk/comrak/releases/download/v0.41.0/comrak-0.41.0-aarch64-unknown-linux-gnu",
           "sha256": "SKIP_CHECKSUM"
+        },
+        "linux-x86_64": {
+          "url": "https://github.com/kivikakk/comrak/releases/download/v0.41.0/comrak-0.41.0-x86_64-unknown-linux-gnu",
+          "sha256": "d3ffc8f04f85a47fa325081affd6b572ad456b542a4d3a1207ef4685afd7e9e2"
         }
       }
     }

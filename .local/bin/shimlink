@@ -7,6 +7,7 @@ symlink filename, validates the binary exists with correct checksum, downloads i
 then exec's the target binary with all arguments and environment passed through.
 """
 
+import argparse
 import gzip
 import hashlib
 import json
@@ -148,7 +149,19 @@ def needs_download(binary_name: str, config: dict) -> bool:
     return False
 
 
-def download_binary(binary_name: str, config: dict) -> bool:
+def update_config_checksum(binary_name: str, config: dict, new_checksum: str) -> None:
+    """Update the checksum in the configuration file."""
+    platform_key = get_platform()
+    config["binaries"][binary_name]["platforms"][platform_key]["sha256"] = new_checksum
+    
+    config_path = get_config_path()
+    with open(config_path, 'w') as f:
+        json.dump(config, f, indent=2)
+    
+    print(f"shimlink: updated checksum for {binary_name} to {new_checksum}", file=sys.stderr)
+
+
+def download_binary(binary_name: str, config: dict, force: bool = False) -> bool:
     """Download and install a binary. Returns True if successful."""
     binary_config = config["binaries"].get(binary_name)
     if not binary_config:
@@ -200,9 +213,16 @@ def download_binary(binary_name: str, config: dict) -> bool:
         if extracted_binary.exists():
             extracted_binary.chmod(0o755)
 
-        # Verify checksum of final binary if provided and not explicitly skipped
-        if expected_sha256 and expected_sha256 != "SKIP_CHECKSUM":
-            actual_sha256 = calculate_sha256(extracted_binary)
+        # Calculate actual checksum for verification or update
+        actual_sha256 = calculate_sha256(extracted_binary)
+        
+        # Handle checksum verification and updates
+        if force:
+            # Force mode: always update config with actual checksum
+            update_config_checksum(binary_name, config, actual_sha256)
+            print(f"shimlink: force mode - updated checksum for {binary_name}", file=sys.stderr)
+        elif expected_sha256 and expected_sha256 != "SKIP_CHECKSUM":
+            # Normal mode: verify checksum if provided
             if actual_sha256 != expected_sha256:
                 print(f"shimlink: checksum mismatch for {binary_name}", file=sys.stderr)
                 print(f"shimlink:   expected: {expected_sha256}", file=sys.stderr)
@@ -315,8 +335,12 @@ def show_help():
     print()
     print("Usage:")
     print("  shimlink                    # Show this help")
+    print("  shimlink -f <binary>        # Force download and update checksum")
     print("  ln -s shimlink <binary>     # Create symlink for managed binary")
     print("  <binary> [args...]          # Execute binary through shimlink")
+    print()
+    print("Options:")
+    print("  -f, --force                 # Skip checksum validation and update config")
     print()
     print("When invoked through a symlink, shimlink automatically downloads")
     print("and manages the target binary, then executes it with all arguments.")
@@ -330,6 +354,44 @@ def main():
     target_name = get_target_name()
     
     if target_name == "shimlink":
+        # Parse arguments when invoked as shimlink directly
+        parser = argparse.ArgumentParser(
+            prog="shimlink",
+            description="A symlink-based binary manager",
+            add_help=False
+        )
+        parser.add_argument("-f", "--force", action="store_true",
+                          help="Force download and update checksum")
+        parser.add_argument("-h", "--help", action="store_true",
+                          help="Show help")
+        parser.add_argument("binary", nargs="?",
+                          help="Binary to force download")
+        
+        args, remaining = parser.parse_known_args()
+        
+        if args.help or (not args.force and not args.binary):
+            show_help()
+            return
+        
+        if args.force:
+            if not args.binary:
+                print("shimlink: -f requires a binary name", file=sys.stderr)
+                sys.exit(1)
+            
+            # Load configuration
+            try:
+                config = load_config()
+            except Exception as e:
+                print(f"shimlink: failed to load configuration: {e}", file=sys.stderr)
+                sys.exit(1)
+            
+            # Force download the specified binary
+            if not download_binary(args.binary, config, force=True):
+                print(f"shimlink: failed to force download {args.binary}", file=sys.stderr)
+                sys.exit(1)
+            return
+        
+        # If we get here, show help
         show_help()
         return
     
