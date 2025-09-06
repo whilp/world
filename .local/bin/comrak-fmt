@@ -1,0 +1,18 @@
+#!/usr/bin/env python3
+import subprocess
+import sys
+import re
+
+# Run comrak with the conform config args
+result = subprocess.run([
+    "comrak", "--to", "commonmark", "--gfm", "--width", "0", 
+    "--front-matter-delimiter", "---"
+] + sys.argv[1:], capture_output=True, text=True)
+
+if result.returncode != 0:
+    sys.stderr.write(result.stderr)
+    sys.exit(result.returncode)
+
+# Fix space after triple backticks with language info
+output = re.sub(r'^``` (.+)', r'```\1', result.stdout, flags=re.MULTILINE)
+sys.stdout.write(output)

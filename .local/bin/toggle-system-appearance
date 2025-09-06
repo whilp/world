@@ -1,0 +1,36 @@
+#!/bin/bash
+#
+# Required parameters:
+# @raycast.schemaVersion 1
+# @raycast.title Toggle Light/Dark
+# @raycast.mode compact
+
+# Optional parameters:
+# @raycast.icon 🤖
+
+# Documentation:
+# @raycast.author whilp
+# @raycast.authorURL https://raycast.com/whilp
+
+set -euo pipefail
+
+main () {
+    is_dark=$(osascript -e 'tell application "System Events" to tell appearance preferences to return dark mode' 2>/dev/null)
+    case "$is_dark" in
+        true) next=light;;
+        *)    next=dark;;
+    esac
+
+    # Toggle system appearance
+    osascript -e 'tell application "System Events" to tell appearance preferences to set dark mode to not dark mode'
+
+    # Alacritty
+    theme="$HOME/.config/alacritty/themes/theme.toml" 
+
+    ln -sf "${next}.toml" "$theme"
+
+    # nvim
+    nvim --remote-expr "execute(\"colorscheme github_${next}_colorblind\")" 2>/dev/null
+}
+
+main "$@"

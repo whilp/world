@@ -1,0 +1,76 @@
+#!/usr/bin/env -S uv run --script
+
+# /// script
+# dependencies = ["markdown"]
+# ///
+
+import sys
+import subprocess
+import markdown
+import re
+
+def create_html_format(content):
+    """Convert markdown content to HTML using the markdown library"""
+
+    # Fix double-bracket links: [[text](url)] -> [text](url)
+    content = re.sub(r'\[\[([^\]]+)\]\(([^)]+)\)\]', r'[\1](\2)', content)
+
+    # Use markdown to convert to HTML
+    html_content = markdown.markdown(content, extensions=['extra'])
+
+    # For Slack compatibility, add paragraphs with non-breaking spaces for better spacing
+    # Use regex with groups to handle all block elements at once
+    html_content = re.sub(r'</(p|ul|ol)>', r'</\1><p>&nbsp;</p>', html_content)
+
+    # Remove any trailing spacing paragraphs and incomplete tags
+    html_content = re.sub(r'<p>&nbsp;</p>\s*$', '', html_content)
+    html_content = re.sub(r'<[^>]*$', '', html_content)  # Remove incomplete tags at end
+
+    return html_content
+
+def set_clipboard_html(html_content, original_content):
+    """Set clipboard with both HTML and text formats"""
+
+    # Convert HTML to hex for AppleScript
+    html_hex = html_content.encode('utf-8').hex()
+
+    # Create a better plain text version from the HTML (matching original behavior)
+    # Convert HTML links to plain URLs for text fallback
+    plain_text = re.sub(r'<a href="([^"]+)">([^<]+)</a>', r'\2 (\1)', html_content)
+    # Remove HTML tags
+    plain_text = re.sub(r'<[^>]+>', '', plain_text)
+    # Clean up extra whitespace and line breaks
+    plain_text = re.sub(r'\n\s*\n', '\n\n', plain_text.strip())
+
+    # Escape quotes for AppleScript
+    escaped_text = plain_text.replace('"', '\\"').replace('\n', '\\n')
+
+    script = f'''
+    tell application "System Events"
+        set the clipboard to {{«class HTML»:«data HTML{html_hex.upper()}», string:"{escaped_text}"}}
+    end tell
+    '''
+
+    subprocess.run(['osascript', '-e', script])
+
+def main():
+    if len(sys.argv) > 1:
+        # Read from file if provided
+        with open(sys.argv[1], 'r') as f:
+            content = f.read()
+    else:
+        # Read from stdin
+        content = sys.stdin.read()
+
+    if not content.strip():
+        print("No content provided", file=sys.stderr)
+        sys.exit(1)
+
+    # Create HTML format
+    html_content = create_html_format(content)
+
+    # Set clipboard with both formats
+    set_clipboard_html(html_content, content.strip())
+
+if __name__ == "__main__":
+    main()

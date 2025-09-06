@@ -1,0 +1,6 @@
+#!/bin/bash
+
+sock=~/.config/nvim/nvim.sock
+
+[ -r "$sock" ] && exec nvim --server "$sock" "$@"
+exec nvim --listen "$sock" "$@"

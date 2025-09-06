@@ -1,0 +1,1 @@
+-- nvim configuration entry point

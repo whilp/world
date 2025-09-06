@@ -1,0 +1,41 @@
+{
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git log:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(rg:*)",
+      "Bash(ast-grep:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)",
+      "Bash(make:*)",
+      "Bash(touch:*)",
+      "Bash(uv sync:*)",
+      "Bash(uv tree:*)",
+      "Bash(jq:*)",
+      "Bash(comrak:*)",
+      "Bash(session-logger:*)",
+      "Bash(yarn build:*)",
+      "Bash(npm test:*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "session-logger --hook"
+          }
+        ]
+      }
+    ]
+  },
+  "feedbackSurveyState": {
+    "lastShownTime": 1754368507584
+  },
+  "model": "sonnet"
+}

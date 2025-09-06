@@ -1,0 +1,44 @@
+[user]
+	name = "Will Maier"
+
+[fetch]
+	prune = true
+
+[push]
+	default = simple
+
+# http://stackoverflow.com/questions/18257622/why-is-git-core-preloadindex-default-value-false
+[core]
+	preloadindex = true
+	deltabasecachelimit = 4g
+	editor = cat > /tmp/COMMIT_EDITMSG
+	excludesfile = ~/.config/git/ignore
+
+[help]
+	autocorrect = 50
+
+[feature]
+	manyfiles = true
+
+[init]
+	defaultBranch = main
+
+[pull]
+	ff = only
+
+[alias]
+	co = checkout
+	ci = commit
+	st = status
+	br = branch
+	di = diff
+	dc = diff --cached
+	lo = log --oneline
+	ls = log --stat
+	up = pull --rebase
+	rb = rebase
+	rc = rebase --continue
+	ra = rebase --abort
+
+[advice]
+	addIgnoredFile = false
