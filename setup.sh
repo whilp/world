@@ -40,24 +40,23 @@ _shimlink() {
 }
 
 _claude() {
-  local claude="$DST/.claude"
-  local credentials="$claude/.credentials.json"
-  mkdir -p "$claude"
-  [ -r "$credentials" ] && return
+  local claude="$DST/.claude.json"
+  [ -r "$claude" ] && return
 
-  touch "$credentials"
-  chmod 600 "$credentials"
-  echo "$CLAUDE_CREDENTIALS" >"$credentials"
+  local auth=""
+  if [ -n "CLAUDE_API_KEY" ]; then
+    auth='"primaryApiKey": "'${CLAUDE_API_KEY}'",'
+  fi
+
   local settings='{
   "numStartups": 1,
   "installMethod": "unknown",
   "autoUpdates": true,
   "theme": "dark-daltonized",
-  "userID": "'${CLAUDE_USER_ID}'",
-  "oauthAccount": '${CLAUDE_OAUTH}',
+  '${auth}'
   "hasCompletedOnboarding": true
 }'
-  echo "$settings" >"$DST/.claude.json"
+  echo "$settings" >"$claude"
 }
 
 main "$@"
