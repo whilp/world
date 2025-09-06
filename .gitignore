@@ -87,8 +87,8 @@
 .ssh/
 .viminfo
 .vscode-remote/
-.zcompdump
+.zcompdump*
 .zprofile
+.zsh_history
 java
 nvm
-
