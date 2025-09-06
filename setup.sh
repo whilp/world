@@ -26,6 +26,7 @@ _shimlink() {
   biome --version
   claude --version
   comrak --version
+  delta --version
   marksman --version
   nvim --version
   rg --version

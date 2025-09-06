@@ -64,6 +64,11 @@
     "claude": {
       "url": " https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/1.0.108/linux-x64/claude",
       "sha256": "5f1b6832302ba1ab3e2473e97fb48ea930698d832e86c31cd4e316ec9fb245fb"
+    },
+    "delta": {
+      "url": "https://github.com/dandavison/delta/releases/download/0.18.2/delta-0.18.2-x86_64-unknown-linux-musl.tar.gz",
+      "sha256": "bb03dd7961db278aa04f0059de8d390ce1f11816e08ae8eebc0867d3aabc9f11",
+      "executable_path": "delta-0.18.2-x86_64-unknown-linux-musl/delta"
     }
   }
 }
