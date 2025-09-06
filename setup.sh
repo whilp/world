@@ -41,9 +41,21 @@ _claude() {
   local claude="$DST/.claude"
   local credentials="$claude/.credentials.json"
   mkdir -p "$claude"
-  [ -r "$credentials" ] || echo "$CLAUDE_CREDENTIALS" >"$credentials"
-  which claude >/dev/null 2>&1 && return
-  curl -fsSL https://claude.ai/install.sh | bash -s latest
+  [ -r "$credentials" ] && return
+
+  touch "$credentials"
+  chmod 500 "$credentials"
+  echo "$CLAUDE_CREDENTIALS" >"$credentials"
+  local settings='{
+  "numStartups": 1,
+  "installMethod": "unknown",
+  "autoUpdates": true,
+  "theme": "dark-daltonized",
+  "userID": "'${CLAUDE_USER_ID}'",
+  "oauthAccount": '${CLAUDE_OAUTH}',
+  "hasCompletedOnboarding": true
+}'
+  echo "$settings" >"~/.claude.json"
 }
 
 main "$@"
