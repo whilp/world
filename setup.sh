@@ -1,15 +1,16 @@
 #!/bin/bash
 
 main() {
-  setshell
-  shimlinks
+  _shell
+  _shimlink
+  _claude
 }
 
-setshell() {
+_shell() {
   sudo chsh "$(id -un)" --shell "/usr/bin/zsh"
 }
 
-shimlinks() {
+_shimlink() {
   ast-grep --version &
   biome --version &
   comrak --version &
@@ -22,6 +23,13 @@ shimlinks() {
   superhtml --version &
   tree-sitter --version &
   uv --version &
+}
+
+_claude() {
+  local credentials=~/.claude/.credentials.json
+  [ -r "$credentials" ] || echo "$CLAUDE_CREDENTIALS" >"$credentials"
+  which claude >/dev/null 2>&1 && return
+  curl -fsSL https://claude.ai/install.sh | bash -s latest
 }
 
 main "$@"
