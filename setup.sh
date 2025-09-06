@@ -13,6 +13,7 @@ main() {
 
 _git() {
   cp -ra "$SRC/.git" "$DST/.git"
+  cd "$DST" && git checkout .
 }
 
 _shell() {
