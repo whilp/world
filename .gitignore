@@ -16,7 +16,6 @@
 .hugo/
 .jupyter/
 .lesshst
-.local/bin/claude
 .local/bin/debugpy
 .local/bin/debugpy-adapter
 .local/bin/f2py

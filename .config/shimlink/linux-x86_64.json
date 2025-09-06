@@ -60,6 +60,10 @@
       "url": "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz",
       "sha256": "4dad02a2f9c8c3c8d89434e47337aa654cb0e2aa50e806589132f186bf5c2b66",
       "executable_path": "ripgrep-14.1.1-x86_64-unknown-linux-musl/rg"
+    },
+    "claude": {
+    "url": " https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/1.0.108/linux-x64/claude",
+    "sha256": "5f1b6832302ba1ab3e2473e97fb48ea930698d832e86c31cd4e316ec9fb245fb"
     }
   }
 }
