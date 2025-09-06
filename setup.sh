@@ -23,7 +23,7 @@ _shimlink() {
   ast-grep --version
   biome --version
   comrak --version
-  marksman --version 
+  marksman --version
   nvim --version
   rg --version
   ruff --version
