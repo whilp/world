@@ -26,7 +26,7 @@
     },
     "sqruff": {
       "url": "https://github.com/quarylabs/sqruff/releases/download/v0.21.2/sqruff-linux-x86_64-musl.tar.gz",
-      "sha256": "ae09dfcb0d275bf5317769d6eff8aa62c05942369f63ea5e747164a7db9225d9",
+      "sha256": "9ef7797be3e73f72215b95cd6aa2431a62d17daf9d33fe129f2bf2bcc9ecd971",
       "executable_path": "sqruff"
     },
     "shfmt": {
@@ -45,7 +45,7 @@
     },
     "tree-sitter": {
       "url": "https://github.com/tree-sitter/tree-sitter/releases/download/v0.25.8/tree-sitter-linux-x64.gz",
-      "sha256": "c9d46697e3e5ae6900a39ad4483667d2ba14c8ffb12c3f863bcf82a9564ee19f",
+      "sha256": "7f78c9df701d7f8155b18c94dd92362bf398ad635426ce323532fe8f20ef0125",
       "executable_path": "tree-sitter"
     },
     "marksman": {
@@ -58,12 +58,12 @@
     },
     "rg": {
       "url": "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz",
-      "sha256": "4dad02a2f9c8c3c8d89434e47337aa654cb0e2aa50e806589132f186bf5c2b66",
+      "sha256": "f401154e2393f9002ac77e419f9ee5521c18f4f8cd3e32293972f493ba06fce7",
       "executable_path": "ripgrep-14.1.1-x86_64-unknown-linux-musl/rg"
     },
     "claude": {
-    "url": " https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/1.0.108/linux-x64/claude",
-    "sha256": "5f1b6832302ba1ab3e2473e97fb48ea930698d832e86c31cd4e316ec9fb245fb"
+      "url": " https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/1.0.108/linux-x64/claude",
+      "sha256": "5f1b6832302ba1ab3e2473e97fb48ea930698d832e86c31cd4e316ec9fb245fb"
     }
   }
 }
