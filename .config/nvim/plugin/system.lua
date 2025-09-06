@@ -8,3 +8,6 @@ opt.hidden = true
 vim.o.shell = '/usr/bin/zsh'
 
 vim.env.NVIM_INVIM = "true"
+
+-- OSC52 clipboard configuration
+vim.g.clipboard = "osc52"

@@ -30,8 +30,8 @@ opt.undodir = os.getenv('HOME') .. '/.config/nvim/undodir'
 opt.undofile = true
 
 -- Clipboard operations
-map({ 'n', 'v' }, '<Space>yy', '"*y')
-map('n', '<Space>pp', '"*p')
+map({ 'n', 'v' }, '<Space>yy', '"+y')
+map('n', '<Space>pp', '"+p')
 
 -- File operations
 map('n', '<Space>yf', function()
