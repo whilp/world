@@ -13,6 +13,7 @@
 	deltabasecachelimit = 4g
 	editor = cat > /tmp/COMMIT_EDITMSG
 	excludesfile = ~/.config/git/ignore
+	pager = delta
 
 [help]
 	autocorrect = 50
@@ -42,3 +43,9 @@
 
 [advice]
 	addIgnoredFile = false
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+[merge]
+	conflictStyle = zdiff3
