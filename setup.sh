@@ -16,6 +16,7 @@ _shimlink() {
   comrak --version &
   marksman --version &
   nvim --version &
+  rg --version &
   ruff --version &
   shfmt --version &
   sqruff --version &
