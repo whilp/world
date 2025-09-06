@@ -9,6 +9,7 @@ main() {
   _shell
   _shimlink &
   _claude &
+  wait
 }
 
 _git() {
