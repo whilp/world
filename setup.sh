@@ -6,7 +6,7 @@ export PATH="$SRC/.local/bin:$PATH"
 
 main() {
   _git
-  _shell
+  _shell &
   _shimlink &
   _claude &
   wait
@@ -24,6 +24,7 @@ _shell() {
 _shimlink() {
   ast-grep --version
   biome --version
+  claude --version
   comrak --version
   marksman --version
   nvim --version
@@ -44,7 +45,7 @@ _claude() {
   [ -r "$credentials" ] && return
 
   touch "$credentials"
-  chmod 500 "$credentials"
+  chmod 600 "$credentials"
   echo "$CLAUDE_CREDENTIALS" >"$credentials"
   local settings='{
   "numStartups": 1,
@@ -55,7 +56,7 @@ _claude() {
   "oauthAccount": '${CLAUDE_OAUTH}',
   "hasCompletedOnboarding": true
 }'
-  echo "$settings" >"~/.claude.json"
+  echo "$settings" >"$DST/.claude.json"
 }
 
 main "$@"
