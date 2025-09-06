@@ -1,5 +1,0 @@
-exports_files([
-    "cdpath",
-    "osc52",
-    "get",
-])
