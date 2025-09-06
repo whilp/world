@@ -55,6 +55,11 @@
     "comrak": {
       "url": "https://github.com/kivikakk/comrak/releases/download/v0.41.0/comrak-0.41.0-x86_64-unknown-linux-gnu",
       "sha256": "d3ffc8f04f85a47fa325081affd6b572ad456b542a4d3a1207ef4685afd7e9e2"
+    },
+    "rg": {
+      "url": "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz",
+      "sha256": "4dad02a2f9c8c3c8d89434e47337aa654cb0e2aa50e806589132f186bf5c2b66",
+      "executable_path": "ripgrep-14.1.1-x86_64-unknown-linux-musl/rg"
     }
   }
 }
