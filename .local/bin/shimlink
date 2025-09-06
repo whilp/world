@@ -43,9 +43,19 @@ def calculate_sha256(filepath: Path) -> str:
     return hash_sha256.hexdigest()
 
 
+def get_config_dir() -> Path:
+    """Get the shimlink configuration directory."""
+    return Path.home() / ".config" / "shimlink"
+
+
 def get_config_path() -> Path:
-    """Get the path to shimlink configuration file."""
-    return Path.home() / ".config" / "shimlink.json"
+    """Get the path to general shimlink configuration file."""
+    return get_config_dir() / "shimlink.json"
+
+
+def get_platform_config_path() -> Path:
+    """Get the path to platform-specific shimlink configuration file."""
+    return get_config_dir() / f"{get_platform()}.json"
 
 
 def get_bin_dir(binary_name: str = None) -> Path:
@@ -56,15 +66,40 @@ def get_bin_dir(binary_name: str = None) -> Path:
 
 
 def load_config() -> dict:
-    """Load shimlink configuration from JSON file."""
-    config_path = get_config_path()
-    if not config_path.exists():
-        print(f"shimlink: configuration file not found at {config_path}", file=sys.stderr)
-        print("shimlink: create ~/.config/shimlink.json with binary configurations", file=sys.stderr)
+    """Load shimlink configuration from both general and platform-specific files."""
+    config_dir = get_config_dir()
+    general_config_path = get_config_path()
+    platform_config_path = get_platform_config_path()
+    
+    # Check if config directory exists
+    if not config_dir.exists():
+        print(f"shimlink: configuration directory not found at {config_dir}", file=sys.stderr)
+        print("shimlink: create ~/.config/shimlink/ with shimlink.json and <platform>.json files", file=sys.stderr)
         sys.exit(1)
     
-    with open(config_path, 'r') as f:
-        return json.load(f)
+    # Load general config (may be empty)
+    general_config = {}
+    if general_config_path.exists():
+        with open(general_config_path, 'r') as f:
+            general_config = json.load(f)
+    
+    # Load platform-specific config
+    if not platform_config_path.exists():
+        print(f"shimlink: platform configuration file not found at {platform_config_path}", file=sys.stderr)
+        print(f"shimlink: create ~/.config/shimlink/{get_platform()}.json with binary configurations", file=sys.stderr)
+        sys.exit(1)
+    
+    with open(platform_config_path, 'r') as f:
+        platform_config = json.load(f)
+    
+    # Merge configs: platform-specific takes precedence
+    merged_config = general_config.copy()
+    if 'binaries' in platform_config:
+        if 'binaries' not in merged_config:
+            merged_config['binaries'] = {}
+        merged_config['binaries'].update(platform_config['binaries'])
+    
+    return merged_config
 
 
 def download_file(url: str, dest_path: Path) -> None:
@@ -115,15 +150,9 @@ def needs_download(binary_name: str, config: dict) -> bool:
         print(f"shimlink: no configuration found for {binary_name}", file=sys.stderr)
         return False
 
-    platform_key = get_platform()
-    platform_config = binary_config["platforms"].get(platform_key)
-    if not platform_config:
-        print(f"shimlink: no platform config for {binary_name} on {platform_key}", file=sys.stderr)
-        return False
-
     # Get the path to the executable
     bin_dir = get_bin_dir(binary_name)
-    executable_path = platform_config.get("executable_path")
+    executable_path = binary_config.get("executable_path")
     if executable_path:
         binary_path = bin_dir / executable_path
     else:
@@ -133,13 +162,13 @@ def needs_download(binary_name: str, config: dict) -> bool:
     if not binary_path.exists():
         return True
 
-    sha256_value = platform_config.get("sha256")
+    sha256_value = binary_config.get("sha256")
     if not sha256_value or sha256_value == "SKIP_CHECKSUM":
         # No checksum verification, assume binary is fine
         return False
 
     # Verify checksum
-    expected_sha256 = platform_config["sha256"]
+    expected_sha256 = binary_config["sha256"]
     actual_sha256 = calculate_sha256(binary_path)
 
     if actual_sha256 != expected_sha256:
@@ -150,12 +179,12 @@ def needs_download(binary_name: str, config: dict) -> bool:
 
 
 def update_config_checksum(binary_name: str, config: dict, new_checksum: str) -> None:
-    """Update the checksum in the configuration file."""
-    platform_key = get_platform()
-    config["binaries"][binary_name]["platforms"][platform_key]["sha256"] = new_checksum
+    """Update the checksum in the platform-specific configuration file."""
+    config["binaries"][binary_name]["sha256"] = new_checksum
     
-    config_path = get_config_path()
-    with open(config_path, 'w') as f:
+    # Write to platform-specific config file
+    platform_config_path = get_platform_config_path()
+    with open(platform_config_path, 'w') as f:
         json.dump(config, f, indent=2)
     
     print(f"shimlink: updated checksum for {binary_name} to {new_checksum}", file=sys.stderr)
@@ -168,15 +197,9 @@ def download_binary(binary_name: str, config: dict, force: bool = False) -> bool
         print(f"shimlink: no configuration found for {binary_name}", file=sys.stderr)
         return False
 
-    platform_key = get_platform()
-    platform_config = binary_config["platforms"].get(platform_key)
-    if not platform_config:
-        print(f"shimlink: no platform config for {binary_name} on {platform_key}", file=sys.stderr)
-        return False
-
-    url = platform_config["url"]
-    expected_sha256 = platform_config.get("sha256", "SKIP_CHECKSUM")
-    executable_path = platform_config.get("executable_path")
+    url = binary_config["url"]
+    expected_sha256 = binary_config.get("sha256", "SKIP_CHECKSUM")
+    executable_path = binary_config.get("executable_path")
 
     bin_dir = get_bin_dir(binary_name)
     bin_dir.mkdir(parents=True, exist_ok=True)
@@ -303,14 +326,8 @@ def exec_binary(binary_name: str, args: list, config: dict) -> None:
         print(f"shimlink: no configuration found for {binary_name}", file=sys.stderr)
         sys.exit(1)
 
-    platform_key = get_platform()
-    platform_config = binary_config["platforms"].get(platform_key)
-    if not platform_config:
-        print(f"shimlink: no platform config for {binary_name} on {platform_key}", file=sys.stderr)
-        sys.exit(1)
-
     bin_dir = get_bin_dir(binary_name)
-    executable_path = platform_config.get("executable_path")
+    executable_path = binary_config.get("executable_path")
     
     if executable_path:
         binary_path = bin_dir / executable_path
@@ -345,7 +362,8 @@ def show_help():
     print("When invoked through a symlink, shimlink automatically downloads")
     print("and manages the target binary, then executes it with all arguments.")
     print()
-    print("Configuration: ~/.config/shimlink.json (required)")
+    print("Configuration: ~/.config/shimlink/shimlink.json (general)")
+    print("               ~/.config/shimlink/<platform>.json (platform-specific)")
     print("Binaries stored: ~/.local/share/shimlink/<binary>/")
 
 
