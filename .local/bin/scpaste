@@ -24,15 +24,9 @@ def log(message: str):
 
 def get_process_table():
     """Get the complete process table once"""
-    try:
-        result = subprocess.run(
-            ["ps", "-eo", "pid,ppid,comm"], capture_output=True, text=True, timeout=10
-        )
-    except (subprocess.SubprocessError, subprocess.TimeoutExpired):
-        return {}
-
-    if result.returncode != 0:
-        return {}
+    result = subprocess.run(
+        ["ps", "-eo", "pid,ppid,comm"], capture_output=True, text=True, timeout=10, check=True
+    )
 
     process_table = {}
     for line in result.stdout.strip().split("\n")[1:]:  # Skip header
@@ -64,12 +58,7 @@ def get_alacritty_pid_from_env():
     if not alacritty_socket:
         return None
 
-    success, output, _ = run_lsof_command(
-        ["-F", "pc", alacritty_socket], timeout=5, log_errors=False
-    )
-    if not success:
-        return None
-
+    output = run_lsof_command(["-F", "pc", alacritty_socket], timeout=5)
     records = parse_lsof_fields(output)
     for record in records:
         if record.get("command") == "alacritty":
@@ -86,25 +75,12 @@ def find_alacritty_in_ancestry(ancestry):
     return None
 
 
-def run_lsof_command(
-    args: List[str], timeout: int = 10, log_errors: bool = True
-) -> tuple:
-    """Run lsof command with standardized error handling."""
-    try:
-        result = subprocess.run(
-            ["lsof"] + args, capture_output=True, text=True, timeout=timeout
-        )
-    except (subprocess.SubprocessError, subprocess.TimeoutExpired) as e:
-        if log_errors:
-            log(f"lsof command failed: {e}")
-        return False, "", str(e)
-
-    if result.returncode != 0:
-        if log_errors:
-            log(f"lsof failed with return code {result.returncode}")
-        return False, "", result.stderr
-
-    return True, result.stdout, ""
+def run_lsof_command(args: List[str], timeout: int = 10) -> str:
+    """Run lsof command and return stdout. Raises exceptions on failure."""
+    result = subprocess.run(
+        ["lsof"] + args, capture_output=True, text=True, timeout=timeout, check=True
+    )
+    return result.stdout
 
 
 def parse_lsof_fields(output: str) -> List[Dict[str, str]]:
@@ -186,12 +162,7 @@ def find_ssh_socket_groups():
     # Get process table once for efficient ancestry lookups
     process_table = get_process_table()
 
-    success, output, _ = run_lsof_command(
-        ["-U", "-F", "pcnt"], timeout=10, log_errors=True
-    )
-    if not success:
-        return {}
-
+    output = run_lsof_command(["-U", "-F", "pcnt"], timeout=10)
     socket_groups = {}
     records = parse_lsof_fields(output)
 
@@ -201,15 +172,9 @@ def find_ssh_socket_groups():
             process_ssh_socket(record, record["name"], process_table, socket_groups)
 
     # Now find SSH clients that use ControlPath to link to these sockets
-    try:
-        ps_result = subprocess.run(
-            ["ps", "-eo", "pid,command"], capture_output=True, text=True, timeout=10
-        )
-    except (subprocess.SubprocessError, subprocess.TimeoutExpired):
-        return socket_groups  # Return what we have so far
-
-    if ps_result.returncode != 0:
-        return socket_groups  # Return what we have so far
+    ps_result = subprocess.run(
+        ["ps", "-eo", "pid,command"], capture_output=True, text=True, timeout=10, check=True
+    )
 
     for line in ps_result.stdout.strip().split("\n")[1:]:  # Skip header
         parts = line.strip().split(None, 1)
@@ -271,27 +236,15 @@ def find_relevant_sockets(alacritty_pid: str) -> Dict[str, Dict]:
     for socket_path, group in socket_groups.items():
         if group.get("alacritty_pid") == alacritty_pid:
             # Test socket connectivity
-            try:
-                result = subprocess.run(
-                    ["ssh", "-S", socket_path, "-O", "check", "dummy"],
-                    capture_output=True,
-                    text=True,
-                    timeout=5,
-                )
-                if result.returncode == 0:
-                    relevant_sockets[socket_path] = group
-                    log(f"Socket {socket_path} is connectable")
-                else:
-                    log(
-                        f"Socket {socket_path} failed connectivity test: {result.stderr}"
-                    )
-            except (subprocess.SubprocessError, subprocess.TimeoutExpired) as e:
-                log(f"Socket {socket_path} connectivity test failed: {e}")
-                continue
+            result = subprocess.run(
+                ["ssh", "-S", socket_path, "-O", "check", "dummy"],
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
+            if result.returncode == 0:
+                relevant_sockets[socket_path] = group
 
-    log(
-        f"Found {len(relevant_sockets)} relevant sockets for Alacritty PID {alacritty_pid}"
-    )
     return relevant_sockets
 
 
@@ -340,14 +293,11 @@ def get_clipboard_content() -> Dict[str, str]:
             text=True,
         )
         if info_result.returncode != 0:
-            log(f"Failed to get clipboard info: {info_result.stderr}")
             return {}
-    except Exception as e:
-        log(f"Error getting clipboard info: {e}")
+    except Exception:
         return {}
 
     clipboard_info = info_result.stdout.strip()
-    log(f"Clipboard info: {clipboard_info}")
 
     # Try to get PNG data
     if "PNGf" in clipboard_info:
@@ -367,9 +317,8 @@ def get_clipboard_content() -> Dict[str, str]:
                 if png_data.startswith("«data PNGf") and png_data.endswith("»"):
                     hex_data = png_data[10:-1]  # Remove «data PNGf and »
                     formats["png"] = hex_data
-                    log(f"Retrieved PNG data: {len(hex_data)} hex chars")
-        except Exception as e:
-            log(f"Error getting PNG data: {e}")
+        except Exception:
+            pass
 
     # Try to get text data
     try:
@@ -377,12 +326,8 @@ def get_clipboard_content() -> Dict[str, str]:
         if text_result.returncode == 0 and text_result.stdout.strip():
             content = text_result.stdout.strip()
             formats["txt"] = content
-            log(f"Retrieved text content: {len(content)} chars")
-    except Exception as e:
-        log(f"Error getting text content: {e}")
-
-    if not formats:
-        log("No clipboard content found")
+    except Exception:
+        pass
 
     return formats
 
@@ -404,25 +349,19 @@ def transfer_to_hosts(
 
     for socket_path, group in sockets.items():
         print(f"📡 Transferring via {socket_path}...")
-        process_count = len(group.get("processes", []))
-        log(f"Transferring via {socket_path} ({process_count} processes)")
 
         # Test connection and ensure ~/pastes directory exists
-        try:
-            subprocess.run(
-                ["ssh", "-S", socket_path, "-O", "check", "dummy"],
-                check=True,
-                capture_output=True,
-            )
-            # If check succeeds, create the directory (SSH will use the control master)
-            subprocess.run(
-                ["ssh", "-S", socket_path, "dummy", "mkdir -p ~/pastes"],
-                check=True,
-                capture_output=True,
-            )
-        except subprocess.CalledProcessError as e:
-            print(f"❌ Error accessing socket {socket_path}: {e}")
-            continue
+        subprocess.run(
+            ["ssh", "-S", socket_path, "-O", "check", "dummy"],
+            check=True,
+            capture_output=True,
+        )
+        # If check succeeds, create the directory (SSH will use the control master)
+        subprocess.run(
+            ["ssh", "-S", socket_path, "dummy", "mkdir -p ~/pastes"],
+            check=True,
+            capture_output=True,
+        )
 
         created_files = []
         for ext, content in clipboard_content.items():
@@ -431,93 +370,91 @@ def transfer_to_hosts(
 
             filename = f"~/pastes/{timestamp}.{ext}"
 
+            # Create temporary file
+            if ext == "png":
+                mode, file_content = "wb", bytes.fromhex(content)
+            else:
+                mode, file_content = "w", content
+
+            with tempfile.NamedTemporaryFile(
+                mode=mode, suffix=f".{ext}", delete=False
+            ) as temp_file:
+                temp_file.write(file_content)
+                temp_file_path = temp_file.name
+
             try:
-                # Create temporary file
-                if ext == "png":
-                    mode, file_content = "wb", bytes.fromhex(content)
-                else:
-                    mode, file_content = "w", content
-
-                with tempfile.NamedTemporaryFile(
-                    mode=mode, suffix=f".{ext}", delete=False
-                ) as temp_file:
-                    temp_file.write(file_content)
-                    temp_file_path = temp_file.name
-
-                try:
-                    # Transfer via scp (SSH will determine host from control master)
-                    scp_cmd = [
-                        "scp",
-                        "-o",
-                        f"ControlPath={socket_path}",
-                        temp_file_path,
-                        f"dummy:{filename}",
-                    ]
-                    result = subprocess.run(scp_cmd, capture_output=True, text=True)
-
-                    if result.returncode == 0:
-                        created_files.append(filename)
-                    else:
-                        log(f"SCP error for {filename}: {result.stderr}")
-                finally:
-                    os.unlink(temp_file_path)
-
-            except Exception as e:
-                log(f"Error transferring {ext} via {socket_path}: {e}")
+                # Transfer via scp (SSH will determine host from control master)
+                scp_cmd = [
+                    "scp",
+                    "-o",
+                    f"ControlPath={socket_path}",
+                    temp_file_path,
+                    f"dummy:{filename}",
+                ]
+                subprocess.run(scp_cmd, capture_output=True, text=True, check=True)
+                created_files.append(filename)
+            finally:
+                os.unlink(temp_file_path)
 
         if created_files:
             print(f"✅ Created {len(created_files)} files via {socket_path}:")
             for file in created_files:
                 print(f"   📄 {file}")
             all_created_files.extend(created_files)
-        else:
-            print(f"❌ No files created via {socket_path}")
 
     return all_created_files
 
 
 def main(environ: Dict[str, str], argv: List[str]) -> int:
     """Main function."""
-    log("=== scpaste started ===")
+    try:
+        alacritty_pid = get_alacritty_pid_from_env()
+        if not alacritty_pid:
+            print("❌ Error: Not running in Alacritty or unable to detect PID")
+            return 1
 
-    alacritty_pid = get_alacritty_pid_from_env()
-    if not alacritty_pid:
-        print("❌ Error: Not running in Alacritty or unable to detect PID")
+        # Find relevant SSH sockets
+        sockets = find_relevant_sockets(alacritty_pid)
+        if not sockets:
+            print("❌ No SSH sockets found for this Alacritty window")
+            return 1
+
+        print(f"🔌 Found {len(sockets)} SSH socket groups:")
+        for socket_path, group in sockets.items():
+            process_count = len(group.get("processes", []))
+            print(f"   • {socket_path} ({process_count} processes)")
+
+        # Get clipboard content
+        clipboard_content = get_clipboard_content()
+        if not clipboard_content:
+            print("❌ No clipboard content found")
+            return 1
+
+        print(f"📋 Found clipboard formats: {', '.join(clipboard_content.keys())}")
+
+        # Transfer to remote hosts
+        created_files = transfer_to_hosts(sockets, clipboard_content)
+
+        if created_files:
+            print(
+                f"\n🎉 Successfully created {len(created_files)} files across {len(sockets)} hosts"
+            )
+        else:
+            print("\n❌ No files were created")
+
+        return 0
+
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Command failed: {e.cmd[0]} (exit code {e.returncode})")
+        if e.stderr:
+            print(f"   Error: {e.stderr.strip()}")
         return 1
-
-    log(f"Using Alacritty PID: {alacritty_pid}")
-
-    # Find relevant SSH sockets
-    sockets = find_relevant_sockets(alacritty_pid)
-    if not sockets:
-        print("❌ No SSH sockets found for this Alacritty window")
+    except subprocess.TimeoutExpired as e:
+        print(f"❌ Command timed out: {e.cmd[0]} (after {e.timeout}s)")
         return 1
-
-    print(f"🔌 Found {len(sockets)} SSH socket groups:")
-    for socket_path, group in sockets.items():
-        process_count = len(group.get("processes", []))
-        print(f"   • {socket_path} ({process_count} processes)")
-
-    # Get clipboard content
-    clipboard_content = get_clipboard_content()
-    if not clipboard_content:
-        print("❌ No clipboard content found")
+    except Exception as e:
+        print(f"❌ Unexpected error: {e}")
         return 1
-
-    print(f"📋 Found clipboard formats: {', '.join(clipboard_content.keys())}")
-
-    # Transfer to remote hosts
-    created_files = transfer_to_hosts(sockets, clipboard_content)
-
-    if created_files:
-        print(
-            f"\n🎉 Successfully created {len(created_files)} files across {len(sockets)} hosts"
-        )
-    else:
-        print("\n❌ No files were created")
-
-    log("=== scpaste completed ===")
-    return 0
 
 
 if __name__ == "__main__":
