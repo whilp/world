@@ -288,38 +288,6 @@ def find_relevant_sockets(alacritty_pid: str) -> Dict[str, Dict]:
     return relevant_sockets
 
 
-def parse_clipboard_data(raw_data: str, format_class: str) -> Optional[str]:
-    """Parse raw clipboard data based on its format class."""
-    if not raw_data:
-        return None
-
-    # Text formats - return as-is
-    if format_class in ["TEXT", "utf8"]:
-        return raw_data
-
-    # Binary formats - extract hex data
-    if format_class in ["PNGf", "HTML", "RTF "]:
-        # Look for hex data pattern: «data TYPE...hex...»
-        if "«data" in raw_data and "»" in raw_data:
-            hex_data = raw_data.split("«data", 1)[1].split("»", 1)[0]
-            hex_data = hex_data.replace(format_class, "").strip()
-
-            if not hex_data:
-                return None
-
-            # For binary formats like PNG, return hex as-is
-            if format_class == "PNGf":
-                return hex_data
-
-            # For text-based formats, decode hex to text
-            try:
-                return bytes.fromhex(hex_data).decode("utf-8", errors="ignore")
-            except Exception:
-                return None
-
-    # Unknown format - return raw data
-    return raw_data
-
 
 def get_clipboard_content() -> Dict[str, str]:
     """Get clipboard content in all available formats."""
