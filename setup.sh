@@ -18,7 +18,7 @@ _git() {
 }
 
 _shell() {
-  sudo chsh "$(id -un)" --shell "/usr/bin/zsh"
+  sudo chsh "$(id -un)" --shell $(which zsh)
 }
 
 _shimlink() {
