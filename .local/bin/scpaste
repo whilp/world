@@ -58,8 +58,10 @@ def get_alacritty_pid_from_env():
     if not alacritty_socket:
         return None
 
-    output = run_lsof_command(["-F", "pc", alacritty_socket], timeout=5)
-    records = parse_lsof_fields(output)
+    result = subprocess.run(
+        ["lsof", "-F", "pc", alacritty_socket], capture_output=True, text=True, timeout=5, check=True
+    )
+    records = parse_lsof_fields(result.stdout)
     for record in records:
         if record.get("command") == "alacritty":
             return record.get("pid")
@@ -74,13 +76,6 @@ def find_alacritty_in_ancestry(ancestry):
             return process["pid"]
     return None
 
-
-def run_lsof_command(args: List[str], timeout: int = 10) -> str:
-    """Run lsof command and return stdout. Raises exceptions on failure."""
-    result = subprocess.run(
-        ["lsof"] + args, capture_output=True, text=True, timeout=timeout, check=True
-    )
-    return result.stdout
 
 
 def parse_lsof_fields(output: str) -> List[Dict[str, str]]:
@@ -162,9 +157,11 @@ def find_ssh_socket_groups():
     # Get process table once for efficient ancestry lookups
     process_table = get_process_table()
 
-    output = run_lsof_command(["-U", "-F", "pcnt"], timeout=10)
+    result = subprocess.run(
+        ["lsof", "-U", "-F", "pcnt"], capture_output=True, text=True, timeout=10, check=True
+    )
     socket_groups = {}
-    records = parse_lsof_fields(output)
+    records = parse_lsof_fields(result.stdout)
 
     for record in records:
         # Process each record that has a name field (socket path)
