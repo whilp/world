@@ -1,10 +1,9 @@
 #!/bin/bash
 
 main() {
-
-  local claude="$HOME/.local/bin/claude"
-  local usr_claude="/usr/local/bin/claude"
-  [ -x "$usr_claude" ] && claude="$usr_claude"
+  local claude
+  claude=$(which -a claude | head -n1)
+  [ -z "$claude" ] && claude="$HOME/.local/bin/claude"
   exec "$claude" "$@"
 }
 
