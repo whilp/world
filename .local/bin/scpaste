@@ -11,6 +11,7 @@ import sys
 import subprocess
 import datetime
 import tempfile
+import time
 from pathlib import Path
 from typing import List, Dict, Optional, Set
 
@@ -271,7 +272,7 @@ def find_relevant_sockets(alacritty_pid: str) -> Dict[str, Dict]:
     """Find SSH sockets relevant to this Alacritty instance."""
     socket_groups = find_ssh_socket_groups()
 
-    # Filter for groups that belong to the current Alacritty window
+    # Filter for groups that belong to the current Alacritty window and are connectable
     relevant_sockets = {}
     for socket_path, group in socket_groups.items():
         if group.get("alacritty_pid") == alacritty_pid:
@@ -360,25 +361,22 @@ def transfer_to_hosts(
         )
 
         created_files = []
-        for ext, content in clipboard_content.items():
-            if not content.strip():
-                continue
+        with tempfile.TemporaryDirectory() as temp_dir:
+            for ext, content in clipboard_content.items():
+                if not content.strip():
+                    continue
 
-            filename = f"~/paste.{ext}"
+                filename = f"~/paste.{ext}"
+                temp_file_path = os.path.join(temp_dir, f"paste.{ext}")
 
-            # Create temporary file
-            if ext == "png":
-                mode, file_content = "wb", bytes.fromhex(content)
-            else:
-                mode, file_content = "w", content
+                mode = "w"
+                raw_content = content
+                if ext == "png":
+                    mode = "wb"
+                    raw_content = bytes.fromhex(content)
+                with open(temp_file_path, mode) as f:
+                    f.write(raw_content)
 
-            with tempfile.NamedTemporaryFile(
-                mode=mode, suffix=f".{ext}", delete=False
-            ) as temp_file:
-                temp_file.write(file_content)
-                temp_file_path = temp_file.name
-
-            try:
                 # Transfer via scp (SSH will determine host from control master)
                 scp_cmd = [
                     "scp",
@@ -389,8 +387,6 @@ def transfer_to_hosts(
                 ]
                 subprocess.run(scp_cmd, capture_output=True, text=True, check=True)
                 created_files.append(filename)
-            finally:
-                os.unlink(temp_file_path)
 
         if created_files:
             print(f"✅ Created {len(created_files)} files via {socket_path}:")
@@ -410,15 +406,30 @@ def main(environ: Dict[str, str], argv: List[str]) -> int:
             return 1
 
         # Find relevant SSH sockets
-        sockets = find_relevant_sockets(alacritty_pid)
-        if not sockets:
+        all_sockets = find_relevant_sockets(alacritty_pid)
+        if not all_sockets:
             print("❌ No SSH sockets found for this Alacritty window")
             return 1
 
-        print(f"🔌 Found {len(sockets)} SSH socket groups:")
-        for socket_path, group in sockets.items():
-            process_count = len(group.get("processes", []))
-            print(f"   • {socket_path} ({process_count} processes)")
+        # Sort sockets by modification time (most recent first) and take only the first one
+        socket_items = []
+        for socket_path, group in all_sockets.items():
+            try:
+                mtime = os.path.getmtime(socket_path)
+            except OSError:
+                mtime = 0  # Fallback for sockets we can't stat
+            socket_items.append((socket_path, group, mtime))
+
+        socket_items.sort(key=lambda x: x[2], reverse=True)
+        socket_path, group, _ = socket_items[0]
+        sockets = {socket_path: group}
+
+        process_count = len(group.get("processes", []))
+        print(f"🔌 Using SSH socket: {socket_path} ({process_count} processes)")
+        if len(all_sockets) > 1:
+            print(
+                f"   (Selected most recent from {len(all_sockets)} available sockets)"
+            )
 
         # Get clipboard content
         clipboard_content = get_clipboard_content()
@@ -453,5 +464,21 @@ def main(environ: Dict[str, str], argv: List[str]) -> int:
         return 1
 
 
+def outer(environ: Dict[str, str], argv: List[str]) -> int:
+    try:
+        return main(environ, argv)
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Command failed: {e.cmd[0]} (exit code {e.returncode})")
+        if e.stderr:
+            print(f"   Error: {e.stderr.strip()}")
+        return 1
+    except subprocess.TimeoutExpired as e:
+        print(f"❌ Command timed out: {e.cmd[0]} (after {e.timeout}s)")
+        return 1
+    except Exception as e:
+        print(f"❌ Unexpected error: {e}")
+        return 1
+
+
 if __name__ == "__main__":
-    sys.exit(main(os.environ, sys.argv))
+    sys.exit(outer(os.environ, sys.argv))
