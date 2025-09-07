@@ -19,6 +19,9 @@ typeset -aU path
 local paths=(
   "/Applications/Alacritty.app/Contents/MacOS"
   "$HOME/.local/bin"
+  "/opt/homebrew/bin"
+  "/opt/homebrew/sbin"
+  "$HOME/stripe/space-commander/bin"
 )
 
 for p in "${paths[@]}"; do
