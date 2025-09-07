@@ -5,7 +5,13 @@ opt.autoread = true
 opt.hidden = true
 
 -- Shell configuration
-vim.o.shell = '/usr/bin/zsh'
+local zsh_paths = { "/usr/bin/zsh", "/bin/zsh" }
+for _, path in ipairs(zsh_paths) do
+  if vim.fn.executable(path) == 1 then
+    vim.o.shell = path
+    break
+  end
+end
 
 vim.env.NVIM_INVIM = "true"
 
