@@ -48,10 +48,12 @@
 	diffFilter = delta --color-only
 [delta]
 	navigate = true
+	features = colorblind-dark
 [merge]
 	conflictStyle = zdiff3
 [include]
 	path = .config/git/config
 	path = .config/git/local
+	path = .config/delta/delta.gitconfig
 [diff]
 	noprefix = true

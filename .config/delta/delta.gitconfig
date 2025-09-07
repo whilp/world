@@ -1,0 +1,139 @@
+# Delta colorblind-friendly themes
+# These themes use colors that are accessible to people with color vision deficiencies
+# Based on Tol's colorblind-friendly color schemes and daltonized palettes
+
+[delta "colorblind-dark"]
+    # Dark theme optimized for colorblind users
+    dark = true
+    file-style = bold "#4477AA"
+    file-decoration-style = "#4477AA" ul
+    hunk-header-style = file line-number syntax
+    hunk-header-decoration-style = "#DDCC77" box
+    line-numbers = true
+    line-numbers-left-style = "#666666"
+    line-numbers-right-style = "#666666"
+    line-numbers-minus-style = "#D55E00"
+    line-numbers-plus-style = "#0173B2"
+    line-numbers-zero-style = "#666666"
+    minus-style = syntax "#2D1B00"
+    minus-emph-style = syntax "#4A2E00"
+    plus-style = syntax "#001A2E"
+    plus-emph-style = syntax "#002E4A"
+    zero-style = syntax
+    syntax-theme = OneHalfDark
+    file-added-label = [+]
+    file-copied-label = [==]
+    file-modified-label = [*]
+    file-removed-label = [-]
+    file-renamed-label = [->]
+    whitespace-error-style = "#AA3939" reverse
+
+[delta "colorblind-light"]
+    # Light theme optimized for colorblind users
+    light = true
+    file-style = bold "#4477AA"
+    file-decoration-style = "#4477AA" ul
+    hunk-header-style = file line-number syntax
+    hunk-header-decoration-style = "#DDCC77" box
+    line-numbers = true
+    line-numbers-left-style = "#999999"
+    line-numbers-right-style = "#999999"
+    line-numbers-minus-style = "#D55E00"
+    line-numbers-plus-style = "#0173B2"
+    line-numbers-zero-style = "#999999"
+    minus-style = syntax "#FFEBE0"
+    minus-emph-style = syntax "#FFD6C2"
+    plus-style = syntax "#E0F2FF"
+    plus-emph-style = syntax "#C2E5FF"
+    zero-style = syntax
+    syntax-theme = GitHub
+    file-added-label = [+]
+    file-copied-label = [==]
+    file-modified-label = [*]
+    file-removed-label = [-]
+    file-renamed-label = [->]
+    whitespace-error-style = "#AA3939" reverse
+
+[delta "protanopia-friendly"]
+    # Optimized for protanopia (red-blind)
+    dark = true
+    file-style = bold "#0173B2"
+    file-decoration-style = "#0173B2" ul
+    hunk-header-style = file line-number syntax
+    hunk-header-decoration-style = "#E69F00" box
+    line-numbers = true
+    line-numbers-left-style = "#666666"
+    line-numbers-right-style = "#666666"
+    line-numbers-minus-style = "#D55E00"
+    line-numbers-plus-style = "#0173B2"
+    line-numbers-zero-style = "#666666"
+    minus-style = syntax "#2D1B00"
+    minus-emph-style = syntax "#4A2E00"
+    plus-style = syntax "#001A2E"
+    plus-emph-style = syntax "#002E4A"
+    zero-style = syntax
+    syntax-theme = OneHalfDark
+    whitespace-error-style = "#CC79A7" reverse
+
+[delta "deuteranopia-friendly"]
+    # Optimized for deuteranopia (green-blind)
+    dark = true
+    file-style = bold "#0173B2"
+    file-decoration-style = "#0173B2" ul
+    hunk-header-style = file line-number syntax
+    hunk-header-decoration-style = "#E69F00" box
+    line-numbers = true
+    line-numbers-left-style = "#666666"
+    line-numbers-right-style = "#666666"
+    line-numbers-minus-style = "#D55E00"
+    line-numbers-plus-style = "#0173B2"
+    line-numbers-zero-style = "#666666"
+    minus-style = syntax "#2D1B00"
+    minus-emph-style = syntax "#4A2E00"
+    plus-style = syntax "#001A2E"
+    plus-emph-style = syntax "#002E4A"
+    zero-style = syntax
+    syntax-theme = OneHalfDark
+    whitespace-error-style = "#F0E442" reverse
+
+[delta "tritanopia-friendly"]
+    # Optimized for tritanopia (blue-blind)
+    dark = true
+    file-style = bold "#D55E00"
+    file-decoration-style = "#D55E00" ul
+    hunk-header-style = file line-number syntax
+    hunk-header-decoration-style = "#CC79A7" box
+    line-numbers = true
+    line-numbers-left-style = "#666666"
+    line-numbers-right-style = "#666666"
+    line-numbers-minus-style = "#D55E00"
+    line-numbers-plus-style = "#0173B2"
+    line-numbers-zero-style = "#666666"
+    minus-style = syntax "#2D1B00"
+    minus-emph-style = syntax "#4A2E00"
+    plus-style = syntax "#001A2E"
+    plus-emph-style = syntax "#002E4A"
+    zero-style = syntax
+    syntax-theme = OneHalfDark
+    whitespace-error-style = "#F0E442" reverse
+
+[delta "high-contrast"]
+    # High contrast theme for maximum accessibility
+    dark = true
+    file-style = bold white
+    file-decoration-style = white ul
+    hunk-header-style = file line-number syntax
+    hunk-header-decoration-style = yellow box
+    line-numbers = true
+    line-numbers-left-style = "#888888"
+    line-numbers-right-style = "#888888"
+    line-numbers-minus-style = "#D55E00"
+    line-numbers-plus-style = "#0173B2"
+    line-numbers-zero-style = "#888888"
+    minus-style = syntax "#2D1B00"
+    minus-emph-style = syntax "#4A2E00"
+    plus-style = syntax "#001A2E"
+    plus-emph-style = syntax "#002E4A"
+    zero-style = syntax
+    syntax-theme = OneHalfDark
+    whitespace-error-style = magenta reverse
