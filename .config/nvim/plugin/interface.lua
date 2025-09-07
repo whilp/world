@@ -6,6 +6,7 @@ opt.lazyredraw = true
 opt.inccommand = 'nosplit'
 opt.title = true
 opt.conceallevel = 2
+opt.showtabline = 2
 
 -- Wild menu (command completion)
 opt.wildmenu = true
