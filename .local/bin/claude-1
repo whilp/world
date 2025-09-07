@@ -1,0 +1,11 @@
+#!/bin/bash
+
+main() {
+
+  local claude="$HOME/.local/bin/claude"
+  local usr_claude="/usr/local/bin/claude"
+  [ -x "$usr_claude" ] && claude="$usr_claude"
+  exec "$claude" "$@"
+}
+
+main "$@"
