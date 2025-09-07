@@ -2,10 +2,19 @@
 """
 scpaste - Transfer clipboard content to remote hosts via SSH control sockets.
 
-Finds SSH control sockets associated with the current Alacritty window,
+Finds SSH control sockets associated with the current terminal window,
 gets clipboard content in multiple formats, and transfers to remote hosts.
+
+Usage:
+    scpaste [--terminal TERMINAL] [--verbose]
+
+Options:
+    --terminal TERMINAL    Terminal type (default: alacritty)
+    --verbose              Enable verbose logging
 """
 
+import argparse
+import logging
 import os
 import sys
 import subprocess
@@ -16,11 +25,24 @@ from pathlib import Path
 from typing import List, Dict, Optional, Set
 
 
-def log(message: str):
-    """Simple logging to /tmp/scpaste.log"""
-    with open("/tmp/scpaste.log", "a") as f:
-        timestamp = datetime.datetime.now().isoformat()
-        f.write(f"[{timestamp}] {message}\n")
+def configure_logging(verbose: bool) -> None:
+    """Configure logging based on verbosity level."""
+    if verbose:
+        logging.basicConfig(
+            level=logging.DEBUG,
+            format="%(asctime)s - %(levelname)s - %(message)s",
+            handlers=[
+                logging.FileHandler("/tmp/scpaste.log"),
+                logging.StreamHandler(sys.stderr),
+            ],
+        )
+    else:
+        # Silent by default - only log to file if it exists
+        logging.basicConfig(
+            level=logging.WARNING,
+            format="%(asctime)s - %(levelname)s - %(message)s",
+            handlers=[logging.NullHandler()],
+        )
 
 
 def get_process_table():
@@ -57,14 +79,14 @@ def trace_process_ancestry(pid, process_table):
     return ancestry
 
 
-def get_alacritty_pid_from_env():
-    """Get current Alacritty PID from environment variable"""
-    alacritty_socket = os.environ.get("ALACRITTY_SOCKET")
-    if not alacritty_socket:
+def get_terminal_pid_from_env(terminal_type: str):
+    """Get current terminal PID from environment variable"""
+    terminal_socket = os.environ.get(f"{terminal_type.upper()}_SOCKET")
+    if not terminal_socket:
         return None
 
     result = subprocess.run(
-        ["lsof", "-F", "pc", alacritty_socket],
+        ["lsof", "-F", "pc", terminal_socket],
         capture_output=True,
         text=True,
         timeout=5,
@@ -72,16 +94,16 @@ def get_alacritty_pid_from_env():
     )
     records = parse_lsof_fields(result.stdout)
     for record in records:
-        if record.get("command") == "alacritty":
+        if record.get("command") == terminal_type.lower():
             return record.get("pid")
 
     return None
 
 
-def find_alacritty_in_ancestry(ancestry):
-    """Check if Alacritty is in the process ancestry"""
+def find_terminal_in_ancestry(ancestry, terminal_type: str):
+    """Check if terminal is in the process ancestry"""
     for process in ancestry:
-        if "alacritty" in process["comm"].lower():
+        if terminal_type.lower() in process["comm"].lower():
             return process["pid"]
     return None
 
@@ -134,7 +156,7 @@ def process_ssh_socket(current_process, field_value, process_table):
 
     # Trace ancestry
     ancestry = trace_process_ancestry(current_process["pid"], process_table)
-    alacritty_pid = find_alacritty_in_ancestry(ancestry)
+    terminal_pid = None  # Will be set by caller
 
     process_info = {
         "pid": current_process["pid"],
@@ -142,14 +164,14 @@ def process_ssh_socket(current_process, field_value, process_table):
         "original_path": field_value,
         "type": current_process["type"],
         "ancestry": ancestry,
-        "alacritty_pid": alacritty_pid,
+        "terminal_pid": terminal_pid,
         "is_master": "[mux]" in field_value,
     }
 
     return clean_socket_path, process_info
 
 
-def get_socket_groups(process_table):
+def get_socket_groups(process_table, terminal_type: str):
     """Build socket groups from lsof records"""
     result = subprocess.run(
         ["lsof", "-U", "-F", "pcnt"],
@@ -168,28 +190,33 @@ def get_socket_groups(process_table):
             if result:
                 clean_socket_path, process_info = result
 
+                # Set terminal_pid using terminal type
+                process_info["terminal_pid"] = find_terminal_in_ancestry(
+                    process_info["ancestry"], terminal_type
+                )
+
                 # Group by socket path
                 if clean_socket_path not in socket_groups:
                     socket_groups[clean_socket_path] = {
                         "socket_path": clean_socket_path,
                         "processes": [],
-                        "alacritty_pid": None,
+                        "terminal_pid": None,
                     }
 
                 socket_groups[clean_socket_path]["processes"].append(process_info)
 
-                # If any process has Alacritty ancestry, mark the whole group
-                alacritty_pid = process_info["alacritty_pid"]
+                # If any process has terminal ancestry, mark the whole group
+                terminal_pid = process_info["terminal_pid"]
                 if (
-                    alacritty_pid
-                    and not socket_groups[clean_socket_path]["alacritty_pid"]
+                    terminal_pid
+                    and not socket_groups[clean_socket_path]["terminal_pid"]
                 ):
-                    socket_groups[clean_socket_path]["alacritty_pid"] = alacritty_pid
+                    socket_groups[clean_socket_path]["terminal_pid"] = terminal_pid
 
     return socket_groups
 
 
-def get_controlpath_clients(process_table):
+def get_controlpath_clients(process_table, terminal_type: str):
     """Find SSH client processes that use ControlPath and return client data by socket path"""
     ps_result = subprocess.run(
         ["ps", "-eo", "pid,command"],
@@ -224,7 +251,7 @@ def get_controlpath_clients(process_table):
 
         # Get ancestry for this SSH client
         ancestry = trace_process_ancestry(pid, process_table)
-        alacritty_pid = find_alacritty_in_ancestry(ancestry)
+        terminal_pid = find_terminal_in_ancestry(ancestry, terminal_type)
 
         # Create client info
         client_info = {
@@ -233,7 +260,7 @@ def get_controlpath_clients(process_table):
             "original_path": f"client-using-{control_path}",
             "type": "client",
             "ancestry": ancestry,
-            "alacritty_pid": alacritty_pid,
+            "terminal_pid": terminal_pid,
             "is_master": False,
         }
 
@@ -245,37 +272,37 @@ def get_controlpath_clients(process_table):
     return clients_by_socket
 
 
-def find_ssh_socket_groups():
+def find_ssh_socket_groups(terminal_type: str):
     """Find SSH processes grouped by socket path"""
     process_table = get_process_table()
-    socket_groups = get_socket_groups(process_table)
-    clients_by_socket = get_controlpath_clients(process_table)
+    socket_groups = get_socket_groups(process_table, terminal_type)
+    clients_by_socket = get_controlpath_clients(process_table, terminal_type)
 
     # Merge client data into socket groups
     for socket_path, clients in clients_by_socket.items():
         if socket_path in socket_groups:
             socket_groups[socket_path]["processes"].extend(clients)
 
-            # If any client has Alacritty ancestry, inherit it to the socket group
+            # If any client has terminal ancestry, inherit it to the socket group
             for client in clients:
-                alacritty_pid = client["alacritty_pid"]
-                if alacritty_pid and not socket_groups[socket_path]["alacritty_pid"]:
-                    socket_groups[socket_path]["alacritty_pid"] = alacritty_pid
-                    socket_groups[socket_path]["alacritty_source"] = (
+                terminal_pid = client["terminal_pid"]
+                if terminal_pid and not socket_groups[socket_path]["terminal_pid"]:
+                    socket_groups[socket_path]["terminal_pid"] = terminal_pid
+                    socket_groups[socket_path]["terminal_source"] = (
                         f"client-{client['pid']}"
                     )
 
     return socket_groups
 
 
-def find_relevant_sockets(alacritty_pid: str) -> Dict[str, Dict]:
-    """Find SSH sockets relevant to this Alacritty instance."""
-    socket_groups = find_ssh_socket_groups()
+def find_relevant_sockets(terminal_pid: str, terminal_type: str) -> Dict[str, Dict]:
+    """Find SSH sockets relevant to this terminal instance."""
+    socket_groups = find_ssh_socket_groups(terminal_type)
 
-    # Filter for groups that belong to the current Alacritty window and are connectable
+    # Filter for groups that belong to the current terminal window and are connectable
     relevant_sockets = {}
     for socket_path, group in socket_groups.items():
-        if group.get("alacritty_pid") == alacritty_pid:
+        if group.get("terminal_pid") == terminal_pid:
             # Test socket connectivity
             result = subprocess.run(
                 ["ssh", "-S", socket_path, "-O", "check", "dummy"],
@@ -397,17 +424,45 @@ def transfer_to_hosts(
     return all_created_files
 
 
+def parse_args(argv: List[str]) -> argparse.Namespace:
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(
+        description="Transfer clipboard content to remote hosts via SSH control sockets"
+    )
+    parser.add_argument(
+        "--terminal",
+        "-t",
+        default="alacritty",
+        help="Terminal type (default: alacritty)",
+    )
+    parser.add_argument(
+        "--verbose",
+        "-v",
+        action="store_true",
+        help="Enable verbose logging",
+    )
+    return parser.parse_args(argv[1:])
+
+
 def main(environ: Dict[str, str], argv: List[str]) -> int:
     """Main function."""
-    alacritty_pid = get_alacritty_pid_from_env()
-    if not alacritty_pid:
-        print("❌ Error: Not running in Alacritty or unable to detect PID")
+    args = parse_args(argv)
+    configure_logging(args.verbose)
+    terminal_type = args.terminal
+
+    logging.debug(f"Starting scpaste with terminal type: {terminal_type}")
+
+    terminal_pid = get_terminal_pid_from_env(terminal_type)
+    if not terminal_pid:
+        print(
+            f"❌ Error: Not running in {terminal_type.title()} or unable to detect PID"
+        )
         return 1
 
     # Find relevant SSH sockets
-    all_sockets = find_relevant_sockets(alacritty_pid)
+    all_sockets = find_relevant_sockets(terminal_pid, terminal_type)
     if not all_sockets:
-        print("❌ No SSH sockets found for this Alacritty window")
+        print(f"❌ No SSH sockets found for this {terminal_type.title()} window")
         return 1
 
     # Sort sockets by modification time (most recent first) and take only the first one
