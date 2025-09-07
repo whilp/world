@@ -143,3 +143,8 @@ action = "ReceiveChar"
 key = "F"
 mods = "Command"
 action = "ReceiveChar"
+
+[[keyboard.bindings]]
+key = "W"
+mods = "Command|Shift"
+action = "Quit"
