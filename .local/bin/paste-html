@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# paste-html - Extract HTML content from macOS clipboard
+# Usage: paste-html [output-file]
+
+set -euo pipefail
+
+# Function to show usage
+usage() {
+  echo "Usage: paste-html [output-file]"
+  echo "  If no output file specified, prints to stdout"
+  echo "  If output file specified, writes HTML content to file"
+  exit 1
+}
+
+# Function to extract HTML from clipboard
+extract_html() {
+  # Try to get HTML data from pasteboard
+  if osascript -e 'tell application "System Events" to get the clipboard as «class HTML»' 2>/dev/null | grep -q "«data HTML"; then
+    # Extract and decode the hex-encoded HTML
+    osascript -e 'tell application "System Events" to get the clipboard as «class HTML»' |
+      sed 's/«data HTML//' |
+      sed 's/»$//' |
+      xxd -r -p
+  else
+    echo "Error: No HTML content found in clipboard" >&2
+    exit 1
+  fi
+}
+
+# Main logic
+main() {
+  local output_file=""
+
+  # Parse arguments
+  if [[ $# -gt 1 ]]; then
+    usage
+  elif [[ $# -eq 1 ]]; then
+    if [[ "$1" == "-h" || "$1" == "--help" ]]; then
+      usage
+    fi
+    output_file="$1"
+  fi
+
+  # Extract HTML content
+  local html_content
+  html_content=$(extract_html)
+
+  # Output to file or stdout
+  if [[ -n "$output_file" ]]; then
+    echo "$html_content" >"$output_file"
+    echo "HTML content written to: $output_file" >&2
+  else
+    echo "$html_content"
+  fi
+}
+
+main "$@"
+
