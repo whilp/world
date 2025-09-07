@@ -9,7 +9,7 @@ if ok then
   conform.setup({
     formatters_by_ft = {
       lua = { "stylua" },
-      python = { "ruff_format" },
+      python = { "ruff_format", "injected" },
       javascript = { "biome" },
       typescript = { "biome" },
       javascriptreact = { "biome" },
@@ -17,13 +17,12 @@ if ok then
       json = { "biome" },
       jsonc = { "biome" },
       css = { "biome" },
-      html = { "superhtml" },
+      html = { "superhtml", "injected" },
       graphql = { "biome" },
       sql = { "sqruff" },
-      sh = { "shfmt" },
-      bash = { "shfmt" },
-      zsh = { "shfmt" },
-      markdown = { "comrak" },
+      sh = { "shfmt", "injected" },
+      bash = { "shfmt", "injected" },
+      markdown = { "comrak", "injected" },
     },
     formatters = {
       comrak = {
