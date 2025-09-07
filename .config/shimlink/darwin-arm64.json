@@ -2,7 +2,7 @@
   "binaries": {
     "nvim": {
       "url": "https://github.com/neovim/neovim/releases/download/nightly/nvim-macos-arm64.tar.gz",
-      "sha256": "36d140d5de54b7641067f709b8990156ef545c25e5c121f4b6e944b4d32b698e",
+      "sha256": "452d40fc4eb9972f598ae9b279a29714b45c26cf1584b33abcc9d36ccda390b2",
       "executable_path": "nvim-macos-arm64/bin/nvim"
     },
     "biome": {
