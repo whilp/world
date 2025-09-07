@@ -15,6 +15,7 @@ Options:
 
 import argparse
 import logging
+import json
 import os
 import sys
 import subprocess
@@ -25,24 +26,28 @@ from pathlib import Path
 from typing import List, Dict, Optional, Set
 
 
-def configure_logging(verbose: bool) -> None:
-    """Configure logging based on verbosity level."""
-    if verbose:
-        logging.basicConfig(
-            level=logging.DEBUG,
-            format="%(asctime)s - %(levelname)s - %(message)s",
-            handlers=[
-                logging.FileHandler("/tmp/scpaste.log"),
-                logging.StreamHandler(sys.stderr),
-            ],
-        )
-    else:
-        # Silent by default - only log to file if it exists
-        logging.basicConfig(
-            level=logging.WARNING,
-            format="%(asctime)s - %(levelname)s - %(message)s",
-            handlers=[logging.NullHandler()],
-        )
+class Log:
+    def __init__(self, message, /, **kwargs):
+        self.message = message
+        self.kwargs = kwargs
+
+    def __str__(self):
+        return "%s >>> %s" % (self.message, json.dumps(self.kwargs))
+
+    @classmethod
+    def debug(cls, *args, **kwargs):
+        return logging.debug(cls(*args, **kwargs))
+
+
+def configure_logging() -> None:
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        handlers=[
+            logging.FileHandler("/tmp/scpaste.log"),
+            logging.StreamHandler(sys.stderr),
+        ],
+    )
 
 
 def get_process_table():
@@ -447,7 +452,8 @@ def parse_args(argv: List[str]) -> argparse.Namespace:
 def main(environ: Dict[str, str], argv: List[str]) -> int:
     """Main function."""
     args = parse_args(argv)
-    configure_logging(args.verbose)
+    if args.verbose:
+        configure_logging()
     terminal_type = args.terminal
 
     logging.debug(f"Starting scpaste with terminal type: {terminal_type}")
