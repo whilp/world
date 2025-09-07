@@ -115,8 +115,8 @@ def parse_lsof_fields(output: str) -> List[Dict[str, str]]:
     return records
 
 
-def process_ssh_socket(current_process, field_value, process_table, socket_groups):
-    """Process an SSH socket entry and add it to socket groups"""
+def process_ssh_socket(current_process, field_value, process_table):
+    """Process an SSH socket entry and return socket path and process info"""
     # Check if this is an SSH process using a socket
     if not (
         current_process.get("command") == "ssh"
@@ -124,7 +124,7 @@ def process_ssh_socket(current_process, field_value, process_table, socket_group
         and field_value.startswith("/")
         and not field_value.startswith("->")
     ):
-        return
+        return None
 
     # Clean socket path (remove temporary suffixes)
     clean_socket_path = field_value
@@ -145,19 +145,7 @@ def process_ssh_socket(current_process, field_value, process_table, socket_group
         "is_master": "[mux]" in field_value,
     }
 
-    # Group by socket path
-    if clean_socket_path not in socket_groups:
-        socket_groups[clean_socket_path] = {
-            "socket_path": clean_socket_path,
-            "processes": [],
-            "alacritty_pid": None,
-        }
-
-    socket_groups[clean_socket_path]["processes"].append(process_info)
-
-    # If any process has Alacritty ancestry, mark the whole group
-    if alacritty_pid and not socket_groups[clean_socket_path]["alacritty_pid"]:
-        socket_groups[clean_socket_path]["alacritty_pid"] = alacritty_pid
+    return clean_socket_path, process_info
 
 
 def find_ssh_socket_groups():
@@ -178,7 +166,27 @@ def find_ssh_socket_groups():
     for record in records:
         # Process each record that has a name field (socket path)
         if "name" in record:
-            process_ssh_socket(record, record["name"], process_table, socket_groups)
+            result = process_ssh_socket(record, record["name"], process_table)
+            if result:
+                clean_socket_path, process_info = result
+
+                # Group by socket path
+                if clean_socket_path not in socket_groups:
+                    socket_groups[clean_socket_path] = {
+                        "socket_path": clean_socket_path,
+                        "processes": [],
+                        "alacritty_pid": None,
+                    }
+
+                socket_groups[clean_socket_path]["processes"].append(process_info)
+
+                # If any process has Alacritty ancestry, mark the whole group
+                alacritty_pid = process_info["alacritty_pid"]
+                if (
+                    alacritty_pid
+                    and not socket_groups[clean_socket_path]["alacritty_pid"]
+                ):
+                    socket_groups[clean_socket_path]["alacritty_pid"] = alacritty_pid
 
     # Now find SSH clients that use ControlPath to link to these sockets
     ps_result = subprocess.run(
