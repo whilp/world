@@ -6,6 +6,7 @@
 
 [push]
 	default = simple
+	autoSetupRemote = true
 
 # http://stackoverflow.com/questions/18257622/why-is-git-core-preloadindex-default-value-false
 [core]
