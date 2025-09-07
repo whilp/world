@@ -64,20 +64,16 @@ def get_alacritty_pid_from_env():
     if not alacritty_socket:
         return None
 
-    try:
-        result = subprocess.run(
-            ["lsof", alacritty_socket], capture_output=True, text=True, timeout=5
-        )
-    except (subprocess.SubprocessError, subprocess.TimeoutExpired):
+    success, output, _ = run_lsof_command(
+        ["-F", "pc", alacritty_socket], timeout=5, log_errors=False
+    )
+    if not success:
         return None
 
-    if result.returncode != 0:
-        return None
-
-    for line in result.stdout.strip().split("\n")[1:]:  # Skip header
-        parts = line.strip().split()
-        if len(parts) >= 2 and parts[0] == "alacritty":
-            return parts[1]  # PID is second column
+    records = parse_lsof_fields(output)
+    for record in records:
+        if record.get("command") == "alacritty":
+            return record.get("pid")
 
     return None
 
@@ -88,6 +84,56 @@ def find_alacritty_in_ancestry(ancestry):
         if "alacritty" in process["comm"].lower():
             return process["pid"]
     return None
+
+
+def run_lsof_command(
+    args: List[str], timeout: int = 10, log_errors: bool = True
+) -> tuple:
+    """Run lsof command with standardized error handling."""
+    try:
+        result = subprocess.run(
+            ["lsof"] + args, capture_output=True, text=True, timeout=timeout
+        )
+    except (subprocess.SubprocessError, subprocess.TimeoutExpired) as e:
+        if log_errors:
+            log(f"lsof command failed: {e}")
+        return False, "", str(e)
+
+    if result.returncode != 0:
+        if log_errors:
+            log(f"lsof failed with return code {result.returncode}")
+        return False, "", result.stderr
+
+    return True, result.stdout, ""
+
+
+def parse_lsof_fields(output: str) -> List[Dict[str, str]]:
+    """Parse lsof -F output into structured records."""
+    records = []
+    current_record = {}
+
+    for line in output.strip().split("\n"):
+        if not line:
+            continue
+
+        field_type = line[0]
+        field_value = line[1:]
+
+        if field_type == "p":
+            # New process record starts
+            if current_record:
+                records.append(current_record)
+            current_record = {"pid": field_value}
+        elif field_type in ["c", "n", "t"]:
+            current_record[{"c": "command", "n": "name", "t": "type"}[field_type]] = (
+                field_value
+            )
+
+    # Don't forget the last record
+    if current_record:
+        records.append(current_record)
+
+    return records
 
 
 def process_ssh_socket(current_process, field_value, process_table, socket_groups):
@@ -140,39 +186,19 @@ def find_ssh_socket_groups():
     # Get process table once for efficient ancestry lookups
     process_table = get_process_table()
 
-    try:
-        result = subprocess.run(
-            ["lsof", "-U", "-F", "pcnt"], capture_output=True, text=True, timeout=10
-        )
-    except (subprocess.SubprocessError, subprocess.TimeoutExpired) as e:
-        log(f"lsof command failed: {e}")
-        return {}
-
-    if result.returncode != 0:
-        log(f"lsof failed with return code {result.returncode}")
+    success, output, _ = run_lsof_command(
+        ["-U", "-F", "pcnt"], timeout=10, log_errors=True
+    )
+    if not success:
         return {}
 
     socket_groups = {}
-    current_process = {}
+    records = parse_lsof_fields(output)
 
-    for line in result.stdout.strip().split("\n"):
-        if not line:
-            continue
-
-        field_type = line[0]
-        field_value = line[1:]
-
-        if field_type == "p":
-            current_process = {"pid": field_value}
-        elif field_type == "c":
-            current_process["command"] = field_value
-        elif field_type == "t":
-            current_process["type"] = field_value
-        elif field_type == "n":
-            current_process["name"] = field_value
-            process_ssh_socket(
-                current_process, field_value, process_table, socket_groups
-            )
+    for record in records:
+        # Process each record that has a name field (socket path)
+        if "name" in record:
+            process_ssh_socket(record, record["name"], process_table, socket_groups)
 
     # Now find SSH clients that use ControlPath to link to these sockets
     try:
@@ -305,12 +331,13 @@ def parse_clipboard_data(raw_data: str, format_class: str) -> Optional[str]:
 def get_clipboard_content() -> Dict[str, str]:
     """Get clipboard content in all available formats."""
     formats = {}
-    
+
     # First, get clipboard info to see what formats are available
     try:
         info_result = subprocess.run(
             ["osascript", "-e", 'tell application "System Events" to clipboard info'],
-            capture_output=True, text=True
+            capture_output=True,
+            text=True,
         )
         if info_result.returncode != 0:
             log(f"Failed to get clipboard info: {info_result.stderr}")
@@ -318,16 +345,21 @@ def get_clipboard_content() -> Dict[str, str]:
     except Exception as e:
         log(f"Error getting clipboard info: {e}")
         return {}
-    
+
     clipboard_info = info_result.stdout.strip()
     log(f"Clipboard info: {clipboard_info}")
-    
+
     # Try to get PNG data
     if "PNGf" in clipboard_info:
         try:
             png_result = subprocess.run(
-                ["osascript", "-e", 'tell application "System Events" to get the clipboard as «class PNGf»'],
-                capture_output=True, text=True
+                [
+                    "osascript",
+                    "-e",
+                    'tell application "System Events" to get the clipboard as «class PNGf»',
+                ],
+                capture_output=True,
+                text=True,
             )
             if png_result.returncode == 0 and png_result.stdout.strip():
                 png_data = png_result.stdout.strip()
@@ -338,7 +370,7 @@ def get_clipboard_content() -> Dict[str, str]:
                     log(f"Retrieved PNG data: {len(hex_data)} hex chars")
         except Exception as e:
             log(f"Error getting PNG data: {e}")
-    
+
     # Try to get text data
     try:
         text_result = subprocess.run(["pbpaste"], capture_output=True, text=True)
@@ -348,10 +380,10 @@ def get_clipboard_content() -> Dict[str, str]:
             log(f"Retrieved text content: {len(content)} chars")
     except Exception as e:
         log(f"Error getting text content: {e}")
-    
+
     if not formats:
         log("No clipboard content found")
-    
+
     return formats
 
 
