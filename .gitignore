@@ -68,8 +68,8 @@
 .viminfo
 .vscode-remote/
 .zcompdump*
-.zprofile
 .zsh_history
+.zshrc
 java
 nvm
 .CFUserTextEncoding
