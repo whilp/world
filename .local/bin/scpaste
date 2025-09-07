@@ -148,11 +148,8 @@ def process_ssh_socket(current_process, field_value, process_table):
     return clean_socket_path, process_info
 
 
-def find_ssh_socket_groups():
-    """Find SSH processes grouped by socket path"""
-    # Get process table once for efficient ancestry lookups
-    process_table = get_process_table()
-
+def get_socket_groups(process_table):
+    """Build socket groups from lsof records"""
     result = subprocess.run(
         ["lsof", "-U", "-F", "pcnt"],
         capture_output=True,
@@ -160,8 +157,8 @@ def find_ssh_socket_groups():
         timeout=10,
         check=True,
     )
-    socket_groups = {}
     records = parse_lsof_fields(result.stdout)
+    socket_groups = {}
 
     for record in records:
         # Process each record that has a name field (socket path)
@@ -188,7 +185,11 @@ def find_ssh_socket_groups():
                 ):
                     socket_groups[clean_socket_path]["alacritty_pid"] = alacritty_pid
 
-    # Now find SSH clients that use ControlPath to link to these sockets
+    return socket_groups
+
+
+def get_controlpath_clients(process_table):
+    """Find SSH client processes that use ControlPath and return client data by socket path"""
     ps_result = subprocess.run(
         ["ps", "-eo", "pid,command"],
         capture_output=True,
@@ -196,6 +197,8 @@ def find_ssh_socket_groups():
         timeout=10,
         check=True,
     )
+
+    clients_by_socket = {}
 
     for line in ps_result.stdout.strip().split("\n")[1:]:  # Skip header
         parts = line.strip().split(None, 1)
@@ -218,32 +221,48 @@ def find_ssh_socket_groups():
         except (IndexError, ValueError):
             continue
 
-        # Check if this ControlPath matches any of our socket groups
-        for socket_path, group in socket_groups.items():
-            if control_path != socket_path:
-                continue
+        # Get ancestry for this SSH client
+        ancestry = trace_process_ancestry(pid, process_table)
+        alacritty_pid = find_alacritty_in_ancestry(ancestry)
 
-            # Get ancestry for this SSH client
-            ancestry = trace_process_ancestry(pid, process_table)
-            alacritty_pid = find_alacritty_in_ancestry(ancestry)
+        # Create client info
+        client_info = {
+            "pid": pid,
+            "command": "ssh-client",
+            "original_path": f"client-using-{control_path}",
+            "type": "client",
+            "ancestry": ancestry,
+            "alacritty_pid": alacritty_pid,
+            "is_master": False,
+        }
 
-            # If client has Alacritty ancestry, inherit it to the socket group
-            if alacritty_pid and not group["alacritty_pid"]:
-                group["alacritty_pid"] = alacritty_pid
-                group["alacritty_source"] = f"client-{pid}"
+        # Group clients by their control path
+        if control_path not in clients_by_socket:
+            clients_by_socket[control_path] = []
+        clients_by_socket[control_path].append(client_info)
 
-            # Add client info to the group
-            client_info = {
-                "pid": pid,
-                "command": "ssh-client",
-                "original_path": f"client-using-{control_path}",
-                "type": "client",
-                "ancestry": ancestry,
-                "alacritty_pid": alacritty_pid,
-                "is_master": False,
-            }
-            group["processes"].append(client_info)
-            break
+    return clients_by_socket
+
+
+def find_ssh_socket_groups():
+    """Find SSH processes grouped by socket path"""
+    process_table = get_process_table()
+    socket_groups = get_socket_groups(process_table)
+    clients_by_socket = get_controlpath_clients(process_table)
+
+    # Merge client data into socket groups
+    for socket_path, clients in clients_by_socket.items():
+        if socket_path in socket_groups:
+            socket_groups[socket_path]["processes"].extend(clients)
+
+            # If any client has Alacritty ancestry, inherit it to the socket group
+            for client in clients:
+                alacritty_pid = client["alacritty_pid"]
+                if alacritty_pid and not socket_groups[socket_path]["alacritty_pid"]:
+                    socket_groups[socket_path]["alacritty_pid"] = alacritty_pid
+                    socket_groups[socket_path]["alacritty_source"] = (
+                        f"client-{client['pid']}"
+                    )
 
     return socket_groups
 
