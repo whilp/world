@@ -1,3 +1,5 @@
+.config/git/local
+.Trash/
 .bash_history
 .bash_logout
 .bashrc
