@@ -15,18 +15,18 @@
     line-numbers-minus-style = "#D55E00"
     line-numbers-plus-style = "#0173B2"
     line-numbers-zero-style = "#666666"
-    minus-style = syntax "#2D1B00"
-    minus-emph-style = syntax "#4A2E00"
+    minus-style = syntax "#440000"
+    minus-emph-style = syntax "#880000"
     plus-style = syntax "#001A2E"
     plus-emph-style = syntax "#002E4A"
     zero-style = syntax
-    syntax-theme = OneHalfDark
+    syntax-theme = base16
     file-added-label = [+]
     file-copied-label = [==]
     file-modified-label = [*]
     file-removed-label = [-]
     file-renamed-label = [->]
-    whitespace-error-style = "#AA3939" reverse
+    whitespace-error-style = magenta reverse
 
 [delta "colorblind-light"]
     # Light theme optimized for colorblind users
