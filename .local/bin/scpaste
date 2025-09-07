@@ -304,82 +304,54 @@ def parse_clipboard_data(raw_data: str, format_class: str) -> Optional[str]:
 
 def get_clipboard_content() -> Dict[str, str]:
     """Get clipboard content in all available formats."""
-    script = """
-    on run
-        tell application "System Events"
-            set clipboardInfo to (clipboard info)
-            set results to {}
-            repeat with clipType in clipboardInfo
-                set formatClass to (class of clipType) as string
-                try
-                    set clipData to (get the clipboard as «class » & formatClass & «»)
-                    set results to results & {formatClass & "|" & (clipData as string)}
-                on error
-                    -- Skip formats that can't be retrieved
-                end try
-            end repeat
-            return results as string
-        end tell
-    end run
-    """
-
-    try:
-        result = subprocess.run(
-            ["osascript", "-e", script], capture_output=True, text=True
-        )
-        if result.returncode != 0 or not result.stdout.strip():
-            # Fallback to pbpaste for text content
-            try:
-                fallback = subprocess.run(["pbpaste"], capture_output=True, text=True)
-                if fallback.returncode == 0 and fallback.stdout.strip():
-                    content = fallback.stdout.strip()
-                    log(
-                        f"Retrieved clipboard text content via pbpaste: {len(content)} chars"
-                    )
-                    return {"txt": content}
-            except Exception:
-                pass
-            return {}
-        osascript_output = result.stdout.strip()
-    except Exception as e:
-        log(f"Error running osascript: {e}")
-        return {}
-
     formats = {}
-    format_extensions = {
-        "TEXT": "txt",
-        "utf8": "txt",
-        "PNGf": "png",
-        "HTML": "html",
-        "RTF ": "rtf",
-    }
-
-    # Parse the combined result: "format1|data1, format2|data2, ..."
-    for item in osascript_output.split(", "):
-        if "|" not in item:
-            continue
-
+    
+    # First, get clipboard info to see what formats are available
+    try:
+        info_result = subprocess.run(
+            ["osascript", "-e", 'tell application "System Events" to clipboard info'],
+            capture_output=True, text=True
+        )
+        if info_result.returncode != 0:
+            log(f"Failed to get clipboard info: {info_result.stderr}")
+            return {}
+    except Exception as e:
+        log(f"Error getting clipboard info: {e}")
+        return {}
+    
+    clipboard_info = info_result.stdout.strip()
+    log(f"Clipboard info: {clipboard_info}")
+    
+    # Try to get PNG data
+    if "PNGf" in clipboard_info:
         try:
-            format_class, raw_data = item.split("|", 1)
-        except ValueError:
-            # Shouldn't happen since we checked for "|", but be safe
-            continue
-
-        format_class = format_class.strip()
-
-        parsed_data = parse_clipboard_data(raw_data, format_class)
-        if not parsed_data:
-            continue
-
-        ext = format_extensions.get(format_class, format_class.lower())
-
-        # Avoid duplicate text content
-        if ext == "txt" and "txt" in formats:
-            continue
-
-        formats[ext] = parsed_data
-
-    log(f"Retrieved clipboard formats: {list(formats.keys())}")
+            png_result = subprocess.run(
+                ["osascript", "-e", 'tell application "System Events" to get the clipboard as «class PNGf»'],
+                capture_output=True, text=True
+            )
+            if png_result.returncode == 0 and png_result.stdout.strip():
+                png_data = png_result.stdout.strip()
+                # Parse PNG data: «data PNGf...hex...
+                if png_data.startswith("«data PNGf") and png_data.endswith("»"):
+                    hex_data = png_data[10:-1]  # Remove «data PNGf and »
+                    formats["png"] = hex_data
+                    log(f"Retrieved PNG data: {len(hex_data)} hex chars")
+        except Exception as e:
+            log(f"Error getting PNG data: {e}")
+    
+    # Try to get text data
+    try:
+        text_result = subprocess.run(["pbpaste"], capture_output=True, text=True)
+        if text_result.returncode == 0 and text_result.stdout.strip():
+            content = text_result.stdout.strip()
+            formats["txt"] = content
+            log(f"Retrieved text content: {len(content)} chars")
+    except Exception as e:
+        log(f"Error getting text content: {e}")
+    
+    if not formats:
+        log("No clipboard content found")
+    
     return formats
 
 

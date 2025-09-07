@@ -18,6 +18,7 @@
       "Bash(comrak:*)",
       "Bash(session-logger:*)",
       "Bash(yarn build:*)",
+      "Bash(alacritty:*)",
       "Bash(npm test:*)"
     ]
   },
@@ -36,6 +37,5 @@
   },
   "feedbackSurveyState": {
     "lastShownTime": 1754368507584
-  },
-  "model": "sonnet"
+  }
 }

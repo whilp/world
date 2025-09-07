@@ -1,0 +1,414 @@
+#!/usr/bin/env python3
+"""
+Test script for global lsof SSH socket detection.
+Uses only Python stdlib - no external dependencies.
+"""
+
+import subprocess
+import sys
+import os
+from pathlib import Path
+
+
+def get_process_table():
+    """Get the complete process table once"""
+    try:
+        result = subprocess.run(
+            ["ps", "-eo", "pid,ppid,comm"], capture_output=True, text=True, timeout=10
+        )
+    except (subprocess.SubprocessError, subprocess.TimeoutExpired):
+        return {}
+
+    if result.returncode != 0:
+        return {}
+
+    process_table = {}
+    for line in result.stdout.strip().split("\n")[1:]:  # Skip header
+        parts = line.strip().split(None, 2)
+        if len(parts) < 3:
+            continue
+        pid, ppid, comm = parts[0], parts[1], parts[2]
+        process_table[pid] = {"pid": pid, "ppid": ppid, "comm": comm}
+
+    return process_table
+
+
+def trace_process_ancestry(pid, process_table):
+    """Trace process ancestry using pre-loaded process table"""
+    ancestry = []
+    current_pid = str(pid)
+
+    while current_pid != "1" and current_pid in process_table:
+        process_info = process_table[current_pid]
+        ancestry.append(process_info)
+        current_pid = process_info["ppid"]
+
+    return ancestry
+
+
+def get_alacritty_pid_from_env():
+    """Get current Alacritty PID from environment variable"""
+    alacritty_socket = os.environ.get("ALACRITTY_SOCKET")
+    if not alacritty_socket:
+        return None
+
+    try:
+        result = subprocess.run(
+            ["lsof", alacritty_socket], capture_output=True, text=True, timeout=5
+        )
+    except (subprocess.SubprocessError, subprocess.TimeoutExpired):
+        return None
+
+    if result.returncode != 0:
+        return None
+
+    for line in result.stdout.strip().split("\n")[1:]:  # Skip header
+        parts = line.strip().split()
+        if len(parts) >= 2 and parts[0] == "alacritty":
+            return parts[1]  # PID is second column
+
+    return None
+
+
+def find_alacritty_in_ancestry(ancestry):
+    """Check if Alacritty is in the process ancestry"""
+    for process in ancestry:
+        if "alacritty" in process["comm"].lower():
+            return process["pid"]
+    return None
+
+
+def process_ssh_socket(current_process, field_value, process_table, socket_groups):
+    """Process an SSH socket entry and add it to socket groups"""
+    # Check if this is an SSH process using a socket
+    if not (
+        current_process.get("command") == "ssh"
+        and current_process.get("type") == "unix"
+        and field_value.startswith("/")
+        and not field_value.startswith("->")
+    ):
+        return
+
+    # Clean socket path (remove temporary suffixes)
+    clean_socket_path = field_value
+    if ".sock." in field_value:
+        clean_socket_path = field_value.split(".sock.")[0] + ".sock"
+
+    # Trace ancestry
+    ancestry = trace_process_ancestry(current_process["pid"], process_table)
+    alacritty_pid = find_alacritty_in_ancestry(ancestry)
+
+    process_info = {
+        "pid": current_process["pid"],
+        "command": current_process["command"],
+        "original_path": field_value,
+        "type": current_process["type"],
+        "ancestry": ancestry,
+        "alacritty_pid": alacritty_pid,
+        "is_master": "[mux]" in field_value,
+    }
+
+    # Group by socket path
+    if clean_socket_path not in socket_groups:
+        socket_groups[clean_socket_path] = {
+            "socket_path": clean_socket_path,
+            "processes": [],
+            "alacritty_pid": None,
+        }
+
+    socket_groups[clean_socket_path]["processes"].append(process_info)
+
+    # If any process has Alacritty ancestry, mark the whole group
+    if alacritty_pid and not socket_groups[clean_socket_path]["alacritty_pid"]:
+        socket_groups[clean_socket_path]["alacritty_pid"] = alacritty_pid
+
+
+def find_ssh_socket_groups():
+    """Find SSH processes grouped by socket path"""
+    # Get process table once for efficient ancestry lookups
+    process_table = get_process_table()
+
+    try:
+        result = subprocess.run(
+            ["lsof", "-U", "-F", "pcnt"], capture_output=True, text=True, timeout=10
+        )
+    except (subprocess.SubprocessError, subprocess.TimeoutExpired) as e:
+        print(f"lsof command failed: {e}")
+        return {}
+
+    if result.returncode != 0:
+        print(f"lsof failed with return code {result.returncode}")
+        return {}
+
+    socket_groups = {}
+    current_process = {}
+
+    for line in result.stdout.strip().split("\n"):
+        if not line:
+            continue
+
+        field_type = line[0]
+        field_value = line[1:]
+
+        if field_type == "p":
+            current_process = {"pid": field_value}
+        elif field_type == "c":
+            current_process["command"] = field_value
+        elif field_type == "t":
+            current_process["type"] = field_value
+        elif field_type == "n":
+            current_process["name"] = field_value
+            process_ssh_socket(current_process, field_value, process_table, socket_groups)
+
+    # Now find SSH clients that use ControlPath to link to these sockets
+    try:
+        ps_result = subprocess.run(
+            ["ps", "-eo", "pid,command"], capture_output=True, text=True, timeout=10
+        )
+    except (subprocess.SubprocessError, subprocess.TimeoutExpired):
+        return socket_groups  # Return what we have so far
+
+    if ps_result.returncode != 0:
+        return socket_groups  # Return what we have so far
+
+    for line in ps_result.stdout.strip().split("\n")[1:]:  # Skip header
+        parts = line.strip().split(None, 1)
+        if len(parts) < 2:
+            continue
+
+        pid, command = parts[0], parts[1]
+
+        # Look for SSH clients with ControlPath
+        if not (
+            ("/usr/bin/ssh" in command or command.startswith("ssh "))
+            and "-o ControlPath=" in command
+            and "[mux]" not in command
+        ):
+            continue
+
+        # Extract ControlPath
+        try:
+            control_path = command.split("-o ControlPath=")[1].split()[0]
+        except (IndexError, ValueError):
+            continue
+
+        # Check if this ControlPath matches any of our socket groups
+        for socket_path, group in socket_groups.items():
+            if control_path != socket_path:
+                continue
+
+            # Get ancestry for this SSH client
+            ancestry = trace_process_ancestry(pid, process_table)
+            alacritty_pid = find_alacritty_in_ancestry(ancestry)
+
+            # If client has Alacritty ancestry, inherit it to the socket group
+            if alacritty_pid and not group["alacritty_pid"]:
+                group["alacritty_pid"] = alacritty_pid
+                group["alacritty_source"] = f"client-{pid}"
+
+            # Add client info to the group
+            client_info = {
+                "pid": pid,
+                "command": "ssh-client",
+                "original_path": f"client-using-{control_path}",
+                "type": "client",
+                "ancestry": ancestry,
+                "alacritty_pid": alacritty_pid,
+                "is_master": False,
+            }
+            group["processes"].append(client_info)
+            break
+
+    return socket_groups
+
+
+def validate_socket_paths(ssh_sockets):
+    """Validate that socket paths exist and are actual sockets"""
+    valid_sockets = []
+
+    for socket_info in ssh_sockets:
+        socket_path = socket_info["socket_path"]
+
+        try:
+            path_obj = Path(socket_path)
+
+            # Check if path exists and is a socket
+            if path_obj.exists() and path_obj.is_socket():
+                socket_info["valid"] = True
+                socket_info["exists"] = True
+                socket_info["is_socket"] = True
+            else:
+                socket_info["valid"] = False
+                socket_info["exists"] = path_obj.exists()
+                socket_info["is_socket"] = (
+                    path_obj.is_socket() if socket_info["exists"] else False
+                )
+
+        except (OSError, PermissionError) as e:
+            socket_info["valid"] = False
+            socket_info["error"] = str(e)
+
+        valid_sockets.append(socket_info)
+
+    return valid_sockets
+
+
+def test_socket_connectivity(socket_info):
+    """Test if SSH socket is active/connectable"""
+    socket_path = socket_info["socket_path"]
+
+    try:
+        # Test SSH control master connection
+        result = subprocess.run(
+            ["ssh", "-S", socket_path, "-O", "check", "dummy"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+
+        socket_info["connectable"] = result.returncode == 0
+        socket_info["ssh_check_output"] = result.stderr.strip()
+
+    except subprocess.TimeoutExpired:
+        socket_info["connectable"] = False
+        socket_info["ssh_check_output"] = "Connection test timed out"
+    except subprocess.SubprocessError as e:
+        socket_info["connectable"] = False
+        socket_info["ssh_check_output"] = f"SSH test failed: {e}"
+
+
+def main():
+    """Test SSH socket detection with process grouping"""
+    print("=== SSH Socket Detection with Process Grouping ===\n")
+
+    # Get current Alacritty PID for filtering
+    current_alacritty_pid = get_alacritty_pid_from_env()
+    if current_alacritty_pid:
+        print(f"Current Alacritty PID: {current_alacritty_pid}\n")
+    else:
+        print("Not running in Alacritty or unable to detect PID\n")
+
+    print("1. Finding SSH socket groups...")
+    socket_groups = find_ssh_socket_groups()
+    total_processes = sum(len(group["processes"]) for group in socket_groups.values())
+    print(
+        f"   Found {total_processes} SSH processes across {len(socket_groups)} socket groups\n"
+    )
+
+    if not socket_groups:
+        print("No SSH socket groups found. Exiting.")
+        return
+
+    print("2. Validating socket paths...")
+    valid_groups = []
+    for socket_path, group in socket_groups.items():
+        try:
+            path_obj = Path(socket_path)
+            if path_obj.exists() and path_obj.is_socket():
+                group["valid"] = True
+                valid_groups.append(group)
+            else:
+                group["valid"] = False
+        except (OSError, PermissionError):
+            group["valid"] = False
+
+    print(f"   {len(valid_groups)}/{len(socket_groups)} socket groups are valid\n")
+
+    print("3. Testing socket connectivity...")
+    connectable_groups = []
+    for group in valid_groups:
+        socket_path = group["socket_path"]
+        try:
+            result = subprocess.run(
+                ["ssh", "-S", socket_path, "-O", "check", "dummy"],
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
+            group["connectable"] = result.returncode == 0
+            group["ssh_check_output"] = result.stderr.strip()
+            if group["connectable"]:
+                connectable_groups.append(group)
+        except (subprocess.SubprocessError, subprocess.TimeoutExpired):
+            group["connectable"] = False
+            group["ssh_check_output"] = "Connection test failed"
+
+    print(
+        f"   {len(connectable_groups)}/{len(valid_groups)} valid socket groups are connectable\n"
+    )
+
+    print("4. Socket Group Analysis:")
+    print("=" * 60)
+
+    current_window_groups = []
+    for i, (socket_path, group) in enumerate(socket_groups.items(), 1):
+        print(f"\nSocket Group #{i}:")
+        print(f"  Path: {socket_path}")
+        print(f"  Valid: {group.get('valid', 'Unknown')}")
+        print(f"  Connectable: {group.get('connectable', 'Unknown')}")
+
+        # Show Alacritty relationship
+        alacritty_pid = group.get("alacritty_pid")
+        if alacritty_pid:
+            source = group.get("alacritty_source", "unknown")
+            print(f"  Alacritty PID: {alacritty_pid} (via {source})")
+            if current_alacritty_pid and alacritty_pid == current_alacritty_pid:
+                print(f"  🎯 BELONGS TO CURRENT WINDOW")
+                current_window_groups.append(group)
+        else:
+            print(f"  Alacritty PID: None")
+
+        # Show processes in this group
+        processes = group.get("processes", [])
+        masters = [p for p in processes if p.get("is_master")]
+        clients = [p for p in processes if not p.get("is_master")]
+
+        if masters:
+            print(f"  Control Masters ({len(masters)}):")
+            for master in masters:
+                alacritty_marker = (
+                    f" (Alacritty: {master['alacritty_pid']})"
+                    if master["alacritty_pid"]
+                    else ""
+                )
+                print(f"    • PID {master['pid']}{alacritty_marker}")
+
+        if clients:
+            print(f"  SSH Clients ({len(clients)}):")
+            for client in clients:
+                alacritty_marker = (
+                    f" (Alacritty: {client['alacritty_pid']})"
+                    if client["alacritty_pid"]
+                    else ""
+                )
+                print(f"    • PID {client['pid']}{alacritty_marker}")
+
+        if group.get("connectable") and "ssh_check_output" in group:
+            print(f"  SSH Check: {group['ssh_check_output']}")
+
+    print(f"\n=== Summary ===\n")
+    print(f"Total socket groups: {len(socket_groups)}")
+    print(f"Valid groups: {len(valid_groups)}")
+    print(f"Connectable groups: {len(connectable_groups)}")
+
+    if current_alacritty_pid:
+        current_window_count = len(current_window_groups)
+        current_window_connectable = sum(
+            1 for g in current_window_groups if g.get("connectable", False)
+        )
+        print(f"\nCurrent Alacritty window groups: {current_window_count}")
+        print(f"Current window connectable groups: {current_window_connectable}")
+
+        if current_window_connectable > 0:
+            print(
+                f"\n🎯 Found {current_window_connectable} usable socket groups for current window!"
+            )
+            for group in current_window_groups:
+                if group.get("connectable"):
+                    print(f"  • {group['socket_path']}")
+
+    print(f"\n=== {len(connectable_groups)} total working SSH socket groups found ===")
+
+
+if __name__ == "__main__":
+    main()

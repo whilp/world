@@ -146,6 +146,11 @@ mods = "Command"
 action = "ReceiveChar"
 
 [[keyboard.bindings]]
+key = "V"
+mods = "Command|Shift"
+command = { program = "/bin/sh", args = ["-c", "$HOME/.local/bin/scpaste"] }
+
+[[keyboard.bindings]]
 key = "W"
 mods = "Command|Shift"
 action = "Quit"
