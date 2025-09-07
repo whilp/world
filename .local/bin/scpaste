@@ -399,69 +399,54 @@ def transfer_to_hosts(
 
 def main(environ: Dict[str, str], argv: List[str]) -> int:
     """Main function."""
-    try:
-        alacritty_pid = get_alacritty_pid_from_env()
-        if not alacritty_pid:
-            print("❌ Error: Not running in Alacritty or unable to detect PID")
-            return 1
-
-        # Find relevant SSH sockets
-        all_sockets = find_relevant_sockets(alacritty_pid)
-        if not all_sockets:
-            print("❌ No SSH sockets found for this Alacritty window")
-            return 1
-
-        # Sort sockets by modification time (most recent first) and take only the first one
-        socket_items = []
-        for socket_path, group in all_sockets.items():
-            try:
-                mtime = os.path.getmtime(socket_path)
-            except OSError:
-                mtime = 0  # Fallback for sockets we can't stat
-            socket_items.append((socket_path, group, mtime))
-
-        socket_items.sort(key=lambda x: x[2], reverse=True)
-        socket_path, group, _ = socket_items[0]
-        sockets = {socket_path: group}
-
-        process_count = len(group.get("processes", []))
-        print(f"🔌 Using SSH socket: {socket_path} ({process_count} processes)")
-        if len(all_sockets) > 1:
-            print(
-                f"   (Selected most recent from {len(all_sockets)} available sockets)"
-            )
-
-        # Get clipboard content
-        clipboard_content = get_clipboard_content()
-        if not clipboard_content:
-            print("❌ No clipboard content found")
-            return 1
-
-        print(f"📋 Found clipboard formats: {', '.join(clipboard_content.keys())}")
-
-        # Transfer to remote hosts
-        created_files = transfer_to_hosts(sockets, clipboard_content)
-
-        if created_files:
-            print(
-                f"\n🎉 Successfully created {len(created_files)} files across {len(sockets)} hosts"
-            )
-        else:
-            print("\n❌ No files were created")
-
-        return 0
-
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Command failed: {e.cmd[0]} (exit code {e.returncode})")
-        if e.stderr:
-            print(f"   Error: {e.stderr.strip()}")
+    alacritty_pid = get_alacritty_pid_from_env()
+    if not alacritty_pid:
+        print("❌ Error: Not running in Alacritty or unable to detect PID")
         return 1
-    except subprocess.TimeoutExpired as e:
-        print(f"❌ Command timed out: {e.cmd[0]} (after {e.timeout}s)")
+
+    # Find relevant SSH sockets
+    all_sockets = find_relevant_sockets(alacritty_pid)
+    if not all_sockets:
+        print("❌ No SSH sockets found for this Alacritty window")
         return 1
-    except Exception as e:
-        print(f"❌ Unexpected error: {e}")
+
+    # Sort sockets by modification time (most recent first) and take only the first one
+    socket_items = []
+    for socket_path, group in all_sockets.items():
+        try:
+            mtime = os.path.getmtime(socket_path)
+        except OSError:
+            mtime = 0  # Fallback for sockets we can't stat
+        socket_items.append((socket_path, group, mtime))
+
+    socket_items.sort(key=lambda x: x[2], reverse=True)
+    socket_path, group, _ = socket_items[0]
+    sockets = {socket_path: group}
+
+    process_count = len(group.get("processes", []))
+    print(f"🔌 Using SSH socket: {socket_path} ({process_count} processes)")
+    if len(all_sockets) > 1:
+        print(f"   (Selected most recent from {len(all_sockets)} available sockets)")
+
+    # Get clipboard content
+    clipboard_content = get_clipboard_content()
+    if not clipboard_content:
+        print("❌ No clipboard content found")
         return 1
+
+    print(f"📋 Found clipboard formats: {', '.join(clipboard_content.keys())}")
+
+    # Transfer to remote hosts
+    created_files = transfer_to_hosts(sockets, clipboard_content)
+
+    if created_files:
+        print(
+            f"\n🎉 Successfully created {len(created_files)} files across {len(sockets)} hosts"
+        )
+    else:
+        print("\n❌ No files were created")
+
+    return 0
 
 
 def outer(environ: Dict[str, str], argv: List[str]) -> int:
