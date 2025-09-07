@@ -14,7 +14,11 @@ main() {
 
 _git() {
   cp -ra "$SRC/.git" "$DST/.git"
-  cd "$DST" && git checkout .
+  (
+    cd "$DST"
+    git checkout .
+    git config user.email 189851+whilp@users.noreply.github.com
+  )
 }
 
 _shell() {
