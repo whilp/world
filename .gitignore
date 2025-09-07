@@ -136,3 +136,13 @@ Remarkable/
 go/
 obsidian/
 stripe/
+.config/dev-runner/
+.config/systemd/
+.cursor*
+.gitconfig-devbox
+.remote_default_bashrc_appendix.sh
+.remote_default_bashrc_preamble.sh
+.sentinels/
+.vscode*
+dotfiles/
+metadata.yaml
