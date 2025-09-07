@@ -159,7 +159,44 @@ _G.render_tabline = function()
     s = s .. '%' .. i .. 'T' .. ' ' .. tab_number .. ' '
   end
   
+  -- Add right-aligned section with environment variables
   s = s .. '%#TabLineFill#%T'
+  
+  -- Get environment variables with hostname fallback
+  local github_repo = os.getenv('GITHUB_REPOSITORY') or ''
+  local codespace_name = os.getenv('CODESPACE_NAME') or ''
+  
+  -- Use hostname as fallback if neither environment variable is set
+  local hostname = ''
+  if github_repo == '' and codespace_name == '' then
+    local handle = io.popen('hostname')
+    if handle then
+      hostname = handle:read('*l') or ''
+      handle:close()
+      -- Clean up hostname if it exists
+      hostname = hostname:gsub('\n', ''):gsub('^%s*(.-)%s*$', '%1')
+    end
+  end
+  
+  -- Build right section
+  local right_section = ''
+  if github_repo ~= '' then
+    right_section = right_section .. github_repo
+  end
+  if codespace_name ~= '' then
+    if right_section ~= '' then
+      right_section = right_section .. ' | '
+    end
+    right_section = right_section .. codespace_name
+  end
+  if hostname ~= '' and right_section == '' then
+    right_section = hostname
+  end
+  
+  if right_section ~= '' then
+    s = s .. '%=' .. '%#TabLine# ' .. right_section .. ' '
+  end
+  
   return s
 end
 
