@@ -21,6 +21,7 @@ if ok then
       graphql = { "biome" },
       sql = { "sqruff" },
       sh = { "shfmt", "injected" },
+      zsh = { "shfmt", "injected" },
       bash = { "shfmt", "injected" },
       markdown = { "comrak", "injected" },
     },
@@ -41,20 +42,5 @@ end
 
 local ok, lspconfig = pcall(require, "lspconfig")
 if ok then
-  lspconfig.ast_grep.setup({
-    cmd = { "ast-grep", "lsp" },
-    filetypes = {
-      "go",
-      "java",
-      "python",
-      "javascript",
-      "typescript",
-      "html",
-      "css",
-      "lua",
-    },
-    root_dir = lspconfig.util.root_pattern("sgconfig.yaml", "sgconfig.yml", ".git"),
-  })
-
   lspconfig.marksman.setup({})
 end
