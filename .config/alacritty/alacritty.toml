@@ -35,6 +35,7 @@ history = 0
 multiplier = 3
 
 [terminal]
+osc52 = "CopyPaste"
 shell = { program = "/bin/zsh", args = ["-l"] }
 
 [window]
