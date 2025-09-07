@@ -1,0 +1,645 @@
+#!/usr/bin/env python3
+"""
+Find SSH control sockets associated with a given Alacritty window.
+
+This script uses multiple detection methods:
+1. Environment variable detection (SSH_CONNECTION, etc.)
+2. Process tree walking to find SSH processes
+3. Socket file inspection in known directories
+4. Pay command socket detection in /tmp/paycmd/
+"""
+
+import os
+import sys
+import subprocess
+import json
+import base64
+import datetime
+from pathlib import Path
+from typing import List, Dict, Optional, Set
+
+
+def get_window_id() -> Optional[str]:
+    """Get the current Alacritty window ID from environment."""
+    return os.environ.get("ALACRITTY_WINDOW_ID")
+
+def get_alacritty_pid_from_socket() -> Optional[int]:
+    """Extract Alacritty PID from ALACRITTY_SOCKET environment variable."""
+    socket_path = os.environ.get("ALACRITTY_SOCKET")
+    if socket_path:
+        # Socket format: /var/folders/.../Alacritty-83851.sock
+        try:
+            import re
+            match = re.search(r'Alacritty-(\d+)\.sock', socket_path)
+            if match:
+                return int(match.group(1))
+        except Exception:
+            pass
+    return None
+
+def find_alacritty_parent_pid() -> Optional[int]:
+    """Find the Alacritty process that invoked this script by walking up the process tree."""
+    try:
+        current_pid = os.getpid()
+        
+        # Get all processes
+        result = subprocess.run(
+            ["ps", "-eo", "pid,ppid,command"], capture_output=True, text=True
+        )
+        
+        # Build process lookup
+        processes = {}
+        for line in result.stdout.strip().split("\n")[1:]:  # Skip header
+            parts = line.strip().split(None, 2)
+            if len(parts) >= 2:
+                pid = int(parts[0])
+                ppid = int(parts[1])
+                cmd = parts[2] if len(parts) > 2 else ""
+                processes[pid] = {"ppid": ppid, "command": cmd}
+        
+        # Walk up the process tree
+        pid = current_pid
+        while pid in processes:
+            proc = processes[pid]
+            if "alacritty" in proc["command"].lower():
+                return pid
+            pid = proc["ppid"]
+            if pid <= 1:  # Stop at init
+                break
+                
+        return None
+    except Exception as e:
+        print(f"Error finding Alacritty parent: {e}", file=sys.stderr)
+        return None
+
+
+def get_current_ssh_env() -> Dict[str, str]:
+    """Check for SSH environment variables in current session."""
+    ssh_vars = {}
+    for key in ["SSH_CONNECTION", "SSH_CLIENT", "SSH_TTY", "SSH_AUTH_SOCK"]:
+        if key in os.environ:
+            ssh_vars[key] = os.environ[key]
+    return ssh_vars
+
+
+def get_process_tree() -> List[Dict]:
+    """Get process tree information using ps."""
+    try:
+        # Get all processes with parent-child relationships
+        result = subprocess.run(
+            ["ps", "-eo", "pid,ppid,command"], capture_output=True, text=True
+        )
+
+        processes = []
+        for line in result.stdout.strip().split("\n")[1:]:  # Skip header
+            parts = line.strip().split(None, 2)
+            if len(parts) >= 2:
+                pid = int(parts[0])
+                ppid = int(parts[1])
+                cmd = parts[2] if len(parts) > 2 else ""
+                processes.append({"pid": pid, "ppid": ppid, "command": cmd})
+
+        return processes
+    except (subprocess.SubprocessError, ValueError) as e:
+        print(f"Error getting process tree: {e}", file=sys.stderr)
+        return []
+
+
+def find_ssh_processes(processes: List[Dict]) -> List[Dict]:
+    """Find SSH-related processes in the process tree."""
+    ssh_processes = []
+
+    for proc in processes:
+        cmd = proc["command"].lower()
+        if "ssh" in cmd and ("ssh:" in cmd or "/ssh" in cmd or cmd.startswith("ssh")):
+            ssh_processes.append(proc)
+
+    return ssh_processes
+
+
+def find_alacritty_process(processes: List[Dict]) -> Optional[int]:
+    """Find the Alacritty process PID."""
+    for proc in processes:
+        if "alacritty" in proc["command"].lower():
+            return proc["pid"]
+    return None
+
+
+def get_process_descendants(processes: List[Dict], parent_pid: int) -> Set[int]:
+    """Get all descendant processes of a given parent PID."""
+    descendants = set()
+
+    # Build parent -> children mapping
+    children = {}
+    for proc in processes:
+        ppid = proc["ppid"]
+        if ppid not in children:
+            children[ppid] = []
+        children[ppid].append(proc["pid"])
+
+    # Recursively find descendants
+    def collect_descendants(pid: int):
+        if pid in children:
+            for child in children[pid]:
+                descendants.add(child)
+                collect_descendants(child)
+
+    collect_descendants(parent_pid)
+    return descendants
+
+
+def find_socket_files() -> List[Path]:
+    """Find SSH socket files in common locations."""
+    socket_paths = []
+
+    # Check common socket directories
+    search_dirs = [
+        Path("/tmp/paycmd/"),
+        Path.home() / ".ssh" / "sockets",
+        Path("/tmp"),
+    ]
+
+    for dir_path in search_dirs:
+        if dir_path.exists():
+            # Look for socket files (typically end in .sock or contain ssh)
+            for item in dir_path.iterdir():
+                if (
+                    item.is_socket()
+                    or ".sock" in item.name
+                    or "ssh" in item.name.lower()
+                ):
+                    socket_paths.append(item)
+
+    return socket_paths
+
+
+def parse_socket_info(socket_path: Path) -> Dict:
+    """Extract information from socket path."""
+    info = {
+        "path": str(socket_path),
+        "name": socket_path.name,
+        "directory": str(socket_path.parent),
+        "host": None,
+        "user": None,
+        "port": None,
+    }
+
+    # Parse pay command sockets: hostname.sock
+    if socket_path.parent.name == "paycmd":
+        name = socket_path.name
+        if name.endswith(".sock"):
+            info["host"] = name[:-5]  # Remove .sock suffix
+
+    # Parse standard SSH sockets: user@host-port
+    elif "@" in socket_path.name:
+        parts = socket_path.name.split("@")
+        if len(parts) >= 2:
+            info["user"] = parts[0]
+            host_part = parts[1]
+            if "-" in host_part:
+                host_parts = host_part.rsplit("-", 1)
+                info["host"] = host_parts[0]
+                try:
+                    info["port"] = int(host_parts[1])
+                except ValueError:
+                    info["host"] = host_part
+
+    return info
+
+
+def get_clipboard_formats() -> Dict[str, str]:
+    """Get clipboard content in multiple formats using osascript."""
+    formats = {}
+    
+    try:
+        # Get text format
+        script = 'tell application "System Events" to get the clipboard as text'
+        result = subprocess.run(['osascript', '-e', script], capture_output=True, text=True)
+        if result.returncode == 0 and result.stdout.strip():
+            formats['txt'] = result.stdout.strip()
+    except Exception as e:
+        print(f"Error getting text clipboard: {e}", file=sys.stderr)
+    
+    try:
+        # Get HTML format using AppleScript
+        script = 'tell application "System Events" to get the clipboard as «class HTML»'
+        result = subprocess.run(['osascript', '-e', script], capture_output=True, text=True)
+        if result.returncode == 0 and result.stdout.strip():
+            html_output = result.stdout.strip()
+            if 'HTML' in html_output and html_output != formats.get('txt', ''):
+                # Parse hex-encoded HTML data
+                try:
+                    hex_data = html_output.replace('«data HTML', '').replace('»', '').strip()
+                    if hex_data:
+                        html_content = bytes.fromhex(hex_data).decode('utf-8', errors='ignore')
+                        if html_content and html_content != formats.get('txt', ''):
+                            formats['html'] = html_content
+                except Exception:
+                    pass
+    except Exception as e:
+        print(f"Error getting HTML clipboard: {e}", file=sys.stderr)
+    
+    try:
+        # Get RTF format
+        script = 'tell application "System Events" to get the clipboard as «class RTF »'
+        result = subprocess.run(['osascript', '-e', script], capture_output=True, text=True)
+        if result.returncode == 0 and result.stdout.strip():
+            rtf_output = result.stdout.strip()
+            if 'RTF' in rtf_output and rtf_output != formats.get('txt', ''):
+                try:
+                    hex_data = rtf_output.replace('«data RTF ', '').replace('»', '').strip()
+                    if hex_data:
+                        rtf_content = bytes.fromhex(hex_data).decode('utf-8', errors='ignore')
+                        if rtf_content and rtf_content != formats.get('txt', ''):
+                            formats['rtf'] = rtf_content
+                except Exception:
+                    pass
+    except Exception as e:
+        print(f"Error getting RTF clipboard: {e}", file=sys.stderr)
+    
+    try:
+        # Get PNG image format using AppleScript
+        script = 'tell application "System Events" to get the clipboard as «class PNGf»'
+        result = subprocess.run(['osascript', '-e', script], capture_output=True, text=True)
+        if result.returncode == 0 and result.stdout.strip():
+            png_output = result.stdout.strip()
+            if 'PNGf' in png_output:
+                try:
+                    hex_data = png_output.replace('«data PNGf', '').replace('»', '').strip()
+                    if hex_data:
+                        formats['png'] = hex_data  # Keep as hex for easier transfer
+                except Exception:
+                    pass
+    except Exception as e:
+        print(f"Error getting PNG clipboard: {e}", file=sys.stderr)
+    
+    return formats
+
+
+def create_remote_files(host: str, socket_path: str, clipboard_formats: Dict[str, str]) -> List[str]:
+    """Create files on remote host using existing SSH socket."""
+    timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+    created_files = []
+    
+    # First, ensure the ~/pastes directory exists
+    mkdir_cmd = ['ssh', '-S', socket_path, host, 'mkdir -p ~/pastes']
+    try:
+        subprocess.run(mkdir_cmd, check=True, capture_output=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error creating pastes directory: {e}", file=sys.stderr)
+        return []
+    
+    for ext, content in clipboard_formats.items():
+        if not content.strip():
+            continue
+            
+        filename = f"~/pastes/{timestamp}.{ext}"
+        
+        try:
+            # Use temporary file approach for all formats - simpler and more reliable
+            import tempfile
+            import os
+            
+            # Determine appropriate mode and content based on format
+            if ext == 'png':
+                # PNG is hex-encoded, decode to binary for temp file
+                mode = 'wb'
+                file_content = bytes.fromhex(content)
+            else:
+                # Text formats
+                mode = 'w'
+                file_content = content
+                
+            with tempfile.NamedTemporaryFile(mode=mode, suffix=f'.{ext}', delete=False) as temp_file:
+                temp_file.write(file_content)
+                temp_file_path = temp_file.name
+            
+            try:
+                # Use scp to transfer the file directly
+                scp_cmd = ['scp', '-o', f'ControlPath={socket_path}', temp_file_path, f'{host}:{filename}']
+                result = subprocess.run(scp_cmd, capture_output=True, text=True)
+            finally:
+                # Clean up local temp file
+                try:
+                    os.unlink(temp_file_path)
+                except:
+                    pass
+            
+            if result.returncode == 0:
+                created_files.append(filename)
+                print(f"Created {filename} on {host}")
+            else:
+                error_msg = result.stderr if result.stderr else 'unknown error'
+                print(f"Error creating {filename}: {error_msg}", file=sys.stderr)
+                
+                # Log detailed error info
+                with open("/tmp/find-ssh-sockets.log", "a") as f:
+                    f.write(f"File creation error for {filename}:\n")
+                    f.write(f"  Return code: {result.returncode}\n")
+                    f.write(f"  Stdout: {result.stdout}\n")
+                    f.write(f"  Stderr: {result.stderr}\n")
+                    f.write(f"  Content length: {len(content)}\n")
+                    f.write(f"  Content preview: {content[:100]}...\n")
+                
+        except Exception as e:
+            print(f"Error processing {ext} format: {e}", file=sys.stderr)
+    
+    return created_files
+
+
+def find_ssh_sockets_for_alacritty_pid(alacritty_pid: int, processes: List[Dict]) -> List[Dict]:
+    """Find SSH sockets specifically associated with the given Alacritty PID."""
+    relevant_sockets = []
+    
+    # Get descendants of the Alacritty process
+    descendants = get_process_descendants(processes, alacritty_pid)
+    descendants.add(alacritty_pid)  # Include the Alacritty process itself
+    
+    # Find SSH processes that are descendants of this Alacritty instance
+    ssh_processes = find_ssh_processes(processes)
+    alacritty_ssh_processes = []
+    for proc in ssh_processes:
+        if proc["pid"] in descendants:
+            alacritty_ssh_processes.append(proc)
+    
+    # Look for pay command sockets that might be related
+    socket_files = find_socket_files()
+    pay_sockets = []
+    for socket_path in socket_files:
+        socket_info = parse_socket_info(socket_path)
+        if socket_info["directory"].endswith("paycmd") and socket_info["host"]:
+            # Check if there are SSH processes using this socket
+            for proc in ssh_processes:
+                if socket_path.name in proc["command"]:
+                    socket_info["related_process"] = proc
+                    pay_sockets.append(socket_info)
+                    break
+            else:
+                # Even if no direct process match, include pay sockets
+                pay_sockets.append(socket_info)
+    
+    return {
+        "alacritty_ssh_processes": alacritty_ssh_processes,
+        "pay_sockets": pay_sockets,
+        "all_descendants": list(descendants)
+    }
+
+def find_ssh_sockets_for_window(window_id: str) -> Dict:
+    """Find SSH sockets associated with the given window ID."""
+
+    result = {
+        "window_id": window_id,
+        "ssh_env": get_current_ssh_env(),
+        "ssh_processes": [],
+        "socket_files": [],
+        "alacritty_descendants": [],
+        "alacritty_specific": {},
+        "recommendations": [],
+    }
+
+    # Get process information
+    processes = get_process_tree()
+    ssh_processes = find_ssh_processes(processes)
+    result["ssh_processes"] = ssh_processes
+
+    # Find Alacritty process and its descendants
+    alacritty_pid = find_alacritty_process(processes)
+    if alacritty_pid:
+        descendants = get_process_descendants(processes, alacritty_pid)
+
+        # Filter SSH processes that are descendants of Alacritty
+        for proc in ssh_processes:
+            if proc["pid"] in descendants:
+                result["alacritty_descendants"].append(proc)
+
+    # If window_id contains a PID (format: pid-12345), extract it
+    extracted_pid = None
+    if window_id.startswith("pid-"):
+        try:
+            extracted_pid = int(window_id[4:])
+        except ValueError:
+            pass
+    
+    # Find sockets specific to this Alacritty instance
+    if extracted_pid:
+        result["alacritty_specific"] = find_ssh_sockets_for_alacritty_pid(extracted_pid, processes)
+
+    # Find all socket files
+    socket_files = find_socket_files()
+    for socket_path in socket_files:
+        socket_info = parse_socket_info(socket_path)
+        result["socket_files"].append(socket_info)
+
+    # Generate recommendations
+    if result["ssh_env"]:
+        result["recommendations"].append(
+            "Currently in SSH session based on environment variables"
+        )
+
+    if result["alacritty_specific"].get("pay_sockets"):
+        for socket in result["alacritty_specific"]["pay_sockets"]:
+            result["recommendations"].append(
+                f"Found pay command socket for host: {socket['host']}"
+            )
+    
+    if result["alacritty_specific"].get("alacritty_ssh_processes"):
+        result["recommendations"].append(
+            f"Found {len(result['alacritty_specific']['alacritty_ssh_processes'])} SSH processes under this Alacritty instance"
+        )
+
+    if not result["socket_files"] and not result["ssh_processes"]:
+        result["recommendations"].append("No SSH connections detected for this window")
+
+    return result
+
+
+def main():
+    """Main function."""
+    # Log environment to file for debugging
+    import datetime
+
+    timestamp = datetime.datetime.now().isoformat()
+
+    with open("/tmp/find-ssh-sockets.log", "a") as f:
+        f.write(f"\n=== find-ssh-sockets executed at {timestamp} ===\n")
+        f.write("Environment variables:\n")
+        for key, value in sorted(os.environ.items()):
+            f.write(f"  {key}={value}\n")
+        f.write("=== End environment ===\n\n")
+
+    window_id = get_window_id()
+    alacritty_pid = find_alacritty_parent_pid()
+    socket_pid = get_alacritty_pid_from_socket()
+    
+    with open("/tmp/find-ssh-sockets.log", "a") as f:
+        f.write(f"Window ID from env: {window_id}\n")
+        f.write(f"Alacritty parent PID: {alacritty_pid}\n")
+        f.write(f"Alacritty socket PID: {socket_pid}\n")
+        f.write(f"Current script PID: {os.getpid()}\n")
+        
+        # Debug: show process tree for current script
+        f.write("Process tree debugging:\n")
+        try:
+            result = subprocess.run(["ps", "-eo", "pid,ppid,command"], capture_output=True, text=True)
+            current_pid = os.getpid()
+            
+            # Show our process and its ancestors
+            processes = {}
+            for line in result.stdout.strip().split("\n")[1:]:
+                parts = line.strip().split(None, 2)
+                if len(parts) >= 2:
+                    pid = int(parts[0])
+                    ppid = int(parts[1])
+                    cmd = parts[2] if len(parts) > 2 else ""
+                    processes[pid] = {"ppid": ppid, "command": cmd}
+            
+            # Walk up from current process
+            pid = current_pid
+            level = 0
+            while pid in processes and level < 10:
+                proc = processes[pid]
+                f.write(f"  {level}: PID {pid} -> PPID {proc['ppid']}: {proc['command']}\n")
+                pid = proc["ppid"]
+                level += 1
+                if pid <= 1:
+                    break
+                    
+        except Exception as e:
+            f.write(f"Error in process tree debug: {e}\n")
+
+    # Use best available identifier
+    effective_alacritty_pid = alacritty_pid or socket_pid
+    
+    if not window_id and not effective_alacritty_pid:
+        error_msg = "Error: Not running in an Alacritty terminal (no ALACRITTY_WINDOW_ID and no Alacritty PID found)"
+        print(error_msg, file=sys.stderr)
+        with open("/tmp/find-ssh-sockets.log", "a") as f:
+            f.write(f"ERROR: {error_msg}\n")
+        sys.exit(1)
+    
+    # Use window_id if available, otherwise fall back to PID-based identifier
+    effective_window_id = window_id or f"pid-{effective_alacritty_pid}"
+    
+    with open("/tmp/find-ssh-sockets.log", "a") as f:
+        f.write(f"Using effective window ID: {effective_window_id}\n")
+        f.write("Starting SSH socket analysis...\n")
+
+    print(f"Analyzing SSH sockets for Alacritty window: {effective_window_id}")
+    print("=" * 60)
+
+    try:
+        result = find_ssh_sockets_for_window(effective_window_id)
+        
+        with open("/tmp/find-ssh-sockets.log", "a") as f:
+            f.write(f"Analysis completed successfully\n")
+            f.write(f"Found {len(result.get('alacritty_specific', {}).get('pay_sockets', []))} pay sockets\n")
+            f.write(f"Found {len(result.get('ssh_processes', []))} total SSH processes\n")
+        
+        # Get clipboard content and create remote files
+        clipboard_formats = get_clipboard_formats()
+        
+        with open("/tmp/find-ssh-sockets.log", "a") as f:
+            f.write(f"Clipboard formats found: {list(clipboard_formats.keys())}\n")
+        
+        if clipboard_formats and result.get('alacritty_specific', {}).get('pay_sockets'):
+            pay_sockets = result['alacritty_specific']['pay_sockets']
+            
+            for socket_info in pay_sockets:
+                if socket_info.get('host'):
+                    host = socket_info['host']
+                    socket_path = socket_info['path']
+                    
+                    with open("/tmp/find-ssh-sockets.log", "a") as f:
+                        f.write(f"Creating remote files on {host} via {socket_path}\n")
+                    
+                    try:
+                        created_files = create_remote_files(host, socket_path, clipboard_formats)
+                        
+                        with open("/tmp/find-ssh-sockets.log", "a") as f:
+                            f.write(f"Successfully created {len(created_files)} files: {created_files}\n")
+                        
+                        if created_files:
+                            print(f"\n✅ Successfully created {len(created_files)} files on {host}:")
+                            for file in created_files:
+                                print(f"  📄 {file}")
+                        
+                    except Exception as e:
+                        error_msg = f"Error creating remote files: {e}"
+                        print(error_msg, file=sys.stderr)
+                        with open("/tmp/find-ssh-sockets.log", "a") as f:
+                            f.write(f"ERROR: {error_msg}\n")
+        
+        elif not clipboard_formats:
+            print("⚠️  No clipboard content found")
+            with open("/tmp/find-ssh-sockets.log", "a") as f:
+                f.write("No clipboard content found\n")
+        
+        elif not result.get('alacritty_specific', {}).get('pay_sockets'):
+            print("⚠️  No SSH sockets found for this Alacritty window")
+            with open("/tmp/find-ssh-sockets.log", "a") as f:
+                f.write("No pay sockets found\n")
+            
+    except Exception as e:
+        error_msg = f"Error during analysis: {e}"
+        print(error_msg, file=sys.stderr)
+        with open("/tmp/find-ssh-sockets.log", "a") as f:
+            f.write(f"ERROR: {error_msg}\n")
+        import traceback
+        with open("/tmp/find-ssh-sockets.log", "a") as f:
+            f.write(f"Traceback: {traceback.format_exc()}\n")
+        return
+
+    # Print results
+    if result["ssh_env"]:
+        print("\nSSH Environment Variables:")
+        for key, value in result["ssh_env"].items():
+            print(f"  {key}: {value}")
+
+    # Show Alacritty-specific findings first (most relevant)
+    if result.get("alacritty_specific"):
+        alacritty_data = result["alacritty_specific"]
+        
+        if alacritty_data.get("pay_sockets"):
+            print(f"\nPay Command Sockets for this Alacritty (total: {len(alacritty_data['pay_sockets'])}):")
+            for socket in alacritty_data["pay_sockets"]:
+                print(f"  {socket['path']}")
+                if socket["host"]:
+                    print(f"    -> Host: {socket['host']}")
+                if socket.get("related_process"):
+                    proc = socket["related_process"]
+                    print(f"    -> Process: PID {proc['pid']}: {proc['command'][:80]}...")
+        
+        if alacritty_data.get("alacritty_ssh_processes"):
+            print(f"\nSSH Processes under this Alacritty (total: {len(alacritty_data['alacritty_ssh_processes'])}):")
+            for proc in alacritty_data["alacritty_ssh_processes"]:
+                print(f"  PID {proc['pid']}: {proc['command']}")
+        
+        print(f"\nTotal descendant processes: {len(alacritty_data.get('all_descendants', []))}")
+
+    if result["ssh_processes"]:
+        print(f"\nAll SSH Processes (total: {len(result['ssh_processes'])}):")
+        for proc in result["ssh_processes"]:
+            print(f"  PID {proc['pid']}: {proc['command']}")
+
+    if result["socket_files"]:
+        print(f"\nAll SSH Socket Files (total: {len(result['socket_files'])}):")
+        for socket in result["socket_files"]:
+            print(f"  {socket['path']}")
+            if socket["host"]:
+                print(f"    -> Host: {socket['host']}")
+            if socket["user"]:
+                print(f"    -> User: {socket['user']}")
+
+    print("\nRecommendations:")
+    for rec in result["recommendations"]:
+        print(f"  • {rec}")
+
+    # Output JSON for programmatic use
+    if "--json" in sys.argv:
+        print("\n" + "=" * 60)
+        print("JSON Output:")
+        print(json.dumps(result, indent=2))
+
+
+if __name__ == "__main__":
+    main()
