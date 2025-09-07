@@ -22,6 +22,7 @@ import subprocess
 import datetime
 import tempfile
 import time
+import stat
 from pathlib import Path
 from typing import List, Dict, Optional, Set
 
@@ -143,6 +144,49 @@ def parse_lsof_fields(output: str) -> List[Dict[str, str]]:
     return records
 
 
+def resolve_socket_path(original_path: str) -> str:
+    """Resolve socket path using smart fallback logic.
+
+    1. Check if original path exists
+    2. If not, find longest matching path in same directory
+    """
+    Log.debug("Resolving socket path", original_path=original_path)
+
+    # If original path exists, use it
+    if os.path.exists(original_path):
+        return original_path
+
+    # Extract directory and filename
+    directory = os.path.dirname(original_path)
+    if not directory or not os.path.exists(directory):
+        return original_path
+
+    # Find all files in directory
+    try:
+        files_in_dir = os.listdir(directory)
+    except (OSError, PermissionError) as e:
+        return original_path
+
+    original_filename = os.path.basename(original_path)
+    # Sort filenames by length (descending) to prefer longer matches
+    files_in_dir.sort(key=len, reverse=True)
+
+    for filename in files_in_dir:
+        if not original_filename.startswith(filename):
+            continue
+        candidate_path = os.path.join(directory, filename)
+
+        try:
+            file_stat = os.stat(candidate_path)
+        except (OSError, PermissionError):
+            continue
+        if not stat.S_ISSOCK(file_stat.st_mode):
+            continue
+        return candidate_path
+
+    return None
+
+
 def process_ssh_socket(current_process, field_value, process_table):
     """Process an SSH socket entry and return socket path and process info"""
     # Check if this is an SSH process using a socket
@@ -154,10 +198,11 @@ def process_ssh_socket(current_process, field_value, process_table):
     ):
         return None
 
-    # Clean socket path (remove temporary suffixes)
-    clean_socket_path = field_value
-    if ".sock." in field_value:
-        clean_socket_path = field_value.split(".sock.")[0] + ".sock"
+    # Clean socket path using smart path resolution
+    clean_socket_path = resolve_socket_path(field_value)
+    if clean_socket_path is None:
+        # No valid socket found, skip this entry
+        return None
 
     # Trace ancestry
     ancestry = trace_process_ancestry(current_process["pid"], process_table)
