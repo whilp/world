@@ -1,18 +1,40 @@
--- Use built-in treesitter for syntax highlighting
--- Neovim 0.12+ has built-in treesitter support with many parsers included
-
--- Enable treesitter highlighting globally
-vim.opt.syntax = 'off'  -- Disable legacy syntax highlighting
-
--- Auto-start treesitter for files with available parsers
-vim.api.nvim_create_autocmd({'BufRead', 'BufNewFile'}, {
-  callback = function()
-    local lang = vim.treesitter.language.get_lang(vim.bo.filetype)
-    if lang then
-      local ok = pcall(vim.treesitter.language.add, lang)
-      if ok then
-        pcall(vim.treesitter.start)
-      end
-    end
-  end,
+vim.pack.add({
+  { src = "https://github.com/nvim-treesitter/nvim-treesitter", branch = "main" },
 })
+
+require("nvim-treesitter").setup({
+  install_dir = vim.fn.stdpath("data") .. "/site",
+})
+
+local lang = {
+  "python",
+  "markdown",
+  "bash",
+  "lua",
+  "yaml",
+  "javascript",
+  "json",
+  "ruby",
+  "go",
+  "sql",
+}
+
+local ok, ts_configs = pcall(require, "nvim-treesitter.configs")
+if ok then
+  ts_configs.setup({
+    ensure_installed = lang,
+    highlight = {
+      enable = true,
+    },
+    indent = {
+      enable = true,
+    },
+  })
+
+  vim.api.nvim_create_autocmd("FileType", {
+    pattern = lang,
+    callback = function()
+      vim.treesitter.start()
+    end,
+  })
+end
