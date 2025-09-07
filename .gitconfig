@@ -52,3 +52,5 @@
 [include]
 	path = .config/git/config
 	path = .config/git/local
+[diff]
+	noprefix = true
