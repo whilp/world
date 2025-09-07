@@ -288,7 +288,6 @@ def find_relevant_sockets(alacritty_pid: str) -> Dict[str, Dict]:
     return relevant_sockets
 
 
-
 def get_clipboard_content() -> Dict[str, str]:
     """Get clipboard content in all available formats."""
     formats = {}
@@ -345,28 +344,17 @@ def transfer_to_hosts(
 ) -> List[str]:
     """Transfer clipboard content to remote hosts via SSH sockets."""
     if not clipboard_content:
-        print("⚠️  No clipboard content found")
         return []
 
     if not sockets:
-        print("⚠️  No SSH sockets found")
         return []
 
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     all_created_files = []
 
     for socket_path, group in sockets.items():
-        print(f"📡 Transferring via {socket_path}...")
-
-        # Test connection and ensure ~/pastes directory exists
+        # Test connection
         subprocess.run(
             ["ssh", "-S", socket_path, "-O", "check", "dummy"],
-            check=True,
-            capture_output=True,
-        )
-        # If check succeeds, create the directory (SSH will use the control master)
-        subprocess.run(
-            ["ssh", "-S", socket_path, "dummy", "mkdir -p ~/pastes"],
             check=True,
             capture_output=True,
         )
@@ -376,7 +364,7 @@ def transfer_to_hosts(
             if not content.strip():
                 continue
 
-            filename = f"~/pastes/{timestamp}.{ext}"
+            filename = f"~/paste.{ext}"
 
             # Create temporary file
             if ext == "png":
