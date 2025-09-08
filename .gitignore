@@ -2,6 +2,7 @@
 .Trash/
 .bash_history
 .bash_logout
+paste.*
 .bashrc
 .cache/
 .claude.json
