@@ -28,13 +28,15 @@ _shell() {
 }
 
 _shimlink() {
+  # nvim nightly
+  shimlink -f nvim
+
   ast-grep --version
   biome --version
   claude --version
   comrak --version
   delta --version
   marksman --version
-  nvim --version
   rg --version
   ruff --version
   shfmt --version
