@@ -2,14 +2,13 @@
 """
 scpaste - Transfer clipboard content to remote hosts via SSH control sockets.
 
-Finds SSH control sockets associated with the current terminal window,
-gets clipboard content in multiple formats, and transfers to remote hosts.
+Finds all open SSH control sockets, gets clipboard content in multiple formats,
+and transfers to all connected remote hosts.
 
 Usage:
-    scpaste [--terminal TERMINAL] [--verbose]
+    scpaste [--verbose]
 
 Options:
-    --terminal TERMINAL    Terminal type (default: alacritty)
     --verbose              Enable verbose logging
 """
 
@@ -85,33 +84,6 @@ def trace_process_ancestry(pid, process_table):
     return ancestry
 
 
-def get_terminal_pid_from_env(terminal_type: str):
-    """Get current terminal PID from environment variable"""
-    terminal_socket = os.environ.get(f"{terminal_type.upper()}_SOCKET")
-    if not terminal_socket:
-        return None
-
-    result = subprocess.run(
-        ["lsof", "-F", "pc", terminal_socket],
-        capture_output=True,
-        text=True,
-        timeout=5,
-        check=True,
-    )
-    records = parse_lsof_fields(result.stdout)
-    for record in records:
-        if record.get("command") == terminal_type.lower():
-            return record.get("pid")
-
-    return None
-
-
-def find_terminal_in_ancestry(ancestry, terminal_type: str):
-    """Check if terminal is in the process ancestry"""
-    for process in ancestry:
-        if terminal_type.lower() in process["comm"].lower():
-            return process["pid"]
-    return None
 
 
 def parse_lsof_fields(output: str) -> List[Dict[str, str]]:
@@ -154,36 +126,60 @@ def resolve_socket_path(original_path: str) -> str:
 
     # If original path exists, use it
     if os.path.exists(original_path):
+        Log.debug("Using original path (exists)", path=original_path)
         return original_path
 
     # Extract directory and filename
     directory = os.path.dirname(original_path)
     if not directory or not os.path.exists(directory):
+        Log.debug("Directory missing, using original", directory=directory)
         return original_path
 
     # Find all files in directory
     try:
         files_in_dir = os.listdir(directory)
+        Log.debug(
+            "Listed directory files", directory=directory, file_count=len(files_in_dir)
+        )
     except (OSError, PermissionError) as e:
+        Log.debug("Cannot list directory", directory=directory, error=str(e))
         return original_path
 
     original_filename = os.path.basename(original_path)
     # Sort filenames by length (descending) to prefer longer matches
     files_in_dir.sort(key=len, reverse=True)
+    Log.debug(
+        "Checking prefix matches",
+        original_filename=original_filename,
+        candidates=files_in_dir[:5],
+    )
 
     for filename in files_in_dir:
         if not original_filename.startswith(filename):
             continue
         candidate_path = os.path.join(directory, filename)
+        Log.debug(
+            "Found prefix match", filename=filename, candidate_path=candidate_path
+        )
 
         try:
             file_stat = os.stat(candidate_path)
-        except (OSError, PermissionError):
+        except (OSError, PermissionError) as e:
+            Log.debug(
+                "Cannot stat candidate", candidate_path=candidate_path, error=str(e)
+            )
             continue
         if not stat.S_ISSOCK(file_stat.st_mode):
+            Log.debug(
+                "Not a socket",
+                candidate_path=candidate_path,
+                mode=oct(file_stat.st_mode),
+            )
             continue
+        Log.debug("Found valid socket", resolved_path=candidate_path)
         return candidate_path
 
+    Log.debug("No valid socket prefix found", original_path=original_path)
     return None
 
 
@@ -206,7 +202,6 @@ def process_ssh_socket(current_process, field_value, process_table):
 
     # Trace ancestry
     ancestry = trace_process_ancestry(current_process["pid"], process_table)
-    terminal_pid = None  # Will be set by caller
 
     process_info = {
         "pid": current_process["pid"],
@@ -214,14 +209,13 @@ def process_ssh_socket(current_process, field_value, process_table):
         "original_path": field_value,
         "type": current_process["type"],
         "ancestry": ancestry,
-        "terminal_pid": terminal_pid,
         "is_master": "[mux]" in field_value,
     }
 
     return clean_socket_path, process_info
 
 
-def get_socket_groups(process_table, terminal_type: str):
+def get_socket_groups(process_table):
     """Build socket groups from lsof records"""
     result = subprocess.run(
         ["lsof", "-U", "-F", "pcnt"],
@@ -231,42 +225,35 @@ def get_socket_groups(process_table, terminal_type: str):
         check=True,
     )
     records = parse_lsof_fields(result.stdout)
+    Log.debug("lsof unix sockets", record_count=len(records))
     socket_groups = {}
 
     for record in records:
         # Process each record that has a name field (socket path)
         if "name" in record:
+            Log.debug(
+                "Processing lsof record",
+                command=record.get("command"),
+                name=record.get("name"),
+                pid=record.get("pid"),
+            )
             result = process_ssh_socket(record, record["name"], process_table)
             if result:
                 clean_socket_path, process_info = result
-
-                # Set terminal_pid using terminal type
-                process_info["terminal_pid"] = find_terminal_in_ancestry(
-                    process_info["ancestry"], terminal_type
-                )
 
                 # Group by socket path
                 if clean_socket_path not in socket_groups:
                     socket_groups[clean_socket_path] = {
                         "socket_path": clean_socket_path,
                         "processes": [],
-                        "terminal_pid": None,
                     }
 
                 socket_groups[clean_socket_path]["processes"].append(process_info)
 
-                # If any process has terminal ancestry, mark the whole group
-                terminal_pid = process_info["terminal_pid"]
-                if (
-                    terminal_pid
-                    and not socket_groups[clean_socket_path]["terminal_pid"]
-                ):
-                    socket_groups[clean_socket_path]["terminal_pid"] = terminal_pid
-
     return socket_groups
 
 
-def get_controlpath_clients(process_table, terminal_type: str):
+def get_controlpath_clients(process_table):
     """Find SSH client processes that use ControlPath and return client data by socket path"""
     ps_result = subprocess.run(
         ["ps", "-eo", "pid,command"],
@@ -274,6 +261,16 @@ def get_controlpath_clients(process_table, terminal_type: str):
         text=True,
         timeout=10,
         check=True,
+    )
+
+    ssh_processes = []
+    for line in ps_result.stdout.strip().split("\n")[1:]:
+        if "ssh" in line.lower() and "ControlPath=" in line:
+            ssh_processes.append(line.strip())
+    Log.debug(
+        "Found SSH processes with ControlPath",
+        count=len(ssh_processes),
+        processes=ssh_processes[:3],
     )
 
     clients_by_socket = {}
@@ -301,7 +298,6 @@ def get_controlpath_clients(process_table, terminal_type: str):
 
         # Get ancestry for this SSH client
         ancestry = trace_process_ancestry(pid, process_table)
-        terminal_pid = find_terminal_in_ancestry(ancestry, terminal_type)
 
         # Create client info
         client_info = {
@@ -310,7 +306,6 @@ def get_controlpath_clients(process_table, terminal_type: str):
             "original_path": f"client-using-{control_path}",
             "type": "client",
             "ancestry": ancestry,
-            "terminal_pid": terminal_pid,
             "is_master": False,
         }
 
@@ -322,53 +317,58 @@ def get_controlpath_clients(process_table, terminal_type: str):
     return clients_by_socket
 
 
-def find_ssh_socket_groups(terminal_type: str):
+def find_ssh_socket_groups():
     """Find SSH processes grouped by socket path"""
     process_table = get_process_table()
-    socket_groups = get_socket_groups(process_table, terminal_type)
-    clients_by_socket = get_controlpath_clients(process_table, terminal_type)
+    Log.debug("Got process table", process_count=len(process_table))
+    socket_groups = get_socket_groups(process_table)
+    Log.debug("Got socket groups from lsof", socket_group_count=len(socket_groups))
+    clients_by_socket = get_controlpath_clients(process_table)
+    Log.debug("Got ControlPath clients", client_socket_count=len(clients_by_socket))
 
     # Merge client data into socket groups
     for socket_path, clients in clients_by_socket.items():
         if socket_path in socket_groups:
             socket_groups[socket_path]["processes"].extend(clients)
 
-            # If any client has terminal ancestry, inherit it to the socket group
-            for client in clients:
-                terminal_pid = client["terminal_pid"]
-                if terminal_pid and not socket_groups[socket_path]["terminal_pid"]:
-                    socket_groups[socket_path]["terminal_pid"] = terminal_pid
-                    socket_groups[socket_path]["terminal_source"] = (
-                        f"client-{client['pid']}"
-                    )
-
     return socket_groups
 
 
-def find_relevant_sockets(terminal_pid: str, terminal_type: str) -> Dict[str, Dict]:
-    """Find SSH sockets relevant to this terminal instance."""
-    socket_groups = find_ssh_socket_groups(terminal_type)
+def find_all_open_sockets() -> Dict[str, Dict]:
+    """Find all open SSH control sockets."""
+    socket_groups = find_ssh_socket_groups()
+    Log.debug("Found socket groups", group_count=len(socket_groups))
 
-    # Filter for groups that belong to the current terminal window and are connectable
-    relevant_sockets = {}
+    connectable_sockets = {}
+    
     for socket_path, group in socket_groups.items():
-        if group.get("terminal_pid") == terminal_pid:
-            # Test socket connectivity
-            result = subprocess.run(
-                ["ssh", "-S", socket_path, "-O", "check", "dummy"],
-                capture_output=True,
-                text=True,
-                timeout=5,
+        Log.debug("Testing socket connectivity", socket_path=socket_path)
+        result = subprocess.run(
+            ["ssh", "-S", socket_path, "-O", "check", "dummy"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        if result.returncode == 0:
+            Log.debug("Socket is connectable", socket_path=socket_path, stdout=result.stdout.strip(), stderr=result.stderr.strip())
+            connectable_sockets[socket_path] = group
+        else:
+            Log.debug(
+                "Socket not connectable",
+                socket_path=socket_path,
+                returncode=result.returncode,
+                stdout=result.stdout.strip(),
+                stderr=result.stderr.strip(),
             )
-            if result.returncode == 0:
-                relevant_sockets[socket_path] = group
 
-    return relevant_sockets
+    Log.debug("Found connectable sockets", count=len(connectable_sockets))
+    return connectable_sockets
 
 
 def get_clipboard_content() -> Dict[str, str]:
     """Get clipboard content in all available formats."""
     formats = {}
+    Log.debug("Getting clipboard content")
 
     # First, get clipboard info to see what formats are available
     try:
@@ -378,14 +378,18 @@ def get_clipboard_content() -> Dict[str, str]:
             text=True,
         )
         if info_result.returncode != 0:
+            Log.debug("Clipboard info failed", returncode=info_result.returncode)
             return {}
-    except Exception:
+    except Exception as e:
+        Log.debug("Clipboard info exception", error=str(e))
         return {}
 
     clipboard_info = info_result.stdout.strip()
+    Log.debug("Clipboard info retrieved", info=clipboard_info, raw_info=repr(clipboard_info))
 
     # Try to get PNG data
     if "PNGf" in clipboard_info:
+        Log.debug("Attempting to get PNG data")
         try:
             png_result = subprocess.run(
                 [
@@ -402,18 +406,32 @@ def get_clipboard_content() -> Dict[str, str]:
                 if png_data.startswith("«data PNGf") and png_data.endswith("»"):
                     hex_data = png_data[10:-1]  # Remove «data PNGf and »
                     formats["png"] = hex_data
-        except Exception:
-            pass
+                    Log.debug("PNG data retrieved", hex_length=len(hex_data))
+                else:
+                    Log.debug("PNG data malformed", data_preview=png_data[:100])
+            else:
+                Log.debug("PNG retrieval failed", returncode=png_result.returncode)
+        except Exception as e:
+            Log.debug("PNG retrieval exception", error=str(e))
 
     # Try to get text data
+    Log.debug("Attempting to get text data")
     try:
         text_result = subprocess.run(["pbpaste"], capture_output=True, text=True)
         if text_result.returncode == 0 and text_result.stdout.strip():
             content = text_result.stdout.strip()
             formats["txt"] = content
-    except Exception:
-        pass
+            Log.debug("Text data retrieved", text_length=len(content), preview=content[:100])
+        else:
+            Log.debug("No text data available", returncode=text_result.returncode, stdout_len=len(text_result.stdout))
+    except Exception as e:
+        Log.debug("Text retrieval exception", error=str(e))
 
+    Log.debug(
+        "Clipboard content summary",
+        formats=list(formats.keys()),
+        total_formats=len(formats),
+    )
     return formats
 
 
@@ -421,6 +439,11 @@ def transfer_to_hosts(
     sockets: Dict[str, Dict], clipboard_content: Dict[str, str]
 ) -> List[str]:
     """Transfer clipboard content to remote hosts via SSH sockets."""
+    Log.debug(
+        "Starting file transfer",
+        socket_count=len(sockets),
+        content_formats=list(clipboard_content.keys()),
+    )
     if not clipboard_content:
         return []
 
@@ -430,29 +453,55 @@ def transfer_to_hosts(
     all_created_files = []
 
     for socket_path, group in sockets.items():
+        Log.debug("Processing socket for transfer", socket_path=socket_path)
         # Test connection
-        subprocess.run(
-            ["ssh", "-S", socket_path, "-O", "check", "dummy"],
-            check=True,
-            capture_output=True,
-        )
+        try:
+            check_result = subprocess.run(
+                ["ssh", "-S", socket_path, "-O", "check", "dummy"],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            Log.debug("Socket connection verified", socket_path=socket_path, stdout=check_result.stdout.strip(), stderr=check_result.stderr.strip())
+        except subprocess.CalledProcessError as e:
+            Log.debug("Socket connection failed", socket_path=socket_path, returncode=e.returncode, stdout=e.stdout, stderr=e.stderr)
+            raise
 
         created_files = []
         with tempfile.TemporaryDirectory() as temp_dir:
+            Log.debug("Created temp directory", temp_dir=temp_dir)
             for ext, content in clipboard_content.items():
                 if not content.strip():
+                    Log.debug("Skipping empty content", format=ext)
                     continue
 
                 filename = f"~/paste.{ext}"
                 temp_file_path = os.path.join(temp_dir, f"paste.{ext}")
+                Log.debug(
+                    "Preparing file for transfer",
+                    format=ext,
+                    filename=filename,
+                    temp_path=temp_file_path,
+                )
 
                 mode = "w"
                 raw_content = content
                 if ext == "png":
                     mode = "wb"
                     raw_content = bytes.fromhex(content)
+                    Log.debug(
+                        "Converting PNG hex to bytes",
+                        hex_length=len(content),
+                        byte_length=len(raw_content),
+                    )
+
                 with open(temp_file_path, mode) as f:
                     f.write(raw_content)
+                Log.debug(
+                    "Wrote temp file",
+                    temp_path=temp_file_path,
+                    size_bytes=os.path.getsize(temp_file_path),
+                )
 
                 # Transfer via scp (SSH will determine host from control master)
                 scp_cmd = [
@@ -462,7 +511,13 @@ def transfer_to_hosts(
                     temp_file_path,
                     f"dummy:{filename}",
                 ]
-                subprocess.run(scp_cmd, capture_output=True, text=True, check=True)
+                Log.debug("Starting scp transfer", command=scp_cmd)
+                try:
+                    result = subprocess.run(scp_cmd, capture_output=True, text=True, check=True)
+                    Log.debug("Transfer completed", filename=filename, stdout=result.stdout, stderr=result.stderr)
+                except subprocess.CalledProcessError as e:
+                    Log.debug("Transfer failed", filename=filename, returncode=e.returncode, stdout=e.stdout, stderr=e.stderr, command=e.cmd)
+                    raise
                 created_files.append(filename)
 
         if created_files:
@@ -480,12 +535,6 @@ def parse_args(argv: List[str]) -> argparse.Namespace:
         description="Transfer clipboard content to remote hosts via SSH control sockets"
     )
     parser.add_argument(
-        "--terminal",
-        "-t",
-        default="alacritty",
-        help="Terminal type (default: alacritty)",
-    )
-    parser.add_argument(
         "--verbose",
         "-v",
         action="store_true",
@@ -499,40 +548,16 @@ def main(environ: Dict[str, str], argv: List[str]) -> int:
     args = parse_args(argv)
     if args.verbose:
         configure_logging()
-    terminal_type = args.terminal
 
-    logging.debug(f"Starting scpaste with terminal type: {terminal_type}")
+    logging.debug("Starting scpaste")
 
-    terminal_pid = get_terminal_pid_from_env(terminal_type)
-    if not terminal_pid:
-        print(
-            f"❌ Error: Not running in {terminal_type.title()} or unable to detect PID"
-        )
-        return 1
-
-    # Find relevant SSH sockets
-    all_sockets = find_relevant_sockets(terminal_pid, terminal_type)
+    # Find all open SSH sockets
+    all_sockets = find_all_open_sockets()
     if not all_sockets:
-        print(f"❌ No SSH sockets found for this {terminal_type.title()} window")
+        print("❌ No open SSH control sockets found")
         return 1
 
-    # Sort sockets by modification time (most recent first) and take only the first one
-    socket_items = []
-    for socket_path, group in all_sockets.items():
-        try:
-            mtime = os.path.getmtime(socket_path)
-        except OSError:
-            mtime = 0  # Fallback for sockets we can't stat
-        socket_items.append((socket_path, group, mtime))
-
-    socket_items.sort(key=lambda x: x[2], reverse=True)
-    socket_path, group, _ = socket_items[0]
-    sockets = {socket_path: group}
-
-    process_count = len(group.get("processes", []))
-    print(f"🔌 Using SSH socket: {socket_path} ({process_count} processes)")
-    if len(all_sockets) > 1:
-        print(f"   (Selected most recent from {len(all_sockets)} available sockets)")
+    print(f"🔌 Found {len(all_sockets)} open SSH control sockets")
 
     # Get clipboard content
     clipboard_content = get_clipboard_content()
@@ -542,12 +567,12 @@ def main(environ: Dict[str, str], argv: List[str]) -> int:
 
     print(f"📋 Found clipboard formats: {', '.join(clipboard_content.keys())}")
 
-    # Transfer to remote hosts
-    created_files = transfer_to_hosts(sockets, clipboard_content)
+    # Transfer to all remote hosts
+    created_files = transfer_to_hosts(all_sockets, clipboard_content)
 
     if created_files:
         print(
-            f"\n🎉 Successfully created {len(created_files)} files across {len(sockets)} hosts"
+            f"\n🎉 Successfully created {len(created_files)} files across {len(all_sockets)} hosts"
         )
     else:
         print("\n❌ No files were created")
