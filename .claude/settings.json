@@ -17,6 +17,7 @@
       "Bash(jq:*)",
       "Bash(comrak:*)",
       "Bash(session-logger:*)",
+      "Bash(scpaste:*)",
       "Bash(yarn build:*)",
       "Bash(alacritty:*)",
       "Bash(npm test:*)"
@@ -39,3 +40,4 @@
     "lastShownTime": 1754368507584
   }
 }
+
