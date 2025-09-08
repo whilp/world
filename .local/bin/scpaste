@@ -2,375 +2,132 @@
 """
 scpaste - Transfer clipboard content to remote hosts via SSH control sockets.
 
-Finds all open SSH control sockets, gets clipboard content in multiple formats,
-and transfers to all connected remote hosts.
-
-Usage:
-    scpaste [--verbose]
-
-Options:
-    --verbose              Enable verbose logging
+Finds all open SSH control sockets and transfers clipboard content to all connected remote hosts.
 """
 
-import argparse
-import logging
-import json
 import os
+import stat
 import sys
 import subprocess
-import datetime
 import tempfile
-import time
-import stat
-from pathlib import Path
-from typing import List, Dict, Optional, Set
+from typing import List, Dict, Set, Optional, Union
 
 
-class Log:
-    def __init__(self, message, /, **kwargs):
-        self.message = message
-        self.kwargs = kwargs
-
-    def __str__(self):
-        return "%s >>> %s" % (self.message, json.dumps(self.kwargs))
-
-    @classmethod
-    def debug(cls, *args, **kwargs):
-        return logging.debug(cls(*args, **kwargs))
-
-
-def configure_logging() -> None:
-    logging.basicConfig(
-        level=logging.DEBUG,
-        format="%(asctime)s - %(levelname)s - %(message)s",
-        handlers=[
-            logging.FileHandler("/tmp/scpaste.log"),
-            logging.StreamHandler(sys.stderr),
-        ],
-    )
-
-
-def get_process_table():
-    """Get the complete process table once"""
-    result = subprocess.run(
-        ["ps", "-eo", "pid,ppid,comm"],
-        capture_output=True,
-        text=True,
-        timeout=10,
-        check=True,
-    )
-
-    process_table = {}
-    for line in result.stdout.strip().split("\n")[1:]:  # Skip header
-        parts = line.strip().split(None, 2)
-        if len(parts) < 3:
-            continue
-        pid, ppid, comm = parts[0], parts[1], parts[2]
-        process_table[pid] = {"pid": pid, "ppid": ppid, "comm": comm}
-
-    return process_table
-
-
-def trace_process_ancestry(pid, process_table):
-    """Trace process ancestry using pre-loaded process table"""
-    ancestry = []
-    current_pid = str(pid)
-
-    while current_pid != "1" and current_pid in process_table:
-        process_info = process_table[current_pid]
-        ancestry.append(process_info)
-        current_pid = process_info["ppid"]
-
-    return ancestry
-
-
-
-
-def parse_lsof_fields(output: str) -> List[Dict[str, str]]:
-    """Parse lsof -F output into structured records."""
-    records = []
-    current_record = {}
-    field_mapping = {"p": "pid", "c": "command", "n": "name", "t": "type"}
-
-    for line in output.strip().split("\n"):
-        if not line:
-            continue
-
-        field_type = line[0]
-        field_value = line[1:]
-        field_name = field_mapping.get(field_type)
-        if field_name is None:
-            continue
-
-        if field_name == "pid":
-            # New process record starts
-            if current_record:
-                records.append(current_record)
-            current_record = {}
-        current_record[field_name] = field_value
-
-    # Don't forget the last record
-    if current_record:
-        records.append(current_record)
-
-    return records
-
-
-def resolve_socket_path(original_path: str) -> str:
+def resolve_socket_path(original_path: str) -> Optional[str]:
     """Resolve socket path using smart fallback logic.
 
     1. Check if original path exists
     2. If not, find longest matching path in same directory
     """
-    Log.debug("Resolving socket path", original_path=original_path)
-
     # If original path exists, use it
     if os.path.exists(original_path):
-        Log.debug("Using original path (exists)", path=original_path)
         return original_path
 
     # Extract directory and filename
     directory = os.path.dirname(original_path)
     if not directory or not os.path.exists(directory):
-        Log.debug("Directory missing, using original", directory=directory)
-        return original_path
+        return None
 
     # Find all files in directory
     try:
         files_in_dir = os.listdir(directory)
-        Log.debug(
-            "Listed directory files", directory=directory, file_count=len(files_in_dir)
-        )
-    except (OSError, PermissionError) as e:
-        Log.debug("Cannot list directory", directory=directory, error=str(e))
-        return original_path
+    except (OSError, PermissionError):
+        return None
 
     original_filename = os.path.basename(original_path)
     # Sort filenames by length (descending) to prefer longer matches
     files_in_dir.sort(key=len, reverse=True)
-    Log.debug(
-        "Checking prefix matches",
-        original_filename=original_filename,
-        candidates=files_in_dir[:5],
-    )
 
     for filename in files_in_dir:
         if not original_filename.startswith(filename):
             continue
         candidate_path = os.path.join(directory, filename)
-        Log.debug(
-            "Found prefix match", filename=filename, candidate_path=candidate_path
-        )
 
         try:
             file_stat = os.stat(candidate_path)
-        except (OSError, PermissionError) as e:
-            Log.debug(
-                "Cannot stat candidate", candidate_path=candidate_path, error=str(e)
-            )
+        except (OSError, PermissionError):
             continue
         if not stat.S_ISSOCK(file_stat.st_mode):
-            Log.debug(
-                "Not a socket",
-                candidate_path=candidate_path,
-                mode=oct(file_stat.st_mode),
-            )
             continue
-        Log.debug("Found valid socket", resolved_path=candidate_path)
         return candidate_path
 
-    Log.debug("No valid socket prefix found", original_path=original_path)
     return None
 
 
-def process_ssh_socket(current_process, field_value, process_table):
-    """Process an SSH socket entry and return socket path and process info"""
-    # Check if this is an SSH process using a socket
-    if not (
-        current_process.get("command") == "ssh"
-        and current_process.get("type") == "unix"
-        and field_value.startswith("/")
-        and not field_value.startswith("->")
-    ):
-        return None
+def parse_lsof(stdout):
+    record = {}
 
-    # Clean socket path using smart path resolution
-    clean_socket_path = resolve_socket_path(field_value)
-    if clean_socket_path is None:
-        # No valid socket found, skip this entry
-        return None
-
-    # Trace ancestry
-    ancestry = trace_process_ancestry(current_process["pid"], process_table)
-
-    process_info = {
-        "pid": current_process["pid"],
-        "command": current_process["command"],
-        "original_path": field_value,
-        "type": current_process["type"],
-        "ancestry": ancestry,
-        "is_master": "[mux]" in field_value,
-    }
-
-    return clean_socket_path, process_info
-
-
-def get_socket_groups(process_table):
-    """Build socket groups from lsof records"""
-    result = subprocess.run(
-        ["lsof", "-U", "-F", "pcnt"],
-        capture_output=True,
-        text=True,
-        timeout=10,
-        check=True,
-    )
-    records = parse_lsof_fields(result.stdout)
-    Log.debug("lsof unix sockets", record_count=len(records))
-    socket_groups = {}
-
-    for record in records:
-        # Process each record that has a name field (socket path)
-        if "name" in record:
-            Log.debug(
-                "Processing lsof record",
-                command=record.get("command"),
-                name=record.get("name"),
-                pid=record.get("pid"),
-            )
-            result = process_ssh_socket(record, record["name"], process_table)
-            if result:
-                clean_socket_path, process_info = result
-
-                # Group by socket path
-                if clean_socket_path not in socket_groups:
-                    socket_groups[clean_socket_path] = {
-                        "socket_path": clean_socket_path,
-                        "processes": [],
-                    }
-
-                socket_groups[clean_socket_path]["processes"].append(process_info)
-
-    return socket_groups
-
-
-def get_controlpath_clients(process_table):
-    """Find SSH client processes that use ControlPath and return client data by socket path"""
-    ps_result = subprocess.run(
-        ["ps", "-eo", "pid,command"],
-        capture_output=True,
-        text=True,
-        timeout=10,
-        check=True,
-    )
-
-    ssh_processes = []
-    for line in ps_result.stdout.strip().split("\n")[1:]:
-        if "ssh" in line.lower() and "ControlPath=" in line:
-            ssh_processes.append(line.strip())
-    Log.debug(
-        "Found SSH processes with ControlPath",
-        count=len(ssh_processes),
-        processes=ssh_processes[:3],
-    )
-
-    clients_by_socket = {}
-
-    for line in ps_result.stdout.strip().split("\n")[1:]:  # Skip header
-        parts = line.strip().split(None, 1)
-        if len(parts) < 2:
+    for line in stdout.strip().split("\n"):
+        if not line:
             continue
 
-        pid, command = parts[0], parts[1]
+        field_type = line[0]
+        field_value = line[1:]
 
-        # Look for SSH clients with ControlPath
-        if not (
-            ("/usr/bin/ssh" in command or command.startswith("ssh "))
-            and "-o ControlPath=" in command
-            and "[mux]" not in command
-        ):
-            continue
+        if field_type == "p":
+            # New process record
+            record = {"pid": field_value}
+        elif field_type == "c":
+            record["command"] = field_value
+        elif field_type == "t":
+            record["type"] = field_value
+        elif field_type == "n":
+            record["path"] = field_value
+            yield record
 
-        # Extract ControlPath
-        try:
-            control_path = command.split("-o ControlPath=")[1].split()[0]
-        except (IndexError, ValueError):
-            continue
-
-        # Get ancestry for this SSH client
-        ancestry = trace_process_ancestry(pid, process_table)
-
-        # Create client info
-        client_info = {
-            "pid": pid,
-            "command": "ssh-client",
-            "original_path": f"client-using-{control_path}",
-            "type": "client",
-            "ancestry": ancestry,
-            "is_master": False,
-        }
-
-        # Group clients by their control path
-        if control_path not in clients_by_socket:
-            clients_by_socket[control_path] = []
-        clients_by_socket[control_path].append(client_info)
-
-    return clients_by_socket
+    if record:
+        yield record
 
 
-def find_ssh_socket_groups():
-    """Find SSH processes grouped by socket path"""
-    process_table = get_process_table()
-    Log.debug("Got process table", process_count=len(process_table))
-    socket_groups = get_socket_groups(process_table)
-    Log.debug("Got socket groups from lsof", socket_group_count=len(socket_groups))
-    clients_by_socket = get_controlpath_clients(process_table)
-    Log.debug("Got ControlPath clients", client_socket_count=len(clients_by_socket))
-
-    # Merge client data into socket groups
-    for socket_path, clients in clients_by_socket.items():
-        if socket_path in socket_groups:
-            socket_groups[socket_path]["processes"].extend(clients)
-
-    return socket_groups
-
-
-def find_all_open_sockets() -> Dict[str, Dict]:
-    """Find all open SSH control sockets."""
-    socket_groups = find_ssh_socket_groups()
-    Log.debug("Found socket groups", group_count=len(socket_groups))
-
-    connectable_sockets = {}
-    
-    for socket_path, group in socket_groups.items():
-        Log.debug("Testing socket connectivity", socket_path=socket_path)
+def find_ssh_sockets() -> Set[str]:
+    """Find all SSH control sockets using lsof."""
+    try:
         result = subprocess.run(
-            ["ssh", "-S", socket_path, "-O", "check", "dummy"],
+            ["lsof", "-U", "-F", "pcnt"],
             capture_output=True,
             text=True,
-            timeout=5,
+            timeout=10,
+            check=True,
         )
-        if result.returncode == 0:
-            Log.debug("Socket is connectable", socket_path=socket_path, stdout=result.stdout.strip(), stderr=result.stderr.strip())
-            connectable_sockets[socket_path] = group
-        else:
-            Log.debug(
-                "Socket not connectable",
-                socket_path=socket_path,
-                returncode=result.returncode,
-                stdout=result.stdout.strip(),
-                stderr=result.stderr.strip(),
-            )
+    except subprocess.CalledProcessError:
+        return set()
 
-    Log.debug("Found connectable sockets", count=len(connectable_sockets))
-    return connectable_sockets
+    records = parse_lsof(result.stdout)
+    sockets = set(
+        resolve_socket_path(x["path"])
+        for x in records
+        if x["command"] == "ssh" and x["type"] == "unix" and x["path"].startswith("/")
+    )
+
+    return sockets
 
 
-def get_clipboard_content() -> Dict[str, str]:
+def get_clipboard_class(cls):
+    got = subprocess.run(
+        [
+            "osascript",
+            "-e",
+            f'tell application "System Events" to get the clipboard as «class {cls}»',
+        ],
+        capture_output=True,
+        text=True,
+    )
+    if got.returncode != 0:
+        return None
+
+    data = got.stdout.strip()
+    if cls == "utf8":
+        return data.encode("utf-8")
+
+    try:
+        return bytes.fromhex(data.lstrip("«data " + cls).rstrip("»"))
+    except ValueError:
+        return None
+
+
+def get_clipboard_content() -> Dict[str, bytes]:
     """Get clipboard content in all available formats."""
-    formats = {}
-    Log.debug("Getting clipboard content")
-
-    # First, get clipboard info to see what formats are available
+    # Get clipboard info to see what formats are available
     try:
         info_result = subprocess.run(
             ["osascript", "-e", 'tell application "System Events" to clipboard info'],
@@ -378,132 +135,63 @@ def get_clipboard_content() -> Dict[str, str]:
             text=True,
         )
         if info_result.returncode != 0:
-            Log.debug("Clipboard info failed", returncode=info_result.returncode)
             return {}
-    except Exception as e:
-        Log.debug("Clipboard info exception", error=str(e))
+    except Exception:
         return {}
 
     clipboard_info = info_result.stdout.strip()
-    Log.debug("Clipboard info retrieved", info=clipboard_info, raw_info=repr(clipboard_info))
+    formats = {
+        "PNGf": None,
+        "HTML": None,
+        "GIF": None,
+        "PDF": None,
+        "utf8": None,
+    }
+    extensions = {
+        "PNGf": "png",
+        "HTML": "html",
+        "GIF": "gif",
+        "PDF": "pdf",
+        "utf8": "txt",
+    }
 
-    # Try to get PNG data
-    if "PNGf" in clipboard_info:
-        Log.debug("Attempting to get PNG data")
-        try:
-            png_result = subprocess.run(
-                [
-                    "osascript",
-                    "-e",
-                    'tell application "System Events" to get the clipboard as «class PNGf»',
-                ],
-                capture_output=True,
-                text=True,
-            )
-            if png_result.returncode == 0 and png_result.stdout.strip():
-                png_data = png_result.stdout.strip()
-                # Parse PNG data: «data PNGf...hex...
-                if png_data.startswith("«data PNGf") and png_data.endswith("»"):
-                    hex_data = png_data[10:-1]  # Remove «data PNGf and »
-                    formats["png"] = hex_data
-                    Log.debug("PNG data retrieved", hex_length=len(hex_data))
-                else:
-                    Log.debug("PNG data malformed", data_preview=png_data[:100])
-            else:
-                Log.debug("PNG retrieval failed", returncode=png_result.returncode)
-        except Exception as e:
-            Log.debug("PNG retrieval exception", error=str(e))
+    for format in formats:
+        if f"«class {format}»" not in clipboard_info:
+            continue
+        formats[format] = get_clipboard_class(format)
 
-    # Try to get text data
-    Log.debug("Attempting to get text data")
-    try:
-        text_result = subprocess.run(["pbpaste"], capture_output=True, text=True)
-        if text_result.returncode == 0 and text_result.stdout.strip():
-            content = text_result.stdout.strip()
-            formats["txt"] = content
-            Log.debug("Text data retrieved", text_length=len(content), preview=content[:100])
-        else:
-            Log.debug("No text data available", returncode=text_result.returncode, stdout_len=len(text_result.stdout))
-    except Exception as e:
-        Log.debug("Text retrieval exception", error=str(e))
-
-    Log.debug(
-        "Clipboard content summary",
-        formats=list(formats.keys()),
-        total_formats=len(formats),
-    )
-    return formats
+    # Remove any None values and convert to extension
+    return {extensions[k]: v for k, v in formats.items() if v is not None}
 
 
 def transfer_to_hosts(
-    sockets: Dict[str, Dict], clipboard_content: Dict[str, str]
+    sockets: Set[str], clipboard_content: Dict[str, bytes], prefix: str = "~/"
 ) -> List[str]:
     """Transfer clipboard content to remote hosts via SSH sockets."""
-    Log.debug(
-        "Starting file transfer",
-        socket_count=len(sockets),
-        content_formats=list(clipboard_content.keys()),
-    )
-    if not clipboard_content:
-        return []
-
-    if not sockets:
+    if not clipboard_content or not sockets:
         return []
 
     all_created_files = []
 
-    for socket_path, group in sockets.items():
-        Log.debug("Processing socket for transfer", socket_path=socket_path)
-        # Test connection
-        try:
-            check_result = subprocess.run(
-                ["ssh", "-S", socket_path, "-O", "check", "dummy"],
-                check=True,
-                capture_output=True,
-                text=True,
-            )
-            Log.debug("Socket connection verified", socket_path=socket_path, stdout=check_result.stdout.strip(), stderr=check_result.stderr.strip())
-        except subprocess.CalledProcessError as e:
-            Log.debug("Socket connection failed", socket_path=socket_path, returncode=e.returncode, stdout=e.stdout, stderr=e.stderr)
-            raise
-
+    for socket_path in sockets:
         created_files = []
+
         with tempfile.TemporaryDirectory() as temp_dir:
-            Log.debug("Created temp directory", temp_dir=temp_dir)
             for ext, content in clipboard_content.items():
-                if not content.strip():
-                    Log.debug("Skipping empty content", format=ext)
+                if not content:
                     continue
 
-                filename = f"~/paste.{ext}"
+                filename = f"{prefix}paste.{ext}"
                 temp_file_path = os.path.join(temp_dir, f"paste.{ext}")
-                Log.debug(
-                    "Preparing file for transfer",
-                    format=ext,
-                    filename=filename,
-                    temp_path=temp_file_path,
-                )
 
-                mode = "w"
-                raw_content = content
-                if ext == "png":
-                    mode = "wb"
-                    raw_content = bytes.fromhex(content)
-                    Log.debug(
-                        "Converting PNG hex to bytes",
-                        hex_length=len(content),
-                        byte_length=len(raw_content),
-                    )
+                # Write content to temp file - everything is bytes now
+                try:
+                    with open(temp_file_path, "wb") as f:
+                        f.write(content)
+                except Exception:
+                    continue  # Skip this format on error
 
-                with open(temp_file_path, mode) as f:
-                    f.write(raw_content)
-                Log.debug(
-                    "Wrote temp file",
-                    temp_path=temp_file_path,
-                    size_bytes=os.path.getsize(temp_file_path),
-                )
-
-                # Transfer via scp (SSH will determine host from control master)
+                # Transfer via scp
                 scp_cmd = [
                     "scp",
                     "-o",
@@ -511,14 +199,12 @@ def transfer_to_hosts(
                     temp_file_path,
                     f"dummy:{filename}",
                 ]
-                Log.debug("Starting scp transfer", command=scp_cmd)
+
                 try:
-                    result = subprocess.run(scp_cmd, capture_output=True, text=True, check=True)
-                    Log.debug("Transfer completed", filename=filename, stdout=result.stdout, stderr=result.stderr)
-                except subprocess.CalledProcessError as e:
-                    Log.debug("Transfer failed", filename=filename, returncode=e.returncode, stdout=e.stdout, stderr=e.stderr, command=e.cmd)
-                    raise
-                created_files.append(filename)
+                    subprocess.run(scp_cmd, capture_output=True, text=True, check=True)
+                    created_files.append(filename)
+                except subprocess.CalledProcessError:
+                    continue  # Skip this file on transfer error
 
         if created_files:
             print(f"✅ Created {len(created_files)} files via {socket_path}:")
@@ -529,35 +215,22 @@ def transfer_to_hosts(
     return all_created_files
 
 
-def parse_args(argv: List[str]) -> argparse.Namespace:
-    """Parse command line arguments."""
-    parser = argparse.ArgumentParser(
-        description="Transfer clipboard content to remote hosts via SSH control sockets"
-    )
-    parser.add_argument(
-        "--verbose",
-        "-v",
-        action="store_true",
-        help="Enable verbose logging",
-    )
-    return parser.parse_args(argv[1:])
-
-
-def main(environ: Dict[str, str], argv: List[str]) -> int:
+def main() -> int:
     """Main function."""
-    args = parse_args(argv)
-    if args.verbose:
-        configure_logging()
+    # Get prefix from command line argument, default to ~/
+    prefix = sys.argv[1] if len(sys.argv) > 1 else "~/"
 
-    logging.debug("Starting scpaste")
+    # Ensure prefix ends with / if it doesn't already
+    if prefix and not prefix.endswith("/"):
+        prefix += "/"
 
-    # Find all open SSH sockets
-    all_sockets = find_all_open_sockets()
-    if not all_sockets:
-        print("❌ No open SSH control sockets found")
+    # Find all SSH sockets
+    sockets = find_ssh_sockets()
+    if not sockets:
+        print("❌ No SSH control sockets found")
         return 1
 
-    print(f"🔌 Found {len(all_sockets)} open SSH control sockets")
+    print(f"🔌 Found {len(sockets)} SSH control sockets")
 
     # Get clipboard content
     clipboard_content = get_clipboard_content()
@@ -568,33 +241,24 @@ def main(environ: Dict[str, str], argv: List[str]) -> int:
     print(f"📋 Found clipboard formats: {', '.join(clipboard_content.keys())}")
 
     # Transfer to all remote hosts
-    created_files = transfer_to_hosts(all_sockets, clipboard_content)
+    created_files = transfer_to_hosts(sockets, clipboard_content, prefix)
 
     if created_files:
         print(
-            f"\n🎉 Successfully created {len(created_files)} files across {len(all_sockets)} hosts"
+            f"🎉 Successfully created {len(created_files)} files across {len(sockets)} hosts"
         )
     else:
-        print("\n❌ No files were created")
+        print("❌ No files were created")
 
     return 0
 
 
-def outer(environ: Dict[str, str], argv: List[str]) -> int:
+if __name__ == "__main__":
     try:
-        return main(environ, argv)
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Command failed: {e.cmd[0]} (exit code {e.returncode})")
-        if e.stderr:
-            print(f"   Error: {e.stderr.strip()}")
-        return 1
-    except subprocess.TimeoutExpired as e:
-        print(f"❌ Command timed out: {e.cmd[0]} (after {e.timeout}s)")
-        return 1
+        sys.exit(main())
+    except KeyboardInterrupt:
+        print("\n❌ Interrupted")
+        sys.exit(1)
     except Exception as e:
         print(f"❌ Unexpected error: {e}")
-        return 1
-
-
-if __name__ == "__main__":
-    sys.exit(outer(os.environ, sys.argv))
+        sys.exit(1)
