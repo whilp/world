@@ -24,6 +24,7 @@ _git() {
 _shell() {
   sudo chsh "$(id -un)" --shell $(which zsh)
   echo 'export SHELL=/bin/zsh' >"$DST/.bashrc"
+  echo '' >"$DST/.zshrc"
 }
 
 _shimlink() {
