@@ -23,6 +23,7 @@
       "Bash(npm test:*)"
     ]
   },
+  "model": "opusplan",
   "hooks": {
     "SessionStart": [
       {
@@ -40,4 +41,3 @@
     "lastShownTime": 1754368507584
   }
 }
-
