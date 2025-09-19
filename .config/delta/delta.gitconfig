@@ -8,7 +8,7 @@
     file-style = bold "#4477AA"
     file-decoration-style = "#4477AA" ul
     hunk-header-style = file line-number syntax
-    hunk-header-decoration-style = "#DDCC77" box
+    hunk-header-decoration-style = "#DDCC77"
     line-numbers = true
     line-numbers-left-style = "#666666"
     line-numbers-right-style = "#666666"
@@ -34,7 +34,7 @@
     file-style = bold "#4477AA"
     file-decoration-style = "#4477AA" ul
     hunk-header-style = file line-number syntax
-    hunk-header-decoration-style = "#DDCC77" box
+    hunk-header-decoration-style = "#DDCC77"
     line-numbers = true
     line-numbers-left-style = "#999999"
     line-numbers-right-style = "#999999"
@@ -60,7 +60,7 @@
     file-style = bold "#0173B2"
     file-decoration-style = "#0173B2" ul
     hunk-header-style = file line-number syntax
-    hunk-header-decoration-style = "#E69F00" box
+    hunk-header-decoration-style = "#E69F00"
     line-numbers = true
     line-numbers-left-style = "#666666"
     line-numbers-right-style = "#666666"
@@ -81,7 +81,7 @@
     file-style = bold "#0173B2"
     file-decoration-style = "#0173B2" ul
     hunk-header-style = file line-number syntax
-    hunk-header-decoration-style = "#E69F00" box
+    hunk-header-decoration-style = "#E69F00"
     line-numbers = true
     line-numbers-left-style = "#666666"
     line-numbers-right-style = "#666666"
@@ -102,7 +102,7 @@
     file-style = bold "#D55E00"
     file-decoration-style = "#D55E00" ul
     hunk-header-style = file line-number syntax
-    hunk-header-decoration-style = "#CC79A7" box
+    hunk-header-decoration-style = "#CC79A7"
     line-numbers = true
     line-numbers-left-style = "#666666"
     line-numbers-right-style = "#666666"
@@ -123,7 +123,7 @@
     file-style = bold white
     file-decoration-style = white ul
     hunk-header-style = file line-number syntax
-    hunk-header-decoration-style = yellow box
+    hunk-header-decoration-style = yellow
     line-numbers = true
     line-numbers-left-style = "#888888"
     line-numbers-right-style = "#888888"
