@@ -10,6 +10,7 @@ paste.*
 .claude/.credentials.json
 .claude/projects/
 .claude/shell-snapshots/
+.claude/session-logger/
 .claude/statsig/
 .claude/todos/
 .conda/
