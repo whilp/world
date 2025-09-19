@@ -11,6 +11,7 @@ macos-non-native-fullscreen = "padded-notch"
 fullscreen = true
 window-save-state = "default"
 shell-integration = "zsh"
+mouse-hide-while-typing = true
 
 scrollback-limit = 0
 bell-features="no-audio,no-system,no-attention,no-title,no-border"
@@ -18,3 +19,6 @@ bell-features="no-audio,no-system,no-attention,no-title,no-border"
 theme = "GitHub Dark Colorblind"
 
 keybind = cmd+shift+w=quit
+keybind = cmd+v=paste_from_clipboard
+keybind = cmd+c=copy_to_clipboard
+keybind = shift+enter=text:\x1b\r
