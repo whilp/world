@@ -12,6 +12,7 @@ fullscreen = true
 window-save-state = "default"
 shell-integration = "zsh"
 mouse-hide-while-typing = true
+clipboard-write = allow
 
 scrollback-limit = 0
 bell-features="no-audio,no-system,no-attention,no-title,no-border"
