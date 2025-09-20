@@ -50,6 +50,10 @@ _claude() {
   local claude="$DST/.claude.json"
   [ -r "$claude" ] && return
 
+  if [ -n "${CLAUDE_CREDENTIALS}" ]; then
+    echo "${CLAUDE_CREDENTIALS}" >"$DST/.claude/.credentials.json"
+  fi
+
   local auth=""
   if [ -n "${CLAUDE_API_KEY}" ]; then
     auth='"primaryApiKey": "'${CLAUDE_API_KEY}'",'
