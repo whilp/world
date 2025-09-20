@@ -1,1 +1,1 @@
-source ~/.zprofile
+[ -r ~/.zprofile ] && source ~/.zprofile
