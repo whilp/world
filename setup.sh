@@ -51,7 +51,7 @@ _claude() {
   [ -r "$claude" ] && return
 
   local auth=""
-  if [ -n "CLAUDE_API_KEY" ]; then
+  if [ -n "${CLAUDE_API_KEY}" ]; then
     auth='"primaryApiKey": "'${CLAUDE_API_KEY}'",'
   fi
 
