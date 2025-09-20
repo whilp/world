@@ -22,11 +22,11 @@ map('t', '<S-D-]>', '<C-\\><C-n>gt', { desc = 'Switch to next tab' })
 -- Create new tab with directory with CMD-T
 map('n', '<D-t>', function()
   -- Get current tab's local directory, fallback to global cwd
-  local current_dir = vim.fn.exists('*haslocaldir') == 1 and vim.fn.haslocaldir() == 1 
+  local current_dir = vim.fn.exists('*haslocaldir') == 1 and vim.fn.haslocaldir() == 1
     and vim.fn.getcwd() or vim.fn.getcwd()
-  
-  vim.ui.input({ 
-    prompt = 'Directory path: ', 
+
+  vim.ui.input({
+    prompt = 'Directory path: ',
     default = current_dir,
     completion = 'dir'
   }, function(input)
@@ -37,11 +37,11 @@ map('n', '<D-t>', function()
 end, { desc = 'Create tab with directory' })
 map('i', '<D-t>', function()
   -- Get current tab's local directory, fallback to global cwd
-  local current_dir = vim.fn.exists('*haslocaldir') == 1 and vim.fn.haslocaldir() == 1 
+  local current_dir = vim.fn.exists('*haslocaldir') == 1 and vim.fn.haslocaldir() == 1
     and vim.fn.getcwd() or vim.fn.getcwd()
-  
-  vim.ui.input({ 
-    prompt = 'Directory path: ', 
+
+  vim.ui.input({
+    prompt = 'Directory path: ',
     default = current_dir,
     completion = 'dir'
   }, function(input)
@@ -52,11 +52,11 @@ map('i', '<D-t>', function()
 end, { desc = 'Create tab with directory' })
 map('t', '<D-t>', function()
   -- Get current tab's local directory, fallback to global cwd
-  local current_dir = vim.fn.exists('*haslocaldir') == 1 and vim.fn.haslocaldir() == 1 
+  local current_dir = vim.fn.exists('*haslocaldir') == 1 and vim.fn.haslocaldir() == 1
     and vim.fn.getcwd() or vim.fn.getcwd()
-  
-  vim.ui.input({ 
-    prompt = 'Directory path: ', 
+
+  vim.ui.input({
+    prompt = 'Directory path: ',
     default = current_dir,
     completion = 'dir'
   }, function(input)
@@ -77,7 +77,7 @@ local function generate_short_dir_name(dir_path)
   local clean_path = dir_path:gsub('/+$', '')
   local home_path = vim.fn.fnamemodify(clean_path, ':~')
   local parts = vim.split(home_path, '/')
-  
+
   if #parts <= 2 then
     return home_path
   else
@@ -102,25 +102,25 @@ _G.create_tab_with_directory = function(dir_path)
     print('Error: Directory path required')
     return
   end
-  
+
   -- Expand path
   local expanded_path = vim.fn.expand(dir_path)
-  
+
   -- Check if directory exists
   if vim.fn.isdirectory(expanded_path) ~= 1 then
     print('Error: Directory does not exist: ' .. expanded_path)
     return
   end
-  
+
   -- Create new tab
   vim.cmd('tabnew')
-  
+
   -- Set tab-local directory
   vim.cmd('tcd ' .. vim.fn.fnameescape(expanded_path))
-  
+
   -- Generate shortened path name
   local short_name = generate_short_dir_name(expanded_path)
-  
+
   -- Set manual tab name to prevent auto-naming
   vim.fn.settabvar(vim.fn.tabpagenr(), 'tab_name', short_name)
   vim.cmd('redrawtabline')
@@ -146,26 +146,26 @@ _G.render_tabline = function()
     if title == '' then
       title = vim.fn.gettabvar(i, 'claude_title', 'Tab ' .. i) -- Auto-generated
     end
-    
+
     -- Highlight current tab
     if i == vim.fn.tabpagenr() then
       s = s .. '%#TabLineSel#'
     else
       s = s .. '%#TabLine#'
     end
-    
+
     -- Format tab number with filled triangle for active tab, outline triangle for inactive
     local tab_number = (i == vim.fn.tabpagenr()) and '▶ ' .. i .. ' ' .. title or '▷ ' .. i .. ' ' .. title
     s = s .. '%' .. i .. 'T' .. ' ' .. tab_number .. ' '
   end
-  
+
   -- Add right-aligned section with environment variables
   s = s .. '%#TabLineFill#%T'
-  
+
   -- Get environment variables with hostname fallback
   local github_repo = os.getenv('GITHUB_REPOSITORY') or ''
   local codespace_name = os.getenv('CODESPACE_NAME') or ''
-  
+
   -- Use hostname as fallback if neither environment variable is set
   local hostname = ''
   if github_repo == '' and codespace_name == '' then
@@ -177,7 +177,7 @@ _G.render_tabline = function()
       hostname = hostname:gsub('\n', ''):gsub('^%s*(.-)%s*$', '%1')
     end
   end
-  
+
   -- Build right section
   local right_section = ''
   if github_repo ~= '' then
@@ -192,11 +192,11 @@ _G.render_tabline = function()
   if hostname ~= '' and right_section == '' then
     right_section = hostname
   end
-  
+
   if right_section ~= '' then
     s = s .. '%=' .. '%#TabLine# ' .. right_section .. ' '
   end
-  
+
   return s
 end
 
@@ -217,15 +217,15 @@ local function collect_tab_data(tabnr)
     content = "",
     has_terminal = false
   }
-  
+
   -- Get all buffers in this tab
   local tab_buffers = vim.fn.tabpagebuflist(tabnr)
   local content_parts = {}
-  
+
   for _, bufnr in ipairs(tab_buffers) do
     local bufname = vim.api.nvim_buf_get_name(bufnr)
     local buftype = vim.api.nvim_buf_get_option(bufnr, 'buftype')
-    
+
     if buftype == 'terminal' then
       tab_data.has_terminal = true
       -- Get terminal content (last 20 lines)
@@ -237,7 +237,7 @@ local function collect_tab_data(tabnr)
     elseif bufname and bufname ~= "" and buftype == "" then
       -- Regular file buffer
       table.insert(tab_data.files, bufname)
-      
+
       -- Get content sample (first 30 lines)
       local ok, lines = pcall(vim.api.nvim_buf_get_lines, bufnr, 0, 30, false)
       if ok and lines then
@@ -248,10 +248,10 @@ local function collect_tab_data(tabnr)
       end
     end
   end
-  
+
   -- Combine all content
   tab_data.content = table.concat(content_parts, ' | '):sub(1, 500)
-  
+
   return tab_data
 end
 
@@ -262,45 +262,45 @@ local function generate_single_tab_title(tabnr)
   if manual_name ~= '' then
     return
   end
-  
+
   -- Check if request is already pending for this tab
   if tab_namer.pending_requests[tabnr] then
     return
   end
-  
+
   -- Check debounce timing
   local current_time = vim.loop.now()
   local last_time = tab_namer.last_update_time[tabnr] or 0
   if current_time - last_time < tab_namer.debounce_ms then
     return
   end
-  
+
   -- Mark request as pending
   tab_namer.pending_requests[tabnr] = true
   tab_namer.last_update_time[tabnr] = current_time
-  
+
   local tab_data = collect_tab_data(tabnr)
-  
+
   -- Convert to JSON for the external script
   local json_data = vim.json.encode(tab_data)
-  
+
   -- Call the external claude-tab-namer script
   local cmd = {'bash', '-c', 'echo ' .. vim.fn.shellescape(json_data) .. ' | ~/.local/bin/claude-tab-namer'}
-  
+
   vim.system(cmd, {timeout = 20000}, function(result)
     local title = "tab"
-    
+
     if result.code == 0 and result.stdout then
       local generated_title = result.stdout:gsub('\n', ''):gsub('^%s*(.-)%s*$', '%1')
       if generated_title and #generated_title > 0 and #generated_title <= 25 then
         title = generated_title
       end
     end
-    
+
     vim.schedule(function()
       -- Clear pending request
       tab_namer.pending_requests[tabnr] = nil
-      
+
       vim.fn.settabvar(tabnr, 'claude_title', title)
       vim.cmd('redrawtabline')
     end)
@@ -314,13 +314,13 @@ local function force_update_tab_title(tabnr)
   if manual_name ~= '' then
     return
   end
-  
+
   -- Cancel any pending request
   tab_namer.pending_requests[tabnr] = nil
-  
+
   -- Force update by resetting timing
   tab_namer.last_update_time[tabnr] = 0
-  
+
   generate_single_tab_title(tabnr)
 end
 
@@ -360,7 +360,7 @@ end, { desc = 'Update current tab name using Claude' })
 vim.api.nvim_create_user_command('TabName', function(opts)
   local name = opts.args
   local tabnr = vim.fn.tabpagenr()
-  
+
   if name == '' then
     -- Clear manual name, allow auto-naming again
     vim.fn.settabvar(tabnr, 'tab_name', '')
@@ -370,9 +370,9 @@ vim.api.nvim_create_user_command('TabName', function(opts)
     vim.fn.settabvar(tabnr, 'tab_name', name)
     vim.cmd('redrawtabline')
   end
-end, { 
-  nargs = '?', 
-  desc = 'Set manual tab name (empty to clear and auto-name)' 
+end, {
+  nargs = '?',
+  desc = 'Set manual tab name (empty to clear and auto-name)'
 })
 
 -- Auto-commands for tab management
@@ -402,7 +402,7 @@ local function cleanup_closed_tabs()
   for i = 1, vim.fn.tabpagenr('$') do
     existing_tabs[i] = true
   end
-  
+
   -- Clean up tracking for non-existent tabs
   for tabnr, _ in pairs(tab_namer.pending_requests) do
     if not existing_tabs[tabnr] then
