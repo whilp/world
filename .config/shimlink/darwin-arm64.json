@@ -66,6 +66,11 @@
       "url": "https://github.com/cli/cli/releases/download/v2.79.0/gh_2.79.0_macOS_arm64.zip",
       "sha256": "20f0520e9cc872b543bd5e31984f64932b197732c3d3df2c7367d0dc66e7a450",
       "executable_path": "gh_2.79.0_macOS_arm64/bin/gh"
+    },
+    "rg": {
+      "url": "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-apple-darwin.tar.gz",
+      "sha256": "0e0cb83f5195f1f51bb8feef1fff5b0b171e82bd1db6bd35deee701a3e7102f8",
+      "executable_path": "ripgrep-14.1.1-aarch64-apple-darwin/rg"
     }
   }
 }
