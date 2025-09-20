@@ -19,6 +19,7 @@ bell-features="no-audio,no-system,no-attention,no-title,no-border"
 theme = "GitHub Dark Colorblind"
 
 keybind = cmd+shift+w=quit
+keybind = cmd+t=unbind
 keybind = cmd+v=paste_from_clipboard
 keybind = cmd+c=copy_to_clipboard
 keybind = shift+enter=text:\x1b\r
