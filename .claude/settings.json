@@ -9,6 +9,7 @@
       "Bash(rg:*)",
       "Bash(ast-grep:*)",
       "Bash(ls:*)",
+      "Bash(ln:*)",
       "Bash(mkdir:*)",
       "Bash(make:*)",
       "Bash(touch:*)",
@@ -23,7 +24,6 @@
       "Bash(npm test:*)"
     ]
   },
-  "model": "opusplan",
   "hooks": {
     "SessionStart": [
       {
