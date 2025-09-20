@@ -33,6 +33,7 @@ _shimlink() {
   claude --version
   comrak --version
   delta --version
+  gh --version
   marksman --version
   nvim --version
   rg --version
