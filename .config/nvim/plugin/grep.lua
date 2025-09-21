@@ -4,20 +4,9 @@ local opt = vim.opt
 opt.grepprg = "rg --vimgrep --no-heading --smart-case"
 opt.grepformat = "%f:%l:%c:%m,%f"
 
--- Enhanced grep commands
-vim.cmd([[
-function! Grep(...)
-    return system(join([&grepprg] + [expandcmd(join(a:000, ' '))], ' '))
-endfunction
-
-command! -nargs=+ -complete=file_in_path -bar Grep  cgetexpr Grep(<f-args>) | copen
-command! -nargs=+ -complete=file_in_path -bar LGrep lgetexpr Grep(<f-args>) | lopen
-augroup quickfix
-    autocmd!
-    autocmd QuickFixCmdPost cgetexpr cwindow
-    autocmd QuickFixCmdPost lgetexpr lwindow
-augroup END
-]])
 
 -- Command alias to redirect :grep to :Grep
 vim.cmd('cnoreabbrev <expr> grep (getcmdtype() ==# ":" && getcmdline() ==# "grep") ? "Grep" : "grep"')
+
+-- Rebind :Grep to :Pick grep_live
+vim.cmd('command! -nargs=* Grep Pick grep_live <args>')
