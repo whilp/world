@@ -33,3 +33,5 @@ pay() {
   fi
   command pay "$@"
 }
+
+[ -r "$egress" ] && source "$egress"
