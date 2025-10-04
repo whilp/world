@@ -152,3 +152,7 @@ metadata.yaml
 .terminfo
 .flyte
 .sparkmagic
+.ecr
+.intellij
+.mongodb
+.config/gocode
