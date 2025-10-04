@@ -2,6 +2,7 @@ export STRIPE_DO_NOT_MANAGE=1
 
 export RIPGREP_CONFIG_PATH=~/.config/ripgrep/rg.conf
 export COLORTERM=truecolor
+export TERM=xterm-ghostty
 export PS1='%# '
 set -o vi
 
