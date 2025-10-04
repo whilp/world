@@ -20,7 +20,9 @@ typeset -aU path
 
 path=(
   "$HOME/.local/bin"
-  "/Applications/Alacritty.app/Contents/MacOS"  
+  "/Applications/Alacritty.app/Contents/MacOS"
   "$HOME/stripe/space-commander/bin"
   $path
 )
+
+tic -x - <./.config/ghostty/term.tic >/dev/null 2>&1
