@@ -24,5 +24,3 @@ path=(
   "$HOME/stripe/space-commander/bin"
   $path
 )
-
-tic -x - <./.config/ghostty/term.tic >/dev/null 2>&1
