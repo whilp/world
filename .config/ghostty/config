@@ -1,7 +1,7 @@
 # vim: ft=conf
 
 # General settings
-term = "xterm-256color"
+#term = "xterm-256color"
 font-size = 14
 cursor-style = "block"
 window-theme = "dark"
