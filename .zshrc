@@ -20,7 +20,7 @@ typeset -aU path
 
 path=(
   "$HOME/.local/bin"
-  "/Applications/Alacritty.app/Contents/MacOS"
   "$HOME/stripe/space-commander/bin"
+  "/pay/deploy/claude-wrapper-hosts/current"
   $path
 )
