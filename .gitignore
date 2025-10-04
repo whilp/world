@@ -149,3 +149,4 @@ stripe/
 .vscode*
 dotfiles/
 metadata.yaml
+.terminfo
