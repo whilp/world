@@ -13,6 +13,7 @@ paste.*
 .claude/session-logger/
 .claude/statsig/
 .claude/todos/
+.claude/history.jsonl
 .conda/
 .config/vscode-dev-containers/
 .docker
