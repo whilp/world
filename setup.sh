@@ -6,10 +6,10 @@ export PATH="$SRC/.local/bin:$PATH"
 
 main() {
   _git
-  _nvim
-  _shell &
-  _shimlink &
+  _shell
+  _shimlink
   _claude &
+  _nvim &
   wait
 }
 
