@@ -6,6 +6,7 @@ export PATH="$SRC/.local/bin:$PATH"
 
 main() {
   _git
+  _nvim
   _shell &
   _shimlink &
   _claude &
@@ -67,6 +68,14 @@ _claude() {
   "hasCompletedOnboarding": true
 }'
   echo "$settings" >"$claude"
+}
+
+_nvim() {
+  # Install vim.pack plugins by starting nvim headlessly
+  nvim --headless +'lua vim.wait(30000, function() return vim.fn.isdirectory(vim.fn.stdpath("data") .. "/site/pack/core/opt/mini.nvim") == 1 end)' +qa
+
+  # Generate helptags
+  nvim --headless +'helptags ALL' +qa
 }
 
 main "$@"
