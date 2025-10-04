@@ -1,0 +1,12 @@
+[Unit]
+Description=Neovim headless server
+After=default.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/env nvim --listen %h/.config/nvim/nvim.sock --headless
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=default.target

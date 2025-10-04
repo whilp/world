@@ -76,6 +76,11 @@ _nvim() {
 
   # Generate helptags
   nvim --headless +'helptags ALL' +qa
+
+  # Enable and start nvim server service
+  systemctl --user daemon-reload
+  systemctl --user enable nvim.service
+  systemctl --user start nvim.service
 }
 
 main "$@"
