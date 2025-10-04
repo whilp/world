@@ -1,6 +1,4 @@
-#!/bin/bash
-
-cat <<EOF | tic -x -
+#	Reconstructed via infocmp from file: /Applications/Ghostty.app/Contents/Resources/terminfo/78/xterm-ghostty
 xterm-ghostty|ghostty|Ghostty,
 	am, bce, ccc, hs, km, mc5i, mir, msgr, npc, xenl, AX, Su, Tc, XT, fullkbd,
 	colors#256, cols#80, it#8, lines#24, pairs#32767,
@@ -81,4 +79,3 @@ xterm-ghostty|ghostty|Ghostty,
 	setrgbf=\E[38\:2\:%p1%d\:%p2%d\:%p3%dm, smxx=\E[9m,
 	xm=\E[<%i%p3%d;%p1%d;%p2%d;%?%p4%tM%em%;,
 	xr=\EP>\\|[ -~]+a\E\\,
-EOF
