@@ -21,7 +21,7 @@ typeset -aU path
 path=(
   "$HOME/.local/bin"
   "$HOME/stripe/space-commander/bin"
-  "/pay/deploy/claude-wrapper-hosts/current"
+  "/pay/deploy/claude-wrapper-hosts/current/bin"
   $path
 )
 
