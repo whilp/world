@@ -13,6 +13,6 @@ case x"$1" in
 xcleanup) exec rm -f "$sock" ;;
 xserve)
   trap 'rm -f "$sock"' EXIT INT TERM
-  exec /bin/zsh -l -c "exec $nvim --listen $sock --headless"
+  exec /bin/zsh -l -i -c "exec $nvim --listen $sock --headless"
   ;;
 esac
