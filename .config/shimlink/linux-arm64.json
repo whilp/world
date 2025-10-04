@@ -3,7 +3,7 @@
     "nvim": {
       "url": "https://github.com/whilp/dotfiles/releases/download/2025.10.04/nvim-linux-arm64.tar.gz",
       "upstream_url": "https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-arm64.tar.gz",
-      "sha256": "a4724f583f3b7bfe04f0babd1f0f8695a4796b79e778ff178ae4d052f846381d",
+      "sha256": "87bb55ec3eafff4ccc1466e1e2f5e1f66d1a48e518553fa80bd7b58c805b74e3",
       "executable_path": "nvim-linux-arm64/bin/nvim"
     },
     "biome": {
@@ -73,4 +73,3 @@
     }
   }
 }
-
