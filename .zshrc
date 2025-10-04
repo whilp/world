@@ -24,3 +24,10 @@ path=(
   "/pay/deploy/claude-wrapper-hosts/current"
   $path
 )
+
+pay() {
+  if [[ -z "$STRIPE_SHELLINIT_SOURCED" ]]; then
+    [[ -f ~/.stripe/shellinit/zshrc ]] && source ~/.stripe/shellinit/zshrc
+  fi
+  command pay "$@"
+}
