@@ -1,6 +1,6 @@
 vim.pack.add({
   { src = "https://github.com/neovim/nvim-lspconfig" },
-  { src = "https://github.com/stevearc/conform.nvim", version = vim.version.range("9.0.0") },
+  { src = "https://github.com/stevearc/conform.nvim", version = vim.version.range("9.1.0") },
 })
 
 require("conform")
