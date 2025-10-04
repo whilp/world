@@ -4,7 +4,10 @@ After=default.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/env nvim --listen %h/.config/nvim/nvim.sock --headless
+Environment="NVIM_SERVER_MODE=1"
+ExecStart=%h/.local/bin/nvim-1 serve
+ExecStopPost=%h/.local/bin/nvim-1 cleanup
+
 Restart=on-failure
 RestartSec=5
 

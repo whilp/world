@@ -1,6 +1,18 @@
 #!/bin/bash
 
+nvim=~/.local/bin/nvim
 sock=~/.config/nvim/nvim.sock
 
-[ -S "$sock" ] && exec nvim --server "$sock" "$@"
-exec nvim --listen "$sock" "$@"
+# Client
+if [ -z "$NVIM_SERVER_MODE" ]; then
+  exec "$nvim" --server "$sock" "$@"
+fi
+
+# Otherwise, server
+case x"$1" in
+xcleanup) exec rm -f "$sock" ;;
+xserve)
+  trap 'rm -f "$sock"' EXIT INT TERM
+  exec /bin/zsh -l -c "exec $nvim --listen $sock --headless"
+  ;;
+esac
