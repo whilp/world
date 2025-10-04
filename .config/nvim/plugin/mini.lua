@@ -9,4 +9,8 @@ if ok then
   require("mini.git").setup()
   require("mini.pick").setup()
   require("mini.extra").setup()
+  require("mini.hues").setup({
+    background = '#0d1117',
+    foreground = '#c9d1d9',
+  })
 end

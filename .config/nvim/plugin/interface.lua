@@ -13,5 +13,5 @@ opt.wildmenu = true
 opt.wildmode = "longest:full,full"
 
 -- Color scheme (syntax handled by treesitter)
-vim.cmd('colorscheme github_dark_colorblind')
+-- Applied by mini.hues.setup() in mini.lua
 vim.cmd.filetype("plugin indent on")
