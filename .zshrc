@@ -34,4 +34,5 @@ pay() {
   command pay "$@"
 }
 
+egress=/usr/stripe/etc/stripe-egress-env.sh
 [ -r "$egress" ] && source "$egress"

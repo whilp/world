@@ -1,7 +1,7 @@
 {
   "binaries": {
     "nvim": {
-      "url": "https://github.com/whilp/dotfiles/releases/download/2025.09.07/nvim-linux-arm64.tar.gz",
+      "url": "https://github.com/whilp/dotfiles/releases/download/2025.10.04/nvim-linux-arm64.tar.gz",
       "upstream_url": "https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-arm64.tar.gz",
       "sha256": "a4724f583f3b7bfe04f0babd1f0f8695a4796b79e778ff178ae4d052f846381d",
       "executable_path": "nvim-linux-arm64/bin/nvim"
@@ -73,3 +73,4 @@
     }
   }
 }
+
