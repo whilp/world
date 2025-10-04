@@ -1,6 +1,7 @@
 local opt = vim.opt
 
 -- Visual and UI settings
+opt.termguicolors = true
 opt.list = true
 opt.lazyredraw = true
 opt.inccommand = 'nosplit'
