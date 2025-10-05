@@ -20,6 +20,7 @@ _git() {
     git checkout .
     git config user.email 189851+whilp@users.noreply.github.com
   )
+  command -v watchman >/dev/null 2>&1 && watchman watch-project "$DST"
 }
 
 _shell() {
