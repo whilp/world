@@ -10,7 +10,7 @@ need_shellinit() {
 }
 
 get_shellinit() {
-  for name in $HOME/.*/shellinit/bashrc $HOME/.*/shellinit/profile; do
+  for name in $HOME/.*/shellinit/bashrc $HOME/.*/shellinit/profile $HOME/.*/shellinit/bash_profile; do
     [ -r "$name" ] || continue
     echo "$name"
     break
