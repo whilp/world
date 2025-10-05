@@ -3,7 +3,7 @@
 export SRC="$PWD"
 export DST="$HOME"
 export PATH="$SRC/.local/bin:$PATH"
-export BACKUP="$DST/backup"
+export SHELLINIT="$DST/.config/shellinit"
 
 main() {
   _backup
@@ -16,10 +16,12 @@ main() {
 }
 
 _backup() {
-  mkdir -p "$BACKUP"
+  mkdir -p "$SHELLINIT"
   (
     cd "SRC"
-    cp .bash* .*profile* .zsh* "$BACKUP"
+    for name in bashrc bash_profile profile zshrc; do
+      [[ -r ".$name" ]] && cp ".$name" "$BACKUP/$name"
+    done
   )
 }
 

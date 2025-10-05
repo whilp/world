@@ -3,7 +3,7 @@
 .bash_history
 .bash_logout
 paste.*
-backup
+.config/shellinit
 .bashrc
 .cache/
 .claude.json
