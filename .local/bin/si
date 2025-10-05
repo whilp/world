@@ -1,0 +1,21 @@
+#!/bin/bash
+
+main() {
+  need_shellinit || source $(get_shellinit)/bashrc
+  exec "$@"
+}
+
+need_shellinit() {
+  env | grep -q 'SHELLINIT.*COMPLETE=1' 2>/dev/null
+}
+
+get_shellinit() {
+  for name in $HOME/.*/shellinit; do
+    [ -d "$name" ] || continue
+    echo "$name"
+    break
+  done
+}
+
+main "$@"
+exit $?

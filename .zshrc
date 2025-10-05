@@ -27,12 +27,5 @@ path=(
   $path
 )
 
-pay() {
-  if [[ -z "$STRIPE_SHELLINIT_SOURCED" ]]; then
-    [[ -f ~/.stripe/shellinit/zshrc ]] && source ~/.stripe/shellinit/zshrc
-  fi
-  command pay "$@"
-}
-
 egress=/usr/stripe/etc/stripe-egress-env.sh
 [ -r "$egress" ] && source "$egress"
