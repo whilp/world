@@ -18,7 +18,7 @@ main() {
 _backup() {
   mkdir -p "$SHELLINIT"
   (
-    cd "SRC"
+    cd "$DST"
     for name in bashrc bash_profile profile zshrc; do
       [[ -r ".$name" ]] && cp ".$name" "$BACKUP/$name"
     done
