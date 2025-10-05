@@ -26,6 +26,7 @@ path=(
   "/pay/deploy/claude-wrapper-hosts/current/bin"
   $path
 )
+path+=(/usr/*/bin(N))
 
 egress=/usr/stripe/etc/stripe-egress-env.sh
 [ -r "$egress" ] && source "$egress"
