@@ -1,7 +1,7 @@
 #!/bin/bash
 
 main() {
-  need_shellinit || source $(get_bashrc)
+  need_shellinit || source $(get_shellinit)
   exec "$@"
 }
 
@@ -9,8 +9,8 @@ need_shellinit() {
   env | grep -q 'SHELLINIT.*COMPLETE=1' 2>/dev/null
 }
 
-get_bashrc() {
-  for name in $HOME/.*/shellinit/bashrc; do
+get_shellinit() {
+  for name in $HOME/.*/shellinit/bashrc $HOME/.*/shellinit/profile; do
     [ -r "$name" ] || continue
     echo "$name"
     break
