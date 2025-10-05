@@ -3,6 +3,7 @@
 .bash_history
 .bash_logout
 paste.*
+backup
 .bashrc
 .cache/
 .claude.json

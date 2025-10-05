@@ -3,14 +3,24 @@
 export SRC="$PWD"
 export DST="$HOME"
 export PATH="$SRC/.local/bin:$PATH"
+export BACKUP="$DST/backup"
 
 main() {
+  _backup
   _git
   _shell
   _shimlink
   _claude &
   _nvim &
   wait
+}
+
+_backup() {
+  mkdir -p "$BACKUP"
+  (
+    cd "SRC"
+    cp .bash* .*profile* .zsh* "$BACKUP"
+  )
 }
 
 _git() {
