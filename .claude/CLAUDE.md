@@ -4,7 +4,7 @@
 
 ## Terminal
 
-- Alacritty config is located at `.config/alacritty/alacritty.toml`
+- Ghostty config is located at `.config/ghostty/config`
 
 ## Neovim
 
