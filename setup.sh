@@ -20,7 +20,7 @@ _backup() {
   (
     cd "$DST"
     for name in bashrc bash_profile profile zshrc; do
-      [[ -r ".$name" ]] && cp ".$name" "$BACKUP/$name"
+      [[ -r ".$name" ]] && cp ".$name" "$SHELLINIT/$name"
     done
   )
 }
