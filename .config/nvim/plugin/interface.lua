@@ -8,6 +8,7 @@ opt.inccommand = 'nosplit'
 opt.title = true
 opt.conceallevel = 2
 opt.showtabline = 2
+opt.signcolumn = 'yes'
 
 -- Wild menu (command completion)
 opt.wildmenu = true
