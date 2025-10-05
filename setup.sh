@@ -47,8 +47,11 @@ _shimlink() {
 }
 
 _claude() {
-  local claude="$DST/.claude.json"
-  [ -r "$claude" ] && return
+  local claude=$(command -v claude 2>/dev/null)
+  ln -sf "${claude:-shimlink}" "$DST/.local/bin/claude"
+
+  local config="$DST/.claude.json"
+  [ -r "$config" ] && return
 
   if [ -n "${CLAUDE_CREDENTIALS}" ]; then
     echo "${CLAUDE_CREDENTIALS}" >"$DST/.claude/.credentials.json"
@@ -67,7 +70,7 @@ _claude() {
   '${auth}'
   "hasCompletedOnboarding": true
 }'
-  echo "$settings" >"$claude"
+  echo "$settings" >"$config"
 }
 
 _nvim() {
