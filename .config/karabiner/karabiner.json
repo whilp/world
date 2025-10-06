@@ -65,7 +65,7 @@
                         ]
                     },
                     {
-                        "description": "l-down",
+                        "description": "l-right",
                         "manipulators": [
                             {
                                 "from": {
