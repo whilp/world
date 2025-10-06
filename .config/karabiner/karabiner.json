@@ -82,7 +82,7 @@
                         ]
                     },
                     {
-                        "description": "hyperspace",
+                        "description": "hyperspace (Enter when tapped, hyper modifier when held)",
                         "manipulators": [
                             {
                                 "from": {
