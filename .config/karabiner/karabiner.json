@@ -1,6 +1,16 @@
 {
     "profiles": [
         {
+            "simple_modifications": [
+                {
+                    "from": { "key_code": "caps_lock" },
+                    "to": [{ "key_code": "left_control" }]
+                },
+                {
+                    "from": { "key_code": "left_control" },
+                    "to": [{ "key_code": "escape" }]
+                }
+            ],
             "complex_modifications": {
                 "rules": [
                     {
@@ -136,17 +146,7 @@
                         "is_keyboard": true,
                         "product_id": 638,
                         "vendor_id": 1452
-                    },
-                    "simple_modifications": [
-                        {
-                            "from": { "key_code": "caps_lock" },
-                            "to": [{ "key_code": "left_control" }]
-                        },
-                        {
-                            "from": { "key_code": "left_control" },
-                            "to": [{ "key_code": "escape" }]
-                        }
-                    ]
+                    }
                 },
                 {
                     "disable_built_in_keyboard_if_exists": true,
@@ -163,17 +163,7 @@
                         "is_keyboard": true,
                         "product_id": 834,
                         "vendor_id": 1452
-                    },
-                    "simple_modifications": [
-                        {
-                            "from": { "key_code": "caps_lock" },
-                            "to": [{ "key_code": "left_control" }]
-                        },
-                        {
-                            "from": { "key_code": "left_control" },
-                            "to": [{ "key_code": "escape" }]
-                        }
-                    ]
+                    }
                 },
                 {
                     "identifiers": {
@@ -181,16 +171,6 @@
                         "product_id": 45929,
                         "vendor_id": 1133
                     },
-                    "simple_modifications": [
-                        {
-                            "from": { "key_code": "caps_lock" },
-                            "to": [{ "key_code": "left_control" }]
-                        },
-                        {
-                            "from": { "key_code": "left_control" },
-                            "to": [{ "key_code": "escape" }]
-                        }
-                    ],
                     "treat_as_built_in_keyboard": true
                 }
             ],
