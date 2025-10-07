@@ -24,6 +24,7 @@
       "Bash(npm test:*)"
     ]
   },
+  "model": "claude-sonnet-4-20250514",
   "hooks": {
     "SessionStart": [
       {
@@ -37,7 +38,7 @@
       }
     ]
   },
-  "alwaysThinkingEnabled": false,
+  "alwaysThinkingEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754368507584
   }
