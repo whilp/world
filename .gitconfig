@@ -59,3 +59,5 @@
 	noprefix = true
 [commit]
 	verbose = true
+[status]
+	showUntrackedFiles = no
