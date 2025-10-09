@@ -98,7 +98,11 @@ def load_config() -> dict:
         if 'binaries' not in merged_config:
             merged_config['binaries'] = {}
         merged_config['binaries'].update(platform_config['binaries'])
-    
+    if 'aliases' in platform_config:
+        if 'aliases' not in merged_config:
+            merged_config['aliases'] = {}
+        merged_config['aliases'].update(platform_config['aliases'])
+
     return merged_config
 
 
@@ -306,15 +310,21 @@ def test_binary(binary_path: Path, test_command: str) -> bool:
         return False
 
 
+def resolve_alias(name: str, config: dict) -> str:
+    """Resolve an alias to the actual binary name."""
+    aliases = config.get("aliases", {})
+    return aliases.get(name, name)
+
+
 def get_target_name() -> str:
     """Determine the target binary name from how shimlink was invoked."""
     # Get the actual path of the symlink (not resolved)
     invoked_path = Path(sys.argv[0])
-    
+
     # If invoked directly as shimlink, show help
     if invoked_path.name == "shimlink":
         return "shimlink"
-    
+
     # Otherwise, use the symlink name as the target
     return invoked_path.name
 
@@ -361,6 +371,9 @@ def show_help():
     print()
     print("When invoked through a symlink, shimlink automatically downloads")
     print("and manages the target binary, then executes it with all arguments.")
+    print()
+    print("Aliases can be defined in the 'aliases' section of the config to map")
+    print("alternative names to actual binary names (e.g., 'nvim-1' -> 'nvim').")
     print()
     print("Configuration: ~/.config/shimlink/shimlink.json (general)")
     print("               ~/.config/shimlink/<platform>.json (platform-specific)")
@@ -419,15 +432,18 @@ def main():
     except Exception as e:
         print(f"shimlink: failed to load configuration: {e}", file=sys.stderr)
         sys.exit(1)
-    
+
+    # Resolve alias to actual binary name
+    actual_binary_name = resolve_alias(target_name, config)
+
     # Check if we need to download the binary
-    if needs_download(target_name, config):
-        if not download_binary(target_name, config):
-            print(f"shimlink: failed to ensure {target_name} is available", file=sys.stderr)
+    if needs_download(actual_binary_name, config):
+        if not download_binary(actual_binary_name, config):
+            print(f"shimlink: failed to ensure {actual_binary_name} is available", file=sys.stderr)
             sys.exit(1)
-    
+
     # Execute the target binary with all arguments (excluding argv[0])
-    exec_binary(target_name, sys.argv[1:], config)
+    exec_binary(actual_binary_name, sys.argv[1:], config)
 
 
 if __name__ == "__main__":
