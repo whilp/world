@@ -5,8 +5,8 @@ After=default.target
 [Service]
 Type=simple
 Environment="NVIM_SERVER_MODE=1"
-ExecStart=%h/.local/bin/nvim-1 serve
-ExecStopPost=%h/.local/bin/nvim-1 cleanup
+ExecStart=%h/.local/bin/nvim serve
+ExecStopPost=%h/.local/bin/nvim cleanup
 
 Restart=on-failure
 RestartSec=5

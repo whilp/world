@@ -1,4 +1,7 @@
 {
+  "aliases": {
+    "nvim-1": "nvim"
+  },
   "binaries": {
     "nvim": {
       "url": "https://github.com/whilp/dotfiles/releases/download/2025.09.07/nvim-macos-arm64.tar.gz",
