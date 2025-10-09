@@ -25,3 +25,24 @@
 ## Gists
 
 - to create a gist, do `gh create <file> --desc "<description>"`
+
+## Services
+
+### systemd (Linux)
+
+- user services are in `~/.config/systemd/user/`
+- reload after changes: `systemctl --user daemon-reload`
+- enable at login: `systemctl --user enable <service>`
+- start now: `systemctl --user start <service>`
+- check status: `systemctl --user status <service>`
+- view logs: `journalctl --user -u <service> -f`
+
+### launchd (macOS)
+
+- user services are in `~/Library/LaunchAgents/`
+- load service: `launchctl load ~/Library/LaunchAgents/<plist>`
+- unload service: `launchctl unload ~/Library/LaunchAgents/<plist>`
+- start service: `launchctl start <label>`
+- stop service: `launchctl stop <label>`
+- list services: `launchctl list | grep <label>`
+- view logs: `log stream --predicate 'process == "<process-name>"'`
