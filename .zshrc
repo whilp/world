@@ -24,6 +24,7 @@ path=(
   "$HOME/.local/bin"
   "$HOME/stripe/space-commander/bin"
   "/pay/deploy/claude-wrapper-hosts/current/bin"
+  "/opt/homebrew/bin"
   $path
 )
 path+=(/usr/*/bin(N))
