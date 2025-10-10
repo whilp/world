@@ -82,6 +82,101 @@
                         ]
                     },
                     {
+                        "description": "Tab+j to Option-Shift-Down",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "tab_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "j"
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "down_arrow",
+                                        "modifiers": ["left_option", "left_shift"]
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Tab+k to Option-Shift-Up",
+                        "manipulators": [
+                            {
+                                "conditions": [
+                                    {
+                                        "name": "tab_held",
+                                        "type": "variable_if",
+                                        "value": 1
+                                    }
+                                ],
+                                "from": {
+                                    "key_code": "k"
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "up_arrow",
+                                        "modifiers": ["left_option", "left_shift"]
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
+                        "description": "Tab as modifier (tap for Tab, hold with j/k for Option-Shift-Down/Up)",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "tab",
+                                    "modifiers": { "optional": ["any"] }
+                                },
+                                "parameters": {
+                                    "basic.to_delayed_action_delay_milliseconds": 200,
+                                    "basic.to_if_held_down_threshold_milliseconds": 200
+                                },
+                                "to_delayed_action": {
+                                    "to_if_canceled": [
+                                        {
+                                            "key_code": "tab",
+                                            "modifiers": []
+                                        }
+                                    ]
+                                },
+                                "to_if_alone": [
+                                    {
+                                        "halt": true,
+                                        "key_code": "tab",
+                                        "modifiers": []
+                                    }
+                                ],
+                                "to_if_held_down": [
+                                    {
+                                        "set_variable": {
+                                            "name": "tab_held",
+                                            "value": 1
+                                        }
+                                    }
+                                ],
+                                "to_after_key_up": [
+                                    {
+                                        "set_variable": {
+                                            "name": "tab_held",
+                                            "value": 0
+                                        }
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "hyperspace (Enter when tapped, hyper modifier when held)",
                         "manipulators": [
                             {
