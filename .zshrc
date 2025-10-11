@@ -29,5 +29,7 @@ path=(
 )
 path+=(/usr/*/bin(N))
 
-egress=/usr/stripe/etc/stripe-egress-env.sh
-[ -r "$egress" ] && source "$egress"
+egress=(/usr/*/etc/*egress-env.sh(N))
+for f in $egress; do
+  [ -r "$f" ] && source "$f"
+done
