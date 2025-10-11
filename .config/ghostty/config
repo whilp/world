@@ -30,13 +30,23 @@ keybind = cmd+t=unbind
 keybind = cmd+shift+right_bracket=unbind
 keybind = cmd+shift+left_bracket=unbind
 
-# Broken until: https://github.com/ghostty-org/ghostty/discussions/8756
-keybind = cmd+1=unbind
-keybind = cmd+2=unbind
-keybind = cmd+3=unbind
-keybind = cmd+4=unbind
-keybind = cmd+5=unbind
-keybind = cmd+6=unbind
-keybind = cmd+7=unbind
-keybind = cmd+8=unbind
-keybind = cmd+9=unbind
+keybind = cmd+digit_1=unbind
+keybind = cmd+digit_2=unbind
+keybind = cmd+digit_3=unbind
+keybind = cmd+digit_4=unbind
+keybind = cmd+digit_5=unbind
+keybind = cmd+digit_6=unbind
+keybind = cmd+digit_7=unbind
+keybind = cmd+digit_8=unbind
+keybind = cmd+digit_9=unbind
+keybind = cmd+digit_0=unbind
+keybind = cmd+one=unbind
+keybind = cmd+two=unbind
+keybind = cmd+three=unbind
+keybind = cmd+four=unbind
+keybind = cmd+five=unbind
+keybind = cmd+six=unbind
+keybind = cmd+seven=unbind
+keybind = cmd+eight=unbind
+keybind = cmd+nine=unbind
+keybind = cmd+zero=unbind
