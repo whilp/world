@@ -1,0 +1,55 @@
+#!/usr/bin/env -S uv run --quiet --script
+# /// script
+# requires-python = ">=3.8"
+# dependencies = [
+#     "sqlglot[rs]",
+# ]
+# ///
+"""sqlglot formatter - reads SQL from stdin and formats it."""
+
+import argparse
+import sys
+import sqlglot
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Format SQL from stdin",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument(
+        "-r", "--read",
+        metavar="DIALECT",
+        default="trino",
+        help="Input SQL dialect (default: trino)",
+    )
+    parser.add_argument(
+        "-w", "--write",
+        metavar="DIALECT",
+        help="Output SQL dialect (default: same as input)",
+    )
+
+    args = parser.parse_args()
+
+    # Read SQL from stdin
+    sql = sys.stdin.read()
+
+    if not sql.strip():
+        print("sqlglot: no input provided", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        # Format the SQL with specified dialects
+        write_dialect = args.write if args.write else args.read
+        formatted = sqlglot.transpile(
+            sql,
+            read=args.read,
+            write=write_dialect,
+            pretty=True
+        )[0]
+        print(formatted)
+    except Exception as e:
+        print(f"sqlglot: error formatting SQL: {e}", file=sys.stderr)
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
