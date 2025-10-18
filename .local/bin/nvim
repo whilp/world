@@ -1,18 +1,70 @@
-#!/bin/bash
+#!/usr/bin/env luajit
 
-nvim=~/.local/bin/nvim-1
-sock=~/.config/nvim/nvim.sock
+local home = os.getenv("HOME")
+local nvim = home .. "/.local/bin/nvim-1"
+local sock = home .. "/.config/nvim/nvim.sock"
 
-# Client
-if [ -n "$NVIM_INVIM" -o -z "$NVIM_SERVER_MODE" ]; then
-  exec "$nvim" --server "$sock" "$@"
-fi
+-- Client mode: if NVIM_INVIM is set or NVIM_SERVER_MODE is not set
+local nvim_invim = os.getenv("NVIM_INVIM")
+local nvim_server_mode = os.getenv("NVIM_SERVER_MODE")
 
-# Otherwise, server
-case x"$1" in
-xcleanup) exec rm -f "$sock" ;;
-xserve)
-  trap 'rm -f "$sock"' EXIT INT TERM
-  exec /bin/zsh -l -i -c "exec $nvim --listen $sock --headless"
-  ;;
-esac
+if nvim_invim ~= nil and nvim_invim ~= "" or nvim_server_mode == nil or nvim_server_mode == "" then
+  -- Build command with arguments - use exec to avoid shell overhead
+  local ffi = require("ffi")
+  ffi.cdef[[
+    int execv(const char *path, char *const argv[]);
+  ]]
+
+  -- Build argv array for execv
+  local argv = ffi.new("char*[?]", #arg + 4)
+  argv[0] = ffi.cast("char*", nvim)
+  argv[1] = ffi.cast("char*", "--server")
+  argv[2] = ffi.cast("char*", sock)
+  for i = 1, #arg do
+    argv[i + 2] = ffi.cast("char*", arg[i])
+  end
+  argv[#arg + 3] = nil  -- NULL-terminate
+
+  -- Replace current process with nvim
+  ffi.C.execv(nvim, argv)
+
+  -- If execvp returns, it failed
+  os.exit(1)
+end
+
+-- Server mode: handle cleanup and serve commands
+if arg[1] == "cleanup" then
+  os.remove(sock)
+  os.exit()
+elseif arg[1] == "serve" then
+  -- Remove socket on exit
+  local function cleanup()
+    os.remove(sock)
+  end
+
+  -- Set up signal handlers
+  local ffi = require("ffi")
+  ffi.cdef[[
+    typedef void (*sighandler_t)(int);
+    sighandler_t signal(int signum, sighandler_t handler);
+  ]]
+
+  local SIG_IGN = ffi.cast("sighandler_t", 1)
+  local SIGINT = 2
+  local SIGTERM = 15
+
+  -- Register cleanup on exit
+  local function signal_handler()
+    cleanup()
+    os.exit(1)
+  end
+
+  ffi.C.signal(SIGINT, signal_handler)
+  ffi.C.signal(SIGTERM, signal_handler)
+
+  -- Execute nvim in headless mode
+  local cmd = string.format("/bin/zsh -l -i -c 'exec %s --listen %s --headless'", nvim, sock)
+  local status = os.execute(cmd)
+  cleanup()
+  os.exit(status)
+end
