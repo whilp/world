@@ -38,8 +38,16 @@ BUILD_DATE="${COMMIT_DATE}"
 export SOURCE_DATE_EPOCH=$(git log -1 --format=%ct)
 export TZ=UTC
 
+if [[ "${OS}" == "darwin" ]]; then
+  export MACOSX_DEPLOYMENT_TARGET=11.0
+fi
+
 echo "Building LuaJIT..."
-make amalg PREFIX="${TEMP_DIR}/install" XCFLAGS="-DLUAJIT_ENABLE_GC64" TARGET_LDFLAGS="-Wl,--build-id=none"
+if [[ "${OS}" == "darwin" ]]; then
+  make amalg PREFIX="${TEMP_DIR}/install" XCFLAGS="-DLUAJIT_ENABLE_GC64"
+else
+  make amalg PREFIX="${TEMP_DIR}/install" XCFLAGS="-DLUAJIT_ENABLE_GC64" TARGET_LDFLAGS="-Wl,--build-id=none"
+fi
 
 echo "Installing to temporary location..."
 TZ=UTC make install PREFIX="${TEMP_DIR}/install"
