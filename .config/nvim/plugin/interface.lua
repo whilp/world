@@ -10,6 +10,10 @@ opt.conceallevel = 2
 opt.showtabline = 2
 opt.signcolumn = 'yes'
 
+-- Set terminal title with host identifier
+local host_identifier = require('host_identifier')
+opt.titlestring = host_identifier.get() .. ' - nvim'
+
 -- Wild menu (command completion)
 opt.wildmenu = true
 opt.wildmode = "longest:full,full"

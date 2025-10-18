@@ -4,7 +4,7 @@ nvim=~/.local/bin/nvim-1
 sock=~/.config/nvim/nvim.sock
 
 # Client
-if [ -z "$NVIM_SERVER_MODE" ]; then
+if [ -n "$NVIM_INVIM" -o -z "$NVIM_SERVER_MODE" ]; then
   exec "$nvim" --server "$sock" "$@"
 fi
 
