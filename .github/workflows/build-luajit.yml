@@ -89,9 +89,6 @@ jobs:
             - linux-x64
             - linux-arm64
             - darwin-arm64
-
-            To use with shimlink, add the appropriate
-            configuration for your platform.
           files: |
             dist/luajit/${{ matrix.platform }}/${{
               steps.release_files.outputs.tarball }}
