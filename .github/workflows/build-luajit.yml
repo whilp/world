@@ -71,9 +71,7 @@ jobs:
         run: |
           cd dist/luajit/${{ matrix.platform }}
           tarball=$(ls luajit-*.tar.gz | grep -v latest)
-          checksum=$(ls luajit-*.sha256)
           echo "tarball=${tarball}" >> $GITHUB_OUTPUT
-          echo "checksum=${checksum}" >> $GITHUB_OUTPUT
 
       - name: create release
         if: github.event.inputs.create_release == 'true'
@@ -92,8 +90,6 @@ jobs:
           files: |
             dist/luajit/${{ matrix.platform }}/${{
               steps.release_files.outputs.tarball }}
-            dist/luajit/${{ matrix.platform }}/${{
-              steps.release_files.outputs.checksum }}
           draft: false
           prerelease: false
 
@@ -123,12 +119,4 @@ jobs:
             ls -lh "$dir" >> $GITHUB_STEP_SUMMARY
             echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-
-            if [ -f "$dir"/*.sha256 ]; then
-              echo "**checksums:**" >> $GITHUB_STEP_SUMMARY
-              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-              cat "$dir"/*.sha256 >> $GITHUB_STEP_SUMMARY
-              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-              echo "" >> $GITHUB_STEP_SUMMARY
-            fi
           done
