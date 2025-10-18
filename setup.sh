@@ -57,6 +57,7 @@ _shimlink() {
   superhtml version
   tree-sitter --version
   uv --version
+  luajit --version
 }
 
 _claude() {
