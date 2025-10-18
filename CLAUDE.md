@@ -26,6 +26,13 @@
 
 - to create a gist, do `gh create <file> --desc "<description>"`
 
+## Shimlink
+
+- symlink-based binary manager; config at `~/.config/shimlink/shimlink.json`
+- binaries stored in `~/.local/share/shimlink/<binary>/`
+- create managed binary: `ln -s shimlink <binary>`
+- force update: `shimlink -f <binary>`
+
 ## Services
 
 ### nvim service
