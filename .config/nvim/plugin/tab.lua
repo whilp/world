@@ -169,12 +169,43 @@ _G.render_tabline = function()
   -- Use hostname as fallback if neither environment variable is set
   local hostname = ''
   if github_repo == '' and codespace_name == '' then
-    local handle = io.popen('hostname')
-    if handle then
-      hostname = handle:read('*l') or ''
-      handle:close()
-      -- Clean up hostname if it exists
-      hostname = hostname:gsub('\n', ''):gsub('^%s*(.-)%s*$', '%1')
+    -- Try to find and read /*/conf/box-name using vim.fn.glob
+    local box_name_matches = vim.fn.glob('/*/conf/box-name', false, true)
+    local box_name_path = box_name_matches[1]
+
+    if box_name_path and box_name_path ~= '' then
+      local box_name_file = io.open(box_name_path, 'r')
+      if box_name_file then
+        hostname = box_name_file:read('*l') or ''
+        box_name_file:close()
+        hostname = hostname:gsub('\n', ''):gsub('^%s*(.-)%s*$', '%1')
+
+        -- If box-name exists, try to find and read host_env in same directory
+        if hostname ~= '' then
+          local conf_dir = box_name_path:match('(.*)/box%-name$')
+          if conf_dir then
+            local host_env_file = io.open(conf_dir .. '/host_env', 'r')
+            if host_env_file then
+              local env = host_env_file:read('*l') or ''
+              host_env_file:close()
+              env = env:gsub('\n', ''):gsub('^%s*(.-)%s*$', '%1')
+              if env ~= '' then
+                hostname = hostname .. '/' .. env
+              end
+            end
+          end
+        end
+      end
+    end
+
+    -- Fall back to short hostname if files don't exist
+    if hostname == '' then
+      local handle = io.popen('hostname -s')
+      if handle then
+        hostname = handle:read('*l') or ''
+        handle:close()
+        hostname = hostname:gsub('\n', ''):gsub('^%s*(.-)%s*$', '%1')
+      end
     end
   end
 
