@@ -125,7 +125,7 @@ def extract_archive(archive_path: Path, extract_to: Path, executable_path: str =
             zf.extractall(extract_to)
     elif archive_path.name.endswith((".tar.gz", ".tgz")):
         with tarfile.open(archive_path, "r:gz") as tf:
-            tf.extractall(extract_to)
+            tf.extractall(extract_to, filter="data")
     elif archive_path.suffix == ".gz" and not archive_path.name.endswith(".tar.gz"):
         # Single file gzip compression - extract to specified path
         if not executable_path:
