@@ -126,16 +126,15 @@ local function dirname(path)
   return dir or "."
 end
 
--- Platform detection
+-- Platform detection (using LuaJIT built-ins instead of FFI to avoid segfault)
 local function get_platform()
-  local uname_info = ffi.new("struct utsname")
-  ffi.C.uname(uname_info)
-
-  local system = ffi.string(uname_info.sysname):lower()
-  local machine = ffi.string(uname_info.machine):lower()
+  local system = jit.os:lower()
+  local machine = jit.arch:lower()
 
   -- Normalize architecture names
-  if machine == "aarch64" or machine == "arm64" then
+  if machine == "x64" then
+    machine = "x86_64"
+  elseif machine == "aarch64" or machine == "arm64" then
     machine = "arm64"
   end
 
@@ -189,8 +188,14 @@ local function load_config()
   local general_config = {}
   if file_exists(general_config_path) then
     local content = read_file(general_config_path)
-    if content then
-      general_config = json.decode(content)
+    if content and content ~= "" then
+      local ok, result = pcall(json.decode, content)
+      if ok then
+        general_config = result
+      else
+        stderr_write("shimlink: failed to parse " .. general_config_path .. ": " .. tostring(result))
+        os.exit(1)
+      end
     end
   end
 
@@ -202,7 +207,16 @@ local function load_config()
   end
 
   local content = read_file(platform_config_path)
-  local platform_config = json.decode(content)
+  if not content or content == "" then
+    stderr_write("shimlink: platform configuration file is empty: " .. platform_config_path)
+    os.exit(1)
+  end
+
+  local ok, platform_config = pcall(json.decode, content)
+  if not ok then
+    stderr_write("shimlink: failed to parse " .. platform_config_path .. ": " .. tostring(platform_config))
+    os.exit(1)
+  end
 
   -- Merge configs: platform-specific takes precedence
   local merged_config = {}
@@ -524,21 +538,7 @@ local function exec_binary(binary_name, args, config)
     os.exit(1)
   end
 
-  -- Build argv array for execve
-  local argv = ffi.new("char*[?]", #args + 2)
-  argv[0] = ffi.cast("char*", binary_name)
-  for i, arg in ipairs(args) do
-    argv[i] = ffi.cast("char*", arg)
-  end
-  argv[#args + 1] = nil
-
-  -- Build envp array
-  local env_count = 0
-  for _ in pairs(os.getenv) do
-    env_count = env_count + 1
-  end
-
-  -- Execute using os.execute as fallback since building envp is complex
+  -- Execute the binary with arguments
   local cmd_parts = { binary_path }
   for _, arg in ipairs(args) do
     table.insert(cmd_parts, string.format("%q", arg))
@@ -597,7 +597,7 @@ local function main()
 
     if show_help_flag or (not force and not binary) then
       show_help()
-      return
+      os.exit(0)
     end
 
     if force then
@@ -618,11 +618,11 @@ local function main()
         stderr_write("shimlink: failed to force download " .. binary)
         os.exit(1)
       end
-      return
+      os.exit(0)
     end
 
     show_help()
-    return
+    os.exit(0)
   end
 
   -- Load configuration
