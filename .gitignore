@@ -58,6 +58,7 @@ paste.*
 .local/etc/
 .local/lib/
 .local/share/
+!.local/share/lua/
 .local/state/
 .maven/
 .npm/
