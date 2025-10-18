@@ -78,6 +78,11 @@
       "url": "https://github.com/dandavison/delta/releases/download/0.18.2/delta-0.18.2-x86_64-unknown-linux-musl.tar.gz",
       "sha256": "bb03dd7961db278aa04f0059de8d390ce1f11816e08ae8eebc0867d3aabc9f11",
       "executable_path": "delta-0.18.2-x86_64-unknown-linux-musl/delta"
+    },
+    "luajit": {
+      "url": "https://github.com/whilp/dotfiles/releases/download/luajit-3/luajit-2025.10.16-25a61a18-linux-x64.tar.gz",
+      "sha256": "6263fa87f0d7e07a70ee0ab40c2831c5003137c2c84bb4d308065be91d77b37f",
+      "executable_path": "luajit-2025.10.16-25a61a18-linux-x64/bin/luajit"
     }
   }
 }
