@@ -1,7 +1,4 @@
 {
-  "aliases": {
-    "nvim-1": "nvim"
-  },
   "binaries": {
     "nvim": {
       "url": "https://github.com/whilp/dotfiles/releases/download/2025.09.07/nvim-macos-arm64.tar.gz",
@@ -74,6 +71,14 @@
       "url": "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-apple-darwin.tar.gz",
       "sha256": "0e0cb83f5195f1f51bb8feef1fff5b0b171e82bd1db6bd35deee701a3e7102f8",
       "executable_path": "ripgrep-14.1.1-aarch64-apple-darwin/rg"
+    },
+    "luajit": {
+      "url": "https://github.com/whilp/dotfiles/releases/download/luajit-3/luajit-2025.10.16-25a61a18-darwin-arm64.tar.gz",
+      "sha256": "2c081318a9a9de0e61d6d8cad6b150043fac550a4fc17ec3cfb8a52f9b5d263c",
+      "executable_path": "luajit-2025.10.16-25a61a18-darwin-arm64/bin/luajit"
     }
+  },
+  "aliases": {
+    "nvim-1": "nvim"
   }
 }
