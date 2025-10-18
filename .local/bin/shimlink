@@ -271,7 +271,12 @@ def download_binary(binary_name: str, config: dict, force: bool = False) -> bool
             shutil.move(str(extracted_binary), str(final_path))
 
         print(f"shimlink: installed {binary_name}", file=sys.stderr)
-        
+
+        # Create additional symlinks if configured
+        symlinks = binary_config.get("symlinks", {})
+        for src_path, dest_path in symlinks.items():
+            create_symlink(bin_dir, src_path, dest_path, binary_name)
+
         # Run test command if provided
         test_command = binary_config.get("test_command")
         if test_command:
@@ -280,13 +285,40 @@ def download_binary(binary_name: str, config: dict, force: bool = False) -> bool
                 test_binary_path = bin_dir / executable_path
             else:
                 test_binary_path = bin_dir / binary_name
-                
+
             if test_binary(test_binary_path, test_command):
                 print(f"shimlink: {binary_name} test passed", file=sys.stderr)
             else:
                 print(f"shimlink: {binary_name} test failed", file=sys.stderr)
-        
+
         return True
+
+
+def create_symlink(bin_dir: Path, src_path: str, dest_path: str, binary_name: str) -> None:
+    """Create a symlink from source (relative to bin_dir) to destination (absolute or ~-relative)."""
+    # Resolve source path relative to bin_dir
+    source = bin_dir / src_path
+
+    if not source.exists():
+        print(f"shimlink: warning: symlink source does not exist: {source}", file=sys.stderr)
+        return
+
+    # Resolve destination path
+    dest = Path(dest_path).expanduser()
+
+    # Create parent directories if needed
+    dest.parent.mkdir(parents=True, exist_ok=True)
+
+    # Remove existing symlink or file
+    if dest.is_symlink() or dest.exists():
+        dest.unlink()
+
+    # Create the symlink
+    try:
+        dest.symlink_to(source)
+        print(f"shimlink: created symlink {dest} -> {source}", file=sys.stderr)
+    except OSError as e:
+        print(f"shimlink: warning: failed to create symlink {dest}: {e}", file=sys.stderr)
 
 
 def test_binary(binary_path: Path, test_command: str) -> bool:
