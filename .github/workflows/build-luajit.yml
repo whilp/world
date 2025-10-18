@@ -1,0 +1,137 @@
+name: build luajit
+
+on:
+  workflow_dispatch:
+    inputs:
+      luajit_commit:
+        description: 'LuaJIT commit hash to build'
+        required: false
+        default: '25a61a182166fec06f1a1a025eb8fabbb6cf483e'
+      create_release:
+        description: 'Create a GitHub release'
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux-x64
+          - os: ubuntu-latest
+            platform: linux-arm64
+          - os: macos-latest
+            platform: darwin-arm64
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: set up QEMU for cross-compilation
+        if: matrix.platform == 'linux-arm64'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: build luajit (native)
+        if: matrix.platform != 'linux-arm64'
+        env:
+          LUAJIT_VERSION: ${{ github.event.inputs.luajit_commit }}
+          OUTPUT_DIR: ${{ github.workspace }}/dist/luajit
+        run: bash scripts/build-luajit.sh
+
+      - name: build luajit (cross-compile arm64)
+        if: matrix.platform == 'linux-arm64'
+        env:
+          LUAJIT_VERSION: ${{ github.event.inputs.luajit_commit }}
+          OUTPUT_DIR: ${{ github.workspace }}/dist/luajit
+        run: |
+          docker run --rm -v "$PWD":/workspace -w /workspace \
+            --platform linux/arm64 ubuntu:24.04 bash -c "
+              apt-get update && apt-get install -y git make gcc && \
+              bash scripts/build-luajit.sh"
+
+      - name: upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: luajit-${{ matrix.platform }}
+          path: dist/luajit/${{ matrix.platform }}/*
+          retention-days: 30
+
+      - name: prepare release files
+        if: github.event.inputs.create_release == 'true'
+        id: release_files
+        run: |
+          cd dist/luajit/${{ matrix.platform }}
+          tarball=$(ls luajit-*.tar.gz | grep -v latest)
+          checksum=$(ls luajit-*.sha256)
+          echo "tarball=${tarball}" >> $GITHUB_OUTPUT
+          echo "checksum=${checksum}" >> $GITHUB_OUTPUT
+
+      - name: create release
+        if: github.event.inputs.create_release == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: luajit-${{ github.run_number }}
+          name: luajit build ${{ github.run_number }}
+          body: |
+            LuaJIT build from commit
+            ${{ github.event.inputs.luajit_commit }}
+
+            Built for:
+            - linux-x64
+            - linux-arm64
+            - darwin-arm64
+
+            To use with shimlink, add the appropriate
+            configuration for your platform.
+          files: |
+            dist/luajit/${{ matrix.platform }}/${{
+              steps.release_files.outputs.tarball }}
+            dist/luajit/${{ matrix.platform }}/${{
+              steps.release_files.outputs.checksum }}
+          draft: false
+          prerelease: false
+
+  summary:
+    needs: build
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: generate build summary
+        run: |
+          echo "# LuaJIT build summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Built platforms" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          for dir in artifacts/*/; do
+            platform=$(basename "$dir")
+            echo "### ${platform}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            ls -lh "$dir" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+
+            if [ -f "$dir"/*.sha256 ]; then
+              echo "**checksums:**" >> $GITHUB_STEP_SUMMARY
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+              cat "$dir"/*.sha256 >> $GITHUB_STEP_SUMMARY
+              echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+            fi
+          done
