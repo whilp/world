@@ -75,7 +75,10 @@
     "luajit": {
       "url": "https://github.com/whilp/dotfiles/releases/download/luajit-3/luajit-2025.10.16-25a61a18-darwin-arm64.tar.gz",
       "sha256": "2c081318a9a9de0e61d6d8cad6b150043fac550a4fc17ec3cfb8a52f9b5d263c",
-      "executable_path": "luajit-2025.10.16-25a61a18-darwin-arm64/bin/luajit"
+      "executable_path": "luajit-2025.10.16-25a61a18-darwin-arm64/bin/luajit",
+      "symlinks": {
+        "luajit-2025.10.16-25a61a18-darwin-arm64/share/luajit-2.1": "~/.local/share/luajit-2.1"
+      }
     }
   },
   "aliases": {
