@@ -7,5 +7,8 @@ if [[ ! -f ~/.terminfo/x/xterm-ghostty ]] || [[ ~/.config/ghostty/term.tic -nt ~
 fi
 export TERM=xterm-ghostty
 
-# LuaJIT module path (symlink managed by shimlink)
-export LUA_PATH="$HOME/.local/share/luajit-2.1/?.lua;;"
+# Lua module paths
+# - luajit-2.1: symlink managed by shimlink for LuaJIT standard library
+# - lua: personal Lua libraries
+# - lua/3p: vendored third-party libraries
+export LUA_PATH="$HOME/.local/share/lua/?.lua;$HOME/.local/share/lua/3p/?.lua;$HOME/.local/share/luajit-2.1/?.lua;;"
