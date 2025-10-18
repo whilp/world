@@ -63,19 +63,33 @@ TARBALL_NAME="${BINARY_NAME}.tar.gz"
 echo "Packaging binary as ${TARBALL_NAME}..."
 cd "${TEMP_DIR}/install"
 
-tar --sort=name \
-  --mtime="@${SOURCE_DATE_EPOCH}" \
-  --owner=0 \
-  --group=0 \
-  --numeric-owner \
-  --pax-option=exthdr.name=%d/PaxHeaders/%f,delete=atime,delete=ctime \
-  --transform "s,^,${BINARY_NAME}/," \
-  -cf - \
-  bin/luajit* \
-  lib/libluajit* \
-  share/luajit* \
-  include/luajit* |
-  gzip -n >"${OUTPUT_DIR}/${PLATFORM}/${TARBALL_NAME}"
+# Create a temporary directory with the correct structure for tarball
+STAGING_DIR="${TEMP_DIR}/staging"
+mkdir -p "${STAGING_DIR}/${BINARY_NAME}"
+
+# Copy files to staging directory
+cp -R bin "${STAGING_DIR}/${BINARY_NAME}/"
+cp -R lib "${STAGING_DIR}/${BINARY_NAME}/"
+cp -R share "${STAGING_DIR}/${BINARY_NAME}/"
+cp -R include "${STAGING_DIR}/${BINARY_NAME}/"
+
+# Create tarball with options compatible with both GNU and BSD tar
+cd "${STAGING_DIR}"
+if [[ "${OS}" == "darwin" ]]; then
+  # BSD tar on macOS
+  find "${BINARY_NAME}" -print0 | sort -z | tar -cf - --null -T - | gzip -n >"${OUTPUT_DIR}/${PLATFORM}/${TARBALL_NAME}"
+else
+  # GNU tar on Linux
+  tar --sort=name \
+    --mtime="@${SOURCE_DATE_EPOCH}" \
+    --owner=0 \
+    --group=0 \
+    --numeric-owner \
+    --pax-option=exthdr.name=%d/PaxHeaders/%f,delete=atime,delete=ctime \
+    -cf - \
+    "${BINARY_NAME}" |
+    gzip -n >"${OUTPUT_DIR}/${PLATFORM}/${TARBALL_NAME}"
+fi
 
 cd "${OUTPUT_DIR}/${PLATFORM}"
 ln -sf "${TARBALL_NAME}" "luajit-latest-${PLATFORM}.tar.gz"
