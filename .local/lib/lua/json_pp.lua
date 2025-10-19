@@ -1,7 +1,7 @@
 -- json_pp.lua: JSON pretty printer compatible with shimlink config format
 -- Uses 2-space indentation and sorts object keys alphabetically
 
-local json = require("json")
+local json = require("3p.json")
 
 local M = {}
 
