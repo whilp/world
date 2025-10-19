@@ -133,15 +133,14 @@ _claude() {
 
 _nvim() {
   # Install vim.pack plugins by starting nvim headlessly
-  nvim --headless +'lua vim.wait(30000, function() return vim.fn.isdirectory(vim.fn.stdpath("data") .. "/site/pack/core/opt/mini.nvim") == 1 end)' +qa
+  NVIM_INVIM=1 nvim-1 --headless +'lua vim.wait(30000, function() return vim.fn.isdirectory(vim.fn.stdpath("data") .. "/site/pack/core/opt/mini.nvim") == 1 end)' +qa
 
   # Generate helptags
-  nvim --headless +'helptags ALL' +qa
+  NVIM_INVIM=1 nvim-1 --headless +'helptags ALL' +qa
 
-  # Enable and start nvim server service
-  systemctl --user daemon-reload
-  systemctl --user enable nvim.service
-  systemctl --user start nvim.service
+  # Load and start nvim server service
+  nvim load
+  nvim restart
 }
 
 main "$@"
