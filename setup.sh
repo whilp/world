@@ -9,6 +9,7 @@ main() {
   _backup
   _git
   _shell
+  _luajit
   _shimlink
   _claude &
   _nvim &
@@ -38,6 +39,49 @@ _git() {
 _shell() {
   sudo chsh "$(id -un)" --shell $(which zsh)
   echo 'export SHELL=/bin/zsh' >"$DST/.bashrc"
+}
+
+_luajit() {
+  # Detect platform and architecture
+  local os=$(uname -s | tr '[:upper:]' '[:lower:]')
+  local arch=$(uname -m)
+  local url
+
+  case "$os-$arch" in
+  linux-x86_64)
+    url="https://github.com/whilp/dotfiles/releases/download/luajit-3/luajit-2025.10.16-25a61a18-linux-x64.tar.gz"
+    ;;
+  linux-aarch64 | linux-arm64)
+    url="https://github.com/whilp/dotfiles/releases/download/luajit-3/luajit-2025.10.16-25a61a18-linux-arm64.tar.gz"
+    ;;
+  darwin-arm64)
+    url="https://github.com/whilp/dotfiles/releases/download/luajit-3/luajit-2025.10.16-25a61a18-darwin-arm64.tar.gz"
+    ;;
+  *)
+    echo "Unsupported platform: $os-$arch" >&2
+    exit 1
+    ;;
+  esac
+
+  # Create temporary directory for bootstrap
+  local temp_dir=$(mktemp -d)
+  local archive="$temp_dir/luajit.tar.gz"
+
+  # Download LuaJIT
+  echo "Bootstrapping LuaJIT from $url" >&2
+  curl -fsSL -o "$archive" "$url"
+
+  # Extract to temporary location
+  tar -xzf "$archive" -C "$temp_dir"
+
+  # Find the extracted directory (it will have the version in the name)
+  local luajit_dir=$(find "$temp_dir" -maxdepth 1 -type d -name "luajit-*" | head -n1)
+
+  # Export the bootstrapped LuaJIT path and LUA_PATH
+  export BOOTSTRAP_LUAJIT="$luajit_dir/bin/luajit"
+  export LUA_PATH="$DST/.local/lib/lua/?.lua;$DST/.local/lib/lua/?/init.lua;;"
+
+  echo "Bootstrapped LuaJIT at $BOOTSTRAP_LUAJIT" >&2
 }
 
 _shimlink() {
