@@ -9,6 +9,7 @@ then exec's the target binary with all arguments and environment passed through.
 
 local ffi = require("ffi")
 local json = require("json")
+local json_pp = require("json_pp")
 
 -- FFI declarations for system calls
 ffi.cdef([[
@@ -337,7 +338,7 @@ local function update_config_checksum(binary_name, config, new_checksum)
 
   -- Write to platform-specific config file
   local platform_config_path = get_platform_config_path()
-  local encoded = json.encode(config)
+  local encoded = json_pp.encode(config) .. "\n"
   write_file(platform_config_path, encoded)
 
   stderr_write("shimlink: updated checksum for " .. binary_name .. " to " .. new_checksum)
