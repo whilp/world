@@ -1,7 +1,4 @@
 {
-  "aliases": {
-    "nvim-1": "nvim"
-  },
   "binaries": {
     "ast-grep": {
       "executable_path": "ast-grep",
@@ -79,5 +76,8 @@
       "sha256": "36d8307245f75cc0487c622a07c001f4e0faf224fc0893e6a338faa916b7f3d2",
       "url": "https://github.com/astral-sh/uv/releases/download/0.5.7/uv-aarch64-unknown-linux-gnu.tar.gz"
     }
+  },
+  "aliases": {
+    "nvim-1": "nvim"
   }
 }
