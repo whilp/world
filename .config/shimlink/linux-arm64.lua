@@ -1,7 +1,7 @@
 return {
   binaries = {
     ["ast-grep"] = {
-      executable_path = "ast-grep",
+      path = "ast-grep",
       sha256 = "147fe3d3857f099df957ff2969eb9adea7b44cceeaa3d50a5e8f4a46acbab134",
       url = "https://github.com/ast-grep/ast-grep/releases/download/0.28.0/app-aarch64-unknown-linux-gnu.zip",
     },
@@ -18,12 +18,12 @@ return {
       url = "https://github.com/kivikakk/comrak/releases/download/v0.41.0/comrak-0.41.0-aarch64-unknown-linux-gnu",
     },
     delta = {
-      executable_path = "delta-0.18.2-aarch64-unknown-linux-gnu/delta",
+      path = "delta-0.18.2-aarch64-unknown-linux-gnu/delta",
       sha256 = "7833733f45a128e96757254066b84f6baf553860a656bda4075c32fd735102a0",
       url = "https://github.com/dandavison/delta/releases/download/0.18.2/delta-0.18.2-aarch64-unknown-linux-gnu.tar.gz",
     },
     luajit = {
-      executable_path = "luajit-2025.10.16-25a61a18-linux-arm64/bin/luajit",
+      path = "luajit-2025.10.16-25a61a18-linux-arm64/bin/luajit",
       sha256 = "ad9301412855c4b06ccfc7eb98d068e04996345276ab3deb00a7ce9f26eb339d",
       url = "https://github.com/whilp/dotfiles/releases/download/luajit-3/luajit-2025.10.16-25a61a18-linux-arm64.tar.gz",
     },
@@ -32,18 +32,18 @@ return {
       url = "https://github.com/artempyanykh/marksman/releases/download/2024-12-18/marksman-linux-arm64",
     },
     nvim = {
-      executable_path = "nvim-linux-arm64/bin/nvim",
+      path = "nvim-linux-arm64/bin/nvim",
       sha256 = "87bb55ec3eafff4ccc1466e1e2f5e1f66d1a48e518553fa80bd7b58c805b74e3",
       upstream_url = "https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-arm64.tar.gz",
       url = "https://github.com/whilp/dotfiles/releases/download/2025.10.04/nvim-linux-arm64.tar.gz",
     },
     rg = {
-      executable_path = "ripgrep-14.1.1-aarch64-unknown-linux-gnu/rg",
+      path = "ripgrep-14.1.1-aarch64-unknown-linux-gnu/rg",
       sha256 = "e07d5c85fa9ca740ff4ab8bbac60a1e11c7a5ce242435f7820a03f7c20ef6276",
       url = "https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-aarch64-unknown-linux-gnu.tar.gz",
     },
     ruff = {
-      executable_path = "ruff-aarch64-unknown-linux-gnu/ruff",
+      path = "ruff-aarch64-unknown-linux-gnu/ruff",
       sha256 = "922c84fdb86d1909fe0f691d173f23d875d33b1716d3d8a5cf344e59e1a6c722",
       url = "https://github.com/astral-sh/ruff/releases/download/0.8.4/ruff-aarch64-unknown-linux-gnu.tar.gz",
     },
@@ -52,27 +52,27 @@ return {
       url = "https://github.com/mvdan/sh/releases/download/v3.10.0/shfmt_v3.10.0_linux_arm64",
     },
     sqruff = {
-      executable_path = "sqruff",
+      path = "sqruff",
       sha256 = "fddd62ea4a632544190424ed1fbb8824013314e24dce4eab8d9a5a420341adc5",
       url = "https://github.com/quarylabs/sqruff/releases/download/v0.21.2/sqruff-linux-aarch64-musl.tar.gz",
     },
     stylua = {
-      executable_path = "stylua",
+      path = "stylua",
       sha256 = "5848253ab2c10f41c8105c8f94659114078efa592bba18157da816ca50026701",
       url = "https://github.com/JohnnyMorganz/StyLua/releases/download/v2.0.1/stylua-linux-aarch64.zip",
     },
     superhtml = {
-      executable_path = "aarch64-linux/superhtml",
+      path = "aarch64-linux/superhtml",
       sha256 = "2450946a457e96a56b3baeac4d54943b3838c723e4beeb3383ff458aa6ac0cf0",
       url = "https://github.com/kristoff-it/superhtml/releases/download/v0.5.3/aarch64-linux.tar.gz",
     },
     ["tree-sitter"] = {
-      executable_path = "tree-sitter",
+      path = "tree-sitter",
       sha256 = "aa0612920c0149a933e4cebc78e0161e6df47f89f5eb18fd6d4ca7326618b02e",
       url = "https://github.com/tree-sitter/tree-sitter/releases/download/v0.25.8/tree-sitter-linux-arm64.gz",
     },
     uv = {
-      executable_path = "uv-aarch64-unknown-linux-gnu/uv",
+      path = "uv-aarch64-unknown-linux-gnu/uv",
       sha256 = "36d8307245f75cc0487c622a07c001f4e0faf224fc0893e6a338faa916b7f3d2",
       url = "https://github.com/astral-sh/uv/releases/download/0.5.7/uv-aarch64-unknown-linux-gnu.tar.gz",
     },
