@@ -84,25 +84,8 @@ elseif arg[1] == "restart" then
   end
   os.exit(os.execute(cmd))
 elseif arg[1] == "serve" then
-  -- Remove socket on exit
-  local function cleanup()
-    os.remove(sock)
-  end
-
-  -- Set up signal handlers
-
-  local SIG_IGN = ffi.cast("sighandler_t", 1)
-  local SIGINT = 2
-  local SIGTERM = 15
-
-  -- Register cleanup on exit
-  local function signal_handler()
-    cleanup()
-    os.exit(1)
-  end
-
-  ffi.C.signal(SIGINT, signal_handler)
-  ffi.C.signal(SIGTERM, signal_handler)
+  -- Clean up stale socket before starting
+  os.remove(sock)
 
   -- Execute nvim in headless mode using exec to replace the process
   local argv = ffi.new("char*[?]", 5)
@@ -116,6 +99,5 @@ elseif arg[1] == "serve" then
   ffi.C.execv(nvim, argv)
 
   -- If execv returns, it failed
-  cleanup()
   os.exit(1)
 end
