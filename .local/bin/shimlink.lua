@@ -32,6 +32,9 @@ ffi.cdef([[
     char machine[65];
   };
   int uname(struct utsname *buf);
+
+  // environ for accessing environment variables
+  extern char **environ;
 ]])
 
 -- Helper functions
@@ -544,13 +547,21 @@ local function exec_binary(binary_name, args, config)
     os.exit(1)
   end
 
-  -- Execute the binary with arguments
-  local cmd_parts = { binary_path }
-  for _, arg in ipairs(args) do
-    table.insert(cmd_parts, string.format("%q", arg))
+  -- Build argv array for execve
+  local argv = ffi.new("char*[?]", #args + 2)
+  argv[0] = ffi.cast("char*", binary_path)
+  for i, arg_val in ipairs(args) do
+    argv[i] = ffi.cast("char*", arg_val)
   end
-  local cmd = table.concat(cmd_parts, " ")
-  os.exit(os.execute(cmd))
+  argv[#args + 1] = nil
+
+  -- Use the environ global variable directly (works on Linux and macOS)
+  -- execve expects char *const envp[], so we just pass environ
+  local result = ffi.C.execve(binary_path, argv, ffi.C.environ)
+
+  -- If execve returns, an error occurred
+  stderr_write("shimlink: failed to exec " .. binary_path .. ": " .. tostring(result))
+  os.exit(1)
 end
 
 -- Show help
