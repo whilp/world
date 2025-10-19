@@ -132,6 +132,11 @@ local function get_platform()
   local system = jit.os:lower()
   local machine = jit.arch:lower()
 
+  -- Normalize system names
+  if system == "osx" then
+    system = "darwin"
+  end
+
   -- Normalize architecture names
   if machine == "x64" then
     machine = "x86_64"
