@@ -20,8 +20,8 @@ if ok then
   end
 
   -- Get host identifier and generate deterministic color scheme
-  local host_identifier = require('host_identifier')
-  local host_id = host_identifier.get()
+  local whereami = require('whereami')
+  local host_id = whereami.get()
   local hue = string_to_hue(host_id)
 
   local base_colors = require("mini.hues").gen_random_base_colors({
