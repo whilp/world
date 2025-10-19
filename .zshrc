@@ -6,6 +6,12 @@ export TERM=xterm-ghostty
 export PS1='%# '
 set -o vi
 
+# Set terminal title
+HOST_IDENTIFIER=$(whereami)
+precmd() {
+  print -Pn "\e]0;${HOST_IDENTIFIER} - zsh\a"
+}
+
 alias co='git checkout'
 alias ci='git commit'
 alias st='git status'
