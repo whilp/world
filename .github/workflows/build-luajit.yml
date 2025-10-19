@@ -40,6 +40,14 @@ jobs:
         with:
           platforms: arm64
 
+      - name: install dependencies (macos)
+        if: matrix.os == 'macos-latest'
+        run: brew install openssl
+
+      - name: install dependencies (linux)
+        if: matrix.os == 'ubuntu-latest' && matrix.platform != 'linux-arm64'
+        run: sudo apt-get update && sudo apt-get install -y libssl-dev
+
       - name: build luajit (native)
         if: matrix.platform != 'linux-arm64'
         env:
@@ -55,7 +63,7 @@ jobs:
         run: |
           docker run --rm -v "$PWD":/workspace -w /workspace \
             --platform linux/arm64 ubuntu:24.04 bash -c "
-              apt-get update && apt-get install -y git make gcc && \
+              apt-get update && apt-get install -y git make gcc libssl-dev && \
               bash scripts/build-luajit.sh"
 
       - name: upload artifacts
