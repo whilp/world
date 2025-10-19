@@ -1,4 +1,4 @@
-#!/usr/bin/env luajit
+#!/usr/bin/env lua
 -- json-pp: JSON pretty printer CLI tool
 
 local json_pp = require("json_pp")

@@ -1,4 +1,4 @@
-#!/usr/bin/env luajit
+#!/usr/bin/env lua
 -- Get hostname or box-name/host_env identifier
 
 local whereami = require('whereami')
