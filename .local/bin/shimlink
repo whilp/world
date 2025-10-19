@@ -8,8 +8,6 @@ then exec's the target binary with all arguments and environment passed through.
 ]]
 
 local ffi = require("ffi")
-local json = require("json")
-local json_pp = require("json_pp")
 
 -- FFI declarations for system calls
 ffi.cdef([[
@@ -166,11 +164,11 @@ local function get_config_dir()
 end
 
 local function get_config_path()
-  return path_join(get_config_dir(), "shimlink.json")
+  return path_join(get_config_dir(), "shimlink.lua")
 end
 
 local function get_platform_config_path()
-  return path_join(get_config_dir(), get_platform() .. ".json")
+  return path_join(get_config_dir(), get_platform() .. ".lua")
 end
 
 local function get_bin_dir(binary_name)
@@ -189,41 +187,54 @@ local function load_config()
   -- Check if config directory exists
   if not is_directory(config_dir) then
     stderr_write("shimlink: configuration directory not found at " .. config_dir)
-    stderr_write("shimlink: create ~/.config/shimlink/ with shimlink.json and <platform>.json files")
+    stderr_write("shimlink: create ~/.config/shimlink/ with shimlink.lua and <platform>.lua files")
     os.exit(1)
   end
 
   -- Load general config (may be empty)
   local general_config = {}
   if file_exists(general_config_path) then
-    local content = read_file(general_config_path)
-    if content and content ~= "" then
-      local ok, result = pcall(json.decode, content)
-      if ok then
-        general_config = result
-      else
-        stderr_write("shimlink: failed to parse " .. general_config_path .. ": " .. tostring(result))
-        os.exit(1)
-      end
+    local func, err = loadfile(general_config_path)
+    if not func then
+      stderr_write("shimlink: failed to load " .. general_config_path .. ": " .. tostring(err))
+      os.exit(1)
     end
+
+    local ok, result = pcall(func)
+    if not ok then
+      stderr_write("shimlink: failed to execute " .. general_config_path .. ": " .. tostring(result))
+      os.exit(1)
+    end
+
+    if type(result) ~= "table" then
+      stderr_write("shimlink: config must return a table, got " .. type(result))
+      os.exit(1)
+    end
+
+    general_config = result
   end
 
   -- Load platform-specific config
   if not file_exists(platform_config_path) then
     stderr_write("shimlink: platform configuration file not found at " .. platform_config_path)
-    stderr_write("shimlink: create ~/.config/shimlink/" .. get_platform() .. ".json with binary configurations")
+    stderr_write("shimlink: create ~/.config/shimlink/" .. get_platform() .. ".lua with binary configurations")
     os.exit(1)
   end
 
-  local content = read_file(platform_config_path)
-  if not content or content == "" then
-    stderr_write("shimlink: platform configuration file is empty: " .. platform_config_path)
+  local func, err = loadfile(platform_config_path)
+  if not func then
+    stderr_write("shimlink: failed to load " .. platform_config_path .. ": " .. tostring(err))
     os.exit(1)
   end
 
-  local ok, platform_config = pcall(json.decode, content)
+  local ok, platform_config = pcall(func)
   if not ok then
-    stderr_write("shimlink: failed to parse " .. platform_config_path .. ": " .. tostring(platform_config))
+    stderr_write("shimlink: failed to execute " .. platform_config_path .. ": " .. tostring(platform_config))
+    os.exit(1)
+  end
+
+  if type(platform_config) ~= "table" then
+    stderr_write("shimlink: config must return a table, got " .. type(platform_config))
     os.exit(1)
   end
 
@@ -344,11 +355,31 @@ end
 local function update_config_checksum(binary_name, config, new_checksum)
   config.binaries[binary_name].sha256 = new_checksum
 
-  -- Write to platform-specific config file
+  -- Write to platform-specific config file using string replacement
   local platform_config_path = get_platform_config_path()
-  local encoded = json_pp.encode(config) .. "\n"
-  write_file(platform_config_path, encoded)
+  local content = read_file(platform_config_path)
 
+  if not content then
+    stderr_write("shimlink: failed to read " .. platform_config_path)
+    return
+  end
+
+  -- Pattern to match the sha256 field for this binary
+  -- Handles both ["binary-name"] and binary_name key formats
+  local pattern = '(%[?"?' .. binary_name:gsub("%-", "%%-") .. '"?%]?%s*=%s*%{.-)sha256%s*=%s*"([^"]*)"'
+  local replaced = false
+
+  content = content:gsub(pattern, function(before, old_hash)
+    replaced = true
+    return before .. 'sha256 = "' .. new_checksum .. '"'
+  end)
+
+  if not replaced then
+    stderr_write("shimlink: warning: could not find sha256 field for " .. binary_name .. " in config")
+    return
+  end
+
+  write_file(platform_config_path, content)
   stderr_write("shimlink: updated checksum for " .. binary_name .. " to " .. new_checksum)
 end
 
@@ -583,8 +614,8 @@ local function show_help()
   print("Aliases can be defined in the 'aliases' section of the config to map")
   print("alternative names to actual binary names (e.g., 'nvim-1' -> 'nvim').")
   print()
-  print("Configuration: ~/.config/shimlink/shimlink.json (general)")
-  print("               ~/.config/shimlink/<platform>.json (platform-specific)")
+  print("Configuration: ~/.config/shimlink/shimlink.lua (general)")
+  print("               ~/.config/shimlink/<platform>.lua (platform-specific)")
   print("Binaries stored: ~/.local/share/shimlink/<binary>/")
 end
 
