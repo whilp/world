@@ -1,9 +1,5 @@
 local map = vim.keymap.set
 
--- Set terminal window title to hostname
-vim.opt.title = true
-vim.opt.titlestring = vim.fn.hostname()
-
 -- Terminal mode keybindings
 map('t', [[<C-\>]], [[<C-\><C-n>]])
 map({ 'n', 't' }, '<C-z>', '<C-z>', { desc = 'Pass Control-Z through' })
