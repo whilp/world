@@ -9,7 +9,7 @@ set -o vi
 # Set terminal title
 HOST_IDENTIFIER=$(whereami)
 precmd() {
-  print -Pn "\e]0;${HOST_IDENTIFIER} - zsh\a"
+  print -Pn "\e]0;${HOST_IDENTIFIER}\a"
 }
 
 alias co='git checkout'
