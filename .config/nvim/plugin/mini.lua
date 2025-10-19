@@ -55,6 +55,8 @@ if ok_hues then
     foreground = base_colors.foreground,
   })
 
+  vim.g.colors_name = "minihues"
+
 end
 
 -- mini.pick keybindings (only if mini.pick is available)
