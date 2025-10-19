@@ -169,8 +169,8 @@ _G.render_tabline = function()
   -- Use hostname as fallback if neither environment variable is set
   local hostname = ''
   if github_repo == '' and codespace_name == '' then
-    local host_identifier = require('host_identifier')
-    hostname = host_identifier.get()
+    local whereami = require('whereami')
+    hostname = whereami.get()
   end
 
   -- Build right section
