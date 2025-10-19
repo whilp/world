@@ -44,7 +44,8 @@ if ok_hues then
   -- Get host identifier and generate deterministic color scheme
   local whereami = require('whereami')
   local host_id = whereami.get()
-  local hue = string_to_hue(host_id)
+  local seed = "1"  -- Change this to get a different color scheme
+  local hue = string_to_hue(host_id .. seed)
 
   local base_colors = require("mini.hues").gen_random_base_colors({
     gen_hue = function() return hue end
