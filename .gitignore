@@ -56,9 +56,8 @@ paste.*
 .local/bin/ttx
 .local/bin/wsdump
 .local/etc/
-.local/lib/
+.local/lib/*goose
 .local/share/
-!.local/share/lua/
 .local/state/
 .maven/
 .npm/
