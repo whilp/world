@@ -86,7 +86,7 @@ function M.get()
       if conf_dir then
         local env = read_file(conf_dir .. '/host_env')
         if env and env ~= '' then
-          identifier = identifier .. '/' .. env
+          identifier = identifier .. '.' .. env
         end
       end
     end
