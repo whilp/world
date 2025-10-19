@@ -1,5 +1,12 @@
 #!/usr/bin/env luajit
 
+local ffi = require("ffi")
+ffi.cdef([[
+  int execv(const char *path, char *const argv[]);
+  typedef void (*sighandler_t)(int);
+  sighandler_t signal(int signum, sighandler_t handler);
+]])
+
 local home = os.getenv("HOME")
 local nvim = home .. "/.local/bin/nvim-1"
 local sock = home .. "/.config/nvim/nvim.sock"
@@ -15,11 +22,6 @@ else
 
 if nvim_invim ~= nil and nvim_invim ~= "" or nvim_server_mode == nil or nvim_server_mode == "" then
   -- Build command with arguments - use exec to avoid shell overhead
-  local ffi = require("ffi")
-  ffi.cdef([[
-    int execv(const char *path, char *const argv[]);
-  ]])
-
   -- Build argv array for execv
   local argv = ffi.new("char*[?]", #arg + 4)
   argv[0] = ffi.cast("char*", nvim)
@@ -88,11 +90,6 @@ elseif arg[1] == "serve" then
   end
 
   -- Set up signal handlers
-  local ffi = require("ffi")
-  ffi.cdef([[
-    typedef void (*sighandler_t)(int);
-    sighandler_t signal(int signum, sighandler_t handler);
-  ]])
 
   local SIG_IGN = ffi.cast("sighandler_t", 1)
   local SIGINT = 2
@@ -107,9 +104,18 @@ elseif arg[1] == "serve" then
   ffi.C.signal(SIGINT, signal_handler)
   ffi.C.signal(SIGTERM, signal_handler)
 
-  -- Execute nvim in headless mode
-  local cmd = string.format("/bin/zsh -l -i -c 'exec %s --listen %s --headless'", nvim, sock)
-  local status = os.execute(cmd)
+  -- Execute nvim in headless mode using exec to replace the process
+  local argv = ffi.new("char*[?]", 5)
+  argv[0] = ffi.cast("char*", nvim)
+  argv[1] = ffi.cast("char*", "--listen")
+  argv[2] = ffi.cast("char*", sock)
+  argv[3] = ffi.cast("char*", "--headless")
+  argv[4] = nil
+
+  -- Replace current process with nvim
+  ffi.C.execv(nvim, argv)
+
+  -- If execv returns, it failed
   cleanup()
-  os.exit(status)
+  os.exit(1)
 end
