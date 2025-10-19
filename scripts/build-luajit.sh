@@ -42,6 +42,82 @@ if [[ "${OS}" == "darwin" ]]; then
   export MACOSX_DEPLOYMENT_TARGET=11.0
 fi
 
+echo "Patching lib_package.c to support relocatable paths on Unix..."
+
+# Detect sed variant for BSD/GNU compatibility
+if [[ "${OS}" == "darwin" ]]; then
+  SED_INPLACE=(-i '')
+else
+  SED_INPLACE=(-i)
+fi
+
+# We need to add includes and implementation before the setprogdir line
+# First, add the necessary includes after the existing includes
+sed "${SED_INPLACE[@]}" '/^#include "lj_obj.h"/a\
+#if defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__APPLE__)\
+#include <limits.h>\
+#if defined(__APPLE__)\
+#include <mach-o/dyld.h>\
+#endif\
+#endif' src/lib_package.c
+
+# Now replace the setprogdir macro with the implementation
+# Find the line number of "#define setprogdir(L)"
+LINE_NUM=$(grep -n "^#define setprogdir(L)" src/lib_package.c | cut -d: -f1)
+
+if [ -n "$LINE_NUM" ]; then
+  # Create a temporary file with the replacement
+  cat > /tmp/setprogdir_replacement.txt << 'REPLACEMENT'
+#if defined(__linux__) || defined(__FreeBSD__) || defined(__NetBSD__) || defined(__APPLE__)
+static void setprogdir(lua_State *L)
+{
+  char buff[PATH_MAX + 1];
+  char *lb;
+  ssize_t len = -1;
+
+#if defined(__linux__)
+  len = readlink("/proc/self/exe", buff, sizeof(buff) - 1);
+#elif defined(__FreeBSD__)
+  len = readlink("/proc/curproc/file", buff, sizeof(buff) - 1);
+#elif defined(__NetBSD__)
+  len = readlink("/proc/curproc/exe", buff, sizeof(buff) - 1);
+#elif defined(__APPLE__)
+  uint32_t size = sizeof(buff);
+  if (_NSGetExecutablePath(buff, &size) == 0) {
+    len = strlen(buff);
+  }
+#endif
+
+  if (len > 0 && len < (ssize_t)sizeof(buff)) {
+    buff[len] = '\0';
+    lb = strrchr(buff, '/');
+    if (lb != NULL) {
+      *lb = '\0';
+      luaL_gsub(L, lua_tostring(L, -1), LUA_EXECDIR, buff);
+      lua_remove(L, -2);
+    }
+  }
+}
+#else
+#define setprogdir(L) ((void)0)
+#endif
+REPLACEMENT
+
+  # Replace the line with the content
+  sed "${SED_INPLACE[@]}" "${LINE_NUM}r /tmp/setprogdir_replacement.txt" src/lib_package.c
+  sed "${SED_INPLACE[@]}" "${LINE_NUM}d" src/lib_package.c
+fi
+
+echo "Patching luaconf.h to use ! paths..."
+# Patch luaconf.h to use ! in the paths like Windows does
+sed "${SED_INPLACE[@]}" '/^#define LUA_PATH_DEFAULT/c\
+#define LUA_PATH_DEFAULT \\\
+  "./?.lua;!/../share/luajit-2.1/?.lua;!/../share/lua/5.1/?.lua;!/../share/lua/5.1/?/init.lua"' src/luaconf.h
+
+sed "${SED_INPLACE[@]}" '/^#define LUA_CPATH_DEFAULT/c\
+#define LUA_CPATH_DEFAULT \\\
+  "./?.so;!/../lib/lua/5.1/?.so"' src/luaconf.h
+
 echo "Building LuaJIT..."
 if [[ "${OS}" == "darwin" ]]; then
   make amalg PREFIX="${TEMP_DIR}/install" XCFLAGS="-DLUAJIT_ENABLE_GC64"
@@ -51,6 +127,20 @@ fi
 
 echo "Installing to temporary location..."
 TZ=UTC make install PREFIX="${TEMP_DIR}/install"
+
+echo "Installing LuaRocks..."
+cd "${TEMP_DIR}"
+git clone https://github.com/luarocks/luarocks.git
+cd luarocks
+./configure --prefix="${TEMP_DIR}/install" --with-lua="${TEMP_DIR}/install" --lua-suffix=jit
+make
+make install
+
+echo "Installing LuaSocket..."
+"${TEMP_DIR}/install/bin/luarocks" install luasocket
+
+echo "Installing LuaSec..."
+"${TEMP_DIR}/install/bin/luarocks" install luasec
 
 echo "Stripping binaries..."
 find "${TEMP_DIR}/install" -type f -executable -exec strip --strip-unneeded {} \; 2>/dev/null || true
@@ -107,6 +197,7 @@ echo "Testing binary..."
 cd "${TEMP_DIR}/install/bin"
 ./luajit -v
 ./luajit -e "print('LuaJIT test successful')"
+./luajit -e "require('socket'); require('ssl'); print('LuaSocket and LuaSec loaded successfully')"
 
 echo "Binary size: $(du -h ./luajit | cut -f1)"
 if command -v ldd >/dev/null 2>&1; then
