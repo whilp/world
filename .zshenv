@@ -11,4 +11,4 @@ export TERM=xterm-ghostty
 # - luajit-2.1: symlink managed by shimlink for LuaJIT standard library
 # - lua: personal Lua libraries
 # - lua/3p: vendored third-party libraries
-export LUA_PATH="$HOME/.local/share/lua/?.lua;$HOME/.local/share/lua/3p/?.lua;$HOME/.local/share/luajit-2.1/?.lua;;"
+export LUA_PATH="$HOME/.local/lib/lua/?.lua;$HOME/.local/lib/lua/3p/?.lua;$HOME/.local/share/luajit-2.1/?.lua;;"
