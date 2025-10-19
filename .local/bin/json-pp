@@ -1,0 +1,27 @@
+#!/usr/bin/env luajit
+-- json-pp: JSON pretty printer CLI tool
+
+local json_pp = require("json_pp")
+
+-- Read from stdin or file
+local content
+if #arg > 0 then
+  local f = io.open(arg[1], "r")
+  if not f then
+    io.stderr:write("Error: Could not open file: " .. arg[1] .. "\n")
+    os.exit(1)
+  end
+  content = f:read("*all")
+  f:close()
+else
+  content = io.stdin:read("*all")
+end
+
+-- Pretty print
+local ok, result = pcall(json_pp.prettify, content)
+if not ok then
+  io.stderr:write("Error: " .. result .. "\n")
+  os.exit(1)
+end
+
+print(result)
