@@ -56,3 +56,4 @@
 - stop service: `launchctl stop com.user.nvim`
 - check status: `launchctl list | grep nvim`
 - view logs: `log stream --predicate 'process == "nvim"'`
+- always use atomic commits
