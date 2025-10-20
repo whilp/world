@@ -1,103 +1,63 @@
-#!/usr/bin/env lua
+#!/bin/zsh
 
-local ffi = require("ffi")
-ffi.cdef([[
-  int execv(const char *path, char *const argv[]);
-  typedef void (*sighandler_t)(int);
-  sighandler_t signal(int signum, sighandler_t handler);
-]])
+set -euo pipefail
 
-local home = os.getenv("HOME")
-local nvim = home .. "/.local/share/shimlink/bin/nvim"
-local sock = home .. "/.config/nvim/nvim.sock"
+NVIM_BIN="$HOME/.local/share/shimlink/bin/nvim"
+SOCK="$HOME/.config/nvim/nvim.sock"
 
--- Check for server management commands first
-local server_commands = {cleanup = true, load = true, reload = true, restart = true, serve = true}
-if arg[1] and server_commands[arg[1]] then
-  -- Handle these later in the script
+# Check if invoked as nvimd (daemon mode)
+if [[ "${0:t}" == "nvimd" ]]; then
+  case "${1:-}" in
+    serve)
+      # Source zsh configs for full environment
+      [[ -f ~/.zshenv ]] && source ~/.zshenv
+      [[ -f ~/.zprofile ]] && source ~/.zprofile
+      [[ -f ~/.zshrc ]] && source ~/.zshrc
+
+      # Clean up stale socket
+      rm -f "$SOCK"
+
+      # Cleanup on exit
+      trap "rm -f '$SOCK'" EXIT
+
+      # Start nvim in headless server mode
+      export NVIM_SERVER_MODE=1
+      exec "$NVIM_BIN" --listen "$SOCK" --headless
+      ;;
+
+    reload)
+      if [[ "$(uname -s)" == "Darwin" ]]; then
+        launchctl unload ~/Library/LaunchAgents/com.user.nvim.plist
+        launchctl load ~/Library/LaunchAgents/com.user.nvim.plist
+      else
+        systemctl --user daemon-reload
+      fi
+      ;;
+
+    restart)
+      if [[ "$(uname -s)" == "Darwin" ]]; then
+        launchctl stop com.user.nvim
+        launchctl start com.user.nvim
+      else
+        systemctl --user restart nvim
+      fi
+      ;;
+
+    cleanup)
+      rm -f "$SOCK"
+      ;;
+
+    *)
+      echo "nvimd: unknown command: ${1:-}"
+      echo "Usage: nvimd {serve|reload|restart|cleanup}"
+      exit 1
+      ;;
+  esac
 else
-  -- Client mode: if NVIM_INVIM is set or NVIM_SERVER_MODE is not set
-  local nvim_invim = os.getenv("NVIM_INVIM")
-  local nvim_server_mode = os.getenv("NVIM_SERVER_MODE")
-
-if nvim_invim ~= nil and nvim_invim ~= "" or nvim_server_mode == nil or nvim_server_mode == "" then
-  -- Build command with arguments - use exec to avoid shell overhead
-  -- Build argv array for execv
-  local argv = ffi.new("char*[?]", #arg + 4)
-  argv[0] = ffi.cast("char*", nvim)
-  argv[1] = ffi.cast("char*", "--server")
-  argv[2] = ffi.cast("char*", sock)
-  for i = 1, #arg do
-    argv[i + 2] = ffi.cast("char*", arg[i])
-  end
-  argv[#arg + 3] = nil -- NULL-terminate
-
-  -- Replace current process with nvim
-  ffi.C.execv(nvim, argv)
-
-  -- If execvp returns, it failed
-  os.exit(1)
-end
-end
-
--- Detect platform
-local function get_platform()
-  local handle = io.popen("uname -s")
-  local result = handle:read("*a"):lower():gsub("%s+", "")
-  handle:close()
-  if result == "darwin" then
-    return "darwin"
+  # Client mode: use --server if not already in nvim or in server mode
+  if [[ -z "${NVIM_INVIM:-}" && -z "${NVIM_SERVER_MODE:-}" ]]; then
+    exec "$NVIM_BIN" --server "$SOCK" "$@"
   else
-    return "linux"
-  end
-end
-
--- Server mode: handle cleanup and serve commands
-if arg[1] == "cleanup" then
-  os.remove(sock)
-  os.exit()
-elseif arg[1] == "load" then
-  local platform = get_platform()
-  local cmd
-  if platform == "darwin" then
-    cmd = "launchctl load ~/Library/LaunchAgents/com.user.nvim.plist 2>/dev/null || true"
-  else
-    cmd = "systemctl --user daemon-reload && systemctl --user enable nvim.service"
-  end
-  os.exit(os.execute(cmd))
-elseif arg[1] == "reload" then
-  local platform = get_platform()
-  local cmd
-  if platform == "darwin" then
-    cmd = "launchctl unload ~/Library/LaunchAgents/com.user.nvim.plist && launchctl load ~/Library/LaunchAgents/com.user.nvim.plist"
-  else
-    cmd = "systemctl --user daemon-reload"
-  end
-  os.exit(os.execute(cmd))
-elseif arg[1] == "restart" then
-  local platform = get_platform()
-  local cmd
-  if platform == "darwin" then
-    cmd = "launchctl stop com.user.nvim && launchctl start com.user.nvim"
-  else
-    cmd = "systemctl --user restart nvim"
-  end
-  os.exit(os.execute(cmd))
-elseif arg[1] == "serve" then
-  -- Clean up stale socket before starting
-  os.remove(sock)
-
-  -- Execute nvim in headless mode using exec to replace the process
-  local argv = ffi.new("char*[?]", 5)
-  argv[0] = ffi.cast("char*", nvim)
-  argv[1] = ffi.cast("char*", "--listen")
-  argv[2] = ffi.cast("char*", sock)
-  argv[3] = ffi.cast("char*", "--headless")
-  argv[4] = nil
-
-  -- Replace current process with nvim
-  ffi.C.execv(nvim, argv)
-
-  -- If execv returns, it failed
-  os.exit(1)
-end
+    exec "$NVIM_BIN" "$@"
+  fi
+fi
