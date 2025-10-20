@@ -82,5 +82,6 @@ return {
   },
   aliases = {
     ["nvim-1"] = "nvim",
+    lua = "luajit",
   },
 }

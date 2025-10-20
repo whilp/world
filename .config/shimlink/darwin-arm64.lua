@@ -1,6 +1,7 @@
 return {
   aliases = {
     ["nvim-1"] = "nvim",
+    lua = "luajit",
   },
   binaries = {
     ["ast-grep"] = {
