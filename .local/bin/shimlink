@@ -179,31 +179,39 @@ end
 -- Configuration loading
 local function load_config()
   local config_dir = get_config_dir()
-  local platform_config_path = get_platform_config_path()
+  local platform = get_platform()
 
   -- Check if config directory exists
   if not is_directory(config_dir) then
     stderr_write("shimlink: configuration directory not found at " .. config_dir)
-    stderr_write("shimlink: create ~/.config/shimlink/ with <platform>.lua file")
+    stderr_write("shimlink: create ~/.config/shimlink/ with shimlink.lua file")
     os.exit(1)
   end
 
-  -- Load platform-specific config
-  if not file_exists(platform_config_path) then
-    stderr_write("shimlink: platform configuration file not found at " .. platform_config_path)
-    stderr_write("shimlink: create ~/.config/shimlink/" .. get_platform() .. ".lua with binary configurations")
-    os.exit(1)
+  -- Try shimlink.lua first (unified config), fall back to platform-specific
+  local config_path = path_join(config_dir, "shimlink.lua")
+  local platform_config_path = get_platform_config_path()
+
+  if not file_exists(config_path) then
+    -- Fall back to platform-specific config for backwards compatibility
+    if not file_exists(platform_config_path) then
+      stderr_write("shimlink: configuration file not found")
+      stderr_write("shimlink: create ~/.config/shimlink/shimlink.lua or " .. platform .. ".lua")
+      os.exit(1)
+    end
+    config_path = platform_config_path
   end
 
-  local func, err = loadfile(platform_config_path)
+  local func, err = loadfile(config_path)
   if not func then
-    stderr_write("shimlink: failed to load " .. platform_config_path .. ": " .. tostring(err))
+    stderr_write("shimlink: failed to load " .. config_path .. ": " .. tostring(err))
     os.exit(1)
   end
 
-  local ok, config = pcall(func)
+  -- Pass platform as argument to config (shimlink.lua uses it, platform files ignore it)
+  local ok, config = pcall(func, platform)
   if not ok then
-    stderr_write("shimlink: failed to execute " .. platform_config_path .. ": " .. tostring(config))
+    stderr_write("shimlink: failed to execute " .. config_path .. ": " .. tostring(config))
     os.exit(1)
   end
 
