@@ -1,4 +1,4 @@
-#!/usr/bin/env lua
+#!/usr/bin/env lua-shimlink
 --[[
 shimlink: A symlink-based binary manager that downloads and manages binaries on demand.
 
