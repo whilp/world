@@ -57,3 +57,4 @@
 - check status: `launchctl list | grep nvim`
 - view logs: `log stream --predicate 'process == "nvim"'`
 - always use atomic commits
+- write commit messages like '<component>: <action>'; eg 'comrak-fmt: rewrite in lua'
