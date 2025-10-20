@@ -176,6 +176,14 @@ local function get_bin_dir(binary_name)
   return path_join(get_home_dir(), ".local", "share", "shimlink")
 end
 
+local function get_versioned_dir(binary_name, sha256)
+  return path_join(get_bin_dir(binary_name), sha256:sub(1, 16))
+end
+
+local function get_current_link(binary_name)
+  return path_join(get_bin_dir(binary_name), "current")
+end
+
 -- Configuration loading
 local function load_config()
   local config_dir = get_config_dir()
@@ -269,43 +277,15 @@ local function extract_archive(archive_path, extract_to, executable_path)
   end
 end
 
--- Check if binary needs download
-local function needs_download(binary_name, config)
+-- Check if binary is installed (checks if current symlink exists)
+local function is_installed(binary_name, config)
   local binary_config = config.binaries and config.binaries[binary_name]
   if not binary_config then
-    stderr_write("shimlink: no configuration found for " .. binary_name)
     return false
   end
 
-  -- Get the path to the executable
-  local bin_dir = get_bin_dir(binary_name)
-  local path = binary_config.path
-  local binary_path
-
-  if path then
-    binary_path = path_join(bin_dir, path)
-  else
-    binary_path = path_join(bin_dir, binary_name)
-  end
-
-  if not file_exists(binary_path) then
-    return true
-  end
-
-  local expected_sha256 = binary_config.sha256
-  if not expected_sha256 then
-    return false
-  end
-
-  -- Verify checksum
-  local actual_sha256 = calculate_sha256(binary_path)
-
-  if actual_sha256 ~= expected_sha256 then
-    stderr_write("shimlink: checksum mismatch for " .. binary_name .. ", will re-download")
-    return true
-  end
-
-  return false
+  local current_link = get_current_link(binary_name)
+  return file_exists(current_link)
 end
 
 -- Update config checksum
@@ -340,7 +320,35 @@ local function update_config_checksum(binary_name, config, new_checksum)
   stderr_write("shimlink: updated checksum for " .. binary_name .. " to " .. new_checksum)
 end
 
--- Create symlink
+-- Create symlink atomically
+local function create_symlink_atomic(target, link_path)
+  local temp_link = link_path .. ".tmp." .. os.time()
+
+  -- Create parent directories if needed
+  mkdir_p(dirname(link_path))
+
+  -- Remove temp link if it exists
+  ffi.C.unlink(temp_link)
+
+  -- Create temporary symlink
+  local result = ffi.C.symlink(target, temp_link)
+  if result ~= 0 then
+    stderr_write("shimlink: failed to create temporary symlink " .. temp_link)
+    return false
+  end
+
+  -- Atomically replace the target symlink
+  local rename_result = os.rename(temp_link, link_path)
+  if not rename_result then
+    stderr_write("shimlink: failed to rename symlink " .. temp_link .. " to " .. link_path)
+    ffi.C.unlink(temp_link)
+    return false
+  end
+
+  return true
+end
+
+-- Create symlink (legacy function for additional symlinks in config)
 local function create_symlink(bin_dir, src_path, dest_path, binary_name)
   local source = path_join(bin_dir, src_path)
 
@@ -368,7 +376,7 @@ local function create_symlink(bin_dir, src_path, dest_path, binary_name)
   end
 end
 
--- Download binary
+-- Download binary and install to versioned directory
 local function download_binary(binary_name, config, force)
   local binary_config = config.binaries and config.binaries[binary_name]
   if not binary_config then
@@ -379,9 +387,6 @@ local function download_binary(binary_name, config, force)
   local url = binary_config.url
   local expected_sha256 = binary_config.sha256
   local path = binary_config.path
-
-  local bin_dir = get_bin_dir(binary_name)
-  mkdir_p(bin_dir)
 
   -- Create temporary directory
   local temp_dir = os.tmpname()
@@ -399,31 +404,45 @@ local function download_binary(binary_name, config, force)
   end
 
   -- Extract or copy binary
-  local extracted_binary
   local extract_temp
+  local binary_for_checksum
 
   if path then
     extract_temp = path_join(temp_dir, "extracted")
     mkdir_p(extract_temp)
     local err
-    extracted_binary, err = extract_archive(download_path, extract_temp, path)
-    if not extracted_binary then
+    local extracted_path
+    extracted_path, err = extract_archive(download_path, extract_temp, path)
+    if not extracted_path then
       stderr_write("shimlink: failed to extract " .. binary_name .. ": " .. err)
       rm_rf(temp_dir)
       return false
     end
+
+    -- Find the actual binary path after stripping components
+    local strip_components = binary_config.strip_components or 0
+    local binary_dir = extract_temp
+    for i = 1, strip_components do
+      local handle = io.popen(string.format("ls -1 %q", binary_dir))
+      local first_entry = handle:read("*l")
+      handle:close()
+      if first_entry then
+        binary_dir = path_join(binary_dir, first_entry)
+      end
+    end
+    binary_for_checksum = path_join(binary_dir, path)
   else
-    extracted_binary = download_path
     extract_temp = temp_dir
+    binary_for_checksum = download_path
   end
 
   -- Make executable
-  if file_exists(extracted_binary) then
-    ffi.C.chmod(extracted_binary, tonumber("0755", 8))
+  if file_exists(binary_for_checksum) then
+    ffi.C.chmod(binary_for_checksum, tonumber("0755", 8))
   end
 
   -- Calculate actual checksum
-  local actual_sha256 = calculate_sha256(extracted_binary)
+  local actual_sha256 = calculate_sha256(binary_for_checksum)
 
   -- Handle checksum verification and updates
   if force then
@@ -439,33 +458,121 @@ local function download_binary(binary_name, config, force)
     end
   end
 
-  -- Remove existing directory if it exists
-  if is_directory(bin_dir) or file_exists(bin_dir) then
-    rm_rf(bin_dir)
+  -- Create versioned directory using checksum
+  local versioned_dir = get_versioned_dir(binary_name, actual_sha256)
+  local bin_dir = get_bin_dir(binary_name)
+  mkdir_p(bin_dir)
+
+  -- Check if this version already exists
+  if is_directory(versioned_dir) then
+    stderr_write("shimlink: version " .. actual_sha256:sub(1, 16) .. " already exists")
+    rm_rf(temp_dir)
+    return true, actual_sha256
   end
 
+  -- Move extracted content to versioned directory
   if path then
-    -- Move the entire extracted directory structure
-    os.execute(string.format("mv %q %q", extract_temp, bin_dir))
+    local strip_components = binary_config.strip_components or 0
+
+    if strip_components > 0 then
+      -- Strip top-level directories by moving only the inner content
+      -- For strip_components=1, we extract to temp, then move the first subdir's contents
+      local source_dir = extract_temp
+      for i = 1, strip_components do
+        -- Find the single directory at this level
+        local handle = io.popen(string.format("ls -1 %q", source_dir))
+        local first_entry = handle:read("*l")
+        handle:close()
+
+        if first_entry then
+          source_dir = path_join(source_dir, first_entry)
+        else
+          stderr_write("shimlink: warning: cannot strip " .. i .. " components, directory empty")
+          break
+        end
+      end
+      os.execute(string.format("mv %q %q", source_dir, versioned_dir))
+    else
+      -- Move the entire extracted directory structure
+      os.execute(string.format("mv %q %q", extract_temp, versioned_dir))
+    end
   else
     -- For direct binary downloads, create directory and move binary
-    mkdir_p(bin_dir)
-    local final_path = path_join(bin_dir, binary_name)
-    os.execute(string.format("mv %q %q", extracted_binary, final_path))
+    mkdir_p(versioned_dir)
+    local final_path = path_join(versioned_dir, binary_name)
+    os.execute(string.format("mv %q %q", binary_for_checksum, final_path))
   end
 
-  stderr_write("shimlink: installed " .. binary_name)
+  stderr_write("shimlink: installed " .. binary_name .. " version " .. actual_sha256:sub(1, 16))
 
   -- Create additional symlinks if configured
   local symlinks = binary_config.symlinks
   if symlinks then
     for src_path, dest_path in pairs(symlinks) do
-      create_symlink(bin_dir, src_path, dest_path, binary_name)
+      create_symlink(versioned_dir, src_path, dest_path, binary_name)
     end
   end
 
   -- Clean up temp directory
   rm_rf(temp_dir)
+
+  return true, actual_sha256
+end
+
+-- Update binary: download and create symlinks
+local function update_binary(binary_name, config, force)
+  local binary_config = config.binaries and config.binaries[binary_name]
+  if not binary_config then
+    stderr_write("shimlink: no configuration found for " .. binary_name)
+    return false
+  end
+
+  -- Download and install to versioned directory
+  local success, sha256 = download_binary(binary_name, config, force)
+  if not success then
+    return false
+  end
+
+  local versioned_dir = get_versioned_dir(binary_name, sha256)
+  local path = binary_config.path
+  local binary_path
+
+  if path then
+    binary_path = path_join(versioned_dir, path)
+  else
+    binary_path = path_join(versioned_dir, binary_name)
+  end
+
+  if not file_exists(binary_path) then
+    stderr_write("shimlink: binary not found at " .. binary_path)
+    return false
+  end
+
+  -- Update "current" symlink atomically
+  local current_link = get_current_link(binary_name)
+  local relative_target = basename(versioned_dir)
+  if not create_symlink_atomic(relative_target, current_link) then
+    stderr_write("shimlink: failed to update current symlink for " .. binary_name)
+    return false
+  end
+  stderr_write("shimlink: updated " .. current_link .. " -> " .. relative_target)
+
+  -- Create symlink in .local/bin with relative path
+  local bin_link = path_join(get_home_dir(), ".local", "bin", binary_name)
+  local relative_path_to_current
+  if path then
+    -- For archives with paths: ../share/shimlink/<binary>/current/<path>
+    relative_path_to_current = path_join("..", "share", "shimlink", binary_name, "current", path)
+  else
+    -- For direct binaries: ../share/shimlink/<binary>/current/<binary>
+    relative_path_to_current = path_join("..", "share", "shimlink", binary_name, "current", binary_name)
+  end
+
+  if not create_symlink_atomic(relative_path_to_current, bin_link) then
+    stderr_write("shimlink: failed to create bin symlink for " .. binary_name)
+    return false
+  end
+  stderr_write("shimlink: updated " .. bin_link .. " -> " .. relative_path_to_current)
 
   return true
 end
@@ -488,7 +595,7 @@ local function get_target_name()
   return name
 end
 
--- Execute binary
+-- Execute binary (legacy function for on-demand execution)
 local function exec_binary(binary_name, args, config)
   local binary_config = config.binaries and config.binaries[binary_name]
   if not binary_config then
@@ -496,14 +603,21 @@ local function exec_binary(binary_name, args, config)
     os.exit(1)
   end
 
-  local bin_dir = get_bin_dir(binary_name)
+  -- Check if binary is installed via current symlink
+  local current_link = get_current_link(binary_name)
+  if not file_exists(current_link) then
+    stderr_write("shimlink: " .. binary_name .. " not installed")
+    stderr_write("shimlink: run 'shimlink update " .. binary_name .. "' to install")
+    os.exit(1)
+  end
+
   local path = binary_config.path
   local binary_path
 
   if path then
-    binary_path = path_join(bin_dir, path)
+    binary_path = path_join(current_link, path)
   else
-    binary_path = path_join(bin_dir, binary_name)
+    binary_path = path_join(current_link, binary_name)
   end
 
   if not file_exists(binary_path) then
@@ -560,22 +674,22 @@ local function show_help()
   print("shimlink: A symlink-based binary manager")
   print()
   print("Usage:")
-  print("  shimlink                    # Show this help")
-  print("  shimlink -f <binary>        # Force download and update checksum")
-  print("  ln -s shimlink <binary>     # Create symlink for managed binary")
-  print("  <binary> [args...]          # Execute binary through shimlink")
+  print("  shimlink update <binary>...    # Download and symlink binaries")
+  print("  shimlink update -f <binary>... # Force update and update checksum")
+  print("  shimlink                       # Show this help")
   print()
   print("Options:")
-  print("  -f, --force                 # Skip checksum validation and update config")
+  print("  -f, --force                    # Skip checksum validation and update config")
   print()
-  print("When invoked through a symlink, shimlink automatically downloads")
-  print("and manages the target binary, then executes it with all arguments.")
+  print("The update command downloads binaries to versioned directories and creates")
+  print("atomic symlinks in ~/.local/bin. Binaries are stored in versioned directories")
+  print("with a 'current' symlink pointing to the active version.")
   print()
   print("Aliases can be defined in the 'aliases' section of the config to map")
   print("alternative names to actual binary names (e.g., 'nvim-1' -> 'nvim').")
   print()
-  print("Configuration: ~/.config/shimlink/<platform>.lua")
-  print("Binaries stored: ~/.local/share/shimlink/<binary>/")
+  print("Configuration: ~/.config/shimlink/shimlink.lua")
+  print("Binaries stored: ~/.local/share/shimlink/<binary>/<version>/")
 end
 
 -- Main entry point
@@ -584,54 +698,62 @@ local function main()
 
   if target_name == "shimlink" then
     -- Parse arguments when invoked as shimlink directly
-    local force = false
-    local binary = nil
-    local show_help_flag = false
-
-    local i = 1
-    while i <= #arg do
-      if arg[i] == "-f" or arg[i] == "--force" then
-        force = true
-        i = i + 1
-      elseif arg[i] == "-h" or arg[i] == "--help" then
-        show_help_flag = true
-        i = i + 1
-      else
-        binary = arg[i]
-        i = i + 1
-      end
-    end
-
-    if show_help_flag or (not force and not binary) then
+    if #arg == 0 or arg[1] == "-h" or arg[1] == "--help" then
       show_help()
       os.exit(0)
     end
 
-    if force then
-      if not binary then
-        stderr_write("shimlink: -f requires a binary name")
+    -- Load configuration
+    local ok, config = pcall(load_config)
+    if not ok then
+      stderr_write("shimlink: failed to load configuration: " .. tostring(config))
+      os.exit(1)
+    end
+
+    -- Handle update command
+    if arg[1] == "update" then
+      local force = false
+      local binaries = {}
+
+      local i = 2
+      while i <= #arg do
+        if arg[i] == "-f" or arg[i] == "--force" then
+          force = true
+        elseif arg[i] == "-h" or arg[i] == "--help" then
+          show_help()
+          os.exit(0)
+        else
+          table.insert(binaries, arg[i])
+        end
+        i = i + 1
+      end
+
+      if #binaries == 0 then
+        stderr_write("shimlink: update requires at least one binary name")
         os.exit(1)
       end
 
-      -- Load configuration
-      local ok, config = pcall(load_config)
-      if not ok then
-        stderr_write("shimlink: failed to load configuration: " .. tostring(config))
-        os.exit(1)
+      local failed = false
+      for _, binary in ipairs(binaries) do
+        if not update_binary(binary, config, force) then
+          stderr_write("shimlink: failed to update " .. binary)
+          failed = true
+        end
       end
 
-      -- Force download the specified binary
-      if not download_binary(binary, config, true) then
-        stderr_write("shimlink: failed to force download " .. binary)
+      if failed then
         os.exit(1)
       end
       os.exit(0)
     end
 
-    show_help()
-    os.exit(0)
+    -- Unknown command
+    stderr_write("shimlink: unknown command '" .. arg[1] .. "'")
+    stderr_write("shimlink: run 'shimlink' for help")
+    os.exit(1)
   end
 
+  -- Legacy mode: invoked through a symlink
   -- Load configuration
   local ok, config = pcall(load_config)
   if not ok then
@@ -641,14 +763,6 @@ local function main()
 
   -- Resolve alias to actual binary name
   local actual_binary_name = resolve_alias(target_name, config)
-
-  -- Check if we need to download the binary
-  if needs_download(actual_binary_name, config) then
-    if not download_binary(actual_binary_name, config, false) then
-      stderr_write("shimlink: failed to ensure " .. actual_binary_name .. " is available")
-      os.exit(1)
-    end
-  end
 
   -- Execute the target binary with all arguments
   local args = {}
