@@ -135,6 +135,13 @@ end
 -- comrak (single binary, not archived)
 local comrak_map = platform_maps.rust_triple
 if comrak_map[platform] then
+  local comrak_exec
+  if platform == "linux-arm64" then
+    comrak_exec = { "/lib/ld-linux-aarch64.so.1", "{binary}" }
+  elseif platform == "linux-x86_64" then
+    comrak_exec = { "/lib64/ld-linux-x86-64.so.2", "{binary}" }
+  end
+
   binaries.comrak = {
     sha256 = ({
       ["darwin-arm64"] = "ebff398559a48112e7699ad8ce8a35e1f5f0cf469ed44d55318b1d794abf1090",
@@ -142,6 +149,8 @@ if comrak_map[platform] then
       ["linux-x86_64"] = "d3ffc8f04f85a47fa325081affd6b572ad456b542a4d3a1207ef4685afd7e9e2",
     })[platform],
     url = string.format("https://github.com/kivikakk/comrak/releases/download/v0.41.0/comrak-0.41.0-%s", comrak_map[platform]),
+    -- comrak is built with nix and has a hardcoded interpreter path, use system linker
+    exec = comrak_exec,
   }
 end
 

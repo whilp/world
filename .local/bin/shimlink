@@ -511,20 +511,47 @@ local function exec_binary(binary_name, args, config)
     os.exit(1)
   end
 
+  -- Check if there's a custom exec array
+  local exec_cmd = binary_config.exec
+  local exec_path = binary_path
+  local exec_args = {}
+
+  if exec_cmd and type(exec_cmd) == "table" then
+    -- Custom exec array: ["/path/to/wrapper", "{binary}", ...]
+    -- Build the command by replacing {binary} with binary_path
+    exec_path = exec_cmd[1]
+    for i = 2, #exec_cmd do
+      if exec_cmd[i] == "{binary}" then
+        table.insert(exec_args, binary_path)
+      else
+        table.insert(exec_args, exec_cmd[i])
+      end
+    end
+    -- Append user args
+    for _, arg in ipairs(args) do
+      table.insert(exec_args, arg)
+    end
+  else
+    -- Normal execution: just the binary and args
+    for _, arg in ipairs(args) do
+      table.insert(exec_args, arg)
+    end
+  end
+
   -- Build argv array for execve
-  local argv = ffi.new("char*[?]", #args + 2)
-  argv[0] = ffi.cast("char*", binary_path)
-  for i, arg_val in ipairs(args) do
+  local argv = ffi.new("char*[?]", #exec_args + 2)
+  argv[0] = ffi.cast("char*", exec_path)
+  for i, arg_val in ipairs(exec_args) do
     argv[i] = ffi.cast("char*", arg_val)
   end
-  argv[#args + 1] = nil
+  argv[#exec_args + 1] = nil
 
   -- Use the environ global variable directly (works on Linux and macOS)
   -- execve expects char *const envp[], so we just pass environ
-  local result = ffi.C.execve(binary_path, argv, ffi.C.environ)
+  local result = ffi.C.execve(exec_path, argv, ffi.C.environ)
 
   -- If execve returns, an error occurred
-  stderr_write("shimlink: failed to exec " .. binary_path .. ": " .. tostring(result))
+  stderr_write("shimlink: failed to exec " .. exec_path .. ": " .. tostring(result))
   os.exit(1)
 end
 
