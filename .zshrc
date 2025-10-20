@@ -10,6 +10,7 @@ set -o vi
 typeset -aU path
 
 path=(
+  "$HOME/.local/share/shimlink/bin"
   "$HOME/.local/bin"
   "$HOME/stripe/space-commander/bin"
   "/pay/deploy/claude-wrapper-hosts/current/bin"
