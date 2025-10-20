@@ -2,7 +2,7 @@
 
 export SRC="$PWD"
 export DST="$HOME"
-export PATH="$SRC/.local/bin:$PATH"
+export PATH="$DST/.local/share/shimlink/bin:$SRC/.local/bin:$PATH"
 export SHELLINIT="$DST/.config/shellinit"
 
 main() {
@@ -110,9 +110,6 @@ _shimlink() {
 }
 
 _claude() {
-  local claude=$(command -v claude 2>/dev/null)
-  ln -sf "${claude:-shimlink}" "$DST/.local/bin/claude"
-
   local config="$DST/.claude.json"
   [ -r "$config" ] && return
 
