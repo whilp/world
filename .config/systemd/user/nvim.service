@@ -5,6 +5,7 @@ After=default.target
 [Service]
 Type=simple
 Environment="NVIM_SERVER_MODE=1"
+Environment="PATH=%h/.local/bin:/usr/local/bin:/usr/bin:/bin"
 Environment="LUA_PATH=%h/.local/lib/lua/?.lua;%h/.local/lib/lua/3p/?.lua;./?.lua;/usr/share/luajit-2.1/?.lua;/usr/local/share/lua/5.1/?.lua;/usr/local/share/lua/5.1/?/init.lua;/usr/share/lua/5.1/?.lua;/usr/share/lua/5.1/?/init.lua;;"
 ExecStart=%h/.local/bin/nvim serve
 ExecStopPost=%h/.local/bin/nvim cleanup
