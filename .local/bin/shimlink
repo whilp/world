@@ -169,19 +169,27 @@ local function get_platform_config_path()
   return path_join(get_config_dir(), get_platform() .. ".lua")
 end
 
-local function get_bin_dir(binary_name)
-  if binary_name then
-    return path_join(get_home_dir(), ".local", "share", "shimlink", binary_name)
-  end
+local function get_shimlink_root()
   return path_join(get_home_dir(), ".local", "share", "shimlink")
 end
 
-local function get_versioned_dir(binary_name, sha256)
-  return path_join(get_bin_dir(binary_name), sha256:sub(1, 16))
+local function get_storage_dir(binary_name)
+  if binary_name then
+    return path_join(get_shimlink_root(), "_", binary_name)
+  end
+  return path_join(get_shimlink_root(), "_")
 end
 
-local function get_current_link(binary_name)
-  return path_join(get_bin_dir(binary_name), "current")
+local function get_versioned_dir(binary_name, sha256)
+  return path_join(get_storage_dir(binary_name), sha256:sub(1, 16))
+end
+
+local function get_shimlink_bin_dir()
+  return path_join(get_shimlink_root(), "bin")
+end
+
+local function get_shimlink_bin_link(binary_name)
+  return path_join(get_shimlink_bin_dir(), binary_name)
 end
 
 -- Configuration loading
@@ -277,15 +285,15 @@ local function extract_archive(archive_path, extract_to, executable_path)
   end
 end
 
--- Check if binary is installed (checks if current symlink exists)
+-- Check if binary is installed (checks if shimlink bin link exists)
 local function is_installed(binary_name, config)
   local binary_config = config.binaries and config.binaries[binary_name]
   if not binary_config then
     return false
   end
 
-  local current_link = get_current_link(binary_name)
-  return file_exists(current_link)
+  local bin_link = get_shimlink_bin_link(binary_name)
+  return file_exists(bin_link)
 end
 
 -- Update config checksum
@@ -460,8 +468,8 @@ local function download_binary(binary_name, config, force)
 
   -- Create versioned directory using checksum
   local versioned_dir = get_versioned_dir(binary_name, actual_sha256)
-  local bin_dir = get_bin_dir(binary_name)
-  mkdir_p(bin_dir)
+  local storage_dir = get_storage_dir(binary_name)
+  mkdir_p(storage_dir)
 
   -- Check if this version already exists
   if is_directory(versioned_dir) then
@@ -548,31 +556,36 @@ local function update_binary(binary_name, config, force)
     return false
   end
 
-  -- Update "current" symlink atomically
-  local current_link = get_current_link(binary_name)
-  local relative_target = basename(versioned_dir)
-  if not create_symlink_atomic(relative_target, current_link) then
-    stderr_write("shimlink: failed to update current symlink for " .. binary_name)
-    return false
-  end
-  stderr_write("shimlink: updated " .. current_link .. " -> " .. relative_target)
+  -- Create shimlink/bin/ symlink pointing to versioned binary
+  local shimlink_bin_link = get_shimlink_bin_link(binary_name)
+  local short_sha = sha256:sub(1, 16)
 
-  -- Create symlink in .local/bin with relative path
-  local bin_link = path_join(get_home_dir(), ".local", "bin", binary_name)
-  local relative_path_to_current
+  -- Relative path from shimlink/bin/ to ../_/<binary>/<sha>/<path>
+  local relative_to_versioned
   if path then
-    -- For archives with paths: ../share/shimlink/<binary>/current/<path>
-    relative_path_to_current = path_join("..", "share", "shimlink", binary_name, "current", path)
+    relative_to_versioned = path_join("..", "_", binary_name, short_sha, path)
   else
-    -- For direct binaries: ../share/shimlink/<binary>/current/<binary>
-    relative_path_to_current = path_join("..", "share", "shimlink", binary_name, "current", binary_name)
+    relative_to_versioned = path_join("..", "_", binary_name, short_sha, binary_name)
   end
 
-  if not create_symlink_atomic(relative_path_to_current, bin_link) then
-    stderr_write("shimlink: failed to create bin symlink for " .. binary_name)
+  if not create_symlink_atomic(relative_to_versioned, shimlink_bin_link) then
+    stderr_write("shimlink: failed to create shimlink bin link for " .. binary_name)
     return false
   end
-  stderr_write("shimlink: updated " .. bin_link .. " -> " .. relative_path_to_current)
+  stderr_write("shimlink: updated " .. shimlink_bin_link .. " -> " .. relative_to_versioned)
+
+  -- Create alias symlinks if configured
+  local aliases = config.aliases or {}
+  for alias_name, target_name in pairs(aliases) do
+    if target_name == binary_name then
+      local alias_link = get_shimlink_bin_link(alias_name)
+      if not create_symlink_atomic(binary_name, alias_link) then
+        stderr_write("shimlink: warning: failed to create alias " .. alias_name .. " -> " .. binary_name)
+      else
+        stderr_write("shimlink: created alias " .. alias_link .. " -> " .. binary_name)
+      end
+    end
+  end
 
   return true
 end
@@ -603,23 +616,18 @@ local function exec_binary(binary_name, args, config)
     os.exit(1)
   end
 
-  -- Check if binary is installed via current symlink
-  local current_link = get_current_link(binary_name)
-  if not file_exists(current_link) then
+  -- Check if binary is installed via shimlink bin link
+  local shimlink_bin_link = get_shimlink_bin_link(binary_name)
+  if not file_exists(shimlink_bin_link) then
     stderr_write("shimlink: " .. binary_name .. " not installed")
     stderr_write("shimlink: run 'shimlink update " .. binary_name .. "' to install")
     os.exit(1)
   end
 
-  local path = binary_config.path
-  local binary_path
+  -- Resolve the symlink to get the actual binary path
+  local binary_path = shimlink_bin_link
 
-  if path then
-    binary_path = path_join(current_link, path)
-  else
-    binary_path = path_join(current_link, binary_name)
-  end
-
+  -- Read the symlink to ensure we're pointing to the right file
   if not file_exists(binary_path) then
     stderr_write("shimlink: binary " .. binary_name .. " not found at " .. binary_path)
     os.exit(1)
