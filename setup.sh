@@ -81,6 +81,10 @@ _luajit() {
   export BOOTSTRAP_LUAJIT="$luajit_dir/bin/luajit"
   export LUA_PATH="$DST/.local/lib/lua/?.lua;$DST/.local/lib/lua/?/init.lua;;"
 
+  # Create initial lua-shimlink symlink for shimlink's shebang
+  mkdir -p "$DST/.local/bin"
+  ln -sf "$BOOTSTRAP_LUAJIT" "$DST/.local/bin/lua-shimlink"
+
   echo "Bootstrapped LuaJIT at $BOOTSTRAP_LUAJIT" >&2
 }
 
