@@ -1,18 +1,22 @@
-#!/usr/bin/env python3
-import subprocess
-import sys
-import re
+#!/usr/bin/env luajit
 
-# Run comrak with the conform config args
-result = subprocess.run([
-    "comrak", "--to", "commonmark", "--gfm", "--width", "0", 
-    "--front-matter-delimiter", "---"
-] + sys.argv[1:], capture_output=True, text=True)
+-- Build comrak command with arguments
+local args = {"comrak", "--to", "commonmark", "--gfm", "--width", "0", "--front-matter-delimiter", "---"}
+for i = 1, #arg do
+    table.insert(args, arg[i])
+end
 
-if result.returncode != 0:
-    sys.stderr.write(result.stderr)
-    sys.exit(result.returncode)
+-- Run comrak and capture output
+local handle = io.popen(table.concat(args, " "))
+local output = handle:read("*a")
+local success, exit_type, exit_code = handle:close()
 
-# Fix space after triple backticks with language info
-output = re.sub(r'^``` (.+)', r'```\1', result.stdout, flags=re.MULTILINE)
-sys.stdout.write(output)
+if not success then
+    os.exit(exit_code or 1)
+end
+
+-- Fix space after triple backticks with language info
+output = output:gsub("^``` (.+)", "```%1"):gsub("\n``` (.+)", "\n```%1")
+
+-- Write to stdout
+io.write(output)
