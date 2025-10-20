@@ -60,8 +60,9 @@ local function rust_binary(repo, version, name, shas, triple_map, bin_name, incl
   end
 
   return {
-    path = string.format("%s/%s", dir_name, bin_name),
+    path = bin_name,
     sha256 = shas[platform],
+    strip_components = 1,  -- strip the top-level archive directory
     url = string.format("https://github.com/%s/releases/download/%s/%s.tar.gz",
       repo, version, archive_name),
   }
@@ -81,10 +82,11 @@ local function simple_binary(repo, version, name, shas, ext, map)
 end
 
 -- Builder for archive with custom path inside
-local function archive_binary(repo, version, archive_name, inner_path, sha256)
+local function archive_binary(repo, version, archive_name, inner_path, sha256, strip_components)
   return {
     path = inner_path,
     sha256 = sha256,
+    strip_components = strip_components or 0,
     url = string.format("https://github.com/%s/releases/download/%s/%s",
       repo, version, archive_name),
   }
@@ -104,16 +106,20 @@ end
 local binaries = {}
 
 -- ast-grep
-binaries["ast-grep"] = rust_binary("ast-grep/ast-grep", "0.28.0", "app", {
-  ["darwin-arm64"] = "0377bd0d8ea17dcf2e5e76921c7a8324efd4a2b1ae1a321216f896f367da59db",
-  ["linux-arm64"] = "147fe3d3857f099df957ff2969eb9adea7b44cceeaa3d50a5e8f4a46acbab134",
-  ["linux-x86_64"] = "e34f8222846594570dae0edb99b36a9927b44b86597fb33814c2bf366b583b4a",
-})
-if binaries["ast-grep"] then
-  -- ast-grep uses .zip instead of .tar.gz
-  binaries["ast-grep"].url = binaries["ast-grep"].url:gsub("%.tar%.gz$", ".zip")
-  -- ast-grep extracts to just "ast-grep" not "app"
-  binaries["ast-grep"].path = "ast-grep"
+-- ast-grep has unusual naming: releases are named "sg-{version}-{platform}"
+local ast_grep_map = platform_maps.simple
+if ast_grep_map[platform] then
+  local plat = ast_grep_map[platform]
+  binaries["ast-grep"] = {
+    path = "ast-grep",
+    sha256 = ({
+      ["darwin-arm64"] = "0377bd0d8ea17dcf2e5e76921c7a8324efd4a2b1ae1a321216f896f367da59db",
+      ["linux-arm64"] = "147fe3d3857f099df957ff2969eb9adea7b44cceeaa3d50a5e8f4a46acbab134",
+      ["linux-x86_64"] = "e34f8222846594570dae0edb99b36a9927b44b86597fb33814c2bf366b583b4a",
+    })[platform],
+    strip_components = 1,
+    url = string.format("https://github.com/ast-grep/ast-grep/releases/download/0.28.0/sg-0.28.0-%s.zip", plat),
+  }
 end
 
 -- biome
@@ -164,40 +170,50 @@ binaries.delta = rust_binary("dandavison/delta", "0.18.2", "delta", {
 -- gh (GitHub CLI)
 if platform == "darwin-arm64" then
   binaries.gh = archive_binary("cli/cli", "v2.79.0", "gh_2.79.0_macOS_arm64.zip",
-    "gh_2.79.0_macOS_arm64/bin/gh",
-    "20f0520e9cc872b543bd5e31984f64932b197732c3d3df2c7367d0dc66e7a450")
+    "bin/gh",
+    "20f0520e9cc872b543bd5e31984f64932b197732c3d3df2c7367d0dc66e7a450",
+    1)  -- strip gh_2.79.0_macOS_arm64/
+elseif platform == "linux-arm64" then
+  binaries.gh = archive_binary("cli/cli", "v2.79.0", "gh_2.79.0_linux_arm64.tar.gz",
+    "bin/gh",
+    "ee4a9a73720c68152340de6a130ed3bf499d5817a7434bd3d52377acc32a8a67",
+    1)  -- strip gh_2.79.0_linux_arm64/
 elseif platform == "linux-x86_64" then
   binaries.gh = archive_binary("cli/cli", "v2.79.0", "gh_2.79.0_linux_amd64.tar.gz",
-    "gh_2.79.0_linux_amd64/bin/gh",
-    "da5b8b030353dab06e1f170a40967abece3ee78166723fa66141ba02c3234790")
+    "bin/gh",
+    "da5b8b030353dab06e1f170a40967abece3ee78166723fa66141ba02c3234790",
+    1)  -- strip gh_2.79.0_linux_amd64/
 end
 
 -- luajit
 local luajit_version = "2025.10.16-25a61a18"
 if platform == "darwin-arm64" then
   binaries.luajit = {
-    path = string.format("luajit-%s-darwin-arm64/bin/luajit", luajit_version),
+    path = "bin/luajit",
     sha256 = "2c081318a9a9de0e61d6d8cad6b150043fac550a4fc17ec3cfb8a52f9b5d263c",
+    strip_components = 1,
     symlinks = {
-      [string.format("luajit-%s-darwin-arm64/share/luajit-2.1", luajit_version)] = "~/.local/share/luajit-2.1",
+      ["share/luajit-2.1"] = "~/.local/share/luajit-2.1",
     },
     url = string.format("https://github.com/whilp/dotfiles/releases/download/luajit-3/luajit-%s-darwin-arm64.tar.gz", luajit_version),
   }
 elseif platform == "linux-arm64" then
   binaries.luajit = {
-    path = string.format("luajit-%s-linux-arm64/bin/luajit", luajit_version),
+    path = "bin/luajit",
     sha256 = "a64256bebcca54f243bcd9c0aac075c1d3632c0beef81193ce3245977c4a1036",
+    strip_components = 1,
     symlinks = {
-      [string.format("luajit-%s-linux-arm64/bin/luajit", luajit_version)] = "~/.local/bin/lua-shimlink",
+      ["bin/luajit"] = "~/.local/bin/lua-shimlink",
     },
     url = string.format("https://github.com/whilp/dotfiles/releases/download/luajit-3/luajit-%s-linux-arm64.tar.gz", luajit_version),
   }
 elseif platform == "linux-x86_64" then
   binaries.luajit = {
-    path = string.format("luajit-%s-linux-x64/bin/luajit", luajit_version),
+    path = "bin/luajit",
     sha256 = "6263fa87f0d7e07a70ee0ab40c2831c5003137c2c84bb4d308065be91d77b37f",
+    strip_components = 1,
     symlinks = {
-      [string.format("luajit-%s-linux-x64/bin/luajit", luajit_version)] = "~/.local/bin/lua-shimlink",
+      ["bin/luajit"] = "~/.local/bin/lua-shimlink",
     },
     url = string.format("https://github.com/whilp/dotfiles/releases/download/luajit-3/luajit-%s-linux-x64.tar.gz", luajit_version),
   }
@@ -213,22 +229,25 @@ binaries.marksman = simple_binary("artempyanykh/marksman", "2024-12-18", "marksm
 -- nvim
 if platform == "darwin-arm64" then
   binaries.nvim = {
-    path = "nvim-macos-arm64/bin/nvim",
+    path = "bin/nvim",
     sha256 = "46d9ceb410bad2ca1d93bad133360867af7162505040e7efb4fac9fb860a90f4",
+    strip_components = 1,
     upstream_url = "https://github.com/neovim/neovim/releases/download/nightly/nvim-macos-arm64.tar.gz",
     url = "https://github.com/whilp/dotfiles/releases/download/2025.09.07/nvim-macos-arm64.tar.gz",
   }
 elseif platform == "linux-arm64" then
   binaries.nvim = {
-    path = "nvim-linux-arm64/bin/nvim",
+    path = "bin/nvim",
     sha256 = "87bb55ec3eafff4ccc1466e1e2f5e1f66d1a48e518553fa80bd7b58c805b74e3",
+    strip_components = 1,
     upstream_url = "https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-arm64.tar.gz",
     url = "https://github.com/whilp/dotfiles/releases/download/2025.10.04/nvim-linux-arm64.tar.gz",
   }
 elseif platform == "linux-x86_64" then
   binaries.nvim = {
-    path = "nvim-linux-x86_64/bin/nvim",
+    path = "bin/nvim",
     sha256 = "ff97080925d17e6c4f80e98252ead500fcbdc20ade14cf17c8ceaccd2a0ecdf8",
+    strip_components = 1,
     upstream_url = "https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-x86_64.tar.gz",
     url = "https://github.com/whilp/dotfiles/releases/download/2025.09.07/nvim-linux-x86_64.tar.gz",
   }
@@ -304,12 +323,13 @@ end
 -- superhtml
 local superhtml_map = platform_maps.arch_os
 binaries.superhtml = {
-  path = string.format("%s/superhtml", superhtml_map[platform]),
+  path = "superhtml",
   sha256 = ({
     ["darwin-arm64"] = "e20c63e0046fb03bced8a5168267fab2ef71381e9e96c9310f5ea0b7ce3a7ab6",
     ["linux-arm64"] = "2450946a457e96a56b3baeac4d54943b3838c723e4beeb3383ff458aa6ac0cf0",
     ["linux-x86_64"] = "aeef7e31e7c1885354be05907252af090b1d6dfce08b51ce09f90a109c3d0cbe",
   })[platform],
+  strip_components = 1,
   url = string.format("https://github.com/kristoff-it/superhtml/releases/download/v0.5.3/%s.tar.gz", superhtml_map[platform]),
 }
 
