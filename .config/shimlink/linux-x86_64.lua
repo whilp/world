@@ -33,6 +33,9 @@ return {
     luajit = {
       path = "luajit-2025.10.16-25a61a18-linux-x64/bin/luajit",
       sha256 = "6263fa87f0d7e07a70ee0ab40c2831c5003137c2c84bb4d308065be91d77b37f",
+      symlinks = {
+        ["luajit-2025.10.16-25a61a18-linux-x64/bin/luajit"] = "~/.local/bin/lua-shimlink",
+      },
       url = "https://github.com/whilp/dotfiles/releases/download/luajit-3/luajit-2025.10.16-25a61a18-linux-x64.tar.gz",
     },
     marksman = {
