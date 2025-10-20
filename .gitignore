@@ -24,6 +24,7 @@ paste.*
 .lesshst
 .local/bin/claude
 .local/bin/debugpy
+.local/bin/lua-shimlink
 .local/bin/debugpy-adapter
 .local/bin/f2py
 .local/bin/fonttools
