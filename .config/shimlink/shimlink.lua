@@ -106,10 +106,10 @@ end
 local binaries = {}
 
 -- ast-grep
--- ast-grep has unusual naming: releases are named "sg-{version}-{platform}"
-local ast_grep_map = platform_maps.simple
+-- ast-grep releases are named "app-{rust-triple}.zip" and contain ast-grep binary at root
+local ast_grep_map = platform_maps.rust_triple_gnu
 if ast_grep_map[platform] then
-  local plat = ast_grep_map[platform]
+  local triple = ast_grep_map[platform]
   binaries["ast-grep"] = {
     path = "ast-grep",
     sha256 = ({
@@ -117,8 +117,8 @@ if ast_grep_map[platform] then
       ["linux-arm64"] = "147fe3d3857f099df957ff2969eb9adea7b44cceeaa3d50a5e8f4a46acbab134",
       ["linux-x86_64"] = "e34f8222846594570dae0edb99b36a9927b44b86597fb33814c2bf366b583b4a",
     })[platform],
-    strip_components = 1,
-    url = string.format("https://github.com/ast-grep/ast-grep/releases/download/0.28.0/sg-0.28.0-%s.zip", plat),
+    strip_components = 0,
+    url = string.format("https://github.com/ast-grep/ast-grep/releases/download/0.28.0/app-%s.zip", triple),
   }
 end
 
