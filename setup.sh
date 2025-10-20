@@ -89,23 +89,24 @@ _luajit() {
 }
 
 _shimlink() {
-  ast-grep --version
-  biome --version
-  claude --version
-  comrak --version
-  delta --version
-  gh --version
-  marksman --version
-  nvim --version
-  rg --version
-  ruff --version
-  shfmt --version
-  sqruff --version
-  stylua --version
-  superhtml version
-  tree-sitter --version
-  uv --version
-  luajit --version
+  shimlink update ast-grep &
+  shimlink update biome &
+  shimlink update claude &
+  shimlink update comrak &
+  shimlink update delta &
+  shimlink update gh &
+  shimlink update marksman &
+  shimlink update nvim &
+  shimlink update rg &
+  shimlink update ruff &
+  shimlink update shfmt &
+  shimlink update sqruff &
+  shimlink update stylua &
+  shimlink update superhtml &
+  shimlink update tree-sitter &
+  shimlink update uv &
+  shimlink update luajit &
+  wait
 }
 
 _claude() {
