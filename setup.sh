@@ -131,6 +131,17 @@ _claude() {
   "hasCompletedOnboarding": true
 }'
   echo "$settings" >"$config"
+
+  # Clone ai plugin marketplace if it doesn't exist
+  if [ ! -d "$DST/ai" ]; then
+    git clone https://git.corp.stripe.com/wcm/ai "$DST/ai"
+  fi
+
+  # Add ai marketplace to claude plugins
+  (
+    cd "$DST"
+    claude plugin marketplace add ./ai
+  )
 }
 
 _nvim() {

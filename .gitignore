@@ -9,6 +9,7 @@ paste.*
 .claude.json
 .claude.json.backup
 .claude/.credentials.json
+.claude/plugins/known_marketplaces.json
 .claude/projects/
 .claude/shell-snapshots/
 .claude/session-logger/
