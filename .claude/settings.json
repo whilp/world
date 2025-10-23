@@ -37,11 +37,11 @@
       }
     ]
   },
+  "enabledPlugins": {
+    "pybook-analysis@wcm-ai": true
+  },
   "alwaysThinkingEnabled": false,
   "feedbackSurveyState": {
     "lastShownTime": 1754368507584
-  },
-  "enabledPlugins": {
-    "pybook-analysis@wcm-ai": true
   }
 }
