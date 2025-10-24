@@ -33,28 +33,7 @@
 - create managed binary: `ln -s shimlink <binary>`
 - force update: `shimlink -f <binary>`
 
-## Services
+## Git
 
-### nvim service
-
-#### systemd (Linux)
-
-- user services are in `~/.config/systemd/user/`
-- reload after changes: `systemctl --user daemon-reload`
-- enable at login: `systemctl --user enable nvim`
-- start now: `systemctl --user start nvim`
-- check status: `systemctl --user status nvim`
-- view logs: `journalctl --user -u nvim -f`
-
-#### launchd (macOS)
-
-- user services are in `~/Library/LaunchAgents/`
-- load and start: `launchctl load ~/Library/LaunchAgents/com.user.nvim.plist && launchctl start com.user.nvim`
-- load service: `launchctl load ~/Library/LaunchAgents/com.user.nvim.plist`
-- unload service: `launchctl unload ~/Library/LaunchAgents/com.user.nvim.plist`
-- start service: `launchctl start com.user.nvim` (must load first)
-- stop service: `launchctl stop com.user.nvim`
-- check status: `launchctl list | grep nvim`
-- view logs: `log stream --predicate 'process == "nvim"'`
 - always use atomic commits
 - write commit messages like '<component>: <action>'; eg 'comrak-fmt: rewrite in lua'
