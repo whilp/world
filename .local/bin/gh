@@ -68,7 +68,7 @@ local function generate_env_lua(env)
   return table.concat(parts, "\n")
 end
 
--- Dump mode: output env.lua as tar archive to stdout
+-- Dump mode: output env.lua to stdout
 local function dump_mode()
   local env = collect_gh_env_vars()
 
@@ -78,27 +78,7 @@ local function dump_mode()
   end
 
   local env_lua_content = generate_env_lua(env)
-
-  -- Create tar archive with the env.lua file
-  -- Use a temp file to create the content, then tar it
-  local tmpdir = os.tmpname()
-  os.remove(tmpdir)
-  os.execute(string.format("mkdir -p %q/.config/gh", tmpdir))
-
-  local tmpfile = tmpdir .. "/.config/gh/env.lua"
-  local f = io.open(tmpfile, "w")
-  if not f then
-    stderr_write("gh: failed to create temp file")
-    os.exit(1)
-  end
-  f:write(env_lua_content)
-  f:close()
-
-  -- Create tar archive and output to stdout
-  os.execute(string.format("tar -czf- -C %q .config", tmpdir))
-
-  -- Cleanup
-  os.execute(string.format("rm -rf %q", tmpdir))
+  io.write(env_lua_content)
   os.exit(0)
 end
 
