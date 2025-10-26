@@ -2,7 +2,7 @@
 
 export SRC="$PWD"
 export DST="$HOME"
-export PATH="$DST/.local/share/shimlink/bin:$SRC/.local/bin:$PATH"
+export PATH="$DST/.local/share/shimlink/bin:$DST/.local/bin:$PATH"
 export SHELLINIT="$DST/.config/shellinit"
 
 main() {
@@ -11,9 +11,8 @@ main() {
   _shell
   _luajit
   _shimlink
-  _claude &
-  _nvim &
-  wait
+  _claude
+  _nvim
 }
 
 _backup() {
@@ -21,17 +20,19 @@ _backup() {
   (
     cd "$DST"
     for name in bashrc bash_profile profile zshrc; do
-      [[ -r ".$name" ]] && cp ".$name" "$SHELLINIT/$name"
+      [[ -r ".$name" && ! -f "$SHELLINIT/$name" ]] && cp ".$name" "$SHELLINIT/$name"
     done
   )
 }
 
 _git() {
+  rm -rf "$DST/.git"
   cp -ra "$SRC/.git" "$DST/.git"
   (
     cd "$DST"
     git checkout .
     git config user.email 189851+whilp@users.noreply.github.com
+    git config core.fsmonitor false
   )
   command -v watchman >/dev/null 2>&1 && watchman watch-project "$DST"
 }
@@ -89,24 +90,22 @@ _luajit() {
 }
 
 _shimlink() {
-  shimlink update ast-grep &
-  shimlink update biome &
-  shimlink update claude &
-  shimlink update comrak &
-  shimlink update delta &
-  shimlink update gh &
-  shimlink update marksman &
-  shimlink update nvim &
-  shimlink update rg &
-  shimlink update ruff &
-  shimlink update shfmt &
-  shimlink update sqruff &
-  shimlink update stylua &
-  shimlink update superhtml &
-  shimlink update tree-sitter &
-  shimlink update uv &
-  shimlink update luajit &
-  wait
+  shimlink update ast-grep
+  shimlink update biome
+  shimlink update comrak
+  shimlink update delta
+  shimlink update gh
+  shimlink update marksman
+  shimlink update nvim
+  shimlink update rg
+  shimlink update ruff
+  shimlink update shfmt
+  shimlink update sqruff
+  shimlink update stylua
+  shimlink update superhtml
+  shimlink update tree-sitter
+  shimlink update uv
+  shimlink update luajit
 }
 
 _claude() {
@@ -134,17 +133,22 @@ _claude() {
 
   # Clone ai plugin marketplace if it doesn't exist
   if [ ! -d "$DST/ai" ]; then
-    git clone https://git.corp.stripe.com/wcm/ai "$DST/ai"
+    git clone https://git.corp.stripe.com/wcm/ai "$DST/ai" 2>/dev/null || echo "Skipping ai plugin marketplace (requires Stripe credentials)"
   fi
 
   # Add ai marketplace to claude plugins
-  (
-    cd "$DST"
-    claude plugin marketplace add ./ai
-  )
+  if [ -d "$DST/ai" ]; then
+    (
+      cd "$DST"
+      claude plugin marketplace add ./ai 2>/dev/null || true
+    )
+  fi
 }
 
 _nvim() {
+  # Clean up any stale swap files
+  rm -rf "$DST/.local/state/nvim/swap"
+
   # Install vim.pack plugins by starting nvim headlessly
   NVIM_INVIM=1 nvim-1 --headless +'lua vim.wait(30000, function() return vim.fn.isdirectory(vim.fn.stdpath("data") .. "/site/pack/core/opt/mini.nvim") == 1 end)' +qa
 
@@ -152,8 +156,8 @@ _nvim() {
   NVIM_INVIM=1 nvim-1 --headless +'helptags ALL' +qa
 
   # Load and start nvim server service
-  nvim load
-  nvim restart
+  nvimd reload
+  nvimd restart
 }
 
 main "$@"

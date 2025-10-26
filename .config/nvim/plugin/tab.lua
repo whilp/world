@@ -170,7 +170,7 @@ _G.render_tabline = function()
   local hostname = ''
   if github_repo == '' and codespace_name == '' then
     local whereami = require('whereami')
-    hostname = whereami.get()
+    hostname = whereami.get_with_emoji()
   end
 
   -- Build right section
