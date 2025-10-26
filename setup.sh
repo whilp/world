@@ -11,9 +11,8 @@ main() {
   _shell
   _luajit
   _shimlink
-  _claude &
-  _nvim &
-  wait
+  _claude
+  _nvim
 }
 
 _backup() {
@@ -21,12 +20,13 @@ _backup() {
   (
     cd "$DST"
     for name in bashrc bash_profile profile zshrc; do
-      [[ -r ".$name" ]] && cp ".$name" "$SHELLINIT/$name"
+      [[ -r ".$name" && ! -f "$SHELLINIT/$name" ]] && cp ".$name" "$SHELLINIT/$name"
     done
   )
 }
 
 _git() {
+  rm -rf "$DST/.git"
   cp -ra "$SRC/.git" "$DST/.git"
   (
     cd "$DST"
@@ -90,24 +90,23 @@ _luajit() {
 }
 
 _shimlink() {
-  shimlink update ast-grep &
-  shimlink update biome &
-  shimlink update claude &
-  shimlink update comrak &
-  shimlink update delta &
-  shimlink update gh &
-  shimlink update marksman &
-  shimlink update nvim &
-  shimlink update rg &
-  shimlink update ruff &
-  shimlink update shfmt &
-  shimlink update sqruff &
-  shimlink update stylua &
-  shimlink update superhtml &
-  shimlink update tree-sitter &
-  shimlink update uv &
-  shimlink update luajit &
-  wait
+  shimlink update ast-grep
+  shimlink update biome
+  shimlink update claude
+  shimlink update comrak
+  shimlink update delta
+  shimlink update gh
+  shimlink update marksman
+  shimlink update nvim
+  shimlink update rg
+  shimlink update ruff
+  shimlink update shfmt
+  shimlink update sqruff
+  shimlink update stylua
+  shimlink update superhtml
+  shimlink update tree-sitter
+  shimlink update uv
+  shimlink update luajit
 }
 
 _claude() {
@@ -146,6 +145,9 @@ _claude() {
 }
 
 _nvim() {
+  # Clean up any stale swap files
+  rm -rf "$DST/.local/state/nvim/swap"
+
   # Install vim.pack plugins by starting nvim headlessly
   NVIM_INVIM=1 nvim-1 --headless +'lua vim.wait(30000, function() return vim.fn.isdirectory(vim.fn.stdpath("data") .. "/site/pack/core/opt/mini.nvim") == 1 end)' +qa
 
