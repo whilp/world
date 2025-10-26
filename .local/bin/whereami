@@ -2,4 +2,19 @@
 -- Get hostname or box-name/host_env identifier
 
 local whereami = require('whereami')
-print(whereami.get())
+
+-- Parse arguments
+local name_only = false
+for i = 1, #arg do
+  if arg[i] == '-n' then
+    name_only = true
+    break
+  end
+end
+
+-- Print result
+if name_only then
+  print(whereami.get())
+else
+  print(whereami.get_with_emoji())
+end

@@ -12,7 +12,7 @@ opt.signcolumn = 'yes'
 
 -- Set terminal title with host identifier
 local whereami = require('whereami')
-opt.titlestring = whereami.get()
+opt.titlestring = whereami.get_with_emoji()
 
 -- Wild menu (command completion)
 opt.wildmenu = true

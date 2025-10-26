@@ -43,8 +43,15 @@ local function file_exists(path)
   return C.access(path, F_OK) == 0
 end
 
--- Function to glob for /*/conf/box-name
-local function find_box_name()
+-- Cache for conf directory path
+local cached_conf_dir = nil
+
+-- Function to find the conf directory (scans root once and caches result)
+local function find_conf_dir()
+  if cached_conf_dir ~= nil then
+    return cached_conf_dir
+  end
+
   local dir = C.opendir('/')
   if dir == nil then
     return nil
@@ -58,36 +65,63 @@ local function find_box_name()
 
     local name = ffi.string(entry.d_name)
     if name ~= '.' and name ~= '..' then
-      local path = '/' .. name .. '/conf/box-name'
-      if file_exists(path) then
+      local conf_path = '/' .. name .. '/conf'
+      -- Check if conf directory exists by checking for box-name file
+      if file_exists(conf_path .. '/box-name') then
         C.closedir(dir)
-        return path
+        cached_conf_dir = conf_path
+        return conf_path
       end
     end
   end
 
   C.closedir(dir)
+  cached_conf_dir = false  -- Cache negative result
   return nil
+end
+
+-- Function to deterministically pick an emoji based on a string
+local function string_to_emoji(str)
+  -- List of emojis to choose from
+  local emojis = {
+    '🍎', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒',
+    '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦', '🥬',
+    '🥒', '🌶️', '🫑', '🌽', '🥕', '🫒', '🧄', '🧅', '🥔', '🍠',
+    '🥐', '🥯', '🍞', '🥖', '🥨', '🧀', '🥚', '🍳', '🧈', '🥞',
+    '🧇', '🥓', '🥩', '🍗', '🍖', '🦴', '🌭', '🍔', '🍟', '🍕',
+    '🥪', '🥙', '🧆', '🌮', '🌯', '🫔', '🥗', '🥘', '🫕', '🥫',
+    '🍝', '🍜', '🍲', '🍛', '🍣', '🍱', '🥟', '🦪', '🍤', '🍙',
+    '🍚', '🍘', '🍥', '🥠', '🥮', '🍢', '🍡', '🍧', '🍨', '🍦',
+    '🥧', '🧁', '🍰', '🎂', '🍮', '🍭', '🍬', '🍫', '🍿', '🍩',
+    '🍪', '🌰', '🥜', '🍯', '🥛', '🫖', '☕', '🍵', '🧃', '🥤'
+  }
+
+  -- Generate hash from string
+  local hash = 0
+  for i = 1, #str do
+    hash = (hash * 31 + string.byte(str, i)) % 2147483647
+  end
+
+  -- Pick emoji based on hash
+  local index = (hash % #emojis) + 1
+  return emojis[index]
 end
 
 -- Main function to get the identifier
 function M.get()
   local identifier = ''
 
-  -- Try to find and read /*/conf/box-name
-  local box_name_path = find_box_name()
-  if box_name_path then
-    local box_name = read_file(box_name_path)
+  -- Try to find conf directory and read box-name
+  local conf_dir = find_conf_dir()
+  if conf_dir then
+    local box_name = read_file(conf_dir .. '/box-name')
     if box_name and box_name ~= '' then
       identifier = box_name
 
       -- Try to append host_env
-      local conf_dir = box_name_path:match('(.*)/box%-name$')
-      if conf_dir then
-        local env = read_file(conf_dir .. '/host_env')
-        if env and env ~= '' then
-          identifier = identifier .. '.' .. env
-        end
+      local env = read_file(conf_dir .. '/host_env')
+      if env and env ~= '' then
+        identifier = identifier .. '.' .. env
       end
     end
   end
@@ -105,6 +139,25 @@ function M.get()
   end
 
   return identifier ~= '' and identifier or 'unknown'
+end
+
+-- Function to get identifier with emoji suffix
+function M.get_with_emoji()
+  local identifier = M.get()
+  local emoji = ''
+
+  -- Try to read /*/conf/box-emoji using cached conf directory
+  local conf_dir = find_conf_dir()
+  if conf_dir then
+    emoji = read_file(conf_dir .. '/box-emoji')
+  end
+
+  -- Fall back to deterministic emoji if not found
+  if not emoji or emoji == '' then
+    emoji = string_to_emoji(identifier)
+  end
+
+  return identifier .. ' ' .. emoji
 end
 
 return M
