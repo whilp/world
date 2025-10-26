@@ -68,66 +68,32 @@ local function generate_env_lua(env)
   return table.concat(parts, "\n")
 end
 
--- Parse ssh arguments to find hostname and detect if it's an interactive session
-local function parse_ssh_args(args)
-  local i = 1
-  local hostname = nil
-  local has_command = false
-
-  while i <= #args do
-    local arg = args[i]
-
-    -- Skip flags that take arguments
-    if arg == "-b" or arg == "-c" or arg == "-D" or arg == "-E" or arg == "-e" or
-       arg == "-F" or arg == "-I" or arg == "-i" or arg == "-J" or arg == "-L" or
-       arg == "-l" or arg == "-m" or arg == "-O" or arg == "-o" or arg == "-p" or
-       arg == "-Q" or arg == "-R" or arg == "-S" or arg == "-W" or arg == "-w" then
-      i = i + 2
-    -- First non-flag argument is the hostname
-    elseif not arg:match("^%-") then
-      if not hostname then
-        hostname = arg
-      else
-        -- Any argument after hostname is a command
-        has_command = true
-        break
-      end
-      i = i + 1
-    else
-      i = i + 1
-    end
-  end
-
-  return hostname, not has_command
-end
-
 -- Sync GH environment to remote host
-local function sync_gh_env(hostname)
+local function sync_gh_env(args)
   local env = collect_gh_env_vars()
 
   -- If no GH vars are set, skip sync
   if next(env) == nil then
-    return true
+    return
   end
 
   local env_lua_content = generate_env_lua(env)
 
-  -- Use ssh to write the file remotely
-  local ssh_cmd = string.format(
-    "/usr/bin/ssh %s 'mkdir -p ~/.config/gh && cat > ~/.config/gh/env.lua'",
-    hostname
-  )
+  -- Build ssh command with same args, running remote command to write config
+  local ssh_cmd = {"/usr/bin/ssh"}
+  for i = 1, #args do
+    table.insert(ssh_cmd, args[i])
+  end
+  table.insert(ssh_cmd, "mkdir -p ~/.config/gh && cat > ~/.config/gh/env.lua")
 
-  local handle = io.popen(ssh_cmd, "w")
+  local handle = io.popen(table.concat(ssh_cmd, " "), "w")
   if not handle then
     stderr_write("ssh: warning: failed to sync GH environment to remote")
-    return false
+    return
   end
 
   handle:write(env_lua_content)
-  local success = handle:close()
-
-  return success
+  handle:close()
 end
 
 -- Main execution
@@ -140,13 +106,8 @@ local function main()
     table.insert(args, arg[i])
   end
 
-  -- Parse arguments to determine if we should sync
-  local hostname, is_interactive = parse_ssh_args(args)
-
-  -- Sync GH environment for interactive sessions
-  if is_interactive and hostname then
-    sync_gh_env(hostname)
-  end
+  -- Sync GH environment before connecting
+  sync_gh_env(args)
 
   -- Build argv array for execve
   local argv = ffi.new("char*[?]", #args + 2)
