@@ -154,8 +154,8 @@ _nvim() {
   NVIM_INVIM=1 nvim-1 --headless +'helptags ALL' +qa
 
   # Load and start nvim server service
-  nvim load
-  nvim restart
+  nvimd reload
+  nvimd restart
 }
 
 main "$@"
