@@ -32,6 +32,7 @@ _git() {
     cd "$DST"
     git checkout .
     git config user.email 189851+whilp@users.noreply.github.com
+    git config core.fsmonitor false
   )
   command -v watchman >/dev/null 2>&1 && watchman watch-project "$DST"
 }

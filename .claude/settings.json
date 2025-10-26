@@ -38,7 +38,8 @@
     ]
   },
   "enabledPlugins": {
-    "pybook-analysis@wcm-ai": true
+    "pybook-analysis@wcm-ai": true,
+    "sail@wcm-ai": true
   },
   "alwaysThinkingEnabled": false,
   "feedbackSurveyState": {
