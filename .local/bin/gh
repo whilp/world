@@ -113,12 +113,37 @@ end
 
 -- Dump mode: output env.lua to stdout
 local function dump_mode()
-  -- First load any existing config to apply to environment
-  local config = load_env_config()
-  apply_env_config(config)
+  local gh_binary = expand_path("~/.local/share/shimlink/bin/gh")
+  local env = {}
 
-  -- Now collect the actual GH env vars (which may come from config or environment)
-  local env = collect_gh_env_vars()
+  -- Get token from gh auth token
+  local token_handle = io.popen(gh_binary .. " auth token 2>/dev/null")
+  if token_handle then
+    local token = token_handle:read("*l")
+    token_handle:close()
+    if token and token ~= "" then
+      env.GH_TOKEN = token
+    end
+  end
+
+  -- Get host from gh auth status
+  local status_handle = io.popen(gh_binary .. " auth status 2>&1")
+  if status_handle then
+    local status = status_handle:read("*a")
+    status_handle:close()
+    -- Parse first line to get hostname
+    local host = status:match("^([^\n]+)")
+    if host and host ~= "" and not host:match("not logged") then
+      env.GH_HOST = host
+    end
+  end
+
+  -- Also collect any additional env vars set in environment
+  for key, value in pairs(collect_gh_env_vars()) do
+    if not env[key] then
+      env[key] = value
+    end
+  end
 
   -- If no GH vars are set, exit
   if next(env) == nil then
@@ -132,12 +157,37 @@ end
 
 -- Sync mode: sync env.lua to remote host via ssh
 local function sync_mode(hostname)
-  -- First load any existing config to apply to environment
-  local config = load_env_config()
-  apply_env_config(config)
+  local gh_binary = expand_path("~/.local/share/shimlink/bin/gh")
+  local env = {}
 
-  -- Now collect the actual GH env vars (which may come from config or environment)
-  local env = collect_gh_env_vars()
+  -- Get token from gh auth token
+  local token_handle = io.popen(gh_binary .. " auth token 2>/dev/null")
+  if token_handle then
+    local token = token_handle:read("*l")
+    token_handle:close()
+    if token and token ~= "" then
+      env.GH_TOKEN = token
+    end
+  end
+
+  -- Get host from gh auth status
+  local status_handle = io.popen(gh_binary .. " auth status 2>&1")
+  if status_handle then
+    local status = status_handle:read("*a")
+    status_handle:close()
+    -- Parse first line to get hostname
+    local host = status:match("^([^\n]+)")
+    if host and host ~= "" and not host:match("not logged") then
+      env.GH_HOST = host
+    end
+  end
+
+  -- Also collect any additional env vars set in environment
+  for key, value in pairs(collect_gh_env_vars()) do
+    if not env[key] then
+      env[key] = value
+    end
+  end
 
   -- If no GH vars are set, exit
   if next(env) == nil then
