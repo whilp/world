@@ -92,7 +92,6 @@ _luajit() {
 _shimlink() {
   shimlink update ast-grep
   shimlink update biome
-  shimlink update claude
   shimlink update comrak
   shimlink update delta
   shimlink update gh
