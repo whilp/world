@@ -133,14 +133,16 @@ _claude() {
 
   # Clone ai plugin marketplace if it doesn't exist
   if [ ! -d "$DST/ai" ]; then
-    git clone https://git.corp.stripe.com/wcm/ai "$DST/ai"
+    git clone https://git.corp.stripe.com/wcm/ai "$DST/ai" 2>/dev/null || echo "Skipping ai plugin marketplace (requires Stripe credentials)"
   fi
 
   # Add ai marketplace to claude plugins
-  (
-    cd "$DST"
-    claude plugin marketplace add ./ai
-  )
+  if [ -d "$DST/ai" ]; then
+    (
+      cd "$DST"
+      claude plugin marketplace add ./ai 2>/dev/null || true
+    )
+  fi
 }
 
 _nvim() {
