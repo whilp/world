@@ -116,25 +116,22 @@ local function dump_mode()
   local gh_binary = expand_path("~/.local/share/shimlink/bin/gh")
   local env = {}
 
-  -- Get token from gh auth token
-  local token_handle = io.popen(gh_binary .. " auth token 2>/dev/null")
-  if token_handle then
-    local token = token_handle:read("*l")
-    token_handle:close()
-    if token and token ~= "" then
-      env.GH_TOKEN = token
-    end
-  end
-
-  -- Get host from gh auth status
-  local status_handle = io.popen(gh_binary .. " auth status 2>&1")
+  -- Get token and host from gh auth status -a -t
+  local status_handle = io.popen(gh_binary .. " auth status -a -t 2>&1")
   if status_handle then
     local status = status_handle:read("*a")
     status_handle:close()
-    -- Parse first line to get hostname
+
+    -- Parse hostname from first line
     local host = status:match("^([^\n]+)")
     if host and host ~= "" and not host:match("not logged") then
       env.GH_HOST = host
+    end
+
+    -- Parse token from "Token: " line
+    local token = status:match("Token:%s+([^\n]+)")
+    if token and token ~= "" then
+      env.GH_TOKEN = token
     end
   end
 
@@ -160,25 +157,22 @@ local function sync_mode(hostname)
   local gh_binary = expand_path("~/.local/share/shimlink/bin/gh")
   local env = {}
 
-  -- Get token from gh auth token
-  local token_handle = io.popen(gh_binary .. " auth token 2>/dev/null")
-  if token_handle then
-    local token = token_handle:read("*l")
-    token_handle:close()
-    if token and token ~= "" then
-      env.GH_TOKEN = token
-    end
-  end
-
-  -- Get host from gh auth status
-  local status_handle = io.popen(gh_binary .. " auth status 2>&1")
+  -- Get token and host from gh auth status -a -t
+  local status_handle = io.popen(gh_binary .. " auth status -a -t 2>&1")
   if status_handle then
     local status = status_handle:read("*a")
     status_handle:close()
-    -- Parse first line to get hostname
+
+    -- Parse hostname from first line
     local host = status:match("^([^\n]+)")
     if host and host ~= "" and not host:match("not logged") then
       env.GH_HOST = host
+    end
+
+    -- Parse token from "Token: " line
+    local token = status:match("Token:%s+([^\n]+)")
+    if token and token ~= "" then
+      env.GH_TOKEN = token
     end
   end
 
