@@ -1,0 +1,16 @@
+#!/bin/bash
+
+set -euo pipefail
+
+name="${1:+dev-}${1:-dev}"
+shift || true
+
+pay remote new \
+  --repo pay-server \
+  --skip-confirm \
+  --defaults \
+  --ide None \
+  "$@" \
+  "$name"
+
+~/.local/bin/box-bootstrap | pay remote ssh "$name" -- bash -
