@@ -2,7 +2,7 @@
 
 export SRC="$PWD"
 export DST="$HOME"
-export PATH="$DST/.local/share/shimlink/bin:$SRC/.local/bin:$PATH"
+export PATH="$DST/.local/share/shimlink/bin:$DST/.local/bin:$PATH"
 export SHELLINIT="$DST/.config/shellinit"
 
 main() {
