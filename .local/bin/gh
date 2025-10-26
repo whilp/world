@@ -112,6 +112,7 @@ local function apply_env_config(config)
 end
 
 -- Dump mode: output env.lua to stdout
+-- Note: with multi-host support, this now only dumps the first host
 local function dump_mode()
   local gh_binary = expand_path("~/.local/share/shimlink/bin/gh")
   local env = {}
@@ -122,16 +123,23 @@ local function dump_mode()
     local status = status_handle:read("*a")
     status_handle:close()
 
-    -- Parse hostname from first line
-    local host = status:match("^([^\n]+)")
-    if host and host ~= "" and not host:match("not logged") then
-      env.GH_HOST = host
-    end
-
-    -- Parse token from "Token: " line
-    local token = status:match("Token:%s+([^\n]+)")
-    if token and token ~= "" then
-      env.GH_TOKEN = token
+    -- Parse all hosts and tokens, use first found
+    local current_host = nil
+    for line in status:gmatch("[^\n]+") do
+      -- Check if this is a host line (no leading whitespace)
+      if not line:match("^%s") then
+        current_host = line
+        if not env.GH_HOST and not current_host:match("not logged") then
+          env.GH_HOST = current_host
+        end
+      elseif current_host then
+        -- Check if this is a token line
+        local tok = line:match("Token:%s+([^%s]+)")
+        if tok and not env.GH_TOKEN then
+          env.GH_TOKEN = tok
+          break
+        end
+      end
     end
   end
 
@@ -152,58 +160,54 @@ local function dump_mode()
   os.exit(0)
 end
 
--- Sync mode: sync env.lua to remote host via ssh
-local function sync_mode(hostname)
-  local gh_binary = expand_path("~/.local/share/shimlink/bin/gh")
-  local env = {}
+-- Sync mode: set up gh auth on remote host
+-- This uses gh auth login to authenticate directly on the remote
+local function sync_mode(hostname, gh_host)
+  -- If no gh_host specified, default to github.com
+  if not gh_host or gh_host == "" then
+    gh_host = "github.com"
+  end
 
-  -- Get token and host from gh auth status -a -t
+  -- Get the token for the specified host
+  local gh_binary = expand_path("~/.local/share/shimlink/bin/gh")
+  local token = nil
+
   local status_handle = io.popen(gh_binary .. " auth status -a -t 2>&1")
   if status_handle then
     local status = status_handle:read("*a")
     status_handle:close()
 
-    -- Parse hostname from first line
-    local host = status:match("^([^\n]+)")
-    if host and host ~= "" and not host:match("not logged") then
-      env.GH_HOST = host
-    end
-
-    -- Parse token from "Token: " line
-    local token = status:match("Token:%s+([^\n]+)")
-    if token and token ~= "" then
-      env.GH_TOKEN = token
-    end
-  end
-
-  -- Also collect any additional env vars set in environment
-  for key, value in pairs(collect_gh_env_vars()) do
-    if not env[key] then
-      env[key] = value
+    -- Parse all hosts and tokens
+    local current_host = nil
+    for line in status:gmatch("[^\n]+") do
+      -- Check if this is a host line (no leading whitespace)
+      if not line:match("^%s") then
+        current_host = line
+      elseif current_host then
+        -- Check if this is a token line
+        local tok = line:match("Token:%s+([^%s]+)")
+        if tok and current_host == gh_host then
+          token = tok
+          break
+        end
+      end
     end
   end
 
-  -- If no GH vars are set, exit
-  if next(env) == nil then
+  -- If no token found, exit silently
+  if not token then
     os.exit(0)
   end
 
-  local env_lua_content = generate_env_lua(env)
-
-  -- Pipe content to ssh
+  -- Send gh auth login command to remote host
   local ssh_cmd = string.format(
-    '/usr/bin/ssh %s "mkdir -p ~/.config/gh && cat > ~/.config/gh/env.lua"',
-    hostname
+    '/usr/bin/ssh %s "echo %s | gh auth login -p ssh -h %s --with-token 2>/dev/null"',
+    hostname,
+    token,
+    gh_host
   )
 
-  local ssh = io.popen(ssh_cmd, "w")
-  if not ssh then
-    stderr_write("gh: failed to connect to " .. hostname)
-    os.exit(1)
-  end
-
-  ssh:write(env_lua_content)
-  local success = ssh:close()
+  local success = os.execute(ssh_cmd)
 
   if not success then
     os.exit(1)
@@ -222,7 +226,8 @@ local function main()
   -- Check for sync mode (sync env to remote host)
   local sync_host = os.getenv("GH_SYNC_ENV")
   if sync_host then
-    sync_mode(sync_host)
+    local gh_host = os.getenv("GH_SYNC_HOST")
+    sync_mode(sync_host, gh_host)
   end
 
   -- Load and apply environment configuration
