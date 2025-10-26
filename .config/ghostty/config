@@ -11,7 +11,7 @@ macos-option-as-alt = true
 macos-non-native-fullscreen = "padded-notch"
 fullscreen = true
 window-save-state = "default"
-shell-integration = "zsh"
+#shell-integration = "zsh"
 mouse-hide-while-typing = true
 clipboard-write = allow
 
