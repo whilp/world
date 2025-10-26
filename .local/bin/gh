@@ -68,53 +68,6 @@ local function generate_env_lua(env)
   return table.concat(parts, "\n")
 end
 
--- Dump mode: output env.lua to stdout
-local function dump_mode()
-  local env = collect_gh_env_vars()
-
-  -- If no GH vars are set, exit
-  if next(env) == nil then
-    os.exit(0)
-  end
-
-  local env_lua_content = generate_env_lua(env)
-  io.write(env_lua_content)
-  os.exit(0)
-end
-
--- Sync mode: sync env.lua to remote host via ssh
-local function sync_mode(hostname)
-  local env = collect_gh_env_vars()
-
-  -- If no GH vars are set, exit
-  if next(env) == nil then
-    os.exit(0)
-  end
-
-  local env_lua_content = generate_env_lua(env)
-
-  -- Pipe content to ssh
-  local ssh_cmd = string.format(
-    '/usr/bin/ssh %s "mkdir -p ~/.config/gh && cat > ~/.config/gh/env.lua"',
-    hostname
-  )
-
-  local ssh = io.popen(ssh_cmd, "w")
-  if not ssh then
-    stderr_write("gh: failed to connect to " .. hostname)
-    os.exit(1)
-  end
-
-  ssh:write(env_lua_content)
-  local success = ssh:close()
-
-  if not success then
-    os.exit(1)
-  end
-
-  os.exit(0)
-end
-
 -- Load configuration from ~/.config/gh/env.lua
 local function load_env_config()
   local config_path = expand_path("~/.config/gh/env.lua")
@@ -156,6 +109,63 @@ local function apply_env_config(config)
       os.setenv(key, value)
     end
   end
+end
+
+-- Dump mode: output env.lua to stdout
+local function dump_mode()
+  -- First load any existing config to apply to environment
+  local config = load_env_config()
+  apply_env_config(config)
+
+  -- Now collect the actual GH env vars (which may come from config or environment)
+  local env = collect_gh_env_vars()
+
+  -- If no GH vars are set, exit
+  if next(env) == nil then
+    os.exit(0)
+  end
+
+  local env_lua_content = generate_env_lua(env)
+  io.write(env_lua_content)
+  os.exit(0)
+end
+
+-- Sync mode: sync env.lua to remote host via ssh
+local function sync_mode(hostname)
+  -- First load any existing config to apply to environment
+  local config = load_env_config()
+  apply_env_config(config)
+
+  -- Now collect the actual GH env vars (which may come from config or environment)
+  local env = collect_gh_env_vars()
+
+  -- If no GH vars are set, exit
+  if next(env) == nil then
+    os.exit(0)
+  end
+
+  local env_lua_content = generate_env_lua(env)
+
+  -- Pipe content to ssh
+  local ssh_cmd = string.format(
+    '/usr/bin/ssh %s "mkdir -p ~/.config/gh && cat > ~/.config/gh/env.lua"',
+    hostname
+  )
+
+  local ssh = io.popen(ssh_cmd, "w")
+  if not ssh then
+    stderr_write("gh: failed to connect to " .. hostname)
+    os.exit(1)
+  end
+
+  ssh:write(env_lua_content)
+  local success = ssh:close()
+
+  if not success then
+    os.exit(1)
+  end
+
+  os.exit(0)
 end
 
 -- Main execution
