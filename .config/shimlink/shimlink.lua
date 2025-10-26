@@ -134,7 +134,7 @@ if platform:match("^linux") then
   local arch = platform:match("arm64") and "arm64" or "x64"
   binaries.claude = {
     sha256 = "5f1b6832302ba1ab3e2473e97fb48ea930698d832e86c31cd4e316ec9fb245fb",
-    url = string.format(" https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/1.0.108/linux-%s/claude", arch),
+    url = string.format("https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/1.0.108/linux-%s/claude", arch),
   }
 end
 
