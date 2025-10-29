@@ -1,0 +1,118 @@
+name: release nvim nightly
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag (defaults to current date YYYY.MM.DD)'
+        required: false
+        default: ''
+      create_release:
+        description: 'Create a GitHub release'
+        type: boolean
+        required: false
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  download:
+    strategy:
+      matrix:
+        include:
+          - platform: darwin-arm64
+            asset_name: nvim-macos-arm64.tar.gz
+          - platform: linux-arm64
+            asset_name: nvim-linux-arm64.tar.gz
+          - platform: linux-x64
+            asset_name: nvim-linux64.tar.gz
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@v4
+
+      - name: set release tag
+        id: tag
+        run: |
+          if [ -z "${{ github.event.inputs.release_tag }}" ]; then
+            TAG=$(date +%Y.%m.%d)
+          else
+            TAG="${{ github.event.inputs.release_tag }}"
+          fi
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+
+      - name: download nvim nightly asset
+        run: |
+          mkdir -p dist/nvim/${{ matrix.platform }}
+          cd dist/nvim/${{ matrix.platform }}
+
+          UPSTREAM_URL="https://github.com/neovim/neovim/releases/download/nightly/${{ matrix.asset_name }}"
+          echo "Downloading ${UPSTREAM_URL}..."
+          curl -L -o ${{ matrix.asset_name }} "${UPSTREAM_URL}"
+
+          # Generate SHA256 checksum
+          sha256sum ${{ matrix.asset_name }} > ${{ matrix.asset_name }}.sha256
+
+          # Display checksums
+          cat ${{ matrix.asset_name }}.sha256
+
+      - name: upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nvim-${{ matrix.platform }}
+          path: dist/nvim/${{ matrix.platform }}/*
+          retention-days: 30
+
+      - name: create release
+        if: github.event.inputs.create_release == 'true'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: nvim nightly ${{ steps.tag.outputs.tag }}
+          body: |
+            NeoVim nightly build
+
+            Downloaded from: https://github.com/neovim/neovim/releases/tag/nightly
+
+            Platforms:
+            - darwin-arm64
+            - linux-arm64
+            - linux-x64
+          files: |
+            dist/nvim/${{ matrix.platform }}/${{ matrix.asset_name }}
+            dist/nvim/${{ matrix.platform }}/${{ matrix.asset_name }}.sha256
+          draft: false
+          prerelease: false
+
+  summary:
+    needs: download
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: generate summary
+        run: |
+          echo "# nvim nightly download summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Downloaded platforms" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          for dir in artifacts/*/; do
+            platform=$(basename "$dir")
+            echo "### ${platform}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            ls -lh "$dir" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            cat "$dir"/*.sha256 >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          done
