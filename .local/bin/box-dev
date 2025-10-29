@@ -1,16 +1,212 @@
-#!/bin/bash
+#!/usr/bin/env lua
+-- box: manage remote dev environments
 
-set -euo pipefail
+local ffi = require("ffi")
 
-name="${1:+dev-}${1:-dev}"
-shift || true
+-- FFI declarations for execvp
+ffi.cdef([[
+  int execvp(const char *file, char *const argv[]);
+  extern char **environ;
+]])
 
-pay remote new \
-  --repo pay-server \
-  --skip-confirm \
-  --defaults \
-  --ide None \
-  "$@" \
-  "$name"
+local VERBOSE = false
 
-~/.local/bin/box-bootstrap | pay remote ssh "$name" -- bash -
+local function stderr_write(msg)
+  io.stderr:write(msg .. "\n")
+  io.stderr:flush()
+end
+
+local function verbose(msg)
+  if VERBOSE then
+    stderr_write("box: " .. msg)
+  end
+end
+
+local function validate_name(name)
+  if not name:match("^[a-zA-Z0-9_-]+$") then
+    stderr_write("box: invalid name '" .. name .. "' (must contain only alphanumeric, dash, or underscore)")
+    os.exit(1)
+  end
+end
+
+local function validate_safe_string(str, label)
+  if not str:match("^[a-zA-Z0-9_./-]+$") then
+    stderr_write("box: invalid " .. label .. " contains unsafe characters")
+    os.exit(1)
+  end
+end
+
+local function exec(args)
+  -- Build argv array for execvp
+  local argv = ffi.new("char*[?]", #args + 1)
+  for i, arg in ipairs(args) do
+    argv[i - 1] = ffi.cast("char*", arg)
+  end
+  argv[#args] = nil
+
+  -- Replace current process
+  local result = ffi.C.execvp(args[1], argv)
+
+  -- If execvp returns, an error occurred
+  stderr_write("box: failed to exec " .. args[1] .. ": " .. tostring(result))
+  os.exit(1)
+end
+
+local function generate_bootstrap_script()
+  -- Get gh auth status
+  local status_handle = io.popen("gh auth status -a -t 2>&1")
+  if not status_handle then
+    return ""
+  end
+
+  local status = status_handle:read("*a")
+  status_handle:close()
+
+  local hosts = {}
+  local current_host = nil
+  local is_active = false
+
+  for line in status:gmatch("[^\n]+") do
+    -- Check if this is a host line (no leading whitespace)
+    if not line:match("^%s") then
+      current_host = line
+      is_active = false
+    elseif current_host then
+      -- Check if this is an active account line
+      if line:match("Active account:%s+true") then
+        is_active = true
+      end
+      -- Check if this is a token line
+      local tok = line:match("Token:%s+([^%s]+)")
+      if tok and is_active then
+        hosts[current_host] = tok
+      end
+    end
+  end
+
+  -- Generate bash commands to authenticate on remote for all active hosts
+  local script_lines = {}
+  for host, token in pairs(hosts) do
+    -- Validate host and token contain only safe characters
+    validate_safe_string(host, "host")
+    validate_safe_string(token, "token")
+    table.insert(script_lines, string.format("echo %s | gh auth login -p ssh -h %s --with-token 2>/dev/null", token, host))
+  end
+
+  return table.concat(script_lines, "\n") .. (next(script_lines) and "\n" or "")
+end
+
+local function bootstrap(name, ...)
+  local extra_args = { ... }
+
+  verbose("creating remote environment '" .. name .. "'")
+
+  -- Build command for pay remote new
+  local new_cmd = "pay remote new --repo pay-server --skip-confirm --defaults --ide None"
+  for _, arg in ipairs(extra_args) do
+    new_cmd = new_cmd .. " " .. arg
+  end
+  new_cmd = new_cmd .. " " .. name
+
+  local result = os.execute(new_cmd)
+  if not (result == 0 or result == true) then
+    stderr_write("box: failed to create remote environment")
+    os.exit(1)
+  end
+
+  verbose("generating bootstrap script")
+
+  -- Generate bootstrap script
+  local bootstrap_script = generate_bootstrap_script()
+
+  if not bootstrap_script or bootstrap_script == "" then
+    stderr_write("box: failed to generate bootstrap script")
+    os.exit(1)
+  end
+
+  verbose("running bootstrap script on remote")
+
+  -- Execute pay remote ssh with bootstrap script as stdin
+  local ssh_handle = io.popen("pay remote ssh " .. name .. " -- bash -", "w")
+  if not ssh_handle then
+    stderr_write("box: failed to start pay remote ssh")
+    os.exit(1)
+  end
+
+  ssh_handle:write(bootstrap_script)
+  ssh_handle:close()
+
+  verbose("bootstrap complete")
+
+  os.exit(0)
+end
+
+local function ssh(name, ...)
+  verbose("connecting to '" .. name .. "'")
+
+  local args = { "pay", "remote", "ssh", "--force-tty", name }
+  for _, arg in ipairs({ ... }) do
+    table.insert(args, arg)
+  end
+
+  exec(args)
+end
+
+local function show_help()
+  print("box: manage remote dev environments")
+  print()
+  print("Usage:")
+  print("  box [-v] <name> [bootstrap]    # Create and bootstrap a new remote environment")
+  print("  box [-v] <name> ssh [args...]  # SSH into a remote environment")
+  print()
+  print("Options:")
+  print("  -v, --verbose  Show progress messages")
+  print()
+  print("Commands:")
+  print("  bootstrap      Create new remote environment (default)")
+  print("  ssh            Connect to existing remote environment")
+end
+
+local function main()
+  if #arg == 0 or arg[1] == "-h" or arg[1] == "--help" then
+    show_help()
+    os.exit(0)
+  end
+
+  -- Parse verbose flag
+  local arg_offset = 1
+  if arg[1] == "-v" or arg[1] == "--verbose" then
+    VERBOSE = true
+    arg_offset = 2
+  end
+
+  if #arg < arg_offset then
+    stderr_write("box: missing required argument <name>")
+    stderr_write("box: run 'box --help' for help")
+    os.exit(1)
+  end
+
+  local name = arg[arg_offset]
+  local cmd = arg[arg_offset + 1] or "bootstrap"
+
+  -- Validate name before any operations
+  validate_name(name)
+
+  -- Collect remaining arguments
+  local extra_args = {}
+  for i = arg_offset + 2, #arg do
+    table.insert(extra_args, arg[i])
+  end
+
+  if cmd == "bootstrap" then
+    bootstrap(name, unpack(extra_args))
+  elseif cmd == "ssh" then
+    ssh(name, unpack(extra_args))
+  else
+    stderr_write("box: unknown command '" .. cmd .. "'")
+    stderr_write("box: run 'box --help' for help")
+    os.exit(1)
+  end
+end
+
+main()
