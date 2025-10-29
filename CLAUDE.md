@@ -35,6 +35,13 @@
 - update binary: `shimlink update <binary>`
 - force update (skip checksum): `shimlink update -f <binary>`
 
+### checksums
+
+- shimlink checksums are calculated on the **extracted binary file**, not the archive
+- for archives with `path: "bin/nvim"`, the sha256 should be of the extracted `bin/nvim` file
+- to get the correct checksum: `curl -sL <url> | tar -xzf - && shasum -a 256 <path/to/binary>`
+- example: `curl -sL https://github.com/.../nvim-macos-arm64.tar.gz | tar -xzf - && shasum -a 256 nvim-macos-arm64/bin/nvim`
+
 ## Git
 
 - always use atomic commits

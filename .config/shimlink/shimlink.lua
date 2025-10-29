@@ -228,6 +228,8 @@ binaries.marksman = simple_binary("artempyanykh/marksman", "2024-12-18", "marksm
 }, "", platform_maps.os_simple)
 
 -- nvim
+-- NOTE: sha256 checksums are of the extracted bin/nvim binary, not the tar.gz archive
+-- To update: curl -sL <url> | tar -xzf - && shasum -a 256 nvim-<platform>/bin/nvim
 if platform == "darwin-arm64" then
   binaries.nvim = {
     path = "bin/nvim",
