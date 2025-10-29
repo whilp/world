@@ -28,10 +28,12 @@
 
 ## Shimlink
 
-- symlink-based binary manager; config at `~/.config/shimlink/shimlink.json`
-- binaries stored in `~/.local/share/shimlink/<binary>/`
-- create managed binary: `ln -s shimlink <binary>`
-- force update: `shimlink -f <binary>`
+- symlink-based binary manager
+- config: `~/.config/shimlink/shimlink.lua`
+- binaries stored in versioned dirs: `~/.local/share/shimlink/_/<binary>/<sha>/`
+- shimlink bin directory: `~/.local/share/shimlink/bin/` (symlinks to versioned binaries)
+- update binary: `shimlink update <binary>`
+- force update (skip checksum): `shimlink update -f <binary>`
 
 ## Git
 
