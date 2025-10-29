@@ -162,7 +162,13 @@ parse.auth = function(xs)
   if not xs then
     return
   end
-  return { "-u", type(xs) == "table" and util.kv_to_str(xs, nil, ":") or xs }
+  if type(xs) == "table" then
+    -- Handle array-style auth: {"user", "pass"}
+    return { "-u", table.concat(xs, ":") }
+  else
+    -- Handle string-style auth: "user:pass"
+    return { "-u", xs }
+  end
 end
 
 parse.url = function(xs, q)
