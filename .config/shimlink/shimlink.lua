@@ -247,10 +247,10 @@ elseif platform == "linux-arm64" then
 elseif platform == "linux-x86_64" then
   binaries.nvim = {
     path = "bin/nvim",
-    sha256 = "d776368f36e24afcf21e5507b2cdfff8bd1b1b762a5d49b82d52cd18dc9c0eec",
+    sha256 = "d87a9985b9f43f30af16355a6bd2756f82d4a93bb10145d04ff7cdf654e6d30c",
     strip_components = 1,
     upstream_url = "https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-x86_64.tar.gz",
-    url = "https://github.com/whilp/dotfiles/releases/download/2025.10.04/nvim-linux-x86_64.tar.gz",
+    url = "https://github.com/whilp/dotfiles/releases/download/2025.10.29/nvim-linux-x86_64.tar.gz",
   }
 end
 
