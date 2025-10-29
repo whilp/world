@@ -29,9 +29,10 @@ and returns table:
 author = github.com/tami5 (original plenary implementation)
 ]]
 
+local utils = require("utils")
 local util, parse = {}, {}
 
--- Utility functions ----------------------------------------------------
+-- Curl-specific utilities -----------------------------------------------
 -------------------------------------------------------------------------
 
 -- URL encode a string
@@ -48,49 +49,17 @@ util.url_encode = function(str)
   end
 end
 
--- Flatten a nested table
-local function flatten(tbl)
-  local result = {}
-  for _, v in ipairs(tbl) do
-    if type(v) == "table" then
-      for _, inner_v in ipairs(flatten(v)) do
-        table.insert(result, inner_v)
-      end
-    else
-      table.insert(result, v)
-    end
-  end
-  return result
-end
-
--- Map over key-value pairs
-local function kv_map(fn, tbl)
-  local result = {}
-  for k, v in pairs(tbl) do
-    table.insert(result, fn({k, v}))
-  end
-  return result
-end
-
--- Join array elements with separator
-local function join(tbl, sep)
-  if not sep then
-    return table.concat(tbl)
-  end
-  return table.concat(tbl, sep)
-end
-
 -- Convert key-value table to list with prefix and separator
 util.kv_to_list = function(kv, prefix, sep)
-  return flatten(kv_map(function(kvp)
+  return utils.flatten(utils.kv_map(function(kvp)
     return { prefix, kvp[1] .. sep .. kvp[2] }
   end, kv))
 end
 
 -- Convert key-value table to string
 util.kv_to_str = function(kv, sep, kvsep)
-  return join(
-    kv_map(function(kvp)
+  return utils.join(
+    utils.kv_map(function(kvp)
       return kvp[1] .. kvsep .. util.url_encode(kvp[2])
     end, kv),
     sep
@@ -105,8 +74,7 @@ util.gen_dump_path = function()
     return string.format("%x", v)
   end)
 
-  -- Check if Windows
-  if package.config:sub(1, 1) == "\\" then
+  if utils.is_windows() then
     local userprofile = os.getenv("USERPROFILE") or "C:\\Users\\Default"
     path = string.format("%s\\AppData\\Local\\Temp\\lua_curl_%s.headers", userprofile, id)
   else
@@ -115,63 +83,6 @@ util.gen_dump_path = function()
   end
 
   return { "-D", path }
-end
-
--- Check if file exists
-local function file_exists(path)
-  local f = io.open(path, "r")
-  if f then
-    f:close()
-    return true
-  end
-  return false
-end
-
--- Read all lines from a file
-local function readlines(path)
-  local lines = {}
-  local file = io.open(path, "r")
-  if not file then
-    return lines
-  end
-  for line in file:lines() do
-    table.insert(lines, line)
-  end
-  file:close()
-  return lines
-end
-
--- Expand path (basic implementation)
-local function expand_path(path)
-  if path:sub(1, 1) == "~" then
-    local home = os.getenv("HOME") or os.getenv("USERPROFILE")
-    return home .. path:sub(2)
-  end
-  return path
-end
-
--- Table extend (merge tables)
-local function tbl_extend(behavior, ...)
-  local result = {}
-  local tables = {...}
-
-  if behavior == "force" then
-    for _, t in ipairs(tables) do
-      for k, v in pairs(t) do
-        result[k] = v
-      end
-    end
-  elseif behavior == "keep" then
-    for _, t in ipairs(tables) do
-      for k, v in pairs(t) do
-        if result[k] == nil then
-          result[k] = v
-        end
-      end
-    end
-  end
-
-  return result
 end
 
 -- Parsers ---------------------------------------------------------------
@@ -244,7 +155,7 @@ parse.file = function(p)
   if not p then
     return
   end
-  return { "-d", "@" .. expand_path(p) }
+  return { "-d", "@" .. utils.expand_path(p) }
 end
 
 parse.auth = function(xs)
@@ -294,7 +205,7 @@ parse.request = function(opts)
     opts.body = nil
     if type(b) == "table" then
       opts.data = b
-    elseif file_exists(b) then
+    elseif utils.file_exists(b) then
       opts.in_file = b
     elseif type(b) == "string" then
       opts.raw_body = b
@@ -334,13 +245,13 @@ parse.request = function(opts)
   end
 
   table.insert(result, parse.url(opts.url, opts.query))
-  return flatten(result), opts
+  return utils.flatten(result), opts
 end
 
 -- Parse response --------------------------------------------------------
 --------------------------------------------------------------------------
 parse.response = function(output, dump_path, code)
-  local headers = readlines(dump_path)
+  local headers = utils.readlines(dump_path)
   local status = nil
   local processed_headers = {}
 
@@ -399,8 +310,8 @@ end
 -- Main request function -------------------------------------------------
 --------------------------------------------------------------------------
 local request = function(specs)
-  local args, opts = parse.request(tbl_extend("force", {
-    compressed = package.config:sub(1, 1) ~= "\\",
+  local args, opts = parse.request(utils.tbl_extend("force", {
+    compressed = not utils.is_windows(),
     dry_run = false,
     dump = util.gen_dump_path(),
   }, specs))
@@ -444,7 +355,7 @@ return (function()
         spec.url = url
         spec.method = method
       end
-      opts = method == "request" and opts or (tbl_extend("keep", opts, spec))
+      opts = method == "request" and opts or (utils.tbl_extend("keep", opts, spec))
       return request(opts)
     end
   end
