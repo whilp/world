@@ -16,3 +16,7 @@ A reproducible and complete environment for computering since 2005.
 - `claude` works
 - `scpaste` (and `CMD-Shift-v` in `Ghostty`) copies rich clipboard contents to any active SSH connection
 - `shimlink` fetches utility executables and verifies checksums
+
+## License
+
+This repository is licensed under the MIT License. You are welcome to borrow, use, or adapt any code here for your own projects. See the [LICENSE](LICENSE) file for details.
