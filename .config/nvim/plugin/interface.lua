@@ -9,7 +9,7 @@ opt.title = true
 opt.conceallevel = 2
 opt.showtabline = 2
 opt.signcolumn = 'yes'
-opt.laststatus = 3  -- global statusline
+opt.laststatus = 2  -- always show statusline
 opt.updatetime = 250
 
 -- Shorten message formats
