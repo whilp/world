@@ -6,6 +6,8 @@ local opts = { silent = true }
 opt.hlsearch = false
 opt.smartcase = true
 opt.ignorecase = true
+opt.gdefault = true  -- use 'g' flag by default with :s/foo/bar
+opt.switchbuf = 'useopen,uselast'  -- use buffer in open windows when jumping
 
 -- Path for fuzzy finding
 opt.path:append("**")

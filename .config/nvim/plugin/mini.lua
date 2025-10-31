@@ -28,6 +28,11 @@ if ok_extra then
   require("mini.extra").setup()
 end
 
+local ok_jump, _ = pcall(require, "mini.jump")
+if ok_jump then
+  require("mini.jump").setup()
+end
+
 -- Setup mini.hues color scheme
 local ok_hues, _ = pcall(require, "mini.hues")
 if ok_hues then
