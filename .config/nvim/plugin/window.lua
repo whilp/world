@@ -89,7 +89,7 @@ map("i", "<D-S-k>", function()
 end, { desc = "Always create split above and switch to it" })
 
 -- Buffer management
-map("n", "<D-q>", "<cmd>enew|bd #<cr>", { noremap = true, silent = true })
+map("n", "<D-q>", "<cmd>enew|bd #<cr>", { noremap = true, silent = true, desc = "Close current buffer" })
 
 -- Auto-maximize current window
 vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {

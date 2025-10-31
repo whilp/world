@@ -1,7 +1,7 @@
 local map = vim.keymap.set
 
 -- Tab management
-map('n', '<Space>tt', ':tabnew<CR>')
+map('n', '<Space>tt', ':tabnew<CR>', { desc = 'Create new tab' })
 
 -- Tab switching with CMD-1 through CMD-9
 for i = 1, 9 do
