@@ -1,8 +1,3 @@
-vim.pack.add({
-  { src = "https://github.com/nvim-lua/plenary.nvim" },
-  { src = "https://github.com/NeogitOrg/neogit" },
-})
-
 local ok, neogit = pcall(require, "neogit")
 if ok then
   neogit.setup({

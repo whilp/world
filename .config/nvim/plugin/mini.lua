@@ -1,7 +1,3 @@
-vim.pack.add({
-  { src = "https://github.com/nvim-mini/mini.nvim" },
-})
-
 -- Setup mini.nvim modules individually (don't require 'mini' directly)
 local ok_bufremove, _ = pcall(require, "mini.bufremove")
 if ok_bufremove then
@@ -32,6 +28,8 @@ local ok_jump, _ = pcall(require, "mini.jump")
 if ok_jump then
   require("mini.jump").setup()
 end
+
+-- mini.clue setup is in plugin/clue.lua
 
 -- Setup mini.hues color scheme
 local ok_hues, _ = pcall(require, "mini.hues")
