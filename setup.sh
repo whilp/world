@@ -42,11 +42,7 @@ _git() {
 }
 
 _extras() {
-  local remote=$(
-    cd "$SRC"
-    git config --get remote.origin.url
-  )
-  local extras=${remote%/*}/extras
+  local extras=${REMOTE%/*}/extras
   (
     cd "$DST"
     if [ ! -d extras ]; then
