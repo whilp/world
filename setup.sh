@@ -167,4 +167,20 @@ _nvim() {
   nvimd restart
 }
 
+_ai() {
+  (
+    cd "$DST"
+    if [ ! -d ./ai ]; then
+      git clone ${REMOTE%/*}/ai ./ai
+    else
+      (
+        cd ./ai
+        git fetch
+      )
+    fi
+
+    claude plugin marketplace add ./ai
+  )
+}
+
 main "$@"
