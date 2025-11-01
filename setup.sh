@@ -51,6 +51,8 @@ _extras() {
       cd ./extras
       git fetch
     fi
+    cd extras
+    [ -x ./setup.sh ] && ./setup.sh
   )
 }
 
