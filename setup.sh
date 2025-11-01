@@ -8,6 +8,7 @@ export SHELLINIT="$DST/.config/shellinit"
 main() {
   _backup
   _git
+  _extras
   _shell
   _luajit
   _shimlink
@@ -35,6 +36,23 @@ _git() {
     git config core.fsmonitor false
   )
   command -v watchman >/dev/null 2>&1 && watchman watch-project "$DST"
+}
+
+_extras() {
+  local remote=$(
+    cd "$SRC"
+    git config --get remote.origin.url
+  )
+  local extras=${remote%/*}/extras
+  (
+    cd "$DST"
+    if [ ! -d extras ]; then
+      git clone "$extras" extras
+    else
+      cd ./extras
+      git fetch
+    fi
+  )
 }
 
 _shell() {
