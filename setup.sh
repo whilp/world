@@ -17,6 +17,7 @@ main() {
   _claude
   _nvim
   _extras
+  _ai
 }
 
 _backup() {
