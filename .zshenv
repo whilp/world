@@ -17,4 +17,6 @@ lua_path=(
   ""
 )
 
+export LUA_PATH
+
 [ -r ~/extras/zshenv ] && source ~/extras/zshenv
