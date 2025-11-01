@@ -11,12 +11,12 @@ export REMOTE=$(
 main() {
   _backup
   _git
-  _extras
   _shell
   _luajit
   _shimlink
   _claude
   _nvim
+  _extras
 }
 
 _backup() {
