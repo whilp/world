@@ -1,5 +1,6 @@
 [ -r ~/.zprofile ] && source ~/.zprofile
 
+export WHEREAMI=$(whereami)
 export RIPGREP_CONFIG_PATH=~/.config/ripgrep/rg.conf
 export COLORTERM=truecolor
 

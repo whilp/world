@@ -4,9 +4,8 @@ export PS1='%# '
 set -o vi
 
 # Set terminal title
-HOST_IDENTIFIER=$(whereami)
 precmd() {
-  print -Pn "\e]0;${HOST_IDENTIFIER}\a"
+  print -Pn "\e]0;${WHEREAMI}\a"
 }
 
 alias co='git checkout'
