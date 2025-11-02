@@ -1,4 +1,3 @@
-require("conform")
 local ok, conform = pcall(require, "conform")
 if ok then
   conform.setup({
