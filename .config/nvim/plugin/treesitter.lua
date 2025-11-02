@@ -1,6 +1,9 @@
-require("nvim-treesitter").setup({
-  install_dir = vim.fn.stdpath("data") .. "/site",
-})
+local ok, ts = pcall(require, "nvim-treesitter")
+if ok then
+  ts.setup({
+    install_dir = vim.fn.stdpath("data") .. "/site",
+  })
+end
 
 local lang = {
   "python",
