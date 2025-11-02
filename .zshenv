@@ -1,16 +1,3 @@
-[ -r ~/.zprofile ] && source ~/.zprofile
-
-export WHEREAMI=$(whereami)
-export RIPGREP_CONFIG_PATH=~/.config/ripgrep/rg.conf
-export COLORTERM=truecolor
-
-# Install ghostty terminfo if missing or outdated
-if [[ ! -f ~/.terminfo/x/xterm-ghostty ]] || [[ ~/.config/ghostty/term.tic -nt ~/.terminfo/x/xterm-ghostty ]]; then
-  mkdir -p ~/.terminfo
-  tic -x ~/.config/ghostty/term.tic 2>/dev/null
-fi
-export TERM=xterm-ghostty
-
 typeset -aU path
 
 path=(
@@ -36,4 +23,16 @@ lua_path=(
 
 export LUA_PATH
 
+[ -r ~/.zprofile ] && source ~/.zprofile
+
+export WHEREAMI=$(whereami)
+export RIPGREP_CONFIG_PATH=~/.config/ripgrep/rg.conf
+export COLORTERM=truecolor
+
+# Install ghostty terminfo if missing or outdated
+if [[ ! -f ~/.terminfo/x/xterm-ghostty ]] || [[ ~/.config/ghostty/term.tic -nt ~/.terminfo/x/xterm-ghostty ]]; then
+  mkdir -p ~/.terminfo
+  tic -x ~/.config/ghostty/term.tic 2>/dev/null
+fi
+export TERM=xterm-ghostty
 [ -r ~/extras/zshenv ] && source ~/extras/zshenv
