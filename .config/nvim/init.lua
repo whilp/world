@@ -3,3 +3,22 @@
 -- Add lua paths
 local home = vim.fn.expand("~")
 package.path = home .. "/.local/lib/lua/?.lua;" .. home .. "/.local/lib/lua/3p/?.lua;" .. package.path
+
+-- Load plugins before anything else
+vim.pack.add({
+  { src = "https://github.com/nvim-mini/mini.nvim" },
+})
+
+vim.pack.add({
+  { src = "https://github.com/nvim-lua/plenary.nvim" },
+  { src = "https://github.com/NeogitOrg/neogit" },
+})
+
+vim.pack.add({
+  { src = "https://github.com/neovim/nvim-lspconfig" },
+  { src = "https://github.com/stevearc/conform.nvim", version = vim.version.range("9.1.0") },
+})
+
+vim.pack.add({
+  { src = "https://github.com/nvim-treesitter/nvim-treesitter", branch = "main" },
+})
