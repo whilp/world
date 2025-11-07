@@ -36,12 +36,8 @@ if [[ "${0:t}" == "nvimd" ]]; then
 
     restart)
       if [[ "$(uname -s)" == "Darwin" ]]; then
-        launchctl unload ~/Library/LaunchAgents/com.user.nvim.plist
-        launchctl load ~/Library/LaunchAgents/com.user.nvim.plist
-        launchctl stop com.user.nvim
-        launchctl start com.user.nvim
+        launchctl kickstart -k gui/$(id -u)/com.user.nvim
       else
-        systemctl --user daemon-reload
         systemctl --user restart nvim
       fi
       ;;
