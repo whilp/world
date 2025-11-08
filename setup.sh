@@ -105,6 +105,8 @@ _luajit() {
   # Create initial lua-shimlink symlink for shimlink's shebang
   mkdir -p "$DST/.local/bin"
   ln -sf "$BOOTSTRAP_LUAJIT" "$DST/.local/bin/lua-shimlink"
+  # Also create lua symlink for tools that expect plain 'lua'
+  ln -sf "$BOOTSTRAP_LUAJIT" "$DST/.local/bin/lua"
 
   echo "Bootstrapped LuaJIT at $BOOTSTRAP_LUAJIT" >&2
 }
