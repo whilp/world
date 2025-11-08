@@ -211,7 +211,7 @@ elseif platform == "linux-arm64" then
 elseif platform == "linux-x86_64" then
   binaries.luajit = {
     path = "bin/luajit",
-    sha256 = "6263fa87f0d7e07a70ee0ab40c2831c5003137c2c84bb4d308065be91d77b37f",
+    sha256 = "1189d646d8a25023ad7c7c44f741e3f905920cd37b3ab175bed9dbdba78b563a",
     strip_components = 1,
     symlinks = {
       ["bin/luajit"] = "~/.local/bin/lua-shimlink",
