@@ -2,7 +2,7 @@
 
 export SRC="$PWD"
 export DST="$HOME"
-export PATH="$DST/.local/share/shimlink/bin:$DST/.local/bin:$PATH"
+export PATH="$DST/.local/share/shimlink/bin:$DST/.local/bin:$DST/extras/bin:$PATH"
 export SHELLINIT="$DST/.config/shellinit"
 export REMOTE=$(
   git config --get remote.origin.url
