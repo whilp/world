@@ -8,16 +8,35 @@ export REMOTE=$(
   git config --get remote.origin.url
 )
 
+_check_jobs() {
+  local failed=0
+  for pid in "$@"; do
+    if ! wait "$pid"; then
+      failed=$((failed + 1))
+    fi
+  done
+  if [ $failed -gt 0 ]; then
+    echo "error: $failed background job(s) failed" >&2
+    return 1
+  fi
+  return 0
+}
+
 main() {
   _backup
   _git
   _shell
   _luajit
   _shimlink
-  _claude
-  _nvim
-  _extras
-  _ai
+  _claude &
+  local claude_pid=$!
+  _nvim &
+  local nvim_pid=$!
+  _extras &
+  local extras_pid=$!
+  _ai &
+  local ai_pid=$!
+  _check_jobs "$claude_pid" "$nvim_pid" "$extras_pid" "$ai_pid"
 }
 
 _backup() {
@@ -39,7 +58,7 @@ _git() {
     git config user.email 189851+whilp@users.noreply.github.com
     git config core.fsmonitor false
   )
-  command -v watchman >/dev/null 2>&1 && watchman watch-project "$DST"
+  command -v watchman >/dev/null 2>&1 && watchman watch-project "$DST" &
 }
 
 _extras() {
@@ -110,22 +129,23 @@ _luajit() {
 }
 
 _shimlink() {
-  shimlink update ast-grep
-  shimlink update biome
-  shimlink update comrak
-  shimlink update delta
-  shimlink update gh
-  shimlink update marksman
-  shimlink update nvim
-  shimlink update rg
-  shimlink update ruff
-  shimlink update shfmt
-  shimlink update sqruff
-  shimlink update stylua
-  shimlink update superhtml
-  shimlink update tree-sitter
-  shimlink update uv
-  shimlink update luajit
+  shimlink update ast-grep &
+  shimlink update biome &
+  shimlink update comrak &
+  shimlink update delta &
+  shimlink update gh &
+  shimlink update marksman &
+  shimlink update nvim &
+  shimlink update rg &
+  shimlink update ruff &
+  shimlink update shfmt &
+  shimlink update sqruff &
+  shimlink update stylua &
+  shimlink update superhtml &
+  shimlink update tree-sitter &
+  shimlink update uv &
+  shimlink update luajit &
+  wait
 }
 
 _claude() {
