@@ -141,11 +141,8 @@ end, { desc = 'Set manual tab name' })
 _G.render_tabline = function()
   local s = ''
   for i = 1, vim.fn.tabpagenr('$') do
-    -- Respect manual tab names first, then fall back to auto-generated ones
-    local title = vim.fn.gettabvar(i, 'tab_name', '') -- Manual name
-    if title == '' then
-      title = vim.fn.gettabvar(i, 'claude_title', 'Tab ' .. i) -- Auto-generated
-    end
+    -- Use manual tab names or default to "Tab N"
+    local title = vim.fn.gettabvar(i, 'tab_name', 'Tab ' .. i)
 
     -- Highlight current tab
     if i == vim.fn.tabpagenr() then
@@ -357,9 +354,9 @@ vim.api.nvim_create_user_command('TabName', function(opts)
   local tabnr = vim.fn.tabpagenr()
 
   if name == '' then
-    -- Clear manual name, allow auto-naming again
+    -- Clear manual name
     vim.fn.settabvar(tabnr, 'tab_name', '')
-    _G.force_update_current_tab_name()
+    vim.cmd('redrawtabline')
   else
     -- Set manual name
     vim.fn.settabvar(tabnr, 'tab_name', name)
@@ -367,7 +364,7 @@ vim.api.nvim_create_user_command('TabName', function(opts)
   end
 end, {
   nargs = '?',
-  desc = 'Set manual tab name (empty to clear and auto-name)'
+  desc = 'Set manual tab name (empty to clear)'
 })
 
 -- Auto-commands for tab management
@@ -381,15 +378,15 @@ vim.api.nvim_create_autocmd('TabNew', {
   end
 })
 
--- Auto-update tab names on certain events
-vim.api.nvim_create_autocmd({'TabNew', 'BufEnter', 'BufWritePost'}, {
-  callback = function()
-    vim.schedule(function()
-      _G.update_current_tab_name()
-    end)
-  end,
-  desc = 'Auto-update tab names on buffer/tab events'
-})
+-- Auto-update tab names on certain events (disabled)
+-- vim.api.nvim_create_autocmd({'TabNew', 'BufEnter', 'BufWritePost'}, {
+--   callback = function()
+--     vim.schedule(function()
+--       _G.update_current_tab_name()
+--     end)
+--   end,
+--   desc = 'Auto-update tab names on buffer/tab events'
+-- })
 
 -- Clean up tracking data for closed tabs
 local function cleanup_closed_tabs()
@@ -430,9 +427,9 @@ vim.api.nvim_create_autocmd('VimEnter', {
   desc = 'Set up first tab name on startup'
 })
 
--- Timer-based refresh (every 30 minutes)
-local refresh_timer = vim.loop.new_timer()
-refresh_timer:start(1800000, 1800000, vim.schedule_wrap(function()
-  cleanup_closed_tabs()
-  _G.update_all_tab_names()
-end))
+-- Timer-based refresh (disabled)
+-- local refresh_timer = vim.loop.new_timer()
+-- refresh_timer:start(1800000, 1800000, vim.schedule_wrap(function()
+--   cleanup_closed_tabs()
+--   _G.update_all_tab_names()
+-- end))
