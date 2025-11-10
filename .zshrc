@@ -19,3 +19,5 @@ alias up='git pull --rebase'
 alias rb='git rebase'
 alias rc='git rebase --continue'
 alias ra='git rebase --abort'
+
+[ -f ~/extras/zshrc ] && source ~/extras/zshrc
