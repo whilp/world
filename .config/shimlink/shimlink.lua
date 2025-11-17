@@ -168,6 +168,25 @@ binaries.delta = rust_binary("dandavison/delta", "0.18.2", "delta", {
   ["linux-x86_64"] = "bb03dd7961db278aa04f0059de8d390ce1f11816e08ae8eebc0867d3aabc9f11",
 })
 
+-- duckdb
+local duckdb_names = {
+  ["darwin-arm64"] = "osx-arm64",
+  ["linux-arm64"] = "linux-arm64",
+  ["linux-x86_64"] = "linux-amd64",
+}
+if duckdb_names[platform] then
+  binaries.duckdb = {
+    path = "duckdb",
+    sha256 = ({
+      ["darwin-arm64"] = "7125d2e18bf5cc17cf654ab03383457f57decbf7d9bdf9e8ac32b1f515c19dbf",
+      ["linux-arm64"] = "e6eb0afdcc98084fd4776aa5a6108e0a36ab7f5069efc4e07a18f72a74b16642",
+      ["linux-x86_64"] = "356cdd10622e15cc2a411a27ddf8d4c0df6c315799f4cbedb0551dfc6e566567",
+    })[platform],
+    strip_components = 0,
+    url = string.format("https://github.com/duckdb/duckdb/releases/download/v1.4.2/duckdb_cli-%s.zip", duckdb_names[platform]),
+  }
+end
+
 -- gh (GitHub CLI)
 if platform == "darwin-arm64" then
   binaries.gh = archive_binary("cli/cli", "v2.79.0", "gh_2.79.0_macOS_arm64.zip",
