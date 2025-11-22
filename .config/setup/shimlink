@@ -1,0 +1,21 @@
+#!/bin/bash
+
+source "$(dirname "$0")/env"
+
+shimlink update luajit
+shimlink update ast-grep &
+shimlink update biome &
+shimlink update comrak &
+shimlink update delta &
+shimlink update gh &
+shimlink update marksman &
+shimlink update nvim &
+shimlink update rg &
+shimlink update ruff &
+shimlink update shfmt &
+shimlink update sqruff &
+shimlink update stylua &
+shimlink update superhtml &
+shimlink update tree-sitter &
+shimlink update uv &
+wait

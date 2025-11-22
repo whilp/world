@@ -1,0 +1,14 @@
+#!/bin/bash
+
+source "$(dirname "$0")/env"
+
+cd "$DST"
+if [ ! -d ./ai ]; then
+  git clone ${REMOTE%/*}/ai ./ai
+else
+  cd ./ai
+  git fetch
+  cd "$DST"
+fi
+
+claude plugin marketplace add ./ai

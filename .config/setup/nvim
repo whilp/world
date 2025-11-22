@@ -1,0 +1,10 @@
+#!/bin/bash
+
+source "$(dirname "$0")/env"
+
+# Clean up any stale swap files
+rm -rf "$DST/.local/state/nvim/swap"
+
+# Load and start nvim server service
+nvimd reload
+nvimd restart

@@ -79,6 +79,10 @@ jobs:
             rm -rf "${PACK_DIR}/${name}/.git"
           done
 
+          # Generate helptags
+          export PATH="${GITHUB_WORKSPACE}/dist/nvim/${{ matrix.platform }}/${EXTRACTED_DIR}/bin:${PATH}"
+          nvim --headless +'helptags ALL' +qa
+
       - name: repackage with plugins
         run: |
           cd dist/nvim/${{ matrix.platform }}
