@@ -63,7 +63,7 @@ jobs:
         run: |
           docker run --rm -v "$PWD":/workspace -w /workspace \
             --platform linux/arm64 ubuntu:24.04 bash -c "
-              apt-get update && apt-get install -y git make gcc libssl-dev build-essential && \
+              apt-get update && apt-get install -y git make gcc libssl-dev build-essential unzip wget && \
               bash scripts/build-luajit.sh"
 
       - name: upload artifacts
