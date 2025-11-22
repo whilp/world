@@ -411,9 +411,11 @@ local function download_binary(binary_name, config, force)
     return false
   end
 
+  -- Calculate checksum of the downloaded artifact (before extraction)
+  local actual_sha256 = calculate_sha256(download_path)
+
   -- Extract or copy binary
   local extract_temp
-  local binary_for_checksum
 
   if path then
     extract_temp = path_join(temp_dir, "extracted")
@@ -438,19 +440,19 @@ local function download_binary(binary_name, config, force)
         binary_dir = path_join(binary_dir, first_entry)
       end
     end
-    binary_for_checksum = path_join(binary_dir, path)
+    local binary_path = path_join(binary_dir, path)
+
+    -- Make extracted binary executable
+    if file_exists(binary_path) then
+      ffi.C.chmod(binary_path, tonumber("0755", 8))
+    end
   else
     extract_temp = temp_dir
-    binary_for_checksum = download_path
+    -- Make downloaded binary executable
+    if file_exists(download_path) then
+      ffi.C.chmod(download_path, tonumber("0755", 8))
+    end
   end
-
-  -- Make executable
-  if file_exists(binary_for_checksum) then
-    ffi.C.chmod(binary_for_checksum, tonumber("0755", 8))
-  end
-
-  -- Calculate actual checksum
-  local actual_sha256 = calculate_sha256(binary_for_checksum)
 
   -- Handle checksum verification and updates
   if force then

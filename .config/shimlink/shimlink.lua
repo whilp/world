@@ -113,9 +113,9 @@ if ast_grep_map[platform] then
   binaries["ast-grep"] = {
     path = "ast-grep",
     sha256 = ({
-      ["darwin-arm64"] = "0377bd0d8ea17dcf2e5e76921c7a8324efd4a2b1ae1a321216f896f367da59db",
-      ["linux-arm64"] = "147fe3d3857f099df957ff2969eb9adea7b44cceeaa3d50a5e8f4a46acbab134",
-      ["linux-x86_64"] = "e34f8222846594570dae0edb99b36a9927b44b86597fb33814c2bf366b583b4a",
+      ["darwin-arm64"] = "c9a9e690d94cd9696d2552690fe0abdd2c303e48a3ee5cf9d38728eda054f147",
+      ["linux-arm64"] = "62e9e79148be33d27fde24f4dcda83eab207a297ce50fb4a0becfbb29c8f218b",
+      ["linux-x86_64"] = "d28be5970afb3e8022210fb9427de0875f1d64f4e4b91ed28b3a3abfebb1d934",
     })[platform],
     strip_components = 0,
     url = string.format("https://github.com/ast-grep/ast-grep/releases/download/0.28.0/app-%s.zip", triple),
@@ -163,26 +163,26 @@ end
 
 -- delta
 binaries.delta = rust_binary("dandavison/delta", "0.18.2", "delta", {
-  ["darwin-arm64"] = "afa92e826b45d93232946e8d5371b7056ca633aef92b5baa6ce08875c274843e",
-  ["linux-arm64"] = "7833733f45a128e96757254066b84f6baf553860a656bda4075c32fd735102a0",
-  ["linux-x86_64"] = "bb03dd7961db278aa04f0059de8d390ce1f11816e08ae8eebc0867d3aabc9f11",
+  ["darwin-arm64"] = "6ba38dce9f91ee1b9a24aa4aede1db7195258fe176c3f8276ae2d4457d8170a0",
+  ["linux-arm64"] = "adf7674086daa4582f598f74ce9caa6b70c1ba8f4a57d2911499b37826b014f9",
+  ["linux-x86_64"] = "b7ea845004762358a00ef9127dd9fd723e333c7e4b9cb1da220c3909372310ee",
 })
 
 -- gh (GitHub CLI)
 if platform == "darwin-arm64" then
   binaries.gh = archive_binary("cli/cli", "v2.79.0", "gh_2.79.0_macOS_arm64.zip",
     "bin/gh",
-    "20f0520e9cc872b543bd5e31984f64932b197732c3d3df2c7367d0dc66e7a450",
+    "5454f9509e3dbb8f321310e9e344877d9a01ebb8f8703886b1afb0936d60ffaa",
     1)  -- strip gh_2.79.0_macOS_arm64/
 elseif platform == "linux-arm64" then
   binaries.gh = archive_binary("cli/cli", "v2.79.0", "gh_2.79.0_linux_arm64.tar.gz",
     "bin/gh",
-    "ee4a9a73720c68152340de6a130ed3bf499d5817a7434bd3d52377acc32a8a67",
+    "1b91e546b30181a8ee6d8c72bbf59eaadbb0600bab014dfbcc199676c83ea102",
     1)  -- strip gh_2.79.0_linux_arm64/
 elseif platform == "linux-x86_64" then
   binaries.gh = archive_binary("cli/cli", "v2.79.0", "gh_2.79.0_linux_amd64.tar.gz",
     "bin/gh",
-    "da5b8b030353dab06e1f170a40967abece3ee78166723fa66141ba02c3234790",
+    "e7af0c72a607c0528fda1989f7c8e3be85e67d321889002af0e2938ad9c8fb68",
     1)  -- strip gh_2.79.0_linux_amd64/
 end
 
@@ -191,7 +191,7 @@ local luajit_version = "2025.10.16-25a61a18"
 if platform == "darwin-arm64" then
   binaries.luajit = {
     path = "bin/luajit",
-    sha256 = "09cfbff3ee8c64908d9e1b5d7a2ae734935b519c27e5da371ad1c6eb2fef01bf",
+    sha256 = "7b43d46318ec9bf373afcb6d7c7bbab4bd542ea485f50d053cf1a2e89e737183",
     strip_components = 1,
     symlinks = {
       ["share/luajit-2.1"] = "~/.local/share/luajit-2.1",
@@ -201,7 +201,7 @@ if platform == "darwin-arm64" then
 elseif platform == "linux-arm64" then
   binaries.luajit = {
     path = "bin/luajit",
-    sha256 = "d965bdafb98e635767cdf7d827b340c0720c51c31d78198287f1190ce0fc6fa3",
+    sha256 = "f1b7e2e6b4e6cf9d185a3012e200c526f21d20f4b72f08ddd8f1df53b5883ff7",
     strip_components = 1,
     symlinks = {
       ["bin/luajit"] = "~/.local/bin/lua-shimlink",
@@ -211,7 +211,7 @@ elseif platform == "linux-arm64" then
 elseif platform == "linux-x86_64" then
   binaries.luajit = {
     path = "bin/luajit",
-    sha256 = "0e21aa2e78b84758e7fe8c1999567b5021ba0839d0d86d42493bd6597e16483f",
+    sha256 = "2ea3c1c6d74fd6d3cacd1e7ee3f300c46767917068f39602476cd94fc9c4e6fc",
     strip_components = 1,
     symlinks = {
       ["bin/luajit"] = "~/.local/bin/lua-shimlink",
@@ -228,12 +228,10 @@ binaries.marksman = simple_binary("artempyanykh/marksman", "2024-12-18", "marksm
 }, "", platform_maps.os_simple)
 
 -- nvim
--- NOTE: sha256 checksums are of the extracted bin/nvim binary, not the tar.gz archive
--- To update: curl -sL <url> | tar -xzf - && shasum -a 256 nvim-<platform>/bin/nvim
 if platform == "darwin-arm64" then
   binaries.nvim = {
     path = "bin/nvim",
-    sha256 = "31c2625339e5716c1d11f5460460ed8bb5a199128e8f578c3c1fa2639a74604d",
+    sha256 = "503f3fd7c3926cab7a383c8c2ee4e08ea32a6eaaaf980dc82ea17bbd0f93e593",
     strip_components = 1,
     upstream_url = "https://github.com/neovim/neovim/releases/download/nightly/nvim-macos-arm64.tar.gz",
     url = "https://github.com/whilp/dotfiles/releases/download/2025.11.22/nvim-macos-arm64.tar.gz",
@@ -241,7 +239,7 @@ if platform == "darwin-arm64" then
 elseif platform == "linux-arm64" then
   binaries.nvim = {
     path = "bin/nvim",
-    sha256 = "944154fefb337ba80615d24261ea85e41dac1d0493c4bd6c6c981b24aa2e28fc",
+    sha256 = "77d3b791d164937bfd2f63111a426bafc006bd8c72999e569dfbf663c8c962e6",
     strip_components = 1,
     upstream_url = "https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-arm64.tar.gz",
     url = "https://github.com/whilp/dotfiles/releases/download/2025.11.22/nvim-linux-arm64.tar.gz",
@@ -249,7 +247,7 @@ elseif platform == "linux-arm64" then
 elseif platform == "linux-x86_64" then
   binaries.nvim = {
     path = "bin/nvim",
-    sha256 = "7bd780ee615c81e5aef9f9453e58bd0fc7331f195030f342d3ea731b5d50cc5b",
+    sha256 = "d50a43f6f0a050e5efe1fb960a741009d6b01b5154778cffa17419551b4b7878",
     strip_components = 1,
     upstream_url = "https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-x86_64.tar.gz",
     url = "https://github.com/whilp/dotfiles/releases/download/2025.11.22/nvim-linux-x86_64.tar.gz",
@@ -258,16 +256,16 @@ end
 
 -- rg (ripgrep)
 binaries.rg = rust_binary("BurntSushi/ripgrep", "14.1.1", "ripgrep", {
-  ["darwin-arm64"] = "0e0cb83f5195f1f51bb8feef1fff5b0b171e82bd1db6bd35deee701a3e7102f8",
-  ["linux-arm64"] = "e07d5c85fa9ca740ff4ab8bbac60a1e11c7a5ce242435f7820a03f7c20ef6276",
-  ["linux-x86_64"] = "f401154e2393f9002ac77e419f9ee5521c18f4f8cd3e32293972f493ba06fce7",
+  ["darwin-arm64"] = "24ad76777745fbff131c8fbc466742b011f925bfa4fffa2ded6def23b5b937be",
+  ["linux-arm64"] = "c827481c4ff4ea10c9dc7a4022c8de5db34a5737cb74484d62eb94a95841ab2f",
+  ["linux-x86_64"] = "4cf9f2741e6c465ffdb7c26f38056a59e2a2544b51f7cc128ef28337eeae4d8e",
 }, nil, "rg")
 
 -- ruff
 binaries.ruff = rust_binary("astral-sh/ruff", "0.8.4", "ruff", {
-  ["darwin-arm64"] = "4122d2367d4580ee316fe20c31004f153bfc591f2c19e5ad25dbc72957ac02c8",
-  ["linux-arm64"] = "922c84fdb86d1909fe0f691d173f23d875d33b1716d3d8a5cf344e59e1a6c722",
-  ["linux-x86_64"] = "ce7b99797145b43d23b732d6050fbbd62e4f9059663cf24218810598753dfb90",
+  ["darwin-arm64"] = "8893f3ede33a73740f69b10ee9356e5cf2933c0afe146f00176be12ef91bf9d9",
+  ["linux-arm64"] = "0dfe36fabb817638863375e0140ce03bf26ccc9a7fd9d2c8e8337b1a21697ed4",
+  ["linux-x86_64"] = "c4e6591ae1bb4f15c09c9022b7bfc57e1c3a567acdc9cd76021cd1304b5868c3",
 }, platform_maps.rust_triple_gnu, nil, false)
 
 -- shfmt
@@ -297,9 +295,9 @@ if sqruff_targets[platform] then
   binaries.sqruff = {
     path = "sqruff",
     sha256 = ({
-      ["darwin-arm64"] = "a6267afec08516a040792d7f137509f5e109d53f509b1b5706cd1399151164bb",
-      ["linux-arm64"] = "fddd62ea4a632544190424ed1fbb8824013314e24dce4eab8d9a5a420341adc5",
-      ["linux-x86_64"] = "9ef7797be3e73f72215b95cd6aa2431a62d17daf9d33fe129f2bf2bcc9ecd971",
+      ["darwin-arm64"] = "cb969b42ebbca8229b4484ae2503530c4eef16e23829b340a0b270e1a007e6b6",
+      ["linux-arm64"] = "94ef0e55978a960f9cfc717bf5ed2127ae4462cc0a7915d7d38d843e3ca7ddfb",
+      ["linux-x86_64"] = "ae09dfcb0d275bf5317769d6eff8aa62c05942369f63ea5e747164a7db9225d9",
     })[platform],
     url = string.format("https://github.com/quarylabs/sqruff/releases/download/v0.21.2/sqruff-%s.tar.gz", sqruff_targets[platform]),
   }
@@ -315,9 +313,9 @@ if stylua_targets[platform] then
   binaries.stylua = {
     path = "stylua",
     sha256 = ({
-      ["darwin-arm64"] = "31b48975b0897317a817471f05a02c5c0b468d3147e10f8cd5cc15c21359c8d7",
-      ["linux-arm64"] = "5848253ab2c10f41c8105c8f94659114078efa592bba18157da816ca50026701",
-      ["linux-x86_64"] = "3d2476596a4f7aa7c52fbf67ccd8a6ef208e7e89dfddf9aa2ceb6e195600ad98",
+      ["darwin-arm64"] = "3d9caaa660da4b3bc092e805d09af59e42b7504f1253c863b682ea3fc80944f2",
+      ["linux-arm64"] = "3db53cd00a685d0b59f4a4ab188bfa6acb804dca489d810a852ed2ea32eb2b1c",
+      ["linux-x86_64"] = "9087e42f599855192cf4f6a7fb0cb7353e23debd7c749c6e3a76fc58abde3c89",
     })[platform],
     url = string.format("https://github.com/JohnnyMorganz/StyLua/releases/download/v2.0.1/stylua-%s.zip", stylua_targets[platform]),
   }
@@ -328,9 +326,9 @@ local superhtml_map = platform_maps.arch_os
 binaries.superhtml = {
   path = "superhtml",
   sha256 = ({
-    ["darwin-arm64"] = "e20c63e0046fb03bced8a5168267fab2ef71381e9e96c9310f5ea0b7ce3a7ab6",
-    ["linux-arm64"] = "2450946a457e96a56b3baeac4d54943b3838c723e4beeb3383ff458aa6ac0cf0",
-    ["linux-x86_64"] = "aeef7e31e7c1885354be05907252af090b1d6dfce08b51ce09f90a109c3d0cbe",
+    ["darwin-arm64"] = "b8b2327f666ff316422061284e107add5c413ebdfdb91774c0c3702a66e65ec9",
+    ["linux-arm64"] = "54cd2414de6664b85166a0a2e7c208ca3dbcc935274f4a55309cc9dcfa8e605b",
+    ["linux-x86_64"] = "c9fabbbd57851e38a67e6c1eb7942e8bc6189925bfcf437f1e5286932c76d60a",
   })[platform],
   strip_components = 1,
   url = string.format("https://github.com/kristoff-it/superhtml/releases/download/v0.5.3/%s.tar.gz", superhtml_map[platform]),
@@ -340,9 +338,9 @@ binaries.superhtml = {
 binaries["tree-sitter"] = gz_binary("tree-sitter/tree-sitter", "v0.25.8",
   "tree-sitter-" .. platform_maps.os_arch[platform],
   ({
-    ["darwin-arm64"] = "15ed2301ef7506ddc0ac844793208eb13dd017f6ae4075cc162e6c4bd9337e28",
-    ["linux-arm64"] = "aa0612920c0149a933e4cebc78e0161e6df47f89f5eb18fd6d4ca7326618b02e",
-    ["linux-x86_64"] = "7f78c9df701d7f8155b18c94dd92362bf398ad635426ce323532fe8f20ef0125",
+    ["darwin-arm64"] = "ae3bbba3ba68e759a949e7591a42100a12d660cae165837aba48cae76a599e64",
+    ["linux-arm64"] = "cd81d0108df9bdacf4fd32ec53534acced4780540eb5e889c77470d496e37fc5",
+    ["linux-x86_64"] = "c9d46697e3e5ae6900a39ad4483667d2ba14c8ffb12c3f863bcf82a9564ee19f",
   })[platform])
 if binaries["tree-sitter"] then
   binaries["tree-sitter"].path = "tree-sitter"
@@ -350,9 +348,9 @@ end
 
 -- uv
 binaries.uv = rust_binary("astral-sh/uv", "0.5.7", "uv", {
-  ["darwin-arm64"] = "de38aa84629780f2568ecdc0d24a62ff4be1e3a12f66b2b7655527a646f06deb",
-  ["linux-arm64"] = "36d8307245f75cc0487c622a07c001f4e0faf224fc0893e6a338faa916b7f3d2",
-  ["linux-x86_64"] = "884e9aed698f57e6c56252025342214a9af5993ff8da4580157588726d71fa01",
+  ["darwin-arm64"] = "b8cab25ab2ec0714dbb34179f948c27aa4ab307be54e0628e9e1eef1d2264f9f",
+  ["linux-arm64"] = "d4dd7a72689888c92b5191902fd4ec9d25b7eeba07be41ba4a8f89acbb403e2d",
+  ["linux-x86_64"] = "8a0a3e823684dec6e49ae17f31bf6483c778fd579671992d9156875210e5161e",
 }, platform_maps.rust_triple_gnu, nil, false)
 
 return {
