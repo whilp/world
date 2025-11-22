@@ -233,26 +233,26 @@ binaries.marksman = simple_binary("artempyanykh/marksman", "2024-12-18", "marksm
 if platform == "darwin-arm64" then
   binaries.nvim = {
     path = "bin/nvim",
-    sha256 = "47d7c27be3a013b306e540c7119132c9d53087dbda29ec182cd1f24230849465",
+    sha256 = "31c2625339e5716c1d11f5460460ed8bb5a199128e8f578c3c1fa2639a74604d",
     strip_components = 1,
     upstream_url = "https://github.com/neovim/neovim/releases/download/nightly/nvim-macos-arm64.tar.gz",
-    url = "https://github.com/whilp/dotfiles/releases/download/2025.10.29/nvim-macos-arm64.tar.gz",
+    url = "https://github.com/whilp/dotfiles/releases/download/2025.11.22/nvim-macos-arm64.tar.gz",
   }
 elseif platform == "linux-arm64" then
   binaries.nvim = {
     path = "bin/nvim",
-    sha256 = "2e40754d63c46ec3251fcadee74c9b33f5a129fb0a189c922b6d80acf0eb9b79",
+    sha256 = "944154fefb337ba80615d24261ea85e41dac1d0493c4bd6c6c981b24aa2e28fc",
     strip_components = 1,
     upstream_url = "https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-arm64.tar.gz",
-    url = "https://github.com/whilp/dotfiles/releases/download/2025.10.29/nvim-linux-arm64.tar.gz",
+    url = "https://github.com/whilp/dotfiles/releases/download/2025.11.22/nvim-linux-arm64.tar.gz",
   }
 elseif platform == "linux-x86_64" then
   binaries.nvim = {
     path = "bin/nvim",
-    sha256 = "764a7fb16345507ac281c4e75f8a8e43569073a1bb6a0367b8fed638ca5e55c5",
+    sha256 = "7bd780ee615c81e5aef9f9453e58bd0fc7331f195030f342d3ea731b5d50cc5b",
     strip_components = 1,
     upstream_url = "https://github.com/neovim/neovim/releases/download/nightly/nvim-linux-x86_64.tar.gz",
-    url = "https://github.com/whilp/dotfiles/releases/download/2025.10.29/nvim-linux-x86_64.tar.gz",
+    url = "https://github.com/whilp/dotfiles/releases/download/2025.11.22/nvim-linux-x86_64.tar.gz",
   }
 end
 
