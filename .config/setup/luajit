@@ -1,0 +1,56 @@
+#!/bin/bash
+
+source ~/.config/setup/env
+
+# Detect platform and architecture
+os=$(uname -s | tr '[:upper:]' '[:lower:]')
+arch=$(uname -m)
+
+case "$os-$arch" in
+linux-x86_64)
+  url="https://github.com/whilp/dotfiles/releases/download/luajit-3/luajit-2025.10.16-25a61a18-linux-x64.tar.gz"
+  ;;
+linux-aarch64 | linux-arm64)
+  url="https://github.com/whilp/dotfiles/releases/download/luajit-3/luajit-2025.10.16-25a61a18-linux-arm64.tar.gz"
+  ;;
+darwin-arm64)
+  url="https://github.com/whilp/dotfiles/releases/download/luajit-3/luajit-2025.10.16-25a61a18-darwin-arm64.tar.gz"
+  ;;
+*)
+  echo "Unsupported platform: $os-$arch" >&2
+  exit 1
+  ;;
+esac
+
+# Create bootstrap directory structure
+bootstrap_dir="$DST/.local/bootstrap"
+mkdir -p "$bootstrap_dir"/{bin,lib}
+
+# Create temporary directory for download
+temp_dir=$(mktemp -d)
+archive="$temp_dir/luajit.tar.gz"
+
+# Download LuaJIT
+echo "Bootstrapping LuaJIT from $url" >&2
+curl -fsSL -o "$archive" "$url"
+
+# Extract to bootstrap location
+tar -xzf "$archive" -C "$bootstrap_dir"
+
+# Find the extracted directory (it will have the version in the name)
+luajit_dir=$(find "$bootstrap_dir" -maxdepth 1 -type d -name "luajit-*" | head -n1)
+
+# Create symlinks in bootstrap/bin
+ln -sf "$luajit_dir/bin/luajit" "$bootstrap_dir/bin/luajit"
+ln -sf "$luajit_dir/bin/luajit" "$bootstrap_dir/bin/lua-shimlink"
+ln -sf "$luajit_dir/bin/luajit" "$bootstrap_dir/bin/lua"
+
+# Copy lib files to bootstrap/lib if they exist
+if [ -d "$luajit_dir/lib" ]; then
+  cp -r "$luajit_dir/lib"/* "$bootstrap_dir/lib/"
+fi
+
+# Clean up
+rm -rf "$temp_dir"
+
+echo "Bootstrapped LuaJIT in $bootstrap_dir" >&2

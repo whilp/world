@@ -1,0 +1,11 @@
+#!/bin/bash
+
+source ~/.config/setup/env
+
+mkdir -p "$SHELLINIT"
+(
+  cd "$DST"
+  for name in bashrc bash_profile profile zshrc; do
+    [[ -r ".$name" && ! -f "$SHELLINIT/$name" ]] && cp ".$name" "$SHELLINIT/$name"
+  done
+)

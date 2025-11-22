@@ -1,0 +1,8 @@
+#!/bin/bash
+
+export SRC="$PWD"
+export DST="$HOME"
+export PATH="$DST/.local/bootstrap/bin:$DST/.local/share/shimlink/bin:$DST/.local/bin:$DST/extras/bin:$PATH"
+export LUA_PATH="$DST/.local/bootstrap/lib/lua/?.lua;$DST/.local/bootstrap/lib/lua/?/init.lua;$DST/.local/lib/lua/?.lua;$DST/.local/lib/lua/?/init.lua;;"
+export SHELLINIT="$DST/.config/shellinit"
+export REMOTE=$(git config --get remote.origin.url)

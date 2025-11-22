@@ -1,0 +1,25 @@
+#!/bin/bash
+
+source ~/.config/setup/env
+
+config="$DST/.claude.json"
+[ -r "$config" ] && exit 0
+
+if [ -n "${CLAUDE_CREDENTIALS}" ]; then
+  echo "${CLAUDE_CREDENTIALS}" >"$DST/.claude/.credentials.json"
+fi
+
+auth=""
+if [ -n "${CLAUDE_API_KEY}" ]; then
+  auth='"primaryApiKey": "'${CLAUDE_API_KEY}'",'
+fi
+
+settings='{
+  "numStartups": 1,
+  "installMethod": "unknown",
+  "autoUpdates": true,
+  "theme": "dark-daltonized",
+  '${auth}'
+  "hasCompletedOnboarding": true
+}'
+echo "$settings" >"$config"

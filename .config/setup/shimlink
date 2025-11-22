@@ -1,0 +1,20 @@
+#!/bin/bash
+
+source ~/.config/setup/env
+
+shimlink update ast-grep &
+shimlink update biome &
+shimlink update comrak &
+shimlink update delta &
+shimlink update gh &
+shimlink update marksman &
+shimlink update nvim &
+shimlink update rg &
+shimlink update ruff &
+shimlink update shfmt &
+shimlink update sqruff &
+shimlink update stylua &
+shimlink update superhtml &
+shimlink update tree-sitter &
+shimlink update uv &
+wait

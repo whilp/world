@@ -1,0 +1,16 @@
+#!/bin/bash
+
+source ~/.config/setup/env
+
+extras=${REMOTE%/*}/extras
+(
+  cd "$DST"
+  if [ ! -d extras ]; then
+    git clone "$extras" extras
+  else
+    cd ./extras
+    git fetch
+  fi
+  cd extras
+  [ -x ./setup.sh ] && ./setup.sh
+)
