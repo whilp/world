@@ -102,7 +102,7 @@ local function mkdir_p(path)
   for _, part in ipairs(parts) do
     current = current .. part
     if not is_directory(current) then
-      ffi.C.mkdir(current, tonumber("0755", 8))
+      stat.mkdir(current, tonumber("0755", 8))
     end
     current = current .. "/"
   end
