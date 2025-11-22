@@ -5,12 +5,6 @@ source "$(dirname "$0")/env"
 # Clean up any stale swap files
 rm -rf "$DST/.local/state/nvim/swap"
 
-# Install vim.pack plugins by starting nvim headlessly
-NVIM_INVIM=1 nvim-1 --headless +'lua vim.wait(30000, function() return vim.fn.isdirectory(vim.fn.stdpath("data") .. "/site/pack/core/opt/mini.nvim") == 1 end)' +qa
-
-# Generate helptags
-NVIM_INVIM=1 nvim-1 --headless +'helptags ALL' +qa
-
 # Load and start nvim server service
 nvimd reload
 nvimd restart
