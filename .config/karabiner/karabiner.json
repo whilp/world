@@ -168,6 +168,19 @@
                 {
                     "identifiers": {
                         "is_keyboard": true,
+                        "product_id": 0,
+                        "vendor_id": 0
+                    },
+                    "simple_modifications": [
+                        {
+                            "from": { "key_code": "caps_lock" },
+                            "to": [{ "key_code": "left_control" }]
+                        }
+                    ]
+                },
+                {
+                    "identifiers": {
+                        "is_keyboard": true,
                         "product_id": 50895,
                         "vendor_id": 12951
                     },
