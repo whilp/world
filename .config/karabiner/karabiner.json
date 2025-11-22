@@ -227,6 +227,14 @@
                         {
                             "from": { "key_code": "left_control" },
                             "to": [{ "key_code": "escape" }]
+                        },
+                        {
+                            "from": { "key_code": "fn" },
+                            "to": [{ "key_code": "escape" }]
+                        },
+                        {
+                            "from": { "key_code": "escape" },
+                            "to": [{ "key_code": "fn" }]
                         }
                     ]
                 },
