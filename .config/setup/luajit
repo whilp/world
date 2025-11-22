@@ -6,15 +6,18 @@ source "$(dirname "$0")/env"
 os=$(uname -s | tr '[:upper:]' '[:lower:]')
 arch=$(uname -m)
 
+luajit_version="2025.10.16-25a61a18"
+release_tag="2025.11.22"
+
 case "$os-$arch" in
 linux-x86_64)
-  url="https://github.com/whilp/dotfiles/releases/download/luajit-3/luajit-2025.10.16-25a61a18-linux-x64.tar.gz"
+  url="https://github.com/whilp/dotfiles/releases/download/${release_tag}/luajit-${luajit_version}-linux-x64.tar.gz"
   ;;
 linux-aarch64 | linux-arm64)
-  url="https://github.com/whilp/dotfiles/releases/download/luajit-3/luajit-2025.10.16-25a61a18-linux-arm64.tar.gz"
+  url="https://github.com/whilp/dotfiles/releases/download/${release_tag}/luajit-${luajit_version}-linux-arm64.tar.gz"
   ;;
 darwin-arm64)
-  url="https://github.com/whilp/dotfiles/releases/download/luajit-3/luajit-2025.10.16-25a61a18-darwin-arm64.tar.gz"
+  url="https://github.com/whilp/dotfiles/releases/download/${release_tag}/luajit-${luajit_version}-darwin-arm64.tar.gz"
   ;;
 *)
   echo "Unsupported platform: $os-$arch" >&2
