@@ -191,32 +191,32 @@ local luajit_version = "2025.10.16-25a61a18"
 if platform == "darwin-arm64" then
   binaries.luajit = {
     path = "bin/luajit",
-    sha256 = "2c081318a9a9de0e61d6d8cad6b150043fac550a4fc17ec3cfb8a52f9b5d263c",
+    sha256 = "09cfbff3ee8c64908d9e1b5d7a2ae734935b519c27e5da371ad1c6eb2fef01bf",
     strip_components = 1,
     symlinks = {
       ["share/luajit-2.1"] = "~/.local/share/luajit-2.1",
     },
-    url = string.format("https://github.com/whilp/dotfiles/releases/download/luajit-3/luajit-%s-darwin-arm64.tar.gz", luajit_version),
+    url = string.format("https://github.com/whilp/dotfiles/releases/download/luajit-4/luajit-%s-darwin-arm64.tar.gz", luajit_version),
   }
 elseif platform == "linux-arm64" then
   binaries.luajit = {
     path = "bin/luajit",
-    sha256 = "a64256bebcca54f243bcd9c0aac075c1d3632c0beef81193ce3245977c4a1036",
+    sha256 = "d965bdafb98e635767cdf7d827b340c0720c51c31d78198287f1190ce0fc6fa3",
     strip_components = 1,
     symlinks = {
       ["bin/luajit"] = "~/.local/bin/lua-shimlink",
     },
-    url = string.format("https://github.com/whilp/dotfiles/releases/download/luajit-3/luajit-%s-linux-arm64.tar.gz", luajit_version),
+    url = string.format("https://github.com/whilp/dotfiles/releases/download/luajit-4/luajit-%s-linux-arm64.tar.gz", luajit_version),
   }
 elseif platform == "linux-x86_64" then
   binaries.luajit = {
     path = "bin/luajit",
-    sha256 = "1189d646d8a25023ad7c7c44f741e3f905920cd37b3ab175bed9dbdba78b563a",
+    sha256 = "0e21aa2e78b84758e7fe8c1999567b5021ba0839d0d86d42493bd6597e16483f",
     strip_components = 1,
     symlinks = {
       ["bin/luajit"] = "~/.local/bin/lua-shimlink",
     },
-    url = string.format("https://github.com/whilp/dotfiles/releases/download/luajit-3/luajit-%s-linux-x64.tar.gz", luajit_version),
+    url = string.format("https://github.com/whilp/dotfiles/releases/download/luajit-4/luajit-%s-linux-x64.tar.gz", luajit_version),
   }
 end
 
