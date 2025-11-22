@@ -206,7 +206,7 @@ if luajit_plat then
     symlinks = {
       ["share/luajit-2.1"] = "~/.local/share/luajit-2.1",
     },
-    url = string.format("https://github.com/whilp/dotfiles/releases/download/luajit-4/luajit-%s-%s.tar.gz", luajit_version, luajit_plat),
+    url = string.format("https://github.com/whilp/dotfiles/releases/download/2025.11.22/luajit-%s-%s.tar.gz", luajit_version, luajit_plat),
   }
 end
 
