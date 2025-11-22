@@ -300,12 +300,17 @@ end
 local function update_config_checksum(binary_name, config, new_checksum)
   config.binaries[binary_name].sha256 = new_checksum
 
-  -- Write to platform-specific config file using string replacement
-  local platform_config_path = get_platform_config_path()
-  local content = read_file(platform_config_path)
+  -- Write to shimlink.lua if it exists, otherwise platform-specific config
+  local config_dir = get_config_dir()
+  local config_path = path_join(config_dir, "shimlink.lua")
+  if not file_exists(config_path) then
+    config_path = get_platform_config_path()
+  end
+
+  local content = read_file(config_path)
 
   if not content then
-    stderr_write("shimlink: failed to read " .. platform_config_path)
+    stderr_write("shimlink: failed to read " .. config_path)
     return
   end
 
@@ -324,7 +329,7 @@ local function update_config_checksum(binary_name, config, new_checksum)
     return
   end
 
-  write_file(platform_config_path, content)
+  write_file(config_path, content)
   stderr_write("shimlink: updated checksum for " .. binary_name .. " to " .. new_checksum)
 end
 
