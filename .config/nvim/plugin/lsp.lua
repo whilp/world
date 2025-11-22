@@ -34,7 +34,15 @@ if ok then
   })
 end
 
-local ok, lspconfig = pcall(require, "lspconfig")
-if ok then
-  lspconfig.marksman.setup({})
-end
+vim.lsp.config.marksman = {
+  cmd = { "marksman", "server" },
+  filetypes = { "markdown", "markdown.mdx" },
+  root_markers = { ".git", ".marksman.toml" },
+}
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "markdown", "markdown.mdx" },
+  callback = function(args)
+    vim.lsp.enable("marksman")
+  end,
+})
