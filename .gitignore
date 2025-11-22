@@ -16,6 +16,10 @@ paste.*
 .claude/statsig/
 .claude/todos/
 .claude/history.jsonl
+.claude/debug/
+.claude/file-history/
+.bazel-profile-summarizer/
+.bazel-profile-uploader/
 .conda/
 .config/vscode-dev-containers/
 .docker
@@ -57,6 +61,7 @@ paste.*
 .local/bin/torchrun
 .local/bin/ttx
 .local/bin/wsdump
+.local/bootstrap/
 .local/etc/
 .local/lib/*goose
 .local/share/
@@ -161,3 +166,5 @@ metadata.yaml
 .intellij
 .mongodb
 .config/gocode
+ai
+extras
