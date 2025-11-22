@@ -515,7 +515,7 @@ local function download_binary(binary_name, config, force)
     -- For direct binary downloads, create directory and move binary
     mkdir_p(versioned_dir)
     local final_path = path_join(versioned_dir, binary_name)
-    os.execute(string.format("mv %q %q", binary_for_checksum, final_path))
+    os.execute(string.format("mv %q %q", download_path, final_path))
   end
 
   stderr_write("shimlink: installed " .. binary_name .. " version " .. actual_sha256:sub(1, 16))
