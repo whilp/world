@@ -1,18 +1,17 @@
 #!/usr/bin/env luajit
 
+local posix = require('posix')
+
 local commands = {
-  "defaults write NSGlobalDomain com.apple.sound.beep.volume -float 0.0",
-  "defaults write NSGlobalDomain com.apple.sound.uiaudio.enabled -int 0",
-  "defaults write com.apple.systemsound 'com.apple.sound.beep.flash' -int 0",
+  {"defaults", "write", "NSGlobalDomain", "com.apple.sound.beep.volume", "-float", "0.0"},
+  {"defaults", "write", "NSGlobalDomain", "com.apple.sound.uiaudio.enabled", "-int", "0"},
+  {"defaults", "write", "com.apple.systemsound", "com.apple.sound.beep.flash", "-int", "0"},
 }
 
-for _, cmd in ipairs(commands) do
-  local handle = io.popen(cmd)
-  local output = handle:read("*a")
-  local success, exit_type, exit_code = handle:close()
-
-  if not success then
-    io.stderr:write("sound-disable: failed to disable system sounds\n")
-    os.exit(exit_code or 1)
+for _, argv in ipairs(commands) do
+  local status, reason = posix.spawn(argv)
+  if reason ~= 'exited' or status ~= 0 then
+    io.stderr:write("sound-disable: command failed\n")
+    os.exit(status or 1)
   end
 end

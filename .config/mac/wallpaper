@@ -1,12 +1,11 @@
 #!/usr/bin/env luajit
 
+local posix = require('posix')
+
 local script = [[tell application "System Events" to tell every desktop to set picture to "/System/Library/Desktop Pictures/Solid Colors/Black.png"]]
 
-local handle = io.popen("osascript -e " .. string.format("%q", script))
-local output = handle:read("*a")
-local success, exit_type, exit_code = handle:close()
-
-if not success then
+local status, reason = posix.spawn({"osascript", "-e", script})
+if reason ~= 'exited' or status ~= 0 then
   io.stderr:write("wallpaper: failed to set wallpaper\n")
-  os.exit(exit_code or 1)
+  os.exit(status or 1)
 end
