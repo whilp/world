@@ -198,9 +198,9 @@ if luajit_plat then
   binaries.luajit = {
     path = "bin/luajit",
     sha256 = ({
-      ["darwin-arm64"] = "09cfbff3ee8c64908d9e1b5d7a2ae734935b519c27e5da371ad1c6eb2fef01bf",
-      ["linux-arm64"] = "d965bdafb98e635767cdf7d827b340c0720c51c31d78198287f1190ce0fc6fa3",
-      ["linux-x86_64"] = "0e21aa2e78b84758e7fe8c1999567b5021ba0839d0d86d42493bd6597e16483f",
+      ["darwin-arm64"] = "d7187346b0dc76669cd1491c4919d5241d6cb742d956888ae0709c747b11ef1a",
+      ["linux-arm64"] = "6b905b96c7fcf19fca7c3a69998bcdaeff9e4b180797b64c457af28c6527f1ec",
+      ["linux-x86_64"] = "46d73e423fe3fb7cf49dc37371df6329611d4a301f73000c8199ac3d05efd22e",
     })[platform],
     strip_components = 1,
     symlinks = {
