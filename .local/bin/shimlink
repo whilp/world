@@ -46,20 +46,14 @@ local function stderr_write(msg)
 end
 
 local function file_exists(path)
-  local f = io.open(path, "r")
-  if f then
-    f:close()
-    return true
-  end
-  return false
+  local st = stat.stat(path)
+  return st ~= nil
 end
 
 local function is_directory(path)
-  local ok, err, code = os.rename(path, path)
-  if not ok and code == 13 then
-    return true
-  end
-  return ok
+  local st = stat.stat(path)
+  if not st then return false end
+  return stat.S_ISDIR(st.st_mode) ~= 0
 end
 
 local function read_file(path)
