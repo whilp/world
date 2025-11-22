@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SETUP_DIR="$HOME/.config/setup"
+SETUP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.config/setup" && pwd)"
 
 main() {
   "$SETUP_DIR/backup"
