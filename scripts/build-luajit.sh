@@ -111,12 +111,12 @@ fi
 echo "Patching luaconf.h to use ! paths..."
 # Patch luaconf.h to use ! in the paths like Windows does
 sed "${SED_INPLACE[@]}" '/^#define LUA_PATH_DEFAULT/c\
-#define LUA_PATH_DEFAULT \\\
-  "./?.lua;!/../share/luajit-2.1/?.lua;!/../share/lua/5.1/?.lua;!/../share/lua/5.1/?/init.lua"' src/luaconf.h
+#define LUA_PATH_DEFAULT "./?.lua;!/../share/luajit-2.1/?.lua;!/../share/lua/5.1/?.lua;!/../share/lua/5.1/?/init.lua"
+' src/luaconf.h
 
 sed "${SED_INPLACE[@]}" '/^#define LUA_CPATH_DEFAULT/c\
-#define LUA_CPATH_DEFAULT \\\
-  "./?.so;!/../lib/lua/5.1/?.so"' src/luaconf.h
+#define LUA_CPATH_DEFAULT "./?.so;!/../lib/lua/5.1/?.so"
+' src/luaconf.h
 
 echo "Building LuaJIT..."
 if [[ "${OS}" == "darwin" ]]; then
