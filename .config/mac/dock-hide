@@ -1,0 +1,10 @@
+#!/usr/bin/env luajit
+
+local handle = io.popen("defaults write com.apple.dock autohide -bool true && killall Dock")
+local output = handle:read("*a")
+local success, exit_type, exit_code = handle:close()
+
+if not success then
+  io.stderr:write("dock-hide: failed to hide dock\n")
+  os.exit(exit_code or 1)
+end
