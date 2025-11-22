@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+defaults write com.apple.dock showDesktopGestureEnabled -bool false
+defaults write com.apple.dock showLaunchpadGestureEnabled -bool false
+killall Dock
+
+echo "dock desktop and launchpad gestures disabled"

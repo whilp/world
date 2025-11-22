@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+defaults write NSGlobalDomain AppleFirstWeekday -dict gregorian 2
+
+echo "week start day set to monday"
