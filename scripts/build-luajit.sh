@@ -149,34 +149,8 @@ fi
 echo "Installing LuaPosix..."
 "${TEMP_DIR}/install/bin/luarocks" install luaposix
 
-echo "Creating wrapper script..."
-mv "${TEMP_DIR}/install/bin/luajit" "${TEMP_DIR}/install/bin/luajit-binary"
-cat > "${TEMP_DIR}/install/bin/luajit" << 'WRAPPER_EOF'
-#!/bin/sh
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-INSTALL_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
-
-DEFAULT_LUA_PATH="./?.lua;${INSTALL_ROOT}/share/luajit-2.1/?.lua;${INSTALL_ROOT}/share/lua/5.1/?.lua;${INSTALL_ROOT}/share/lua/5.1/?/init.lua"
-DEFAULT_LUA_CPATH="./?.so;${INSTALL_ROOT}/lib/lua/5.1/?.so"
-
-if [ -n "${LUA_PATH}" ]; then
-  export LUA_PATH="${DEFAULT_LUA_PATH};${LUA_PATH}"
-else
-  export LUA_PATH="${DEFAULT_LUA_PATH}"
-fi
-
-if [ -n "${LUA_CPATH}" ]; then
-  export LUA_CPATH="${DEFAULT_LUA_CPATH};${LUA_CPATH}"
-else
-  export LUA_CPATH="${DEFAULT_LUA_CPATH}"
-fi
-
-exec "${SCRIPT_DIR}/luajit-binary" "$@"
-WRAPPER_EOF
-chmod +x "${TEMP_DIR}/install/bin/luajit"
-
 echo "Stripping binaries..."
-find "${TEMP_DIR}/install" -type f -executable ! -name "luajit" -exec strip --strip-unneeded {} \; 2>/dev/null || true
+find "${TEMP_DIR}/install" -type f -executable -exec strip --strip-unneeded {} \; 2>/dev/null || true
 
 mkdir -p "${OUTPUT_DIR}/${PLATFORM}"
 
