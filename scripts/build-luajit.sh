@@ -142,6 +142,9 @@ echo "Installing LuaSocket..."
 echo "Installing LuaSec..."
 "${TEMP_DIR}/install/bin/luarocks" install luasec
 
+echo "Installing LuaPosix..."
+"${TEMP_DIR}/install/bin/luarocks" install luaposix
+
 echo "Stripping binaries..."
 find "${TEMP_DIR}/install" -type f -executable -exec strip --strip-unneeded {} \; 2>/dev/null || true
 
@@ -198,6 +201,7 @@ cd "${TEMP_DIR}/install/bin"
 ./luajit -v
 ./luajit -e "print('LuaJIT test successful')"
 ./luajit -e "require('socket'); require('ssl'); print('LuaSocket and LuaSec loaded successfully')"
+./luajit -e "require('posix'); print('LuaPosix loaded successfully')"
 
 echo "Binary size: $(du -h ./luajit | cut -f1)"
 if command -v ldd >/dev/null 2>&1; then
