@@ -53,6 +53,43 @@ jobs:
           echo "Downloading ${UPSTREAM_URL}..."
           curl -L -o ${{ matrix.asset_name }} "${UPSTREAM_URL}"
 
+          # Extract the archive
+          tar -xzf ${{ matrix.asset_name }}
+
+          # Determine the extracted directory name
+          EXTRACTED_DIR=$(tar -tzf ${{ matrix.asset_name }} | head -1 | cut -f1 -d"/")
+
+          # Create pack directory structure
+          mkdir -p "${EXTRACTED_DIR}/share/nvim/site/pack/core/opt"
+
+      - name: bundle vim.pack plugins
+        run: |
+          cd dist/nvim/${{ matrix.platform }}
+          EXTRACTED_DIR=$(ls -d nvim-*)
+          LOCK_FILE="${GITHUB_WORKSPACE}/.config/nvim/nvim-pack-lock.json"
+          PACK_DIR="${EXTRACTED_DIR}/share/nvim/site/pack/core/opt"
+
+          # Parse JSON and clone plugins
+          jq -r '.plugins | to_entries[] | "\(.key)|\(.value.src)|\(.value.rev)"' "$LOCK_FILE" | while IFS='|' read -r name src rev; do
+            echo "Cloning ${name} at ${rev}..."
+            git clone --depth 1 --branch "${rev}" "${src}" "${PACK_DIR}/${name}" || \
+              (git clone "${src}" "${PACK_DIR}/${name}" && cd "${PACK_DIR}/${name}" && git checkout "${rev}")
+
+            # Remove .git directory to reduce size
+            rm -rf "${PACK_DIR}/${name}/.git"
+          done
+
+      - name: repackage with plugins
+        run: |
+          cd dist/nvim/${{ matrix.platform }}
+          EXTRACTED_DIR=$(ls -d nvim-*)
+
+          # Remove original archive
+          rm ${{ matrix.asset_name }}
+
+          # Repackage with plugins included
+          tar -czf ${{ matrix.asset_name }} "${EXTRACTED_DIR}"
+
           # Generate SHA256 checksum
           sha256sum ${{ matrix.asset_name }} > ${{ matrix.asset_name }}.sha256
 
@@ -73,9 +110,17 @@ jobs:
           tag_name: ${{ steps.tag.outputs.tag }}
           name: nvim nightly ${{ steps.tag.outputs.tag }}
           body: |
-            NeoVim nightly build
+            NeoVim nightly build with bundled vim.pack plugins
 
             Downloaded from: https://github.com/neovim/neovim/releases/tag/nightly
+
+            Bundled plugins from .config/nvim/nvim-pack-lock.json:
+            - conform.nvim
+            - mini.nvim
+            - neogit
+            - nvim-lspconfig
+            - nvim-treesitter
+            - plenary.nvim
 
             Platforms:
             - darwin-arm64
