@@ -97,7 +97,6 @@ jobs:
           LUASEC_VERSION: ${{ github.event.inputs.luasec_version }}
           LUAOSSL_VERSION: ${{ github.event.inputs.luaossl_version }}
           LUAPOSIX_VERSION: ${{ github.event.inputs.luaposix_version }}
-          OUTPUT_DIR: ${{ github.workspace }}/dist/luajit
         run: |
           docker run --rm -v "$PWD":/workspace -w /workspace \
             --platform linux/arm64 \
@@ -106,7 +105,7 @@ jobs:
             -e LUASEC_VERSION="${LUASEC_VERSION}" \
             -e LUAOSSL_VERSION="${LUAOSSL_VERSION}" \
             -e LUAPOSIX_VERSION="${LUAPOSIX_VERSION}" \
-            -e OUTPUT_DIR="${OUTPUT_DIR}" \
+            -e OUTPUT_DIR="/workspace/dist/luajit" \
             ubuntu:24.04 bash -c "
               apt-get update && apt-get install -y git make gcc libssl-dev build-essential unzip wget && \
               bash scripts/build-luajit.sh"
