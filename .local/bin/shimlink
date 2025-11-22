@@ -13,30 +13,11 @@ local stat = require('posix.sys.stat')
 local openssl = require('openssl')
 local digest = require('openssl.digest')
 
--- FFI declarations for system calls
+-- FFI declarations for symlink operations (not available in luaposix)
 ffi.cdef([[
   typedef struct { long tv_sec; long tv_usec; } timeval;
-  int execve(const char *path, char *const argv[], char *const envp[]);
-  char *getenv(const char *name);
   int symlink(const char *target, const char *linkpath);
   int unlink(const char *pathname);
-  int mkdir(const char *pathname, unsigned int mode);
-  int access(const char *pathname, int mode);
-  int chmod(const char *pathname, unsigned int mode);
-  char *realpath(const char *path, char *resolved_path);
-
-  // uname for platform detection
-  struct utsname {
-    char sysname[65];
-    char nodename[65];
-    char release[65];
-    char version[65];
-    char machine[65];
-  };
-  int uname(struct utsname *buf);
-
-  // environ for accessing environment variables
-  extern char **environ;
 ]])
 
 -- Helper functions
