@@ -2,6 +2,7 @@
 
 source "$(dirname "$0")/env"
 
+shimlink update luajit
 shimlink update ast-grep &
 shimlink update biome &
 shimlink update comrak &

@@ -7,7 +7,6 @@ main() {
   "$SETUP_DIR/git"
   "$SETUP_DIR/shell"
   "$SETUP_DIR/luajit"
-  "$SETUP_DIR/shimlink-luajit"
   "$SETUP_DIR/shimlink"
   "$SETUP_DIR/claude" &
   "$SETUP_DIR/nvim" &
