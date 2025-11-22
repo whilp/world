@@ -15,7 +15,7 @@ lua_path=(
   "$HOME/.local/lib/lua/?.lua"
   "$HOME/.local/lib/lua/3p/?.lua"
   "$HOME/.local/share/luajit-2.1/?.lua"
-  ""
+  ""  # ;; preserves built-in paths for bundled rocks in relocated luajit installs
 )
 
 export LUA_PATH
