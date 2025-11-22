@@ -26,22 +26,6 @@
 
 - to create a gist, do `gh create <file> --desc "<description>"`
 
-## Shimlink
-
-- symlink-based binary manager
-- config: `~/.config/shimlink/shimlink.lua`
-- binaries stored in versioned dirs: `~/.local/share/shimlink/_/<binary>/<sha>/`
-- shimlink bin directory: `~/.local/share/shimlink/bin/` (symlinks to versioned binaries)
-- update binary: `shimlink update <binary>`
-- force update (skip checksum): `shimlink update -f <binary>`
-
-### checksums
-
-- shimlink checksums are calculated on the **archive/artifact**, not the extracted binary
-- the sha256 should be of the downloaded archive file itself
-- to get the correct checksum: `curl -sL <url> | shasum -a 256`
-- example: `curl -sL https://github.com/.../nvim-macos-arm64.tar.gz | shasum -a 256`
-
 ## Git
 
 - always use atomic commits
