@@ -27,8 +27,12 @@ if [[ "${0:t}" == "nvimd" ]]; then
 
     reload)
       if [[ "$(uname -s)" == "Darwin" ]]; then
-        launchctl unload ~/Library/LaunchAgents/com.user.nvim.plist
-        launchctl load ~/Library/LaunchAgents/com.user.nvim.plist
+        # On macOS, we need to bootout and bootstrap to reload the plist
+        launchctl bootout gui/$(id -u)/com.user.nvim 2>/dev/null || true
+        sleep 0.5
+        launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.user.nvim.plist 2>/dev/null || true
+        launchctl enable gui/$(id -u)/com.user.nvim
+        launchctl kickstart gui/$(id -u)/com.user.nvim
       else
         systemctl --user daemon-reload
       fi
