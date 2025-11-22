@@ -140,7 +140,11 @@ echo "Installing LuaSocket..."
 "${TEMP_DIR}/install/bin/luarocks" install luasocket
 
 echo "Installing LuaSec..."
-"${TEMP_DIR}/install/bin/luarocks" install luasec
+if [[ "${OS}" == "darwin" ]]; then
+  OPENSSL_DIR=$(brew --prefix openssl@3) "${TEMP_DIR}/install/bin/luarocks" install luasec
+else
+  "${TEMP_DIR}/install/bin/luarocks" install luasec
+fi
 
 echo "Installing LuaPosix..."
 "${TEMP_DIR}/install/bin/luarocks" install luaposix
