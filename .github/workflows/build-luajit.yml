@@ -3,6 +3,10 @@ name: build luajit
 on:
   workflow_dispatch:
     inputs:
+      release_tag:
+        description: 'Release tag (defaults to current date YYYY.MM.DD)'
+        required: false
+        default: ''
       luajit_commit:
         description: 'LuaJIT commit hash to build'
         required: false
@@ -11,7 +15,7 @@ on:
         description: 'Create a GitHub release'
         type: boolean
         required: false
-        default: false
+        default: true
 
 permissions:
   contents: write
@@ -33,6 +37,16 @@ jobs:
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
+
+      - name: set release tag
+        id: tag
+        run: |
+          if [ -z "${{ github.event.inputs.release_tag }}" ]; then
+            TAG=$(date +%Y.%m.%d)
+          else
+            TAG="${{ github.event.inputs.release_tag }}"
+          fi
+          echo "tag=${TAG}" >> $GITHUB_OUTPUT
 
       - name: set up QEMU for cross-compilation
         if: matrix.platform == 'linux-arm64'
@@ -85,16 +99,15 @@ jobs:
         if: github.event.inputs.create_release == 'true'
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: luajit-${{ github.run_number }}
-          name: luajit build ${{ github.run_number }}
+          tag_name: ${{ steps.tag.outputs.tag }}
+          name: luajit ${{ steps.tag.outputs.tag }}
           body: |
-            LuaJIT build from commit
-            ${{ github.event.inputs.luajit_commit }}
+            LuaJIT build from commit ${{ github.event.inputs.luajit_commit }}
 
-            Built for:
-            - linux-x64
-            - linux-arm64
+            Platforms:
             - darwin-arm64
+            - linux-arm64
+            - linux-x64
           files: |
             dist/luajit/${{ matrix.platform }}/${{
               steps.release_files.outputs.tarball }}
