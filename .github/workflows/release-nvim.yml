@@ -65,7 +65,7 @@ jobs:
       - name: bundle vim.pack plugins
         run: |
           cd dist/nvim/${{ matrix.platform }}
-          EXTRACTED_DIR=$(ls -d nvim-*)
+          EXTRACTED_DIR=$(find . -maxdepth 1 -type d -name 'nvim-*' | head -1 | sed 's|^\./||')
           LOCK_FILE="${GITHUB_WORKSPACE}/.config/nvim/nvim-pack-lock.json"
           PACK_DIR="${EXTRACTED_DIR}/share/nvim/site/pack/core/opt"
 
@@ -82,7 +82,7 @@ jobs:
       - name: repackage with plugins
         run: |
           cd dist/nvim/${{ matrix.platform }}
-          EXTRACTED_DIR=$(ls -d nvim-*)
+          EXTRACTED_DIR=$(find . -maxdepth 1 -type d -name 'nvim-*' | head -1 | sed 's|^\./||')
 
           # Remove original archive
           rm ${{ matrix.asset_name }}
