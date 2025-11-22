@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ~/.config/setup/env
+source "$(dirname "$0")/env"
 
 rm -rf "$DST/.git"
 cp -ra "$SRC/.git" "$DST/.git"

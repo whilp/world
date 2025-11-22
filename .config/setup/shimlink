@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source ~/.config/setup/env
+source "$(dirname "$0")/env"
 
 shimlink update ast-grep &
 shimlink update biome &
