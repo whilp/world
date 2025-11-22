@@ -529,10 +529,22 @@ local function update_binary(binary_name, config, force)
     return false
   end
 
-  -- Download and install to versioned directory
-  local success, sha256 = download_binary(binary_name, config, force)
-  if not success then
-    return false
+  local sha256
+  local expected_sha256 = binary_config.sha256
+  if expected_sha256 and not force then
+    local versioned_dir = get_versioned_dir(binary_name, expected_sha256)
+    if is_directory(versioned_dir) then
+      stderr_write("shimlink: version " .. expected_sha256:sub(1, 16) .. " already exists")
+      sha256 = expected_sha256
+    end
+  end
+
+  if not sha256 then
+    local success
+    success, sha256 = download_binary(binary_name, config, force)
+    if not success then
+      return false
+    end
   end
 
   local versioned_dir = get_versioned_dir(binary_name, sha256)
