@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+BOOTSTRAP_DIR="${HOME}/.local/bootstrap"
+
+if ! command -v luajit >/dev/null 2>&1; then
+  if [ -x "${BOOTSTRAP_DIR}/bin/luajit" ]; then
+    export PATH="${BOOTSTRAP_DIR}/bin:${PATH}"
+  else
+    echo "luajit not found. run .config/setup/luajit to install it first." >&2
+    exit 1
+  fi
+fi
+
+exec luajit "$@"

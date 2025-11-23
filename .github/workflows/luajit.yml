@@ -1,4 +1,4 @@
-name: build nvim
+name: build luajit
 
 on:
   workflow_dispatch:
@@ -44,27 +44,35 @@ jobs:
           fi
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
 
+      - name: install dependencies (macos)
+        if: matrix.os == 'macos-latest'
+        run: brew install openssl sqlite
+
+      - name: install dependencies (linux)
+        if: startsWith(matrix.os, 'ubuntu-')
+        run: sudo apt-get update && sudo apt-get install -y libssl-dev libsqlite3-dev build-essential
+
       - name: bootstrap luajit
         run: bash .config/setup/luajit
 
-      - name: build nvim
+      - name: build luajit
         env:
-          OUTPUT_DIR: ${{ github.workspace }}/dist/nvim
-        run: bash scripts/build-nvim
+          OUTPUT_DIR: ${{ github.workspace }}/dist/luajit
+        run: bash .github/build/bootstrap .github/build/luajit
 
       - name: upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: nvim-${{ matrix.platform }}
-          path: dist/nvim/${{ matrix.platform }}/*
+          name: luajit-${{ matrix.platform }}
+          path: dist/luajit/${{ matrix.platform }}/*
           retention-days: 30
 
       - name: prepare release files
         if: github.event.inputs.create_release == 'true'
         id: release_files
         run: |
-          cd dist/nvim/${{ matrix.platform }}
-          tarball=$(ls nvim-*.tar.gz | grep -v latest)
+          cd dist/luajit/${{ matrix.platform }}
+          tarball=$(ls luajit-*.tar.gz | grep -v latest)
           sha256="${tarball}.sha256"
           echo "tarball=${tarball}" >> $GITHUB_OUTPUT
           echo "sha256=${sha256}" >> $GITHUB_OUTPUT
@@ -74,27 +82,17 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ steps.tag.outputs.tag }}
-          name: nvim nightly ${{ steps.tag.outputs.tag }}
+          name: luajit ${{ steps.tag.outputs.tag }}
           body: |
-            NeoVim nightly build with bundled vim.pack plugins
-
-            Downloaded from: https://github.com/neovim/neovim/releases/tag/nightly
-
-            Bundled plugins from .config/nvim/nvim-pack-lock.json:
-            - conform.nvim
-            - mini.nvim
-            - neogit
-            - nvim-lspconfig
-            - nvim-treesitter
-            - plenary.nvim
+            LuaJIT build with lua-cjson, lua-http, and dependencies
 
             Platforms:
             - darwin-arm64
             - linux-arm64
             - linux-x64
           files: |
-            dist/nvim/${{ matrix.platform }}/${{ steps.release_files.outputs.tarball }}
-            dist/nvim/${{ matrix.platform }}/${{ steps.release_files.outputs.sha256 }}
+            dist/luajit/${{ matrix.platform }}/${{ steps.release_files.outputs.tarball }}
+            dist/luajit/${{ matrix.platform }}/${{ steps.release_files.outputs.sha256 }}
           draft: false
           prerelease: false
 
@@ -111,7 +109,7 @@ jobs:
 
       - name: generate build summary
         run: |
-          echo "# nvim build summary" >> $GITHUB_STEP_SUMMARY
+          echo "# LuaJIT build summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Built platforms" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -122,8 +120,6 @@ jobs:
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
             ls -lh "$dir" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            cat "$dir"/*.sha256 >> $GITHUB_STEP_SUMMARY
             echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           done

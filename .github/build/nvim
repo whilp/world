@@ -1,0 +1,156 @@
+#!/usr/bin/env luajit
+
+package.path = arg[0]:match("^(.*/)") .. "?.lua;" .. package.path
+local util = require('util')
+
+local function load_pack_lock(lock_file)
+  if not util.file_exists(lock_file) then
+    util.errorf("pack lock file not found: %s\n", lock_file)
+  end
+
+  local content = util.read_file(lock_file)
+  local json = require("dkjson")
+  local data, pos, err = json.decode(content)
+
+  if err then
+    util.errorf("failed to parse pack lock file: %s\n", err)
+  end
+
+  return data
+end
+
+local function download_nvim_nightly(config)
+  util.printf("downloading nvim nightly for %s\n", config.platform.platform)
+
+  local asset_name = string.format("nvim-%s-%s.tar.gz",
+    config.platform.is_darwin and "macos" or "linux",
+    config.platform.nvim_arch)
+
+  local upstream_url = string.format(
+    "https://github.com/neovim/neovim/releases/download/nightly/%s",
+    asset_name)
+
+  util.printf("downloading from %s\n", upstream_url)
+  local download_path = config.temp_dir .. "/" .. asset_name
+  util.exec(string.format("curl -L -o %s %s", download_path, upstream_url))
+
+  util.printf("extracting archive\n")
+  util.exec(string.format("cd %s && tar -xzf %s", config.temp_dir, asset_name))
+
+  local extracted_dir = util.capture(string.format(
+    "cd %s && tar -tzf %s | head -1 | cut -f1 -d/",
+    config.temp_dir, asset_name))
+
+  config.extracted_dir = config.temp_dir .. "/" .. extracted_dir
+  config.asset_name = asset_name
+
+  util.printf("extracted to %s\n", config.extracted_dir)
+end
+
+local function bundle_plugins(config)
+  util.printf("bundling vim.pack plugins\n")
+
+  local pack_dir = config.extracted_dir .. "/share/nvim/site/pack/core/opt"
+  util.mkdir_p(pack_dir)
+
+  local plugins = config.pack_lock.plugins
+
+  for name, info in pairs(plugins) do
+    util.printf("cloning %s at %s\n", name, info.rev)
+    local plugin_dir = pack_dir .. "/" .. name
+
+    local clone_cmd = string.format(
+      "git clone --depth 1 --branch %s %s %s",
+      info.rev, info.src, plugin_dir)
+
+    if not util.exec(clone_cmd, {allow_failure = true}) then
+      util.printf("branch clone failed, trying checkout\n")
+      util.exec(string.format("git clone %s %s", info.src, plugin_dir))
+      util.exec(string.format("cd %s && git checkout %s", plugin_dir, info.rev))
+    end
+
+    util.exec(string.format("rm -rf %s/.git", plugin_dir))
+  end
+
+  util.printf("generating helptags\n")
+  local nvim_bin = config.extracted_dir .. "/bin/nvim"
+  util.exec(string.format("%s --headless +'helptags ALL' +qa", nvim_bin))
+end
+
+local function repackage_nvim(config)
+  util.printf("repackaging nvim with plugins\n")
+
+  local platform_dir = config.output_dir .. "/" .. config.platform.platform
+  util.mkdir_p(platform_dir)
+
+  local build_date = util.capture("date +%Y.%m.%d")
+  local binary_name = string.format("nvim-%s-%s", build_date, config.platform.platform)
+  local tarball_name = binary_name .. ".tar.gz"
+  local tarball_path = platform_dir .. "/" .. tarball_name
+
+  local staging_dir = config.temp_dir .. "/staging"
+  util.mkdir_p(staging_dir)
+
+  util.exec(string.format("cp -R %s %s/%s", config.extracted_dir, staging_dir, binary_name))
+
+  util.create_tarball(staging_dir, binary_name, tarball_path, config.platform, nil)
+
+  util.exec(string.format(
+    "cd %s && ln -sf %s nvim-latest-%s.tar.gz",
+    platform_dir, tarball_name, config.platform.platform))
+
+  util.printf("calculating sha256\n")
+  local checksum = util.calculate_sha256(tarball_path)
+
+  util.printf("testing binary\n")
+  local nvim_bin = staging_dir .. "/" .. binary_name .. "/bin/nvim"
+  util.exec(nvim_bin .. " --version")
+  util.exec(nvim_bin .. " --headless +'lua print(\"nvim test successful\")' +qa")
+
+  util.printf("verifying plugins\n")
+  for name, _ in pairs(config.pack_lock.plugins) do
+    util.exec(string.format(
+      "%s --headless +'packadd %s' +'lua print(\"plugin %s loaded\")' +qa",
+      nvim_bin, name, name))
+  end
+
+  local size = util.capture("du -h " .. nvim_bin .. " | cut -f1")
+  util.printf("binary size: %s\n", size)
+
+  util.printf("build complete!\n")
+  util.printf("tarball: %s/%s\n", platform_dir, tarball_name)
+  util.printf("sha256: %s\n", checksum)
+end
+
+local function main()
+  local script_dir = arg[0]:match("^(.*/)") or "./"
+  local workspace_root = util.capture(string.format("cd %s../../ && pwd", script_dir))
+  local lock_file = workspace_root .. "/.config/nvim/nvim-pack-lock.json"
+
+  local pack_lock = load_pack_lock(lock_file)
+
+  local temp_dir = util.capture("mktemp -d")
+  local output_dir = os.getenv("OUTPUT_DIR") or (workspace_root .. "/dist/nvim")
+
+  local config = {
+    pack_lock = pack_lock,
+    temp_dir = temp_dir,
+    output_dir = output_dir,
+    platform = util.detect_platform(),
+  }
+
+  local ok, err = pcall(function()
+    download_nvim_nightly(config)
+    bundle_plugins(config)
+    repackage_nvim(config)
+  end)
+
+  if not ok then
+    util.errorf("build failed: %s\n", err)
+  end
+
+  util.printf("cleaning up\n")
+  util.exec("rm -rf " .. config.temp_dir)
+end
+
+main()
