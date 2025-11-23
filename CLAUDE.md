@@ -31,3 +31,4 @@
 - always use atomic commits
 - write commit messages like '<component>: <action>'; eg 'comrak-fmt: rewrite in lua'
 - git is usually configured with `status.showUntrackedFiles`; check `.gitconfig` when in doubt
+- never invoke git -A; always add specific files
