@@ -1,7 +1,5 @@
 #!/usr/bin/env luajit
 
-local json = require('dkjson')
-
 local function printf(fmt, ...)
   io.write(string.format(fmt, ...))
   io.flush()
@@ -73,12 +71,51 @@ local function load_pack_lock(lock_file)
   end
 
   local content = read_file(lock_file)
-  local data, pos, err = json.decode(content)
-  if not data then
-    errorf("failed to parse pack lock file: %s\n", err)
+
+  local plugins = {}
+  local in_plugins = false
+  local current_name = nil
+  local current_rev = nil
+  local current_src = nil
+
+  for line in content:gmatch("[^\n]+") do
+    if line:match('"plugins"%s*:%s*{') then
+      in_plugins = true
+    elseif in_plugins then
+      local name = line:match('^%s*"([^"]+)"%s*:%s*{')
+      if name then
+        if current_name and current_rev and current_src then
+          plugins[current_name] = {rev = current_rev, src = current_src}
+        end
+        current_name = name
+        current_rev = nil
+        current_src = nil
+      end
+
+      local rev = line:match('"rev"%s*:%s*"([^"]+)"')
+      if rev then
+        current_rev = rev
+      end
+
+      local src = line:match('"src"%s*:%s*"([^"]+)"')
+      if src then
+        current_src = src
+      end
+
+      if line:match('^%s*}%s*$') and in_plugins then
+        if current_name and current_rev and current_src then
+          plugins[current_name] = {rev = current_rev, src = current_src}
+        end
+        in_plugins = false
+      end
+    end
   end
 
-  return data
+  if current_name and current_rev and current_src then
+    plugins[current_name] = {rev = current_rev, src = current_src}
+  end
+
+  return {plugins = plugins}
 end
 
 local function get_script_dir()
