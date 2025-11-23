@@ -123,7 +123,9 @@ jobs:
         run: |
           cd dist/luajit/${{ matrix.platform }}
           tarball=$(ls luajit-*.tar.gz | grep -v latest)
+          sha256="${tarball}.sha256"
           echo "tarball=${tarball}" >> $GITHUB_OUTPUT
+          echo "sha256=${sha256}" >> $GITHUB_OUTPUT
 
       - name: create release
         if: github.event.inputs.create_release == 'true'
@@ -139,8 +141,8 @@ jobs:
             - linux-arm64
             - linux-x64
           files: |
-            dist/luajit/${{ matrix.platform }}/${{
-              steps.release_files.outputs.tarball }}
+            dist/luajit/${{ matrix.platform }}/${{ steps.release_files.outputs.tarball }}
+            dist/luajit/${{ matrix.platform }}/${{ steps.release_files.outputs.sha256 }}
           draft: false
           prerelease: false
 
