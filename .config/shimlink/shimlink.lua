@@ -214,7 +214,7 @@ local luajit_platform_map = {
 local luajit_plat = luajit_platform_map[platform]
 if luajit_plat then
   local luajit_sha = ({
-    ["darwin-arm64"] = "b9522fe875a5ec708cdb9138e5da5a2119d30004c062149dd30fca06713e01b7",
+    ["darwin-arm64"] = "cf9930a22d81d312e2773d61369113613808c48e8dc2a5fad5f0e4ef588a92d8",
     ["linux-arm64"] = "37400b35f4764b74023c6c8d49701db73f8a95da199892b5a6ebdf89dfb6ec31",
     ["linux-x86_64"] = "3b18b247e7ca9a2568af1e148c3b9c38fef7174c789b12283496ba2ae97e9fd7",
   })[platform]
