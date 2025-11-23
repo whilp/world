@@ -136,30 +136,17 @@ cd luarocks
 make
 make install
 
-LUASOCKET_VERSION="${LUASOCKET_VERSION:-3.1.0-1}"
-LUASEC_VERSION="${LUASEC_VERSION:-1.3.2-1}"
-LUAOSSL_VERSION="${LUAOSSL_VERSION:-20250929-0}"
-LUAPOSIX_VERSION="${LUAPOSIX_VERSION:-36.2.1-1}"
+echo "Copying rockspec and lock file..."
+cp "${SCRIPT_DIR}/../luajit-build-1.0-1.rockspec" "${TEMP_DIR}/install/"
+cp "${SCRIPT_DIR}/../luarocks.lock" "${TEMP_DIR}/install/"
 
-echo "Installing LuaSocket ${LUASOCKET_VERSION}..."
-"${TEMP_DIR}/install/bin/luarocks" install luasocket "${LUASOCKET_VERSION}"
-
-echo "Installing LuaSec ${LUASEC_VERSION}..."
+echo "Installing dependencies from lock file..."
+cd "${TEMP_DIR}/install"
 if [[ "${OS}" == "darwin" ]]; then
-  "${TEMP_DIR}/install/bin/luarocks" install luasec "${LUASEC_VERSION}" OPENSSL_DIR=$(brew --prefix openssl@3)
+  "${TEMP_DIR}/install/bin/luarocks" make --pin OPENSSL_DIR=$(brew --prefix openssl@3) CRYPTO_DIR=$(brew --prefix openssl@3)
 else
-  "${TEMP_DIR}/install/bin/luarocks" install luasec "${LUASEC_VERSION}"
+  "${TEMP_DIR}/install/bin/luarocks" make --pin
 fi
-
-echo "Installing LuaOSSL ${LUAOSSL_VERSION}..."
-if [[ "${OS}" == "darwin" ]]; then
-  "${TEMP_DIR}/install/bin/luarocks" install luaossl "${LUAOSSL_VERSION}" OPENSSL_DIR=$(brew --prefix openssl@3) CRYPTO_DIR=$(brew --prefix openssl@3)
-else
-  "${TEMP_DIR}/install/bin/luarocks" install luaossl "${LUAOSSL_VERSION}"
-fi
-
-echo "Installing LuaPosix ${LUAPOSIX_VERSION}..."
-"${TEMP_DIR}/install/bin/luarocks" install luaposix "${LUAPOSIX_VERSION}"
 
 echo "Stripping binaries..."
 find "${TEMP_DIR}/install" -type f -executable -exec strip --strip-unneeded {} \; 2>/dev/null || true
