@@ -102,15 +102,15 @@ local function gz_binary(repo, version, filename, sha256)
   }
 end
 
--- Build the binaries table based on platform
-local binaries = {}
+-- Build the executables table based on platform
+local executables = {}
 
 -- ast-grep
 -- ast-grep releases are named "app-{rust-triple}.zip" and contain ast-grep binary at root
 local ast_grep_map = platform_maps.rust_triple_gnu
 if ast_grep_map[platform] then
   local triple = ast_grep_map[platform]
-  binaries["ast-grep"] = {
+  executables["ast-grep"] = {
     path = "ast-grep",
     sha256 = ({
       ["darwin-arm64"] = "c9a9e690d94cd9696d2552690fe0abdd2c303e48a3ee5cf9d38728eda054f147",
@@ -123,7 +123,7 @@ if ast_grep_map[platform] then
 end
 
 -- biome
-binaries.biome = simple_binary("biomejs/biome", "cli%2Fv1.9.4", "biome", {
+executables.biome = simple_binary("biomejs/biome", "cli%2Fv1.9.4", "biome", {
   ["darwin-arm64"] = "c68f2cbe09e9485426a749353a155b1d22c130c6ccdadc7772d603eb247b9a9d",
   ["linux-arm64"] = "f0f0f3e7cdec78420a600b05bfc364aa9b804811bd3bbae04e7bf090828ae970",
   ["linux-x86_64"] = "ce247fb644999ef52e5111dd6fd6e471019669fc9c4a44b5699721e39b7032c3",
@@ -133,7 +133,7 @@ binaries.biome = simple_binary("biomejs/biome", "cli%2Fv1.9.4", "biome", {
 -- Disabled for now
 -- if platform:match("^linux") then
 --   local arch = platform:match("arm64") and "arm64" or "x64"
---   binaries.claude = {
+--   executables.claude = {
 --     sha256 = "5f1b6832302ba1ab3e2473e97fb48ea930698d832e86c31cd4e316ec9fb245fb",
 --     url = string.format("https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/1.0.108/linux-%s/claude", arch),
 --   }
@@ -149,7 +149,7 @@ if comrak_map[platform] then
     comrak_exec = { "/lib64/ld-linux-x86-64.so.2", "{binary}" }
   end
 
-  binaries.comrak = {
+  executables.comrak = {
     sha256 = ({
       ["darwin-arm64"] = "ebff398559a48112e7699ad8ce8a35e1f5f0cf469ed44d55318b1d794abf1090",
       ["linux-arm64"] = "b76c1a02cd2b2d2b5f9dbde9d16124aa54d9e5a66fa2bc3f5f4d0ce637b1bb64",
@@ -162,7 +162,7 @@ if comrak_map[platform] then
 end
 
 -- delta
-binaries.delta = rust_binary("dandavison/delta", "0.18.2", "delta", {
+executables.delta = rust_binary("dandavison/delta", "0.18.2", "delta", {
   ["darwin-arm64"] = "6ba38dce9f91ee1b9a24aa4aede1db7195258fe176c3f8276ae2d4457d8170a0",
   ["linux-arm64"] = "adf7674086daa4582f598f74ce9caa6b70c1ba8f4a57d2911499b37826b014f9",
   ["linux-x86_64"] = "b7ea845004762358a00ef9127dd9fd723e333c7e4b9cb1da220c3909372310ee",
@@ -175,7 +175,7 @@ local duckdb_names = {
   ["linux-x86_64"] = "linux-amd64",
 }
 if duckdb_names[platform] then
-  binaries.duckdb = {
+  executables.duckdb = {
     path = "duckdb",
     sha256 = ({
       ["darwin-arm64"] = "4dda25dff89b9757dd248f3a48c4d3e215dff64c4c9535a7822b3b7a7f4031c2",
@@ -188,17 +188,17 @@ end
 
 -- gh (GitHub CLI)
 if platform == "darwin-arm64" then
-  binaries.gh = archive_binary("cli/cli", "v2.79.0", "gh_2.79.0_macOS_arm64.zip",
+  executables.gh = archive_binary("cli/cli", "v2.79.0", "gh_2.79.0_macOS_arm64.zip",
     "bin/gh",
     "5454f9509e3dbb8f321310e9e344877d9a01ebb8f8703886b1afb0936d60ffaa",
     1)  -- strip gh_2.79.0_macOS_arm64/
 elseif platform == "linux-arm64" then
-  binaries.gh = archive_binary("cli/cli", "v2.79.0", "gh_2.79.0_linux_arm64.tar.gz",
+  executables.gh = archive_binary("cli/cli", "v2.79.0", "gh_2.79.0_linux_arm64.tar.gz",
     "bin/gh",
     "1b91e546b30181a8ee6d8c72bbf59eaadbb0600bab014dfbcc199676c83ea102",
     1)  -- strip gh_2.79.0_linux_arm64/
 elseif platform == "linux-x86_64" then
-  binaries.gh = archive_binary("cli/cli", "v2.79.0", "gh_2.79.0_linux_amd64.tar.gz",
+  executables.gh = archive_binary("cli/cli", "v2.79.0", "gh_2.79.0_linux_amd64.tar.gz",
     "bin/gh",
     "e7af0c72a607c0528fda1989f7c8e3be85e67d321889002af0e2938ad9c8fb68",
     1)  -- strip gh_2.79.0_linux_amd64/
@@ -220,7 +220,7 @@ if luajit_plat then
   })[platform]
   local luajit_url = string.format("https://github.com/whilp/dotfiles/releases/download/2025.11.23/luajit-%s-%s.tar.gz", luajit_version, luajit_plat)
 
-  binaries.luajit = {
+  executables.luajit = {
     path = "bin/luajit",
     sha256 = luajit_sha,
     strip_components = 1,
@@ -230,14 +230,14 @@ if luajit_plat then
     url = luajit_url,
   }
 
-  binaries.luarocks = {
+  executables.luarocks = {
     path = "bin/luarocks",
     sha256 = luajit_sha,
     strip_components = 1,
     url = luajit_url,
   }
 
-  binaries["luarocks-admin"] = {
+  executables["luarocks-admin"] = {
     path = "bin/luarocks-admin",
     sha256 = luajit_sha,
     strip_components = 1,
@@ -246,7 +246,7 @@ if luajit_plat then
 end
 
 -- marksman
-binaries.marksman = simple_binary("artempyanykh/marksman", "2024-12-18", "marksman", {
+executables.marksman = simple_binary("artempyanykh/marksman", "2024-12-18", "marksman", {
   ["darwin-arm64"] = "7e18803966231a33ee107d0d26f69b41f2f0dc1332c52dd9729c2e29fb77be83",
   ["linux-arm64"] = "b8d6972a56f3f9b7bbbf7c77ef8998e3b66fa82fb03c01398e224144486c9e73",
   ["linux-x86_64"] = "b9cb666c643dfd9b699811fdfc445ed4c56be65c1d878c21d46847f0d7b0e475",
@@ -254,7 +254,7 @@ binaries.marksman = simple_binary("artempyanykh/marksman", "2024-12-18", "marksm
 
 -- nvim
 if platform == "darwin-arm64" then
-  binaries.nvim = {
+  executables.nvim = {
     path = "bin/nvim",
     sha256 = "877b95fe0d84aaaff51eab66c8c03c2bfc5202c572de6d5b10670159ab83cd2f",
     strip_components = 1,
@@ -262,7 +262,7 @@ if platform == "darwin-arm64" then
     url = "https://github.com/whilp/dotfiles/releases/download/2025.11.23/nvim-2025.11.23-darwin-arm64.tar.gz",
   }
 elseif platform == "linux-arm64" then
-  binaries.nvim = {
+  executables.nvim = {
     path = "bin/nvim",
     sha256 = "9f1a2c06f9217a96878fbd494cd4198d57a47f651dc8f804b82acdb03c7fa607",
     strip_components = 1,
@@ -270,7 +270,7 @@ elseif platform == "linux-arm64" then
     url = "https://github.com/whilp/dotfiles/releases/download/2025.11.23/nvim-2025.11.23-linux-arm64.tar.gz",
   }
 elseif platform == "linux-x86_64" then
-  binaries.nvim = {
+  executables.nvim = {
     path = "bin/nvim",
     sha256 = "52ee34f0b4cf95c300716b21638f3c8aa4ec6a5761a1d77b44c5f3f4d73701f6",
     strip_components = 1,
@@ -280,14 +280,14 @@ elseif platform == "linux-x86_64" then
 end
 
 -- rg (ripgrep)
-binaries.rg = rust_binary("BurntSushi/ripgrep", "14.1.1", "ripgrep", {
+executables.rg = rust_binary("BurntSushi/ripgrep", "14.1.1", "ripgrep", {
   ["darwin-arm64"] = "24ad76777745fbff131c8fbc466742b011f925bfa4fffa2ded6def23b5b937be",
   ["linux-arm64"] = "c827481c4ff4ea10c9dc7a4022c8de5db34a5737cb74484d62eb94a95841ab2f",
   ["linux-x86_64"] = "4cf9f2741e6c465ffdb7c26f38056a59e2a2544b51f7cc128ef28337eeae4d8e",
 }, nil, "rg")
 
 -- ruff
-binaries.ruff = rust_binary("astral-sh/ruff", "0.8.4", "ruff", {
+executables.ruff = rust_binary("astral-sh/ruff", "0.8.4", "ruff", {
   ["darwin-arm64"] = "8893f3ede33a73740f69b10ee9356e5cf2933c0afe146f00176be12ef91bf9d9",
   ["linux-arm64"] = "0dfe36fabb817638863375e0140ce03bf26ccc9a7fd9d2c8e8337b1a21697ed4",
   ["linux-x86_64"] = "c4e6591ae1bb4f15c09c9022b7bfc57e1c3a567acdc9cd76021cd1304b5868c3",
@@ -300,7 +300,7 @@ local shfmt_names = {
   ["linux-x86_64"] = "linux_amd64",
 }
 if shfmt_names[platform] then
-  binaries.shfmt = {
+  executables.shfmt = {
     sha256 = ({
       ["darwin-arm64"] = "86030533a823c0a7cd92dee0f74094e5b901c3277b43def6337d5e19e56fe553",
       ["linux-arm64"] = "9d23013d56640e228732fd2a04a9ede0ab46bc2d764bf22a4a35fb1b14d707a8",
@@ -317,7 +317,7 @@ local sqruff_targets = {
   ["linux-x86_64"] = "linux-x86_64-musl",
 }
 if sqruff_targets[platform] then
-  binaries.sqruff = {
+  executables.sqruff = {
     path = "sqruff",
     sha256 = ({
       ["darwin-arm64"] = "cb969b42ebbca8229b4484ae2503530c4eef16e23829b340a0b270e1a007e6b6",
@@ -335,7 +335,7 @@ local stylua_targets = {
   ["linux-x86_64"] = "linux-x86_64",
 }
 if stylua_targets[platform] then
-  binaries.stylua = {
+  executables.stylua = {
     path = "stylua",
     sha256 = ({
       ["darwin-arm64"] = "3d9caaa660da4b3bc092e805d09af59e42b7504f1253c863b682ea3fc80944f2",
@@ -348,7 +348,7 @@ end
 
 -- superhtml
 local superhtml_map = platform_maps.arch_os
-binaries.superhtml = {
+executables.superhtml = {
   path = "superhtml",
   sha256 = ({
     ["darwin-arm64"] = "b8b2327f666ff316422061284e107add5c413ebdfdb91774c0c3702a66e65ec9",
@@ -360,19 +360,19 @@ binaries.superhtml = {
 }
 
 -- tree-sitter
-binaries["tree-sitter"] = gz_binary("tree-sitter/tree-sitter", "v0.25.8",
+executables["tree-sitter"] = gz_binary("tree-sitter/tree-sitter", "v0.25.8",
   "tree-sitter-" .. platform_maps.os_arch[platform],
   ({
     ["darwin-arm64"] = "ae3bbba3ba68e759a949e7591a42100a12d660cae165837aba48cae76a599e64",
     ["linux-arm64"] = "cd81d0108df9bdacf4fd32ec53534acced4780540eb5e889c77470d496e37fc5",
     ["linux-x86_64"] = "c9d46697e3e5ae6900a39ad4483667d2ba14c8ffb12c3f863bcf82a9564ee19f",
   })[platform])
-if binaries["tree-sitter"] then
-  binaries["tree-sitter"].path = "tree-sitter"
+if executables["tree-sitter"] then
+  executables["tree-sitter"].path = "tree-sitter"
 end
 
 -- uv
-binaries.uv = rust_binary("astral-sh/uv", "0.5.7", "uv", {
+executables.uv = rust_binary("astral-sh/uv", "0.5.7", "uv", {
   ["darwin-arm64"] = "b8cab25ab2ec0714dbb34179f948c27aa4ab307be54e0628e9e1eef1d2264f9f",
   ["linux-arm64"] = "d4dd7a72689888c92b5191902fd4ec9d25b7eeba07be41ba4a8f89acbb403e2d",
   ["linux-x86_64"] = "8a0a3e823684dec6e49ae17f31bf6483c778fd579671992d9156875210e5161e",
@@ -383,5 +383,5 @@ return {
     ["nvim-1"] = "nvim",
     lua = "luajit",
   },
-  binaries = binaries,
+  executables = executables,
 }
