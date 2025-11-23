@@ -21,6 +21,7 @@ LUALPEGPATTERNS_VERSION="${LUALPEGPATTERNS_VERSION:-0.5-0}"
 LUABINARYHEAP_VERSION="${LUABINARYHEAP_VERSION:-0.4-1}"
 LUACQUEUES_VERSION="${LUACQUEUES_VERSION:-20200726.51-0}"
 LUAHTTP_VERSION="${LUAHTTP_VERSION:-0.4-0}"
+LSQLITE3_VERSION="${LSQLITE3_VERSION:-0.9.6-1}"
 TEMP_DIR=$(mktemp -d)
 OUTPUT_DIR="${OUTPUT_DIR:-${SCRIPT_DIR}/../dist/luajit}"
 
@@ -159,8 +160,10 @@ cd "${TEMP_DIR}/install"
 
 if [[ "${OS}" == "darwin" ]]; then
   OPENSSL_FLAGS="OPENSSL_DIR=$(brew --prefix openssl@3) CRYPTO_DIR=$(brew --prefix openssl@3)"
+  SQLITE_FLAGS="SQLITE_DIR=$(brew --prefix sqlite) SQLITE_INCDIR=$(brew --prefix sqlite)/include SQLITE_LIBDIR=$(brew --prefix sqlite)/lib"
 else
   OPENSSL_FLAGS=""
+  SQLITE_FLAGS="SQLITE_INCDIR=/usr/include SQLITE_LIBDIR=/usr/lib"
 fi
 
 "${TEMP_DIR}/install/bin/luarocks" install luasocket ${LUASOCKET_VERSION} ${OPENSSL_FLAGS}
@@ -175,6 +178,7 @@ fi
 "${TEMP_DIR}/install/bin/luarocks" install binaryheap ${LUABINARYHEAP_VERSION}
 "${TEMP_DIR}/install/bin/luarocks" install cqueues ${LUACQUEUES_VERSION} ${OPENSSL_FLAGS}
 "${TEMP_DIR}/install/bin/luarocks" install http ${LUAHTTP_VERSION}
+"${TEMP_DIR}/install/bin/luarocks" install lsqlite3 ${LSQLITE3_VERSION} ${SQLITE_FLAGS}
 
 echo "Fixing luarocks shebangs for relocatable installation..."
 for script in "${TEMP_DIR}/install/bin/luarocks" "${TEMP_DIR}/install/bin/luarocks-admin"; do
@@ -244,6 +248,7 @@ cd "${TEMP_DIR}/install/bin"
 ./luajit -e "require('dkjson'); print('dkjson loaded successfully')"
 ./luajit -e "require('lfs'); print('luafilesystem loaded successfully')"
 ./luajit -e "require('http.client'); print('lua-http loaded successfully')"
+./luajit -e "require('lsqlite3'); print('lsqlite3 loaded successfully')"
 
 echo "Binary size: $(du -h ./luajit | cut -f1)"
 if command -v ldd >/dev/null 2>&1; then

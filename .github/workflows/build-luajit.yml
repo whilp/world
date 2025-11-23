@@ -46,11 +46,11 @@ jobs:
 
       - name: install dependencies (macos)
         if: matrix.os == 'macos-latest'
-        run: brew install openssl
+        run: brew install openssl sqlite
 
       - name: install dependencies (linux)
         if: startsWith(matrix.os, 'ubuntu-')
-        run: sudo apt-get update && sudo apt-get install -y libssl-dev build-essential
+        run: sudo apt-get update && sudo apt-get install -y libssl-dev libsqlite3-dev build-essential
 
       - name: build luajit
         env:
