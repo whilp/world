@@ -1,6 +1,7 @@
 ---
-description: Manage binaries with shimlink
+description: Manage binaries with shimlink (user)
 location: user
+trigger: Use this skill for ANY shimlink-related tasks including updating binaries, modifying shimlink.lua config, managing checksums, debugging the luajit bootstrap, or working with GitHub workflows that use shimlink/luajit
 ---
 
 # shimlink
