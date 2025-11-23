@@ -11,6 +11,7 @@ local ffi = require("ffi")
 local posix = require('posix')
 local unistd = require('posix.unistd')
 local stat = require('posix.sys.stat')
+local dirent = require('posix.dirent')
 local openssl = require('openssl')
 local digest = require('openssl.digest')
 
@@ -95,8 +96,22 @@ local function rm_rf(path)
     return true
   end
 
-  local exit_status = posix.spawn({"rm", "-rf", path})
-  return exit_status == 0
+  local function remove_recursive(p)
+    if is_directory(p) then
+      local entries = dirent.dir(p)
+      for _, entry in ipairs(entries) do
+        if entry ~= "." and entry ~= ".." then
+          remove_recursive(path_join(p, entry))
+        end
+      end
+      unistd.rmdir(p)
+    else
+      ffi.C.unlink(p)
+    end
+  end
+
+  remove_recursive(path)
+  return true
 end
 
 local function basename(path)
@@ -106,6 +121,16 @@ end
 local function dirname(path)
   local dir = path:match("(.+)/[^/]+$")
   return dir or "."
+end
+
+local function list_dir_first_entry(path)
+  local entries = dirent.dir(path)
+  for _, entry in ipairs(entries) do
+    if entry ~= "." and entry ~= ".." then
+      return entry
+    end
+  end
+  return nil
 end
 
 -- Platform detection (using LuaJIT built-ins instead of FFI to avoid segfault)
@@ -459,13 +484,8 @@ local function download_binary(binary_name, config, force)
     local strip_components = binary_config.strip_components or 0
     local binary_dir = extract_temp
     for i = 1, strip_components do
-      local wait = require('posix.sys.wait')
-      local handle = posix.popen({"/bin/sh", "-c", string.format("ls -1 %q", binary_dir)}, "r")
-      local first_entry = unistd.read(handle.fd, 1024)
-      wait.wait(handle.pids[1])
-      unistd.close(handle.fd)
+      local first_entry = list_dir_first_entry(binary_dir)
       if first_entry then
-        first_entry = first_entry:match("([^\n]+)")
         binary_dir = path_join(binary_dir, first_entry)
       end
     end
@@ -518,31 +538,24 @@ local function download_binary(binary_name, config, force)
       -- For strip_components=1, we extract to temp, then move the first subdir's contents
       local source_dir = extract_temp
       for i = 1, strip_components do
-        -- Find the single directory at this level
-        local wait = require('posix.sys.wait')
-        local handle = posix.popen({"/bin/sh", "-c", string.format("ls -1 %q", source_dir)}, "r")
-        local first_entry = unistd.read(handle.fd, 1024)
-        wait.wait(handle.pids[1])
-        unistd.close(handle.fd)
-
-        if first_entry and first_entry ~= "" then
-          first_entry = first_entry:match("([^\n]+)")
+        local first_entry = list_dir_first_entry(source_dir)
+        if first_entry then
           source_dir = path_join(source_dir, first_entry)
         else
           stderr_write("shimlink: warning: cannot strip " .. i .. " components, directory empty")
           break
         end
       end
-      posix.spawn({"mv", source_dir, versioned_dir})
+      os.rename(source_dir, versioned_dir)
     else
       -- Move the entire extracted directory structure
-      posix.spawn({"mv", extract_temp, versioned_dir})
+      os.rename(extract_temp, versioned_dir)
     end
   else
     -- For direct binary downloads, create directory and move binary
     mkdir_p(versioned_dir)
     local final_path = path_join(versioned_dir, binary_name)
-    posix.spawn({"mv", download_path, final_path})
+    os.rename(download_path, final_path)
   end
 
   stderr_write("shimlink: installed " .. binary_name .. " version " .. actual_sha256:sub(1, 16))
