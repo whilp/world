@@ -1,4 +1,4 @@
-name: build nvim
+name: nvim
 
 on:
   workflow_dispatch:
@@ -47,7 +47,7 @@ jobs:
       - name: bootstrap luajit
         run: bash .config/setup/luajit
 
-      - name: build nvim
+      - name: nvim
         env:
           OUTPUT_DIR: ${{ github.workspace }}/dist/nvim
         run: bash .github/build/bootstrap .github/build/nvim

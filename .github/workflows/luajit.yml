@@ -1,4 +1,4 @@
-name: build luajit
+name: luajit
 
 on:
   workflow_dispatch:
@@ -55,7 +55,7 @@ jobs:
       - name: bootstrap luajit
         run: bash .config/setup/luajit
 
-      - name: build luajit
+      - name: luajit
         env:
           OUTPUT_DIR: ${{ github.workspace }}/dist/luajit
         run: bash .github/build/bootstrap .github/build/luajit
