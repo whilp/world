@@ -1,6 +1,5 @@
 #!/usr/bin/env luajit
 
-local posix = require('posix')
 local json = require('dkjson')
 
 local function printf(fmt, ...)
@@ -41,8 +40,12 @@ local function mkdir_p(path)
 end
 
 local function file_exists(path)
-  local stat = posix.stat(path)
-  return stat and stat.type == "regular"
+  local f = io.open(path, "r")
+  if f then
+    f:close()
+    return true
+  end
+  return false
 end
 
 local function read_file(path)
