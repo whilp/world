@@ -344,13 +344,21 @@ end
 
 -- Update config checksum
 local function update_config_checksum(executable_name, config, new_checksum)
+  local old_checksum = config.executables[executable_name].sha256
   config.executables[executable_name].sha256 = new_checksum
 
-  -- Write to shimlink.lua if it exists, otherwise platform-specific config
   local config_dir = get_config_dir()
-  local config_path = path_join(config_dir, "shimlink.lua")
-  if not file_exists(config_path) then
-    config_path = get_platform_config_path()
+
+  -- First try per-package file (e.g., tree-sitter.lua)
+  local package_path = path_join(config_dir, executable_name .. ".lua")
+  local config_path = package_path
+
+  if not file_exists(package_path) then
+    -- Fall back to shimlink.lua
+    config_path = path_join(config_dir, "shimlink.lua")
+    if not file_exists(config_path) then
+      config_path = get_platform_config_path()
+    end
   end
 
   local content = read_file(config_path)
@@ -360,15 +368,12 @@ local function update_config_checksum(executable_name, config, new_checksum)
     return
   end
 
-  -- Pattern to match the sha256 field for this executable
-  -- Handles both ["binary-name"] and executable_name key formats
-  local pattern = '(%[?"?' .. executable_name:gsub("%-", "%%-") .. '"?%]?%s*=%s*%{.-)sha256%s*=%s*"([^"]*)"'
+  -- Simple approach: replace the old checksum with the new one
   local replaced = false
-
-  content = content:gsub(pattern, function(before, old_hash)
-    replaced = true
-    return before .. 'sha256 = "' .. new_checksum .. '"'
-  end)
+  if old_checksum then
+    content = content:gsub(old_checksum, new_checksum)
+    replaced = content:find(new_checksum) ~= nil
+  end
 
   if not replaced then
     stderr_write("shimlink: warning: could not find sha256 field for " .. executable_name .. " in config")
