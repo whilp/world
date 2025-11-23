@@ -213,18 +213,35 @@ local luajit_platform_map = {
 }
 local luajit_plat = luajit_platform_map[platform]
 if luajit_plat then
+  local luajit_sha = ({
+    ["darwin-arm64"] = "28c3e11ceb01995ad7e8001c7f705ead113a68839e5b41f4c6b7de1765ca8b33",
+    ["linux-arm64"] = "9922b7dbee40e1014fa6d394884fbbce81c5a31b17f20fad6c97cc623a630cc6",
+    ["linux-x86_64"] = "8fe07e0c021574c692cd6be647fadd2f31d0d2683896fd9de7fa59b3b96daa20",
+  })[platform]
+  local luajit_url = string.format("https://github.com/whilp/dotfiles/releases/download/2025.11.22/luajit-%s-%s.tar.gz", luajit_version, luajit_plat)
+
   binaries.luajit = {
     path = "bin/luajit",
-    sha256 = ({
-      ["darwin-arm64"] = "28c3e11ceb01995ad7e8001c7f705ead113a68839e5b41f4c6b7de1765ca8b33",
-      ["linux-arm64"] = "9922b7dbee40e1014fa6d394884fbbce81c5a31b17f20fad6c97cc623a630cc6",
-      ["linux-x86_64"] = "8fe07e0c021574c692cd6be647fadd2f31d0d2683896fd9de7fa59b3b96daa20",
-    })[platform],
+    sha256 = luajit_sha,
     strip_components = 1,
     symlinks = {
       ["share/luajit-2.1"] = "~/.local/share/luajit-2.1",
     },
-    url = string.format("https://github.com/whilp/dotfiles/releases/download/2025.11.22/luajit-%s-%s.tar.gz", luajit_version, luajit_plat),
+    url = luajit_url,
+  }
+
+  binaries.luarocks = {
+    path = "bin/luarocks",
+    sha256 = luajit_sha,
+    strip_components = 1,
+    url = luajit_url,
+  }
+
+  binaries["luarocks-admin"] = {
+    path = "bin/luarocks-admin",
+    sha256 = luajit_sha,
+    strip_components = 1,
+    url = luajit_url,
   }
 end
 
