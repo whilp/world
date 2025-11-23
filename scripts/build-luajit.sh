@@ -13,7 +13,7 @@ LUASOCKET_VERSION="${LUASOCKET_VERSION:-3.1.0-1}"
 LUASEC_VERSION="${LUASEC_VERSION:-1.3.2-1}"
 LUAOSSL_VERSION="${LUAOSSL_VERSION:-20250929-0}"
 LUAPOSIX_VERSION="${LUAPOSIX_VERSION:-36.2.1-1}"
-LUACJSON_VERSION="${LUACJSON_VERSION:-2.1.0.13-1}"
+DKJSON_VERSION="${DKJSON_VERSION:-2.8-1}"
 LUAFILESYSTEM_VERSION="${LUAFILESYSTEM_VERSION:-1.8.0-1}"
 LUACOMPAT53_VERSION="${LUACOMPAT53_VERSION:-0.14-1}"
 LUALPEGPATTERNS_VERSION="${LUALPEGPATTERNS_VERSION:-0.5-0}"
@@ -166,7 +166,7 @@ fi
 "${TEMP_DIR}/install/bin/luarocks" install luasec ${LUASEC_VERSION} ${OPENSSL_FLAGS}
 "${TEMP_DIR}/install/bin/luarocks" install luaossl ${LUAOSSL_VERSION} ${OPENSSL_FLAGS}
 "${TEMP_DIR}/install/bin/luarocks" install luaposix ${LUAPOSIX_VERSION} ${OPENSSL_FLAGS}
-"${TEMP_DIR}/install/bin/luarocks" install lua-cjson ${LUACJSON_VERSION}
+"${TEMP_DIR}/install/bin/luarocks" install dkjson ${DKJSON_VERSION}
 "${TEMP_DIR}/install/bin/luarocks" install luafilesystem ${LUAFILESYSTEM_VERSION}
 "${TEMP_DIR}/install/bin/luarocks" install compat53 ${LUACOMPAT53_VERSION}
 "${TEMP_DIR}/install/bin/luarocks" install lpeg_patterns ${LUALPEGPATTERNS_VERSION}
@@ -239,7 +239,7 @@ cd "${TEMP_DIR}/install/bin"
 ./luajit -e "require('socket'); require('ssl'); print('LuaSocket and LuaSec loaded successfully')"
 ./luajit -e "require('openssl'); print('LuaOSSL loaded successfully')"
 ./luajit -e "require('posix'); print('LuaPosix loaded successfully')"
-./luajit -e "require('cjson'); print('lua-cjson loaded successfully')"
+./luajit -e "require('dkjson'); print('dkjson loaded successfully')"
 ./luajit -e "require('lfs'); print('luafilesystem loaded successfully')"
 ./luajit -e "require('http.client'); print('lua-http loaded successfully')"
 
