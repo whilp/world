@@ -94,7 +94,7 @@ local function patch_luaconf(conf_file, platform)
 end
 
 local function build_luajit(config)
-  util.printf("building luajit %s for %s\n", config.version, config.platform.platform)
+  util.printf("building luajit %s for %s\n", config.versions.luajit, config.platform.platform)
   util.printf("temporary directory: %s\n", config.temp_dir)
   util.printf("output directory: %s\n", config.output_dir)
 
@@ -102,8 +102,8 @@ local function build_luajit(config)
   local luajit_dir = config.temp_dir .. "/luajit"
   util.exec(string.format("git clone https://luajit.org/git/luajit.git %s", luajit_dir))
 
-  util.printf("checking out %s...\n", config.version)
-  util.exec(string.format("cd %s && git checkout %s", luajit_dir, config.version))
+  util.printf("checking out %s...\n", config.versions.luajit)
+  util.exec(string.format("cd %s && git checkout %s", luajit_dir, config.versions.luajit))
 
   local commit_hash = util.capture(string.format("cd %s && git rev-parse --short HEAD", luajit_dir))
   local commit_date = util.capture(string.format("cd %s && git log -1 --format=%%cd --date=format:%%Y.%%m.%%d", luajit_dir))
@@ -167,19 +167,19 @@ local function build_luajit(config)
   local luarocks = install_dir .. "/bin/luarocks"
 
   local deps = {
-    {"luasocket", config.versions.LUASOCKET_VERSION, openssl_flags},
-    {"luasec", config.versions.LUASEC_VERSION, openssl_flags},
-    {"luaossl", config.versions.LUAOSSL_VERSION, openssl_flags},
-    {"luaposix", config.versions.LUAPOSIX_VERSION, openssl_flags},
-    {"dkjson", config.versions.DKJSON_VERSION, ""},
-    {"luafilesystem", config.versions.LUAFILESYSTEM_VERSION, ""},
-    {"compat53", config.versions.LUACOMPAT53_VERSION, ""},
-    {"lpeg", config.versions.LPEG_VERSION, ""},
-    {"lpeg_patterns", config.versions.LUALPEGPATTERNS_VERSION, ""},
-    {"binaryheap", config.versions.LUABINARYHEAP_VERSION, ""},
-    {"cqueues", config.versions.LUACQUEUES_VERSION, openssl_flags},
-    {"http", config.versions.LUAHTTP_VERSION, ""},
-    {"lsqlite3", config.versions.LSQLITE3_VERSION, sqlite_flags},
+    {"luasocket", config.versions.luasocket, openssl_flags},
+    {"luasec", config.versions.luasec, openssl_flags},
+    {"luaossl", config.versions.luaossl, openssl_flags},
+    {"luaposix", config.versions.luaposix, openssl_flags},
+    {"dkjson", config.versions.dkjson, ""},
+    {"luafilesystem", config.versions.luafilesystem, ""},
+    {"compat53", config.versions.compat53, ""},
+    {"lpeg", config.versions.lpeg, ""},
+    {"lpeg_patterns", config.versions.lpeg_patterns, ""},
+    {"binaryheap", config.versions.binaryheap, ""},
+    {"cqueues", config.versions.cqueues, openssl_flags},
+    {"http", config.versions.http, ""},
+    {"lsqlite3", config.versions.lsqlite3, sqlite_flags},
   }
 
   for _, dep in ipairs(deps) do
@@ -266,7 +266,6 @@ local function main()
   local output_dir = os.getenv("OUTPUT_DIR") or (workspace_root .. "/dist/luajit")
 
   local config = {
-    version = versions.LUAJIT_VERSION,
     versions = versions,
     temp_dir = temp_dir,
     output_dir = output_dir,
