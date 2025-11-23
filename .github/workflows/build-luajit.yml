@@ -41,9 +41,9 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             platform: linux-x64
-          - os: ubuntu-latest
+          - os: ubuntu-24.04-arm
             platform: linux-arm64
           - os: macos-latest
             platform: darwin-arm64
@@ -64,22 +64,15 @@ jobs:
           fi
           echo "tag=${TAG}" >> $GITHUB_OUTPUT
 
-      - name: set up QEMU for cross-compilation
-        if: matrix.platform == 'linux-arm64'
-        uses: docker/setup-qemu-action@v3
-        with:
-          platforms: arm64
-
       - name: install dependencies (macos)
         if: matrix.os == 'macos-latest'
         run: brew install openssl
 
       - name: install dependencies (linux)
-        if: matrix.os == 'ubuntu-latest' && matrix.platform != 'linux-arm64'
+        if: startsWith(matrix.os, 'ubuntu-')
         run: sudo apt-get update && sudo apt-get install -y libssl-dev build-essential
 
-      - name: build luajit (native)
-        if: matrix.platform != 'linux-arm64'
+      - name: build luajit
         env:
           LUAJIT_VERSION: ${{ github.event.inputs.luajit_commit }}
           LUASOCKET_VERSION: ${{ github.event.inputs.luasocket_version }}
@@ -88,27 +81,6 @@ jobs:
           LUAPOSIX_VERSION: ${{ github.event.inputs.luaposix_version }}
           OUTPUT_DIR: ${{ github.workspace }}/dist/luajit
         run: bash scripts/build-luajit.sh
-
-      - name: build luajit (cross-compile arm64)
-        if: matrix.platform == 'linux-arm64'
-        env:
-          LUAJIT_VERSION: ${{ github.event.inputs.luajit_commit }}
-          LUASOCKET_VERSION: ${{ github.event.inputs.luasocket_version }}
-          LUASEC_VERSION: ${{ github.event.inputs.luasec_version }}
-          LUAOSSL_VERSION: ${{ github.event.inputs.luaossl_version }}
-          LUAPOSIX_VERSION: ${{ github.event.inputs.luaposix_version }}
-        run: |
-          docker run --rm -v "$PWD":/workspace -w /workspace \
-            --platform linux/arm64 \
-            -e LUAJIT_VERSION="${LUAJIT_VERSION}" \
-            -e LUASOCKET_VERSION="${LUASOCKET_VERSION}" \
-            -e LUASEC_VERSION="${LUASEC_VERSION}" \
-            -e LUAOSSL_VERSION="${LUAOSSL_VERSION}" \
-            -e LUAPOSIX_VERSION="${LUAPOSIX_VERSION}" \
-            -e OUTPUT_DIR="/workspace/dist/luajit" \
-            ubuntu:24.04 bash -c "
-              apt-get update && apt-get install -y git make gcc libssl-dev build-essential unzip wget && \
-              bash scripts/build-luajit.sh"
 
       - name: upload artifacts
         uses: actions/upload-artifact@v4
