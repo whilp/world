@@ -29,6 +29,7 @@ and returns table:
 author = github.com/tami5 (original plenary implementation)
 ]]
 
+local posix = require('posix')
 local utils = require("utils")
 local util, parse = {}, {}
 
@@ -292,7 +293,7 @@ local function execute_curl(args, timeout)
     cmd = "timeout " .. timeout .. " " .. cmd
   end
 
-  local handle = io.popen(cmd .. " 2>&1")
+  local handle = posix.popen(cmd .. " 2>&1")
   if not handle then
     return nil, 1
   end

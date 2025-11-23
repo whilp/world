@@ -1,5 +1,6 @@
 #!/usr/bin/env luajit
 
+local posix = require('posix')
 local M = {}
 
 function M.printf(fmt, ...)
@@ -18,20 +19,26 @@ function M.exec(cmd, opts)
   if not opts.quiet then
     M.printf("+ %s\n", cmd)
   end
-  local ret = os.execute(cmd)
-  if ret ~= 0 and not opts.allow_failure then
+  local status = posix.spawn({"/bin/sh", "-c", cmd})
+  if not status then
+    M.errorf("failed to spawn command: %s\n", cmd)
+  end
+  if status ~= 0 and not opts.allow_failure then
     M.errorf("command failed: %s\n", cmd)
   end
-  return ret == 0
+  return status == 0
 end
 
 function M.capture(cmd)
-  local handle = io.popen(cmd)
+  local unistd = require('posix.unistd')
+  local wait = require('posix.sys.wait')
+  local handle = posix.popen({"/bin/sh", "-c", cmd}, "r")
   if not handle then
     M.errorf("failed to run: %s\n", cmd)
   end
-  local result = handle:read("*a")
-  handle:close()
+  local result = unistd.read(handle.fd, 65536) or ""
+  wait.wait(handle.pids[1])
+  unistd.close(handle.fd)
   return result:gsub("%s+$", "")
 end
 

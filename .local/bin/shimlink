@@ -8,6 +8,7 @@ then exec's the target binary with all arguments and environment passed through.
 ]]
 
 local ffi = require("ffi")
+local posix = require('posix')
 local unistd = require('posix.unistd')
 local stat = require('posix.sys.stat')
 local openssl = require('openssl')
@@ -94,8 +95,8 @@ local function rm_rf(path)
     return true
   end
 
-  local result = os.execute(string.format("rm -rf %q", path))
-  return result == 0 or result == true
+  local exit_status = posix.spawn({"rm", "-rf", path})
+  return exit_status == 0
 end
 
 local function basename(path)
@@ -230,8 +231,8 @@ end
 local function download_file(url, dest_path)
   stderr_write("shimlink: downloading " .. url)
 
-  local result = os.execute(string.format("curl -fsSL -A 'shimlink/1.0' -o %q %q", dest_path, url))
-  return result == 0 or result == true
+  local exit_status = posix.spawn({"curl", "-fsSL", "-A", "shimlink/1.0", "-o", dest_path, url})
+  return exit_status == 0
 end
 
 -- Extract archive
@@ -239,13 +240,13 @@ local function extract_archive(archive_path, extract_to, executable_path)
   local archive_name = basename(archive_path)
 
   if archive_name:match("%.zip$") then
-    local result = os.execute(string.format("unzip -q %q -d %q", archive_path, extract_to))
-    if not (result == 0 or result == true) then
+    local exit_status = posix.spawn({"unzip", "-q", archive_path, "-d", extract_to})
+    if exit_status ~= 0 then
       return nil, "failed to extract zip"
     end
   elseif archive_name:match("%.tar%.gz$") or archive_name:match("%.tgz$") then
-    local result = os.execute(string.format("tar -xzf %q -C %q", archive_path, extract_to))
-    if not (result == 0 or result == true) then
+    local exit_status = posix.spawn({"tar", "-xzf", archive_path, "-C", extract_to})
+    if exit_status ~= 0 then
       return nil, "failed to extract tar.gz"
     end
   elseif archive_name:match("%.gz$") and not archive_name:match("%.tar%.gz$") then
@@ -255,8 +256,9 @@ local function extract_archive(archive_path, extract_to, executable_path)
     end
     local output_path = path_join(extract_to, executable_path)
     mkdir_p(dirname(output_path))
-    local result = os.execute(string.format("gunzip -c %q > %q", archive_path, output_path))
-    if not (result == 0 or result == true) then
+    -- For gunzip with output redirection, we need to use shell
+    local exit_status = posix.spawn({"/bin/sh", "-c", string.format("gunzip -c %q > %q", archive_path, output_path)})
+    if exit_status ~= 0 then
       return nil, "failed to extract gzip"
     end
     return output_path
@@ -425,10 +427,13 @@ local function download_binary(binary_name, config, force)
     local strip_components = binary_config.strip_components or 0
     local binary_dir = extract_temp
     for i = 1, strip_components do
-      local handle = io.popen(string.format("ls -1 %q", binary_dir))
-      local first_entry = handle:read("*l")
-      handle:close()
+      local wait = require('posix.sys.wait')
+      local handle = posix.popen({"/bin/sh", "-c", string.format("ls -1 %q", binary_dir)}, "r")
+      local first_entry = unistd.read(handle.fd, 1024)
+      wait.wait(handle.pids[1])
+      unistd.close(handle.fd)
       if first_entry then
+        first_entry = first_entry:match("([^\n]+)")
         binary_dir = path_join(binary_dir, first_entry)
       end
     end
@@ -482,27 +487,30 @@ local function download_binary(binary_name, config, force)
       local source_dir = extract_temp
       for i = 1, strip_components do
         -- Find the single directory at this level
-        local handle = io.popen(string.format("ls -1 %q", source_dir))
-        local first_entry = handle:read("*l")
-        handle:close()
+        local wait = require('posix.sys.wait')
+        local handle = posix.popen({"/bin/sh", "-c", string.format("ls -1 %q", source_dir)}, "r")
+        local first_entry = unistd.read(handle.fd, 1024)
+        wait.wait(handle.pids[1])
+        unistd.close(handle.fd)
 
-        if first_entry then
+        if first_entry and first_entry ~= "" then
+          first_entry = first_entry:match("([^\n]+)")
           source_dir = path_join(source_dir, first_entry)
         else
           stderr_write("shimlink: warning: cannot strip " .. i .. " components, directory empty")
           break
         end
       end
-      os.execute(string.format("mv %q %q", source_dir, versioned_dir))
+      posix.spawn({"mv", source_dir, versioned_dir})
     else
       -- Move the entire extracted directory structure
-      os.execute(string.format("mv %q %q", extract_temp, versioned_dir))
+      posix.spawn({"mv", extract_temp, versioned_dir})
     end
   else
     -- For direct binary downloads, create directory and move binary
     mkdir_p(versioned_dir)
     local final_path = path_join(versioned_dir, binary_name)
-    os.execute(string.format("mv %q %q", download_path, final_path))
+    posix.spawn({"mv", download_path, final_path})
   end
 
   stderr_write("shimlink: installed " .. binary_name .. " version " .. actual_sha256:sub(1, 16))
