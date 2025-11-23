@@ -28,7 +28,7 @@ jobs:
           - platform: linux-x64
             asset_name: nvim-linux-x86_64.tar.gz
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: checkout repository
@@ -138,7 +138,7 @@ jobs:
 
   summary:
     needs: download
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: always()
 
     steps:
