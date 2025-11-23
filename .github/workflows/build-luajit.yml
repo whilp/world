@@ -27,6 +27,34 @@ on:
         description: 'LuaPosix version'
         required: false
         default: '36.2.1-1'
+      luacjson_version:
+        description: 'lua-cjson version'
+        required: false
+        default: '2.1.0.13-1'
+      luafilesystem_version:
+        description: 'luafilesystem version'
+        required: false
+        default: '1.8.0-1'
+      luacompat53_version:
+        description: 'compat53 version'
+        required: false
+        default: '0.14-1'
+      lualpegpatterns_version:
+        description: 'lpeg_patterns version'
+        required: false
+        default: '0.5-0'
+      luabinaryheap_version:
+        description: 'binaryheap version'
+        required: false
+        default: '0.4-1'
+      luacqueues_version:
+        description: 'cqueues version'
+        required: false
+        default: '20200726.53-0'
+      luahttp_version:
+        description: 'lua-http version'
+        required: false
+        default: '0.4-0'
       create_release:
         description: 'Create a GitHub release'
         type: boolean
@@ -79,6 +107,13 @@ jobs:
           LUASEC_VERSION: ${{ github.event.inputs.luasec_version }}
           LUAOSSL_VERSION: ${{ github.event.inputs.luaossl_version }}
           LUAPOSIX_VERSION: ${{ github.event.inputs.luaposix_version }}
+          LUACJSON_VERSION: ${{ github.event.inputs.luacjson_version }}
+          LUAFILESYSTEM_VERSION: ${{ github.event.inputs.luafilesystem_version }}
+          LUACOMPAT53_VERSION: ${{ github.event.inputs.luacompat53_version }}
+          LUALPEGPATTERNS_VERSION: ${{ github.event.inputs.lualpegpatterns_version }}
+          LUABINARYHEAP_VERSION: ${{ github.event.inputs.luabinaryheap_version }}
+          LUACQUEUES_VERSION: ${{ github.event.inputs.luacqueues_version }}
+          LUAHTTP_VERSION: ${{ github.event.inputs.luahttp_version }}
           OUTPUT_DIR: ${{ github.workspace }}/dist/luajit
         run: bash scripts/build-luajit.sh
 

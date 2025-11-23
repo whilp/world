@@ -7,6 +7,13 @@ LUASOCKET_VERSION="${LUASOCKET_VERSION:-3.1.0-1}"
 LUASEC_VERSION="${LUASEC_VERSION:-1.3.2-1}"
 LUAOSSL_VERSION="${LUAOSSL_VERSION:-20250929-0}"
 LUAPOSIX_VERSION="${LUAPOSIX_VERSION:-36.2.1-1}"
+LUACJSON_VERSION="${LUACJSON_VERSION:-2.1.0.13-1}"
+LUAFILESYSTEM_VERSION="${LUAFILESYSTEM_VERSION:-1.8.0-1}"
+LUACOMPAT53_VERSION="${LUACOMPAT53_VERSION:-0.14-1}"
+LUALPEGPATTERNS_VERSION="${LUALPEGPATTERNS_VERSION:-0.5-0}"
+LUABINARYHEAP_VERSION="${LUABINARYHEAP_VERSION:-0.4-1}"
+LUACQUEUES_VERSION="${LUACQUEUES_VERSION:-20200726.53-0}"
+LUAHTTP_VERSION="${LUAHTTP_VERSION:-0.4-0}"
 TEMP_DIR=$(mktemp -d)
 OUTPUT_DIR="${OUTPUT_DIR:-${SCRIPT_DIR}/../dist/luajit}"
 
@@ -153,6 +160,13 @@ fi
 "${TEMP_DIR}/install/bin/luarocks" install luasec ${LUASEC_VERSION} ${OPENSSL_FLAGS}
 "${TEMP_DIR}/install/bin/luarocks" install luaossl ${LUAOSSL_VERSION} ${OPENSSL_FLAGS}
 "${TEMP_DIR}/install/bin/luarocks" install luaposix ${LUAPOSIX_VERSION} ${OPENSSL_FLAGS}
+"${TEMP_DIR}/install/bin/luarocks" install lua-cjson ${LUACJSON_VERSION}
+"${TEMP_DIR}/install/bin/luarocks" install luafilesystem ${LUAFILESYSTEM_VERSION}
+"${TEMP_DIR}/install/bin/luarocks" install compat53 ${LUACOMPAT53_VERSION}
+"${TEMP_DIR}/install/bin/luarocks" install lpeg_patterns ${LUALPEGPATTERNS_VERSION}
+"${TEMP_DIR}/install/bin/luarocks" install binaryheap ${LUABINARYHEAP_VERSION}
+"${TEMP_DIR}/install/bin/luarocks" install cqueues ${LUACQUEUES_VERSION} ${OPENSSL_FLAGS}
+"${TEMP_DIR}/install/bin/luarocks" install http ${LUAHTTP_VERSION}
 
 echo "Fixing luarocks shebangs for relocatable installation..."
 for script in "${TEMP_DIR}/install/bin/luarocks" "${TEMP_DIR}/install/bin/luarocks-admin"; do
@@ -219,6 +233,9 @@ cd "${TEMP_DIR}/install/bin"
 ./luajit -e "require('socket'); require('ssl'); print('LuaSocket and LuaSec loaded successfully')"
 ./luajit -e "require('openssl'); print('LuaOSSL loaded successfully')"
 ./luajit -e "require('posix'); print('LuaPosix loaded successfully')"
+./luajit -e "require('cjson'); print('lua-cjson loaded successfully')"
+./luajit -e "require('lfs'); print('luafilesystem loaded successfully')"
+./luajit -e "require('http.client'); print('lua-http loaded successfully')"
 
 echo "Binary size: $(du -h ./luajit | cut -f1)"
 if command -v ldd >/dev/null 2>&1; then
