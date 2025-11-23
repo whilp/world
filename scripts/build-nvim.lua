@@ -235,12 +235,12 @@ end
 
 local function main()
   local script_dir = get_script_dir()
-  local lock_file = script_dir .. "../.config/nvim/nvim-pack-lock.json"
+  local lock_file = script_dir .. "/../.config/nvim/nvim-pack-lock.json"
 
   local pack_lock = load_pack_lock(lock_file)
 
   local temp_dir = capture("mktemp -d")
-  local output_dir = os.getenv("OUTPUT_DIR") or (script_dir .. "../dist/nvim")
+  local output_dir = os.getenv("OUTPUT_DIR") or (script_dir .. "/../dist/nvim")
 
   local config = {
     pack_lock = pack_lock,
