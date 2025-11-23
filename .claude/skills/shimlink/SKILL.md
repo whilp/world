@@ -30,6 +30,21 @@ shimlink update -f <binary>
 - to get the correct checksum: `curl -sL <url> | shasum -a 256`
 - example: `curl -sL https://github.com/.../nvim-macos-arm64.tar.gz | shasum -a 256`
 
+## Luajit bootstrap
+
+The luajit bootstrap script (`.config/setup/luajit`) is used by GitHub workflows to install luajit before running lua-based build scripts:
+
+- downloads pre-built luajit from github releases
+- extracts to `~/.local/bootstrap/`
+- copies `bin/`, `lib/`, and `share/` directories
+- the `share/` directory contains lua modules including dkjson
+- version must match the version in `.config/shimlink/shimlink.lua`
+
+Key files:
+- `.config/setup/luajit`: bootstrap script
+- `.config/shimlink/shimlink.lua`: shimlink config with luajit version and checksums
+- `.github/workflows/build-nvim.yml`: workflow that uses the bootstrap
+
 ## Examples
 
 ```bash
