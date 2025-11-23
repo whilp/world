@@ -11,11 +11,12 @@ Run GitHub workflows on github.com
 
 When the user asks to run a workflow:
 
-1. Check git remotes to find the github.com remote (often named `github`)
-2. Push to github.com first: `git push <github-remote> <branch>`
-3. Trigger the workflow with appropriate parameters
-4. For iteration/testing: run only the fastest matrix build variant
-5. Download workflow artifacts to verify outputs
+1. Check the workflow file in `.github/workflows/` to understand its trigger type
+2. For `workflow_dispatch` workflows: trigger directly with `gh workflow run`
+3. For `push` workflows: push to the remote first, then the workflow runs automatically
+4. Use appropriate parameters based on the workflow's input definitions
+5. For iteration/testing: run only the fastest matrix build variant
+6. Download workflow artifacts to verify outputs
 
 ## Usage
 
@@ -49,14 +50,13 @@ For workflows with matrix builds, test with the fastest variant first:
 ## Examples
 
 ```bash
-# Push and run CI workflow
-git push github main
-GH_HOST=github.com gh workflow run ci.yml
+# Run workflow_dispatch workflow with inputs
+GH_HOST=github.com gh workflow run build-luajit.yml -f release_tag=2025.11.23 -f create_release=true
 
-# Run with branch
+# Run workflow on specific branch
 GH_HOST=github.com gh workflow run deploy.yml --ref main
 
-# Run with matrix targeting (if workflow supports it)
+# Run with specific input parameters
 GH_HOST=github.com gh workflow run build.yml -f os=ubuntu-latest -f version=3.11
 
 # Download artifacts from latest run
