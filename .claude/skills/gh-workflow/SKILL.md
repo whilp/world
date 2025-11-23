@@ -51,7 +51,7 @@ For workflows with matrix builds, test with the fastest variant first:
 
 ```bash
 # Run workflow_dispatch workflow with inputs
-GH_HOST=github.com gh workflow run build-luajit.yml -f release_tag=2025.11.23 -f create_release=true
+GH_HOST=github.com gh workflow run luajit.yml -f release_tag=2025.11.23 -f create_release=true
 
 # Run workflow on specific branch
 GH_HOST=github.com gh workflow run deploy.yml --ref main
