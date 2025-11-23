@@ -9,6 +9,10 @@
         <string>/Users/wcm/.local/bin/nvimd</string>
         <string>serve</string>
     </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/wcm</string>
+
     <key>RunAtLoad</key>
     <true/>
     <key>KeepAlive</key>
@@ -17,8 +21,9 @@
         <false/>
     </dict>
     <key>StandardOutPath</key>
-    <string>/tmp/nvim.log</string>
+    <string>/tmp/nvim-service.log</string>
+
     <key>StandardErrorPath</key>
-    <string>/tmp/nvim.err</string>
+    <string>/tmp/nvim-service-error.log</string>
 </dict>
 </plist>
