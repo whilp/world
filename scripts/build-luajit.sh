@@ -16,6 +16,7 @@ LUAPOSIX_VERSION="${LUAPOSIX_VERSION:-36.2.1-1}"
 DKJSON_VERSION="${DKJSON_VERSION:-2.8-1}"
 LUAFILESYSTEM_VERSION="${LUAFILESYSTEM_VERSION:-1.8.0-1}"
 LUACOMPAT53_VERSION="${LUACOMPAT53_VERSION:-0.14-1}"
+LPEG_VERSION="${LPEG_VERSION:-1.1.0-2}"
 LUALPEGPATTERNS_VERSION="${LUALPEGPATTERNS_VERSION:-0.5-0}"
 LUABINARYHEAP_VERSION="${LUABINARYHEAP_VERSION:-0.4-1}"
 LUACQUEUES_VERSION="${LUACQUEUES_VERSION:-20200726-0}"
@@ -169,6 +170,7 @@ fi
 "${TEMP_DIR}/install/bin/luarocks" install dkjson ${DKJSON_VERSION}
 "${TEMP_DIR}/install/bin/luarocks" install luafilesystem ${LUAFILESYSTEM_VERSION}
 "${TEMP_DIR}/install/bin/luarocks" install compat53 ${LUACOMPAT53_VERSION}
+"${TEMP_DIR}/install/bin/luarocks" install lpeg ${LPEG_VERSION}
 "${TEMP_DIR}/install/bin/luarocks" install lpeg_patterns ${LUALPEGPATTERNS_VERSION}
 "${TEMP_DIR}/install/bin/luarocks" install binaryheap ${LUABINARYHEAP_VERSION}
 "${TEMP_DIR}/install/bin/luarocks" install cqueues ${LUACQUEUES_VERSION} ${OPENSSL_FLAGS}
