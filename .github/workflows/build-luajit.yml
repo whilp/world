@@ -21,10 +21,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: ubuntu-24.04
-            platform: linux-x64
-          - os: ubuntu-24.04-arm
-            platform: linux-arm64
           - os: macos-latest
             platform: darwin-arm64
 
@@ -52,10 +48,13 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu-')
         run: sudo apt-get update && sudo apt-get install -y libssl-dev libsqlite3-dev build-essential
 
+      - name: bootstrap luajit
+        run: bash .config/setup/luajit
+
       - name: build luajit
         env:
           OUTPUT_DIR: ${{ github.workspace }}/dist/luajit
-        run: bash scripts/build-luajit.sh
+        run: bash scripts/build-luajit
 
       - name: upload artifacts
         uses: actions/upload-artifact@v4
