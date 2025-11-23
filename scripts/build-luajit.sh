@@ -19,6 +19,7 @@ LUACOMPAT53_VERSION="${LUACOMPAT53_VERSION:-0.14-1}"
 LPEG_VERSION="${LPEG_VERSION:-1.1.0-2}"
 LUALPEGPATTERNS_VERSION="${LUALPEGPATTERNS_VERSION:-0.5-0}"
 LUABINARYHEAP_VERSION="${LUABINARYHEAP_VERSION:-0.4-1}"
+LUACQUEUES_VERSION="${LUACQUEUES_VERSION:-20200726.51-0}"
 LUAHTTP_VERSION="${LUAHTTP_VERSION:-0.4-0}"
 TEMP_DIR=$(mktemp -d)
 OUTPUT_DIR="${OUTPUT_DIR:-${SCRIPT_DIR}/../dist/luajit}"
@@ -172,7 +173,7 @@ fi
 "${TEMP_DIR}/install/bin/luarocks" install lpeg ${LPEG_VERSION}
 "${TEMP_DIR}/install/bin/luarocks" install lpeg_patterns ${LUALPEGPATTERNS_VERSION}
 "${TEMP_DIR}/install/bin/luarocks" install binaryheap ${LUABINARYHEAP_VERSION}
-"${TEMP_DIR}/install/bin/luarocks" install cqueues ${OPENSSL_FLAGS}
+"${TEMP_DIR}/install/bin/luarocks" install cqueues ${LUACQUEUES_VERSION} ${OPENSSL_FLAGS}
 "${TEMP_DIR}/install/bin/luarocks" install http ${LUAHTTP_VERSION}
 
 echo "Fixing luarocks shebangs for relocatable installation..."
