@@ -214,9 +214,9 @@ local luajit_platform_map = {
 local luajit_plat = luajit_platform_map[platform]
 if luajit_plat then
   local luajit_sha = ({
-    ["darwin-arm64"] = "cf9930a22d81d312e2773d61369113613808c48e8dc2a5fad5f0e4ef588a92d8",
-    ["linux-arm64"] = "37400b35f4764b74023c6c8d49701db73f8a95da199892b5a6ebdf89dfb6ec31",
-    ["linux-x86_64"] = "3b18b247e7ca9a2568af1e148c3b9c38fef7174c789b12283496ba2ae97e9fd7",
+    ["darwin-arm64"] = "86ed38fbafac292fdfe07d39be5b10647800de49ec1b80ecf14949543b4cdeb8",
+    ["linux-arm64"] = "4369d8ea36709af7bbaf09caa25bd3900c06fc6b5d1fe608187d35e4557e82c4",
+    ["linux-x86_64"] = "8b2550de4d806e82038e0b60b673b213fb420c775632484d61142a4fd78b99ec",
   })[platform]
   local luajit_url = string.format("https://github.com/whilp/dotfiles/releases/download/2025.11.23/luajit-%s-%s.tar.gz", luajit_version, luajit_plat)
 
