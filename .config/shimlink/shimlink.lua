@@ -214,11 +214,11 @@ local luajit_platform_map = {
 local luajit_plat = luajit_platform_map[platform]
 if luajit_plat then
   local luajit_sha = ({
-    ["darwin-arm64"] = "28c3e11ceb01995ad7e8001c7f705ead113a68839e5b41f4c6b7de1765ca8b33",
-    ["linux-arm64"] = "9922b7dbee40e1014fa6d394884fbbce81c5a31b17f20fad6c97cc623a630cc6",
-    ["linux-x86_64"] = "8fe07e0c021574c692cd6be647fadd2f31d0d2683896fd9de7fa59b3b96daa20",
+    ["darwin-arm64"] = "b9522fe875a5ec708cdb9138e5da5a2119d30004c062149dd30fca06713e01b7",
+    ["linux-arm64"] = "37400b35f4764b74023c6c8d49701db73f8a95da199892b5a6ebdf89dfb6ec31",
+    ["linux-x86_64"] = "3b18b247e7ca9a2568af1e148c3b9c38fef7174c789b12283496ba2ae97e9fd7",
   })[platform]
-  local luajit_url = string.format("https://github.com/whilp/dotfiles/releases/download/2025.11.22/luajit-%s-%s.tar.gz", luajit_version, luajit_plat)
+  local luajit_url = string.format("https://github.com/whilp/dotfiles/releases/download/2025.11.23/luajit-%s-%s.tar.gz", luajit_version, luajit_plat)
 
   binaries.luajit = {
     path = "bin/luajit",
