@@ -2,6 +2,12 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+VERSIONS_FILE="${VERSIONS_FILE:-${SCRIPT_DIR}/../.config/luajit/versions.conf}"
+if [ -f "${VERSIONS_FILE}" ]; then
+  source "${VERSIONS_FILE}"
+fi
+
 VERSION="${LUAJIT_VERSION:-25a61a182166fec06f1a1a025eb8fabbb6cf483e}"
 LUASOCKET_VERSION="${LUASOCKET_VERSION:-3.1.0-1}"
 LUASEC_VERSION="${LUASEC_VERSION:-1.3.2-1}"

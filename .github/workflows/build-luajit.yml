@@ -7,54 +7,6 @@ on:
         description: 'Release tag (defaults to current date YYYY.MM.DD)'
         required: false
         default: ''
-      luajit_commit:
-        description: 'LuaJIT commit hash to build'
-        required: false
-        default: '25a61a182166fec06f1a1a025eb8fabbb6cf483e'
-      luasocket_version:
-        description: 'LuaSocket version'
-        required: false
-        default: '3.1.0-1'
-      luasec_version:
-        description: 'LuaSec version'
-        required: false
-        default: '1.3.2-1'
-      luaossl_version:
-        description: 'LuaOSSL version'
-        required: false
-        default: '20250929-0'
-      luaposix_version:
-        description: 'LuaPosix version'
-        required: false
-        default: '36.2.1-1'
-      luacjson_version:
-        description: 'lua-cjson version'
-        required: false
-        default: '2.1.0.13-1'
-      luafilesystem_version:
-        description: 'luafilesystem version'
-        required: false
-        default: '1.8.0-1'
-      luacompat53_version:
-        description: 'compat53 version'
-        required: false
-        default: '0.14-1'
-      lualpegpatterns_version:
-        description: 'lpeg_patterns version'
-        required: false
-        default: '0.5-0'
-      luabinaryheap_version:
-        description: 'binaryheap version'
-        required: false
-        default: '0.4-1'
-      luacqueues_version:
-        description: 'cqueues version'
-        required: false
-        default: '20200726.53-0'
-      luahttp_version:
-        description: 'lua-http version'
-        required: false
-        default: '0.4-0'
       create_release:
         description: 'Create a GitHub release'
         type: boolean
@@ -102,18 +54,6 @@ jobs:
 
       - name: build luajit
         env:
-          LUAJIT_VERSION: ${{ github.event.inputs.luajit_commit }}
-          LUASOCKET_VERSION: ${{ github.event.inputs.luasocket_version }}
-          LUASEC_VERSION: ${{ github.event.inputs.luasec_version }}
-          LUAOSSL_VERSION: ${{ github.event.inputs.luaossl_version }}
-          LUAPOSIX_VERSION: ${{ github.event.inputs.luaposix_version }}
-          LUACJSON_VERSION: ${{ github.event.inputs.luacjson_version }}
-          LUAFILESYSTEM_VERSION: ${{ github.event.inputs.luafilesystem_version }}
-          LUACOMPAT53_VERSION: ${{ github.event.inputs.luacompat53_version }}
-          LUALPEGPATTERNS_VERSION: ${{ github.event.inputs.lualpegpatterns_version }}
-          LUABINARYHEAP_VERSION: ${{ github.event.inputs.luabinaryheap_version }}
-          LUACQUEUES_VERSION: ${{ github.event.inputs.luacqueues_version }}
-          LUAHTTP_VERSION: ${{ github.event.inputs.luahttp_version }}
           OUTPUT_DIR: ${{ github.workspace }}/dist/luajit
         run: bash scripts/build-luajit.sh
 
@@ -141,7 +81,7 @@ jobs:
           tag_name: ${{ steps.tag.outputs.tag }}
           name: luajit ${{ steps.tag.outputs.tag }}
           body: |
-            LuaJIT build from commit ${{ github.event.inputs.luajit_commit }}
+            LuaJIT build with lua-cjson, lua-http, and dependencies
 
             Platforms:
             - darwin-arm64
