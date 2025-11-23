@@ -2,26 +2,12 @@
 
 package.path = arg[0]:match("^(.*/)") .. "?.lua;" .. package.path
 local util = require('util')
+local versions = require('versions')
 local posix = require('posix')
 
 local function file_exists(path)
   local stat = posix.stat(path)
   return stat and stat.type == "regular"
-end
-
-local function load_versions(versions_file)
-  local versions = {}
-
-  if file_exists(versions_file) then
-    for line in io.lines(versions_file) do
-      local key, value = line:match("^([^=]+)=(.+)$")
-      if key and value then
-        versions[key] = value
-      end
-    end
-  end
-
-  return versions
 end
 
 local function patch_lib_package(src_file, platform)
@@ -275,32 +261,6 @@ end
 local function main()
   local script_dir = arg[0]:match("^(.*/)") or "./"
   local workspace_root = util.capture(string.format("cd %s../../ && pwd", script_dir))
-  local versions_file = workspace_root .. "/.config/luajit/versions.conf"
-
-  local versions = load_versions(versions_file)
-
-  local defaults = {
-    LUAJIT_VERSION = "25a61a182166fec06f1a1a025eb8fabbb6cf483e",
-    LUASOCKET_VERSION = "3.1.0-1",
-    LUASEC_VERSION = "1.3.2-1",
-    LUAOSSL_VERSION = "20250929-0",
-    LUAPOSIX_VERSION = "36.3-1",
-    DKJSON_VERSION = "2.8-1",
-    LUAFILESYSTEM_VERSION = "1.8.0-1",
-    LUACOMPAT53_VERSION = "0.14.4-1",
-    LPEG_VERSION = "1.1.0-2",
-    LUALPEGPATTERNS_VERSION = "0.5-0",
-    LUABINARYHEAP_VERSION = "0.4-1",
-    LUACQUEUES_VERSION = "20200726.51-0",
-    LUAHTTP_VERSION = "0.4-0",
-    LSQLITE3_VERSION = "0.9.6-1",
-  }
-
-  for k, v in pairs(defaults) do
-    if not versions[k] then
-      versions[k] = v
-    end
-  end
 
   local temp_dir = util.capture("mktemp -d")
   local output_dir = os.getenv("OUTPUT_DIR") or (workspace_root .. "/dist/luajit")
