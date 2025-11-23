@@ -3,12 +3,6 @@
 package.path = arg[0]:match("^(.*/)") .. "?.lua;" .. package.path
 local util = require('util')
 local versions = require('versions')
-local posix = require('posix')
-
-local function file_exists(path)
-  local stat = posix.stat(path)
-  return stat and stat.type == "regular"
-end
 
 local function patch_lib_package(src_file, platform)
   util.printf("patching lib_package.c to support relocatable paths on unix...\n")
@@ -190,7 +184,7 @@ local function build_luajit(config)
   util.printf("fixing luarocks shebangs for relocatable installation...\n")
   for _, script in ipairs({"luarocks", "luarocks-admin"}) do
     local script_path = install_dir .. "/bin/" .. script
-    if file_exists(script_path) then
+    if util.file_exists(script_path) then
       local content = util.read_file(script_path)
       content = content:gsub(
         "^#!" .. install_dir:gsub("[%-%.%+%[%]%(%)%$%^%%%?%*]", "%%%1") .. "/bin/luajit",
