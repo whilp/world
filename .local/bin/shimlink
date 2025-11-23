@@ -231,8 +231,40 @@ end
 local function download_file(url, dest_path)
   stderr_write("shimlink: downloading " .. url)
 
-  local exit_status = posix.spawn({"curl", "-fsSL", "-A", "shimlink/1.0", "-o", dest_path, url})
-  return exit_status == 0
+  local http_request = require("http.request")
+  local http_util = require("http.util")
+
+  local req = http_request.new_from_uri(url)
+  req.headers:upsert(":method", "GET")
+  req.headers:upsert("user-agent", "shimlink/1.0")
+
+  local headers, stream = req:go()
+  if not headers then
+    stderr_write("shimlink: failed to connect: " .. tostring(stream))
+    return false
+  end
+
+  local status = headers:get(":status")
+  if status ~= "200" then
+    stderr_write("shimlink: http error " .. status)
+    return false
+  end
+
+  local body, err = stream:get_body_as_string()
+  if not body then
+    stderr_write("shimlink: failed to read response: " .. tostring(err))
+    return false
+  end
+
+  local f = io.open(dest_path, "wb")
+  if not f then
+    stderr_write("shimlink: failed to open " .. dest_path)
+    return false
+  end
+  f:write(body)
+  f:close()
+
+  return true
 end
 
 -- Extract archive
