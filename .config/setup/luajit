@@ -48,9 +48,14 @@ ln -sf "$luajit_dir/bin/luajit" "$bootstrap_dir/bin/luajit"
 ln -sf "$luajit_dir/bin/luajit" "$bootstrap_dir/bin/lua-shimlink"
 ln -sf "$luajit_dir/bin/luajit" "$bootstrap_dir/bin/lua"
 
-# Copy lib files to bootstrap/lib if they exist
+# Copy lib and share directories to bootstrap if they exist
 if [ -d "$luajit_dir/lib" ]; then
   cp -r "$luajit_dir/lib"/* "$bootstrap_dir/lib/"
+fi
+
+if [ -d "$luajit_dir/share" ]; then
+  mkdir -p "$bootstrap_dir/share"
+  cp -r "$luajit_dir/share"/* "$bootstrap_dir/share/"
 fi
 
 # Clean up
