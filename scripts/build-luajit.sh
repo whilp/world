@@ -3,6 +3,10 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VERSION="${LUAJIT_VERSION:-25a61a182166fec06f1a1a025eb8fabbb6cf483e}"
+LUASOCKET_VERSION="${LUASOCKET_VERSION:-3.1.0-1}"
+LUASEC_VERSION="${LUASEC_VERSION:-1.3.2-1}"
+LUAOSSL_VERSION="${LUAOSSL_VERSION:-20250929-0}"
+LUAPOSIX_VERSION="${LUAPOSIX_VERSION:-36.2.1-1}"
 TEMP_DIR=$(mktemp -d)
 OUTPUT_DIR="${OUTPUT_DIR:-${SCRIPT_DIR}/../dist/luajit}"
 
@@ -136,17 +140,26 @@ cd luarocks
 make
 make install
 
-echo "Copying rockspec and lock file..."
-cp "${SCRIPT_DIR}/../luajit-build-1.0-1.rockspec" "${TEMP_DIR}/install/"
-cp "${SCRIPT_DIR}/../luarocks.lock" "${TEMP_DIR}/install/"
-
-echo "Installing dependencies from lock file..."
+echo "Installing dependencies..."
 cd "${TEMP_DIR}/install"
+
 if [[ "${OS}" == "darwin" ]]; then
-  "${TEMP_DIR}/install/bin/luarocks" make --pin OPENSSL_DIR=$(brew --prefix openssl@3) CRYPTO_DIR=$(brew --prefix openssl@3)
+  OPENSSL_FLAGS="OPENSSL_DIR=$(brew --prefix openssl@3) CRYPTO_DIR=$(brew --prefix openssl@3)"
 else
-  "${TEMP_DIR}/install/bin/luarocks" make --pin
+  OPENSSL_FLAGS=""
 fi
+
+"${TEMP_DIR}/install/bin/luarocks" install luasocket ${LUASOCKET_VERSION} ${OPENSSL_FLAGS}
+"${TEMP_DIR}/install/bin/luarocks" install luasec ${LUASEC_VERSION} ${OPENSSL_FLAGS}
+"${TEMP_DIR}/install/bin/luarocks" install luaossl ${LUAOSSL_VERSION} ${OPENSSL_FLAGS}
+"${TEMP_DIR}/install/bin/luarocks" install luaposix ${LUAPOSIX_VERSION} ${OPENSSL_FLAGS}
+
+echo "Fixing luarocks shebangs for relocatable installation..."
+for script in "${TEMP_DIR}/install/bin/luarocks" "${TEMP_DIR}/install/bin/luarocks-admin"; do
+  if [ -f "$script" ]; then
+    sed "${SED_INPLACE[@]}" "1s|#!${TEMP_DIR}/install/bin/luajit|#!/usr/bin/env luajit|" "$script"
+  fi
+done
 
 echo "Stripping binaries..."
 find "${TEMP_DIR}/install" -type f -executable -exec strip --strip-unneeded {} \; 2>/dev/null || true
