@@ -17,7 +17,7 @@ ffi.cdef([[
 ]])
 
 local function config_dir()
-  return os.getenv("HOME") .. "/.config/shimlink2"
+  return os.getenv("HOME") .. "/.config/shimlink"
 end
 
 local function config_path(executable)
