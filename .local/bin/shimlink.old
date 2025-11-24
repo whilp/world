@@ -1,0 +1,918 @@
+#!/usr/bin/env lua
+--[[
+shimlink: A symlink-based executable manager that downloads and manages binaries on demand.
+
+When invoked through a symlink, shimlink determines the target executable name from the
+symlink filename, validates the executable exists with correct checksum, downloads if needed,
+then exec's the target executable with all arguments and environment passed through.
+]]
+
+local ffi = require("ffi")
+local posix = require('posix')
+local unistd = require('posix.unistd')
+local stat = require('posix.sys.stat')
+local dirent = require('posix.dirent')
+local openssl = require('openssl')
+local digest = require('openssl.digest')
+
+-- FFI declarations for symlink operations (not available in luaposix)
+ffi.cdef([[
+  typedef struct { long tv_sec; long tv_usec; } timeval;
+  int symlink(const char *target, const char *linkpath);
+  int unlink(const char *pathname);
+]])
+
+-- Helper functions
+local function stderr_write(msg)
+  io.stderr:write(msg .. "\n")
+  io.stderr:flush()
+end
+
+local function file_exists(path)
+  local st = stat.stat(path)
+  return st ~= nil
+end
+
+local function is_directory(path)
+  local st = stat.stat(path)
+  if not st then return false end
+  return stat.S_ISDIR(st.st_mode) ~= 0
+end
+
+local function read_file(path)
+  local f = io.open(path, "rb")
+  if not f then
+    return nil
+  end
+  local content = f:read("*all")
+  f:close()
+  return content
+end
+
+local function write_file(path, content)
+  local f = io.open(path, "wb")
+  if not f then
+    return false
+  end
+  f:write(content)
+  f:close()
+  return true
+end
+
+local function get_home_dir()
+  return os.getenv("HOME") or os.getenv("USERPROFILE")
+end
+
+local function path_join(...)
+  local parts = { ... }
+  return table.concat(parts, "/")
+end
+
+local function expand_path(path)
+  if path:sub(1, 1) == "~" then
+    return get_home_dir() .. path:sub(2)
+  end
+  return path
+end
+
+local function mkdir_p(path)
+  local parts = {}
+  for part in path:gmatch("[^/]+") do
+    table.insert(parts, part)
+  end
+
+  local current = path:sub(1, 1) == "/" and "/" or ""
+  for _, part in ipairs(parts) do
+    current = current .. part
+    if not is_directory(current) then
+      stat.mkdir(current, tonumber("0755", 8))
+    end
+    current = current .. "/"
+  end
+end
+
+local function rm_rf(path)
+  if not file_exists(path) and not is_directory(path) then
+    return true
+  end
+
+  local function remove_recursive(p)
+    if is_directory(p) then
+      local entries = dirent.dir(p)
+      for _, entry in ipairs(entries) do
+        if entry ~= "." and entry ~= ".." then
+          remove_recursive(path_join(p, entry))
+        end
+      end
+      unistd.rmdir(p)
+    else
+      ffi.C.unlink(p)
+    end
+  end
+
+  remove_recursive(path)
+  return true
+end
+
+local function basename(path)
+  return path:match("([^/]+)$") or path
+end
+
+local function dirname(path)
+  local dir = path:match("(.+)/[^/]+$")
+  return dir or "."
+end
+
+local function list_dir_first_entry(path)
+  local entries = dirent.dir(path)
+  for _, entry in ipairs(entries) do
+    if entry ~= "." and entry ~= ".." then
+      return entry
+    end
+  end
+  return nil
+end
+
+-- Platform detection (using LuaJIT built-ins instead of FFI to avoid segfault)
+local function get_platform()
+  local system = jit.os:lower()
+  local machine = jit.arch:lower()
+
+  -- Normalize system names
+  local system_map = {
+    osx = "darwin",
+  }
+  system = system_map[system] or system
+
+  -- Normalize architecture names
+  local arch_map = {
+    x64 = "x86_64",
+    aarch64 = "arm64",
+    arm64 = "arm64",
+  }
+  machine = arch_map[machine] or machine
+
+  return system .. "-" .. machine
+end
+
+-- SHA256 calculation
+local function calculate_sha256(filepath)
+  local f = io.open(filepath, 'rb')
+  if not f then return nil end
+
+  local md = digest.new('sha256')
+  while true do
+    local chunk = f:read(8192)
+    if not chunk then break end
+    md:update(chunk)
+  end
+  f:close()
+
+  -- Convert executable hash to hex string
+  local hash = md:final()
+  return hash:gsub('.', function(c) return string.format('%02x', string.byte(c)) end)
+end
+
+-- Configuration paths
+local function get_config_dir()
+  return path_join(get_home_dir(), ".config", "shimlink")
+end
+
+local function get_platform_config_path()
+  return path_join(get_config_dir(), get_platform() .. ".lua")
+end
+
+local function get_shimlink_root()
+  return path_join(get_home_dir(), ".local", "share", "shimlink")
+end
+
+local function get_storage_dir(executable_name)
+  if executable_name then
+    return path_join(get_shimlink_root(), "_", executable_name)
+  end
+  return path_join(get_shimlink_root(), "_")
+end
+
+local function get_versioned_dir(executable_name, sha256)
+  return path_join(get_storage_dir(executable_name), sha256:sub(1, 16))
+end
+
+local function get_shimlink_bin_dir()
+  return path_join(get_shimlink_root(), "bin")
+end
+
+local function get_shimlink_bin_link(executable_name)
+  return path_join(get_shimlink_bin_dir(), executable_name)
+end
+
+-- Configuration loading
+local function load_config()
+  local config_dir = get_config_dir()
+  local platform = get_platform()
+
+  -- Check if config directory exists
+  if not is_directory(config_dir) then
+    stderr_write("shimlink: configuration directory not found at " .. config_dir)
+    stderr_write("shimlink: create ~/.config/shimlink/ with shimlink.lua file")
+    os.exit(1)
+  end
+
+  -- Try shimlink.lua first (unified config), fall back to platform-specific
+  local config_path = path_join(config_dir, "shimlink.lua")
+  local platform_config_path = get_platform_config_path()
+
+  if not file_exists(config_path) then
+    -- Fall back to platform-specific config for backwards compatibility
+    if not file_exists(platform_config_path) then
+      stderr_write("shimlink: configuration file not found")
+      stderr_write("shimlink: create ~/.config/shimlink/shimlink.lua or " .. platform .. ".lua")
+      os.exit(1)
+    end
+    config_path = platform_config_path
+  end
+
+  local func, err = loadfile(config_path)
+  if not func then
+    stderr_write("shimlink: failed to load " .. config_path .. ": " .. tostring(err))
+    os.exit(1)
+  end
+
+  -- Pass platform as argument to config (shimlink.lua uses it, platform files ignore it)
+  local ok, config = pcall(func, platform)
+  if not ok then
+    stderr_write("shimlink: failed to execute " .. config_path .. ": " .. tostring(config))
+    os.exit(1)
+  end
+
+  if type(config) ~= "table" then
+    stderr_write("shimlink: config must return a table, got " .. type(config))
+    os.exit(1)
+  end
+
+  return config
+end
+
+-- Download file
+local function download_file(url, dest_path)
+  stderr_write("shimlink: downloading " .. url)
+
+  local http_request = require("http.request")
+  local http_util = require("http.util")
+
+  local req = http_request.new_from_uri(url)
+  req.headers:upsert(":method", "GET")
+  req.headers:upsert("user-agent", "shimlink/1.0")
+
+  local headers, stream = req:go()
+  if not headers then
+    stderr_write("shimlink: failed to connect: " .. tostring(stream))
+    return false
+  end
+
+  local status = headers:get(":status")
+  if status ~= "200" then
+    stderr_write("shimlink: http error " .. status)
+    return false
+  end
+
+  local body, err = stream:get_body_as_string()
+  if not body then
+    stderr_write("shimlink: failed to read response: " .. tostring(err))
+    return false
+  end
+
+  local f = io.open(dest_path, "wb")
+  if not f then
+    stderr_write("shimlink: failed to open " .. dest_path)
+    return false
+  end
+  f:write(body)
+  f:close()
+
+  return true
+end
+
+-- Extract archive
+local function extract_archive(archive_path, extract_to, executable_path)
+  local archive_name = basename(archive_path)
+
+  if archive_name:match("%.zip$") then
+    local exit_status = posix.spawn({"unzip", "-q", archive_path, "-d", extract_to})
+    if exit_status ~= 0 then
+      return nil, "failed to extract zip"
+    end
+  elseif archive_name:match("%.tar%.gz$") or archive_name:match("%.tgz$") then
+    local exit_status = posix.spawn({"tar", "-xzf", archive_path, "-C", extract_to})
+    if exit_status ~= 0 then
+      return nil, "failed to extract tar.gz"
+    end
+  elseif archive_name:match("%.gz$") and not archive_name:match("%.tar%.gz$") then
+    -- Single file gzip compression
+    if not executable_path then
+      return nil, "executable_path required for single file gzip"
+    end
+    local output_path = path_join(extract_to, executable_path)
+    mkdir_p(dirname(output_path))
+    -- For gunzip with output redirection, we need to use shell
+    local exit_status = posix.spawn({"/bin/sh", "-c", string.format("gunzip -c %q > %q", archive_path, output_path)})
+    if exit_status ~= 0 then
+      return nil, "failed to extract gzip"
+    end
+    return output_path
+  else
+    return nil, "unsupported archive format: " .. archive_path
+  end
+
+  -- For archives, locate the executable
+  if executable_path then
+    return path_join(extract_to, executable_path)
+  else
+    return archive_path
+  end
+end
+
+-- Check if executable is installed (checks if shimlink bin link exists)
+local function is_installed(executable_name, config)
+  local executable_config = config.executables and config.executables[executable_name]
+  if not executable_config then
+    return false
+  end
+
+  local bin_link = get_shimlink_bin_link(executable_name)
+  return file_exists(bin_link)
+end
+
+-- Update config checksum
+local function update_config_checksum(executable_name, config, new_checksum)
+  local old_checksum = config.executables[executable_name].sha256
+  config.executables[executable_name].sha256 = new_checksum
+
+  local config_dir = get_config_dir()
+
+  -- First try per-package file (e.g., tree-sitter.lua)
+  local package_path = path_join(config_dir, executable_name .. ".lua")
+  local config_path = package_path
+
+  if not file_exists(package_path) then
+    -- Fall back to shimlink.lua
+    config_path = path_join(config_dir, "shimlink.lua")
+    if not file_exists(config_path) then
+      config_path = get_platform_config_path()
+    end
+  end
+
+  local content = read_file(config_path)
+
+  if not content then
+    stderr_write("shimlink: failed to read " .. config_path)
+    return
+  end
+
+  -- Simple approach: replace the old checksum with the new one
+  local replaced = false
+  if old_checksum then
+    content = content:gsub(old_checksum, new_checksum)
+    replaced = content:find(new_checksum) ~= nil
+  end
+
+  if not replaced then
+    stderr_write("shimlink: warning: could not find sha256 field for " .. executable_name .. " in config")
+    return
+  end
+
+  write_file(config_path, content)
+  stderr_write("shimlink: updated checksum for " .. executable_name .. " to " .. new_checksum)
+end
+
+-- Create symlink atomically
+local function create_symlink_atomic(target, link_path)
+  local temp_link = link_path .. ".tmp." .. os.time()
+
+  -- Create parent directories if needed
+  mkdir_p(dirname(link_path))
+
+  -- Remove temp link if it exists
+  ffi.C.unlink(temp_link)
+
+  -- Create temporary symlink
+  local result = ffi.C.symlink(target, temp_link)
+  if result ~= 0 then
+    stderr_write("shimlink: failed to create temporary symlink " .. temp_link)
+    return false
+  end
+
+  -- Atomically replace the target symlink
+  local rename_result = os.rename(temp_link, link_path)
+  if not rename_result then
+    stderr_write("shimlink: failed to rename symlink " .. temp_link .. " to " .. link_path)
+    ffi.C.unlink(temp_link)
+    return false
+  end
+
+  return true
+end
+
+-- Create symlink (legacy function for additional symlinks in config)
+local function create_symlink(bin_dir, src_path, dest_path, executable_name)
+  local source = path_join(bin_dir, src_path)
+
+  if not file_exists(source) then
+    stderr_write("shimlink: warning: symlink source does not exist: " .. source)
+    return
+  end
+
+  local dest = expand_path(dest_path)
+
+  -- Create parent directories if needed
+  mkdir_p(dirname(dest))
+
+  -- Remove existing symlink or file
+  if file_exists(dest) then
+    ffi.C.unlink(dest)
+  end
+
+  -- Create the symlink
+  local result = ffi.C.symlink(source, dest)
+  if result == 0 then
+    stderr_write("shimlink: created symlink " .. dest .. " -> " .. source)
+  else
+    stderr_write("shimlink: warning: failed to create symlink " .. dest)
+  end
+end
+
+-- Download executable and install to versioned directory
+local function download_executable(executable_name, config, force)
+  local executable_config = config.executables and config.executables[executable_name]
+  if not executable_config then
+    stderr_write("shimlink: no configuration found for " .. executable_name)
+    return false
+  end
+
+  local url = executable_config.url
+  local expected_sha256 = executable_config.sha256
+  local path = executable_config.path
+
+  -- Create temporary directory
+  local temp_dir = os.tmpname()
+  os.remove(temp_dir)
+  mkdir_p(temp_dir)
+
+  -- Download
+  local download_name = basename(url)
+  local download_path = path_join(temp_dir, download_name)
+
+  if not download_file(url, download_path) then
+    stderr_write("shimlink: failed to download " .. executable_name)
+    rm_rf(temp_dir)
+    return false
+  end
+
+  -- Calculate checksum of the downloaded artifact (before extraction)
+  local actual_sha256 = calculate_sha256(download_path)
+
+  -- Extract or copy executable
+  local extract_temp
+
+  if path then
+    extract_temp = path_join(temp_dir, "extracted")
+    mkdir_p(extract_temp)
+    local err
+    local extracted_path
+    extracted_path, err = extract_archive(download_path, extract_temp, path)
+    if not extracted_path then
+      stderr_write("shimlink: failed to extract " .. executable_name .. ": " .. err)
+      rm_rf(temp_dir)
+      return false
+    end
+
+    -- Find the actual executable path after stripping components
+    local strip_components = executable_config.strip_components or 0
+    local binary_dir = extract_temp
+    for i = 1, strip_components do
+      local first_entry = list_dir_first_entry(binary_dir)
+      if first_entry then
+        binary_dir = path_join(binary_dir, first_entry)
+      end
+    end
+    local executable_path = path_join(binary_dir, path)
+
+    -- Make extracted executable executable
+    if file_exists(executable_path) then
+      stat.chmod(executable_path, tonumber("0755", 8))
+    end
+  else
+    extract_temp = temp_dir
+    -- Make downloaded executable executable
+    if file_exists(download_path) then
+      stat.chmod(download_path, tonumber("0755", 8))
+    end
+  end
+
+  -- Handle checksum verification and updates
+  if force then
+    update_config_checksum(executable_name, config, actual_sha256)
+    stderr_write("shimlink: force mode - updated checksum for " .. executable_name)
+  elseif expected_sha256 then
+    if actual_sha256 ~= expected_sha256 then
+      stderr_write("shimlink: checksum mismatch for " .. executable_name)
+      stderr_write("shimlink:   expected: " .. expected_sha256)
+      stderr_write("shimlink:   actual:   " .. actual_sha256)
+      rm_rf(temp_dir)
+      return false
+    end
+  end
+
+  -- Create versioned directory using checksum
+  local versioned_dir = get_versioned_dir(executable_name, actual_sha256)
+  local storage_dir = get_storage_dir(executable_name)
+  mkdir_p(storage_dir)
+
+  -- Check if this version already exists
+  if is_directory(versioned_dir) then
+    stderr_write("shimlink: version " .. actual_sha256:sub(1, 16) .. " already exists")
+    rm_rf(temp_dir)
+    return true, actual_sha256
+  end
+
+  -- Move extracted content to versioned directory
+  if path then
+    local strip_components = executable_config.strip_components or 0
+
+    if strip_components > 0 then
+      -- Strip top-level directories by moving only the inner content
+      -- For strip_components=1, we extract to temp, then move the first subdir's contents
+      local source_dir = extract_temp
+      for i = 1, strip_components do
+        local first_entry = list_dir_first_entry(source_dir)
+        if first_entry then
+          source_dir = path_join(source_dir, first_entry)
+        else
+          stderr_write("shimlink: warning: cannot strip " .. i .. " components, directory empty")
+          break
+        end
+      end
+      os.rename(source_dir, versioned_dir)
+    else
+      -- Move the entire extracted directory structure
+      os.rename(extract_temp, versioned_dir)
+    end
+  else
+    -- For direct executable downloads, create directory and move executable
+    mkdir_p(versioned_dir)
+    local final_path = path_join(versioned_dir, executable_name)
+    os.rename(download_path, final_path)
+  end
+
+  stderr_write("shimlink: installed " .. executable_name .. " version " .. actual_sha256:sub(1, 16))
+
+  -- Create additional symlinks if configured
+  local symlinks = executable_config.symlinks
+  if symlinks then
+    for src_path, dest_path in pairs(symlinks) do
+      create_symlink(versioned_dir, src_path, dest_path, executable_name)
+    end
+  end
+
+  -- Clean up temp directory
+  rm_rf(temp_dir)
+
+  return true, actual_sha256
+end
+
+-- Update executable: download and create symlinks
+local function update_executable(executable_name, config, force)
+  local executable_config = config.executables and config.executables[executable_name]
+  if not executable_config then
+    stderr_write("shimlink: no configuration found for " .. executable_name)
+    return false
+  end
+
+  local sha256
+  local expected_sha256 = executable_config.sha256
+  if expected_sha256 and not force then
+    local versioned_dir = get_versioned_dir(executable_name, expected_sha256)
+    if is_directory(versioned_dir) then
+      stderr_write("shimlink: version " .. expected_sha256:sub(1, 16) .. " already exists")
+      sha256 = expected_sha256
+    end
+  end
+
+  if not sha256 then
+    local success
+    success, sha256 = download_executable(executable_name, config, force)
+    if not success then
+      return false
+    end
+  end
+
+  local versioned_dir = get_versioned_dir(executable_name, sha256)
+  local path = executable_config.path
+  local executable_path
+
+  if path then
+    executable_path = path_join(versioned_dir, path)
+  else
+    executable_path = path_join(versioned_dir, executable_name)
+  end
+
+  if not file_exists(executable_path) then
+    stderr_write("shimlink: executable not found at " .. executable_path)
+    return false
+  end
+
+  -- Create shimlink/bin/ symlink pointing to versioned executable
+  local shimlink_bin_link = get_shimlink_bin_link(executable_name)
+  local short_sha = sha256:sub(1, 16)
+
+  -- Relative path from shimlink/bin/ to ../_/<executable>/<sha>/<path>
+  local relative_to_versioned
+  if path then
+    relative_to_versioned = path_join("..", "_", executable_name, short_sha, path)
+  else
+    relative_to_versioned = path_join("..", "_", executable_name, short_sha, executable_name)
+  end
+
+  if not create_symlink_atomic(relative_to_versioned, shimlink_bin_link) then
+    stderr_write("shimlink: failed to create shimlink bin link for " .. executable_name)
+    return false
+  end
+  stderr_write("shimlink: updated " .. shimlink_bin_link .. " -> " .. relative_to_versioned)
+
+  -- Create alias symlinks if configured
+  local aliases = config.aliases or {}
+  for alias_name, target_name in pairs(aliases) do
+    if target_name == executable_name then
+      local alias_link = get_shimlink_bin_link(alias_name)
+      if not create_symlink_atomic(executable_name, alias_link) then
+        stderr_write("shimlink: warning: failed to create alias " .. alias_name .. " -> " .. executable_name)
+      else
+        stderr_write("shimlink: created alias " .. alias_link .. " -> " .. executable_name)
+      end
+    end
+  end
+
+  return true
+end
+
+-- Resolve alias
+local function resolve_alias(name, config)
+  local aliases = config.aliases or {}
+  return aliases[name] or name
+end
+
+-- Get target name
+local function get_target_name()
+  local invoked_path = arg[0]
+  local name = basename(invoked_path)
+
+  if name == "shimlink.lua" or name == "shimlink" then
+    return "shimlink"
+  end
+
+  return name
+end
+
+-- Execute executable (legacy function for on-demand execution)
+local function exec_executable(executable_name, args, config)
+  local executable_config = config.executables and config.executables[executable_name]
+  if not executable_config then
+    stderr_write("shimlink: no configuration found for " .. executable_name)
+    os.exit(1)
+  end
+
+  -- Check if executable is installed via shimlink bin link
+  local shimlink_bin_link = get_shimlink_bin_link(executable_name)
+  if not file_exists(shimlink_bin_link) then
+    stderr_write("shimlink: " .. executable_name .. " not installed")
+    stderr_write("shimlink: run 'shimlink update " .. executable_name .. "' to install")
+    os.exit(1)
+  end
+
+  -- Resolve the symlink to get the actual executable path
+  local executable_path = shimlink_bin_link
+
+  -- Read the symlink to ensure we're pointing to the right file
+  if not file_exists(executable_path) then
+    stderr_write("shimlink: executable " .. executable_name .. " not found at " .. executable_path)
+    os.exit(1)
+  end
+
+  -- Check if there's a custom exec array
+  local exec_cmd = executable_config.exec
+  local exec_path = executable_path
+  local exec_args = {}
+
+  if exec_cmd and type(exec_cmd) == "table" then
+    -- Custom exec array: ["/path/to/wrapper", "{binary}", ...]
+    -- Build the command by replacing {binary} with executable_path
+    exec_path = exec_cmd[1]
+    for i = 2, #exec_cmd do
+      if exec_cmd[i] == "{binary}" then
+        table.insert(exec_args, executable_path)
+      else
+        table.insert(exec_args, exec_cmd[i])
+      end
+    end
+    -- Append user args
+    for _, arg in ipairs(args) do
+      table.insert(exec_args, arg)
+    end
+  else
+    -- Normal execution: just the executable and args
+    for _, arg in ipairs(args) do
+      table.insert(exec_args, arg)
+    end
+  end
+
+  -- Build argv array for exec
+  -- Note: luaposix exec/execp expects the argv table to contain only the arguments
+  -- (not including argv[0] like in C), as the first parameter is the program path
+  local argv = {}
+  for _, arg_val in ipairs(exec_args) do
+    table.insert(argv, arg_val)
+  end
+
+  -- Use execp which searches PATH if needed, or exec for absolute paths
+  -- execp automatically inherits the current environment
+  local result, err = unistd.execp(exec_path, argv)
+
+  -- If exec returns, an error occurred
+  stderr_write("shimlink: failed to exec " .. exec_path .. ": " .. tostring(err))
+  os.exit(1)
+end
+
+-- Show help
+local function show_help()
+  print("shimlink: A symlink-based executable manager")
+  print()
+  print("Usage:")
+  print("  shimlink update <executable>...    # Download and symlink executables")
+  print("  shimlink update -f <executable>... # Force update and update checksum")
+  print("  shimlink inspect <executable>      # Show resolved configuration for executable")
+  print("  shimlink list                      # List all configured executables")
+  print("  shimlink                       # Show this help")
+  print()
+  print("Options:")
+  print("  -f, --force                    # Skip checksum validation and update config")
+  print()
+  print("The update command downloads executables to versioned directories and creates")
+  print("atomic symlinks in ~/.local/bin. Binaries are stored in versioned directories")
+  print("with a 'current' symlink pointing to the active version.")
+  print()
+  print("Aliases can be defined in the 'aliases' section of the config to map")
+  print("alternative names to actual executable names (e.g., 'nvim-1' -> 'nvim').")
+  print()
+  print("Configuration: ~/.config/shimlink/shimlink.lua")
+  print("Binaries stored: ~/.local/share/shimlink/<executable>/<version>/")
+end
+
+-- List all configured executables
+local function list_executables(config)
+  local executables = config.executables or {}
+  local names = {}
+  for name in pairs(executables) do
+    table.insert(names, name)
+  end
+  table.sort(names)
+
+  for _, name in ipairs(names) do
+    print(name)
+  end
+
+  return true
+end
+
+-- Inspect executable configuration
+local function inspect_executable(executable_name, config)
+  local executable_config = config.executables and config.executables[executable_name]
+  if not executable_config then
+    stderr_write("shimlink: no configuration found for " .. executable_name)
+    return false
+  end
+
+  print("Executable: " .. executable_name)
+  print("URL: " .. (executable_config.url or "(none)"))
+  print("SHA256: " .. (executable_config.sha256 or "(none)"))
+  print("Path: " .. (executable_config.path or executable_name))
+
+  if executable_config.strip_components then
+    print("Strip components: " .. executable_config.strip_components)
+  end
+
+  if executable_config.exec then
+    print("Exec: " .. table.concat(executable_config.exec, " "))
+  end
+
+  if executable_config.symlinks then
+    print("Symlinks:")
+    for src, dest in pairs(executable_config.symlinks) do
+      print("  " .. src .. " -> " .. dest)
+    end
+  end
+
+  return true
+end
+
+-- Main entry point
+local function main()
+  local target_name = get_target_name()
+
+  if target_name == "shimlink" then
+    -- Parse arguments when invoked as shimlink directly
+    if #arg == 0 or arg[1] == "-h" or arg[1] == "--help" then
+      show_help()
+      os.exit(0)
+    end
+
+    -- Load configuration
+    local ok, config = pcall(load_config)
+    if not ok then
+      stderr_write("shimlink: failed to load configuration: " .. tostring(config))
+      os.exit(1)
+    end
+
+    -- Handle update command
+    if arg[1] == "update" then
+      local force = false
+      local executables = {}
+
+      local i = 2
+      while i <= #arg do
+        if arg[i] == "-f" or arg[i] == "--force" then
+          force = true
+        elseif arg[i] == "-h" or arg[i] == "--help" then
+          show_help()
+          os.exit(0)
+        else
+          table.insert(executables, arg[i])
+        end
+        i = i + 1
+      end
+
+      if #executables == 0 then
+        stderr_write("shimlink: update requires at least one executable name")
+        os.exit(1)
+      end
+
+      local failed = false
+      for _, executable in ipairs(executables) do
+        if not update_executable(executable, config, force) then
+          stderr_write("shimlink: failed to update " .. executable)
+          failed = true
+        end
+      end
+
+      if failed then
+        os.exit(1)
+      end
+      os.exit(0)
+    end
+
+    -- Handle inspect command
+    if arg[1] == "inspect" then
+      if #arg ~= 2 then
+        stderr_write("shimlink: inspect requires exactly one executable name")
+        os.exit(1)
+      end
+
+      if not inspect_executable(arg[2], config) then
+        os.exit(1)
+      end
+      os.exit(0)
+    end
+
+    -- Handle list command
+    if arg[1] == "list" then
+      if not list_executables(config) then
+        os.exit(1)
+      end
+      os.exit(0)
+    end
+
+    -- Unknown command
+    stderr_write("shimlink: unknown command '" .. arg[1] .. "'")
+    stderr_write("shimlink: run 'shimlink' for help")
+    os.exit(1)
+  end
+
+  -- Legacy mode: invoked through a symlink
+  -- Load configuration
+  local ok, config = pcall(load_config)
+  if not ok then
+    stderr_write("shimlink: failed to load configuration: " .. tostring(config))
+    os.exit(1)
+  end
+
+  -- Resolve alias to actual executable name
+  local actual_binary_name = resolve_alias(target_name, config)
+
+  -- Execute the target executable with all arguments
+  local args = {}
+  for i = 1, #arg do
+    table.insert(args, arg[i])
+  end
+  exec_executable(actual_binary_name, args, config)
+end
+
+-- Run main
+main()
