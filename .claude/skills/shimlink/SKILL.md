@@ -1,7 +1,7 @@
 ---
-description: Manage binaries with shimlink (user)
-location: user
-trigger: Use this skill for ANY shimlink-related tasks including updating binaries, modifying shimlink config files, managing checksums, debugging the luajit bootstrap, or working with GitHub workflows that use shimlink/luajit
+name: shimlink
+description: Install and update development tool binaries (nvim, luajit, tree-sitter, etc.) using shimlink. Use when updating binary versions, fixing checksums, modifying shimlink config files, debugging luajit bootstrap, or working with shimlink GitHub workflows.
+allowed-tools: [Read, Write, Edit, Bash, Glob, Grep]
 ---
 
 # shimlink
