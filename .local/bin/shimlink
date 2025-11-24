@@ -427,8 +427,11 @@ local function download_executable(executable_name, config, force)
   local expected_sha256 = config.sha256
   local path = config.path
 
+  local shimlink_root = get_shimlink_root()
+  mkdir_p(shimlink_root)
+
   local stdlib = require("posix.stdlib")
-  local temp_template = path_join(get_shimlink_root(), ".tmp." .. executable_name .. ".XXXXXX")
+  local temp_template = path_join(shimlink_root, ".tmp." .. executable_name .. ".XXXXXX")
   local temp_dir = stdlib.mkdtemp(temp_template)
 
   local download_name = basename(url)
