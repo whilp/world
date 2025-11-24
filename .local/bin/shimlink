@@ -703,16 +703,16 @@ local function cmd_write(args)
 end
 
 local function cmd_help()
-  print([[shimlink2 - experimental serpent-based config manager
+  print([[shimlink - symlink-based executable manager
 
 usage:
-  shimlink2 show <executable> [key=value...]
+  shimlink show <executable> [key=value...]
     show config with optional updates applied (does not persist)
 
-  shimlink2 write <executable> [key=value...]
+  shimlink write <executable> [key=value...]
     update config and persist to disk
 
-  shimlink2 update <executable>... [-f|--force]
+  shimlink update <executable>... [-f|--force]
     download and install executables to versioned directories
     creates symlinks in ~/.local/share/shimlink/bin/
 
@@ -725,13 +725,13 @@ special parameters (show/write):
   sha=Z       - update sha256 for platform (requires platform=)
 
 examples:
-  shimlink2 show nvim
-  shimlink2 show nvim version=2025.11.24
-  shimlink2 write nvim platform=darwin-arm64 version=2025.11.24 sha=abc123...
-  shimlink2 write nvim version=2025.11.24
-  shimlink2 update nvim
-  shimlink2 update nvim -f
-  shimlink2 update nvim luajit tree-sitter
+  shimlink show nvim
+  shimlink show nvim version=2025.11.24
+  shimlink write nvim platform=darwin-arm64 version=2025.11.24 sha=abc123...
+  shimlink write nvim version=2025.11.24
+  shimlink update nvim
+  shimlink update nvim -f
+  shimlink update nvim luajit tree-sitter
 ]])
 end
 
