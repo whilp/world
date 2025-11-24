@@ -51,7 +51,7 @@ jobs:
       - name: nvim
         env:
           OUTPUT_DIR: ${{ github.workspace }}/dist/nvim
-        run: bash .github/build/bootstrap .github/workflows/nvim/build
+        run: bash .github/workflows/bootstrap .github/workflows/nvim/build
 
       - name: upload artifacts
         uses: actions/upload-artifact@v4
