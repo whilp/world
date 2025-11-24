@@ -15,4 +15,5 @@ return {
   cqueues = "20200726.51-0",
   http = "0.4-0",
   lsqlite3 = "0.9.6-1",
+  serpent = "0.30-2",
 }
