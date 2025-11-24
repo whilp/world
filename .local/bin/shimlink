@@ -244,35 +244,35 @@ local function get_shimlink_bin_link(executable_name)
 end
 
 local function download_file(url, dest_path)
-  stderr_write("shimlink2: downloading " .. url)
+  stderr_write("shimlink: downloading " .. url)
 
   local http_request = require("http.request")
 
   local req = http_request.new_from_uri(url)
   req.headers:upsert(":method", "GET")
-  req.headers:upsert("user-agent", "shimlink2/1.0")
+  req.headers:upsert("user-agent", "shimlink/1.0")
 
   local headers, stream = req:go()
   if not headers then
-    stderr_write("shimlink2: failed to connect: " .. tostring(stream))
+    stderr_write("shimlink: failed to connect: " .. tostring(stream))
     return false
   end
 
   local status = headers:get(":status")
   if status ~= "200" then
-    stderr_write("shimlink2: http error " .. status)
+    stderr_write("shimlink: http error " .. status)
     return false
   end
 
   local body, err = stream:get_body_as_string()
   if not body then
-    stderr_write("shimlink2: failed to read response: " .. tostring(err))
+    stderr_write("shimlink: failed to read response: " .. tostring(err))
     return false
   end
 
   local f = io.open(dest_path, "wb")
   if not f then
-    stderr_write("shimlink2: failed to open " .. dest_path)
+    stderr_write("shimlink: failed to open " .. dest_path)
     return false
   end
   f:write(body)
@@ -325,13 +325,13 @@ local function create_symlink_atomic(target, link_path)
 
   local result = ffi.C.symlink(target, temp_link)
   if result ~= 0 then
-    stderr_write("shimlink2: failed to create temporary symlink " .. temp_link)
+    stderr_write("shimlink: failed to create temporary symlink " .. temp_link)
     return false
   end
 
   local rename_result = os.rename(temp_link, link_path)
   if not rename_result then
-    stderr_write("shimlink2: failed to rename symlink " .. temp_link .. " to " .. link_path)
+    stderr_write("shimlink: failed to rename symlink " .. temp_link .. " to " .. link_path)
     ffi.C.unlink(temp_link)
     return false
   end
@@ -343,7 +343,7 @@ local function create_symlink(bin_dir, src_path, dest_path, executable_name)
   local source = path_join(bin_dir, src_path)
 
   if not file_exists(source) then
-    stderr_write("shimlink2: warning: symlink source does not exist: " .. source)
+    stderr_write("shimlink: warning: symlink source does not exist: " .. source)
     return
   end
 
@@ -357,9 +357,9 @@ local function create_symlink(bin_dir, src_path, dest_path, executable_name)
 
   local result = ffi.C.symlink(source, dest)
   if result == 0 then
-    stderr_write("shimlink2: created symlink " .. dest .. " -> " .. source)
+    stderr_write("shimlink: created symlink " .. dest .. " -> " .. source)
   else
-    stderr_write("shimlink2: warning: failed to create symlink " .. dest)
+    stderr_write("shimlink: warning: failed to create symlink " .. dest)
   end
 end
 
@@ -368,7 +368,7 @@ local function get_platform_config(config)
   local platform_data = config.platforms[platform]
 
   if not platform_data then
-    stderr_write("shimlink2: no configuration for platform " .. platform)
+    stderr_write("shimlink: no configuration for platform " .. platform)
     return nil
   end
 
@@ -412,13 +412,13 @@ local function update_config_checksum(executable_name, platform, new_sha)
 
   local f = io.open(config_file, "w")
   if not f then
-    stderr_write("shimlink2: failed to open " .. config_file .. " for writing")
+    stderr_write("shimlink: failed to open " .. config_file .. " for writing")
     return false
   end
   f:write(rendered)
   f:close()
 
-  stderr_write("shimlink2: updated checksum for " .. executable_name .. " (" .. platform .. ") to " .. new_sha)
+  stderr_write("shimlink: updated checksum for " .. executable_name .. " (" .. platform .. ") to " .. new_sha)
   return true
 end
 
@@ -435,7 +435,7 @@ local function download_executable(executable_name, config, force)
   local download_path = path_join(temp_dir, download_name)
 
   if not download_file(url, download_path) then
-    stderr_write("shimlink2: failed to download " .. executable_name)
+    stderr_write("shimlink: failed to download " .. executable_name)
     rm_rf(temp_dir)
     return false
   end
@@ -451,7 +451,7 @@ local function download_executable(executable_name, config, force)
     local extracted_path
     extracted_path, err = extract_archive(download_path, extract_temp, path)
     if not extracted_path then
-      stderr_write("shimlink2: failed to extract " .. executable_name .. ": " .. err)
+      stderr_write("shimlink: failed to extract " .. executable_name .. ": " .. err)
       rm_rf(temp_dir)
       return false
     end
@@ -478,12 +478,12 @@ local function download_executable(executable_name, config, force)
 
   if force then
     update_config_checksum(executable_name, config.platform, actual_sha256)
-    stderr_write("shimlink2: force mode - updated checksum for " .. executable_name)
+    stderr_write("shimlink: force mode - updated checksum for " .. executable_name)
   elseif expected_sha256 then
     if actual_sha256 ~= expected_sha256 then
-      stderr_write("shimlink2: checksum mismatch for " .. executable_name)
-      stderr_write("shimlink2:   expected: " .. expected_sha256)
-      stderr_write("shimlink2:   actual:   " .. actual_sha256)
+      stderr_write("shimlink: checksum mismatch for " .. executable_name)
+      stderr_write("shimlink:   expected: " .. expected_sha256)
+      stderr_write("shimlink:   actual:   " .. actual_sha256)
       rm_rf(temp_dir)
       return false
     end
@@ -494,7 +494,7 @@ local function download_executable(executable_name, config, force)
   mkdir_p(storage_dir)
 
   if is_directory(versioned_dir) then
-    stderr_write("shimlink2: version " .. actual_sha256:sub(1, 16) .. " already exists")
+    stderr_write("shimlink: version " .. actual_sha256:sub(1, 16) .. " already exists")
     rm_rf(temp_dir)
     return true, actual_sha256
   end
@@ -509,7 +509,7 @@ local function download_executable(executable_name, config, force)
         if first_entry then
           source_dir = path_join(source_dir, first_entry)
         else
-          stderr_write("shimlink2: warning: cannot strip " .. i .. " components, directory empty")
+          stderr_write("shimlink: warning: cannot strip " .. i .. " components, directory empty")
           break
         end
       end
@@ -523,7 +523,7 @@ local function download_executable(executable_name, config, force)
     os.rename(download_path, final_path)
   end
 
-  stderr_write("shimlink2: installed " .. executable_name .. " version " .. actual_sha256:sub(1, 16))
+  stderr_write("shimlink: installed " .. executable_name .. " version " .. actual_sha256:sub(1, 16))
 
   rm_rf(temp_dir)
 
@@ -543,7 +543,7 @@ local function update_executable(executable_name, config, force)
   if expected_sha256 and not force then
     local versioned_dir = get_versioned_dir(executable_name, expected_sha256)
     if is_directory(versioned_dir) then
-      stderr_write("shimlink2: version " .. expected_sha256:sub(1, 16) .. " already exists")
+      stderr_write("shimlink: version " .. expected_sha256:sub(1, 16) .. " already exists")
       sha256 = expected_sha256
     end
   end
@@ -573,7 +573,7 @@ local function update_executable(executable_name, config, force)
     end
 
     if not file_exists(executable_full_path) then
-      stderr_write("shimlink2: executable not found at " .. executable_full_path)
+      stderr_write("shimlink: executable not found at " .. executable_full_path)
       return false
     end
 
@@ -588,10 +588,10 @@ local function update_executable(executable_name, config, force)
     end
 
     if not create_symlink_atomic(relative_to_versioned, shimlink_bin_link) then
-      stderr_write("shimlink2: failed to create shimlink bin link for " .. executable_name_inner)
+      stderr_write("shimlink: failed to create shimlink bin link for " .. executable_name_inner)
       return false
     end
-    stderr_write("shimlink2: updated " .. shimlink_bin_link .. " -> " .. relative_to_versioned)
+    stderr_write("shimlink: updated " .. shimlink_bin_link .. " -> " .. relative_to_versioned)
 
     if executable_symlinks then
       for src_path, dest_path in pairs(executable_symlinks) do
@@ -659,7 +659,7 @@ end
 
 local function cmd_show(args)
   if #args < 1 then
-    error("usage: shimlink2 show <executable> [key=value...]")
+    error("usage: shimlink show <executable> [key=value...]")
   end
 
   local executable = args[1]
@@ -674,7 +674,7 @@ end
 
 local function cmd_write(args)
   if #args < 1 then
-    error("usage: shimlink2 write <executable> [key=value...]")
+    error("usage: shimlink write <executable> [key=value...]")
   end
 
   local executable = args[1]
@@ -753,7 +753,7 @@ local function cmd_update(args)
   end
 
   if #executables == 0 then
-    stderr_write("shimlink2: update requires at least one executable name")
+    stderr_write("shimlink: update requires at least one executable name")
     os.exit(1)
   end
 
@@ -763,12 +763,12 @@ local function cmd_update(args)
       local config = load_config(executable)
       config = expand_templates(config)
       if not update_executable(executable, config, force) then
-        stderr_write("shimlink2: failed to update " .. executable)
+        stderr_write("shimlink: failed to update " .. executable)
         failed = true
       end
     end)
     if not ok then
-      stderr_write("shimlink2: error updating " .. executable .. ": " .. tostring(err))
+      stderr_write("shimlink: error updating " .. executable .. ": " .. tostring(err))
       failed = true
     end
   end
