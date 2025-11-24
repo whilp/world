@@ -1,6 +1,7 @@
 #!/usr/bin/env luajit
 
-local serpent = require("serpent")
+package.path = os.getenv("HOME") .. "/.local/lib/lua/?.lua;" .. package.path
+local version = require("version")
 
 local function config_dir()
   return os.getenv("HOME") .. "/.config/shimlink2"
@@ -11,63 +12,22 @@ local function config_path(executable)
 end
 
 local function load_config(executable)
-  local path = config_path(executable)
-  local loader, err = loadfile(path)
-  if not loader then
-    error("failed to load config: " .. err)
-  end
-  return loader()
-end
-
-local function interpolate(template, context)
-  if type(template) ~= "string" then
-    return template
-  end
-  return template:gsub("%${([%w_]+)}", function(key)
-    return tostring(context[key] or "")
-  end)
-end
-
-local function expand_value(value, context)
-  if type(value) == "string" then
-    return interpolate(value, context)
-  elseif type(value) == "table" then
-    local expanded = {}
-    for k, v in pairs(value) do
-      expanded[k] = expand_value(v, context)
-    end
-    return expanded
-  else
-    return value
-  end
+  return version.load(config_path(executable))
 end
 
 local function build_context(config, platform, platform_data)
-  local context = {}
-
-  -- Add computed values
-  context.destination = os.getenv("HOME") .. "/.local/share/shimlink/bin"
-
-  -- Add all top-level config values
+  local base = {
+    destination = os.getenv("HOME") .. "/.local/share/shimlink/bin",
+  }
   for k, v in pairs(config) do
     if k ~= "platforms" and k ~= "urls" then
-      context[k] = v
+      base[k] = v
     end
   end
-
-  -- Add platform-specific values
-  context.platform = platform
-  if type(platform_data) == "table" then
-    for k, v in pairs(platform_data) do
-      context[k] = v
-    end
-  end
-
-  return context
+  return version.merge(base, platform_data or {}, {platform = platform})
 end
 
 local function expand_templates(config)
-  -- First pass: expand top-level values with a basic context
   local base_context = {
     destination = os.getenv("HOME") .. "/.local/share/shimlink/bin",
   }
@@ -79,25 +39,23 @@ local function expand_templates(config)
 
   for k, v in pairs(config) do
     if k ~= "platforms" and k ~= "urls" and k ~= "url" then
-      config[k] = expand_value(v, base_context)
+      config[k] = version.expand(v, base_context)
     end
   end
 
-  -- Second pass: expand platform-specific values
   local expanded = {}
   for platform, platform_data in pairs(config.platforms) do
     local context = build_context(config, platform, platform_data)
-    expanded[platform] = expand_value(platform_data, context)
+    expanded[platform] = version.expand(platform_data, context)
   end
 
   config.platforms = expanded
 
-  -- Third pass: generate URLs
   if config.url then
     config.urls = {}
     for platform, platform_data in pairs(config.platforms) do
       local context = build_context(config, platform, platform_data)
-      config.urls[platform] = interpolate(config.url, context)
+      config.urls[platform] = version.interpolate(config.url, context)
     end
   end
 
@@ -170,11 +128,7 @@ local function cmd_show(args)
   config = apply_updates(config, params)
   config = expand_templates(config)
 
-  print(serpent.block(config, {
-    comment = false,
-    sortkeys = true,
-    indent = "  ",
-  }))
+  print(version.render(config))
 end
 
 local function cmd_write(args)
@@ -188,25 +142,14 @@ local function cmd_write(args)
   local config = load_config(executable)
   config = apply_updates(config, params)
 
-  local config_to_write = {}
-  for k, v in pairs(config) do
-    if k ~= "urls" then
-      config_to_write[k] = v
-    end
-  end
-
-  local serialized = serpent.block(config_to_write, {
-    comment = false,
-    sortkeys = true,
-    indent = "  ",
-  })
+  local rendered = version.render(config, {exclude = {"urls"}})
 
   local path = config_path(executable)
   local f = io.open(path, "w")
   if not f then
     error("failed to open file for writing: " .. path)
   end
-  f:write("return " .. serialized .. "\n")
+  f:write(rendered)
   f:close()
 
   print("updated " .. path)
