@@ -59,7 +59,7 @@ jobs:
       - name: luajit
         env:
           OUTPUT_DIR: ${{ github.workspace }}/dist/luajit
-        run: bash .github/build/bootstrap .github/build/luajit
+        run: bash .github/build/bootstrap .github/workflows/luajit/build
 
       - name: upload artifacts
         uses: actions/upload-artifact@v4
