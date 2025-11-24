@@ -386,9 +386,9 @@ local function get_platform_config(config)
   return merged
 end
 
-local function get_binaries(config)
-  if config.binaries then
-    return config.binaries
+local function get_executables(config)
+  if config.executables then
+    return config.executables
   else
     return {{
       name = config.name,
@@ -536,7 +536,7 @@ local function update_executable(executable_name, config, force)
     return false
   end
 
-  local binaries = get_binaries(platform_config)
+  local executables = get_executables(platform_config)
 
   local sha256
   local expected_sha256 = platform_config.sha256
@@ -560,42 +560,42 @@ local function update_executable(executable_name, config, force)
 
   local versioned_dir = get_versioned_dir(executable_name, sha256)
 
-  for _, binary_config in ipairs(binaries) do
-    local binary_name = binary_config.name
-    local binary_path = binary_config.path
-    local binary_symlinks = binary_config.symlinks
+  for _, executable_config in ipairs(executables) do
+    local executable_name_inner = executable_config.name
+    local executable_path_config = executable_config.path
+    local executable_symlinks = executable_config.symlinks
 
-    local executable_path
-    if binary_path then
-      executable_path = path_join(versioned_dir, binary_path)
+    local executable_full_path
+    if executable_path_config then
+      executable_full_path = path_join(versioned_dir, executable_path_config)
     else
-      executable_path = path_join(versioned_dir, binary_name)
+      executable_full_path = path_join(versioned_dir, executable_name_inner)
     end
 
-    if not file_exists(executable_path) then
-      stderr_write("shimlink2: executable not found at " .. executable_path)
+    if not file_exists(executable_full_path) then
+      stderr_write("shimlink2: executable not found at " .. executable_full_path)
       return false
     end
 
-    local shimlink_bin_link = get_shimlink_bin_link(binary_name)
+    local shimlink_bin_link = get_shimlink_bin_link(executable_name_inner)
     local short_sha = sha256:sub(1, 16)
 
     local relative_to_versioned
-    if binary_path then
-      relative_to_versioned = path_join("..", "_", executable_name, short_sha, binary_path)
+    if executable_path_config then
+      relative_to_versioned = path_join("..", "_", executable_name, short_sha, executable_path_config)
     else
-      relative_to_versioned = path_join("..", "_", executable_name, short_sha, binary_name)
+      relative_to_versioned = path_join("..", "_", executable_name, short_sha, executable_name_inner)
     end
 
     if not create_symlink_atomic(relative_to_versioned, shimlink_bin_link) then
-      stderr_write("shimlink2: failed to create shimlink bin link for " .. binary_name)
+      stderr_write("shimlink2: failed to create shimlink bin link for " .. executable_name_inner)
       return false
     end
     stderr_write("shimlink2: updated " .. shimlink_bin_link .. " -> " .. relative_to_versioned)
 
-    if binary_symlinks then
-      for src_path, dest_path in pairs(binary_symlinks) do
-        create_symlink(versioned_dir, src_path, dest_path, binary_name)
+    if executable_symlinks then
+      for src_path, dest_path in pairs(executable_symlinks) do
+        create_symlink(versioned_dir, src_path, dest_path, executable_name_inner)
       end
     end
   end

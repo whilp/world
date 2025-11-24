@@ -1,5 +1,5 @@
 return {
-  binaries = {
+  executables = {
     {
       name = "luajit",
       path = "bin/luajit",
