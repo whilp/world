@@ -38,7 +38,8 @@ jobs:
         id: tag
         run: |
           if [ -z "${{ github.event.inputs.release_tag }}" ]; then
-            TAG=$(date +%Y.%m.%d)
+            SHORT_SHA=$(git rev-parse --short HEAD)
+            TAG=$(date +%Y.%m.%d)-${SHORT_SHA}
           else
             TAG="${{ github.event.inputs.release_tag }}"
           fi
