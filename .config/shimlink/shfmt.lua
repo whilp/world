@@ -1,6 +1,5 @@
 return {
   name = "shfmt",
-  path = "${name}",
   platforms = {
     ["darwin-arm64"] = {
       sha256 = "86030533a823c0a7cd92dee0f74094e5b901c3277b43def6337d5e19e56fe553",

@@ -1,6 +1,5 @@
 return {
   name = "marksman",
-  path = "${name}",
   platforms = {
     ["darwin-arm64"] = {
       sha256 = "7e18803966231a33ee107d0d26f69b41f2f0dc1332c52dd9729c2e29fb77be83",

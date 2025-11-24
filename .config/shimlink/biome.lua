@@ -1,6 +1,5 @@
 return {
   name = "biome",
-  path = "${name}",
   platforms = {
     ["darwin-arm64"] = {
       sha256 = "c68f2cbe09e9485426a749353a155b1d22c130c6ccdadc7772d603eb247b9a9d",
