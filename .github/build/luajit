@@ -238,6 +238,9 @@ local function build_luajit(config)
   util.exec(luajit_bin .. " -e \"require('lsqlite3'); print('lsqlite3 loaded successfully')\"")
   util.exec(luajit_bin .. " -e \"require('serpent'); print('serpent loaded successfully')\"")
 
+  util.printf("listing tarball contents...\n")
+  util.exec(string.format("tar -tvzf %s | head -50", tarball_path))
+
   local size = util.capture("du -h " .. luajit_bin .. " | cut -f1")
   util.printf("binary size: %s\n", size)
 
