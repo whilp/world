@@ -1,0 +1,267 @@
+#!/usr/bin/env luajit
+
+local serpent = require("serpent")
+
+local function config_dir()
+  return os.getenv("HOME") .. "/.config/shimlink2"
+end
+
+local function config_path(executable)
+  return config_dir() .. "/" .. executable .. ".lua"
+end
+
+local function load_config(executable)
+  local path = config_path(executable)
+  local loader, err = loadfile(path)
+  if not loader then
+    error("failed to load config: " .. err)
+  end
+  return loader()
+end
+
+local function interpolate(template, context)
+  if type(template) ~= "string" then
+    return template
+  end
+  return template:gsub("%${([%w_]+)}", function(key)
+    return tostring(context[key] or "")
+  end)
+end
+
+local function expand_value(value, context)
+  if type(value) == "string" then
+    return interpolate(value, context)
+  elseif type(value) == "table" then
+    local expanded = {}
+    for k, v in pairs(value) do
+      expanded[k] = expand_value(v, context)
+    end
+    return expanded
+  else
+    return value
+  end
+end
+
+local function build_context(config, platform, platform_data)
+  local context = {}
+
+  -- Add computed values
+  context.destination = os.getenv("HOME") .. "/.local/share/shimlink/bin"
+
+  -- Add all top-level config values
+  for k, v in pairs(config) do
+    if k ~= "platforms" and k ~= "urls" then
+      context[k] = v
+    end
+  end
+
+  -- Add platform-specific values
+  context.platform = platform
+  if type(platform_data) == "table" then
+    for k, v in pairs(platform_data) do
+      context[k] = v
+    end
+  end
+
+  return context
+end
+
+local function expand_templates(config)
+  -- First pass: expand top-level values with a basic context
+  local base_context = {
+    destination = os.getenv("HOME") .. "/.local/share/shimlink/bin",
+  }
+  for k, v in pairs(config) do
+    if k ~= "platforms" and k ~= "urls" then
+      base_context[k] = v
+    end
+  end
+
+  for k, v in pairs(config) do
+    if k ~= "platforms" and k ~= "urls" and k ~= "url" then
+      config[k] = expand_value(v, base_context)
+    end
+  end
+
+  -- Second pass: expand platform-specific values
+  local expanded = {}
+  for platform, platform_data in pairs(config.platforms) do
+    local context = build_context(config, platform, platform_data)
+    expanded[platform] = expand_value(platform_data, context)
+  end
+
+  config.platforms = expanded
+
+  -- Third pass: generate URLs
+  if config.url then
+    config.urls = {}
+    for platform, platform_data in pairs(config.platforms) do
+      local context = build_context(config, platform, platform_data)
+      config.urls[platform] = interpolate(config.url, context)
+    end
+  end
+
+  return config
+end
+
+local function parse_params(args)
+  local params = {}
+  for _, arg in ipairs(args) do
+    local key, value = arg:match("^([^=]+)=(.+)$")
+    if key and value then
+      params[key] = value
+    end
+  end
+  return params
+end
+
+local function set_nested(tbl, path, value)
+  local keys = {}
+  for key in path:gmatch("[^.]+") do
+    table.insert(keys, key)
+  end
+
+  local current = tbl
+  for i = 1, #keys - 1 do
+    local key = keys[i]
+    if not current[key] then
+      current[key] = {}
+    end
+    current = current[key]
+  end
+
+  current[keys[#keys]] = value
+end
+
+local function apply_updates(config, params)
+  local platform = params.platform
+  local version = params.version
+  local sha = params.sha
+
+  if version then
+    config.version = version
+  end
+
+  if platform and sha then
+    if not config.platforms[platform] then
+      config.platforms[platform] = {}
+    end
+    config.platforms[platform].sha256 = sha
+  end
+
+  for key, value in pairs(params) do
+    if key ~= "platform" and key ~= "version" and key ~= "sha" then
+      set_nested(config, key, value)
+    end
+  end
+
+  return config
+end
+
+local function cmd_show(args)
+  if #args < 1 then
+    error("usage: shimlink2 show <executable> [key=value...]")
+  end
+
+  local executable = args[1]
+  local params = parse_params({unpack(args, 2)})
+
+  local config = load_config(executable)
+  config = apply_updates(config, params)
+  config = expand_templates(config)
+
+  print(serpent.block(config, {
+    comment = false,
+    sortkeys = true,
+    indent = "  ",
+  }))
+end
+
+local function cmd_write(args)
+  if #args < 1 then
+    error("usage: shimlink2 write <executable> [key=value...]")
+  end
+
+  local executable = args[1]
+  local params = parse_params({unpack(args, 2)})
+
+  local config = load_config(executable)
+  config = apply_updates(config, params)
+
+  local config_to_write = {}
+  for k, v in pairs(config) do
+    if k ~= "urls" then
+      config_to_write[k] = v
+    end
+  end
+
+  local serialized = serpent.block(config_to_write, {
+    comment = false,
+    sortkeys = true,
+    indent = "  ",
+  })
+
+  local path = config_path(executable)
+  local f = io.open(path, "w")
+  if not f then
+    error("failed to open file for writing: " .. path)
+  end
+  f:write("return " .. serialized .. "\n")
+  f:close()
+
+  print("updated " .. path)
+  if params.version then
+    print("  version: " .. params.version)
+  end
+  if params.platform and params.sha then
+    print("  " .. params.platform .. ": " .. params.sha:sub(1, 16) .. "...")
+  end
+end
+
+local function cmd_help()
+  print([[shimlink2 - experimental serpent-based config manager
+
+usage:
+  shimlink2 show <executable> [key=value...]
+    show config with optional updates applied (does not persist)
+
+  shimlink2 write <executable> [key=value...]
+    update config and persist to disk
+
+special parameters:
+  platform=X  - target platform for sha updates
+  version=Y   - update version (regenerates all URLs)
+  sha=Z       - update sha256 for platform (requires platform=)
+
+examples:
+  shimlink2 show mivn
+  shimlink2 show mivn version=2025.11.24
+  shimlink2 write mivn platform=darwin-arm64 version=2025.11.24 sha=abc123...
+  shimlink2 write mivn version=2025.11.24
+]])
+end
+
+local function main(args)
+  if #args == 0 or args[1] == "help" or args[1] == "--help" then
+    cmd_help()
+    os.exit(0)
+  end
+
+  local command = args[1]
+  local cmd_args = {unpack(args, 2)}
+
+  if command == "show" then
+    cmd_show(cmd_args)
+  elseif command == "write" then
+    cmd_write(cmd_args)
+  else
+    error("unknown command: " .. command)
+  end
+end
+
+local args = {...}
+local ok, err = pcall(main, args)
+if not ok then
+  io.stderr:write("error: " .. tostring(err) .. "\n")
+  os.exit(1)
+end
