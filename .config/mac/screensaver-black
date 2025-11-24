@@ -1,0 +1,21 @@
+#!/usr/bin/env luajit
+
+local posix = require('posix')
+
+local status, reason = posix.spawn({"defaults", "-currentHost", "write", "com.apple.screensaver", "modulePath", "-string", "/System/Library/Screen Savers/Basic.saver"})
+if reason ~= 'exited' or status ~= 0 then
+  io.stderr:write("screensaver-black: failed to set screensaver module\n")
+  os.exit(status or 1)
+end
+
+status, reason = posix.spawn({"defaults", "-currentHost", "write", "com.apple.screensaver", "moduleName", "-string", "Basic"})
+if reason ~= 'exited' or status ~= 0 then
+  io.stderr:write("screensaver-black: failed to set screensaver name\n")
+  os.exit(status or 1)
+end
+
+status, reason = posix.spawn({"defaults", "-currentHost", "write", "com.apple.screensaver.Basic", "COLOR", "-string", "0 0 0"})
+if reason ~= 'exited' or status ~= 0 then
+  io.stderr:write("screensaver-black: failed to set black color\n")
+  os.exit(status or 1)
+end
