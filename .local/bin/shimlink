@@ -20,9 +20,12 @@ local function config_dir()
 end
 
 local function get_version_files()
-  local entries = dirent.dir(config_dir())
-  local files = {}
+  local entries, err = dirent.dir(config_dir())
+  if not entries then
+    return nil, "failed to read config directory: " .. tostring(err)
+  end
 
+  local files = {}
   for _, entry in ipairs(entries) do
     if entry:match("%.lua$") then
       table.insert(files, config_dir() .. "/" .. entry)
@@ -33,10 +36,15 @@ local function get_version_files()
 end
 
 local function load_all_configs()
-  for _, path in ipairs(get_version_files()) do
-    local ok, err = platform.load_file(path)
+  local files, err = get_version_files()
+  if not files then
+    error("failed to get version files: " .. tostring(err))
+  end
+
+  for _, path in ipairs(files) do
+    local ok, load_err = platform.load_file(path)
     if not ok then
-      error("failed to load " .. path .. ": " .. tostring(err))
+      error("failed to load " .. path .. ": " .. tostring(load_err))
     end
   end
 end
@@ -60,15 +68,17 @@ local function file_exists(path)
 end
 
 local function is_directory(path)
-  local st = stat.stat(path)
-  if not st then return false end
+  local st, err = stat.stat(path)
+  if not st then
+    return nil, "failed to stat path: " .. tostring(err)
+  end
   return stat.S_ISDIR(st.st_mode) ~= 0
 end
 
 local function read_file(path)
-  local f = io.open(path, "rb")
+  local f, err = io.open(path, "rb")
   if not f then
-    return nil
+    return nil, "failed to open file: " .. tostring(err)
   end
   local content = f:read("*all")
   f:close()
@@ -76,9 +86,9 @@ local function read_file(path)
 end
 
 local function write_file(path, content)
-  local f = io.open(path, "wb")
+  local f, err = io.open(path, "wb")
   if not f then
-    return false
+    return nil, "failed to open file for writing: " .. tostring(err)
   end
   f:write(content)
   f:close()
@@ -118,26 +128,40 @@ local function mkdir_p(path)
 end
 
 local function rm_rf(path)
-  if not file_exists(path) and not is_directory(path) then
+  local is_dir, dir_err = is_directory(path)
+  if not file_exists(path) and not is_dir then
     return true
   end
 
   local function remove_recursive(p)
-    if is_directory(p) then
-      local entries = dirent.dir(p)
+    local p_is_dir = is_directory(p)
+    if p_is_dir then
+      local entries, err = dirent.dir(p)
+      if not entries then
+        return nil, "failed to read directory during removal: " .. tostring(err)
+      end
       for _, entry in ipairs(entries) do
         if entry ~= "." and entry ~= ".." then
-          remove_recursive(path_join(p, entry))
+          local ok, rec_err = remove_recursive(path_join(p, entry))
+          if not ok then
+            return nil, rec_err
+          end
         end
       end
-      unistd.rmdir(p)
+      local result, rmdir_err = unistd.rmdir(p)
+      if not result then
+        return nil, "failed to remove directory: " .. tostring(rmdir_err)
+      end
     else
-      ffi.C.unlink(p)
+      local result = ffi.C.unlink(p)
+      if result ~= 0 then
+        return nil, "failed to unlink file: " .. p
+      end
     end
+    return true
   end
 
-  remove_recursive(path)
-  return true
+  return remove_recursive(path)
 end
 
 local function basename(path)
@@ -150,18 +174,23 @@ local function dirname(path)
 end
 
 local function list_dir_first_entry(path)
-  local entries = dirent.dir(path)
+  local entries, err = dirent.dir(path)
+  if not entries then
+    return nil, "failed to read directory: " .. tostring(err)
+  end
   for _, entry in ipairs(entries) do
     if entry ~= "." and entry ~= ".." then
       return entry
     end
   end
-  return nil
+  return nil, "directory is empty"
 end
 
 local function calculate_sha256(filepath)
-  local f = io.open(filepath, "rb")
-  if not f then return nil end
+  local f, err = io.open(filepath, "rb")
+  if not f then
+    return nil, "failed to open file for checksum: " .. tostring(err)
+  end
 
   local md = digest.new("sha256")
   while true do
@@ -218,26 +247,22 @@ local function download_file(url, dest_path)
 
   local headers, stream = req:go()
   if not headers then
-    stderr_write("shimlink: failed to connect: " .. tostring(stream))
-    return false
+    return nil, "failed to connect: " .. tostring(stream)
   end
 
   local status = headers:get(":status")
   if status ~= "200" then
-    stderr_write("shimlink: http error " .. status)
-    return false
+    return nil, "http error " .. status
   end
 
   local body, err = stream:get_body_as_string()
   if not body then
-    stderr_write("shimlink: failed to read response: " .. tostring(err))
-    return false
+    return nil, "failed to read response: " .. tostring(err)
   end
 
-  local f = io.open(dest_path, "wb")
+  local f, open_err = io.open(dest_path, "wb")
   if not f then
-    stderr_write("shimlink: failed to open " .. dest_path)
-    return false
+    return nil, "failed to open destination file: " .. tostring(open_err)
   end
   f:write(body)
   f:close()
@@ -305,8 +330,7 @@ local function create_symlink_atomic(target, link_path)
 
   if not ok then
     cleanup()
-    stderr_write("shimlink: " .. tostring(err))
-    return false
+    return nil, tostring(err)
   end
 
   return true
@@ -352,8 +376,7 @@ end
 local function update_config_checksum(executable_name, plat, new_sha)
   local config = platform.get(executable_name)
   if not config then
-    stderr_write("shimlink: config not found for " .. executable_name)
-    return false
+    return nil, "config not found for " .. executable_name
   end
 
   if not config.platforms[plat] then
@@ -385,10 +408,9 @@ local function update_config_checksum(executable_name, plat, new_sha)
   end
 
   -- Write to file
-  local f = io.open(source, "w")
+  local f, err = io.open(source, "w")
   if not f then
-    stderr_write("shimlink: failed to open " .. source .. " for writing")
-    return false
+    return nil, "failed to open " .. source .. " for writing: " .. tostring(err)
   end
   f:write(table.concat(output, "\n"))
   f:close()
@@ -401,18 +423,25 @@ local function download_to_temp(url, executable_name, temp_dir)
   local download_name = basename(url)
   local download_path = path_join(temp_dir, download_name)
 
-  if not download_file(url, download_path) then
-    return nil, "failed to download " .. executable_name
+  local ok, err = download_file(url, download_path)
+  if not ok then
+    return nil, "failed to download " .. executable_name .. ": " .. tostring(err)
   end
 
   return download_path
 end
 
 local function validate_checksum(download_path, expected_sha256, executable_name, config, force)
-  local actual_sha256 = calculate_sha256(download_path)
+  local actual_sha256, err = calculate_sha256(download_path)
+  if not actual_sha256 then
+    return nil, err
+  end
 
   if force then
-    update_config_checksum(executable_name, config.platform, actual_sha256)
+    local ok, update_err = update_config_checksum(executable_name, config.platform, actual_sha256)
+    if not ok then
+      return nil, update_err
+    end
     stderr_write("shimlink: force mode - updated checksum for " .. executable_name)
   elseif expected_sha256 then
     if actual_sha256 ~= expected_sha256 then
@@ -440,10 +469,11 @@ local function extract_and_prepare(download_path, temp_dir, path, executable_nam
     local strip_components = config.strip_components or 0
     local binary_dir = extract_temp
     for i = 1, strip_components do
-      local first_entry = list_dir_first_entry(binary_dir)
-      if first_entry then
-        binary_dir = path_join(binary_dir, first_entry)
+      local first_entry, dir_err = list_dir_first_entry(binary_dir)
+      if not first_entry then
+        return nil, "failed to strip component " .. i .. ": " .. tostring(dir_err)
       end
+      binary_dir = path_join(binary_dir, first_entry)
     end
     local executable_path = path_join(binary_dir, path)
 
@@ -478,13 +508,11 @@ local function install_to_versioned_dir(extract_temp, download_path, temp_dir, e
     if strip_components > 0 then
       local source_dir = extract_temp
       for i = 1, strip_components do
-        local first_entry = list_dir_first_entry(source_dir)
-        if first_entry then
-          source_dir = path_join(source_dir, first_entry)
-        else
-          stderr_write("shimlink: warning: cannot strip " .. i .. " components, directory empty")
-          break
+        local first_entry, dir_err = list_dir_first_entry(source_dir)
+        if not first_entry then
+          return nil, "failed to strip component " .. i .. " during installation: " .. tostring(dir_err)
         end
+        source_dir = path_join(source_dir, first_entry)
       end
       local ok, err = os.rename(source_dir, install_temp)
       if not ok then
@@ -513,7 +541,10 @@ local function install_to_versioned_dir(extract_temp, download_path, temp_dir, e
 
   ok, err = os.rename(temp_versioned, versioned_dir)
   if not ok then
-    rm_rf(temp_versioned)
+    local cleanup_ok, cleanup_err = rm_rf(temp_versioned)
+    if not cleanup_ok then
+      stderr_write("shimlink: warning: failed to cleanup temp directory: " .. tostring(cleanup_err))
+    end
     return nil, "failed to finalize installation: " .. tostring(err)
   end
 
@@ -561,7 +592,10 @@ local function download_executable(executable_name, config, force)
     return installed_sha
   end)
 
-  rm_rf(temp_dir)
+  local cleanup_ok, cleanup_err = rm_rf(temp_dir)
+  if not cleanup_ok then
+    stderr_write("shimlink: warning: failed to cleanup temp directory: " .. tostring(cleanup_err))
+  end
 
   if not success then
     stderr_write("shimlink: " .. tostring(result))
@@ -625,8 +659,9 @@ local function update_executable(executable_name, config, force)
     local executable_path = executable_path_config or executable_name_inner
     local relative_to_versioned = get_relative_versioned_path(executable_name, sha256, executable_path)
 
-    if not create_symlink_atomic(relative_to_versioned, shimlink_bin_link) then
-      stderr_write("shimlink: failed to create shimlink bin link for " .. executable_name_inner)
+    local ok, err = create_symlink_atomic(relative_to_versioned, shimlink_bin_link)
+    if not ok then
+      stderr_write("shimlink: failed to create shimlink bin link for " .. executable_name_inner .. ": " .. tostring(err))
       return false
     end
     stderr_write("shimlink: updated " .. shimlink_bin_link .. " -> " .. relative_to_versioned)
@@ -662,11 +697,11 @@ local function get_nested(tbl, path)
   for i = 1, #keys do
     local key = keys[i]
     if type(current) ~= "table" then
-      return nil
+      return nil, "not a table at key: " .. key
     end
     current = current[key]
     if current == nil then
-      return nil
+      return nil, "field not found: " .. path
     end
   end
 
