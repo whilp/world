@@ -1,4 +1,4 @@
-return {
+Version{
   name = "shfmt",
   platforms = {
     ["darwin-arm64"] = {

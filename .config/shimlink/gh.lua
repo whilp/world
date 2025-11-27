@@ -1,4 +1,4 @@
-return {
+Version{
   name = "gh",
   path = "bin/${name}",
   platforms = {

@@ -1,4 +1,4 @@
-return {
+Version{
   name = "superhtml",
   path = "${name}",
   platforms = {

@@ -20,12 +20,35 @@ local function config_dir()
   return os.getenv("HOME") .. "/.config/shimlink"
 end
 
-local function config_path(executable)
-  return config_dir() .. "/" .. executable .. ".lua"
+local function get_version_files()
+  local entries = dirent.dir(config_dir())
+  local files = {}
+
+  for _, entry in ipairs(entries) do
+    if entry:match("%.lua$") then
+      table.insert(files, config_dir() .. "/" .. entry)
+    end
+  end
+
+  return files
+end
+
+local function load_all_configs()
+  for _, path in ipairs(get_version_files()) do
+    local ok, err = version.load_file(path)
+    if not ok then
+      error("failed to load " .. path .. ": " .. tostring(err))
+    end
+  end
 end
 
 local function load_config(executable)
-  return version.load(config_path(executable))
+  load_all_configs()
+  local config = version.get(executable)
+  if not config then
+    error("config not found for: " .. executable)
+  end
+  return config
 end
 
 local function build_context(config, platform, platform_data)
@@ -400,22 +423,48 @@ local function get_executables(config)
 end
 
 local function update_config_checksum(executable_name, platform, new_sha)
-  local config_file = config_path(executable_name)
-  local config = load_config(executable_name)
+  load_all_configs()
+  local config = version.get(executable_name)
+  if not config then
+    stderr_write("shimlink: config not found for " .. executable_name)
+    return false
+  end
 
   if not config.platforms[platform] then
     config.platforms[platform] = {}
   end
   config.platforms[platform].sha256 = new_sha
 
-  local rendered = version.render(config, {exclude = {"urls"}})
+  -- Get source from metadata
+  local source = config._meta.source
 
-  local f = io.open(config_file, "w")
+  -- Reload file with custom callback to preserve order and replace updated config
+  local reloaded = {}
+  local kinds = {
+    Version = function(cfg)
+      if cfg.name == config.name then
+        table.insert(reloaded, config)
+      else
+        table.insert(reloaded, cfg)
+      end
+    end
+  }
+
+  version.load_file(source, kinds)
+
+  -- Build output by concatenating rendered configs
+  local output = {}
+  for _, cfg in ipairs(reloaded) do
+    table.insert(output, version.write(cfg))
+  end
+
+  -- Write to file
+  local f = io.open(source, "w")
   if not f then
-    stderr_write("shimlink: failed to open " .. config_file .. " for writing")
+    stderr_write("shimlink: failed to open " .. source .. " for writing")
     return false
   end
-  f:write(rendered)
+  f:write(table.concat(output, "\n"))
   f:close()
 
   stderr_write("shimlink: updated checksum for " .. executable_name .. " (" .. platform .. ") to " .. new_sha)
@@ -672,7 +721,15 @@ local function cmd_show(args)
   config = apply_updates(config, params)
   config = expand_templates(config)
 
-  print(version.render(config))
+  -- Remove metadata before rendering
+  local clean = {}
+  for k, v in pairs(config) do
+    if k ~= "_meta" then
+      clean[k] = v
+    end
+  end
+
+  print(version.render(clean))
 end
 
 local function cmd_write(args)
@@ -683,20 +740,46 @@ local function cmd_write(args)
   local executable = args[1]
   local params = parse_params({unpack(args, 2)})
 
-  local config = load_config(executable)
+  -- Load all configs first
+  load_all_configs()
+  local config = version.get(executable)
+  if not config then
+    error("config not found for: " .. executable)
+  end
   config = apply_updates(config, params)
 
-  local rendered = version.render(config, {exclude = {"urls"}})
+  -- Get source from metadata
+  local source = config._meta.source
 
-  local path = config_path(executable)
-  local f = io.open(path, "w")
-  if not f then
-    error("failed to open file for writing: " .. path)
+  -- Reload file with custom callback to preserve order and replace updated config
+  local reloaded = {}
+  local kinds = {
+    Version = function(cfg)
+      if cfg.name == config.name then
+        table.insert(reloaded, config)
+      else
+        table.insert(reloaded, cfg)
+      end
+    end
+  }
+
+  version.load_file(source, kinds)
+
+  -- Build output by concatenating rendered configs
+  local output = {}
+  for _, cfg in ipairs(reloaded) do
+    table.insert(output, version.write(cfg))
   end
-  f:write(rendered)
+
+  -- Write to file
+  local f = io.open(source, "w")
+  if not f then
+    error("failed to open " .. source)
+  end
+  f:write(table.concat(output, "\n"))
   f:close()
 
-  print("updated " .. path)
+  print("updated " .. source)
   if params.version then
     print("  version: " .. params.version)
   end

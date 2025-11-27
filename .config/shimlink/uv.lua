@@ -1,4 +1,4 @@
-return {
+Version{
   name = "uv",
   path = "${name}",
   platforms = {

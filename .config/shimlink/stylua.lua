@@ -1,4 +1,4 @@
-return {
+Version{
   name = "stylua",
   path = "${name}",
   platforms = {

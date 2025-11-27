@@ -1,4 +1,4 @@
-return {
+Version{
   name = "marksman",
   platforms = {
     ["darwin-arm64"] = {

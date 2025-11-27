@@ -1,4 +1,4 @@
-return {
+Version{
   name = "nvim",
   path = "bin/${name}",
   platforms = {

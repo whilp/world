@@ -1,4 +1,4 @@
-return {
+Version{
   name = "duckdb",
   path = "${name}",
   platforms = {

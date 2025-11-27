@@ -1,4 +1,4 @@
-return {
+Version{
   executables = {
     {
       name = "luajit",

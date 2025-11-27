@@ -1,4 +1,4 @@
-return {
+Version{
   name = "comrak",
   platforms = {
     ["darwin-arm64"] = {

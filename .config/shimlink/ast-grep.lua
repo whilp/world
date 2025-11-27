@@ -1,4 +1,4 @@
-return {
+Version{
   name = "ast-grep",
   path = "${name}",
   platforms = {

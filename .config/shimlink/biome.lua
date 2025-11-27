@@ -1,4 +1,4 @@
-return {
+Version{
   name = "biome",
   platforms = {
     ["darwin-arm64"] = {

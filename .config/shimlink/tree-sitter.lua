@@ -1,4 +1,4 @@
-return {
+Version{
   name = "tree-sitter",
   platforms = {
     ["darwin-arm64"] = {
