@@ -56,13 +56,15 @@ Implement the items below, using separate agents for each step. Work sequentiall
 
 ## High priority: code clarity & maintainability
 
-### 6. Eliminate code duplication in path construction
+### 6. Eliminate code duplication in path construction ✓ DONE
 
 **Issue**: Path patterns repeated: `.local/bin/shimlink:547-549` duplicates logic from `get_versioned_dir`
 
 **Fix**: Create single source of truth for path construction, use consistently
 
 **Impact**: Reduces bugs from inconsistent path logic
+
+**Commit**: a84d8da874627cdd7d3df92998c4d775cd8a4255
 
 ### 7. Split monolithic `download_executable` function
 
