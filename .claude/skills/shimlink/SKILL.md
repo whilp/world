@@ -12,26 +12,44 @@ Symlink-based binary manager for installing and managing development tools.
 
 shimlink uses a content-addressed storage model where binaries are stored by their SHA-256 hash:
 
-- config files: `~/.config/shimlink/<binary>.lua` - Lua tables with version, platforms, URLs
+- config files: `~/.config/shimlink/<binary>.lua` - Lua configs using `Version{}` callback pattern
 - storage: `~/.local/share/shimlink/_/<binary>/<sha-prefix>/` - versioned binaries indexed by first 16 chars of SHA
 - bin directory: `~/.local/share/shimlink/bin/` - symlinks pointing to specific versions
+
+Config files use the PIL Chapter 12 event-driven callback pattern:
+- Files define configs using `Version{}` instead of `return {}`
+- Supports single or multiple tool configs per file
+- Automatic metadata tracking via `version.lua` module
+- Collision detection prevents duplicate tool names across files
 
 ## Commands
 
 ### show: preview config changes
 
 ```bash
-shimlink show <binary>
+shimlink show <binary>[.<field>]
 shimlink show <binary> key=value...
+shimlink show <binary>.<field> key=value...
 ```
 
 Preview configuration with optional parameter updates without persisting to disk. Expands templates and generates URLs.
+
+Supports dot notation for accessing specific fields:
+- `shimlink show <binary>.<field>` - prints specific top-level field value
+- `shimlink show <binary>.url` - prints expanded URL for current platform
+- `shimlink show <binary>.url platform=X` - prints URL for specific platform
+- `shimlink show <binary>.platforms.darwin-arm64.arch` - accesses nested fields
 
 Examples:
 ```bash
 shimlink show nvim
 shimlink show nvim version=2025.11.24
 shimlink show nvim platform=darwin-arm64 version=2025.11.24 sha=abc123...
+shimlink show rg.repo                    # prints: BurntSushi/ripgrep
+shimlink show rg.version                 # prints: 14.1.1
+shimlink show rg.url                     # prints expanded URL for current platform
+shimlink show rg.url platform=linux-arm64  # prints URL for specific platform
+shimlink show rg.platforms.darwin-arm64.arch  # prints: aarch64-apple-darwin
 ```
 
 ### write: update config
@@ -83,10 +101,10 @@ shimlink update nvim luajit tree-sitter
 
 ## Config file structure
 
-Config files in `~/.config/shimlink/` are Lua tables:
+Config files in `~/.config/shimlink/` use the `Version{}` callback pattern:
 
 ```lua
-return {
+Version{
   name = "nvim",
   version = "2025.11.23",
   repo = "whilp/dotfiles",
@@ -110,7 +128,27 @@ return {
 }
 ```
 
+**Important**: Use `Version{}` not `return {}`. The callback pattern enables:
+- Automatic metadata tracking (file source, config name)
+- Multi-tool configs in single files
+- Better collision error messages showing both config paths
+
 Template variables like `${version}`, `${name}`, `${arch}` are interpolated from config values and platform data.
+
+## version.lua module
+
+The `version.lua` module (`~/.local/lib/lua/version.lua`) provides the infrastructure for config file loading:
+
+**Key functions**:
+- `load_file(path, kinds)` - loads config file with callback pattern support
+- `write(config, callback_name)` - renders config back to `Version{}` syntax
+- `get(name)` - retrieves loaded config by tool name
+- `get_by_file(source)` - retrieves all configs from a specific file
+
+**Features**:
+- Automatic metadata tracking: adds `_meta.source` (file path) and `_meta.kind` (callback name)
+- Collision detection: errors show both existing and new config paths when duplicate names are found
+- Format: `"version name collision: <name> (existing: <path1>, new: <path2>)"`
 
 ## Checksums
 
