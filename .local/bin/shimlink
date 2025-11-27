@@ -198,6 +198,15 @@ local function get_shimlink_bin_link(executable_name)
   return path_join(get_shimlink_bin_dir(), executable_name)
 end
 
+local function get_relative_versioned_path(executable_name, sha256, executable_path)
+  local short_sha = sha256:sub(1, 16)
+  if executable_path then
+    return path_join("..", "_", executable_name, short_sha, executable_path)
+  else
+    return path_join("..", "_", executable_name, short_sha)
+  end
+end
+
 local function download_file(url, dest_path)
   stderr_write("shimlink: downloading " .. url)
 
@@ -575,14 +584,9 @@ local function update_executable(executable_name, config, force)
     end
 
     local shimlink_bin_link = get_shimlink_bin_link(executable_name_inner)
-    local short_sha = sha256:sub(1, 16)
 
-    local relative_to_versioned
-    if executable_path_config then
-      relative_to_versioned = path_join("..", "_", executable_name, short_sha, executable_path_config)
-    else
-      relative_to_versioned = path_join("..", "_", executable_name, short_sha, executable_name_inner)
-    end
+    local executable_path = executable_path_config or executable_name_inner
+    local relative_to_versioned = get_relative_versioned_path(executable_name, sha256, executable_path)
 
     if not create_symlink_atomic(relative_to_versioned, shimlink_bin_link) then
       stderr_write("shimlink: failed to create shimlink bin link for " .. executable_name_inner)
