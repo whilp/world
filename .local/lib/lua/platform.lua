@@ -58,8 +58,9 @@ local function validate_platform_config(config, platform)
   return true
 end
 
--- Get platform-specific merged config
-function M.get_config(config, platform)
+-- Get platform-specific merged config from an expanded config
+-- This should be called AFTER platform.expand() to get a single platform's view
+function M.get_platform_config(config, platform)
   platform = platform or M.detect()
   if not platform then
     return nil, "unable to detect platform"
@@ -74,7 +75,7 @@ function M.get_config(config, platform)
 
   local merged = {}
   for k, v in pairs(config) do
-    if k ~= "platforms" and k ~= "urls" then
+    if k ~= "platforms" and k ~= "urls" and k ~= "url" then
       merged[k] = v
     end
   end
@@ -83,17 +84,20 @@ function M.get_config(config, platform)
   end
   merged.platform = platform
 
+  if config.urls and config.urls[platform] then
+    merged.url = config.urls[platform]
+  end
+
   return merged
 end
 
--- Expand config with platform awareness
-function M.expand(config, platform)
-  platform = platform or M.detect()
-  if not platform then
-    return nil, "unable to detect platform"
-  end
+-- Deprecated: use get_platform_config instead
+M.get_config = M.get_platform_config
 
-  -- First pass: expand base fields
+-- Expand all template variables in config for all platforms
+-- This performs a single expansion pass and generates the urls table
+function M.expand(config)
+  -- First pass: expand base fields with base context
   local base_context = build_context(config)
 
   for k, v in pairs(config) do
@@ -102,7 +106,7 @@ function M.expand(config, platform)
     end
   end
 
-  -- Second pass: expand each platform's config
+  -- Second pass: expand each platform's config with merged context
   local expanded_platforms = {}
   for plat, platform_data in pairs(config.platforms or {}) do
     local context = build_context(config, platform_data)
@@ -124,7 +128,8 @@ function M.expand(config, platform)
   return config
 end
 
--- Get field with platform awareness
+-- Get field with platform awareness from an expanded config
+-- First checks platform-specific fields, then falls back to base fields
 function M.get_field(config, field_path, platform)
   platform = platform or M.detect()
 
@@ -143,6 +148,27 @@ function M.get_field(config, field_path, platform)
     table.insert(keys, key)
   end
 
+  -- First try platform-specific field
+  if config.platforms and config.platforms[platform] then
+    local current = config.platforms[platform]
+    local found = true
+    for _, key in ipairs(keys) do
+      if type(current) ~= "table" then
+        found = false
+        break
+      end
+      current = current[key]
+      if current == nil then
+        found = false
+        break
+      end
+    end
+    if found then
+      return current
+    end
+  end
+
+  -- Fall back to base field
   local current = config
   for _, key in ipairs(keys) do
     if type(current) ~= "table" then

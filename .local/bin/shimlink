@@ -607,7 +607,7 @@ end
 
 local function update_executable(executable_name, config, force)
   local plat = platform.detect()
-  local platform_config, err = platform.get_config(config, plat)
+  local platform_config, err = platform.get_platform_config(config, plat)
   if not platform_config then
     stderr_write("shimlink: " .. err)
     return false
@@ -768,7 +768,7 @@ local function cmd_show(args)
 
   local config = load_config(executable)
   config = apply_updates(config, params)
-  config = platform.expand(config, params.platform)
+  config = platform.expand(config)
 
   -- Remove metadata before rendering
   local clean = {}
