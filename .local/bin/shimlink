@@ -397,6 +397,131 @@ local function update_config_checksum(executable_name, plat, new_sha)
   return true
 end
 
+local function download_to_temp(url, executable_name, temp_dir)
+  local download_name = basename(url)
+  local download_path = path_join(temp_dir, download_name)
+
+  if not download_file(url, download_path) then
+    return nil, "failed to download " .. executable_name
+  end
+
+  return download_path
+end
+
+local function validate_checksum(download_path, expected_sha256, executable_name, config, force)
+  local actual_sha256 = calculate_sha256(download_path)
+
+  if force then
+    update_config_checksum(executable_name, config.platform, actual_sha256)
+    stderr_write("shimlink: force mode - updated checksum for " .. executable_name)
+  elseif expected_sha256 then
+    if actual_sha256 ~= expected_sha256 then
+      stderr_write("shimlink: checksum mismatch for " .. executable_name)
+      stderr_write("shimlink:   expected: " .. expected_sha256)
+      stderr_write("shimlink:   actual:   " .. actual_sha256)
+      return nil, "checksum mismatch"
+    end
+  end
+
+  return actual_sha256
+end
+
+local function extract_and_prepare(download_path, temp_dir, path, executable_name, config)
+  local extract_temp
+
+  if path then
+    extract_temp = path_join(temp_dir, "extracted")
+    mkdir_p(extract_temp)
+    local extracted_path, err = extract_archive(download_path, extract_temp, path)
+    if not extracted_path then
+      return nil, "failed to extract " .. executable_name .. ": " .. err
+    end
+
+    local strip_components = config.strip_components or 0
+    local binary_dir = extract_temp
+    for i = 1, strip_components do
+      local first_entry = list_dir_first_entry(binary_dir)
+      if first_entry then
+        binary_dir = path_join(binary_dir, first_entry)
+      end
+    end
+    local executable_path = path_join(binary_dir, path)
+
+    if file_exists(executable_path) then
+      stat.chmod(executable_path, tonumber("0755", 8))
+    end
+  else
+    extract_temp = temp_dir
+    if file_exists(download_path) then
+      stat.chmod(download_path, tonumber("0755", 8))
+    end
+  end
+
+  return extract_temp
+end
+
+local function install_to_versioned_dir(extract_temp, download_path, temp_dir, executable_name, path, config, actual_sha256)
+  local versioned_dir = get_versioned_dir(executable_name, actual_sha256)
+  local storage_dir = get_storage_dir(executable_name)
+  mkdir_p(storage_dir)
+
+  if is_directory(versioned_dir) then
+    stderr_write("shimlink: version " .. actual_sha256:sub(1, 16) .. " already exists")
+    return actual_sha256
+  end
+
+  local install_temp = path_join(temp_dir, "install")
+
+  if path then
+    local strip_components = config.strip_components or 0
+
+    if strip_components > 0 then
+      local source_dir = extract_temp
+      for i = 1, strip_components do
+        local first_entry = list_dir_first_entry(source_dir)
+        if first_entry then
+          source_dir = path_join(source_dir, first_entry)
+        else
+          stderr_write("shimlink: warning: cannot strip " .. i .. " components, directory empty")
+          break
+        end
+      end
+      local ok, err = os.rename(source_dir, install_temp)
+      if not ok then
+        return nil, "failed to prepare installation directory: " .. tostring(err)
+      end
+    else
+      local ok, err = os.rename(extract_temp, install_temp)
+      if not ok then
+        return nil, "failed to prepare installation directory: " .. tostring(err)
+      end
+    end
+  else
+    mkdir_p(install_temp)
+    local final_path = path_join(install_temp, executable_name)
+    local ok, err = os.rename(download_path, final_path)
+    if not ok then
+      return nil, "failed to move executable: " .. tostring(err)
+    end
+  end
+
+  local temp_versioned = path_join(storage_dir, ".installing." .. actual_sha256:sub(1, 16))
+  local ok, err = os.rename(install_temp, temp_versioned)
+  if not ok then
+    return nil, "failed to create temporary versioned directory: " .. tostring(err)
+  end
+
+  ok, err = os.rename(temp_versioned, versioned_dir)
+  if not ok then
+    rm_rf(temp_versioned)
+    return nil, "failed to finalize installation: " .. tostring(err)
+  end
+
+  stderr_write("shimlink: installed " .. executable_name .. " version " .. actual_sha256:sub(1, 16))
+
+  return actual_sha256
+end
+
 local function download_executable(executable_name, config, force)
   local url = config.url
   local expected_sha256 = config.sha256
@@ -410,118 +535,30 @@ local function download_executable(executable_name, config, force)
   local temp_dir = stdlib.mkdtemp(temp_template)
 
   local success, result = pcall(function()
-    local download_name = basename(url)
-    local download_path = path_join(temp_dir, download_name)
-
-    if not download_file(url, download_path) then
-      error("failed to download " .. executable_name)
+    local download_path, err = download_to_temp(url, executable_name, temp_dir)
+    if not download_path then
+      error(err)
     end
 
-    local actual_sha256 = calculate_sha256(download_path)
-
-    if force then
-      update_config_checksum(executable_name, config.platform, actual_sha256)
-      stderr_write("shimlink: force mode - updated checksum for " .. executable_name)
-    elseif expected_sha256 then
-      if actual_sha256 ~= expected_sha256 then
-        stderr_write("shimlink: checksum mismatch for " .. executable_name)
-        stderr_write("shimlink:   expected: " .. expected_sha256)
-        stderr_write("shimlink:   actual:   " .. actual_sha256)
-        error("checksum mismatch")
-      end
+    local actual_sha256
+    actual_sha256, err = validate_checksum(download_path, expected_sha256, executable_name, config, force)
+    if not actual_sha256 then
+      error(err)
     end
 
     local extract_temp
-
-    if path then
-      extract_temp = path_join(temp_dir, "extracted")
-      mkdir_p(extract_temp)
-      local err
-      local extracted_path
-      extracted_path, err = extract_archive(download_path, extract_temp, path)
-      if not extracted_path then
-        error("failed to extract " .. executable_name .. ": " .. err)
-      end
-
-      local strip_components = config.strip_components or 0
-      local binary_dir = extract_temp
-      for i = 1, strip_components do
-        local first_entry = list_dir_first_entry(binary_dir)
-        if first_entry then
-          binary_dir = path_join(binary_dir, first_entry)
-        end
-      end
-      local executable_path = path_join(binary_dir, path)
-
-      if file_exists(executable_path) then
-        stat.chmod(executable_path, tonumber("0755", 8))
-      end
-    else
-      extract_temp = temp_dir
-      if file_exists(download_path) then
-        stat.chmod(download_path, tonumber("0755", 8))
-      end
+    extract_temp, err = extract_and_prepare(download_path, temp_dir, path, executable_name, config)
+    if not extract_temp then
+      error(err)
     end
 
-    local versioned_dir = get_versioned_dir(executable_name, actual_sha256)
-    local storage_dir = get_storage_dir(executable_name)
-    mkdir_p(storage_dir)
-
-    if is_directory(versioned_dir) then
-      stderr_write("shimlink: version " .. actual_sha256:sub(1, 16) .. " already exists")
-      return actual_sha256
+    local installed_sha
+    installed_sha, err = install_to_versioned_dir(extract_temp, download_path, temp_dir, executable_name, path, config, actual_sha256)
+    if not installed_sha then
+      error(err)
     end
 
-    local install_temp = path_join(temp_dir, "install")
-
-    if path then
-      local strip_components = config.strip_components or 0
-
-      if strip_components > 0 then
-        local source_dir = extract_temp
-        for i = 1, strip_components do
-          local first_entry = list_dir_first_entry(source_dir)
-          if first_entry then
-            source_dir = path_join(source_dir, first_entry)
-          else
-            stderr_write("shimlink: warning: cannot strip " .. i .. " components, directory empty")
-            break
-          end
-        end
-        local ok, err = os.rename(source_dir, install_temp)
-        if not ok then
-          error("failed to prepare installation directory: " .. tostring(err))
-        end
-      else
-        local ok, err = os.rename(extract_temp, install_temp)
-        if not ok then
-          error("failed to prepare installation directory: " .. tostring(err))
-        end
-      end
-    else
-      mkdir_p(install_temp)
-      local final_path = path_join(install_temp, executable_name)
-      local ok, err = os.rename(download_path, final_path)
-      if not ok then
-        error("failed to move executable: " .. tostring(err))
-      end
-    end
-
-    local temp_versioned = path_join(storage_dir, ".installing." .. actual_sha256:sub(1, 16))
-    local ok, err = os.rename(install_temp, temp_versioned)
-    if not ok then
-      error("failed to create temporary versioned directory: " .. tostring(err))
-    end
-
-    ok, err = os.rename(temp_versioned, versioned_dir)
-    if not ok then
-      rm_rf(temp_versioned)
-      error("failed to finalize installation: " .. tostring(err))
-    end
-
-    stderr_write("shimlink: installed " .. executable_name .. " version " .. actual_sha256:sub(1, 16))
-
-    return actual_sha256
+    return installed_sha
   end)
 
   rm_rf(temp_dir)
