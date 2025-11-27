@@ -1,6 +1,5 @@
 #!/usr/bin/env luajit
 
-package.path = os.getenv("HOME") .. "/.local/lib/lua/?.lua;" .. package.path
 local platform = require("platform")
 local ffi = require("ffi")
 local posix = require("posix")

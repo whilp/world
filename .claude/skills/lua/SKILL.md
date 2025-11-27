@@ -27,8 +27,6 @@ Executable script pattern (in `~/.local/bin/`):
 ```lua
 #!/usr/bin/env luajit
 
-package.path = os.getenv("HOME") .. "/.local/lib/lua/?.lua;" .. package.path
-
 local function main()
   -- implementation
 end

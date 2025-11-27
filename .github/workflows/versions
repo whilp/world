@@ -1,6 +1,5 @@
 #!/usr/bin/env luajit
 
-package.path = os.getenv("HOME") .. "/.local/lib/lua/?.lua;" .. package.path
 local version = require("version")
 
 local function versions_path()
