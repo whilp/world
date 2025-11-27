@@ -1,6 +1,7 @@
 #!/usr/bin/env luajit
 
 local platform = require("platform")
+local file = require("file")
 local ffi = require("ffi")
 local posix = require("posix")
 local unistd = require("posix.unistd")
@@ -62,128 +63,8 @@ local function stderr_write(msg)
   io.stderr:flush()
 end
 
-local function file_exists(path)
-  local st = stat.stat(path)
-  return st ~= nil
-end
-
-local function is_directory(path)
-  local st, err = stat.stat(path)
-  if not st then
-    return nil, "failed to stat path: " .. tostring(err)
-  end
-  return stat.S_ISDIR(st.st_mode) ~= 0
-end
-
-local function read_file(path)
-  local f, err = io.open(path, "rb")
-  if not f then
-    return nil, "failed to open file: " .. tostring(err)
-  end
-  local content = f:read("*all")
-  f:close()
-  return content
-end
-
-local function write_file(path, content)
-  local f, err = io.open(path, "wb")
-  if not f then
-    return nil, "failed to open file for writing: " .. tostring(err)
-  end
-  f:write(content)
-  f:close()
-  return true
-end
-
 local function get_home_dir()
   return os.getenv("HOME") or os.getenv("USERPROFILE")
-end
-
-local function path_join(...)
-  local parts = { ... }
-  return table.concat(parts, "/")
-end
-
-local function expand_path(path)
-  if path:sub(1, 1) == "~" then
-    return get_home_dir() .. path:sub(2)
-  end
-  return path
-end
-
-local function mkdir_p(path)
-  local parts = {}
-  for part in path:gmatch("[^/]+") do
-    table.insert(parts, part)
-  end
-
-  local current = path:sub(1, 1) == "/" and "/" or ""
-  for _, part in ipairs(parts) do
-    current = current .. part
-    if not is_directory(current) then
-      stat.mkdir(current, tonumber("0755", 8))
-    end
-    current = current .. "/"
-  end
-end
-
-local function rm_rf(path)
-  local is_dir, dir_err = is_directory(path)
-  if not file_exists(path) and not is_dir then
-    return true
-  end
-
-  local function remove_recursive(p)
-    local p_is_dir = is_directory(p)
-    if p_is_dir then
-      local entries, err = dirent.dir(p)
-      if not entries then
-        return nil, "failed to read directory during removal: " .. tostring(err)
-      end
-      for _, entry in ipairs(entries) do
-        if entry ~= "." and entry ~= ".." then
-          local ok, rec_err = remove_recursive(path_join(p, entry))
-          if not ok then
-            return nil, rec_err
-          end
-        end
-      end
-      local result, rmdir_err = unistd.rmdir(p)
-      if not result then
-        return nil, "failed to remove directory: " .. tostring(rmdir_err)
-      end
-    else
-      local result = ffi.C.unlink(p)
-      if result ~= 0 then
-        return nil, "failed to unlink file: " .. p
-      end
-    end
-    return true
-  end
-
-  return remove_recursive(path)
-end
-
-local function basename(path)
-  return path:match("([^/]+)$") or path
-end
-
-local function dirname(path)
-  local dir = path:match("(.+)/[^/]+$")
-  return dir or "."
-end
-
-local function list_dir_first_entry(path)
-  local entries, err = dirent.dir(path)
-  if not entries then
-    return nil, "failed to read directory: " .. tostring(err)
-  end
-  for _, entry in ipairs(entries) do
-    if entry ~= "." and entry ~= ".." then
-      return entry
-    end
-  end
-  return nil, "directory is empty"
 end
 
 local function calculate_sha256(filepath)
@@ -205,34 +86,34 @@ local function calculate_sha256(filepath)
 end
 
 local function get_shimlink_root()
-  return path_join(get_home_dir(), ".local", "share", "shimlink")
+  return file.path_join(get_home_dir(), ".local", "share", "shimlink")
 end
 
 local function get_storage_dir(executable_name)
   if executable_name then
-    return path_join(get_shimlink_root(), "_", executable_name)
+    return file.path_join(get_shimlink_root(), "_", executable_name)
   end
-  return path_join(get_shimlink_root(), "_")
+  return file.path_join(get_shimlink_root(), "_")
 end
 
 local function get_versioned_dir(executable_name, sha256)
-  return path_join(get_storage_dir(executable_name), sha256:sub(1, 16))
+  return file.path_join(get_storage_dir(executable_name), sha256:sub(1, 16))
 end
 
 local function get_shimlink_bin_dir()
-  return path_join(get_shimlink_root(), "bin")
+  return file.path_join(get_shimlink_root(), "bin")
 end
 
 local function get_shimlink_bin_link(executable_name)
-  return path_join(get_shimlink_bin_dir(), executable_name)
+  return file.path_join(get_shimlink_bin_dir(), executable_name)
 end
 
 local function get_relative_versioned_path(executable_name, sha256, executable_path)
   local short_sha = sha256:sub(1, 16)
   if executable_path then
-    return path_join("..", "_", executable_name, short_sha, executable_path)
+    return file.path_join("..", "_", executable_name, short_sha, executable_path)
   else
-    return path_join("..", "_", executable_name, short_sha)
+    return file.path_join("..", "_", executable_name, short_sha)
   end
 end
 
@@ -271,7 +152,7 @@ local function download_file(url, dest_path)
 end
 
 local function extract_archive(archive_path, extract_to, executable_path)
-  local archive_name = basename(archive_path)
+  local archive_name = file.basename(archive_path)
 
   if archive_name:match("%.zip$") then
     local exit_status = posix.spawn({"unzip", "-q", archive_path, "-d", extract_to})
@@ -287,8 +168,8 @@ local function extract_archive(archive_path, extract_to, executable_path)
     if not executable_path then
       return nil, "executable_path required for single file gzip"
     end
-    local output_path = path_join(extract_to, executable_path)
-    mkdir_p(dirname(output_path))
+    local output_path = file.path_join(extract_to, executable_path)
+    file.mkdir_p(file.dirname(output_path))
     local exit_status = posix.spawn({"/bin/sh", "-c", string.format("gunzip -c %q > %q", archive_path, output_path)})
     if exit_status ~= 0 then
       return nil, "failed to extract gzip"
@@ -299,7 +180,7 @@ local function extract_archive(archive_path, extract_to, executable_path)
   end
 
   if executable_path then
-    return path_join(extract_to, executable_path)
+    return file.path_join(extract_to, executable_path)
   else
     return archive_path
   end
@@ -313,7 +194,7 @@ local function create_symlink_atomic(target, link_path)
   end
 
   local ok, err = pcall(function()
-    mkdir_p(dirname(link_path))
+    file.mkdir_p(file.dirname(link_path))
 
     cleanup()
 
@@ -337,18 +218,18 @@ local function create_symlink_atomic(target, link_path)
 end
 
 local function create_symlink(bin_dir, src_path, dest_path, executable_name)
-  local source = path_join(bin_dir, src_path)
+  local source = file.path_join(bin_dir, src_path)
 
-  if not file_exists(source) then
+  if not file.exists(source) then
     stderr_write("shimlink: warning: symlink source does not exist: " .. source)
     return
   end
 
-  local dest = expand_path(dest_path)
+  local dest = file.expand_path(dest_path)
 
-  mkdir_p(dirname(dest))
+  file.mkdir_p(file.dirname(dest))
 
-  if file_exists(dest) then
+  if file.exists(dest) then
     ffi.C.unlink(dest)
   end
 
@@ -420,8 +301,8 @@ local function update_config_checksum(executable_name, plat, new_sha)
 end
 
 local function download_to_temp(url, executable_name, temp_dir)
-  local download_name = basename(url)
-  local download_path = path_join(temp_dir, download_name)
+  local download_name = file.basename(url)
+  local download_path = file.path_join(temp_dir, download_name)
 
   local ok, err = download_file(url, download_path)
   if not ok then
@@ -459,8 +340,8 @@ local function extract_and_prepare(download_path, temp_dir, path, executable_nam
   local extract_temp
 
   if path then
-    extract_temp = path_join(temp_dir, "extracted")
-    mkdir_p(extract_temp)
+    extract_temp = file.path_join(temp_dir, "extracted")
+    file.mkdir_p(extract_temp)
     local extracted_path, err = extract_archive(download_path, extract_temp, path)
     if not extracted_path then
       return nil, "failed to extract " .. executable_name .. ": " .. err
@@ -469,20 +350,20 @@ local function extract_and_prepare(download_path, temp_dir, path, executable_nam
     local strip_components = config.strip_components or 0
     local binary_dir = extract_temp
     for i = 1, strip_components do
-      local first_entry, dir_err = list_dir_first_entry(binary_dir)
+      local first_entry, dir_err = file.list_dir_first_entry(binary_dir)
       if not first_entry then
         return nil, "failed to strip component " .. i .. ": " .. tostring(dir_err)
       end
-      binary_dir = path_join(binary_dir, first_entry)
+      binary_dir = file.path_join(binary_dir, first_entry)
     end
-    local executable_path = path_join(binary_dir, path)
+    local executable_path = file.path_join(binary_dir, path)
 
-    if file_exists(executable_path) then
+    if file.exists(executable_path) then
       stat.chmod(executable_path, tonumber("0755", 8))
     end
   else
     extract_temp = temp_dir
-    if file_exists(download_path) then
+    if file.exists(download_path) then
       stat.chmod(download_path, tonumber("0755", 8))
     end
   end
@@ -493,14 +374,14 @@ end
 local function install_to_versioned_dir(extract_temp, download_path, temp_dir, executable_name, path, config, actual_sha256)
   local versioned_dir = get_versioned_dir(executable_name, actual_sha256)
   local storage_dir = get_storage_dir(executable_name)
-  mkdir_p(storage_dir)
+  file.mkdir_p(storage_dir)
 
-  if is_directory(versioned_dir) then
+  if file.is_directory(versioned_dir) then
     stderr_write("shimlink: version " .. actual_sha256:sub(1, 16) .. " already exists")
     return actual_sha256
   end
 
-  local install_temp = path_join(temp_dir, "install")
+  local install_temp = file.path_join(temp_dir, "install")
 
   if path then
     local strip_components = config.strip_components or 0
@@ -508,11 +389,11 @@ local function install_to_versioned_dir(extract_temp, download_path, temp_dir, e
     if strip_components > 0 then
       local source_dir = extract_temp
       for i = 1, strip_components do
-        local first_entry, dir_err = list_dir_first_entry(source_dir)
+        local first_entry, dir_err = file.list_dir_first_entry(source_dir)
         if not first_entry then
           return nil, "failed to strip component " .. i .. " during installation: " .. tostring(dir_err)
         end
-        source_dir = path_join(source_dir, first_entry)
+        source_dir = file.path_join(source_dir, first_entry)
       end
       local ok, err = os.rename(source_dir, install_temp)
       if not ok then
@@ -525,15 +406,15 @@ local function install_to_versioned_dir(extract_temp, download_path, temp_dir, e
       end
     end
   else
-    mkdir_p(install_temp)
-    local final_path = path_join(install_temp, executable_name)
+    file.mkdir_p(install_temp)
+    local final_path = file.path_join(install_temp, executable_name)
     local ok, err = os.rename(download_path, final_path)
     if not ok then
       return nil, "failed to move executable: " .. tostring(err)
     end
   end
 
-  local temp_versioned = path_join(storage_dir, ".installing." .. actual_sha256:sub(1, 16))
+  local temp_versioned = file.path_join(storage_dir, ".installing." .. actual_sha256:sub(1, 16))
   local ok, err = os.rename(install_temp, temp_versioned)
   if not ok then
     return nil, "failed to create temporary versioned directory: " .. tostring(err)
@@ -541,7 +422,7 @@ local function install_to_versioned_dir(extract_temp, download_path, temp_dir, e
 
   ok, err = os.rename(temp_versioned, versioned_dir)
   if not ok then
-    local cleanup_ok, cleanup_err = rm_rf(temp_versioned)
+    local cleanup_ok, cleanup_err = file.rm_rf(temp_versioned)
     if not cleanup_ok then
       stderr_write("shimlink: warning: failed to cleanup temp directory: " .. tostring(cleanup_err))
     end
@@ -559,10 +440,10 @@ local function download_executable(executable_name, config, force)
   local path = config.path
 
   local shimlink_root = get_shimlink_root()
-  mkdir_p(shimlink_root)
+  file.mkdir_p(shimlink_root)
 
   local stdlib = require("posix.stdlib")
-  local temp_template = path_join(shimlink_root, ".tmp." .. executable_name .. ".XXXXXX")
+  local temp_template = file.path_join(shimlink_root, ".tmp." .. executable_name .. ".XXXXXX")
   local temp_dir = stdlib.mkdtemp(temp_template)
 
   local success, result = pcall(function()
@@ -592,7 +473,7 @@ local function download_executable(executable_name, config, force)
     return installed_sha
   end)
 
-  local cleanup_ok, cleanup_err = rm_rf(temp_dir)
+  local cleanup_ok, cleanup_err = file.rm_rf(temp_dir)
   if not cleanup_ok then
     stderr_write("shimlink: warning: failed to cleanup temp directory: " .. tostring(cleanup_err))
   end
@@ -619,7 +500,7 @@ local function update_executable(executable_name, config, force)
   local expected_sha256 = platform_config.sha256
   if expected_sha256 and not force then
     local versioned_dir = get_versioned_dir(executable_name, expected_sha256)
-    if is_directory(versioned_dir) then
+    if file.is_directory(versioned_dir) then
       stderr_write("shimlink: version " .. expected_sha256:sub(1, 16) .. " already exists")
       sha256 = expected_sha256
     end
@@ -644,12 +525,12 @@ local function update_executable(executable_name, config, force)
 
     local executable_full_path
     if executable_path_config then
-      executable_full_path = path_join(versioned_dir, executable_path_config)
+      executable_full_path = file.path_join(versioned_dir, executable_path_config)
     else
-      executable_full_path = path_join(versioned_dir, executable_name_inner)
+      executable_full_path = file.path_join(versioned_dir, executable_name_inner)
     end
 
-    if not file_exists(executable_full_path) then
+    if not file.exists(executable_full_path) then
       stderr_write("shimlink: executable not found at " .. executable_full_path)
       return false
     end

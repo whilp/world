@@ -102,7 +102,7 @@ All callers updated to handle new error pattern. Reserved `error()` for programm
 
 **Commit**: 14d723c570eb5f20cab86e20fe60ec5a58af9b6e
 
-### 9. Remove redundant platform config merging
+### 9. Remove redundant platform config merging ✓ DONE
 
 **Issue**: `platform.get_config` (.local/lib/lua/platform.lua:62-87) and `platform.expand` (90-125) have overlapping logic
 
@@ -110,13 +110,38 @@ All callers updated to handle new error pattern. Reserved `error()` for programm
 
 **Impact**: Removes subtle bugs from multiple passes over same data
 
-### 10. Consolidate file operations library
+**Implementation**: Unified platform config handling with clear semantics:
+- Renamed `get_config` to `get_platform_config` (kept alias for compatibility)
+- Removed platform parameter from `expand()` - now expands all platforms once
+- `get_platform_config` now works on already-expanded configs and includes url from urls table
+- Enhanced `get_field` to check platform-specific fields before falling back to base fields
+- Updated shimlink callers to use new unified workflow
+
+New workflow eliminates redundant merging:
+1. `config = platform.expand(config)` - single pass expanding all templates for all platforms
+2. `platform_config = platform.get_platform_config(config, plat)` - extract merged view for one platform
+3. `value = platform.get_field(config, field, plat)` - access fields with platform awareness
+
+Tested with all 17 shimlink configs - all pass with correct URL generation and field access.
+
+**Commit**: 19e17db9b0e9e0e79933d556ef3b28be9f43f7a6
+
+### 10. Consolidate file operations library ✓ DONE
 
 **Issue**: File helpers scattered through main script: `read_file` (68), `write_file` (78), `file_exists` (57), `is_directory` (62)
 
 **Fix**: Extract to separate `file.lua` module with comprehensive operations
 
 **Impact**: Reusable across projects, easier to test independently
+
+**Implementation**: Created `/pay/home/owner/.local/lib/lua/file.lua` with 11 functions:
+- File operations: `read`, `write`, `exists`, `is_directory`
+- Path operations: `basename`, `dirname`, `path_join`, `expand_path`
+- Directory operations: `mkdir_p`, `rm_rf`, `list_dir_first_entry`
+
+Reduced shimlink from 956 to 837 lines (119 lines). All functions maintain original behavior with consistent `nil, err` error handling pattern. Comprehensive testing confirms all operations work correctly.
+
+**Commit**: [pending]
 
 ## Medium priority: additional robustness
 
