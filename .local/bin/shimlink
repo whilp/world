@@ -410,6 +410,18 @@ local function download_executable(executable_name, config, force)
 
     local actual_sha256 = calculate_sha256(download_path)
 
+    if force then
+      update_config_checksum(executable_name, config.platform, actual_sha256)
+      stderr_write("shimlink: force mode - updated checksum for " .. executable_name)
+    elseif expected_sha256 then
+      if actual_sha256 ~= expected_sha256 then
+        stderr_write("shimlink: checksum mismatch for " .. executable_name)
+        stderr_write("shimlink:   expected: " .. expected_sha256)
+        stderr_write("shimlink:   actual:   " .. actual_sha256)
+        error("checksum mismatch")
+      end
+    end
+
     local extract_temp
 
     if path then
@@ -439,18 +451,6 @@ local function download_executable(executable_name, config, force)
       extract_temp = temp_dir
       if file_exists(download_path) then
         stat.chmod(download_path, tonumber("0755", 8))
-      end
-    end
-
-    if force then
-      update_config_checksum(executable_name, config.platform, actual_sha256)
-      stderr_write("shimlink: force mode - updated checksum for " .. executable_name)
-    elseif expected_sha256 then
-      if actual_sha256 ~= expected_sha256 then
-        stderr_write("shimlink: checksum mismatch for " .. executable_name)
-        stderr_write("shimlink:   expected: " .. expected_sha256)
-        stderr_write("shimlink:   actual:   " .. actual_sha256)
-        error("checksum mismatch")
       end
     end
 
