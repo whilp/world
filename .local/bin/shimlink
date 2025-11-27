@@ -272,22 +272,31 @@ local function extract_archive(archive_path, extract_to, executable_path)
 end
 
 local function create_symlink_atomic(target, link_path)
-  local temp_link = link_path .. ".tmp." .. os.time()
+  local temp_link = string.format("%s.tmp.%d.%d", link_path, os.time(), unistd.getpid())
 
-  mkdir_p(dirname(link_path))
-
-  ffi.C.unlink(temp_link)
-
-  local result = ffi.C.symlink(target, temp_link)
-  if result ~= 0 then
-    stderr_write("shimlink: failed to create temporary symlink " .. temp_link)
-    return false
+  local cleanup = function()
+    ffi.C.unlink(temp_link)
   end
 
-  local rename_result = os.rename(temp_link, link_path)
-  if not rename_result then
-    stderr_write("shimlink: failed to rename symlink " .. temp_link .. " to " .. link_path)
-    ffi.C.unlink(temp_link)
+  local ok, err = pcall(function()
+    mkdir_p(dirname(link_path))
+
+    cleanup()
+
+    local result = ffi.C.symlink(target, temp_link)
+    if result ~= 0 then
+      error(string.format("failed to create temporary symlink %s -> %s", temp_link, target))
+    end
+
+    local rename_result = os.rename(temp_link, link_path)
+    if not rename_result then
+      error(string.format("failed to rename symlink %s to %s", temp_link, link_path))
+    end
+  end)
+
+  if not ok then
+    cleanup()
+    stderr_write("shimlink: " .. tostring(err))
     return false
   end
 
