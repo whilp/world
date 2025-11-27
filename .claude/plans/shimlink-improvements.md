@@ -84,13 +84,23 @@ Main `download_executable` reduced to 48 lines as a clean coordinator that calls
 
 **Commit**: b63a50b5f87ba8e4da2ea5e4cf742b3e9f0e16a5
 
-### 8. Standardize error reporting
+### 8. Standardize error reporting ✓ DONE
 
 **Issue**: Mixed approaches: some return `false`, some return `nil, err`, some use `error()`
 
 **Fix**: Use consistent `ok, err` pattern throughout; reserve `error()` for unrecoverable situations
 
 **Impact**: Predictable error handling, easier to wrap in recovery logic
+
+**Implementation**: Standardized 11 utility functions to consistently return `nil, err` on failure:
+- File operations: `read_file`, `write_file`, `is_directory`, `calculate_sha256`
+- Directory operations: `list_dir_first_entry`, `get_version_files`, `rm_rf`
+- Network/system operations: `download_file`, `create_symlink_atomic`, `update_config_checksum`
+- Utility functions: `get_nested`
+
+All callers updated to handle new error pattern. Reserved `error()` for programmer errors only.
+
+**Commit**: 14d723c570eb5f20cab86e20fe60ec5a58af9b6e
 
 ### 9. Remove redundant platform config merging
 
