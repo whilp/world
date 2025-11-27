@@ -666,6 +666,27 @@ local function parse_params(args)
   return params
 end
 
+local function get_nested(tbl, path)
+  local keys = {}
+  for key in path:gmatch("[^.]+") do
+    table.insert(keys, key)
+  end
+
+  local current = tbl
+  for i = 1, #keys do
+    local key = keys[i]
+    if type(current) ~= "table" then
+      return nil
+    end
+    current = current[key]
+    if current == nil then
+      return nil
+    end
+  end
+
+  return current
+end
+
 local function set_nested(tbl, path, value)
   local keys = {}
   for key in path:gmatch("[^.]+") do
@@ -711,10 +732,17 @@ end
 
 local function cmd_show(args)
   if #args < 1 then
-    error("usage: shimlink show <executable> [key=value...]")
+    error("usage: shimlink show <executable>[.<field>] [key=value...]")
   end
 
-  local executable = args[1]
+  local first_arg = args[1]
+  local executable, field_path = first_arg:match("^([^.]+)%.(.+)$")
+
+  if not executable then
+    executable = first_arg
+    field_path = nil
+  end
+
   local params = parse_params({unpack(args, 2)})
 
   local config = load_config(executable)
@@ -729,7 +757,30 @@ local function cmd_show(args)
     end
   end
 
-  print(version.render(clean))
+  if field_path then
+    if field_path == "url" then
+      local platform = params.platform or get_platform()
+      local value = config.urls and config.urls[platform]
+      if value then
+        print(value)
+      else
+        error("no URL found for platform: " .. platform)
+      end
+    else
+      local value = get_nested(clean, field_path)
+      if value == nil then
+        error("field not found: " .. field_path)
+      end
+
+      if type(value) == "table" then
+        print(version.render(value))
+      else
+        print(tostring(value))
+      end
+    end
+  else
+    print(version.render(clean))
+  end
 end
 
 local function cmd_write(args)
