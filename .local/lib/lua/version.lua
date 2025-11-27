@@ -8,7 +8,10 @@ local function default_version_callback(config)
   end
 
   if M.versions[config.name] then
-    error("version name collision: " .. config.name)
+    local existing = M.versions[config.name]
+    local existing_path = existing._meta and existing._meta.source or "unknown"
+    local new_path = config._meta and config._meta.source or "unknown"
+    error("version name collision: " .. config.name .. " (existing: " .. existing_path .. ", new: " .. new_path .. ")")
   end
 
   M.versions[config.name] = config
