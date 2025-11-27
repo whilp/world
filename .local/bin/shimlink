@@ -42,7 +42,6 @@ local function load_all_configs()
 end
 
 local function load_config(executable)
-  load_all_configs()
   local config = platform.get(executable)
   if not config then
     error("config not found for: " .. executable)
@@ -333,7 +332,6 @@ local function get_executables(config)
 end
 
 local function update_config_checksum(executable_name, plat, new_sha)
-  load_all_configs()
   local config = platform.get(executable_name)
   if not config then
     stderr_write("shimlink: config not found for " .. executable_name)
@@ -694,8 +692,6 @@ local function cmd_write(args)
   local executable = args[1]
   local params = parse_params({unpack(args, 2)})
 
-  -- Load all configs first
-  load_all_configs()
   local config = platform.get(executable)
   if not config then
     error("config not found for: " .. executable)
@@ -824,6 +820,8 @@ local function main(args)
     cmd_help()
     os.exit(0)
   end
+
+  load_all_configs()
 
   local command = args[1]
   local cmd_args = {unpack(args, 2)}
