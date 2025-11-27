@@ -141,7 +141,7 @@ Tested with all 17 shimlink configs - all pass with correct URL generation and f
 
 Reduced shimlink from 956 to 837 lines (119 lines). All functions maintain original behavior with consistent `nil, err` error handling pattern. Comprehensive testing confirms all operations work correctly.
 
-**Commit**: [pending]
+**Commit**: 48b72e1e8a5dcf07bcec3e07ac6a2c68c2734fa0
 
 ## Medium priority: additional robustness
 
