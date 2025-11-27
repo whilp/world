@@ -1,7 +1,7 @@
 #!/usr/bin/env luajit
 
 package.path = os.getenv("HOME") .. "/.local/lib/lua/?.lua;" .. package.path
-local version = require("version")
+local platform = require("platform")
 local ffi = require("ffi")
 local posix = require("posix")
 local unistd = require("posix.unistd")
@@ -35,7 +35,7 @@ end
 
 local function load_all_configs()
   for _, path in ipairs(get_version_files()) do
-    local ok, err = version.load_file(path)
+    local ok, err = platform.load_file(path)
     if not ok then
       error("failed to load " .. path .. ": " .. tostring(err))
     end
@@ -44,57 +44,10 @@ end
 
 local function load_config(executable)
   load_all_configs()
-  local config = version.get(executable)
+  local config = platform.get(executable)
   if not config then
     error("config not found for: " .. executable)
   end
-  return config
-end
-
-local function build_context(config, platform, platform_data)
-  local base = {
-    destination = os.getenv("HOME") .. "/.local/share/shimlink/bin",
-  }
-  for k, v in pairs(config) do
-    if k ~= "platforms" and k ~= "urls" then
-      base[k] = v
-    end
-  end
-  return version.merge(base, platform_data or {}, {platform = platform})
-end
-
-local function expand_templates(config)
-  local base_context = {
-    destination = os.getenv("HOME") .. "/.local/share/shimlink/bin",
-  }
-  for k, v in pairs(config) do
-    if k ~= "platforms" and k ~= "urls" then
-      base_context[k] = v
-    end
-  end
-
-  for k, v in pairs(config) do
-    if k ~= "platforms" and k ~= "urls" and k ~= "url" then
-      config[k] = version.expand(v, base_context)
-    end
-  end
-
-  local expanded = {}
-  for platform, platform_data in pairs(config.platforms) do
-    local context = build_context(config, platform, platform_data)
-    expanded[platform] = version.expand(platform_data, context)
-  end
-
-  config.platforms = expanded
-
-  if config.url then
-    config.urls = {}
-    for platform, platform_data in pairs(config.platforms) do
-      local context = build_context(config, platform, platform_data)
-      config.urls[platform] = version.interpolate(config.url, context)
-    end
-  end
-
   return config
 end
 
@@ -206,25 +159,6 @@ local function list_dir_first_entry(path)
     end
   end
   return nil
-end
-
-local function get_platform()
-  local system = jit.os:lower()
-  local machine = jit.arch:lower()
-
-  local system_map = {
-    osx = "darwin",
-  }
-  system = system_map[system] or system
-
-  local arch_map = {
-    x64 = "x86_64",
-    aarch64 = "arm64",
-    arm64 = "arm64",
-  }
-  machine = arch_map[machine] or machine
-
-  return system .. "-" .. machine
 end
 
 local function calculate_sha256(filepath)
@@ -386,29 +320,6 @@ local function create_symlink(bin_dir, src_path, dest_path, executable_name)
   end
 end
 
-local function get_platform_config(config)
-  local platform = get_platform()
-  local platform_data = config.platforms[platform]
-
-  if not platform_data then
-    stderr_write("shimlink: no configuration for platform " .. platform)
-    return nil
-  end
-
-  local merged = {}
-  for k, v in pairs(config) do
-    if k ~= "platforms" then
-      merged[k] = v
-    end
-  end
-  for k, v in pairs(platform_data) do
-    merged[k] = v
-  end
-  merged.platform = platform
-
-  return merged
-end
-
 local function get_executables(config)
   if config.executables then
     return config.executables
@@ -422,18 +333,18 @@ local function get_executables(config)
   end
 end
 
-local function update_config_checksum(executable_name, platform, new_sha)
+local function update_config_checksum(executable_name, plat, new_sha)
   load_all_configs()
-  local config = version.get(executable_name)
+  local config = platform.get(executable_name)
   if not config then
     stderr_write("shimlink: config not found for " .. executable_name)
     return false
   end
 
-  if not config.platforms[platform] then
-    config.platforms[platform] = {}
+  if not config.platforms[plat] then
+    config.platforms[plat] = {}
   end
-  config.platforms[platform].sha256 = new_sha
+  config.platforms[plat].sha256 = new_sha
 
   -- Get source from metadata
   local source = config._meta.source
@@ -450,12 +361,12 @@ local function update_config_checksum(executable_name, platform, new_sha)
     end
   }
 
-  version.load_file(source, kinds)
+  platform.load_file(source, kinds)
 
   -- Build output by concatenating rendered configs
   local output = {}
   for _, cfg in ipairs(reloaded) do
-    table.insert(output, version.write(cfg))
+    table.insert(output, platform.write(cfg))
   end
 
   -- Write to file
@@ -467,7 +378,7 @@ local function update_config_checksum(executable_name, platform, new_sha)
   f:write(table.concat(output, "\n"))
   f:close()
 
-  stderr_write("shimlink: updated checksum for " .. executable_name .. " (" .. platform .. ") to " .. new_sha)
+  stderr_write("shimlink: updated checksum for " .. executable_name .. " (" .. plat .. ") to " .. new_sha)
   return true
 end
 
@@ -583,8 +494,10 @@ local function download_executable(executable_name, config, force)
 end
 
 local function update_executable(executable_name, config, force)
-  local platform_config = get_platform_config(config)
+  local plat = platform.detect()
+  local platform_config, err = platform.get_config(config, plat)
   if not platform_config then
+    stderr_write("shimlink: " .. err)
     return false
   end
 
@@ -603,7 +516,7 @@ local function update_executable(executable_name, config, force)
   if not sha256 then
     local success
     local urls = config.urls or {}
-    platform_config.url = urls[platform_config.platform] or config.url
+    platform_config.url = urls[plat] or config.url
     success, sha256 = download_executable(executable_name, platform_config, force)
     if not success then
       return false
@@ -747,7 +660,7 @@ local function cmd_show(args)
 
   local config = load_config(executable)
   config = apply_updates(config, params)
-  config = expand_templates(config)
+  config = platform.expand(config, params.platform)
 
   -- Remove metadata before rendering
   local clean = {}
@@ -758,28 +671,19 @@ local function cmd_show(args)
   end
 
   if field_path then
-    if field_path == "url" then
-      local platform = params.platform or get_platform()
-      local value = config.urls and config.urls[platform]
-      if value then
-        print(value)
-      else
-        error("no URL found for platform: " .. platform)
-      end
-    else
-      local value = get_nested(clean, field_path)
-      if value == nil then
-        error("field not found: " .. field_path)
-      end
+    local plat = params.platform or platform.detect()
+    local value, err = platform.get_field(clean, field_path, plat)
+    if not value then
+      error(err)
+    end
 
-      if type(value) == "table" then
-        print(version.render(value))
-      else
-        print(tostring(value))
-      end
+    if type(value) == "table" then
+      print(platform.render(value))
+    else
+      print(tostring(value))
     end
   else
-    print(version.render(clean))
+    print(platform.render(clean))
   end
 end
 
@@ -793,7 +697,7 @@ local function cmd_write(args)
 
   -- Load all configs first
   load_all_configs()
-  local config = version.get(executable)
+  local config = platform.get(executable)
   if not config then
     error("config not found for: " .. executable)
   end
@@ -814,12 +718,12 @@ local function cmd_write(args)
     end
   }
 
-  version.load_file(source, kinds)
+  platform.load_file(source, kinds)
 
   -- Build output by concatenating rendered configs
   local output = {}
   for _, cfg in ipairs(reloaded) do
-    table.insert(output, version.write(cfg))
+    table.insert(output, platform.write(cfg))
   end
 
   -- Write to file
@@ -898,7 +802,7 @@ local function cmd_update(args)
   for _, executable in ipairs(executables) do
     local ok, err = pcall(function()
       local config = load_config(executable)
-      config = expand_templates(config)
+      config = platform.expand(config)
       if not update_executable(executable, config, force) then
         stderr_write("shimlink: failed to update " .. executable)
         failed = true
