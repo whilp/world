@@ -43,7 +43,68 @@ Key patterns:
 
 ## Error handling
 
-Use `pcall` for optional dependencies:
+### Consistent error pattern
+
+Use `nil, err` for runtime failures, reserve `error()` for programmer errors:
+
+```lua
+local function read_file(path)
+  local f = io.open(path, "r")
+  if not f then
+    return nil, "failed to open file: " .. path
+  end
+  local content = f:read("*all")
+  f:close()
+  return content
+end
+```
+
+Functions return:
+- Success: `true` or the actual value
+- Failure: `nil, error_message`
+
+Use `error()` only for unrecoverable programmer errors:
+
+```lua
+if not config.name then
+  error("config missing required field 'name'")
+end
+```
+
+### Input validation
+
+Validate inputs early with descriptive errors:
+
+```lua
+local function download_file(url, dest_path)
+  if not url or url == "" then
+    return nil, "url cannot be empty"
+  end
+  if not dest_path or dest_path == "" then
+    return nil, "dest_path cannot be empty"
+  end
+  -- proceed with download
+end
+```
+
+### Error propagation
+
+Propagate errors with context:
+
+```lua
+local function download_to_temp(url, name, temp_dir)
+  local download_path = file.path_join(temp_dir, file.basename(url))
+  local ok, err = download_file(url, download_path)
+  if not ok then
+    return nil, "failed to download " .. name .. ": " .. err
+  end
+  return download_path
+end
+```
+
+### Protected calls
+
+Use `pcall` for optional dependencies and cleanup:
 
 ```lua
 local ok, module = pcall(require, "module_name")
@@ -52,65 +113,74 @@ if ok then
 end
 ```
 
-Use guard clauses for validation:
+Wrap operations needing guaranteed cleanup:
 
 ```lua
-local function read_file(path)
-  local f = io.open(path, "r")
-  if not f then
-    return nil
+local function operation(path)
+  local temp_dir = create_temp_dir()
+  local ok, result = pcall(function()
+    -- risky operations
+    return process(temp_dir)
+  end)
+  file.rm_rf(temp_dir)  -- cleanup always happens
+  if not ok then
+    return nil, result  -- result is error message
   end
-  local content = f:read("*all")
-  f:close()
-  return content
-end
-```
-
-Use explicit error messages:
-
-```lua
-if not condition then
-  error("descriptive error message")
+  return result
 end
 ```
 
 ## File I/O patterns
 
-Standard read pattern:
+Standard read pattern with error handling:
 
 ```lua
-local f = io.open(path, "r")
-if not f then
-  return nil
+local function read_file(path)
+  local f = io.open(path, "r")
+  if not f then
+    return nil, "failed to open file: " .. path
+  end
+  local content = f:read("*all")  -- or "*l" for single line
+  f:close()
+  return content
 end
-local content = f:read("*all")  -- or "*l" for single line
-f:close()
-return content
 ```
 
-Standard write pattern:
+Standard write pattern with error handling:
 
 ```lua
-local f = io.open(path, "w")
-if not f then
-  return false
+local function write_file(path, content)
+  local f = io.open(path, "w")
+  if not f then
+    return nil, "failed to open file for writing: " .. path
+  end
+  f:write(content)
+  f:close()
+  return true
 end
-f:write(content)
-f:close()
-return true
 ```
 
 Use atomic operations (temp file + rename) for critical writes:
 
 ```lua
-local temp = path .. ".tmp." .. os.time()
-local f = io.open(temp, "w")
-if not f then
-  return false
+local function atomic_write(path, content)
+  local unistd = require("posix.unistd")
+  local temp = string.format("%s.tmp.%d.%d", path, os.time(), unistd.getpid())
+
+  local f = io.open(temp, "w")
+  if not f then
+    return nil, "failed to create temp file: " .. temp
+  end
+  f:write(content)
+  f:close()
+
+  local ok, err = os.rename(temp, path)
+  if not ok then
+    ffi.C.unlink(temp)  -- cleanup on failure
+    return nil, "failed to rename temp file: " .. err
+  end
+  return true
 end
-f:write(content)
-f:close()
-os.rename(temp, path)
 ```
 
 Write to stdout and stderr:
@@ -328,16 +398,166 @@ local function get_platform()
 end
 ```
 
+## Function design principles
+
+### Single responsibility
+
+Split large functions into focused functions with single responsibilities:
+
+```lua
+-- Before: 100+ line monolithic function
+local function download_executable(name, config, force)
+  -- download, checksum, extract, install all mixed together
+end
+
+-- After: Split into focused functions
+local function download_to_temp(url, name, temp_dir)
+  -- only handles downloading
+end
+
+local function validate_checksum(path, expected, name, config, force)
+  -- only handles checksum validation
+end
+
+local function extract_and_prepare(archive, temp_dir, path, config)
+  -- only handles extraction
+end
+
+local function install_to_versioned_dir(extract_temp, sha256, config)
+  -- only handles installation
+end
+
+-- Coordinator function
+local function download_executable(name, config, force)
+  local temp_dir = create_temp()
+  local download_path, err = download_to_temp(config.url, name, temp_dir)
+  if not download_path then
+    file.rm_rf(temp_dir)
+    return nil, err
+  end
+  -- chain other operations with error handling
+end
+```
+
+### Eliminate duplication
+
+Create single source of truth for repeated patterns:
+
+```lua
+-- Before: Duplicated path construction
+local path1 = path_join("..", "_", name, sha:sub(1, 16), exec_path)
+local path2 = path_join("..", "_", name, sha:sub(1, 16), exec_path)
+
+-- After: Single helper function
+local function get_relative_versioned_path(name, sha256, exec_path)
+  local short_sha = sha256:sub(1, 16)
+  if exec_path then
+    return path_join("..", "_", name, short_sha, exec_path)
+  else
+    return path_join("..", "_", name, short_sha)
+  end
+end
+```
+
+### Transaction pattern
+
+Use transaction pattern for operations that modify state:
+
+```lua
+local function install_package(name, config)
+  local temp_dir = create_temp_dir()
+
+  -- Wrap risky operations
+  local ok, result = pcall(function()
+    download_to(temp_dir)
+    validate_checksums(temp_dir)
+    extract_to(temp_dir)
+    -- Only commit at the end
+    return atomic_move_to_final(temp_dir, final_dir)
+  end)
+
+  -- Always cleanup temp, regardless of success
+  file.rm_rf(temp_dir)
+
+  if not ok then
+    return nil, result
+  end
+  return result
+end
+```
+
+### Validation early
+
+Validate inputs at function boundaries:
+
+```lua
+local function process_config(config)
+  -- Validate required fields
+  if not config.name or config.name == "" then
+    return nil, "config missing required field 'name'"
+  end
+  if type(config.platforms) ~= "table" then
+    return nil, "config field 'platforms' must be table, got " .. type(config.platforms)
+  end
+  if not next(config.platforms) then
+    return nil, "config field 'platforms' cannot be empty"
+  end
+
+  -- Process only after validation passes
+  return process(config)
+end
+```
+
+## Signal handling
+
+Register cleanup handlers for graceful shutdown:
+
+```lua
+local signal = require("posix.signal")
+local cleanup_registry = {}
+
+local function register_temp_dir(path)
+  table.insert(cleanup_registry, path)
+end
+
+local function cleanup_temp_resources()
+  for _, path in ipairs(cleanup_registry) do
+    if path and file.exists(path) then
+      file.rm_rf(path)
+    end
+  end
+  cleanup_registry = {}
+end
+
+local function setup_signal_handlers()
+  local handler = function(signum)
+    io.stderr:write(string.format("received signal %d, cleaning up...\n", signum))
+    io.stderr:flush()
+    cleanup_temp_resources()
+    os.exit(128 + signum)
+  end
+
+  signal.signal(signal.SIGINT, handler)
+  signal.signal(signal.SIGTERM, handler)
+end
+
+-- Call at program start
+setup_signal_handlers()
+```
+
 ## Best practices
 
-1. Use guard clauses and early returns
-2. Prefer explicit over implicit (avoid colon syntax for methods)
-3. Use atomic operations for critical file writes
-4. Always close file handles
-5. Check for nil before using file handles
-6. Use `pcall` to wrap main entry points
-7. Write errors to stderr: `io.stderr:write()`
-8. Keep modules focused and single-purpose
-9. Remove comments unless they're very useful
-10. Store library code in `~/.local/lib/lua/`
-11. Store executable scripts in `~/.local/bin/`
+1. **Error handling**: Use consistent `nil, err` pattern, reserve `error()` for programmer errors
+2. **Input validation**: Validate early with descriptive messages
+3. **Single responsibility**: Each function should do one thing well
+4. **Eliminate duplication**: Create helpers for repeated patterns
+5. **Transaction pattern**: Extract to temp, validate, then atomic move
+6. **Guard clauses**: Use early returns for validation
+7. **Atomic operations**: Use PID in temp file names, cleanup in all paths
+8. **Error propagation**: Add context when propagating errors
+9. **Signal handling**: Register cleanup handlers for graceful shutdown
+10. **Protected calls**: Use `pcall` with guaranteed cleanup
+11. **File handles**: Always close, check for nil before using
+12. **Module organization**: Keep focused and single-purpose
+13. **Code clarity**: Remove comments unless very useful
+14. **Standard paths**: Library code in `~/.local/lib/lua/`, executables in `~/.local/bin/`
