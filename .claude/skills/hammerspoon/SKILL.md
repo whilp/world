@@ -32,7 +32,7 @@ Manage Hammerspoon configuration for macOS automation including window managemen
 
 **init.lua** - Main entry point
 - Defines `hyper` modifier: `{cmd, ctrl, alt, shift}`
-- Loads all modules: hyper-key, config-watch, window-hotkeys
+- Loads all modules: hyper-key, config-watch, window-hotkeys, quick-switch
 - Current bindings:
   - `hyper+r` - Reload config manually
   - `hyper+t` - Test alert
@@ -69,10 +69,21 @@ Manage Hammerspoon configuration for macOS automation including window managemen
 - Uses `super+option` for nudge:
   - `super+option+h/j/k/l` - Nudge left/down/up/right
 
+### App launcher (Phase 2.1 ✅)
+
+**quick-switch.lua** - Direct app launch keybindings
+- Simple module with `setup(hyper)` function
+- Uses `toApplication()` method from HyperKey
+- Current app bindings:
+  - `hyper+return` - Ghostty (terminal)
+  - `hyper+c` - Google Chrome
+  - `hyper+s` - Spotify
+  - `hyper+1` - 1Password
+- Easy to add more apps: `hyper:bind("key"):toApplication("App Name")`
+
 ## Planned modules
 
-### Phase 2: App launcher and automation
-- `quick-switch.lua` - Direct app launch keybindings
+### Phase 2: Remaining automation
 - `text-expander.lua` - Trie-based snippet expansion
 - `audio-switcher.lua` - Audio device chooser
 - `mute-on-sleep.lua` - Auto-mute on wake

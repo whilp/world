@@ -13,7 +13,8 @@ This skill should be updated as new modules and features are implemented. Track 
 **Skill updates log:**
 - 2025-11-28: Initial skill created with Phase 1.1 implementation (hyper-key, config-watch, init.lua)
 - 2025-11-28: Added Phase 1.2 window management (window-management.lua, window-hotkeys.lua)
-- Next update: Add Phase 2.1 quick app switcher implementation details
+- 2025-11-28: Added Phase 2.1 quick app switcher (quick-switch.lua)
+- Next update: Add Phase 2.2 text expansion implementation details
 
 ## Current state analysis
 
@@ -169,27 +170,36 @@ return {
 
 ## Phase 2: App launcher and basic automation
 
-### 2.1: Quick app switcher
+### 2.1: Quick app switcher ✅
 
-**Files to create:**
+**Status:** Completed on 2025-11-28
+
+**Files created:**
 - `~/.config/hammerspoon/quick-switch.lua` - Direct app launch keybindings
 
-**Apps to bind (hyper key prefix):**
-- `t` - Ghostty (terminal)
-- `c` - Google Chrome
-- `s` - Spotify
-- `1` - 1Password
-- Add more as needed
+**Implementation notes:**
+- Created QuickSwitch module with setup function that accepts hyper key object
+- Uses `toApplication()` method from HyperKey for clean app launching
+- Integrated into init.lua with `quickSwitch.setup(hyper)` call
 
-**Testing:**
-- Test each app launch
-- Test switching to already-running apps
-- Test launching apps that aren't running
+**Apps bound (hyper key prefix):**
+- `hyper+return` - Ghostty (terminal)
+- `hyper+c` - Google Chrome
+- `hyper+s` - Spotify
+- `hyper+1` - 1Password
+
+**Testing checklist:**
+- [ ] Test each app launch
+- [ ] Test switching to already-running apps
+- [ ] Test launching apps that aren't running
+- [ ] Compare speed with Raycast launcher
 
 **Migration checklist:**
 - [ ] Identify most-used Raycast app launches
-- [ ] Add keybindings for top 10 apps
+- [ ] Add keybindings for additional frequently-used apps
 - [ ] Decide which Raycast features to keep (clipboard, extensions, etc.)
+
+**Next step:** Phase 2.2 - Text expansion
 
 ### 2.2: Text expansion
 
