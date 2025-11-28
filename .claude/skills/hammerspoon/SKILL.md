@@ -234,13 +234,12 @@ end
 ## App replacement status
 
 Current Hammerspoon setup replaces:
-- **Rectangle**: Window management via window-management.lua and window-hotkeys.lua
-- **AltTab**: Window switching via window-switcher.lua
-- **Raycast** (partial): App launching via quick-switch.lua
+- **AltTab**: Window switching via window-switcher.lua (hyper+tab)
 
 Still using:
-- **Karabiner-Elements**: Key remapping (hyperspace key, vim arrows, etc.)
-- **Raycast** (partial): Clipboard history, snippets, extensions
+- **Karabiner-Elements**: Key remapping (hyper key, caps lock to ctrl, right option to meh)
+- **Rectangle**: Window management
+- **Raycast**: App launching, clipboard history, snippets, extensions
 
 ## Troubleshooting
 
