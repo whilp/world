@@ -4,6 +4,8 @@ local windowHotkeys = require("window-hotkeys")
 local quickSwitch = require("quick-switch")
 local windowSwitcher = require("window-switcher")
 
+hs.ipc.cliInstall()
+
 local hyper = HyperKey.new({"cmd", "ctrl", "alt", "shift"})
 
 hyper:bind("r"):toFunction("Reload config", function()

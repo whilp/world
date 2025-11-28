@@ -13,8 +13,7 @@ Manage Hammerspoon configuration for macOS automation including window managemen
 
 - Config directory: `~/.config/hammerspoon/`
 - Symlink: `~/.hammerspoon` → `~/.config/hammerspoon/`
-- Console logs: `~/Library/Logs/Hammerspoon/console.log`
-- CLI tool: `hs` (in PATH at `/Applications/Hammerspoon.app/Contents/Frameworks/hs/hs`)
+- CLI tool: `hs` (installed via `hs.ipc.cliInstall()` in init.lua)
 
 ## Current modules
 
@@ -32,6 +31,7 @@ Manage Hammerspoon configuration for macOS automation including window managemen
 - Uses `hs.pathwatcher` API
 
 **init.lua** - Main entry point
+- Calls `hs.ipc.cliInstall()` to enable CLI access
 - Defines `hyper` modifier: `{cmd, ctrl, alt, shift}`
 - Defines `super` modifier: `{cmd, ctrl, alt}`
 - Loads all modules: hyper-key, config-watch, window-hotkeys, quick-switch, window-switcher
@@ -83,9 +83,26 @@ Manage Hammerspoon configuration for macOS automation including window managemen
 
 ### Using the hs CLI
 
-The `hs` command-line tool is available in PATH and provides direct interaction with Hammerspoon:
+The `hs` command-line tool provides direct interaction with Hammerspoon. It requires `hs.ipc.cliInstall()` to be called in init.lua (already configured).
 
-**View console output (clone prints to terminal):**
+**Check for errors and module status:**
+```bash
+hs -c "
+local status = {modules_loaded = {}, errors = {}}
+local modules = {'hyper-key', 'config-watch', 'window-hotkeys', 'quick-switch', 'window-switcher'}
+for _, mod in ipairs(modules) do
+  local ok, result = pcall(require, mod)
+  if ok then
+    table.insert(status.modules_loaded, mod)
+  else
+    table.insert(status.errors, mod .. ': ' .. tostring(result))
+  end
+end
+return hs.json.encode(status, true)
+"
+```
+
+**View live console output:**
 ```bash
 hs -C
 ```
@@ -113,8 +130,9 @@ hs /path/to/script.lua
 
 **Common flags:**
 - `-A` - Auto-launch Hammerspoon if not running
-- `-C` - Clone console prints to this terminal
+- `-C` - Clone console prints to this terminal (best for checking errors)
 - `-P` - Mirror prints to Hammerspoon console
+- `-c` - Execute command and return result
 - `-i` - Force interactive mode
 - `-n` - Disable colorized output
 - `-N` - Force colorized output
@@ -134,11 +152,10 @@ open -g hammerspoon://reload
 ps aux | rg -i hammerspoon
 ```
 
-**View console logs (file):**
+**Open console window:**
 ```bash
-tail -f ~/Library/Logs/Hammerspoon/console.log
+open "hammerspoon://consoleWindow"
 ```
-Note: Log file only exists if Hammerspoon has logged something. Use `hs -C` instead to view live console output.
 
 **Test configuration:**
 Edit any `.lua` file in `~/.config/hammerspoon/` to trigger auto-reload
@@ -227,20 +244,44 @@ Still using:
 
 ## Troubleshooting
 
+### Check for errors
+Use the `hs` CLI to check for module loading errors:
+```bash
+hs -c "
+local status = {modules_loaded = {}, errors = {}}
+local modules = {'hyper-key', 'config-watch', 'window-hotkeys', 'quick-switch', 'window-switcher'}
+for _, mod in ipairs(modules) do
+  local ok, result = pcall(require, mod)
+  if ok then
+    table.insert(status.modules_loaded, mod)
+  else
+    table.insert(status.errors, mod .. ': ' .. tostring(result))
+  end
+end
+return hs.json.encode(status, true)
+"
+```
+
+Or view live console output: `hs -C`
+
 ### Config not loading
 - Check symlink: `ls -la ~/.hammerspoon`
 - Verify Hammerspoon is running: `ps aux | rg Hammerspoon`
-- Reload manually: `open -g hammerspoon://reload`
+- Reload manually: `hs -c "hs.reload()"`
+- Check for errors: `hs -C` or `open "hammerspoon://consoleWindow"`
 
 ### Keybindings not working
 - Check for conflicts with app shortcuts
 - Verify modifier keys are correct
-- Test with simple alert: `hs.alert.show("test")`
+- Test with: `hs -c "hs.alert.show('test')"`
 
 ### Auto-reload not triggering
 - Verify `config-watch.lua` is loaded in `init.lua`
 - Check file extension is `.lua`
 - Restart Hammerspoon app
+
+### CLI not working
+If `hs` command not found, ensure `hs.ipc.cliInstall()` is called in init.lua
 
 ## Philosophy
 
