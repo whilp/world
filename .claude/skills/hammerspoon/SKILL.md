@@ -7,7 +7,7 @@ description: Configure and manage Hammerspoon automation, window management, key
 
 ## Overview
 
-Manage Hammerspoon configuration for macOS automation including window management, key remapping, app launching, and system automation.
+Manage Hammerspoon configuration for macOS automation including window management, app launching, and window switching.
 
 ## Configuration locations
 
@@ -15,9 +15,9 @@ Manage Hammerspoon configuration for macOS automation including window managemen
 - Symlink: `~/.hammerspoon` → `~/.config/hammerspoon/`
 - Console logs: `~/Library/Logs/Hammerspoon/console.log`
 
-## Current implementation
+## Current modules
 
-### Core modules (Phase 1.1 ✅)
+### Core infrastructure
 
 **hyper-key.lua** - Inline hyper key implementation
 - No spoon dependencies
@@ -32,13 +32,11 @@ Manage Hammerspoon configuration for macOS automation including window managemen
 
 **init.lua** - Main entry point
 - Defines `hyper` modifier: `{cmd, ctrl, alt, shift}`
+- Defines `super` modifier: `{cmd, ctrl, alt}`
 - Loads all modules: hyper-key, config-watch, window-hotkeys, quick-switch, window-switcher
-- Current bindings:
-  - `hyper+r` - Reload config manually
-  - `hyper+t` - Test alert
-- Shows "Hammerspoon loaded" alert on startup
+- Test bindings: `hyper+r` (reload), `hyper+t` (test alert)
 
-### Window management (Phase 1.2 ✅)
+### Window management
 
 **window-management.lua** - Grid-based window functions
 - Dynamic grid system adjusts to screen type:
@@ -46,67 +44,39 @@ Manage Hammerspoon configuration for macOS automation including window managemen
   - Ultrawide screens (aspect > 2.5): 10x4 grid
   - Vertical screens (aspect < 1): 4x8 grid
 - Screen watcher automatically adjusts grid on display changes
-- Core functions:
-  - `maximizeWindow()`, `centerOnScreen()`
-  - `leftHalf()`, `rightHalf()`, `topHalf()`, `bottomHalf()`
-  - `topLeft()`, `topRight()`, `bottomLeft()`, `bottomRight()` - Corners
-  - `leftThird()`, `centerThird()`, `rightThird()` - Thirds
-  - `leftTwoThirds()`, `rightTwoThirds()` - Two-thirds
-  - `throwLeft()`, `throwRight()`, `throwUp()`, `throwDown()` - Multi-display
-  - `shrinkLeft()`, `growRight()`, `shrinkUp()`, `growDown()` - Resize (40px)
-  - `nudgeLeft()`, `nudgeRight()`, `nudgeUp()`, `nudgeDown()` - Nudge (40px)
+- Core functions: maximize, center, halves, corners, thirds, two-thirds, throw (multi-display), resize (40px), nudge (40px)
 
 **window-hotkeys.lua** - Comprehensive keybindings
-- Uses `super` key (cmd+ctrl+alt) for all window operations:
+- `super` key (cmd+ctrl+alt) for window operations:
   - `super+f` - Maximize, `super+c` - Center
   - `super+h/j/k/l` - Left/bottom/top/right halves
-  - `super+u/i/n/m` - Corners (top-left/top-right/bottom-left/bottom-right)
-  - `super+d/e/g` - Thirds (left/center/right)
-  - `super+s/t` - Two-thirds (left/right)
-  - `super+q/w/a/z` - Throw to displays (left/right/up/down)
-- Uses `hyper` key (super+shift) for resize:
-  - `hyper+h/j/k/l` - Shrink left, grow down, shrink up, grow right
-- Uses `super+option` for nudge:
-  - `super+option+h/j/k/l` - Nudge left/down/up/right
+  - `super+u/i/n/m` - Corners
+  - `super+d/e/g` - Thirds
+  - `super+s/t` - Two-thirds
+  - `super+q/w/a/z` - Throw to displays
+- `hyper` key (super+shift) for resize: `hyper+h/j/k/l`
+- `super+option` for nudge: `super+option+h/j/k/l`
 
-### App launcher (Phase 2.1 ✅)
+### App launcher
 
 **quick-switch.lua** - Direct app launch keybindings
-- Simple module with `setup(hyper)` function
 - Uses `toApplication()` method from HyperKey
 - Current app bindings:
-  - `hyper+return` - Ghostty (terminal)
+  - `hyper+return` - Ghostty
   - `hyper+c` - Google Chrome
   - `hyper+s` - Spotify
   - `hyper+1` - 1Password
 - Easy to add more apps: `hyper:bind("key"):toApplication("App Name")`
 
-### Window switcher (Phase 4.1 ✅)
+### Window switcher
 
 **window-switcher.lua** - Window switcher using hs.window.switcher
 - Uses built-in `hs.window.switcher` API
-- Configured window filter shows all windows across all spaces and screens
+- Shows all windows across all spaces and screens
 - UI features: thumbnails, titles, dark background theme
 - Keybindings:
   - `hyper+tab` - Next window
   - `hyper+backtick` - Previous window
-- Simple `setup(hyper)` function for integration
-
-## Planned modules
-
-### Phase 2: Remaining automation (marked SKIP)
-- `text-expander.lua` - Trie-based snippet expansion
-- `audio-switcher.lua` - Audio device chooser
-- `mute-on-sleep.lua` - Auto-mute on wake
-
-### Phase 3: Key remapping (marked SKIP)
-- Vim arrow keys (option+hjkl)
-- Emacs navigation (ctrl+n/p)
-- Page navigation (cmd+shift+j/k)
-
-### Phase 4: Remaining advanced features
-- Monitor input switching (marked SKIP)
-- Custom automation ideas (optional)
 
 ## Common operations
 
@@ -199,21 +169,16 @@ else
 end
 ```
 
-## Migration tracking
+## App replacement status
 
-Plan location: `~/.claude/plans/hammerspoon-consolidation.md`
+Current Hammerspoon setup replaces:
+- **Rectangle**: Window management via window-management.lua and window-hotkeys.lua
+- **AltTab**: Window switching via window-switcher.lua
+- **Raycast** (partial): App launching via quick-switch.lua
 
-### Apps to replace
-- Rectangle (window management) - Phase 1
-- Raycast (app launcher, snippets) - Phase 2
-- Karabiner-Elements (key remapping) - Phase 3
-- AltTab (window switching) - Phase 4
-
-### Migration strategy
-1. Implement Hammerspoon equivalent
-2. Run in parallel with existing app
-3. Test for 1-2 weeks
-4. Disable/uninstall old app when confident
+Still using:
+- **Karabiner-Elements**: Key remapping (hyperspace key, vim arrows, etc.)
+- **Raycast** (partial): Clipboard history, snippets, extensions
 
 ## Troubleshooting
 
@@ -238,7 +203,21 @@ Plan location: `~/.claude/plans/hammerspoon-consolidation.md`
 - Inline functionality instead of external dependencies
 - Only use spoons if absolutely necessary
 - Keep implementation simple and maintainable
-- If spoons needed: create GitHub workflow for bundling
+
+**Decision criteria for using spoons:**
+- Must provide significant value that's hard to inline
+- Must be actively maintained
+- Must be worth the workflow complexity
+
+**Future spoon management (not yet implemented):**
+If spoons are needed, they will be managed via GitHub workflow:
+1. Add spoon commit hash to `.github/workflows/versions.lua`
+2. Create `.github/workflows/hammerspoon.yml` build workflow
+3. Workflow clones spoons at specified revisions, bundles into tarball
+4. Release as `hammerspoon-YYYY.MM.DD-darwin-arm64.tar.gz`
+5. Only add spoons to config after workflow builds successfully
+
+This ensures pinned, reproducible spoon dependencies similar to other tools in the repo.
 
 ### File organization
 - One module per file
