@@ -47,7 +47,8 @@
                                 "to": [
                                     {
                                         "key_code": "left_shift",
-                                        "modifiers": ["left_command", "left_control", "left_option"]
+                                        "modifiers": ["left_command", "left_control", "left_option"],
+                                        "lazy": true
                                     }
                                 ],
                                 "type": "basic"
