@@ -27,6 +27,19 @@
                         ]
                     },
                     {
+                        "description": "left control to escape",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "left_control",
+                                    "modifiers": { "optional": ["any"] }
+                                },
+                                "to": [{ "key_code": "escape" }],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "right command to hyper (internal keyboard only)",
                         "manipulators": [
                             {
