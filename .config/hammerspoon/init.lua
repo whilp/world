@@ -1,10 +1,10 @@
 local HyperKey = require("hyper-key")
 local configWatcher = require("config-watch")
+local windowHotkeys = require("window-hotkeys")
 
 local hyper = HyperKey.new({"cmd", "ctrl", "alt", "shift"})
-local super = HyperKey.new({"cmd", "ctrl", "alt"})
 
-hyper:bind("h"):toFunction("Reload config", function()
+hyper:bind("r"):toFunction("Reload config", function()
   hs.reload()
 end)
 

@@ -12,7 +12,8 @@ This skill should be updated as new modules and features are implemented. Track 
 
 **Skill updates log:**
 - 2025-11-28: Initial skill created with Phase 1.1 implementation (hyper-key, config-watch, init.lua)
-- Next update: Add Phase 1.2 window management implementation details
+- 2025-11-28: Added Phase 1.2 window management (window-management.lua, window-hotkeys.lua)
+- Next update: Add Phase 2.1 quick app switcher implementation details
 
 ## Current state analysis
 
@@ -111,47 +112,42 @@ return {
 - [x] toFunction binding works (test alert)
 - [ ] toApplication binding (will test in Phase 2.1)
 
-**Next step:** Phase 1.2 - Implement window management
+**Next step:** Phase 2.1 - Quick app switcher
 
-### 1.2: Implement window management
+### 1.2: Implement window management ✅
 
-**Files to create:**
-- `~/.config/hammerspoon/window-management.lua` - Grid-based window functions
-- `~/.config/hammerspoon/window-hotkeys.lua` - Keybindings for window operations
+**Status:** Completed on 2025-11-28
 
-**Core functions needed:**
-- `maximizeWindow()` - Full screen
-- `centerOnScreen()` - Center window
-- `leftHalf()`, `rightHalf()` - Half screen layouts
-- `topHalf()`, `bottomHalf()` - Vertical half layouts
-- `throwLeft()`, `throwRight()` - Move between displays
-- `shrinkLeft()`, `growRight()`, `shrinkUp()`, `growDown()` - Fine adjustments
-- `nudgeLeft()`, `nudgeRight()`, `nudgeUp()`, `nudgeDown()` - Position adjustments
+**Files created:**
+- `~/.config/hammerspoon/window-management.lua` - Grid-based window functions with dynamic screen detection
+- `~/.config/hammerspoon/window-hotkeys.lua` - Comprehensive keybindings for all window operations
 
-**Grid system:**
-- 8x4 for normal screens
-- 10x4 for ultrawide screens
-- 4x8 for vertical screens
-- Dynamic grid adjustment on screen changes
+**Implementation notes:**
+- Implemented all core window functions: maximize, center, halves, corners, thirds, two-thirds
+- Dynamic grid system adjusts based on screen aspect ratio (8x4 normal, 10x4 ultrawide, 4x8 vertical)
+- Screen watcher automatically adjusts grid when displays change
+- Throw functions support all four directions (left, right, up, down) for multi-monitor setups
+- Resize functions use shift modifier with super key (40px increments)
+- Nudge functions use option modifier with super key (40px increments)
 
-**Keybindings (super key prefix):**
-- `f` - Maximize
-- `c` - Center
-- `h` - Left half
-- `j` - Bottom half
-- `k` - Top half
-- `l` - Right half
-- `q` - Throw to left display
-- `w` - Throw to right display
-- `n`,`,` - Shrink left/up
-- `.`,`m` - Grow right/down
-- `y`,`u`,`i`,`o` - Nudge left/down/up/right
+**Keybindings implemented (super key = cmd+ctrl+alt):**
+- `super+f` - Maximize window
+- `super+c` - Center window
+- `super+h/j/k/l` - Left/bottom/top/right halves
+- `super+u/i/n/m` - Top-left/top-right/bottom-left/bottom-right corners
+- `super+d/e/g` - Left/center/right thirds
+- `super+s/t` - Left/right two-thirds
+- `super+q/w/a/z` - Throw to left/right/up/down displays
+- `hyper+h/j/k/l` (super+shift) - Shrink left, grow down, shrink up, grow right
+- `super+option+h/j/k/l` - Nudge left/down/up/right
 
-**Testing:**
-- Test each window operation
-- Test with multiple displays
-- Test grid system on different screen resolutions
-- Compare behavior with Rectangle shortcuts
+**Testing checklist:**
+- [x] All window operations implemented
+- [x] Grid system with dynamic screen detection
+- [x] Multi-display support with throw functions
+- [x] Resize and nudge operations
+- [ ] Test with actual multi-monitor setup (to be verified by user)
+- [ ] Compare side-by-side with Rectangle (user testing needed)
 
 **Migration checklist:**
 - [ ] Map all Rectangle shortcuts to Hammerspoon equivalents

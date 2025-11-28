@@ -32,18 +32,44 @@ Manage Hammerspoon configuration for macOS automation including window managemen
 
 **init.lua** - Main entry point
 - Defines `hyper` modifier: `{cmd, ctrl, alt, shift}`
-- Defines `super` modifier: `{cmd, ctrl, alt}`
+- Loads all modules: hyper-key, config-watch, window-hotkeys
 - Current bindings:
-  - `hyper+h` - Reload config manually
+  - `hyper+r` - Reload config manually
   - `hyper+t` - Test alert
 - Shows "Hammerspoon loaded" alert on startup
 
-## Planned modules
+### Window management (Phase 1.2 ✅)
 
-### Phase 1.2: Window management (next)
-- `window-management.lua` - Grid-based window functions
-- `window-hotkeys.lua` - Keybindings for window operations
-- Target: Replace Rectangle app functionality
+**window-management.lua** - Grid-based window functions
+- Dynamic grid system adjusts to screen type:
+  - Normal screens: 8x4 grid
+  - Ultrawide screens (aspect > 2.5): 10x4 grid
+  - Vertical screens (aspect < 1): 4x8 grid
+- Screen watcher automatically adjusts grid on display changes
+- Core functions:
+  - `maximizeWindow()`, `centerOnScreen()`
+  - `leftHalf()`, `rightHalf()`, `topHalf()`, `bottomHalf()`
+  - `topLeft()`, `topRight()`, `bottomLeft()`, `bottomRight()` - Corners
+  - `leftThird()`, `centerThird()`, `rightThird()` - Thirds
+  - `leftTwoThirds()`, `rightTwoThirds()` - Two-thirds
+  - `throwLeft()`, `throwRight()`, `throwUp()`, `throwDown()` - Multi-display
+  - `shrinkLeft()`, `growRight()`, `shrinkUp()`, `growDown()` - Resize (40px)
+  - `nudgeLeft()`, `nudgeRight()`, `nudgeUp()`, `nudgeDown()` - Nudge (40px)
+
+**window-hotkeys.lua** - Comprehensive keybindings
+- Uses `super` key (cmd+ctrl+alt) for all window operations:
+  - `super+f` - Maximize, `super+c` - Center
+  - `super+h/j/k/l` - Left/bottom/top/right halves
+  - `super+u/i/n/m` - Corners (top-left/top-right/bottom-left/bottom-right)
+  - `super+d/e/g` - Thirds (left/center/right)
+  - `super+s/t` - Two-thirds (left/right)
+  - `super+q/w/a/z` - Throw to displays (left/right/up/down)
+- Uses `hyper` key (super+shift) for resize:
+  - `hyper+h/j/k/l` - Shrink left, grow down, shrink up, grow right
+- Uses `super+option` for nudge:
+  - `super+option+h/j/k/l` - Nudge left/down/up/right
+
+## Planned modules
 
 ### Phase 2: App launcher and automation
 - `quick-switch.lua` - Direct app launch keybindings
@@ -111,12 +137,46 @@ hyper:bind("t"):toApplication("Ghostty")
 3. Require in `init.lua`: `local module = require("module-name")`
 4. Auto-reload will trigger on save
 
-### Grid-based window management
+### Window management patterns
 
-Use `hs.grid` for consistent window positioning:
-- Standard screen: 8x4 grid
-- Ultrawide: 10x4 grid
-- Vertical: 4x8 grid
+**Getting focused window:**
+```lua
+local win = hs.window.focusedWindow()
+if not win then return end
+```
+
+**Setting window frame:**
+```lua
+local screen = win:screen()
+local max = screen:frame()
+win:setFrame({
+  x = max.x,
+  y = max.y,
+  w = max.w / 2,
+  h = max.h
+})
+```
+
+**Moving between displays:**
+```lua
+local nextScreen = screen:toEast()  -- or toWest(), toNorth(), toSouth()
+if nextScreen then
+  win:moveToScreen(nextScreen)
+end
+```
+
+**Dynamic grid adjustment:**
+```lua
+local frame = screen:frame()
+local aspectRatio = frame.w / frame.h
+if aspectRatio > 2.5 then
+  hs.grid.setGrid('10x4')  -- ultrawide
+elseif aspectRatio < 1 then
+  hs.grid.setGrid('4x8')   -- vertical
+else
+  hs.grid.setGrid('8x4')   -- normal
+end
+```
 
 ## Migration tracking
 
