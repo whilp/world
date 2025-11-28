@@ -2,8 +2,8 @@ local WindowSwitcher = {}
 
 local chooser = nil
 
-function WindowSwitcher.setup(hyper)
-  hyper:bind("tab"):toFunction("Window switcher", function()
+local function showSwitcher()
+  return function()
     -- get windows immediately
     local windows = hs.window.orderedWindows()
     local choices = {}
@@ -38,7 +38,11 @@ function WindowSwitcher.setup(hyper)
 
     chooser:choices(choices)
     chooser:show()
-  end)
+  end
+end
+
+function WindowSwitcher.setup(hyper)
+  hyper:bind("tab"):toFunction("Window switcher", showSwitcher())
 end
 
 return WindowSwitcher

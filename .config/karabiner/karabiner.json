@@ -56,6 +56,26 @@
                         ]
                     },
                     {
+                        "description": "left cmd+tab to hyper+tab",
+                        "manipulators": [
+                            {
+                                "from": {
+                                    "key_code": "tab",
+                                    "modifiers": {
+                                        "mandatory": ["left_command"]
+                                    }
+                                },
+                                "to": [
+                                    {
+                                        "key_code": "tab",
+                                        "modifiers": ["left_shift", "left_command", "left_control", "left_option"]
+                                    }
+                                ],
+                                "type": "basic"
+                            }
+                        ]
+                    },
+                    {
                         "description": "right option to meh (internal keyboard only)",
                         "manipulators": [
                             {
