@@ -11,26 +11,31 @@ Consolidate Rectangle, Karabiner-Elements, AltTab, and Raycast functionality int
 This skill should be updated as new modules and features are implemented. Track additions here:
 
 **Skill updates log:**
+
 - 2025-11-28: Initial skill created with Phase 1.1 implementation (hyper-key, config-watch, init.lua)
 - 2025-11-28: Added Phase 1.2 window management (window-management.lua, window-hotkeys.lua)
 - 2025-11-28: Added Phase 2.1 quick app switcher (quick-switch.lua)
-- Next update: Add Phase 2.2 text expansion implementation details
+- 2025-11-28: Added Phase 4.1 window switcher (window-switcher.lua)
+- Next update: Add custom automation implementations if needed
 
 ## Current state analysis
 
 ### Apps to potentially replace
+
 - **Rectangle**: Window management (98 shortcuts configured)
 - **Karabiner-Elements**: 9 key remapping rules (vim arrows, hyperspace, ctrl-n/p)
 - **AltTab**: Window switching
 - **Raycast**: App launcher, clipboard history, snippets, extensions
 
 ### Current Karabiner rules
+
 1. Option+hjkl → arrow keys
 2. Control+n/p → down/up arrows
 3. Cmd+Shift+j/k → Shift+PageDown/PageUp
 4. Enter as hyperspace (tap=enter, hold=hyper modifier)
 
 ### Current Rectangle shortcuts
+
 - Window halves (left/right/top/bottom)
 - Corners (4 positions)
 - Thirds and sixths
@@ -44,11 +49,13 @@ This skill should be updated as new modules and features are implemented. Track 
 ### Spoons: only if necessary, only through workflow
 
 **Decision criteria for using spoons:**
+
 - Must provide significant value that's hard to inline
 - Must be actively maintained
 - Must be worth the workflow complexity
 
 **Current assessment:**
+
 - **HyperKey.spoon**: Can inline - it's ~90 lines plus overlays we might not need
 - **VimMode.spoon**: Skip - not needed for this workflow
 - **SkyRocket.spoon**: Skip - mouse-based window management is optional
@@ -61,11 +68,13 @@ This skill should be updated as new modules and features are implemented. Track 
 **Only create this if we actually need spoons:**
 
 **Files to create:**
+
 - `.github/workflows/hammerspoon.yml` - Build workflow
 - `.github/workflows/hammerspoon/build` - Build script (LuaJIT)
 - Update `.github/workflows/versions.lua` - Add spoon commit hashes
 
 **Build process:**
+
 1. Read versions.lua for spoon commit hashes
 2. Clone each spoon at specified revision
 3. Remove .git directories
@@ -74,6 +83,7 @@ This skill should be updated as new modules and features are implemented. Track 
 6. Create GitHub release with artifact
 
 **versions.lua additions:**
+
 ```lua
 return {
   luajit = "25a61a182166fec06f1a1a025eb8fabbb6cf483e",
@@ -93,11 +103,13 @@ return {
 **Status:** Completed on 2025-11-28
 
 **Files created:**
+
 - `~/.config/hammerspoon/init.lua` - Main entry point
 - `~/.config/hammerspoon/hyper-key.lua` - Inline hyper key implementation (from HyperKey.spoon)
 - `~/.config/hammerspoon/config-watch.lua` - Auto-reload on changes
 
 **Implementation notes:**
+
 - Created symlink from `~/.hammerspoon` → `~/.config/hammerspoon/` (backed up existing directory to `~/.hammerspoon.backup`)
 - Implemented hyper key module with `toFunction()` and `toApplication()` binding methods
 - Config watcher monitors `~/.config/hammerspoon/` for `.lua` file changes and auto-reloads
@@ -107,6 +119,7 @@ return {
 - Both `hyper` (cmd+ctrl+alt+shift) and `super` (cmd+ctrl+alt) modifier objects created
 
 **Testing checklist:**
+
 - [x] Hyper key detection works (cmd+ctrl+alt+shift + key)
 - [x] Auto-reload triggers when editing `.lua` files
 - [x] Manual reload with hyper+h works
@@ -120,10 +133,12 @@ return {
 **Status:** Completed on 2025-11-28
 
 **Files created:**
+
 - `~/.config/hammerspoon/window-management.lua` - Grid-based window functions with dynamic screen detection
 - `~/.config/hammerspoon/window-hotkeys.lua` - Comprehensive keybindings for all window operations
 
 **Implementation notes:**
+
 - Implemented all core window functions: maximize, center, halves, corners, thirds, two-thirds
 - Dynamic grid system adjusts based on screen aspect ratio (8x4 normal, 10x4 ultrawide, 4x8 vertical)
 - Screen watcher automatically adjusts grid when displays change
@@ -132,6 +147,7 @@ return {
 - Nudge functions use option modifier with super key (40px increments)
 
 **Keybindings implemented (super key = cmd+ctrl+alt):**
+
 - `super+f` - Maximize window
 - `super+c` - Center window
 - `super+h/j/k/l` - Left/bottom/top/right halves
@@ -143,6 +159,7 @@ return {
 - `super+option+h/j/k/l` - Nudge left/down/up/right
 
 **Testing checklist:**
+
 - [x] All window operations implemented
 - [x] Grid system with dynamic screen detection
 - [x] Multi-display support with throw functions
@@ -151,6 +168,7 @@ return {
 - [ ] Compare side-by-side with Rectangle (user testing needed)
 
 **Migration checklist:**
+
 - [ ] Map all Rectangle shortcuts to Hammerspoon equivalents
 - [ ] Test Rectangle todo mode (decide keep or replace)
 - [ ] Disable Rectangle launch on login
@@ -162,6 +180,7 @@ return {
 **Decision:** Skip initially - mouse-based window management is not essential
 
 **If needed later:**
+
 - Inline SkyRocket functionality (simple canvas-based drag handlers)
 - Or use built-in `hs.grid` with mouse integration
 - Or wait until we have spoon workflow, then bundle SkyRocket
@@ -175,100 +194,118 @@ return {
 **Status:** Completed on 2025-11-28
 
 **Files created:**
+
 - `~/.config/hammerspoon/quick-switch.lua` - Direct app launch keybindings
 
 **Implementation notes:**
+
 - Created QuickSwitch module with setup function that accepts hyper key object
 - Uses `toApplication()` method from HyperKey for clean app launching
 - Integrated into init.lua with `quickSwitch.setup(hyper)` call
 
 **Apps bound (hyper key prefix):**
+
 - `hyper+return` - Ghostty (terminal)
 - `hyper+c` - Google Chrome
 - `hyper+s` - Spotify
 - `hyper+1` - 1Password
 
 **Testing checklist:**
+
 - [ ] Test each app launch
 - [ ] Test switching to already-running apps
 - [ ] Test launching apps that aren't running
 - [ ] Compare speed with Raycast launcher
 
 **Migration checklist:**
+
 - [ ] Identify most-used Raycast app launches
 - [ ] Add keybindings for additional frequently-used apps
 - [ ] Decide which Raycast features to keep (clipboard, extensions, etc.)
 
 **Next step:** Phase 2.2 - Text expansion
 
-### 2.2: Text expansion
+### 2.2: Text expansion <SKIP>
 
 **Files to create:**
+
 - `~/.config/hammerspoon/text-expander.lua` - Trie-based snippet expansion
 
 **Initial snippets:**
+
 - `+date` - Current date (formatted)
 - `+email` - Email address
 - `+time` - Current time
 - Add personal snippets
 
 **Features:**
+
 - Trigger on space or return
 - Support for dynamic snippets (functions)
 - Trie-based matching for performance
 
 **Testing:**
+
 - Test basic string expansion
 - Test dynamic date/time snippets
 - Test in different applications
 - Compare with Raycast snippet timing
 
 **Migration checklist:**
+
 - [ ] Export snippets from Raycast
 - [ ] Convert to Hammerspoon format
 - [ ] Test all snippets
 - [ ] Decide if keeping Raycast for other features
 
-### 2.3: Audio device switcher
+### 2.3: Audio device switcher <SKIP>
 
 **Files to create:**
+
 - `~/.config/hammerspoon/audio-switcher.lua` - Audio output chooser
 
 **Features:**
+
 - Cmd+shift+space to show audio device chooser
 - Display device name, mute status, volume
 - One-key selection
 - Auto-unmute on selection
 
 **Testing:**
+
 - Test with multiple audio devices
 - Test mute/unmute behavior
 - Test volume display accuracy
 
-### 2.4: Auto-mute on wake
+### 2.4: Auto-mute on wake <SKIP>
 
 **Files to create:**
+
 - `~/.config/hammerspoon/mute-on-sleep.lua` - System wake watcher
 
 **Features:**
+
 - Automatically mute audio on system wake
 - Allowlist for specific devices (headphones, external DACs)
 - Alert notification
 
 **Configuration:**
+
 - Define allowlisted devices (pattern matching)
 - Customize alert behavior
 
 **Testing:**
+
 - Test with laptop speakers
 - Test with allowlisted devices
 - Test alert notifications
 
 ## Phase 3: Key remapping migration
 
-### 3.1: Vim arrow keys (option+hjkl)
+### 3.1: Vim arrow keys (option+hjkl) <SKIP>
 
 **Implementation:**
+
 - Use `hs.hotkey.bind()` for global hotkeys
 - Option+h → left arrow
 - Option+j → down arrow
@@ -276,122 +313,153 @@ return {
 - Option+l → right arrow
 
 **Testing:**
+
 - Test in various apps (browser, editor, terminal)
 - Ensure no conflicts with app-specific shortcuts
 
-### 3.2: Emacs-style navigation (ctrl+n/p)
+### 3.2: Emacs-style navigation (ctrl+n/p) <SKIP>
 
 **Implementation:**
+
 - Ctrl+n → down arrow
 - Ctrl+p → up arrow
 
 **Testing:**
+
 - Test in text fields, browsers, etc.
 - Verify doesn't conflict with terminal apps
 
-### 3.3: Hyperspace key (enter as hyper modifier)
+### 3.3: Hyperspace key (enter as hyper modifier) <SKIP>
 
 **Implementation:**
+
 - Tap enter → enter key
 - Hold enter → hyper modifier (cmd+ctrl+alt+shift)
 - 200ms threshold for detection
 
 **Complexity note:**
+
 - This requires `hs.eventtap` with complex timing logic
 - Consider if worth migrating or keeping in Karabiner
 - Karabiner handles this more reliably
 
 **Decision point:**
+
 - [ ] Migrate to Hammerspoon (more complex)
 - [ ] Keep in Karabiner (simpler, more reliable)
 
 **Recommendation:** Keep hyperspace in Karabiner, migrate simpler key remappings to Hammerspoon
 
-### 3.4: Page navigation (cmd+shift+j/k)
+### 3.4: Page navigation (cmd+shift+j/k) <SKIP>
 
 **Implementation:**
+
 - Cmd+shift+j → shift+page down
 - Cmd+shift+k → shift+page up
 
 **Testing:**
+
 - Test in browsers and text editors
 - Verify text selection behavior
 
-### 3.5: Device-specific key swaps
+### 3.5: Device-specific key swaps <SKIP>
 
 **Current Karabiner config:**
+
 - Apple Magic Keyboard: fn ↔ escape swap
 - QMK keyboard: ignored (handled by QMK firmware)
 
 **Decision:**
+
 - Keep device-specific mappings in Karabiner
 - Karabiner excels at device-specific rules
 
 ## Phase 4: Advanced features
 
-### 4.1: Window switcher (AltTab replacement)
+### 4.1: Window switcher (AltTab replacement) ✅
 
-**Implementation options:**
-1. `hs.window.switcher` - Built-in window switcher
-2. `hs.chooser` - Custom UI with window list
-3. Third-party spoon (WindowSigils, etc.)
+**Status:** Completed on 2025-11-28
 
-**Features needed:**
+**Files created:**
+- `~/.config/hammerspoon/window-switcher.lua` - Window switcher using hs.window.switcher
+
+**Implementation notes:**
+- Used built-in `hs.window.switcher` API (simplest option)
+- Configured window filter to show all windows across all spaces and screens
+- UI customization: thumbnails enabled, dark background, white text
+- Integrated into init.lua with `windowSwitcher.setup(hyper)` call
+
+**Keybindings:**
+- `hyper+tab` - Next window
+- `hyper+backtick` - Previous window
+
+**Features implemented:**
 - Show all windows across spaces
-- Show app icons
+- Show thumbnails and titles
 - Keyboard navigation
-- Preview on hover
+- Dark theme UI
 
-**Testing:**
-- Compare UX with AltTab
-- Test with many windows open
-- Test across multiple spaces
+**Testing checklist:**
+- [ ] Compare UX with AltTab
+- [ ] Test with many windows open
+- [ ] Test across multiple spaces
+- [ ] Verify performance with thumbnails
 
 **Migration checklist:**
-- [ ] Implement window switcher
-- [ ] Configure keybinding (cmd+tab alternative?)
 - [ ] Test for 1 week alongside AltTab
-- [ ] Uninstall AltTab
+- [ ] Compare feel and responsiveness
+- [ ] Disable AltTab launch on login
+- [ ] Uninstall AltTab if satisfied
 
-### 4.2: Universal vim mode
+**Next step:** Custom automation (Phase 4.4) or migration testing
+
+### 4.2: Universal vim mode <SKIP>
 
 **Decision:** Skip - not needed for this workflow
 
 **Rationale:**
+
 - VimMode.spoon is complex (~3000+ lines)
 - Major workflow change with significant learning curve
 - Not essential for productivity improvements
 - Keep vim usage in terminal/editor where it belongs
 
 **If reconsidered later:**
+
 - Would require spoon workflow (too complex to inline)
 - Add to versions.lua: `vimmode_spoon = "commit_hash"`
 - Build and bundle via GitHub workflow
 
-### 4.3: Monitor input switching
+### 4.3: Monitor input switching <SKIP>
 
 **Files to create:**
+
 - `~/.config/hammerspoon/monitor-switching.lua` - DDC monitor control
 
 **Requirements:**
+
 - Install `ddcctl` via homebrew
 - Configure monitor input values (USB-C, DisplayPort, HDMI)
 
 **Features:**
+
 - Hyper+w to cycle monitor inputs
 - Useful for KVM-style setups
 
 **Use case:**
+
 - Only needed if sharing external monitors between computers
 - Skip if not applicable
 
 **Testing:**
+
 - Test input switching
 - Verify correct input values for your monitor
 
 ### 4.4: Custom automation ideas
 
 **Additional possibilities to explore:**
+
 - Automatic window layouts per space/desktop
 - App-specific automation (Slack, Chrome, etc.)
 - Clipboard history (if leaving Raycast)
@@ -408,6 +476,7 @@ return {
 **Duration:** 1-2 weeks per phase
 
 **Approach:**
+
 1. Implement Hammerspoon equivalent
 2. Keep existing app running
 3. Try to use Hammerspoon version by default
@@ -428,6 +497,7 @@ return {
 ### Rollback plan
 
 All original apps remain installed during migration:
+
 - Rectangle config backed up
 - Karabiner config in git
 - Raycast settings preserved
@@ -436,18 +506,21 @@ All original apps remain installed during migration:
 ## Success criteria
 
 ### Must have
+
 - Window management matches Rectangle functionality
 - App switching is fast and reliable
 - Key remapping works consistently
 - Config is maintainable and documented
 
 ### Nice to have
+
 - Fewer apps running in menu bar
 - Unified configuration in Lua
 - Custom automation possibilities unlocked
 - Better understanding of macOS automation
 
 ### Deal breakers
+
 - Noticeable lag or performance issues
 - Reliability problems (crashes, missed keystrokes)
 - Missing critical features from replaced apps
@@ -456,6 +529,7 @@ All original apps remain installed during migration:
 ## File organization
 
 All Hammerspoon config lives in `.config/hammerspoon/` (not `~/.hammerspoon/`):
+
 - Consistent with other dotfile locations
 - Easier to track in git
 - Follows XDG-style conventions
@@ -465,11 +539,13 @@ Symlink from `~/.hammerspoon` → `.config/hammerspoon/` if needed
 ## Resources
 
 ### Documentation
-- Hammerspoon API: https://www.hammerspoon.org/docs/
-- dbalatero dotfiles: https://github.com/dbalatero/dotfiles/tree/main/hammerspoon (inspiration only)
-- HyperKey spoon source: https://github.com/dbalatero/HyperKey.spoon (for inlining reference)
+
+- Hammerspoon API: <https://www.hammerspoon.org/docs/>
+- dbalatero dotfiles: <https://github.com/dbalatero/dotfiles/tree/main/hammerspoon> (inspiration only)
+- HyperKey spoon source: <https://github.com/dbalatero/HyperKey.spoon> (for inlining reference)
 
 ### Community
+
 - Hammerspoon GitHub discussions
 - /r/hammerspoon on Reddit
 - Hammerspoon IRC channel

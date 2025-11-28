@@ -32,7 +32,7 @@ Manage Hammerspoon configuration for macOS automation including window managemen
 
 **init.lua** - Main entry point
 - Defines `hyper` modifier: `{cmd, ctrl, alt, shift}`
-- Loads all modules: hyper-key, config-watch, window-hotkeys, quick-switch
+- Loads all modules: hyper-key, config-watch, window-hotkeys, quick-switch, window-switcher
 - Current bindings:
   - `hyper+r` - Reload config manually
   - `hyper+t` - Test alert
@@ -81,22 +81,32 @@ Manage Hammerspoon configuration for macOS automation including window managemen
   - `hyper+1` - 1Password
 - Easy to add more apps: `hyper:bind("key"):toApplication("App Name")`
 
+### Window switcher (Phase 4.1 ✅)
+
+**window-switcher.lua** - Window switcher using hs.window.switcher
+- Uses built-in `hs.window.switcher` API
+- Configured window filter shows all windows across all spaces and screens
+- UI features: thumbnails, titles, dark background theme
+- Keybindings:
+  - `hyper+tab` - Next window
+  - `hyper+backtick` - Previous window
+- Simple `setup(hyper)` function for integration
+
 ## Planned modules
 
-### Phase 2: Remaining automation
+### Phase 2: Remaining automation (marked SKIP)
 - `text-expander.lua` - Trie-based snippet expansion
 - `audio-switcher.lua` - Audio device chooser
 - `mute-on-sleep.lua` - Auto-mute on wake
 
-### Phase 3: Key remapping
+### Phase 3: Key remapping (marked SKIP)
 - Vim arrow keys (option+hjkl)
 - Emacs navigation (ctrl+n/p)
 - Page navigation (cmd+shift+j/k)
 
-### Phase 4: Advanced features
-- Window switcher (AltTab replacement)
-- Monitor input switching
-- Custom automation
+### Phase 4: Remaining advanced features
+- Monitor input switching (marked SKIP)
+- Custom automation ideas (optional)
 
 ## Common operations
 
