@@ -40,6 +40,33 @@ karabiner_cli --show-current-profile-name
 karabiner_cli --list-profile-names
 ```
 
+### Device inspection
+
+**List connected devices:**
+```bash
+karabiner_cli --list-connected-devices
+```
+
+Returns JSON with device information:
+- `device_id`: unique device identifier
+- `device_identifiers`: keyboard/pointing device flags, vendor/product IDs
+- `is_built_in_keyboard`/`is_built_in_pointing_device`: built-in device flags
+- `manufacturer`, `product`: device name and manufacturer
+- `transport`: connection type (USB, Bluetooth, FIFO, Audio)
+
+Useful for finding `vendor_id` and `product_id` for device-specific mappings.
+
+**List system variables:**
+```bash
+karabiner_cli --list-system-variables
+```
+
+Shows current system state variables:
+- `system.now.milliseconds`: current timestamp
+- `system.scroll_direction_is_natural`: natural scrolling enabled
+- `system.use_fkeys_as_standard_function_keys`: function key behavior
+- `system.temporarily_ignore_all_devices`: temporary disable flag
+
 ### Variable management
 
 Set variables for complex modifications:
@@ -51,6 +78,15 @@ karabiner_cli --set-variables '{"cli_flag1":1, "cli_flag2":2}'
 Use `--silent` flag to suppress output.
 
 ### Development tools
+
+**Run JavaScript files:**
+```bash
+karabiner_cli --eval-js path/to/script.js
+```
+
+Executes JavaScript using Duktape engine. Useful for generating or manipulating complex modifications programmatically.
+
+
 
 **Lint configuration:**
 ```bash
