@@ -2,6 +2,18 @@ local WindowSwitcher = {}
 
 local chooser = nil
 
+local cleanshotCommands = {
+  { text = "CleanShot: All-in-one", subText = "Open all capture options", url = "cleanshot://all-in-one" },
+  { text = "CleanShot: Area capture", subText = "Capture selected area", url = "cleanshot://capture-area" },
+  { text = "CleanShot: Fullscreen", subText = "Capture fullscreen", url = "cleanshot://capture-fullscreen" },
+  { text = "CleanShot: Window", subText = "Capture window", url = "cleanshot://capture-window" },
+  { text = "CleanShot: Scrolling", subText = "Capture scrolling window", url = "cleanshot://scrolling-capture" },
+  { text = "CleanShot: Record screen", subText = "Start screen recording", url = "cleanshot://record-screen" },
+  { text = "CleanShot: OCR", subText = "Capture text from screen", url = "cleanshot://capture-text" },
+  { text = "CleanShot: History", subText = "Open capture history", url = "cleanshot://open-history" },
+  { text = "CleanShot: Toggle desktop icons", subText = "Hide/show desktop icons", url = "cleanshot://toggle-desktop-icons" },
+}
+
 local function showSwitcher()
   return function()
     local windows = hs.window.orderedWindows()
@@ -41,6 +53,10 @@ local function showSwitcher()
       end
     end
 
+    for _, cmd in ipairs(cleanshotCommands) do
+      table.insert(choices, cmd)
+    end
+
     if not chooser then
       chooser = hs.chooser.new(function(choice)
         if choice then
@@ -48,6 +64,8 @@ local function showSwitcher()
             choice.window:focus()
           elseif choice.appName then
             hs.application.launchOrFocus(choice.appName)
+          elseif choice.url then
+            hs.urlevent.openURL(choice.url)
           end
         end
       end)
