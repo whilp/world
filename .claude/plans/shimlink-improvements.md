@@ -211,7 +211,7 @@ Validation runs at config load time in default_version_callback before registeri
 - Invalid values (negative integers, wrong-length checksums)
 - Malformed nested structures (executables, platforms)
 
-**Commit**: [pending]
+**Commit**: d8b32c6b74d6d00e7c05c9da2b5fc6d3e7ca6c8a
 
 ## Structural improvements (bonus)
 
