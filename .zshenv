@@ -6,6 +6,7 @@ path=(
   "$HOME/.local/share/shimlink/bin"
   "/Applications/Ghostty.app/Contents/MacOS"
   "/Applications/Hammerspoon.app/Contents/Frameworks/hs"
+  "/Library/Application Support/org.pqrs/Karabiner-Elements/bin"
   "/opt/homebrew/bin"
   $path
 )
