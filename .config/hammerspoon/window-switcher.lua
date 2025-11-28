@@ -4,27 +4,51 @@ local chooser = nil
 
 local function showSwitcher()
   return function()
-    -- get windows immediately
     local windows = hs.window.orderedWindows()
     local choices = {}
+    local seenApps = {}
 
     for _, win in ipairs(windows) do
       local app = win:application()
+      local appName = app:name()
       local title = win:title()
 
       if title and title ~= "" then
         table.insert(choices, {
           text = title,
-          subText = app:name(),
+          subText = appName,
           window = win
         })
+        seenApps[appName] = true
+      end
+    end
+
+    for _, app in ipairs(hs.application.runningApplications()) do
+      local appName = app:name()
+      if appName and not seenApps[appName] then
+        local ok, appPath = pcall(app.path, app)
+        if ok and appPath and (
+          appPath:find("^/Applications/") or
+          appPath:find("^/System/Applications/") or
+          appPath:find("/Applications/[^/]+%.app$")
+        ) then
+          table.insert(choices, {
+            text = appName,
+            subText = "Focus application",
+            appName = appName
+          })
+        end
       end
     end
 
     if not chooser then
       chooser = hs.chooser.new(function(choice)
-        if choice and choice.window then
-          choice.window:focus()
+        if choice then
+          if choice.window then
+            choice.window:focus()
+          elseif choice.appName then
+            hs.application.launchOrFocus(choice.appName)
+          end
         end
       end)
 
