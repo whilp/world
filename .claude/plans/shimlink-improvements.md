@@ -215,11 +215,29 @@ Validation runs at config load time in default_version_callback before registeri
 
 ## Structural improvements (bonus)
 
-### 16. Separate concerns: CLI vs library
+### 16. Separate concerns: CLI vs library ✓ DONE
 
 **Current**: Main script mixes command parsing with core logic
 
 **Better**: Extract core shimlink operations to library, keep only CLI in main script
 
 **Benefit**: Core logic becomes reusable, testable as library
+
+**Implementation**: Created `/pay/home/owner/.local/lib/lua/shimlink.lua` with 23 exported functions:
+- Config operations: `config_dir`, `get_version_files`, `load_all_configs`, `load_config`
+- Path helpers: `get_shimlink_root`, `get_storage_dir`, `get_versioned_dir`, `get_shimlink_bin_dir`, `get_shimlink_bin_link`, `get_relative_versioned_path`
+- Download operations: `download_file`, `download_to_temp`, `download_executable`
+- Checksum operations: `calculate_sha256`, `validate_checksum`, `update_config_checksum`
+- Extraction operations: `extract_archive`, `extract_and_prepare`
+- Installation operations: `install_to_versioned_dir`
+- Symlink operations: `create_symlink_atomic`, `create_symlink`
+- Update operations: `update_executable`, `get_executables`
+
+Main CLI script reduced from 875 to 326 lines (549 lines extracted). CLI now contains only:
+- Command implementations: `cmd_show`, `cmd_write`, `cmd_update`, `cmd_help`
+- CLI-specific helpers: `parse_params`, `get_nested`, `set_nested`, `apply_updates`
+- Signal handling: `setup_signal_handlers`, `register_temp_dir`, `cleanup_temp_resources`
+- Entry point: `main`
+
+All functionality verified working. Library is now reusable by other scripts via `require("shimlink")`.
 
