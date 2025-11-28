@@ -1,6 +1,30 @@
 local WindowSwitcher = {}
 
 local chooser = nil
+local allChoices = {}
+
+local function fuzzyMatch(str, pattern)
+  local strLower = str:lower()
+  local patternLower = pattern:lower()
+  local patternIdx = 1
+  local lastMatchIdx = 0
+  local score = 0
+
+  for i = 1, #strLower do
+    if patternIdx <= #patternLower and strLower:sub(i, i) == patternLower:sub(patternIdx, patternIdx) then
+      local gap = i - lastMatchIdx - 1
+      score = score + gap
+      lastMatchIdx = i
+      patternIdx = patternIdx + 1
+    end
+  end
+
+  if patternIdx > #patternLower then
+    score = score + #strLower
+    return true, score
+  end
+  return false, math.huge
+end
 
 local cleanshotCommands = {
   { text = "CleanShot: All-in-one", subText = "Open all capture options", url = "cleanshot://all-in-one" },
@@ -57,6 +81,8 @@ local function showSwitcher()
       table.insert(choices, cmd)
     end
 
+    allChoices = choices
+
     if not chooser then
       chooser = hs.chooser.new(function(choice)
         if choice then
@@ -76,6 +102,27 @@ local function showSwitcher()
       chooser:width(50)
       chooser:rows(15)
       chooser:searchSubText(true)
+
+      chooser:queryChangedCallback(function(query)
+        if query == "" then
+          chooser:choices(allChoices)
+        else
+          local filtered = {}
+          for _, choice in ipairs(allChoices) do
+            local searchText = choice.text .. " " .. (choice.subText or "")
+            local matches, score = fuzzyMatch(searchText, query)
+            if matches then
+              table.insert(filtered, {choice = choice, score = score})
+            end
+          end
+          table.sort(filtered, function(a, b) return a.score < b.score end)
+          local sortedChoices = {}
+          for _, item in ipairs(filtered) do
+            table.insert(sortedChoices, item.choice)
+          end
+          chooser:choices(sortedChoices)
+        end
+      end)
     end
 
     chooser:choices(choices)
