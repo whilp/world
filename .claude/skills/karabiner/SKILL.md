@@ -18,17 +18,13 @@ Manage Karabiner-Elements configuration for macOS keyboard customization includi
 
 ## Current configuration
 
-### Complex modifications
+### Complex modifications (internal keyboard only)
 
-- **vim arrows**: `opt+h/j/k/l` → arrow keys
-- **ctrl navigation**: `ctrl+n/p` → down/up arrows
-- **page navigation**: `cmd+shift+j/k` → shift+pagedown/pageup
-- **hyperspace**: return when tapped, hyper modifier when held (200ms threshold)
+- **caps lock → left control**: Caps lock acts as control
+- **right command → hyper**: Right command acts as cmd+shift+ctrl+opt
+- **right option → meh**: Right option acts as shift+ctrl+opt
 
-### Device mappings
-
-- Apple Magic Keyboard: fn ↔ escape swap
-- Multiple external keyboards configured with ignore rules
+All modifications are limited to the internal MacBook keyboard using `device_if` conditions with `is_built_in_keyboard: true`.
 
 ## CLI operations
 
@@ -310,6 +306,34 @@ After editing karabiner.json:
 2. Press keys to see their key codes
 3. Use codes in configuration
 
+## Device condition patterns
+
+### Limiting rules to built-in keyboard
+
+```json
+{
+  "conditions": [
+    {
+      "identifiers": [
+        {
+          "is_built_in_keyboard": true
+        }
+      ],
+      "type": "device_if"
+    }
+  ]
+}
+```
+
+Use `device_if` conditions to limit modifications to specific devices. The `is_built_in_keyboard` flag targets only the internal MacBook keyboard, ignoring all external keyboards.
+
+### Other device condition options
+
+- `is_built_in_keyboard`: Internal MacBook keyboard
+- `is_pointing_device`: Trackpads and mice
+- `vendor_id` + `product_id`: Specific device by identifiers
+- `device_unless`: Inverse condition (apply to all except specified devices)
+
 ## Integration with other tools
 
 ### Hammerspoon relationship
@@ -319,8 +343,8 @@ After editing karabiner.json:
 - Use Karabiner for modifier/key remaps, Hammerspoon for actions
 
 Current setup:
-- Karabiner creates hyper key (return when tapped, modifier when held)
-- Hammerspoon binds hyper key to app launches and window management
+- Karabiner creates hyper and meh modifiers from right command/option
+- Hammerspoon can bind hyper/meh keys to app launches and window management
 
 ## Troubleshooting
 
