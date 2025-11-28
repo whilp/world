@@ -14,6 +14,7 @@ Manage Hammerspoon configuration for macOS automation including window managemen
 - Config directory: `~/.config/hammerspoon/`
 - Symlink: `~/.hammerspoon` → `~/.config/hammerspoon/`
 - Console logs: `~/Library/Logs/Hammerspoon/console.log`
+- CLI tool: `hs` (in PATH at `/Applications/Hammerspoon.app/Contents/Frameworks/hs/hs`)
 
 ## Current modules
 
@@ -80,22 +81,66 @@ Manage Hammerspoon configuration for macOS automation including window managemen
 
 ## Common operations
 
-### Reload Hammerspoon
+### Using the hs CLI
+
+The `hs` command-line tool is available in PATH and provides direct interaction with Hammerspoon:
+
+**View console output (clone prints to terminal):**
 ```bash
+hs -C
+```
+
+**Execute Hammerspoon commands:**
+```bash
+hs -c "hs.alert.show('test')"
+hs -c "hs.reload()"
+```
+
+**Interactive Lua REPL:**
+```bash
+hs
+```
+
+**Mirror prints to console:**
+```bash
+hs -P
+```
+
+**Run a script:**
+```bash
+hs /path/to/script.lua
+```
+
+**Common flags:**
+- `-A` - Auto-launch Hammerspoon if not running
+- `-C` - Clone console prints to this terminal
+- `-P` - Mirror prints to Hammerspoon console
+- `-i` - Force interactive mode
+- `-n` - Disable colorized output
+- `-N` - Force colorized output
+- `-q` - Quiet mode (errors and results only)
+
+### Other operations
+
+**Reload Hammerspoon:**
+```bash
+hs -c "hs.reload()"
+# or via URL:
 open -g hammerspoon://reload
 ```
 
-### Check if running
+**Check if running:**
 ```bash
 ps aux | rg -i hammerspoon
 ```
 
-### View console logs
+**View console logs (file):**
 ```bash
 tail -f ~/Library/Logs/Hammerspoon/console.log
 ```
+Note: Log file only exists if Hammerspoon has logged something. Use `hs -C` instead to view live console output.
 
-### Test configuration
+**Test configuration:**
 Edit any `.lua` file in `~/.config/hammerspoon/` to trigger auto-reload
 
 ## Development patterns
