@@ -169,13 +169,26 @@ Reduced shimlink from 956 to 837 lines (119 lines). All functions maintain origi
 
 **Impact**: Better UX, users know system is working
 
-### 14. Implement proper tempfile cleanup on signals
+### 14. Implement proper tempfile cleanup on signals ✓ DONE
 
 **Issue**: SIGINT/SIGTERM during download leaves garbage in temp directories
 
 **Fix**: Register signal handler to cleanup temp files on exit
 
 **Impact**: Cleaner filesystem, no manual cleanup needed
+
+**Implementation**: Added signal handling infrastructure with:
+- Global cleanup registry tracking temp directories created during operations
+- Signal handlers for SIGINT and SIGTERM that cleanup tracked resources
+- `register_temp_dir()` called when mkdtemp creates temp directory
+- `cleanup_temp_resources()` safely removes all tracked temp dirs
+- Handlers exit with standard exit code (128 + signal number)
+- Safe handling of nil values and non-existent paths
+- Informative message "received signal X, cleaning up..." on interrupt
+
+Tested with both SIGINT (Ctrl+C) and SIGTERM - both properly cleanup temp directories without leaving garbage.
+
+**Commit**: [pending]
 
 ### 15. Add validation for version config structure
 

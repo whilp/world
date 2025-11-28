@@ -9,12 +9,51 @@ local stat = require("posix.sys.stat")
 local dirent = require("posix.dirent")
 local openssl = require("openssl")
 local digest = require("openssl.digest")
+local signal = require("posix.signal")
 
 ffi.cdef([[
   typedef struct { long tv_sec; long tv_usec; } timeval;
   int symlink(const char *target, const char *linkpath);
   int unlink(const char *pathname);
 ]])
+
+local cleanup_registry = {
+  temp_dirs = {},
+}
+
+local function stderr_write(msg)
+  io.stderr:write(msg .. "\n")
+  io.stderr:flush()
+end
+
+local function register_temp_dir(path)
+  if path then
+    table.insert(cleanup_registry.temp_dirs, path)
+  end
+end
+
+local function cleanup_temp_resources()
+  for _, temp_dir in ipairs(cleanup_registry.temp_dirs) do
+    if temp_dir and file.exists(temp_dir) then
+      local ok, err = file.rm_rf(temp_dir)
+      if not ok then
+        stderr_write("shimlink: warning: failed to cleanup temp directory during signal handling: " .. tostring(err))
+      end
+    end
+  end
+  cleanup_registry.temp_dirs = {}
+end
+
+local function setup_signal_handlers()
+  local function signal_handler(signum)
+    stderr_write("\nshimlink: received signal " .. signum .. ", cleaning up...")
+    cleanup_temp_resources()
+    os.exit(128 + signum)
+  end
+
+  signal.signal(signal.SIGINT, signal_handler)
+  signal.signal(signal.SIGTERM, signal_handler)
+end
 
 local function config_dir()
   return os.getenv("HOME") .. "/.config/shimlink"
@@ -56,11 +95,6 @@ local function load_config(executable)
     error("config not found for: " .. executable)
   end
   return config
-end
-
-local function stderr_write(msg)
-  io.stderr:write(msg .. "\n")
-  io.stderr:flush()
 end
 
 local function get_home_dir()
@@ -445,6 +479,7 @@ local function download_executable(executable_name, config, force)
   local stdlib = require("posix.stdlib")
   local temp_template = file.path_join(shimlink_root, ".tmp." .. executable_name .. ".XXXXXX")
   local temp_dir = stdlib.mkdtemp(temp_template)
+  register_temp_dir(temp_dir)
 
   local success, result = pcall(function()
     local download_path, err = download_to_temp(url, executable_name, temp_dir)
@@ -808,6 +843,8 @@ local function cmd_update(args)
 end
 
 local function main(args)
+  setup_signal_handlers()
+
   if #args == 0 or args[1] == "help" or args[1] == "--help" then
     cmd_help()
     os.exit(0)
