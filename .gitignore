@@ -18,6 +18,7 @@ paste.*
 .claude/history.jsonl
 .claude/debug/
 .claude/file-history/
+.claude/plans/
 .bazel-profile-summarizer/
 .bazel-profile-uploader/
 .conda/
