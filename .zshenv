@@ -5,6 +5,7 @@ path=(
   "$HOME/.local/bootstrap/bin"
   "$HOME/.local/share/shimlink/bin"
   "/Applications/Ghostty.app/Contents/MacOS"
+  "/Applications/Hammerspoon.app/Contents/Frameworks/hs"
   "/opt/homebrew/bin"
   $path
 )
