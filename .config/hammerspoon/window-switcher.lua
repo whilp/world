@@ -38,6 +38,7 @@ local function showSwitcher()
 
     chooser:choices(choices)
     chooser:show()
+    chooser:selectedRow(2)
   end
 end
 
