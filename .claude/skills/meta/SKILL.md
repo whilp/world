@@ -48,6 +48,68 @@ If Claude doesn't use your skill:
 - Description not specific enough about WHEN to use it
 - Wrong file path or permissions
 
+### Finding and fixing frontmatter issues
+
+**Check if frontmatter exists:**
+```bash
+# View first 10 lines of SKILL.md
+head -10 ~/.claude/skills/*/SKILL.md
+```
+
+**Common frontmatter problems:**
+1. **Missing frontmatter block** - File starts with `#` instead of `---`
+   - Fix: Add YAML block at top of file
+2. **Missing closing `---`** - Only one `---` marker
+   - Fix: Ensure both opening and closing markers exist
+3. **Missing required fields** - No `name:` or `description:`
+   - Fix: Add both required fields
+4. **Wrong indentation** - YAML is indentation-sensitive
+   - Fix: Use 2 spaces, no tabs
+5. **Missing description trigger terms** - Generic description
+   - Fix: Add specific keywords users would say
+
+**Validation script:**
+```bash
+# Check all skills for frontmatter
+for skill in ~/.claude/skills/*/SKILL.md; do
+  echo "=== $skill ==="
+  if head -1 "$skill" | grep -q "^---$"; then
+    echo "✓ Has frontmatter"
+  else
+    echo "✗ Missing frontmatter"
+  fi
+done
+```
+
+## Systematic skill debugging workflow
+
+When debugging skills that aren't working:
+
+1. **List all skills** - Verify skill exists
+   ```bash
+   ls -la ~/.claude/skills/
+   ```
+
+2. **Check frontmatter** - Validate YAML structure
+   ```bash
+   head -10 ~/.claude/skills/skill-name/SKILL.md
+   ```
+
+3. **Verify required fields** - Ensure name and description exist
+   - `name:` must match directory name
+   - `description:` must include trigger terms
+
+4. **Test description specificity** - Does it explain WHEN to use?
+   - Include file types, actions, or domain terms
+   - Avoid generic phrases like "helps with" or "manages"
+
+5. **Check allowed-tools** - If restricted, verify needed tools included
+   ```yaml
+   allowed-tools: [Read, Write, Edit, Bash, Glob, Grep]
+   ```
+
+6. **Review content** - Ensure instructions are clear and actionable
+
 ## Skills vs slash commands
 
 **Use skills for:**
