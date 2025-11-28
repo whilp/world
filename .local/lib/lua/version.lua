@@ -2,16 +2,138 @@ local M = {}
 
 M.versions = {}
 
-local function default_version_callback(config)
+local function validate_config(config)
+  local function type_check(value, expected_type, field_name)
+    local actual_type = type(value)
+    if actual_type ~= expected_type then
+      return nil, string.format("field '%s' must be %s, got %s", field_name, expected_type, actual_type)
+    end
+    return true
+  end
+
   if not config.name then
-    error("version config missing 'name' field")
+    return nil, "missing required field 'name'"
+  end
+  local ok, err = type_check(config.name, "string", "name")
+  if not ok then return nil, err end
+
+  if not config.platforms then
+    return nil, "missing required field 'platforms'"
+  end
+  local ok, err = type_check(config.platforms, "table", "platforms")
+  if not ok then return nil, err end
+
+  local platform_count = 0
+  for plat, platform_data in pairs(config.platforms) do
+    platform_count = platform_count + 1
+
+    if type(platform_data) ~= "table" then
+      return nil, string.format("platform '%s' must be a table, got %s", plat, type(platform_data))
+    end
+
+    if not platform_data.sha256 then
+      return nil, string.format("platform '%s' missing required field 'sha256'", plat)
+    end
+
+    if type(platform_data.sha256) ~= "string" then
+      return nil, string.format("platform '%s' field 'sha256' must be string, got %s", plat, type(platform_data.sha256))
+    end
+
+    if #platform_data.sha256 ~= 64 then
+      return nil, string.format("platform '%s' field 'sha256' must be 64 characters (SHA-256 hex), got %d", plat, #platform_data.sha256)
+    end
+
+    if platform_data.arch and type(platform_data.arch) ~= "string" then
+      return nil, string.format("platform '%s' field 'arch' must be string, got %s", plat, type(platform_data.arch))
+    end
+
+    if platform_data.ext and type(platform_data.ext) ~= "string" then
+      return nil, string.format("platform '%s' field 'ext' must be string, got %s", plat, type(platform_data.ext))
+    end
+  end
+
+  if platform_count == 0 then
+    return nil, "platforms table cannot be empty, must have at least one platform"
+  end
+
+  if config.path and type(config.path) ~= "string" then
+    return nil, string.format("field 'path' must be string, got %s", type(config.path))
+  end
+
+  if config.url and type(config.url) ~= "string" then
+    return nil, string.format("field 'url' must be string, got %s", type(config.url))
+  end
+
+  if config.version and type(config.version) ~= "string" then
+    return nil, string.format("field 'version' must be string, got %s", type(config.version))
+  end
+
+  if config.repo and type(config.repo) ~= "string" then
+    return nil, string.format("field 'repo' must be string, got %s", type(config.repo))
+  end
+
+  if config.strip_components then
+    if type(config.strip_components) ~= "number" then
+      return nil, string.format("field 'strip_components' must be number, got %s", type(config.strip_components))
+    end
+    if config.strip_components < 0 or config.strip_components ~= math.floor(config.strip_components) then
+      return nil, string.format("field 'strip_components' must be non-negative integer, got %s", tostring(config.strip_components))
+    end
+  end
+
+  if config.executables then
+    local ok, err = type_check(config.executables, "table", "executables")
+    if not ok then return nil, err end
+
+    for i, exe in ipairs(config.executables) do
+      if type(exe) ~= "table" then
+        return nil, string.format("executables[%d] must be table, got %s", i, type(exe))
+      end
+
+      if not exe.name then
+        return nil, string.format("executables[%d] missing required field 'name'", i)
+      end
+
+      if type(exe.name) ~= "string" then
+        return nil, string.format("executables[%d] field 'name' must be string, got %s", i, type(exe.name))
+      end
+
+      if not exe.path then
+        return nil, string.format("executables[%d] missing required field 'path'", i)
+      end
+
+      if type(exe.path) ~= "string" then
+        return nil, string.format("executables[%d] field 'path' must be string, got %s", i, type(exe.path))
+      end
+
+      if exe.symlinks then
+        if type(exe.symlinks) ~= "table" then
+          return nil, string.format("executables[%d] field 'symlinks' must be table, got %s", i, type(exe.symlinks))
+        end
+        for src, dst in pairs(exe.symlinks) do
+          if type(src) ~= "string" or type(dst) ~= "string" then
+            return nil, string.format("executables[%d] symlinks must map string to string", i)
+          end
+        end
+      end
+    end
+  end
+
+  return true
+end
+
+local function default_version_callback(config)
+  local source = config._meta and config._meta.source or "unknown"
+
+  local ok, err = validate_config(config)
+  if not ok then
+    error("config validation failed in " .. source .. ": " .. err)
   end
 
   if M.versions[config.name] then
     local existing = M.versions[config.name]
     local existing_path = existing._meta and existing._meta.source or "unknown"
-    local new_path = config._meta and config._meta.source or "unknown"
-    error("version name collision: " .. config.name .. " (existing: " .. existing_path .. ", new: " .. new_path .. ")")
+    error("version name collision: " .. config.name .. " (existing: " .. existing_path .. ", new: " .. source .. ")")
   end
 
   M.versions[config.name] = config

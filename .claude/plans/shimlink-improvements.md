@@ -188,15 +188,30 @@ Reduced shimlink from 956 to 837 lines (119 lines). All functions maintain origi
 
 Tested with both SIGINT (Ctrl+C) and SIGTERM - both properly cleanup temp directories without leaving garbage.
 
-**Commit**: [pending]
+**Commit**: 57e5fe7ce8a97a5bb50c8e7e65c8c12e26a97b1f
 
-### 15. Add validation for version config structure
+### 15. Add validation for version config structure ✓ DONE
 
 **Issue**: `version.load_file` (.local/lib/lua/version.lua:20-48) accepts any table structure
 
 **Fix**: Add schema validation - required fields, type checking
 
 **Impact**: Catches config errors at load time rather than during operations
+
+**Implementation**: Added comprehensive validation function that checks:
+- Required fields: name (string), platforms (non-empty table)
+- Platform entries: sha256 (64-char string) required, arch/ext (strings) optional
+- Optional fields with type checking: path, url, version, repo (strings), strip_components (non-negative integer)
+- Executables validation: array of tables with required name/path fields, optional symlinks table
+- Clear error messages including field path and source file location
+
+Validation runs at config load time in default_version_callback before registering the config. All 17 existing shimlink configs pass validation. Testing confirms proper error detection for:
+- Missing required fields
+- Wrong types (string vs number vs table)
+- Invalid values (negative integers, wrong-length checksums)
+- Malformed nested structures (executables, platforms)
+
+**Commit**: [pending]
 
 ## Structural improvements (bonus)
 
