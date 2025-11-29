@@ -6,36 +6,24 @@ local chooser = nil
 local allChoices = {}
 
 local INITIAL_SELECTION = 1
-local SUBTEXT_PENALTY = 100
-
-local function scoreChoice(choice, query)
-  local textMatches, textScore = fuzzy.match(choice.text, query)
-
-  if textMatches then
-    return textScore
-  end
-
-  local fullMatches, fullScore = fuzzy.match(choice.text .. " " .. (choice.subText or ""), query)
-  if fullMatches then
-    return fullScore + SUBTEXT_PENALTY
-  end
-
-  return nil
-end
+local SUBTEXT_PENALTY = 50
 
 local function filterAndSort(choices, query)
-  local filtered = {}
+  local items = {}
   for _, choice in ipairs(choices) do
-    local score = scoreChoice(choice, query)
-    if score then
-      table.insert(filtered, {choice = choice, score = score})
-    end
+    table.insert(items, {
+      text = choice.text,
+      subText = choice.subText,
+      type = "window",
+      original = choice
+    })
   end
-  table.sort(filtered, function(a, b) return a.score < b.score end)
+
+  local results = fuzzy.fuzzy_find(items, query, #choices, SUBTEXT_PENALTY)
 
   local sortedChoices = {}
-  for _, item in ipairs(filtered) do
-    table.insert(sortedChoices, item.choice)
+  for _, result in ipairs(results) do
+    table.insert(sortedChoices, result.original)
   end
   return sortedChoices
 end
