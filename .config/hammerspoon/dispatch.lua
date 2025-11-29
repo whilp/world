@@ -34,7 +34,7 @@ M.getAppChoices = function(seenApps)
       local kind = app:kind()
       local ok, appPath = pcall(app.path, app)
 
-      if kind == 1 and ok and appPath and appPath:find("/Applications/") then
+      if kind == 1 and ok and appPath and appPath:match("%.app/?$") then
         table.insert(choices, {
           text = appName,
           subText = "Focus application",
@@ -43,6 +43,47 @@ M.getAppChoices = function(seenApps)
       end
     end
   end
+
+  return choices
+end
+
+M.getInstalledAppChoices = function(seenApps)
+  local choices = {}
+  local seenNames = {}
+
+  -- Copy seenApps to seenNames
+  for name, _ in pairs(seenApps) do
+    seenNames[name] = true
+  end
+
+  local appDirs = {
+    "/Applications",
+    "/System/Applications",
+    os.getenv("HOME") .. "/Applications"
+  }
+
+  for _, dir in ipairs(appDirs) do
+    local iter, dirObj = hs.fs.dir(dir)
+    if iter then
+      for file in iter, dirObj do
+        if file:match("%.app$") then
+          local appName = file:gsub("%.app$", "")
+          if not seenNames[appName] then
+            table.insert(choices, {
+              text = appName,
+              subText = "Launch application",
+              appName = appName
+            })
+            seenNames[appName] = true
+          end
+        end
+      end
+    end
+  end
+
+  table.sort(choices, function(a, b)
+    return a.text < b.text
+  end)
 
   return choices
 end
@@ -64,6 +105,11 @@ M.getAllChoices = function()
     table.insert(choices, choice)
   end
 
+  local installedAppChoices = M.getInstalledAppChoices(seenApps)
+  for _, choice in ipairs(installedAppChoices) do
+    table.insert(choices, choice)
+  end
+
   local commandChoices = M.getCommandChoices()
   for _, choice in ipairs(commandChoices) do
     table.insert(choices, choice)
@@ -74,7 +120,12 @@ end
 
 M.detectType = function(item)
   if item.window then return "window"
-  elseif item.appName then return "app"
+  elseif item.appName then
+    if item.subText == "Focus application" then
+      return "running_app"
+    else
+      return "installed_app"
+    end
   elseif item.commandId then return "command"
   elseif item.emoji then return "emoji"
   elseif item.symbol then return "symbol"

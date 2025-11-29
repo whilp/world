@@ -1,8 +1,9 @@
 local Fuzzy = {}
 
 local TYPE_PRIORITY = {
-	window = 3,
-	app = 2,
+	window = 4,
+	running_app = 3,
+	installed_app = 2,
 	command = 1,
 }
 
