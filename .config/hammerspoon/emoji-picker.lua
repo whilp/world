@@ -4,7 +4,13 @@ package.path = os.getenv("HOME") .. "/.local/lib/lua/?.lua;" .. package.path
 
 local emoji = require("emoji.emoji")
 
+local cachedChoices = nil
+
 M.getEmojiChoices = function()
+  if cachedChoices then
+    return cachedChoices
+  end
+
   local choices = {}
 
   for _, item in ipairs(emoji) do
@@ -15,6 +21,7 @@ M.getEmojiChoices = function()
     })
   end
 
+  cachedChoices = choices
   return choices
 end
 

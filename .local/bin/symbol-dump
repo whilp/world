@@ -1,0 +1,59 @@
+#!/usr/bin/env luajit
+
+package.path = os.getenv("HOME") .. "/.local/lib/lua/?.lua;" .. package.path
+
+local serpent = require("serpent")
+local dump = require("symbols.dump")
+
+local function cmd_urls(args)
+  io.write("UnicodeData.txt: " .. dump.unicode_data_url .. "\n")
+  io.write("Blocks.txt: " .. dump.blocks_url .. "\n")
+end
+
+local function cmd_show(args)
+  if #args < 2 then
+    io.stderr:write("usage: symbol-dump show <unicode-data-file> <blocks-file>\n")
+    os.exit(1)
+  end
+
+  local unicode_data_path = args[1]
+  local blocks_path = args[2]
+
+  local symbols, err = dump.load_from_files(unicode_data_path, blocks_path)
+  if not symbols then
+    io.stderr:write("error: " .. err .. "\n")
+    os.exit(1)
+  end
+
+  local serialized = serpent.block(symbols, {
+    comment = false,
+    sortkeys = false,
+    compact = false
+  })
+  io.write("return " .. serialized)
+end
+
+local function main(args)
+  if #args == 0 then
+    io.stderr:write("usage: symbol-dump <command> [args]\n")
+    io.stderr:write("commands:\n")
+    io.stderr:write("  urls                           print source URLs\n")
+    io.stderr:write("  show <unicode-data> <blocks>   show symbol data\n")
+    os.exit(1)
+  end
+
+  local command = args[1]
+  local cmd_args = {unpack(args, 2)}
+
+  if command == "urls" then
+    cmd_urls(cmd_args)
+  elseif command == "show" then
+    cmd_show(cmd_args)
+  else
+    io.stderr:write("error: unknown command: " .. command .. "\n")
+    os.exit(1)
+  end
+end
+
+local args = {...}
+main(args)
