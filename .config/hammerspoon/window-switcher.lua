@@ -117,6 +117,7 @@ local function showSwitcher()
   end
 
   chooser:choices(choices)
+  chooser:query("")
   chooser:show()
   chooser:selectedRow(INITIAL_SELECTION)
 end
