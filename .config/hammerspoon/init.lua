@@ -47,6 +47,11 @@ clueManager.setup(clueLoader, {
   symbol = showSymbolChooser,
 })
 
+local metaModal = clueManager.create_meta_modal(hyper)
+hyper:bind("space"):toFunction("Show modals", function()
+  metaModal:enter()
+end)
+
 windowSwitcher.setup(hyper)
 notchClock.start()
 

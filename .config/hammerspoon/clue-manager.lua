@@ -6,9 +6,89 @@ M.mode_handlers = {}
 
 M.setup = function(loader, mode_handlers)
   M.mode_handlers = mode_handlers or {}
+  M.loader = loader
   for prefix, modal_config in pairs(loader.modals) do
     M.create_modal(prefix, modal_config, loader)
   end
+end
+
+M.create_meta_modal = function(hyper)
+  local modal = hs.hotkey.modal.new({"cmd", "ctrl", "alt", "shift"}, nil)
+
+  function modal:entered()
+    M.show_meta_overlay()
+  end
+
+  function modal:exited()
+    M.hide_overlay()
+  end
+
+  modal:bind("", "escape", function()
+    modal:exit()
+  end)
+
+  return modal
+end
+
+M.show_meta_overlay = function()
+  local screen = hs.mouse.getCurrentScreen()
+  if not screen then
+    return nil, "no screen found"
+  end
+
+  local screen_frame = screen:frame()
+  local lines = { "Modals", "" }
+
+  local modal_keys = {}
+  for prefix, _ in pairs(M.loader.modals) do
+    table.insert(modal_keys, prefix)
+  end
+  table.sort(modal_keys)
+
+  for _, prefix in ipairs(modal_keys) do
+    local modal_config = M.loader.modals[prefix]
+    local key = modal_config.trigger[2]
+    local name = ""
+    if #modal_config.bindings > 0 then
+      local first_clue = modal_config.bindings[1].clue
+      name = first_clue.group or prefix
+      name = name:gsub("^%l", string.upper)
+    end
+    table.insert(lines, string.format("  %s  →  %s", key, name))
+  end
+
+  table.insert(lines, "")
+  table.insert(lines, "  esc  →  Cancel")
+
+  local text = table.concat(lines, "\n")
+  local line_height = 20
+  local canvas_height = #lines * line_height + 40
+  local canvas_width = 400
+
+  M.canvas = hs.canvas.new({
+    x = screen_frame.x + screen_frame.w / 2 - canvas_width / 2,
+    y = screen_frame.y + screen_frame.h - canvas_height - 50,
+    w = canvas_width,
+    h = canvas_height
+  })
+
+  M.canvas[1] = {
+    type = "rectangle",
+    action = "fill",
+    fillColor = { alpha = 0.9, white = 0.1 },
+    roundedRectRadii = { xRadius = 10, yRadius = 10 }
+  }
+
+  M.canvas[2] = {
+    type = "text",
+    text = text,
+    textColor = { white = 1.0 },
+    textSize = 14,
+    textFont = "Menlo",
+  }
+
+  M.canvas:show()
+  return true
 end
 
 M.create_modal = function(prefix, config, loader)
