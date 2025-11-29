@@ -182,6 +182,7 @@ local function print_help()
   print([[usage: cleanshot <subcommand> [flags]
 
 subcommands:
+  latest                  Print path of most recent screenshot
   all-in-one              Launch all-in-one capture tool
   capture-area            Area capture
   capture-fullscreen      Fullscreen capture
@@ -233,6 +234,17 @@ local function main(args)
   end
 
   local subcommand, flags = parse_args(args)
+
+  if subcommand == "latest" then
+    local dir = get_screenshot_directory(flags)
+    local latest_file = get_latest_file(dir)
+    if latest_file then
+      print(latest_file)
+      os.exit(0)
+    else
+      error("no screenshots found in " .. dir)
+    end
+  end
 
   if not VALID_COMMANDS[subcommand] then
     error("unknown subcommand: " .. subcommand)

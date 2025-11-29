@@ -16,6 +16,9 @@ cleanshot <subcommand> [flags]
 
 ## Subcommands
 
+### Query commands
+- `latest` - Print path of most recent screenshot
+
 ### Capture commands
 - `all-in-one` - Launch all-in-one capture tool
 - `capture-area` - Area capture
@@ -66,6 +69,10 @@ cleanshot <subcommand> [flags]
 ## Examples
 
 ```bash
+# Get latest screenshot
+cleanshot latest
+cleanshot latest -path ~/Pictures/screenshots
+
 # Simple captures
 cleanshot capture-area
 cleanshot capture-fullscreen
@@ -108,6 +115,8 @@ cleanshot help
 ## Usage examples
 
 When user requests:
+- "what's my latest screenshot" → `cleanshot latest`
+- "get the most recent screenshot path" → `cleanshot latest`
 - "take a screenshot" → `cleanshot capture-area` or `cleanshot capture-fullscreen`
 - "save a screenshot" → `cleanshot capture-area -action save`
 - "record my screen" → `cleanshot record-screen`
