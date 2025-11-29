@@ -1,0 +1,97 @@
+#!/usr/bin/env luajit
+
+local posix = require('posix')
+local unistd = require('posix.unistd')
+local wait = require('posix.sys.wait')
+local serpent = require('serpent')
+
+local function build_hs_code(query)
+  query = query or ""
+  local json_query = string.format("%q", query)
+
+  return [[
+local fuzzy = require("fuzzy")
+local switcherItems = require("switcher-items")
+
+local allItems = switcherItems.getAllChoices()
+
+for _, item in ipairs(allItems) do
+  item.type = switcherItems.detectType(item)
+  if item.window then
+    item.windowId = item.window:id()
+    item.window = nil
+  end
+end
+
+local results
+local query = ]] .. json_query .. [[
+
+if query == "" then
+  results = allItems
+else
+  local items = {}
+  for _, item in ipairs(allItems) do
+    table.insert(items, {
+      text = item.text,
+      subText = item.subText,
+      type = item.type,
+      original = item
+    })
+  end
+
+  local scored = fuzzy.fuzzy_find(items, query, #items, 50)
+  results = {}
+  for _, result in ipairs(scored) do
+    local merged = result.original
+    merged.matchScore = result.matchScore
+    table.insert(results, merged)
+  end
+end
+
+return hs.inspect(results)
+]]
+end
+
+local function main(args)
+  local query = args[1] or ""
+
+  local hs_code = build_hs_code(query)
+
+  local handle = posix.popen({"hs", "-c", hs_code}, "r")
+  if not handle then
+    io.stderr:write("error: failed to execute hs command\n")
+    io.stderr:flush()
+    os.exit(1)
+  end
+
+  local output = unistd.read(handle.fd, 1048576) or ""
+  local _, reason, exit_code = wait.wait(handle.pids[1])
+  unistd.close(handle.fd)
+
+  if reason ~= "exited" or exit_code ~= 0 then
+    io.stderr:write("error: hs command failed\n")
+    io.stderr:write(output)
+    io.stderr:flush()
+    os.exit(exit_code or 1)
+  end
+
+  local results, err = load("return " .. output)
+  if not results then
+    io.stderr:write("error: failed to parse hs output: " .. tostring(err) .. "\n")
+    io.stderr:flush()
+    os.exit(1)
+  end
+
+  local data = results()
+  local serialized = serpent.block(data, {comment=false})
+  io.write(serialized)
+  io.write("\n")
+end
+
+local args = {...}
+local ok, err = pcall(main, args)
+if not ok then
+  io.stderr:write("error: " .. tostring(err) .. "\n")
+  io.stderr:flush()
+  os.exit(1)
+end
