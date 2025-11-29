@@ -1,5 +1,4 @@
 local HyperKey = require("hyper-key")
-local configWatcher = require("config-watch")
 local windowSwitcher = require("window-switcher")
 local notchClock = require("notch-clock")
 
