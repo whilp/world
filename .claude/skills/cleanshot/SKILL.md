@@ -265,18 +265,58 @@ open "cleanshot://open-settings?tab=shortcuts"
 
 Parameters: `tab` (values: `general`, `wallpaper`, `shortcuts`, `quickaccess`, `recording`, `screenshots`, `annotate`, `cloud`, `advanced`, `about`)
 
+## CLI Tool
+
+A Lua CLI wrapper is available at `~/.local/bin/cleanshot` for simplified usage.
+
+**Basic usage:**
+```bash
+cleanshot <subcommand> [flags]
+```
+
+**Examples:**
+```bash
+# Simple captures
+cleanshot capture-area
+cleanshot capture-fullscreen
+
+# With coordinates and save (automatically prints screenshot path)
+cleanshot capture-area -x 100 -y 120 -width 200 -height 150 -action save
+
+# Custom screenshot directory
+cleanshot capture-fullscreen -action save -path ~/Pictures/screenshots
+
+# Scrolling capture with auto-start
+cleanshot scrolling-capture -start -autoscroll
+
+# OCR with line breaks
+cleanshot capture-text -linebreaks
+
+# Open settings
+cleanshot open-settings -tab shortcuts
+
+# Show help
+cleanshot help
+```
+
+**Key features:**
+- Automatically detects and prints screenshot path when using `-action save`
+- Default screenshot directory: `~/Downloads/screens` (override with `-path`)
+- Boolean flags don't require values: `-start`, `-autoscroll`, `-linebreaks`
+- Supports all CleanShot URL scheme parameters
+
 ## Usage examples
 
 When user requests:
-- "take a screenshot" → use `capture-area` or `capture-fullscreen`
-- "save a screenshot" → use `capture-area?action=save&filepath=~/Downloads/screens/screenshot.png`
-- "record my screen" → use `record-screen`
-- "extract text from image" → use `capture-text`
-- "annotate this image" → use `open-annotate`
-- "hide desktop icons" → use `hide-desktop-icons`
-- "scrolling screenshot" → use `scrolling-capture`
+- "take a screenshot" → use `cleanshot capture-area` or `cleanshot capture-fullscreen`
+- "save a screenshot" → use `cleanshot capture-area -action save`
+- "record my screen" → use `cleanshot record-screen`
+- "extract text from image" → use `cleanshot capture-text`
+- "annotate this image" → use `cleanshot open-annotate -filepath <path>`
+- "hide desktop icons" → use `cleanshot hide-desktop-icons`
+- "scrolling screenshot" → use `cleanshot scrolling-capture`
 - "capture this specific region" → use coordinate parameters with appropriate command
 
 Always confirm which capture type the user wants if ambiguous.
 
-**Note:** When saving screenshots, always use `~/Downloads/screens/` as the target directory.
+**Note:** When saving screenshots, the CLI tool automatically detects and prints the screenshot path.
