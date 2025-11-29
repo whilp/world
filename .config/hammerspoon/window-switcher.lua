@@ -44,7 +44,7 @@ local function switchToEmojiMode()
   isSymbolMode = false
   local emojiChoices = emojiPicker.getEmojiChoices()
   allChoices = emojiChoices
-  chooser:choices(emojiChoices)
+  chooser:choices(chooserStyle.styleChoices(emojiChoices))
   chooser:query("")
   chooser:selectedRow(1)
   chooser:show()
@@ -55,7 +55,7 @@ local function switchToSymbolMode()
   isSymbolMode = true
   local symbolChoices = symbolPicker.getSymbolChoices()
   allChoices = symbolChoices
-  chooser:choices(symbolChoices)
+  chooser:choices(chooserStyle.styleChoices(symbolChoices))
   chooser:query("")
   chooser:selectedRow(1)
   chooser:show()
@@ -100,16 +100,16 @@ local function showSwitcher()
       end
 
       if query == "" then
-        chooser:choices(allChoices)
+        chooser:choices(chooserStyle.styleChoices(allChoices))
       else
         debounceTimer = hs.timer.doAfter(DEBOUNCE_DELAY, function()
-          chooser:choices(filterAndSort(allChoices, query))
+          chooser:choices(chooserStyle.styleChoices(filterAndSort(allChoices, query)))
         end)
       end
     end)
   end
 
-  chooser:choices(choices)
+  chooser:choices(chooserStyle.styleChoices(choices))
   chooser:query("")
   chooser:show()
   chooser:selectedRow(INITIAL_SELECTION)
