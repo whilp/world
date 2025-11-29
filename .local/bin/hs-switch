@@ -11,12 +11,12 @@ local function build_hs_code(query)
 
   return [[
 local fuzzy = require("fuzzy")
-local switcherItems = require("switcher-items")
+local dispatch = require("dispatch")
 
-local allItems = switcherItems.getAllChoices()
+local allItems = dispatch.getAllChoices()
 
 for _, item in ipairs(allItems) do
-  item.type = switcherItems.detectType(item)
+  item.type = dispatch.detectType(item)
   if item.window then
     item.windowId = item.window:id()
     item.window = nil

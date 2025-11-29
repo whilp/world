@@ -1,7 +1,7 @@
 local WindowSwitcher = {}
 
 local fuzzy = require("fuzzy")
-local switcherItems = require("switcher-items")
+local dispatch = require("dispatch")
 local hammerspoonModule = require("hammerspoon-commands")
 local chooser = nil
 local allChoices = {}
@@ -16,7 +16,7 @@ local function filterAndSort(choices, query)
     table.insert(items, {
       text = choice.text,
       subText = choice.subText,
-      type = switcherItems.detectType(choice),
+      type = dispatch.detectType(choice),
       original = choice
     })
   end
@@ -31,7 +31,7 @@ local function filterAndSort(choices, query)
 end
 
 local function showSwitcher()
-  local choices = switcherItems.getAllChoices()
+  local choices = dispatch.getAllChoices()
   allChoices = choices
 
   if not chooser then
