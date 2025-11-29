@@ -84,7 +84,7 @@ Manage Hammerspoon configuration for macOS automation including window managemen
 - `getCommandChoices()` - collect CleanShot and Hammerspoon commands
 - `getAllChoices()` - convenience function for all items
 - `detectType(item)` - identify type (window/app/command)
-- Used by both window-switcher and hs-switch CLI tool
+- Used by both window-switcher and hs-dispatch CLI tool
 
 **fuzzy.lua** - Dynamic programming fuzzy matching
 - Subsequence matching with scoring:
@@ -179,20 +179,20 @@ open "hammerspoon://consoleWindow"
 **Test configuration:**
 Edit any `.lua` file in `~/.config/hammerspoon/` to trigger auto-reload
 
-### Using hs-switch CLI
+### Using hs-dispatch CLI
 
-The `hs-switch` tool (in `~/.local/bin/hs-switch`) queries the dispatcher modal items for testing and tuning. It uses the same item collection and fuzzy matching logic as the modal.
+The `hs-dispatch` tool (in `~/.local/bin/hs-dispatch`) queries the dispatcher modal items for testing and tuning. It uses the same item collection and fuzzy matching logic as the modal.
 
 **List all items:**
 ```bash
-hs-switch
+hs-dispatch
 ```
 
 **Filter and rank items:**
 ```bash
-hs-switch ghost      # find Ghostty window
-hs-switch reload     # find Hammerspoon reload command
-hs-switch cleanshot  # find CleanShot commands
+hs-dispatch ghost      # find Ghostty window
+hs-dispatch reload     # find Hammerspoon reload command
+hs-dispatch cleanshot  # find CleanShot commands
 ```
 
 **Output format:**
