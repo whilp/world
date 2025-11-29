@@ -29,18 +29,18 @@ Version{
   platforms = {
     ["darwin-arm64"] = {
       arch = "darwin-arm64",
-      sha256 = "9412e11b0f8db9e1301ab4eda5ba49162c07a5b19edf9123aa3908cf65104380"
+      sha256 = "fec9c0554dcbdf267393c40f6788a4bbd1fa3d47722020256d2fe48e747ee5ac"
     },
     ["linux-arm64"] = {
       arch = "linux-arm64",
-      sha256 = "c1270a190a2df167c29095466991483c28b7fe71e85c6e55b97985c3aaccf93b"
+      sha256 = "67d3c064f8beaa2ecffff638b11e2f881d02ecfb4f791621d3a95e9d67badd0a"
     },
     ["linux-x86_64"] = {
       arch = "linux-x64",
-      sha256 = "2853c518d8ac68e22240f31c66951089247c65c36d2cfceb4a5b55baa1ffcb2e"
+      sha256 = "5c5579b64a342317b3000282afc20263f66d7a713870b67e2d196adcf6fad847"
     }
   },
-  release = "2025.11.29-b35f0e8",
+  release = "2025.11.29-db85101",
   repo = "whilp/dotfiles",
   strip_components = 1,
   url = "https://github.com/${repo}/releases/download/${release}/${name}-${version}-${arch}.tar.gz",
