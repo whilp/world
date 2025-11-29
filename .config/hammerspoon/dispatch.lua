@@ -86,7 +86,7 @@ end
 M.detectType = function(item)
   if item.window then return "window"
   elseif item.appName then return "app"
-  elseif item.url or item.commandId then return "command"
+  elseif item.commandId then return "command"
   else return "unknown"
   end
 end

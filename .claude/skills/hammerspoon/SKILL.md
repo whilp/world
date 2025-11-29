@@ -106,7 +106,7 @@ The `hs` command-line tool provides direct interaction with Hammerspoon. It requ
 
 **Check for errors and module status:**
 ```bash
-hs -c "
+echo "
 local status = {modules_loaded = {}, errors = {}}
 local modules = {'hyper-key', 'config-watch', 'window-hotkeys', 'quick-switch', 'window-switcher'}
 for _, mod in ipairs(modules) do
@@ -118,7 +118,7 @@ for _, mod in ipairs(modules) do
   end
 end
 return hs.json.encode(status, true)
-"
+" | hs -c ''
 ```
 
 **View live console output:**
@@ -128,8 +128,8 @@ hs -C
 
 **Execute Hammerspoon commands:**
 ```bash
-hs -c "hs.alert.show('test')"
-hs -c "hs.reload()"
+echo "hs.alert.show('test')" | hs -c ''
+echo 'hs.reload()' | hs -c ''
 ```
 
 **Interactive Lua REPL:**
@@ -161,7 +161,7 @@ hs /path/to/script.lua
 
 **Reload Hammerspoon:**
 ```bash
-hs-reload
+echo 'hs.reload()' | hs -c ''
 # or via URL:
 open -g hammerspoon://reload
 ```
@@ -178,32 +178,6 @@ open "hammerspoon://consoleWindow"
 
 **Test configuration:**
 Edit any `.lua` file in `~/.config/hammerspoon/` to trigger auto-reload
-
-### Using hs-reload CLI
-
-The `hs-reload` tool (in `~/.local/bin/hs-reload`) reloads Hammerspoon while suppressing common IPC errors that occur during reload.
-
-**Reload Hammerspoon cleanly:**
-```bash
-hs-reload
-```
-
-**Features:**
-- Filters out CFMessagePort and IPC errors that are normal during reload
-- Uses 2-second timeout to prevent hanging
-- Captures both stdout and stderr separately
-- Always exits cleanly (code 0) after filtering errors
-
-**Filtered error patterns:**
-- `CFMessagePort: dropping corrupt reply Mach message`
-- `error communicating with Hammerspoon: message port was invalidated`
-- `error unregistering CLI instance with Hammerspoon: message port invalid`
-- `transport errors are normal if Hammerspoon is reloading`
-
-**Implementation details:**
-- Uses `fork()` + `pipe()` + `dup2()` for stderr capture
-- Written in LuaJIT following repo conventions
-- More reliable than raw `hs -c 'hs.reload()'` which shows noisy errors
 
 ### Using hs-dispatch CLI
 
@@ -254,7 +228,7 @@ hs-dispatch cleanshot  # find CleanShot commands
 - Validate changes to switcher logic without opening the modal
 
 **Implementation details:**
-- Uses `hs -c` to execute code in Hammerspoon context
+- Uses `echo 'code' | hs -c ''` to execute code in Hammerspoon context
 - Shares `switcher-items` and `fuzzy` modules with window-switcher
 - Safe query injection via `string.format("%q")`
 - Written in LuaJIT following repo conventions
@@ -345,7 +319,7 @@ Still using:
 ### Check for errors
 Use the `hs` CLI to check for module loading errors:
 ```bash
-hs -c "
+echo "
 local status = {modules_loaded = {}, errors = {}}
 local modules = {'hyper-key', 'config-watch', 'window-hotkeys', 'quick-switch', 'window-switcher'}
 for _, mod in ipairs(modules) do
@@ -357,7 +331,7 @@ for _, mod in ipairs(modules) do
   end
 end
 return hs.json.encode(status, true)
-"
+" | hs -c ''
 ```
 
 Or view live console output: `hs -C`
@@ -365,13 +339,13 @@ Or view live console output: `hs -C`
 ### Config not loading
 - Check symlink: `ls -la ~/.hammerspoon`
 - Verify Hammerspoon is running: `ps aux | rg Hammerspoon`
-- Reload manually: `hs -c "hs.reload()"`
+- Reload manually: `echo 'hs.reload()' | hs -c ''`
 - Check for errors: `hs -C` or `open "hammerspoon://consoleWindow"`
 
 ### Keybindings not working
 - Check for conflicts with app shortcuts
 - Verify modifier keys are correct
-- Test with: `hs -c "hs.alert.show('test')"`
+- Test with: `echo "hs.alert.show('test')" | hs -c ''`
 
 ### Auto-reload not triggering
 - Verify `config-watch.lua` is loaded in `init.lua`

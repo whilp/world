@@ -41,8 +41,6 @@ local function showSwitcher()
           choice.window:focus()
         elseif choice.appName then
           hs.application.launchOrFocus(choice.appName)
-        elseif choice.url then
-          hs.urlevent.openURL(choice.url)
         elseif choice.commandId then
           local action = commandActions[choice.commandId]
           if action then
