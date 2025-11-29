@@ -217,6 +217,11 @@ local function build_luajit(config)
         content = content:gsub("=" .. escaped_install_dir .. "/lib", "=\"$(dirname \"$0\")\"/../lib")
         content = content:gsub("=" .. escaped_install_dir .. "/etc", "=\"$(dirname \"$0\")\"/../etc")
 
+        content = content:gsub('"' .. escaped_install_dir .. "/share", '"$(dirname "$0")/../share')
+        content = content:gsub('"' .. escaped_install_dir .. "/lib", '"$(dirname "$0")/../lib')
+        content = content:gsub(escaped_install_dir .. "/share", "$(dirname \"$0\")/../share")
+        content = content:gsub(escaped_install_dir .. "/lib", "$(dirname \"$0\")/../lib")
+
         util.write_file(file_path, content)
       end
     end
