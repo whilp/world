@@ -29,9 +29,18 @@ function M.createCachedPicker(dataModule, itemToChoice)
   }
 end
 
--- Inserts text by simulating keystrokes
+-- Inserts text using the pasteboard
+-- This properly handles multi-byte UTF-8 characters like emoji
 function M.insertText(text)
-  hs.eventtap.keyStrokes(text)
+  local previousContents = hs.pasteboard.getContents()
+  hs.pasteboard.setContents(text)
+  hs.eventtap.keyStroke({"cmd"}, "v")
+
+  hs.timer.doAfter(0.1, function()
+    if previousContents then
+      hs.pasteboard.setContents(previousContents)
+    end
+  end)
 end
 
 return M
