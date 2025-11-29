@@ -135,7 +135,7 @@ M.show_overlay = function(modal_config, loader, prefix)
     text = text,
     textColor = { white = 1.0 },
     textSize = 14,
-    textFont = "SF Mono",
+    textFont = "Menlo",
   }
 
   M.canvas:show()
