@@ -82,14 +82,24 @@ M.show_overlay = function(modal_config, loader, prefix)
     return a.key < b.key
   end)
 
+  local max_key_width = 0
+  for _, binding in ipairs(sorted_bindings) do
+    if #binding.key > max_key_width then
+      max_key_width = #binding.key
+    end
+  end
+  if max_key_width < 3 then
+    max_key_width = 3
+  end
+
   for _, binding in ipairs(sorted_bindings) do
     local clue = binding.clue
     local display_name = clue.name or clue.id or "unknown"
-    table.insert(lines, string.format("  %s  →  %s", binding.key, display_name))
+    table.insert(lines, string.format("  %-"..max_key_width.."s  →  %s", binding.key, display_name))
   end
 
   table.insert(lines, "")
-  table.insert(lines, "  esc  →  Cancel")
+  table.insert(lines, string.format("  %-"..max_key_width.."s  →  Cancel", "esc"))
 
   local text = table.concat(lines, "\n")
 
