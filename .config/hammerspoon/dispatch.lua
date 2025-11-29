@@ -1,7 +1,6 @@
 local M = {}
 
-local cleanshotCommands = require("cleanshot-commands")
-local hammerspoonModule = require("hammerspoon-commands")
+local clueLoader = require("clue-loader")
 
 M.getWindowChoices = function()
   local windows = hs.window.orderedWindows()
@@ -49,17 +48,7 @@ M.getAppChoices = function(seenApps)
 end
 
 M.getCommandChoices = function()
-  local choices = {}
-
-  for _, choice in ipairs(cleanshotCommands) do
-    table.insert(choices, choice)
-  end
-
-  for _, choice in ipairs(hammerspoonModule.choices) do
-    table.insert(choices, choice)
-  end
-
-  return choices
+  return clueLoader.to_choices()
 end
 
 M.getAllChoices = function()

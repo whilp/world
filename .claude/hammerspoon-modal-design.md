@@ -559,11 +559,13 @@ hyper:toFunction("tab", windowSwitcher.show):bind()
 5. ✅ Test clue execution
 6. ✅ Verify emoji/symbol picker integration
 
-### Phase 4: Cleanup (TODO)
-1. ⏳ Remove `hammerspoon-commands.lua`
-2. ⏳ Remove `cleanshot-commands.lua`
-3. ⏳ Update dispatcher to use clue-loader exclusively
-4. ⏳ Remove old command imports
+### ✅ Phase 4: Cleanup (COMPLETE)
+1. ✅ Remove `hammerspoon-commands.lua`
+2. ✅ Remove `cleanshot-commands.lua`
+3. ✅ Update dispatcher to use clue-loader exclusively
+4. ✅ Remove old command imports
+5. ✅ Update window-switcher to use clue-manager
+6. ✅ Test all integrations still work
 
 ### Phase 5: Extensions (TODO)
 1. ⏳ Add more clue groups (window management, app launching, etc.)
@@ -792,12 +794,14 @@ Generates markdown documentation from loaded clues and modals.
 - Emoji/symbol picker integration working
 - **Time:** ~1.5 hours
 
-**Phase 4 (Cleanup):** ⏳ TODO
-- Remove old command modules
+**Phase 4 (Cleanup):** ✅ COMPLETE
+- Removed old command modules
+- Updated dispatch.lua and window-switcher.lua
+- All integrations tested and working
 - **Time:** ~0.5 hours
 
-**Total Time So Far:** ~6.5 hours
-**Remaining:** ~0.5 hours
+**Total Time:** ~7 hours
+**Phase 5 (Extensions):** ⏳ TODO (Future work)
 
 ---
 

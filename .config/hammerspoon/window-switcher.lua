@@ -2,12 +2,12 @@ local WindowSwitcher = {}
 
 local fuzzy = require("fuzzy")
 local dispatch = require("dispatch")
-local hammerspoonModule = require("hammerspoon-commands")
+local clueLoader = require("clue-loader")
+local clueManager = require("clue-manager")
 local emojiPicker = require("emoji-picker")
 local symbolPicker = require("symbol-picker")
 local chooser = nil
 local allChoices = {}
-local commandActions = hammerspoonModule.commands
 local isEmojiMode = false
 local isSymbolMode = false
 
@@ -79,16 +79,13 @@ local function showSwitcher()
         elseif choice.appName then
           hs.application.launchOrFocus(choice.appName)
         elseif choice.commandId then
-          local action = commandActions[choice.commandId]
-          if action then
-            local result = action()
-            if result == "emoji" then
-              switchToEmojiMode()
-              return
-            elseif result == "symbol" then
-              switchToSymbolMode()
-              return
-            end
+          local result = clueManager.execute_clue(choice.commandId, clueLoader)
+          if result == "emoji" then
+            switchToEmojiMode()
+            return
+          elseif result == "symbol" then
+            switchToSymbolMode()
+            return
           end
         end
       end
