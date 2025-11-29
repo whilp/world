@@ -1,8 +1,8 @@
 local Fuzzy = {}
 
 local TYPE_PRIORITY = {
-	window = 4,
-	running_app = 3,
+	window = 8,
+	running_app = 7,
 	installed_app = 2,
 	command = 1,
 }
@@ -263,7 +263,7 @@ function Fuzzy.fuzzy_find(items, query, max_results, subtext_penalty)
 		local score = Fuzzy.match_item(item, query, subtext_penalty)
 		if score then
 			local type_priority = TYPE_PRIORITY[item.type] or 0
-			local final_score = score + (type_priority * 10)
+			local final_score = score + (type_priority * 15)
 			table.insert(scored, {
 				item = item,
 				matchScore = final_score,
