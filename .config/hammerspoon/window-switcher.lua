@@ -3,9 +3,11 @@ local WindowSwitcher = {}
 local fuzzy = require("fuzzy")
 local dispatch = require("dispatch")
 local hammerspoonModule = require("hammerspoon-commands")
+local emojiPicker = require("emoji-picker")
 local chooser = nil
 local allChoices = {}
 local commandActions = hammerspoonModule.commands
+local isEmojiMode = false
 
 local INITIAL_SELECTION = 2
 local SUBTEXT_PENALTY = 50
@@ -30,21 +32,38 @@ local function filterAndSort(choices, query)
   return sortedChoices
 end
 
+local function switchToEmojiMode()
+  isEmojiMode = true
+  local emojiChoices = emojiPicker.getEmojiChoices()
+  allChoices = emojiChoices
+  chooser:choices(emojiChoices)
+  chooser:query("")
+  chooser:selectedRow(1)
+  chooser:show()
+end
+
 local function showSwitcher()
+  isEmojiMode = false
   local choices = dispatch.getAllChoices()
   allChoices = choices
 
   if not chooser then
     chooser = hs.chooser.new(function(choice)
       if choice then
-        if choice.window then
+        if isEmojiMode and choice.emoji then
+          emojiPicker.insertEmoji(choice.emoji)
+        elseif choice.window then
           choice.window:focus()
         elseif choice.appName then
           hs.application.launchOrFocus(choice.appName)
         elseif choice.commandId then
           local action = commandActions[choice.commandId]
           if action then
-            action()
+            local result = action()
+            if result == "emoji" then
+              switchToEmojiMode()
+              return
+            end
           end
         end
       end
