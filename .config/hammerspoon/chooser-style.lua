@@ -22,6 +22,7 @@ M.styleChoice = function(choice)
       styled[k] = v
     end
   end
+  styled.image = nil
   return styled
 end
 
