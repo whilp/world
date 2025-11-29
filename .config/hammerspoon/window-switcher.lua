@@ -2,6 +2,7 @@ local WindowSwitcher = {}
 
 local chooser = nil
 local allChoices = {}
+local usageStats = {}
 
 local function fuzzyMatch(str, pattern)
   local strLower = str:lower()
@@ -61,7 +62,7 @@ local function showSwitcher()
 
     for _, app in ipairs(hs.application.runningApplications()) do
       local appName = app:name()
-      if appName and not seenApps[appName] then
+      if appName and not seenApps[appName] and not appName:match("Helper") then
         local ok, appPath = pcall(app.path, app)
         if ok and appPath and (
           appPath:find("^/Applications/") or
@@ -86,6 +87,12 @@ local function showSwitcher()
     if not chooser then
       chooser = hs.chooser.new(function(choice)
         if choice then
+          local query = chooser:query()
+          if query and query ~= "" then
+            local key = query:lower() .. "|" .. choice.text
+            usageStats[key] = (usageStats[key] or 0) + 1
+          end
+
           if choice.window then
             choice.window:focus()
           elseif choice.appName then
@@ -109,10 +116,21 @@ local function showSwitcher()
         else
           local filtered = {}
           for _, choice in ipairs(allChoices) do
-            local searchText = choice.text .. " " .. (choice.subText or "")
-            local matches, score = fuzzyMatch(searchText, query)
-            if matches then
-              table.insert(filtered, {choice = choice, score = score})
+            local textMatches, textScore = fuzzyMatch(choice.text, query)
+            local fullMatches, fullScore = fuzzyMatch(choice.text .. " " .. (choice.subText or ""), query)
+
+            local finalScore = nil
+            if textMatches then
+              finalScore = textScore
+            elseif fullMatches then
+              finalScore = fullScore + 10000
+            end
+
+            if finalScore then
+              local key = query:lower() .. "|" .. choice.text
+              local usageCount = usageStats[key] or 0
+              finalScore = finalScore - (usageCount * 1000)
+              table.insert(filtered, {choice = choice, score = finalScore})
             end
           end
           table.sort(filtered, function(a, b) return a.score < b.score end)
