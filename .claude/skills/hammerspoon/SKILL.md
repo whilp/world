@@ -71,13 +71,32 @@ Manage Hammerspoon configuration for macOS automation including window managemen
 
 ### Window switcher
 
-**window-switcher.lua** - Window switcher using hs.window.switcher
-- Uses built-in `hs.window.switcher` API
-- Shows all windows across all spaces and screens
-- UI features: thumbnails, titles, dark background theme
-- Keybindings:
-  - `hyper+tab` - Next window
-  - `hyper+backtick` - Previous window
+**window-switcher.lua** - Unified launcher/dispatcher modal
+- Uses `hs.chooser` API with fuzzy matching
+- Shows windows, apps, and commands (CleanShot + Hammerspoon)
+- Dynamic programming fuzzy matching with scoring bonuses
+- UI features: dark theme, search subtext, 15 visible rows
+- Keybinding: `hyper+tab`
+
+**switcher-items.lua** - Shared item collection module
+- `getWindowChoices()` - collect all windows
+- `getAppChoices(seenApps)` - collect apps without windows
+- `getCommandChoices()` - collect CleanShot and Hammerspoon commands
+- `getAllChoices()` - convenience function for all items
+- `detectType(item)` - identify type (window/app/command)
+- Used by both window-switcher and hs-switch CLI tool
+
+**fuzzy.lua** - Dynamic programming fuzzy matching
+- Subsequence matching with scoring:
+  - Base: 10 points per character
+  - Word start: +40 points
+  - String start: +10 points
+  - Position bonus: +max(0, 20-j) points
+  - Consecutive: +20 points
+  - Prefix match: +50 points
+  - Substring match: +20 points
+- Type priority: window (3), app (2), command (1)
+- Subtext matching with penalty (-50 points)
 
 ## Common operations
 
@@ -159,6 +178,60 @@ open "hammerspoon://consoleWindow"
 
 **Test configuration:**
 Edit any `.lua` file in `~/.config/hammerspoon/` to trigger auto-reload
+
+### Using hs-switch CLI
+
+The `hs-switch` tool (in `~/.local/bin/hs-switch`) queries the dispatcher modal items for testing and tuning. It uses the same item collection and fuzzy matching logic as the modal.
+
+**List all items:**
+```bash
+hs-switch
+```
+
+**Filter and rank items:**
+```bash
+hs-switch ghost      # find Ghostty window
+hs-switch reload     # find Hammerspoon reload command
+hs-switch cleanshot  # find CleanShot commands
+```
+
+**Output format:**
+- Serpent-serialized Lua tables
+- Includes all metadata: `text`, `subText`, `type`, `windowId`, `appName`, `url`, `commandId`
+- Filtered results include `matchScore` field
+
+**Example output:**
+```lua
+{
+  {
+    matchScore = 190,
+    subText = "Ghostty",
+    text = "st-wcm3",
+    type = "window",
+    windowId = 12320
+  },
+  {
+    matchScore = 294,
+    subText = "CleanShot",
+    text = "Capture area",
+    type = "command",
+    url = "cleanshot://capture-area"
+  }
+}
+```
+
+**Use cases:**
+- Test fuzzy matching behavior with different queries
+- Verify item collection (windows, apps, commands)
+- Debug type detection and scoring
+- Tune fuzzy matching parameters by seeing actual scores
+- Validate changes to switcher logic without opening the modal
+
+**Implementation details:**
+- Uses `hs -c` to execute code in Hammerspoon context
+- Shares `switcher-items` and `fuzzy` modules with window-switcher
+- Safe query injection via `string.format("%q")`
+- Written in LuaJIT following repo conventions
 
 ## Development patterns
 
