@@ -7,7 +7,6 @@ M.apply = function(chooser)
   chooser:width(50)
   chooser:rows(15)
   chooser:searchSubText(true)
-  chooser:font("Menlo")
 end
 
 return M
