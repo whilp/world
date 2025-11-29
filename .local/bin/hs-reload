@@ -1,0 +1,57 @@
+#!/usr/bin/env luajit
+
+local unistd = require("posix.unistd")
+
+local function is_filtered_error(line)
+  local patterns = {
+    "CFMessagePort: dropping corrupt reply Mach message",
+    "error communicating with Hammerspoon: message port was invalidated",
+    "error unregistering CLI instance with Hammerspoon: message port invalid",
+    "transport errors are normal if Hammerspoon is reloading"
+  }
+
+  for _, pattern in ipairs(patterns) do
+    if line:find(pattern, 1, true) then
+      return true
+    end
+  end
+  return false
+end
+
+local function main()
+  local tmp = string.format("/tmp/hs-reload.%d", unistd.getpid())
+
+  local cmd = string.format("hs -c 'hs.reload()' 2>%s", tmp)
+  local handle = io.popen(cmd)
+  if not handle then
+    io.stderr:write("error: failed to execute hs command\n")
+    io.stderr:flush()
+    os.remove(tmp)
+    os.exit(1)
+  end
+
+  handle:close()
+
+  local f = io.open(tmp, "r")
+  if f then
+    local stderr = f:read("*all")
+    f:close()
+
+    for line in stderr:gmatch("[^\r\n]+") do
+      if not is_filtered_error(line) then
+        io.stderr:write(line)
+        io.stderr:write("\n")
+      end
+    end
+    io.stderr:flush()
+  end
+
+  os.remove(tmp)
+end
+
+local ok, err = pcall(main)
+if not ok then
+  io.stderr:write("error: " .. tostring(err) .. "\n")
+  io.stderr:flush()
+  os.exit(1)
+end
