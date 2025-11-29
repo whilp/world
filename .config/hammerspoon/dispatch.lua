@@ -13,9 +13,21 @@ M.getWindowChoices = function()
     local title = win:title()
 
     if title and title ~= "" then
+      local displayTitle = title
+      local subText = appName
+
+      -- Extract Chrome profile from title
+      if appName == "Google Chrome" then
+        local profile = title:match(" %- Google Chrome %- (.+)$")
+        if profile then
+          displayTitle = title:gsub(" %- Google Chrome %- .+$", "")
+          subText = appName .. " - " .. profile
+        end
+      end
+
       table.insert(choices, {
-        text = title,
-        subText = appName,
+        text = displayTitle,
+        subText = subText,
         window = win
       })
       seenApps[appName] = true
