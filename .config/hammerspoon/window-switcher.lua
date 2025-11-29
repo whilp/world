@@ -2,8 +2,10 @@ local WindowSwitcher = {}
 
 local fuzzy = require("fuzzy")
 local cleanshotCommands = require("cleanshot-commands")
+local hammerspoonModule = require("hammerspoon-commands")
 local chooser = nil
 local allChoices = {}
+local commandActions = hammerspoonModule.commands
 
 local INITIAL_SELECTION = 1
 local SUBTEXT_PENALTY = 50
@@ -74,7 +76,17 @@ local function getAppChoices(seenApps)
 end
 
 local function getCommandChoices()
-  return cleanshotCommands
+  local choices = {}
+
+  for _, choice in ipairs(cleanshotCommands) do
+    table.insert(choices, choice)
+  end
+
+  for _, choice in ipairs(hammerspoonModule.choices) do
+    table.insert(choices, choice)
+  end
+
+  return choices
 end
 
 local function showSwitcher()
@@ -106,6 +118,11 @@ local function showSwitcher()
           hs.application.launchOrFocus(choice.appName)
         elseif choice.url then
           hs.urlevent.openURL(choice.url)
+        elseif choice.commandId then
+          local action = commandActions[choice.commandId]
+          if action then
+            action()
+          end
         end
       end
     end)
