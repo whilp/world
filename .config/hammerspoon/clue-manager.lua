@@ -64,6 +64,16 @@ M.show_meta_overlay = function()
   end
   table.sort(modal_keys)
 
+  -- Calculate max key width for alignment
+  local max_key_width = 3  -- minimum for "esc"
+  for _, prefix in ipairs(modal_keys) do
+    local modal_config = M.loader.modals[prefix]
+    local key = modal_config.trigger[2]
+    if #key > max_key_width then
+      max_key_width = #key
+    end
+  end
+
   for _, prefix in ipairs(modal_keys) do
     local modal_config = M.loader.modals[prefix]
     local key = modal_config.trigger[2]
@@ -73,11 +83,11 @@ M.show_meta_overlay = function()
       name = first_clue.group or prefix
       name = name:gsub("^%l", string.upper)
     end
-    table.insert(lines, string.format("  %s  →  %s", key, name))
+    table.insert(lines, string.format("  %-"..max_key_width.."s  →  %s", key, name))
   end
 
   table.insert(lines, "")
-  table.insert(lines, "  esc  →  Cancel")
+  table.insert(lines, string.format("  %-"..max_key_width.."s  →  Cancel", "esc"))
 
   local text = table.concat(lines, "\n")
   local line_height = 20
