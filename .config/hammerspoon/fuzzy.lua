@@ -62,8 +62,8 @@ local function fuzzy_score_dp(haystack, needle)
 			s = s + 10 -- start-of-string bonus (tuned from 5)
 		end
 
-		-- earlier positions are better (up to about 20 chars)
-		s = s + math.max(0, 20 - j)
+		-- earlier positions are better, but with reduced bias
+		s = s + math.max(0, 15 - j / 2)
 
 		if consecutive then
 			s = s + 20 -- adjacency bonus (tuned from 15)
@@ -151,24 +151,52 @@ local function fuzzy_score_dp(haystack, needle)
 		best = best + 20 -- substring bonus (tuned from 15)
 	end
 
+	-- Word-level matching bonuses
+	local normalized_haystack = normalize(haystack)
+	local normalized_needle = normalize(needle)
+	for word in normalized_haystack:gmatch("%w+") do
+		if word == normalized_needle then
+			best = best + 150 -- exact word match
+			break
+		end
+		if #word >= #normalized_needle and word:sub(1, #normalized_needle) == normalized_needle then
+			best = best + 100 -- prefix of a word
+			break
+		end
+	end
+
 	return best
 end
 
 function Fuzzy.match_item(item, query, subtext_penalty)
 	subtext_penalty = subtext_penalty or 50
+	local subtext_only_penalty = 25
 
 	local text_score = fuzzy_score_dp(item.text or "", query)
+	local subtext_score = fuzzy_score_dp(item.subText or "", query)
+	local combined_score = fuzzy_score_dp((item.text or "") .. " " .. (item.subText or ""), query)
+
+	local best_score = nil
+
 	if text_score then
-		return text_score
+		best_score = text_score
 	end
 
-	local combined = (item.text or "") .. " " .. (item.subText or "")
-	local full_score = fuzzy_score_dp(combined, query)
-	if full_score then
-		return full_score - subtext_penalty
+	if subtext_score then
+		local adjusted = subtext_score - subtext_only_penalty
+		if not best_score or adjusted > best_score then
+			best_score = adjusted
+		end
 	end
 
-	return nil
+	if combined_score then
+		local adjusted = combined_score - subtext_penalty
+		if not best_score or adjusted > best_score then
+			best_score = adjusted
+		end
+	end
+
+	return best_score
 end
 
 function Fuzzy.fuzzy_find(items, query, max_results, subtext_penalty)
