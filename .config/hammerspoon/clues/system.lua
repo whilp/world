@@ -1,6 +1,6 @@
 Clue{
   name = "System Settings",
-  desc = "Open System Settings",
+  desc = "open main settings",
   key = { "hyper", "s", "s" },
   group = "system",
   show_in_chooser = true,
@@ -9,7 +9,7 @@ Clue{
 
 Clue{
   name = "Accessibility",
-  desc = "Open Accessibility settings",
+  desc = "open accessibility settings",
   key = { "hyper", "s", "a" },
   group = "system",
   show_in_chooser = true,
@@ -18,7 +18,7 @@ Clue{
 
 Clue{
   name = "Privacy & Security",
-  desc = "Open Privacy & Security settings",
+  desc = "open privacy & security settings",
   key = { "hyper", "s", "p" },
   group = "system",
   show_in_chooser = true,
@@ -27,7 +27,7 @@ Clue{
 
 Clue{
   name = "Keyboard",
-  desc = "Open Keyboard settings",
+  desc = "open keyboard settings",
   key = { "hyper", "s", "k" },
   group = "system",
   show_in_chooser = true,
@@ -36,7 +36,7 @@ Clue{
 
 Clue{
   name = "Displays",
-  desc = "Open Displays settings",
+  desc = "open displays settings",
   key = { "hyper", "s", "d" },
   group = "system",
   show_in_chooser = true,
@@ -45,7 +45,7 @@ Clue{
 
 Clue{
   name = "Sound",
-  desc = "Open Sound settings",
+  desc = "open sound settings",
   key = { "hyper", "s", "o" },
   group = "system",
   show_in_chooser = true,
@@ -54,7 +54,7 @@ Clue{
 
 Clue{
   name = "Network",
-  desc = "Open Network settings",
+  desc = "open network settings",
   key = { "hyper", "s", "n" },
   group = "system",
   show_in_chooser = true,
@@ -63,7 +63,7 @@ Clue{
 
 Clue{
   name = "General",
-  desc = "Open General settings",
+  desc = "open general settings",
   key = { "hyper", "s", "g" },
   group = "system",
   show_in_chooser = true,
@@ -72,7 +72,7 @@ Clue{
 
 Clue{
   name = "Appearance",
-  desc = "Open Appearance settings",
+  desc = "open appearance settings",
   key = { "hyper", "s", "l" },
   group = "system",
   show_in_chooser = true,
@@ -81,7 +81,7 @@ Clue{
 
 Clue{
   name = "Desktop & Dock",
-  desc = "Open Desktop & Dock settings",
+  desc = "open desktop & dock settings",
   key = { "hyper", "s", "w" },
   group = "system",
   show_in_chooser = true,
@@ -90,7 +90,7 @@ Clue{
 
 Clue{
   name = "Notifications",
-  desc = "Open Notifications settings",
+  desc = "open notifications settings",
   key = { "hyper", "s", "i" },
   group = "system",
   show_in_chooser = true,
@@ -99,7 +99,7 @@ Clue{
 
 Clue{
   name = "Trackpad",
-  desc = "Open Trackpad settings",
+  desc = "open trackpad settings",
   key = { "hyper", "s", "t" },
   group = "system",
   show_in_chooser = true,
@@ -108,7 +108,7 @@ Clue{
 
 Clue{
   name = "Battery",
-  desc = "Open Battery settings",
+  desc = "open battery settings",
   key = { "hyper", "s", "b" },
   group = "system",
   show_in_chooser = true,

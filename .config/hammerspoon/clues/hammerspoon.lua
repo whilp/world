@@ -1,6 +1,6 @@
 Clue{
   name = "Reload config",
-  desc = "Reload Hammerspoon configuration",
+  desc = "reload configuration",
   key = { "hyper", "h", "r" },
   group = "hammerspoon",
   show_in_chooser = true,
@@ -9,7 +9,7 @@ Clue{
 
 Clue{
   name = "Console",
-  desc = "Open Hammerspoon console",
+  desc = "open console",
   key = { "hyper", "h", "c" },
   group = "hammerspoon",
   show_in_chooser = true,
@@ -18,7 +18,7 @@ Clue{
 
 Clue{
   name = "Emoji picker",
-  desc = "Open emoji picker",
+  desc = "open emoji picker",
   key = { "hyper", "h", "e" },
   group = "hammerspoon",
   show_in_chooser = true,
@@ -27,7 +27,7 @@ Clue{
 
 Clue{
   name = "Symbol picker",
-  desc = "Open symbol picker",
+  desc = "open symbol picker",
   key = { "hyper", "h", "s" },
   group = "hammerspoon",
   show_in_chooser = true,
@@ -36,7 +36,7 @@ Clue{
 
 Clue{
   name = "Update apps",
-  desc = "Run mscupdate to update applications",
+  desc = "run mscupdate to update applications",
   key = { "hyper", "h", "u" },
   group = "hammerspoon",
   show_in_chooser = true,

@@ -6,6 +6,7 @@ local clueLoader = require("clue-loader")
 local clueManager = require("clue-manager")
 local emojiPicker = require("emoji-picker")
 local symbolPicker = require("symbol-picker")
+local chooserStyle = require("chooser-style")
 local chooser = nil
 local allChoices = {}
 local isEmojiMode = false
@@ -91,12 +92,7 @@ local function showSwitcher()
       end
     end)
 
-    chooser:bgDark(true)
-    chooser:fgColor({white = 1.0})
-    chooser:subTextColor({white = 0.6})
-    chooser:width(50)
-    chooser:rows(15)
-    chooser:searchSubText(true)
+    chooserStyle.apply(chooser)
 
     chooser:queryChangedCallback(function(query)
       if debounceTimer then

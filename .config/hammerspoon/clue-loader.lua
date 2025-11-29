@@ -137,9 +137,18 @@ M.to_choices = function()
   local choices = {}
   for id, clue in pairs(M.clues) do
     if clue.show_in_chooser ~= false then
+      local subText = ""
+      if clue.group and clue.desc then
+        subText = clue.group .. " " .. clue.desc
+      elseif clue.desc then
+        subText = clue.desc
+      elseif clue.group then
+        subText = clue.group
+      end
+
       table.insert(choices, {
         text = clue.name,
-        subText = clue.desc or clue.group or "",
+        subText = subText,
         commandId = id,
       })
     end

@@ -1,6 +1,6 @@
 Clue{
   name = "All-in-one capture",
-  desc = "CleanShot all-in-one capture",
+  desc = "all-in-one capture",
   key = { "hyper", "c", "a" },
   group = "cleanshot",
   show_in_chooser = true,
@@ -9,7 +9,7 @@ Clue{
 
 Clue{
   name = "Capture area",
-  desc = "CleanShot capture area",
+  desc = "capture area",
   key = { "hyper", "c", "c" },
   group = "cleanshot",
   show_in_chooser = true,
@@ -18,7 +18,7 @@ Clue{
 
 Clue{
   name = "Capture fullscreen",
-  desc = "CleanShot capture fullscreen",
+  desc = "capture fullscreen",
   key = { "hyper", "c", "f" },
   group = "cleanshot",
   show_in_chooser = true,
@@ -27,7 +27,7 @@ Clue{
 
 Clue{
   name = "Capture window",
-  desc = "CleanShot capture window",
+  desc = "capture window",
   key = { "hyper", "c", "w" },
   group = "cleanshot",
   show_in_chooser = true,
@@ -36,7 +36,7 @@ Clue{
 
 Clue{
   name = "Capture scrolling window",
-  desc = "CleanShot capture scrolling window",
+  desc = "capture scrolling window",
   key = { "hyper", "c", "s" },
   group = "cleanshot",
   show_in_chooser = true,
@@ -45,7 +45,7 @@ Clue{
 
 Clue{
   name = "Record screen",
-  desc = "CleanShot record screen",
+  desc = "record screen",
   key = { "hyper", "c", "r" },
   group = "cleanshot",
   show_in_chooser = true,
@@ -54,7 +54,7 @@ Clue{
 
 Clue{
   name = "OCR text from screen",
-  desc = "CleanShot OCR text from screen",
+  desc = "OCR text from screen",
   key = { "hyper", "c", "o" },
   group = "cleanshot",
   show_in_chooser = true,
@@ -63,7 +63,7 @@ Clue{
 
 Clue{
   name = "Open capture history",
-  desc = "CleanShot open capture history",
+  desc = "open capture history",
   key = { "hyper", "c", "h" },
   group = "cleanshot",
   show_in_chooser = true,
@@ -72,7 +72,7 @@ Clue{
 
 Clue{
   name = "Toggle desktop icons",
-  desc = "CleanShot toggle desktop icons",
+  desc = "toggle desktop icons",
   key = { "hyper", "c", "d" },
   group = "cleanshot",
   show_in_chooser = true,
