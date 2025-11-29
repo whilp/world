@@ -15,11 +15,13 @@ local commands = {
   notifications = function() hs.execute('open "x-apple.systempreferences:com.apple.preference.notifications"') end,
   trackpad = function() hs.execute('open "x-apple.systempreferences:com.apple.preference.trackpad"') end,
   battery = function() hs.execute('open "x-apple.systempreferences:com.apple.preference.battery"') end,
+  emoji = function() return "emoji" end,
 }
 
 local choices = {
   { text = "Reload config", subText = "Hammerspoon", commandId = "reload" },
   { text = "Console", subText = "Hammerspoon", commandId = "console" },
+  { text = "Emoji picker", subText = "Hammerspoon", commandId = "emoji" },
   { text = "Update apps", subText = "mscupdate", commandId = "mscupdate" },
   { text = "System Settings", subText = "System", commandId = "systemsettings" },
   { text = "Accessibility", subText = "System", commandId = "accessibility" },
