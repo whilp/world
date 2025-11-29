@@ -161,7 +161,7 @@ hs /path/to/script.lua
 
 **Reload Hammerspoon:**
 ```bash
-hs -c "hs.reload()"
+hs-reload
 # or via URL:
 open -g hammerspoon://reload
 ```
@@ -178,6 +178,32 @@ open "hammerspoon://consoleWindow"
 
 **Test configuration:**
 Edit any `.lua` file in `~/.config/hammerspoon/` to trigger auto-reload
+
+### Using hs-reload CLI
+
+The `hs-reload` tool (in `~/.local/bin/hs-reload`) reloads Hammerspoon while suppressing common IPC errors that occur during reload.
+
+**Reload Hammerspoon cleanly:**
+```bash
+hs-reload
+```
+
+**Features:**
+- Filters out CFMessagePort and IPC errors that are normal during reload
+- Uses 2-second timeout to prevent hanging
+- Captures both stdout and stderr separately
+- Always exits cleanly (code 0) after filtering errors
+
+**Filtered error patterns:**
+- `CFMessagePort: dropping corrupt reply Mach message`
+- `error communicating with Hammerspoon: message port was invalidated`
+- `error unregistering CLI instance with Hammerspoon: message port invalid`
+- `transport errors are normal if Hammerspoon is reloading`
+
+**Implementation details:**
+- Uses `fork()` + `pipe()` + `dup2()` for stderr capture
+- Written in LuaJIT following repo conventions
+- More reliable than raw `hs -c 'hs.reload()'` which shows noisy errors
 
 ### Using hs-dispatch CLI
 
