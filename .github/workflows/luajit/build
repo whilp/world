@@ -208,19 +208,22 @@ local function build_luajit(config)
       if content:match("^#!/bin/sh") and content:match(escaped_install_dir) then
         util.printf("  fixing %s\n", file_path)
 
+        local basedir_var = 'BASEDIR="$(cd "$(dirname "$0")/.." && pwd)"'
+        content = content:gsub("^(#!/bin/sh)", "%1\n" .. basedir_var)
+
         content = content:gsub("'" .. escaped_install_dir .. "/bin/luajit'", "'luajit'")
-        content = content:gsub("'" .. escaped_install_dir .. "/share", "'\"$(dirname \"$0\")\"/../share")
-        content = content:gsub("'" .. escaped_install_dir .. "/lib", "'\"$(dirname \"$0\")\"/../lib")
-        content = content:gsub("'" .. escaped_install_dir .. "/etc", "'\"$(dirname \"$0\")\"/../etc")
+        content = content:gsub("'" .. escaped_install_dir .. "/share", "\"$BASEDIR/share")
+        content = content:gsub("'" .. escaped_install_dir .. "/lib", "\"$BASEDIR/lib")
+        content = content:gsub("'" .. escaped_install_dir .. "/etc", "\"$BASEDIR/etc")
 
-        content = content:gsub("=" .. escaped_install_dir .. "/share", "=\"$(dirname \"$0\")\"/../share")
-        content = content:gsub("=" .. escaped_install_dir .. "/lib", "=\"$(dirname \"$0\")\"/../lib")
-        content = content:gsub("=" .. escaped_install_dir .. "/etc", "=\"$(dirname \"$0\")\"/../etc")
+        content = content:gsub("=" .. escaped_install_dir .. "/share", "=\"$BASEDIR/share")
+        content = content:gsub("=" .. escaped_install_dir .. "/lib", "=\"$BASEDIR/lib")
+        content = content:gsub("=" .. escaped_install_dir .. "/etc", "=\"$BASEDIR/etc")
 
-        content = content:gsub('"' .. escaped_install_dir .. "/share", '"$(dirname "$0")/../share')
-        content = content:gsub('"' .. escaped_install_dir .. "/lib", '"$(dirname "$0")/../lib')
-        content = content:gsub(escaped_install_dir .. "/share", "$(dirname \"$0\")/../share")
-        content = content:gsub(escaped_install_dir .. "/lib", "$(dirname \"$0\")/../lib")
+        content = content:gsub('"' .. escaped_install_dir .. "/share", '"$BASEDIR/share')
+        content = content:gsub('"' .. escaped_install_dir .. "/lib", '"$BASEDIR/lib')
+        content = content:gsub(escaped_install_dir .. "/share", "$BASEDIR/share")
+        content = content:gsub(escaped_install_dir .. "/lib", "$BASEDIR/lib")
 
         util.write_file(file_path, content)
       end
