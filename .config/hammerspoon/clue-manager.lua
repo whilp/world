@@ -2,8 +2,10 @@ local M = {}
 
 M.active_modals = {}
 M.canvas = nil
+M.mode_handlers = {}
 
-M.setup = function(loader)
+M.setup = function(loader, mode_handlers)
+  M.mode_handlers = mode_handlers or {}
   for prefix, modal_config in pairs(loader.modals) do
     M.create_modal(prefix, modal_config, loader)
   end
@@ -46,7 +48,14 @@ M.create_modal = function(prefix, config, loader)
 
     modal:bind("", binding.key, function()
       modal:exit()
-      M.execute_clue(binding.clue.id, loader)
+      local result = M.execute_clue(binding.clue.id, loader)
+
+      if type(result) == "string" then
+        local handler = M.mode_handlers[result]
+        if handler and type(handler) == "function" then
+          handler()
+        end
+      end
     end)
   end
 
