@@ -7,7 +7,7 @@ local chooser = nil
 local allChoices = {}
 local commandActions = hammerspoonModule.commands
 
-local INITIAL_SELECTION = 1
+local INITIAL_SELECTION = 2
 local SUBTEXT_PENALTY = 50
 
 local function filterAndSort(choices, query)
