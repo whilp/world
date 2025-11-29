@@ -13,8 +13,10 @@ local isSymbolMode = false
 
 local INITIAL_SELECTION = 2
 local SUBTEXT_PENALTY = 50
-local MAX_RESULTS = 100
-local DEBOUNCE_DELAY = 0.05
+
+-- Performance tuning constants
+local MAX_RESULTS = 100        -- Limit fuzzy matching to top N results (chooser shows 15 rows)
+local DEBOUNCE_DELAY = 0.05    -- Wait 50ms after last keystroke before filtering
 
 local function filterAndSort(choices, query)
   local items = {}

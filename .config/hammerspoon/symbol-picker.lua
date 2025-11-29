@@ -3,6 +3,7 @@ local M = {}
 package.path = os.getenv("HOME") .. "/.local/lib/lua/?.lua;" .. package.path
 
 local symbols = require("symbols.symbols")
+local pickerUtils = require("picker-utils")
 
 local EXCLUDED_BLOCKS = {
   ["Sutton SignWriting"] = true,
@@ -16,31 +17,26 @@ local EXCLUDED_BLOCKS = {
   ["Enclosed CJK Letters and Months"] = true,
 }
 
-local cachedChoices = nil
-
-M.getSymbolChoices = function()
-  if cachedChoices then
-    return cachedChoices
-  end
-
-  local choices = {}
-
+local function createFilteredSymbols()
+  local filtered = {}
   for _, item in ipairs(symbols) do
     if not EXCLUDED_BLOCKS[item.block] then
-      table.insert(choices, {
-        text = item.symbol .. "  " .. item.name,
-        subText = item.block,
-        symbol = item.symbol
-      })
+      table.insert(filtered, item)
     end
   end
-
-  cachedChoices = choices
-  return choices
+  return filtered
 end
 
-M.insertSymbol = function(symbol)
-  hs.eventtap.keyStrokes(symbol)
-end
+local picker = pickerUtils.createCachedPicker(createFilteredSymbols(), function(item)
+  return {
+    text = item.symbol .. "  " .. item.name,
+    subText = item.block,
+    symbol = item.symbol
+  }
+end)
+
+M.getSymbolChoices = picker.getChoices
+M.clearCache = picker.clearCache
+M.insertSymbol = pickerUtils.insertText
 
 return M
