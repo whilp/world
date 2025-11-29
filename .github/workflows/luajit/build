@@ -175,6 +175,8 @@ local function build_luajit(config)
     {"http", config.versions.http, ""},
     {"lsqlite3", config.versions.lsqlite3, sqlite_flags},
     {"serpent", config.versions.serpent, ""},
+    {"djot", config.versions.djot, ""},
+    {"lunamark", config.versions.lunamark, ""},
   }
 
   for _, dep in ipairs(deps) do
@@ -237,6 +239,8 @@ local function build_luajit(config)
   util.exec(luajit_bin .. " -e \"require('http.client'); print('lua-http loaded successfully')\"")
   util.exec(luajit_bin .. " -e \"require('lsqlite3'); print('lsqlite3 loaded successfully')\"")
   util.exec(luajit_bin .. " -e \"require('serpent'); print('serpent loaded successfully')\"")
+  util.exec(luajit_bin .. " -e \"require('djot'); print('djot loaded successfully')\"")
+  util.exec(luajit_bin .. " -e \"require('lunamark'); print('lunamark loaded successfully')\"")
 
   util.printf("listing tarball contents...\n")
   util.exec(string.format("tar -tvzf %s | head -50", tarball_path))
