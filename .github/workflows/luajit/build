@@ -205,27 +205,22 @@ local function build_luajit(config)
       local content = util.read_file(file_path)
       local escaped_install_dir = install_dir:gsub("[%-%.%+%[%]%(%)%$%^%%%?%*]", "%%%1")
 
-      if content:match("^#!/bin/sh") and content:match(escaped_install_dir) then
+      if content:match("^#!/bin/sh") and content:match("LUAROCKS_SYSCONFDIR") and content:match(escaped_install_dir) then
         util.printf("  fixing %s\n", file_path)
 
-        local basedir_var = 'BASEDIR="$(cd "$(dirname "$0")/.." && pwd)"'
-        content = content:gsub("^(#!/bin/sh)", "%1\n" .. basedir_var)
+        local wrapper_template = [[#!/bin/sh
+BASEDIR="$(cd "$(dirname "$0")/.." && pwd)"
+export LUAROCKS_SYSCONFDIR="$BASEDIR/etc/luarocks"
+export LUA_PATH="$BASEDIR/share/lua/5.1/?.lua;$BASEDIR/share/lua/5.1/?/init.lua;;"
+export LUA_CPATH="$BASEDIR/lib/lua/5.1/?.so;;"
+exec luajit "$BASEDIR%s" "$@"
+]]
 
-        content = content:gsub("'" .. escaped_install_dir .. "/bin/luajit'", "'luajit'")
-        content = content:gsub("'" .. escaped_install_dir .. "/share", "\"$BASEDIR/share")
-        content = content:gsub("'" .. escaped_install_dir .. "/lib", "\"$BASEDIR/lib")
-        content = content:gsub("'" .. escaped_install_dir .. "/etc", "\"$BASEDIR/etc")
-
-        content = content:gsub("=" .. escaped_install_dir .. "/share", "=\"$BASEDIR/share")
-        content = content:gsub("=" .. escaped_install_dir .. "/lib", "=\"$BASEDIR/lib")
-        content = content:gsub("=" .. escaped_install_dir .. "/etc", "=\"$BASEDIR/etc")
-
-        content = content:gsub('"' .. escaped_install_dir .. "/share", '"$BASEDIR/share')
-        content = content:gsub('"' .. escaped_install_dir .. "/lib", '"$BASEDIR/lib')
-        content = content:gsub(escaped_install_dir .. "/share", "$BASEDIR/share")
-        content = content:gsub(escaped_install_dir .. "/lib", "$BASEDIR/lib")
-
-        util.write_file(file_path, content)
+        local lib_path = content:match(escaped_install_dir .. "(/lib/luarocks/rocks%-5%.1/[^']+)")
+        if lib_path then
+          content = wrapper_template:format(lib_path)
+          util.write_file(file_path, content)
+        end
       end
     end
   end
