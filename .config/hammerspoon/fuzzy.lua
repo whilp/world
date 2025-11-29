@@ -168,6 +168,49 @@ local function fuzzy_score_dp(haystack, needle)
 	return best
 end
 
+local function split_query(query)
+	local tokens = {}
+	for token in query:gmatch("%S+") do
+		table.insert(tokens, token)
+	end
+	return tokens
+end
+
+local function match_multi_token(item, tokens)
+	local text = normalize(item.text or "")
+	local subtext = normalize(item.subText or "")
+
+	local unmatched_tokens = {}
+	for _, token in ipairs(tokens) do
+		table.insert(unmatched_tokens, normalize(token))
+	end
+
+	-- Try to match subtext tokens first
+	local matched_in_subtext = {}
+	for i = #unmatched_tokens, 1, -1 do
+		local token = unmatched_tokens[i]
+		if subtext:find(token, 1, true) then
+			table.insert(matched_in_subtext, token)
+			table.remove(unmatched_tokens, i)
+		end
+	end
+
+	-- Remaining tokens must match in text
+	if #unmatched_tokens > 0 then
+		local remaining_query = table.concat(unmatched_tokens, " ")
+		local text_score = fuzzy_score_dp(item.text or "", remaining_query)
+		if not text_score then
+			return nil
+		end
+
+		-- Bonus for matching subtext tokens exactly
+		local subtext_bonus = #matched_in_subtext * 30
+		return text_score + subtext_bonus
+	end
+
+	return nil
+end
+
 function Fuzzy.match_item(item, query, subtext_penalty)
 	subtext_penalty = subtext_penalty or 50
 	local subtext_only_penalty = 25
@@ -193,6 +236,17 @@ function Fuzzy.match_item(item, query, subtext_penalty)
 		local adjusted = combined_score - subtext_penalty
 		if not best_score or adjusted > best_score then
 			best_score = adjusted
+		end
+	end
+
+	-- Try multi-token matching (e.g., "slack unread")
+	local tokens = split_query(query)
+	if #tokens > 1 then
+		local multi_token_score = match_multi_token(item, tokens)
+		if multi_token_score then
+			if not best_score or multi_token_score > best_score then
+				best_score = multi_token_score
+			end
 		end
 	end
 
