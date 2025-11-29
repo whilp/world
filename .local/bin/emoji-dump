@@ -1,0 +1,57 @@
+#!/usr/bin/env luajit
+
+package.path = os.getenv("HOME") .. "/.local/lib/lua/?.lua;" .. package.path
+
+local serpent = require("serpent")
+local dump = require("emoji.dump")
+
+local function cmd_url(args)
+  io.write(dump.url .. "\n")
+end
+
+local function cmd_show(args)
+  if #args < 1 then
+    io.stderr:write("usage: emoji-dump show <input-file>\n")
+    os.exit(1)
+  end
+
+  local file_path = args[1]
+
+  local emoji_list, err = dump.load_from_file(file_path)
+  if not emoji_list then
+    io.stderr:write("error: " .. err .. "\n")
+    os.exit(1)
+  end
+
+  local serialized = serpent.block(emoji_list, {
+    comment = false,
+    sortkeys = false,
+    compact = false
+  })
+  io.write("return " .. serialized)
+end
+
+local function main(args)
+  if #args == 0 then
+    io.stderr:write("usage: emoji-dump <command> [args]\n")
+    io.stderr:write("commands:\n")
+    io.stderr:write("  url                     print source url\n")
+    io.stderr:write("  show <input-file>       show emoji data\n")
+    os.exit(1)
+  end
+
+  local command = args[1]
+  local cmd_args = {unpack(args, 2)}
+
+  if command == "url" then
+    cmd_url(cmd_args)
+  elseif command == "show" then
+    cmd_show(cmd_args)
+  else
+    io.stderr:write("error: unknown command: " .. command .. "\n")
+    os.exit(1)
+  end
+end
+
+local args = {...}
+main(args)
