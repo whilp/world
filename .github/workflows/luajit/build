@@ -207,10 +207,16 @@ local function build_luajit(config)
 
       if content:match("^#!/bin/sh") and content:match(escaped_install_dir) then
         util.printf("  fixing %s\n", file_path)
-        content = content:gsub(escaped_install_dir .. "/bin/luajit", "luajit")
-        content = content:gsub(escaped_install_dir .. "/share", "$(dirname \"$0\")/../share")
-        content = content:gsub(escaped_install_dir .. "/lib", "$(dirname \"$0\")/../lib")
-        content = content:gsub(escaped_install_dir .. "/etc", "$(dirname \"$0\")/../etc")
+
+        content = content:gsub("'" .. escaped_install_dir .. "/bin/luajit'", "'luajit'")
+        content = content:gsub("'" .. escaped_install_dir .. "/share", "'\"$(dirname \"$0\")\"/../share")
+        content = content:gsub("'" .. escaped_install_dir .. "/lib", "'\"$(dirname \"$0\")\"/../lib")
+        content = content:gsub("'" .. escaped_install_dir .. "/etc", "'\"$(dirname \"$0\")\"/../etc")
+
+        content = content:gsub("=" .. escaped_install_dir .. "/share", "=\"$(dirname \"$0\")\"/../share")
+        content = content:gsub("=" .. escaped_install_dir .. "/lib", "=\"$(dirname \"$0\")\"/../lib")
+        content = content:gsub("=" .. escaped_install_dir .. "/etc", "=\"$(dirname \"$0\")\"/../etc")
+
         util.write_file(file_path, content)
       end
     end
