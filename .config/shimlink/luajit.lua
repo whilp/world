@@ -14,6 +14,14 @@ Version{
     {
       name = "luarocks-admin",
       path = "bin/luarocks-admin"
+    },
+    {
+      name = "djot",
+      path = "bin/djot"
+    },
+    {
+      name = "lunamark",
+      path = "bin/lunamark"
     }
   },
   name = "luajit",

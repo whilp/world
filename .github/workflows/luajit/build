@@ -198,6 +198,24 @@ local function build_luajit(config)
     end
   end
 
+  util.printf("fixing luarocks-installed wrapper scripts for relocatable installation...\n")
+  local bin_files = util.capture(string.format("find %s/bin -type f", install_dir))
+  for file_path in bin_files:gmatch("[^\n]+") do
+    if util.file_exists(file_path) then
+      local content = util.read_file(file_path)
+      local escaped_install_dir = install_dir:gsub("[%-%.%+%[%]%(%)%$%^%%%?%*]", "%%%1")
+
+      if content:match("^#!/bin/sh") and content:match(escaped_install_dir) then
+        util.printf("  fixing %s\n", file_path)
+        content = content:gsub(escaped_install_dir .. "/bin/luajit", "luajit")
+        content = content:gsub(escaped_install_dir .. "/share", "$(dirname \"$0\")/../share")
+        content = content:gsub(escaped_install_dir .. "/lib", "$(dirname \"$0\")/../lib")
+        content = content:gsub(escaped_install_dir .. "/etc", "$(dirname \"$0\")/../etc")
+        util.write_file(file_path, content)
+      end
+    end
+  end
+
   util.printf("stripping binaries...\n")
   util.exec("find " .. install_dir .. " -type f -executable -exec strip --strip-unneeded {} \\; 2>/dev/null", {allow_failure = true})
 
