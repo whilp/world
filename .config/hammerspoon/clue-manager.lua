@@ -31,7 +31,10 @@ M.create_meta_modal = function(hyper)
   for prefix, modal_config in pairs(M.loader.modals) do
     local key = modal_config.trigger[2]
     modal:bind("", key, function()
+      -- Exit without hiding overlay yet - the new modal will replace it
+      modal.exited = function() end
       modal:exit()
+      modal.exited = function() M.hide_overlay() end
       -- Simulate the key press to trigger the actual modal
       hs.eventtap.keyStroke({"cmd", "ctrl", "alt", "shift"}, key, 0)
     end)
@@ -41,6 +44,12 @@ M.create_meta_modal = function(hyper)
 end
 
 M.show_meta_overlay = function()
+  -- Hide existing overlay immediately to prevent overlap
+  if M.canvas then
+    M.canvas:hide()
+    M.canvas = nil
+  end
+
   local screen = hs.mouse.getCurrentScreen()
   if not screen then
     return nil, "no screen found"
@@ -157,6 +166,12 @@ M.create_modal = function(prefix, config, loader)
 end
 
 M.show_overlay = function(modal_config, loader, prefix)
+  -- Hide existing overlay immediately to prevent overlap
+  if M.canvas then
+    M.canvas:hide()
+    M.canvas = nil
+  end
+
   local screen = hs.mouse.getCurrentScreen()
   if not screen then
     return nil, "no screen found"
