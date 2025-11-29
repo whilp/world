@@ -1,6 +1,13 @@
 local M = {}
 
 M.font = { name = "Menlo", size = 14 }
+M.maxTextLength = 80
+
+local function truncate(text, maxLen)
+  if type(text) ~= "string" then return text end
+  if #text <= maxLen then return text end
+  return text:sub(1, maxLen - 1) .. "…"
+end
 
 M.apply = function(chooser)
   chooser:bgDark(true)
@@ -15,14 +22,16 @@ M.styleChoice = function(choice)
   local styled = {}
   for k, v in pairs(choice) do
     if k == "text" and type(v) == "string" then
-      styled[k] = hs.styledtext.new(v, { font = M.font })
+      local truncated = truncate(v, M.maxTextLength)
+      styled[k] = hs.styledtext.new(truncated, { font = M.font, paragraphStyle = { lineBreak = "truncateTail" } })
     elseif k == "subText" and type(v) == "string" then
       styled[k] = hs.styledtext.new(v, { font = M.font })
-    else
+    elseif k ~= "image" and k ~= "valid" then
       styled[k] = v
     end
   end
   styled.image = nil
+  styled.valid = nil
   return styled
 end
 
