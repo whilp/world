@@ -209,7 +209,8 @@ local function build_luajit(config)
         util.printf("  fixing %s\n", file_path)
 
         local wrapper_template = [[#!/bin/sh
-BASEDIR="$(cd "$(dirname "$0")/.." && pwd)"
+SCRIPT="$(readlink -f "$0" 2>/dev/null || realpath "$0" 2>/dev/null || echo "$0")"
+BASEDIR="$(cd "$(dirname "$SCRIPT")/.." && pwd)"
 export LUAROCKS_SYSCONFDIR="$BASEDIR/etc/luarocks"
 export LUA_PATH="$BASEDIR/share/lua/5.1/?.lua;$BASEDIR/share/lua/5.1/?/init.lua;;"
 export LUA_CPATH="$BASEDIR/lib/lua/5.1/?.so;;"
