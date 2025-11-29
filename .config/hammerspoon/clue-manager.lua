@@ -27,6 +27,16 @@ M.create_meta_modal = function(hyper)
     modal:exit()
   end)
 
+  -- Bind each modal trigger key
+  for prefix, modal_config in pairs(M.loader.modals) do
+    local key = modal_config.trigger[2]
+    modal:bind("", key, function()
+      modal:exit()
+      -- Simulate the key press to trigger the actual modal
+      hs.eventtap.keyStroke({"cmd", "ctrl", "alt", "shift"}, key, 0)
+    end)
+  end
+
   return modal
 end
 
