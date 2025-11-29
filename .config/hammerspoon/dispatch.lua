@@ -87,6 +87,7 @@ M.detectType = function(item)
   if item.window then return "window"
   elseif item.appName then return "app"
   elseif item.commandId then return "command"
+  elseif item.emoji then return "emoji"
   else return "unknown"
   end
 end
