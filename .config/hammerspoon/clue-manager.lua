@@ -16,8 +16,15 @@ M.create_modal = function(prefix, config, loader)
     error("modal trigger must have at least 2 elements: " .. prefix)
   end
 
-  local modifier = trigger[1]
+  local modifier_name = trigger[1]
   local key = trigger[2]
+
+  local modifier
+  if modifier_name == "hyper" then
+    modifier = {"cmd", "ctrl", "alt", "shift"}
+  else
+    modifier = modifier_name
+  end
 
   local modal = hs.hotkey.modal.new(modifier, key)
 
