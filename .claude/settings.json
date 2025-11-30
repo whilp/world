@@ -20,7 +20,6 @@
       "Bash(uv tree:*)",
       "Bash(jq:*)",
       "Bash(comrak:*)",
-      "Bash(session-logger:*)",
       "Bash(scpaste:*)",
       "Bash(yarn build:*)",
       "Bash(alacritty:*)",
@@ -35,17 +34,6 @@
           {
             "type": "command",
             "command": "use-skills"
-          }
-        ]
-      }
-    ],
-    "SessionStart": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "session-logger --hook"
           }
         ]
       }
