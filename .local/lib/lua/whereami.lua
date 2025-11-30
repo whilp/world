@@ -1,7 +1,6 @@
 -- Module to get hostname or box-name/host_env identifier
 local M = {}
 
-local posix = require('posix')
 local ffi = require('ffi')
 
 ffi.cdef[[
@@ -131,6 +130,7 @@ function M.get()
   if identifier == '' then
     local unistd = require('posix.unistd')
     local wait = require('posix.sys.wait')
+    local posix = require('posix')
     local handle = posix.popen({'/bin/sh', '-c', 'hostname -s 2>/dev/null || hostname'}, 'r')
     if handle then
       local hostname = unistd.read(handle.fd, 1024)

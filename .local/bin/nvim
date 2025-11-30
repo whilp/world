@@ -6,6 +6,7 @@ local fcntl = require("posix.fcntl")
 local signal = require("posix.signal")
 local wait = require("posix.sys.wait")
 local stat = require("posix.sys.stat")
+local stdlib = require("posix.stdlib")
 
 ffi.cdef([[
   typedef int pid_t;
@@ -83,17 +84,24 @@ local function load_zsh_environment()
   wait.wait(handle.pids[1])
   unistd.close(handle.fd)
 
-  for line in output:gmatch("([^\0]+)") do
+  local i = 1
+  while i <= #output do
+    local next_null = output:find("\0", i, true)
+    if not next_null then
+      break
+    end
+    local line = output:sub(i, next_null - 1)
     local key, value = line:match("^([^=]+)=(.*)$")
     if key then
-      os.setenv(key, value)
+      stdlib.setenv(key, value)
     end
+    i = next_null + 1
   end
 end
 
 local function setup_nvim_environment()
   load_zsh_environment()
-  os.setenv("NVIM_SERVER_MODE", "1")
+  stdlib.setenv("NVIM_SERVER_MODE", "1")
 end
 
 local function exec_nvim_server()
