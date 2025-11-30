@@ -1,4 +1,7 @@
 {
+  "env": {
+    "DISABLE_AUTOUPDATER": "1"
+  },
   "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
@@ -48,16 +51,9 @@
       }
     ]
   },
-  "enabledPlugins": {
-    "pybook-analysis@wcm-ai": true,
-    "sail@wcm-ai": true
-  },
   "alwaysThinkingEnabled": false,
   "feedbackSurveyState": {
     "lastShownTime": 1754368507584
-  },
-  "env": {
-    "DISABLE_AUTOUPDATER": "1"
   },
   "installMethod": "unknown"
 }
