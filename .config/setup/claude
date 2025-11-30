@@ -16,10 +16,11 @@ fi
 
 settings='{
   "numStartups": 1,
-  "installMethod": "unknown",
-  "autoUpdates": true,
+  "installMethod": "native",
+  "autoUpdates": false,
   "theme": "dark-daltonized",
   '${auth}'
-  "hasCompletedOnboarding": true
+  "hasCompletedOnboarding": true,
+  "bypassPermissionsModeAccepted": true
 }'
 echo "$settings" >"$config"
