@@ -37,7 +37,8 @@ if skills then
   end
 end
 
-local skill_instruction = "INSTRUCTION: Review available skills and pick at least one that is relevant to the user's request. Activate it with Skill(<skillname>)."
+local skill_instruction =
+  "INSTRUCTION: After the user supplies a prompt, you MUST IMMEDIATELY activate at least one skill with Skill(<skillname>) that is relevant to the user's request."
 if #skill_names > 0 then
   skill_instruction = skill_instruction .. " Available user skills: " .. table.concat(skill_names, ", ")
 end
