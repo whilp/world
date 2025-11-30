@@ -1,3 +1,7 @@
+## Skills
+
+- ALWAYS consider available skills. Almost every session will involve one or more skills, and the most relevant skills should be evident early in the session.
+
 ## Writing
 
 - Always use sentence case
