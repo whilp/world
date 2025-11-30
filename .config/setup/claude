@@ -3,7 +3,7 @@
 source "$(dirname "$0")/env"
 
 if [ "${CODESPACES}" = "true" ]; then
-  shimlink update claude
+  shimlink update claude &
 fi
 
 config="$DST/.claude.json"
@@ -22,3 +22,5 @@ settings='{
   "bypassPermissionsModeAccepted": true
 }'
 echo "$settings" >"$config"
+
+wait
