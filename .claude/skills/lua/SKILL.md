@@ -1,6 +1,6 @@
 ---
 name: lua
-description: Write LuaJIT scripts and modules following repository conventions. Use for lua/luajit code, posix system calls, ffi bindings, config files, or shell script replacements. Includes patterns for file I/O, command execution, error handling, and module structure.
+description: Write lua or LuaJIT scripts and modules following repository conventions. Use for lua or luajit code, posix system calls, ffi bindings, config files, or shell script replacements. Includes patterns for file I/O, command execution, error handling, and module structure.
 allowed-tools: [Read, Write, Edit, Bash, Glob, Grep]
 ---
 
@@ -24,7 +24,7 @@ return M
 
 Executable script pattern (in `~/.local/bin/`):
 
-```lua
+``` lua
 #!/usr/bin/env luajit
 
 local function main()
@@ -35,6 +35,7 @@ main()
 ```
 
 Key patterns:
+
 - Shebang: `#!/usr/bin/env luajit` for executable scripts only
 - Module table: `local M = {}` ... `return M`
 - Function definitions: `M.name = function(...)` or `function M.name()` both acceptable
@@ -47,7 +48,7 @@ Key patterns:
 
 Use `nil, err` for runtime failures, reserve `error()` for programmer errors:
 
-```lua
+``` lua
 local function read_file(path)
   local f = io.open(path, "r")
   if not f then
@@ -60,12 +61,13 @@ end
 ```
 
 Functions return:
+
 - Success: `true` or the actual value
 - Failure: `nil, error_message`
 
 Use `error()` only for unrecoverable programmer errors:
 
-```lua
+``` lua
 if not config.name then
   error("config missing required field 'name'")
 end
@@ -75,7 +77,7 @@ end
 
 Validate inputs early with descriptive errors:
 
-```lua
+``` lua
 local function download_file(url, dest_path)
   if not url or url == "" then
     return nil, "url cannot be empty"
@@ -91,7 +93,7 @@ end
 
 Propagate errors with context:
 
-```lua
+``` lua
 local function download_to_temp(url, name, temp_dir)
   local download_path = file.path_join(temp_dir, file.basename(url))
   local ok, err = download_file(url, download_path)
@@ -106,7 +108,7 @@ end
 
 Use `pcall` for optional dependencies and cleanup:
 
-```lua
+``` lua
 local ok, module = pcall(require, "module_name")
 if ok then
   -- use module
@@ -115,16 +117,16 @@ end
 
 Wrap operations needing guaranteed cleanup:
 
-```lua
+``` lua
 local function operation(path)
   local temp_dir = create_temp_dir()
   local ok, result = pcall(function()
     -- risky operations
     return process(temp_dir)
   end)
-  file.rm_rf(temp_dir)  -- cleanup always happens
+  file.rm_rf(temp_dir) -- cleanup always happens
   if not ok then
-    return nil, result  -- result is error message
+    return nil, result -- result is error message
   end
   return result
 end
@@ -134,13 +136,13 @@ end
 
 Standard read pattern with error handling:
 
-```lua
+``` lua
 local function read_file(path)
   local f = io.open(path, "r")
   if not f then
     return nil, "failed to open file: " .. path
   end
-  local content = f:read("*all")  -- or "*l" for single line
+  local content = f:read("*all") -- or "*l" for single line
   f:close()
   return content
 end
@@ -148,7 +150,7 @@ end
 
 Standard write pattern with error handling:
 
-```lua
+``` lua
 local function write_file(path, content)
   local f = io.open(path, "w")
   if not f then
@@ -162,7 +164,7 @@ end
 
 Use atomic operations (temp file + rename) for critical writes:
 
-```lua
+``` lua
 local function atomic_write(path, content)
   local unistd = require("posix.unistd")
   local temp = string.format("%s.tmp.%d.%d", path, os.time(), unistd.getpid())
@@ -176,7 +178,7 @@ local function atomic_write(path, content)
 
   local ok, err = os.rename(temp, path)
   if not ok then
-    ffi.C.unlink(temp)  -- cleanup on failure
+    ffi.C.unlink(temp) -- cleanup on failure
     return nil, "failed to rename temp file: " .. err
   end
   return true
@@ -185,10 +187,10 @@ end
 
 Write to stdout and stderr:
 
-```lua
-io.write(output)  -- stdout, no newline
+``` lua
+io.write(output) -- stdout, no newline
 io.stderr:write("error: " .. msg .. "\n")
-io.stderr:flush()  -- ensure immediate output
+io.stderr:flush() -- ensure immediate output
 ```
 
 ## Command execution
@@ -228,19 +230,18 @@ run_command({"systemctl", "--user", "restart", "service"})
 
 Use `posix.spawn` for simple execution with exit code:
 
-```lua
-local posix = require('posix')
-local exit_status = posix.spawn({"command", "arg1", "arg2"})
+``` lua
+local posix = require("posix")
+local exit_status = posix.spawn({ "command", "arg1", "arg2" })
 if exit_status ~= 0 then
   error("command failed")
 end
 ```
-
 ## Command-line arguments
 
 Subcommand pattern:
 
-```lua
+``` lua
 local function main(args)
   if #args == 0 or args[1] == "help" then
     print("usage: command [subcommand]")
@@ -248,7 +249,7 @@ local function main(args)
   end
 
   local command = args[1]
-  local cmd_args = {unpack(args, 2)}
+  local cmd_args = { unpack(args, 2) }
 
   if command == "show" then
     cmd_show(cmd_args)
@@ -259,7 +260,7 @@ local function main(args)
   end
 end
 
-local args = {...}
+local args = { ... }
 local ok, err = pcall(main, args)
 if not ok then
   io.stderr:write("error: " .. tostring(err) .. "\n")
@@ -269,7 +270,7 @@ end
 
 Parse key=value parameters:
 
-```lua
+``` lua
 local function parse_params(args)
   local params = {}
   for _, arg in ipairs(args) do
@@ -286,14 +287,14 @@ end
 
 Use pattern matching:
 
-```lua
+``` lua
 local basename = path:match("([^/]+)$")
 local key, value = arg:match("^([^=]+)=(.+)$")
 ```
 
 Template interpolation:
 
-```lua
+``` lua
 M.interpolate = function(template, context)
   if type(template) ~= "string" then
     return template
@@ -308,7 +309,7 @@ end
 
 Recursive table expansion:
 
-```lua
+``` lua
 M.expand = function(value, context)
   if type(value) == "string" then
     return M.interpolate(value, context)
@@ -326,7 +327,7 @@ end
 
 Flatten nested tables:
 
-```lua
+``` lua
 M.flatten = function(tbl)
   local result = {}
   for _, item in ipairs(tbl) do
@@ -346,7 +347,7 @@ end
 
 Pure data tables for config:
 
-```lua
+``` lua
 return {
   name = "tool",
   version = "1.0.0",
@@ -355,13 +356,13 @@ return {
   platforms = {
     ["darwin-arm64"] = {
       arch = "darwin-arm64",
-      sha256 = "abc123..."
+      sha256 = "abc123...",
     },
     ["linux-x86_64"] = {
       arch = "linux-x64",
-      sha256 = "def456..."
-    }
-  }
+      sha256 = "def456...",
+    },
+  },
 }
 ```
 
@@ -370,6 +371,7 @@ Template variables use `${variable}` syntax and are interpolated at runtime.
 ## Common dependencies
 
 Standard libraries used in this repo:
+
 - `posix` - POSIX system calls
 - `posix.unistd` - Unix standard functions (read, write, close)
 - `posix.sys.wait` - Process waiting
@@ -383,7 +385,7 @@ Standard libraries used in this repo:
 
 FFI usage for C functions:
 
-```lua
+``` lua
 local ffi = require("ffi")
 ffi.cdef([[
   int symlink(const char *target, const char *linkpath);
@@ -395,7 +397,7 @@ local result = ffi.C.symlink(target, linkpath)
 
 Remove comments unless they're very useful:
 
-```lua
+``` lua
 -- Example: flatten({{1, 2}, {3, 4}}) -> {1, 2, 3, 4}
 M.flatten = function(tbl)
   -- implementation
@@ -406,7 +408,7 @@ General-purpose library modules may include a brief header comment explaining th
 
 ## Platform detection
 
-```lua
+``` lua
 local function get_platform()
   local system = jit.os:lower()
   local machine = jit.arch:lower()
@@ -424,7 +426,7 @@ end
 
 Split large functions into focused functions with single responsibilities:
 
-```lua
+``` lua
 -- Before: 100+ line monolithic function
 local function download_executable(name, config, force)
   -- download, checksum, extract, install all mixed together
@@ -463,7 +465,7 @@ end
 
 Create single source of truth for repeated patterns:
 
-```lua
+``` lua
 -- Before: Duplicated path construction
 local path1 = path_join("..", "_", name, sha:sub(1, 16), exec_path)
 local path2 = path_join("..", "_", name, sha:sub(1, 16), exec_path)
@@ -483,7 +485,7 @@ end
 
 Use transaction pattern for operations that modify state:
 
-```lua
+``` lua
 local function install_package(name, config)
   local temp_dir = create_temp_dir()
 
@@ -510,7 +512,7 @@ end
 
 Validate inputs at function boundaries:
 
-```lua
+``` lua
 local function process_config(config)
   -- Validate required fields
   if not config.name or config.name == "" then
@@ -532,7 +534,7 @@ end
 
 Register cleanup handlers for graceful shutdown:
 
-```lua
+``` lua
 local signal = require("posix.signal")
 local cleanup_registry = {}
 
