@@ -125,6 +125,7 @@ function M.download_file(url, dest_path)
   local req = http_request.new_from_uri(url)
   req.headers:upsert(":method", "GET")
   req.headers:upsert("user-agent", "shimlink/1.0")
+  req.version = 1.1  -- Force HTTP/1.1 to avoid HTTP/2 bugs with large files
 
   local headers, stream = req:go()
   if not headers then
@@ -136,17 +137,17 @@ function M.download_file(url, dest_path)
     return nil, "http error " .. status
   end
 
-  local body, err = stream:get_body_as_string()
-  if not body then
-    return nil, "failed to read response: " .. tostring(err)
-  end
-
   local f, open_err = io.open(dest_path, "wb")
   if not f then
     return nil, "failed to open destination file: " .. tostring(open_err)
   end
-  f:write(body)
+
+  local ok, err = stream:save_body_to_file(f)
   f:close()
+
+  if not ok then
+    return nil, "failed to save response: " .. tostring(err)
+  end
 
   return true
 end
