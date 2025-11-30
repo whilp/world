@@ -148,6 +148,7 @@ local function cmd_start()
         unistd.close(fd)
       end
 
+      unistd.chdir(HOME)
       setup_nvim_environment()
       exec_nvim_server()
       os.exit(1)
