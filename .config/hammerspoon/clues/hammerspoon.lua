@@ -24,3 +24,12 @@ Clue{
   show_in_chooser = true,
   action = { shell = "/usr/local/bin/mscupdate" }
 }
+
+Clue{
+  name = "Switcher (unfiltered)",
+  desc = "show all apps without filtering",
+  key = { "hyper", "h", "s" },
+  group = "hammerspoon",
+  show_in_chooser = true,
+  action = { mode = "unfiltered_switcher" }
+}

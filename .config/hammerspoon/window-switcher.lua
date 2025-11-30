@@ -61,10 +61,10 @@ local function switchToSymbolMode()
   chooser:show()
 end
 
-local function showSwitcher()
+local function showSwitcher(applyFilter)
   isEmojiMode = false
   isSymbolMode = false
-  local choices = dispatch.getAllChoices()
+  local choices = dispatch.getAllChoices(applyFilter)
   allChoices = choices
   local debounceTimer = nil
 
@@ -116,7 +116,16 @@ local function showSwitcher()
 end
 
 function WindowSwitcher.setup(hyper)
-  hyper:bind("tab"):toFunction("Window switcher", showSwitcher)
+  hyper:bind("tab"):toFunction("Window switcher", function()
+    showSwitcher(true)
+  end)
+  hyper:bind("shift", "tab"):toFunction("Window switcher (unfiltered)", function()
+    showSwitcher(false)
+  end)
+end
+
+function WindowSwitcher.showUnfiltered()
+  showSwitcher(false)
 end
 
 return WindowSwitcher

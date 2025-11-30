@@ -45,6 +45,7 @@ clueLoader.load_all()
 clueManager.setup(clueLoader, {
   emoji = showEmojiChooser,
   symbol = showSymbolChooser,
+  unfiltered_switcher = function() windowSwitcher.showUnfiltered() end,
 })
 
 local metaModal = clueManager.create_meta_modal(hyper)

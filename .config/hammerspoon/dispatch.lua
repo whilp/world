@@ -2,7 +2,32 @@ local M = {}
 
 local clueLoader = require("clue-loader")
 
-M.getWindowChoices = function()
+M.filteredApps = {
+  "Chess",
+  "Karabiner-VirtualHIDDevice-Manager",
+  "Bigmac",
+  "Books",
+  "Calculator",
+  "System Calcluator",
+  "Archive Utility",
+  "Activity Monitor",
+  "Font Book",
+  "Dictionary",
+  "VoiceOver Utility",
+  "Stickies",
+  "TextEdit",
+}
+
+local function shouldFilterApp(appName)
+  for _, filtered in ipairs(M.filteredApps) do
+    if appName == filtered or appName:match("^%.") then
+      return true
+    end
+  end
+  return false
+end
+
+M.getWindowChoices = function(applyFilter)
   local windows = hs.window.orderedWindows()
   local choices = {}
   local seenApps = {}
@@ -12,7 +37,7 @@ M.getWindowChoices = function()
     local appName = app:name()
     local title = win:title()
 
-    if title and title ~= "" then
+    if title and title ~= "" and (not applyFilter or not shouldFilterApp(appName)) then
       local displayTitle = title
       local subText = appName
 
@@ -37,12 +62,12 @@ M.getWindowChoices = function()
   return choices, seenApps
 end
 
-M.getAppChoices = function(seenApps)
+M.getAppChoices = function(seenApps, applyFilter)
   local choices = {}
 
   for _, app in ipairs(hs.application.runningApplications()) do
     local appName = app:name()
-    if appName and not seenApps[appName] then
+    if appName and not seenApps[appName] and (not applyFilter or not shouldFilterApp(appName)) then
       local kind = app:kind()
       local ok, appPath = pcall(app.path, app)
 
@@ -59,7 +84,7 @@ M.getAppChoices = function(seenApps)
   return choices
 end
 
-M.getInstalledAppChoices = function(seenApps)
+M.getInstalledAppChoices = function(seenApps, applyFilter)
   local choices = {}
   local seenNames = {}
 
@@ -80,7 +105,7 @@ M.getInstalledAppChoices = function(seenApps)
       for file in iter, dirObj do
         if file:match("%.app$") then
           local appName = file:gsub("%.app$", "")
-          if not seenNames[appName] then
+          if not seenNames[appName] and (not applyFilter or not shouldFilterApp(appName)) then
             table.insert(choices, {
               text = appName,
               subText = "Launch application",
@@ -104,20 +129,20 @@ M.getCommandChoices = function()
   return clueLoader.to_choices()
 end
 
-M.getAllChoices = function()
+M.getAllChoices = function(applyFilter)
   local choices = {}
 
-  local windowChoices, seenApps = M.getWindowChoices()
+  local windowChoices, seenApps = M.getWindowChoices(applyFilter)
   for _, choice in ipairs(windowChoices) do
     table.insert(choices, choice)
   end
 
-  local appChoices = M.getAppChoices(seenApps)
+  local appChoices = M.getAppChoices(seenApps, applyFilter)
   for _, choice in ipairs(appChoices) do
     table.insert(choices, choice)
   end
 
-  local installedAppChoices = M.getInstalledAppChoices(seenApps)
+  local installedAppChoices = M.getInstalledAppChoices(seenApps, applyFilter)
   for _, choice in ipairs(installedAppChoices) do
     table.insert(choices, choice)
   end
