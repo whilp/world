@@ -8,6 +8,7 @@ main() {
   "$SETUP_DIR/shell"
   "$SETUP_DIR/luajit"
   "$SETUP_DIR/shimlink"
+  "$SETUP_DIR/codespace"
   "$SETUP_DIR/claude" &
   "$SETUP_DIR/nvim" &
   "$SETUP_DIR/extras" &
