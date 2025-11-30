@@ -4,10 +4,12 @@ local clock = nil
 local updateTimer = nil
 local menubarWatcher = nil
 local mouseTimer = nil
+local timeOffsetMinutes = 0
 
 local function updateClockText()
 	if clock then
-		clock[2].text = os.date("%a %b %d  %H:%M")
+		local adjustedTime = os.time() + (timeOffsetMinutes * 60)
+		clock[2].text = os.date("%a %b %d  %H:%M", adjustedTime)
 	end
 end
 
@@ -38,9 +40,10 @@ local function createClock()
 		action = "fill",
 	}
 
+	local adjustedTime = os.time() + (timeOffsetMinutes * 60)
 	clock[2] = {
 		type = "text",
-		text = os.date("%a %b %d  %H:%M"),
+		text = os.date("%a %b %d  %H:%M", adjustedTime),
 		textColor = { white = 0.85 },
 		textSize = 13,
 		textFont = ".AppleSystemUIFont",
@@ -94,7 +97,9 @@ local function handleScreenChange()
 	createClock()
 end
 
-function NotchClock.start()
+function NotchClock.start(options)
+	options = options or {}
+	timeOffsetMinutes = options.offsetMinutes or 0
 	createClock()
 
 	if updateTimer then

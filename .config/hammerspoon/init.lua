@@ -53,6 +53,6 @@ hyper:bind("space"):toFunction("Show modals", function()
 end)
 
 windowSwitcher.setup(hyper)
-notchClock.start()
+notchClock.start({ offsetMinutes = 4 })
 
 hs.alert.show("Hammerspoon loaded")
