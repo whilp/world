@@ -55,5 +55,8 @@
   "alwaysThinkingEnabled": false,
   "feedbackSurveyState": {
     "lastShownTime": 1754368507584
+  },
+  "env": {
+    "DISABLE_AUTOUPDATER": "1"
   }
 }
