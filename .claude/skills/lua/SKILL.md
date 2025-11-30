@@ -193,7 +193,40 @@ io.stderr:flush()  -- ensure immediate output
 
 ## Command execution
 
-Use `posix.spawn` for simple execution:
+IMPORTANT: Always prefer `posix.popen()` or `posix.spawn()` over `io.popen()` or `os.execute()`:
+- `posix.popen()` takes an array of arguments and does direct exec without shell invocation
+- `io.popen()` invokes `/bin/sh` to parse the command string
+- Avoid shell invocation unless you specifically need shell features (sourcing files, variable expansion, etc.)
+
+Use `posix.popen` for running commands (with or without capturing output):
+
+```lua
+local posix = require('posix')
+local unistd = require('posix.unistd')
+local wait = require('posix.sys.wait')
+
+local handle = posix.popen({"command", "arg1", "arg2"}, "r")
+local output = unistd.read(handle.fd, 65536) or ""
+wait.wait(handle.pids[1])
+unistd.close(handle.fd)
+```
+
+For fire-and-forget commands (no output needed):
+
+```lua
+local function run_command(args)
+  local posix = require("posix")
+  local handle = posix.popen(args, "r")
+  if handle then
+    wait.wait(handle.pids[1])
+    unistd.close(handle.fd)
+  end
+end
+
+run_command({"systemctl", "--user", "restart", "service"})
+```
+
+Use `posix.spawn` for simple execution with exit code:
 
 ```lua
 local posix = require('posix')
@@ -201,19 +234,6 @@ local exit_status = posix.spawn({"command", "arg1", "arg2"})
 if exit_status ~= 0 then
   error("command failed")
 end
-```
-
-Use `posix.popen` for capturing output:
-
-```lua
-local posix = require('posix')
-local unistd = require('posix.unistd')
-local wait = require('posix.sys.wait')
-
-local handle = posix.popen({"command", "arg"}, "r")
-local output = unistd.read(handle.fd, 65536) or ""
-wait.wait(handle.pids[1])
-unistd.close(handle.fd)
 ```
 
 ## Command-line arguments
