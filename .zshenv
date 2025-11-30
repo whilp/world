@@ -55,5 +55,5 @@ if [[ ! -f ~/.terminfo/x/xterm-ghostty ]] || [[ ~/.config/ghostty/term.tic -nt ~
   mkdir -p ~/.terminfo
   tic -x ~/.config/ghostty/term.tic 2>/dev/null
 fi
-export TERM=xterm-ghostty
+export TERM=xterm
 [ -r ~/extras/zshenv ] && source ~/extras/zshenv
