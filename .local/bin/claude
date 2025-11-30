@@ -43,11 +43,17 @@ if #skill_names > 0 then
   skill_instruction = skill_instruction .. " Available user skills: " .. table.concat(skill_names, ", ")
 end
 
+local append_prompts = { skill_instruction }
+local env_append = os.getenv("CLAUDE_APPEND_SYSTEM_PROMPT")
+if env_append then
+  table.insert(append_prompts, env_append)
+end
+
 local argv = {
   "--dangerously-skip-permissions",
   "--strict-mcp-config",
   "--append-system-prompt",
-  skill_instruction,
+  table.concat(append_prompts, "\n\n"),
 }
 
 for i = 1, #arg do
