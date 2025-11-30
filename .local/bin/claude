@@ -25,11 +25,28 @@ if not claude_bin then
   os.exit(1)
 end
 
+local skills_dir = HOME .. "/.claude/skills"
+local skill_names = {}
+local skills = glob.glob(skills_dir .. "/*", 0)
+if skills then
+  for _, skill_path in ipairs(skills) do
+    local name = skill_path:match("([^/]+)$")
+    if name then
+      table.insert(skill_names, name)
+    end
+  end
+end
+
+local skill_instruction = "INSTRUCTION: Review available skills and pick at least one that is relevant to the user's request. Activate it with Skill(<skillname>)."
+if #skill_names > 0 then
+  skill_instruction = skill_instruction .. " Available user skills: " .. table.concat(skill_names, ", ")
+end
+
 local argv = {
   "--dangerously-skip-permissions",
   "--strict-mcp-config",
   "--append-system-prompt",
-  [[INSTRUCTION: Review available skills and pick at least one that is relevant to the user's request. Activate it with Skill(<skillname>).]],
+  skill_instruction,
 }
 
 for i = 1, #arg do
