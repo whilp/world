@@ -9,17 +9,11 @@ if [ -n "${CLAUDE_CREDENTIALS}" ]; then
   echo "${CLAUDE_CREDENTIALS}" >"$DST/.claude/.credentials.json"
 fi
 
-auth=""
-if [ -n "${CLAUDE_API_KEY}" ]; then
-  auth='"primaryApiKey": "'${CLAUDE_API_KEY}'",'
-fi
-
 settings='{
   "numStartups": 1,
   "installMethod": "native",
   "autoUpdates": false,
   "theme": "dark-daltonized",
-  '${auth}'
   "hasCompletedOnboarding": true,
   "bypassPermissionsModeAccepted": true
 }'
