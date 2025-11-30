@@ -12,7 +12,7 @@ Version{
     },
     ["linux-x86_64"] = {
       sha256 = "d3ffc8f04f85a47fa325081affd6b572ad456b542a4d3a1207ef4685afd7e9e2",
-      arch = "x86_64-unknown-linux-musl",
+      arch = "x86_64-unknown-linux-gnu",
       exec = { "/lib64/ld-linux-x86-64.so.2", "${destination}/${name}" },
     },
   },
