@@ -1,0 +1,185 @@
+#!/usr/bin/env luajit
+
+local json = require("dkjson")
+
+local function read_stdin()
+  local content = io.read("*all")
+  if not content or content == "" then
+    return nil, "no input provided on stdin"
+  end
+  return content
+end
+
+local function parse_json(content)
+  local data, _, err = json.decode(content)
+  if not data then
+    return nil, "failed to parse json: " .. tostring(err)
+  end
+  return data
+end
+
+local function read_skill_file(path)
+  local f = io.open(path, "r")
+  if not f then
+    return nil
+  end
+  local content = f:read("*all")
+  f:close()
+  return content
+end
+
+local function extract_skill_metadata(content)
+  local in_frontmatter = false
+  local name, description
+
+  for line in content:gmatch("[^\n]+") do
+    if line == "---" then
+      if not in_frontmatter then
+        in_frontmatter = true
+      else
+        break
+      end
+    elseif in_frontmatter then
+      local key, value = line:match("^(%w+):%s*(.+)$")
+      if key == "name" then
+        name = value:match("^%s*(.-)%s*$")
+      elseif key == "description" then
+        description = value:match("^%s*(.-)%s*$")
+      end
+    end
+  end
+
+  return name, description
+end
+
+local function find_skills()
+  local home = os.getenv("HOME")
+  if not home then
+    return {}
+  end
+
+  local skills_dir = home .. "/.claude/skills"
+  local posix = require("posix")
+  local dirent = require("posix.dirent")
+  local stat = require("posix.sys.stat")
+
+  local st = stat.stat(skills_dir)
+  if not st or stat.S_ISDIR(st.st_mode) == 0 then
+    return {}
+  end
+
+  local skills = {}
+  local dir = dirent.dir(skills_dir)
+  if not dir then
+    return skills
+  end
+
+  for _, entry in ipairs(dir) do
+    if entry ~= "." and entry ~= ".." then
+      local skill_path = skills_dir .. "/" .. entry .. "/SKILL.md"
+      local st = stat.stat(skill_path)
+      if st and stat.S_ISREG(st.st_mode) then
+        local content = read_skill_file(skill_path)
+        if content then
+          local name, description = extract_skill_metadata(content)
+          if name and description then
+            table.insert(skills, {
+              name = name,
+              description = description:lower()
+            })
+          end
+        end
+      end
+    end
+  end
+
+  return skills
+end
+
+local function extract_keywords(description)
+  local keywords = {}
+  for word in description:gmatch("%w+") do
+    if #word >= 3 then
+      keywords[word:lower()] = true
+    end
+  end
+  return keywords
+end
+
+local function check_prompt_matches_skill(prompt, skill)
+  local prompt_lower = prompt:lower()
+  local skill_keywords = extract_keywords(skill.description)
+
+  if prompt_lower:find(skill.name, 1, true) then
+    return true
+  end
+
+  for keyword in pairs(skill_keywords) do
+    if prompt_lower:find(keyword, 1, true) then
+      return true
+    end
+  end
+
+  return false
+end
+
+local function find_matching_skills(prompt, skills)
+  local matches = {}
+  for _, skill in ipairs(skills) do
+    if check_prompt_matches_skill(prompt, skill) then
+      table.insert(matches, skill.name)
+    end
+  end
+  return matches
+end
+
+local function main()
+  local input, err = read_stdin()
+  if not input then
+    io.stderr:write("error: " .. err .. "\n")
+    io.stderr:flush()
+    os.exit(1)
+  end
+
+  local data, parse_err = parse_json(input)
+  if not data then
+    io.stderr:write("error: " .. parse_err .. "\n")
+    io.stderr:flush()
+    os.exit(1)
+  end
+
+  local prompt = data.prompt
+  if not prompt or prompt == "" then
+    os.exit(0)
+  end
+
+  local skills = find_skills()
+  if #skills == 0 then
+    os.exit(0)
+  end
+
+  local matches = find_matching_skills(prompt, skills)
+  if #matches > 0 then
+    if #matches == 1 then
+      io.write("INSTRUCTION: Activate Skill(" .. matches[1] .. ") immediately.\n")
+    else
+      local skill_calls = {}
+      for _, skill in ipairs(matches) do
+        table.insert(skill_calls, "Skill(" .. skill .. ")")
+      end
+      local skill_list = table.concat(skill_calls, " and ")
+      io.write("INSTRUCTION: Activate " .. skill_list .. " immediately.\n")
+    end
+  else
+    io.write("INSTRUCTION: If the prompt matches any available skill keywords, use Skill(skill-name) to activate it.\n")
+  end
+
+  os.exit(0)
+end
+
+local ok, err = pcall(main)
+if not ok then
+  io.stderr:write("error: " .. tostring(err) .. "\n")
+  io.stderr:flush()
+  os.exit(1)
+end
