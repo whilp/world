@@ -11,6 +11,16 @@ local stdlib = require("posix.stdlib")
 ffi.cdef([[
   typedef int pid_t;
   pid_t setsid(void);
+
+  struct flock {
+    short l_type;
+    short l_whence;
+    long long l_start;
+    long long l_len;
+    pid_t l_pid;
+  };
+
+  int fcntl(int fd, int cmd, ...);
 ]])
 
 local HOME = os.getenv("HOME")
@@ -73,6 +83,62 @@ local function get_running_pid()
   return nil
 end
 
+local function wait_for_socket(socket_path, timeout)
+  timeout = timeout or 5
+  local sleep_interval = 0.1
+  local elapsed = 0
+
+  while elapsed < timeout do
+    if file_exists(socket_path) then
+      local socket = require("posix.sys.socket")
+      local sock_fd = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM, 0)
+      if sock_fd and sock_fd >= 0 then
+        local sockaddr = {
+          family = socket.AF_UNIX,
+          path = socket_path
+        }
+        local ok = socket.connect(sock_fd, sockaddr)
+        unistd.close(sock_fd)
+        if ok == 0 then
+          return true
+        end
+      end
+    end
+
+    unistd.sleep(sleep_interval)
+    elapsed = elapsed + sleep_interval
+  end
+
+  return false
+end
+
+local function acquire_pidfile_lock()
+  local lockfd = fcntl.open(PIDFILE, fcntl.O_RDWR + fcntl.O_CREAT, tonumber("644", 8))
+  if not lockfd or lockfd < 0 then
+    return nil, "failed to open pidfile for locking"
+  end
+
+  local lock = ffi.new("struct flock")
+  lock.l_type = fcntl.F_WRLCK
+  lock.l_whence = unistd.SEEK_SET
+  lock.l_start = 0
+  lock.l_len = 0
+
+  local ret = ffi.C.fcntl(lockfd, fcntl.F_SETLK, lock)
+  if ret == -1 then
+    unistd.close(lockfd)
+    return nil, "another instance is starting"
+  end
+
+  return lockfd
+end
+
+local function release_pidfile_lock(lockfd)
+  if lockfd then
+    unistd.close(lockfd)
+  end
+end
+
 local function load_zsh_environment()
   local posix = require("posix")
   local handle = posix.popen({"zsh", "-i", "-l", "-c", "env -0"}, "r")
@@ -115,14 +181,32 @@ local function cmd_serve()
 end
 
 local function cmd_start()
+  local ok, err = mkdir_p(PIDFILE:match("(.+)/[^/]+$"))
+  if not ok then
+    io.stderr:write("error: " .. err .. "\n")
+    return 1
+  end
+
+  ok, err = mkdir_p(LOGFILE:match("(.+)/[^/]+$"))
+  if not ok then
+    io.stderr:write("error: " .. err .. "\n")
+    return 1
+  end
+
+  local lockfd
+  lockfd, err = acquire_pidfile_lock()
+  if not lockfd then
+    io.stderr:write("failed to acquire lock: " .. err .. "\n")
+    return 1
+  end
+
   local pid = get_running_pid()
   if pid then
+    release_pidfile_lock(lockfd)
     io.write("nvim server already running\n")
     return 0
   end
 
-  mkdir_p(PIDFILE:match("(.+)/[^/]+$"))
-  mkdir_p(LOGFILE:match("(.+)/[^/]+$"))
   os.remove(SOCK)
 
   local child_pid = unistd.fork()
@@ -131,6 +215,8 @@ local function cmd_start()
 
     local grandchild_pid = unistd.fork()
     if grandchild_pid == 0 then
+      release_pidfile_lock(lockfd)
+
       local logfd = fcntl.open(LOGFILE, fcntl.O_WRONLY + fcntl.O_CREAT + fcntl.O_APPEND, tonumber("644", 8))
       if logfd then
         unistd.dup2(logfd, unistd.STDOUT_FILENO)
@@ -145,7 +231,7 @@ local function cmd_start()
       end
 
       for fd = 3, 255 do
-        unistd.close(fd)
+        pcall(unistd.close, fd)
       end
 
       unistd.chdir(HOME)
@@ -153,19 +239,35 @@ local function cmd_start()
       exec_nvim_server()
       os.exit(1)
     else
-      write_file(PIDFILE, tostring(grandchild_pid))
+      local ok, err = write_file(PIDFILE, tostring(grandchild_pid))
+      if not ok then
+        io.stderr:write("error: " .. err .. "\n")
+        release_pidfile_lock(lockfd)
+        os.exit(1)
+      end
+      release_pidfile_lock(lockfd)
       os.exit(0)
     end
   else
+    release_pidfile_lock(lockfd)
     wait.wait(child_pid)
-    unistd.sleep(1)
 
-    pid = get_running_pid()
-    if pid then
-      io.write("nvim server started\n")
-      return 0
+    if wait_for_socket(SOCK, 5) then
+      pid = get_running_pid()
+      if pid then
+        io.write("nvim server started\n")
+        return 0
+      else
+        io.stderr:write("nvim server process died after starting, check " .. LOGFILE .. "\n")
+        os.remove(PIDFILE)
+        return 1
+      end
     else
-      io.stderr:write("nvim server failed to start, check " .. LOGFILE .. "\n")
+      io.stderr:write("nvim server failed to start: socket not ready after 5 seconds, check " .. LOGFILE .. "\n")
+      pid = get_running_pid()
+      if pid then
+        signal.kill(pid, signal.SIGTERM)
+      end
       os.remove(PIDFILE)
       return 1
     end
@@ -203,10 +305,15 @@ end
 local function run_command(args)
   local posix = require("posix")
   local handle = posix.popen(args, "r")
-  if handle then
-    wait.wait(handle.pids[1])
-    unistd.close(handle.fd)
+  if not handle then
+    return 1
   end
+  local _, reason, status = wait.wait(handle.pids[1])
+  unistd.close(handle.fd)
+  if reason == "exited" then
+    return status
+  end
+  return 1
 end
 
 local function cmd_reload()
@@ -214,12 +321,30 @@ local function cmd_reload()
     local uid = unistd.getuid()
     run_command({"launchctl", "bootout", "gui/" .. uid .. "/com.user.nvim"})
     unistd.sleep(0.5)
-    run_command({"launchctl", "bootstrap", "gui/" .. uid, HOME .. "/Library/LaunchAgents/com.user.nvim.plist"})
-    run_command({"launchctl", "enable", "gui/" .. uid .. "/com.user.nvim"})
-    run_command({"launchctl", "kickstart", "gui/" .. uid .. "/com.user.nvim"})
+    local status = run_command({"launchctl", "bootstrap", "gui/" .. uid, HOME .. "/Library/LaunchAgents/com.user.nvim.plist"})
+    if status ~= 0 then
+      io.stderr:write("failed to bootstrap nvim service\n")
+      return 1
+    end
+    status = run_command({"launchctl", "enable", "gui/" .. uid .. "/com.user.nvim"})
+    if status ~= 0 then
+      io.stderr:write("failed to enable nvim service\n")
+      return 1
+    end
+    status = run_command({"launchctl", "kickstart", "gui/" .. uid .. "/com.user.nvim"})
+    if status ~= 0 then
+      io.stderr:write("failed to kickstart nvim service\n")
+      return 1
+    end
+    io.write("nvim service reloaded\n")
   else
     if is_systemd_running() then
-      run_command({"systemctl", "--user", "daemon-reload"})
+      local status = run_command({"systemctl", "--user", "daemon-reload"})
+      if status ~= 0 then
+        io.stderr:write("failed to reload systemd daemon\n")
+        return 1
+      end
+      io.write("systemd daemon reloaded\n")
     end
   end
   return 0
@@ -228,10 +353,20 @@ end
 local function cmd_restart()
   if jit.os == "OSX" then
     local uid = unistd.getuid()
-    run_command({"launchctl", "kickstart", "-k", "gui/" .. uid .. "/com.user.nvim"})
+    local status = run_command({"launchctl", "kickstart", "-k", "gui/" .. uid .. "/com.user.nvim"})
+    if status ~= 0 then
+      io.stderr:write("failed to restart nvim service\n")
+      return 1
+    end
+    io.write("nvim service restarted\n")
   else
     if is_systemd_running() then
-      run_command({"systemctl", "--user", "restart", "nvim"})
+      local status = run_command({"systemctl", "--user", "restart", "nvim"})
+      if status ~= 0 then
+        io.stderr:write("failed to restart nvim service\n")
+        return 1
+      end
+      io.write("nvim service restarted\n")
     else
       cmd_stop()
       unistd.sleep(1)
@@ -288,7 +423,21 @@ local function client_mode(args)
   end
 end
 
+local function cleanup_and_exit(signum)
+  os.remove(SOCK)
+  if file_exists(PIDFILE) then
+    local pid = get_running_pid()
+    if not pid then
+      os.remove(PIDFILE)
+    end
+  end
+  os.exit(128 + signum)
+end
+
 local function main(args)
+  signal.signal(signal.SIGINT, function() cleanup_and_exit(signal.SIGINT) end)
+  signal.signal(signal.SIGTERM, function() cleanup_and_exit(signal.SIGTERM) end)
+
   local program_name = args[0]:match("([^/]+)$")
 
   if program_name == "nvimd" or program_name == "nvimd.lua" then
