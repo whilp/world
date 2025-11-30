@@ -15,7 +15,7 @@ fi
 
 settings='{
   "numStartups": 1,
-  "installMethod": "native",
+  "installMethod": "unknown",
   "autoUpdates": false,
   "theme": "dark-daltonized",
   "hasCompletedOnboarding": true,

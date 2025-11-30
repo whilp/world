@@ -6,6 +6,7 @@ local fcntl = require("posix.fcntl")
 local signal = require("posix.signal")
 local wait = require("posix.sys.wait")
 local stat = require("posix.sys.stat")
+local stdlib = require("posix.stdlib")
 
 ffi.cdef([[
   typedef int pid_t;
@@ -74,7 +75,7 @@ end
 
 local function load_zsh_environment()
   local posix = require("posix")
-  local handle = posix.popen({"zsh", "-c", "source ~/.zshenv 2>/dev/null && env -0"}, "r")
+  local handle = posix.popen({"zsh", "-i", "-l", "-c", "env -0"}, "r")
   if not handle then
     return
   end
@@ -83,21 +84,34 @@ local function load_zsh_environment()
   wait.wait(handle.pids[1])
   unistd.close(handle.fd)
 
-  for line in output:gmatch("([^\0]+)") do
+  local i = 1
+  while i <= #output do
+    local next_null = output:find("\0", i, true)
+    if not next_null then
+      break
+    end
+    local line = output:sub(i, next_null - 1)
     local key, value = line:match("^([^=]+)=(.*)$")
     if key then
-      os.setenv(key, value)
+      stdlib.setenv(key, value)
     end
+    i = next_null + 1
   end
 end
 
-local function cmd_serve()
+local function setup_nvim_environment()
   load_zsh_environment()
+  stdlib.setenv("NVIM_SERVER_MODE", "1")
+end
 
+local function exec_nvim_server()
   os.remove(SOCK)
-
-  os.setenv("NVIM_SERVER_MODE", "1")
   unistd.execp(NVIM_BIN, {NVIM_BIN, "--listen", SOCK, "--headless"})
+end
+
+local function cmd_serve()
+  setup_nvim_environment()
+  exec_nvim_server()
 end
 
 local function cmd_start()
@@ -134,7 +148,9 @@ local function cmd_start()
         unistd.close(fd)
       end
 
-      unistd.execp(NVIM_BIN, {NVIM_BIN, "--listen", SOCK, "--headless"})
+      unistd.chdir(HOME)
+      setup_nvim_environment()
+      exec_nvim_server()
       os.exit(1)
     else
       write_file(PIDFILE, tostring(grandchild_pid))
@@ -230,23 +246,22 @@ local function cmd_cleanup()
   return 0
 end
 
+local commands = {
+  serve = cmd_serve,
+  start = cmd_start,
+  stop = cmd_stop,
+  status = cmd_status,
+  reload = cmd_reload,
+  restart = cmd_restart,
+  cleanup = cmd_cleanup,
+}
+
 local function daemon_mode(args)
   local command = args[1] or ""
+  local cmd_fn = commands[command]
 
-  if command == "serve" then
-    return cmd_serve()
-  elseif command == "start" then
-    return cmd_start()
-  elseif command == "stop" then
-    return cmd_stop()
-  elseif command == "status" then
-    return cmd_status()
-  elseif command == "reload" then
-    return cmd_reload()
-  elseif command == "restart" then
-    return cmd_restart()
-  elseif command == "cleanup" then
-    return cmd_cleanup()
+  if cmd_fn then
+    return cmd_fn()
   else
     io.stderr:write("nvimd: unknown command: " .. command .. "\n")
     io.stderr:write("Usage: nvimd {serve|start|stop|status|restart|reload|cleanup}\n")
