@@ -28,6 +28,8 @@ end
 local argv = {
   "--dangerously-skip-permissions",
   "--strict-mcp-config",
+  "--append-system-prompt",
+  [[INSTRUCTION: Review available skills and pick at least one that is relevant to the user's request. Activate it with Skill(<skillname>).]],
 }
 
 for i = 1, #arg do
