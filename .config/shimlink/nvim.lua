@@ -12,7 +12,7 @@ Version{
     },
     ["linux-x86_64"] = {
       arch = "linux-x64",
-      sha256 = "52ee34f0b4cf95c300716b21638f3c8aa4ec6a5761a1d77b44c5f3f4d73701f6"
+      sha256 = "9d6fc63c2a0b96d11d435dfadab58042dfab86c7cbb394dc6cd7f3d0f004b61a"
     }
   },
   repo = "whilp/dotfiles",
