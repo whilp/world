@@ -25,6 +25,17 @@
     ]
   },
   "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "use-skills"
+          }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "matcher": "*",
