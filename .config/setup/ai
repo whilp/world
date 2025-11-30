@@ -4,11 +4,13 @@ source "$(dirname "$0")/env"
 
 cd "$DST"
 if [ ! -d ./ai ]; then
-  git clone ${REMOTE%/*}/ai ./ai
+  if ! git clone ${REMOTE%/*}/ai ./ai 2>/dev/null; then
+    exit 0
+  fi
 else
   cd ./ai
   git fetch
   cd "$DST"
 fi
 
-claude plugin marketplace add ./ai
+claude plugin marketplace add ./ai 2>/dev/null || true
