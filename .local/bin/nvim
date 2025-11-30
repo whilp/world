@@ -13,11 +13,11 @@ ffi.cdef([[
   pid_t setsid(void);
 
   struct flock {
-    short l_type;
-    short l_whence;
     long long l_start;
     long long l_len;
     pid_t l_pid;
+    short l_type;
+    short l_whence;
   };
 
   int fcntl(int fd, int cmd, ...);
@@ -38,13 +38,17 @@ local function mkdir_p(path)
   local current = path:sub(1, 1) == "/" and "/" or ""
   for _, part in ipairs(parts) do
     current = current .. part .. "/"
-    stat.mkdir(current, tonumber("755", 8))
+    local ok, err = pcall(stat.mkdir, current, tonumber("755", 8))
+    if not ok and not err:match("File exists") then
+      return nil, "failed to create directory " .. current .. ": " .. tostring(err)
+    end
   end
+  return true
 end
 
 local function file_exists(path)
-  local s = stat.stat(path)
-  return s ~= nil
+  local ok, s = pcall(stat.stat, path)
+  return ok and s ~= nil
 end
 
 local function read_file(path)
@@ -119,15 +123,17 @@ local function acquire_pidfile_lock()
   end
 
   local lock = ffi.new("struct flock")
-  lock.l_type = fcntl.F_WRLCK
-  lock.l_whence = unistd.SEEK_SET
   lock.l_start = 0
   lock.l_len = 0
+  lock.l_pid = 0
+  lock.l_type = fcntl.F_WRLCK
+  lock.l_whence = unistd.SEEK_SET
 
   local ret = ffi.C.fcntl(lockfd, fcntl.F_SETLK, lock)
   if ret == -1 then
+    local errno = ffi.errno()
     unistd.close(lockfd)
-    return nil, "another instance is starting"
+    return nil, string.format("another instance is starting (errno: %d)", errno)
   end
 
   return lockfd
@@ -186,7 +192,6 @@ local function cmd_start()
     io.stderr:write("error: " .. err .. "\n")
     return 1
   end
-
   ok, err = mkdir_p(LOGFILE:match("(.+)/[^/]+$"))
   if not ok then
     io.stderr:write("error: " .. err .. "\n")
@@ -215,8 +220,6 @@ local function cmd_start()
 
     local grandchild_pid = unistd.fork()
     if grandchild_pid == 0 then
-      release_pidfile_lock(lockfd)
-
       local logfd = fcntl.open(LOGFILE, fcntl.O_WRONLY + fcntl.O_CREAT + fcntl.O_APPEND, tonumber("644", 8))
       if logfd then
         unistd.dup2(logfd, unistd.STDOUT_FILENO)
@@ -249,7 +252,6 @@ local function cmd_start()
       os.exit(0)
     end
   else
-    release_pidfile_lock(lockfd)
     wait.wait(child_pid)
 
     if wait_for_socket(SOCK, 5) then
