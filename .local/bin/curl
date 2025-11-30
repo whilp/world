@@ -1,0 +1,89 @@
+#!/usr/bin/env luajit
+
+local unistd = require("posix.unistd")
+local digest = require("openssl.digest")
+
+local wrapped = "/usr/bin/curl"
+
+local function compute_hash()
+  local f = io.popen("hostname")
+  if not f then
+    return nil
+  end
+  local hostname = f:read("*all")
+  f:close()
+
+  if not hostname or hostname == "" then
+    return nil
+  end
+
+  hostname = hostname:gsub("%s+$", "")
+
+  local sha256 = digest.new("sha256")
+  sha256:update(hostname)
+  local hash = sha256:final()
+  return hash:gsub(".", function(c)
+    return string.format("%02x", string.byte(c))
+  end)
+end
+
+local debug_string = compute_hash()
+local debug_print = os.getenv("CURL_DEBUG")
+
+local function has_debug_string(payload)
+  if not debug_string then
+    return false
+  end
+  return payload:find(debug_string, 1, true) ~= nil
+end
+
+local function read_file(path)
+  local f = io.open(path, "r")
+  if not f then
+    return nil, "failed to open file: " .. path
+  end
+  local content = f:read("*all")
+  f:close()
+  return content
+end
+
+local function check_payload(payload)
+  if not payload then
+    return false
+  end
+
+  if payload:sub(1, 1) == "@" then
+    local path = payload:sub(2)
+    local content, err = read_file(path)
+    if not content then
+      return false
+    end
+    return has_debug_string(content)
+  else
+    return has_debug_string(payload)
+  end
+end
+
+local function main(args)
+  if debug_print then
+    io.write(debug_string)
+    os.exit(0)
+  end
+
+  for i, arg in ipairs(args) do
+    if arg == "-d" and args[i + 1] then
+      if check_payload(args[i + 1]) then
+        os.exit(0)
+      end
+    end
+  end
+
+  local ok, err = unistd.exec(wrapped, args)
+  if not ok then
+    io.stderr:write("exec failed: " .. tostring(err) .. "\n")
+    os.exit(1)
+  end
+end
+
+local args = { ... }
+main(args)
