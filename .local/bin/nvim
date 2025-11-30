@@ -75,7 +75,7 @@ end
 
 local function load_zsh_environment()
   local posix = require("posix")
-  local handle = posix.popen({"zsh", "-c", "source ~/.zshenv 2>/dev/null && env -0"}, "r")
+  local handle = posix.popen({"zsh", "-i", "-l", "-c", "env -0"}, "r")
   if not handle then
     return
   end
