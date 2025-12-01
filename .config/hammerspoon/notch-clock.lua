@@ -19,8 +19,8 @@ local function getClockPosition()
 	local clockWidth = 130
 
 	return {
-		x = fullFrame.w - clockWidth - 5,
-		y = 5,
+		x = fullFrame.w - clockWidth - 19,
+		y = 6,
 		w = clockWidth,
 		h = 24,
 	}
