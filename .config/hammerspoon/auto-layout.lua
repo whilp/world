@@ -28,8 +28,29 @@ local function getExternalMonitor()
   return nil
 end
 
-local function calculateZones(screen)
+local screenMargins = {
+  ['DELL U3419W'] = {top = 30, right = 0, bottom = 0, left = 0}
+}
+
+local function getUsableFrame(screen)
   local frame = screen:frame()
+  local screenName = screen:name()
+  local margins = screenMargins[screenName]
+
+  if margins then
+    return {
+      x = frame.x + margins.left,
+      y = frame.y + margins.top,
+      w = frame.w - margins.left - margins.right,
+      h = frame.h - margins.top - margins.bottom
+    }
+  end
+
+  return frame
+end
+
+local function calculateZones(screen)
+  local frame = getUsableFrame(screen)
 
   return {
     top_left = {

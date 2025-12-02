@@ -40,6 +40,30 @@ local function getWindow()
   return hs.window.focusedWindow()
 end
 
+-- configuration for screen-specific margins
+local screenMargins = {
+  ['DELL U3419W'] = {top = 30, right = 0, bottom = 0, left = 0}
+}
+
+-- helper to get usable frame for a screen
+-- accounts for menu bar on the screen where it's located
+local function getUsableFrame(screen)
+  local frame = screen:frame()
+  local screenName = screen:name()
+  local margins = screenMargins[screenName]
+
+  if margins then
+    return {
+      x = frame.x + margins.left,
+      y = frame.y + margins.top,
+      w = frame.w - margins.left - margins.right,
+      h = frame.h - margins.top - margins.bottom
+    }
+  end
+
+  return frame
+end
+
 -- maximize window
 function WindowManagement.maximizeWindow()
   local win = getWindow()
@@ -59,7 +83,7 @@ function WindowManagement.leftHalf()
   local win = getWindow()
   if not win then return end
   local screen = win:screen()
-  local max = screen:frame()
+  local max = getUsableFrame(screen)
   win:setFrame({
     x = max.x,
     y = max.y,
@@ -72,7 +96,7 @@ function WindowManagement.rightHalf()
   local win = getWindow()
   if not win then return end
   local screen = win:screen()
-  local max = screen:frame()
+  local max = getUsableFrame(screen)
   win:setFrame({
     x = max.x + max.w / 2,
     y = max.y,
@@ -85,7 +109,7 @@ function WindowManagement.topHalf()
   local win = getWindow()
   if not win then return end
   local screen = win:screen()
-  local max = screen:frame()
+  local max = getUsableFrame(screen)
   win:setFrame({
     x = max.x,
     y = max.y,
@@ -98,7 +122,7 @@ function WindowManagement.bottomHalf()
   local win = getWindow()
   if not win then return end
   local screen = win:screen()
-  local max = screen:frame()
+  local max = getUsableFrame(screen)
   win:setFrame({
     x = max.x,
     y = max.y + max.h / 2,
@@ -112,7 +136,7 @@ function WindowManagement.topLeft()
   local win = getWindow()
   if not win then return end
   local screen = win:screen()
-  local max = screen:frame()
+  local max = getUsableFrame(screen)
   win:setFrame({
     x = max.x,
     y = max.y,
@@ -125,7 +149,7 @@ function WindowManagement.topRight()
   local win = getWindow()
   if not win then return end
   local screen = win:screen()
-  local max = screen:frame()
+  local max = getUsableFrame(screen)
   win:setFrame({
     x = max.x + max.w / 2,
     y = max.y,
@@ -138,7 +162,7 @@ function WindowManagement.bottomLeft()
   local win = getWindow()
   if not win then return end
   local screen = win:screen()
-  local max = screen:frame()
+  local max = getUsableFrame(screen)
   win:setFrame({
     x = max.x,
     y = max.y + max.h / 2,
@@ -151,7 +175,7 @@ function WindowManagement.bottomRight()
   local win = getWindow()
   if not win then return end
   local screen = win:screen()
-  local max = screen:frame()
+  local max = getUsableFrame(screen)
   win:setFrame({
     x = max.x + max.w / 2,
     y = max.y + max.h / 2,
@@ -165,7 +189,7 @@ function WindowManagement.leftThird()
   local win = getWindow()
   if not win then return end
   local screen = win:screen()
-  local max = screen:frame()
+  local max = getUsableFrame(screen)
   win:setFrame({
     x = max.x,
     y = max.y,
@@ -178,7 +202,7 @@ function WindowManagement.centerThird()
   local win = getWindow()
   if not win then return end
   local screen = win:screen()
-  local max = screen:frame()
+  local max = getUsableFrame(screen)
   win:setFrame({
     x = max.x + max.w / 3,
     y = max.y,
@@ -191,7 +215,7 @@ function WindowManagement.rightThird()
   local win = getWindow()
   if not win then return end
   local screen = win:screen()
-  local max = screen:frame()
+  local max = getUsableFrame(screen)
   win:setFrame({
     x = max.x + (max.w * 2 / 3),
     y = max.y,
@@ -205,7 +229,7 @@ function WindowManagement.leftTwoThirds()
   local win = getWindow()
   if not win then return end
   local screen = win:screen()
-  local max = screen:frame()
+  local max = getUsableFrame(screen)
   win:setFrame({
     x = max.x,
     y = max.y,
@@ -218,7 +242,7 @@ function WindowManagement.rightTwoThirds()
   local win = getWindow()
   if not win then return end
   local screen = win:screen()
-  local max = screen:frame()
+  local max = getUsableFrame(screen)
   win:setFrame({
     x = max.x + max.w / 3,
     y = max.y,
