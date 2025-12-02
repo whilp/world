@@ -19,8 +19,10 @@ opt.shortmess:append('A')  -- ignore swap file messages
 opt.shortmess:append('a')  -- shorter message formats
 
 -- Set terminal title with host identifier
-local whereami = require('whereami')
-opt.titlestring = whereami.get_with_emoji()
+local ok_whereami, whereami = pcall(require, 'whereami')
+if ok_whereami then
+  opt.titlestring = whereami.get_with_emoji()
+end
 
 -- Wild menu (command completion)
 opt.wildmenu = true

@@ -166,8 +166,10 @@ _G.render_tabline = function()
   -- Use hostname as fallback if neither environment variable is set
   local hostname = ''
   if github_repo == '' and codespace_name == '' then
-    local whereami = require('whereami')
-    hostname = whereami.get_with_emoji()
+    local ok, whereami = pcall(require, 'whereami')
+    if ok then
+      hostname = whereami.get_with_emoji()
+    end
   end
 
   -- Build right section
