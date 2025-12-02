@@ -1,0 +1,40 @@
+#!/usr/bin/env luajit
+
+local posix = require('posix')
+local unistd = require('posix.unistd')
+
+local url = "https://oryx.zsa.io/source/ZPeDwo"
+local output_dir = posix.getenv("HOME") .. "/.config/voyager"
+local temp_dir = posix.mkdtemp("/tmp/voyager_layout.XXXXXX")
+if not temp_dir then
+  io.stderr:write("Failed to create temp directory\n")
+  os.exit(1)
+end
+local temp_zip = temp_dir .. "/layout.zip"
+
+posix.mkdir(output_dir)
+
+local curl_cmd = string.format("curl -L -o %s %s", temp_zip, url)
+local ret = os.execute(curl_cmd)
+if ret ~= 0 then
+  io.stderr:write("Failed to download layout\n")
+  os.exit(1)
+end
+
+local unzip_cmd = string.format("unzip -o %s '*_source/*' -d %s", temp_zip, temp_dir)
+ret = os.execute(unzip_cmd)
+if ret ~= 0 then
+  io.stderr:write("Failed to unzip layout\n")
+  os.exit(1)
+end
+
+local move_cmd = string.format("mv %s/*_source/* %s/", temp_dir, output_dir)
+ret = os.execute(move_cmd)
+if ret ~= 0 then
+  io.stderr:write("Failed to move source files\n")
+  os.exit(1)
+end
+
+os.execute(string.format("rm -rf %s", temp_dir))
+
+print("Layout downloaded and extracted to " .. output_dir)
