@@ -56,4 +56,14 @@ end)
 windowSwitcher.setup(hyper)
 notchClock.start({ offsetMinutes = 4 })
 
+-- cmd+space opens dispatcher
+hs.hotkey.bind({"cmd"}, "space", function()
+  windowSwitcher.showUnfiltered()
+end)
+
+-- cmd+tab opens dispatcher
+hs.hotkey.bind({"cmd"}, "tab", function()
+  windowSwitcher.showUnfiltered()
+end)
+
 hs.alert.show("Hammerspoon loaded")
