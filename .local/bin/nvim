@@ -89,7 +89,8 @@ end
 
 local function wait_for_socket(socket_path, timeout)
   timeout = timeout or 5
-  local sleep_interval = 0.1
+  local sleep_interval_ms = 100  -- 100ms
+  local time = require("posix.time")
   local elapsed = 0
 
   while elapsed < timeout do
@@ -109,8 +110,9 @@ local function wait_for_socket(socket_path, timeout)
       end
     end
 
-    unistd.sleep(sleep_interval)
-    elapsed = elapsed + sleep_interval
+    -- nanosleep takes seconds and nanoseconds
+    time.nanosleep({tv_sec = 0, tv_nsec = sleep_interval_ms * 1000000})
+    elapsed = elapsed + (sleep_interval_ms / 1000)
   end
 
   return false
