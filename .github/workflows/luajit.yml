@@ -85,7 +85,7 @@ jobs:
           tag_name: ${{ steps.tag.outputs.tag }}
           name: luajit ${{ steps.tag.outputs.tag }}
           body: |
-            LuaJIT build with lua-cjson, lua-http, serpent, and dependencies
+            LuaJIT build with lua-cjson, lua-http, serpent, luaunit, and dependencies
 
             Platforms:
             - darwin-arm64

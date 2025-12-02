@@ -178,6 +178,7 @@ local function build_luajit(config)
     {"serpent", config.versions.serpent, ""},
     {"djot", config.versions.djot, ""},
     {"lunamark", config.versions.lunamark, ""},
+    {"luaunit", config.versions.luaunit, ""},
   }
 
   for _, dep in ipairs(deps) do
@@ -270,6 +271,7 @@ exec luajit "$BASEDIR%s" "$@"
   util.exec(luajit_bin .. " -e \"require('serpent'); print('serpent loaded successfully')\"")
   util.exec(luajit_bin .. " -e \"require('djot'); print('djot loaded successfully')\"")
   util.exec(luajit_bin .. " -e \"require('lunamark'); print('lunamark loaded successfully')\"")
+  util.exec(luajit_bin .. " -e \"require('luaunit'); print('luaunit loaded successfully')\"")
 
   util.printf("listing tarball contents...\n")
   util.exec(string.format("tar -tvzf %s | head -50", tarball_path))

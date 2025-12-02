@@ -18,4 +18,5 @@ return {
   serpent = "0.30-2",
   djot = "0.2.1-1",
   lunamark = "0.6.0-1",
+  luaunit = "3.4-1",
 }
