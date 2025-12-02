@@ -6,6 +6,7 @@ local clueManager = require("clue-manager")
 local emojiPicker = require("emoji-picker")
 local symbolPicker = require("symbol-picker")
 local chooserStyle = require("chooser-style")
+local autoLayout = require("auto-layout")
 
 hs.ipc.cliInstall()
 
@@ -55,6 +56,7 @@ end)
 
 windowSwitcher.setup(hyper)
 notchClock.start({ offsetMinutes = 4 })
+autoLayout.setup(hyper)
 
 -- cmd+space opens dispatcher
 hs.hotkey.bind({"cmd"}, "space", function()
