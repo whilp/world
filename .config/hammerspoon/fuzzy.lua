@@ -264,6 +264,15 @@ function Fuzzy.fuzzy_find(items, query, max_results, subtext_penalty)
 		if score then
 			local type_priority = TYPE_PRIORITY[item.type] or 0
 			local final_score = score + (type_priority * 15)
+
+			-- Add MRU (most recently used) bonus for windows
+			-- First window gets +100, decaying by 2 points per position
+			-- This makes recent windows rank higher without overwhelming fuzzy match scores
+			if item.original and item.original.mruIndex then
+				local mru_bonus = math.max(0, 100 - (item.original.mruIndex * 2))
+				final_score = final_score + mru_bonus
+			end
+
 			table.insert(scored, {
 				item = item,
 				matchScore = final_score,

@@ -32,10 +32,20 @@ M.getWindowChoices = function(applyFilter)
   local choices = {}
   local seenApps = {}
 
-  for _, win in ipairs(windows) do
+  for index, win in ipairs(windows) do
     local app = win:application()
     local appName = app:name()
     local title = win:title()
+
+    -- Filter out non-standard windows (utility dialogs, system dialogs, etc.)
+    if not win:isStandard() then
+      goto continue
+    end
+
+    -- Filter out invisible windows
+    if not win:isVisible() then
+      goto continue
+    end
 
     if title and title ~= "" and (not applyFilter or not shouldFilterApp(appName)) then
       local displayTitle = title
@@ -53,10 +63,12 @@ M.getWindowChoices = function(applyFilter)
       table.insert(choices, {
         text = displayTitle,
         subText = subText,
-        window = win
+        window = win,
+        mruIndex = index  -- Store MRU position for scoring
       })
       seenApps[appName] = true
     end
+    ::continue::
   end
 
   return choices, seenApps
