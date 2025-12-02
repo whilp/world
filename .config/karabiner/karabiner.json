@@ -4,19 +4,9 @@
             "complex_modifications": {
                 "rules": [
                     {
-                        "description": "caps lock to left control (internal keyboard only)",
+                        "description": "caps lock to left control",
                         "manipulators": [
                             {
-                                "conditions": [
-                                    {
-                                        "identifiers": [
-                                            {
-                                                "is_built_in_keyboard": true
-                                            }
-                                        ],
-                                        "type": "device_if"
-                                    }
-                                ],
                                 "from": {
                                     "key_code": "caps_lock",
                                     "modifiers": { "optional": ["any"] }
@@ -40,19 +30,9 @@
                         ]
                     },
                     {
-                        "description": "right command to hyper (internal keyboard only)",
+                        "description": "right command to hyper",
                         "manipulators": [
                             {
-                                "conditions": [
-                                    {
-                                        "identifiers": [
-                                            {
-                                                "is_built_in_keyboard": true
-                                            }
-                                        ],
-                                        "type": "device_if"
-                                    }
-                                ],
                                 "from": {
                                     "key_code": "right_command",
                                     "modifiers": { "optional": ["any"] }
@@ -60,8 +40,8 @@
                                 "to": [
                                     {
                                         "key_code": "left_shift",
-                                        "modifiers": ["left_command", "left_control", "left_option"],
-                                        "lazy": true
+                                        "lazy": true,
+                                        "modifiers": ["left_command", "left_control", "left_option"]
                                     }
                                 ],
                                 "type": "basic"
@@ -74,9 +54,7 @@
                             {
                                 "from": {
                                     "key_code": "tab",
-                                    "modifiers": {
-                                        "mandatory": ["left_command"]
-                                    }
+                                    "modifiers": { "mandatory": ["left_command"] }
                                 },
                                 "to": [
                                     {
@@ -99,13 +77,11 @@
                                 "to": [
                                     {
                                         "key_code": "left_shift",
-                                        "modifiers": ["left_command", "left_control", "left_option"],
-                                        "lazy": true
+                                        "lazy": true,
+                                        "modifiers": ["left_command", "left_control", "left_option"]
                                     }
                                 ],
-                                "to_if_alone": [
-                                    { "key_code": "tab" }
-                                ],
+                                "to_if_alone": [{ "key_code": "tab" }],
                                 "type": "basic"
                             }
                         ]
@@ -116,9 +92,7 @@
                             {
                                 "from": {
                                     "key_code": "spacebar",
-                                    "modifiers": {
-                                        "mandatory": ["command"]
-                                    }
+                                    "modifiers": { "mandatory": ["command"] }
                                 },
                                 "to": [
                                     {
@@ -131,19 +105,9 @@
                         ]
                     },
                     {
-                        "description": "right option to meh (internal keyboard only)",
+                        "description": "right option to meh",
                         "manipulators": [
                             {
-                                "conditions": [
-                                    {
-                                        "identifiers": [
-                                            {
-                                                "is_built_in_keyboard": true
-                                            }
-                                        ],
-                                        "type": "device_if"
-                                    }
-                                ],
                                 "from": {
                                     "key_code": "right_option",
                                     "modifiers": { "optional": ["any"] }
@@ -160,10 +124,17 @@
                     }
                 ]
             },
-            "devices": [],
+            "devices": [
+                {
+                    "identifiers": {
+                        "is_keyboard": true,
+                        "is_built_in_keyboard": false
+                    },
+                    "ignore": true
+                }
+            ],
             "name": "Default profile",
             "selected": true,
-            "simple_modifications": [],
             "virtual_hid_keyboard": { "keyboard_type_v2": "ansi" }
         }
     ]
