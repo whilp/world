@@ -50,6 +50,9 @@ export WHEREAMI=$(whereami)
 export RIPGREP_CONFIG_PATH=~/.config/ripgrep/rg.conf
 export COLORTERM=truecolor
 
+export GIT_AUTHOR_EMAIL="189851+whilp@users.noreply.github.com"
+export GIT_COMMITTER_EMAIL="189851+whilp@users.noreply.github.com"
+
 # Install ghostty terminfo if missing or outdated
 if [[ ! -f ~/.terminfo/x/xterm-ghostty ]] || [[ ~/.config/ghostty/term.tic -nt ~/.terminfo/x/xterm-ghostty ]]; then
   mkdir -p ~/.terminfo
