@@ -2,16 +2,17 @@ local M = {}
 
 M.config = {
   appMapping = {
-    ["zoom.us"] = "top_left",
-    ["Google Calendar"] = "top_left",
-    ["Gmail"] = "top_left",
-    ["Slack"] = "bottom_left",
+    ["zoom.us"] = "center_top",
+    ["Google Calendar"] = "center_top",
+    ["Gmail"] = "center_top",
+    ["Slack"] = "center_bottom",
     ["Google Chrome"] = "main_right",
-    ["Ghostty"] = "main_right"
+    ["Ghostty"] = "main_left"
   },
 
   debounceTime = 5,
-  animationDuration = 0.3
+  animationDuration = 0.3,
+  centerColumnWidth = 0.25
 }
 
 local lastPlacement = {}
@@ -51,24 +52,32 @@ end
 
 local function calculateZones(screen)
   local frame = getUsableFrame(screen)
+  local centerWidth = M.config.centerColumnWidth
+  local sideWidth = (1 - centerWidth) / 2
 
   return {
-    top_left = {
+    main_left = {
       x = frame.x,
       y = frame.y,
-      w = frame.w / 3,
+      w = frame.w * sideWidth,
+      h = frame.h
+    },
+    center_top = {
+      x = frame.x + frame.w * sideWidth,
+      y = frame.y,
+      w = frame.w * centerWidth,
       h = frame.h / 2
     },
-    bottom_left = {
-      x = frame.x,
+    center_bottom = {
+      x = frame.x + frame.w * sideWidth,
       y = frame.y + frame.h / 2,
-      w = frame.w / 3,
+      w = frame.w * centerWidth,
       h = frame.h / 2
     },
     main_right = {
-      x = frame.x + frame.w / 3,
+      x = frame.x + frame.w * (sideWidth + centerWidth),
       y = frame.y,
-      w = frame.w * 2 / 3,
+      w = frame.w * sideWidth,
       h = frame.h
     }
   }
