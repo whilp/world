@@ -33,3 +33,15 @@ Clue{
   show_in_chooser = true,
   action = { mode = "unfiltered_switcher" }
 }
+
+Clue{
+  name = "Snap layout",
+  desc = "apply window layout to external monitor",
+  key = { "hyper", "h", "l" },
+  group = "hammerspoon",
+  show_in_chooser = true,
+  action = { fn = function()
+    local autoLayout = require("auto-layout")
+    autoLayout.applyLayoutToAllWindows()
+  end }
+}
