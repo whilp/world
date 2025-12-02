@@ -145,7 +145,7 @@ local function atomic_write(path, content)
 
   local ok, err = os.rename(temp, path)
   if not ok then
-    ffi.C.unlink(temp) -- cleanup on failure
+    unistd.unlink(temp) -- cleanup on failure
     return nil, "failed to rename temp file: " .. err
   end
   return true
@@ -297,19 +297,68 @@ Template variables use `${variable}` syntax and are interpolated at runtime.
 
 Standard libraries used in this repo:
 - `posix` - POSIX system calls
-- `posix.unistd` - Unix standard functions (read, write, close)
+- `posix.unistd` - Unix standard functions (read, write, close, unlink, exec)
 - `posix.sys.wait` - Process waiting
-- `ffi` - Foreign function interface for C calls
+- `posix.signal` - Signal handling
+- `ffi` - Foreign function interface (use sparingly, prefer POSIX bindings)
 - `openssl.digest` - Hash functions (SHA256)
 
-FFI usage for C functions:
+## POSIX system calls
+
+**IMPORTANT**: Always prefer POSIX bindings over FFI when available. Use FFI only when POSIX bindings don't exist.
+
+Common POSIX operations:
+
+```lua
+local posix = require("posix")
+local unistd = require("posix.unistd")
+
+-- Create symbolic link (third argument true = symbolic, false = hard)
+local result, err = posix.link(target_path, link_path, true)
+if result ~= 0 then
+  error("symlink failed: " .. tostring(err))
+end
+
+-- Remove file or symlink
+local result, err = unistd.unlink(path)
+if result ~= 0 then
+  error("unlink failed: " .. tostring(err))
+end
+
+-- Create temporary directory (template must end with XXXXXX)
+local temp_dir = posix.mkdtemp("/tmp/myapp.XXXXXX")
+if not temp_dir then
+  error("mkdtemp failed")
+end
+
+-- Remove directory
+posix.rmdir(path)
+
+-- Set environment variable
+posix.setenv("VAR_NAME", "value")
+
+-- Get process ID
+local pid = unistd.getpid()
+
+-- Read symbolic link
+local target = unistd.readlink(link_path)
+
+-- Execute program (replaces current process)
+unistd.exec(program_path, {"arg0", "arg1", "arg2"})
+```
+
+FFI usage (only when POSIX bindings unavailable):
+
+**Most common syscalls are available in luaposix**. Use FFI only for truly missing functionality:
 
 ``` lua
 local ffi = require("ffi")
+
+-- Example: syscall not in luaposix
 ffi.cdef([[
-  int symlink(const char *target, const char *linkpath);
+  int some_syscall(const char *arg);
 ]])
-local result = ffi.C.symlink(target, linkpath)
+ffi.C.some_syscall("value")
 ```
 
 ## Platform detection
