@@ -259,15 +259,15 @@ local function cmd_start()
     if wait_for_socket(SOCK, 5) then
       pid = get_running_pid()
       if pid then
-        io.write("nvim server started\n")
+        io.write("manual: nvim server started\n")
         return 0
       else
-        io.stderr:write("nvim server process died after starting, check " .. LOGFILE .. "\n")
+        io.stderr:write("manual: nvim server process died after starting, check " .. LOGFILE .. "\n")
         os.remove(PIDFILE)
         return 1
       end
     else
-      io.stderr:write("nvim server failed to start: socket not ready after 5 seconds, check " .. LOGFILE .. "\n")
+      io.stderr:write("manual: nvim server failed to start: socket not ready after 5 seconds, check " .. LOGFILE .. "\n")
       pid = get_running_pid()
       if pid then
         signal.kill(pid, signal.SIGTERM)
@@ -283,9 +283,9 @@ local function cmd_stop()
   if pid then
     signal.kill(pid, signal.SIGTERM)
     os.remove(PIDFILE)
-    io.write("nvim server stopped\n")
+    io.write("manual: nvim server stopped\n")
   else
-    io.write("nvim server not running\n")
+    io.write("manual: nvim server not running\n")
   end
   os.remove(SOCK)
   return 0
@@ -302,10 +302,6 @@ local function cmd_status()
   end
 end
 
-local function is_systemd_running()
-  return file_exists("/run/systemd/system")
-end
-
 local function run_command(args)
   local posix = require("posix")
   local handle = posix.popen(args, "r")
@@ -320,6 +316,26 @@ local function run_command(args)
   return 1
 end
 
+local function is_systemd_user_available()
+  if not file_exists("/run/systemd/system") then
+    return false
+  end
+  local devnull = fcntl.open("/dev/null", fcntl.O_WRONLY)
+  if not devnull then
+    return false
+  end
+  local old_stderr = unistd.dup(unistd.STDERR_FILENO)
+  unistd.dup2(devnull, unistd.STDERR_FILENO)
+  unistd.close(devnull)
+
+  local status = run_command({"systemctl", "--user", "is-system-running"})
+
+  unistd.dup2(old_stderr, unistd.STDERR_FILENO)
+  unistd.close(old_stderr)
+
+  return status == 0
+end
+
 local function cmd_reload()
   if jit.os == "OSX" then
     local uid = unistd.getuid()
@@ -327,28 +343,28 @@ local function cmd_reload()
     unistd.sleep(0.5)
     local status = run_command({"launchctl", "bootstrap", "gui/" .. uid, HOME .. "/Library/LaunchAgents/com.user.nvim.plist"})
     if status ~= 0 then
-      io.stderr:write("failed to bootstrap nvim service\n")
+      io.stderr:write("launchd: failed to bootstrap nvim service\n")
       return 1
     end
     status = run_command({"launchctl", "enable", "gui/" .. uid .. "/com.user.nvim"})
     if status ~= 0 then
-      io.stderr:write("failed to enable nvim service\n")
+      io.stderr:write("launchd: failed to enable nvim service\n")
       return 1
     end
     status = run_command({"launchctl", "kickstart", "gui/" .. uid .. "/com.user.nvim"})
     if status ~= 0 then
-      io.stderr:write("failed to kickstart nvim service\n")
+      io.stderr:write("launchd: failed to kickstart nvim service\n")
       return 1
     end
-    io.write("nvim service reloaded\n")
+    io.write("launchd: nvim service reloaded\n")
   else
-    if is_systemd_running() then
+    if is_systemd_user_available() then
       local status = run_command({"systemctl", "--user", "daemon-reload"})
       if status ~= 0 then
-        io.stderr:write("failed to reload systemd daemon\n")
+        io.stderr:write("systemd: failed to reload daemon\n")
         return 1
       end
-      io.write("systemd daemon reloaded\n")
+      io.write("systemd: daemon reloaded\n")
     end
   end
   return 0
@@ -359,18 +375,18 @@ local function cmd_restart()
     local uid = unistd.getuid()
     local status = run_command({"launchctl", "kickstart", "-k", "gui/" .. uid .. "/com.user.nvim"})
     if status ~= 0 then
-      io.stderr:write("failed to restart nvim service\n")
+      io.stderr:write("launchd: failed to restart nvim service\n")
       return 1
     end
-    io.write("nvim service restarted\n")
+    io.write("launchd: nvim service restarted\n")
   else
-    if is_systemd_running() then
+    if is_systemd_user_available() then
       local status = run_command({"systemctl", "--user", "restart", "nvim"})
       if status ~= 0 then
-        io.stderr:write("failed to restart nvim service\n")
+        io.stderr:write("systemd: failed to restart nvim service\n")
         return 1
       end
-      io.write("nvim service restarted\n")
+      io.write("systemd: nvim service restarted\n")
     else
       cmd_stop()
       unistd.sleep(1)
