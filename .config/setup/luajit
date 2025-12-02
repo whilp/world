@@ -12,12 +12,15 @@ release_tag="2025.12.02-c993cc1"
 case "$os-$arch" in
 linux-x86_64)
   url="https://github.com/whilp/dotfiles/releases/download/${release_tag}/luajit-${luajit_version}-linux-x64.tar.gz"
+  expected_sha256="60d43c1b20e75561ab338f7c91b3ed0945f58cc725ca16991c063bf66d8321c2"
   ;;
 linux-aarch64 | linux-arm64)
   url="https://github.com/whilp/dotfiles/releases/download/${release_tag}/luajit-${luajit_version}-linux-arm64.tar.gz"
+  expected_sha256="53efb033dfca07672ab6dae56a3ee3bf99989bf806407ce9570d787967d74082"
   ;;
 darwin-arm64)
   url="https://github.com/whilp/dotfiles/releases/download/${release_tag}/luajit-${luajit_version}-darwin-arm64.tar.gz"
+  expected_sha256="b91254d85fa599a3de65b210e4c1bcb0799fb6e777fd8ed490cde55d12e7bfae"
   ;;
 *)
   echo "Unsupported platform: $os-$arch" >&2
@@ -36,6 +39,16 @@ archive="$temp_dir/luajit.tar.gz"
 # Download LuaJIT
 echo "Bootstrapping LuaJIT from $url" >&2
 curl -fsSL -o "$archive" "$url"
+
+# Verify checksum
+actual_sha256=$(shasum -a 256 "$archive" | cut -d' ' -f1)
+if [ "$actual_sha256" != "$expected_sha256" ]; then
+  echo "Checksum mismatch for $archive" >&2
+  echo "  expected: $expected_sha256" >&2
+  echo "  actual:   $actual_sha256" >&2
+  rm -rf "$temp_dir"
+  exit 1
+fi
 
 # Extract to bootstrap location
 tar -xzf "$archive" -C "$bootstrap_dir"
