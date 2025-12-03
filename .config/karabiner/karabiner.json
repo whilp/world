@@ -7,6 +7,12 @@
                         "description": "caps lock to left control",
                         "manipulators": [
                             {
+                                "conditions": [
+                                    {
+                                        "identifiers": [{ "is_built_in_keyboard": true }],
+                                        "type": "device_if"
+                                    }
+                                ],
                                 "from": {
                                     "key_code": "caps_lock",
                                     "modifiers": { "optional": ["any"] }
@@ -20,6 +26,12 @@
                         "description": "left control to escape",
                         "manipulators": [
                             {
+                                "conditions": [
+                                    {
+                                        "identifiers": [{ "is_built_in_keyboard": true }],
+                                        "type": "device_if"
+                                    }
+                                ],
                                 "from": {
                                     "key_code": "left_control",
                                     "modifiers": { "optional": ["any"] }
@@ -33,6 +45,12 @@
                         "description": "right command to hyper",
                         "manipulators": [
                             {
+                                "conditions": [
+                                    {
+                                        "identifiers": [{ "is_built_in_keyboard": true }],
+                                        "type": "device_if"
+                                    }
+                                ],
                                 "from": {
                                     "key_code": "right_command",
                                     "modifiers": { "optional": ["any"] }
@@ -52,6 +70,12 @@
                         "description": "tab to hyper when held, tab when tapped",
                         "manipulators": [
                             {
+                                "conditions": [
+                                    {
+                                        "identifiers": [{ "is_built_in_keyboard": true }],
+                                        "type": "device_if"
+                                    }
+                                ],
                                 "from": {
                                     "key_code": "tab",
                                     "modifiers": { "optional": ["any"] }
@@ -72,6 +96,12 @@
                         "description": "right option to meh",
                         "manipulators": [
                             {
+                                "conditions": [
+                                    {
+                                        "identifiers": [{ "is_built_in_keyboard": true }],
+                                        "type": "device_if"
+                                    }
+                                ],
                                 "from": {
                                     "key_code": "right_option",
                                     "modifiers": { "optional": ["any"] }
@@ -89,13 +119,6 @@
                 ]
             },
             "devices": [
-                {
-                    "identifiers": {
-                        "is_built_in_keyboard": false,
-                        "is_keyboard": true
-                    },
-                    "ignore": true
-                },
                 {
                     "identifiers": {
                         "is_keyboard": true,
