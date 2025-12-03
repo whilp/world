@@ -9,7 +9,9 @@ opt.winminwidth = 0
 opt.equalalways = false
 
 -- Window manager state
-local M = {}
+local M = {
+  last_active_in_region = {}
+}
 
 -- Detect if nvim is in tall or wide mode
 -- Monospace chars are ~2:1 (height:width), so we adjust for that
@@ -176,7 +178,12 @@ end
 
 -- Switch to other region
 local function switch_region()
+  local current_win = vim.api.nvim_get_current_win()
   local region, mode = get_current_region()
+
+  -- Save current window as last active in this region
+  M.last_active_in_region[region] = current_win
+
   local other_region
 
   if mode == "tall" then
@@ -188,28 +195,44 @@ local function switch_region()
   local other_windows = get_windows_in_region(other_region, mode)
 
   if #other_windows > 0 then
-    -- Find the closest window in the other region
-    local current_win_info = get_window_info(vim.api.nvim_get_current_win())
-    local best_window = other_windows[1]
-    local best_distance = math.huge
+    local target_window
 
-    for _, win_info in ipairs(other_windows) do
-      local distance
-      if mode == "tall" then
-        -- In tall mode, prefer window with similar column position
-        distance = math.abs(win_info.col - current_win_info.col)
-      else
-        -- In wide mode, prefer window with similar row position
-        distance = math.abs(win_info.row - current_win_info.row)
-      end
-
-      if distance < best_distance then
-        best_distance = distance
-        best_window = win_info
+    -- Check if we have a last active window in the target region
+    local last_active = M.last_active_in_region[other_region]
+    if last_active and vim.api.nvim_win_is_valid(last_active) then
+      -- Verify it's still in the target region
+      local last_info = get_window_info(last_active)
+      if get_window_region(last_info, mode) == other_region then
+        target_window = last_info
       end
     end
 
-    vim.api.nvim_set_current_win(best_window.winid)
+    -- If no valid last active window, find the closest window
+    if not target_window then
+      local current_win_info = get_window_info(current_win)
+      local best_window = other_windows[1]
+      local best_distance = math.huge
+
+      for _, win_info in ipairs(other_windows) do
+        local distance
+        if mode == "tall" then
+          -- In tall mode, prefer window with similar column position
+          distance = math.abs(win_info.col - current_win_info.col)
+        else
+          -- In wide mode, prefer window with similar row position
+          distance = math.abs(win_info.row - current_win_info.row)
+        end
+
+        if distance < best_distance then
+          best_distance = distance
+          best_window = win_info
+        end
+      end
+
+      target_window = best_window
+    end
+
+    vim.api.nvim_set_current_win(target_window.winid)
     maximize_current_window()
   else
     -- No window in other region, create one
@@ -240,11 +263,33 @@ map("i", "<D-j>", function() handle_navigation("j") end, { desc = "Move down or 
 map("i", "<D-k>", function() handle_navigation("k") end, { desc = "Move up or create split" })
 map("i", "<D-i>", switch_region, { desc = "Switch to other region" })
 
--- Horizontal navigation (basic)
-map("n", "<D-h>", "<C-w>h", { desc = "Move to window left" })
-map("n", "<D-l>", "<C-w>l", { desc = "Move to window right" })
-map("i", "<D-h>", "<C-o><C-w>h", { desc = "Move to window left" })
-map("i", "<D-l>", "<C-o><C-w>l", { desc = "Move to window right" })
+-- Handle horizontal navigation (h/l)
+local function handle_horizontal_navigation(direction)
+  local current_win = vim.api.nvim_get_current_win()
+  local region, mode = get_current_region()
+
+  -- Save current window as last active in this region
+  M.last_active_in_region[region] = current_win
+
+  -- In wide mode, h/l switches regions (same as switch_region)
+  -- In tall mode, h/l uses basic window navigation
+  if mode == "wide" then
+    switch_region()
+  else
+    -- In tall mode, use basic vim window navigation
+    if direction == "h" then
+      vim.cmd("wincmd h")
+    else
+      vim.cmd("wincmd l")
+    end
+  end
+end
+
+-- Horizontal navigation
+map("n", "<D-h>", function() handle_horizontal_navigation("h") end, { desc = "Move to window left" })
+map("n", "<D-l>", function() handle_horizontal_navigation("l") end, { desc = "Move to window right" })
+map("i", "<D-h>", function() handle_horizontal_navigation("h") end, { desc = "Move to window left" })
+map("i", "<D-l>", function() handle_horizontal_navigation("l") end, { desc = "Move to window right" })
 
 -- Buffer management
 map("n", "<D-q>", "<cmd>enew|bd #<cr>", { desc = "Close current buffer" })
