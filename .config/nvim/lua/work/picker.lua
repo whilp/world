@@ -190,7 +190,12 @@ end
 function M.search()
   local MiniPick = require("mini.pick")
   MiniPick.builtin.grep_live({
+    tool = "rg",
     cwd = work.config.data_dir,
+  }, {
+    source = {
+      cwd = work.config.data_dir,
+    }
   })
 end
 

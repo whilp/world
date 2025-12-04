@@ -14,7 +14,7 @@ opt.path:append("**")
 
 -- Completion
 opt.complete = "o,.,w,b,u"
-opt.completeopt = { "fuzzy", "menuone", "noselect", "popup" }
+opt.completeopt = { "fuzzy", "menuone", "popup", "noselect" }
 opt.pumheight = 7
 opt.pumwidth = 80
 
