@@ -26,6 +26,7 @@
       "Bash(npm test:*)"
     ]
   },
+  "model": "sonnet",
   "hooks": {
     "UserPromptSubmit": [
       {
