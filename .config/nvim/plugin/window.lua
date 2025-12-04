@@ -1,307 +1,157 @@
+-- window.lua: region-based window management
+-- Two regions: left and right
+-- Windows stack vertically within each region
+
 local opt = vim.opt
 local map = vim.keymap.set
 
--- Window settings
 opt.splitright = true
 opt.splitbelow = true
 opt.winminheight = 0
 opt.winminwidth = 0
 opt.equalalways = false
 
--- Window manager state
-local M = {
-  last_active_in_region = {}
-}
+local M = {}
+M.last_active = { left = nil, right = nil }
 
--- Detect if nvim is in tall or wide mode
--- Monospace chars are ~2:1 (height:width), so we adjust for that
-local function get_layout_mode()
-  local cols = vim.o.columns
-  local rows = vim.o.lines
-  -- If half the columns is greater than rows, we're in wide mode
-  return (cols / 2) > rows and "wide" or "tall"
-end
-
--- Get window position info
 local function get_window_info(winid)
   local pos = vim.api.nvim_win_get_position(winid)
-  local width = vim.api.nvim_win_get_width(winid)
-  local height = vim.api.nvim_win_get_height(winid)
   return {
     row = pos[1],
     col = pos[2],
-    width = width,
-    height = height,
-    winid = winid
+    width = vim.api.nvim_win_get_width(winid),
+    height = vim.api.nvim_win_get_height(winid),
+    winid = winid,
   }
 end
 
--- Get all windows in current tab
 local function get_tab_windows()
-  local windows = vim.api.nvim_tabpage_list_wins(0)
-  local window_infos = {}
-  for _, winid in ipairs(windows) do
-    table.insert(window_infos, get_window_info(winid))
+  local wins = vim.api.nvim_tabpage_list_wins(0)
+  local infos = {}
+  for _, w in ipairs(wins) do
+    table.insert(infos, get_window_info(w))
   end
-  return window_infos
+  return infos
 end
 
--- Determine which region a window belongs to
-local function get_window_region(window_info, mode)
-  local total_height = vim.o.lines - vim.o.cmdheight - 1 -- subtract statusline
-  local total_width = vim.o.columns
-
-  if mode == "tall" then
-    local midpoint = math.floor(total_height / 2)
-    return window_info.row < midpoint and "top" or "bottom"
-  else -- wide
-    local midpoint = math.floor(total_width / 2)
-    return window_info.col < midpoint and "left" or "right"
-  end
+local function get_window_region(win_info)
+  local midpoint = math.floor(vim.o.columns / 2)
+  return win_info.col < midpoint and "left" or "right"
 end
 
--- Get current window's region
 local function get_current_region()
-  local mode = get_layout_mode()
-  local current_win = vim.api.nvim_get_current_win()
-  local win_info = get_window_info(current_win)
-  return get_window_region(win_info, mode), mode
+  local win = vim.api.nvim_get_current_win()
+  return get_window_region(get_window_info(win))
 end
 
--- Find windows in a specific region
-local function get_windows_in_region(region, mode)
-  local all_windows = get_tab_windows()
-  local region_windows = {}
+local function get_windows_in_region(region)
+  local all = get_tab_windows()
+  local result = {}
+  for _, w in ipairs(all) do
+    if get_window_region(w) == region then
+      table.insert(result, w)
+    end
+  end
+  -- Sort by row (top to bottom)
+  table.sort(result, function(a, b) return a.row < b.row end)
+  return result
+end
 
-  for _, win_info in ipairs(all_windows) do
-    if get_window_region(win_info, mode) == region then
-      table.insert(region_windows, win_info)
+local function maximize_in_region()
+  local current_win = vim.api.nvim_get_current_win()
+  local region = get_current_region()
+  local region_windows = get_windows_in_region(region)
+
+  -- Minimize all other windows in region
+  for _, w in ipairs(region_windows) do
+    if w.winid ~= current_win then
+      vim.api.nvim_win_set_height(w.winid, 0)
     end
   end
 
-  return region_windows
+  -- Maximize current window
+  vim.cmd("resize")
+
+  M.last_active[region] = current_win
 end
 
--- Find the next window in a direction within the current region
-local function find_next_window_in_region(direction, current_win_info, region, mode)
-  local region_windows = get_windows_in_region(region, mode)
-  local current_row = current_win_info.row
-  local current_col = current_win_info.col
+local function navigate(direction)
+  local current_win = vim.api.nvim_get_current_win()
+  local region = get_current_region()
+  local region_windows = get_windows_in_region(region)
 
-  local best_window = nil
-  local best_distance = math.huge
-
-  for _, win_info in ipairs(region_windows) do
-    if win_info.winid ~= current_win_info.winid then
-      local is_valid = false
-      local distance = 0
-
-      if mode == "tall" then
-        -- In tall mode, j/k move vertically
-        if direction == "j" and win_info.row > current_row then
-          is_valid = true
-          distance = win_info.row - current_row
-        elseif direction == "k" and win_info.row < current_row then
-          is_valid = true
-          distance = current_row - win_info.row
-        end
-      else
-        -- In wide mode, j/k still move vertically within the column
-        if direction == "j" and win_info.row > current_row then
-          is_valid = true
-          distance = win_info.row - current_row
-        elseif direction == "k" and win_info.row < current_row then
-          is_valid = true
-          distance = current_row - win_info.row
-        end
-      end
-
-      if is_valid and distance < best_distance then
-        best_distance = distance
-        best_window = win_info
-      end
+  -- Find current window index
+  local current_idx = nil
+  for i, w in ipairs(region_windows) do
+    if w.winid == current_win then
+      current_idx = i
+      break
     end
   end
 
-  return best_window
-end
-
--- Maximize current window based on mode
-local function maximize_current_window()
-  local mode = get_layout_mode()
-
-  if mode == "tall" then
-    -- In tall mode, maximize width (windows are side-by-side)
-    local available_width = vim.o.columns
-    vim.api.nvim_win_set_width(0, available_width)
-  else
-    -- In wide mode, maximize height (windows are stacked vertically)
-    local available_height = vim.o.lines - vim.o.cmdheight - 1
-    vim.api.nvim_win_set_height(0, available_height)
+  if not current_idx then
+    return
   end
-end
 
--- Handle navigation with j/k
-local function handle_navigation(direction)
-  local current_win = vim.api.nvim_get_current_win()
-  local current_win_info = get_window_info(current_win)
-  local region, mode = get_current_region()
+  local target_idx = direction == "j" and current_idx + 1 or current_idx - 1
 
-  -- Try to find next window in same region
-  local next_window = find_next_window_in_region(direction, current_win_info, region, mode)
-
-  if next_window then
-    -- Move to existing window
-    vim.api.nvim_set_current_win(next_window.winid)
-    maximize_current_window()
+  if target_idx >= 1 and target_idx <= #region_windows then
+    -- Navigate to existing window
+    vim.api.nvim_set_current_win(region_windows[target_idx].winid)
+    maximize_in_region()
   else
-    -- No window found, create new split at edge of region
-    if mode == "tall" then
-      -- In tall mode, create vsplits (left/right)
-      if direction == "j" then
-        vim.cmd("belowright vsplit")
-      else -- k
-        vim.cmd("aboveleft vsplit")
-      end
+    -- At boundary - create new split
+    if direction == "j" then
+      vim.cmd("belowright split")
     else
-      -- In wide mode, create splits (top/bottom)
-      if direction == "j" then
-        vim.cmd("belowright split")
-      else -- k
-        vim.cmd("aboveleft split")
-      end
+      vim.cmd("aboveleft split")
     end
     vim.cmd("enew")
-    maximize_current_window()
+    maximize_in_region()
   end
 end
 
--- Switch to other region
 local function switch_region()
   local current_win = vim.api.nvim_get_current_win()
-  local region, mode = get_current_region()
+  local region = get_current_region()
+  M.last_active[region] = current_win
 
-  -- Save current window as last active in this region
-  M.last_active_in_region[region] = current_win
-
-  local other_region
-
-  if mode == "tall" then
-    other_region = region == "top" and "bottom" or "top"
-  else
-    other_region = region == "left" and "right" or "left"
-  end
-
-  local other_windows = get_windows_in_region(other_region, mode)
+  local other_region = region == "left" and "right" or "left"
+  local other_windows = get_windows_in_region(other_region)
 
   if #other_windows > 0 then
-    local target_window
-
-    -- Check if we have a last active window in the target region
-    local last_active = M.last_active_in_region[other_region]
-    if last_active and vim.api.nvim_win_is_valid(last_active) then
-      -- Verify it's still in the target region
-      local last_info = get_window_info(last_active)
-      if get_window_region(last_info, mode) == other_region then
-        target_window = last_info
-      end
+    -- Go to last active or first window in other region
+    local target = M.last_active[other_region]
+    if not target or not vim.api.nvim_win_is_valid(target) then
+      target = other_windows[1].winid
     end
-
-    -- If no valid last active window, find the closest window
-    if not target_window then
-      local current_win_info = get_window_info(current_win)
-      local best_window = other_windows[1]
-      local best_distance = math.huge
-
-      for _, win_info in ipairs(other_windows) do
-        local distance
-        if mode == "tall" then
-          -- In tall mode, prefer window with similar column position
-          distance = math.abs(win_info.col - current_win_info.col)
-        else
-          -- In wide mode, prefer window with similar row position
-          distance = math.abs(win_info.row - current_win_info.row)
-        end
-
-        if distance < best_distance then
-          best_distance = distance
-          best_window = win_info
-        end
-      end
-
-      target_window = best_window
-    end
-
-    vim.api.nvim_set_current_win(target_window.winid)
-    maximize_current_window()
+    vim.api.nvim_set_current_win(target)
+    maximize_in_region()
   else
-    -- No window in other region, create one
-    if mode == "tall" then
-      if other_region == "bottom" then
-        vim.cmd("belowright split")
-      else
-        vim.cmd("aboveleft split")
-      end
-    else
-      if other_region == "right" then
-        vim.cmd("belowright vsplit")
-      else
-        vim.cmd("aboveleft vsplit")
-      end
-    end
+    -- Create new region
+    vim.cmd("belowright vsplit")
     vim.cmd("enew")
-    maximize_current_window()
+    maximize_in_region()
   end
 end
 
--- Key mappings
-map("n", "<D-j>", function() handle_navigation("j") end, { desc = "Move down or create split" })
-map("n", "<D-k>", function() handle_navigation("k") end, { desc = "Move up or create split" })
-map("n", "<D-i>", switch_region, { desc = "Switch to other region" })
+-- Keymaps
+map({ "n", "i" }, "<D-j>", function() navigate("j") end, { silent = true, desc = "Move down/split" })
+map({ "n", "i" }, "<D-k>", function() navigate("k") end, { silent = true, desc = "Move up/split" })
+map({ "n", "i" }, "<D-i>", switch_region, { silent = true, desc = "Switch region" })
+map({ "n", "i" }, "<D-h>", switch_region, { silent = true, desc = "Switch region" })
+map({ "n", "i" }, "<D-l>", switch_region, { silent = true, desc = "Switch region" })
+map("n", "<D-q>", "<cmd>enew|bd #<cr>", { desc = "Close buffer" })
+map("n", "<Space>z", maximize_in_region, { desc = "Maximize in region" })
 
-map("i", "<D-j>", function() handle_navigation("j") end, { desc = "Move down or create split" })
-map("i", "<D-k>", function() handle_navigation("k") end, { desc = "Move up or create split" })
-map("i", "<D-i>", switch_region, { desc = "Switch to other region" })
-
--- Handle horizontal navigation (h/l)
-local function handle_horizontal_navigation(direction)
-  local current_win = vim.api.nvim_get_current_win()
-  local region, mode = get_current_region()
-
-  -- Save current window as last active in this region
-  M.last_active_in_region[region] = current_win
-
-  -- In wide mode, h/l switches regions (same as switch_region)
-  -- In tall mode, h/l uses basic window navigation
-  if mode == "wide" then
-    switch_region()
-  else
-    -- In tall mode, use basic vim window navigation
-    if direction == "h" then
-      vim.cmd("wincmd h")
-    else
-      vim.cmd("wincmd l")
-    end
+-- Debug
+map("n", "<Space>d", function()
+  local wins = get_tab_windows()
+  table.sort(wins, function(a, b) return a.col < b.col or (a.col == b.col and a.row < b.row) end)
+  local lines = {}
+  for i, w in ipairs(wins) do
+    local region = get_window_region(w)
+    table.insert(lines, string.format("win%d: col=%d row=%d h=%d region=%s", i, w.col, w.row, w.height, region))
   end
-end
-
--- Horizontal navigation
-map("n", "<D-h>", function() handle_horizontal_navigation("h") end, { desc = "Move to window left" })
-map("n", "<D-l>", function() handle_horizontal_navigation("l") end, { desc = "Move to window right" })
-map("i", "<D-h>", function() handle_horizontal_navigation("h") end, { desc = "Move to window left" })
-map("i", "<D-l>", function() handle_horizontal_navigation("l") end, { desc = "Move to window right" })
-
--- Buffer management
-map("n", "<D-q>", "<cmd>enew|bd #<cr>", { desc = "Close current buffer" })
-
--- Manual maximize
-map("n", "<Space>z", maximize_current_window, { desc = "Maximize current window" })
-
--- Auto-maximize current window on entry (disabled for testing)
--- vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
---   pattern = "*",
---   callback = function()
---     vim.schedule(maximize_current_window)
---   end,
---   desc = "Auto-maximize current window",
--- })
+  vim.notify(table.concat(lines, "\n"))
+end, { desc = "Debug layout" })
