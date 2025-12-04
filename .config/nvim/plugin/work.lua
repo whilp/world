@@ -73,7 +73,7 @@ end, {
 })
 
 -- Keybindings under <Space>w
-vim.keymap.set("n", "<Space>wl", function() buffer.list() end, { desc = "Work: list all" })
+vim.keymap.set("n", "<Space>wl", function() actions.log() end, { desc = "Work: log entry" })
 vim.keymap.set("n", "<Space>wL", function() picker.all() end, { desc = "Work: pick all" })
 vim.keymap.set("n", "<Space>wt", function() buffer.tree() end, { desc = "Work: tree view" })
 vim.keymap.set("n", "<Space>wr", function() picker.ready() end, { desc = "Work: pick ready" })
@@ -105,7 +105,7 @@ local function setup_work_submode()
   -- Add clues with postkeys to stay in submode
   -- Note: pickers and interactive UIs don't use postkeys to avoid input interference
   local work_clues = {
-    { mode = 'n', keys = '<Space>wl', desc = 'Work: list all', postkeys = '<Space>w' },
+    { mode = 'n', keys = '<Space>wl', desc = 'Work: log entry' },
     { mode = 'n', keys = '<Space>wL', desc = 'Work: pick all' },
     { mode = 'n', keys = '<Space>wt', desc = 'Work: tree view', postkeys = '<Space>w' },
     { mode = 'n', keys = '<Space>wr', desc = 'Work: pick ready' },
