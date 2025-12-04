@@ -41,30 +41,45 @@ local function ensure_lib_path()
   end
 end
 
--- Load work library modules
+-- Load work library modules with error handling
 local function get_data()
   ensure_lib_path()
-  return require("work.data")
+  local ok, mod = pcall(require, "work.data")
+  if not ok then
+    return nil, "failed to load work.data: " .. tostring(mod)
+  end
+  return mod
 end
 
 local function get_process()
   ensure_lib_path()
-  return require("work.process")
+  local ok, mod = pcall(require, "work.process")
+  if not ok then
+    return nil, "failed to load work.process: " .. tostring(mod)
+  end
+  return mod
 end
 
 local function get_render()
   ensure_lib_path()
-  return require("work.render")
+  local ok, mod = pcall(require, "work.render")
+  if not ok then
+    return nil, "failed to load work.render: " .. tostring(mod)
+  end
+  return mod
 end
 
 -- Load all work items from data directory
 -- Returns: items table (id -> item), or nil, error
 function M.load_items()
-  local data = get_data()
-  data.items = {} -- reset
-  local ok, err = data.load_all(M.config.data_dir)
-  if not ok then
+  local data, err = get_data()
+  if not data then
     return nil, err
+  end
+  data.items = {} -- reset
+  local ok, load_err = data.load_all(M.config.data_dir)
+  if not ok then
+    return nil, load_err
   end
   return data.items
 end
@@ -75,7 +90,10 @@ function M.get_all()
   if not items then
     return nil, err
   end
-  local data = get_data()
+  local data, data_err = get_data()
+  if not data then
+    return nil, data_err
+  end
   return data.get_all()
 end
 
@@ -85,7 +103,10 @@ function M.get_all_enriched()
   if not items then
     return nil, err
   end
-  local process = get_process()
+  local process, proc_err = get_process()
+  if not process then
+    return nil, proc_err
+  end
   return process.enrich_all(items)
 end
 
@@ -95,7 +116,10 @@ function M.get_ready()
   if err then
     return nil, err
   end
-  local process = get_process()
+  local process, proc_err = get_process()
+  if not process then
+    return nil, proc_err
+  end
   local items = process.get_ready_items()
   process.sort_by_schedule(items)
   return process.enrich_all(items)
@@ -107,7 +131,10 @@ function M.get_blocked()
   if err then
     return nil, err
   end
-  local process = get_process()
+  local process, proc_err = get_process()
+  if not process then
+    return nil, proc_err
+  end
   local items = process.get_blocked_items()
   process.sort_by_schedule(items)
   return process.enrich_all(items)
@@ -119,7 +146,10 @@ function M.get(id)
   if err then
     return nil, err
   end
-  local data = get_data()
+  local data, data_err = get_data()
+  if not data then
+    return nil, data_err
+  end
   local full_id, resolve_err = data.resolve_id(id)
   if not full_id then
     return nil, resolve_err
@@ -128,7 +158,10 @@ function M.get(id)
   if not item then
     return nil, "item not found: " .. full_id
   end
-  local process = get_process()
+  local process, proc_err = get_process()
+  if not process then
+    return nil, proc_err
+  end
   return process.enrich(item)
 end
 
@@ -138,7 +171,10 @@ function M.get_file_path(id)
   if err then
     return nil, err
   end
-  local data = get_data()
+  local data, data_err = get_data()
+  if not data then
+    return nil, data_err
+  end
   local full_id, resolve_err = data.resolve_id(id)
   if not full_id then
     return nil, resolve_err
@@ -156,7 +192,10 @@ function M.mark_done(id)
   if err then
     return nil, err
   end
-  local data = get_data()
+  local data, data_err = get_data()
+  if not data then
+    return nil, data_err
+  end
   local full_id, resolve_err = data.resolve_id(id)
   if not full_id then
     return nil, resolve_err
@@ -179,7 +218,10 @@ function M.add_log(id, message)
   if err then
     return nil, err
   end
-  local data = get_data()
+  local data, data_err = get_data()
+  if not data then
+    return nil, data_err
+  end
   local full_id, resolve_err = data.resolve_id(id)
   if not full_id then
     return nil, resolve_err
@@ -203,7 +245,10 @@ end
 -- Create new item
 function M.add(title, opts)
   opts = opts or {}
-  local data = get_data()
+  local data, data_err = get_data()
+  if not data then
+    return nil, data_err
+  end
   local _, err = M.load_items()
   if err then
     return nil, err
@@ -223,7 +268,10 @@ function M.add(title, opts)
     item.priority = opts.priority
   end
   if opts.blocks then
-    local process = get_process()
+    local process, proc_err = get_process()
+  if not process then
+    return nil, proc_err
+  end
     local blocks = {}
     for _, short_id in ipairs(opts.blocks) do
       local full_id, resolve_err = data.resolve_id(short_id)
@@ -252,7 +300,10 @@ function M.delete(id)
   if err then
     return nil, err
   end
-  local data = get_data()
+  local data, data_err = get_data()
+  if not data then
+    return nil, data_err
+  end
   local full_id, resolve_err = data.resolve_id(id)
   if not full_id then
     return nil, resolve_err
@@ -274,8 +325,14 @@ function M.get_tree(root_id)
   if err then
     return nil, err
   end
-  local data = get_data()
-  local process = get_process()
+  local data, data_err = get_data()
+  if not data then
+    return nil, data_err
+  end
+  local process, proc_err = get_process()
+  if not process then
+    return nil, proc_err
+  end
   local items
   if root_id then
     local full_id, resolve_err = data.resolve_id(root_id)
@@ -305,27 +362,42 @@ end
 
 -- Render functions (delegate to render module)
 function M.render_list(items)
-  local render = get_render()
+  local render, render_err = get_render()
+  if not render then
+    return nil, render_err
+  end
   return render.list(items)
 end
 
 function M.render_tree(tree_data)
-  local render = get_render()
+  local render, render_err = get_render()
+  if not render then
+    return nil, render_err
+  end
   return render.tree(tree_data)
 end
 
 function M.render_detail(item)
-  local render = get_render()
+  local render, render_err = get_render()
+  if not render then
+    return nil, render_err
+  end
   return render.detail(item)
 end
 
 function M.render_ready(items)
-  local render = get_render()
+  local render, render_err = get_render()
+  if not render then
+    return nil, render_err
+  end
   return render.ready(items)
 end
 
 function M.render_blocked(items)
-  local render = get_render()
+  local render, render_err = get_render()
+  if not render then
+    return nil, render_err
+  end
   return render.blocked(items)
 end
 
