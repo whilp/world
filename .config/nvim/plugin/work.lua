@@ -94,3 +94,34 @@ vim.keymap.set("n", "gw", function()
   end
 end, { desc = "Go to work item" })
 
+-- Setup work submode with mini.clue
+local function setup_work_submode()
+  local ok_clue, clue = pcall(require, "mini.clue")
+  if not ok_clue then return end
+
+  -- Add work submode trigger
+  table.insert(clue.config.triggers, { mode = 'n', keys = '<Space>w' })
+
+  -- Add clues with postkeys to stay in submode
+  local work_clues = {
+    { mode = 'n', keys = '<Space>wl', desc = 'Work: list all', postkeys = '<Space>w' },
+    { mode = 'n', keys = '<Space>wL', desc = 'Work: pick all', postkeys = '<Space>w' },
+    { mode = 'n', keys = '<Space>wt', desc = 'Work: tree view', postkeys = '<Space>w' },
+    { mode = 'n', keys = '<Space>wr', desc = 'Work: pick ready', postkeys = '<Space>w' },
+    { mode = 'n', keys = '<Space>wR', desc = 'Work: ready list', postkeys = '<Space>w' },
+    { mode = 'n', keys = '<Space>wb', desc = 'Work: pick blocked', postkeys = '<Space>w' },
+    { mode = 'n', keys = '<Space>wB', desc = 'Work: blocked list', postkeys = '<Space>w' },
+    { mode = 'n', keys = '<Space>ws', desc = 'Work: show item', postkeys = '<Space>w' },
+    { mode = 'n', keys = '<Space>wd', desc = 'Work: mark done', postkeys = '<Space>w' },
+    { mode = 'n', keys = '<Space>wa', desc = 'Work: add item', postkeys = '<Space>w' },
+    { mode = 'n', keys = '<Space>wc', desc = 'Work: quick capture', postkeys = '<Space>w' },
+    { mode = 'n', keys = '<Space>wD', desc = 'Work: delete item', postkeys = '<Space>w' },
+    { mode = 'n', keys = '<Space>w/', desc = 'Work: search', postkeys = '<Space>w' },
+  }
+
+  for _, clue_item in ipairs(work_clues) do
+    table.insert(clue.config.clues, clue_item)
+  end
+end
+
+setup_work_submode()
