@@ -4,6 +4,52 @@ local M = {}
 local work = require("work")
 local buffer = require("work.buffer")
 
+-- Create a floating window with common settings and keymappings
+-- Returns: buf, win
+local function create_float_window(lines, title)
+  local buf = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+
+  local width = math.min(80, vim.o.columns - 10)
+  local height = math.min(20, vim.o.lines - 10)
+  local row = math.floor((vim.o.lines - height) / 2)
+  local col = math.floor((vim.o.columns - width) / 2)
+
+  local win = vim.api.nvim_open_win(buf, true, {
+    relative = "editor",
+    width = width,
+    height = height,
+    row = row,
+    col = col,
+    style = "minimal",
+    border = "rounded",
+    title = " " .. title .. " ",
+    title_pos = "center",
+  })
+
+  vim.bo[buf].filetype = "markdown"
+  vim.api.nvim_win_set_option(win, "cursorline", true)
+  vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
+
+  return buf, win
+end
+
+-- Setup keymappings for floating window
+-- process_fn: function to call on save
+local function setup_float_keymaps(buf, win, process_fn)
+  local function process_and_close()
+    local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+    vim.api.nvim_win_close(win, true)
+    process_fn(lines)
+  end
+
+  vim.keymap.set("n", "<CR>", process_and_close, {buffer = buf})
+  vim.keymap.set("i", "<D-CR>", process_and_close, {buffer = buf})
+  vim.keymap.set("n", "q", function()
+    vim.api.nvim_win_close(win, true)
+  end, {buffer = buf})
+end
+
 -- Get work item ID from current context
 -- Returns: id or nil
 local function get_current_id()
@@ -104,43 +150,19 @@ function M.set_due(id, due_date)
       return
     end
 
-    local buf = vim.api.nvim_create_buf(false, true)
     local current_due = item.due or ""
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
+    local buf, win = create_float_window({
       "# set due date for: " .. item.title,
       "# enter date below (YYYY-MM-DD, 'today', '0d', '1d', '2w', etc.)",
-      "# press <CR> to save, q to cancel",
+      "# press <CR> or CMD-Enter to save, q to cancel",
       "",
       current_due,
-    })
+    }, "set due date")
 
-    local width = math.min(80, vim.o.columns - 10)
-    local height = math.min(10, vim.o.lines - 10)
-    local row = math.floor((vim.o.lines - height) / 2)
-    local col = math.floor((vim.o.columns - width) / 2)
-
-    local win = vim.api.nvim_open_win(buf, true, {
-      relative = "editor",
-      width = width,
-      height = height,
-      row = row,
-      col = col,
-      style = "minimal",
-      border = "rounded",
-      title = " set due date ",
-      title_pos = "center",
-    })
-
-    vim.bo[buf].filetype = "markdown"
-    vim.api.nvim_win_set_option(win, "cursorline", true)
-    vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
     vim.api.nvim_win_set_cursor(win, {5, #current_due})
     vim.cmd("startinsert!")
 
-    local function process_and_close()
-      local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-      vim.api.nvim_win_close(win, true)
-
+    setup_float_keymaps(buf, win, function(lines)
       local input_date = nil
       for _, line in ipairs(lines) do
         if not line:match("^%s*#") and not line:match("^%s*$") then
@@ -170,12 +192,7 @@ function M.set_due(id, due_date)
       if bufname:match(id) or bufname:match(updated_item.id) then
         vim.cmd.edit()
       end
-    end
-
-    vim.keymap.set("n", "<CR>", process_and_close, {buffer = buf})
-    vim.keymap.set("n", "q", function()
-      vim.api.nvim_win_close(win, true)
-    end, {buffer = buf})
+    end)
 
     return
   end
@@ -213,40 +230,16 @@ function M.log(id, message)
       return
     end
 
-    local buf = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
+    local buf, win = create_float_window({
       "# log entry for: " .. item.title,
-      "# press <CR> to save, q to cancel",
+      "# press <CR> or CMD-Enter to save, q to cancel",
       "",
-    })
+    }, "work log")
 
-    local width = math.min(80, vim.o.columns - 10)
-    local height = math.min(10, vim.o.lines - 10)
-    local row = math.floor((vim.o.lines - height) / 2)
-    local col = math.floor((vim.o.columns - width) / 2)
-
-    local win = vim.api.nvim_open_win(buf, true, {
-      relative = "editor",
-      width = width,
-      height = height,
-      row = row,
-      col = col,
-      style = "minimal",
-      border = "rounded",
-      title = " work log ",
-      title_pos = "center",
-    })
-
-    vim.bo[buf].filetype = "markdown"
-    vim.api.nvim_win_set_option(win, "cursorline", true)
-    vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
     vim.api.nvim_win_set_cursor(win, {3, 0})
     vim.cmd("startinsert")
 
-    local function process_and_close()
-      local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-      vim.api.nvim_win_close(win, true)
-
+    setup_float_keymaps(buf, win, function(lines)
       local log_lines = {}
       for _, line in ipairs(lines) do
         if not line:match("^%s*#") and not line:match("^%s*$") then
@@ -268,12 +261,7 @@ function M.log(id, message)
           vim.cmd.edit()
         end
       end
-    end
-
-    vim.keymap.set("n", "<CR>", process_and_close, {buffer = buf})
-    vim.keymap.set("n", "q", function()
-      vim.api.nvim_win_close(win, true)
-    end, {buffer = buf})
+    end)
 
     return
   end
@@ -344,41 +332,17 @@ end
 
 -- Quick capture: open scratch buffer to add multiple todos
 function M.quick_capture()
-  local buf = vim.api.nvim_create_buf(false, true)
-  vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
+  local buf, win = create_float_window({
     "# add todos below (one per line)",
     "# lines starting with # are ignored",
-    "# press <CR> to save, q to cancel",
+    "# press <CR> or CMD-Enter to save, q to cancel",
     "",
-  })
+  }, "quick capture")
 
-  local width = math.min(80, vim.o.columns - 10)
-  local height = math.min(20, vim.o.lines - 10)
-  local row = math.floor((vim.o.lines - height) / 2)
-  local col = math.floor((vim.o.columns - width) / 2)
-
-  local win = vim.api.nvim_open_win(buf, true, {
-    relative = "editor",
-    width = width,
-    height = height,
-    row = row,
-    col = col,
-    style = "minimal",
-    border = "rounded",
-    title = " quick capture ",
-    title_pos = "center",
-  })
-
-  vim.bo[buf].filetype = "markdown"
-  vim.api.nvim_win_set_option(win, "cursorline", true)
-  vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
   vim.api.nvim_win_set_cursor(win, {4, 0})
   vim.cmd("startinsert")
 
-  local function process_and_close()
-    local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-    vim.api.nvim_win_close(win, true)
-
+  setup_float_keymaps(buf, win, function(lines)
     local captured_timestamp = os.date("%Y-%m-%dT%H:%M:%S")
     local count = 0
     local errors = 0
@@ -403,12 +367,7 @@ function M.quick_capture()
     if errors > 0 then
       vim.notify("failed to add " .. errors .. " item" .. (errors == 1 and "" or "s"), vim.log.levels.WARN)
     end
-  end
-
-  vim.keymap.set("n", "<CR>", process_and_close, {buffer = buf})
-  vim.keymap.set("n", "q", function()
-    vim.api.nvim_win_close(win, true)
-  end, {buffer = buf})
+  end)
 end
 
 return M
