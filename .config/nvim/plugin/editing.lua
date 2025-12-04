@@ -14,7 +14,15 @@ opt.path:append("**")
 
 -- Completion
 opt.complete = "o,.,w,b,u"
-opt.completeopt = { "fuzzy", "menuone", "noselect", "popup", "preview" }
+opt.completeopt = { "fuzzy", "menuone", "noselect", "popup" }
+opt.pumheight = 7
+opt.pumwidth = 80
+
+vim.api.nvim_create_autocmd("LspAttach", {
+  callback = function()
+    vim.opt_local.complete = "o"
+  end,
+})
 
 -- Text formatting
 opt.linebreak = true

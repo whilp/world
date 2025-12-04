@@ -29,6 +29,11 @@ if ok_jump then
   require("mini.jump").setup()
 end
 
+local ok_completion, _ = pcall(require, "mini.completion")
+if ok_completion then
+  require("mini.completion").setup()
+end
+
 -- mini.clue setup is in plugin/clue.lua
 
 -- Setup mini.hues color scheme

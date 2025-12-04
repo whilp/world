@@ -10,6 +10,10 @@ local work = require("work")
 local picker = require("work.picker")
 local buffer = require("work.buffer")
 local actions = require("work.actions")
+local complete = require("work.complete")
+
+-- Setup completion
+complete.setup()
 
 -- Commands
 vim.api.nvim_create_user_command("Work", function(opts)
@@ -41,6 +45,8 @@ vim.api.nvim_create_user_command("Work", function(opts)
     actions.done(rest ~= "" and rest or nil)
   elseif cmd == "add" then
     actions.add(rest ~= "" and rest or nil)
+  elseif cmd == "capture" then
+    actions.quick_capture()
   elseif cmd == "delete" or cmd == "rm" then
     actions.delete(rest ~= "" and rest or nil)
   elseif cmd == "log" then
@@ -57,7 +63,7 @@ end, {
   complete = function(arglead, cmdline, cursorpos)
     local args = vim.split(cmdline, "%s+")
     if #args <= 2 then
-      local cmds = { "list", "tree", "ready", "blocked", "show", "open", "done", "add", "delete", "rm", "log", "pick", "search" }
+      local cmds = { "list", "tree", "ready", "blocked", "show", "open", "done", "add", "capture", "delete", "rm", "log", "pick", "search" }
       return vim.tbl_filter(function(c)
         return c:find(arglead, 1, true) == 1
       end, cmds)
@@ -77,6 +83,7 @@ vim.keymap.set("n", "<Space>wB", function() buffer.blocked() end, { desc = "Work
 vim.keymap.set("n", "<Space>ws", function() actions.show() end, { desc = "Work: show item" })
 vim.keymap.set("n", "<Space>wd", function() actions.done() end, { desc = "Work: mark done" })
 vim.keymap.set("n", "<Space>wa", function() actions.add() end, { desc = "Work: add item" })
+vim.keymap.set("n", "<Space>wc", function() actions.quick_capture() end, { desc = "Work: quick capture" })
 vim.keymap.set("n", "<Space>wD", function() actions.delete() end, { desc = "Work: delete item" })
 vim.keymap.set("n", "<Space>w/", function() picker.search() end, { desc = "Work: search" })
 
