@@ -108,7 +108,8 @@ M.getInstalledAppChoices = function(seenApps, applyFilter)
   local appDirs = {
     "/Applications",
     "/System/Applications",
-    os.getenv("HOME") .. "/Applications"
+    os.getenv("HOME") .. "/Applications",
+    os.getenv("HOME") .. "/Applications/Chrome Apps.localized"
   }
 
   for _, dir in ipairs(appDirs) do
