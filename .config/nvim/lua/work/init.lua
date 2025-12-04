@@ -242,6 +242,32 @@ function M.add_log(id, message)
   return timestamp
 end
 
+-- Set due date for item
+function M.set_due(id, due_date)
+  local _, err = M.load_items()
+  if err then
+    return nil, err
+  end
+  local data, data_err = get_data()
+  if not data then
+    return nil, data_err
+  end
+  local full_id, resolve_err = data.resolve_id(id)
+  if not full_id then
+    return nil, resolve_err
+  end
+  local item = data.get(full_id)
+  if not item then
+    return nil, "item not found: " .. full_id
+  end
+  item.due = due_date
+  local ok, save_err = data.save(item, M.config.data_dir)
+  if not ok then
+    return nil, save_err
+  end
+  return item
+end
+
 -- Create new item
 function M.add(title, opts)
   opts = opts or {}

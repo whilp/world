@@ -51,6 +51,55 @@ function M.done(id)
   end
 end
 
+-- Set due date for item
+function M.set_due(id, due_date)
+  id = id or get_current_id()
+  if not id then
+    vim.notify("work: no item ID found", vim.log.levels.WARN)
+    return
+  end
+  if not due_date then
+    local item, err = work.get(id)
+    if not item then
+      vim.notify("work: " .. err, vim.log.levels.ERROR)
+      return
+    end
+
+    local current_due = item.due or ""
+    vim.ui.input({
+      prompt = "Due date (YYYY-MM-DD): ",
+      default = current_due,
+    }, function(input)
+      if not input or input == "" then
+        return
+      end
+      local updated_item, set_err = work.set_due(id, input)
+      if not updated_item then
+        vim.notify("work: " .. set_err, vim.log.levels.ERROR)
+        return
+      end
+      vim.notify("set due date: " .. input)
+      -- Reload buffer if viewing the item
+      local bufname = vim.api.nvim_buf_get_name(0)
+      if bufname:match(id) or bufname:match(updated_item.id) then
+        vim.cmd.edit()
+      end
+    end)
+    return
+  end
+  local item, err = work.set_due(id, due_date)
+  if not item then
+    vim.notify("work: " .. err, vim.log.levels.ERROR)
+    return
+  end
+  vim.notify("set due date: " .. due_date)
+  -- Reload buffer if viewing the item
+  local bufname = vim.api.nvim_buf_get_name(0)
+  if bufname:match(id) or bufname:match(item.id) then
+    vim.cmd.edit()
+  end
+end
+
 -- Add log entry to item
 function M.log(id, message)
   id = id or get_current_id()
@@ -59,11 +108,74 @@ function M.log(id, message)
     return
   end
   if not message then
-    vim.ui.input({ prompt = "Log message: " }, function(input)
-      if input and input ~= "" then
-        M.log(id, input)
+    local item, err = work.get(id)
+    if not item then
+      vim.notify("work: " .. err, vim.log.levels.ERROR)
+      return
+    end
+
+    local buf = vim.api.nvim_create_buf(false, true)
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
+      "# log entry for: " .. item.title,
+      "# press <CR> to save, q to cancel",
+      "",
+    })
+
+    local width = math.min(80, vim.o.columns - 10)
+    local height = math.min(10, vim.o.lines - 10)
+    local row = math.floor((vim.o.lines - height) / 2)
+    local col = math.floor((vim.o.columns - width) / 2)
+
+    local win = vim.api.nvim_open_win(buf, true, {
+      relative = "editor",
+      width = width,
+      height = height,
+      row = row,
+      col = col,
+      style = "minimal",
+      border = "rounded",
+      title = " work log ",
+      title_pos = "center",
+    })
+
+    vim.bo[buf].filetype = "markdown"
+    vim.api.nvim_win_set_option(win, "cursorline", true)
+    vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
+    vim.api.nvim_win_set_cursor(win, {3, 0})
+    vim.cmd("startinsert")
+
+    local function process_and_close()
+      local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+      vim.api.nvim_win_close(win, true)
+
+      local log_lines = {}
+      for _, line in ipairs(lines) do
+        if not line:match("^%s*#") and not line:match("^%s*$") then
+          table.insert(log_lines, line)
+        end
       end
-    end)
+
+      if #log_lines > 0 then
+        local log_message = table.concat(log_lines, "\n")
+        local timestamp, log_err = work.add_log(id, log_message)
+        if not timestamp then
+          vim.notify("work: " .. log_err, vim.log.levels.ERROR)
+          return
+        end
+        vim.notify("logged at " .. timestamp)
+        -- Reload buffer if viewing the item
+        local bufname = vim.api.nvim_buf_get_name(0)
+        if bufname:match(id) then
+          vim.cmd.edit()
+        end
+      end
+    end
+
+    vim.keymap.set("n", "<CR>", process_and_close, {buffer = buf})
+    vim.keymap.set("n", "q", function()
+      vim.api.nvim_win_close(win, true)
+    end, {buffer = buf})
+
     return
   end
   local timestamp, err = work.add_log(id, message)
@@ -79,28 +191,6 @@ function M.log(id, message)
   end
 end
 
--- Create new work item
-function M.add(title)
-  if not title then
-    vim.ui.input({ prompt = "Title: " }, function(input)
-      if input and input ~= "" then
-        M.add(input)
-      end
-    end)
-    return
-  end
-  local item, err = work.add(title)
-  if not item then
-    vim.notify("work: " .. err, vim.log.levels.ERROR)
-    return
-  end
-  vim.notify("created: " .. work.short_id(item))
-  -- Open the new item
-  local path = work.get_file_path(item.id)
-  if path then
-    vim.cmd.edit(path)
-  end
-end
 
 -- Delete work item
 function M.delete(id)

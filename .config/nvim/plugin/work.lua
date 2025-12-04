@@ -43,14 +43,14 @@ vim.api.nvim_create_user_command("Work", function(opts)
     end
   elseif cmd == "done" then
     actions.done(rest ~= "" and rest or nil)
-  elseif cmd == "add" then
-    actions.add(rest ~= "" and rest or nil)
   elseif cmd == "capture" then
     actions.quick_capture()
   elseif cmd == "delete" or cmd == "rm" then
     actions.delete(rest ~= "" and rest or nil)
   elseif cmd == "log" then
     actions.log(nil, rest ~= "" and rest or nil)
+  elseif cmd == "due" then
+    actions.set_due(nil, rest ~= "" and rest or nil)
   elseif cmd == "pick" then
     picker.all()
   elseif cmd == "search" then
@@ -63,7 +63,7 @@ end, {
   complete = function(arglead, cmdline, cursorpos)
     local args = vim.split(cmdline, "%s+")
     if #args <= 2 then
-      local cmds = { "list", "tree", "ready", "blocked", "show", "open", "done", "add", "capture", "delete", "rm", "log", "pick", "search" }
+      local cmds = { "list", "tree", "ready", "blocked", "show", "open", "done", "capture", "delete", "rm", "log", "due", "pick", "search" }
       return vim.tbl_filter(function(c)
         return c:find(arglead, 1, true) == 1
       end, cmds)
@@ -82,7 +82,7 @@ vim.keymap.set("n", "<Space>wb", function() picker.blocked() end, { desc = "Work
 vim.keymap.set("n", "<Space>wB", function() buffer.blocked() end, { desc = "Work: blocked list" })
 vim.keymap.set("n", "<Space>ws", function() actions.show() end, { desc = "Work: show item" })
 vim.keymap.set("n", "<Space>wd", function() actions.done() end, { desc = "Work: mark done" })
-vim.keymap.set("n", "<Space>wa", function() actions.add() end, { desc = "Work: add item" })
+vim.keymap.set("n", "<Space>wu", function() actions.set_due() end, { desc = "Work: set due date" })
 vim.keymap.set("n", "<Space>wc", function() actions.quick_capture() end, { desc = "Work: quick capture" })
 vim.keymap.set("n", "<Space>wD", function() actions.delete() end, { desc = "Work: delete item" })
 vim.keymap.set("n", "<Space>w/", function() picker.search() end, { desc = "Work: search" })
@@ -114,7 +114,7 @@ local function setup_work_submode()
     { mode = 'n', keys = '<Space>wB', desc = 'Work: blocked list', postkeys = '<Space>w' },
     { mode = 'n', keys = '<Space>ws', desc = 'Work: show item', postkeys = '<Space>w' },
     { mode = 'n', keys = '<Space>wd', desc = 'Work: mark done', postkeys = '<Space>w' },
-    { mode = 'n', keys = '<Space>wa', desc = 'Work: add item', postkeys = '<Space>w' },
+    { mode = 'n', keys = '<Space>wu', desc = 'Work: set due date' },
     { mode = 'n', keys = '<Space>wc', desc = 'Work: quick capture' },
     { mode = 'n', keys = '<Space>wD', desc = 'Work: delete item', postkeys = '<Space>w' },
     { mode = 'n', keys = '<Space>w/', desc = 'Work: search' },
