@@ -267,6 +267,9 @@ function M.add(title, opts)
   if opts.priority then
     item.priority = opts.priority
   end
+  if opts.captured then
+    item.captured = opts.captured
+  end
   if opts.blocks then
     local process, proc_err = get_process()
   if not process then
