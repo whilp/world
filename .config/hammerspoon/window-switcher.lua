@@ -78,7 +78,12 @@ local function showSwitcher(applyFilter)
         elseif choice.window then
           choice.window:focus()
         elseif choice.appName then
-          hs.application.launchOrFocus(choice.appName)
+          local app = hs.application.get(choice.appName)
+          if app then
+            app:activate()
+          else
+            hs.application.launchOrFocus(choice.appName)
+          end
         elseif choice.commandId then
           local result = clueManager.execute_clue(choice.commandId, clueLoader)
           if result == "emoji" then
