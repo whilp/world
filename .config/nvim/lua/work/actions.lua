@@ -370,4 +370,66 @@ function M.quick_capture()
   end)
 end
 
+-- Add or update blocks for current item
+function M.add_blocks(id)
+  id = id or get_current_id()
+  if not id then
+    vim.notify("work: no item ID found", vim.log.levels.WARN)
+    return
+  end
+
+  local item, err = work.get(id)
+  if not item then
+    vim.notify("work: " .. err, vim.log.levels.ERROR)
+    return
+  end
+
+  local picker = require("work.picker")
+  picker.select_blocks(item.id, function(selected_ids)
+    -- Get existing blocks
+    local existing_blocks = item.blocks or {}
+
+    -- Merge with selected blocks (avoiding duplicates)
+    local block_set = {}
+    for _, block_id in ipairs(existing_blocks) do
+      block_set[block_id] = true
+    end
+    for _, block_id in ipairs(selected_ids) do
+      block_set[block_id] = true
+    end
+
+    -- Convert back to array
+    local new_blocks = {}
+    for block_id, _ in pairs(block_set) do
+      table.insert(new_blocks, block_id)
+    end
+
+    local updated_item, set_err = work.set_blocks(id, new_blocks)
+    if not updated_item then
+      vim.notify("work: " .. set_err, vim.log.levels.ERROR)
+      return
+    end
+
+    local count = #selected_ids
+    vim.notify("added " .. count .. " block" .. (count == 1 and "" or "s"))
+
+    -- Reload buffer if viewing the item
+    local bufname = vim.api.nvim_buf_get_name(0)
+    local short_id = work.short_id(updated_item)
+
+    -- Check if we're viewing this item in any format
+    if bufname:match(id) or bufname:match(updated_item.id) or bufname:match(short_id) then
+      -- If it's a work detail buffer (scratch buffer), re-render it
+      if bufname:match("^work:") then
+        local current_buf = vim.api.nvim_get_current_buf()
+        buffer.show(updated_item.id)
+        vim.api.nvim_buf_delete(current_buf, { force = true })
+      else
+        -- It's a file buffer, reload it
+        vim.cmd.edit()
+      end
+    end
+  end)
+end
+
 return M
