@@ -27,19 +27,6 @@
     ]
   },
   "model": "sonnet",
-  "hooks": {
-    "UserPromptSubmit": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "use-skills"
-          }
-        ]
-      }
-    ]
-  },
   "alwaysThinkingEnabled": false,
   "feedbackSurveyState": {
     "lastShownTime": 1754368507584
