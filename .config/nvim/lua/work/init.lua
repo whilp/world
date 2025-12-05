@@ -268,6 +268,53 @@ function M.set_due(id, due_date)
   return item
 end
 
+-- Add or update blocks for an item
+function M.set_blocks(id, block_ids)
+  local _, err = M.load_items()
+  if err then
+    return nil, err
+  end
+  local data, data_err = get_data()
+  if not data then
+    return nil, data_err
+  end
+  local full_id, resolve_err = data.resolve_id(id)
+  if not full_id then
+    return nil, resolve_err
+  end
+  local item = data.get(full_id)
+  if not item then
+    return nil, "item not found: " .. full_id
+  end
+  local process, proc_err = get_process()
+  if not process then
+    return nil, proc_err
+  end
+
+  -- Resolve short IDs to full IDs
+  local blocks = {}
+  for _, block_id in ipairs(block_ids) do
+    local full_block_id, block_resolve_err = data.resolve_id(block_id)
+    if not full_block_id then
+      return nil, block_resolve_err
+    end
+    table.insert(blocks, full_block_id)
+  end
+
+  -- Validate blocks
+  local ok, validate_err = process.validate_blocks(item.id, blocks)
+  if not ok then
+    return nil, validate_err
+  end
+
+  item.blocks = blocks
+  local save_ok, save_err = data.save(item, M.config.data_dir)
+  if not save_ok then
+    return nil, save_err
+  end
+  return item
+end
+
 -- Create new item
 function M.add(title, opts)
   opts = opts or {}
