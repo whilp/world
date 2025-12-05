@@ -78,8 +78,8 @@ vim.keymap.set("n", "<Space>wL", function() picker.all() end, { desc = "Work: pi
 vim.keymap.set("n", "<Space>wt", function() buffer.tree() end, { desc = "Work: tree view" })
 vim.keymap.set("n", "<Space>wr", function() picker.ready() end, { desc = "Work: pick ready" })
 vim.keymap.set("n", "<Space>wR", function() buffer.ready() end, { desc = "Work: ready list" })
-vim.keymap.set("n", "<Space>wb", function() picker.blocked() end, { desc = "Work: pick blocked" })
-vim.keymap.set("n", "<Space>wB", function() buffer.blocked() end, { desc = "Work: blocked list" })
+vim.keymap.set("n", "<Space>wb", function() actions.add_blocks() end, { desc = "Work: add blocks" })
+vim.keymap.set("n", "<Space>wB", function() picker.blocked() end, { desc = "Work: pick blocked" })
 vim.keymap.set("n", "<Space>ws", function() actions.show() end, { desc = "Work: show item" })
 vim.keymap.set("n", "<Space>wd", function() actions.done() end, { desc = "Work: mark done" })
 vim.keymap.set("n", "<Space>wu", function() actions.set_due() end, { desc = "Work: set due date" })
@@ -110,8 +110,8 @@ local function setup_work_submode()
     { mode = 'n', keys = '<Space>wt', desc = 'Work: tree view', postkeys = '<Space>w' },
     { mode = 'n', keys = '<Space>wr', desc = 'Work: pick ready' },
     { mode = 'n', keys = '<Space>wR', desc = 'Work: ready list', postkeys = '<Space>w' },
-    { mode = 'n', keys = '<Space>wb', desc = 'Work: pick blocked' },
-    { mode = 'n', keys = '<Space>wB', desc = 'Work: blocked list', postkeys = '<Space>w' },
+    { mode = 'n', keys = '<Space>wb', desc = 'Work: add blocks' },
+    { mode = 'n', keys = '<Space>wB', desc = 'Work: pick blocked' },
     { mode = 'n', keys = '<Space>ws', desc = 'Work: show item', postkeys = '<Space>w' },
     { mode = 'n', keys = '<Space>wd', desc = 'Work: mark done', postkeys = '<Space>w' },
     { mode = 'n', keys = '<Space>wu', desc = 'Work: set due date' },
