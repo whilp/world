@@ -199,4 +199,55 @@ function M.search()
   })
 end
 
+-- Pick items to add as blocks (with multi-select support)
+function M.select_blocks(current_id, callback)
+  local MiniPick = require("mini.pick")
+  local items, err = work.get_all_enriched()
+  if not items then
+    vim.notify("work: " .. err, vim.log.levels.ERROR)
+    return
+  end
+
+  -- Filter out current item and completed items
+  local available = {}
+  for _, item in ipairs(items) do
+    if item.id ~= current_id and not item.completed then
+      table.insert(available, item)
+    end
+  end
+
+  local source_items = {}
+  for _, item in ipairs(available) do
+    table.insert(source_items, {
+      text = format_item(item),
+      item = item,
+    })
+  end
+
+  local source = {
+    items = source_items,
+    name = "Select blocks",
+    choose = function(chosen)
+      if not chosen then return end
+      callback({chosen.item.id})
+    end,
+    preview = function(buf_id, chosen)
+      if not chosen then return end
+      local detail = work.render_detail(chosen.item)
+      local lines = vim.split(detail, "\n")
+      vim.api.nvim_buf_set_lines(buf_id, 0, -1, false, lines)
+    end,
+    choose_marked = function(marked)
+      if not marked or #marked == 0 then return end
+      local block_ids = {}
+      for _, chosen in ipairs(marked) do
+        table.insert(block_ids, chosen.item.id)
+      end
+      callback(block_ids)
+    end,
+  }
+
+  MiniPick.start({ source = source })
+end
+
 return M
