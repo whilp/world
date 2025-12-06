@@ -27,6 +27,8 @@ vim.api.nvim_create_user_command("Work", function(opts)
     buffer.tree(rest ~= "" and rest or nil)
   elseif cmd == "ready" then
     buffer.ready()
+  elseif cmd == "started" then
+    picker.ready_started()
   elseif cmd == "blocked" then
     buffer.blocked()
   elseif cmd == "show" then
@@ -63,7 +65,7 @@ end, {
   complete = function(arglead, cmdline, cursorpos)
     local args = vim.split(cmdline, "%s+")
     if #args <= 2 then
-      local cmds = { "list", "tree", "ready", "blocked", "show", "open", "done", "capture", "delete", "rm", "log", "due", "pick", "search" }
+      local cmds = { "list", "tree", "ready", "started", "blocked", "show", "open", "done", "capture", "delete", "rm", "log", "due", "pick", "search" }
       return vim.tbl_filter(function(c)
         return c:find(arglead, 1, true) == 1
       end, cmds)
@@ -78,6 +80,7 @@ vim.keymap.set("n", "<Space>wL", function() picker.all() end, { desc = "Work: pi
 vim.keymap.set("n", "<Space>wt", function() buffer.tree() end, { desc = "Work: tree view" })
 vim.keymap.set("n", "<Space>wr", function() picker.ready() end, { desc = "Work: pick ready" })
 vim.keymap.set("n", "<Space>wR", function() buffer.ready() end, { desc = "Work: ready list" })
+vim.keymap.set("n", "<Space>wT", function() picker.ready_started() end, { desc = "Work: pick ready started" })
 vim.keymap.set("n", "<Space>wb", function() actions.add_blocks() end, { desc = "Work: add blocks" })
 vim.keymap.set("n", "<Space>wB", function() picker.blocked() end, { desc = "Work: pick blocked" })
 vim.keymap.set("n", "<Space>ws", function() actions.show() end, { desc = "Work: show item" })
@@ -110,6 +113,7 @@ local function setup_work_submode()
     { mode = 'n', keys = '<Space>wt', desc = 'Work: tree view', postkeys = '<Space>w' },
     { mode = 'n', keys = '<Space>wr', desc = 'Work: pick ready' },
     { mode = 'n', keys = '<Space>wR', desc = 'Work: ready list', postkeys = '<Space>w' },
+    { mode = 'n', keys = '<Space>wT', desc = 'Work: pick ready started' },
     { mode = 'n', keys = '<Space>wb', desc = 'Work: add blocks' },
     { mode = 'n', keys = '<Space>wB', desc = 'Work: pick blocked' },
     { mode = 'n', keys = '<Space>ws', desc = 'Work: show item', postkeys = '<Space>w' },

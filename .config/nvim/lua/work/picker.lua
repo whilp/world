@@ -152,7 +152,43 @@ function M.ready()
     vim.notify("work: " .. err, vim.log.levels.ERROR)
     return
   end
+  local mappings = setup_mappings()
+  -- Add mark started mapping
+  mappings.mark_started = {
+    char = "<C-t>",
+    func = function()
+      local matches = MiniPick.get_picker_matches()
+      local current = matches.current
+      if not current or not current.item then return end
+      local ok, err = work.mark_started(current.item.id)
+      if ok then
+        vim.notify("marked started: " .. work.short_id(current.item))
+        MiniPick.stop()
+      else
+        vim.notify("work: " .. err, vim.log.levels.ERROR)
+      end
+    end,
+  }
   local source = make_source(items, "Ready Items")
+  MiniPick.start({ source = source, mappings = mappings })
+end
+
+-- Pick ready started items
+function M.ready_started()
+  local MiniPick = require("mini.pick")
+  local items, err = work.get_ready()
+  if not items then
+    vim.notify("work: " .. err, vim.log.levels.ERROR)
+    return
+  end
+  -- Filter for started items
+  local started = {}
+  for _, item in ipairs(items) do
+    if item.started then
+      table.insert(started, item)
+    end
+  end
+  local source = make_source(started, "Ready Started Items")
   MiniPick.start({ source = source, mappings = setup_mappings() })
 end
 

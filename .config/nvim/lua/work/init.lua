@@ -90,6 +90,12 @@ function M.mark_done(id)
   return api.done(id)
 end
 
+-- Mark item as started
+function M.mark_started(id)
+  local api = get_api()
+  return api.start(id)
+end
+
 -- Add log entry to item
 function M.add_log(id, message)
   local api = get_api()
