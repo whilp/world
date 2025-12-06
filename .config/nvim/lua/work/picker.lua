@@ -156,7 +156,7 @@ function M.ready()
 
   -- Add mark started mapping with reopen
   mappings.mark_started = {
-    char = "<C-t>",
+    char = "<C-s>",
     func = function()
       local matches = MiniPick.get_picker_matches()
       local current = matches.current
