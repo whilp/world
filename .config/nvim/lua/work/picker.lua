@@ -153,22 +153,116 @@ function M.ready()
     return
   end
   local mappings = setup_mappings()
-  -- Add mark started mapping
+
+  -- Add mark started mapping with reopen
   mappings.mark_started = {
     char = "<C-t>",
     func = function()
       local matches = MiniPick.get_picker_matches()
       local current = matches.current
       if not current or not current.item then return end
-      local ok, err = work.mark_started(current.item.id)
+      local ok, err_msg = work.mark_started(current.item.id)
       if ok then
         vim.notify("marked started: " .. work.short_id(current.item))
         MiniPick.stop()
+        vim.defer_fn(M.ready, 50)
       else
-        vim.notify("work: " .. err, vim.log.levels.ERROR)
+        vim.notify("work: " .. err_msg, vim.log.levels.ERROR)
       end
     end,
   }
+
+  -- Override mark done to reopen picker
+  mappings.mark_done = {
+    char = "<C-d>",
+    func = function()
+      local matches = MiniPick.get_picker_matches()
+      local current = matches.current
+      if not current or not current.item then return end
+      local ok, err_msg = work.mark_done(current.item.id)
+      if ok then
+        vim.notify("marked done: " .. work.short_id(current.item))
+        MiniPick.stop()
+        vim.defer_fn(M.ready, 50)
+      else
+        vim.notify("work: " .. err_msg, vim.log.levels.ERROR)
+      end
+    end,
+  }
+
+  -- Add set due mapping with reopen
+  mappings.set_due = {
+    char = "<C-u>",
+    func = function()
+      local matches = MiniPick.get_picker_matches()
+      local current = matches.current
+      if not current or not current.item then return end
+      local item_id = current.item.id
+      local item_title = current.item.title
+      MiniPick.stop()
+      vim.ui.input({
+        prompt = "Due date (YYYY-MM-DD, 'today', '1d', '2w', etc): ",
+        default = current.item.due or ""
+      }, function(input)
+        if input and input ~= "" then
+          local actions = require("work.actions")
+          -- Parse the date using the same logic as actions.set_due
+          local function parse_relative_date(date_input)
+            if not date_input or date_input == "" then return nil end
+            date_input = date_input:lower():gsub("^%s*(.-)%s*$", "%1")
+            if date_input == "today" or date_input == "0d" then return os.date("%Y-%m-%d") end
+            if date_input == "tomorrow" or date_input == "1d" then return os.date("%Y-%m-%d", os.time() + 86400) end
+            local num, unit = date_input:match("^(%d+)([dwmy])$")
+            if num and unit then
+              num = tonumber(num)
+              local seconds_map = { d = 86400, w = 86400 * 7, m = 86400 * 30, y = 86400 * 365 }
+              local seconds = seconds_map[unit]
+              if seconds then return os.date("%Y-%m-%d", os.time() + (num * seconds)) end
+            end
+            if date_input:match("^%d%d%d%d%-%d%d%-%d%d$") then return date_input end
+            return nil
+          end
+
+          local parsed_date = parse_relative_date(input)
+          if parsed_date then
+            local ok, err_msg = work.set_due(item_id, parsed_date)
+            if ok then
+              vim.notify("set due date: " .. parsed_date)
+            else
+              vim.notify("work: " .. err_msg, vim.log.levels.ERROR)
+            end
+          else
+            vim.notify("work: invalid date format: " .. input, vim.log.levels.ERROR)
+          end
+        end
+        vim.defer_fn(M.ready, 50)
+      end)
+    end,
+  }
+
+  -- Override add log to reopen picker
+  mappings.add_log = {
+    char = "<C-l>",
+    func = function()
+      local matches = MiniPick.get_picker_matches()
+      local current = matches.current
+      if not current or not current.item then return end
+      local item_id = current.item.id
+      MiniPick.stop()
+      vim.ui.input({ prompt = "Log entry: " }, function(message)
+        if message and message ~= "" then
+          local ok, err_msg = work.add_log(item_id, message)
+          if ok then
+            vim.notify("added log to " .. work.short_id(current.item))
+          else
+            vim.notify("work: " .. err_msg, vim.log.levels.ERROR)
+          end
+        end
+        vim.defer_fn(M.ready, 50)
+      end)
+    end,
+  }
+
   local source = make_source(items, "Ready Items")
   MiniPick.start({ source = source, mappings = mappings })
 end
@@ -188,8 +282,100 @@ function M.ready_started()
       table.insert(started, item)
     end
   end
+
+  local mappings = setup_mappings()
+
+  -- Override mark done to reopen picker
+  mappings.mark_done = {
+    char = "<C-d>",
+    func = function()
+      local matches = MiniPick.get_picker_matches()
+      local current = matches.current
+      if not current or not current.item then return end
+      local ok, err_msg = work.mark_done(current.item.id)
+      if ok then
+        vim.notify("marked done: " .. work.short_id(current.item))
+        MiniPick.stop()
+        vim.defer_fn(M.ready_started, 50)
+      else
+        vim.notify("work: " .. err_msg, vim.log.levels.ERROR)
+      end
+    end,
+  }
+
+  -- Add set due mapping with reopen
+  mappings.set_due = {
+    char = "<C-u>",
+    func = function()
+      local matches = MiniPick.get_picker_matches()
+      local current = matches.current
+      if not current or not current.item then return end
+      local item_id = current.item.id
+      MiniPick.stop()
+      vim.ui.input({
+        prompt = "Due date (YYYY-MM-DD, 'today', '1d', '2w', etc): ",
+        default = current.item.due or ""
+      }, function(input)
+        if input and input ~= "" then
+          -- Parse the date using the same logic as actions.set_due
+          local function parse_relative_date(date_input)
+            if not date_input or date_input == "" then return nil end
+            date_input = date_input:lower():gsub("^%s*(.-)%s*$", "%1")
+            if date_input == "today" or date_input == "0d" then return os.date("%Y-%m-%d") end
+            if date_input == "tomorrow" or date_input == "1d" then return os.date("%Y-%m-%d", os.time() + 86400) end
+            local num, unit = date_input:match("^(%d+)([dwmy])$")
+            if num and unit then
+              num = tonumber(num)
+              local seconds_map = { d = 86400, w = 86400 * 7, m = 86400 * 30, y = 86400 * 365 }
+              local seconds = seconds_map[unit]
+              if seconds then return os.date("%Y-%m-%d", os.time() + (num * seconds)) end
+            end
+            if date_input:match("^%d%d%d%d%-%d%d%-%d%d$") then return date_input end
+            return nil
+          end
+
+          local parsed_date = parse_relative_date(input)
+          if parsed_date then
+            local ok, err_msg = work.set_due(item_id, parsed_date)
+            if ok then
+              vim.notify("set due date: " .. parsed_date)
+            else
+              vim.notify("work: " .. err_msg, vim.log.levels.ERROR)
+            end
+          else
+            vim.notify("work: invalid date format: " .. input, vim.log.levels.ERROR)
+          end
+        end
+        vim.defer_fn(M.ready_started, 50)
+      end)
+    end,
+  }
+
+  -- Override add log to reopen picker
+  mappings.add_log = {
+    char = "<C-l>",
+    func = function()
+      local matches = MiniPick.get_picker_matches()
+      local current = matches.current
+      if not current or not current.item then return end
+      local item_id = current.item.id
+      MiniPick.stop()
+      vim.ui.input({ prompt = "Log entry: " }, function(message)
+        if message and message ~= "" then
+          local ok, err_msg = work.add_log(item_id, message)
+          if ok then
+            vim.notify("added log to " .. work.short_id(current.item))
+          else
+            vim.notify("work: " .. err_msg, vim.log.levels.ERROR)
+          end
+        end
+        vim.defer_fn(M.ready_started, 50)
+      end)
+    end,
+  }
+
   local source = make_source(started, "Ready Started Items")
-  MiniPick.start({ source = source, mappings = setup_mappings() })
+  MiniPick.start({ source = source, mappings = mappings })
 end
 
 -- Pick blocked items
