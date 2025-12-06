@@ -19,6 +19,7 @@ local function create_contextual_buffer()
   if is_terminal then
     local buf_id = vim.api.nvim_get_current_buf()
     local unique_id = "nvim_" .. buf_id .. "_" .. os.time()
+    vim.cmd("enew")
     vim.fn.termopen(vim.o.shell, {
       env = vim.tbl_extend("force", vim.fn.environ(), {
         NVIM_BUFFER_ID = unique_id,
@@ -73,6 +74,34 @@ end
 -- Track last window per column for smart horizontal navigation
 local last_left_window = nil
 local last_right_window = nil
+
+-- Open file in split above left window (for external editor)
+local function open_file_in_left_split(filepath)
+  -- Move to left window
+  if last_left_window and vim.api.nvim_win_is_valid(last_left_window) then
+    vim.api.nvim_set_current_win(last_left_window)
+  else
+    vim.cmd("wincmd h")
+  end
+
+  -- Create split above
+  local current_win = vim.api.nvim_get_current_win()
+  vim.cmd("wincmd k")
+  local new_win = vim.api.nvim_get_current_win()
+
+  if current_win == new_win then
+    vim.cmd("split")
+  end
+
+  -- Open the file
+  vim.cmd("edit " .. vim.fn.fnameescape(filepath))
+  return vim.api.nvim_get_current_buf()
+end
+
+-- Expose functions globally for use in terminal mode
+_G.move_or_split_down = move_or_split_down
+_G.move_or_split_up = move_or_split_up
+_G.open_file_in_left_split = open_file_in_left_split
 
 local function smart_move_left()
   local current_win = vim.api.nvim_get_current_win()
@@ -140,11 +169,14 @@ end, { desc = "Always create split above and switch to it" })
 -- Buffer management
 map("n", "<D-q>", "<cmd>enew|bd #<cr>", { noremap = true, silent = true, desc = "Close current buffer" })
 
--- Auto-maximize current window
+-- Auto-maximize current window (but not floating windows)
 vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
   pattern = "*",
   callback = function()
-    vim.cmd("wincmd _")
+    local win_config = vim.api.nvim_win_get_config(0)
+    if win_config.relative == "" then
+      vim.cmd("wincmd _")
+    end
   end,
   desc = "Auto-maximize current window",
 })
