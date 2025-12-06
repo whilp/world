@@ -88,6 +88,36 @@ local function patch_luaconf(conf_file, platform)
   util.write_file(conf_file, content)
 end
 
+local function install_luachild_with_patch(luarocks, version, temp_dir)
+  util.printf("installing luachild with macOS compilation fix...\n")
+
+  local unpack_dir = temp_dir .. "/luachild-unpack"
+  util.exec(string.format("mkdir -p %s", unpack_dir))
+  util.exec(string.format("cd %s && %s unpack luachild %s", unpack_dir, luarocks, version))
+
+  local luachild_dir = util.capture(string.format("ls -d %s/luachild-* | head -1", unpack_dir))
+  local source_file = luachild_dir .. "/luachild_luajit_2_1.c"
+
+  if util.file_exists(source_file) then
+    util.printf("patching %s to add missing headers...\n", source_file)
+    local content = util.read_file(source_file)
+
+    local includes_patch = [[
+#include <stdlib.h>
+#include <string.h>
+]]
+
+    content = content:gsub(
+      '(#include "luachild%.h")',
+      '%1' .. includes_patch
+    )
+
+    util.write_file(source_file, content)
+  end
+
+  util.exec(string.format("cd %s && %s make", luachild_dir, luarocks))
+end
+
 local function build_luajit(config)
   util.printf("building luajit %s for %s\n", config.versions.luajit, config.platform.platform)
   util.printf("temporary directory: %s\n", config.temp_dir)
@@ -184,7 +214,11 @@ local function build_luajit(config)
 
   for _, dep in ipairs(deps) do
     local name, version, flags = dep[1], dep[2], dep[3]
-    util.exec(string.format("%s install %s %s %s", luarocks, name, version, flags))
+    if name == "luachild" then
+      install_luachild_with_patch(luarocks, version, config.temp_dir)
+    else
+      util.exec(string.format("%s install %s %s %s", luarocks, name, version, flags))
+    end
   end
 
   util.printf("fixing luarocks shebangs for relocatable installation...\n")
