@@ -20,6 +20,78 @@ local function get_window_config()
   }
 end
 
+-- Open floating window for log entry
+local function open_log_window(item, on_complete)
+  local buf = vim.api.nvim_create_buf(false, true)
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
+    "# log entry for: " .. item.title,
+    "# press <CR> or CMD-Enter to save, q to cancel",
+    "",
+  })
+
+  local width = math.min(80, vim.o.columns - 10)
+  local height = math.min(8, vim.o.lines - 10)
+  local row = math.floor((vim.o.lines - height) / 2)
+  local col = math.floor((vim.o.columns - width) / 2)
+
+  local win = vim.api.nvim_open_win(buf, true, {
+    relative = "editor",
+    width = width,
+    height = height,
+    row = row,
+    col = col,
+    style = "minimal",
+    border = "rounded",
+    title = " work log ",
+    title_pos = "center",
+  })
+
+  vim.bo[buf].filetype = "markdown"
+  vim.api.nvim_win_set_option(win, "cursorline", true)
+  vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
+
+  vim.schedule(function()
+    vim.api.nvim_set_current_win(win)
+    vim.api.nvim_win_set_cursor(win, {3, 0})
+    vim.cmd("startinsert")
+  end)
+
+  local function process_and_close()
+    local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
+    vim.api.nvim_win_close(win, true)
+
+    local log_lines = {}
+    for _, line in ipairs(lines) do
+      if not line:match("^%s*#") and not line:match("^%s*$") then
+        table.insert(log_lines, line)
+      end
+    end
+
+    if #log_lines > 0 then
+      local log_message = table.concat(log_lines, "\n")
+      local ok, err = work.add_log(item.id, log_message)
+      if ok then
+        vim.notify("added log to " .. work.short_id(item))
+      else
+        vim.notify("work: " .. err, vim.log.levels.ERROR)
+      end
+    end
+
+    if on_complete then
+      on_complete()
+    end
+  end
+
+  vim.keymap.set("n", "<CR>", process_and_close, {buffer = buf})
+  vim.keymap.set("i", "<D-CR>", process_and_close, {buffer = buf})
+  vim.keymap.set("n", "q", function()
+    vim.api.nvim_win_close(win, true)
+    if on_complete then
+      on_complete()
+    end
+  end, {buffer = buf})
+end
+
 -- Format item for picker display
 local function format_item(item)
   local status = item.completed and "done" or "todo"
@@ -104,16 +176,7 @@ local function setup_mappings()
         local current = matches.current
         if not current or not current.item then return end
         MiniPick.stop()
-        vim.ui.input({ prompt = "Log entry: " }, function(message)
-          if message and message ~= "" then
-            local ok, err = work.add_log(current.item.id, message)
-            if ok then
-              vim.notify("added log to " .. work.short_id(current.item))
-            else
-              vim.notify("work: " .. err, vim.log.levels.ERROR)
-            end
-          end
-        end)
+        open_log_window(current.item)
       end,
     },
     open_split = {
@@ -264,17 +327,8 @@ function M.ready()
       local matches = MiniPick.get_picker_matches()
       local current = matches.current
       if not current or not current.item then return end
-      local item_id = current.item.id
       MiniPick.stop()
-      vim.ui.input({ prompt = "Log entry: " }, function(message)
-        if message and message ~= "" then
-          local ok, err_msg = work.add_log(item_id, message)
-          if ok then
-            vim.notify("added log to " .. work.short_id(current.item))
-          else
-            vim.notify("work: " .. err_msg, vim.log.levels.ERROR)
-          end
-        end
+      open_log_window(current.item, function()
         vim.defer_fn(M.ready, 50)
       end)
     end,
@@ -375,17 +429,8 @@ function M.ready_started()
       local matches = MiniPick.get_picker_matches()
       local current = matches.current
       if not current or not current.item then return end
-      local item_id = current.item.id
       MiniPick.stop()
-      vim.ui.input({ prompt = "Log entry: " }, function(message)
-        if message and message ~= "" then
-          local ok, err_msg = work.add_log(item_id, message)
-          if ok then
-            vim.notify("added log to " .. work.short_id(current.item))
-          else
-            vim.notify("work: " .. err_msg, vim.log.levels.ERROR)
-          end
-        end
+      open_log_window(current.item, function()
         vim.defer_fn(M.ready_started, 50)
       end)
     end,
