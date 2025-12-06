@@ -2,6 +2,8 @@
 
 local unistd = require("posix.unistd")
 local glob = require("posix.glob")
+local stat = require("posix.sys.stat")
+local stdlib = require("posix.stdlib")
 
 local HOME = os.getenv("HOME")
 
@@ -43,6 +45,11 @@ end
 
 for i = 1, #arg do
   table.insert(argv, arg[i])
+end
+
+local extras_settings = HOME .. "/extras/.claude/settings.json"
+if stat.stat(extras_settings) then
+  stdlib.setenv("CLAUDE_CONFIG_DIR", HOME .. "/extras")
 end
 
 local result, err = unistd.execp(claude_bin, argv)
