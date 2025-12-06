@@ -97,8 +97,9 @@ M.get_ready = function()
   end
 
   local items = process.get_ready_items(_store)
-  process.sort_by_schedule(items)
-  return process.enrich_all(_store, items)
+  local enriched = process.enrich_all(_store, items)
+  process.sort_by_schedule(enriched)
+  return enriched
 end
 
 -- Get blocked items
@@ -110,8 +111,9 @@ M.get_blocked = function()
   end
 
   local items = process.get_blocked_items(_store)
-  process.sort_by_schedule(items)
-  return process.enrich_all(_store, items)
+  local enriched = process.enrich_all(_store, items)
+  process.sort_by_schedule(enriched)
+  return enriched
 end
 
 -- Get incomplete items
@@ -123,8 +125,9 @@ M.get_incomplete = function()
   end
 
   local items = process.get_incomplete_items(_store)
-  process.sort_by_schedule(items)
-  return process.enrich_all(_store, items)
+  local enriched = process.enrich_all(_store, items)
+  process.sort_by_schedule(enriched)
+  return enriched
 end
 
 -- Get dependency tree
