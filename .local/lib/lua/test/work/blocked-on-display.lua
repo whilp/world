@@ -2,12 +2,14 @@ local lu = require("luaunit")
 
 local data = require("work.data")
 local process = require("work.process")
+local store = require("work.store")
 local Work = require("lib")
+local test_store = Work.store
 
 TestBlockedOnDisplay = {}
 
 function TestBlockedOnDisplay:setUp()
-  data.items = {}
+  store.reset(test_store)
 end
 
 function TestBlockedOnDisplay:test_unresolved_blocks_display()
@@ -31,11 +33,11 @@ function TestBlockedOnDisplay:test_unresolved_blocks_display()
     blocks = { "01TEST0000000000000000001" },
   }
 
-  local blocked_item = data.get("01TEST0000000000000000001")
+  local blocked_item = data.get(test_store, "01TEST0000000000000000001")
 
-  lu.assertTrue(process.is_item_blocked(blocked_item))
+  lu.assertTrue(process.is_item_blocked(test_store, blocked_item))
 
-  local unresolved = process.get_unresolved_blocks(blocked_item)
+  local unresolved = process.get_unresolved_blocks(test_store, blocked_item)
 
   lu.assertTrue(#unresolved > 0, "blocked item should show what items are blocking it, got: " .. #unresolved)
 end

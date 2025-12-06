@@ -2,12 +2,14 @@ local lu = require("luaunit")
 
 local data = require("work.data")
 local process = require("work.process")
+local store = require("work.store")
 local Work = require("lib")
+local test_store = Work.store
 
 TestBlockers = {}
 
 function TestBlockers:setUp()
-  data.items = {}
+  store.reset(test_store)
 end
 
 function TestBlockers:test_item_blocking_relationship()
@@ -24,12 +26,12 @@ function TestBlockers:test_item_blocking_relationship()
     blocks = { "01TEST0000000000000000001" },
   }
 
-  local blocked = data.get("01TEST0000000000000000001")
-  local blocker = data.get("01TEST0000000000000000002")
+  local blocked = data.get(test_store, "01TEST0000000000000000001")
+  local blocker = data.get(test_store, "01TEST0000000000000000002")
 
   lu.assertEquals(blocker.blocks[1], blocked.id)
-  lu.assertTrue(process.is_item_blocked(blocked))
-  lu.assertFalse(process.is_item_blocked(blocker))
+  lu.assertTrue(process.is_item_blocked(test_store, blocked))
+  lu.assertFalse(process.is_item_blocked(test_store, blocker))
 end
 
 return TestBlockers

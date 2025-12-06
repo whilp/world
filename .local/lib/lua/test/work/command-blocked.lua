@@ -2,12 +2,14 @@ local lu = require("luaunit")
 
 local data = require("work.data")
 local process = require("work.process")
+local store = require("work.store")
 local Work = require("lib")
+local test_store = Work.store
 
 TestCommandBlocked = {}
 
 function TestCommandBlocked:setUp()
-  data.items = {}
+  store.reset(test_store)
 end
 
 function TestCommandBlocked:test_blocked_items_list()
@@ -24,10 +26,10 @@ function TestCommandBlocked:test_blocked_items_list()
     blocks = { "01TEST0000000000000000001" },
   }
 
-  local item1 = data.get("01TEST0000000000000000001")
-  local item2 = data.get("01TEST0000000000000000002")
+  local item1 = data.get(test_store, "01TEST0000000000000000001")
+  local item2 = data.get(test_store, "01TEST0000000000000000002")
 
-  local blocked_items = process.get_blocked_items()
+  local blocked_items = process.get_blocked_items(test_store)
   lu.assertEquals(#blocked_items, 1)
   lu.assertEquals(blocked_items[1].id, item1.id)
 end

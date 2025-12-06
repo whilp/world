@@ -1,12 +1,14 @@
 local lu = require("luaunit")
 
 local data = require("work.data")
+local store = require("work.store")
 local Work = require("lib")
+local test_store = Work.store
 
 TestStringSanitization = {}
 
 function TestStringSanitization:setUp()
-  data.items = {}
+  store.reset(test_store)
 end
 
 function TestStringSanitization:test_validate_string_content_accepts_valid_strings()
@@ -97,7 +99,7 @@ function TestStringSanitization:test_valid_item_with_all_string_fields()
     },
   }
 
-  lu.assertNotNil(data.items["01TEST0000000000000000004"])
+  lu.assertNotNil(test_store.items["01TEST0000000000000000004"])
 end
 
 function TestStringSanitization:test_error_message_includes_field_name()

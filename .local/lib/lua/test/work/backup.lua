@@ -1,11 +1,14 @@
 local lu = require("luaunit")
 
 local data = require("work.data")
+local store = require("work.store")
+local Work = require("lib")
+local test_store = Work.store
 
 TestBackup = {}
 
 function TestBackup:setUp()
-  data.items = {}
+  store.reset(test_store)
   self.test_dir = "/tmp/work-test-backup-" .. os.time()
   os.execute("mkdir -p " .. self.test_dir)
 end

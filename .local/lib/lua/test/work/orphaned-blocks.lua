@@ -2,12 +2,14 @@ local lu = require("luaunit")
 
 local data = require("work.data")
 local process = require("work.process")
+local store = require("work.store")
 local Work = require("lib")
+local test_store = Work.store
 
 TestOrphanedBlocks = {}
 
 function TestOrphanedBlocks:setUp()
-  data.items = {}
+  store.reset(test_store)
 end
 
 function TestOrphanedBlocks:test_find_items_blocking_on()
@@ -31,7 +33,7 @@ function TestOrphanedBlocks:test_find_items_blocking_on()
     blocks = { "01TEST0000000000000000001" },
   }
 
-  local referencing = process.find_items_blocking_on("01TEST0000000000000000001")
+  local referencing = process.find_items_blocking_on(test_store, "01TEST0000000000000000001")
   lu.assertEquals(#referencing, 2)
 
   local ids = {}
@@ -57,7 +59,7 @@ function TestOrphanedBlocks:test_find_items_blocking_on_no_references()
     created = "2025-12-01",
   }
 
-  local referencing = process.find_items_blocking_on("01TEST0000000000000000001")
+  local referencing = process.find_items_blocking_on(test_store, "01TEST0000000000000000001")
   lu.assertEquals(#referencing, 0)
 end
 
@@ -68,7 +70,7 @@ function TestOrphanedBlocks:test_find_items_blocking_on_nonexistent()
     created = "2025-12-01",
   }
 
-  local referencing = process.find_items_blocking_on("01TEST9999999999999999999")
+  local referencing = process.find_items_blocking_on(test_store, "01TEST9999999999999999999")
   lu.assertEquals(#referencing, 0)
 end
 
@@ -92,11 +94,11 @@ function TestOrphanedBlocks:test_find_items_blocking_on_multiple_blocks()
     blocks = { "01TEST0000000000000000001", "01TEST0000000000000000002" },
   }
 
-  local referencing_a = process.find_items_blocking_on("01TEST0000000000000000001")
+  local referencing_a = process.find_items_blocking_on(test_store, "01TEST0000000000000000001")
   lu.assertEquals(#referencing_a, 1)
   lu.assertEquals(referencing_a[1].id, "01TEST0000000000000000003")
 
-  local referencing_b = process.find_items_blocking_on("01TEST0000000000000000002")
+  local referencing_b = process.find_items_blocking_on(test_store, "01TEST0000000000000000002")
   lu.assertEquals(#referencing_b, 1)
   lu.assertEquals(referencing_b[1].id, "01TEST0000000000000000003")
 end

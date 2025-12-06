@@ -1,12 +1,15 @@
 local lu = require("luaunit")
 
 local data = require("work.data")
+local store = require("work.store")
 local fcntl = require("posix.fcntl")
+local Work = require("lib")
+local test_store = Work.store
 
 TestFileLocking = {}
 
 function TestFileLocking:setUp()
-  data.items = {}
+  store.reset(test_store)
   self.test_dir = "/tmp/work-test-" .. os.time()
   os.execute("mkdir -p " .. self.test_dir)
 end
@@ -95,9 +98,9 @@ function TestFileLocking:test_delete_with_locking()
   lu.assertTrue(ok, "save should succeed: " .. tostring(err))
 
   -- Load it to get the _meta.source
-  data.items = {}
-  data.load_all(self.test_dir)
-  local loaded_item = data.get("01TEST0000000000000000002")
+  store.reset(test_store)
+  data.load_all(test_store, self.test_dir)
+  local loaded_item = data.get(test_store, "01TEST0000000000000000002")
   lu.assertNotNil(loaded_item, "item should be loaded")
 
   -- Delete it

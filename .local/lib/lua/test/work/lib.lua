@@ -1,4 +1,7 @@
 local data = require("work.data")
+local store = require("work.store")
+
+local _test_store = store.new()
 
 local function Work(item)
   local ok, err = data.validate(item)
@@ -6,11 +9,15 @@ local function Work(item)
     error("validation failed: " .. err)
   end
 
-  if data.items[item.id] then
+  if _test_store.items[item.id] then
     error("item id collision: " .. item.id)
   end
 
-  data.items[item.id] = item
+  store.add(_test_store, item)
 end
 
-return Work
+return setmetatable({ store = _test_store }, {
+  __call = function(_, item)
+    return Work(item)
+  end
+})
