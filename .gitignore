@@ -10,6 +10,7 @@ paste.*
 .claude.json.backup
 .claude/.credentials.json
 .claude/plugins/known_marketplaces.json
+.claude/plugins/installed_plugins.json
 .claude/projects/
 .claude/shell-snapshots/
 .claude/session-logger/
@@ -170,3 +171,6 @@ metadata.yaml
 .config/gocode
 ai
 extras
+.duckdb/
+.duckdb_history
+dist/

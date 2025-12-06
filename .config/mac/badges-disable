@@ -1,0 +1,23 @@
+#!/usr/bin/env luajit
+
+local posix = require('posix')
+local unistd = require('posix.unistd')
+local wait = require('posix.sys.wait')
+
+local commands = {
+  "defaults write com.apple.dock show-recents -bool false",
+  "defaults write com.apple.dock badge-notifications -bool false",
+  "killall Dock",
+}
+
+for _, cmd in ipairs(commands) do
+  local handle = posix.popen({"/bin/sh", "-c", cmd}, "r")
+  local output = unistd.read(handle.fd, 65536) or ""
+  local _, reason, exit_code = wait.wait(handle.pids[1])
+  unistd.close(handle.fd)
+
+  if reason ~= "exited" or exit_code ~= 0 then
+    io.stderr:write("badges-disable: failed to disable notification badges\n")
+    os.exit(exit_code or 1)
+  end
+end

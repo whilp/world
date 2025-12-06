@@ -1,0 +1,93 @@
+#!/usr/bin/env luajit
+
+local posix = require("posix")
+local unistd = require("posix.unistd")
+local wait = require("posix.sys.wait")
+local time = require("posix.time")
+
+local NVIM_SOCKET = os.getenv("HOME") .. "/.config/nvim/nvim.sock"
+
+local function usage()
+  io.stderr:write([[
+usage: editor [options] <file>
+
+options:
+  -w, --wait    block until buffer is closed
+  -h, --help    show this help
+
+Opens file in nvim using remote server. File is opened in a split
+above the current left side window.
+]])
+  os.exit(1)
+end
+
+local function nvim_remote_expr(expr)
+  local handle = posix.popen({
+    "nvim",
+    "--server", NVIM_SOCKET,
+    "--remote-expr", expr
+  }, "r")
+  local result = unistd.read(handle.fd, 65536) or ""
+  wait.wait(handle.pids[1])
+  unistd.close(handle.fd)
+  return result:gsub("^%s+", ""):gsub("%s+$", "")
+end
+
+local function is_buffer_valid(bufnr)
+  local expr = string.format("nvim_buf_is_valid(%s)", bufnr)
+  local result = nvim_remote_expr(expr)
+  return result == "1" or result == "true"
+end
+
+local function sleep(seconds)
+  time.nanosleep({ tv_sec = 0, tv_nsec = seconds * 1000000000 })
+end
+
+local function open_file(filepath, should_wait)
+  local absolute_path = filepath
+  if not filepath:match("^/") then
+    absolute_path = unistd.getcwd() .. "/" .. filepath
+  end
+
+  local escaped = absolute_path:gsub("'", "''")
+  local expr = string.format("luaeval('open_file_in_left_split(_A)', '%s')", escaped)
+  local bufnr = nvim_remote_expr(expr)
+
+  if should_wait then
+    while is_buffer_valid(bufnr) do
+      sleep(0.5)
+    end
+  end
+end
+
+local function main(args)
+  local should_wait = false
+  local filepath = nil
+
+  for _, arg in ipairs(args) do
+    if arg == "-h" or arg == "--help" then
+      usage()
+    elseif arg == "-w" or arg == "--wait" then
+      should_wait = true
+    elseif not filepath then
+      filepath = arg
+    else
+      io.stderr:write("error: unexpected argument: " .. arg .. "\n")
+      usage()
+    end
+  end
+
+  if not filepath then
+    io.stderr:write("error: file path required\n")
+    usage()
+  end
+
+  open_file(filepath, should_wait)
+end
+
+local args = {...}
+local ok, err = pcall(main, args)
+if not ok then
+  io.stderr:write("error: " .. tostring(err) .. "\n")
+  os.exit(1)
+end
