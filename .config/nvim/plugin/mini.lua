@@ -29,6 +29,15 @@ if ok_jump then
   require("mini.jump").setup()
 end
 
+local ok_jump2d, _ = pcall(require, "mini.jump2d")
+if ok_jump2d then
+  require("mini.jump2d").setup({
+    mappings = {
+      start_jumping = '<CR>',
+    },
+  })
+end
+
 local ok_completion, _ = pcall(require, "mini.completion")
 if ok_completion then
   require("mini.completion").setup()
@@ -76,4 +85,9 @@ if ok_pick then
   vim.keymap.set('n', '<Space>ph', '<Cmd>Pick help<CR>', { desc = 'Pick help' })
   vim.keymap.set('n', '<Space>pr', '<Cmd>Pick resume<CR>', { desc = 'Resume last pick' })
   vim.keymap.set('n', '<Space>p/', '<Cmd>Pick grep_live<CR>', { desc = 'Live grep' })
+end
+
+-- mini.jump2d keybindings (only if mini.jump2d is available)
+if ok_jump2d then
+  vim.keymap.set('n', '<Space>j', '<Cmd>lua MiniJump2d.start(MiniJump2d.builtin_opts.single_character)<CR>', { desc = 'Jump to character' })
 end
