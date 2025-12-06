@@ -49,8 +49,25 @@ map('t', '<D-k>', function()
   end
 end, { desc = 'Move to window above or create split' })
 
-map('t', '<D-h>', '<C-\\><C-n><C-w>h', { desc = 'Move to window left' })
-map('t', '<D-l>', '<C-\\><C-n><C-w>l', { desc = 'Move to window right' })
+map('t', '<D-h>', function()
+  vim.cmd('stopinsert')
+  -- Reference smart_move_left from window.lua (will be available globally)
+  if _G.smart_move_left then
+    _G.smart_move_left()
+  else
+    vim.cmd('wincmd h')
+  end
+end, { desc = 'Move to window left' })
+
+map('t', '<D-l>', function()
+  vim.cmd('stopinsert')
+  -- Reference smart_move_right from window.lua (will be available globally)
+  if _G.smart_move_right then
+    _G.smart_move_right()
+  else
+    vim.cmd('wincmd l')
+  end
+end, { desc = 'Move to window right' })
 
 -- Terminal buffer management
 map('t', '<D-q>', '<C-\\><C-n><cmd>enew|bd #<cr>', { noremap = true, silent = true, desc = 'Close current terminal buffer' })
