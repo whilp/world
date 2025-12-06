@@ -11,19 +11,33 @@ opt.eadirection = "hor"
 -- Window maximizing
 map("n", "<Space>z", "<C-w>_", { desc = "Maximize current window height" })
 
+-- Create appropriate buffer based on current context
+local function create_contextual_buffer()
+  local current_buf = vim.api.nvim_get_current_buf()
+  local is_terminal = vim.bo[current_buf].buftype == "terminal"
+
+  if is_terminal then
+    local buf_id = vim.api.nvim_get_current_buf()
+    local unique_id = "nvim_" .. buf_id .. "_" .. os.time()
+    vim.fn.termopen(vim.o.shell, {
+      env = vim.tbl_extend("force", vim.fn.environ(), {
+        NVIM_BUFFER_ID = unique_id,
+        NVIM_SOCKET = "~/.config/nvim/nvim.sock",
+      }),
+    })
+  else
+    vim.cmd("enew")
+  end
+end
+
 -- Parameterized function to handle window movement and creation
 local function handle_window_split(direction, always_create)
   local current_win = vim.api.nvim_get_current_win()
+  local split_cmd = direction == "down" and "belowright split" or "split"
 
   if always_create then
-    -- Always create a new split
-    if direction == "down" then
-      vim.cmd("belowright split")
-      vim.cmd("enew")
-    elseif direction == "up" then
-      vim.cmd("split")
-      vim.cmd("enew")
-    end
+    vim.cmd(split_cmd)
+    create_contextual_buffer()
   else
     -- Move to existing window or create split if none exists
     local move_cmd = direction == "down" and "wincmd j" or "wincmd k"
@@ -32,13 +46,8 @@ local function handle_window_split(direction, always_create)
 
     if current_win == new_win then
       -- No window in that direction, create new split
-      if direction == "down" then
-        vim.cmd("belowright split")
-        vim.cmd("enew")
-      elseif direction == "up" then
-        vim.cmd("split")
-        vim.cmd("enew")
-      end
+      vim.cmd(split_cmd)
+      create_contextual_buffer()
     end
   end
   -- Autocmd will handle maximizing the current window
