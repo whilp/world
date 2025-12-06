@@ -265,6 +265,34 @@ M.done = function(id)
   return item
 end
 
+-- Mark item as started
+-- Returns: item, err
+M.start = function(id)
+  local ok, err = M.load()
+  if not ok then
+    return nil, err
+  end
+
+  local full_id, resolve_err = data.resolve_id(_store, id)
+  if not full_id then
+    return nil, resolve_err
+  end
+
+  local item = data.get(_store, full_id)
+  if not item then
+    return nil, "item not found: " .. full_id
+  end
+
+  data.mark_started(item)
+
+  local ok, save_err = data.save(item, _config.data_dir)
+  if not ok then
+    return nil, save_err
+  end
+
+  return item
+end
+
 -- Update item fields
 -- id: item ID
 -- updates: table of field=value pairs

@@ -10,10 +10,10 @@ M.field_update = function(item, key, value)
     return nil, "cannot update field: " .. key
   end
 
-  if key == "completed" then
+  if key == "completed" or key == "started" then
     -- Validate timestamp format
     if value ~= "" and not value:match("^%d%d%d%d%-%d%d%-%d%dT%d%d:%d%d:%d%d$") then
-      return nil, "completed must be YYYY-MM-DDTHH:MM:SS format"
+      return nil, key .. " must be YYYY-MM-DDTHH:MM:SS format"
     end
   end
 

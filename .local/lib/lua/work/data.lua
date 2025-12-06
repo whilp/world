@@ -78,6 +78,10 @@ M.validate = function(item)
     return nil, string.format("field 'completed' must be string, got %s", type(item.completed))
   end
 
+  if item.started and type(item.started) ~= "string" then
+    return nil, string.format("field 'started' must be string, got %s", type(item.started))
+  end
+
   if item.description then
     if type(item.description) ~= "string" then
       return nil, string.format("field 'description' must be string, got %s", type(item.description))
@@ -561,6 +565,14 @@ end
 M.mark_done = function(item, timestamp)
   timestamp = timestamp or os.date("!%Y-%m-%dT%H:%M:%S")
   item.completed = timestamp
+  return item
+end
+
+-- Mark item as started with timestamp
+-- Returns: item (mutated)
+M.mark_started = function(item, timestamp)
+  timestamp = timestamp or os.date("!%Y-%m-%dT%H:%M:%S")
+  item.started = timestamp
   return item
 end
 

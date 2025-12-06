@@ -147,6 +147,10 @@ M.detail = function(item, opts)
   table.insert(lines, "title: " .. item.title)
   table.insert(lines, "created: " .. (item.created or ""))
 
+  if item.started then
+    table.insert(lines, "started: " .. item.started)
+  end
+
   if item.completed then
     table.insert(lines, "completed: " .. item.completed)
   end

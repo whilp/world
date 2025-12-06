@@ -151,6 +151,23 @@ local function cmd_done(args)
   end
 end
 
+local function cmd_start(args)
+  if #args < 1 then
+    error("usage: work start <id>")
+  end
+
+  local item, err = api.start(args[1])
+  if not item then
+    error(err)
+  end
+
+  if json_mode then
+    json_print(api.clean(item))
+  else
+    print("marked started: " .. item.id)
+  end
+end
+
 local function cmd_update(args)
   if #args < 2 then
     error("usage: work update <id> <field>=<value>...")
@@ -375,6 +392,7 @@ local function main(args)
     print("  tree [id]                          show work items as dependency tree")
     print("  show <id>                          show work item details")
     print("  done <id>                          mark work item as done")
+    print("  start <id>                         mark work item as started")
     print("  update <id> <field>=<value>...     update work item fields")
     print("  rm <id>                            remove work item")
     print("  blocked                            list blocked items")
@@ -393,6 +411,7 @@ local function main(args)
     tree = cmd_tree,
     show = cmd_show,
     done = cmd_done,
+    start = cmd_start,
     update = cmd_update,
     rm = cmd_rm,
     blocked = cmd_blocked,
