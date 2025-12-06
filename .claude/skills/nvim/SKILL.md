@@ -1,6 +1,6 @@
 ---
-description: Interact with Neovim configuration, service, and build system
-trigger: Use this skill for neovim configuration, plugin management, service operations, or building custom nvim releases
+description: Interact with Neovim configuration and build system
+trigger: Use this skill for neovim configuration, plugin management, or building custom nvim releases
 ---
 
 # Neovim interaction skill
@@ -12,8 +12,6 @@ This skill provides comprehensive knowledge for interacting with Neovim in this 
 ### Binary management
 - Actual nvim binary managed by shimlink at `~/.local/share/shimlink/bin/nvim`
 - Custom nvim builds with bundled plugins available via `.github/workflows/build-nvim.yml`
-- Wrapper script at `.local/bin/nvim` (zsh) handles client/server mode
-- Symlink `nvimd` -> `nvim` for daemon operations
 
 ### Configuration structure
 - Entry point: `.config/nvim/init.lua` (sets up lua paths)
@@ -21,23 +19,6 @@ This skill provides comprehensive knowledge for interacting with Neovim in this 
   - editing.lua, git.lua, grep.lua, interface.lua, lsp.lua, mini.lua
   - system.lua, tab.lua, terminal.lua, treesitter.lua, window.lua
 - Treesitter queries: `.config/nvim/queries/`
-- Socket: `.config/nvim/nvim.sock`
-
-## Wrapper script behavior
-
-The wrapper script (`.local/bin/nvim`) detects how it's invoked:
-
-### nvimd mode (daemon management)
-When invoked as `nvimd`, supports these commands:
-- `nvimd serve` - Start headless server (sources zsh configs, sets `NVIM_SERVER_MODE=1`)
-- `nvimd reload` - Reload service configuration (systemctl/launchctl daemon-reload)
-- `nvimd restart` - Restart service (systemctl/launchctl restart)
-- `nvimd cleanup` - Remove stale socket file
-
-### nvim mode (client)
-When invoked as `nvim`:
-- Uses `--server` flag to connect to socket (unless `NVIM_INVIM` or `NVIM_SERVER_MODE` set)
-- Falls back to direct nvim invocation when already inside nvim or in server mode
 
 ## Configuration guidelines
 
@@ -113,48 +94,12 @@ gh workflow run build-nvim.yml -f create_release=false  # test build
 gh workflow run build-nvim.yml -f release_tag=2025.11.23  # create release
 ```
 
-## Remote inspection
+## Reloading configuration
 
-Inspect running nvim server: `nvim --remote-expr "expression"`
+To reload nvim configuration after making changes, use the remote-expr command:
 
-Useful vimscript expressions:
-- `get(b:, 'term_title', 'unset')` - get buffer terminal title
-- `&title` - get title option
-- `&titlestring` - get titlestring option
+```bash
+nvim --remote-expr "execute('source ~/.config/nvim/init.lua')"
+```
 
-Important notes:
-- Use `execute()` when sourcing config via remote-expr
-- The vim global isn't available in remote-expr; use vimscript syntax
-
-## Service management
-
-### systemd (Linux)
-
-Service file: `~/.config/systemd/user/nvim.service`
-
-Commands:
-- Reload: `systemctl --user daemon-reload` (or `nvimd reload`)
-- Enable: `systemctl --user enable nvim`
-- Start: `systemctl --user start nvim`
-- Restart: `systemctl --user restart nvim` (or `nvimd restart`)
-- Status: `systemctl --user status nvim`
-- Logs: `journalctl --user -u nvim -f`
-
-The service uses:
-- `ExecStart=%h/.local/bin/nvimd serve`
-- `ExecStopPost=%h/.local/bin/nvimd cleanup`
-
-### launchd (macOS)
-
-Service file: `~/Library/LaunchAgents/com.user.nvim.plist`
-
-Note: Service file not currently in repo; wrapper has support built in.
-
-Commands:
-- Reload: `launchctl unload ~/Library/LaunchAgents/com.user.nvim.plist && launchctl load ~/Library/LaunchAgents/com.user.nvim.plist` (or `nvimd reload`)
-- Load: `launchctl load ~/Library/LaunchAgents/com.user.nvim.plist`
-- Unload: `launchctl unload ~/Library/LaunchAgents/com.user.nvim.plist`
-- Start: `launchctl start com.user.nvim` (or `nvimd restart`)
-- Stop: `launchctl stop com.user.nvim`
-- Status: `launchctl list | grep nvim`
-- Logs: `log stream --predicate 'process == "nvim"'`
+This sources the configuration in any running nvim instances without restarting them.
