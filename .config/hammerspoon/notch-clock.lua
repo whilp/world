@@ -3,7 +3,6 @@ local NotchClock = {}
 local clock = nil
 local updateTimer = nil
 local menubarWatcher = nil
-local mouseTimer = nil
 local timeOffsetMinutes = 0
 
 local function updateClockText()
@@ -51,7 +50,7 @@ local function createClock()
 		frame = { x = 0, y = 0, w = pos.w, h = pos.h },
 	}
 
-	clock:level("overlay")
+	clock:level("desktop")
 	clock:clickActivating(false)
 	clock:alpha(0)
 	clock:show()
@@ -70,16 +69,6 @@ local function hideClock()
 end
 
 local function checkMenubar()
-	local mousePos = hs.mouse.absolutePosition()
-	local screen = hs.screen.mainScreen()
-	local screenFrame = screen:fullFrame()
-
-	-- Hide if mouse is in top 34 pixels (menubar area)
-	if mousePos.y <= 34 then
-		hideClock()
-		return
-	end
-
 	local frontApp = hs.application.frontmostApplication()
 	if frontApp then
 		local mainWindow = frontApp:mainWindow()
@@ -118,12 +107,6 @@ function NotchClock.start(options)
 	hs.window.filter.default:subscribe(hs.window.filter.windowFocused, checkMenubar)
 	hs.window.filter.default:subscribe(hs.window.filter.windowUnfocused, checkMenubar)
 
-	-- Check mouse position frequently
-	if mouseTimer then
-		mouseTimer:stop()
-	end
-	mouseTimer = hs.timer.doEvery(0.1, checkMenubar)
-
 	checkMenubar()
 end
 
@@ -136,11 +119,6 @@ function NotchClock.stop()
 	if updateTimer then
 		updateTimer:stop()
 		updateTimer = nil
-	end
-
-	if mouseTimer then
-		mouseTimer:stop()
-		mouseTimer = nil
 	end
 
 	if menubarWatcher then
