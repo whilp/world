@@ -1,10 +1,5 @@
-Clue{
-  name = "Start recording",
-  desc = "start recording",
-  key = { "hyper", "w", "r" },
-  group = "superwhisper",
-  show_in_chooser = true,
-  action = { url = "superwhisper://record" }
+local bindings = {
+  Bind("r", "Start recording", { url = "superwhisper://record" })
 }
 
 local modes_dir = os.getenv("HOME") .. "/Documents/superwhisper/modes"
@@ -22,17 +17,11 @@ if iter then
         local ok, mode = pcall(hs.json.decode, content)
         if ok and mode.key and mode.name then
           local key_char = mode.key:sub(1, 1)
-
-          Clue{
-            name = "Switch to " .. mode.name .. " mode",
-            desc = "switch to " .. mode.name:lower() .. " mode",
-            key = { "hyper", "w", key_char },
-            group = "superwhisper",
-            show_in_chooser = true,
-            action = { url = "superwhisper://mode?key=" .. mode.key }
-          }
+          table.insert(bindings, Bind(key_char, "Switch to " .. mode.name, { url = "superwhisper://mode?key=" .. mode.key }))
         end
       end
     end
   end
 end
+
+return Leader("w", "Superwhisper", bindings)

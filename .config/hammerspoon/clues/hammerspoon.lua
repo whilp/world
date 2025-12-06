@@ -1,47 +1,10 @@
-Clue{
-  name = "Reload config",
-  desc = "reload configuration",
-  key = { "hyper", "h", "r" },
-  group = "hammerspoon",
-  show_in_chooser = true,
-  action = { fn = function() hs.reload() end }
-}
-
-Clue{
-  name = "Console",
-  desc = "open console",
-  key = { "hyper", "h", "c" },
-  group = "hammerspoon",
-  show_in_chooser = true,
-  action = { fn = function() hs.openConsole() end }
-}
-
-Clue{
-  name = "Update apps",
-  desc = "run mscupdate to update applications",
-  key = { "hyper", "h", "u" },
-  group = "hammerspoon",
-  show_in_chooser = true,
-  action = { shell = "/usr/local/bin/mscupdate" }
-}
-
-Clue{
-  name = "Switcher (unfiltered)",
-  desc = "show all apps without filtering",
-  key = { "hyper", "h", "s" },
-  group = "hammerspoon",
-  show_in_chooser = true,
-  action = { mode = "unfiltered_switcher" }
-}
-
-Clue{
-  name = "Snap layout",
-  desc = "apply window layout to external monitor",
-  key = { "hyper", "h", "l" },
-  group = "hammerspoon",
-  show_in_chooser = true,
-  action = { fn = function()
+return Leader("h", "Hammerspoon", {
+  Bind("r", "Reload config", { fn = function() hs.reload() end }),
+  Bind("c", "Console", { fn = function() hs.openConsole() end }),
+  Bind("u", "Update apps", { shell = "/usr/local/bin/mscupdate" }),
+  Bind("s", "Switcher (unfiltered)", { mode = "unfiltered_switcher" }),
+  Bind("l", "Snap layout", { fn = function()
     local autoLayout = require("auto-layout")
     autoLayout.applyLayoutToAllWindows()
-  end }
-}
+  end }),
+})

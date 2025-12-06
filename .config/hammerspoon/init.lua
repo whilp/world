@@ -1,8 +1,8 @@
 local HyperKey = require("hyper-key")
 local windowSwitcher = require("window-switcher")
 local notchClock = require("notch-clock")
-local clueLoader = require("clue-loader")
-local clueManager = require("clue-manager")
+local leaderModal = require("leader-modal")
+local leaderDsl = require("leader-dsl")
 local emojiPicker = require("emoji-picker")
 local symbolPicker = require("symbol-picker")
 local chooserStyle = require("chooser-style")
@@ -42,17 +42,38 @@ local function showSymbolChooser()
   chooser:selectedRow(1)
 end
 
-clueLoader.load_all()
-clueManager.setup(clueLoader, {
+local clue_dir = hs.configdir .. "/clues"
+local iter, dir_obj = hs.fs.dir(clue_dir)
+if iter then
+  for file in iter, dir_obj do
+    if file:match("%.lua$") and file ~= "." and file ~= ".." then
+      local env = {
+        Leader = leaderDsl.Leader,
+        Bind = leaderDsl.Bind,
+      }
+      setmetatable(env, { __index = _G })
+
+      local f = io.open(clue_dir .. "/" .. file, "r")
+      if f then
+        local content = f:read("*all")
+        f:close()
+        local chunk, err = load(content, file, "t", env)
+        if chunk then
+          local ok, result = pcall(chunk)
+          if ok and result and result.type == "leader" then
+            leaderDsl.register_root(result)
+          end
+        end
+      end
+    end
+  end
+end
+
+leaderModal.setup(leaderDsl.get_tree(), { timeout_ms = 3000 }, {
   emoji = showEmojiChooser,
   symbol = showSymbolChooser,
   unfiltered_switcher = function() windowSwitcher.showUnfiltered() end,
 })
-
-local metaModal = clueManager.create_meta_modal(hyper)
-hyper:bind("space"):toFunction("Show modals", function()
-  metaModal:enter()
-end)
 
 windowSwitcher.setup(hyper)
 notchClock.start({ offsetMinutes = 4 })

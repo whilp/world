@@ -80,7 +80,7 @@
                         ]
                     },
                     {
-                        "description": "right command to hyper",
+                        "description": "right command to hyper (held) / F18 (tap)",
                         "manipulators": [
                             {
                                 "conditions": [
@@ -100,6 +100,7 @@
                                         "modifiers": ["left_command", "left_control", "left_option"]
                                     }
                                 ],
+                                "to_if_alone": [{ "key_code": "f18" }],
                                 "type": "basic"
                             }
                         ]

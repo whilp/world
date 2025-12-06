@@ -2,8 +2,7 @@ local WindowSwitcher = {}
 
 local fuzzy = require("fuzzy")
 local dispatch = require("dispatch")
-local clueLoader = require("clue-loader")
-local clueManager = require("clue-manager")
+local leaderModal = require("leader-modal")
 local emojiPicker = require("emoji-picker")
 local symbolPicker = require("symbol-picker")
 local chooserStyle = require("chooser-style")
@@ -85,13 +84,16 @@ local function showSwitcher(applyFilter)
             hs.application.launchOrFocus(choice.appName)
           end
         elseif choice.commandId then
-          local result = clueManager.execute_clue(choice.commandId, clueLoader)
-          if result == "emoji" then
-            switchToEmojiMode()
-            return
-          elseif result == "symbol" then
-            switchToSymbolMode()
-            return
+          local action = dispatch.getCommandAction(choice.commandId)
+          if action then
+            local result = leaderModal.execute_action(action)
+            if result == "emoji" then
+              switchToEmojiMode()
+              return
+            elseif result == "symbol" then
+              switchToSymbolMode()
+              return
+            end
           end
         end
       end

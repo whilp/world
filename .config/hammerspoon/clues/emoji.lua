@@ -1,8 +1,4 @@
-Clue{
-  name = "Emoji picker",
-  desc = "emoji",
-  key = { "hyper", "p", "e" },
-  group = "picker",
-  show_in_chooser = true,
-  action = { mode = "emoji" }
-}
+return Leader("p", "Picker", {
+  Bind("e", "Emoji", { mode = "emoji" }),
+  Bind("s", "Symbol", { mode = "symbol" }),
+})

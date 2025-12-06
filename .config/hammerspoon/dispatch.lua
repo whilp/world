@@ -1,6 +1,6 @@
 local M = {}
 
-local clueLoader = require("clue-loader")
+local leaderDsl = require("leader-dsl")
 
 M.filteredApps = {
   "Chess",
@@ -139,7 +139,47 @@ M.getInstalledAppChoices = function(seenApps, applyFilter)
 end
 
 M.getCommandChoices = function()
-  return clueLoader.to_choices()
+  local choices = {}
+  local tree = leaderDsl.get_tree()
+
+  local function traverse(node, prefix, group)
+    for key, child in pairs(node) do
+      if child.type == "bind" then
+        local commandId = prefix .. key
+        table.insert(choices, {
+          text = child.desc,
+          subText = group,
+          commandId = commandId
+        })
+      elseif child.type == "leader" then
+        traverse(child.children, prefix .. key .. ".", child.desc)
+      end
+    end
+  end
+
+  traverse(tree, "", "")
+  return choices
+end
+
+M.getCommandAction = function(commandId)
+  local tree = leaderDsl.get_tree()
+  local parts = {}
+  for part in commandId:gmatch("[^.]+") do
+    table.insert(parts, part)
+  end
+
+  local node = tree
+  for i, part in ipairs(parts) do
+    if not node or not node[part] then
+      return nil
+    end
+    node = node[part]
+    if i < #parts then
+      node = node.children
+    end
+  end
+
+  return node and node.action
 end
 
 M.getAllChoices = function(applyFilter)
