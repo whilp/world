@@ -96,10 +96,10 @@ gh workflow run build-nvim.yml -f release_tag=2025.11.23  # create release
 
 ## Reloading configuration
 
-To reload nvim configuration after making changes, use the remote-expr command:
+To reload nvim configuration after making changes, use the remote-expr command with the socket:
 
 ```bash
-nvim --remote-expr "execute('source ~/.config/nvim/init.lua')"
+nvim --server ~/.config/nvim/nvim.sock --remote-expr "execute('source ~/.config/nvim/init.lua')"
 ```
 
 This sources the configuration in any running nvim instances without restarting them.
