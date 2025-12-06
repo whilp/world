@@ -95,8 +95,9 @@ local function install_luachild_with_patch(luarocks, version, temp_dir)
   util.exec(string.format("mkdir -p %s", unpack_dir))
   util.exec(string.format("cd %s && %s unpack luachild %s", unpack_dir, luarocks, version))
 
-  local luachild_dir = util.capture(string.format("ls -d %s/luachild-* | head -1", unpack_dir))
-  local source_file = luachild_dir .. "/luachild_luajit_2_1.c"
+  local version_dir = string.format("%s/luachild-%s", unpack_dir, version)
+  local rockspec = string.format("%s/luachild-%s.rockspec", version_dir, version)
+  local source_file = version_dir .. "/luachild/luachild_luajit_2_1.c"
 
   if util.file_exists(source_file) then
     util.printf("patching %s to add missing headers...\n", source_file)
@@ -115,7 +116,7 @@ local function install_luachild_with_patch(luarocks, version, temp_dir)
     util.write_file(source_file, content)
   end
 
-  util.exec(string.format("cd %s && %s make", luachild_dir, luarocks))
+  util.exec(string.format("cd %s && %s make %s", version_dir, luarocks, rockspec))
 end
 
 local function build_luajit(config)
