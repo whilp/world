@@ -385,8 +385,9 @@ end
 -- Returns: sorted items (in-place)
 M.sort_by_schedule = function(items)
   table.sort(items, function(a, b)
-    local a_due = a.due and M.resolve_due_date(a) or nil
-    local b_due = b.due and M.resolve_due_date(b) or nil
+    -- Use pre-computed due date if available (from enrich), otherwise nil
+    local a_due = (a._computed and a._computed.resolved_due) or nil
+    local b_due = (b._computed and b._computed.resolved_due) or nil
 
     -- Items with due dates come before items without
     if a_due and not b_due then

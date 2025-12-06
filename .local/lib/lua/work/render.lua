@@ -20,7 +20,8 @@ end
 
 -- Returns: 5-char string like "+3w ", " +3d ", "  ?  ", or "     "
 M.due_display = function(item)
-  local resolved_due, warning = work.resolve_due_date(item)
+  -- Use pre-computed resolved_due from enriched item
+  local resolved_due = item._computed and item._computed.resolved_due
   if resolved_due then
     local relative = work.date_relative_to_today(resolved_due)
     if relative then
@@ -154,8 +155,8 @@ M.detail = function(item, opts)
     table.insert(lines, "priority: " .. item.priority)
   end
 
-  -- Due date handling with resolution
-  local resolved_due, warning = work.resolve_due_date(item)
+  -- Due date handling with resolution (use pre-computed value from enriched item)
+  local resolved_due = item._computed and item._computed.resolved_due
   if item.due then
     if resolved_due then
       local relative = work.date_relative_to_today(resolved_due)
@@ -168,8 +169,7 @@ M.detail = function(item, opts)
       end
     else
       -- Has explicit due but couldn't resolve
-      local warning_msg = warning and ": " .. warning or ""
-      table.insert(lines, "due: " .. item.due .. " (unresolved" .. warning_msg .. ")")
+      table.insert(lines, "due: " .. item.due .. " (unresolved)")
     end
   elseif resolved_due then
     -- No explicit due, but we inferred one
