@@ -1,6 +1,6 @@
 ---
 name: lua
-description: Write lua or LuaJIT scripts and modules following repository conventions. Use for lua or luajit code, posix system calls, ffi bindings, config files, or shell script replacements. Includes patterns for file I/O, command execution, error handling, and module structure.
+description: Write lua or LuaJIT scripts and modules following repository conventions. Use for lua or luajit code, posix system calls, subprocess spawning, ffi bindings, config files, or shell script replacements. Includes patterns for file I/O, command execution, bidirectional pipes, error handling, and module structure.
 allowed-tools: [Read, Write, Edit, Bash, Glob, Grep]
 ---
 
@@ -162,12 +162,26 @@ io.stderr:flush() -- ensure immediate output
 
 ## Command execution
 
-IMPORTANT: Always prefer `posix.popen()` or `posix.spawn()` over `io.popen()` or `os.execute()`:
-- `posix.popen()` takes an array of arguments and does direct exec without shell invocation
+IMPORTANT: Always prefer `posix.popen()`, `posix.spawn()`, or `luachild` over `io.popen()` or `os.execute()`:
+- `posix.popen()` and `luachild` take an array of arguments and do direct exec without shell invocation
 - `io.popen()` invokes `/bin/sh` to parse the command string
 - Avoid shell invocation unless you specifically need shell features
 
-Use `posix.popen` for running commands with output:
+### Simple execution with exit code
+
+Use `posix.spawn` for simple commands where you only need the exit status:
+
+``` lua
+local posix = require("posix")
+local exit_status = posix.spawn({ "command", "arg1", "arg2" })
+if exit_status ~= 0 then
+  error("command failed")
+end
+```
+
+### Capture output (read-only)
+
+Use `posix.popen` for running commands with output capture:
 
 ```lua
 local posix = require('posix')
@@ -180,14 +194,45 @@ wait.wait(handle.pids[1])
 unistd.close(handle.fd)
 ```
 
-Use `posix.spawn` for simple execution with exit code:
+### Bidirectional communication with pipes
 
-``` lua
-local posix = require("posix")
-local exit_status = posix.spawn({ "command", "arg1", "arg2" })
-if exit_status ~= 0 then
-  error("command failed")
-end
+Use `luachild` when you need to:
+- Send input to stdin and read from stdout/stderr
+- Control stdin, stdout, and stderr independently
+- Communicate bidirectionally with a subprocess
+
+```lua
+local lc = require('luachild')
+local unistd = require('posix.unistd')
+
+-- Create pipes for stdin/stdout
+local stdin_r, stdin_w = lc.pipe()
+local stdout_r, stdout_w = lc.pipe()
+
+-- Spawn process with redirected pipes
+local pid = lc.spawn({
+  file = '/usr/bin/command',
+  args = {'command', 'arg1'},
+  env = lc.environ(),
+  stdin = stdin_r,
+  stdout = stdout_w,
+  stderr = stdout_w,  -- redirect stderr to stdout
+})
+
+-- Close unused pipe ends in parent
+unistd.close(stdin_r)
+unistd.close(stdout_w)
+
+-- Write to child's stdin
+unistd.write(stdin_w, "input data\n")
+unistd.close(stdin_w)
+
+-- Read from child's stdout
+local output = unistd.read(stdout_r, 65536) or ""
+unistd.close(stdout_r)
+
+-- Wait for child to complete
+local status = lc.wait(pid)
 ```
 
 ## Command-line arguments
@@ -300,6 +345,7 @@ Standard libraries used in this repo:
 - `posix.unistd` - Unix standard functions (read, write, close, unlink, exec)
 - `posix.sys.wait` - Process waiting
 - `posix.signal` - Signal handling
+- `luachild` - Subprocess spawning with bidirectional pipe communication
 - `ffi` - Foreign function interface (use sparingly, prefer POSIX bindings)
 - `openssl.digest` - Hash functions (SHA256)
 
