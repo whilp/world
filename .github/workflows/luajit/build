@@ -103,14 +103,9 @@ local function install_luachild_with_patch(luarocks, version, temp_dir)
     util.printf("patching %s to add missing headers...\n", source_file)
     local content = util.read_file(source_file)
 
-    local includes_patch = [[
-#include <stdlib.h>
-#include <string.h>
-]]
-
     content = content:gsub(
-      '(#include "luachild%.h")',
-      '%1' .. includes_patch
+      '(#include "luachild%.h")\n',
+      '%1\n#include <stdlib.h>\n#include <string.h>\n'
     )
 
     util.write_file(source_file, content)
