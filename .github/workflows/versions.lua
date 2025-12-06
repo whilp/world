@@ -19,4 +19,5 @@ return {
   djot = "0.2.1-1",
   lunamark = "0.6.0-1",
   luaunit = "3.4-1",
+  luachild = "0.1-2",
 }
