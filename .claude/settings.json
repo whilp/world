@@ -26,7 +26,7 @@
       "Bash(npm test:*)"
     ]
   },
-  "model": "sonnet",
+  "model": "opusplan",
   "alwaysThinkingEnabled": false,
   "feedbackSurveyState": {
     "lastShownTime": 1754368507584
