@@ -12,11 +12,16 @@ Run GitHub workflows on github.com
 When the user asks to run a workflow:
 
 1. Check the workflow file in `.github/workflows/` to understand its trigger type and inputs
-2. For `workflow_dispatch` workflows: trigger directly with `gh workflow run`
-3. For `push` workflows: push to the remote first, then the workflow runs automatically
-4. Use appropriate parameters based on the workflow's input definitions
-5. For testing/iteration with matrix builds: prefer x64 over arm64 (faster provisioning)
-6. Download workflow artifacts to verify outputs
+2. **Ensure code is pushed to the github.com remote** before triggering workflows:
+   - Workflows run on github.com, not corp/internal git servers
+   - Check the correct remote with `git remote -v | grep github.com`
+   - Push to the github remote: `git push github main` (or appropriate remote name)
+   - Verify the push completed: `git fetch github && git log github/main -1`
+3. For `workflow_dispatch` workflows: trigger directly with `gh workflow run`
+4. For `push` workflows: push to the remote first, then the workflow runs automatically
+5. Use appropriate parameters based on the workflow's input definitions
+6. For testing/iteration with matrix builds: prefer x64 over arm64 (faster provisioning)
+7. Download workflow artifacts to verify outputs
 
 ## Usage
 
