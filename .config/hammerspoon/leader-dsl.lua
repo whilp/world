@@ -19,12 +19,13 @@ function M.Leader(key, desc, children)
   return node
 end
 
-function M.Bind(key, desc, action)
+function M.Bind(key, desc, action, opts)
   return {
     type = "bind",
     key = key,
     desc = desc,
-    action = action
+    action = action,
+    sticky = opts and opts.sticky or false
   }
 end
 

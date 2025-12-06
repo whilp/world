@@ -44,7 +44,11 @@ function M.create_child_modal(path, node)
         M.push_modal(path .. "." .. key, child)
       elseif child.type == "bind" then
         local result = M.execute_action(child.action)
-        M.exit_all()
+
+        -- If sticky, keep modal open; otherwise exit
+        if not child.sticky then
+          M.exit_all()
+        end
 
         if type(result) == "string" then
           local handler = M.mode_handlers[result]
@@ -55,6 +59,11 @@ function M.create_child_modal(path, node)
       end
     end)
   end
+
+  -- Add 'q' as quit key for sticky modals
+  modal:bind("", "q", function()
+    M.exit_all()
+  end)
 
   local original_entered = function()
     M.show_overlay(path, node)
@@ -177,10 +186,12 @@ function M.show_overlay(path, node)
   local bindings = {}
   for key, child in pairs(node.children or {}) do
     local is_group = child.type == "leader"
+    local is_sticky = child.type == "bind" and child.sticky or false
     table.insert(bindings, {
       key = key,
       desc = child.desc or key,
       is_group = is_group,
+      is_sticky = is_sticky,
     })
   end
 
@@ -191,7 +202,22 @@ function M.show_overlay(path, node)
     return a.key < b.key
   end)
 
-  table.insert(bindings, { key = "esc", desc = "Cancel", is_escape = true })
+  -- Check if any bindings are sticky
+  local has_sticky = false
+  for _, binding in ipairs(bindings) do
+    if binding.is_sticky then
+      has_sticky = true
+      break
+    end
+  end
+
+  -- Add quit keys
+  if has_sticky then
+    table.insert(bindings, { key = "q", desc = "Quit", is_escape = true })
+    table.insert(bindings, { key = "esc", desc = "Quit", is_escape = true })
+  else
+    table.insert(bindings, { key = "esc", desc = "Cancel", is_escape = true })
+  end
 
   local columns = M.config.overlay_columns
   local rows = math.ceil(#bindings / columns)
@@ -216,6 +242,17 @@ function M.show_overlay(path, node)
   }
 
   local header_text = path == "root" and "Leader" or path:gsub("%.", " > ")
+
+  -- Add STICKY indicator if any bindings are sticky
+  local has_sticky = false
+  for _, binding in ipairs(bindings) do
+    if binding.is_sticky then
+      has_sticky = true
+      header_text = header_text .. " [STICKY]"
+      break
+    end
+  end
+
   M.canvas[2] = {
     type = "text",
     text = header_text,
