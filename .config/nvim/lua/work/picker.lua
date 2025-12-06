@@ -3,6 +3,23 @@ local M = {}
 
 local work = require("work")
 
+-- Window configuration for centered, smaller pickers
+local function get_window_config()
+  return {
+    config = function()
+      local height = math.floor(vim.o.lines * 0.5)
+      local width = math.floor(vim.o.columns * 0.6)
+      return {
+        anchor = "NW",
+        height = height,
+        width = width,
+        row = math.floor((vim.o.lines - height) / 2),
+        col = math.floor((vim.o.columns - width) / 2),
+      }
+    end
+  }
+end
+
 -- Format item for picker display
 local function format_item(item)
   local status = item.completed and "done" or "todo"
@@ -141,7 +158,7 @@ function M.all()
     return
   end
   local source = make_source(items, "Work Items")
-  MiniPick.start({ source = source, mappings = setup_mappings() })
+  MiniPick.start({ source = source, mappings = setup_mappings(), window = get_window_config() })
 end
 
 -- Pick ready (unblocked) items
@@ -264,7 +281,7 @@ function M.ready()
   }
 
   local source = make_source(items, "Ready Items")
-  MiniPick.start({ source = source, mappings = mappings })
+  MiniPick.start({ source = source, mappings = mappings, window = get_window_config() })
 end
 
 -- Pick ready started items
@@ -375,7 +392,7 @@ function M.ready_started()
   }
 
   local source = make_source(started, "Ready Started Items")
-  MiniPick.start({ source = source, mappings = mappings })
+  MiniPick.start({ source = source, mappings = mappings, window = get_window_config() })
 end
 
 -- Pick blocked items
@@ -387,7 +404,7 @@ function M.blocked()
     return
   end
   local source = make_source(items, "Blocked Items")
-  MiniPick.start({ source = source, mappings = setup_mappings() })
+  MiniPick.start({ source = source, mappings = setup_mappings(), window = get_window_config() })
 end
 
 -- Pick incomplete items (todo + blocked)
@@ -405,7 +422,7 @@ function M.incomplete()
     end
   end
   local source = make_source(incomplete, "Incomplete Items")
-  MiniPick.start({ source = source })
+  MiniPick.start({ source = source, window = get_window_config() })
 end
 
 -- Search work items by title/description
@@ -469,7 +486,7 @@ function M.select_blocks(current_id, callback)
     end,
   }
 
-  MiniPick.start({ source = source })
+  MiniPick.start({ source = source, window = get_window_config() })
 end
 
 return M
