@@ -1,17 +1,7 @@
 local M = {
-  items = {},  -- DEPRECATED: kept for backwards compatibility, use store parameter instead
   _lock_handle = nil,
   _lock_path = nil,
 }
-
--- Helper: get items table from store or fallback to M.items
--- For backwards compatibility during transition
-local function get_items(store_or_nil)
-  if store_or_nil and type(store_or_nil) == "table" and store_or_nil.items then
-    return store_or_nil.items
-  end
-  return M.items
-end
 
 -- Validate string content for dangerous lua patterns
 -- Returns: ok, err
@@ -143,32 +133,18 @@ local function make_work_callback(items_table)
 end
 
 -- Load and execute lua file with Work{} callbacks
--- Signature: M.load_file(path, store_or_kinds, kinds)
--- For backwards compat: M.load_file(path, kinds) uses M.items
--- New usage: M.load_file(path, store, kinds)
+-- Signature: M.load_file(path, store, kinds)
 -- Returns: ok, err
-M.load_file = function(path, store_or_kinds, kinds)
+M.load_file = function(path, store, kinds)
   local loader, err = loadfile(path)
   if not loader then
     return false, err
   end
 
-  -- Detect if second arg is a store or kinds table
-  local store, env
-  if store_or_kinds and store_or_kinds.items then
-    -- It's a store
-    store = store_or_kinds
-    env = kinds or {}
-  else
-    -- It's kinds (backwards compat)
-    store = nil
-    env = store_or_kinds or {}
-  end
-
-  local items_table = get_items(store)
+  local env = kinds or {}
 
   if not env.Work then
-    env.Work = make_work_callback(items_table)
+    env.Work = make_work_callback(store.items)
   end
 
   local wrapped_env = {}
@@ -246,31 +222,18 @@ M.write = function(item, callback_name)
 end
 
 -- Get item by full ID
--- Signature: M.get(store, id) or M.get(id) for backwards compat
+-- Signature: M.get(store, id)
 -- Returns: item or nil
-M.get = function(store_or_id, maybe_id)
-  local store, id
-  if maybe_id then
-    -- New signature: M.get(store, id)
-    store = store_or_id
-    id = maybe_id
-  else
-    -- Old signature: M.get(id)
-    store = nil
-    id = store_or_id
-  end
-
-  local items = get_items(store)
-  return items[id]
+M.get = function(store, id)
+  return store.items[id]
 end
 
 -- Get all items sorted by created date
--- Signature: M.get_all(store) or M.get_all() for backwards compat
+-- Signature: M.get_all(store)
 -- Returns: array of items
 M.get_all = function(store)
-  local items = get_items(store)
   local all = {}
-  for _, item in pairs(items) do
+  for _, item in pairs(store.items) do
     table.insert(all, item)
   end
   table.sort(all, function(a, b)
@@ -280,23 +243,11 @@ M.get_all = function(store)
 end
 
 -- Get items from specific file
--- Signature: M.get_by_file(store, source) or M.get_by_file(source) for backwards compat
+-- Signature: M.get_by_file(store, source)
 -- Returns: array of items
-M.get_by_file = function(store_or_source, maybe_source)
-  local store, source
-  if maybe_source then
-    -- New signature: M.get_by_file(store, source)
-    store = store_or_source
-    source = maybe_source
-  else
-    -- Old signature: M.get_by_file(source)
-    store = nil
-    source = store_or_source
-  end
-
-  local items_table = get_items(store)
+M.get_by_file = function(store, source)
   local items = {}
-  for _, item in pairs(items_table) do
+  for _, item in pairs(store.items) do
     if item._meta and item._meta.source == source then
       table.insert(items, item)
     end
@@ -371,20 +322,9 @@ M.release_lock = function()
 end
 
 -- Load all work items from directory
--- Signature: M.load_all(store, dir) or M.load_all(dir) for backwards compat
+-- Signature: M.load_all(store, dir)
 -- Returns: ok, err
-M.load_all = function(store_or_dir, maybe_dir)
-  local store, dir
-  if maybe_dir then
-    -- New signature: M.load_all(store, dir)
-    store = store_or_dir
-    dir = maybe_dir
-  else
-    -- Old signature: M.load_all(dir)
-    store = nil
-    dir = store_or_dir
-  end
-
+M.load_all = function(store, dir)
   local ok, err = ensure_data_dir(dir)
   if not ok then
     return nil, err
@@ -399,12 +339,7 @@ M.load_all = function(store_or_dir, maybe_dir)
   end
 
   for _, file in ipairs(files) do
-    local ok, err
-    if store then
-      ok, err = M.load_file(file, store)
-    else
-      ok, err = M.load_file(file)
-    end
+    local ok, err = M.load_file(file, store)
     if not ok then
       return nil, "failed to load " .. file .. ": " .. tostring(err)
     end
@@ -579,20 +514,9 @@ M.generate_id = function()
 end
 
 -- Resolve short ID to full ID
--- Signature: M.resolve_id(store, short_id) or M.resolve_id(short_id) for backwards compat
+-- Signature: M.resolve_id(store, short_id)
 -- Returns: full_id, err
-M.resolve_id = function(store_or_id, maybe_id)
-  local store, short_id
-  if maybe_id then
-    -- New signature: M.resolve_id(store, short_id)
-    store = store_or_id
-    short_id = maybe_id
-  else
-    -- Old signature: M.resolve_id(short_id)
-    store = nil
-    short_id = store_or_id
-  end
-
+M.resolve_id = function(store, short_id)
   -- Validate input
   if not short_id or short_id == "" then
     return nil, "id cannot be empty"
@@ -606,11 +530,9 @@ M.resolve_id = function(store_or_id, maybe_id)
     return normalized
   end
 
-  local items = get_items(store)
-
   -- Find all items that match the prefix or suffix
   local matches = {}
-  for id, _ in pairs(items) do
+  for id, _ in pairs(store.items) do
     if id:sub(1, #normalized) == normalized or id:sub(-#normalized) == normalized then
       table.insert(matches, id)
     end

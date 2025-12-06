@@ -2,15 +2,6 @@ local data = require("work.data")
 
 local M = {}
 
--- Helper: get items table from store or fallback to data.items
--- For backwards compatibility during transition
-local function get_items(store_or_nil)
-  if store_or_nil and type(store_or_nil) == "table" and store_or_nil.items then
-    return store_or_nil.items
-  end
-  return data.items
-end
-
 -- Parse date string YYYY-MM-DD into year, month, day
 -- Returns: year, month, day or nil, err
 M.parse_date = function(date_str)
@@ -103,19 +94,9 @@ end
 
 -- Get all items that this item transitively depends on
 -- (items this blocks on, and items those block on, etc.)
--- Signature: M.get_transitive_dependencies(store, item_id) or M.get_transitive_dependencies(item_id)
+-- Signature: M.get_transitive_dependencies(store, item_id)
 -- Returns: array of items
-M.get_transitive_dependencies = function(store_or_id, maybe_id)
-  local store, item_id
-  if maybe_id then
-    store = store_or_id
-    item_id = maybe_id
-  else
-    store = nil
-    item_id = store_or_id
-  end
-
-  local items = get_items(store)
+M.get_transitive_dependencies = function(store, item_id)
   local visited = {}
   local dependencies = {}
 
@@ -125,7 +106,7 @@ M.get_transitive_dependencies = function(store_or_id, maybe_id)
     end
     visited[id] = true
 
-    local item = items[id]
+    local item = store.items[id]
     if not item then
       return
     end
@@ -145,19 +126,9 @@ end
 
 -- Get all items that transitively depend on this item
 -- (items that block on this item, and items that block on those, etc.)
--- Signature: M.get_transitive_dependents(store, item_id) or M.get_transitive_dependents(item_id)
+-- Signature: M.get_transitive_dependents(store, item_id)
 -- Returns: array of items
-M.get_transitive_dependents = function(store_or_id, maybe_id)
-  local store, item_id
-  if maybe_id then
-    store = store_or_id
-    item_id = maybe_id
-  else
-    store = nil
-    item_id = store_or_id
-  end
-
-  local items = get_items(store)
+M.get_transitive_dependents = function(store, item_id)
   local visited = {}
   local dependents = {}
 
@@ -168,7 +139,7 @@ M.get_transitive_dependents = function(store_or_id, maybe_id)
     visited[id] = true
 
     -- Find all items that block on this id
-    for _, item in pairs(items) do
+    for _, item in pairs(store.items) do
       if item.blocks then
         for _, block_id in ipairs(item.blocks) do
           if block_id == id then
@@ -186,27 +157,12 @@ M.get_transitive_dependents = function(store_or_id, maybe_id)
 end
 
 -- Validate that adding blocks doesn't create a cycle
--- Signature: M.validate_blocks(store, item_id, new_blocks) or M.validate_blocks(item_id, new_blocks)
+-- Signature: M.validate_blocks(store, item_id, new_blocks)
 -- Returns: ok, err
-M.validate_blocks = function(store_or_id, item_id_or_blocks, maybe_blocks)
-  local store, item_id, new_blocks
-  if maybe_blocks then
-    -- New signature: M.validate_blocks(store, item_id, new_blocks)
-    store = store_or_id
-    item_id = item_id_or_blocks
-    new_blocks = maybe_blocks
-  else
-    -- Old signature: M.validate_blocks(item_id, new_blocks)
-    store = nil
-    item_id = store_or_id
-    new_blocks = item_id_or_blocks
-  end
-
+M.validate_blocks = function(store, item_id, new_blocks)
   if not new_blocks or #new_blocks == 0 then
     return true
   end
-
-  local items = get_items(store)
 
   -- Check for self-blocking
   for _, block_id in ipairs(new_blocks) do
@@ -215,19 +171,14 @@ M.validate_blocks = function(store_or_id, item_id_or_blocks, maybe_blocks)
     end
 
     -- Check that the block reference exists (skip the item_id itself as it may not exist yet during add)
-    if block_id ~= item_id and not items[block_id] then
+    if block_id ~= item_id and not store.items[block_id] then
       return nil, string.format("block reference '%s' does not exist", block_id)
     end
   end
 
   -- Check if this would create a cycle
   -- An item can't block on something that transitively blocks on it
-  local dependents
-  if store then
-    dependents = M.get_transitive_dependents(store, item_id)
-  else
-    dependents = M.get_transitive_dependents(item_id)
-  end
+  local dependents = M.get_transitive_dependents(store, item_id)
 
   for _, dependent in ipairs(dependents) do
     for _, block_id in ipairs(new_blocks) do
@@ -342,40 +293,20 @@ local function resolve_due_date_impl(item, visiting, items_table)
 end
 
 -- Resolve due date for an item
--- Signature: M.resolve_due_date(store, item) or M.resolve_due_date(item)
+-- Signature: M.resolve_due_date(store, item)
 -- Returns: resolved_date, warning_message
-M.resolve_due_date = function(store_or_item, maybe_item)
-  local store, item
-  if maybe_item then
-    store = store_or_item
-    item = maybe_item
-  else
-    store = nil
-    item = store_or_item
-  end
-
-  local items = get_items(store)
-  return resolve_due_date_impl(item, {}, items)
+M.resolve_due_date = function(store, item)
+  return resolve_due_date_impl(item, {}, store.items)
 end
 
 -- Get unresolved blocks for an item
 -- Returns items that are blocking this item (items that have this item in their blocks field and are not completed)
--- Signature: M.get_unresolved_blocks(store, item) or M.get_unresolved_blocks(item)
+-- Signature: M.get_unresolved_blocks(store, item)
 -- Returns: array of IDs
-M.get_unresolved_blocks = function(store_or_item, maybe_item)
-  local store, item
-  if maybe_item then
-    store = store_or_item
-    item = maybe_item
-  else
-    store = nil
-    item = store_or_item
-  end
-
-  local items = get_items(store)
+M.get_unresolved_blocks = function(store, item)
   local unresolved = {}
   -- Find all incomplete items that block on this item
-  for _, other in pairs(items) do
+  for _, other in pairs(store.items) do
     if not other.completed and other.blocks then
       for _, blocked_id in ipairs(other.blocks) do
         if blocked_id == item.id then
@@ -389,22 +320,12 @@ M.get_unresolved_blocks = function(store_or_item, maybe_item)
 end
 
 -- Check if an item is blocked
--- Signature: M.is_item_blocked(store, item) or M.is_item_blocked(item)
+-- Signature: M.is_item_blocked(store, item)
 -- Returns: boolean
-M.is_item_blocked = function(store_or_item, maybe_item)
-  local store, item
-  if maybe_item then
-    store = store_or_item
-    item = maybe_item
-  else
-    store = nil
-    item = store_or_item
-  end
-
-  local items = get_items(store)
+M.is_item_blocked = function(store, item)
   -- An item is blocked if any other incomplete item blocks on this item
   -- (meaning this item must wait for those items to complete first)
-  for _, other in pairs(items) do
+  for _, other in pairs(store.items) do
     if not other.completed and other.blocks then
       for _, blocked_id in ipairs(other.blocks) do
         if blocked_id == item.id then
@@ -417,20 +338,13 @@ M.is_item_blocked = function(store_or_item, maybe_item)
 end
 
 -- Get blocked items (items that are blocked by other incomplete items)
--- Signature: M.get_blocked_items(store) or M.get_blocked_items()
+-- Signature: M.get_blocked_items(store)
 -- Returns: array of blocked items
 M.get_blocked_items = function(store)
-  local items = get_items(store)
   local blocked = {}
-  for _, item in pairs(items) do
+  for _, item in pairs(store.items) do
     if not item.completed then
-      local is_blocked
-      if store then
-        is_blocked = M.is_item_blocked(store, item)
-      else
-        is_blocked = M.is_item_blocked(item)
-      end
-      if is_blocked then
+      if M.is_item_blocked(store, item) then
         table.insert(blocked, item)
       end
     end
@@ -439,12 +353,11 @@ M.get_blocked_items = function(store)
 end
 
 -- Get all incomplete items
--- Signature: M.get_incomplete_items(store) or M.get_incomplete_items()
+-- Signature: M.get_incomplete_items(store)
 -- Returns items that are not completed
 M.get_incomplete_items = function(store)
-  local items = get_items(store)
   local incomplete = {}
-  for _, item in pairs(items) do
+  for _, item in pairs(store.items) do
     if not item.completed then
       table.insert(incomplete, item)
     end
@@ -453,21 +366,14 @@ M.get_incomplete_items = function(store)
 end
 
 -- Get ready (unblocked) items
--- Signature: M.get_ready_items(store) or M.get_ready_items()
+-- Signature: M.get_ready_items(store)
 -- Returns items that are not completed and have no incomplete blockers
 M.get_ready_items = function(store)
-  local items = get_items(store)
   local ready = {}
-  for _, item in pairs(items) do
+  for _, item in pairs(store.items) do
     -- Skip completed items
     if not item.completed then
-      local is_blocked
-      if store then
-        is_blocked = M.is_item_blocked(store, item)
-      else
-        is_blocked = M.is_item_blocked(item)
-      end
-      if not is_blocked then
+      if not M.is_item_blocked(store, item) then
         table.insert(ready, item)
       end
     end
@@ -565,56 +471,30 @@ M.build_tree = function(items)
 end
 
 -- Enrich an item with computed fields
--- Signature: M.enrich(store, item) or M.enrich(item)
+-- Signature: M.enrich(store, item)
 -- Returns: item with _computed field
-M.enrich = function(store_or_item, maybe_item)
-  local store, item
-  if maybe_item then
-    store = store_or_item
-    item = maybe_item
-  else
-    store = nil
-    item = store_or_item
-  end
-
+M.enrich = function(store, item)
   -- Don't re-enrich
   if item._computed then
     return item
   end
 
-  local items_table = get_items(store)
-
   -- Calculate short ID (last 6 characters)
   local short_id = item.id:sub(-6)
 
   -- Resolve due date
-  local resolved_due, _
-  if store then
-    resolved_due, _ = M.resolve_due_date(store, item)
-  else
-    resolved_due, _ = M.resolve_due_date(item)
-  end
+  local resolved_due, _ = M.resolve_due_date(store, item)
   local relative_due = M.date_relative_to_today(resolved_due)
 
   -- Check if blocked
-  local is_blocked
-  if store then
-    is_blocked = M.is_item_blocked(store, item)
-  else
-    is_blocked = M.is_item_blocked(item)
-  end
+  local is_blocked = M.is_item_blocked(store, item)
 
   -- Get unresolved blocks
-  local unresolved_blocks
-  if store then
-    unresolved_blocks = M.get_unresolved_blocks(store, item)
-  else
-    unresolved_blocks = M.get_unresolved_blocks(item)
-  end
+  local unresolved_blocks = M.get_unresolved_blocks(store, item)
 
   -- Count dependents (items that block on this one)
   local dependent_count = 0
-  for _, other in pairs(items_table) do
+  for _, other in pairs(store.items) do
     if other.blocks then
       for _, block_id in ipairs(other.blocks) do
         if block_id == item.id then
@@ -638,45 +518,22 @@ M.enrich = function(store_or_item, maybe_item)
 end
 
 -- Enrich all items with computed fields
--- Signature: M.enrich_all(store, items) or M.enrich_all(items)
+-- Signature: M.enrich_all(store, items)
 -- Returns: array of enriched items
-M.enrich_all = function(store_or_items, maybe_items)
-  local store, items
-  if maybe_items then
-    store = store_or_items
-    items = maybe_items
-  else
-    store = nil
-    items = store_or_items
-  end
-
+M.enrich_all = function(store, items)
   local enriched = {}
   for _, item in ipairs(items) do
-    if store then
-      table.insert(enriched, M.enrich(store, item))
-    else
-      table.insert(enriched, M.enrich(item))
-    end
+    table.insert(enriched, M.enrich(store, item))
   end
   return enriched
 end
 
 -- Find items that have the given ID in their blocks field
--- Signature: M.find_items_blocking_on(store, target_id) or M.find_items_blocking_on(target_id)
+-- Signature: M.find_items_blocking_on(store, target_id)
 -- Returns: array of items that reference this ID
-M.find_items_blocking_on = function(store_or_id, maybe_id)
-  local store, target_id
-  if maybe_id then
-    store = store_or_id
-    target_id = maybe_id
-  else
-    store = nil
-    target_id = store_or_id
-  end
-
-  local items = get_items(store)
+M.find_items_blocking_on = function(store, target_id)
   local referencing_items = {}
-  for _, item in pairs(items) do
+  for _, item in pairs(store.items) do
     if item.blocks then
       for _, block_id in ipairs(item.blocks) do
         if block_id == target_id then
