@@ -6,12 +6,14 @@ local buffer = require("work.buffer")
 
 -- Create a floating window with common settings and keymappings
 -- Returns: buf, win
-local function create_float_window(lines, title)
+local function create_float_window(lines, title, opts)
+  opts = opts or {}
   local buf = vim.api.nvim_create_buf(false, true)
   vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
 
   local width = math.min(80, vim.o.columns - 10)
-  local height = math.min(20, vim.o.lines - 10)
+  local default_height = opts.height or 20
+  local height = math.min(default_height, vim.o.lines - 10)
   local row = math.floor((vim.o.lines - height) / 2)
   local col = math.floor((vim.o.columns - width) / 2)
 
@@ -337,7 +339,7 @@ function M.quick_capture()
     "# lines starting with # are ignored",
     "# press <CR> or CMD-Enter to save, q to cancel",
     "",
-  }, "quick capture")
+  }, "quick capture", { height = 8 })
 
   vim.api.nvim_win_set_cursor(win, {4, 0})
   vim.cmd("startinsert")
