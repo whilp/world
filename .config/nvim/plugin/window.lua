@@ -71,18 +71,10 @@ local function always_split_up()
   handle_window_split("up", true)
 end
 
--- Track last window per column for smart horizontal navigation
-local last_left_window = nil
-local last_right_window = nil
-
 -- Open file in split above left window (for external editor)
 local function open_file_in_left_split(filepath)
-  -- Move to left window
-  if last_left_window and vim.api.nvim_win_is_valid(last_left_window) then
-    vim.api.nvim_set_current_win(last_left_window)
-  else
-    vim.cmd("wincmd h")
-  end
+  -- Move to leftmost window
+  vim.cmd("wincmd h")
 
   -- Create split above
   local current_win = vim.api.nvim_get_current_win()
@@ -98,42 +90,73 @@ local function open_file_in_left_split(filepath)
   return vim.api.nvim_get_current_buf()
 end
 
--- Expose functions globally for use in terminal mode
-_G.move_or_split_down = move_or_split_down
-_G.move_or_split_up = move_or_split_up
-_G.open_file_in_left_split = open_file_in_left_split
+-- Find the maximized window in the target direction
+local function find_maximized_window_in_direction(direction)
+  local current_win = vim.api.nvim_get_current_win()
+  local current_pos = vim.api.nvim_win_get_position(current_win)
+
+  -- Get all windows in current tab
+  local windows = vim.api.nvim_tabpage_list_wins(0)
+
+  local target_windows = {}
+  for _, win in ipairs(windows) do
+    -- Skip floating windows and current window
+    local config = vim.api.nvim_win_get_config(win)
+    if config.relative == "" and win ~= current_win then
+      local pos = vim.api.nvim_win_get_position(win)
+      local height = vim.api.nvim_win_get_height(win)
+
+      -- Check if window is in the target direction
+      if direction == "left" and pos[2] < current_pos[2] then
+        table.insert(target_windows, {win = win, height = height, col = pos[2]})
+      elseif direction == "right" and pos[2] > current_pos[2] then
+        table.insert(target_windows, {win = win, height = height, col = pos[2]})
+      end
+    end
+  end
+
+  -- Find the maximized window (tallest window)
+  local max_height = 0
+  local target_win = nil
+
+  for _, info in ipairs(target_windows) do
+    if info.height > max_height then
+      max_height = info.height
+      target_win = info.win
+    end
+  end
+
+  return target_win
+end
 
 local function smart_move_left()
-  local current_win = vim.api.nvim_get_current_win()
+  local target_win = find_maximized_window_in_direction("left")
 
-  -- Store current window as last right window
-  last_right_window = current_win
-
-  -- Try to return to the last left window if it still exists
-  if last_left_window and vim.api.nvim_win_is_valid(last_left_window) then
-    vim.api.nvim_set_current_win(last_left_window)
+  if target_win then
+    vim.api.nvim_set_current_win(target_win)
   else
-    -- Fall back to default behavior
+    -- Fall back to default behavior if no window found
     vim.cmd("wincmd h")
-    last_left_window = vim.api.nvim_get_current_win()
   end
 end
 
 local function smart_move_right()
-  local current_win = vim.api.nvim_get_current_win()
+  local target_win = find_maximized_window_in_direction("right")
 
-  -- Store current window as last left window
-  last_left_window = current_win
-
-  -- Try to return to the last right window if it still exists
-  if last_right_window and vim.api.nvim_win_is_valid(last_right_window) then
-    vim.api.nvim_set_current_win(last_right_window)
+  if target_win then
+    vim.api.nvim_set_current_win(target_win)
   else
-    -- Fall back to default behavior
+    -- Fall back to default behavior if no window found
     vim.cmd("wincmd l")
-    last_right_window = vim.api.nvim_get_current_win()
   end
 end
+
+-- Expose functions globally for use in terminal mode
+_G.move_or_split_down = move_or_split_down
+_G.move_or_split_up = move_or_split_up
+_G.open_file_in_left_split = open_file_in_left_split
+_G.smart_move_left = smart_move_left
+_G.smart_move_right = smart_move_right
 
 -- Window navigation and split creation
 map("n", "<D-j>", move_or_split_down, { desc = "Move to window below or create split" })
