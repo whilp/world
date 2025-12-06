@@ -96,7 +96,7 @@ local function install_luachild_with_patch(luarocks, version, temp_dir)
   util.exec(string.format("cd %s && %s unpack luachild %s", unpack_dir, luarocks, version))
 
   local version_dir = string.format("%s/luachild-%s", unpack_dir, version)
-  local rockspec = string.format("%s/luachild-%s.rockspec", version_dir, version)
+  local rockspec = util.capture(string.format("ls %s/*.rockspec 2>/dev/null | head -1", version_dir))
   local source_file = version_dir .. "/luachild/luachild_luajit_2_1.c"
 
   if util.file_exists(source_file) then
