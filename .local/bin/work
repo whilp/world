@@ -1,0 +1,621 @@
+#!/usr/bin/env luajit
+
+package.path = os.getenv("HOME") .. "/.local/lib/lua/?.lua;" .. package.path
+
+local data = require("work.data")
+local process = require("work.process")
+local render = require("work.render")
+local posix = require("posix")
+
+local posix_glob = require("posix.glob")
+local home = os.getenv("HOME")
+local pattern = home .. "/*/*/work"
+local matches = posix_glob.glob(pattern, 0)
+local DATA_DIR
+if matches and #matches == 1 then
+  DATA_DIR = matches[1]
+else
+  error("Could not find unique work data directory matching " .. pattern)
+end
+local json_mode = false
+
+-- Signal handling for cleanup on interruption
+local signal = require("posix.signal")
+local cleanup_registry = {}
+
+local function cleanup_temp_files()
+  for _, path in ipairs(cleanup_registry) do
+    if path then
+      os.remove(path)
+    end
+  end
+end
+
+local function setup_signal_handlers()
+  local handler = function(signum)
+    cleanup_temp_files()
+    os.exit(128 + signum)
+  end
+  signal.signal(signal.SIGINT, handler)
+  signal.signal(signal.SIGTERM, handler)
+end
+
+setup_signal_handlers()
+
+local function stderr_write(msg)
+  io.stderr:write(msg .. "\n")
+  io.stderr:flush()
+end
+
+local function json_encode(data)
+  local json = require("dkjson")
+  return json.encode(data, { indent = true })
+end
+
+local function json_print(data)
+  print(json_encode(data))
+end
+
+-- Command-specific validation helper
+local function validate_field_update(item, key, value)
+  if key == "id" or key == "created" then
+    return nil, "cannot update field: " .. key
+  end
+
+  if key == "completed" then
+    -- Validate timestamp format
+    if value ~= "" and not value:match("^%d%d%d%d%-%d%d%-%d%dT%d%d:%d%d:%d%d$") then
+      return nil, "completed must be YYYY-MM-DDTHH:MM:SS format"
+    end
+  end
+
+  if key == "due" then
+    -- Validate date format (absolute or relative)
+    local is_absolute = value:match("^%d%d%d%d%-%d%d%-%d%d$")
+    local is_relative = value:match("^[+-]?%d+[dw]$")
+    if not is_absolute and not is_relative then
+      return nil, "due must be YYYY-MM-DD or relative format like -7d or +2w"
+    end
+  end
+
+  if key == "priority" then
+    local num = tonumber(value)
+    if not num then
+      return nil, "priority must be a number"
+    end
+  end
+
+  return true
+end
+
+-- Command-specific parsing helper
+local function parse_blocks_argument(blocks_str)
+  local blocks = {}
+  for short_id in blocks_str:gmatch("[^,]+") do
+    local full_id, err = data.resolve_id(short_id)
+    if not full_id then
+      return nil, err
+    end
+    table.insert(blocks, full_id)
+  end
+  return blocks
+end
+
+local function cmd_add(args)
+  if #args < 1 then
+    error("usage: work add <title> [field=value...]")
+  end
+
+  -- 1. Load data
+  local ok, err = data.load_all(DATA_DIR)
+  if not ok then error(err) end
+
+  local title = args[1]
+  local blocks = {}
+
+  local item = {
+    id = data.generate_id(),
+    title = title,
+    created = os.date("%Y-%m-%d"),
+  }
+
+  -- Parse additional field arguments
+  for i = 2, #args do
+    local key, value = args[i]:match("^([^=]+)=(.*)$")
+    if key then
+      if key == "blocks" then
+        local parsed_blocks, err = parse_blocks_argument(value)
+        if not parsed_blocks then
+          error(err)
+        end
+        blocks = parsed_blocks
+      elseif key == "description" then
+        item.description = value
+      elseif key == "due" then
+        item.due = value
+      elseif key == "priority" then
+        local num = tonumber(value)
+        if not num then
+          error("priority must be a number")
+        end
+        item.priority = num
+      else
+        error("unknown field: " .. key)
+      end
+    end
+  end
+
+  if #blocks > 0 then
+    -- 2. Process (validate blocks)
+    local ok, err = process.validate_blocks(item.id, blocks)
+    if not ok then
+      error(err)
+    end
+    item.blocks = blocks
+  end
+
+  data.items[item.id] = item
+
+  -- 3. Save
+  local ok, err = data.save(item, DATA_DIR)
+  if not ok then
+    error(err)
+  end
+
+  -- 4. Present
+  if json_mode then
+    json_print(data.clean(item))
+  else
+    print(item.id)
+  end
+end
+
+local function cmd_list(args)
+  -- 1. Load data
+  local ok, err = data.load_all(DATA_DIR)
+  if not ok then error(err) end
+
+  -- 2. Process
+  local items = data.get_all()
+  local enriched = process.enrich_all(items)
+
+  -- 3. Present
+  if json_mode then
+    local clean = {}
+    for _, item in ipairs(enriched) do
+      table.insert(clean, data.clean(item))
+    end
+    json_print(clean)
+  else
+    print(render.list(enriched))
+  end
+end
+
+local function cmd_tree(args)
+  -- 1. Load data
+  local ok, err = data.load_all(DATA_DIR)
+  if not ok then error(err) end
+
+  -- Parse optional root ID
+  local root_id = nil
+  if #args >= 1 then
+    local id, err = data.resolve_id(args[1])
+    if not id then error(err) end
+    root_id = id
+  end
+
+  -- 2. Process
+  local items = data.get_all()
+
+  -- If root_id specified, filter to just that item and items it blocks (dependents)
+  if root_id then
+    local root_item = data.get(root_id)
+    if not root_item then
+      error("work item not found: " .. root_id)
+    end
+
+    -- Get the root item plus all items that transitively depend on it
+    items = { root_item }
+    local dependents = process.get_transitive_dependents(root_id)
+    for _, item in ipairs(dependents) do
+      table.insert(items, item)
+    end
+  end
+
+  local enriched = process.enrich_all(items)
+
+  local tree_data = process.build_tree(enriched)
+
+  -- Sort roots and children by schedule
+  process.sort_by_schedule(tree_data.roots)
+  for _, children_list in pairs(tree_data.children) do
+    process.sort_by_schedule(children_list)
+  end
+
+  -- 3. Present
+  print(render.tree(tree_data))
+end
+
+local function cmd_show(args)
+  if #args < 1 then
+    error("usage: work show <id>")
+  end
+
+  -- 1. Load data
+  local ok, err = data.load_all(DATA_DIR)
+  if not ok then error(err) end
+
+  local id, err = data.resolve_id(args[1])
+  if not id then error(err) end
+
+  local item = data.get(id)
+  if not item then
+    error("work item not found: " .. id)
+  end
+
+  -- 2. Process
+  local enriched = process.enrich(item)
+
+  -- 3. Present
+  if json_mode then
+    json_print(data.clean(enriched))
+  else
+    print(render.detail(enriched))
+  end
+end
+
+local function cmd_done(args)
+  if #args < 1 then
+    error("usage: work done <id>")
+  end
+
+  -- 1. Load data
+  local ok, err = data.load_all(DATA_DIR)
+  if not ok then error(err) end
+
+  local id, err = data.resolve_id(args[1])
+  if not id then error(err) end
+
+  local item = data.get(id)
+  if not item then
+    error("work item not found: " .. id)
+  end
+
+  -- 2. Update
+  data.mark_done(item)
+
+  -- 3. Save
+  local ok, err = data.save(item, DATA_DIR)
+  if not ok then error(err) end
+
+  -- 4. Present
+  if json_mode then
+    json_print(data.clean(item))
+  else
+    print("marked done: " .. id)
+  end
+end
+
+local function cmd_update(args)
+  if #args < 2 then
+    error("usage: work update <id> <field>=<value>...")
+  end
+
+  -- 1. Load data
+  local ok, err = data.load_all(DATA_DIR)
+  if not ok then error(err) end
+
+  local id, err = data.resolve_id(args[1])
+  if not id then error(err) end
+
+  local item = data.get(id)
+  if not item then
+    error("work item not found: " .. id)
+  end
+
+  -- 2. Process updates
+  for i = 2, #args do
+    local key, value = args[i]:match("^([^=]+)=(.*)$")
+    if key then
+      -- Empty value means remove the field
+      if value == "" then
+        item[key] = nil
+      else
+        local ok, err = validate_field_update(item, key, value)
+        if not ok then
+          error(err)
+        end
+
+        if key == "blocks" then
+          local blocks, err = parse_blocks_argument(value)
+          if not blocks then
+            error(err)
+          end
+
+          -- Validate no cycles
+          local ok, err = process.validate_blocks(item.id, blocks)
+          if not ok then
+            error(err)
+          end
+
+          item[key] = blocks
+        elseif key == "priority" then
+          item[key] = tonumber(value)
+        else
+          item[key] = value
+        end
+      end
+    end
+  end
+
+  -- 3. Save
+  local ok, err = data.save(item, DATA_DIR)
+  if not ok then error(err) end
+
+  -- 4. Present
+  if json_mode then
+    json_print(data.clean(item))
+  else
+    print("updated: " .. id)
+  end
+end
+
+local function cmd_rm(args)
+  if #args < 1 then
+    error("usage: work rm <id>")
+  end
+
+  -- 1. Load data
+  local ok, err = data.load_all(DATA_DIR)
+  if not ok then error(err) end
+
+  local id, err = data.resolve_id(args[1])
+  if not id then error(err) end
+
+  local item = data.get(id)
+  if not item then
+    error("work item not found: " .. id)
+  end
+
+  -- Check for orphaned block references
+  local referencing_items = process.find_items_blocking_on(id)
+  if #referencing_items > 0 then
+    io.stderr:write("warning: deleting this item will orphan block references in:\n")
+    for _, ref_item in ipairs(referencing_items) do
+      local short_id = ref_item.id:sub(-6):lower()
+      io.stderr:write(string.format("  - %s: %s\n", short_id, ref_item.title))
+    end
+    io.stderr:flush()
+  end
+
+  local clean_copy = data.clean(item)
+
+  -- 2. Delete
+  local ok, err = data.delete(item, DATA_DIR)
+  if not ok then error(err) end
+
+  data.items[id] = nil
+
+  -- 3. Present
+  if json_mode then
+    json_print(clean_copy)
+  else
+    print("removed: " .. id)
+  end
+end
+
+-- Parse --limit and --shuffle arguments
+-- Returns: limit, shuffle
+local function parse_filter_args(args)
+  local limit = nil  -- nil means no limit
+  local shuffle = false
+
+  for _, arg in ipairs(args) do
+    if arg:match("^%-%-limit=") then
+      limit = tonumber(arg:match("^%-%-limit=(%d+)$"))
+      if not limit then
+        error("--limit must be a number")
+      end
+    elseif arg == "--shuffle" then
+      shuffle = true
+    else
+      error("unknown option: " .. arg)
+    end
+  end
+
+  return limit, shuffle
+end
+
+-- Generic function for ready/blocked commands
+local function cmd_filter_items(args, get_items_fn, render_fn, json_extra_fn)
+  local limit, shuffle = parse_filter_args(args)
+
+  -- 1. Load data
+  local ok, err = data.load_all(DATA_DIR)
+  if not ok then error(err) end
+
+  -- 2. Process
+  local items = get_items_fn()
+  local enriched = process.enrich_all(items)
+
+  if shuffle then
+    -- Sort by reversed ID (entropy is at the end)
+    table.sort(enriched, function(a, b)
+      return a.id > b.id
+    end)
+  else
+    -- Use standard schedule sorting: due date (asc), priority (desc), created (asc)
+    process.sort_by_schedule(enriched)
+  end
+
+  -- Apply limit
+  local filtered = enriched
+  if limit then
+    filtered = {}
+    for i = 1, math.min(limit, #enriched) do
+      table.insert(filtered, enriched[i])
+    end
+  end
+
+  -- 3. Present
+  if json_mode then
+    local clean = {}
+    for _, item in ipairs(filtered) do
+      local clean_item = data.clean(item)
+      if json_extra_fn then
+        json_extra_fn(clean_item, item)
+      end
+      table.insert(clean, clean_item)
+    end
+    json_print(clean)
+  else
+    print(render_fn(filtered))
+  end
+end
+
+local function cmd_blocked(args)
+  cmd_filter_items(
+    args,
+    process.get_blocked_items,
+    render.blocked,
+    function(clean_item, item)
+      clean_item.unresolved_blocks = item._computed.unresolved_blocks
+    end
+  )
+end
+
+local function cmd_ready(args)
+  cmd_filter_items(
+    args,
+    process.get_ready_items,
+    render.ready,
+    nil  -- no extra json fields
+  )
+end
+
+local function cmd_next(args)
+  cmd_filter_items(
+    args,
+    process.get_incomplete_items,
+    render.ready,
+    nil  -- no extra json fields
+  )
+end
+
+local function cmd_log(args)
+  if #args < 2 then
+    error("usage: work log id=<id> <message>")
+  end
+
+  -- 1. Load data
+  local ok, err = data.load_all(DATA_DIR)
+  if not ok then error(err) end
+
+  local short_id = args[1]:match("^id=(.+)$")
+  if not short_id then
+    error("first argument must be id=<id>")
+  end
+
+  local id, err = data.resolve_id(short_id)
+  if not id then error(err) end
+
+  local item = data.get(id)
+  if not item then
+    error("work item not found: " .. id)
+  end
+
+  -- 2. Process log entry
+  local message_parts = {}
+  for i = 2, #args do
+    table.insert(message_parts, args[i])
+  end
+  local message = table.concat(message_parts, " ")
+  local timestamp = os.date("%Y-%m-%dT%H:%M:%S")
+
+  data.add_log(item, message, timestamp)
+
+  -- 3. Save
+  local ok, err = data.save(item, DATA_DIR)
+  if not ok then error(err) end
+
+  -- 4. Present
+  if json_mode then
+    json_print({
+      id = id,
+      timestamp = timestamp,
+      message = message,
+    })
+  else
+    print("logged to " .. id .. " at " .. timestamp)
+  end
+end
+
+local function main(args)
+  -- Parse global flags
+  local filtered_args = {}
+  for _, arg in ipairs(args) do
+    if arg == "--json" then
+      json_mode = true
+    else
+      table.insert(filtered_args, arg)
+    end
+  end
+  args = filtered_args
+
+  if #args == 0 or args[1] == "help" then
+    print("usage: work [--json] <command> [args...]")
+    print("")
+    print("flags:")
+    print("  --json                             output in json format")
+    print("")
+    print("commands:")
+    print("  add <title> [field=value...]       add new work item")
+    print("  list                               list all work items")
+    print("  tree [id]                          show work items as dependency tree")
+    print("  show <id>                          show work item details")
+    print("  done <id>                          mark work item as done")
+    print("  update <id> <field>=<value>...     update work item fields")
+    print("  rm <id>                            remove work item")
+    print("  blocked                            list blocked items")
+    print("  ready [--limit=N] [--shuffle]      show next ready (unblocked) items")
+    print("  next [--limit=N] [--shuffle]       show next N incomplete items by schedule")
+    print("  log id=<id> <message>              append log entry with timestamp")
+    os.exit(0)
+  end
+
+  local command = args[1]
+  local cmd_args = { unpack(args, 2) }
+
+  if command == "add" then
+    cmd_add(cmd_args)
+  elseif command == "list" then
+    cmd_list(cmd_args)
+  elseif command == "tree" then
+    cmd_tree(cmd_args)
+  elseif command == "show" then
+    cmd_show(cmd_args)
+  elseif command == "done" then
+    cmd_done(cmd_args)
+  elseif command == "update" then
+    cmd_update(cmd_args)
+  elseif command == "rm" then
+    cmd_rm(cmd_args)
+  elseif command == "blocked" then
+    cmd_blocked(cmd_args)
+  elseif command == "ready" then
+    cmd_ready(cmd_args)
+  elseif command == "next" then
+    cmd_next(cmd_args)
+  elseif command == "log" then
+    cmd_log(cmd_args)
+  else
+    error("unknown command: " .. command)
+  end
+end
+
+local args = { ... }
+local ok, err = pcall(main, args)
+if not ok then
+  stderr_write("work: error: " .. tostring(err))
+  os.exit(1)
+end
