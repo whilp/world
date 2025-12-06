@@ -27,7 +27,7 @@
     ]
   },
   "model": "opusplan",
-  "alwaysThinkingEnabled": false,
+  "alwaysThinkingEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754368507584
   },
