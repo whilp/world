@@ -55,6 +55,7 @@ function M.edit(item_or_id)
     log_input_value = "",
     focused_section = item._focused_section or "title",
     autofocus_field = item._autofocus_field or "title",
+    show_delete_confirm = false,
   })
 
   local renderer = n.create_renderer({
@@ -332,29 +333,31 @@ function M.edit(item_or_id)
     state.logs_sort_asc = not state:get_value().logs_sort_asc
   end
 
-  local function delete_item()
+  local function show_delete_confirm()
     if is_new then
       vim.notify("work: cannot delete unsaved item", vim.log.levels.WARN)
       return
     end
+    state.show_delete_confirm = true
+  end
+
+  local function confirm_delete()
+    local deleted, del_err = work.delete(item.id)
+    if not deleted then
+      vim.notify("work: " .. del_err, vim.log.levels.ERROR)
+      return
+    end
+    vim.notify("deleted: " .. work.short_id(item))
+
+    -- Git rm and commit
+    local git = require("work.git")
+    git.commit(item.id, "delete")
 
     renderer:close()
-    vim.ui.select({ "Yes", "No" }, {
-      prompt = "Delete '" .. item.title .. "'?",
-    }, function(choice)
-      if choice == "Yes" then
-        local deleted, del_err = work.delete(item.id)
-        if not deleted then
-          vim.notify("work: " .. del_err, vim.log.levels.ERROR)
-          return
-        end
-        vim.notify("deleted: " .. work.short_id(item))
+  end
 
-        -- Git rm and commit
-        local git = require("work.git")
-        git.commit(item.id, "delete")
-      end
-    end)
+  local function cancel_delete()
+    state.show_delete_confirm = false
   end
 
   local function blocks_changed(new_blocks, old_blocks)
@@ -552,7 +555,7 @@ function M.edit(item_or_id)
   local body = function()
     local form_components = {
       n.text_input({
-        autofocus = not state:get_value().show_log_input and state:get_value().autofocus_field == "title",
+        autofocus = not state:get_value().show_log_input and not state:get_value().show_delete_confirm and state:get_value().autofocus_field == "title",
         border_label = is_new and "Title * (Ctrl+s to submit, Esc to cancel)" or "Title * (Ctrl+s to submit, Ctrl+d to delete, Esc to cancel)",
         max_lines = 1,
         value = state.title,
@@ -651,6 +654,15 @@ function M.edit(item_or_id)
       }))
     end
 
+    if state:get_value().show_delete_confirm then
+      table.insert(form_components, n.paragraph({
+        autofocus = true,
+        border_label = "Confirm delete",
+        lines = "Delete '" .. item.title .. "'?\nPress 'y' to confirm, Esc to cancel",
+        is_focusable = true,
+      }))
+    end
+
     table.insert(form_components, n.paragraph({
       border_label = "Logs (Enter to add, 's' to toggle sort)",
       lines = n.create_signal(function()
@@ -682,7 +694,16 @@ function M.edit(item_or_id)
     {
       mode = { "n" },
       key = "<C-d>",
-      handler = delete_item,
+      handler = show_delete_confirm,
+    },
+    {
+      mode = { "n" },
+      key = "y",
+      handler = function()
+        if state:get_value().show_delete_confirm then
+          confirm_delete()
+        end
+      end,
     },
     {
       mode = { "n", "i" },
@@ -710,7 +731,9 @@ function M.edit(item_or_id)
       mode = { "n" },
       key = "<Esc>",
       handler = function()
-        if state:get_value().show_log_input then
+        if state:get_value().show_delete_confirm then
+          cancel_delete()
+        elseif state:get_value().show_log_input then
           cancel_log_entry()
         else
           renderer:close()
