@@ -556,7 +556,7 @@ function M.edit(item_or_id)
     local form_components = {
       n.text_input({
         autofocus = not state:get_value().show_log_input and not state:get_value().show_delete_confirm and state:get_value().autofocus_field == "title",
-        border_label = is_new and "Title * (Ctrl+s to submit, Esc to cancel)" or "Title * (Ctrl+s to submit, X to delete, Esc to cancel)",
+        border_label = "Title *",
         max_lines = 1,
         value = state.title,
         on_change = function(value) state.title = value end,
@@ -678,6 +678,29 @@ function M.edit(item_or_id)
         state.autofocus_field = "logs"
       end,
     }))
+
+    -- Action buttons at the bottom
+    local action_buttons = {}
+
+    table.insert(action_buttons, n.button({
+      label = "Submit (Ctrl+s)",
+      on_press = function()
+        if state:get_value().show_log_input then
+          submit_log_entry()
+        else
+          submit_form()
+        end
+      end,
+    }))
+
+    if not is_new then
+      table.insert(action_buttons, n.button({
+        label = "Delete (X)",
+        on_press = show_delete_confirm,
+      }))
+    end
+
+    table.insert(form_components, n.columns(unpack(action_buttons)))
 
     return n.rows(unpack(form_components))
   end
