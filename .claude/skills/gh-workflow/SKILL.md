@@ -11,12 +11,13 @@ Run GitHub workflows on github.com
 
 When the user asks to run a workflow:
 
-1. Check the workflow file in `.github/workflows/` to understand its trigger type and inputs
-2. **Ensure code is pushed to the github.com remote** before triggering workflows:
-   - Workflows run on github.com, not corp/internal git servers
-   - Check the correct remote with `git remote -v | grep github.com`
-   - Push to the github remote: `git push github main` (or appropriate remote name)
-   - Verify the push completed: `git fetch github && git log github/main -1`
+1. **Verify git remotes and confirm commits are pushed** (MANDATORY):
+   - Check remotes: `git remote -v | grep github.com`
+   - Get current commit: `git rev-parse HEAD`
+   - Verify commit exists on remote: `git fetch github && git branch -r --contains $(git rev-parse HEAD) | grep -q github/`
+   - If not found, push first: `git push github HEAD:main` (or appropriate branch name)
+   - Quick check: `git fetch github && git branch -r --contains HEAD | grep -q github/ || echo "WARNING: HEAD not pushed to github"`
+2. Check the workflow file in `.github/workflows/` to understand its trigger type and inputs
 3. For `workflow_dispatch` workflows: trigger directly with `gh workflow run`
 4. For `push` workflows: push to the remote first, then the workflow runs automatically
 5. Use appropriate parameters based on the workflow's input definitions
@@ -58,8 +59,11 @@ For workflows with matrix builds, test with the fastest variant first:
 # Run workflow_dispatch workflow with inputs
 GH_HOST=github.com gh workflow run luajit.yml -f release_tag=2025.11.23 -f create_release=true
 
-# Run workflow on specific branch
-GH_HOST=github.com gh workflow run luajit.yml --ref main
+# Run workflow at specific commit (preferred - explicit and reproducible)
+GH_HOST=github.com gh workflow run luajit.yml --ref $(git rev-parse HEAD)
+
+# Or with explicit SHA
+GH_HOST=github.com gh workflow run luajit.yml --ref abc1234
 
 # Run without creating release (testing)
 GH_HOST=github.com gh workflow run nvim.yml -f create_release=false
