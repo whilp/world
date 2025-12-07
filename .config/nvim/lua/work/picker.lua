@@ -219,6 +219,16 @@ local function setup_mappings()
         require("work.form").edit(current.item)
       end,
     },
+    open_form_enter = {
+      char = "<CR>",
+      func = function()
+        local matches = MiniPick.get_picker_matches()
+        local current = matches.current
+        if not current or not current.item then return end
+        MiniPick.stop()
+        require("work.form").edit(current.item)
+      end,
+    },
   }
 end
 

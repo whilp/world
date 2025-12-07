@@ -133,30 +133,32 @@ function M.edit(item_or_id)
     end
   end
 
-  local body = n.rows(
-    { flex = 0 },
-    n.text_input({
-      autofocus = true,
-      border_label = "Title *",
-      max_lines = 1,
-      value = state.title,
-      on_change = function(value) state.title = value end,
-    }),
-    n.gap(1),
-    n.text_input({
-      border_label = "Due (YYYY-MM-DD or +1d, +2w)",
-      max_lines = 1,
-      value = state.due,
-      on_change = function(value) state.due = value end,
-    }),
-    n.gap(1),
-    n.text_input({
-      border_label = "Description",
-      max_lines = 10,
-      value = state.description,
-      on_change = function(value) state.description = value end,
-    })
-  )
+  local body = function()
+    return n.rows(
+      { flex = 0 },
+      n.text_input({
+        autofocus = true,
+        border_label = "Title *",
+        max_lines = 1,
+        value = state.title,
+        on_change = function(value) state.title = value end,
+      }),
+      n.text_input({
+        border_label = "Due (YYYY-MM-DD or +1d, +2w)",
+        max_lines = 1,
+        value = state.due,
+        on_change = function(value) state.due = value end,
+      }),
+      n.text_input({
+        border_label = "Description",
+        max_lines = 10,
+        autoresize = true,
+        wrap = true,
+        value = state.description,
+        on_change = function(value) state.description = value end,
+      })
+    )
+  end
 
   renderer:add_mappings({
     {
@@ -174,20 +176,6 @@ function M.edit(item_or_id)
       key = "<Esc>",
       handler = function()
         renderer:close()
-      end,
-    },
-    {
-      mode = { "n", "i" },
-      key = "<Tab>",
-      handler = function()
-        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Tab>", true, false, true), "n", false)
-      end,
-    },
-    {
-      mode = { "n", "i" },
-      key = "<S-Tab>",
-      handler = function()
-        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<S-Tab>", true, false, true), "n", false)
       end,
     },
   })
