@@ -8,6 +8,7 @@ local validators = {
   title = function(v) return v ~= "" end,
   date = function(v) return v == "" or v:match("^%d%d%d%d%-%d%d%-%d%d$") end,
   due = function(v) return v == "" or v:match("^%d%d%d%d%-%d%d%-%d%d$") or v:match("^[+-]?%d+[dw]$") end,
+  timestamp = function(v) return v == "" or v:match("^%d%d%d%d%-%d%d%-%d%dT%d%d:%d%d:%d%d$") end,
 }
 
 
@@ -30,6 +31,8 @@ function M.edit(item_or_id)
     title = item.title or "",
     due = item.due or "",
     description = item.description or "",
+    started = item.started or "",
+    completed = item.completed or "",
     blocks = item.blocks or {},
     log = item.log or {},
     logs_sort_asc = true,
@@ -41,6 +44,18 @@ function M.edit(item_or_id)
     width = 80,
     height = 20,
   })
+
+  local function format_relative_days(days)
+    if days == 0 then
+      return "0d"
+    end
+    local sign = days > 0 and "+" or ""
+    local abs_days = math.abs(days)
+    if abs_days % 7 == 0 then
+      return sign .. (days / 7) .. "w"
+    end
+    return sign .. days .. "d"
+  end
 
   local function format_due_date(due_date)
     if not due_date or due_date == "" then
@@ -72,12 +87,31 @@ function M.edit(item_or_id)
     return string.format("%s (%s)", due_date, relative)
   end
 
+  local function format_timestamp(ts, label)
+    if not ts or ts == "" then
+      return label
+    end
+
+    local year, month, day = ts:match("(%d%d%d%d)-(%d%d)-(%d%d)")
+    if not year then
+      return label
+    end
+
+    local ts_time = os.time({ year = tonumber(year), month = tonumber(month), day = tonumber(day), hour = 0 })
+    local today_time = os.time({ year = os.date("%Y"), month = os.date("%m"), day = os.date("%d"), hour = 0 })
+    local days_diff = math.floor((ts_time - today_time) / 86400)
+
+    return format_relative_days(days_diff)
+  end
+
   local function reopen_with_state(extra_fields)
     local current_state = state:get_value()
     local updated_item = vim.deepcopy(item)
     updated_item.title = current_state.title
     updated_item.due = current_state.due
     updated_item.description = current_state.description
+    updated_item.started = current_state.started
+    updated_item.completed = current_state.completed
     updated_item.blocks = current_state.blocks
     updated_item.log = current_state.log
 
@@ -310,6 +344,16 @@ function M.edit(item_or_id)
       return
     end
 
+    if not validators.timestamp(state:get_value().started) then
+      vim.notify("work: invalid started timestamp format", vim.log.levels.ERROR)
+      return
+    end
+
+    if not validators.timestamp(state:get_value().completed) then
+      vim.notify("work: invalid completed timestamp format", vim.log.levels.ERROR)
+      return
+    end
+
     local parsed_due = state:get_value().due
     if parsed_due ~= "" then
       local resolved = util.parse_relative_date(parsed_due)
@@ -336,6 +380,16 @@ function M.edit(item_or_id)
 
     if state:get_value().description ~= (original.description or "") then
       updates.description = state:get_value().description == "" and nil or state:get_value().description
+      has_updates = true
+    end
+
+    if state:get_value().started ~= (original.started or "") then
+      updates.started = state:get_value().started == "" and nil or state:get_value().started
+      has_updates = true
+    end
+
+    if state:get_value().completed ~= (original.completed or "") then
+      updates.completed = state:get_value().completed == "" and nil or state:get_value().completed
       has_updates = true
     end
 
@@ -417,6 +471,34 @@ function M.edit(item_or_id)
         wrap = true,
         value = state.description,
         on_change = function(value) state.description = value end,
+      }),
+      n.button({
+        border_label = "Started",
+        label = state.started:map(function(ts) return format_timestamp(ts, "Not started") end),
+        on_press = function()
+          renderer:close()
+          local date_picker = require("work.date_picker")
+          date_picker.pick(function(selected_date)
+            vim.schedule(function()
+              local ts = selected_date and (selected_date .. "T" .. os.date("%H:%M:%S"))
+              reopen_with_state({ started = ts or "" })
+            end)
+          end, { from = -30, to = 0 })
+        end,
+      }),
+      n.button({
+        border_label = "Completed",
+        label = state.completed:map(function(ts) return format_timestamp(ts, "Not completed") end),
+        on_press = function()
+          renderer:close()
+          local date_picker = require("work.date_picker")
+          date_picker.pick(function(selected_date)
+            vim.schedule(function()
+              local ts = selected_date and (selected_date .. "T" .. os.date("%H:%M:%S"))
+              reopen_with_state({ completed = ts or "" })
+            end)
+          end, { from = -30, to = 0 })
+        end,
       }),
       n.paragraph({
         border_label = "Blocks ('a' to add, 'd' to delete)",
