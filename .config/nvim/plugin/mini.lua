@@ -75,6 +75,10 @@ if ok_hues then
 
   vim.g.colors_name = "minihues"
 
+  -- Make floating windows match the color scheme
+  vim.api.nvim_set_hl(0, "FloatBorder", { link = "Normal" })
+  vim.api.nvim_set_hl(0, "NormalFloat", { link = "Normal" })
+
 end
 
 -- mini.pick keybindings (only if mini.pick is available)
