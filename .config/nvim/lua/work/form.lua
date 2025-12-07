@@ -719,6 +719,14 @@ function M.edit(item_or_id)
       end,
     }))
 
+    table.insert(action_buttons, n.button({
+      label = "Cancel",
+      flex = 1,
+      on_press = function()
+        renderer:close()
+      end,
+    }))
+
     if not is_new then
       table.insert(action_buttons, n.button({
         label = "Delete",
