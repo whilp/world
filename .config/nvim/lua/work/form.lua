@@ -40,6 +40,8 @@ function M.edit(item_or_id)
     item = item_or_id
   end
 
+  -- Preserve the original log data across reopens
+  local original_log = item._original_log or vim.deepcopy(item.log or {})
   local original = vim.deepcopy(item)
 
   local state = n.create_signal({
@@ -50,13 +52,14 @@ function M.edit(item_or_id)
     completed = item.completed or "",
     blocks = item.blocks or {},
     log = item.log or {},
-    logs_sort_asc = true,
+    logs_sort_asc = item._logs_sort_asc ~= nil and item._logs_sort_asc or false,  -- Default to descending (newest first)
     show_log_input = item._show_log_input or false,
     log_input_value = "",
     focused_section = item._focused_section or "title",
     autofocus_field = item._autofocus_field or "title",
     show_delete_confirm = false,
   })
+
 
   local renderer = n.create_renderer({
     width = 80,
@@ -144,6 +147,8 @@ function M.edit(item_or_id)
     updated_item.log = current_state.log
     updated_item._focused_section = current_state.focused_section
     updated_item._autofocus_field = current_state.autofocus_field
+    updated_item._logs_sort_asc = current_state.logs_sort_asc
+    updated_item._original_log = original_log  -- Preserve original log across reopens
 
     if extra_fields then
       for k, v in pairs(extra_fields) do
@@ -172,16 +177,20 @@ function M.edit(item_or_id)
     return table.concat(titles, "\n")
   end
 
-  local function format_logs(log_table, sort_asc)
-    if not log_table or vim.tbl_count(log_table) == 0 then
+  local function format_logs(log_table, sort_asc, original_log)
+    local count = log_table and vim.tbl_count(log_table) or 0
+
+    if not log_table or count == 0 then
       return "No logs (press Enter to add)"
     end
 
     local entries = {}
     for timestamp, message in pairs(log_table) do
-      table.insert(entries, { timestamp = timestamp, message = message })
+      local is_draft = not (original_log and original_log[timestamp])
+      table.insert(entries, { timestamp = timestamp, message = message, is_draft = is_draft })
     end
 
+    -- Sort descending by default (newest first)
     table.sort(entries, function(a, b)
       if sort_asc then
         return a.timestamp < b.timestamp
@@ -190,10 +199,13 @@ function M.edit(item_or_id)
       end
     end)
 
+    -- Limit to 5 most recent
     local lines = {}
-    for _, entry in ipairs(entries) do
+    for i, entry in ipairs(entries) do
+      if i > 5 then break end
       local time_part = entry.timestamp:match("T(.+)$") or entry.timestamp
-      local line = string.format("• %s  %s", time_part, entry.message)
+      local bullet = entry.is_draft and "◉" or "●"
+      local line = string.format("%s %s  %s", bullet, time_part, entry.message)
       table.insert(lines, line)
     end
 
@@ -318,8 +330,11 @@ function M.edit(item_or_id)
   end
 
   local function add_log_entry()
-    state.show_log_input = true
-    state.log_input_value = ""
+    state.autofocus_field = "log_input"
+    renderer:close()
+    vim.schedule(function()
+      reopen_with_state({ _show_log_input = true, _autofocus_field = "log_input" })
+    end)
   end
 
   local function submit_log_entry()
@@ -328,19 +343,27 @@ function M.edit(item_or_id)
       local timestamp = os.date("%Y-%m-%dT%H:%M:%S")
       local updated_log = vim.deepcopy(state:get_value().log)
       updated_log[timestamp] = message
-      state.log = updated_log
-      state.show_log_input = false
-      state.log_input_value = ""
+
+      renderer:close()
+      vim.schedule(function()
+        reopen_with_state({ log = updated_log, _show_log_input = false, _autofocus_field = "logs" })
+      end)
     end
   end
 
   local function cancel_log_entry()
-    state.show_log_input = false
-    state.log_input_value = ""
+    renderer:close()
+    vim.schedule(function()
+      reopen_with_state({ _show_log_input = false, _autofocus_field = "logs" })
+    end)
   end
 
   local function toggle_logs_sort()
-    state.logs_sort_asc = not state:get_value().logs_sort_asc
+    local new_sort = not state:get_value().logs_sort_asc
+    renderer:close()
+    vim.schedule(function()
+      reopen_with_state({ _logs_sort_asc = new_sort, _autofocus_field = "logs" })
+    end)
   end
 
   local function show_delete_confirm()
@@ -671,6 +694,10 @@ function M.edit(item_or_id)
         max_lines = 3,
         value = state.log_input_value,
         on_change = function(value) state.log_input_value = value end,
+        on_focus = function()
+          state.focused_section = "log_input"
+          state.autofocus_field = "log_input"
+        end,
         window = {
           highlight = {
             NormalFloat = "Normal",
@@ -693,9 +720,9 @@ function M.edit(item_or_id)
 
     table.insert(form_components, n.paragraph({
       border_label = "Logs (Enter to add, 's' to toggle sort)",
-      lines = n.create_signal(function()
-        return format_logs(state.log:get_value(), state.logs_sort_asc:get_value())
-      end, { state.log, state.logs_sort_asc }),
+      lines = state.log:map(function(log)
+        return format_logs(log, state.logs_sort_asc:get_value(), original_log)
+      end),
       is_focusable = true,
       autofocus = state:get_value().autofocus_field == "logs",
       on_focus = function()
@@ -816,6 +843,8 @@ function M.edit(item_or_id)
       handler = function()
         if state:get_value().focused_section == "blocks" then
           add_blocks()
+        elseif state:get_value().show_log_input then
+          submit_log_entry()
         else
           add_log_entry()
         end
