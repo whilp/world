@@ -124,7 +124,7 @@ end
 
 local function main()
   local script_dir = arg[0]:match("^(.*/)") or "./"
-  local workspace_root = util.capture(string.format("cd %s../../ && pwd", script_dir))
+  local workspace_root = util.capture(string.format("cd %s../../../ && pwd", script_dir))
   local lock_file = workspace_root .. "/.config/nvim/nvim-pack-lock.json"
 
   local pack_lock = load_pack_lock(lock_file)
