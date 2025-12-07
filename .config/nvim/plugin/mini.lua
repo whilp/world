@@ -17,10 +17,6 @@ end
 local ok_pick, _ = pcall(require, "mini.pick")
 if ok_pick then
   require("mini.pick").setup()
-
-  -- Override mini.pick highlights to match normal background
-  vim.api.nvim_set_hl(0, "MiniPickBorder", { link = "Normal" })
-  vim.api.nvim_set_hl(0, "MiniPickNormal", { link = "Normal" })
 end
 
 local ok_extra, _ = pcall(require, "mini.extra")
@@ -82,6 +78,10 @@ if ok_hues then
   -- Make floating windows match the color scheme
   vim.api.nvim_set_hl(0, "FloatBorder", { link = "Normal" })
   vim.api.nvim_set_hl(0, "NormalFloat", { link = "Normal" })
+
+  -- Make mini.pick windows match the color scheme
+  vim.api.nvim_set_hl(0, "MiniPickBorder", { link = "Normal" })
+  vim.api.nvim_set_hl(0, "MiniPickNormal", { link = "Normal" })
 
 end
 
