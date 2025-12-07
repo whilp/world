@@ -682,8 +682,10 @@ function M.edit(item_or_id)
     -- Action buttons at the bottom
     local action_buttons = {}
 
+    table.insert(action_buttons, n.gap())
+
     table.insert(action_buttons, n.button({
-      label = "Submit (Ctrl+s)",
+      label = "Submit",
       on_press = function()
         if state:get_value().show_log_input then
           submit_log_entry()
@@ -695,10 +697,12 @@ function M.edit(item_or_id)
 
     if not is_new then
       table.insert(action_buttons, n.button({
-        label = "Delete (X)",
+        label = "Delete",
         on_press = show_delete_confirm,
       }))
     end
+
+    table.insert(action_buttons, n.gap())
 
     table.insert(form_components, n.columns(unpack(action_buttons)))
 
