@@ -710,6 +710,34 @@ function M.edit(item_or_id)
   renderer:add_mappings({
     {
       mode = { "n" },
+      key = "<C-n>",
+      handler = function()
+        renderer:focus_next()
+      end,
+    },
+    {
+      mode = { "n" },
+      key = "<C-p>",
+      handler = function()
+        renderer:focus_prev()
+      end,
+    },
+    {
+      mode = { "n" },
+      key = "<Down>",
+      handler = function()
+        renderer:focus_next()
+      end,
+    },
+    {
+      mode = { "n" },
+      key = "<Up>",
+      handler = function()
+        renderer:focus_prev()
+      end,
+    },
+    {
+      mode = { "n" },
       key = "<C-s>",
       handler = function()
         if state:get_value().show_log_input then
