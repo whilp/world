@@ -79,6 +79,10 @@ if ok_hues then
   vim.api.nvim_set_hl(0, "FloatBorder", { link = "Normal" })
   vim.api.nvim_set_hl(0, "NormalFloat", { link = "Normal" })
 
+  -- Make mini.pick windows match the color scheme
+  vim.api.nvim_set_hl(0, "MiniPickBorder", { link = "Normal" })
+  vim.api.nvim_set_hl(0, "MiniPickNormal", { link = "Normal" })
+
 end
 
 -- mini.pick keybindings (only if mini.pick is available)
