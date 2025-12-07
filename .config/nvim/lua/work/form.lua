@@ -349,6 +349,10 @@ function M.edit(item_or_id)
           return
         end
         vim.notify("deleted: " .. work.short_id(item))
+
+        -- Git rm and commit
+        local git = require("work.git")
+        git.commit(item.id, "delete")
       end
     end)
   end
@@ -549,7 +553,7 @@ function M.edit(item_or_id)
     local form_components = {
       n.text_input({
         autofocus = not state:get_value().show_log_input and state:get_value().autofocus_field == "title",
-        border_label = is_new and "Title * (Ctrl+s to submit, Esc to cancel)" or "Title * (Ctrl+s to submit, D to delete, Esc to cancel)",
+        border_label = is_new and "Title * (Ctrl+s to submit, Esc to cancel)" or "Title * (Ctrl+s to submit, Ctrl+d to delete, Esc to cancel)",
         max_lines = 1,
         value = state.title,
         on_change = function(value) state.title = value end,
@@ -677,7 +681,7 @@ function M.edit(item_or_id)
     },
     {
       mode = { "n" },
-      key = "D",
+      key = "<C-d>",
       handler = delete_item,
     },
     {
