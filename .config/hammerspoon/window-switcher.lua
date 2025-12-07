@@ -69,12 +69,22 @@ local function showSwitcher(applyFilter)
 
   if not chooser then
     chooser = hs.chooser.new(function(choice)
-      if choice then
-        if isEmojiMode and choice.emoji then
-          emojiPicker.insertEmoji(choice.emoji)
-        elseif isSymbolMode and choice.symbol then
-          symbolPicker.insertSymbol(choice.symbol)
-        elseif choice.window then
+      if not choice then return end
+
+      -- For emoji/symbol modes that need to keep chooser open, handle inline
+      if isEmojiMode and choice.emoji then
+        emojiPicker.insertEmoji(choice.emoji)
+        return
+      elseif isSymbolMode and choice.symbol then
+        symbolPicker.insertSymbol(choice.symbol)
+        return
+      end
+
+      -- For everything else, close chooser immediately and execute asynchronously
+      chooser:hide()
+
+      hs.timer.doAfter(0, function()
+        if choice.window then
           choice.window:focus()
         elseif choice.appName then
           local app = hs.application.get(choice.appName)
@@ -89,14 +99,12 @@ local function showSwitcher(applyFilter)
             local result = leaderModal.execute_action(action)
             if result == "emoji" then
               switchToEmojiMode()
-              return
             elseif result == "symbol" then
               switchToSymbolMode()
-              return
             end
           end
         end
-      end
+      end)
     end)
 
     chooserStyle.apply(chooser)
