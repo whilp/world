@@ -438,6 +438,10 @@ function M.edit(item_or_id)
         end
       end
 
+      -- Commit the new item to git
+      local git = require("work.git")
+      git.commit(item.id, "add")
+
       renderer:close()
       return
     end
