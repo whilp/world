@@ -589,7 +589,7 @@ function M.edit(item_or_id)
     local form_components = {
       n.text_input({
         autofocus = not state:get_value().show_log_input and not state:get_value().show_delete_confirm and state:get_value().autofocus_field == "title",
-        border_label = "Title *",
+        border_label = "[T]itle *",
         max_lines = 1,
         value = state.title,
         on_change = function(value) state.title = value end,
@@ -603,7 +603,7 @@ function M.edit(item_or_id)
         },
       }),
       n.button({
-        border_label = "Due",
+        border_label = "D[u]e",
         label = state.due:map(function(due) return format_due_date(due) end),
         autofocus = state:get_value().autofocus_field == "due",
         on_press = function()
@@ -621,7 +621,7 @@ function M.edit(item_or_id)
         end,
       }),
       n.text_input({
-        border_label = "Description",
+        border_label = "D[e]scription",
         max_lines = 10,
         autoresize = true,
         wrap = true,
@@ -638,7 +638,7 @@ function M.edit(item_or_id)
         },
       }),
       n.button({
-        border_label = "Started",
+        border_label = "St[a]rted",
         label = state.started:map(function(ts) return format_timestamp(ts, "Not started") end),
         autofocus = state:get_value().autofocus_field == "started",
         on_press = function()
@@ -657,7 +657,7 @@ function M.edit(item_or_id)
         end,
       }),
       n.button({
-        border_label = "Completed",
+        border_label = "C[o]mpleted",
         label = state.completed:map(function(ts) return format_timestamp(ts, "Not completed") end),
         autofocus = state:get_value().autofocus_field == "completed",
         on_press = function()
@@ -676,7 +676,7 @@ function M.edit(item_or_id)
         end,
       }),
       n.paragraph({
-        border_label = "Blocks (Enter to add, 'd' to delete)",
+        border_label = "[B]locks (Enter to add, 'd' to delete)",
         lines = state.blocks:map(function(blocks) return format_blocks(blocks) end),
         is_focusable = true,
         autofocus = state:get_value().autofocus_field == "blocks",
@@ -719,7 +719,7 @@ function M.edit(item_or_id)
     end
 
     table.insert(form_components, n.paragraph({
-      border_label = "Logs (Enter to add, 's' to toggle sort)",
+      border_label = "[L]ogs (Enter to add, 's' to toggle sort)",
       lines = state.log:map(function(log)
         return format_logs(log, state.logs_sort_asc:get_value(), original_log)
       end),
@@ -735,7 +735,7 @@ function M.edit(item_or_id)
     local action_buttons = {}
 
     table.insert(action_buttons, n.button({
-      label = "Submit",
+      label = "[S]ubmit",
       flex = 1,
       on_press = function()
         if state:get_value().show_log_input then
@@ -747,7 +747,7 @@ function M.edit(item_or_id)
     }))
 
     table.insert(action_buttons, n.button({
-      label = "Cancel",
+      label = "[C]ancel",
       flex = 1,
       on_press = function()
         renderer:close()
@@ -756,7 +756,7 @@ function M.edit(item_or_id)
 
     if not is_new then
       table.insert(action_buttons, n.button({
-        label = "Delete",
+        label = "[D]elete",
         flex = 1,
         on_press = show_delete_confirm,
       }))
@@ -834,6 +834,8 @@ function M.edit(item_or_id)
       handler = function()
         if state:get_value().focused_section == "blocks" then
           delete_blocks()
+        else
+          show_delete_confirm()
         end
       end,
     },
@@ -856,7 +858,99 @@ function M.edit(item_or_id)
       handler = function()
         if state:get_value().focused_section == "logs" then
           toggle_logs_sort()
+        else
+          submit_form()
         end
+      end,
+    },
+    {
+      mode = { "n" },
+      key = "c",
+      handler = function()
+        if state:get_value().show_delete_confirm then
+          cancel_delete()
+        elseif state:get_value().show_log_input then
+          cancel_log_entry()
+        else
+          renderer:close()
+        end
+      end,
+    },
+    {
+      mode = { "n" },
+      key = "t",
+      handler = function()
+        state.autofocus_field = "title"
+        renderer:close()
+        vim.schedule(function()
+          reopen_with_state({ _autofocus_field = "title" })
+        end)
+      end,
+    },
+    {
+      mode = { "n" },
+      key = "u",
+      handler = function()
+        state.autofocus_field = "due"
+        renderer:close()
+        vim.schedule(function()
+          reopen_with_state({ _autofocus_field = "due" })
+        end)
+      end,
+    },
+    {
+      mode = { "n" },
+      key = "e",
+      handler = function()
+        state.autofocus_field = "description"
+        renderer:close()
+        vim.schedule(function()
+          reopen_with_state({ _autofocus_field = "description" })
+        end)
+      end,
+    },
+    {
+      mode = { "n" },
+      key = "b",
+      handler = function()
+        state.autofocus_field = "blocks"
+        renderer:close()
+        vim.schedule(function()
+          reopen_with_state({ _autofocus_field = "blocks" })
+        end)
+      end,
+    },
+    {
+      mode = { "n" },
+      key = "l",
+      handler = function()
+        state.autofocus_field = "logs"
+        renderer:close()
+        vim.schedule(function()
+          reopen_with_state({ _autofocus_field = "logs" })
+        end)
+      end,
+    },
+    {
+      mode = { "n" },
+      key = "a",
+      handler = function()
+        state.autofocus_field = "started"
+        renderer:close()
+        vim.schedule(function()
+          reopen_with_state({ _autofocus_field = "started" })
+        end)
+      end,
+    },
+    {
+      mode = { "n" },
+      key = "o",
+      handler = function()
+        state.autofocus_field = "completed"
+        renderer:close()
+        vim.schedule(function()
+          reopen_with_state({ _autofocus_field = "completed" })
+        end)
       end,
     },
   })
