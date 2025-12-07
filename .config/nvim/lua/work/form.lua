@@ -556,7 +556,7 @@ function M.edit(item_or_id)
     local form_components = {
       n.text_input({
         autofocus = not state:get_value().show_log_input and not state:get_value().show_delete_confirm and state:get_value().autofocus_field == "title",
-        border_label = is_new and "Title * (Ctrl+s to submit, Esc to cancel)" or "Title * (Ctrl+s to submit, Ctrl+d to delete, Esc to cancel)",
+        border_label = is_new and "Title * (Ctrl+s to submit, Esc to cancel)" or "Title * (Ctrl+s to submit, X to delete, Esc to cancel)",
         max_lines = 1,
         value = state.title,
         on_change = function(value) state.title = value end,
@@ -657,9 +657,12 @@ function M.edit(item_or_id)
     if state:get_value().show_delete_confirm then
       table.insert(form_components, n.paragraph({
         autofocus = true,
-        border_label = "Confirm delete",
-        lines = "Delete '" .. item.title .. "'?\nPress 'y' to confirm, Esc to cancel",
+        border_label = "Confirm delete (press 'y' to confirm, Esc to cancel)",
+        lines = "Delete '" .. item.title .. "'?",
         is_focusable = true,
+        on_focus = function()
+          state.focused_section = "delete_confirm"
+        end,
       }))
     end
 
@@ -693,7 +696,7 @@ function M.edit(item_or_id)
     },
     {
       mode = { "n" },
-      key = "<C-d>",
+      key = "X",
       handler = show_delete_confirm,
     },
     {
