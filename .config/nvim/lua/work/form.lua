@@ -61,6 +61,10 @@ function M.edit(item_or_id)
   local renderer = n.create_renderer({
     width = 80,
     height = 20,
+    keymap = {
+      focus_next = { "<Tab>", "<C-n>", "<Down>" },
+      focus_prev = { "<S-Tab>", "<C-p>", "<Up>" },
+    },
   })
 
   local function format_relative_days(days)
