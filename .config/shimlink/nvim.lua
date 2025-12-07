@@ -15,8 +15,9 @@ Version{
       sha256 = "92b09500a845d5c5dd35473b28486c188a836ccc4fa3ab7fe54d2ce0777b4e0d"
     }
   },
+  release = "2025.12.07-c016a4c",
   repo = "whilp/dotfiles",
   strip_components = 1,
-  url = "https://github.com/${repo}/releases/download/${version}/${name}-${version}-${arch}.tar.gz",
-  version = "2025.12.07-c016a4c"
+  url = "https://github.com/${repo}/releases/download/${release}/${name}-${version}-${arch}.tar.gz",
+  version = "2025.12.07"
 }
