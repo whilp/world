@@ -183,12 +183,32 @@ function M.edit(item_or_id)
         value = state.title,
         on_change = function(value) state.title = value end,
       }),
-      n.text_input({
-        border_label = "Due (YYYY-MM-DD or +1d, +2w)",
-        max_lines = 1,
-        value = state.due,
-        on_change = function(value) state.due = value end,
-      }),
+      n.columns(
+        { flex = 0 },
+        n.text_input({
+          flex = 1,
+          border_label = "Due (YYYY-MM-DD or +1d, +2w)",
+          max_lines = 1,
+          value = state.due,
+          on_change = function(value) state.due = value end,
+        }),
+        n.button({
+          label = "Pick date",
+          on_press = function()
+            local current_state = state:get_value()
+            renderer:close()
+            local date_picker = require("work.date_picker")
+            date_picker.pick(function(selected_date)
+              local updated_item = vim.deepcopy(item)
+              updated_item.title = current_state.title
+              updated_item.due = selected_date
+              updated_item.description = current_state.description
+              updated_item.blocks = current_state.blocks
+              M.edit(updated_item)
+            end)
+          end,
+        })
+      ),
       n.text_input({
         border_label = "Description",
         max_lines = 10,
