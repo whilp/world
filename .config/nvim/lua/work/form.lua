@@ -573,6 +573,11 @@ function M.edit(item_or_id)
         on_focus = function()
           state.autofocus_field = "title"
         end,
+        window = {
+          highlight = {
+            NormalFloat = "Normal",
+          },
+        },
       }),
       n.button({
         border_label = "Due",
@@ -603,6 +608,11 @@ function M.edit(item_or_id)
         on_focus = function()
           state.autofocus_field = "description"
         end,
+        window = {
+          highlight = {
+            NormalFloat = "Normal",
+          },
+        },
       }),
       n.button({
         border_label = "Started",
@@ -661,6 +671,11 @@ function M.edit(item_or_id)
         max_lines = 3,
         value = state.log_input_value,
         on_change = function(value) state.log_input_value = value end,
+        window = {
+          highlight = {
+            NormalFloat = "Normal",
+          },
+        },
       }))
     end
 
