@@ -126,6 +126,8 @@ function M.download_file(url, dest_path)
   req.headers:upsert(":method", "GET")
   req.headers:upsert("user-agent", "shimlink/1.0")
   req.version = 1.1  -- Force HTTP/1.1 to avoid HTTP/2 bugs with large files
+  req.follow_redirects = true  -- Ensure redirects are followed for GitHub releases
+  req.max_redirects = 10
 
   local headers, stream = req:go()
   if not headers then

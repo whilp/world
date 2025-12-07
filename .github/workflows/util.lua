@@ -109,7 +109,7 @@ function M.create_tarball(staging_dir, binary_name, output_path, platform, sourc
 
   if platform.is_darwin then
     M.exec(string.format(
-      "cd %s && find %s -print0 | sort -z | tar -cf - --null -T - | gzip -n > %s",
+      "cd %s && find %s -type f -print0 | sort -z | tar -cf - --null -T - | gzip -n > %s",
       staging_dir, binary_name, output_path))
   else
     local mtime_opt = source_date_epoch and string.format("--mtime='@%s'", source_date_epoch) or ""
