@@ -80,12 +80,8 @@ if ok_hues then
   vim.api.nvim_set_hl(0, "NormalFloat", { link = "Normal" })
 
   -- Make mini.pick windows match the color scheme
-  -- Use schedule to ensure this happens after mini.hues sets its highlights
-  vim.schedule(function()
-    local normal_hl = vim.api.nvim_get_hl(0, { name = "Normal" })
-    vim.api.nvim_set_hl(0, "MiniPickBorder", { fg = normal_hl.fg, bg = normal_hl.bg })
-    vim.api.nvim_set_hl(0, "MiniPickNormal", { fg = normal_hl.fg, bg = normal_hl.bg })
-  end)
+  vim.api.nvim_set_hl(0, "MiniPickBorder", { link = "Normal" })
+  vim.api.nvim_set_hl(0, "MiniPickNormal", { link = "Normal" })
 
 end
 
