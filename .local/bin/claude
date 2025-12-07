@@ -43,13 +43,14 @@ if #append_prompts > 0 then
   table.insert(argv, table.concat(append_prompts, "\n\n"))
 end
 
-for i = 1, #arg do
-  table.insert(argv, arg[i])
+local extras_mcp = HOME .. "/extras/mcp.json"
+if stat.stat(extras_mcp) then
+  table.insert(argv, "--mcp-config")
+  table.insert(argv, extras_mcp)
 end
 
-local extras_settings = HOME .. "/extras/.claude/settings.json"
-if stat.stat(extras_settings) then
-  stdlib.setenv("CLAUDE_CONFIG_DIR", HOME .. "/extras")
+for i = 1, #arg do
+  table.insert(argv, arg[i])
 end
 
 local result, err = unistd.execp(claude_bin, argv)
