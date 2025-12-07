@@ -709,34 +709,6 @@ function M.edit(item_or_id)
 
   renderer:add_mappings({
     {
-      mode = { "n", "i" },
-      key = "<C-n>",
-      handler = function()
-        renderer:focus_next()
-      end,
-    },
-    {
-      mode = { "n", "i" },
-      key = "<C-p>",
-      handler = function()
-        renderer:focus_prev()
-      end,
-    },
-    {
-      mode = { "n", "i" },
-      key = "<Down>",
-      handler = function()
-        renderer:focus_next()
-      end,
-    },
-    {
-      mode = { "n", "i" },
-      key = "<Up>",
-      handler = function()
-        renderer:focus_prev()
-      end,
-    },
-    {
       mode = { "n" },
       key = "<C-s>",
       handler = function()
