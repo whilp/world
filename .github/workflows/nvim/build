@@ -70,6 +70,11 @@ local function bundle_plugins(config)
     end
 
     util.exec(string.format("rm -rf %s/.git", plugin_dir))
+
+    -- Remove unnecessary documentation assets to reduce package size
+    if name == "nui-components.nvim" then
+      util.exec(string.format("rm -rf %s/docs/public", plugin_dir), {quiet = true})
+    end
   end
 
   util.printf("generating helptags\n")
