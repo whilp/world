@@ -90,7 +90,7 @@ vim.keymap.set("n", "<Space>wb", function() actions.add_blocks() end, { desc = "
 vim.keymap.set("n", "<Space>wB", function() picker.blocked() end, { desc = "Work: pick blocked" })
 vim.keymap.set("n", "<Space>wd", function() actions.done() end, { desc = "Work: mark done" })
 vim.keymap.set("n", "<Space>wu", function() actions.set_due() end, { desc = "Work: set due date" })
-vim.keymap.set("n", "<Space>wc", function() actions.quick_capture() end, { desc = "Work: quick capture" })
+vim.keymap.set("n", "<Space>wc", function() require("work.form").edit() end, { desc = "Work: create item" })
 vim.keymap.set("n", "<Space>wD", function() actions.delete() end, { desc = "Work: delete item" })
 vim.keymap.set("n", "<Space>w/", function() picker.search() end, { desc = "Work: search" })
 
@@ -123,7 +123,7 @@ local function setup_work_submode()
     { mode = 'n', keys = '<Space>wB', desc = 'Work: pick blocked' },
     { mode = 'n', keys = '<Space>wd', desc = 'Work: mark done', postkeys = '<Space>w' },
     { mode = 'n', keys = '<Space>wu', desc = 'Work: set due date' },
-    { mode = 'n', keys = '<Space>wc', desc = 'Work: quick capture' },
+    { mode = 'n', keys = '<Space>wc', desc = 'Work: create item' },
     { mode = 'n', keys = '<Space>wD', desc = 'Work: delete item', postkeys = '<Space>w' },
     { mode = 'n', keys = '<Space>w/', desc = 'Work: search' },
   }

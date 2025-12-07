@@ -14,7 +14,22 @@ local validators = {
 
 function M.edit(item_or_id)
   local item
-  if type(item_or_id) == "string" then
+  local is_new = false
+
+  if item_or_id == nil then
+    -- Creating a new item
+    is_new = true
+    item = {
+      id = nil,  -- Will be assigned on submit
+      title = "",
+      due = nil,
+      description = nil,
+      started = nil,
+      completed = nil,
+      blocks = {},
+      log = {},
+    }
+  elseif type(item_or_id) == "string" then
     local loaded_item, err = work.get(item_or_id)
     if not loaded_item then
       vim.notify("work: " .. err, vim.log.levels.ERROR)
@@ -38,7 +53,8 @@ function M.edit(item_or_id)
     logs_sort_asc = true,
     show_log_input = item._show_log_input or false,
     log_input_value = "",
-    focused_section = "logs",
+    focused_section = item._focused_section or "title",
+    autofocus_field = item._autofocus_field or "title",
   })
 
   local renderer = n.create_renderer({
@@ -115,6 +131,8 @@ function M.edit(item_or_id)
     updated_item.completed = current_state.completed
     updated_item.blocks = current_state.blocks
     updated_item.log = current_state.log
+    updated_item._focused_section = current_state.focused_section
+    updated_item._autofocus_field = current_state.autofocus_field
 
     if extra_fields then
       for k, v in pairs(extra_fields) do
@@ -173,12 +191,13 @@ function M.edit(item_or_id)
 
   local function add_blocks()
     local current_blocks = state:get_value().blocks
+    state.autofocus_field = "blocks"
     renderer:close()
     local picker = require("work.picker")
     picker.select_blocks(item.id, function(selected_ids)
       vim.schedule(function()
         if not selected_ids then
-          reopen_with_state()
+          reopen_with_state({ _autofocus_field = "blocks" })
           return
         end
 
@@ -196,7 +215,7 @@ function M.edit(item_or_id)
           table.insert(merged_blocks, block_id)
         end
 
-        reopen_with_state({ blocks = merged_blocks })
+        reopen_with_state({ blocks = merged_blocks, _autofocus_field = "blocks" })
       end)
     end)
   end
@@ -207,6 +226,7 @@ function M.edit(item_or_id)
       return
     end
 
+    state.autofocus_field = "blocks"
     renderer:close()
     local MiniPick = require("mini.pick")
 
@@ -230,7 +250,7 @@ function M.edit(item_or_id)
         callback_called = true
         vim.schedule(function()
           if not chosen then
-            reopen_with_state()
+            reopen_with_state({ _autofocus_field = "blocks" })
             return
           end
 
@@ -241,14 +261,14 @@ function M.edit(item_or_id)
             end
           end
 
-          reopen_with_state({ blocks = new_blocks })
+          reopen_with_state({ blocks = new_blocks, _autofocus_field = "blocks" })
         end)
       end,
       choose_marked = function(marked)
         callback_called = true
         vim.schedule(function()
           if not marked or #marked == 0 then
-            reopen_with_state()
+            reopen_with_state({ _autofocus_field = "blocks" })
             return
           end
 
@@ -264,7 +284,7 @@ function M.edit(item_or_id)
             end
           end
 
-          reopen_with_state({ blocks = new_blocks })
+          reopen_with_state({ blocks = new_blocks, _autofocus_field = "blocks" })
         end)
       end,
     }
@@ -277,7 +297,7 @@ function M.edit(item_or_id)
           callback_called = true
           MiniPick.stop()
           vim.schedule(function()
-            reopen_with_state()
+            reopen_with_state({ _autofocus_field = "blocks" })
           end)
         end,
       },
@@ -366,6 +386,63 @@ function M.edit(item_or_id)
       end
     end
 
+    -- Handle new item creation
+    if is_new then
+      local captured_timestamp = os.date("%Y-%m-%dT%H:%M:%S")
+      local new_item, err = work.add(state:get_value().title, { captured = captured_timestamp })
+      if not new_item then
+        vim.notify("work: failed to create item: " .. err, vim.log.levels.ERROR)
+        return
+      end
+      item.id = new_item.id
+      vim.notify("created " .. work.short_id(new_item), vim.log.levels.INFO)
+
+      -- Now update all other fields if they're set
+      local updates = {}
+      if parsed_due ~= "" then
+        updates.due = parsed_due
+      end
+      if state:get_value().description ~= "" then
+        updates.description = state:get_value().description
+      end
+      if state:get_value().started ~= "" then
+        updates.started = state:get_value().started
+      end
+      if state:get_value().completed ~= "" then
+        updates.completed = state:get_value().completed
+      end
+
+      if next(updates) then
+        local _, update_err = work.update(item.id, updates)
+        if update_err then
+          vim.notify("work: failed to update fields: " .. update_err, vim.log.levels.ERROR)
+          return
+        end
+      end
+
+      -- Set blocks if any
+      if #state:get_value().blocks > 0 then
+        local _, block_err = work.set_blocks(item.id, state:get_value().blocks)
+        if block_err then
+          vim.notify("work: failed to set blocks: " .. block_err, vim.log.levels.ERROR)
+          return
+        end
+      end
+
+      -- Set logs if any
+      if vim.tbl_count(state:get_value().log) > 0 then
+        local _, log_err = work.update(item.id, { log = state:get_value().log })
+        if log_err then
+          vim.notify("work: failed to set logs: " .. log_err, vim.log.levels.ERROR)
+          return
+        end
+      end
+
+      renderer:close()
+      return
+    end
+
+    -- Handle existing item updates
     local updates = {}
     local has_updates = false
 
@@ -446,23 +523,31 @@ function M.edit(item_or_id)
   local body = function()
     local form_components = {
       n.text_input({
-        autofocus = not state:get_value().show_log_input,
-        border_label = "Title *",
+        autofocus = not state:get_value().show_log_input and state:get_value().autofocus_field == "title",
+        border_label = "Title * (Ctrl+s to submit, Esc to cancel)",
         max_lines = 1,
         value = state.title,
         on_change = function(value) state.title = value end,
+        on_focus = function()
+          state.autofocus_field = "title"
+        end,
       }),
       n.button({
         border_label = "Due",
         label = state.due:map(function(due) return format_due_date(due) end),
+        autofocus = state:get_value().autofocus_field == "due",
         on_press = function()
+          state.autofocus_field = "due"
           renderer:close()
           local date_picker = require("work.date_picker")
           date_picker.pick(function(selected_date)
             vim.schedule(function()
-              reopen_with_state(selected_date and { due = selected_date })
+              reopen_with_state(selected_date and { due = selected_date, _autofocus_field = "due" })
             end)
           end)
+        end,
+        on_focus = function()
+          state.autofocus_field = "due"
         end,
       }),
       n.text_input({
@@ -470,43 +555,59 @@ function M.edit(item_or_id)
         max_lines = 10,
         autoresize = true,
         wrap = true,
+        autofocus = state:get_value().autofocus_field == "description",
         value = state.description,
         on_change = function(value) state.description = value end,
+        on_focus = function()
+          state.autofocus_field = "description"
+        end,
       }),
       n.button({
         border_label = "Started",
         label = state.started:map(function(ts) return format_timestamp(ts, "Not started") end),
+        autofocus = state:get_value().autofocus_field == "started",
         on_press = function()
+          state.autofocus_field = "started"
           renderer:close()
           local date_picker = require("work.date_picker")
           date_picker.pick(function(selected_date)
             vim.schedule(function()
               local ts = selected_date and (selected_date .. "T" .. os.date("%H:%M:%S"))
-              reopen_with_state({ started = ts or "" })
+              reopen_with_state({ started = ts or "", _autofocus_field = "started" })
             end)
           end, { from = -30, to = 0 })
+        end,
+        on_focus = function()
+          state.autofocus_field = "started"
         end,
       }),
       n.button({
         border_label = "Completed",
         label = state.completed:map(function(ts) return format_timestamp(ts, "Not completed") end),
+        autofocus = state:get_value().autofocus_field == "completed",
         on_press = function()
+          state.autofocus_field = "completed"
           renderer:close()
           local date_picker = require("work.date_picker")
           date_picker.pick(function(selected_date)
             vim.schedule(function()
               local ts = selected_date and (selected_date .. "T" .. os.date("%H:%M:%S"))
-              reopen_with_state({ completed = ts or "" })
+              reopen_with_state({ completed = ts or "", _autofocus_field = "completed" })
             end)
           end, { from = -30, to = 0 })
+        end,
+        on_focus = function()
+          state.autofocus_field = "completed"
         end,
       }),
       n.paragraph({
         border_label = "Blocks (Enter to add, 'd' to delete)",
         lines = state.blocks:map(function(blocks) return format_blocks(blocks) end),
         is_focusable = true,
+        autofocus = state:get_value().autofocus_field == "blocks",
         on_focus = function()
           state.focused_section = "blocks"
+          state.autofocus_field = "blocks"
         end,
       }),
     }
@@ -527,8 +628,10 @@ function M.edit(item_or_id)
         return format_logs(state.log:get_value(), state.logs_sort_asc:get_value())
       end, { state.log, state.logs_sort_asc }),
       is_focusable = true,
+      autofocus = state:get_value().autofocus_field == "logs",
       on_focus = function()
         state.focused_section = "logs"
+        state.autofocus_field = "logs"
       end,
     }))
 
@@ -536,6 +639,17 @@ function M.edit(item_or_id)
   end
 
   renderer:add_mappings({
+    {
+      mode = { "n" },
+      key = "<C-s>",
+      handler = function()
+        if state:get_value().show_log_input then
+          submit_log_entry()
+        else
+          submit_form()
+        end
+      end,
+    },
     {
       mode = { "n", "i" },
       key = "<C-CR>",
@@ -570,9 +684,13 @@ function M.edit(item_or_id)
       end,
     },
     {
-      mode = { "n", "i" },
+      mode = { "n" },
       key = "d",
-      handler = delete_blocks,
+      handler = function()
+        if state:get_value().focused_section == "blocks" then
+          delete_blocks()
+        end
+      end,
     },
     {
       mode = { "n" },
@@ -586,9 +704,13 @@ function M.edit(item_or_id)
       end,
     },
     {
-      mode = { "n", "i" },
+      mode = { "n" },
       key = "s",
-      handler = toggle_logs_sort,
+      handler = function()
+        if state:get_value().focused_section == "logs" then
+          toggle_logs_sort()
+        end
+      end,
     },
   })
 
