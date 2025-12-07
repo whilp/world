@@ -682,7 +682,7 @@ function M.edit(item_or_id)
     -- Action buttons at the bottom
     local action_buttons = {}
 
-    table.insert(action_buttons, n.gap())
+    table.insert(action_buttons, n.gap(1))
 
     table.insert(action_buttons, n.button({
       label = "Submit",
@@ -702,7 +702,7 @@ function M.edit(item_or_id)
       }))
     end
 
-    table.insert(action_buttons, n.gap())
+    table.insert(action_buttons, n.gap(1))
 
     table.insert(form_components, n.columns(unpack(action_buttons)))
 
