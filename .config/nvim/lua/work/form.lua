@@ -65,6 +65,12 @@ function M.edit(item_or_id)
       focus_next = { "<Tab>", "<C-n>", "<Down>" },
       focus_prev = { "<S-Tab>", "<C-p>", "<Up>" },
     },
+    window = {
+      highlight = {
+        FloatBorder = "FloatBorder",
+        NormalFloat = "NormalFloat",
+      },
+    },
   })
 
   local function format_relative_days(days)
