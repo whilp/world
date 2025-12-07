@@ -79,9 +79,11 @@ if ok_hues then
   vim.api.nvim_set_hl(0, "FloatBorder", { link = "Normal" })
   vim.api.nvim_set_hl(0, "NormalFloat", { link = "Normal" })
 
-  -- Make mini.pick windows match the color scheme
-  vim.api.nvim_set_hl(0, "MiniPickBorder", { link = "Normal" })
-  vim.api.nvim_set_hl(0, "MiniPickNormal", { link = "Normal" })
+  -- Override Diagnostic groups that mini.hues sets with bg_edge
+  local normal_hl = vim.api.nvim_get_hl(0, { name = "Normal" })
+  vim.api.nvim_set_hl(0, "DiagnosticFloatingHint", { fg = "#8fd8c3", bg = normal_hl.bg })
+  vim.api.nvim_set_hl(0, "DiagnosticFloatingInfo", { fg = "#acc7fc", bg = normal_hl.bg })
+  vim.api.nvim_set_hl(0, "FloatTitle", { fg = "#86d8d7", bg = normal_hl.bg, bold = true })
 
 end
 
