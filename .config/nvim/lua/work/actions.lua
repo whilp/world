@@ -3,6 +3,7 @@ local M = {}
 
 local work = require("work")
 local buffer = require("work.buffer")
+local util = require("work.util")
 
 -- Create a floating window with common settings and keymappings
 -- Returns: buf, win
@@ -99,44 +100,6 @@ function M.done(id)
   end
 end
 
--- Parse relative date strings like 'today', '0d', '1d', '2w', etc.
--- Returns: YYYY-MM-DD formatted date string or nil
-local function parse_relative_date(input)
-  if not input or input == "" then
-    return nil
-  end
-
-  input = input:lower():gsub("^%s*(.-)%s*$", "%1")
-
-  if input == "today" or input == "0d" then
-    return os.date("%Y-%m-%d")
-  end
-
-  if input == "tomorrow" or input == "1d" then
-    return os.date("%Y-%m-%d", os.time() + 86400)
-  end
-
-  local num, unit = input:match("^(%d+)([dwmy])$")
-  if num and unit then
-    num = tonumber(num)
-    local seconds_map = {
-      d = 86400,
-      w = 86400 * 7,
-      m = 86400 * 30,
-      y = 86400 * 365,
-    }
-    local seconds = seconds_map[unit]
-    if seconds then
-      return os.date("%Y-%m-%d", os.time() + (num * seconds))
-    end
-  end
-
-  if input:match("^%d%d%d%d%-%d%d%-%d%d$") then
-    return input
-  end
-
-  return nil
-end
 
 -- Set due date for item
 function M.set_due(id, due_date)
@@ -177,7 +140,7 @@ function M.set_due(id, due_date)
         return
       end
 
-      local parsed_date = parse_relative_date(input_date)
+      local parsed_date = util.parse_relative_date(input_date)
       if not parsed_date then
         vim.notify("work: invalid date format: " .. input_date, vim.log.levels.ERROR)
         return
@@ -199,7 +162,7 @@ function M.set_due(id, due_date)
     return
   end
 
-  local parsed_date = parse_relative_date(due_date)
+  local parsed_date = util.parse_relative_date(due_date)
   if not parsed_date then
     vim.notify("work: invalid date format: " .. due_date, vim.log.levels.ERROR)
     return

@@ -1,20 +1,6 @@
 local M = {}
 
-local function get_window_config()
-  return {
-    config = function()
-      local height = math.floor(vim.o.lines * 0.5)
-      local width = math.floor(vim.o.columns * 0.6)
-      return {
-        anchor = "NW",
-        height = height,
-        width = width,
-        row = math.floor((vim.o.lines - height) / 2),
-        col = math.floor((vim.o.columns - width) / 2),
-      }
-    end
-  }
-end
+local util = require("work.util")
 
 local function format_date_item(date_str, days_offset)
   local date_obj = os.time({ year = tonumber(date_str:sub(1, 4)), month = tonumber(date_str:sub(6, 7)), day = tonumber(date_str:sub(9, 10)) })
@@ -57,16 +43,34 @@ function M.pick(callback)
     })
   end
 
+  local callback_called = false
+
   local source = {
     items = items,
     name = "Pick date",
     choose = function(chosen)
-      if not chosen then return end
+      callback_called = true
+      if not chosen then
+        callback(nil)
+        return
+      end
       callback(chosen.date)
     end,
   }
 
-  MiniPick.start({ source = source, window = get_window_config() })
+  -- Add custom mappings to handle Esc
+  local mappings = {
+    cancel = {
+      char = "<Esc>",
+      func = function()
+        callback_called = true
+        MiniPick.stop()
+        callback(nil)
+      end,
+    },
+  }
+
+  MiniPick.start({ source = source, window = util.get_window_config(), mappings = mappings })
 end
 
 return M

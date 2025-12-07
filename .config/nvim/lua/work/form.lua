@@ -1,5 +1,6 @@
 local n = require("nui-components")
 local work = require("work")
+local util = require("work.util")
 
 local M = {}
 
@@ -9,44 +10,6 @@ local validators = {
   due = function(v) return v == "" or v:match("^%d%d%d%d%-%d%d%-%d%d$") or v:match("^[+-]?%d+[dw]$") end,
 }
 
-local function parse_relative_date(input)
-  if not input or input == "" then
-    return nil
-  end
-
-  input = input:lower():gsub("^%s*(.-)%s*$", "%1")
-
-  if input == "today" or input == "0d" then
-    return os.date("%Y-%m-%d")
-  end
-
-  if input == "tomorrow" or input == "+1d" then
-    return os.date("%Y-%m-%d", os.time() + 86400)
-  end
-
-  local sign, num, unit = input:match("^([+-]?)(%d+)([dw])$")
-  if num and unit then
-    num = tonumber(num)
-    local seconds_map = {
-      d = 86400,
-      w = 86400 * 7,
-    }
-    local seconds = seconds_map[unit]
-    if seconds then
-      if sign == "-" then
-        return os.date("%Y-%m-%d", os.time() - (num * seconds))
-      else
-        return os.date("%Y-%m-%d", os.time() + (num * seconds))
-      end
-    end
-  end
-
-  if input:match("^%d%d%d%d%-%d%d%-%d%d$") then
-    return input
-  end
-
-  return nil
-end
 
 function M.edit(item_or_id)
   local item
@@ -109,6 +72,24 @@ function M.edit(item_or_id)
     return string.format("%s (%s)", due_date, relative)
   end
 
+  local function reopen_with_state(extra_fields)
+    local current_state = state:get_value()
+    local updated_item = vim.deepcopy(item)
+    updated_item.title = current_state.title
+    updated_item.due = current_state.due
+    updated_item.description = current_state.description
+    updated_item.blocks = current_state.blocks
+    updated_item.log = current_state.log
+
+    if extra_fields then
+      for k, v in pairs(extra_fields) do
+        updated_item[k] = v
+      end
+    end
+
+    M.edit(updated_item)
+  end
+
   local function format_blocks(block_ids)
     if not block_ids or #block_ids == 0 then
       return "No blocks ('a' to add)"
@@ -156,36 +137,37 @@ function M.edit(item_or_id)
   end
 
   local function add_blocks()
-    local current_state = state:get_value()
+    local current_blocks = state:get_value().blocks
     renderer:close()
     local picker = require("work.picker")
     picker.select_blocks(item.id, function(selected_ids)
-      -- Merge with existing blocks, avoiding duplicates
-      local block_set = {}
-      for _, block_id in ipairs(current_state.blocks) do
-        block_set[block_id] = true
-      end
-      for _, block_id in ipairs(selected_ids) do
-        block_set[block_id] = true
-      end
+      vim.schedule(function()
+        if not selected_ids then
+          reopen_with_state()
+          return
+        end
 
-      local merged_blocks = {}
-      for block_id, _ in pairs(block_set) do
-        table.insert(merged_blocks, block_id)
-      end
+        -- Merge with existing blocks, avoiding duplicates
+        local block_set = {}
+        for _, block_id in ipairs(current_blocks) do
+          block_set[block_id] = true
+        end
+        for _, block_id in ipairs(selected_ids) do
+          block_set[block_id] = true
+        end
 
-      local updated_item = vim.deepcopy(item)
-      updated_item.title = current_state.title
-      updated_item.due = current_state.due
-      updated_item.description = current_state.description
-      updated_item.blocks = merged_blocks
-      M.edit(updated_item)
+        local merged_blocks = {}
+        for block_id, _ in pairs(block_set) do
+          table.insert(merged_blocks, block_id)
+        end
+
+        reopen_with_state({ blocks = merged_blocks })
+      end)
     end)
   end
 
   local function delete_blocks()
-    local current_state = state:get_value()
-    local current_blocks = current_state.blocks
+    local current_blocks = state:get_value().blocks
     if #current_blocks == 0 then
       return
     end
@@ -204,82 +186,74 @@ function M.edit(item_or_id)
       end
     end
 
+    local callback_called = false
+
     local source = {
       items = items,
       name = "Delete blocks",
       choose = function(chosen)
-        if not chosen then
-          M.edit(item)
-          return
-        end
-        local new_blocks = {}
-        for _, block_id in ipairs(current_blocks) do
-          if block_id ~= chosen.id then
-            table.insert(new_blocks, block_id)
+        callback_called = true
+        vim.schedule(function()
+          if not chosen then
+            reopen_with_state()
+            return
           end
-        end
-        local updated_item = vim.deepcopy(item)
-        updated_item.title = current_state.title
-        updated_item.due = current_state.due
-        updated_item.description = current_state.description
-        updated_item.blocks = new_blocks
-        M.edit(updated_item)
+
+          local new_blocks = {}
+          for _, block_id in ipairs(current_blocks) do
+            if block_id ~= chosen.id then
+              table.insert(new_blocks, block_id)
+            end
+          end
+
+          reopen_with_state({ blocks = new_blocks })
+        end)
       end,
       choose_marked = function(marked)
-        if not marked or #marked == 0 then
-          M.edit(item)
-          return
-        end
-        local delete_set = {}
-        for _, chosen in ipairs(marked) do
-          delete_set[chosen.id] = true
-        end
-        local new_blocks = {}
-        for _, block_id in ipairs(current_blocks) do
-          if not delete_set[block_id] then
-            table.insert(new_blocks, block_id)
+        callback_called = true
+        vim.schedule(function()
+          if not marked or #marked == 0 then
+            reopen_with_state()
+            return
           end
-        end
-        local updated_item = vim.deepcopy(item)
-        updated_item.title = current_state.title
-        updated_item.due = current_state.due
-        updated_item.description = current_state.description
-        updated_item.blocks = new_blocks
-        M.edit(updated_item)
+
+          local delete_set = {}
+          for _, chosen in ipairs(marked) do
+            delete_set[chosen.id] = true
+          end
+
+          local new_blocks = {}
+          for _, block_id in ipairs(current_blocks) do
+            if not delete_set[block_id] then
+              table.insert(new_blocks, block_id)
+            end
+          end
+
+          reopen_with_state({ blocks = new_blocks })
+        end)
       end,
     }
 
-    local function get_window_config()
-      return {
-        config = function()
-          local height = math.floor(vim.o.lines * 0.5)
-          local width = math.floor(vim.o.columns * 0.6)
-          return {
-            anchor = "NW",
-            height = height,
-            width = width,
-            row = math.floor((vim.o.lines - height) / 2),
-            col = math.floor((vim.o.columns - width) / 2),
-          }
-        end
-      }
-    end
+    -- Add custom mappings to handle Esc
+    local mappings = {
+      cancel = {
+        char = "<Esc>",
+        func = function()
+          callback_called = true
+          MiniPick.stop()
+          vim.schedule(function()
+            reopen_with_state()
+          end)
+        end,
+      },
+    }
 
-    MiniPick.start({ source = source, window = get_window_config() })
+    MiniPick.start({ source = source, window = util.get_window_config(), mappings = mappings })
   end
 
   local function add_log_entry()
-    local current_state = state:get_value()
-    renderer:close()
-
-    local updated_item = vim.deepcopy(item)
-    updated_item.title = current_state.title
-    updated_item.due = current_state.due
-    updated_item.description = current_state.description
-    updated_item.blocks = current_state.blocks
-    updated_item.log = current_state.log
-    updated_item._show_log_input = true
-    M.edit(updated_item)
+    state.show_log_input = true
+    state.log_input_value = ""
   end
 
   local function submit_log_entry()
@@ -288,37 +262,19 @@ function M.edit(item_or_id)
       local timestamp = os.date("%Y-%m-%dT%H:%M:%S")
       local updated_log = vim.deepcopy(state:get_value().log)
       updated_log[timestamp] = message
-
-      local current_state = state:get_value()
-      renderer:close()
-
-      local updated_item = vim.deepcopy(item)
-      updated_item.title = current_state.title
-      updated_item.due = current_state.due
-      updated_item.description = current_state.description
-      updated_item.blocks = current_state.blocks
-      updated_item.log = updated_log
-      M.edit(updated_item)
+      state.log = updated_log
+      state.show_log_input = false
+      state.log_input_value = ""
     end
   end
 
   local function cancel_log_entry()
-    local current_state = state:get_value()
-    renderer:close()
-
-    local updated_item = vim.deepcopy(item)
-    updated_item.title = current_state.title
-    updated_item.due = current_state.due
-    updated_item.description = current_state.description
-    updated_item.blocks = current_state.blocks
-    updated_item.log = current_state.log
-    M.edit(updated_item)
+    state.show_log_input = false
+    state.log_input_value = ""
   end
 
   local function toggle_logs_sort()
     state.logs_sort_asc = not state:get_value().logs_sort_asc
-    local current_log = state.log:get_value()
-    state.log = current_log
   end
 
   local function blocks_changed(new_blocks, old_blocks)
@@ -356,7 +312,7 @@ function M.edit(item_or_id)
 
     local parsed_due = state:get_value().due
     if parsed_due ~= "" then
-      local resolved = parse_relative_date(parsed_due)
+      local resolved = util.parse_relative_date(parsed_due)
       if resolved then
         parsed_due = resolved
       elseif not validators.date(parsed_due) then
@@ -386,16 +342,17 @@ function M.edit(item_or_id)
     local blocks_updated = blocks_changed(state:get_value().blocks, original.blocks or {})
     local logs_updated = logs_changed(state:get_value().log, original.log or {})
 
+    local any_changes = false
+
     if has_updates then
       local _, err = work.update(item.id, updates)
       if not err then
         vim.notify("updated " .. work.short_id(item), vim.log.levels.INFO)
+        any_changes = true
       else
         vim.notify("work: failed to update: " .. err, vim.log.levels.ERROR)
         return
       end
-      local git = require("work.git")
-      git.commit(item.id, "update")
     end
 
     if blocks_updated then
@@ -405,8 +362,7 @@ function M.edit(item_or_id)
         return
       end
       vim.notify("updated blocks for " .. work.short_id(item), vim.log.levels.INFO)
-      local git = require("work.git")
-      git.commit(item.id, "update")
+      any_changes = true
     end
 
     if logs_updated then
@@ -416,13 +372,18 @@ function M.edit(item_or_id)
         return
       end
       vim.notify("updated logs for " .. work.short_id(item), vim.log.levels.INFO)
+      any_changes = true
+    end
+
+    -- Single git commit for all changes
+    if any_changes then
       local git = require("work.git")
       git.commit(item.id, "update")
     end
 
     renderer:close()
 
-    if not has_updates and not blocks_updated and not logs_updated then
+    if not any_changes then
       vim.notify("no changes made", vim.log.levels.INFO)
     end
   end
@@ -440,16 +401,12 @@ function M.edit(item_or_id)
         border_label = "Due",
         label = state.due:map(function(due) return format_due_date(due) end),
         on_press = function()
-          local current_state = state:get_value()
           renderer:close()
           local date_picker = require("work.date_picker")
           date_picker.pick(function(selected_date)
-            local updated_item = vim.deepcopy(item)
-            updated_item.title = current_state.title
-            updated_item.due = selected_date
-            updated_item.description = current_state.description
-            updated_item.blocks = current_state.blocks
-            M.edit(updated_item)
+            vim.schedule(function()
+              reopen_with_state(selected_date and { due = selected_date })
+            end)
           end)
         end,
       }),
@@ -480,9 +437,9 @@ function M.edit(item_or_id)
 
     table.insert(form_components, n.paragraph({
       border_label = "Logs (Enter to add, 's' to toggle sort)",
-      lines = state.log:map(function(log)
-        return format_logs(log, state.logs_sort_asc:get_value())
-      end),
+      lines = n.create_signal(function()
+        return format_logs(state.log:get_value(), state.logs_sort_asc:get_value())
+      end, { state.log, state.logs_sort_asc }),
       is_focusable = true,
     }))
 
