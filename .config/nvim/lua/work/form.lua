@@ -68,6 +68,10 @@ function M.edit(item_or_id)
     due = item.due or "",
     description = item.description or "",
     blocks = item.blocks or {},
+    log = item.log or {},
+    logs_sort_asc = true,
+    show_log_input = item._show_log_input or false,
+    log_input_value = "",
   })
 
   local renderer = n.create_renderer({
@@ -121,6 +125,34 @@ function M.edit(item_or_id)
       end
     end
     return table.concat(titles, "\n")
+  end
+
+  local function format_logs(log_table, sort_asc)
+    if not log_table or vim.tbl_count(log_table) == 0 then
+      return "No logs (press Enter to add)"
+    end
+
+    local entries = {}
+    for timestamp, message in pairs(log_table) do
+      table.insert(entries, { timestamp = timestamp, message = message })
+    end
+
+    table.sort(entries, function(a, b)
+      if sort_asc then
+        return a.timestamp < b.timestamp
+      else
+        return a.timestamp > b.timestamp
+      end
+    end)
+
+    local lines = {}
+    for _, entry in ipairs(entries) do
+      local time_part = entry.timestamp:match("T(.+)$") or entry.timestamp
+      local line = string.format("• %s  %s", time_part, entry.message)
+      table.insert(lines, line)
+    end
+
+    return table.concat(lines, "\n")
   end
 
   local function add_blocks()
@@ -236,6 +268,59 @@ function M.edit(item_or_id)
     MiniPick.start({ source = source, window = get_window_config() })
   end
 
+  local function add_log_entry()
+    local current_state = state:get_value()
+    renderer:close()
+
+    local updated_item = vim.deepcopy(item)
+    updated_item.title = current_state.title
+    updated_item.due = current_state.due
+    updated_item.description = current_state.description
+    updated_item.blocks = current_state.blocks
+    updated_item.log = current_state.log
+    updated_item._show_log_input = true
+    M.edit(updated_item)
+  end
+
+  local function submit_log_entry()
+    local message = state:get_value().log_input_value
+    if message and message ~= "" then
+      local timestamp = os.date("%Y-%m-%dT%H:%M:%S")
+      local updated_log = vim.deepcopy(state:get_value().log)
+      updated_log[timestamp] = message
+
+      local current_state = state:get_value()
+      renderer:close()
+
+      local updated_item = vim.deepcopy(item)
+      updated_item.title = current_state.title
+      updated_item.due = current_state.due
+      updated_item.description = current_state.description
+      updated_item.blocks = current_state.blocks
+      updated_item.log = updated_log
+      M.edit(updated_item)
+    end
+  end
+
+  local function cancel_log_entry()
+    local current_state = state:get_value()
+    renderer:close()
+
+    local updated_item = vim.deepcopy(item)
+    updated_item.title = current_state.title
+    updated_item.due = current_state.due
+    updated_item.description = current_state.description
+    updated_item.blocks = current_state.blocks
+    updated_item.log = current_state.log
+    M.edit(updated_item)
+  end
+
+  local function toggle_logs_sort()
+    state.logs_sort_asc = not state:get_value().logs_sort_asc
+    local current_log = state.log:get_value()
+    state.log = current_log
+  end
+
   local function blocks_changed(new_blocks, old_blocks)
     if #new_blocks ~= #old_blocks then return true end
     local old_set = {}
@@ -244,6 +329,16 @@ function M.edit(item_or_id)
     end
     for _, id in ipairs(new_blocks) do
       if not old_set[id] then return true end
+    end
+    return false
+  end
+
+  local function logs_changed(new_log, old_log)
+    local new_count = vim.tbl_count(new_log)
+    local old_count = vim.tbl_count(old_log)
+    if new_count ~= old_count then return true end
+    for timestamp, message in pairs(new_log) do
+      if old_log[timestamp] ~= message then return true end
     end
     return false
   end
@@ -289,6 +384,7 @@ function M.edit(item_or_id)
     end
 
     local blocks_updated = blocks_changed(state:get_value().blocks, original.blocks or {})
+    local logs_updated = logs_changed(state:get_value().log, original.log or {})
 
     if has_updates then
       local _, err = work.update(item.id, updates)
@@ -313,18 +409,29 @@ function M.edit(item_or_id)
       git.commit(item.id, "update")
     end
 
+    if logs_updated then
+      local _, err = work.update(item.id, { log = state:get_value().log })
+      if err then
+        vim.notify("work: failed to update logs: " .. err, vim.log.levels.ERROR)
+        return
+      end
+      vim.notify("updated logs for " .. work.short_id(item), vim.log.levels.INFO)
+      local git = require("work.git")
+      git.commit(item.id, "update")
+    end
+
     renderer:close()
 
-    if not has_updates and not blocks_updated then
+    if not has_updates and not blocks_updated and not logs_updated then
       vim.notify("no changes made", vim.log.levels.INFO)
     end
   end
 
   local body = function()
-    return n.rows(
+    local components = {
       { flex = 0 },
       n.text_input({
-        autofocus = true,
+        autofocus = not state:get_value().show_log_input,
         border_label = "Title *",
         max_lines = 1,
         value = state.title,
@@ -359,26 +466,62 @@ function M.edit(item_or_id)
         border_label = "Blocks ('a' to add, 'd' to delete)",
         lines = state.blocks:map(function(blocks) return format_blocks(blocks) end),
         is_focusable = true,
-      })
-    )
+      }),
+    }
+
+    if state:get_value().show_log_input then
+      table.insert(components, n.text_input({
+        autofocus = true,
+        border_label = "New log (Ctrl+Enter to submit, Esc to cancel)",
+        max_lines = 3,
+        value = state.log_input_value,
+        on_change = function(value) state.log_input_value = value end,
+      }))
+    end
+
+    table.insert(components, n.paragraph({
+      border_label = "Logs (Enter to add, 's' to toggle sort)",
+      lines = state.log:map(function(log)
+        return format_logs(log, state.logs_sort_asc:get_value())
+      end),
+      is_focusable = true,
+    }))
+
+    return n.rows(unpack(components))
   end
 
   renderer:add_mappings({
     {
       mode = { "n", "i" },
       key = "<C-CR>",
-      handler = submit_form,
+      handler = function()
+        if state:get_value().show_log_input then
+          submit_log_entry()
+        else
+          submit_form()
+        end
+      end,
     },
     {
       mode = { "n", "i" },
       key = "<D-CR>",
-      handler = submit_form,
+      handler = function()
+        if state:get_value().show_log_input then
+          submit_log_entry()
+        else
+          submit_form()
+        end
+      end,
     },
     {
       mode = { "n" },
       key = "<Esc>",
       handler = function()
-        renderer:close()
+        if state:get_value().show_log_input then
+          cancel_log_entry()
+        else
+          renderer:close()
+        end
       end,
     },
     {
@@ -390,6 +533,16 @@ function M.edit(item_or_id)
       mode = { "n", "i" },
       key = "d",
       handler = delete_blocks,
+    },
+    {
+      mode = { "n" },
+      key = "<CR>",
+      handler = add_log_entry,
+    },
+    {
+      mode = { "n", "i" },
+      key = "s",
+      handler = toggle_logs_sort,
     },
   })
 
