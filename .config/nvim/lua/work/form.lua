@@ -75,6 +75,36 @@ function M.edit(item_or_id)
     height = 20,
   })
 
+  local function format_due_date(due_date)
+    if not due_date or due_date == "" then
+      return "Set due date"
+    end
+
+    local year, month, day = due_date:match("(%d+)-(%d+)-(%d+)")
+    if not year then
+      return "Set due date"
+    end
+
+    local due_time = os.time({ year = tonumber(year), month = tonumber(month), day = tonumber(day), hour = 0 })
+    local today_time = os.time({ year = os.date("%Y"), month = os.date("%m"), day = os.date("%d"), hour = 0 })
+    local days_diff = math.floor((due_time - today_time) / 86400)
+
+    local relative
+    if days_diff == 0 then
+      relative = "today"
+    elseif days_diff == 1 then
+      relative = "tomorrow"
+    elseif days_diff == -1 then
+      relative = "yesterday"
+    elseif days_diff < 0 then
+      relative = math.abs(days_diff) .. "d ago"
+    else
+      relative = days_diff .. "d"
+    end
+
+    return string.format("%s (%s)", due_date, relative)
+  end
+
   local function format_blocks(block_ids)
     if not block_ids or #block_ids == 0 then
       return "No blocks"
@@ -183,32 +213,23 @@ function M.edit(item_or_id)
         value = state.title,
         on_change = function(value) state.title = value end,
       }),
-      n.columns(
-        { flex = 0 },
-        n.text_input({
-          flex = 1,
-          border_label = "Due (YYYY-MM-DD or +1d, +2w)",
-          max_lines = 1,
-          value = state.due,
-          on_change = function(value) state.due = value end,
-        }),
-        n.button({
-          label = "Pick date",
-          on_press = function()
-            local current_state = state:get_value()
-            renderer:close()
-            local date_picker = require("work.date_picker")
-            date_picker.pick(function(selected_date)
-              local updated_item = vim.deepcopy(item)
-              updated_item.title = current_state.title
-              updated_item.due = selected_date
-              updated_item.description = current_state.description
-              updated_item.blocks = current_state.blocks
-              M.edit(updated_item)
-            end)
-          end,
-        })
-      ),
+      n.button({
+        border_label = "Due",
+        label = state.due:map(function(due) return format_due_date(due) end),
+        on_press = function()
+          local current_state = state:get_value()
+          renderer:close()
+          local date_picker = require("work.date_picker")
+          date_picker.pick(function(selected_date)
+            local updated_item = vim.deepcopy(item)
+            updated_item.title = current_state.title
+            updated_item.due = selected_date
+            updated_item.description = current_state.description
+            updated_item.blocks = current_state.blocks
+            M.edit(updated_item)
+          end)
+        end,
+      }),
       n.text_input({
         border_label = "Description",
         max_lines = 10,
