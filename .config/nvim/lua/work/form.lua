@@ -38,6 +38,7 @@ function M.edit(item_or_id)
     logs_sort_asc = true,
     show_log_input = item._show_log_input or false,
     log_input_value = "",
+    focused_section = "logs",
   })
 
   local renderer = n.create_renderer({
@@ -501,9 +502,12 @@ function M.edit(item_or_id)
         end,
       }),
       n.paragraph({
-        border_label = "Blocks ('a' to add, 'd' to delete)",
+        border_label = "Blocks (Enter to add, 'd' to delete)",
         lines = state.blocks:map(function(blocks) return format_blocks(blocks) end),
         is_focusable = true,
+        on_focus = function()
+          state.focused_section = "blocks"
+        end,
       }),
     }
 
@@ -523,6 +527,9 @@ function M.edit(item_or_id)
         return format_logs(state.log:get_value(), state.logs_sort_asc:get_value())
       end, { state.log, state.logs_sort_asc }),
       is_focusable = true,
+      on_focus = function()
+        state.focused_section = "logs"
+      end,
     }))
 
     return n.rows(unpack(form_components))
@@ -564,18 +571,19 @@ function M.edit(item_or_id)
     },
     {
       mode = { "n", "i" },
-      key = "a",
-      handler = add_blocks,
-    },
-    {
-      mode = { "n", "i" },
       key = "d",
       handler = delete_blocks,
     },
     {
       mode = { "n" },
       key = "<CR>",
-      handler = add_log_entry,
+      handler = function()
+        if state:get_value().focused_section == "blocks" then
+          add_blocks()
+        else
+          add_log_entry()
+        end
+      end,
     },
     {
       mode = { "n", "i" },
