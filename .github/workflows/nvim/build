@@ -1,6 +1,6 @@
 #!/usr/bin/env luajit
 
-package.path = arg[0]:match("^(.*/)") .. "?.lua;" .. package.path
+package.path = arg[0]:match("^(.*/)") .. "../?.lua;" .. package.path
 local util = require('util')
 
 local function load_pack_lock(lock_file)
