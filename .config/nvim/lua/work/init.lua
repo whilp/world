@@ -126,6 +126,12 @@ function M.delete(id)
   return api.delete(id)
 end
 
+-- Update item fields
+function M.update(id, updates)
+  local api = get_api()
+  return api.update(id, updates)
+end
+
 -- Build dependency tree
 function M.get_tree(root_id)
   local api = get_api()

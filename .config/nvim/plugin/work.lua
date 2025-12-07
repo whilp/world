@@ -74,6 +74,10 @@ end, {
   end,
 })
 
+vim.api.nvim_create_user_command("WorkEdit", function(opts)
+  require("work.form").edit(opts.args ~= "" and opts.args or nil)
+end, { nargs = "?", desc = "Edit work item in form" })
+
 -- Keybindings under <Space>w
 vim.keymap.set("n", "<Space>wl", function() actions.log() end, { desc = "Work: log entry" })
 vim.keymap.set("n", "<Space>wL", function() picker.all() end, { desc = "Work: pick all" })
