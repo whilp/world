@@ -2,6 +2,7 @@
 local M = {}
 
 local work = require("work")
+local git = require("work.git")
 
 -- Open work item file by ID
 function M.open(id)
@@ -39,6 +40,7 @@ function M.show(id)
     local ok, done_err = work.mark_done(item.id)
     if ok then
       vim.notify("marked done: " .. work.short_id(item))
+      git.commit(item.id, "mark done")
       M.show(item.id) -- refresh
     else
       vim.notify("work: " .. done_err, vim.log.levels.ERROR)
