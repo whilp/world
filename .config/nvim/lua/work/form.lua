@@ -332,6 +332,27 @@ function M.edit(item_or_id)
     state.logs_sort_asc = not state:get_value().logs_sort_asc
   end
 
+  local function delete_item()
+    if is_new then
+      vim.notify("work: cannot delete unsaved item", vim.log.levels.WARN)
+      return
+    end
+
+    renderer:close()
+    vim.ui.select({ "Yes", "No" }, {
+      prompt = "Delete '" .. item.title .. "'?",
+    }, function(choice)
+      if choice == "Yes" then
+        local deleted, del_err = work.delete(item.id)
+        if not deleted then
+          vim.notify("work: " .. del_err, vim.log.levels.ERROR)
+          return
+        end
+        vim.notify("deleted: " .. work.short_id(item))
+      end
+    end)
+  end
+
   local function blocks_changed(new_blocks, old_blocks)
     if #new_blocks ~= #old_blocks then return true end
     local old_set = {}
@@ -528,7 +549,7 @@ function M.edit(item_or_id)
     local form_components = {
       n.text_input({
         autofocus = not state:get_value().show_log_input and state:get_value().autofocus_field == "title",
-        border_label = "Title * (Ctrl+s to submit, Esc to cancel)",
+        border_label = is_new and "Title * (Ctrl+s to submit, Esc to cancel)" or "Title * (Ctrl+s to submit, D to delete, Esc to cancel)",
         max_lines = 1,
         value = state.title,
         on_change = function(value) state.title = value end,
@@ -653,6 +674,11 @@ function M.edit(item_or_id)
           submit_form()
         end
       end,
+    },
+    {
+      mode = { "n" },
+      key = "D",
+      handler = delete_item,
     },
     {
       mode = { "n", "i" },
