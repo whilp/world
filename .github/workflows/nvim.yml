@@ -85,6 +85,8 @@ jobs:
             - conform.nvim
             - mini.nvim
             - neogit
+            - nui-components.nvim
+            - nui.nvim
             - nvim-lspconfig
             - nvim-treesitter
             - plenary.nvim
