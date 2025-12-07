@@ -428,8 +428,7 @@ function M.edit(item_or_id)
   end
 
   local body = function()
-    local components = {
-      { flex = 0 },
+    local form_components = {
       n.text_input({
         autofocus = not state:get_value().show_log_input,
         border_label = "Title *",
@@ -470,7 +469,7 @@ function M.edit(item_or_id)
     }
 
     if state:get_value().show_log_input then
-      table.insert(components, n.text_input({
+      table.insert(form_components, n.text_input({
         autofocus = true,
         border_label = "New log (Ctrl+Enter to submit, Esc to cancel)",
         max_lines = 3,
@@ -479,7 +478,7 @@ function M.edit(item_or_id)
       }))
     end
 
-    table.insert(components, n.paragraph({
+    table.insert(form_components, n.paragraph({
       border_label = "Logs (Enter to add, 's' to toggle sort)",
       lines = state.log:map(function(log)
         return format_logs(log, state.logs_sort_asc:get_value())
@@ -487,7 +486,7 @@ function M.edit(item_or_id)
       is_focusable = true,
     }))
 
-    return n.rows(unpack(components))
+    return n.rows(unpack(form_components))
   end
 
   renderer:add_mappings({
