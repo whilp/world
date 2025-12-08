@@ -57,7 +57,7 @@ function M.edit(item_or_id)
     log_input_value = "",
     focused_section = item._focused_section or "title",
     autofocus_field = item._autofocus_field or "title",
-    show_delete_confirm = false,
+    show_delete_confirm = item._show_delete_confirm or false,
   })
 
 
@@ -371,7 +371,10 @@ function M.edit(item_or_id)
       vim.notify("work: cannot delete unsaved item", vim.log.levels.WARN)
       return
     end
-    state.show_delete_confirm = true
+    renderer:close()
+    vim.schedule(function()
+      reopen_with_state({ _show_delete_confirm = true })
+    end)
   end
 
   local function confirm_delete()
@@ -390,7 +393,10 @@ function M.edit(item_or_id)
   end
 
   local function cancel_delete()
-    state.show_delete_confirm = false
+    renderer:close()
+    vim.schedule(function()
+      reopen_with_state({ _show_delete_confirm = false })
+    end)
   end
 
   local function blocks_changed(new_blocks, old_blocks)
@@ -706,18 +712,6 @@ function M.edit(item_or_id)
       }))
     end
 
-    if state:get_value().show_delete_confirm then
-      table.insert(form_components, n.paragraph({
-        autofocus = true,
-        border_label = "Confirm delete (press 'y' to confirm, Esc to cancel)",
-        lines = "Delete '" .. item.title .. "'?",
-        is_focusable = true,
-        on_focus = function()
-          state.focused_section = "delete_confirm"
-        end,
-      }))
-    end
-
     table.insert(form_components, n.paragraph({
       border_label = "[L]ogs (Enter to add, 's' to toggle sort)",
       lines = state.log:map(function(log)
@@ -756,9 +750,23 @@ function M.edit(item_or_id)
 
     if not is_new then
       table.insert(action_buttons, n.button({
-        label = "[D]elete",
+        label = state.show_delete_confirm:map(function(confirm)
+          return confirm and "Confirm? [Enter]" or "[D]elete"
+        end),
         flex = 1,
-        on_press = show_delete_confirm,
+        autofocus = state:get_value().show_delete_confirm,
+        on_press = function()
+          if state:get_value().show_delete_confirm then
+            confirm_delete()
+          else
+            show_delete_confirm()
+          end
+        end,
+        on_focus = function()
+          if state:get_value().show_delete_confirm then
+            state.focused_section = "delete_confirm"
+          end
+        end,
       }))
     end
 
@@ -843,7 +851,9 @@ function M.edit(item_or_id)
       mode = { "n" },
       key = "<CR>",
       handler = function()
-        if state:get_value().focused_section == "blocks" then
+        if state:get_value().show_delete_confirm then
+          confirm_delete()
+        elseif state:get_value().focused_section == "blocks" then
           add_blocks()
         elseif state:get_value().show_log_input then
           submit_log_entry()
