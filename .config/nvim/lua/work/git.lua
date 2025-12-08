@@ -3,18 +3,44 @@ local work = require("work")
 
 function M.commit(id, action, file_path)
   file_path = file_path or work.get_file_path(id)
-  if not file_path then return end
+  if not file_path then
+    vim.notify("work: git commit failed - could not get file path for " .. tostring(id), vim.log.levels.ERROR)
+    return
+  end
   local short_id = id:sub(-6):lower()
   local msg = "work: " .. action .. " " .. short_id
-  vim.fn.system({"git", "-C", work.config.data_dir, "add", file_path})
-  vim.fn.system({"git", "-C", work.config.data_dir, "commit", "-m", msg})
+
+  local add_result = vim.fn.system({"git", "-C", work.config.data_dir, "add", file_path})
+  if vim.v.shell_error ~= 0 then
+    vim.notify("work: git add failed: " .. add_result, vim.log.levels.ERROR)
+    return
+  end
+
+  local commit_result = vim.fn.system({"git", "-C", work.config.data_dir, "commit", "-m", msg})
+  if vim.v.shell_error ~= 0 then
+    -- Check if it's just "nothing to commit" (which is ok)
+    if not commit_result:match("nothing to commit") and not commit_result:match("no changes added") then
+      vim.notify("work: git commit failed: " .. commit_result, vim.log.levels.WARN)
+    end
+  end
 end
 
 function M.commit_delete(id, file_path)
   local short_id = id:sub(-6):lower()
   local msg = "work: delete " .. short_id
-  vim.fn.system({"git", "-C", work.config.data_dir, "add", file_path})
-  vim.fn.system({"git", "-C", work.config.data_dir, "commit", "-m", msg})
+
+  local add_result = vim.fn.system({"git", "-C", work.config.data_dir, "add", file_path})
+  if vim.v.shell_error ~= 0 then
+    vim.notify("work: git add failed: " .. add_result, vim.log.levels.ERROR)
+    return
+  end
+
+  local commit_result = vim.fn.system({"git", "-C", work.config.data_dir, "commit", "-m", msg})
+  if vim.v.shell_error ~= 0 then
+    if not commit_result:match("nothing to commit") and not commit_result:match("no changes added") then
+      vim.notify("work: git commit failed: " .. commit_result, vim.log.levels.WARN)
+    end
+  end
 end
 
 function M.commit_bulk(items, action)
@@ -34,8 +60,19 @@ function M.commit_bulk(items, action)
   for _, path in ipairs(paths) do
     table.insert(git_add_args, path)
   end
-  vim.fn.system(git_add_args)
-  vim.fn.system({"git", "-C", work.config.data_dir, "commit", "-m", msg})
+
+  local add_result = vim.fn.system(git_add_args)
+  if vim.v.shell_error ~= 0 then
+    vim.notify("work: git add failed: " .. add_result, vim.log.levels.ERROR)
+    return
+  end
+
+  local commit_result = vim.fn.system({"git", "-C", work.config.data_dir, "commit", "-m", msg})
+  if vim.v.shell_error ~= 0 then
+    if not commit_result:match("nothing to commit") and not commit_result:match("no changes added") then
+      vim.notify("work: git commit failed: " .. commit_result, vim.log.levels.WARN)
+    end
+  end
 end
 
 return M
