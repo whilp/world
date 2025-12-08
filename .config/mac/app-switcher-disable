@@ -1,0 +1,11 @@
+#!/usr/bin/env luajit
+
+local posix = require('posix')
+
+local status, reason = posix.spawn({"defaults", "write", "com.apple.symbolichotkeys", "AppleSymbolicHotKeys", "-dict-add", "61", "<dict><key>enabled</key><false/></dict>"})
+if reason ~= 'exited' or status ~= 0 then
+  io.stderr:write("app-switcher-disable: failed to disable cmd-tab\n")
+  os.exit(status or 1)
+end
+
+print("app-switcher-disable: cmd-tab disabled. Log out and back in for changes to take effect.")
