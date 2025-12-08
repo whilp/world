@@ -28,6 +28,7 @@ function M.edit(item_or_id)
       completed = nil,
       blocks = {},
       log = {},
+      _is_new = true,  -- Mark as new for persistence across reopens
     }
   elseif type(item_or_id) == "string" then
     local loaded_item, err = work.get(item_or_id)
@@ -38,6 +39,10 @@ function M.edit(item_or_id)
     item = loaded_item
   else
     item = item_or_id
+    -- Preserve is_new flag across reopens
+    if item._is_new then
+      is_new = true
+    end
   end
 
   -- Preserve the original log data across reopens
@@ -149,6 +154,7 @@ function M.edit(item_or_id)
     updated_item._autofocus_field = current_state.autofocus_field
     updated_item._logs_sort_asc = current_state.logs_sort_asc
     updated_item._original_log = original_log  -- Preserve original log across reopens
+    updated_item._is_new = is_new  -- Preserve new item flag across reopens
 
     if extra_fields then
       for k, v in pairs(extra_fields) do
@@ -480,27 +486,27 @@ function M.edit(item_or_id)
       end
 
       if next(updates) then
-        local _, update_err = work.update(item.id, updates)
-        if update_err then
-          vim.notify("work: failed to update fields: " .. update_err, vim.log.levels.ERROR)
+        local result, update_err = work.update(item.id, updates)
+        if not result or update_err then
+          vim.notify("work: failed to update fields: " .. (update_err or "unknown error"), vim.log.levels.ERROR)
           return
         end
       end
 
       -- Set blocks if any
       if #state:get_value().blocks > 0 then
-        local _, block_err = work.set_blocks(item.id, state:get_value().blocks)
-        if block_err then
-          vim.notify("work: failed to set blocks: " .. block_err, vim.log.levels.ERROR)
+        local result, block_err = work.set_blocks(item.id, state:get_value().blocks)
+        if not result or block_err then
+          vim.notify("work: failed to set blocks: " .. (block_err or "unknown error"), vim.log.levels.ERROR)
           return
         end
       end
 
       -- Set logs if any
       if vim.tbl_count(state:get_value().log) > 0 then
-        local _, log_err = work.update(item.id, { log = state:get_value().log })
-        if log_err then
-          vim.notify("work: failed to set logs: " .. log_err, vim.log.levels.ERROR)
+        local result, log_err = work.update(item.id, { log = state:get_value().log })
+        if not result or log_err then
+          vim.notify("work: failed to set logs: " .. (log_err or "unknown error"), vim.log.levels.ERROR)
           return
         end
       end
