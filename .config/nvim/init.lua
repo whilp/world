@@ -4,6 +4,12 @@
 local home = vim.fn.expand("~")
 package.path = home .. "/.local/lib/lua/?.lua;" .. home .. "/.local/lib/lua/3p/?.lua;" .. package.path
 
+-- Add extras to runtimepath if it exists
+local extras_nvim = home .. "/extras/nvim"
+if vim.fn.isdirectory(extras_nvim) == 1 then
+  vim.opt.runtimepath:append(extras_nvim)
+end
+
 -- Load plugins before anything else
 vim.pack.add({
   { src = "https://github.com/nvim-mini/mini.nvim" },
