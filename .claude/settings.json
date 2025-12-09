@@ -26,10 +26,10 @@
       "Bash(npm test:*)"
     ]
   },
-  "model": "opusplan",
   "alwaysThinkingEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754368507584
   },
-  "installMethod": "unknown"
+  "installMethod": "unknown",
+  "model": "opusplan"
 }
