@@ -47,9 +47,10 @@ M.getWindowChoices = function(applyFilter)
       goto continue
     end
 
-    if title and title ~= "" and (not applyFilter or not shouldFilterApp(appName)) then
-      local displayTitle = title
-      local subText = appName
+    if (not applyFilter or not shouldFilterApp(appName)) then
+      -- Use app name as title if window title is empty (common for Chrome apps/PWAs)
+      local displayTitle = (title and title ~= "") and title or appName
+      local subText = (title and title ~= "") and appName or "Application window"
 
       -- Extract Chrome profile from title
       if appName == "Google Chrome" then
