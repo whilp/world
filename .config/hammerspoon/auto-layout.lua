@@ -84,29 +84,46 @@ local function calculateZones(screen)
 end
 
 local function placeWindow(win)
-  if not win then return end
+  local t0 = hs.timer.secondsSinceEpoch()
+  print(string.format("[auto-layout] placeWindow started at %.3f", t0))
+
+  if not win then
+    print("[auto-layout] no window, returning")
+    return
+  end
 
   local appName = win:application():name()
   local zoneName = M.config.appMapping[appName]
 
-  if not zoneName then return end
+  if not zoneName then
+    print(string.format("[auto-layout] no zone mapping for %s", appName))
+    return
+  end
 
   local winId = win:id()
   local now = os.time()
   if lastPlacement[winId] and (now - lastPlacement[winId]) < M.config.debounceTime then
+    print(string.format("[auto-layout] debouncing window %d", winId))
     return
   end
 
   local externalScreen = getExternalMonitor()
-  if not externalScreen then return end
+  if not externalScreen then
+    print("[auto-layout] no external monitor")
+    return
+  end
 
   local zones = calculateZones(externalScreen)
   local targetZone = zones[zoneName]
 
   if targetZone then
+    print(string.format("[auto-layout] placing %s in %s", appName, zoneName))
     win:setFrame(targetZone, 0)
     lastPlacement[winId] = now
   end
+
+  local t1 = hs.timer.secondsSinceEpoch()
+  print(string.format("[auto-layout] placeWindow completed at %.3f (delta: %.3fms)", t1, (t1-t0)*1000))
 end
 
 M.applyLayoutToAllWindows = function()
