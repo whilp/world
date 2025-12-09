@@ -2,7 +2,6 @@ local NotchClock = {}
 
 local clock = nil
 local updateTimer = nil
-local menubarWatcher = nil
 local timeOffsetMinutes = 0
 
 local function updateClockText()
@@ -52,34 +51,8 @@ local function createClock()
 
 	clock:level("desktop")
 	clock:clickActivating(false)
-	clock:alpha(0)
+	clock:alpha(1)
 	clock:show()
-end
-
-local function showClock()
-	if clock then
-		clock:alpha(1)
-	end
-end
-
-local function hideClock()
-	if clock then
-		clock:alpha(0)
-	end
-end
-
-local function checkMenubar()
-	local frontApp = hs.application.frontmostApplication()
-	if frontApp then
-		local mainWindow = frontApp:mainWindow()
-		if mainWindow and mainWindow:isFullScreen() then
-			hideClock()
-		else
-			showClock()
-		end
-	else
-		showClock()
-	end
 end
 
 local function handleScreenChange()
@@ -98,16 +71,6 @@ function NotchClock.start(options)
 	updateTimer = hs.timer.doEvery(60, updateClockText)
 
 	hs.screen.watcher.new(handleScreenChange):start()
-
-	menubarWatcher = hs.application.watcher.new(function(appName, eventType, app)
-		checkMenubar()
-	end)
-	menubarWatcher:start()
-
-	hs.window.filter.default:subscribe(hs.window.filter.windowFocused, checkMenubar)
-	hs.window.filter.default:subscribe(hs.window.filter.windowUnfocused, checkMenubar)
-
-	checkMenubar()
 end
 
 function NotchClock.stop()
@@ -119,11 +82,6 @@ function NotchClock.stop()
 	if updateTimer then
 		updateTimer:stop()
 		updateTimer = nil
-	end
-
-	if menubarWatcher then
-		menubarWatcher:stop()
-		menubarWatcher = nil
 	end
 end
 
