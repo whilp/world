@@ -19,6 +19,55 @@ local SUBTEXT_PENALTY = 50
 local MAX_RESULTS = 15         -- Limit fuzzy matching to top N results (chooser shows 15 rows)
 local DEBOUNCE_DELAY = 0.15    -- Wait 150ms after last keystroke before filtering
 
+-- Enable/disable debug logging
+local DEBUG = false
+
+local function debugLog(msg)
+  if DEBUG then
+    pcall(function() print(msg) end)
+  end
+end
+
+-- Safe window focus with timeout protection
+local function safeFocusWindow(win)
+  -- Validate window still exists
+  if not win then
+    return false
+  end
+
+  -- Check if window is still valid by trying to get its app
+  local ok, app = pcall(function() return win:application() end)
+  if not ok or not app then
+    return false
+  end
+
+  -- Use AXUIElement directly with timeout for better responsiveness
+  local axApp = hs.axuielement.applicationElement(app)
+  local axWin = hs.axuielement.windowElement(win)
+
+  if axWin then
+    -- Set a timeout on the AX element (500ms)
+    axWin:setTimeout(0.5)
+
+    -- Try to raise and focus via AX
+    local ok = pcall(function()
+      axWin:setAttributeValue("AXMain", true)
+      axWin:setAttributeValue("AXFocused", true)
+      axApp:setAttributeValue("AXFrontmost", true)
+    end)
+
+    if ok then
+      return true
+    end
+  end
+
+  -- Fallback: activate app then focus window
+  pcall(function() app:activate(true) end)
+  pcall(function() win:focus() end)
+
+  return true
+end
+
 local function filterAndSort(choices, query)
   local items = {}
   for _, choice in ipairs(choices) do
@@ -70,13 +119,18 @@ local function showSwitcher(applyFilter)
 
   if not chooser then
     chooser = hs.chooser.new(function(choice)
-      if not choice then return end
+      if not choice then
+        return
+      end
+
+      -- Check type field first to avoid slow field probing on window objects
+      local choiceType = choice.type
 
       -- For emoji/symbol modes that need to keep chooser open, handle inline
-      if isEmojiMode and choice.emoji then
+      if choiceType == "emoji" then
         emojiPicker.insertEmoji(choice.emoji)
         return
-      elseif isSymbolMode and choice.symbol then
+      elseif choiceType == "symbol" then
         symbolPicker.insertSymbol(choice.symbol)
         return
       end
@@ -85,16 +139,16 @@ local function showSwitcher(applyFilter)
       chooser:hide()
 
       hs.timer.doAfter(0, function()
-        if choice.window then
-          choice.window:focus()
-        elseif choice.appName then
+        if choiceType == "window" then
+          safeFocusWindow(choice.window)
+        elseif choiceType == "app" then
           local app = hs.application.get(choice.appName)
           if app then
             app:activate()
           else
             hs.application.launchOrFocus(choice.appName)
           end
-        elseif choice.commandId then
+        elseif choiceType == "command" then
           local action = dispatch.getCommandAction(choice.commandId)
           if action then
             local result = leaderModal.execute_action(action)
@@ -137,7 +191,7 @@ local function showSwitcher(applyFilter)
     end)
   end
 
-  -- Start with only top 15 items to avoid initial rendering lag with 129 items
+  -- Start with only top 15 items to avoid initial rendering lag
   local initialChoices = {}
   for i = 1, math.min(15, #choices) do
     table.insert(initialChoices, choices[i])

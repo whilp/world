@@ -2,6 +2,9 @@ local M = {}
 
 local leaderDsl = require("leader-dsl")
 
+-- Reusable window filter for performance (avoid creating new objects each call)
+local windowfilter = hs.window.filter.new(nil):setDefaultFilter{}
+
 M.filteredApps = {
   "Chess",
   "Karabiner-VirtualHIDDevice-Manager",
@@ -18,6 +21,19 @@ M.filteredApps = {
   "TextEdit",
 }
 
+-- Filter system processes with slow accessibility APIs (causes beachballs)
+M.filteredBundleIDs = {
+  "com.apple.SafariPlatformSupport.Helper",
+  "com.apple.appkit.xpc.ThemeWidgetControlViewService",
+  "com.apple.ViewBridgeAuxiliary",
+  "com.apple.quicklook.QuickLookUIService",
+  "com.apple.TextInputUI.xpc.CursorUIViewService",
+  "com.apple.PressAndHold",
+  "com.apple.coreservices.uiagent",
+  "com.apple.wifi.WiFiAgent",
+  "com.apple.CharacterPaletteIM",
+}
+
 local function shouldFilterApp(appName)
   for _, filtered in ipairs(M.filteredApps) do
     if appName == filtered or appName:match("^%.") then
@@ -27,14 +43,33 @@ local function shouldFilterApp(appName)
   return false
 end
 
+local function shouldFilterBundleID(bundleID)
+  if not bundleID then return false end
+  for _, filtered in ipairs(M.filteredBundleIDs) do
+    if bundleID == filtered then
+      return true
+    end
+  end
+  return false
+end
+
 M.getWindowChoices = function(applyFilter)
-  local windows = hs.window.orderedWindows()
+  -- Use window filter for better performance and timeout handling
+  -- getWindows() has built-in timeout protection (returns empty on timeout rather than hanging)
+  local windows = windowfilter:getWindows(hs.window.filter.sortByFocusedLast)
+
   local choices = {}
   local seenApps = {}
 
   for index, win in ipairs(windows) do
+    -- Safely get app and handle nil case
     local app = win:application()
+    if not app then
+      goto continue
+    end
+
     local appName = app:name()
+    local bundleID = app:bundleID()
     local title = win:title()
 
     -- Filter out non-standard windows (utility dialogs, system dialogs, etc.)
@@ -44,6 +79,11 @@ M.getWindowChoices = function(applyFilter)
 
     -- Filter out invisible windows
     if not win:isVisible() then
+      goto continue
+    end
+
+    -- Filter by bundle ID (slow accessibility APIs)
+    if applyFilter and shouldFilterBundleID(bundleID) then
       goto continue
     end
 
@@ -65,7 +105,8 @@ M.getWindowChoices = function(applyFilter)
         text = displayTitle,
         subText = subText,
         window = win,
-        mruIndex = index  -- Store MRU position for scoring
+        mruIndex = index,  -- Store MRU position for scoring
+        type = "window"  -- Explicit type to avoid field probing in callbacks
       })
       seenApps[appName] = true
     end
@@ -88,7 +129,8 @@ M.getAppChoices = function(seenApps, applyFilter)
         table.insert(choices, {
           text = appName,
           subText = "Focus application",
-          appName = appName
+          appName = appName,
+          type = "app"
         })
       end
     end
@@ -123,7 +165,8 @@ M.getInstalledAppChoices = function(seenApps, applyFilter)
             table.insert(choices, {
               text = appName,
               subText = "Launch application",
-              appName = appName
+              appName = appName,
+              type = "app"
             })
             seenNames[appName] = true
           end
@@ -150,7 +193,8 @@ M.getCommandChoices = function()
         table.insert(choices, {
           text = child.desc,
           subText = group,
-          commandId = commandId
+          commandId = commandId,
+          type = "command"
         })
       elseif child.type == "leader" then
         traverse(child.children, prefix .. key .. ".", child.desc)
