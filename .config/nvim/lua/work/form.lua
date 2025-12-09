@@ -384,6 +384,9 @@ function M.edit(item_or_id)
   end
 
   local function confirm_delete()
+    -- Get file path before deletion (item will be removed from store)
+    local file_path = work.get_file_path(item.id)
+
     local deleted, del_err = work.delete(item.id)
     if not deleted then
       vim.notify("work: " .. del_err, vim.log.levels.ERROR)
@@ -393,7 +396,7 @@ function M.edit(item_or_id)
 
     -- Git rm and commit
     local git = require("work.git")
-    git.commit(item.id, "delete")
+    git.commit(item.id, "delete", file_path)
 
     renderer:close()
   end
