@@ -17,7 +17,10 @@ local SUBTEXT_PENALTY = 50
 
 -- Performance tuning constants
 local MAX_RESULTS = 15         -- Limit fuzzy matching to top N results (chooser shows 15 rows)
-local DEBOUNCE_DELAY = 0.15    -- Wait 150ms after last keystroke before filtering
+local DEBOUNCE_DELAY = 0.075   -- Wait 75ms after last keystroke before filtering
+
+-- Set short global AX timeout (150ms) to prevent blocking
+hs.window.timeout(0.15)
 
 -- Enable/disable debug logging
 local DEBUG = false
@@ -28,45 +31,6 @@ local function debugLog(msg)
   end
 end
 
--- Safe window focus with timeout protection
-local function safeFocusWindow(win)
-  -- Validate window still exists
-  if not win then
-    return false
-  end
-
-  -- Check if window is still valid by trying to get its app
-  local ok, app = pcall(function() return win:application() end)
-  if not ok or not app then
-    return false
-  end
-
-  -- Use AXUIElement directly with timeout for better responsiveness
-  local axApp = hs.axuielement.applicationElement(app)
-  local axWin = hs.axuielement.windowElement(win)
-
-  if axWin then
-    -- Set a timeout on the AX element (500ms)
-    axWin:setTimeout(0.5)
-
-    -- Try to raise and focus via AX
-    local ok = pcall(function()
-      axWin:setAttributeValue("AXMain", true)
-      axWin:setAttributeValue("AXFocused", true)
-      axApp:setAttributeValue("AXFrontmost", true)
-    end)
-
-    if ok then
-      return true
-    end
-  end
-
-  -- Fallback: activate app then focus window
-  pcall(function() app:activate(true) end)
-  pcall(function() win:focus() end)
-
-  return true
-end
 
 local function filterAndSort(choices, query)
   local items = {}
@@ -140,7 +104,7 @@ local function showSwitcher(applyFilter)
 
       hs.timer.doAfter(0, function()
         if choiceType == "window" then
-          safeFocusWindow(choice.window)
+          pcall(function() choice.window:focus() end)
         elseif choiceType == "app" then
           local app = hs.application.get(choice.appName)
           if app then
