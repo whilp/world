@@ -95,6 +95,14 @@ if ok_pick then
   vim.keymap.set('n', '<Space>ph', '<Cmd>Pick help<CR>', { desc = 'Pick help' })
   vim.keymap.set('n', '<Space>pr', '<Cmd>Pick resume<CR>', { desc = 'Resume last pick' })
   vim.keymap.set('n', '<Space>p/', '<Cmd>Pick grep_live<CR>', { desc = 'Live grep' })
+
+  -- Claude config files
+  vim.keymap.set('n', '<Space>pc', function()
+    require('mini.pick').builtin.files({ tool = 'rg' }, { source = { cwd = vim.fn.expand('~/.claude') } })
+  end, { desc = 'Pick claude files' })
+  vim.keymap.set('n', '<Space>pC', function()
+    require('mini.pick').builtin.grep_live({ tool = 'rg' }, { source = { cwd = vim.fn.expand('~/.claude') } })
+  end, { desc = 'Live grep claude' })
 end
 
 -- mini.jump2d keybindings (only if mini.jump2d is available)
