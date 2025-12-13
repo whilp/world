@@ -4,6 +4,3 @@ source "$(dirname "$0")/env"
 
 # Clean up any stale swap files
 rm -rf "$DST/.local/state/nvim/swap"
-
-# Start nvim server
-nvimd start

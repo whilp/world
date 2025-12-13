@@ -23,7 +23,7 @@ local function create_contextual_buffer()
     vim.fn.termopen(vim.o.shell, {
       env = vim.tbl_extend("force", vim.fn.environ(), {
         NVIM_BUFFER_ID = unique_id,
-        NVIM_SOCKET = "~/.config/nvim/nvim.sock",
+        NVIM_SOCKET = vim.v.servername,
       }),
     })
   else

@@ -94,12 +94,49 @@ gh workflow run build-nvim.yml -f create_release=false  # test build
 gh workflow run build-nvim.yml -f release_tag=2025.11.23  # create release
 ```
 
-## Reloading configuration
+## Nvim wrapper and daemon management
 
-To reload nvim configuration after making changes, use the remote-expr command with the socket:
+The nvim wrapper at `~/.local/bin/nvim` provides automatic server management with flexible socket configuration.
 
+### Socket configuration
+- Default socket: `~/.config/nvim/nvim.sock`
+- Specify via CLI: `nvim --socket /path/to/socket.sock`
+- Specify via environment: `NVIM_SOCKET=/path/to/socket.sock nvim`
+- Priority: CLI flag > env var > default
+
+### Client mode (nvim)
+Automatically starts a daemon server if not running, then connects:
 ```bash
-nvim --server ~/.config/nvim/nvim.sock --remote-expr "execute('source ~/.config/nvim/init.lua')"
+nvim file.txt                                    # uses default socket, auto-starts if needed
+nvim --socket /tmp/project.sock file.txt        # uses custom socket
+nvim --remote-expr "execute('echo 42')"          # remote commands work too
 ```
 
-This sources the configuration in any running nvim instances without restarting them.
+### Daemon management (nvimd)
+Explicit daemon control commands:
+```bash
+nvimd start                                      # start server at default socket
+nvimd --socket /tmp/project.sock start           # start at custom socket
+nvimd stop                                       # stop server
+nvimd status                                     # check if running
+nvimd restart                                    # restart server
+nvimd cleanup                                    # remove stale socket file
+```
+
+### Multiple servers
+Each socket path gets its own daemon, pidfile, and logfile:
+- Socket: `/path/to/foo.sock`
+- Pidfile: `/path/to/foo.pid`
+- Logfile: `/path/to/foo.log`
+
+### Reloading configuration
+
+To reload nvim configuration after making changes:
+
+```bash
+nvim --remote-expr "execute('source ~/.config/nvim/init.lua')"
+# or with custom socket:
+nvim --socket /tmp/project.sock --remote-expr "execute('source ~/.config/nvim/init.lua')"
+```
+
+This sources the configuration in running nvim instances without restarting them.
