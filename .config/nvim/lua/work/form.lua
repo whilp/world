@@ -1232,10 +1232,21 @@ function setup_keymaps()
   -- Delete item
   map("n", "<C-d>", handle_delete_item)
 
-  -- Delete blocks (only on blocks field)
+  -- Delete field content (dd in vim style)
   map("n", "dd", function()
-    if state and state.ui.focused_field == "blocks" then
+    if not state then return end
+
+    if state.ui.focused_field == "blocks" then
       delete_blocks()
+    elseif state.ui.focused_field == "due" then
+      state.data.due = ""
+      render()
+    elseif state.ui.focused_field == "started" then
+      state.data.started = ""
+      render()
+    elseif state.ui.focused_field == "completed" then
+      state.data.completed = ""
+      render()
     end
   end)
 
