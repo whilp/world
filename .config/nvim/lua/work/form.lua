@@ -749,6 +749,7 @@ local function add_log_entry()
     if preserved_item then
       preserved_item._show_log_input = true
       preserved_item._autofocus_field = "log_input"
+      preserved_item._enter_insert_mode = true
       M.edit(preserved_item)
     end
   end)
@@ -1304,6 +1305,15 @@ function M.edit(item_or_id)
   -- Create window and render
   create_window()
   render()
+
+  -- Auto-enter insert mode if requested (e.g., for log input)
+  if item._enter_insert_mode then
+    vim.schedule(function()
+      if win and vim.api.nvim_win_is_valid(win) then
+        vim.cmd("startinsert")
+      end
+    end)
+  end
 end
 
 return M
