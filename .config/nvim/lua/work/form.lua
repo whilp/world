@@ -241,6 +241,23 @@ local function apply_highlights()
   end
 end
 
+-- Update highlight for a single field (avoids full clear/reapply)
+local function update_field_highlight(field_name)
+  if not buf or not vim.api.nvim_buf_is_valid(buf) then return end
+  if not state or not state.field_positions then return end
+
+  local pos = state.field_positions[field_name]
+  if not pos then return end
+
+  local is_focused = (field_name == state.ui.focused_field)
+  local hl_label = is_focused and "Title" or "Comment"
+
+  -- Clear only this line's highlights
+  vim.api.nvim_buf_clear_namespace(buf, ns, pos.start - 1, pos.start)
+  -- Re-apply highlight
+  vim.api.nvim_buf_add_highlight(buf, ns, hl_label, pos.start - 1, 0, -1)
+end
+
 -- Focus management (must be defined before render())
 local function get_visible_fields()
   local visible = {}
@@ -275,12 +292,17 @@ local function focus_field(field_name, skip_render)
 
   if not pos then return end
 
+  -- Track old focused field for highlight update
+  local old_field = state.ui.focused_field
+
   -- Update state
   state.ui.focused_field = field_name
 
   -- Update highlights if not skipping render
   if not skip_render then
-    apply_highlights()
+    -- Only update the two fields that changed
+    update_field_highlight(old_field)
+    update_field_highlight(field_name)
   end
 
   -- Move cursor to first content line (pos.start+1, since pos.start is label)
@@ -525,8 +547,11 @@ function setup_autocmds()
 
       -- Update focused field if changed
       if field.name ~= state.ui.focused_field then
+        local old_field = state.ui.focused_field
         state.ui.focused_field = field.name
-        apply_highlights()
+        -- Only update highlights for the two fields that changed
+        update_field_highlight(old_field)
+        update_field_highlight(field.name)
       end
     end,
   })
