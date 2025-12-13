@@ -641,103 +641,6 @@ local function add_blocks()
   end)
 end
 
-local function delete_blocks()
-  if not state then return end
-
-  local current_blocks = state.data.blocks
-  if #current_blocks == 0 then
-    return
-  end
-
-  state.ui.focused_field = "blocks"
-  local preserved_item = capture_state_for_reopen()
-  close()
-
-  local MiniPick = require("mini.pick")
-
-  local items = {}
-  for _, block_id in ipairs(current_blocks) do
-    local block_item, _ = work.get(block_id)
-    if block_item then
-      table.insert(items, {
-        text = work.short_id(block_item) .. ": " .. block_item.title,
-        id = block_id,
-      })
-    end
-  end
-
-  local source = {
-    items = items,
-    name = "Delete blocks",
-    choose = function(chosen)
-      vim.schedule(function()
-        if not preserved_item then return end
-
-        if not chosen then
-          preserved_item._autofocus_field = "blocks"
-          M.edit(preserved_item)
-          return
-        end
-
-        local new_blocks = {}
-        for _, block_id in ipairs(current_blocks) do
-          if block_id ~= chosen.id then
-            table.insert(new_blocks, block_id)
-          end
-        end
-
-        preserved_item.blocks = new_blocks
-        preserved_item._autofocus_field = "blocks"
-        M.edit(preserved_item)
-      end)
-    end,
-    choose_marked = function(marked)
-      vim.schedule(function()
-        if not preserved_item then return end
-
-        if not marked or #marked == 0 then
-          preserved_item._autofocus_field = "blocks"
-          M.edit(preserved_item)
-          return
-        end
-
-        local delete_set = {}
-        for _, chosen in ipairs(marked) do
-          delete_set[chosen.id] = true
-        end
-
-        local new_blocks = {}
-        for _, block_id in ipairs(current_blocks) do
-          if not delete_set[block_id] then
-            table.insert(new_blocks, block_id)
-          end
-        end
-
-        preserved_item.blocks = new_blocks
-        preserved_item._autofocus_field = "blocks"
-        M.edit(preserved_item)
-      end)
-    end,
-  }
-
-  local mappings = {
-    cancel = {
-      char = "<Esc>",
-      func = function()
-        MiniPick.stop()
-        vim.schedule(function()
-          if preserved_item then
-            preserved_item._autofocus_field = "blocks"
-            M.edit(preserved_item)
-          end
-        end)
-      end,
-    },
-  }
-
-  MiniPick.start({ source = source, window = util.get_window_config(), mappings = mappings })
-end
-
 local function add_log_entry()
   if not state then return end
 
@@ -1237,7 +1140,22 @@ function setup_keymaps()
     if not state then return end
 
     if state.ui.focused_field == "blocks" then
-      delete_blocks()
+      -- Delete the block under cursor
+      if not win or not vim.api.nvim_win_is_valid(win) then return end
+      local cursor = vim.api.nvim_win_get_cursor(win)
+      local row = cursor[1]
+
+      local pos = state.field_positions["blocks"]
+      if not pos then return end
+
+      -- Calculate which block line we're on (1-indexed)
+      local block_line_idx = row - pos.start  -- pos.start is label line
+
+      if block_line_idx > 0 and block_line_idx <= #state.data.blocks then
+        -- Remove the block at this index
+        table.remove(state.data.blocks, block_line_idx)
+        render()
+      end
     elseif state.ui.focused_field == "due" then
       state.data.due = ""
       render()
