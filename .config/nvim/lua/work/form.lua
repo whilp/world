@@ -435,7 +435,7 @@ local function render()
   if state.ui.show_delete_confirm then
     help_line = "Confirm delete? Press Enter to confirm, Esc to cancel"
   else
-    help_line = "C-s save · C-q cancel · d delete · e edit file"
+    help_line = "C-s save · C-q cancel · C-d delete · C-e edit file"
   end
   table.insert(lines, help_line)
 
@@ -1235,10 +1235,10 @@ function setup_keymaps()
   map({ "n", "i" }, "<C-q>", handle_cancel)
 
   -- Delete
-  map("n", "d", handle_delete_or_field_action)
+  map("n", "<C-d>", handle_delete_or_field_action)
 
   -- Edit file directly
-  map("n", "e", edit_file)
+  map("n", "<C-e>", edit_file)
 
   -- Activate current field (open pickers, add blocks, etc.) or confirm delete
   map("n", "<Space>", handle_enter)
