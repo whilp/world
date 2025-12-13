@@ -60,6 +60,7 @@ local function switchToEmojiMode()
   chooser:choices(emojiChoices)
   chooser:query("")
   chooser:selectedRow(1)
+  chooserStyle.apply(chooser)
   chooser:show()
 end
 
@@ -71,6 +72,7 @@ local function switchToSymbolMode()
   chooser:choices(symbolChoices)
   chooser:query("")
   chooser:selectedRow(1)
+  chooserStyle.apply(chooser)
   chooser:show()
 end
 
@@ -164,6 +166,7 @@ local function showSwitcher(applyFilter)
   chooser:choices(initialChoices)
   ignoreNextQueryChange = true  -- Prevent double-rendering from query("")
   chooser:query("")
+  chooserStyle.apply(chooser)  -- Recalculate width for current screen
   chooser:show()
   chooser:selectedRow(INITIAL_SELECTION)
 end

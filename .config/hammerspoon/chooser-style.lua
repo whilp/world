@@ -1,7 +1,7 @@
 local M = {}
 
 M.apply = function(chooser)
-  local MAX_WIDTH_PX = 800
+  local MAX_WIDTH_PX = 1200
   local screen = hs.screen.mainScreen()
   local screenFrame = screen:frame()
   local maxWidthPercent = (MAX_WIDTH_PX / screenFrame.w) * 100
