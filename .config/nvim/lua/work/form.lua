@@ -1177,17 +1177,8 @@ function setup_keymaps()
     end
   end)
 
-  -- Enter (contextual)
-  map("n", "<CR>", handle_enter)
-
-  -- Field hotkeys
-  for _, field in ipairs(FIELDS) do
-    if field.hotkey then
-      map("n", field.hotkey, function()
-        focus_field(field.name)
-      end)
-    end
-  end
+  -- Activate current field (open pickers, add blocks, etc.)
+  map("n", "<Space>", handle_enter)
 
   -- mini.jump2d support
   local ok_jump2d, MiniJump2d = pcall(require, "mini.jump2d")
