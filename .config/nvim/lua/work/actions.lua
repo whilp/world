@@ -1,98 +1,40 @@
 -- work.nvim - user-facing actions
 local M = {}
 
-local work = require("work")
+-- Ensure work library is in path
+local lib_path = vim.fn.expand("~/.local/lib/lua")
+if not package.path:find(lib_path, 1, true) then
+  package.path = lib_path .. "/?.lua;" .. package.path
+end
+
+local api_module = require("work.api")
+local api = api_module.init({ data_dir = vim.fn.expand("~/stripe/progress/work") })
+local render = require("work.render")
 local buffer = require("work.buffer")
 local util = require("work.util")
 
--- Create a floating window with common settings and keymappings
--- Returns: buf, win
-local function create_float_window(lines, title, opts)
-  opts = opts or {}
-  local buf = vim.api.nvim_create_buf(false, true)
-  vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-
-  local width = math.min(80, vim.o.columns - 10)
-  local default_height = opts.height or 20
-  local height = math.min(default_height, vim.o.lines - 10)
-  local row = math.floor((vim.o.lines - height) / 2)
-  local col = math.floor((vim.o.columns - width) / 2)
-
-  local win = vim.api.nvim_open_win(buf, true, {
-    relative = "editor",
-    width = width,
-    height = height,
-    row = row,
-    col = col,
-    style = "minimal",
-    border = "rounded",
-    title = " " .. title .. " ",
-    title_pos = "center",
-  })
-
-  vim.bo[buf].filetype = "markdown"
-  vim.api.nvim_win_set_option(win, "cursorline", true)
-  vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
-
-  return buf, win
+-- Helper to get short ID from item
+local function short_id(item)
+  if item._computed and item._computed.short_id then
+    return item._computed.short_id:lower()
+  end
+  return item.id:sub(-6):lower()
 end
 
--- Setup keymappings for floating window
--- process_fn: function to call on save
-local function setup_float_keymaps(buf, win, process_fn)
-  local function process_and_close()
-    local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-    vim.api.nvim_win_close(win, true)
-    process_fn(lines)
-  end
-
-  vim.keymap.set("n", "<CR>", process_and_close, {buffer = buf})
-  vim.keymap.set("i", "<D-CR>", process_and_close, {buffer = buf})
-  vim.keymap.set("n", "q", function()
-    vim.api.nvim_win_close(win, true)
-  end, {buffer = buf})
-end
-
--- Get work item ID from current context
--- Returns: id or nil
-local function get_current_id()
-  local bufname = vim.api.nvim_buf_get_name(0)
-  -- Check if we're in a work item file
-  if bufname:match("/work/[%a%d]+%.lua$") then
-    local id = bufname:match("([%a%d]+)%.lua$")
-    return id
-  end
-  -- Check if we're in a work buffer with ID in name
-  if bufname:match("^work:") then
-    local id = bufname:match(":([%a%d]+)$")
-    if id and #id >= 6 then
-      return id
-    end
-  end
-  -- Try word under cursor
-  local word = vim.fn.expand("<cword>")
-  if word:match("^[%a%d]+$") and #word >= 6 then
-    local _, err = work.get(word)
-    if not err then
-      return word
-    end
-  end
-  return nil
-end
 
 -- Mark current item as done
 function M.done(id)
-  id = id or get_current_id()
+  id = id or util.get_current_id()
   if not id then
     vim.notify("work: no item ID found", vim.log.levels.WARN)
     return
   end
-  local item, err = work.mark_done(id)
+  local item, err = api.done(id)
   if not item then
     vim.notify("work: " .. err, vim.log.levels.ERROR)
     return
   end
-  vim.notify("marked done: " .. work.short_id(item))
+  vim.notify("marked done: " .. short_id(item))
   -- Reload buffer if we're viewing the item
   local bufname = vim.api.nvim_buf_get_name(0)
   if bufname:match(id) or bufname:match(item.id) then
@@ -103,20 +45,20 @@ end
 
 -- Set due date for item
 function M.set_due(id, due_date)
-  id = id or get_current_id()
+  id = id or util.get_current_id()
   if not id then
     vim.notify("work: no item ID found", vim.log.levels.WARN)
     return
   end
   if not due_date then
-    local item, err = work.get(id)
+    local item, err = api.get(id)
     if not item then
       vim.notify("work: " .. err, vim.log.levels.ERROR)
       return
     end
 
     local current_due = item.due or ""
-    local buf, win = create_float_window({
+    local buf, win = util.create_float_window({
       "# set due date for: " .. item.title,
       "# enter date below (YYYY-MM-DD, 'today', '0d', '1d', '2w', etc.)",
       "# press <CR> or CMD-Enter to save, q to cancel",
@@ -127,7 +69,7 @@ function M.set_due(id, due_date)
     vim.api.nvim_win_set_cursor(win, {5, #current_due})
     vim.cmd("startinsert!")
 
-    setup_float_keymaps(buf, win, function(lines)
+    util.setup_float_keymaps(buf, win, function(lines)
       local input_date = nil
       for _, line in ipairs(lines) do
         if not line:match("^%s*#") and not line:match("^%s*$") then
@@ -146,7 +88,7 @@ function M.set_due(id, due_date)
         return
       end
 
-      local updated_item, set_err = work.set_due(id, parsed_date)
+      local updated_item, set_err = api.set_due(id, parsed_date)
       if not updated_item then
         vim.notify("work: " .. set_err, vim.log.levels.ERROR)
         return
@@ -168,7 +110,7 @@ function M.set_due(id, due_date)
     return
   end
 
-  local item, err = work.set_due(id, parsed_date)
+  local item, err = api.set_due(id, parsed_date)
   if not item then
     vim.notify("work: " .. err, vim.log.levels.ERROR)
     return
@@ -183,19 +125,19 @@ end
 
 -- Add log entry to item
 function M.log(id, message)
-  id = id or get_current_id()
+  id = id or util.get_current_id()
   if not id then
     vim.notify("work: no item ID found", vim.log.levels.WARN)
     return
   end
   if not message then
-    local item, err = work.get(id)
+    local item, err = api.get(id)
     if not item then
       vim.notify("work: " .. err, vim.log.levels.ERROR)
       return
     end
 
-    local buf, win = create_float_window({
+    local buf, win = util.create_float_window({
       "# log entry for: " .. item.title,
       "# press <CR> or CMD-Enter to save, q to cancel",
       "",
@@ -204,7 +146,7 @@ function M.log(id, message)
     vim.api.nvim_win_set_cursor(win, {3, 0})
     vim.cmd("startinsert")
 
-    setup_float_keymaps(buf, win, function(lines)
+    util.setup_float_keymaps(buf, win, function(lines)
       local log_lines = {}
       for _, line in ipairs(lines) do
         if not line:match("^%s*#") and not line:match("^%s*$") then
@@ -214,7 +156,7 @@ function M.log(id, message)
 
       if #log_lines > 0 then
         local log_message = table.concat(log_lines, "\n")
-        local timestamp, log_err = work.add_log(id, log_message)
+        local timestamp, log_err = api.log(id, log_message)
         if not timestamp then
           vim.notify("work: " .. log_err, vim.log.levels.ERROR)
           return
@@ -230,7 +172,7 @@ function M.log(id, message)
 
     return
   end
-  local timestamp, err = work.add_log(id, message)
+  local timestamp, err = api.log(id, message)
   if not timestamp then
     vim.notify("work: " .. err, vim.log.levels.ERROR)
     return
@@ -246,12 +188,12 @@ end
 
 -- Delete work item
 function M.delete(id)
-  id = id or get_current_id()
+  id = id or util.get_current_id()
   if not id then
     vim.notify("work: no item ID found", vim.log.levels.WARN)
     return
   end
-  local item, err = work.get(id)
+  local item, err = api.get(id)
   if not item then
     vim.notify("work: " .. err, vim.log.levels.ERROR)
     return
@@ -260,12 +202,12 @@ function M.delete(id)
     prompt = "Delete '" .. item.title .. "'?",
   }, function(choice)
     if choice == "Yes" then
-      local deleted, del_err = work.delete(id)
+      local deleted, del_err = api.delete(id)
       if not deleted then
         vim.notify("work: " .. del_err, vim.log.levels.ERROR)
         return
       end
-      vim.notify("deleted: " .. work.short_id(item))
+      vim.notify("deleted: " .. short_id(item))
       -- Close buffer if viewing the deleted item
       local bufname = vim.api.nvim_buf_get_name(0)
       if bufname:match(item.id) then
@@ -277,7 +219,7 @@ end
 
 -- Show item details
 function M.show(id)
-  id = id or get_current_id()
+  id = id or util.get_current_id()
   if not id then
     vim.notify("work: no item ID found", vim.log.levels.WARN)
     return
@@ -287,7 +229,7 @@ end
 
 -- Open item file
 function M.open(id)
-  id = id or get_current_id()
+  id = id or util.get_current_id()
   if not id then
     vim.notify("work: no item ID found", vim.log.levels.WARN)
     return
@@ -315,7 +257,7 @@ function M.quick_capture()
       if not line:match("^%s*#") and not line:match("^%s*$") then
         local title = line:match("^%s*[-*]%s*(.+)") or line:match("^%s*(.+)")
         if title and title ~= "" then
-          local item, err = work.add(title, { captured = captured_timestamp })
+          local item, err = api.add(title, { captured = captured_timestamp })
           if item then
             count = count + 1
           else
@@ -337,13 +279,13 @@ end
 
 -- Add or update blocks for current item
 function M.add_blocks(id)
-  id = id or get_current_id()
+  id = id or util.get_current_id()
   if not id then
     vim.notify("work: no item ID found", vim.log.levels.WARN)
     return
   end
 
-  local item, err = work.get(id)
+  local item, err = api.get(id)
   if not item then
     vim.notify("work: " .. err, vim.log.levels.ERROR)
     return
@@ -369,7 +311,7 @@ function M.add_blocks(id)
       table.insert(new_blocks, block_id)
     end
 
-    local updated_item, set_err = work.set_blocks(id, new_blocks)
+    local updated_item, set_err = api.set_blocks(id, new_blocks)
     if not updated_item then
       vim.notify("work: " .. set_err, vim.log.levels.ERROR)
       return
@@ -380,7 +322,7 @@ function M.add_blocks(id)
 
     -- Reload buffer if viewing the item
     local bufname = vim.api.nvim_buf_get_name(0)
-    local short_id = work.short_id(updated_item)
+    local short_id = short_id(updated_item)
 
     -- Check if we're viewing this item in any format
     if bufname:match(id) or bufname:match(updated_item.id) or bufname:match(short_id) then

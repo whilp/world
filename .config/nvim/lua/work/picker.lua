@@ -1,49 +1,38 @@
 -- work.nvim - mini.pick integration for work items
 local M = {}
 
-local work = require("work")
+-- Ensure work library is in path
+local lib_path = vim.fn.expand("~/.local/lib/lua")
+if not package.path:find(lib_path, 1, true) then
+  package.path = lib_path .. "/?.lua;" .. package.path
+end
+
+local api_module = require("work.api")
+local DATA_DIR = vim.fn.expand("~/stripe/progress/work")
+local api = api_module.init({ data_dir = DATA_DIR })
+local render = require("work.render")
 local util = require("work.util")
 
--- Open floating window for log entry
-local function open_log_window(item, on_complete)
-  local buf = vim.api.nvim_create_buf(false, true)
-  vim.api.nvim_buf_set_lines(buf, 0, -1, false, {
+-- Helper to get short ID from item
+local function short_id(item)
+  if item._computed and item._computed.short_id then
+    return item._computed.short_id:lower()
+  end
+  return item.id:sub(-6):lower()
+end
+
+-- Helper to show log window and reopen picker
+local function show_log_and_reopen(item, on_complete)
+  local buf, win = util.create_float_window({
     "# log entry for: " .. item.title,
     "# press <CR> or CMD-Enter to save, q to cancel",
     "",
-  })
+  }, "work log", { height = 8 })
 
-  local width = math.min(80, vim.o.columns - 10)
-  local height = math.min(8, vim.o.lines - 10)
-  local row = math.floor((vim.o.lines - height) / 2)
-  local col = math.floor((vim.o.columns - width) / 2)
+  vim.api.nvim_win_set_cursor(win, {3, 0})
+  vim.cmd("startinsert")
 
-  local win = vim.api.nvim_open_win(buf, true, {
-    relative = "editor",
-    width = width,
-    height = height,
-    row = row,
-    col = col,
-    style = "minimal",
-    border = "rounded",
-    title = " work log ",
-    title_pos = "center",
-  })
-
-  vim.bo[buf].filetype = "markdown"
-  vim.api.nvim_win_set_option(win, "cursorline", true)
-  vim.api.nvim_buf_set_option(buf, "bufhidden", "wipe")
-
-  vim.schedule(function()
-    vim.api.nvim_set_current_win(win)
-    vim.api.nvim_win_set_cursor(win, {3, 0})
-    vim.cmd("startinsert")
-  end)
-
-  local function process_and_close()
-    local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
-    vim.api.nvim_win_close(win, true)
-
+  util.setup_float_keymaps(buf, win, function(lines)
     local log_lines = {}
     for _, line in ipairs(lines) do
       if not line:match("^%s*#") and not line:match("^%s*$") then
@@ -53,9 +42,9 @@ local function open_log_window(item, on_complete)
 
     if #log_lines > 0 then
       local log_message = table.concat(log_lines, "\n")
-      local ok, err = work.add_log(item.id, log_message)
+      local ok, err = api.log(item.id, log_message)
       if ok then
-        vim.notify("added log to " .. work.short_id(item))
+        vim.notify("added log to " .. short_id(item))
       else
         vim.notify("work: " .. err, vim.log.levels.ERROR)
       end
@@ -64,22 +53,13 @@ local function open_log_window(item, on_complete)
     if on_complete then
       on_complete()
     end
-  end
-
-  vim.keymap.set("n", "<CR>", process_and_close, {buffer = buf})
-  vim.keymap.set("i", "<D-CR>", process_and_close, {buffer = buf})
-  vim.keymap.set("n", "q", function()
-    vim.api.nvim_win_close(win, true)
-    if on_complete then
-      on_complete()
-    end
-  end, {buffer = buf})
+  end)
 end
 
 -- Format item for picker display
 local function format_item(item)
   local status = item.completed and "done" or "todo"
-  local short_id = work.short_id(item)
+  local short_id = short_id(item)
   local due = ""
   if item._computed and item._computed.relative_due then
     due = item._computed.relative_due .. " "
@@ -105,7 +85,7 @@ local function make_source(items, name)
     name = name,
     choose = function(chosen)
       if not chosen then return end
-      local path = work.get_file_path(chosen.item.id)
+      local path = api.get_file_path(chosen.item.id)
       if path then
         local MiniPick = require("mini.pick")
         local target = MiniPick.get_picker_state().windows.target
@@ -115,7 +95,7 @@ local function make_source(items, name)
     end,
     preview = function(buf_id, chosen)
       if not chosen then return end
-      local detail = work.render_detail(chosen.item)
+      local detail = render.detail(chosen.item)
       local lines = vim.split(detail, "\n")
       vim.api.nvim_buf_set_lines(buf_id, 0, -1, false, lines)
     end,
@@ -125,7 +105,7 @@ local function make_source(items, name)
       local target = MiniPick.get_picker_state().windows.target
       vim.api.nvim_set_current_win(target)
       for _, chosen in ipairs(marked) do
-        local path = work.get_file_path(chosen.item.id)
+        local path = api.get_file_path(chosen.item.id)
         if path then
           vim.cmd.edit(path)
         end
@@ -134,30 +114,33 @@ local function make_source(items, name)
   }
 end
 
--- Create picker mappings with reopen callback
-local function make_mappings_with_reopen(reopen_fn)
+-- Create picker mappings for work actions
+-- reopen_fn: optional callback to reopen picker after actions
+local function setup_mappings(reopen_fn)
   local MiniPick = require("mini.pick")
   local mappings = {}
 
-  -- mark_done with reopen
+  -- mark_done
   mappings.mark_done = {
     char = "<C-d>",
     func = function()
       local matches = MiniPick.get_picker_matches()
       local current = matches.current
       if not current or not current.item then return end
-      local ok, err_msg = work.mark_done(current.item.id)
+      local ok, err_msg = api.done(current.item.id)
       if ok then
-        vim.notify("marked done: " .. work.short_id(current.item))
+        vim.notify("marked done: " .. short_id(current.item))
         MiniPick.stop()
-        vim.defer_fn(reopen_fn, 50)
+        if reopen_fn then
+          vim.defer_fn(reopen_fn, 50)
+        end
       else
         vim.notify("work: " .. err_msg, vim.log.levels.ERROR)
       end
     end,
   }
 
-  -- set_due with reopen
+  -- set_due
   mappings.set_due = {
     char = "<C-u>",
     func = function()
@@ -173,7 +156,7 @@ local function make_mappings_with_reopen(reopen_fn)
         if input and input ~= "" then
           local parsed_date = util.parse_relative_date(input)
           if parsed_date then
-            local ok, err_msg = work.set_due(item_id, parsed_date)
+            local ok, err_msg = api.set_due(item_id, parsed_date)
             if ok then
               vim.notify("set due date: " .. parsed_date)
             else
@@ -183,12 +166,14 @@ local function make_mappings_with_reopen(reopen_fn)
             vim.notify("work: invalid date format: " .. input, vim.log.levels.ERROR)
           end
         end
-        vim.defer_fn(reopen_fn, 50)
+        if reopen_fn then
+          vim.defer_fn(reopen_fn, 50)
+        end
       end)
     end,
   }
 
-  -- add_log with reopen
+  -- add_log
   mappings.add_log = {
     char = "<C-l>",
     func = function()
@@ -196,9 +181,9 @@ local function make_mappings_with_reopen(reopen_fn)
       local current = matches.current
       if not current or not current.item then return end
       MiniPick.stop()
-      open_log_window(current.item, function()
+      show_log_and_reopen(current.item, reopen_fn and function()
         vim.defer_fn(reopen_fn, 50)
-      end)
+      end or nil)
     end,
   }
 
@@ -209,7 +194,7 @@ local function make_mappings_with_reopen(reopen_fn)
       local matches = MiniPick.get_picker_matches()
       local current = matches.current
       if not current or not current.item then return end
-      local path = work.get_file_path(current.item.id)
+      local path = api.get_file_path(current.item.id)
       if path then
         local target = MiniPick.get_picker_state().windows.target
         vim.api.nvim_set_current_win(target)
@@ -226,7 +211,7 @@ local function make_mappings_with_reopen(reopen_fn)
       local matches = MiniPick.get_picker_matches()
       local current = matches.current
       if not current or not current.item then return end
-      local path = work.get_file_path(current.item.id)
+      local path = api.get_file_path(current.item.id)
       if path then
         local target = MiniPick.get_picker_state().windows.target
         vim.api.nvim_set_current_win(target)
@@ -267,92 +252,10 @@ local function make_mappings_with_reopen(reopen_fn)
   return mappings
 end
 
--- Create picker mappings for work actions
-local function setup_mappings()
-  local MiniPick = require("mini.pick")
-  return {
-    mark_done = {
-      char = "<C-d>",
-      func = function()
-        local matches = MiniPick.get_picker_matches()
-        local current = matches.current
-        if not current or not current.item then return end
-        local ok, err = work.mark_done(current.item.id)
-        if ok then
-          vim.notify("marked done: " .. work.short_id(current.item))
-          MiniPick.stop()
-        else
-          vim.notify("work: " .. err, vim.log.levels.ERROR)
-        end
-      end,
-    },
-    add_log = {
-      char = "<C-l>",
-      func = function()
-        local matches = MiniPick.get_picker_matches()
-        local current = matches.current
-        if not current or not current.item then return end
-        MiniPick.stop()
-        open_log_window(current.item)
-      end,
-    },
-    open_split = {
-      char = "<C-s>",
-      func = function()
-        local matches = MiniPick.get_picker_matches()
-        local current = matches.current
-        if not current or not current.item then return end
-        local path = work.get_file_path(current.item.id)
-        if path then
-          local target = MiniPick.get_picker_state().windows.target
-          vim.api.nvim_set_current_win(target)
-          vim.cmd.split(path)
-          MiniPick.stop()
-        end
-      end,
-    },
-    open_vsplit = {
-      char = "<C-v>",
-      func = function()
-        local matches = MiniPick.get_picker_matches()
-        local current = matches.current
-        if not current or not current.item then return end
-        local path = work.get_file_path(current.item.id)
-        if path then
-          local target = MiniPick.get_picker_state().windows.target
-          vim.api.nvim_set_current_win(target)
-          vim.cmd.vsplit(path)
-          MiniPick.stop()
-        end
-      end,
-    },
-    open_form = {
-      char = "<C-o>",
-      func = function()
-        local matches = MiniPick.get_picker_matches()
-        local current = matches.current
-        if not current or not current.item then return end
-        MiniPick.stop()
-        require("work.form").edit(current.item)
-      end,
-    },
-    open_form_enter = {
-      char = "<CR>",
-      func = function()
-        local matches = MiniPick.get_picker_matches()
-        local current = matches.current
-        if not current or not current.item then return end
-        MiniPick.stop()
-        require("work.form").edit(current.item)
-      end,
-    },
-  }
-end
-
 -- Pick all work items
 function M.all()
   local MiniPick = require("mini.pick")
-  local items, err = work.get_all_enriched()
+  local items, err = api.get_all()
   if not items then
     vim.notify("work: " .. err, vim.log.levels.ERROR)
     return
@@ -364,13 +267,13 @@ end
 -- Pick ready (unblocked) items
 function M.ready()
   local MiniPick = require("mini.pick")
-  local items, err = work.get_ready()
+  local items, err = api.get_ready()
   if not items then
     vim.notify("work: " .. err, vim.log.levels.ERROR)
     return
   end
 
-  local mappings = make_mappings_with_reopen(M.ready)
+  local mappings = setup_mappings(M.ready)
 
   -- Override <C-s> for mark started (instead of split)
   mappings.mark_started = {
@@ -379,9 +282,9 @@ function M.ready()
       local matches = MiniPick.get_picker_matches()
       local current = matches.current
       if not current or not current.item then return end
-      local ok, err_msg = work.mark_started(current.item.id)
+      local ok, err_msg = api.start(current.item.id)
       if ok then
-        vim.notify("marked started: " .. work.short_id(current.item))
+        vim.notify("marked started: " .. short_id(current.item))
         MiniPick.stop()
         vim.defer_fn(M.ready, 50)
       else
@@ -398,7 +301,7 @@ end
 -- Pick ready started items
 function M.ready_started()
   local MiniPick = require("mini.pick")
-  local items, err = work.get_ready()
+  local items, err = api.get_ready()
   if not items then
     vim.notify("work: " .. err, vim.log.levels.ERROR)
     return
@@ -411,7 +314,7 @@ function M.ready_started()
     end
   end
 
-  local mappings = make_mappings_with_reopen(M.ready_started)
+  local mappings = setup_mappings(M.ready_started)
 
   local source = make_source(started, "Ready Started Items")
   MiniPick.start({ source = source, mappings = mappings, window = util.get_window_config() })
@@ -420,7 +323,7 @@ end
 -- Pick blocked items
 function M.blocked()
   local MiniPick = require("mini.pick")
-  local items, err = work.get_blocked()
+  local items, err = api.get_blocked()
   if not items then
     vim.notify("work: " .. err, vim.log.levels.ERROR)
     return
@@ -432,7 +335,7 @@ end
 -- Pick incomplete items (todo + blocked)
 function M.incomplete()
   local MiniPick = require("mini.pick")
-  local items, err = work.get_all_enriched()
+  local items, err = api.get_all()
   if not items then
     vim.notify("work: " .. err, vim.log.levels.ERROR)
     return
@@ -444,7 +347,7 @@ function M.incomplete()
     end
   end
   local source = make_source(incomplete, "Incomplete Items")
-  MiniPick.start({ source = source, window = util.get_window_config() })
+  MiniPick.start({ source = source, mappings = setup_mappings(), window = util.get_window_config() })
 end
 
 -- Search work items by title/description
@@ -452,10 +355,10 @@ function M.search()
   local MiniPick = require("mini.pick")
   MiniPick.builtin.grep_live({
     tool = "rg",
-    cwd = work.config.data_dir,
+    cwd = DATA_DIR,
   }, {
     source = {
-      cwd = work.config.data_dir,
+      cwd = DATA_DIR,
     }
   })
 end
@@ -463,7 +366,7 @@ end
 -- Pick items to add as blocks (with multi-select support)
 function M.select_blocks(current_id, callback)
   local MiniPick = require("mini.pick")
-  local items, err = work.get_all_enriched()
+  local items, err = api.get_all()
   if not items then
     vim.notify("work: " .. err, vim.log.levels.ERROR)
     return
@@ -500,7 +403,7 @@ function M.select_blocks(current_id, callback)
     end,
     preview = function(buf_id, chosen)
       if not chosen then return end
-      local detail = work.render_detail(chosen.item)
+      local detail = render.detail(chosen.item)
       local lines = vim.split(detail, "\n")
       vim.api.nvim_buf_set_lines(buf_id, 0, -1, false, lines)
     end,

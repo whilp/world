@@ -1,6 +1,22 @@
 -- work.form - native implementation without nui-components
-local work = require("work")
+-- Ensure work library is in path
+local lib_path = vim.fn.expand("~/.local/lib/lua")
+if not package.path:find(lib_path, 1, true) then
+  package.path = lib_path .. "/?.lua;" .. package.path
+end
+
+local api_module = require("work.api")
+local api = api_module.init({ data_dir = vim.fn.expand("~/stripe/progress/work") })
+local render = require("work.render")
 local util = require("work.util")
+
+-- Helper to get short ID from item
+local function short_id(item)
+  if item._computed and item._computed.short_id then
+    return item._computed.short_id:lower()
+  end
+  return item.id:sub(-6):lower()
+end
 
 local M = {}
 
@@ -30,65 +46,6 @@ local validators = {
   timestamp = function(v) return v == "" or v:match("^%d%d%d%d%-%d%d%-%d%dT%d%d:%d%d:%d%d$") end,
 }
 
--- Helper functions for date/timestamp formatting
-local function format_relative_days(days)
-  if days == 0 then
-    return "0d"
-  end
-  local sign = days > 0 and "+" or ""
-  local abs_days = math.abs(days)
-  if abs_days % 7 == 0 then
-    return sign .. (days / 7) .. "w"
-  end
-  return sign .. days .. "d"
-end
-
-local function format_due_date(due_date)
-  if not due_date or due_date == "" then
-    return "Set due date"
-  end
-
-  local year, month, day = due_date:match("(%d+)-(%d+)-(%d+)")
-  if not year then
-    return "Set due date"
-  end
-
-  local due_time = os.time({ year = tonumber(year), month = tonumber(month), day = tonumber(day), hour = 0 })
-  local today_time = os.time({ year = os.date("%Y"), month = os.date("%m"), day = os.date("%d"), hour = 0 })
-  local days_diff = math.floor((due_time - today_time) / 86400)
-
-  local relative
-  if days_diff == 0 then
-    relative = "today"
-  elseif days_diff == 1 then
-    relative = "tomorrow"
-  elseif days_diff == -1 then
-    relative = "yesterday"
-  elseif days_diff < 0 then
-    relative = math.abs(days_diff) .. "d ago"
-  else
-    relative = days_diff .. "d"
-  end
-
-  return string.format("%s (%s)", due_date, relative)
-end
-
-local function format_timestamp(ts, label)
-  if not ts or ts == "" then
-    return label
-  end
-
-  local year, month, day = ts:match("(%d%d%d%d)-(%d%d)-(%d%d)")
-  if not year then
-    return label
-  end
-
-  local ts_time = os.time({ year = tonumber(year), month = tonumber(month), day = tonumber(day), hour = 0 })
-  local today_time = os.time({ year = os.date("%Y"), month = os.date("%m"), day = os.date("%d"), hour = 0 })
-  local days_diff = math.floor((ts_time - today_time) / 86400)
-
-  return format_relative_days(days_diff)
-end
 
 local function format_blocks(block_ids)
   if not block_ids or #block_ids == 0 then
@@ -96,9 +53,9 @@ local function format_blocks(block_ids)
   end
   local lines = {}
   for _, block_id in ipairs(block_ids) do
-    local block_item, _ = work.get(block_id)
+    local block_item, _ = api.get(block_id)
     if block_item then
-      local label = work.short_id(block_item) .. ": " .. block_item.title
+      local label = short_id(block_item) .. ": " .. block_item.title
       if block_item.due then
         label = label .. " [" .. block_item.due .. "]"
       end
@@ -397,11 +354,11 @@ local function render()
     elseif field.type == "button" then
       local value
       if field.name == "due" then
-        value = format_due_date(state.data.due)
+        value = util.format_due_date(state.data.due)
       elseif field.name == "started" then
-        value = format_timestamp(state.data.started, "Not started")
+        value = util.format_timestamp(state.data.started, "Not started")
       elseif field.name == "completed" then
-        value = format_timestamp(state.data.completed, "Not completed")
+        value = util.format_timestamp(state.data.completed, "Not completed")
       else
         value = state.data[field.name] or ""
       end
@@ -729,11 +686,11 @@ end
 local function confirm_delete()
   if not state then return end
 
-  local file_path = work.get_file_path(state.item.id)
+  local file_path = api.get_file_path(state.item.id)
   local item_id = state.item.id
-  local short_id = work.short_id(state.item)
+  local short_id = short_id(state.item)
 
-  local deleted, del_err = work.delete(item_id)
+  local deleted, del_err = api.delete(item_id)
   if not deleted then
     vim.notify("work: " .. del_err, vim.log.levels.ERROR)
     return
@@ -767,7 +724,7 @@ local function edit_file()
     return
   end
 
-  local file_path = work.get_file_path(state.item.id)
+  local file_path = api.get_file_path(state.item.id)
   if not file_path then
     vim.notify("work: file not found", vim.log.levels.ERROR)
     return
@@ -841,13 +798,13 @@ local function submit_form()
   -- Handle new item creation
   if state.is_new then
     local captured_timestamp = os.date("%Y-%m-%dT%H:%M:%S")
-    local new_item, err = work.add(state.data.title, { captured = captured_timestamp })
+    local new_item, err = api.add(state.data.title, { captured = captured_timestamp })
     if not new_item then
       vim.notify("work: failed to create item: " .. err, vim.log.levels.ERROR)
       return
     end
     state.item.id = new_item.id
-    vim.notify("created " .. work.short_id(new_item), vim.log.levels.INFO)
+    vim.notify("created " .. short_id(new_item), vim.log.levels.INFO)
 
     -- Now update all other fields if they're set
     local updates = {}
@@ -865,7 +822,7 @@ local function submit_form()
     end
 
     if next(updates) then
-      local result, update_err = work.update(state.item.id, updates)
+      local result, update_err = api.update(state.item.id, updates)
       if not result or update_err then
         vim.notify("work: failed to update fields: " .. (update_err or "unknown error"), vim.log.levels.ERROR)
         return
@@ -874,7 +831,7 @@ local function submit_form()
 
     -- Set blocks if any
     if #state.data.blocks > 0 then
-      local result, block_err = work.set_blocks(state.item.id, state.data.blocks)
+      local result, block_err = api.set_blocks(state.item.id, state.data.blocks)
       if not result or block_err then
         vim.notify("work: failed to set blocks: " .. (block_err or "unknown error"), vim.log.levels.ERROR)
         return
@@ -883,7 +840,7 @@ local function submit_form()
 
     -- Set logs if any
     if vim.tbl_count(state.data.log) > 0 then
-      local result, log_err = work.update(state.item.id, { log = state.data.log })
+      local result, log_err = api.update(state.item.id, { log = state.data.log })
       if not result or log_err then
         vim.notify("work: failed to set logs: " .. (log_err or "unknown error"), vim.log.levels.ERROR)
         return
@@ -933,9 +890,9 @@ local function submit_form()
   local any_changes = false
 
   if has_updates then
-    local _, err = work.update(state.item.id, updates)
+    local _, err = api.update(state.item.id, updates)
     if not err then
-      vim.notify("updated " .. work.short_id(state.item), vim.log.levels.INFO)
+      vim.notify("updated " .. short_id(state.item), vim.log.levels.INFO)
       any_changes = true
     else
       vim.notify("work: failed to update: " .. err, vim.log.levels.ERROR)
@@ -944,22 +901,22 @@ local function submit_form()
   end
 
   if blocks_updated then
-    local _, err = work.set_blocks(state.item.id, state.data.blocks)
+    local _, err = api.set_blocks(state.item.id, state.data.blocks)
     if err then
       vim.notify("work: failed to update blocks: " .. err, vim.log.levels.ERROR)
       return
     end
-    vim.notify("updated blocks for " .. work.short_id(state.item), vim.log.levels.INFO)
+    vim.notify("updated blocks for " .. short_id(state.item), vim.log.levels.INFO)
     any_changes = true
   end
 
   if logs_updated then
-    local _, err = work.update(state.item.id, { log = state.data.log })
+    local _, err = api.update(state.item.id, { log = state.data.log })
     if err then
       vim.notify("work: failed to update logs: " .. err, vim.log.levels.ERROR)
       return
     end
-    vim.notify("updated logs for " .. work.short_id(state.item), vim.log.levels.INFO)
+    vim.notify("updated logs for " .. short_id(state.item), vim.log.levels.INFO)
     any_changes = true
   end
 
@@ -1210,7 +1167,7 @@ function M.edit(item_or_id)
       _is_new = true,
     }
   elseif type(item_or_id) == "string" then
-    local loaded_item, err = work.get(item_or_id)
+    local loaded_item, err = api.get(item_or_id)
     if not loaded_item then
       vim.notify("work: " .. err, vim.log.levels.ERROR)
       return

@@ -18,19 +18,11 @@ complete.setup()
 -- Commands
 vim.api.nvim_create_user_command("Work", function(opts)
   local args = vim.split(opts.args, "%s+")
-  local cmd = args[1] or "list"
+  local cmd = args[1] or "pick"
   local rest = table.concat(vim.list_slice(args, 2), " ")
 
-  if cmd == "list" then
-    buffer.list()
-  elseif cmd == "tree" then
-    buffer.tree(rest ~= "" and rest or nil)
-  elseif cmd == "ready" then
-    buffer.ready()
-  elseif cmd == "started" then
+  if cmd == "started" then
     picker.ready_started()
-  elseif cmd == "blocked" then
-    buffer.blocked()
   elseif cmd == "show" then
     if rest == "" then
       actions.show()
@@ -65,7 +57,7 @@ end, {
   complete = function(arglead, cmdline, cursorpos)
     local args = vim.split(cmdline, "%s+")
     if #args <= 2 then
-      local cmds = { "list", "tree", "ready", "started", "blocked", "show", "open", "done", "capture", "delete", "rm", "log", "due", "pick", "search" }
+      local cmds = { "started", "show", "open", "done", "capture", "delete", "rm", "log", "due", "pick", "search" }
       return vim.tbl_filter(function(c)
         return c:find(arglead, 1, true) == 1
       end, cmds)
@@ -81,9 +73,7 @@ end, { nargs = "?", desc = "Edit work item in form" })
 -- Keybindings under <Space>w
 vim.keymap.set("n", "<Space>wl", function() actions.log() end, { desc = "Work: log entry" })
 vim.keymap.set("n", "<Space>wL", function() picker.all() end, { desc = "Work: pick all" })
-vim.keymap.set("n", "<Space>wt", function() buffer.tree() end, { desc = "Work: tree view" })
 vim.keymap.set("n", "<Space>wr", function() picker.ready() end, { desc = "Work: pick ready" })
-vim.keymap.set("n", "<Space>wR", function() buffer.ready() end, { desc = "Work: ready list" })
 vim.keymap.set("n", "<Space>ws", function() picker.ready_started() end, { desc = "Work: pick ready started" })
 vim.keymap.set("n", "<Space>wS", function() actions.show() end, { desc = "Work: show item" })
 vim.keymap.set("n", "<Space>wb", function() actions.add_blocks() end, { desc = "Work: add blocks" })
@@ -114,9 +104,7 @@ local function setup_work_submode()
   local work_clues = {
     { mode = 'n', keys = '<Space>wl', desc = 'Work: log entry' },
     { mode = 'n', keys = '<Space>wL', desc = 'Work: pick all' },
-    { mode = 'n', keys = '<Space>wt', desc = 'Work: tree view', postkeys = '<Space>w' },
     { mode = 'n', keys = '<Space>wr', desc = 'Work: pick ready' },
-    { mode = 'n', keys = '<Space>wR', desc = 'Work: ready list', postkeys = '<Space>w' },
     { mode = 'n', keys = '<Space>ws', desc = 'Work: pick ready started' },
     { mode = 'n', keys = '<Space>wS', desc = 'Work: show item', postkeys = '<Space>w' },
     { mode = 'n', keys = '<Space>wb', desc = 'Work: add blocks' },
