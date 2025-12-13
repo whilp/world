@@ -183,11 +183,6 @@ local function exec_nvim_server()
   unistd.execp(NVIM_BIN, {NVIM_BIN, "--listen", SOCK, "--headless"})
 end
 
-local function cmd_serve()
-  setup_nvim_environment()
-  exec_nvim_server()
-end
-
 local function cmd_start()
   local ok, err = mkdir_p(PIDFILE:match("(.+)/[^/]+$"))
   if not ok then
@@ -316,84 +311,10 @@ local function run_command(args)
   return 1
 end
 
-local function is_systemd_user_available()
-  if not file_exists("/run/systemd/system") then
-    return false
-  end
-  local devnull = fcntl.open("/dev/null", fcntl.O_WRONLY)
-  if not devnull then
-    return false
-  end
-  local old_stderr = unistd.dup(unistd.STDERR_FILENO)
-  unistd.dup2(devnull, unistd.STDERR_FILENO)
-  unistd.close(devnull)
-
-  local status = run_command({"systemctl", "--user", "is-system-running"})
-
-  unistd.dup2(old_stderr, unistd.STDERR_FILENO)
-  unistd.close(old_stderr)
-
-  return status == 0
-end
-
-local function cmd_reload()
-  if jit.os == "OSX" then
-    local uid = unistd.getuid()
-    run_command({"launchctl", "bootout", "gui/" .. uid .. "/com.user.nvim"})
-    unistd.sleep(0.5)
-    local status = run_command({"launchctl", "bootstrap", "gui/" .. uid, HOME .. "/Library/LaunchAgents/com.user.nvim.plist"})
-    if status ~= 0 then
-      io.stderr:write("launchd: failed to bootstrap nvim service\n")
-      return 1
-    end
-    status = run_command({"launchctl", "enable", "gui/" .. uid .. "/com.user.nvim"})
-    if status ~= 0 then
-      io.stderr:write("launchd: failed to enable nvim service\n")
-      return 1
-    end
-    status = run_command({"launchctl", "kickstart", "gui/" .. uid .. "/com.user.nvim"})
-    if status ~= 0 then
-      io.stderr:write("launchd: failed to kickstart nvim service\n")
-      return 1
-    end
-    io.write("launchd: nvim service reloaded\n")
-  else
-    if is_systemd_user_available() then
-      local status = run_command({"systemctl", "--user", "daemon-reload"})
-      if status ~= 0 then
-        io.stderr:write("systemd: failed to reload daemon\n")
-        return 1
-      end
-      io.write("systemd: daemon reloaded\n")
-    end
-  end
-  return 0
-end
-
 local function cmd_restart()
-  if jit.os == "OSX" then
-    local uid = unistd.getuid()
-    local status = run_command({"launchctl", "kickstart", "-k", "gui/" .. uid .. "/com.user.nvim"})
-    if status ~= 0 then
-      io.stderr:write("launchd: failed to restart nvim service\n")
-      return 1
-    end
-    io.write("launchd: nvim service restarted\n")
-  else
-    if is_systemd_user_available() then
-      local status = run_command({"systemctl", "--user", "restart", "nvim"})
-      if status ~= 0 then
-        io.stderr:write("systemd: failed to restart nvim service\n")
-        return 1
-      end
-      io.write("systemd: nvim service restarted\n")
-    else
-      cmd_stop()
-      unistd.sleep(1)
-      return cmd_start()
-    end
-  end
-  return 0
+  cmd_stop()
+  unistd.sleep(1)
+  return cmd_start()
 end
 
 local function cmd_cleanup()
@@ -402,11 +323,9 @@ local function cmd_cleanup()
 end
 
 local commands = {
-  serve = cmd_serve,
   start = cmd_start,
   stop = cmd_stop,
   status = cmd_status,
-  reload = cmd_reload,
   restart = cmd_restart,
   cleanup = cmd_cleanup,
 }
@@ -419,7 +338,7 @@ local function daemon_mode(args)
     return cmd_fn()
   else
     io.stderr:write("nvimd: unknown command: " .. command .. "\n")
-    io.stderr:write("Usage: nvimd {serve|start|stop|status|restart|reload|cleanup}\n")
+    io.stderr:write("Usage: nvimd {start|stop|status|restart|cleanup}\n")
     return 1
   end
 end
