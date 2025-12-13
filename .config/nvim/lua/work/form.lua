@@ -435,7 +435,7 @@ local function render()
   if state.ui.show_delete_confirm then
     help_line = "Confirm delete? Press Enter to confirm, Esc to cancel"
   else
-    help_line = "C-s save · C-q cancel · d delete"
+    help_line = "C-s save · C-q cancel · d delete · e edit file"
   end
   table.insert(lines, help_line)
 
@@ -856,6 +856,26 @@ local function cancel_delete()
   end)
 end
 
+local function edit_file()
+  if not state then return end
+
+  if state.is_new then
+    vim.notify("work: save item before editing file", vim.log.levels.WARN)
+    return
+  end
+
+  local file_path = work.get_file_path(state.item.id)
+  if not file_path then
+    vim.notify("work: file not found", vim.log.levels.ERROR)
+    return
+  end
+
+  close()
+  vim.schedule(function()
+    vim.cmd.edit(file_path)
+  end)
+end
+
 local function blocks_changed(new_blocks, old_blocks)
   if #new_blocks ~= #old_blocks then return true end
   local old_set = {}
@@ -1216,6 +1236,9 @@ function setup_keymaps()
 
   -- Delete
   map("n", "d", handle_delete_or_field_action)
+
+  -- Edit file directly
+  map("n", "e", edit_file)
 
   -- Activate current field (open pickers, add blocks, etc.) or confirm delete
   map("n", "<Space>", handle_enter)
