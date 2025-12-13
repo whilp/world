@@ -229,7 +229,7 @@ end
 
 local function exec_nvim_server(sock)
   os.remove(sock)
-  unistd.execp(NVIM_BIN, {"nvim", "--listen", sock, "--headless"})
+  unistd.execp(NVIM_BIN, {"--listen", sock, "--headless"})
 end
 
 local function cmd_start(paths)
@@ -439,7 +439,7 @@ local function client_mode(args)
       cmd_start(paths)
     end
 
-    local new_args = {NVIM_BIN}
+    local new_args = {}
     if not has_server then
       table.insert(new_args, "--server")
       table.insert(new_args, paths.sock)
@@ -449,7 +449,7 @@ local function client_mode(args)
     end
     unistd.execp(NVIM_BIN, new_args)
   else
-    local new_args = {NVIM_BIN}
+    local new_args = {}
     for _, arg in ipairs(args) do
       table.insert(new_args, arg)
     end
