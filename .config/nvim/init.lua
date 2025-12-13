@@ -15,10 +15,6 @@ vim.pack.add({
   { src = "https://github.com/nvim-mini/mini.nvim" },
 })
 
-vim.pack.add({
-  { src = "https://github.com/MunifTanjim/nui.nvim" },
-  { src = "https://github.com/grapp-dev/nui-components.nvim" },
-})
 
 vim.pack.add({
   { src = "https://github.com/nvim-lua/plenary.nvim" },
