@@ -1108,14 +1108,9 @@ local function handle_cancel()
   end
 end
 
-local function handle_delete_or_field_action()
+local function handle_delete_item()
   if not state then return end
-
-  if state.ui.focused_field == "blocks" then
-    delete_blocks()
-  else
-    show_delete_confirm()
-  end
+  show_delete_confirm()
 end
 
 local function handle_enter()
@@ -1234,8 +1229,15 @@ function setup_keymaps()
   map("n", "<Esc>", handle_escape)
   map({ "n", "i" }, "<C-q>", handle_cancel)
 
-  -- Delete
-  map("n", "<C-d>", handle_delete_or_field_action)
+  -- Delete item
+  map("n", "<C-d>", handle_delete_item)
+
+  -- Delete blocks (only on blocks field)
+  map("n", "dd", function()
+    if state and state.ui.focused_field == "blocks" then
+      delete_blocks()
+    end
+  end)
 
   -- Edit file directly
   map("n", "<C-e>", edit_file)
