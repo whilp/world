@@ -92,7 +92,7 @@ end
 
 local function format_blocks(block_ids)
   if not block_ids or #block_ids == 0 then
-    return { "No blocks ('a' to add)" }
+    return { "No blocks" }
   end
   local lines = {}
   for _, block_id in ipairs(block_ids) do
@@ -112,7 +112,7 @@ local function format_logs(log_table, sort_asc, original_log)
   local count = log_table and vim.tbl_count(log_table) or 0
 
   if not log_table or count == 0 then
-    return { "No logs (press Enter to add)" }
+    return { "No logs" }
   end
 
   local entries = {}
