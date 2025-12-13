@@ -39,7 +39,7 @@ else
     })
   end
 
-  local scored = fuzzy.fuzzy_find(items, query, #items, 50)
+  local scored = fuzzy.fuzzy_find(items, query, #items, 50, dispatch.appAdjustments)
   results = {}
   for _, result in ipairs(scored) do
     local merged = result.original

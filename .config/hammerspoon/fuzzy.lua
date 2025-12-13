@@ -254,9 +254,39 @@ function Fuzzy.match_item(item, query, subtext_penalty)
 	return best_score
 end
 
-function Fuzzy.fuzzy_find(items, query, max_results, subtext_penalty)
+local function get_app_adjustment(item, app_adjustments)
+	if not app_adjustments then
+		return 0
+	end
+
+	local app_name = nil
+	if item.original then
+		-- For commands, check text field first (before subText check)
+		if item.original.commandId and item.original.text then
+			app_name = item.original.text
+		-- For apps (running or installed), check appName
+		elseif item.original.appName then
+			app_name = item.original.appName
+		-- For windows, extract app name from subText
+		elseif item.original.subText then
+			app_name = item.original.subText:match("^([^%-]+)") -- Extract app name before " - "
+			if app_name then
+				app_name = app_name:gsub("^%s*(.-)%s*$", "%1") -- Trim whitespace
+			end
+		end
+	end
+
+	if app_name then
+		return app_adjustments[app_name] or 0
+	end
+
+	return 0
+end
+
+function Fuzzy.fuzzy_find(items, query, max_results, subtext_penalty, app_adjustments)
 	max_results = max_results or 10
 	subtext_penalty = subtext_penalty or 50
+	app_adjustments = app_adjustments or {}
 
 	local scored = {}
 	for _, item in ipairs(items) do
@@ -272,6 +302,10 @@ function Fuzzy.fuzzy_find(items, query, max_results, subtext_penalty)
 				local mru_bonus = math.max(0, 100 - (item.original.mruIndex * 2))
 				final_score = final_score + mru_bonus
 			end
+
+			-- Apply app-specific score adjustments
+			local adjustment = get_app_adjustment(item, app_adjustments)
+			final_score = final_score + adjustment
 
 			table.insert(scored, {
 				item = item,

@@ -10,15 +10,20 @@ M.filteredApps = {
   "Karabiner-VirtualHIDDevice-Manager",
   "Bigmac",
   "Books",
-  "Calculator",
-  "System Calcluator",
   "Archive Utility",
-  "Activity Monitor",
   "Font Book",
-  "Dictionary",
   "VoiceOver Utility",
   "Stickies",
   "TextEdit",
+}
+
+-- Score adjustments for specific apps (negative = penalty, positive = bonus)
+M.appAdjustments = {
+  ["Calendar"] = -150,
+  ["Calculator"] = -150,
+  ["System Calculator"] = -150,
+  ["Dictionary"] = -150,
+  ["Activity Monitor"] = -150,
 }
 
 -- Filter system processes with slow accessibility APIs (causes beachballs)

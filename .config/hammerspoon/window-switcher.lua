@@ -43,7 +43,7 @@ local function filterAndSort(choices, query)
     })
   end
 
-  local results = fuzzy.fuzzy_find(items, query, MAX_RESULTS, SUBTEXT_PENALTY)
+  local results = fuzzy.fuzzy_find(items, query, MAX_RESULTS, SUBTEXT_PENALTY, dispatch.appAdjustments)
 
   local sortedChoices = {}
   for _, result in ipairs(results) do
