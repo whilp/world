@@ -1188,6 +1188,14 @@ function setup_keymaps()
       end)
     end
   end
+
+  -- mini.jump2d support
+  local ok_jump2d, MiniJump2d = pcall(require, "mini.jump2d")
+  if ok_jump2d then
+    map("n", "f", function()
+      MiniJump2d.start(MiniJump2d.builtin_opts.single_character)
+    end)
+  end
 end
 
 -- Public API
