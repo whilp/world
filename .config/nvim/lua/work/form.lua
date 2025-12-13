@@ -411,11 +411,11 @@ local function render()
   -- Action buttons row
   local buttons_line
   if state.ui.show_delete_confirm then
-    buttons_line = "[S]ubmit  [C]ancel  Confirm? [Enter]"
+    buttons_line = "Submit  Cancel  Confirm? [Enter]"
   elseif state.is_new then
-    buttons_line = "[S]ubmit  [C]ancel"
+    buttons_line = "Submit  Cancel"
   else
-    buttons_line = "[S]ubmit  [C]ancel  [D]elete"
+    buttons_line = "Submit  Cancel  Delete"
   end
   table.insert(lines, buttons_line)
 
@@ -1150,6 +1150,20 @@ function setup_keymaps()
     vim.keymap.set(mode, key, handler, { buffer = buf, nowait = true, silent = true })
   end
 
+  -- Insert mode trigger - contextual based on field type
+  local function handle_insert_mode()
+    if not state then return end
+    local field_def = get_field_def(state.ui.focused_field)
+    if field_def and field_def.type == "text_input" then
+      -- Allow normal insert mode for text fields
+      return false
+    else
+      -- Trigger action for button/paragraph fields
+      handle_enter()
+      return true
+    end
+  end
+
   -- Navigation
   map("n", "<Tab>", focus_next)
   map("n", "<S-Tab>", focus_prev)
@@ -1157,6 +1171,17 @@ function setup_keymaps()
   map("n", "<Up>", focus_prev)
   map("n", "<C-n>", focus_next)
   map("n", "<C-p>", focus_prev)
+
+  -- Insert mode keys - contextual
+  for _, key in ipairs({"i", "a", "o", "I", "A", "O"}) do
+    map("n", key, function()
+      if not handle_insert_mode() then
+        -- Let the key through for text fields
+        local feedkey = vim.api.nvim_replace_termcodes(key, true, false, true)
+        vim.api.nvim_feedkeys(feedkey, "n", false)
+      end
+    end)
+  end
 
   -- Submit
   map("n", "<C-s>", handle_submit)
