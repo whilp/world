@@ -1,21 +1,32 @@
 -- work.form - native implementation without nui-components
--- Ensure work library is in path
-local lib_path = vim.fn.expand("~/.local/lib/lua")
-if not package.path:find(lib_path, 1, true) then
-  package.path = lib_path .. "/?.lua;" .. package.path
-end
-
-local api_module = require("work.api")
-local api = api_module.init({ data_dir = vim.fn.expand("~/stripe/progress/work") })
+local work = require("work")
+local api = work.api
 local render = require("work.render")
 local util = require("work.util")
 
--- Helper to get short ID from item
-local function short_id(item)
-  if item._computed and item._computed.short_id then
-    return item._computed.short_id:lower()
+-- Helper to commit changes to git
+local function git_commit(id, action, file_path)
+  file_path = file_path or api.get_file_path(id)
+  if not file_path then
+    vim.notify("work: git commit failed - could not get file path for " .. tostring(id), vim.log.levels.ERROR)
+    return
   end
-  return item.id:sub(-6):lower()
+  local short_id = id:sub(-6):lower()
+  local msg = "work: " .. action .. " " .. short_id
+
+  local add_result = vim.fn.system({"git", "-C", work.config.data_dir, "add", file_path})
+  if vim.v.shell_error ~= 0 then
+    vim.notify("work: git add failed: " .. add_result, vim.log.levels.ERROR)
+    return
+  end
+
+  local commit_result = vim.fn.system({"git", "-C", work.config.data_dir, "commit", "-m", msg})
+  if vim.v.shell_error ~= 0 then
+    -- Check if it's just "nothing to commit" (which is ok)
+    if not commit_result:match("nothing to commit") and not commit_result:match("no changes added") then
+      vim.notify("work: git commit failed: " .. commit_result, vim.log.levels.WARN)
+    end
+  end
 end
 
 local M = {}
@@ -55,7 +66,7 @@ local function format_blocks(block_ids)
   for _, block_id in ipairs(block_ids) do
     local block_item, _ = api.get(block_id)
     if block_item then
-      local label = short_id(block_item) .. ": " .. block_item.title
+      local label = util.short_id(block_item) .. ": " .. block_item.title
       if block_item.due then
         label = label .. " [" .. block_item.due .. "]"
       end
@@ -688,17 +699,16 @@ local function confirm_delete()
 
   local file_path = api.get_file_path(state.item.id)
   local item_id = state.item.id
-  local short_id = short_id(state.item)
+  local item_short_id = util.short_id(state.item)
 
   local deleted, del_err = api.delete(item_id)
   if not deleted then
     vim.notify("work: " .. del_err, vim.log.levels.ERROR)
     return
   end
-  vim.notify("deleted: " .. short_id)
+  vim.notify("deleted: " .. item_short_id)
 
-  local git = require("work.git")
-  git.commit(item_id, "delete", file_path)
+  git_commit(item_id, "delete", file_path)
 
   close()
 end
@@ -804,7 +814,7 @@ local function submit_form()
       return
     end
     state.item.id = new_item.id
-    vim.notify("created " .. short_id(new_item), vim.log.levels.INFO)
+    vim.notify("created " .. util.short_id(new_item), vim.log.levels.INFO)
 
     -- Now update all other fields if they're set
     local updates = {}
@@ -848,8 +858,7 @@ local function submit_form()
     end
 
     -- Commit the new item to git
-    local git = require("work.git")
-    git.commit(state.item.id, "add")
+    git_commit(state.item.id, "add")
 
     close()
     return
@@ -892,7 +901,7 @@ local function submit_form()
   if has_updates then
     local _, err = api.update(state.item.id, updates)
     if not err then
-      vim.notify("updated " .. short_id(state.item), vim.log.levels.INFO)
+      vim.notify("updated " .. util.short_id(state.item), vim.log.levels.INFO)
       any_changes = true
     else
       vim.notify("work: failed to update: " .. err, vim.log.levels.ERROR)
@@ -906,7 +915,7 @@ local function submit_form()
       vim.notify("work: failed to update blocks: " .. err, vim.log.levels.ERROR)
       return
     end
-    vim.notify("updated blocks for " .. short_id(state.item), vim.log.levels.INFO)
+    vim.notify("updated blocks for " .. util.short_id(state.item), vim.log.levels.INFO)
     any_changes = true
   end
 
@@ -916,14 +925,13 @@ local function submit_form()
       vim.notify("work: failed to update logs: " .. err, vim.log.levels.ERROR)
       return
     end
-    vim.notify("updated logs for " .. short_id(state.item), vim.log.levels.INFO)
+    vim.notify("updated logs for " .. util.short_id(state.item), vim.log.levels.INFO)
     any_changes = true
   end
 
   -- Single git commit for all changes
   if any_changes then
-    local git = require("work.git")
-    git.commit(state.item.id, "update")
+    git_commit(state.item.id, "update")
   end
 
   close()

@@ -3,6 +3,14 @@ local M = {}
 -- ID regex pattern constant
 M.ID_PATTERN = "[%a%d][%a%d][%a%d][%a%d][%a%d][%a%d]"
 
+-- Get short ID from item
+function M.short_id(item)
+  if item._computed and item._computed.short_id then
+    return item._computed.short_id:lower()
+  end
+  return item.id:sub(-6):lower()
+end
+
 -- Get window configuration for centered pickers
 function M.get_window_config()
   return {

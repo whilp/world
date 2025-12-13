@@ -1,25 +1,10 @@
 -- work.nvim - user-facing actions
 local M = {}
 
--- Ensure work library is in path
-local lib_path = vim.fn.expand("~/.local/lib/lua")
-if not package.path:find(lib_path, 1, true) then
-  package.path = lib_path .. "/?.lua;" .. package.path
-end
-
-local api_module = require("work.api")
-local api = api_module.init({ data_dir = vim.fn.expand("~/stripe/progress/work") })
+local api = require("work").api
 local render = require("work.render")
 local buffer = require("work.buffer")
 local util = require("work.util")
-
--- Helper to get short ID from item
-local function short_id(item)
-  if item._computed and item._computed.short_id then
-    return item._computed.short_id:lower()
-  end
-  return item.id:sub(-6):lower()
-end
 
 
 -- Mark current item as done
@@ -34,7 +19,7 @@ function M.done(id)
     vim.notify("work: " .. err, vim.log.levels.ERROR)
     return
   end
-  vim.notify("marked done: " .. short_id(item))
+  vim.notify("marked done: " .. util.short_id(item))
   -- Reload buffer if we're viewing the item
   local bufname = vim.api.nvim_buf_get_name(0)
   if bufname:match(id) or bufname:match(item.id) then
@@ -207,7 +192,7 @@ function M.delete(id)
         vim.notify("work: " .. del_err, vim.log.levels.ERROR)
         return
       end
-      vim.notify("deleted: " .. short_id(item))
+      vim.notify("deleted: " .. util.short_id(item))
       -- Close buffer if viewing the deleted item
       local bufname = vim.api.nvim_buf_get_name(0)
       if bufname:match(item.id) then
@@ -224,7 +209,7 @@ function M.show(id)
     vim.notify("work: no item ID found", vim.log.levels.WARN)
     return
   end
-  buffer.show(id)
+  require("work.form").edit(id)
 end
 
 -- Open item file
@@ -239,7 +224,7 @@ end
 
 -- Quick capture: open scratch buffer to add multiple todos
 function M.quick_capture()
-  local buf, win = create_float_window({
+  local buf, win = util.create_float_window({
     "# add todos below (one per line)",
     "# lines starting with # are ignored",
     "# press <CR> or CMD-Enter to save, q to cancel",
@@ -249,7 +234,7 @@ function M.quick_capture()
   vim.api.nvim_win_set_cursor(win, {4, 0})
   vim.cmd("startinsert")
 
-  setup_float_keymaps(buf, win, function(lines)
+  util.setup_float_keymaps(buf, win, function(lines)
     local captured_timestamp = os.date("%Y-%m-%dT%H:%M:%S")
     local count = 0
     local errors = 0
@@ -322,19 +307,11 @@ function M.add_blocks(id)
 
     -- Reload buffer if viewing the item
     local bufname = vim.api.nvim_buf_get_name(0)
-    local short_id = short_id(updated_item)
+    local item_short_id = util.short_id(updated_item)
 
-    -- Check if we're viewing this item in any format
-    if bufname:match(id) or bufname:match(updated_item.id) or bufname:match(short_id) then
-      -- If it's a work detail buffer (scratch buffer), re-render it
-      if bufname:match("^work:") then
-        local current_buf = vim.api.nvim_get_current_buf()
-        buffer.show(updated_item.id)
-        vim.api.nvim_buf_delete(current_buf, { force = true })
-      else
-        -- It's a file buffer, reload it
-        vim.cmd.edit()
-      end
+    -- Reload buffer if viewing the item
+    if bufname:match(id) or bufname:match(updated_item.id) or bufname:match(item_short_id) then
+      vim.cmd.edit()
     end
   end)
 end

@@ -1,25 +1,9 @@
 -- work.nvim - mini.pick integration for work items
 local M = {}
 
--- Ensure work library is in path
-local lib_path = vim.fn.expand("~/.local/lib/lua")
-if not package.path:find(lib_path, 1, true) then
-  package.path = lib_path .. "/?.lua;" .. package.path
-end
-
-local api_module = require("work.api")
-local DATA_DIR = vim.fn.expand("~/stripe/progress/work")
-local api = api_module.init({ data_dir = DATA_DIR })
+local api = require("work").api
 local render = require("work.render")
 local util = require("work.util")
-
--- Helper to get short ID from item
-local function short_id(item)
-  if item._computed and item._computed.short_id then
-    return item._computed.short_id:lower()
-  end
-  return item.id:sub(-6):lower()
-end
 
 -- Helper to show log window and reopen picker
 local function show_log_and_reopen(item, on_complete)
@@ -44,7 +28,7 @@ local function show_log_and_reopen(item, on_complete)
       local log_message = table.concat(log_lines, "\n")
       local ok, err = api.log(item.id, log_message)
       if ok then
-        vim.notify("added log to " .. short_id(item))
+        vim.notify("added log to " .. util.short_id(item))
       else
         vim.notify("work: " .. err, vim.log.levels.ERROR)
       end
@@ -59,7 +43,7 @@ end
 -- Format item for picker display
 local function format_item(item)
   local status = item.completed and "done" or "todo"
-  local short_id = short_id(item)
+  local item_short_id = util.short_id(item)
   local due = ""
   if item._computed and item._computed.relative_due then
     due = item._computed.relative_due .. " "
@@ -68,7 +52,7 @@ local function format_item(item)
   if item.priority and item.priority ~= 0 then
     priority = string.format(" [p%d]", item.priority)
   end
-  return string.format("[%s] %s %s%s%s", status, short_id, due, item.title, priority)
+  return string.format("[%s] %s %s%s%s", status, item_short_id, due, item.title, priority)
 end
 
 -- Create picker source from items
@@ -129,7 +113,7 @@ local function setup_mappings(reopen_fn)
       if not current or not current.item then return end
       local ok, err_msg = api.done(current.item.id)
       if ok then
-        vim.notify("marked done: " .. short_id(current.item))
+        vim.notify("marked done: " .. util.short_id(current.item))
         MiniPick.stop()
         if reopen_fn then
           vim.defer_fn(reopen_fn, 50)
@@ -284,7 +268,7 @@ function M.ready()
       if not current or not current.item then return end
       local ok, err_msg = api.start(current.item.id)
       if ok then
-        vim.notify("marked started: " .. short_id(current.item))
+        vim.notify("marked started: " .. util.short_id(current.item))
         MiniPick.stop()
         vim.defer_fn(M.ready, 50)
       else

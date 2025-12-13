@@ -10,10 +10,6 @@ local work = require("work")
 local picker = require("work.picker")
 local buffer = require("work.buffer")
 local actions = require("work.actions")
-local complete = require("work.complete")
-
--- Setup completion
-complete.setup()
 
 -- Commands
 vim.api.nvim_create_user_command("Work", function(opts)
@@ -24,11 +20,7 @@ vim.api.nvim_create_user_command("Work", function(opts)
   if cmd == "started" then
     picker.ready_started()
   elseif cmd == "show" then
-    if rest == "" then
-      actions.show()
-    else
-      buffer.show(rest)
-    end
+    actions.show(rest ~= "" and rest or nil)
   elseif cmd == "open" then
     if rest == "" then
       actions.open()

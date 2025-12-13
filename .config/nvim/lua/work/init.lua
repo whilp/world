@@ -31,4 +31,8 @@ M.config = {
   data_dir = find_work_dir(),
 }
 
+-- Initialize API once and export
+local api_module = require("work.api")
+M.api = api_module.init({ data_dir = M.config.data_dir })
+
 return M
