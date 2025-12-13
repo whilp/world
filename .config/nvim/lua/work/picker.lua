@@ -244,7 +244,9 @@ local function make_mappings_with_reopen(reopen_fn)
       local current = matches.current
       if not current or not current.item then return end
       MiniPick.stop()
-      require("work.form").edit(current.item)
+      vim.schedule(function()
+        require("work.form").edit(current.item)
+      end)
     end,
   }
 
@@ -256,7 +258,9 @@ local function make_mappings_with_reopen(reopen_fn)
       local current = matches.current
       if not current or not current.item then return end
       MiniPick.stop()
-      require("work.form").edit(current.item)
+      vim.schedule(function()
+        require("work.form").edit(current.item)
+      end)
     end,
   }
 

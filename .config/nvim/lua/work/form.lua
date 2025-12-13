@@ -718,9 +718,14 @@ end
 local function add_log_entry()
   if not state then return end
 
+  local preserved_item = capture_state_for_reopen()
   close()
   vim.schedule(function()
-    reopen_with_state({ _show_log_input = true, _autofocus_field = "log_input" })
+    if preserved_item then
+      preserved_item._show_log_input = true
+      preserved_item._autofocus_field = "log_input"
+      M.edit(preserved_item)
+    end
   end)
 end
 
@@ -733,9 +738,15 @@ local function submit_log_entry()
     local updated_log = vim.deepcopy(state.data.log)
     updated_log[timestamp] = message
 
+    local preserved_item = capture_state_for_reopen()
     close()
     vim.schedule(function()
-      reopen_with_state({ log = updated_log, _show_log_input = false, _autofocus_field = "logs" })
+      if preserved_item then
+        preserved_item.log = updated_log
+        preserved_item._show_log_input = false
+        preserved_item._autofocus_field = "logs"
+        M.edit(preserved_item)
+      end
     end)
   end
 end
@@ -743,9 +754,14 @@ end
 local function cancel_log_entry()
   if not state then return end
 
+  local preserved_item = capture_state_for_reopen()
   close()
   vim.schedule(function()
-    reopen_with_state({ _show_log_input = false, _autofocus_field = "logs" })
+    if preserved_item then
+      preserved_item._show_log_input = false
+      preserved_item._autofocus_field = "logs"
+      M.edit(preserved_item)
+    end
   end)
 end
 
@@ -753,9 +769,14 @@ local function toggle_logs_sort()
   if not state then return end
 
   local new_sort = not state.ui.logs_sort_asc
+  local preserved_item = capture_state_for_reopen()
   close()
   vim.schedule(function()
-    reopen_with_state({ _logs_sort_asc = new_sort, _autofocus_field = "logs" })
+    if preserved_item then
+      preserved_item._logs_sort_asc = new_sort
+      preserved_item._autofocus_field = "logs"
+      M.edit(preserved_item)
+    end
   end)
 end
 
@@ -766,9 +787,14 @@ local function show_delete_confirm()
     vim.notify("work: cannot delete unsaved item", vim.log.levels.WARN)
     return
   end
+
+  local preserved_item = capture_state_for_reopen()
   close()
   vim.schedule(function()
-    reopen_with_state({ _show_delete_confirm = true })
+    if preserved_item then
+      preserved_item._show_delete_confirm = true
+      M.edit(preserved_item)
+    end
   end)
 end
 
@@ -776,16 +802,18 @@ local function confirm_delete()
   if not state then return end
 
   local file_path = work.get_file_path(state.item.id)
+  local item_id = state.item.id
+  local short_id = work.short_id(state.item)
 
-  local deleted, del_err = work.delete(state.item.id)
+  local deleted, del_err = work.delete(item_id)
   if not deleted then
     vim.notify("work: " .. del_err, vim.log.levels.ERROR)
     return
   end
-  vim.notify("deleted: " .. work.short_id(state.item))
+  vim.notify("deleted: " .. short_id)
 
   local git = require("work.git")
-  git.commit(state.item.id, "delete", file_path)
+  git.commit(item_id, "delete", file_path)
 
   close()
 end
@@ -793,9 +821,13 @@ end
 local function cancel_delete()
   if not state then return end
 
+  local preserved_item = capture_state_for_reopen()
   close()
   vim.schedule(function()
-    reopen_with_state({ _show_delete_confirm = false })
+    if preserved_item then
+      preserved_item._show_delete_confirm = false
+      M.edit(preserved_item)
+    end
   end)
 end
 
