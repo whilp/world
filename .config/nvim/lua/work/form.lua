@@ -430,16 +430,14 @@ local function render()
     }
   end
 
-  -- Action buttons row
-  local buttons_line
+  -- Help line
+  local help_line
   if state.ui.show_delete_confirm then
-    buttons_line = "Submit  Cancel  Confirm? [Enter]"
-  elseif state.is_new then
-    buttons_line = "Submit  Cancel"
+    help_line = "Confirm delete? Press Enter to confirm, Esc to cancel"
   else
-    buttons_line = "Submit  Cancel  Delete"
+    help_line = "C-s save · C-q cancel · d delete"
   end
-  table.insert(lines, buttons_line)
+  table.insert(lines, help_line)
 
   -- Update buffer
   vim.api.nvim_buf_set_option(buf, "modifiable", true)
@@ -1161,16 +1159,6 @@ local function handle_enter()
   end
 end
 
-local function handle_submit_or_sort()
-  if not state then return end
-
-  if state.ui.focused_field == "logs" then
-    toggle_logs_sort()
-  else
-    submit_form()
-  end
-end
-
 -- Keymap setup
 function setup_keymaps()
   local function map(mode, key, handler)
@@ -1214,23 +1202,30 @@ function setup_keymaps()
   map("n", "<C-s>", handle_submit)
   map({ "n", "i" }, "<C-CR>", handle_submit)
   map({ "n", "i" }, "<D-CR>", handle_submit)
-  map("n", "s", handle_submit_or_sort)
 
-  -- Cancel/Escape
-  map("n", "<Esc>", handle_escape)
-  map("n", "c", handle_cancel)
-
-  -- Delete
-  map("n", "d", handle_delete_or_field_action)
-  map("n", "X", show_delete_confirm)
-  map("n", "y", function()
-    if state.ui.show_delete_confirm then
-      confirm_delete()
+  -- Sort logs (only on logs field)
+  map("n", "s", function()
+    if state and state.ui.focused_field == "logs" then
+      toggle_logs_sort()
     end
   end)
 
-  -- Activate current field (open pickers, add blocks, etc.)
+  -- Cancel/Escape
+  map("n", "<Esc>", handle_escape)
+  map({ "n", "i" }, "<C-q>", handle_cancel)
+
+  -- Delete
+  map("n", "d", handle_delete_or_field_action)
+
+  -- Activate current field (open pickers, add blocks, etc.) or confirm delete
   map("n", "<Space>", handle_enter)
+
+  -- Enter for confirming delete
+  map("n", "<CR>", function()
+    if state and state.ui.show_delete_confirm then
+      confirm_delete()
+    end
+  end)
 
   -- mini.jump2d support
   local ok_jump2d, MiniJump2d = pcall(require, "mini.jump2d")
