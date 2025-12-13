@@ -13,13 +13,13 @@ local autocmd_group = nil
 
 -- Field definitions
 local FIELDS = {
-  { name = "title", label = "[T]itle *", type = "text_input", hotkey = "t", multiline = false },
-  { name = "due", label = "D[u]e", type = "button", hotkey = "u" },
-  { name = "description", label = "D[e]scription", type = "text_input", hotkey = "e", multiline = true },
-  { name = "started", label = "St[a]rted", type = "button", hotkey = "a" },
-  { name = "completed", label = "C[o]mpleted", type = "button", hotkey = "o" },
-  { name = "blocks", label = "[B]locks", type = "paragraph", hotkey = "b" },
-  { name = "logs", label = "[L]ogs", type = "paragraph", hotkey = "l" },
+  { name = "title", label = "Title *", type = "text_input", multiline = false },
+  { name = "due", label = "Due", type = "button" },
+  { name = "description", label = "Description", type = "text_input", multiline = true },
+  { name = "started", label = "Started", type = "button" },
+  { name = "completed", label = "Completed", type = "button" },
+  { name = "blocks", label = "Blocks", type = "paragraph" },
+  { name = "logs", label = "Logs", type = "paragraph" },
 }
 
 -- Validators
