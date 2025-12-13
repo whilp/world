@@ -771,6 +771,7 @@ local function submit_log_entry()
         preserved_item.log = updated_log
         preserved_item._show_log_input = false
         preserved_item._autofocus_field = "logs"
+        preserved_item._enter_insert_mode = false
         M.edit(preserved_item)
       end
     end)
@@ -1306,11 +1307,19 @@ function M.edit(item_or_id)
   create_window()
   render()
 
-  -- Auto-enter insert mode if requested (e.g., for log input)
+  -- Handle insert mode based on flags
   if item._enter_insert_mode then
+    -- Auto-enter insert mode if requested (e.g., for log input)
     vim.schedule(function()
       if win and vim.api.nvim_win_is_valid(win) then
         vim.cmd("startinsert")
+      end
+    end)
+  elseif item._enter_insert_mode == false then
+    -- Explicitly ensure normal mode
+    vim.schedule(function()
+      if win and vim.api.nvim_win_is_valid(win) then
+        vim.cmd("stopinsert")
       end
     end)
   end
