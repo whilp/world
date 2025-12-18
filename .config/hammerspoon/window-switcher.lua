@@ -19,9 +19,6 @@ local SUBTEXT_PENALTY = 50
 local MAX_RESULTS = 15         -- Limit fuzzy matching to top N results (chooser shows 15 rows)
 local DEBOUNCE_DELAY = 0.075   -- Wait 75ms after last keystroke before filtering
 
--- Set short global AX timeout (150ms) to prevent blocking
-hs.window.timeout(0.15)
-
 -- Enable/disable debug logging
 local DEBUG = false
 
