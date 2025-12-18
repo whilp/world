@@ -9,8 +9,8 @@ start-at-login = true
 enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
 
-# Accordion padding (set to 0 for fully overlapping windows)
-accordion-padding = 0
+# Accordion padding (shows edge of stacked windows)
+accordion-padding = 30
 
 # Default layout (accordion for stacked windows)
 default-root-container-layout = 'accordion'
