@@ -1,7 +1,7 @@
 # AeroSpace configuration
-# Internal monitor: maximized windows (workspaces 1-5)
+# Internal monitor: accordion layout - stacked windows (workspaces 1-5)
 # External monitor: three-column tiling (workspaces 6-9)
-# No gaps for clean edge-to-edge tiling
+# No gaps for clean edge-to-edge tiling/stacking
 
 # Start AeroSpace at login
 start-at-login = true
@@ -9,6 +9,9 @@ start-at-login = true
 # Normalizations (keeps layout tree sensible)
 enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
+
+# Accordion padding (set to 0 for fully overlapping windows)
+accordion-padding = 0
 
 # Default layout
 default-root-container-layout = 'tiles'
@@ -92,6 +95,7 @@ alt-shift-period = 'move-workspace-to-monitor right'
 # Layout controls
 alt-shift-space = 'layout floating tiling'  # Toggle float/tile
 alt-f = 'fullscreen'                         # Toggle fullscreen
+alt-a = 'layout accordion tiles'             # Toggle accordion/tiles (stacked vs tiled)
 
 # Three-column layout helper (for external monitor workspaces)
 # Use this to create vertical splits within horizontal layout
@@ -123,7 +127,7 @@ esc = 'mode main'
 if.during-aerospace-startup = false
 run = '''layout tiling'''
 
-# For internal monitor workspaces (1-5), windows start maximized with no gaps
+# For internal monitor workspaces (1-5), use accordion layout for stacked windows
 [[on-window-detected]]
 if.workspace = [1, 2, 3, 4, 5]
-run = ['fullscreen on --no-outer-gaps']
+run = ['layout accordion']
