@@ -1,0 +1,128 @@
+# AeroSpace configuration
+# Internal monitor: maximized windows (workspaces 1-5)
+# External monitor: three-column tiling (workspaces 6-9)
+
+# Start AeroSpace at login
+start-at-login = true
+
+# Normalizations (keeps layout tree sensible)
+enable-normalization-flatten-containers = true
+enable-normalization-opposite-orientation-for-nested-containers = true
+
+# Default layout
+default-root-container-layout = 'tiles'
+default-root-container-orientation = 'horizontal'
+
+# Gaps configuration
+[gaps]
+inner.horizontal = 8
+inner.vertical = 8
+outer.left = 8
+outer.bottom = 8
+outer.top = 8
+outer.right = 8
+
+# Assign workspaces to monitors
+[workspace-to-monitor-force-assignment]
+# Internal monitor (built-in) - workspaces 1-5
+1 = 'built-in'
+2 = 'built-in'
+3 = 'built-in'
+4 = 'built-in'
+5 = 'built-in'
+
+# External monitor - workspaces 6-9
+# Uses monitor sequence number 2 (left-to-right ordering)
+# When external is connected, it will be monitor 2
+6 = 2
+7 = 2
+8 = 2
+9 = 2
+
+# Key mapping (use qwerty, dvorak, or colemak)
+[key-mapping]
+preset = 'qwerty'
+
+# Main mode bindings
+[mode.main.binding]
+
+# Focus windows (vim-style)
+alt-h = 'focus left'
+alt-j = 'focus down'
+alt-k = 'focus up'
+alt-l = 'focus right'
+
+# Move windows
+alt-shift-h = 'move left'
+alt-shift-j = 'move down'
+alt-shift-k = 'move up'
+alt-shift-l = 'move right'
+
+# Switch workspaces
+alt-1 = 'workspace 1'
+alt-2 = 'workspace 2'
+alt-3 = 'workspace 3'
+alt-4 = 'workspace 4'
+alt-5 = 'workspace 5'
+alt-6 = 'workspace 6'
+alt-7 = 'workspace 7'
+alt-8 = 'workspace 8'
+alt-9 = 'workspace 9'
+
+# Move window to workspace
+alt-shift-1 = ['move-node-to-workspace 1', 'workspace 1']
+alt-shift-2 = ['move-node-to-workspace 2', 'workspace 2']
+alt-shift-3 = ['move-node-to-workspace 3', 'workspace 3']
+alt-shift-4 = ['move-node-to-workspace 4', 'workspace 4']
+alt-shift-5 = ['move-node-to-workspace 5', 'workspace 5']
+alt-shift-6 = ['move-node-to-workspace 6', 'workspace 6']
+alt-shift-7 = ['move-node-to-workspace 7', 'workspace 7']
+alt-shift-8 = ['move-node-to-workspace 8', 'workspace 8']
+alt-shift-9 = ['move-node-to-workspace 9', 'workspace 9']
+
+# Focus monitors
+alt-comma = 'focus-monitor left'
+alt-period = 'focus-monitor right'
+
+# Move workspace to different monitor
+alt-shift-comma = 'move-workspace-to-monitor left'
+alt-shift-period = 'move-workspace-to-monitor right'
+
+# Layout controls
+alt-shift-space = 'layout floating tiling'  # Toggle float/tile
+alt-f = 'fullscreen'                         # Toggle fullscreen
+
+# Three-column layout helper (for external monitor workspaces)
+# Use this to create vertical splits within horizontal layout
+alt-shift-v = 'join-with right'              # Create nested vertical split
+
+# Toggle between horizontal and vertical orientation
+alt-shift-o = 'layout horizontal vertical'
+
+# Resize mode
+alt-r = 'mode resize'
+
+# Reload config
+alt-shift-r = 'reload-config'
+
+# Close window
+alt-shift-q = 'close'
+
+# Resize mode
+[mode.resize.binding]
+h = 'resize width -50'
+j = 'resize height +50'
+k = 'resize height -50'
+l = 'resize width +50'
+enter = 'mode main'
+esc = 'mode main'
+
+# Auto-tile new windows on external monitor workspaces (6-9)
+[[on-window-detected]]
+if.during-aerospace-startup = false
+run = '''layout tiling'''
+
+# For internal monitor workspaces (1-5), windows start maximized with no gaps
+[[on-window-detected]]
+if.workspace = [1, 2, 3, 4, 5]
+run = ['fullscreen on --no-outer-gaps']
