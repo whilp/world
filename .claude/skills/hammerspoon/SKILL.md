@@ -1,13 +1,13 @@
 ---
 name: hammerspoon
-description: Configure and manage Hammerspoon automation, window management, key remapping, and app launching. Use when working with ~/.config/hammerspoon config files, adding keybindings, implementing window layouts, or troubleshooting Hammerspoon functionality.
+description: Configure and manage Hammerspoon automation, app launching, and window switching. Use when working with ~/.config/hammerspoon config files, adding keybindings, modifying the leader modal, or troubleshooting Hammerspoon functionality. Window management is handled by AeroSpace.
 ---
 
 # Hammerspoon configuration skill
 
 ## Overview
 
-Manage Hammerspoon configuration for macOS automation including window management, app launching, and window switching.
+Manage Hammerspoon configuration for macOS automation including app launching, window switching, emoji/symbol pickers, and leader modal. Window management is handled by AeroSpace.
 
 ## Configuration locations
 
@@ -25,78 +25,68 @@ Manage Hammerspoon configuration for macOS automation including window managemen
 - Binding methods: `bind(key):toFunction(name, fn)` and `bind(key):toApplication(app)`
 - Tracks bindings in `self.bindings` table
 
-**config-watch.lua** - Auto-reload watcher
-- Monitors `~/.config/hammerspoon/` for `.lua` file changes
-- Automatically reloads Hammerspoon when files change
-- Uses `hs.pathwatcher` API
-
 **init.lua** - Main entry point
 - Calls `hs.ipc.cliInstall()` to enable CLI access
 - Defines `hyper` modifier: `{cmd, ctrl, alt, shift}`
-- Defines `super` modifier: `{cmd, ctrl, alt}`
-- Loads all modules: hyper-key, config-watch, window-hotkeys, quick-switch, window-switcher
-- Test bindings: `hyper+r` (reload), `hyper+t` (test alert)
+- Loads window-switcher and sets up cmd+space and cmd+tab bindings
+- Loads notch-clock with 4-minute offset
+- Loads leader modal with emoji and symbol pickers
 
-### Window management
+### Leader modal system
 
-**window-management.lua** - Grid-based window functions
-- Dynamic grid system adjusts to screen type:
-  - Normal screens: 8x4 grid
-  - Ultrawide screens (aspect > 2.5): 10x4 grid
-  - Vertical screens (aspect < 1): 4x8 grid
-- Screen watcher automatically adjusts grid on display changes
-- Core functions: maximize, center, halves, corners, thirds, two-thirds, throw (multi-display), resize (40px), nudge (40px)
+**leader-modal.lua** - Modal keybinding system
+- Timeout-based modal (default 3000ms)
+- Shows on-screen hints for available bindings
+- Supports nested leader keys
+- Sticky mode for repeated actions
 
-**window-hotkeys.lua** - Comprehensive keybindings
-- `super` key (cmd+ctrl+alt) for window operations:
-  - `super+f` - Maximize, `super+c` - Center
-  - `super+h/j/k/l` - Left/bottom/top/right halves
-  - `super+u/i/n/m` - Corners
-  - `super+d/e/g` - Thirds
-  - `super+s/t` - Two-thirds
-  - `super+q/w/a/z` - Throw to displays
-- `hyper` key (super+shift) for resize: `hyper+h/j/k/l`
-- `super+option` for nudge: `super+option+h/j/k/l`
+**leader-dsl.lua** - DSL for defining leader bindings
+- `Leader(key, description, bindings)` - Define leader menu
+- `Bind(key, description, action, options)` - Define action
+- Actions can be functions, shell commands, or mode transitions
+- Automatically registers clues from `~/.config/hammerspoon/clues/` directory
 
-### App launcher
+**clues/*.lua** - Leader binding definitions
+- `windows.lua` - Window management (moved to AeroSpace)
+- `hammerspoon.lua` - Reload config, console, update apps, switcher
+- `apps.lua` - App launching
+- `system.lua` - System operations
+- `cleanshot.lua` - CleanShot integration
+- `emoji.lua` - Emoji picker
+- `superwhisper.lua` - SuperWhisper integration
 
-**quick-switch.lua** - Direct app launch keybindings
-- Uses `toApplication()` method from HyperKey
-- Current app bindings:
-  - `hyper+return` - Ghostty
-  - `hyper+c` - Google Chrome
-  - `hyper+s` - Spotify
-  - `hyper+1` - 1Password
-- Easy to add more apps: `hyper:bind("key"):toApplication("App Name")`
+### Pickers
+
+**emoji-picker.lua** - Emoji chooser
+- Fuzzy-searchable emoji picker
+- Categories and descriptions
+- Inserts selected emoji via keystroke
+
+**symbol-picker.lua** - Symbol chooser
+- Special characters and symbols
+- Categories: arrows, math, punctuation, currency, etc.
+- Inserts selected symbol via keystroke
+
+**chooser-style.lua** - Shared chooser styling
+- Dark theme
+- Consistent width and row count
+- Applied to all choosers
 
 ### Window switcher
 
 **window-switcher.lua** - Unified launcher/dispatcher modal
 - Uses `hs.chooser` API with fuzzy matching
-- Shows windows, apps, and commands (CleanShot + Hammerspoon)
-- Dynamic programming fuzzy matching with scoring bonuses
-- UI features: dark theme, search subtext, 15 visible rows
-- Keybinding: `hyper+tab`
-
-**switcher-items.lua** - Shared item collection module
-- `getWindowChoices()` - collect all windows
-- `getAppChoices(seenApps)` - collect apps without windows
-- `getCommandChoices()` - collect CleanShot and Hammerspoon commands
-- `getAllChoices()` - convenience function for all items
-- `detectType(item)` - identify type (window/app/command)
-- Used by both window-switcher and hs-dispatch CLI tool
+- Shows windows, apps, and commands
+- Keybindings: `cmd+space` and `cmd+tab`
+- Dark theme with 15 visible rows
 
 **fuzzy.lua** - Dynamic programming fuzzy matching
-- Subsequence matching with scoring:
-  - Base: 10 points per character
-  - Word start: +40 points
-  - String start: +10 points
-  - Position bonus: +max(0, 20-j) points
-  - Consecutive: +20 points
-  - Prefix match: +50 points
-  - Substring match: +20 points
+- Subsequence matching with scoring bonuses
 - Type priority: window (3), app (2), command (1)
-- Subtext matching with penalty (-50 points)
+
+**notch-clock.lua** - Clock in notch area
+- Shows time in MacBook notch
+- 4-minute offset configuration
 
 ## Common operations
 
@@ -179,81 +169,19 @@ open "hammerspoon://consoleWindow"
 **Test configuration:**
 Edit any `.lua` file in `~/.config/hammerspoon/` to trigger auto-reload
 
-### Using hs-dispatch CLI
-
-The `hs-dispatch` tool (in `~/.local/bin/hs-dispatch`) queries the dispatcher modal items for testing and tuning. It uses the same item collection and fuzzy matching logic as the modal.
-
-**List all items:**
-```bash
-hs-dispatch
-```
-
-**Filter and rank items:**
-```bash
-hs-dispatch ghost      # find Ghostty window
-hs-dispatch reload     # find Hammerspoon reload command
-hs-dispatch cleanshot  # find CleanShot commands
-```
-
-**Output format:**
-- Serpent-serialized Lua tables
-- Includes all metadata: `text`, `subText`, `type`, `windowId`, `appName`, `url`, `commandId`
-- Filtered results include `matchScore` field
-
-**Example output:**
-```lua
-{
-  {
-    matchScore = 190,
-    subText = "Ghostty",
-    text = "st-wcm3",
-    type = "window",
-    windowId = 12320
-  },
-  {
-    matchScore = 294,
-    subText = "CleanShot",
-    text = "Capture area",
-    type = "command",
-    url = "cleanshot://capture-area"
-  }
-}
-```
-
-**Use cases:**
-- Test fuzzy matching behavior with different queries
-- Verify item collection (windows, apps, commands)
-- Debug type detection and scoring
-- Tune fuzzy matching parameters by seeing actual scores
-- Validate changes to switcher logic without opening the modal
-
-**Implementation details:**
-- Uses `echo 'code' | hs -c ''` to execute code in Hammerspoon context
-- Shares `switcher-items` and `fuzzy` modules with window-switcher
-- Safe query injection via `string.format("%q")`
-- Written in LuaJIT following repo conventions
 
 ## Development patterns
 
-### Adding new keybindings
+### Adding new leader bindings
 
-**Using hyper key:**
-```lua
-hyper:bind("key"):toFunction("Description", function()
-  -- implementation
-end)
-```
+Create a file in `~/.config/hammerspoon/clues/`:
 
-**Using super key:**
 ```lua
-super:bind("key"):toFunction("Description", function()
-  -- implementation
-end)
-```
-
-**Direct app launch:**
-```lua
-hyper:bind("t"):toApplication("Ghostty")
+return Leader("key", "Description", {
+  Bind("a", "Action 1", { fn = function() ... end }),
+  Bind("b", "Action 2", { shell = "/path/to/script" }),
+  Bind("c", "Action 3", { mode = "mode_name" }),
+})
 ```
 
 ### Creating new modules
@@ -261,58 +189,16 @@ hyper:bind("t"):toApplication("Ghostty")
 1. Create `~/.config/hammerspoon/module-name.lua`
 2. Return module table or functionality
 3. Require in `init.lua`: `local module = require("module-name")`
-4. Auto-reload will trigger on save
-
-### Window management patterns
-
-**Getting focused window:**
-```lua
-local win = hs.window.focusedWindow()
-if not win then return end
-```
-
-**Setting window frame:**
-```lua
-local screen = win:screen()
-local max = screen:frame()
-win:setFrame({
-  x = max.x,
-  y = max.y,
-  w = max.w / 2,
-  h = max.h
-})
-```
-
-**Moving between displays:**
-```lua
-local nextScreen = screen:toEast()  -- or toWest(), toNorth(), toSouth()
-if nextScreen then
-  win:moveToScreen(nextScreen)
-end
-```
-
-**Dynamic grid adjustment:**
-```lua
-local frame = screen:frame()
-local aspectRatio = frame.w / frame.h
-if aspectRatio > 2.5 then
-  hs.grid.setGrid('10x4')  -- ultrawide
-elseif aspectRatio < 1 then
-  hs.grid.setGrid('4x8')   -- vertical
-else
-  hs.grid.setGrid('8x4')   -- normal
-end
-```
 
 ## App replacement status
 
 Current Hammerspoon setup replaces:
-- **AltTab**: Window switching via window-switcher.lua (hyper+tab)
+- **AltTab**: Window switching via window-switcher.lua (cmd+space, cmd+tab)
 
-Still using:
-- **Karabiner-Elements**: Key remapping (hyper key, caps lock to ctrl, right option to meh)
-- **Rectangle**: Window management
-- **Raycast**: App launching, clipboard history, snippets, extensions
+Other macOS automation tools:
+- **Karabiner-Elements**: Key remapping (caps lock to ctrl, etc.)
+- **AeroSpace**: Window management (tiling, workspaces, monitor assignment)
+- **CleanShot**: Screenshots (integrated via leader modal)
 
 ## Troubleshooting
 
