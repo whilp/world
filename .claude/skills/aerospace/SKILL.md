@@ -129,59 +129,298 @@ Two automatic normalizations keep layouts sensible:
 
 Result: `[Window 1] [Window 2 over Window 3]`
 
-## Common operations
+## CLI reference
 
-### List monitors
+### Overview
+```bash
+aerospace [-h|--help] [-v|--version] <subcommand> [<args>...]
+```
+
+### Query commands
+
+**list-monitors** - List monitors
 ```bash
 aerospace list-monitors
+aerospace list-monitors --focused
 aerospace list-monitors --format '%{monitor-id} | %{monitor-name}'
+aerospace list-monitors --json
+aerospace list-monitors --count
 ```
 
-### List workspaces
+**list-workspaces** - List workspaces
 ```bash
-aerospace list-workspaces --monitor all
+aerospace list-workspaces --all
+aerospace list-workspaces --focused
 aerospace list-workspaces --monitor focused
+aerospace list-workspaces --monitor all --visible --empty no
+aerospace list-workspaces --format '%{workspace}' --json
 ```
 
-### List windows
+**list-windows** - List windows
 ```bash
-aerospace list-windows --workspace focused
 aerospace list-windows --all
+aerospace list-windows --focused
+aerospace list-windows --workspace focused
+aerospace list-windows --workspace 1
+aerospace list-windows --monitor focused
+aerospace list-windows --pid <pid>
+aerospace list-windows --app-bundle-id <bundle-id>
+aerospace list-windows --format '%{window-id} | %{app-name} | %{window-title}'
+aerospace list-windows --json
 ```
 
-### Manual layout commands
+**list-apps** - List running applications
 ```bash
-# Change layout
-aerospace layout h_tiles      # Horizontal tiles
-aerospace layout v_tiles      # Vertical tiles
-aerospace layout horizontal   # Change orientation to horizontal
-aerospace layout vertical     # Change orientation to vertical
+aerospace list-apps
+```
 
-# Toggle layouts
+**list-modes** - List binding modes
+```bash
+aerospace list-modes
+```
+
+**list-exec-env-vars** - List environment variables for exec commands
+```bash
+aerospace list-exec-env-vars
+```
+
+**config** - Query config options
+```bash
+aerospace config <key>
+```
+
+### Window management
+
+**focus** - Focus window
+```bash
+aerospace focus left|down|up|right
+aerospace focus dfs-next|dfs-prev
+aerospace focus --window-id <id>
+aerospace focus --dfs-index <index>
+aerospace focus left --ignore-floating
+aerospace focus right --boundaries workspace --boundaries-action wrap-around-the-workspace
+```
+
+**move** - Move window
+```bash
+aerospace move left|down|up|right
+aerospace move --window-id <id> left
+aerospace move right --boundaries workspace --boundaries-action stop
+```
+
+**swap** - Swap windows
+```bash
+aerospace swap left|down|up|right
+```
+
+**resize** - Resize window
+```bash
+aerospace resize smart +50           # Smart resize (larger)
+aerospace resize smart -50           # Smart resize (smaller)
+aerospace resize width +100          # Increase width by 100px
+aerospace resize height -50          # Decrease height by 50px
+aerospace resize --window-id <id> smart +50
+```
+
+**close** - Close window
+```bash
+aerospace close
+aerospace close --window-id <id>
+```
+
+**close-all-windows-but-current** - Close all windows except current
+```bash
+aerospace close-all-windows-but-current
+```
+
+### Layout commands
+
+**layout** - Change layout
+```bash
+# Specific layouts
+aerospace layout h_tiles             # Horizontal tiles
+aerospace layout v_tiles             # Vertical tiles
+aerospace layout h_accordion         # Horizontal accordion
+aerospace layout v_accordion         # Vertical accordion
+
+# Orientations
+aerospace layout horizontal          # Change to horizontal
+aerospace layout vertical            # Change to vertical
+
+# Toggle commands (cycles through options)
 aerospace layout tiles accordion              # Toggle tile vs accordion
 aerospace layout horizontal vertical          # Toggle orientation
 aerospace layout floating tiling              # Toggle float vs tiling
 
-# Join windows
-aerospace join-with right     # Create nested vertical split
-aerospace join-with left      # Create nested vertical split on left
-aerospace join-with up        # Create nested horizontal split above
-aerospace join-with down      # Create nested horizontal split below
+# Window-specific
+aerospace layout --window-id <id> floating
+```
 
-# Move windows
-aerospace move left
-aerospace move right
-aerospace move up
-aerospace move down
+**join-with** - Join windows under common parent
+```bash
+aerospace join-with left|down|up|right
+aerospace join-with right            # Create nested vertical split
+aerospace join-with down             # Create nested horizontal split
+aerospace join-with --window-id <id> right
+```
 
-# Resize windows
-aerospace resize smart +50    # Smart resize (larger)
-aerospace resize smart -50    # Smart resize (smaller)
-aerospace resize width +100
-aerospace resize height -50
+**split** - Split focused window
+```bash
+aerospace split horizontal|vertical
+```
 
-# Flatten tree
+**flatten-workspace-tree** - Flatten workspace tree
+```bash
 aerospace flatten-workspace-tree
+```
+
+**balance-sizes** - Balance window sizes
+```bash
+aerospace balance-sizes
+```
+
+### Fullscreen commands
+
+**fullscreen** - Toggle AeroSpace fullscreen
+```bash
+aerospace fullscreen
+aerospace fullscreen on
+aerospace fullscreen off
+aerospace fullscreen on --no-outer-gaps
+aerospace fullscreen --window-id <id>
+```
+
+**macos-native-fullscreen** - Toggle macOS fullscreen
+```bash
+aerospace macos-native-fullscreen
+```
+
+**macos-native-minimize** - Minimize window
+```bash
+aerospace macos-native-minimize
+```
+
+### Workspace commands
+
+**workspace** - Focus workspace
+```bash
+aerospace workspace 1                # Switch to workspace 1
+aerospace workspace next             # Next workspace
+aerospace workspace prev             # Previous workspace
+aerospace workspace next --wrap-around
+aerospace workspace 5 --auto-back-and-forth
+aerospace workspace 3 --fail-if-noop
+```
+
+**workspace-back-and-forth** - Toggle between workspaces
+```bash
+aerospace workspace-back-and-forth
+```
+
+**move-node-to-workspace** - Move window to workspace
+```bash
+aerospace move-node-to-workspace 1
+aerospace move-node-to-workspace next
+aerospace move-node-to-workspace prev --wrap-around
+aerospace move-node-to-workspace 5 --focus-follows-window
+aerospace move-node-to-workspace --window-id <id> 3
+```
+
+**move-workspace-to-monitor** - Move workspace to monitor
+```bash
+aerospace move-workspace-to-monitor left|down|up|right
+aerospace move-workspace-to-monitor next|prev
+aerospace move-workspace-to-monitor <monitor-pattern>
+```
+
+**summon-workspace** - Move workspace to focused monitor
+```bash
+aerospace summon-workspace 1
+```
+
+### Monitor commands
+
+**focus-monitor** - Focus monitor
+```bash
+aerospace focus-monitor left|down|up|right
+aerospace focus-monitor next|prev
+aerospace focus-monitor <monitor-pattern>
+aerospace focus-monitor next --wrap-around
+```
+
+**move-node-to-monitor** - Move window to monitor
+```bash
+aerospace move-node-to-monitor left|down|up|right
+aerospace move-node-to-monitor next|prev
+aerospace move-node-to-monitor <monitor-pattern>
+```
+
+**move-mouse** - Move mouse cursor
+```bash
+aerospace move-mouse monitor-lazy-center
+aerospace move-mouse monitor-force-center
+aerospace move-mouse window-lazy-center
+aerospace move-mouse window-force-center
+```
+
+### Mode commands
+
+**mode** - Activate binding mode
+```bash
+aerospace mode service
+aerospace mode resize
+aerospace mode main
+```
+
+**trigger-binding** - Trigger binding manually
+```bash
+aerospace trigger-binding --mode main --key alt-1
+```
+
+### System commands
+
+**reload-config** - Reload configuration
+```bash
+aerospace reload-config
+```
+
+**enable** - Enable/disable window management
+```bash
+aerospace enable on|off|toggle
+```
+
+**volume** - Manipulate volume
+```bash
+aerospace volume <args>
+```
+
+**debug-windows** - Debug Accessibility API
+```bash
+aerospace debug-windows
+```
+
+### Focus back-and-forth
+
+**focus-back-and-forth** - Toggle focus
+```bash
+aerospace focus-back-and-forth
+```
+
+## Common operations
+
+### Quick status checks
+```bash
+# Current workspace
+aerospace list-workspaces --focused
+
+# All windows on current workspace
+aerospace list-windows --workspace focused
+
+# All monitors
+aerospace list-monitors
+
+# Current window tree
+aerospace list-windows --workspace focused --format '%{window-id} | %{app-name}'
 ```
 
 ### Reload config
