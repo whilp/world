@@ -105,7 +105,7 @@ local function showSwitcher(applyFilter)
         if choiceType == "window" then
           -- Use AeroSpace to focus window
           if choice.windowId then
-            hs.task.new("/opt/homebrew/bin/aerospace", nil, nil, {"focus", "--window-id", tostring(choice.windowId)}):start()
+            hs.task.new("/opt/homebrew/bin/aerospace", nil, {"focus", "--window-id", tostring(choice.windowId)}):start()
           end
         elseif choiceType == "app" then
           local app = hs.application.get(choice.appName)
