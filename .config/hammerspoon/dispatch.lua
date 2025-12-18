@@ -2,9 +2,6 @@ local M = {}
 
 local leaderDsl = require("leader-dsl")
 
--- Reusable window filter for performance (avoid creating new objects each call)
-local windowfilter = hs.window.filter.new(nil):setDefaultFilter{}
-
 M.filteredApps = {
   "Chess",
   "Karabiner-VirtualHIDDevice-Manager",
@@ -26,19 +23,6 @@ M.appAdjustments = {
   ["Activity Monitor"] = -150,
 }
 
--- Filter system processes with slow accessibility APIs (causes beachballs)
-M.filteredBundleIDs = {
-  "com.apple.SafariPlatformSupport.Helper",
-  "com.apple.appkit.xpc.ThemeWidgetControlViewService",
-  "com.apple.ViewBridgeAuxiliary",
-  "com.apple.quicklook.QuickLookUIService",
-  "com.apple.TextInputUI.xpc.CursorUIViewService",
-  "com.apple.PressAndHold",
-  "com.apple.coreservices.uiagent",
-  "com.apple.wifi.WiFiAgent",
-  "com.apple.CharacterPaletteIM",
-}
-
 local function shouldFilterApp(appName)
   for _, filtered in ipairs(M.filteredApps) do
     if appName == filtered or appName:match("^%.") then
@@ -48,73 +32,53 @@ local function shouldFilterApp(appName)
   return false
 end
 
-local function shouldFilterBundleID(bundleID)
-  if not bundleID then return false end
-  for _, filtered in ipairs(M.filteredBundleIDs) do
-    if bundleID == filtered then
-      return true
-    end
-  end
-  return false
-end
-
 M.getWindowChoices = function(applyFilter)
-  -- Use window filter for better performance and timeout handling
-  -- getWindows() has built-in timeout protection (returns empty on timeout rather than hanging)
-  local windows = windowfilter:getWindows(hs.window.filter.sortByFocusedLast)
+  -- Use AeroSpace CLI to list windows
+  local handle = io.popen("aerospace list-windows --all --json 2>/dev/null")
+  local result = handle:read("*a")
+  handle:close()
 
   local choices = {}
   local seenApps = {}
 
+  -- Parse JSON response
+  local windows = hs.json.decode(result)
+  if not windows then
+    return choices, seenApps
+  end
+
   for index, win in ipairs(windows) do
-    -- Safely get app and handle nil case
-    local app = win:application()
-    if not app then
+    local appName = win["app-name"]
+    local title = win["window-title"] or ""
+    local windowId = win["window-id"]
+
+    -- Skip if app should be filtered
+    if applyFilter and shouldFilterApp(appName) then
       goto continue
     end
 
-    local appName = app:name()
-    local bundleID = app:bundleID()
-    local title = win:title()
+    -- Use app name as title if window title is empty (common for Chrome apps/PWAs)
+    local displayTitle = (title and title ~= "") and title or appName
+    local subText = (title and title ~= "") and appName or "Application window"
 
-    -- Filter out non-standard windows (utility dialogs, system dialogs, etc.)
-    if not win:isStandard() then
-      goto continue
-    end
-
-    -- Filter out invisible windows
-    if not win:isVisible() then
-      goto continue
-    end
-
-    -- Filter by bundle ID (slow accessibility APIs)
-    if applyFilter and shouldFilterBundleID(bundleID) then
-      goto continue
-    end
-
-    if (not applyFilter or not shouldFilterApp(appName)) then
-      -- Use app name as title if window title is empty (common for Chrome apps/PWAs)
-      local displayTitle = (title and title ~= "") and title or appName
-      local subText = (title and title ~= "") and appName or "Application window"
-
-      -- Extract Chrome profile from title
-      if appName == "Google Chrome" then
-        local profile = title:match(" %- Google Chrome %- (.+)$")
-        if profile then
-          displayTitle = title:gsub(" %- Google Chrome %- .+$", "")
-          subText = appName .. " - " .. profile
-        end
+    -- Extract Chrome profile from title
+    if appName == "Google Chrome" then
+      local profile = title:match(" %- Google Chrome %- (.+)$")
+      if profile then
+        displayTitle = title:gsub(" %- Google Chrome %- .+$", "")
+        subText = appName .. " - " .. profile
       end
-
-      table.insert(choices, {
-        text = displayTitle,
-        subText = subText,
-        window = win,
-        mruIndex = index,  -- Store MRU position for scoring
-        type = "window"  -- Explicit type to avoid field probing in callbacks
-      })
-      seenApps[appName] = true
     end
+
+    table.insert(choices, {
+      text = displayTitle,
+      subText = subText,
+      windowId = windowId,
+      mruIndex = index,  -- Store MRU position for scoring
+      type = "window"  -- Explicit type to avoid field probing in callbacks
+    })
+    seenApps[appName] = true
+
     ::continue::
   end
 
@@ -259,7 +223,7 @@ M.getAllChoices = function(applyFilter)
 end
 
 M.detectType = function(item)
-  if item.window then return "window"
+  if item.windowId then return "window"
   elseif item.appName then
     if item.subText == "Focus application" then
       return "running_app"

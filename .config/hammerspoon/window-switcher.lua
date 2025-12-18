@@ -106,7 +106,10 @@ local function showSwitcher(applyFilter)
 
       hs.timer.doAfter(0, function()
         if choiceType == "window" then
-          pcall(function() choice.window:focus() end)
+          -- Use AeroSpace to focus window
+          if choice.windowId then
+            os.execute(string.format("aerospace focus --window-id %d 2>/dev/null &", choice.windowId))
+          end
         elseif choiceType == "app" then
           local app = hs.application.get(choice.appName)
           if app then
