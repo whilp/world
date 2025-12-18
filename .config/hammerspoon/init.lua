@@ -6,7 +6,6 @@ local leaderDsl = require("leader-dsl")
 local emojiPicker = require("emoji-picker")
 local symbolPicker = require("symbol-picker")
 local chooserStyle = require("chooser-style")
-local autoLayout = require("auto-layout")
 
 hs.ipc.cliInstall()
 
@@ -77,7 +76,6 @@ leaderModal.setup(leaderDsl.get_tree(), { timeout_ms = 3000 }, {
 
 windowSwitcher.setup(hyper)
 notchClock.start({ offsetMinutes = 4 })
-autoLayout.setup(hyper)
 
 -- cmd+space opens dispatcher
 hs.hotkey.bind({"cmd"}, "space", function()

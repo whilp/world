@@ -3,8 +3,4 @@ return Leader("h", "Hammerspoon", {
   Bind("c", "Console", { fn = function() hs.openConsole() end }),
   Bind("u", "Update apps", { shell = "/usr/local/bin/mscupdate" }),
   Bind("s", "Switcher (unfiltered)", { mode = "unfiltered_switcher" }),
-  Bind("l", "Snap layout", { fn = function()
-    local autoLayout = require("auto-layout")
-    autoLayout.applyLayoutToAllWindows()
-  end }),
 })
