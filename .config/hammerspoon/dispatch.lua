@@ -2,6 +2,36 @@ local M = {}
 
 local leaderDsl = require("leader-dsl")
 
+-- Simple MRU tracking - just track order of windows accessed via dispatcher
+local mruWindowIds = {}
+
+M.recordWindowAccess = function(windowId)
+  -- Remove if exists
+  for i, id in ipairs(mruWindowIds) do
+    if id == windowId then
+      table.remove(mruWindowIds, i)
+      break
+    end
+  end
+
+  -- Add to front
+  table.insert(mruWindowIds, 1, windowId)
+
+  -- Keep list manageable
+  while #mruWindowIds > 50 do
+    table.remove(mruWindowIds)
+  end
+end
+
+local function getMRUIndex(windowId)
+  for i, id in ipairs(mruWindowIds) do
+    if id == windowId then
+      return i
+    end
+  end
+  return 9999  -- Not in MRU list
+end
+
 M.filteredApps = {
   "Chess",
   "Karabiner-VirtualHIDDevice-Manager",
@@ -47,7 +77,7 @@ M.getWindowChoices = function(applyFilter)
     return choices, seenApps
   end
 
-  for index, win in ipairs(windows) do
+  for _, win in ipairs(windows) do
     local appName = win["app-name"]
     local title = win["window-title"] or ""
     local windowId = win["window-id"]
@@ -74,12 +104,22 @@ M.getWindowChoices = function(applyFilter)
       text = displayTitle,
       subText = subText,
       windowId = windowId,
-      mruIndex = index,  -- Store MRU position for scoring
+      mruIndex = getMRUIndex(windowId),  -- MRU position for scoring
       type = "window"  -- Explicit type to avoid field probing in callbacks
     })
     seenApps[appName] = true
 
     ::continue::
+  end
+
+  -- Sort by MRU index (lower is more recent)
+  table.sort(choices, function(a, b)
+    return a.mruIndex < b.mruIndex
+  end)
+
+  -- Reset mruIndex to sorted position
+  for index, choice in ipairs(choices) do
+    choice.mruIndex = index
   end
 
   return choices, seenApps
