@@ -64,7 +64,7 @@ end
 
 M.getWindowChoices = function(applyFilter)
   -- Use AeroSpace CLI to list windows
-  local handle = io.popen("aerospace list-windows --all --json 2>/dev/null")
+  local handle = io.popen("/opt/homebrew/bin/aerospace list-windows --all --json 2>/dev/null")
   local result = handle:read("*a")
   handle:close()
 
