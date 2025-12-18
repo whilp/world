@@ -1,6 +1,15 @@
 # AeroSpace configuration
-# Accordion layout only - all windows stacked (one visible at a time)
-# No gaps for clean edge-to-edge display
+# Accordion layout - all windows stacked (one visible at a time)
+# Workspace organization:
+#   1: Terminal/Development (Ghostty)
+#   2: Communication (Slack, Messages)
+#   3: Email/Calendar (Gmail, Google Calendar)
+#   4: Work Browser (Chrome - Stripe)
+#   5: Recruiting (Greenhouse)
+#   6: AI Tools (LibreChat, Gemini)
+#   7: Media (Music)
+#   8: Utilities (iPhone Mirroring)
+#   9: Personal Browser (Chrome - Personal)
 
 # Start AeroSpace at login
 start-at-login = true
@@ -10,7 +19,7 @@ enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
 
 # Accordion padding (shows edge of stacked windows)
-accordion-padding = 30
+accordion-padding = 0
 
 # Default layout (accordion for stacked windows)
 default-root-container-layout = 'accordion'
@@ -24,23 +33,6 @@ outer.left = 0
 outer.bottom = 0
 outer.top = 0
 outer.right = 0
-
-# Assign workspaces to monitors
-[workspace-to-monitor-force-assignment]
-# Internal monitor (built-in) - workspaces 1-5
-1 = 'built-in'
-2 = 'built-in'
-3 = 'built-in'
-4 = 'built-in'
-5 = 'built-in'
-
-# External monitor - workspaces 6-9
-# Uses monitor sequence number 2 (left-to-right ordering)
-# When external is connected, it will be monitor 2
-6 = 2
-7 = 2
-8 = 2
-9 = 2
 
 # Key mapping (use qwerty, dvorak, or colemak)
 [key-mapping]
@@ -115,7 +107,67 @@ l = 'resize width +50'
 enter = 'mode main'
 esc = 'mode main'
 
-# Auto-stack new windows in accordion layout
+# Workspace assignments
+# Workspace 1: Terminal/Development
+[[on-window-detected]]
+if.app-name-regex-substring = 'Ghostty'
+run = 'move-node-to-workspace 1'
+
+# Workspace 2: Communication
+[[on-window-detected]]
+if.app-name-regex-substring = 'Slack'
+run = 'move-node-to-workspace 2'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Messages'
+run = 'move-node-to-workspace 2'
+
+# Workspace 3: Email/Calendar
+[[on-window-detected]]
+if.app-name-regex-substring = 'Gmail'
+run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Google Calendar'
+run = 'move-node-to-workspace 3'
+
+# Workspace 4: Work Browser
+[[on-window-detected]]
+if.app-name-regex-substring = 'Google Chrome'
+if.window-title-regex-substring = 'wcm \(stripe\)'
+run = 'move-node-to-workspace 4'
+
+# Workspace 5: Recruiting
+[[on-window-detected]]
+if.app-name-regex-substring = 'Greenhouse'
+run = 'move-node-to-workspace 5'
+
+# Workspace 6: AI Tools
+[[on-window-detected]]
+if.app-name-regex-substring = 'LibreChat'
+run = 'move-node-to-workspace 6'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Google Gemini'
+run = 'move-node-to-workspace 6'
+
+# Workspace 7: Media
+[[on-window-detected]]
+if.app-name-regex-substring = 'Music'
+run = 'move-node-to-workspace 7'
+
+# Workspace 8: Utilities
+[[on-window-detected]]
+if.app-name-regex-substring = 'iPhone Mirroring'
+run = 'move-node-to-workspace 8'
+
+# Workspace 9: Personal Browser
+[[on-window-detected]]
+if.app-name-regex-substring = 'Google Chrome'
+if.window-title-regex-substring = 'Will \(gmail\)'
+run = 'move-node-to-workspace 9'
+
+# Auto-apply accordion layout to all windows
 [[on-window-detected]]
 if.during-aerospace-startup = false
-run = '''layout accordion'''
+run = 'layout accordion'
