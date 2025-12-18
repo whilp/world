@@ -62,27 +62,27 @@ alt-shift-j = 'move down'
 alt-shift-k = 'move up'
 alt-shift-l = 'move right'
 
-# Switch workspaces
-alt-1 = 'workspace 1'
-alt-2 = 'workspace 2'
-alt-3 = 'workspace 3'
-alt-4 = 'workspace 4'
-alt-5 = 'workspace 5'
-alt-6 = 'workspace 6'
-alt-7 = 'workspace 7'
-alt-8 = 'workspace 8'
-alt-9 = 'workspace 9'
+# Switch workspaces (1-5 use accordion, 6-9 use tiles)
+alt-1 = ['workspace 1', 'layout accordion']
+alt-2 = ['workspace 2', 'layout accordion']
+alt-3 = ['workspace 3', 'layout accordion']
+alt-4 = ['workspace 4', 'layout accordion']
+alt-5 = ['workspace 5', 'layout accordion']
+alt-6 = ['workspace 6', 'layout tiles']
+alt-7 = ['workspace 7', 'layout tiles']
+alt-8 = ['workspace 8', 'layout tiles']
+alt-9 = ['workspace 9', 'layout tiles']
 
-# Move window to workspace
-alt-shift-1 = ['move-node-to-workspace 1', 'workspace 1']
-alt-shift-2 = ['move-node-to-workspace 2', 'workspace 2']
-alt-shift-3 = ['move-node-to-workspace 3', 'workspace 3']
-alt-shift-4 = ['move-node-to-workspace 4', 'workspace 4']
-alt-shift-5 = ['move-node-to-workspace 5', 'workspace 5']
-alt-shift-6 = ['move-node-to-workspace 6', 'workspace 6']
-alt-shift-7 = ['move-node-to-workspace 7', 'workspace 7']
-alt-shift-8 = ['move-node-to-workspace 8', 'workspace 8']
-alt-shift-9 = ['move-node-to-workspace 9', 'workspace 9']
+# Move window to workspace (and apply layout)
+alt-shift-1 = ['move-node-to-workspace 1', 'workspace 1', 'layout accordion']
+alt-shift-2 = ['move-node-to-workspace 2', 'workspace 2', 'layout accordion']
+alt-shift-3 = ['move-node-to-workspace 3', 'workspace 3', 'layout accordion']
+alt-shift-4 = ['move-node-to-workspace 4', 'workspace 4', 'layout accordion']
+alt-shift-5 = ['move-node-to-workspace 5', 'workspace 5', 'layout accordion']
+alt-shift-6 = ['move-node-to-workspace 6', 'workspace 6', 'layout tiles']
+alt-shift-7 = ['move-node-to-workspace 7', 'workspace 7', 'layout tiles']
+alt-shift-8 = ['move-node-to-workspace 8', 'workspace 8', 'layout tiles']
+alt-shift-9 = ['move-node-to-workspace 9', 'workspace 9', 'layout tiles']
 
 # Focus monitors
 alt-comma = 'focus-monitor left'
@@ -122,12 +122,7 @@ l = 'resize width +50'
 enter = 'mode main'
 esc = 'mode main'
 
-# Auto-tile new windows on external monitor workspaces (6-9)
+# Auto-tile new windows
 [[on-window-detected]]
 if.during-aerospace-startup = false
 run = '''layout tiling'''
-
-# For internal monitor workspaces (1-5), use accordion layout for stacked windows
-[[on-window-detected]]
-if.workspace = [1, 2, 3, 4, 5]
-run = ['layout accordion']
