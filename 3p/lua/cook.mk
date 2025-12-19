@@ -105,11 +105,8 @@ lua_all_objs := $(lua_core_objs) $(lua_ext_lua_objs) $(lua_ext_net_objs) $(lua_l
 # output
 lua_bin := results/bin/lua
 
-# target for lua fat binary - use recursive make to ensure sources exist before compiling
-lua:
-	$(MAKE) $(cosmopolitan_src) $(cosmocc_bin) $(cosmos_bin) $(luaunit_lua_dir)/luaunit.lua
-	$(MAKE) $(lua_patched)
-	$(MAKE) $(lua_bin)
+# target for lua fat binary
+lua: $(lua_bin)
 
 # patch lua.main.c, lfuncs.c, and copy headers to register redbean modules
 $(lua_patched): $(cosmopolitan_src) | $(lua_build_dir)
@@ -126,9 +123,14 @@ $(lua_patched): $(cosmopolitan_src) | $(lua_build_dir)
 # cosmos zip is needed for APE binaries (system zip doesn't work with APE format)
 cosmos_zip_bin := $(cosmos_dir)/bin/zip
 
-$(lua_bin): $(lua_all_objs) | results/bin
+$(cosmos_zip_bin): $(cosmos_bin)
+
+$(lua_bin): $(lua_all_objs) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua | results/bin
 	$(cosmocc_bin) -mcosmo $(lua_all_objs) -o $@
 	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
+
+# ensure all objects wait for patching and toolchain
+$(lua_all_objs): | $(lua_patched) $(cosmocc_bin)
 
 # lua core objects (from third_party/lua)
 $(lua_build_dir)/lua/%.o: $(lua_cosmo_dir)/third_party/lua/%.c | $(lua_build_dir)/lua
