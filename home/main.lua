@@ -93,13 +93,7 @@ local function cmd_install()
     local extract_dir = dest .. "/.local/share/home-binaries"
     os.execute("mkdir -p " .. extract_dir)
 
-    local cmd = string.format(
-      "unzip -q -o '%s' -d '%s' '*/%s/*' 2>/dev/null || true",
-      binaries_tmp,
-      extract_dir,
-      platform
-    )
-    os.execute(cmd)
+    os.execute(string.format("unzip -q -o '%s' -d '%s'", binaries_tmp, extract_dir))
     os.remove(binaries_tmp)
 
     io.stderr:write("creating symlinks...\n")
