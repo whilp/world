@@ -1,15 +1,6 @@
 # AeroSpace configuration
-# Accordion layout - all windows stacked (one visible at a time)
-# Workspace organization:
-#   1: Terminal/Development (Ghostty)
-#   2: Communication (Slack, Messages)
-#   3: Email/Calendar (Gmail, Google Calendar)
-#   4: Work Browser (Chrome - Stripe)
-#   5: Recruiting (Greenhouse)
-#   6: AI Tools (LibreChat, Gemini)
-#   7: Media (Music)
-#   8: Utilities (iPhone Mirroring)
-#   9: Personal Browser (Chrome - Personal)
+# Single workspace with zero padding accordion layout
+# All windows in one workspace, stacked (one visible at a time)
 
 # Start AeroSpace at login
 start-at-login = true
@@ -53,28 +44,6 @@ alt-shift-j = 'move down'
 alt-shift-k = 'move up'
 alt-shift-l = 'move right'
 
-# Switch workspaces
-alt-1 = 'workspace 1'
-alt-2 = 'workspace 2'
-alt-3 = 'workspace 3'
-alt-4 = 'workspace 4'
-alt-5 = 'workspace 5'
-alt-6 = 'workspace 6'
-alt-7 = 'workspace 7'
-alt-8 = 'workspace 8'
-alt-9 = 'workspace 9'
-
-# Move window to workspace
-alt-shift-1 = ['move-node-to-workspace 1', 'workspace 1']
-alt-shift-2 = ['move-node-to-workspace 2', 'workspace 2']
-alt-shift-3 = ['move-node-to-workspace 3', 'workspace 3']
-alt-shift-4 = ['move-node-to-workspace 4', 'workspace 4']
-alt-shift-5 = ['move-node-to-workspace 5', 'workspace 5']
-alt-shift-6 = ['move-node-to-workspace 6', 'workspace 6']
-alt-shift-7 = ['move-node-to-workspace 7', 'workspace 7']
-alt-shift-8 = ['move-node-to-workspace 8', 'workspace 8']
-alt-shift-9 = ['move-node-to-workspace 9', 'workspace 9']
-
 # Focus monitors
 alt-comma = 'focus-monitor left'
 alt-period = 'focus-monitor right'
@@ -106,66 +75,6 @@ k = 'resize height -50'
 l = 'resize width +50'
 enter = 'mode main'
 esc = 'mode main'
-
-# Workspace assignments
-# Workspace 1: Terminal/Development
-[[on-window-detected]]
-if.app-name-regex-substring = 'Ghostty'
-run = 'move-node-to-workspace 1'
-
-# Workspace 2: Communication
-[[on-window-detected]]
-if.app-name-regex-substring = 'Slack'
-run = 'move-node-to-workspace 2'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'Messages'
-run = 'move-node-to-workspace 2'
-
-# Workspace 3: Email/Calendar
-[[on-window-detected]]
-if.app-name-regex-substring = 'Gmail'
-run = 'move-node-to-workspace 3'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'Google Calendar'
-run = 'move-node-to-workspace 3'
-
-# Workspace 4: Work Browser
-[[on-window-detected]]
-if.app-name-regex-substring = 'Google Chrome'
-if.window-title-regex-substring = 'wcm \(stripe\)'
-run = 'move-node-to-workspace 4'
-
-# Workspace 5: Recruiting
-[[on-window-detected]]
-if.app-name-regex-substring = 'Greenhouse'
-run = 'move-node-to-workspace 5'
-
-# Workspace 6: AI Tools
-[[on-window-detected]]
-if.app-name-regex-substring = 'LibreChat'
-run = 'move-node-to-workspace 6'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'Google Gemini'
-run = 'move-node-to-workspace 6'
-
-# Workspace 7: Media
-[[on-window-detected]]
-if.app-name-regex-substring = 'Music'
-run = 'move-node-to-workspace 7'
-
-# Workspace 8: Utilities
-[[on-window-detected]]
-if.app-name-regex-substring = 'iPhone Mirroring'
-run = 'move-node-to-workspace 8'
-
-# Workspace 9: Personal Browser
-[[on-window-detected]]
-if.app-name-regex-substring = 'Google Chrome'
-if.window-title-regex-substring = 'Will \(gmail\)'
-run = 'move-node-to-workspace 9'
 
 # Auto-apply accordion layout to all windows
 [[on-window-detected]]
