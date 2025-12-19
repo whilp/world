@@ -3,7 +3,7 @@
 
 # directories (hardcode version to avoid variable expansion timing issues)
 lua_cosmo_dir := $(3p)/cosmopolitan/cosmopolitan-4.0.2
-lua_build_dir := o/lua
+lua_build_dir := $(o)/lua
 lua_patch_dir := 3p/lua
 
 # compiler flags (uses $(zip) and $(cosmocc_bin) from 3p/cook.mk)

@@ -1,5 +1,5 @@
 local function cmd_unpack()
-  local f = io.open("/.zip/dotfiles.zip", "rb")
+  local f = io.open("/zip/dotfiles.zip", "rb")
   if not f then
     io.stderr:write("error: embedded dotfiles not found\n")
     os.exit(1)
