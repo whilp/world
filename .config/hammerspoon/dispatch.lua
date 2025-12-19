@@ -2,6 +2,33 @@ local M = {}
 
 local leaderDsl = require("leader-dsl")
 
+local mruWindowIds = {}
+local MRU_MAX_SIZE = 10
+
+M.recordWindowAccess = function(windowId)
+  for i, id in ipairs(mruWindowIds) do
+    if id == windowId then
+      table.remove(mruWindowIds, i)
+      break
+    end
+  end
+
+  table.insert(mruWindowIds, 1, windowId)
+
+  while #mruWindowIds > MRU_MAX_SIZE do
+    table.remove(mruWindowIds)
+  end
+end
+
+local function getMRUIndex(windowId)
+  for i, id in ipairs(mruWindowIds) do
+    if id == windowId then
+      return i
+    end
+  end
+  return 9999
+end
+
 M.filteredApps = {
   "Chess",
   "Karabiner-VirtualHIDDevice-Manager",
@@ -34,8 +61,6 @@ end
 
 M.getWindowChoices = function(applyFilter)
   -- Use AeroSpace CLI to list windows
-  -- AeroSpace returns windows in DFS order (depth-first search through tree)
-  -- Earlier windows in the list are typically more recently focused
   local handle = io.popen("/opt/homebrew/bin/aerospace list-windows --all --json 2>/dev/null")
   local result = handle:read("*a")
   handle:close()
@@ -76,12 +101,24 @@ M.getWindowChoices = function(applyFilter)
       text = displayTitle,
       subText = subText,
       windowId = windowId,
-      mruIndex = index,  -- Use position in AeroSpace's list as depth/recency metric
+      mruIndex = getMRUIndex(windowId),
+      aerospaceIndex = index,
       type = "window"
     })
     seenApps[appName] = true
 
     ::continue::
+  end
+
+  table.sort(choices, function(a, b)
+    if a.mruIndex ~= b.mruIndex then
+      return a.mruIndex < b.mruIndex
+    end
+    return a.aerospaceIndex < b.aerospaceIndex
+  end)
+
+  for index, choice in ipairs(choices) do
+    choice.mruIndex = index
   end
 
   return choices, seenApps

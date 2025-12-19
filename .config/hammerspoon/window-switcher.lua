@@ -15,9 +15,8 @@ local ignoreNextQueryChange = false
 local INITIAL_SELECTION = 2
 local SUBTEXT_PENALTY = 50
 
--- Performance tuning constants
-local MAX_RESULTS = 15         -- Limit fuzzy matching to top N results (chooser shows 15 rows)
-local DEBOUNCE_DELAY = 0.075   -- Wait 75ms after last keystroke before filtering
+local MAX_RESULTS = 15
+local DEBOUNCE_DELAY = 0.03
 
 -- Enable/disable debug logging
 local DEBUG = false
@@ -103,8 +102,8 @@ local function showSwitcher(applyFilter)
 
       hs.timer.doAfter(0, function()
         if choiceType == "window" then
-          -- Use AeroSpace to focus window
           if choice.windowId then
+            dispatch.recordWindowAccess(choice.windowId)
             hs.task.new("/opt/homebrew/bin/aerospace", nil, {"focus", "--window-id", tostring(choice.windowId)}):start()
           end
         elseif choiceType == "app" then
