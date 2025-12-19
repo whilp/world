@@ -67,7 +67,8 @@ jobs:
       - name: Test extraction
         run: |
           mkdir -p /tmp/test-home
-          results/bin/home unpack | unzip -d /tmp/test-home
+          results/bin/home unpack > /tmp/dotfiles.zip
+          unzip -q /tmp/dotfiles.zip -d /tmp/test-home
           test -f /tmp/test-home/.zshenv
 
   release:
