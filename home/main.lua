@@ -22,7 +22,7 @@ local function main(args)
     cmd_version()
   else
     io.stderr:write("usage: home unpack > dotfiles.zip\n")
-    io.stderr:write("       home unpack | unzip -d ~/\n")
+    io.stderr:write("       unzip dotfiles.zip -d ~/\n")
     io.stderr:write("       home version\n")
     os.exit(cmd == "help" and 0 or 1)
   end
