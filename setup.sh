@@ -2,6 +2,10 @@
 
 SETUP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.config/setup" && pwd)"
 
+if command -v home &>/dev/null; then
+  home unpack | unzip -o -d ~/
+fi
+
 main() {
   "$SETUP_DIR/backup"
   "$SETUP_DIR/git"

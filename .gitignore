@@ -174,3 +174,7 @@ extras
 .duckdb/
 .duckdb_history
 dist/
+3p/*/digest
+3p/*/fetch
+o/
+results/

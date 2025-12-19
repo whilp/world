@@ -1,0 +1,227 @@
+--- a/third_party/lua/BUILD.mk	2025-12-19 01:30:00.014204266 +0000
++++ b/third_party/lua/BUILD.mk	2025-12-19 01:40:24.430218012 +0000
+@@ -14,6 +14,10 @@
+ THIRD_PARTY_LUA_CHECKS =					\
+ 	$(THIRD_PARTY_LUA_A).pkg				\
+ 	$(THIRD_PARTY_LUA_UNIX).pkg				\
++	THIRD_PARTY_LUA_PATH					\
++	THIRD_PARTY_LUA_RE					\
++	THIRD_PARTY_LUA_SQLITE3					\
++	THIRD_PARTY_LUA_ARGON2					\
+ 	$(THIRD_PARTY_LUA_HDRS:%=o/$(MODE)/%.ok)		\
+ 	o/$(MODE)/third_party/lua/lua.pkg			\
+ 	o/$(MODE)/third_party/lua/luac.pkg
+@@ -224,6 +228,174 @@
+ 		$(foreach x,$(THIRD_PARTY_LUA_UNIX_DIRECTDEPS),$($(x)_A).pkg)
+ 
+ ################################################################################
++# lpath.a
++
++THIRD_PARTY_LUA_PATH =						\
++	$(THIRD_PARTY_LUA_A_DEPS)				\
++	$(THIRD_PARTY_LUA_A)
++
++THIRD_PARTY_LUA_ARTIFACTS +=					\
++	THIRD_PARTY_LUA_PATH
++
++THIRD_PARTY_LUA_PATH_A =					\
++	o/$(MODE)/third_party/lua/lpath.a
++
++THIRD_PARTY_LUA_PATH_HDRS =					\
++	third_party/lua/lpath.h
++
++THIRD_PARTY_LUA_PATH_SRCS =					\
++	third_party/lua/lpath.c
++
++THIRD_PARTY_LUA_PATH_OBJS =					\
++	$(THIRD_PARTY_LUA_PATH_SRCS:%.c=o/$(MODE)/%.o)
++
++THIRD_PARTY_LUA_PATH_DIRECTDEPS =				\
++	LIBC_CALLS						\
++	LIBC_INTRIN						\
++	LIBC_STR						\
++	LIBC_SYSV						\
++	THIRD_PARTY_LUA
++
++THIRD_PARTY_LUA_PATH_DEPS :=					\
++	$(call uniq,$(foreach x,$(THIRD_PARTY_LUA_PATH_DIRECTDEPS),$($(x))))
++
++$(THIRD_PARTY_LUA_A):						\
++		third_party/lua/				\
++		$(THIRD_PARTY_LUA_PATH_A).pkg			\
++		$(THIRD_PARTY_LUA_PATH_OBJS)
++
++$(THIRD_PARTY_LUA_PATH_A).pkg:					\
++		$(THIRD_PARTY_LUA_PATH_OBJS)			\
++		$(foreach x,$(THIRD_PARTY_LUA_PATH_DIRECTDEPS),$($(x)_A).pkg)
++
++################################################################################
++# lre.a
++
++THIRD_PARTY_LUA_RE =						\
++	$(THIRD_PARTY_LUA_A_DEPS)				\
++	$(THIRD_PARTY_LUA_A)
++
++THIRD_PARTY_LUA_ARTIFACTS +=					\
++	THIRD_PARTY_LUA_RE
++
++THIRD_PARTY_LUA_RE_A =						\
++	o/$(MODE)/third_party/lua/lre.a
++
++THIRD_PARTY_LUA_RE_HDRS =					\
++	third_party/lua/lre.h
++
++THIRD_PARTY_LUA_RE_SRCS =					\
++	third_party/lua/lre.c
++
++THIRD_PARTY_LUA_RE_OBJS =					\
++	$(THIRD_PARTY_LUA_RE_SRCS:%.c=o/$(MODE)/%.o)
++
++THIRD_PARTY_LUA_RE_DIRECTDEPS =					\
++	LIBC_CALLS						\
++	LIBC_INTRIN						\
++	LIBC_STR						\
++	LIBC_SYSV						\
++	THIRD_PARTY_LUA						\
++	THIRD_PARTY_REGEX
++
++THIRD_PARTY_LUA_RE_DEPS :=					\
++	$(call uniq,$(foreach x,$(THIRD_PARTY_LUA_RE_DIRECTDEPS),$($(x))))
++
++$(THIRD_PARTY_LUA_A):						\
++		third_party/lua/				\
++		$(THIRD_PARTY_LUA_RE_A).pkg			\
++		$(THIRD_PARTY_LUA_RE_OBJS)
++
++$(THIRD_PARTY_LUA_RE_A).pkg:					\
++		$(THIRD_PARTY_LUA_RE_OBJS)			\
++		$(foreach x,$(THIRD_PARTY_LUA_RE_DIRECTDEPS),$($(x)_A).pkg)
++
++################################################################################
++# lsqlite3.a
++
++THIRD_PARTY_LUA_SQLITE3 =					\
++	$(THIRD_PARTY_LUA_A_DEPS)				\
++	$(THIRD_PARTY_LUA_A)
++
++THIRD_PARTY_LUA_ARTIFACTS +=					\
++	THIRD_PARTY_LUA_SQLITE3
++
++THIRD_PARTY_LUA_SQLITE3_A =					\
++	o/$(MODE)/third_party/lua/lsqlite3.a
++
++THIRD_PARTY_LUA_SQLITE3_HDRS =					\
++	third_party/lua/lsqlite3.h
++
++THIRD_PARTY_LUA_SQLITE3_SRCS =					\
++	third_party/lua/lsqlite3.c
++
++THIRD_PARTY_LUA_SQLITE3_OBJS =					\
++	$(THIRD_PARTY_LUA_SQLITE3_SRCS:%.c=o/$(MODE)/%.o)
++
++THIRD_PARTY_LUA_SQLITE3_DIRECTDEPS =				\
++	LIBC_CALLS						\
++	LIBC_INTRIN						\
++	LIBC_MEM						\
++	LIBC_STDIO						\
++	LIBC_STR						\
++	LIBC_SYSV						\
++	THIRD_PARTY_LUA
++
++THIRD_PARTY_LUA_SQLITE3_DEPS :=					\
++	$(call uniq,$(foreach x,$(THIRD_PARTY_LUA_SQLITE3_DIRECTDEPS),$($(x))))
++
++$(THIRD_PARTY_LUA_SQLITE3_A):					\
++		third_party/lua/				\
++		$(THIRD_PARTY_LUA_SQLITE3_A).pkg		\
++		$(THIRD_PARTY_LUA_SQLITE3_OBJS)
++
++$(THIRD_PARTY_LUA_SQLITE3_A).pkg:				\
++		$(THIRD_PARTY_LUA_SQLITE3_OBJS)			\
++		$(foreach x,$(THIRD_PARTY_LUA_SQLITE3_DIRECTDEPS),$($(x)_A).pkg) \
++		o/$(MODE)/third_party/sqlite3/libsqlite3.a.pkg
++
++################################################################################
++# largon2.a
++
++THIRD_PARTY_LUA_ARGON2 =					\
++	$(THIRD_PARTY_LUA_A_DEPS)				\
++	$(THIRD_PARTY_LUA_A)
++
++THIRD_PARTY_LUA_ARTIFACTS +=					\
++	THIRD_PARTY_LUA_ARGON2
++
++THIRD_PARTY_LUA_ARGON2_A =					\
++	o/$(MODE)/third_party/lua/largon2.a
++
++THIRD_PARTY_LUA_ARGON2_HDRS =					\
++	third_party/lua/largon2.h
++
++THIRD_PARTY_LUA_ARGON2_SRCS =					\
++	third_party/lua/largon2.c
++
++THIRD_PARTY_LUA_ARGON2_OBJS =					\
++	$(THIRD_PARTY_LUA_ARGON2_SRCS:%.c=o/$(MODE)/%.o)
++
++THIRD_PARTY_LUA_ARGON2_DIRECTDEPS =				\
++	LIBC_INTRIN						\
++	LIBC_STDIO						\
++	LIBC_STR						\
++	THIRD_PARTY_LUA
++
++THIRD_PARTY_LUA_ARGON2_DEPS :=					\
++	$(call uniq,$(foreach x,$(THIRD_PARTY_LUA_ARGON2_DIRECTDEPS),$($(x))))
++
++$(THIRD_PARTY_LUA_ARGON2_A):					\
++		third_party/lua/				\
++		$(THIRD_PARTY_LUA_ARGON2_A).pkg			\
++		$(THIRD_PARTY_LUA_ARGON2_OBJS)
++
++$(THIRD_PARTY_LUA_ARGON2_A).pkg:				\
++		$(THIRD_PARTY_LUA_ARGON2_OBJS)			\
++		$(foreach x,$(THIRD_PARTY_LUA_ARGON2_DIRECTDEPS),$($(x)_A).pkg) \
++		o/$(MODE)/third_party/argon2/argon2.a.pkg
++
++################################################################################
+ # lua
+ 
+ THIRD_PARTY_LUA_LUA_DIRECTDEPS =				\
+@@ -239,23 +411,35 @@
+ 	LIBC_THREAD						\
+ 	THIRD_PARTY_LINENOISE					\
+ 	THIRD_PARTY_LUA						\
++	THIRD_PARTY_LUA_PATH					\
++	THIRD_PARTY_LUA_RE					\
++	THIRD_PARTY_LUA_SQLITE3					\
++	THIRD_PARTY_LUA_ARGON2					\
+ 	THIRD_PARTY_LUA_UNIX					\
+ 	TOOL_ARGS
+ 
+ THIRD_PARTY_LUA_LUA_DEPS :=					\
+ 	$(call uniq,$(foreach x,$(THIRD_PARTY_LUA_LUA_DIRECTDEPS),$($(x))))
+ 
++THIRD_PARTY_LUA_LUA_SQLITE3_DEPS :=				\
++	o/$(MODE)/third_party/sqlite3/libsqlite3.a
++
+ o/$(MODE)/third_party/lua/lua.pkg:				\
+ 		o/$(MODE)/third_party/lua/lua.main.o		\
+-		$(foreach x,$(THIRD_PARTY_LUA_LUA_DIRECTDEPS),$($(x)_A).pkg)
++		$(foreach x,$(THIRD_PARTY_LUA_LUA_DIRECTDEPS),$($(x)_A).pkg) \
++		o/$(MODE)/third_party/sqlite3/libsqlite3.a.pkg
+ 
+ o/$(MODE)/third_party/lua/lua.dbg:				\
+ 		$(THIRD_PARTY_LUA_LUA_DEPS)			\
+ 		o/$(MODE)/third_party/lua/lua.pkg		\
+ 		o/$(MODE)/third_party/lua/lua.main.o		\
++		o/$(MODE)/third_party/lua/lsqlite3.o		\
++		o/$(MODE)/third_party/lua/largon2.o		\
+ 		$(CRT)						\
+-		$(APE_NO_MODIFY_SELF)
+-	@$(APELINK)
++		$(APE_NO_MODIFY_SELF)				\
++		$(THIRD_PARTY_LUA_LUA_SQLITE3_DEPS)		\
++		o/$(MODE)/third_party/argon2/argon2.a
++	@$(COMPILE) -ALINK.ape $(LINK) $(patsubst %.lds,-T %.lds,--start-group $(call uniqr,$(LD.libs) $(filter-out %.pkg,$^)) --end-group) $(OUTPUT_OPTION) && $(COMPILE) -AFIXUP.ape -wT$@ $(FIXUPOBJ) $@
+ 
+ ################################################################################
+ # luac
