@@ -33,17 +33,28 @@ end
 function test_setup_nvim_environment_sets_server_mode()
   local env = nvim.setup_nvim_environment()
 
-  lu.assertEquals(env.NVIM_SERVER_MODE, "1", "should set NVIM_SERVER_MODE to 1")
+  local found = false
+  for _, entry in ipairs(env) do
+    if entry == "NVIM_SERVER_MODE=1" then
+      found = true
+      break
+    end
+  end
+  lu.assertTrue(found, "should set NVIM_SERVER_MODE to 1")
 end
 
 function test_setup_nvim_environment_preserves_loaded_env()
   local env = nvim.setup_nvim_environment()
 
-  lu.assertTrue(env.NVIM_SERVER_MODE ~= nil, "should have NVIM_SERVER_MODE")
-  for k, v in pairs(env) do
-    lu.assertTrue(type(k) == "string", "env keys should be strings")
-    lu.assertTrue(type(v) == "string", "env values should be strings")
+  local has_server_mode = false
+  for _, entry in ipairs(env) do
+    lu.assertTrue(type(entry) == "string", "env entries should be strings")
+    lu.assertTrue(entry:match("^[^=]+=[^=]*$") ~= nil, "env entries should be in KEY=value format")
+    if entry:match("^NVIM_SERVER_MODE=") then
+      has_server_mode = true
+    end
   end
+  lu.assertTrue(has_server_mode, "should have NVIM_SERVER_MODE")
 end
 
 function test_setup_nvim_environment_returns_table()

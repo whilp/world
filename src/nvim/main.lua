@@ -120,7 +120,8 @@ local function read_file(path)
 end
 
 local function is_process_running(pid)
-  return unix.kill(pid, 0) == 0
+  local ok = unix.kill(pid, 0)
+  return ok ~= nil
 end
 
 local function get_running_pid(pidfile)
@@ -144,7 +145,7 @@ local function wait_for_socket(socket_path, timeout)
     if file_exists(socket_path) then
       local fd = unix.socket(unix.AF_UNIX, unix.SOCK_STREAM, 0)
       if fd and fd >= 0 then
-        local ok = unix.connect(fd, {sun_family = unix.AF_UNIX, sun_path = socket_path})
+        local ok = unix.connect(fd, socket_path)
         unix.close(fd)
         if ok then
           return true
@@ -177,7 +178,7 @@ local function load_zsh_environment()
     unix.close(read_fd)
     unix.dup(write_fd, 1)
     unix.close(write_fd)
-    unix.execve("zsh", {"-i", "-l", "-c", "env -0"}, unix.environ())
+    unix.execve("/usr/bin/zsh", {"zsh", "-l", "-c", "env -0"}, unix.environ())
     unix.exit(1)
   else
     unix.close(write_fd)
@@ -203,14 +204,18 @@ local function load_zsh_environment()
 end
 
 local function setup_nvim_environment()
-  local env = load_zsh_environment()
-  env["NVIM_SERVER_MODE"] = "1"
+  local env_table = load_zsh_environment()
+  env_table["NVIM_SERVER_MODE"] = "1"
+  local env = {}
+  for k, v in pairs(env_table) do
+    table.insert(env, k .. "=" .. v)
+  end
   return env
 end
 
 local function exec_nvim_server(sock, env)
   os.remove(sock)
-  unix.execve(NVIM_BIN, {"--listen", sock, "--headless"}, env)
+  unix.execve(NVIM_BIN, {"nvim", "--listen", sock, "--headless"}, env)
 end
 
 local function cmd_start(paths)
@@ -228,15 +233,12 @@ local function cmd_start(paths)
   local lockfd
   lockfd, err = daemonize.acquire_lock(paths.pid)
   if not lockfd then
+    if err:match("another instance") then
+      io.write("nvim server already running\n")
+      return 0
+    end
     io.stderr:write("failed to acquire lock: " .. err .. "\n")
     return 1
-  end
-
-  local pid = get_running_pid(paths.pid)
-  if pid then
-    unix.close(lockfd)
-    io.write("nvim server already running\n")
-    return 0
   end
 
   os.remove(paths.sock)
@@ -382,7 +384,7 @@ local function is_socket_connectable(socket_path)
     return false
   end
 
-  local ok = unix.connect(fd, {sun_family = unix.AF_UNIX, sun_path = socket_path})
+  local ok = unix.connect(fd, socket_path)
   unix.close(fd)
   return ok
 end
@@ -401,7 +403,7 @@ local function client_mode(args)
       cmd_start(paths)
     end
 
-    local new_args = {}
+    local new_args = {"nvim"}
     if not has_server then
       table.insert(new_args, "--server")
       table.insert(new_args, paths.sock)
@@ -411,7 +413,7 @@ local function client_mode(args)
     end
     unix.execve(NVIM_BIN, new_args, unix.environ())
   else
-    local new_args = {}
+    local new_args = {"nvim"}
     for _, arg in ipairs(args) do
       table.insert(new_args, arg)
     end
