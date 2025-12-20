@@ -28,7 +28,12 @@ clean:
 
 home_exclude_pattern = ^(3p/|o/|results/|Makefile|home/|\.git)
 
-results/dotfiles.zip: | results
+results/dotfiles.zip: private .UNVEIL = \
+	r:$(CURDIR) \
+	rx:$(cosmos_zip_bin) \
+	rwc:results \
+	rw:/dev/null
+results/dotfiles.zip: $(cosmos_zip_bin) | results
 	git ls-files -z | grep -zZvE '$(home_exclude_pattern)' | \
 		xargs -0 $(cosmos_zip_bin) -q -r $@
 
