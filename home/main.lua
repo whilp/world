@@ -13,6 +13,17 @@ local function copy_file(src, dst, mode, overwrite)
   local data = src_f:read("*a")
   src_f:close()
 
+  -- If overwriting and destination is a symlink, remove it first
+  if overwrite then
+    local st = unix.stat(dst, unix.AT_SYMLINK_NOFOLLOW)
+    if st and unix.S_ISLNK(st.st_mode) then
+      local unlink_ok = unix.unlink(dst)
+      if not unlink_ok then
+        return false, "failed to remove existing symlink"
+      end
+    end
+  end
+
   -- Create or overwrite destination with restrictive permissions
   local flags = unix.O_WRONLY | unix.O_CREAT
   if overwrite then

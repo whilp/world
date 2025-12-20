@@ -44,8 +44,8 @@ install_home() {
 }
 
 main() {
-  home_bin=$(install_home) || exit 1
-  "${home_bin}" unpack "$HOME"
+  home_bin=$(install_home) || return 1
+  "${home_bin}" unpack --force "$HOME"
   rm -rf "$(dirname "${home_bin}")"
 
   "$SETUP_DIR/backup"
