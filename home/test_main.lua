@@ -282,7 +282,7 @@ function test_copy_file_with_mode()
 
   local st = unix.stat(dst)
   lu.assertNotNil(st)
-  local mode_bits = st.st_mode & 0x1FF
+  local mode_bits = st:mode() & 0x1FF
   lu.assertEquals(mode_bits, tonumber("755", 8))
 
   remove_dir(tmp)

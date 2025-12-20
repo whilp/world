@@ -28,7 +28,7 @@ local function copy_file(src, dst, mode, overwrite)
   -- If overwriting and destination is a symlink, remove it first
   if overwrite then
     local st = unix.stat(dst, unix.AT_SYMLINK_NOFOLLOW)
-    if st and unix.S_ISLNK(st.st_mode) then
+    if st and unix.S_ISLNK(st:mode()) then
       local unlink_ok = unix.unlink(dst)
       if not unlink_ok then
         return false, "failed to remove existing symlink"
