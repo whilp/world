@@ -9,18 +9,33 @@ comrak_linux_arm64_sha := b76c1a02cd2b2d2b5f9dbde9d16124aa54d9e5a66fa2bc3f5f4d0c
 comrak_linux_x86_64_url := https://github.com/kivikakk/comrak/releases/download/v0.41.0/comrak-0.41.0-x86_64-unknown-linux-gnu
 comrak_linux_x86_64_sha := d3ffc8f04f85a47fa325081affd6b572ad456b542a4d3a1207ef4685afd7e9e2
 
+$(comrak_dir)/darwin-arm64/.extracted: private .UNVEIL = \
+	r:/etc/resolv.conf \
+	r:/etc/ssl \
+	rwc:$(comrak_dir)/darwin-arm64 \
+	rw:/dev/null
 $(comrak_dir)/darwin-arm64/.extracted: | $(comrak_dir)/darwin-arm64
 	$(curl) -o $(comrak_dir)/darwin-arm64/comrak $(comrak_darwin_arm64_url)
 	cd $(comrak_dir)/darwin-arm64 && echo "$(comrak_darwin_arm64_sha)  comrak" | $(sha256sum) -c
 	chmod +x $(comrak_dir)/darwin-arm64/comrak
 	touch $@
 
+$(comrak_dir)/linux-arm64/.extracted: private .UNVEIL = \
+	r:/etc/resolv.conf \
+	r:/etc/ssl \
+	rwc:$(comrak_dir)/linux-arm64 \
+	rw:/dev/null
 $(comrak_dir)/linux-arm64/.extracted: | $(comrak_dir)/linux-arm64
 	$(curl) -o $(comrak_dir)/linux-arm64/comrak $(comrak_linux_arm64_url)
 	cd $(comrak_dir)/linux-arm64 && echo "$(comrak_linux_arm64_sha)  comrak" | $(sha256sum) -c
 	chmod +x $(comrak_dir)/linux-arm64/comrak
 	touch $@
 
+$(comrak_dir)/linux-x86_64/.extracted: private .UNVEIL = \
+	r:/etc/resolv.conf \
+	r:/etc/ssl \
+	rwc:$(comrak_dir)/linux-x86_64 \
+	rw:/dev/null
 $(comrak_dir)/linux-x86_64/.extracted: | $(comrak_dir)/linux-x86_64
 	$(curl) -o $(comrak_dir)/linux-x86_64/comrak $(comrak_linux_x86_64_url)
 	cd $(comrak_dir)/linux-x86_64 && echo "$(comrak_linux_x86_64_sha)  comrak" | $(sha256sum) -c

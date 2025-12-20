@@ -9,6 +9,11 @@ delta_linux_arm64_sha := adf7674086daa4582f598f74ce9caa6b70c1ba8f4a57d2911499b37
 delta_linux_x86_64_url := https://github.com/dandavison/delta/releases/download/0.18.2/delta-0.18.2-x86_64-unknown-linux-musl.tar.gz
 delta_linux_x86_64_sha := b7ea845004762358a00ef9127dd9fd723e333c7e4b9cb1da220c3909372310ee
 
+$(delta_dir)/darwin-arm64/.extracted: private .UNVEIL = \
+	r:/etc/resolv.conf \
+	r:/etc/ssl \
+	rwc:$(delta_dir)/darwin-arm64 \
+	rw:/dev/null
 $(delta_dir)/darwin-arm64/.extracted: | $(delta_dir)/darwin-arm64
 	$(curl) -o $(delta_dir)/darwin-arm64/archive.tar.gz $(delta_darwin_arm64_url)
 	cd $(delta_dir)/darwin-arm64 && echo "$(delta_darwin_arm64_sha)  archive.tar.gz" | $(sha256sum) -c
@@ -16,6 +21,11 @@ $(delta_dir)/darwin-arm64/.extracted: | $(delta_dir)/darwin-arm64
 	rm $(delta_dir)/darwin-arm64/archive.tar.gz
 	touch $@
 
+$(delta_dir)/linux-arm64/.extracted: private .UNVEIL = \
+	r:/etc/resolv.conf \
+	r:/etc/ssl \
+	rwc:$(delta_dir)/linux-arm64 \
+	rw:/dev/null
 $(delta_dir)/linux-arm64/.extracted: | $(delta_dir)/linux-arm64
 	$(curl) -o $(delta_dir)/linux-arm64/archive.tar.gz $(delta_linux_arm64_url)
 	cd $(delta_dir)/linux-arm64 && echo "$(delta_linux_arm64_sha)  archive.tar.gz" | $(sha256sum) -c
@@ -23,6 +33,11 @@ $(delta_dir)/linux-arm64/.extracted: | $(delta_dir)/linux-arm64
 	rm $(delta_dir)/linux-arm64/archive.tar.gz
 	touch $@
 
+$(delta_dir)/linux-x86_64/.extracted: private .UNVEIL = \
+	r:/etc/resolv.conf \
+	r:/etc/ssl \
+	rwc:$(delta_dir)/linux-x86_64 \
+	rw:/dev/null
 $(delta_dir)/linux-x86_64/.extracted: | $(delta_dir)/linux-x86_64
 	$(curl) -o $(delta_dir)/linux-x86_64/archive.tar.gz $(delta_linux_x86_64_url)
 	cd $(delta_dir)/linux-x86_64 && echo "$(delta_linux_x86_64_sha)  archive.tar.gz" | $(sha256sum) -c

@@ -26,7 +26,26 @@ jobs:
           path: |
             o/3p/cosmocc
             o/3p/cosmos
-          key: tools-${{ hashFiles('3p/cosmocc/cook.mk', '3p/cosmos/cook.mk') }}
+            o/3p/cosmopolitan
+          key: tools-${{ hashFiles('3p/cosmocc/cook.mk', '3p/cosmos/cook.mk', '3p/cosmopolitan/cook.mk') }}
+
+      - name: Cache third-party binaries
+        uses: actions/cache@v4
+        with:
+          path: o/3p
+          key: 3p-binaries-${{ hashFiles('3p/**/cook.mk') }}
+          restore-keys: |
+            3p-binaries-
+
+      - name: Cache Lua build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            o/lua
+            results/bin/lua
+          key: lua-build-${{ hashFiles('3p/lua/**', '.local/lib/lua/run-test.lua') }}
+          restore-keys: |
+            lua-build-
 
       - name: Build home binary
         run: make home -j$(nproc)

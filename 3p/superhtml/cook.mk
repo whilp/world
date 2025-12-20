@@ -9,6 +9,11 @@ superhtml_linux_arm64_sha := 54cd2414de6664b85166a0a2e7c208ca3dbcc935274f4a55309
 superhtml_linux_x86_64_url := https://github.com/kristoff-it/superhtml/releases/download/v0.5.3/x86_64-linux-musl.tar.gz
 superhtml_linux_x86_64_sha := c9fabbbd57851e38a67e6c1eb7942e8bc6189925bfcf437f1e5286932c76d60a
 
+$(superhtml_dir)/darwin-arm64/.extracted: private .UNVEIL = \
+	r:/etc/resolv.conf \
+	r:/etc/ssl \
+	rwc:$(superhtml_dir)/darwin-arm64 \
+	rw:/dev/null
 $(superhtml_dir)/darwin-arm64/.extracted: | $(superhtml_dir)/darwin-arm64
 	$(curl) -o $(superhtml_dir)/darwin-arm64/archive.tar.gz $(superhtml_darwin_arm64_url)
 	cd $(superhtml_dir)/darwin-arm64 && echo "$(superhtml_darwin_arm64_sha)  archive.tar.gz" | $(sha256sum) -c
@@ -16,6 +21,11 @@ $(superhtml_dir)/darwin-arm64/.extracted: | $(superhtml_dir)/darwin-arm64
 	rm $(superhtml_dir)/darwin-arm64/archive.tar.gz
 	touch $@
 
+$(superhtml_dir)/linux-arm64/.extracted: private .UNVEIL = \
+	r:/etc/resolv.conf \
+	r:/etc/ssl \
+	rwc:$(superhtml_dir)/linux-arm64 \
+	rw:/dev/null
 $(superhtml_dir)/linux-arm64/.extracted: | $(superhtml_dir)/linux-arm64
 	$(curl) -o $(superhtml_dir)/linux-arm64/archive.tar.gz $(superhtml_linux_arm64_url)
 	cd $(superhtml_dir)/linux-arm64 && echo "$(superhtml_linux_arm64_sha)  archive.tar.gz" | $(sha256sum) -c
@@ -23,6 +33,11 @@ $(superhtml_dir)/linux-arm64/.extracted: | $(superhtml_dir)/linux-arm64
 	rm $(superhtml_dir)/linux-arm64/archive.tar.gz
 	touch $@
 
+$(superhtml_dir)/linux-x86_64/.extracted: private .UNVEIL = \
+	r:/etc/resolv.conf \
+	r:/etc/ssl \
+	rwc:$(superhtml_dir)/linux-x86_64 \
+	rw:/dev/null
 $(superhtml_dir)/linux-x86_64/.extracted: | $(superhtml_dir)/linux-x86_64
 	$(curl) -o $(superhtml_dir)/linux-x86_64/archive.tar.gz $(superhtml_linux_x86_64_url)
 	cd $(superhtml_dir)/linux-x86_64 && echo "$(superhtml_linux_x86_64_sha)  archive.tar.gz" | $(sha256sum) -c

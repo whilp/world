@@ -9,6 +9,11 @@ ruff_linux_arm64_sha := 0dfe36fabb817638863375e0140ce03bf26ccc9a7fd9d2c8e8337b1a
 ruff_linux_x86_64_url := https://github.com/astral-sh/ruff/releases/download/0.8.4/ruff-x86_64-unknown-linux-gnu.tar.gz
 ruff_linux_x86_64_sha := c4e6591ae1bb4f15c09c9022b7bfc57e1c3a567acdc9cd76021cd1304b5868c3
 
+$(ruff_dir)/darwin-arm64/.extracted: private .UNVEIL = \
+	r:/etc/resolv.conf \
+	r:/etc/ssl \
+	rwc:$(ruff_dir)/darwin-arm64 \
+	rw:/dev/null
 $(ruff_dir)/darwin-arm64/.extracted: | $(ruff_dir)/darwin-arm64
 	$(curl) -o $(ruff_dir)/darwin-arm64/archive.tar.gz $(ruff_darwin_arm64_url)
 	cd $(ruff_dir)/darwin-arm64 && echo "$(ruff_darwin_arm64_sha)  archive.tar.gz" | $(sha256sum) -c
@@ -16,6 +21,11 @@ $(ruff_dir)/darwin-arm64/.extracted: | $(ruff_dir)/darwin-arm64
 	rm $(ruff_dir)/darwin-arm64/archive.tar.gz
 	touch $@
 
+$(ruff_dir)/linux-arm64/.extracted: private .UNVEIL = \
+	r:/etc/resolv.conf \
+	r:/etc/ssl \
+	rwc:$(ruff_dir)/linux-arm64 \
+	rw:/dev/null
 $(ruff_dir)/linux-arm64/.extracted: | $(ruff_dir)/linux-arm64
 	$(curl) -o $(ruff_dir)/linux-arm64/archive.tar.gz $(ruff_linux_arm64_url)
 	cd $(ruff_dir)/linux-arm64 && echo "$(ruff_linux_arm64_sha)  archive.tar.gz" | $(sha256sum) -c
@@ -23,6 +33,11 @@ $(ruff_dir)/linux-arm64/.extracted: | $(ruff_dir)/linux-arm64
 	rm $(ruff_dir)/linux-arm64/archive.tar.gz
 	touch $@
 
+$(ruff_dir)/linux-x86_64/.extracted: private .UNVEIL = \
+	r:/etc/resolv.conf \
+	r:/etc/ssl \
+	rwc:$(ruff_dir)/linux-x86_64 \
+	rw:/dev/null
 $(ruff_dir)/linux-x86_64/.extracted: | $(ruff_dir)/linux-x86_64
 	$(curl) -o $(ruff_dir)/linux-x86_64/archive.tar.gz $(ruff_linux_x86_64_url)
 	cd $(ruff_dir)/linux-x86_64 && echo "$(ruff_linux_x86_64_sha)  archive.tar.gz" | $(sha256sum) -c

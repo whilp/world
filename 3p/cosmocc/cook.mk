@@ -4,9 +4,18 @@ cosmocc_dir := $(3p)/cosmocc
 cosmocc_zip := $(cosmocc_dir)/cosmocc.zip
 cosmocc_bin := $(cosmocc_dir)/bin/cosmocc
 
+$(cosmocc_bin): private .UNVEIL = \
+	r:$(cosmocc_dir)/cosmocc.zip \
+	rwc:$(cosmocc_dir) \
+	rw:/dev/null
 $(cosmocc_bin): $(cosmocc_zip)
 	$(unzip) -o $< -d $(cosmocc_dir)
 
+$(cosmocc_zip): private .UNVEIL = \
+	r:/etc/resolv.conf \
+	r:/etc/ssl \
+	rwc:$(cosmocc_dir) \
+	rw:/dev/null
 $(cosmocc_zip): | $(cosmocc_dir)
 	$(curl) -o $@ $(cosmocc_url)
 	cd $(dir $@) && echo "$(cosmocc_sha256)  $(notdir $@)" | $(sha256sum) -c

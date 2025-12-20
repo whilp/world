@@ -1,6 +1,7 @@
 include 3p/cook.mk
 include 3p/luaunit/cook.mk
 include 3p/cosmopolitan/cook.mk
+include 3p/make/cook.mk
 include 3p/lua/cook.mk
 include 3p/nvim/cook.mk
 include 3p/gh/cook.mk
@@ -27,7 +28,12 @@ clean:
 
 home_exclude_pattern = ^(3p/|o/|results/|Makefile|home/|\.git)
 
-results/dotfiles.zip: | results
+results/dotfiles.zip: private .UNVEIL = \
+	r:$(CURDIR) \
+	rx:$(cosmos_zip_bin) \
+	rwc:results \
+	rw:/dev/null
+results/dotfiles.zip: $(cosmos_zip_bin) | results
 	git ls-files -z | grep -zZvE '$(home_exclude_pattern)' | \
 		xargs -0 $(cosmos_zip_bin) -q -r $@
 
@@ -51,17 +57,32 @@ all_binaries := \
 	$(uv_binaries)
 
 # Platform-specific binaries zips
-results/binaries-darwin-arm64.zip: $(all_binaries) | results
+results/binaries-darwin-arm64.zip: private .UNVEIL = \
+	r:$(3p) \
+	rx:$(cosmos_zip_bin) \
+	rwc:results \
+	rw:/dev/null
+results/binaries-darwin-arm64.zip: $(all_binaries) $(cosmos_zip_bin) | results
 	cd $(3p) && \
 		find . -path '*/darwin-arm64/*' -type f ! -name '.extracted' | \
 		$(cosmos_zip_bin) -q $(CURDIR)/$@ -@
 
-results/binaries-linux-arm64.zip: $(all_binaries) | results
+results/binaries-linux-arm64.zip: private .UNVEIL = \
+	r:$(3p) \
+	rx:$(cosmos_zip_bin) \
+	rwc:results \
+	rw:/dev/null
+results/binaries-linux-arm64.zip: $(all_binaries) $(cosmos_zip_bin) | results
 	cd $(3p) && \
 		find . -path '*/linux-arm64/*' -type f ! -name '.extracted' | \
 		$(cosmos_zip_bin) -q $(CURDIR)/$@ -@
 
-results/binaries-linux-x86_64.zip: $(all_binaries) | results
+results/binaries-linux-x86_64.zip: private .UNVEIL = \
+	r:$(3p) \
+	rx:$(cosmos_zip_bin) \
+	rwc:results \
+	rw:/dev/null
+results/binaries-linux-x86_64.zip: $(all_binaries) $(cosmos_zip_bin) | results
 	cd $(3p) && \
 		find . -path '*/linux-x86_64/*' -type f ! -name '.extracted' | \
 		$(cosmos_zip_bin) -q $(CURDIR)/$@ -@

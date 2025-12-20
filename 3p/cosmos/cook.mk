@@ -4,9 +4,18 @@ cosmos_dir := $(3p)/cosmos
 cosmos_zip := $(cosmos_dir)/cosmos.zip
 cosmos_bin := $(cosmos_dir)/bin/make
 
+$(cosmos_bin): private .UNVEIL = \
+	r:$(cosmos_dir)/cosmos.zip \
+	rwc:$(cosmos_dir) \
+	rw:/dev/null
 $(cosmos_bin): $(cosmos_zip)
 	$(unzip) -o $< -d $(cosmos_dir)
 
+$(cosmos_zip): private .UNVEIL = \
+	r:/etc/resolv.conf \
+	r:/etc/ssl \
+	rwc:$(cosmos_dir) \
+	rw:/dev/null
 $(cosmos_zip): | $(cosmos_dir)
 	$(curl) -o $@ $(cosmos_url)
 	cd $(dir $@) && echo "$(cosmos_sha256)  $(notdir $@)" | $(sha256sum) -c
