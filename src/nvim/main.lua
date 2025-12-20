@@ -3,8 +3,36 @@ local unix = cosmo.unix
 local daemonize = require("daemonize")
 
 local HOME = os.getenv("HOME")
-local NVIM_BIN = HOME .. "/.local/share/shimlink/bin/nvim"
 local DEFAULT_SOCK = HOME .. "/.config/nvim/nvim.sock"
+
+local function get_script_dir()
+  local script = arg[0]
+  if not script then
+    return nil
+  end
+
+  if script:sub(1, 1) ~= "/" then
+    local pwd = os.getenv("PWD")
+    if pwd then
+      script = pwd .. "/" .. script
+    else
+      return nil
+    end
+  end
+
+  local dir = script:match("^(.*)/[^/]+$")
+  return dir
+end
+
+local function resolve_nvim_bin()
+  local script_dir = get_script_dir()
+  if script_dir then
+    return script_dir .. "/../share/nvim/bin/nvim"
+  end
+  return HOME .. "/.local/share/nvim/bin/nvim"
+end
+
+local NVIM_BIN = resolve_nvim_bin()
 
 local function derive_paths(sock)
   local sock_dir = sock:match("(.+)/[^/]+$")
@@ -428,4 +456,6 @@ return {
   main = main,
   load_zsh_environment = load_zsh_environment,
   setup_nvim_environment = setup_nvim_environment,
+  get_script_dir = get_script_dir,
+  resolve_nvim_bin = resolve_nvim_bin,
 }
