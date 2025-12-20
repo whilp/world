@@ -80,18 +80,21 @@ local function cmd_unpack(dest)
     -- For now, we'll use a simpler approach: just copy known file paths
   end
 
-  -- Use io.popen to get list of files from zip
-  local handle = io.popen("unzip -Z1 '" .. get_executable_path() .. "' 2>/dev/null | grep '^home/'")
-  if not handle then
-    io.stderr:write("error: failed to list zip contents\n")
+  -- Read manifest to get list of files
+  local manifest = io.open("/zip/MANIFEST.txt", "r")
+  if not manifest then
+    io.stderr:write("error: failed to read manifest\n")
     os.exit(1)
   end
 
   local files = {}
-  for line in handle:lines() do
-    table.insert(files, line)
+  for line in manifest:lines() do
+    -- Skip comments and empty lines
+    if not line:match("^%s*#") and line:match("%S") then
+      table.insert(files, line)
+    end
   end
-  handle:close()
+  manifest:close()
 
   -- Copy each file from /zip/ to destination
   for _, file_path in ipairs(files) do
