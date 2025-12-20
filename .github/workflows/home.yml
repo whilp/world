@@ -1,0 +1,113 @@
+name: Build home
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Register APE binfmt
+        run: |
+          sudo wget -q -O /usr/bin/ape https://cosmo.zip/pub/cosmos/bin/ape-$(uname -m).elf
+          sudo chmod +x /usr/bin/ape
+          sudo sh -c "echo ':APE:M::MZqFpD::/usr/bin/ape:' >/proc/sys/fs/binfmt_misc/register" || true
+
+      - name: Cache tools
+        uses: actions/cache@v4
+        with:
+          path: |
+            o/3p/cosmocc
+            o/3p/cosmos
+          key: tools-${{ hashFiles('3p/cosmocc/cook.mk', '3p/cosmos/cook.mk') }}
+
+      - name: Build home binary
+        run: make home -j$(nproc)
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: home-binaries
+          path: results/bin/home-*
+
+  test:
+    runs-on: ${{ matrix.os }}
+    needs: build
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            binary: home-linux-x86_64
+          - os: macos-latest
+            binary: home-darwin-arm64
+          - os: ubuntu-24.04-arm
+            binary: home-linux-arm64
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: home-binaries
+          path: results/bin/
+
+      - name: Make binary executable
+        run: chmod +x results/bin/${{ matrix.binary }}
+
+      - name: Test help command
+        run: results/bin/${{ matrix.binary }} || test $? -eq 1
+
+      - name: Test unpack outputs zip
+        run: |
+          results/bin/${{ matrix.binary }} unpack > /tmp/test.zip
+          unzip -l /tmp/test.zip | head -20
+
+      - name: Test extraction
+        run: |
+          mkdir -p /tmp/test-home
+          results/bin/${{ matrix.binary }} unpack > /tmp/dotfiles.zip
+          unzip -q /tmp/dotfiles.zip -d /tmp/test-home
+          test -f /tmp/test-home/.zshenv
+
+  release:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    needs: test
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: home-binaries
+          path: results/bin/
+
+      - name: Get version
+        id: version
+        run: |
+          echo "tag=home-$(date -u +%Y-%m-%d)-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+      - name: Create checksums
+        run: |
+          cd results/bin
+          sha256sum home-* > SHA256SUMS
+          cat SHA256SUMS
+
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: home ${{ steps.version.outputs.tag }}
+          files: |
+            results/bin/home-darwin-arm64
+            results/bin/home-linux-arm64
+            results/bin/home-linux-x86_64
+            results/bin/SHA256SUMS
