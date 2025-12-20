@@ -1,6 +1,6 @@
 ---
 name: lua
-description: Write lua or LuaJIT scripts and modules following repository conventions. Use for lua or luajit code, posix system calls, subprocess spawning, ffi bindings, config files, or shell script replacements. Includes patterns for file I/O, command execution, bidirectional pipes, error handling, and module structure.
+description: Write lua scripts and modules following repository conventions. Use for lua code, subprocess spawning, config files, or shell script replacements. Includes patterns for file I/O, command execution, bidirectional pipes, error handling, and module structure.
 allowed-tools: [Read, Write, Edit, Bash, Glob, Grep]
 ---
 
@@ -367,8 +367,8 @@ Atomic operations (temp file + rename) for critical writes:
 
 ```lua
 local function atomic_write(path, content)
-  local unistd = require("posix.unistd")
-  local temp = string.format("%s.tmp.%d.%d", path, os.time(), unistd.getpid())
+  local unix = require("cosmo").unix
+  local temp = string.format("%s.tmp.%d.%d", path, os.time(), unix.getpid())
 
   local f = io.open(temp, "w")
   if not f then
@@ -379,7 +379,7 @@ local function atomic_write(path, content)
 
   local ok, err = os.rename(temp, path)
   if not ok then
-    unistd.unlink(temp) -- cleanup on failure
+    unix.unlink(temp) -- cleanup on failure
     return nil, "failed to rename temp file: " .. err
   end
   return true
@@ -396,48 +396,16 @@ io.stderr:flush() -- ensure immediate output
 
 ## Command execution
 
-IMPORTANT: Always prefer `posix.popen()`, `posix.spawn()`, or `luachild` over `io.popen()` or `os.execute()`:
-- `posix.popen()` and `luachild` take an array of arguments and do direct exec without shell invocation
-- `io.popen()` invokes `/bin/sh` to parse the command string
-- Avoid shell invocation unless you specifically need shell features
-
-### Simple execution with exit code
-
-Use `posix.spawn` for simple commands where you only need the exit status:
-
-```lua
-local posix = require("posix")
-local exit_status = posix.spawn({ "command", "arg1", "arg2" })
-if exit_status ~= 0 then
-  error("command failed")
-end
-```
-
-### Capture output (read-only)
-
-Use `posix.popen` for running commands with output capture:
-
-```lua
-local posix = require('posix')
-local unistd = require('posix.unistd')
-local wait = require('posix.sys.wait')
-
-local handle = posix.popen({"command", "arg1", "arg2"}, "r")
-local output = unistd.read(handle.fd, 65536) or ""
-wait.wait(handle.pids[1])
-unistd.close(handle.fd)
-```
+Use `luachild` for subprocess spawning with bidirectional pipe communication:
+- Takes an array of arguments and does direct exec without shell invocation
+- Avoid `io.popen()` which invokes `/bin/sh` to parse the command string
+- Only use shell invocation when you specifically need shell features
 
 ### Bidirectional communication with pipes
 
-Use `luachild` when you need to:
-- Send input to stdin and read from stdout/stderr
-- Control stdin, stdout, and stderr independently
-- Communicate bidirectionally with a subprocess
-
 ```lua
 local lc = require('luachild')
-local unistd = require('posix.unistd')
+local unix = require('cosmo').unix
 
 -- Create pipes for stdin/stdout
 local stdin_r, stdin_w = lc.pipe()
@@ -454,16 +422,16 @@ local pid = lc.spawn({
 })
 
 -- Close unused pipe ends in parent
-unistd.close(stdin_r)
-unistd.close(stdout_w)
+unix.close(stdin_r)
+unix.close(stdout_w)
 
 -- Write to child's stdin
-unistd.write(stdin_w, "input data\n")
-unistd.close(stdin_w)
+unix.write(stdin_w, "input data\n")
+unix.close(stdin_w)
 
 -- Read from child's stdout
-local output = unistd.read(stdout_r, 65536) or ""
-unistd.close(stdout_r)
+local output = unix.read(stdout_r, 65536) or ""
+unix.close(stdout_r)
 
 -- Wait for child to complete
 local status = lc.wait(pid)
@@ -599,23 +567,15 @@ Template variables use `${variable}` syntax and are interpolated at runtime.
 ## Common dependencies
 
 Standard libraries used in this repo:
-- `cosmo` - Unified interface to POSIX and path utilities (preferred over direct posix)
-- `cosmo.unix` - Unix system calls (fork, exec, pipe, etc)
-- `cosmo.path` - Path manipulation utilities
-- `posix` - POSIX system calls (when not using cosmo)
-- `posix.unistd` - Unix standard functions (read, write, close, unlink, exec)
-- `posix.sys.wait` - Process waiting
-- `posix.signal` - Signal handling
+- `cosmo` - Unified interface to Unix system calls and path utilities
+- `cosmo.unix` - Unix system calls (fork, exec, pipe, read, write, etc)
+- `cosmo.path` - Path manipulation utilities (dirname, etc)
 - `luachild` - Subprocess spawning with bidirectional pipe communication
-- `daemonize` - Daemon process creation (from `.local/lib/lua/`)
-- `ffi` - Foreign function interface (use sparingly, prefer POSIX bindings)
-- `openssl.digest` - Hash functions (SHA256)
+- `daemonize` - Daemon process creation (from `src/` modules)
 
-## POSIX system calls
+## Unix system calls
 
-**IMPORTANT**: Always prefer `cosmo.unix` or POSIX bindings over FFI when available. Use FFI only when POSIX bindings don't exist.
-
-Common POSIX operations:
+Common operations using `cosmo.unix`:
 
 ```lua
 local cosmo = require("cosmo")
@@ -652,66 +612,6 @@ unix.kill(pid, unix.SIGTERM)
 
 -- Process ID
 local pid = unix.getpid()
-```
-
-Using posix directly (when cosmo doesn't provide what you need):
-
-```lua
-local posix = require("posix")
-local unistd = require("posix.unistd")
-
--- Create symbolic link (third argument true = symbolic, false = hard)
-local result, err = posix.link(target_path, link_path, true)
-if result ~= 0 then
-  error("symlink failed: " .. tostring(err))
-end
-
--- Remove file or symlink
-local result, err = unistd.unlink(path)
-if result ~= 0 then
-  error("unlink failed: " .. tostring(err))
-end
-
--- Create temporary directory (template must end with XXXXXX)
-local temp_dir = posix.mkdtemp("/tmp/myapp.XXXXXX")
-if not temp_dir then
-  error("mkdtemp failed")
-end
-
--- Remove directory
-posix.rmdir(path)
-
--- Set environment variable
-posix.setenv("VAR_NAME", "value")
-
--- Read symbolic link
-local target = unistd.readlink(link_path)
-```
-
-FFI usage (only when POSIX bindings unavailable):
-
-**Most common syscalls are available in luaposix or cosmo**. Use FFI only for truly missing functionality:
-
-```lua
-local ffi = require("ffi")
-
--- Example: syscall not in luaposix
-ffi.cdef([[
-  int some_syscall(const char *arg);
-]])
-ffi.C.some_syscall("value")
-```
-
-## Platform detection
-
-```lua
-local function get_platform()
-  local system = jit.os:lower()
-  local machine = jit.arch:lower()
-  local system_map = { osx = "darwin" }
-  system = system_map[system] or system
-  return system .. "-" .. machine
-end
 ```
 
 ## Design principles
