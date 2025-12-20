@@ -1,6 +1,6 @@
 ---
 name: lua
-description: Write lua or LuaJIT scripts and modules following repository conventions. Use for lua or luajit code, posix system calls, subprocess spawning, ffi bindings, config files, or shell script replacements. Includes patterns for file I/O, command execution, bidirectional pipes, error handling, and module structure.
+description: Write lua scripts and modules following repository conventions. Use for lua code, subprocess spawning, config files, or shell script replacements. Includes patterns for file I/O, command execution, bidirectional pipes, error handling, and module structure.
 allowed-tools: [Read, Write, Edit, Bash, Glob, Grep]
 ---
 
@@ -8,49 +8,283 @@ allowed-tools: [Read, Write, Edit, Bash, Glob, Grep]
 
 Write Lua code following established repository conventions for consistency and maintainability.
 
-## Module structure
+## Project structure
 
-Library module pattern (in `~/.local/lib/lua/`):
+This repository organizes Lua code in three locations:
+
+- **`.local/bin/`** - executable wrappers that set up paths and call main modules
+- **`src/*/main.lua`** - application logic modules
+- **`src/*/*.lua`** - reusable library modules (legacy: `.local/lib/lua/`)
+
+Each location follows specific patterns described below.
+
+## Module templates
+
+Use the templates in `.claude/skills/lua/templates/` as starting points:
+
+- **`executable.lua`** - for scripts in `.local/bin/`
+- **`main.lua`** - for application modules in `src/*/main.lua`
+- **`module.lua`** - for library modules in `src/*/*.lua` (or `.local/lib/lua/`, legacy)
+- **`test.lua`** - for test files in `src/*/test*.lua`
+
+## Executable pattern
+
+Executables in `.local/bin/` are thin wrappers that:
+1. Set up the Lua module path to include `src/`
+2. Load the corresponding module from `src/*/main.lua`
+3. Call the module's main function with conditional execution
+4. Return the module for testability
+
+See `.claude/skills/lua/templates/executable.lua` for full template.
+
+Key points:
+- Always use `#!/usr/bin/env lua` shebang
+- Use `cosmo.path.dirname()` to build paths relative to script location
+- Use `pcall(debug.getlocal, 4, 1)` to detect if running as script vs being required
+- Pass `arg` table to main function
+- Return module to support testing
+
+## Main module pattern
+
+Modules in `src/*/main.lua` contain application logic:
 
 ```lua
-local M = {}
+local cosmo = require("cosmo")
+local unix = cosmo.unix
 
-M.function_name = function(arg)
+local function helper_function(arg)
+  if not arg or arg == "" then
+    return nil, "arg cannot be empty"
+  end
   -- implementation
+  return true
+end
+
+local function cmd_help(args)
+  io.write("mymodule - description\n")
+  io.write("\n")
+  io.write("usage: mymodule [command] [args]\n")
+  io.write("\n")
+  io.write("commands:\n")
+  io.write("  help    show this help\n")
+  io.write("  run     run the module\n")
+  io.write("  env     example with environment variables\n")
+  return 0
+end
+
+local function cmd_run(args)
+  local result, err = helper_function(args[1])
+  if not result then
+    io.stderr:write("error: " .. err .. "\n")
+    return 1
+  end
+  return 0
+end
+
+local function cmd_env(args)
+  -- Read specific environment variable
+  local home = os.getenv("HOME")
+  if home then
+    io.write("HOME=" .. home .. "\n")
+  end
+
+  -- Build custom environment for subprocess
+  -- unix.environ() returns array of "KEY=value" strings
+  local env = unix.environ()
+  table.insert(env, "CUSTOM_VAR=custom_value")
+
+  -- Example: could use env with unix.execve()
+  -- unix.execve("/usr/bin/env", {"env"}, env)
+
+  io.write("environment prepared\n")
+  return 0
+end
+
+local function cmd_unknown(command)
+  io.stderr:write("unknown command: " .. command .. "\n")
+  io.stderr:write("run 'mymodule help' for usage\n")
+  return 1
+end
+
+local commands = {
+  help = cmd_help,
+  run = cmd_run,
+  env = cmd_env,
+}
+
+local function main(args)
+  if #args == 0 then
+    return cmd_help(args)
+  end
+
+  local command = args[1]
+  local cmd_args = { unpack(args, 2) }
+  local cmd_fn = commands[command]
+
+  if cmd_fn then
+    return cmd_fn(cmd_args)
+  else
+    return cmd_unknown(command)
+  end
+end
+
+return {
+  main = main,
+  helper_function = helper_function,
+}
+```
+
+Key points:
+- Use command dispatch table pattern for subcommands
+- Implement `cmd_help` and `cmd_unknown` handlers
+- Export both `main` and helper functions for testing
+- `main` takes args table and returns exit code
+- Use `local function` for all functions
+- Return table of exported functions
+
+## Library module pattern
+
+Modules in `src/*/*.lua` (or `.local/lib/lua/`, legacy) are reusable libraries:
+
+```lua
+local cosmo = require("cosmo")
+local unix = cosmo.unix
+
+local function function_name(arg)
+  if not arg or arg == "" then
+    return nil, "arg cannot be empty"
+  end
+
+  -- implementation
+  return result
+end
+
+local function cmd_help(args)
+  io.write("module - description\n")
+  io.write("\n")
+  io.write("usage: module [command] [args]\n")
+  io.write("\n")
+  io.write("commands:\n")
+  io.write("  help    show this help\n")
+  io.write("  run     run the module\n")
+  return 0
+end
+
+local function cmd_run(args)
+  local result, err = function_name(args[1])
+  if not result then
+    io.stderr:write("error: " .. err .. "\n")
+    return 1
+  end
+  return 0
+end
+
+local function cmd_unknown(command)
+  io.stderr:write("unknown command: " .. command .. "\n")
+  io.stderr:write("run 'module help' for usage\n")
+  return 1
+end
+
+local commands = {
+  help = cmd_help,
+  run = cmd_run,
+}
+
+local function main(args)
+  if #args == 0 then
+    return cmd_help(args)
+  end
+
+  local command = args[1]
+  local cmd_args = { unpack(args, 2) }
+  local cmd_fn = commands[command]
+
+  if cmd_fn then
+    return cmd_fn(cmd_args)
+  else
+    return cmd_unknown(command)
+  end
+end
+
+local M = {
+  function_name = function_name,
+  main = main,
+}
+
+-- Run main if executed directly (not required as a module)
+if not pcall(debug.getlocal, 4, 1) then
+  local exit_code = main(arg)
+  os.exit(exit_code or 0)
 end
 
 return M
 ```
 
-Executable script pattern (in `~/.local/bin/`):
+Key points:
+- Use `local function` for all functions
+- Use command dispatch table pattern for subcommands
+- Implement `cmd_help` and `cmd_unknown` handlers
+- Optionally include a `main` function for direct execution
+- Assemble table at end with exported functions
+- Use conditional execution pattern to run main only when executed directly
+- Always return table at end
+- Use `nil, err` for error returns
 
-``` lua
-#!/usr/bin/env lua
+## Test pattern
 
-local function main()
-  -- implementation
+Test files in `src/*/test.lua` verify module behavior:
+
+```lua
+local script_path = debug.getinfo(1, "S").source:sub(2)
+local script_dir = script_path:match("(.+)/[^/]+$")
+if script_dir then
+  package.path = script_dir .. "/../../.local/lib/lua/?.lua;" .. package.path
+else
+  package.path = "../../.local/lib/lua/?.lua;" .. package.path
 end
 
-main()
+local cosmo = require('cosmo')
+local unix = cosmo.unix
+
+if script_dir then
+  package.path = script_dir .. "/../?.lua;" .. package.path
+else
+  package.path = "../?.lua;" .. package.path
+end
+
+local mymodule = require("mymodule.main")
+
+function test_function_returns_expected()
+  local result = mymodule.helper_function("input")
+
+  lu.assertTrue(type(result) == "string", "should return string")
+end
+
+function test_function_handles_error()
+  local result, err = mymodule.helper_function("")
+
+  lu.assertNil(result, "should return nil on error")
+  lu.assertTrue(type(err) == "string", "should return error message")
+end
 ```
 
-Key patterns:
-- Shebang: `#!/usr/bin/env lua` for executable scripts only
-- Module table: `local M = {}` ... `return M`
-- Function definitions: `M.name = function(...)` or `function M.name()` both acceptable
-- Local helper functions: `local function name(...)`
+Key points:
+- Set up package.path to find both lib modules and the module under test
+- Use `function test_*()` naming convention
+- Use `lu.*` assertions (luaunit)
+- Test both success and error cases
 
 ## Error handling
 
 Use `nil, err` for runtime failures, reserve `error()` for programmer errors:
 
-``` lua
+```lua
 local function read_file(path)
   local f = io.open(path, "r")
   if not f then
     return nil, "failed to open file: " .. path
   end
-  local content = f:read("*all") -- or "*l" for single line
+  local content = f:read("*all")
   f:close()
   return content
 end
@@ -62,7 +296,7 @@ Functions return:
 
 Use `error()` only for unrecoverable programmer errors:
 
-``` lua
+```lua
 if not config.name then
   error("config missing required field 'name'")
 end
@@ -70,7 +304,7 @@ end
 
 Validate inputs early:
 
-``` lua
+```lua
 local function download_file(url, dest_path)
   if not url or url == "" then
     return nil, "url cannot be empty"
@@ -81,7 +315,7 @@ end
 
 Propagate errors with context:
 
-``` lua
+```lua
 local ok, err = download_file(url, download_path)
 if not ok then
   return nil, "failed to download " .. name .. ": " .. err
@@ -90,7 +324,7 @@ end
 
 Use `pcall` for optional dependencies and cleanup:
 
-``` lua
+```lua
 local ok, module = pcall(require, "module_name")
 if ok then
   -- use module
@@ -99,7 +333,7 @@ end
 
 Wrap operations needing guaranteed cleanup:
 
-``` lua
+```lua
 local function operation(path)
   local temp_dir = create_temp_dir()
   local ok, result = pcall(function()
@@ -117,7 +351,7 @@ end
 
 Standard write pattern:
 
-``` lua
+```lua
 local function write_file(path, content)
   local f = io.open(path, "w")
   if not f then
@@ -131,10 +365,10 @@ end
 
 Atomic operations (temp file + rename) for critical writes:
 
-``` lua
+```lua
 local function atomic_write(path, content)
-  local unistd = require("posix.unistd")
-  local temp = string.format("%s.tmp.%d.%d", path, os.time(), unistd.getpid())
+  local unix = require("cosmo").unix
+  local temp = string.format("%s.tmp.%d.%d", path, os.time(), unix.getpid())
 
   local f = io.open(temp, "w")
   if not f then
@@ -145,7 +379,7 @@ local function atomic_write(path, content)
 
   local ok, err = os.rename(temp, path)
   if not ok then
-    unistd.unlink(temp) -- cleanup on failure
+    unix.unlink(temp) -- cleanup on failure
     return nil, "failed to rename temp file: " .. err
   end
   return true
@@ -154,7 +388,7 @@ end
 
 Write to stdout and stderr:
 
-``` lua
+```lua
 io.write(output) -- stdout, no newline
 io.stderr:write("error: " .. msg .. "\n")
 io.stderr:flush() -- ensure immediate output
@@ -162,97 +396,99 @@ io.stderr:flush() -- ensure immediate output
 
 ## Command execution
 
-IMPORTANT: Always prefer `posix.popen()`, `posix.spawn()`, or `luachild` over `io.popen()` or `os.execute()`:
-- `posix.popen()` and `luachild` take an array of arguments and do direct exec without shell invocation
-- `io.popen()` invokes `/bin/sh` to parse the command string
-- Avoid shell invocation unless you specifically need shell features
-
-### Simple execution with exit code
-
-Use `posix.spawn` for simple commands where you only need the exit status:
-
-``` lua
-local posix = require("posix")
-local exit_status = posix.spawn({ "command", "arg1", "arg2" })
-if exit_status ~= 0 then
-  error("command failed")
-end
-```
-
-### Capture output (read-only)
-
-Use `posix.popen` for running commands with output capture:
-
-```lua
-local posix = require('posix')
-local unistd = require('posix.unistd')
-local wait = require('posix.sys.wait')
-
-local handle = posix.popen({"command", "arg1", "arg2"}, "r")
-local output = unistd.read(handle.fd, 65536) or ""
-wait.wait(handle.pids[1])
-unistd.close(handle.fd)
-```
+Use `unix.fork()` and `unix.execve()` for subprocess spawning:
+- Takes an array of arguments and does direct exec without shell invocation
+- Avoid `io.popen()` which invokes `/bin/sh` to parse the command string
+- Only use shell invocation when you specifically need shell features
 
 ### Bidirectional communication with pipes
 
-Use `luachild` when you need to:
-- Send input to stdin and read from stdout/stderr
-- Control stdin, stdout, and stderr independently
-- Communicate bidirectionally with a subprocess
-
 ```lua
-local lc = require('luachild')
-local unistd = require('posix.unistd')
+local unix = require('cosmo').unix
 
 -- Create pipes for stdin/stdout
-local stdin_r, stdin_w = lc.pipe()
-local stdout_r, stdout_w = lc.pipe()
+local stdin_r, stdin_w = unix.pipe()
+local stdout_r, stdout_w = unix.pipe()
 
--- Spawn process with redirected pipes
-local pid = lc.spawn({
-  file = '/usr/bin/command',
-  args = {'command', 'arg1'},
-  env = lc.environ(),
-  stdin = stdin_r,
-  stdout = stdout_w,
-  stderr = stdout_w,  -- redirect stderr to stdout
-})
+-- Fork process
+local pid = unix.fork()
 
--- Close unused pipe ends in parent
-unistd.close(stdin_r)
-unistd.close(stdout_w)
+if pid == 0 then
+  -- Child process
+  unix.close(stdin_w)
+  unix.close(stdout_r)
 
--- Write to child's stdin
-unistd.write(stdin_w, "input data\n")
-unistd.close(stdin_w)
+  -- Redirect stdin and stdout
+  unix.dup2(stdin_r, 0)
+  unix.dup2(stdout_w, 1)
+  unix.dup2(stdout_w, 2)
 
--- Read from child's stdout
-local output = unistd.read(stdout_r, 65536) or ""
-unistd.close(stdout_r)
+  unix.close(stdin_r)
+  unix.close(stdout_w)
 
--- Wait for child to complete
-local status = lc.wait(pid)
+  -- Execute command
+  unix.execve('/usr/bin/command', {'command', 'arg1'}, unix.environ())
+  unix.exit(1)  -- only reached on error
+else
+  -- Parent process
+  unix.close(stdin_r)
+  unix.close(stdout_w)
+
+  -- Write to child's stdin
+  unix.write(stdin_w, "input data\n")
+  unix.close(stdin_w)
+
+  -- Read from child's stdout
+  local output = unix.read(stdout_r, 65536) or ""
+  unix.close(stdout_r)
+
+  -- Wait for child to complete
+  local status = unix.wait()
+end
 ```
 
 ## Command-line arguments
 
-Subcommand pattern:
+Subcommand dispatch pattern:
 
-``` lua
+```lua
+local function cmd_help(args)
+  io.write("usage: command [subcommand]\n")
+  io.write("\n")
+  io.write("commands:\n")
+  io.write("  help    show this help\n")
+  io.write("  show    show information\n")
+  return 0
+end
+
+local function cmd_show(args)
+  -- implementation
+  return 0
+end
+
+local function cmd_unknown(command)
+  io.stderr:write("unknown command: " .. command .. "\n")
+  return 1
+end
+
+local commands = {
+  help = cmd_help,
+  show = cmd_show,
+}
+
 local function main(args)
-  if #args == 0 or args[1] == "help" then
-    print("usage: command [subcommand]")
-    os.exit(0)
+  if #args == 0 then
+    return cmd_help(args)
   end
 
   local command = args[1]
   local cmd_args = { unpack(args, 2) }
+  local cmd_fn = commands[command]
 
-  if command == "show" then
-    cmd_show(cmd_args)
+  if cmd_fn then
+    return cmd_fn(cmd_args)
   else
-    error("unknown command: " .. command)
+    return cmd_unknown(command)
   end
 end
 
@@ -266,7 +502,7 @@ end
 
 Parse key=value parameters:
 
-``` lua
+```lua
 local function parse_params(args)
   local params = {}
   for _, arg in ipairs(args) do
@@ -283,14 +519,14 @@ end
 
 Pattern matching:
 
-``` lua
+```lua
 local basename = path:match("([^/]+)$")
 local key, value = arg:match("^([^=]+)=(.+)$")
 ```
 
 Template interpolation:
 
-``` lua
+```lua
 M.interpolate = function(template, context)
   if type(template) ~= "string" then
     return template
@@ -303,7 +539,7 @@ end
 
 Flatten nested tables:
 
-``` lua
+```lua
 M.flatten = function(tbl)
   local result = {}
   for _, item in ipairs(tbl) do
@@ -323,7 +559,7 @@ end
 
 Pure data tables for config:
 
-``` lua
+```lua
 return {
   name = "tool",
   version = "1.0.0",
@@ -341,82 +577,50 @@ Template variables use `${variable}` syntax and are interpolated at runtime.
 ## Common dependencies
 
 Standard libraries used in this repo:
-- `posix` - POSIX system calls
-- `posix.unistd` - Unix standard functions (read, write, close, unlink, exec)
-- `posix.sys.wait` - Process waiting
-- `posix.signal` - Signal handling
-- `luachild` - Subprocess spawning with bidirectional pipe communication
-- `ffi` - Foreign function interface (use sparingly, prefer POSIX bindings)
-- `openssl.digest` - Hash functions (SHA256)
+- `cosmo` - Unified interface to Unix system calls and path utilities
+- `cosmo.unix` - Unix system calls (fork, exec, pipe, read, write, etc)
+- `cosmo.path` - Path manipulation utilities (dirname, etc)
+- `daemonize` - Daemon process creation (from `src/` modules)
 
-## POSIX system calls
+## Unix system calls
 
-**IMPORTANT**: Always prefer POSIX bindings over FFI when available. Use FFI only when POSIX bindings don't exist.
-
-Common POSIX operations:
+Common operations using `cosmo.unix`:
 
 ```lua
-local posix = require("posix")
-local unistd = require("posix.unistd")
+local cosmo = require("cosmo")
+local unix = cosmo.unix
 
--- Create symbolic link (third argument true = symbolic, false = hard)
-local result, err = posix.link(target_path, link_path, true)
-if result ~= 0 then
-  error("symlink failed: " .. tostring(err))
+-- Fork process
+local pid = unix.fork()
+if pid == 0 then
+  -- child process
+  unix.exit(0)
+elseif pid > 0 then
+  -- parent process
+  unix.wait()
 end
-
--- Remove file or symlink
-local result, err = unistd.unlink(path)
-if result ~= 0 then
-  error("unlink failed: " .. tostring(err))
-end
-
--- Create temporary directory (template must end with XXXXXX)
-local temp_dir = posix.mkdtemp("/tmp/myapp.XXXXXX")
-if not temp_dir then
-  error("mkdtemp failed")
-end
-
--- Remove directory
-posix.rmdir(path)
-
--- Set environment variable
-posix.setenv("VAR_NAME", "value")
-
--- Get process ID
-local pid = unistd.getpid()
-
--- Read symbolic link
-local target = unistd.readlink(link_path)
 
 -- Execute program (replaces current process)
-unistd.exec(program_path, {"arg0", "arg1", "arg2"})
-```
+unix.execve(program_path, {"arg0", "arg1", "arg2"}, unix.environ())
 
-FFI usage (only when POSIX bindings unavailable):
+-- Create pipes
+local read_fd, write_fd = unix.pipe()
 
-**Most common syscalls are available in luaposix**. Use FFI only for truly missing functionality:
+-- Read/write
+local data = unix.read(fd, 65536)
+unix.write(fd, "data")
+unix.close(fd)
 
-``` lua
-local ffi = require("ffi")
+-- File operations
+local stat = unix.stat(path)
+local fd = unix.open(path, unix.O_RDWR)
 
--- Example: syscall not in luaposix
-ffi.cdef([[
-  int some_syscall(const char *arg);
-]])
-ffi.C.some_syscall("value")
-```
+-- Signals
+unix.sigaction(unix.SIGINT, handler_function)
+unix.kill(pid, unix.SIGTERM)
 
-## Platform detection
-
-``` lua
-local function get_platform()
-  local system = jit.os:lower()
-  local machine = jit.arch:lower()
-  local system_map = { osx = "darwin" }
-  system = system_map[system] or system
-  return system .. "-" .. machine
-end
+-- Process ID
+local pid = unix.getpid()
 ```
 
 ## Design principles
@@ -425,7 +629,7 @@ end
 
 **Transaction pattern**: Use pcall with guaranteed cleanup for operations that modify state:
 
-``` lua
+```lua
 local function install_package(name, config)
   local temp_dir = create_temp_dir()
   local ok, result = pcall(function()
@@ -449,8 +653,9 @@ end
 
 Register cleanup handlers for graceful shutdown:
 
-``` lua
-local signal = require("posix.signal")
+```lua
+local cosmo = require("cosmo")
+local unix = cosmo.unix
 local cleanup_registry = {}
 
 local function cleanup_temp_resources()
@@ -466,8 +671,8 @@ local function setup_signal_handlers()
     cleanup_temp_resources()
     os.exit(128 + signum)
   end
-  signal.signal(signal.SIGINT, handler)
-  signal.signal(signal.SIGTERM, handler)
+  unix.sigaction(unix.SIGINT, handler)
+  unix.sigaction(unix.SIGTERM, handler)
 end
 
 setup_signal_handlers()

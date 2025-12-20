@@ -80,7 +80,20 @@ test-nvim: lua
 		LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;;" \
 		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
 
-# skip test-work until work.lua module is available in CI
-test-all: test-3p-lua test-lib-whereami test-home test-lib-daemonize test-claude test-nvim
+test-claude-skills: private .UNVEIL = \
+	r:src/claude \
+	r:.local/lib/lua \
+	r:.claude/skills \
+	rx:$(lua_bin) \
+	r:$(test_runner) \
+	r:$(CURDIR) \
+	rw:/dev/null
+test-claude-skills: lua
+	cd src/claude && HOME=$(CURDIR) \
+		LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;;" \
+		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test_skills.lua
 
-.PHONY: test-3p-lua test-lib-whereami test-work test-home test-lib-daemonize test-claude test-nvim test-all
+# skip test-work until work.lua module is available in CI
+test-all: test-3p-lua test-lib-whereami test-home test-lib-daemonize test-claude test-nvim test-claude-skills
+
+.PHONY: test-3p-lua test-lib-whereami test-work test-home test-lib-daemonize test-claude test-nvim test-claude-skills test-all
