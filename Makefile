@@ -57,17 +57,32 @@ all_binaries := \
 	$(uv_binaries)
 
 # Platform-specific binaries zips
-results/binaries-darwin-arm64.zip: $(all_binaries) | results
+results/binaries-darwin-arm64.zip: private .UNVEIL = \
+	r:$(3p) \
+	rx:$(cosmos_zip_bin) \
+	rwc:results \
+	rw:/dev/null
+results/binaries-darwin-arm64.zip: $(all_binaries) $(cosmos_zip_bin) | results
 	cd $(3p) && \
 		find . -path '*/darwin-arm64/*' -type f ! -name '.extracted' | \
 		$(cosmos_zip_bin) -q $(CURDIR)/$@ -@
 
-results/binaries-linux-arm64.zip: $(all_binaries) | results
+results/binaries-linux-arm64.zip: private .UNVEIL = \
+	r:$(3p) \
+	rx:$(cosmos_zip_bin) \
+	rwc:results \
+	rw:/dev/null
+results/binaries-linux-arm64.zip: $(all_binaries) $(cosmos_zip_bin) | results
 	cd $(3p) && \
 		find . -path '*/linux-arm64/*' -type f ! -name '.extracted' | \
 		$(cosmos_zip_bin) -q $(CURDIR)/$@ -@
 
-results/binaries-linux-x86_64.zip: $(all_binaries) | results
+results/binaries-linux-x86_64.zip: private .UNVEIL = \
+	r:$(3p) \
+	rx:$(cosmos_zip_bin) \
+	rwc:results \
+	rw:/dev/null
+results/binaries-linux-x86_64.zip: $(all_binaries) $(cosmos_zip_bin) | results
 	cd $(3p) && \
 		find . -path '*/linux-x86_64/*' -type f ! -name '.extracted' | \
 		$(cosmos_zip_bin) -q $(CURDIR)/$@ -@
