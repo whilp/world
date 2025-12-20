@@ -136,23 +136,24 @@ local function wait_for_socket(socket_path, timeout)
 end
 
 local function load_zsh_environment()
+  local env = {}
   local read_fd, write_fd = unix.pipe()
   if not read_fd then
-    return
+    return env
   end
 
   local pid = unix.fork()
   if not pid then
     unix.close(read_fd)
     unix.close(write_fd)
-    return
+    return env
   end
 
   if pid == 0 then
     unix.close(read_fd)
     unix.dup(write_fd, 1)
     unix.close(write_fd)
-    unix.execp("zsh", {"-i", "-l", "-c", "env -0"})
+    unix.execve("zsh", {"-i", "-l", "-c", "env -0"}, unix.environ())
     unix.exit(1)
   else
     unix.close(write_fd)
@@ -169,21 +170,23 @@ local function load_zsh_environment()
       local line = output:sub(i, next_null - 1)
       local key, value = line:match("^([^=]+)=(.*)$")
       if key then
-        unix.setenv(key, value, 1)
+        env[key] = value
       end
       i = next_null + 1
     end
   end
+  return env
 end
 
 local function setup_nvim_environment()
-  load_zsh_environment()
-  unix.setenv("NVIM_SERVER_MODE", "1", 1)
+  local env = load_zsh_environment()
+  env["NVIM_SERVER_MODE"] = "1"
+  return env
 end
 
-local function exec_nvim_server(sock)
+local function exec_nvim_server(sock, env)
   os.remove(sock)
-  unix.execp(NVIM_BIN, {"--listen", sock, "--headless"})
+  unix.execve(NVIM_BIN, {"--listen", sock, "--headless"}, env)
 end
 
 local function cmd_start(paths)
@@ -243,8 +246,8 @@ local function cmd_start(paths)
     unix.close(lockfd)
 
     unix.chdir(HOME)
-    setup_nvim_environment()
-    exec_nvim_server(paths.sock)
+    local env = setup_nvim_environment()
+    exec_nvim_server(paths.sock, env)
     unix.exit(1)
   elseif child_pid > 0 then
     unix.close(lockfd)
@@ -382,13 +385,13 @@ local function client_mode(args)
     for _, arg in ipairs(remaining_args) do
       table.insert(new_args, arg)
     end
-    unix.execp(NVIM_BIN, new_args)
+    unix.execve(NVIM_BIN, new_args, unix.environ())
   else
     local new_args = {}
     for _, arg in ipairs(args) do
       table.insert(new_args, arg)
     end
-    unix.execp(NVIM_BIN, new_args)
+    unix.execve(NVIM_BIN, new_args, unix.environ())
   end
 end
 
