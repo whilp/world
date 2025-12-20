@@ -1,3 +1,5 @@
+local cosmo = require('cosmo')
+
 local function get_executable_path()
   local path
 
@@ -7,7 +9,7 @@ local function get_executable_path()
   -- Try arg[0]
   elseif arg and arg[0] then
     path = arg[0]
-  -- Last resort: try /proc/self/exe (though unzip may not work with symlinks)
+  -- Last resort: try /proc/self/exe
   else
     local f = io.open("/proc/self/exe", "r")
     if f then
@@ -20,20 +22,14 @@ local function get_executable_path()
 
   -- Convert to absolute path if relative
   if not path:match("^/") then
-    local handle = io.popen("realpath '" .. path .. "'")
-    local result = handle:read("*a"):gsub("%s+$", "")
-    handle:close()
-    return result
+    return cosmo.unix.realpath(path)
   end
 
   return path
 end
 
 local function mkdir_p(path)
-  local handle = io.popen("mkdir -p '" .. path .. "' 2>&1")
-  local result = handle:read("*a")
-  local success = handle:close()
-  return success
+  return cosmo.unix.makedirs(path)
 end
 
 local function copy_file(src, dst)
@@ -105,10 +101,8 @@ local function cmd_unpack(dest)
     -- Check if it's a directory (ends with /)
     if not file_path:match("/$") then
       -- Create parent directory
-      local parent_dir = dest_file_path:match("(.*/)")
-      if parent_dir then
-        mkdir_p(parent_dir)
-      end
+      local parent_dir = cosmo.path.dirname(dest_file_path)
+      mkdir_p(parent_dir)
 
       -- Copy file
       if not copy_file(zip_file_path, dest_file_path) then
