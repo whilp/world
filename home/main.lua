@@ -3,42 +3,66 @@ local unix = cosmo.unix
 
 -- Atomic file copy with permissions
 -- Creates file with restrictive perms, writes data, then sets final mode
-local function copy_file(src, dst, mode)
+-- Returns ok, err where ok is true on success, false on failure
+local function copy_file(src, dst, mode, overwrite)
   -- Read source
-  local src_f = io.open(src, "rb")
+  local src_f, err = io.open(src, "rb")
   if not src_f then
-    return false
+    return false, "failed to open source: " .. (err or "unknown error")
   end
   local data = src_f:read("*a")
   src_f:close()
 
-  -- Create destination atomically with restrictive permissions
-  local fd = unix.open(dst, unix.O_WRONLY | unix.O_CREAT | unix.O_EXCL, 0600)
+  -- Create or overwrite destination with restrictive permissions
+  local flags = unix.O_WRONLY | unix.O_CREAT
+  if overwrite then
+    flags = flags | unix.O_TRUNC
+  else
+    flags = flags | unix.O_EXCL
+  end
+
+  local fd = unix.open(dst, flags, 0600)
   if not fd or fd < 0 then
-    return false
+    if overwrite then
+      return false, "failed to open destination for writing"
+    else
+      return false, "destination already exists (use --force to overwrite)"
+    end
   end
 
   -- Write data
   local bytes_written = unix.write(fd, data)
   local success = bytes_written == #data
 
-  -- Set final permissions if specified and write succeeded
-  if mode and success then
-    unix.chmod(dst, mode)
+  if not success then
+    unix.close(fd)
+    return false, "failed to write data (wrote " .. bytes_written .. " of " .. #data .. " bytes)"
+  end
+
+  -- Set final permissions if specified
+  if mode then
+    local chmod_ok = unix.chmod(dst, mode)
+    if not chmod_ok then
+      unix.close(fd)
+      return false, "failed to set permissions"
+    end
   end
 
   unix.close(fd)
-  return success
+  return true
 end
 
-local function cmd_unpack(dest)
+local function cmd_unpack(dest, force)
   if not dest then
     io.stderr:write("error: destination path required\n")
-    io.stderr:write("usage: home unpack <destination>\n")
+    io.stderr:write("usage: home unpack [--force] <destination>\n")
     os.exit(1)
   end
 
   io.stderr:write("extracting to " .. dest .. "...\n")
+  if force then
+    io.stderr:write("overwrite mode enabled\n")
+  end
 
   -- Create destination directory
   if not unix.makedirs(dest) then
@@ -102,8 +126,9 @@ local function cmd_unpack(dest)
       unix.makedirs(parent_dir)
 
       -- Copy file atomically with permissions
-      if not copy_file(zip_file_path, dest_file_path, mode) then
-        io.stderr:write("warning: failed to copy " .. file_path .. "\n")
+      local ok, err = copy_file(zip_file_path, dest_file_path, mode, force)
+      if not ok then
+        io.stderr:write("warning: failed to copy " .. file_path .. ": " .. (err or "unknown error") .. "\n")
       end
     else
       -- Create directory
@@ -165,7 +190,19 @@ local function main(args)
   local cmd = args[1] or "help"
 
   if cmd == "unpack" then
-    cmd_unpack(args[2])
+    -- Parse flags and arguments
+    local force = false
+    local dest
+    local i = 2
+    while i <= #args do
+      if args[i] == "--force" or args[i] == "-f" then
+        force = true
+      elseif not dest then
+        dest = args[i]
+      end
+      i = i + 1
+    end
+    cmd_unpack(dest, force)
   elseif cmd == "list" then
     cmd_list()
   elseif cmd == "version" then
@@ -173,9 +210,11 @@ local function main(args)
   else
     io.stderr:write("usage: home <command> [args]\n")
     io.stderr:write("\ncommands:\n")
-    io.stderr:write("  unpack <dest>  - extract dotfiles and binaries to destination\n")
-    io.stderr:write("  list           - list embedded tools\n")
-    io.stderr:write("  version        - show build version\n")
+    io.stderr:write("  unpack [--force] <dest>  - extract dotfiles and binaries to destination\n")
+    io.stderr:write("  list                     - list embedded tools\n")
+    io.stderr:write("  version                  - show build version\n")
+    io.stderr:write("\noptions:\n")
+    io.stderr:write("  --force, -f              - overwrite existing files\n")
     os.exit(cmd == "help" and 0 or 1)
   end
 end
