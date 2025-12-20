@@ -20,8 +20,6 @@ lua_path=(
   "$HOME/extras/lua/3p/?.lua"
   "$HOME/.local/lib/lua/?.lua"
   "$HOME/.local/lib/lua/3p/?.lua"
-  "$HOME/.local/share/lua/5.1/?.lua"
-  "$HOME/.local/share/lua/5.1/?/init.lua"
 )
 
 LUA_PATH="${LUA_PATH};;"
@@ -31,8 +29,7 @@ typeset -T LUA_CPATH lua_cpath ';'
 typeset -aU lua_cpath
 
 lua_cpath=(
-  "$HOME/.local/lib/lua/5.1/?.so"
-  "$HOME/.local/lib/lua/5.1/?/?.so"
+  "$HOME/.local/lib/lua/?.so"
 )
 
 LUA_CPATH="${LUA_CPATH};;"
