@@ -23,6 +23,9 @@ build: lua
 test: lua
 	$(lua_bin) 3p/lua/test.lua
 
+test-lib: lua
+	HOME=$(CURDIR) LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;;" $(lua_bin) .local/lib/lua/test-runner.lua
+
 clean:
 	rm -rf o results
 

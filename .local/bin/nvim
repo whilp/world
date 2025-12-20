@@ -158,7 +158,7 @@ local function load_zsh_environment()
     unix.close(write_fd)
     local output = unix.read(read_fd, 65536) or ""
     unix.close(read_fd)
-    unix.waitpid(pid)
+    unix.wait()
 
     local i = 1
     while i <= #output do
@@ -248,7 +248,7 @@ local function cmd_start(paths)
     unix.exit(1)
   elseif child_pid > 0 then
     unix.close(lockfd)
-    unix.waitpid(child_pid)
+    unix.wait()
 
     if wait_for_socket(paths.sock, 5) then
       pid = get_running_pid(paths.pid)
