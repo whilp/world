@@ -101,7 +101,7 @@ define build_home
 	@cp -p $(lua_bin) results/home-$(2)/home/.local/bin/lua
 	@cp -p o/3p/cosmos/bin/unzip results/home-$(2)/home/.local/bin/unzip
 	@echo "Generating manifest..."
-	@cd results/home-$(2) && find home \( -type f -o -type l \) -exec sh -c 'printf "%s %s\n" "{}" $$(stat -c "%a" "{}" 2>/dev/null || stat -f "%Lp" "{}")' \; | sort > MANIFEST.txt
+	@cd results/home-$(2) && find home \( -type f -o -type l \) -exec sh -c 'printf "%s %s\n" "$$1" $$(stat -c "%a" "$$1" 2>/dev/null || stat -f "%Lp" "$$1")' _ {} \; | sort > MANIFEST.txt
 	@echo "Creating home binary..."
 	@cp $(lua_bin) $(1)
 	@cd results/home-$(2) && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$(1) -@
