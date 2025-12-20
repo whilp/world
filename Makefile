@@ -1,6 +1,7 @@
 include 3p/cook.mk
 include 3p/luaunit/cook.mk
 include 3p/cosmopolitan/cook.mk
+include 3p/make/cook.mk
 include 3p/lua/cook.mk
 include 3p/nvim/cook.mk
 include 3p/gh/cook.mk
