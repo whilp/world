@@ -1,27 +1,10 @@
 #!/usr/bin/env lua
 
-local ffi = require("ffi")
-local unistd = require("posix.unistd")
-local fcntl = require("posix.fcntl")
-local signal = require("posix.signal")
-local wait = require("posix.sys.wait")
-local stat = require("posix.sys.stat")
-local stdlib = require("posix.stdlib")
+package.path = os.getenv("HOME") .. "/.local/lib/lua/?.lua;" .. package.path
 
-ffi.cdef([[
-  typedef int pid_t;
-  pid_t setsid(void);
-
-  struct flock {
-    long long l_start;
-    long long l_len;
-    pid_t l_pid;
-    short l_type;
-    short l_whence;
-  };
-
-  int fcntl(int fd, int cmd, ...);
-]])
+local cosmo = require("cosmo")
+local unix = cosmo.unix
+local daemonize = require("daemonize")
 
 local HOME = os.getenv("HOME")
 local NVIM_BIN = HOME .. "/.local/share/shimlink/bin/nvim"
@@ -86,18 +69,20 @@ local function mkdir_p(path)
 
   local current = path:sub(1, 1) == "/" and "/" or ""
   for _, part in ipairs(parts) do
-    current = current .. part .. "/"
-    local ok, err = pcall(stat.mkdir, current, tonumber("755", 8))
-    if not ok and not err:match("File exists") then
-      return nil, "failed to create directory " .. current .. ": " .. tostring(err)
+    current = current .. part
+    if not unix.stat(current) then
+      local ok = unix.mkdir(current, tonumber("755", 8))
+      if not ok then
+        return nil, "failed to create directory " .. current
+      end
     end
+    current = current .. "/"
   end
   return true
 end
 
 local function file_exists(path)
-  local ok, s = pcall(stat.stat, path)
-  return ok and s ~= nil
+  return unix.stat(path) ~= nil
 end
 
 local function read_file(path)
@@ -110,18 +95,8 @@ local function read_file(path)
   return content
 end
 
-local function write_file(path, content)
-  local f = io.open(path, "w")
-  if not f then
-    return nil, "failed to write file: " .. path
-  end
-  f:write(content)
-  f:close()
-  return true
-end
-
 local function is_process_running(pid)
-  return signal.kill(pid, 0) == 0
+  return unix.kill(pid, 0) == 0
 end
 
 local function get_running_pid(pidfile)
@@ -138,98 +113,77 @@ end
 
 local function wait_for_socket(socket_path, timeout)
   timeout = timeout or 5
-  local sleep_interval_ms = 100  -- 100ms
-  local time = require("posix.time")
+  local sleep_interval_ms = 100
   local elapsed = 0
 
   while elapsed < timeout do
     if file_exists(socket_path) then
-      local socket = require("posix.sys.socket")
-      local sock_fd = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM, 0)
-      if sock_fd and sock_fd >= 0 then
-        local sockaddr = {
-          family = socket.AF_UNIX,
-          path = socket_path
-        }
-        local ok = socket.connect(sock_fd, sockaddr)
-        unistd.close(sock_fd)
-        if ok == 0 then
+      local fd = unix.socket(unix.AF_UNIX, unix.SOCK_STREAM, 0)
+      if fd and fd >= 0 then
+        local ok = unix.connect(fd, {sun_family = unix.AF_UNIX, sun_path = socket_path})
+        unix.close(fd)
+        if ok then
           return true
         end
       end
     end
 
-    -- nanosleep takes seconds and nanoseconds
-    time.nanosleep({tv_sec = 0, tv_nsec = sleep_interval_ms * 1000000})
+    unix.nanosleep(0, sleep_interval_ms * 1000000)
     elapsed = elapsed + (sleep_interval_ms / 1000)
   end
 
   return false
 end
 
-local function acquire_pidfile_lock(pidfile)
-  local lockfd = fcntl.open(pidfile, fcntl.O_RDWR + fcntl.O_CREAT, tonumber("644", 8))
-  if not lockfd or lockfd < 0 then
-    return nil, "failed to open pidfile for locking"
-  end
-
-  local lock = ffi.new("struct flock")
-  lock.l_start = 0
-  lock.l_len = 0
-  lock.l_pid = 0
-  lock.l_type = fcntl.F_WRLCK
-  lock.l_whence = unistd.SEEK_SET
-
-  local ret = ffi.C.fcntl(lockfd, fcntl.F_SETLK, lock)
-  if ret == -1 then
-    local errno = ffi.errno()
-    unistd.close(lockfd)
-    return nil, string.format("another instance is starting (errno: %d)", errno)
-  end
-
-  return lockfd
-end
-
-local function release_pidfile_lock(lockfd)
-  if lockfd then
-    unistd.close(lockfd)
-  end
-end
-
 local function load_zsh_environment()
-  local posix = require("posix")
-  local handle = posix.popen({"zsh", "-i", "-l", "-c", "env -0"}, "r")
-  if not handle then
+  local read_fd, write_fd = unix.pipe()
+  if not read_fd then
     return
   end
 
-  local output = unistd.read(handle.fd, 65536) or ""
-  wait.wait(handle.pids[1])
-  unistd.close(handle.fd)
+  local pid = unix.fork()
+  if not pid then
+    unix.close(read_fd)
+    unix.close(write_fd)
+    return
+  end
 
-  local i = 1
-  while i <= #output do
-    local next_null = output:find("\0", i, true)
-    if not next_null then
-      break
+  if pid == 0 then
+    unix.close(read_fd)
+    unix.dup(write_fd, 1)
+    unix.close(write_fd)
+    unix.execp("zsh", {"-i", "-l", "-c", "env -0"})
+    unix.exit(1)
+  else
+    unix.close(write_fd)
+    local output = unix.read(read_fd, 65536) or ""
+    unix.close(read_fd)
+    unix.waitpid(pid)
+
+    local i = 1
+    while i <= #output do
+      local next_null = output:find("\0", i, true)
+      if not next_null then
+        break
+      end
+      local line = output:sub(i, next_null - 1)
+      local key, value = line:match("^([^=]+)=(.*)$")
+      if key then
+        unix.setenv(key, value, 1)
+      end
+      i = next_null + 1
     end
-    local line = output:sub(i, next_null - 1)
-    local key, value = line:match("^([^=]+)=(.*)$")
-    if key then
-      stdlib.setenv(key, value)
-    end
-    i = next_null + 1
   end
 end
 
 local function setup_nvim_environment()
   load_zsh_environment()
-  stdlib.setenv("NVIM_SERVER_MODE", "1")
+  unix.setenv("NVIM_SERVER_MODE", "1", 1)
 end
 
 local function exec_nvim_server(sock)
   os.remove(sock)
-  unistd.execp(NVIM_BIN, {"--listen", sock, "--headless"})
+  unix.execp(NVIM_BIN, {"--listen", sock, "--headless"})
 end
 
 local function cmd_start(paths)
@@ -245,7 +199,7 @@ local function cmd_start(paths)
   end
 
   local lockfd
-  lockfd, err = acquire_pidfile_lock(paths.pid)
+  lockfd, err = daemonize.acquire_lock(paths.pid)
   if not lockfd then
     io.stderr:write("failed to acquire lock: " .. err .. "\n")
     return 1
@@ -253,83 +207,83 @@ local function cmd_start(paths)
 
   local pid = get_running_pid(paths.pid)
   if pid then
-    release_pidfile_lock(lockfd)
+    unix.close(lockfd)
     io.write("nvim server already running\n")
     return 0
   end
 
   os.remove(paths.sock)
 
-  local child_pid = unistd.fork()
+  local child_pid = unix.fork()
   if child_pid == 0 then
-    ffi.C.setsid()
-
-    local grandchild_pid = unistd.fork()
-    if grandchild_pid == 0 then
-      local logfd = fcntl.open(paths.log, fcntl.O_WRONLY + fcntl.O_CREAT + fcntl.O_APPEND, tonumber("644", 8))
-      if logfd then
-        unistd.dup2(logfd, unistd.STDOUT_FILENO)
-        unistd.dup2(logfd, unistd.STDERR_FILENO)
-        unistd.close(logfd)
-      end
-
-      local devnull = fcntl.open("/dev/null", fcntl.O_RDONLY)
-      if devnull then
-        unistd.dup2(devnull, unistd.STDIN_FILENO)
-        unistd.close(devnull)
-      end
-
-      for fd = 3, 255 do
-        pcall(unistd.close, fd)
-      end
-
-      unistd.chdir(HOME)
-      setup_nvim_environment()
-      exec_nvim_server(paths.sock)
-      os.exit(1)
-    else
-      local ok, err = write_file(paths.pid, tostring(grandchild_pid))
-      if not ok then
-        io.stderr:write("error: " .. err .. "\n")
-        release_pidfile_lock(lockfd)
-        os.exit(1)
-      end
-      release_pidfile_lock(lockfd)
-      os.exit(0)
+    ok, err = daemonize.daemon({nochdir = true, noclose = true})
+    if not ok then
+      io.stderr:write("daemonize failed: " .. err .. "\n")
+      unix.exit(1)
     end
-  else
-    wait.wait(child_pid)
+
+    ok, err = daemonize.redirect_output(paths.log, paths.log, true)
+    if not ok then
+      io.stderr:write("redirect_output failed: " .. err .. "\n")
+      unix.exit(1)
+    end
+
+    local devnull = unix.open("/dev/null", unix.O_RDONLY)
+    if devnull then
+      unix.dup(devnull, 0)
+      unix.close(devnull)
+    end
+
+    ok, err = daemonize.write_pidfile(paths.pid)
+    if not ok then
+      io.stderr:write("write_pidfile failed: " .. err .. "\n")
+      unix.exit(1)
+    end
+
+    unix.close(lockfd)
+
+    unix.chdir(HOME)
+    setup_nvim_environment()
+    exec_nvim_server(paths.sock)
+    unix.exit(1)
+  elseif child_pid > 0 then
+    unix.close(lockfd)
+    unix.waitpid(child_pid)
 
     if wait_for_socket(paths.sock, 5) then
       pid = get_running_pid(paths.pid)
       if pid then
-        io.write("manual: nvim server started\n")
+        io.write("nvim server started\n")
         return 0
       else
-        io.stderr:write("manual: nvim server process died after starting, check " .. paths.log .. "\n")
+        io.stderr:write("nvim server process died after starting, check " .. paths.log .. "\n")
         os.remove(paths.pid)
         return 1
       end
     else
-      io.stderr:write("manual: nvim server failed to start: socket not ready after 5 seconds, check " .. paths.log .. "\n")
+      io.stderr:write("nvim server failed to start: socket not ready after 5 seconds, check " .. paths.log .. "\n")
       pid = get_running_pid(paths.pid)
       if pid then
-        signal.kill(pid, signal.SIGTERM)
+        unix.kill(pid, unix.SIGTERM)
       end
       os.remove(paths.pid)
       return 1
     end
+  else
+    unix.close(lockfd)
+    io.stderr:write("fork failed\n")
+    return 1
   end
 end
 
 local function cmd_stop(paths)
   local pid = get_running_pid(paths.pid)
   if pid then
-    signal.kill(pid, signal.SIGTERM)
+    unix.kill(pid, unix.SIGTERM)
     os.remove(paths.pid)
-    io.write("manual: nvim server stopped\n")
+    io.write("nvim server stopped\n")
   else
-    io.write("manual: nvim server not running\n")
+    io.write("nvim server not running\n")
   end
   os.remove(paths.sock)
   return 0
@@ -346,23 +300,9 @@ local function cmd_status(paths)
   end
 end
 
-local function run_command(args)
-  local posix = require("posix")
-  local handle = posix.popen(args, "r")
-  if not handle then
-    return 1
-  end
-  local _, reason, status = wait.wait(handle.pids[1])
-  unistd.close(handle.fd)
-  if reason == "exited" then
-    return status
-  end
-  return 1
-end
-
 local function cmd_restart(paths)
   cmd_stop(paths)
-  unistd.sleep(1)
+  unix.sleep(1)
   return cmd_start(paths)
 end
 
@@ -391,7 +331,7 @@ local function daemon_mode(args)
     return cmd_fn(paths)
   else
     io.stderr:write("nvimd: unknown command: " .. command .. "\n")
-    io.stderr:write("Usage: nvimd [--socket PATH] {start|stop|status|restart|cleanup}\n")
+    io.stderr:write("usage: nvimd [--socket PATH] {start|stop|status|restart|cleanup}\n")
     return 1
   end
 end
@@ -410,19 +350,14 @@ local function is_socket_connectable(socket_path)
     return false
   end
 
-  local socket = require("posix.sys.socket")
-  local sock_fd = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM, 0)
-  if not sock_fd or sock_fd < 0 then
+  local fd = unix.socket(unix.AF_UNIX, unix.SOCK_STREAM, 0)
+  if not fd or fd < 0 then
     return false
   end
 
-  local sockaddr = {
-    family = socket.AF_UNIX,
-    path = socket_path
-  }
-  local ok = socket.connect(sock_fd, sockaddr)
-  unistd.close(sock_fd)
-  return ok == 0
+  local ok = unix.connect(fd, {sun_family = unix.AF_UNIX, sun_path = socket_path})
+  unix.close(fd)
+  return ok
 end
 
 local function client_mode(args)
@@ -447,13 +382,13 @@ local function client_mode(args)
     for _, arg in ipairs(remaining_args) do
       table.insert(new_args, arg)
     end
-    unistd.execp(NVIM_BIN, new_args)
+    unix.execp(NVIM_BIN, new_args)
   else
     local new_args = {}
     for _, arg in ipairs(args) do
       table.insert(new_args, arg)
     end
-    unistd.execp(NVIM_BIN, new_args)
+    unix.execp(NVIM_BIN, new_args)
   end
 end
 
@@ -480,8 +415,8 @@ local function main(args)
   local socket_path = get_socket_path(cli_socket)
   local paths = derive_paths(socket_path)
 
-  signal.signal(signal.SIGINT, function() cleanup_and_exit(signal.SIGINT, paths) end)
-  signal.signal(signal.SIGTERM, function() cleanup_and_exit(signal.SIGTERM, paths) end)
+  unix.sigaction(unix.SIGINT, function() cleanup_and_exit(unix.SIGINT, paths) end)
+  unix.sigaction(unix.SIGTERM, function() cleanup_and_exit(unix.SIGTERM, paths) end)
 
   if program_name == "nvimd" or program_name == "nvimd.lua" then
     return daemon_mode(cmd_args)
