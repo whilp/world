@@ -50,8 +50,9 @@ local function cmd_env(args)
   end
 
   -- Build custom environment for subprocess
+  -- unix.environ() returns array of "KEY=value" strings
   local env = unix.environ()
-  env["CUSTOM_VAR"] = "custom_value"
+  table.insert(env, "CUSTOM_VAR=custom_value")
 
   -- Example: could use env with unix.execve()
   -- unix.execve("/usr/bin/env", {"env"}, env)

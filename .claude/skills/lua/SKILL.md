@@ -14,7 +14,7 @@ This repository organizes Lua code in three locations:
 
 - **`.local/bin/`** - executable wrappers that set up paths and call main modules
 - **`src/*/main.lua`** - application logic modules
-- **`.local/lib/lua/`** - reusable library modules
+- **`src/*/*.lua`** - reusable library modules (legacy: `.local/lib/lua/`)
 
 Each location follows specific patterns described below.
 
@@ -24,34 +24,18 @@ Use the templates in `.claude/skills/lua/templates/` as starting points:
 
 - **`executable.lua`** - for scripts in `.local/bin/`
 - **`main.lua`** - for application modules in `src/*/main.lua`
-- **`module.lua`** - for library modules in `.local/lib/lua/`
-- **`test.lua`** - for test files in `src/*/test.lua`
+- **`module.lua`** - for library modules in `src/*/*.lua` (or `.local/lib/lua/`, legacy)
+- **`test.lua`** - for test files in `src/*/test*.lua`
 
 ## Executable pattern
 
 Executables in `.local/bin/` are thin wrappers that:
-1. Set up the Lua module path
-2. Load the corresponding module from `src/`
-3. Call the module's main function
+1. Set up the Lua module path to include `src/`
+2. Load the corresponding module from `src/*/main.lua`
+3. Call the module's main function with conditional execution
 4. Return the module for testability
 
-```lua
-#!/usr/bin/env lua
-
-local cosmo = require("cosmo")
-local unix = cosmo.unix
-
-local script_dir = cosmo.path.dirname(cosmo.path.dirname(cosmo.path.dirname(debug.getinfo(1, "S").source:sub(2))))
-package.path = script_dir .. "/src/?.lua;" .. package.path
-
-local mymodule = require("mymodule.main")
-
-if not pcall(debug.getlocal, 4, 1) then
-  mymodule.main(arg)
-end
-
-return mymodule
-```
+See `.claude/skills/lua/templates/executable.lua` for full template.
 
 Key points:
 - Always use `#!/usr/bin/env lua` shebang
@@ -105,8 +89,9 @@ local function cmd_env(args)
   end
 
   -- Build custom environment for subprocess
+  -- unix.environ() returns array of "KEY=value" strings
   local env = unix.environ()
-  env["CUSTOM_VAR"] = "custom_value"
+  table.insert(env, "CUSTOM_VAR=custom_value")
 
   -- Example: could use env with unix.execve()
   -- unix.execve("/usr/bin/env", {"env"}, env)
@@ -159,7 +144,7 @@ Key points:
 
 ## Library module pattern
 
-Modules in `.local/lib/lua/` are reusable libraries:
+Modules in `src/*/*.lua` (or `.local/lib/lua/`, legacy) are reusable libraries:
 
 ```lua
 local cosmo = require("cosmo")
