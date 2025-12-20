@@ -396,7 +396,7 @@ io.stderr:flush() -- ensure immediate output
 
 ## Command execution
 
-Use `luachild` for subprocess spawning with bidirectional pipe communication:
+Use `unix.fork()` and `unix.execve()` for subprocess spawning:
 - Takes an array of arguments and does direct exec without shell invocation
 - Avoid `io.popen()` which invokes `/bin/sh` to parse the command string
 - Only use shell invocation when you specifically need shell features
@@ -404,37 +404,47 @@ Use `luachild` for subprocess spawning with bidirectional pipe communication:
 ### Bidirectional communication with pipes
 
 ```lua
-local lc = require('luachild')
 local unix = require('cosmo').unix
 
 -- Create pipes for stdin/stdout
-local stdin_r, stdin_w = lc.pipe()
-local stdout_r, stdout_w = lc.pipe()
+local stdin_r, stdin_w = unix.pipe()
+local stdout_r, stdout_w = unix.pipe()
 
--- Spawn process with redirected pipes
-local pid = lc.spawn({
-  file = '/usr/bin/command',
-  args = {'command', 'arg1'},
-  env = lc.environ(),
-  stdin = stdin_r,
-  stdout = stdout_w,
-  stderr = stdout_w,  -- redirect stderr to stdout
-})
+-- Fork process
+local pid = unix.fork()
 
--- Close unused pipe ends in parent
-unix.close(stdin_r)
-unix.close(stdout_w)
+if pid == 0 then
+  -- Child process
+  unix.close(stdin_w)
+  unix.close(stdout_r)
 
--- Write to child's stdin
-unix.write(stdin_w, "input data\n")
-unix.close(stdin_w)
+  -- Redirect stdin and stdout
+  unix.dup2(stdin_r, 0)
+  unix.dup2(stdout_w, 1)
+  unix.dup2(stdout_w, 2)
 
--- Read from child's stdout
-local output = unix.read(stdout_r, 65536) or ""
-unix.close(stdout_r)
+  unix.close(stdin_r)
+  unix.close(stdout_w)
 
--- Wait for child to complete
-local status = lc.wait(pid)
+  -- Execute command
+  unix.execve('/usr/bin/command', {'command', 'arg1'}, unix.environ())
+  unix.exit(1)  -- only reached on error
+else
+  -- Parent process
+  unix.close(stdin_r)
+  unix.close(stdout_w)
+
+  -- Write to child's stdin
+  unix.write(stdin_w, "input data\n")
+  unix.close(stdin_w)
+
+  -- Read from child's stdout
+  local output = unix.read(stdout_r, 65536) or ""
+  unix.close(stdout_r)
+
+  -- Wait for child to complete
+  local status = unix.wait()
+end
 ```
 
 ## Command-line arguments
@@ -570,7 +580,6 @@ Standard libraries used in this repo:
 - `cosmo` - Unified interface to Unix system calls and path utilities
 - `cosmo.unix` - Unix system calls (fork, exec, pipe, read, write, etc)
 - `cosmo.path` - Path manipulation utilities (dirname, etc)
-- `luachild` - Subprocess spawning with bidirectional pipe communication
 - `daemonize` - Daemon process creation (from `src/` modules)
 
 ## Unix system calls
