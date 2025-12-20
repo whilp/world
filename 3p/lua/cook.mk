@@ -121,6 +121,7 @@ $(lua_patched): $(cosmopolitan_src) | $(lua_build_dir)
 	cp $(lua_patch_dir)/lsqlite3.h $(lua_cosmo_dir)/third_party/lua/
 	cp $(lua_patch_dir)/largon2.h $(lua_cosmo_dir)/third_party/lua/
 	cp $(lua_patch_dir)/lcosmo.h $(lua_cosmo_dir)/third_party/lua/
+	cp $(lua_patch_dir)/lhttp.h $(lua_cosmo_dir)/third_party/lua/
 	cp $(lua_patch_dir)/lfuncs_register.c $(lua_cosmo_dir)/third_party/lua/
 	cd $(lua_cosmo_dir) && patch -p1 < $(CURDIR)/$(lua_patch_dir)/lua.main.c.patch
 	cd $(lua_cosmo_dir) && patch -p1 < $(CURDIR)/$(lua_patch_dir)/lfuncs.c.patch

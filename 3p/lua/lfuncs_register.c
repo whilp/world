@@ -1,7 +1,7 @@
 /*
  * cosmo module - registers utility functions and submodules
  * Functions from tool/net/lfuncs.c exposed via "cosmo" module
- * Submodules: cosmo.unix, cosmo.path, cosmo.re, cosmo.argon2, cosmo.sqlite3
+ * Submodules: cosmo.unix, cosmo.path, cosmo.re, cosmo.argon2, cosmo.sqlite3, cosmo.http
  *
  * NOTE: Functions guarded by LFUNCS_LITE in lfuncs.c are excluded:
  * - LuaDecimate (needs dsp/scale)
@@ -15,7 +15,102 @@
 #include "third_party/lua/lre.h"
 #include "third_party/lua/largon2.h"
 #include "third_party/lua/lsqlite3.h"
+#include "third_party/lua/lhttp.h"
 #include "tool/net/lfuncs.h"
+#include "libc/mem/mem.h"
+
+static int LuaEncodeJson(lua_State *L) {
+    char *p = 0;
+    struct EncoderConfig conf = {
+        .maxdepth = 64,
+        .sorted = true,
+        .pretty = false,
+        .indent = "  ",
+    };
+    if (lua_istable(L, 2)) {
+        lua_settop(L, 2);
+        lua_getfield(L, 2, "maxdepth");
+        if (!lua_isnoneornil(L, -1)) {
+            lua_Integer n = lua_tointeger(L, -1);
+            if (n < 0) n = 0;
+            if (n > 32767) n = 32767;
+            conf.maxdepth = n;
+        }
+        lua_getfield(L, 2, "sorted");
+        if (!lua_isnoneornil(L, -1)) {
+            conf.sorted = lua_toboolean(L, -1);
+        }
+        lua_getfield(L, 2, "pretty");
+        if (!lua_isnoneornil(L, -1)) {
+            conf.pretty = lua_toboolean(L, -1);
+            lua_getfield(L, 2, "indent");
+            if (!lua_isnoneornil(L, -1)) {
+                conf.indent = luaL_checkstring(L, -1);
+            }
+        }
+    }
+    lua_settop(L, 1);
+    if (LuaEncodeJsonData(L, &p, -1, conf) == -1) {
+        free(p);
+        return 2;
+    }
+    lua_pushstring(L, p);
+    free(p);
+    return 1;
+}
+
+static int LuaEncodeLua(lua_State *L) {
+    char *p = 0;
+    struct EncoderConfig conf = {
+        .maxdepth = 64,
+        .sorted = true,
+        .pretty = false,
+        .indent = "  ",
+    };
+    if (lua_istable(L, 2)) {
+        lua_settop(L, 2);
+        lua_getfield(L, 2, "maxdepth");
+        if (!lua_isnoneornil(L, -1)) {
+            lua_Integer n = lua_tointeger(L, -1);
+            if (n < 0) n = 0;
+            if (n > 32767) n = 32767;
+            conf.maxdepth = n;
+        }
+        lua_getfield(L, 2, "sorted");
+        if (!lua_isnoneornil(L, -1)) {
+            conf.sorted = lua_toboolean(L, -1);
+        }
+        lua_getfield(L, 2, "pretty");
+        if (!lua_isnoneornil(L, -1)) {
+            conf.pretty = lua_toboolean(L, -1);
+            lua_getfield(L, 2, "indent");
+            if (!lua_isnoneornil(L, -1)) {
+                conf.indent = luaL_checkstring(L, -1);
+            }
+        }
+    }
+    lua_settop(L, 1);
+    if (LuaEncodeLuaData(L, &p, -1, conf) == -1) {
+        free(p);
+        return 2;
+    }
+    lua_pushstring(L, p);
+    free(p);
+    return 1;
+}
+
+static const luaL_Reg kHttpFuncs[] = {
+    {"EncodeJson", LuaEncodeJson},
+    {"EncodeLua", LuaEncodeLua},
+    {"EncodeUrl", LuaEncodeUrl},
+    {"ParseUrl", LuaParseUrl},
+    {NULL, NULL}
+};
+
+static int LuaHttp(lua_State *L) {
+    luaL_newlib(L, kHttpFuncs);
+    return 1;
+}
 
 static const luaL_Reg kCosmoFuncs[] = {
     {"Bsf", LuaBsf},
@@ -101,6 +196,10 @@ int luaopen_cosmo(lua_State *L) {
     /* add sqlite3 submodule */
     luaopen_lsqlite3(L);
     lua_setfield(L, -2, "sqlite3");
+
+    /* add http submodule */
+    LuaHttp(L);
+    lua_setfield(L, -2, "http");
 
     return 1;
 }

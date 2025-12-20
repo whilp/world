@@ -58,3 +58,51 @@ function test_cosmo_sqlite3_open_memory()
     lu.assertNotNil(db)
     db:close()
 end
+
+function test_cosmo_http_exists()
+    lu.assertNotNil(cosmo.http, "cosmo.http should exist")
+end
+
+function test_cosmo_http_ParseUrl()
+    lu.assertNotNil(cosmo.http.ParseUrl)
+    local url = cosmo.http.ParseUrl("https://example.com:8080/path?foo=bar&baz=qux#fragment")
+    lu.assertEquals(url.scheme, "https")
+    lu.assertEquals(url.host, "example.com")
+    lu.assertEquals(url.port, "8080")
+    lu.assertEquals(url.path, "/path")
+    lu.assertEquals(url.fragment, "fragment")
+    lu.assertNotNil(url.params)
+end
+
+function test_cosmo_http_EncodeUrl()
+    lu.assertNotNil(cosmo.http.EncodeUrl)
+    local url = cosmo.http.EncodeUrl({
+        scheme = "https",
+        host = "example.com",
+        path = "/test",
+    })
+    lu.assertEquals(url, "https://example.com/test")
+end
+
+function test_cosmo_http_EncodeJson()
+    lu.assertNotNil(cosmo.http.EncodeJson)
+    local json = cosmo.http.EncodeJson({foo = "bar", num = 42})
+    lu.assertNotNil(json)
+    lu.assertStrContains(json, '"foo"')
+    lu.assertStrContains(json, '"bar"')
+    lu.assertStrContains(json, '42')
+end
+
+function test_cosmo_http_EncodeJson_pretty()
+    local json = cosmo.http.EncodeJson({a = 1}, {pretty = true})
+    lu.assertNotNil(json)
+    lu.assertStrContains(json, '\n')
+end
+
+function test_cosmo_http_EncodeLua()
+    lu.assertNotNil(cosmo.http.EncodeLua)
+    local lua_str = cosmo.http.EncodeLua({foo = "bar"})
+    lu.assertNotNil(lua_str)
+    lu.assertStrContains(lua_str, 'foo')
+    lu.assertStrContains(lua_str, 'bar')
+end
