@@ -19,9 +19,10 @@ local function run(env)
 		os.execute(cmd)
 
 		local verify_cmd = string.format("echo '%s  %s' | sha256sum -c -", CLAUDE_SHA256, temp_file)
-		local verify_status = os.execute(verify_cmd)
-		if verify_status == 0 then
-			os.execute(string.format("mv %s %s", temp_file, CLAUDE_BIN))
+		local ok, status, code = os.execute(verify_cmd)
+		local success = (ok == true) or (ok == 0) or (code == 0)
+		if success then
+			os.execute(string.format("mv '%s' '%s'", temp_file, CLAUDE_BIN))
 			unix.chmod(CLAUDE_BIN, 0755)
 		else
 			io.stderr:write("error: claude binary checksum verification failed\n")

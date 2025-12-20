@@ -1,19 +1,9 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
 
-local function rm_rf(path)
-	local cmd = string.format("rm -rf %s", path)
-	os.execute(cmd)
-end
-
-local function cp_ra(src, dst)
-	local cmd = string.format("cp -ra %s %s", src, dst)
-	os.execute(cmd)
-end
-
 local function run(env)
-	rm_rf(env.DST .. "/.git")
-	cp_ra(env.SRC .. "/.git", env.DST .. "/.git")
+	os.execute(string.format("rm -rf '%s'", env.DST .. "/.git"))
+	os.execute(string.format("cp -ra '%s' '%s'", env.SRC .. "/.git", env.DST .. "/.git"))
 	unix.chdir(env.DST)
 	os.execute("git checkout .")
 	os.execute("git config user.email 189851+whilp@users.noreply.github.com")
