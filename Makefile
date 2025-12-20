@@ -2,7 +2,22 @@ include 3p/cook.mk
 include 3p/luaunit/cook.mk
 include 3p/cosmopolitan/cook.mk
 include 3p/lua/cook.mk
-include 3p/shimlink/cook.mk
+include 3p/nvim/cook.mk
+include 3p/gh/cook.mk
+include 3p/delta/cook.mk
+include 3p/rg/cook.mk
+include 3p/duckdb/cook.mk
+include 3p/tree-sitter/cook.mk
+include 3p/ast-grep/cook.mk
+include 3p/biome/cook.mk
+include 3p/comrak/cook.mk
+include 3p/marksman/cook.mk
+include 3p/ruff/cook.mk
+include 3p/shfmt/cook.mk
+include 3p/sqruff/cook.mk
+include 3p/stylua/cook.mk
+include 3p/superhtml/cook.mk
+include 3p/uv/cook.mk
 
 build: lua
 test: lua
@@ -17,40 +32,88 @@ results/dotfiles.zip: | results
 	git ls-files -z | grep -zZvE '$(home_exclude_pattern)' | \
 		xargs -0 $(cosmos_zip_bin) -q $@
 
+# Aggregate all binary extraction markers
+all_binaries := \
+	$(nvim_binaries) \
+	$(gh_binaries) \
+	$(delta_binaries) \
+	$(rg_binaries) \
+	$(duckdb_binaries) \
+	$(tree_sitter_binaries) \
+	$(ast_grep_binaries) \
+	$(biome_binaries) \
+	$(comrak_binaries) \
+	$(marksman_binaries) \
+	$(ruff_binaries) \
+	$(shfmt_binaries) \
+	$(sqruff_binaries) \
+	$(stylua_binaries) \
+	$(superhtml_binaries) \
+	$(uv_binaries)
+
 # Platform-specific binaries zips
-results/binaries-darwin-arm64.zip: $(shimlink_binaries) | results
-	cd $(shimlink_dir) && \
+results/binaries-darwin-arm64.zip: $(all_binaries) | results
+	cd $(3p) && \
 		find . -path '*/darwin-arm64/*' -type f ! -name '.extracted' | \
 		$(cosmos_zip_bin) -q $(CURDIR)/$@ -@
 
-results/binaries-linux-arm64.zip: $(shimlink_binaries) | results
-	cd $(shimlink_dir) && \
+results/binaries-linux-arm64.zip: $(all_binaries) | results
+	cd $(3p) && \
 		find . -path '*/linux-arm64/*' -type f ! -name '.extracted' | \
 		$(cosmos_zip_bin) -q $(CURDIR)/$@ -@
 
-results/binaries-linux-x86_64.zip: $(shimlink_binaries) | results
-	cd $(shimlink_dir) && \
+results/binaries-linux-x86_64.zip: $(all_binaries) | results
+	cd $(3p) && \
 		find . -path '*/linux-x86_64/*' -type f ! -name '.extracted' | \
 		$(cosmos_zip_bin) -q $(CURDIR)/$@ -@
 
 # Platform-specific home binaries
+define build_home
+	@echo "Building $(1) for $(2)..."
+	@rm -rf results/home-$(2)
+	@mkdir -p results/home-$(2)/home
+	@echo "Extracting dotfiles..."
+	@unzip -q results/dotfiles.zip -d results/home-$(2)/home
+	@echo "Extracting and organizing binaries..."
+	@mkdir -p results/home-$(2)/temp-binaries
+	@unzip -q results/binaries-$(2).zip -d results/home-$(2)/temp-binaries
+	@mkdir -p results/home-$(2)/home/.local/bin results/home-$(2)/home/.local/share
+	@cd results/home-$(2)/temp-binaries && \
+		for tool in nvim gh delta rg duckdb tree-sitter ast-grep biome comrak marksman ruff shfmt sqruff stylua superhtml uv; do \
+			if [ -d "$$tool/$(2)" ]; then \
+				echo "  Installing $$tool..."; \
+				if [ -d "$$tool/$(2)/bin" ]; then \
+					exe=$$(find "$$tool/$(2)/bin" -maxdepth 1 -type f -name "$$tool" 2>/dev/null | head -1); \
+					if [ -n "$$exe" ]; then cp "$$exe" $(CURDIR)/results/home-$(2)/home/.local/bin/$$tool; fi; \
+				else \
+					exe=$$(find "$$tool/$(2)" -maxdepth 1 -type f -name "$$tool" 2>/dev/null | head -1); \
+					if [ -n "$$exe" ]; then cp "$$exe" $(CURDIR)/results/home-$(2)/home/.local/bin/$$tool; fi; \
+				fi; \
+				for dir in lib share libexec; do \
+					if [ -d "$$tool/$(2)/$$dir" ]; then \
+						mkdir -p $(CURDIR)/results/home-$(2)/home/.local/share/$$tool; \
+						cp -r "$$tool/$(2)/$$dir" $(CURDIR)/results/home-$(2)/home/.local/share/$$tool/; \
+					fi; \
+				done; \
+			fi; \
+		done
+	@rm -rf results/home-$(2)/temp-binaries
+	@cp $(lua_bin) results/home-$(2)/home/.local/bin/lua
+	@echo "Creating home binary..."
+	@cp $(lua_bin) $(1)
+	@cd results/home-$(2) && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$(1) -@
+	@cd home && $(cosmos_zip_bin) -qr $(CURDIR)/$(1) main.lua .args
+	@rm -rf results/home-$(2)
+endef
+
 results/bin/home-darwin-arm64: $(lua_bin) results/dotfiles.zip results/binaries-darwin-arm64.zip home/main.lua home/.args | results/bin
-	cp $(lua_bin) $@
-	$(cosmos_zip_bin) -qj $@ results/dotfiles.zip
-	$(cosmos_zip_bin) -qj $@ results/binaries-darwin-arm64.zip
-	cd home && $(cosmos_zip_bin) -qr $(CURDIR)/$@ main.lua .args
+	$(call build_home,$@,darwin-arm64)
 
 results/bin/home-linux-arm64: $(lua_bin) results/dotfiles.zip results/binaries-linux-arm64.zip home/main.lua home/.args | results/bin
-	cp $(lua_bin) $@
-	$(cosmos_zip_bin) -qj $@ results/dotfiles.zip
-	$(cosmos_zip_bin) -qj $@ results/binaries-linux-arm64.zip
-	cd home && $(cosmos_zip_bin) -qr $(CURDIR)/$@ main.lua .args
+	$(call build_home,$@,linux-arm64)
 
 results/bin/home-linux-x86_64: $(lua_bin) results/dotfiles.zip results/binaries-linux-x86_64.zip home/main.lua home/.args | results/bin
-	cp $(lua_bin) $@
-	$(cosmos_zip_bin) -qj $@ results/dotfiles.zip
-	$(cosmos_zip_bin) -qj $@ results/binaries-linux-x86_64.zip
-	cd home && $(cosmos_zip_bin) -qr $(CURDIR)/$@ main.lua .args
+	$(call build_home,$@,linux-x86_64)
 
 results/bin:
 	mkdir -p $@

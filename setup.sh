@@ -38,10 +38,10 @@ install_home() {
 }
 
 if command -v home &>/dev/null; then
-  home unpack | unzip -o -d ~/
+  home unpack
 else
   home_bin=$(install_home) || exit 1
-  "${home_bin}" unpack | unzip -o -d ~/
+  "${home_bin}" unpack
   rm -rf "$(dirname "${home_bin}")"
 fi
 
