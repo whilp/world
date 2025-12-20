@@ -20,14 +20,8 @@ lua_path=(
   "$HOME/extras/lua/3p/?.lua"
   "$HOME/.local/lib/lua/?.lua"
   "$HOME/.local/lib/lua/3p/?.lua"
-  "$HOME/.local/bootstrap/share/lua/5.1/?.lua"
-  "$HOME/.local/bootstrap/share/lua/5.1/?/init.lua"
-  "$HOME/.local/share/luajit-2.1/?.lua"
-  "$HOME/.local/share/luajit-2.1/../../share/lua/5.1/?.lua"
-  "$HOME/.local/share/luajit-2.1/../../share/lua/5.1/?/init.lua"
 )
 
-# append ;; to preserve built-in paths for bundled rocks in relocated luajit installs
 LUA_PATH="${LUA_PATH};;"
 export LUA_PATH
 
@@ -35,10 +29,7 @@ typeset -T LUA_CPATH lua_cpath ';'
 typeset -aU lua_cpath
 
 lua_cpath=(
-  "$HOME/.local/bootstrap/lib/lua/5.1/?.so"
-  "$HOME/.local/bootstrap/lib/lua/5.1/?/?.so"
-  "$HOME/.local/share/luajit-2.1/../../lib/lua/5.1/?.so"
-  "$HOME/.local/share/luajit-2.1/../../lib/lua/5.1/?/?.so"
+  "$HOME/.local/lib/lua/?.so"
 )
 
 LUA_CPATH="${LUA_CPATH};;"
