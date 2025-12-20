@@ -1,10 +1,6 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
 
-local function mkdir_p(path)
-  return cosmo.unix.makedirs(path)
-end
-
 local function copy_file(src, dst)
   local src_f = io.open(src, "rb")
   if not src_f then
@@ -34,7 +30,7 @@ local function cmd_unpack(dest)
   io.stderr:write("extracting to " .. dest .. "...\n")
 
   -- Create destination directory
-  if not mkdir_p(dest) then
+  if not unix.makedirs(dest) then
     io.stderr:write("error: failed to create destination directory\n")
     os.exit(1)
   end
@@ -82,7 +78,7 @@ local function cmd_unpack(dest)
     if not file_path:match("/$") then
       -- Create parent directory
       local parent_dir = cosmo.path.dirname(dest_file_path)
-      mkdir_p(parent_dir)
+      unix.makedirs(parent_dir)
 
       -- Copy file
       if not copy_file(zip_file_path, dest_file_path) then
@@ -90,7 +86,7 @@ local function cmd_unpack(dest)
       end
     else
       -- Create directory
-      mkdir_p(dest .. "/" .. file_path:sub(6))
+      unix.makedirs(dest .. "/" .. file_path:sub(6))
     end
   end
 
