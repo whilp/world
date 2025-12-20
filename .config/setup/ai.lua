@@ -1,5 +1,6 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
+local util = require("util")
 
 local function run(env)
 	unix.chdir(env.DST)
@@ -10,18 +11,17 @@ local function run(env)
 			return 0
 		end
 
-		local cmd = string.format("git clone %s/ai ./ai 2>/dev/null", remote_base)
-		local status = os.execute(cmd)
+		local status = util.spawn({"git", "clone", remote_base .. "/ai", "./ai"})
 		if status ~= 0 then
 			return 0
 		end
 	else
 		unix.chdir("./ai")
-		os.execute("git fetch")
+		util.spawn({"git", "fetch"})
 		unix.chdir(env.DST)
 	end
 
-	os.execute("claude plugin marketplace add ./ai 2>/dev/null || true")
+	util.spawn({"claude", "plugin", "marketplace", "add", "./ai"})
 
 	return 0
 end

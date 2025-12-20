@@ -1,5 +1,6 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
+local util = require("util")
 
 local function run(env)
 	if os.getenv("CODESPACES") == "true" then
@@ -15,18 +16,24 @@ local function run(env)
 		unix.makedirs(bin_dir)
 
 		local temp_file = "/tmp/claude-download"
-		local cmd = string.format("curl -fsSL -o %s %s", temp_file, CLAUDE_URL)
-		os.execute(cmd)
+		util.spawn({"curl", "-fsSL", "-o", temp_file, CLAUDE_URL})
 
-		local verify_cmd = string.format("echo '%s  %s' | sha256sum -c -", CLAUDE_SHA256, temp_file)
-		local ok, status, code = os.execute(verify_cmd)
-		local success = (ok == true) or (ok == 0) or (code == 0)
-		if success then
-			os.execute(string.format("mv '%s' '%s'", temp_file, CLAUDE_BIN))
+		local handle = io.popen(string.format("shasum -a 256 '%s'", temp_file), "r")
+		local actual_sha256
+		if handle then
+			local output = handle:read("*l")
+			handle:close()
+			if output then
+				actual_sha256 = output:match("^(%x+)")
+			end
+		end
+
+		if actual_sha256 == CLAUDE_SHA256 then
+			util.spawn({"mv", temp_file, CLAUDE_BIN})
 			unix.chmod(CLAUDE_BIN, 0755)
 		else
 			io.stderr:write("error: claude binary checksum verification failed\n")
-			os.remove(temp_file)
+			unix.unlink(temp_file)
 		end
 	end
 

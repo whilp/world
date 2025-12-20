@@ -1,20 +1,21 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
+local util = require("util")
 
 local function run(env)
-	os.execute(string.format("rm -rf '%s'", env.DST .. "/.git"))
-	os.execute(string.format("cp -ra '%s' '%s'", env.SRC .. "/.git", env.DST .. "/.git"))
+	unix.rmrf(env.DST .. "/.git")
+	util.copy_tree(env.SRC .. "/.git", env.DST .. "/.git")
 	unix.chdir(env.DST)
-	os.execute("git checkout .")
-	os.execute("git config user.email 189851+whilp@users.noreply.github.com")
-	os.execute("git config core.fsmonitor false")
+	util.spawn({"git", "checkout", "."})
+	util.spawn({"git", "config", "user.email", "189851+whilp@users.noreply.github.com"})
+	util.spawn({"git", "config", "core.fsmonitor", "false"})
 
-	local handle = io.popen("command -v watchman >/dev/null 2>&1 && echo yes", "r")
-	if handle then
-		local has_watchman = handle:read("*l")
-		handle:close()
-		if has_watchman == "yes" then
-			os.execute(string.format("watchman watch-project %s &", env.DST))
+	if unix.commandv("watchman") then
+		local pid = unix.fork()
+		if pid == 0 then
+			local watchman = unix.commandv("watchman")
+			unix.execve(watchman, {watchman, "watch-project", env.DST}, unix.environ())
+			os.exit(127)
 		end
 	end
 

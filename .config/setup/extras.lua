@@ -1,5 +1,6 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
+local util = require("util")
 
 local function run(env)
 	local remote_base = env.REMOTE:match("(.+)/[^/]+$")
@@ -11,19 +12,18 @@ local function run(env)
 	unix.chdir(env.DST)
 
 	if not unix.stat("extras") then
-		local cmd = string.format("git clone %s extras 2>/dev/null", extras)
-		local status = os.execute(cmd)
+		local status = util.spawn({"git", "clone", extras, "extras"})
 		if status == 0 then
 			unix.chdir("extras")
 			if unix.stat("./setup.sh") and unix.access("./setup.sh", unix.X_OK) then
-				os.execute("./setup.sh")
+				util.spawn({"./setup.sh"})
 			end
 		end
 	else
 		unix.chdir("./extras")
-		os.execute("git fetch")
+		util.spawn({"git", "fetch"})
 		if unix.stat("./setup.sh") and unix.access("./setup.sh", unix.X_OK) then
-			os.execute("./setup.sh")
+			util.spawn({"./setup.sh"})
 		end
 	end
 

@@ -1,5 +1,6 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
+local util = require("util")
 
 local function run(env)
 	local handle = io.popen("id -un", "r")
@@ -9,15 +10,9 @@ local function run(env)
 	local username = handle:read("*l")
 	handle:close()
 
-	handle = io.popen("which zsh", "r")
-	if not handle then
-		return 1
-	end
-	local zsh_path = handle:read("*l")
-	handle:close()
-
-	if zsh_path and zsh_path ~= "" then
-		os.execute(string.format("sudo chsh %s --shell %s", username, zsh_path))
+	local zsh_path = unix.commandv("zsh")
+	if zsh_path then
+		util.spawn({"sudo", "chsh", username, "--shell", zsh_path})
 	end
 
 	local bashrc = env.DST .. "/.bashrc"
