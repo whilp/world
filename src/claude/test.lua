@@ -28,6 +28,19 @@ function test_find_claude_binary_returns_nil_when_none_exist()
   lu.assertNil(result, "should return nil when no files exist")
 end
 
+function test_find_claude_binary_handles_nil_in_paths()
+  local tmpfile = os.tmpname()
+  local f = io.open(tmpfile, "w")
+  f:write("test")
+  f:close()
+
+  local paths = {nil, tmpfile, "/also/nonexistent"}
+  local result = claude.find_claude_binary(paths)
+
+  lu.assertEquals(result, tmpfile, "should find existing file even when nil is first element")
+  os.remove(tmpfile)
+end
+
 function test_build_argv_basic()
   local argv = claude.build_argv({}, nil, {})
 
