@@ -1,11 +1,6 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
 
--- File open flags
-local O_WRONLY = 1
-local O_CREAT = 64    -- 0o100
-local O_EXCL = 128    -- 0o200
-
 -- Atomic file copy with permissions
 -- Creates file with restrictive perms, writes data, then sets final mode
 local function copy_file(src, dst, mode)
@@ -18,7 +13,7 @@ local function copy_file(src, dst, mode)
   src_f:close()
 
   -- Create destination atomically with restrictive permissions
-  local fd = unix.open(dst, O_WRONLY | O_CREAT | O_EXCL, 0600)
+  local fd = unix.open(dst, unix.O_WRONLY | unix.O_CREAT | unix.O_EXCL, 0600)
   if not fd or fd < 0 then
     return false
   end
