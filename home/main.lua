@@ -1,6 +1,18 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
 
+-- Read entire file contents
+-- Returns data, nil on success; nil, err on failure
+local function read_file(path)
+  local f, err = io.open(path, "rb")
+  if not f then
+    return nil, "failed to open: " .. (err or "unknown error")
+  end
+  local data = f:read("*a")
+  f:close()
+  return data
+end
+
 -- Atomic file copy with permissions
 -- Creates file with restrictive perms, writes data, then sets final mode
 -- Returns ok, err where ok is true on success, false on failure
@@ -16,7 +28,7 @@ local function copy_file(src, dst, mode, overwrite)
   -- If overwriting and destination is a symlink, remove it first
   if overwrite then
     local st = unix.stat(dst, unix.AT_SYMLINK_NOFOLLOW)
-    if st and unix.S_ISLNK(st.st_mode) then
+    if st and unix.S_ISLNK(st:mode()) then
       local unlink_ok = unix.unlink(dst)
       if not unlink_ok then
         return false, "failed to remove existing symlink"
@@ -63,75 +75,141 @@ local function copy_file(src, dst, mode, overwrite)
   return true
 end
 
-local function cmd_unpack(dest, force)
-  if not dest then
-    io.stderr:write("error: destination path required\n")
-    io.stderr:write("usage: home unpack [--force] <destination>\n")
-    os.exit(1)
+-- Parse a single manifest line
+-- Returns {path=string, mode=number|nil} or nil for skip (comment/empty)
+local function parse_manifest_line(line)
+  -- Skip comments and empty lines
+  if line:match("^%s*#") or not line:match("%S") then
+    return nil
   end
 
-  io.stderr:write("extracting to " .. dest .. "...\n")
+  -- Parse "filepath mode" format
+  local file_path, mode_str = line:match("^(.-)%s+(%x+)$")
+  if file_path and mode_str then
+    local mode = tonumber(mode_str, 8)
+    return { path = file_path, mode = mode }
+  else
+    -- Fallback for old format (no mode)
+    return { path = line, mode = nil }
+  end
+end
+
+-- Parse manifest content (string or line iterator)
+-- Returns array of {path=string, mode=number|nil}
+local function parse_manifest(input)
+  local files = {}
+  local lines
+  if type(input) == "string" then
+    lines = input:gmatch("[^\n]+")
+  else
+    lines = input
+  end
+
+  for line in lines do
+    local entry = parse_manifest_line(line)
+    if entry then
+      table.insert(files, entry)
+    end
+  end
+  return files
+end
+
+-- Extract tool names from manifest entries
+-- Returns sorted array of tool names from .local/bin
+local function extract_tools(files)
+  local tools = {}
+  for _, file_info in ipairs(files) do
+    local tool = file_info.path:match("home/%.local/bin/([^/]+)$")
+    if tool and not tools[tool] then
+      tools[tool] = true
+    end
+  end
+
+  local sorted = {}
+  for tool in pairs(tools) do
+    table.insert(sorted, tool)
+  end
+  table.sort(sorted)
+  return sorted
+end
+
+-- Parse command-line arguments
+-- Returns {cmd=string, force=bool, dest=string|nil}
+local function parse_args(args)
+  local result = {
+    cmd = args[1] or "help",
+    force = false,
+    dest = nil,
+  }
+
+  local i = 2
+  while i <= #args do
+    if args[i] == "--force" or args[i] == "-f" then
+      result.force = true
+    elseif not result.dest then
+      result.dest = args[i]
+    end
+    i = i + 1
+  end
+
+  return result
+end
+
+-- Strip "home/" prefix from path
+local function strip_home_prefix(path)
+  if path:sub(1, 5) == "home/" then
+    return path:sub(6)
+  end
+  return path
+end
+
+-- Check if path is a directory (ends with /)
+local function is_directory_path(path)
+  return path:match("/$") ~= nil
+end
+
+local function cmd_unpack(dest, force, opts)
+  opts = opts or {}
+  local manifest_path = opts.manifest_path or "/zip/MANIFEST.txt"
+  local zip_root = opts.zip_root or "/zip/"
+  local stderr = opts.stderr or io.stderr
+
+  if not dest then
+    stderr:write("error: destination path required\n")
+    stderr:write("usage: home unpack [--force] <destination>\n")
+    return 1
+  end
+
+  stderr:write("extracting to " .. dest .. "...\n")
   if force then
-    io.stderr:write("overwrite mode enabled\n")
+    stderr:write("overwrite mode enabled\n")
   end
 
   -- Create destination directory
   if not unix.makedirs(dest) then
-    io.stderr:write("error: failed to create destination directory\n")
-    os.exit(1)
-  end
-
-  -- Recursively copy files from /zip/home/ to destination
-  local function copy_from_zip(zip_path, dest_path, prefix)
-    -- Try to open the path as a file first
-    local f = io.open(zip_path, "rb")
-    if f then
-      f:close()
-      -- It's a file, copy it
-      if not copy_file(zip_path, dest_path) then
-        io.stderr:write("warning: failed to copy " .. zip_path .. "\n")
-      end
-      return
-    end
-
-    -- It's a directory, list its contents using find via zip listing
-    -- For now, we'll use a simpler approach: just copy known file paths
+    stderr:write("error: failed to create destination directory\n")
+    return 1
   end
 
   -- Read manifest to get list of files with modes
-  local manifest = io.open("/zip/MANIFEST.txt", "r")
+  local manifest = io.open(manifest_path, "r")
   if not manifest then
-    io.stderr:write("error: failed to read manifest\n")
-    os.exit(1)
+    stderr:write("error: failed to read manifest\n")
+    return 1
   end
 
-  local files = {}
-  for line in manifest:lines() do
-    -- Skip comments and empty lines
-    if not line:match("^%s*#") and line:match("%S") then
-      -- Parse "filepath mode" format
-      local file_path, mode_str = line:match("^(.-)%s+(%x+)$")
-      if file_path and mode_str then
-        local mode = tonumber(mode_str, 8) -- Parse octal mode
-        table.insert(files, {path = file_path, mode = mode})
-      else
-        -- Fallback for old format (no mode)
-        table.insert(files, {path = line, mode = nil})
-      end
-    end
-  end
+  local files = parse_manifest(manifest:lines())
   manifest:close()
 
-  -- Copy each file from /zip/ to destination
+  -- Copy each file from zip to destination
   for _, file_info in ipairs(files) do
     local file_path = file_info.path
     local mode = file_info.mode
-    -- file_path is like "home/.zshrc"
-    local zip_file_path = "/zip/" .. file_path
-    local dest_file_path = dest .. "/" .. file_path:sub(6) -- Remove "home/" prefix
+    local rel_path = strip_home_prefix(file_path)
+    local zip_file_path = zip_root .. file_path
+    local dest_file_path = dest .. "/" .. rel_path
 
-    -- Check if it's a directory (ends with /)
-    if not file_path:match("/$") then
+    if not is_directory_path(file_path) then
       -- Create parent directory
       local parent_dir = cosmo.path.dirname(dest_file_path)
       unix.makedirs(parent_dir)
@@ -139,95 +217,106 @@ local function cmd_unpack(dest, force)
       -- Copy file atomically with permissions
       local ok, err = copy_file(zip_file_path, dest_file_path, mode, force)
       if not ok then
-        io.stderr:write("warning: failed to copy " .. file_path .. ": " .. (err or "unknown error") .. "\n")
+        stderr:write("warning: failed to copy " .. file_path .. ": " .. (err or "unknown error") .. "\n")
       end
     else
       -- Create directory
-      unix.makedirs(dest .. "/" .. file_path:sub(6))
+      unix.makedirs(dest .. "/" .. rel_path)
     end
   end
 
-  io.stderr:write("extraction complete\n")
-  io.stderr:write("add " .. dest .. "/.local/bin to PATH if needed\n")
+  stderr:write("extraction complete\n")
+  stderr:write("add " .. dest .. "/.local/bin to PATH if needed\n")
+  return 0
 end
 
-local function cmd_list()
+local function cmd_list(opts)
+  opts = opts or {}
+  local manifest_path = opts.manifest_path or "/zip/MANIFEST.txt"
+  local stdout = opts.stdout or io.stdout
+  local stderr = opts.stderr or io.stderr
+
   -- Read manifest to get list of files
-  local manifest = io.open("/zip/MANIFEST.txt", "r")
+  local manifest = io.open(manifest_path, "r")
   if not manifest then
-    io.stderr:write("error: failed to read manifest\n")
-    os.exit(1)
+    stderr:write("error: failed to read manifest\n")
+    return 1
   end
 
-  -- Count files and collect unique tools from .local/bin
-  local file_count = 0
-  local tools = {}
-  for line in manifest:lines() do
-    if not line:match("^%s*#") and line:match("%S") then
-      file_count = file_count + 1
-      -- Parse "filepath mode" format, extract filepath
-      local file_path = line:match("^(.-)%s+%x+$") or line
-      -- Extract tool name from .local/bin paths
-      local tool = file_path:match("home/%.local/bin/([^/]+)$")
-      if tool and not tools[tool] then
-        tools[tool] = true
-      end
-    end
-  end
+  local files = parse_manifest(manifest:lines())
   manifest:close()
 
-  io.stdout:write("embedded files: " .. file_count .. " total\n")
-  io.stdout:write("  - dotfiles (~/.zshrc, ~/.config/*, etc.)\n")
-  io.stdout:write("  - binaries (~/.local/bin/*)\n")
-  io.stdout:write("\nembedded tools:\n")
+  local tools = extract_tools(files)
 
-  -- Sort tools alphabetically
-  local sorted_tools = {}
-  for tool, _ in pairs(tools) do
-    table.insert(sorted_tools, tool)
-  end
-  table.sort(sorted_tools)
+  stdout:write("embedded files: " .. #files .. " total\n")
+  stdout:write("  - dotfiles (~/.zshrc, ~/.config/*, etc.)\n")
+  stdout:write("  - binaries (~/.local/bin/*)\n")
+  stdout:write("\nembedded tools:\n")
 
-  for _, tool in ipairs(sorted_tools) do
-    io.stdout:write("  - " .. tool .. "\n")
+  for _, tool in ipairs(tools) do
+    stdout:write("  - " .. tool .. "\n")
   end
+
+  return 0
 end
 
-local function cmd_version()
-  io.stdout:write("home built COMMIT_PLACEHOLDER\n")
+local function cmd_version(opts)
+  opts = opts or {}
+  local stdout = opts.stdout or io.stdout
+  stdout:write("home built COMMIT_PLACEHOLDER\n")
+  return 0
 end
 
-local function main(args)
-  local cmd = args[1] or "help"
+local function cmd_help(opts)
+  opts = opts or {}
+  local stderr = opts.stderr or io.stderr
+  stderr:write("usage: home <command> [args]\n")
+  stderr:write("\ncommands:\n")
+  stderr:write("  unpack [--force] <dest>  - extract dotfiles and binaries to destination\n")
+  stderr:write("  list                     - list embedded tools\n")
+  stderr:write("  version                  - show build version\n")
+  stderr:write("\noptions:\n")
+  stderr:write("  --force, -f              - overwrite existing files\n")
+  return 0
+end
 
-  if cmd == "unpack" then
-    -- Parse flags and arguments
-    local force = false
-    local dest
-    local i = 2
-    while i <= #args do
-      if args[i] == "--force" or args[i] == "-f" then
-        force = true
-      elseif not dest then
-        dest = args[i]
-      end
-      i = i + 1
-    end
-    cmd_unpack(dest, force)
-  elseif cmd == "list" then
-    cmd_list()
-  elseif cmd == "version" then
-    cmd_version()
+local function main(args, opts)
+  opts = opts or {}
+  local parsed = parse_args(args)
+
+  if parsed.cmd == "unpack" then
+    return cmd_unpack(parsed.dest, parsed.force, opts)
+  elseif parsed.cmd == "list" then
+    return cmd_list(opts)
+  elseif parsed.cmd == "version" then
+    return cmd_version(opts)
+  elseif parsed.cmd == "help" then
+    return cmd_help(opts)
   else
-    io.stderr:write("usage: home <command> [args]\n")
-    io.stderr:write("\ncommands:\n")
-    io.stderr:write("  unpack [--force] <dest>  - extract dotfiles and binaries to destination\n")
-    io.stderr:write("  list                     - list embedded tools\n")
-    io.stderr:write("  version                  - show build version\n")
-    io.stderr:write("\noptions:\n")
-    io.stderr:write("  --force, -f              - overwrite existing files\n")
-    os.exit(cmd == "help" and 0 or 1)
+    cmd_help(opts)
+    return 1
   end
 end
 
-main({ ... })
+local home = {
+  read_file = read_file,
+  copy_file = copy_file,
+  parse_manifest_line = parse_manifest_line,
+  parse_manifest = parse_manifest,
+  extract_tools = extract_tools,
+  parse_args = parse_args,
+  strip_home_prefix = strip_home_prefix,
+  is_directory_path = is_directory_path,
+  cmd_unpack = cmd_unpack,
+  cmd_list = cmd_list,
+  cmd_version = cmd_version,
+  cmd_help = cmd_help,
+  main = main,
+}
+
+-- Run main if executed directly (not required as module)
+if arg and arg[0] and arg[0]:match("/main%.lua$") then
+  os.exit(main({ ... }) or 0)
+end
+
+return home
