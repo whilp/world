@@ -2,8 +2,9 @@ local cosmo = require("cosmo")
 local unix = cosmo.unix
 
 local function find_claude_binary(paths)
-  for _, path in ipairs(paths) do
-    if unix.stat(path) then
+  for i = 1, #paths do
+    local path = paths[i]
+    if path and unix.stat(path) then
       return path
     end
   end
