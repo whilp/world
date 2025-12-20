@@ -1,4 +1,5 @@
-local cosmo = require('cosmo')
+local cosmo = require("cosmo")
+local unix = cosmo.unix
 
 local function get_executable_path()
   local path
@@ -20,12 +21,8 @@ local function get_executable_path()
     end
   end
 
-  -- Convert to absolute path if relative
-  if not path:match("^/") then
-    return cosmo.unix.realpath(path)
-  end
-
-  return path
+  -- Always normalize to absolute path
+  return unix.realpath(path)
 end
 
 local function mkdir_p(path)
@@ -34,13 +31,17 @@ end
 
 local function copy_file(src, dst)
   local src_f = io.open(src, "rb")
-  if not src_f then return false end
+  if not src_f then
+    return false
+  end
 
   local data = src_f:read("*a")
   src_f:close()
 
   local dst_f = io.open(dst, "wb")
-  if not dst_f then return false end
+  if not dst_f then
+    return false
+  end
 
   dst_f:write(data)
   dst_f:close()
@@ -96,7 +97,7 @@ local function cmd_unpack(dest)
   for _, file_path in ipairs(files) do
     -- file_path is like "home/.zshrc"
     local zip_file_path = "/zip/" .. file_path
-    local dest_file_path = dest .. "/" .. file_path:sub(6)  -- Remove "home/" prefix
+    local dest_file_path = dest .. "/" .. file_path:sub(6) -- Remove "home/" prefix
 
     -- Check if it's a directory (ends with /)
     if not file_path:match("/$") then
@@ -125,10 +126,27 @@ local function cmd_list()
   io.stdout:write("\nembedded tools:\n")
 
   local tools = {
-    "nvim", "gh", "delta", "rg", "duckdb", "tree-sitter",
-    "ast-grep", "biome", "comrak", "marksman", "ruff",
-    "shfmt", "sqruff", "stylua", "superhtml", "uv",
-    "luajit", "luarocks", "luarocks-admin", "djot", "lunamark"
+    "nvim",
+    "gh",
+    "delta",
+    "rg",
+    "duckdb",
+    "tree-sitter",
+    "ast-grep",
+    "biome",
+    "comrak",
+    "marksman",
+    "ruff",
+    "shfmt",
+    "sqruff",
+    "stylua",
+    "superhtml",
+    "uv",
+    "luajit",
+    "luarocks",
+    "luarocks-admin",
+    "djot",
+    "lunamark",
   }
 
   for _, tool in ipairs(tools) do
@@ -159,4 +177,4 @@ local function main(args)
   end
 end
 
-main({...})
+main({ ... })
