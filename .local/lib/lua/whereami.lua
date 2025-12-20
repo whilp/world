@@ -109,26 +109,12 @@ function M.get()
 
   -- Fall back to short hostname
   if identifier == '' then
-    local read_fd, write_fd = unix.pipe()
-    if read_fd then
-      local pid = unix.fork()
-      if pid == 0 then
-        unix.close(read_fd)
-        unix.dup(write_fd, 1)
-        unix.close(write_fd)
-        unix.execp('/bin/sh', {'-c', 'hostname -s 2>/dev/null || hostname'})
-        unix.exit(1)
-      elseif pid > 0 then
-        unix.close(write_fd)
-        local hostname = unix.read(read_fd, 1024)
-        unix.close(read_fd)
-        unix.wait()
-        if hostname then
-          identifier = hostname:match('([^.%s]+)')
-        end
-      else
-        unix.close(read_fd)
-        unix.close(write_fd)
+    local handle = io.popen('hostname -s 2>/dev/null || hostname', 'r')
+    if handle then
+      local hostname = handle:read('*l')
+      handle:close()
+      if hostname then
+        identifier = trim(hostname):match('([^.%s]+)')
       end
     end
   end
