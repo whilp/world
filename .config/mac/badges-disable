@@ -1,4 +1,4 @@
-#!/usr/bin/env luajit
+#!/usr/bin/env lua
 
 local posix = require('posix')
 local unistd = require('posix.unistd')

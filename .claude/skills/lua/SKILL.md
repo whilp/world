@@ -25,7 +25,7 @@ return M
 Executable script pattern (in `~/.local/bin/`):
 
 ``` lua
-#!/usr/bin/env luajit
+#!/usr/bin/env lua
 
 local function main()
   -- implementation
@@ -35,7 +35,7 @@ main()
 ```
 
 Key patterns:
-- Shebang: `#!/usr/bin/env luajit` for executable scripts only
+- Shebang: `#!/usr/bin/env lua` for executable scripts only
 - Module table: `local M = {}` ... `return M`
 - Function definitions: `M.name = function(...)` or `function M.name()` both acceptable
 - Local helper functions: `local function name(...)`

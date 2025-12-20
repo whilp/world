@@ -1,4 +1,4 @@
-#!/usr/bin/env luajit
+#!/usr/bin/env lua
 
 local script_dir = arg[0]:match("^(.*/)") or "./"
 package.path = script_dir .. "?.lua;" .. script_dir .. "../?.lua;" .. package.path

@@ -91,7 +91,7 @@ data.get(test_store, "01TEST...")
 
 ```bash
 cd .local/lib/lua/test/work
-luajit run.lua
+lua run.lua
 ```
 
 ### Phase 2: Audit nvim modules
@@ -232,7 +232,7 @@ Functions to update in `process.lua`:
 
 ```bash
 cd .local/lib/lua/test/work
-luajit run.lua
+lua run.lua
 ```
 
 All tests must pass.

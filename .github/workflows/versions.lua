@@ -1,4 +1,4 @@
-#!/usr/bin/env luajit
+#!/usr/bin/env lua
 
 return {
   luajit = "25a61a182166fec06f1a1a025eb8fabbb6cf483e",
