@@ -109,6 +109,12 @@ lua_bin := results/bin/lua
 lua: $(lua_bin)
 
 # patch lua.main.c, lfuncs.c, and copy headers to register redbean modules
+$(lua_patched): private .UNVEIL = \
+	r:$(lua_patch_dir) \
+	rwc:$(lua_cosmo_dir)/third_party/lua \
+	rwc:$(lua_cosmo_dir)/tool/net \
+	rwc:$(lua_build_dir) \
+	rw:/dev/null
 $(lua_patched): $(cosmopolitan_src) | $(lua_build_dir)
 	cp $(lua_patch_dir)/lpath.h $(lua_cosmo_dir)/third_party/lua/
 	cp $(lua_patch_dir)/lre.h $(lua_cosmo_dir)/third_party/lua/
@@ -125,11 +131,23 @@ cosmos_zip_bin := $(cosmos_dir)/bin/zip
 
 $(cosmos_zip_bin): $(cosmos_bin)
 
+$(lua_bin): private .UNVEIL = \
+	r:$(lua_build_dir) \
+	r:$(luaunit_lua_dir) \
+	r:$(cosmocc_dir) \
+	r:$(cosmos_dir) \
+	rwc:results/bin \
+	rw:/dev/null
 $(lua_bin): $(lua_all_objs) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua | results/bin
 	$(cosmocc_bin) -mcosmo $(lua_all_objs) -o $@
 	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
 
 # ensure all objects wait for patching and toolchain
+$(lua_all_objs): private .UNVEIL = \
+	r:$(lua_cosmo_dir) \
+	r:$(cosmocc_dir) \
+	rwc:$(lua_build_dir) \
+	rw:/dev/null
 $(lua_all_objs): | $(lua_patched) $(cosmocc_bin)
 
 # lua core objects (from third_party/lua)
