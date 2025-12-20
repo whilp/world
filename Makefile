@@ -26,6 +26,9 @@ test: lua
 test-lib: lua
 	HOME=$(CURDIR) LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;;" $(lua_bin) .local/lib/lua/test-runner.lua
 
+test-home: lua
+	cd home && LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;;" $(CURDIR)/$(lua_bin) test_main.lua
+
 clean:
 	rm -rf o results
 
