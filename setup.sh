@@ -48,8 +48,6 @@ main() {
   "${home_bin}" unpack --force "$HOME"
   rm -rf "$(dirname "${home_bin}")"
 
-  "$SETUP_DIR/luajit"
-
   export LUA_PATH="$SETUP_DIR/?.lua;$HOME/.local/bootstrap/lib/lua/?.lua;$HOME/.local/bootstrap/lib/lua/?/init.lua;;"
   lua -e "require('setup').main()"
 }
