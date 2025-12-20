@@ -19,7 +19,7 @@ include 3p/sqruff/cook.mk
 include 3p/stylua/cook.mk
 include 3p/superhtml/cook.mk
 include 3p/uv/cook.mk
-include test.mk
+include src/test.mk
 
 build: lua
 
