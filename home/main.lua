@@ -1,30 +1,6 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
 
-local function get_executable_path()
-  local path
-
-  -- Cosmopolitan sets arg[-1] to the actual executable path
-  if arg and arg[-1] then
-    path = arg[-1]
-  -- Try arg[0]
-  elseif arg and arg[0] then
-    path = arg[0]
-  -- Last resort: try /proc/self/exe
-  else
-    local f = io.open("/proc/self/exe", "r")
-    if f then
-      f:close()
-      path = "/proc/self/exe"
-    else
-      error("cannot determine executable path")
-    end
-  end
-
-  -- Always normalize to absolute path
-  return unix.realpath(path)
-end
-
 local function mkdir_p(path)
   return cosmo.unix.makedirs(path)
 end
@@ -123,36 +99,41 @@ local function cmd_unpack(dest)
 end
 
 local function cmd_list()
-  io.stdout:write("embedded files:\n")
+  -- Read manifest to get list of files
+  local manifest = io.open("/zip/MANIFEST.txt", "r")
+  if not manifest then
+    io.stderr:write("error: failed to read manifest\n")
+    os.exit(1)
+  end
+
+  -- Count files and collect unique tools from .local/bin
+  local file_count = 0
+  local tools = {}
+  for line in manifest:lines() do
+    if not line:match("^%s*#") and line:match("%S") then
+      file_count = file_count + 1
+      -- Extract tool name from .local/bin paths
+      local tool = line:match("home/%.local/bin/([^/]+)$")
+      if tool and not tools[tool] then
+        tools[tool] = true
+      end
+    end
+  end
+  manifest:close()
+
+  io.stdout:write("embedded files: " .. file_count .. " total\n")
   io.stdout:write("  - dotfiles (~/.zshrc, ~/.config/*, etc.)\n")
-  io.stdout:write("  - binaries (~/.local/bin/* -> ~/.local/share/home-binaries/*)\n")
+  io.stdout:write("  - binaries (~/.local/bin/*)\n")
   io.stdout:write("\nembedded tools:\n")
 
-  local tools = {
-    "nvim",
-    "gh",
-    "delta",
-    "rg",
-    "duckdb",
-    "tree-sitter",
-    "ast-grep",
-    "biome",
-    "comrak",
-    "marksman",
-    "ruff",
-    "shfmt",
-    "sqruff",
-    "stylua",
-    "superhtml",
-    "uv",
-    "luajit",
-    "luarocks",
-    "luarocks-admin",
-    "djot",
-    "lunamark",
-  }
+  -- Sort tools alphabetically
+  local sorted_tools = {}
+  for tool, _ in pairs(tools) do
+    table.insert(sorted_tools, tool)
+  end
+  table.sort(sorted_tools)
 
-  for _, tool in ipairs(tools) do
+  for _, tool in ipairs(sorted_tools) do
     io.stdout:write("  - " .. tool .. "\n")
   end
 end
