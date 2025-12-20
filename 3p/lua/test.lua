@@ -1,5 +1,5 @@
 #!/usr/bin/env lua
-local script_dir = arg[0]:match("(.*/)")
+local script_dir = arg[0]:match("(.*/)")  or ""
 
 lu = require('luaunit')
 
