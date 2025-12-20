@@ -3,7 +3,7 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
 
-local script_dir = cosmo.path.dirname(cosmo.path.dirname(debug.getinfo(1, "S").source:sub(2)))
+local script_dir = cosmo.path.dirname(cosmo.path.dirname(cosmo.path.dirname(debug.getinfo(1, "S").source:sub(2))))
 package.path = script_dir .. "/src/?.lua;" .. package.path
 
 local claude = require("claude.main")
