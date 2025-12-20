@@ -7,7 +7,7 @@ lua_build_dir := $(o)/lua
 lua_patch_dir := 3p/lua
 
 # compiler flags (uses $(zip) and $(cosmocc_bin) from 3p/cook.mk)
-lua_cflags := -mcosmo -include stdbool.h -I$(lua_cosmo_dir)
+lua_cflags := -mcosmo -include stdbool.h -I$(lua_cosmo_dir) -MMD -MP
 
 # patching marker
 lua_patched := $(lua_build_dir)/.patched
@@ -108,7 +108,8 @@ lua_bin := results/bin/lua
 # target for lua fat binary
 lua: $(lua_bin)
 
-.NOTPARALLEL: $(lua_bin)
+# include generated dependency files
+-include $(lua_all_objs:.o=.d)
 
 # patch lua.main.c, lfuncs.c, and copy headers to register redbean modules
 $(lua_patched): $(cosmopolitan_src) | $(lua_build_dir)
@@ -135,36 +136,36 @@ $(lua_bin): $(lua_all_objs) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua | r
 $(lua_all_objs): | $(lua_patched) $(cosmocc_bin)
 
 # lua core objects (from third_party/lua)
-$(lua_build_dir)/lua/%.o: $(lua_build_dir)/lua
-	$(cosmocc_bin) $(lua_cflags) -c $(lua_cosmo_dir)/third_party/lua/$*.c -o $@
+$(lua_build_dir)/lua/%.o: $(lua_cosmo_dir)/third_party/lua/%.c | $(lua_build_dir)/lua
+	$(cosmocc_bin) $(lua_cflags) -c $< -o $@
 
 # lua extension objects from tool/net (generic rule)
-$(lua_build_dir)/net/%.o: $(lua_build_dir)/net
-	$(cosmocc_bin) $(lua_cflags) -c $(lua_cosmo_dir)/tool/net/$*.c -o $@
+$(lua_build_dir)/net/%.o: $(lua_cosmo_dir)/tool/net/%.c | $(lua_build_dir)/net
+	$(cosmocc_bin) $(lua_cflags) -c $< -o $@
 
 # lfuncs.c needs LFUNCS_LITE to exclude functions with heavy dependencies
-$(lua_build_dir)/net/lfuncs.o: $(lua_build_dir)/net
-	$(cosmocc_bin) $(lua_cflags) -DLFUNCS_LITE -c $(lua_cosmo_dir)/tool/net/lfuncs.c -o $@
+$(lua_build_dir)/net/lfuncs.o: $(lua_cosmo_dir)/tool/net/lfuncs.c | $(lua_build_dir)/net
+	$(cosmocc_bin) $(lua_cflags) -DLFUNCS_LITE -c $< -o $@
 
 # linenoise objects
-$(lua_build_dir)/linenoise/%.o: $(lua_build_dir)/linenoise
-	$(cosmocc_bin) $(lua_cflags) -c $(lua_cosmo_dir)/third_party/linenoise/$*.c -o $@
+$(lua_build_dir)/linenoise/%.o: $(lua_cosmo_dir)/third_party/linenoise/%.c | $(lua_build_dir)/linenoise
+	$(cosmocc_bin) $(lua_cflags) -c $< -o $@
 
 # argon2 objects
-$(lua_build_dir)/argon2/%.o: $(lua_build_dir)/argon2
-	$(cosmocc_bin) $(lua_cflags) -c $(lua_cosmo_dir)/third_party/argon2/$*.c -o $@
+$(lua_build_dir)/argon2/%.o: $(lua_cosmo_dir)/third_party/argon2/%.c | $(lua_build_dir)/argon2
+	$(cosmocc_bin) $(lua_cflags) -c $< -o $@
 
 # regex objects
-$(lua_build_dir)/regex/%.o: $(lua_build_dir)/regex
-	$(cosmocc_bin) $(lua_cflags) -c $(lua_cosmo_dir)/third_party/regex/$*.c -o $@
+$(lua_build_dir)/regex/%.o: $(lua_cosmo_dir)/third_party/regex/%.c | $(lua_build_dir)/regex
+	$(cosmocc_bin) $(lua_cflags) -c $< -o $@
 
 # sqlite3 objects
-$(lua_build_dir)/sqlite3/%.o: $(lua_build_dir)/sqlite3
-	$(cosmocc_bin) $(lua_cflags) $(lua_sqlite_flags) -c $(lua_cosmo_dir)/third_party/sqlite3/$*.c -o $@
+$(lua_build_dir)/sqlite3/%.o: $(lua_cosmo_dir)/third_party/sqlite3/%.c | $(lua_build_dir)/sqlite3
+	$(cosmocc_bin) $(lua_cflags) $(lua_sqlite_flags) -c $< -o $@
 
 # cosmo module objects (lfuncs_register.c is copied to third_party/lua)
-$(lua_build_dir)/cosmo/%.o: $(lua_build_dir)/cosmo
-	$(cosmocc_bin) $(lua_cflags) -c $(lua_cosmo_dir)/third_party/lua/$*.c -o $@
+$(lua_build_dir)/cosmo/%.o: $(lua_cosmo_dir)/third_party/lua/%.c | $(lua_build_dir)/cosmo
+	$(cosmocc_bin) $(lua_cflags) -c $< -o $@
 
 # directory creation
 $(lua_build_dir) $(lua_build_dir)/lua $(lua_build_dir)/net $(lua_build_dir)/linenoise $(lua_build_dir)/argon2 $(lua_build_dir)/regex $(lua_build_dir)/sqlite3 $(lua_build_dir)/cosmo:
