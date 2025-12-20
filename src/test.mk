@@ -33,14 +33,14 @@ test-work: lua
 		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) run.lua
 
 test-home: private .UNVEIL = \
-	r:home \
+	r:src/home \
 	r:.local/lib/lua \
 	rx:$(lua_bin) \
 	r:$(test_runner) \
-	rwc:home/o \
+	rwc:src/home/o \
 	rw:/dev/null
 test-home: lua
-	cd home && LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;;" \
+	cd src/home && LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;;" \
 		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test_main.lua
 
 test-lib-daemonize: private .UNVEIL = \

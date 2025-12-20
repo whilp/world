@@ -19,14 +19,14 @@ include 3p/sqruff/cook.mk
 include 3p/stylua/cook.mk
 include 3p/superhtml/cook.mk
 include 3p/uv/cook.mk
-include test.mk
+include src/test.mk
 
 build: lua
 
 clean:
 	rm -rf o results
 
-home_exclude_pattern = ^(3p/|o/|results/|Makefile|home/|\.git)
+home_exclude_pattern = ^(3p/|o/|results/|Makefile|src/home/|\.git)
 
 results/dotfiles.zip: private .UNVEIL = \
 	r:$(CURDIR) \
@@ -130,17 +130,17 @@ define build_home
 	@echo "Creating home binary..."
 	@cp $(lua_bin) $(1)
 	@cd results/home-$(2) && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$(1) -@
-	@cd home && $(cosmos_zip_bin) -qr $(CURDIR)/$(1) main.lua .args
+	@cd src/home && $(cosmos_zip_bin) -qr $(CURDIR)/$(1) main.lua .args
 	@rm -rf results/home-$(2)
 endef
 
-results/bin/home-darwin-arm64: $(lua_bin) results/dotfiles.zip results/binaries-darwin-arm64.zip home/main.lua home/.args | results/bin
+results/bin/home-darwin-arm64: $(lua_bin) results/dotfiles.zip results/binaries-darwin-arm64.zip src/home/main.lua src/home/.args | results/bin
 	$(call build_home,$@,darwin-arm64)
 
-results/bin/home-linux-arm64: $(lua_bin) results/dotfiles.zip results/binaries-linux-arm64.zip home/main.lua home/.args | results/bin
+results/bin/home-linux-arm64: $(lua_bin) results/dotfiles.zip results/binaries-linux-arm64.zip src/home/main.lua src/home/.args | results/bin
 	$(call build_home,$@,linux-arm64)
 
-results/bin/home-linux-x86_64: $(lua_bin) results/dotfiles.zip results/binaries-linux-x86_64.zip home/main.lua home/.args | results/bin
+results/bin/home-linux-x86_64: $(lua_bin) results/dotfiles.zip results/binaries-linux-x86_64.zip src/home/main.lua src/home/.args | results/bin
 	$(call build_home,$@,linux-x86_64)
 
 results/bin:
