@@ -50,6 +50,9 @@ jobs:
       - name: Build home binary
         run: make home -j$(nproc)
 
+      - name: Run tests
+        run: make test-all -j$(nproc)
+
       - name: Upload artifacts
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
         with:
