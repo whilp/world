@@ -18,16 +18,9 @@ include 3p/sqruff/cook.mk
 include 3p/stylua/cook.mk
 include 3p/superhtml/cook.mk
 include 3p/uv/cook.mk
+include test.mk
 
 build: lua
-test: lua
-	$(lua_bin) 3p/lua/test.lua
-
-test-lib: lua
-	HOME=$(CURDIR) LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;;" $(lua_bin) .local/lib/lua/test-runner.lua
-
-test-home: lua
-	cd home && LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;;" $(CURDIR)/$(lua_bin) test_main.lua
 
 clean:
 	rm -rf o results
@@ -132,4 +125,4 @@ results:
 
 home: results/bin/home-darwin-arm64 results/bin/home-linux-arm64 results/bin/home-linux-x86_64
 
-.PHONY: build test clean home
+.PHONY: build clean home
