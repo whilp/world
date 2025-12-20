@@ -84,14 +84,7 @@ M.acquire_lock = function(path)
     end
   end
 
-  local lock = {
-    l_type = unix.F_WRLCK,
-    l_whence = unix.SEEK_SET,
-    l_start = 0,
-    l_len = 0,
-  }
-
-  local ok, err = unix.fcntl(fd, unix.F_SETLK, lock)
+  local ok, err = unix.fcntl(fd, unix.F_SETLK, unix.F_WRLCK, unix.SEEK_SET, 0, 0)
   if not ok then
     unix.close(fd)
     return nil, "failed to acquire lock"
@@ -101,12 +94,6 @@ M.acquire_lock = function(path)
   unix.lseek(fd, 0, 0)
   local pid_str = tostring(unix.getpid()) .. "\n"
   unix.write(fd, pid_str)
-
-  local flags = unix.fcntl(fd, unix.F_GETFD)
-  if flags then
-    local bit = require("bit")
-    unix.fcntl(fd, unix.F_SETFD, bit.band(flags, bit.bnot(unix.FD_CLOEXEC)))
-  end
 
   return fd
 end
@@ -151,19 +138,6 @@ M.redirect_output = function(stdout_path, stderr_path, append)
         unix.close(fd)
       end
     end
-  end
-
-  return true
-end
-
-M.setenv = function(name, value)
-  if not name or name == "" then
-    return nil, "environment variable name required"
-  end
-
-  local ok = unix.setenv(name, value or "", 1)
-  if not ok then
-    return nil, "setenv failed"
   end
 
   return true

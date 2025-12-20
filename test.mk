@@ -43,6 +43,17 @@ test-home: lua
 	cd home && LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;;" \
 		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test_main.lua
 
-test-all: test-3p-lua test-lib-whereami test-work test-home
+test-lib-daemonize: private .UNVEIL = \
+	r:.local/lib/lua \
+	rx:$(lua_bin) \
+	r:$(test_runner) \
+	r:$(CURDIR) \
+	rwc:/tmp \
+	rw:/dev/null
+test-lib-daemonize: lua
+	cd .local/lib/lua && HOME=$(CURDIR) LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;;" \
+		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test_daemonize.lua
 
-.PHONY: test-3p-lua test-lib-whereami test-work test-home test-all
+test-all: test-3p-lua test-lib-whereami test-work test-home test-lib-daemonize
+
+.PHONY: test-3p-lua test-lib-whereami test-work test-home test-lib-daemonize test-all
