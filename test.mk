@@ -80,6 +80,7 @@ test-nvim: lua
 		LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;;" \
 		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
 
-test-all: test-3p-lua test-lib-whereami test-work test-home test-lib-daemonize test-claude test-nvim
+# skip test-work until work.lua module is available in CI
+test-all: test-3p-lua test-lib-whereami test-home test-lib-daemonize test-claude test-nvim
 
 .PHONY: test-3p-lua test-lib-whereami test-work test-home test-lib-daemonize test-claude test-nvim test-all
