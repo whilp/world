@@ -30,7 +30,7 @@ home_exclude_pattern = ^(3p/|o/|results/|Makefile|home/|\.git)
 
 results/dotfiles.zip: | results
 	git ls-files -z | grep -zZvE '$(home_exclude_pattern)' | \
-		xargs -0 $(cosmos_zip_bin) -q $@
+		xargs -0 $(cosmos_zip_bin) -q -r $@
 
 # Aggregate all binary extraction markers
 all_binaries := \
@@ -84,10 +84,10 @@ define build_home
 				echo "  Installing $$tool..."; \
 				if [ -d "$$tool/$(2)/bin" ]; then \
 					exe=$$(find "$$tool/$(2)/bin" -maxdepth 1 -type f -name "$$tool" 2>/dev/null | head -1); \
-					if [ -n "$$exe" ]; then cp "$$exe" $(CURDIR)/results/home-$(2)/home/.local/bin/$$tool; fi; \
+					if [ -n "$$exe" ]; then cp -p "$$exe" $(CURDIR)/results/home-$(2)/home/.local/bin/$$tool; fi; \
 				else \
 					exe=$$(find "$$tool/$(2)" -maxdepth 1 -type f -name "$$tool" 2>/dev/null | head -1); \
-					if [ -n "$$exe" ]; then cp "$$exe" $(CURDIR)/results/home-$(2)/home/.local/bin/$$tool; fi; \
+					if [ -n "$$exe" ]; then cp -p "$$exe" $(CURDIR)/results/home-$(2)/home/.local/bin/$$tool; fi; \
 				fi; \
 				for dir in lib share libexec; do \
 					if [ -d "$$tool/$(2)/$$dir" ]; then \
@@ -98,10 +98,10 @@ define build_home
 			fi; \
 		done
 	@rm -rf results/home-$(2)/temp-binaries
-	@cp $(lua_bin) results/home-$(2)/home/.local/bin/lua
-	@cp o/3p/cosmos/bin/unzip results/home-$(2)/home/.local/bin/unzip
+	@cp -p $(lua_bin) results/home-$(2)/home/.local/bin/lua
+	@cp -p o/3p/cosmos/bin/unzip results/home-$(2)/home/.local/bin/unzip
 	@echo "Generating manifest..."
-	@cd results/home-$(2) && find home -type f -o -type l | sort > MANIFEST.txt
+	@cd results/home-$(2) && find home \( -type f -o -type l \) -exec sh -c 'printf "%s %s\n" "{}" $$(stat -c "%a" "{}" 2>/dev/null || stat -f "%Lp" "{}")' \; | sort > MANIFEST.txt
 	@echo "Creating home binary..."
 	@cp $(lua_bin) $(1)
 	@cd results/home-$(2) && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$(1) -@

@@ -1,23 +1,39 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
 
-local function copy_file(src, dst)
+-- File open flags
+local O_WRONLY = 1
+local O_CREAT = 64    -- 0o100
+local O_EXCL = 128    -- 0o200
+
+-- Atomic file copy with permissions
+-- Creates file with restrictive perms, writes data, then sets final mode
+local function copy_file(src, dst, mode)
+  -- Read source
   local src_f = io.open(src, "rb")
   if not src_f then
     return false
   end
-
   local data = src_f:read("*a")
   src_f:close()
 
-  local dst_f = io.open(dst, "wb")
-  if not dst_f then
+  -- Create destination atomically with restrictive permissions
+  local fd = unix.open(dst, O_WRONLY | O_CREAT | O_EXCL, 0600)
+  if not fd or fd < 0 then
     return false
   end
 
-  dst_f:write(data)
-  dst_f:close()
-  return true
+  -- Write data
+  local bytes_written = unix.write(fd, data)
+  local success = bytes_written == #data
+
+  -- Set final permissions if specified and write succeeded
+  if mode and success then
+    unix.chmod(dst, mode)
+  end
+
+  unix.close(fd)
+  return success
 end
 
 local function cmd_unpack(dest)
@@ -52,7 +68,7 @@ local function cmd_unpack(dest)
     -- For now, we'll use a simpler approach: just copy known file paths
   end
 
-  -- Read manifest to get list of files
+  -- Read manifest to get list of files with modes
   local manifest = io.open("/zip/MANIFEST.txt", "r")
   if not manifest then
     io.stderr:write("error: failed to read manifest\n")
@@ -63,13 +79,23 @@ local function cmd_unpack(dest)
   for line in manifest:lines() do
     -- Skip comments and empty lines
     if not line:match("^%s*#") and line:match("%S") then
-      table.insert(files, line)
+      -- Parse "filepath mode" format
+      local file_path, mode_str = line:match("^(.-)%s+(%x+)$")
+      if file_path and mode_str then
+        local mode = tonumber(mode_str, 8) -- Parse octal mode
+        table.insert(files, {path = file_path, mode = mode})
+      else
+        -- Fallback for old format (no mode)
+        table.insert(files, {path = line, mode = nil})
+      end
     end
   end
   manifest:close()
 
   -- Copy each file from /zip/ to destination
-  for _, file_path in ipairs(files) do
+  for _, file_info in ipairs(files) do
+    local file_path = file_info.path
+    local mode = file_info.mode
     -- file_path is like "home/.zshrc"
     local zip_file_path = "/zip/" .. file_path
     local dest_file_path = dest .. "/" .. file_path:sub(6) -- Remove "home/" prefix
@@ -80,8 +106,8 @@ local function cmd_unpack(dest)
       local parent_dir = cosmo.path.dirname(dest_file_path)
       unix.makedirs(parent_dir)
 
-      -- Copy file
-      if not copy_file(zip_file_path, dest_file_path) then
+      -- Copy file atomically with permissions
+      if not copy_file(zip_file_path, dest_file_path, mode) then
         io.stderr:write("warning: failed to copy " .. file_path .. "\n")
       end
     else
@@ -108,8 +134,10 @@ local function cmd_list()
   for line in manifest:lines() do
     if not line:match("^%s*#") and line:match("%S") then
       file_count = file_count + 1
+      -- Parse "filepath mode" format, extract filepath
+      local file_path = line:match("^(.-)%s+%x+$") or line
       -- Extract tool name from .local/bin paths
-      local tool = line:match("home/%.local/bin/([^/]+)$")
+      local tool = file_path:match("home/%.local/bin/([^/]+)$")
       if tool and not tools[tool] then
         tools[tool] = true
       end
