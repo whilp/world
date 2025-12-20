@@ -34,15 +34,21 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: home
-          path: results/bin/home
+          name: home-binaries
+          path: results/bin/home-*
 
   test:
     runs-on: ${{ matrix.os }}
     needs: build
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, ubuntu-24.04-arm]
+        include:
+          - os: ubuntu-latest
+            binary: home-linux-x86_64
+          - os: macos-latest
+            binary: home-darwin-arm64
+          - os: ubuntu-24.04-arm
+            binary: home-linux-arm64
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -50,24 +56,24 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: home
+          name: home-binaries
           path: results/bin/
 
       - name: Make binary executable
-        run: chmod +x results/bin/home
+        run: chmod +x results/bin/${{ matrix.binary }}
 
       - name: Test help command
-        run: results/bin/home || test $? -eq 1
+        run: results/bin/${{ matrix.binary }} || test $? -eq 1
 
       - name: Test unpack outputs zip
         run: |
-          results/bin/home unpack > /tmp/test.zip
+          results/bin/${{ matrix.binary }} unpack > /tmp/test.zip
           unzip -l /tmp/test.zip | head -20
 
       - name: Test extraction
         run: |
           mkdir -p /tmp/test-home
-          results/bin/home unpack > /tmp/dotfiles.zip
+          results/bin/${{ matrix.binary }} unpack > /tmp/dotfiles.zip
           unzip -q /tmp/dotfiles.zip -d /tmp/test-home
           test -f /tmp/test-home/.zshenv
 
@@ -81,7 +87,7 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: home
+          name: home-binaries
           path: results/bin/
 
       - name: Get version
@@ -92,7 +98,7 @@ jobs:
       - name: Create checksums
         run: |
           cd results/bin
-          sha256sum home > SHA256SUMS
+          sha256sum home-* > SHA256SUMS
           cat SHA256SUMS
 
       - name: Create release
@@ -101,5 +107,7 @@ jobs:
           tag_name: ${{ steps.version.outputs.tag }}
           name: home ${{ steps.version.outputs.tag }}
           files: |
-            results/bin/home
+            results/bin/home-darwin-arm64
+            results/bin/home-linux-arm64
+            results/bin/home-linux-x86_64
             results/bin/SHA256SUMS
