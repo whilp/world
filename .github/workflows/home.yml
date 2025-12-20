@@ -65,17 +65,12 @@ jobs:
       - name: Test help command
         run: results/bin/${{ matrix.binary }} || test $? -eq 1
 
-      - name: Test unpack outputs zip
-        run: |
-          results/bin/${{ matrix.binary }} unpack > /tmp/test.zip
-          unzip -l /tmp/test.zip | head -20
-
       - name: Test extraction
         run: |
           mkdir -p /tmp/test-home
-          results/bin/${{ matrix.binary }} unpack > /tmp/dotfiles.zip
-          unzip -q /tmp/dotfiles.zip -d /tmp/test-home
+          results/bin/${{ matrix.binary }} unpack /tmp/test-home
           test -f /tmp/test-home/.zshenv
+          test -f /tmp/test-home/.local/bin/nvim
 
   release:
     if: github.ref == 'refs/heads/main'

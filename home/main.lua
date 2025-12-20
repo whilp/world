@@ -1,39 +1,123 @@
 local function get_executable_path()
+  local path
+
   -- Cosmopolitan sets arg[-1] to the actual executable path
   if arg and arg[-1] then
-    return arg[-1]
-  end
-
+    path = arg[-1]
   -- Try arg[0]
-  if arg and arg[0] then
-    return arg[0]
-  end
-
+  elseif arg and arg[0] then
+    path = arg[0]
   -- Last resort: try /proc/self/exe (though unzip may not work with symlinks)
-  local f = io.open("/proc/self/exe", "r")
-  if f then
-    f:close()
-    return "/proc/self/exe"
+  else
+    local f = io.open("/proc/self/exe", "r")
+    if f then
+      f:close()
+      path = "/proc/self/exe"
+    else
+      error("cannot determine executable path")
+    end
   end
 
-  error("cannot determine executable path")
+  -- Convert to absolute path if relative
+  if not path:match("^/") then
+    local handle = io.popen("realpath '" .. path .. "'")
+    local result = handle:read("*a"):gsub("%s+$", "")
+    handle:close()
+    return result
+  end
+
+  return path
+end
+
+local function mkdir_p(path)
+  local handle = io.popen("mkdir -p '" .. path .. "' 2>&1")
+  local result = handle:read("*a")
+  local success = handle:close()
+  return success
+end
+
+local function copy_file(src, dst)
+  local src_f = io.open(src, "rb")
+  if not src_f then return false end
+
+  local data = src_f:read("*a")
+  src_f:close()
+
+  local dst_f = io.open(dst, "wb")
+  if not dst_f then return false end
+
+  dst_f:write(data)
+  dst_f:close()
+  return true
 end
 
 local function cmd_unpack(dest)
-  dest = dest or os.getenv("HOME")
-  if not dest or dest == "" then
-    io.stderr:write("error: destination not specified and HOME not set\n")
+  if not dest then
+    io.stderr:write("error: destination path required\n")
+    io.stderr:write("usage: home unpack <destination>\n")
     os.exit(1)
   end
 
-  local exe_path = get_executable_path()
   io.stderr:write("extracting to " .. dest .. "...\n")
 
-  local cmd = string.format("unzip -q -o '%s' -d '%s'", exe_path, dest)
-  local ret = os.execute(cmd)
-  if ret ~= 0 and ret ~= true then
-    io.stderr:write("error: extraction failed\n")
+  -- Create destination directory
+  if not mkdir_p(dest) then
+    io.stderr:write("error: failed to create destination directory\n")
     os.exit(1)
+  end
+
+  -- Recursively copy files from /zip/home/ to destination
+  local function copy_from_zip(zip_path, dest_path, prefix)
+    -- Try to open the path as a file first
+    local f = io.open(zip_path, "rb")
+    if f then
+      f:close()
+      -- It's a file, copy it
+      if not copy_file(zip_path, dest_path) then
+        io.stderr:write("warning: failed to copy " .. zip_path .. "\n")
+      end
+      return
+    end
+
+    -- It's a directory, list its contents using find via zip listing
+    -- For now, we'll use a simpler approach: just copy known file paths
+  end
+
+  -- Use io.popen to get list of files from zip
+  local handle = io.popen("unzip -Z1 '" .. get_executable_path() .. "' 2>/dev/null | grep '^home/'")
+  if not handle then
+    io.stderr:write("error: failed to list zip contents\n")
+    os.exit(1)
+  end
+
+  local files = {}
+  for line in handle:lines() do
+    table.insert(files, line)
+  end
+  handle:close()
+
+  -- Copy each file from /zip/ to destination
+  for _, file_path in ipairs(files) do
+    -- file_path is like "home/.zshrc"
+    local zip_file_path = "/zip/" .. file_path
+    local dest_file_path = dest .. "/" .. file_path:sub(6)  -- Remove "home/" prefix
+
+    -- Check if it's a directory (ends with /)
+    if not file_path:match("/$") then
+      -- Create parent directory
+      local parent_dir = dest_file_path:match("(.*/)")
+      if parent_dir then
+        mkdir_p(parent_dir)
+      end
+
+      -- Copy file
+      if not copy_file(zip_file_path, dest_file_path) then
+        io.stderr:write("warning: failed to copy " .. file_path .. "\n")
+      end
+    else
+      -- Create directory
+      mkdir_p(dest .. "/" .. file_path:sub(6))
+    end
   end
 
   io.stderr:write("extraction complete\n")
@@ -74,7 +158,7 @@ local function main(args)
   else
     io.stderr:write("usage: home <command> [args]\n")
     io.stderr:write("\ncommands:\n")
-    io.stderr:write("  unpack [dest]  - extract dotfiles and binaries (default: $HOME)\n")
+    io.stderr:write("  unpack <dest>  - extract dotfiles and binaries to destination\n")
     io.stderr:write("  list           - list embedded tools\n")
     io.stderr:write("  version        - show build version\n")
     os.exit(cmd == "help" and 0 or 1)

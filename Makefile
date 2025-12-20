@@ -99,6 +99,7 @@ define build_home
 		done
 	@rm -rf results/home-$(2)/temp-binaries
 	@cp $(lua_bin) results/home-$(2)/home/.local/bin/lua
+	@cp o/3p/cosmos/bin/unzip results/home-$(2)/home/.local/bin/unzip
 	@echo "Creating home binary..."
 	@cp $(lua_bin) $(1)
 	@cd results/home-$(2) && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$(1) -@
