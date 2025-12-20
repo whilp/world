@@ -18,3 +18,5 @@ export AR := $(dir $(cosmocc_bin))cosmocc-ar
 export RANLIB := $(dir $(cosmocc_bin))cosmocc-ranlib
 
 make := $(make_bin) COSMOCC=$(cosmocc_dir)
+
+.STRICT = 1
