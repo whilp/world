@@ -1,59 +1,15 @@
 #!/usr/bin/env lua
 
-local unistd = require("posix.unistd")
-local glob = require("posix.glob")
-local stat = require("posix.sys.stat")
-local stdlib = require("posix.stdlib")
+local cosmo = require("cosmo")
+local unix = cosmo.unix
 
-local HOME = os.getenv("HOME")
+local script_dir = cosmo.path.dirname(cosmo.path.dirname(debug.getinfo(1, "S").source:sub(2)))
+package.path = script_dir .. "/src/?.lua;" .. package.path
 
-local claude_patterns = {
-  "/*/deploy/claude-wrapper-hosts/current/bin/claude",
-  "/usr/local/bin/claude",
-  HOME .. "/.local/share/shimlink/bin/claude",
-}
+local claude = require("claude.main")
 
-local claude_bin = nil
-for _, pattern in ipairs(claude_patterns) do
-  local matches = glob.glob(pattern, 0)
-  if matches and #matches > 0 then
-    claude_bin = matches[1]
-    break
-  end
+if not pcall(debug.getlocal, 4, 1) then
+  claude.main(arg)
 end
 
-if not claude_bin then
-  io.stderr:write("claude wrapper: no claude binary found in configured paths\n")
-  os.exit(1)
-end
-
-local append_prompts = {}
-local env_append = os.getenv("CLAUDE_APPEND_SYSTEM_PROMPT")
-if env_append then
-  table.insert(append_prompts, env_append)
-end
-
-local argv = {
-  "--dangerously-skip-permissions",
-  "--strict-mcp-config",
-}
-
-if #append_prompts > 0 then
-  table.insert(argv, "--append-system-prompt")
-  table.insert(argv, table.concat(append_prompts, "\n\n"))
-end
-
-local extras_mcp = HOME .. "/extras/mcp.json"
-if stat.stat(extras_mcp) then
-  table.insert(argv, "--mcp-config")
-  table.insert(argv, extras_mcp)
-end
-
-for i = 1, #arg do
-  table.insert(argv, arg[i])
-end
-
-local result, err = unistd.execp(claude_bin, argv)
-
-io.stderr:write("claude wrapper: failed to exec claude: " .. tostring(err) .. "\n")
-os.exit(1)
+return claude
