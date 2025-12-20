@@ -35,7 +35,7 @@ end
 
 -- Helper: remove directory recursively
 local function remove_dir(path)
-  os.execute("rm -rf " .. path)
+  os.execute("/usr/bin/rm -rf " .. path)
 end
 
 -- Helper: write file
