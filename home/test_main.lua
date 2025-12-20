@@ -1,6 +1,3 @@
-package.path = os.getenv("HOME") .. "/.local/lib/lua/?.lua;" .. package.path
-package.path = "./?.lua;" .. package.path
-
 lu = require("luaunit")
 
 -- cosmo may not be available in all environments

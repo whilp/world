@@ -315,7 +315,7 @@ local home = {
 }
 
 -- Run main if executed directly (not required as module)
-if arg and arg[0] and arg[0]:match("main%.lua$") then
+if arg and arg[0] and arg[0]:match("/main%.lua$") then
   os.exit(main({ ... }) or 0)
 end
 
