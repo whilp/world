@@ -1,11 +1,8 @@
-local ffi = require("ffi")
+local cosmo = require("cosmo")
+local unix = cosmo.unix
 local stat = require("posix.sys.stat")
 local dirent = require("posix.dirent")
 local unistd = require("posix.unistd")
-
-ffi.cdef([[
-  int unlink(const char *pathname);
-]])
 
 local M = {}
 
@@ -106,8 +103,8 @@ function M.rm_rf(path)
         return nil, "failed to remove directory: " .. tostring(rmdir_err)
       end
     else
-      local result = ffi.C.unlink(p)
-      if result ~= 0 then
+      local result = unix.unlink(p)
+      if not result then
         return nil, "failed to unlink file: " .. p
       end
     end

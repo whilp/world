@@ -1,26 +1,8 @@
 -- Module to get hostname or box-name/host_env identifier
 local M = {}
 
-local ffi = require('ffi')
-
-ffi.cdef[[
-  typedef struct DIR DIR;
-  typedef struct dirent {
-    uint64_t d_ino;
-    int64_t d_off;
-    unsigned short d_reclen;
-    unsigned char d_type;
-    char d_name[256];
-  } dirent;
-
-  DIR *opendir(const char *name);
-  dirent *readdir(DIR *dirp);
-  int closedir(DIR *dirp);
-  int access(const char *pathname, int mode);
-]]
-
-local C = ffi.C
-local F_OK = 0
+local cosmo = require('cosmo')
+local unix = cosmo.unix
 
 -- Function to trim whitespace
 local function trim(s)
@@ -40,7 +22,7 @@ end
 
 -- Function to check if file exists
 local function file_exists(path)
-  return C.access(path, F_OK) == 0
+  return unix.access(path, unix.F_OK)
 end
 
 -- Cache for conf directory path
@@ -52,30 +34,29 @@ local function find_conf_dir()
     return cached_conf_dir
   end
 
-  local dir = C.opendir('/')
-  if dir == nil then
+  local dir = unix.opendir('/')
+  if not dir then
     return nil
   end
 
   while true do
-    local entry = C.readdir(dir)
-    if entry == nil then
+    local name = dir:read()
+    if not name then
       break
     end
 
-    local name = ffi.string(entry.d_name)
     if name ~= '.' and name ~= '..' then
       local conf_path = '/' .. name .. '/conf'
       -- Check if conf directory exists by checking for box-name file
       if file_exists(conf_path .. '/box-name') then
-        C.closedir(dir)
+        dir:close()
         cached_conf_dir = conf_path
         return conf_path
       end
     end
   end
 
-  C.closedir(dir)
+  dir:close()
   cached_conf_dir = false  -- Cache negative result
   return nil
 end

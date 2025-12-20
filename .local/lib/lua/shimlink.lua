@@ -1,18 +1,13 @@
 local platform = require("platform")
 local file = require("file")
-local ffi = require("ffi")
+local cosmo = require("cosmo")
+local unix = cosmo.unix
 local posix = require("posix")
 local unistd = require("posix.unistd")
 local stat = require("posix.sys.stat")
 local dirent = require("posix.dirent")
 local openssl = require("openssl")
 local digest = require("openssl.digest")
-
-ffi.cdef([[
-  typedef struct { long tv_sec; long tv_usec; } timeval;
-  int symlink(const char *target, const char *linkpath);
-  int unlink(const char *pathname);
-]])
 
 local M = {}
 
@@ -193,7 +188,7 @@ function M.create_symlink_atomic(target, link_path)
   local temp_link = string.format("%s.tmp.%d.%d", link_path, os.time(), unistd.getpid())
 
   local cleanup = function()
-    ffi.C.unlink(temp_link)
+    unix.unlink(temp_link)
   end
 
   local ok, err = pcall(function()
@@ -201,8 +196,8 @@ function M.create_symlink_atomic(target, link_path)
 
     cleanup()
 
-    local result = ffi.C.symlink(target, temp_link)
-    if result ~= 0 then
+    local result = unix.symlink(target, temp_link)
+    if not result then
       error(string.format("failed to create temporary symlink %s -> %s", temp_link, target))
     end
 
@@ -233,11 +228,11 @@ function M.create_symlink(bin_dir, src_path, dest_path, executable_name)
   file.mkdir_p(file.dirname(dest))
 
   if file.exists(dest) then
-    ffi.C.unlink(dest)
+    unix.unlink(dest)
   end
 
-  local result = ffi.C.symlink(source, dest)
-  if result == 0 then
+  local result = unix.symlink(source, dest)
+  if result then
     stderr_write("shimlink: created symlink " .. dest .. " -> " .. source)
   else
     stderr_write("shimlink: warning: failed to create symlink " .. dest)
