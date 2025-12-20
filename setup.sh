@@ -5,15 +5,21 @@ SETUP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.config/setup" && pwd)"
 get_platform() {
   local os arch
   case "$(uname -s)" in
-    Darwin) os="darwin" ;;
-    Linux) os="linux" ;;
-    *) echo "unsupported OS: $(uname -s)" >&2; return 1 ;;
+  Darwin) os="darwin" ;;
+  Linux) os="linux" ;;
+  *)
+    echo "unsupported OS: $(uname -s)" >&2
+    return 1
+    ;;
   esac
 
   case "$(uname -m)" in
-    arm64|aarch64) arch="arm64" ;;
-    x86_64|amd64) arch="x86_64" ;;
-    *) echo "unsupported architecture: $(uname -m)" >&2; return 1 ;;
+  arm64 | aarch64) arch="arm64" ;;
+  x86_64 | amd64) arch="x86_64" ;;
+  *)
+    echo "unsupported architecture: $(uname -m)" >&2
+    return 1
+    ;;
   esac
 
   echo "${os}-${arch}"
@@ -37,20 +43,14 @@ install_home() {
   echo "${tmpdir}/home"
 }
 
-if command -v home &>/dev/null; then
-  home unpack
-else
-  home_bin=$(install_home) || exit 1
-  "${home_bin}" unpack
-  rm -rf "$(dirname "${home_bin}")"
-fi
-
 main() {
+  home_bin=$(install_home) || exit 1
+  "${home_bin}" unpack "$HOME"
+  rm -rf "$(dirname "${home_bin}")"
+
   "$SETUP_DIR/backup"
   "$SETUP_DIR/git"
   "$SETUP_DIR/shell"
-  "$SETUP_DIR/luajit"
-  "$SETUP_DIR/shimlink"
   "$SETUP_DIR/codespace"
   "$SETUP_DIR/claude" &
   "$SETUP_DIR/nvim" &
