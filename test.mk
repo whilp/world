@@ -54,6 +54,19 @@ test-lib-daemonize: lua
 	cd .local/lib/lua && HOME=$(CURDIR) LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;;" \
 		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test_daemonize.lua
 
-test-all: test-3p-lua test-lib-whereami test-work test-home test-lib-daemonize
+test-claude: private .UNVEIL = \
+	r:src/claude \
+	r:.local/lib/lua \
+	rx:$(lua_bin) \
+	r:$(test_runner) \
+	r:$(CURDIR) \
+	rwc:/tmp \
+	rw:/dev/null
+test-claude: lua
+	cd src/claude && HOME=$(CURDIR) \
+		LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;;" \
+		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
 
-.PHONY: test-3p-lua test-lib-whereami test-work test-home test-lib-daemonize test-all
+test-all: test-3p-lua test-lib-whereami test-work test-home test-lib-daemonize test-claude
+
+.PHONY: test-3p-lua test-lib-whereami test-work test-home test-lib-daemonize test-claude test-all
