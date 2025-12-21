@@ -135,10 +135,11 @@ local function extract_tools(files)
 end
 
 -- Parse command-line arguments
--- Returns {cmd=string, force=bool, verbose=bool, dry_run=bool, only=bool, null=bool, dest=string|nil}
+-- Returns {cmd=string, subcmd=string|nil, force=bool, verbose=bool, dry_run=bool, only=bool, null=bool, dest=string|nil}
 local function parse_args(args)
   local result = {
     cmd = args[1] or "help",
+    subcmd = nil,
     force = false,
     verbose = false,
     dry_run = false,
@@ -159,6 +160,8 @@ local function parse_args(args)
       result.only = true
     elseif args[i] == "--null" or args[i] == "-0" then
       result.null = true
+    elseif result.cmd == "3p" and not result.subcmd and not args[i]:match("^%-") then
+      result.subcmd = args[i]
     elseif not result.dest then
       result.dest = args[i]
     end
@@ -347,6 +350,154 @@ local function cmd_version(opts)
   return 0
 end
 
+local MANAGED_BINARIES = {
+  "ast-grep",
+  "biome",
+  "comrak",
+  "delta",
+  "duckdb",
+  "gh",
+  "marksman",
+  "nvim",
+  "rg",
+  "ruff",
+  "shfmt",
+  "sqruff",
+  "stylua",
+  "superhtml",
+  "tree-sitter",
+  "uv",
+}
+
+local function find_binary_in_dir(dir, tool_name)
+  local patterns = {
+    path.join(dir, "bin", tool_name),
+    path.join(dir, tool_name),
+  }
+  for _, p in ipairs(patterns) do
+    if unix.stat(p) then
+      return p
+    end
+  end
+  return nil
+end
+
+local function scan_for_latest_version(tool_name, share_dir)
+  share_dir = share_dir or path.join(os.getenv("HOME"), ".local", "share")
+  local tool_dir = path.join(share_dir, tool_name)
+
+  if not unix.stat(tool_dir) then
+    return nil
+  end
+
+  local latest_path = nil
+  local latest_version = nil
+  local latest_sha = nil
+
+  for name, _ in unix.opendir(tool_dir) do
+    if name ~= "." and name ~= ".." then
+      local version, sha = name:match("^(.+)%-(%x+)$")
+      if version and sha then
+        local version_dir = path.join(tool_dir, name)
+        local bin_path = find_binary_in_dir(version_dir, tool_name)
+        if bin_path and unix.stat(bin_path) then
+          if not latest_version or version > latest_version then
+            latest_version = version
+            latest_sha = sha
+            latest_path = bin_path
+          end
+        end
+      end
+    end
+  end
+
+  if latest_path then
+    return {
+      version = latest_version,
+      sha = latest_sha,
+      path = latest_path,
+    }
+  end
+  return nil
+end
+
+local function update_symlink(link_path, target_path, opts)
+  opts = opts or {}
+
+  if opts.dry_run then
+    if opts.verbose then
+      opts.stdout:write(string.format("would link %s -> %s\n", link_path, target_path))
+    end
+    return true
+  end
+
+  local st = unix.stat(link_path, unix.AT_SYMLINK_NOFOLLOW)
+  if st then
+    if unix.S_ISLNK(st:mode()) then
+      unix.unlink(link_path)
+    else
+      return false, "exists and is not a symlink"
+    end
+  end
+
+  local ok = unix.symlink(target_path, link_path)
+  if ok and opts.verbose then
+    opts.stdout:write(string.format("%s -> %s\n", link_path, target_path))
+  end
+  return ok
+end
+
+local function cmd_3p(args, opts)
+  opts = opts or {}
+  local stdout = opts.stdout or io.stdout
+  local stderr = opts.stderr or io.stderr
+  local verbose = opts.verbose or false
+  local dry_run = opts.dry_run or false
+  local list_only = args[1] == "list"
+
+  local HOME = opts.home or os.getenv("HOME")
+  local bin_dir = path.join(HOME, ".local", "bin")
+  local share_dir = opts.share_dir or path.join(HOME, ".local", "share")
+
+  if not dry_run then
+    unix.makedirs(bin_dir)
+  end
+
+  local results = {}
+
+  for _, tool in ipairs(MANAGED_BINARIES) do
+    local info = scan_for_latest_version(tool, share_dir)
+    if info then
+      table.insert(results, {
+        name = tool,
+        version = info.version,
+        sha = info.sha,
+        path = info.path,
+      })
+
+      if not list_only then
+        local link_path = path.join(bin_dir, tool)
+        local ok, err = update_symlink(link_path, info.path, {
+          dry_run = dry_run,
+          verbose = verbose,
+          stdout = stdout,
+        })
+        if not ok and err then
+          stderr:write(string.format("warning: %s: %s\n", tool, err))
+        end
+      end
+    end
+  end
+
+  if list_only then
+    for _, r in ipairs(results) do
+      stdout:write(string.format("%s %s-%s\n", r.name, r.version, r.sha))
+    end
+  end
+
+  return 0
+end
+
 local function cmd_help(opts)
   opts = opts or {}
   local stderr = opts.stderr or io.stderr
@@ -354,6 +505,7 @@ local function cmd_help(opts)
   stderr:write("\ncommands:\n")
   stderr:write("  list [options]           - list embedded files (paths only by default)\n")
   stderr:write("  unpack [options] <dest>  - extract dotfiles and binaries to destination\n")
+  stderr:write("  3p [subcommand]          - manage third-party binary symlinks\n")
   stderr:write("  version                  - show build version\n")
   stderr:write("\nlist options:\n")
   stderr:write("  --verbose, -v            - show permissions and paths (tar-style)\n")
@@ -364,6 +516,12 @@ local function cmd_help(opts)
   stderr:write("  --dry-run, -n            - show what would be extracted without doing it\n")
   stderr:write("  --only                   - only extract files listed on stdin\n")
   stderr:write("  --null, -0               - read null-delimited paths (with --only)\n")
+  stderr:write("\n3p subcommands:\n")
+  stderr:write("  3p                       - scan and symlink latest versions\n")
+  stderr:write("  3p list                  - list installed tools and versions\n")
+  stderr:write("\n3p options:\n")
+  stderr:write("  --verbose, -v            - show detailed output\n")
+  stderr:write("  --dry-run, -n            - show what would be done\n")
   return 0
 end
 
@@ -393,6 +551,19 @@ local function main(args, opts)
     list_opts.null = parsed.null
 
     return cmd_list(list_opts)
+  elseif parsed.cmd == "3p" then
+    local threep_opts = {}
+    for k, v in pairs(opts) do
+      threep_opts[k] = v
+    end
+    threep_opts.verbose = parsed.verbose
+    threep_opts.dry_run = parsed.dry_run
+
+    local subcmd_args = {}
+    if parsed.subcmd then
+      table.insert(subcmd_args, parsed.subcmd)
+    end
+    return cmd_3p(subcmd_args, threep_opts)
   elseif parsed.cmd == "version" then
     return cmd_version(opts)
   elseif parsed.cmd == "help" then
@@ -417,6 +588,11 @@ local home = {
   cmd_list = cmd_list,
   cmd_version = cmd_version,
   cmd_help = cmd_help,
+  MANAGED_BINARIES = MANAGED_BINARIES,
+  find_binary_in_dir = find_binary_in_dir,
+  scan_for_latest_version = scan_for_latest_version,
+  update_symlink = update_symlink,
+  cmd_3p = cmd_3p,
   main = main,
 }
 

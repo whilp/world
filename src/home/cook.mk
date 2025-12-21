@@ -23,24 +23,22 @@ define build_home
 	@cd results/home-$(2)/temp-binaries && \
 		for tool in nvim gh delta rg duckdb tree-sitter ast-grep biome comrak marksman ruff shfmt sqruff stylua superhtml uv; do \
 			if [ -d "$$tool/$(2)" ]; then \
-				echo "  Installing $$tool..."; \
-				if [ "$$tool" = "nvim" ]; then \
-					mkdir -p $(CURDIR)/results/home-$(2)/home/.local/share/nvim; \
-					cp -r $$tool/$(2)/* $(CURDIR)/results/home-$(2)/home/.local/share/nvim/; \
+				version=$$(cat "$$tool/$(2)/VERSION" 2>/dev/null || echo "0.0.0"); \
+				sha=$$(cat "$$tool/$(2)/SHA" 2>/dev/null | head -c 8 || echo "00000000"); \
+				install_dir="$(CURDIR)/results/home-$(2)/home/.local/share/$$tool/$${version}-$${sha}"; \
+				echo "  Installing $$tool $${version}-$${sha}..."; \
+				mkdir -p "$$install_dir"; \
+				if [ "$$tool" = "nvim" ] || [ "$$tool" = "gh" ]; then \
+					cp -r $$tool/$(2)/bin $$tool/$(2)/lib $$tool/$(2)/share "$$install_dir/" 2>/dev/null || true; \
+					cp -r $$tool/$(2)/libexec "$$install_dir/" 2>/dev/null || true; \
 				else \
 					if [ -d "$$tool/$(2)/bin" ]; then \
 						exe=$$(find "$$tool/$(2)/bin" -maxdepth 1 -type f -name "$$tool" 2>/dev/null | head -1); \
-						if [ -n "$$exe" ]; then cp -p "$$exe" $(CURDIR)/results/home-$(2)/home/.local/bin/$$tool; fi; \
+						if [ -n "$$exe" ]; then cp -p "$$exe" "$$install_dir/$$tool"; fi; \
 					else \
 						exe=$$(find "$$tool/$(2)" -maxdepth 1 -type f -name "$$tool" 2>/dev/null | head -1); \
-						if [ -n "$$exe" ]; then cp -p "$$exe" $(CURDIR)/results/home-$(2)/home/.local/bin/$$tool; fi; \
+						if [ -n "$$exe" ]; then cp -p "$$exe" "$$install_dir/$$tool"; fi; \
 					fi; \
-					for dir in lib share libexec; do \
-						if [ -d "$$tool/$(2)/$$dir" ]; then \
-							mkdir -p $(CURDIR)/results/home-$(2)/home/.local/share/$$tool; \
-							cp -r "$$tool/$(2)/$$dir" $(CURDIR)/results/home-$(2)/home/.local/share/$$tool/; \
-						fi; \
-					done; \
 				fi; \
 			fi; \
 		done

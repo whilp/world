@@ -837,4 +837,384 @@ function test_format_mode_no_mode()
   lu.assertEquals(result, "----------")
 end
 
+--------------------------------------------------------------------------------
+-- Test: parse_args - 3p command
+--------------------------------------------------------------------------------
+function test_parse_args_3p_basic()
+  local args = { "3p" }
+  local parsed = home.parse_args(args)
+  lu.assertEquals(parsed.cmd, "3p")
+  lu.assertNil(parsed.subcmd)
+end
+
+function test_parse_args_3p_list()
+  local args = { "3p", "list" }
+  local parsed = home.parse_args(args)
+  lu.assertEquals(parsed.cmd, "3p")
+  lu.assertEquals(parsed.subcmd, "list")
+end
+
+function test_parse_args_3p_verbose()
+  local args = { "3p", "--verbose" }
+  local parsed = home.parse_args(args)
+  lu.assertEquals(parsed.cmd, "3p")
+  lu.assertTrue(parsed.verbose)
+  lu.assertNil(parsed.subcmd)
+end
+
+function test_parse_args_3p_dry_run()
+  local args = { "3p", "--dry-run" }
+  local parsed = home.parse_args(args)
+  lu.assertEquals(parsed.cmd, "3p")
+  lu.assertTrue(parsed.dry_run)
+end
+
+function test_parse_args_3p_list_verbose()
+  local args = { "3p", "list", "-v" }
+  local parsed = home.parse_args(args)
+  lu.assertEquals(parsed.cmd, "3p")
+  lu.assertEquals(parsed.subcmd, "list")
+  lu.assertTrue(parsed.verbose)
+end
+
+--------------------------------------------------------------------------------
+-- Test: find_binary_in_dir
+--------------------------------------------------------------------------------
+function test_find_binary_in_dir_direct()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local bin_path = path.join(tmp, "mytool")
+  write_file(bin_path, "#!/bin/sh\necho test")
+
+  local result = home.find_binary_in_dir(tmp, "mytool")
+  lu.assertEquals(result, bin_path)
+
+  remove_dir(tmp)
+end
+
+function test_find_binary_in_dir_in_bin()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local bin_dir = path.join(tmp, "bin")
+  unix.makedirs(bin_dir)
+  local bin_path = path.join(bin_dir, "mytool")
+  write_file(bin_path, "#!/bin/sh\necho test")
+
+  local result = home.find_binary_in_dir(tmp, "mytool")
+  lu.assertEquals(result, bin_path)
+
+  remove_dir(tmp)
+end
+
+function test_find_binary_in_dir_not_found()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+
+  local result = home.find_binary_in_dir(tmp, "nonexistent")
+  lu.assertNil(result)
+
+  remove_dir(tmp)
+end
+
+--------------------------------------------------------------------------------
+-- Test: scan_for_latest_version
+--------------------------------------------------------------------------------
+function test_scan_for_latest_version_single()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local share_dir = tmp
+  local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234")
+  unix.makedirs(tool_dir)
+  local bin_path = path.join(tool_dir, "rg")
+  write_file(bin_path, "#!/bin/sh\necho rg")
+
+  local result = home.scan_for_latest_version("rg", share_dir)
+  lu.assertNotNil(result)
+  lu.assertEquals(result.version, "14.1.1")
+  lu.assertEquals(result.sha, "abcd1234")
+  lu.assertEquals(result.path, bin_path)
+
+  remove_dir(tmp)
+end
+
+function test_scan_for_latest_version_multiple()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local share_dir = tmp
+
+  local old_dir = path.join(share_dir, "rg", "14.0.0-aaa00000")
+  unix.makedirs(old_dir)
+  write_file(path.join(old_dir, "rg"), "old")
+
+  local new_dir = path.join(share_dir, "rg", "14.1.1-bbb11111")
+  unix.makedirs(new_dir)
+  local new_bin = path.join(new_dir, "rg")
+  write_file(new_bin, "new")
+
+  local result = home.scan_for_latest_version("rg", share_dir)
+  lu.assertNotNil(result)
+  lu.assertEquals(result.version, "14.1.1")
+  lu.assertEquals(result.sha, "bbb11111")
+  lu.assertEquals(result.path, new_bin)
+
+  remove_dir(tmp)
+end
+
+function test_scan_for_latest_version_not_found()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+
+  local result = home.scan_for_latest_version("nonexistent", tmp)
+  lu.assertNil(result)
+
+  remove_dir(tmp)
+end
+
+function test_scan_for_latest_version_bin_subdir()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local share_dir = tmp
+  local tool_dir = path.join(share_dir, "nvim", "2025.12.07-abcd1234")
+  local bin_dir = path.join(tool_dir, "bin")
+  unix.makedirs(bin_dir)
+  local bin_path = path.join(bin_dir, "nvim")
+  write_file(bin_path, "#!/bin/sh\necho nvim")
+
+  local result = home.scan_for_latest_version("nvim", share_dir)
+  lu.assertNotNil(result)
+  lu.assertEquals(result.version, "2025.12.07")
+  lu.assertEquals(result.path, bin_path)
+
+  remove_dir(tmp)
+end
+
+--------------------------------------------------------------------------------
+-- Test: update_symlink
+--------------------------------------------------------------------------------
+function test_update_symlink_create()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local target = path.join(tmp, "target")
+  write_file(target, "target content")
+  local link = path.join(tmp, "link")
+
+  local ok = home.update_symlink(link, target, {})
+  lu.assertTrue(ok)
+
+  local st = unix.stat(link, unix.AT_SYMLINK_NOFOLLOW)
+  lu.assertNotNil(st)
+  lu.assertTrue(unix.S_ISLNK(st:mode()))
+
+  remove_dir(tmp)
+end
+
+function test_update_symlink_replace()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local old_target = path.join(tmp, "old_target")
+  write_file(old_target, "old content")
+  local new_target = path.join(tmp, "new_target")
+  write_file(new_target, "new content")
+  local link = path.join(tmp, "link")
+
+  unix.symlink(old_target, link)
+
+  local ok = home.update_symlink(link, new_target, {})
+  lu.assertTrue(ok)
+
+  local st = unix.stat(link, unix.AT_SYMLINK_NOFOLLOW)
+  lu.assertNotNil(st)
+  lu.assertTrue(unix.S_ISLNK(st:mode()))
+
+  local f = io.open(link, "r")
+  lu.assertNotNil(f)
+  local content = f:read("*a")
+  f:close()
+  lu.assertEquals(content, "new content")
+
+  remove_dir(tmp)
+end
+
+function test_update_symlink_fails_on_regular_file()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local target = path.join(tmp, "target")
+  write_file(target, "target")
+  local existing_file = path.join(tmp, "existing")
+  write_file(existing_file, "regular file")
+
+  local ok, err = home.update_symlink(existing_file, target, {})
+  lu.assertFalse(ok)
+  lu.assertStrContains(err, "not a symlink")
+
+  remove_dir(tmp)
+end
+
+function test_update_symlink_dry_run()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local target = path.join(tmp, "target")
+  write_file(target, "target")
+  local link = path.join(tmp, "link")
+  local stdout = mock_writer()
+
+  local ok = home.update_symlink(link, target, {
+    dry_run = true,
+    verbose = true,
+    stdout = stdout,
+  })
+  lu.assertTrue(ok)
+
+  local st = unix.stat(link, unix.AT_SYMLINK_NOFOLLOW)
+  lu.assertNil(st)
+
+  lu.assertStrContains(stdout:get(), "would link")
+
+  remove_dir(tmp)
+end
+
+--------------------------------------------------------------------------------
+-- Test: cmd_3p
+--------------------------------------------------------------------------------
+function test_cmd_3p_empty_share()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local share_dir = path.join(tmp, "share")
+  local bin_dir = path.join(tmp, "bin")
+  unix.makedirs(share_dir)
+
+  local stdout = mock_writer()
+  local stderr = mock_writer()
+
+  local code = home.cmd_3p({}, {
+    home = tmp,
+    share_dir = share_dir,
+    stdout = stdout,
+    stderr = stderr,
+    dry_run = true,
+  })
+  lu.assertEquals(code, 0)
+
+  remove_dir(tmp)
+end
+
+function test_cmd_3p_creates_symlinks()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local share_dir = path.join(tmp, "share")
+  local bin_dir = path.join(tmp, ".local", "bin")
+
+  local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234")
+  unix.makedirs(tool_dir)
+  write_file(path.join(tool_dir, "rg"), "#!/bin/sh\necho rg")
+
+  local stdout = mock_writer()
+  local stderr = mock_writer()
+
+  local code = home.cmd_3p({}, {
+    home = tmp,
+    share_dir = share_dir,
+    stdout = stdout,
+    stderr = stderr,
+  })
+  lu.assertEquals(code, 0)
+
+  local link = path.join(bin_dir, "rg")
+  local st = unix.stat(link, unix.AT_SYMLINK_NOFOLLOW)
+  lu.assertNotNil(st)
+  lu.assertTrue(unix.S_ISLNK(st:mode()))
+
+  remove_dir(tmp)
+end
+
+function test_cmd_3p_list()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local share_dir = path.join(tmp, "share")
+
+  local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234")
+  unix.makedirs(tool_dir)
+  write_file(path.join(tool_dir, "rg"), "#!/bin/sh\necho rg")
+
+  local stdout = mock_writer()
+  local stderr = mock_writer()
+
+  local code = home.cmd_3p({ "list" }, {
+    home = tmp,
+    share_dir = share_dir,
+    stdout = stdout,
+    stderr = stderr,
+  })
+  lu.assertEquals(code, 0)
+
+  lu.assertStrContains(stdout:get(), "rg 14.1.1-abcd1234")
+
+  remove_dir(tmp)
+end
+
+function test_cmd_3p_dry_run_verbose()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local share_dir = path.join(tmp, "share")
+  local bin_dir = path.join(tmp, ".local", "bin")
+
+  local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234")
+  unix.makedirs(tool_dir)
+  write_file(path.join(tool_dir, "rg"), "#!/bin/sh\necho rg")
+
+  local stdout = mock_writer()
+  local stderr = mock_writer()
+
+  local code = home.cmd_3p({}, {
+    home = tmp,
+    share_dir = share_dir,
+    stdout = stdout,
+    stderr = stderr,
+    dry_run = true,
+    verbose = true,
+  })
+  lu.assertEquals(code, 0)
+
+  lu.assertStrContains(stdout:get(), "would link")
+
+  local link = path.join(bin_dir, "rg")
+  local st = unix.stat(link, unix.AT_SYMLINK_NOFOLLOW)
+  lu.assertNil(st)
+
+  remove_dir(tmp)
+end
+
+--------------------------------------------------------------------------------
+-- Test: main dispatch for 3p
+--------------------------------------------------------------------------------
+function test_main_3p()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local share_dir = path.join(tmp, "share")
+  unix.makedirs(share_dir)
+
+  local stdout = mock_writer()
+  local stderr = mock_writer()
+
+  local code = home.main({ "3p" }, {
+    home = tmp,
+    share_dir = share_dir,
+    stdout = stdout,
+    stderr = stderr,
+    dry_run = true,
+  })
+  lu.assertEquals(code, 0)
+
+  remove_dir(tmp)
+end
+
+function test_cmd_help_includes_3p()
+  local stderr = mock_writer()
+  local code = home.cmd_help({ stderr = stderr })
+  lu.assertEquals(code, 0)
+  local output = stderr:get()
+  lu.assertStrContains(output, "3p")
+  lu.assertStrContains(output, "symlink")
+end
+
 os.exit(lu.LuaUnit.run())
