@@ -3,8 +3,10 @@ ruleDirs:
 
 # Scan all lua files including tests and configs
 # Exclude nvim and hammerspoon (they use their own lua environments)
+# Exclude work tests (separate work in progress)
 languageGlobs:
   lua:
     - "**/*.lua"
     - "!.config/nvim/**/*.lua"
     - "!.config/hammerspoon/**/*.lua"
+    - "!.local/lib/lua/test/work/**/*.lua"
