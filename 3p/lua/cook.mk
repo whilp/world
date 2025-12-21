@@ -147,7 +147,7 @@ $(lua_bin): $(lua_all_objs) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua | r
 	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
 
 # platform-specific native binaries
-# build ELF directly without APE wrapper, then append zip
+# link with cosmocc but without -mcosmo to produce native ELF
 $(lua_bin_linux_x86_64): private .UNVEIL = \
 	r:$(lua_build_dir) \
 	r:$(luaunit_lua_dir) \
@@ -156,7 +156,7 @@ $(lua_bin_linux_x86_64): private .UNVEIL = \
 	rwc:results/bin \
 	rw:/dev/null
 $(lua_bin_linux_x86_64): $(lua_all_objs) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua | results/bin
-	$(cosmocc_dir)/bin/x86_64-linux-cosmo-cc -s $(lua_all_objs) -o $@
+	$(cosmocc_bin) --target=x86_64-linux $(lua_all_objs) -o $@
 	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
 
 $(lua_bin_linux_arm64): private .UNVEIL = \
@@ -167,7 +167,7 @@ $(lua_bin_linux_arm64): private .UNVEIL = \
 	rwc:results/bin \
 	rw:/dev/null
 $(lua_bin_linux_arm64): $(lua_all_objs) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua | results/bin
-	$(cosmocc_dir)/bin/aarch64-linux-cosmo-cc -s $(lua_all_objs) -o $@
+	$(cosmocc_bin) --target=aarch64-linux $(lua_all_objs) -o $@
 	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
 
 lua-native: $(lua_bin_linux_x86_64) $(lua_bin_linux_arm64)
