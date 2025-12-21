@@ -1,0 +1,39 @@
+#!/home/codespace/.local/bin/lua
+-- Check for unsafe path manipulations in Lua code
+
+local function main()
+  print("Checking for unsafe path manipulations...")
+  print("Looking for patterns like: var .. \"/\" .. other")
+  print()
+
+  -- Use rg to find unsafe path concatenations
+  local cmd = [[rg '\.\.\s*"/[^"]*"' --type lua -n --color never || true]]
+  local f = io.popen(cmd)
+  if not f then
+    print("Error running ripgrep")
+    os.exit(1)
+  end
+
+  local found_issues = false
+  for line in f:lines() do
+    if not found_issues then
+      print("Found unsafe path concatenations:")
+      print()
+      found_issues = true
+    end
+    print(line)
+  end
+  f:close()
+
+  if found_issues then
+    print()
+    print("Use cosmo.path.join() instead of string concatenation for paths.")
+    print("Example: path.join(dir, file) instead of dir .. \"/\" .. file")
+    os.exit(1)
+  else
+    print("No unsafe path concatenations found!")
+    os.exit(0)
+  end
+end
+
+main()

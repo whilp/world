@@ -1,13 +1,13 @@
 ast_grep_dir := $(3p)/ast-grep
 
-ast_grep_darwin_arm64_url := https://github.com/ast-grep/ast-grep/releases/download/0.28.0/app-aarch64-apple-darwin.zip
-ast_grep_darwin_arm64_sha := c9a9e690d94cd9696d2552690fe0abdd2c303e48a3ee5cf9d38728eda054f147
+ast_grep_darwin_arm64_url := https://github.com/ast-grep/ast-grep/releases/download/0.40.3/app-aarch64-apple-darwin.zip
+ast_grep_darwin_arm64_sha := 4fda598391d0ad819e23de1355a3c1e16fe5aa4056ae90410321260cd1ba6f8b
 
-ast_grep_linux_arm64_url := https://github.com/ast-grep/ast-grep/releases/download/0.28.0/app-aarch64-unknown-linux-gnu.zip
-ast_grep_linux_arm64_sha := 62e9e79148be33d27fde24f4dcda83eab207a297ce50fb4a0becfbb29c8f218b
+ast_grep_linux_arm64_url := https://github.com/ast-grep/ast-grep/releases/download/0.40.3/app-aarch64-unknown-linux-gnu.zip
+ast_grep_linux_arm64_sha := dd409e779752cd68f1afe9437c9f195245290d26d5293aa052c6c759dcfbddd1
 
-ast_grep_linux_x86_64_url := https://github.com/ast-grep/ast-grep/releases/download/0.28.0/app-x86_64-unknown-linux-gnu.zip
-ast_grep_linux_x86_64_sha := d28be5970afb3e8022210fb9427de0875f1d64f4e4b91ed28b3a3abfebb1d934
+ast_grep_linux_x86_64_url := https://github.com/ast-grep/ast-grep/releases/download/0.40.3/app-x86_64-unknown-linux-gnu.zip
+ast_grep_linux_x86_64_sha := 253c94dc566652662cb1efdad86a08689578a3dcfbd7d7c03e4c8a73de79ba5b
 
 $(ast_grep_dir)/darwin-arm64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
