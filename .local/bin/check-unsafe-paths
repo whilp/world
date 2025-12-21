@@ -7,7 +7,8 @@ local function main()
   print()
 
   -- Use rg to find unsafe path concatenations
-  local cmd = [[rg '\.\.\s*"/[^"]*"' --type lua -n --color never || true]]
+  -- Exclude nvim and hammerspoon (they use their own lua environments)
+  local cmd = [[rg '\.\.\s*"/[^"]*"' --type lua -n --color never -g '!.config/nvim/**' -g '!.config/hammerspoon/**' || true]]
   local f = io.popen(cmd)
   if not f then
     print("Error running ripgrep")

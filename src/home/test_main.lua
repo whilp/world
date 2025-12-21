@@ -3,6 +3,7 @@ lu = require("luaunit")
 -- cosmo may not be available in all environments
 local has_cosmo, cosmo = pcall(require, "cosmo")
 local unix = has_cosmo and cosmo.unix or nil
+local path = has_cosmo and cosmo.path or nil
 
 local home = require("main")
 
@@ -294,8 +295,8 @@ end
 function test_copy_file_basic()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local src = tmp .. "/source.txt"
-  local dst = tmp .. "/dest.txt"
+  local src = path and path.join(tmp, "source.txt") or tmp .. "/source.txt"
+  local dst = path and path.join(tmp, "dest.txt") or tmp .. "/dest.txt"
 
   write_file(src, "hello world")
 
@@ -314,8 +315,8 @@ end
 function test_copy_file_with_mode()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local src = tmp .. "/source.txt"
-  local dst = tmp .. "/dest.txt"
+  local src = path and path.join(tmp, "source.txt") or tmp .. "/source.txt"
+  local dst = path and path.join(tmp, "dest.txt") or tmp .. "/dest.txt"
 
   write_file(src, "executable")
 
@@ -336,8 +337,8 @@ end
 function test_copy_file_no_overwrite_fails()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local src = tmp .. "/source.txt"
-  local dst = tmp .. "/dest.txt"
+  local src = path and path.join(tmp, "source.txt") or tmp .. "/source.txt"
+  local dst = path and path.join(tmp, "dest.txt") or tmp .. "/dest.txt"
 
   write_file(src, "source content")
   write_file(dst, "existing content")
@@ -357,8 +358,8 @@ end
 function test_copy_file_overwrite_succeeds()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local src = tmp .. "/source.txt"
-  local dst = tmp .. "/dest.txt"
+  local src = path and path.join(tmp, "source.txt") or tmp .. "/source.txt"
+  local dst = path and path.join(tmp, "dest.txt") or tmp .. "/dest.txt"
 
   write_file(src, "new content")
   write_file(dst, "old content")
@@ -380,7 +381,7 @@ end
 function test_copy_file_source_missing()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local ok, err = home.copy_file(tmp .. "/nonexistent", tmp .. "/dest")
+  local ok, err = home.copy_file(path and path.join(tmp, "nonexistent") or tmp .. "/nonexistent", path and path.join(tmp, "dest") or tmp .. "/dest")
   lu.assertFalse(ok)
   lu.assertStrContains(err, "failed to open source")
   remove_dir(tmp)
@@ -426,14 +427,14 @@ end
 function test_cmd_unpack_silent_by_default()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local manifest_path = tmp .. "/MANIFEST.txt"
-  local zip_root = tmp .. "/zip/"
+  local manifest_path = path and path.join(tmp, "MANIFEST.txt") or tmp .. "/MANIFEST.txt"
+  local zip_root = path and path.join(tmp, "zip/") or tmp .. "/zip/"
   unix.makedirs(zip_root .. "home")
 
   write_file(manifest_path, "home/.testfile 644\n")
   write_file(zip_root .. "home/.testfile", "test content")
 
-  local dest = tmp .. "/dest"
+  local dest = path and path.join(tmp, "dest") or tmp .. "/dest"
   local stderr = mock_writer()
   local stdout = mock_writer()
 
@@ -458,15 +459,15 @@ end
 function test_cmd_unpack_verbose()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local manifest_path = tmp .. "/MANIFEST.txt"
-  local zip_root = tmp .. "/zip/"
+  local manifest_path = path and path.join(tmp, "MANIFEST.txt") or tmp .. "/MANIFEST.txt"
+  local zip_root = path and path.join(tmp, "zip/") or tmp .. "/zip/"
   unix.makedirs(zip_root .. "home")
 
   write_file(manifest_path, "home/.zshrc 644\nhome/.bashrc 644\n")
   write_file(zip_root .. "home/.zshrc", "zsh content")
   write_file(zip_root .. "home/.bashrc", "bash content")
 
-  local dest = tmp .. "/dest"
+  local dest = path and path.join(tmp, "dest") or tmp .. "/dest"
   local stdout = mock_writer()
 
   local code = home.cmd_unpack(dest, false, {
@@ -487,16 +488,16 @@ end
 function test_cmd_unpack_verbose_force_overwrite()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local manifest_path = tmp .. "/MANIFEST.txt"
-  local zip_root = tmp .. "/zip/"
+  local manifest_path = path and path.join(tmp, "MANIFEST.txt") or tmp .. "/MANIFEST.txt"
+  local zip_root = path and path.join(tmp, "zip/") or tmp .. "/zip/"
   unix.makedirs(zip_root .. "home")
 
   write_file(manifest_path, "home/.testfile 644\n")
   write_file(zip_root .. "home/.testfile", "new content")
 
-  local dest = tmp .. "/dest"
+  local dest = path and path.join(tmp, "dest") or tmp .. "/dest"
   unix.makedirs(dest)
-  write_file(dest .. "/.testfile", "old content")
+  write_file(path and path.join(dest, ".testfile") or dest .. "/.testfile", "old content")
 
   local stdout = mock_writer()
 
@@ -520,14 +521,14 @@ end
 function test_cmd_unpack_dry_run()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local manifest_path = tmp .. "/MANIFEST.txt"
-  local zip_root = tmp .. "/zip/"
+  local manifest_path = path and path.join(tmp, "MANIFEST.txt") or tmp .. "/MANIFEST.txt"
+  local zip_root = path and path.join(tmp, "zip/") or tmp .. "/zip/"
   unix.makedirs(zip_root .. "home")
 
   write_file(manifest_path, "home/.testfile 644\n")
   write_file(zip_root .. "home/.testfile", "test content")
 
-  local dest = tmp .. "/dest"
+  local dest = path and path.join(tmp, "dest") or tmp .. "/dest"
 
   local code = home.cmd_unpack(dest, false, {
     manifest_path = manifest_path,
@@ -538,7 +539,7 @@ function test_cmd_unpack_dry_run()
   lu.assertEquals(code, 0)
 
   -- Verify file was NOT actually created
-  local f = io.open(dest .. "/.testfile", "r")
+  local f = io.open(path and path.join(dest, ".testfile") or dest .. "/.testfile", "r")
   lu.assertNil(f)
 
   remove_dir(tmp)
@@ -547,14 +548,14 @@ end
 function test_cmd_unpack_dry_run_verbose()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local manifest_path = tmp .. "/MANIFEST.txt"
-  local zip_root = tmp .. "/zip/"
+  local manifest_path = path and path.join(tmp, "MANIFEST.txt") or tmp .. "/MANIFEST.txt"
+  local zip_root = path and path.join(tmp, "zip/") or tmp .. "/zip/"
   unix.makedirs(zip_root .. "home")
 
   write_file(manifest_path, "home/.zshrc 644\n")
   write_file(zip_root .. "home/.zshrc", "zsh content")
 
-  local dest = tmp .. "/dest"
+  local dest = path and path.join(tmp, "dest") or tmp .. "/dest"
   local stdout = mock_writer()
 
   local code = home.cmd_unpack(dest, false, {
@@ -570,7 +571,7 @@ function test_cmd_unpack_dry_run_verbose()
   lu.assertStrContains(output, ".zshrc\n")
 
   -- Verify file was NOT actually created
-  local f = io.open(dest .. "/.zshrc", "r")
+  local f = io.open(path and path.join(dest, ".zshrc") or dest .. "/.zshrc", "r")
   lu.assertNil(f)
 
   remove_dir(tmp)
@@ -582,8 +583,8 @@ end
 function test_cmd_unpack_only_filter()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local manifest_path = tmp .. "/MANIFEST.txt"
-  local zip_root = tmp .. "/zip/"
+  local manifest_path = path and path.join(tmp, "MANIFEST.txt") or tmp .. "/MANIFEST.txt"
+  local zip_root = path and path.join(tmp, "zip/") or tmp .. "/zip/"
   unix.makedirs(zip_root .. "home")
 
   write_file(manifest_path, "home/.zshrc 644\nhome/.bashrc 644\nhome/.vimrc 644\n")
@@ -591,7 +592,7 @@ function test_cmd_unpack_only_filter()
   write_file(zip_root .. "home/.bashrc", "bash content")
   write_file(zip_root .. "home/.vimrc", "vim content")
 
-  local dest = tmp .. "/dest"
+  local dest = path and path.join(tmp, "dest") or tmp .. "/dest"
 
   -- Simulate stdin input with only .zshrc and .vimrc
   local filter_input = ".zshrc\n.vimrc\n"
@@ -606,15 +607,15 @@ function test_cmd_unpack_only_filter()
   lu.assertEquals(code, 0)
 
   -- Verify only filtered files were created
-  local zsh = io.open(dest .. "/.zshrc", "r")
+  local zsh = io.open(path and path.join(dest, ".zshrc") or dest .. "/.zshrc", "r")
   lu.assertNotNil(zsh)
   zsh:close()
 
-  local vim = io.open(dest .. "/.vimrc", "r")
+  local vim = io.open(path and path.join(dest, ".vimrc") or dest .. "/.vimrc", "r")
   lu.assertNotNil(vim)
   vim:close()
 
-  local bash = io.open(dest .. "/.bashrc", "r")
+  local bash = io.open(path and path.join(dest, ".bashrc") or dest .. "/.bashrc", "r")
   lu.assertNil(bash)
 
   remove_dir(tmp)
@@ -623,14 +624,14 @@ end
 function test_cmd_unpack_only_empty_filter()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local manifest_path = tmp .. "/MANIFEST.txt"
-  local zip_root = tmp .. "/zip/"
+  local manifest_path = path and path.join(tmp, "MANIFEST.txt") or tmp .. "/MANIFEST.txt"
+  local zip_root = path and path.join(tmp, "zip/") or tmp .. "/zip/"
   unix.makedirs(zip_root .. "home")
 
   write_file(manifest_path, "home/.zshrc 644\n")
   write_file(zip_root .. "home/.zshrc", "zsh content")
 
-  local dest = tmp .. "/dest"
+  local dest = path and path.join(tmp, "dest") or tmp .. "/dest"
 
   -- Empty filter = extract nothing
   local code = home.cmd_unpack(dest, false, {
@@ -642,7 +643,7 @@ function test_cmd_unpack_only_empty_filter()
 
   lu.assertEquals(code, 0)
 
-  local f = io.open(dest .. "/.zshrc", "r")
+  local f = io.open(path and path.join(dest, ".zshrc") or dest .. "/.zshrc", "r")
   lu.assertNil(f)
 
   remove_dir(tmp)
@@ -651,8 +652,8 @@ end
 function test_cmd_unpack_only_null_delimited()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local manifest_path = tmp .. "/MANIFEST.txt"
-  local zip_root = tmp .. "/zip/"
+  local manifest_path = path and path.join(tmp, "MANIFEST.txt") or tmp .. "/MANIFEST.txt"
+  local zip_root = path and path.join(tmp, "zip/") or tmp .. "/zip/"
   unix.makedirs(zip_root .. "home")
 
   write_file(manifest_path, "home/.zshrc 644\nhome/.bashrc 644\nhome/.vimrc 644\n")
@@ -660,7 +661,7 @@ function test_cmd_unpack_only_null_delimited()
   write_file(zip_root .. "home/.bashrc", "bash content")
   write_file(zip_root .. "home/.vimrc", "vim content")
 
-  local dest = tmp .. "/dest"
+  local dest = path and path.join(tmp, "dest") or tmp .. "/dest"
 
   -- Null-delimited input
   local filter_input = ".zshrc" .. string.char(0) .. ".vimrc" .. string.char(0)
@@ -676,15 +677,15 @@ function test_cmd_unpack_only_null_delimited()
   lu.assertEquals(code, 0)
 
   -- Verify only filtered files were created
-  local zsh = io.open(dest .. "/.zshrc", "r")
+  local zsh = io.open(path and path.join(dest, ".zshrc") or dest .. "/.zshrc", "r")
   lu.assertNotNil(zsh)
   zsh:close()
 
-  local vim = io.open(dest .. "/.vimrc", "r")
+  local vim = io.open(path and path.join(dest, ".vimrc") or dest .. "/.vimrc", "r")
   lu.assertNotNil(vim)
   vim:close()
 
-  local bash = io.open(dest .. "/.bashrc", "r")
+  local bash = io.open(path and path.join(dest, ".bashrc") or dest .. "/.bashrc", "r")
   lu.assertNil(bash)
 
   remove_dir(tmp)
@@ -695,7 +696,7 @@ end
 --------------------------------------------------------------------------------
 function test_cmd_list_default_paths_only()
   local tmp = make_temp_dir()
-  local manifest_path = tmp .. "/MANIFEST.txt"
+  local manifest_path = path and path.join(tmp, "MANIFEST.txt") or tmp .. "/MANIFEST.txt"
   write_file(manifest_path, [[
 home/.zshrc 644
 home/.local/bin/nvim 755
@@ -719,7 +720,7 @@ end
 
 function test_cmd_list_verbose()
   local tmp = make_temp_dir()
-  local manifest_path = tmp .. "/MANIFEST.txt"
+  local manifest_path = path and path.join(tmp, "MANIFEST.txt") or tmp .. "/MANIFEST.txt"
   write_file(manifest_path, [[
 home/.zshrc 644
 home/.local/bin/nvim 755
@@ -746,7 +747,7 @@ end
 
 function test_cmd_list_null_delimiter()
   local tmp = make_temp_dir()
-  local manifest_path = tmp .. "/MANIFEST.txt"
+  local manifest_path = path and path.join(tmp, "MANIFEST.txt") or tmp .. "/MANIFEST.txt"
   write_file(manifest_path, [[
 home/.zshrc 644
 home/.bashrc 644
@@ -797,7 +798,7 @@ end
 --------------------------------------------------------------------------------
 function test_read_file_success()
   local tmp = make_temp_dir()
-  local path = tmp .. "/test.txt"
+  local path = path and path.join(tmp, "test.txt") or tmp .. "/test.txt"
   write_file(path, "test content")
 
   local data, err = home.read_file(path)
