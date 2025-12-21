@@ -379,15 +379,15 @@ function test_cmd_unpack_no_dest()
 end
 
 --------------------------------------------------------------------------------
--- Test: cmd_list with mock manifest
+-- Test: cmd_list with mock manifest (old test kept for compatibility)
 --------------------------------------------------------------------------------
-function test_cmd_list()
+function test_cmd_list_structured_output()
   local tmp = make_temp_dir()
   local manifest_path = tmp .. "/MANIFEST.txt"
   write_file(manifest_path, [[
 home/.zshrc 644
 home/.local/bin/nvim 755
-home/.local/bin/rg 755
+home/.config/foo/ 755
 ]])
 
   local stdout = mock_writer()
@@ -400,9 +400,31 @@ home/.local/bin/rg 755
   lu.assertEquals(code, 0)
 
   local output = stdout:get()
-  lu.assertStrContains(output, "embedded files: 3 total")
-  lu.assertStrContains(output, "nvim")
-  lu.assertStrContains(output, "rg")
+  lu.assertStrContains(output, "-rw-r--r-- .zshrc\n")
+  lu.assertStrContains(output, "-rwxr-xr-x .local/bin/nvim\n")
+  lu.assertStrContains(output, "drwxr-xr-x .config/foo/\n")
+
+  remove_dir(tmp)
+end
+
+function test_cmd_list_no_mode()
+  local tmp = make_temp_dir()
+  local manifest_path = tmp .. "/MANIFEST.txt"
+  write_file(manifest_path, [[
+home/.bashrc
+]])
+
+  local stdout = mock_writer()
+  local stderr = mock_writer()
+  local code = home.cmd_list({
+    manifest_path = manifest_path,
+    stdout = stdout,
+    stderr = stderr,
+  })
+  lu.assertEquals(code, 0)
+
+  local output = stdout:get()
+  lu.assertStrContains(output, "---------- .bashrc\n")
 
   remove_dir(tmp)
 end

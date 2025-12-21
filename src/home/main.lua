@@ -270,15 +270,15 @@ local function cmd_list(opts)
   local files = parse_manifest(manifest:lines())
   manifest:close()
 
-  local tools = extract_tools(files)
+  -- Output each file with mode and path
+  for _, file_info in ipairs(files) do
+    local file_path = file_info.path
+    local mode = file_info.mode
+    local is_dir = is_directory_path(file_path)
+    local rel_path = strip_home_prefix(file_path)
+    local mode_str = format_mode(mode, is_dir)
 
-  stdout:write("embedded files: " .. #files .. " total\n")
-  stdout:write("  - dotfiles (~/.zshrc, ~/.config/*, etc.)\n")
-  stdout:write("  - binaries (~/.local/bin/*)\n")
-  stdout:write("\nembedded tools:\n")
-
-  for _, tool in ipairs(tools) do
-    stdout:write("  - " .. tool .. "\n")
+    stdout:write(mode_str .. " " .. rel_path .. "\n")
   end
 
   return 0
