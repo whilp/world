@@ -51,15 +51,7 @@ jobs:
         run: make home -j$(nproc)
 
       - name: Build native lua binaries
-        continue-on-error: true
-        run: |
-          echo "=== Attempting native build ==="
-          make lua-native -j$(nproc) V=1 2>&1 || {
-            echo "=== Native build failed, checking what compilers are available ==="
-            ls -la o/3p/cosmocc/bin/ | head -20
-            echo "=== Checking cosmocc version ==="
-            o/3p/cosmocc/bin/cosmocc --version || true
-          }
+        run: make lua-native -j$(nproc)
 
       - name: Run tests
         run: make test-all -j$(nproc)
@@ -131,7 +123,7 @@ jobs:
       - name: Create checksums
         run: |
           cd results/bin
-          sha256sum home-* > SHA256SUMS
+          sha256sum home-* lua-* > SHA256SUMS
           cat SHA256SUMS
 
       - name: Create release
@@ -143,4 +135,5 @@ jobs:
             results/bin/home-darwin-arm64 \
             results/bin/home-linux-arm64 \
             results/bin/home-linux-x86_64 \
+            results/bin/lua-linux-x86_64 \
             results/bin/SHA256SUMS
