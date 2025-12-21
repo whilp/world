@@ -3,8 +3,8 @@ local unix = cosmo.unix
 local util = require("util")
 
 local function run(env)
-	unix.rmrf(env.DST .. "/.git")
-	util.copy_tree(env.SRC .. "/.git", env.DST .. "/.git")
+	unix.rmrf(path.join(env.DST, ".git"))
+	util.copy_tree(path.join(env.SRC, ".git"), path.join(env.DST, ".git"))
 	unix.chdir(env.DST)
 	util.spawn({"git", "checkout", "."})
 	util.spawn({"git", "config", "user.email", "189851+whilp@users.noreply.github.com"})

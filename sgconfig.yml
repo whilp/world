@@ -1,2 +1,7 @@
 ruleDirs:
   - .ast-grep/rules
+
+# Scan all lua files including tests and configs
+languageGlobs:
+  lua:
+    - "**/*.lua"

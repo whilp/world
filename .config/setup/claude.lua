@@ -72,8 +72,8 @@ local function run(env)
 		)
 
 		local short_sha = CLAUDE_SHA256:sub(1, 8)
-		local version_dir = string.format("%s/.local/share/claude/%s-%s", env.DST, CLAUDE_VERSION, short_sha)
-		local claude_bin = version_dir .. "/claude"
+		local version_dir = path.join(env.DST, ".local", "share", "claude", string.format("%s-%s", CLAUDE_VERSION, short_sha))
+		local claude_bin = path.join(version_dir, "claude")
 
 		if unix.stat(claude_bin) then
 			io.stderr:write("claude " .. CLAUDE_VERSION .. " already installed\n")
@@ -104,16 +104,16 @@ local function run(env)
 		end
 	end
 
-	local config = env.DST .. "/.claude.json"
+	local config = path.join(env.DST, ".claude.json")
 	if unix.stat(config) then
 		return 0
 	end
 
 	local claude_credentials = os.getenv("CLAUDE_CREDENTIALS")
 	if claude_credentials then
-		local creds_dir = env.DST .. "/.claude"
+		local creds_dir = path.join(env.DST, ".claude")
 		unix.makedirs(creds_dir)
-		local creds_file = creds_dir .. "/.credentials.json"
+		local creds_file = path.join(creds_dir, ".credentials.json")
 		local fd = unix.open(creds_file, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, 0600)
 		if fd and fd >= 0 then
 			unix.write(fd, claude_credentials)

@@ -7,7 +7,7 @@ local function run(env)
 	end
 
 	local creation_log = "/workspaces/.codespaces/.persistedshare/creation.log"
-	local setup_log = env.DST .. "/setup.log"
+	local setup_log = path.join(env.DST, "setup.log")
 
 	if unix.stat(creation_log) then
 		unix.unlink(setup_log)

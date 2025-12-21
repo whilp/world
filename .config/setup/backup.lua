@@ -1,5 +1,6 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
+local path = cosmo.path
 
 local function run(env)
 	unix.makedirs(env.SHELLINIT)
@@ -8,7 +9,7 @@ local function run(env)
 	local files = {"bashrc", "bash_profile", "profile", "zshrc"}
 	for _, name in ipairs(files) do
 		local src_path = "." .. name
-		local dst_path = env.SHELLINIT .. "/" .. name
+		local dst_path = path.join(env.SHELLINIT, name)
 		local src_stat = unix.stat(src_path)
 		local dst_stat = unix.stat(dst_path)
 

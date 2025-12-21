@@ -15,7 +15,7 @@ local function run(env)
 		util.spawn({"sudo", "chsh", username, "--shell", zsh_path})
 	end
 
-	local bashrc = env.DST .. "/.bashrc"
+	local bashrc = path.join(env.DST, ".bashrc")
 	local fd = unix.open(bashrc, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, 0644)
 	if fd and fd >= 0 then
 		unix.write(fd, "export SHELL=/bin/zsh\n")
