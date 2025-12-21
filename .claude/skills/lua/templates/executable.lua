@@ -2,11 +2,12 @@
 
 local cosmo = require("cosmo")
 local unix = cosmo.unix
+local path = cosmo.path
 
 -- Build path to src directory relative to this script
 -- Script is in .local/bin, src is at project root
 local script_dir = cosmo.path.dirname(cosmo.path.dirname(cosmo.path.dirname(debug.getinfo(1, "S").source:sub(2))))
-package.path = script_dir .. "/src/?.lua;" .. package.path
+package.path = path.join(script_dir, "src/?.lua;") .. package.path
 
 -- Replace 'mymodule' with your module name
 local mymodule = require("mymodule.main")

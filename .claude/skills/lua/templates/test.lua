@@ -2,17 +2,18 @@
 local script_path = debug.getinfo(1, "S").source:sub(2)
 local script_dir = script_path:match("(.+)/[^/]+$")
 if script_dir then
-  package.path = script_dir .. "/../../.local/lib/lua/?.lua;" .. package.path
+  package.path = path.join(script_dir, "../../.local/lib/lua/?.lua;") .. package.path
 else
   package.path = "../../.local/lib/lua/?.lua;" .. package.path
 end
 
 local cosmo = require('cosmo')
 local unix = cosmo.unix
+local path = cosmo.path
 
 -- Set up package path to find the module under test
 if script_dir then
-  package.path = script_dir .. "/../?.lua;" .. package.path
+  package.path = path.join(script_dir, "../?.lua;") .. package.path
 else
   package.path = "../?.lua;" .. package.path
 end
