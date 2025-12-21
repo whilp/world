@@ -10,6 +10,9 @@ message: |
 note: String concatenation for building paths is unsafe and can lead to path traversal vulnerabilities or malformed paths. Use cosmo.path.join() for safe path construction.
 
 rule:
-  any:
-    - pattern: ($LEFT .. "/" .. $RIGHT)
-    - pattern: ($LEFT .. "/$PATH")
+  kind: binary_expression
+  has:
+    field: right
+    regex: "^\"/\""
+  not:
+    regex: "~=|==|<|>|<=|>="

@@ -83,4 +83,23 @@ results/bin:
 results:
 	mkdir -p $@
 
-.PHONY: build clean
+check: private .UNVEIL = \
+	r:$(CURDIR) \
+	rx:$(3p)/ast-grep \
+	rw:/dev/null
+check:
+	@if [ "$$(uname)" = "Darwin" ]; then \
+		PLATFORM="darwin-arm64"; \
+	elif [ "$$(uname -m)" = "aarch64" ]; then \
+		PLATFORM="linux-arm64"; \
+	else \
+		PLATFORM="linux-x86_64"; \
+	fi; \
+	SG="$(3p)/ast-grep/$$PLATFORM/sg"; \
+	if [ ! -x "$$SG" ]; then \
+		echo "ast-grep not found at $$SG, building..."; \
+		$(MAKE) $(3p)/ast-grep/$$PLATFORM/.extracted; \
+	fi; \
+	$$SG scan --color always
+
+.PHONY: build clean check

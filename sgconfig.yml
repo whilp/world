@@ -7,6 +7,9 @@ ruleDirs:
 languageGlobs:
   lua:
     - "**/*.lua"
+    - ".local/bin/*"
+    - ".claude/skills/*/main.lua"
     - "!.config/nvim/**/*.lua"
     - "!.config/hammerspoon/**/*.lua"
     - "!.local/lib/lua/test/work/**/*.lua"
+    - "!src/nvim/**/*.lua"
