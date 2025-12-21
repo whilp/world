@@ -4,7 +4,12 @@ local cosmo = require("cosmo")
 local unix = cosmo.unix
 
 local env = unix.environ()
-table.insert(env, "GH_HOST=github.com")
+for i, v in ipairs(env) do
+	if v:match("^GH_HOST=") then
+		env[i] = "GH_HOST=github.com"
+		break
+	end
+end
 
 local args = {"gh", ...}
 unix.execve(unix.commandv("gh"), args, env)
