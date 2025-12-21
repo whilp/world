@@ -110,10 +110,11 @@ check:
 		$(MAKE) lua; \
 	fi
 	@results/bin/lua /zip/.lua/bin/luacheck \
-		.config/setup/*.lua \
-		.local/lib/lua/*.lua \
-		src/**/main.lua \
-		src/**/test*.lua \
+		.config \
+		.local/lib/lua \
+		.github \
+		src \
+		--exclude-files '.claude/skills/lua/templates/*.lua' \
 		|| true
 
 .PHONY: build clean check

@@ -44,11 +44,7 @@ function lfs.dir(path)
 	end
 
 	return function()
-		local entry = dir:read()
-		if entry then
-			return entry:name()
-		end
-		return nil
+		return dir:read()
 	end
 end
 
