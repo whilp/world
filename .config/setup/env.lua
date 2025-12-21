@@ -1,5 +1,6 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
+local path = cosmo.path
 
 local function get()
 	local env = {}
@@ -14,24 +15,24 @@ local function get()
 	env.DST = os.getenv("HOME")
 
 	local path_parts = {
-		env.DST .. "/.local/bootstrap/bin",
-		env.DST .. "/.local/share/shimlink/bin",
-		env.DST .. "/.local/bin",
-		env.DST .. "/extras/bin",
+		path.join(env.DST, ".local", "bootstrap", "bin"),
+		path.join(env.DST, ".local", "share", "shimlink", "bin"),
+		path.join(env.DST, ".local", "bin"),
+		path.join(env.DST, "extras", "bin"),
 		os.getenv("PATH") or "",
 	}
 	env.PATH = table.concat(path_parts, ":")
 
 	local lua_path_parts = {
-		env.DST .. "/.local/bootstrap/lib/lua/?.lua",
-		env.DST .. "/.local/bootstrap/lib/lua/?/init.lua",
-		env.DST .. "/.local/lib/lua/?.lua",
-		env.DST .. "/.local/lib/lua/?/init.lua",
+		path.join(env.DST, ".local", "bootstrap", "lib", "lua", "?.lua"),
+		path.join(env.DST, ".local", "bootstrap", "lib", "lua", "?", "init.lua"),
+		path.join(env.DST, ".local", "lib", "lua", "?.lua"),
+		path.join(env.DST, ".local", "lib", "lua", "?", "init.lua"),
 		"",
 	}
 	env.LUA_PATH = table.concat(lua_path_parts, ";")
 
-	env.SHELLINIT = env.DST .. "/.config/shellinit"
+	env.SHELLINIT = path.join(env.DST, ".config", "shellinit")
 
 	local handle = io.popen("git config --get remote.origin.url 2>/dev/null", "r")
 	if handle then

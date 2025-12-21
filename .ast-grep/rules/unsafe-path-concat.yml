@@ -1,0 +1,18 @@
+id: unsafe-path-concat
+language: lua
+severity: warning
+message: |
+  Unsafe path concatenation detected. Use cosmo.path.join() instead of string concatenation.
+
+  Example:
+    Bad:  path .. "/" .. file
+    Good: cosmo.path.join(path, file)
+note: String concatenation for building paths is unsafe and can lead to path traversal vulnerabilities or malformed paths. Use cosmo.path.join() for safe path construction.
+
+rule:
+  kind: binary_expression
+  has:
+    field: right
+    regex: "^\"/\""
+  not:
+    regex: "~=|==|<|>|<=|>="

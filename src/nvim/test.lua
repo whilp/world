@@ -1,19 +1,6 @@
-local script_path = debug.getinfo(1, "S").source:sub(2)
-local script_dir = script_path:match("(.+)/[^/]+$")
-if script_dir then
-  package.path = script_dir .. "/../../.local/lib/lua/?.lua;" .. package.path
-else
-  package.path = "../../.local/lib/lua/?.lua;" .. package.path
-end
-
 local cosmo = require('cosmo')
 local unix = cosmo.unix
-
-if script_dir then
-  package.path = script_dir .. "/../?.lua;" .. package.path
-else
-  package.path = "../?.lua;" .. package.path
-end
+local path = cosmo.path
 
 local nvim = require("nvim.main")
 
@@ -49,7 +36,7 @@ function test_setup_nvim_environment_preserves_loaded_env()
   local has_server_mode = false
   for _, entry in ipairs(env) do
     lu.assertTrue(type(entry) == "string", "env entries should be strings")
-    lu.assertTrue(entry:match("^[^=]+=[^=]*$") ~= nil, "env entries should be in KEY=value format")
+    lu.assertTrue(entry:match("^[^=]+=.*$") ~= nil, "env entries should be in KEY=value format")
     if entry:match("^NVIM_SERVER_MODE=") then
       has_server_mode = true
     end

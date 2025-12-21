@@ -1,5 +1,6 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
+local path = cosmo.path
 local stat = require("posix.sys.stat")
 local dirent = require("posix.dirent")
 local unistd = require("posix.unistd")
@@ -53,27 +54,18 @@ function M.path_join(...)
   return table.concat(parts, "/")
 end
 
-function M.expand_path(path)
-  if path:sub(1, 1) == "~" then
+function M.expand_path(file_path)
+  if file_path:sub(1, 1) == "~" then
     local home = os.getenv("HOME") or os.getenv("USERPROFILE")
-    return home .. path:sub(2)
+    return path.join(home, file_path:sub(2))
   end
-  return path
+  return file_path
 end
 
-function M.mkdir_p(path)
-  local parts = {}
-  for part in path:gmatch("[^/]+") do
-    table.insert(parts, part)
-  end
-
-  local current = path:sub(1, 1) == "/" and "/" or ""
-  for _, part in ipairs(parts) do
-    current = current .. part
-    if not M.is_directory(current) then
-      stat.mkdir(current, tonumber("0755", 8))
-    end
-    current = current .. "/"
+function M.mkdir_p(dir_path)
+  local ok, err = unix.makedirs(dir_path, tonumber("0755", 8))
+  if not ok then
+    error("failed to create directory " .. dir_path .. ": " .. tostring(err))
   end
 end
 

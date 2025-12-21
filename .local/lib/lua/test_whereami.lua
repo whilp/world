@@ -1,5 +1,6 @@
 -- test whereami module
-package.path = os.getenv("HOME") .. "/.local/lib/lua/?.lua;" .. package.path
+local cosmo = require('cosmo')
+local path = cosmo.path
 
 local whereami = require('whereami')
 

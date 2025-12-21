@@ -8,7 +8,7 @@ local function run(env)
 		return 0
 	end
 
-	local extras = remote_base .. "/extras"
+	local extras = path.join(remote_base, "extras")
 	unix.chdir(env.DST)
 
 	if not unix.stat("extras") then

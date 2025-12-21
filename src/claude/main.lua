@@ -1,5 +1,6 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
+local path = cosmo.path
 
 local function debug_log(msg)
   if os.getenv("CLAUDE_WRAPPER_DEBUG") then
@@ -43,9 +44,9 @@ end
 local function scan_for_claude_deploy()
   local prefixes = {"/opt", "/usr", "/home"}
   for _, prefix in ipairs(prefixes) do
-    local path = prefix .. "/deploy/claude-wrapper-hosts/current/bin/claude"
-    if unix.stat(path) then
-      return path
+    local bin_path = path.join(prefix, "deploy", "claude-wrapper-hosts", "current", "bin", "claude")
+    if unix.stat(bin_path) then
+      return bin_path
     end
   end
   return nil
@@ -53,7 +54,7 @@ end
 
 local function scan_for_atomic_install()
   local HOME = os.getenv("HOME")
-  local share_dir = HOME .. "/.local/share/claude"
+  local share_dir = path.join(HOME, ".local", "share", "claude")
 
   if not unix.stat(share_dir) then
     return nil
@@ -66,7 +67,7 @@ local function scan_for_atomic_install()
     if name ~= "." and name ~= ".." then
       local version = name:match("^([%d%.]+)%-")
       if version then
-        local bin_path = share_dir .. "/" .. name .. "/claude"
+        local bin_path = path.join(share_dir, name, "claude")
         if unix.stat(bin_path) then
           if not latest_version or version > latest_version then
             latest_version = version
@@ -86,7 +87,7 @@ local function main(args)
   local claude_paths = {
     scan_for_claude_deploy(),
     scan_for_atomic_install(),
-    HOME .. "/.local/share/claude/bin/claude",
+    path.join(HOME, ".local", "share", "claude", "bin", "claude"),
     "/usr/local/bin/claude",
   }
 
@@ -104,7 +105,7 @@ local function main(args)
     table.insert(append_prompts, env_append)
   end
 
-  local extras_mcp = HOME .. "/extras/mcp.json"
+  local extras_mcp = path.join(HOME, "extras", "mcp.json")
   local argv = build_argv(append_prompts, extras_mcp, args)
 
   local execve_argv = {claude_bin}

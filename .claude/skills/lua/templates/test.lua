@@ -1,21 +1,9 @@
--- Set up package path to find library modules
-local script_path = debug.getinfo(1, "S").source:sub(2)
-local script_dir = script_path:match("(.+)/[^/]+$")
-if script_dir then
-  package.path = script_dir .. "/../../.local/lib/lua/?.lua;" .. package.path
-else
-  package.path = "../../.local/lib/lua/?.lua;" .. package.path
-end
+-- Note: Package paths are configured in src/test.mk via LUA_PATH
+-- Add your test target there with paths to .local/lib/lua and src modules
 
 local cosmo = require('cosmo')
 local unix = cosmo.unix
-
--- Set up package path to find the module under test
-if script_dir then
-  package.path = script_dir .. "/../?.lua;" .. package.path
-else
-  package.path = "../?.lua;" .. package.path
-end
+local path = cosmo.path
 
 -- Import the module to test (replace 'mymodule' with your module name)
 local mymodule = require("mymodule.main")

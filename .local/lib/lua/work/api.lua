@@ -1,6 +1,9 @@
 -- Unified API layer for work system
 -- Provides high-level operations for both CLI and nvim consumers
 
+local cosmo = require("cosmo")
+local path = cosmo.path
+
 local config = require("work.config")
 local data = require("work.data")
 local store = require("work.store")
@@ -462,7 +465,7 @@ M.get_file_path = function(id)
     return nil, "item not found: " .. full_id
   end
 
-  return item._meta and item._meta.source or (_config.data_dir .. "/" .. full_id .. ".lua")
+  return item._meta and item._meta.source or path.join(_config.data_dir, full_id .. ".lua")
 end
 
 -- Clean item (remove internal fields)

@@ -1,8 +1,8 @@
-package.path = os.getenv("HOME") .. "/.local/lib/lua/?.lua;" .. package.path
-
-local daemonize = require('daemonize')
 local cosmo = require('cosmo')
 local unix = cosmo.unix
+local path = cosmo.path
+
+local daemonize = require('daemonize')
 
 function test_acquire_lock()
   local lock_path = "/tmp/test_daemonize_lock"

@@ -1,3 +1,6 @@
+local cosmo = require("cosmo")
+local path = cosmo.path
+
 local M = {
   _lock_handle = nil,
   _lock_path = nil,
@@ -278,7 +281,7 @@ M.acquire_lock = function(dir)
   end
 
   local fcntl = require("posix.fcntl")
-  local lock_path = dir .. "/.work.lock"
+  local lock_path = path.join(dir, ".work.lock")
 
   -- Open or create lock file
   local fd, err = fcntl.open(lock_path, fcntl.O_CREAT + fcntl.O_RDWR, 384) -- 384 = 0600 octal
@@ -335,7 +338,7 @@ M.load_all = function(store, dir)
   end
 
   local glob = require("posix.glob")
-  local pattern = dir .. "/*.lua"
+  local pattern = path.join(dir, "*.lua")
   local files = glob.glob(pattern, 0)
 
   if not files or #files == 0 then
@@ -397,7 +400,7 @@ M.save = function(item, dir)
 
   local source = item._meta and item._meta.source
   if not source then
-    source = dir .. "/" .. item.id .. ".lua"
+    source = path.join(dir, item.id .. ".lua")
   end
 
   -- Create backup if file already exists
@@ -457,7 +460,7 @@ end
 -- Returns: array of backup file paths
 M.list_backups = function(dir)
   local glob = require("posix.glob")
-  local pattern = dir .. "/*.lua.bak"
+  local pattern = path.join(dir, "*.lua.bak")
   local files = glob.glob(pattern, 0)
   return files or {}
 end
