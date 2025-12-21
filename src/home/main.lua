@@ -168,6 +168,30 @@ local function is_directory_path(path)
   return path:match("/$") ~= nil
 end
 
+-- Convert octal mode to permission string (e.g., 0644 -> "-rw-r--r--")
+-- Returns 10-character string: type + owner + group + other permissions
+local function format_mode(mode, is_dir)
+  if not mode then
+    return "----------"
+  end
+
+  local result = {}
+
+  -- File type
+  table.insert(result, is_dir and "d" or "-")
+
+  -- Owner, group, other permissions (3 bits each)
+  for i = 2, 0, -1 do
+    local shift = i * 3
+    local perms = (mode >> shift) & 7
+    table.insert(result, (perms & 4) ~= 0 and "r" or "-")
+    table.insert(result, (perms & 2) ~= 0 and "w" or "-")
+    table.insert(result, (perms & 1) ~= 0 and "x" or "-")
+  end
+
+  return table.concat(result)
+end
+
 local function cmd_unpack(dest, force, opts)
   opts = opts or {}
   local manifest_path = opts.manifest_path or "/zip/MANIFEST.txt"
@@ -307,6 +331,7 @@ local home = {
   parse_args = parse_args,
   strip_home_prefix = strip_home_prefix,
   is_directory_path = is_directory_path,
+  format_mode = format_mode,
   cmd_unpack = cmd_unpack,
   cmd_list = cmd_list,
   cmd_version = cmd_version,

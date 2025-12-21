@@ -451,4 +451,27 @@ function test_read_file_not_found()
   lu.assertStrContains(err, "failed to open")
 end
 
+--------------------------------------------------------------------------------
+-- Test: format_mode - Permission string formatting
+--------------------------------------------------------------------------------
+function test_format_mode_regular_file_644()
+  local result = home.format_mode(tonumber("644", 8), false)
+  lu.assertEquals(result, "-rw-r--r--")
+end
+
+function test_format_mode_executable_755()
+  local result = home.format_mode(tonumber("755", 8), false)
+  lu.assertEquals(result, "-rwxr-xr-x")
+end
+
+function test_format_mode_directory()
+  local result = home.format_mode(tonumber("755", 8), true)
+  lu.assertEquals(result, "drwxr-xr-x")
+end
+
+function test_format_mode_no_mode()
+  local result = home.format_mode(nil, false)
+  lu.assertEquals(result, "----------")
+end
+
 os.exit(lu.LuaUnit.run())
