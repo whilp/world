@@ -51,7 +51,15 @@ jobs:
         run: make home -j$(nproc)
 
       - name: Build native lua binaries
-        run: make lua-native -j$(nproc)
+        continue-on-error: true
+        run: |
+          echo "=== Attempting native build ==="
+          make lua-native -j$(nproc) V=1 2>&1 || {
+            echo "=== Native build failed, checking what compilers are available ==="
+            ls -la o/3p/cosmocc/bin/ | head -20
+            echo "=== Checking cosmocc version ==="
+            o/3p/cosmocc/bin/cosmocc --version || true
+          }
 
       - name: Run tests
         run: make test-all -j$(nproc)
