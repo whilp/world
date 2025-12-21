@@ -87,6 +87,7 @@ results:
 check: private .UNVEIL = \
 	r:$(CURDIR) \
 	rx:$(3p)/ast-grep \
+	rx:results/bin \
 	rw:/dev/null
 check:
 	@if [ "$$(uname)" = "Darwin" ]; then \
@@ -102,5 +103,17 @@ check:
 		$(MAKE) $(3p)/ast-grep/$$PLATFORM/.extracted; \
 	fi; \
 	$$SG scan --color always
+	@echo ""
+	@echo "Running luacheck..."
+	@if [ ! -x results/bin/lua ]; then \
+		echo "lua binary not found, building..."; \
+		$(MAKE) lua; \
+	fi
+	@results/bin/lua /zip/.lua/bin/luacheck \
+		.config/setup/*.lua \
+		.local/lib/lua/*.lua \
+		src/**/main.lua \
+		src/**/test*.lua \
+		|| true
 
 .PHONY: build clean check
