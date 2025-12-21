@@ -649,9 +649,9 @@ function test_cmd_unpack_only_empty_filter()
 end
 
 --------------------------------------------------------------------------------
--- Test: cmd_list with mock manifest (old test kept for compatibility)
+-- Test: cmd_list default (paths only)
 --------------------------------------------------------------------------------
-function test_cmd_list_structured_output()
+function test_cmd_list_default_paths_only()
   local tmp = make_temp_dir()
   local manifest_path = tmp .. "/MANIFEST.txt"
   write_file(manifest_path, [[
@@ -670,18 +670,18 @@ home/.config/foo/ 755
   lu.assertEquals(code, 0)
 
   local output = stdout:get()
-  lu.assertStrContains(output, "-rw-r--r-- .zshrc\n")
-  lu.assertStrContains(output, "-rwxr-xr-x .local/bin/nvim\n")
-  lu.assertStrContains(output, "drwxr-xr-x .config/foo/\n")
+  lu.assertEquals(output, ".zshrc\n.local/bin/nvim\n.config/foo/\n")
 
   remove_dir(tmp)
 end
 
-function test_cmd_list_no_mode()
+function test_cmd_list_verbose()
   local tmp = make_temp_dir()
   local manifest_path = tmp .. "/MANIFEST.txt"
   write_file(manifest_path, [[
-home/.bashrc
+home/.zshrc 644
+home/.local/bin/nvim 755
+home/.config/foo/ 755
 ]])
 
   local stdout = mock_writer()
@@ -690,11 +690,39 @@ home/.bashrc
     manifest_path = manifest_path,
     stdout = stdout,
     stderr = stderr,
+    verbose = true,
   })
   lu.assertEquals(code, 0)
 
   local output = stdout:get()
-  lu.assertStrContains(output, "---------- .bashrc\n")
+  lu.assertStrContains(output, "-rw-r--r-- .zshrc\n")
+  lu.assertStrContains(output, "-rwxr-xr-x .local/bin/nvim\n")
+  lu.assertStrContains(output, "drwxr-xr-x .config/foo/\n")
+
+  remove_dir(tmp)
+end
+
+function test_cmd_list_null_delimiter()
+  local tmp = make_temp_dir()
+  local manifest_path = tmp .. "/MANIFEST.txt"
+  write_file(manifest_path, [[
+home/.zshrc 644
+home/.bashrc 644
+]])
+
+  local stdout = mock_writer()
+  local stderr = mock_writer()
+  local code = home.cmd_list({
+    manifest_path = manifest_path,
+    stdout = stdout,
+    stderr = stderr,
+    null = true,
+  })
+  lu.assertEquals(code, 0)
+
+  local output = stdout:get()
+  local expected = ".zshrc" .. string.char(0) .. ".bashrc" .. string.char(0)
+  lu.assertEquals(output, expected)
 
   remove_dir(tmp)
 end

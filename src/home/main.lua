@@ -134,7 +134,7 @@ local function extract_tools(files)
 end
 
 -- Parse command-line arguments
--- Returns {cmd=string, force=bool, verbose=bool, dry_run=bool, only=bool, dest=string|nil}
+-- Returns {cmd=string, force=bool, verbose=bool, dry_run=bool, only=bool, null=bool, dest=string|nil}
 local function parse_args(args)
   local result = {
     cmd = args[1] or "help",
@@ -142,6 +142,7 @@ local function parse_args(args)
     verbose = false,
     dry_run = false,
     only = false,
+    null = false,
     dest = nil,
   }
 
@@ -155,6 +156,8 @@ local function parse_args(args)
       result.dry_run = true
     elseif args[i] == "--only" then
       result.only = true
+    elseif args[i] == "--null" or args[i] == "-0" then
+      result.null = true
     elseif not result.dest then
       result.dest = args[i]
     end
@@ -301,6 +304,8 @@ local function cmd_list(opts)
   local manifest_path = opts.manifest_path or "/zip/MANIFEST.txt"
   local stdout = opts.stdout or io.stdout
   local stderr = opts.stderr or io.stderr
+  local verbose = opts.verbose or false
+  local null = opts.null or false
 
   -- Read manifest to get list of files
   local manifest = io.open(manifest_path, "r")
@@ -312,15 +317,20 @@ local function cmd_list(opts)
   local files = parse_manifest(manifest:lines())
   manifest:close()
 
-  -- Output each file with mode and path
+  -- Output each file
+  local delimiter = null and string.char(0) or "\n"
   for _, file_info in ipairs(files) do
     local file_path = file_info.path
     local mode = file_info.mode
     local is_dir = is_directory_path(file_path)
     local rel_path = strip_home_prefix(file_path)
-    local mode_str = format_mode(mode, is_dir)
 
-    stdout:write(mode_str .. " " .. rel_path .. "\n")
+    if verbose then
+      local mode_str = format_mode(mode, is_dir)
+      stdout:write(mode_str .. " " .. rel_path .. delimiter)
+    else
+      stdout:write(rel_path .. delimiter)
+    end
   end
 
   return 0
@@ -336,12 +346,15 @@ end
 local function cmd_help(opts)
   opts = opts or {}
   local stderr = opts.stderr or io.stderr
-  stderr:write("usage: home <command> [args]\n")
+  stderr:write("usage: home <command> [options]\n")
   stderr:write("\ncommands:\n")
+  stderr:write("  list [options]           - list embedded files (paths only by default)\n")
   stderr:write("  unpack [options] <dest>  - extract dotfiles and binaries to destination\n")
-  stderr:write("  list                     - list embedded files with permissions\n")
   stderr:write("  version                  - show build version\n")
-  stderr:write("\noptions:\n")
+  stderr:write("\nlist options:\n")
+  stderr:write("  --verbose, -v            - show permissions and paths (tar-style)\n")
+  stderr:write("  --null, -0               - use null delimiter instead of newline\n")
+  stderr:write("\nunpack options:\n")
   stderr:write("  --force, -f              - overwrite existing files\n")
   stderr:write("  --verbose, -v            - show files as they are extracted\n")
   stderr:write("  --dry-run, -n            - show what would be extracted without doing it\n")
@@ -365,7 +378,15 @@ local function main(args, opts)
 
     return cmd_unpack(parsed.dest, parsed.force, unpack_opts)
   elseif parsed.cmd == "list" then
-    return cmd_list(opts)
+    -- Merge parsed options with opts
+    local list_opts = {}
+    for k, v in pairs(opts) do
+      list_opts[k] = v
+    end
+    list_opts.verbose = parsed.verbose
+    list_opts.null = parsed.null
+
+    return cmd_list(list_opts)
   elseif parsed.cmd == "version" then
     return cmd_version(opts)
   elseif parsed.cmd == "help" then
