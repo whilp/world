@@ -515,6 +515,68 @@ function test_cmd_unpack_verbose_force_overwrite()
 end
 
 --------------------------------------------------------------------------------
+-- Test: cmd_unpack dry-run mode
+--------------------------------------------------------------------------------
+function test_cmd_unpack_dry_run()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local manifest_path = tmp .. "/MANIFEST.txt"
+  local zip_root = tmp .. "/zip/"
+  unix.makedirs(zip_root .. "home")
+
+  write_file(manifest_path, "home/.testfile 644\n")
+  write_file(zip_root .. "home/.testfile", "test content")
+
+  local dest = tmp .. "/dest"
+
+  local code = home.cmd_unpack(dest, false, {
+    manifest_path = manifest_path,
+    zip_root = zip_root,
+    dry_run = true,
+  })
+
+  lu.assertEquals(code, 0)
+
+  -- Verify file was NOT actually created
+  local f = io.open(dest .. "/.testfile", "r")
+  lu.assertNil(f)
+
+  remove_dir(tmp)
+end
+
+function test_cmd_unpack_dry_run_verbose()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local manifest_path = tmp .. "/MANIFEST.txt"
+  local zip_root = tmp .. "/zip/"
+  unix.makedirs(zip_root .. "home")
+
+  write_file(manifest_path, "home/.zshrc 644\n")
+  write_file(zip_root .. "home/.zshrc", "zsh content")
+
+  local dest = tmp .. "/dest"
+  local stdout = mock_writer()
+
+  local code = home.cmd_unpack(dest, false, {
+    manifest_path = manifest_path,
+    zip_root = zip_root,
+    stdout = stdout,
+    dry_run = true,
+    verbose = true,
+  })
+
+  lu.assertEquals(code, 0)
+  local output = stdout:get()
+  lu.assertStrContains(output, ".zshrc\n")
+
+  -- Verify file was NOT actually created
+  local f = io.open(dest .. "/.zshrc", "r")
+  lu.assertNil(f)
+
+  remove_dir(tmp)
+end
+
+--------------------------------------------------------------------------------
 -- Test: cmd_list with mock manifest (old test kept for compatibility)
 --------------------------------------------------------------------------------
 function test_cmd_list_structured_output()

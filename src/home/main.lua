@@ -208,6 +208,7 @@ local function cmd_unpack(dest, force, opts)
   local stderr = opts.stderr or io.stderr
   local stdout = opts.stdout or io.stdout
   local verbose = opts.verbose or false
+  local dry_run = opts.dry_run or false
 
   if not dest then
     stderr:write("error: destination path required\n")
@@ -216,9 +217,11 @@ local function cmd_unpack(dest, force, opts)
   end
 
   -- Create destination directory
-  if not unix.makedirs(dest) then
-    stderr:write("error: failed to create destination directory\n")
-    return 1
+  if not dry_run then
+    if not unix.makedirs(dest) then
+      stderr:write("error: failed to create destination directory\n")
+      return 1
+    end
   end
 
   -- Read manifest to get list of files with modes
@@ -241,24 +244,29 @@ local function cmd_unpack(dest, force, opts)
 
     if not is_directory_path(file_path) then
       -- Check if file exists before copying (for verbose overwrite detection)
-      local file_exists = unix.stat(dest_file_path) ~= nil
+      local file_exists = not dry_run and unix.stat(dest_file_path) ~= nil
 
-      -- Create parent directory
-      local parent_dir = cosmo.path.dirname(dest_file_path)
-      unix.makedirs(parent_dir)
+      if not dry_run then
+        -- Create parent directory
+        local parent_dir = cosmo.path.dirname(dest_file_path)
+        unix.makedirs(parent_dir)
 
-      -- Copy file atomically with permissions
-      local ok, err = copy_file(zip_file_path, dest_file_path, mode, force)
-      if not ok then
-        stderr:write("warning: failed to copy " .. file_path .. ": " .. (err or "unknown error") .. "\n")
-      elseif verbose then
-        if force and file_exists then
-          stdout:write(rel_path .. " (overwritten)\n")
-        else
-          stdout:write(rel_path .. "\n")
+        -- Copy file atomically with permissions
+        local ok, err = copy_file(zip_file_path, dest_file_path, mode, force)
+        if not ok then
+          stderr:write("warning: failed to copy " .. file_path .. ": " .. (err or "unknown error") .. "\n")
+        elseif verbose then
+          if force and file_exists then
+            stdout:write(rel_path .. " (overwritten)\n")
+          else
+            stdout:write(rel_path .. "\n")
+          end
         end
+      elseif verbose then
+        -- Dry-run with verbose: show what would be done
+        stdout:write(rel_path .. "\n")
       end
-    else
+    elseif not dry_run then
       -- Create directory
       unix.makedirs(dest .. "/" .. rel_path)
     end
