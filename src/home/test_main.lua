@@ -648,6 +648,48 @@ function test_cmd_unpack_only_empty_filter()
   remove_dir(tmp)
 end
 
+function test_cmd_unpack_only_null_delimited()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local manifest_path = tmp .. "/MANIFEST.txt"
+  local zip_root = tmp .. "/zip/"
+  unix.makedirs(zip_root .. "home")
+
+  write_file(manifest_path, "home/.zshrc 644\nhome/.bashrc 644\nhome/.vimrc 644\n")
+  write_file(zip_root .. "home/.zshrc", "zsh content")
+  write_file(zip_root .. "home/.bashrc", "bash content")
+  write_file(zip_root .. "home/.vimrc", "vim content")
+
+  local dest = tmp .. "/dest"
+
+  -- Null-delimited input
+  local filter_input = ".zshrc" .. string.char(0) .. ".vimrc" .. string.char(0)
+
+  local code = home.cmd_unpack(dest, false, {
+    manifest_path = manifest_path,
+    zip_root = zip_root,
+    only = true,
+    null = true,
+    filter_input = filter_input,
+  })
+
+  lu.assertEquals(code, 0)
+
+  -- Verify only filtered files were created
+  local zsh = io.open(dest .. "/.zshrc", "r")
+  lu.assertNotNil(zsh)
+  zsh:close()
+
+  local vim = io.open(dest .. "/.vimrc", "r")
+  lu.assertNotNil(vim)
+  vim:close()
+
+  local bash = io.open(dest .. "/.bashrc", "r")
+  lu.assertNil(bash)
+
+  remove_dir(tmp)
+end
+
 --------------------------------------------------------------------------------
 -- Test: cmd_list default (paths only)
 --------------------------------------------------------------------------------

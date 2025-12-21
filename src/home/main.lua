@@ -225,7 +225,10 @@ local function cmd_unpack(dest, force, opts)
   if only then
     filter = {}
     local input = opts.filter_input or io.stdin:read("*a")
-    for line in input:gmatch("[^\n]+") do
+    local delimiter = opts.null and string.char(0) or "\n"
+    local pattern = opts.null and "[^\0]+" or "[^\n]+"
+
+    for line in input:gmatch(pattern) do
       local path = line:match("^%s*(.-)%s*$")
       if path and path ~= "" then
         filter[path] = true
@@ -359,6 +362,7 @@ local function cmd_help(opts)
   stderr:write("  --verbose, -v            - show files as they are extracted\n")
   stderr:write("  --dry-run, -n            - show what would be extracted without doing it\n")
   stderr:write("  --only                   - only extract files listed on stdin\n")
+  stderr:write("  --null, -0               - read null-delimited paths (with --only)\n")
   return 0
 end
 
@@ -375,6 +379,7 @@ local function main(args, opts)
     unpack_opts.verbose = parsed.verbose
     unpack_opts.dry_run = parsed.dry_run
     unpack_opts.only = parsed.only
+    unpack_opts.null = parsed.null
 
     return cmd_unpack(parsed.dest, parsed.force, unpack_opts)
   elseif parsed.cmd == "list" then
