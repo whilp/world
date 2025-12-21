@@ -1,0 +1,27 @@
+#!/usr/bin/env lua
+
+package.path = package.path .. ";.config/setup/?.lua"
+
+local claude = require("claude")
+
+local function main(args)
+	if #args == 0 or args[1] == "latest" then
+		return claude.print_latest()
+	elseif args[1] == "help" or args[1] == "--help" or args[1] == "-h" then
+		io.write("usage: claude-version [latest]\n")
+		io.write("\ncommands:\n")
+		io.write("  latest  - fetch and display latest claude code version and sha256\n")
+		return 0
+	else
+		io.stderr:write("error: unknown command: " .. args[1] .. "\n")
+		io.stderr:write("run 'claude-version help' for usage\n")
+		return 1
+	end
+end
+
+local ok, err = pcall(main, { ... })
+if not ok then
+	io.stderr:write("error: " .. tostring(err) .. "\n")
+	os.exit(1)
+end
+os.exit(err or 0)

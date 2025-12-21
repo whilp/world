@@ -582,6 +582,14 @@ Standard libraries used in this repo:
 - `cosmo.path` - Path manipulation utilities (dirname, etc)
 - `daemonize` - Daemon process creation (from `src/` modules)
 
+For detailed API documentation, see the cosmo reference files in this skill directory:
+- `cosmo.md` - Main module (encoding, compression, hashing, networking, system info)
+- `cosmo-unix.md` - Unix system calls
+- `cosmo-path.md` - Path manipulation
+- `cosmo-re.md` - Regular expressions
+- `cosmo-argon2.md` - Argon2 password hashing
+- `cosmo-sqlite3.md` - SQLite database
+
 ## Unix system calls
 
 Common operations using `cosmo.unix`:
