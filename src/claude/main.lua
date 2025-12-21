@@ -125,6 +125,7 @@ local claude = {
   find_claude_binary = find_claude_binary,
   build_argv = build_argv,
   scan_for_claude_deploy = scan_for_claude_deploy,
+  scan_for_atomic_install = scan_for_atomic_install,
   main = main,
 }
 

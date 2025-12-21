@@ -86,6 +86,10 @@ end
 
 function test_scan_for_claude_deploy()
   local result = claude.scan_for_claude_deploy()
-  -- Should return nil or a valid path, but not crash
+  lu.assertTrue(result == nil or type(result) == "string", "should return nil or string")
+end
+
+function test_scan_for_atomic_install()
+  local result = claude.scan_for_atomic_install()
   lu.assertTrue(result == nil or type(result) == "string", "should return nil or string")
 end
