@@ -50,7 +50,7 @@ function test_setup_nvim_environment_preserves_loaded_env()
   local has_server_mode = false
   for _, entry in ipairs(env) do
     lu.assertTrue(type(entry) == "string", "env entries should be strings")
-    lu.assertTrue(entry:match("^[^=]+=[^=]*$") ~= nil, "env entries should be in KEY=value format")
+    lu.assertTrue(entry:match("^[^=]+=.*$") ~= nil, "env entries should be in KEY=value format")
     if entry:match("^NVIM_SERVER_MODE=") then
       has_server_mode = true
     end

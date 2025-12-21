@@ -1,11 +1,11 @@
+package.path = os.getenv("HOME") .. "/.local/lib/lua/?.lua;" .. package.path
+
 local cosmo = require('cosmo')
 local unix = cosmo.unix
 local path = cosmo.path
 
-package.path = path.join(os.getenv("HOME"), ".local", "lib", "lua", "?.lua") .. ";" .. package.path
-
 local script_dir = path.dirname(debug.getinfo(1, "S").source:sub(2))
-package.path = path.join(script_dir, "..", "?.lua") .. ";" .. package.path
+package.path = script_dir .. "/../?.lua;" .. package.path
 
 local claude = require("claude.main")
 
