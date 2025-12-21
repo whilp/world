@@ -134,11 +134,15 @@ local function extract_tools(files)
 end
 
 -- Parse command-line arguments
--- Returns {cmd=string, force=bool, dest=string|nil}
+-- Returns {cmd=string, force=bool, verbose=bool, dry_run=bool, only=bool, null=bool, dest=string|nil}
 local function parse_args(args)
   local result = {
     cmd = args[1] or "help",
     force = false,
+    verbose = false,
+    dry_run = false,
+    only = false,
+    null = false,
     dest = nil,
   }
 
@@ -146,6 +150,14 @@ local function parse_args(args)
   while i <= #args do
     if args[i] == "--force" or args[i] == "-f" then
       result.force = true
+    elseif args[i] == "--verbose" or args[i] == "-v" then
+      result.verbose = true
+    elseif args[i] == "--dry-run" or args[i] == "-n" then
+      result.dry_run = true
+    elseif args[i] == "--only" then
+      result.only = true
+    elseif args[i] == "--null" or args[i] == "-0" then
+      result.null = true
     elseif not result.dest then
       result.dest = args[i]
     end
@@ -168,11 +180,39 @@ local function is_directory_path(path)
   return path:match("/$") ~= nil
 end
 
+-- Convert octal mode to permission string (e.g., 0644 -> "-rw-r--r--")
+-- Returns 10-character string: type + owner + group + other permissions
+local function format_mode(mode, is_dir)
+  if not mode then
+    return "----------"
+  end
+
+  local result = {}
+
+  -- File type
+  table.insert(result, is_dir and "d" or "-")
+
+  -- Owner, group, other permissions (3 bits each)
+  for i = 2, 0, -1 do
+    local shift = i * 3
+    local perms = (mode >> shift) & 7
+    table.insert(result, (perms & 4) ~= 0 and "r" or "-")
+    table.insert(result, (perms & 2) ~= 0 and "w" or "-")
+    table.insert(result, (perms & 1) ~= 0 and "x" or "-")
+  end
+
+  return table.concat(result)
+end
+
 local function cmd_unpack(dest, force, opts)
   opts = opts or {}
   local manifest_path = opts.manifest_path or "/zip/MANIFEST.txt"
   local zip_root = opts.zip_root or "/zip/"
   local stderr = opts.stderr or io.stderr
+  local stdout = opts.stdout or io.stdout
+  local verbose = opts.verbose or false
+  local dry_run = opts.dry_run or false
+  local only = opts.only or false
 
   if not dest then
     stderr:write("error: destination path required\n")
@@ -180,15 +220,28 @@ local function cmd_unpack(dest, force, opts)
     return 1
   end
 
-  stderr:write("extracting to " .. dest .. "...\n")
-  if force then
-    stderr:write("overwrite mode enabled\n")
+  -- Read filter from stdin if --only is specified
+  local filter = nil
+  if only then
+    filter = {}
+    local input = opts.filter_input or io.stdin:read("*a")
+    local delimiter = opts.null and string.char(0) or "\n"
+    local pattern = opts.null and "[^\0]+" or "[^\n]+"
+
+    for line in input:gmatch(pattern) do
+      local path = line:match("^%s*(.-)%s*$")
+      if path and path ~= "" then
+        filter[path] = true
+      end
+    end
   end
 
   -- Create destination directory
-  if not unix.makedirs(dest) then
-    stderr:write("error: failed to create destination directory\n")
-    return 1
+  if not dry_run then
+    if not unix.makedirs(dest) then
+      stderr:write("error: failed to create destination directory\n")
+      return 1
+    end
   end
 
   -- Read manifest to get list of files with modes
@@ -209,24 +262,43 @@ local function cmd_unpack(dest, force, opts)
     local zip_file_path = zip_root .. file_path
     local dest_file_path = dest .. "/" .. rel_path
 
-    if not is_directory_path(file_path) then
-      -- Create parent directory
-      local parent_dir = cosmo.path.dirname(dest_file_path)
-      unix.makedirs(parent_dir)
+    -- Skip if filter is active and path not in filter
+    if filter and not filter[rel_path] then
+      goto continue
+    end
 
-      -- Copy file atomically with permissions
-      local ok, err = copy_file(zip_file_path, dest_file_path, mode, force)
-      if not ok then
-        stderr:write("warning: failed to copy " .. file_path .. ": " .. (err or "unknown error") .. "\n")
+    if not is_directory_path(file_path) then
+      -- Check if file exists before copying (for verbose overwrite detection)
+      local file_exists = not dry_run and unix.stat(dest_file_path) ~= nil
+
+      if not dry_run then
+        -- Create parent directory
+        local parent_dir = cosmo.path.dirname(dest_file_path)
+        unix.makedirs(parent_dir)
+
+        -- Copy file atomically with permissions
+        local ok, err = copy_file(zip_file_path, dest_file_path, mode, force)
+        if not ok then
+          stderr:write("warning: failed to copy " .. file_path .. ": " .. (err or "unknown error") .. "\n")
+        elseif verbose then
+          if force and file_exists then
+            stdout:write(rel_path .. " (overwritten)\n")
+          else
+            stdout:write(rel_path .. "\n")
+          end
+        end
+      elseif verbose then
+        -- Dry-run with verbose: show what would be done
+        stdout:write(rel_path .. "\n")
       end
-    else
+    elseif not dry_run then
       -- Create directory
       unix.makedirs(dest .. "/" .. rel_path)
     end
+
+    ::continue::
   end
 
-  stderr:write("extraction complete\n")
-  stderr:write("add " .. dest .. "/.local/bin to PATH if needed\n")
   return 0
 end
 
@@ -235,6 +307,8 @@ local function cmd_list(opts)
   local manifest_path = opts.manifest_path or "/zip/MANIFEST.txt"
   local stdout = opts.stdout or io.stdout
   local stderr = opts.stderr or io.stderr
+  local verbose = opts.verbose or false
+  local null = opts.null or false
 
   -- Read manifest to get list of files
   local manifest = io.open(manifest_path, "r")
@@ -246,15 +320,20 @@ local function cmd_list(opts)
   local files = parse_manifest(manifest:lines())
   manifest:close()
 
-  local tools = extract_tools(files)
+  -- Output each file
+  local delimiter = null and string.char(0) or "\n"
+  for _, file_info in ipairs(files) do
+    local file_path = file_info.path
+    local mode = file_info.mode
+    local is_dir = is_directory_path(file_path)
+    local rel_path = strip_home_prefix(file_path)
 
-  stdout:write("embedded files: " .. #files .. " total\n")
-  stdout:write("  - dotfiles (~/.zshrc, ~/.config/*, etc.)\n")
-  stdout:write("  - binaries (~/.local/bin/*)\n")
-  stdout:write("\nembedded tools:\n")
-
-  for _, tool in ipairs(tools) do
-    stdout:write("  - " .. tool .. "\n")
+    if verbose then
+      local mode_str = format_mode(mode, is_dir)
+      stdout:write(mode_str .. " " .. rel_path .. delimiter)
+    else
+      stdout:write(rel_path .. delimiter)
+    end
   end
 
   return 0
@@ -270,13 +349,20 @@ end
 local function cmd_help(opts)
   opts = opts or {}
   local stderr = opts.stderr or io.stderr
-  stderr:write("usage: home <command> [args]\n")
+  stderr:write("usage: home <command> [options]\n")
   stderr:write("\ncommands:\n")
-  stderr:write("  unpack [--force] <dest>  - extract dotfiles and binaries to destination\n")
-  stderr:write("  list                     - list embedded tools\n")
+  stderr:write("  list [options]           - list embedded files (paths only by default)\n")
+  stderr:write("  unpack [options] <dest>  - extract dotfiles and binaries to destination\n")
   stderr:write("  version                  - show build version\n")
-  stderr:write("\noptions:\n")
+  stderr:write("\nlist options:\n")
+  stderr:write("  --verbose, -v            - show permissions and paths (tar-style)\n")
+  stderr:write("  --null, -0               - use null delimiter instead of newline\n")
+  stderr:write("\nunpack options:\n")
   stderr:write("  --force, -f              - overwrite existing files\n")
+  stderr:write("  --verbose, -v            - show files as they are extracted\n")
+  stderr:write("  --dry-run, -n            - show what would be extracted without doing it\n")
+  stderr:write("  --only                   - only extract files listed on stdin\n")
+  stderr:write("  --null, -0               - read null-delimited paths (with --only)\n")
   return 0
 end
 
@@ -285,9 +371,27 @@ local function main(args, opts)
   local parsed = parse_args(args)
 
   if parsed.cmd == "unpack" then
-    return cmd_unpack(parsed.dest, parsed.force, opts)
+    -- Merge parsed options with opts
+    local unpack_opts = {}
+    for k, v in pairs(opts) do
+      unpack_opts[k] = v
+    end
+    unpack_opts.verbose = parsed.verbose
+    unpack_opts.dry_run = parsed.dry_run
+    unpack_opts.only = parsed.only
+    unpack_opts.null = parsed.null
+
+    return cmd_unpack(parsed.dest, parsed.force, unpack_opts)
   elseif parsed.cmd == "list" then
-    return cmd_list(opts)
+    -- Merge parsed options with opts
+    local list_opts = {}
+    for k, v in pairs(opts) do
+      list_opts[k] = v
+    end
+    list_opts.verbose = parsed.verbose
+    list_opts.null = parsed.null
+
+    return cmd_list(list_opts)
   elseif parsed.cmd == "version" then
     return cmd_version(opts)
   elseif parsed.cmd == "help" then
@@ -307,6 +411,7 @@ local home = {
   parse_args = parse_args,
   strip_home_prefix = strip_home_prefix,
   is_directory_path = is_directory_path,
+  format_mode = format_mode,
   cmd_unpack = cmd_unpack,
   cmd_list = cmd_list,
   cmd_version = cmd_version,
