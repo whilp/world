@@ -206,16 +206,12 @@ local function cmd_unpack(dest, force, opts)
   local manifest_path = opts.manifest_path or "/zip/MANIFEST.txt"
   local zip_root = opts.zip_root or "/zip/"
   local stderr = opts.stderr or io.stderr
+  local verbose = opts.verbose or false
 
   if not dest then
     stderr:write("error: destination path required\n")
     stderr:write("usage: home unpack [--force] <destination>\n")
     return 1
-  end
-
-  stderr:write("extracting to " .. dest .. "...\n")
-  if force then
-    stderr:write("overwrite mode enabled\n")
   end
 
   -- Create destination directory
@@ -258,8 +254,6 @@ local function cmd_unpack(dest, force, opts)
     end
   end
 
-  stderr:write("extraction complete\n")
-  stderr:write("add " .. dest .. "/.local/bin to PATH if needed\n")
   return 0
 end
 

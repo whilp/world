@@ -421,6 +421,38 @@ function test_cmd_unpack_no_dest()
 end
 
 --------------------------------------------------------------------------------
+-- Test: cmd_unpack silent by default
+--------------------------------------------------------------------------------
+function test_cmd_unpack_silent_by_default()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local manifest_path = tmp .. "/MANIFEST.txt"
+  local zip_root = tmp .. "/zip/"
+  unix.makedirs(zip_root .. "home")
+
+  write_file(manifest_path, "home/.testfile 644\n")
+  write_file(zip_root .. "home/.testfile", "test content")
+
+  local dest = tmp .. "/dest"
+  local stderr = mock_writer()
+  local stdout = mock_writer()
+
+  local code = home.cmd_unpack(dest, false, {
+    manifest_path = manifest_path,
+    zip_root = zip_root,
+    stderr = stderr,
+    stdout = stdout,
+    verbose = false,
+  })
+
+  lu.assertEquals(code, 0)
+  lu.assertEquals(stderr:get(), "")
+  lu.assertEquals(stdout:get(), "")
+
+  remove_dir(tmp)
+end
+
+--------------------------------------------------------------------------------
 -- Test: cmd_list with mock manifest (old test kept for compatibility)
 --------------------------------------------------------------------------------
 function test_cmd_list_structured_output()
