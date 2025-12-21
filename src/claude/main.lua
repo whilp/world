@@ -51,11 +51,45 @@ local function scan_for_claude_deploy()
   return nil
 end
 
+local function scan_for_atomic_install()
+  local HOME = os.getenv("HOME")
+  local share_dir = HOME .. "/.local/share/claude"
+  local dir = unix.opendir(share_dir)
+  if not dir then
+    return nil
+  end
+
+  local latest_path = nil
+  local latest_version = nil
+
+  while true do
+    local entry = unix.readdir(dir)
+    if not entry then break end
+    local name = entry.name
+    if name ~= "." and name ~= ".." then
+      local version = name:match("^([%d%.]+)%-")
+      if version then
+        local bin_path = share_dir .. "/" .. name .. "/claude"
+        if unix.stat(bin_path) then
+          if not latest_version or version > latest_version then
+            latest_version = version
+            latest_path = bin_path
+          end
+        end
+      end
+    end
+  end
+
+  unix.closedir(dir)
+  return latest_path
+end
+
 local function main(args)
   local HOME = os.getenv("HOME")
 
   local claude_paths = {
     scan_for_claude_deploy(),
+    scan_for_atomic_install(),
     HOME .. "/.local/share/claude/bin/claude",
     "/usr/local/bin/claude",
   }
