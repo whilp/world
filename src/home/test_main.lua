@@ -381,7 +381,7 @@ end
 function test_copy_file_source_missing()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local ok, err = home.copy_file(path.join(tmp, "nonexistent"), path.join(tmp, "dest")
+  local ok, err = home.copy_file(path.join(tmp, "nonexistent"), path.join(tmp, "dest"))
   lu.assertFalse(ok)
   lu.assertStrContains(err, "failed to open source")
   remove_dir(tmp)
