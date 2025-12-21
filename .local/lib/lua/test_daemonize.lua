@@ -2,8 +2,6 @@ local cosmo = require('cosmo')
 local unix = cosmo.unix
 local path = cosmo.path
 
-package.path = path.join(os.getenv("HOME"), ".local", "lib", "lua", "?.lua") .. ";" .. package.path
-
 local daemonize = require('daemonize')
 
 function test_acquire_lock()

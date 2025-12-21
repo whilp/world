@@ -1,5 +1,3 @@
-package.path = os.getenv("HOME") .. "/.local/lib/lua/?.lua;" .. package.path
-
 local cosmo = require('cosmo')
 local unix = cosmo.unix
 local path = cosmo.path

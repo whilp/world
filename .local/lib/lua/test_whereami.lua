@@ -2,8 +2,6 @@
 local cosmo = require('cosmo')
 local path = cosmo.path
 
-package.path = path.join(os.getenv("HOME"), ".local", "lib", "lua", "?.lua") .. ";" .. package.path
-
 local whereami = require('whereami')
 
 function test_whereami_get()

@@ -232,25 +232,11 @@ Key points:
 
 ## Test pattern
 
-Test files in `src/*/test.lua` verify module behavior:
+Test files in `src/*/test.lua` verify module behavior. Package paths are configured in `src/test.mk` via `LUA_PATH` - add a test target there with paths to `.local/lib/lua` and `src` modules:
 
 ```lua
-local script_path = debug.getinfo(1, "S").source:sub(2)
-local script_dir = script_path:match("(.+)/[^/]+$")
-if script_dir then
-  package.path = script_dir .. "/../../.local/lib/lua/?.lua;" .. package.path
-else
-  package.path = "../../.local/lib/lua/?.lua;" .. package.path
-end
-
 local cosmo = require('cosmo')
 local unix = cosmo.unix
-
-if script_dir then
-  package.path = script_dir .. "/../?.lua;" .. package.path
-else
-  package.path = "../?.lua;" .. package.path
-end
 
 local mymodule = require("mymodule.main")
 
@@ -266,6 +252,14 @@ function test_function_handles_error()
   lu.assertNil(result, "should return nil on error")
   lu.assertTrue(type(err) == "string", "should return error message")
 end
+```
+
+Add to `src/test.mk`:
+```make
+test-mymodule: lua
+	cd src/mymodule && HOME=$(CURDIR) \
+		LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;$(CURDIR)/src/?.lua;;" \
+		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
 ```
 
 Key points:

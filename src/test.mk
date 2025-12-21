@@ -64,7 +64,7 @@ test-claude: private .UNVEIL = \
 	rw:/dev/null
 test-claude: lua
 	cd src/claude && HOME=$(CURDIR) \
-		LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;;" \
+		LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;$(CURDIR)/src/?.lua;;" \
 		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
 
 test-nvim: private .UNVEIL = \
@@ -77,7 +77,7 @@ test-nvim: private .UNVEIL = \
 	rw:/dev/null
 test-nvim: lua
 	cd src/nvim && HOME=$(CURDIR) \
-		LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;;" \
+		LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;$(CURDIR)/src/?.lua;;" \
 		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
 
 test-claude-skills: private .UNVEIL = \
@@ -90,7 +90,7 @@ test-claude-skills: private .UNVEIL = \
 	rw:/dev/null
 test-claude-skills: lua
 	cd src/claude && HOME=$(CURDIR) \
-		LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;;" \
+		LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;$(CURDIR)/src/?.lua;;" \
 		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test_skills.lua
 
 # skip test-work until work.lua module is available in CI
