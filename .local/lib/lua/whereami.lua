@@ -1,8 +1,8 @@
 -- Module to get hostname or box-name/host_env identifier
 local M = {}
 
-local cosmo = require('cosmo')
-local unix = cosmo.unix
+local ok, cosmo = pcall(require, 'cosmo')
+local unix = ok and cosmo.unix or nil
 
 -- Function to trim whitespace
 local function trim(s)
@@ -22,6 +22,14 @@ end
 
 -- Function to check if file exists
 local function file_exists(path)
+  if not unix then
+    local f = io.open(path, 'r')
+    if f then
+      f:close()
+      return true
+    end
+    return false
+  end
   return unix.access(path, unix.F_OK)
 end
 
@@ -32,6 +40,11 @@ local cached_conf_dir = nil
 local function find_conf_dir()
   if cached_conf_dir ~= nil then
     return cached_conf_dir
+  end
+
+  if not unix then
+    cached_conf_dir = false
+    return nil
   end
 
   local dir = unix.opendir('/')

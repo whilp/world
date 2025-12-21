@@ -151,6 +151,12 @@ end
 
 local function load_zsh_environment()
   local env = {}
+
+  local zsh_path = unix.commandv("zsh")
+  if not zsh_path then
+    return env
+  end
+
   local read_fd, write_fd = unix.pipe()
   if not read_fd then
     return env
@@ -167,7 +173,7 @@ local function load_zsh_environment()
     unix.close(read_fd)
     unix.dup(write_fd, 1)
     unix.close(write_fd)
-    unix.execve("/usr/bin/zsh", {"zsh", "-l", "-c", "env -0"}, unix.environ())
+    unix.execve(zsh_path, {"zsh", "-l", "-c", "env -0"}, unix.environ())
     unix.exit(1)
   else
     unix.close(write_fd)
@@ -320,7 +326,7 @@ end
 
 local function cmd_restart(paths)
   cmd_stop(paths)
-  unix.sleep(1)
+  unix.nanosleep(1, 0)
   return cmd_start(paths)
 end
 
