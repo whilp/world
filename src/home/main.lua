@@ -338,11 +338,14 @@ local function cmd_help(opts)
   local stderr = opts.stderr or io.stderr
   stderr:write("usage: home <command> [args]\n")
   stderr:write("\ncommands:\n")
-  stderr:write("  unpack [--force] <dest>  - extract dotfiles and binaries to destination\n")
-  stderr:write("  list                     - list embedded tools\n")
+  stderr:write("  unpack [options] <dest>  - extract dotfiles and binaries to destination\n")
+  stderr:write("  list                     - list embedded files with permissions\n")
   stderr:write("  version                  - show build version\n")
   stderr:write("\noptions:\n")
   stderr:write("  --force, -f              - overwrite existing files\n")
+  stderr:write("  --verbose, -v            - show files as they are extracted\n")
+  stderr:write("  --dry-run, -n            - show what would be extracted without doing it\n")
+  stderr:write("  --only                   - only extract files listed on stdin\n")
   return 0
 end
 
@@ -351,7 +354,16 @@ local function main(args, opts)
   local parsed = parse_args(args)
 
   if parsed.cmd == "unpack" then
-    return cmd_unpack(parsed.dest, parsed.force, opts)
+    -- Merge parsed options with opts
+    local unpack_opts = {}
+    for k, v in pairs(opts) do
+      unpack_opts[k] = v
+    end
+    unpack_opts.verbose = parsed.verbose
+    unpack_opts.dry_run = parsed.dry_run
+    unpack_opts.only = parsed.only
+
+    return cmd_unpack(parsed.dest, parsed.force, unpack_opts)
   elseif parsed.cmd == "list" then
     return cmd_list(opts)
   elseif parsed.cmd == "version" then
