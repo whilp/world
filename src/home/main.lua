@@ -206,6 +206,7 @@ local function cmd_unpack(dest, force, opts)
   local manifest_path = opts.manifest_path or "/zip/MANIFEST.txt"
   local zip_root = opts.zip_root or "/zip/"
   local stderr = opts.stderr or io.stderr
+  local stdout = opts.stdout or io.stdout
   local verbose = opts.verbose or false
 
   if not dest then
@@ -239,6 +240,9 @@ local function cmd_unpack(dest, force, opts)
     local dest_file_path = dest .. "/" .. rel_path
 
     if not is_directory_path(file_path) then
+      -- Check if file exists before copying (for verbose overwrite detection)
+      local file_exists = unix.stat(dest_file_path) ~= nil
+
       -- Create parent directory
       local parent_dir = cosmo.path.dirname(dest_file_path)
       unix.makedirs(parent_dir)
@@ -247,6 +251,12 @@ local function cmd_unpack(dest, force, opts)
       local ok, err = copy_file(zip_file_path, dest_file_path, mode, force)
       if not ok then
         stderr:write("warning: failed to copy " .. file_path .. ": " .. (err or "unknown error") .. "\n")
+      elseif verbose then
+        if force and file_exists then
+          stdout:write(rel_path .. " (overwritten)\n")
+        else
+          stdout:write(rel_path .. "\n")
+        end
       end
     else
       -- Create directory
