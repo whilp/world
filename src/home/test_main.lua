@@ -1217,4 +1217,46 @@ function test_cmd_help_includes_3p()
   lu.assertStrContains(output, "symlink")
 end
 
+--------------------------------------------------------------------------------
+-- Test: scan_for_latest_version path format
+--------------------------------------------------------------------------------
+function test_scan_for_latest_version_path_format()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local share_dir = tmp
+  local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234")
+  unix.makedirs(tool_dir)
+  local bin_path = path.join(tool_dir, "rg")
+  write_file(bin_path, "#!/bin/sh\necho rg")
+
+  local result = home.scan_for_latest_version("rg", share_dir)
+  lu.assertNotNil(result)
+  lu.assertEquals(result.version, "14.1.1")
+  lu.assertEquals(result.sha, "abcd1234")
+  lu.assertEquals(result.path, bin_path)
+
+  -- Verify the version directory path format is <version>-<sha>, not 0.0.0- or similar
+  lu.assertStrContains(result.path, "14.1.1-abcd1234")
+  lu.assertNotStrContains(result.path, "0.0.0-")
+
+  remove_dir(tmp)
+end
+
+function test_scan_for_latest_version_rejects_invalid_paths()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local share_dir = tmp
+
+  -- Create directory with invalid version format (e.g., 0.0.0-)
+  local bad_dir = path.join(share_dir, "rg", "0.0.0-")
+  unix.makedirs(bad_dir)
+  write_file(path.join(bad_dir, "rg"), "#!/bin/sh\necho rg")
+
+  -- Should not find this as a valid version
+  local result = home.scan_for_latest_version("rg", share_dir)
+  lu.assertNil(result)
+
+  remove_dir(tmp)
+end
+
 os.exit(lu.LuaUnit.run())
