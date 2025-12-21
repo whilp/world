@@ -24,7 +24,10 @@ define build_home
 		for tool in nvim gh delta rg duckdb tree-sitter ast-grep biome comrak marksman ruff shfmt sqruff stylua superhtml uv; do \
 			if [ -d "$$tool/$(2)" ]; then \
 				version=$$(cat "$$tool/$(2)/VERSION" 2>/dev/null || echo "0.0.0"); \
-				sha=$$(cat "$$tool/$(2)/SHA" 2>/dev/null | head -c 8 || echo "00000000"); \
+				version=$${version:-0.0.0}; \
+				sha=$$(cat "$$tool/$(2)/SHA" 2>/dev/null || echo ""); \
+				sha=$$(echo "$$sha" | head -c 8); \
+				sha=$${sha:-00000000}; \
 				install_dir="$(CURDIR)/results/home-$(2)/home/.local/share/$$tool/$${version}-$${sha}"; \
 				echo "  Installing $$tool $${version}-$${sha}..."; \
 				mkdir -p "$$install_dir"; \
