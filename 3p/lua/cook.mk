@@ -146,31 +146,45 @@ $(lua_bin): $(lua_all_objs) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua | r
 	$(cosmocc_bin) -mcosmo $(lua_all_objs) -o $@
 	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
 
-# platform-specific native binaries
-# link with cosmocc but without -mcosmo to produce native ELF
+# platform-specific native binaries using MODE=tinylinux
+# this produces actual ELF binaries, not APE
+lua_native_x86_64_build := $(o)/lua-native-x86_64
+lua_native_x86_64_objs := $(addprefix $(lua_native_x86_64_build)/,$(notdir $(lua_all_objs)))
+
+$(lua_native_x86_64_build):
+	mkdir -p $@
+
+# compile objects for tinylinux mode
+$(lua_native_x86_64_build)/%.o: $(lua_cosmo_dir)/third_party/lua/%.c | $(lua_native_x86_64_build) $(lua_patched)
+	MODE=tinylinux $(cosmocc_bin) $(lua_cflags) -c $< -o $@
+
+$(lua_native_x86_64_build)/%.o: $(lua_cosmo_dir)/tool/net/%.c | $(lua_native_x86_64_build) $(lua_patched)
+	MODE=tinylinux $(cosmocc_bin) $(lua_cflags) $(if $(filter lfuncs.c,$(<F)),-DLFUNCS_LITE,) -c $< -o $@
+
+$(lua_native_x86_64_build)/%.o: $(lua_cosmo_dir)/third_party/linenoise/%.c | $(lua_native_x86_64_build) $(lua_patched)
+	MODE=tinylinux $(cosmocc_bin) $(lua_cflags) -c $< -o $@
+
+$(lua_native_x86_64_build)/%.o: $(lua_cosmo_dir)/third_party/argon2/%.c | $(lua_native_x86_64_build) $(lua_patched)
+	MODE=tinylinux $(cosmocc_bin) $(lua_cflags) -c $< -o $@
+
+$(lua_native_x86_64_build)/%.o: $(lua_cosmo_dir)/third_party/regex/%.c | $(lua_native_x86_64_build) $(lua_patched)
+	MODE=tinylinux $(cosmocc_bin) $(lua_cflags) -c $< -o $@
+
+$(lua_native_x86_64_build)/%.o: $(lua_cosmo_dir)/third_party/sqlite3/%.c | $(lua_native_x86_64_build) $(lua_patched)
+	MODE=tinylinux $(cosmocc_bin) $(lua_cflags) $(lua_sqlite_flags) -c $< -o $@
+
 $(lua_bin_linux_x86_64): private .UNVEIL = \
-	r:$(lua_build_dir) \
+	r:$(lua_native_x86_64_build) \
 	r:$(luaunit_lua_dir) \
 	r:$(cosmocc_dir) \
 	r:$(cosmos_dir) \
 	rwc:results/bin \
 	rw:/dev/null
-$(lua_bin_linux_x86_64): $(lua_all_objs) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua | results/bin
-	$(cosmocc_bin) --target=x86_64-linux $(lua_all_objs) -o $@
+$(lua_bin_linux_x86_64): $(lua_native_x86_64_objs) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua | results/bin
+	MODE=tinylinux $(cosmocc_bin) $(lua_native_x86_64_objs) -o $@
 	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
 
-$(lua_bin_linux_arm64): private .UNVEIL = \
-	r:$(lua_build_dir) \
-	r:$(luaunit_lua_dir) \
-	r:$(cosmocc_dir) \
-	r:$(cosmos_dir) \
-	rwc:results/bin \
-	rw:/dev/null
-$(lua_bin_linux_arm64): $(lua_all_objs) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua | results/bin
-	$(cosmocc_bin) --target=aarch64-linux $(lua_all_objs) -o $@
-	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
-
-lua-native: $(lua_bin_linux_x86_64) $(lua_bin_linux_arm64)
+lua-native: $(lua_bin_linux_x86_64)
 
 # ensure all objects wait for patching and toolchain
 $(lua_all_objs): private .UNVEIL = \
