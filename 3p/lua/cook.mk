@@ -134,13 +134,15 @@ $(cosmos_zip_bin): $(cosmos_bin)
 $(lua_bin): private .UNVEIL = \
 	r:$(lua_build_dir) \
 	r:$(luaunit_lua_dir) \
+	r:$(luacheck_lua_dir) \
 	r:$(cosmocc_dir) \
 	r:$(cosmos_dir) \
 	rwc:results/bin \
 	rw:/dev/null
-$(lua_bin): $(lua_all_objs) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua | results/bin
+$(lua_bin): $(lua_all_objs) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua $(luacheck_lua_dir)/bin/luacheck | results/bin
 	$(cosmocc_bin) -mcosmo $(lua_all_objs) -o $@
 	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
+	cd $(luacheck_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luacheck_lua_dir))
 
 # ensure all objects wait for patching and toolchain
 $(lua_all_objs): private .UNVEIL = \

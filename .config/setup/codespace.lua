@@ -1,5 +1,6 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
+local path = cosmo.path
 
 local function run(env)
 	if os.getenv("CODESPACES") ~= "true" then

@@ -1,5 +1,6 @@
 include 3p/cook.mk
 include 3p/luaunit/cook.mk
+include 3p/luacheck/cook.mk
 include 3p/cosmopolitan/cook.mk
 include 3p/make/cook.mk
 include 3p/lua/cook.mk
@@ -86,6 +87,7 @@ results:
 check: private .UNVEIL = \
 	r:$(CURDIR) \
 	rx:$(3p)/ast-grep \
+	rx:results/bin \
 	rw:/dev/null
 check:
 	@if [ "$$(uname)" = "Darwin" ]; then \
@@ -101,5 +103,18 @@ check:
 		$(MAKE) $(3p)/ast-grep/$$PLATFORM/.extracted; \
 	fi; \
 	$$SG scan --color always
+	@echo ""
+	@echo "Running luacheck..."
+	@if [ ! -x results/bin/lua ]; then \
+		echo "lua binary not found, building..."; \
+		$(MAKE) lua; \
+	fi
+	@results/bin/lua /zip/.lua/bin/luacheck \
+		.config \
+		.local/lib/lua \
+		.github \
+		src \
+		--exclude-files '.claude/skills/lua/templates/*.lua' \
+		|| true
 
 .PHONY: build clean check
