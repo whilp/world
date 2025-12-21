@@ -2,38 +2,122 @@ local cosmo = require("cosmo")
 local unix = cosmo.unix
 local util = require("util")
 
+local function get_latest_version()
+	local handle = io.popen("gh api repos/anthropics/claude-code/releases/latest --jq '.tag_name'", "r")
+	if not handle then
+		io.stderr:write("error: failed to fetch latest version\n")
+		return nil
+	end
+	local version = handle:read("*l")
+	handle:close()
+	if version then
+		version = version:match("^v?(.+)$")
+	end
+	return version
+end
+
+local function get_sha256(url)
+	local temp_file = "/tmp/claude-download-" .. os.time()
+	local ok = pcall(util.spawn, {"curl", "-fsSL", "-o", temp_file, url})
+	if not ok then
+		io.stderr:write("error: failed to download claude binary\n")
+		return nil
+	end
+
+	local handle = io.popen(string.format("shasum -a 256 '%s'", temp_file), "r")
+	local sha256
+	if handle then
+		local output = handle:read("*l")
+		handle:close()
+		if output then
+			sha256 = output:match("^(%x+)")
+		end
+	end
+
+	unix.unlink(temp_file)
+	return sha256
+end
+
+local function print_latest()
+	local version = get_latest_version()
+	if not version then
+		return 1
+	end
+
+	local url = string.format(
+		"https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/%s/linux-x64/claude",
+		version
+	)
+
+	io.write("Fetching SHA256 for version " .. version .. "...\n")
+	local sha256 = get_sha256(url)
+	if not sha256 then
+		return 1
+	end
+
+	io.write("\nLatest Claude Code version:\n")
+	io.write("  Version: " .. version .. "\n")
+	io.write("  SHA256:  " .. sha256 .. "\n")
+	io.write("  URL:     " .. url .. "\n")
+	return 0
+end
+
 local function run(env)
 	if os.getenv("CODESPACES") == "true" then
-		local CLAUDE_VERSION = "2.0.67"
-		local CLAUDE_SHA256 = "b2a12279d5df3814f59000682a571edb771b73e89b4bd894101f01e3726726f3"
+		local CLAUDE_VERSION = "2.0.74"
+		local CLAUDE_SHA256 = "43065ff86a1b952225e42042bf4dfe9f6b72ff8ed91686a23add5396b1a11e80"
 		local CLAUDE_URL = string.format(
 			"https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/%s/linux-x64/claude",
 			CLAUDE_VERSION
 		)
-		local CLAUDE_BIN = env.DST .. "/.local/share/claude/bin/claude"
 
-		local bin_dir = cosmo.path.dirname(CLAUDE_BIN)
-		unix.makedirs(bin_dir)
+		local short_sha = CLAUDE_SHA256:sub(1, 8)
+		local version_dir = string.format("%s/.local/share/claude/%s-%s", env.DST, CLAUDE_VERSION, short_sha)
+		local claude_bin = version_dir .. "/claude"
+		local symlink_path = env.DST .. "/.local/bin/claude"
 
-		local temp_file = "/tmp/claude-download"
-		util.spawn({"curl", "-fsSL", "-o", temp_file, CLAUDE_URL})
+		if unix.stat(claude_bin) then
+			io.stderr:write("claude " .. CLAUDE_VERSION .. " already installed\n")
+		else
+			unix.makedirs(version_dir)
 
-		local handle = io.popen(string.format("shasum -a 256 '%s'", temp_file), "r")
-		local actual_sha256
-		if handle then
-			local output = handle:read("*l")
-			handle:close()
-			if output then
-				actual_sha256 = output:match("^(%x+)")
+			local temp_file = "/tmp/claude-download-" .. os.time()
+			util.spawn({"curl", "-fsSL", "-o", temp_file, CLAUDE_URL})
+
+			local handle = io.popen(string.format("shasum -a 256 '%s'", temp_file), "r")
+			local actual_sha256
+			if handle then
+				local output = handle:read("*l")
+				handle:close()
+				if output then
+					actual_sha256 = output:match("^(%x+)")
+				end
+			end
+
+			if actual_sha256 == CLAUDE_SHA256 then
+				util.spawn({"mv", temp_file, claude_bin})
+				unix.chmod(claude_bin, 0755)
+			else
+				io.stderr:write("error: claude binary checksum verification failed\n")
+				unix.unlink(temp_file)
+				return 1
 			end
 		end
 
-		if actual_sha256 == CLAUDE_SHA256 then
-			util.spawn({"mv", temp_file, CLAUDE_BIN})
-			unix.chmod(CLAUDE_BIN, 0755)
-		else
-			io.stderr:write("error: claude binary checksum verification failed\n")
-			unix.unlink(temp_file)
+		local bin_dir = cosmo.path.dirname(symlink_path)
+		unix.makedirs(bin_dir)
+
+		local target_link = string.format("../share/claude/%s-%s/claude", CLAUDE_VERSION, short_sha)
+
+		local existing_stat = unix.stat(symlink_path, unix.AT_SYMLINK_NOFOLLOW)
+		if existing_stat then
+			unix.unlink(symlink_path)
+		end
+
+		local ok, err = unix.symlink(target_link, symlink_path)
+		if not ok then
+			io.stderr:write("error: failed to create symlink: " .. tostring(err) .. "\n")
+			return 1
 		end
 	end
 
@@ -74,4 +158,5 @@ end
 
 return {
 	run = run,
+	print_latest = print_latest,
 }
