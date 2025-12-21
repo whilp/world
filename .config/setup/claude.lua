@@ -74,7 +74,6 @@ local function run(env)
 		local short_sha = CLAUDE_SHA256:sub(1, 8)
 		local version_dir = string.format("%s/.local/share/claude/%s-%s", env.DST, CLAUDE_VERSION, short_sha)
 		local claude_bin = version_dir .. "/claude"
-		local symlink_path = env.DST .. "/.local/bin/claude"
 
 		if unix.stat(claude_bin) then
 			io.stderr:write("claude " .. CLAUDE_VERSION .. " already installed\n")
@@ -102,22 +101,6 @@ local function run(env)
 				unix.unlink(temp_file)
 				return 1
 			end
-		end
-
-		local bin_dir = cosmo.path.dirname(symlink_path)
-		unix.makedirs(bin_dir)
-
-		local target_link = string.format("../share/claude/%s-%s/claude", CLAUDE_VERSION, short_sha)
-
-		local existing_stat = unix.stat(symlink_path, unix.AT_SYMLINK_NOFOLLOW)
-		if existing_stat then
-			unix.unlink(symlink_path)
-		end
-
-		local ok, err = unix.symlink(target_link, symlink_path)
-		if not ok then
-			io.stderr:write("error: failed to create symlink: " .. tostring(err) .. "\n")
-			return 1
 		end
 	end
 
