@@ -209,11 +209,25 @@ local function cmd_unpack(dest, force, opts)
   local stdout = opts.stdout or io.stdout
   local verbose = opts.verbose or false
   local dry_run = opts.dry_run or false
+  local only = opts.only or false
 
   if not dest then
     stderr:write("error: destination path required\n")
     stderr:write("usage: home unpack [--force] <destination>\n")
     return 1
+  end
+
+  -- Read filter from stdin if --only is specified
+  local filter = nil
+  if only then
+    filter = {}
+    local input = opts.filter_input or io.stdin:read("*a")
+    for line in input:gmatch("[^\n]+") do
+      local path = line:match("^%s*(.-)%s*$")
+      if path and path ~= "" then
+        filter[path] = true
+      end
+    end
   end
 
   -- Create destination directory
@@ -241,6 +255,11 @@ local function cmd_unpack(dest, force, opts)
     local rel_path = strip_home_prefix(file_path)
     local zip_file_path = zip_root .. file_path
     local dest_file_path = dest .. "/" .. rel_path
+
+    -- Skip if filter is active and path not in filter
+    if filter and not filter[rel_path] then
+      goto continue
+    end
 
     if not is_directory_path(file_path) then
       -- Check if file exists before copying (for verbose overwrite detection)
@@ -270,6 +289,8 @@ local function cmd_unpack(dest, force, opts)
       -- Create directory
       unix.makedirs(dest .. "/" .. rel_path)
     end
+
+    ::continue::
   end
 
   return 0
