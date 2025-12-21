@@ -105,15 +105,9 @@ lua_all_objs := $(lua_core_objs) $(lua_ext_lua_objs) $(lua_ext_net_objs) $(lua_l
 # output
 lua_bin := results/bin/lua
 
-# platform-specific compilers
-lua_cc_linux_x86_64 := $(cosmocc_dir)/bin/x86_64-linux-cosmo-gcc
-lua_cc_linux_arm64 := $(cosmocc_dir)/bin/aarch64-linux-cosmo-gcc
-lua_cc_darwin_arm64 := $(cosmocc_dir)/bin/aarch64-linux-cosmo-gcc
-
 # platform-specific binaries (native ELF, not APE)
 lua_bin_linux_x86_64 := results/bin/lua-linux-x86_64
 lua_bin_linux_arm64 := results/bin/lua-linux-arm64
-lua_bin_darwin_arm64 := results/bin/lua-darwin-arm64
 
 # target for lua fat binary
 lua: $(lua_bin)
@@ -152,7 +146,8 @@ $(lua_bin): $(lua_all_objs) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua | r
 	$(cosmocc_bin) -mcosmo $(lua_all_objs) -o $@
 	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
 
-# platform-specific lua binaries (native ELF/Mach-O, not APE)
+# platform-specific native binaries
+# build ELF directly without APE wrapper, then append zip
 $(lua_bin_linux_x86_64): private .UNVEIL = \
 	r:$(lua_build_dir) \
 	r:$(luaunit_lua_dir) \
@@ -161,7 +156,7 @@ $(lua_bin_linux_x86_64): private .UNVEIL = \
 	rwc:results/bin \
 	rw:/dev/null
 $(lua_bin_linux_x86_64): $(lua_all_objs) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua | results/bin
-	$(lua_cc_linux_x86_64) $(lua_all_objs) -o $@
+	$(cosmocc_dir)/bin/x86_64-linux-cosmo-cc -s $(lua_all_objs) -o $@
 	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
 
 $(lua_bin_linux_arm64): private .UNVEIL = \
@@ -172,21 +167,10 @@ $(lua_bin_linux_arm64): private .UNVEIL = \
 	rwc:results/bin \
 	rw:/dev/null
 $(lua_bin_linux_arm64): $(lua_all_objs) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua | results/bin
-	$(lua_cc_linux_arm64) $(lua_all_objs) -o $@
+	$(cosmocc_dir)/bin/aarch64-linux-cosmo-cc -s $(lua_all_objs) -o $@
 	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
 
-$(lua_bin_darwin_arm64): private .UNVEIL = \
-	r:$(lua_build_dir) \
-	r:$(luaunit_lua_dir) \
-	r:$(cosmocc_dir) \
-	r:$(cosmos_dir) \
-	rwc:results/bin \
-	rw:/dev/null
-$(lua_bin_darwin_arm64): $(lua_all_objs) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua | results/bin
-	$(cosmocc_dir)/bin/aarch64-apple-darwin-cc $(lua_all_objs) -o $@
-	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
-
-lua-native: $(lua_bin_linux_x86_64) $(lua_bin_linux_arm64) $(lua_bin_darwin_arm64)
+lua-native: $(lua_bin_linux_x86_64) $(lua_bin_linux_arm64)
 
 # ensure all objects wait for patching and toolchain
 $(lua_all_objs): private .UNVEIL = \
