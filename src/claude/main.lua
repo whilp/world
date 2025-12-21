@@ -55,18 +55,15 @@ end
 local function scan_for_atomic_install()
   local HOME = os.getenv("HOME")
   local share_dir = path.join(HOME, ".local", "share", "claude")
-  local dir = unix.opendir(share_dir)
-  if not dir then
+
+  if not unix.stat(share_dir) then
     return nil
   end
 
   local latest_path = nil
   local latest_version = nil
 
-  while true do
-    local entry = unix.readdir(dir)
-    if not entry then break end
-    local name = entry.name
+  for name, _ in unix.opendir(share_dir) do
     if name ~= "." and name ~= ".." then
       local version = name:match("^([%d%.]+)%-")
       if version then
@@ -81,7 +78,6 @@ local function scan_for_atomic_install()
     end
   end
 
-  unix.closedir(dir)
   return latest_path
 end
 
@@ -130,6 +126,7 @@ local claude = {
   find_claude_binary = find_claude_binary,
   build_argv = build_argv,
   scan_for_claude_deploy = scan_for_claude_deploy,
+  scan_for_atomic_install = scan_for_atomic_install,
   main = main,
 }
 
