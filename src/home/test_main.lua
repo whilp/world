@@ -215,6 +215,48 @@ function test_parse_args_list()
   lu.assertEquals(parsed.cmd, "list")
 end
 
+function test_parse_args_verbose_long()
+  local args = { "unpack", "--verbose", "/tmp/dest" }
+  local parsed = home.parse_args(args)
+  lu.assertTrue(parsed.verbose)
+  lu.assertEquals(parsed.dest, "/tmp/dest")
+end
+
+function test_parse_args_verbose_short()
+  local args = { "unpack", "-v", "/tmp/dest" }
+  local parsed = home.parse_args(args)
+  lu.assertTrue(parsed.verbose)
+end
+
+function test_parse_args_dry_run_long()
+  local args = { "unpack", "--dry-run", "/tmp/dest" }
+  local parsed = home.parse_args(args)
+  lu.assertTrue(parsed.dry_run)
+  lu.assertEquals(parsed.dest, "/tmp/dest")
+end
+
+function test_parse_args_dry_run_short()
+  local args = { "unpack", "-n", "/tmp/dest" }
+  local parsed = home.parse_args(args)
+  lu.assertTrue(parsed.dry_run)
+end
+
+function test_parse_args_only()
+  local args = { "unpack", "--only", "/tmp/dest" }
+  local parsed = home.parse_args(args)
+  lu.assertTrue(parsed.only)
+  lu.assertEquals(parsed.dest, "/tmp/dest")
+end
+
+function test_parse_args_combined_flags()
+  local args = { "unpack", "--force", "--verbose", "--dry-run", "/tmp/dest" }
+  local parsed = home.parse_args(args)
+  lu.assertTrue(parsed.force)
+  lu.assertTrue(parsed.verbose)
+  lu.assertTrue(parsed.dry_run)
+  lu.assertEquals(parsed.dest, "/tmp/dest")
+end
+
 --------------------------------------------------------------------------------
 -- Test 7: strip_home_prefix
 --------------------------------------------------------------------------------

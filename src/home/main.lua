@@ -134,11 +134,14 @@ local function extract_tools(files)
 end
 
 -- Parse command-line arguments
--- Returns {cmd=string, force=bool, dest=string|nil}
+-- Returns {cmd=string, force=bool, verbose=bool, dry_run=bool, only=bool, dest=string|nil}
 local function parse_args(args)
   local result = {
     cmd = args[1] or "help",
     force = false,
+    verbose = false,
+    dry_run = false,
+    only = false,
     dest = nil,
   }
 
@@ -146,6 +149,12 @@ local function parse_args(args)
   while i <= #args do
     if args[i] == "--force" or args[i] == "-f" then
       result.force = true
+    elseif args[i] == "--verbose" or args[i] == "-v" then
+      result.verbose = true
+    elseif args[i] == "--dry-run" or args[i] == "-n" then
+      result.dry_run = true
+    elseif args[i] == "--only" then
+      result.only = true
     elseif not result.dest then
       result.dest = args[i]
     end
