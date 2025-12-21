@@ -1,9 +1,10 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
+local path = cosmo.path
 local daemonize = require("daemonize")
 
 local HOME = os.getenv("HOME")
-local DEFAULT_SOCK = HOME .. "/.config/nvim/nvim.sock"
+local DEFAULT_SOCK = path.join(HOME, ".config", "nvim", "nvim.sock")
 
 local function get_script_dir()
   local script = arg[0]
@@ -14,7 +15,7 @@ local function get_script_dir()
   if script:sub(1, 1) ~= "/" then
     local pwd = os.getenv("PWD")
     if pwd then
-      script = pwd .. "/" .. script
+      script = path.join(pwd, script)
     else
       return nil
     end
@@ -27,21 +28,21 @@ end
 local function resolve_nvim_bin()
   local script_dir = get_script_dir()
   if script_dir then
-    return script_dir .. "/../share/nvim/bin/nvim"
+    return path.join(script_dir, "..", "share", "nvim", "bin", "nvim")
   end
-  return HOME .. "/.local/share/nvim/bin/nvim"
+  return path.join(HOME, ".local", "share", "nvim", "bin", "nvim")
 end
 
 local NVIM_BIN = resolve_nvim_bin()
 
 local function derive_paths(sock)
-  local sock_dir = sock:match("(.+)/[^/]+$")
-  local sock_name = sock:match("([^/]+)$"):gsub("%.sock$", "")
+  local sock_dir = path.dirname(sock)
+  local sock_name = path.basename(sock):gsub("%.sock$", "")
 
   return {
     sock = sock,
-    pid = sock_dir .. "/" .. sock_name .. ".pid",
-    log = sock_dir .. "/" .. sock_name .. ".log"
+    pid = path.join(sock_dir, sock_name .. ".pid"),
+    log = path.join(sock_dir, sock_name .. ".log")
   }
 end
 
@@ -63,13 +64,13 @@ local function parse_socket_option(args)
   return socket_path, new_args
 end
 
-local function expand_tilde(path)
-  if path:sub(1, 2) == "~/" then
-    return HOME .. path:sub(2)
-  elseif path == "~" then
+local function expand_tilde(file_path)
+  if file_path:sub(1, 2) == "~/" then
+    return path.join(HOME, file_path:sub(3))
+  elseif file_path == "~" then
     return HOME
   end
-  return path
+  return file_path
 end
 
 local function get_socket_path(cli_socket)
@@ -85,22 +86,10 @@ local function get_socket_path(cli_socket)
   return DEFAULT_SOCK
 end
 
-local function mkdir_p(path)
-  local parts = {}
-  for part in path:gmatch("[^/]+") do
-    table.insert(parts, part)
-  end
-
-  local current = path:sub(1, 1) == "/" and "/" or ""
-  for _, part in ipairs(parts) do
-    current = current .. part
-    if not unix.stat(current) then
-      local ok = unix.mkdir(current, tonumber("755", 8))
-      if not ok then
-        return nil, "failed to create directory " .. current
-      end
-    end
-    current = current .. "/"
+local function mkdir_p(dir_path)
+  local ok, err = unix.makedirs(dir_path, tonumber("755", 8))
+  if not ok then
+    return nil, "failed to create directory " .. dir_path .. ": " .. tostring(err)
   end
   return true
 end
@@ -219,12 +208,12 @@ local function exec_nvim_server(sock, env)
 end
 
 local function cmd_start(paths)
-  local ok, err = mkdir_p(paths.pid:match("(.+)/[^/]+$"))
+  local ok, err = mkdir_p(path.dirname(paths.pid))
   if not ok then
     io.stderr:write("error: " .. err .. "\n")
     return 1
   end
-  ok, err = mkdir_p(paths.log:match("(.+)/[^/]+$"))
+  ok, err = mkdir_p(path.dirname(paths.log))
   if not ok then
     io.stderr:write("error: " .. err .. "\n")
     return 1

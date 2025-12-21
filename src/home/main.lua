@@ -1,5 +1,6 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
+local path = cosmo.path
 
 -- Read entire file contents
 -- Returns data, nil on success; nil, err on failure
@@ -260,7 +261,7 @@ local function cmd_unpack(dest, force, opts)
     local mode = file_info.mode
     local rel_path = strip_home_prefix(file_path)
     local zip_file_path = zip_root .. file_path
-    local dest_file_path = dest .. "/" .. rel_path
+    local dest_file_path = path.join(dest, rel_path)
 
     -- Skip if filter is active and path not in filter
     if filter and not filter[rel_path] then
@@ -273,7 +274,7 @@ local function cmd_unpack(dest, force, opts)
 
       if not dry_run then
         -- Create parent directory
-        local parent_dir = cosmo.path.dirname(dest_file_path)
+        local parent_dir = path.dirname(dest_file_path)
         unix.makedirs(parent_dir)
 
         -- Copy file atomically with permissions
@@ -293,7 +294,7 @@ local function cmd_unpack(dest, force, opts)
       end
     elseif not dry_run then
       -- Create directory
-      unix.makedirs(dest .. "/" .. rel_path)
+      unix.makedirs(path.join(dest, rel_path))
     end
 
     ::continue::
