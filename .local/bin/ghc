@@ -3,13 +3,13 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
 
-local env = unix.environ()
-for i, v in ipairs(env) do
-	if v:match("^GH_HOST=") then
-		env[i] = "GH_HOST=github.com"
-		break
-	end
-end
+local script_dir = cosmo.path.dirname(cosmo.path.dirname(cosmo.path.dirname(debug.getinfo(1, "S").source:sub(2))))
+package.path = script_dir .. "/src/?.lua;" .. script_dir .. "/src/?/init.lua;" .. package.path
+
+local environ = require("environ")
+
+local env = environ.new(unix.environ())
+env.GH_HOST = "github.com"
 
 local args = {"gh", ...}
-unix.execve(unix.commandv("gh"), args, env)
+unix.execve(unix.commandv("gh"), args, env:toarray())
