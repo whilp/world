@@ -49,25 +49,19 @@ local function cmd_env(args)
     io.write("HOME=" .. home .. "\n")
   end
 
-  -- Build custom environment for subprocess
-  -- unix.environ() returns array of "KEY=value" strings
-  local env = unix.environ()
+  -- Build custom environment for subprocess using environ module
+  local environ = require("environ")
+  local env = environ.new(unix.environ())
 
-  -- Replace existing variable or append if not found
-  local found = false
-  for i, v in ipairs(env) do
-    if v:match("^CUSTOM_VAR=") then
-      env[i] = "CUSTOM_VAR=custom_value"
-      found = true
-      break
-    end
-  end
-  if not found then
-    table.insert(env, "CUSTOM_VAR=custom_value")
-  end
+  -- Set or replace variables with table syntax
+  env.CUSTOM_VAR = "custom_value"
+  env.ANOTHER_VAR = "another_value"
 
-  -- Example: could use env with unix.execve()
-  -- unix.execve("/usr/bin/env", {"env"}, env)
+  -- Get variables
+  local custom = env.CUSTOM_VAR
+
+  -- Convert back to array for execve
+  -- unix.execve("/usr/bin/env", {"env"}, env:toarray())
 
   io.write("environment prepared\n")
   return 0
