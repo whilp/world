@@ -427,6 +427,6 @@ bin/work show {id}
   - `render.lua` - Formatting and display
 - ULID library is global (`~/.local/lib/lua/ulid.lua`)
 - Each work item is a separate file for version control friendliness
-- Uses `Work{}` callback pattern like shimlink's `Version{}`
+- Uses `Work{}` callback pattern for data definition
 - Commands follow Load → Process → Render pattern
 - Enrichment pattern computes derived fields once, renders many times

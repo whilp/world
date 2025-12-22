@@ -16,7 +16,6 @@ local function get()
 
 	local path_parts = {
 		path.join(env.DST, ".local", "bootstrap", "bin"),
-		path.join(env.DST, ".local", "share", "shimlink", "bin"),
 		path.join(env.DST, ".local", "bin"),
 		path.join(env.DST, "extras", "bin"),
 		os.getenv("PATH") or "",

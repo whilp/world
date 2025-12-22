@@ -15,7 +15,7 @@ A reproducible and complete environment for computering since 2005.
 - Everything works on (Mac) laptop, GitHub codespaces, and internal devboxes (and three architectures)
 - `claude` works
 - `scpaste` (and `CMD-Shift-v` in `Ghostty`) copies rich clipboard contents to any active SSH connection
-- `shimlink` fetches utility executables and verifies checksums
+- `home 3p` manages versioned third-party binaries with checksum verification
 
 ## License
 
