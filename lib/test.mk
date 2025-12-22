@@ -1,4 +1,4 @@
-test_runner := .local/lib/lua/run-test.lua
+test_runner := lib/run-test.lua
 
 test-3p-lua: private .UNVEIL = \
 	r:3p/lua \
@@ -10,99 +10,99 @@ test-3p-lua: lua
 	cd 3p/lua && $(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
 
 test-lib-whereami: private .UNVEIL = \
-	r:.local/lib/lua \
+	r:lib \
 	rx:$(lua_bin) \
 	r:$(test_runner) \
 	r:$(CURDIR) \
 	rw:/dev/null
 test-lib-whereami: lua
-	cd .local/lib/lua && HOME=$(CURDIR) LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;;" \
+	cd lib && HOME=$(CURDIR) LUA_PATH="$(CURDIR)/lib/?.lua;;" \
 		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test_whereami.lua
 
 test-work: private .UNVEIL = \
-	r:.local/lib/lua \
+	r:lib \
 	r:/home/codespace/.local/bootstrap/lib \
 	rx:$(lua_bin) \
 	r:$(test_runner) \
 	r:$(CURDIR) \
-	rwc:.local/lib/lua/test/work \
+	rwc:lib/test/work \
 	rw:/dev/null
 test-work: lua
-	cd .local/lib/lua/test/work && HOME=$(CURDIR) \
-		LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;$(CURDIR)/.local/lib/lua/test/work/?.lua;;" \
+	cd lib/test/work && HOME=$(CURDIR) \
+		LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/test/work/?.lua;;" \
 		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) run.lua
 
 test-home: private .UNVEIL = \
-	r:src/home \
-	r:.local/lib/lua \
+	r:lib/home \
+	r:lib \
 	rx:$(lua_bin) \
 	r:$(test_runner) \
-	rwc:src/home/o \
+	rwc:lib/home/o \
 	rw:/dev/null
 test-home: lua
-	cd src/home && LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;;" \
+	cd lib/home && LUA_PATH="$(CURDIR)/lib/?.lua;;" \
 		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test_main.lua
 
 test-lib-daemonize: private .UNVEIL = \
-	r:.local/lib/lua \
+	r:lib \
 	rx:$(lua_bin) \
 	r:$(test_runner) \
 	r:$(CURDIR) \
 	rwc:/tmp \
 	rw:/dev/null
 test-lib-daemonize: lua
-	cd .local/lib/lua && HOME=$(CURDIR) LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;;" \
+	cd lib && HOME=$(CURDIR) LUA_PATH="$(CURDIR)/lib/?.lua;;" \
 		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test_daemonize.lua
 
 test-claude: private .UNVEIL = \
-	r:src/claude \
-	r:.local/lib/lua \
+	r:lib/claude \
+	r:lib \
 	rx:$(lua_bin) \
 	r:$(test_runner) \
 	r:$(CURDIR) \
 	rwc:/tmp \
 	rw:/dev/null
 test-claude: lua
-	cd src/claude && HOME=$(CURDIR) \
-		LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;$(CURDIR)/src/?.lua;;" \
+	cd lib/claude && HOME=$(CURDIR) \
+		LUA_PATH="$(CURDIR)/lib/?.lua;;" \
 		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
 
 test-nvim: private .UNVEIL = \
-	r:src/nvim \
-	r:.local/lib/lua \
+	r:lib/nvim \
+	r:lib \
 	rx:$(lua_bin) \
 	r:$(test_runner) \
 	r:$(CURDIR) \
 	rwc:/tmp \
 	rw:/dev/null
 test-nvim: lua
-	cd src/nvim && HOME=$(CURDIR) \
-		LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;$(CURDIR)/src/?.lua;;" \
+	cd lib/nvim && HOME=$(CURDIR) \
+		LUA_PATH="$(CURDIR)/lib/?.lua;;" \
 		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
 
 test-claude-skills: private .UNVEIL = \
-	r:src/claude \
-	r:.local/lib/lua \
+	r:lib/claude \
+	r:lib \
 	r:.claude/skills \
 	rx:$(lua_bin) \
 	r:$(test_runner) \
 	r:$(CURDIR) \
 	rw:/dev/null
 test-claude-skills: lua
-	cd src/claude && HOME=$(CURDIR) \
-		LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;$(CURDIR)/src/?.lua;;" \
+	cd lib/claude && HOME=$(CURDIR) \
+		LUA_PATH="$(CURDIR)/lib/?.lua;;" \
 		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test_skills.lua
 
 test-environ: private .UNVEIL = \
-	r:src/environ \
-	r:.local/lib/lua \
+	r:lib/environ \
+	r:lib \
 	rx:$(lua_bin) \
 	r:$(test_runner) \
 	r:$(CURDIR) \
 	rw:/dev/null
 test-environ: lua
-	cd src/environ && HOME=$(CURDIR) \
-		LUA_PATH="$(CURDIR)/.local/lib/lua/?.lua;$(CURDIR)/src/?.lua;$(CURDIR)/src/?/init.lua;;" \
+	cd lib/environ && HOME=$(CURDIR) \
+		LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;" \
 		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
 
 # skip test-work until work.lua module is available in CI

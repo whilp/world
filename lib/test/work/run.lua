@@ -2,8 +2,8 @@
 
 local lu = require("luaunit")
 
-package.path = os.getenv("HOME") .. "/.local/lib/lua/?.lua;"
-  .. os.getenv("HOME") .. "/.local/lib/lua/test/work/?.lua;" .. package.path
+package.path = os.getenv("HOME") .. "/lib/?.lua;"
+  .. os.getenv("HOME") .. "/lib/test/work/?.lua;" .. package.path
 
 require("command-blocked")
 require("blockers")
