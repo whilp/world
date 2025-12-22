@@ -16,8 +16,10 @@ typeset -aU lua_path
 
 lua_path=(
   "$HOME/extras/lua/?.lua"
+  "$HOME/extras/lua/?/init.lua"
   "$HOME/extras/lua/3p/?.lua"
   "$HOME/lib/?.lua"
+  "$HOME/lib/?/init.lua"
   "$HOME/lib/3p/?.lua"
 )
 

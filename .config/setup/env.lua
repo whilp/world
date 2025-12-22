@@ -23,10 +23,12 @@ local function get()
 	env.PATH = table.concat(path_parts, ":")
 
 	local lua_path_parts = {
-		path.join(env.DST, ".local", "bootstrap", "lib", "lua", "?.lua"),
-		path.join(env.DST, ".local", "bootstrap", "lib", "lua", "?", "init.lua"),
-		path.join(env.DST, ".local", "lib", "lua", "?.lua"),
-		path.join(env.DST, ".local", "lib", "lua", "?", "init.lua"),
+		path.join(env.DST, "extras", "lua", "?.lua"),
+		path.join(env.DST, "extras", "lua", "?", "init.lua"),
+		path.join(env.DST, "extras", "lua", "3p", "?.lua"),
+		path.join(env.DST, "lib", "?.lua"),
+		path.join(env.DST, "lib", "?", "init.lua"),
+		path.join(env.DST, "lib", "3p", "?.lua"),
 		"",
 	}
 	env.LUA_PATH = table.concat(lua_path_parts, ";")

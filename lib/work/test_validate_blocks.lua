@@ -3,7 +3,7 @@ local lu = require("luaunit")
 local data = require("work.data")
 local process = require("work.process")
 local store = require("work.store")
-local Work = require("lib")
+local Work = require("work.test_lib")
 local test_store = Work.store
 
 TestValidateBlocks = {}

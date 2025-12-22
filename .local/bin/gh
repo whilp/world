@@ -4,9 +4,6 @@ local cosmo = require("cosmo")
 local unix = cosmo.unix
 local path = cosmo.path
 
-local script_dir = path.dirname(path.dirname(path.dirname(debug.getinfo(1, "S").source:sub(2))))
-package.path = script_dir .. "/src/?.lua;" .. script_dir .. "/src/?/init.lua;" .. package.path
-
 local environ = require("environ")
 
 local invoked_as = path.basename(arg[0])
