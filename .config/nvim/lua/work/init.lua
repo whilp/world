@@ -19,7 +19,7 @@ end
 
 -- Ensure work library is in path
 local function ensure_lib_path()
-  local lib_path = vim.fn.expand("~/.local/lib/lua")
+  local lib_path = vim.fn.expand("~/lib")
   if not package.path:find(lib_path, 1, true) then
     package.path = lib_path .. "/?.lua;" .. package.path
   end

@@ -43,7 +43,7 @@ jobs:
           path: |
             o/lua
             results/bin/lua
-          key: lua-build-${{ hashFiles('3p/lua/**', '.local/lib/lua/run-test.lua') }}
+          key: lua-build-${{ hashFiles('3p/lua/**', 'lib/run-test.lua') }}
           restore-keys: |
             lua-build-
 

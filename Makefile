@@ -20,8 +20,8 @@ include 3p/sqruff/cook.mk
 include 3p/stylua/cook.mk
 include 3p/superhtml/cook.mk
 include 3p/uv/cook.mk
-include src/home/cook.mk
-include src/test.mk
+include lib/home/cook.mk
+include lib/test.mk
 
 build: lua
 
@@ -111,9 +111,8 @@ check:
 	fi
 	@results/bin/lua /zip/.lua/bin/luacheck \
 		.config \
-		.local/lib/lua \
+		lib \
 		.github \
-		src \
 		--exclude-files '.claude/skills/lua/templates/*.lua' \
 		|| true
 
