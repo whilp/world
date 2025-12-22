@@ -21,9 +21,13 @@ $(superhtml_dir)/darwin-arm64/.extracted: | $(superhtml_dir)/darwin-arm64
 	cd $(superhtml_dir)/darwin-arm64 && echo "$(superhtml_darwin_arm64_sha)  archive.tar.gz" | $(sha256sum) -c
 	$(tar) -xzf $(superhtml_dir)/darwin-arm64/archive.tar.gz -C $(superhtml_dir)/darwin-arm64 --strip-components=1
 	rm $(superhtml_dir)/darwin-arm64/archive.tar.gz
-	echo "$(superhtml_version)" > $(superhtml_dir)/darwin-arm64/VERSION
-	echo "$(superhtml_darwin_arm64_sha)" | head -c 8 > $(superhtml_dir)/darwin-arm64/SHA
 	touch $@
+
+$(superhtml_dir)/darwin-arm64/VERSION: $(superhtml_dir)/darwin-arm64/.extracted
+	echo "$(superhtml_version)" > $@
+
+$(superhtml_dir)/darwin-arm64/SHA: $(superhtml_dir)/darwin-arm64/.extracted
+	echo "$(superhtml_darwin_arm64_sha)" | head -c 8 > $@
 
 $(superhtml_dir)/linux-arm64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -35,9 +39,13 @@ $(superhtml_dir)/linux-arm64/.extracted: | $(superhtml_dir)/linux-arm64
 	cd $(superhtml_dir)/linux-arm64 && echo "$(superhtml_linux_arm64_sha)  archive.tar.gz" | $(sha256sum) -c
 	$(tar) -xzf $(superhtml_dir)/linux-arm64/archive.tar.gz -C $(superhtml_dir)/linux-arm64 --strip-components=1
 	rm $(superhtml_dir)/linux-arm64/archive.tar.gz
-	echo "$(superhtml_version)" > $(superhtml_dir)/linux-arm64/VERSION
-	echo "$(superhtml_linux_arm64_sha)" | head -c 8 > $(superhtml_dir)/linux-arm64/SHA
 	touch $@
+
+$(superhtml_dir)/linux-arm64/VERSION: $(superhtml_dir)/linux-arm64/.extracted
+	echo "$(superhtml_version)" > $@
+
+$(superhtml_dir)/linux-arm64/SHA: $(superhtml_dir)/linux-arm64/.extracted
+	echo "$(superhtml_linux_arm64_sha)" | head -c 8 > $@
 
 $(superhtml_dir)/linux-x86_64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -49,9 +57,13 @@ $(superhtml_dir)/linux-x86_64/.extracted: | $(superhtml_dir)/linux-x86_64
 	cd $(superhtml_dir)/linux-x86_64 && echo "$(superhtml_linux_x86_64_sha)  archive.tar.gz" | $(sha256sum) -c
 	$(tar) -xzf $(superhtml_dir)/linux-x86_64/archive.tar.gz -C $(superhtml_dir)/linux-x86_64 --strip-components=1
 	rm $(superhtml_dir)/linux-x86_64/archive.tar.gz
-	echo "$(superhtml_version)" > $(superhtml_dir)/linux-x86_64/VERSION
-	echo "$(superhtml_linux_x86_64_sha)" | head -c 8 > $(superhtml_dir)/linux-x86_64/SHA
 	touch $@
+
+$(superhtml_dir)/linux-x86_64/VERSION: $(superhtml_dir)/linux-x86_64/.extracted
+	echo "$(superhtml_version)" > $@
+
+$(superhtml_dir)/linux-x86_64/SHA: $(superhtml_dir)/linux-x86_64/.extracted
+	echo "$(superhtml_linux_x86_64_sha)" | head -c 8 > $@
 
 $(superhtml_dir)/darwin-arm64:
 	mkdir -p $@
@@ -64,5 +76,11 @@ $(superhtml_dir)/linux-x86_64:
 
 superhtml_binaries := \
 	$(superhtml_dir)/darwin-arm64/.extracted \
+	$(superhtml_dir)/darwin-arm64/VERSION \
+	$(superhtml_dir)/darwin-arm64/SHA \
 	$(superhtml_dir)/linux-arm64/.extracted \
-	$(superhtml_dir)/linux-x86_64/.extracted
+	$(superhtml_dir)/linux-arm64/VERSION \
+	$(superhtml_dir)/linux-arm64/SHA \
+	$(superhtml_dir)/linux-x86_64/.extracted \
+	$(superhtml_dir)/linux-x86_64/VERSION \
+	$(superhtml_dir)/linux-x86_64/SHA

@@ -21,9 +21,13 @@ $(rg_dir)/darwin-arm64/.extracted: | $(rg_dir)/darwin-arm64
 	cd $(rg_dir)/darwin-arm64 && echo "$(rg_darwin_arm64_sha)  archive.tar.gz" | $(sha256sum) -c
 	$(tar) -xzf $(rg_dir)/darwin-arm64/archive.tar.gz -C $(rg_dir)/darwin-arm64 --strip-components=1
 	rm $(rg_dir)/darwin-arm64/archive.tar.gz
-	echo "$(rg_version)" > $(rg_dir)/darwin-arm64/VERSION
-	echo "$(rg_darwin_arm64_sha)" | head -c 8 > $(rg_dir)/darwin-arm64/SHA
 	touch $@
+
+$(rg_dir)/darwin-arm64/VERSION: $(rg_dir)/darwin-arm64/.extracted
+	echo "$(rg_version)" > $@
+
+$(rg_dir)/darwin-arm64/SHA: $(rg_dir)/darwin-arm64/.extracted
+	echo "$(rg_darwin_arm64_sha)" | head -c 8 > $@
 
 $(rg_dir)/linux-arm64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -35,9 +39,13 @@ $(rg_dir)/linux-arm64/.extracted: | $(rg_dir)/linux-arm64
 	cd $(rg_dir)/linux-arm64 && echo "$(rg_linux_arm64_sha)  archive.tar.gz" | $(sha256sum) -c
 	$(tar) -xzf $(rg_dir)/linux-arm64/archive.tar.gz -C $(rg_dir)/linux-arm64 --strip-components=1
 	rm $(rg_dir)/linux-arm64/archive.tar.gz
-	echo "$(rg_version)" > $(rg_dir)/linux-arm64/VERSION
-	echo "$(rg_linux_arm64_sha)" | head -c 8 > $(rg_dir)/linux-arm64/SHA
 	touch $@
+
+$(rg_dir)/linux-arm64/VERSION: $(rg_dir)/linux-arm64/.extracted
+	echo "$(rg_version)" > $@
+
+$(rg_dir)/linux-arm64/SHA: $(rg_dir)/linux-arm64/.extracted
+	echo "$(rg_linux_arm64_sha)" | head -c 8 > $@
 
 $(rg_dir)/linux-x86_64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -49,9 +57,13 @@ $(rg_dir)/linux-x86_64/.extracted: | $(rg_dir)/linux-x86_64
 	cd $(rg_dir)/linux-x86_64 && echo "$(rg_linux_x86_64_sha)  archive.tar.gz" | $(sha256sum) -c
 	$(tar) -xzf $(rg_dir)/linux-x86_64/archive.tar.gz -C $(rg_dir)/linux-x86_64 --strip-components=1
 	rm $(rg_dir)/linux-x86_64/archive.tar.gz
-	echo "$(rg_version)" > $(rg_dir)/linux-x86_64/VERSION
-	echo "$(rg_linux_x86_64_sha)" | head -c 8 > $(rg_dir)/linux-x86_64/SHA
 	touch $@
+
+$(rg_dir)/linux-x86_64/VERSION: $(rg_dir)/linux-x86_64/.extracted
+	echo "$(rg_version)" > $@
+
+$(rg_dir)/linux-x86_64/SHA: $(rg_dir)/linux-x86_64/.extracted
+	echo "$(rg_linux_x86_64_sha)" | head -c 8 > $@
 
 $(rg_dir)/darwin-arm64:
 	mkdir -p $@
@@ -64,5 +76,11 @@ $(rg_dir)/linux-x86_64:
 
 rg_binaries := \
 	$(rg_dir)/darwin-arm64/.extracted \
+	$(rg_dir)/darwin-arm64/VERSION \
+	$(rg_dir)/darwin-arm64/SHA \
 	$(rg_dir)/linux-arm64/.extracted \
-	$(rg_dir)/linux-x86_64/.extracted
+	$(rg_dir)/linux-arm64/VERSION \
+	$(rg_dir)/linux-arm64/SHA \
+	$(rg_dir)/linux-x86_64/.extracted \
+	$(rg_dir)/linux-x86_64/VERSION \
+	$(rg_dir)/linux-x86_64/SHA

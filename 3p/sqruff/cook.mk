@@ -21,9 +21,13 @@ $(sqruff_dir)/darwin-arm64/.extracted: | $(sqruff_dir)/darwin-arm64
 	cd $(sqruff_dir)/darwin-arm64 && echo "$(sqruff_darwin_arm64_sha)  archive.tar.gz" | $(sha256sum) -c
 	$(tar) -xzf $(sqruff_dir)/darwin-arm64/archive.tar.gz -C $(sqruff_dir)/darwin-arm64
 	rm $(sqruff_dir)/darwin-arm64/archive.tar.gz
-	echo "$(sqruff_version)" > $(sqruff_dir)/darwin-arm64/VERSION
-	echo "$(sqruff_darwin_arm64_sha)" | head -c 8 > $(sqruff_dir)/darwin-arm64/SHA
 	touch $@
+
+$(sqruff_dir)/darwin-arm64/VERSION: $(sqruff_dir)/darwin-arm64/.extracted
+	echo "$(sqruff_version)" > $@
+
+$(sqruff_dir)/darwin-arm64/SHA: $(sqruff_dir)/darwin-arm64/.extracted
+	echo "$(sqruff_darwin_arm64_sha)" | head -c 8 > $@
 
 $(sqruff_dir)/linux-arm64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -35,9 +39,13 @@ $(sqruff_dir)/linux-arm64/.extracted: | $(sqruff_dir)/linux-arm64
 	cd $(sqruff_dir)/linux-arm64 && echo "$(sqruff_linux_arm64_sha)  archive.tar.gz" | $(sha256sum) -c
 	$(tar) -xzf $(sqruff_dir)/linux-arm64/archive.tar.gz -C $(sqruff_dir)/linux-arm64
 	rm $(sqruff_dir)/linux-arm64/archive.tar.gz
-	echo "$(sqruff_version)" > $(sqruff_dir)/linux-arm64/VERSION
-	echo "$(sqruff_linux_arm64_sha)" | head -c 8 > $(sqruff_dir)/linux-arm64/SHA
 	touch $@
+
+$(sqruff_dir)/linux-arm64/VERSION: $(sqruff_dir)/linux-arm64/.extracted
+	echo "$(sqruff_version)" > $@
+
+$(sqruff_dir)/linux-arm64/SHA: $(sqruff_dir)/linux-arm64/.extracted
+	echo "$(sqruff_linux_arm64_sha)" | head -c 8 > $@
 
 $(sqruff_dir)/linux-x86_64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -49,9 +57,13 @@ $(sqruff_dir)/linux-x86_64/.extracted: | $(sqruff_dir)/linux-x86_64
 	cd $(sqruff_dir)/linux-x86_64 && echo "$(sqruff_linux_x86_64_sha)  archive.tar.gz" | $(sha256sum) -c
 	$(tar) -xzf $(sqruff_dir)/linux-x86_64/archive.tar.gz -C $(sqruff_dir)/linux-x86_64
 	rm $(sqruff_dir)/linux-x86_64/archive.tar.gz
-	echo "$(sqruff_version)" > $(sqruff_dir)/linux-x86_64/VERSION
-	echo "$(sqruff_linux_x86_64_sha)" | head -c 8 > $(sqruff_dir)/linux-x86_64/SHA
 	touch $@
+
+$(sqruff_dir)/linux-x86_64/VERSION: $(sqruff_dir)/linux-x86_64/.extracted
+	echo "$(sqruff_version)" > $@
+
+$(sqruff_dir)/linux-x86_64/SHA: $(sqruff_dir)/linux-x86_64/.extracted
+	echo "$(sqruff_linux_x86_64_sha)" | head -c 8 > $@
 
 $(sqruff_dir)/darwin-arm64:
 	mkdir -p $@
@@ -64,5 +76,11 @@ $(sqruff_dir)/linux-x86_64:
 
 sqruff_binaries := \
 	$(sqruff_dir)/darwin-arm64/.extracted \
+	$(sqruff_dir)/darwin-arm64/VERSION \
+	$(sqruff_dir)/darwin-arm64/SHA \
 	$(sqruff_dir)/linux-arm64/.extracted \
-	$(sqruff_dir)/linux-x86_64/.extracted
+	$(sqruff_dir)/linux-arm64/VERSION \
+	$(sqruff_dir)/linux-arm64/SHA \
+	$(sqruff_dir)/linux-x86_64/.extracted \
+	$(sqruff_dir)/linux-x86_64/VERSION \
+	$(sqruff_dir)/linux-x86_64/SHA

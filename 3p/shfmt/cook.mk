@@ -20,9 +20,13 @@ $(shfmt_dir)/darwin-arm64/.extracted: | $(shfmt_dir)/darwin-arm64
 	$(curl) -o $(shfmt_dir)/darwin-arm64/shfmt $(shfmt_darwin_arm64_url)
 	cd $(shfmt_dir)/darwin-arm64 && echo "$(shfmt_darwin_arm64_sha)  shfmt" | $(sha256sum) -c
 	chmod +x $(shfmt_dir)/darwin-arm64/shfmt
-	echo "$(shfmt_version)" > $(shfmt_dir)/darwin-arm64/VERSION
-	echo "$(shfmt_darwin_arm64_sha)" | head -c 8 > $(shfmt_dir)/darwin-arm64/SHA
 	touch $@
+
+$(shfmt_dir)/darwin-arm64/VERSION: $(shfmt_dir)/darwin-arm64/.extracted
+	echo "$(shfmt_version)" > $@
+
+$(shfmt_dir)/darwin-arm64/SHA: $(shfmt_dir)/darwin-arm64/.extracted
+	echo "$(shfmt_darwin_arm64_sha)" | head -c 8 > $@
 
 $(shfmt_dir)/linux-arm64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -33,9 +37,13 @@ $(shfmt_dir)/linux-arm64/.extracted: | $(shfmt_dir)/linux-arm64
 	$(curl) -o $(shfmt_dir)/linux-arm64/shfmt $(shfmt_linux_arm64_url)
 	cd $(shfmt_dir)/linux-arm64 && echo "$(shfmt_linux_arm64_sha)  shfmt" | $(sha256sum) -c
 	chmod +x $(shfmt_dir)/linux-arm64/shfmt
-	echo "$(shfmt_version)" > $(shfmt_dir)/linux-arm64/VERSION
-	echo "$(shfmt_linux_arm64_sha)" | head -c 8 > $(shfmt_dir)/linux-arm64/SHA
 	touch $@
+
+$(shfmt_dir)/linux-arm64/VERSION: $(shfmt_dir)/linux-arm64/.extracted
+	echo "$(shfmt_version)" > $@
+
+$(shfmt_dir)/linux-arm64/SHA: $(shfmt_dir)/linux-arm64/.extracted
+	echo "$(shfmt_linux_arm64_sha)" | head -c 8 > $@
 
 $(shfmt_dir)/linux-x86_64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -46,9 +54,13 @@ $(shfmt_dir)/linux-x86_64/.extracted: | $(shfmt_dir)/linux-x86_64
 	$(curl) -o $(shfmt_dir)/linux-x86_64/shfmt $(shfmt_linux_x86_64_url)
 	cd $(shfmt_dir)/linux-x86_64 && echo "$(shfmt_linux_x86_64_sha)  shfmt" | $(sha256sum) -c
 	chmod +x $(shfmt_dir)/linux-x86_64/shfmt
-	echo "$(shfmt_version)" > $(shfmt_dir)/linux-x86_64/VERSION
-	echo "$(shfmt_linux_x86_64_sha)" | head -c 8 > $(shfmt_dir)/linux-x86_64/SHA
 	touch $@
+
+$(shfmt_dir)/linux-x86_64/VERSION: $(shfmt_dir)/linux-x86_64/.extracted
+	echo "$(shfmt_version)" > $@
+
+$(shfmt_dir)/linux-x86_64/SHA: $(shfmt_dir)/linux-x86_64/.extracted
+	echo "$(shfmt_linux_x86_64_sha)" | head -c 8 > $@
 
 $(shfmt_dir)/darwin-arm64:
 	mkdir -p $@
@@ -61,5 +73,11 @@ $(shfmt_dir)/linux-x86_64:
 
 shfmt_binaries := \
 	$(shfmt_dir)/darwin-arm64/.extracted \
+	$(shfmt_dir)/darwin-arm64/VERSION \
+	$(shfmt_dir)/darwin-arm64/SHA \
 	$(shfmt_dir)/linux-arm64/.extracted \
-	$(shfmt_dir)/linux-x86_64/.extracted
+	$(shfmt_dir)/linux-arm64/VERSION \
+	$(shfmt_dir)/linux-arm64/SHA \
+	$(shfmt_dir)/linux-x86_64/.extracted \
+	$(shfmt_dir)/linux-x86_64/VERSION \
+	$(shfmt_dir)/linux-x86_64/SHA

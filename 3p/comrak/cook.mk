@@ -20,9 +20,13 @@ $(comrak_dir)/darwin-arm64/.extracted: | $(comrak_dir)/darwin-arm64
 	$(curl) -o $(comrak_dir)/darwin-arm64/comrak $(comrak_darwin_arm64_url)
 	cd $(comrak_dir)/darwin-arm64 && echo "$(comrak_darwin_arm64_sha)  comrak" | $(sha256sum) -c
 	chmod +x $(comrak_dir)/darwin-arm64/comrak
-	echo "$(comrak_version)" > $(comrak_dir)/darwin-arm64/VERSION
-	echo "$(comrak_darwin_arm64_sha)" | head -c 8 > $(comrak_dir)/darwin-arm64/SHA
 	touch $@
+
+$(comrak_dir)/darwin-arm64/VERSION: $(comrak_dir)/darwin-arm64/.extracted
+	echo "$(comrak_version)" > $@
+
+$(comrak_dir)/darwin-arm64/SHA: $(comrak_dir)/darwin-arm64/.extracted
+	echo "$(comrak_darwin_arm64_sha)" | head -c 8 > $@
 
 $(comrak_dir)/linux-arm64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -33,9 +37,13 @@ $(comrak_dir)/linux-arm64/.extracted: | $(comrak_dir)/linux-arm64
 	$(curl) -o $(comrak_dir)/linux-arm64/comrak $(comrak_linux_arm64_url)
 	cd $(comrak_dir)/linux-arm64 && echo "$(comrak_linux_arm64_sha)  comrak" | $(sha256sum) -c
 	chmod +x $(comrak_dir)/linux-arm64/comrak
-	echo "$(comrak_version)" > $(comrak_dir)/linux-arm64/VERSION
-	echo "$(comrak_linux_arm64_sha)" | head -c 8 > $(comrak_dir)/linux-arm64/SHA
 	touch $@
+
+$(comrak_dir)/linux-arm64/VERSION: $(comrak_dir)/linux-arm64/.extracted
+	echo "$(comrak_version)" > $@
+
+$(comrak_dir)/linux-arm64/SHA: $(comrak_dir)/linux-arm64/.extracted
+	echo "$(comrak_linux_arm64_sha)" | head -c 8 > $@
 
 $(comrak_dir)/linux-x86_64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -46,9 +54,13 @@ $(comrak_dir)/linux-x86_64/.extracted: | $(comrak_dir)/linux-x86_64
 	$(curl) -o $(comrak_dir)/linux-x86_64/comrak $(comrak_linux_x86_64_url)
 	cd $(comrak_dir)/linux-x86_64 && echo "$(comrak_linux_x86_64_sha)  comrak" | $(sha256sum) -c
 	chmod +x $(comrak_dir)/linux-x86_64/comrak
-	echo "$(comrak_version)" > $(comrak_dir)/linux-x86_64/VERSION
-	echo "$(comrak_linux_x86_64_sha)" | head -c 8 > $(comrak_dir)/linux-x86_64/SHA
 	touch $@
+
+$(comrak_dir)/linux-x86_64/VERSION: $(comrak_dir)/linux-x86_64/.extracted
+	echo "$(comrak_version)" > $@
+
+$(comrak_dir)/linux-x86_64/SHA: $(comrak_dir)/linux-x86_64/.extracted
+	echo "$(comrak_linux_x86_64_sha)" | head -c 8 > $@
 
 $(comrak_dir)/darwin-arm64:
 	mkdir -p $@
@@ -61,5 +73,11 @@ $(comrak_dir)/linux-x86_64:
 
 comrak_binaries := \
 	$(comrak_dir)/darwin-arm64/.extracted \
+	$(comrak_dir)/darwin-arm64/VERSION \
+	$(comrak_dir)/darwin-arm64/SHA \
 	$(comrak_dir)/linux-arm64/.extracted \
-	$(comrak_dir)/linux-x86_64/.extracted
+	$(comrak_dir)/linux-arm64/VERSION \
+	$(comrak_dir)/linux-arm64/SHA \
+	$(comrak_dir)/linux-x86_64/.extracted \
+	$(comrak_dir)/linux-x86_64/VERSION \
+	$(comrak_dir)/linux-x86_64/SHA

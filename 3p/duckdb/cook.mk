@@ -21,9 +21,13 @@ $(duckdb_dir)/darwin-arm64/.extracted: | $(duckdb_dir)/darwin-arm64
 	cd $(duckdb_dir)/darwin-arm64 && echo "$(duckdb_darwin_arm64_sha)  archive.zip" | $(sha256sum) -c
 	$(unzip) -o $(duckdb_dir)/darwin-arm64/archive.zip -d $(duckdb_dir)/darwin-arm64
 	rm $(duckdb_dir)/darwin-arm64/archive.zip
-	echo "$(duckdb_version)" > $(duckdb_dir)/darwin-arm64/VERSION
-	echo "$(duckdb_darwin_arm64_sha)" | head -c 8 > $(duckdb_dir)/darwin-arm64/SHA
 	touch $@
+
+$(duckdb_dir)/darwin-arm64/VERSION: $(duckdb_dir)/darwin-arm64/.extracted
+	echo "$(duckdb_version)" > $@
+
+$(duckdb_dir)/darwin-arm64/SHA: $(duckdb_dir)/darwin-arm64/.extracted
+	echo "$(duckdb_darwin_arm64_sha)" | head -c 8 > $@
 
 $(duckdb_dir)/linux-arm64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -35,9 +39,13 @@ $(duckdb_dir)/linux-arm64/.extracted: | $(duckdb_dir)/linux-arm64
 	cd $(duckdb_dir)/linux-arm64 && echo "$(duckdb_linux_arm64_sha)  archive.zip" | $(sha256sum) -c
 	$(unzip) -o $(duckdb_dir)/linux-arm64/archive.zip -d $(duckdb_dir)/linux-arm64
 	rm $(duckdb_dir)/linux-arm64/archive.zip
-	echo "$(duckdb_version)" > $(duckdb_dir)/linux-arm64/VERSION
-	echo "$(duckdb_linux_arm64_sha)" | head -c 8 > $(duckdb_dir)/linux-arm64/SHA
 	touch $@
+
+$(duckdb_dir)/linux-arm64/VERSION: $(duckdb_dir)/linux-arm64/.extracted
+	echo "$(duckdb_version)" > $@
+
+$(duckdb_dir)/linux-arm64/SHA: $(duckdb_dir)/linux-arm64/.extracted
+	echo "$(duckdb_linux_arm64_sha)" | head -c 8 > $@
 
 $(duckdb_dir)/linux-x86_64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -49,9 +57,13 @@ $(duckdb_dir)/linux-x86_64/.extracted: | $(duckdb_dir)/linux-x86_64
 	cd $(duckdb_dir)/linux-x86_64 && echo "$(duckdb_linux_x86_64_sha)  archive.zip" | $(sha256sum) -c
 	$(unzip) -o $(duckdb_dir)/linux-x86_64/archive.zip -d $(duckdb_dir)/linux-x86_64
 	rm $(duckdb_dir)/linux-x86_64/archive.zip
-	echo "$(duckdb_version)" > $(duckdb_dir)/linux-x86_64/VERSION
-	echo "$(duckdb_linux_x86_64_sha)" | head -c 8 > $(duckdb_dir)/linux-x86_64/SHA
 	touch $@
+
+$(duckdb_dir)/linux-x86_64/VERSION: $(duckdb_dir)/linux-x86_64/.extracted
+	echo "$(duckdb_version)" > $@
+
+$(duckdb_dir)/linux-x86_64/SHA: $(duckdb_dir)/linux-x86_64/.extracted
+	echo "$(duckdb_linux_x86_64_sha)" | head -c 8 > $@
 
 $(duckdb_dir)/darwin-arm64:
 	mkdir -p $@
@@ -64,5 +76,11 @@ $(duckdb_dir)/linux-x86_64:
 
 duckdb_binaries := \
 	$(duckdb_dir)/darwin-arm64/.extracted \
+	$(duckdb_dir)/darwin-arm64/VERSION \
+	$(duckdb_dir)/darwin-arm64/SHA \
 	$(duckdb_dir)/linux-arm64/.extracted \
-	$(duckdb_dir)/linux-x86_64/.extracted
+	$(duckdb_dir)/linux-arm64/VERSION \
+	$(duckdb_dir)/linux-arm64/SHA \
+	$(duckdb_dir)/linux-x86_64/.extracted \
+	$(duckdb_dir)/linux-x86_64/VERSION \
+	$(duckdb_dir)/linux-x86_64/SHA
