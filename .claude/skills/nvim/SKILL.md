@@ -10,7 +10,8 @@ This skill provides comprehensive knowledge for interacting with Neovim in this 
 ## Architecture
 
 ### Binary management
-- Actual nvim binary managed by shimlink at `~/.local/share/shimlink/bin/nvim`
+- Nvim binary installed to `~/.local/share/nvim/<version>-<sha>/bin/nvim`
+- Symlinked from `~/.local/bin/nvim` (managed by `home 3p`)
 - Custom nvim builds with bundled plugins available via `.github/workflows/build-nvim.yml`
 
 ### Configuration structure
