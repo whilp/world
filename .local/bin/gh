@@ -12,12 +12,20 @@ local environ = require("environ")
 local invoked_as = path.basename(arg[0])
 local env = environ.new(unix.environ())
 
-if invoked_as == "gh" then
-  if not env.USE_GH_HOST then
-    env.GH_HOST = nil
-  end
-elseif invoked_as == "ghc" then
-  env.GH_HOST = "github.com"
+local handlers = {
+  gh = function(env)
+    if not env.USE_GH_HOST then
+      env.GH_HOST = nil
+    end
+  end,
+  ghc = function(env)
+    env.GH_HOST = "github.com"
+  end,
+}
+
+local handler = handlers[invoked_as]
+if handler then
+  handler(env)
 end
 
 local function find_gh_binary()
