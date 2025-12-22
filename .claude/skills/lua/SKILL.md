@@ -88,13 +88,19 @@ local function cmd_env(args)
     io.write("HOME=" .. home .. "\n")
   end
 
-  -- Build custom environment for subprocess
-  -- unix.environ() returns array of "KEY=value" strings
-  local env = unix.environ()
-  table.insert(env, "CUSTOM_VAR=custom_value")
+  -- Build custom environment for subprocess using environ module
+  local environ = require("environ")
+  local env = environ.new(unix.environ())
 
-  -- Example: could use env with unix.execve()
-  -- unix.execve("/usr/bin/env", {"env"}, env)
+  -- Set or replace variables with table syntax
+  env.CUSTOM_VAR = "custom_value"
+  env.ANOTHER_VAR = "another_value"
+
+  -- Get variables
+  local custom = env.CUSTOM_VAR
+
+  -- Convert back to array for execve
+  -- unix.execve("/usr/bin/env", {"env"}, env:toarray())
 
   io.write("environment prepared\n")
   return 0
@@ -574,6 +580,7 @@ Standard libraries used in this repo:
 - `cosmo` - Unified interface to Unix system calls and path utilities
 - `cosmo.unix` - Unix system calls (fork, exec, pipe, read, write, etc)
 - `cosmo.path` - Path manipulation utilities (dirname, etc)
+- `environ` - Table-like interface for environment variables (from `src/environ`)
 - `daemonize` - Daemon process creation (from `src/` modules)
 
 For detailed API documentation, see the cosmo reference files in this skill directory:
@@ -624,6 +631,33 @@ unix.kill(pid, unix.SIGTERM)
 -- Process ID
 local pid = unix.getpid()
 ```
+
+## Environment variables
+
+Use the `environ` module for clean environment variable manipulation:
+
+```lua
+local environ = require("environ")
+
+-- Create from current environment
+local env = environ.new(unix.environ())
+
+-- Set or replace variables with table syntax
+env.GH_HOST = "github.com"
+env.PATH = "/usr/local/bin:/usr/bin"
+
+-- Get variables
+local host = env.GH_HOST  -- "github.com"
+
+-- Remove variables
+env.UNWANTED_VAR = nil
+
+-- Convert back to array for execve
+local args = {"command", "arg1", "arg2"}
+unix.execve(command_path, args, env:toarray())
+```
+
+The environ module automatically handles variable replacement (no duplicates) and provides a clean table interface instead of manual array manipulation.
 
 ## Design principles
 
