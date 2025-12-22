@@ -30,7 +30,7 @@ end
 
 local function find_gh_binary()
   local home = os.getenv("HOME")
-  local gh_dir = home .. "/.local/share/gh"
+  local gh_dir = path.join(home, ".local", "share", "gh")
 
   local dir = unix.opendir(gh_dir)
   local versions = {}
@@ -45,7 +45,7 @@ local function find_gh_binary()
   local latest = versions[#versions]
 
   if latest then
-    return gh_dir .. "/" .. latest .. "/bin/gh"
+    return path.join(gh_dir, latest, "bin", "gh")
   end
 
   error("could not find gh binary in ~/.local/share/gh")
