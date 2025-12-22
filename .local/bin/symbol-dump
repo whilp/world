@@ -1,7 +1,5 @@
 #!/usr/bin/env lua
 
-package.path = os.getenv("HOME") .. "/.local/lib/lua/?.lua;" .. package.path
-
 local serpent = require("serpent")
 local dump = require("symbols.dump")
 

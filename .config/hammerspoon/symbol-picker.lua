@@ -1,6 +1,6 @@
 local M = {}
 
-package.path = os.getenv("HOME") .. "/.local/lib/lua/?.lua;" .. package.path
+package.path = os.getenv("HOME") .. "/lib/?.lua;" .. package.path
 
 local symbols = require("symbols.symbols")
 local pickerUtils = require("picker-utils")

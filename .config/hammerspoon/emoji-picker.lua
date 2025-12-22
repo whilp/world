@@ -1,6 +1,6 @@
 local M = {}
 
-package.path = os.getenv("HOME") .. "/.local/lib/lua/?.lua;" .. package.path
+package.path = os.getenv("HOME") .. "/lib/?.lua;" .. package.path
 
 local emoji = require("emoji.emoji")
 local pickerUtils = require("picker-utils")

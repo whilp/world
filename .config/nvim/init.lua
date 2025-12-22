@@ -2,7 +2,7 @@
 
 -- Add lua paths
 local home = vim.fn.expand("~")
-package.path = home .. "/.local/lib/lua/?.lua;" .. home .. "/.local/lib/lua/3p/?.lua;" .. package.path
+package.path = home .. "/lib/?.lua;" .. home .. "/lib/3p/?.lua;" .. package.path
 
 -- Add extras to runtimepath if it exists
 local extras_nvim = home .. "/extras/nvim"
