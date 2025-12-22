@@ -23,9 +23,13 @@ $(gh_dir)/darwin-arm64/.extracted: | $(gh_dir)/darwin-arm64
 	find $(gh_dir)/darwin-arm64 -mindepth 2 -maxdepth 2 -exec mv {} $(gh_dir)/darwin-arm64/ \;
 	find $(gh_dir)/darwin-arm64 -mindepth 1 -maxdepth 1 -type d -empty -delete
 	rm $(gh_dir)/darwin-arm64/archive.zip
-	echo "$(gh_version)" > $(gh_dir)/darwin-arm64/VERSION
-	echo "$(gh_darwin_arm64_sha)" | head -c 8 > $(gh_dir)/darwin-arm64/SHA
 	touch $@
+
+$(gh_dir)/darwin-arm64/VERSION: $(gh_dir)/darwin-arm64/.extracted
+	echo "$(gh_version)" > $@
+
+$(gh_dir)/darwin-arm64/SHA: $(gh_dir)/darwin-arm64/.extracted
+	echo "$(gh_darwin_arm64_sha)" | head -c 8 > $@
 
 $(gh_dir)/linux-arm64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -37,9 +41,13 @@ $(gh_dir)/linux-arm64/.extracted: | $(gh_dir)/linux-arm64
 	cd $(gh_dir)/linux-arm64 && echo "$(gh_linux_arm64_sha)  archive.tar.gz" | $(sha256sum) -c
 	$(tar) -xzf $(gh_dir)/linux-arm64/archive.tar.gz -C $(gh_dir)/linux-arm64 --strip-components=1
 	rm $(gh_dir)/linux-arm64/archive.tar.gz
-	echo "$(gh_version)" > $(gh_dir)/linux-arm64/VERSION
-	echo "$(gh_linux_arm64_sha)" | head -c 8 > $(gh_dir)/linux-arm64/SHA
 	touch $@
+
+$(gh_dir)/linux-arm64/VERSION: $(gh_dir)/linux-arm64/.extracted
+	echo "$(gh_version)" > $@
+
+$(gh_dir)/linux-arm64/SHA: $(gh_dir)/linux-arm64/.extracted
+	echo "$(gh_linux_arm64_sha)" | head -c 8 > $@
 
 $(gh_dir)/linux-x86_64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -51,9 +59,13 @@ $(gh_dir)/linux-x86_64/.extracted: | $(gh_dir)/linux-x86_64
 	cd $(gh_dir)/linux-x86_64 && echo "$(gh_linux_x86_64_sha)  archive.tar.gz" | $(sha256sum) -c
 	$(tar) -xzf $(gh_dir)/linux-x86_64/archive.tar.gz -C $(gh_dir)/linux-x86_64 --strip-components=1
 	rm $(gh_dir)/linux-x86_64/archive.tar.gz
-	echo "$(gh_version)" > $(gh_dir)/linux-x86_64/VERSION
-	echo "$(gh_linux_x86_64_sha)" | head -c 8 > $(gh_dir)/linux-x86_64/SHA
 	touch $@
+
+$(gh_dir)/linux-x86_64/VERSION: $(gh_dir)/linux-x86_64/.extracted
+	echo "$(gh_version)" > $@
+
+$(gh_dir)/linux-x86_64/SHA: $(gh_dir)/linux-x86_64/.extracted
+	echo "$(gh_linux_x86_64_sha)" | head -c 8 > $@
 
 $(gh_dir)/darwin-arm64:
 	mkdir -p $@
@@ -66,5 +78,11 @@ $(gh_dir)/linux-x86_64:
 
 gh_binaries := \
 	$(gh_dir)/darwin-arm64/.extracted \
+	$(gh_dir)/darwin-arm64/VERSION \
+	$(gh_dir)/darwin-arm64/SHA \
 	$(gh_dir)/linux-arm64/.extracted \
-	$(gh_dir)/linux-x86_64/.extracted
+	$(gh_dir)/linux-arm64/VERSION \
+	$(gh_dir)/linux-arm64/SHA \
+	$(gh_dir)/linux-x86_64/.extracted \
+	$(gh_dir)/linux-x86_64/VERSION \
+	$(gh_dir)/linux-x86_64/SHA

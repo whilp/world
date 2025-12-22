@@ -22,9 +22,14 @@ $(nvim_dir)/darwin-arm64/.extracted: | $(nvim_dir)/darwin-arm64
 	cd $(nvim_dir)/darwin-arm64 && echo "$(nvim_darwin_arm64_sha)  archive.tar.gz" | $(sha256sum) -c
 	$(tar) -xzf $(nvim_dir)/darwin-arm64/archive.tar.gz -C $(nvim_dir)/darwin-arm64 --strip-components=1
 	rm $(nvim_dir)/darwin-arm64/archive.tar.gz
-	echo "$(nvim_version)" > $(nvim_dir)/darwin-arm64/VERSION
 	echo "$(nvim_release_sha)" > $(nvim_dir)/darwin-arm64/SHA
 	touch $@
+
+$(nvim_dir)/darwin-arm64/VERSION: $(nvim_dir)/darwin-arm64/.extracted
+	echo "$(nvim_version)" > $@
+
+$(nvim_dir)/darwin-arm64/SHA: $(nvim_dir)/darwin-arm64/.extracted
+	echo "$(nvim_darwin_arm64_sha)" | head -c 8 > $@
 
 $(nvim_dir)/linux-arm64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -36,9 +41,14 @@ $(nvim_dir)/linux-arm64/.extracted: | $(nvim_dir)/linux-arm64
 	cd $(nvim_dir)/linux-arm64 && echo "$(nvim_linux_arm64_sha)  archive.tar.gz" | $(sha256sum) -c
 	$(tar) -xzf $(nvim_dir)/linux-arm64/archive.tar.gz -C $(nvim_dir)/linux-arm64 --strip-components=1
 	rm $(nvim_dir)/linux-arm64/archive.tar.gz
-	echo "$(nvim_version)" > $(nvim_dir)/linux-arm64/VERSION
 	echo "$(nvim_release_sha)" > $(nvim_dir)/linux-arm64/SHA
 	touch $@
+
+$(nvim_dir)/linux-arm64/VERSION: $(nvim_dir)/linux-arm64/.extracted
+	echo "$(nvim_version)" > $@
+
+$(nvim_dir)/linux-arm64/SHA: $(nvim_dir)/linux-arm64/.extracted
+	echo "$(nvim_linux_arm64_sha)" | head -c 8 > $@
 
 $(nvim_dir)/linux-x86_64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -50,9 +60,14 @@ $(nvim_dir)/linux-x86_64/.extracted: | $(nvim_dir)/linux-x86_64
 	cd $(nvim_dir)/linux-x86_64 && echo "$(nvim_linux_x86_64_sha)  archive.tar.gz" | $(sha256sum) -c
 	$(tar) -xzf $(nvim_dir)/linux-x86_64/archive.tar.gz -C $(nvim_dir)/linux-x86_64 --strip-components=1
 	rm $(nvim_dir)/linux-x86_64/archive.tar.gz
-	echo "$(nvim_version)" > $(nvim_dir)/linux-x86_64/VERSION
 	echo "$(nvim_release_sha)" > $(nvim_dir)/linux-x86_64/SHA
 	touch $@
+
+$(nvim_dir)/linux-x86_64/VERSION: $(nvim_dir)/linux-x86_64/.extracted
+	echo "$(nvim_version)" > $@
+
+$(nvim_dir)/linux-x86_64/SHA: $(nvim_dir)/linux-x86_64/.extracted
+	echo "$(nvim_linux_x86_64_sha)" | head -c 8 > $@
 
 $(nvim_dir)/darwin-arm64:
 	mkdir -p $@
@@ -65,5 +80,11 @@ $(nvim_dir)/linux-x86_64:
 
 nvim_binaries := \
 	$(nvim_dir)/darwin-arm64/.extracted \
+	$(nvim_dir)/darwin-arm64/VERSION \
+	$(nvim_dir)/darwin-arm64/SHA \
 	$(nvim_dir)/linux-arm64/.extracted \
-	$(nvim_dir)/linux-x86_64/.extracted
+	$(nvim_dir)/linux-arm64/VERSION \
+	$(nvim_dir)/linux-arm64/SHA \
+	$(nvim_dir)/linux-x86_64/.extracted \
+	$(nvim_dir)/linux-x86_64/VERSION \
+	$(nvim_dir)/linux-x86_64/SHA

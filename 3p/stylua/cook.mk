@@ -21,9 +21,13 @@ $(stylua_dir)/darwin-arm64/.extracted: | $(stylua_dir)/darwin-arm64
 	cd $(stylua_dir)/darwin-arm64 && echo "$(stylua_darwin_arm64_sha)  archive.zip" | $(sha256sum) -c
 	$(unzip) -o $(stylua_dir)/darwin-arm64/archive.zip -d $(stylua_dir)/darwin-arm64
 	rm $(stylua_dir)/darwin-arm64/archive.zip
-	echo "$(stylua_version)" > $(stylua_dir)/darwin-arm64/VERSION
-	echo "$(stylua_darwin_arm64_sha)" | head -c 8 > $(stylua_dir)/darwin-arm64/SHA
 	touch $@
+
+$(stylua_dir)/darwin-arm64/VERSION: $(stylua_dir)/darwin-arm64/.extracted
+	echo "$(stylua_version)" > $@
+
+$(stylua_dir)/darwin-arm64/SHA: $(stylua_dir)/darwin-arm64/.extracted
+	echo "$(stylua_darwin_arm64_sha)" | head -c 8 > $@
 
 $(stylua_dir)/linux-arm64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -35,9 +39,13 @@ $(stylua_dir)/linux-arm64/.extracted: | $(stylua_dir)/linux-arm64
 	cd $(stylua_dir)/linux-arm64 && echo "$(stylua_linux_arm64_sha)  archive.zip" | $(sha256sum) -c
 	$(unzip) -o $(stylua_dir)/linux-arm64/archive.zip -d $(stylua_dir)/linux-arm64
 	rm $(stylua_dir)/linux-arm64/archive.zip
-	echo "$(stylua_version)" > $(stylua_dir)/linux-arm64/VERSION
-	echo "$(stylua_linux_arm64_sha)" | head -c 8 > $(stylua_dir)/linux-arm64/SHA
 	touch $@
+
+$(stylua_dir)/linux-arm64/VERSION: $(stylua_dir)/linux-arm64/.extracted
+	echo "$(stylua_version)" > $@
+
+$(stylua_dir)/linux-arm64/SHA: $(stylua_dir)/linux-arm64/.extracted
+	echo "$(stylua_linux_arm64_sha)" | head -c 8 > $@
 
 $(stylua_dir)/linux-x86_64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -49,9 +57,13 @@ $(stylua_dir)/linux-x86_64/.extracted: | $(stylua_dir)/linux-x86_64
 	cd $(stylua_dir)/linux-x86_64 && echo "$(stylua_linux_x86_64_sha)  archive.zip" | $(sha256sum) -c
 	$(unzip) -o $(stylua_dir)/linux-x86_64/archive.zip -d $(stylua_dir)/linux-x86_64
 	rm $(stylua_dir)/linux-x86_64/archive.zip
-	echo "$(stylua_version)" > $(stylua_dir)/linux-x86_64/VERSION
-	echo "$(stylua_linux_x86_64_sha)" | head -c 8 > $(stylua_dir)/linux-x86_64/SHA
 	touch $@
+
+$(stylua_dir)/linux-x86_64/VERSION: $(stylua_dir)/linux-x86_64/.extracted
+	echo "$(stylua_version)" > $@
+
+$(stylua_dir)/linux-x86_64/SHA: $(stylua_dir)/linux-x86_64/.extracted
+	echo "$(stylua_linux_x86_64_sha)" | head -c 8 > $@
 
 $(stylua_dir)/darwin-arm64:
 	mkdir -p $@
@@ -64,5 +76,11 @@ $(stylua_dir)/linux-x86_64:
 
 stylua_binaries := \
 	$(stylua_dir)/darwin-arm64/.extracted \
+	$(stylua_dir)/darwin-arm64/VERSION \
+	$(stylua_dir)/darwin-arm64/SHA \
 	$(stylua_dir)/linux-arm64/.extracted \
-	$(stylua_dir)/linux-x86_64/.extracted
+	$(stylua_dir)/linux-arm64/VERSION \
+	$(stylua_dir)/linux-arm64/SHA \
+	$(stylua_dir)/linux-x86_64/.extracted \
+	$(stylua_dir)/linux-x86_64/VERSION \
+	$(stylua_dir)/linux-x86_64/SHA

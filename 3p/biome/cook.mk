@@ -20,9 +20,13 @@ $(biome_dir)/darwin-arm64/.extracted: | $(biome_dir)/darwin-arm64
 	$(curl) -o $(biome_dir)/darwin-arm64/biome $(biome_darwin_arm64_url)
 	cd $(biome_dir)/darwin-arm64 && echo "$(biome_darwin_arm64_sha)  biome" | $(sha256sum) -c
 	chmod +x $(biome_dir)/darwin-arm64/biome
-	echo "$(biome_version)" > $(biome_dir)/darwin-arm64/VERSION
-	echo "$(biome_darwin_arm64_sha)" | head -c 8 > $(biome_dir)/darwin-arm64/SHA
 	touch $@
+
+$(biome_dir)/darwin-arm64/VERSION: $(biome_dir)/darwin-arm64/.extracted
+	echo "$(biome_version)" > $@
+
+$(biome_dir)/darwin-arm64/SHA: $(biome_dir)/darwin-arm64/.extracted
+	echo "$(biome_darwin_arm64_sha)" | head -c 8 > $@
 
 $(biome_dir)/linux-arm64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -33,9 +37,13 @@ $(biome_dir)/linux-arm64/.extracted: | $(biome_dir)/linux-arm64
 	$(curl) -o $(biome_dir)/linux-arm64/biome $(biome_linux_arm64_url)
 	cd $(biome_dir)/linux-arm64 && echo "$(biome_linux_arm64_sha)  biome" | $(sha256sum) -c
 	chmod +x $(biome_dir)/linux-arm64/biome
-	echo "$(biome_version)" > $(biome_dir)/linux-arm64/VERSION
-	echo "$(biome_linux_arm64_sha)" | head -c 8 > $(biome_dir)/linux-arm64/SHA
 	touch $@
+
+$(biome_dir)/linux-arm64/VERSION: $(biome_dir)/linux-arm64/.extracted
+	echo "$(biome_version)" > $@
+
+$(biome_dir)/linux-arm64/SHA: $(biome_dir)/linux-arm64/.extracted
+	echo "$(biome_linux_arm64_sha)" | head -c 8 > $@
 
 $(biome_dir)/linux-x86_64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -46,9 +54,13 @@ $(biome_dir)/linux-x86_64/.extracted: | $(biome_dir)/linux-x86_64
 	$(curl) -o $(biome_dir)/linux-x86_64/biome $(biome_linux_x86_64_url)
 	cd $(biome_dir)/linux-x86_64 && echo "$(biome_linux_x86_64_sha)  biome" | $(sha256sum) -c
 	chmod +x $(biome_dir)/linux-x86_64/biome
-	echo "$(biome_version)" > $(biome_dir)/linux-x86_64/VERSION
-	echo "$(biome_linux_x86_64_sha)" | head -c 8 > $(biome_dir)/linux-x86_64/SHA
 	touch $@
+
+$(biome_dir)/linux-x86_64/VERSION: $(biome_dir)/linux-x86_64/.extracted
+	echo "$(biome_version)" > $@
+
+$(biome_dir)/linux-x86_64/SHA: $(biome_dir)/linux-x86_64/.extracted
+	echo "$(biome_linux_x86_64_sha)" | head -c 8 > $@
 
 $(biome_dir)/darwin-arm64:
 	mkdir -p $@
@@ -61,5 +73,11 @@ $(biome_dir)/linux-x86_64:
 
 biome_binaries := \
 	$(biome_dir)/darwin-arm64/.extracted \
+	$(biome_dir)/darwin-arm64/VERSION \
+	$(biome_dir)/darwin-arm64/SHA \
 	$(biome_dir)/linux-arm64/.extracted \
-	$(biome_dir)/linux-x86_64/.extracted
+	$(biome_dir)/linux-arm64/VERSION \
+	$(biome_dir)/linux-arm64/SHA \
+	$(biome_dir)/linux-x86_64/.extracted \
+	$(biome_dir)/linux-x86_64/VERSION \
+	$(biome_dir)/linux-x86_64/SHA

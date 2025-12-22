@@ -21,9 +21,13 @@ $(ruff_dir)/darwin-arm64/.extracted: | $(ruff_dir)/darwin-arm64
 	cd $(ruff_dir)/darwin-arm64 && echo "$(ruff_darwin_arm64_sha)  archive.tar.gz" | $(sha256sum) -c
 	$(tar) -xzf $(ruff_dir)/darwin-arm64/archive.tar.gz -C $(ruff_dir)/darwin-arm64 --strip-components=1
 	rm $(ruff_dir)/darwin-arm64/archive.tar.gz
-	echo "$(ruff_version)" > $(ruff_dir)/darwin-arm64/VERSION
-	echo "$(ruff_darwin_arm64_sha)" | head -c 8 > $(ruff_dir)/darwin-arm64/SHA
 	touch $@
+
+$(ruff_dir)/darwin-arm64/VERSION: $(ruff_dir)/darwin-arm64/.extracted
+	echo "$(ruff_version)" > $@
+
+$(ruff_dir)/darwin-arm64/SHA: $(ruff_dir)/darwin-arm64/.extracted
+	echo "$(ruff_darwin_arm64_sha)" | head -c 8 > $@
 
 $(ruff_dir)/linux-arm64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -35,9 +39,13 @@ $(ruff_dir)/linux-arm64/.extracted: | $(ruff_dir)/linux-arm64
 	cd $(ruff_dir)/linux-arm64 && echo "$(ruff_linux_arm64_sha)  archive.tar.gz" | $(sha256sum) -c
 	$(tar) -xzf $(ruff_dir)/linux-arm64/archive.tar.gz -C $(ruff_dir)/linux-arm64 --strip-components=1
 	rm $(ruff_dir)/linux-arm64/archive.tar.gz
-	echo "$(ruff_version)" > $(ruff_dir)/linux-arm64/VERSION
-	echo "$(ruff_linux_arm64_sha)" | head -c 8 > $(ruff_dir)/linux-arm64/SHA
 	touch $@
+
+$(ruff_dir)/linux-arm64/VERSION: $(ruff_dir)/linux-arm64/.extracted
+	echo "$(ruff_version)" > $@
+
+$(ruff_dir)/linux-arm64/SHA: $(ruff_dir)/linux-arm64/.extracted
+	echo "$(ruff_linux_arm64_sha)" | head -c 8 > $@
 
 $(ruff_dir)/linux-x86_64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -49,9 +57,13 @@ $(ruff_dir)/linux-x86_64/.extracted: | $(ruff_dir)/linux-x86_64
 	cd $(ruff_dir)/linux-x86_64 && echo "$(ruff_linux_x86_64_sha)  archive.tar.gz" | $(sha256sum) -c
 	$(tar) -xzf $(ruff_dir)/linux-x86_64/archive.tar.gz -C $(ruff_dir)/linux-x86_64 --strip-components=1
 	rm $(ruff_dir)/linux-x86_64/archive.tar.gz
-	echo "$(ruff_version)" > $(ruff_dir)/linux-x86_64/VERSION
-	echo "$(ruff_linux_x86_64_sha)" | head -c 8 > $(ruff_dir)/linux-x86_64/SHA
 	touch $@
+
+$(ruff_dir)/linux-x86_64/VERSION: $(ruff_dir)/linux-x86_64/.extracted
+	echo "$(ruff_version)" > $@
+
+$(ruff_dir)/linux-x86_64/SHA: $(ruff_dir)/linux-x86_64/.extracted
+	echo "$(ruff_linux_x86_64_sha)" | head -c 8 > $@
 
 $(ruff_dir)/darwin-arm64:
 	mkdir -p $@
@@ -64,5 +76,11 @@ $(ruff_dir)/linux-x86_64:
 
 ruff_binaries := \
 	$(ruff_dir)/darwin-arm64/.extracted \
+	$(ruff_dir)/darwin-arm64/VERSION \
+	$(ruff_dir)/darwin-arm64/SHA \
 	$(ruff_dir)/linux-arm64/.extracted \
-	$(ruff_dir)/linux-x86_64/.extracted
+	$(ruff_dir)/linux-arm64/VERSION \
+	$(ruff_dir)/linux-arm64/SHA \
+	$(ruff_dir)/linux-x86_64/.extracted \
+	$(ruff_dir)/linux-x86_64/VERSION \
+	$(ruff_dir)/linux-x86_64/SHA

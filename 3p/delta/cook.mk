@@ -21,9 +21,13 @@ $(delta_dir)/darwin-arm64/.extracted: | $(delta_dir)/darwin-arm64
 	cd $(delta_dir)/darwin-arm64 && echo "$(delta_darwin_arm64_sha)  archive.tar.gz" | $(sha256sum) -c
 	$(tar) -xzf $(delta_dir)/darwin-arm64/archive.tar.gz -C $(delta_dir)/darwin-arm64 --strip-components=1
 	rm $(delta_dir)/darwin-arm64/archive.tar.gz
-	echo "$(delta_version)" > $(delta_dir)/darwin-arm64/VERSION
-	echo "$(delta_darwin_arm64_sha)" | head -c 8 > $(delta_dir)/darwin-arm64/SHA
 	touch $@
+
+$(delta_dir)/darwin-arm64/VERSION: $(delta_dir)/darwin-arm64/.extracted
+	echo "$(delta_version)" > $@
+
+$(delta_dir)/darwin-arm64/SHA: $(delta_dir)/darwin-arm64/.extracted
+	echo "$(delta_darwin_arm64_sha)" | head -c 8 > $@
 
 $(delta_dir)/linux-arm64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -35,9 +39,13 @@ $(delta_dir)/linux-arm64/.extracted: | $(delta_dir)/linux-arm64
 	cd $(delta_dir)/linux-arm64 && echo "$(delta_linux_arm64_sha)  archive.tar.gz" | $(sha256sum) -c
 	$(tar) -xzf $(delta_dir)/linux-arm64/archive.tar.gz -C $(delta_dir)/linux-arm64 --strip-components=1
 	rm $(delta_dir)/linux-arm64/archive.tar.gz
-	echo "$(delta_version)" > $(delta_dir)/linux-arm64/VERSION
-	echo "$(delta_linux_arm64_sha)" | head -c 8 > $(delta_dir)/linux-arm64/SHA
 	touch $@
+
+$(delta_dir)/linux-arm64/VERSION: $(delta_dir)/linux-arm64/.extracted
+	echo "$(delta_version)" > $@
+
+$(delta_dir)/linux-arm64/SHA: $(delta_dir)/linux-arm64/.extracted
+	echo "$(delta_linux_arm64_sha)" | head -c 8 > $@
 
 $(delta_dir)/linux-x86_64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -49,9 +57,13 @@ $(delta_dir)/linux-x86_64/.extracted: | $(delta_dir)/linux-x86_64
 	cd $(delta_dir)/linux-x86_64 && echo "$(delta_linux_x86_64_sha)  archive.tar.gz" | $(sha256sum) -c
 	$(tar) -xzf $(delta_dir)/linux-x86_64/archive.tar.gz -C $(delta_dir)/linux-x86_64 --strip-components=1
 	rm $(delta_dir)/linux-x86_64/archive.tar.gz
-	echo "$(delta_version)" > $(delta_dir)/linux-x86_64/VERSION
-	echo "$(delta_linux_x86_64_sha)" | head -c 8 > $(delta_dir)/linux-x86_64/SHA
 	touch $@
+
+$(delta_dir)/linux-x86_64/VERSION: $(delta_dir)/linux-x86_64/.extracted
+	echo "$(delta_version)" > $@
+
+$(delta_dir)/linux-x86_64/SHA: $(delta_dir)/linux-x86_64/.extracted
+	echo "$(delta_linux_x86_64_sha)" | head -c 8 > $@
 
 $(delta_dir)/darwin-arm64:
 	mkdir -p $@
@@ -64,5 +76,11 @@ $(delta_dir)/linux-x86_64:
 
 delta_binaries := \
 	$(delta_dir)/darwin-arm64/.extracted \
+	$(delta_dir)/darwin-arm64/VERSION \
+	$(delta_dir)/darwin-arm64/SHA \
 	$(delta_dir)/linux-arm64/.extracted \
-	$(delta_dir)/linux-x86_64/.extracted
+	$(delta_dir)/linux-arm64/VERSION \
+	$(delta_dir)/linux-arm64/SHA \
+	$(delta_dir)/linux-x86_64/.extracted \
+	$(delta_dir)/linux-x86_64/VERSION \
+	$(delta_dir)/linux-x86_64/SHA

@@ -21,9 +21,13 @@ $(tree_sitter_dir)/darwin-arm64/.extracted: | $(tree_sitter_dir)/darwin-arm64
 	cd $(tree_sitter_dir)/darwin-arm64 && echo "$(tree_sitter_darwin_arm64_sha)  tree-sitter.gz" | $(sha256sum) -c
 	gunzip -f $(tree_sitter_dir)/darwin-arm64/tree-sitter.gz
 	chmod +x $(tree_sitter_dir)/darwin-arm64/tree-sitter
-	echo "$(tree_sitter_version)" > $(tree_sitter_dir)/darwin-arm64/VERSION
-	echo "$(tree_sitter_darwin_arm64_sha)" | head -c 8 > $(tree_sitter_dir)/darwin-arm64/SHA
 	touch $@
+
+$(tree_sitter_dir)/darwin-arm64/VERSION: $(tree_sitter_dir)/darwin-arm64/.extracted
+	echo "$(tree_sitter_version)" > $@
+
+$(tree_sitter_dir)/darwin-arm64/SHA: $(tree_sitter_dir)/darwin-arm64/.extracted
+	echo "$(tree_sitter_darwin_arm64_sha)" | head -c 8 > $@
 
 $(tree_sitter_dir)/linux-arm64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -35,9 +39,13 @@ $(tree_sitter_dir)/linux-arm64/.extracted: | $(tree_sitter_dir)/linux-arm64
 	cd $(tree_sitter_dir)/linux-arm64 && echo "$(tree_sitter_linux_arm64_sha)  tree-sitter.gz" | $(sha256sum) -c
 	gunzip -f $(tree_sitter_dir)/linux-arm64/tree-sitter.gz
 	chmod +x $(tree_sitter_dir)/linux-arm64/tree-sitter
-	echo "$(tree_sitter_version)" > $(tree_sitter_dir)/linux-arm64/VERSION
-	echo "$(tree_sitter_linux_arm64_sha)" | head -c 8 > $(tree_sitter_dir)/linux-arm64/SHA
 	touch $@
+
+$(tree_sitter_dir)/linux-arm64/VERSION: $(tree_sitter_dir)/linux-arm64/.extracted
+	echo "$(tree_sitter_version)" > $@
+
+$(tree_sitter_dir)/linux-arm64/SHA: $(tree_sitter_dir)/linux-arm64/.extracted
+	echo "$(tree_sitter_linux_arm64_sha)" | head -c 8 > $@
 
 $(tree_sitter_dir)/linux-x86_64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -49,9 +57,13 @@ $(tree_sitter_dir)/linux-x86_64/.extracted: | $(tree_sitter_dir)/linux-x86_64
 	cd $(tree_sitter_dir)/linux-x86_64 && echo "$(tree_sitter_linux_x86_64_sha)  tree-sitter.gz" | $(sha256sum) -c
 	gunzip -f $(tree_sitter_dir)/linux-x86_64/tree-sitter.gz
 	chmod +x $(tree_sitter_dir)/linux-x86_64/tree-sitter
-	echo "$(tree_sitter_version)" > $(tree_sitter_dir)/linux-x86_64/VERSION
-	echo "$(tree_sitter_linux_x86_64_sha)" | head -c 8 > $(tree_sitter_dir)/linux-x86_64/SHA
 	touch $@
+
+$(tree_sitter_dir)/linux-x86_64/VERSION: $(tree_sitter_dir)/linux-x86_64/.extracted
+	echo "$(tree_sitter_version)" > $@
+
+$(tree_sitter_dir)/linux-x86_64/SHA: $(tree_sitter_dir)/linux-x86_64/.extracted
+	echo "$(tree_sitter_linux_x86_64_sha)" | head -c 8 > $@
 
 $(tree_sitter_dir)/darwin-arm64:
 	mkdir -p $@
@@ -64,5 +76,11 @@ $(tree_sitter_dir)/linux-x86_64:
 
 tree_sitter_binaries := \
 	$(tree_sitter_dir)/darwin-arm64/.extracted \
+	$(tree_sitter_dir)/darwin-arm64/VERSION \
+	$(tree_sitter_dir)/darwin-arm64/SHA \
 	$(tree_sitter_dir)/linux-arm64/.extracted \
-	$(tree_sitter_dir)/linux-x86_64/.extracted
+	$(tree_sitter_dir)/linux-arm64/VERSION \
+	$(tree_sitter_dir)/linux-arm64/SHA \
+	$(tree_sitter_dir)/linux-x86_64/.extracted \
+	$(tree_sitter_dir)/linux-x86_64/VERSION \
+	$(tree_sitter_dir)/linux-x86_64/SHA

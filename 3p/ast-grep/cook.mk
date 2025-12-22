@@ -21,9 +21,13 @@ $(ast_grep_dir)/darwin-arm64/.extracted: | $(ast_grep_dir)/darwin-arm64
 	cd $(ast_grep_dir)/darwin-arm64 && echo "$(ast_grep_darwin_arm64_sha)  archive.zip" | $(sha256sum) -c
 	$(unzip) -o $(ast_grep_dir)/darwin-arm64/archive.zip -d $(ast_grep_dir)/darwin-arm64
 	rm $(ast_grep_dir)/darwin-arm64/archive.zip
-	echo "$(ast_grep_version)" > $(ast_grep_dir)/darwin-arm64/VERSION
-	echo "$(ast_grep_darwin_arm64_sha)" | head -c 8 > $(ast_grep_dir)/darwin-arm64/SHA
 	touch $@
+
+$(ast_grep_dir)/darwin-arm64/VERSION: $(ast_grep_dir)/darwin-arm64/.extracted
+	echo "$(ast_grep_version)" > $@
+
+$(ast_grep_dir)/darwin-arm64/SHA: $(ast_grep_dir)/darwin-arm64/.extracted
+	echo "$(ast_grep_darwin_arm64_sha)" | head -c 8 > $@
 
 $(ast_grep_dir)/linux-arm64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -35,9 +39,13 @@ $(ast_grep_dir)/linux-arm64/.extracted: | $(ast_grep_dir)/linux-arm64
 	cd $(ast_grep_dir)/linux-arm64 && echo "$(ast_grep_linux_arm64_sha)  archive.zip" | $(sha256sum) -c
 	$(unzip) -o $(ast_grep_dir)/linux-arm64/archive.zip -d $(ast_grep_dir)/linux-arm64
 	rm $(ast_grep_dir)/linux-arm64/archive.zip
-	echo "$(ast_grep_version)" > $(ast_grep_dir)/linux-arm64/VERSION
-	echo "$(ast_grep_linux_arm64_sha)" | head -c 8 > $(ast_grep_dir)/linux-arm64/SHA
 	touch $@
+
+$(ast_grep_dir)/linux-arm64/VERSION: $(ast_grep_dir)/linux-arm64/.extracted
+	echo "$(ast_grep_version)" > $@
+
+$(ast_grep_dir)/linux-arm64/SHA: $(ast_grep_dir)/linux-arm64/.extracted
+	echo "$(ast_grep_linux_arm64_sha)" | head -c 8 > $@
 
 $(ast_grep_dir)/linux-x86_64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -49,9 +57,13 @@ $(ast_grep_dir)/linux-x86_64/.extracted: | $(ast_grep_dir)/linux-x86_64
 	cd $(ast_grep_dir)/linux-x86_64 && echo "$(ast_grep_linux_x86_64_sha)  archive.zip" | $(sha256sum) -c
 	$(unzip) -o $(ast_grep_dir)/linux-x86_64/archive.zip -d $(ast_grep_dir)/linux-x86_64
 	rm $(ast_grep_dir)/linux-x86_64/archive.zip
-	echo "$(ast_grep_version)" > $(ast_grep_dir)/linux-x86_64/VERSION
-	echo "$(ast_grep_linux_x86_64_sha)" | head -c 8 > $(ast_grep_dir)/linux-x86_64/SHA
 	touch $@
+
+$(ast_grep_dir)/linux-x86_64/VERSION: $(ast_grep_dir)/linux-x86_64/.extracted
+	echo "$(ast_grep_version)" > $@
+
+$(ast_grep_dir)/linux-x86_64/SHA: $(ast_grep_dir)/linux-x86_64/.extracted
+	echo "$(ast_grep_linux_x86_64_sha)" | head -c 8 > $@
 
 $(ast_grep_dir)/darwin-arm64:
 	mkdir -p $@
@@ -64,5 +76,11 @@ $(ast_grep_dir)/linux-x86_64:
 
 ast_grep_binaries := \
 	$(ast_grep_dir)/darwin-arm64/.extracted \
+	$(ast_grep_dir)/darwin-arm64/VERSION \
+	$(ast_grep_dir)/darwin-arm64/SHA \
 	$(ast_grep_dir)/linux-arm64/.extracted \
-	$(ast_grep_dir)/linux-x86_64/.extracted
+	$(ast_grep_dir)/linux-arm64/VERSION \
+	$(ast_grep_dir)/linux-arm64/SHA \
+	$(ast_grep_dir)/linux-x86_64/.extracted \
+	$(ast_grep_dir)/linux-x86_64/VERSION \
+	$(ast_grep_dir)/linux-x86_64/SHA

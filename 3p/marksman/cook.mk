@@ -20,9 +20,13 @@ $(marksman_dir)/darwin-arm64/.extracted: | $(marksman_dir)/darwin-arm64
 	$(curl) -o $(marksman_dir)/darwin-arm64/marksman $(marksman_darwin_arm64_url)
 	cd $(marksman_dir)/darwin-arm64 && echo "$(marksman_darwin_arm64_sha)  marksman" | $(sha256sum) -c
 	chmod +x $(marksman_dir)/darwin-arm64/marksman
-	echo "$(marksman_version)" > $(marksman_dir)/darwin-arm64/VERSION
-	echo "$(marksman_darwin_arm64_sha)" | head -c 8 > $(marksman_dir)/darwin-arm64/SHA
 	touch $@
+
+$(marksman_dir)/darwin-arm64/VERSION: $(marksman_dir)/darwin-arm64/.extracted
+	echo "$(marksman_version)" > $@
+
+$(marksman_dir)/darwin-arm64/SHA: $(marksman_dir)/darwin-arm64/.extracted
+	echo "$(marksman_darwin_arm64_sha)" | head -c 8 > $@
 
 $(marksman_dir)/linux-arm64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -33,9 +37,13 @@ $(marksman_dir)/linux-arm64/.extracted: | $(marksman_dir)/linux-arm64
 	$(curl) -o $(marksman_dir)/linux-arm64/marksman $(marksman_linux_arm64_url)
 	cd $(marksman_dir)/linux-arm64 && echo "$(marksman_linux_arm64_sha)  marksman" | $(sha256sum) -c
 	chmod +x $(marksman_dir)/linux-arm64/marksman
-	echo "$(marksman_version)" > $(marksman_dir)/linux-arm64/VERSION
-	echo "$(marksman_linux_arm64_sha)" | head -c 8 > $(marksman_dir)/linux-arm64/SHA
 	touch $@
+
+$(marksman_dir)/linux-arm64/VERSION: $(marksman_dir)/linux-arm64/.extracted
+	echo "$(marksman_version)" > $@
+
+$(marksman_dir)/linux-arm64/SHA: $(marksman_dir)/linux-arm64/.extracted
+	echo "$(marksman_linux_arm64_sha)" | head -c 8 > $@
 
 $(marksman_dir)/linux-x86_64/.extracted: private .UNVEIL = \
 	r:/etc/resolv.conf \
@@ -46,9 +54,13 @@ $(marksman_dir)/linux-x86_64/.extracted: | $(marksman_dir)/linux-x86_64
 	$(curl) -o $(marksman_dir)/linux-x86_64/marksman $(marksman_linux_x86_64_url)
 	cd $(marksman_dir)/linux-x86_64 && echo "$(marksman_linux_x86_64_sha)  marksman" | $(sha256sum) -c
 	chmod +x $(marksman_dir)/linux-x86_64/marksman
-	echo "$(marksman_version)" > $(marksman_dir)/linux-x86_64/VERSION
-	echo "$(marksman_linux_x86_64_sha)" | head -c 8 > $(marksman_dir)/linux-x86_64/SHA
 	touch $@
+
+$(marksman_dir)/linux-x86_64/VERSION: $(marksman_dir)/linux-x86_64/.extracted
+	echo "$(marksman_version)" > $@
+
+$(marksman_dir)/linux-x86_64/SHA: $(marksman_dir)/linux-x86_64/.extracted
+	echo "$(marksman_linux_x86_64_sha)" | head -c 8 > $@
 
 $(marksman_dir)/darwin-arm64:
 	mkdir -p $@
@@ -61,5 +73,11 @@ $(marksman_dir)/linux-x86_64:
 
 marksman_binaries := \
 	$(marksman_dir)/darwin-arm64/.extracted \
+	$(marksman_dir)/darwin-arm64/VERSION \
+	$(marksman_dir)/darwin-arm64/SHA \
 	$(marksman_dir)/linux-arm64/.extracted \
-	$(marksman_dir)/linux-x86_64/.extracted
+	$(marksman_dir)/linux-arm64/VERSION \
+	$(marksman_dir)/linux-arm64/SHA \
+	$(marksman_dir)/linux-x86_64/.extracted \
+	$(marksman_dir)/linux-x86_64/VERSION \
+	$(marksman_dir)/linux-x86_64/SHA
