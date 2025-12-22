@@ -28,7 +28,12 @@ end
 local function find_latest_version(base_dir)
   local versions = {}
 
-  for name, kind in unix.opendir(base_dir) do
+  local dir_iter = unix.opendir(base_dir)
+  if not dir_iter then
+    return nil
+  end
+
+  for name, kind in dir_iter do
     if name ~= "." and name ~= ".." and name:match("^%d") then
       if kind == unix.DT_DIR then
         table.insert(versions, name)
