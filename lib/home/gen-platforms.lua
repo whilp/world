@@ -43,24 +43,27 @@ local function platform_from_asset(asset_path)
 end
 
 local function cmd_help()
-  io.stderr:write("usage: gen-platforms <base_url> <tag> <asset1> [asset2] ...\n")
+  io.stderr:write("usage: gen-platforms <output_dir> <base_url> <tag> <asset1> [asset2] ...\n")
   io.stderr:write("\n")
-  io.stderr:write("generates platforms.lua from platform asset files\n")
-  io.stderr:write("extracts sha256, size, and manifest from each asset\n")
-  io.stderr:write("output is written to stdout\n")
+  io.stderr:write("generates platforms.lua and per-platform manifest files\n")
+  io.stderr:write("  <output_dir>/platforms.lua - platform metadata\n")
+  io.stderr:write("  <output_dir>/manifests/<platform>.lua - per-platform manifests\n")
   return 0
 end
 
 local function main(args)
-  if #args < 3 or args[1] == "help" or args[1] == "--help" then
+  if #args < 4 or args[1] == "help" or args[1] == "--help" then
     return cmd_help()
   end
 
-  local base_url = args[1]
-  local tag = args[2]
+  local output_dir = args[1]
+  local base_url = args[2]
+  local tag = args[3]
   local platforms_data = {}
 
-  for i = 3, #args do
+  unix.makedirs(path.join(output_dir, "manifests"))
+
+  for i = 4, #args do
     local asset_path = args[i]
     local platform = platform_from_asset(asset_path)
     if not platform then
@@ -86,21 +89,36 @@ local function main(args)
         return 1
       end
 
+      local manifest_path = path.join(output_dir, "manifests", platform .. ".lua")
+      local f = io.open(manifest_path, "w")
+      if not f then
+        io.stderr:write("error: failed to write " .. manifest_path .. "\n")
+        return 1
+      end
+      f:write(home.serialize_table(manifest))
+      f:close()
+
       platforms_data[platform] = {
         asset = "home-" .. platform,
         sha256 = sha256,
         size = size,
-        manifest = manifest,
       }
     end
   end
 
-  local output = {
+  local platforms_path = path.join(output_dir, "platforms.lua")
+  local f = io.open(platforms_path, "w")
+  if not f then
+    io.stderr:write("error: failed to write " .. platforms_path .. "\n")
+    return 1
+  end
+  f:write(home.serialize_table({
     base_url = base_url,
     tag = tag,
     platforms = platforms_data,
-  }
-  io.write(home.serialize_table(output))
+  }))
+  f:close()
+
   return 0
 end
 

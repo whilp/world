@@ -218,6 +218,14 @@ local function load_platforms()
   return nil
 end
 
+local function load_platform_manifest(platform)
+  local ok, manifest = pcall(dofile, "/zip/manifests/" .. platform .. ".lua")
+  if ok then
+    return manifest
+  end
+  return nil
+end
+
 local function is_platform_mode()
   local ok, _ = pcall(dofile, "/zip/platforms.lua")
   return not ok
@@ -544,6 +552,7 @@ local function cmd_unpack(dest, force, opts)
       return 1
     end
 
+    local plat_manifest = load_platform_manifest(current)
     local url = platform_url or (interpolate(platforms.base_url, { tag = platforms.tag }) .. "/" .. plat_info.asset)
     local tmp_path = path.join(dest, ".home-platform-download")
 
@@ -569,9 +578,9 @@ local function cmd_unpack(dest, force, opts)
       unix.chmod(tmp_path, 493)
 
       local bin_filter = nil
-      if filter and plat_info.manifest and plat_info.manifest.files then
+      if filter and plat_manifest and plat_manifest.files then
         bin_filter = {}
-        for p in pairs(plat_info.manifest.files) do
+        for p in pairs(plat_manifest.files) do
           if filter[p] then
             bin_filter[p] = true
           end
@@ -593,9 +602,9 @@ local function cmd_unpack(dest, force, opts)
       end
     elseif verbose then
       stdout:write("would download " .. plat_info.asset .. "\n")
-      if plat_info.manifest and plat_info.manifest.files then
+      if plat_manifest and plat_manifest.files then
         local bin_paths = {}
-        for p in pairs(plat_info.manifest.files) do
+        for p in pairs(plat_manifest.files) do
           if not filter or filter[p] then
             table.insert(bin_paths, p)
           end
@@ -632,15 +641,12 @@ local function cmd_list(opts)
   end
 
   if not is_platform_mode() then
-    local platforms = load_platforms()
-    if platforms and platforms.platforms then
-      local current = detect_platform()
-      if current then
-        local plat_info = platforms.platforms[current]
-        if plat_info and plat_info.manifest and plat_info.manifest.files then
-          for p, info in pairs(plat_info.manifest.files) do
-            table.insert(all_paths, { path = p, mode = info.mode, source = "platform" })
-          end
+    local current = detect_platform()
+    if current then
+      local plat_manifest = load_platform_manifest(current)
+      if plat_manifest and plat_manifest.files then
+        for p, info in pairs(plat_manifest.files) do
+          table.insert(all_paths, { path = p, mode = info.mode, source = "platform" })
         end
       end
     end
@@ -902,6 +908,7 @@ local home = {
   detect_platform = detect_platform,
   load_manifest = load_manifest,
   load_platforms = load_platforms,
+  load_platform_manifest = load_platform_manifest,
   is_platform_mode = is_platform_mode,
   sha256_file = sha256_file,
   download_file = download_file,

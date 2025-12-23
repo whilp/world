@@ -81,11 +81,10 @@ results/bin/home: $(lua_bin) results/dotfiles.zip results/bin/home-darwin-arm64 
 	@echo "Generating manifest..."
 	@LUA_PATH="lib/home/?.lua;;" $(lua_bin) lib/home/gen-manifest.lua results/home-universal/home $(HOME_VERSION) > results/home-universal/manifest.lua
 	@echo "Generating platforms metadata..."
-	@LUA_PATH="lib/home/?.lua;;" $(lua_bin) lib/home/gen-platforms.lua "$(HOME_BASE_URL)" "$(HOME_TAG)" \
+	@LUA_PATH="lib/home/?.lua;;" $(lua_bin) lib/home/gen-platforms.lua results/home-universal "$(HOME_BASE_URL)" "$(HOME_TAG)" \
 		results/bin/home-darwin-arm64 \
 		results/bin/home-linux-arm64 \
-		results/bin/home-linux-x86_64 \
-		> results/home-universal/platforms.lua
+		results/bin/home-linux-x86_64
 	@echo "Creating home binary..."
 	@cp $(lua_bin) $@
 	@cd results/home-universal && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$@ -@
