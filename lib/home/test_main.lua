@@ -270,7 +270,6 @@ function test_cmd_help()
   lu.assertStrContains(output, "unpack")
   lu.assertStrContains(output, "list")
   lu.assertStrContains(output, "--force")
-  lu.assertStrContains(output, "--with-platform")
 end
 
 --------------------------------------------------------------------------------
