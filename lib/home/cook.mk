@@ -44,7 +44,7 @@ define build_platform_asset
 		done
 	@rm -rf results/platform-$(2)/temp-binaries
 	@echo "Generating manifest..."
-	@$(lua_bin) lib/home/gen-manifest.lua results/platform-$(2)/home $(HOME_VERSION) > results/platform-$(2)/manifest.lua
+	@LUA_PATH="lib/home/?.lua;;" $(lua_bin) lib/home/gen-manifest.lua results/platform-$(2)/home $(HOME_VERSION) > results/platform-$(2)/manifest.lua
 	@echo "Creating platform asset..."
 	@cp $(lua_bin) $(1)
 	@cd results/platform-$(2) && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$(1) -@
@@ -79,9 +79,9 @@ results/bin/home: $(lua_bin) results/dotfiles.zip results/bin/home-darwin-arm64 
 	@cp -p $(lua_bin) results/home-universal/home/.local/bin/lua
 	@cp -p o/3p/cosmos/bin/unzip results/home-universal/home/.local/bin/unzip
 	@echo "Generating manifest..."
-	@$(lua_bin) lib/home/gen-manifest.lua results/home-universal/home $(HOME_VERSION) > results/home-universal/manifest.lua
+	@LUA_PATH="lib/home/?.lua;;" $(lua_bin) lib/home/gen-manifest.lua results/home-universal/home $(HOME_VERSION) > results/home-universal/manifest.lua
 	@echo "Generating platforms metadata..."
-	@$(lua_bin) lib/home/gen-platforms.lua "$(HOME_BASE_URL)" "$(HOME_TAG)" \
+	@LUA_PATH="lib/home/?.lua;;" $(lua_bin) lib/home/gen-platforms.lua "$(HOME_BASE_URL)" "$(HOME_TAG)" \
 		results/bin/home-darwin-arm64 \
 		results/bin/home-linux-arm64 \
 		results/bin/home-linux-x86_64 \
