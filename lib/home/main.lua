@@ -2,16 +2,101 @@ local cosmo = require("cosmo")
 local unix = cosmo.unix
 local path = cosmo.path
 
--- Read entire file contents
--- Returns data, nil on success; nil, err on failure
-local function read_file(path)
-  local f, err = io.open(path, "rb")
+local function read_file(filepath)
+  local f, err = io.open(filepath, "rb")
   if not f then
     return nil, "failed to open: " .. (err or "unknown error")
   end
   local data = f:read("*a")
   f:close()
   return data
+end
+
+local function load_manifest()
+  local ok, manifest = pcall(dofile, "/zip/manifest.lua")
+  if ok then
+    return manifest
+  end
+  return nil
+end
+
+local function load_platforms()
+  local ok, platforms = pcall(dofile, "/zip/platforms.lua")
+  if ok then
+    return platforms
+  end
+  return nil
+end
+
+local function detect_platform()
+  local uname_s = cosmo.uname().sysname or "Linux"
+  local uname_m = cosmo.uname().machine or "x86_64"
+
+  if uname_s == "Darwin" then
+    return "darwin-arm64"
+  elseif uname_m == "aarch64" or uname_m == "arm64" then
+    return "linux-arm64"
+  else
+    return "linux-x86_64"
+  end
+end
+
+local function interpolate(template, context)
+  if type(template) ~= "string" then
+    return template
+  end
+  return template:gsub("%${([%w_]+)}", function(key)
+    return tostring(context[key] or "")
+  end)
+end
+
+local function download_file(url, dest_path, stderr)
+  stderr = stderr or io.stderr
+  local stdin_r, stdin_w = unix.pipe()
+  local stdout_r, stdout_w = unix.pipe()
+
+  local pid = unix.fork()
+  if pid == 0 then
+    unix.close(stdin_w)
+    unix.close(stdout_r)
+    unix.dup2(stdin_r, 0)
+    unix.dup2(stdout_w, 1)
+    unix.dup2(stdout_w, 2)
+    unix.close(stdin_r)
+    unix.close(stdout_w)
+    unix.execve("/usr/bin/curl", {"curl", "-fsSL", "-o", dest_path, url}, unix.environ())
+    unix.exit(1)
+  end
+
+  unix.close(stdin_r)
+  unix.close(stdout_w)
+  unix.close(stdin_w)
+
+  while true do
+    local chunk = unix.read(stdout_r, 65536)
+    if not chunk or chunk == "" then
+      break
+    end
+  end
+  unix.close(stdout_r)
+
+  local _, status = unix.wait()
+  if status ~= 0 then
+    return nil, "curl failed with status " .. tostring(status)
+  end
+  return true
+end
+
+local function verify_sha256(filepath, expected_sha)
+  local data, err = read_file(filepath)
+  if not data then
+    return nil, err
+  end
+  local actual = cosmo.sha256(data, "hex")
+  if actual ~= expected_sha then
+    return nil, string.format("sha256 mismatch: expected %s, got %s", expected_sha, actual)
+  end
+  return true
 end
 
 -- Atomic file copy with permissions
@@ -76,66 +161,6 @@ local function copy_file(src, dst, mode, overwrite)
   return true
 end
 
--- Parse a single manifest line
--- Returns {path=string, mode=number|nil} or nil for skip (comment/empty)
-local function parse_manifest_line(line)
-  -- Skip comments and empty lines
-  if line:match("^%s*#") or not line:match("%S") then
-    return nil
-  end
-
-  -- Parse "filepath mode" format
-  local file_path, mode_str = line:match("^(.-)%s+(%x+)$")
-  if file_path and mode_str then
-    local mode = tonumber(mode_str, 8)
-    return { path = file_path, mode = mode }
-  else
-    -- Fallback for old format (no mode)
-    return { path = line, mode = nil }
-  end
-end
-
--- Parse manifest content (string or line iterator)
--- Returns array of {path=string, mode=number|nil}
-local function parse_manifest(input)
-  local files = {}
-  local lines
-  if type(input) == "string" then
-    lines = input:gmatch("[^\n]+")
-  else
-    lines = input
-  end
-
-  for line in lines do
-    local entry = parse_manifest_line(line)
-    if entry then
-      table.insert(files, entry)
-    end
-  end
-  return files
-end
-
--- Extract tool names from manifest entries
--- Returns sorted array of tool names from .local/bin
-local function extract_tools(files)
-  local tools = {}
-  for _, file_info in ipairs(files) do
-    local tool = file_info.path:match("home/%.local/bin/([^/]+)$")
-    if tool and not tools[tool] then
-      tools[tool] = true
-    end
-  end
-
-  local sorted = {}
-  for tool in pairs(tools) do
-    table.insert(sorted, tool)
-  end
-  table.sort(sorted)
-  return sorted
-end
-
--- Parse command-line arguments
--- Returns {cmd, subcmd, force, verbose, dry_run, only, null, dest}
 local function parse_args(args)
   local result = {
     cmd = args[1] or "help",
@@ -145,6 +170,7 @@ local function parse_args(args)
     dry_run = false,
     only = false,
     null = false,
+    with_binaries = false,
     dest = nil,
   }
 
@@ -160,6 +186,8 @@ local function parse_args(args)
       result.only = true
     elseif args[i] == "--null" or args[i] == "-0" then
       result.null = true
+    elseif args[i] == "--with-binaries" then
+      result.with_binaries = true
     elseif result.cmd == "3p" and not result.subcmd and not args[i]:match("^%-") then
       result.subcmd = args[i]
     elseif not result.dest then
@@ -169,19 +197,6 @@ local function parse_args(args)
   end
 
   return result
-end
-
--- Strip "home/" prefix from path
-local function strip_home_prefix(path)
-  if path:sub(1, 5) == "home/" then
-    return path:sub(6)
-  end
-  return path
-end
-
--- Check if path is a directory (ends with /)
-local function is_directory_path(path)
-  return path:match("/$") ~= nil
 end
 
 -- Convert octal mode to permission string (e.g., 0644 -> "-rw-r--r--")
@@ -208,39 +223,98 @@ local function format_mode(mode, is_dir)
   return table.concat(result)
 end
 
+local function extract_platform_asset(asset_path, dest, force, filter, opts)
+  opts = opts or {}
+  local stderr = opts.stderr or io.stderr
+  local stdout = opts.stdout or io.stdout
+  local verbose = opts.verbose or false
+  local dry_run = opts.dry_run or false
+
+  local stdin_r, stdin_w = unix.pipe()
+  local stdout_r, stdout_w = unix.pipe()
+
+  local cmd_args = {"unpack"}
+  if force then
+    table.insert(cmd_args, "--force")
+  end
+  if verbose then
+    table.insert(cmd_args, "--verbose")
+  end
+  if dry_run then
+    table.insert(cmd_args, "--dry-run")
+  end
+  if filter then
+    table.insert(cmd_args, "--only")
+  end
+  table.insert(cmd_args, dest)
+  table.insert(cmd_args, 1, asset_path)
+
+  local pid = unix.fork()
+  if pid == 0 then
+    unix.close(stdin_w)
+    unix.close(stdout_r)
+    unix.dup2(stdin_r, 0)
+    unix.dup2(stdout_w, 1)
+    unix.dup2(stdout_w, 2)
+    unix.close(stdin_r)
+    unix.close(stdout_w)
+    unix.execve(asset_path, cmd_args, unix.environ())
+    unix.exit(1)
+  end
+
+  unix.close(stdin_r)
+  unix.close(stdout_w)
+
+  if filter then
+    local filter_lines = {}
+    for p in pairs(filter) do
+      table.insert(filter_lines, p)
+    end
+    unix.write(stdin_w, table.concat(filter_lines, "\n"))
+  end
+  unix.close(stdin_w)
+
+  while true do
+    local chunk = unix.read(stdout_r, 65536)
+    if not chunk or chunk == "" then
+      break
+    end
+    stdout:write(chunk)
+  end
+  unix.close(stdout_r)
+
+  local _, status = unix.wait()
+  return status == 0
+end
+
 local function cmd_unpack(dest, force, opts)
   opts = opts or {}
-  local manifest_path = opts.manifest_path or "/zip/MANIFEST.txt"
-  local zip_root = opts.zip_root or "/zip/"
   local stderr = opts.stderr or io.stderr
   local stdout = opts.stdout or io.stdout
   local verbose = opts.verbose or false
   local dry_run = opts.dry_run or false
   local only = opts.only or false
+  local with_binaries = opts.with_binaries or false
 
   if not dest then
     stderr:write("error: destination path required\n")
-    stderr:write("usage: home unpack [--force] <destination>\n")
+    stderr:write("usage: home unpack [--force] [--with-binaries] <destination>\n")
     return 1
   end
 
-  -- Read filter from stdin if --only is specified
   local filter = nil
   if only then
     filter = {}
     local input = opts.filter_input or io.stdin:read("*a")
-    local delimiter = opts.null and string.char(0) or "\n"
     local pattern = opts.null and "[^\0]+" or "[^\n]+"
-
     for line in input:gmatch(pattern) do
-      local path = line:match("^%s*(.-)%s*$")
-      if path and path ~= "" then
-        filter[path] = true
+      local p = line:match("^%s*(.-)%s*$")
+      if p and p ~= "" then
+        filter[p] = true
       end
     end
   end
 
-  -- Create destination directory
   if not dry_run then
     if not unix.makedirs(dest) then
       stderr:write("error: failed to create destination directory\n")
@@ -248,59 +322,125 @@ local function cmd_unpack(dest, force, opts)
     end
   end
 
-  -- Read manifest to get list of files with modes
-  local manifest = io.open(manifest_path, "r")
-  if not manifest then
-    stderr:write("error: failed to read manifest\n")
+  local manifest = load_manifest()
+  if not manifest or not manifest.files then
+    stderr:write("error: failed to load manifest\n")
     return 1
   end
 
-  local files = parse_manifest(manifest:lines())
-  manifest:close()
+  local paths = {}
+  for p in pairs(manifest.files) do
+    table.insert(paths, p)
+  end
+  table.sort(paths)
 
-  -- Copy each file from zip to destination
-  for _, file_info in ipairs(files) do
-    local file_path = file_info.path
-    local mode = file_info.mode
-    local rel_path = strip_home_prefix(file_path)
-    local zip_file_path = zip_root .. file_path
-    local dest_file_path = path.join(dest, rel_path)
+  for _, rel_path in ipairs(paths) do
+    local info = manifest.files[rel_path]
+    local zip_path = "/zip/home/" .. rel_path
+    local dest_path = path.join(dest, rel_path)
 
-    -- Skip if filter is active and path not in filter
     if filter and not filter[rel_path] then
       goto continue
     end
 
-    if not is_directory_path(file_path) then
-      -- Check if file exists before copying (for verbose overwrite detection)
-      local file_exists = not dry_run and unix.stat(dest_file_path) ~= nil
+    local file_exists = not dry_run and unix.stat(dest_path) ~= nil
 
-      if not dry_run then
-        -- Create parent directory
-        local parent_dir = path.dirname(dest_file_path)
-        unix.makedirs(parent_dir)
+    if not dry_run then
+      local parent = path.dirname(dest_path)
+      unix.makedirs(parent)
 
-        -- Copy file atomically with permissions
-        local ok, err = copy_file(zip_file_path, dest_file_path, mode, force)
-        if not ok then
-          stderr:write("warning: failed to copy " .. file_path .. ": " .. (err or "unknown error") .. "\n")
-        elseif verbose then
-          if force and file_exists then
-            stdout:write(rel_path .. " (overwritten)\n")
-          else
-            stdout:write(rel_path .. "\n")
-          end
-        end
+      local ok, err = copy_file(zip_path, dest_path, info.mode, force)
+      if not ok then
+        stderr:write("warning: failed to copy " .. rel_path .. ": " .. (err or "unknown error") .. "\n")
       elseif verbose then
-        -- Dry-run with verbose: show what would be done
-        stdout:write(rel_path .. "\n")
+        if force and file_exists then
+          stdout:write(rel_path .. " (overwritten)\n")
+        else
+          stdout:write(rel_path .. "\n")
+        end
       end
-    elseif not dry_run then
-      -- Create directory
-      unix.makedirs(path.join(dest, rel_path))
+    elseif verbose then
+      stdout:write(rel_path .. "\n")
     end
 
     ::continue::
+  end
+
+  if with_binaries then
+    local platforms = load_platforms()
+    if not platforms then
+      stderr:write("error: no platform metadata available\n")
+      return 1
+    end
+
+    local current = detect_platform()
+    local plat_info = platforms.platforms and platforms.platforms[current]
+    if not plat_info then
+      stderr:write("error: no binaries available for " .. current .. "\n")
+      return 1
+    end
+
+    local url = interpolate(platforms.base_url, {tag = platforms.tag}) .. "/" .. plat_info.asset
+    local tmp_path = path.join(dest, ".home-binaries-download")
+
+    if not dry_run then
+      if verbose then
+        stdout:write("downloading " .. plat_info.asset .. "...\n")
+      end
+
+      local ok, err = download_file(url, tmp_path, stderr)
+      if not ok then
+        stderr:write("error: download failed: " .. (err or "unknown") .. "\n")
+        return 1
+      end
+
+      ok, err = verify_sha256(tmp_path, plat_info.sha256)
+      if not ok then
+        stderr:write("error: " .. (err or "checksum failed") .. "\n")
+        unix.unlink(tmp_path)
+        return 1
+      end
+
+      unix.chmod(tmp_path, 493)
+
+      local bin_filter = nil
+      if filter and plat_info.manifest and plat_info.manifest.files then
+        bin_filter = {}
+        for p in pairs(plat_info.manifest.files) do
+          if filter[p] then
+            bin_filter[p] = true
+          end
+        end
+      end
+
+      ok = extract_platform_asset(tmp_path, dest, force, bin_filter, {
+        stderr = stderr,
+        stdout = stdout,
+        verbose = verbose,
+        dry_run = dry_run,
+      })
+
+      unix.unlink(tmp_path)
+
+      if not ok then
+        stderr:write("error: failed to extract platform binaries\n")
+        return 1
+      end
+    elseif verbose then
+      stdout:write("would download " .. plat_info.asset .. "\n")
+      if plat_info.manifest and plat_info.manifest.files then
+        local bin_paths = {}
+        for p in pairs(plat_info.manifest.files) do
+          if not filter or filter[p] then
+            table.insert(bin_paths, p)
+          end
+        end
+        table.sort(bin_paths)
+        for _, p in ipairs(bin_paths) do
+          stdout:write(p .. "\n")
+        end
+      end
+    end
   end
 
   return 0
@@ -308,35 +448,43 @@ end
 
 local function cmd_list(opts)
   opts = opts or {}
-  local manifest_path = opts.manifest_path or "/zip/MANIFEST.txt"
   local stdout = opts.stdout or io.stdout
   local stderr = opts.stderr or io.stderr
   local verbose = opts.verbose or false
   local null = opts.null or false
 
-  -- Read manifest to get list of files
-  local manifest = io.open(manifest_path, "r")
-  if not manifest then
-    stderr:write("error: failed to read manifest\n")
+  local manifest = load_manifest()
+  if not manifest or not manifest.files then
+    stderr:write("error: failed to load manifest\n")
     return 1
   end
 
-  local files = parse_manifest(manifest:lines())
-  manifest:close()
-
-  -- Output each file
   local delimiter = null and string.char(0) or "\n"
-  for _, file_info in ipairs(files) do
-    local file_path = file_info.path
-    local mode = file_info.mode
-    local is_dir = is_directory_path(file_path)
-    local rel_path = strip_home_prefix(file_path)
+  local all_paths = {}
 
+  for p, info in pairs(manifest.files) do
+    table.insert(all_paths, {path = p, mode = info.mode, source = "dotfiles"})
+  end
+
+  local platforms = load_platforms()
+  if platforms and platforms.platforms then
+    local current = detect_platform()
+    local plat_info = platforms.platforms[current]
+    if plat_info and plat_info.manifest and plat_info.manifest.files then
+      for p, info in pairs(plat_info.manifest.files) do
+        table.insert(all_paths, {path = p, mode = info.mode, source = "binaries"})
+      end
+    end
+  end
+
+  table.sort(all_paths, function(a, b) return a.path < b.path end)
+
+  for _, entry in ipairs(all_paths) do
     if verbose then
-      local mode_str = format_mode(mode, is_dir)
-      stdout:write(mode_str .. " " .. rel_path .. delimiter)
+      local mode_str = format_mode(entry.mode, false)
+      stdout:write(mode_str .. " " .. entry.path .. delimiter)
     else
-      stdout:write(rel_path .. delimiter)
+      stdout:write(entry.path .. delimiter)
     end
   end
 
@@ -346,7 +494,12 @@ end
 local function cmd_version(opts)
   opts = opts or {}
   local stdout = opts.stdout or io.stdout
-  stdout:write("home built COMMIT_PLACEHOLDER\n")
+  local manifest = load_manifest()
+  if manifest and manifest.version then
+    stdout:write("home built " .. manifest.version .. "\n")
+  else
+    stdout:write("home built COMMIT_PLACEHOLDER\n")
+  end
   return 0
 end
 
@@ -503,25 +656,26 @@ local function cmd_help(opts)
   local stderr = opts.stderr or io.stderr
   stderr:write("usage: home <command> [options]\n")
   stderr:write("\ncommands:\n")
-  stderr:write("  list [options]           - list embedded files (paths only by default)\n")
-  stderr:write("  unpack [options] <dest>  - extract dotfiles and binaries to destination\n")
-  stderr:write("  3p [subcommand]          - manage third-party binary symlinks\n")
-  stderr:write("  version                  - show build version\n")
+  stderr:write("  list [options]           list embedded files\n")
+  stderr:write("  unpack [options] <dest>  extract dotfiles to destination\n")
+  stderr:write("  3p [subcommand]          manage third-party binary symlinks\n")
+  stderr:write("  version                  show build version\n")
   stderr:write("\nlist options:\n")
-  stderr:write("  --verbose, -v            - show permissions and paths (tar-style)\n")
-  stderr:write("  --null, -0               - use null delimiter instead of newline\n")
+  stderr:write("  --verbose, -v            show permissions\n")
+  stderr:write("  --null, -0               use null delimiter\n")
   stderr:write("\nunpack options:\n")
-  stderr:write("  --force, -f              - overwrite existing files\n")
-  stderr:write("  --verbose, -v            - show files as they are extracted\n")
-  stderr:write("  --dry-run, -n            - show what would be extracted without doing it\n")
-  stderr:write("  --only                   - only extract files listed on stdin\n")
-  stderr:write("  --null, -0               - read null-delimited paths (with --only)\n")
+  stderr:write("  --force, -f              overwrite existing files\n")
+  stderr:write("  --verbose, -v            show files as extracted\n")
+  stderr:write("  --dry-run, -n            show what would be extracted\n")
+  stderr:write("  --with-binaries          download and extract platform binaries\n")
+  stderr:write("  --only                   only extract files listed on stdin\n")
+  stderr:write("  --null, -0               read null-delimited paths (with --only)\n")
   stderr:write("\n3p subcommands:\n")
-  stderr:write("  3p                       - scan and symlink latest versions\n")
-  stderr:write("  3p list                  - list installed tools and versions\n")
+  stderr:write("  3p                       scan and symlink latest versions\n")
+  stderr:write("  3p list                  list installed tools and versions\n")
   stderr:write("\n3p options:\n")
-  stderr:write("  --verbose, -v            - show detailed output\n")
-  stderr:write("  --dry-run, -n            - show what would be done\n")
+  stderr:write("  --verbose, -v            show detailed output\n")
+  stderr:write("  --dry-run, -n            show what would be done\n")
   return 0
 end
 
@@ -530,7 +684,6 @@ local function main(args, opts)
   local parsed = parse_args(args)
 
   if parsed.cmd == "unpack" then
-    -- Merge parsed options with opts
     local unpack_opts = {}
     for k, v in pairs(opts) do
       unpack_opts[k] = v
@@ -539,6 +692,7 @@ local function main(args, opts)
     unpack_opts.dry_run = parsed.dry_run
     unpack_opts.only = parsed.only
     unpack_opts.null = parsed.null
+    unpack_opts.with_binaries = parsed.with_binaries
 
     return cmd_unpack(parsed.dest, parsed.force, unpack_opts)
   elseif parsed.cmd == "list" then
@@ -576,13 +730,13 @@ end
 
 local home = {
   read_file = read_file,
+  load_manifest = load_manifest,
+  load_platforms = load_platforms,
+  detect_platform = detect_platform,
+  download_file = download_file,
+  verify_sha256 = verify_sha256,
   copy_file = copy_file,
-  parse_manifest_line = parse_manifest_line,
-  parse_manifest = parse_manifest,
-  extract_tools = extract_tools,
   parse_args = parse_args,
-  strip_home_prefix = strip_home_prefix,
-  is_directory_path = is_directory_path,
   format_mode = format_mode,
   cmd_unpack = cmd_unpack,
   cmd_list = cmd_list,
