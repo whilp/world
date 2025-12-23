@@ -33,9 +33,9 @@ jobs:
         uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
         with:
           path: o/3p
-          key: 3p-binaries-${{ hashFiles('3p/**/cook.mk') }}
+          key: 3p-v2-${{ hashFiles('3p/**/version.lua', '3p/cook.mk') }}
           restore-keys: |
-            3p-binaries-
+            3p-v2-
 
       - name: Cache Lua build artifacts
         uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
@@ -43,7 +43,7 @@ jobs:
           path: |
             o/lua
             results/bin/lua
-          key: lua-build-${{ hashFiles('3p/lua/**', '.local/lib/lua/run-test.lua') }}
+          key: lua-build-${{ hashFiles('3p/lua/**', 'lib/run-test.lua') }}
           restore-keys: |
             lua-build-
 

@@ -3,6 +3,9 @@ local unix = cosmo.unix
 local path = cosmo.path
 local util = require("util")
 
+local CLAUDE_BASE_URL = "https://storage.googleapis.com/" ..
+	"claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819"
+
 local function get_latest_version()
 	local handle = io.popen("gh api repos/anthropics/claude-code/releases/latest --jq '.tag_name'", "r")
 	if not handle then
@@ -45,10 +48,7 @@ local function print_latest()
 		return 1
 	end
 
-	local url = string.format(
-		"https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/%s/linux-x64/claude",
-		version
-	)
+	local url = string.format("%s/claude-code-releases/%s/linux-x64/claude", CLAUDE_BASE_URL, version)
 
 	io.write("Fetching SHA256 for version " .. version .. "...\n")
 	local sha256 = get_sha256(url)
@@ -68,9 +68,7 @@ local function run(env)
 		local CLAUDE_VERSION = "2.0.74"
 		local CLAUDE_SHA256 = "43065ff86a1b952225e42042bf4dfe9f6b72ff8ed91686a23add5396b1a11e80"
 		local CLAUDE_URL = string.format(
-			"https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819/claude-code-releases/%s/linux-x64/claude",
-			CLAUDE_VERSION
-		)
+			"%s/claude-code-releases/%s/linux-x64/claude", CLAUDE_BASE_URL, CLAUDE_VERSION)
 
 		local short_sha = CLAUDE_SHA256:sub(1, 8)
 		local version_dir = path.join(env.DST, ".local", "share", "claude", string.format("%s-%s", CLAUDE_VERSION, short_sha))

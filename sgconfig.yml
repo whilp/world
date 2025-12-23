@@ -11,5 +11,4 @@ languageGlobs:
     - ".claude/skills/*/main.lua"
     - "!.config/nvim/**/*.lua"
     - "!.config/hammerspoon/**/*.lua"
-    - "!.local/lib/lua/test/work/**/*.lua"
-    - "!src/nvim/**/*.lua"
+    - "!lib/test/work/**/*.lua"
