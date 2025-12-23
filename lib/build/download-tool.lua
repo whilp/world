@@ -127,8 +127,8 @@ local function extract_zip(archive_path, output_dir, strip_components)
     local strip_cmd = string.format(
       "sh -c 'cd \"%s\" && " ..
       "dir=$(find . -mindepth 1 -maxdepth 1 -type d | head -1) && " ..
-      "mv \"$dir\"/* . && " ..
-      "rmdir \"$dir\"'",
+      "mv \"$dir\"/* \"$dir\"/.* . 2>/dev/null || true && " ..
+      "rmdir \"$dir\" 2>/dev/null || true'",
       output_dir)
     local ok, err = execute(strip_cmd)
     if not ok then
