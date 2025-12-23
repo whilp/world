@@ -153,8 +153,8 @@ local function extract_zip(archive_path, output_dir, strip_components)
       cd '%s' && \
       dir=$(find . -mindepth 1 -maxdepth 1 -type d | head -1) && \
       if [ -n "$dir" ]; then \
-        find "$dir" -mindepth 1 -maxdepth 1 -exec mv {} . \; && \
-        rmdir "$dir"; \
+        cp -r "$dir"/. . && \
+        rm -rf "$dir"; \
       fi
     ]], output_dir)
     ok, err = execute("/bin/sh", {"sh", "-c", sh_script})
