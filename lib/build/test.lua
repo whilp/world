@@ -37,6 +37,24 @@ function test_interpolate_handles_empty_vars()
   lu.assertEquals(result, "https://example.com/file.tar.gz")
 end
 
+function test_interpolate_handles_custom_variables()
+  local template = "https://example.com/${version}/file-${arch}.tar.gz"
+  local vars = { version = "1.0.0", arch = "x86_64-unknown-linux-musl" }
+
+  local result = download_tool.interpolate(template, vars)
+
+  lu.assertEquals(result, "https://example.com/1.0.0/file-x86_64-unknown-linux-musl.tar.gz")
+end
+
+function test_interpolate_handles_platform_variable()
+  local template = "https://example.com/${version}/file-${platform}.tar.gz"
+  local vars = { version = "1.0.0", platform = "darwin-arm64" }
+
+  local result = download_tool.interpolate(template, vars)
+
+  lu.assertEquals(result, "https://example.com/1.0.0/file-darwin-arm64.tar.gz")
+end
+
 -- Test load_tool_config
 function test_load_tool_config_validates_tool_name()
   local config, err = download_tool.load_tool_config("", "linux-x86_64")
@@ -67,9 +85,9 @@ function test_load_tool_config_handles_missing_platform()
   f:write([[
 return {
   version = "1.0.0",
+  url = "https://example.com/file.tar.gz",
   platforms = {
     ["darwin-arm64"] = {
-      url = "https://example.com/file.tar.gz",
       sha = "abc123",
     },
   },
@@ -97,9 +115,9 @@ return {
   release_sha = "xyz789",
   format = "tar.gz",
   strip_components = 1,
+  url = "https://example.com/${version}-${release_sha}.tar.gz",
   platforms = {
     ["linux-x86_64"] = {
-      url = "https://example.com/${version}-${release_sha}.tar.gz",
       sha = "deadbeef",
     },
   },
@@ -131,10 +149,11 @@ function test_load_tool_config_allows_platform_format_override()
 return {
   version = "1.0.0",
   format = "tar.gz",
+  url = "https://example.com/file-${platform}.${ext}",
   platforms = {
     ["darwin-arm64"] = {
       format = "zip",
-      url = "https://example.com/file.zip",
+      ext = "zip",
       sha = "abc123",
     },
   },
@@ -177,6 +196,139 @@ return {
   os.execute("rm -rf 3p/test-no-url")
 end
 
+-- Test enhanced interpolation features
+function test_load_tool_config_tool_level_url_with_arch()
+  -- Create a test config with tool-level URL and platform-specific arch
+  local test_config_path = "3p/test-arch/version.lua"
+  os.execute("mkdir -p 3p/test-arch")
+  local f = io.open(test_config_path, "w")
+  f:write([[
+return {
+  version = "1.0.0",
+  format = "tar.gz",
+  url = "https://example.com/${version}/tool-${arch}.tar.gz",
+  platforms = {
+    ["darwin-arm64"] = {
+      arch = "aarch64-apple-darwin",
+      sha = "abc123",
+    },
+    ["linux-x86_64"] = {
+      arch = "x86_64-unknown-linux-musl",
+      sha = "def456",
+    },
+  },
+}
+]])
+  f:close()
+
+  local config, err = download_tool.load_tool_config("test-arch", "darwin-arm64")
+
+  lu.assertNotNil(config)
+  lu.assertEquals(config.url, "https://example.com/1.0.0/tool-aarch64-apple-darwin.tar.gz")
+
+  config, err = download_tool.load_tool_config("test-arch", "linux-x86_64")
+  lu.assertNotNil(config)
+  lu.assertEquals(config.url, "https://example.com/1.0.0/tool-x86_64-unknown-linux-musl.tar.gz")
+
+  -- Cleanup
+  os.execute("rm -rf 3p/test-arch")
+end
+
+function test_load_tool_config_tool_level_url_with_default_platform()
+  -- Create a test config with tool-level URL using ${platform}
+  local test_config_path = "3p/test-platform/version.lua"
+  os.execute("mkdir -p 3p/test-platform")
+  local f = io.open(test_config_path, "w")
+  f:write([[
+return {
+  version = "1.0.0",
+  url = "https://example.com/${version}/tool-${platform}.tar.gz",
+  platforms = {
+    ["darwin-arm64"] = {
+      sha = "abc123",
+    },
+    ["linux-arm64"] = {
+      sha = "def456",
+    },
+  },
+}
+]])
+  f:close()
+
+  local config, err = download_tool.load_tool_config("test-platform", "darwin-arm64")
+
+  lu.assertNotNil(config)
+  lu.assertEquals(config.url, "https://example.com/1.0.0/tool-darwin-arm64.tar.gz")
+
+  config, err = download_tool.load_tool_config("test-platform", "linux-arm64")
+  lu.assertNotNil(config)
+  lu.assertEquals(config.url, "https://example.com/1.0.0/tool-linux-arm64.tar.gz")
+
+  -- Cleanup
+  os.execute("rm -rf 3p/test-platform")
+end
+
+function test_load_tool_config_tool_level_url_with_platform_override()
+  -- Create a test config with platform override
+  local test_config_path = "3p/test-platform-override/version.lua"
+  os.execute("mkdir -p 3p/test-platform-override")
+  local f = io.open(test_config_path, "w")
+  f:write([[
+return {
+  version = "1.0.0",
+  url = "https://example.com/${version}/tool-${platform}.tar.gz",
+  platforms = {
+    ["darwin-arm64"] = {
+      sha = "abc123",
+    },
+    ["linux-x86_64"] = {
+      platform = "linux-x64",
+      sha = "def456",
+    },
+  },
+}
+]])
+  f:close()
+
+  local config, err = download_tool.load_tool_config("test-platform-override", "linux-x86_64")
+
+  lu.assertNotNil(config)
+  lu.assertEquals(config.url, "https://example.com/1.0.0/tool-linux-x64.tar.gz")
+
+  -- Cleanup
+  os.execute("rm -rf 3p/test-platform-override")
+end
+
+function test_load_tool_config_multiple_custom_variables()
+  -- Create a test config with multiple custom variables
+  local test_config_path = "3p/test-multi-vars/version.lua"
+  os.execute("mkdir -p 3p/test-multi-vars")
+  local f = io.open(test_config_path, "w")
+  f:write([[
+return {
+  version = "1.0.0",
+  release_sha = "abc123",
+  url = "https://example.com/${version}-${release_sha}/tool-${os}-${arch}.tar.gz",
+  platforms = {
+    ["darwin-arm64"] = {
+      os = "macos",
+      arch = "arm64",
+      sha = "deadbeef",
+    },
+  },
+}
+]])
+  f:close()
+
+  local config, err = download_tool.load_tool_config("test-multi-vars", "darwin-arm64")
+
+  lu.assertNotNil(config)
+  lu.assertEquals(config.url, "https://example.com/1.0.0-abc123/tool-macos-arm64.tar.gz")
+
+  -- Cleanup
+  os.execute("rm -rf 3p/test-multi-vars")
+end
+
 -- Test download_tool main function
 function test_download_tool_validates_tool_name()
   local ok, err = download_tool.download_tool("", "linux-x86_64", "/tmp/output")
@@ -208,9 +360,9 @@ function test_download_tool_removes_trailing_slash()
 return {
   version = "1.0.0",
   format = "binary",
+  url = "https://httpbin.org/status/404",
   platforms = {
     ["linux-x86_64"] = {
-      url = "https://httpbin.org/status/404",
       sha = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     },
   },

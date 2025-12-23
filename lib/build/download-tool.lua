@@ -32,16 +32,25 @@ local function load_tool_config(tool_name, platform)
     return nil, string.format("platform %s not found for tool %s", platform, tool_name)
   end
 
-  -- Merge tool-level and platform-level config
-  local url = config.url or tool.url
-  if not url then
-    return nil, "no URL specified for " .. tool_name .. " " .. platform
-  end
-
+  -- Build interpolation context - merge tool-level and platform-level variables
   local vars = {
     version = tool.version or "",
     release_sha = tool.release_sha or "",
+    platform = config.platform or platform,  -- allow platform override
   }
+
+  -- Add platform-specific custom variables (arch, os, etc.)
+  for key, value in pairs(config) do
+    if type(value) == "string" and key ~= "sha" and key ~= "format" then
+      vars[key] = value
+    end
+  end
+
+  -- URL must be at tool level (no per-platform URLs)
+  local url = tool.url
+  if not url then
+    return nil, "no URL specified for " .. tool_name
+  end
   url = interpolate(url, vars)
 
   return {
