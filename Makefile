@@ -17,7 +17,8 @@ else
   PLATFORM := linux-x86_64
 endif
 
-ast_grep_bin := $(ast_grep_dir)/$(PLATFORM)/ast-grep
+ast_grep_dir := $(3p)/ast-grep
+ast_grep_bin := $(ast_grep_dir)/$(PLATFORM)/sg
 ast_grep_extracted := $(ast_grep_dir)/$(PLATFORM)/.extracted
 
 build: lua
