@@ -2,6 +2,38 @@ local cosmo = require("cosmo")
 local unix = cosmo.unix
 local path = cosmo.path
 
+-- Platform normalization table
+local PLATFORMS = {
+  ["Darwin"] = {
+    ["arm64"] = "darwin-arm64",
+    ["aarch64"] = "darwin-arm64",
+  },
+  ["Linux"] = {
+    ["x86_64"] = "linux-x86_64",
+    ["aarch64"] = "linux-arm64",
+    ["arm64"] = "linux-arm64",
+  },
+}
+
+local MANAGED_BINARIES = {
+  "ast-grep",
+  "biome",
+  "comrak",
+  "delta",
+  "duckdb",
+  "gh",
+  "marksman",
+  "nvim",
+  "rg",
+  "ruff",
+  "shfmt",
+  "sqruff",
+  "stylua",
+  "superhtml",
+  "tree-sitter",
+  "uv",
+}
+
 local function read_file(filepath)
   local f, err = io.open(filepath, "rb")
   if not f then
@@ -10,6 +42,148 @@ local function read_file(filepath)
   local data = f:read("*a")
   f:close()
   return data
+end
+
+local function spawn(cmd, args, opts)
+  opts = opts or {}
+  local stdin_data = opts.stdin
+  local capture_stdout = opts.capture_stdout ~= false
+
+  local stdin_r, stdin_w = unix.pipe()
+  local stdout_r, stdout_w = unix.pipe()
+
+  local pid = unix.fork()
+  if pid == 0 then
+    unix.close(stdin_w)
+    unix.close(stdout_r)
+    unix.dup2(stdin_r, 0)
+    unix.dup2(stdout_w, 1)
+    unix.dup2(stdout_w, 2)
+    unix.close(stdin_r)
+    unix.close(stdout_w)
+
+    local env = opts.env or unix.environ()
+    unix.execve(cmd, args, env)
+    unix.exit(127)
+  end
+
+  unix.close(stdin_r)
+  unix.close(stdout_w)
+
+  if stdin_data then
+    unix.write(stdin_w, stdin_data)
+  end
+  unix.close(stdin_w)
+
+  local output = ""
+  if capture_stdout then
+    while true do
+      local chunk = unix.read(stdout_r, 65536)
+      if not chunk or chunk == "" then
+        break
+      end
+      output = output .. chunk
+    end
+  end
+  unix.close(stdout_r)
+
+  local _, status = unix.wait()
+  return status == 0, output, status
+end
+
+local function serialize_value(val, indent)
+  indent = indent or ""
+  local t = type(val)
+
+  if t == "string" then
+    return string.format("%q", val)
+  elseif t == "number" then
+    return tostring(val)
+  elseif t == "boolean" then
+    return val and "true" or "false"
+  elseif t == "nil" then
+    return "nil"
+  elseif t == "table" then
+    local lines = {}
+    local next_indent = indent .. "  "
+
+    local is_array = true
+    local max_index = 0
+    for k, _ in pairs(val) do
+      if type(k) ~= "number" or k < 1 or k ~= math.floor(k) then
+        is_array = false
+        break
+      end
+      if k > max_index then
+        max_index = k
+      end
+    end
+    if is_array and max_index ~= #val then
+      is_array = false
+    end
+
+    table.insert(lines, "{")
+
+    if is_array then
+      for i, v in ipairs(val) do
+        local comma = i < #val and "," or ""
+        table.insert(lines, next_indent .. serialize_value(v, next_indent) .. comma)
+      end
+    else
+      local keys = {}
+      for k in pairs(val) do
+        table.insert(keys, k)
+      end
+      table.sort(keys, function(a, b)
+        if type(a) == type(b) then
+          return a < b
+        end
+        return type(a) < type(b)
+      end)
+
+      for i, k in ipairs(keys) do
+        local v = val[k]
+        local key_str
+        if type(k) == "string" and k:match("^[a-zA-Z_][a-zA-Z0-9_]*$") then
+          key_str = k
+        else
+          key_str = "[" .. serialize_value(k, next_indent) .. "]"
+        end
+        local comma = i < #keys and "," or ""
+        table.insert(lines, next_indent .. key_str .. " = " .. serialize_value(v, next_indent) .. comma)
+      end
+    end
+
+    table.insert(lines, indent .. "}")
+    return table.concat(lines, "\n")
+  else
+    return "nil"
+  end
+end
+
+local function serialize_table(tbl)
+  return "return " .. serialize_value(tbl) .. "\n"
+end
+
+local function detect_platform()
+  if not cosmo.uname then
+    return nil, "cosmo.uname not available"
+  end
+  local uname = cosmo.uname()
+  local sysname = uname.sysname or "Linux"
+  local machine = uname.machine or "x86_64"
+
+  local sys_platforms = PLATFORMS[sysname]
+  if not sys_platforms then
+    return nil, "unsupported system: " .. sysname
+  end
+
+  local platform = sys_platforms[machine]
+  if not platform then
+    return nil, "unsupported machine: " .. machine
+  end
+
+  return platform
 end
 
 local function load_manifest()
@@ -28,17 +202,9 @@ local function load_platforms()
   return nil
 end
 
-local function detect_platform()
-  local uname_s = cosmo.uname().sysname or "Linux"
-  local uname_m = cosmo.uname().machine or "x86_64"
-
-  if uname_s == "Darwin" then
-    return "darwin-arm64"
-  elseif uname_m == "aarch64" or uname_m == "arm64" then
-    return "linux-arm64"
-  else
-    return "linux-x86_64"
-  end
+local function is_platform_mode()
+  local ok, _ = pcall(dofile, "/zip/platforms.lua")
+  return not ok
 end
 
 local function interpolate(template, context)
@@ -50,66 +216,48 @@ local function interpolate(template, context)
   end)
 end
 
+local function sha256_file(filepath)
+  local shasum = unix.commandv("shasum") or unix.commandv("sha256sum")
+  if not shasum then
+    return nil, "neither shasum nor sha256sum found"
+  end
+
+  local args
+  if shasum:match("shasum$") then
+    args = { "shasum", "-a", "256", filepath }
+  else
+    args = { "sha256sum", filepath }
+  end
+
+  local ok, output = spawn(shasum, args)
+  if not ok then
+    return nil, "failed to compute sha256"
+  end
+
+  local sha = output:match("^(%x+)")
+  if not sha or #sha ~= 64 then
+    return nil, "invalid sha256 output"
+  end
+  return sha
+end
+
 local function download_file(url, dest_path)
-  local stdin_r, stdin_w = unix.pipe()
-  local stdout_r, stdout_w = unix.pipe()
-
-  local pid = unix.fork()
-  if pid == 0 then
-    unix.close(stdin_w)
-    unix.close(stdout_r)
-    unix.dup2(stdin_r, 0)
-    unix.dup2(stdout_w, 1)
-    unix.dup2(stdout_w, 2)
-    unix.close(stdin_r)
-    unix.close(stdout_w)
-    unix.execve("/usr/bin/curl", {"curl", "-fsSL", "-o", dest_path, url}, unix.environ())
-    unix.exit(1)
+  local curl = unix.commandv("curl")
+  if not curl then
+    return nil, "curl not found"
   end
 
-  unix.close(stdin_r)
-  unix.close(stdout_w)
-  unix.close(stdin_w)
-
-  while true do
-    local chunk = unix.read(stdout_r, 65536)
-    if not chunk or chunk == "" then
-      break
-    end
-  end
-  unix.close(stdout_r)
-
-  local _, status = unix.wait()
-  if status ~= 0 then
+  local ok, _, status = spawn(curl, { "curl", "-fsSL", "-o", dest_path, url })
+  if not ok then
     return nil, "curl failed with status " .. tostring(status)
   end
   return true
 end
 
 local function verify_sha256(filepath, expected_sha)
-  local shasum = unix.commandv("shasum") or unix.commandv("sha256sum")
-  if not shasum then
-    return nil, "neither shasum nor sha256sum found"
-  end
-
-  local cmd
-  if shasum:match("shasum$") then
-    cmd = string.format("%s -a 256 %q", shasum, filepath)
-  else
-    cmd = string.format("%s %q", shasum, filepath)
-  end
-
-  local f = io.popen(cmd)
-  if not f then
-    return nil, "failed to run " .. shasum
-  end
-
-  local output = f:read("*a")
-  f:close()
-
-  local actual = output:match("^(%x+)")
-  if not actual or #actual ~= 64 then
-    return nil, "failed to compute sha256"
+  local actual, err = sha256_file(filepath)
+  if not actual then
+    return nil, err
   end
   if actual ~= expected_sha then
     return nil, string.format("sha256 mismatch: expected %s, got %s", expected_sha, actual)
@@ -117,11 +265,7 @@ local function verify_sha256(filepath, expected_sha)
   return true
 end
 
--- Atomic file copy with permissions
--- Creates file with restrictive perms, writes data, then sets final mode
--- Returns ok, err where ok is true on success, false on failure
 local function copy_file(src, dst, mode, overwrite)
-  -- Read source
   local src_f, err = io.open(src, "rb")
   if not src_f then
     return false, "failed to open source: " .. (err or "unknown error")
@@ -129,7 +273,6 @@ local function copy_file(src, dst, mode, overwrite)
   local data = src_f:read("*a")
   src_f:close()
 
-  -- If overwriting and destination is a symlink, remove it first
   if overwrite then
     local st = unix.stat(dst, unix.AT_SYMLINK_NOFOLLOW)
     if st and unix.S_ISLNK(st:mode()) then
@@ -140,7 +283,6 @@ local function copy_file(src, dst, mode, overwrite)
     end
   end
 
-  -- Create or overwrite destination with restrictive permissions
   local flags = unix.O_WRONLY | unix.O_CREAT
   if overwrite then
     flags = flags | unix.O_TRUNC
@@ -157,7 +299,6 @@ local function copy_file(src, dst, mode, overwrite)
     end
   end
 
-  -- Write data
   local bytes_written = unix.write(fd, data)
   local success = bytes_written == #data
 
@@ -166,7 +307,6 @@ local function copy_file(src, dst, mode, overwrite)
     return false, "failed to write data (wrote " .. bytes_written .. " of " .. #data .. " bytes)"
   end
 
-  -- Set final permissions if specified
   if mode then
     local chmod_ok = unix.chmod(dst, mode)
     if not chmod_ok then
@@ -179,6 +319,25 @@ local function copy_file(src, dst, mode, overwrite)
   return true
 end
 
+local function format_mode(mode, is_dir)
+  if not mode then
+    return "----------"
+  end
+
+  local result = {}
+  table.insert(result, is_dir and "d" or "-")
+
+  for i = 2, 0, -1 do
+    local shift = i * 3
+    local perms = (mode >> shift) & 7
+    table.insert(result, (perms & 4) ~= 0 and "r" or "-")
+    table.insert(result, (perms & 2) ~= 0 and "w" or "-")
+    table.insert(result, (perms & 1) ~= 0 and "x" or "-")
+  end
+
+  return table.concat(result)
+end
+
 local function parse_args(args)
   local result = {
     cmd = args[1] or "help",
@@ -188,7 +347,7 @@ local function parse_args(args)
     dry_run = false,
     only = false,
     null = false,
-    with_binaries = false,
+    with_platform = false,
     dest = nil,
   }
 
@@ -204,8 +363,8 @@ local function parse_args(args)
       result.only = true
     elseif args[i] == "--null" or args[i] == "-0" then
       result.null = true
-    elseif args[i] == "--with-binaries" then
-      result.with_binaries = true
+    elseif args[i] == "--with-platform" then
+      result.with_platform = true
     elseif result.cmd == "3p" and not result.subcmd and not args[i]:match("^%-") then
       result.subcmd = args[i]
     elseif not result.dest then
@@ -217,30 +376,6 @@ local function parse_args(args)
   return result
 end
 
--- Convert octal mode to permission string (e.g., 0644 -> "-rw-r--r--")
--- Returns 10-character string: type + owner + group + other permissions
-local function format_mode(mode, is_dir)
-  if not mode then
-    return "----------"
-  end
-
-  local result = {}
-
-  -- File type
-  table.insert(result, is_dir and "d" or "-")
-
-  -- Owner, group, other permissions (3 bits each)
-  for i = 2, 0, -1 do
-    local shift = i * 3
-    local perms = (mode >> shift) & 7
-    table.insert(result, (perms & 4) ~= 0 and "r" or "-")
-    table.insert(result, (perms & 2) ~= 0 and "w" or "-")
-    table.insert(result, (perms & 1) ~= 0 and "x" or "-")
-  end
-
-  return table.concat(result)
-end
-
 local function extract_platform_asset(asset_path, dest, force, filter, opts)
   opts = opts or {}
   local stderr = opts.stderr or io.stderr
@@ -248,10 +383,7 @@ local function extract_platform_asset(asset_path, dest, force, filter, opts)
   local verbose = opts.verbose or false
   local dry_run = opts.dry_run or false
 
-  local stdin_r, stdin_w = unix.pipe()
-  local stdout_r, stdout_w = unix.pipe()
-
-  local cmd_args = {"unpack"}
+  local cmd_args = { asset_path, "unpack" }
   if force then
     table.insert(cmd_args, "--force")
   end
@@ -265,44 +397,21 @@ local function extract_platform_asset(asset_path, dest, force, filter, opts)
     table.insert(cmd_args, "--only")
   end
   table.insert(cmd_args, dest)
-  table.insert(cmd_args, 1, asset_path)
 
-  local pid = unix.fork()
-  if pid == 0 then
-    unix.close(stdin_w)
-    unix.close(stdout_r)
-    unix.dup2(stdin_r, 0)
-    unix.dup2(stdout_w, 1)
-    unix.dup2(stdout_w, 2)
-    unix.close(stdin_r)
-    unix.close(stdout_w)
-    unix.execve(asset_path, cmd_args, unix.environ())
-    unix.exit(1)
-  end
-
-  unix.close(stdin_r)
-  unix.close(stdout_w)
-
+  local stdin_data = nil
   if filter then
     local filter_lines = {}
     for p in pairs(filter) do
       table.insert(filter_lines, p)
     end
-    unix.write(stdin_w, table.concat(filter_lines, "\n"))
+    stdin_data = table.concat(filter_lines, "\n")
   end
-  unix.close(stdin_w)
 
-  while true do
-    local chunk = unix.read(stdout_r, 65536)
-    if not chunk or chunk == "" then
-      break
-    end
-    stdout:write(chunk)
+  local ok, output = spawn(asset_path, cmd_args, { stdin = stdin_data })
+  if output and output ~= "" then
+    stdout:write(output)
   end
-  unix.close(stdout_r)
-
-  local _, status = unix.wait()
-  return status == 0
+  return ok
 end
 
 local function cmd_unpack(dest, force, opts)
@@ -312,12 +421,12 @@ local function cmd_unpack(dest, force, opts)
   local verbose = opts.verbose or false
   local dry_run = opts.dry_run or false
   local only = opts.only or false
-  local with_binaries = opts.with_binaries or false
+  local with_platform = opts.with_platform or false
   local zip_root = opts.zip_root or "/zip/home/"
 
   if not dest then
     stderr:write("error: destination path required\n")
-    stderr:write("usage: home unpack [--force] [--with-binaries] <destination>\n")
+    stderr:write("usage: home unpack [--force] [--with-platform] <destination>\n")
     return 1
   end
 
@@ -385,29 +494,35 @@ local function cmd_unpack(dest, force, opts)
     ::continue::
   end
 
-  if with_binaries then
+  if with_platform then
     local platforms = load_platforms()
     if not platforms then
       stderr:write("error: no platform metadata available\n")
       return 1
     end
 
-    local current = detect_platform()
-    local plat_info = platforms.platforms and platforms.platforms[current]
-    if not plat_info then
-      stderr:write("error: no binaries available for " .. current .. "\n")
+    local current, err = detect_platform()
+    if not current then
+      stderr:write("error: " .. (err or "failed to detect platform") .. "\n")
       return 1
     end
 
-    local url = interpolate(platforms.base_url, {tag = platforms.tag}) .. "/" .. plat_info.asset
-    local tmp_path = path.join(dest, ".home-binaries-download")
+    local plat_info = platforms.platforms and platforms.platforms[current]
+    if not plat_info then
+      stderr:write("error: no platform asset available for " .. current .. "\n")
+      return 1
+    end
+
+    local url = interpolate(platforms.base_url, { tag = platforms.tag }) .. "/" .. plat_info.asset
+    local tmp_path = path.join(dest, ".home-platform-download")
 
     if not dry_run then
       if verbose then
         stdout:write("downloading " .. plat_info.asset .. "...\n")
       end
 
-      local ok, err = download_file(url, tmp_path)
+      local ok
+      ok, err = download_file(url, tmp_path)
       if not ok then
         stderr:write("error: download failed: " .. (err or "unknown") .. "\n")
         return 1
@@ -442,7 +557,7 @@ local function cmd_unpack(dest, force, opts)
       unix.unlink(tmp_path)
 
       if not ok then
-        stderr:write("error: failed to extract platform binaries\n")
+        stderr:write("error: failed to extract platform asset\n")
         return 1
       end
     elseif verbose then
@@ -482,21 +597,27 @@ local function cmd_list(opts)
   local all_paths = {}
 
   for p, info in pairs(manifest.files) do
-    table.insert(all_paths, {path = p, mode = info.mode, source = "dotfiles"})
+    table.insert(all_paths, { path = p, mode = info.mode, source = "dotfiles" })
   end
 
-  local platforms = load_platforms()
-  if platforms and platforms.platforms then
-    local current = detect_platform()
-    local plat_info = platforms.platforms[current]
-    if plat_info and plat_info.manifest and plat_info.manifest.files then
-      for p, info in pairs(plat_info.manifest.files) do
-        table.insert(all_paths, {path = p, mode = info.mode, source = "binaries"})
+  if not is_platform_mode() then
+    local platforms = load_platforms()
+    if platforms and platforms.platforms then
+      local current = detect_platform()
+      if current then
+        local plat_info = platforms.platforms[current]
+        if plat_info and plat_info.manifest and plat_info.manifest.files then
+          for p, info in pairs(plat_info.manifest.files) do
+            table.insert(all_paths, { path = p, mode = info.mode, source = "platform" })
+          end
+        end
       end
     end
   end
 
-  table.sort(all_paths, function(a, b) return a.path < b.path end)
+  table.sort(all_paths, function(a, b)
+    return a.path < b.path
+  end)
 
   for _, entry in ipairs(all_paths) do
     if verbose then
@@ -515,31 +636,12 @@ local function cmd_version(opts)
   local stdout = opts.stdout or io.stdout
   local manifest = load_manifest()
   if manifest and manifest.version then
-    stdout:write("home built " .. manifest.version .. "\n")
+    stdout:write("home " .. manifest.version .. "\n")
   else
-    stdout:write("home built COMMIT_PLACEHOLDER\n")
+    stdout:write("home (unknown version)\n")
   end
   return 0
 end
-
-local MANAGED_BINARIES = {
-  "ast-grep",
-  "biome",
-  "comrak",
-  "delta",
-  "duckdb",
-  "gh",
-  "marksman",
-  "nvim",
-  "rg",
-  "ruff",
-  "shfmt",
-  "sqruff",
-  "stylua",
-  "superhtml",
-  "tree-sitter",
-  "uv",
-}
 
 local function find_binary_in_dir(dir, tool_name)
   local patterns = {
@@ -673,11 +775,15 @@ end
 local function cmd_help(opts)
   opts = opts or {}
   local stderr = opts.stderr or io.stderr
+  local platform_mode = is_platform_mode()
+
   stderr:write("usage: home <command> [options]\n")
   stderr:write("\ncommands:\n")
   stderr:write("  list [options]           list embedded files\n")
-  stderr:write("  unpack [options] <dest>  extract dotfiles to destination\n")
-  stderr:write("  3p [subcommand]          manage third-party binary symlinks\n")
+  stderr:write("  unpack [options] <dest>  extract files to destination\n")
+  if not platform_mode then
+    stderr:write("  3p [subcommand]          manage third-party binary symlinks\n")
+  end
   stderr:write("  version                  show build version\n")
   stderr:write("\nlist options:\n")
   stderr:write("  --verbose, -v            show permissions\n")
@@ -686,15 +792,19 @@ local function cmd_help(opts)
   stderr:write("  --force, -f              overwrite existing files\n")
   stderr:write("  --verbose, -v            show files as extracted\n")
   stderr:write("  --dry-run, -n            show what would be extracted\n")
-  stderr:write("  --with-binaries          download and extract platform binaries\n")
+  if not platform_mode then
+    stderr:write("  --with-platform          download and extract platform binaries\n")
+  end
   stderr:write("  --only                   only extract files listed on stdin\n")
   stderr:write("  --null, -0               read null-delimited paths (with --only)\n")
-  stderr:write("\n3p subcommands:\n")
-  stderr:write("  3p                       scan and symlink latest versions\n")
-  stderr:write("  3p list                  list installed tools and versions\n")
-  stderr:write("\n3p options:\n")
-  stderr:write("  --verbose, -v            show detailed output\n")
-  stderr:write("  --dry-run, -n            show what would be done\n")
+  if not platform_mode then
+    stderr:write("\n3p subcommands:\n")
+    stderr:write("  3p                       scan and symlink latest versions\n")
+    stderr:write("  3p list                  list installed tools and versions\n")
+    stderr:write("\n3p options:\n")
+    stderr:write("  --verbose, -v            show detailed output\n")
+    stderr:write("  --dry-run, -n            show what would be done\n")
+  end
   return 0
 end
 
@@ -711,11 +821,10 @@ local function main(args, opts)
     unpack_opts.dry_run = parsed.dry_run
     unpack_opts.only = parsed.only
     unpack_opts.null = parsed.null
-    unpack_opts.with_binaries = parsed.with_binaries
+    unpack_opts.with_platform = parsed.with_platform
 
     return cmd_unpack(parsed.dest, parsed.force, unpack_opts)
   elseif parsed.cmd == "list" then
-    -- Merge parsed options with opts
     local list_opts = {}
     for k, v in pairs(opts) do
       list_opts[k] = v
@@ -748,20 +857,26 @@ local function main(args, opts)
 end
 
 local home = {
+  PLATFORMS = PLATFORMS,
+  MANAGED_BINARIES = MANAGED_BINARIES,
   read_file = read_file,
+  spawn = spawn,
+  serialize_value = serialize_value,
+  serialize_table = serialize_table,
+  detect_platform = detect_platform,
   load_manifest = load_manifest,
   load_platforms = load_platforms,
-  detect_platform = detect_platform,
+  is_platform_mode = is_platform_mode,
+  sha256_file = sha256_file,
   download_file = download_file,
   verify_sha256 = verify_sha256,
   copy_file = copy_file,
-  parse_args = parse_args,
   format_mode = format_mode,
+  parse_args = parse_args,
   cmd_unpack = cmd_unpack,
   cmd_list = cmd_list,
   cmd_version = cmd_version,
   cmd_help = cmd_help,
-  MANAGED_BINARIES = MANAGED_BINARIES,
   find_binary_in_dir = find_binary_in_dir,
   scan_for_latest_version = scan_for_latest_version,
   update_symlink = update_symlink,
@@ -769,9 +884,8 @@ local home = {
   main = main,
 }
 
--- Run main if executed directly (not required as module)
-if arg and arg[0] and arg[0]:match("/main%.lua$") then
-  os.exit(main({ ... }) or 0)
+if not pcall(debug.getlocal, 4, 1) then
+  os.exit(main(arg) or 0)
 end
 
 return home

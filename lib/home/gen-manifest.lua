@@ -2,6 +2,8 @@ local cosmo = require("cosmo")
 local unix = cosmo.unix
 local path = cosmo.path
 
+local home = require("main")
+
 local function walk_dir(dir, base, files)
   files = files or {}
   base = base or ""
@@ -24,30 +26,6 @@ local function walk_dir(dir, base, files)
   end
 
   return files
-end
-
-local function format_manifest(files, version)
-  local lines = {}
-  table.insert(lines, "return {")
-  if version then
-    table.insert(lines, string.format('  version = "%s",', version))
-  end
-  table.insert(lines, "  files = {")
-
-  local paths = {}
-  for p in pairs(files) do
-    table.insert(paths, p)
-  end
-  table.sort(paths)
-
-  for _, p in ipairs(paths) do
-    local info = files[p]
-    table.insert(lines, string.format('    ["%s"] = { mode = %d },', p, info.mode))
-  end
-
-  table.insert(lines, "  },")
-  table.insert(lines, "}")
-  return table.concat(lines, "\n")
 end
 
 local function cmd_help()
@@ -73,14 +51,16 @@ local function main(args)
   end
 
   local files = walk_dir(dir)
-  local manifest = format_manifest(files, version)
-  io.write(manifest .. "\n")
+  local manifest = {
+    version = version,
+    files = files,
+  }
+  io.write(home.serialize_table(manifest))
   return 0
 end
 
 local M = {
   walk_dir = walk_dir,
-  format_manifest = format_manifest,
   main = main,
 }
 
