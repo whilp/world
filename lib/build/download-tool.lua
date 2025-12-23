@@ -26,8 +26,10 @@ local function execute(program, args)
   elseif pid > 0 then
     -- Parent process
     local status = unix.wait()
-    if status ~= 0 then
-      return nil, string.format("command failed: %s (exit: %d)", program, status)
+    -- Decode wait status: exit code is in upper byte
+    local exit_code = (status >> 8) & 0xFF
+    if exit_code ~= 0 then
+      return nil, string.format("command failed: %s (exit: %d)", program, exit_code)
     end
     return true
   else
