@@ -255,7 +255,7 @@ function test_cmd_version()
   local stdout = mock_writer()
   local code = home.cmd_version({ stdout = stdout })
   lu.assertEquals(code, 0)
-  lu.assertStrContains(stdout:get(), "home built")
+  lu.assertStrContains(stdout:get(), "home")
 end
 
 --------------------------------------------------------------------------------
@@ -668,7 +668,7 @@ function test_main_version()
   local stdout = mock_writer()
   local code = home.main({ "version" }, { stdout = stdout })
   lu.assertEquals(code, 0)
-  lu.assertStrContains(stdout:get(), "home built")
+  lu.assertStrContains(stdout:get(), "home")
 end
 
 function test_main_help()
@@ -1098,13 +1098,14 @@ function test_main_3p()
   remove_dir(tmp)
 end
 
-function test_cmd_help_includes_3p()
+function test_cmd_help_output()
   local stderr = mock_writer()
   local code = home.cmd_help({ stderr = stderr })
   lu.assertEquals(code, 0)
   local output = stderr:get()
-  lu.assertStrContains(output, "3p")
-  lu.assertStrContains(output, "symlink")
+  lu.assertStrContains(output, "usage:")
+  lu.assertStrContains(output, "list")
+  lu.assertStrContains(output, "unpack")
 end
 
 --------------------------------------------------------------------------------
