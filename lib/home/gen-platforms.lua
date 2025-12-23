@@ -2,16 +2,6 @@ local cosmo = require("cosmo")
 local unix = cosmo.unix
 local path = cosmo.path
 
-local function read_file(filepath)
-  local f = io.open(filepath, "rb")
-  if not f then
-    return nil, "failed to open: " .. filepath
-  end
-  local data = f:read("*a")
-  f:close()
-  return data
-end
-
 local function sha256_file(filepath)
   local shasum = unix.commandv("shasum") or unix.commandv("sha256sum")
   if not shasum then

@@ -50,8 +50,7 @@ local function interpolate(template, context)
   end)
 end
 
-local function download_file(url, dest_path, stderr)
-  stderr = stderr or io.stderr
+local function download_file(url, dest_path)
   local stdin_r, stdin_w = unix.pipe()
   local stdout_r, stdout_w = unix.pipe()
 
@@ -407,7 +406,7 @@ local function cmd_unpack(dest, force, opts)
         stdout:write("downloading " .. plat_info.asset .. "...\n")
       end
 
-      local ok, err = download_file(url, tmp_path, stderr)
+      local ok, err = download_file(url, tmp_path)
       if not ok then
         stderr:write("error: download failed: " .. (err or "unknown") .. "\n")
         return 1
