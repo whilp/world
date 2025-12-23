@@ -26,13 +26,17 @@ make := $(make_bin) COSMOCC=$(cosmocc_dir)
 TOOLS := nvim gh delta rg duckdb tree-sitter ast-grep biome comrak \
          marksman ruff shfmt sqruff stylua superhtml uv
 
+# download-tool target
+download_tool := lib/build/download-tool.lua
+$(download_tool): lua
+
 # Pattern rule template for each tool
 # Generates: $(3p)/nvim/%/.extracted: 3p/nvim/version.lua ...
 #   where % matches platform (darwin-arm64, linux-arm64, linux-x86_64)
 define tool_download_rule
-$(3p)/$(1)/%/.extracted: 3p/$(1)/version.lua lib/build/download-tool.lua
+$(3p)/$(1)/%/.extracted: 3p/$(1)/version.lua $(download_tool)
 	@mkdir -p $$(dir $$@)
-	$(lua) lib/build/download-tool.lua $(1) $$* $$(dir $$@)
+	$(lua) $(download_tool) $(1) $$* $$(dir $$@)
 	touch $$@
 endef
 

@@ -2,6 +2,10 @@
 -- Downloads and extracts a tool for a specific platform
 -- Usage: lua lib/build/download-tool.lua <tool> <platform> <output_dir>
 
+local cosmo = require("cosmo")
+local path = cosmo.path
+local unix = cosmo.unix
+
 -- Template interpolation
 local function interpolate(template, vars)
   if type(template) ~= "string" then
@@ -10,6 +14,25 @@ local function interpolate(template, vars)
   return template:gsub("%${([%w_]+)}", function(key)
     return tostring(vars[key] or "")
   end)
+end
+
+-- Execute external command using fork/exec
+local function execute(program, args)
+  local pid = unix.fork()
+  if pid == 0 then
+    -- Child process
+    unix.execve(program, args, unix.environ())
+    unix.exit(127) -- Only reached if execve fails
+  elseif pid > 0 then
+    -- Parent process
+    local status = unix.wait()
+    if status ~= 0 then
+      return nil, string.format("command failed: %s (exit: %d)", program, status)
+    end
+    return true
+  else
+    return nil, "fork failed"
+  end
 end
 
 -- Load tool metadata
@@ -21,7 +44,7 @@ local function load_tool_config(tool_name, platform)
     return nil, "platform cannot be empty"
   end
 
-  local version_file = string.format("3p/%s/version.lua", tool_name)
+  local version_file = path.join("3p", tool_name, "version.lua")
   local ok, tool = pcall(dofile, version_file)
   if not ok then
     return nil, "failed to load " .. version_file .. ": " .. tostring(tool)
@@ -64,16 +87,7 @@ local function load_tool_config(tool_name, platform)
   }
 end
 
--- Execute command with error checking
-local function execute(cmd)
-  local success, exit_type, code = os.execute(cmd)
-  if not success then
-    return nil, string.format("command failed: %s (exit: %s %s)", cmd, exit_type, code)
-  end
-  return true
-end
-
--- Download file from URL
+-- Download file from URL using curl
 local function download_file(url, dest_path)
   if not url or url == "" then
     return nil, "url cannot be empty"
@@ -82,11 +96,10 @@ local function download_file(url, dest_path)
     return nil, "dest_path cannot be empty"
   end
 
-  local cmd = string.format("curl -fsSL -o '%s' '%s'", dest_path, url)
-  return execute(cmd)
+  return execute("/usr/bin/curl", {"curl", "-fsSL", "-o", dest_path, url})
 end
 
--- Verify SHA256 checksum
+-- Verify SHA256 checksum using shasum
 local function verify_sha256(file_path, expected_sha)
   if not file_path or file_path == "" then
     return nil, "file_path cannot be empty"
@@ -95,62 +108,89 @@ local function verify_sha256(file_path, expected_sha)
     return nil, "expected_sha cannot be empty"
   end
 
-  local dir = file_path:match("^(.*)/[^/]+$") or "."
-  local filename = file_path:match("([^/]+)$")
-  local cmd = string.format("cd '%s' && echo '%s  %s' | shasum -a 256 -c",
-    dir, expected_sha, filename)
-  return execute(cmd)
+  local dir = path.dirname(file_path)
+  local filename = path.basename(file_path)
+
+  -- Create temp file with expected checksum
+  local check_content = expected_sha .. "  " .. filename .. "\n"
+  local check_fd = unix.open(path.join(dir, ".sha256check"), unix.O_CREAT | unix.O_WRONLY | unix.O_TRUNC, 420)
+  if not check_fd then
+    return nil, "failed to create checksum file"
+  end
+  unix.write(check_fd, check_content)
+  unix.close(check_fd)
+
+  local ok, err = execute("/usr/bin/shasum", {"shasum", "-a", "256", "-c", ".sha256check"}, dir)
+  unix.unlink(path.join(dir, ".sha256check"))
+
+  return ok, err
 end
 
 -- Extract tar.gz archive
 local function extract_targz(archive_path, output_dir, strip_components)
-  local cmd = string.format("tar -xzf '%s' -C '%s' --strip-components=%d",
-    archive_path, output_dir, strip_components)
-  local ok, err = execute(cmd)
+  local ok, err = execute("/usr/bin/tar", {
+    "tar", "-xzf", archive_path, "-C", output_dir,
+    "--strip-components=" .. strip_components
+  })
   if not ok then
     return nil, err
   end
-  os.remove(archive_path)
+  unix.unlink(archive_path)
   return true
 end
 
 -- Extract zip archive
 local function extract_zip(archive_path, output_dir, strip_components)
-  local cmd = string.format("unzip -q -DD -o '%s' -d '%s'", archive_path, output_dir)
-  local ok, err = execute(cmd)
+  local ok, err = execute("/usr/bin/unzip", {"unzip", "-q", "-DD", "-o", archive_path, "-d", output_dir})
   if not ok then
     return nil, err
   end
 
   if strip_components == 1 then
-    -- Move contents up one level: find the single top-level dir and move its contents
-    local strip_cmd = string.format(
-      "sh -c 'cd \"%s\" && " ..
-      "dir=$(find . -mindepth 1 -maxdepth 1 -type d | head -1) && " ..
-      "mv \"$dir\"/* \"$dir\"/.* . 2>/dev/null || true && " ..
-      "rmdir \"$dir\" 2>/dev/null || true'",
-      output_dir)
-    local ok, err = execute(strip_cmd)
-    if not ok then
-      return nil, err
+    -- Move contents up one level using lua
+    local dir_fd = unix.opendir(output_dir)
+    if not dir_fd then
+      return nil, "failed to open output directory"
+    end
+
+    -- Find first directory
+    local subdir = nil
+    while true do
+      local entry = unix.readdir(dir_fd)
+      if not entry then break end
+      if entry ~= "." and entry ~= ".." and entry ~= path.basename(archive_path) then
+        local full_path = path.join(output_dir, entry)
+        local stat = unix.stat(full_path)
+        if stat and unix.S_ISDIR(stat.mode) then
+          subdir = entry
+          break
+        end
+      end
+    end
+    unix.closedir(dir_fd)
+
+    if subdir then
+      local subdir_path = path.join(output_dir, subdir)
+      -- Move contents using system mv for simplicity
+      local ok, err = execute("/bin/mv", {"mv", path.join(subdir_path, "*"), output_dir})
+      unix.rmdir(subdir_path)
     end
   end
 
-  os.remove(archive_path)
+  unix.unlink(archive_path)
   return true
 end
 
 -- Extract gz compressed file
 local function extract_gz(archive_path, tool_name, output_dir)
-  local cmd = string.format("gunzip -f '%s'", archive_path)
-  local ok, err = execute(cmd)
+  local ok, err = execute("/usr/bin/gunzip", {"gunzip", "-f", archive_path})
   if not ok then
     return nil, err
   end
 
-  local binary_path = string.format("%s/%s", output_dir, tool_name)
-  local chmod_cmd = string.format("/usr/bin/chmod +x '%s'", binary_path)
-  return execute(chmod_cmd)
+  local binary_path = path.join(output_dir, tool_name)
+  unix.chmod(binary_path, 493)
+  return true
 end
 
 -- Make binary executable
@@ -159,45 +199,54 @@ local function make_executable(file_path)
     return nil, "file_path cannot be empty"
   end
 
-  local chmod_cmd = string.format("/usr/bin/chmod +x '%s'", file_path)
-  return execute(chmod_cmd)
+  unix.chmod(file_path, 493)
+  return true
 end
+
+-- Extract dispatch table
+local extractors = {
+  ["tar.gz"] = extract_targz,
+  ["zip"] = extract_zip,
+  ["gz"] = extract_gz,
+  ["binary"] = make_executable,
+}
 
 -- Extract based on format
 local function extract(archive_path, output_dir, config)
-  if config.format == "tar.gz" then
-    return extract_targz(archive_path, output_dir, config.strip_components)
-  elseif config.format == "zip" then
-    return extract_zip(archive_path, output_dir, config.strip_components)
-  elseif config.format == "gz" then
-    return extract_gz(archive_path, config.tool_name, output_dir)
-  elseif config.format == "binary" then
-    return make_executable(archive_path)
-  else
+  local extractor = extractors[config.format]
+  if not extractor then
     return nil, "unknown format: " .. config.format
+  end
+
+  if config.format == "gz" then
+    return extractor(archive_path, config.tool_name, output_dir)
+  elseif config.format == "binary" then
+    return extractor(archive_path)
+  else
+    return extractor(archive_path, output_dir, config.strip_components)
   end
 end
 
 -- Write file with error checking
-local function write_file(path, content)
-  local f, err = io.open(path, "w")
-  if not f then
-    return nil, "failed to open " .. path .. " for writing: " .. tostring(err)
+local function write_file(filepath, content)
+  local fd = unix.open(filepath, unix.O_CREAT | unix.O_WRONLY | unix.O_TRUNC, 420)
+  if not fd then
+    return nil, "failed to open " .. filepath .. " for writing"
   end
-  f:write(content)
-  f:close()
+  unix.write(fd, content)
+  unix.close(fd)
   return true
 end
 
 -- Write metadata files
 local function write_metadata(output_dir, config)
-  local ok, err = write_file(output_dir .. "/VERSION", config.version .. "\n")
+  local ok, err = write_file(path.join(output_dir, "VERSION"), config.version .. "\n")
   if not ok then
     return nil, err
   end
 
   local sha_short = config.sha:sub(1, 8)
-  ok, err = write_file(output_dir .. "/SHA", sha_short .. "\n")
+  ok, err = write_file(path.join(output_dir, "SHA"), sha_short .. "\n")
   if not ok then
     return nil, err
   end
@@ -218,8 +267,8 @@ local function download_tool(tool_name, platform, output_dir)
     return nil, "output_dir is required"
   end
 
-  -- Remove trailing slash
-  output_dir = output_dir:gsub("/$", "")
+  -- Normalize path (remove trailing slash)
+  output_dir = path.normalize(output_dir:gsub("/$", ""))
 
   -- Load configuration
   local config, err = load_tool_config(tool_name, platform)
@@ -229,7 +278,7 @@ local function download_tool(tool_name, platform, output_dir)
 
   -- Determine archive name and path
   local archive_name = config.format == "binary" and tool_name or ("archive." .. config.format)
-  local archive_path = output_dir .. "/" .. archive_name
+  local archive_path = path.join(output_dir, archive_name)
   local cleanup_needed = false
 
   -- Transaction pattern: download and extract with cleanup on failure
@@ -265,7 +314,7 @@ local function download_tool(tool_name, platform, output_dir)
 
   -- Cleanup on failure
   if not ok and cleanup_needed then
-    pcall(os.remove, archive_path)
+    pcall(unix.unlink, archive_path)
   end
 
   if not ok then
