@@ -5,10 +5,11 @@
 font-size = 14
 cursor-style = "block"
 window-theme = "dark"
-window-decoration = false
+window-decoration = "none"
 background-opacity = 1.0
+macos-titlebar-style = hidden
 macos-option-as-alt = true
-macos-non-native-fullscreen = "padded-notch"
+#macos-non-native-fullscreen = "padded-notch"
 window-save-state = "default"
 maximize = true
 #shell-integration = "zsh"
