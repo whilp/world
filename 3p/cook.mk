@@ -36,7 +36,7 @@ $(download_tool): lua
 define tool_download_rule
 $(3p)/$(1)/%/.extracted: 3p/$(1)/version.lua $(download_tool)
 	@mkdir -p $$(dir $$@)
-	$(lua) $(download_tool) $(1) $$* $$(dir $$@)
+	$(lua_bin) $(download_tool) $(1) $$* $$(dir $$@)
 	touch $$@
 endef
 
