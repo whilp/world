@@ -148,33 +148,18 @@ local function extract_zip(archive_path, output_dir, strip_components)
   end
 
   if strip_components == 1 then
-    -- Move contents up one level using lua
-    local dir_fd = unix.opendir(output_dir)
-    if not dir_fd then
-      return nil, "failed to open output directory"
-    end
-
-    -- Find first directory
-    local subdir = nil
-    while true do
-      local entry = unix.readdir(dir_fd)
-      if not entry then break end
-      if entry ~= "." and entry ~= ".." and entry ~= path.basename(archive_path) then
-        local full_path = path.join(output_dir, entry)
-        local stat = unix.stat(full_path)
-        if stat and unix.S_ISDIR(stat.mode) then
-          subdir = entry
-          break
-        end
-      end
-    end
-    unix.closedir(dir_fd)
-
-    if subdir then
-      local subdir_path = path.join(output_dir, subdir)
-      -- Move contents using system mv for simplicity
-      local ok, err = execute("/bin/mv", {"mv", path.join(subdir_path, "*"), output_dir})
-      unix.rmdir(subdir_path)
+    -- Move contents up one level using shell
+    local sh_script = string.format([[
+      cd '%s' && \
+      dir=$(find . -mindepth 1 -maxdepth 1 -type d | head -1) && \
+      if [ -n "$dir" ]; then \
+        mv "$dir"/* "$dir"/.* . 2>/dev/null || true; \
+        rmdir "$dir"; \
+      fi
+    ]], output_dir)
+    ok, err = execute("/bin/sh", {"sh", "-c", sh_script})
+    if not ok then
+      return nil, err
     end
   end
 
