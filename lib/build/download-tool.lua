@@ -267,8 +267,8 @@ local function download_tool(tool_name, platform, output_dir)
     return nil, "output_dir is required"
   end
 
-  -- Normalize path (remove trailing slash)
-  output_dir = path.normalize(output_dir:gsub("/$", ""))
+  -- Remove trailing slash
+  output_dir = output_dir:gsub("/$", "")
 
   -- Load configuration
   local config, err = load_tool_config(tool_name, platform)
