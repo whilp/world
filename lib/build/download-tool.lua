@@ -110,20 +110,19 @@ local function verify_sha256(file_path, expected_sha)
     return nil, "expected_sha cannot be empty"
   end
 
-  local dir = path.dirname(file_path)
-  local filename = path.basename(file_path)
+  -- Use absolute paths for verification
+  local check_content = expected_sha .. "  " .. file_path .. "\n"
+  local check_file = file_path .. ".sha256check"
 
-  -- Create temp file with expected checksum
-  local check_content = expected_sha .. "  " .. filename .. "\n"
-  local check_fd = unix.open(path.join(dir, ".sha256check"), unix.O_CREAT | unix.O_WRONLY | unix.O_TRUNC, 420)
+  local check_fd = unix.open(check_file, unix.O_CREAT | unix.O_WRONLY | unix.O_TRUNC, 420)
   if not check_fd then
     return nil, "failed to create checksum file"
   end
   unix.write(check_fd, check_content)
   unix.close(check_fd)
 
-  local ok, err = execute("/usr/bin/shasum", {"shasum", "-a", "256", "-c", ".sha256check"}, dir)
-  unix.unlink(path.join(dir, ".sha256check"))
+  local ok, err = execute("/usr/bin/shasum", {"shasum", "-a", "256", "-c", check_file})
+  unix.unlink(check_file)
 
   return ok, err
 end
