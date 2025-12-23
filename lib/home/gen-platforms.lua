@@ -13,28 +13,25 @@ local function read_file(filepath)
 end
 
 local function sha256_file(filepath)
-  local stdin_r, stdin_w = unix.pipe()
-  local stdout_r, stdout_w = unix.pipe()
-
-  local pid = unix.fork()
-  if pid == 0 then
-    unix.close(stdin_w)
-    unix.close(stdout_r)
-    unix.dup2(stdin_r, 0)
-    unix.dup2(stdout_w, 1)
-    unix.close(stdin_r)
-    unix.close(stdout_w)
-    unix.execve("/usr/bin/shasum", {"shasum", "-a", "256", filepath}, unix.environ())
-    unix.exit(1)
+  local shasum = unix.commandv("shasum") or unix.commandv("sha256sum")
+  if not shasum then
+    return nil, "neither shasum nor sha256sum found"
   end
 
-  unix.close(stdin_r)
-  unix.close(stdout_w)
-  unix.close(stdin_w)
+  local cmd
+  if shasum:match("shasum$") then
+    cmd = string.format("%s -a 256 %q", shasum, filepath)
+  else
+    cmd = string.format("%s %q", shasum, filepath)
+  end
 
-  local output = unix.read(stdout_r, 65536) or ""
-  unix.close(stdout_r)
-  unix.wait()
+  local f = io.popen(cmd)
+  if not f then
+    return nil, "failed to run " .. shasum
+  end
+
+  local output = f:read("*a")
+  f:close()
 
   local sha = output:match("^(%x+)")
   if not sha or #sha ~= 64 then
