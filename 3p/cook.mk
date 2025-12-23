@@ -1,11 +1,14 @@
 o := $(CURDIR)/o
 3p := $(o)/3p
 
+PLATFORMS := darwin-arm64 linux-arm64 linux-x86_64
+
 curl := curl -fsSL
 sha256sum := shasum -a 256
 unzip := unzip -q -DD
 zip := zip -q
 tar := tar -m
+gunzip := gunzip -f
 lua := lua
 
 include 3p/cosmocc/cook.mk
@@ -18,5 +21,28 @@ export AR := $(dir $(cosmocc_bin))cosmocc-ar
 export RANLIB := $(dir $(cosmocc_bin))cosmocc-ranlib
 
 make := $(make_bin) COSMOCC=$(cosmocc_dir)
+
+# Tool list
+TOOLS := nvim gh delta rg duckdb tree-sitter ast-grep biome comrak \
+         marksman ruff shfmt sqruff stylua superhtml uv
+
+# Pattern rule template for each tool
+# Generates: $(3p)/nvim/%/.extracted: 3p/nvim/version.lua ...
+#   where % matches platform (darwin-arm64, linux-arm64, linux-x86_64)
+define tool_download_rule
+$(3p)/$(1)/%/.extracted: 3p/$(1)/version.lua lib/build/download-tool.lua
+	@mkdir -p $$(dir $$@)
+	$(lua) lib/build/download-tool.lua $(1) $$* $$(dir $$@)
+	touch $$@
+endef
+
+# Generate pattern rule for each tool
+$(foreach tool,$(TOOLS),$(eval $(call tool_download_rule,$(tool))))
+
+# Generate {tool}_binaries variables for each tool
+$(foreach tool,$(TOOLS),$(eval $(tool)_binaries := $(foreach p,$(PLATFORMS),$(3p)/$(tool)/$(p)/.extracted)))
+
+# Aggregate all_binaries
+all_binaries := $(foreach tool,$(TOOLS),$($(tool)_binaries))
 
 .STRICT = 1
