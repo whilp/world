@@ -25,7 +25,7 @@ local function execute(program, args)
     unix.exit(127) -- Only reached if execve fails
   elseif pid > 0 then
     -- Parent process
-    local child_pid, status = unix.wait()
+    local _, status = unix.wait()
     -- Decode wait status: exit code is in upper byte
     local exit_code = (status >> 8) & 0xFF
     if exit_code ~= 0 then
@@ -270,29 +270,29 @@ local function download_tool(tool_name, platform, output_dir)
   -- Transaction pattern: download and extract with cleanup on failure
   local ok, result = pcall(function()
     -- Download
-    local ok, err = download_file(config.url, archive_path)
-    if not ok then
-      error(err)
+    local download_ok, download_err = download_file(config.url, archive_path)
+    if not download_ok then
+      error(download_err)
     end
     cleanup_needed = true
 
     -- Verify checksum
-    ok, err = verify_sha256(archive_path, config.sha)
-    if not ok then
-      error(err)
+    local verify_ok, verify_err = verify_sha256(archive_path, config.sha)
+    if not verify_ok then
+      error(verify_err)
     end
 
     -- Extract
-    ok, err = extract(archive_path, output_dir, config)
-    if not ok then
-      error(err)
+    local extract_ok, extract_err = extract(archive_path, output_dir, config)
+    if not extract_ok then
+      error(extract_err)
     end
     cleanup_needed = false
 
     -- Write metadata
-    ok, err = write_metadata(output_dir, config)
-    if not ok then
-      error(err)
+    local meta_ok, meta_err = write_metadata(output_dir, config)
+    if not meta_ok then
+      error(meta_err)
     end
 
     return true
