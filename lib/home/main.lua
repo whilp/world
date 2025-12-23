@@ -171,12 +171,23 @@ local function serialize_table(tbl)
 end
 
 local function detect_platform()
-  if not cosmo.uname then
-    return nil, "cosmo.uname not available"
+  local uname_bin = unix.commandv("uname")
+  if not uname_bin then
+    return nil, "uname not found"
   end
-  local uname = cosmo.uname()
-  local sysname = uname.sysname or "Linux"
-  local machine = uname.machine or "x86_64"
+
+  local ok, sysname = spawn(uname_bin, { "uname", "-s" })
+  if not ok then
+    return nil, "failed to get system name"
+  end
+  sysname = sysname:gsub("%s+$", "")
+
+  local machine
+  ok, machine = spawn(uname_bin, { "uname", "-m" })
+  if not ok then
+    return nil, "failed to get machine type"
+  end
+  machine = machine:gsub("%s+$", "")
 
   local sys_platforms = PLATFORMS[sysname]
   if not sys_platforms then
