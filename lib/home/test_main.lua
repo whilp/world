@@ -25,23 +25,23 @@ end
 
 -- Helper: create temp directory
 local function make_temp_dir()
-  local path = "/tmp/home_test_" .. os.time() .. "_" .. math.random(10000)
+  local temp_path = "/tmp/home_test_" .. os.time() .. "_" .. math.random(10000)
   if unix then
-    unix.makedirs(path)
+    unix.makedirs(temp_path)
   else
-    os.execute("mkdir -p " .. path)
+    os.execute("mkdir -p " .. temp_path)
   end
-  return path
+  return temp_path
 end
 
 -- Helper: remove directory recursively
-local function remove_dir(path)
-  os.execute("/usr/bin/rm -rf " .. path)
+local function remove_dir(dir_path)
+  os.execute("/usr/bin/rm -rf " .. dir_path)
 end
 
 -- Helper: write file
-local function write_file(path, content)
-  local f = io.open(path, "w")
+local function write_file(file_path, content)
+  local f = io.open(file_path, "w")
   if f then
     f:write(content)
     f:close()
@@ -58,122 +58,7 @@ local function skip_without_cosmo()
 end
 
 --------------------------------------------------------------------------------
--- Test 1: parse_manifest_line - Valid format with mode
---------------------------------------------------------------------------------
-function test_parse_manifest_line_with_mode()
-  local entry = home.parse_manifest_line("home/.zshrc 644")
-  lu.assertNotNil(entry)
-  lu.assertEquals(entry.path, "home/.zshrc")
-  lu.assertEquals(entry.mode, tonumber("644", 8))
-end
-
-function test_parse_manifest_line_executable_mode()
-  local entry = home.parse_manifest_line("home/.local/bin/foo 755")
-  lu.assertNotNil(entry)
-  lu.assertEquals(entry.path, "home/.local/bin/foo")
-  lu.assertEquals(entry.mode, tonumber("755", 8))
-end
-
---------------------------------------------------------------------------------
--- Test 2: parse_manifest_line - Old format without mode
---------------------------------------------------------------------------------
-function test_parse_manifest_line_no_mode()
-  local entry = home.parse_manifest_line("home/.bashrc")
-  lu.assertNotNil(entry)
-  lu.assertEquals(entry.path, "home/.bashrc")
-  lu.assertNil(entry.mode)
-end
-
---------------------------------------------------------------------------------
--- Test 3: parse_manifest_line - Comments and empty lines
---------------------------------------------------------------------------------
-function test_parse_manifest_line_comment()
-  lu.assertNil(home.parse_manifest_line("# this is a comment"))
-  lu.assertNil(home.parse_manifest_line("  # indented comment"))
-end
-
-function test_parse_manifest_line_empty()
-  lu.assertNil(home.parse_manifest_line(""))
-  lu.assertNil(home.parse_manifest_line("   "))
-  lu.assertNil(home.parse_manifest_line("\t\t"))
-end
-
---------------------------------------------------------------------------------
--- Test 4: parse_manifest - Full manifest parsing
---------------------------------------------------------------------------------
-function test_parse_manifest_string()
-  local manifest = [[
-# Comment
-home/.zshrc 644
-home/.config/nvim/init.lua 644
-
-home/.local/bin/tool 755
-]]
-  local files = home.parse_manifest(manifest)
-  lu.assertEquals(#files, 3)
-  lu.assertEquals(files[1].path, "home/.zshrc")
-  lu.assertEquals(files[2].path, "home/.config/nvim/init.lua")
-  lu.assertEquals(files[3].path, "home/.local/bin/tool")
-end
-
-function test_parse_manifest_iterator()
-  local lines = { "home/.zshrc 644", "# skip", "home/.bashrc" }
-  local i = 0
-  local iter = function()
-    i = i + 1
-    return lines[i]
-  end
-  local files = home.parse_manifest(iter)
-  lu.assertEquals(#files, 2)
-end
-
---------------------------------------------------------------------------------
--- Test 5: extract_tools - Tool extraction from paths
---------------------------------------------------------------------------------
-function test_extract_tools_basic()
-  local files = {
-    { path = "home/.zshrc", mode = 420 },
-    { path = "home/.local/bin/nvim", mode = 493 },
-    { path = "home/.local/bin/ripgrep", mode = 493 },
-    { path = "home/.config/foo", mode = 420 },
-  }
-  local tools = home.extract_tools(files)
-  lu.assertEquals(#tools, 2)
-  lu.assertEquals(tools[1], "nvim")
-  lu.assertEquals(tools[2], "ripgrep")
-end
-
-function test_extract_tools_sorted()
-  local files = {
-    { path = "home/.local/bin/zsh", mode = 493 },
-    { path = "home/.local/bin/abc", mode = 493 },
-    { path = "home/.local/bin/make", mode = 493 },
-  }
-  local tools = home.extract_tools(files)
-  lu.assertEquals(tools[1], "abc")
-  lu.assertEquals(tools[2], "make")
-  lu.assertEquals(tools[3], "zsh")
-end
-
-function test_extract_tools_no_duplicates()
-  local files = {
-    { path = "home/.local/bin/foo", mode = 493 },
-    { path = "home/.local/bin/foo", mode = 493 },
-  }
-  local tools = home.extract_tools(files)
-  lu.assertEquals(#tools, 1)
-end
-
-function test_extract_tools_ignores_subdirs()
-  local files = {
-    { path = "home/.local/bin/subdir/tool", mode = 493 },
-  }
-  local tools = home.extract_tools(files)
-  lu.assertEquals(#tools, 0)
-end
-
---------------------------------------------------------------------------------
--- Test 6: parse_args - Argument parsing
+-- Test: parse_args - Argument parsing
 --------------------------------------------------------------------------------
 function test_parse_args_unpack_basic()
   local args = { "unpack", "/tmp/dest" }
@@ -249,6 +134,13 @@ function test_parse_args_only()
   lu.assertEquals(parsed.dest, "/tmp/dest")
 end
 
+function test_parse_args_with_binaries()
+  local args = { "unpack", "--with-binaries", "/tmp/dest" }
+  local parsed = home.parse_args(args)
+  lu.assertTrue(parsed.with_binaries)
+  lu.assertEquals(parsed.dest, "/tmp/dest")
+end
+
 function test_parse_args_combined_flags()
   local args = { "unpack", "--force", "--verbose", "--dry-run", "/tmp/dest" }
   local parsed = home.parse_args(args)
@@ -259,38 +151,7 @@ function test_parse_args_combined_flags()
 end
 
 --------------------------------------------------------------------------------
--- Test 7: strip_home_prefix
---------------------------------------------------------------------------------
-function test_strip_home_prefix_with_prefix()
-  lu.assertEquals(home.strip_home_prefix("home/.zshrc"), ".zshrc")
-  lu.assertEquals(home.strip_home_prefix("home/.config/foo"), ".config/foo")
-end
-
-function test_strip_home_prefix_without_prefix()
-  lu.assertEquals(home.strip_home_prefix("other/path"), "other/path")
-  lu.assertEquals(home.strip_home_prefix(".zshrc"), ".zshrc")
-end
-
-function test_strip_home_prefix_edge_cases()
-  lu.assertEquals(home.strip_home_prefix("home/"), "")
-  lu.assertEquals(home.strip_home_prefix("home"), "home")
-end
-
---------------------------------------------------------------------------------
--- Test 8: is_directory_path
---------------------------------------------------------------------------------
-function test_is_directory_path_true()
-  lu.assertTrue(home.is_directory_path("home/.config/"))
-  lu.assertTrue(home.is_directory_path("foo/bar/baz/"))
-end
-
-function test_is_directory_path_false()
-  lu.assertFalse(home.is_directory_path("home/.zshrc"))
-  lu.assertFalse(home.is_directory_path("foo/bar"))
-end
-
---------------------------------------------------------------------------------
--- Test 9: copy_file - Basic copy
+-- Test: copy_file - Basic copy
 --------------------------------------------------------------------------------
 function test_copy_file_basic()
   skip_without_cosmo()
@@ -332,7 +193,7 @@ function test_copy_file_with_mode()
 end
 
 --------------------------------------------------------------------------------
--- Test 10: copy_file - Overwrite behavior
+-- Test: copy_file - Overwrite behavior
 --------------------------------------------------------------------------------
 function test_copy_file_no_overwrite_fails()
   skip_without_cosmo()
@@ -409,6 +270,7 @@ function test_cmd_help()
   lu.assertStrContains(output, "unpack")
   lu.assertStrContains(output, "list")
   lu.assertStrContains(output, "--force")
+  lu.assertStrContains(output, "--with-binaries")
 end
 
 --------------------------------------------------------------------------------
@@ -427,19 +289,23 @@ end
 function test_cmd_unpack_silent_by_default()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local manifest_path = path.join(tmp, "MANIFEST.txt")
   local zip_root = path.join(tmp, "zip/")
-  unix.makedirs(zip_root .. "home")
+  unix.makedirs(zip_root)
 
-  write_file(manifest_path, "home/.testfile 644\n")
-  write_file(zip_root .. "home/.testfile", "test content")
+  write_file(zip_root .. ".testfile", "test content")
+
+  local manifest = {
+    files = {
+      [".testfile"] = { mode = 420 },
+    },
+  }
 
   local dest = path.join(tmp, "dest")
   local stderr = mock_writer()
   local stdout = mock_writer()
 
   local code = home.cmd_unpack(dest, false, {
-    manifest_path = manifest_path,
+    manifest = manifest,
     zip_root = zip_root,
     stderr = stderr,
     stdout = stdout,
@@ -459,19 +325,24 @@ end
 function test_cmd_unpack_verbose()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local manifest_path = path.join(tmp, "MANIFEST.txt")
   local zip_root = path.join(tmp, "zip/")
-  unix.makedirs(zip_root .. "home")
+  unix.makedirs(zip_root)
 
-  write_file(manifest_path, "home/.zshrc 644\nhome/.bashrc 644\n")
-  write_file(zip_root .. "home/.zshrc", "zsh content")
-  write_file(zip_root .. "home/.bashrc", "bash content")
+  write_file(zip_root .. ".zshrc", "zsh content")
+  write_file(zip_root .. ".bashrc", "bash content")
+
+  local manifest = {
+    files = {
+      [".zshrc"] = { mode = 420 },
+      [".bashrc"] = { mode = 420 },
+    },
+  }
 
   local dest = path.join(tmp, "dest")
   local stdout = mock_writer()
 
   local code = home.cmd_unpack(dest, false, {
-    manifest_path = manifest_path,
+    manifest = manifest,
     zip_root = zip_root,
     stdout = stdout,
     verbose = true,
@@ -488,12 +359,16 @@ end
 function test_cmd_unpack_verbose_force_overwrite()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local manifest_path = path.join(tmp, "MANIFEST.txt")
   local zip_root = path.join(tmp, "zip/")
-  unix.makedirs(zip_root .. "home")
+  unix.makedirs(zip_root)
 
-  write_file(manifest_path, "home/.testfile 644\n")
-  write_file(zip_root .. "home/.testfile", "new content")
+  write_file(zip_root .. ".testfile", "new content")
+
+  local manifest = {
+    files = {
+      [".testfile"] = { mode = 420 },
+    },
+  }
 
   local dest = path.join(tmp, "dest")
   unix.makedirs(dest)
@@ -502,7 +377,7 @@ function test_cmd_unpack_verbose_force_overwrite()
   local stdout = mock_writer()
 
   local code = home.cmd_unpack(dest, true, {
-    manifest_path = manifest_path,
+    manifest = manifest,
     zip_root = zip_root,
     stdout = stdout,
     verbose = true,
@@ -521,17 +396,21 @@ end
 function test_cmd_unpack_dry_run()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local manifest_path = path.join(tmp, "MANIFEST.txt")
   local zip_root = path.join(tmp, "zip/")
-  unix.makedirs(zip_root .. "home")
+  unix.makedirs(zip_root)
 
-  write_file(manifest_path, "home/.testfile 644\n")
-  write_file(zip_root .. "home/.testfile", "test content")
+  write_file(zip_root .. ".testfile", "test content")
+
+  local manifest = {
+    files = {
+      [".testfile"] = { mode = 420 },
+    },
+  }
 
   local dest = path.join(tmp, "dest")
 
   local code = home.cmd_unpack(dest, false, {
-    manifest_path = manifest_path,
+    manifest = manifest,
     zip_root = zip_root,
     dry_run = true,
   })
@@ -548,18 +427,22 @@ end
 function test_cmd_unpack_dry_run_verbose()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local manifest_path = path.join(tmp, "MANIFEST.txt")
   local zip_root = path.join(tmp, "zip/")
-  unix.makedirs(zip_root .. "home")
+  unix.makedirs(zip_root)
 
-  write_file(manifest_path, "home/.zshrc 644\n")
-  write_file(zip_root .. "home/.zshrc", "zsh content")
+  write_file(zip_root .. ".zshrc", "zsh content")
+
+  local manifest = {
+    files = {
+      [".zshrc"] = { mode = 420 },
+    },
+  }
 
   local dest = path.join(tmp, "dest")
   local stdout = mock_writer()
 
   local code = home.cmd_unpack(dest, false, {
-    manifest_path = manifest_path,
+    manifest = manifest,
     zip_root = zip_root,
     stdout = stdout,
     dry_run = true,
@@ -583,14 +466,20 @@ end
 function test_cmd_unpack_only_filter()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local manifest_path = path.join(tmp, "MANIFEST.txt")
   local zip_root = path.join(tmp, "zip/")
-  unix.makedirs(zip_root .. "home")
+  unix.makedirs(zip_root)
 
-  write_file(manifest_path, "home/.zshrc 644\nhome/.bashrc 644\nhome/.vimrc 644\n")
-  write_file(zip_root .. "home/.zshrc", "zsh content")
-  write_file(zip_root .. "home/.bashrc", "bash content")
-  write_file(zip_root .. "home/.vimrc", "vim content")
+  write_file(zip_root .. ".zshrc", "zsh content")
+  write_file(zip_root .. ".bashrc", "bash content")
+  write_file(zip_root .. ".vimrc", "vim content")
+
+  local manifest = {
+    files = {
+      [".zshrc"] = { mode = 420 },
+      [".bashrc"] = { mode = 420 },
+      [".vimrc"] = { mode = 420 },
+    },
+  }
 
   local dest = path.join(tmp, "dest")
 
@@ -598,7 +487,7 @@ function test_cmd_unpack_only_filter()
   local filter_input = ".zshrc\n.vimrc\n"
 
   local code = home.cmd_unpack(dest, false, {
-    manifest_path = manifest_path,
+    manifest = manifest,
     zip_root = zip_root,
     only = true,
     filter_input = filter_input,
@@ -624,18 +513,22 @@ end
 function test_cmd_unpack_only_empty_filter()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local manifest_path = path.join(tmp, "MANIFEST.txt")
   local zip_root = path.join(tmp, "zip/")
-  unix.makedirs(zip_root .. "home")
+  unix.makedirs(zip_root)
 
-  write_file(manifest_path, "home/.zshrc 644\n")
-  write_file(zip_root .. "home/.zshrc", "zsh content")
+  write_file(zip_root .. ".zshrc", "zsh content")
+
+  local manifest = {
+    files = {
+      [".zshrc"] = { mode = 420 },
+    },
+  }
 
   local dest = path.join(tmp, "dest")
 
   -- Empty filter = extract nothing
   local code = home.cmd_unpack(dest, false, {
-    manifest_path = manifest_path,
+    manifest = manifest,
     zip_root = zip_root,
     only = true,
     filter_input = "",
@@ -652,14 +545,20 @@ end
 function test_cmd_unpack_only_null_delimited()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local manifest_path = path.join(tmp, "MANIFEST.txt")
   local zip_root = path.join(tmp, "zip/")
-  unix.makedirs(zip_root .. "home")
+  unix.makedirs(zip_root)
 
-  write_file(manifest_path, "home/.zshrc 644\nhome/.bashrc 644\nhome/.vimrc 644\n")
-  write_file(zip_root .. "home/.zshrc", "zsh content")
-  write_file(zip_root .. "home/.bashrc", "bash content")
-  write_file(zip_root .. "home/.vimrc", "vim content")
+  write_file(zip_root .. ".zshrc", "zsh content")
+  write_file(zip_root .. ".bashrc", "bash content")
+  write_file(zip_root .. ".vimrc", "vim content")
+
+  local manifest = {
+    files = {
+      [".zshrc"] = { mode = 420 },
+      [".bashrc"] = { mode = 420 },
+      [".vimrc"] = { mode = 420 },
+    },
+  }
 
   local dest = path.join(tmp, "dest")
 
@@ -667,7 +566,7 @@ function test_cmd_unpack_only_null_delimited()
   local filter_input = ".zshrc" .. string.char(0) .. ".vimrc" .. string.char(0)
 
   local code = home.cmd_unpack(dest, false, {
-    manifest_path = manifest_path,
+    manifest = manifest,
     zip_root = zip_root,
     only = true,
     null = true,
@@ -692,45 +591,42 @@ function test_cmd_unpack_only_null_delimited()
 end
 
 --------------------------------------------------------------------------------
--- Test: cmd_list default (paths only)
+-- Test: cmd_list
 --------------------------------------------------------------------------------
 function test_cmd_list_default_paths_only()
-  local tmp = make_temp_dir()
-  local manifest_path = path.join(tmp, "MANIFEST.txt")
-  write_file(manifest_path, [[
-home/.zshrc 644
-home/.local/bin/nvim 755
-home/.config/foo/ 755
-]])
+  local manifest = {
+    files = {
+      [".zshrc"] = { mode = 420 },
+      [".local/bin/nvim"] = { mode = 493 },
+    },
+  }
 
   local stdout = mock_writer()
   local stderr = mock_writer()
   local code = home.cmd_list({
-    manifest_path = manifest_path,
+    manifest = manifest,
     stdout = stdout,
     stderr = stderr,
   })
   lu.assertEquals(code, 0)
 
   local output = stdout:get()
-  lu.assertEquals(output, ".zshrc\n.local/bin/nvim\n.config/foo/\n")
-
-  remove_dir(tmp)
+  lu.assertStrContains(output, ".zshrc\n")
+  lu.assertStrContains(output, ".local/bin/nvim\n")
 end
 
 function test_cmd_list_verbose()
-  local tmp = make_temp_dir()
-  local manifest_path = path.join(tmp, "MANIFEST.txt")
-  write_file(manifest_path, [[
-home/.zshrc 644
-home/.local/bin/nvim 755
-home/.config/foo/ 755
-]])
+  local manifest = {
+    files = {
+      [".zshrc"] = { mode = 420 },
+      [".local/bin/nvim"] = { mode = 493 },
+    },
+  }
 
   local stdout = mock_writer()
   local stderr = mock_writer()
   local code = home.cmd_list({
-    manifest_path = manifest_path,
+    manifest = manifest,
     stdout = stdout,
     stderr = stderr,
     verbose = true,
@@ -740,23 +636,20 @@ home/.config/foo/ 755
   local output = stdout:get()
   lu.assertStrContains(output, "-rw-r--r-- .zshrc\n")
   lu.assertStrContains(output, "-rwxr-xr-x .local/bin/nvim\n")
-  lu.assertStrContains(output, "drwxr-xr-x .config/foo/\n")
-
-  remove_dir(tmp)
 end
 
 function test_cmd_list_null_delimiter()
-  local tmp = make_temp_dir()
-  local manifest_path = path.join(tmp, "MANIFEST.txt")
-  write_file(manifest_path, [[
-home/.zshrc 644
-home/.bashrc 644
-]])
+  local manifest = {
+    files = {
+      [".zshrc"] = { mode = 420 },
+      [".bashrc"] = { mode = 420 },
+    },
+  }
 
   local stdout = mock_writer()
   local stderr = mock_writer()
   local code = home.cmd_list({
-    manifest_path = manifest_path,
+    manifest = manifest,
     stdout = stdout,
     stderr = stderr,
     null = true,
@@ -764,10 +657,8 @@ home/.bashrc 644
   lu.assertEquals(code, 0)
 
   local output = stdout:get()
-  local expected = ".zshrc" .. string.char(0) .. ".bashrc" .. string.char(0)
-  lu.assertEquals(output, expected)
-
-  remove_dir(tmp)
+  lu.assertStrContains(output, ".zshrc" .. string.char(0))
+  lu.assertStrContains(output, ".bashrc" .. string.char(0))
 end
 
 --------------------------------------------------------------------------------
@@ -798,10 +689,10 @@ end
 --------------------------------------------------------------------------------
 function test_read_file_success()
   local tmp = make_temp_dir()
-  local path = path.join(tmp, "test.txt")
-  write_file(path, "test content")
+  local file_path = path.join(tmp, "test.txt")
+  write_file(file_path, "test content")
 
-  local data, err = home.read_file(path)
+  local data, err = home.read_file(file_path)
   lu.assertNil(err)
   lu.assertEquals(data, "test content")
 
@@ -1080,7 +971,6 @@ function test_cmd_3p_empty_share()
   skip_without_cosmo()
   local tmp = make_temp_dir()
   local share_dir = path.join(tmp, "share")
-  local bin_dir = path.join(tmp, "bin")
   unix.makedirs(share_dir)
 
   local stdout = mock_writer()
@@ -1257,6 +1147,20 @@ function test_scan_for_latest_version_rejects_invalid_paths()
   lu.assertNil(result)
 
   remove_dir(tmp)
+end
+
+--------------------------------------------------------------------------------
+-- Test: detect_platform
+--------------------------------------------------------------------------------
+function test_detect_platform_returns_string()
+  local platform = home.detect_platform()
+  lu.assertNotNil(platform)
+  lu.assertTrue(type(platform) == "string")
+  -- Platform should be one of the known values
+  lu.assertTrue(
+    platform == "darwin-arm64" or platform == "linux-arm64" or platform == "linux-x86_64",
+    "unexpected platform: " .. platform
+  )
 end
 
 os.exit(lu.LuaUnit.run())

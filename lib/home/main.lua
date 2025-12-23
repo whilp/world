@@ -313,6 +313,7 @@ local function cmd_unpack(dest, force, opts)
   local dry_run = opts.dry_run or false
   local only = opts.only or false
   local with_binaries = opts.with_binaries or false
+  local zip_root = opts.zip_root or "/zip/home/"
 
   if not dest then
     stderr:write("error: destination path required\n")
@@ -340,7 +341,7 @@ local function cmd_unpack(dest, force, opts)
     end
   end
 
-  local manifest = load_manifest()
+  local manifest = opts.manifest or load_manifest()
   if not manifest or not manifest.files then
     stderr:write("error: failed to load manifest\n")
     return 1
@@ -354,7 +355,7 @@ local function cmd_unpack(dest, force, opts)
 
   for _, rel_path in ipairs(paths) do
     local info = manifest.files[rel_path]
-    local zip_path = "/zip/home/" .. rel_path
+    local zip_path = zip_root .. rel_path
     local dest_path = path.join(dest, rel_path)
 
     if filter and not filter[rel_path] then
@@ -471,7 +472,7 @@ local function cmd_list(opts)
   local verbose = opts.verbose or false
   local null = opts.null or false
 
-  local manifest = load_manifest()
+  local manifest = opts.manifest or load_manifest()
   if not manifest or not manifest.files then
     stderr:write("error: failed to load manifest\n")
     return 1
