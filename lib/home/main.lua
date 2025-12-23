@@ -15,24 +15,24 @@ local PLATFORMS = {
   },
 }
 
-local MANAGED_BINARIES = {
-  "ast-grep",
-  "biome",
-  "comrak",
-  "delta",
-  "duckdb",
-  "gh",
-  "marksman",
-  "nvim",
-  "rg",
-  "ruff",
-  "shfmt",
-  "sqruff",
-  "stylua",
-  "superhtml",
-  "tree-sitter",
-  "uv",
-}
+local function discover_tools(share_dir)
+  local tools = {}
+  local dir = unix.opendir(share_dir)
+  if not dir then
+    return tools
+  end
+  for name in dir do
+    if name ~= "." and name ~= ".." then
+      local tool_path = path.join(share_dir, name)
+      local st = unix.stat(tool_path)
+      if st and unix.S_ISDIR(st:mode()) then
+        table.insert(tools, name)
+      end
+    end
+  end
+  table.sort(tools)
+  return tools
+end
 
 local function read_file(filepath)
   local f, err = io.open(filepath, "rb")
@@ -769,8 +769,9 @@ local function cmd_3p(args, opts)
   end
 
   local results = {}
+  local tools = discover_tools(share_dir)
 
-  for _, tool in ipairs(MANAGED_BINARIES) do
+  for _, tool in ipairs(tools) do
     local info = scan_for_latest_version(tool, share_dir)
     if info then
       table.insert(results, {
@@ -893,7 +894,7 @@ end
 
 local home = {
   PLATFORMS = PLATFORMS,
-  MANAGED_BINARIES = MANAGED_BINARIES,
+  discover_tools = discover_tools,
   read_file = read_file,
   spawn = spawn,
   serialize_value = serialize_value,

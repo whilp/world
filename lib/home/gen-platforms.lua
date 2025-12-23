@@ -12,50 +12,14 @@ local function file_size(filepath)
   return st:size()
 end
 
-local function sha256_file(filepath)
-  local shasum = unix.commandv("shasum") or unix.commandv("sha256sum")
-  if not shasum then
-    return nil, "neither shasum nor sha256sum found"
-  end
-
-  local cmd
-  if shasum:match("shasum$") then
-    cmd = string.format("%s -a 256 %q 2>/dev/null", shasum, filepath)
-  else
-    cmd = string.format("%s %q 2>/dev/null", shasum, filepath)
-  end
-
-  local f = io.popen(cmd)
-  if not f then
-    return nil, "failed to run shasum"
-  end
-
-  local output = f:read("*a")
-  f:close()
-
-  local sha = output:match("^(%x+)")
-  if not sha or #sha ~= 64 then
-    return nil, "invalid sha256 output"
-  end
-  return sha
-end
-
 local function extract_manifest(asset_path)
   local unzip = unix.commandv("unzip")
   if not unzip then
     return nil, "unzip not found"
   end
 
-  local cmd = string.format("%s -p %q manifest.lua 2>/dev/null", unzip, asset_path)
-  local f = io.popen(cmd)
-  if not f then
-    return nil, "failed to run unzip"
-  end
-
-  local output = f:read("*a")
-  f:close()
-
-  if not output or output == "" then
+  local ok, output = home.spawn(unzip, { "unzip", "-p", asset_path, "manifest.lua" })
+  if not ok or not output or output == "" then
     return nil, "no manifest.lua found in " .. asset_path
   end
 
@@ -102,7 +66,7 @@ local function main(args)
     if not platform then
       io.stderr:write("warning: cannot determine platform from: " .. asset_path .. "\n")
     else
-      local sha256, err = sha256_file(asset_path)
+      local sha256, err = home.sha256_file(asset_path)
       if not sha256 then
         io.stderr:write("error: " .. err .. "\n")
         return 1
@@ -142,7 +106,6 @@ end
 
 local M = {
   file_size = file_size,
-  sha256_file = sha256_file,
   extract_manifest = extract_manifest,
   platform_from_asset = platform_from_asset,
   main = main,
