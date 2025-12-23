@@ -1,6 +1,8 @@
-package.path = "/workspaces/dotfiles/.config/setup/?.lua;/home/codespace/.local/bootstrap/lib/lua/?.lua;/home/codespace/.local/bootstrap/lib/lua/?/init.lua;;"
+package.path = "/workspaces/dotfiles/.config/setup/?.lua;" ..
+	"/home/codespace/.local/bootstrap/lib/lua/?.lua;" ..
+	"/home/codespace/.local/bootstrap/lib/lua/?/init.lua;;"
 
-local cosmo = require("cosmo")
+local cosmo = require("cosmo") -- luacheck: ignore
 
 print("validating setup scripts...")
 print()
