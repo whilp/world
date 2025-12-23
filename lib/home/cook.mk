@@ -48,19 +48,19 @@ define build_platform_asset
 	@echo "Creating platform asset..."
 	@cp $(lua_bin) $(1)
 	@cd results/platform-$(2) && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$(1) -@
-	@$(cosmos_zip_bin) -qj $(1) lib/home/platform-main.lua
-	@cp lib/home/.args-platform results/platform-$(2)/.args
+	@$(cosmos_zip_bin) -qj $(1) lib/home/main.lua
+	@echo -n '/zip/main.lua' > results/platform-$(2)/.args
 	@$(cosmos_zip_bin) -qj $(1) results/platform-$(2)/.args
 	@rm -rf results/platform-$(2)
 endef
 
-results/bin/home-darwin-arm64: $(lua_bin) results/binaries-darwin-arm64.zip lib/home/platform-main.lua lib/home/.args-platform lib/home/gen-manifest.lua | results/bin
+results/bin/home-darwin-arm64: $(lua_bin) results/binaries-darwin-arm64.zip lib/home/main.lua lib/home/gen-manifest.lua | results/bin
 	$(call build_platform_asset,$@,darwin-arm64)
 
-results/bin/home-linux-arm64: $(lua_bin) results/binaries-linux-arm64.zip lib/home/platform-main.lua lib/home/.args-platform lib/home/gen-manifest.lua | results/bin
+results/bin/home-linux-arm64: $(lua_bin) results/binaries-linux-arm64.zip lib/home/main.lua lib/home/gen-manifest.lua | results/bin
 	$(call build_platform_asset,$@,linux-arm64)
 
-results/bin/home-linux-x86_64: $(lua_bin) results/binaries-linux-x86_64.zip lib/home/platform-main.lua lib/home/.args-platform lib/home/gen-manifest.lua | results/bin
+results/bin/home-linux-x86_64: $(lua_bin) results/binaries-linux-x86_64.zip lib/home/main.lua lib/home/gen-manifest.lua | results/bin
 	$(call build_platform_asset,$@,linux-x86_64)
 
 platform-assets: results/bin/home-darwin-arm64 results/bin/home-linux-arm64 results/bin/home-linux-x86_64

@@ -134,10 +134,10 @@ function test_parse_args_only()
   lu.assertEquals(parsed.dest, "/tmp/dest")
 end
 
-function test_parse_args_with_binaries()
-  local args = { "unpack", "--with-binaries", "/tmp/dest" }
+function test_parse_args_with_platform()
+  local args = { "unpack", "--with-platform", "/tmp/dest" }
   local parsed = home.parse_args(args)
-  lu.assertTrue(parsed.with_binaries)
+  lu.assertTrue(parsed.with_platform)
   lu.assertEquals(parsed.dest, "/tmp/dest")
 end
 
@@ -270,7 +270,7 @@ function test_cmd_help()
   lu.assertStrContains(output, "unpack")
   lu.assertStrContains(output, "list")
   lu.assertStrContains(output, "--force")
-  lu.assertStrContains(output, "--with-binaries")
+  lu.assertStrContains(output, "--with-platform")
 end
 
 --------------------------------------------------------------------------------
