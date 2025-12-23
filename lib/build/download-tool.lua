@@ -153,7 +153,7 @@ local function extract_zip(archive_path, output_dir, strip_components)
       cd '%s' && \
       dir=$(find . -mindepth 1 -maxdepth 1 -type d | head -1) && \
       if [ -n "$dir" ]; then \
-        mv "$dir"/* "$dir"/.* . 2>/dev/null || true; \
+        find "$dir" -mindepth 1 -maxdepth 1 -exec mv {} . \; && \
         rmdir "$dir"; \
       fi
     ]], output_dir)
