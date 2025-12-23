@@ -40,7 +40,9 @@ local function validate_config(config)
     end
 
     if #platform_data.sha256 ~= 64 then
-      return nil, string.format("platform '%s' field 'sha256' must be 64 characters (SHA-256 hex), got %d", plat, #platform_data.sha256)
+      return nil, string.format(
+        "platform '%s' field 'sha256' must be 64 characters (SHA-256 hex), got %d",
+        plat, #platform_data.sha256)
     end
 
     if platform_data.arch and type(platform_data.arch) ~= "string" then
@@ -77,7 +79,9 @@ local function validate_config(config)
       return nil, string.format("field 'strip_components' must be number, got %s", type(config.strip_components))
     end
     if config.strip_components < 0 or config.strip_components ~= math.floor(config.strip_components) then
-      return nil, string.format("field 'strip_components' must be non-negative integer, got %s", tostring(config.strip_components))
+      return nil, string.format(
+        "field 'strip_components' must be non-negative integer, got %s",
+        tostring(config.strip_components))
     end
   end
 

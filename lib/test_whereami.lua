@@ -18,5 +18,6 @@ function test_whereami_get_with_emoji()
   lu.assertIsString(identifier, "whereami.get_with_emoji() should return a string")
   lu.assertTrue(#identifier > 0, "whereami.get_with_emoji() should return a non-empty string")
   -- Should contain a space (separating identifier and emoji)
-  lu.assertNotNil(identifier:find(" "), "whereami.get_with_emoji() should contain identifier and emoji separated by space")
+  lu.assertNotNil(identifier:find(" "),
+    "whereami.get_with_emoji() should contain identifier and emoji separated by space")
 end

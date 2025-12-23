@@ -135,7 +135,7 @@ local function extract_tools(files)
 end
 
 -- Parse command-line arguments
--- Returns {cmd=string, subcmd=string|nil, force=bool, verbose=bool, dry_run=bool, only=bool, null=bool, dest=string|nil}
+-- Returns {cmd, subcmd, force, verbose, dry_run, only, null, dest}
 local function parse_args(args)
   local result = {
     cmd = args[1] or "help",

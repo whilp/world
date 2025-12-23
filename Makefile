@@ -23,6 +23,19 @@ include 3p/uv/cook.mk
 include lib/home/cook.mk
 include lib/test.mk
 
+UNAME_S := $(shell uname -s)
+UNAME_M := $(shell uname -m)
+ifeq ($(UNAME_S),Darwin)
+  PLATFORM := darwin-arm64
+else ifeq ($(UNAME_M),aarch64)
+  PLATFORM := linux-arm64
+else
+  PLATFORM := linux-x86_64
+endif
+
+ast_grep_bin := $(ast_grep_dir)/$(PLATFORM)/ast-grep
+ast_grep_extracted := $(ast_grep_dir)/$(PLATFORM)/.extracted
+
 build: lua
 
 clean:
@@ -89,31 +102,16 @@ check: private .UNVEIL = \
 	rx:$(3p)/ast-grep \
 	rx:results/bin \
 	rw:/dev/null
-check:
-	@if [ "$$(uname)" = "Darwin" ]; then \
-		PLATFORM="darwin-arm64"; \
-	elif [ "$$(uname -m)" = "aarch64" ]; then \
-		PLATFORM="linux-arm64"; \
-	else \
-		PLATFORM="linux-x86_64"; \
-	fi; \
-	SG="$(3p)/ast-grep/$$PLATFORM/sg"; \
-	if [ ! -x "$$SG" ]; then \
-		echo "ast-grep not found at $$SG, building..."; \
-		$(MAKE) $(3p)/ast-grep/$$PLATFORM/.extracted; \
-	fi; \
-	$$SG scan --color always
+check: $(ast_grep_extracted) lua
+	$(ast_grep_bin) scan --color always
 	@echo ""
 	@echo "Running luacheck..."
-	@if [ ! -x results/bin/lua ]; then \
-		echo "lua binary not found, building..."; \
-		$(MAKE) lua; \
-	fi
-	@results/bin/lua /zip/.lua/bin/luacheck \
+	@$(lua_bin) /zip/.lua/bin/luacheck \
 		.config \
 		lib \
 		.github \
 		--exclude-files '.claude/skills/lua/templates/*.lua' \
-		|| true
+		--exclude-files '.config/nvim/**/*.lua' \
+		--exclude-files '.config/hammerspoon/**/*.lua'
 
 .PHONY: build clean check
