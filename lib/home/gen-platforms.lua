@@ -13,11 +13,34 @@ local function read_file(filepath)
 end
 
 local function sha256_file(filepath)
-  local data, err = read_file(filepath)
-  if not data then
-    return nil, err
+  local stdin_r, stdin_w = unix.pipe()
+  local stdout_r, stdout_w = unix.pipe()
+
+  local pid = unix.fork()
+  if pid == 0 then
+    unix.close(stdin_w)
+    unix.close(stdout_r)
+    unix.dup2(stdin_r, 0)
+    unix.dup2(stdout_w, 1)
+    unix.close(stdin_r)
+    unix.close(stdout_w)
+    unix.execve("/usr/bin/shasum", {"shasum", "-a", "256", filepath}, unix.environ())
+    unix.exit(1)
   end
-  return cosmo.sha256(data, "hex")
+
+  unix.close(stdin_r)
+  unix.close(stdout_w)
+  unix.close(stdin_w)
+
+  local output = unix.read(stdout_r, 65536) or ""
+  unix.close(stdout_r)
+  unix.wait()
+
+  local sha = output:match("^(%x+)")
+  if not sha or #sha ~= 64 then
+    return nil, "failed to compute sha256 for " .. filepath
+  end
+  return sha
 end
 
 local function file_size(filepath)
