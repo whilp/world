@@ -25,7 +25,7 @@ local function execute(program, args)
     unix.exit(127) -- Only reached if execve fails
   elseif pid > 0 then
     -- Parent process
-    local status = unix.wait()
+    local child_pid, status = unix.wait()
     -- Decode wait status: exit code is in upper byte
     local exit_code = (status >> 8) & 0xFF
     if exit_code ~= 0 then
