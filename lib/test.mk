@@ -105,7 +105,21 @@ test-environ: lua
 		LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;" \
 		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
 
-# skip test-work until work.lua module is available in CI
-test-all: test-3p-lua test-lib-whereami test-home test-lib-daemonize test-claude test-nvim test-claude-skills test-environ
+test-build-download-tool: private .UNVEIL = \
+	r:lib/build \
+	r:lib \
+	r:3p \
+	rx:$(lua_bin) \
+	r:$(test_runner) \
+	r:$(CURDIR) \
+	rwc:/tmp \
+	rw:/dev/null
+test-build-download-tool: lua
+	cd lib/build && HOME=$(CURDIR) \
+		LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;" \
+		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
 
-.PHONY: test-3p-lua test-lib-whereami test-work test-home test-lib-daemonize test-claude test-nvim test-claude-skills test-environ test-all
+# skip test-work until work.lua module is available in CI
+test-all: test-3p-lua test-lib-whereami test-home test-lib-daemonize test-claude test-nvim test-claude-skills test-environ test-build-download-tool
+
+.PHONY: test-3p-lua test-lib-whereami test-work test-home test-lib-daemonize test-claude test-nvim test-claude-skills test-environ test-build-download-tool test-all
