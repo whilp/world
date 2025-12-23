@@ -56,9 +56,14 @@ local function spawn(cmd, args, opts)
   if pid == 0 then
     unix.close(stdin_w)
     unix.close(stdout_r)
-    unix.dup2(stdin_r, 0)
-    unix.dup2(stdout_w, 1)
-    unix.dup2(stdout_w, 2)
+
+    -- close 0,1,2 then dup pipe fds to get them in order
+    unix.close(0)
+    unix.close(1)
+    unix.close(2)
+    unix.dup(stdin_r) -- becomes 0
+    unix.dup(stdout_w) -- becomes 1
+    unix.dup(stdout_w) -- becomes 2
     unix.close(stdin_r)
     unix.close(stdout_w)
 
@@ -348,6 +353,8 @@ local function parse_args(args)
     only = false,
     null = false,
     with_platform = false,
+    platform_url = nil,
+    platform = nil,
     dest = nil,
   }
 
@@ -365,6 +372,12 @@ local function parse_args(args)
       result.null = true
     elseif args[i] == "--with-platform" then
       result.with_platform = true
+    elseif args[i] == "--platform-url" then
+      i = i + 1
+      result.platform_url = args[i]
+    elseif args[i] == "--platform" then
+      i = i + 1
+      result.platform = args[i]
     elseif result.cmd == "3p" and not result.subcmd and not args[i]:match("^%-") then
       result.subcmd = args[i]
     elseif not result.dest then
@@ -422,6 +435,8 @@ local function cmd_unpack(dest, force, opts)
   local dry_run = opts.dry_run or false
   local only = opts.only or false
   local with_platform = opts.with_platform or false
+  local platform_url = opts.platform_url
+  local platform_override = opts.platform
   local zip_root = opts.zip_root or "/zip/home/"
 
   if not dest then
@@ -501,10 +516,15 @@ local function cmd_unpack(dest, force, opts)
       return 1
     end
 
-    local current, err = detect_platform()
-    if not current then
-      stderr:write("error: " .. (err or "failed to detect platform") .. "\n")
-      return 1
+    local current, err
+    if platform_override then
+      current = platform_override
+    else
+      current, err = detect_platform()
+      if not current then
+        stderr:write("error: " .. (err or "failed to detect platform") .. "\n")
+        return 1
+      end
     end
 
     local plat_info = platforms.platforms and platforms.platforms[current]
@@ -513,7 +533,7 @@ local function cmd_unpack(dest, force, opts)
       return 1
     end
 
-    local url = interpolate(platforms.base_url, { tag = platforms.tag }) .. "/" .. plat_info.asset
+    local url = platform_url or (interpolate(platforms.base_url, { tag = platforms.tag }) .. "/" .. plat_info.asset)
     local tmp_path = path.join(dest, ".home-platform-download")
 
     if not dry_run then
@@ -794,6 +814,8 @@ local function cmd_help(opts)
   stderr:write("  --dry-run, -n            show what would be extracted\n")
   if not platform_mode then
     stderr:write("  --with-platform          download and extract platform binaries\n")
+    stderr:write("  --platform <name>        override platform detection\n")
+    stderr:write("  --platform-url <url>     override platform asset download url\n")
   end
   stderr:write("  --only                   only extract files listed on stdin\n")
   stderr:write("  --null, -0               read null-delimited paths (with --only)\n")
@@ -822,6 +844,8 @@ local function main(args, opts)
     unpack_opts.only = parsed.only
     unpack_opts.null = parsed.null
     unpack_opts.with_platform = parsed.with_platform
+    unpack_opts.platform_url = parsed.platform_url
+    unpack_opts.platform = parsed.platform
 
     return cmd_unpack(parsed.dest, parsed.force, unpack_opts)
   elseif parsed.cmd == "list" then
