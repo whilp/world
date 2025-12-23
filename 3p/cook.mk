@@ -26,6 +26,9 @@ make := $(make_bin) COSMOCC=$(cosmocc_dir)
 TOOLS := nvim gh delta rg duckdb tree-sitter ast-grep biome comrak \
          marksman ruff shfmt sqruff stylua superhtml uv
 
+# download-tool needs our custom lua binary with cosmo built-in
+lua_bin := results/bin/lua
+
 # download-tool target
 download_tool := lib/build/download-tool.lua
 $(download_tool): lua
