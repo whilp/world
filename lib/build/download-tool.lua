@@ -123,10 +123,13 @@ local function extract_zip(archive_path, output_dir, strip_components)
   end
 
   if strip_components == 1 then
+    -- Move contents up one level: find the single top-level dir and move its contents
     local strip_cmd = string.format(
-      "find '%s' -mindepth 2 -maxdepth 2 -exec mv {} '%s'/ \\; && " ..
-      "find '%s' -mindepth 1 -maxdepth 1 -type d -empty -delete",
-      output_dir, output_dir, output_dir)
+      "sh -c 'cd \"%s\" && " ..
+      "dir=$(find . -mindepth 1 -maxdepth 1 -type d | head -1) && " ..
+      "mv \"$dir\"/* . && " ..
+      "rmdir \"$dir\"'",
+      output_dir)
     local ok, err = execute(strip_cmd)
     if not ok then
       return nil, err
