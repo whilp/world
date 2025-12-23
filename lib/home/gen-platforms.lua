@@ -49,38 +49,21 @@ local function file_size(filepath)
 end
 
 local function extract_manifest(asset_path)
-  local stdin_r, stdin_w = unix.pipe()
-  local stdout_r, stdout_w = unix.pipe()
-
-  local pid = unix.fork()
-  if pid == 0 then
-    unix.close(stdin_w)
-    unix.close(stdout_r)
-    unix.dup2(stdin_r, 0)
-    unix.dup2(stdout_w, 1)
-    unix.close(stdin_r)
-    unix.close(stdout_w)
-    unix.execve("/usr/bin/unzip", {"unzip", "-p", asset_path, "manifest.lua"}, unix.environ())
-    unix.exit(1)
+  local unzip = unix.commandv("unzip")
+  if not unzip then
+    return nil, "unzip not found"
   end
 
-  unix.close(stdin_r)
-  unix.close(stdout_w)
-  unix.close(stdin_w)
-
-  local chunks = {}
-  while true do
-    local chunk = unix.read(stdout_r, 65536)
-    if not chunk or chunk == "" then
-      break
-    end
-    table.insert(chunks, chunk)
+  local cmd = string.format("%s -p %q manifest.lua", unzip, asset_path)
+  local f = io.popen(cmd)
+  if not f then
+    return nil, "failed to run unzip"
   end
-  unix.close(stdout_r)
-  unix.wait()
 
-  local manifest_str = table.concat(chunks)
-  if manifest_str == "" then
+  local manifest_str = f:read("*a")
+  f:close()
+
+  if not manifest_str or manifest_str == "" then
     return nil, "no manifest.lua found in " .. asset_path
   end
 
