@@ -1153,6 +1153,11 @@ end
 -- Test: detect_platform
 --------------------------------------------------------------------------------
 function test_detect_platform_returns_string()
+  skip_without_cosmo()
+  -- cosmo.uname may not be available in all builds
+  if not cosmo.uname then
+    lu.skip("requires cosmo.uname")
+  end
   local platform = home.detect_platform()
   lu.assertNotNil(platform)
   lu.assertTrue(type(platform) == "string")
