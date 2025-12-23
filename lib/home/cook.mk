@@ -9,18 +9,15 @@ results/dotfiles.zip: $(cosmos_zip_bin) | results
 	git ls-files -z | grep -zZvE '$(home_exclude_pattern)' | \
 		xargs -0 $(cosmos_zip_bin) -q -r $@
 
-# Platform-specific home binaries
-define build_home
-	@echo "Building $(1) for $(2)..."
-	@rm -rf results/home-$(2)
-	@mkdir -p results/home-$(2)/home
-	@echo "Extracting dotfiles..."
-	@unzip -q results/dotfiles.zip -d results/home-$(2)/home
+# Platform-specific binary assets (home-darwin-arm64, home-linux-arm64, home-linux-x86_64)
+define build_platform_asset
+	@echo "Building platform asset $(1) for $(2)..."
+	@rm -rf results/platform-$(2)
+	@mkdir -p results/platform-$(2)/home/.local/share
 	@echo "Extracting and organizing binaries..."
-	@mkdir -p results/home-$(2)/temp-binaries
-	@unzip -q results/binaries-$(2).zip -d results/home-$(2)/temp-binaries
-	@mkdir -p results/home-$(2)/home/.local/bin results/home-$(2)/home/.local/share
-	@cd results/home-$(2)/temp-binaries && \
+	@mkdir -p results/platform-$(2)/temp-binaries
+	@unzip -q results/binaries-$(2).zip -d results/platform-$(2)/temp-binaries
+	@cd results/platform-$(2)/temp-binaries && \
 		for tool in nvim gh delta rg duckdb tree-sitter ast-grep biome comrak marksman ruff shfmt sqruff stylua superhtml uv; do \
 			if [ -d "$$tool/$(2)" ]; then \
 				version=$$(cat "$$tool/$(2)/VERSION" 2>/dev/null || echo "0.0.0"); \
@@ -28,7 +25,7 @@ define build_home
 				sha=$$(cat "$$tool/$(2)/SHA" 2>/dev/null || echo ""); \
 				sha=$$(echo "$$sha" | head -c 8); \
 				sha=$${sha:-00000000}; \
-				install_dir="$(CURDIR)/results/home-$(2)/home/.local/share/$$tool/$${version}-$${sha}"; \
+				install_dir="$(CURDIR)/results/platform-$(2)/home/.local/share/$$tool/$${version}-$${sha}"; \
 				echo "  Installing $$tool $${version}-$${sha}..."; \
 				mkdir -p "$$install_dir"; \
 				if [ "$$tool" = "nvim" ] || [ "$$tool" = "gh" ]; then \
@@ -45,27 +42,55 @@ define build_home
 				fi; \
 			fi; \
 		done
-	@rm -rf results/home-$(2)/temp-binaries
-	@cp -p $(lua_bin) results/home-$(2)/home/.local/bin/lua
-	@cp -p o/3p/cosmos/bin/unzip results/home-$(2)/home/.local/bin/unzip
+	@rm -rf results/platform-$(2)/temp-binaries
 	@echo "Generating manifest..."
-	@cd results/home-$(2) && find home \( -type f -o -type l \) -exec sh -c 'printf "%s %s\n" "$$1" $$(stat -c "%a" "$$1" 2>/dev/null || stat -f "%Lp" "$$1")' _ {} \; | sort > MANIFEST.txt
-	@echo "Creating home binary..."
+	@LUA_PATH="lib/home/?.lua;;" $(lua_bin) lib/home/gen-manifest.lua results/platform-$(2)/home $(HOME_VERSION) > results/platform-$(2)/manifest.lua
+	@echo "Creating platform asset..."
 	@cp $(lua_bin) $(1)
-	@cd results/home-$(2) && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$(1) -@
-	@cd lib/home && $(cosmos_zip_bin) -qr $(CURDIR)/$(1) main.lua .args
-	@rm -rf results/home-$(2)
+	@cd results/platform-$(2) && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$(1) -@
+	@$(cosmos_zip_bin) -qj $(1) lib/home/main.lua
+	@echo -n '/zip/main.lua' > results/platform-$(2)/.args
+	@$(cosmos_zip_bin) -qj $(1) results/platform-$(2)/.args
+	@rm -rf results/platform-$(2)
 endef
 
-results/bin/home-darwin-arm64: $(lua_bin) results/dotfiles.zip results/binaries-darwin-arm64.zip lib/home/main.lua lib/home/.args | results/bin
-	$(call build_home,$@,darwin-arm64)
+results/bin/home-darwin-arm64: $(lua_bin) results/binaries-darwin-arm64.zip lib/home/main.lua lib/home/gen-manifest.lua | results/bin
+	$(call build_platform_asset,$@,darwin-arm64)
 
-results/bin/home-linux-arm64: $(lua_bin) results/dotfiles.zip results/binaries-linux-arm64.zip lib/home/main.lua lib/home/.args | results/bin
-	$(call build_home,$@,linux-arm64)
+results/bin/home-linux-arm64: $(lua_bin) results/binaries-linux-arm64.zip lib/home/main.lua lib/home/gen-manifest.lua | results/bin
+	$(call build_platform_asset,$@,linux-arm64)
 
-results/bin/home-linux-x86_64: $(lua_bin) results/dotfiles.zip results/binaries-linux-x86_64.zip lib/home/main.lua lib/home/.args | results/bin
-	$(call build_home,$@,linux-x86_64)
+results/bin/home-linux-x86_64: $(lua_bin) results/binaries-linux-x86_64.zip lib/home/main.lua lib/home/gen-manifest.lua | results/bin
+	$(call build_platform_asset,$@,linux-x86_64)
 
-home: results/bin/home-darwin-arm64 results/bin/home-linux-arm64 results/bin/home-linux-x86_64
+platform-assets: results/bin/home-darwin-arm64 results/bin/home-linux-arm64 results/bin/home-linux-x86_64
 
-.PHONY: home
+# Universal home binary with dotfiles + platform metadata
+HOME_VERSION ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+HOME_BASE_URL ?= https://github.com/whilp/dotfiles/releases/download/$${tag}
+HOME_TAG ?= home-$(shell date -u +%Y-%m-%d)-$(HOME_VERSION)
+
+results/bin/home: $(lua_bin) results/dotfiles.zip results/bin/home-darwin-arm64 results/bin/home-linux-arm64 results/bin/home-linux-x86_64 lib/home/main.lua lib/home/.args lib/home/gen-manifest.lua lib/home/gen-platforms.lua | results/bin
+	@echo "Building universal home binary..."
+	@rm -rf results/home-universal
+	@mkdir -p results/home-universal/home/.local/bin
+	@echo "Extracting dotfiles..."
+	@unzip -q results/dotfiles.zip -d results/home-universal/home
+	@cp -p $(lua_bin) results/home-universal/home/.local/bin/lua
+	@cp -p o/3p/cosmos/bin/unzip results/home-universal/home/.local/bin/unzip
+	@echo "Generating manifest..."
+	@LUA_PATH="lib/home/?.lua;;" $(lua_bin) lib/home/gen-manifest.lua results/home-universal/home $(HOME_VERSION) > results/home-universal/manifest.lua
+	@echo "Generating platforms metadata..."
+	@LUA_PATH="lib/home/?.lua;;" $(lua_bin) lib/home/gen-platforms.lua results/home-universal "$(HOME_BASE_URL)" "$(HOME_TAG)" \
+		results/bin/home-darwin-arm64 \
+		results/bin/home-linux-arm64 \
+		results/bin/home-linux-x86_64
+	@echo "Creating home binary..."
+	@cp $(lua_bin) $@
+	@cd results/home-universal && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$@ -@
+	@cd lib/home && $(cosmos_zip_bin) -qr $(CURDIR)/$@ main.lua .args
+	@rm -rf results/home-universal
+
+home: results/bin/home
+
+.PHONY: home platform-assets

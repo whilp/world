@@ -47,7 +47,7 @@ jobs:
           restore-keys: |
             lua-build-
 
-      - name: Build home binary
+      - name: Build home binaries
         run: make home -j$(nproc)
 
       - name: Run ast-grep checks
@@ -60,7 +60,9 @@ jobs:
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
         with:
           name: home-binaries
-          path: results/bin/home-*
+          path: |
+            results/bin/home
+            results/bin/home-*
 
   test:
     runs-on: ${{ matrix.os }}
@@ -69,11 +71,11 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
-            binary: home-linux-x86_64
+            platform: linux-x86_64
           - os: macos-latest
-            binary: home-darwin-arm64
+            platform: darwin-arm64
           - os: ubuntu-24.04-arm
-            binary: home-linux-arm64
+            platform: linux-arm64
     steps:
       - name: Checkout repository
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
@@ -84,18 +86,27 @@ jobs:
           name: home-binaries
           path: results/bin/
 
-      - name: Make binary executable
-        run: chmod +x results/bin/${{ matrix.binary }}
+      - name: Make binaries executable
+        run: chmod +x results/bin/home results/bin/home-*
 
-      - name: Test help command
-        run: results/bin/${{ matrix.binary }} || test $? -eq 1
+      - name: Test universal home list
+        run: results/bin/home list | head -20
 
-      - name: Test extraction
+      - name: Test universal home unpack
         run: |
           mkdir -p /tmp/test-home
-          results/bin/${{ matrix.binary }} unpack /tmp/test-home
+          results/bin/home unpack /tmp/test-home
           test -f /tmp/test-home/.zshenv
-          test -f /tmp/test-home/.local/bin/nvim
+          test -f /tmp/test-home/.local/bin/lua
+
+      - name: Test platform asset list
+        run: results/bin/home-${{ matrix.platform }} list | head -10
+
+      - name: Test platform asset unpack
+        run: |
+          mkdir -p /tmp/test-binaries
+          results/bin/home-${{ matrix.platform }} unpack /tmp/test-binaries
+          test -d /tmp/test-binaries/.local/share
 
   release:
     if: github.ref == 'refs/heads/main'
@@ -121,7 +132,7 @@ jobs:
       - name: Create checksums
         run: |
           cd results/bin
-          sha256sum home-* > SHA256SUMS
+          sha256sum home home-* > SHA256SUMS
           cat SHA256SUMS
 
       - name: Create release
@@ -130,6 +141,7 @@ jobs:
         run: |
           gh release create "${{ steps.version.outputs.tag }}" \
             --title "home ${{ steps.version.outputs.tag }}" \
+            results/bin/home \
             results/bin/home-darwin-arm64 \
             results/bin/home-linux-arm64 \
             results/bin/home-linux-x86_64 \
