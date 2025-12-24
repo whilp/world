@@ -50,19 +50,44 @@ jobs:
       - name: Build home binaries
         run: make home -j$(nproc)
 
+      - name: Build gvisor assets
+        run: make gvisor -j$(nproc)
+
       - name: Run ast-grep checks
         run: make check
 
       - name: Run tests
         run: make test-all -j$(nproc)
 
-      - name: Upload artifacts
+      - name: Test gvisor assets
+        run: |
+          echo "Testing assimilated binaries..."
+          results/gvisor/bin/lua -v
+          results/gvisor/bin/lua -e 'print(require("cosmo").GetHostOs())'
+          results/gvisor/bin/make --version | head -1
+          results/gvisor/bin/curl --version | head -1
+          echo "Testing lua with external modules..."
+          LUA_PATH="results/gvisor/lib/lua/?.lua;results/gvisor/lib/lua/?/init.lua;;" \
+            results/gvisor/bin/lua -e 'print("luaunit:", require("luaunit"))'
+
+      - name: Prepare gvisor tarball
+        run: |
+          cd results
+          mv assimilated-*.tar.gz assimilated-linux-x86_64.tar.gz
+
+      - name: Upload home artifacts
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
         with:
           name: home-binaries
           path: |
             results/bin/home
             results/bin/home-*
+
+      - name: Upload gvisor artifacts
+        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
+        with:
+          name: assimilated
+          path: results/assimilated-linux-x86_64.tar.gz
 
   test:
     runs-on: ${{ matrix.os }}
@@ -118,11 +143,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
 
-      - name: Download artifacts
+      - name: Download home artifacts
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: home-binaries
           path: results/bin/
+
+      - name: Download gvisor artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: assimilated
+          path: results/
 
       - name: Get version
         id: version
@@ -131,8 +162,8 @@ jobs:
 
       - name: Create checksums
         run: |
-          cd results/bin
-          sha256sum home home-* > SHA256SUMS
+          cd results
+          sha256sum bin/home bin/home-* assimilated-linux-x86_64.tar.gz > SHA256SUMS
           cat SHA256SUMS
 
       - name: Create release
@@ -141,8 +172,20 @@ jobs:
         run: |
           gh release create "${{ steps.version.outputs.tag }}" \
             --title "home ${{ steps.version.outputs.tag }}" \
+            --notes "## Home binaries
+          Platform-specific dotfiles and tool installers.
+
+          ## gVisor tools
+          Assimilated binaries for gVisor environments (claude.ai/code):
+          - lua, make, curl, zip, unzip
+
+          ### Quick setup (gVisor)
+          \`\`\`bash
+          curl -fsSL https://github.com/${{ github.repository }}/releases/latest/download/assimilated-linux-x86_64.tar.gz | tar -xz -C ~ && source ~/gvisor/env.sh
+          \`\`\`" \
             results/bin/home \
             results/bin/home-darwin-arm64 \
             results/bin/home-linux-arm64 \
             results/bin/home-linux-x86_64 \
-            results/bin/SHA256SUMS
+            results/assimilated-linux-x86_64.tar.gz \
+            results/SHA256SUMS

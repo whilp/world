@@ -5,6 +5,7 @@ include 3p/cosmopolitan/cook.mk
 include 3p/make/cook.mk
 include 3p/lua/cook.mk
 include lib/home/cook.mk
+include lib/gvisor/cook.mk
 include lib/test.mk
 
 UNAME_S := $(shell uname -s)
@@ -58,9 +59,6 @@ results/binaries-linux-x86_64.zip: $(all_binaries) $(cosmos_zip_bin) | results
 	cd $(3p) && \
 		find . -path '*/linux-x86_64/*' -type f ! -name '.extracted' | \
 		$(cosmos_zip_bin) -q $(CURDIR)/$@ -@
-
-results/bin:
-	mkdir -p $@
 
 results:
 	mkdir -p $@
