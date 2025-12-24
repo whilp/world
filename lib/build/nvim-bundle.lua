@@ -154,7 +154,7 @@ local function bundle_plugins(nvim_dir, pack_lock)
 
   io.write("generating helptags\n")
   local nvim_bin = path.join(nvim_dir, "bin/nvim")
-  ok, err = execute(nvim_bin, {nvim_bin, "--headless", "+helptags ALL", "+qa"}, { allow_failure = true })
+  ok = execute(nvim_bin, {nvim_bin, "--headless", "+helptags ALL", "+qa"}, { allow_failure = true })
   if not ok then
     io.write("  helptags skipped (cross-platform build)\n")
   end
