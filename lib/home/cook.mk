@@ -92,7 +92,7 @@ results/bin/home: $(lua_bin) results/dotfiles.zip results/bin/home-darwin-arm64 
 	@cp $(lua_bin) $@
 	@cd results/home-universal && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$@ -@
 	@cd lib/home && $(cosmos_zip_bin) -qr $(CURDIR)/$@ main.lua .args
-	@mkdir -p results/home-universal/.lua && cp -r lib/spawn results/home-universal/.lua/
+	@mkdir -p results/home-universal/.lua && cp -r lib/spawn lib/home/setup results/home-universal/.lua/
 	@cd results/home-universal && $(cosmos_zip_bin) -qr $(CURDIR)/$@ .lua
 	@rm -rf results/home-universal
 
