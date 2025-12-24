@@ -1,5 +1,7 @@
 home_exclude_pattern = ^(3p/|o/|results/|Makefile|lib/home/|\.git)
 home_lua = LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;$(CURDIR)/lib/home/?.lua;;" $(CURDIR)/$(lua_bin)
+home_spawn_sources = $(wildcard lib/spawn/*.lua)
+home_setup_sources = $(wildcard lib/home/setup/*.lua)
 
 results/dotfiles.zip: private .UNVEIL = \
 	r:$(CURDIR) \
@@ -57,13 +59,13 @@ define build_platform_asset
 	@rm -rf results/platform-$(2)
 endef
 
-results/bin/home-darwin-arm64: $(lua_bin) results/binaries-darwin-arm64.zip lib/home/main.lua lib/home/gen-manifest.lua | results/bin
+results/bin/home-darwin-arm64: $(lua_bin) results/binaries-darwin-arm64.zip lib/home/main.lua lib/home/gen-manifest.lua $(home_spawn_sources) | results/bin
 	$(call build_platform_asset,$@,darwin-arm64)
 
-results/bin/home-linux-arm64: $(lua_bin) results/binaries-linux-arm64.zip lib/home/main.lua lib/home/gen-manifest.lua | results/bin
+results/bin/home-linux-arm64: $(lua_bin) results/binaries-linux-arm64.zip lib/home/main.lua lib/home/gen-manifest.lua $(home_spawn_sources) | results/bin
 	$(call build_platform_asset,$@,linux-arm64)
 
-results/bin/home-linux-x86_64: $(lua_bin) results/binaries-linux-x86_64.zip lib/home/main.lua lib/home/gen-manifest.lua | results/bin
+results/bin/home-linux-x86_64: $(lua_bin) results/binaries-linux-x86_64.zip lib/home/main.lua lib/home/gen-manifest.lua $(home_spawn_sources) | results/bin
 	$(call build_platform_asset,$@,linux-x86_64)
 
 platform-assets: results/bin/home-darwin-arm64 results/bin/home-linux-arm64 results/bin/home-linux-x86_64
@@ -73,7 +75,7 @@ HOME_VERSION ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown"
 HOME_BASE_URL ?= https://github.com/whilp/dotfiles/releases/download/{tag}
 HOME_TAG ?= home-$(shell date -u +%Y-%m-%d)-$(HOME_VERSION)
 
-results/bin/home: $(lua_bin) results/dotfiles.zip results/bin/home-darwin-arm64 results/bin/home-linux-arm64 results/bin/home-linux-x86_64 lib/home/main.lua lib/home/.args lib/home/gen-manifest.lua lib/home/gen-platforms.lua | results/bin
+results/bin/home: $(lua_bin) results/dotfiles.zip results/bin/home-darwin-arm64 results/bin/home-linux-arm64 results/bin/home-linux-x86_64 lib/home/main.lua lib/home/.args lib/home/gen-manifest.lua lib/home/gen-platforms.lua $(home_spawn_sources) $(home_setup_sources) | results/bin
 	@echo "Building universal home binary..."
 	@rm -rf results/home-universal
 	@mkdir -p results/home-universal/home/.local/bin
