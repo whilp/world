@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-defaults write NSGlobalDomain AppleReduceDesktopTinting -bool true
-
-echo "desktop tinting reduced"

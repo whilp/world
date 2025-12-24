@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-defaults write NSGlobalDomain AppleICUForce24HourTime -bool true
-
-echo "24-hour time format enabled"

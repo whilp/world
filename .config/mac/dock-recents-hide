@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-defaults write com.apple.dock show-recents -bool false
-killall Dock
-
-echo "recent apps in dock hidden"

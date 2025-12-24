@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-defaults write NSGlobalDomain NSQuitAlwaysKeepsWindows -bool true
-
-echo "configured to restore windows when quitting apps"

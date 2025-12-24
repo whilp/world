@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-defaults write NSGlobalDomain AppleICUDateFormatStrings -dict 1 "y-MM-dd"
-
-echo "date format set to ISO 8601 (y-MM-dd)"
