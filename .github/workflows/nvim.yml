@@ -1,132 +1,164 @@
-name: nvim
+name: nvim nightly
 
 on:
   workflow_dispatch:
-    inputs:
-      release_tag:
-        description: 'Release tag (defaults to current date YYYY.MM.DD)'
-        required: false
-        default: ''
-      create_release:
-        description: 'Create a GitHub release'
-        type: boolean
-        required: false
-        default: true
+  schedule:
+    - cron: '0 6 * * *'
 
 permissions:
   contents: write
 
 jobs:
-  build:
+  fetch:
     strategy:
       matrix:
         include:
           - os: ubuntu-24.04
             platform: linux-x64
+            upstream: nvim-linux-x86_64.tar.gz
           - os: ubuntu-24.04-arm
             platform: linux-arm64
+            upstream: nvim-linux-arm64.tar.gz
           - os: macos-latest
             platform: darwin-arm64
+            upstream: nvim-macos-arm64.tar.gz
 
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: checkout repository
-        uses: actions/checkout@v4
-
-      - name: set release tag
-        id: tag
+      - name: fetch upstream nightly
         run: |
-          if [ -z "${{ github.event.inputs.release_tag }}" ]; then
-            SHORT_SHA=$(git rev-parse --short HEAD)
-            TAG=$(date +%Y.%m.%d)-${SHORT_SHA}
+          curl -fsSL -o nvim-upstream.tar.gz \
+            "https://github.com/neovim/neovim/releases/download/nightly/${{ matrix.upstream }}"
+
+      - name: calculate sha256
+        id: sha
+        run: |
+          if command -v shasum &>/dev/null; then
+            SHA=$(shasum -a 256 nvim-upstream.tar.gz | cut -d' ' -f1)
           else
-            TAG="${{ github.event.inputs.release_tag }}"
+            SHA=$(sha256sum nvim-upstream.tar.gz | cut -d' ' -f1)
           fi
-          echo "tag=${TAG}" >> $GITHUB_OUTPUT
+          echo "sha=${SHA}" >> $GITHUB_OUTPUT
+          echo "$SHA  nvim-${{ matrix.platform }}.tar.gz" > nvim-${{ matrix.platform }}.tar.gz.sha256
 
-      - name: bootstrap luajit
-        run: bash .config/setup/luajit
+      - name: rename for release
+        run: mv nvim-upstream.tar.gz nvim-${{ matrix.platform }}.tar.gz
 
-      - name: nvim
-        env:
-          OUTPUT_DIR: ${{ github.workspace }}/dist/nvim
-        run: bash .github/workflows/bootstrap .github/workflows/nvim/build
-
-      - name: upload artifacts
+      - name: upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: nvim-${{ matrix.platform }}
-          path: dist/nvim/${{ matrix.platform }}/*
-          retention-days: 30
+          path: |
+            nvim-${{ matrix.platform }}.tar.gz
+            nvim-${{ matrix.platform }}.tar.gz.sha256
 
-      - name: prepare release files
-        if: github.event.inputs.create_release == 'true'
-        id: release_files
-        run: |
-          cd dist/nvim/${{ matrix.platform }}
-          tarball=$(ls nvim-*.tar.gz | grep -v latest)
-          sha256="${tarball}.sha256"
-          echo "tarball=${tarball}" >> $GITHUB_OUTPUT
-          echo "sha256=${sha256}" >> $GITHUB_OUTPUT
+    outputs:
+      sha: ${{ steps.sha.outputs.sha }}
 
-      - name: create release
-        if: github.event.inputs.create_release == 'true'
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ steps.tag.outputs.tag }}
-          name: nvim nightly ${{ steps.tag.outputs.tag }}
-          body: |
-            NeoVim nightly build with bundled vim.pack plugins
-
-            Downloaded from: https://github.com/neovim/neovim/releases/tag/nightly
-
-            Bundled plugins from .config/nvim/nvim-pack-lock.json:
-            - conform.nvim
-            - mini.nvim
-            - neogit
-            - nui-components.nvim
-            - nui.nvim
-            - nvim-lspconfig
-            - nvim-treesitter
-            - plenary.nvim
-
-            Platforms:
-            - darwin-arm64
-            - linux-arm64
-            - linux-x64
-          files: |
-            dist/nvim/${{ matrix.platform }}/${{ steps.release_files.outputs.tarball }}
-            dist/nvim/${{ matrix.platform }}/${{ steps.release_files.outputs.sha256 }}
-          draft: false
-          prerelease: false
-
-  summary:
-    needs: build
+  release:
+    needs: fetch
     runs-on: ubuntu-latest
-    if: always()
 
     steps:
-      - name: download all artifacts
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: download artifacts
         uses: actions/download-artifact@v4
         with:
           path: artifacts
 
-      - name: generate build summary
-        run: |
-          echo "# nvim build summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## Built platforms" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
+      - name: set date
+        id: date
+        run: echo "date=$(date -u +%Y.%m.%d)" >> $GITHUB_OUTPUT
 
+      - name: collect shas
+        id: shas
+        run: |
+          cd artifacts
+          DARWIN_ARM64_SHA=$(cat nvim-darwin-arm64/nvim-darwin-arm64.tar.gz.sha256 | cut -d' ' -f1)
+          LINUX_ARM64_SHA=$(cat nvim-linux-arm64/nvim-linux-arm64.tar.gz.sha256 | cut -d' ' -f1)
+          LINUX_X64_SHA=$(cat nvim-linux-x64/nvim-linux-x64.tar.gz.sha256 | cut -d' ' -f1)
+          echo "darwin_arm64=${DARWIN_ARM64_SHA}" >> $GITHUB_OUTPUT
+          echo "linux_arm64=${LINUX_ARM64_SHA}" >> $GITHUB_OUTPUT
+          echo "linux_x64=${LINUX_X64_SHA}" >> $GITHUB_OUTPUT
+
+      - name: create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="nvim-nightly-${{ steps.date.outputs.date }}"
+
+          gh release delete "$TAG" --yes 2>/dev/null || true
+
+          gh release create "$TAG" \
+            --title "nvim nightly ${{ steps.date.outputs.date }}" \
+            --notes "Neovim nightly from https://github.com/neovim/neovim/releases/tag/nightly" \
+            artifacts/nvim-darwin-arm64/nvim-darwin-arm64.tar.gz \
+            artifacts/nvim-darwin-arm64/nvim-darwin-arm64.tar.gz.sha256 \
+            artifacts/nvim-linux-arm64/nvim-linux-arm64.tar.gz \
+            artifacts/nvim-linux-arm64/nvim-linux-arm64.tar.gz.sha256 \
+            artifacts/nvim-linux-x64/nvim-linux-x64.tar.gz \
+            artifacts/nvim-linux-x64/nvim-linux-x64.tar.gz.sha256
+
+      - name: update version.lua
+        run: |
+          cat > 3p/nvim/version.lua << EOF
+          return {
+            version = "nightly",
+            date = "${{ steps.date.outputs.date }}",
+            format = "tar.gz",
+            strip_components = 1,
+            url = "https://github.com/whilp/dotfiles/releases/download/nvim-nightly-{date}/nvim-{platform}.tar.gz",
+            platforms = {
+              ["darwin-arm64"] = {
+                sha = "${{ steps.shas.outputs.darwin_arm64 }}",
+              },
+              ["linux-arm64"] = {
+                sha = "${{ steps.shas.outputs.linux_arm64 }}",
+              },
+              ["linux-x86_64"] = {
+                platform = "linux-x64",
+                sha = "${{ steps.shas.outputs.linux_x64 }}",
+              },
+            },
+          }
+          EOF
+          sed -i 's/^          //' 3p/nvim/version.lua
+
+      - name: commit version.lua
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add 3p/nvim/version.lua
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "nvim: update nightly to ${{ steps.date.outputs.date }}"
+            git push
+          fi
+
+  summary:
+    needs: [fetch, release]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: generate summary
+        run: |
+          echo "# nvim nightly fetch summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           for dir in artifacts/*/; do
             platform=$(basename "$dir")
-            echo "### ${platform}" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-            ls -lh "$dir" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "## ${platform}" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
             cat "$dir"/*.sha256 >> $GITHUB_STEP_SUMMARY
-            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
           done

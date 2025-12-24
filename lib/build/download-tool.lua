@@ -57,6 +57,7 @@ local function load_tool_config(tool_name, platform)
   local vars = {
     version = tool.version or "",
     release_sha = tool.release_sha or "",
+    date = tool.date or "",
     platform = config.platform or platform,  -- allow platform override
   }
 
