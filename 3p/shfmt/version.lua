@@ -1,7 +1,7 @@
 return {
   version = "3.10.0",
   format = "binary",
-  url = "https://github.com/mvdan/sh/releases/download/v${version}/shfmt_v${version}_${os}_${arch}",
+  url = "https://github.com/mvdan/sh/releases/download/v{version}/shfmt_v{version}_{os}_{arch}",
   platforms = {
     ["darwin-arm64"] = {
       os = "darwin",

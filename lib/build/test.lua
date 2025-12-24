@@ -5,7 +5,7 @@ local download_tool = require("build.download-tool")
 
 -- Test template interpolation
 function test_interpolate_replaces_variables()
-  local template = "https://example.com/${version}/file-${release_sha}.tar.gz"
+  local template = "https://example.com/{version}/file-{release_sha}.tar.gz"
   local vars = { version = "1.0.0", release_sha = "abc123" }
 
   local result = download_tool.interpolate(template, vars)
@@ -14,7 +14,7 @@ function test_interpolate_replaces_variables()
 end
 
 function test_interpolate_handles_missing_variables()
-  local template = "https://example.com/${version}/file-${missing}.tar.gz"
+  local template = "https://example.com/{version}/file-{missing}.tar.gz"
   local vars = { version = "1.0.0" }
 
   local result = download_tool.interpolate(template, vars)
@@ -38,7 +38,7 @@ function test_interpolate_handles_empty_vars()
 end
 
 function test_interpolate_handles_custom_variables()
-  local template = "https://example.com/${version}/file-${arch}.tar.gz"
+  local template = "https://example.com/{version}/file-{arch}.tar.gz"
   local vars = { version = "1.0.0", arch = "x86_64-unknown-linux-musl" }
 
   local result = download_tool.interpolate(template, vars)
@@ -47,7 +47,7 @@ function test_interpolate_handles_custom_variables()
 end
 
 function test_interpolate_handles_platform_variable()
-  local template = "https://example.com/${version}/file-${platform}.tar.gz"
+  local template = "https://example.com/{version}/file-{platform}.tar.gz"
   local vars = { version = "1.0.0", platform = "darwin-arm64" }
 
   local result = download_tool.interpolate(template, vars)

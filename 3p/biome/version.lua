@@ -1,7 +1,7 @@
 return {
   version = "1.9.4",
   format = "binary",
-  url = "https://github.com/biomejs/biome/releases/download/cli%2Fv${version}/biome-${platform}",
+  url = "https://github.com/biomejs/biome/releases/download/cli%2Fv{version}/biome-{platform}",
   platforms = {
     ["darwin-arm64"] = {
       sha = "c68f2cbe09e9485426a749353a155b1d22c130c6ccdadc7772d603eb247b9a9d",

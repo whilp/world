@@ -1,7 +1,7 @@
 return {
   version = "0.25.8",
   format = "gz",
-  url = "https://github.com/tree-sitter/tree-sitter/releases/download/v${version}/tree-sitter-${os}-${arch}.gz",
+  url = "https://github.com/tree-sitter/tree-sitter/releases/download/v{version}/tree-sitter-{os}-{arch}.gz",
   platforms = {
     ["darwin-arm64"] = {
       os = "macos",

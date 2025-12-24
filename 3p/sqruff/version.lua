@@ -2,7 +2,7 @@ return {
   version = "0.21.2",
   format = "tar.gz",
   strip_components = 0,
-  url = "https://github.com/quarylabs/sqruff/releases/download/v${version}/sqruff-${platform}.tar.gz",
+  url = "https://github.com/quarylabs/sqruff/releases/download/v{version}/sqruff-{platform}.tar.gz",
   platforms = {
     ["darwin-arm64"] = {
       platform = "darwin-aarch64",

@@ -2,7 +2,7 @@ return {
   version = "0.28.0",
   format = "zip",
   strip_components = 0,
-  url = "https://github.com/ast-grep/ast-grep/releases/download/${version}/app-${arch}.zip",
+  url = "https://github.com/ast-grep/ast-grep/releases/download/{version}/app-{arch}.zip",
   platforms = {
     ["darwin-arm64"] = {
       arch = "aarch64-apple-darwin",

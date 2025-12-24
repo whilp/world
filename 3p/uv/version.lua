@@ -2,7 +2,7 @@ return {
   version = "0.5.7",
   format = "tar.gz",
   strip_components = 1,
-  url = "https://github.com/astral-sh/uv/releases/download/${version}/uv-${arch}.tar.gz",
+  url = "https://github.com/astral-sh/uv/releases/download/{version}/uv-{arch}.tar.gz",
   platforms = {
     ["darwin-arm64"] = {
       arch = "aarch64-apple-darwin",

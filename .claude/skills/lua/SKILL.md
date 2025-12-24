@@ -531,7 +531,7 @@ M.interpolate = function(template, context)
   if type(template) ~= "string" then
     return template
   end
-  return template:gsub("%${([%w_]+)}", function(key)
+  return template:gsub("{([%w_]+)}", function(key)
     return tostring(context[key] or "")
   end)
 end
@@ -572,7 +572,7 @@ return {
 }
 ```
 
-Template variables use `${variable}` syntax and are interpolated at runtime.
+Template variables use `{variable}` syntax and are interpolated at runtime.
 
 ## Common dependencies
 

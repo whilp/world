@@ -2,7 +2,7 @@ return {
   version = "14.1.1",
   format = "tar.gz",
   strip_components = 1,
-  url = "https://github.com/BurntSushi/ripgrep/releases/download/${version}/ripgrep-${version}-${arch}.tar.gz",
+  url = "https://github.com/BurntSushi/ripgrep/releases/download/{version}/ripgrep-{version}-{arch}.tar.gz",
   platforms = {
     ["darwin-arm64"] = {
       arch = "aarch64-apple-darwin",

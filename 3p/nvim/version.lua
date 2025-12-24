@@ -3,7 +3,7 @@ return {
   release_sha = "c016a4c",
   format = "tar.gz",
   strip_components = 1,
-  url = "https://github.com/whilp/dotfiles/releases/download/${version}-${release_sha}/nvim-${version}-${platform}.tar.gz",
+  url = "https://github.com/whilp/dotfiles/releases/download/{version}-{release_sha}/nvim-{version}-{platform}.tar.gz",
   platforms = {
     ["darwin-arm64"] = {
       sha = "143513b8f91dd29a510beef8c1202a9c623f5ced2f0f379df894d1d3e4b37039",
