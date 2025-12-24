@@ -1,7 +1,11 @@
 local mac = require("mac")
 
 local function run()
-	mac.osascript([[tell application "System Events" to tell every desktop to set picture to "/System/Library/Desktop Pictures/Solid Colors/Black.png"]])
+	local script = [[
+tell application "System Events" to tell every desktop
+	set picture to "/System/Library/Desktop Pictures/Solid Colors/Black.png"
+end tell]]
+	mac.osascript(script)
 	return 0
 end
 
