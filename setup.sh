@@ -1,7 +1,5 @@
 #!/bin/bash
 
-SETUP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.config/setup" && pwd)"
-
 install_home() {
   local url tmpdir
   url="https://github.com/whilp/dotfiles/releases/latest/download/home"
@@ -21,10 +19,8 @@ install_home() {
 main() {
   home_bin=$(install_home) || return 1
   "${home_bin}" unpack --force --with-platform "$HOME"
+  "${home_bin}" setup "$HOME"
   rm -rf "$(dirname "${home_bin}")"
-
-  export LUA_PATH="$SETUP_DIR/?.lua;$HOME/.local/bootstrap/lib/lua/?.lua;$HOME/.local/bootstrap/lib/lua/?/init.lua;;"
-  lua -e "require('setup').main()"
 }
 
 main "$@"
