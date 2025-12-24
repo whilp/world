@@ -810,6 +810,34 @@ local function cmd_3p(args, opts)
   return 0
 end
 
+local function cmd_setup(dest, opts)
+  opts = opts or {}
+  local stderr = opts.stderr or io.stderr
+
+  if not dest then
+    stderr:write("error: destination path required\n")
+    stderr:write("usage: home setup <destination>\n")
+    return 1
+  end
+
+  local setup_dir = path.join(dest, ".config", "setup")
+  package.path = setup_dir .. "/?.lua;" .. package.path
+
+  local ok, setup_module = pcall(require, "setup")
+  if not ok then
+    stderr:write("error: failed to load setup module: " .. tostring(setup_module) .. "\n")
+    return 1
+  end
+
+  local success, err = pcall(setup_module.main)
+  if not success then
+    stderr:write("error: setup failed: " .. tostring(err) .. "\n")
+    return 1
+  end
+
+  return 0
+end
+
 local function cmd_help(opts)
   opts = opts or {}
   local stderr = opts.stderr or io.stderr
@@ -820,6 +848,7 @@ local function cmd_help(opts)
   stderr:write("  list [options]           list embedded files\n")
   stderr:write("  unpack [options] <dest>  extract files to destination\n")
   if not platform_mode then
+    stderr:write("  setup <dest>             run setup scripts\n")
     stderr:write("  3p [subcommand]          manage third-party binary symlinks\n")
   end
   stderr:write("  version                  show build version\n")
@@ -875,6 +904,8 @@ local function main(args, opts)
     list_opts.null = parsed.null
 
     return cmd_list(list_opts)
+  elseif parsed.cmd == "setup" then
+    return cmd_setup(parsed.dest, opts)
   elseif parsed.cmd == "3p" then
     local threep_opts = {}
     for k, v in pairs(opts) do
@@ -918,6 +949,7 @@ local home = {
   parse_args = parse_args,
   cmd_unpack = cmd_unpack,
   cmd_list = cmd_list,
+  cmd_setup = cmd_setup,
   cmd_version = cmd_version,
   cmd_help = cmd_help,
   find_binary_in_dir = find_binary_in_dir,
