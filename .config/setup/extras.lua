@@ -13,7 +13,7 @@ local function run(env)
 	unix.chdir(env.DST)
 
 	if not unix.stat("extras") then
-		local status = util.spawn({"git", "clone", extras, "extras"})
+		local status = util.spawn({"git", "clone", extras, "extras"}, {silent = true})
 		if status == 0 then
 			unix.chdir("extras")
 			if unix.stat("./setup.sh") and unix.access("./setup.sh", unix.X_OK) then
