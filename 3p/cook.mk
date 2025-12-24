@@ -50,6 +50,10 @@ $(foreach tool,$(TOOLS),$(eval $(call tool_download_rule,$(tool))))
 # Generate {tool}_binaries variables for each tool
 $(foreach tool,$(TOOLS),$(eval $(tool)_binaries := $(foreach p,$(PLATFORMS),$(3p)/$(tool)/$(p)/.extracted)))
 
+# nvim needs plugin bundling after extraction
+include 3p/nvim/cook.mk
+nvim_binaries := $(nvim_bundled)
+
 # Aggregate all_binaries
 all_binaries := $(foreach tool,$(TOOLS),$($(tool)_binaries))
 
