@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-defaults write NSGlobalDomain _HIHideMenuBar -bool true
-
-echo "menu bar hidden (requires app restart to take effect)"

@@ -338,7 +338,7 @@ local function parse_args(args)
     elseif args[i] == "--platform" then
       i = i + 1
       result.platform = args[i]
-    elseif result.cmd == "3p" and not result.subcmd and not args[i]:match("^%-") then
+    elseif (result.cmd == "3p" or result.cmd == "mac") and not result.subcmd and not args[i]:match("^%-") then
       result.subcmd = args[i]
     elseif not result.dest then
       result.dest = args[i]
@@ -776,6 +776,31 @@ local function cmd_setup(dest, opts)
   return 0
 end
 
+local function cmd_mac(args, opts)
+  opts = opts or {}
+  local stdout = opts.stdout or io.stdout
+  local stderr = opts.stderr or io.stderr
+
+  local ok, mac_module = pcall(require, "mac")
+  if not ok then
+    stderr:write("error: failed to load mac module: " .. tostring(mac_module) .. "\n")
+    return 1
+  end
+
+  local subcmd = args[1]
+
+  if subcmd == "list" then
+    for _, name in ipairs(mac_module.list()) do
+      stdout:write(name .. "\n")
+    end
+    return 0
+  elseif subcmd then
+    return mac_module.run_script(subcmd)
+  else
+    return mac_module.run_all()
+  end
+end
+
 local function cmd_help(opts)
   opts = opts or {}
   local stderr = opts.stderr or io.stderr
@@ -787,6 +812,7 @@ local function cmd_help(opts)
   stderr:write("  unpack [options] <dest>  extract files to destination\n")
   if not platform_mode then
     stderr:write("  setup <dest>             run setup scripts\n")
+    stderr:write("  mac [script]             run macOS defaults scripts\n")
     stderr:write("  3p [subcommand]          manage third-party binary symlinks\n")
   end
   stderr:write("  version                  show build version\n")
@@ -805,6 +831,10 @@ local function cmd_help(opts)
   stderr:write("  --only                   only extract files listed on stdin\n")
   stderr:write("  --null, -0               read null-delimited paths (with --only)\n")
   if not platform_mode then
+    stderr:write("\nmac subcommands:\n")
+    stderr:write("  mac                      run all macOS defaults scripts\n")
+    stderr:write("  mac list                 list available scripts\n")
+    stderr:write("  mac <script>             run a specific script\n")
     stderr:write("\n3p subcommands:\n")
     stderr:write("  3p                       scan and symlink latest versions\n")
     stderr:write("  3p list                  list installed tools and versions\n")
@@ -844,6 +874,14 @@ local function main(args, opts)
     return cmd_list(list_opts)
   elseif parsed.cmd == "setup" then
     return cmd_setup(parsed.dest, opts)
+  elseif parsed.cmd == "mac" then
+    local mac_args = {}
+    if parsed.subcmd then
+      table.insert(mac_args, parsed.subcmd)
+    elseif parsed.dest then
+      table.insert(mac_args, parsed.dest)
+    end
+    return cmd_mac(mac_args, opts)
   elseif parsed.cmd == "3p" then
     local threep_opts = {}
     for k, v in pairs(opts) do
@@ -888,6 +926,7 @@ local home = {
   cmd_unpack = cmd_unpack,
   cmd_list = cmd_list,
   cmd_setup = cmd_setup,
+  cmd_mac = cmd_mac,
   cmd_version = cmd_version,
   cmd_help = cmd_help,
   find_binary_in_dir = find_binary_in_dir,

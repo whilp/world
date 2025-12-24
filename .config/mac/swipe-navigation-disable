@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-defaults write NSGlobalDomain AppleEnableSwipeNavigateWithScrolls -bool false
-
-echo "swipe navigation with scrolls disabled"
