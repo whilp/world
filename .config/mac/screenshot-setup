@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-defaults write com.apple.screencapture showsClicks -bool true
-defaults write com.apple.screencapture showsCursor -bool true
-defaults write com.apple.screencapture location -string "~/Downloads"
-
-echo "screenshot configured to save to downloads, show cursor and clicks"

@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-defaults write NSGlobalDomain com.apple.mouse.scaling -float 0.5
-defaults write NSGlobalDomain com.apple.scrollwheel.scaling -float 0.125
-
-echo "mouse tracking speed set to 0.5, scroll wheel to 0.125"

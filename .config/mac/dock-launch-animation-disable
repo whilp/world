@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-set -euo pipefail
-
-defaults write com.apple.dock launchanim -bool false
-killall Dock
-
-echo "dock launch animation disabled"
