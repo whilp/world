@@ -107,20 +107,15 @@ local function clone_plugin(name, info, pack_dir)
 
   io.write(string.format("  cloning %s at %s\n", name, info.rev))
 
-  local ok = execute("git", {
-    "git", "clone", "--depth", "1", "--branch", info.rev, info.src, plugin_dir
-  }, { allow_failure = true })
-
-  if not ok then
-    io.write("    branch clone failed, trying checkout\n")
-    local clone_ok, clone_err = execute("git", {"git", "clone", info.src, plugin_dir})
-    if not clone_ok then
-      return nil, clone_err
-    end
-    local checkout_ok, checkout_err = execute("git", {"git", "-C", plugin_dir, "checkout", info.rev})
-    if not checkout_ok then
-      return nil, checkout_err
-    end
+  -- Clone and checkout the specific rev
+  -- Using --branch with a commit SHA or --filter=blob:none hangs with cosmos git
+  local clone_ok, clone_err = execute("git", {"git", "clone", info.src, plugin_dir})
+  if not clone_ok then
+    return nil, clone_err
+  end
+  local checkout_ok, checkout_err = execute("git", {"git", "-C", plugin_dir, "checkout", info.rev})
+  if not checkout_ok then
+    return nil, checkout_err
   end
 
   local rm_ok, rm_err = execute("rm", {"rm", "-rf", path.join(plugin_dir, ".git")})
