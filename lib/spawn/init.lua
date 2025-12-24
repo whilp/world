@@ -123,6 +123,8 @@ local function spawn(argv, opts)
 
 	function handle:wait()
 		if self.stdin then self.stdin:close() end
+		if self.stdout then self.stdout:read() end
+		if self.stderr then self.stderr:read() end
 		if self.stdout then self.stdout:close() end
 		if self.stderr then self.stderr:close() end
 		local _, status = unix.wait(self.pid)

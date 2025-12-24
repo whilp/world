@@ -2,7 +2,7 @@ local cosmo = require("cosmo")
 local unix = cosmo.unix
 local path = cosmo.path
 local spawn = require("spawn").spawn
-local util = require("util")
+local util = require("setup.util")
 
 local function run(env)
 	unix.rmrf(path.join(env.DST, ".git"))

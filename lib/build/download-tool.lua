@@ -19,7 +19,14 @@ end
 
 -- Execute external command
 local function execute(program, args)
-  local exit_code = spawn(args):wait()
+  local handle, err = spawn(args)
+  if not handle then
+    return nil, string.format("command failed to start: %s (%s)", program, err or "unknown error")
+  end
+  local exit_code, wait_err = handle:wait()
+  if not exit_code then
+    return nil, string.format("command failed: %s (%s)", program, wait_err or "abnormal termination")
+  end
   if exit_code ~= 0 then
     return nil, string.format("command failed: %s (exit: %d)", program, exit_code)
   end

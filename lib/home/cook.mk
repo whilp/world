@@ -1,5 +1,9 @@
+include lib/spawn/cook.mk
+
 home_exclude_pattern = ^(3p/|o/|results/|Makefile|lib/home/|\.git)
 home_lua = LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;$(CURDIR)/lib/home/?.lua;;" $(CURDIR)/$(lua_bin)
+home_setup_dir = lib/home/setup
+home_setup_sources = $(wildcard $(home_setup_dir)/*.lua)
 
 results/dotfiles.zip: private .UNVEIL = \
 	r:$(CURDIR) \
@@ -50,20 +54,20 @@ define build_platform_asset
 	@cp $(lua_bin) $(1)
 	@cd results/platform-$(2) && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$(1) -@
 	@$(cosmos_zip_bin) -qj $(1) lib/home/main.lua
-	@mkdir -p results/platform-$(2)/.lua && cp -r lib/spawn results/platform-$(2)/.lua/
+	@mkdir -p results/platform-$(2)/.lua && cp -r $(spawn_dir) results/platform-$(2)/.lua/
 	@cd results/platform-$(2) && $(cosmos_zip_bin) -qr $(CURDIR)/$(1) .lua
 	@echo -n '/zip/main.lua' > results/platform-$(2)/.args
 	@$(cosmos_zip_bin) -qj $(1) results/platform-$(2)/.args
 	@rm -rf results/platform-$(2)
 endef
 
-results/bin/home-darwin-arm64: $(lua_bin) results/binaries-darwin-arm64.zip lib/home/main.lua lib/home/gen-manifest.lua | results/bin
+results/bin/home-darwin-arm64: $(lua_bin) results/binaries-darwin-arm64.zip lib/home/main.lua lib/home/gen-manifest.lua $(spawn_sources) | results/bin
 	$(call build_platform_asset,$@,darwin-arm64)
 
-results/bin/home-linux-arm64: $(lua_bin) results/binaries-linux-arm64.zip lib/home/main.lua lib/home/gen-manifest.lua | results/bin
+results/bin/home-linux-arm64: $(lua_bin) results/binaries-linux-arm64.zip lib/home/main.lua lib/home/gen-manifest.lua $(spawn_sources) | results/bin
 	$(call build_platform_asset,$@,linux-arm64)
 
-results/bin/home-linux-x86_64: $(lua_bin) results/binaries-linux-x86_64.zip lib/home/main.lua lib/home/gen-manifest.lua | results/bin
+results/bin/home-linux-x86_64: $(lua_bin) results/binaries-linux-x86_64.zip lib/home/main.lua lib/home/gen-manifest.lua $(spawn_sources) | results/bin
 	$(call build_platform_asset,$@,linux-x86_64)
 
 platform-assets: results/bin/home-darwin-arm64 results/bin/home-linux-arm64 results/bin/home-linux-x86_64
@@ -73,7 +77,7 @@ HOME_VERSION ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown"
 HOME_BASE_URL ?= https://github.com/whilp/dotfiles/releases/download/{tag}
 HOME_TAG ?= home-$(shell date -u +%Y-%m-%d)-$(HOME_VERSION)
 
-results/bin/home: $(lua_bin) results/dotfiles.zip results/bin/home-darwin-arm64 results/bin/home-linux-arm64 results/bin/home-linux-x86_64 lib/home/main.lua lib/home/.args lib/home/gen-manifest.lua lib/home/gen-platforms.lua | results/bin
+results/bin/home: $(lua_bin) results/dotfiles.zip results/bin/home-darwin-arm64 results/bin/home-linux-arm64 results/bin/home-linux-x86_64 lib/home/main.lua lib/home/.args lib/home/gen-manifest.lua lib/home/gen-platforms.lua $(spawn_sources) $(home_setup_sources) | results/bin
 	@echo "Building universal home binary..."
 	@rm -rf results/home-universal
 	@mkdir -p results/home-universal/home/.local/bin
@@ -92,7 +96,7 @@ results/bin/home: $(lua_bin) results/dotfiles.zip results/bin/home-darwin-arm64 
 	@cp $(lua_bin) $@
 	@cd results/home-universal && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$@ -@
 	@cd lib/home && $(cosmos_zip_bin) -qr $(CURDIR)/$@ main.lua .args
-	@mkdir -p results/home-universal/.lua && cp -r lib/spawn results/home-universal/.lua/
+	@mkdir -p results/home-universal/.lua && cp -r $(spawn_dir) $(home_setup_dir) results/home-universal/.lua/
 	@cd results/home-universal && $(cosmos_zip_bin) -qr $(CURDIR)/$@ .lua
 	@rm -rf results/home-universal
 

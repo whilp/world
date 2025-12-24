@@ -761,10 +761,7 @@ local function cmd_setup(dest, opts)
     return 1
   end
 
-  local setup_dir = path.join(dest, ".config", "setup")
-  package.path = setup_dir .. "/?.lua;" .. package.path
-
-  local ok, setup_module = pcall(require, "setup")
+  local ok, setup_module = pcall(require, "setup.setup")
   if not ok then
     stderr:write("error: failed to load setup module: " .. tostring(setup_module) .. "\n")
     return 1
