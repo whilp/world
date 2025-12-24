@@ -9,18 +9,6 @@
       "rev": "6e885e4",
       "src": "https://github.com/nvim-mini/mini.nvim"
     },
-    "neogit": {
-      "rev": "4ba620ad",
-      "src": "https://github.com/NeogitOrg/neogit"
-    },
-    "nui-components.nvim": {
-      "rev": "1654dd7",
-      "src": "https://github.com/grapp-dev/nui-components.nvim"
-    },
-    "nui.nvim": {
-      "rev": "de74099",
-      "src": "https://github.com/MunifTanjim/nui.nvim"
-    },
     "nvim-lspconfig": {
       "rev": "41d32cc",
       "src": "https://github.com/neovim/nvim-lspconfig"
@@ -28,10 +16,6 @@
     "nvim-treesitter": {
       "rev": "42fc28ba",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter"
-    },
-    "plenary.nvim": {
-      "rev": "b9fd522",
-      "src": "https://github.com/nvim-lua/plenary.nvim"
     }
   }
 }
