@@ -1,4 +1,5 @@
 home_exclude_pattern = ^(3p/|o/|results/|Makefile|lib/home/|\.git)
+home_lua = LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;$(CURDIR)/lib/home/?.lua;;" $(CURDIR)/$(lua_bin)
 
 results/dotfiles.zip: private .UNVEIL = \
 	r:$(CURDIR) \
@@ -44,11 +45,13 @@ define build_platform_asset
 		done
 	@rm -rf results/platform-$(2)/temp-binaries
 	@echo "Generating manifest..."
-	@LUA_PATH="lib/home/?.lua;;" $(lua_bin) lib/home/gen-manifest.lua results/platform-$(2)/home $(HOME_VERSION) > results/platform-$(2)/manifest.lua
+	@$(home_lua) lib/home/gen-manifest.lua results/platform-$(2)/home $(HOME_VERSION) > results/platform-$(2)/manifest.lua
 	@echo "Creating platform asset..."
 	@cp $(lua_bin) $(1)
 	@cd results/platform-$(2) && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$(1) -@
 	@$(cosmos_zip_bin) -qj $(1) lib/home/main.lua
+	@mkdir -p results/platform-$(2)/.lua && cp -r lib/spawn results/platform-$(2)/.lua/
+	@cd results/platform-$(2) && $(cosmos_zip_bin) -qr $(CURDIR)/$(1) .lua
 	@echo -n '/zip/main.lua' > results/platform-$(2)/.args
 	@$(cosmos_zip_bin) -qj $(1) results/platform-$(2)/.args
 	@rm -rf results/platform-$(2)
@@ -79,10 +82,9 @@ results/bin/home: $(lua_bin) results/dotfiles.zip results/bin/home-darwin-arm64 
 	@cp -p $(lua_bin) results/home-universal/home/.local/bin/lua
 	@cp -p o/3p/cosmos/bin/unzip results/home-universal/home/.local/bin/unzip
 	@echo "Generating manifest..."
-	@LUA_PATH="lib/home/?.lua;;" $(lua_bin) lib/home/gen-manifest.lua results/home-universal/home $(HOME_VERSION) > results/home-universal/manifest.lua
+	@$(home_lua) lib/home/gen-manifest.lua results/home-universal/home $(HOME_VERSION) > results/home-universal/manifest.lua
 	@echo "Generating platforms metadata..."
-	# Single quotes preserve ${tag} literally; double quotes would expand it as empty shell variable
-	@LUA_PATH="lib/home/?.lua;;" $(lua_bin) lib/home/gen-platforms.lua results/home-universal '$(HOME_BASE_URL)' "$(HOME_TAG)" \
+	@$(home_lua) lib/home/gen-platforms.lua results/home-universal "$(HOME_BASE_URL)" "$(HOME_TAG)" \
 		results/bin/home-darwin-arm64 \
 		results/bin/home-linux-arm64 \
 		results/bin/home-linux-x86_64
@@ -90,6 +92,8 @@ results/bin/home: $(lua_bin) results/dotfiles.zip results/bin/home-darwin-arm64 
 	@cp $(lua_bin) $@
 	@cd results/home-universal && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$@ -@
 	@cd lib/home && $(cosmos_zip_bin) -qr $(CURDIR)/$@ main.lua .args
+	@mkdir -p results/home-universal/.lua && cp -r lib/spawn results/home-universal/.lua/
+	@cd results/home-universal && $(cosmos_zip_bin) -qr $(CURDIR)/$@ .lua
 	@rm -rf results/home-universal
 
 home: results/bin/home

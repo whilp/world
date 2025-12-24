@@ -40,8 +40,7 @@ test-home: private .UNVEIL = \
 	rwc:lib/home/o \
 	rw:/dev/null
 test-home: lua
-	cd lib/home && LUA_PATH="$(CURDIR)/lib/?.lua;;" \
-		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test_main.lua
+	cd lib/home && $(home_lua) $(CURDIR)/$(test_runner) test_main.lua
 
 test-lib-daemonize: private .UNVEIL = \
 	r:lib \

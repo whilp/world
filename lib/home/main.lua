@@ -1,6 +1,7 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
 local path = cosmo.path
+local spawn = require("spawn").spawn
 
 -- Platform normalization table
 local PLATFORMS = {
@@ -42,58 +43,6 @@ local function read_file(filepath)
   local data = f:read("*a")
   f:close()
   return data
-end
-
-local function spawn(cmd, args, opts)
-  opts = opts or {}
-  local stdin_data = opts.stdin
-  local capture_stdout = opts.capture_stdout ~= false
-
-  local stdin_r, stdin_w = unix.pipe()
-  local stdout_r, stdout_w = unix.pipe()
-
-  local pid = unix.fork()
-  if pid == 0 then
-    unix.close(stdin_w)
-    unix.close(stdout_r)
-
-    -- close 0,1,2 then dup pipe fds to get them in order
-    unix.close(0)
-    unix.close(1)
-    unix.close(2)
-    unix.dup(stdin_r) -- becomes 0
-    unix.dup(stdout_w) -- becomes 1
-    unix.dup(stdout_w) -- becomes 2
-    unix.close(stdin_r)
-    unix.close(stdout_w)
-
-    local env = opts.env or unix.environ()
-    unix.execve(cmd, args, env)
-    unix.exit(127)
-  end
-
-  unix.close(stdin_r)
-  unix.close(stdout_w)
-
-  if stdin_data then
-    unix.write(stdin_w, stdin_data)
-  end
-  unix.close(stdin_w)
-
-  local output = ""
-  if capture_stdout then
-    while true do
-      local chunk = unix.read(stdout_r, 65536)
-      if not chunk or chunk == "" then
-        break
-      end
-      output = output .. chunk
-    end
-  end
-  unix.close(stdout_r)
-
-  local _, status = unix.wait()
-  return status == 0, output, status
 end
 
 local function serialize_value(val, indent)
@@ -171,19 +120,14 @@ local function serialize_table(tbl)
 end
 
 local function detect_platform()
-  local uname_bin = unix.commandv("uname")
-  if not uname_bin then
-    return nil, "uname not found"
-  end
-
-  local ok, sysname = spawn(uname_bin, { "uname", "-s" })
+  local ok, sysname = spawn({"uname", "-s"}):read()
   if not ok then
     return nil, "failed to get system name"
   end
   sysname = sysname:gsub("%s+$", "")
 
   local machine
-  ok, machine = spawn(uname_bin, { "uname", "-m" })
+  ok, machine = spawn({"uname", "-m"}):read()
   if not ok then
     return nil, "failed to get machine type"
   end
@@ -241,19 +185,17 @@ local function interpolate(template, context)
 end
 
 local function sha256_file(filepath)
-  local shasum = unix.commandv("shasum") or unix.commandv("sha256sum")
-  if not shasum then
+  local shasum = unix.commandv("shasum")
+  local args
+  if shasum then
+    args = {"shasum", "-a", "256", filepath}
+  elseif unix.commandv("sha256sum") then
+    args = {"sha256sum", filepath}
+  else
     return nil, "neither shasum nor sha256sum found"
   end
 
-  local args
-  if shasum:match("shasum$") then
-    args = { "shasum", "-a", "256", filepath }
-  else
-    args = { "sha256sum", filepath }
-  end
-
-  local ok, output = spawn(shasum, args)
+  local ok, output = spawn(args):read()
   if not ok then
     return nil, "failed to compute sha256"
   end
@@ -266,13 +208,12 @@ local function sha256_file(filepath)
 end
 
 local function download_file(url, dest_path)
-  local curl = unix.commandv("curl")
-  if not curl then
+  if not unix.commandv("curl") then
     return nil, "curl not found"
   end
 
-  local ok, _, status = spawn(curl, { "curl", "-fsSL", "-o", dest_path, url })
-  if not ok then
+  local status = spawn({"curl", "-fsSL", "-o", dest_path, url}):wait()
+  if status ~= 0 then
     return nil, "curl failed with status " .. tostring(status)
   end
   return true
@@ -439,7 +380,7 @@ local function extract_platform_asset(asset_path, dest, force, filter, opts)
     stdin_data = table.concat(filter_lines, "\n")
   end
 
-  local ok, output = spawn(asset_path, cmd_args, { stdin = stdin_data })
+  local ok, output = spawn(cmd_args, {stdin = stdin_data}):read()
   if output and output ~= "" then
     stdout:write(output)
   end
