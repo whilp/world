@@ -1,7 +1,8 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
 
-local function spawn(argv)
+local function spawn(argv, opts)
+	opts = opts or {}
 	local cmd = unix.commandv(argv[1])
 	if not cmd then
 		return nil, "command not found: " .. argv[1]
@@ -9,6 +10,14 @@ local function spawn(argv)
 
 	local pid = unix.fork()
 	if pid == 0 then
+		if opts.silent then
+			local devnull = unix.open("/dev/null", unix.O_WRONLY)
+			if devnull then
+				unix.dup2(devnull, 1)
+				unix.dup2(devnull, 2)
+				unix.close(devnull)
+			end
+		end
 		local full_argv = {cmd}
 		for i = 2, #argv do
 			table.insert(full_argv, argv[i])

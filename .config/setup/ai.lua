@@ -12,7 +12,7 @@ local function run(env)
 			return 0
 		end
 
-		local status = util.spawn({"git", "clone", path.join(remote_base, "ai"), "./ai"})
+		local status = util.spawn({"git", "clone", path.join(remote_base, "ai"), "./ai"}, {silent = true})
 		if status ~= 0 then
 			return 0
 		end
