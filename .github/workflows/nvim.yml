@@ -122,7 +122,9 @@ jobs:
           EOF
           sed -i 's/^          //' 3p/nvim/version.lua
 
-      - name: commit version.lua
+      - name: create PR for version.lua
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -130,8 +132,11 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
+            BRANCH="nvim-nightly-${{ steps.date.outputs.date }}"
+            git checkout -b "$BRANCH"
             git commit -m "nvim: update nightly to ${{ steps.date.outputs.date }}"
-            git push
+            git push -u origin "$BRANCH"
+            gh pr create --title "nvim: update nightly to ${{ steps.date.outputs.date }}" --body "Auto-generated PR to update nvim nightly cache."
           fi
 
   summary:
