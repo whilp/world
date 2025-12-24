@@ -2,7 +2,7 @@ return {
   version = "0.8.4",
   format = "tar.gz",
   strip_components = 1,
-  url = "https://github.com/astral-sh/ruff/releases/download/${version}/ruff-${arch}.tar.gz",
+  url = "https://github.com/astral-sh/ruff/releases/download/{version}/ruff-{arch}.tar.gz",
   platforms = {
     ["darwin-arm64"] = {
       arch = "aarch64-apple-darwin",

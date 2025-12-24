@@ -1,7 +1,7 @@
 return {
   version = "2.79.0",
   strip_components = 1,
-  url = "https://github.com/cli/cli/releases/download/v${version}/gh_${version}_${os}_${arch}.${ext}",
+  url = "https://github.com/cli/cli/releases/download/v{version}/gh_{version}_{os}_{arch}.{ext}",
   platforms = {
     ["darwin-arm64"] = {
       os = "macOS",

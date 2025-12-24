@@ -1,7 +1,7 @@
 return {
   version = "0.41.0",
   format = "binary",
-  url = "https://github.com/kivikakk/comrak/releases/download/v${version}/comrak-${version}-${arch}",
+  url = "https://github.com/kivikakk/comrak/releases/download/v{version}/comrak-{version}-{arch}",
   platforms = {
     ["darwin-arm64"] = {
       arch = "aarch64-apple-darwin",

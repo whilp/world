@@ -70,7 +70,7 @@ platform-assets: results/bin/home-darwin-arm64 results/bin/home-linux-arm64 resu
 
 # Universal home binary with dotfiles + platform metadata
 HOME_VERSION ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
-HOME_BASE_URL ?= https://github.com/whilp/dotfiles/releases/download/$${tag}
+HOME_BASE_URL ?= https://github.com/whilp/dotfiles/releases/download/{tag}
 HOME_TAG ?= home-$(shell date -u +%Y-%m-%d)-$(HOME_VERSION)
 
 results/bin/home: $(lua_bin) results/dotfiles.zip results/bin/home-darwin-arm64 results/bin/home-linux-arm64 results/bin/home-linux-x86_64 lib/home/main.lua lib/home/.args lib/home/gen-manifest.lua lib/home/gen-platforms.lua | results/bin

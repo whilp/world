@@ -179,7 +179,7 @@ local function interpolate(template, context)
   if type(template) ~= "string" then
     return template
   end
-  return template:gsub("%${([%w_]+)}", function(key)
+  return template:gsub("{([%w_]+)}", function(key)
     return tostring(context[key] or "")
   end)
 end

@@ -2,7 +2,7 @@ return {
   version = "1.4.2",
   format = "zip",
   strip_components = 0,
-  url = "https://github.com/duckdb/duckdb/releases/download/v${version}/duckdb_cli-${os}-${arch}.zip",
+  url = "https://github.com/duckdb/duckdb/releases/download/v{version}/duckdb_cli-{os}-{arch}.zip",
   platforms = {
     ["darwin-arm64"] = {
       os = "osx",

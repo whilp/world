@@ -2,7 +2,7 @@ return {
   version = "0.18.2",
   format = "tar.gz",
   strip_components = 1,
-  url = "https://github.com/dandavison/delta/releases/download/${version}/delta-${version}-${arch}.tar.gz",
+  url = "https://github.com/dandavison/delta/releases/download/{version}/delta-{version}-{arch}.tar.gz",
   platforms = {
     ["darwin-arm64"] = {
       arch = "aarch64-apple-darwin",

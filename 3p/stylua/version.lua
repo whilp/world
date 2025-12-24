@@ -2,7 +2,7 @@ return {
   version = "2.0.1",
   format = "zip",
   strip_components = 0,
-  url = "https://github.com/JohnnyMorganz/StyLua/releases/download/v${version}/stylua-${os}-${arch}.zip",
+  url = "https://github.com/JohnnyMorganz/StyLua/releases/download/v{version}/stylua-{os}-{arch}.zip",
   platforms = {
     ["darwin-arm64"] = {
       os = "macos",

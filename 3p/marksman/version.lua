@@ -1,7 +1,7 @@
 return {
   version = "2024-12-18",
   format = "binary",
-  url = "https://github.com/artempyanykh/marksman/releases/download/${version}/marksman-${platform}",
+  url = "https://github.com/artempyanykh/marksman/releases/download/{version}/marksman-{platform}",
   platforms = {
     ["darwin-arm64"] = {
       platform = "macos",
