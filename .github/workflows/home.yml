@@ -20,22 +20,13 @@ jobs:
           sudo chmod +x /usr/bin/ape
           sudo sh -c "echo ':APE:M::MZqFpD::/usr/bin/ape:' >/proc/sys/fs/binfmt_misc/register" || true
 
-      - name: Cache tools
-        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
-        with:
-          path: |
-            o/3p/cosmocc
-            o/3p/cosmos
-            o/3p/cosmopolitan
-          key: tools-${{ hashFiles('3p/cosmocc/cook.mk', '3p/cosmos/cook.mk', '3p/cosmopolitan/cook.mk') }}
-
       - name: Cache third-party binaries
         uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
         with:
           path: o/3p
-          key: 3p-v2-${{ hashFiles('3p/**/version.lua', '3p/cook.mk') }}
+          key: 3p-v3-${{ hashFiles('3p/**/cook.mk', '3p/**/version.lua') }}
           restore-keys: |
-            3p-v2-
+            3p-v3-
 
       - name: Cache Lua build artifacts
         uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
