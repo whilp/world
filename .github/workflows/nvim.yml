@@ -51,9 +51,6 @@ jobs:
             nvim-${{ matrix.platform }}.tar.gz
             nvim-${{ matrix.platform }}.tar.gz.sha256
 
-    outputs:
-      sha: ${{ steps.sha.outputs.sha }}
-
   release:
     needs: fetch
     runs-on: ubuntu-latest
