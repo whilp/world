@@ -5,7 +5,6 @@ include 3p/cosmopolitan/cook.mk
 include 3p/make/cook.mk
 include 3p/lua/cook.mk
 include lib/home/cook.mk
-include lib/gvisor/cook.mk
 include lib/test.mk
 
 UNAME_S := $(shell uname -s)
