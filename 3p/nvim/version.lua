@@ -1,5 +1,5 @@
 return {
-  version = "nightly",
+  version = "0.12.0-dev-1892",
   date = "2025.12.24",
   format = "tar.gz",
   strip_components = 1,

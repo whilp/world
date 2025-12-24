@@ -29,6 +29,15 @@ jobs:
           curl -fsSL -o nvim-upstream.tar.gz \
             "https://github.com/neovim/neovim/releases/download/nightly/${{ matrix.upstream }}"
 
+      - name: extract version from binary
+        id: version
+        run: |
+          mkdir -p nvim-temp
+          tar -xzf nvim-upstream.tar.gz -C nvim-temp --strip-components=1
+          VERSION=$(nvim-temp/bin/nvim --version | head -1 | sed 's/^NVIM v//' | sed 's/+.*//')
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          rm -rf nvim-temp
+
       - name: calculate sha256
         id: sha
         run: |
@@ -43,6 +52,9 @@ jobs:
       - name: rename for release
         run: mv nvim-upstream.tar.gz nvim-${{ matrix.platform }}.tar.gz
 
+      - name: write version file
+        run: echo "${{ steps.version.outputs.version }}" > nvim-${{ matrix.platform }}.version
+
       - name: upload artifact
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
         with:
@@ -50,6 +62,7 @@ jobs:
           path: |
             nvim-${{ matrix.platform }}.tar.gz
             nvim-${{ matrix.platform }}.tar.gz.sha256
+            nvim-${{ matrix.platform }}.version
 
   release:
     needs: fetch
@@ -68,16 +81,18 @@ jobs:
         id: date
         run: echo "date=$(date -u +%Y.%m.%d)" >> $GITHUB_OUTPUT
 
-      - name: collect shas
+      - name: collect shas and version
         id: shas
         run: |
           cd artifacts
           DARWIN_ARM64_SHA=$(cat nvim-darwin-arm64/nvim-darwin-arm64.tar.gz.sha256 | cut -d' ' -f1)
           LINUX_ARM64_SHA=$(cat nvim-linux-arm64/nvim-linux-arm64.tar.gz.sha256 | cut -d' ' -f1)
           LINUX_X64_SHA=$(cat nvim-linux-x64/nvim-linux-x64.tar.gz.sha256 | cut -d' ' -f1)
+          VERSION=$(cat nvim-linux-x64/nvim-linux-x64.version | tr -d '\n')
           echo "darwin_arm64=${DARWIN_ARM64_SHA}" >> $GITHUB_OUTPUT
           echo "linux_arm64=${LINUX_ARM64_SHA}" >> $GITHUB_OUTPUT
           echo "linux_x64=${LINUX_X64_SHA}" >> $GITHUB_OUTPUT
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
       - name: create release
         env:
@@ -101,7 +116,7 @@ jobs:
         run: |
           cat > 3p/nvim/version.lua << EOF
           return {
-            version = "nightly",
+            version = "${{ steps.shas.outputs.version }}",
             date = "${{ steps.date.outputs.date }}",
             format = "tar.gz",
             strip_components = 1,

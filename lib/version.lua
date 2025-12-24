@@ -284,4 +284,130 @@ function M.render(data, opts)
   end
 end
 
+local cosmo = require("cosmo")
+local unix = cosmo.unix
+local path = cosmo.path
+
+local HOME = os.getenv("HOME")
+local DEFAULT_SHARE_DIR = path.join(HOME, ".local", "share")
+
+function M.parse_version_dir(name)
+  local version, sha = name:match("^(.+)%-(%x+)$")
+  if version and sha then
+    return version, sha
+  end
+  return nil, nil
+end
+
+function M.compare_versions(a, b)
+  local function parse_components(v)
+    local parts = {}
+    for part in v:gmatch("[^.-]+") do
+      local num = tonumber(part)
+      table.insert(parts, num or part)
+    end
+    return parts
+  end
+
+  local pa, pb = parse_components(a), parse_components(b)
+  local max_len = math.max(#pa, #pb)
+
+  for i = 1, max_len do
+    local va, vb = pa[i], pb[i]
+    if va == nil then return false end
+    if vb == nil then return true end
+
+    local ta, tb = type(va), type(vb)
+    if ta == "number" and tb == "number" then
+      if va ~= vb then return va > vb end
+    elseif ta == "number" then
+      return true
+    elseif tb == "number" then
+      return false
+    else
+      if va ~= vb then return va > vb end
+    end
+  end
+
+  return false
+end
+
+function M.find_binary(version_dir, tool_name)
+  local patterns = {
+    path.join(version_dir, "bin", tool_name),
+    path.join(version_dir, tool_name),
+  }
+
+  for _, p in ipairs(patterns) do
+    local st = unix.stat(p)
+    if st then
+      local mode = type(st.mode) == "function" and st:mode() or st.mode
+      if not unix.S_ISDIR(mode) then
+        return p
+      end
+    end
+  end
+  return nil
+end
+
+function M.scan_versions(tool_name, share_dir)
+  share_dir = share_dir or DEFAULT_SHARE_DIR
+  local tool_dir = path.join(share_dir, tool_name)
+
+  local st = unix.stat(tool_dir)
+  if not st then
+    return {}
+  end
+  local mode = type(st.mode) == "function" and st:mode() or st.mode
+  if not unix.S_ISDIR(mode) then
+    return {}
+  end
+
+  local versions = {}
+  local dir = unix.opendir(tool_dir)
+  if not dir then
+    return versions
+  end
+
+  for name in dir do
+    if name ~= "." and name ~= ".." then
+      local version, sha = M.parse_version_dir(name)
+      if version and sha then
+        local version_path = path.join(tool_dir, name)
+        local bin_path = M.find_binary(version_path, tool_name)
+        if bin_path then
+          table.insert(versions, {
+            version = version,
+            sha = sha,
+            path = bin_path,
+            dir = version_path,
+          })
+        end
+      end
+    end
+  end
+
+  table.sort(versions, function(a, b)
+    return M.compare_versions(a.version, b.version)
+  end)
+
+  return versions
+end
+
+function M.find_latest(tool_name, share_dir)
+  local versions = M.scan_versions(tool_name, share_dir)
+  if #versions > 0 then
+    return versions[1]
+  end
+  return nil
+end
+
+function M.resolve_bin(tool_name, share_dir)
+  local latest = M.find_latest(tool_name, share_dir)
+  if latest then
+    return latest.path
+  end
+  return nil
+end
+
 return M
