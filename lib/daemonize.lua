@@ -84,7 +84,7 @@ M.acquire_lock = function(path)
     end
   end
 
-  local ok, err = unix.fcntl(fd, unix.F_SETLK, unix.F_WRLCK, unix.SEEK_SET, 0, 0)
+  local ok = unix.fcntl(fd, unix.F_SETLK, unix.F_WRLCK, unix.SEEK_SET, 0, 0)
   if not ok then
     unix.close(fd)
     return nil, "failed to acquire lock"

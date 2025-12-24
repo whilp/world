@@ -10,9 +10,9 @@ end
 
 local function find_claude_binary(paths)
   for i = 1, #paths do
-    local path = paths[i]
-    if path and unix.stat(path) then
-      return path
+    local p = paths[i]
+    if p and unix.stat(p) then
+      return p
     end
   end
   return nil
@@ -116,7 +116,7 @@ local function main(args)
   debug_log("execve argv[0]: " .. execve_argv[1])
   debug_log("execve argv[1..]: " .. table.concat(argv, " "))
 
-  local result, err = unix.execve(claude_bin, execve_argv, unix.environ())
+  local _, err = unix.execve(claude_bin, execve_argv, unix.environ())
 
   io.stderr:write("claude wrapper: failed to exec claude: " .. tostring(err) .. "\n")
   os.exit(1)
