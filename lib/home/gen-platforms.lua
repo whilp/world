@@ -18,7 +18,7 @@ local function extract_manifest(asset_path)
     return nil, "unzip not found"
   end
 
-  local ok, output = home.spawn(unzip, { "unzip", "-p", asset_path, "manifest.lua" })
+  local ok, output = home.spawn({ "unzip", "-p", asset_path, "manifest.lua" }):read()
   if not ok or not output or output == "" then
     return nil, "no manifest.lua found in " .. asset_path
   end

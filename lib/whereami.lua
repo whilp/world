@@ -3,6 +3,8 @@ local M = {}
 
 local ok, cosmo = pcall(require, 'cosmo')
 local unix = ok and cosmo.unix or nil
+local spawn_ok, spawn_mod = pcall(require, 'spawn')
+local spawn = spawn_ok and spawn_mod.spawn or nil
 
 -- Function to trim whitespace
 local function trim(s)
@@ -122,13 +124,26 @@ function M.get()
 
   -- Fall back to short hostname
   if identifier == '' then
-    local handle = io.popen('hostname -s 2>/dev/null || hostname', 'r')
-    if handle then
-      local hostname = handle:read('*l')
-      handle:close()
-      if hostname then
-        identifier = trim(hostname):match('([^.%s]+)')
+    local hostname
+    if spawn then
+      local s_ok, output = spawn({'hostname', '-s'}):read()
+      if s_ok and output then
+        hostname = output
+      else
+        s_ok, output = spawn({'hostname'}):read()
+        if s_ok and output then
+          hostname = output
+        end
       end
+    else
+      local handle = io.popen('hostname -s 2>/dev/null || hostname', 'r')
+      if handle then
+        hostname = handle:read('*l')
+        handle:close()
+      end
+    end
+    if hostname then
+      identifier = trim(hostname):match('([^.%s]+)')
     end
   end
 

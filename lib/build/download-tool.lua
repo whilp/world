@@ -5,6 +5,7 @@
 local cosmo = require("cosmo")
 local path = cosmo.path
 local unix = cosmo.unix
+local spawn = require("spawn").spawn
 
 -- Template interpolation
 local function interpolate(template, vars)
@@ -16,25 +17,13 @@ local function interpolate(template, vars)
   end)
 end
 
--- Execute external command using fork/exec
+-- Execute external command
 local function execute(program, args)
-  local pid = unix.fork()
-  if pid == 0 then
-    -- Child process
-    unix.execve(program, args, unix.environ())
-    unix.exit(127) -- Only reached if execve fails
-  elseif pid > 0 then
-    -- Parent process
-    local _, status = unix.wait()
-    -- Decode wait status: exit code is in upper byte
-    local exit_code = (status >> 8) & 0xFF
-    if exit_code ~= 0 then
-      return nil, string.format("command failed: %s (exit: %d)", program, exit_code)
-    end
-    return true
-  else
-    return nil, "fork failed"
+  local exit_code = spawn(args):wait()
+  if exit_code ~= 0 then
+    return nil, string.format("command failed: %s (exit: %d)", program, exit_code)
   end
+  return true
 end
 
 -- Load tool metadata

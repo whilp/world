@@ -1,7 +1,7 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
 local path = cosmo.path
-local util = require("util")
+local spawn = require("spawn").spawn
 
 local function run(env)
 	unix.chdir(env.DST)
@@ -12,17 +12,20 @@ local function run(env)
 			return 0
 		end
 
-		local status = util.spawn({"git", "clone", path.join(remote_base, "ai"), "./ai"}, {silent = true})
+		local devnull = unix.open("/dev/null", unix.O_RDWR)
+		local clone_url = path.join(remote_base, "ai")
+		local status = spawn({"git", "clone", clone_url, "./ai"}, {stdout = devnull, stderr = devnull}):wait()
+		unix.close(devnull)
 		if status ~= 0 then
 			return 0
 		end
 	else
 		unix.chdir("./ai")
-		util.spawn({"git", "fetch"})
+		spawn({"git", "fetch"}):wait()
 		unix.chdir(env.DST)
 	end
 
-	util.spawn({"claude", "plugin", "marketplace", "add", "./ai"})
+	spawn({"claude", "plugin", "marketplace", "add", "./ai"}):wait()
 
 	return 0
 end

@@ -200,44 +200,26 @@ local function load_zsh_environment()
     return env
   end
 
-  local read_fd, write_fd = unix.pipe()
-  if not read_fd then
+  local spawn = require("spawn").spawn
+  local ok, output = spawn({zsh_path, "-l", "-c", "env -0"}):read()
+  if not ok or not output then
     return env
   end
 
-  local pid = unix.fork()
-  if not pid then
-    unix.close(read_fd)
-    unix.close(write_fd)
-    return env
-  end
-
-  if pid == 0 then
-    unix.close(read_fd)
-    unix.dup(write_fd, 1)
-    unix.close(write_fd)
-    unix.execve(zsh_path, {"zsh", "-l", "-c", "env -0"}, unix.environ())
-    unix.exit(1)
-  else
-    unix.close(write_fd)
-    local output = unix.read(read_fd, 65536) or ""
-    unix.close(read_fd)
-    unix.wait()
-
-    local i = 1
-    while i <= #output do
-      local next_null = output:find("\0", i, true)
-      if not next_null then
-        break
-      end
-      local line = output:sub(i, next_null - 1)
-      local key, value = line:match("^([^=]+)=(.*)$")
-      if key then
-        env[key] = value
-      end
-      i = next_null + 1
+  local i = 1
+  while i <= #output do
+    local next_null = output:find("\0", i, true)
+    if not next_null then
+      break
     end
+    local line = output:sub(i, next_null - 1)
+    local key, value = line:match("^([^=]+)=(.*)$")
+    if key then
+      env[key] = value
+    end
+    i = next_null + 1
   end
+
   return env
 end
 
