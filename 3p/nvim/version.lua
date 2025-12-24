@@ -1,19 +1,19 @@
 return {
-  version = "2025.12.07",
-  release_sha = "c016a4c",
+  version = "nightly",
+  date = "2025.12.24",
   format = "tar.gz",
   strip_components = 1,
-  url = "https://github.com/whilp/dotfiles/releases/download/{version}-{release_sha}/nvim-{version}-{platform}.tar.gz",
+  url = "https://github.com/whilp/dotfiles/releases/download/nvim-nightly-{date}/nvim-{platform}.tar.gz",
   platforms = {
     ["darwin-arm64"] = {
-      sha = "143513b8f91dd29a510beef8c1202a9c623f5ced2f0f379df894d1d3e4b37039",
+      sha = "665bcc6f7ccc159a12ab33b5ebb457a3051151fdb74fefd5b5c17c12413eb955",
     },
     ["linux-arm64"] = {
-      sha = "4a1101efbf237749c0727c356bc3dcf78be6fdbae27d63fc9a5d147b0808a821",
+      sha = "0202cff00e28eeffeb0d4d2cadf8deabf032bf63b72ed1d3db799cb15e5549fd",
     },
     ["linux-x86_64"] = {
       platform = "linux-x64",
-      sha = "92b09500a845d5c5dd35473b28486c188a836ccc4fa3ab7fe54d2ce0777b4e0d",
+      sha = "13a1f03355366b08a1a8cd48b621e0b93280d51d981b44d4ef7041fd32c2d44d",
     },
   },
 }
