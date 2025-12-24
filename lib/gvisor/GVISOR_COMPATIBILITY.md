@@ -103,4 +103,11 @@ curl 8.5.0 (x86_64-pc-linux-gnu)
 
 ## Conclusion
 
-Assimilated binaries are incompatible with gVisor due to syscall differences. They work in standard Linux (verified by GitHub Actions) but cannot be used in gVisor sandboxes like claude.ai/code.
+**Cosmopolitan binaries (both APE and assimilated) cannot work in gVisor sandboxes.** This is due to fundamental limitations:
+
+- APE binaries: Binary format not recognized (ENOEXEC)
+- Assimilated binaries: Use ARCH_SET_GS which gVisor doesn't support
+
+The assimilated binaries work in standard Linux (verified by GitHub Actions) but will never work in gVisor without major changes to gVisor itself.
+
+**Recommendation**: Use system packages (make, curl, zip, unzip already available) and install lua5.4 via apt if needed.
