@@ -2,78 +2,17 @@ local cosmo = require("cosmo")
 local unix = cosmo.unix
 local path = cosmo.path
 local daemonize = require("daemonize")
+local version = require("version")
 
 local HOME = os.getenv("HOME")
 local DEFAULT_SOCK = path.join(HOME, ".config", "nvim", "nvim.sock")
 
-local function get_script_dir(script_path)
-  local script = script_path or arg[0]
-  if not script then
-    return nil
+local function resolve_nvim_bin()
+  local bin_path = version.resolve_bin("nvim")
+  if bin_path then
+    return bin_path
   end
-
-  if script:sub(1, 1) ~= "/" then
-    local pwd = os.getenv("PWD")
-    if pwd then
-      script = path.join(pwd, script)
-    else
-      return nil
-    end
-  end
-
-  local dir = script:match("^(.*)/[^/]+$")
-  return dir
-end
-
-local function find_latest_version(base_dir)
-  local versions = {}
-
-  local dir_iter = unix.opendir(base_dir)
-  if not dir_iter then
-    return nil
-  end
-
-  for name, kind in dir_iter do
-    if name ~= "." and name ~= ".." and name:match("^%d") then
-      if kind == unix.DT_DIR then
-        table.insert(versions, name)
-      else
-        local version_path = path.join(base_dir, name)
-        local stat = unix.stat(version_path)
-        if stat and unix.S_ISDIR(stat.mode) then
-          table.insert(versions, name)
-        end
-      end
-    end
-  end
-
-  if #versions == 0 then
-    return nil
-  end
-
-  table.sort(versions, function(a, b)
-    return a > b
-  end)
-
-  return versions[1]
-end
-
-local function resolve_nvim_bin(script_path)
-  local script_dir = get_script_dir(script_path)
-  local base_dir
-
-  if script_dir then
-    base_dir = path.join(script_dir, "..", "share", "nvim")
-  else
-    base_dir = path.join(HOME, ".local", "share", "nvim")
-  end
-
-  local version = find_latest_version(base_dir)
-  if version then
-    return path.join(base_dir, version, "bin", "nvim")
-  end
-
-  return path.join(base_dir, "bin", "nvim")
+  return path.join(HOME, ".local", "share", "nvim", "bin", "nvim")
 end
 
 local NVIM_BIN = nil
@@ -481,7 +420,7 @@ end
 
 local function main(args)
   local program_name = args[0]:match("([^/]+)$")
-  local nvim_bin = resolve_nvim_bin(args[0])
+  local nvim_bin = resolve_nvim_bin()
 
   local cmd_args = {}
   for i = 1, #args do
@@ -506,6 +445,5 @@ return {
   main = main,
   load_zsh_environment = load_zsh_environment,
   setup_nvim_environment = setup_nvim_environment,
-  get_script_dir = get_script_dir,
   resolve_nvim_bin = resolve_nvim_bin,
 }

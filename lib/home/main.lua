@@ -2,6 +2,7 @@ local cosmo = require("cosmo")
 local unix = cosmo.unix
 local path = cosmo.path
 local spawn = require("spawn").spawn
+local version_mod = require("version")
 
 -- Platform normalization table
 local PLATFORMS = {
@@ -622,55 +623,11 @@ local function cmd_version(opts)
 end
 
 local function find_binary_in_dir(dir, tool_name)
-  local patterns = {
-    path.join(dir, "bin", tool_name),
-    path.join(dir, tool_name),
-  }
-  for _, p in ipairs(patterns) do
-    if unix.stat(p) then
-      return p
-    end
-  end
-  return nil
+  return version_mod.find_binary(dir, tool_name)
 end
 
 local function scan_for_latest_version(tool_name, share_dir)
-  share_dir = share_dir or path.join(os.getenv("HOME"), ".local", "share")
-  local tool_dir = path.join(share_dir, tool_name)
-
-  if not unix.stat(tool_dir) then
-    return nil
-  end
-
-  local latest_path = nil
-  local latest_version = nil
-  local latest_sha = nil
-
-  for name, _ in unix.opendir(tool_dir) do
-    if name ~= "." and name ~= ".." then
-      local version, sha = name:match("^(.+)%-(%x+)$")
-      if version and sha then
-        local version_dir = path.join(tool_dir, name)
-        local bin_path = find_binary_in_dir(version_dir, tool_name)
-        if bin_path and unix.stat(bin_path) then
-          if not latest_version or version > latest_version then
-            latest_version = version
-            latest_sha = sha
-            latest_path = bin_path
-          end
-        end
-      end
-    end
-  end
-
-  if latest_path then
-    return {
-      version = latest_version,
-      sha = latest_sha,
-      path = latest_path,
-    }
-  end
-  return nil
+  return version_mod.find_latest(tool_name, share_dir)
 end
 
 local function update_symlink(link_path, target_path, opts)
