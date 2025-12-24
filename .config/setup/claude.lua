@@ -1,19 +1,18 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
 local path = cosmo.path
-local util = require("util")
+local spawn = require("spawn").spawn
 
 local CLAUDE_BASE_URL = "https://storage.googleapis.com/" ..
 	"claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819"
 
 local function get_latest_version()
-	local handle = io.popen("gh api repos/anthropics/claude-code/releases/latest --jq '.tag_name'", "r")
-	if not handle then
+	local ok, output = spawn({"gh", "api", "repos/anthropics/claude-code/releases/latest", "--jq", ".tag_name"}):read()
+	if not ok then
 		io.stderr:write("error: failed to fetch latest version\n")
 		return nil
 	end
-	local version = handle:read("*l")
-	handle:close()
+	local version = output:gsub("%s+$", "")
 	if version then
 		version = version:match("^v?(.+)$")
 	end
@@ -22,20 +21,16 @@ end
 
 local function get_sha256(url)
 	local temp_file = "/tmp/claude-download-" .. os.time()
-	local ok = pcall(util.spawn, {"curl", "-fsSL", "-o", temp_file, url})
-	if not ok then
+	local status = spawn({"curl", "-fsSL", "-o", temp_file, url}):wait()
+	if status ~= 0 then
 		io.stderr:write("error: failed to download claude binary\n")
 		return nil
 	end
 
-	local handle = io.popen(string.format("shasum -a 256 '%s'", temp_file), "r")
+	local ok, output = spawn({"shasum", "-a", "256", temp_file}):read()
 	local sha256
-	if handle then
-		local output = handle:read("*l")
-		handle:close()
-		if output then
-			sha256 = output:match("^(%x+)")
-		end
+	if ok and output then
+		sha256 = output:match("^(%x+)")
 	end
 
 	unix.unlink(temp_file)
@@ -80,20 +75,16 @@ local function run(env)
 			unix.makedirs(version_dir)
 
 			local temp_file = "/tmp/claude-download-" .. os.time()
-			util.spawn({"curl", "-fsSL", "-o", temp_file, CLAUDE_URL})
+			spawn({"curl", "-fsSL", "-o", temp_file, CLAUDE_URL}):wait()
 
-			local handle = io.popen(string.format("shasum -a 256 '%s'", temp_file), "r")
+			local ok, output = spawn({"shasum", "-a", "256", temp_file}):read()
 			local actual_sha256
-			if handle then
-				local output = handle:read("*l")
-				handle:close()
-				if output then
-					actual_sha256 = output:match("^(%x+)")
-				end
+			if ok and output then
+				actual_sha256 = output:match("^(%x+)")
 			end
 
 			if actual_sha256 == CLAUDE_SHA256 then
-				util.spawn({"mv", temp_file, claude_bin})
+				spawn({"mv", temp_file, claude_bin}):wait()
 				unix.chmod(claude_bin, 0755)
 			else
 				io.stderr:write("error: claude binary checksum verification failed\n")

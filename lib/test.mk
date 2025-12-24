@@ -75,9 +75,7 @@ test-nvim: private .UNVEIL = \
 	rwc:/tmp \
 	rw:/dev/null
 test-nvim: lua
-	cd lib/nvim && HOME=$(CURDIR) \
-		LUA_PATH="$(CURDIR)/lib/?.lua;;" \
-		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
+	cd lib/nvim && HOME=$(CURDIR) $(home_lua) $(CURDIR)/$(test_runner) test.lua
 
 test-claude-skills: private .UNVEIL = \
 	r:lib/claude \
@@ -100,9 +98,7 @@ test-environ: private .UNVEIL = \
 	r:$(CURDIR) \
 	rw:/dev/null
 test-environ: lua
-	cd lib/environ && HOME=$(CURDIR) \
-		LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;" \
-		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
+	cd lib/environ && HOME=$(CURDIR) $(home_lua) $(CURDIR)/$(test_runner) test.lua
 
 test-build-download-tool: private .UNVEIL = \
 	r:lib/build \
@@ -114,9 +110,7 @@ test-build-download-tool: private .UNVEIL = \
 	rwc:/tmp \
 	rw:/dev/null
 test-build-download-tool: lua
-	cd lib/build && HOME=$(CURDIR) \
-		LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;" \
-		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
+	cd lib/build && HOME=$(CURDIR) $(home_lua) $(CURDIR)/$(test_runner) test.lua
 
 # skip test-work until work.lua module is available in CI
 test-all: test-3p-lua test-lib-whereami test-home test-lib-daemonize test-claude test-nvim test-claude-skills test-environ test-build-download-tool

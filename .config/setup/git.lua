@@ -1,23 +1,21 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
 local path = cosmo.path
+local spawn = require("spawn").spawn
 local util = require("util")
 
 local function run(env)
 	unix.rmrf(path.join(env.DST, ".git"))
 	util.copy_tree(path.join(env.SRC, ".git"), path.join(env.DST, ".git"))
 	unix.chdir(env.DST)
-	util.spawn({"git", "checkout", "."})
-	util.spawn({"git", "config", "user.email", "189851+whilp@users.noreply.github.com"})
-	util.spawn({"git", "config", "core.fsmonitor", "false"})
+	spawn({"git", "checkout", "."}):wait()
+	spawn({"git", "config", "user.email", "189851+whilp@users.noreply.github.com"}):wait()
+	spawn({"git", "config", "core.fsmonitor", "false"}):wait()
 
 	if unix.commandv("watchman") then
-		local pid = unix.fork()
-		if pid == 0 then
-			local watchman = unix.commandv("watchman")
-			unix.execve(watchman, {watchman, "watch-project", env.DST}, unix.environ())
-			os.exit(127)
-		end
+		local devnull = unix.open("/dev/null", unix.O_RDWR)
+		spawn({"watchman", "watch-project", env.DST}, {stdin = devnull, stdout = devnull, stderr = devnull})
+		unix.close(devnull)
 	end
 
 	return 0

@@ -1,19 +1,18 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
 local path = cosmo.path
-local util = require("util")
+local spawn = require("spawn").spawn
 
 local function run(env)
-	local handle = io.popen("id -un", "r")
-	if not handle then
+	local ok, output = spawn({"id", "-un"}):read()
+	if not ok then
 		return 1
 	end
-	local username = handle:read("*l")
-	handle:close()
+	local username = output:gsub("%s+$", "")
 
 	local zsh_path = unix.commandv("zsh")
 	if zsh_path then
-		util.spawn({"sudo", "chsh", username, "--shell", zsh_path})
+		spawn({"sudo", "chsh", username, "--shell", zsh_path}):wait()
 	end
 
 	local bashrc = path.join(env.DST, ".bashrc")

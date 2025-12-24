@@ -28,6 +28,7 @@ TOOLS := nvim gh delta rg duckdb tree-sitter ast-grep biome comrak \
 
 # download-tool needs our custom lua binary with cosmo built-in
 lua_bin := results/bin/lua
+lib_lua = LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;" $(CURDIR)/$(lua_bin)
 
 # download-tool target
 download_tool := lib/build/download-tool.lua
@@ -39,7 +40,7 @@ $(download_tool): lua
 define tool_download_rule
 $(3p)/$(1)/%/.extracted: 3p/$(1)/version.lua $(download_tool)
 	@mkdir -p $$(dir $$@)
-	$(lua_bin) $(download_tool) $(1) $$* $$(dir $$@)
+	$(lib_lua) $(download_tool) $(1) $$* $$(dir $$@)
 	touch $$@
 endef
 

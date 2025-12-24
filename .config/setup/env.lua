@@ -1,6 +1,7 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
 local path = cosmo.path
+local spawn = require("spawn").spawn
 
 local function get()
 	local env = {}
@@ -35,11 +36,9 @@ local function get()
 
 	env.SHELLINIT = path.join(env.DST, ".config", "shellinit")
 
-	local handle = io.popen("git config --get remote.origin.url 2>/dev/null", "r")
-	if handle then
-		local remote = handle:read("*l")
-		handle:close()
-		env.REMOTE = remote or ""
+	local ok, output = spawn({"git", "config", "--get", "remote.origin.url"}):read()
+	if ok and output then
+		env.REMOTE = output:gsub("%s+$", "")
 	else
 		env.REMOTE = ""
 	end
