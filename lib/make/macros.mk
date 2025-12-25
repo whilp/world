@@ -59,6 +59,24 @@ $$($(1)_dir):
 	mkdir -p $$@
 endef
 
+# download_binary_rule: generate rules for downloading a single binary
+# $(1) = name (e.g. cosmos)
+# $(2) = binary name (e.g. zip)
+# $(3) = url
+# $(4) = sha256
+# note: caller must define $(1)_dir and create $(1)_dir/bin directory rule
+define download_binary_rule
+$(1)_$(2)_bin := $$($(1)_dir)/bin/$(2)
+
+$$($(1)_$(2)_bin): private .UNVEIL = r:/etc/resolv.conf r:/etc/ssl rwc:$$($(1)_dir) rw:/dev/null
+$$($(1)_$(2)_bin): private .PLEDGE = stdio rpath wpath cpath inet dns
+$$($(1)_$(2)_bin): private .INTERNET = 1
+$$($(1)_$(2)_bin): | $$($(1)_dir)/bin
+	$$(curl) -o $$@ $(3)
+	cd $$(dir $$@) && echo "$(4)  $$(notdir $$@)" | $$(sha256sum) -c
+	chmod +x $$@
+endef
+
 # platform_binaries_zip_rule: generate a binaries zip for a platform
 # $(1) = platform (e.g. darwin-arm64)
 define platform_binaries_zip_rule
