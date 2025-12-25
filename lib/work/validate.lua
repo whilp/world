@@ -5,7 +5,7 @@ local M = {}
 
 -- Validate field update
 -- Returns: ok, err
-M.field_update = function(item, key, value)
+M.field_update = function(_item, key, value)
   if key == "id" or key == "created" then
     return nil, "cannot update field: " .. key
   end

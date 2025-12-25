@@ -352,7 +352,6 @@ end
 
 local function extract_platform_asset(asset_path, dest, force, filter, opts)
   opts = opts or {}
-  local stderr = opts.stderr or io.stderr
   local stdout = opts.stdout or io.stdout
   local verbose = opts.verbose or false
   local dry_run = opts.dry_run or false

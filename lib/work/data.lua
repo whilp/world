@@ -57,18 +57,18 @@ M.validate = function(item)
   if not item.title then
     return nil, "missing required field 'title'"
   end
-  local ok, err = type_check(item.title, "string", "title")
+  ok, err = type_check(item.title, "string", "title")
   if not ok then return nil, err end
-  local ok, err = M.validate_string_content(item.title, "title")
+  ok, err = M.validate_string_content(item.title, "title")
   if not ok then return nil, err end
 
   if item.created then
-    local ok, err = type_check(item.created, "string", "created")
+    ok, err = type_check(item.created, "string", "created")
     if not ok then return nil, err end
   end
 
   if item.blocks then
-    local ok, err = type_check(item.blocks, "table", "blocks")
+    ok, err = type_check(item.blocks, "table", "blocks")
     if not ok then return nil, err end
     for i, block_id in ipairs(item.blocks) do
       if type(block_id) ~= "string" then
@@ -89,7 +89,7 @@ M.validate = function(item)
     if type(item.description) ~= "string" then
       return nil, string.format("field 'description' must be string, got %s", type(item.description))
     end
-    local ok, err = M.validate_string_content(item.description, "description")
+    ok, err = M.validate_string_content(item.description, "description")
     if not ok then return nil, err end
   end
 
@@ -102,7 +102,7 @@ M.validate = function(item)
   end
 
   if item.log then
-    local ok, err = type_check(item.log, "table", "log")
+    ok, err = type_check(item.log, "table", "log")
     if not ok then return nil, err end
     for timestamp, message in pairs(item.log) do
       if type(timestamp) ~= "string" then
@@ -111,7 +111,7 @@ M.validate = function(item)
       if type(message) ~= "string" then
         return nil, string.format("log['%s'] must be string, got %s", timestamp, type(message))
       end
-      local ok, err = M.validate_string_content(message, string.format("log['%s']", timestamp))
+      ok, err = M.validate_string_content(message, string.format("log['%s']", timestamp))
       if not ok then return nil, err end
     end
   end
@@ -140,10 +140,10 @@ local function make_work_callback(items_table)
 end
 
 -- Load and execute lua file with Work{} callbacks
--- Signature: M.load_file(path, store, kinds)
+-- Signature: M.load_file(file_path, store, kinds)
 -- Returns: ok, err
-M.load_file = function(path, store, kinds)
-  local loader, err = loadfile(path)
+M.load_file = function(file_path, store, kinds)
+  local loader, err = loadfile(file_path)
   if not loader then
     return false, err
   end
@@ -265,7 +265,7 @@ end
 -- Ensure data directory exists
 local function ensure_data_dir(dir)
   local posix = require("posix")
-  local ok, err = posix.mkdir(dir)
+  local _, err = posix.mkdir(dir)
   if err and not err:match("File exists") then
     return nil, "failed to create data directory: " .. dir .. ": " .. tostring(err)
   end
@@ -284,7 +284,8 @@ M.acquire_lock = function(dir)
   local lock_path = path.join(dir, ".work.lock")
 
   -- Open or create lock file
-  local fd, err = fcntl.open(lock_path, fcntl.O_CREAT + fcntl.O_RDWR, 384) -- 384 = 0600 octal
+  local fd
+  fd, err = fcntl.open(lock_path, fcntl.O_CREAT + fcntl.O_RDWR, 384) -- 384 = 0600 octal
   if not fd then
     return nil, "failed to open lock file: " .. tostring(err)
   end
@@ -297,7 +298,7 @@ M.acquire_lock = function(dir)
     l_len = 0,
   }
 
-  local ok, err = fcntl.fcntl(fd, fcntl.F_SETLK, lock)
+  ok = fcntl.fcntl(fd, fcntl.F_SETLK, lock)
   if not ok then
     local unistd = require("posix.unistd")
     unistd.close(fd)
@@ -346,7 +347,7 @@ M.load_all = function(store, dir)
   end
 
   for _, file in ipairs(files) do
-    local ok, err = M.load_file(file, store)
+    ok, err = M.load_file(file, store)
     if not ok then
       return nil, "failed to load " .. file .. ": " .. tostring(err)
     end
@@ -359,9 +360,9 @@ local signal = require("posix.signal")
 local cleanup_registry = {}
 
 local function cleanup_temp_files()
-  for _, path in ipairs(cleanup_registry) do
-    if path then
-      os.remove(path)
+  for _, temp_path in ipairs(cleanup_registry) do
+    if temp_path then
+      os.remove(temp_path)
     end
   end
 end
@@ -386,13 +387,13 @@ M.save = function(item, dir)
     return nil, err
   end
 
-  local ok, err = ensure_data_dir(dir)
+  ok, err = ensure_data_dir(dir)
   if not ok then
     M.release_lock()
     return nil, err
   end
 
-  local ok, err = M.validate(item)
+  ok, err = M.validate(item)
   if not ok then
     M.release_lock()
     return nil, err
@@ -435,7 +436,7 @@ M.save = function(item, dir)
   f:write(M.write(item))
   f:close()
 
-  local ok, err = os.rename(temp, source)
+  ok, err = os.rename(temp, source)
   if not ok then
     os.remove(temp)  -- cleanup on failure
     cleanup_registry[#cleanup_registry] = nil  -- remove from registry
@@ -503,7 +504,7 @@ M.delete = function(item, dir)
     return nil, err
   end
 
-  local ok = os.remove(source)
+  ok = os.remove(source)
   if not ok then
     M.release_lock()
     return nil, "failed to remove file: " .. source

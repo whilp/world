@@ -62,9 +62,7 @@ end
 -- Example:
 -- ○ 2F2J: title (blocks: X, Y)
 -- ◉ 3K4M: completed task
-M.list = function(items, opts)
-  opts = opts or {}
-
+M.list = function(items, _opts)
   if #items == 0 then
     return "no work items"
   end
@@ -89,9 +87,7 @@ end
 -- ◉ 6M7P      completed root
 --
 -- tree_data format: {roots = array, children = map}
-M.tree = function(tree_data, opts)
-  opts = opts or {}
-
+M.tree = function(tree_data, _opts)
   local roots = tree_data.roots or {}
   local children = tree_data.children or {}
 
@@ -138,9 +134,7 @@ end
 -- log:
 --   2025-11-30T10:00:00: message 1
 --   2025-11-30T14:00:00: message 2
-M.detail = function(item, opts)
-  opts = opts or {}
-
+M.detail = function(item, _opts)
   local lines = {}
 
   table.insert(lines, "id: " .. item.id:lower())
@@ -232,7 +226,7 @@ local function render_items_list(items, opts)
   for _, item in ipairs(items) do
     local status = opts.status_override or M.status_mark(item)
 
-    local blockers = ""
+    local blockers
     if opts.show_blocks and item._computed and item._computed.unresolved_blocks then
       local block_count = #item._computed.unresolved_blocks
       blockers = string.format("%2d↓ ", block_count)
@@ -263,7 +257,7 @@ end
 -- ○ 4K5N      task with no due
 --
 -- Note: Uses ○ to indicate ready/unblocked status
-M.ready = function(items, opts)
+M.ready = function(items, _opts)
   return render_items_list(items, {
     empty_message = "no ready items",
     show_priority = true,
@@ -277,7 +271,7 @@ end
 --
 -- Note: Uses ⊗ to indicate blocked status, N↓ shows blocker count
 -- Expects enriched items with _computed.unresolved_blocks
-M.blocked = function(items, opts)
+M.blocked = function(items, _opts)
   return render_items_list(items, {
     empty_message = "no blocked items",
     show_priority = false,
