@@ -4,6 +4,7 @@ include 3p/luacheck/cook.mk
 include 3p/cosmopolitan/cook.mk
 include 3p/make/cook.mk
 include 3p/lua/cook.mk
+include 3p/lua-release/cook.mk
 include lib/home/cook.mk
 include lib/test.mk
 
