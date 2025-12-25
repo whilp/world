@@ -109,12 +109,8 @@ lua_bin := results/bin/lua
 lua: $(lua_bin)
 
 # patch lua.main.c, lfuncs.c, and copy headers to register redbean modules
-$(lua_patched): private .UNVEIL = \
-	r:$(lua_patch_dir) \
-	rwc:$(lua_cosmo_dir)/third_party/lua \
-	rwc:$(lua_cosmo_dir)/tool/net \
-	rwc:$(lua_build_dir) \
-	rw:/dev/null
+$(lua_patched): private .UNVEIL = r:$(lua_patch_dir) rwc:$(lua_cosmo_dir)/third_party/lua rwc:$(lua_cosmo_dir)/tool/net rwc:$(lua_build_dir) rw:/dev/null
+$(lua_patched): private .PLEDGE = stdio rpath wpath cpath proc exec
 $(lua_patched): $(cosmopolitan_src) | $(lua_build_dir)
 	cp $(lua_patch_dir)/lpath.h $(lua_cosmo_dir)/third_party/lua/
 	cp $(lua_patch_dir)/lre.h $(lua_cosmo_dir)/third_party/lua/
@@ -131,25 +127,17 @@ cosmos_zip_bin := $(cosmos_dir)/bin/zip
 
 $(cosmos_zip_bin): $(cosmos_bin)
 
-$(lua_bin): private .UNVEIL = \
-	r:$(lua_build_dir) \
-	r:$(luaunit_lua_dir) \
-	r:$(luacheck_lua_dir) \
-	r:$(cosmocc_dir) \
-	r:$(cosmos_dir) \
-	rwc:results/bin \
-	rw:/dev/null
+$(lua_bin): private .UNVEIL = r:$(lua_build_dir) r:$(luaunit_lua_dir) r:$(luacheck_lua_dir) r:$(cosmocc_dir) r:$(cosmos_dir) rwc:results/bin rw:/dev/null
+$(lua_bin): private .PLEDGE = stdio rpath wpath cpath fattr exec proc
+$(lua_bin): private .CPU = 120
 $(lua_bin): $(lua_all_objs) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua $(luacheck_lua_dir)/bin/luacheck | results/bin
 	$(cosmocc_bin) -mcosmo $(lua_all_objs) -o $@
 	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
 	cd $(luacheck_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luacheck_lua_dir))
 
 # ensure all objects wait for patching and toolchain
-$(lua_all_objs): private .UNVEIL = \
-	r:$(lua_cosmo_dir) \
-	r:$(cosmocc_dir) \
-	rwc:$(lua_build_dir) \
-	rw:/dev/null
+$(lua_all_objs): private .UNVEIL = r:$(lua_cosmo_dir) r:$(cosmocc_dir) rwc:$(lua_build_dir) rw:/dev/null
+$(lua_all_objs): private .PLEDGE = stdio rpath wpath cpath exec proc
 $(lua_all_objs): | $(lua_patched) $(cosmocc_bin)
 
 # lua core objects (from third_party/lua)
@@ -191,7 +179,13 @@ $(lua_build_dir) $(lua_build_dir)/lua $(lua_build_dir)/net $(lua_build_dir)/line
 results/bin:
 	mkdir -p $@
 
-.PHONY: lua clean-lua
+test-3p-lua: private .UNVEIL = r:3p/lua rx:$(lua_bin) r:$(test_runner) rwc:3p/lua/o rw:/dev/null
+test-3p-lua: private .PLEDGE = stdio rpath wpath cpath proc exec
+test-3p-lua: private .CPU = 60
+test-3p-lua: lua
+	cd 3p/lua && $(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
 
 clean-lua:
 	rm -rf $(lua_build_dir) $(lua_bin)
+
+.PHONY: lua clean-lua test-3p-lua

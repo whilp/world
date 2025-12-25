@@ -23,50 +23,18 @@ ast_grep_extracted := $(ast_grep_dir)/$(PLATFORM)/.extracted
 
 build: lua
 
+clean: private .PLEDGE = stdio rpath wpath cpath
 clean:
 	rm -rf o results
 
-# all_binaries is now defined in 3p/cook.mk
-
-# Platform-specific binaries zips
-results/binaries-darwin-arm64.zip: private .UNVEIL = \
-	r:$(3p) \
-	rx:$(cosmos_zip_bin) \
-	rwc:results \
-	rw:/dev/null
-results/binaries-darwin-arm64.zip: $(all_binaries) $(cosmos_zip_bin) | results
-	cd $(3p) && \
-		find . -path '*/darwin-arm64/*' -type f ! -name '.extracted' | \
-		$(cosmos_zip_bin) -q $(CURDIR)/$@ -@
-
-results/binaries-linux-arm64.zip: private .UNVEIL = \
-	r:$(3p) \
-	rx:$(cosmos_zip_bin) \
-	rwc:results \
-	rw:/dev/null
-results/binaries-linux-arm64.zip: $(all_binaries) $(cosmos_zip_bin) | results
-	cd $(3p) && \
-		find . -path '*/linux-arm64/*' -type f ! -name '.extracted' | \
-		$(cosmos_zip_bin) -q $(CURDIR)/$@ -@
-
-results/binaries-linux-x86_64.zip: private .UNVEIL = \
-	r:$(3p) \
-	rx:$(cosmos_zip_bin) \
-	rwc:results \
-	rw:/dev/null
-results/binaries-linux-x86_64.zip: $(all_binaries) $(cosmos_zip_bin) | results
-	cd $(3p) && \
-		find . -path '*/linux-x86_64/*' -type f ! -name '.extracted' | \
-		$(cosmos_zip_bin) -q $(CURDIR)/$@ -@
+$(foreach p,$(PLATFORMS),$(eval $(call platform_binaries_zip_rule,$(p))))
 
 results:
 	mkdir -p $@
 
-check: private .UNVEIL = \
-	r:$(CURDIR) \
-	rx:$(3p)/ast-grep \
-	rx:results/bin \
-	rw:/dev/null
+check: private .UNVEIL = r:$(CURDIR) rx:$(3p)/ast-grep rx:results/bin rw:/dev/null
+check: private .PLEDGE = stdio rpath proc exec
+check: private .CPU = 120
 check: $(ast_grep_extracted) lua
 	$(ast_grep_bin) scan --color always
 	@echo ""

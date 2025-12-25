@@ -8,16 +8,12 @@ home_mac_dir = lib/home/mac
 home_setup_sources = $(wildcard $(home_setup_dir)/*.lua)
 home_mac_sources = $(wildcard $(home_mac_dir)/*.lua)
 
-results/dotfiles.zip: private .UNVEIL = \
-	r:$(CURDIR) \
-	rx:$(cosmos_zip_bin) \
-	rwc:results \
-	rw:/dev/null
+results/dotfiles.zip: private .UNVEIL = r:$(CURDIR) rx:$(cosmos_zip_bin) rwc:results rw:/dev/null
+results/dotfiles.zip: private .PLEDGE = stdio rpath wpath cpath fattr exec proc
 results/dotfiles.zip: $(cosmos_zip_bin) | results
 	git ls-files -z | grep -zZvE '$(home_exclude_pattern)' | \
 		xargs -0 $(cosmos_zip_bin) -q -r $@
 
-# Platform-specific binary assets (home-darwin-arm64, home-linux-arm64, home-linux-x86_64)
 define build_platform_asset
 	@echo "Building platform asset $(1) for $(2)..."
 	@rm -rf results/platform-$(2)
@@ -26,7 +22,7 @@ define build_platform_asset
 	@mkdir -p results/platform-$(2)/temp-binaries
 	@unzip -q results/binaries-$(2).zip -d results/platform-$(2)/temp-binaries
 	@cd results/platform-$(2)/temp-binaries && \
-		for tool in nvim gh delta rg duckdb tree-sitter ast-grep biome comrak marksman ruff shfmt sqruff stylua superhtml uv; do \
+		for tool in $(TOOLS); do \
 			if [ -d "$$tool/$(2)" ]; then \
 				version=$$(cat "$$tool/$(2)/VERSION" 2>/dev/null || echo "0.0.0"); \
 				version=$${version:-0.0.0}; \
@@ -64,23 +60,28 @@ define build_platform_asset
 	@rm -rf results/platform-$(2)
 endef
 
-results/bin/home-darwin-arm64: $(lua_bin) results/binaries-darwin-arm64.zip lib/home/main.lua lib/home/gen-manifest.lua $(spawn_sources) $(version_file) | results/bin
-	$(call build_platform_asset,$@,darwin-arm64)
+# generate platform asset rules
+define platform_home_rule
+results/bin/home-$(1): private .PLEDGE = stdio rpath wpath cpath fattr exec proc
+results/bin/home-$(1): private .CPU = 120
+results/bin/home-$(1): $$(lua_bin) results/binaries-$(1).zip lib/home/main.lua lib/home/gen-manifest.lua $$(spawn_sources) $$(version_file) | results/bin
+	$$(call build_platform_asset,$$@,$(1))
+endef
 
-results/bin/home-linux-arm64: $(lua_bin) results/binaries-linux-arm64.zip lib/home/main.lua lib/home/gen-manifest.lua $(spawn_sources) $(version_file) | results/bin
-	$(call build_platform_asset,$@,linux-arm64)
+$(foreach p,$(PLATFORMS),$(eval $(call platform_home_rule,$(p))))
 
-results/bin/home-linux-x86_64: $(lua_bin) results/binaries-linux-x86_64.zip lib/home/main.lua lib/home/gen-manifest.lua $(spawn_sources) $(version_file) | results/bin
-	$(call build_platform_asset,$@,linux-x86_64)
+platform-assets: $(foreach p,$(PLATFORMS),results/bin/home-$(p))
 
-platform-assets: results/bin/home-darwin-arm64 results/bin/home-linux-arm64 results/bin/home-linux-x86_64
-
-# Universal home binary with dotfiles + platform metadata
+# universal home binary with dotfiles + platform metadata
 HOME_VERSION ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 HOME_BASE_URL ?= https://github.com/whilp/dotfiles/releases/download/{tag}
 HOME_TAG ?= home-$(shell date -u +%Y-%m-%d)-$(HOME_VERSION)
 
-results/bin/home: $(lua_bin) results/dotfiles.zip results/bin/home-darwin-arm64 results/bin/home-linux-arm64 results/bin/home-linux-x86_64 lib/home/main.lua lib/home/.args lib/home/gen-manifest.lua lib/home/gen-platforms.lua $(spawn_sources) $(version_file) $(home_setup_sources) $(home_mac_sources) | results/bin
+home_platform_deps := $(foreach p,$(PLATFORMS),results/bin/home-$(p))
+
+results/bin/home: private .PLEDGE = stdio rpath wpath cpath fattr exec proc
+results/bin/home: private .CPU = 180
+results/bin/home: $(lua_bin) results/dotfiles.zip $(home_platform_deps) lib/home/main.lua lib/home/.args lib/home/gen-manifest.lua lib/home/gen-platforms.lua $(spawn_sources) $(version_file) $(home_setup_sources) $(home_mac_sources) | results/bin
 	@echo "Building universal home binary..."
 	@rm -rf results/home-universal
 	@mkdir -p results/home-universal/home/.local/bin
@@ -91,10 +92,7 @@ results/bin/home: $(lua_bin) results/dotfiles.zip results/bin/home-darwin-arm64 
 	@echo "Generating manifest..."
 	@$(home_lua) lib/home/gen-manifest.lua results/home-universal/home $(HOME_VERSION) > results/home-universal/manifest.lua
 	@echo "Generating platforms metadata..."
-	@$(home_lua) lib/home/gen-platforms.lua results/home-universal "$(HOME_BASE_URL)" "$(HOME_TAG)" \
-		results/bin/home-darwin-arm64 \
-		results/bin/home-linux-arm64 \
-		results/bin/home-linux-x86_64
+	@$(home_lua) lib/home/gen-platforms.lua results/home-universal "$(HOME_BASE_URL)" "$(HOME_TAG)" $(home_platform_deps)
 	@echo "Creating home binary..."
 	@cp $(lua_bin) $@
 	@cd results/home-universal && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$@ -@
@@ -105,4 +103,10 @@ results/bin/home: $(lua_bin) results/dotfiles.zip results/bin/home-darwin-arm64 
 
 home: results/bin/home
 
-.PHONY: home platform-assets
+test-home: private .UNVEIL = r:lib/home r:lib rx:$(lua_bin) r:$(test_runner) rwc:lib/home/o rw:/dev/null
+test-home: private .PLEDGE = stdio rpath wpath cpath proc exec
+test-home: private .CPU = 60
+test-home: lua
+	cd lib/home && $(home_lua) $(CURDIR)/$(test_runner) test_main.lua
+
+.PHONY: home platform-assets test-home
