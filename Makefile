@@ -71,7 +71,7 @@ check: $(ast_grep_extracted) lua
 	$(ast_grep_bin) scan --color always
 	@echo ""
 	@echo "Running luacheck..."
-	@$(lua_bin) /zip/.lua/bin/luacheck \
+	$(lua_bin) /zip/.lua/bin/luacheck \
 		.config \
 		lib \
 		.github \

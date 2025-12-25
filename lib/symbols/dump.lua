@@ -105,7 +105,8 @@ M.load_from_files = function(unicode_data_path, blocks_path)
     return nil, err
   end
 
-  local blocks_content, err = read_file(blocks_path)
+  local blocks_content
+  blocks_content, err = read_file(blocks_path)
   if not blocks_content then
     return nil, err
   end

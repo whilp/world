@@ -20,7 +20,7 @@ local function validate_config(config)
   if not config.platforms then
     return nil, "missing required field 'platforms'"
   end
-  local ok, err = type_check(config.platforms, "table", "platforms")
+  ok, err = type_check(config.platforms, "table", "platforms")
   if not ok then return nil, err end
 
   local platform_count = 0
@@ -86,7 +86,7 @@ local function validate_config(config)
   end
 
   if config.executables then
-    local ok, err = type_check(config.executables, "table", "executables")
+    ok, err = type_check(config.executables, "table", "executables")
     if not ok then return nil, err end
 
     for i, exe in ipairs(config.executables) do

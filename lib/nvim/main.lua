@@ -15,7 +15,7 @@ local function resolve_nvim_bin()
   return path.join(HOME, ".local", "share", "nvim", "bin", "nvim")
 end
 
-local NVIM_BIN = nil
+-- NVIM_BIN: reserved for future caching of resolved binary path
 
 local function derive_paths(sock)
   local sock_dir = path.dirname(sock)
@@ -76,12 +76,12 @@ local function mkdir_p(dir_path)
   return true
 end
 
-local function file_exists(path)
-  return unix.stat(path) ~= nil
+local function file_exists(file_path)
+  return unix.stat(file_path) ~= nil
 end
 
-local function read_file(path)
-  local f = io.open(path, "r")
+local function read_file(file_path)
+  local f = io.open(file_path, "r")
   if not f then
     return nil
   end
@@ -239,8 +239,8 @@ local function cmd_start(paths, nvim_bin)
     unix.wait()
 
     if wait_for_socket(paths.sock, 5) then
-      pid = get_running_pid(paths.pid)
-      if pid then
+      local running_pid = get_running_pid(paths.pid)
+      if running_pid then
         io.write("nvim server started\n")
         return 0
       else
@@ -250,9 +250,9 @@ local function cmd_start(paths, nvim_bin)
       end
     else
       io.stderr:write("nvim server failed to start: socket not ready after 5 seconds, check " .. paths.log .. "\n")
-      pid = get_running_pid(paths.pid)
-      if pid then
-        unix.kill(pid, unix.SIGTERM)
+      local running_pid = get_running_pid(paths.pid)
+      if running_pid then
+        unix.kill(running_pid, unix.SIGTERM)
       end
       os.remove(paths.pid)
       return 1

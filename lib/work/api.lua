@@ -197,7 +197,7 @@ M.add = function(title, opts)
   end
 
   if opts.due then
-    local ok, err = validate.due_date(opts.due)
+    ok, err = validate.due_date(opts.due)
     if not ok then
       return nil, err
     end
@@ -222,9 +222,9 @@ M.add = function(title, opts)
       table.insert(blocks, full_id)
     end
 
-    local ok, validate_err = process.validate_blocks(_store, item.id, blocks)
+    ok, err = process.validate_blocks(_store, item.id, blocks)
     if not ok then
-      return nil, validate_err
+      return nil, err
     end
 
     item.blocks = blocks
@@ -232,9 +232,9 @@ M.add = function(title, opts)
 
   store.add(_store, item)
 
-  local ok, save_err = data.save(item, _config.data_dir)
+  ok, err = data.save(item, _config.data_dir)
   if not ok then
-    return nil, save_err
+    return nil, err
   end
 
   return item
@@ -260,9 +260,9 @@ M.done = function(id)
 
   data.mark_done(item)
 
-  local ok, save_err = data.save(item, _config.data_dir)
+  ok, err = data.save(item, _config.data_dir)
   if not ok then
-    return nil, save_err
+    return nil, err
   end
 
   return item
@@ -288,9 +288,9 @@ M.start = function(id)
 
   data.mark_started(item)
 
-  local ok, save_err = data.save(item, _config.data_dir)
+  ok, err = data.save(item, _config.data_dir)
   if not ok then
-    return nil, save_err
+    return nil, err
   end
 
   return item
@@ -321,29 +321,29 @@ M.update = function(id, updates)
     if value == "" or value == nil then
       item[key] = nil
     else
-      local ok, validate_err = validate.field_update(item, key, value)
+      ok, err = validate.field_update(item, key, value)
       if not ok then
-        return nil, validate_err
+        return nil, err
       end
 
       if key == "blocks" then
         -- Parse blocks if it's a string
         local blocks
         if type(value) == "string" then
-          blocks, validate_err = validate.parse_blocks(value, function(short_id)
+          blocks, err = validate.parse_blocks(value, function(short_id)
             return data.resolve_id(_store, short_id)
           end)
           if not blocks then
-            return nil, validate_err
+            return nil, err
           end
         else
           -- Assume it's already an array
           blocks = value
         end
 
-        local ok, cycle_err = process.validate_blocks(_store, item.id, blocks)
+        ok, err = process.validate_blocks(_store, item.id, blocks)
         if not ok then
-          return nil, cycle_err
+          return nil, err
         end
 
         item[key] = blocks
@@ -355,9 +355,9 @@ M.update = function(id, updates)
     end
   end
 
-  local ok, save_err = data.save(item, _config.data_dir)
+  ok, err = data.save(item, _config.data_dir)
   if not ok then
-    return nil, save_err
+    return nil, err
   end
 
   return item
@@ -384,9 +384,9 @@ M.log = function(id, message)
   local timestamp = os.date("%Y-%m-%dT%H:%M:%S")
   data.add_log(item, message, timestamp)
 
-  local ok, save_err = data.save(item, _config.data_dir)
+  ok, err = data.save(item, _config.data_dir)
   if not ok then
-    return nil, save_err
+    return nil, err
   end
 
   return timestamp
@@ -436,9 +436,9 @@ M.delete = function(id)
 
   local clean_copy = data.clean(item)
 
-  local ok, delete_err = data.delete(item, _config.data_dir)
+  ok, err = data.delete(item, _config.data_dir)
   if not ok then
-    return nil, delete_err
+    return nil, err
   end
 
   -- Remove from store

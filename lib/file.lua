@@ -7,21 +7,21 @@ local unistd = require("posix.unistd")
 
 local M = {}
 
-function M.exists(path)
-  local st = stat.stat(path)
+function M.exists(file_path)
+  local st = stat.stat(file_path)
   return st ~= nil
 end
 
-function M.is_directory(path)
-  local st, err = stat.stat(path)
+function M.is_directory(file_path)
+  local st, err = stat.stat(file_path)
   if not st then
     return nil, "failed to stat path: " .. tostring(err)
   end
   return stat.S_ISDIR(st.st_mode) ~= 0
 end
 
-function M.read(path)
-  local f, err = io.open(path, "rb")
+function M.read(file_path)
+  local f, err = io.open(file_path, "rb")
   if not f then
     return nil, "failed to open file: " .. tostring(err)
   end
@@ -30,8 +30,8 @@ function M.read(path)
   return content
 end
 
-function M.write(path, content)
-  local f, err = io.open(path, "wb")
+function M.write(file_path, content)
+  local f, err = io.open(file_path, "wb")
   if not f then
     return nil, "failed to open file for writing: " .. tostring(err)
   end
@@ -40,12 +40,12 @@ function M.write(path, content)
   return true
 end
 
-function M.basename(path)
-  return path:match("([^/]+)$") or path
+function M.basename(file_path)
+  return file_path:match("([^/]+)$") or file_path
 end
 
-function M.dirname(path)
-  local dir = path:match("(.+)/[^/]+$")
+function M.dirname(file_path)
+  local dir = file_path:match("(.+)/[^/]+$")
   return dir or "."
 end
 
@@ -69,9 +69,9 @@ function M.mkdir_p(dir_path)
   end
 end
 
-function M.rm_rf(path)
-  local is_dir, dir_err = M.is_directory(path)
-  if not M.exists(path) and not is_dir then
+function M.rm_rf(target_path)
+  local is_dir = M.is_directory(target_path)
+  if not M.exists(target_path) and not is_dir then
     return true
   end
 
@@ -103,11 +103,11 @@ function M.rm_rf(path)
     return true
   end
 
-  return remove_recursive(path)
+  return remove_recursive(target_path)
 end
 
-function M.list_dir_first_entry(path)
-  local entries, err = dirent.dir(path)
+function M.list_dir_first_entry(dir_path)
+  local entries, err = dirent.dir(dir_path)
   if not entries then
     return nil, "failed to read directory: " .. tostring(err)
   end

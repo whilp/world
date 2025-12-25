@@ -1,5 +1,3 @@
-local data = require("work.data")
-
 local M = {}
 
 -- Parse date string YYYY-MM-DD into year, month, day
