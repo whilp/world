@@ -11,6 +11,7 @@ tar := tar -m
 gunzip := gunzip -f
 lua := lua
 
+include lib/make/macros.mk
 include 3p/cosmocc/cook.mk
 include 3p/cosmos/cook.mk
 include 3p/make/cook.mk
@@ -38,6 +39,9 @@ $(download_tool): lua
 # Generates: $(3p)/nvim/%/.extracted: 3p/nvim/version.lua ...
 #   where % matches platform (darwin-arm64, linux-arm64, linux-x86_64)
 define tool_download_rule
+$(3p)/$(1)/%/.extracted: private .PLEDGE = stdio rpath wpath cpath inet dns exec proc
+$(3p)/$(1)/%/.extracted: private .INTERNET = 1
+$(3p)/$(1)/%/.extracted: private .CPU = 120
 $(3p)/$(1)/%/.extracted: 3p/$(1)/version.lua $(download_tool)
 	@mkdir -p $$(dir $$@)
 	$(lib_lua) $(download_tool) $(1) $$* $$(dir $$@)
