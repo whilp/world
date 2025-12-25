@@ -126,11 +126,6 @@ $(lua_patched): $(cosmopolitan_src) | $(lua_build_dir)
 	cd $(lua_cosmo_dir) && patch -N -p1 < $(CURDIR)/$(lua_patch_dir)/lfuncs.c.patch || true
 	touch $@
 
-# cosmos zip is needed for APE binaries (system zip doesn't work with APE format)
-cosmos_zip_bin := $(cosmos_dir)/bin/zip
-
-$(cosmos_zip_bin): $(cosmos_bin)
-
 $(lua_bin): private .UNVEIL = r:$(lua_build_dir) r:$(luaunit_lua_dir) r:$(luacheck_lua_dir) r:$(cosmocc_dir) r:$(cosmos_dir) rwc:results/bin rw:/dev/null
 $(lua_bin): private .PLEDGE = stdio rpath wpath cpath fattr exec proc
 $(lua_bin): private .CPU = 120
