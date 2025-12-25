@@ -63,6 +63,9 @@ lua_ext_net_srcs := lpath.c lre.c lsqlite3.c largon2.c lfuncs.c
 # cosmo module (lfuncs_register.c registers lfuncs as cosmo module)
 lua_cosmo_srcs := lfuncs_register.c
 
+# gVisor TLS compatibility (from shared lib/cosmo)
+include lib/cosmo/cosmo.mk
+
 # linenoise source
 lua_linenoise_srcs := linenoise.c
 
@@ -100,7 +103,8 @@ lua_regex_objs := $(addprefix $(lua_build_dir)/regex/,$(lua_regex_srcs:.c=.o))
 lua_sqlite3_objs := $(addprefix $(lua_build_dir)/sqlite3/,$(lua_sqlite3_srcs:.c=.o))
 lua_cosmo_objs := $(addprefix $(lua_build_dir)/cosmo/,$(lua_cosmo_srcs:.c=.o))
 
-lua_all_objs := $(lua_core_objs) $(lua_ext_lua_objs) $(lua_ext_net_objs) $(lua_linenoise_objs) $(lua_argon2_objs) $(lua_regex_objs) $(lua_sqlite3_objs) $(lua_cosmo_objs)
+# cosmo override objects must come first to take precedence over libc
+lua_all_objs := $(cosmo_override_objs) $(lua_core_objs) $(lua_ext_lua_objs) $(lua_ext_net_objs) $(lua_linenoise_objs) $(lua_argon2_objs) $(lua_regex_objs) $(lua_sqlite3_objs) $(lua_cosmo_objs)
 
 # output
 lua_bin := results/bin/lua
