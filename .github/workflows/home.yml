@@ -33,8 +33,9 @@ jobs:
         with:
           path: |
             o/lua
+            o/cosmo
             results/bin/lua
-          key: lua-build-${{ hashFiles('3p/lua/**', 'lib/run-test.lua') }}
+          key: lua-build-${{ hashFiles('3p/lua/**', 'lib/cosmo/**', 'lib/run-test.lua') }}
           restore-keys: |
             lua-build-
 
@@ -54,6 +55,7 @@ jobs:
           path: |
             results/bin/home
             results/bin/home-*
+            results/bin/lua
 
   test:
     runs-on: ${{ matrix.os }}
@@ -123,7 +125,7 @@ jobs:
       - name: Create checksums
         run: |
           cd results
-          sha256sum bin/home bin/home-* > SHA256SUMS
+          sha256sum bin/home bin/home-* bin/lua > SHA256SUMS
           cat SHA256SUMS
 
       - name: Create release
@@ -143,4 +145,5 @@ jobs:
             results/bin/home-darwin-arm64 \
             results/bin/home-linux-arm64 \
             results/bin/home-linux-x86_64 \
+            results/bin/lua \
             results/SHA256SUMS
