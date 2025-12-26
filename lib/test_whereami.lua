@@ -23,8 +23,11 @@ function test_whereami_get_with_emoji()
 end
 
 function test_whereami_codespaces_format()
+  local handle = io.popen('git rev-parse --abbrev-ref HEAD')
+  local branch = handle:read('*l')
+  handle:close()
   local base = whereami.get_with_emoji(function() return nil end)
   local env = { CODESPACES = 'true', GITHUB_REPOSITORY = 'owner/repo' }
   local result = whereami.get_with_emoji(function(k) return env[k] end)
-  lu.assertEquals(result, 'repo/feat/whereami-codespaces | ' .. base)
+  lu.assertEquals(result, 'repo/' .. branch .. ' | ' .. base)
 end
