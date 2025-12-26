@@ -1073,6 +1073,51 @@ function test_cmd_3p_dry_run_verbose()
   remove_dir(tmp)
 end
 
+function test_cmd_3p_nvim_site_symlink()
+  skip_without_cosmo()
+  local tmp = make_temp_dir()
+  local share_dir = path.join(tmp, "share")
+  local bin_dir = path.join(tmp, ".local", "bin")
+
+  local nvim_dir = path.join(share_dir, "nvim", "0.12.0-abcd1234")
+  local nvim_bin_dir = path.join(nvim_dir, "bin")
+  local nvim_site_dir = path.join(nvim_dir, "share", "nvim", "site")
+  unix.makedirs(nvim_bin_dir)
+  unix.makedirs(nvim_site_dir)
+  write_file(path.join(nvim_bin_dir, "nvim"), "#!/bin/sh\necho nvim")
+  write_file(path.join(nvim_site_dir, "marker"), "site")
+
+  local stdout = mock_writer()
+  local stderr = mock_writer()
+
+  local code = home.cmd_3p({}, {
+    home = tmp,
+    share_dir = share_dir,
+    stdout = stdout,
+    stderr = stderr,
+  })
+  lu.assertEquals(code, 0)
+
+  local bin_link = path.join(bin_dir, "nvim")
+  local st = unix.stat(bin_link, unix.AT_SYMLINK_NOFOLLOW)
+  lu.assertNotNil(st)
+  lu.assertTrue(unix.S_ISLNK(st:mode()))
+
+  local site_link = path.join(share_dir, "nvim", "site")
+  st = unix.stat(site_link, unix.AT_SYMLINK_NOFOLLOW)
+  lu.assertNotNil(st)
+  lu.assertTrue(unix.S_ISLNK(st:mode()))
+
+  local marker = path.join(site_link, "marker")
+  local f = io.open(marker, "r")
+  lu.assertNotNil(f, "symlink should resolve to actual directory")
+  local content = f:read("*a")
+  f:close()
+  lu.assertEquals(content, "site")
+
+  remove_dir(tmp)
+end
+
 --------------------------------------------------------------------------------
 -- Test: main dispatch for 3p
 --------------------------------------------------------------------------------
