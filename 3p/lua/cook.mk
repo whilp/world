@@ -14,7 +14,7 @@ $(lua_bin): $(cosmos_lua_bin) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua $
 	chmod +x $@
 	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
 	cd $(luacheck_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luacheck_lua_dir))
-	$@ --assimilate
+	./$@ --assimilate
 
 lua: $(lua_bin)
 
