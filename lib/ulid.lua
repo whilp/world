@@ -1,5 +1,7 @@
 local M = {}
 
+local cosmo = require("cosmo")
+
 local ENCODING = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
 
 local ENCODING_LEN = 32
@@ -19,19 +21,10 @@ end
 
 local function encode_random(len)
   local result = {}
-  local f = io.open("/dev/urandom", "rb")
-  if not f then
-    math.randomseed(os.time() + os.clock() * 1000000)
-    for i = 1, len do
-      result[i] = ENCODING:sub(math.random(1, ENCODING_LEN), math.random(1, ENCODING_LEN))
-    end
-  else
-    local bytes = f:read(len)
-    f:close()
-    for i = 1, len do
-      local byte = bytes:byte(i)
-      result[i] = ENCODING:sub((byte % ENCODING_LEN) + 1, (byte % ENCODING_LEN) + 1)
-    end
+  local bytes = cosmo.GetRandomBytes(len)
+  for i = 1, len do
+    local byte = bytes:byte(i)
+    result[i] = ENCODING:sub((byte % ENCODING_LEN) + 1, (byte % ENCODING_LEN) + 1)
   end
   return table.concat(result)
 end

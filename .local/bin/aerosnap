@@ -8,140 +8,6 @@ local spawn = require("spawn").spawn
 local SNAPSHOT_DIR = path.join(os.getenv("HOME"), ".cache", "aerospace")
 local SNAPSHOT_FILE = path.join(SNAPSHOT_DIR, "window-snapshot.json")
 
-local function json_encode(tbl)
-  local function encode_value(val)
-    local t = type(val)
-    if t == "nil" then
-      return "null"
-    elseif t == "boolean" then
-      return val and "true" or "false"
-    elseif t == "number" then
-      return tostring(val)
-    elseif t == "string" then
-      local escaped = val:gsub('\\', '\\\\'):gsub('"', '\\"'):gsub('\n', '\\n'):gsub('\r', '\\r'):gsub('\t', '\\t')
-      return '"' .. escaped .. '"'
-    elseif t == "table" then
-      if #val > 0 or next(val) == nil then
-        local parts = {}
-        for _, v in ipairs(val) do
-          table.insert(parts, encode_value(v))
-        end
-        return "[" .. table.concat(parts, ",") .. "]"
-      else
-        local parts = {}
-        for k, v in pairs(val) do
-          table.insert(parts, '"' .. tostring(k) .. '":' .. encode_value(v))
-        end
-        return "{" .. table.concat(parts, ",") .. "}"
-      end
-    end
-    return "null"
-  end
-  return encode_value(tbl)
-end
-
-local function json_decode(str)
-  local pos = 1
-  local function skip_whitespace()
-    while pos <= #str and str:sub(pos, pos):match("%s") do
-      pos = pos + 1
-    end
-  end
-  local function parse_value()
-    skip_whitespace()
-    local c = str:sub(pos, pos)
-    if c == '"' then
-      pos = pos + 1
-      local result = ""
-      while pos <= #str do
-        local ch = str:sub(pos, pos)
-        if ch == '\\' then
-          pos = pos + 1
-          local escape = str:sub(pos, pos)
-          if escape == 'n' then result = result .. '\n'
-          elseif escape == 'r' then result = result .. '\r'
-          elseif escape == 't' then result = result .. '\t'
-          elseif escape == '"' then result = result .. '"'
-          elseif escape == '\\' then result = result .. '\\'
-          else result = result .. escape
-          end
-          pos = pos + 1
-        elseif ch == '"' then
-          pos = pos + 1
-          return result
-        else
-          result = result .. ch
-          pos = pos + 1
-        end
-      end
-      error("unterminated string")
-    elseif c == '[' then
-      pos = pos + 1
-      local arr = {}
-      skip_whitespace()
-      if str:sub(pos, pos) == ']' then
-        pos = pos + 1
-        return arr
-      end
-      while true do
-        table.insert(arr, parse_value())
-        skip_whitespace()
-        if str:sub(pos, pos) == ']' then
-          pos = pos + 1
-          return arr
-        elseif str:sub(pos, pos) == ',' then
-          pos = pos + 1
-        else
-          error("expected ',' or ']'")
-        end
-      end
-    elseif c == '{' then
-      pos = pos + 1
-      local obj = {}
-      skip_whitespace()
-      if str:sub(pos, pos) == '}' then
-        pos = pos + 1
-        return obj
-      end
-      while true do
-        skip_whitespace()
-        local key = parse_value()
-        skip_whitespace()
-        if str:sub(pos, pos) ~= ':' then
-          error("expected ':'")
-        end
-        pos = pos + 1
-        obj[key] = parse_value()
-        skip_whitespace()
-        if str:sub(pos, pos) == '}' then
-          pos = pos + 1
-          return obj
-        elseif str:sub(pos, pos) == ',' then
-          pos = pos + 1
-        else
-          error("expected ',' or '}'")
-        end
-      end
-    elseif str:sub(pos, pos + 3) == "true" then
-      pos = pos + 4
-      return true
-    elseif str:sub(pos, pos + 4) == "false" then
-      pos = pos + 5
-      return false
-    elseif str:sub(pos, pos + 3) == "null" then
-      pos = pos + 4
-      return nil
-    elseif c:match("[%d%-]") then
-      local num_str = str:match("%-?%d+%.?%d*[eE]?[%+%-]?%d*", pos)
-      pos = pos + #num_str
-      return tonumber(num_str)
-    else
-      error("unexpected character: " .. c .. " at position " .. pos)
-    end
-  end
-  return parse_value()
-end
-
 local function get_all_windows()
   local handle = spawn({"aerospace", "list-windows", "--all", "--json"})
   if not handle then
@@ -152,7 +18,7 @@ local function get_all_windows()
     return nil, "failed to get windows from aerospace"
   end
 
-  local windows = json_decode(json_output)
+  local windows = cosmo.DecodeJson(json_output)
   local enriched = {}
 
   handle = spawn({
@@ -180,31 +46,6 @@ local function get_all_windows()
   return enriched
 end
 
-local function write_file(path, content)
-  local fd, err = unix.open(path, unix.O_WRONLY + unix.O_CREAT + unix.O_TRUNC, 420)
-  if not fd then
-    return nil, "failed to open file: " .. (err or path)
-  end
-  unix.write(fd, content)
-  unix.close(fd)
-  return true
-end
-
-local function read_file(path)
-  local fd, err = unix.open(path, unix.O_RDONLY)
-  if not fd then
-    return nil, "failed to open file: " .. (err or path)
-  end
-  local content = ""
-  while true do
-    local chunk = unix.read(fd, 65536)
-    if not chunk or chunk == "" then break end
-    content = content .. chunk
-  end
-  unix.close(fd)
-  return content
-end
-
 local function cmd_save(args)
   local windows, err = get_all_windows()
   if not windows then
@@ -217,12 +58,9 @@ local function cmd_save(args)
     timestamp = os.date("!%Y-%m-%dT%H:%M:%SZ"),
     windows = windows,
   }
-  local json = json_encode(snapshot)
-  local formatted = json:gsub(",", ",\n  "):gsub("{", "{\n  "):gsub("}", "\n}"):gsub("%[{", "[\n  {"):gsub("}%]", "}\n]")
-
-  local ok, write_err = write_file(SNAPSHOT_FILE, formatted)
+  local ok, write_err = pcall(cosmo.Barf, SNAPSHOT_FILE, cosmo.EncodeJson(snapshot, {pretty = true}))
   if not ok then
-    io.stderr:write("error: " .. write_err .. "\n")
+    io.stderr:write("error: " .. (write_err or "failed to write snapshot") .. "\n")
     return 1
   end
 
@@ -231,13 +69,13 @@ local function cmd_save(args)
 end
 
 local function cmd_load(args)
-  local content, err = read_file(SNAPSHOT_FILE)
+  local content = cosmo.Slurp(SNAPSHOT_FILE)
   if not content then
     io.stderr:write("error: snapshot not found: " .. SNAPSHOT_FILE .. "\n")
     return 1
   end
 
-  local snapshot = json_decode(content)
+  local snapshot = cosmo.DecodeJson(content)
   if not snapshot or not snapshot.windows then
     io.stderr:write("error: invalid snapshot format\n")
     return 1
@@ -295,7 +133,7 @@ local function cmd_load(args)
 end
 
 local function cmd_show(args)
-  local content, err = read_file(SNAPSHOT_FILE)
+  local content = cosmo.Slurp(SNAPSHOT_FILE)
   if not content then
     io.stderr:write("error: snapshot not found: " .. SNAPSHOT_FILE .. "\n")
     return 1

@@ -1,1 +1,0 @@
-$(eval $(call download_tarball_rule,cosmopolitan,https://github.com/jart/cosmopolitan/releases/download/4.0.2/cosmopolitan-4.0.2.tar.gz,e466106b18064e0c996ef64d261133af867bccd921ad14e54975d89aa17a8717,cosmopolitan-4.0.2,Makefile))

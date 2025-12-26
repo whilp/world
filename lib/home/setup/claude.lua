@@ -27,12 +27,7 @@ local function get_sha256(url)
 		return nil
 	end
 
-	local ok, output = spawn({"shasum", "-a", "256", temp_file}):read()
-	local sha256
-	if ok and output then
-		sha256 = output:match("^(%x+)")
-	end
-
+	local sha256 = cosmo.EncodeHex(cosmo.Sha256(cosmo.Slurp(temp_file))):lower()
 	unix.unlink(temp_file)
 	return sha256
 end
@@ -77,12 +72,7 @@ local function run(env)
 			local temp_file = "/tmp/claude-download-" .. os.time()
 			spawn({"curl", "-fsSL", "-o", temp_file, CLAUDE_URL}):wait()
 
-			local ok, output = spawn({"shasum", "-a", "256", temp_file}):read()
-			local actual_sha256
-			if ok and output then
-				actual_sha256 = output:match("^(%x+)")
-			end
-
+			local actual_sha256 = cosmo.EncodeHex(cosmo.Sha256(cosmo.Slurp(temp_file))):lower()
 			if actual_sha256 == CLAUDE_SHA256 then
 				spawn({"mv", temp_file, claude_bin}):wait()
 				unix.chmod(claude_bin, 0755)

@@ -1,6 +1,6 @@
 #!/usr/bin/env lua
 
-local json = require("dkjson")
+local cosmo = require("cosmo")
 
 local function read_stdin()
   local content = io.read("*all")
@@ -11,7 +11,7 @@ local function read_stdin()
 end
 
 local function parse_json(content)
-  local data, _, err = json.decode(content)
+  local data, err = cosmo.DecodeJson(content)
   if not data then
     return nil, "failed to parse json: " .. tostring(err)
   end
