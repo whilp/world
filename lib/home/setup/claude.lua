@@ -2,7 +2,6 @@ local cosmo = require("cosmo")
 local unix = cosmo.unix
 local path = cosmo.path
 local spawn = require("spawn").spawn
-local hash = require("hash")
 
 local CLAUDE_BASE_URL = "https://storage.googleapis.com/" ..
 	"claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819"
@@ -28,7 +27,7 @@ local function get_sha256(url)
 		return nil
 	end
 
-	local sha256 = hash.sha256_file(temp_file)
+	local sha256 = cosmo.EncodeHex(cosmo.Sha256(cosmo.Slurp(temp_file))):lower()
 	unix.unlink(temp_file)
 	return sha256
 end
@@ -73,8 +72,8 @@ local function run(env)
 			local temp_file = "/tmp/claude-download-" .. os.time()
 			spawn({"curl", "-fsSL", "-o", temp_file, CLAUDE_URL}):wait()
 
-			local verified, verify_err = hash.verify_sha256(temp_file, CLAUDE_SHA256)
-			if verified then
+			local actual_sha256 = cosmo.EncodeHex(cosmo.Sha256(cosmo.Slurp(temp_file))):lower()
+			if actual_sha256 == CLAUDE_SHA256 then
 				spawn({"mv", temp_file, claude_bin}):wait()
 				unix.chmod(claude_bin, 0755)
 			else

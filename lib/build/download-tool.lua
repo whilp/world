@@ -6,7 +6,6 @@ local cosmo = require("cosmo")
 local path = cosmo.path
 local unix = cosmo.unix
 local spawn = require("spawn").spawn
-local hash = require("hash")
 
 -- Template interpolation
 local function interpolate(template, vars)
@@ -109,7 +108,15 @@ local function verify_sha256(file_path, expected_sha)
     return nil, "expected_sha cannot be empty"
   end
 
-  return hash.verify_sha256(file_path, expected_sha)
+  local content = cosmo.Slurp(file_path)
+  if not content then
+    return nil, "failed to read file"
+  end
+  local actual = cosmo.EncodeHex(cosmo.Sha256(content)):lower()
+  if actual == expected_sha:lower() then
+    return true
+  end
+  return nil, string.format("sha256 mismatch: expected %s, got %s", expected_sha, actual)
 end
 
 -- Extract tar.gz archive
