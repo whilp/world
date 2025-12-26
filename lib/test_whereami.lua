@@ -23,13 +23,27 @@ function test_whereami_get_with_emoji()
 end
 
 function test_whereami_codespaces_format()
-  if os.getenv('CODESPACES') ~= 'true' then
-    -- Skip test if not in codespaces
-    return
+  local original_getenv = os.getenv
+  local mock_env = {
+    CODESPACES = 'true',
+    GITHUB_REPOSITORY = 'testowner/testrepo',
+  }
+  os.getenv = function(key)
+    if mock_env[key] ~= nil then
+      return mock_env[key]
+    end
+    return original_getenv(key)
   end
 
-  local identifier = whereami.get_with_emoji()
-  -- Codespaces format: <repo>/<branch> | <short hostname> <emoji>
+  package.loaded['whereami'] = nil
+  local w = require('whereami')
+
+  local identifier = w.get_with_emoji()
+
+  os.getenv = original_getenv
+  package.loaded['whereami'] = nil
+  require('whereami')
+
   lu.assertNotNil(identifier:find(' | '),
     "codespaces format should contain ' | ' separator")
 
@@ -37,11 +51,11 @@ function test_whereami_codespaces_format()
   lu.assertNotNil(repo_branch, "should have repo/branch before separator")
   lu.assertNotNil(host_emoji, "should have hostname and emoji after separator")
 
-  -- repo/branch should contain a slash
   lu.assertNotNil(repo_branch:find('/'),
     "repo/branch portion should contain a slash")
+  lu.assertEquals(repo_branch:match('^[^/]+'), 'testrepo',
+    "repo name should be stripped of owner prefix")
 
-  -- host_emoji should contain a space (hostname + emoji)
   lu.assertNotNil(host_emoji:find(' '),
     "hostname and emoji should be space-separated")
 end
