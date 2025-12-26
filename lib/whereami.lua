@@ -1,17 +1,12 @@
--- Module to get hostname or box-name/host_env identifier
-local M = {}
-
 local ok, cosmo = pcall(require, 'cosmo')
 local unix = ok and cosmo.unix or nil
 local spawn_ok, spawn_mod = pcall(require, 'spawn')
 local spawn = spawn_ok and spawn_mod.spawn or nil
 
--- Function to trim whitespace
 local function trim(s)
   return s:match('^%s*(.-)%s*$')
 end
 
--- Function to read file contents
 local function read_file(path)
   local file = io.open(path, 'r')
   if not file then
@@ -22,7 +17,6 @@ local function read_file(path)
   return content and trim(content) or nil
 end
 
--- Function to check if file exists
 local function file_exists(path)
   if not unix then
     local f = io.open(path, 'r')
@@ -35,10 +29,8 @@ local function file_exists(path)
   return unix.access(path, unix.F_OK)
 end
 
--- Cache for conf directory path
 local cached_conf_dir = nil
 
--- Function to find the conf directory (scans root once and caches result)
 local function find_conf_dir()
   if cached_conf_dir ~= nil then
     return cached_conf_dir
@@ -62,7 +54,6 @@ local function find_conf_dir()
 
     if name ~= '.' and name ~= '..' then
       local conf_path = '/' .. name .. '/conf'
-      -- Check if conf directory exists by checking for box-name file
       if file_exists(conf_path .. '/box-name') then
         dir:close()
         cached_conf_dir = conf_path
@@ -72,15 +63,11 @@ local function find_conf_dir()
   end
 
   dir:close()
-  cached_conf_dir = false  -- Cache negative result
+  cached_conf_dir = false
   return nil
 end
 
--- Function to deterministically pick an emoji based on a string
 local function string_to_emoji(str)
-  -- Food & Drink emojis from https://emojipedia.org/food-drink/ (color-blind friendly)
-  -- Must be no newer than Unicode 9.0 to prevent Terminal issues
-  -- From pay-server/dev/lib/devbox/emojier/translator.rb
   local emojis = {
     '🍇', '🍈', '🍉', '🍊', '🍋', '🍌', '🍍', '🍎', '🍐', '🍑',
     '🍒', '🍓', '🥝', '🍅', '🥑', '🍆', '🥔', '🥕', '🌽', '🌶',
@@ -92,18 +79,15 @@ local function string_to_emoji(str)
     '🍹', '🍺', '🍻', '🥂', '🥃'
   }
 
-  -- Generate hash from string
   local hash = 0
   for i = 1, #str do
     hash = (hash * 31 + string.byte(str, i)) % 2147483647
   end
 
-  -- Pick emoji based on hash
   local index = (hash % #emojis) + 1
   return emojis[index]
 end
 
--- Get short hostname
 local function get_short_hostname()
   local hostname
   if spawn then
@@ -129,7 +113,6 @@ local function get_short_hostname()
   return nil
 end
 
--- Get current git branch
 local function get_git_branch()
   local branch
   if spawn then
@@ -150,12 +133,10 @@ local function get_git_branch()
   return branch
 end
 
--- Check if running in GitHub Codespaces
 local function is_codespace()
   return os.getenv('CODESPACES') == 'true'
 end
 
--- Get repo name from GITHUB_REPOSITORY (strips owner prefix)
 local function get_repo_name()
   local repo = os.getenv('GITHUB_REPOSITORY')
   if repo then
@@ -164,18 +145,15 @@ local function get_repo_name()
   return nil
 end
 
--- Main function to get the identifier
-function M.get()
+local function get()
   local identifier = ''
 
-  -- Try to find conf directory and read box-name
   local conf_dir = find_conf_dir()
   if conf_dir then
     local box_name = read_file(conf_dir .. '/box-name')
     if box_name and box_name ~= '' then
       identifier = box_name
 
-      -- Try to append host_env
       local env = read_file(conf_dir .. '/host_env')
       if env and env ~= '' then
         identifier = identifier .. '.' .. env
@@ -183,7 +161,6 @@ function M.get()
     end
   end
 
-  -- Fall back to short hostname
   if identifier == '' then
     identifier = get_short_hostname() or 'unknown'
   end
@@ -191,23 +168,19 @@ function M.get()
   return identifier
 end
 
--- Function to get identifier with emoji suffix
-function M.get_with_emoji()
-  local identifier = M.get()
+local function get_with_emoji()
+  local identifier = get()
   local emoji = ''
 
-  -- Try to read /*/conf/box-emoji using cached conf directory
   local conf_dir = find_conf_dir()
   if conf_dir then
     emoji = read_file(conf_dir .. '/box-emoji')
   end
 
-  -- Fall back to deterministic emoji if not found
   if not emoji or emoji == '' then
     emoji = string_to_emoji(identifier)
   end
 
-  -- Special format for codespaces: <repo>/<branch> | <short hostname> <emoji>
   if is_codespace() then
     local repo = get_repo_name()
     local branch = get_git_branch()
@@ -220,4 +193,7 @@ function M.get_with_emoji()
   return identifier .. ' ' .. emoji
 end
 
-return M
+return {
+  get = get,
+  get_with_emoji = get_with_emoji,
+}
