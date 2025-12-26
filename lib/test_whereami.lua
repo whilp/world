@@ -21,3 +21,27 @@ function test_whereami_get_with_emoji()
   lu.assertNotNil(identifier:find(" "),
     "whereami.get_with_emoji() should contain identifier and emoji separated by space")
 end
+
+function test_whereami_codespaces_format()
+  if os.getenv('CODESPACES') ~= 'true' then
+    -- Skip test if not in codespaces
+    return
+  end
+
+  local identifier = whereami.get_with_emoji()
+  -- Codespaces format: <repo>/<branch> | <short hostname> <emoji>
+  lu.assertNotNil(identifier:find(' | '),
+    "codespaces format should contain ' | ' separator")
+
+  local repo_branch, host_emoji = identifier:match('(.+) | (.+)')
+  lu.assertNotNil(repo_branch, "should have repo/branch before separator")
+  lu.assertNotNil(host_emoji, "should have hostname and emoji after separator")
+
+  -- repo/branch should contain a slash
+  lu.assertNotNil(repo_branch:find('/'),
+    "repo/branch portion should contain a slash")
+
+  -- host_emoji should contain a space (hostname + emoji)
+  lu.assertNotNil(host_emoji:find(' '),
+    "hostname and emoji should be space-separated")
+end
