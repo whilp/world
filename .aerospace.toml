@@ -48,6 +48,12 @@ alt-shift-j = 'move down'
 alt-shift-k = 'move up'
 alt-shift-l = 'move right'
 
+# Join windows (nest under common parent)
+alt-ctrl-h = 'join-with left'
+alt-ctrl-j = 'join-with down'
+alt-ctrl-k = 'join-with up'
+alt-ctrl-l = 'join-with right'
+
 # Focus monitors
 alt-comma = 'focus-monitor left'
 alt-period = 'focus-monitor right'
