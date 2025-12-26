@@ -7,6 +7,7 @@ return {
   url = "https://github.com/whilp/neovim/releases/download/{tag}/nvim-{platform}.tar.gz",
   platforms = {
     ["darwin-arm64"] = {
+      platform = "macos-arm64",
       sha = "2a20f80a1d5683fad8ce6dbb54584e6c2ecf1835f1882bd3079226cd8a95a3d6",
     },
     ["linux-arm64"] = {
