@@ -37,6 +37,10 @@ alt-h = 'focus --boundaries-action wrap-around-the-workspace left'
 alt-j = 'focus --boundaries-action wrap-around-the-workspace down'
 alt-k = 'focus --boundaries-action wrap-around-the-workspace up'
 alt-l = 'focus --boundaries-action wrap-around-the-workspace right'
+cmd-backtick = 'focus --boundaries-action wrap-around-the-workspace left'
+cmd-shift-backtick = 'focus --boundaries-action wrap-around-the-workspace right'
+alt-backtick = 'focus --boundaries-action wrap-around-the-workspace left'
+alt-shift-backtick = 'focus --boundaries-action wrap-around-the-workspace right'
 
 # Move windows
 alt-shift-h = 'move left'
