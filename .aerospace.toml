@@ -111,3 +111,44 @@ esc = 'mode main'
 [[on-window-detected]]
 if.during-aerospace-startup = false
 run = 'layout accordion'
+
+# Workspace 1: personal
+[[on-window-detected]]
+if.app-name-regex-substring = 'Messages'
+run = 'move-node-to-workspace 1'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Reader'
+run = 'move-node-to-workspace 1'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'iPhone Mirroring'
+run = 'move-node-to-workspace 1'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Google Chrome'
+if.window-title-regex-substring = 'Will \(gmail\)'
+run = 'move-node-to-workspace 1'
+
+# Workspace 3: work comms
+[[on-window-detected]]
+if.app-name-regex-substring = 'Slack'
+run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Google Calendar'
+run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Gmail'
+run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Google Gemini'
+run = 'move-node-to-workspace 3'
+
+# Workspace 4: work browser
+[[on-window-detected]]
+if.app-name-regex-substring = 'Google Chrome'
+if.window-title-regex-substring = 'wcm \(stripe\)'
+run = 'move-node-to-workspace 4'
