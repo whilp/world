@@ -4,6 +4,13 @@
 local home = vim.fn.expand("~")
 package.path = home .. "/lib/?.lua;" .. home .. "/lib/3p/?.lua;" .. package.path
 
+-- Add bundled site directory (relative to nvim binary) to runtimepath
+local version_dir = vim.fn.fnamemodify(vim.v.progpath, ":h:h")
+local bundled_site = version_dir .. "/share/nvim/site"
+if vim.fn.isdirectory(bundled_site) == 1 then
+  vim.opt.runtimepath:prepend(bundled_site)
+end
+
 -- Add extras to runtimepath if it exists
 local extras_nvim = home .. "/extras/nvim"
 if vim.fn.isdirectory(extras_nvim) == 1 then
