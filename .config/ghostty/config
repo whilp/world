@@ -22,6 +22,7 @@ bell-features="no-audio,no-system,no-attention,no-title,no-border"
 
 theme = "GitHub Dark Colorblind"
 
+keybind = global:ctrl+`=toggle_quick_terminal
 keybind = cmd+shift+w=quit
 keybind = cmd+v=paste_from_clipboard
 keybind = cmd+c=copy_to_clipboard
