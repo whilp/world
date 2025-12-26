@@ -32,17 +32,27 @@ preset = 'qwerty'
 # Main mode bindings
 [mode.main.binding]
 
-# Focus windows (vim-style)
-alt-h = 'focus left'
-alt-j = 'focus down'
-alt-k = 'focus up'
-alt-l = 'focus right'
+# Focus windows (vim-style, with wrap-around)
+alt-h = 'focus --boundaries-action wrap-around-the-workspace left'
+alt-j = 'focus --boundaries-action wrap-around-the-workspace down'
+alt-k = 'focus --boundaries-action wrap-around-the-workspace up'
+alt-l = 'focus --boundaries-action wrap-around-the-workspace right'
+cmd-backtick = 'focus --boundaries-action wrap-around-the-workspace left'
+cmd-shift-backtick = 'focus --boundaries-action wrap-around-the-workspace right'
+alt-backtick = 'focus --boundaries-action wrap-around-the-workspace left'
+alt-shift-backtick = 'focus --boundaries-action wrap-around-the-workspace right'
 
 # Move windows
 alt-shift-h = 'move left'
 alt-shift-j = 'move down'
 alt-shift-k = 'move up'
 alt-shift-l = 'move right'
+
+# Join windows (nest under common parent)
+alt-ctrl-h = 'join-with left'
+alt-ctrl-j = 'join-with down'
+alt-ctrl-k = 'join-with up'
+alt-ctrl-l = 'join-with right'
 
 # Focus monitors
 alt-comma = 'focus-monitor left'
@@ -67,12 +77,33 @@ alt-shift-r = 'reload-config'
 # Close window
 alt-shift-q = 'close'
 
+# Minimize window
+alt-m = 'macos-native-minimize'
+
+# Window snapshot (save/restore workspace assignments)
+alt-shift-s = 'exec-and-forget lua ~/stripe/dotfiles/.local/bin/aerosnap save'
+alt-shift-w = 'exec-and-forget lua ~/stripe/dotfiles/.local/bin/aerosnap load'
+
+# Workspace switching
+alt-1 = 'workspace 1'
+alt-2 = 'workspace 2'
+alt-3 = 'workspace 3'
+alt-4 = 'workspace 4'
+alt-5 = 'workspace 5'
+
+# Move window to workspace (and follow)
+alt-shift-1 = ['move-node-to-workspace 1', 'workspace 1']
+alt-shift-2 = ['move-node-to-workspace 2', 'workspace 2']
+alt-shift-3 = ['move-node-to-workspace 3', 'workspace 3']
+alt-shift-4 = ['move-node-to-workspace 4', 'workspace 4']
+alt-shift-5 = ['move-node-to-workspace 5', 'workspace 5']
+
 # Resize mode
 [mode.resize.binding]
-h = 'resize width -50'
-j = 'resize height +50'
-k = 'resize height -50'
-l = 'resize width +50'
+h = 'resize smart -50'
+j = 'resize smart +50'
+k = 'resize smart -50'
+l = 'resize smart +50'
 enter = 'mode main'
 esc = 'mode main'
 
@@ -80,3 +111,44 @@ esc = 'mode main'
 [[on-window-detected]]
 if.during-aerospace-startup = false
 run = 'layout accordion'
+
+# Workspace 1: personal
+[[on-window-detected]]
+if.app-name-regex-substring = 'Messages'
+run = 'move-node-to-workspace 1'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Reader'
+run = 'move-node-to-workspace 1'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'iPhone Mirroring'
+run = 'move-node-to-workspace 1'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Google Chrome'
+if.window-title-regex-substring = 'Will \(gmail\)'
+run = 'move-node-to-workspace 1'
+
+# Workspace 3: work comms
+[[on-window-detected]]
+if.app-name-regex-substring = 'Slack'
+run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Google Calendar'
+run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Gmail'
+run = 'move-node-to-workspace 3'
+
+[[on-window-detected]]
+if.app-name-regex-substring = 'Google Gemini'
+run = 'move-node-to-workspace 3'
+
+# Workspace 4: work browser
+[[on-window-detected]]
+if.app-name-regex-substring = 'Google Chrome'
+if.window-title-regex-substring = 'wcm \(stripe\)'
+run = 'move-node-to-workspace 4'

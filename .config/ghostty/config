@@ -5,22 +5,24 @@
 font-size = 14
 cursor-style = "block"
 window-theme = "dark"
-window-decoration = "none"
+window-decoration = auto
 background-opacity = 1.0
 macos-titlebar-style = hidden
 macos-option-as-alt = true
-#macos-non-native-fullscreen = "padded-notch"
+macos-non-native-fullscreen = false
 window-save-state = "default"
-maximize = true
+#maximize = true
 #shell-integration = "zsh"
 mouse-hide-while-typing = true
 clipboard-write = allow
+#adjust-cell-width = 0%
 
 scrollback-limit = 0
 bell-features="no-audio,no-system,no-attention,no-title,no-border"
 
 theme = "GitHub Dark Colorblind"
 
+keybind = global:ctrl+`=toggle_quick_terminal
 keybind = cmd+shift+w=quit
 keybind = cmd+v=paste_from_clipboard
 keybind = cmd+c=copy_to_clipboard
