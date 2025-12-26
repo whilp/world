@@ -8,13 +8,22 @@ lua_ape := results/bin/lua.ape
 results/bin:
 	mkdir -p $@
 
-$(lua_ape): private .UNVEIL = rx:$(cosmos_lua_bin) r:$(luaunit_lua_dir) r:$(luacheck_lua_dir) rx:$(cosmos_zip_bin) rwc:results/bin rw:/dev/null
+lib_lua_files := $(filter-out lib/test_%.lua lib/run-test.lua,$(wildcard lib/*.lua))
+lib_lua_dir := o/3p/lib/.lua
+
+$(lib_lua_dir): $(lib_lua_files) $(spawn_sources)
+	mkdir -p $@
+	cp $(lib_lua_files) $@
+	cp -r lib/spawn $@
+
+$(lua_ape): private .UNVEIL = rx:$(cosmos_lua_bin) r:$(luaunit_lua_dir) r:$(luacheck_lua_dir) r:lib r:o/3p/lib rx:$(cosmos_zip_bin) rwc:results/bin rwc:o/3p/lib rw:/dev/null
 $(lua_ape): private .PLEDGE = stdio rpath wpath cpath fattr exec proc
-$(lua_ape): $(cosmos_lua_bin) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua $(luacheck_lua_dir)/bin/luacheck | results/bin
+$(lua_ape): $(cosmos_lua_bin) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua $(luacheck_lua_dir)/bin/luacheck $(lib_lua_dir) | results/bin
 	cp $(cosmos_lua_bin) $@
 	chmod +x $@
 	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
 	cd $(luacheck_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luacheck_lua_dir))
+	cd o/3p/lib && $(cosmos_zip_bin) -qr $(CURDIR)/$@ .lua
 
 $(lua_bin): $(lua_ape)
 	cp $< $@
@@ -29,6 +38,6 @@ test-3p-lua: lua
 	cd 3p/lua && $(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
 
 clean-lua:
-	rm -rf $(lua_bin) $(lua_ape)
+	rm -rf $(lua_bin) $(lua_ape) o/3p/lib
 
 .PHONY: lua clean-lua test-3p-lua
