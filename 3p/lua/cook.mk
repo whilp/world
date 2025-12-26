@@ -58,7 +58,7 @@ lua_core_srcs := \
 
 # lua extension sources - some in third_party/lua, some in tool/net
 lua_ext_lua_srcs := lunix.c lua.main.c
-lua_ext_net_srcs := lpath.c lre.c lsqlite3.c largon2.c lfuncs.c
+lua_ext_net_srcs := lpath.c lre.c lsqlite3.c largon2.c lfuncs.c ljson.c
 
 # cosmo module (lfuncs_register.c registers lfuncs as cosmo module)
 lua_cosmo_srcs := lfuncs_register.c
@@ -112,15 +112,21 @@ lua_bin := results/bin/lua
 # target for lua fat binary
 lua: $(lua_bin)
 
+# source files that get copied/patched into cosmopolitan
+lua_patch_files := $(lua_patch_dir)/lpath.h $(lua_patch_dir)/lre.h $(lua_patch_dir)/lsqlite3.h \
+	$(lua_patch_dir)/largon2.h $(lua_patch_dir)/lcosmo.h $(lua_patch_dir)/ljson.h \
+	$(lua_patch_dir)/lfuncs_register.c $(lua_patch_dir)/lua.main.c.patch $(lua_patch_dir)/lfuncs.c.patch
+
 # patch lua.main.c, lfuncs.c, and copy headers to register redbean modules
 $(lua_patched): private .UNVEIL = r:$(lua_patch_dir) rwc:$(lua_cosmo_dir)/third_party/lua rwc:$(lua_cosmo_dir)/tool/net rwc:$(lua_build_dir) rw:/dev/null
 $(lua_patched): private .PLEDGE = stdio rpath wpath cpath proc exec
-$(lua_patched): $(cosmopolitan_src) | $(lua_build_dir)
+$(lua_patched): $(cosmopolitan_src) $(lua_patch_files) | $(lua_build_dir)
 	cp $(lua_patch_dir)/lpath.h $(lua_cosmo_dir)/third_party/lua/
 	cp $(lua_patch_dir)/lre.h $(lua_cosmo_dir)/third_party/lua/
 	cp $(lua_patch_dir)/lsqlite3.h $(lua_cosmo_dir)/third_party/lua/
 	cp $(lua_patch_dir)/largon2.h $(lua_cosmo_dir)/third_party/lua/
 	cp $(lua_patch_dir)/lcosmo.h $(lua_cosmo_dir)/third_party/lua/
+	cp $(lua_patch_dir)/ljson.h $(lua_cosmo_dir)/tool/net/
 	cp $(lua_patch_dir)/lfuncs_register.c $(lua_cosmo_dir)/third_party/lua/
 	cd $(lua_cosmo_dir) && patch -N -p1 < $(CURDIR)/$(lua_patch_dir)/lua.main.c.patch || true
 	cd $(lua_cosmo_dir) && patch -N -p1 < $(CURDIR)/$(lua_patch_dir)/lfuncs.c.patch || true
@@ -150,6 +156,10 @@ $(lua_build_dir)/net/%.o: | $(lua_build_dir)/net
 # lfuncs.c needs LFUNCS_LITE to exclude functions with heavy dependencies
 $(lua_build_dir)/net/lfuncs.o: | $(lua_build_dir)/net
 	$(cosmocc_bin) $(lua_cflags) -DLFUNCS_LITE -c $(lua_cosmo_dir)/tool/net/lfuncs.c -o $@
+
+# lfuncs_register.c - depends on source file to force rebuild when changed
+$(lua_build_dir)/cosmo/lfuncs_register.o: $(lua_patch_dir)/lfuncs_register.c | $(lua_build_dir)/cosmo
+	$(cosmocc_bin) $(lua_cflags) -c $(lua_cosmo_dir)/third_party/lua/lfuncs_register.c -o $@
 
 # linenoise objects
 $(lua_build_dir)/linenoise/%.o: | $(lua_build_dir)/linenoise
