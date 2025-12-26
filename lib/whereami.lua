@@ -103,6 +103,67 @@ local function string_to_emoji(str)
   return emojis[index]
 end
 
+-- Get short hostname
+local function get_short_hostname()
+  local hostname
+  if spawn then
+    local s_ok, output = spawn({'hostname', '-s'}):read()
+    if s_ok and output then
+      hostname = output
+    else
+      s_ok, output = spawn({'hostname'}):read()
+      if s_ok and output then
+        hostname = output
+      end
+    end
+  else
+    local handle = io.popen('hostname -s 2>/dev/null || hostname', 'r')
+    if handle then
+      hostname = handle:read('*l')
+      handle:close()
+    end
+  end
+  if hostname then
+    return trim(hostname):match('([^.%s]+)')
+  end
+  return nil
+end
+
+-- Get current git branch
+local function get_git_branch()
+  local branch
+  if spawn then
+    local s_ok, output = spawn({'git', 'rev-parse', '--abbrev-ref', 'HEAD'}):read()
+    if s_ok and output then
+      branch = trim(output)
+    end
+  else
+    local handle = io.popen('git rev-parse --abbrev-ref HEAD 2>/dev/null', 'r')
+    if handle then
+      branch = handle:read('*l')
+      handle:close()
+      if branch then
+        branch = trim(branch)
+      end
+    end
+  end
+  return branch
+end
+
+-- Check if running in GitHub Codespaces
+local function is_codespace()
+  return os.getenv('CODESPACES') == 'true'
+end
+
+-- Get repo name from GITHUB_REPOSITORY (strips owner prefix)
+local function get_repo_name()
+  local repo = os.getenv('GITHUB_REPOSITORY')
+  if repo then
+    return repo:match('[^/]+/(.+)') or repo
+  end
+  return nil
+end
+
 -- Main function to get the identifier
 function M.get()
   local identifier = ''
@@ -124,30 +185,10 @@ function M.get()
 
   -- Fall back to short hostname
   if identifier == '' then
-    local hostname
-    if spawn then
-      local s_ok, output = spawn({'hostname', '-s'}):read()
-      if s_ok and output then
-        hostname = output
-      else
-        s_ok, output = spawn({'hostname'}):read()
-        if s_ok and output then
-          hostname = output
-        end
-      end
-    else
-      local handle = io.popen('hostname -s 2>/dev/null || hostname', 'r')
-      if handle then
-        hostname = handle:read('*l')
-        handle:close()
-      end
-    end
-    if hostname then
-      identifier = trim(hostname):match('([^.%s]+)')
-    end
+    identifier = get_short_hostname() or 'unknown'
   end
 
-  return identifier ~= '' and identifier or 'unknown'
+  return identifier
 end
 
 -- Function to get identifier with emoji suffix
@@ -164,6 +205,16 @@ function M.get_with_emoji()
   -- Fall back to deterministic emoji if not found
   if not emoji or emoji == '' then
     emoji = string_to_emoji(identifier)
+  end
+
+  -- Special format for codespaces: <repo>/<branch> | <short hostname> <emoji>
+  if is_codespace() then
+    local repo = get_repo_name()
+    local branch = get_git_branch()
+    if repo and branch then
+      local hostname = get_short_hostname() or identifier
+      return repo .. '/' .. branch .. ' | ' .. hostname .. ' ' .. emoji
+    end
   end
 
   return identifier .. ' ' .. emoji
