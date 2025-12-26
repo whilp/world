@@ -12,16 +12,12 @@ gunzip := gunzip -f
 lua := lua
 
 include lib/make/macros.mk
-include 3p/cosmocc/cook.mk
 include 3p/cosmos/cook.mk
 include 3p/make/cook.mk
 
-export PATH := $(dir $(cosmos_bin)):$(dir $(cosmocc_bin)):$(PATH)
-export CC := $(cosmocc_bin)
-export AR := $(dir $(cosmocc_bin))cosmocc-ar
-export RANLIB := $(dir $(cosmocc_bin))cosmocc-ranlib
+export PATH := $(dir $(cosmos_bin)):$(PATH)
 
-make := $(make_bin) COSMOCC=$(cosmocc_dir)
+make := $(make_bin)
 
 # Tool list
 TOOLS := nvim gh delta rg duckdb tree-sitter ast-grep biome comrak \
