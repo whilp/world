@@ -113,26 +113,6 @@ local function get_short_hostname()
   return nil
 end
 
-local function get_git_branch()
-  local branch
-  if spawn then
-    local s_ok, output = spawn({'git', 'rev-parse', '--abbrev-ref', 'HEAD'}):read()
-    if s_ok and output then
-      branch = trim(output)
-    end
-  else
-    local handle = io.popen('git rev-parse --abbrev-ref HEAD 2>/dev/null', 'r')
-    if handle then
-      branch = handle:read('*l')
-      handle:close()
-      if branch then
-        branch = trim(branch)
-      end
-    end
-  end
-  return branch
-end
-
 local function get()
   local identifier = ''
 
@@ -173,10 +153,9 @@ local function get_with_emoji(env)
   if env('CODESPACES') == 'true' then
     local repo_full = env('GITHUB_REPOSITORY')
     local repo = repo_full and (repo_full:match('[^/]+/(.+)') or repo_full)
-    local branch = get_git_branch()
-    if repo and branch then
+    if repo then
       local hostname = get_short_hostname() or identifier
-      return repo .. '/' .. branch .. ' | ' .. hostname .. ' ' .. emoji
+      return repo .. ' | ' .. hostname .. ' ' .. emoji
     end
   end
 
