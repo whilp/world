@@ -6,6 +6,7 @@ local cosmo = require("cosmo")
 local path = cosmo.path
 local unix = cosmo.unix
 local spawn = require("spawn").spawn
+local hash = require("hash")
 
 -- Template interpolation
 local function interpolate(template, vars)
@@ -99,7 +100,7 @@ local function download_file(url, dest_path)
   return execute("/usr/bin/curl", {"curl", "-fsSL", "-o", dest_path, url})
 end
 
--- Verify SHA256 checksum using shasum
+-- Verify SHA256 checksum
 local function verify_sha256(file_path, expected_sha)
   if not file_path or file_path == "" then
     return nil, "file_path cannot be empty"
@@ -108,21 +109,7 @@ local function verify_sha256(file_path, expected_sha)
     return nil, "expected_sha cannot be empty"
   end
 
-  -- Use absolute paths for verification
-  local check_content = expected_sha .. "  " .. file_path .. "\n"
-  local check_file = file_path .. ".sha256check"
-
-  local check_fd = unix.open(check_file, unix.O_CREAT | unix.O_WRONLY | unix.O_TRUNC, 420)
-  if not check_fd then
-    return nil, "failed to create checksum file"
-  end
-  unix.write(check_fd, check_content)
-  unix.close(check_fd)
-
-  local ok, err = execute("/usr/bin/shasum", {"shasum", "-a", "256", "-c", check_file})
-  unix.unlink(check_file)
-
-  return ok, err
+  return hash.verify_sha256(file_path, expected_sha)
 end
 
 -- Extract tar.gz archive
