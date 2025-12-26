@@ -72,7 +72,7 @@ alt-shift-o = 'layout horizontal vertical'   # Toggle orientation
 alt-r = 'mode resize'
 
 # Reload config
-alt-shift-r = 'reload-config'
+alt-shift-r = ['reload-config', 'exec-and-forget aerosnap load']
 
 # Close window
 alt-shift-q = 'close'

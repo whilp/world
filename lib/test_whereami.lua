@@ -21,3 +21,10 @@ function test_whereami_get_with_emoji()
   lu.assertNotNil(identifier:find(" "),
     "whereami.get_with_emoji() should contain identifier and emoji separated by space")
 end
+
+function test_whereami_codespaces_format()
+  local base = whereami.get_with_emoji(function() return nil end)
+  local env = { CODESPACES = 'true', GITHUB_REPOSITORY = 'owner/repo' }
+  local result = whereami.get_with_emoji(function(k) return env[k] end)
+  lu.assertEquals(result, 'repo | ' .. base)
+end
