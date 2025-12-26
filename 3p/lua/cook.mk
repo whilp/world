@@ -17,6 +17,9 @@ $(lua_bin): $(cosmos_lua_bin) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua $
 
 lua: $(lua_bin)
 
+ready: lua
+	@$(lua_bin) -v > /dev/null
+
 test-3p-lua: private .UNVEIL = r:3p/lua rx:$(lua_bin) r:$(test_runner) rwc:3p/lua/o rw:/dev/null
 test-3p-lua: private .PLEDGE = stdio rpath wpath cpath proc exec
 test-3p-lua: private .CPU = 60
@@ -26,4 +29,4 @@ test-3p-lua: lua
 clean-lua:
 	rm -rf $(lua_bin)
 
-.PHONY: lua clean-lua test-3p-lua
+.PHONY: lua ready clean-lua test-3p-lua
