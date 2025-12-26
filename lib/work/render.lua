@@ -205,8 +205,8 @@ end
 -- Returns: JSON string
 -- Input should already be cleaned (no _meta, no _computed)
 M.json = function(data)
-  local json = require("dkjson")
-  return json.encode(data, { indent = true })
+  local cosmo = require("cosmo")
+  return cosmo.EncodeJson(data, { pretty = true })
 end
 
 -- Generic function for rendering ready/blocked items
