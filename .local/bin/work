@@ -10,9 +10,10 @@ local function stderr_write(msg)
   io.stderr:flush()
 end
 
+local cosmo = require("cosmo")
+
 local function json_encode(data)
-  local json = require("dkjson")
-  return json.encode(data, { indent = true })
+  return cosmo.EncodeJson(data, { pretty = true })
 end
 
 local function json_print(data)
