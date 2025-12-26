@@ -1,0 +1,359 @@
+#!/usr/bin/env lua
+
+local cosmo = require("cosmo")
+local unix = cosmo.unix
+local path = cosmo.path
+local spawn = require("spawn").spawn
+
+local SNAPSHOT_DIR = path.join(os.getenv("HOME"), ".cache", "aerospace")
+local SNAPSHOT_FILE = path.join(SNAPSHOT_DIR, "window-snapshot.json")
+
+local function json_encode(tbl)
+  local function encode_value(val)
+    local t = type(val)
+    if t == "nil" then
+      return "null"
+    elseif t == "boolean" then
+      return val and "true" or "false"
+    elseif t == "number" then
+      return tostring(val)
+    elseif t == "string" then
+      local escaped = val:gsub('\\', '\\\\'):gsub('"', '\\"'):gsub('\n', '\\n'):gsub('\r', '\\r'):gsub('\t', '\\t')
+      return '"' .. escaped .. '"'
+    elseif t == "table" then
+      if #val > 0 or next(val) == nil then
+        local parts = {}
+        for _, v in ipairs(val) do
+          table.insert(parts, encode_value(v))
+        end
+        return "[" .. table.concat(parts, ",") .. "]"
+      else
+        local parts = {}
+        for k, v in pairs(val) do
+          table.insert(parts, '"' .. tostring(k) .. '":' .. encode_value(v))
+        end
+        return "{" .. table.concat(parts, ",") .. "}"
+      end
+    end
+    return "null"
+  end
+  return encode_value(tbl)
+end
+
+local function json_decode(str)
+  local pos = 1
+  local function skip_whitespace()
+    while pos <= #str and str:sub(pos, pos):match("%s") do
+      pos = pos + 1
+    end
+  end
+  local function parse_value()
+    skip_whitespace()
+    local c = str:sub(pos, pos)
+    if c == '"' then
+      pos = pos + 1
+      local result = ""
+      while pos <= #str do
+        local ch = str:sub(pos, pos)
+        if ch == '\\' then
+          pos = pos + 1
+          local escape = str:sub(pos, pos)
+          if escape == 'n' then result = result .. '\n'
+          elseif escape == 'r' then result = result .. '\r'
+          elseif escape == 't' then result = result .. '\t'
+          elseif escape == '"' then result = result .. '"'
+          elseif escape == '\\' then result = result .. '\\'
+          else result = result .. escape
+          end
+          pos = pos + 1
+        elseif ch == '"' then
+          pos = pos + 1
+          return result
+        else
+          result = result .. ch
+          pos = pos + 1
+        end
+      end
+      error("unterminated string")
+    elseif c == '[' then
+      pos = pos + 1
+      local arr = {}
+      skip_whitespace()
+      if str:sub(pos, pos) == ']' then
+        pos = pos + 1
+        return arr
+      end
+      while true do
+        table.insert(arr, parse_value())
+        skip_whitespace()
+        if str:sub(pos, pos) == ']' then
+          pos = pos + 1
+          return arr
+        elseif str:sub(pos, pos) == ',' then
+          pos = pos + 1
+        else
+          error("expected ',' or ']'")
+        end
+      end
+    elseif c == '{' then
+      pos = pos + 1
+      local obj = {}
+      skip_whitespace()
+      if str:sub(pos, pos) == '}' then
+        pos = pos + 1
+        return obj
+      end
+      while true do
+        skip_whitespace()
+        local key = parse_value()
+        skip_whitespace()
+        if str:sub(pos, pos) ~= ':' then
+          error("expected ':'")
+        end
+        pos = pos + 1
+        obj[key] = parse_value()
+        skip_whitespace()
+        if str:sub(pos, pos) == '}' then
+          pos = pos + 1
+          return obj
+        elseif str:sub(pos, pos) == ',' then
+          pos = pos + 1
+        else
+          error("expected ',' or '}'")
+        end
+      end
+    elseif str:sub(pos, pos + 3) == "true" then
+      pos = pos + 4
+      return true
+    elseif str:sub(pos, pos + 4) == "false" then
+      pos = pos + 5
+      return false
+    elseif str:sub(pos, pos + 3) == "null" then
+      pos = pos + 4
+      return nil
+    elseif c:match("[%d%-]") then
+      local num_str = str:match("%-?%d+%.?%d*[eE]?[%+%-]?%d*", pos)
+      pos = pos + #num_str
+      return tonumber(num_str)
+    else
+      error("unexpected character: " .. c .. " at position " .. pos)
+    end
+  end
+  return parse_value()
+end
+
+local function get_all_windows()
+  local handle = spawn({"aerospace", "list-windows", "--all", "--json"})
+  if not handle then
+    return nil, "failed to get windows from aerospace"
+  end
+  local _, json_output = handle:read()
+  if not json_output or json_output == "" then
+    return nil, "failed to get windows from aerospace"
+  end
+
+  local windows = json_decode(json_output)
+  local enriched = {}
+
+  handle = spawn({
+    "aerospace", "list-windows", "--all",
+    "--format", "%{window-id}|%{app-bundle-id}|%{app-pid}|%{workspace}|%{monitor-id}"
+  })
+  local _, format_output = handle:read()
+  for _, win in ipairs(windows) do
+    for line in (format_output or ""):gmatch("[^\n]+") do
+      local window_id, bundle_id, pid_str, workspace, monitor_id = line:match("^(%d+)|([^|]*)|([^|]*)|([^|]*)|([^|]*)")
+      if window_id and tonumber(window_id) == win["window-id"] then
+        table.insert(enriched, {
+          ["window-id"] = tonumber(window_id),
+          ["app-name"] = win["app-name"],
+          ["app-bundle-id"] = bundle_id,
+          ["app-pid"] = tonumber(pid_str),
+          ["workspace"] = workspace,
+          ["monitor-id"] = tonumber(monitor_id),
+          ["window-title"] = win["window-title"],
+        })
+        break
+      end
+    end
+  end
+  return enriched
+end
+
+local function write_file(path, content)
+  local fd, err = unix.open(path, unix.O_WRONLY + unix.O_CREAT + unix.O_TRUNC, 420)
+  if not fd then
+    return nil, "failed to open file: " .. (err or path)
+  end
+  unix.write(fd, content)
+  unix.close(fd)
+  return true
+end
+
+local function read_file(path)
+  local fd, err = unix.open(path, unix.O_RDONLY)
+  if not fd then
+    return nil, "failed to open file: " .. (err or path)
+  end
+  local content = ""
+  while true do
+    local chunk = unix.read(fd, 65536)
+    if not chunk or chunk == "" then break end
+    content = content .. chunk
+  end
+  unix.close(fd)
+  return content
+end
+
+local function cmd_save(args)
+  local windows, err = get_all_windows()
+  if not windows then
+    io.stderr:write("error: " .. err .. "\n")
+    return 1
+  end
+
+  unix.makedirs(SNAPSHOT_DIR)
+  local snapshot = {
+    timestamp = os.date("!%Y-%m-%dT%H:%M:%SZ"),
+    windows = windows,
+  }
+  local json = json_encode(snapshot)
+  local formatted = json:gsub(",", ",\n  "):gsub("{", "{\n  "):gsub("}", "\n}"):gsub("%[{", "[\n  {"):gsub("}%]", "}\n]")
+
+  local ok, write_err = write_file(SNAPSHOT_FILE, formatted)
+  if not ok then
+    io.stderr:write("error: " .. write_err .. "\n")
+    return 1
+  end
+
+  io.write(string.format("saved %d windows to snapshot\n", #windows))
+  return 0
+end
+
+local function cmd_load(args)
+  local content, err = read_file(SNAPSHOT_FILE)
+  if not content then
+    io.stderr:write("error: snapshot not found: " .. SNAPSHOT_FILE .. "\n")
+    return 1
+  end
+
+  local snapshot = json_decode(content)
+  if not snapshot or not snapshot.windows then
+    io.stderr:write("error: invalid snapshot format\n")
+    return 1
+  end
+
+  local current_windows, get_err = get_all_windows()
+  if not current_windows then
+    io.stderr:write("error: " .. get_err .. "\n")
+    return 1
+  end
+
+  local current_by_id = {}
+  for _, win in ipairs(current_windows) do
+    current_by_id[win["window-id"]] = win
+  end
+
+  local moved, matched_by_id, matched_by_attrs, not_found = 0, 0, 0, 0
+
+  for _, snap_win in ipairs(snapshot.windows) do
+    local target_workspace = snap_win.workspace
+    local current_win = current_by_id[snap_win["window-id"]]
+
+    if current_win then
+      if current_win.workspace ~= target_workspace then
+        spawn({"aerospace", "move-node-to-workspace", target_workspace, "--window-id", tostring(snap_win["window-id"])}):wait()
+        moved = moved + 1
+      end
+      matched_by_id = matched_by_id + 1
+    else
+      local found = false
+      for _, cur_win in ipairs(current_windows) do
+        if cur_win["app-bundle-id"] == snap_win["app-bundle-id"] and
+           cur_win["window-title"] == snap_win["window-title"] then
+          if cur_win.workspace ~= target_workspace then
+            spawn({"aerospace", "move-node-to-workspace", target_workspace, "--window-id", tostring(cur_win["window-id"])}):wait()
+            moved = moved + 1
+          end
+          matched_by_attrs = matched_by_attrs + 1
+          found = true
+          break
+        end
+      end
+      if not found then
+        not_found = not_found + 1
+      end
+    end
+  end
+
+  io.write(string.format("snapshot from: %s\n", snapshot.timestamp))
+  io.write(string.format("matched by window-id: %d\n", matched_by_id))
+  io.write(string.format("matched by attributes: %d\n", matched_by_attrs))
+  io.write(string.format("not found: %d\n", not_found))
+  io.write(string.format("moved: %d\n", moved))
+  return 0
+end
+
+local function cmd_show(args)
+  local content, err = read_file(SNAPSHOT_FILE)
+  if not content then
+    io.stderr:write("error: snapshot not found: " .. SNAPSHOT_FILE .. "\n")
+    return 1
+  end
+  io.write(content)
+  return 0
+end
+
+local function cmd_help(args)
+  io.write("aerosnap - snapshot and restore aerospace window assignments\n")
+  io.write("\n")
+  io.write("usage: aerosnap <command>\n")
+  io.write("\n")
+  io.write("commands:\n")
+  io.write("  save    capture current window-to-workspace assignments\n")
+  io.write("  load    restore windows to workspaces from snapshot\n")
+  io.write("  show    display current snapshot contents\n")
+  io.write("  help    show this help\n")
+  io.write("\n")
+  io.write("snapshot location: " .. SNAPSHOT_FILE .. "\n")
+  return 0
+end
+
+local function cmd_unknown(command)
+  io.stderr:write("unknown command: " .. command .. "\n")
+  io.stderr:write("run 'aerosnap help' for usage\n")
+  return 1
+end
+
+local commands = {
+  save = cmd_save,
+  load = cmd_load,
+  show = cmd_show,
+  help = cmd_help,
+}
+
+local function main(args)
+  if #args == 0 then
+    return cmd_help(args)
+  end
+
+  local command = args[1]
+  local cmd_args = {table.unpack(args, 2)}
+  local cmd_fn = commands[command]
+
+  if cmd_fn then
+    return cmd_fn(cmd_args)
+  else
+    return cmd_unknown(command)
+  end
+end
+
+if not pcall(debug.getlocal, 4, 1) then
+  local exit_code = main(arg)
+  os.exit(exit_code or 0)
+end
+
+return {
+  main = main,
+  get_all_windows = get_all_windows,
+}

@@ -81,8 +81,8 @@ alt-shift-q = 'close'
 alt-m = 'macos-native-minimize'
 
 # Window snapshot (save/restore workspace assignments)
-alt-shift-s = 'exec-and-forget lua ~/stripe/dotfiles/.local/bin/aerosnap save'
-alt-shift-w = 'exec-and-forget lua ~/stripe/dotfiles/.local/bin/aerosnap load'
+alt-shift-s = 'exec-and-forget aerosnap save'
+alt-shift-w = 'exec-and-forget aerosnap load'
 
 # Workspace switching
 alt-1 = 'workspace 1'
@@ -91,12 +91,12 @@ alt-3 = 'workspace 3'
 alt-4 = 'workspace 4'
 alt-5 = 'workspace 5'
 
-# Move window to workspace (and follow)
-alt-shift-1 = ['move-node-to-workspace 1', 'workspace 1']
-alt-shift-2 = ['move-node-to-workspace 2', 'workspace 2']
-alt-shift-3 = ['move-node-to-workspace 3', 'workspace 3']
-alt-shift-4 = ['move-node-to-workspace 4', 'workspace 4']
-alt-shift-5 = ['move-node-to-workspace 5', 'workspace 5']
+# Move window to workspace (and follow, then snapshot)
+alt-shift-1 = ['move-node-to-workspace 1', 'workspace 1', 'exec-and-forget aerosnap save']
+alt-shift-2 = ['move-node-to-workspace 2', 'workspace 2', 'exec-and-forget aerosnap save']
+alt-shift-3 = ['move-node-to-workspace 3', 'workspace 3', 'exec-and-forget aerosnap save']
+alt-shift-4 = ['move-node-to-workspace 4', 'workspace 4', 'exec-and-forget aerosnap save']
+alt-shift-5 = ['move-node-to-workspace 5', 'workspace 5', 'exec-and-forget aerosnap save']
 
 # Resize mode
 [mode.resize.binding]
