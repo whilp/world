@@ -10,5 +10,8 @@ $(eval $(call download_binary_rule,cosmos,make,$(cosmos_url)/make,b60bb21aee7c91
 
 cosmos_bin := $(cosmos_make_bin)
 
+cosmos: $(cosmos_lua_bin) $(cosmos_zip_bin) $(cosmos_unzip_bin) $(cosmos_make_bin)
+.PHONY: cosmos
+
 $(cosmos_dir)/bin:
 	mkdir -p $@

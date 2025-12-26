@@ -26,6 +26,9 @@ jobs:
           path: o/3p
           key: 3p-${{ hashFiles('3p/**/cook.mk', '3p/**/version.lua', '.config/nvim/nvim-pack-lock.json') }}
 
+      - name: Build cosmos and lua
+        run: make cosmos lua
+
       - name: Build home binaries
         run: make home -j$(nproc)
 
