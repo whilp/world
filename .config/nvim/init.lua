@@ -10,13 +10,7 @@ if vim.fn.isdirectory(extras_nvim) == 1 then
   vim.opt.runtimepath:append(extras_nvim)
 end
 
--- Add bundled plugins site to packpath (derived from $VIMRUNTIME)
-local bundled_site = vim.env.VIMRUNTIME:gsub("/runtime$", "/site")
-if vim.fn.isdirectory(bundled_site) == 1 then
-  vim.opt.packpath:prepend(bundled_site)
-end
-
--- Load plugins (skips download if already in packpath)
+-- Load plugins before anything else
 vim.pack.add({
   { src = "https://github.com/nvim-mini/mini.nvim" },
 })

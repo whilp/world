@@ -694,6 +694,22 @@ local function cmd_3p(args, opts)
         if not ok and err then
           stderr:write(string.format("warning: %s: %s\n", tool, err))
         end
+
+        if tool == "nvim" then
+          local version_dir = info.path:match("(.+)/bin/nvim$")
+          if version_dir then
+            local site_target = path.join(version_dir, "share", "nvim", "site")
+            local site_link = path.join(share_dir, "nvim", "site")
+            ok, err = update_symlink(site_link, site_target, {
+              dry_run = dry_run,
+              verbose = verbose,
+              stdout = stdout,
+            })
+            if not ok and err then
+              stderr:write(string.format("warning: nvim site: %s\n", err))
+            end
+          end
+        end
       end
     end
   end
