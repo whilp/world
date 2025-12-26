@@ -12,12 +12,10 @@ local function updateClockText()
 end
 
 local function getClockPosition()
-	local screen = hs.screen.mainScreen()
-	local fullFrame = screen:fullFrame()
 	local clockWidth = 130
 
 	return {
-		x = fullFrame.w - clockWidth - 19,
+		x = 10,
 		y = 6,
 		w = clockWidth,
 		h = 24,
