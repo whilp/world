@@ -91,6 +91,50 @@ local function bundle_plugins(nvim_dir, plugins_dir, plugins)
   return true
 end
 
+local TS_PARSERS = {
+  "python",
+  "markdown",
+  "bash",
+  "lua",
+  "yaml",
+  "javascript",
+  "json",
+  "ruby",
+  "go",
+  "sql",
+}
+
+local function install_treesitter_parsers(nvim_dir)
+  io.write("installing treesitter parsers\n")
+  local nvim_bin = path.join(nvim_dir, "bin/nvim")
+
+  local first_ok = execute(nvim_bin, {nvim_bin, "--version"}, { allow_failure = true })
+  if not first_ok then
+    io.write("  parsers skipped (cross-platform build)\n")
+    return true
+  end
+
+  local cwd = unix.getcwd()
+  local config_home = path.join(cwd, ".config")
+  local data_home = path.join(nvim_dir, "share")
+
+  for _, parser in ipairs(TS_PARSERS) do
+    io.write(string.format("  installing %s\n", parser))
+    local cmd = string.format("TSInstallSync %s", parser)
+    local ok = execute("env", {
+      "env",
+      "XDG_CONFIG_HOME=" .. config_home,
+      "XDG_DATA_HOME=" .. data_home,
+      nvim_bin, "--headless", "+" .. cmd, "+qa"
+    }, { allow_failure = true })
+    if not ok then
+      io.write(string.format("    %s failed, continuing\n", parser))
+    end
+  end
+
+  return true
+end
+
 local function verify_plugins(nvim_dir, plugins)
   io.write("verifying plugins\n")
   local nvim_bin = path.join(nvim_dir, "bin/nvim")
@@ -141,6 +185,8 @@ local function bundle(platform, nvim_dir, plugins_dir)
   if not ok then
     return nil, err
   end
+
+  install_treesitter_parsers(nvim_dir)
 
   ok, err = verify_plugins(nvim_dir, plugins)
   if not ok then
