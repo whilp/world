@@ -91,19 +91,6 @@ local function bundle_plugins(nvim_dir, plugins_dir, plugins)
   return true
 end
 
-local TS_PARSERS = {
-  "python",
-  "markdown",
-  "bash",
-  "lua",
-  "yaml",
-  "javascript",
-  "json",
-  "ruby",
-  "go",
-  "sql",
-}
-
 local function install_treesitter_parsers(nvim_dir)
   io.write("installing treesitter parsers\n")
   local nvim_bin = path.join(nvim_dir, "bin/nvim")
@@ -118,7 +105,8 @@ local function install_treesitter_parsers(nvim_dir)
   local config_home = path.join(cwd, ".config")
   local data_home = path.join(nvim_dir, "share")
 
-  for _, parser in ipairs(TS_PARSERS) do
+  local parsers = dofile(path.join(cwd, ".config/nvim/parsers.lua"))
+  for _, parser in ipairs(parsers) do
     io.write(string.format("  installing %s\n", parser))
     local cmd = string.format("TSInstallSync %s", parser)
     local ok = execute("env", {

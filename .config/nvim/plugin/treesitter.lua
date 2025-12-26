@@ -1,22 +1,11 @@
+local lang = dofile(vim.fn.stdpath("config") .. "/parsers.lua")
+
 local ok, ts = pcall(require, "nvim-treesitter")
 if ok then
   ts.setup({
     install_dir = vim.fn.stdpath("data") .. "/site",
   })
 end
-
-local lang = {
-  "python",
-  "markdown",
-  "bash",
-  "lua",
-  "yaml",
-  "javascript",
-  "json",
-  "ruby",
-  "go",
-  "sql",
-}
 
 local ok, ts_configs = pcall(require, "nvim-treesitter.configs")
 if ok then
