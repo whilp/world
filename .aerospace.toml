@@ -80,6 +80,10 @@ alt-shift-q = 'close'
 # Minimize window
 alt-m = 'macos-native-minimize'
 
+# Window snapshot (save/restore workspace assignments)
+alt-shift-s = 'exec-and-forget lua ~/stripe/dotfiles/.local/bin/aerosnap save'
+alt-shift-w = 'exec-and-forget lua ~/stripe/dotfiles/.local/bin/aerosnap load'
+
 # Resize mode
 [mode.resize.binding]
 h = 'resize width -50'
