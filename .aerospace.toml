@@ -100,10 +100,10 @@ alt-shift-5 = ['move-node-to-workspace 5', 'workspace 5']
 
 # Resize mode
 [mode.resize.binding]
-h = 'resize width -50'
-j = 'resize height +50'
-k = 'resize height -50'
-l = 'resize width +50'
+h = 'resize smart -50'
+j = 'resize smart +50'
+k = 'resize smart -50'
+l = 'resize smart +50'
 enter = 'mode main'
 esc = 'mode main'
 
