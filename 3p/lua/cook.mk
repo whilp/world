@@ -18,7 +18,7 @@ $(lua_ape): $(cosmos_lua_bin) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua $
 
 $(lua_bin): $(lua_ape)
 	cp $< $@
-	./$@ --assimilate
+	./$@ --assimilate || true
 
 lua: $(lua_bin)
 
