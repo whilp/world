@@ -108,7 +108,7 @@ local function install_treesitter_parsers(nvim_dir)
   local parsers = dofile(path.join(cwd, ".config/nvim/parsers.lua"))
   for _, parser in ipairs(parsers) do
     io.write(string.format("  installing %s\n", parser))
-    local cmd = string.format("TSInstallSync %s", parser)
+    local cmd = string.format("TSUpdateSync %s", parser)
     local ok = execute("env", {
       "env",
       "XDG_CONFIG_HOME=" .. config_home,
