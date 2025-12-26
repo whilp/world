@@ -49,6 +49,61 @@ function test_cosmo_DecodeLatin1()
     lu.assertNotNil(cosmo.DecodeLatin1)
 end
 
+function test_cosmo_DecodeJson()
+    lu.assertNotNil(cosmo.DecodeJson)
+    local result = cosmo.DecodeJson('{"key": "value", "num": 42}')
+    lu.assertNotNil(result)
+    lu.assertEquals(result.key, "value")
+    lu.assertEquals(result.num, 42)
+end
+
+function test_cosmo_DecodeJson_array()
+    lu.assertNotNil(cosmo.DecodeJson)
+    local result = cosmo.DecodeJson('[1, 2, 3]')
+    lu.assertNotNil(result)
+    lu.assertEquals(result[1], 1)
+    lu.assertEquals(result[2], 2)
+    lu.assertEquals(result[3], 3)
+end
+
+function test_cosmo_DecodeJson_error()
+    lu.assertNotNil(cosmo.DecodeJson)
+    local result, err = cosmo.DecodeJson('invalid json')
+    lu.assertNil(result)
+    lu.assertNotNil(err)
+end
+
+function test_cosmo_EncodeJson()
+    lu.assertNotNil(cosmo.EncodeJson)
+    local json = cosmo.EncodeJson({key = "value", num = 42})
+    lu.assertNotNil(json)
+    lu.assertStrContains(json, '"key"')
+    lu.assertStrContains(json, '"value"')
+    lu.assertStrContains(json, '42')
+end
+
+function test_cosmo_EncodeJson_array()
+    lu.assertNotNil(cosmo.EncodeJson)
+    local json = cosmo.EncodeJson({1, 2, 3})
+    lu.assertNotNil(json)
+    lu.assertEquals(json, "[1,2,3]")
+end
+
+function test_cosmo_EncodeJson_pretty()
+    lu.assertNotNil(cosmo.EncodeJson)
+    local json = cosmo.EncodeJson({a = 1, b = 2}, {pretty = true})
+    lu.assertNotNil(json)
+    lu.assertStrContains(json, "\n")
+end
+
+function test_cosmo_EncodeLua()
+    lu.assertNotNil(cosmo.EncodeLua)
+    local lua_str = cosmo.EncodeLua({key = "value", num = 42})
+    lu.assertNotNil(lua_str)
+    lu.assertStrContains(lua_str, "key")
+    lu.assertStrContains(lua_str, "value")
+end
+
 -- escape functions
 function test_cosmo_EscapeHtml()
     lu.assertNotNil(cosmo.EscapeHtml)

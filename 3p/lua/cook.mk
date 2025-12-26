@@ -58,7 +58,7 @@ lua_core_srcs := \
 
 # lua extension sources - some in third_party/lua, some in tool/net
 lua_ext_lua_srcs := lunix.c lua.main.c
-lua_ext_net_srcs := lpath.c lre.c lsqlite3.c largon2.c lfuncs.c
+lua_ext_net_srcs := lpath.c lre.c lsqlite3.c largon2.c lfuncs.c ljson.c
 
 # cosmo module (lfuncs_register.c registers lfuncs as cosmo module)
 lua_cosmo_srcs := lfuncs_register.c
@@ -121,6 +121,7 @@ $(lua_patched): $(cosmopolitan_src) | $(lua_build_dir)
 	cp $(lua_patch_dir)/lsqlite3.h $(lua_cosmo_dir)/third_party/lua/
 	cp $(lua_patch_dir)/largon2.h $(lua_cosmo_dir)/third_party/lua/
 	cp $(lua_patch_dir)/lcosmo.h $(lua_cosmo_dir)/third_party/lua/
+	cp $(lua_patch_dir)/ljson.h $(lua_cosmo_dir)/tool/net/
 	cp $(lua_patch_dir)/lfuncs_register.c $(lua_cosmo_dir)/third_party/lua/
 	cd $(lua_cosmo_dir) && patch -N -p1 < $(CURDIR)/$(lua_patch_dir)/lua.main.c.patch || true
 	cd $(lua_cosmo_dir) && patch -N -p1 < $(CURDIR)/$(lua_patch_dir)/lfuncs.c.patch || true
