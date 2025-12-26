@@ -27,7 +27,7 @@ jobs:
       - name: fetch upstream nightly
         run: |
           curl -fsSL -o nvim-upstream.tar.gz \
-            "https://github.com/neovim/neovim/releases/download/nightly/${{ matrix.upstream }}"
+            "https://github.com/whilp/neovim/releases/download/nightly/${{ matrix.upstream }}"
 
       - name: extract version from binary
         id: version
@@ -104,7 +104,7 @@ jobs:
 
           gh release create "$TAG" \
             --title "nvim nightly ${{ steps.date.outputs.date }}" \
-            --notes "Neovim nightly from https://github.com/neovim/neovim/releases/tag/nightly" \
+            --notes "Neovim nightly from https://github.com/whilp/neovim/releases/tag/nightly" \
             artifacts/nvim-darwin-arm64/nvim-darwin-arm64.tar.gz \
             artifacts/nvim-darwin-arm64/nvim-darwin-arm64.tar.gz.sha256 \
             artifacts/nvim-linux-arm64/nvim-linux-arm64.tar.gz \

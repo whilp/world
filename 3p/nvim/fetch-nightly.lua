@@ -8,7 +8,7 @@ local path = cosmo.path
 local unix = cosmo.unix
 local spawn = require("spawn").spawn
 
-local UPSTREAM_URL = "https://github.com/neovim/neovim/releases/download/nightly"
+local UPSTREAM_URL = "https://github.com/whilp/neovim/releases/download/nightly"
 
 local PLATFORM_MAP = {
   ["darwin-arm64"] = "nvim-macos-arm64.tar.gz",
