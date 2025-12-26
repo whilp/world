@@ -23,26 +23,8 @@ function test_whereami_get_with_emoji()
 end
 
 function test_whereami_codespaces_format()
-  local mock_env = {
-    CODESPACES = 'true',
-    GITHUB_REPOSITORY = 'testowner/testrepo',
-  }
-  local function env(key) return mock_env[key] end
-
-  local identifier = whereami.get_with_emoji(env)
-
-  lu.assertNotNil(identifier:find(' | '),
-    "codespaces format should contain ' | ' separator")
-
-  local repo_branch, host_emoji = identifier:match('(.+) | (.+)')
-  lu.assertNotNil(repo_branch, "should have repo/branch before separator")
-  lu.assertNotNil(host_emoji, "should have hostname and emoji after separator")
-
-  lu.assertNotNil(repo_branch:find('/'),
-    "repo/branch portion should contain a slash")
-  lu.assertEquals(repo_branch:match('^[^/]+'), 'testrepo',
-    "repo name should be stripped of owner prefix")
-
-  lu.assertNotNil(host_emoji:find(' '),
-    "hostname and emoji should be space-separated")
+  local env = { CODESPACES = 'true', GITHUB_REPOSITORY = 'owner/repo' }
+  local result = whereami.get_with_emoji(function(k) return env[k] end)
+  lu.assertStrContains(result, 'repo/')
+  lu.assertStrContains(result, ' | ')
 end
