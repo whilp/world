@@ -5,6 +5,12 @@
 # Start AeroSpace at login
 start-at-login = true
 
+# Load window snapshot on startup
+after-startup-command = ['exec-and-forget aerosnap load']
+
+# Save window snapshot on workspace change
+exec-on-workspace-change = ['/bin/bash', '-c', 'aerosnap save']
+
 # Normalizations (keeps layout tree sensible)
 enable-normalization-flatten-containers = true
 enable-normalization-opposite-orientation-for-nested-containers = true
@@ -15,6 +21,11 @@ accordion-padding = 0
 # Default layout (accordion for stacked windows)
 default-root-container-layout = 'accordion'
 default-root-container-orientation = 'horizontal'
+
+# Exec environment
+[exec.env-vars]
+PATH = '${HOME}/.local/bin:${PATH}'
+LUA_PATH = '${HOME}/lib/?/init.lua;${LUA_PATH}'
 
 # Gaps configuration
 [gaps]
