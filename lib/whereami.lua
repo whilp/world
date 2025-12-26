@@ -133,18 +133,6 @@ local function get_git_branch()
   return branch
 end
 
-local function is_codespace()
-  return os.getenv('CODESPACES') == 'true'
-end
-
-local function get_repo_name()
-  local repo = os.getenv('GITHUB_REPOSITORY')
-  if repo then
-    return repo:match('[^/]+/(.+)') or repo
-  end
-  return nil
-end
-
 local function get()
   local identifier = ''
 
@@ -154,9 +142,9 @@ local function get()
     if box_name and box_name ~= '' then
       identifier = box_name
 
-      local env = read_file(conf_dir .. '/host_env')
-      if env and env ~= '' then
-        identifier = identifier .. '.' .. env
+      local host_env = read_file(conf_dir .. '/host_env')
+      if host_env and host_env ~= '' then
+        identifier = identifier .. '.' .. host_env
       end
     end
   end
@@ -168,7 +156,8 @@ local function get()
   return identifier
 end
 
-local function get_with_emoji()
+local function get_with_emoji(env)
+  env = env or os.getenv
   local identifier = get()
   local emoji = ''
 
@@ -181,8 +170,9 @@ local function get_with_emoji()
     emoji = string_to_emoji(identifier)
   end
 
-  if is_codespace() then
-    local repo = get_repo_name()
+  if env('CODESPACES') == 'true' then
+    local repo_full = env('GITHUB_REPOSITORY')
+    local repo = repo_full and (repo_full:match('[^/]+/(.+)') or repo_full)
     local branch = get_git_branch()
     if repo and branch then
       local hostname = get_short_hostname() or identifier

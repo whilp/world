@@ -23,26 +23,13 @@ function test_whereami_get_with_emoji()
 end
 
 function test_whereami_codespaces_format()
-  local original_getenv = os.getenv
   local mock_env = {
     CODESPACES = 'true',
     GITHUB_REPOSITORY = 'testowner/testrepo',
   }
-  os.getenv = function(key)
-    if mock_env[key] ~= nil then
-      return mock_env[key]
-    end
-    return original_getenv(key)
-  end
+  local function env(key) return mock_env[key] end
 
-  package.loaded['whereami'] = nil
-  local w = require('whereami')
-
-  local identifier = w.get_with_emoji()
-
-  os.getenv = original_getenv
-  package.loaded['whereami'] = nil
-  require('whereami')
+  local identifier = whereami.get_with_emoji(env)
 
   lu.assertNotNil(identifier:find(' | '),
     "codespaces format should contain ' | ' separator")
