@@ -494,7 +494,8 @@ local function cmd_unpack(dest, force, opts)
     end
 
     local plat_manifest = load_platform_manifest(current)
-    local url = platform_url or (interpolate(platforms.base_url, { tag = platforms.tag }) .. "/" .. plat_info.asset)
+    local base_url = interpolate(platforms.base_url, { tag = platforms.tag })
+    local url = platform_url or string.format("%s/%s", base_url, plat_info.asset)
     local tmp_path = path.join(dest, ".home-platform-download")
 
     if not dry_run then
