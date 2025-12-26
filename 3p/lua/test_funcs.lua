@@ -213,7 +213,6 @@ function test_cosmo_FormatIp()
 end
 
 function test_cosmo_ResolveIp()
-    lu.skipIf(missing("ResolveIp"), "not in lfuncs.c")
     lu.assertNotNil(cosmo.ResolveIp)
 end
 
@@ -245,19 +244,19 @@ function test_cosmo_GetRandomBytes()
     lu.assertEquals(#bytes, 16)
 end
 
--- uuid functions (not in lfuncs.c)
+-- uuid functions
 function test_cosmo_UuidV4()
-    lu.skipIf(missing("UuidV4"), "not in lfuncs.c")
     lu.assertNotNil(cosmo.UuidV4)
     local uuid = cosmo.UuidV4()
     lu.assertEquals(#uuid, 36)
+    lu.assertStrMatches(uuid, "%x%x%x%x%x%x%x%x%-%x%x%x%x%-4%x%x%x%-%x%x%x%x%-%x%x%x%x%x%x%x%x%x%x%x%x")
 end
 
 function test_cosmo_UuidV7()
-    lu.skipIf(missing("UuidV7"), "not in lfuncs.c")
     lu.assertNotNil(cosmo.UuidV7)
     local uuid = cosmo.UuidV7()
     lu.assertEquals(#uuid, 36)
+    lu.assertStrMatches(uuid, "%x%x%x%x%x%x%x%x%-%x%x%x%x%-7%x%x%x%-%x%x%x%x%-%x%x%x%x%x%x%x%x%x%x%x%x")
 end
 
 -- date/time functions (LFUNCS_LITE: FormatHttpDateTime excluded)
@@ -328,15 +327,22 @@ function test_cosmo_Decimate()
     lu.assertNotNil(cosmo.Decimate)
 end
 
--- not in lfuncs.c
+-- file I/O
 function test_cosmo_Slurp()
-    lu.skipIf(missing("Slurp"), "not in lfuncs.c")
     lu.assertNotNil(cosmo.Slurp)
 end
 
 function test_cosmo_Barf()
-    lu.skipIf(missing("Barf"), "not in lfuncs.c")
     lu.assertNotNil(cosmo.Barf)
+end
+
+function test_cosmo_Slurp_Barf_roundtrip()
+    local testfile = "/tmp/cosmo_test_" .. tostring(os.time()) .. ".txt"
+    local content = "hello world\ntest content"
+    cosmo.Barf(testfile, content)
+    local read = cosmo.Slurp(testfile)
+    lu.assertEquals(read, content)
+    os.remove(testfile)
 end
 
 function test_cosmo_Sleep()
@@ -358,26 +364,53 @@ end
 
 -- random number generators
 function test_cosmo_Rand64()
-    lu.skipIf(missing("Rand64"), "not in lfuncs.c")
     lu.assertNotNil(cosmo.Rand64)
+    local r = cosmo.Rand64()
+    lu.assertNotNil(r)
 end
 
 function test_cosmo_Lemur64()
     lu.assertNotNil(cosmo.Lemur64)
 end
 
--- low-level formatting (not in lfuncs.c)
+-- number formatting
 function test_cosmo_bin()
-    lu.skipIf(missing("bin"), "not in lfuncs.c")
     lu.assertNotNil(cosmo.bin)
+    lu.assertEquals(cosmo.bin(255), "0b11111111")
 end
 
 function test_cosmo_hex()
-    lu.skipIf(missing("hex"), "not in lfuncs.c")
     lu.assertNotNil(cosmo.hex)
+    lu.assertEquals(cosmo.hex(255), "0xff")
 end
 
 function test_cosmo_oct()
-    lu.skipIf(missing("oct"), "not in lfuncs.c")
     lu.assertNotNil(cosmo.oct)
+    lu.assertEquals(cosmo.oct(255), "0377")
+end
+
+-- URL functions
+function test_cosmo_ParseUrl()
+    lu.assertNotNil(cosmo.ParseUrl)
+    local url = cosmo.ParseUrl("https://user:pass@example.com:8080/path?foo=bar#frag")
+    lu.assertEquals(url.scheme, "https")
+    lu.assertEquals(url.user, "user")
+    lu.assertEquals(url.pass, "pass")
+    lu.assertEquals(url.host, "example.com")
+    lu.assertEquals(url.port, "8080")
+    lu.assertEquals(url.path, "/path")
+    lu.assertEquals(url.fragment, "frag")
+end
+
+function test_cosmo_EncodeUrl()
+    lu.assertNotNil(cosmo.EncodeUrl)
+    local url = cosmo.EncodeUrl({scheme = "https", host = "example.com", path = "/test"})
+    lu.assertEquals(url, "https://example.com/test")
+end
+
+-- encoding
+function test_cosmo_Underlong()
+    lu.assertNotNil(cosmo.Underlong)
+    local encoded = cosmo.Underlong("hello")
+    lu.assertNotNil(encoded)
 end

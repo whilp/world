@@ -95,8 +95,10 @@ static int LuaEncodeLua(lua_State *L) {
 }
 
 static const luaL_Reg kCosmoFuncs[] = {
+    {"Barf", LuaBarf},
     {"Bsf", LuaBsf},
     {"Bsr", LuaBsr},
+    {"bin", LuaBin},
     {"CategorizeIp", LuaCategorizeIp},
     {"Compress", LuaCompress},
     {"Crc32", LuaCrc32},
@@ -113,6 +115,7 @@ static const luaL_Reg kCosmoFuncs[] = {
     {"EncodeJson", LuaEncodeJson},
     {"EncodeLatin1", LuaEncodeLatin1},
     {"EncodeLua", LuaEncodeLua},
+    {"EncodeUrl", LuaEncodeUrl},
     {"EscapeFragment", LuaEscapeFragment},
     {"EscapeHost", LuaEscapeHost},
     {"EscapeHtml", LuaEscapeHtml},
@@ -135,6 +138,7 @@ static const luaL_Reg kCosmoFuncs[] = {
     {"GetTime", LuaGetTime},
     {"HasControlCodes", LuaHasControlCodes},
     {"HighwayHash64", LuaHighwayHash64},
+    {"hex", LuaHex},
     {"IndentLines", LuaIndentLines},
     {"Inflate", LuaInflate},
     {"IsAcceptableHost", LuaIsAcceptableHost},
@@ -148,13 +152,21 @@ static const luaL_Reg kCosmoFuncs[] = {
     {"IsValidHttpToken", LuaIsValidHttpToken},
     {"Lemur64", LuaLemur64},
     {"MeasureEntropy", LuaMeasureEntropy},
+    {"oct", LuaOct},
     {"ParseHost", LuaParseHost},
     {"ParseHttpDateTime", LuaParseHttpDateTime},
     {"ParseIp", LuaParseIp},
     {"ParseParams", LuaParseParams},
+    {"ParseUrl", LuaParseUrl},
     {"Popcnt", LuaPopcnt},
+    {"Rand64", LuaRand64},
+    {"ResolveIp", LuaResolveIp},
     {"Sleep", LuaSleep},
+    {"Slurp", LuaSlurp},
     {"Uncompress", LuaUncompress},
+    {"Underlong", LuaUnderlong},
+    {"UuidV4", LuaUuidV4},
+    {"UuidV7", LuaUuidV7},
     {"VisualizeControlCodes", LuaVisualizeControlCodes},
     {NULL, NULL}
 };
