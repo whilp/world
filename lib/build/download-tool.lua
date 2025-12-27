@@ -87,7 +87,6 @@ local function load_tool_config(tool_name, platform)
   }
 end
 
--- Download file from URL using curl
 local function download_file(url, dest_path)
   if not url or url == "" then
     return nil, "url cannot be empty"
@@ -96,7 +95,24 @@ local function download_file(url, dest_path)
     return nil, "dest_path cannot be empty"
   end
 
-  return execute("/usr/bin/curl", {"curl", "-fsSL", "-o", dest_path, url})
+  local status, _, body = cosmo.Fetch(url)
+  if not status then
+    return nil, "fetch failed: " .. tostring(body or "unknown error")
+  end
+  if status ~= 200 then
+    return nil, "fetch failed with status " .. tostring(status)
+  end
+
+  local fd = unix.open(dest_path, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, 0644)
+  if not fd or fd < 0 then
+    return nil, "failed to open destination file"
+  end
+  local bytes_written = unix.write(fd, body)
+  unix.close(fd)
+  if bytes_written ~= #body then
+    return nil, "failed to write data"
+  end
+  return true
 end
 
 -- Verify SHA256 checksum

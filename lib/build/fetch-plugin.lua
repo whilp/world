@@ -99,34 +99,36 @@ local function fetch_plugin(plugin_name, output_dir)
   -- Ensure parent directory exists
   local parent = output_dir:match("(.+)/[^/]+$")
   if parent then
-    local parent_ok, parent_err = execute("mkdir", {"mkdir", "-p", parent})
-    if not parent_ok then
-      return nil, parent_err
-    end
+    unix.makedirs(parent)
   end
 
   -- Download
-  local curl_ok, curl_err = execute("curl", {"curl", "-fsSL", "-o", tarball, url})
-  if not curl_ok then
-    return nil, curl_err
+  local status, _, body = cosmo.Fetch(url)
+  if not status then
+    return nil, "fetch failed: " .. tostring(body or "unknown error")
+  end
+  if status ~= 200 then
+    return nil, "fetch failed with status " .. tostring(status)
   end
 
-  -- Extract
-  local mkdir_ok, mkdir_err = execute("mkdir", {"mkdir", "-p", output_dir})
-  if not mkdir_ok then
-    execute("rm", {"rm", "-f", tarball})
-    return nil, mkdir_err
+  local fd = unix.open(tarball, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, 0644)
+  if not fd or fd < 0 then
+    return nil, "failed to create tarball"
   end
+  unix.write(fd, body)
+  unix.close(fd)
+
+  -- Extract
+  unix.makedirs(output_dir)
 
   local tar_ok, tar_err = execute("tar", {"tar", "-xzf", tarball, "-C", output_dir, "--strip-components=1"})
   if not tar_ok then
-    execute("rm", {"rm", "-f", tarball})
-    execute("rm", {"rm", "-rf", output_dir})
+    unix.unlink(tarball)
     return nil, tar_err
   end
 
   -- Cleanup tarball
-  execute("rm", {"rm", "-f", tarball})
+  unix.unlink(tarball)
 
   if plugin_name == "nui-components.nvim" then
     execute("rm", {"rm", "-rf", path.join(output_dir, "docs/public")}, { allow_failure = true })
