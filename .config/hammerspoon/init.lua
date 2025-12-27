@@ -1,6 +1,8 @@
 local HyperKey = require("hyper-key")
-local windowSwitcher = require("window-switcher")
 local notchClock = require("notch-clock")
+
+-- Global for IPC access (aerospace on-focus-changed callback)
+aeroSwitcher = require("aero-switcher")
 local leaderModal = require("leader-modal")
 local leaderDsl = require("leader-dsl")
 local emojiPicker = require("emoji-picker")
@@ -20,10 +22,10 @@ local function showEmojiChooser()
   end)
 
   chooserStyle.apply(chooser)
+  chooser:initialSelectedRow(1)
   chooser:choices(choices)
   chooser:query("")
   chooser:show()
-  chooser:selectedRow(1)
 end
 
 local function showSymbolChooser()
@@ -35,10 +37,10 @@ local function showSymbolChooser()
   end)
 
   chooserStyle.apply(chooser)
+  chooser:initialSelectedRow(1)
   chooser:choices(choices)
   chooser:query("")
   chooser:show()
-  chooser:selectedRow(1)
 end
 
 local clue_dir = hs.configdir .. "/clues"
@@ -71,20 +73,13 @@ end
 leaderModal.setup(leaderDsl.get_tree(), { timeout_ms = 3000 }, {
   emoji = showEmojiChooser,
   symbol = showSymbolChooser,
-  unfiltered_switcher = function() windowSwitcher.showUnfiltered() end,
+  unfiltered_switcher = function() aeroSwitcher.show() end,
 })
 
-windowSwitcher.setup(hyper)
 notchClock.start({ offsetMinutes = 4 })
 
--- cmd+space opens dispatcher
-hs.hotkey.bind({"cmd"}, "space", function()
-  windowSwitcher.showUnfiltered()
-end)
-
--- cmd+tab opens dispatcher
-hs.hotkey.bind({"cmd"}, "tab", function()
-  windowSwitcher.showUnfiltered()
-end)
+-- Window switcher bindings
+hs.hotkey.bind({"alt"}, "space", function() aeroSwitcher.show() end)
+hs.hotkey.bind({"cmd"}, "space", function() aeroSwitcher.show() end)
 
 hs.alert.show("Hammerspoon loaded")
