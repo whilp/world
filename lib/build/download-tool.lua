@@ -171,28 +171,23 @@ local function extract_zip(archive_path, output_dir, strip_components)
 
   if strip_components == 1 then
     -- Move contents up one level
-    local dirent = require("posix.dirent")
-    local stat = require("posix.sys.stat")
-    local entries = dirent.dir(output_dir)
-    if entries then
-      local first_dir
-      for _, entry in ipairs(entries) do
-        if entry ~= "." and entry ~= ".." then
-          local entry_path = path.join(output_dir, entry)
-          local st = stat.stat(entry_path)
-          if st and stat.S_ISDIR(st.st_mode) ~= 0 then
-            first_dir = entry_path
-            break
-          end
+    local first_dir
+    for name in unix.opendir(output_dir) do
+      if name ~= "." and name ~= ".." then
+        local entry_path = path.join(output_dir, name)
+        local st = unix.stat(entry_path)
+        if st and unix.S_ISDIR(st:mode()) then
+          first_dir = entry_path
+          break
         end
       end
-      if first_dir then
-        ok, err = execute("/bin/cp", {"cp", "-r", first_dir .. "/.", output_dir})
-        if not ok then
-          return nil, err
-        end
-        unix.rmrf(first_dir)
+    end
+    if first_dir then
+      ok, err = execute("/bin/cp", {"cp", "-r", first_dir .. "/.", output_dir})
+      if not ok then
+        return nil, err
       end
+      unix.rmrf(first_dir)
     end
   end
 
