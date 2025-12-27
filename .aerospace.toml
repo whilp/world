@@ -8,8 +8,6 @@ start-at-login = true
 # Load window snapshot on startup
 after-startup-command = ['exec-and-forget aerosnap load']
 
-# Save window snapshot on workspace change
-exec-on-workspace-change = ['/bin/bash', '-c', 'aerosnap save']
 
 # Normalizations (keeps layout tree sensible)
 enable-normalization-flatten-containers = true
@@ -91,8 +89,8 @@ alt-shift-q = 'close'
 # Minimize window
 alt-m = 'macos-native-minimize'
 
-# Window snapshot (save/restore workspace assignments)
-alt-shift-s = 'exec-and-forget aerosnap save'
+# Window snapshot (seed all/restore workspace assignments)
+alt-shift-s = 'exec-and-forget aerosnap seed'
 alt-shift-w = 'exec-and-forget aerosnap load'
 
 # Workspace switching
@@ -102,12 +100,12 @@ alt-3 = 'workspace 3'
 alt-4 = 'workspace 4'
 alt-5 = 'workspace 5'
 
-# Move window to workspace (and follow, then snapshot)
-alt-shift-1 = ['move-node-to-workspace 1', 'workspace 1', 'exec-and-forget aerosnap save']
-alt-shift-2 = ['move-node-to-workspace 2', 'workspace 2', 'exec-and-forget aerosnap save']
-alt-shift-3 = ['move-node-to-workspace 3', 'workspace 3', 'exec-and-forget aerosnap save']
-alt-shift-4 = ['move-node-to-workspace 4', 'workspace 4', 'exec-and-forget aerosnap save']
-alt-shift-5 = ['move-node-to-workspace 5', 'workspace 5', 'exec-and-forget aerosnap save']
+# Move window to workspace (and follow, then record)
+alt-shift-1 = ['move-node-to-workspace 1', 'workspace 1', 'exec-and-forget aerosnap record']
+alt-shift-2 = ['move-node-to-workspace 2', 'workspace 2', 'exec-and-forget aerosnap record']
+alt-shift-3 = ['move-node-to-workspace 3', 'workspace 3', 'exec-and-forget aerosnap record']
+alt-shift-4 = ['move-node-to-workspace 4', 'workspace 4', 'exec-and-forget aerosnap record']
+alt-shift-5 = ['move-node-to-workspace 5', 'workspace 5', 'exec-and-forget aerosnap record']
 
 # Resize mode
 [mode.resize.binding]
