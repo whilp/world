@@ -1,6 +1,6 @@
 id: unsafe-path-concat
 language: lua
-severity: warning
+severity: error
 message: |
   Unsafe path concatenation detected. Use cosmo.path.join() instead of string concatenation.
 

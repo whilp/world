@@ -11,7 +11,7 @@ local function walk_dir(dir, base, files)
   for name in unix.opendir(dir) do
     if name ~= "." and name ~= ".." then
       local full_path = path.join(dir, name)
-      local rel_path = base == "" and name or (base .. "/" .. name)
+      local rel_path = base == "" and name or path.join(base, name)
       local st = unix.stat(full_path)
 
       if st then
