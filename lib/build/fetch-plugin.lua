@@ -103,16 +103,19 @@ local function fetch_plugin(plugin_name, output_dir)
   end
 
   -- Download with retry
-  local status, _, body
+  local status, headers, body
   local last_err
-  for attempt = 1, 5 do
-    status, _, body = cosmo.Fetch(url)
+  local max_attempts = 8
+  local fetch_opts = {headers = {["User-Agent"] = "curl/8.0"}}
+  for attempt = 1, max_attempts do
+    status, headers, body = cosmo.Fetch(url, fetch_opts)
     if status then
       break
     end
-    last_err = tostring(body or "unknown error")
-    if attempt < 5 then
-      unix.nanosleep(attempt, 0)
+    last_err = tostring(headers or "unknown error")
+    if attempt < max_attempts then
+      local delay = math.min(30, 2 ^ attempt)
+      unix.nanosleep(delay, 0)
     end
   end
   if not status then
