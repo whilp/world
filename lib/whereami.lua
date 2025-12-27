@@ -89,22 +89,17 @@ local function string_to_emoji(str)
 end
 
 local function get_short_hostname()
+  if not spawn then
+    return nil
+  end
   local hostname
-  if spawn then
-    local s_ok, output = spawn({'hostname', '-s'}):read()
+  local s_ok, output = spawn({'hostname', '-s'}):read()
+  if s_ok and output then
+    hostname = output
+  else
+    s_ok, output = spawn({'hostname'}):read()
     if s_ok and output then
       hostname = output
-    else
-      s_ok, output = spawn({'hostname'}):read()
-      if s_ok and output then
-        hostname = output
-      end
-    end
-  else
-    local handle = io.popen('hostname -s 2>/dev/null || hostname', 'r')
-    if handle then
-      hostname = handle:read('*l')
-      handle:close()
     end
   end
   if hostname then
@@ -114,6 +109,11 @@ local function get_short_hostname()
 end
 
 local function get()
+  local env_val = os.getenv("WHEREAMI")
+  if env_val and env_val ~= '' then
+    return env_val
+  end
+
   local identifier = ''
 
   local conf_dir = find_conf_dir()
@@ -138,6 +138,11 @@ end
 
 local function get_with_emoji(env)
   env = env or os.getenv
+  local env_val = env("WHEREAMI_EMOJI")
+  if env_val and env_val ~= '' then
+    return env_val
+  end
+
   local identifier = get()
   local emoji = ''
 
