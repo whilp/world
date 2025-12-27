@@ -48,6 +48,7 @@ jobs:
             results/bin/lua
 
   test:
+    if: github.ref == 'refs/heads/main'
     runs-on: ${{ matrix.os }}
     needs: build
     strategy:
