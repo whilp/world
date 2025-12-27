@@ -4,25 +4,14 @@ local ok, ts = pcall(require, "nvim-treesitter")
 if ok then
   ts.setup({
     install_dir = vim.fn.stdpath("data") .. "/site",
+    ensure_install = lang,
   })
 end
 
-local ok, ts_configs = pcall(require, "nvim-treesitter.configs")
-if ok then
-  ts_configs.setup({
-    ensure_installed = lang,
-    highlight = {
-      enable = true,
-    },
-    indent = {
-      enable = true,
-    },
-  })
-
-  vim.api.nvim_create_autocmd("FileType", {
-    pattern = lang,
-    callback = function()
-      vim.treesitter.start()
-    end,
-  })
-end
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = lang,
+  callback = function()
+    vim.treesitter.start()
+    vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+  end,
+})
