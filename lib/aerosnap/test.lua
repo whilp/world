@@ -1,17 +1,13 @@
 local lu = require("luaunit")
 local cosmo = require("cosmo")
 local sqlite3 = cosmo.sqlite3
-local unix = cosmo.unix
 
-local aerosnap = dofile(os.getenv("HOME") .. "/.local/bin/aerosnap")
+local aerosnap = require("aerosnap")
 
 TestLookupWorkspace = {}
 
-local TEST_DB = "/tmp/aerosnap_test.db"
-
 function TestLookupWorkspace:setUp()
-  unix.unlink(TEST_DB)
-  self.db = sqlite3.open(TEST_DB)
+  self.db = sqlite3.open(":memory:")
   self.db:exec([[
     create table window_mappings (
       id integer primary key autoincrement,
@@ -27,7 +23,6 @@ end
 
 function TestLookupWorkspace:tearDown()
   self.db:close()
-  unix.unlink(TEST_DB)
 end
 
 function TestLookupWorkspace:test_finds_exact_match()
