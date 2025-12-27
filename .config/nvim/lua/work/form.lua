@@ -1,4 +1,4 @@
--- work.form - native implementation without nui-components
+-- work.form - native implementation
 local work = require("work")
 local api = work.api
 local render = require("work.render")
