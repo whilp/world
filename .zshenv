@@ -9,7 +9,6 @@ path=(
   "/opt/homebrew/bin"
   $path
 )
-path+=(~/.local/share/*/*-*(NOm/))
 path+=(~/.local/share/*/*-*/bin(NOm/))
 path+=(/usr/*/bin(N))
 

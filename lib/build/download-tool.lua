@@ -166,18 +166,28 @@ local function extract_gz(archive_path, tool_name, output_dir)
     return nil, err
   end
 
-  local binary_path = path.join(output_dir, tool_name)
+  local bin_dir = path.join(output_dir, "bin")
+  unix.makedirs(bin_dir)
+
+  local uncompressed_path = path.join(output_dir, tool_name)
+  local binary_path = path.join(bin_dir, tool_name)
+  unix.rename(uncompressed_path, binary_path)
   unix.chmod(binary_path, 493)
   return true
 end
 
--- Make binary executable
-local function make_executable(file_path)
+-- Make binary executable and move to bin subdirectory
+local function make_executable(file_path, tool_name, output_dir)
   if not file_path or file_path == "" then
     return nil, "file_path cannot be empty"
   end
 
-  unix.chmod(file_path, 493)
+  local bin_dir = path.join(output_dir, "bin")
+  unix.makedirs(bin_dir)
+
+  local binary_path = path.join(bin_dir, tool_name)
+  unix.rename(file_path, binary_path)
+  unix.chmod(binary_path, 493)
   return true
 end
 
@@ -199,7 +209,7 @@ local function extract(archive_path, output_dir, config)
   if config.format == "gz" then
     return extractor(archive_path, config.tool_name, output_dir)
   elseif config.format == "binary" then
-    return extractor(archive_path)
+    return extractor(archive_path, config.tool_name, output_dir)
   else
     return extractor(archive_path, output_dir, config.strip_components)
   end

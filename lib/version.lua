@@ -333,18 +333,12 @@ function M.compare_versions(a, b)
 end
 
 function M.find_binary(version_dir, tool_name)
-  local patterns = {
-    path.join(version_dir, "bin", tool_name),
-    path.join(version_dir, tool_name),
-  }
-
-  for _, p in ipairs(patterns) do
-    local st = unix.stat(p)
-    if st then
-      local mode = type(st.mode) == "function" and st:mode() or st.mode
-      if not unix.S_ISDIR(mode) then
-        return p
-      end
+  local binary_path = path.join(version_dir, "bin", tool_name)
+  local st = unix.stat(binary_path)
+  if st then
+    local mode = type(st.mode) == "function" and st:mode() or st.mode
+    if not unix.S_ISDIR(mode) then
+      return binary_path
     end
   end
   return nil
