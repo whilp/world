@@ -32,6 +32,8 @@ max_line_length = 120
 -- See: https://github.com/bakpakin/Fennel/blob/main/rationale.md
 
 ignore = {
+  "111/test_.*",
+  "111/Test.*",
   "131/test_.*",
   "131/Test.*",
   "212/self",
