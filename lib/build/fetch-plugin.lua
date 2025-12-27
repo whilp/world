@@ -145,7 +145,7 @@ local function fetch_plugin(plugin_name, output_dir)
   unix.unlink(tarball)
 
   if plugin_name == "nui-components.nvim" then
-    execute("rm", {"rm", "-rf", path.join(output_dir, "docs/public")}, { allow_failure = true })
+    unix.rmrf(path.join(output_dir, "docs/public"))
   end
 
   return true

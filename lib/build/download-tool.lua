@@ -170,18 +170,24 @@ local function extract_zip(archive_path, output_dir, strip_components)
   end
 
   if strip_components == 1 then
-    -- Move contents up one level using shell
-    local sh_script = string.format([[
-      cd '%s' && \
-      dir=$(find . -mindepth 1 -maxdepth 1 -type d | head -1) && \
-      if [ -n "$dir" ]; then \
-        cp -r "$dir"/. . && \
-        rm -rf "$dir"; \
-      fi
-    ]], output_dir)
-    ok, err = execute("/bin/sh", {"sh", "-c", sh_script})
-    if not ok then
-      return nil, err
+    -- Move contents up one level
+    local first_dir
+    for name in unix.opendir(output_dir) do
+      if name ~= "." and name ~= ".." then
+        local entry_path = path.join(output_dir, name)
+        local st = unix.stat(entry_path)
+        if st and unix.S_ISDIR(st:mode()) then
+          first_dir = entry_path
+          break
+        end
+      end
+    end
+    if first_dir then
+      ok, err = execute("/bin/cp", {"cp", "-r", first_dir .. "/.", output_dir})
+      if not ok then
+        return nil, err
+      end
+      unix.rmrf(first_dir)
     end
   end
 
