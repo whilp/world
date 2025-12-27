@@ -26,17 +26,27 @@ end
 -- Helper: create temp directory
 local function make_temp_dir()
   local temp_path = "/tmp/home_test_" .. os.time() .. "_" .. math.random(10000)
-  if unix then
-    unix.makedirs(temp_path)
-  else
-    os.execute("mkdir -p " .. temp_path)
-  end
+  unix.makedirs(temp_path)
   return temp_path
 end
 
 -- Helper: remove directory recursively
 local function remove_dir(dir_path)
-  os.execute("/usr/bin/rm -rf " .. dir_path)
+  if not unix then
+    return
+  end
+  for name in unix.opendir(dir_path) do
+    if name ~= "." and name ~= ".." then
+      local full_path = path.join(dir_path, name)
+      local st = unix.stat(full_path, unix.AT_SYMLINK_NOFOLLOW)
+      if st and unix.S_ISDIR(st:mode()) then
+        remove_dir(full_path)
+      else
+        unix.unlink(full_path)
+      end
+    end
+  end
+  unix.rmdir(dir_path)
 end
 
 -- Helper: write file

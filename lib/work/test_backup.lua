@@ -1,21 +1,39 @@
 local lu = require("luaunit")
+local cosmo = require("cosmo")
+local unix = cosmo.unix
+local path = cosmo.path
 
 local data = require("work.data")
 local store = require("work.store")
 local Work = require("work.test_lib")
 local test_store = Work.store
 
+local function remove_dir(dir_path)
+  for name in unix.opendir(dir_path) do
+    if name ~= "." and name ~= ".." then
+      local full_path = path.join(dir_path, name)
+      local st = unix.stat(full_path, unix.AT_SYMLINK_NOFOLLOW)
+      if st and unix.S_ISDIR(st:mode()) then
+        remove_dir(full_path)
+      else
+        unix.unlink(full_path)
+      end
+    end
+  end
+  unix.rmdir(dir_path)
+end
+
 TestBackup = {}
 
 function TestBackup:setUp()
   store.reset(test_store)
   self.test_dir = "/tmp/work-test-backup-" .. os.time()
-  os.execute("mkdir -p " .. self.test_dir)
+  unix.makedirs(self.test_dir)
 end
 
 function TestBackup:tearDown()
   data.release_lock()
-  os.execute("rm -rf " .. self.test_dir)
+  remove_dir(self.test_dir)
   data._lock_handle = nil
   data._lock_path = nil
 end
@@ -108,9 +126,9 @@ function TestBackup:test_list_backups()
   -- Verify paths
   local found_backup1 = false
   local found_backup2 = false
-  for _, path in ipairs(backups) do
-    if path == backup1 then found_backup1 = true end
-    if path == backup2 then found_backup2 = true end
+  for _, backup_path in ipairs(backups) do
+    if backup_path == backup1 then found_backup1 = true end
+    if backup_path == backup2 then found_backup2 = true end
   end
   lu.assertTrue(found_backup1, "should find backup1")
   lu.assertTrue(found_backup2, "should find backup2")
