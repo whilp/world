@@ -59,8 +59,7 @@ if ok_hues then
   end
 
   -- Get host identifier and generate deterministic color scheme
-  local ok_whereami, whereami = pcall(require, 'whereami')
-  local host_id = ok_whereami and whereami.get() or 'default'
+  local host_id = vim.env.WHEREAMI or 'default'
   local seed = "1"  -- Change this to get a different color scheme
   local hue = string_to_hue(host_id .. seed)
 

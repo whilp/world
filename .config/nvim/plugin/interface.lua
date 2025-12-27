@@ -19,9 +19,9 @@ opt.shortmess:append('A')  -- ignore swap file messages
 opt.shortmess:append('a')  -- shorter message formats
 
 -- Set terminal title with host identifier
-local ok_whereami, whereami = pcall(require, 'whereami')
-if ok_whereami then
-  opt.titlestring = whereami.get_with_emoji()
+local whereami = vim.env.WHEREAMI
+if whereami then
+  opt.titlestring = whereami
 end
 
 -- Wild menu (command completion)

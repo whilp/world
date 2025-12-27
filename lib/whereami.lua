@@ -1,7 +1,6 @@
-local ok, cosmo = pcall(require, 'cosmo')
-local unix = ok and cosmo.unix or nil
-local spawn_ok, spawn_mod = pcall(require, 'spawn')
-local spawn = spawn_ok and spawn_mod.spawn or nil
+local cosmo = require('cosmo')
+local unix = cosmo.unix
+local spawn = require('spawn').spawn
 
 local function trim(s)
   return s:match('^%s*(.-)%s*$')
@@ -18,14 +17,6 @@ local function read_file(path)
 end
 
 local function file_exists(path)
-  if not unix then
-    local f = io.open(path, 'r')
-    if f then
-      f:close()
-      return true
-    end
-    return false
-  end
   return unix.access(path, unix.F_OK)
 end
 
@@ -34,11 +25,6 @@ local cached_conf_dir = nil
 local function find_conf_dir()
   if cached_conf_dir ~= nil then
     return cached_conf_dir
-  end
-
-  if not unix then
-    cached_conf_dir = false
-    return nil
   end
 
   local dir = unix.opendir('/')
@@ -89,31 +75,18 @@ local function string_to_emoji(str)
 end
 
 local function get_short_hostname()
-  if not spawn then
-    return nil
+  local ok, output = spawn({'hostname', '-s'}):read()
+  if ok and output then
+    return trim(output):match('([^.%s]+)')
   end
-  local hostname
-  local s_ok, output = spawn({'hostname', '-s'}):read()
-  if s_ok and output then
-    hostname = output
-  else
-    s_ok, output = spawn({'hostname'}):read()
-    if s_ok and output then
-      hostname = output
-    end
-  end
-  if hostname then
-    return trim(hostname):match('([^.%s]+)')
+  ok, output = spawn({'hostname'}):read()
+  if ok and output then
+    return trim(output):match('([^.%s]+)')
   end
   return nil
 end
 
 local function get()
-  local env_val = os.getenv("WHEREAMI")
-  if env_val and env_val ~= '' then
-    return env_val
-  end
-
   local identifier = ''
 
   local conf_dir = find_conf_dir()
@@ -138,11 +111,6 @@ end
 
 local function get_with_emoji(env)
   env = env or os.getenv
-  local env_val = env("WHEREAMI_EMOJI")
-  if env_val and env_val ~= '' then
-    return env_val
-  end
-
   local identifier = get()
   local emoji = ''
 
@@ -159,8 +127,9 @@ local function get_with_emoji(env)
     local repo_full = env('GITHUB_REPOSITORY')
     local repo = repo_full and (repo_full:match('[^/]+/(.+)') or repo_full)
     if repo then
-      local hostname = get_short_hostname() or identifier
-      return repo .. ' | ' .. hostname .. ' ' .. emoji
+      local codespace_name = env('CODESPACE_NAME') or identifier
+      codespace_name = codespace_name:match('(.+)-[^-]+$') or codespace_name
+      return repo .. ' | ' .. codespace_name .. ' ' .. emoji
     end
   end
 
