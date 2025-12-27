@@ -4,7 +4,6 @@
 -- Reads plugin info from .config/nvim/nvim-pack-lock.json
 
 local cosmo = require("cosmo")
-local path = cosmo.path
 local unix = cosmo.unix
 local spawn = require("spawn").spawn
 
@@ -143,10 +142,6 @@ local function fetch_plugin(plugin_name, output_dir)
 
   -- Cleanup tarball
   unix.unlink(tarball)
-
-  if plugin_name == "nui-components.nvim" then
-    unix.rmrf(path.join(output_dir, "docs/public"))
-  end
 
   return true
 end
