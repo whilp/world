@@ -20,16 +20,16 @@ local function get_latest_version()
 end
 
 local function get_sha256(url)
-	local temp_file = "/tmp/claude-download-" .. os.time()
-	local status = spawn({"curl", "-fsSL", "-o", temp_file, url}):wait()
-	if status ~= 0 then
+	local status, _, body = cosmo.Fetch(url)
+	if not status then
 		io.stderr:write("error: failed to download claude binary\n")
 		return nil
 	end
-
-	local sha256 = cosmo.EncodeHex(cosmo.Sha256(cosmo.Slurp(temp_file))):lower()
-	unix.unlink(temp_file)
-	return sha256
+	if status ~= 200 then
+		io.stderr:write("error: download failed with status " .. tostring(status) .. "\n")
+		return nil
+	end
+	return cosmo.EncodeHex(cosmo.Sha256(body)):lower()
 end
 
 local function print_latest()
@@ -69,18 +69,25 @@ local function run(env)
 		else
 			unix.makedirs(version_dir)
 
-			local temp_file = "/tmp/claude-download-" .. os.time()
-			spawn({"curl", "-fsSL", "-o", temp_file, CLAUDE_URL}):wait()
-
-			local actual_sha256 = cosmo.EncodeHex(cosmo.Sha256(cosmo.Slurp(temp_file))):lower()
-			if actual_sha256 == CLAUDE_SHA256 then
-				spawn({"mv", temp_file, claude_bin}):wait()
-				unix.chmod(claude_bin, 0755)
-			else
-				io.stderr:write("error: claude binary checksum verification failed\n")
-				unix.unlink(temp_file)
+			local status, _, body = cosmo.Fetch(CLAUDE_URL)
+			if not status or status ~= 200 then
+				io.stderr:write("error: failed to download claude binary\n")
 				return 1
 			end
+
+			local actual_sha256 = cosmo.EncodeHex(cosmo.Sha256(body)):lower()
+			if actual_sha256 ~= CLAUDE_SHA256 then
+				io.stderr:write("error: claude binary checksum verification failed\n")
+				return 1
+			end
+
+			local fd = unix.open(claude_bin, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, 0755)
+			if not fd or fd < 0 then
+				io.stderr:write("error: failed to create claude binary\n")
+				return 1
+			end
+			unix.write(fd, body)
+			unix.close(fd)
 		end
 	end
 
