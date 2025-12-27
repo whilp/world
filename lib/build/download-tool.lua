@@ -97,13 +97,13 @@ local function download_file(url, dest_path)
 
   local status, _, body
   local last_err
-  for attempt = 1, 3 do
+  for attempt = 1, 5 do
     status, _, body = cosmo.Fetch(url)
     if status then
       break
     end
     last_err = tostring(body or "unknown error")
-    if attempt < 3 then
+    if attempt < 5 then
       unix.nanosleep(attempt, 0)
     end
   end
