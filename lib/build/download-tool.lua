@@ -87,7 +87,6 @@ local function load_tool_config(tool_name, platform)
   }
 end
 
--- Download file from URL using curl
 local function download_file(url, dest_path)
   if not url or url == "" then
     return nil, "url cannot be empty"
@@ -96,7 +95,35 @@ local function download_file(url, dest_path)
     return nil, "dest_path cannot be empty"
   end
 
-  return execute("/usr/bin/curl", {"curl", "-fsSL", "-o", dest_path, url})
+  local status, _, body
+  local last_err
+  for attempt = 1, 5 do
+    status, _, body = cosmo.Fetch(url)
+    if status then
+      break
+    end
+    last_err = tostring(body or "unknown error")
+    if attempt < 5 then
+      unix.nanosleep(attempt, 0)
+    end
+  end
+  if not status then
+    return nil, "fetch failed: " .. last_err
+  end
+  if status ~= 200 then
+    return nil, "fetch failed with status " .. tostring(status)
+  end
+
+  local fd = unix.open(dest_path, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, 0644)
+  if not fd or fd < 0 then
+    return nil, "failed to open destination file"
+  end
+  local bytes_written = unix.write(fd, body)
+  unix.close(fd)
+  if bytes_written ~= #body then
+    return nil, "failed to write data"
+  end
+  return true
 end
 
 -- Verify SHA256 checksum
@@ -166,18 +193,28 @@ local function extract_gz(archive_path, tool_name, output_dir)
     return nil, err
   end
 
-  local binary_path = path.join(output_dir, tool_name)
+  local bin_dir = path.join(output_dir, "bin")
+  unix.makedirs(bin_dir)
+
+  local uncompressed_path = path.join(output_dir, tool_name)
+  local binary_path = path.join(bin_dir, tool_name)
+  unix.rename(uncompressed_path, binary_path)
   unix.chmod(binary_path, 493)
   return true
 end
 
--- Make binary executable
-local function make_executable(file_path)
+-- Make binary executable and move to bin subdirectory
+local function make_executable(file_path, tool_name, output_dir)
   if not file_path or file_path == "" then
     return nil, "file_path cannot be empty"
   end
 
-  unix.chmod(file_path, 493)
+  local bin_dir = path.join(output_dir, "bin")
+  unix.makedirs(bin_dir)
+
+  local binary_path = path.join(bin_dir, tool_name)
+  unix.rename(file_path, binary_path)
+  unix.chmod(binary_path, 493)
   return true
 end
 
@@ -199,7 +236,7 @@ local function extract(archive_path, output_dir, config)
   if config.format == "gz" then
     return extractor(archive_path, config.tool_name, output_dir)
   elseif config.format == "binary" then
-    return extractor(archive_path)
+    return extractor(archive_path, config.tool_name, output_dir)
   else
     return extractor(archive_path, output_dir, config.strip_components)
   end

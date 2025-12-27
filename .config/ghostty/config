@@ -14,6 +14,9 @@ window-save-state = "default"
 #maximize = true
 #shell-integration = "zsh"
 mouse-hide-while-typing = true
+window-padding-x = 8
+window-padding-y = 8
+window-padding-color = extend
 clipboard-write = allow
 #adjust-cell-width = 0%
 
