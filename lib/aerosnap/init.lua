@@ -37,7 +37,8 @@ local function get_focused_window()
     return nil, "no focused window"
   end
 
-  local window_id, bundle_id, app_name, workspace, title = output:match("^(%d+)\t([^\t]*)\t([^\t]*)\t([^\t]*)\t([^\n]*)")
+  local pat = "^(%d+)\t([^\t]*)\t([^\t]*)\t([^\t]*)\t([^\n]*)"
+  local window_id, bundle_id, app_name, workspace, title = output:match(pat)
   if window_id then
     return {
       ["window-id"] = tonumber(window_id),
@@ -103,7 +104,7 @@ local function lookup_workspace(db, bundle_id, window_title)
   return target_workspace, match_type
 end
 
-local function cmd_record(args)
+local function cmd_record(_args)
   local win, err = get_focused_window()
   if not win then
     io.stderr:write("error: " .. err .. "\n")
@@ -141,7 +142,7 @@ local function cmd_record(args)
   return 0
 end
 
-local function cmd_load(args)
+local function cmd_load(_args)
   local db = open_db()
   local current_windows, err = get_all_windows()
   if not current_windows then
@@ -174,7 +175,7 @@ local function cmd_load(args)
   return 0
 end
 
-local function cmd_show(args)
+local function cmd_show(_args)
   local db = open_db()
   io.write("window mappings:\n")
   io.write(string.format("%-30s %-40s %s\n", "app", "title", "workspace"))
@@ -194,7 +195,7 @@ local function cmd_show(args)
   return 0
 end
 
-local function cmd_seed(args)
+local function cmd_seed(_args)
   local windows, err = get_all_windows()
   if not windows then
     io.stderr:write("error: " .. err .. "\n")
@@ -232,7 +233,7 @@ local function cmd_seed(args)
   return 0
 end
 
-local function cmd_clear(args)
+local function cmd_clear(_args)
   local db = open_db()
   db:exec("delete from window_mappings")
   db:close()
