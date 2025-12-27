@@ -31,6 +31,18 @@ $(foreach p,$(PLATFORMS),$(eval $(call platform_binaries_zip_rule,$(p))))
 results:
 	mkdir -p $@
 
+luacheck: private .UNVEIL = r:$(CURDIR) rx:results/bin rw:/dev/null
+luacheck: private .PLEDGE = stdio rpath proc exec
+luacheck: private .CPU = 60
+luacheck: lua
+	$(lua_bin) /zip/.lua/bin/luacheck \
+		.config \
+		lib \
+		.github \
+		--exclude-files '.claude/skills/lua/templates/*.lua' \
+		--exclude-files '.config/nvim/**/*.lua' \
+		--exclude-files '.config/hammerspoon/**/*.lua'
+
 check: private .UNVEIL = r:$(CURDIR) rx:$(3p)/ast-grep rx:results/bin rw:/dev/null
 check: private .PLEDGE = stdio rpath proc exec
 check: private .CPU = 120
@@ -46,4 +58,4 @@ check: $(ast_grep_extracted) lua
 		--exclude-files '.config/nvim/**/*.lua' \
 		--exclude-files '.config/hammerspoon/**/*.lua'
 
-.PHONY: build clean check
+.PHONY: build clean check luacheck
