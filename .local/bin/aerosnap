@@ -79,6 +79,32 @@ local function get_all_windows()
   return windows
 end
 
+local function lookup_workspace(db, bundle_id, window_title)
+  local target_workspace = nil
+  local match_type = nil
+
+  local stmt = db:prepare([[
+    select workspace, window_title from window_mappings
+    where app_bundle_id = ?
+    order by
+      case when window_title = ? then 0 else 1 end,
+      updated_at desc
+    limit 1
+  ]])
+  stmt:bind_values(bundle_id, window_title or "")
+  for row in stmt:nrows() do
+    target_workspace = row.workspace
+    if row.window_title == (window_title or "") then
+      match_type = "exact"
+    else
+      match_type = "bundle"
+    end
+  end
+  stmt:finalize()
+
+  return target_workspace, match_type
+end
+
 local function cmd_record(args)
   local win, err = get_focused_window()
   if not win then
@@ -129,24 +155,7 @@ local function cmd_load(args)
   local moved, matched = 0, 0
 
   for _, win in ipairs(current_windows) do
-    local target_workspace = nil
-    local match_type = nil
-
-    for row in db:nrows([[
-      select workspace, app_name, window_title from window_mappings
-      where app_bundle_id = ?
-      order by
-        case when window_title = ? then 0 else 1 end,
-        updated_at desc
-      limit 1
-    ]], win["app-bundle-id"], win["window-title"] or "") do
-      target_workspace = row.workspace
-      if row.window_title == (win["window-title"] or "") then
-        match_type = "exact"
-      else
-        match_type = "bundle"
-      end
-    end
+    local target_workspace, match_type = lookup_workspace(db, win["app-bundle-id"], win["window-title"])
 
     if target_workspace and target_workspace ~= win.workspace then
       spawn({"aerospace", "move-node-to-workspace", target_workspace,
@@ -290,4 +299,5 @@ return {
   main = main,
   get_all_windows = get_all_windows,
   get_focused_window = get_focused_window,
+  lookup_workspace = lookup_workspace,
 }
