@@ -139,7 +139,7 @@ end, { desc = 'Set manual tab name' })
 
 -- Configure tabline to show tab titles
 _G.render_tabline = function()
-  local s = ''
+  local s = ' '  -- left margin
   for i = 1, vim.fn.tabpagenr('$') do
     -- Use manual tab names or default to "Tab N"
     local title = vim.fn.gettabvar(i, 'tab_name', 'Tab ' .. i)
@@ -162,6 +162,8 @@ _G.render_tabline = function()
   local whereami = os.getenv('WHEREAMI') or ''
   if whereami ~= '' then
     s = s .. '%=' .. '%#TabLine# ' .. whereami .. ' '
+  else
+    s = s .. '%=%#TabLineFill# '
   end
 
   return s
