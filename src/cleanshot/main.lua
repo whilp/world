@@ -1,5 +1,6 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
+local cpath = cosmo.path
 
 local VALID_COMMANDS = {
   ["all-in-one"] = true,
@@ -114,7 +115,7 @@ local function get_latest_file(dir)
 
   for name, kind in unix.opendir(dir) do
     if name ~= "." and name ~= ".." then
-      local path = dir .. "/" .. name
+      local path = cpath.join(dir, name)
       local st = unix.stat(path)
       if st then
         local mtime = st:mtim()
