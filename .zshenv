@@ -9,6 +9,7 @@ path=(
   "/opt/homebrew/bin"
   $path
 )
+path+=(~/.local/share/*/*-*/bin(NOm/))
 path+=(/usr/*/bin(N))
 
 typeset -T LUA_PATH lua_path ';'

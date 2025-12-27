@@ -783,7 +783,9 @@ end
 function test_find_binary_in_dir_direct()
   skip_without_cosmo()
   local tmp = make_temp_dir()
-  local bin_path = path.join(tmp, "mytool")
+  local bin_dir = path.join(tmp, "bin")
+  unix.makedirs(bin_dir)
+  local bin_path = path.join(bin_dir, "mytool")
   write_file(bin_path, "#!/bin/sh\necho test")
 
   local result = home.find_binary_in_dir(tmp, "mytool")
@@ -824,8 +826,9 @@ function test_scan_for_latest_version_single()
   local tmp = make_temp_dir()
   local share_dir = tmp
   local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234")
-  unix.makedirs(tool_dir)
-  local bin_path = path.join(tool_dir, "rg")
+  local tool_bin_dir = path.join(tool_dir, "bin")
+  unix.makedirs(tool_bin_dir)
+  local bin_path = path.join(tool_bin_dir, "rg")
   write_file(bin_path, "#!/bin/sh\necho rg")
 
   local result = home.scan_for_latest_version("rg", share_dir)
@@ -842,11 +845,11 @@ function test_scan_for_latest_version_multiple()
   local tmp = make_temp_dir()
   local share_dir = tmp
 
-  local old_dir = path.join(share_dir, "rg", "14.0.0-aaa00000")
+  local old_dir = path.join(share_dir, "rg", "14.0.0-aaa00000", "bin")
   unix.makedirs(old_dir)
   write_file(path.join(old_dir, "rg"), "old")
 
-  local new_dir = path.join(share_dir, "rg", "14.1.1-bbb11111")
+  local new_dir = path.join(share_dir, "rg", "14.1.1-bbb11111", "bin")
   unix.makedirs(new_dir)
   local new_bin = path.join(new_dir, "rg")
   write_file(new_bin, "new")
@@ -1003,7 +1006,7 @@ function test_cmd_3p_creates_symlinks()
   local share_dir = path.join(tmp, "share")
   local bin_dir = path.join(tmp, ".local", "bin")
 
-  local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234")
+  local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234", "bin")
   unix.makedirs(tool_dir)
   write_file(path.join(tool_dir, "rg"), "#!/bin/sh\necho rg")
 
@@ -1031,7 +1034,7 @@ function test_cmd_3p_list()
   local tmp = make_temp_dir()
   local share_dir = path.join(tmp, "share")
 
-  local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234")
+  local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234", "bin")
   unix.makedirs(tool_dir)
   write_file(path.join(tool_dir, "rg"), "#!/bin/sh\necho rg")
 
@@ -1057,7 +1060,7 @@ function test_cmd_3p_dry_run_verbose()
   local share_dir = path.join(tmp, "share")
   local bin_dir = path.join(tmp, ".local", "bin")
 
-  local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234")
+  local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234", "bin")
   unix.makedirs(tool_dir)
   write_file(path.join(tool_dir, "rg"), "#!/bin/sh\necho rg")
 
@@ -1170,8 +1173,9 @@ function test_scan_for_latest_version_path_format()
   local tmp = make_temp_dir()
   local share_dir = tmp
   local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234")
-  unix.makedirs(tool_dir)
-  local bin_path = path.join(tool_dir, "rg")
+  local tool_bin_dir = path.join(tool_dir, "bin")
+  unix.makedirs(tool_bin_dir)
+  local bin_path = path.join(tool_bin_dir, "rg")
   write_file(bin_path, "#!/bin/sh\necho rg")
 
   local result = home.scan_for_latest_version("rg", share_dir)
