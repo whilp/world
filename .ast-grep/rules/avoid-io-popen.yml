@@ -1,0 +1,14 @@
+id: avoid-io-popen
+language: lua
+severity: error
+message: |
+  Avoid io.popen. Use the spawn module instead.
+
+  Example:
+    Bad:  local handle = io.popen('cmd', 'r')
+    Good: local spawn = require("spawn").spawn
+          local ok, output = spawn({"cmd"}):read()
+note: io.popen has inconsistent error handling and is not portable. Use spawn for reliable command execution.
+
+rule:
+  pattern: io.popen($$$)

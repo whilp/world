@@ -3,9 +3,28 @@ local unix = cosmo.unix
 local path = cosmo.path
 local daemonize = require("daemonize")
 local version = require("version")
+local whereami = require("whereami")
 
 local HOME = os.getenv("HOME")
 local DEFAULT_SOCK = path.join(HOME, ".config", "nvim", "nvim.sock")
+
+local function get_whereami_env()
+  return {
+    WHEREAMI = whereami.get(),
+    WHEREAMI_EMOJI = whereami.get_with_emoji(),
+  }
+end
+
+local function enhance_environ()
+  local env = {}
+  for _, entry in ipairs(unix.environ()) do
+    table.insert(env, entry)
+  end
+  for k, v in pairs(get_whereami_env()) do
+    table.insert(env, k .. "=" .. v)
+  end
+  return env
+end
 
 local function resolve_nvim_bin()
   local bin_path = version.resolve_bin("nvim")
@@ -165,6 +184,9 @@ end
 local function setup_nvim_environment()
   local env_table = load_zsh_environment()
   env_table["NVIM_SERVER_MODE"] = "1"
+  for k, v in pairs(get_whereami_env()) do
+    env_table[k] = v
+  end
   local env = {}
   for k, v in pairs(env_table) do
     table.insert(env, k .. "=" .. v)
@@ -367,7 +389,7 @@ local function client_mode(args, nvim_bin)
     for _, arg in ipairs(args) do
       table.insert(new_args, arg)
     end
-    unix.execve(nvim_bin, new_args, unix.environ())
+    unix.execve(nvim_bin, new_args, enhance_environ())
     return
   end
 
@@ -397,13 +419,13 @@ local function client_mode(args, nvim_bin)
       table.insert(new_args, arg)
     end
 
-    unix.execve(nvim_bin, new_args, unix.environ())
+    unix.execve(nvim_bin, new_args, enhance_environ())
   else
     local new_args = {"nvim"}
     for _, arg in ipairs(remaining_args) do
       table.insert(new_args, arg)
     end
-    unix.execve(nvim_bin, new_args, unix.environ())
+    unix.execve(nvim_bin, new_args, enhance_environ())
   end
 end
 

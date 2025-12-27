@@ -1,0 +1,20 @@
+id: avoid-os-execute
+language: lua
+severity: error
+message: |
+  Avoid os.execute. Use the spawn module or unix API instead.
+
+  Example:
+    Bad:  os.execute("mkdir -p " .. dir)
+    Good: unix.makedirs(dir)
+
+    Bad:  os.execute("rm -rf " .. dir)
+    Good: Use a recursive remove helper with unix.unlink/unix.rmdir
+
+    Bad:  os.execute("some-command arg1 arg2")
+    Good: local spawn = require("spawn").spawn
+          spawn({"some-command", "arg1", "arg2"}):wait()
+note: os.execute spawns a shell which is unsafe and non-portable. Use unix API for filesystem operations or spawn for commands.
+
+rule:
+  pattern: os.execute($$$)
