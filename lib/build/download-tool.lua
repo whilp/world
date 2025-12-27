@@ -95,9 +95,20 @@ local function download_file(url, dest_path)
     return nil, "dest_path cannot be empty"
   end
 
-  local status, _, body = cosmo.Fetch(url)
+  local status, _, body
+  local last_err
+  for attempt = 1, 3 do
+    status, _, body = cosmo.Fetch(url)
+    if status then
+      break
+    end
+    last_err = tostring(body or "unknown error")
+    if attempt < 3 then
+      unix.nanosleep(attempt, 0)
+    end
+  end
   if not status then
-    return nil, "fetch failed: " .. tostring(body or "unknown error")
+    return nil, "fetch failed: " .. last_err
   end
   if status ~= 200 then
     return nil, "fetch failed with status " .. tostring(status)
