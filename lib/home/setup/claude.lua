@@ -3,7 +3,7 @@ local unix = cosmo.unix
 local path = cosmo.path
 
 local function load_version()
-	local ok, v = pcall(require, "claude_version")
+	local ok, v = pcall(require, "claude.version")
 	if ok then
 		return v
 	end

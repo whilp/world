@@ -98,7 +98,7 @@ results/bin/home: $(lua_bin) results/dotfiles.zip $(home_platform_deps) lib/home
 	@cp $(lua_bin) $@
 	@cd results/home-universal && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$@ -@
 	@cd lib/home && $(cosmos_zip_bin) -qr $(CURDIR)/$@ main.lua .args
-	@mkdir -p results/home-universal/.lua && cp -r $(spawn_dir) $(home_setup_dir) $(home_mac_dir) results/home-universal/.lua/ && cp $(version_file) results/home-universal/.lua/ && cp lib/claude/version.lua results/home-universal/.lua/claude_version.lua
+	@mkdir -p results/home-universal/.lua && cp -r $(spawn_dir) $(home_setup_dir) $(home_mac_dir) lib/claude results/home-universal/.lua/ && cp $(version_file) results/home-universal/.lua/
 	@cd results/home-universal && $(cosmos_zip_bin) -qr $(CURDIR)/$@ .lua
 	@rm -rf results/home-universal
 
