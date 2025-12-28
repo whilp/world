@@ -105,7 +105,7 @@ local function fetch_plugin(plugin_name, output_dir)
   local status, headers, body
   local last_err
   local max_attempts = 8
-  local fetch_opts = {headers = {["User-Agent"] = "curl/8.0"}, maxresponse = 200 * 1024 * 1024}
+  local fetch_opts = {headers = {["User-Agent"] = "curl/8.0"}, maxresponse = 300 * 1024 * 1024}
   for attempt = 1, max_attempts do
     status, headers, body = cosmo.Fetch(url, fetch_opts)
     if status then
