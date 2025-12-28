@@ -41,6 +41,8 @@
 
 ## Lua
 
+See the lua skill for detailed patterns and templates
+
 ### Command execution
 - NEVER use `os.execute()` - use spawn module or unix API instead
 - NEVER use `io.popen()` - use spawn module instead
@@ -64,6 +66,7 @@
 
 ## Make
 
+- run `make help` to see available targets
 - makefile fragments are named `cook.mk`
 - use self-documenting help targets with `## description` comments
 - group targets by workflow in help output
