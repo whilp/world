@@ -150,7 +150,7 @@ local function verify_sha256(file_path, expected_sha)
 end
 
 -- Extract tar.gz archive
-local function extract_targz(archive_path, output_dir, strip_components)
+local function extract_targz(archive_path, output_dir, strip_components, tool_name)
   local ok, err = execute("/usr/bin/tar", {
     "tar", "-xzf", archive_path, "-C", output_dir,
     "--strip-components=" .. strip_components
@@ -159,6 +159,21 @@ local function extract_targz(archive_path, output_dir, strip_components)
     return nil, err
   end
   unix.unlink(archive_path)
+
+  -- If no bin directory exists, create one and move the binary there
+  local bin_dir = path.join(output_dir, "bin")
+  local bin_stat = unix.stat(bin_dir)
+  if not bin_stat or not unix.S_ISDIR(bin_stat:mode()) then
+    local binary_path = path.join(output_dir, tool_name)
+    local binary_stat = unix.stat(binary_path)
+    if binary_stat and unix.S_ISREG(binary_stat:mode()) then
+      unix.makedirs(bin_dir)
+      local dest_path = path.join(bin_dir, tool_name)
+      unix.rename(binary_path, dest_path)
+      unix.chmod(dest_path, 493)
+    end
+  end
+
   return true
 end
 
@@ -246,6 +261,8 @@ local function extract(archive_path, output_dir, config)
     return extractor(archive_path, config.tool_name, output_dir)
   elseif config.format == "binary" then
     return extractor(archive_path, config.tool_name, output_dir)
+  elseif config.format == "tar.gz" then
+    return extractor(archive_path, output_dir, config.strip_components, config.tool_name)
   else
     return extractor(archive_path, output_dir, config.strip_components)
   end

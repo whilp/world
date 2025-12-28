@@ -1,22 +1,15 @@
--- Note: Package paths are configured in src/test.mk via LUA_PATH
--- Add your test target there with paths to .local/lib/lua and src modules
-
 local cosmo = require('cosmo')
 local unix = cosmo.unix
-local path = cosmo.path
 
--- Import the module to test (replace 'mymodule' with your module name)
-local mymodule = require("mymodule.main")
+local mymodule = require("mymodule")
 
--- Test success case
 function test_function_returns_expected()
   local result = mymodule.helper_function("input")
 
   lu.assertTrue(result ~= nil, "should not return nil")
-  lu.assertTrue(type(result) == "boolean", "should return boolean")
+  lu.assertEquals(result, "input", "should return input")
 end
 
--- Test error case
 function test_function_handles_empty_input()
   local result, err = mymodule.helper_function("")
 
@@ -25,16 +18,8 @@ function test_function_handles_empty_input()
   lu.assertStrContains(err, "empty", "error should mention empty")
 end
 
--- Test with valid data
 function test_main_returns_zero_on_success()
   local exit_code = mymodule.main({"help"})
 
   lu.assertEquals(exit_code, 0, "should return 0 on success")
-end
-
--- Test with invalid command
-function test_main_returns_nonzero_on_error()
-  local exit_code = mymodule.main({"invalid"})
-
-  lu.assertTrue(exit_code ~= 0, "should return non-zero on error")
 end
