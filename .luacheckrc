@@ -40,6 +40,3 @@ ignore = {
   "131/Test.*",
   "212/self",
 }
-
--- lib/run-test.lua modifies arg to set up test file execution
-files["lib/run-test.lua"] = { ignore = { "122" } }

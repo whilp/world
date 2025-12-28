@@ -6,8 +6,13 @@ if not arg[1] then
 end
 
 local test_file = arg[1]
-arg[0] = test_file
-arg[1] = nil
 
-dofile(test_file)
+local env = setmetatable({ arg = { [0] = test_file } }, { __index = _G, __newindex = _G })
+local loader, err = loadfile(test_file, "t", env)
+if not loader then
+  io.stderr:write("error loading " .. test_file .. ": " .. err .. "\n")
+  os.exit(1)
+end
+
+loader()
 os.exit(lu.LuaUnit.run())
