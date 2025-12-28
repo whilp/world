@@ -1,0 +1,14 @@
+id: avoid-package-path
+language: lua
+severity: error
+message: |
+  Avoid manipulating package.path. Use proper module installation or LUA_PATH instead.
+
+  Example:
+    Bad:  package.path = package.path .. ";./lib/?.lua"
+    Bad:  package.path = dir .. "/?.lua;" .. package.path
+    Good: Install modules to a standard location and set LUA_PATH in shell config
+note: Manipulating package.path makes module resolution unpredictable and hard to debug. Install modules properly or configure LUA_PATH at the environment level.
+
+rule:
+  pattern: package.path = $$$
