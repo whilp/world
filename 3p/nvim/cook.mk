@@ -1,3 +1,10 @@
+nvim-latest: private .PLEDGE = stdio rpath wpath cpath inet dns
+nvim-latest: private .INTERNET = 1
+nvim-latest: $(lua_bin)
+	$(lua_bin) 3p/nvim/latest.lua
+
+.PHONY: nvim-latest
+
 nvim_pack_lock := .config/nvim/nvim-pack-lock.json
 nvim_plugins_dir := $(3p)/nvim/plugins
 
