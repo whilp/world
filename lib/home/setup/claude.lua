@@ -81,7 +81,7 @@ local function run(env)
 				return 1
 			end
 
-			local fd = unix.open(claude_bin, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, 0755)
+			local fd = unix.open(claude_bin, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("0755", 8))
 			if not fd or fd < 0 then
 				io.stderr:write("error: failed to create claude binary\n")
 				return 1
@@ -101,7 +101,7 @@ local function run(env)
 		local creds_dir = path.join(env.DST, ".claude")
 		unix.makedirs(creds_dir)
 		local creds_file = path.join(creds_dir, ".credentials.json")
-		local fd = unix.open(creds_file, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, 0600)
+		local fd = unix.open(creds_file, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("0600", 8))
 		if fd and fd >= 0 then
 			unix.write(fd, claude_credentials)
 			unix.close(fd)
@@ -117,7 +117,7 @@ local function run(env)
   "bypassPermissionsModeAccepted": true
 }]]
 
-	local fd = unix.open(config, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, 0644)
+	local fd = unix.open(config, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("0644", 8))
 	if fd and fd >= 0 then
 		unix.write(fd, settings)
 		unix.close(fd)
