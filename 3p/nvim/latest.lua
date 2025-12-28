@@ -94,32 +94,7 @@ local function main()
     platforms = platforms,
   }
 
-  -- TODO: switch to cosmo.EncodeLua when it supports pretty printing
-  local function pretty_print(t, indent)
-    indent = indent or 0
-    local pad = string.rep("  ", indent)
-    local pad1 = string.rep("  ", indent + 1)
-    local parts = {}
-    local keys = {}
-    for k in pairs(t) do
-      keys[#keys + 1] = k
-    end
-    table.sort(keys)
-    for _, k in ipairs(keys) do
-      local v = t[k]
-      local key = k:match("^%a[%w_]*$") and k or '["' .. k .. '"]'
-      if type(v) == "table" then
-        parts[#parts + 1] = pad1 .. key .. " = " .. pretty_print(v, indent + 1)
-      elseif type(v) == "string" then
-        parts[#parts + 1] = pad1 .. key .. ' = "' .. v .. '"'
-      else
-        parts[#parts + 1] = pad1 .. key .. " = " .. tostring(v)
-      end
-    end
-    return "{\n" .. table.concat(parts, ",\n") .. ",\n" .. pad .. "}"
-  end
-
-  print("return " .. pretty_print(result))
+  print("return " .. cosmo.EncodeLua(result, {pretty=true}))
 end
 
 main()
