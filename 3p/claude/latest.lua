@@ -1,18 +1,26 @@
 local cosmo = require("cosmo")
-local spawn = require("spawn").spawn
 
 local CLAUDE_BASE_URL = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819"
 
 local function get_latest_version()
-  local ok, output = spawn({"gh", "api", "repos/anthropics/claude-code/releases/latest", "--jq", ".tag_name"}):read()
-  if not ok then
-    io.stderr:write("error: failed to fetch latest version\n")
+  local url = "https://api.github.com/repos/anthropics/claude-code/releases/latest"
+  local status, _, body = cosmo.Fetch(url, {
+    headers = {["User-Agent"] = "curl/8.0", ["Accept"] = "application/vnd.github+json"},
+  })
+  if not status then
+    io.stderr:write("error: failed to fetch release info\n")
     return nil
   end
-  local version = output:gsub("%s+$", "")
-  if version then
-    version = version:match("^v?(.+)$")
+  if status ~= 200 then
+    io.stderr:write("error: fetch failed with status " .. tostring(status) .. "\n")
+    return nil
   end
+  local release = cosmo.DecodeJson(body)
+  if not release or not release.tag_name then
+    io.stderr:write("error: invalid release response\n")
+    return nil
+  end
+  local version = release.tag_name:match("^v?(.+)$")
   return version
 end
 
