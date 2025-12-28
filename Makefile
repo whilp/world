@@ -22,18 +22,35 @@ ast_grep_extracted := $(ast_grep_dir)/$(PLATFORM)/.extracted
 
 .DEFAULT_GOAL := build
 
-help: ## Show available targets
+help:
 	@echo "Usage: make [target]"
 	@echo ""
-	@grep -hE '^[a-zA-Z_-]+:.*## ' $(MAKEFILE_LIST) | \
-		awk 'BEGIN {FS = ":.*## "}; {printf "  %-18s %s\n", $$1, $$2}' | sort
+	@echo "Getting started:"
+	@echo "  deps               Build dependencies (run this first)"
+	@echo ""
+	@echo "Build:"
+	@echo "  build              Build lua binary [default]"
+	@echo "  home               Build universal home binary"
+	@echo "  platform-assets    Build platform-specific binaries"
+	@echo ""
+	@echo "Development:"
+	@echo "  check              Run linters (ast-grep, luacheck)"
+	@echo "  test               Run all tests"
+	@echo ""
+	@echo "Maintenance:"
+	@echo "  latest             Fetch latest versions (claude, cosmos, nvim)"
+	@echo "  clean              Remove build artifacts"
 	@echo ""
 	@echo "Individual test targets:"
 	@for t in $(TEST_TARGETS); do printf "  %s\n" "$$t"; done
 
 build: lua ## Build lua binary [default]
 
-clean: ## Remove o/ and results/
+deps: lua ## Build dependencies (run this first)
+
+latest: claude-latest cosmos-latest nvim-latest ## Fetch latest versions
+
+clean: ## Remove build artifacts
 clean: private .PLEDGE = stdio rpath wpath cpath
 clean:
 	rm -rf o results
@@ -59,4 +76,4 @@ check: $(ast_grep_extracted) lua
 		--exclude-files '.config/nvim/**/*.lua' \
 		--exclude-files '.config/hammerspoon/**/*.lua'
 
-.PHONY: help build clean check
+.PHONY: help build deps latest clean check
