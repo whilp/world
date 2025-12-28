@@ -1,3 +1,4 @@
+local lu = require('luaunit')
 local cosmo = require('cosmo')
 local unix = cosmo.unix
 

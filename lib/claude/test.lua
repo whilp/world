@@ -1,3 +1,4 @@
+local lu = require('luaunit')
 local claude = require("claude.main")
 
 function test_find_claude_binary_finds_existing()

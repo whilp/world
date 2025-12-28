@@ -1,3 +1,4 @@
+local lu = require('luaunit')
 local whereami = require('whereami')
 
 function test_whereami_get()

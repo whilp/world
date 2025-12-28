@@ -1,4 +1,4 @@
-lu = require('luaunit')
+local lu = require('luaunit')
 
 if not arg[1] then
   io.stderr:write("usage: run-test.lua <test-file>\n")

@@ -42,12 +42,8 @@ ignore = {
 }
 
 read_globals = {
-  "jit",
-  "setfenv",
-}
-
-globals = {
-  "lu",
+  "jit",      -- LuaJIT detection in lib/platform.lua
+  "setfenv",  -- Lua 5.1 compat in lib/version.lua and lib/work/data.lua
 }
 
 -- lib/run-test.lua modifies arg to set up test file execution
