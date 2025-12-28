@@ -39,7 +39,7 @@ test-3p-lua: private .CPU = 60
 test-3p-lua: lua
 	cd 3p/lua && $(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
 
-clean-lua: ## Remove lua build artifacts
+clean-lua:
 	rm -rf $(lua_bin) $(lua_ape) o/3p/lib
 
 .PHONY: lua clean-lua test-3p-lua
