@@ -1,7 +1,4 @@
--- test whereami module
-local cosmo = require('cosmo')
-local path = cosmo.path
-
+local lu = require('luaunit')
 local whereami = require('whereami')
 
 function test_whereami_get()

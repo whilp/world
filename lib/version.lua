@@ -144,11 +144,6 @@ local function default_version_callback(config)
 end
 
 M.load_file = function(path, kinds)
-  local loader, err = loadfile(path)
-  if not loader then
-    return false, err
-  end
-
   local env = kinds or {}
 
   if not env.Version then
@@ -167,7 +162,11 @@ M.load_file = function(path, kinds)
     end
   end
 
-  setfenv(loader, wrapped_env)
+  local loader, err = loadfile(path, "t", wrapped_env)
+  if not loader then
+    return false, err
+  end
+
   local ok, load_err = pcall(loader)
 
   return ok, load_err
