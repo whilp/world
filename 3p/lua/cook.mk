@@ -31,7 +31,7 @@ $(lua_bin): $(lua_ape)
 	cp $< $@
 	./$@ --assimilate || true
 
-lua: $(lua_bin)
+lua: $(lua_bin) ## Build lua with bundled modules
 
 test-3p-lua: private .UNVEIL = r:3p/lua rx:$(lua_bin) r:$(test_runner) rwc:3p/lua/o rw:/dev/null
 test-3p-lua: private .PLEDGE = stdio rpath wpath cpath proc exec
@@ -39,7 +39,7 @@ test-3p-lua: private .CPU = 60
 test-3p-lua: lua
 	cd 3p/lua && $(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
 
-clean-lua:
+clean-lua: ## Remove lua build artifacts
 	rm -rf $(lua_bin) $(lua_ape) o/3p/lib
 
 .PHONY: lua clean-lua test-3p-lua

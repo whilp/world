@@ -11,6 +11,6 @@ TEST_TARGETS := test-3p-lua test-lib-whereami test-home test-lib-daemonize \
 
 test-all: $(TEST_TARGETS)
 
-test: test-all
+test: test-all ## Run all tests
 
 .PHONY: test-all test
