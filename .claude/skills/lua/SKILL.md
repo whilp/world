@@ -32,12 +32,6 @@ Executables in `.local/bin/` are thin wrappers:
 ```lua
 #!/usr/bin/env lua
 
-local cosmo = require("cosmo")
-local path = cosmo.path
-
-local script_dir = path.dirname(path.dirname(debug.getinfo(1, "S").source:sub(2)))
-package.path = path.join(script_dir, "lib/?.lua;") .. package.path
-
 local mymodule = require("mymodule")
 
 if not pcall(debug.getlocal, 4, 1) then
@@ -50,7 +44,6 @@ return mymodule
 
 Key points:
 - Use `#!/usr/bin/env lua` shebang
-- Build package.path relative to script location using `cosmo.path`
 - Use `pcall(debug.getlocal, 4, 1)` to detect direct execution
 - Return module to support testing
 
