@@ -54,6 +54,8 @@ $(foreach tool,$(TOOLS),$(eval $(tool)_binaries := $(foreach p,$(PLATFORMS),$(3p
 include 3p/nvim/cook.mk
 nvim_binaries := $(nvim_bundled)
 
+include 3p/claude/cook.mk
+
 # Aggregate all_binaries
 all_binaries := $(foreach tool,$(TOOLS),$($(tool)_binaries))
 
