@@ -1,7 +1,4 @@
-local cosmo = require('cosmo')
-local unix = cosmo.unix
-local path = cosmo.path
-
+local lu = require('luaunit')
 local nvim = require("nvim.main")
 
 function test_load_zsh_environment_returns_table()

@@ -4,7 +4,6 @@
 -- Reads plugin info from .config/nvim/nvim-pack-lock.json
 
 local cosmo = require("cosmo")
-local path = cosmo.path
 local unix = cosmo.unix
 local spawn = require("spawn").spawn
 
@@ -106,7 +105,7 @@ local function fetch_plugin(plugin_name, output_dir)
   local status, headers, body
   local last_err
   local max_attempts = 8
-  local fetch_opts = {headers = {["User-Agent"] = "curl/8.0"}}
+  local fetch_opts = {headers = {["User-Agent"] = "curl/8.0"}, maxresponse = 300 * 1024 * 1024}
   for attempt = 1, max_attempts do
     status, headers, body = cosmo.Fetch(url, fetch_opts)
     if status then
@@ -143,10 +142,6 @@ local function fetch_plugin(plugin_name, output_dir)
 
   -- Cleanup tarball
   unix.unlink(tarball)
-
-  if plugin_name == "nui-components.nvim" then
-    unix.rmrf(path.join(output_dir, "docs/public"))
-  end
 
   return true
 end
