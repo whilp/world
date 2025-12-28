@@ -31,21 +31,13 @@ Executables in `.local/bin/` are thin wrappers:
 
 ```lua
 #!/usr/bin/env lua
-
 local mymodule = require("mymodule")
-
-if not pcall(debug.getlocal, 4, 1) then
-  local exit_code = mymodule.main(arg)
-  os.exit(exit_code or 0)
-end
-
-return mymodule
+os.exit(mymodule.main(arg) or 0)
 ```
 
 Key points:
 - Use `#!/usr/bin/env lua` shebang
-- Use `pcall(debug.getlocal, 4, 1)` to detect direct execution
-- Return module to support testing
+- Call module's main function and exit with its return code
 
 ## Module pattern
 
