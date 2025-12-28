@@ -40,16 +40,21 @@ local function print_latest()
 
 	local url = string.format("%s/claude-code-releases/%s/linux-x64/claude", CLAUDE_BASE_URL, version)
 
-	io.write("Fetching SHA256 for version " .. version .. "...\n")
+	io.stderr:write("fetching sha256 for linux-x64...\n")
 	local sha256 = get_sha256(url)
 	if not sha256 then
 		return 1
 	end
 
-	io.write("\nLatest Claude Code version:\n")
-	io.write("  Version: " .. version .. "\n")
-	io.write("  SHA256:  " .. sha256 .. "\n")
-	io.write("  URL:     " .. url .. "\n")
+	local result = {
+		version = version,
+		url = CLAUDE_BASE_URL .. "/claude-code-releases/{version}/{platform}/claude",
+		platforms = {
+			["linux-x64"] = {sha = sha256},
+		},
+	}
+
+	print("return " .. cosmo.EncodeLua(result, {pretty=true}))
 	return 0
 end
 
