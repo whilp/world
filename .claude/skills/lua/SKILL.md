@@ -10,11 +10,10 @@ Write lua code following established repository conventions.
 
 ## Project structure
 
-Lua code is organized in three locations:
+Lua code is organized in two locations:
 
 - **`.local/bin/`** - executable wrappers that set paths and call modules
 - **`lib/`** - reusable library modules
-- **`src/`** - application modules (newer convention)
 
 Each location follows specific patterns described below.
 
@@ -23,7 +22,7 @@ Each location follows specific patterns described below.
 Use templates in `.claude/skills/lua/templates/` as starting points:
 
 - **`executable.lua`** - for scripts in `.local/bin/`
-- **`module.lua`** - for library modules in `lib/` or `src/`
+- **`module.lua`** - for library modules in `lib/`
 - **`test.lua`** - for test files
 
 ## Executable pattern
@@ -57,7 +56,7 @@ Key points:
 
 ## Module pattern
 
-Library modules in `lib/` or `src/`:
+Library modules in `lib/`:
 
 ```lua
 local cosmo = require("cosmo")
