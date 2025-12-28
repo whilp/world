@@ -113,11 +113,11 @@ local function get_latest_file(dir)
   local latest_time = 0
   local latest_file = nil
 
-  for name, kind in unix.opendir(dir) do
+  for name in unix.opendir(dir) do
     if name ~= "." and name ~= ".." then
       local path = cpath.join(dir, name)
       local st = unix.stat(path)
-      if st then
+      if st and unix.S_ISREG(st:mode()) then
         local mtime = st:mtim()
         if mtime > latest_time then
           latest_time = mtime
@@ -256,6 +256,7 @@ local function cmd_capture(subcommand, args)
   if should_wait_for_file(subcommand, flags) then
     dir = get_screenshot_dir(flags)
     unix.makedirs(dir)
+    local _
     _, baseline_time = get_latest_file(dir)
     baseline_time = baseline_time or 0
   end
