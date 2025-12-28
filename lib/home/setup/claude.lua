@@ -33,7 +33,11 @@ local function run(env)
 
 		local CLAUDE_VERSION = version_info.version
 		local CLAUDE_SHA256 = platform_info.sha
-		local CLAUDE_URL = interpolate(version_info.url, {version = CLAUDE_VERSION, platform = platform})
+		local CLAUDE_URL = interpolate(version_info.url, {
+			base_url = version_info.base_url,
+			version = CLAUDE_VERSION,
+			platform = platform,
+		})
 
 		local short_sha = CLAUDE_SHA256:sub(1, 8)
 		local version_dir = path.join(env.DST, ".local", "share", "claude", string.format("%s-%s", CLAUDE_VERSION, short_sha))

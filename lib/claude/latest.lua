@@ -51,15 +51,17 @@ local function main()
     os.exit(1)
   end
 
-  local result = {
-    version = version,
-    url = CLAUDE_BASE_URL .. "/claude-code-releases/{version}/{platform}/claude",
-    platforms = {
-      ["linux-x64"] = {sha = sha256},
+  print([[return {
+  version = "]] .. version .. [[",
+  base_url = "https://storage.googleapis.com/"
+    .. "claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819",
+  url = "{base_url}/claude-code-releases/{version}/{platform}/claude",
+  platforms = {
+    ["linux-x64"] = {
+      sha = "]] .. sha256 .. [[",
     },
-  }
-
-  print("return " .. cosmo.EncodeLua(result, {pretty=true}))
+  },
+}]])
 end
 
 main()
