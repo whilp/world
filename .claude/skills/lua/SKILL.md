@@ -262,7 +262,7 @@ Use `unix.open`, `unix.read`, `unix.write` for file operations:
 
 ```lua
 local function write_file(filepath, content)
-  local fd = unix.open(filepath, unix.O_CREAT | unix.O_WRONLY | unix.O_TRUNC, 0644)
+  local fd = unix.open(filepath, unix.O_CREAT | unix.O_WRONLY | unix.O_TRUNC, tonumber("0644", 8))
   if not fd then
     return nil, "failed to open " .. filepath .. " for writing"
   end
@@ -384,7 +384,7 @@ local function download_file(url, dest_path)
     return nil, "fetch failed with status " .. tostring(status)
   end
 
-  local fd = unix.open(dest_path, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, 0644)
+  local fd = unix.open(dest_path, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("0644", 8))
   if not fd or fd < 0 then
     return nil, "failed to open destination file"
   end
@@ -417,7 +417,7 @@ unix.unlink(file_path)
 
 unix.rename(old_path, new_path)
 
-unix.chmod(file_path, 0755)
+unix.chmod(file_path, tonumber("0755", 8))
 
 local stat = unix.stat(path)
 if stat and unix.S_ISDIR(stat:mode()) then
