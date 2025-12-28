@@ -1,64 +1,43 @@
 local cosmo = require("cosmo")
 local unix = cosmo.unix
 local path = cosmo.path
-local spawn = require("spawn").spawn
 
-local CLAUDE_BASE_URL = "https://storage.googleapis.com/" ..
-	"claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819"
-
-local function get_latest_version()
-	local ok, output = spawn({"gh", "api", "repos/anthropics/claude-code/releases/latest", "--jq", ".tag_name"}):read()
-	if not ok then
-		io.stderr:write("error: failed to fetch latest version\n")
-		return nil
+local function load_version()
+	local ok, v = pcall(require, "claude.version")
+	if ok then
+		return v
 	end
-	local version = output:gsub("%s+$", "")
-	if version then
-		version = version:match("^v?(.+)$")
-	end
-	return version
+	return nil
 end
 
-local function get_sha256(url)
-	local status, _, body = cosmo.Fetch(url, {maxresponse = 300 * 1024 * 1024})
-	if not status then
-		io.stderr:write("error: failed to download claude binary\n")
-		return nil
-	end
-	if status ~= 200 then
-		io.stderr:write("error: download failed with status " .. tostring(status) .. "\n")
-		return nil
-	end
-	return cosmo.EncodeHex(cosmo.Sha256(body)):lower()
-end
-
-local function print_latest()
-	local version = get_latest_version()
-	if not version then
-		return 1
-	end
-
-	local url = string.format("%s/claude-code-releases/%s/linux-x64/claude", CLAUDE_BASE_URL, version)
-
-	io.write("Fetching SHA256 for version " .. version .. "...\n")
-	local sha256 = get_sha256(url)
-	if not sha256 then
-		return 1
-	end
-
-	io.write("\nLatest Claude Code version:\n")
-	io.write("  Version: " .. version .. "\n")
-	io.write("  SHA256:  " .. sha256 .. "\n")
-	io.write("  URL:     " .. url .. "\n")
-	return 0
+local function interpolate(template, vars)
+	return template:gsub("{([%w_]+)}", function(key)
+		return tostring(vars[key] or "")
+	end)
 end
 
 local function run(env)
 	if os.getenv("CODESPACES") == "true" then
-		local CLAUDE_VERSION = "2.0.74"
-		local CLAUDE_SHA256 = "43065ff86a1b952225e42042bf4dfe9f6b72ff8ed91686a23add5396b1a11e80"
-		local CLAUDE_URL = string.format(
-			"%s/claude-code-releases/%s/linux-x64/claude", CLAUDE_BASE_URL, CLAUDE_VERSION)
+		local version_info = load_version()
+		if not version_info then
+			io.stderr:write("error: failed to load claude version info\n")
+			return 1
+		end
+
+		local platform = "linux-x64"
+		local platform_info = version_info.platforms[platform]
+		if not platform_info then
+			io.stderr:write("error: no platform info for " .. platform .. "\n")
+			return 1
+		end
+
+		local CLAUDE_VERSION = version_info.version
+		local CLAUDE_SHA256 = platform_info.sha
+		local CLAUDE_URL = interpolate(version_info.url, {
+			base_url = version_info.base_url,
+			version = CLAUDE_VERSION,
+			platform = platform,
+		})
 
 		local short_sha = CLAUDE_SHA256:sub(1, 8)
 		local version_dir = path.join(env.DST, ".local", "share", "claude", string.format("%s-%s", CLAUDE_VERSION, short_sha))
@@ -128,5 +107,4 @@ end
 
 return {
 	run = run,
-	print_latest = print_latest,
 }
