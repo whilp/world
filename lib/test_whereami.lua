@@ -1,7 +1,3 @@
--- test whereami module
-local cosmo = require('cosmo')
-local path = cosmo.path
-
 local whereami = require('whereami')
 
 function test_whereami_get()

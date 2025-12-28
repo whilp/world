@@ -1,6 +1,5 @@
 local cosmo = require('cosmo')
 local unix = cosmo.unix
-local path = cosmo.path
 
 local daemonize = require('daemonize')
 
