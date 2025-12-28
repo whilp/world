@@ -71,7 +71,7 @@ endef
 
 $(foreach p,$(PLATFORMS),$(eval $(call platform_home_rule,$(p))))
 
-platform-assets: $(foreach p,$(PLATFORMS),results/bin/home-$(p))
+platform-assets: $(foreach p,$(PLATFORMS),results/bin/home-$(p)) ## Build platform-specific binaries
 
 # universal home binary with dotfiles + platform metadata
 HOME_VERSION ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
@@ -102,7 +102,7 @@ results/bin/home: $(lua_bin) results/dotfiles.zip $(home_platform_deps) lib/home
 	@cd results/home-universal && $(cosmos_zip_bin) -qr $(CURDIR)/$@ .lua
 	@rm -rf results/home-universal
 
-home: results/bin/home
+home: results/bin/home ## Build universal home binary
 
 test-home: private .UNVEIL = r:lib/home r:lib rx:$(lua_bin) r:$(test_runner) rwc:lib/home/o rw:/dev/null
 test-home: private .PLEDGE = stdio rpath wpath cpath proc exec
