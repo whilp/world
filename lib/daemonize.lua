@@ -68,7 +68,7 @@ M.acquire_lock = function(path)
     return nil, "lock file path required"
   end
 
-  local fd, err = unix.open(path, unix.O_CREAT + unix.O_RDWR, 384)
+  local fd, err = unix.open(path, unix.O_CREAT + unix.O_RDWR, tonumber("0600", 8))
   if not fd then
     return nil, "failed to open lock file: " .. tostring(err)
   end
@@ -107,7 +107,7 @@ M.redirect_output = function(stdout_path, stderr_path, append)
   end
 
   if stdout_path and stderr_path and stdout_path == stderr_path then
-    local fd = unix.open(stdout_path, flags, 420)
+    local fd = unix.open(stdout_path, flags, tonumber("0644", 8))
     if not fd then
       return nil, "failed to open output file: " .. stdout_path
     end
@@ -118,7 +118,7 @@ M.redirect_output = function(stdout_path, stderr_path, append)
     end
   else
     if stdout_path then
-      local fd = unix.open(stdout_path, flags, 420)
+      local fd = unix.open(stdout_path, flags, tonumber("0644", 8))
       if not fd then
         return nil, "failed to open stdout file: " .. stdout_path
       end
@@ -129,7 +129,7 @@ M.redirect_output = function(stdout_path, stderr_path, append)
     end
 
     if stderr_path then
-      local fd = unix.open(stderr_path, flags, 420)
+      local fd = unix.open(stderr_path, flags, tonumber("0644", 8))
       if not fd then
         return nil, "failed to open stderr file: " .. stderr_path
       end

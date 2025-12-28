@@ -124,7 +124,7 @@ local function fetch_plugin(plugin_name, output_dir)
     return nil, "fetch failed with status " .. tostring(status)
   end
 
-  local fd = unix.open(tarball, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, 0644)
+  local fd = unix.open(tarball, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("0644", 8))
   if not fd or fd < 0 then
     return nil, "failed to create tarball"
   end

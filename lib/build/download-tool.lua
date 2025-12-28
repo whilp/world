@@ -117,7 +117,7 @@ local function download_file(url, dest_path)
     return nil, "fetch failed with status " .. tostring(status)
   end
 
-  local fd = unix.open(dest_path, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, 0644)
+  local fd = unix.open(dest_path, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("0644", 8))
   if not fd or fd < 0 then
     return nil, "failed to open destination file"
   end
@@ -208,7 +208,7 @@ local function extract_gz(archive_path, tool_name, output_dir)
   local uncompressed_path = path.join(output_dir, tool_name)
   local binary_path = path.join(bin_dir, tool_name)
   unix.rename(uncompressed_path, binary_path)
-  unix.chmod(binary_path, 493)
+  unix.chmod(binary_path, tonumber("0755", 8))
   return true
 end
 
@@ -223,7 +223,7 @@ local function make_executable(file_path, tool_name, output_dir)
 
   local binary_path = path.join(bin_dir, tool_name)
   unix.rename(file_path, binary_path)
-  unix.chmod(binary_path, 493)
+  unix.chmod(binary_path, tonumber("0755", 8))
   return true
 end
 
@@ -253,7 +253,7 @@ end
 
 -- Write file with error checking
 local function write_file(filepath, content)
-  local fd = unix.open(filepath, unix.O_CREAT | unix.O_WRONLY | unix.O_TRUNC, 420)
+  local fd = unix.open(filepath, unix.O_CREAT | unix.O_WRONLY | unix.O_TRUNC, tonumber("0644", 8))
   if not fd then
     return nil, "failed to open " .. filepath .. " for writing"
   end
