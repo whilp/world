@@ -16,7 +16,7 @@ local function run(env)
 	end
 
 	local bashrc = path.join(env.DST, ".bashrc")
-	local fd = unix.open(bashrc, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, 0644)
+	local fd = unix.open(bashrc, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("0644", 8))
 	if fd and fd >= 0 then
 		unix.write(fd, "export SHELL=/bin/zsh\n")
 		unix.close(fd)

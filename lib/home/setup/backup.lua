@@ -20,7 +20,7 @@ local function run(env)
 				unix.close(src_fd)
 
 				if data then
-					local dst_fd = unix.open(dst_path, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, 0644)
+					local dst_fd = unix.open(dst_path, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("0644", 8))
 					if dst_fd and dst_fd >= 0 then
 						unix.write(dst_fd, data)
 						unix.close(dst_fd)

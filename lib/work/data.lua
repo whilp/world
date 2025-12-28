@@ -284,7 +284,7 @@ M.acquire_lock = function(dir)
 
   -- Open or create lock file
   local fd
-  fd, err = fcntl.open(lock_path, fcntl.O_CREAT + fcntl.O_RDWR, 384) -- 384 = 0600 octal
+  fd, err = fcntl.open(lock_path, fcntl.O_CREAT + fcntl.O_RDWR, tonumber("0600", 8))
   if not fd then
     return nil, "failed to open lock file: " .. tostring(err)
   end
