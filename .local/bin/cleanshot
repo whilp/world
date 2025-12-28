@@ -1,12 +1,6 @@
 #!/usr/bin/env lua
 
-local cosmo = require("cosmo")
-local path = cosmo.path
-
-local script_dir = path.dirname(path.dirname(path.dirname(debug.getinfo(1, "S").source:sub(2))))
-package.path = path.join(script_dir, "src/?.lua;") .. package.path
-
-local cleanshot = require("cleanshot.main")
+local cleanshot = require("cleanshot")
 
 if not pcall(debug.getlocal, 4, 1) then
   local exit_code = cleanshot.main(arg)
