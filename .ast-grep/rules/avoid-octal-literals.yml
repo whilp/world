@@ -1,0 +1,16 @@
+id: avoid-octal-literals
+language: lua
+severity: error
+message: |
+  Avoid octal-looking literals for file permissions. Lua has no octal notation, so 0755 is decimal 755.
+
+  Example:
+    Bad:  unix.open(path, flags, 0644)
+    Bad:  unix.chmod(path, 0755)
+    Good: unix.open(path, flags, tonumber("0644", 8))
+    Good: unix.chmod(path, tonumber("0755", 8))
+note: Use tonumber("0NNN", 8) to explicitly convert octal strings to numbers.
+
+rule:
+  kind: number
+  regex: "^0[0-7]{3}$"
