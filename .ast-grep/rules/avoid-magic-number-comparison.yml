@@ -1,0 +1,23 @@
+id: avoid-magic-number-comparison
+language: lua
+severity: error
+message: |
+  Avoid comparing against magic numbers. Extract to a named constant or use a predicate function.
+
+  Example:
+    Bad:  if kind == 8 then
+    Bad:  if status == 256 then
+    Good: local DT_REG = 8; if kind == DT_REG then
+    Good: if unix.S_ISREG(st:mode()) then
+note: Magic numbers obscure intent and are error-prone. Use named constants or predicate functions.
+
+rule:
+  any:
+    - pattern: $X == $N
+    - pattern: $X ~= $N
+    - pattern: $N == $X
+    - pattern: $N ~= $X
+constraints:
+  N:
+    kind: number
+    regex: "^[2-9]|^[1-9]\\d+"
