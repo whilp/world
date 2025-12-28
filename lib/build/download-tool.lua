@@ -87,7 +87,6 @@ local function load_tool_config(tool_name, platform)
   }
 end
 
--- Download file from URL using curl
 local function download_file(url, dest_path)
   if not url or url == "" then
     return nil, "url cannot be empty"
@@ -96,7 +95,38 @@ local function download_file(url, dest_path)
     return nil, "dest_path cannot be empty"
   end
 
-  return execute("/usr/bin/curl", {"curl", "-fsSL", "-o", dest_path, url})
+  local status, headers, body
+  local last_err
+  local max_attempts = 8
+  local fetch_opts = {headers = {["User-Agent"] = "curl/8.0"}}
+  for attempt = 1, max_attempts do
+    status, headers, body = cosmo.Fetch(url, fetch_opts)
+    if status then
+      break
+    end
+    last_err = tostring(headers or "unknown error")
+    if attempt < max_attempts then
+      local delay = math.min(30, 2 ^ attempt)
+      unix.nanosleep(delay, 0)
+    end
+  end
+  if not status then
+    return nil, "fetch failed: " .. last_err
+  end
+  if status ~= 200 then
+    return nil, "fetch failed with status " .. tostring(status)
+  end
+
+  local fd = unix.open(dest_path, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, 0644)
+  if not fd or fd < 0 then
+    return nil, "failed to open destination file"
+  end
+  local bytes_written = unix.write(fd, body)
+  unix.close(fd)
+  if bytes_written ~= #body then
+    return nil, "failed to write data"
+  end
+  return true
 end
 
 -- Verify SHA256 checksum
@@ -140,18 +170,24 @@ local function extract_zip(archive_path, output_dir, strip_components)
   end
 
   if strip_components == 1 then
-    -- Move contents up one level using shell
-    local sh_script = string.format([[
-      cd '%s' && \
-      dir=$(find . -mindepth 1 -maxdepth 1 -type d | head -1) && \
-      if [ -n "$dir" ]; then \
-        cp -r "$dir"/. . && \
-        rm -rf "$dir"; \
-      fi
-    ]], output_dir)
-    ok, err = execute("/bin/sh", {"sh", "-c", sh_script})
-    if not ok then
-      return nil, err
+    -- Move contents up one level
+    local first_dir
+    for name in unix.opendir(output_dir) do
+      if name ~= "." and name ~= ".." then
+        local entry_path = path.join(output_dir, name)
+        local st = unix.stat(entry_path)
+        if st and unix.S_ISDIR(st:mode()) then
+          first_dir = entry_path
+          break
+        end
+      end
+    end
+    if first_dir then
+      ok, err = execute("/bin/cp", {"cp", "-r", first_dir .. "/.", output_dir})
+      if not ok then
+        return nil, err
+      end
+      unix.rmrf(first_dir)
     end
   end
 
