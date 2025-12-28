@@ -27,7 +27,6 @@ function TestCommandBlocked:test_blocked_items_list()
   }
 
   local item1 = data.get(test_store, "01TEST0000000000000000001")
-  local item2 = data.get(test_store, "01TEST0000000000000000002")
 
   local blocked_items = process.get_blocked_items(test_store)
   lu.assertEquals(#blocked_items, 1)

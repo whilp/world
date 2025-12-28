@@ -41,35 +41,10 @@ ignore = {
   "212/self",
 }
 
-read_globals = {
-  "jit",
-  "setfenv",
+files = {
+  ["lib/run-test.lua"] = {
+    -- Test runner must modify arg to set arg[0] for the test file
+    -- and clear arg[1] so luaunit doesn't interpret it as a filter
+    globals = { "arg" },
+  },
 }
-
-globals = {
-  "lu",
-}
-
--- Test file suppressions
--- 211: unused variable is acceptable in tests
--- 411: redefining locals is common in test setup/teardown
--- 421-423: shadowing is acceptable in test contexts
-files["lib/claude/test.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/environ/test.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/home/test_main.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/nvim/test.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/spawn/test_spawn.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/test_daemonize.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/test_whereami.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/work/test.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/work/test_backup.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/work/test_blocked_on_display.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/work/test_blockers.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/work/test_command_blocked.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/work/test_file_locking.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/work/test_orphaned_blocks.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/work/test_string_sanitization.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/work/test_validate_blocks.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-
--- lib/run-test.lua uses setfenv which triggers 122 (setting read-only global)
-files["lib/run-test.lua"] = { ignore = { "122" } }

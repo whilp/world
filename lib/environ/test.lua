@@ -1,4 +1,4 @@
-lu = require("luaunit")
+local lu = require("luaunit")
 
 local environ = require("environ")
 

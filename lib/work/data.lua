@@ -143,11 +143,6 @@ end
 -- Signature: M.load_file(file_path, store, kinds)
 -- Returns: ok, err
 M.load_file = function(file_path, store, kinds)
-  local loader, err = loadfile(file_path)
-  if not loader then
-    return false, err
-  end
-
   local env = kinds or {}
 
   if not env.Work then
@@ -166,7 +161,11 @@ M.load_file = function(file_path, store, kinds)
     end
   end
 
-  setfenv(loader, wrapped_env)
+  local loader, err = loadfile(file_path, "t", wrapped_env)
+  if not loader then
+    return false, err
+  end
+
   local ok, load_err = pcall(loader)
 
   return ok, load_err

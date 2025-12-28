@@ -209,7 +209,7 @@ local function sha256_file(filepath)
 end
 
 local function download_file(url, dest_path)
-  local status, _, body = cosmo.Fetch(url, {maxresponse = 200 * 1024 * 1024})
+  local status, _, body = cosmo.Fetch(url, {maxresponse = 300 * 1024 * 1024})
   if not status then
     return nil, "fetch failed: " .. tostring(body or "unknown error")
   end

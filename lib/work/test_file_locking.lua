@@ -5,7 +5,6 @@ local path = cosmo.path
 
 local data = require("work.data")
 local store = require("work.store")
-local fcntl = require("posix.fcntl")
 local Work = require("work.test_lib")
 local test_store = Work.store
 
@@ -45,14 +44,14 @@ function TestFileLocking:test_acquire_and_release_lock()
   lu.assertNotNil(data._lock_handle, "lock handle should be set")
   lu.assertEquals(data._lock_path, self.test_dir .. "/.work.lock")
 
-  local ok, err = data.release_lock()
+  ok = data.release_lock()
   lu.assertTrue(ok, "should release lock successfully")
   lu.assertNil(data._lock_handle, "lock handle should be cleared")
   lu.assertNil(data._lock_path, "lock path should be cleared")
 end
 
 function TestFileLocking:test_lock_creates_lock_file()
-  local ok, err = data.acquire_lock(self.test_dir)
+  local ok = data.acquire_lock(self.test_dir)
   lu.assertTrue(ok, "first lock should succeed")
 
   -- Verify lock file exists
@@ -64,7 +63,7 @@ function TestFileLocking:test_lock_creates_lock_file()
   data.release_lock()
 
   -- Lock file should still exist after release (but unlocked)
-  local f = io.open(lock_path, "r")
+  f = io.open(lock_path, "r")
   lu.assertNotNil(f, "lock file should still exist after release")
   f:close()
 end
@@ -122,7 +121,7 @@ function TestFileLocking:test_delete_with_locking()
   lu.assertNotNil(loaded_item, "item should be loaded")
 
   -- Delete it
-  local ok, err = data.delete(loaded_item, self.test_dir)
+  ok, err = data.delete(loaded_item, self.test_dir)
   lu.assertTrue(ok, "delete should succeed: " .. tostring(err))
 
   -- Verify lock is released after delete

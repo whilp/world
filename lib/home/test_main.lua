@@ -1,4 +1,4 @@
-lu = require("luaunit")
+local lu = require("luaunit")
 
 -- cosmo may not be available in all environments
 local has_cosmo, cosmo = pcall(require, "cosmo")
