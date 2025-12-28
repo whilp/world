@@ -21,11 +21,8 @@ function M.normalize_arch(arch)
 end
 
 function M.detect(system, arch)
-  system = system or (jit and jit.os and jit.os:lower())
-  arch = arch or (jit and jit.arch and jit.arch:lower())
-
   if not system or not arch then
-    return nil, "unable to detect platform"
+    return nil, "unable to detect platform (system and arch must be provided)"
   end
 
   system = M.normalize_system(system)

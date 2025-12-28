@@ -41,10 +41,5 @@ ignore = {
   "212/self",
 }
 
-read_globals = {
-  "jit",      -- LuaJIT detection in lib/platform.lua
-  "setfenv",  -- Lua 5.1 compat in lib/version.lua and lib/work/data.lua
-}
-
 -- lib/run-test.lua modifies arg to set up test file execution
 files["lib/run-test.lua"] = { ignore = { "122" } }
