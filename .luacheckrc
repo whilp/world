@@ -40,3 +40,11 @@ ignore = {
   "131/Test.*",
   "212/self",
 }
+
+files = {
+  ["lib/run-test.lua"] = {
+    -- Test runner must modify arg to set arg[0] for the test file
+    -- and clear arg[1] so luaunit doesn't interpret it as a filter
+    globals = { "arg" },
+  },
+}
