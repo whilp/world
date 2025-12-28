@@ -1,3 +1,11 @@
+claude-latest: ## Fetch latest claude version
+claude-latest: private .PLEDGE = stdio rpath wpath cpath inet dns
+claude-latest: private .INTERNET = 1
+claude-latest: $(lua_bin)
+	$(lib_lua) lib/claude/latest.lua
+
+.PHONY: claude-latest
+
 test-claude: private .UNVEIL = r:lib/claude r:lib rx:$(lua_bin) r:$(test_runner) r:$(CURDIR) rwc:/tmp rw:/dev/null
 test-claude: private .PLEDGE = stdio rpath wpath cpath proc exec
 test-claude: private .CPU = 60

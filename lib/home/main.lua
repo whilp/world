@@ -217,7 +217,7 @@ local function download_file(url, dest_path)
     return nil, "fetch failed with status " .. tostring(status)
   end
 
-  local fd = unix.open(dest_path, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, 0644)
+  local fd = unix.open(dest_path, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("0644", 8))
   if not fd or fd < 0 then
     return nil, "failed to open destination file"
   end
@@ -265,7 +265,7 @@ local function copy_file(src, dst, mode, overwrite)
     flags = flags | unix.O_EXCL
   end
 
-  local fd = unix.open(dst, flags, 0600)
+  local fd = unix.open(dst, flags, tonumber("0600", 8))
   if not fd or fd < 0 then
     if overwrite then
       return false, "failed to open destination for writing"
@@ -526,7 +526,7 @@ local function cmd_unpack(dest, force, opts)
         return 1
       end
 
-      unix.chmod(tmp_path, 493)
+      unix.chmod(tmp_path, tonumber("0755", 8))
 
       local bin_filter = nil
       if filter and plat_manifest and plat_manifest.files then

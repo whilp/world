@@ -47,4 +47,8 @@ files = {
     -- and clear arg[1] so luaunit doesn't interpret it as a filter
     globals = { "arg" },
   },
+  ["lib/claude/version.lua"] = {
+    -- Generated file with long URLs
+    max_line_length = false,
+  },
 }

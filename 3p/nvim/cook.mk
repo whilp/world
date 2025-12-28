@@ -1,3 +1,4 @@
+nvim-latest: ## Fetch latest nvim version
 nvim-latest: private .PLEDGE = stdio rpath wpath cpath inet dns
 nvim-latest: private .INTERNET = 1
 nvim-latest: $(lua_bin)
