@@ -71,3 +71,15 @@ end, { desc = 'Move to window right' })
 
 -- Terminal buffer management
 map('t', '<D-q>', '<C-\\><C-n><cmd>enew|bd #<cr>', { noremap = true, silent = true, desc = 'Close current terminal buffer' })
+
+-- OSC passthrough: forward escape sequences from nested terminals to host terminal
+-- Requires: https://github.com/whilp/neovim/pull/4
+vim.api.nvim_create_autocmd('TermRequest', {
+  group = vim.api.nvim_create_augroup('osc_passthrough', { clear = true }),
+  callback = function(args)
+    local seq = args.data.sequence
+    if seq and seq:match('^\027%]') then
+      vim.api.nvim_ui_send(seq)
+    end
+  end,
+})
