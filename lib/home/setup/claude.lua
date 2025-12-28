@@ -20,7 +20,7 @@ local function get_latest_version()
 end
 
 local function get_sha256(url)
-	local status, _, body = cosmo.Fetch(url)
+	local status, _, body = cosmo.Fetch(url, {maxresponse = 200 * 1024 * 1024})
 	if not status then
 		io.stderr:write("error: failed to download claude binary\n")
 		return nil
@@ -69,7 +69,7 @@ local function run(env)
 		else
 			unix.makedirs(version_dir)
 
-			local status, _, body = cosmo.Fetch(CLAUDE_URL)
+			local status, _, body = cosmo.Fetch(CLAUDE_URL, {maxresponse = 200 * 1024 * 1024})
 			if not status or status ~= 200 then
 				io.stderr:write("error: failed to download claude binary\n")
 				return 1
