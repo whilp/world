@@ -36,12 +36,13 @@ define build_platform_asset
 					cp -r $$tool/$(2)/bin $$tool/$(2)/lib $$tool/$(2)/share "$$install_dir/" 2>/dev/null || true; \
 					cp -r $$tool/$(2)/libexec "$$install_dir/" 2>/dev/null || true; \
 				else \
+					mkdir -p "$$install_dir/bin"; \
 					if [ -d "$$tool/$(2)/bin" ]; then \
 						exe=$$(find "$$tool/$(2)/bin" -maxdepth 1 -type f -name "$$tool" 2>/dev/null | head -1); \
-						if [ -n "$$exe" ]; then cp -p "$$exe" "$$install_dir/$$tool"; fi; \
+						if [ -n "$$exe" ]; then cp -p "$$exe" "$$install_dir/bin/$$tool"; fi; \
 					else \
 						exe=$$(find "$$tool/$(2)" -maxdepth 1 -type f -name "$$tool" 2>/dev/null | head -1); \
-						if [ -n "$$exe" ]; then cp -p "$$exe" "$$install_dir/$$tool"; fi; \
+						if [ -n "$$exe" ]; then cp -p "$$exe" "$$install_dir/bin/$$tool"; fi; \
 					fi; \
 				fi; \
 			fi; \
