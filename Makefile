@@ -48,6 +48,8 @@ check: private .UNVEIL = r:$(CURDIR) rx:$(3p)/ast-grep rx:results/bin rw:/dev/nu
 check: private .PLEDGE = stdio rpath proc exec
 check: private .CPU = 120
 check: $(ast_grep_extracted) lua
+	@echo "Validating Makefiles..."
+	@bash -o pipefail -c '$(MAKE) -n --warn-undefined-variables build test clean 2>&1 | (! grep warning:)'
 	$(ast_grep_bin) scan --color always
 	@echo ""
 	@echo "Running luacheck..."
