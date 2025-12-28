@@ -12,7 +12,7 @@ Write lua code following established repository conventions.
 
 Lua code is organized in two locations:
 
-- **`.local/bin/`** - executable wrappers that set paths and call modules
+- **`.local/bin/`** - executable wrappers that call modules
 - **`lib/`** - reusable library modules
 
 Each location follows specific patterns described below.
