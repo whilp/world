@@ -3,11 +3,7 @@ local unix = cosmo.unix
 local path = cosmo.path
 
 local function load_version()
-	local ok, v = pcall(dofile, "/zip/.lua/claude_version.lua")
-	if ok then
-		return v
-	end
-	ok, v = pcall(dofile, "3p/claude/version.lua")
+	local ok, v = pcall(require, "claude_version")
 	if ok then
 		return v
 	end
