@@ -49,6 +49,9 @@ $(lua_bin): $(lua_ape)
 
 lua: $(lua_bin) ## Build lua with bundled modules
 
+TEST_STAMPS += o/3p/lua/test_modules.lua.ok
+TEST_STAMPS += o/3p/lua/test_funcs.lua.ok
+
 o/3p/lua/test_modules.lua.ok: private .UNVEIL = r:3p/lua rx:$(lua_test) rw:/dev/null
 o/3p/lua/test_modules.lua.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
 o/3p/lua/test_modules.lua.ok: private .CPU = 60

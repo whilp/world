@@ -3,6 +3,15 @@
 
 work_src := $(filter-out lib/work/test%.lua,$(wildcard lib/work/*.lua))
 
+TEST_STAMPS += o/lib/work/test_backup.lua.ok
+TEST_STAMPS += o/lib/work/test_blocked_on_display.lua.ok
+TEST_STAMPS += o/lib/work/test_blockers.lua.ok
+TEST_STAMPS += o/lib/work/test_command_blocked.lua.ok
+TEST_STAMPS += o/lib/work/test_file_locking.lua.ok
+TEST_STAMPS += o/lib/work/test_orphaned_blocks.lua.ok
+TEST_STAMPS += o/lib/work/test_string_sanitization.lua.ok
+TEST_STAMPS += o/lib/work/test_validate_blocks.lua.ok
+
 o/lib/work/test_backup.lua.ok: private .UNVEIL = r:lib rx:$(lua_test) rwc:/tmp rw:/dev/null
 o/lib/work/test_backup.lua.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
 o/lib/work/test_backup.lua.ok: private .CPU = 30

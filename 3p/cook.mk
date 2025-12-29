@@ -19,13 +19,27 @@ export PATH := $(dir $(cosmos_bin)):$(PATH)
 
 make := $(make_bin)
 
-# Tool list
-TOOLS := nvim gh delta rg duckdb tree-sitter ast-grep biome comrak \
-         marksman ruff shfmt sqruff stylua superhtml uv
-
 # download-tool needs our custom lua binary with cosmo built-in
 lua_bin := results/bin/lua
 lib_lua = LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;" $(CURDIR)/$(lua_bin)
+
+# Tools self-register via TOOLS +=
+include 3p/ast-grep/cook.mk
+include 3p/biome/cook.mk
+include 3p/comrak/cook.mk
+include 3p/delta/cook.mk
+include 3p/duckdb/cook.mk
+include 3p/gh/cook.mk
+include 3p/marksman/cook.mk
+include 3p/nvim/cook.mk
+include 3p/rg/cook.mk
+include 3p/ruff/cook.mk
+include 3p/shfmt/cook.mk
+include 3p/sqruff/cook.mk
+include 3p/stylua/cook.mk
+include 3p/superhtml/cook.mk
+include 3p/tree-sitter/cook.mk
+include 3p/uv/cook.mk
 
 # download-tool target
 download_tool := lib/build/download-tool.lua
@@ -50,8 +64,7 @@ $(foreach tool,$(TOOLS),$(eval $(call tool_download_rule,$(tool))))
 # Generate {tool}_binaries variables for each tool
 $(foreach tool,$(TOOLS),$(eval $(tool)_binaries := $(foreach p,$(PLATFORMS),$(3p)/$(tool)/$(p)/.extracted)))
 
-# nvim needs plugin bundling after extraction
-include 3p/nvim/cook.mk
+# nvim needs plugin bundling after extraction (defined in 3p/nvim/cook.mk)
 nvim_binaries := $(nvim_bundled)
 
 # Aggregate all_binaries
