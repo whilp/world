@@ -1,23 +1,17 @@
-test-lib-whereami: private .UNVEIL = r:lib rx:$(lua_bin) r:$(test_runner) r:$(CURDIR) rw:/dev/null
-test-lib-whereami: private .PLEDGE = stdio rpath proc exec
-test-lib-whereami: private .CPU = 30
-test-lib-whereami: lua
-	cd lib && HOME=$(CURDIR) LUA_PATH="$(CURDIR)/lib/?.lua;;" \
-		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test_whereami.lua
+# lib/cook.mk - core lib tests
 
-test-lib-daemonize: private .UNVEIL = r:lib rx:$(lua_bin) r:$(test_runner) r:$(CURDIR) rwc:/tmp rw:/dev/null
-test-lib-daemonize: private .PLEDGE = stdio rpath wpath cpath proc exec
-test-lib-daemonize: private .CPU = 30
-test-lib-daemonize: lua
-	cd lib && HOME=$(CURDIR) LUA_PATH="$(CURDIR)/lib/?.lua;;" \
-		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test_daemonize.lua
+o/lib/test_whereami.lua.ok: private .UNVEIL = r:lib rx:$(lua_test) rw:/dev/null
+o/lib/test_whereami.lua.ok: private .PLEDGE = stdio rpath proc exec
+o/lib/test_whereami.lua.ok: private .CPU = 30
+o/lib/test_whereami.lua.ok: $(lua_test) lib/test_whereami.lua lib/whereami.lua lib/spawn/init.lua
+	@mkdir -p $(@D)
+	$(lua_test) lib/test_whereami.lua
+	@touch $@
 
-test-work: private .UNVEIL = r:lib r:/home/codespace/.local/bootstrap/lib rx:$(lua_bin) r:$(test_runner) r:$(CURDIR) rwc:lib/test/work rw:/dev/null
-test-work: private .PLEDGE = stdio rpath wpath cpath proc exec
-test-work: private .CPU = 60
-test-work: lua
-	cd lib/test/work && HOME=$(CURDIR) \
-		LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/test/work/?.lua;;" \
-		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) run.lua
-
-.PHONY: test-lib-whereami test-lib-daemonize test-work
+o/lib/test_daemonize.lua.ok: private .UNVEIL = r:lib rx:$(lua_test) rwc:/tmp rw:/dev/null
+o/lib/test_daemonize.lua.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
+o/lib/test_daemonize.lua.ok: private .CPU = 30
+o/lib/test_daemonize.lua.ok: $(lua_test) lib/test_daemonize.lua lib/daemonize.lua lib/spawn/init.lua
+	@mkdir -p $(@D)
+	$(lua_test) lib/test_daemonize.lua
+	@touch $@

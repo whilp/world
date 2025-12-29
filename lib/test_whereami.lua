@@ -25,3 +25,5 @@ function test_whereami_codespaces_format()
   -- In codespaces mode, result should be "repo | hostname emoji"
   lu.assertStrMatches(result, '^repo | .+')
 end
+
+os.exit(lu.LuaUnit.run())

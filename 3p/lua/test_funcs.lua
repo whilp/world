@@ -1,6 +1,7 @@
 -- test cosmo module functions
 -- functions excluded by LFUNCS_LITE or not in lfuncs.c use lu.skipIf
 
+local lu = require('luaunit')
 local cosmo = require('cosmo')
 
 -- helper to check if function is missing
@@ -414,3 +415,5 @@ function test_cosmo_Underlong()
     local encoded = cosmo.Underlong("hello")
     lu.assertNotNil(encoded)
 end
+
+os.exit(lu.LuaUnit.run())
