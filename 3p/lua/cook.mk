@@ -49,7 +49,11 @@ $(lua_bin): $(lua_ape)
 
 lua: $(lua_bin) ## Build lua with bundled modules
 
+lua-skill: $(lua_bin) ## Generate cosmo-lua skill
+	rm -rf .claude/skills/cosmo-lua
+	$(lua_bin) --skill .
+
 clean-lua:
 	rm -rf $(lua_bin) $(lua_ape) $(lua_test) o/3p/lib
 
-.PHONY: lua clean-lua
+.PHONY: lua lua-skill clean-lua
