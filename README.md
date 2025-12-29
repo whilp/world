@@ -26,6 +26,13 @@ latest release is at https://github.com/whilp/world/releases/latest
 curl -fsSL https://github.com/whilp/world/releases/latest/download/home | sh
 ```
 
+### try lua
+
+```bash
+curl -fsSL https://github.com/whilp/world/releases/latest/download/home 3p lua
+./o/3p/lua/bin/lua -e 'help("cosmo.Fetch")'
+```
+
 ## forks
 
 - [neovim](https://github.com/whilp/neovim) (fork of [neovim](https://neovim.io))
