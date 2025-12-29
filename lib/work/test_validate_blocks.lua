@@ -1,5 +1,14 @@
 local lu = require("luaunit")
 
+-- skip if posix not available (work module requires luaposix)
+local has_posix = pcall(require, "posix")
+if not has_posix then
+  function test_validate_blocks_skipped()
+    lu.skip("requires luaposix")
+  end
+  os.exit(lu.LuaUnit.run())
+end
+
 local process = require("work.process")
 local store = require("work.store")
 local Work = require("work.test_lib")
@@ -90,4 +99,4 @@ function TestValidateBlocks:test_validate_blocks_self_reference()
   lu.assertStrContains(err, "cannot block on itself")
 end
 
-return TestValidateBlocks
+os.exit(lu.LuaUnit.run())

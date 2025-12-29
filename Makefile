@@ -79,5 +79,7 @@ check: $(ast_grep_extracted) lua
 		--exclude-files '.claude/skills/lua/templates/*.lua' \
 		--exclude-files '.config/nvim/**/*.lua' \
 		--exclude-files '.config/hammerspoon/**/*.lua'
+	@echo ""
+	@$(MAKE) --no-print-directory check-test-coverage
 
 .PHONY: help build deps latest clean check
