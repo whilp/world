@@ -1,4 +1,5 @@
-include lib/cook.mk
+include lib/whereami/cook.mk
+include lib/daemonize/cook.mk
 include lib/claude/cook.mk
 include lib/cosmos/cook.mk
 include lib/nvim/cook.mk
@@ -9,8 +10,6 @@ include lib/work/cook.mk
 
 TEST_STAMPS += o/3p/lua/test_modules.lua.ok
 TEST_STAMPS += o/3p/lua/test_funcs.lua.ok
-TEST_STAMPS += o/lib/test_whereami.lua.ok
-TEST_STAMPS += o/lib/test_daemonize.lua.ok
 TEST_STAMPS += o/lib/home/test_main.lua.ok
 TEST_STAMPS += o/lib/claude/test.lua.ok
 TEST_STAMPS += o/lib/claude/test_skills.lua.ok
