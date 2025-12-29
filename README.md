@@ -14,12 +14,25 @@ A monorepo containing dotfiles, tools, and infrastructure for a reproducible com
         [project @ 2005-06-11 16:26:33 by will]
         initial import into CVS
 
-## Current features
+## Releases
 
-- Everything works on (Mac) laptop, GitHub codespaces, and internal devboxes (and three architectures)
-- `claude` works
-- `scpaste` (and `CMD-Shift-v` in `Ghostty`) copies rich clipboard contents to any active SSH connection
-- `home 3p` manages versioned third-party binaries with checksum verification
+Automated builds produce platform-specific installers for macOS (ARM64), Linux (ARM64, x86_64) containing dotfiles, tools, and configured third-party binaries.
+
+[**Latest release →**](https://github.com/whilp/world/releases/latest)
+
+### Quick setup
+
+```bash
+curl -fsSL https://github.com/whilp/world/releases/latest/download/home | sh
+```
+
+## Key components
+
+- Custom [Neovim](https://github.com/whilp/neovim) builds with bundled plugins
+- Custom [Cosmopolitan Libc](https://github.com/whilp/cosmopolitan) builds for portable binaries
+- Dotfiles for zsh, git, and various development tools
+- Lua-based configuration and build system
+- Third-party binaries managed with checksum verification
 
 ## License
 
