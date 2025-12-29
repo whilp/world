@@ -1,9 +1,9 @@
 local lu = require("luaunit")
 
 -- cosmo may not be available in all environments
-local has_cosmo, cosmo = pcall(require, "cosmo")
-local unix = has_cosmo and cosmo.unix or nil
-local path = has_cosmo and cosmo.path or nil
+local has_unix, unix = pcall(require, "cosmo.unix")
+local has_path, path = pcall(require, "cosmo.path")
+local has_cosmo = has_unix and has_path
 
 local home = require("main")
 
@@ -1213,10 +1213,6 @@ end
 --------------------------------------------------------------------------------
 function test_detect_platform_returns_string()
   skip_without_cosmo()
-  -- cosmo.uname may not be available in all builds
-  if not cosmo.uname then
-    lu.skip("requires cosmo.uname")
-  end
   local platform = home.detect_platform()
   lu.assertNotNil(platform)
   lu.assertTrue(type(platform) == "string")

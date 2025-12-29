@@ -3,8 +3,7 @@
 -- Usage: lua lib/build/list-plugins.lua
 -- Outputs space-separated plugin names for make
 
-local cosmo = require("cosmo")
-local unix = cosmo.unix
+local unix = require("cosmo.unix")
 
 local PACK_LOCK = ".config/nvim/nvim-pack-lock.json"
 

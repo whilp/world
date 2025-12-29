@@ -1,5 +1,4 @@
-local cosmo = require('cosmo')
-local unix = cosmo.unix
+local unix = require("cosmo.unix")
 local spawn = require('spawn').spawn
 
 local function trim(s)

@@ -283,9 +283,8 @@ function M.render(data, opts)
   end
 end
 
-local cosmo = require("cosmo")
-local unix = cosmo.unix
-local path = cosmo.path
+local unix = require("cosmo.unix")
+local path = require("cosmo.path")
 
 local HOME = os.getenv("HOME")
 local DEFAULT_SHARE_DIR = path.join(HOME, ".local", "share")

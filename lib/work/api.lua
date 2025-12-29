@@ -1,8 +1,7 @@
 -- Unified API layer for work system
 -- Provides high-level operations for both CLI and nvim consumers
 
-local cosmo = require("cosmo")
-local path = cosmo.path
+local path = require("cosmo.path")
 
 local config = require("work.config")
 local data = require("work.data")

@@ -1,6 +1,5 @@
 local lu = require("luaunit")
-local cosmo = require("cosmo")
-local sqlite3 = cosmo.sqlite3
+local sqlite3 = require("cosmo.lsqlite3")
 
 local aerosnap = require("aerosnap")
 

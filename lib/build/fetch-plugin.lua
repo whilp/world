@@ -4,7 +4,7 @@
 -- Reads plugin info from .config/nvim/nvim-pack-lock.json
 
 local cosmo = require("cosmo")
-local unix = cosmo.unix
+local unix = require("cosmo.unix")
 local spawn = require("spawn").spawn
 
 local PACK_LOCK = ".config/nvim/nvim-pack-lock.json"
