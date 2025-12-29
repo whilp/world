@@ -121,18 +121,10 @@ local function serialize_table(tbl)
 end
 
 local function detect_platform()
-  local ok, sysname = spawn({"uname", "-s"}):read()
-  if not ok then
-    return nil, "failed to get system name"
-  end
-  sysname = sysname:gsub("%s+$", "")
-
-  local machine
-  ok, machine = spawn({"uname", "-m"}):read()
-  if not ok then
-    return nil, "failed to get machine type"
-  end
-  machine = machine:gsub("%s+$", "")
+  -- cosmo returns uppercase (LINUX, DARWIN, X86_64, AARCH64)
+  -- normalize to match PLATFORMS table keys
+  local sysname = cosmo.GetHostOs():sub(1, 1) .. cosmo.GetHostOs():sub(2):lower()
+  local machine = cosmo.GetHostIsa():lower()
 
   local sys_platforms = PLATFORMS[sysname]
   if not sys_platforms then
