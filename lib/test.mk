@@ -4,20 +4,31 @@ include lib/cosmos/cook.mk
 include lib/nvim/cook.mk
 include lib/environ/cook.mk
 include lib/build/cook.mk
+include lib/aerosnap/cook.mk
+include lib/work/cook.mk
 
-TEST_STAMPS := \
-	o/3p/lua/test_modules.lua.ok \
-	o/3p/lua/test_funcs.lua.ok \
-	o/lib/test_whereami.lua.ok \
-	o/lib/test_daemonize.lua.ok \
-	o/lib/home/test_main.lua.ok \
-	o/lib/claude/test.lua.ok \
-	o/lib/claude/test_skills.lua.ok \
-	o/lib/nvim/test.lua.ok \
-	o/lib/environ/test.lua.ok \
-	o/lib/build/test.lua.ok \
-	o/lib/spawn/test_spawn.lua.ok
+TEST_STAMPS += o/3p/lua/test_modules.lua.ok
+TEST_STAMPS += o/3p/lua/test_funcs.lua.ok
+TEST_STAMPS += o/lib/test_whereami.lua.ok
+TEST_STAMPS += o/lib/test_daemonize.lua.ok
+TEST_STAMPS += o/lib/home/test_main.lua.ok
+TEST_STAMPS += o/lib/claude/test.lua.ok
+TEST_STAMPS += o/lib/claude/test_skills.lua.ok
+TEST_STAMPS += o/lib/nvim/test.lua.ok
+TEST_STAMPS += o/lib/environ/test.lua.ok
+TEST_STAMPS += o/lib/build/test.lua.ok
+TEST_STAMPS += o/lib/spawn/test_spawn.lua.ok
 
 test: $(TEST_STAMPS) ## Run all tests
 
-.PHONY: test
+check-test-coverage:
+	@rg --files -g 'test*.lua' lib 3p | grep -v -e test_lib.lua -e setup/test.lua -e 'lib/work/test.lua' | sort > /tmp/test_files.txt
+	@for f in $$(cat /tmp/test_files.txt); do \
+		stamp="o/$${f}.ok"; \
+		if ! grep -q "$$stamp" lib/test.mk lib/*/cook.mk 3p/*/cook.mk 2>/dev/null; then \
+			echo "MISSING: $$f not in any cook.mk"; \
+		fi; \
+	done
+	@rm -f /tmp/test_files.txt
+
+.PHONY: test check-test-coverage

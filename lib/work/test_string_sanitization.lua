@@ -1,5 +1,14 @@
 local lu = require("luaunit")
 
+-- skip if posix not available (work module requires luaposix)
+local has_posix = pcall(require, "posix")
+if not has_posix then
+  function test_string_sanitization_skipped()
+    lu.skip("requires luaposix")
+  end
+  os.exit(lu.LuaUnit.run())
+end
+
 local data = require("work.data")
 local store = require("work.store")
 local Work = require("work.test_lib")
@@ -114,4 +123,4 @@ function TestStringSanitization:test_error_message_includes_field_name()
   lu.assertStrContains(err, "title")
 end
 
-return TestStringSanitization
+os.exit(lu.LuaUnit.run())
