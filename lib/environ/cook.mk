@@ -1,5 +1,7 @@
 # lib/environ/cook.mk - environ module
 
+TEST_STAMPS += o/lib/environ/test.lua.ok
+
 o/lib/environ/test.lua.ok: private .UNVEIL = r:lib rx:$(lua_test) rw:/dev/null
 o/lib/environ/test.lua.ok: private .PLEDGE = stdio rpath proc exec
 o/lib/environ/test.lua.ok: private .CPU = 30
