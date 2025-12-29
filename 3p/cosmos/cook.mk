@@ -1,9 +1,9 @@
 # cosmos binaries from whilp/cosmopolitan fork
 cosmos_dir := $(3p)/cosmos
-cosmos_version := 2025.12.29-f2f4a9e2a
+cosmos_version := 2025.12.29-6868479b1
 cosmos_url := https://github.com/whilp/cosmopolitan/releases/download/$(cosmos_version)
 
-$(eval $(call download_binary_rule,cosmos,lua,$(cosmos_url)/lua,3816bdedb68ccd45e6df578eac21d722e53ee3386dafa2a89b0d2be3c0072bd2))
+$(eval $(call download_binary_rule,cosmos,lua,$(cosmos_url)/lua,52e92da125637916adedfa2fd7651d8430134fec63671ce7d6d2e636c73bc2a4))
 $(eval $(call download_binary_rule,cosmos,zip,$(cosmos_url)/zip,0dc386094952aa9f19e1de2fe255330dd039a14bd348bb951ba4a06e072807fe))
 $(eval $(call download_binary_rule,cosmos,unzip,$(cosmos_url)/unzip,65538efad171d952de6c4e9c99b18ad11e293ab38f546fd526d76e2892f68399))
 $(eval $(call download_binary_rule,cosmos,make,$(cosmos_url)/make,c7c8e7f09a1ed51d875bd6b3b1048e9faeb9d76cb3c7eedf01e153cced4a9373))

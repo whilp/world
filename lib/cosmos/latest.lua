@@ -4,7 +4,7 @@ local REPO = "whilp/cosmopolitan"
 local BINARIES = {"lua", "make", "unzip", "zip"}
 
 local function get_latest_version()
-  local url = "https://api.github.com/repos/" .. REPO .. "/releases"
+  local url = "https://api.github.com/repos/" .. REPO .. "/releases/latest"
   local status, _, body = cosmo.Fetch(url, {
     headers = {["User-Agent"] = "curl/8.0", ["Accept"] = "application/vnd.github+json"},
   })
@@ -16,19 +16,12 @@ local function get_latest_version()
     io.stderr:write("error: fetch failed with status " .. tostring(status) .. "\n")
     return nil
   end
-  local releases = cosmo.DecodeJson(body)
-  if not releases then
-    io.stderr:write("error: invalid releases response\n")
+  local release = cosmo.DecodeJson(body)
+  if not release or not release.tag_name then
+    io.stderr:write("error: invalid release response\n")
     return nil
   end
-  for _, release in ipairs(releases) do
-    local tag = release.tag_name
-    if tag and not tag:match("^cosmocc%-") then
-      return tag
-    end
-  end
-  io.stderr:write("error: no matching release found\n")
-  return nil
+  return release.tag_name
 end
 
 local function get_sha256sums(version)
