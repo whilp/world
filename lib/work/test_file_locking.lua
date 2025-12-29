@@ -1,4 +1,14 @@
 local lu = require("luaunit")
+
+-- skip if posix not available (work module requires luaposix)
+local has_posix = pcall(require, "posix")
+if not has_posix then
+  function test_file_locking_skipped()
+    lu.skip("requires luaposix")
+  end
+  os.exit(lu.LuaUnit.run())
+end
+
 local cosmo = require("cosmo")
 local unix = cosmo.unix
 local path = cosmo.path
@@ -133,4 +143,4 @@ function TestFileLocking:test_delete_with_locking()
   lu.assertNil(f, "work item file should not exist after delete")
 end
 
-return TestFileLocking
+os.exit(lu.LuaUnit.run())
