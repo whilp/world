@@ -1,5 +1,14 @@
 local lu = require("luaunit")
 
+-- skip if posix not available (work module requires luaposix)
+local has_posix = pcall(require, "posix")
+if not has_posix then
+  function test_skipped()
+    lu.skip("requires luaposix")
+  end
+  os.exit(lu.LuaUnit.run())
+end
+
 local process = require("work.process")
 local store = require("work.store")
 local Work = require("work.test_lib")
@@ -102,4 +111,4 @@ function TestOrphanedBlocks:test_find_items_blocking_on_multiple_blocks()
   lu.assertEquals(referencing_b[1].id, "01TEST0000000000000000003")
 end
 
-return TestOrphanedBlocks
+os.exit(lu.LuaUnit.run())
