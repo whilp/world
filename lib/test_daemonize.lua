@@ -51,3 +51,4 @@ function test_acquire_lock_requires_path()
   lu.assertStrContains(err, "required", "error should mention path is required")
 end
 
+os.exit(lu.LuaUnit.run())

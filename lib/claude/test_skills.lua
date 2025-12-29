@@ -26,3 +26,5 @@ function test_lua_skill_has_valid_frontmatter()
   lu.assertTrue(content:match("\ndescription:") ~= nil, "should have description field")
   lu.assertTrue(content:match("\nallowed%-tools:") ~= nil, "should have allowed-tools field")
 end
+
+os.exit(lu.LuaUnit.run())

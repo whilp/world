@@ -1,6 +1,3 @@
-# test infrastructure
-test_runner := lib/run-test.lua
-
 include 3p/cook.mk
 include 3p/luaunit/cook.mk
 include 3p/luacheck/cook.mk

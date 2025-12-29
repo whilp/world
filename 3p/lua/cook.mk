@@ -14,7 +14,7 @@ results/bin:
 o/bin:
 	mkdir -p $@
 
-lib_lua_files := $(filter-out lib/test_%.lua lib/run-test.lua,$(wildcard lib/*.lua))
+lib_lua_files := $(filter-out lib/test_%.lua,$(wildcard lib/*.lua))
 lib_lua_dir := o/3p/lib/.lua
 lib_lua_stamp := $(lib_lua_dir)/.copied
 
@@ -49,12 +49,12 @@ $(lua_bin): $(lua_ape)
 
 lua: $(lua_bin) ## Build lua with bundled modules
 
-o/test/3p-lua.ok: private .UNVEIL = r:3p/lua rx:$(lua_test) r:$(test_runner) rwc:3p/lua/o rw:/dev/null
+o/test/3p-lua.ok: private .UNVEIL = r:3p/lua rx:$(lua_test) rwc:3p/lua/o rw:/dev/null
 o/test/3p-lua.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
 o/test/3p-lua.ok: private .CPU = 60
-o/test/3p-lua.ok: $(lua_test) $(test_runner) 3p/lua/test.lua 3p/lua/test_modules.lua 3p/lua/test_funcs.lua
+o/test/3p-lua.ok: $(lua_test) 3p/lua/test.lua 3p/lua/test_modules.lua 3p/lua/test_funcs.lua
 	@mkdir -p $(@D)
-	cd 3p/lua && $(CURDIR)/$(lua_test) $(CURDIR)/$(test_runner) test.lua
+	$(lua_test) 3p/lua/test.lua
 	@touch $@
 
 clean-lua:
