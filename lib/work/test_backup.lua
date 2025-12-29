@@ -9,9 +9,8 @@ if not has_posix then
   os.exit(lu.LuaUnit.run())
 end
 
-local cosmo = require("cosmo")
-local unix = cosmo.unix
-local path = cosmo.path
+local unix = require("cosmo.unix")
+local path = require("cosmo.path")
 
 local data = require("work.data")
 local store = require("work.store")

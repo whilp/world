@@ -1,5 +1,4 @@
-local cosmo = require("cosmo")
-local path = cosmo.path
+local path = require("cosmo.path")
 
 local M = {
   _lock_handle = nil,

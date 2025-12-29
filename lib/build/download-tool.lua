@@ -3,8 +3,8 @@
 -- Usage: lua lib/build/download-tool.lua <tool> <platform> <output_dir>
 
 local cosmo = require("cosmo")
-local path = cosmo.path
-local unix = cosmo.unix
+local path = require("cosmo.path")
+local unix = require("cosmo.unix")
 local spawn = require("spawn").spawn
 
 -- Template interpolation

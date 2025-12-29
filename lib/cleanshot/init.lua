@@ -1,6 +1,5 @@
-local cosmo = require("cosmo")
-local unix = cosmo.unix
-local cpath = cosmo.path
+local unix = require("cosmo.unix")
+local cpath = require("cosmo.path")
 
 local VALID_COMMANDS = {
   ["all-in-one"] = true,

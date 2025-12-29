@@ -1,6 +1,6 @@
 local cosmo = require("cosmo")
-local unix = cosmo.unix
-local path = cosmo.path
+local unix = require("cosmo.unix")
+local path = require("cosmo.path")
 
 local function load_version()
 	local ok, v = pcall(require, "claude.version")

@@ -1,5 +1,4 @@
-local cosmo = require("cosmo")
-local unix = cosmo.unix
+local unix = require("cosmo.unix")
 
 local function make_pipe(fd)
 	if not fd then

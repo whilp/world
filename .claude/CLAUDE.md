@@ -41,7 +41,10 @@
 
 ## Lua
 
-See the lua skill for detailed patterns and templates
+### Imports
+- use `require("cosmo.unix")` for unix functions
+- use `require("cosmo.path")` for path functions
+- use `require("cosmo")` for top-level functions (Fetch, EncodeJson, etc)
 
 ### Command execution
 - NEVER use `os.execute()` - use spawn module or unix API instead
@@ -50,7 +53,7 @@ See the lua skill for detailed patterns and templates
 
 ### File system operations
 - use `unix.*` functions: `unix.makedirs()`, `unix.rmrf()`, `unix.stat()`, `unix.opendir()`
-- NEVER use string concatenation for paths - use `cosmo.path.join()` instead
+- NEVER use string concatenation for paths - use `path.join()` instead
 - file permissions: use `tonumber("644", 8)` not `0644` (lua has no octal notation)
 
 ### Other patterns

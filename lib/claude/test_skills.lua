@@ -1,9 +1,8 @@
 local lu = require('luaunit')
-local cosmo = require('cosmo')
-local unix = cosmo.unix
-local path = cosmo.path
+local unix = require("cosmo.unix")
+local path = require("cosmo.path")
 
-local script_dir = cosmo.path.dirname(debug.getinfo(1, "S").source:sub(2))
+local script_dir = path.dirname(debug.getinfo(1, "S").source:sub(2))
 local dotfiles_root = path.join(script_dir, "../..")
 local skills_dir = path.join(dotfiles_root, ".claude/skills")
 

@@ -1,9 +1,9 @@
 local lu = require("luaunit")
 
 -- cosmo may not be available in all environments
-local has_cosmo, cosmo = pcall(require, "cosmo")
-local unix = has_cosmo and cosmo.unix or nil
-local path = has_cosmo and cosmo.path or nil
+local has_unix, unix = pcall(require, "cosmo.unix")
+local has_path, path = pcall(require, "cosmo.path")
+local has_cosmo = has_unix and has_path
 
 local home = require("main")
 
