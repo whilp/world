@@ -1,7 +1,7 @@
 # lib/work/cook.mk - work module tests
 # note: these tests require luaposix and will skip if not available
 
-work_src := $(wildcard lib/work/*.lua)
+work_src := $(filter-out lib/work/test%.lua,$(wildcard lib/work/*.lua))
 
 o/lib/work/test_backup.lua.ok: private .UNVEIL = r:lib rx:$(lua_test) rwc:/tmp rw:/dev/null
 o/lib/work/test_backup.lua.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
