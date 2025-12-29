@@ -1,3 +1,5 @@
+TOOLS += nvim
+
 nvim-latest:
 nvim-latest: private .PLEDGE = stdio rpath wpath cpath inet dns
 nvim-latest: private .INTERNET = 1
