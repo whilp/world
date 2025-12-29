@@ -1,3 +1,5 @@
+export LUA_PATH := lib/?.lua;lib/?/init.lua;lib/home/?.lua;;
+
 include 3p/cook.mk
 include 3p/luaunit/cook.mk
 include 3p/luacheck/cook.mk
@@ -35,14 +37,14 @@ help:
 	@echo ""
 	@echo "Development:"
 	@echo "  check              Run linters (ast-grep, luacheck)"
-	@echo "  test               Run all tests"
+	@echo "  test               Run all tests (incremental)"
 	@echo ""
 	@echo "Maintenance:"
 	@echo "  latest             Fetch latest versions (claude, cosmos, nvim)"
-	@echo "  clean              Remove build artifacts"
+	@echo "  clean              Remove build artifacts and test stamps"
 	@echo ""
-	@echo "Individual test targets:"
-	@for t in $(TEST_TARGETS); do printf "  %s\n" "$$t"; done
+	@echo "Run individual tests via stamp files:"
+	@echo "  make o/lib/claude/test.lua.ok"
 
 build: lua ## Build lua binary [default]
 

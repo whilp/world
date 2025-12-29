@@ -1,4 +1,5 @@
 -- test cosmo submodules
+local lu = require('luaunit')
 local cosmo = require('cosmo')
 
 function test_cosmo_module_exists()
@@ -58,3 +59,5 @@ function test_cosmo_sqlite3_open_memory()
     lu.assertNotNil(db)
     db:close()
 end
+
+os.exit(lu.LuaUnit.run())

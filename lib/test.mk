@@ -1,5 +1,3 @@
-test_runner := lib/run-test.lua
-
 include lib/cook.mk
 include lib/claude/cook.mk
 include lib/cosmos/cook.mk
@@ -7,11 +5,19 @@ include lib/nvim/cook.mk
 include lib/environ/cook.mk
 include lib/build/cook.mk
 
-TEST_TARGETS := test-3p-lua test-lib-whereami test-home test-lib-daemonize \
-                test-claude test-nvim test-claude-skills test-environ test-build-download-tool
+TEST_STAMPS := \
+	o/3p/lua/test_modules.lua.ok \
+	o/3p/lua/test_funcs.lua.ok \
+	o/lib/test_whereami.lua.ok \
+	o/lib/test_daemonize.lua.ok \
+	o/lib/home/test_main.lua.ok \
+	o/lib/claude/test.lua.ok \
+	o/lib/claude/test_skills.lua.ok \
+	o/lib/nvim/test.lua.ok \
+	o/lib/environ/test.lua.ok \
+	o/lib/build/test.lua.ok \
+	o/lib/spawn/test_spawn.lua.ok
 
-test-all: $(TEST_TARGETS)
+test: $(TEST_STAMPS) ## Run all tests
 
-test: test-all ## Run all tests
-
-.PHONY: test-all test
+.PHONY: test
