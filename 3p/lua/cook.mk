@@ -49,18 +49,18 @@ $(lua_bin): $(lua_ape)
 
 lua: $(lua_bin) ## Build lua with bundled modules
 
-o/test/3p-lua-modules.ok: private .UNVEIL = r:3p/lua rx:$(lua_test) rw:/dev/null
-o/test/3p-lua-modules.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
-o/test/3p-lua-modules.ok: private .CPU = 60
-o/test/3p-lua-modules.ok: $(lua_test) 3p/lua/test_modules.lua
+o/3p/lua/test_modules.lua.ok: private .UNVEIL = r:3p/lua rx:$(lua_test) rw:/dev/null
+o/3p/lua/test_modules.lua.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
+o/3p/lua/test_modules.lua.ok: private .CPU = 60
+o/3p/lua/test_modules.lua.ok: $(lua_test) 3p/lua/test_modules.lua
 	@mkdir -p $(@D)
 	$(lua_test) 3p/lua/test_modules.lua
 	@touch $@
 
-o/test/3p-lua-funcs.ok: private .UNVEIL = r:3p/lua rx:$(lua_test) rw:/dev/null
-o/test/3p-lua-funcs.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
-o/test/3p-lua-funcs.ok: private .CPU = 60
-o/test/3p-lua-funcs.ok: $(lua_test) 3p/lua/test_funcs.lua
+o/3p/lua/test_funcs.lua.ok: private .UNVEIL = r:3p/lua rx:$(lua_test) rw:/dev/null
+o/3p/lua/test_funcs.lua.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
+o/3p/lua/test_funcs.lua.ok: private .CPU = 60
+o/3p/lua/test_funcs.lua.ok: $(lua_test) 3p/lua/test_funcs.lua
 	@mkdir -p $(@D)
 	$(lua_test) 3p/lua/test_funcs.lua
 	@touch $@

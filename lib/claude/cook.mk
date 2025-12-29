@@ -8,18 +8,18 @@ claude-latest: $(lua_bin)
 
 .PHONY: claude-latest
 
-o/test/claude.ok: private .UNVEIL = r:lib rx:$(lua_test) rwc:/tmp rw:/dev/null
-o/test/claude.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
-o/test/claude.ok: private .CPU = 60
-o/test/claude.ok: $(lua_test) lib/claude/test.lua lib/claude/main.lua
+o/lib/claude/test.lua.ok: private .UNVEIL = r:lib rx:$(lua_test) rwc:/tmp rw:/dev/null
+o/lib/claude/test.lua.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
+o/lib/claude/test.lua.ok: private .CPU = 60
+o/lib/claude/test.lua.ok: $(lua_test) lib/claude/test.lua lib/claude/main.lua
 	@mkdir -p $(@D)
 	$(lua_test) lib/claude/test.lua
 	@touch $@
 
-o/test/claude-skills.ok: private .UNVEIL = r:lib r:.claude/skills rx:$(lua_test) rw:/dev/null
-o/test/claude-skills.ok: private .PLEDGE = stdio rpath proc exec
-o/test/claude-skills.ok: private .CPU = 30
-o/test/claude-skills.ok: $(lua_test) lib/claude/test_skills.lua lib/claude/main.lua $(wildcard .claude/skills/*.md)
+o/lib/claude/test_skills.lua.ok: private .UNVEIL = r:lib r:.claude/skills rx:$(lua_test) rw:/dev/null
+o/lib/claude/test_skills.lua.ok: private .PLEDGE = stdio rpath proc exec
+o/lib/claude/test_skills.lua.ok: private .CPU = 30
+o/lib/claude/test_skills.lua.ok: $(lua_test) lib/claude/test_skills.lua lib/claude/main.lua $(wildcard .claude/skills/*.md)
 	@mkdir -p $(@D)
 	$(lua_test) lib/claude/test_skills.lua
 	@touch $@
