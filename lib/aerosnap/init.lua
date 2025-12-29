@@ -1,6 +1,6 @@
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
-local sqlite3 = require("cosmo.sqlite3")
+local sqlite3 = require("cosmo.lsqlite3")
 local spawn = require("spawn").spawn
 
 local DB_DIR = path.join(os.getenv("HOME"), ".cache", "aerospace")
