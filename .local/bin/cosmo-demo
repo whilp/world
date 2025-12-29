@@ -1,0 +1,62 @@
+#!/home/user/world/results/bin/lua
+
+local cosmo = require("cosmo")
+local path = require("cosmo.path")
+local unix = require("cosmo.unix")
+
+print("=== Cosmo Lua Demo ===\n")
+
+-- Path operations
+print("1. Path operations:")
+local home = os.getenv("HOME")
+local demo_path = path.join(home, ".config", "demo.txt")
+print("  joined path: " .. demo_path)
+print("  basename: " .. path.basename(demo_path))
+print("  dirname: " .. path.dirname(demo_path))
+print("  exists: " .. tostring(path.exists(demo_path)))
+
+-- Encoding & hashing
+print("\n2. Encoding & hashing:")
+local message = "Hello, Cosmo!"
+local encoded = cosmo.EncodeBase64(message)
+print("  base64 encode: " .. encoded)
+print("  base64 decode: " .. cosmo.DecodeBase64(encoded))
+print("  sha256: " .. cosmo.EncodeHex(cosmo.Sha256(message)))
+print("  md5: " .. cosmo.EncodeHex(cosmo.Md5(message)))
+
+-- JSON
+print("\n3. JSON:")
+local data = {
+  name = "cosmo-lua",
+  version = "1.0",
+  features = {"http", "json", "unix"},
+  awesome = true
+}
+local json = cosmo.EncodeJson(data)
+print("  encoded: " .. json)
+local decoded = cosmo.DecodeJson(json)
+print("  decoded name: " .. decoded.name)
+
+-- Unix operations
+print("\n4. Unix operations:")
+print("  pid: " .. unix.getpid())
+print("  current time: " .. unix.clock_gettime())
+
+local env = unix.environ()
+print("  USER env: " .. (env.USER or "not set"))
+
+-- HTTP fetch (example.com)
+print("\n5. HTTP fetch:")
+local status, headers, body = cosmo.Fetch("http://example.com")
+print("  status: " .. status)
+print("  body length: " .. #body .. " bytes")
+if status == 200 then
+  print("  title found: " .. tostring(body:match("<title>([^<]+)</title>") ~= nil))
+end
+
+-- Random bytes
+print("\n6. Cryptographic random:")
+local random = cosmo.GetRandomBytes(16)
+print("  16 random bytes (hex): " .. cosmo.EncodeHex(random))
+
+print("\n=== Demo complete ===")
