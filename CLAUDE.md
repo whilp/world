@@ -1,38 +1,14 @@
-## Skills
+## Scripts
 
-- ALWAYS consider available skills. Almost every session will involve one or more skills, and the most relevant skills should be evident early in the session.
+- Store scripts in `.local/bin`
 
-## Writing
+## Terminal
 
-- Always use sentence case
+- Ghostty config is located at `.config/ghostty/config`
 
-## SQL
+## Make
 
-- always write sql in lowercase style for trino
-
-## Searching
-
-- ALWAYS use `rg` (ripgrep) to explore files
-- NEVER use `find`
-- NEVER use `grep`
-- to find files with `rg`: `rg --files -g '*.<extension>' <path>`; if this doesn't work, consider whether it is appropriate to ignore gitignore and then try again with `-uuu`
-
-## Python
-
-- ALWAYS invoke `python3`
-- NEVER invoke plain `python`
-
-## Docs
-
-- ALWAYS fetch the .md version of docs; for <https://docs.anthropic.com/en/docs/claude-code/hooks> -\> <https://docs.anthropic.com/en/docs/claude-code/hooks.md>
-
-## Gists
-
-- to create a gist, do `gh create <file> --desc "<description>"`
-
-## Git
-
-- always use atomic commits
-- write commit messages like '<component>: <action>'; eg 'comrak-fmt: rewrite in lua'
-- git is usually configured with `status.showUntrackedFiles`; check `.gitconfig` when in doubt
-- never invoke git -A; always add specific files
+- run `make help` to see available targets
+- makefile fragments are named `cook.mk`
+- use self-documenting help targets with `## description` comments
+- group targets by workflow in help output
