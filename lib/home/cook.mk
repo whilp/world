@@ -109,7 +109,7 @@ o/test/home.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
 o/test/home.ok: private .CPU = 60
 o/test/home.ok: $(lua_test) lib/home/test_main.lua lib/home/main.lua
 	@mkdir -p $(@D)
-	LUA_PATH="lib/?.lua;lib/?/init.lua;lib/home/?.lua;;" $(lua_test) lib/home/test_main.lua
+	$(lua_test) lib/home/test_main.lua
 	@touch $@
 
 .PHONY: home platform-assets

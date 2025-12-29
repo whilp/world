@@ -5,5 +5,5 @@ o/test/build-download-tool.ok: private .PLEDGE = stdio rpath wpath cpath proc ex
 o/test/build-download-tool.ok: private .CPU = 60
 o/test/build-download-tool.ok: $(lua_test) lib/build/test.lua lib/build/download-tool.lua
 	@mkdir -p $(@D)
-	LUA_PATH="lib/?.lua;lib/?/init.lua;;" $(lua_test) lib/build/test.lua
+	$(lua_test) lib/build/test.lua
 	@touch $@
