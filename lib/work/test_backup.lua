@@ -1,4 +1,14 @@
 local lu = require("luaunit")
+
+-- skip if posix not available (work module requires luaposix)
+local has_posix = pcall(require, "posix")
+if not has_posix then
+  function test_backup_skipped()
+    lu.skip("requires luaposix")
+  end
+  os.exit(lu.LuaUnit.run())
+end
+
 local cosmo = require("cosmo")
 local unix = cosmo.unix
 local path = cosmo.path
@@ -216,4 +226,4 @@ function TestBackup:test_backup_content_matches_original()
   lu.assertNotStrContains(backup_content, "updated content")
 end
 
-return TestBackup
+os.exit(lu.LuaUnit.run())
