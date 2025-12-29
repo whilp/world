@@ -1,5 +1,7 @@
 # lib/build/cook.mk - build tools
 
+TEST_STAMPS += o/lib/build/test.lua.ok
+
 o/lib/build/test.lua.ok: private .UNVEIL = r:lib r:3p rx:$(lua_test) rwc:/tmp rw:/dev/null
 o/lib/build/test.lua.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
 o/lib/build/test.lua.ok: private .CPU = 60

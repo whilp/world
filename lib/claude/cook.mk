@@ -1,5 +1,8 @@
 # lib/claude/cook.mk - claude module
 
+TEST_STAMPS += o/lib/claude/test.lua.ok
+TEST_STAMPS += o/lib/claude/test_skills.lua.ok
+
 claude-latest:
 claude-latest: private .PLEDGE = stdio rpath wpath cpath inet dns
 claude-latest: private .INTERNET = 1

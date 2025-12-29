@@ -8,29 +8,9 @@ include lib/build/cook.mk
 include lib/aerosnap/cook.mk
 include lib/work/cook.mk
 # lib/spawn/cook.mk included via lib/home/cook.mk
+# 3p/lua/cook.mk included via Makefile
 
-TEST_STAMPS := \
-	o/3p/lua/test_modules.lua.ok \
-	o/3p/lua/test_funcs.lua.ok \
-	o/lib/whereami/test.lua.ok \
-	o/lib/daemonize/test.lua.ok \
-	o/lib/home/test_main.lua.ok \
-	o/lib/claude/test.lua.ok \
-	o/lib/claude/test_skills.lua.ok \
-	o/lib/nvim/test.lua.ok \
-	o/lib/environ/test.lua.ok \
-	o/lib/build/test.lua.ok \
-	o/lib/spawn/test_spawn.lua.ok \
-	o/lib/aerosnap/test.lua.ok \
-	o/lib/work/test_backup.lua.ok \
-	o/lib/work/test_blocked_on_display.lua.ok \
-	o/lib/work/test_blockers.lua.ok \
-	o/lib/work/test_command_blocked.lua.ok \
-	o/lib/work/test_file_locking.lua.ok \
-	o/lib/work/test_orphaned_blocks.lua.ok \
-	o/lib/work/test_string_sanitization.lua.ok \
-	o/lib/work/test_validate_blocks.lua.ok
-
+# TEST_STAMPS accumulated from cook.mk files via +=
 test: $(TEST_STAMPS) ## Run all tests
 
 # check for orphaned test files not in TEST_STAMPS
