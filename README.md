@@ -28,9 +28,40 @@ curl -fsSL https://github.com/whilp/world/releases/latest/download/home | sh
 
 ### try lua
 
-```bash
-curl -fsSL https://github.com/whilp/world/releases/latest/download/home 3p lua
-./o/3p/lua/bin/lua -e 'help("cosmo.Fetch")'
+lua is available from [whilp/cosmopolitan](https://github.com/whilp/cosmopolitan/releases/latest):
+
+```console
+$ curl -fsSLO https://github.com/whilp/cosmopolitan/releases/latest/download/lua && chmod +x lua
+$ ./lua -e 'help = require("cosmo.help"); help()'
+Cosmo Lua Help System
+
+Modules:
+  cosmo         - Encoding, hashing, compression, networking
+  cosmo.unix    - POSIX system calls
+  cosmo.path    - Path manipulation
+  cosmo.re      - Regular expressions
+  cosmo.sqlite3 - SQLite database
+  cosmo.argon2  - Password hashing
+
+Usage:
+  help("cosmo")              - List module contents
+  help("cosmo.Fetch")        - Show function documentation
+  help(cosmo.Fetch)          - Same, using function reference
+  help.search("base64")      - Search for matching functions
+
+$ ./lua -e 'help = require("cosmo.help"); help("cosmo.Fetch")'
+Fetch(url, body)
+
+Sends an HTTP/HTTPS request to the specified URL. If only the URL is provided,
+then a GET request is sent. If both URL and body parameters are specified, then
+a POST request is sent. ...
+
+Parameters:
+  url (string)
+  body (string|{) (optional): headers: table<string,string>, method: string, ...
+
+Returns:
+  integer: status, table<string,string> headers, string body
 ```
 
 ## forks
