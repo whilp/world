@@ -1,3 +1,6 @@
+# test infrastructure
+test_runner := lib/run-test.lua
+
 include 3p/cook.mk
 include 3p/luaunit/cook.mk
 include 3p/luacheck/cook.mk
@@ -35,14 +38,22 @@ help:
 	@echo ""
 	@echo "Development:"
 	@echo "  check              Run linters (ast-grep, luacheck)"
-	@echo "  test               Run all tests"
+	@echo "  test               Run all tests (incremental)"
 	@echo ""
 	@echo "Maintenance:"
 	@echo "  latest             Fetch latest versions (claude, cosmos, nvim)"
-	@echo "  clean              Remove build artifacts"
+	@echo "  clean              Remove build artifacts and test stamps"
 	@echo ""
-	@echo "Individual test targets:"
-	@for t in $(TEST_TARGETS); do printf "  %s\n" "$$t"; done
+	@echo "Individual tests (incremental via stamp files):"
+	@echo "  test-3p-lua              3p lua modules"
+	@echo "  test-lib-whereami        whereami module"
+	@echo "  test-lib-daemonize       daemonize module"
+	@echo "  test-home                home module"
+	@echo "  test-claude              claude module"
+	@echo "  test-claude-skills       claude skills"
+	@echo "  test-nvim                nvim module"
+	@echo "  test-environ             environ module"
+	@echo "  test-build-download-tool build tools"
 
 build: lua ## Build lua binary [default]
 

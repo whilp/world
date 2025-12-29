@@ -104,10 +104,13 @@ results/bin/home: $(lua_bin) results/dotfiles.zip $(home_platform_deps) lib/home
 
 home: results/bin/home ## Build universal home binary
 
-test-home: private .UNVEIL = r:lib/home r:lib rx:$(lua_bin) r:$(test_runner) rwc:lib/home/o rw:/dev/null
-test-home: private .PLEDGE = stdio rpath wpath cpath proc exec
-test-home: private .CPU = 60
-test-home: lua
-	cd lib/home && $(home_lua) $(CURDIR)/$(test_runner) test_main.lua
+o/test/home.ok: private .UNVEIL = r:lib/home r:lib rx:$(lua_test) r:$(test_runner) rwc:lib/home/o rw:/dev/null
+o/test/home.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
+o/test/home.ok: private .CPU = 60
+o/test/home.ok: $(lua_test) $(test_runner) lib/home/test_main.lua lib/home/main.lua
+	@mkdir -p $(@D)
+	cd lib/home && HOME=$(CURDIR) LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;$(CURDIR)/lib/home/?.lua;;" \
+		$(CURDIR)/$(lua_test) $(CURDIR)/$(test_runner) test_main.lua
+	@touch $@
 
-.PHONY: home platform-assets test-home
+.PHONY: home platform-assets

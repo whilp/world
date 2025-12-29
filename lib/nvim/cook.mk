@@ -1,7 +1,10 @@
-test-nvim: private .UNVEIL = r:lib/nvim r:lib rx:$(lua_bin) r:$(test_runner) r:$(CURDIR) rwc:/tmp rw:/dev/null
-test-nvim: private .PLEDGE = stdio rpath wpath cpath proc exec
-test-nvim: private .CPU = 60
-test-nvim: lua
-	cd lib/nvim && HOME=$(CURDIR) $(home_lua) $(CURDIR)/$(test_runner) test.lua
+# lib/nvim/cook.mk - nvim module
 
-.PHONY: test-nvim
+o/test/nvim.ok: private .UNVEIL = r:lib/nvim r:lib rx:$(lua_test) r:$(test_runner) r:$(CURDIR) rwc:/tmp rw:/dev/null
+o/test/nvim.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
+o/test/nvim.ok: private .CPU = 60
+o/test/nvim.ok: $(lua_test) $(test_runner) lib/nvim/test.lua lib/nvim/main.lua
+	@mkdir -p $(@D)
+	cd lib/nvim && HOME=$(CURDIR) LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;" \
+		$(CURDIR)/$(lua_test) $(CURDIR)/$(test_runner) test.lua
+	@touch $@

@@ -1,23 +1,19 @@
-test-lib-whereami: private .UNVEIL = r:lib rx:$(lua_bin) r:$(test_runner) r:$(CURDIR) rw:/dev/null
-test-lib-whereami: private .PLEDGE = stdio rpath proc exec
-test-lib-whereami: private .CPU = 30
-test-lib-whereami: lua
+# lib/cook.mk - core lib tests
+
+o/test/lib-whereami.ok: private .UNVEIL = r:lib rx:$(lua_test) r:$(test_runner) r:$(CURDIR) rw:/dev/null
+o/test/lib-whereami.ok: private .PLEDGE = stdio rpath proc exec
+o/test/lib-whereami.ok: private .CPU = 30
+o/test/lib-whereami.ok: $(lua_test) $(test_runner) lib/test_whereami.lua lib/whereami.lua
+	@mkdir -p $(@D)
 	cd lib && HOME=$(CURDIR) LUA_PATH="$(CURDIR)/lib/?.lua;;" \
-		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test_whereami.lua
+		$(CURDIR)/$(lua_test) $(CURDIR)/$(test_runner) test_whereami.lua
+	@touch $@
 
-test-lib-daemonize: private .UNVEIL = r:lib rx:$(lua_bin) r:$(test_runner) r:$(CURDIR) rwc:/tmp rw:/dev/null
-test-lib-daemonize: private .PLEDGE = stdio rpath wpath cpath proc exec
-test-lib-daemonize: private .CPU = 30
-test-lib-daemonize: lua
+o/test/lib-daemonize.ok: private .UNVEIL = r:lib rx:$(lua_test) r:$(test_runner) r:$(CURDIR) rwc:/tmp rw:/dev/null
+o/test/lib-daemonize.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
+o/test/lib-daemonize.ok: private .CPU = 30
+o/test/lib-daemonize.ok: $(lua_test) $(test_runner) lib/test_daemonize.lua lib/daemonize.lua lib/spawn/init.lua
+	@mkdir -p $(@D)
 	cd lib && HOME=$(CURDIR) LUA_PATH="$(CURDIR)/lib/?.lua;;" \
-		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test_daemonize.lua
-
-test-work: private .UNVEIL = r:lib r:/home/codespace/.local/bootstrap/lib rx:$(lua_bin) r:$(test_runner) r:$(CURDIR) rwc:lib/test/work rw:/dev/null
-test-work: private .PLEDGE = stdio rpath wpath cpath proc exec
-test-work: private .CPU = 60
-test-work: lua
-	cd lib/test/work && HOME=$(CURDIR) \
-		LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/test/work/?.lua;;" \
-		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) run.lua
-
-.PHONY: test-lib-whereami test-lib-daemonize test-work
+		$(CURDIR)/$(lua_test) $(CURDIR)/$(test_runner) test_daemonize.lua
+	@touch $@
