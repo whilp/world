@@ -43,16 +43,8 @@ help:
 	@echo "  latest             Fetch latest versions (claude, cosmos, nvim)"
 	@echo "  clean              Remove build artifacts and test stamps"
 	@echo ""
-	@echo "Individual tests (incremental via stamp files):"
-	@echo "  test-3p-lua              3p lua modules"
-	@echo "  test-lib-whereami        whereami module"
-	@echo "  test-lib-daemonize       daemonize module"
-	@echo "  test-home                home module"
-	@echo "  test-claude              claude module"
-	@echo "  test-claude-skills       claude skills"
-	@echo "  test-nvim                nvim module"
-	@echo "  test-environ             environ module"
-	@echo "  test-build-download-tool build tools"
+	@echo "Run individual tests via stamp files:"
+	@echo "  make o/lib/claude/test.lua.ok"
 
 build: lua ## Build lua binary [default]
 
