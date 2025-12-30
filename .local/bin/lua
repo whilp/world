@@ -1,0 +1,38 @@
+#!/bin/sh
+# Wrapper script to download and exec cosmopolitan lua
+
+set -e
+
+# Find home directory
+if [ -z "$HOME" ]; then
+  echo "Error: HOME environment variable not set" >&2
+  exit 1
+fi
+
+# Path to the lua binary
+LUA_BIN="$HOME/.local/bootstrap/lua"
+
+# Download lua if not present
+if [ ! -f "$LUA_BIN" ]; then
+  echo "Downloading cosmopolitan lua..." >&2
+  mkdir -p "$HOME/.local/bootstrap"
+
+  # Download to temporary file first
+  TMP_LUA="$LUA_BIN.tmp"
+  if command -v curl >/dev/null 2>&1; then
+    curl -L -o "$TMP_LUA" https://github.com/whilp/cosmopolitan/releases/latest/download/lua
+  elif command -v wget >/dev/null 2>&1; then
+    wget -O "$TMP_LUA" https://github.com/whilp/cosmopolitan/releases/latest/download/lua
+  else
+    echo "Error: neither curl nor wget found" >&2
+    exit 1
+  fi
+
+  # Make it executable and move to final location
+  chmod +x "$TMP_LUA"
+  mv "$TMP_LUA" "$LUA_BIN"
+  echo "Downloaded lua to $LUA_BIN" >&2
+fi
+
+# Exec lua with all arguments
+exec "$LUA_BIN" "$@"
