@@ -2,7 +2,7 @@
 
 extreme dotfiles, all reproducible everything, a model home.
 
-![model home](https://brianlauritzen.files.wordpress.com/2013/05/bluths-model-home-falling.gif)
+![model home](https://brianlauritzen.files.wordpress.com/2013/05/house_fall.gif)
 
 a monorepo containing dotfiles, tools, and things for reproducible computering since 2005.
 
