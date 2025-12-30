@@ -32,24 +32,25 @@ lua is available from [whilp/cosmopolitan](https://github.com/whilp/cosmopolitan
 
 ```console
 $ curl -fsSLO https://github.com/whilp/cosmopolitan/releases/latest/download/lua && chmod +x lua
-$ ./lua -e 'help = require("cosmo.help"); help()'
+$ ./lua -e 'help()'
 Cosmo Lua Help System
 
 Modules:
-  cosmo         - Encoding, hashing, compression, networking
-  cosmo.unix    - POSIX system calls
-  cosmo.path    - Path manipulation
-  cosmo.re      - Regular expressions
-  cosmo.sqlite3 - SQLite database
-  cosmo.argon2  - Password hashing
+  cosmo            - Encoding, hashing, compression, networking
+  cosmo.unix       - POSIX system calls
+  cosmo.path       - Path manipulation
+  cosmo.re         - Regular expressions
+  cosmo.lsqlite3   - SQLite database
+  cosmo.argon2     - Password hashing
 
 Usage:
-  help("cosmo")              - List module contents
-  help("cosmo.Fetch")        - Show function documentation
-  help(cosmo.Fetch)          - Same, using function reference
-  help.search("base64")      - Search for matching functions
+  help()                      - This overview
+  help("cosmo")               - List top-level functions
+  help("cosmo.unix")          - List module contents
+  help("cosmo.Fetch")         - Show function documentation
+  help.search("base64")       - Search for matching functions
 
-$ ./lua -e 'help = require("cosmo.help"); help("cosmo.Fetch")'
+$ ./lua -e 'help("cosmo.Fetch")'
 Fetch(url, body)
 
 Sends an HTTP/HTTPS request to the specified URL. If only the URL is provided,
