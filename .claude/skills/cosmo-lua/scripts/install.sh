@@ -1,4 +1,18 @@
 #!/bin/sh
+# Install lua wrapper to $HOME/.local/bin
+
+set -e
+
+# Determine installation directory
+INSTALL_DIR="${HOME:-$HOME}/.local/bin"
+INSTALL_PATH="$INSTALL_DIR/lua"
+
+# Create installation directory if needed
+mkdir -p "$INSTALL_DIR"
+
+# Create the lua wrapper script
+cat > "$INSTALL_PATH" << 'EOF'
+#!/bin/sh
 # Wrapper script to download and exec cosmopolitan lua
 
 set -e
@@ -36,3 +50,9 @@ fi
 
 # Exec lua with all arguments
 exec "$LUA_BIN" "$@"
+EOF
+
+# Make it executable
+chmod +x "$INSTALL_PATH"
+
+echo "Installed lua wrapper to $INSTALL_PATH"

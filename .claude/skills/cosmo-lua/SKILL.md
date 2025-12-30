@@ -10,6 +10,16 @@ Portable Lua 5.4 with batteries included. Single binary runs on Linux, macOS, Wi
 
 ## Installation
 
+### Option 1: Install wrapper to PATH (recommended)
+
+```bash
+bash .claude/skills/cosmo-lua/scripts/install.sh
+```
+
+This installs a wrapper script to `$HOME/.local/bin/lua` that automatically downloads cosmo-lua on first use.
+
+### Option 2: Download directly
+
 ```bash
 curl -L -o lua https://github.com/whilp/cosmopolitan/releases/latest/download/lua
 chmod +x lua
