@@ -319,6 +319,16 @@ local function fetch_binary(version_data, binary, dest_path)
   return true
 end
 
+local function write_file(file_path, content)
+  local fd = unix.open(file_path, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("644", 8))
+  if not fd or fd < 0 then
+    return nil, "failed to open " .. file_path
+  end
+  unix.write(fd, content)
+  unix.close(fd)
+  return true
+end
+
 local function fetch_tool(version_data, tool_name, platform, output_dir)
   local config, err = build_config(version_data, tool_name, platform)
   if not config then
@@ -346,6 +356,14 @@ local function fetch_tool(version_data, tool_name, platform, output_dir)
   if not ok then
     return nil, err
   end
+
+  -- write manifest
+  local manifest = string.format(
+    'return {\n  version = %q,\n  sha = %q,\n}\n',
+    version_data.version or "",
+    config.sha
+  )
+  write_file(path.join(output_dir, ".extracted"), manifest)
 
   return true
 end

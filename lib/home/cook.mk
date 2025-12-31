@@ -13,40 +13,14 @@ $(o)/dotfiles.zip: $(cosmos_zip_bin)
 	git ls-files -z | grep -zZvE '$(home_exclude_pattern)' | \
 		xargs -0 $(cosmos_zip_bin) -q -r $@
 
+install_tools := lib/build/install-tools.lua
+
 define build_platform_asset
 	@echo "Building platform asset $(1) for $(2)..."
 	@rm -rf $(o)/platform-$(2)
 	@mkdir -p $(o)/platform-$(2)/home/.local/share
-	@echo "Extracting and organizing binaries..."
-	@mkdir -p $(o)/platform-$(2)/temp-binaries
-	@unzip -q $(o)/binaries-$(2).zip -d $(o)/platform-$(2)/temp-binaries
-	@cd $(o)/platform-$(2)/temp-binaries && \
-		for tool in $(TOOLS); do \
-			if [ -d "$$tool/$(2)" ]; then \
-				version=$$(cat "$$tool/$(2)/VERSION" 2>/dev/null || echo "0.0.0"); \
-				version=$${version:-0.0.0}; \
-				sha=$$(cat "$$tool/$(2)/SHA" 2>/dev/null || echo ""); \
-				sha=$$(echo "$$sha" | head -c 8); \
-				sha=$${sha:-00000000}; \
-				install_dir="$(o)/platform-$(2)/home/.local/share/$$tool/$${version}-$${sha}"; \
-				echo "  Installing $$tool $${version}-$${sha}..."; \
-				mkdir -p "$$install_dir"; \
-				if [ "$$tool" = "nvim" ] || [ "$$tool" = "gh" ]; then \
-					cp -r $$tool/$(2)/bin $$tool/$(2)/lib $$tool/$(2)/share "$$install_dir/" 2>/dev/null || true; \
-					cp -r $$tool/$(2)/libexec "$$install_dir/" 2>/dev/null || true; \
-				else \
-					mkdir -p "$$install_dir/bin"; \
-					if [ -d "$$tool/$(2)/bin" ]; then \
-						exe=$$(find "$$tool/$(2)/bin" -maxdepth 1 -type f -name "$$tool" 2>/dev/null | head -1); \
-						if [ -n "$$exe" ]; then cp -p "$$exe" "$$install_dir/bin/$$tool"; fi; \
-					else \
-						exe=$$(find "$$tool/$(2)" -maxdepth 1 -type f -name "$$tool" 2>/dev/null | head -1); \
-						if [ -n "$$exe" ]; then cp -p "$$exe" "$$install_dir/bin/$$tool"; fi; \
-					fi; \
-				fi; \
-			fi; \
-		done
-	@rm -rf $(o)/platform-$(2)/temp-binaries
+	@echo "Installing tools..."
+	@$(lua_bin) $(install_tools) $(o)/binaries-$(2).zip $(2) $(o)/platform-$(2)
 	@echo "Generating manifest..."
 	@$(lua_bin) lib/home/gen-manifest.lua $(o)/platform-$(2)/home $(HOME_VERSION) > $(o)/platform-$(2)/manifest.lua
 	@echo "Creating platform asset..."

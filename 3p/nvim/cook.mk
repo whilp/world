@@ -2,9 +2,7 @@ $(o)/%/3p/nvim/.extracted: private .PLEDGE = stdio rpath wpath cpath inet dns ex
 $(o)/%/3p/nvim/.extracted: private .INTERNET = 1
 $(o)/%/3p/nvim/.extracted: private .CPU = 120
 $(o)/%/3p/nvim/.extracted: 3p/nvim/version.lua $(fetch)
-	@mkdir -p $(dir $@)
 	$(lua_bin) $(fetch) $< nvim $* $(dir $@)
-	touch $@
 
 nvim-latest:
 nvim-latest: private .PLEDGE = stdio rpath wpath cpath inet dns
