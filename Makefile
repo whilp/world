@@ -20,7 +20,6 @@ endif
 
 ast_grep_dir := $(o)/$(PLATFORM)/3p/ast-grep
 ast_grep_bin := $(ast_grep_dir)/bin/sg
-ast_grep_extracted := $(ast_grep_dir)/.extracted
 
 bin := ./bin
 cosmo := whilp/cosmopolitan
@@ -84,7 +83,7 @@ check: ## Run linters (ast-grep, luacheck)
 check: private .UNVEIL = r:$(CURDIR) rx:$(ast_grep_dir) rx:o/bin rw:/dev/null
 check: private .PLEDGE = stdio rpath proc exec
 check: private .CPU = 120
-check: $(ast_grep_extracted) lua
+check: $(ast_grep_bin) lua
 	@echo "Validating Makefiles..."
 	@bash -o pipefail -c '$(MAKE) -n --warn-undefined-variables build test clean 2>&1 | (! grep warning:)'
 	$(ast_grep_bin) scan --color always
