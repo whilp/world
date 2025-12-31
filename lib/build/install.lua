@@ -1,41 +1,11 @@
 #!/usr/bin/env lua
-local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
+local spawn = require("spawn").spawn
 
-local function copy_file(src, dest)
-  local content = cosmo.Slurp(src)
-  if not content then
-    return nil, "failed to read " .. src
-  end
-  unix.makedirs(path.dirname(dest))
-  local fd = unix.open(dest, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("755", 8))
-  if not fd or fd < 0 then
-    return nil, "failed to open " .. dest
-  end
-  unix.write(fd, content)
-  unix.close(fd)
-  return true
-end
-
-local function list_dir(dir)
-  local files = {}
-  local d = unix.opendir(dir)
-  if not d then return files end
-  while true do
-    local name = d:read()
-    if not name then break end
-    if name ~= "." and name ~= ".." then
-      table.insert(files, name)
-    end
-  end
-  d:close()
-  return files
-end
-
-local function main(version_file, platform, src, base_dir)
-  if not version_file or not platform or not src or not base_dir then
-    return nil, "usage: install.lua <version_file> <platform> <src> <base_dir>"
+local function main(version_file, platform, base_dir, install_type, source)
+  if not version_file or not platform or not base_dir or not install_type or not source then
+    return nil, "usage: install.lua <version_file> <platform> <base_dir> <bin|lib> <source>"
   end
 
   local ok, spec = pcall(dofile, version_file)
@@ -49,31 +19,27 @@ local function main(version_file, platform, src, base_dir)
   end
 
   local version_dir = spec.version .. "-" .. plat.sha:sub(1, 8)
-  local bin_dir = path.join(base_dir, version_dir, "bin")
+  local target_dir = path.join(base_dir, version_dir, install_type)
 
-  local stat = unix.stat(src)
-  local is_dir = stat and unix.S_ISDIR(stat:mode())
+  unix.makedirs(target_dir)
 
-  local binaries
-  if is_dir then
-    binaries = list_dir(src)
-  else
-    binaries = {path.basename(base_dir)}
+  -- copy source to target_dir
+  local stat = unix.stat(source)
+  if not stat then
+    return nil, "source not found: " .. source
   end
 
-  for _, tool in ipairs(binaries) do
-    local src_path = is_dir and path.join(src, tool) or src
-    local dest = path.join(bin_dir, tool)
-    local err
-    ok, err = copy_file(src_path, dest)
-    if not ok then
-      return nil, err
-    end
+  local is_dir = unix.S_ISDIR(stat:mode())
+  local cp_args = is_dir and { "cp", "-r", source, target_dir } or { "cp", source, target_dir }
+  local exit_code = spawn(cp_args):wait()
+  if exit_code ~= 0 then
+    return nil, "cp failed with exit code " .. exit_code
   end
 
-  local link_path = path.join(base_dir, "bin")
+  -- create symlink
+  local link_path = path.join(base_dir, install_type)
   unix.unlink(link_path)
-  unix.symlink(path.join(version_dir, "bin"), link_path)
+  unix.symlink(path.join(version_dir, install_type), link_path)
 
   return true
 end

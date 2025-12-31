@@ -6,7 +6,7 @@ o/%/biome/download: $(biome_version) $(fetch)
 	$(fetch) $(biome_version) $* $@
 
 o/%/biome/bin/biome: $(biome_version) $(install) o/%/biome/download
-	$(install) $(biome_version) $* o/$*/biome/download o/$*/biome
+	$(install) $(biome_version) $* o/$*/biome bin o/$*/biome/download
 
 o/%/biome/test.ok: 3p/biome/test.lua o/%/biome/bin/biome
 	$< o/$*/biome && touch $@

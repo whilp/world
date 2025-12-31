@@ -6,7 +6,7 @@ o/%/shfmt/download: $(shfmt_version) $(fetch)
 	$(fetch) $(shfmt_version) $* $@
 
 o/%/shfmt/bin/shfmt: $(shfmt_version) $(install) o/%/shfmt/download
-	$(install) $(shfmt_version) $* o/$*/shfmt/download o/$*/shfmt
+	$(install) $(shfmt_version) $* o/$*/shfmt bin o/$*/shfmt/download
 
 o/%/shfmt/test.ok: 3p/shfmt/test.lua o/%/shfmt/bin/shfmt
 	$< o/$*/shfmt && touch $@

@@ -1,3 +1,4 @@
+include 3p/argparse/cook.mk
 include 3p/ast-grep/cook.mk
 include 3p/biome/cook.mk
 include 3p/comrak/cook.mk
@@ -5,6 +6,8 @@ include 3p/cosmos/cook.mk
 include 3p/delta/cook.mk
 include 3p/duckdb/cook.mk
 include 3p/gh/cook.mk
+include 3p/lfs/cook.mk
+include 3p/luacheck/cook.mk
 include 3p/luaunit/cook.mk
 include 3p/marksman/cook.mk
 include 3p/nvim/cook.mk
@@ -17,8 +20,16 @@ include 3p/superhtml/cook.mk
 include 3p/tree-sitter/cook.mk
 include 3p/uv/cook.mk
 
+space := $(subst ,, )
+
 define platform_target
 3p-$(1): $(subst %,$(1),$(targets))
 test-$(1): $(subst %,$(1),$(tests))
 endef
 $(foreach p,$(platforms),$(eval $(call platform_target,$(p))))
+
+# LUA_PATH addition with % for platform substitution in recipes
+LUA_PATH_3P := $(subst $(space),;,$(foreach lib,$(lua_libs),o/%/$(lib)/lib/?.lua;o/%/$(lib)/lib/?/init.lua))
+
+# Add 3p libs to global LUA_PATH
+export LUA_PATH := $(LUA_PATH);$(subst %,$(current_platform),$(LUA_PATH_3P))

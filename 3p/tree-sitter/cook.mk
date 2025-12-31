@@ -9,7 +9,7 @@ o/%/tree-sitter/staging/tree-sitter: $(tree_sitter_version) $(extract) o/%/tree-
 	$(extract) $(tree_sitter_version) $* o/$*/tree-sitter/archive.gz o/$*/tree-sitter/staging
 
 o/%/tree-sitter/bin/tree-sitter: $(tree_sitter_version) $(install) o/%/tree-sitter/staging/tree-sitter
-	$(install) $(tree_sitter_version) $* o/$*/tree-sitter/staging/tree-sitter o/$*/tree-sitter
+	$(install) $(tree_sitter_version) $* o/$*/tree-sitter bin o/$*/tree-sitter/staging/tree-sitter
 
 o/%/tree-sitter/test.ok: 3p/tree-sitter/test.lua o/%/tree-sitter/bin/tree-sitter
 	$< o/$*/tree-sitter && touch $@

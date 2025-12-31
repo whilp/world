@@ -9,7 +9,7 @@ o/%/gh/staging/bin/gh: $(gh_version) $(extract) o/%/gh/archive
 	$(extract) $(gh_version) $* o/$*/gh/archive o/$*/gh/staging
 
 o/%/gh/bin/gh: $(gh_version) $(install) o/%/gh/staging/bin/gh
-	$(install) $(gh_version) $* o/$*/gh/staging/bin/gh o/$*/gh
+	$(install) $(gh_version) $* o/$*/gh bin o/$*/gh/staging/bin/gh
 
 o/%/gh/test.ok: 3p/gh/test.lua o/%/gh/bin/gh
 	$< o/$*/gh && touch $@

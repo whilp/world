@@ -9,7 +9,7 @@ o/%/nvim/staging/bin/nvim: $(nvim_version) $(extract) o/%/nvim/archive.tar.gz
 	$(extract) $(nvim_version) $* o/$*/nvim/archive.tar.gz o/$*/nvim/staging
 
 o/%/nvim/bin/nvim: $(nvim_version) $(install) o/%/nvim/staging/bin/nvim
-	$(install) $(nvim_version) $* o/$*/nvim/staging/bin/nvim o/$*/nvim
+	$(install) $(nvim_version) $* o/$*/nvim bin o/$*/nvim/staging/bin/nvim
 
 o/%/nvim/test.ok: 3p/nvim/test.lua o/%/nvim/bin/nvim
 	TEST_BIN_DIR=o/$*/nvim $(runner) $< $@

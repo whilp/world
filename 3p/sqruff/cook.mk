@@ -9,7 +9,7 @@ o/%/sqruff/staging/sqruff: $(sqruff_version) $(extract) o/%/sqruff/archive.tar.g
 	$(extract) $(sqruff_version) $* o/$*/sqruff/archive.tar.gz o/$*/sqruff/staging
 
 o/%/sqruff/bin/sqruff: $(sqruff_version) $(install) o/%/sqruff/staging/sqruff
-	$(install) $(sqruff_version) $* o/$*/sqruff/staging/sqruff o/$*/sqruff
+	$(install) $(sqruff_version) $* o/$*/sqruff bin o/$*/sqruff/staging/sqruff
 
 o/%/sqruff/test.ok: 3p/sqruff/test.lua o/%/sqruff/bin/sqruff
 	$< o/$*/sqruff && touch $@
