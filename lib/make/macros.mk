@@ -14,5 +14,5 @@ $(o)/binaries-$(1).zip: private .PLEDGE = stdio rpath wpath cpath fattr exec pro
 $(o)/binaries-$(1).zip: $$(all_binaries) $$(cosmos_zip_bin)
 	cd $(o)/$(1)/3p && \
 		find . -type f ! -name '.extracted' ! -name '.bundled' | \
-		$$(cosmos_zip_bin) -q $$(CURDIR)/$$@ -@
+		$$(cosmos_zip_bin) -q $$@ -@
 endef
