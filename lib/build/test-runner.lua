@@ -1,8 +1,5 @@
 #!/usr/bin/env lua
--- save args before clearing
 local test_file, output = ...
-
--- clear arg so luaunit doesn't try to parse command line
 arg = {}
 
 local lu = require("luaunit")
@@ -10,11 +7,10 @@ local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 
 if not test_file or not output then
-  io.stderr:write("usage: TEST_BIN_DIR=<dir> test-runner.lua <test_file> <output>\n")
+  io.stderr:write("usage: test-runner.lua <test_file> <output>\n")
   os.exit(1)
 end
 
--- collect TEST_* env vars, strip prefix
 local env = {}
 for _, entry in ipairs(unix.environ()) do
   local k, v = entry:match("^([^=]+)=(.*)$")
@@ -26,23 +22,15 @@ for _, entry in ipairs(unix.environ()) do
   end
 end
 
-if not env.BIN_DIR then
-  io.stderr:write("error: TEST_BIN_DIR not set\n")
-  os.exit(1)
-end
-
--- load test suite, passing env table
 local suite = dofile(test_file)
 if type(suite) == "function" then
   suite = suite(env)
 end
 
--- run tests
 local runner = lu.LuaUnit.new()
-runner:setOutputType("nil")  -- quiet
+runner:setOutputType("nil")
 local code = runner:runSuite()
 
--- write results
 local result = {
   tests = runner.result.runCount,
   passed = runner.result.runCount - runner.result.notSuccessCount - runner.result.skippedCount,
