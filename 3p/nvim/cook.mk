@@ -12,7 +12,7 @@ nvim_pack_lock := .config/nvim/nvim-pack-lock.json
 nvim_plugins_dir := $(o)/any/3p/nvim/plugins
 
 ifneq ($(wildcard $(lua_bin)),)
-nvim_plugins := $(shell $(lib_lua) lib/build/list-plugins.lua)
+nvim_plugins := $(shell $(lua_bin) lib/build/list-plugins.lua)
 else
 nvim_plugins :=
 endif
@@ -22,7 +22,7 @@ $(nvim_plugins_dir)/%/.fetched: private .PLEDGE = stdio rpath wpath cpath inet d
 $(nvim_plugins_dir)/%/.fetched: private .INTERNET = 1
 $(nvim_plugins_dir)/%/.fetched: private .CPU = 60
 $(nvim_plugins_dir)/%/.fetched: $(nvim_pack_lock) $(fetch_plugin)
-	$(lib_lua) $(fetch_plugin) $* $(dir $@)
+	$(lua_bin) $(fetch_plugin) $* $(dir $@)
 	touch $@
 
 nvim_plugin_targets := $(foreach p,$(nvim_plugins),$(nvim_plugins_dir)/$(p)/.fetched)
@@ -32,7 +32,7 @@ $(o)/%/3p/nvim/.bundled: private .PLEDGE = stdio rpath wpath cpath inet dns exec
 $(o)/%/3p/nvim/.bundled: private .INTERNET = 1
 $(o)/%/3p/nvim/.bundled: private .CPU = 180
 $(o)/%/3p/nvim/.bundled: $(o)/%/3p/nvim/.extracted $(nvim_bundle) $(nvim_plugin_targets)
-	$(lib_lua) $(nvim_bundle) $* $(dir $@) $(nvim_plugins_dir)
+	$(lua_bin) $(nvim_bundle) $* $(dir $@) $(nvim_plugins_dir)
 	touch $@
 
 nvim_bundled := $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/nvim/.bundled)

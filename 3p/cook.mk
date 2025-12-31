@@ -20,7 +20,6 @@ make := $(make_bin)
 
 # fetch needs our custom lua binary with cosmo built-in
 lua_bin := o/bin/lua
-lib_lua = LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;" $(CURDIR)/$(lua_bin)
 fetch := lib/build/fetch.lua
 
 # Tools self-register via TOOLS +=
@@ -50,7 +49,7 @@ $(o)/%/3p/$(1)/.extracted: private .INTERNET = 1
 $(o)/%/3p/$(1)/.extracted: private .CPU = 120
 $(o)/%/3p/$(1)/.extracted: 3p/$(1)/version.lua $(fetch)
 	@mkdir -p $$(dir $$@)
-	$(lib_lua) $(fetch) 3p/$(1)/version.lua $(1) $$* $$(dir $$@)
+	$(lua_bin) $(fetch) 3p/$(1)/version.lua $(1) $$* $$(dir $$@)
 	touch $$@
 endef
 

@@ -2,7 +2,6 @@ include lib/spawn/cook.mk
 
 version_file = lib/version.lua
 home_exclude_pattern = ^(3p/|o/|Makefile|lib/home/|\.git)
-home_lua = LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;$(CURDIR)/lib/home/?.lua;;" $(CURDIR)/$(lua_bin)
 home_setup_dir = lib/home/setup
 home_mac_dir = lib/home/mac
 home_setup_sources = $(wildcard $(home_setup_dir)/*.lua)
@@ -49,7 +48,7 @@ define build_platform_asset
 		done
 	@rm -rf $(o)/platform-$(2)/temp-binaries
 	@echo "Generating manifest..."
-	@$(home_lua) lib/home/gen-manifest.lua $(o)/platform-$(2)/home $(HOME_VERSION) > $(o)/platform-$(2)/manifest.lua
+	@$(lua_bin) lib/home/gen-manifest.lua $(o)/platform-$(2)/home $(HOME_VERSION) > $(o)/platform-$(2)/manifest.lua
 	@echo "Creating platform asset..."
 	@cp $(lua_bin) $(1)
 	@cd $(o)/platform-$(2) && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$(1) -@
@@ -91,9 +90,9 @@ $(o)/bin/home: $(lua_bin) $(cosmos_unzip_bin) $(o)/dotfiles.zip $(home_platform_
 	@cp -p $(lua_bin) $(o)/home-universal/home/.local/bin/lua
 	@cp -p $(cosmos_unzip_bin) $(o)/home-universal/home/.local/bin/unzip
 	@echo "Generating manifest..."
-	@$(home_lua) lib/home/gen-manifest.lua $(o)/home-universal/home $(HOME_VERSION) > $(o)/home-universal/manifest.lua
+	@$(lua_bin) lib/home/gen-manifest.lua $(o)/home-universal/home $(HOME_VERSION) > $(o)/home-universal/manifest.lua
 	@echo "Generating platforms metadata..."
-	@$(home_lua) lib/home/gen-platforms.lua $(o)/home-universal "$(HOME_BASE_URL)" "$(HOME_TAG)" $(home_platform_deps)
+	@$(lua_bin) lib/home/gen-platforms.lua $(o)/home-universal "$(HOME_BASE_URL)" "$(HOME_TAG)" $(home_platform_deps)
 	@echo "Creating home binary..."
 	@cp $(lua_bin) $@
 	@cd $(o)/home-universal && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$@ -@
