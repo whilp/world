@@ -22,10 +22,8 @@ for _, entry in ipairs(unix.environ()) do
   end
 end
 
-local suite = dofile(test_file)
-if type(suite) == "function" then
-  suite = suite(env)
-end
+ENV = env
+dofile(test_file)
 
 local runner = lu.LuaUnit.new()
 runner:setOutputType("nil")
