@@ -1,6 +1,7 @@
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
+local spawn = require("spawn").spawn
 
 local function interpolate(template, vars)
   return template:gsub("{([%w_]+)}", function(key)
@@ -41,9 +42,9 @@ local function write_file(dest, content, mode)
   return true
 end
 
-local function main(version_file, platform, base_dir)
-  if not version_file or not platform or not base_dir then
-    return nil, "usage: fetch2.lua <version_file> <platform> <base_dir>"
+local function main(version_file, platform, output)
+  if not version_file or not platform or not output then
+    return nil, "usage: fetch2.lua <version_file> <platform> <output>"
   end
 
   local ok, spec = pcall(dofile, version_file)
@@ -69,23 +70,48 @@ local function main(version_file, platform, base_dir)
     return nil, err
   end
 
+  local format = plat.format or spec.format or "binary"
+  local base_dir = output
   local tool = path.basename(base_dir)
   local sha8 = plat.sha:sub(1, 8)
   local version_dir = spec.version .. "-" .. sha8
-  local bin_path = path.join(base_dir, version_dir, "bin", tool)
+  local dest_dir = path.join(base_dir, version_dir)
 
-  ok, err = write_file(bin_path, body, tonumber("755", 8))
-  if not ok then
-    return nil, err
+  if format == "binary" then
+    local bin_path = path.join(dest_dir, "bin", tool)
+    ok, err = write_file(bin_path, body, tonumber("755", 8))
+    if not ok then
+      return nil, err
+    end
+  elseif format == "zip" then
+    local archive_path = path.join(base_dir, "archive.zip")
+    ok, err = write_file(archive_path, body, tonumber("644", 8))
+    if not ok then
+      return nil, err
+    end
+
+    local bin_dir = path.join(dest_dir, "bin")
+    unix.makedirs(bin_dir)
+
+    local handle = spawn({"unzip", "-o", "-d", bin_dir, archive_path})
+    local exit_code = handle:wait()
+    if exit_code ~= 0 then
+      return nil, "unzip failed with exit code " .. exit_code
+    end
+
+    unix.unlink(archive_path)
+  else
+    return nil, "unknown format: " .. format
   end
 
   local link_path = path.join(base_dir, "bin")
   unix.unlink(link_path)
   unix.symlink(path.join(version_dir, "bin"), link_path)
+
   return true
 end
 
-if not debug.getlocal(4, 1) then
+if not pcall(debug.getlocal, 4, 1) then
   local ok, err = main(...)
   if not ok then
     io.stderr:write("error: " .. err .. "\n")
