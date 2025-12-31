@@ -20,5 +20,3 @@ define platform_target
 test-$(1): $(subst %,$(1),$(tests))
 endef
 $(foreach p,$(platforms),$(eval $(call platform_target,$(p))))
-
-test-any: $(tests_any)

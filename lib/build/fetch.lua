@@ -52,7 +52,7 @@ local function main(version_file, platform, output, binary)
     return nil, "failed to load " .. version_file .. ": " .. tostring(spec)
   end
 
-  local plat = spec.platforms[platform]
+  local plat = spec.platforms[platform] or spec.platforms["*"]
   if not plat then
     return nil, "unknown platform: " .. platform
   end
