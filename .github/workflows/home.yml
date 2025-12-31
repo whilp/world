@@ -136,11 +136,15 @@ jobs:
         run: |
           echo "tag=home-$(date -u +%Y-%m-%d)-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
-      - name: Create checksums
+      - name: Prepare release assets
         run: |
-          cd o
-          sha256sum any/bin/home any/bin/lua */bin/home > SHA256SUMS
-          cat SHA256SUMS
+          mkdir -p o/release
+          cp o/any/bin/home o/release/home
+          cp o/any/bin/lua o/release/lua
+          cp o/darwin-arm64/bin/home o/release/home-darwin-arm64
+          cp o/linux-arm64/bin/home o/release/home-linux-arm64
+          cp o/linux-x86_64/bin/home o/release/home-linux-x86_64
+          cd o/release && sha256sum * > SHA256SUMS && cat SHA256SUMS
 
       - name: Create release
         env:
@@ -155,9 +159,4 @@ jobs:
           \`\`\`bash
           curl -fsSL https://github.com/${{ github.repository }}/releases/latest/download/home | sh
           \`\`\`" \
-            o/any/bin/home \
-            o/any/bin/lua \
-            o/darwin-arm64/bin/home \
-            o/linux-arm64/bin/home \
-            o/linux-x86_64/bin/home \
-            o/SHA256SUMS
+            o/release/*
