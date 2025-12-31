@@ -1,5 +1,6 @@
 argparse_version := 3p/argparse/version.lua
 lua_libs += argparse
+lib_dirs += o/%/argparse/lib
 libs += o/%/argparse/lib/argparse.lua
 
 o/%/argparse/archive.tar.gz: $(argparse_version) $(fetch)

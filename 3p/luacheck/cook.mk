@@ -1,5 +1,6 @@
 luacheck_version := 3p/luacheck/version.lua
 lua_libs += luacheck
+lib_dirs += o/%/luacheck/lib
 libs += o/%/luacheck/lib/luacheck/main.lua
 bins += o/%/luacheck/bin/luacheck
 tests += o/%/luacheck/test.ok

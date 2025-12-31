@@ -72,4 +72,3 @@ function TestSpawn:test_read_captures_output()
 	lu.assertEquals(out, "line1\nline2\n")
 end
 
-os.exit(lu.LuaUnit.run())

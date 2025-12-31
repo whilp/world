@@ -26,6 +26,10 @@ local result = {
   skipped = runner.result.skippedCount,
 }
 
+local unix = require("cosmo.unix")
+local path = require("cosmo.path")
+unix.makedirs(path.dirname(output))
+
 local f = io.open(output, "w")
 f:write("return " .. cosmo.EncodeLua(result) .. "\n")
 f:close()

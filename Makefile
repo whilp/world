@@ -22,6 +22,7 @@ $(fetch) $(extract) $(install): | $(lua_bin)
 cosmo := whilp/cosmopolitan
 release ?= latest
 
+include lib/cook.mk
 include 3p/cook.mk
 
 bootstrap: $(lua_bin)

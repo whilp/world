@@ -1,4 +1,5 @@
 include 3p/argparse/cook.mk
+include 3p/lua/cook.mk
 include 3p/ast-grep/cook.mk
 include 3p/biome/cook.mk
 include 3p/comrak/cook.mk
