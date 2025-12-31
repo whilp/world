@@ -1,26 +1,3 @@
 #!/usr/bin/env lua
-
-local cosmo = require("cosmo")
-local unix = cosmo.unix
-
-local script_dir = cosmo.path.dirname(cosmo.path.dirname(cosmo.path.dirname(debug.getinfo(1, "S").source:sub(2))))
-package.path = script_dir .. "/src/?.lua;" .. package.path
-
 local nvim = require("nvim.main")
-
-if not pcall(debug.getlocal, 4, 1) then
-  local args = {[0] = arg[0]}
-  for i = 1, #arg do
-    args[i] = arg[i]
-  end
-
-  local ok, result = pcall(nvim.main, args)
-  if not ok then
-    io.stderr:write("error: " .. tostring(result) .. "\n")
-    os.exit(1)
-  end
-
-  os.exit(result or 0)
-end
-
-return nvim
+os.exit(nvim.main(arg) or 0)
