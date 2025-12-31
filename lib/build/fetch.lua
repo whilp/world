@@ -52,22 +52,15 @@ local function main(version_file, platform, output, binary)
     return nil, "failed to load " .. version_file .. ": " .. tostring(spec)
   end
 
-  local sha, arch
-  if spec.binaries and binary then
-    sha = spec.binaries[binary]
-    if not sha then
-      return nil, "unknown binary: " .. binary
-    end
-  else
-    local plat = spec.platforms[platform]
-    if not plat then
-      return nil, "unknown platform: " .. platform
-    end
-    sha = plat.sha
-    arch = plat.arch
+  local plat = spec.platforms[platform]
+  if not plat then
+    return nil, "unknown platform: " .. platform
   end
 
-  local vars = {version = spec.version, arch = arch, binary = binary}
+  local vars = {version = spec.version, binary = binary}
+  for k, v in pairs(plat) do
+    vars[k] = v
+  end
   local url = interpolate(spec.url, vars)
 
   local body, err = download(url)
@@ -75,7 +68,7 @@ local function main(version_file, platform, output, binary)
     return nil, err
   end
 
-  ok, err = verify_sha256(body, sha)
+  ok, err = verify_sha256(body, plat.sha)
   if not ok then
     return nil, err
   end
