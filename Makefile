@@ -34,7 +34,17 @@ $(lua_bin):
 cosmos: o/$(current_platform)/cosmos/bin/lua
 lua: cosmos
 
+# TODO: rewrite these targets
+home:
+	@echo "TODO: home target not yet rewritten"
+
+check:
+	@echo "TODO: check target not yet rewritten"
+
+test:
+	@echo "TODO: test target not yet rewritten"
+
 clean:
 	rm -rf o
 
-.PHONY: bootstrap clean cosmos lua
+.PHONY: bootstrap clean cosmos lua home check test
