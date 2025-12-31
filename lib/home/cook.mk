@@ -28,7 +28,7 @@ define build_platform_asset
 				sha=$$(cat "$$tool/$(2)/SHA" 2>/dev/null || echo ""); \
 				sha=$$(echo "$$sha" | head -c 8); \
 				sha=$${sha:-00000000}; \
-				install_dir="$(CURDIR)/$(o)/platform-$(2)/home/.local/share/$$tool/$${version}-$${sha}"; \
+				install_dir="$(o)/platform-$(2)/home/.local/share/$$tool/$${version}-$${sha}"; \
 				echo "  Installing $$tool $${version}-$${sha}..."; \
 				mkdir -p "$$install_dir"; \
 				if [ "$$tool" = "nvim" ] || [ "$$tool" = "gh" ]; then \
@@ -51,10 +51,10 @@ define build_platform_asset
 	@$(lua_bin) lib/home/gen-manifest.lua $(o)/platform-$(2)/home $(HOME_VERSION) > $(o)/platform-$(2)/manifest.lua
 	@echo "Creating platform asset..."
 	@cp $(lua_bin) $(1)
-	@cd $(o)/platform-$(2) && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$(1) -@
+	@cd $(o)/platform-$(2) && find . -type f -o -type l | $(cosmos_zip_bin) -q $(1) -@
 	@$(cosmos_zip_bin) -qj $(1) lib/home/main.lua
 	@mkdir -p $(o)/platform-$(2)/.lua && cp -r $(spawn_dir) $(o)/platform-$(2)/.lua/ && cp $(version_file) $(o)/platform-$(2)/.lua/
-	@cd $(o)/platform-$(2) && $(cosmos_zip_bin) -qr $(CURDIR)/$(1) .lua
+	@cd $(o)/platform-$(2) && $(cosmos_zip_bin) -qr $(1) .lua
 	@echo -n '/zip/main.lua' > $(o)/platform-$(2)/.args
 	@$(cosmos_zip_bin) -qj $(1) $(o)/platform-$(2)/.args
 	@rm -rf $(o)/platform-$(2)
@@ -95,10 +95,10 @@ $(o)/bin/home: $(lua_bin) $(cosmos_unzip_bin) $(o)/dotfiles.zip $(home_platform_
 	@$(lua_bin) lib/home/gen-platforms.lua $(o)/home-universal "$(HOME_BASE_URL)" "$(HOME_TAG)" $(home_platform_deps)
 	@echo "Creating home binary..."
 	@cp $(lua_bin) $@
-	@cd $(o)/home-universal && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$@ -@
-	@cd lib/home && $(cosmos_zip_bin) -qr $(CURDIR)/$@ main.lua .args
+	@cd $(o)/home-universal && find . -type f -o -type l | $(cosmos_zip_bin) -q $@ -@
+	@cd lib/home && $(cosmos_zip_bin) -qr $@ main.lua .args
 	@mkdir -p $(o)/home-universal/.lua && cp -r $(spawn_dir) $(home_setup_dir) $(home_mac_dir) lib/claude $(o)/home-universal/.lua/ && cp $(version_file) $(o)/home-universal/.lua/
-	@cd $(o)/home-universal && $(cosmos_zip_bin) -qr $(CURDIR)/$@ .lua
+	@cd $(o)/home-universal && $(cosmos_zip_bin) -qr $@ .lua
 	@rm -rf $(o)/home-universal
 
 home: $(o)/bin/home ## Build universal home binary
