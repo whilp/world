@@ -11,5 +11,5 @@ o/%/superhtml/staging/superhtml: $(superhtml_version) $(extract) o/%/superhtml/a
 o/%/superhtml/bin/superhtml: $(superhtml_version) $(install) o/%/superhtml/staging/superhtml
 	$(install) $(superhtml_version) $* o/$*/superhtml bin o/$*/superhtml/staging/superhtml
 
-o/%/superhtml/test.ok: 3p/superhtml/test.lua o/%/superhtml/bin/superhtml
-	$< o/$*/superhtml && touch $@
+o/%/superhtml/test.ok: 3p/superhtml/test.lua o/%/superhtml/bin/superhtml $(runner)
+	TEST_BIN_DIR=o/$*/superhtml $(runner) $< $@

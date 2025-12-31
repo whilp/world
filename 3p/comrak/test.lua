@@ -1,19 +1,17 @@
-#!/usr/bin/env lua
-local spawn = require("spawn").spawn
+local lu = require("luaunit")
+local spawn = require("spawn")
+local path = require("cosmo.path")
 
-local function main(bin_dir)
-  local bin = bin_dir .. "/bin/comrak"
+local bin = path.join(os.getenv("TEST_BIN_DIR"), "bin", "comrak")
 
-  local handle = spawn({bin, "--version"})
+TestComrak = {}
+
+function TestComrak:test_version()
+  local handle = spawn({ bin, "--version" })
   local code = handle:wait()
   -- skip: comrak binary is nix-linked and can't execute on this platform
   if code == 127 or code == 126 then
-    print("SKIP: binary cannot execute on this platform")
-    return true
+    lu.skip("binary cannot execute on this platform")
   end
-  return code == 0
-end
-
-if not pcall(debug.getlocal, 4, 1) then
-  if not main(...) then os.exit(1) end
+  lu.assertEquals(code, 0)
 end

@@ -1,12 +1,12 @@
-#!/usr/bin/env lua
-local spawn = require("spawn").spawn
+local lu = require("luaunit")
+local spawn = require("spawn")
+local path = require("cosmo.path")
 
-local function main(bin_dir)
-  local bin = bin_dir .. "/bin/duckdb"
-  local handle = spawn({bin, "--version"})
-  return handle:wait() == 0
-end
+local bin = path.join(os.getenv("TEST_BIN_DIR"), "bin", "duckdb")
 
-if not pcall(debug.getlocal, 4, 1) then
-  if not main(...) then os.exit(1) end
+TestDuckdb = {}
+
+function TestDuckdb:test_version()
+  local handle = spawn({ bin, "--version" })
+  lu.assertEquals(handle:wait(), 0)
 end

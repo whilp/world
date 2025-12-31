@@ -11,5 +11,5 @@ o/%/ruff/staging/ruff: $(ruff_version) $(extract) o/%/ruff/archive.tar.gz
 o/%/ruff/bin/ruff: $(ruff_version) $(install) o/%/ruff/staging/ruff
 	$(install) $(ruff_version) $* o/$*/ruff bin o/$*/ruff/staging/ruff
 
-o/%/ruff/test.ok: 3p/ruff/test.lua o/%/ruff/bin/ruff
-	$< o/$*/ruff && touch $@
+o/%/ruff/test.ok: 3p/ruff/test.lua o/%/ruff/bin/ruff $(runner)
+	TEST_BIN_DIR=o/$*/ruff $(runner) $< $@

@@ -8,5 +8,5 @@ o/%/comrak/download: $(comrak_version) $(fetch)
 o/%/comrak/bin/comrak: $(comrak_version) $(install) o/%/comrak/download
 	$(install) $(comrak_version) $* o/$*/comrak bin o/$*/comrak/download
 
-o/%/comrak/test.ok: 3p/comrak/test.lua o/%/comrak/bin/comrak
-	$< o/$*/comrak && touch $@
+o/%/comrak/test.ok: 3p/comrak/test.lua o/%/comrak/bin/comrak $(runner)
+	TEST_BIN_DIR=o/$*/comrak $(runner) $< $@

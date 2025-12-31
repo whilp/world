@@ -11,5 +11,5 @@ o/%/gh/staging/bin/gh: $(gh_version) $(extract) o/%/gh/archive
 o/%/gh/bin/gh: $(gh_version) $(install) o/%/gh/staging/bin/gh
 	$(install) $(gh_version) $* o/$*/gh bin o/$*/gh/staging/bin/gh
 
-o/%/gh/test.ok: 3p/gh/test.lua o/%/gh/bin/gh
-	$< o/$*/gh && touch $@
+o/%/gh/test.ok: 3p/gh/test.lua o/%/gh/bin/gh $(runner)
+	TEST_BIN_DIR=o/$*/gh $(runner) $< $@

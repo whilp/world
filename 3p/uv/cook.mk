@@ -11,5 +11,5 @@ o/%/uv/staging/uv: $(uv_version) $(extract) o/%/uv/archive.tar.gz
 o/%/uv/bin/uv: $(uv_version) $(install) o/%/uv/staging/uv
 	$(install) $(uv_version) $* o/$*/uv bin o/$*/uv/staging/uv
 
-o/%/uv/test.ok: 3p/uv/test.lua o/%/uv/bin/uv
-	$< o/$*/uv && touch $@
+o/%/uv/test.ok: 3p/uv/test.lua o/%/uv/bin/uv $(runner)
+	TEST_BIN_DIR=o/$*/uv $(runner) $< $@
