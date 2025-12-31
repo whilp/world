@@ -1,103 +1,126 @@
--- Tests for download-tool module
+-- Tests for fetch module
 
 local lu = require("luaunit")
-local download_tool = require("build.download-tool")
+local fetch = require("build.fetch")
 
 -- Test template interpolation
 function test_interpolate_replaces_variables()
-  local template = "https://example.com/{version}/file-{release_sha}.tar.gz"
-  local vars = { version = "1.0.0", release_sha = "abc123" }
+  local template = "https://example.com/{version}/file-{arch}.tar.gz"
+  local vars = {version = "1.0.0", arch = "abc123"}
 
-  local result = download_tool.interpolate(template, vars)
+  local result = fetch.interpolate(template, vars)
 
   lu.assertEquals(result, "https://example.com/1.0.0/file-abc123.tar.gz")
 end
 
 function test_interpolate_handles_missing_variables()
   local template = "https://example.com/{version}/file-{missing}.tar.gz"
-  local vars = { version = "1.0.0" }
+  local vars = {version = "1.0.0"}
 
-  local result = download_tool.interpolate(template, vars)
+  local result = fetch.interpolate(template, vars)
 
   lu.assertEquals(result, "https://example.com/1.0.0/file-.tar.gz")
 end
 
 function test_interpolate_handles_non_string_input()
-  local result = download_tool.interpolate(nil, {})
+  local result = fetch.interpolate(nil, {})
   lu.assertNil(result)
 
-  result = download_tool.interpolate(123, {})
+  result = fetch.interpolate(123, {})
   lu.assertEquals(result, 123)
 end
 
 function test_interpolate_handles_empty_vars()
   local template = "https://example.com/file.tar.gz"
-  local result = download_tool.interpolate(template, {})
+  local result = fetch.interpolate(template, {})
 
   lu.assertEquals(result, "https://example.com/file.tar.gz")
 end
 
-function test_interpolate_handles_custom_variables()
-  local template = "https://example.com/{version}/file-{arch}.tar.gz"
-  local vars = { version = "1.0.0", arch = "x86_64-unknown-linux-musl" }
+-- Test build_config with binaries format (cosmos-style)
+function test_build_config_binaries_format()
+  local version_data = {
+    version = "1.0.0",
+    url = "https://example.com/{version}/{binary}",
+    binaries = {
+      lua = "abc123",
+      zip = "def456",
+    },
+  }
 
-  local result = download_tool.interpolate(template, vars)
+  local config, err = fetch.build_config(version_data, "lua", nil)
 
-  lu.assertEquals(result, "https://example.com/1.0.0/file-x86_64-unknown-linux-musl.tar.gz")
+  lu.assertNil(err)
+  lu.assertEquals(config.url, "https://example.com/1.0.0/lua")
+  lu.assertEquals(config.sha, "abc123")
+  lu.assertEquals(config.format, "binary")
 end
 
-function test_interpolate_handles_platform_variable()
-  local template = "https://example.com/{version}/file-{platform}.tar.gz"
-  local vars = { version = "1.0.0", platform = "darwin-arm64" }
+-- Test build_config with platforms format
+function test_build_config_platforms_format()
+  local version_data = {
+    version = "1.0.0",
+    format = "tar.gz",
+    url = "https://example.com/{version}/tool-{arch}.tar.gz",
+    platforms = {
+      ["linux-x86_64"] = {
+        arch = "x86_64-linux",
+        sha = "abc123",
+      },
+    },
+  }
 
-  local result = download_tool.interpolate(template, vars)
+  local config, err = fetch.build_config(version_data, "tool", "linux-x86_64")
 
-  lu.assertEquals(result, "https://example.com/1.0.0/file-darwin-arm64.tar.gz")
+  lu.assertNil(err)
+  lu.assertEquals(config.url, "https://example.com/1.0.0/tool-x86_64-linux.tar.gz")
+  lu.assertEquals(config.sha, "abc123")
+  lu.assertEquals(config.format, "tar.gz")
 end
 
--- Test load_tool_config
-function test_load_tool_config_validates_tool_name()
-  local config, err = download_tool.load_tool_config("", "linux-x86_64")
+function test_build_config_missing_platform()
+  local version_data = {
+    version = "1.0.0",
+    url = "https://example.com/{version}/tool.tar.gz",
+    platforms = {
+      ["linux-x86_64"] = {sha = "abc123"},
+    },
+  }
+
+  local config, err = fetch.build_config(version_data, "tool", "darwin-arm64")
 
   lu.assertNil(config)
-  lu.assertEquals(err, "tool_name cannot be empty")
+  lu.assertStrContains(err, "platform darwin-arm64 not found")
 end
 
-function test_load_tool_config_validates_platform()
-  local config, err = download_tool.load_tool_config("nvim", "")
+function test_build_config_missing_sha()
+  local version_data = {
+    version = "1.0.0",
+    url = "https://example.com/{version}/{binary}",
+    binaries = {
+      lua = "abc123",
+    },
+  }
+
+  local config, err = fetch.build_config(version_data, "missing", nil)
 
   lu.assertNil(config)
-  lu.assertEquals(err, "platform cannot be empty")
+  lu.assertStrContains(err, "no sha found")
 end
 
-function test_load_tool_config_handles_missing_file()
-  local config, err = download_tool.load_tool_config("nonexistent-tool", "linux-x86_64")
+-- Test load_version
+function test_load_version_validates_path()
+  local data, err = fetch.load_version("")
 
-  lu.assertNil(config)
+  lu.assertNil(data)
+  lu.assertEquals(err, "version_path cannot be empty")
+end
+
+function test_load_version_handles_missing_file()
+  local data, err = fetch.load_version("nonexistent.lua")
+
+  lu.assertNil(data)
   lu.assertStrContains(err, "failed to load")
-end
-
-
--- Test download_tool main function
-function test_download_tool_validates_tool_name()
-  local ok, err = download_tool.download_tool("", "linux-x86_64", "/tmp/output")
-
-  lu.assertNil(ok)
-  lu.assertEquals(err, "tool_name is required")
-end
-
-function test_download_tool_validates_platform()
-  local ok, err = download_tool.download_tool("nvim", "", "/tmp/output")
-
-  lu.assertNil(ok)
-  lu.assertEquals(err, "platform is required")
-end
-
-function test_download_tool_validates_output_dir()
-  local ok, err = download_tool.download_tool("nvim", "linux-x86_64", "")
-
-  lu.assertNil(ok)
-  lu.assertEquals(err, "output_dir is required")
 end
 
 os.exit(lu.LuaUnit.run())

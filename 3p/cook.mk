@@ -19,9 +19,10 @@ export PATH := $(dir $(cosmos_bin)):$(PATH)
 
 make := $(make_bin)
 
-# download-tool needs our custom lua binary with cosmo built-in
+# fetch needs our custom lua binary with cosmo built-in
 lua_bin := results/bin/lua
 lib_lua = LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;" $(CURDIR)/$(lua_bin)
+fetch := lib/build/fetch.lua
 
 # Tools self-register via TOOLS +=
 include 3p/ast-grep/cook.mk
@@ -41,10 +42,6 @@ include 3p/superhtml/cook.mk
 include 3p/tree-sitter/cook.mk
 include 3p/uv/cook.mk
 
-# download-tool target
-download_tool := lib/build/download-tool.lua
-$(download_tool): lua
-
 # Pattern rule template for each tool
 # Generates: $(3p)/nvim/%/.extracted: 3p/nvim/version.lua ...
 #   where % matches platform (darwin-arm64, linux-arm64, linux-x86_64)
@@ -52,9 +49,9 @@ define tool_download_rule
 $(3p)/$(1)/%/.extracted: private .PLEDGE = stdio rpath wpath cpath inet dns exec proc
 $(3p)/$(1)/%/.extracted: private .INTERNET = 1
 $(3p)/$(1)/%/.extracted: private .CPU = 120
-$(3p)/$(1)/%/.extracted: 3p/$(1)/version.lua $(download_tool)
+$(3p)/$(1)/%/.extracted: 3p/$(1)/version.lua $(fetch)
 	@mkdir -p $$(dir $$@)
-	$(lib_lua) $(download_tool) $(1) $$* $$(dir $$@)
+	$(lib_lua) $(fetch) 3p/$(1)/version.lua $(1) $$* $$(dir $$@)
 	touch $$@
 endef
 

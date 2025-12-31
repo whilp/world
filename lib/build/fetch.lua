@@ -1,7 +1,8 @@
--- lib/build/fetch.lua - generic version file loading, interpolation, and downloading
+-- lib/build/fetch.lua - unified version file loading, downloading, and extraction
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
+local spawn = require("spawn").spawn
 
 local function interpolate(template, vars)
   if type(template) ~= "string" then
@@ -21,30 +22,6 @@ local function load_version(version_path)
     return nil, "failed to load " .. version_path .. ": " .. tostring(data)
   end
   return data
-end
-
-local function build_url(version_data, binary)
-  if not version_data then
-    return nil, "version_data is required"
-  end
-  if not binary or binary == "" then
-    return nil, "binary name is required"
-  end
-  if not version_data.url then
-    return nil, "version_data.url is required"
-  end
-  local vars = {
-    version = version_data.version or "",
-    binary = binary,
-  }
-  return interpolate(version_data.url, vars)
-end
-
-local function get_sha(version_data, binary)
-  if not version_data or not version_data.binaries then
-    return nil, "version_data.binaries is required"
-  end
-  return version_data.binaries[binary]
 end
 
 local function download(url, dest_path)
@@ -128,24 +105,184 @@ local function make_executable(file_path)
   return true
 end
 
-local function fetch_binary(version_data, binary, dest_path)
-  local url, err = build_url(version_data, binary)
-  if not url then
+local function execute(args)
+  local handle, err = spawn(args)
+  if not handle then
+    return nil, string.format("command failed to start: %s", err or "unknown error")
+  end
+  local exit_code, wait_err = handle:wait()
+  if not exit_code then
+    return nil, string.format("command failed: %s", wait_err or "abnormal termination")
+  end
+  if exit_code ~= 0 then
+    return nil, string.format("command failed with exit %d", exit_code)
+  end
+  return true
+end
+
+-- extraction
+
+local function extract_targz(archive_path, output_dir, strip_components, binary_name)
+  local ok, err = execute({
+    "tar", "-xzf", archive_path, "-C", output_dir,
+    "--strip-components=" .. (strip_components or 0)
+  })
+  if not ok then
     return nil, err
   end
+  unix.unlink(archive_path)
 
-  local sha = get_sha(version_data, binary)
-  if not sha then
-    return nil, "no sha256 for binary: " .. binary
+  -- if binary landed at top level, move to bin/
+  local bin_dir = path.join(output_dir, "bin")
+  local bin_stat = unix.stat(bin_dir)
+  if not bin_stat or not unix.S_ISDIR(bin_stat:mode()) then
+    local binary_path = path.join(output_dir, binary_name)
+    local binary_stat = unix.stat(binary_path)
+    if binary_stat and unix.S_ISREG(binary_stat:mode()) then
+      unix.makedirs(bin_dir)
+      local dest = path.join(bin_dir, binary_name)
+      unix.rename(binary_path, dest)
+      unix.chmod(dest, tonumber("755", 8))
+    end
   end
 
-  local ok
-  ok, err = download(url, dest_path)
+  return true
+end
+
+local function extract_zip(archive_path, output_dir, strip_components)
+  local ok, err = execute({"unzip", "-q", "-DD", "-o", archive_path, "-d", output_dir})
   if not ok then
     return nil, err
   end
 
-  ok, err = verify_sha256(dest_path, sha)
+  if strip_components == 1 then
+    local first_dir
+    for name in unix.opendir(output_dir) do
+      if name ~= "." and name ~= ".." then
+        local entry_path = path.join(output_dir, name)
+        local st = unix.stat(entry_path)
+        if st and unix.S_ISDIR(st:mode()) then
+          first_dir = entry_path
+          break
+        end
+      end
+    end
+    if first_dir then
+      ok, err = execute({"cp", "-r", first_dir .. "/.", output_dir})
+      if not ok then
+        return nil, err
+      end
+      unix.rmrf(first_dir)
+    end
+  end
+
+  unix.unlink(archive_path)
+  return true
+end
+
+local function extract_gz(archive_path, binary_name, output_dir)
+  local ok, err = execute({"gunzip", "-f", archive_path})
+  if not ok then
+    return nil, err
+  end
+
+  local bin_dir = path.join(output_dir, "bin")
+  unix.makedirs(bin_dir)
+
+  local uncompressed = path.join(output_dir, binary_name)
+  local dest = path.join(bin_dir, binary_name)
+  unix.rename(uncompressed, dest)
+  unix.chmod(dest, tonumber("755", 8))
+  return true
+end
+
+local function extract_binary(file_path, binary_name, output_dir)
+  local bin_dir = path.join(output_dir, "bin")
+  unix.makedirs(bin_dir)
+
+  local dest = path.join(bin_dir, binary_name)
+  unix.rename(file_path, dest)
+  unix.chmod(dest, tonumber("755", 8))
+  return true
+end
+
+local function extract(archive_path, output_dir, format, strip_components, binary_name)
+  if format == "tar.gz" then
+    return extract_targz(archive_path, output_dir, strip_components, binary_name)
+  elseif format == "zip" then
+    return extract_zip(archive_path, output_dir, strip_components)
+  elseif format == "gz" then
+    return extract_gz(archive_path, binary_name, output_dir)
+  elseif format == "binary" then
+    return extract_binary(archive_path, binary_name, output_dir)
+  else
+    return nil, "unknown format: " .. tostring(format)
+  end
+end
+
+-- build config from version data
+
+local function build_config(version_data, key, platform)
+  local vars = {
+    version = version_data.version or "",
+    tag = version_data.tag or "",
+    date = version_data.date or "",
+  }
+
+  local sha, format, strip_components
+
+  if version_data.binaries then
+    -- simple format: binaries = {name = sha}
+    sha = version_data.binaries[key]
+    format = "binary"
+    strip_components = 0
+    vars.binary = key
+  elseif version_data.platforms and platform then
+    -- platform format: platforms = {platform = {sha, arch, os, ...}}
+    local plat = version_data.platforms[platform]
+    if not plat then
+      return nil, string.format("platform %s not found", platform)
+    end
+    sha = plat.sha
+    format = plat.format or version_data.format or "tar.gz"
+    strip_components = plat.strip_components or version_data.strip_components or 0
+    vars.platform = plat.platform or platform
+    for k, v in pairs(plat) do
+      if type(v) == "string" and k ~= "sha" and k ~= "format" then
+        vars[k] = v
+      end
+    end
+  else
+    return nil, "version data must have 'binaries' or 'platforms'"
+  end
+
+  if not sha then
+    return nil, "no sha found for " .. key
+  end
+
+  return {
+    url = interpolate(version_data.url, vars),
+    sha = sha,
+    format = format,
+    strip_components = strip_components,
+  }
+end
+
+-- high-level fetch
+
+local function fetch_binary(version_data, binary, dest_path)
+  local config, err = build_config(version_data, binary, nil)
+  if not config then
+    return nil, err
+  end
+
+  local ok
+  ok, err = download(config.url, dest_path)
+  if not ok then
+    return nil, err
+  end
+
+  ok, err = verify_sha256(dest_path, config.sha)
   if not ok then
     unix.unlink(dest_path)
     return nil, err
@@ -159,14 +296,47 @@ local function fetch_binary(version_data, binary, dest_path)
   return true
 end
 
+local function fetch_tool(version_data, tool_name, platform, output_dir)
+  local config, err = build_config(version_data, tool_name, platform)
+  if not config then
+    return nil, err
+  end
+
+  unix.makedirs(output_dir)
+
+  local archive_name = config.format == "binary" and tool_name or ("archive." .. config.format)
+  local archive_path = path.join(output_dir, archive_name)
+
+  local ok
+  ok, err = download(config.url, archive_path)
+  if not ok then
+    return nil, err
+  end
+
+  ok, err = verify_sha256(archive_path, config.sha)
+  if not ok then
+    unix.unlink(archive_path)
+    return nil, err
+  end
+
+  ok, err = extract(archive_path, output_dir, config.format, config.strip_components, tool_name)
+  if not ok then
+    return nil, err
+  end
+
+  return true
+end
+
 -- CLI
 if not pcall(debug.getlocal, 4, 1) then
   local version_path = arg[1]
-  local binary = arg[2]
-  local dest_path = arg[3]
+  local key = arg[2]
+  local arg3 = arg[3]
+  local arg4 = arg[4]
 
-  if not version_path or not binary or not dest_path then
+  if not version_path or not key then
     io.stderr:write("usage: fetch.lua <version_file> <binary> <dest_path>\n")
+    io.stderr:write("       fetch.lua <version_file> <tool> <platform> <output_dir>\n")
     os.exit(1)
   end
 
@@ -177,7 +347,12 @@ if not pcall(debug.getlocal, 4, 1) then
   end
 
   local ok
-  ok, err = fetch_binary(version_data, binary, dest_path)
+  if arg4 then
+    ok, err = fetch_tool(version_data, key, arg3, arg4)
+  else
+    ok, err = fetch_binary(version_data, key, arg3)
+  end
+
   if not ok then
     io.stderr:write("error: " .. tostring(err) .. "\n")
     os.exit(1)
@@ -187,10 +362,11 @@ end
 return {
   interpolate = interpolate,
   load_version = load_version,
-  build_url = build_url,
-  get_sha = get_sha,
   download = download,
   verify_sha256 = verify_sha256,
   make_executable = make_executable,
+  extract = extract,
+  build_config = build_config,
   fetch_binary = fetch_binary,
+  fetch_tool = fetch_tool,
 }
