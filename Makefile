@@ -16,7 +16,7 @@ lua_bin := o/any/lua/bin/lua
 fetch := lib/build/fetch.lua
 extract := lib/build/extract.lua
 install := lib/build/install.lua
-runner := lib/build/test-runner.lua
+runner := lib/build/test.lua
 
 $(fetch) $(extract) $(install): | $(lua_bin)
 cosmo := whilp/cosmopolitan
