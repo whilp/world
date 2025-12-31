@@ -1,6 +1,6 @@
 #!/usr/bin/env lua
 -- save args before clearing
-local test_file, bin_dir, output = ...
+local test_file, output = ...
 
 -- clear arg so luaunit doesn't try to parse command line
 arg = {}
@@ -8,8 +8,14 @@ arg = {}
 local lu = require("luaunit")
 local cosmo = require("cosmo")
 
-if not test_file or not bin_dir or not output then
-  io.stderr:write("usage: test-runner.lua <test_file> <bin_dir> <output>\n")
+if not test_file or not output then
+  io.stderr:write("usage: BIN_DIR=<dir> test-runner.lua <test_file> <output>\n")
+  os.exit(1)
+end
+
+local bin_dir = os.getenv("BIN_DIR")
+if not bin_dir then
+  io.stderr:write("error: BIN_DIR not set\n")
   os.exit(1)
 end
 
