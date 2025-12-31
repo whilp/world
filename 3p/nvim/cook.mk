@@ -12,7 +12,7 @@ o/%/nvim/bin/nvim: $(nvim_version) $(install) o/%/nvim/staging/bin/nvim
 	$(install) $(nvim_version) $* o/$*/nvim/staging/bin/nvim o/$*/nvim
 
 o/%/nvim/test.ok: 3p/nvim/test.lua o/%/nvim/bin/nvim
-	$< o/$*/nvim && touch $@
+	$(runner) $< o/$*/nvim $@
 
 nvim-latest: | $(lua_bin)
 	3p/nvim/latest.lua > 3p/nvim/version.lua

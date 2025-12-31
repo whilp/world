@@ -1,12 +1,15 @@
-#!/usr/bin/env lua
+local lu = require("luaunit")
 local spawn = require("spawn").spawn
 
-local function main(bin_dir)
+return function(bin_dir)
   local bin = bin_dir .. "/bin/nvim"
-  local handle = spawn({bin, "--version"})
-  return handle:wait() == 0
-end
 
-if not pcall(debug.getlocal, 4, 1) then
-  if not main(...) then os.exit(1) end
+  TestNvim = {}
+
+  function TestNvim:test_version()
+    local handle = spawn({bin, "--version"})
+    lu.assertEquals(handle:wait(), 0)
+  end
+
+  return TestNvim
 end
