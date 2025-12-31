@@ -1,4 +1,17 @@
 {
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "make --no-print-directory -C \"$CLAUDE_PROJECT_DIR\" bootstrap"
+          }
+        ]
+      }
+    ]
+  },
   "env": {
     "DISABLE_AUTOUPDATER": "1"
   },
