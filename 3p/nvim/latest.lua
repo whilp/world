@@ -1,3 +1,4 @@
+#!/usr/bin/env lua
 local cosmo = require("cosmo")
 
 local repo = "whilp/neovim"
@@ -78,10 +79,13 @@ local function main()
       io.stderr:write("error: " .. sha_err .. "\n")
       os.exit(1)
     end
-    platforms[platform] = {sha = sha}
+    local plat = {sha = sha}
     if platform == "darwin-arm64" then
-      platforms[platform].platform = "macos-arm64"
+      plat.platform = "macos-arm64"
+    else
+      plat.platform = platform
     end
+    platforms[platform] = plat
   end
 
   local result = {
