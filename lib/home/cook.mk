@@ -62,26 +62,29 @@ endef
 
 # generate platform asset rules
 define platform_home_rule
-$(o)/bin/home-$(1): private .PLEDGE = stdio rpath wpath cpath fattr exec proc
-$(o)/bin/home-$(1): private .CPU = 120
-$(o)/bin/home-$(1): $$(lua_bin) $(o)/binaries-$(1).zip lib/home/main.lua lib/home/gen-manifest.lua $$(spawn_sources) $$(version_file) | o/bin
+$(o)/$(1)/bin/home: private .PLEDGE = stdio rpath wpath cpath fattr exec proc
+$(o)/$(1)/bin/home: private .CPU = 120
+$(o)/$(1)/bin/home: $$(lua_bin) $(o)/binaries-$(1).zip lib/home/main.lua lib/home/gen-manifest.lua $$(spawn_sources) $$(version_file) | $(o)/$(1)/bin
 	$$(call build_platform_asset,$$@,$(1))
+
+$(o)/$(1)/bin:
+	@mkdir -p $$@
 endef
 
 $(foreach p,$(PLATFORMS),$(eval $(call platform_home_rule,$(p))))
 
-platform-assets: $(foreach p,$(PLATFORMS),$(o)/bin/home-$(p)) ## Build platform-specific binaries
+platform-assets: $(foreach p,$(PLATFORMS),$(o)/$(p)/bin/home) ## Build platform-specific binaries
 
 # universal home binary with dotfiles + platform metadata
 HOME_VERSION ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 HOME_BASE_URL ?= https://github.com/whilp/dotfiles/releases/download/{tag}
 HOME_TAG ?= home-$(shell date -u +%Y-%m-%d)-$(HOME_VERSION)
 
-home_platform_deps := $(foreach p,$(PLATFORMS),$(o)/bin/home-$(p))
+home_platform_deps := $(foreach p,$(PLATFORMS),$(o)/$(p)/bin/home)
 
-$(o)/bin/home: private .PLEDGE = stdio rpath wpath cpath fattr exec proc
-$(o)/bin/home: private .CPU = 180
-$(o)/bin/home: $(lua_bin) $(cosmos_unzip_bin) $(o)/dotfiles.zip $(home_platform_deps) lib/home/main.lua lib/home/.args lib/home/gen-manifest.lua lib/home/gen-platforms.lua $(spawn_sources) $(version_file) $(home_setup_sources) $(home_mac_sources) | o/bin
+$(o)/any/bin/home: private .PLEDGE = stdio rpath wpath cpath fattr exec proc
+$(o)/any/bin/home: private .CPU = 180
+$(o)/any/bin/home: $(lua_bin) $(cosmos_unzip_bin) $(o)/dotfiles.zip $(home_platform_deps) lib/home/main.lua lib/home/.args lib/home/gen-manifest.lua lib/home/gen-platforms.lua $(spawn_sources) $(version_file) $(home_setup_sources) $(home_mac_sources) | o/any/bin
 	@echo "Building universal home binary..."
 	@rm -rf $(o)/home-universal
 	@mkdir -p $(o)/home-universal/home/.local/bin
@@ -101,7 +104,7 @@ $(o)/bin/home: $(lua_bin) $(cosmos_unzip_bin) $(o)/dotfiles.zip $(home_platform_
 	@cd $(o)/home-universal && $(cosmos_zip_bin) -qr $@ .lua
 	@rm -rf $(o)/home-universal
 
-home: $(o)/bin/home ## Build universal home binary
+home: $(o)/any/bin/home ## Build universal home binary
 
 o/lib/home/test_main.lua.ok: private .UNVEIL = r:lib rx:$(lua_test) rw:/dev/null
 o/lib/home/test_main.lua.ok: private .PLEDGE = stdio rpath wpath cpath proc exec

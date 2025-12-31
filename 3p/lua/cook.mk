@@ -2,13 +2,13 @@
 # pre-built with all C extensions (unix, path, re, sqlite3, argon2, json, cosmo)
 # we just need to zip in pure lua modules (luaunit, luacheck)
 
-lua_bin := o/bin/lua
-lua_ape := o/bin/lua.ape
+lua_bin := o/any/bin/lua
+lua_ape := o/any/bin/lua.ape
 
 # minimal lua for testing - only luaunit bundled
-lua_test := o/bin/lua-test
+lua_test := o/any/bin/lua-test
 
-o/bin:
+o/any/bin:
 	mkdir -p $@
 
 lib_lua_files := $(filter-out lib/test_%.lua,$(wildcard lib/*.lua))
@@ -22,18 +22,18 @@ $(lib_lua_stamp): $(lib_lua_files) $(wildcard lib/spawn/*.lua)
 	touch $@
 
 # test binary: cosmos lua + luaunit only
-$(lua_test): private .UNVEIL = rx:$(cosmos_lua_bin) r:$(luaunit_lua_dir) rx:$(cosmos_zip_bin) rwc:o/bin rw:/dev/null
+$(lua_test): private .UNVEIL = rx:$(cosmos_lua_bin) r:$(luaunit_lua_dir) rx:$(cosmos_zip_bin) rwc:o/any/bin rw:/dev/null
 $(lua_test): private .PLEDGE = stdio rpath wpath cpath fattr exec proc
-$(lua_test): $(cosmos_lua_bin) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua | o/bin
+$(lua_test): $(cosmos_lua_bin) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua | o/any/bin
 	cp $(cosmos_lua_bin) $@
 	chmod +x $@
 	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
 	./$@ --assimilate || true
 
 # full binary: cosmos lua + luaunit + luacheck + lib modules
-$(lua_ape): private .UNVEIL = rx:$(cosmos_lua_bin) r:$(luaunit_lua_dir) r:$(luacheck_lua_dir) r:lib r:o/any/3p/lib rx:$(cosmos_zip_bin) rwc:o/bin rwc:o/any/3p/lib rw:/dev/null
+$(lua_ape): private .UNVEIL = rx:$(cosmos_lua_bin) r:$(luaunit_lua_dir) r:$(luacheck_lua_dir) r:lib r:o/any/3p/lib rx:$(cosmos_zip_bin) rwc:o/any/bin rwc:o/any/3p/lib rw:/dev/null
 $(lua_ape): private .PLEDGE = stdio rpath wpath cpath fattr exec proc
-$(lua_ape): $(cosmos_lua_bin) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua $(luacheck_lua_dir)/bin/luacheck $(lib_lua_stamp) | o/bin
+$(lua_ape): $(cosmos_lua_bin) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua $(luacheck_lua_dir)/bin/luacheck $(lib_lua_stamp) | o/any/bin
 	cp $(cosmos_lua_bin) $@
 	chmod +x $@
 	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
@@ -55,6 +55,6 @@ $(lua_skill): $(lua_bin)
 lua-skill: $(lua_skill) ## Generate cosmo-lua skill
 
 clean-lua:
-	rm -rf $(lua_bin) $(lua_ape) $(lua_test) o/any/3p/lib
+	rm -rf $(lua_bin) $(lua_ape) $(lua_test) o/any/3p/lib o/any/bin
 
 .PHONY: lua lua-skill clean-lua

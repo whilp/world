@@ -69,9 +69,11 @@ jobs:
         with:
           name: home-binaries
           path: |
-            o/bin/home
-            o/bin/home-*
-            o/bin/lua
+            o/any/bin/home
+            o/any/bin/lua
+            o/darwin-arm64/bin/home
+            o/linux-arm64/bin/home
+            o/linux-x86_64/bin/home
 
   test:
     if: github.ref == 'refs/heads/main'
@@ -94,28 +96,28 @@ jobs:
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: home-binaries
-          path: o/bin/
+          path: o/
 
       - name: Make binaries executable
-        run: chmod +x o/bin/home o/bin/home-*
+        run: chmod +x o/any/bin/home o/any/bin/lua o/*/bin/home
 
       - name: Test universal home list
-        run: o/bin/home list | head -20
+        run: o/any/bin/home list | head -20
 
       - name: Test universal home unpack
         run: |
           mkdir -p /tmp/test-home
-          o/bin/home unpack /tmp/test-home
+          o/any/bin/home unpack /tmp/test-home
           test -f /tmp/test-home/.zshenv
           test -f /tmp/test-home/.local/bin/lua
 
       - name: Test platform asset list
-        run: o/bin/home-${{ matrix.platform }} list | head -10
+        run: o/${{ matrix.platform }}/bin/home list | head -10
 
       - name: Test platform asset unpack
         run: |
           mkdir -p /tmp/test-binaries
-          o/bin/home-${{ matrix.platform }} unpack /tmp/test-binaries
+          o/${{ matrix.platform }}/bin/home unpack /tmp/test-binaries
           test -d /tmp/test-binaries/.local/share
 
   release:
@@ -132,7 +134,7 @@ jobs:
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: home-binaries
-          path: o/bin/
+          path: o/
 
       - name: Get version
         id: version
@@ -142,7 +144,7 @@ jobs:
       - name: Create checksums
         run: |
           cd o
-          sha256sum bin/home bin/home-* bin/lua > SHA256SUMS
+          sha256sum any/bin/home any/bin/lua */bin/home > SHA256SUMS
           cat SHA256SUMS
 
       - name: Create release
@@ -158,9 +160,9 @@ jobs:
           \`\`\`bash
           curl -fsSL https://github.com/${{ github.repository }}/releases/latest/download/home | sh
           \`\`\`" \
-            o/bin/home \
-            o/bin/home-darwin-arm64 \
-            o/bin/home-linux-arm64 \
-            o/bin/home-linux-x86_64 \
-            o/bin/lua \
+            o/any/bin/home \
+            o/any/bin/lua \
+            o/darwin-arm64/bin/home \
+            o/linux-arm64/bin/home \
+            o/linux-x86_64/bin/home \
             o/SHA256SUMS
