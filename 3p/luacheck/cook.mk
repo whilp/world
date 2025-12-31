@@ -1,6 +1,6 @@
 luacheck_url := https://github.com/lunarmodules/luacheck/archive/refs/tags/v1.2.0.tar.gz
 luacheck_sha256 := 8efe62a7da4fdb32c0c22ec1f7c9306cbc397d7d40493c29988221a059636e25
-luacheck_dir := $(3p)/luacheck
+luacheck_dir := $(o)/any/3p/luacheck
 luacheck_archive := $(luacheck_dir)/luacheck-1.2.0.tar.gz
 luacheck_src := $(luacheck_dir)/luacheck-1.2.0
 luacheck_extracted := $(luacheck_src)/.extracted

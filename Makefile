@@ -18,9 +18,9 @@ else
   PLATFORM := linux-x86_64
 endif
 
-ast_grep_dir := $(3p)/ast-grep
-ast_grep_bin := $(ast_grep_dir)/$(PLATFORM)/sg
-ast_grep_extracted := $(ast_grep_dir)/$(PLATFORM)/.extracted
+ast_grep_dir := $(o)/$(PLATFORM)/3p/ast-grep
+ast_grep_bin := $(ast_grep_dir)/bin/sg
+ast_grep_extracted := $(ast_grep_dir)/.extracted
 
 .DEFAULT_GOAL := build
 
@@ -48,7 +48,19 @@ help:
 
 build: lua ## Build lua binary [default]
 
-deps: lua ## Build dependencies (run this first)
+# bootstrap downloads a pre-built lua if results/bin/lua doesn't exist
+# needed for fresh builds since cosmos rules require lua to run fetch.lua
+bootstrap: private .PLEDGE = stdio rpath wpath cpath inet dns
+bootstrap: private .INTERNET = 1
+bootstrap:
+	@if [ ! -f results/bin/lua ]; then \
+		echo "Bootstrapping lua..."; \
+		mkdir -p results/bin; \
+		curl -fsSL -o results/bin/lua https://github.com/whilp/cosmopolitan/releases/latest/download/lua; \
+		chmod +x results/bin/lua; \
+	fi
+
+deps: bootstrap lua ## Build dependencies (run this first)
 
 latest: claude-latest cosmos-latest nvim-latest ## Fetch latest versions
 
@@ -63,7 +75,7 @@ results:
 	mkdir -p $@
 
 check: ## Run linters (ast-grep, luacheck)
-check: private .UNVEIL = r:$(CURDIR) rx:$(3p)/ast-grep rx:results/bin rw:/dev/null
+check: private .UNVEIL = r:$(CURDIR) rx:$(ast_grep_dir) rx:results/bin rw:/dev/null
 check: private .PLEDGE = stdio rpath proc exec
 check: private .CPU = 120
 check: $(ast_grep_extracted) lua
@@ -82,4 +94,4 @@ check: $(ast_grep_extracted) lua
 	@echo ""
 	@$(MAKE) --no-print-directory check-test-coverage
 
-.PHONY: help build deps latest clean check
+.PHONY: help build bootstrap deps latest clean check

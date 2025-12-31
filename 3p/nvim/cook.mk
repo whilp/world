@@ -9,7 +9,7 @@ nvim-latest: $(lua_bin)
 .PHONY: nvim-latest
 
 nvim_pack_lock := .config/nvim/nvim-pack-lock.json
-nvim_plugins_dir := $(3p)/nvim/plugins
+nvim_plugins_dir := $(o)/any/3p/nvim/plugins
 
 ifneq ($(wildcard $(lua_bin)),)
 nvim_plugins := $(shell $(lib_lua) lib/build/list-plugins.lua)
@@ -28,11 +28,11 @@ $(nvim_plugins_dir)/%/.fetched: $(nvim_pack_lock) $(fetch_plugin)
 nvim_plugin_targets := $(foreach p,$(nvim_plugins),$(nvim_plugins_dir)/$(p)/.fetched)
 
 nvim_bundle := lib/build/nvim-bundle.lua
-$(3p)/nvim/%/.bundled: private .PLEDGE = stdio rpath wpath cpath inet dns exec proc
-$(3p)/nvim/%/.bundled: private .INTERNET = 1
-$(3p)/nvim/%/.bundled: private .CPU = 180
-$(3p)/nvim/%/.bundled: $(3p)/nvim/%/.extracted $(nvim_bundle) $(nvim_plugin_targets)
+$(o)/%/3p/nvim/.bundled: private .PLEDGE = stdio rpath wpath cpath inet dns exec proc
+$(o)/%/3p/nvim/.bundled: private .INTERNET = 1
+$(o)/%/3p/nvim/.bundled: private .CPU = 180
+$(o)/%/3p/nvim/.bundled: $(o)/%/3p/nvim/.extracted $(nvim_bundle) $(nvim_plugin_targets)
 	$(lib_lua) $(nvim_bundle) $* $(dir $@) $(nvim_plugins_dir)
 	touch $@
 
-nvim_bundled := $(foreach p,$(PLATFORMS),$(3p)/nvim/$(p)/.bundled)
+nvim_bundled := $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/nvim/.bundled)

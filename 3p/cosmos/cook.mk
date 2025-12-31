@@ -1,5 +1,5 @@
 # cosmos binaries from whilp/cosmopolitan fork
-cosmos_dir := $(3p)/cosmos
+cosmos_dir := $(o)/any/3p/cosmos
 cosmos_version := lib/cosmos/version.lua
 cosmos_fetch := lib/build/fetch.lua
 

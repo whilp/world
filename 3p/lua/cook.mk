@@ -15,7 +15,7 @@ o/bin:
 	mkdir -p $@
 
 lib_lua_files := $(filter-out lib/test_%.lua,$(wildcard lib/*.lua))
-lib_lua_dir := o/3p/lib/.lua
+lib_lua_dir := o/any/3p/lib/.lua
 lib_lua_stamp := $(lib_lua_dir)/.copied
 
 $(lib_lua_stamp): $(lib_lua_files) $(wildcard lib/spawn/*.lua)
@@ -34,14 +34,14 @@ $(lua_test): $(cosmos_lua_bin) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua 
 	./$@ --assimilate || true
 
 # full binary: cosmos lua + luaunit + luacheck + lib modules
-$(lua_ape): private .UNVEIL = rx:$(cosmos_lua_bin) r:$(luaunit_lua_dir) r:$(luacheck_lua_dir) r:lib r:o/3p/lib rx:$(cosmos_zip_bin) rwc:results/bin rwc:o/3p/lib rw:/dev/null
+$(lua_ape): private .UNVEIL = rx:$(cosmos_lua_bin) r:$(luaunit_lua_dir) r:$(luacheck_lua_dir) r:lib r:o/any/3p/lib rx:$(cosmos_zip_bin) rwc:results/bin rwc:o/any/3p/lib rw:/dev/null
 $(lua_ape): private .PLEDGE = stdio rpath wpath cpath fattr exec proc
 $(lua_ape): $(cosmos_lua_bin) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua $(luacheck_lua_dir)/bin/luacheck $(lib_lua_stamp) | results/bin
 	cp $(cosmos_lua_bin) $@
 	chmod +x $@
 	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
 	cd $(luacheck_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luacheck_lua_dir))
-	cd o/3p/lib && $(cosmos_zip_bin) -qr $(CURDIR)/$@ .lua
+	cd o/any/3p/lib && $(cosmos_zip_bin) -qr $(CURDIR)/$@ .lua
 
 $(lua_bin): $(lua_ape)
 	cp $< $@
@@ -58,6 +58,6 @@ $(lua_skill): $(lua_bin)
 lua-skill: $(lua_skill) ## Generate cosmo-lua skill
 
 clean-lua:
-	rm -rf $(lua_bin) $(lua_ape) $(lua_test) o/3p/lib
+	rm -rf $(lua_bin) $(lua_ape) $(lua_test) o/any/3p/lib
 
 .PHONY: lua lua-skill clean-lua

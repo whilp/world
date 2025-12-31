@@ -122,7 +122,43 @@ end
 
 -- extraction
 
-local function extract_targz(archive_path, output_dir, strip_components, binary_name)
+local S_IXUSR = tonumber("100", 8) -- 0o100 = 64
+
+local function move_executables_to_bin(output_dir)
+  local bin_dir = path.join(output_dir, "bin")
+  local bin_stat = unix.stat(bin_dir)
+  if bin_stat and unix.S_ISDIR(bin_stat:mode()) then
+    return true -- bin/ already exists
+  end
+
+  local executables = {}
+  for name in unix.opendir(output_dir) do
+    if name ~= "." and name ~= ".." then
+      local entry_path = path.join(output_dir, name)
+      local st = unix.stat(entry_path)
+      if st and unix.S_ISREG(st:mode()) then
+        local mode = st:mode()
+        if mode & S_IXUSR ~= 0 then
+          table.insert(executables, name)
+        end
+      end
+    end
+  end
+
+  if #executables > 0 then
+    unix.makedirs(bin_dir)
+    for _, name in ipairs(executables) do
+      local src = path.join(output_dir, name)
+      local dest = path.join(bin_dir, name)
+      unix.rename(src, dest)
+      unix.chmod(dest, tonumber("755", 8))
+    end
+  end
+
+  return true
+end
+
+local function extract_targz(archive_path, output_dir, strip_components)
   local ok, err = execute({
     "tar", "-xzf", archive_path, "-C", output_dir,
     "--strip-components=" .. (strip_components or 0)
@@ -131,21 +167,7 @@ local function extract_targz(archive_path, output_dir, strip_components, binary_
     return nil, err
   end
   unix.unlink(archive_path)
-
-  -- if binary landed at top level, move to bin/
-  local bin_dir = path.join(output_dir, "bin")
-  local bin_stat = unix.stat(bin_dir)
-  if not bin_stat or not unix.S_ISDIR(bin_stat:mode()) then
-    local binary_path = path.join(output_dir, binary_name)
-    local binary_stat = unix.stat(binary_path)
-    if binary_stat and unix.S_ISREG(binary_stat:mode()) then
-      unix.makedirs(bin_dir)
-      local dest = path.join(bin_dir, binary_name)
-      unix.rename(binary_path, dest)
-      unix.chmod(dest, tonumber("755", 8))
-    end
-  end
-
+  move_executables_to_bin(output_dir)
   return true
 end
 
@@ -176,6 +198,7 @@ local function extract_zip(archive_path, output_dir, strip_components)
     end
   end
 
+  move_executables_to_bin(output_dir)
   unix.unlink(archive_path)
   return true
 end
@@ -208,7 +231,7 @@ end
 
 local function extract(archive_path, output_dir, format, strip_components, binary_name)
   if format == "tar.gz" then
-    return extract_targz(archive_path, output_dir, strip_components, binary_name)
+    return extract_targz(archive_path, output_dir, strip_components)
   elseif format == "zip" then
     return extract_zip(archive_path, output_dir, strip_components)
   elseif format == "gz" then
