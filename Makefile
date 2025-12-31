@@ -22,6 +22,18 @@ ast_grep_dir := $(3p)/ast-grep
 ast_grep_bin := $(ast_grep_dir)/$(PLATFORM)/sg
 ast_grep_extracted := $(ast_grep_dir)/$(PLATFORM)/.extracted
 
+bin := ./bin
+cosmo := whilp/cosmopolitan
+release ?= latest
+
+bootstrap: $(bin)/lua ## Bootstrap Claude environment
+	@[ -n "$$CLAUDE_ENV_FILE" ] && echo "PATH=$(bin):\$$PATH" >> "$$CLAUDE_ENV_FILE"; true
+
+$(bin)/lua:
+	@mkdir -p $(@D)
+	@curl -sL -o $@ "https://github.com/$(cosmo)/releases/$(release)/download/lua"
+	@chmod +x $@
+
 .DEFAULT_GOAL := build
 
 help:
@@ -82,4 +94,4 @@ check: $(ast_grep_extracted) lua
 	@echo ""
 	@$(MAKE) --no-print-directory check-test-coverage
 
-.PHONY: help build deps latest clean check
+.PHONY: help build deps latest clean check bootstrap
