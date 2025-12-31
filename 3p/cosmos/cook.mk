@@ -1,38 +1,16 @@
-# cosmos binaries from whilp/cosmopolitan fork
-cosmos_dir := $(3p)/cosmos
-cosmos_version := lib/cosmos/version.lua
-cosmos_fetch := lib/build/fetch.lua
+cosmos_version := 3p/cosmos/version.lua
+targets += o/any/cosmos/bin/lua
 
-cosmos_lua_bin := $(cosmos_dir)/bin/lua
-cosmos_zip_bin := $(cosmos_dir)/bin/zip
-cosmos_unzip_bin := $(cosmos_dir)/bin/unzip
-cosmos_make_bin := $(cosmos_dir)/bin/make
+o/any/cosmos/archive.zip: $(cosmos_version) $(fetch)
+	$(fetch) $(cosmos_version) any $@
 
-cosmos_bin := $(cosmos_make_bin)
+o/any/cosmos/staging/lua: $(cosmos_version) $(extract) o/any/cosmos/archive.zip
+	$(extract) $(cosmos_version) any o/any/cosmos/archive.zip o/any/cosmos/staging
 
-$(cosmos_lua_bin): private .UNVEIL = r:/etc/resolv.conf r:/etc/ssl r:lib rwc:$(cosmos_dir) rw:/dev/null
-$(cosmos_lua_bin): private .PLEDGE = stdio rpath wpath cpath inet dns
-$(cosmos_lua_bin): private .INTERNET = 1
-$(cosmos_lua_bin): $(cosmos_fetch) $(cosmos_version)
-	$(lib_lua) $(cosmos_fetch) $(cosmos_version) lua $@
+o/any/cosmos/bin/lua: $(cosmos_version) $(install) o/any/cosmos/staging/lua
+	$(install) $(cosmos_version) any o/any/cosmos/staging o/any/cosmos
 
-$(cosmos_zip_bin): private .UNVEIL = r:/etc/resolv.conf r:/etc/ssl r:lib rwc:$(cosmos_dir) rw:/dev/null
-$(cosmos_zip_bin): private .PLEDGE = stdio rpath wpath cpath inet dns
-$(cosmos_zip_bin): private .INTERNET = 1
-$(cosmos_zip_bin): $(cosmos_fetch) $(cosmos_version)
-	$(lib_lua) $(cosmos_fetch) $(cosmos_version) zip $@
+cosmos-latest: | $(lua_bin)
+	lua 3p/cosmos/latest.lua > $(cosmos_version)
 
-$(cosmos_unzip_bin): private .UNVEIL = r:/etc/resolv.conf r:/etc/ssl r:lib rwc:$(cosmos_dir) rw:/dev/null
-$(cosmos_unzip_bin): private .PLEDGE = stdio rpath wpath cpath inet dns
-$(cosmos_unzip_bin): private .INTERNET = 1
-$(cosmos_unzip_bin): $(cosmos_fetch) $(cosmos_version)
-	$(lib_lua) $(cosmos_fetch) $(cosmos_version) unzip $@
-
-$(cosmos_make_bin): private .UNVEIL = r:/etc/resolv.conf r:/etc/ssl r:lib rwc:$(cosmos_dir) rw:/dev/null
-$(cosmos_make_bin): private .PLEDGE = stdio rpath wpath cpath inet dns
-$(cosmos_make_bin): private .INTERNET = 1
-$(cosmos_make_bin): $(cosmos_fetch) $(cosmos_version)
-	$(lib_lua) $(cosmos_fetch) $(cosmos_version) make $@
-
-cosmos: $(cosmos_lua_bin) $(cosmos_zip_bin) $(cosmos_unzip_bin) $(cosmos_make_bin)
-.PHONY: cosmos
+.PHONY: cosmos-latest

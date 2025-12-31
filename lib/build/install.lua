@@ -18,6 +18,21 @@ local function copy_file(src, dest)
   return true
 end
 
+local function list_dir(dir)
+  local files = {}
+  local d = unix.opendir(dir)
+  if not d then return files end
+  while true do
+    local name = d:read()
+    if not name then break end
+    if name ~= "." and name ~= ".." then
+      table.insert(files, name)
+    end
+  end
+  d:close()
+  return files
+end
+
 local function main(version_file, platform, src, base_dir)
   if not version_file or not platform or not src or not base_dir then
     return nil, "usage: install.lua <version_file> <platform> <src> <base_dir>"
@@ -33,15 +48,27 @@ local function main(version_file, platform, src, base_dir)
     return nil, "unknown platform: " .. platform
   end
 
-  local tool = path.basename(base_dir)
-  local sha8 = plat.sha:sub(1, 8)
-  local version_dir = spec.version .. "-" .. sha8
-  local dest = path.join(base_dir, version_dir, "bin", tool)
+  local version_dir = spec.version .. "-" .. plat.sha:sub(1, 8)
+  local bin_dir = path.join(base_dir, version_dir, "bin")
 
-  local err
-  ok, err = copy_file(src, dest)
-  if not ok then
-    return nil, err
+  local stat = unix.stat(src)
+  local is_dir = stat and unix.S_ISDIR(stat:mode())
+
+  local binaries
+  if is_dir then
+    binaries = list_dir(src)
+  else
+    binaries = {path.basename(base_dir)}
+  end
+
+  for _, tool in ipairs(binaries) do
+    local src_path = is_dir and path.join(src, tool) or src
+    local dest = path.join(bin_dir, tool)
+    local err
+    ok, err = copy_file(src_path, dest)
+    if not ok then
+      return nil, err
+    end
   end
 
   local link_path = path.join(base_dir, "bin")

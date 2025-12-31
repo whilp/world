@@ -42,9 +42,9 @@ local function write_file(dest, content, mode)
   return true
 end
 
-local function main(version_file, platform, output)
+local function main(version_file, platform, output, binary)
   if not version_file or not platform or not output then
-    return nil, "usage: fetch.lua <version_file> <platform> <output>"
+    return nil, "usage: fetch.lua <version_file> <platform> <output> [binary]"
   end
 
   local ok, spec = pcall(dofile, version_file)
@@ -52,12 +52,22 @@ local function main(version_file, platform, output)
     return nil, "failed to load " .. version_file .. ": " .. tostring(spec)
   end
 
-  local plat = spec.platforms[platform]
-  if not plat then
-    return nil, "unknown platform: " .. platform
+  local sha, arch
+  if spec.binaries and binary then
+    sha = spec.binaries[binary]
+    if not sha then
+      return nil, "unknown binary: " .. binary
+    end
+  else
+    local plat = spec.platforms[platform]
+    if not plat then
+      return nil, "unknown platform: " .. platform
+    end
+    sha = plat.sha
+    arch = plat.arch
   end
 
-  local vars = {version = spec.version, arch = plat.arch}
+  local vars = {version = spec.version, arch = arch, binary = binary}
   local url = interpolate(spec.url, vars)
 
   local body, err = download(url)
@@ -65,12 +75,12 @@ local function main(version_file, platform, output)
     return nil, err
   end
 
-  ok, err = verify_sha256(body, plat.sha)
+  ok, err = verify_sha256(body, sha)
   if not ok then
     return nil, err
   end
 
-  ok, err = write_file(output, body, tonumber("644", 8))
+  ok, err = write_file(output, body, tonumber("755", 8))
   if not ok then
     return nil, err
   end
