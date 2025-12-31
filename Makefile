@@ -26,9 +26,6 @@ bin := ./bin
 cosmo := whilp/cosmopolitan
 release ?= latest
 
-bootstrap: $(bin)/lua ## Bootstrap Claude environment
-	@[ -n "$$CLAUDE_ENV_FILE" ] && echo "PATH=$(bin):\$$PATH" >> "$$CLAUDE_ENV_FILE"; true
-
 $(bin)/lua:
 	@mkdir -p $(@D)
 	@curl -sL -o $@ "https://github.com/$(cosmo)/releases/$(release)/download/lua"
@@ -60,17 +57,17 @@ help:
 
 build: lua ## Build lua binary [default]
 
-# bootstrap downloads a pre-built lua if o/bin/lua doesn't exist
-# needed for fresh builds since cosmos rules require lua to run fetch.lua
+# bootstrap downloads a pre-built lua and sets up Claude environment
 bootstrap: private .PLEDGE = stdio rpath wpath cpath inet dns
 bootstrap: private .INTERNET = 1
-bootstrap:
+bootstrap: $(bin)/lua ## Bootstrap Claude environment
 	@if [ ! -f o/bin/lua ]; then \
 		echo "Bootstrapping lua..."; \
 		mkdir -p o/bin; \
 		curl -fsSL -o o/bin/lua https://github.com/whilp/cosmopolitan/releases/latest/download/lua; \
 		chmod +x o/bin/lua; \
 	fi
+	@[ -n "$$CLAUDE_ENV_FILE" ] && echo "PATH=$(bin):$$PATH" >> "$$CLAUDE_ENV_FILE"; true
 
 deps: bootstrap lua ## Build dependencies (run this first)
 
