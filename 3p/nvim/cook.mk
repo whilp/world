@@ -15,6 +15,6 @@ o/%/nvim/test.ok: 3p/nvim/test.lua o/%/nvim/bin/nvim
 	$< o/$*/nvim && touch $@
 
 nvim-latest: | $(lua_bin)
-	lua 3p/nvim/latest.lua
+	3p/nvim/latest.lua > 3p/nvim/version.lua
 
 .PHONY: nvim-latest
