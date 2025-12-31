@@ -1,7 +1,7 @@
 return {
   version = "0.5.3",
   format = "tar.gz",
-  strip_components = 1,
+  strip_components = 2,
   url = "https://github.com/kristoff-it/superhtml/releases/download/v{version}/{arch}-{os}.tar.gz",
   platforms = {
     ["darwin-arm64"] = {

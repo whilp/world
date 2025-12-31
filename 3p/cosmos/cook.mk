@@ -1,6 +1,6 @@
 cosmos_version := 3p/cosmos/version.lua
 targets += o/any/cosmos/bin/lua
-tests += o/any/cosmos/test.ok
+tests_any += o/any/cosmos/test.ok
 
 o/any/cosmos/archive.zip: $(cosmos_version) $(fetch)
 	$(fetch) $(cosmos_version) any $@
