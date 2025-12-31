@@ -48,16 +48,16 @@ help:
 
 build: lua ## Build lua binary [default]
 
-# bootstrap downloads a pre-built lua if results/bin/lua doesn't exist
+# bootstrap downloads a pre-built lua if o/bin/lua doesn't exist
 # needed for fresh builds since cosmos rules require lua to run fetch.lua
 bootstrap: private .PLEDGE = stdio rpath wpath cpath inet dns
 bootstrap: private .INTERNET = 1
 bootstrap:
-	@if [ ! -f results/bin/lua ]; then \
+	@if [ ! -f o/bin/lua ]; then \
 		echo "Bootstrapping lua..."; \
-		mkdir -p results/bin; \
-		curl -fsSL -o results/bin/lua https://github.com/whilp/cosmopolitan/releases/latest/download/lua; \
-		chmod +x results/bin/lua; \
+		mkdir -p o/bin; \
+		curl -fsSL -o o/bin/lua https://github.com/whilp/cosmopolitan/releases/latest/download/lua; \
+		chmod +x o/bin/lua; \
 	fi
 
 deps: bootstrap lua ## Build dependencies (run this first)
@@ -67,15 +67,12 @@ latest: claude-latest cosmos-latest nvim-latest ## Fetch latest versions
 clean: ## Remove build artifacts
 clean: private .PLEDGE = stdio rpath wpath cpath
 clean:
-	rm -rf o results
+	rm -rf o
 
 $(foreach p,$(PLATFORMS),$(eval $(call platform_binaries_zip_rule,$(p))))
 
-results:
-	mkdir -p $@
-
 check: ## Run linters (ast-grep, luacheck)
-check: private .UNVEIL = r:$(CURDIR) rx:$(ast_grep_dir) rx:results/bin rw:/dev/null
+check: private .UNVEIL = r:$(CURDIR) rx:$(ast_grep_dir) rx:o/bin rw:/dev/null
 check: private .PLEDGE = stdio rpath proc exec
 check: private .CPU = 120
 check: $(ast_grep_extracted) lua

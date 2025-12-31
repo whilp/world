@@ -46,10 +46,10 @@ jobs:
 
       - name: Bootstrap lua
         run: |
-          if [ ! -f results/bin/lua ]; then
-            mkdir -p results/bin
-            curl -fsSL -o results/bin/lua https://github.com/whilp/cosmopolitan/releases/latest/download/lua
-            chmod +x results/bin/lua
+          if [ ! -f o/bin/lua ]; then
+            mkdir -p o/bin
+            curl -fsSL -o o/bin/lua https://github.com/whilp/cosmopolitan/releases/latest/download/lua
+            chmod +x o/bin/lua
           fi
 
       - name: Build cosmos and lua
@@ -69,9 +69,9 @@ jobs:
         with:
           name: home-binaries
           path: |
-            results/bin/home
-            results/bin/home-*
-            results/bin/lua
+            o/bin/home
+            o/bin/home-*
+            o/bin/lua
 
   test:
     if: github.ref == 'refs/heads/main'
@@ -94,28 +94,28 @@ jobs:
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: home-binaries
-          path: results/bin/
+          path: o/bin/
 
       - name: Make binaries executable
-        run: chmod +x results/bin/home results/bin/home-*
+        run: chmod +x o/bin/home o/bin/home-*
 
       - name: Test universal home list
-        run: results/bin/home list | head -20
+        run: o/bin/home list | head -20
 
       - name: Test universal home unpack
         run: |
           mkdir -p /tmp/test-home
-          results/bin/home unpack /tmp/test-home
+          o/bin/home unpack /tmp/test-home
           test -f /tmp/test-home/.zshenv
           test -f /tmp/test-home/.local/bin/lua
 
       - name: Test platform asset list
-        run: results/bin/home-${{ matrix.platform }} list | head -10
+        run: o/bin/home-${{ matrix.platform }} list | head -10
 
       - name: Test platform asset unpack
         run: |
           mkdir -p /tmp/test-binaries
-          results/bin/home-${{ matrix.platform }} unpack /tmp/test-binaries
+          o/bin/home-${{ matrix.platform }} unpack /tmp/test-binaries
           test -d /tmp/test-binaries/.local/share
 
   release:
@@ -132,7 +132,7 @@ jobs:
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           name: home-binaries
-          path: results/bin/
+          path: o/bin/
 
       - name: Get version
         id: version
@@ -141,7 +141,7 @@ jobs:
 
       - name: Create checksums
         run: |
-          cd results
+          cd o
           sha256sum bin/home bin/home-* bin/lua > SHA256SUMS
           cat SHA256SUMS
 
@@ -158,9 +158,9 @@ jobs:
           \`\`\`bash
           curl -fsSL https://github.com/${{ github.repository }}/releases/latest/download/home | sh
           \`\`\`" \
-            results/bin/home \
-            results/bin/home-darwin-arm64 \
-            results/bin/home-linux-arm64 \
-            results/bin/home-linux-x86_64 \
-            results/bin/lua \
-            results/SHA256SUMS
+            o/bin/home \
+            o/bin/home-darwin-arm64 \
+            o/bin/home-linux-arm64 \
+            o/bin/home-linux-x86_64 \
+            o/bin/lua \
+            o/SHA256SUMS

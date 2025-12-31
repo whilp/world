@@ -1,27 +1,27 @@
 include lib/spawn/cook.mk
 
 version_file = lib/version.lua
-home_exclude_pattern = ^(3p/|o/|results/|Makefile|lib/home/|\.git)
+home_exclude_pattern = ^(3p/|o/|Makefile|lib/home/|\.git)
 home_lua = LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;$(CURDIR)/lib/home/?.lua;;" $(CURDIR)/$(lua_bin)
 home_setup_dir = lib/home/setup
 home_mac_dir = lib/home/mac
 home_setup_sources = $(wildcard $(home_setup_dir)/*.lua)
 home_mac_sources = $(wildcard $(home_mac_dir)/*.lua)
 
-results/dotfiles.zip: private .UNVEIL = r:$(CURDIR) rx:$(cosmos_zip_bin) rwc:results rw:/dev/null
-results/dotfiles.zip: private .PLEDGE = stdio rpath wpath cpath fattr exec proc
-results/dotfiles.zip: $(cosmos_zip_bin) | results
+$(o)/dotfiles.zip: private .UNVEIL = r:$(CURDIR) rx:$(cosmos_zip_bin) rwc:$(o) rw:/dev/null
+$(o)/dotfiles.zip: private .PLEDGE = stdio rpath wpath cpath fattr exec proc
+$(o)/dotfiles.zip: $(cosmos_zip_bin)
 	git ls-files -z | grep -zZvE '$(home_exclude_pattern)' | \
 		xargs -0 $(cosmos_zip_bin) -q -r $@
 
 define build_platform_asset
 	@echo "Building platform asset $(1) for $(2)..."
-	@rm -rf results/platform-$(2)
-	@mkdir -p results/platform-$(2)/home/.local/share
+	@rm -rf $(o)/platform-$(2)
+	@mkdir -p $(o)/platform-$(2)/home/.local/share
 	@echo "Extracting and organizing binaries..."
-	@mkdir -p results/platform-$(2)/temp-binaries
-	@unzip -q results/binaries-$(2).zip -d results/platform-$(2)/temp-binaries
-	@cd results/platform-$(2)/temp-binaries && \
+	@mkdir -p $(o)/platform-$(2)/temp-binaries
+	@unzip -q $(o)/binaries-$(2).zip -d $(o)/platform-$(2)/temp-binaries
+	@cd $(o)/platform-$(2)/temp-binaries && \
 		for tool in $(TOOLS); do \
 			if [ -d "$$tool/$(2)" ]; then \
 				version=$$(cat "$$tool/$(2)/VERSION" 2>/dev/null || echo "0.0.0"); \
@@ -29,7 +29,7 @@ define build_platform_asset
 				sha=$$(cat "$$tool/$(2)/SHA" 2>/dev/null || echo ""); \
 				sha=$$(echo "$$sha" | head -c 8); \
 				sha=$${sha:-00000000}; \
-				install_dir="$(CURDIR)/results/platform-$(2)/home/.local/share/$$tool/$${version}-$${sha}"; \
+				install_dir="$(CURDIR)/$(o)/platform-$(2)/home/.local/share/$$tool/$${version}-$${sha}"; \
 				echo "  Installing $$tool $${version}-$${sha}..."; \
 				mkdir -p "$$install_dir"; \
 				if [ "$$tool" = "nvim" ] || [ "$$tool" = "gh" ]; then \
@@ -47,62 +47,62 @@ define build_platform_asset
 				fi; \
 			fi; \
 		done
-	@rm -rf results/platform-$(2)/temp-binaries
+	@rm -rf $(o)/platform-$(2)/temp-binaries
 	@echo "Generating manifest..."
-	@$(home_lua) lib/home/gen-manifest.lua results/platform-$(2)/home $(HOME_VERSION) > results/platform-$(2)/manifest.lua
+	@$(home_lua) lib/home/gen-manifest.lua $(o)/platform-$(2)/home $(HOME_VERSION) > $(o)/platform-$(2)/manifest.lua
 	@echo "Creating platform asset..."
 	@cp $(lua_bin) $(1)
-	@cd results/platform-$(2) && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$(1) -@
+	@cd $(o)/platform-$(2) && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$(1) -@
 	@$(cosmos_zip_bin) -qj $(1) lib/home/main.lua
-	@mkdir -p results/platform-$(2)/.lua && cp -r $(spawn_dir) results/platform-$(2)/.lua/ && cp $(version_file) results/platform-$(2)/.lua/
-	@cd results/platform-$(2) && $(cosmos_zip_bin) -qr $(CURDIR)/$(1) .lua
-	@echo -n '/zip/main.lua' > results/platform-$(2)/.args
-	@$(cosmos_zip_bin) -qj $(1) results/platform-$(2)/.args
-	@rm -rf results/platform-$(2)
+	@mkdir -p $(o)/platform-$(2)/.lua && cp -r $(spawn_dir) $(o)/platform-$(2)/.lua/ && cp $(version_file) $(o)/platform-$(2)/.lua/
+	@cd $(o)/platform-$(2) && $(cosmos_zip_bin) -qr $(CURDIR)/$(1) .lua
+	@echo -n '/zip/main.lua' > $(o)/platform-$(2)/.args
+	@$(cosmos_zip_bin) -qj $(1) $(o)/platform-$(2)/.args
+	@rm -rf $(o)/platform-$(2)
 endef
 
 # generate platform asset rules
 define platform_home_rule
-results/bin/home-$(1): private .PLEDGE = stdio rpath wpath cpath fattr exec proc
-results/bin/home-$(1): private .CPU = 120
-results/bin/home-$(1): $$(lua_bin) results/binaries-$(1).zip lib/home/main.lua lib/home/gen-manifest.lua $$(spawn_sources) $$(version_file) | results/bin
+$(o)/bin/home-$(1): private .PLEDGE = stdio rpath wpath cpath fattr exec proc
+$(o)/bin/home-$(1): private .CPU = 120
+$(o)/bin/home-$(1): $$(lua_bin) $(o)/binaries-$(1).zip lib/home/main.lua lib/home/gen-manifest.lua $$(spawn_sources) $$(version_file) | o/bin
 	$$(call build_platform_asset,$$@,$(1))
 endef
 
 $(foreach p,$(PLATFORMS),$(eval $(call platform_home_rule,$(p))))
 
-platform-assets: $(foreach p,$(PLATFORMS),results/bin/home-$(p)) ## Build platform-specific binaries
+platform-assets: $(foreach p,$(PLATFORMS),$(o)/bin/home-$(p)) ## Build platform-specific binaries
 
 # universal home binary with dotfiles + platform metadata
 HOME_VERSION ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 HOME_BASE_URL ?= https://github.com/whilp/dotfiles/releases/download/{tag}
 HOME_TAG ?= home-$(shell date -u +%Y-%m-%d)-$(HOME_VERSION)
 
-home_platform_deps := $(foreach p,$(PLATFORMS),results/bin/home-$(p))
+home_platform_deps := $(foreach p,$(PLATFORMS),$(o)/bin/home-$(p))
 
-results/bin/home: private .PLEDGE = stdio rpath wpath cpath fattr exec proc
-results/bin/home: private .CPU = 180
-results/bin/home: $(lua_bin) $(cosmos_unzip_bin) results/dotfiles.zip $(home_platform_deps) lib/home/main.lua lib/home/.args lib/home/gen-manifest.lua lib/home/gen-platforms.lua $(spawn_sources) $(version_file) $(home_setup_sources) $(home_mac_sources) | results/bin
+$(o)/bin/home: private .PLEDGE = stdio rpath wpath cpath fattr exec proc
+$(o)/bin/home: private .CPU = 180
+$(o)/bin/home: $(lua_bin) $(cosmos_unzip_bin) $(o)/dotfiles.zip $(home_platform_deps) lib/home/main.lua lib/home/.args lib/home/gen-manifest.lua lib/home/gen-platforms.lua $(spawn_sources) $(version_file) $(home_setup_sources) $(home_mac_sources) | o/bin
 	@echo "Building universal home binary..."
-	@rm -rf results/home-universal
-	@mkdir -p results/home-universal/home/.local/bin
+	@rm -rf $(o)/home-universal
+	@mkdir -p $(o)/home-universal/home/.local/bin
 	@echo "Extracting dotfiles..."
-	@unzip -q results/dotfiles.zip -d results/home-universal/home
-	@cp -p $(lua_bin) results/home-universal/home/.local/bin/lua
-	@cp -p $(cosmos_unzip_bin) results/home-universal/home/.local/bin/unzip
+	@unzip -q $(o)/dotfiles.zip -d $(o)/home-universal/home
+	@cp -p $(lua_bin) $(o)/home-universal/home/.local/bin/lua
+	@cp -p $(cosmos_unzip_bin) $(o)/home-universal/home/.local/bin/unzip
 	@echo "Generating manifest..."
-	@$(home_lua) lib/home/gen-manifest.lua results/home-universal/home $(HOME_VERSION) > results/home-universal/manifest.lua
+	@$(home_lua) lib/home/gen-manifest.lua $(o)/home-universal/home $(HOME_VERSION) > $(o)/home-universal/manifest.lua
 	@echo "Generating platforms metadata..."
-	@$(home_lua) lib/home/gen-platforms.lua results/home-universal "$(HOME_BASE_URL)" "$(HOME_TAG)" $(home_platform_deps)
+	@$(home_lua) lib/home/gen-platforms.lua $(o)/home-universal "$(HOME_BASE_URL)" "$(HOME_TAG)" $(home_platform_deps)
 	@echo "Creating home binary..."
 	@cp $(lua_bin) $@
-	@cd results/home-universal && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$@ -@
+	@cd $(o)/home-universal && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$@ -@
 	@cd lib/home && $(cosmos_zip_bin) -qr $(CURDIR)/$@ main.lua .args
-	@mkdir -p results/home-universal/.lua && cp -r $(spawn_dir) $(home_setup_dir) $(home_mac_dir) lib/claude results/home-universal/.lua/ && cp $(version_file) results/home-universal/.lua/
-	@cd results/home-universal && $(cosmos_zip_bin) -qr $(CURDIR)/$@ .lua
-	@rm -rf results/home-universal
+	@mkdir -p $(o)/home-universal/.lua && cp -r $(spawn_dir) $(home_setup_dir) $(home_mac_dir) lib/claude $(o)/home-universal/.lua/ && cp $(version_file) $(o)/home-universal/.lua/
+	@cd $(o)/home-universal && $(cosmos_zip_bin) -qr $(CURDIR)/$@ .lua
+	@rm -rf $(o)/home-universal
 
-home: results/bin/home ## Build universal home binary
+home: $(o)/bin/home ## Build universal home binary
 
 o/lib/home/test_main.lua.ok: private .UNVEIL = r:lib rx:$(lua_test) rw:/dev/null
 o/lib/home/test_main.lua.ok: private .PLEDGE = stdio rpath wpath cpath proc exec

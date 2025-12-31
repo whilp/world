@@ -2,14 +2,11 @@
 # pre-built with all C extensions (unix, path, re, sqlite3, argon2, json, cosmo)
 # we just need to zip in pure lua modules (luaunit, luacheck)
 
-lua_bin := results/bin/lua
-lua_ape := results/bin/lua.ape
+lua_bin := o/bin/lua
+lua_ape := o/bin/lua.ape
 
 # minimal lua for testing - only luaunit bundled
 lua_test := o/bin/lua-test
-
-results/bin:
-	mkdir -p $@
 
 o/bin:
 	mkdir -p $@
@@ -34,9 +31,9 @@ $(lua_test): $(cosmos_lua_bin) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua 
 	./$@ --assimilate || true
 
 # full binary: cosmos lua + luaunit + luacheck + lib modules
-$(lua_ape): private .UNVEIL = rx:$(cosmos_lua_bin) r:$(luaunit_lua_dir) r:$(luacheck_lua_dir) r:lib r:o/any/3p/lib rx:$(cosmos_zip_bin) rwc:results/bin rwc:o/any/3p/lib rw:/dev/null
+$(lua_ape): private .UNVEIL = rx:$(cosmos_lua_bin) r:$(luaunit_lua_dir) r:$(luacheck_lua_dir) r:lib r:o/any/3p/lib rx:$(cosmos_zip_bin) rwc:o/bin rwc:o/any/3p/lib rw:/dev/null
 $(lua_ape): private .PLEDGE = stdio rpath wpath cpath fattr exec proc
-$(lua_ape): $(cosmos_lua_bin) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua $(luacheck_lua_dir)/bin/luacheck $(lib_lua_stamp) | results/bin
+$(lua_ape): $(cosmos_lua_bin) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua $(luacheck_lua_dir)/bin/luacheck $(lib_lua_stamp) | o/bin
 	cp $(cosmos_lua_bin) $@
 	chmod +x $@
 	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))

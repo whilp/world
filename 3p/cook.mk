@@ -19,7 +19,7 @@ export PATH := $(dir $(cosmos_bin)):$(PATH)
 make := $(make_bin)
 
 # fetch needs our custom lua binary with cosmo built-in
-lua_bin := results/bin/lua
+lua_bin := o/bin/lua
 lib_lua = LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;" $(CURDIR)/$(lua_bin)
 fetch := lib/build/fetch.lua
 
