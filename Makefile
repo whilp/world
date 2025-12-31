@@ -61,11 +61,11 @@ build: lua ## Build lua binary [default]
 bootstrap: private .PLEDGE = stdio rpath wpath cpath inet dns
 bootstrap: private .INTERNET = 1
 bootstrap: $(bin)/lua ## Bootstrap Claude environment
-	@if [ ! -f o/bin/lua ]; then \
+	@if [ ! -f o/any/bin/lua ]; then \
 		echo "Bootstrapping lua..."; \
-		mkdir -p o/bin; \
-		curl -fsSL -o o/bin/lua https://github.com/whilp/cosmopolitan/releases/latest/download/lua; \
-		chmod +x o/bin/lua; \
+		mkdir -p o/any/bin; \
+		curl -fsSL -o o/any/bin/lua https://github.com/whilp/cosmopolitan/releases/latest/download/lua; \
+		chmod +x o/any/bin/lua; \
 	fi
 	@[ -n "$$CLAUDE_ENV_FILE" ] && echo "PATH=$(bin):$$PATH" >> "$$CLAUDE_ENV_FILE"; true
 
