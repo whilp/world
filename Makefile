@@ -1,7 +1,16 @@
 platforms := darwin-arm64 linux-arm64 linux-x86_64
 
+# Detect current platform
+uname_s := $(shell uname -s)
+uname_m := $(shell uname -m)
+ifeq ($(uname_s),Darwin)
+  current_platform := darwin-$(subst x86_64,x86_64,$(subst arm64,arm64,$(uname_m)))
+else ifeq ($(uname_s),Linux)
+  current_platform := linux-$(subst aarch64,arm64,$(uname_m))
+endif
+
 export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
-export PATH := $(CURDIR)/o/any/lua/bin:$(PATH)
+export PATH := $(CURDIR)/o/$(current_platform)/cosmos/bin:$(CURDIR)/o/any/lua/bin:$(PATH)
 
 lua_bin := o/any/lua/bin/lua
 fetch := lib/build/fetch.lua
@@ -22,7 +31,10 @@ $(lua_bin):
 	curl -sL -o $@ "https://github.com/$(cosmo)/releases/$(release)/download/lua"
 	@chmod +x $@
 
+cosmos: o/$(current_platform)/cosmos/bin/lua
+lua: cosmos
+
 clean:
 	rm -rf o
 
-.PHONY: bootstrap clean
+.PHONY: bootstrap clean cosmos lua
