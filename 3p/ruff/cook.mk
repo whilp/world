@@ -1,5 +1,6 @@
 ruff_version := 3p/ruff/version.lua
 targets += o/%/ruff/bin/ruff
+tests += o/%/ruff/test.ok
 
 o/%/ruff/archive.tar.gz: $(ruff_version) $(fetch)
 	$(fetch) $(ruff_version) $* $@
@@ -9,3 +10,6 @@ o/%/ruff/staging/ruff: $(ruff_version) $(extract) o/%/ruff/archive.tar.gz
 
 o/%/ruff/bin/ruff: $(ruff_version) $(install) o/%/ruff/staging/ruff
 	$(install) $(ruff_version) $* o/$*/ruff/staging/ruff o/$*/ruff
+
+o/%/ruff/test.ok: 3p/ruff/test.lua o/%/ruff/bin/ruff
+	$< o/$*/ruff && touch $@

@@ -17,5 +17,6 @@ include 3p/uv/cook.mk
 
 define platform_target
 3p-$(1): $(subst %,$(1),$(targets))
+test-$(1): $(subst %,$(1),$(tests))
 endef
 $(foreach p,$(platforms),$(eval $(call platform_target,$(p))))

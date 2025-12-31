@@ -1,5 +1,6 @@
 duckdb_version := 3p/duckdb/version.lua
 targets += o/%/duckdb/bin/duckdb
+tests += o/%/duckdb/test.ok
 
 o/%/duckdb/archive.zip: $(duckdb_version) $(fetch)
 	$(fetch) $(duckdb_version) $* $@
@@ -9,3 +10,6 @@ o/%/duckdb/staging/duckdb: $(duckdb_version) $(extract) o/%/duckdb/archive.zip
 
 o/%/duckdb/bin/duckdb: $(duckdb_version) $(install) o/%/duckdb/staging/duckdb
 	$(install) $(duckdb_version) $* o/$*/duckdb/staging/duckdb o/$*/duckdb
+
+o/%/duckdb/test.ok: 3p/duckdb/test.lua o/%/duckdb/bin/duckdb
+	$< o/$*/duckdb && touch $@
