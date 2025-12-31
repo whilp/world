@@ -1,5 +1,5 @@
 stylua_version := 3p/stylua/version.lua
-targets += o/%/stylua/bin/stylua
+bins += o/%/stylua/bin/stylua
 tests += o/%/stylua/test.ok
 
 o/%/stylua/archive.zip: $(stylua_version) $(fetch)

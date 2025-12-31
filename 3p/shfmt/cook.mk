@@ -1,5 +1,5 @@
 shfmt_version := 3p/shfmt/version.lua
-targets += o/%/shfmt/bin/shfmt
+bins += o/%/shfmt/bin/shfmt
 tests += o/%/shfmt/test.ok
 
 o/%/shfmt/download: $(shfmt_version) $(fetch)

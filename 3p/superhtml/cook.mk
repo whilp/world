@@ -1,5 +1,5 @@
 superhtml_version := 3p/superhtml/version.lua
-targets += o/%/superhtml/bin/superhtml
+bins += o/%/superhtml/bin/superhtml
 tests += o/%/superhtml/test.ok
 
 o/%/superhtml/archive.tar.gz: $(superhtml_version) $(fetch)

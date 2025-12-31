@@ -1,5 +1,5 @@
 cosmos_version := 3p/cosmos/version.lua
-targets += o/%/cosmos/bin/lua
+bins += o/%/cosmos/bin/lua
 tests += o/%/cosmos/test.ok
 
 o/%/cosmos/archive.zip: $(cosmos_version) $(fetch)

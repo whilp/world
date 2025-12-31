@@ -23,7 +23,7 @@ include 3p/uv/cook.mk
 space := $(subst ,, )
 
 define platform_target
-3p-$(1): $(subst %,$(1),$(targets))
+3p-$(1): $(subst %,$(1),$(bins) $(libs))
 test-$(1): $(subst %,$(1),$(tests))
 endef
 $(foreach p,$(platforms),$(eval $(call platform_target,$(p))))

@@ -1,5 +1,5 @@
 tree_sitter_version := 3p/tree-sitter/version.lua
-targets += o/%/tree-sitter/bin/tree-sitter
+bins += o/%/tree-sitter/bin/tree-sitter
 tests += o/%/tree-sitter/test.ok
 
 o/%/tree-sitter/archive.gz: $(tree_sitter_version) $(fetch)

@@ -1,5 +1,5 @@
 lua_libs += lfs
-targets += o/%/lfs/lib/lfs.lua
+libs += o/%/lfs/lib/lfs.lua
 
 o/%/lfs/lib/lfs.lua: 3p/lua/lfs_stub.lua
 	mkdir -p $(dir $@)

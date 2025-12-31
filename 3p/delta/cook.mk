@@ -1,5 +1,5 @@
 delta_version := 3p/delta/version.lua
-targets += o/%/delta/bin/delta
+bins += o/%/delta/bin/delta
 tests += o/%/delta/test.ok
 
 o/%/delta/archive.tar.gz: $(delta_version) $(fetch)

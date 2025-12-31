@@ -1,5 +1,5 @@
 biome_version := 3p/biome/version.lua
-targets += o/%/biome/bin/biome
+bins += o/%/biome/bin/biome
 tests += o/%/biome/test.ok
 
 o/%/biome/download: $(biome_version) $(fetch)

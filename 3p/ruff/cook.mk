@@ -1,5 +1,5 @@
 ruff_version := 3p/ruff/version.lua
-targets += o/%/ruff/bin/ruff
+bins += o/%/ruff/bin/ruff
 tests += o/%/ruff/test.ok
 
 o/%/ruff/archive.tar.gz: $(ruff_version) $(fetch)

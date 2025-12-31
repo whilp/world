@@ -1,5 +1,5 @@
 rg_version := 3p/rg/version.lua
-targets += o/%/rg/bin/rg
+bins += o/%/rg/bin/rg
 tests += o/%/rg/test.ok
 
 o/%/rg/archive.tar.gz: $(rg_version) $(fetch)

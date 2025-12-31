@@ -1,5 +1,5 @@
 duckdb_version := 3p/duckdb/version.lua
-targets += o/%/duckdb/bin/duckdb
+bins += o/%/duckdb/bin/duckdb
 tests += o/%/duckdb/test.ok
 
 o/%/duckdb/archive.zip: $(duckdb_version) $(fetch)

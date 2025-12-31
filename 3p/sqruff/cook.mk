@@ -1,5 +1,5 @@
 sqruff_version := 3p/sqruff/version.lua
-targets += o/%/sqruff/bin/sqruff
+bins += o/%/sqruff/bin/sqruff
 tests += o/%/sqruff/test.ok
 
 o/%/sqruff/archive.tar.gz: $(sqruff_version) $(fetch)

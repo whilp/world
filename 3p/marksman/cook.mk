@@ -1,5 +1,5 @@
 marksman_version := 3p/marksman/version.lua
-targets += o/%/marksman/bin/marksman
+bins += o/%/marksman/bin/marksman
 tests += o/%/marksman/test.ok
 
 o/%/marksman/download: $(marksman_version) $(fetch)

@@ -1,5 +1,5 @@
 nvim_version := 3p/nvim/version.lua
-targets += o/%/nvim/bin/nvim
+bins += o/%/nvim/bin/nvim
 tests += o/%/nvim/test.ok
 
 o/%/nvim/archive.tar.gz: $(nvim_version) $(fetch)

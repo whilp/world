@@ -1,5 +1,5 @@
 gh_version := 3p/gh/version.lua
-targets += o/%/gh/bin/gh
+bins += o/%/gh/bin/gh
 tests += o/%/gh/test.ok
 
 o/%/gh/archive: $(gh_version) $(fetch)

@@ -1,5 +1,5 @@
 comrak_version := 3p/comrak/version.lua
-targets += o/%/comrak/bin/comrak
+bins += o/%/comrak/bin/comrak
 tests += o/%/comrak/test.ok
 
 o/%/comrak/download: $(comrak_version) $(fetch)

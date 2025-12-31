@@ -1,5 +1,5 @@
 uv_version := 3p/uv/version.lua
-targets += o/%/uv/bin/uv
+bins += o/%/uv/bin/uv
 tests += o/%/uv/test.ok
 
 o/%/uv/archive.tar.gz: $(uv_version) $(fetch)

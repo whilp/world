@@ -1,5 +1,5 @@
 astgrep_version := 3p/ast-grep/version.lua
-targets += o/%/ast-grep/bin/sg
+bins += o/%/ast-grep/bin/sg
 tests += o/%/ast-grep/test.ok
 
 o/%/ast-grep/archive.zip: $(astgrep_version) $(fetch)
