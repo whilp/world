@@ -1,38 +1,20 @@
-TOOLS += nvim
+nvim_version := 3p/nvim/version.lua
+targets += o/%/nvim/bin/nvim
+tests += o/%/nvim/test.ok
 
-nvim-latest:
-nvim-latest: private .PLEDGE = stdio rpath wpath cpath inet dns
-nvim-latest: private .INTERNET = 1
-nvim-latest: $(lua_bin)
-	$(lua_bin) 3p/nvim/latest.lua
+o/%/nvim/archive.tar.gz: $(nvim_version) $(fetch)
+	$(fetch) $(nvim_version) $* $@
+
+o/%/nvim/staging/bin/nvim: $(nvim_version) $(extract) o/%/nvim/archive.tar.gz
+	$(extract) $(nvim_version) $* o/$*/nvim/archive.tar.gz o/$*/nvim/staging
+
+o/%/nvim/bin/nvim: $(nvim_version) $(install) o/%/nvim/staging/bin/nvim
+	$(install) $(nvim_version) $* o/$*/nvim/staging/bin/nvim o/$*/nvim
+
+o/%/nvim/test.ok: 3p/nvim/test.lua o/%/nvim/bin/nvim
+	$< o/$*/nvim && touch $@
+
+nvim-latest: | $(lua_bin)
+	lua 3p/nvim/latest.lua
 
 .PHONY: nvim-latest
-
-nvim_pack_lock := .config/nvim/nvim-pack-lock.json
-nvim_plugins_dir := $(3p)/nvim/plugins
-
-ifneq ($(wildcard $(lua_bin)),)
-nvim_plugins := $(shell $(lib_lua) lib/build/list-plugins.lua)
-else
-nvim_plugins :=
-endif
-
-fetch_plugin := lib/build/fetch-plugin.lua
-$(nvim_plugins_dir)/%/.fetched: private .PLEDGE = stdio rpath wpath cpath inet dns exec proc
-$(nvim_plugins_dir)/%/.fetched: private .INTERNET = 1
-$(nvim_plugins_dir)/%/.fetched: private .CPU = 60
-$(nvim_plugins_dir)/%/.fetched: $(nvim_pack_lock) $(fetch_plugin)
-	$(lib_lua) $(fetch_plugin) $* $(dir $@)
-	touch $@
-
-nvim_plugin_targets := $(foreach p,$(nvim_plugins),$(nvim_plugins_dir)/$(p)/.fetched)
-
-nvim_bundle := lib/build/nvim-bundle.lua
-$(3p)/nvim/%/.bundled: private .PLEDGE = stdio rpath wpath cpath inet dns exec proc
-$(3p)/nvim/%/.bundled: private .INTERNET = 1
-$(3p)/nvim/%/.bundled: private .CPU = 180
-$(3p)/nvim/%/.bundled: $(3p)/nvim/%/.extracted $(nvim_bundle) $(nvim_plugin_targets)
-	$(lib_lua) $(nvim_bundle) $* $(dir $@) $(nvim_plugins_dir)
-	touch $@
-
-nvim_bundled := $(foreach p,$(PLATFORMS),$(3p)/nvim/$(p)/.bundled)

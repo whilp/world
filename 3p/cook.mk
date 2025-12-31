@@ -6,6 +6,7 @@ include 3p/delta/cook.mk
 include 3p/duckdb/cook.mk
 include 3p/gh/cook.mk
 include 3p/marksman/cook.mk
+include 3p/nvim/cook.mk
 include 3p/rg/cook.mk
 include 3p/ruff/cook.mk
 include 3p/shfmt/cook.mk
