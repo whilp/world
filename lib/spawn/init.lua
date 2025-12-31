@@ -154,6 +154,14 @@ local function spawn(argv, opts)
 	return handle
 end
 
-return {
+local M = {
 	spawn = spawn,
 }
+
+setmetatable(M, {
+	__call = function(_, ...)
+		return spawn(...)
+	end,
+})
+
+return M

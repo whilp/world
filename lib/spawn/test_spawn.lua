@@ -1,6 +1,6 @@
 local lu = require("luaunit")
 local unix = require("cosmo.unix")
-local spawn = require("spawn").spawn
+local spawn = require("spawn")
 
 TestSpawn = {}
 
