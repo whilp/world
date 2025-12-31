@@ -61,6 +61,7 @@ local function main()
 
   local result = {
     version = version,
+    format = "zip",
     url = "https://github.com/" .. REPO .. "/releases/download/{version}/cosmos.zip",
     platforms = {any = {sha = sha}},
   }

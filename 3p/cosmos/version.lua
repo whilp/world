@@ -1,8 +1,6 @@
 return {
-  version = "2025.12.31-c1df9bee9",
-  url = "https://github.com/whilp/cosmopolitan/releases/download/{version}/cosmos.zip",
-  format = "zip",
-  platforms = {
-    any = {sha = "191848023042197a9ac0dddd3780b4b5e61486734457361f137ef522114d9d5c"}
-  }
+  format="zip",
+  platforms={any={sha="d9f0e79e093f5504008b766f7bf342c964a916305fb4b0dbc7de8286eba04cc0"}},
+  url="https://github.com/whilp/cosmopolitan/releases/download/{version}/cosmos.zip",
+  version="2025.12.31-d6ec29cf9"
 }
