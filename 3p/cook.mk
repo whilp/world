@@ -8,7 +8,6 @@ unzip := unzip -q -DD
 zip := zip -q
 tar := tar -m
 gunzip := gunzip -f
-lua := lua
 
 include lib/make/macros.mk
 include 3p/cosmos/cook.mk
@@ -22,7 +21,7 @@ make := $(make_bin)
 lua_bin := o/any/bin/lua
 fetch := lib/build/fetch.lua
 
-# Tools self-register via TOOLS +=
+# each tool defines its own download rule and {tool}_binaries variable
 include 3p/ast-grep/cook.mk
 include 3p/biome/cook.mk
 include 3p/comrak/cook.mk
@@ -40,29 +39,25 @@ include 3p/superhtml/cook.mk
 include 3p/tree-sitter/cook.mk
 include 3p/uv/cook.mk
 
-# Pattern rule template for each tool
-# Generates: $(o)/%/3p/nvim/.extracted: 3p/nvim/version.lua ...
-#   where % matches platform (darwin-arm64, linux-arm64, linux-x86_64)
-define tool_download_rule
-$(o)/%/3p/$(1)/.extracted: private .PLEDGE = stdio rpath wpath cpath inet dns exec proc
-$(o)/%/3p/$(1)/.extracted: private .INTERNET = 1
-$(o)/%/3p/$(1)/.extracted: private .CPU = 120
-$(o)/%/3p/$(1)/.extracted: 3p/$(1)/version.lua $(fetch)
-	@mkdir -p $$(dir $$@)
-	$(lua_bin) $(fetch) 3p/$(1)/version.lua $(1) $$* $$(dir $$@)
-	touch $$@
-endef
-
-# Generate pattern rule for each tool
-$(foreach tool,$(TOOLS),$(eval $(call tool_download_rule,$(tool))))
-
-# Generate {tool}_binaries variables for each tool
-$(foreach tool,$(TOOLS),$(eval $(tool)_binaries := $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/$(tool)/.extracted)))
-
-# nvim needs plugin bundling after extraction (defined in 3p/nvim/cook.mk)
+# nvim uses .bundled instead of .extracted
 nvim_binaries := $(nvim_bundled)
 
-# Aggregate all_binaries
-all_binaries := $(foreach tool,$(TOOLS),$($(tool)_binaries))
+all_binaries := \
+	$(ast-grep_binaries) \
+	$(biome_binaries) \
+	$(comrak_binaries) \
+	$(delta_binaries) \
+	$(duckdb_binaries) \
+	$(gh_binaries) \
+	$(marksman_binaries) \
+	$(nvim_binaries) \
+	$(rg_binaries) \
+	$(ruff_binaries) \
+	$(shfmt_binaries) \
+	$(sqruff_binaries) \
+	$(stylua_binaries) \
+	$(superhtml_binaries) \
+	$(tree-sitter_binaries) \
+	$(uv_binaries)
 
 .STRICT = 1
