@@ -82,14 +82,14 @@ home_platform_deps := $(foreach p,$(PLATFORMS),results/bin/home-$(p))
 
 results/bin/home: private .PLEDGE = stdio rpath wpath cpath fattr exec proc
 results/bin/home: private .CPU = 180
-results/bin/home: $(lua_bin) results/dotfiles.zip $(home_platform_deps) lib/home/main.lua lib/home/.args lib/home/gen-manifest.lua lib/home/gen-platforms.lua $(spawn_sources) $(version_file) $(home_setup_sources) $(home_mac_sources) | results/bin
+results/bin/home: $(lua_bin) $(cosmos_unzip_bin) results/dotfiles.zip $(home_platform_deps) lib/home/main.lua lib/home/.args lib/home/gen-manifest.lua lib/home/gen-platforms.lua $(spawn_sources) $(version_file) $(home_setup_sources) $(home_mac_sources) | results/bin
 	@echo "Building universal home binary..."
 	@rm -rf results/home-universal
 	@mkdir -p results/home-universal/home/.local/bin
 	@echo "Extracting dotfiles..."
 	@unzip -q results/dotfiles.zip -d results/home-universal/home
 	@cp -p $(lua_bin) results/home-universal/home/.local/bin/lua
-	@cp -p o/3p/cosmos/bin/unzip results/home-universal/home/.local/bin/unzip
+	@cp -p $(cosmos_unzip_bin) results/home-universal/home/.local/bin/unzip
 	@echo "Generating manifest..."
 	@$(home_lua) lib/home/gen-manifest.lua results/home-universal/home $(HOME_VERSION) > results/home-universal/manifest.lua
 	@echo "Generating platforms metadata..."
