@@ -13,6 +13,6 @@ $(o)/binaries-$(1).zip: private .UNVEIL = r:$(o)/$(1) rx:$$(cosmos_zip_bin) rwc:
 $(o)/binaries-$(1).zip: private .PLEDGE = stdio rpath wpath cpath fattr exec proc
 $(o)/binaries-$(1).zip: $$(all_binaries) $$(cosmos_zip_bin)
 	cd $(o)/$(1)/3p && \
-		find . -type f ! -name '.extracted' ! -name '.bundled' | \
-		$$(cosmos_zip_bin) -q $$@ -@
+		find . \( -type f -o -type l \) ! -name '.bundled' | \
+		$$(cosmos_zip_bin) -qy $$@ -@
 endef
