@@ -1,17 +1,38 @@
 # cosmos binaries from whilp/cosmopolitan fork
 cosmos_dir := $(3p)/cosmos
-cosmos_version := 2025.12.29-6868479b1
-cosmos_url := https://github.com/whilp/cosmopolitan/releases/download/$(cosmos_version)
+cosmos_version := lib/cosmos/version.lua
+cosmos_fetch := lib/build/fetch.lua
 
-$(eval $(call download_binary_rule,cosmos,lua,$(cosmos_url)/lua,52e92da125637916adedfa2fd7651d8430134fec63671ce7d6d2e636c73bc2a4))
-$(eval $(call download_binary_rule,cosmos,zip,$(cosmos_url)/zip,0dc386094952aa9f19e1de2fe255330dd039a14bd348bb951ba4a06e072807fe))
-$(eval $(call download_binary_rule,cosmos,unzip,$(cosmos_url)/unzip,65538efad171d952de6c4e9c99b18ad11e293ab38f546fd526d76e2892f68399))
-$(eval $(call download_binary_rule,cosmos,make,$(cosmos_url)/make,c7c8e7f09a1ed51d875bd6b3b1048e9faeb9d76cb3c7eedf01e153cced4a9373))
+cosmos_lua_bin := $(cosmos_dir)/bin/lua
+cosmos_zip_bin := $(cosmos_dir)/bin/zip
+cosmos_unzip_bin := $(cosmos_dir)/bin/unzip
+cosmos_make_bin := $(cosmos_dir)/bin/make
 
 cosmos_bin := $(cosmos_make_bin)
 
+$(cosmos_lua_bin): private .UNVEIL = r:/etc/resolv.conf r:/etc/ssl r:lib rwc:$(cosmos_dir) rw:/dev/null
+$(cosmos_lua_bin): private .PLEDGE = stdio rpath wpath cpath inet dns
+$(cosmos_lua_bin): private .INTERNET = 1
+$(cosmos_lua_bin): $(cosmos_fetch) $(cosmos_version)
+	$(lib_lua) $(cosmos_fetch) $(cosmos_version) lua $@
+
+$(cosmos_zip_bin): private .UNVEIL = r:/etc/resolv.conf r:/etc/ssl r:lib rwc:$(cosmos_dir) rw:/dev/null
+$(cosmos_zip_bin): private .PLEDGE = stdio rpath wpath cpath inet dns
+$(cosmos_zip_bin): private .INTERNET = 1
+$(cosmos_zip_bin): $(cosmos_fetch) $(cosmos_version)
+	$(lib_lua) $(cosmos_fetch) $(cosmos_version) zip $@
+
+$(cosmos_unzip_bin): private .UNVEIL = r:/etc/resolv.conf r:/etc/ssl r:lib rwc:$(cosmos_dir) rw:/dev/null
+$(cosmos_unzip_bin): private .PLEDGE = stdio rpath wpath cpath inet dns
+$(cosmos_unzip_bin): private .INTERNET = 1
+$(cosmos_unzip_bin): $(cosmos_fetch) $(cosmos_version)
+	$(lib_lua) $(cosmos_fetch) $(cosmos_version) unzip $@
+
+$(cosmos_make_bin): private .UNVEIL = r:/etc/resolv.conf r:/etc/ssl r:lib rwc:$(cosmos_dir) rw:/dev/null
+$(cosmos_make_bin): private .PLEDGE = stdio rpath wpath cpath inet dns
+$(cosmos_make_bin): private .INTERNET = 1
+$(cosmos_make_bin): $(cosmos_fetch) $(cosmos_version)
+	$(lib_lua) $(cosmos_fetch) $(cosmos_version) make $@
+
 cosmos: $(cosmos_lua_bin) $(cosmos_zip_bin) $(cosmos_unzip_bin) $(cosmos_make_bin)
 .PHONY: cosmos
-
-$(cosmos_dir)/bin:
-	mkdir -p $@
