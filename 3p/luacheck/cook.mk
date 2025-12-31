@@ -17,5 +17,5 @@ o/%/luacheck/bin/luacheck: $(luacheck_version) $(install) o/%/luacheck/lib/luach
 	$(install) $(luacheck_version) $* o/$*/luacheck bin 3p/luacheck/luacheck
 	chmod +x o/$*/luacheck/bin/luacheck
 
-o/%/luacheck/test.ok: 3p/luacheck/test.lua o/%/luacheck/bin/luacheck
+o/%/luacheck/test.ok: 3p/luacheck/test.lua o/%/luacheck/bin/luacheck $(runner)
 	TEST_BIN_DIR=o/$*/luacheck $(runner) $< $@

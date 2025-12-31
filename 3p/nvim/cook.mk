@@ -11,7 +11,7 @@ o/%/nvim/staging/bin/nvim: $(nvim_version) $(extract) o/%/nvim/archive.tar.gz
 o/%/nvim/bin/nvim: $(nvim_version) $(install) o/%/nvim/staging/bin/nvim
 	$(install) $(nvim_version) $* o/$*/nvim bin o/$*/nvim/staging/bin/nvim
 
-o/%/nvim/test.ok: 3p/nvim/test.lua o/%/nvim/bin/nvim
+o/%/nvim/test.ok: 3p/nvim/test.lua o/%/nvim/bin/nvim $(runner)
 	TEST_BIN_DIR=o/$*/nvim $(runner) $< $@
 
 nvim-latest: | $(lua_bin)
