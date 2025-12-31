@@ -1,5 +1,14 @@
 local lu = require("luaunit")
 
+-- skip if posix not available (work module requires luaposix)
+local has_posix = pcall(require, "posix")
+if not has_posix then
+  function test_command_blocked_skipped()
+    lu.skip("requires luaposix")
+  end
+  os.exit(lu.LuaUnit.run())
+end
+
 local data = require("work.data")
 local process = require("work.process")
 local store = require("work.store")
@@ -27,11 +36,10 @@ function TestCommandBlocked:test_blocked_items_list()
   }
 
   local item1 = data.get(test_store, "01TEST0000000000000000001")
-  local item2 = data.get(test_store, "01TEST0000000000000000002")
 
   local blocked_items = process.get_blocked_items(test_store)
   lu.assertEquals(#blocked_items, 1)
   lu.assertEquals(blocked_items[1].id, item1.id)
 end
 
-return TestCommandBlocked
+os.exit(lu.LuaUnit.run())

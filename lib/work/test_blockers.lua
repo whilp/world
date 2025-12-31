@@ -1,5 +1,14 @@
 local lu = require("luaunit")
 
+-- skip if posix not available (work module requires luaposix)
+local has_posix = pcall(require, "posix")
+if not has_posix then
+  function test_blockers_skipped()
+    lu.skip("requires luaposix")
+  end
+  os.exit(lu.LuaUnit.run())
+end
+
 local data = require("work.data")
 local process = require("work.process")
 local store = require("work.store")
@@ -34,4 +43,4 @@ function TestBlockers:test_item_blocking_relationship()
   lu.assertFalse(process.is_item_blocked(test_store, blocker))
 end
 
-return TestBlockers
+os.exit(lu.LuaUnit.run())

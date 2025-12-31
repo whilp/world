@@ -2,9 +2,8 @@
 -- Bundles pre-fetched plugins into an nvim directory
 -- Usage: lua lib/build/nvim-bundle.lua <platform> <nvim_dir> <plugins_dir>
 
-local cosmo = require("cosmo")
-local path = cosmo.path
-local unix = cosmo.unix
+local path = require("cosmo.path")
+local unix = require("cosmo.unix")
 local spawn = require("spawn").spawn
 
 local PACK_LOCK = ".config/nvim/nvim-pack-lock.json"

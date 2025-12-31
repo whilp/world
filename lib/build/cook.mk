@@ -1,7 +1,9 @@
-test-build-download-tool: private .UNVEIL = r:lib/build r:lib r:3p rx:$(lua_bin) r:$(test_runner) r:$(CURDIR) rwc:/tmp rw:/dev/null
-test-build-download-tool: private .PLEDGE = stdio rpath wpath cpath proc exec
-test-build-download-tool: private .CPU = 60
-test-build-download-tool: lua
-	cd lib/build && HOME=$(CURDIR) $(home_lua) $(CURDIR)/$(test_runner) test.lua
+# lib/build/cook.mk - build tools
 
-.PHONY: test-build-download-tool
+o/lib/build/test.lua.ok: private .UNVEIL = r:lib r:3p rx:$(lua_test) rwc:/tmp rw:/dev/null
+o/lib/build/test.lua.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
+o/lib/build/test.lua.ok: private .CPU = 60
+o/lib/build/test.lua.ok: $(lua_test) lib/build/test.lua lib/build/download-tool.lua
+	@mkdir -p $(@D)
+	$(lua_test) lib/build/test.lua
+	@touch $@

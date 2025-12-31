@@ -1,4 +1,4 @@
-local cosmo = require("cosmo") -- luacheck: ignore
+require("cosmo") -- luacheck: ignore
 
 local function main()
 	local modules = {

@@ -1,7 +1,4 @@
-local cosmo = require('cosmo')
-local unix = cosmo.unix
-local path = cosmo.path
-
+local lu = require('luaunit')
 local claude = require("claude.main")
 
 function test_find_claude_binary_finds_existing()
@@ -89,3 +86,5 @@ function test_scan_for_atomic_install()
   local result = claude.scan_for_atomic_install()
   lu.assertTrue(result == nil or type(result) == "string", "should return nil or string")
 end
+
+os.exit(lu.LuaUnit.run())
