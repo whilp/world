@@ -13,7 +13,7 @@ end
 dofile(test_file)
 
 local runner = lu.LuaUnit.new()
-runner:setOutputType("nil")
+runner:setOutputType("tap")
 local code = runner:runSuite()
 
 local result = {
