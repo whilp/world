@@ -18,6 +18,7 @@ runner:setOutputType("tap")
 local code = runner:runSuite()
 
 local result = {
+  file = test_file,
   tests = runner.result.runCount,
   passed = runner.result.runCount - runner.result.notSuccessCount - runner.result.skippedCount,
   failed = runner.result.failureCount,
