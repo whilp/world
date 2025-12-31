@@ -10,6 +10,7 @@ if not test_file or not output then
   os.exit(1)
 end
 
+print("# " .. test_file)
 dofile(test_file)
 
 local runner = lu.LuaUnit.new()
