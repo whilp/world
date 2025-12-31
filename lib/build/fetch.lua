@@ -335,10 +335,16 @@ local function fetch_tool(version_data, tool_name, platform, output_dir)
     return nil, err
   end
 
-  unix.makedirs(output_dir)
+  -- extract to versioned subdir
+  local version = version_data.version or "unknown"
+  local sha_short = config.sha:sub(1, 8)
+  local version_dir = version .. "-" .. sha_short
+  local extract_dir = path.join(output_dir, version_dir)
+
+  unix.makedirs(extract_dir)
 
   local archive_name = config.format == "binary" and tool_name or ("archive." .. config.format)
-  local archive_path = path.join(output_dir, archive_name)
+  local archive_path = path.join(extract_dir, archive_name)
 
   local ok
   ok, err = download(config.url, archive_path)
@@ -352,18 +358,18 @@ local function fetch_tool(version_data, tool_name, platform, output_dir)
     return nil, err
   end
 
-  ok, err = extract(archive_path, output_dir, config.format, config.strip_components, tool_name)
+  ok, err = extract(archive_path, extract_dir, config.format, config.strip_components, tool_name)
   if not ok then
     return nil, err
   end
 
-  -- write manifest
-  local manifest = string.format(
-    'return {\n  version = %q,\n  sha = %q,\n}\n',
-    version_data.version or "",
-    config.sha
-  )
-  write_file(path.join(output_dir, ".extracted"), manifest)
+  -- create bin symlink pointing to versioned bin
+  local symlink_path = path.join(output_dir, "bin")
+  local target = version_dir .. "/bin"
+
+  -- remove existing symlink if present
+  unix.unlink(symlink_path)
+  unix.symlink(target, symlink_path)
 
   return true
 end

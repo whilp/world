@@ -1,7 +1,7 @@
-$(o)/%/3p/stylua/.extracted: private .PLEDGE = stdio rpath wpath cpath inet dns exec proc
-$(o)/%/3p/stylua/.extracted: private .INTERNET = 1
-$(o)/%/3p/stylua/.extracted: private .CPU = 120
-$(o)/%/3p/stylua/.extracted: 3p/stylua/version.lua $(fetch)
-	$(lua_bin) $(fetch) $< stylua $* $(dir $@)
+$(o)/%/3p/stylua/bin/stylua: private .PLEDGE = stdio rpath wpath cpath inet dns exec proc
+$(o)/%/3p/stylua/bin/stylua: private .INTERNET = 1
+$(o)/%/3p/stylua/bin/stylua: private .CPU = 120
+$(o)/%/3p/stylua/bin/stylua: 3p/stylua/version.lua $(fetch)
+	$(lua_bin) $(fetch) $< stylua $* $(patsubst %/bin/,%/,$(dir $@))
 
-all_binaries += $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/stylua/.extracted)
+all_binaries += $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/stylua/bin/stylua)

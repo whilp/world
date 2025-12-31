@@ -1,8 +1,8 @@
-$(o)/%/3p/nvim/.extracted: private .PLEDGE = stdio rpath wpath cpath inet dns exec proc
-$(o)/%/3p/nvim/.extracted: private .INTERNET = 1
-$(o)/%/3p/nvim/.extracted: private .CPU = 120
-$(o)/%/3p/nvim/.extracted: 3p/nvim/version.lua $(fetch)
-	$(lua_bin) $(fetch) $< nvim $* $(dir $@)
+$(o)/%/3p/nvim/bin/nvim: private .PLEDGE = stdio rpath wpath cpath inet dns exec proc
+$(o)/%/3p/nvim/bin/nvim: private .INTERNET = 1
+$(o)/%/3p/nvim/bin/nvim: private .CPU = 120
+$(o)/%/3p/nvim/bin/nvim: 3p/nvim/version.lua $(fetch)
+	$(lua_bin) $(fetch) $< nvim $* $(patsubst %/bin/,%/,$(dir $@))
 
 nvim-latest:
 nvim-latest: private .PLEDGE = stdio rpath wpath cpath inet dns
@@ -35,7 +35,7 @@ nvim_bundle := lib/build/nvim-bundle.lua
 $(o)/%/3p/nvim/.bundled: private .PLEDGE = stdio rpath wpath cpath inet dns exec proc
 $(o)/%/3p/nvim/.bundled: private .INTERNET = 1
 $(o)/%/3p/nvim/.bundled: private .CPU = 180
-$(o)/%/3p/nvim/.bundled: $(o)/%/3p/nvim/.extracted $(nvim_bundle) $(nvim_plugin_targets)
+$(o)/%/3p/nvim/.bundled: $(o)/%/3p/nvim/bin/nvim $(nvim_bundle) $(nvim_plugin_targets)
 	$(lua_bin) $(nvim_bundle) $* $(dir $@) $(nvim_plugins_dir)
 	touch $@
 

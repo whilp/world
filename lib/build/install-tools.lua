@@ -32,45 +32,26 @@ local function copy_recursive(src, dest)
 end
 
 local function install_tool(tool_dir, tool_name, install_base)
-  -- read manifest from .extracted
-  local manifest_path = path.join(tool_dir, ".extracted")
-  local ok, manifest = pcall(dofile, manifest_path)
-  if not ok or not manifest then
-    io.stderr:write("  skipping " .. tool_name .. " (no manifest)\n")
+  -- get version from bin symlink target (e.g., "0.35.0-abc12345/bin")
+  local bin_symlink = path.join(tool_dir, "bin")
+  local target = unix.readlink(bin_symlink)
+  if not target then
+    io.stderr:write("  skipping " .. tool_name .. " (no bin symlink)\n")
     return
   end
 
-  local version = manifest.version or "0.0.0"
-  local sha = (manifest.sha or "00000000"):sub(1, 8)
-  local install_dir = path.join(install_base, tool_name, version .. "-" .. sha)
-
-  print("  installing " .. tool_name .. " " .. version .. "-" .. sha)
-  unix.makedirs(install_dir)
-
-  -- nvim and gh have full directory structures
-  if tool_name == "nvim" or tool_name == "gh" then
-    for _, subdir in ipairs({"bin", "lib", "share", "libexec"}) do
-      local src = path.join(tool_dir, subdir)
-      if unix.stat(src) then
-        copy_recursive(src, path.join(install_dir, subdir))
-      end
-    end
-  else
-    -- simple tools: just copy the binary
-    local bin_dir = path.join(install_dir, "bin")
-    unix.makedirs(bin_dir)
-
-    local src_bin = path.join(tool_dir, "bin", tool_name)
-    if not unix.stat(src_bin) then
-      src_bin = path.join(tool_dir, tool_name)
-    end
-
-    if unix.stat(src_bin) then
-      local dest = path.join(bin_dir, tool_name)
-      execute({"cp", "-p", src_bin, dest})
-      unix.chmod(dest, tonumber("755", 8))
-    end
+  -- parse "version-sha/bin" to get version directory
+  local version_dir = target:match("^([^/]+)/bin$")
+  if not version_dir then
+    io.stderr:write("  skipping " .. tool_name .. " (invalid symlink: " .. target .. ")\n")
+    return
   end
+
+  local install_dir = path.join(install_base, tool_name, version_dir)
+  local src_dir = path.join(tool_dir, version_dir)
+
+  print("  installing " .. tool_name .. " " .. version_dir)
+  copy_recursive(src_dir, install_dir)
 end
 
 -- CLI: install-tools.lua <binaries_zip> <platform> <output_dir>
