@@ -1,7 +1,16 @@
 local lu = require("luaunit")
-local cosmo = require("cosmo")
-local unix = cosmo.unix
-local path = cosmo.path
+
+-- skip if posix not available (work module requires luaposix)
+local has_posix = pcall(require, "posix")
+if not has_posix then
+  function test_backup_skipped()
+    lu.skip("requires luaposix")
+  end
+  os.exit(lu.LuaUnit.run())
+end
+
+local unix = require("cosmo.unix")
+local path = require("cosmo.path")
 
 local data = require("work.data")
 local store = require("work.store")
@@ -51,7 +60,7 @@ function TestBackup:test_backup_created_on_update()
 
   -- Update item
   item.title = "updated title"
-  local ok, err = data.save(item, self.test_dir)
+  ok, err = data.save(item, self.test_dir)
   lu.assertTrue(ok, "second save should succeed: " .. tostring(err))
 
   -- Verify backup was removed after successful save
@@ -61,7 +70,7 @@ function TestBackup:test_backup_created_on_update()
 
   -- Verify updated content
   local file_path = self.test_dir .. "/01BACKUP00000000000000001.lua"
-  local f = io.open(file_path, "r")
+  f = io.open(file_path, "r")
   local content = f:read("*a")
   f:close()
   lu.assertStrContains(content, "updated title")
@@ -101,7 +110,7 @@ function TestBackup:test_no_backup_for_new_file()
 
   -- Verify file exists
   local file_path = self.test_dir .. "/01BACKUP00000000000000003.lua"
-  local f = io.open(file_path, "r")
+  f = io.open(file_path, "r")
   lu.assertNotNil(f, "file should exist")
   f:close()
 end
@@ -153,11 +162,11 @@ function TestBackup:test_restore_backup()
   lu.assertTrue(ok, "restore should succeed: " .. tostring(err))
 
   -- Verify backup is gone
-  local f = io.open(backup_path, "r")
+  f = io.open(backup_path, "r")
   lu.assertNil(f, "backup file should be removed after restore")
 
   -- Verify original exists
-  local f = io.open(original_path, "r")
+  f = io.open(original_path, "r")
   lu.assertNotNil(f, "original file should exist after restore")
   local content = f:read("*a")
   f:close()
@@ -198,7 +207,7 @@ function TestBackup:test_backup_content_matches_original()
 
   -- Manually create a backup to test
   local backup_path = original_path .. ".bak"
-  local f = io.open(backup_path, "w")
+  f = io.open(backup_path, "w")
   f:write(original_content)
   f:close()
 
@@ -206,7 +215,7 @@ function TestBackup:test_backup_content_matches_original()
   item.title = "updated content"
 
   -- Read backup before update
-  local f = io.open(backup_path, "r")
+  f = io.open(backup_path, "r")
   local backup_content = f:read("*a")
   f:close()
 
@@ -216,4 +225,4 @@ function TestBackup:test_backup_content_matches_original()
   lu.assertNotStrContains(backup_content, "updated content")
 end
 
-return TestBackup
+os.exit(lu.LuaUnit.run())

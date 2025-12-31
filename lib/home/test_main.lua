@@ -1,9 +1,6 @@
-lu = require("luaunit")
-
--- cosmo may not be available in all environments
-local has_cosmo, cosmo = pcall(require, "cosmo")
-local unix = has_cosmo and cosmo.unix or nil
-local path = has_cosmo and cosmo.path or nil
+local lu = require("luaunit")
+local unix = require("cosmo.unix")
+local path = require("cosmo.path")
 
 local home = require("main")
 
@@ -32,9 +29,6 @@ end
 
 -- Helper: remove directory recursively
 local function remove_dir(dir_path)
-  if not unix then
-    return
-  end
   for name in unix.opendir(dir_path) do
     if name ~= "." and name ~= ".." then
       local full_path = path.join(dir_path, name)
@@ -58,13 +52,6 @@ local function write_file(file_path, content)
     return true
   end
   return false
-end
-
--- Helper: skip test if cosmo not available
-local function skip_without_cosmo()
-  if not has_cosmo then
-    lu.skip("requires cosmo module")
-  end
 end
 
 --------------------------------------------------------------------------------
@@ -164,7 +151,6 @@ end
 -- Test: copy_file - Basic copy
 --------------------------------------------------------------------------------
 function test_copy_file_basic()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
@@ -184,7 +170,6 @@ function test_copy_file_basic()
 end
 
 function test_copy_file_with_mode()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
@@ -206,7 +191,6 @@ end
 -- Test: copy_file - Overwrite behavior
 --------------------------------------------------------------------------------
 function test_copy_file_no_overwrite_fails()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
@@ -227,7 +211,6 @@ function test_copy_file_no_overwrite_fails()
 end
 
 function test_copy_file_overwrite_succeeds()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
@@ -250,7 +233,6 @@ end
 -- Test: copy_file - Source doesn't exist
 --------------------------------------------------------------------------------
 function test_copy_file_source_missing()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local ok, err = home.copy_file(path.join(tmp, "nonexistent"), path.join(tmp, "dest"))
   lu.assertFalse(ok)
@@ -296,7 +278,6 @@ end
 -- Test: cmd_unpack silent by default
 --------------------------------------------------------------------------------
 function test_cmd_unpack_silent_by_default()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
@@ -332,7 +313,6 @@ end
 -- Test: cmd_unpack verbose mode
 --------------------------------------------------------------------------------
 function test_cmd_unpack_verbose()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
@@ -366,7 +346,6 @@ function test_cmd_unpack_verbose()
 end
 
 function test_cmd_unpack_verbose_force_overwrite()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
@@ -403,7 +382,6 @@ end
 -- Test: cmd_unpack dry-run mode
 --------------------------------------------------------------------------------
 function test_cmd_unpack_dry_run()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
@@ -434,7 +412,6 @@ function test_cmd_unpack_dry_run()
 end
 
 function test_cmd_unpack_dry_run_verbose()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
@@ -473,7 +450,6 @@ end
 -- Test: cmd_unpack --only filter
 --------------------------------------------------------------------------------
 function test_cmd_unpack_only_filter()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
@@ -520,7 +496,6 @@ function test_cmd_unpack_only_filter()
 end
 
 function test_cmd_unpack_only_empty_filter()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
@@ -552,7 +527,6 @@ function test_cmd_unpack_only_empty_filter()
 end
 
 function test_cmd_unpack_only_null_delimited()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
@@ -781,7 +755,6 @@ end
 -- Test: find_binary_in_dir
 --------------------------------------------------------------------------------
 function test_find_binary_in_dir_direct()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local bin_dir = path.join(tmp, "bin")
   unix.makedirs(bin_dir)
@@ -795,7 +768,6 @@ function test_find_binary_in_dir_direct()
 end
 
 function test_find_binary_in_dir_in_bin()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local bin_dir = path.join(tmp, "bin")
   unix.makedirs(bin_dir)
@@ -809,7 +781,6 @@ function test_find_binary_in_dir_in_bin()
 end
 
 function test_find_binary_in_dir_not_found()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
 
   local result = home.find_binary_in_dir(tmp, "nonexistent")
@@ -822,7 +793,6 @@ end
 -- Test: scan_for_latest_version
 --------------------------------------------------------------------------------
 function test_scan_for_latest_version_single()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local share_dir = tmp
   local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234")
@@ -841,7 +811,6 @@ function test_scan_for_latest_version_single()
 end
 
 function test_scan_for_latest_version_multiple()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local share_dir = tmp
 
@@ -864,7 +833,6 @@ function test_scan_for_latest_version_multiple()
 end
 
 function test_scan_for_latest_version_not_found()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
 
   local result = home.scan_for_latest_version("nonexistent", tmp)
@@ -874,7 +842,6 @@ function test_scan_for_latest_version_not_found()
 end
 
 function test_scan_for_latest_version_bin_subdir()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local share_dir = tmp
   local tool_dir = path.join(share_dir, "nvim", "2025.12.07-abcd1234")
@@ -895,7 +862,6 @@ end
 -- Test: update_symlink
 --------------------------------------------------------------------------------
 function test_update_symlink_create()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local target = path.join(tmp, "target")
   write_file(target, "target content")
@@ -912,7 +878,6 @@ function test_update_symlink_create()
 end
 
 function test_update_symlink_replace()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local old_target = path.join(tmp, "old_target")
   write_file(old_target, "old content")
@@ -939,7 +904,6 @@ function test_update_symlink_replace()
 end
 
 function test_update_symlink_fails_on_regular_file()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local target = path.join(tmp, "target")
   write_file(target, "target")
@@ -954,7 +918,6 @@ function test_update_symlink_fails_on_regular_file()
 end
 
 function test_update_symlink_dry_run()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local target = path.join(tmp, "target")
   write_file(target, "target")
@@ -980,7 +943,6 @@ end
 -- Test: cmd_3p
 --------------------------------------------------------------------------------
 function test_cmd_3p_empty_share()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local share_dir = path.join(tmp, "share")
   unix.makedirs(share_dir)
@@ -1001,7 +963,6 @@ function test_cmd_3p_empty_share()
 end
 
 function test_cmd_3p_creates_symlinks()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local share_dir = path.join(tmp, "share")
   local bin_dir = path.join(tmp, ".local", "bin")
@@ -1030,7 +991,6 @@ function test_cmd_3p_creates_symlinks()
 end
 
 function test_cmd_3p_list()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local share_dir = path.join(tmp, "share")
 
@@ -1055,7 +1015,6 @@ function test_cmd_3p_list()
 end
 
 function test_cmd_3p_dry_run_verbose()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local share_dir = path.join(tmp, "share")
   local bin_dir = path.join(tmp, ".local", "bin")
@@ -1087,7 +1046,6 @@ function test_cmd_3p_dry_run_verbose()
 end
 
 function test_cmd_3p_nvim_site_symlink()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local share_dir = path.join(tmp, "share")
   local bin_dir = path.join(tmp, ".local", "bin")
@@ -1135,7 +1093,6 @@ end
 -- Test: main dispatch for 3p
 --------------------------------------------------------------------------------
 function test_main_3p()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local share_dir = path.join(tmp, "share")
   unix.makedirs(share_dir)
@@ -1169,7 +1126,6 @@ end
 -- Test: scan_for_latest_version path format
 --------------------------------------------------------------------------------
 function test_scan_for_latest_version_path_format()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local share_dir = tmp
   local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234")
@@ -1192,7 +1148,6 @@ function test_scan_for_latest_version_path_format()
 end
 
 function test_scan_for_latest_version_rejects_invalid_paths()
-  skip_without_cosmo()
   local tmp = make_temp_dir()
   local share_dir = tmp
 
@@ -1212,11 +1167,6 @@ end
 -- Test: detect_platform
 --------------------------------------------------------------------------------
 function test_detect_platform_returns_string()
-  skip_without_cosmo()
-  -- cosmo.uname may not be available in all builds
-  if not cosmo.uname then
-    lu.skip("requires cosmo.uname")
-  end
   local platform = home.detect_platform()
   lu.assertNotNil(platform)
   lu.assertTrue(type(platform) == "string")

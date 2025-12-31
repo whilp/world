@@ -4,8 +4,7 @@
 -- Reads plugin info from .config/nvim/nvim-pack-lock.json
 
 local cosmo = require("cosmo")
-local path = cosmo.path
-local unix = cosmo.unix
+local unix = require("cosmo.unix")
 local spawn = require("spawn").spawn
 
 local PACK_LOCK = ".config/nvim/nvim-pack-lock.json"
@@ -99,38 +98,50 @@ local function fetch_plugin(plugin_name, output_dir)
   -- Ensure parent directory exists
   local parent = output_dir:match("(.+)/[^/]+$")
   if parent then
-    local parent_ok, parent_err = execute("mkdir", {"mkdir", "-p", parent})
-    if not parent_ok then
-      return nil, parent_err
+    unix.makedirs(parent)
+  end
+
+  -- Download with retry
+  local status, headers, body
+  local last_err
+  local max_attempts = 8
+  local fetch_opts = {headers = {["User-Agent"] = "curl/8.0"}, maxresponse = 300 * 1024 * 1024}
+  for attempt = 1, max_attempts do
+    status, headers, body = cosmo.Fetch(url, fetch_opts)
+    if status then
+      break
+    end
+    last_err = tostring(headers or "unknown error")
+    if attempt < max_attempts then
+      local delay = math.min(30, 2 ^ attempt)
+      unix.nanosleep(delay, 0)
     end
   end
-
-  -- Download
-  local curl_ok, curl_err = execute("curl", {"curl", "-fsSL", "-o", tarball, url})
-  if not curl_ok then
-    return nil, curl_err
+  if not status then
+    return nil, "fetch failed: " .. last_err
   end
+  if status ~= 200 then
+    return nil, "fetch failed with status " .. tostring(status)
+  end
+
+  local fd = unix.open(tarball, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("0644", 8))
+  if not fd or fd < 0 then
+    return nil, "failed to create tarball"
+  end
+  unix.write(fd, body)
+  unix.close(fd)
 
   -- Extract
-  local mkdir_ok, mkdir_err = execute("mkdir", {"mkdir", "-p", output_dir})
-  if not mkdir_ok then
-    execute("rm", {"rm", "-f", tarball})
-    return nil, mkdir_err
-  end
+  unix.makedirs(output_dir)
 
   local tar_ok, tar_err = execute("tar", {"tar", "-xzf", tarball, "-C", output_dir, "--strip-components=1"})
   if not tar_ok then
-    execute("rm", {"rm", "-f", tarball})
-    execute("rm", {"rm", "-rf", output_dir})
+    unix.unlink(tarball)
     return nil, tar_err
   end
 
   -- Cleanup tarball
-  execute("rm", {"rm", "-f", tarball})
-
-  if plugin_name == "nui-components.nvim" then
-    execute("rm", {"rm", "-rf", path.join(output_dir, "docs/public")}, { allow_failure = true })
-  end
+  unix.unlink(tarball)
 
   return true
 end

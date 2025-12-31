@@ -36,12 +36,13 @@ define build_platform_asset
 					cp -r $$tool/$(2)/bin $$tool/$(2)/lib $$tool/$(2)/share "$$install_dir/" 2>/dev/null || true; \
 					cp -r $$tool/$(2)/libexec "$$install_dir/" 2>/dev/null || true; \
 				else \
+					mkdir -p "$$install_dir/bin"; \
 					if [ -d "$$tool/$(2)/bin" ]; then \
 						exe=$$(find "$$tool/$(2)/bin" -maxdepth 1 -type f -name "$$tool" 2>/dev/null | head -1); \
-						if [ -n "$$exe" ]; then cp -p "$$exe" "$$install_dir/$$tool"; fi; \
+						if [ -n "$$exe" ]; then cp -p "$$exe" "$$install_dir/bin/$$tool"; fi; \
 					else \
 						exe=$$(find "$$tool/$(2)" -maxdepth 1 -type f -name "$$tool" 2>/dev/null | head -1); \
-						if [ -n "$$exe" ]; then cp -p "$$exe" "$$install_dir/$$tool"; fi; \
+						if [ -n "$$exe" ]; then cp -p "$$exe" "$$install_dir/bin/$$tool"; fi; \
 					fi; \
 				fi; \
 			fi; \
@@ -70,7 +71,7 @@ endef
 
 $(foreach p,$(PLATFORMS),$(eval $(call platform_home_rule,$(p))))
 
-platform-assets: $(foreach p,$(PLATFORMS),results/bin/home-$(p))
+platform-assets: $(foreach p,$(PLATFORMS),results/bin/home-$(p)) ## Build platform-specific binaries
 
 # universal home binary with dotfiles + platform metadata
 HOME_VERSION ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
@@ -97,16 +98,18 @@ results/bin/home: $(lua_bin) results/dotfiles.zip $(home_platform_deps) lib/home
 	@cp $(lua_bin) $@
 	@cd results/home-universal && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$@ -@
 	@cd lib/home && $(cosmos_zip_bin) -qr $(CURDIR)/$@ main.lua .args
-	@mkdir -p results/home-universal/.lua && cp -r $(spawn_dir) $(home_setup_dir) $(home_mac_dir) results/home-universal/.lua/ && cp $(version_file) results/home-universal/.lua/
+	@mkdir -p results/home-universal/.lua && cp -r $(spawn_dir) $(home_setup_dir) $(home_mac_dir) lib/claude results/home-universal/.lua/ && cp $(version_file) results/home-universal/.lua/
 	@cd results/home-universal && $(cosmos_zip_bin) -qr $(CURDIR)/$@ .lua
 	@rm -rf results/home-universal
 
-home: results/bin/home
+home: results/bin/home ## Build universal home binary
 
-test-home: private .UNVEIL = r:lib/home r:lib rx:$(lua_bin) r:$(test_runner) rwc:lib/home/o rw:/dev/null
-test-home: private .PLEDGE = stdio rpath wpath cpath proc exec
-test-home: private .CPU = 60
-test-home: lua
-	cd lib/home && $(home_lua) $(CURDIR)/$(test_runner) test_main.lua
+o/lib/home/test_main.lua.ok: private .UNVEIL = r:lib rx:$(lua_test) rw:/dev/null
+o/lib/home/test_main.lua.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
+o/lib/home/test_main.lua.ok: private .CPU = 60
+o/lib/home/test_main.lua.ok: $(lua_test) lib/home/test_main.lua lib/home/main.lua
+	@mkdir -p $(@D)
+	$(lua_test) lib/home/test_main.lua
+	@touch $@
 
-.PHONY: home platform-assets test-home
+.PHONY: home platform-assets

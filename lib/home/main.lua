@@ -1,6 +1,6 @@
 local cosmo = require("cosmo")
-local unix = cosmo.unix
-local path = cosmo.path
+local unix = require("cosmo.unix")
+local path = require("cosmo.path")
 local spawn = require("spawn").spawn
 local version_mod = require("version")
 
@@ -121,18 +121,10 @@ local function serialize_table(tbl)
 end
 
 local function detect_platform()
-  local ok, sysname = spawn({"uname", "-s"}):read()
-  if not ok then
-    return nil, "failed to get system name"
-  end
-  sysname = sysname:gsub("%s+$", "")
-
-  local machine
-  ok, machine = spawn({"uname", "-m"}):read()
-  if not ok then
-    return nil, "failed to get machine type"
-  end
-  machine = machine:gsub("%s+$", "")
+  -- cosmo returns uppercase (LINUX, DARWIN, X86_64, AARCH64)
+  -- normalize to match PLATFORMS table keys
+  local sysname = cosmo.GetHostOs():sub(1, 1) .. cosmo.GetHostOs():sub(2):lower()
+  local machine = cosmo.GetHostIsa():lower()
 
   local sys_platforms = PLATFORMS[sysname]
   if not sys_platforms then
@@ -209,7 +201,7 @@ local function sha256_file(filepath)
 end
 
 local function download_file(url, dest_path)
-  local status, _, body = cosmo.Fetch(url)
+  local status, _, body = cosmo.Fetch(url, {maxresponse = 300 * 1024 * 1024})
   if not status then
     return nil, "fetch failed: " .. tostring(body or "unknown error")
   end
@@ -217,7 +209,7 @@ local function download_file(url, dest_path)
     return nil, "fetch failed with status " .. tostring(status)
   end
 
-  local fd = unix.open(dest_path, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, 0644)
+  local fd = unix.open(dest_path, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("0644", 8))
   if not fd or fd < 0 then
     return nil, "failed to open destination file"
   end
@@ -265,7 +257,7 @@ local function copy_file(src, dst, mode, overwrite)
     flags = flags | unix.O_EXCL
   end
 
-  local fd = unix.open(dst, flags, 0600)
+  local fd = unix.open(dst, flags, tonumber("0600", 8))
   if not fd or fd < 0 then
     if overwrite then
       return false, "failed to open destination for writing"
@@ -526,7 +518,7 @@ local function cmd_unpack(dest, force, opts)
         return 1
       end
 
-      unix.chmod(tmp_path, 493)
+      unix.chmod(tmp_path, tonumber("0755", 8))
 
       local bin_filter = nil
       if filter and plat_manifest and plat_manifest.files then

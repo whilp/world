@@ -1,6 +1,5 @@
-local cosmo = require("cosmo")
-local unix = cosmo.unix
-local path = cosmo.path
+local unix = require("cosmo.unix")
+local path = require("cosmo.path")
 
 local function debug_log(msg)
   if os.getenv("CLAUDE_WRAPPER_DEBUG") then

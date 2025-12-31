@@ -1,7 +1,21 @@
+TOOLS += nvim
+
+nvim-latest:
+nvim-latest: private .PLEDGE = stdio rpath wpath cpath inet dns
+nvim-latest: private .INTERNET = 1
+nvim-latest: $(lua_bin)
+	$(lua_bin) 3p/nvim/latest.lua
+
+.PHONY: nvim-latest
+
 nvim_pack_lock := .config/nvim/nvim-pack-lock.json
 nvim_plugins_dir := $(3p)/nvim/plugins
 
+ifneq ($(wildcard $(lua_bin)),)
 nvim_plugins := $(shell $(lib_lua) lib/build/list-plugins.lua)
+else
+nvim_plugins :=
+endif
 
 fetch_plugin := lib/build/fetch-plugin.lua
 $(nvim_plugins_dir)/%/.fetched: private .PLEDGE = stdio rpath wpath cpath inet dns exec proc

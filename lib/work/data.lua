@@ -1,5 +1,4 @@
-local cosmo = require("cosmo")
-local path = cosmo.path
+local path = require("cosmo.path")
 
 local M = {
   _lock_handle = nil,
@@ -143,11 +142,6 @@ end
 -- Signature: M.load_file(file_path, store, kinds)
 -- Returns: ok, err
 M.load_file = function(file_path, store, kinds)
-  local loader, err = loadfile(file_path)
-  if not loader then
-    return false, err
-  end
-
   local env = kinds or {}
 
   if not env.Work then
@@ -166,7 +160,11 @@ M.load_file = function(file_path, store, kinds)
     end
   end
 
-  setfenv(loader, wrapped_env)
+  local loader, err = loadfile(file_path, "t", wrapped_env)
+  if not loader then
+    return false, err
+  end
+
   local ok, load_err = pcall(loader)
 
   return ok, load_err
@@ -285,7 +283,7 @@ M.acquire_lock = function(dir)
 
   -- Open or create lock file
   local fd
-  fd, err = fcntl.open(lock_path, fcntl.O_CREAT + fcntl.O_RDWR, 384) -- 384 = 0600 octal
+  fd, err = fcntl.open(lock_path, fcntl.O_CREAT + fcntl.O_RDWR, tonumber("0600", 8))
   if not fd then
     return nil, "failed to open lock file: " .. tostring(err)
   end

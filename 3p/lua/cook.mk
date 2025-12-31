@@ -5,20 +5,38 @@
 lua_bin := results/bin/lua
 lua_ape := results/bin/lua.ape
 
+# minimal lua for testing - only luaunit bundled
+lua_test := o/bin/lua-test
+
 results/bin:
 	mkdir -p $@
 
-lib_lua_files := $(filter-out lib/test_%.lua lib/run-test.lua,$(wildcard lib/*.lua))
-lib_lua_dir := o/3p/lib/.lua
-
-$(lib_lua_dir): $(lib_lua_files) $(spawn_sources)
+o/bin:
 	mkdir -p $@
-	cp $(lib_lua_files) $@
-	cp -r lib/spawn $@
 
+lib_lua_files := $(filter-out lib/test_%.lua,$(wildcard lib/*.lua))
+lib_lua_dir := o/3p/lib/.lua
+lib_lua_stamp := $(lib_lua_dir)/.copied
+
+$(lib_lua_stamp): $(lib_lua_files) $(wildcard lib/spawn/*.lua)
+	mkdir -p $(lib_lua_dir)
+	cp $(lib_lua_files) $(lib_lua_dir)
+	cp -r lib/spawn $(lib_lua_dir)
+	touch $@
+
+# test binary: cosmos lua + luaunit only
+$(lua_test): private .UNVEIL = rx:$(cosmos_lua_bin) r:$(luaunit_lua_dir) rx:$(cosmos_zip_bin) rwc:o/bin rw:/dev/null
+$(lua_test): private .PLEDGE = stdio rpath wpath cpath fattr exec proc
+$(lua_test): $(cosmos_lua_bin) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua | o/bin
+	cp $(cosmos_lua_bin) $@
+	chmod +x $@
+	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
+	./$@ --assimilate || true
+
+# full binary: cosmos lua + luaunit + luacheck + lib modules
 $(lua_ape): private .UNVEIL = rx:$(cosmos_lua_bin) r:$(luaunit_lua_dir) r:$(luacheck_lua_dir) r:lib r:o/3p/lib rx:$(cosmos_zip_bin) rwc:results/bin rwc:o/3p/lib rw:/dev/null
 $(lua_ape): private .PLEDGE = stdio rpath wpath cpath fattr exec proc
-$(lua_ape): $(cosmos_lua_bin) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua $(luacheck_lua_dir)/bin/luacheck $(lib_lua_dir) | results/bin
+$(lua_ape): $(cosmos_lua_bin) $(cosmos_zip_bin) $(luaunit_lua_dir)/luaunit.lua $(luacheck_lua_dir)/bin/luacheck $(lib_lua_stamp) | results/bin
 	cp $(cosmos_lua_bin) $@
 	chmod +x $@
 	cd $(luaunit_lua_dir)/.. && $(cosmos_zip_bin) -qr $(CURDIR)/$@ $(notdir $(luaunit_lua_dir))
@@ -29,15 +47,17 @@ $(lua_bin): $(lua_ape)
 	cp $< $@
 	./$@ --assimilate || true
 
-lua: $(lua_bin)
+lua: $(lua_bin) ## Build lua with bundled modules
 
-test-3p-lua: private .UNVEIL = r:3p/lua rx:$(lua_bin) r:$(test_runner) rwc:3p/lua/o rw:/dev/null
-test-3p-lua: private .PLEDGE = stdio rpath wpath cpath proc exec
-test-3p-lua: private .CPU = 60
-test-3p-lua: lua
-	cd 3p/lua && $(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
+lua_skill := .claude/skills/cosmo-lua/SKILL.md
+
+$(lua_skill): $(lua_bin)
+	rm -rf $(dir $@)
+	$(lua_bin) --skill .
+
+lua-skill: $(lua_skill) ## Generate cosmo-lua skill
 
 clean-lua:
-	rm -rf $(lua_bin) $(lua_ape) o/3p/lib
+	rm -rf $(lua_bin) $(lua_ape) $(lua_test) o/3p/lib
 
-.PHONY: lua clean-lua test-3p-lua
+.PHONY: lua lua-skill clean-lua

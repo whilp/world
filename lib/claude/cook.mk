@@ -1,17 +1,17 @@
-test-claude: private .UNVEIL = r:lib/claude r:lib rx:$(lua_bin) r:$(test_runner) r:$(CURDIR) rwc:/tmp rw:/dev/null
-test-claude: private .PLEDGE = stdio rpath wpath cpath proc exec
-test-claude: private .CPU = 60
-test-claude: lua
-	cd lib/claude && HOME=$(CURDIR) \
-		LUA_PATH="$(CURDIR)/lib/?.lua;;" \
-		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test.lua
+# lib/claude/cook.mk - claude module
 
-test-claude-skills: private .UNVEIL = r:lib/claude r:lib r:.claude/skills rx:$(lua_bin) r:$(test_runner) r:$(CURDIR) rw:/dev/null
-test-claude-skills: private .PLEDGE = stdio rpath proc exec
-test-claude-skills: private .CPU = 30
-test-claude-skills: lua
-	cd lib/claude && HOME=$(CURDIR) \
-		LUA_PATH="$(CURDIR)/lib/?.lua;;" \
-		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test_skills.lua
+claude-latest:
+claude-latest: private .PLEDGE = stdio rpath wpath cpath inet dns
+claude-latest: private .INTERNET = 1
+claude-latest: $(lua_bin)
+	$(lua_bin) lib/claude/latest.lua
 
-.PHONY: test-claude test-claude-skills
+.PHONY: claude-latest
+
+o/lib/claude/test.lua.ok: private .UNVEIL = r:lib rx:$(lua_test) rwc:/tmp rw:/dev/null
+o/lib/claude/test.lua.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
+o/lib/claude/test.lua.ok: private .CPU = 60
+o/lib/claude/test.lua.ok: $(lua_test) lib/claude/test.lua lib/claude/main.lua
+	@mkdir -p $(@D)
+	$(lua_test) lib/claude/test.lua
+	@touch $@

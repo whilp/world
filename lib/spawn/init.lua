@@ -1,5 +1,4 @@
-local cosmo = require("cosmo")
-local unix = cosmo.unix
+local unix = require("cosmo.unix")
 
 local function make_pipe(fd)
 	if not fd then
@@ -155,6 +154,14 @@ local function spawn(argv, opts)
 	return handle
 end
 
-return {
+local M = {
 	spawn = spawn,
 }
+
+setmetatable(M, {
+	__call = function(_, ...)
+		return spawn(...)
+	end,
+})
+
+return M

@@ -1,5 +1,4 @@
-local cosmo = require("cosmo")
-local unix = cosmo.unix
+local unix = require("cosmo.unix")
 
 local lfs = {
 	_VERSION = "LuaFileSystem 1.8.0 (stub)"
