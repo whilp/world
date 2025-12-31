@@ -25,6 +25,17 @@ local function extract_targz(archive, dest_dir, strip)
   return true
 end
 
+local function extract_gz(archive, dest_dir, tool_name)
+  local dest = path.join(dest_dir, tool_name)
+  local handle = spawn({"sh", "-c", "gunzip -c " .. archive .. " > " .. dest})
+  local exit_code = handle:wait()
+  if exit_code ~= 0 then
+    return nil, "gunzip failed with exit code " .. exit_code
+  end
+  unix.chmod(dest, tonumber("755", 8))
+  return true
+end
+
 local function main(version_file, platform, input, dest_dir)
   if not version_file or not platform or not input or not dest_dir then
     return nil, "usage: extract.lua <version_file> <platform> <input> <dest_dir>"
@@ -50,6 +61,9 @@ local function main(version_file, platform, input, dest_dir)
   elseif format == "tar.gz" then
     local strip = plat.strip_components or spec.strip_components or 0
     ok, err = extract_targz(input, dest_dir, strip)
+  elseif format == "gz" then
+    local tool_name = path.basename(path.dirname(dest_dir))
+    ok, err = extract_gz(input, dest_dir, tool_name)
   else
     return nil, "unknown format: " .. format
   end
