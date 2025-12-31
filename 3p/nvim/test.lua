@@ -1,8 +1,8 @@
 local lu = require("luaunit")
 local spawn = require("spawn").spawn
 
-return function(bin_dir)
-  local bin = bin_dir .. "/bin/nvim"
+return function(env)
+  local bin = env.BIN_DIR .. "/bin/nvim"
 
   TestNvim = {}
 

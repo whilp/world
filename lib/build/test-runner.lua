@@ -7,22 +7,34 @@ arg = {}
 
 local lu = require("luaunit")
 local cosmo = require("cosmo")
+local unix = require("cosmo.unix")
 
 if not test_file or not output then
-  io.stderr:write("usage: BIN_DIR=<dir> test-runner.lua <test_file> <output>\n")
+  io.stderr:write("usage: TEST_BIN_DIR=<dir> test-runner.lua <test_file> <output>\n")
   os.exit(1)
 end
 
-local bin_dir = os.getenv("BIN_DIR")
-if not bin_dir then
-  io.stderr:write("error: BIN_DIR not set\n")
+-- collect TEST_* env vars, strip prefix
+local env = {}
+for _, entry in ipairs(unix.environ()) do
+  local k, v = entry:match("^([^=]+)=(.*)$")
+  if k then
+    local name = k:match("^TEST_(.+)")
+    if name then
+      env[name] = v
+    end
+  end
+end
+
+if not env.BIN_DIR then
+  io.stderr:write("error: TEST_BIN_DIR not set\n")
   os.exit(1)
 end
 
--- load test suite, passing bin_dir
+-- load test suite, passing env table
 local suite = dofile(test_file)
 if type(suite) == "function" then
-  suite = suite(bin_dir)
+  suite = suite(env)
 end
 
 -- run tests
