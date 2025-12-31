@@ -2,7 +2,7 @@ local lu = require("luaunit")
 local spawn = require("spawn")
 local path = require("cosmo.path")
 
-local bin = path.join(ENV.BIN_DIR, "bin", "nvim")
+local bin = path.join(os.getenv("TEST_BIN_DIR"), "bin", "nvim")
 
 TestNvim = {}
 
