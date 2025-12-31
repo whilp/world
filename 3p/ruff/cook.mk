@@ -6,4 +6,4 @@ $(o)/%/3p/ruff/.extracted: 3p/ruff/version.lua $(fetch)
 	$(lua_bin) $(fetch) $< ruff $* $(dir $@)
 	touch $@
 
-ruff_binaries := $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/ruff/.extracted)
+all_binaries += $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/ruff/.extracted)

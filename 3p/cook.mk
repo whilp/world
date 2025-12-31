@@ -21,7 +21,8 @@ make := $(make_bin)
 lua_bin := o/any/bin/lua
 fetch := lib/build/fetch.lua
 
-# each tool defines its own download rule and {tool}_binaries variable
+# each tool self-registers via: all_binaries += ...
+all_binaries :=
 include 3p/ast-grep/cook.mk
 include 3p/biome/cook.mk
 include 3p/comrak/cook.mk
@@ -38,26 +39,5 @@ include 3p/stylua/cook.mk
 include 3p/superhtml/cook.mk
 include 3p/tree-sitter/cook.mk
 include 3p/uv/cook.mk
-
-# nvim uses .bundled instead of .extracted
-nvim_binaries := $(nvim_bundled)
-
-all_binaries := \
-	$(ast-grep_binaries) \
-	$(biome_binaries) \
-	$(comrak_binaries) \
-	$(delta_binaries) \
-	$(duckdb_binaries) \
-	$(gh_binaries) \
-	$(marksman_binaries) \
-	$(nvim_binaries) \
-	$(rg_binaries) \
-	$(ruff_binaries) \
-	$(shfmt_binaries) \
-	$(sqruff_binaries) \
-	$(stylua_binaries) \
-	$(superhtml_binaries) \
-	$(tree-sitter_binaries) \
-	$(uv_binaries)
 
 .STRICT = 1

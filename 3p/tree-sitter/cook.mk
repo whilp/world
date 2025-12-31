@@ -6,4 +6,4 @@ $(o)/%/3p/tree-sitter/.extracted: 3p/tree-sitter/version.lua $(fetch)
 	$(lua_bin) $(fetch) $< tree-sitter $* $(dir $@)
 	touch $@
 
-tree-sitter_binaries := $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/tree-sitter/.extracted)
+all_binaries += $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/tree-sitter/.extracted)

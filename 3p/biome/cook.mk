@@ -6,4 +6,4 @@ $(o)/%/3p/biome/.extracted: 3p/biome/version.lua $(fetch)
 	$(lua_bin) $(fetch) $< biome $* $(dir $@)
 	touch $@
 
-biome_binaries := $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/biome/.extracted)
+all_binaries += $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/biome/.extracted)

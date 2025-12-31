@@ -6,4 +6,4 @@ $(o)/%/3p/comrak/.extracted: 3p/comrak/version.lua $(fetch)
 	$(lua_bin) $(fetch) $< comrak $* $(dir $@)
 	touch $@
 
-comrak_binaries := $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/comrak/.extracted)
+all_binaries += $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/comrak/.extracted)

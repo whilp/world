@@ -6,4 +6,4 @@ $(o)/%/3p/superhtml/.extracted: 3p/superhtml/version.lua $(fetch)
 	$(lua_bin) $(fetch) $< superhtml $* $(dir $@)
 	touch $@
 
-superhtml_binaries := $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/superhtml/.extracted)
+all_binaries += $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/superhtml/.extracted)

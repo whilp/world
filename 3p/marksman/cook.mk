@@ -6,4 +6,4 @@ $(o)/%/3p/marksman/.extracted: 3p/marksman/version.lua $(fetch)
 	$(lua_bin) $(fetch) $< marksman $* $(dir $@)
 	touch $@
 
-marksman_binaries := $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/marksman/.extracted)
+all_binaries += $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/marksman/.extracted)

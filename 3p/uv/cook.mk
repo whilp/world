@@ -6,4 +6,4 @@ $(o)/%/3p/uv/.extracted: 3p/uv/version.lua $(fetch)
 	$(lua_bin) $(fetch) $< uv $* $(dir $@)
 	touch $@
 
-uv_binaries := $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/uv/.extracted)
+all_binaries += $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/uv/.extracted)

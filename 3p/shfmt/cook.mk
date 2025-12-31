@@ -6,4 +6,4 @@ $(o)/%/3p/shfmt/.extracted: 3p/shfmt/version.lua $(fetch)
 	$(lua_bin) $(fetch) $< shfmt $* $(dir $@)
 	touch $@
 
-shfmt_binaries := $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/shfmt/.extracted)
+all_binaries += $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/shfmt/.extracted)

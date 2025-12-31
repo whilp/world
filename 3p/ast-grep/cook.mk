@@ -6,4 +6,4 @@ $(o)/%/3p/ast-grep/.extracted: 3p/ast-grep/version.lua $(fetch)
 	$(lua_bin) $(fetch) $< ast-grep $* $(dir $@)
 	touch $@
 
-ast-grep_binaries := $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/ast-grep/.extracted)
+all_binaries += $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/ast-grep/.extracted)

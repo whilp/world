@@ -6,4 +6,4 @@ $(o)/%/3p/delta/.extracted: 3p/delta/version.lua $(fetch)
 	$(lua_bin) $(fetch) $< delta $* $(dir $@)
 	touch $@
 
-delta_binaries := $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/delta/.extracted)
+all_binaries += $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/delta/.extracted)

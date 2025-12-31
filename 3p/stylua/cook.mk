@@ -6,4 +6,4 @@ $(o)/%/3p/stylua/.extracted: 3p/stylua/version.lua $(fetch)
 	$(lua_bin) $(fetch) $< stylua $* $(dir $@)
 	touch $@
 
-stylua_binaries := $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/stylua/.extracted)
+all_binaries += $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/stylua/.extracted)

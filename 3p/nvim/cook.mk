@@ -42,3 +42,5 @@ $(o)/%/3p/nvim/.bundled: $(o)/%/3p/nvim/.extracted $(nvim_bundle) $(nvim_plugin_
 	touch $@
 
 nvim_bundled := $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/nvim/.bundled)
+
+all_binaries += $(nvim_bundled)

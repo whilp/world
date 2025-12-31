@@ -6,4 +6,4 @@ $(o)/%/3p/duckdb/.extracted: 3p/duckdb/version.lua $(fetch)
 	$(lua_bin) $(fetch) $< duckdb $* $(dir $@)
 	touch $@
 
-duckdb_binaries := $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/duckdb/.extracted)
+all_binaries += $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/duckdb/.extracted)

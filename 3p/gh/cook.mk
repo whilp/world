@@ -6,4 +6,4 @@ $(o)/%/3p/gh/.extracted: 3p/gh/version.lua $(fetch)
 	$(lua_bin) $(fetch) $< gh $* $(dir $@)
 	touch $@
 
-gh_binaries := $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/gh/.extracted)
+all_binaries += $(foreach p,$(PLATFORMS),$(o)/$(p)/3p/gh/.extracted)
