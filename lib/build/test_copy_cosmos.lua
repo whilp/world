@@ -70,15 +70,8 @@ end
 local src = "o/linux-x86_64/cosmos/staging/lua"
 local dst = "/tmp/test_cosmos_copy/lua"
 
--- First check if source exists
+-- Check if source exists (CI extracts cosmos before this test runs)
 local st = unix.stat(src)
-if not st then
-  -- Try to extract it first
-  io.stderr:write("Source not found, extracting cosmos...\n")
-  os.execute("make o/linux-x86_64/cosmos/.extracted 2>&1")
-  st = unix.stat(src)
-end
-
 if st then
   if copy_file(src, dst) then
     -- Verify the copy
