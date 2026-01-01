@@ -1,0 +1,19 @@
+id: tmp-path-concat
+language: lua
+severity: error
+message: |
+  Temp path construction via concatenation detected. Use unix.mkdtemp() instead.
+
+  Example:
+    Bad:  local temp = "/tmp/myapp_" .. os.time()
+    Good: local temp = unix.mkdtemp("/tmp/myapp_XXXXXX")
+
+    Bad:  local path = "/tmp/test_" .. id .. "_" .. pid
+    Good: local path = unix.mkdtemp("/tmp/test_XXXXXX")
+note: Constructing temp paths via concatenation is unsafe and can lead to race conditions. Use unix.mkdtemp() for secure temp directory creation with atomic uniqueness.
+
+rule:
+  kind: binary_expression
+  has:
+    kind: string
+    regex: '^"/tmp/'

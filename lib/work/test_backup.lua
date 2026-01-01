@@ -20,8 +20,7 @@ TestBackup = {}
 
 function TestBackup:setUp()
   store.reset(test_store)
-  self.test_dir = "/tmp/work-test-backup-" .. os.time()
-  unix.makedirs(self.test_dir)
+  self.test_dir = unix.mkdtemp("/tmp/work-test-backup-XXXXXX")
 end
 
 function TestBackup:tearDown()

@@ -1,8 +1,11 @@
 local lu = require('luaunit')
+local unix = require("cosmo.unix")
+local path = require("cosmo.path")
 local claude = require("claude.main")
 
 function test_find_claude_binary_finds_existing()
-  local tmpfile = os.tmpname()
+  local tmpdir = unix.mkdtemp("/tmp/claude_test_XXXXXX")
+  local tmpfile = path.join(tmpdir, "testfile")
   local f = io.open(tmpfile, "w")
   f:write("test")
   f:close()
@@ -11,7 +14,8 @@ function test_find_claude_binary_finds_existing()
   local result = claude.find_claude_binary(paths)
 
   lu.assertEquals(result, tmpfile, "should find existing file")
-  os.remove(tmpfile)
+  unix.unlink(tmpfile)
+  unix.rmdir(tmpdir)
 end
 
 function test_find_claude_binary_returns_nil_when_none_exist()
@@ -22,7 +26,8 @@ function test_find_claude_binary_returns_nil_when_none_exist()
 end
 
 function test_find_claude_binary_handles_nil_in_paths()
-  local tmpfile = os.tmpname()
+  local tmpdir = unix.mkdtemp("/tmp/claude_test_XXXXXX")
+  local tmpfile = path.join(tmpdir, "testfile")
   local f = io.open(tmpfile, "w")
   f:write("test")
   f:close()
@@ -31,7 +36,8 @@ function test_find_claude_binary_handles_nil_in_paths()
   local result = claude.find_claude_binary(paths)
 
   lu.assertEquals(result, tmpfile, "should find existing file even when nil is first element")
-  os.remove(tmpfile)
+  unix.unlink(tmpfile)
+  unix.rmdir(tmpdir)
 end
 
 function test_build_argv_basic()
@@ -58,7 +64,8 @@ function test_build_argv_with_user_args()
 end
 
 function test_build_argv_with_mcp_config()
-  local tmpfile = os.tmpname()
+  local tmpdir = unix.mkdtemp("/tmp/claude_test_XXXXXX")
+  local tmpfile = path.join(tmpdir, "mcp.json")
   local f = io.open(tmpfile, "w")
   f:write("{}")
   f:close()
@@ -68,7 +75,8 @@ function test_build_argv_with_mcp_config()
   lu.assertStrContains(table.concat(argv, " "), "--mcp-config")
   lu.assertStrContains(table.concat(argv, " "), tmpfile)
 
-  os.remove(tmpfile)
+  unix.unlink(tmpfile)
+  unix.rmdir(tmpdir)
 end
 
 function test_build_argv_ignores_nonexistent_mcp()

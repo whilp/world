@@ -1,0 +1,21 @@
+id: manual-temp-file
+language: lua
+severity: error
+message: |
+  Manual temp file construction detected. Temp files should use unix.mkdtemp() or unix.mkstemp().
+
+  Example:
+    Bad:  local tmp = path .. ".tmp." .. os.time() .. "." .. getpid()
+    Good: local tmpdir = unix.mkdtemp("/tmp/myapp_XXXXXX")
+          local tmp = path.join(tmpdir, "file.tmp")
+
+    Bad:  local f = io.open("/tmp/myfile.tmp", "w")
+    Good: local fd, tmpfile = unix.mkstemp("/tmp/myfile_XXXXXX")
+          local f = unix.fdopen(fd, "w")
+note: Manually constructing temp file paths can lead to race conditions and security issues. Use unix.mkdtemp() to create a secure temp directory first, or unix.mkstemp() for atomic temp file creation.
+
+rule:
+  pattern: string.format($FMT, $$$)
+constraints:
+  FMT:
+    regex: '.*\.tmp.*'

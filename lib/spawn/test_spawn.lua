@@ -36,8 +36,9 @@ function TestSpawn:test_wait_returns_exit_code()
 end
 
 function TestSpawn:test_wait_drains_stdout_to_avoid_sigpipe()
-	local tmp_file = "/tmp/spawn_test_checkfile"
-	local tmp_target = "/tmp/spawn_test_target"
+	local tmpdir = unix.mkdtemp("/tmp/spawn_test_XXXXXX")
+	local tmp_file = path.join(tmpdir, "checkfile")
+	local tmp_target = path.join(tmpdir, "target")
 
 	local f = io.open(tmp_target, "w")
 	f:write("test content\n")
@@ -72,6 +73,7 @@ function TestSpawn:test_wait_drains_stdout_to_avoid_sigpipe()
 
 	unix.unlink(tmp_file)
 	unix.unlink(tmp_target)
+	unix.rmdir(tmpdir)
 end
 
 function TestSpawn:test_stdin_string()

@@ -20,8 +20,7 @@ TestFileLocking = {}
 
 function TestFileLocking:setUp()
   store.reset(test_store)
-  self.test_dir = "/tmp/work-test-" .. os.time()
-  unix.makedirs(self.test_dir)
+  self.test_dir = unix.mkdtemp("/tmp/work-test-XXXXXX")
 end
 
 function TestFileLocking:tearDown()

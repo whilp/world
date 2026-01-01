@@ -418,9 +418,15 @@ M.save = function(item, dir)
     backup_file:close()
   end
 
-  -- Atomic write pattern
+  -- Atomic write pattern: temp file in same directory for atomic rename
   local unistd = require("posix.unistd")
-  local temp = string.format("%s.tmp.%d.%d", source, os.time(), unistd.getpid())
+  local stdlib = require("posix.stdlib")
+  local fd, temp = stdlib.mkstemp(source .. ".tmp.XXXXXX")
+  if not fd then
+    M.release_lock()
+    return nil, "failed to create temp file: " .. tostring(temp)
+  end
+  unistd.close(fd)  -- close fd, reopen with io.open for simpler API
 
   -- Register temp file for signal handler cleanup
   table.insert(cleanup_registry, temp)

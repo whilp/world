@@ -1,0 +1,18 @@
+id: avoid-os-tmpname
+language: lua
+severity: error
+message: |
+  Avoid os.tmpname(). Use unix.mkdtemp() or unix.mkstemp() instead.
+
+  Example:
+    Bad:  local tmpfile = os.tmpname()
+    Good: local tmpdir = unix.mkdtemp("/tmp/myapp_XXXXXX")
+          local tmpfile = path.join(tmpdir, "file")
+
+    Bad:  local f = io.open(os.tmpname(), "w")
+    Good: local fd, tmpfile = unix.mkstemp("/tmp/myapp_XXXXXX")
+          local f = unix.fdopen(fd, "w")
+note: os.tmpname() is deprecated, not secure, and has platform-specific behavior. Use unix.mkdtemp() for temp directories or unix.mkstemp() for temp files.
+
+rule:
+  pattern: os.tmpname($$$)
