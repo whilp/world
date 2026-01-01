@@ -18,52 +18,46 @@ local function copy_file_raw(src, dst)
   io.stderr:write("copy_file_raw: " .. src .. " -> " .. dst .. "\n")
   io.stderr:flush()
 
-  io.stderr:write("  opening source\n")
+  -- get source file permissions first
+  local st = unix.stat(src)
+  local mode = st and st:mode() or tonumber("755", 8)
+
+  io.stderr:write("  opening source with unix.open\n")
   io.stderr:flush()
 
-  -- read source file in binary mode
-  local f_in = io.open(src, "rb")
-  if not f_in then
+  -- open source file
+  local fd_in = unix.open(src, unix.O_RDONLY)
+  if not fd_in then
     return nil, "failed to open source: " .. src
   end
 
-  io.stderr:write("  opened source\n")
+  io.stderr:write("  opened source, opening dest\n")
   io.stderr:flush()
 
-  -- get source file permissions
-  local st = unix.stat(src)
-  local mode = st and st:mode() or tonumber("644", 8)
-
-  io.stderr:write("  opening dest\n")
-  io.stderr:flush()
-
-  -- write to destination
-  local f_out = io.open(dst, "wb")
-  if not f_out then
-    f_in:close()
+  -- open destination file
+  local fd_out = unix.open(dst, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, mode)
+  if not fd_out then
+    unix.close(fd_in)
     return nil, "failed to open destination: " .. dst
   end
 
   io.stderr:write("  opened dest, copying\n")
   io.stderr:flush()
 
-  -- copy in chunks to avoid memory issues
+  -- copy in chunks
   local bytes = 0
   while true do
-    local chunk = f_in:read(65536)
-    if not chunk then break end
-    f_out:write(chunk)
+    local chunk = unix.read(fd_in, 65536)
+    if not chunk or #chunk == 0 then break end
+    unix.write(fd_out, chunk)
     bytes = bytes + #chunk
   end
 
   io.stderr:write("  copied " .. bytes .. " bytes\n")
   io.stderr:flush()
 
-  f_in:close()
-  f_out:close()
-
-  -- set permissions
-  unix.chmod(dst, mode)
+  unix.close(fd_in)
+  unix.close(fd_out)
 
   io.stderr:write("copy_file_raw: done\n")
   io.stderr:flush()
