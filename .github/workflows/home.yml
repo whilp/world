@@ -18,6 +18,7 @@ jobs:
         run: make bootstrap
 
       - name: Build home and lua binaries
+        # TODO: combining these in one make call causes ETXTBSY with high parallelism
         run: |
           make home-all -j$(nproc)
           make lua-all -j$(nproc)
