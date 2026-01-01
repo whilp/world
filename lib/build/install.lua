@@ -3,9 +3,6 @@ local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 
-local M = {}
-
--- copy a single file using cosmo Slurp/Barf
 local function copy_file_raw(src, dst)
   local content = cosmo.Slurp(src)
   if not content then
@@ -22,7 +19,6 @@ local function copy_file_raw(src, dst)
   return true
 end
 
--- recursively copy a directory
 local function copy_dir_recursive(src, dst)
   local st = unix.stat(src)
   if not st then
@@ -48,14 +44,11 @@ local function copy_dir_recursive(src, dst)
   return true
 end
 
--- copy a single file to target directory
--- if install_type is "bin" and source filename looks generic, rename to tool_name
-function M.copy_file(source, target_dir, install_type, tool_name)
+local function copy_file(source, target_dir, install_type, tool_name)
   local source_name = path.basename(source)
   local dest
 
   if install_type == "bin" then
-    -- only rename if source name is generic (like "download", "binary", etc)
     local generic_names = { download = true, binary = true, bin = true }
     if generic_names[source_name] then
       dest = path.join(target_dir, tool_name)
@@ -69,13 +62,11 @@ function M.copy_file(source, target_dir, install_type, tool_name)
   return copy_file_raw(source, dest)
 end
 
--- copy a directory's contents to target directory
-function M.copy_dir(source, target_dir)
+local function copy_dir(source, target_dir)
   return copy_dir_recursive(source, target_dir)
 end
 
--- main install function
-function M.install(version_file, platform, base_dir, install_type, source)
+local function install(version_file, platform, base_dir, install_type, source)
   if not version_file or not platform or not base_dir or not install_type or not source then
     return nil, "usage: install.lua <version_file> <platform> <base_dir> <bin|lib> <source>"
   end
@@ -103,9 +94,9 @@ function M.install(version_file, platform, base_dir, install_type, source)
 
   local err
   if unix.S_ISDIR(stat:mode()) then
-    ok, err = M.copy_dir(source, target_dir)
+    ok, err = copy_dir(source, target_dir)
   else
-    ok, err = M.copy_file(source, target_dir, install_type, tool_name)
+    ok, err = copy_file(source, target_dir, install_type, tool_name)
   end
 
   if not ok then
@@ -130,7 +121,7 @@ local function main(version_file, platform, base_dir, install_type, source)
   unix.unveil(base_dir, "rwc")
   unix.unveil(nil, nil)
 
-  return M.install(version_file, platform, base_dir, install_type, source)
+  return install(version_file, platform, base_dir, install_type, source)
 end
 
 if not pcall(debug.getlocal, 4, 1) then
@@ -141,4 +132,8 @@ if not pcall(debug.getlocal, 4, 1) then
   end
 end
 
-return M
+return {
+  copy_file = copy_file,
+  copy_dir = copy_dir,
+  install = install,
+}

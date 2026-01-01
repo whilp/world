@@ -32,16 +32,6 @@ local function verify_sha256(content, expected)
   return nil, string.format("sha256 mismatch: expected %s, got %s", expected, actual)
 end
 
-local function write_file(dest, content, mode)
-  unix.makedirs(path.dirname(dest))
-  local fd = unix.open(dest, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, mode)
-  if not fd or fd < 0 then return nil, "failed to open " .. dest end
-  local written = unix.write(fd, content)
-  unix.close(fd)
-  if written ~= #content then return nil, "write failed" end
-  return true
-end
-
 local function main(version_file, platform, output, binary)
   if not version_file or not platform or not output then
     return nil, "usage: fetch.lua <version_file> <platform> <output> [binary]"
@@ -88,9 +78,8 @@ local function main(version_file, platform, output, binary)
     return nil, err
   end
 
-  ok, err = write_file(output, body, tonumber("755", 8))
-  if not ok then
-    return nil, err
+  if not cosmo.Barf(output, body, tonumber("755", 8)) then
+    return nil, "failed to write " .. output
   end
 
   return true

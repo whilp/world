@@ -3,7 +3,7 @@ local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local install = require("build.install")
 
-local tmp_dir = "/tmp/test_install_" .. os.time()
+local tmp_dir = unix.mkdtemp("/tmp/test_install_XXXXXX")
 
 local function write_file(filepath, content)
   unix.makedirs(path.dirname(filepath))

@@ -39,7 +39,11 @@ local lu = require("luaunit")
 local cosmo = require("cosmo")
 
 print("# " .. test_file)
-dofile(test_file)
+local ok, err = pcall(dofile, test_file)
+if not ok then
+  io.stderr:write("error loading test file: " .. tostring(err) .. "\n")
+  os.exit(1)
+end
 
 local runner = lu.LuaUnit.new()
 runner:setOutputType("tap")
