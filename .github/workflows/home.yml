@@ -14,15 +14,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
 
-      - name: Cache nvim plugins
-        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
-        with:
-          path: o/any/nvim/plugins
-          key: nvim-plugins-${{ hashFiles('.config/nvim/nvim-pack-lock.json') }}
-
-      # NOTE: Platform binary caches disabled - APE binaries self-modify on first
-      # run and cause Bus errors when cached/restored across different runners
-
       - name: Bootstrap lua
         run: |
           make o/any/lua/bin/lua
