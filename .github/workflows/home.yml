@@ -48,10 +48,36 @@ jobs:
       # Build cosmos binaries one at a time
       - name: Build cosmos binaries
         run: |
-          for p in darwin-arm64 linux-arm64 linux-x86_64; do
+          # Build darwin-arm64 and linux-arm64 using make
+          for p in darwin-arm64 linux-arm64; do
             for b in lua zip unzip; do
               make o/$p/cosmos/bin/$b
             done
+          done
+
+          # For linux-x86_64, use shell commands to avoid APE lua issues
+          # The APE lua has issues with unix.open on the same platform
+          version=$(o/any/lua/bin/lua -e 'local s = dofile("3p/cosmos/version.lua"); print(s.version .. "-" .. s.platforms["linux-x86_64"].sha:sub(1,8))')
+          echo "Cosmos version: $version"
+
+          for b in lua zip unzip; do
+            target_dir="o/linux-x86_64/cosmos/$version/bin"
+            mkdir -p "$target_dir"
+
+            # Fetch
+            o/any/lua/bin/lua lib/build/fetch.lua 3p/cosmos/version.lua linux-x86_64 o/linux-x86_64/cosmos/archive.zip
+
+            # Extract
+            o/any/lua/bin/lua lib/build/extract.lua 3p/cosmos/version.lua linux-x86_64 o/linux-x86_64/cosmos/archive.zip o/linux-x86_64/cosmos/staging
+
+            # Copy with shell cp instead of install.lua
+            cp -p "o/linux-x86_64/cosmos/staging/$b" "$target_dir/$b"
+
+            # Create symlink
+            ln -sfn "$version/bin" o/linux-x86_64/cosmos/bin
+
+            # Cleanup
+            rm -rf o/linux-x86_64/cosmos/archive.zip o/linux-x86_64/cosmos/staging
           done
 
       - name: Build home binaries for all platforms
