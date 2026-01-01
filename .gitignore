@@ -175,6 +175,7 @@ extras
 dist/
 3p/*/digest
 3p/*/fetch
+3p/*/test_files/
 o/
 results/
 .ape*
