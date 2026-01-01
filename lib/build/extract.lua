@@ -11,7 +11,8 @@ local function extract_zip(archive, dest_dir, strip)
     return nil, "unzip failed with exit code " .. exit_code
   end
 
-  -- unzip doesn't support strip-components, so we do it manually
+  -- TODO: unzip doesn't support strip-components, so we do it manually
+  -- Consider using a zip library or more robust path manipulation
   if strip and strip > 0 then
     -- find the single top-level directory and move its contents up
     local dir = unix.opendir(dest_dir)
