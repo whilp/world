@@ -9,6 +9,25 @@ local function interpolate(template, vars)
   end)
 end
 
+local function build_url(spec, platform)
+  local plat = spec.platforms[platform] or spec.platforms["*"]
+  if not plat then
+    return nil, "unknown platform: " .. platform
+  end
+
+  local vars = {platform = platform}
+  for k, v in pairs(spec) do
+    if type(v) ~= "table" then
+      vars[k] = v
+    end
+  end
+  for k, v in pairs(plat) do
+    vars[k] = v
+  end
+
+  return interpolate(spec.url, vars)
+end
+
 local function download(url)
   local status, headers, body
   local last_err
@@ -55,18 +74,7 @@ local function main(version_file, platform, output, binary)
     return nil, "unknown platform: " .. platform
   end
 
-  local vars = {binary = binary, platform = platform}
-  -- copy top-level spec fields (version, tag, etc)
-  for k, v in pairs(spec) do
-    if type(v) ~= "table" then
-      vars[k] = v
-    end
-  end
-  -- copy platform-specific fields (override top-level)
-  for k, v in pairs(plat) do
-    vars[k] = v
-  end
-  local url = interpolate(spec.url, vars)
+  local url = build_url(spec, platform)
 
   local body, err = download(url)
   if not body then
@@ -92,3 +100,7 @@ if not pcall(debug.getlocal, 4, 1) then
     os.exit(1)
   end
 end
+
+return {
+  build_url = build_url,
+}

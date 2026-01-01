@@ -1,31 +1,5 @@
 local lu = require("luaunit")
-
--- reproduce the interpolation logic from fetch.lua
-local function interpolate(template, vars)
-  return template:gsub("{([%w_]+)}", function(key)
-    return tostring(vars[key] or "")
-  end)
-end
-
--- reproduce the vars construction logic from fetch.lua
-local function build_url(spec, platform)
-  local plat = spec.platforms[platform] or spec.platforms["*"]
-  if not plat then
-    return nil, "unknown platform: " .. platform
-  end
-
-  local vars = {platform = platform}
-  for k, v in pairs(spec) do
-    if type(v) ~= "table" then
-      vars[k] = v
-    end
-  end
-  for k, v in pairs(plat) do
-    vars[k] = v
-  end
-
-  return interpolate(spec.url, vars)
-end
+local fetch = require("build.fetch")
 
 TestBuildUrl = {}
 
@@ -42,7 +16,7 @@ function TestBuildUrl:test_platform_override()
     },
   }
 
-  local url = build_url(spec, "linux-x86_64")
+  local url = fetch.build_url(spec, "linux-x86_64")
   lu.assertEquals(url, "https://example.com/1.0/tool-linux-x64")
 end
 
@@ -58,6 +32,6 @@ function TestBuildUrl:test_platform_no_override()
     },
   }
 
-  local url = build_url(spec, "darwin-arm64")
+  local url = fetch.build_url(spec, "darwin-arm64")
   lu.assertEquals(url, "https://example.com/1.0/tool-darwin-arm64")
 end
