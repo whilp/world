@@ -93,7 +93,7 @@ function TestApeRace:test_concurrent_execution_with_priming()
   lu.assertEquals(prime_exit, 0, "priming should succeed")
 
   -- sync to ensure assimilation is flushed
-  os.execute("sync")
+  spawn({ "sync" }):wait()
 
   -- now concurrent executions should all succeed
   local handles = {}
