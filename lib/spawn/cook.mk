@@ -1,10 +1,11 @@
-spawn_dir = lib/spawn
-spawn_sources = $(filter-out %test%.lua,$(wildcard $(spawn_dir)/*.lua))
+lib_lua_modules += spawn
+lib_dirs += o/any/spawn/lib
+lib_libs += o/any/spawn/lib/spawn/init.lua
+lib_tests += o/%/spawn/test.ok
 
-o/lib/spawn/test_spawn.lua.ok: private .UNVEIL = r:lib rx:$(lua_test) rwc:/tmp rw:/dev/null
-o/lib/spawn/test_spawn.lua.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
-o/lib/spawn/test_spawn.lua.ok: private .CPU = 30
-o/lib/spawn/test_spawn.lua.ok: $(lua_test) lib/spawn/test_spawn.lua lib/spawn/init.lua
-	@mkdir -p $(@D)
-	$(lua_test) lib/spawn/test_spawn.lua
-	@touch $@
+o/any/spawn/lib/spawn/init.lua: lib/spawn/init.lua
+	mkdir -p $(@D)
+	cp $< $@
+
+o/%/spawn/test.ok: lib/spawn/test_spawn.lua o/any/spawn/lib/spawn/init.lua o/%/cosmos/bin/lua $(runner)
+	TEST_BIN_DIR=o/$*/cosmos $(runner) $< $@

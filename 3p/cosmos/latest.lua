@@ -1,7 +1,7 @@
+#!/usr/bin/env lua
 local cosmo = require("cosmo")
 
 local REPO = "whilp/cosmopolitan"
-local BINARIES = {"lua", "make", "unzip", "zip"}
 
 local function get_latest_version()
   local url = "https://api.github.com/repos/" .. REPO .. "/releases/latest"
@@ -53,19 +53,17 @@ local function main()
     os.exit(1)
   end
 
-  local binaries = {}
-  for _, name in ipairs(BINARIES) do
-    if sums[name] then
-      binaries[name] = sums[name]
-    else
-      io.stderr:write("warning: no sha256 for " .. name .. "\n")
-    end
+  local sha = sums["cosmos.zip"]
+  if not sha then
+    io.stderr:write("error: no sha256 for cosmos.zip\n")
+    os.exit(1)
   end
 
   local result = {
     version = version,
-    url = "https://github.com/" .. REPO .. "/releases/download/{version}/{binary}",
-    binaries = binaries,
+    format = "zip",
+    url = "https://github.com/" .. REPO .. "/releases/download/{version}/cosmos.zip",
+    platforms = {["*"] = {sha = sha}},
   }
 
   print("return " .. cosmo.EncodeLua(result, {pretty = true}))

@@ -1,7 +1,6 @@
+local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
-
-local home = require("main")
 
 local function walk_dir(dir, base, files)
   files = files or {}
@@ -54,7 +53,7 @@ local function main(args)
     version = version,
     files = files,
   }
-  io.write(home.serialize_table(manifest))
+  io.write("return " .. cosmo.EncodeLua(manifest, {pretty = true}) .. "\n")
   return 0
 end
 

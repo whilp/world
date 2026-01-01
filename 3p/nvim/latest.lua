@@ -1,10 +1,11 @@
+#!/usr/bin/env lua
 local cosmo = require("cosmo")
 
 local repo = "whilp/neovim"
 local api_url = "https://api.github.com/repos/" .. repo .. "/releases/latest"
 
 local function fetch_json(url)
-  local status, headers, body = cosmo.Fetch(url, {
+  local status, _, body = cosmo.Fetch(url, {
     headers = {["User-Agent"] = "curl/8.0", ["Accept"] = "application/vnd.github+json"},
   })
   if status ~= 200 then
@@ -14,7 +15,7 @@ local function fetch_json(url)
 end
 
 local function fetch_sha256(url)
-  local status, headers, body = cosmo.Fetch(url, {
+  local status, _, body = cosmo.Fetch(url, {
     headers = {["User-Agent"] = "curl/8.0"},
     maxresponse = 300 * 1024 * 1024,
   })
@@ -73,15 +74,18 @@ local function main()
   local platforms = {}
   for platform, url in pairs(assets) do
     io.stderr:write("fetching sha256 for " .. platform .. "...\n")
-    local sha, sha_err = fetch_sha256(url)
+    local sha, fetch_err = fetch_sha256(url)
     if not sha then
-      io.stderr:write("error: " .. sha_err .. "\n")
+      io.stderr:write("error: " .. fetch_err .. "\n")
       os.exit(1)
     end
-    platforms[platform] = {sha = sha}
+    local plat = {sha = sha}
     if platform == "darwin-arm64" then
-      platforms[platform].platform = "macos-arm64"
+      plat.platform = "macos-arm64"
+    else
+      plat.platform = platform
     end
+    platforms[platform] = plat
   end
 
   local result = {

@@ -2,6 +2,7 @@
 -- Bundles pre-fetched plugins into an nvim directory
 -- Usage: lua lib/build/nvim-bundle.lua <platform> <nvim_dir> <plugins_dir>
 
+local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 local spawn = require("spawn").spawn
@@ -42,25 +43,67 @@ local function read_file(filepath)
   return table.concat(chunks)
 end
 
-local function list_plugins(content)
-  local plugins = {}
-  local in_plugins = false
-
-  for line in content:gmatch("[^\n]+") do
-    if line:match('^%s*"plugins":%s*{%s*$') then
-      in_plugins = true
-    elseif in_plugins then
-      local name = line:match('^%s*"([^"]+)":%s*{%s*$')
-      if name then
-        table.insert(plugins, name)
-      end
-    end
+local function parse_pack_lock(content)
+  local data = cosmo.DecodeJson(content)
+  if not data or not data.plugins then
+    return nil, "invalid pack-lock format"
   end
+  return data
+end
 
+local function list_plugins(data)
+  local plugins = {}
+  for name, _ in pairs(data.plugins) do
+    table.insert(plugins, name)
+  end
+  table.sort(plugins)
   return plugins
 end
 
-local function bundle_plugins(nvim_dir, plugins_dir, plugins)
+local function fetch_plugin_inline(plugin_name, output_dir, pack_lock_data)
+  local info = pack_lock_data.plugins[plugin_name]
+  if not info or not info.src or not info.rev then
+    return nil, "plugin not found: " .. plugin_name
+  end
+
+  local owner, repo = info.src:match("github%.com/([^/]+)/([^/]+)$")
+  if not owner or not repo then
+    return nil, "invalid GitHub URL: " .. info.src
+  end
+
+  io.write(string.format("  fetching %s at %s\n", plugin_name, info.rev))
+  local url = string.format("https://github.com/%s/%s/archive/%s.tar.gz", owner, repo, info.rev)
+  local tarball = output_dir .. ".tar.gz"
+
+  -- ensure parent directory exists
+  unix.makedirs(path.dirname(output_dir))
+
+  local status, _, body
+  local fetch_opts = {headers = {["User-Agent"] = "curl/8.0"}, maxresponse = 300 * 1024 * 1024}
+  for attempt = 1, 8 do
+    status, _, body = cosmo.Fetch(url, fetch_opts)
+    if status then break end
+    if attempt < 8 then
+      unix.nanosleep(math.min(30, 2 ^ attempt), 0)
+    end
+  end
+  if not status or status ~= 200 then
+    return nil, "fetch failed for " .. plugin_name
+  end
+
+  local fd, err = unix.open(tarball, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("0644", 8))
+  if not fd or fd < 0 then return nil, "failed to create tarball at " .. tarball .. ": " .. tostring(err) end
+  unix.write(fd, body)
+  unix.close(fd)
+
+  unix.makedirs(output_dir)
+  local ok, extract_err = execute("tar", {"tar", "-xzf", tarball, "-C", output_dir, "--strip-components=1"})
+  unix.unlink(tarball)
+  if not ok then return nil, extract_err end
+  return true
+end
+
+local function bundle_plugins(nvim_dir, plugins_dir, plugins, pack_lock_data)
   io.write("bundling plugins\n")
 
   local pack_dir = path.join(nvim_dir, "share/nvim/site/pack/core/opt")
@@ -72,6 +115,16 @@ local function bundle_plugins(nvim_dir, plugins_dir, plugins)
   for _, name in ipairs(plugins) do
     local src = path.join(plugins_dir, name)
     local dst = path.join(pack_dir, name)
+
+    -- fetch if missing
+    local st = unix.stat(src)
+    if not st then
+      unix.makedirs(plugins_dir)
+      ok, err = fetch_plugin_inline(name, src, pack_lock_data)
+      if not ok then
+        return nil, err
+      end
+    end
 
     io.write(string.format("  copying %s\n", name))
     local cp_ok, cp_err = execute("cp", {"cp", "-r", src, dst})
@@ -157,18 +210,35 @@ local function bundle(platform, nvim_dir, plugins_dir)
   nvim_dir = nvim_dir:gsub("/$", "")
   plugins_dir = plugins_dir:gsub("/$", "")
 
+  unix.makedirs(plugins_dir)
+
+  unix.unveil(PACK_LOCK, "r")
+  unix.unveil(".config/nvim", "r")
+  unix.unveil(plugins_dir, "rwc")
+  unix.unveil(nvim_dir, "rwcx")
+  unix.unveil("/etc/resolv.conf", "r")
+  unix.unveil("/etc/ssl", "r")
+  unix.unveil("/usr", "rx")
+  unix.unveil(nil, nil)
+
   local content, err = read_file(PACK_LOCK)
   if not content then
     return nil, err
   end
 
-  local plugins = list_plugins(content)
+  local pack_lock_data
+  pack_lock_data, err = parse_pack_lock(content)
+  if not pack_lock_data then
+    return nil, err
+  end
+
+  local plugins = list_plugins(pack_lock_data)
   if #plugins == 0 then
     return nil, "no plugins found in pack-lock"
   end
 
   local ok
-  ok, err = bundle_plugins(nvim_dir, plugins_dir, plugins)
+  ok, err = bundle_plugins(nvim_dir, plugins_dir, plugins, pack_lock_data)
   if not ok then
     return nil, err
   end
