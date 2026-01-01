@@ -15,5 +15,5 @@ o/%/ast-grep/bin/ast-grep: $(astgrep_version) $(install) o/%/ast-grep/staging/as
 o/%/ast-grep/test.ok: 3p/ast-grep/test.lua o/%/ast-grep/bin/ast-grep $(runner)
 	TEST_BIN_DIR=o/$*/ast-grep $(runner) $< $@
 
-o/%/ast-grep/test_rules.ok: 3p/ast-grep/test_rules.lua o/%/ast-grep/bin/ast-grep $(runner)
-	TEST_BIN_DIR=o/$*/ast-grep $(runner) $< $@
+o/%/ast-grep/test_rules.ok: 3p/ast-grep/test_rules.lua o/%/ast-grep/bin/ast-grep sgconfig.yml $(runner)
+	TEST_BIN_DIR=o/$*/ast-grep SGCONFIG=$(CURDIR)/sgconfig.yml RULES_DIR=$(CURDIR)/.ast-grep/rules $(runner) $< $@

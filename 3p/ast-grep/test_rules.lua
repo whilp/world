@@ -5,6 +5,7 @@ local unix = require("cosmo.unix")
 
 local bin = path.join(os.getenv("TEST_BIN_DIR"), "bin", "ast-grep")
 local test_dir = path.join(os.getenv("TEST_BIN_DIR"), "test_files")
+local config_path = os.getenv("SGCONFIG")
 
 local function write_test_file(filename, content)
   unix.makedirs(test_dir, tonumber("755", 8))
@@ -16,13 +17,8 @@ local function write_test_file(filename, content)
 end
 
 local function run_ast_grep(filepath, rule_id)
-  local project_root = os.getenv("PWD") or "/home/user/world"
-  local config_path = path.join(project_root, "sgconfig.yml")
-  local cwd = unix.getcwd()
-  unix.chdir(project_root)
   local handle = spawn({ bin, "scan", "-c", config_path, "--filter", rule_id, filepath })
   local status = handle:wait()
-  unix.chdir(cwd)
   return status
 end
 
@@ -259,6 +255,119 @@ end
   local filepath = write_test_file("test_path_concat_good.lua", code)
   local status = run_ast_grep(filepath, "unsafe-path-concat")
   lu.assertEquals(status, 0, "should not detect path.join or comparison operators")
+  unix.unlink(filepath)
+end
+
+function TestAstGrepRules:test_avoid_os_tmpname_positive()
+  local code = [[
+local tmpfile = os.tmpname()
+local f = io.open(os.tmpname(), "w")
+]]
+  local filepath = write_test_file("test_os_tmpname_bad.lua", code)
+  local status = run_ast_grep(filepath, "avoid-os-tmpname")
+  lu.assertEquals(status, 1, "should detect os.tmpname usage")
+  unix.unlink(filepath)
+end
+
+function TestAstGrepRules:test_avoid_os_tmpname_negative()
+  local code = [[
+local tmpdir = unix.mkdtemp("/tmp/myapp_XXXXXX")
+local fd, tmpfile = unix.mkstemp("/tmp/myapp_XXXXXX")
+]]
+  local filepath = write_test_file("test_os_tmpname_good.lua", code)
+  local status = run_ast_grep(filepath, "avoid-os-tmpname")
+  lu.assertEquals(status, 0, "should not detect mkdtemp/mkstemp usage")
+  unix.unlink(filepath)
+end
+
+function TestAstGrepRules:test_hardcoded_tmp_path_positive()
+  local code = [[
+local lock_path = "/tmp/test_daemonize_lock"
+local tmp = "/tmp/spawn_test_checkfile"
+]]
+  local filepath = write_test_file("test_hardcoded_tmp_bad.lua", code)
+  local status = run_ast_grep(filepath, "hardcoded-tmp-path")
+  lu.assertEquals(status, 1, "should detect hardcoded /tmp paths")
+  unix.unlink(filepath)
+end
+
+function TestAstGrepRules:test_hardcoded_tmp_path_negative()
+  local code = [[
+local template = "/tmp/myapp_XXXXXX"
+local tmpdir = unix.mkdtemp("/tmp/myapp_XXXXXX")
+local regular = "/home/user/file"
+]]
+  local filepath = write_test_file("test_hardcoded_tmp_good.lua", code)
+  local status = run_ast_grep(filepath, "hardcoded-tmp-path")
+  lu.assertEquals(status, 0, "should not detect XXXXXX templates or non-tmp paths")
+  unix.unlink(filepath)
+end
+
+function TestAstGrepRules:test_manual_temp_dir_positive()
+  local code = [[
+unix.makedirs("/tmp/test_dir")
+unix.makedirs("/tmp/myapp/subdir")
+]]
+  local filepath = write_test_file("test_manual_temp_dir_bad.lua", code)
+  local status = run_ast_grep(filepath, "manual-temp-dir")
+  lu.assertEquals(status, 1, "should detect manual temp directory creation")
+  unix.unlink(filepath)
+end
+
+function TestAstGrepRules:test_manual_temp_dir_negative()
+  local code = [[
+local tmpdir = unix.mkdtemp("/tmp/test_XXXXXX")
+unix.makedirs("/home/user/mydir")
+unix.makedirs(somepath)
+]]
+  local filepath = write_test_file("test_manual_temp_dir_good.lua", code)
+  local status = run_ast_grep(filepath, "manual-temp-dir")
+  lu.assertEquals(status, 0, "should not detect mkdtemp or non-tmp paths")
+  unix.unlink(filepath)
+end
+
+function TestAstGrepRules:test_manual_temp_file_positive()
+  local code = [[
+local tmp = string.format("%s.tmp.%d", path, os.time())
+local name = string.format("/tmp/file.tmp.%s", id)
+]]
+  local filepath = write_test_file("test_manual_temp_file_bad.lua", code)
+  local status = run_ast_grep(filepath, "manual-temp-file")
+  lu.assertEquals(status, 1, "should detect manual temp file construction")
+  unix.unlink(filepath)
+end
+
+function TestAstGrepRules:test_manual_temp_file_negative()
+  local code = [[
+local fd, tmpfile = unix.mkstemp("/tmp/myfile_XXXXXX")
+local msg = string.format("error: %s", err)
+]]
+  local filepath = write_test_file("test_manual_temp_file_good.lua", code)
+  local status = run_ast_grep(filepath, "manual-temp-file")
+  lu.assertEquals(status, 0, "should not detect mkstemp or non-tmp string.format")
+  unix.unlink(filepath)
+end
+
+function TestAstGrepRules:test_tmp_path_concat_positive()
+  local code = [[
+local temp = "/tmp/myapp_" .. os.time()
+local path = "/tmp/test_" .. id .. "_" .. pid
+]]
+  local filepath = write_test_file("test_tmp_path_concat_bad.lua", code)
+  local status = run_ast_grep(filepath, "tmp-path-concat")
+  lu.assertEquals(status, 1, "should detect temp path concatenation")
+  unix.unlink(filepath)
+end
+
+function TestAstGrepRules:test_tmp_path_concat_negative()
+  local code = [[
+local tmpdir = unix.mkdtemp("/tmp/myapp_XXXXXX")
+local msg = "error: " .. err
+local home = "/home/" .. user
+]]
+  local filepath = write_test_file("test_tmp_path_concat_good.lua", code)
+  local status = run_ast_grep(filepath, "tmp-path-concat")
+  lu.assertEquals(status, 0, "should not detect mkdtemp or non-tmp concatenation")
   unix.unlink(filepath)
 end
 

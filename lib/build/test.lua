@@ -33,6 +33,15 @@ if home then
     end
   end
 end
+-- Allow tests to specify additional paths via environment variables
+local sgconfig = os.getenv("SGCONFIG")
+if sgconfig then
+  unix.unveil(sgconfig, "r")
+end
+local rules_dir = os.getenv("RULES_DIR")
+if rules_dir then
+  unix.unveil(rules_dir, "r")
+end
 unix.unveil(nil, nil)
 
 local lu = require("luaunit")
