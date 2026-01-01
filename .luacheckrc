@@ -1,6 +1,18 @@
 std = "lua54"
 max_line_length = 120
 
+include_files = {
+  "lib",
+  "3p",
+}
+
+exclude_files = {
+  "**/*.mk",
+  "**/*.ok",
+  "lib/home/.args",
+  "lib/home/MANIFEST.txt",
+}
+
 -- Fennel-inspired strictness
 --
 -- Fennel addresses several Lua language issues through stricter defaults:
@@ -32,19 +44,14 @@ max_line_length = 120
 -- See: https://github.com/bakpakin/Fennel/blob/main/rationale.md
 
 ignore = {
-  "111/test_.*",
-  "111/Test.*",
-  "112/Test.*",
-  "113/Test.*",
-  "131/test_.*",
-  "131/Test.*",
-  "212/self",
+  "111/Test.*",   -- setting test class globals
+  "111/test_.*",  -- setting test function globals
+  "112/Test.*",   -- mutating test class globals
+  "212/self",     -- unused self in test methods
 }
 
 files = {
-  ["lib/run-test.lua"] = {
-    -- Test runner must modify arg to set arg[0] for the test file
-    -- and clear arg[1] so luaunit doesn't interpret it as a filter
+  ["lib/build/test.lua"] = {
     globals = { "arg" },
   },
   ["lib/claude/version.lua"] = {

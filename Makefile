@@ -39,14 +39,13 @@ lua: o/$(current_platform)/lua/bin/lua.dist
 
 ast_grep := o/$(current_platform)/ast-grep/bin/ast-grep
 lua_dist := o/$(current_platform)/lua/bin/lua.dist
-checker := lib/build/check.lua
 
-check: $(ast_grep) $(lua_dist)
+check: $(ast_grep) $(lua_dist) ## Run ast-grep and luacheck
 	@echo "Running ast-grep..."
 	$(ast_grep) scan --color always
 	@echo ""
 	@echo "Running luacheck..."
-	$(lua_dist) $(checker) lib 3p
+	$(lua_dist) -e 'arg={[0]="luacheck","."} require("luacheck.main")'
 
 test: lib-test $(subst %,$(current_platform),$(tests))
 	@echo "All tests passed"

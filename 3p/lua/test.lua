@@ -110,7 +110,7 @@ function test_lua_dist_can_require_modules()
 
   for _, mod in ipairs(test_requires) do
     local handle = spawn({lua_dist, "-e", "require('" .. mod .. "')"})
-    local ok, output, exit_code = handle:read()
+    local _, output, exit_code = handle:read()
     lu.assertEquals(exit_code, 0, "should be able to require " .. mod .. ": " .. (output or ""))
   end
 end

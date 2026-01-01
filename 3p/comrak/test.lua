@@ -12,7 +12,7 @@ function TestComrak:test_version()
     lu.skip("spawn failed: " .. tostring(err))
     return
   end
-  local ok, output, code = handle:read()
+  local _, output, code = handle:read()
   -- skip: comrak binary is nix-linked and can't execute on this platform
   -- may fail with 127 (not found), 126 (not executable), or 1 (dynamic linker failed)
   if code ~= 0 then

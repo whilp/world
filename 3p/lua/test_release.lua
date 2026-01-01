@@ -34,7 +34,7 @@ function test_lua_binary_has_bundled_modules()
   for _, mod in ipairs(test_modules) do
     local script = string.format("require('%s')", mod)
     local handle = spawn({lua_bin, "-e", script})
-    local ok, output, exit_code = handle:read()
+    local _, output, exit_code = handle:read()
     lu.assertEquals(exit_code, 0, "should require " .. mod .. ": " .. (output or ""))
   end
 end
