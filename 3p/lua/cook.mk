@@ -17,7 +17,6 @@ o/%/lua/bin/lua.ape: o/%/cosmos/bin/lua $(lib_libs) $(libs)
 
 o/%/lua/bin/lua.dist: o/%/lua/bin/lua.ape
 	cp $< $@
-	./$@ --assimilate || true
 
 o/%/lua/test.ok: 3p/lua/test.lua o/%/lua/bin/lua.dist $(runner)
 	$(runner) $< $@
