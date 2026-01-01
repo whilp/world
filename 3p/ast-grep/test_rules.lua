@@ -5,7 +5,7 @@ local unix = require("cosmo.unix")
 
 local bin = path.join(os.getenv("TEST_BIN_DIR"), "bin", "ast-grep")
 local test_dir = path.join(os.getenv("TEST_BIN_DIR"), "test_files")
-local config_path = os.getenv("SGCONFIG")
+local config_path = TEST_ARGS[1]
 
 local function write_test_file(filename, content)
   unix.makedirs(test_dir, tonumber("755", 8))
