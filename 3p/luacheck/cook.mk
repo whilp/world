@@ -17,7 +17,7 @@ o/%/luacheck/staging/src/luacheck/main.lua: $(luacheck_version) $(extract) o/%/l
 	$(extract) $(luacheck_version) $* o/$*/luacheck/archive.tar.gz o/$*/luacheck/staging
 
 o/%/luacheck/lib/luacheck/main.lua: $(luacheck_version) $(install) o/%/luacheck/staging/src/luacheck/main.lua
-	$(install) $(luacheck_version) $* o/$*/luacheck lib o/$*/luacheck/staging/src/luacheck
+	$(install) $(luacheck_version) $* o/$*/luacheck lib o/$*/luacheck/staging/src
 
 o/%/luacheck/bin/luacheck: $(luacheck_version) $(install) o/%/luacheck/lib/luacheck/main.lua $(luacheck_deps)
 	$(install) $(luacheck_version) $* o/$*/luacheck bin 3p/luacheck/luacheck
