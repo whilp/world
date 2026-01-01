@@ -39,16 +39,18 @@ local function main(version_file, platform, output, binary)
 
   local output_dir = path.dirname(output)
   unix.makedirs(output_dir)
-  unix.unveil(version_file, "r")
-  unix.unveil(output_dir, "rwc")
-  unix.unveil("/etc/resolv.conf", "r")
-  unix.unveil("/etc/ssl", "r")
 
-  -- unveil the lua binary itself (needed for APE binaries to access embedded modules)
-  local lua_bin = arg[-1] or arg[0]
-  if lua_bin then unix.unveil(lua_bin, "rx") end
+  -- skip unveil in CI environments (can cause bus errors with APE binaries)
+  if not os.getenv("CI") then
+    local lua_bin = arg[-1] or arg[0]
+    if lua_bin then unix.unveil(lua_bin, "rx") end
 
-  unix.unveil(nil, nil)
+    unix.unveil(version_file, "r")
+    unix.unveil(output_dir, "rwc")
+    unix.unveil("/etc/resolv.conf", "r")
+    unix.unveil("/etc/ssl", "r")
+    unix.unveil(nil, nil)
+  end
 
   local ok, spec = pcall(dofile, version_file)
   if not ok then

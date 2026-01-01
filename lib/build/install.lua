@@ -116,14 +116,16 @@ local function main(version_file, platform, base_dir, install_type, source)
     return nil, "usage: install.lua <version_file> <platform> <base_dir> <bin|lib> <source>"
   end
 
-  -- unveil the lua binary itself (needed for APE binaries to access embedded modules)
-  local lua_bin = arg[-1] or arg[0]
-  if lua_bin then unix.unveil(lua_bin, "rx") end
+  -- skip unveil in CI environments (can cause bus errors with APE binaries)
+  if not os.getenv("CI") then
+    local lua_bin = arg[-1] or arg[0]
+    if lua_bin then unix.unveil(lua_bin, "rx") end
 
-  unix.unveil(version_file, "r")
-  unix.unveil(source, "r")
-  unix.unveil(base_dir, "rwc")
-  unix.unveil(nil, nil)
+    unix.unveil(version_file, "r")
+    unix.unveil(source, "r")
+    unix.unveil(base_dir, "rwc")
+    unix.unveil(nil, nil)
+  end
 
   return install(version_file, platform, base_dir, install_type, source)
 end

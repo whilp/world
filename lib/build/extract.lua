@@ -48,17 +48,19 @@ local function main(version_file, platform, input, dest_dir)
   end
 
   unix.makedirs(dest_dir)
-  unix.unveil(version_file, "r")
-  unix.unveil(input, "r")
-  unix.unveil(dest_dir, "rwc")
-  unix.unveil("/usr", "rx")
-  unix.unveil("/bin", "rx")
 
-  -- unveil the lua binary itself (needed for APE binaries to access embedded modules)
-  local lua_bin = arg[-1] or arg[0]
-  if lua_bin then unix.unveil(lua_bin, "rx") end
+  -- skip unveil in CI environments (can cause bus errors with APE binaries)
+  if not os.getenv("CI") then
+    local lua_bin = arg[-1] or arg[0]
+    if lua_bin then unix.unveil(lua_bin, "rx") end
 
-  unix.unveil(nil, nil)
+    unix.unveil(version_file, "r")
+    unix.unveil(input, "r")
+    unix.unveil(dest_dir, "rwc")
+    unix.unveil("/usr", "rx")
+    unix.unveil("/bin", "rx")
+    unix.unveil(nil, nil)
+  end
 
   local ok, spec = pcall(dofile, version_file)
   if not ok then
