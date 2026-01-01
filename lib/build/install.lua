@@ -111,27 +111,8 @@ local function install(version_file, platform, base_dir, install_type, source)
   return true
 end
 
-local function main(version_file, platform, base_dir, install_type, source)
-  if not version_file or not platform or not base_dir or not install_type or not source then
-    return nil, "usage: install.lua <version_file> <platform> <base_dir> <bin|lib> <source>"
-  end
-
-  -- skip unveil in CI environments (can cause bus errors with APE binaries)
-  if not os.getenv("CI") then
-    local lua_bin = arg[-1] or arg[0]
-    if lua_bin then unix.unveil(lua_bin, "rx") end
-
-    unix.unveil(version_file, "r")
-    unix.unveil(source, "r")
-    unix.unveil(base_dir, "rwc")
-    unix.unveil(nil, nil)
-  end
-
-  return install(version_file, platform, base_dir, install_type, source)
-end
-
 if not pcall(debug.getlocal, 4, 1) then
-  local ok, err = main(...)
+  local ok, err = install(...)
   if not ok then
     io.stderr:write("error: " .. err .. "\n")
     os.exit(1)
