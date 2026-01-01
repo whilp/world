@@ -94,8 +94,27 @@ jobs:
             echo "FAILED with unveil: no symlink"
           fi
 
+          # Clean up
+          rm -rf o/linux-x86_64/cosmos/3.* o/linux-x86_64/cosmos/bin
+
+          # Now try the ACTUAL make target that was originally failing
+          echo ""
+          echo "=== Testing actual make target (should trigger crash if issue exists) ==="
+          rm -rf o/linux-x86_64/cosmos  # Clean slate
+
+          # This is what originally crashed
+          make o/linux-x86_64/cosmos/bin/lua 2>&1 || echo "make target failed with exit code $?"
+
+          # Check result
+          if [ -f o/linux-x86_64/cosmos/bin/lua ]; then
+            echo "SUCCESS: make target created lua binary"
+            ls -la o/linux-x86_64/cosmos/bin/
+          else
+            echo "FAILED: make target did not create lua binary"
+          fi
+
           # Clean up for next step
-          rm -rf o/linux-x86_64/cosmos/3.* o/linux-x86_64/cosmos/bin o/linux-x86_64/cosmos/.extracted o/linux-x86_64/cosmos/archive.zip
+          rm -rf o/linux-x86_64/cosmos
 
       # Build cosmos binaries one at a time
       - name: Build cosmos binaries
