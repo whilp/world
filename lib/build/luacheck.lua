@@ -4,16 +4,40 @@ local path = require("cosmo.path")
 local cosmo = require("cosmo")
 local spawn = require("spawn").spawn
 
+local function walk(dir, pattern, results)
+  results = results or {}
+  local handle = unix.opendir(dir)
+  if not handle then return results end
+
+  while true do
+    local entry = handle:read()
+    if not entry then break end
+    if entry ~= "." and entry ~= ".." then
+      local full_path = path.join(dir, entry)
+      local stat = unix.stat(full_path)
+      if stat then
+        if unix.S_ISDIR(stat:mode()) then
+          walk(full_path, pattern, results)
+        elseif entry:match(pattern) then
+          table.insert(results, full_path)
+        end
+      end
+    end
+  end
+  handle:close()
+  return results
+end
+
 local function parse_plain(stdout)
   local issues = {}
   for line in (stdout or ""):gmatch("[^\n]+") do
     -- plain format: file:line:col-endcol: (CODE) message
-    local file, ln, col, endcol, code, msg = line:match("^(.+):(%d+):(%d+)-(%d+): %(([WE]%d+)%) (.+)$")
-    if not file then
+    local _, ln, col, endcol, code, msg = line:match("^(.+):(%d+):(%d+)-(%d+): %(([WE]%d+)%) (.+)$")
+    if not ln then
       -- without ranges: file:line:col: (CODE) message
-      file, ln, col, code, msg = line:match("^(.+):(%d+):(%d+): %(([WE]%d+)%) (.+)$")
+      _, ln, col, code, msg = line:match("^(.+):(%d+):(%d+): %(([WE]%d+)%) (.+)$")
     end
-    if file then
+    if ln then
       table.insert(issues, {
         line = tonumber(ln),
         column = tonumber(col),
@@ -32,14 +56,15 @@ local function check(source_file, output, luacheck_bin)
 
   print("# luacheck " .. source_file)
 
+  local source = cosmo.Slurp(source_file)
   local handle = spawn({
     luacheck_bin,
     "--formatter", "plain",
     "--codes",
     "--ranges",
-    "--include-files", source_file,
-    "--", source_file,
-  })
+    "--filename", source_file,
+    "-",
+  }, { stdin = source })
 
   local _, stdout, exit_code = handle:read()
 
@@ -58,9 +83,7 @@ local function check(source_file, output, luacheck_bin)
     issues = issues,
   }
 
-  local f = io.open(output, "w")
-  f:write("return " .. cosmo.EncodeLua(result) .. "\n")
-  f:close()
+  cosmo.Barf(output, "return " .. cosmo.EncodeLua(result) .. "\n")
 
   -- TODO: fail build once all files pass
 end
@@ -72,11 +95,8 @@ local function report(output_dir)
   local total_issues = 0
   local by_code = {}
 
-  local handle = spawn({ "find", output_dir, "-name", "*.luacheck.ok", "-type", "f" })
-  local _, stdout = handle:read()
-
-  for line in (stdout or ""):gmatch("[^\n]+") do
-    local chunk = loadfile(line)
+  for _, filepath in ipairs(walk(output_dir, "%.luacheck%.ok$")) do
+    local chunk = loadfile(filepath)
     if chunk then
       local result = chunk()
       if result then

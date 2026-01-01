@@ -1,14 +1,6 @@
 std = "lua54"
 max_line_length = 120
 
-include_files = {
-  "lib",
-  "3p",
-  ".local/bin",
-  ".config/hammerspoon",
-  ".config/nvim",
-}
-
 exclude_files = {
   "**/*.mk",
   "**/*.ok",
