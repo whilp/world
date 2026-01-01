@@ -11,6 +11,7 @@ endif
 
 export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;$(CURDIR)/o/any/luaunit/lib/?.lua;/zip/.lua/?.lua;/zip/.lua/?/init.lua
 export PATH := $(CURDIR)/o/$(current_platform)/cosmos/bin:$(CURDIR)/o/any/lua/bin:$(PATH)
+export RIPGREP_CONFIG_PATH := $(CURDIR)/.config/ripgrep/rg.conf
 
 lua_bin := o/any/lua/bin/lua
 
@@ -38,8 +39,8 @@ release ?= latest
 include lib/cook.mk
 include 3p/cook.mk
 
-lua_libs := $(shell rg --files --hidden -g '*.lua')
-lua_scripts := $(shell rg --hidden -l '^#!/.*lua' .local/bin 3p 2>/dev/null)
+lua_libs := $(shell rg --files -g '*.lua')
+lua_scripts := $(shell rg -l '^#!/.*lua' .local/bin 3p 2>/dev/null)
 lua_files := $(lua_libs) $(lua_scripts)
 luacheck_files := $(patsubst %,o/any/%.luacheck.ok,$(lua_files))
 
