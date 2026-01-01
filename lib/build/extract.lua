@@ -97,8 +97,37 @@ local function clear_dir(dir)
   end
 end
 
+local function set_timestamps_recursive(dir, mtime)
+  local handle = unix.opendir(dir)
+  if not handle then return end
+
+  for name in handle do
+    if name ~= "." and name ~= ".." then
+      local filepath = path.join(dir, name)
+      local stat = unix.stat(filepath)
+      if stat then
+        if unix.S_ISDIR(stat:mode()) then
+          set_timestamps_recursive(filepath, mtime)
+        end
+        local fd = unix.open(filepath, unix.O_RDONLY)
+        if fd then
+          unix.futimens(fd, mtime, 0, mtime, 0)
+          unix.close(fd)
+        end
+      end
+    end
+  end
+end
+
 local function extract_zip(archive, dest_dir, strip)
   strip = strip or 0
+
+  local archive_stat = unix.stat(archive)
+  if not archive_stat then
+    return nil, "failed to stat archive " .. archive
+  end
+  local archive_mtime = archive_stat:mtim()
+
   -- temp_dir must be on same filesystem as dest_dir for rename to work
   local temp_dir = unix.mkdtemp(path.join(path.dirname(dest_dir), ".extract_XXXXXX"))
   clear_dir(dest_dir)
@@ -117,11 +146,20 @@ local function extract_zip(archive, dest_dir, strip)
   if not ok then
     return nil, err
   end
+
+  set_timestamps_recursive(dest_dir, archive_mtime)
   return true
 end
 
 local function extract_targz(archive, dest_dir, strip)
   strip = strip or 0
+
+  local archive_stat = unix.stat(archive)
+  if not archive_stat then
+    return nil, "failed to stat archive " .. archive
+  end
+  local archive_mtime = archive_stat:mtim()
+
   -- temp_dir must be on same filesystem as dest_dir for rename to work
   local temp_dir = unix.mkdtemp(path.join(path.dirname(dest_dir), ".extract_XXXXXX"))
   clear_dir(dest_dir)
@@ -138,37 +176,19 @@ local function extract_targz(archive, dest_dir, strip)
   if not ok then
     return nil, err
   end
+
+  set_timestamps_recursive(dest_dir, archive_mtime)
   return true
-end
-
-local function read_gzip_timestamp(archive)
-  local fd = unix.open(archive, unix.O_RDONLY)
-  if not fd then
-    return nil
-  end
-  local header = unix.read(fd, 10)
-  unix.close(fd)
-
-  if not header or #header < 10 then
-    return nil
-  end
-
-  -- gzip header bytes 4-7 contain the modification time (little-endian 32-bit)
-  local b1, b2, b3, b4 = header:byte(5, 8)
-  local timestamp = b1 + b2 * 256 + b3 * 65536 + b4 * 16777216
-
-  -- return 0 if timestamp is not set in gzip header
-  if timestamp == 0 then
-    return nil
-  end
-
-  return timestamp
 end
 
 local function extract_gz(archive, dest_dir, tool_name)
   local dest = path.join(dest_dir, tool_name)
 
-  local timestamp = read_gzip_timestamp(archive)
+  local archive_stat = unix.stat(archive)
+  if not archive_stat then
+    return nil, "failed to stat archive " .. archive
+  end
+  local archive_mtime = archive_stat:mtim()
 
   local handle = spawn({"gunzip", "-c", archive})
   local ok, output, exit_code = handle:read()
@@ -180,11 +200,7 @@ local function extract_gz(archive, dest_dir, tool_name)
     return nil, "failed to create " .. dest
   end
   unix.write(fd, output)
-
-  if timestamp then
-    unix.futimens(fd, timestamp, 0, timestamp, 0)
-  end
-
+  unix.futimens(fd, archive_mtime, 0, archive_mtime, 0)
   unix.close(fd)
   return true
 end

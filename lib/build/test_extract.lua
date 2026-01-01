@@ -267,15 +267,14 @@ function TestTimestampPreservation:setUp()
   write_file(path.join(self.archive_src, "file1.txt"), "content1")
   write_file(path.join(self.archive_src, "file2.txt"), "content2")
 
-  self.file1_stat = unix.stat(path.join(self.archive_src, "file1.txt"))
-  self.file2_stat = unix.stat(path.join(self.archive_src, "file2.txt"))
-
   local cwd = unix.getcwd()
   unix.chdir(self.archive_src)
   local handle = spawn({"tar", "-czf", self.archive, "file1.txt", "file2.txt"})
   local exit_code = handle:wait()
   unix.chdir(cwd)
   lu.assertEquals(exit_code, 0, "failed to create test tar.gz")
+
+  self.archive_stat = unix.stat(self.archive)
 end
 
 function TestTimestampPreservation:tearDown()
@@ -284,7 +283,7 @@ function TestTimestampPreservation:tearDown()
   unix.rmrf(self.archive)
 end
 
-function TestTimestampPreservation:test_preserves_file_timestamps()
+function TestTimestampPreservation:test_uses_archive_mtime()
   local ok, err = extract.extract_targz(self.archive, self.dest, 0)
   lu.assertTrue(ok, "extract should succeed: " .. tostring(err))
 
@@ -297,8 +296,8 @@ function TestTimestampPreservation:test_preserves_file_timestamps()
   local extracted_stat1 = unix.stat(extracted_file1)
   local extracted_stat2 = unix.stat(extracted_file2)
 
-  lu.assertEquals(extracted_stat1:mtim(), self.file1_stat:mtim(), "file1 mtime should be preserved")
-  lu.assertEquals(extracted_stat2:mtim(), self.file2_stat:mtim(), "file2 mtime should be preserved")
+  lu.assertEquals(extracted_stat1:mtim(), self.archive_stat:mtim(), "file1 mtime should match archive")
+  lu.assertEquals(extracted_stat2:mtim(), self.archive_stat:mtim(), "file2 mtime should match archive")
 end
 
 TestTimestampPreservationZip = {}
@@ -316,15 +315,14 @@ function TestTimestampPreservationZip:setUp()
   write_file(path.join(self.archive_src, "file1.txt"), "content1")
   write_file(path.join(self.archive_src, "file2.txt"), "content2")
 
-  self.file1_stat = unix.stat(path.join(self.archive_src, "file1.txt"))
-  self.file2_stat = unix.stat(path.join(self.archive_src, "file2.txt"))
-
   local cwd = unix.getcwd()
   unix.chdir(self.archive_src)
   local handle = spawn({"zip", "-r", self.archive, "file1.txt", "file2.txt"})
   local exit_code = handle:wait()
   unix.chdir(cwd)
   lu.assertEquals(exit_code, 0, "failed to create test zip")
+
+  self.archive_stat = unix.stat(self.archive)
 end
 
 function TestTimestampPreservationZip:tearDown()
@@ -333,7 +331,7 @@ function TestTimestampPreservationZip:tearDown()
   unix.rmrf(self.archive)
 end
 
-function TestTimestampPreservationZip:test_preserves_file_timestamps()
+function TestTimestampPreservationZip:test_uses_archive_mtime()
   local ok, err = extract.extract_zip(self.archive, self.dest, 0)
   lu.assertTrue(ok, "extract should succeed: " .. tostring(err))
 
@@ -346,8 +344,8 @@ function TestTimestampPreservationZip:test_preserves_file_timestamps()
   local extracted_stat1 = unix.stat(extracted_file1)
   local extracted_stat2 = unix.stat(extracted_file2)
 
-  lu.assertEquals(extracted_stat1:mtim(), self.file1_stat:mtim(), "file1 mtime should be preserved")
-  lu.assertEquals(extracted_stat2:mtim(), self.file2_stat:mtim(), "file2 mtime should be preserved")
+  lu.assertEquals(extracted_stat1:mtim(), self.archive_stat:mtim(), "file1 mtime should match archive")
+  lu.assertEquals(extracted_stat2:mtim(), self.archive_stat:mtim(), "file2 mtime should match archive")
 end
 
 TestTimestampPreservationGz = {}
@@ -366,8 +364,6 @@ function TestTimestampPreservationGz:setUp()
   local src_file = path.join(self.archive_src, self.tool_name)
   write_file(src_file, "binary content")
 
-  self.file_stat = unix.stat(src_file)
-
   local handle = spawn({"gzip", "-c", src_file})
   local ok, output, exit_code = handle:read()
   lu.assertEquals(exit_code, 0, "failed to create test gz")
@@ -375,6 +371,8 @@ function TestTimestampPreservationGz:setUp()
   local fd = unix.open(self.archive, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("644", 8))
   unix.write(fd, output)
   unix.close(fd)
+
+  self.archive_stat = unix.stat(self.archive)
 end
 
 function TestTimestampPreservationGz:tearDown()
@@ -383,7 +381,7 @@ function TestTimestampPreservationGz:tearDown()
   unix.rmrf(self.archive)
 end
 
-function TestTimestampPreservationGz:test_preserves_file_timestamp()
+function TestTimestampPreservationGz:test_uses_archive_mtime()
   local ok, err = extract.extract_gz(self.archive, self.dest, self.tool_name)
   lu.assertTrue(ok, "extract should succeed: " .. tostring(err))
 
@@ -391,5 +389,5 @@ function TestTimestampPreservationGz:test_preserves_file_timestamp()
   lu.assertTrue(file_exists(extracted_file))
 
   local extracted_stat = unix.stat(extracted_file)
-  lu.assertEquals(extracted_stat:mtim(), self.file_stat:mtim(), "mtime should be preserved")
+  lu.assertEquals(extracted_stat:mtim(), self.archive_stat:mtim(), "mtime should match archive")
 end
