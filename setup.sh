@@ -2,7 +2,7 @@
 
 install_home() {
   local url tmpdir
-  url="https://github.com/whilp/dotfiles/releases/latest/download/home"
+  url="https://github.com/whilp/world/releases/latest/download/home"
   tmpdir=$(mktemp -d)
 
   echo "downloading home..." >&2
