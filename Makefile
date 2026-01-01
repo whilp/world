@@ -13,13 +13,22 @@ export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;$(CURDIR)/o/any/
 export PATH := $(CURDIR)/o/$(current_platform)/cosmos/bin:$(CURDIR)/o/any/lua/bin:$(PATH)
 
 lua_bin := o/any/lua/bin/lua
-fetch := lib/build/fetch.lua
-extract := lib/build/extract.lua
-install := lib/build/install.lua
-runner := lib/build/test.lua
+
+# Script paths (for dependencies)
+fetch_script := lib/build/fetch.lua
+extract_script := lib/build/extract.lua
+install_script := lib/build/install.lua
+runner_script := lib/build/test.lua
+
+# Commands (invoke lua explicitly to avoid APE "Text file busy" errors)
+fetch = $(lua_bin) $(fetch_script)
+extract = $(lua_bin) $(extract_script)
+install = $(lua_bin) $(install_script)
+runner = $(lua_bin) $(runner_script)
+
 luaunit := o/any/luaunit/lib/luaunit.lua
 
-$(fetch) $(extract) $(install): | $(lua_bin)
+$(fetch_script) $(extract_script) $(install_script) $(runner_script): | $(lua_bin)
 cosmo := whilp/cosmopolitan
 release ?= latest
 
