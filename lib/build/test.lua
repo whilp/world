@@ -49,7 +49,7 @@ local runner = lu.LuaUnit.new()
 runner:setOutputType("tap")
 local code = runner:runSuite()
 
-if runner.result.runCount == 0 then
+if runner.result.runCount == 0 and runner.result.skippedCount == 0 then
   io.stderr:write("error: no tests found in " .. test_file .. "\n")
   os.exit(1)
 end
