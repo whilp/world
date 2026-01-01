@@ -229,9 +229,12 @@ local function bundle(platform, nvim_dir, plugins_dir)
   nvim_dir = nvim_dir:gsub("/$", "")
   plugins_dir = plugins_dir:gsub("/$", "")
 
+  unix.makedirs(plugins_dir)
+
   unix.unveil(PACK_LOCK, "r")
   unix.unveil(".config/nvim", "r")
-  unix.unveil("o", "rwcx")
+  unix.unveil(plugins_dir, "rwc")
+  unix.unveil(nvim_dir, "rwcx")
   unix.unveil("/etc/resolv.conf", "r")
   unix.unveil("/etc/ssl", "r")
   unix.unveil("/usr", "rx")
