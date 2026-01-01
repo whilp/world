@@ -32,4 +32,8 @@ luacheck_runner = $(lua_bin) $(luacheck_script)
 
 lib-luacheck: $(luacheck_files) ## Run luacheck on lib modules
 
+# generic pattern rule for luacheck (works for any lib/*/%.lua)
+o/any/%.luacheck.ok: lib/%.lua .luacheckrc $(luacheck_script) $(luacheck_bin)
+	$(luacheck_runner) $< $@ $(luacheck_bin)
+
 .PHONY: lib-test lib-luacheck
