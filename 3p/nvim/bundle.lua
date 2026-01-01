@@ -90,6 +90,12 @@ local function fetch_plugin_inline(plugin_name, output_dir, pack_lock_content)
   local url = string.format("https://github.com/%s/%s/archive/%s.tar.gz", owner, repo, info.rev)
   local tarball = output_dir .. ".tar.gz"
 
+  -- ensure parent directory exists
+  local parent = output_dir:match("(.+)/[^/]+$")
+  if parent then
+    unix.makedirs(parent)
+  end
+
   local cosmo = require("cosmo")
   local status, headers, body
   local fetch_opts = {headers = {["User-Agent"] = "curl/8.0"}, maxresponse = 300 * 1024 * 1024}
@@ -104,8 +110,8 @@ local function fetch_plugin_inline(plugin_name, output_dir, pack_lock_content)
     return nil, "fetch failed for " .. plugin_name
   end
 
-  local fd = unix.open(tarball, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("0644", 8))
-  if not fd or fd < 0 then return nil, "failed to create tarball" end
+  local fd, err = unix.open(tarball, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("0644", 8))
+  if not fd or fd < 0 then return nil, "failed to create tarball at " .. tarball .. ": " .. tostring(err) end
   unix.write(fd, body)
   unix.close(fd)
 
