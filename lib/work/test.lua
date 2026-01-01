@@ -11,4 +11,3 @@ require("work.test_file_locking")
 require("work.test_string_sanitization")
 require("work.test_backup")
 
-os.exit(lu.LuaUnit.run())

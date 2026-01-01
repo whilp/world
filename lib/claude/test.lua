@@ -95,4 +95,3 @@ function test_scan_for_atomic_install()
   lu.assertTrue(result == nil or type(result) == "string", "should return nil or string")
 end
 
-os.exit(lu.LuaUnit.run())

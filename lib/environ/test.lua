@@ -139,4 +139,3 @@ function test_roundtrip()
   lu.assertEquals(env2.NUM, "123")
 end
 
-os.exit(lu.LuaUnit.run())
