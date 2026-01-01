@@ -10,7 +10,6 @@ if not has_posix then
 end
 
 local unix = require("cosmo.unix")
-local path = require("cosmo.path")
 
 local data = require("work.data")
 local store = require("work.store")
