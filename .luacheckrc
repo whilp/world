@@ -53,11 +53,10 @@ ignore = {
 
 files = {
   ["lib/build/test.lua"] = {
-    globals = { "arg", "TEST_ARGS" },
-    ignore = { "122" }, -- overriding os.getenv for TEST_TMPDIR
+    globals = { "arg", "TEST_ARGS", "TEST_TMPDIR" },
   },
   ["**/test*.lua"] = {
-    globals = { "TEST_ARGS" },
+    globals = { "TEST_ARGS", "TEST_TMPDIR" },
   },
   ["lib/claude/version.lua"] = {
     -- Generated file with long URLs
