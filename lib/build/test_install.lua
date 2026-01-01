@@ -1,4 +1,5 @@
 local lu = require("luaunit")
+local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local install = require("build.install")
@@ -7,10 +8,7 @@ local tmp_dir = unix.mkdtemp("/tmp/test_install_XXXXXX")
 
 local function write_file(filepath, content)
   unix.makedirs(path.dirname(filepath))
-  local f = io.open(filepath, "w")
-  f:write(content or "test")
-  f:close()
-  unix.chmod(filepath, tonumber("755", 8))
+  cosmo.Barf(filepath, content or "test", tonumber("755", 8))
 end
 
 local function file_exists(filepath)

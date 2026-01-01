@@ -49,6 +49,11 @@ local runner = lu.LuaUnit.new()
 runner:setOutputType("tap")
 local code = runner:runSuite()
 
+if runner.result.runCount == 0 then
+  io.stderr:write("error: no tests found in " .. test_file .. "\n")
+  os.exit(1)
+end
+
 local result = {
   file = test_file,
   tests = runner.result.runCount,
