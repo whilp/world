@@ -1,9 +1,8 @@
 bins += o/%/lua-dist/bin/lua
 
-o/%/lua-dist/staging/.built: $(lib_dirs) $(3p_lib_dirs) o/any/luaunit/luaunit.lua
+o/%/lua-dist/staging/.built: $(lib_dirs) $(3p_lib_dirs)
 	rm -rf o/$*/lua-dist/staging
 	mkdir -p o/$*/lua-dist/staging/.lua
-	cp o/any/luaunit/luaunit.lua o/$*/lua-dist/staging/.lua/
 	$(foreach d,$(3p_lib_dirs),cp -r $(subst %,$*,$(d))/* o/$*/lua-dist/staging/.lua/;)
 	$(foreach d,$(lib_dirs),cp -r $(d)/* o/$*/lua-dist/staging/.lua/;)
 	find o/$*/lua-dist/staging/.lua -name 'test*.lua' -delete
