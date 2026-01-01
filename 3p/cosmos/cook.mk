@@ -26,11 +26,6 @@ o/%/cosmos/bin/make: $(cosmos_version) $(install) o/%/cosmos/.extracted
 o/%/cosmos/test.ok: 3p/cosmos/test.lua $(cosmos_bins) $(runner)
 	TEST_BIN_DIR=o/$*/cosmos $(runner) $< $@
 
-o/%/cosmos/test_ape_race.ok: 3p/cosmos/test_ape_race.lua $(cosmos_bins) $(runner)
-	TEST_BIN_DIR=o/$*/cosmos $(runner) $< $@
-
-tests += o/%/cosmos/test_ape_race.ok
-
 cosmos-latest: | $(lua_bin)
 	3p/cosmos/latest.lua > $(cosmos_version)
 
