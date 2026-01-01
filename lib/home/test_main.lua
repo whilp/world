@@ -772,4 +772,3 @@ function test_detect_platform_returns_string()
   )
 end
 
-os.exit(lu.LuaUnit.run())

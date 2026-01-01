@@ -6,7 +6,7 @@ if not has_posix then
   function test_blockers_skipped()
     lu.skip("requires luaposix")
   end
-  os.exit(lu.LuaUnit.run())
+  return
 end
 
 local data = require("work.data")
@@ -43,4 +43,3 @@ function TestBlockers:test_item_blocking_relationship()
   lu.assertFalse(process.is_item_blocked(test_store, blocker))
 end
 
-os.exit(lu.LuaUnit.run())

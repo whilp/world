@@ -6,7 +6,7 @@ if not has_posix then
   function test_file_locking_skipped()
     lu.skip("requires luaposix")
   end
-  os.exit(lu.LuaUnit.run())
+  return
 end
 
 local unix = require("cosmo.unix")
@@ -124,5 +124,3 @@ function TestFileLocking:test_delete_with_locking()
   local f = io.open(file_path, "r")
   lu.assertNil(f, "work item file should not exist after delete")
 end
-
-os.exit(lu.LuaUnit.run())
