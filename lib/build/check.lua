@@ -2,20 +2,8 @@
 local lfs = require('lfs')
 local luacheck = require('luacheck')
 
-local exclude_patterns = {
-  '^test',
-  'cook%.mk',
-}
-
-local exclude_dirs = {
-  home = true,
-}
-
-local function should_exclude(name)
-  for _, pattern in ipairs(exclude_patterns) do
-    if name:match(pattern) then return true end
-  end
-  return false
+local function is_test_file(name)
+  return name:match('^test')
 end
 
 local function find_lua_files(dir, files)
@@ -25,10 +13,8 @@ local function find_lua_files(dir, files)
       local path = dir .. '/' .. entry
       local attr = lfs.attributes(path)
       if attr and attr.mode == 'directory' then
-        if not exclude_dirs[entry] then
-          find_lua_files(path, files)
-        end
-      elseif entry:match('%.lua$') and not should_exclude(entry) then
+        find_lua_files(path, files)
+      elseif entry:match('%.lua$') and not is_test_file(entry) then
         table.insert(files, path)
       end
     end
