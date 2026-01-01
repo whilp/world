@@ -1,15 +1,6 @@
 std = "lua54"
 max_line_length = 120
 
-exclude_files = {
-  "**/*.mk",
-  "**/*.ok",
-  "**/*.sh",
-  "**/*.tl",
-  "lib/home/.args",
-  "lib/home/MANIFEST.txt",
-}
-
 -- Fennel-inspired strictness
 --
 -- Fennel addresses several Lua language issues through stricter defaults:
