@@ -43,6 +43,13 @@ jobs:
           make o/any/lua/bin/lua
           o/any/lua/bin/lua -v
 
+      - name: Build cosmos binaries
+        run: |
+          # Build cosmos for each platform sequentially to avoid parallel APE issues
+          for p in darwin-arm64 linux-arm64 linux-x86_64; do
+            make o/$p/cosmos/bin/lua o/$p/cosmos/bin/zip o/$p/cosmos/bin/unzip
+          done
+
       - name: Build home binaries
         run: make home-all -j$(nproc)
 
