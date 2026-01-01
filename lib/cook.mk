@@ -2,6 +2,7 @@ lib_lua_modules :=
 lib_dirs :=
 lib_libs :=
 lib_tests :=
+luacheck_files :=
 
 # standalone lib files
 lib_dirs += o/any/lib
@@ -24,4 +25,11 @@ include lib/work/cook.mk
 
 lib-test: $(luaunit) $(lib_tests) ## Run lib module tests
 
-.PHONY: lib-test
+# luacheck runner
+luacheck_script := lib/build/luacheck.lua
+luacheck_bin = o/$(current_platform)/luacheck/bin/luacheck
+luacheck_runner = $(lua_bin) $(luacheck_script)
+
+lib-luacheck: $(luacheck_files) ## Run luacheck on lib modules
+
+.PHONY: lib-test lib-luacheck
