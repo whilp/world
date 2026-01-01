@@ -1,9 +1,61 @@
 #!/usr/bin/env lua
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
-local spawn = require("spawn").spawn
 
 local M = {}
+
+-- copy a single file using unix APIs
+local function copy_file_raw(src, dst)
+  local src_fd = unix.open(src, unix.O_RDONLY)
+  if not src_fd then
+    return nil, "failed to open source: " .. src
+  end
+
+  local st = unix.fstat(src_fd)
+  local mode = st and st:mode() or tonumber("644", 8)
+
+  local dst_fd = unix.open(dst, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, mode)
+  if not dst_fd then
+    unix.close(src_fd)
+    return nil, "failed to create destination: " .. dst
+  end
+
+  while true do
+    local chunk = unix.read(src_fd, 65536)
+    if not chunk or chunk == "" then break end
+    unix.write(dst_fd, chunk)
+  end
+
+  unix.close(src_fd)
+  unix.close(dst_fd)
+  return true
+end
+
+-- recursively copy a directory
+local function copy_dir_recursive(src, dst)
+  local st = unix.stat(src)
+  if not st then
+    return nil, "source not found: " .. src
+  end
+
+  if unix.S_ISDIR(st:mode()) then
+    unix.makedirs(dst)
+    local dir = unix.opendir(src)
+    if not dir then
+      return nil, "failed to open directory: " .. src
+    end
+    for name in dir do
+      if name ~= "." and name ~= ".." then
+        local ok, err = copy_dir_recursive(path.join(src, name), path.join(dst, name))
+        if not ok then return nil, err end
+      end
+    end
+  else
+    local ok, err = copy_file_raw(src, dst)
+    if not ok then return nil, err end
+  end
+  return true
+end
 
 -- copy a single file to target directory
 -- if install_type is "bin" and source filename looks generic, rename to tool_name
@@ -23,20 +75,12 @@ function M.copy_file(source, target_dir, install_type, tool_name)
     dest = path.join(target_dir, source_name)
   end
 
-  local exit_code = spawn({ "cp", source, dest }):wait()
-  if exit_code ~= 0 then
-    return nil, "cp failed with exit code " .. exit_code
-  end
-  return true
+  return copy_file_raw(source, dest)
 end
 
 -- copy a directory's contents to target directory
 function M.copy_dir(source, target_dir)
-  local exit_code = spawn({ "cp", "-r", source, target_dir }):wait()
-  if exit_code ~= 0 then
-    return nil, "cp failed with exit code " .. exit_code
-  end
-  return true
+  return copy_dir_recursive(source, target_dir)
 end
 
 -- main install function
@@ -93,7 +137,6 @@ local function main(version_file, platform, base_dir, install_type, source)
   unix.unveil(version_file, "r")
   unix.unveil(source, "r")
   unix.unveil(base_dir, "rwc")
-  unix.unveil("/usr", "rx")
   unix.unveil(nil, nil)
 
   return M.install(version_file, platform, base_dir, install_type, source)

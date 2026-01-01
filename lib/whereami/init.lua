@@ -74,6 +74,12 @@ local function string_to_emoji(str)
 end
 
 local function get_short_hostname()
+  -- try /etc/hostname first (works without /usr unveil)
+  local hostname = read_file('/etc/hostname')
+  if hostname then
+    return hostname:match('([^.%s]+)')
+  end
+  -- fallback to hostname command
   local ok, output = spawn({'hostname', '-s'}):read()
   if ok and output then
     return trim(output):match('([^.%s]+)')

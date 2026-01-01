@@ -95,4 +95,4 @@ function TestCopyFile:test_zip_name_preserved()
   lu.assertTrue(file_exists(path.join(target_dir, "zip")))
 end
 
-os.exit(lu.LuaUnit.run())
+-- test runner handles execution
