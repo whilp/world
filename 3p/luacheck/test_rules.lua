@@ -4,13 +4,8 @@ local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 
 local test_bin_dir = os.getenv("TEST_BIN_DIR")
-local project_root = path.join(path.dirname(test_bin_dir), "..", "..")
-local lua_bin = path.join(project_root, "o", "any", "lua", "bin", "lua")
-local test_dir = path.join(project_root, "3p", "luacheck", "test_files")
-local config_path = path.join(project_root, ".luacheckrc")
-local luacheck_lib = path.join(os.getenv("TEST_BIN_DIR"), "lib")
-local argparse_lib = path.join(project_root, "o", "any", "argparse", "lib")
-local lfs_lib = path.join(project_root, "o", "any", "lfs", "lib")
+local luacheck_bin = path.join(test_bin_dir, "bin", "luacheck")
+local test_dir = path.join(TEST_TMPDIR, "luacheck_test_files")
 
 local function write_test_file(filename, content)
   unix.makedirs(test_dir, tonumber("755", 8))
@@ -22,17 +17,9 @@ local function write_test_file(filename, content)
 end
 
 local function run_luacheck(filepath)
-  local lua_path = string.format(
-    "%s/?.lua;%s/?/init.lua;%s/?.lua;%s/?/init.lua;%s/?.lua;%s/?/init.lua",
-    luacheck_lib, luacheck_lib,
-    argparse_lib, argparse_lib,
-    lfs_lib, lfs_lib
-  )
-  local code = string.format(
-    'package.path = %q .. ";" .. package.path; arg = {[0] = "luacheck", "--config", %q, %q}; require("luacheck.main")',
-    lua_path, config_path, filepath
-  )
-  local handle = spawn({ lua_bin, "-e", code })
+  -- Use --no-config to prevent loading .luacheckrc which has include_files restrictions
+  -- Also use --std lua54 for consistency with the project's lua version
+  local handle = spawn({ luacheck_bin, "--no-config", "--std", "lua54", filepath })
   local status = handle:wait()
   return status
 end
