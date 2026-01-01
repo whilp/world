@@ -46,8 +46,10 @@ local function main(version_file, platform, input, dest_dir)
     return nil, "usage: extract.lua <version_file> <platform> <input> <dest_dir>"
   end
 
+  unix.makedirs(dest_dir)
   unix.unveil(version_file, "r")
-  unix.unveil("o", "rwc")
+  unix.unveil(input, "r")
+  unix.unveil(dest_dir, "rwc")
   unix.unveil("/usr", "rx")
   unix.unveil(nil, nil)
 
@@ -62,8 +64,6 @@ local function main(version_file, platform, input, dest_dir)
   end
 
   local format = plat.format or spec.format or "binary"
-
-  unix.makedirs(dest_dir)
 
   local err
   if format == "zip" then

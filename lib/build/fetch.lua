@@ -47,8 +47,10 @@ local function main(version_file, platform, output, binary)
     return nil, "usage: fetch.lua <version_file> <platform> <output> [binary]"
   end
 
+  local output_dir = path.dirname(output)
+  unix.makedirs(output_dir)
   unix.unveil(version_file, "r")
-  unix.unveil("o", "rwc")
+  unix.unveil(output_dir, "rwc")
   unix.unveil("/etc/resolv.conf", "r")
   unix.unveil("/etc/ssl", "r")
   unix.unveil(nil, nil)

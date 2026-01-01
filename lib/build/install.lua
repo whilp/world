@@ -9,7 +9,8 @@ local function main(version_file, platform, base_dir, install_type, source)
   end
 
   unix.unveil(version_file, "r")
-  unix.unveil("o", "rwc")
+  unix.unveil(source, "r")
+  unix.unveil(base_dir, "rwc")
   unix.unveil("/usr", "rx")
   unix.unveil(nil, nil)
 
