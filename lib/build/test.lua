@@ -2,13 +2,26 @@
 local test_file, output = ...
 arg = {}
 
-local lu = require("luaunit")
-local cosmo = require("cosmo")
+local unix = require("cosmo.unix")
+local path = require("cosmo.path")
 
 if not test_file or not output then
   io.stderr:write("usage: test-runner.lua <test_file> <output>\n")
   os.exit(1)
 end
+
+local output_dir = path.dirname(output)
+unix.makedirs(output_dir)
+unix.unveil(test_file, "r")
+unix.unveil(output_dir, "rwc")
+unix.unveil("o", "rx")
+unix.unveil("lib", "r")
+unix.unveil("/tmp", "rwc")
+unix.unveil("/usr", "rx")
+unix.unveil(nil, nil)
+
+local lu = require("luaunit")
+local cosmo = require("cosmo")
 
 print("# " .. test_file)
 dofile(test_file)
@@ -25,10 +38,6 @@ local result = {
   errors = runner.result.errorCount,
   skipped = runner.result.skippedCount,
 }
-
-local unix = require("cosmo.unix")
-local path = require("cosmo.path")
-unix.makedirs(path.dirname(output))
 
 local f = io.open(output, "w")
 f:write("return " .. cosmo.EncodeLua(result) .. "\n")
