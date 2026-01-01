@@ -4,6 +4,7 @@ lua_libs += luacheck
 libs += o/%/luacheck/lib/luacheck/main.lua
 bins += o/%/luacheck/bin/luacheck
 tests += o/%/luacheck/test.ok
+tests += o/%/luacheck/test_rules.ok
 luacheck_deps := \
 	o/%/argparse/lib/argparse.lua \
 	o/%/lfs/lib/lfs.lua \
@@ -25,3 +26,6 @@ o/%/luacheck/bin/luacheck: $(luacheck_version) $(install) o/%/luacheck/lib/luach
 
 o/%/luacheck/test.ok: 3p/luacheck/test.lua o/%/luacheck/bin/luacheck $(runner)
 	TEST_BIN_DIR=o/$*/luacheck $(runner) $< $@
+
+o/%/luacheck/test_rules.ok: 3p/luacheck/test_rules.lua o/%/luacheck/bin/luacheck .luacheckrc $(runner)
+	TEST_BIN_DIR=o/$*/luacheck $(runner) $< $@ $(CURDIR)/.luacheckrc
