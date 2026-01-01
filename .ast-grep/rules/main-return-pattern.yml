@@ -1,0 +1,36 @@
+id: main-return-pattern
+language: lua
+severity: warning
+message: |
+  Avoid os.exit(), unix.exit(), or io.stderr in main() - use return (status, err) instead.
+
+  main() functions should return (status, err):
+    Bad:  os.exit(1)
+    Bad:  unix.exit(1)
+    Bad:  io.stderr:write("error\n")
+    Good: return 1, "error message"
+    Good: return 0
+
+  Exceptions:
+    - Signal handlers (ok to call os.exit/unix.exit)
+    - Child processes after fork (ok to call unix.exit)
+    - Debug logging with io.stderr in conditional blocks
+note: |
+  main() functions should use the transaction pattern:
+  1. Accept an opts parameter with stderr/stdout for testability
+  2. Return (status, err) where status is 0 for success
+  3. Let the caller handle os.exit() and error output
+
+  This rule flags potential violations for manual review.
+
+rule:
+  any:
+    - pattern: os.exit($ARG)
+    - pattern: unix.exit($ARG)
+    - pattern: io.stderr:write($ARG)
+
+constraints:
+  ARG:
+    not:
+      # Exclude the common wrapper pattern: os.exit(main(arg) or 0)
+      regex: "^main\\("
