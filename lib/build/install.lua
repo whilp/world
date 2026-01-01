@@ -1,16 +1,24 @@
 #!/usr/bin/env lua
-local cosmo = require("cosmo")
-local path = require("cosmo.path")
-local unix = require("cosmo.unix")
+io.stderr:write("install.lua starting\n")
+io.stderr:flush()
 
-local spawn = require("spawn").spawn
+local cosmo = require("cosmo")
+io.stderr:write("loaded cosmo\n")
+io.stderr:flush()
+
+local path = require("cosmo.path")
+io.stderr:write("loaded path\n")
+io.stderr:flush()
+
+local unix = require("cosmo.unix")
+io.stderr:write("loaded unix\n")
+io.stderr:flush()
 
 local function copy_file_raw(src, dst)
   -- use shell cp to avoid cosmopolitan memory issues with large APE binaries
-  local handle = spawn({"/usr/bin/cp", "-p", src, dst})
-  local exit_code = handle:wait()
-  if exit_code ~= 0 then
-    return nil, "cp failed with exit code " .. exit_code
+  local ok = os.execute(string.format('/usr/bin/cp -p "%s" "%s"', src, dst))
+  if not ok then
+    return nil, "cp failed"
   end
   return true
 end
