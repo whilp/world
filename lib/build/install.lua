@@ -3,40 +3,15 @@ local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 
+local spawn = require("spawn").spawn
+
 local function copy_file_raw(src, dst)
-  if os.getenv("CI") then
-    io.stderr:write("copy_file_raw: " .. src .. " -> " .. dst .. "\n")
-    io.stderr:flush()
+  -- use shell cp to avoid cosmopolitan memory issues with large APE binaries
+  local handle = spawn({"/usr/bin/cp", "-p", src, dst})
+  local exit_code = handle:wait()
+  if exit_code ~= 0 then
+    return nil, "cp failed with exit code " .. exit_code
   end
-
-  local content = cosmo.Slurp(src)
-  if not content then
-    return nil, "failed to read source: " .. src
-  end
-
-  if os.getenv("CI") then
-    io.stderr:write("  read " .. #content .. " bytes\n")
-    io.stderr:flush()
-  end
-
-  local st = unix.stat(src)
-  local mode = st and st:mode() or tonumber("644", 8)
-
-  if os.getenv("CI") then
-    io.stderr:write("  mode: " .. string.format("%o", mode) .. "\n")
-    io.stderr:flush()
-  end
-
-  local ok = cosmo.Barf(dst, content, mode)
-  if not ok then
-    return nil, "failed to write destination: " .. dst
-  end
-
-  if os.getenv("CI") then
-    io.stderr:write("  write complete\n")
-    io.stderr:flush()
-  end
-
   return true
 end
 
@@ -145,6 +120,8 @@ local function main(version_file, platform, base_dir, install_type, source)
     unix.unveil(version_file, "r")
     unix.unveil(source, "r")
     unix.unveil(base_dir, "rwc")
+    unix.unveil("/usr", "rx")
+    unix.unveil("/bin", "rx")
     unix.unveil(nil, nil)
   end
 
