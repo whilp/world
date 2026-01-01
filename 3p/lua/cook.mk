@@ -19,3 +19,7 @@ o/%/lua/test.ok: 3p/lua/test.lua o/%/lua/bin/lua.dist $(runner)
 
 o/%/lua/test_release.ok: 3p/lua/test_release.lua o/%/lua/bin/lua.dist $(runner)
 	TEST_BIN_DIR=o/$*/lua $(runner) $< $@
+
+lua-all: $(foreach p,$(platforms),o/$(p)/lua/bin/lua.dist) ## Build lua.dist for all platforms
+
+.PHONY: lua-all

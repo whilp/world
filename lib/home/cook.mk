@@ -41,4 +41,6 @@ o/%/home/bin/home: o/%/cosmos/bin/lua o/%/cosmos/bin/zip o/%/cosmos/bin/unzip o/
 
 home: o/$(current_platform)/home/bin/home
 
-.PHONY: home
+home-all: $(foreach p,$(platforms),o/$(p)/home/bin/home) ## Build home for all platforms
+
+.PHONY: home home-all
