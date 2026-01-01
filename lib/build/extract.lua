@@ -3,13 +3,45 @@ local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 local spawn = require("spawn").spawn
 
-local function extract_zip(archive, dest_dir)
+local function extract_zip(archive, dest_dir, strip)
   -- use absolute path to avoid cosmopolitan binary issues with unveil
   local handle = spawn({"/usr/bin/unzip", "-o", "-d", dest_dir, archive})
   local exit_code = handle:wait()
   if exit_code ~= 0 then
     return nil, "unzip failed with exit code " .. exit_code
   end
+
+  -- TODO: unzip doesn't support strip-components, so we do it manually
+  -- Consider using a zip library or more robust path manipulation
+  if strip and strip > 0 then
+    -- find the single top-level directory and move its contents up
+    local dir = unix.opendir(dest_dir)
+    if not dir then
+      return nil, "failed to open " .. dest_dir
+    end
+    local entries = {}
+    for name in dir do
+      if name ~= "." and name ~= ".." then
+        table.insert(entries, name)
+      end
+    end
+    if #entries == 1 then
+      local subdir = path.join(dest_dir, entries[1])
+      local subdir_handle = unix.opendir(subdir)
+      if subdir_handle then
+        -- it's a directory, move contents up
+        for name in subdir_handle do
+          if name ~= "." and name ~= ".." then
+            local src = path.join(subdir, name)
+            local dst = path.join(dest_dir, name)
+            unix.rename(src, dst)
+          end
+        end
+        unix.rmdir(subdir)
+      end
+    end
+  end
+
   return true
 end
 
@@ -67,11 +99,12 @@ local function main(version_file, platform, input, dest_dir)
 
   local format = plat.format or spec.format or "binary"
 
+  local strip = plat.strip_components or spec.strip_components or 0
+
   local err
   if format == "zip" then
-    ok, err = extract_zip(input, dest_dir)
+    ok, err = extract_zip(input, dest_dir, strip)
   elseif format == "tar.gz" then
-    local strip = plat.strip_components or spec.strip_components or 0
     ok, err = extract_targz(input, dest_dir, strip)
   elseif format == "gz" then
     local tool_name = path.basename(path.dirname(dest_dir))
