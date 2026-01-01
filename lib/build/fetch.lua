@@ -47,6 +47,12 @@ local function main(version_file, platform, output, binary)
     return nil, "usage: fetch.lua <version_file> <platform> <output> [binary]"
   end
 
+  unix.unveil(version_file, "r")
+  unix.unveil("o", "rwc")
+  unix.unveil("/etc/resolv.conf", "r")
+  unix.unveil("/etc/ssl", "r")
+  unix.unveil(nil, nil)
+
   local ok, spec = pcall(dofile, version_file)
   if not ok then
     return nil, "failed to load " .. version_file .. ": " .. tostring(spec)

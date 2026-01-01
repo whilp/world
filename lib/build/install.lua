@@ -8,6 +8,11 @@ local function main(version_file, platform, base_dir, install_type, source)
     return nil, "usage: install.lua <version_file> <platform> <base_dir> <bin|lib> <source>"
   end
 
+  unix.unveil(version_file, "r")
+  unix.unveil("o", "rwc")
+  unix.unveil("/usr", "rx")
+  unix.unveil(nil, nil)
+
   local ok, spec = pcall(dofile, version_file)
   if not ok then
     return nil, "failed to load " .. version_file .. ": " .. tostring(spec)

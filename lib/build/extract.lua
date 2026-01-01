@@ -46,6 +46,11 @@ local function main(version_file, platform, input, dest_dir)
     return nil, "usage: extract.lua <version_file> <platform> <input> <dest_dir>"
   end
 
+  unix.unveil(version_file, "r")
+  unix.unveil("o", "rwc")
+  unix.unveil("/usr", "rx")
+  unix.unveil(nil, nil)
+
   local ok, spec = pcall(dofile, version_file)
   if not ok then
     return nil, "failed to load " .. version_file .. ": " .. tostring(spec)
