@@ -7,6 +7,9 @@ local unix = require("cosmo.unix")
 
 local PACK_LOCK = ".config/nvim/nvim-pack-lock.json"
 
+unix.unveil(PACK_LOCK, "r")
+unix.unveil(nil, nil)
+
 local function read_file(filepath)
   local fd = unix.open(filepath, unix.O_RDONLY)
   if not fd then

@@ -157,6 +157,13 @@ local function bundle(platform, nvim_dir, plugins_dir)
   nvim_dir = nvim_dir:gsub("/$", "")
   plugins_dir = plugins_dir:gsub("/$", "")
 
+  unix.unveil(PACK_LOCK, "r")
+  unix.unveil(".config/nvim", "r")
+  unix.unveil(plugins_dir, "r")
+  unix.unveil(nvim_dir, "rwcx")
+  unix.unveil("/usr", "rx")
+  unix.unveil(nil, nil)
+
   local content, err = read_file(PACK_LOCK)
   if not content then
     return nil, err

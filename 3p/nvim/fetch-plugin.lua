@@ -73,6 +73,17 @@ local function fetch_plugin(plugin_name, output_dir)
   end
 
   output_dir = output_dir:gsub("/$", "")
+  local parent = output_dir:match("(.+)/[^/]+$")
+  if parent then
+    unix.makedirs(parent)
+  end
+
+  unix.unveil(PACK_LOCK, "r")
+  unix.unveil(parent or output_dir, "rwc")
+  unix.unveil("/etc/resolv.conf", "r")
+  unix.unveil("/etc/ssl", "r")
+  unix.unveil("/usr", "rx")
+  unix.unveil(nil, nil)
 
   local content, err = read_file(PACK_LOCK)
   if not content then
@@ -94,12 +105,6 @@ local function fetch_plugin(plugin_name, output_dir)
 
   local url = string.format("https://github.com/%s/%s/archive/%s.tar.gz", owner, repo, info.rev)
   local tarball = output_dir .. ".tar.gz"
-
-  -- Ensure parent directory exists
-  local parent = output_dir:match("(.+)/[^/]+$")
-  if parent then
-    unix.makedirs(parent)
-  end
 
   -- Download with retry
   local status, headers, body
