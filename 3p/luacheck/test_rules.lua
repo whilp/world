@@ -116,10 +116,9 @@ return foo(x)
 end
 
 function TestLuacheckRules:test_line_too_long_detected()
-  local code = [[
-local very_long_line = "this is an extremely long line that definitely exceeds the maximum line length of 120 characters"
-return very_long_line
-]]
+  -- Build a line >120 chars without exceeding 120 chars in this file
+  local long_str = string.rep("x", 130)
+  local code = 'local v = "' .. long_str .. '"\nreturn v\n'
   local filepath = write_test_file("check_long_line_bad.lua", code)
   local status = run_luacheck(filepath)
   lu.assertNotEquals(status, 0, "should detect line exceeding max length")
