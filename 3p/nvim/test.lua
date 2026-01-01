@@ -1,6 +1,7 @@
 local lu = require("luaunit")
 local spawn = require("spawn").spawn
 local path = require("cosmo.path")
+local unix = require("cosmo.unix")
 
 local bin_dir = os.getenv("TEST_BIN_DIR")
 local bin = path.join(bin_dir, "bin", "nvim")
@@ -45,14 +46,12 @@ end
 
 function TestNvim:test_vimruntime_exists()
   local runtime_dir = path.join(bin_dir, "share", "nvim", "runtime")
-  local unix = require("cosmo.unix")
   local st = unix.stat(runtime_dir)
   lu.assertNotNil(st, "share/nvim/runtime directory should exist")
 end
 
 function TestNvim:test_vimruntime_has_syntax()
   local syntax_file = path.join(bin_dir, "share", "nvim", "runtime", "syntax", "syntax.vim")
-  local unix = require("cosmo.unix")
   local st = unix.stat(syntax_file)
   lu.assertNotNil(st, "runtime/syntax/syntax.vim should exist")
 end
