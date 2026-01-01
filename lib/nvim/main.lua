@@ -12,7 +12,13 @@ local function resolve_nvim_bin()
   if bin_path then
     return bin_path
   end
-  return path.join(HOME, ".local", "share", "nvim", "bin", "nvim")
+
+  local fallback = path.join(HOME, ".local", "share", "nvim", "bin", "nvim")
+  if unix.stat(fallback) then
+    return fallback
+  end
+
+  return nil, "nvim binary not found. Run 'make nvim' to install."
 end
 
 -- NVIM_BIN: reserved for future caching of resolved binary path
@@ -421,7 +427,11 @@ end
 
 local function main(args)
   local program_name = args[0]:match("([^/]+)$")
-  local nvim_bin = resolve_nvim_bin()
+  local nvim_bin, err = resolve_nvim_bin()
+  if not nvim_bin then
+    io.stderr:write("error: " .. err .. "\n")
+    return 1
+  end
 
   local cmd_args = {}
   for i = 1, #args do
