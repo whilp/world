@@ -21,7 +21,7 @@ jobs:
           sync  # ensure APE binary assimilation is flushed to disk
 
       - name: Build home binaries
-        run: make home-all -j1
+        run: make home-all -j$(nproc)
 
       - name: Run checks
         run: make check
