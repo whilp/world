@@ -2,7 +2,6 @@ local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local spawn = require("spawn").spawn
-local version_mod = require("version")
 
 -- Platform normalization table
 local PLATFORMS = {
@@ -21,25 +20,6 @@ local PLATFORMS = {
     ["arm64"] = "linux-arm64",
   },
 }
-
-local function discover_tools(share_dir)
-  local tools = {}
-  local dir = unix.opendir(share_dir)
-  if not dir then
-    return tools
-  end
-  for name in dir do
-    if name ~= "." and name ~= ".." then
-      local tool_path = path.join(share_dir, name)
-      local st = unix.stat(tool_path)
-      if st and unix.S_ISDIR(st:mode()) then
-        table.insert(tools, name)
-      end
-    end
-  end
-  table.sort(tools)
-  return tools
-end
 
 local function read_file(filepath)
   local f, err = io.open(filepath, "rb")
@@ -345,7 +325,7 @@ local function parse_args(args)
     elseif args[i] == "--platform" then
       i = i + 1
       result.platform = args[i]
-    elseif (result.cmd == "3p" or result.cmd == "mac") and not result.subcmd and not args[i]:match("^%-") then
+    elseif result.cmd == "mac" and not result.subcmd and not args[i]:match("^%-") then
       result.subcmd = args[i]
     elseif not result.dest then
       result.dest = args[i]
@@ -628,108 +608,6 @@ local function cmd_version(opts)
   return 0
 end
 
-local function find_binary_in_dir(dir, tool_name)
-  return version_mod.find_binary(dir, tool_name)
-end
-
-local function scan_for_latest_version(tool_name, share_dir)
-  return version_mod.find_latest(tool_name, share_dir)
-end
-
-local function update_symlink(link_path, target_path, opts)
-  opts = opts or {}
-
-  if opts.dry_run then
-    if opts.verbose then
-      opts.stdout:write(string.format("would link %s -> %s\n", link_path, target_path))
-    end
-    return true
-  end
-
-  local st = unix.stat(link_path, unix.AT_SYMLINK_NOFOLLOW)
-  if st then
-    if unix.S_ISLNK(st:mode()) then
-      unix.unlink(link_path)
-    else
-      return false, "exists and is not a symlink"
-    end
-  end
-
-  local ok = unix.symlink(target_path, link_path)
-  if ok and opts.verbose then
-    opts.stdout:write(string.format("%s -> %s\n", link_path, target_path))
-  end
-  return ok
-end
-
-local function cmd_3p(args, opts)
-  opts = opts or {}
-  local stdout = opts.stdout or io.stdout
-  local stderr = opts.stderr or io.stderr
-  local verbose = opts.verbose or false
-  local dry_run = opts.dry_run or false
-  local list_only = args[1] == "list"
-
-  local HOME = opts.home or os.getenv("HOME")
-  local bin_dir = path.join(HOME, ".local", "bin")
-  local share_dir = opts.share_dir or path.join(HOME, ".local", "share")
-
-  if not dry_run then
-    unix.makedirs(bin_dir)
-  end
-
-  local results = {}
-  local tools = discover_tools(share_dir)
-
-  for _, tool in ipairs(tools) do
-    local info = scan_for_latest_version(tool, share_dir)
-    if info then
-      table.insert(results, {
-        name = tool,
-        version = info.version,
-        sha = info.sha,
-        path = info.path,
-      })
-
-      if not list_only then
-        local link_path = path.join(bin_dir, tool)
-        local ok, err = update_symlink(link_path, info.path, {
-          dry_run = dry_run,
-          verbose = verbose,
-          stdout = stdout,
-        })
-        if not ok and err then
-          stderr:write(string.format("warning: %s: %s\n", tool, err))
-        end
-
-        if tool == "nvim" then
-          local version_dir = info.path:match("(.+)/bin/nvim$")
-          if version_dir then
-            local site_target = path.join(version_dir, "share", "nvim", "site")
-            local site_link = path.join(share_dir, "nvim", "site")
-            ok, err = update_symlink(site_link, site_target, {
-              dry_run = dry_run,
-              verbose = verbose,
-              stdout = stdout,
-            })
-            if not ok and err then
-              stderr:write(string.format("warning: nvim site: %s\n", err))
-            end
-          end
-        end
-      end
-    end
-  end
-
-  if list_only then
-    for _, r in ipairs(results) do
-      stdout:write(string.format("%s %s-%s\n", r.name, r.version, r.sha))
-    end
-  end
-
-  return 0
-end
-
 local function cmd_setup(dest, opts)
   opts = opts or {}
   local stderr = opts.stderr or io.stderr
@@ -792,7 +670,6 @@ local function cmd_help(opts)
   if not platform_mode then
     stderr:write("  setup <dest>             run setup scripts\n")
     stderr:write("  mac [script]             run macOS defaults scripts\n")
-    stderr:write("  3p [subcommand]          manage third-party binary symlinks\n")
   end
   stderr:write("  version                  show build version\n")
   stderr:write("\nlist options:\n")
@@ -814,12 +691,6 @@ local function cmd_help(opts)
     stderr:write("  mac                      run all macOS defaults scripts\n")
     stderr:write("  mac list                 list available scripts\n")
     stderr:write("  mac <script>             run a specific script\n")
-    stderr:write("\n3p subcommands:\n")
-    stderr:write("  3p                       scan and symlink latest versions\n")
-    stderr:write("  3p list                  list installed tools and versions\n")
-    stderr:write("\n3p options:\n")
-    stderr:write("  --verbose, -v            show detailed output\n")
-    stderr:write("  --dry-run, -n            show what would be done\n")
   end
   return 0
 end
@@ -861,19 +732,6 @@ local function main(args, opts)
       table.insert(mac_args, parsed.dest)
     end
     return cmd_mac(mac_args, opts)
-  elseif parsed.cmd == "3p" then
-    local threep_opts = {}
-    for k, v in pairs(opts) do
-      threep_opts[k] = v
-    end
-    threep_opts.verbose = parsed.verbose
-    threep_opts.dry_run = parsed.dry_run
-
-    local subcmd_args = {}
-    if parsed.subcmd then
-      table.insert(subcmd_args, parsed.subcmd)
-    end
-    return cmd_3p(subcmd_args, threep_opts)
   elseif parsed.cmd == "version" then
     return cmd_version(opts)
   elseif parsed.cmd == "help" then
@@ -886,7 +744,6 @@ end
 
 local home = {
   PLATFORMS = PLATFORMS,
-  discover_tools = discover_tools,
   read_file = read_file,
   spawn = spawn,
   serialize_value = serialize_value,
@@ -908,10 +765,6 @@ local home = {
   cmd_mac = cmd_mac,
   cmd_version = cmd_version,
   cmd_help = cmd_help,
-  find_binary_in_dir = find_binary_in_dir,
-  scan_for_latest_version = scan_for_latest_version,
-  update_symlink = update_symlink,
-  cmd_3p = cmd_3p,
   main = main,
 }
 

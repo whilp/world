@@ -115,7 +115,7 @@ jobs:
           gh release create "${{ steps.version.outputs.tag }}" \
             --title "home ${{ steps.version.outputs.tag }}" \
             --notes "## Home binaries
-          Platform-specific dotfiles and tool installers.
+          Platform-specific dotfiles and bundled tools.
 
           ### Quick setup
           \`\`\`bash

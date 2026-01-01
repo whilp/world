@@ -3,29 +3,32 @@ local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 local spawn = require("spawn").spawn
 
-local function strip_components(source_dir, dest_dir, strip)
-  if strip == 0 then
-    -- just move everything from source to dest
-    local dir = unix.opendir(source_dir)
-    if not dir then
-      return nil, "failed to open directory " .. source_dir
-    end
-    for name in dir do
-      if name ~= "." and name ~= ".." then
-        local src = path.join(source_dir, name)
-        local dst = path.join(dest_dir, name)
-        local ok, err = unix.rename(src, dst)
-        if not ok then
-          return nil, "failed to move " .. src .. " to " .. dst .. ": " .. tostring(err)
-        end
+local function move_contents(source_dir, dest_dir)
+  local dir = unix.opendir(source_dir)
+  if not dir then
+    return nil, "failed to open directory " .. source_dir
+  end
+  for name in dir do
+    if name ~= "." and name ~= ".." then
+      local src = path.join(source_dir, name)
+      local dst = path.join(dest_dir, name)
+      local ok, err = unix.rename(src, dst)
+      if not ok then
+        return nil, "failed to move " .. src .. " to " .. dst .. ": " .. tostring(err)
       end
     end
-    return true
+  end
+  return true
+end
+
+local function strip_components(source_dir, dest_dir, strip)
+  if strip == 0 then
+    return move_contents(source_dir, dest_dir)
   end
 
-  -- navigate down strip levels
+  -- navigate down (strip - 1) levels, then move contents of the final level
   local current = source_dir
-  for i = 1, strip do
+  for i = 1, strip - 1 do
     local dir = unix.opendir(current)
     if not dir then
       return nil, "failed to open directory " .. current
@@ -50,22 +53,46 @@ local function strip_components(source_dir, dest_dir, strip)
     current = entry
   end
 
-  -- move contents from current to dest_dir
+  -- at final level, find the single entry and move it (file or directory)
   local dir = unix.opendir(current)
   if not dir then
     return nil, "failed to open directory " .. current
   end
+  local entries = {}
   for name in dir do
     if name ~= "." and name ~= ".." then
-      local src = path.join(current, name)
-      local dst = path.join(dest_dir, name)
-      local ok, err = unix.rename(src, dst)
-      if not ok then
-        return nil, "failed to move " .. src .. " to " .. dst .. ": " .. tostring(err)
-      end
+      table.insert(entries, name)
     end
   end
-  return true
+  if #entries ~= 1 then
+    return nil, string.format("cannot strip %d components: expected 1 entry at level %d, found %d", strip, strip, #entries)
+  end
+  local final_entry = path.join(current, entries[1])
+  local stat = unix.stat(final_entry)
+  if not stat then
+    return nil, string.format("cannot strip %d components: failed to stat entry at level %d", strip, strip)
+  end
+
+  if unix.S_ISDIR(stat:mode()) then
+    return move_contents(final_entry, dest_dir)
+  else
+    local dst = path.join(dest_dir, entries[1])
+    local ok, err = unix.rename(final_entry, dst)
+    if not ok then
+      return nil, "failed to move " .. final_entry .. " to " .. dst .. ": " .. tostring(err)
+    end
+    return true
+  end
+end
+
+local function clear_dir(dir)
+  local handle = unix.opendir(dir)
+  if not handle then return end
+  for name in handle do
+    if name ~= "." and name ~= ".." then
+      unix.rmrf(path.join(dir, name))
+    end
+  end
 end
 
 local function extract_zip(archive, dest_dir, strip)
@@ -73,6 +100,7 @@ local function extract_zip(archive, dest_dir, strip)
   local temp_dir = dest_dir .. ".tmp"
   unix.rmrf(temp_dir)
   unix.makedirs(temp_dir)
+  clear_dir(dest_dir)
 
   -- use absolute path to avoid cosmopolitan binary issues with unveil
   local handle = spawn({"/usr/bin/unzip", "-o", "-d", temp_dir, archive})
@@ -95,6 +123,7 @@ local function extract_targz(archive, dest_dir, strip)
   local temp_dir = dest_dir .. ".tmp"
   unix.rmrf(temp_dir)
   unix.makedirs(temp_dir)
+  clear_dir(dest_dir)
 
   local handle = spawn({"tar", "-xzf", archive, "-C", temp_dir})
   local exit_code = handle:wait()
@@ -133,12 +162,8 @@ local function main(version_file, platform, input, dest_dir)
   end
 
   unix.makedirs(dest_dir)
-  unix.unveil(version_file, "r")
-  unix.unveil(input, "r")
-  unix.unveil(dest_dir, "rwc")
-  unix.unveil("/usr", "rx")
-  unix.unveil("/bin", "rx")
-  unix.unveil(nil, nil)
+  -- TODO: re-enable unveil once we handle temp_dir inode changes after rmrf
+  -- unveil binds to inode, so rmrf+makedirs breaks access
 
   local ok, spec = pcall(dofile, version_file)
   if not ok then

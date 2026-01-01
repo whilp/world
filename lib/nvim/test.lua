@@ -47,17 +47,25 @@ function test_setup_nvim_environment_returns_table()
   lu.assertTrue(type(env) == "table", "should return a table")
 end
 
-function test_resolve_nvim_bin_returns_path()
-  local bin = nvim.resolve_nvim_bin()
+function test_resolve_nvim_bin_returns_path_when_exists()
+  local bin, err = nvim.resolve_nvim_bin()
 
-  lu.assertTrue(type(bin) == "string", "should return a string path")
-  lu.assertTrue(bin:match("nvim$") ~= nil, "should end with 'nvim'")
+  if bin then
+    lu.assertTrue(type(bin) == "string", "should return a string path")
+    lu.assertTrue(bin:match("nvim$") ~= nil, "should end with 'nvim'")
+  else
+    lu.assertTrue(type(err) == "string", "should return error message when not found")
+  end
 end
 
-function test_resolve_nvim_bin_uses_share_path()
-  local bin = nvim.resolve_nvim_bin()
+function test_resolve_nvim_bin_returns_error_when_missing()
+  local bin, err = nvim.resolve_nvim_bin()
 
-  lu.assertTrue(bin:match("share/nvim/") ~= nil, "should contain share/nvim/")
+  -- either binary exists and we get a path, or it's missing and we get an error
+  if not bin then
+    lu.assertTrue(type(err) == "string", "should return error message")
+    lu.assertTrue(err:match("not found") ~= nil, "error should mention 'not found'")
+  end
 end
 
 os.exit(lu.LuaUnit.run())

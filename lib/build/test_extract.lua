@@ -262,7 +262,7 @@ function TestStripComponentsErrors:test_too_many_components_fails()
   write_file(version_file, [[
 return {
   format = "zip",
-  strip_components = 2,
+  strip_components = 3,
   platforms = { ["*"] = {} }
 }
 ]])
@@ -271,6 +271,57 @@ return {
   local exit_code = handle:wait()
 
   lu.assertNotEquals(exit_code, 0, "extract should fail when stripping too many components")
+
+  unix.rmrf(version_file)
+end
+
+-- Test strip_components=2 where final entry is a file (like superhtml archives)
+TestStripComponentsDeepFile = {}
+
+function TestStripComponentsDeepFile:setUp()
+  -- create archive with structure: wrapper/subdir/binary
+  local archive_dir = path.join(tmp_dir, "archive_deep")
+  self.archive = path.join(tmp_dir, "test_deep.tar.gz")
+  self.dest = path.join(tmp_dir, "dest_deep")
+
+  unix.rmrf(archive_dir)
+  unix.rmrf(self.dest)
+  unix.makedirs(self.dest)
+
+  local deep_dir = path.join(archive_dir, "wrapper/subdir")
+  unix.makedirs(deep_dir)
+  write_file(path.join(deep_dir, "binary"), "executable")
+
+  local cwd = unix.getcwd()
+  unix.chdir(archive_dir)
+  local handle = spawn({"tar", "-czf", self.archive, "wrapper"})
+  local exit_code = handle:wait()
+  unix.chdir(cwd)
+  lu.assertEquals(exit_code, 0, "failed to create test tar.gz")
+
+  unix.rmrf(archive_dir)
+end
+
+function TestStripComponentsDeepFile:tearDown()
+  unix.rmrf(self.dest)
+  unix.rmrf(self.archive)
+end
+
+function TestStripComponentsDeepFile:test_strips_to_file()
+  local version_file = path.join(tmp_dir, "version.lua")
+  write_file(version_file, [[
+return {
+  format = "tar.gz",
+  strip_components = 2,
+  platforms = { ["*"] = {} }
+}
+]])
+
+  local handle = spawn({"o/any/lua/bin/lua", "lib/build/extract.lua", version_file, "*", self.archive, self.dest})
+  local exit_code = handle:wait()
+
+  lu.assertEquals(exit_code, 0, "extract should succeed")
+  lu.assertTrue(file_exists(path.join(self.dest, "binary")))
 
   unix.rmrf(version_file)
 end
