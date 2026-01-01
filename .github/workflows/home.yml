@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: Register APE binfmt
         run: |
@@ -21,25 +21,25 @@ jobs:
           sudo sh -c "echo ':APE:M::MZqFpD::/usr/bin/ape:' >/proc/sys/fs/binfmt_misc/register" || true
 
       - name: Cache nvim plugins
-        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+        uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
         with:
           path: o/3p/nvim/plugins
           key: nvim-plugins-${{ hashFiles('.config/nvim/nvim-pack-lock.json') }}
 
       - name: Cache darwin-arm64 binaries
-        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+        uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
         with:
           path: o/3p/*/darwin-arm64
           key: 3p-darwin-arm64-${{ hashFiles('3p/**/cook.mk', '3p/**/version.lua', '.config/nvim/nvim-pack-lock.json') }}
 
       - name: Cache linux-arm64 binaries
-        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+        uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
         with:
           path: o/3p/*/linux-arm64
           key: 3p-linux-arm64-${{ hashFiles('3p/**/cook.mk', '3p/**/version.lua', '.config/nvim/nvim-pack-lock.json') }}
 
       - name: Cache linux-x86_64 binaries
-        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+        uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
         with:
           path: o/3p/*/linux-x86_64
           key: 3p-linux-x86_64-${{ hashFiles('3p/**/cook.mk', '3p/**/version.lua', '.config/nvim/nvim-pack-lock.json') }}
@@ -65,7 +65,7 @@ jobs:
         run: make test -j$(nproc)
 
       - name: Upload home artifacts
-        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: home-binaries
           path: |
@@ -88,10 +88,10 @@ jobs:
             platform: linux-arm64
     steps:
       - name: Checkout repository
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: Download artifacts
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: home-binaries
           path: results/bin/
@@ -126,10 +126,10 @@ jobs:
       contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
       - name: Download home artifacts
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: home-binaries
           path: results/bin/
