@@ -19,6 +19,7 @@ include 3p/shfmt/cook.mk
 include 3p/sqruff/cook.mk
 include 3p/stylua/cook.mk
 include 3p/superhtml/cook.mk
+include 3p/tl/cook.mk
 include 3p/tree-sitter/cook.mk
 include 3p/uv/cook.mk
 include 3p/lua/cook.mk
