@@ -51,13 +51,27 @@ jobs:
           o/any/lua/bin/lua -v
           sync
 
-      # Build cosmos binaries one at a time. APE binaries self-modify on first
-      # run (assimilation), causing bus errors if run in parallel.
+      # Build cosmos binaries one at a time with debugging
       - name: Build cosmos binaries
         run: |
+          echo "=== Bootstrap lua info ==="
+          file o/any/lua/bin/lua
+          ls -la o/any/lua/bin/lua
+
           for p in darwin-arm64 linux-arm64 linux-x86_64; do
+            echo "=== Building cosmos for $p ==="
             for b in lua zip unzip; do
-              make o/$p/cosmos/bin/$b
+              echo "--- Building $b ---"
+              if ! make o/$p/cosmos/bin/$b; then
+                echo "=== FAILED: $p/$b ==="
+                echo "Checking staging directory:"
+                ls -la o/$p/cosmos/staging/ 2>/dev/null || echo "No staging dir"
+                file o/$p/cosmos/staging/$b 2>/dev/null || echo "No staging binary"
+                echo "Checking target directory:"
+                ls -la o/$p/cosmos/bin/ 2>/dev/null || echo "No bin dir"
+                exit 1
+              fi
+              sync
             done
           done
 
