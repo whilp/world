@@ -1,7 +1,6 @@
 3p_lib_dirs :=
 
 include 3p/argparse/cook.mk
-include 3p/lua/cook.mk
 include 3p/ast-grep/cook.mk
 include 3p/biome/cook.mk
 include 3p/comrak/cook.mk
@@ -22,6 +21,7 @@ include 3p/stylua/cook.mk
 include 3p/superhtml/cook.mk
 include 3p/tree-sitter/cook.mk
 include 3p/uv/cook.mk
+include 3p/lua/cook.mk
 
 define platform_target
 3p-$(1): $(subst %,$(1),$(bins) $(libs))
