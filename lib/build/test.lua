@@ -1,12 +1,17 @@
 #!/usr/bin/env lua
-local test_file, output = ...
+local args = { ... }
+local test_file, output = args[1], args[2]
 arg = {}
+TEST_ARGS = {}
+for i = 3, #args do
+  TEST_ARGS[#TEST_ARGS + 1] = args[i]
+end
 
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 
 if not test_file or not output then
-  io.stderr:write("usage: test-runner.lua <test_file> <output>\n")
+  io.stderr:write("usage: test-runner.lua <test_file> <output> [unveil_paths...]\n")
   os.exit(1)
 end
 
@@ -32,6 +37,10 @@ if home then
       end
     end
   end
+end
+-- Unveil additional paths passed as arguments (available to test via TEST_ARGS)
+for _, p in ipairs(TEST_ARGS) do
+  unix.unveil(p, "r")
 end
 unix.unveil(nil, nil)
 

@@ -53,7 +53,10 @@ ignore = {
 
 files = {
   ["lib/build/test.lua"] = {
-    globals = { "arg" },
+    globals = { "arg", "TEST_ARGS" },
+  },
+  ["**/test*.lua"] = {
+    globals = { "TEST_ARGS" },
   },
   ["lib/claude/version.lua"] = {
     -- Generated file with long URLs
