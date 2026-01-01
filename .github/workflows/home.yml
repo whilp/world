@@ -71,11 +71,19 @@ jobs:
           done
           ln -sfn "$version/bin" o/linux-x86_64/cosmos/bin
 
-          # Cleanup
-          rm -rf o/linux-x86_64/cosmos/.extracted o/linux-x86_64/cosmos/archive.zip o/linux-x86_64/cosmos/staging
+          # Don't clean up staging - make might need it
+          rm -f o/linux-x86_64/cosmos/archive.zip
 
-      - name: Build home binaries for all platforms
-        run: make home-all -j$(nproc)
+          # Touch the bin files to prevent make from rebuilding
+          touch o/linux-x86_64/cosmos/bin/lua o/linux-x86_64/cosmos/bin/zip o/linux-x86_64/cosmos/bin/unzip
+
+      - name: Build home binaries for darwin-arm64 and linux-arm64
+        run: make o/darwin-arm64/home/bin/home o/linux-arm64/home/bin/home -j$(nproc)
+
+      - name: Build home binary for linux-x86_64
+        run: |
+          # Build without parallel to avoid APE lua issues
+          make o/linux-x86_64/home/bin/home
 
       - name: Run ast-grep checks
         run: make check
