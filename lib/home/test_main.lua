@@ -2,7 +2,7 @@ local lu = require("luaunit")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 
-local home = require("main")
+local home = require("home.main")
 
 -- Helper: create a mock writer that captures output
 local function mock_writer()

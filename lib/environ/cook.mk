@@ -1,9 +1,11 @@
-# lib/environ/cook.mk - environ module
+lib_lua_modules += environ
+lib_dirs += o/any/environ/lib
+lib_libs += o/any/environ/lib/environ/init.lua
+lib_tests += o/any/environ/test.ok
 
-o/lib/environ/test.lua.ok: private .UNVEIL = r:lib rx:$(lua_test) rw:/dev/null
-o/lib/environ/test.lua.ok: private .PLEDGE = stdio rpath proc exec
-o/lib/environ/test.lua.ok: private .CPU = 30
-o/lib/environ/test.lua.ok: $(lua_test) lib/environ/test.lua lib/environ/init.lua
-	@mkdir -p $(@D)
-	$(lua_test) lib/environ/test.lua
-	@touch $@
+o/any/environ/lib/environ/init.lua: lib/environ/init.lua
+	mkdir -p $(@D)
+	cp $< $@
+
+o/any/environ/test.ok: lib/environ/test.lua o/any/environ/lib/environ/init.lua $(runner)
+	$(runner) $< $@

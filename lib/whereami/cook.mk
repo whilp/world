@@ -1,11 +1,11 @@
-# lib/whereami/cook.mk - whereami module
+lib_lua_modules += whereami
+lib_dirs += o/any/whereami/lib
+lib_libs += o/any/whereami/lib/whereami/init.lua
+lib_tests += o/any/whereami/test.ok
 
-TEST_STAMPS += o/lib/whereami/test.lua.ok
+o/any/whereami/lib/whereami/init.lua: lib/whereami/init.lua
+	mkdir -p $(@D)
+	cp $< $@
 
-o/lib/whereami/test.lua.ok: private .UNVEIL = r:lib rx:$(lua_test) rw:/dev/null
-o/lib/whereami/test.lua.ok: private .PLEDGE = stdio rpath proc exec
-o/lib/whereami/test.lua.ok: private .CPU = 30
-o/lib/whereami/test.lua.ok: $(lua_test) lib/whereami/test.lua lib/whereami/init.lua
-	@mkdir -p $(@D)
-	$(lua_test) lib/whereami/test.lua
-	@touch $@
+o/any/whereami/test.ok: lib/whereami/test.lua o/any/whereami/lib/whereami/init.lua $(runner)
+	$(runner) $< $@

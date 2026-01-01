@@ -55,14 +55,15 @@ local function scan_for_atomic_install()
   local HOME = os.getenv("HOME")
   local share_dir = path.join(HOME, ".local", "share", "claude")
 
-  if not unix.stat(share_dir) then
+  local dir = unix.opendir(share_dir)
+  if not dir then
     return nil
   end
 
   local latest_path = nil
   local latest_version = nil
 
-  for name, _ in unix.opendir(share_dir) do
+  for name in dir do
     if name ~= "." and name ~= ".." then
       local version = name:match("^([%d%.]+)%-")
       if version then

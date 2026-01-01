@@ -1,11 +1,11 @@
-# lib/aerosnap/cook.mk - aerosnap module tests
+lib_lua_modules += aerosnap
+lib_dirs += o/any/aerosnap/lib
+lib_libs += o/any/aerosnap/lib/aerosnap/init.lua
+lib_tests += o/any/aerosnap/test.ok
 
-TEST_STAMPS += o/lib/aerosnap/test.lua.ok
+o/any/aerosnap/lib/aerosnap/init.lua: lib/aerosnap/init.lua
+	mkdir -p $(@D)
+	cp $< $@
 
-o/lib/aerosnap/test.lua.ok: private .UNVEIL = r:lib rx:$(lua_test) rw:/dev/null
-o/lib/aerosnap/test.lua.ok: private .PLEDGE = stdio rpath proc exec
-o/lib/aerosnap/test.lua.ok: private .CPU = 30
-o/lib/aerosnap/test.lua.ok: $(lua_test) lib/aerosnap/test.lua lib/aerosnap/init.lua
-	@mkdir -p $(@D)
-	$(lua_test) lib/aerosnap/test.lua
-	@touch $@
+o/any/aerosnap/test.ok: lib/aerosnap/test.lua o/any/aerosnap/lib/aerosnap/init.lua $(runner)
+	$(runner) $< $@

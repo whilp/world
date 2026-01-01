@@ -1,9 +1,11 @@
-# lib/nvim/cook.mk - nvim module
+lib_lua_modules += nvim
+lib_dirs += o/any/nvim/lib
+lib_libs += o/any/nvim/lib/nvim/main.lua
+lib_tests += o/any/nvim/test.ok
 
-o/lib/nvim/test.lua.ok: private .UNVEIL = r:lib rx:$(lua_test) rwc:/tmp rw:/dev/null
-o/lib/nvim/test.lua.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
-o/lib/nvim/test.lua.ok: private .CPU = 60
-o/lib/nvim/test.lua.ok: $(lua_test) lib/nvim/test.lua lib/nvim/main.lua
-	@mkdir -p $(@D)
-	$(lua_test) lib/nvim/test.lua
-	@touch $@
+o/any/nvim/lib/nvim/main.lua: lib/nvim/main.lua
+	mkdir -p $(@D)
+	cp $< $@
+
+o/any/nvim/test.ok: lib/nvim/test.lua o/any/nvim/lib/nvim/main.lua $(runner)
+	$(runner) $< $@

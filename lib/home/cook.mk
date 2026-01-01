@@ -1,4 +1,16 @@
-include lib/spawn/cook.mk
+lib_lua_modules += home
+lib_dirs += o/any/home/lib
+home_src := $(filter-out lib/home/test%.lua,$(wildcard lib/home/*.lua))
+home_lib := $(patsubst lib/%,o/any/home/lib/%,$(home_src))
+lib_libs += $(home_lib)
+lib_tests += o/any/home/test_main.ok
+
+o/any/home/lib/home/%.lua: lib/home/%.lua
+	mkdir -p $(@D)
+	cp $< $@
+
+o/any/home/test_main.ok: lib/home/test_main.lua $(home_lib) $(runner)
+	$(runner) $< $@
 
 version_file = lib/version.lua
 home_exclude_pattern = ^(3p/|o/|results/|Makefile|lib/home/|\.git)
@@ -103,13 +115,5 @@ results/bin/home: $(lua_bin) results/dotfiles.zip $(home_platform_deps) lib/home
 	@rm -rf results/home-universal
 
 home: results/bin/home ## Build universal home binary
-
-o/lib/home/test_main.lua.ok: private .UNVEIL = r:lib rx:$(lua_test) rw:/dev/null
-o/lib/home/test_main.lua.ok: private .PLEDGE = stdio rpath wpath cpath proc exec
-o/lib/home/test_main.lua.ok: private .CPU = 60
-o/lib/home/test_main.lua.ok: $(lua_test) lib/home/test_main.lua lib/home/main.lua
-	@mkdir -p $(@D)
-	$(lua_test) lib/home/test_main.lua
-	@touch $@
 
 .PHONY: home platform-assets
