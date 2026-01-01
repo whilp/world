@@ -25,6 +25,10 @@ o/any/home/dotfiles.zip: o/$(current_platform)/cosmos/bin/zip
 
 o/%/home/bin/home: o/%/cosmos/bin/lua o/%/cosmos/bin/zip o/%/cosmos/bin/unzip o/any/home/dotfiles.zip $(lib_libs) lib/home/main.lua lib/home/.args lib/home/gen-manifest.lua
 	@echo "Building home binary for $*..."
+	@# TODO: remove APE priming once caching/assimilation issues are resolved
+	@o/$*/cosmos/bin/zip -v >/dev/null 2>&1 || true
+	@o/$*/cosmos/bin/unzip -v >/dev/null 2>&1 || true
+	@sync
 	rm -rf o/$*/home/staging
 	mkdir -p o/$*/home/staging/home/.local/bin o/$*/home/staging/.lua $(@D)
 	o/$*/cosmos/bin/unzip -q o/any/home/dotfiles.zip -d o/$*/home/staging/home
