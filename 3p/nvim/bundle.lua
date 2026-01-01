@@ -60,7 +60,63 @@ local function list_plugins(content)
   return plugins
 end
 
-local function bundle_plugins(nvim_dir, plugins_dir, plugins)
+local function fetch_plugin_inline(plugin_name, output_dir, pack_lock_content)
+  local info = {}
+  local in_plugin = false
+  for line in pack_lock_content:gmatch("[^\n]+") do
+    local name = line:match('^%s*"([^"]+)":%s*{%s*$')
+    if name == plugin_name then
+      in_plugin = true
+    elseif in_plugin then
+      local key, value = line:match('^%s*"([^"]+)":%s*"([^"]*)"')
+      if key then
+        info[key] = value
+      end
+      if line:match("^%s*}") then
+        break
+      end
+    end
+  end
+  if not info.src or not info.rev then
+    return nil, "plugin not found: " .. plugin_name
+  end
+
+  local owner, repo = info.src:match("github%.com/([^/]+)/([^/]+)$")
+  if not owner or not repo then
+    return nil, "invalid GitHub URL: " .. info.src
+  end
+
+  io.write(string.format("  fetching %s at %s\n", plugin_name, info.rev))
+  local url = string.format("https://github.com/%s/%s/archive/%s.tar.gz", owner, repo, info.rev)
+  local tarball = output_dir .. ".tar.gz"
+
+  local cosmo = require("cosmo")
+  local status, headers, body
+  local fetch_opts = {headers = {["User-Agent"] = "curl/8.0"}, maxresponse = 300 * 1024 * 1024}
+  for attempt = 1, 8 do
+    status, headers, body = cosmo.Fetch(url, fetch_opts)
+    if status then break end
+    if attempt < 8 then
+      unix.nanosleep(math.min(30, 2 ^ attempt), 0)
+    end
+  end
+  if not status or status ~= 200 then
+    return nil, "fetch failed for " .. plugin_name
+  end
+
+  local fd = unix.open(tarball, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("0644", 8))
+  if not fd or fd < 0 then return nil, "failed to create tarball" end
+  unix.write(fd, body)
+  unix.close(fd)
+
+  unix.makedirs(output_dir)
+  local ok, err = execute("tar", {"tar", "-xzf", tarball, "-C", output_dir, "--strip-components=1"})
+  unix.unlink(tarball)
+  if not ok then return nil, err end
+  return true
+end
+
+local function bundle_plugins(nvim_dir, plugins_dir, plugins, pack_lock_content)
   io.write("bundling plugins\n")
 
   local pack_dir = path.join(nvim_dir, "share/nvim/site/pack/core/opt")
@@ -72,6 +128,16 @@ local function bundle_plugins(nvim_dir, plugins_dir, plugins)
   for _, name in ipairs(plugins) do
     local src = path.join(plugins_dir, name)
     local dst = path.join(pack_dir, name)
+
+    -- fetch if missing
+    local st = unix.stat(src)
+    if not st then
+      unix.makedirs(plugins_dir)
+      ok, err = fetch_plugin_inline(name, src, pack_lock_content)
+      if not ok then
+        return nil, err
+      end
+    end
 
     io.write(string.format("  copying %s\n", name))
     local cp_ok, cp_err = execute("cp", {"cp", "-r", src, dst})
@@ -159,8 +225,10 @@ local function bundle(platform, nvim_dir, plugins_dir)
 
   unix.unveil(PACK_LOCK, "r")
   unix.unveil(".config/nvim", "r")
-  unix.unveil(plugins_dir, "r")
+  unix.unveil(plugins_dir, "rwc")
   unix.unveil(nvim_dir, "rwcx")
+  unix.unveil("/etc/resolv.conf", "r")
+  unix.unveil("/etc/ssl", "r")
   unix.unveil("/usr", "rx")
   unix.unveil(nil, nil)
 
@@ -175,7 +243,7 @@ local function bundle(platform, nvim_dir, plugins_dir)
   end
 
   local ok
-  ok, err = bundle_plugins(nvim_dir, plugins_dir, plugins)
+  ok, err = bundle_plugins(nvim_dir, plugins_dir, plugins, content)
   if not ok then
     return nil, err
   end
