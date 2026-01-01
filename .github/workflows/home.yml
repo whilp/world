@@ -156,21 +156,29 @@ jobs:
             unix.rmrf("o/linux-x86_64/cosmos/test-barf")
           ' 2>&1 || echo "cosmo.Slurp/Barf test failed with exit code $?"
 
-          # Test parallel make execution (might trigger race conditions)
+          # Test parallel make execution with many iterations
           echo ""
-          echo "=== Testing parallel make for linux-x86_64 cosmos ==="
-          rm -rf o/linux-x86_64/cosmos
+          echo "=== Testing parallel make with 10 iterations ==="
 
-          # Build all 3 binaries in parallel - this is how the original failure happened
-          make o/linux-x86_64/cosmos/bin/lua o/linux-x86_64/cosmos/bin/zip o/linux-x86_64/cosmos/bin/unzip -j3 2>&1 || echo "parallel make failed with exit code $?"
+          for i in $(seq 1 10); do
+            echo "--- Iteration $i ---"
+            rm -rf o/linux-x86_64/cosmos
 
-          if [ -f o/linux-x86_64/cosmos/bin/lua ] && [ -f o/linux-x86_64/cosmos/bin/zip ] && [ -f o/linux-x86_64/cosmos/bin/unzip ]; then
-            echo "SUCCESS: parallel make created all binaries"
-            ls -la o/linux-x86_64/cosmos/bin/
-          else
-            echo "FAILED: parallel make did not create all binaries"
-            ls -la o/linux-x86_64/cosmos/bin/ 2>/dev/null || echo "bin dir does not exist"
-          fi
+            # Build all 3 binaries in parallel with max parallelism
+            make o/linux-x86_64/cosmos/bin/lua o/linux-x86_64/cosmos/bin/zip o/linux-x86_64/cosmos/bin/unzip -j$(nproc) 2>&1 || {
+              echo "CRASH DETECTED in iteration $i!"
+              exit 1
+            }
+
+            if [ -f o/linux-x86_64/cosmos/bin/lua ] && [ -f o/linux-x86_64/cosmos/bin/zip ] && [ -f o/linux-x86_64/cosmos/bin/unzip ]; then
+              echo "Iteration $i: SUCCESS"
+            else
+              echo "Iteration $i: FAILED - binaries not created"
+              exit 1
+            fi
+          done
+
+          echo "=== All 10 iterations passed ==="
 
           # Clean up for next step
           rm -rf o/linux-x86_64/cosmos
