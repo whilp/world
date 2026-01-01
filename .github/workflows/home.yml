@@ -20,35 +20,29 @@ jobs:
           path: o/any/nvim/plugins
           key: nvim-plugins-${{ hashFiles('.config/nvim/nvim-pack-lock.json') }}
 
-      - name: Cache darwin-arm64 binaries
-        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
-        with:
-          path: o/darwin-arm64
-          key: 3p-darwin-arm64-${{ hashFiles('3p/**/cook.mk', '3p/**/version.lua', '.config/nvim/nvim-pack-lock.json') }}
+      # DISABLED: Testing without cache to see if cache causes Bus error
+      # - name: Cache darwin-arm64 binaries
+      #   uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+      #   with:
+      #     path: o/darwin-arm64
+      #     key: 3p-darwin-arm64-${{ hashFiles('3p/**/cook.mk', '3p/**/version.lua', '.config/nvim/nvim-pack-lock.json') }}
 
-      - name: Cache linux-arm64 binaries
-        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
-        with:
-          path: o/linux-arm64
-          key: 3p-linux-arm64-${{ hashFiles('3p/**/cook.mk', '3p/**/version.lua', '.config/nvim/nvim-pack-lock.json') }}
+      # - name: Cache linux-arm64 binaries
+      #   uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+      #   with:
+      #     path: o/linux-arm64
+      #     key: 3p-linux-arm64-${{ hashFiles('3p/**/cook.mk', '3p/**/version.lua', '.config/nvim/nvim-pack-lock.json') }}
 
-      - name: Cache linux-x86_64 binaries
-        uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
-        with:
-          path: o/linux-x86_64
-          key: 3p-linux-x86_64-${{ hashFiles('3p/**/cook.mk', '3p/**/version.lua', '.config/nvim/nvim-pack-lock.json') }}
+      # - name: Cache linux-x86_64 binaries
+      #   uses: actions/cache@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4.2.0
+      #   with:
+      #     path: o/linux-x86_64
+      #     key: 3p-linux-x86_64-${{ hashFiles('3p/**/cook.mk', '3p/**/version.lua', '.config/nvim/nvim-pack-lock.json') }}
 
       - name: Bootstrap lua
         run: |
           make o/any/lua/bin/lua
           o/any/lua/bin/lua -v
-
-      - name: Build cosmos binaries
-        run: |
-          # Build cosmos for each platform sequentially to avoid parallel APE issues
-          for p in darwin-arm64 linux-arm64 linux-x86_64; do
-            make o/$p/cosmos/bin/lua o/$p/cosmos/bin/zip o/$p/cosmos/bin/unzip
-          done
 
       - name: Build home binaries
         run: make home-all -j$(nproc)
