@@ -4,6 +4,11 @@ lua_libs += luacheck
 libs += o/%/luacheck/lib/luacheck/main.lua
 bins += o/%/luacheck/bin/luacheck
 tests += o/%/luacheck/test.ok
+luacheck_deps := \
+	o/%/argparse/lib/argparse.lua \
+	o/%/lfs/lib/lfs.lua \
+	o/%/cosmos/bin/lua \
+	3p/luacheck/luacheck
 
 o/%/luacheck/archive.tar.gz: $(luacheck_version) $(fetch)
 	$(fetch) $(luacheck_version) $* $@
@@ -14,7 +19,7 @@ o/%/luacheck/staging/src/luacheck/main.lua: $(luacheck_version) $(extract) o/%/l
 o/%/luacheck/lib/luacheck/main.lua: $(luacheck_version) $(install) o/%/luacheck/staging/src/luacheck/main.lua
 	$(install) $(luacheck_version) $* o/$*/luacheck lib o/$*/luacheck/staging/src/luacheck
 
-o/%/luacheck/bin/luacheck: $(luacheck_version) $(install) o/%/luacheck/lib/luacheck/main.lua o/%/argparse/lib/argparse.lua o/%/lfs/lib/lfs.lua o/%/cosmos/bin/lua 3p/luacheck/luacheck
+o/%/luacheck/bin/luacheck: $(luacheck_version) $(install) o/%/luacheck/lib/luacheck/main.lua $(luacheck_deps)
 	$(install) $(luacheck_version) $* o/$*/luacheck bin 3p/luacheck/luacheck
 	chmod +x o/$*/luacheck/bin/luacheck
 
