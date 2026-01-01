@@ -15,7 +15,10 @@ function test_load_zsh_environment_completes_without_error()
 end
 
 function test_setup_nvim_environment_sets_server_mode()
-  local env = nvim.setup_nvim_environment()
+  local bin = nvim.resolve_nvim_bin()
+  if not bin then return end
+
+  local env = nvim.setup_nvim_environment(bin)
 
   local found = false
   for _, entry in ipairs(env) do
@@ -28,7 +31,10 @@ function test_setup_nvim_environment_sets_server_mode()
 end
 
 function test_setup_nvim_environment_preserves_loaded_env()
-  local env = nvim.setup_nvim_environment()
+  local bin = nvim.resolve_nvim_bin()
+  if not bin then return end
+
+  local env = nvim.setup_nvim_environment(bin)
 
   local has_server_mode = false
   for _, entry in ipairs(env) do
@@ -42,9 +48,28 @@ function test_setup_nvim_environment_preserves_loaded_env()
 end
 
 function test_setup_nvim_environment_returns_table()
-  local env = nvim.setup_nvim_environment()
+  local bin = nvim.resolve_nvim_bin()
+  if not bin then return end
+
+  local env = nvim.setup_nvim_environment(bin)
 
   lu.assertTrue(type(env) == "table", "should return a table")
+end
+
+function test_setup_nvim_environment_sets_vimruntime()
+  local bin = nvim.resolve_nvim_bin()
+  if not bin then return end
+
+  local env = nvim.setup_nvim_environment(bin)
+
+  local found = false
+  for _, entry in ipairs(env) do
+    if entry:match("^VIMRUNTIME=") then
+      found = true
+      break
+    end
+  end
+  lu.assertTrue(found, "should set VIMRUNTIME")
 end
 
 function test_resolve_nvim_bin_returns_path_when_exists()
