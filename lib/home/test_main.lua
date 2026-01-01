@@ -22,9 +22,7 @@ end
 
 -- Helper: create temp directory
 local function make_temp_dir()
-  local temp_path = "/tmp/home_test_" .. os.time() .. "_" .. math.random(10000)
-  unix.makedirs(temp_path)
-  return temp_path
+  return unix.mkdtemp("/tmp/home_test_XXXXXX")
 end
 
 -- Helper: remove directory recursively

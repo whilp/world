@@ -1,6 +1,6 @@
 id: hardcoded-tmp-path
 language: lua
-severity: warning
+severity: error
 message: |
   Hardcoded /tmp path detected. Consider using unix.mkdtemp() for temp directories.
 

@@ -1,11 +1,12 @@
 local lu = require('luaunit')
 local unix = require("cosmo.unix")
+local path = require("cosmo.path")
 
 local daemonize = require('daemonize')
 
 function test_acquire_lock()
-  local lock_path = "/tmp/test_daemonize_lock"
-  os.remove(lock_path)
+  local tmpdir = unix.mkdtemp("/tmp/daemonize_test_XXXXXX")
+  local lock_path = path.join(tmpdir, "lock")
 
   local fd, err = daemonize.acquire_lock(lock_path)
   lu.assertNotNil(fd, "acquire_lock should return a file descriptor: " .. tostring(err))
@@ -14,12 +15,13 @@ function test_acquire_lock()
     unix.close(fd)
   end
 
-  os.remove(lock_path)
+  unix.unlink(lock_path)
+  unix.rmdir(tmpdir)
 end
 
 function test_write_pidfile()
-  local pid_path = "/tmp/test_daemonize_pidfile"
-  os.remove(pid_path)
+  local tmpdir = unix.mkdtemp("/tmp/daemonize_test_XXXXXX")
+  local pid_path = path.join(tmpdir, "pidfile")
 
   local ok, err = daemonize.write_pidfile(pid_path)
   lu.assertNotNil(ok, "write_pidfile should succeed: " .. tostring(err))
@@ -33,7 +35,8 @@ function test_write_pidfile()
   lu.assertNotNil(pid, "pidfile should contain a number")
   lu.assertEquals(pid, unix.getpid(), "pidfile should contain current process pid")
 
-  os.remove(pid_path)
+  unix.unlink(pid_path)
+  unix.rmdir(tmpdir)
 end
 
 function test_write_pidfile_requires_path()
