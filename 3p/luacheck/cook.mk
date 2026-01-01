@@ -27,5 +27,5 @@ o/%/luacheck/bin/luacheck: $(luacheck_version) $(install) o/%/luacheck/lib/luach
 o/%/luacheck/test.ok: 3p/luacheck/test.lua o/%/luacheck/bin/luacheck $(runner)
 	TEST_BIN_DIR=o/$*/luacheck $(runner) $< $@
 
-o/%/luacheck/test_rules.ok: 3p/luacheck/test_rules.lua o/%/luacheck/bin/luacheck $(runner)
-	TEST_BIN_DIR=o/$*/luacheck $(runner) $< $@
+o/%/luacheck/test_rules.ok: 3p/luacheck/test_rules.lua o/%/luacheck/bin/luacheck .luacheckrc $(runner)
+	TEST_BIN_DIR=o/$*/luacheck $(runner) $< $@ $(CURDIR)/.luacheckrc

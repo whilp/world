@@ -1,25 +1,21 @@
 local lu = require("luaunit")
+local cosmo = require("cosmo")
 local spawn = require("spawn").spawn
 local path = require("cosmo.path")
-local unix = require("cosmo.unix")
 
 local test_bin_dir = os.getenv("TEST_BIN_DIR")
 local luacheck_bin = path.join(test_bin_dir, "bin", "luacheck")
-local test_dir = path.join(TEST_TMPDIR, "luacheck_test_files")
-
-local function write_test_file(filename, content)
-  unix.makedirs(test_dir, tonumber("755", 8))
-  local filepath = path.join(test_dir, filename)
-  local fd = unix.open(filepath, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("644", 8))
-  unix.write(fd, content)
-  unix.close(fd)
-  return filepath
+local config_path = TEST_ARGS[1]
+if not config_path then
+  error("missing config path in TEST_ARGS[1]")
 end
 
 local function run_luacheck(filepath)
-  -- Use --no-config to prevent loading .luacheckrc which has include_files restrictions
-  -- Also use --std lua54 for consistency with the project's lua version
-  local handle = spawn({ luacheck_bin, "--no-config", "--std", "lua54", filepath })
+  -- Use project config, override include_files to check just this file
+  -- Use -- to separate options from file arguments
+  local handle = spawn({
+    luacheck_bin, "--config", config_path, "--include-files", filepath, "--", filepath
+  })
   local status = handle:wait()
   return status
 end
@@ -32,10 +28,10 @@ local x = 10
 y = 20
 return x + y
 ]]
-  local filepath = write_test_file("check_global_bad.lua", code)
+  local filepath = path.join(TEST_TMPDIR, "check_global_bad.lua")
+  cosmo.Barf(filepath, code)
   local status = run_luacheck(filepath)
   lu.assertNotEquals(status, 0, "should detect undefined global variable")
-  unix.unlink(filepath)
 end
 
 function TestLuacheckRules:test_clean_code_passes()
@@ -43,10 +39,10 @@ function TestLuacheckRules:test_clean_code_passes()
 local x = 10
 return x
 ]]
-  local filepath = write_test_file("check_clean.lua", code)
+  local filepath = path.join(TEST_TMPDIR, "check_clean.lua")
+  cosmo.Barf(filepath, code)
   local status = run_luacheck(filepath)
   lu.assertEquals(status, 0, "should pass for clean code")
-  unix.unlink(filepath)
 end
 
 function TestLuacheckRules:test_unused_variable_detected()
@@ -55,10 +51,10 @@ local x = 10
 local y = 20
 return y
 ]]
-  local filepath = write_test_file("check_unused_bad.lua", code)
+  local filepath = path.join(TEST_TMPDIR, "check_unused_bad.lua")
+  cosmo.Barf(filepath, code)
   local status = run_luacheck(filepath)
   lu.assertNotEquals(status, 0, "should detect unused variable")
-  unix.unlink(filepath)
 end
 
 function TestLuacheckRules:test_all_variables_used_passes()
@@ -67,10 +63,10 @@ local x = 10
 local y = 20
 return x + y
 ]]
-  local filepath = write_test_file("check_used_good.lua", code)
+  local filepath = path.join(TEST_TMPDIR, "check_used_good.lua")
+  cosmo.Barf(filepath, code)
   local status = run_luacheck(filepath)
   lu.assertEquals(status, 0, "should pass when all variables are used")
-  unix.unlink(filepath)
 end
 
 function TestLuacheckRules:test_variable_shadowing_detected()
@@ -82,10 +78,10 @@ local function foo()
 end
 return foo() + x
 ]]
-  local filepath = write_test_file("check_shadow_bad.lua", code)
+  local filepath = path.join(TEST_TMPDIR, "check_shadow_bad.lua")
+  cosmo.Barf(filepath, code)
   local status = run_luacheck(filepath)
   lu.assertNotEquals(status, 0, "should detect variable shadowing")
-  unix.unlink(filepath)
 end
 
 function TestLuacheckRules:test_no_shadowing_passes()
@@ -96,20 +92,20 @@ local function foo(y)
 end
 return foo(x)
 ]]
-  local filepath = write_test_file("check_shadow_good.lua", code)
+  local filepath = path.join(TEST_TMPDIR, "check_shadow_good.lua")
+  cosmo.Barf(filepath, code)
   local status = run_luacheck(filepath)
   lu.assertEquals(status, 0, "should pass when no shadowing")
-  unix.unlink(filepath)
 end
 
 function TestLuacheckRules:test_line_too_long_detected()
   -- Build a line >120 chars without exceeding 120 chars in this file
   local long_str = string.rep("x", 130)
   local code = 'local v = "' .. long_str .. '"\nreturn v\n'
-  local filepath = write_test_file("check_long_line_bad.lua", code)
+  local filepath = path.join(TEST_TMPDIR, "check_long_line_bad.lua")
+  cosmo.Barf(filepath, code)
   local status = run_luacheck(filepath)
   lu.assertNotEquals(status, 0, "should detect line exceeding max length")
-  unix.unlink(filepath)
 end
 
 function TestLuacheckRules:test_short_line_passes()
@@ -117,8 +113,8 @@ function TestLuacheckRules:test_short_line_passes()
 local short = "short"
 return short
 ]]
-  local filepath = write_test_file("check_short_line.lua", code)
+  local filepath = path.join(TEST_TMPDIR, "check_short_line.lua")
+  cosmo.Barf(filepath, code)
   local status = run_luacheck(filepath)
   lu.assertEquals(status, 0, "should pass for short lines")
-  unix.unlink(filepath)
 end
