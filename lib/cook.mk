@@ -12,6 +12,7 @@ o/any/lib/%.lua: lib/%.lua
 	cp $< $@
 
 include lib/aerosnap/cook.mk
+include lib/build/cook.mk
 include lib/claude/cook.mk
 include lib/daemonize/cook.mk
 include lib/environ/cook.mk

@@ -34,7 +34,16 @@ $(lua_bin):
 	@chmod +x $@
 
 cosmos: o/$(current_platform)/cosmos/bin/lua
-lua: cosmos
+lua: o/$(current_platform)/lua/bin/lua.dist
+
+results:
+	mkdir -p results
+
+results/bin: | results
+	mkdir -p results/bin
+
+results/bin/lua: o/$(current_platform)/lua/bin/lua.dist | results/bin
+	cp $< $@
 
 # TODO: rewrite these targets
 home:
@@ -43,10 +52,10 @@ home:
 check:
 	@echo "TODO: check target not yet rewritten"
 
-test:
-	@echo "TODO: test target not yet rewritten"
+test: lib-test $(subst %,$(current_platform),$(tests))
+	@echo "All tests passed"
 
 clean:
-	rm -rf o
+	rm -rf o results
 
 .PHONY: bootstrap clean cosmos lua home check test

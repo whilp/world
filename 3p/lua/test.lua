@@ -133,5 +133,3 @@ function test_lua_dist_can_require_modules()
     lu.assertEquals(exit_code, 0, "should be able to require " .. mod .. ": " .. (output or ""))
   end
 end
-
-os.exit(lu.LuaUnit.run())

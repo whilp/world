@@ -1,5 +1,6 @@
 bins += o/%/lua/bin/lua.dist
 tests += o/%/lua/test.ok
+tests += o/%/lua/test_release.ok
 
 o/%/lua/bin/lua.ape: o/%/cosmos/bin/lua $(lib_libs) $(libs)
 	rm -rf o/$*/lua/staging
@@ -19,4 +20,7 @@ o/%/lua/bin/lua.dist: o/%/lua/bin/lua.ape
 	./$@ --assimilate || true
 
 o/%/lua/test.ok: 3p/lua/test.lua o/%/lua/bin/lua.dist $(runner)
+	$(runner) $< $@
+
+o/%/lua/test_release.ok: 3p/lua/test_release.lua results/bin/lua $(runner)
 	$(runner) $< $@

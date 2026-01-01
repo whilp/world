@@ -16,8 +16,24 @@ unix.unveil(test_file, "r")
 unix.unveil(output_dir, "rwc")
 unix.unveil("o", "rx")
 unix.unveil("lib", "r")
+unix.unveil("results", "rx")
+unix.unveil("3p", "r")
 unix.unveil("/tmp", "rwc")
 unix.unveil("/usr", "rx")
+unix.unveil("/proc", "r")
+unix.unveil("/etc", "r")
+-- APE binaries need the APE loader from $HOME/.ape-*
+local home = os.getenv("HOME")
+if home then
+  local dir = unix.opendir(home)
+  if dir then
+    for name in dir do
+      if name:match("^%.ape%-") then
+        unix.unveil(path.join(home, name), "rx")
+      end
+    end
+  end
+end
 unix.unveil(nil, nil)
 
 local lu = require("luaunit")
