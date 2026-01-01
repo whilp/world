@@ -1,6 +1,6 @@
 id: main-exit-pattern
 language: lua
-severity: warning
+severity: error
 message: |
   Avoid os.exit() or unix.exit() in main() - return (status, err) instead.
 

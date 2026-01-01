@@ -1,6 +1,6 @@
 id: main-stderr-pattern
 language: lua
-severity: hint
+severity: error
 message: |
   Consider avoiding io.stderr:write() in main() - accept opts.stderr for testability.
 
@@ -17,8 +17,6 @@ note: |
   1. Accept an opts parameter with stderr/stdout streams
   2. Use opts.stderr instead of io.stderr
   3. Or return errors and let the caller handle output
-
-  This is a hint for manual review, not a hard rule.
 
 rule:
   pattern: io.stderr:write($$$ARGS)
