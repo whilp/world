@@ -1,0 +1,24 @@
+id: hardcoded-tmp-path
+language: lua
+severity: warning
+message: |
+  Hardcoded /tmp path detected. Consider using unix.mkdtemp() for temp directories.
+
+  Example:
+    Bad:  local lock_path = "/tmp/test_daemonize_lock"
+    Good: local tmpdir = unix.mkdtemp("/tmp/myapp_XXXXXX")
+          local lock_path = path.join(tmpdir, "lock")
+
+    Bad:  local tmp = "/tmp/spawn_test_checkfile"
+    Good: local tmpdir = unix.mkdtemp("/tmp/spawn_XXXXXX")
+          local tmp = path.join(tmpdir, "checkfile")
+note: Hardcoded /tmp paths can lead to race conditions and collisions. Use unix.mkdtemp() to create secure temp directories with unique names.
+
+rule:
+  pattern: $VAR = $PATH
+  not:
+    has:
+      regex: 'XXXXXX'
+constraints:
+  PATH:
+    regex: '^"/tmp/[^"]+"$'
