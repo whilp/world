@@ -35,15 +35,18 @@ $(fetch_script) $(extract_script) $(install_script) $(runner_script) $(luacheck_
 cosmo := whilp/cosmopolitan
 release ?= latest
 
-luacheck_files :=
-
 include lib/cook.mk
 include 3p/cook.mk
 
-# Incremental luacheck (per-file)
+# Incremental luacheck (per-file, auto-discovered)
+luacheck_files := $(patsubst %.lua,o/any/%.luacheck.ok,$(shell rg --files -g '*.lua' lib 3p))
+
 luacheck: $(luacheck_files) ## Run luacheck incrementally on changed files
 
-o/any/%.luacheck.ok: lib/%.lua .luacheckrc $(luacheck_script) $(luacheck_bin)
+o/any/lib/%.luacheck.ok: lib/%.lua .luacheckrc $(luacheck_script) $(luacheck_bin)
+	$(luacheck_runner) $< $@ $(luacheck_bin)
+
+o/any/3p/%.luacheck.ok: 3p/%.lua .luacheckrc $(luacheck_script) $(luacheck_bin)
 	$(luacheck_runner) $< $@ $(luacheck_bin)
 
 bootstrap: $(lua_bin)
