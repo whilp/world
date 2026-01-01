@@ -40,19 +40,20 @@ local platform_map = {
   ["nvim-linux-x86_64.tar.gz"] = "linux-x86_64",
 }
 
-local function main()
-  io.stderr:write("fetching release info...\n")
+local function main(opts)
+  opts = opts or {}
+  local stderr = opts.stderr or io.stderr
+
+  stderr:write("fetching release info...\n")
   local release, err = fetch_json(api_url)
   if not release then
-    io.stderr:write("error: " .. err .. "\n")
-    os.exit(1)
+    return 1, err
   end
 
   local tag = release.tag_name
   local date, short_sha = tag:match("^(%d+%.%d+%.%d+)%-([0-9a-f]+)$")
   if not date or not short_sha then
-    io.stderr:write("error: could not parse tag: " .. tag .. "\n")
-    os.exit(1)
+    return 1, "could not parse tag: " .. tag
   end
 
   local assets = {}
@@ -63,21 +64,19 @@ local function main()
     end
   end
 
-  io.stderr:write("fetching commit info...\n")
+  stderr:write("fetching commit info...\n")
   local full_sha, sha_err = get_commit_info(short_sha)
   if not full_sha then
-    io.stderr:write("error: " .. sha_err .. "\n")
-    os.exit(1)
+    return 1, sha_err
   end
   local version = "0.12.0-dev-" .. full_sha:sub(1, 10)
 
   local platforms = {}
   for platform, url in pairs(assets) do
-    io.stderr:write("fetching sha256 for " .. platform .. "...\n")
+    stderr:write("fetching sha256 for " .. platform .. "...\n")
     local sha, fetch_err = fetch_sha256(url)
     if not sha then
-      io.stderr:write("error: " .. fetch_err .. "\n")
-      os.exit(1)
+      return 1, fetch_err
     end
     local plat = {sha = sha}
     if platform == "darwin-arm64" then
@@ -99,6 +98,11 @@ local function main()
   }
 
   print("return " .. cosmo.EncodeLua(result, {pretty=true}))
+  return 0
 end
 
-main()
+local status, err = main()
+if err then
+  io.stderr:write("error: " .. err .. "\n")
+end
+os.exit(status)

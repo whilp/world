@@ -686,404 +686,73 @@ function test_format_mode_no_mode()
 end
 
 --------------------------------------------------------------------------------
--- Test: parse_args - 3p command
+-- Test: 3p binaries in .local/share structure
 --------------------------------------------------------------------------------
-function test_parse_args_3p_basic()
-  local args = { "3p" }
-  local parsed = home.parse_args(args)
-  lu.assertEquals(parsed.cmd, "3p")
-  lu.assertNil(parsed.subcmd)
-end
-
-function test_parse_args_3p_list()
-  local args = { "3p", "list" }
-  local parsed = home.parse_args(args)
-  lu.assertEquals(parsed.cmd, "3p")
-  lu.assertEquals(parsed.subcmd, "list")
-end
-
-function test_parse_args_3p_verbose()
-  local args = { "3p", "--verbose" }
-  local parsed = home.parse_args(args)
-  lu.assertEquals(parsed.cmd, "3p")
-  lu.assertTrue(parsed.verbose)
-  lu.assertNil(parsed.subcmd)
-end
-
-function test_parse_args_3p_dry_run()
-  local args = { "3p", "--dry-run" }
-  local parsed = home.parse_args(args)
-  lu.assertEquals(parsed.cmd, "3p")
-  lu.assertTrue(parsed.dry_run)
-end
-
-function test_parse_args_3p_list_verbose()
-  local args = { "3p", "list", "-v" }
-  local parsed = home.parse_args(args)
-  lu.assertEquals(parsed.cmd, "3p")
-  lu.assertEquals(parsed.subcmd, "list")
-  lu.assertTrue(parsed.verbose)
-end
-
---------------------------------------------------------------------------------
--- Test: find_binary_in_dir
---------------------------------------------------------------------------------
-function test_find_binary_in_dir_direct()
+function test_unpack_3p_binary_structure()
   local tmp = make_temp_dir()
-  local bin_dir = path.join(tmp, "bin")
-  unix.makedirs(bin_dir)
-  local bin_path = path.join(bin_dir, "mytool")
-  cosmo.Barf(bin_path, "#!/bin/sh\necho test")
+  local zip_root = path.join(tmp, "zip/")
 
-  local result = home.find_binary_in_dir(tmp, "mytool")
-  lu.assertEquals(result, bin_path)
-
-  unix.rmrf(tmp)
-end
-
-function test_find_binary_in_dir_in_bin()
-  local tmp = make_temp_dir()
-  local bin_dir = path.join(tmp, "bin")
-  unix.makedirs(bin_dir)
-  local bin_path = path.join(bin_dir, "mytool")
-  cosmo.Barf(bin_path, "#!/bin/sh\necho test")
-
-  local result = home.find_binary_in_dir(tmp, "mytool")
-  lu.assertEquals(result, bin_path)
-
-  unix.rmrf(tmp)
-end
-
-function test_find_binary_in_dir_not_found()
-  local tmp = make_temp_dir()
-
-  local result = home.find_binary_in_dir(tmp, "nonexistent")
-  lu.assertNil(result)
-
-  unix.rmrf(tmp)
-end
-
---------------------------------------------------------------------------------
--- Test: scan_for_latest_version
---------------------------------------------------------------------------------
-function test_scan_for_latest_version_single()
-  local tmp = make_temp_dir()
-  local share_dir = tmp
-  local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234")
-  local tool_bin_dir = path.join(tool_dir, "bin")
-  unix.makedirs(tool_bin_dir)
-  local bin_path = path.join(tool_bin_dir, "rg")
-  cosmo.Barf(bin_path, "#!/bin/sh\necho rg")
-
-  local result = home.scan_for_latest_version("rg", share_dir)
-  lu.assertNotNil(result)
-  lu.assertEquals(result.version, "14.1.1")
-  lu.assertEquals(result.sha, "abcd1234")
-  lu.assertEquals(result.path, bin_path)
-
-  unix.rmrf(tmp)
-end
-
-function test_scan_for_latest_version_multiple()
-  local tmp = make_temp_dir()
-  local share_dir = tmp
-
-  local old_dir = path.join(share_dir, "rg", "14.0.0-aaa00000", "bin")
-  unix.makedirs(old_dir)
-  cosmo.Barf(path.join(old_dir, "rg"), "old")
-
-  local new_dir = path.join(share_dir, "rg", "14.1.1-bbb11111", "bin")
-  unix.makedirs(new_dir)
-  local new_bin = path.join(new_dir, "rg")
-  cosmo.Barf(new_bin, "new")
-
-  local result = home.scan_for_latest_version("rg", share_dir)
-  lu.assertNotNil(result)
-  lu.assertEquals(result.version, "14.1.1")
-  lu.assertEquals(result.sha, "bbb11111")
-  lu.assertEquals(result.path, new_bin)
-
-  unix.rmrf(tmp)
-end
-
-function test_scan_for_latest_version_not_found()
-  local tmp = make_temp_dir()
-
-  local result = home.scan_for_latest_version("nonexistent", tmp)
-  lu.assertNil(result)
-
-  unix.rmrf(tmp)
-end
-
-function test_scan_for_latest_version_bin_subdir()
-  local tmp = make_temp_dir()
-  local share_dir = tmp
-  local tool_dir = path.join(share_dir, "nvim", "2025.12.07-abcd1234")
-  local bin_dir = path.join(tool_dir, "bin")
-  unix.makedirs(bin_dir)
-  local bin_path = path.join(bin_dir, "nvim")
-  cosmo.Barf(bin_path, "#!/bin/sh\necho nvim")
-
-  local result = home.scan_for_latest_version("nvim", share_dir)
-  lu.assertNotNil(result)
-  lu.assertEquals(result.version, "2025.12.07")
-  lu.assertEquals(result.path, bin_path)
-
-  unix.rmrf(tmp)
-end
-
---------------------------------------------------------------------------------
--- Test: update_symlink
---------------------------------------------------------------------------------
-function test_update_symlink_create()
-  local tmp = make_temp_dir()
-  local target = path.join(tmp, "target")
-  cosmo.Barf(target, "target content")
-  local link = path.join(tmp, "link")
-
-  local ok = home.update_symlink(link, target, {})
-  lu.assertTrue(ok)
-
-  local st = unix.stat(link, unix.AT_SYMLINK_NOFOLLOW)
-  lu.assertNotNil(st)
-  lu.assertTrue(unix.S_ISLNK(st:mode()))
-
-  unix.rmrf(tmp)
-end
-
-function test_update_symlink_replace()
-  local tmp = make_temp_dir()
-  local old_target = path.join(tmp, "old_target")
-  cosmo.Barf(old_target, "old content")
-  local new_target = path.join(tmp, "new_target")
-  cosmo.Barf(new_target, "new content")
-  local link = path.join(tmp, "link")
-
-  unix.symlink(old_target, link)
-
-  local ok = home.update_symlink(link, new_target, {})
-  lu.assertTrue(ok)
-
-  local st = unix.stat(link, unix.AT_SYMLINK_NOFOLLOW)
-  lu.assertNotNil(st)
-  lu.assertTrue(unix.S_ISLNK(st:mode()))
-
-  local f = io.open(link, "r")
-  lu.assertNotNil(f)
-  local content = f:read("*a")
-  f:close()
-  lu.assertEquals(content, "new content")
-
-  unix.rmrf(tmp)
-end
-
-function test_update_symlink_fails_on_regular_file()
-  local tmp = make_temp_dir()
-  local target = path.join(tmp, "target")
-  cosmo.Barf(target, "target")
-  local existing_file = path.join(tmp, "existing")
-  cosmo.Barf(existing_file, "regular file")
-
-  local ok, err = home.update_symlink(existing_file, target, {})
-  lu.assertFalse(ok)
-  lu.assertStrContains(err, "not a symlink")
-
-  unix.rmrf(tmp)
-end
-
-function test_update_symlink_dry_run()
-  local tmp = make_temp_dir()
-  local target = path.join(tmp, "target")
-  cosmo.Barf(target, "target")
-  local link = path.join(tmp, "link")
-  local stdout = mock_writer()
-
-  local ok = home.update_symlink(link, target, {
-    dry_run = true,
-    verbose = true,
-    stdout = stdout,
-  })
-  lu.assertTrue(ok)
-
-  local st = unix.stat(link, unix.AT_SYMLINK_NOFOLLOW)
-  lu.assertNil(st)
-
-  lu.assertStrContains(stdout:get(), "would link")
-
-  unix.rmrf(tmp)
-end
-
---------------------------------------------------------------------------------
--- Test: cmd_3p
---------------------------------------------------------------------------------
-function test_cmd_3p_empty_share()
-  local tmp = make_temp_dir()
-  local share_dir = path.join(tmp, "share")
-  unix.makedirs(share_dir)
-
-  local stdout = mock_writer()
-  local stderr = mock_writer()
-
-  local code = home.cmd_3p({}, {
-    home = tmp,
-    share_dir = share_dir,
-    stdout = stdout,
-    stderr = stderr,
-    dry_run = true,
-  })
-  lu.assertEquals(code, 0)
-
-  unix.rmrf(tmp)
-end
-
-function test_cmd_3p_creates_symlinks()
-  local tmp = make_temp_dir()
-  local share_dir = path.join(tmp, "share")
-  local bin_dir = path.join(tmp, ".local", "bin")
-
-  local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234", "bin")
-  unix.makedirs(tool_dir)
-  cosmo.Barf(path.join(tool_dir, "rg"), "#!/bin/sh\necho rg")
-
-  local stdout = mock_writer()
-  local stderr = mock_writer()
-
-  local code = home.cmd_3p({}, {
-    home = tmp,
-    share_dir = share_dir,
-    stdout = stdout,
-    stderr = stderr,
-  })
-  lu.assertEquals(code, 0)
-
-  local link = path.join(bin_dir, "rg")
-  local st = unix.stat(link, unix.AT_SYMLINK_NOFOLLOW)
-  lu.assertNotNil(st)
-  lu.assertTrue(unix.S_ISLNK(st:mode()))
-
-  unix.rmrf(tmp)
-end
-
-function test_cmd_3p_list()
-  local tmp = make_temp_dir()
-  local share_dir = path.join(tmp, "share")
-
-  local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234", "bin")
-  unix.makedirs(tool_dir)
-  cosmo.Barf(path.join(tool_dir, "rg"), "#!/bin/sh\necho rg")
-
-  local stdout = mock_writer()
-  local stderr = mock_writer()
-
-  local code = home.cmd_3p({ "list" }, {
-    home = tmp,
-    share_dir = share_dir,
-    stdout = stdout,
-    stderr = stderr,
-  })
-  lu.assertEquals(code, 0)
-
-  lu.assertStrContains(stdout:get(), "rg 14.1.1-abcd1234")
-
-  unix.rmrf(tmp)
-end
-
-function test_cmd_3p_dry_run_verbose()
-  local tmp = make_temp_dir()
-  local share_dir = path.join(tmp, "share")
-  local bin_dir = path.join(tmp, ".local", "bin")
-
-  local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234", "bin")
-  unix.makedirs(tool_dir)
-  cosmo.Barf(path.join(tool_dir, "rg"), "#!/bin/sh\necho rg")
-
-  local stdout = mock_writer()
-  local stderr = mock_writer()
-
-  local code = home.cmd_3p({}, {
-    home = tmp,
-    share_dir = share_dir,
-    stdout = stdout,
-    stderr = stderr,
-    dry_run = true,
-    verbose = true,
-  })
-  lu.assertEquals(code, 0)
-
-  lu.assertStrContains(stdout:get(), "would link")
-
-  local link = path.join(bin_dir, "rg")
-  local st = unix.stat(link, unix.AT_SYMLINK_NOFOLLOW)
-  lu.assertNil(st)
-
-  unix.rmrf(tmp)
-end
-
-function test_cmd_3p_nvim_site_symlink()
-  local tmp = make_temp_dir()
-  local share_dir = path.join(tmp, "share")
-  local bin_dir = path.join(tmp, ".local", "bin")
-
-  local nvim_dir = path.join(share_dir, "nvim", "0.12.0-abcd1234")
-  local nvim_bin_dir = path.join(nvim_dir, "bin")
-  local nvim_site_dir = path.join(nvim_dir, "share", "nvim", "site")
+  -- Create versioned binary structure
+  local nvim_bin_dir = path.join(zip_root, ".local/share/nvim/0.12.0-abcd1234/bin")
   unix.makedirs(nvim_bin_dir)
-  unix.makedirs(nvim_site_dir)
   cosmo.Barf(path.join(nvim_bin_dir, "nvim"), "#!/bin/sh\necho nvim")
-  cosmo.Barf(path.join(nvim_site_dir, "marker"), "site")
 
-  local stdout = mock_writer()
-  local stderr = mock_writer()
+  local rg_bin_dir = path.join(zip_root, ".local/share/rg/14.1.1-efgh5678/bin")
+  unix.makedirs(rg_bin_dir)
+  cosmo.Barf(path.join(rg_bin_dir, "rg"), "#!/bin/sh\necho rg")
 
-  local code = home.cmd_3p({}, {
-    home = tmp,
-    share_dir = share_dir,
-    stdout = stdout,
-    stderr = stderr,
+  local manifest = {
+    files = {
+      [".local/share/nvim/0.12.0-abcd1234/bin/nvim"] = { mode = 493 },
+      [".local/share/rg/14.1.1-efgh5678/bin/rg"] = { mode = 493 },
+    },
+  }
+
+  local dest = path.join(tmp, "dest")
+  local code = home.cmd_unpack(dest, false, {
+    manifest = manifest,
+    zip_root = zip_root,
   })
+
   lu.assertEquals(code, 0)
 
-  local bin_link = path.join(bin_dir, "nvim")
-  local st = unix.stat(bin_link, unix.AT_SYMLINK_NOFOLLOW)
-  lu.assertNotNil(st)
-  lu.assertTrue(unix.S_ISLNK(st:mode()))
+  -- Verify binaries were extracted with correct structure
+  local nvim_path = path.join(dest, ".local/share/nvim/0.12.0-abcd1234/bin/nvim")
+  local st = unix.stat(nvim_path)
+  lu.assertNotNil(st, "nvim binary should exist")
+  local mode_bits = st:mode() & 0x1FF
+  lu.assertEquals(mode_bits, tonumber("755", 8), "nvim should be executable")
 
-  local site_link = path.join(share_dir, "nvim", "site")
-  st = unix.stat(site_link, unix.AT_SYMLINK_NOFOLLOW)
-  lu.assertNotNil(st)
-  lu.assertTrue(unix.S_ISLNK(st:mode()))
-
-  local marker = path.join(site_link, "marker")
-  local f = io.open(marker, "r")
-  lu.assertNotNil(f, "symlink should resolve to actual directory")
-  local content = f:read("*a")
-  f:close()
-  lu.assertEquals(content, "site")
+  local rg_path = path.join(dest, ".local/share/rg/14.1.1-efgh5678/bin/rg")
+  st = unix.stat(rg_path)
+  lu.assertNotNil(st, "rg binary should exist")
+  mode_bits = st:mode() & 0x1FF
+  lu.assertEquals(mode_bits, tonumber("755", 8), "rg should be executable")
 
   unix.rmrf(tmp)
 end
 
---------------------------------------------------------------------------------
--- Test: main dispatch for 3p
---------------------------------------------------------------------------------
-function test_main_3p()
-  local tmp = make_temp_dir()
-  local share_dir = path.join(tmp, "share")
-  unix.makedirs(share_dir)
+function test_list_includes_3p_binaries()
+  local manifest = {
+    files = {
+      [".zshrc"] = { mode = 420 },
+      [".local/share/nvim/0.12.0-abcd1234/bin/nvim"] = { mode = 493 },
+      [".local/share/rg/14.1.1-efgh5678/bin/rg"] = { mode = 493 },
+    },
+  }
 
   local stdout = mock_writer()
   local stderr = mock_writer()
-
-  local code = home.main({ "3p" }, {
-    home = tmp,
-    share_dir = share_dir,
+  local code = home.cmd_list({
+    manifest = manifest,
     stdout = stdout,
     stderr = stderr,
-    dry_run = true,
   })
   lu.assertEquals(code, 0)
 
-  unix.rmrf(tmp)
+  local output = stdout:get()
+  lu.assertStrContains(output, ".local/share/nvim/0.12.0-abcd1234/bin/nvim")
+  lu.assertStrContains(output, ".local/share/rg/14.1.1-efgh5678/bin/rg")
 end
 
 function test_cmd_help_output()
@@ -1094,47 +763,6 @@ function test_cmd_help_output()
   lu.assertStrContains(output, "usage:")
   lu.assertStrContains(output, "list")
   lu.assertStrContains(output, "unpack")
-end
-
---------------------------------------------------------------------------------
--- Test: scan_for_latest_version path format
---------------------------------------------------------------------------------
-function test_scan_for_latest_version_path_format()
-  local tmp = make_temp_dir()
-  local share_dir = tmp
-  local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234")
-  local tool_bin_dir = path.join(tool_dir, "bin")
-  unix.makedirs(tool_bin_dir)
-  local bin_path = path.join(tool_bin_dir, "rg")
-  cosmo.Barf(bin_path, "#!/bin/sh\necho rg")
-
-  local result = home.scan_for_latest_version("rg", share_dir)
-  lu.assertNotNil(result)
-  lu.assertEquals(result.version, "14.1.1")
-  lu.assertEquals(result.sha, "abcd1234")
-  lu.assertEquals(result.path, bin_path)
-
-  -- Verify the version directory path format is <version>-<sha>, not 0.0.0- or similar
-  lu.assertStrContains(result.path, "14.1.1-abcd1234")
-  lu.assertNotStrContains(result.path, "0.0.0-")
-
-  unix.rmrf(tmp)
-end
-
-function test_scan_for_latest_version_rejects_invalid_paths()
-  local tmp = make_temp_dir()
-  local share_dir = tmp
-
-  -- Create directory with invalid version format (e.g., 0.0.0-)
-  local bad_dir = path.join(share_dir, "rg", "0.0.0-")
-  unix.makedirs(bad_dir)
-  cosmo.Barf(path.join(bad_dir, "rg"), "#!/bin/sh\necho rg")
-
-  -- Should not find this as a valid version
-  local result = home.scan_for_latest_version("rg", share_dir)
-  lu.assertNil(result)
-
-  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------

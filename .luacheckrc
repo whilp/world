@@ -9,6 +9,7 @@ include_files = {
 exclude_files = {
   "**/*.mk",
   "**/*.ok",
+  "**/*.sh",
   "lib/home/.args",
   "lib/home/MANIFEST.txt",
 }

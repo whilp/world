@@ -1,6 +1,6 @@
 nvim_version := 3p/nvim/version.lua
 nvim_pack_lock := .config/nvim/nvim-pack-lock.json
-nvim_plugins := $(shell 3p/nvim/list-plugins.lua)
+nvim_plugins := $(shell 3p/nvim/list-plugins.sh)
 nvim_fetch_plugin := 3p/nvim/fetch-plugin.lua
 nvim_bundle := 3p/nvim/bundle.lua
 bins += o/%/nvim/bin/nvim
@@ -19,8 +19,14 @@ o/any/nvim/plugins/%: $(nvim_pack_lock) $(nvim_fetch_plugin)
 nvim_plugin_dirs := $(addprefix o/any/nvim/plugins/,$(nvim_plugins))
 .PRECIOUS: $(nvim_plugin_dirs)
 
-o/%/nvim/bin/nvim: $(nvim_version) $(install) o/%/nvim/staging/bin/nvim $(nvim_plugin_dirs) $(nvim_bundle)
+# Serialize plugin fetching to avoid race conditions with parallel builds
+o/any/nvim/.plugins-fetched: $(nvim_plugin_dirs)
+	mkdir -p $(@D)
+	touch $@
+
+o/%/nvim/bin/nvim: $(nvim_version) $(install) o/%/nvim/staging/bin/nvim o/any/nvim/.plugins-fetched $(nvim_bundle)
 	$(install) $(nvim_version) $* o/$*/nvim bin o/$*/nvim/staging/bin/nvim
+	$(install) $(nvim_version) $* o/$*/nvim share o/$*/nvim/staging/share
 	$(nvim_bundle) $* o/$*/nvim o/any/nvim/plugins
 
 o/%/nvim/test.ok: 3p/nvim/test.lua o/%/nvim/bin/nvim $(runner)
