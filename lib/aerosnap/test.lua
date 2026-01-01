@@ -71,4 +71,3 @@ function TestLookupWorkspace:test_returns_nil_for_unknown_bundle()
   lu.assertNil(match_type, "match_type should be nil")
 end
 
-os.exit(lu.LuaUnit.run())

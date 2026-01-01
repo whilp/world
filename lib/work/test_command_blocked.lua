@@ -6,7 +6,7 @@ if not has_posix then
   function test_command_blocked_skipped()
     lu.skip("requires luaposix")
   end
-  os.exit(lu.LuaUnit.run())
+  return
 end
 
 local data = require("work.data")
@@ -42,4 +42,3 @@ function TestCommandBlocked:test_blocked_items_list()
   lu.assertEquals(blocked_items[1].id, item1.id)
 end
 
-os.exit(lu.LuaUnit.run())

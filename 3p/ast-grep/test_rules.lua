@@ -22,6 +22,13 @@ local function run_ast_grep(filepath, rule_id)
   return status
 end
 
+local function has_ast_grep_matches(filepath, rule_id)
+  local handle = spawn({ bin, "scan", "-c", config_path, "--filter", rule_id, "--json=compact", filepath })
+  local _, output = handle:read()
+  -- compact JSON returns "[]" (+ newline = 3 chars) for no matches
+  return output and #output > 3
+end
+
 TestAstGrepRules = {}
 
 function TestAstGrepRules:test_avoid_io_popen_positive()
@@ -327,5 +334,29 @@ local home = "/home/" .. user
   local filepath = write_test_file("test_tmp_path_concat_good.lua", code)
   local status = run_ast_grep(filepath, "tmp-path-concat")
   lu.assertEquals(status, 0, "should not detect mkdtemp or non-tmp concatenation")
+  unix.unlink(filepath)
+end
+
+function TestAstGrepRules:test_use_tmpdir_global_positive()
+  local code = [[
+local tmpdir = unix.mkdtemp("/tmp/test_XXXXXX")
+local cosmo_unix = require("cosmo.unix")
+local dir = cosmo_unix.mkdtemp("/tmp/foo_XXXXXX")
+]]
+  local filepath = write_test_file("test_tmpdir_bad.lua", code)
+  local has_matches = has_ast_grep_matches(filepath, "test-use-tmpdir-global")
+  lu.assertTrue(has_matches, "should detect mkdtemp in test files")
+  unix.unlink(filepath)
+end
+
+function TestAstGrepRules:test_use_tmpdir_global_negative()
+  local code = [[
+local tmpdir = TEST_TMPDIR
+local subdir = path.join(TEST_TMPDIR, "subdir")
+unix.makedirs(subdir)
+]]
+  local filepath = write_test_file("test_tmpdir_good.lua", code)
+  local has_matches = has_ast_grep_matches(filepath, "test-use-tmpdir-global")
+  lu.assertFalse(has_matches, "should not detect TEST_TMPDIR usage")
   unix.unlink(filepath)
 end

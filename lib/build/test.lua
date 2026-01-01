@@ -3,6 +3,7 @@ local args = { ... }
 local test_file, output = args[1], args[2]
 arg = {}
 TEST_ARGS = {}
+TEST_TMPDIR = nil -- set after mkdtemp
 for i = 3, #args do
   TEST_ARGS[#TEST_ARGS + 1] = args[i]
 end
@@ -38,6 +39,9 @@ if home then
     end
   end
 end
+-- setup TEST_TMPDIR for tests to use
+TEST_TMPDIR = unix.mkdtemp("/tmp/test_XXXXXX")
+unix.unveil(TEST_TMPDIR, "rwc")
 -- Unveil additional paths passed as arguments (available to test via TEST_ARGS)
 for _, p in ipairs(TEST_ARGS) do
   unix.unveil(p, "r")
@@ -46,6 +50,15 @@ unix.unveil(nil, nil)
 
 local lu = require("luaunit")
 local cosmo = require("cosmo")
+
+-- exclude TEST_* globals from test discovery (reserved for test runner)
+local original_isTestName = lu.LuaUnit.isTestName
+lu.LuaUnit.isTestName = function(s)
+  if s:match("^TEST_") then
+    return false
+  end
+  return original_isTestName(s)
+end
 
 print("# " .. test_file)
 local ok, err = pcall(dofile, test_file)
@@ -57,6 +70,9 @@ end
 local runner = lu.LuaUnit.new()
 runner:setOutputType("tap")
 local code = runner:runSuite()
+
+-- cleanup TEST_TMPDIR
+unix.rmrf(TEST_TMPDIR)
 
 if runner.result.runCount == 0 and runner.result.skippedCount == 0 then
   io.stderr:write("error: no tests found in " .. test_file .. "\n")

@@ -93,4 +93,3 @@ function test_resolve_nvim_bin_returns_error_when_missing()
   end
 end
 
-os.exit(lu.LuaUnit.run())

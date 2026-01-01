@@ -6,10 +6,8 @@ if not has_posix then
   function test_file_locking_skipped()
     lu.skip("requires luaposix")
   end
-  os.exit(lu.LuaUnit.run())
+  return
 end
-
-local unix = require("cosmo.unix")
 
 local data = require("work.data")
 local store = require("work.store")
@@ -20,12 +18,11 @@ TestFileLocking = {}
 
 function TestFileLocking:setUp()
   store.reset(test_store)
-  self.test_dir = unix.mkdtemp("/tmp/work-test-XXXXXX")
+  self.test_dir = TEST_TMPDIR
 end
 
 function TestFileLocking:tearDown()
   data.release_lock()
-  unix.rmrf(self.test_dir)
   data._lock_handle = nil
   data._lock_path = nil
 end
@@ -124,5 +121,3 @@ function TestFileLocking:test_delete_with_locking()
   local f = io.open(file_path, "r")
   lu.assertNil(f, "work item file should not exist after delete")
 end
-
-os.exit(lu.LuaUnit.run())

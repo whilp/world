@@ -6,7 +6,7 @@ if not has_posix then
   function test_string_sanitization_skipped()
     lu.skip("requires luaposix")
   end
-  os.exit(lu.LuaUnit.run())
+  return
 end
 
 local data = require("work.data")
@@ -123,4 +123,3 @@ function TestStringSanitization:test_error_message_includes_field_name()
   lu.assertStrContains(err, "title")
 end
 
-os.exit(lu.LuaUnit.run())

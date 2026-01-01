@@ -26,4 +26,3 @@ function test_whereami_codespaces_format()
   lu.assertStrMatches(result, '^repo | .+')
 end
 
-os.exit(lu.LuaUnit.run())
