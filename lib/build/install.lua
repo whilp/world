@@ -15,8 +15,18 @@ io.stderr:write("loaded unix\n")
 io.stderr:flush()
 
 local function copy_file_raw(src, dst)
+  io.stderr:write("copy_file_raw: " .. src .. " -> " .. dst .. "\n")
+  io.stderr:flush()
+
   -- use shell cp to avoid cosmopolitan memory issues with large APE binaries
-  local ok = os.execute(string.format('/usr/bin/cp -p "%s" "%s"', src, dst))
+  local cmd = string.format('/usr/bin/cp -p "%s" "%s"', src, dst)
+  io.stderr:write("copy_file_raw: executing: " .. cmd .. "\n")
+  io.stderr:flush()
+
+  local ok = os.execute(cmd)
+  io.stderr:write("copy_file_raw: os.execute returned\n")
+  io.stderr:flush()
+
   if not ok then
     return nil, "cp failed"
   end
