@@ -18,7 +18,6 @@ unix.unveil("o", "rx")
 unix.unveil("lib", "r")
 unix.unveil("3p", "r")
 unix.unveil("/tmp", "rwc")
-unix.unveil("/usr", "rx")
 unix.unveil("/proc", "r")
 unix.unveil("/etc", "r")
 -- APE binaries need the APE loader from $HOME/.ape-*
