@@ -6,7 +6,7 @@ if not has_posix then
   function test_backup_skipped()
     lu.skip("requires luaposix")
   end
-  os.exit(lu.LuaUnit.run())
+  return
 end
 
 local data = require("work.data")
@@ -205,4 +205,3 @@ function TestBackup:test_backup_content_matches_original()
   lu.assertNotStrContains(backup_content, "updated content")
 end
 
-os.exit(lu.LuaUnit.run())

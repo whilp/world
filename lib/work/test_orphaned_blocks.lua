@@ -6,7 +6,7 @@ if not has_posix then
   function test_orphaned_blocks_skipped()
     lu.skip("requires luaposix")
   end
-  os.exit(lu.LuaUnit.run())
+  return
 end
 
 local process = require("work.process")
@@ -111,4 +111,3 @@ function TestOrphanedBlocks:test_find_items_blocking_on_multiple_blocks()
   lu.assertEquals(referencing_b[1].id, "01TEST0000000000000000003")
 end
 
-os.exit(lu.LuaUnit.run())

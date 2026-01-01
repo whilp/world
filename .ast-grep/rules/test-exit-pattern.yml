@@ -1,0 +1,32 @@
+id: test-exit-pattern
+language: lua
+severity: error
+message: |
+  Test files should never call os.exit() or lu.*.run() - these are only called by the test runner.
+
+  Test files should define test functions and let the test runner handle execution:
+    Bad:  os.exit(lu.LuaUnit.run())
+    Bad:  lu.LuaUnit.run()
+    Good: Define test functions and let the test runner call them
+
+note: |
+  The test runner is responsible for:
+  1. Loading test modules
+  2. Running lu.LuaUnit.run()
+  3. Calling os.exit() with the appropriate status
+
+  Test files should only define test functions.
+
+rule:
+  any:
+    - pattern: os.exit($LU.$METHOD.run($$$))
+    - pattern: $LU.$METHOD.run($$$)
+      not:
+        inside:
+          any:
+            - kind: function_definition
+            - kind: function_declaration
+
+constraints:
+  LU:
+    regex: "^lu$"

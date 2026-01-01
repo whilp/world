@@ -6,7 +6,7 @@ if not has_posix then
   function test_blocked_on_display_skipped()
     lu.skip("requires luaposix")
   end
-  os.exit(lu.LuaUnit.run())
+  return
 end
 
 local data = require("work.data")
@@ -51,4 +51,3 @@ function TestBlockedOnDisplay:test_unresolved_blocks_display()
   lu.assertTrue(#unresolved > 0, "blocked item should show what items are blocking it, got: " .. #unresolved)
 end
 
-os.exit(lu.LuaUnit.run())

@@ -6,7 +6,7 @@ if not has_posix then
   function test_validate_blocks_skipped()
     lu.skip("requires luaposix")
   end
-  os.exit(lu.LuaUnit.run())
+  return
 end
 
 local process = require("work.process")
@@ -99,4 +99,3 @@ function TestValidateBlocks:test_validate_blocks_self_reference()
   lu.assertStrContains(err, "cannot block on itself")
 end
 
-os.exit(lu.LuaUnit.run())
