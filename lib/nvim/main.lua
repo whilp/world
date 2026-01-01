@@ -21,7 +21,34 @@ local function resolve_nvim_bin()
   return nil, "nvim binary not found. Run 'make nvim' to install."
 end
 
--- NVIM_BIN: reserved for future caching of resolved binary path
+local function derive_vimruntime(nvim_bin)
+  local bin_dir = path.dirname(nvim_bin)
+  local version_dir = path.dirname(bin_dir)
+  return path.join(version_dir, "share", "nvim", "runtime")
+end
+
+local function set_vimruntime(env, nvim_bin)
+  local vimruntime = derive_vimruntime(nvim_bin)
+  if unix.stat(vimruntime) then
+    env["VIMRUNTIME"] = vimruntime
+  end
+end
+
+local function env_with_vimruntime(nvim_bin)
+  local env = {}
+  for _, entry in ipairs(unix.environ()) do
+    local key, value = entry:match("^([^=]+)=(.*)$")
+    if key then
+      env[key] = value
+    end
+  end
+  set_vimruntime(env, nvim_bin)
+  local result = {}
+  for k, v in pairs(env) do
+    table.insert(result, k .. "=" .. v)
+  end
+  return result
+end
 
 local function derive_paths(sock)
   local sock_dir = path.dirname(sock)
@@ -168,10 +195,11 @@ local function load_zsh_environment()
   return env
 end
 
-local function setup_nvim_environment()
+local function setup_nvim_environment(nvim_bin)
   local env_table = load_zsh_environment()
   env_table["NVIM_SERVER_MODE"] = "1"
   env_table["WHEREAMI"] = whereami.get_with_emoji()
+  set_vimruntime(env_table, nvim_bin)
   local env = {}
   for k, v in pairs(env_table) do
     table.insert(env, k .. "=" .. v)
@@ -238,7 +266,7 @@ local function cmd_start(paths, nvim_bin)
     unix.close(lockfd)
 
     unix.chdir(HOME)
-    local env = setup_nvim_environment()
+    local env = setup_nvim_environment(nvim_bin)
     exec_nvim_server(paths.sock, env, nvim_bin)
     unix.exit(1)
   elseif child_pid > 0 then
@@ -368,13 +396,14 @@ end
 local function client_mode(args, nvim_bin)
   local nvim_invim = os.getenv("NVIM_INVIM")
   local nvim_server_mode = os.getenv("NVIM_SERVER_MODE")
+  local env = env_with_vimruntime(nvim_bin)
 
   if nvim_invim or nvim_server_mode then
     local new_args = {"nvim"}
     for _, arg in ipairs(args) do
       table.insert(new_args, arg)
     end
-    unix.execve(nvim_bin, new_args, unix.environ())
+    unix.execve(nvim_bin, new_args, env)
     return
   end
 
@@ -404,13 +433,13 @@ local function client_mode(args, nvim_bin)
       table.insert(new_args, arg)
     end
 
-    unix.execve(nvim_bin, new_args, unix.environ())
+    unix.execve(nvim_bin, new_args, env)
   else
     local new_args = {"nvim"}
     for _, arg in ipairs(remaining_args) do
       table.insert(new_args, arg)
     end
-    unix.execve(nvim_bin, new_args, unix.environ())
+    unix.execve(nvim_bin, new_args, env)
   end
 end
 
