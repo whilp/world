@@ -97,28 +97,6 @@ local function clear_dir(dir)
   end
 end
 
-local function set_timestamps_recursive(dir, mtime)
-  local handle = unix.opendir(dir)
-  if not handle then return end
-
-  for name in handle do
-    if name ~= "." and name ~= ".." then
-      local filepath = path.join(dir, name)
-      local stat = unix.stat(filepath)
-      if stat then
-        if unix.S_ISDIR(stat:mode()) then
-          set_timestamps_recursive(filepath, mtime)
-        end
-        local fd = unix.open(filepath, unix.O_RDONLY)
-        if fd then
-          unix.futimens(fd, mtime, 0, mtime, 0)
-          unix.close(fd)
-        end
-      end
-    end
-  end
-end
-
 local function extract_zip(archive, dest_dir, strip)
   strip = strip or 0
   -- temp_dir must be on same filesystem as dest_dir for rename to work
@@ -163,7 +141,20 @@ local function extract_targz(archive, dest_dir, strip)
   return true
 end
 
+local function read_gz_mtime(archive)
+  local fd = unix.open(archive, unix.O_RDONLY)
+  if not fd then return nil end
+  local header = unix.read(fd, 8)
+  unix.close(fd)
+  if not header or #header < 8 then return nil end
+  -- mtime is bytes 4-7 (0-indexed) as little-endian uint32
+  local b1, b2, b3, b4 = header:byte(5, 8)
+  return b1 + b2 * 256 + b3 * 65536 + b4 * 16777216
+end
+
 local function extract_gz(archive, dest_dir, tool_name)
+  local mtime = read_gz_mtime(archive)
+
   local dest = path.join(dest_dir, tool_name)
   local handle = spawn({"gunzip", "-c", archive})
   local ok, output, exit_code = handle:read()
@@ -175,6 +166,9 @@ local function extract_gz(archive, dest_dir, tool_name)
     return nil, "failed to create " .. dest
   end
   unix.write(fd, output)
+  if mtime and mtime > 0 then
+    unix.futimens(fd, mtime, 0, mtime, 0)
+  end
   unix.close(fd)
   return true
 end
@@ -200,12 +194,6 @@ local function main(version_file, platform, input, dest_dir)
   local format = plat.format or spec.format or "binary"
   local strip = plat.strip_components or spec.strip_components or 0
 
-  local archive_stat = unix.stat(input)
-  if not archive_stat then
-    return nil, "failed to stat archive " .. input
-  end
-  local archive_mtime = archive_stat:mtim()
-
   local err
   if format == "zip" then
     ok, err = extract_zip(input, dest_dir, strip)
@@ -222,7 +210,6 @@ local function main(version_file, platform, input, dest_dir)
     return nil, err
   end
 
-  set_timestamps_recursive(dest_dir, archive_mtime)
   return true
 end
 
