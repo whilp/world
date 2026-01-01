@@ -19,7 +19,11 @@ o/any/nvim/plugins/%: $(nvim_pack_lock) $(nvim_fetch_plugin)
 nvim_plugin_dirs := $(addprefix o/any/nvim/plugins/,$(nvim_plugins))
 .PRECIOUS: $(nvim_plugin_dirs)
 
-o/%/nvim/bin/nvim: $(nvim_version) $(install) o/%/nvim/staging/bin/nvim $(nvim_plugin_dirs) $(nvim_bundle)
+# Serialize plugin fetching to avoid race conditions with parallel builds
+o/any/nvim/.plugins-fetched: $(nvim_plugin_dirs)
+	touch $@
+
+o/%/nvim/bin/nvim: $(nvim_version) $(install) o/%/nvim/staging/bin/nvim o/any/nvim/.plugins-fetched $(nvim_bundle)
 	$(install) $(nvim_version) $* o/$*/nvim bin o/$*/nvim/staging/bin/nvim
 	$(nvim_bundle) $* o/$*/nvim o/any/nvim/plugins
 
