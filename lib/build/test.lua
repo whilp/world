@@ -33,10 +33,22 @@ if home then
     end
   end
 end
+-- setup TEST_TMPDIR for tests to use
+local test_tmpdir = unix.mkdtemp("/tmp/test_XXXXXX")
+unix.unveil(test_tmpdir, "rwc")
 unix.unveil(nil, nil)
 
 local lu = require("luaunit")
 local cosmo = require("cosmo")
+
+-- override os.getenv to provide TEST_TMPDIR as environment variable
+local real_getenv = os.getenv
+local extra_env = {
+  TEST_TMPDIR = test_tmpdir,
+}
+os.getenv = function(key)
+  return extra_env[key] or real_getenv(key)
+end
 
 print("# " .. test_file)
 local ok, err = pcall(dofile, test_file)
@@ -66,5 +78,8 @@ local result = {
 local f = io.open(output, "w")
 f:write("return " .. cosmo.EncodeLua(result) .. "\n")
 f:close()
+
+-- cleanup TEST_TMPDIR
+unix.rmrf(test_tmpdir)
 
 os.exit(code)
