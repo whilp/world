@@ -43,7 +43,7 @@ function TestApeRace:test_concurrent_execution_without_priming()
   -- spawn multiple concurrent executions of fresh binary
   local handles = {}
   local num_concurrent = 4
-  for i = 1, num_concurrent do
+  for _ = 1, num_concurrent do
     local h, spawn_err = spawn({ dst, "--version" })
     if h then
       table.insert(handles, { handle = h, spawned = true })
