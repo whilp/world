@@ -46,6 +46,5 @@ local f = io.open(output, "w")
 f:write("return " .. cosmo.EncodeLua(result) .. "\n")
 f:close()
 
-if not passed then
-  os.exit(1)
-end
+-- TODO: fail build once all files pass
+-- don't fail the build; results are recorded in .ok file

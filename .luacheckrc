@@ -4,6 +4,7 @@ max_line_length = 120
 include_files = {
   "lib",
   "3p",
+  ".local/bin",
 }
 
 exclude_files = {
