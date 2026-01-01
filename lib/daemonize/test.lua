@@ -4,8 +4,10 @@ local path = require("cosmo.path")
 
 local daemonize = require('daemonize')
 
+local tmpdir = path.join(TEST_TMPDIR, "daemonize_test")
+unix.makedirs(tmpdir)
+
 function test_acquire_lock()
-  local tmpdir = unix.mkdtemp("/tmp/daemonize_test_XXXXXX")
   local lock_path = path.join(tmpdir, "lock")
 
   local fd, err = daemonize.acquire_lock(lock_path)
@@ -16,11 +18,9 @@ function test_acquire_lock()
   end
 
   unix.unlink(lock_path)
-  unix.rmdir(tmpdir)
 end
 
 function test_write_pidfile()
-  local tmpdir = unix.mkdtemp("/tmp/daemonize_test_XXXXXX")
   local pid_path = path.join(tmpdir, "pidfile")
 
   local ok, err = daemonize.write_pidfile(pid_path)
@@ -36,7 +36,6 @@ function test_write_pidfile()
   lu.assertEquals(pid, unix.getpid(), "pidfile should contain current process pid")
 
   unix.unlink(pid_path)
-  unix.rmdir(tmpdir)
 end
 
 function test_write_pidfile_requires_path()

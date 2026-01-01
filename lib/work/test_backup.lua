@@ -10,6 +10,7 @@ if not has_posix then
 end
 
 local unix = require("cosmo.unix")
+local path = require("cosmo.path")
 
 local data = require("work.data")
 local store = require("work.store")
@@ -20,7 +21,8 @@ TestBackup = {}
 
 function TestBackup:setUp()
   store.reset(test_store)
-  self.test_dir = unix.mkdtemp("/tmp/work-test-backup-XXXXXX")
+  self.test_dir = path.join(TEST_TMPDIR, "work-test-backup")
+  unix.makedirs(self.test_dir)
 end
 
 function TestBackup:tearDown()

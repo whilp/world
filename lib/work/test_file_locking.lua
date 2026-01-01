@@ -10,6 +10,7 @@ if not has_posix then
 end
 
 local unix = require("cosmo.unix")
+local path = require("cosmo.path")
 
 local data = require("work.data")
 local store = require("work.store")
@@ -20,7 +21,8 @@ TestFileLocking = {}
 
 function TestFileLocking:setUp()
   store.reset(test_store)
-  self.test_dir = unix.mkdtemp("/tmp/work-test-XXXXXX")
+  self.test_dir = path.join(TEST_TMPDIR, "work-test-locking")
+  unix.makedirs(self.test_dir)
 end
 
 function TestFileLocking:tearDown()

@@ -36,7 +36,8 @@ function TestSpawn:test_wait_returns_exit_code()
 end
 
 function TestSpawn:test_wait_drains_stdout_to_avoid_sigpipe()
-	local tmpdir = unix.mkdtemp("/tmp/spawn_test_XXXXXX")
+	local tmpdir = path.join(TEST_TMPDIR, "spawn_test")
+	unix.makedirs(tmpdir)
 	local tmp_file = path.join(tmpdir, "checkfile")
 	local tmp_target = path.join(tmpdir, "target")
 

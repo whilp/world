@@ -6,7 +6,7 @@ local cosmo = require("cosmo")
 
 local extract = dofile("lib/build/extract.lua")
 
-local tmp_dir = unix.mkdtemp("/tmp/test_extract_XXXXXX")
+local tmp_dir = path.join(TEST_TMPDIR, "test_extract")
 
 local function file_exists(filepath)
   return unix.stat(filepath) ~= nil

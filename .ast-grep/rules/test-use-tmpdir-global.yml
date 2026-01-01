@@ -13,6 +13,9 @@ files:
   - "**/test*.lua"
   - "**/test.lua"
 
+ignores:
+  - "lib/build/test.lua"
+
 rule:
   any:
     - pattern: unix.mkdtemp($$$)

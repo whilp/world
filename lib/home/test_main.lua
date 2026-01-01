@@ -5,6 +5,15 @@ local path = require("cosmo.path")
 
 local home = require("home.main")
 
+-- Helper: create a test subdirectory in TEST_TMPDIR
+local test_counter = 0
+local function make_test_dir()
+  test_counter = test_counter + 1
+  local dir = path.join(TEST_TMPDIR, "home_test_" .. test_counter)
+  unix.makedirs(dir)
+  return dir
+end
+
 -- Helper: create a mock writer that captures output
 local function mock_writer()
   local output = {}
@@ -118,7 +127,7 @@ end
 -- Test: copy_file - Basic copy
 --------------------------------------------------------------------------------
 function test_copy_file_basic()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = make_test_dir()
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
 
@@ -137,7 +146,7 @@ function test_copy_file_basic()
 end
 
 function test_copy_file_with_mode()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = make_test_dir()
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
 
@@ -158,7 +167,7 @@ end
 -- Test: copy_file - Overwrite behavior
 --------------------------------------------------------------------------------
 function test_copy_file_no_overwrite_fails()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = make_test_dir()
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
 
@@ -178,7 +187,7 @@ function test_copy_file_no_overwrite_fails()
 end
 
 function test_copy_file_overwrite_succeeds()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = make_test_dir()
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
 
@@ -200,7 +209,7 @@ end
 -- Test: copy_file - Source doesn't exist
 --------------------------------------------------------------------------------
 function test_copy_file_source_missing()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = make_test_dir()
   local ok, err = home.copy_file(path.join(tmp, "nonexistent"), path.join(tmp, "dest"))
   lu.assertFalse(ok)
   lu.assertStrContains(err, "failed to open source")
@@ -245,7 +254,7 @@ end
 -- Test: cmd_unpack silent by default
 --------------------------------------------------------------------------------
 function test_cmd_unpack_silent_by_default()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = make_test_dir()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -280,7 +289,7 @@ end
 -- Test: cmd_unpack verbose mode
 --------------------------------------------------------------------------------
 function test_cmd_unpack_verbose()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = make_test_dir()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -313,7 +322,7 @@ function test_cmd_unpack_verbose()
 end
 
 function test_cmd_unpack_verbose_force_overwrite()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = make_test_dir()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -349,7 +358,7 @@ end
 -- Test: cmd_unpack dry-run mode
 --------------------------------------------------------------------------------
 function test_cmd_unpack_dry_run()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = make_test_dir()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -379,7 +388,7 @@ function test_cmd_unpack_dry_run()
 end
 
 function test_cmd_unpack_dry_run_verbose()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = make_test_dir()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -417,7 +426,7 @@ end
 -- Test: cmd_unpack --only filter
 --------------------------------------------------------------------------------
 function test_cmd_unpack_only_filter()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = make_test_dir()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -463,7 +472,7 @@ function test_cmd_unpack_only_filter()
 end
 
 function test_cmd_unpack_only_empty_filter()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = make_test_dir()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -494,7 +503,7 @@ function test_cmd_unpack_only_empty_filter()
 end
 
 function test_cmd_unpack_only_null_delimited()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = make_test_dir()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -638,7 +647,7 @@ end
 -- Test: read_file
 --------------------------------------------------------------------------------
 function test_read_file_success()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = make_test_dir()
   local file_path = path.join(tmp, "test.txt")
   cosmo.Barf(file_path, "test content")
 
@@ -682,7 +691,7 @@ end
 -- Test: 3p binaries in .local/share structure
 --------------------------------------------------------------------------------
 function test_unpack_3p_binary_structure()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = make_test_dir()
   local zip_root = path.join(tmp, "zip/")
 
   -- Create versioned binary structure
