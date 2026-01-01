@@ -40,6 +40,13 @@ local function fetch(version_file, platform, output, binary)
   local output_dir = path.dirname(output)
   unix.makedirs(output_dir)
 
+  -- TODO: restore unveil once APE binary caching issues are resolved
+  -- unix.unveil(version_file, "r")
+  -- unix.unveil(output_dir, "rwc")
+  -- unix.unveil("/etc/resolv.conf", "r")
+  -- unix.unveil("/etc/ssl", "r")
+  -- unix.unveil(nil, nil)
+
   local ok, spec = pcall(dofile, version_file)
   if not ok then
     return nil, "failed to load " .. version_file .. ": " .. tostring(spec)

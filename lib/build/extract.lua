@@ -48,6 +48,14 @@ local function extract(version_file, platform, input, dest_dir)
 
   unix.makedirs(dest_dir)
 
+  -- TODO: restore unveil once APE binary caching issues are resolved
+  -- unix.unveil(version_file, "r")
+  -- unix.unveil(input, "r")
+  -- unix.unveil(dest_dir, "rwc")
+  -- unix.unveil("/usr", "rx")
+  -- unix.unveil("/bin", "rx")
+  -- unix.unveil(nil, nil)
+
   local ok, spec = pcall(dofile, version_file)
   if not ok then
     return nil, "failed to load " .. version_file .. ": " .. tostring(spec)

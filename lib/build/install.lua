@@ -112,6 +112,12 @@ local function install(version_file, platform, base_dir, install_type, source)
 end
 
 if not pcall(debug.getlocal, 4, 1) then
+  -- TODO: restore unveil once APE binary caching issues are resolved
+  -- unix.unveil(arg[1], "r")  -- version_file
+  -- unix.unveil(arg[5], "r")  -- source
+  -- unix.unveil(arg[3], "rwc")  -- base_dir
+  -- unix.unveil(nil, nil)
+
   local ok, err = install(...)
   if not ok then
     io.stderr:write("error: " .. err .. "\n")
