@@ -9,17 +9,14 @@ local function get_latest_version()
     headers = {["User-Agent"] = "curl/8.0", ["Accept"] = "application/vnd.github+json"},
   })
   if not status then
-    io.stderr:write("error: failed to fetch releases\n")
-    return nil
+    return nil, "failed to fetch releases"
   end
   if status ~= 200 then
-    io.stderr:write("error: fetch failed with status " .. tostring(status) .. "\n")
-    return nil
+    return nil, "fetch failed with status " .. tostring(status)
   end
   local release = cosmo.DecodeJson(body)
   if not release or not release.tag_name then
-    io.stderr:write("error: invalid release response\n")
-    return nil
+    return nil, "invalid release response"
   end
   return release.tag_name
 end
@@ -28,7 +25,7 @@ local function get_sha256sums(version)
   local url = string.format("https://github.com/%s/releases/download/%s/SHA256SUMS", REPO, version)
   local status, _, body = cosmo.Fetch(url)
   if not status or status ~= 200 then
-    return nil
+    return nil, "failed to fetch SHA256SUMS"
   end
   local sums = {}
   for line in body:gmatch("[^\n]+") do
@@ -40,23 +37,24 @@ local function get_sha256sums(version)
   return sums
 end
 
-local function main()
-  local version = get_latest_version()
+local function main(opts)
+  opts = opts or {}
+  local stderr = opts.stderr or io.stderr
+
+  local version, err = get_latest_version()
   if not version then
-    os.exit(1)
+    return 1, err
   end
 
-  io.stderr:write("fetching sha256sums for " .. version .. "...\n")
-  local sums = get_sha256sums(version)
+  stderr:write("fetching sha256sums for " .. version .. "...\n")
+  local sums, sums_err = get_sha256sums(version)
   if not sums then
-    io.stderr:write("error: failed to fetch SHA256SUMS\n")
-    os.exit(1)
+    return 1, sums_err
   end
 
   local sha = sums["cosmos.zip"]
   if not sha then
-    io.stderr:write("error: no sha256 for cosmos.zip\n")
-    os.exit(1)
+    return 1, "no sha256 for cosmos.zip"
   end
 
   local result = {
@@ -67,6 +65,11 @@ local function main()
   }
 
   print("return " .. cosmo.EncodeLua(result, {pretty = true}))
+  return 0
 end
 
-main()
+local status, err = main()
+if err then
+  io.stderr:write("error: " .. err .. "\n")
+end
+os.exit(status)
