@@ -1,12 +1,17 @@
 #!/usr/bin/env lua
-local test_file, output = ...
+local args = { ... }
+local test_file, output = args[1], args[2]
+local extra_unveils = {}
+for i = 3, #args do
+  extra_unveils[#extra_unveils + 1] = args[i]
+end
 arg = {}
 
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 
 if not test_file or not output then
-  io.stderr:write("usage: test-runner.lua <test_file> <output>\n")
+  io.stderr:write("usage: test-runner.lua <test_file> <output> [unveil_paths...]\n")
   os.exit(1)
 end
 
@@ -33,14 +38,11 @@ if home then
     end
   end
 end
--- Allow tests to specify additional paths via environment variables
-local sgconfig = os.getenv("SGCONFIG")
-if sgconfig then
-  unix.unveil(sgconfig, "r")
-end
-local rules_dir = os.getenv("RULES_DIR")
-if rules_dir then
-  unix.unveil(rules_dir, "r")
+-- Unveil additional paths passed as arguments
+for _, p in ipairs(extra_unveils) do
+  if p then
+    unix.unveil(p, "r")
+  end
 end
 unix.unveil(nil, nil)
 
