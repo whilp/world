@@ -3,21 +3,35 @@ local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 local spawn = require("spawn").spawn
 
-local function extract_zip(archive, dest_dir, strip)
-  -- use absolute path to avoid cosmopolitan binary issues with unveil
-  local handle = spawn({"/usr/bin/unzip", "-o", "-d", dest_dir, archive})
-  local exit_code = handle:wait()
-  if exit_code ~= 0 then
-    return nil, "unzip failed with exit code " .. exit_code
+local function move_contents(source_dir, dest_dir)
+  local dir = unix.opendir(source_dir)
+  if not dir then
+    return nil, "failed to open directory " .. source_dir
+  end
+  for name in dir do
+    if name ~= "." and name ~= ".." then
+      local src = path.join(source_dir, name)
+      local dst = path.join(dest_dir, name)
+      local ok, err = unix.rename(src, dst)
+      if not ok then
+        return nil, "failed to move " .. src .. " to " .. dst .. ": " .. tostring(err)
+      end
+    end
+  end
+  return true
+end
+
+local function strip_components(source_dir, dest_dir, strip)
+  if strip == 0 then
+    return move_contents(source_dir, dest_dir)
   end
 
-  -- TODO: unzip doesn't support strip-components, so we do it manually
-  -- Consider using a zip library or more robust path manipulation
-  if strip and strip > 0 then
-    -- find the single top-level directory and move its contents up
-    local dir = unix.opendir(dest_dir)
+  -- navigate down (strip - 1) levels, then move contents of the final level
+  local current = source_dir
+  for i = 1, strip - 1 do
+    local dir = unix.opendir(current)
     if not dir then
-      return nil, "failed to open " .. dest_dir
+      return nil, "failed to open directory " .. current
     end
     local entries = {}
     for name in dir do
@@ -25,35 +39,104 @@ local function extract_zip(archive, dest_dir, strip)
         table.insert(entries, name)
       end
     end
-    if #entries == 1 then
-      local subdir = path.join(dest_dir, entries[1])
-      local subdir_handle = unix.opendir(subdir)
-      if subdir_handle then
-        -- it's a directory, move contents up
-        for name in subdir_handle do
-          if name ~= "." and name ~= ".." then
-            local src = path.join(subdir, name)
-            local dst = path.join(dest_dir, name)
-            unix.rename(src, dst)
-          end
-        end
-        unix.rmdir(subdir)
-      end
+    if #entries ~= 1 then
+      local msg = "cannot strip %d components: expected 1 entry at level %d, found %d"
+      return nil, string.format(msg, strip, i, #entries)
     end
+    local entry = path.join(current, entries[1])
+    local stat = unix.stat(entry)
+    if not stat then
+      return nil, string.format("cannot strip %d components: failed to stat entry at level %d", strip, i)
+    end
+    if not unix.S_ISDIR(stat:mode()) then
+      return nil, string.format("cannot strip %d components: entry at level %d is not a directory", strip, i)
+    end
+    current = entry
   end
 
+  -- at final level, find the single entry and move it (file or directory)
+  local dir = unix.opendir(current)
+  if not dir then
+    return nil, "failed to open directory " .. current
+  end
+  local entries = {}
+  for name in dir do
+    if name ~= "." and name ~= ".." then
+      table.insert(entries, name)
+    end
+  end
+  if #entries ~= 1 then
+    local msg = "cannot strip %d components: expected 1 entry at level %d, found %d"
+    return nil, string.format(msg, strip, strip, #entries)
+  end
+  local final_entry = path.join(current, entries[1])
+  local stat = unix.stat(final_entry)
+  if not stat then
+    return nil, string.format("cannot strip %d components: failed to stat entry at level %d", strip, strip)
+  end
+
+  if unix.S_ISDIR(stat:mode()) then
+    return move_contents(final_entry, dest_dir)
+  else
+    local dst = path.join(dest_dir, entries[1])
+    local ok, err = unix.rename(final_entry, dst)
+    if not ok then
+      return nil, "failed to move " .. final_entry .. " to " .. dst .. ": " .. tostring(err)
+    end
+    return true
+  end
+end
+
+local function clear_dir(dir)
+  local handle = unix.opendir(dir)
+  if not handle then return end
+  for name in handle do
+    if name ~= "." and name ~= ".." then
+      unix.rmrf(path.join(dir, name))
+    end
+  end
+end
+
+local function extract_zip(archive, dest_dir, strip)
+  strip = strip or 0
+  -- temp_dir must be on same filesystem as dest_dir for rename to work
+  local temp_dir = unix.mkdtemp(path.join(path.dirname(dest_dir), ".extract_XXXXXX"))
+  clear_dir(dest_dir)
+
+  -- TODO: re-enable unveil; it binds to inodes so rmrf+makedirs breaks access
+  -- use absolute path to avoid cosmopolitan binary issues with unveil
+  local handle = spawn({"/usr/bin/unzip", "-o", "-d", temp_dir, archive})
+  local exit_code = handle:wait()
+  if exit_code ~= 0 then
+    unix.rmrf(temp_dir)
+    return nil, "unzip failed with exit code " .. exit_code
+  end
+
+  local ok, err = strip_components(temp_dir, dest_dir, strip)
+  unix.rmrf(temp_dir)
+  if not ok then
+    return nil, err
+  end
   return true
 end
 
 local function extract_targz(archive, dest_dir, strip)
-  local args = {"tar", "-xzf", archive, "-C", dest_dir}
-  if strip and strip > 0 then
-    table.insert(args, "--strip-components=" .. strip)
-  end
-  local handle = spawn(args)
+  strip = strip or 0
+  -- temp_dir must be on same filesystem as dest_dir for rename to work
+  local temp_dir = unix.mkdtemp(path.join(path.dirname(dest_dir), ".extract_XXXXXX"))
+  clear_dir(dest_dir)
+
+  local handle = spawn({"tar", "-xzf", archive, "-C", temp_dir})
   local exit_code = handle:wait()
   if exit_code ~= 0 then
+    unix.rmrf(temp_dir)
     return nil, "tar failed with exit code " .. exit_code
+  end
+
+  local ok, err = strip_components(temp_dir, dest_dir, strip)
+  unix.rmrf(temp_dir)
+  if not ok then
+    return nil, err
   end
   return true
 end
@@ -80,12 +163,7 @@ local function main(version_file, platform, input, dest_dir)
   end
 
   unix.makedirs(dest_dir)
-  unix.unveil(version_file, "r")
-  unix.unveil(input, "r")
-  unix.unveil(dest_dir, "rwc")
-  unix.unveil("/usr", "rx")
-  unix.unveil("/bin", "rx")
-  unix.unveil(nil, nil)
+  -- TODO: re-enable unveil (disabled because it binds to inodes, breaks after rmrf)
 
   local ok, spec = pcall(dofile, version_file)
   if not ok then
@@ -98,7 +176,6 @@ local function main(version_file, platform, input, dest_dir)
   end
 
   local format = plat.format or spec.format or "binary"
-
   local strip = plat.strip_components or spec.strip_components or 0
 
   local err
@@ -127,3 +204,10 @@ if not pcall(debug.getlocal, 4, 1) then
     os.exit(1)
   end
 end
+
+return {
+  extract_zip = extract_zip,
+  extract_targz = extract_targz,
+  extract_gz = extract_gz,
+  strip_components = strip_components,
+}

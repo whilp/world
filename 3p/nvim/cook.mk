@@ -26,6 +26,7 @@ o/any/nvim/.plugins-fetched: $(nvim_plugin_dirs)
 
 o/%/nvim/bin/nvim: $(nvim_version) $(install) o/%/nvim/staging/bin/nvim o/any/nvim/.plugins-fetched $(nvim_bundle)
 	$(install) $(nvim_version) $* o/$*/nvim bin o/$*/nvim/staging/bin/nvim
+	$(install) $(nvim_version) $* o/$*/nvim share o/$*/nvim/staging/share
 	$(nvim_bundle) $* o/$*/nvim o/any/nvim/plugins
 
 o/%/nvim/test.ok: 3p/nvim/test.lua o/%/nvim/bin/nvim $(runner)
