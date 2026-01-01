@@ -32,20 +32,18 @@ local function verify_sha256(content, expected)
   return nil, string.format("sha256 mismatch: expected %s, got %s", expected, actual)
 end
 
-local function fetch(version_file, platform, output, binary)
+local function main(version_file, platform, output, binary)
   if not version_file or not platform or not output then
     return nil, "usage: fetch.lua <version_file> <platform> <output> [binary]"
   end
 
   local output_dir = path.dirname(output)
   unix.makedirs(output_dir)
-
-  -- TODO: restore unveil once APE binary caching issues are resolved
-  -- unix.unveil(version_file, "r")
-  -- unix.unveil(output_dir, "rwc")
-  -- unix.unveil("/etc/resolv.conf", "r")
-  -- unix.unveil("/etc/ssl", "r")
-  -- unix.unveil(nil, nil)
+  unix.unveil(version_file, "r")
+  unix.unveil(output_dir, "rwc")
+  unix.unveil("/etc/resolv.conf", "r")
+  unix.unveil("/etc/ssl", "r")
+  unix.unveil(nil, nil)
 
   local ok, spec = pcall(dofile, version_file)
   if not ok then
@@ -88,7 +86,7 @@ local function fetch(version_file, platform, output, binary)
 end
 
 if not pcall(debug.getlocal, 4, 1) then
-  local ok, err = fetch(...)
+  local ok, err = main(...)
   if not ok then
     io.stderr:write("error: " .. err .. "\n")
     os.exit(1)

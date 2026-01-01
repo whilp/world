@@ -111,14 +111,21 @@ local function install(version_file, platform, base_dir, install_type, source)
   return true
 end
 
-if not pcall(debug.getlocal, 4, 1) then
-  -- TODO: restore unveil once APE binary caching issues are resolved
-  -- unix.unveil(arg[1], "r")  -- version_file
-  -- unix.unveil(arg[5], "r")  -- source
-  -- unix.unveil(arg[3], "rwc")  -- base_dir
-  -- unix.unveil(nil, nil)
+local function main(version_file, platform, base_dir, install_type, source)
+  if not version_file or not platform or not base_dir or not install_type or not source then
+    return nil, "usage: install.lua <version_file> <platform> <base_dir> <bin|lib> <source>"
+  end
 
-  local ok, err = install(...)
+  unix.unveil(version_file, "r")
+  unix.unveil(source, "r")
+  unix.unveil(base_dir, "rwc")
+  unix.unveil(nil, nil)
+
+  return install(version_file, platform, base_dir, install_type, source)
+end
+
+if not pcall(debug.getlocal, 4, 1) then
+  local ok, err = main(...)
   if not ok then
     io.stderr:write("error: " .. err .. "\n")
     os.exit(1)
