@@ -18,7 +18,6 @@ jobs:
         run: |
           make o/any/lua/bin/lua
           o/any/lua/bin/lua -v
-          sync  # ensure APE binary assimilation is flushed to disk
 
       - name: Build home binaries
         run: make home-all -j$(nproc)
