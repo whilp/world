@@ -38,20 +38,14 @@ release ?= latest
 include lib/cook.mk
 include 3p/cook.mk
 
-lua_files := $(shell rg --files -g '*.lua' lib 3p)
-lua_shebang_files := $(shell rg -l '^\#!/.*lua' .local/bin 3p/luacheck/luacheck 2>/dev/null)
-luacheck_files := $(patsubst %.lua,o/any/%.luacheck.ok,$(lua_files))
-luacheck_files += $(patsubst %,o/any/%.luacheck.ok,$(lua_shebang_files))
+lua_libs := $(shell rg --files -g '*.lua' lib 3p)
+lua_scripts := $(shell rg -l '^\#!/.*lua' .local/bin 3p/luacheck/luacheck 2>/dev/null)
+lua_files := $(lua_libs) $(lua_scripts)
+luacheck_files := $(patsubst %,o/any/%.luacheck.ok,$(lua_files))
 
 luacheck: $(luacheck_files) ## Run luacheck incrementally on changed files
 
-o/any/%.luacheck.ok: %.lua .luacheckrc $(luacheck_script) $(luacheck_bin)
-	$(luacheck_runner) $< $@ $(luacheck_bin)
-
-o/any/.local/bin/%.luacheck.ok: .local/bin/% .luacheckrc $(luacheck_script) $(luacheck_bin)
-	$(luacheck_runner) $< $@ $(luacheck_bin)
-
-o/any/3p/luacheck/luacheck.luacheck.ok: 3p/luacheck/luacheck .luacheckrc $(luacheck_script) $(luacheck_bin)
+o/any/%.luacheck.ok: % .luacheckrc $(luacheck_script) $(luacheck_bin)
 	$(luacheck_runner) $< $@ $(luacheck_bin)
 
 bootstrap: $(lua_bin)
