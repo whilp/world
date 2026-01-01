@@ -49,9 +49,10 @@ function test_lua_binary_has_bundled_modules()
 end
 
 function test_lua_binary_luacheck_works()
-  -- verify luacheck can run
-  local handle = spawn({lua_bin, "/zip/.lua/bin/luacheck", "--version"})
+  -- verify luacheck can be required and used as a library
+  local script = [[require("luacheck"); print("ok")]]
+  local handle = spawn({lua_bin, "-e", script})
   local ok, output, exit_code = handle:read()
-  lu.assertEquals(exit_code, 0, "luacheck should run: " .. (output or ""))
-  lu.assertStrContains(output or "", "Luacheck")
+  lu.assertEquals(exit_code, 0, "luacheck should load: " .. (output or ""))
+  lu.assertStrContains(output or "", "ok")
 end

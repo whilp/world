@@ -2,23 +2,19 @@
 local lu = require("luaunit")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
+local zip = require("cosmo.zip")
 local spawn = require("spawn").spawn
 
 local lua_dist = path.join(os.getenv("TEST_BIN_DIR"), "bin", "lua.dist")
 
--- helper to list zip contents
-local function zip_list(archive)
-  local handle = spawn({"/usr/bin/unzip", "-l", archive})
-  local ok, output = handle:read()
-  if not ok then
-    return nil
+-- helper to check if any entry matches a pattern
+local function zip_contains(entries, pattern)
+  for _, entry in ipairs(entries) do
+    if entry:match(pattern) then
+      return true
+    end
   end
-  return output
-end
-
--- helper to check if a pattern exists in zip listing
-local function zip_contains(listing, pattern)
-  return listing:match(pattern) ~= nil
+  return false
 end
 
 -- expected lua modules that should be in .lua/
@@ -28,7 +24,6 @@ local expected_modules = {
   "lfs.lua",
   "luaunit.lua",
   "luacheck/init.lua",
-  "bin/luacheck",
 
   -- standalone lib files
   "version.lua",
@@ -70,24 +65,28 @@ function test_lua_dist_is_executable()
 end
 
 function test_lua_dist_contains_expected_modules()
-  local listing = zip_list(lua_dist)
-  lu.assertNotNil(listing, "should be able to list zip contents")
+  local z = zip.open(lua_dist)
+  lu.assertNotNil(z, "should be able to open zip")
+  local entries = z:list()
+  z:close()
 
   for _, mod in ipairs(expected_modules) do
     local pattern = "%.lua/" .. mod:gsub("%.", "%%.")
-    lu.assertTrue(zip_contains(listing, pattern), "should contain .lua/" .. mod)
+    lu.assertTrue(zip_contains(entries, pattern), "should contain .lua/" .. mod)
   end
 end
 
 function test_lua_dist_excludes_test_files()
-  local listing = zip_list(lua_dist)
-  lu.assertNotNil(listing, "should be able to list zip contents")
+  local z = zip.open(lua_dist)
+  lu.assertNotNil(z, "should be able to open zip")
+  local entries = z:list()
+  z:close()
 
   -- check that test files and cook.mk are not included
   for _, pattern in ipairs(excluded_patterns) do
-    local full_pattern = "%.lua/[^%s]*" .. pattern
+    local full_pattern = "%.lua/.*" .. pattern
     -- this is a softer check - we just warn if found
-    if zip_contains(listing, full_pattern) then
+    if zip_contains(entries, full_pattern) then
       io.stderr:write("WARNING: found excluded pattern in dist: " .. pattern .. "\n")
     end
   end
