@@ -70,6 +70,30 @@ jobs:
             echo "FAILED: no symlink"
           fi
 
+          # Clean up
+          rm -rf o/linux-x86_64/cosmos/3.* o/linux-x86_64/cosmos/bin
+
+          # Now try with unveil ENABLED (unset CI to trigger unveil code path)
+          echo ""
+          echo "=== Testing with unveil ENABLED (unset CI) ==="
+          make o/linux-x86_64/cosmos/.extracted
+
+          CI= o/any/lua/bin/lua lib/build/install.lua \
+            3p/cosmos/version.lua \
+            linux-x86_64 \
+            o/linux-x86_64/cosmos \
+            bin \
+            o/linux-x86_64/cosmos/staging/lua \
+            2>&1 || echo "install.lua with unveil failed with exit code $?"
+
+          # Check result
+          if [ -L o/linux-x86_64/cosmos/bin ]; then
+            echo "SUCCESS with unveil: symlink created"
+            ls -la o/linux-x86_64/cosmos/bin/
+          else
+            echo "FAILED with unveil: no symlink"
+          fi
+
           # Clean up for next step
           rm -rf o/linux-x86_64/cosmos/3.* o/linux-x86_64/cosmos/bin o/linux-x86_64/cosmos/.extracted o/linux-x86_64/cosmos/archive.zip
 
