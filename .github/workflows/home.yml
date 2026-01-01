@@ -18,10 +18,7 @@ jobs:
         run: make bootstrap
 
       - name: Build home and lua binaries
-        run: |
-          make home-all -j$(nproc)
-          # Build lua.dist for all platforms (for integration tests)
-          make o/darwin-arm64/lua/bin/lua.dist o/linux-arm64/lua/bin/lua.dist o/linux-x86_64/lua/bin/lua.dist -j$(nproc)
+        run: make home-all lua-all -j$(nproc)
 
       - name: Run checks
         run: make check
