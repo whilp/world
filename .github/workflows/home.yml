@@ -156,6 +156,22 @@ jobs:
             unix.rmrf("o/linux-x86_64/cosmos/test-barf")
           ' 2>&1 || echo "cosmo.Slurp/Barf test failed with exit code $?"
 
+          # Test parallel make execution (might trigger race conditions)
+          echo ""
+          echo "=== Testing parallel make for linux-x86_64 cosmos ==="
+          rm -rf o/linux-x86_64/cosmos
+
+          # Build all 3 binaries in parallel - this is how the original failure happened
+          make o/linux-x86_64/cosmos/bin/lua o/linux-x86_64/cosmos/bin/zip o/linux-x86_64/cosmos/bin/unzip -j3 2>&1 || echo "parallel make failed with exit code $?"
+
+          if [ -f o/linux-x86_64/cosmos/bin/lua ] && [ -f o/linux-x86_64/cosmos/bin/zip ] && [ -f o/linux-x86_64/cosmos/bin/unzip ]; then
+            echo "SUCCESS: parallel make created all binaries"
+            ls -la o/linux-x86_64/cosmos/bin/
+          else
+            echo "FAILED: parallel make did not create all binaries"
+            ls -la o/linux-x86_64/cosmos/bin/ 2>/dev/null || echo "bin dir does not exist"
+          fi
+
           # Clean up for next step
           rm -rf o/linux-x86_64/cosmos
 
