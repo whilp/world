@@ -97,21 +97,64 @@ jobs:
           # Clean up
           rm -rf o/linux-x86_64/cosmos/3.* o/linux-x86_64/cosmos/bin
 
-          # Now try the ACTUAL make target that was originally failing
+          # Test the ORIGINAL implementation with cosmo.Slurp/Barf
           echo ""
-          echo "=== Testing actual make target (should trigger crash if issue exists) ==="
-          rm -rf o/linux-x86_64/cosmos  # Clean slate
+          echo "=== Testing original cosmo.Slurp/Barf implementation ==="
+          make o/linux-x86_64/cosmos/.extracted
 
-          # This is what originally crashed
-          make o/linux-x86_64/cosmos/bin/lua 2>&1 || echo "make target failed with exit code $?"
+          o/any/lua/bin/lua -e '
+            local cosmo = require("cosmo")
+            local unix = require("cosmo.unix")
 
-          # Check result
-          if [ -f o/linux-x86_64/cosmos/bin/lua ]; then
-            echo "SUCCESS: make target created lua binary"
-            ls -la o/linux-x86_64/cosmos/bin/
-          else
-            echo "FAILED: make target did not create lua binary"
-          fi
+            local src = "o/linux-x86_64/cosmos/staging/lua"
+            local dst = "/tmp/test_barf/lua"
+
+            io.stderr:write("Testing cosmo.Slurp/Barf on linux-x86_64...\n")
+            io.stderr:flush()
+
+            unix.makedirs("/tmp/test_barf")
+
+            io.stderr:write("Reading with cosmo.Slurp: " .. src .. "\n")
+            io.stderr:flush()
+            local content = cosmo.Slurp(src)
+            if not content then
+              io.stderr:write("FAILED: Slurp returned nil\n")
+              os.exit(1)
+            end
+            io.stderr:write("Read " .. #content .. " bytes\n")
+            io.stderr:flush()
+
+            local st = unix.stat(src)
+            local mode = st and st:mode() or tonumber("755", 8)
+
+            io.stderr:write("Writing with cosmo.Barf: " .. dst .. "\n")
+            io.stderr:flush()
+            local ok = cosmo.Barf(dst, content, mode)
+            if not ok then
+              io.stderr:write("FAILED: Barf returned nil\n")
+              os.exit(1)
+            end
+
+            io.stderr:write("SUCCESS with cosmo.Slurp/Barf to /tmp\n")
+            unix.rmrf("/tmp/test_barf")
+
+            -- Now test writing to the ACTUAL destination path
+            io.stderr:write("\nTesting Barf to actual cosmos path...\n")
+            io.stderr:flush()
+
+            dst = "o/linux-x86_64/cosmos/test-barf/lua"
+            unix.makedirs("o/linux-x86_64/cosmos/test-barf")
+
+            io.stderr:write("Writing with cosmo.Barf: " .. dst .. "\n")
+            io.stderr:flush()
+            ok = cosmo.Barf(dst, content, mode)
+            if not ok then
+              io.stderr:write("FAILED: Barf to actual path returned nil\n")
+              os.exit(1)
+            end
+            io.stderr:write("SUCCESS with cosmo.Barf to actual cosmos path\n")
+            unix.rmrf("o/linux-x86_64/cosmos/test-barf")
+          ' 2>&1 || echo "cosmo.Slurp/Barf test failed with exit code $?"
 
           # Clean up for next step
           rm -rf o/linux-x86_64/cosmos
