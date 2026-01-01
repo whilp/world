@@ -2,7 +2,7 @@ local lu = require("luaunit")
 local spawn = require("spawn")
 local path = require("cosmo.path")
 
-local bin = path.join(os.getenv("TEST_BIN_DIR"), "bin", "sg")
+local bin = path.join(os.getenv("TEST_BIN_DIR"), "bin", "ast-grep")
 
 TestAstGrep = {}
 
