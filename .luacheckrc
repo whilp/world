@@ -48,15 +48,15 @@ ignore = {
   "111/Test.*",   -- setting test class globals
   "111/test_.*",  -- setting test function globals
   "112/Test.*",   -- mutating test class globals
+  "111/TEST_.*",  -- setting test runner globals (TEST_ARGS, TEST_TMPDIR, etc)
+  "112/TEST_.*",  -- mutating test runner globals
+  "113/TEST_.*",  -- accessing test runner globals
   "212/self",     -- unused self in test methods
 }
 
 files = {
   ["lib/build/test.lua"] = {
-    globals = { "arg", "TEST_ARGS", "TEST_TMPDIR" },
-  },
-  ["**/test*.lua"] = {
-    globals = { "TEST_ARGS", "TEST_TMPDIR" },
+    globals = { "arg" },
   },
   ["lib/claude/version.lua"] = {
     -- Generated file with long URLs
