@@ -3,11 +3,8 @@ local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local claude = require("claude.main")
 
-local tmpdir = path.join(TEST_TMPDIR, "claude_test")
-unix.makedirs(tmpdir)
-
 function test_find_claude_binary_finds_existing()
-  local tmpfile = path.join(tmpdir, "testfile")
+  local tmpfile = path.join(TEST_TMPDIR, "testfile")
   local f = io.open(tmpfile, "w")
   f:write("test")
   f:close()
@@ -27,7 +24,7 @@ function test_find_claude_binary_returns_nil_when_none_exist()
 end
 
 function test_find_claude_binary_handles_nil_in_paths()
-  local tmpfile = path.join(tmpdir, "testfile2")
+  local tmpfile = path.join(TEST_TMPDIR, "testfile2")
   local f = io.open(tmpfile, "w")
   f:write("test")
   f:close()
@@ -63,7 +60,7 @@ function test_build_argv_with_user_args()
 end
 
 function test_build_argv_with_mcp_config()
-  local tmpfile = path.join(tmpdir, "mcp.json")
+  local tmpfile = path.join(TEST_TMPDIR, "mcp.json")
   local f = io.open(tmpfile, "w")
   f:write("{}")
   f:close()

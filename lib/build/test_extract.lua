@@ -6,8 +6,6 @@ local cosmo = require("cosmo")
 
 local extract = dofile("lib/build/extract.lua")
 
-local tmp_dir = path.join(TEST_TMPDIR, "test_extract")
-
 local function file_exists(filepath)
   return unix.stat(filepath) ~= nil
 end
@@ -18,8 +16,8 @@ local function write_file(filepath, content)
 end
 
 local function create_test_zip_with_wrapper(name)
-  local archive_dir = path.join(tmp_dir, "archive_src")
-  local archive_path = path.join(tmp_dir, name)
+  local archive_dir = path.join(TEST_TMPDIR, "archive_src")
+  local archive_path = path.join(TEST_TMPDIR, name)
 
   unix.rmrf(archive_dir)
   unix.makedirs(archive_dir)
@@ -41,8 +39,8 @@ local function create_test_zip_with_wrapper(name)
 end
 
 local function create_test_zip_no_wrapper(name)
-  local archive_dir = path.join(tmp_dir, "archive_src")
-  local archive_path = path.join(tmp_dir, name)
+  local archive_dir = path.join(TEST_TMPDIR, "archive_src")
+  local archive_path = path.join(TEST_TMPDIR, name)
 
   unix.rmrf(archive_dir)
   unix.makedirs(archive_dir)
@@ -62,8 +60,8 @@ local function create_test_zip_no_wrapper(name)
 end
 
 local function create_test_targz_with_wrapper(name)
-  local archive_dir = path.join(tmp_dir, "archive_src")
-  local archive_path = path.join(tmp_dir, name)
+  local archive_dir = path.join(TEST_TMPDIR, "archive_src")
+  local archive_path = path.join(TEST_TMPDIR, name)
 
   unix.rmrf(archive_dir)
   unix.makedirs(archive_dir)
@@ -85,8 +83,8 @@ local function create_test_targz_with_wrapper(name)
 end
 
 local function create_test_targz_no_wrapper(name)
-  local archive_dir = path.join(tmp_dir, "archive_src")
-  local archive_path = path.join(tmp_dir, name)
+  local archive_dir = path.join(TEST_TMPDIR, "archive_src")
+  local archive_path = path.join(TEST_TMPDIR, name)
 
   unix.rmrf(archive_dir)
   unix.makedirs(archive_dir)
@@ -109,7 +107,7 @@ TestZipExtractNoStrip = {}
 
 function TestZipExtractNoStrip:setUp()
   self.archive = create_test_zip_no_wrapper("test_no_strip.zip")
-  self.dest = path.join(tmp_dir, "dest_no_strip")
+  self.dest = path.join(TEST_TMPDIR, "dest_no_strip")
   unix.rmrf(self.dest)
   unix.makedirs(self.dest)
 end
@@ -131,7 +129,7 @@ TestZipExtractWithStrip = {}
 
 function TestZipExtractWithStrip:setUp()
   self.archive = create_test_zip_with_wrapper("test_with_strip.zip")
-  self.dest = path.join(tmp_dir, "dest_with_strip")
+  self.dest = path.join(TEST_TMPDIR, "dest_with_strip")
   unix.rmrf(self.dest)
   unix.makedirs(self.dest)
 end
@@ -154,7 +152,7 @@ TestTarGzExtractNoStrip = {}
 
 function TestTarGzExtractNoStrip:setUp()
   self.archive = create_test_targz_no_wrapper("test_no_strip.tar.gz")
-  self.dest = path.join(tmp_dir, "dest_targz_no_strip")
+  self.dest = path.join(TEST_TMPDIR, "dest_targz_no_strip")
   unix.rmrf(self.dest)
   unix.makedirs(self.dest)
 end
@@ -176,7 +174,7 @@ TestTarGzExtractWithStrip = {}
 
 function TestTarGzExtractWithStrip:setUp()
   self.archive = create_test_targz_with_wrapper("test_with_strip.tar.gz")
-  self.dest = path.join(tmp_dir, "dest_targz_with_strip")
+  self.dest = path.join(TEST_TMPDIR, "dest_targz_with_strip")
   unix.rmrf(self.dest)
   unix.makedirs(self.dest)
 end
@@ -199,7 +197,7 @@ TestStripComponentsErrors = {}
 
 function TestStripComponentsErrors:setUp()
   self.archive = create_test_zip_with_wrapper("test_error.zip")
-  self.dest = path.join(tmp_dir, "dest_error")
+  self.dest = path.join(TEST_TMPDIR, "dest_error")
   unix.rmrf(self.dest)
   unix.makedirs(self.dest)
 end
@@ -220,9 +218,9 @@ TestStripComponentsDeepFile = {}
 
 function TestStripComponentsDeepFile:setUp()
   -- create archive with structure: wrapper/subdir/binary
-  local archive_dir = path.join(tmp_dir, "archive_deep")
-  self.archive = path.join(tmp_dir, "test_deep.tar.gz")
-  self.dest = path.join(tmp_dir, "dest_deep")
+  local archive_dir = path.join(TEST_TMPDIR, "archive_deep")
+  self.archive = path.join(TEST_TMPDIR, "test_deep.tar.gz")
+  self.dest = path.join(TEST_TMPDIR, "dest_deep")
 
   unix.rmrf(archive_dir)
   unix.rmrf(self.dest)

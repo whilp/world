@@ -1,5 +1,4 @@
 local lu = require("luaunit")
-local unix = require("cosmo.unix")
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local spawn = require("spawn")
@@ -36,10 +35,8 @@ function TestSpawn:test_wait_returns_exit_code()
 end
 
 function TestSpawn:test_wait_drains_stdout_to_avoid_sigpipe()
-	local tmpdir = path.join(TEST_TMPDIR, "spawn_test")
-	unix.makedirs(tmpdir)
-	local tmp_file = path.join(tmpdir, "checkfile")
-	local tmp_target = path.join(tmpdir, "target")
+	local tmp_file = path.join(TEST_TMPDIR, "checkfile")
+	local tmp_target = path.join(TEST_TMPDIR, "target")
 
 	local f = io.open(tmp_target, "w")
 	f:write("test content\n")
@@ -71,10 +68,6 @@ function TestSpawn:test_wait_drains_stdout_to_avoid_sigpipe()
 
 	local exit_code, err = handle:wait()
 	lu.assertEquals(exit_code, 0, "sha check should exit 0, got: " .. tostring(err))
-
-	unix.unlink(tmp_file)
-	unix.unlink(tmp_target)
-	unix.rmdir(tmpdir)
 end
 
 function TestSpawn:test_stdin_string()
