@@ -9,7 +9,7 @@ else ifeq ($(uname_s),Linux)
   current_platform := linux-$(subst aarch64,arm64,$(uname_m))
 endif
 
-export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;$(CURDIR)/o/any/luaunit/?.lua;/zip/.lua/?.lua;/zip/.lua/?/init.lua
+export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;$(CURDIR)/o/any/luaunit/lib/?.lua;/zip/.lua/?.lua;/zip/.lua/?/init.lua
 export PATH := $(CURDIR)/o/$(current_platform)/cosmos/bin:$(CURDIR)/o/any/lua/bin:$(PATH)
 
 lua_bin := o/any/lua/bin/lua
@@ -17,6 +17,7 @@ fetch := lib/build/fetch.lua
 extract := lib/build/extract.lua
 install := lib/build/install.lua
 runner := lib/build/test.lua
+luaunit := o/any/luaunit/lib/luaunit.lua
 
 $(fetch) $(extract) $(install): | $(lua_bin)
 cosmo := whilp/cosmopolitan

@@ -22,6 +22,6 @@ include lib/nvim/cook.mk
 include lib/whereami/cook.mk
 include lib/work/cook.mk
 
-lib-test: $(lib_tests) ## Run lib module tests
+lib-test: $(luaunit) $(lib_tests) ## Run lib module tests
 
 .PHONY: lib-test

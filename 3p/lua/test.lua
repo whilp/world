@@ -4,23 +4,7 @@ local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local spawn = require("spawn").spawn
 
--- get platform from environment or detect
-local function get_platform()
-  local ok_s, uname_s = spawn({"uname", "-s"}):read()
-  local ok_m, uname_m = spawn({"uname", "-m"}):read()
-  if not ok_s or not ok_m or not uname_s or not uname_m then
-    return nil
-  end
-  uname_s = uname_s:gsub("%s+$", "")
-  uname_m = uname_m:gsub("%s+$", "")
-
-  local os_name = uname_s == "Darwin" and "darwin" or "linux"
-  local arch = uname_m == "aarch64" and "arm64" or uname_m
-  return os_name .. "-" .. arch
-end
-
-local platform = get_platform()
-local lua_dist = "o/" .. platform .. "/lua/bin/lua.dist"
+local lua_dist = path.join(os.getenv("TEST_BIN_DIR"), "bin", "lua.dist")
 
 -- helper to list zip contents
 local function zip_list(archive)
