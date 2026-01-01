@@ -1,33 +1,24 @@
 #!/usr/bin/env lua
+local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 
 local M = {}
 
--- copy a single file using unix APIs
+-- copy a single file using cosmo Slurp/Barf
 local function copy_file_raw(src, dst)
-  local src_fd = unix.open(src, unix.O_RDONLY)
-  if not src_fd then
-    return nil, "failed to open source: " .. src
+  local content = cosmo.Slurp(src)
+  if not content then
+    return nil, "failed to read source: " .. src
   end
 
-  local st = unix.fstat(src_fd)
+  local st = unix.stat(src)
   local mode = st and st:mode() or tonumber("644", 8)
 
-  local dst_fd = unix.open(dst, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, mode)
-  if not dst_fd then
-    unix.close(src_fd)
-    return nil, "failed to create destination: " .. dst
+  local ok = cosmo.Barf(dst, content, mode)
+  if not ok then
+    return nil, "failed to write destination: " .. dst
   end
-
-  while true do
-    local chunk = unix.read(src_fd, 65536)
-    if not chunk or chunk == "" then break end
-    unix.write(dst_fd, chunk)
-  end
-
-  unix.close(src_fd)
-  unix.close(dst_fd)
   return true
 end
 

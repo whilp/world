@@ -19,6 +19,7 @@ unix.unveil("lib", "r")
 unix.unveil("3p", "r")
 unix.unveil("/tmp", "rwc")
 unix.unveil("/proc", "r")
+unix.unveil("/usr", "rx")
 unix.unveil("/etc", "r")
 -- APE binaries need the APE loader from $HOME/.ape-*
 local home = os.getenv("HOME")
