@@ -19,21 +19,32 @@ fetch_script := lib/build/fetch.lua
 extract_script := lib/build/extract.lua
 install_script := lib/build/install.lua
 runner_script := lib/build/test.lua
+luacheck_script := lib/build/luacheck.lua
 
 # Commands (invoke lua explicitly to avoid APE "Text file busy" errors)
 fetch = $(lua_bin) $(fetch_script)
 extract = $(lua_bin) $(extract_script)
 install = $(lua_bin) $(install_script)
 runner = $(lua_bin) $(runner_script)
+luacheck_bin = o/$(current_platform)/luacheck/bin/luacheck
+luacheck_runner = $(lua_bin) $(luacheck_script)
 
 luaunit := o/any/luaunit/lib/luaunit.lua
 
-$(fetch_script) $(extract_script) $(install_script) $(runner_script): | $(lua_bin)
+$(fetch_script) $(extract_script) $(install_script) $(runner_script) $(luacheck_script): | $(lua_bin)
 cosmo := whilp/cosmopolitan
 release ?= latest
 
+luacheck_files :=
+
 include lib/cook.mk
 include 3p/cook.mk
+
+# Incremental luacheck (per-file)
+luacheck: $(luacheck_files) ## Run luacheck incrementally on changed files
+
+o/any/%.luacheck.ok: lib/%.lua .luacheckrc $(luacheck_script) $(luacheck_bin)
+	$(luacheck_runner) $< $@ $(luacheck_bin)
 
 bootstrap: $(lua_bin)
 	@[ -n "$$CLAUDE_ENV_FILE" ] && echo "PATH=$(dir $(lua_bin)):\$$PATH" >> "$$CLAUDE_ENV_FILE"; true
@@ -68,4 +79,4 @@ test: lib-test $(subst %,$(current_platform),$(tests))
 clean:
 	rm -rf o
 
-.PHONY: bootstrap clean cosmos lua check test home
+.PHONY: bootstrap clean cosmos lua check luacheck test home

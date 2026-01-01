@@ -1,11 +1,8 @@
 lib_lua_modules += spawn
 lib_dirs += o/any/spawn/lib
-spawn_lua := $(wildcard lib/spawn/*.lua)
-spawn_lib := $(filter-out lib/spawn/test%.lua,$(spawn_lua))
-spawn_test := $(filter lib/spawn/test%.lua,$(spawn_lua))
-lib_libs += $(patsubst lib/%,o/any/lib/%,$(spawn_lib))
-lib_tests += $(patsubst lib/spawn/%.lua,o/%/spawn/%.ok,$(spawn_test))
-luacheck_files += $(patsubst lib/%.lua,o/any/%.luacheck.ok,$(spawn_lua))
+lib_libs += o/any/spawn/lib/spawn/init.lua
+lib_tests += o/%/spawn/test.ok
+luacheck_files += $(patsubst lib/%.lua,o/any/%.luacheck.ok,$(wildcard lib/spawn/*.lua))
 
 o/any/spawn/lib/spawn/init.lua: lib/spawn/init.lua
 	mkdir -p $(@D)
