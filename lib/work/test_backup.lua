@@ -17,21 +17,6 @@ local store = require("work.store")
 local Work = require("work.test_lib")
 local test_store = Work.store
 
-local function remove_dir(dir_path)
-  for name in unix.opendir(dir_path) do
-    if name ~= "." and name ~= ".." then
-      local full_path = path.join(dir_path, name)
-      local st = unix.stat(full_path, unix.AT_SYMLINK_NOFOLLOW)
-      if st and unix.S_ISDIR(st:mode()) then
-        remove_dir(full_path)
-      else
-        unix.unlink(full_path)
-      end
-    end
-  end
-  unix.rmdir(dir_path)
-end
-
 TestBackup = {}
 
 function TestBackup:setUp()
@@ -42,7 +27,7 @@ end
 
 function TestBackup:tearDown()
   data.release_lock()
-  remove_dir(self.test_dir)
+  unix.rmrf(self.test_dir)
   data._lock_handle = nil
   data._lock_path = nil
 end

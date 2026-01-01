@@ -1,4 +1,5 @@
 local lu = require("luaunit")
+local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 
@@ -27,31 +28,9 @@ local function make_temp_dir()
   return temp_path
 end
 
--- Helper: remove directory recursively
-local function remove_dir(dir_path)
-  for name in unix.opendir(dir_path) do
-    if name ~= "." and name ~= ".." then
-      local full_path = path.join(dir_path, name)
-      local st = unix.stat(full_path, unix.AT_SYMLINK_NOFOLLOW)
-      if st and unix.S_ISDIR(st:mode()) then
-        remove_dir(full_path)
-      else
-        unix.unlink(full_path)
-      end
-    end
-  end
-  unix.rmdir(dir_path)
-end
-
 -- Helper: write file
 local function write_file(file_path, content)
-  local f = io.open(file_path, "w")
-  if f then
-    f:write(content)
-    f:close()
-    return true
-  end
-  return false
+  return cosmo.Barf(file_path, content)
 end
 
 --------------------------------------------------------------------------------
@@ -166,7 +145,7 @@ function test_copy_file_basic()
   f:close()
   lu.assertEquals(content, "hello world")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_copy_file_with_mode()
@@ -184,7 +163,7 @@ function test_copy_file_with_mode()
   local mode_bits = st:mode() & 0x1FF
   lu.assertEquals(mode_bits, tonumber("755", 8))
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
@@ -207,7 +186,7 @@ function test_copy_file_no_overwrite_fails()
   f:close()
   lu.assertEquals(content, "existing content")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_copy_file_overwrite_succeeds()
@@ -226,7 +205,7 @@ function test_copy_file_overwrite_succeeds()
   f:close()
   lu.assertEquals(content, "new content")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
@@ -237,7 +216,7 @@ function test_copy_file_source_missing()
   local ok, err = home.copy_file(path.join(tmp, "nonexistent"), path.join(tmp, "dest"))
   lu.assertFalse(ok)
   lu.assertStrContains(err, "failed to open source")
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
@@ -306,7 +285,7 @@ function test_cmd_unpack_silent_by_default()
   lu.assertEquals(stderr:get(), "")
   lu.assertEquals(stdout:get(), "")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
@@ -342,7 +321,7 @@ function test_cmd_unpack_verbose()
   lu.assertStrContains(output, ".zshrc\n")
   lu.assertStrContains(output, ".bashrc\n")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_cmd_unpack_verbose_force_overwrite()
@@ -375,7 +354,7 @@ function test_cmd_unpack_verbose_force_overwrite()
   local output = stdout:get()
   lu.assertStrContains(output, ".testfile (overwritten)\n")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
@@ -408,7 +387,7 @@ function test_cmd_unpack_dry_run()
   local f = io.open(path.join(dest, ".testfile"), "r")
   lu.assertNil(f)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_cmd_unpack_dry_run_verbose()
@@ -443,7 +422,7 @@ function test_cmd_unpack_dry_run_verbose()
   local f = io.open(path.join(dest, ".zshrc"), "r")
   lu.assertNil(f)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
@@ -492,7 +471,7 @@ function test_cmd_unpack_only_filter()
   local bash = io.open(path.join(dest, ".bashrc"), "r")
   lu.assertNil(bash)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_cmd_unpack_only_empty_filter()
@@ -523,7 +502,7 @@ function test_cmd_unpack_only_empty_filter()
   local f = io.open(path.join(dest, ".zshrc"), "r")
   lu.assertNil(f)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_cmd_unpack_only_null_delimited()
@@ -570,7 +549,7 @@ function test_cmd_unpack_only_null_delimited()
   local bash = io.open(path.join(dest, ".bashrc"), "r")
   lu.assertNil(bash)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
@@ -679,7 +658,7 @@ function test_read_file_success()
   lu.assertNil(err)
   lu.assertEquals(data, "test content")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_read_file_not_found()
@@ -764,7 +743,7 @@ function test_find_binary_in_dir_direct()
   local result = home.find_binary_in_dir(tmp, "mytool")
   lu.assertEquals(result, bin_path)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_find_binary_in_dir_in_bin()
@@ -777,7 +756,7 @@ function test_find_binary_in_dir_in_bin()
   local result = home.find_binary_in_dir(tmp, "mytool")
   lu.assertEquals(result, bin_path)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_find_binary_in_dir_not_found()
@@ -786,7 +765,7 @@ function test_find_binary_in_dir_not_found()
   local result = home.find_binary_in_dir(tmp, "nonexistent")
   lu.assertNil(result)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
@@ -807,7 +786,7 @@ function test_scan_for_latest_version_single()
   lu.assertEquals(result.sha, "abcd1234")
   lu.assertEquals(result.path, bin_path)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_scan_for_latest_version_multiple()
@@ -829,7 +808,7 @@ function test_scan_for_latest_version_multiple()
   lu.assertEquals(result.sha, "bbb11111")
   lu.assertEquals(result.path, new_bin)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_scan_for_latest_version_not_found()
@@ -838,7 +817,7 @@ function test_scan_for_latest_version_not_found()
   local result = home.scan_for_latest_version("nonexistent", tmp)
   lu.assertNil(result)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_scan_for_latest_version_bin_subdir()
@@ -855,7 +834,7 @@ function test_scan_for_latest_version_bin_subdir()
   lu.assertEquals(result.version, "2025.12.07")
   lu.assertEquals(result.path, bin_path)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
@@ -874,7 +853,7 @@ function test_update_symlink_create()
   lu.assertNotNil(st)
   lu.assertTrue(unix.S_ISLNK(st:mode()))
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_update_symlink_replace()
@@ -900,7 +879,7 @@ function test_update_symlink_replace()
   f:close()
   lu.assertEquals(content, "new content")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_update_symlink_fails_on_regular_file()
@@ -914,7 +893,7 @@ function test_update_symlink_fails_on_regular_file()
   lu.assertFalse(ok)
   lu.assertStrContains(err, "not a symlink")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_update_symlink_dry_run()
@@ -936,7 +915,7 @@ function test_update_symlink_dry_run()
 
   lu.assertStrContains(stdout:get(), "would link")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
@@ -959,7 +938,7 @@ function test_cmd_3p_empty_share()
   })
   lu.assertEquals(code, 0)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_cmd_3p_creates_symlinks()
@@ -987,7 +966,7 @@ function test_cmd_3p_creates_symlinks()
   lu.assertNotNil(st)
   lu.assertTrue(unix.S_ISLNK(st:mode()))
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_cmd_3p_list()
@@ -1011,7 +990,7 @@ function test_cmd_3p_list()
 
   lu.assertStrContains(stdout:get(), "rg 14.1.1-abcd1234")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_cmd_3p_dry_run_verbose()
@@ -1042,7 +1021,7 @@ function test_cmd_3p_dry_run_verbose()
   local st = unix.stat(link, unix.AT_SYMLINK_NOFOLLOW)
   lu.assertNil(st)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_cmd_3p_nvim_site_symlink()
@@ -1086,7 +1065,7 @@ function test_cmd_3p_nvim_site_symlink()
   f:close()
   lu.assertEquals(content, "site")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
@@ -1109,7 +1088,7 @@ function test_main_3p()
   })
   lu.assertEquals(code, 0)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_cmd_help_output()
@@ -1144,7 +1123,7 @@ function test_scan_for_latest_version_path_format()
   lu.assertStrContains(result.path, "14.1.1-abcd1234")
   lu.assertNotStrContains(result.path, "0.0.0-")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_scan_for_latest_version_rejects_invalid_paths()
@@ -1160,7 +1139,7 @@ function test_scan_for_latest_version_rejects_invalid_paths()
   local result = home.scan_for_latest_version("rg", share_dir)
   lu.assertNil(result)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
