@@ -40,7 +40,8 @@ local function strip_components(source_dir, dest_dir, strip)
       end
     end
     if #entries ~= 1 then
-      return nil, string.format("cannot strip %d components: expected 1 entry at level %d, found %d", strip, i, #entries)
+      local msg = "cannot strip %d components: expected 1 entry at level %d, found %d"
+      return nil, string.format(msg, strip, i, #entries)
     end
     local entry = path.join(current, entries[1])
     local stat = unix.stat(entry)
@@ -65,7 +66,8 @@ local function strip_components(source_dir, dest_dir, strip)
     end
   end
   if #entries ~= 1 then
-    return nil, string.format("cannot strip %d components: expected 1 entry at level %d, found %d", strip, strip, #entries)
+    local msg = "cannot strip %d components: expected 1 entry at level %d, found %d"
+    return nil, string.format(msg, strip, strip, #entries)
   end
   local final_entry = path.join(current, entries[1])
   local stat = unix.stat(final_entry)

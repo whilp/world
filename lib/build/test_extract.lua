@@ -118,8 +118,6 @@ function TestZipExtractNoStrip:tearDown()
 end
 
 function TestZipExtractNoStrip:test_extracts_directly()
-  local extract = dofile("lib/build/extract.lua")
-
   local version_file = path.join(tmp_dir, "version.lua")
   write_file(version_file, [[
 return {
