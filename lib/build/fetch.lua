@@ -55,7 +55,7 @@ local function main(version_file, platform, output, binary)
     return nil, "unknown platform: " .. platform
   end
 
-  local vars = {binary = binary}
+  local vars = {binary = binary, platform = platform}
   -- copy top-level spec fields (version, tag, etc)
   for k, v in pairs(spec) do
     if type(v) ~= "table" then
