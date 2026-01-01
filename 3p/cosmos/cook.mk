@@ -27,6 +27,6 @@ o/%/cosmos/test.ok: 3p/cosmos/test.lua $(cosmos_bins) $(runner)
 	TEST_BIN_DIR=o/$*/cosmos $(runner) $< $@
 
 cosmos-latest: | $(lua_bin)
-	lua 3p/cosmos/latest.lua > $(cosmos_version)
+	3p/cosmos/latest.lua > $(cosmos_version)
 
 .PHONY: cosmos-latest
