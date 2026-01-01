@@ -57,7 +57,7 @@ jobs:
 
           # For linux-x86_64, use shell commands to avoid APE lua issues
           # The APE lua has issues with unix.open on the same platform
-          version=$(o/any/lua/bin/lua -e 'local s = dofile("3p/cosmos/version.lua"); print(s.version .. "-" .. s.platforms["linux-x86_64"].sha:sub(1,8))')
+          version=$(o/any/lua/bin/lua -e 'local s = dofile("3p/cosmos/version.lua"); local p = s.platforms["*"] or s.platforms; print(s.version .. "-" .. p.sha:sub(1,8))')
           echo "Cosmos version: $version"
 
           for b in lua zip unzip; do
