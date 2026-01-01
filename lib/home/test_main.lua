@@ -1167,8 +1167,11 @@ end
 -- Test: detect_platform
 --------------------------------------------------------------------------------
 function test_detect_platform_returns_string()
-  local platform = home.detect_platform()
-  lu.assertNotNil(platform)
+  local cosmo = require("cosmo")
+  print("DEBUG: GetHostOs=" .. tostring(cosmo.GetHostOs()) .. " GetHostIsa=" .. tostring(cosmo.GetHostIsa()))
+  local platform, err = home.detect_platform()
+  print("DEBUG: platform=" .. tostring(platform) .. " err=" .. tostring(err))
+  lu.assertNotNil(platform, "detect_platform failed: " .. tostring(err))
   lu.assertTrue(type(platform) == "string")
   -- Platform should be one of the known values
   lu.assertTrue(
