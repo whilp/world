@@ -118,7 +118,7 @@ end
 -- Test: copy_file - Basic copy
 --------------------------------------------------------------------------------
 function test_copy_file_basic()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = TEST_TMPDIR
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
 
@@ -133,13 +133,12 @@ function test_copy_file_basic()
   f:close()
   lu.assertEquals(content, "hello world")
 
-  unix.rmrf(tmp)
 end
 
 function test_copy_file_with_mode()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
-  local src = path.join(tmp, "source.txt")
-  local dst = path.join(tmp, "dest.txt")
+  local tmp = TEST_TMPDIR
+  local src = path.join(tmp, "source_mode.txt")
+  local dst = path.join(tmp, "dest_mode.txt")
 
   cosmo.Barf(src, "executable")
 
@@ -151,14 +150,13 @@ function test_copy_file_with_mode()
   local mode_bits = st:mode() & 0x1FF
   lu.assertEquals(mode_bits, tonumber("755", 8))
 
-  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
 -- Test: copy_file - Overwrite behavior
 --------------------------------------------------------------------------------
 function test_copy_file_no_overwrite_fails()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = TEST_TMPDIR
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
 
@@ -174,11 +172,10 @@ function test_copy_file_no_overwrite_fails()
   f:close()
   lu.assertEquals(content, "existing content")
 
-  unix.rmrf(tmp)
 end
 
 function test_copy_file_overwrite_succeeds()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = TEST_TMPDIR
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
 
@@ -193,18 +190,16 @@ function test_copy_file_overwrite_succeeds()
   f:close()
   lu.assertEquals(content, "new content")
 
-  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
 -- Test: copy_file - Source doesn't exist
 --------------------------------------------------------------------------------
 function test_copy_file_source_missing()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = TEST_TMPDIR
   local ok, err = home.copy_file(path.join(tmp, "nonexistent"), path.join(tmp, "dest"))
   lu.assertFalse(ok)
   lu.assertStrContains(err, "failed to open source")
-  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
@@ -245,7 +240,7 @@ end
 -- Test: cmd_unpack silent by default
 --------------------------------------------------------------------------------
 function test_cmd_unpack_silent_by_default()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = TEST_TMPDIR
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -273,15 +268,17 @@ function test_cmd_unpack_silent_by_default()
   lu.assertEquals(stderr:get(), "")
   lu.assertEquals(stdout:get(), "")
 
-  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
 -- Test: cmd_unpack verbose mode
 --------------------------------------------------------------------------------
 function test_cmd_unpack_verbose()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = TEST_TMPDIR
   local zip_root = path.join(tmp, "zip/")
+  local dest = path.join(tmp, "dest")
+  unix.rmrf(zip_root)
+  unix.rmrf(dest)
   unix.makedirs(zip_root)
 
   cosmo.Barf(zip_root .. ".zshrc", "zsh content")
@@ -294,7 +291,6 @@ function test_cmd_unpack_verbose()
     },
   }
 
-  local dest = path.join(tmp, "dest")
   local stdout = mock_writer()
 
   local code = home.cmd_unpack(dest, false, {
@@ -309,11 +305,10 @@ function test_cmd_unpack_verbose()
   lu.assertStrContains(output, ".zshrc\n")
   lu.assertStrContains(output, ".bashrc\n")
 
-  unix.rmrf(tmp)
 end
 
 function test_cmd_unpack_verbose_force_overwrite()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = TEST_TMPDIR
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -342,14 +337,13 @@ function test_cmd_unpack_verbose_force_overwrite()
   local output = stdout:get()
   lu.assertStrContains(output, ".testfile (overwritten)\n")
 
-  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
 -- Test: cmd_unpack dry-run mode
 --------------------------------------------------------------------------------
 function test_cmd_unpack_dry_run()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = TEST_TMPDIR
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -375,11 +369,10 @@ function test_cmd_unpack_dry_run()
   local f = io.open(path.join(dest, ".testfile"), "r")
   lu.assertNil(f)
 
-  unix.rmrf(tmp)
 end
 
 function test_cmd_unpack_dry_run_verbose()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = TEST_TMPDIR
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -410,14 +403,13 @@ function test_cmd_unpack_dry_run_verbose()
   local f = io.open(path.join(dest, ".zshrc"), "r")
   lu.assertNil(f)
 
-  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
 -- Test: cmd_unpack --only filter
 --------------------------------------------------------------------------------
 function test_cmd_unpack_only_filter()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = TEST_TMPDIR
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -459,11 +451,10 @@ function test_cmd_unpack_only_filter()
   local bash = io.open(path.join(dest, ".bashrc"), "r")
   lu.assertNil(bash)
 
-  unix.rmrf(tmp)
 end
 
 function test_cmd_unpack_only_empty_filter()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = TEST_TMPDIR
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -490,11 +481,10 @@ function test_cmd_unpack_only_empty_filter()
   local f = io.open(path.join(dest, ".zshrc"), "r")
   lu.assertNil(f)
 
-  unix.rmrf(tmp)
 end
 
 function test_cmd_unpack_only_null_delimited()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = TEST_TMPDIR
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -537,7 +527,6 @@ function test_cmd_unpack_only_null_delimited()
   local bash = io.open(path.join(dest, ".bashrc"), "r")
   lu.assertNil(bash)
 
-  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
@@ -638,7 +627,7 @@ end
 -- Test: read_file
 --------------------------------------------------------------------------------
 function test_read_file_success()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = TEST_TMPDIR
   local file_path = path.join(tmp, "test.txt")
   cosmo.Barf(file_path, "test content")
 
@@ -646,7 +635,6 @@ function test_read_file_success()
   lu.assertNil(err)
   lu.assertEquals(data, "test content")
 
-  unix.rmrf(tmp)
 end
 
 function test_read_file_not_found()
@@ -682,7 +670,7 @@ end
 -- Test: 3p binaries in .local/share structure
 --------------------------------------------------------------------------------
 function test_unpack_3p_binary_structure()
-  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
+  local tmp = TEST_TMPDIR
   local zip_root = path.join(tmp, "zip/")
 
   -- Create versioned binary structure
@@ -722,7 +710,6 @@ function test_unpack_3p_binary_structure()
   mode_bits = st:mode() & 0x1FF
   lu.assertEquals(mode_bits, tonumber("755", 8), "rg should be executable")
 
-  unix.rmrf(tmp)
 end
 
 function test_list_includes_3p_binaries()

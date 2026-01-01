@@ -9,8 +9,6 @@ if not has_posix then
   os.exit(lu.LuaUnit.run())
 end
 
-local unix = require("cosmo.unix")
-
 local data = require("work.data")
 local store = require("work.store")
 local Work = require("work.test_lib")
@@ -20,12 +18,11 @@ TestFileLocking = {}
 
 function TestFileLocking:setUp()
   store.reset(test_store)
-  self.test_dir = unix.mkdtemp("/tmp/work-test-XXXXXX")
+  self.test_dir = TEST_TMPDIR
 end
 
 function TestFileLocking:tearDown()
   data.release_lock()
-  unix.rmrf(self.test_dir)
   data._lock_handle = nil
   data._lock_path = nil
 end

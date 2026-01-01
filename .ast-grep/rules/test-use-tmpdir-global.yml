@@ -1,0 +1,22 @@
+id: test-use-tmpdir-global
+language: lua
+severity: warning
+message: |
+  Tests should use TEST_TMPDIR global instead of calling unix.mkdtemp() directly.
+
+  Example:
+    Bad:  local tmpdir = unix.mkdtemp("/tmp/test_XXXXXX")
+    Good: local tmpdir = TEST_TMPDIR
+note: The test runner provides TEST_TMPDIR which is automatically created and cleaned up.
+
+files:
+  - "**/test*.lua"
+  - "**/test.lua"
+
+ignores:
+  - "lib/build/test.lua"
+
+rule:
+  any:
+    - pattern: unix.mkdtemp($$$)
+    - pattern: $X.mkdtemp($$$)
