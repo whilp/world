@@ -37,12 +37,20 @@ $(lua_bin):
 cosmos: o/$(current_platform)/cosmos/bin/lua
 lua: o/$(current_platform)/lua/bin/lua.dist
 
-# TODO: rewrite these targets
+ast_grep := o/$(current_platform)/ast-grep/bin/ast-grep
+lua_dist := o/$(current_platform)/lua/bin/lua.dist
+checker := lib/build/check.lua
+
+check: $(ast_grep) $(lua_dist)
+	@echo "Running ast-grep..."
+	$(ast_grep) scan --color always
+	@echo ""
+	@echo "Running luacheck..."
+	$(lua_dist) $(checker) lib 3p
+
+# TODO: rewrite home target
 home:
 	@echo "TODO: home target not yet rewritten"
-
-check:
-	@echo "TODO: check target not yet rewritten"
 
 test: lib-test $(subst %,$(current_platform),$(tests))
 	@echo "All tests passed"

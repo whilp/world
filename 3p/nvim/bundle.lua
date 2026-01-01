@@ -78,10 +78,10 @@ local function fetch_plugin_inline(plugin_name, output_dir, pack_lock_data)
   -- ensure parent directory exists
   unix.makedirs(path.dirname(output_dir))
 
-  local status, headers, body
+  local status, _, body
   local fetch_opts = {headers = {["User-Agent"] = "curl/8.0"}, maxresponse = 300 * 1024 * 1024}
   for attempt = 1, 8 do
-    status, headers, body = cosmo.Fetch(url, fetch_opts)
+    status, _, body = cosmo.Fetch(url, fetch_opts)
     if status then break end
     if attempt < 8 then
       unix.nanosleep(math.min(30, 2 ^ attempt), 0)
@@ -97,9 +97,9 @@ local function fetch_plugin_inline(plugin_name, output_dir, pack_lock_data)
   unix.close(fd)
 
   unix.makedirs(output_dir)
-  local ok, err = execute("tar", {"tar", "-xzf", tarball, "-C", output_dir, "--strip-components=1"})
+  local ok, extract_err = execute("tar", {"tar", "-xzf", tarball, "-C", output_dir, "--strip-components=1"})
   unix.unlink(tarball)
-  if not ok then return nil, err end
+  if not ok then return nil, extract_err end
   return true
 end
 
