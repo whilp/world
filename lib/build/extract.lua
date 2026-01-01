@@ -141,8 +141,35 @@ local function extract_targz(archive, dest_dir, strip)
   return true
 end
 
+local function read_gzip_timestamp(archive)
+  local fd = unix.open(archive, unix.O_RDONLY)
+  if not fd then
+    return nil
+  end
+  local header = unix.read(fd, 10)
+  unix.close(fd)
+
+  if not header or #header < 10 then
+    return nil
+  end
+
+  -- gzip header bytes 4-7 contain the modification time (little-endian 32-bit)
+  local b1, b2, b3, b4 = header:byte(5, 8)
+  local timestamp = b1 + b2 * 256 + b3 * 65536 + b4 * 16777216
+
+  -- return 0 if timestamp is not set in gzip header
+  if timestamp == 0 then
+    return nil
+  end
+
+  return timestamp
+end
+
 local function extract_gz(archive, dest_dir, tool_name)
   local dest = path.join(dest_dir, tool_name)
+
+  local timestamp = read_gzip_timestamp(archive)
+
   local handle = spawn({"gunzip", "-c", archive})
   local ok, output, exit_code = handle:read()
   if not ok then
@@ -153,6 +180,11 @@ local function extract_gz(archive, dest_dir, tool_name)
     return nil, "failed to create " .. dest
   end
   unix.write(fd, output)
+
+  if timestamp then
+    unix.futimens(fd, timestamp, 0, timestamp, 0)
+  end
+
   unix.close(fd)
   return true
 end
