@@ -49,22 +49,7 @@ local ok, output = handle:read()
 end
 
 function TestAstGrepRules:test_avoid_magic_number_positive()
-  local code = [[
-if status == 256 then
-  print("found")
-end
-if kind ~= 8 then
-  return
-end
-if 42 == value then
-  process()
-end
-]]
-  local filepath = write_test_file("test_magic_bad.lua", code)
-  local status = run_ast_grep(filepath, "avoid-magic-number-comparison")
-  -- skip: rule uses constraints that don't work properly with ast-grep's lua support
-  lu.assertEquals(status, 0, "rule currently doesn't match due to constraint issues")
-  unix.unlink(filepath)
+  lu.skip("rule uses constraints that don't work with ast-grep lua support")
 end
 
 function TestAstGrepRules:test_avoid_magic_number_negative()
@@ -160,19 +145,7 @@ package.loaded["module"] = nil
 end
 
 function TestAstGrepRules:test_main_exit_pattern_positive()
-  local code = [[
-local function main(arg)
-  if #arg == 0 then
-    os.exit(1)
-  end
-  unix.exit(0)
-end
-]]
-  local filepath = write_test_file("test_main_exit_bad.lua", code)
-  local status = run_ast_grep(filepath, "main-exit-pattern")
-  -- skip: rule uses inside constraint that doesn't work properly with ast-grep's lua support
-  lu.assertEquals(status, 0, "rule currently doesn't match due to constraint issues")
-  unix.unlink(filepath)
+  lu.skip("rule uses inside constraint that doesn't work with ast-grep lua support")
 end
 
 function TestAstGrepRules:test_main_exit_pattern_negative()
@@ -197,21 +170,7 @@ end
 end
 
 function TestAstGrepRules:test_main_stderr_pattern_positive()
-  local code = [[
-local function main(opts)
-  io.stderr:write("error occurred\n")
-  return 1
-end
-
-function main(arg)
-  io.stderr:write("usage: command [options]\n")
-end
-]]
-  local filepath = write_test_file("test_main_stderr_bad.lua", code)
-  local status = run_ast_grep(filepath, "main-stderr-pattern")
-  -- skip: rule uses inside constraint that doesn't work properly with ast-grep's lua support
-  lu.assertEquals(status, 0, "rule currently doesn't match due to constraint issues")
-  unix.unlink(filepath)
+  lu.skip("rule uses inside constraint that doesn't work with ast-grep lua support")
 end
 
 function TestAstGrepRules:test_main_stderr_pattern_negative()
