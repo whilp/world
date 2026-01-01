@@ -37,11 +37,9 @@ end
 
 local function spawn(argv, opts)
 	opts = opts or {}
-	local cmd
-	if argv[1]:find("/") then
-		cmd = argv[1]
-	else
-		cmd = unix.commandv(argv[1])
+
+	if not argv[1]:find("/") then
+		local cmd = unix.commandv(argv[1])
 		if not cmd then
 			return nil, "command not found: " .. argv[1]
 		end
@@ -94,13 +92,17 @@ local function spawn(argv, opts)
 			unix.close(stderr_w)
 		end
 
-		local full_argv = {cmd}
-		for i = 2, #argv do
-			table.insert(full_argv, argv[i])
-		end
 		local env = opts.env or unix.environ()
-		unix.execve(cmd, full_argv, env)
+		if argv[1]:find("/") then
+			unix.execve(argv[1], argv, env)
+		else
+			unix.execvpe(argv[1], argv, env)
+		end
 		os.exit(127)
+	end
+
+	if pid == nil then
+		return nil, "fork failed"
 	end
 
 	if not stdin_is_fd then

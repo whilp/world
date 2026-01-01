@@ -2,50 +2,6 @@ local unix = require("cosmo.unix")
 
 local M = {}
 
-M.daemon = function(opts)
-  opts = opts or {}
-
-  local pid = unix.fork()
-  if pid == nil then
-    return nil, "first fork failed"
-  end
-  if pid > 0 then
-    unix.exit(0)
-  end
-
-  if not unix.setsid() then
-    return nil, "setsid failed"
-  end
-
-  pid = unix.fork()
-  if pid == nil then
-    return nil, "second fork failed"
-  end
-  if pid > 0 then
-    unix.exit(0)
-  end
-
-  unix.umask(0)
-
-  if not opts.nochdir then
-    unix.chdir("/")
-  end
-
-  if not opts.noclose then
-    local null_fd = unix.open("/dev/null", unix.O_RDWR)
-    if null_fd then
-      unix.dup(null_fd, 0)
-      unix.dup(null_fd, 1)
-      unix.dup(null_fd, 2)
-      if null_fd > 2 then
-        unix.close(null_fd)
-      end
-    end
-  end
-
-  return true
-end
-
 M.write_pidfile = function(path)
   if not path or path == "" then
     return nil, "pid file path required"

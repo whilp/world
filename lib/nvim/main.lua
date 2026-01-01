@@ -1,8 +1,8 @@
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
-local daemonize = require("daemonize")
 local version = require("version")
 local whereami = require("whereami")
+local daemonize = require("daemonize")
 
 local HOME = os.getenv("HOME")
 local DEFAULT_SOCK = path.join(HOME, ".config", "nvim", "nvim.sock")
@@ -205,9 +205,9 @@ local function cmd_start(paths, nvim_bin)
 
   local child_pid = unix.fork()
   if child_pid == 0 then
-    ok, err = daemonize.daemon({nochdir = true, noclose = true})
+    ok = unix.daemon(true, true)
     if not ok then
-      io.stderr:write("daemonize failed: " .. err .. "\n")
+      io.stderr:write("daemon failed\n")
       unix.exit(1)
     end
 
