@@ -6,7 +6,7 @@ local cosmo = require("cosmo")
 
 local lua_dist = path.join(os.getenv("TEST_BIN_DIR"):gsub("/tl$", "/lua"), "bin", "lua.dist")
 local tl_bin = path.join(os.getenv("TEST_BIN_DIR"), "bin", "tl")
-local tmpdir = os.getenv("TEST_TMPDIR") or "/tmp"
+local tmpdir = TEST_TMPDIR or "/tmp"
 
 TestTealTypeCheck = {}
 
