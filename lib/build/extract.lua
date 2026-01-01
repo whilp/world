@@ -99,11 +99,11 @@ end
 
 local function extract_zip(archive, dest_dir, strip)
   strip = strip or 0
-  local temp_dir = dest_dir .. ".tmp"
-  unix.rmrf(temp_dir)
-  unix.makedirs(temp_dir)
+  -- temp_dir must be on same filesystem as dest_dir for rename to work
+  local temp_dir = unix.mkdtemp(path.join(path.dirname(dest_dir), ".extract_XXXXXX"))
   clear_dir(dest_dir)
 
+  -- TODO: re-enable unveil; it binds to inodes so rmrf+makedirs breaks access
   -- use absolute path to avoid cosmopolitan binary issues with unveil
   local handle = spawn({"/usr/bin/unzip", "-o", "-d", temp_dir, archive})
   local exit_code = handle:wait()
@@ -122,9 +122,8 @@ end
 
 local function extract_targz(archive, dest_dir, strip)
   strip = strip or 0
-  local temp_dir = dest_dir .. ".tmp"
-  unix.rmrf(temp_dir)
-  unix.makedirs(temp_dir)
+  -- temp_dir must be on same filesystem as dest_dir for rename to work
+  local temp_dir = unix.mkdtemp(path.join(path.dirname(dest_dir), ".extract_XXXXXX"))
   clear_dir(dest_dir)
 
   local handle = spawn({"tar", "-xzf", archive, "-C", temp_dir})
@@ -164,8 +163,7 @@ local function main(version_file, platform, input, dest_dir)
   end
 
   unix.makedirs(dest_dir)
-  -- TODO: re-enable unveil once we handle temp_dir inode changes after rmrf
-  -- unveil binds to inode, so rmrf+makedirs breaks access
+  -- TODO: re-enable unveil (disabled because it binds to inodes, breaks after rmrf)
 
   local ok, spec = pcall(dofile, version_file)
   if not ok then
@@ -206,3 +204,10 @@ if not pcall(debug.getlocal, 4, 1) then
     os.exit(1)
   end
 end
+
+return {
+  extract_zip = extract_zip,
+  extract_targz = extract_targz,
+  extract_gz = extract_gz,
+  strip_components = strip_components,
+}

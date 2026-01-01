@@ -4,6 +4,8 @@ local path = require("cosmo.path")
 local spawn = require("spawn").spawn
 local cosmo = require("cosmo")
 
+local extract = dofile("lib/build/extract.lua")
+
 local tmp_dir = unix.mkdtemp("/tmp/test_extract_XXXXXX")
 
 local function file_exists(filepath)
@@ -118,23 +120,11 @@ function TestZipExtractNoStrip:tearDown()
 end
 
 function TestZipExtractNoStrip:test_extracts_directly()
-  local version_file = path.join(tmp_dir, "version.lua")
-  write_file(version_file, [[
-return {
-  format = "zip",
-  strip_components = 0,
-  platforms = { ["*"] = {} }
-}
-]])
+  local ok, err = extract.extract_zip(self.archive, self.dest, 0)
 
-  local handle = spawn({"o/any/lua/bin/lua", "lib/build/extract.lua", version_file, "*", self.archive, self.dest})
-  local exit_code = handle:wait()
-
-  lu.assertEquals(exit_code, 0, "extract should succeed")
+  lu.assertTrue(ok, "extract should succeed: " .. tostring(err))
   lu.assertTrue(file_exists(path.join(self.dest, "file1.txt")))
   lu.assertTrue(file_exists(path.join(self.dest, "file2.txt")))
-
-  unix.rmrf(version_file)
 end
 
 TestZipExtractWithStrip = {}
@@ -152,24 +142,12 @@ function TestZipExtractWithStrip:tearDown()
 end
 
 function TestZipExtractWithStrip:test_strips_wrapper_directory()
-  local version_file = path.join(tmp_dir, "version.lua")
-  write_file(version_file, [[
-return {
-  format = "zip",
-  strip_components = 1,
-  platforms = { ["*"] = {} }
-}
-]])
+  local ok, err = extract.extract_zip(self.archive, self.dest, 1)
 
-  local handle = spawn({"o/any/lua/bin/lua", "lib/build/extract.lua", version_file, "*", self.archive, self.dest})
-  local exit_code = handle:wait()
-
-  lu.assertEquals(exit_code, 0, "extract should succeed")
+  lu.assertTrue(ok, "extract should succeed: " .. tostring(err))
   lu.assertTrue(file_exists(path.join(self.dest, "file1.txt")))
   lu.assertTrue(file_exists(path.join(self.dest, "file2.txt")))
   lu.assertFalse(file_exists(path.join(self.dest, "wrapper-1.0")))
-
-  unix.rmrf(version_file)
 end
 
 TestTarGzExtractNoStrip = {}
@@ -187,23 +165,11 @@ function TestTarGzExtractNoStrip:tearDown()
 end
 
 function TestTarGzExtractNoStrip:test_extracts_directly()
-  local version_file = path.join(tmp_dir, "version.lua")
-  write_file(version_file, [[
-return {
-  format = "tar.gz",
-  strip_components = 0,
-  platforms = { ["*"] = {} }
-}
-]])
+  local ok, err = extract.extract_targz(self.archive, self.dest, 0)
 
-  local handle = spawn({"o/any/lua/bin/lua", "lib/build/extract.lua", version_file, "*", self.archive, self.dest})
-  local exit_code = handle:wait()
-
-  lu.assertEquals(exit_code, 0, "extract should succeed")
+  lu.assertTrue(ok, "extract should succeed: " .. tostring(err))
   lu.assertTrue(file_exists(path.join(self.dest, "file1.txt")))
   lu.assertTrue(file_exists(path.join(self.dest, "file2.txt")))
-
-  unix.rmrf(version_file)
 end
 
 TestTarGzExtractWithStrip = {}
@@ -221,24 +187,12 @@ function TestTarGzExtractWithStrip:tearDown()
 end
 
 function TestTarGzExtractWithStrip:test_strips_wrapper_directory()
-  local version_file = path.join(tmp_dir, "version.lua")
-  write_file(version_file, [[
-return {
-  format = "tar.gz",
-  strip_components = 1,
-  platforms = { ["*"] = {} }
-}
-]])
+  local ok, err = extract.extract_targz(self.archive, self.dest, 1)
 
-  local handle = spawn({"o/any/lua/bin/lua", "lib/build/extract.lua", version_file, "*", self.archive, self.dest})
-  local exit_code = handle:wait()
-
-  lu.assertEquals(exit_code, 0, "extract should succeed")
+  lu.assertTrue(ok, "extract should succeed: " .. tostring(err))
   lu.assertTrue(file_exists(path.join(self.dest, "file1.txt")))
   lu.assertTrue(file_exists(path.join(self.dest, "file2.txt")))
   lu.assertFalse(file_exists(path.join(self.dest, "wrapper-1.0")))
-
-  unix.rmrf(version_file)
 end
 
 TestStripComponentsErrors = {}
@@ -256,21 +210,9 @@ function TestStripComponentsErrors:tearDown()
 end
 
 function TestStripComponentsErrors:test_too_many_components_fails()
-  local version_file = path.join(tmp_dir, "version.lua")
-  write_file(version_file, [[
-return {
-  format = "zip",
-  strip_components = 3,
-  platforms = { ["*"] = {} }
-}
-]])
+  local ok = extract.extract_zip(self.archive, self.dest, 3)
 
-  local handle = spawn({"o/any/lua/bin/lua", "lib/build/extract.lua", version_file, "*", self.archive, self.dest})
-  local exit_code = handle:wait()
-
-  lu.assertNotEquals(exit_code, 0, "extract should fail when stripping too many components")
-
-  unix.rmrf(version_file)
+  lu.assertNil(ok, "extract should fail when stripping too many components")
 end
 
 -- Test strip_components=2 where final entry is a file (like superhtml archives)
@@ -306,20 +248,8 @@ function TestStripComponentsDeepFile:tearDown()
 end
 
 function TestStripComponentsDeepFile:test_strips_to_file()
-  local version_file = path.join(tmp_dir, "version.lua")
-  write_file(version_file, [[
-return {
-  format = "tar.gz",
-  strip_components = 2,
-  platforms = { ["*"] = {} }
-}
-]])
+  local ok, err = extract.extract_targz(self.archive, self.dest, 2)
 
-  local handle = spawn({"o/any/lua/bin/lua", "lib/build/extract.lua", version_file, "*", self.archive, self.dest})
-  local exit_code = handle:wait()
-
-  lu.assertEquals(exit_code, 0, "extract should succeed")
+  lu.assertTrue(ok, "extract should succeed: " .. tostring(err))
   lu.assertTrue(file_exists(path.join(self.dest, "binary")))
-
-  unix.rmrf(version_file)
 end
