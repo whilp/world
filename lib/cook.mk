@@ -1,5 +1,6 @@
 lib_lua_modules :=
 lib_dirs :=
+lib_libs :=
 lib_tests :=
 
 include lib/spawn/cook.mk
