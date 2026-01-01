@@ -51,9 +51,9 @@ local function verify_sha256(content, expected)
   return nil, string.format("sha256 mismatch: expected %s, got %s", expected, actual)
 end
 
-local function main(version_file, platform, output, binary)
+local function main(version_file, platform, output)
   if not version_file or not platform or not output then
-    return nil, "usage: fetch.lua <version_file> <platform> <output> [binary]"
+    return nil, "usage: fetch.lua <version_file> <platform> <output>"
   end
 
   local output_dir = path.dirname(output)
