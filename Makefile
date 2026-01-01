@@ -48,9 +48,7 @@ check: $(ast_grep) $(lua_dist)
 	@echo "Running luacheck..."
 	$(lua_dist) $(checker) lib 3p
 
-# TODO: rewrite home target
-home:
-	@echo "TODO: home target not yet rewritten"
+# home target is defined in lib/home/cook.mk but needs more work
 
 test: lib-test $(subst %,$(current_platform),$(tests))
 	@echo "All tests passed"
@@ -58,4 +56,4 @@ test: lib-test $(subst %,$(current_platform),$(tests))
 clean:
 	rm -rf o
 
-.PHONY: bootstrap clean cosmos lua home check test
+.PHONY: bootstrap clean cosmos lua check test

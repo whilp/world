@@ -114,7 +114,5 @@ results/bin/home: $(lua_bin) results/dotfiles.zip $(home_platform_deps) lib/home
 	@cd results/home-universal && $(cosmos_zip_bin) -qr $(CURDIR)/$@ .lua
 	@rm -rf results/home-universal
 
-# TODO: rewrite home target
-# home: results/bin/home ## Build universal home binary
 
 .PHONY: platform-assets
