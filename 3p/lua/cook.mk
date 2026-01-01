@@ -18,10 +18,3 @@ o/%/lua-dist/bin/lua.ape: o/%/cosmos/bin/lua o/%/lua-dist/staging/.built
 o/%/lua-dist/bin/lua: o/%/lua-dist/bin/lua.ape
 	cp $< $@
 	./$@ --assimilate || true
-
-lua-dist: o/$(current_platform)/lua-dist/bin/lua ## Build distributable lua with bundled modules
-
-clean-lua-dist:
-	rm -rf o/*/lua-dist
-
-.PHONY: lua-dist clean-lua-dist
