@@ -7,6 +7,7 @@ lib_tests += o/any/build/test_install.ok
 lib_tests += o/any/build/test_fetch.ok
 lib_tests += o/any/build/test_extract.ok
 lib_tests += o/any/build/test_luacheck.ok
+lib_tests += o/any/build/test_ast_grep.ok
 
 o/any/build/lib/build/install.lua: lib/build/install.lua
 	mkdir -p $(@D)
@@ -27,3 +28,6 @@ o/any/build/test_extract.ok: lib/build/test_extract.lua lib/build/extract.lua $(
 
 o/any/build/test_luacheck.ok: lib/build/test_luacheck.lua lib/build/luacheck.lua $(luacheck_bin) $(runner)
 	TEST_BIN_DIR=o/$(current_platform)/luacheck $(runner) $< $@ $(CURDIR)/.luacheckrc
+
+o/any/build/test_ast_grep.ok: lib/build/test_ast_grep.lua lib/build/ast-grep.lua $(ast_grep) $(runner)
+	TEST_BIN_DIR=o/$(current_platform)/ast-grep $(runner) $< $@ $(CURDIR)/sgconfig.yml $(CURDIR)/.ast-grep
