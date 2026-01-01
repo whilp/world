@@ -121,13 +121,6 @@ end
 
 local function extract_zip(archive, dest_dir, strip)
   strip = strip or 0
-
-  local archive_stat = unix.stat(archive)
-  if not archive_stat then
-    return nil, "failed to stat archive " .. archive
-  end
-  local archive_mtime = archive_stat:mtim()
-
   -- temp_dir must be on same filesystem as dest_dir for rename to work
   local temp_dir = unix.mkdtemp(path.join(path.dirname(dest_dir), ".extract_XXXXXX"))
   clear_dir(dest_dir)
@@ -146,20 +139,11 @@ local function extract_zip(archive, dest_dir, strip)
   if not ok then
     return nil, err
   end
-
-  set_timestamps_recursive(dest_dir, archive_mtime)
   return true
 end
 
 local function extract_targz(archive, dest_dir, strip)
   strip = strip or 0
-
-  local archive_stat = unix.stat(archive)
-  if not archive_stat then
-    return nil, "failed to stat archive " .. archive
-  end
-  local archive_mtime = archive_stat:mtim()
-
   -- temp_dir must be on same filesystem as dest_dir for rename to work
   local temp_dir = unix.mkdtemp(path.join(path.dirname(dest_dir), ".extract_XXXXXX"))
   clear_dir(dest_dir)
@@ -176,20 +160,11 @@ local function extract_targz(archive, dest_dir, strip)
   if not ok then
     return nil, err
   end
-
-  set_timestamps_recursive(dest_dir, archive_mtime)
   return true
 end
 
 local function extract_gz(archive, dest_dir, tool_name)
   local dest = path.join(dest_dir, tool_name)
-
-  local archive_stat = unix.stat(archive)
-  if not archive_stat then
-    return nil, "failed to stat archive " .. archive
-  end
-  local archive_mtime = archive_stat:mtim()
-
   local handle = spawn({"gunzip", "-c", archive})
   local ok, output, exit_code = handle:read()
   if not ok then
@@ -200,7 +175,6 @@ local function extract_gz(archive, dest_dir, tool_name)
     return nil, "failed to create " .. dest
   end
   unix.write(fd, output)
-  unix.futimens(fd, archive_mtime, 0, archive_mtime, 0)
   unix.close(fd)
   return true
 end
@@ -226,6 +200,12 @@ local function main(version_file, platform, input, dest_dir)
   local format = plat.format or spec.format or "binary"
   local strip = plat.strip_components or spec.strip_components or 0
 
+  local archive_stat = unix.stat(input)
+  if not archive_stat then
+    return nil, "failed to stat archive " .. input
+  end
+  local archive_mtime = archive_stat:mtim()
+
   local err
   if format == "zip" then
     ok, err = extract_zip(input, dest_dir, strip)
@@ -242,6 +222,7 @@ local function main(version_file, platform, input, dest_dir)
     return nil, err
   end
 
+  set_timestamps_recursive(dest_dir, archive_mtime)
   return true
 end
 
