@@ -4,10 +4,9 @@ tests += o/%/lua/test_release.ok
 
 o/%/lua/bin/lua.ape: o/%/cosmos/bin/lua $(lib_libs) $(libs) $(luaunit)
 	rm -rf o/$*/lua/staging
-	mkdir -p o/$*/lua/staging/.lua o/$*/lua/staging/.lua/bin $(@D)
+	mkdir -p o/$*/lua/staging/.lua $(@D)
 	$(foreach d,$(3p_lib_dirs),cp -r $(subst %,$*,$(d))/* o/$*/lua/staging/.lua/;)
 	$(foreach d,$(lib_dirs),cp -r $(d)/* o/$*/lua/staging/.lua/;)
-	cp 3p/luacheck/luacheck o/$*/lua/staging/.lua/bin/luacheck
 	cp o/$*/cosmos/bin/lua $@
 	chmod +x $@
 	cd o/$*/lua/staging && zip -qr $(CURDIR)/$@ .lua
