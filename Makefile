@@ -49,12 +49,24 @@ lua: o/$(current_platform)/lua/bin/lua.dist
 ast_grep := o/$(current_platform)/ast-grep/bin/ast-grep
 lua_dist := o/$(current_platform)/lua/bin/lua.dist
 
-check: $(ast_grep) $(lua_dist) ## Run ast-grep and luacheck
+tl_bin := o/$(current_platform)/tl/bin/tl
+
+check: $(ast_grep) $(lua_dist) $(tl_bin) ## Run ast-grep, luacheck, and teal
 	@echo "Running ast-grep..."
 	$(ast_grep) scan --color always
 	@echo ""
 	@echo "Running luacheck..."
 	$(lua_dist) -e 'arg={[0]="luacheck","."} require("luacheck.main")'
+	@echo ""
+	@echo "Running teal type checker..."
+	@if find . -name "*.tl" -type f ! -path "./o/*" 2>/dev/null | grep -q .; then \
+		find . -name "*.tl" -type f ! -path "./o/*" | while read -r file; do \
+			echo "Checking $$file..."; \
+			$(lua_dist) $(tl_bin) check "$$file" || exit 1; \
+		done; \
+	else \
+		echo "No .tl files found to check"; \
+	fi
 
 test: lib-test $(subst %,$(current_platform),$(tests))
 	@echo "All tests passed"
