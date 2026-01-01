@@ -329,5 +329,3 @@ local home = "/home/" .. user
   lu.assertEquals(status, 0, "should not detect mkdtemp or non-tmp concatenation")
   unix.unlink(filepath)
 end
-
-os.exit(lu.LuaUnit.run())
