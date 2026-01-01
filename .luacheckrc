@@ -10,6 +10,7 @@ exclude_files = {
   "**/*.mk",
   "**/*.ok",
   "**/*.sh",
+  "**/*.tl",
   "lib/home/.args",
   "lib/home/MANIFEST.txt",
 }

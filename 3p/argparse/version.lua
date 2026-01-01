@@ -1,11 +1,11 @@
 return {
-  version = "0.6.0",
+  version = "0.7.1",
   format = "tar.gz",
   strip_components = 1,
-  url = "https://github.com/mpeterv/argparse/archive/refs/tags/{version}.tar.gz",
+  url = "https://github.com/luarocks/argparse/archive/refs/tags/{version}.tar.gz",
   platforms = {
     ["*"] = {
-      sha = "0eddda29d591536bc7310b99ce7acc3e5e00557f18d6e63ab10d56683e8952f1",
+      sha = "d344e49404c3e7b3e7fa4fe6741c106f25909d9b24923cb08dcceda1f9754809",
     },
   },
 }
