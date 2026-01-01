@@ -27,12 +27,17 @@ end
 
 local function extract_gz(archive, dest_dir, tool_name)
   local dest = path.join(dest_dir, tool_name)
-  local handle = spawn({"sh", "-c", "gunzip -c " .. archive .. " > " .. dest})
-  local exit_code = handle:wait()
-  if exit_code ~= 0 then
-    return nil, "gunzip failed with exit code " .. exit_code
+  local handle = spawn({"gunzip", "-c", archive})
+  local ok, output, exit_code = handle:read()
+  if not ok then
+    return nil, "gunzip failed with exit code " .. (exit_code or "unknown")
   end
-  unix.chmod(dest, tonumber("755", 8))
+  local fd = unix.open(dest, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("755", 8))
+  if not fd then
+    return nil, "failed to create " .. dest
+  end
+  unix.write(fd, output)
+  unix.close(fd)
   return true
 end
 
