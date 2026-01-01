@@ -10,6 +10,11 @@ local PLATFORMS = {
     ["arm64"] = "darwin-arm64",
     ["aarch64"] = "darwin-arm64",
   },
+  -- cosmo.GetHostOs() returns "XNU" on macOS (the kernel name)
+  ["Xnu"] = {
+    ["arm64"] = "darwin-arm64",
+    ["aarch64"] = "darwin-arm64",
+  },
   ["Linux"] = {
     ["x86_64"] = "linux-x86_64",
     ["aarch64"] = "linux-arm64",
