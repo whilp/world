@@ -1,3 +1,4 @@
+local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local spawn = require('spawn').spawn
 
@@ -5,14 +6,13 @@ local function trim(s)
   return s:match('^%s*(.-)%s*$')
 end
 
-local function read_file(path)
-  local file = io.open(path, 'r')
-  if not file then
+local function read_file(filepath)
+  local content = cosmo.Slurp(filepath)
+  if not content then
     return nil
   end
-  local content = file:read('*l')
-  file:close()
-  return content and trim(content) or nil
+  local first_line = content:match('^[^\n]*')
+  return first_line and trim(first_line) or nil
 end
 
 local function file_exists(path)

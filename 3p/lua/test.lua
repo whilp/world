@@ -85,10 +85,8 @@ function test_lua_dist_excludes_test_files()
   -- check that test files and cook.mk are not included
   for _, pattern in ipairs(excluded_patterns) do
     local full_pattern = "%.lua/.*" .. pattern
-    -- this is a softer check - we just warn if found
-    if zip_contains(entries, full_pattern) then
-      io.stderr:write("WARNING: found excluded pattern in dist: " .. pattern .. "\n")
-    end
+    lu.assertFalse(zip_contains(entries, full_pattern),
+      "should not contain excluded pattern: " .. pattern)
   end
 end
 

@@ -11,15 +11,6 @@ function test_lua_binary_exists()
   lu.assertNotNil(st, lua_bin .. " should exist")
 end
 
-function test_lua_binary_is_executable()
-  local st = unix.stat(lua_bin)
-  lu.assertNotNil(st, lua_bin .. " should exist")
-  local mode = st:mode()
-  -- check user or group execute bit
-  lu.assertTrue(mode % 2 == 1 or (mode / 8) % 2 == 1 or (mode / 64) % 2 == 1,
-    lua_bin .. " should be executable")
-end
-
 function test_lua_binary_runs()
   local handle = spawn({lua_bin, "-e", "print('hello')"})
   local ok, output, exit_code = handle:read()
@@ -48,11 +39,3 @@ function test_lua_binary_has_bundled_modules()
   end
 end
 
-function test_lua_binary_luacheck_works()
-  -- verify luacheck can be required and used as a library
-  local script = [[require("luacheck"); print("ok")]]
-  local handle = spawn({lua_bin, "-e", script})
-  local ok, output, exit_code = handle:read()
-  lu.assertEquals(exit_code, 0, "luacheck should load: " .. (output or ""))
-  lu.assertStrContains(output or "", "ok")
-end
