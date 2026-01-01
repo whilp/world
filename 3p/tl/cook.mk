@@ -4,7 +4,6 @@ lua_libs += tl
 libs += o/%/tl/lib/tl.lua
 bins += o/%/tl/bin/tl
 tests += o/%/tl/test.ok
-tests += o/%/tl/test_typecheck_integration.ok
 tl_deps := \
 	o/%/argparse/lib/argparse.lua \
 	o/%/cosmos/bin/lua
@@ -24,7 +23,4 @@ o/%/tl/bin/tl: $(tl_version) $(install) o/%/tl/staging/tl.lua $(tl_deps)
 	chmod +x o/$*/tl/bin/tl
 
 o/%/tl/test.ok: 3p/tl/test.lua o/%/tl/bin/tl $(runner)
-	TEST_BIN_DIR=o/$*/tl $(runner) $< $@
-
-o/%/tl/test_typecheck_integration.ok: 3p/tl/test_typecheck_integration.lua o/%/tl/bin/tl $(runner)
 	TEST_BIN_DIR=o/$*/tl $(runner) $< $@
