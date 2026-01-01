@@ -69,6 +69,8 @@ local function report(output_dir)
   local files = {}
   local passed = 0
   local failed = 0
+  local total_issues = 0
+  local by_code = {}
 
   local handle = spawn({ "find", output_dir, "-name", "*.luacheck.ok", "-type", "f" })
   local _, stdout = handle:read()
@@ -84,6 +86,10 @@ local function report(output_dir)
         else
           failed = failed + 1
         end
+        for _, issue in ipairs(result.issues or {}) do
+          total_issues = total_issues + 1
+          by_code[issue.code] = (by_code[issue.code] or 0) + 1
+        end
       end
     end
   end
@@ -92,17 +98,29 @@ local function report(output_dir)
 
   print("luacheck report")
   print("───────────────────────────────")
-  print(string.format("  total checked:  %d", total))
+  print(string.format("  files checked:  %d", total))
   print(string.format("  passed:         %d", passed))
   print(string.format("  failed:         %d", failed))
+  print(string.format("  total issues:   %d", total_issues))
   print("")
+
+  if total_issues > 0 then
+    print("issues by code:")
+    local codes = {}
+    for code in pairs(by_code) do table.insert(codes, code) end
+    table.sort(codes, function(a, b) return by_code[b] < by_code[a] end)
+    for _, code in ipairs(codes) do
+      print(string.format("  %s: %d", code, by_code[code]))
+    end
+    print("")
+  end
 
   if failed > 0 then
     print("files with issues:")
     table.sort(files, function(a, b) return a.file < b.file end)
     for _, f in ipairs(files) do
       if not f.passed then
-        print("  " .. f.file)
+        print(string.format("  %s (%d)", f.file, #(f.issues or {})))
       end
     end
   end
