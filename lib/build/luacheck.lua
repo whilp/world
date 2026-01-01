@@ -4,6 +4,28 @@ local path = require("cosmo.path")
 local cosmo = require("cosmo")
 local spawn = require("spawn").spawn
 
+local function parse_plain(stdout)
+  local issues = {}
+  for line in (stdout or ""):gmatch("[^\n]+") do
+    -- plain format: file:line:col-endcol: (CODE) message
+    local file, ln, col, endcol, code, msg = line:match("^(.+):(%d+):(%d+)-(%d+): %(([WE]%d+)%) (.+)$")
+    if not file then
+      -- without ranges: file:line:col: (CODE) message
+      file, ln, col, code, msg = line:match("^(.+):(%d+):(%d+): %(([WE]%d+)%) (.+)$")
+    end
+    if file then
+      table.insert(issues, {
+        line = tonumber(ln),
+        column = tonumber(col),
+        end_column = endcol and tonumber(endcol),
+        code = code,
+        message = msg,
+      })
+    end
+  end
+  return issues
+end
+
 local function check(source_file, output, luacheck_bin)
   local output_dir = path.dirname(output)
   unix.makedirs(output_dir)
@@ -12,7 +34,7 @@ local function check(source_file, output, luacheck_bin)
 
   local handle = spawn({
     luacheck_bin,
-    "--no-color",
+    "--formatter", "plain",
     "--codes",
     "--ranges",
     "--include-files", source_file,
@@ -25,6 +47,7 @@ local function check(source_file, output, luacheck_bin)
     io.write(stdout)
   end
 
+  local issues = parse_plain(stdout)
   local passed = (exit_code == 0)
 
   local result = {
@@ -32,6 +55,7 @@ local function check(source_file, output, luacheck_bin)
     checker = "luacheck",
     passed = passed,
     exit_code = exit_code,
+    issues = issues,
   }
 
   local f = io.open(output, "w")
