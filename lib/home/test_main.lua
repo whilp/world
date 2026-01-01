@@ -1,4 +1,5 @@
 local lu = require("luaunit")
+local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 
@@ -25,33 +26,6 @@ local function make_temp_dir()
   local temp_path = "/tmp/home_test_" .. os.time() .. "_" .. math.random(10000)
   unix.makedirs(temp_path)
   return temp_path
-end
-
--- Helper: remove directory recursively
-local function remove_dir(dir_path)
-  for name in unix.opendir(dir_path) do
-    if name ~= "." and name ~= ".." then
-      local full_path = path.join(dir_path, name)
-      local st = unix.stat(full_path, unix.AT_SYMLINK_NOFOLLOW)
-      if st and unix.S_ISDIR(st:mode()) then
-        remove_dir(full_path)
-      else
-        unix.unlink(full_path)
-      end
-    end
-  end
-  unix.rmdir(dir_path)
-end
-
--- Helper: write file
-local function write_file(file_path, content)
-  local f = io.open(file_path, "w")
-  if f then
-    f:write(content)
-    f:close()
-    return true
-  end
-  return false
 end
 
 --------------------------------------------------------------------------------
@@ -155,7 +129,7 @@ function test_copy_file_basic()
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
 
-  write_file(src, "hello world")
+  cosmo.Barf(src, "hello world")
 
   local ok, err = home.copy_file(src, dst)
   lu.assertTrue(ok, err)
@@ -166,7 +140,7 @@ function test_copy_file_basic()
   f:close()
   lu.assertEquals(content, "hello world")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_copy_file_with_mode()
@@ -174,7 +148,7 @@ function test_copy_file_with_mode()
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
 
-  write_file(src, "executable")
+  cosmo.Barf(src, "executable")
 
   local ok, err = home.copy_file(src, dst, tonumber("755", 8))
   lu.assertTrue(ok, err)
@@ -184,7 +158,7 @@ function test_copy_file_with_mode()
   local mode_bits = st:mode() & 0x1FF
   lu.assertEquals(mode_bits, tonumber("755", 8))
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
@@ -195,8 +169,8 @@ function test_copy_file_no_overwrite_fails()
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
 
-  write_file(src, "source content")
-  write_file(dst, "existing content")
+  cosmo.Barf(src, "source content")
+  cosmo.Barf(dst, "existing content")
 
   local ok, err = home.copy_file(src, dst, nil, false)
   lu.assertFalse(ok)
@@ -207,7 +181,7 @@ function test_copy_file_no_overwrite_fails()
   f:close()
   lu.assertEquals(content, "existing content")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_copy_file_overwrite_succeeds()
@@ -215,8 +189,8 @@ function test_copy_file_overwrite_succeeds()
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
 
-  write_file(src, "new content")
-  write_file(dst, "old content")
+  cosmo.Barf(src, "new content")
+  cosmo.Barf(dst, "old content")
 
   local ok, err = home.copy_file(src, dst, nil, true)
   lu.assertTrue(ok, err)
@@ -226,7 +200,7 @@ function test_copy_file_overwrite_succeeds()
   f:close()
   lu.assertEquals(content, "new content")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
@@ -237,7 +211,7 @@ function test_copy_file_source_missing()
   local ok, err = home.copy_file(path.join(tmp, "nonexistent"), path.join(tmp, "dest"))
   lu.assertFalse(ok)
   lu.assertStrContains(err, "failed to open source")
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
@@ -282,7 +256,7 @@ function test_cmd_unpack_silent_by_default()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
-  write_file(zip_root .. ".testfile", "test content")
+  cosmo.Barf(zip_root .. ".testfile", "test content")
 
   local manifest = {
     files = {
@@ -306,7 +280,7 @@ function test_cmd_unpack_silent_by_default()
   lu.assertEquals(stderr:get(), "")
   lu.assertEquals(stdout:get(), "")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
@@ -317,8 +291,8 @@ function test_cmd_unpack_verbose()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
-  write_file(zip_root .. ".zshrc", "zsh content")
-  write_file(zip_root .. ".bashrc", "bash content")
+  cosmo.Barf(zip_root .. ".zshrc", "zsh content")
+  cosmo.Barf(zip_root .. ".bashrc", "bash content")
 
   local manifest = {
     files = {
@@ -342,7 +316,7 @@ function test_cmd_unpack_verbose()
   lu.assertStrContains(output, ".zshrc\n")
   lu.assertStrContains(output, ".bashrc\n")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_cmd_unpack_verbose_force_overwrite()
@@ -350,7 +324,7 @@ function test_cmd_unpack_verbose_force_overwrite()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
-  write_file(zip_root .. ".testfile", "new content")
+  cosmo.Barf(zip_root .. ".testfile", "new content")
 
   local manifest = {
     files = {
@@ -360,7 +334,7 @@ function test_cmd_unpack_verbose_force_overwrite()
 
   local dest = path.join(tmp, "dest")
   unix.makedirs(dest)
-  write_file(path.join(dest, ".testfile"), "old content")
+  cosmo.Barf(path.join(dest, ".testfile"), "old content")
 
   local stdout = mock_writer()
 
@@ -375,7 +349,7 @@ function test_cmd_unpack_verbose_force_overwrite()
   local output = stdout:get()
   lu.assertStrContains(output, ".testfile (overwritten)\n")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
@@ -386,7 +360,7 @@ function test_cmd_unpack_dry_run()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
-  write_file(zip_root .. ".testfile", "test content")
+  cosmo.Barf(zip_root .. ".testfile", "test content")
 
   local manifest = {
     files = {
@@ -408,7 +382,7 @@ function test_cmd_unpack_dry_run()
   local f = io.open(path.join(dest, ".testfile"), "r")
   lu.assertNil(f)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_cmd_unpack_dry_run_verbose()
@@ -416,7 +390,7 @@ function test_cmd_unpack_dry_run_verbose()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
-  write_file(zip_root .. ".zshrc", "zsh content")
+  cosmo.Barf(zip_root .. ".zshrc", "zsh content")
 
   local manifest = {
     files = {
@@ -443,7 +417,7 @@ function test_cmd_unpack_dry_run_verbose()
   local f = io.open(path.join(dest, ".zshrc"), "r")
   lu.assertNil(f)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
@@ -454,9 +428,9 @@ function test_cmd_unpack_only_filter()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
-  write_file(zip_root .. ".zshrc", "zsh content")
-  write_file(zip_root .. ".bashrc", "bash content")
-  write_file(zip_root .. ".vimrc", "vim content")
+  cosmo.Barf(zip_root .. ".zshrc", "zsh content")
+  cosmo.Barf(zip_root .. ".bashrc", "bash content")
+  cosmo.Barf(zip_root .. ".vimrc", "vim content")
 
   local manifest = {
     files = {
@@ -492,7 +466,7 @@ function test_cmd_unpack_only_filter()
   local bash = io.open(path.join(dest, ".bashrc"), "r")
   lu.assertNil(bash)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_cmd_unpack_only_empty_filter()
@@ -500,7 +474,7 @@ function test_cmd_unpack_only_empty_filter()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
-  write_file(zip_root .. ".zshrc", "zsh content")
+  cosmo.Barf(zip_root .. ".zshrc", "zsh content")
 
   local manifest = {
     files = {
@@ -523,7 +497,7 @@ function test_cmd_unpack_only_empty_filter()
   local f = io.open(path.join(dest, ".zshrc"), "r")
   lu.assertNil(f)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_cmd_unpack_only_null_delimited()
@@ -531,9 +505,9 @@ function test_cmd_unpack_only_null_delimited()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
-  write_file(zip_root .. ".zshrc", "zsh content")
-  write_file(zip_root .. ".bashrc", "bash content")
-  write_file(zip_root .. ".vimrc", "vim content")
+  cosmo.Barf(zip_root .. ".zshrc", "zsh content")
+  cosmo.Barf(zip_root .. ".bashrc", "bash content")
+  cosmo.Barf(zip_root .. ".vimrc", "vim content")
 
   local manifest = {
     files = {
@@ -570,7 +544,7 @@ function test_cmd_unpack_only_null_delimited()
   local bash = io.open(path.join(dest, ".bashrc"), "r")
   lu.assertNil(bash)
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 --------------------------------------------------------------------------------
@@ -673,13 +647,13 @@ end
 function test_read_file_success()
   local tmp = make_temp_dir()
   local file_path = path.join(tmp, "test.txt")
-  write_file(file_path, "test content")
+  cosmo.Barf(file_path, "test content")
 
   local data, err = home.read_file(file_path)
   lu.assertNil(err)
   lu.assertEquals(data, "test content")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_read_file_not_found()
@@ -721,11 +695,11 @@ function test_unpack_3p_binary_structure()
   -- Create versioned binary structure
   local nvim_bin_dir = path.join(zip_root, ".local/share/nvim/0.12.0-abcd1234/bin")
   unix.makedirs(nvim_bin_dir)
-  write_file(path.join(nvim_bin_dir, "nvim"), "#!/bin/sh\necho nvim")
+  cosmo.Barf(path.join(nvim_bin_dir, "nvim"), "#!/bin/sh\necho nvim")
 
   local rg_bin_dir = path.join(zip_root, ".local/share/rg/14.1.1-efgh5678/bin")
   unix.makedirs(rg_bin_dir)
-  write_file(path.join(rg_bin_dir, "rg"), "#!/bin/sh\necho rg")
+  cosmo.Barf(path.join(rg_bin_dir, "rg"), "#!/bin/sh\necho rg")
 
   local manifest = {
     files = {
@@ -755,7 +729,7 @@ function test_unpack_3p_binary_structure()
   mode_bits = st:mode() & 0x1FF
   lu.assertEquals(mode_bits, tonumber("755", 8), "rg should be executable")
 
-  remove_dir(tmp)
+  unix.rmrf(tmp)
 end
 
 function test_list_includes_3p_binaries()
