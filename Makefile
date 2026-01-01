@@ -67,12 +67,11 @@ lua_dist := o/$(current_platform)/lua/bin/lua.dist
 
 tl_bin := o/$(current_platform)/tl/bin/tl
 
-check: $(ast_grep) $(lua_dist) $(tl_bin) ## Run ast-grep, luacheck, and teal
+check: $(ast_grep) $(tl_bin) $(luacheck_files) ## Run ast-grep, luacheck, and teal
 	@echo "Running ast-grep..."
 	$(ast_grep) scan --color always
 	@echo ""
-	@echo "Running luacheck..."
-	$(lua_dist) -e 'arg={[0]="luacheck","."} require("luacheck.main")'
+	@$(luacheck_runner) report o/any || true
 	@echo ""
 	@echo "Running teal type checker (lax mode)..."
 	# TODO: add .d.tl declarations for cosmo to reduce noise
