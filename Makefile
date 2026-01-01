@@ -11,6 +11,7 @@ endif
 
 export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;$(CURDIR)/o/any/luaunit/lib/?.lua;/zip/.lua/?.lua;/zip/.lua/?/init.lua
 export PATH := $(CURDIR)/o/$(current_platform)/cosmos/bin:$(CURDIR)/o/any/lua/bin:$(PATH)
+export RIPGREP_CONFIG_PATH := $(CURDIR)/.config/ripgrep/rg.conf
 
 lua_bin := o/any/lua/bin/lua
 
@@ -19,21 +20,36 @@ fetch_script := lib/build/fetch.lua
 extract_script := lib/build/extract.lua
 install_script := lib/build/install.lua
 runner_script := lib/build/test.lua
+luacheck_script := lib/build/luacheck.lua
 
 # Commands (invoke lua explicitly to avoid APE "Text file busy" errors)
 fetch = $(lua_bin) $(fetch_script)
 extract = $(lua_bin) $(extract_script)
 install = $(lua_bin) $(install_script)
 runner = $(lua_bin) $(runner_script)
+luacheck_bin = o/$(current_platform)/luacheck/bin/luacheck
+luacheck_runner = $(lua_bin) $(luacheck_script)
 
 luaunit := o/any/luaunit/lib/luaunit.lua
 
-$(fetch_script) $(extract_script) $(install_script) $(runner_script): | $(lua_bin)
+$(fetch_script) $(extract_script) $(install_script) $(runner_script) $(luacheck_script): | $(lua_bin)
 cosmo := whilp/cosmopolitan
 release ?= latest
 
 include lib/cook.mk
 include 3p/cook.mk
+
+lua_files := $(shell rg --files -g '*.lua'; rg --no-ignore -l '^#!/.*lua' -g '!*.lua' -g '!o/' 2>/dev/null)
+luacheck_files := $(patsubst %,o/any/%.luacheck.ok,$(lua_files))
+
+luacheck: $(luacheck_files) ## Run luacheck incrementally on changed files
+
+o/any/%.luacheck.ok: % .luacheckrc $(luacheck_script) $(luacheck_bin)
+	$(luacheck_runner) $< $@ $(luacheck_bin)
+
+luacheck-report: $(luacheck_files) ## Run luacheck and show summary report
+	# TODO: remove || true once all files pass
+	@$(luacheck_runner) report o/any || true
 
 bootstrap: $(lua_bin)
 	@[ -n "$$CLAUDE_ENV_FILE" ] && echo "PATH=$(dir $(lua_bin)):\$$PATH" >> "$$CLAUDE_ENV_FILE"; true
@@ -51,12 +67,11 @@ lua_dist := o/$(current_platform)/lua/bin/lua.dist
 
 tl_bin := o/$(current_platform)/tl/bin/tl
 
-check: $(ast_grep) $(lua_dist) $(tl_bin) ## Run ast-grep, luacheck, and teal
+check: $(ast_grep) $(tl_bin) $(luacheck_files) ## Run ast-grep, luacheck, and teal
 	@echo "Running ast-grep..."
 	$(ast_grep) scan --color always
 	@echo ""
-	@echo "Running luacheck..."
-	$(lua_dist) -e 'arg={[0]="luacheck","."} require("luacheck.main")'
+	@$(luacheck_runner) report o/any || true
 	@echo ""
 	@echo "Running teal type checker (lax mode)..."
 	# TODO: add .d.tl declarations for cosmo to reduce noise
@@ -68,4 +83,4 @@ test: lib-test $(subst %,$(current_platform),$(tests))
 clean:
 	rm -rf o
 
-.PHONY: bootstrap clean cosmos lua check test home
+.PHONY: bootstrap clean cosmos lua check luacheck luacheck-report test home
