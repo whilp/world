@@ -57,19 +57,15 @@ jobs:
 
       - name: Build home binaries
         run: make home -j$(nproc)
-        continue-on-error: true  # TODO: rewrite home target
 
       - name: Run ast-grep checks
         run: make check
-        continue-on-error: true  # TODO: rewrite check target
 
       - name: Run tests
         run: make test -j$(nproc)
-        continue-on-error: true  # TODO: rewrite test target
 
       - name: Upload home artifacts
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
-        continue-on-error: true  # TODO: rewrite home target
         with:
           name: home-binaries
           path: |
