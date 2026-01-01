@@ -36,15 +36,6 @@ $(lua_bin):
 cosmos: o/$(current_platform)/cosmos/bin/lua
 lua: o/$(current_platform)/lua/bin/lua.dist
 
-results:
-	mkdir -p results
-
-results/bin: | results
-	mkdir -p results/bin
-
-results/bin/lua: o/$(current_platform)/lua/bin/lua.dist | results/bin
-	cp $< $@
-
 # TODO: rewrite these targets
 home:
 	@echo "TODO: home target not yet rewritten"
@@ -56,6 +47,6 @@ test: lib-test $(subst %,$(current_platform),$(tests))
 	@echo "All tests passed"
 
 clean:
-	rm -rf o results
+	rm -rf o
 
 .PHONY: bootstrap clean cosmos lua home check test

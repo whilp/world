@@ -2,21 +2,22 @@
 local lu = require("luaunit")
 local unix = require("cosmo.unix")
 local spawn = require("spawn").spawn
+local path = require("cosmo.path")
 
-local lua_bin = "results/bin/lua"
+local lua_bin = path.join(os.getenv("TEST_BIN_DIR"), "bin", "lua.dist")
 
 function test_lua_binary_exists()
   local st = unix.stat(lua_bin)
-  lu.assertNotNil(st, "results/bin/lua should exist")
+  lu.assertNotNil(st, lua_bin .. " should exist")
 end
 
 function test_lua_binary_is_executable()
   local st = unix.stat(lua_bin)
-  lu.assertNotNil(st, "results/bin/lua should exist")
+  lu.assertNotNil(st, lua_bin .. " should exist")
   local mode = st:mode()
   -- check user or group execute bit
   lu.assertTrue(mode % 2 == 1 or (mode / 8) % 2 == 1 or (mode / 64) % 2 == 1,
-    "results/bin/lua should be executable")
+    lua_bin .. " should be executable")
 end
 
 function test_lua_binary_runs()

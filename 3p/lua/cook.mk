@@ -22,5 +22,5 @@ o/%/lua/bin/lua.dist: o/%/lua/bin/lua.ape
 o/%/lua/test.ok: 3p/lua/test.lua o/%/lua/bin/lua.dist $(runner)
 	$(runner) $< $@
 
-o/%/lua/test_release.ok: 3p/lua/test_release.lua results/bin/lua $(runner)
-	$(runner) $< $@
+o/%/lua/test_release.ok: 3p/lua/test_release.lua o/%/lua/bin/lua.dist $(runner)
+	TEST_BIN_DIR=o/$*/lua $(runner) $< $@
