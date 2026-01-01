@@ -20,11 +20,6 @@ local function mock_writer()
   }
 end
 
--- Helper: create temp directory
-local function make_temp_dir()
-  return unix.mkdtemp("/tmp/home_test_XXXXXX")
-end
-
 -- Helper: remove directory recursively
 local function remove_dir(dir_path)
   for name in unix.opendir(dir_path) do
@@ -149,7 +144,7 @@ end
 -- Test: copy_file - Basic copy
 --------------------------------------------------------------------------------
 function test_copy_file_basic()
-  local tmp = make_temp_dir()
+  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
 
@@ -168,7 +163,7 @@ function test_copy_file_basic()
 end
 
 function test_copy_file_with_mode()
-  local tmp = make_temp_dir()
+  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
 
@@ -189,7 +184,7 @@ end
 -- Test: copy_file - Overwrite behavior
 --------------------------------------------------------------------------------
 function test_copy_file_no_overwrite_fails()
-  local tmp = make_temp_dir()
+  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
 
@@ -209,7 +204,7 @@ function test_copy_file_no_overwrite_fails()
 end
 
 function test_copy_file_overwrite_succeeds()
-  local tmp = make_temp_dir()
+  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
 
@@ -231,7 +226,7 @@ end
 -- Test: copy_file - Source doesn't exist
 --------------------------------------------------------------------------------
 function test_copy_file_source_missing()
-  local tmp = make_temp_dir()
+  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
   local ok, err = home.copy_file(path.join(tmp, "nonexistent"), path.join(tmp, "dest"))
   lu.assertFalse(ok)
   lu.assertStrContains(err, "failed to open source")
@@ -276,7 +271,7 @@ end
 -- Test: cmd_unpack silent by default
 --------------------------------------------------------------------------------
 function test_cmd_unpack_silent_by_default()
-  local tmp = make_temp_dir()
+  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -311,7 +306,7 @@ end
 -- Test: cmd_unpack verbose mode
 --------------------------------------------------------------------------------
 function test_cmd_unpack_verbose()
-  local tmp = make_temp_dir()
+  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -344,7 +339,7 @@ function test_cmd_unpack_verbose()
 end
 
 function test_cmd_unpack_verbose_force_overwrite()
-  local tmp = make_temp_dir()
+  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -380,7 +375,7 @@ end
 -- Test: cmd_unpack dry-run mode
 --------------------------------------------------------------------------------
 function test_cmd_unpack_dry_run()
-  local tmp = make_temp_dir()
+  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -410,7 +405,7 @@ function test_cmd_unpack_dry_run()
 end
 
 function test_cmd_unpack_dry_run_verbose()
-  local tmp = make_temp_dir()
+  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -448,7 +443,7 @@ end
 -- Test: cmd_unpack --only filter
 --------------------------------------------------------------------------------
 function test_cmd_unpack_only_filter()
-  local tmp = make_temp_dir()
+  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -494,7 +489,7 @@ function test_cmd_unpack_only_filter()
 end
 
 function test_cmd_unpack_only_empty_filter()
-  local tmp = make_temp_dir()
+  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -525,7 +520,7 @@ function test_cmd_unpack_only_empty_filter()
 end
 
 function test_cmd_unpack_only_null_delimited()
-  local tmp = make_temp_dir()
+  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
@@ -669,7 +664,7 @@ end
 -- Test: read_file
 --------------------------------------------------------------------------------
 function test_read_file_success()
-  local tmp = make_temp_dir()
+  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
   local file_path = path.join(tmp, "test.txt")
   write_file(file_path, "test content")
 
@@ -713,7 +708,7 @@ end
 -- Test: 3p binaries in .local/share structure
 --------------------------------------------------------------------------------
 function test_unpack_3p_binary_structure()
-  local tmp = make_temp_dir()
+  local tmp = unix.mkdtemp("/tmp/home_test_XXXXXX")
   local zip_root = path.join(tmp, "zip/")
 
   -- Create versioned binary structure

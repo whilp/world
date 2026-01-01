@@ -1,6 +1,6 @@
 id: manual-temp-dir
 language: lua
-severity: warning
+severity: error
 message: |
   Potential manual temp directory construction detected. Consider using unix.mkdtemp() instead.
 
