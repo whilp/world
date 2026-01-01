@@ -18,11 +18,7 @@ jobs:
         run: make bootstrap
 
       - name: Build home and lua binaries
-        # TODO: combining these in one make call causes ETXTBSY with high parallelism
-        # Using -j4 to reduce race conditions with APE binary assimilation
-        run: |
-          make home-all -j4
-          make lua-all -j4
+        run: make home-all lua-all -j4
 
       - name: Run checks
         run: make check
