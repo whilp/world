@@ -17,8 +17,11 @@ jobs:
       - name: Bootstrap lua
         run: make bootstrap
 
-      - name: Build home binaries
-        run: make home-all -j$(nproc)
+      - name: Build home and lua binaries
+        run: |
+          make home-all -j$(nproc)
+          # Build lua.dist for all platforms (for integration tests)
+          make o/darwin-arm64/lua/bin/lua.dist o/linux-arm64/lua/bin/lua.dist o/linux-x86_64/lua/bin/lua.dist -j$(nproc)
 
       - name: Run checks
         run: make check
@@ -32,7 +35,9 @@ jobs:
           name: home-binaries
           path: |
             o/darwin-arm64/home/bin/home
+            o/darwin-arm64/lua/bin/lua.dist
             o/linux-arm64/home/bin/home
+            o/linux-arm64/lua/bin/lua.dist
             o/linux-x86_64/home/bin/home
             o/linux-x86_64/lua/bin/lua.dist
 
@@ -60,10 +65,16 @@ jobs:
           path: o/
 
       - name: Make binaries executable
-        run: chmod +x o/*/home/bin/home o/*/lua/bin/*
+        run: |
+          chmod +x o/*/home/bin/home o/*/lua/bin/*
+          # Create lua symlink so shebang scripts work
+          ln -sf lua.dist o/${{ matrix.platform }}/lua/bin/lua
 
-      - name: Test home binary runs
-        run: o/${{ matrix.platform }}/home/bin/home version
+      - name: Run home tests
+        env:
+          LUA_PATH: lib/?.lua;lib/?/init.lua
+        run: |
+          o/${{ matrix.platform }}/lua/bin/lua lib/home/test_main.lua
 
   release:
     if: github.ref == 'refs/heads/main'
