@@ -47,6 +47,9 @@ luacheck: $(luacheck_files) ## Run luacheck incrementally on changed files
 o/any/%.luacheck.ok: % .luacheckrc $(luacheck_script) $(luacheck_bin)
 	$(luacheck_runner) $< $@ $(luacheck_bin)
 
+luacheck-report: $(luacheck_files) ## Run luacheck and show summary report
+	@$(luacheck_runner) report o/any
+
 bootstrap: $(lua_bin)
 	@[ -n "$$CLAUDE_ENV_FILE" ] && echo "PATH=$(dir $(lua_bin)):\$$PATH" >> "$$CLAUDE_ENV_FILE"; true
 
@@ -80,4 +83,4 @@ test: lib-test $(subst %,$(current_platform),$(tests))
 clean:
 	rm -rf o
 
-.PHONY: bootstrap clean cosmos lua check luacheck test home
+.PHONY: bootstrap clean cosmos lua check luacheck luacheck-report test home
