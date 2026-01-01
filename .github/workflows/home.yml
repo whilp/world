@@ -45,6 +45,56 @@ jobs:
           o/any/lua/bin/lua -v
           sync
 
+      # Debug: test unix.open behavior on linux-x86_64
+      - name: Test unix.open write behavior
+        run: |
+          echo "=== Testing unix.open on linux-x86_64 ==="
+          # First extract cosmos to get the staging files
+          make o/linux-x86_64/cosmos/.extracted
+
+          # Now test copying with our lua script
+          o/any/lua/bin/lua lib/build/test_copy_cosmos.lua || echo "Test failed with exit code $?"
+
+          # Also test copying to the ACTUAL destination path
+          echo "=== Testing copy to actual cosmos path ==="
+          o/any/lua/bin/lua -e '
+            local unix = require("cosmo.unix")
+            local src = "o/linux-x86_64/cosmos/staging/lua"
+            local dst = "o/linux-x86_64/cosmos/test-bin/lua"
+
+            unix.makedirs("o/linux-x86_64/cosmos/test-bin")
+
+            io.stderr:write("Opening source: " .. src .. "\n")
+            io.stderr:flush()
+            local fd_in = unix.open(src, unix.O_RDONLY)
+            io.stderr:write("  fd_in = " .. tostring(fd_in) .. "\n")
+            io.stderr:flush()
+
+            io.stderr:write("Opening dest: " .. dst .. "\n")
+            io.stderr:flush()
+            local fd_out = unix.open(dst, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("755", 8))
+            io.stderr:write("  fd_out = " .. tostring(fd_out) .. "\n")
+            io.stderr:flush()
+
+            local bytes = 0
+            while true do
+              local chunk = unix.read(fd_in, 65536)
+              if not chunk or #chunk == 0 then break end
+              unix.write(fd_out, chunk)
+              bytes = bytes + #chunk
+            end
+            io.stderr:write("Copied " .. bytes .. " bytes\n")
+            io.stderr:flush()
+
+            unix.close(fd_in)
+            unix.close(fd_out)
+
+            io.stderr:write("SUCCESS\n")
+          ' || echo "Inline test failed with exit code $?"
+
+          # Clean up
+          rm -rf o/linux-x86_64/cosmos/test-bin o/linux-x86_64/cosmos/.extracted o/linux-x86_64/cosmos/archive.zip
+
       # Build cosmos binaries one at a time
       - name: Build cosmos binaries
         run: |
