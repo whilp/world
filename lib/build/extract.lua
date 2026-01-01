@@ -4,7 +4,8 @@ local unix = require("cosmo.unix")
 local spawn = require("spawn").spawn
 
 local function extract_zip(archive, dest_dir)
-  local handle = spawn({"unzip", "-o", "-d", dest_dir, archive})
+  -- use absolute path to avoid cosmopolitan binary issues with unveil
+  local handle = spawn({"/usr/bin/unzip", "-o", "-d", dest_dir, archive})
   local exit_code = handle:wait()
   if exit_code ~= 0 then
     return nil, "unzip failed with exit code " .. exit_code
@@ -51,6 +52,7 @@ local function main(version_file, platform, input, dest_dir)
   unix.unveil(input, "r")
   unix.unveil(dest_dir, "rwc")
   unix.unveil("/usr", "rx")
+  unix.unveil("/bin", "rx")
   unix.unveil(nil, nil)
 
   local ok, spec = pcall(dofile, version_file)
