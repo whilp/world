@@ -71,14 +71,23 @@ local function copy_dir(source, target_dir)
 end
 
 local function install(version_file, platform, base_dir, install_type, source)
+  io.stderr:write("install: starting\n")
+  io.stderr:flush()
+
   if not version_file or not platform or not base_dir or not install_type or not source then
     return nil, "usage: install.lua <version_file> <platform> <base_dir> <bin|lib> <source>"
   end
+
+  io.stderr:write("install: loading version file\n")
+  io.stderr:flush()
 
   local ok, spec = pcall(dofile, version_file)
   if not ok then
     return nil, "failed to load " .. version_file .. ": " .. tostring(spec)
   end
+
+  io.stderr:write("install: got spec\n")
+  io.stderr:flush()
 
   local plat = spec.platforms[platform] or spec.platforms["*"]
   if not plat then
@@ -89,12 +98,21 @@ local function install(version_file, platform, base_dir, install_type, source)
   local target_dir = path.join(base_dir, version_dir, install_type)
   local tool_name = path.basename(base_dir)
 
+  io.stderr:write("install: makedirs " .. target_dir .. "\n")
+  io.stderr:flush()
+
   unix.makedirs(target_dir)
+
+  io.stderr:write("install: stat source\n")
+  io.stderr:flush()
 
   local stat = unix.stat(source)
   if not stat then
     return nil, "source not found: " .. source
   end
+
+  io.stderr:write("install: copying\n")
+  io.stderr:flush()
 
   local err
   if unix.S_ISDIR(stat:mode()) then
@@ -102,6 +120,9 @@ local function install(version_file, platform, base_dir, install_type, source)
   else
     ok, err = copy_file(source, target_dir, install_type, tool_name)
   end
+
+  io.stderr:write("install: copy done\n")
+  io.stderr:flush()
 
   if not ok then
     return nil, err
@@ -112,13 +133,22 @@ local function install(version_file, platform, base_dir, install_type, source)
   unix.unlink(link_path)
   unix.symlink(path.join(version_dir, install_type), link_path)
 
+  io.stderr:write("install: done\n")
+  io.stderr:flush()
+
   return true
 end
 
 local function main(version_file, platform, base_dir, install_type, source)
+  io.stderr:write("main: args received\n")
+  io.stderr:flush()
+
   if not version_file or not platform or not base_dir or not install_type or not source then
     return nil, "usage: install.lua <version_file> <platform> <base_dir> <bin|lib> <source>"
   end
+
+  io.stderr:write("main: CI=" .. tostring(os.getenv("CI")) .. "\n")
+  io.stderr:flush()
 
   -- skip unveil in CI environments (can cause bus errors with APE binaries)
   if not os.getenv("CI") then
@@ -133,11 +163,18 @@ local function main(version_file, platform, base_dir, install_type, source)
     unix.unveil(nil, nil)
   end
 
+  io.stderr:write("main: calling install\n")
+  io.stderr:flush()
+
   return install(version_file, platform, base_dir, install_type, source)
 end
 
 if not pcall(debug.getlocal, 4, 1) then
+  io.stderr:write("calling main\n")
+  io.stderr:flush()
   local ok, err = main(...)
+  io.stderr:write("main returned\n")
+  io.stderr:flush()
   if not ok then
     io.stderr:write("error: " .. err .. "\n")
     os.exit(1)
