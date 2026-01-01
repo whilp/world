@@ -18,18 +18,39 @@ local function copy_file_raw(src, dst)
   io.stderr:write("copy_file_raw: " .. src .. " -> " .. dst .. "\n")
   io.stderr:flush()
 
-  -- use shell cp to avoid cosmopolitan memory issues with large APE binaries
-  local cmd = string.format('/usr/bin/cp -p "%s" "%s"', src, dst)
-  io.stderr:write("copy_file_raw: executing: " .. cmd .. "\n")
-  io.stderr:flush()
-
-  local ok = os.execute(cmd)
-  io.stderr:write("copy_file_raw: os.execute returned\n")
-  io.stderr:flush()
-
-  if not ok then
-    return nil, "cp failed"
+  -- read source file in binary mode
+  local f_in = io.open(src, "rb")
+  if not f_in then
+    return nil, "failed to open source: " .. src
   end
+
+  -- get source file permissions
+  local st = unix.stat(src)
+  local mode = st and st:mode() or tonumber("644", 8)
+
+  -- write to destination
+  local f_out = io.open(dst, "wb")
+  if not f_out then
+    f_in:close()
+    return nil, "failed to open destination: " .. dst
+  end
+
+  -- copy in chunks to avoid memory issues
+  while true do
+    local chunk = f_in:read(65536)
+    if not chunk then break end
+    f_out:write(chunk)
+  end
+
+  f_in:close()
+  f_out:close()
+
+  -- set permissions
+  unix.chmod(dst, mode)
+
+  io.stderr:write("copy_file_raw: done\n")
+  io.stderr:flush()
+
   return true
 end
 
