@@ -1167,8 +1167,8 @@ end
 -- Test: detect_platform
 --------------------------------------------------------------------------------
 function test_detect_platform_returns_string()
-  local platform = home.detect_platform()
-  lu.assertNotNil(platform)
+  local platform, err = home.detect_platform()
+  lu.assertNotNil(platform, "detect_platform failed: " .. tostring(err))
   lu.assertTrue(type(platform) == "string")
   -- Platform should be one of the known values
   lu.assertTrue(
