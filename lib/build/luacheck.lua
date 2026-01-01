@@ -167,4 +167,14 @@ local function main(args)
   return 0
 end
 
-os.exit(main({ ... }))
+if ... then
+  os.exit(main({ ... }))
+else
+  return {
+    walk = walk,
+    parse_plain = parse_plain,
+    check = check,
+    report = report,
+    main = main,
+  }
+end
