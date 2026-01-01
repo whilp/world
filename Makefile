@@ -38,8 +38,8 @@ release ?= latest
 include lib/cook.mk
 include 3p/cook.mk
 
-lua_libs := $(shell rg --files -g '*.lua' lib 3p)
-lua_scripts := $(shell rg -l '^\#!/.*lua' .local/bin 3p/luacheck/luacheck 2>/dev/null)
+lua_libs := $(shell rg --files -g '*.lua')
+lua_scripts := $(shell rg -l '^#!/.*lua' .local/bin 3p 2>/dev/null)
 lua_files := $(lua_libs) $(lua_scripts)
 luacheck_files := $(patsubst %,o/any/%.luacheck.ok,$(lua_files))
 
