@@ -1,35 +1,21 @@
 #!/usr/bin/env lua
+local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 
 local function copy_file_raw(src, dst)
-  -- get source file permissions first
+  local content = cosmo.Slurp(src)
+  if not content then
+    return nil, "failed to read source: " .. src
+  end
+
   local st = unix.stat(src)
-  local mode = st and st:mode() or tonumber("755", 8)
+  local mode = st and st:mode() or tonumber("644", 8)
 
-  -- open source file
-  local fd_in = unix.open(src, unix.O_RDONLY)
-  if not fd_in then
-    return nil, "failed to open source: " .. src
+  local ok = cosmo.Barf(dst, content, mode)
+  if not ok then
+    return nil, "failed to write destination: " .. dst
   end
-
-  -- open destination file
-  local fd_out = unix.open(dst, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, mode)
-  if not fd_out then
-    unix.close(fd_in)
-    return nil, "failed to open destination: " .. dst
-  end
-
-  -- copy in chunks
-  while true do
-    local chunk = unix.read(fd_in, 65536)
-    if not chunk or #chunk == 0 then break end
-    unix.write(fd_out, chunk)
-  end
-
-  unix.close(fd_in)
-  unix.close(fd_out)
-
   return true
 end
 
@@ -130,7 +116,7 @@ local function main(version_file, platform, base_dir, install_type, source)
     return nil, "usage: install.lua <version_file> <platform> <base_dir> <bin|lib> <source>"
   end
 
-  -- skip unveil in CI environments (can cause issues with APE binaries)
+  -- skip unveil in CI environments (can cause bus errors with APE binaries)
   if not os.getenv("CI") then
     local lua_bin = arg[-1] or arg[0]
     if lua_bin then unix.unveil(lua_bin, "rx") end
@@ -138,8 +124,6 @@ local function main(version_file, platform, base_dir, install_type, source)
     unix.unveil(version_file, "r")
     unix.unveil(source, "r")
     unix.unveil(base_dir, "rwc")
-    unix.unveil("/usr", "rx")
-    unix.unveil("/bin", "rx")
     unix.unveil(nil, nil)
   end
 
