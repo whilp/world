@@ -28,11 +28,6 @@ local function make_temp_dir()
   return temp_path
 end
 
--- Helper: write file
-local function write_file(file_path, content)
-  return cosmo.Barf(file_path, content)
-end
-
 --------------------------------------------------------------------------------
 -- Test: parse_args - Argument parsing
 --------------------------------------------------------------------------------
@@ -134,7 +129,7 @@ function test_copy_file_basic()
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
 
-  write_file(src, "hello world")
+  cosmo.Barf(src, "hello world")
 
   local ok, err = home.copy_file(src, dst)
   lu.assertTrue(ok, err)
@@ -153,7 +148,7 @@ function test_copy_file_with_mode()
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
 
-  write_file(src, "executable")
+  cosmo.Barf(src, "executable")
 
   local ok, err = home.copy_file(src, dst, tonumber("755", 8))
   lu.assertTrue(ok, err)
@@ -174,8 +169,8 @@ function test_copy_file_no_overwrite_fails()
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
 
-  write_file(src, "source content")
-  write_file(dst, "existing content")
+  cosmo.Barf(src, "source content")
+  cosmo.Barf(dst, "existing content")
 
   local ok, err = home.copy_file(src, dst, nil, false)
   lu.assertFalse(ok)
@@ -194,8 +189,8 @@ function test_copy_file_overwrite_succeeds()
   local src = path.join(tmp, "source.txt")
   local dst = path.join(tmp, "dest.txt")
 
-  write_file(src, "new content")
-  write_file(dst, "old content")
+  cosmo.Barf(src, "new content")
+  cosmo.Barf(dst, "old content")
 
   local ok, err = home.copy_file(src, dst, nil, true)
   lu.assertTrue(ok, err)
@@ -261,7 +256,7 @@ function test_cmd_unpack_silent_by_default()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
-  write_file(zip_root .. ".testfile", "test content")
+  cosmo.Barf(zip_root .. ".testfile", "test content")
 
   local manifest = {
     files = {
@@ -296,8 +291,8 @@ function test_cmd_unpack_verbose()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
-  write_file(zip_root .. ".zshrc", "zsh content")
-  write_file(zip_root .. ".bashrc", "bash content")
+  cosmo.Barf(zip_root .. ".zshrc", "zsh content")
+  cosmo.Barf(zip_root .. ".bashrc", "bash content")
 
   local manifest = {
     files = {
@@ -329,7 +324,7 @@ function test_cmd_unpack_verbose_force_overwrite()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
-  write_file(zip_root .. ".testfile", "new content")
+  cosmo.Barf(zip_root .. ".testfile", "new content")
 
   local manifest = {
     files = {
@@ -339,7 +334,7 @@ function test_cmd_unpack_verbose_force_overwrite()
 
   local dest = path.join(tmp, "dest")
   unix.makedirs(dest)
-  write_file(path.join(dest, ".testfile"), "old content")
+  cosmo.Barf(path.join(dest, ".testfile"), "old content")
 
   local stdout = mock_writer()
 
@@ -365,7 +360,7 @@ function test_cmd_unpack_dry_run()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
-  write_file(zip_root .. ".testfile", "test content")
+  cosmo.Barf(zip_root .. ".testfile", "test content")
 
   local manifest = {
     files = {
@@ -395,7 +390,7 @@ function test_cmd_unpack_dry_run_verbose()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
-  write_file(zip_root .. ".zshrc", "zsh content")
+  cosmo.Barf(zip_root .. ".zshrc", "zsh content")
 
   local manifest = {
     files = {
@@ -433,9 +428,9 @@ function test_cmd_unpack_only_filter()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
-  write_file(zip_root .. ".zshrc", "zsh content")
-  write_file(zip_root .. ".bashrc", "bash content")
-  write_file(zip_root .. ".vimrc", "vim content")
+  cosmo.Barf(zip_root .. ".zshrc", "zsh content")
+  cosmo.Barf(zip_root .. ".bashrc", "bash content")
+  cosmo.Barf(zip_root .. ".vimrc", "vim content")
 
   local manifest = {
     files = {
@@ -479,7 +474,7 @@ function test_cmd_unpack_only_empty_filter()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
-  write_file(zip_root .. ".zshrc", "zsh content")
+  cosmo.Barf(zip_root .. ".zshrc", "zsh content")
 
   local manifest = {
     files = {
@@ -510,9 +505,9 @@ function test_cmd_unpack_only_null_delimited()
   local zip_root = path.join(tmp, "zip/")
   unix.makedirs(zip_root)
 
-  write_file(zip_root .. ".zshrc", "zsh content")
-  write_file(zip_root .. ".bashrc", "bash content")
-  write_file(zip_root .. ".vimrc", "vim content")
+  cosmo.Barf(zip_root .. ".zshrc", "zsh content")
+  cosmo.Barf(zip_root .. ".bashrc", "bash content")
+  cosmo.Barf(zip_root .. ".vimrc", "vim content")
 
   local manifest = {
     files = {
@@ -652,7 +647,7 @@ end
 function test_read_file_success()
   local tmp = make_temp_dir()
   local file_path = path.join(tmp, "test.txt")
-  write_file(file_path, "test content")
+  cosmo.Barf(file_path, "test content")
 
   local data, err = home.read_file(file_path)
   lu.assertNil(err)
@@ -738,7 +733,7 @@ function test_find_binary_in_dir_direct()
   local bin_dir = path.join(tmp, "bin")
   unix.makedirs(bin_dir)
   local bin_path = path.join(bin_dir, "mytool")
-  write_file(bin_path, "#!/bin/sh\necho test")
+  cosmo.Barf(bin_path, "#!/bin/sh\necho test")
 
   local result = home.find_binary_in_dir(tmp, "mytool")
   lu.assertEquals(result, bin_path)
@@ -751,7 +746,7 @@ function test_find_binary_in_dir_in_bin()
   local bin_dir = path.join(tmp, "bin")
   unix.makedirs(bin_dir)
   local bin_path = path.join(bin_dir, "mytool")
-  write_file(bin_path, "#!/bin/sh\necho test")
+  cosmo.Barf(bin_path, "#!/bin/sh\necho test")
 
   local result = home.find_binary_in_dir(tmp, "mytool")
   lu.assertEquals(result, bin_path)
@@ -778,7 +773,7 @@ function test_scan_for_latest_version_single()
   local tool_bin_dir = path.join(tool_dir, "bin")
   unix.makedirs(tool_bin_dir)
   local bin_path = path.join(tool_bin_dir, "rg")
-  write_file(bin_path, "#!/bin/sh\necho rg")
+  cosmo.Barf(bin_path, "#!/bin/sh\necho rg")
 
   local result = home.scan_for_latest_version("rg", share_dir)
   lu.assertNotNil(result)
@@ -795,12 +790,12 @@ function test_scan_for_latest_version_multiple()
 
   local old_dir = path.join(share_dir, "rg", "14.0.0-aaa00000", "bin")
   unix.makedirs(old_dir)
-  write_file(path.join(old_dir, "rg"), "old")
+  cosmo.Barf(path.join(old_dir, "rg"), "old")
 
   local new_dir = path.join(share_dir, "rg", "14.1.1-bbb11111", "bin")
   unix.makedirs(new_dir)
   local new_bin = path.join(new_dir, "rg")
-  write_file(new_bin, "new")
+  cosmo.Barf(new_bin, "new")
 
   local result = home.scan_for_latest_version("rg", share_dir)
   lu.assertNotNil(result)
@@ -827,7 +822,7 @@ function test_scan_for_latest_version_bin_subdir()
   local bin_dir = path.join(tool_dir, "bin")
   unix.makedirs(bin_dir)
   local bin_path = path.join(bin_dir, "nvim")
-  write_file(bin_path, "#!/bin/sh\necho nvim")
+  cosmo.Barf(bin_path, "#!/bin/sh\necho nvim")
 
   local result = home.scan_for_latest_version("nvim", share_dir)
   lu.assertNotNil(result)
@@ -843,7 +838,7 @@ end
 function test_update_symlink_create()
   local tmp = make_temp_dir()
   local target = path.join(tmp, "target")
-  write_file(target, "target content")
+  cosmo.Barf(target, "target content")
   local link = path.join(tmp, "link")
 
   local ok = home.update_symlink(link, target, {})
@@ -859,9 +854,9 @@ end
 function test_update_symlink_replace()
   local tmp = make_temp_dir()
   local old_target = path.join(tmp, "old_target")
-  write_file(old_target, "old content")
+  cosmo.Barf(old_target, "old content")
   local new_target = path.join(tmp, "new_target")
-  write_file(new_target, "new content")
+  cosmo.Barf(new_target, "new content")
   local link = path.join(tmp, "link")
 
   unix.symlink(old_target, link)
@@ -885,9 +880,9 @@ end
 function test_update_symlink_fails_on_regular_file()
   local tmp = make_temp_dir()
   local target = path.join(tmp, "target")
-  write_file(target, "target")
+  cosmo.Barf(target, "target")
   local existing_file = path.join(tmp, "existing")
-  write_file(existing_file, "regular file")
+  cosmo.Barf(existing_file, "regular file")
 
   local ok, err = home.update_symlink(existing_file, target, {})
   lu.assertFalse(ok)
@@ -899,7 +894,7 @@ end
 function test_update_symlink_dry_run()
   local tmp = make_temp_dir()
   local target = path.join(tmp, "target")
-  write_file(target, "target")
+  cosmo.Barf(target, "target")
   local link = path.join(tmp, "link")
   local stdout = mock_writer()
 
@@ -948,7 +943,7 @@ function test_cmd_3p_creates_symlinks()
 
   local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234", "bin")
   unix.makedirs(tool_dir)
-  write_file(path.join(tool_dir, "rg"), "#!/bin/sh\necho rg")
+  cosmo.Barf(path.join(tool_dir, "rg"), "#!/bin/sh\necho rg")
 
   local stdout = mock_writer()
   local stderr = mock_writer()
@@ -975,7 +970,7 @@ function test_cmd_3p_list()
 
   local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234", "bin")
   unix.makedirs(tool_dir)
-  write_file(path.join(tool_dir, "rg"), "#!/bin/sh\necho rg")
+  cosmo.Barf(path.join(tool_dir, "rg"), "#!/bin/sh\necho rg")
 
   local stdout = mock_writer()
   local stderr = mock_writer()
@@ -1000,7 +995,7 @@ function test_cmd_3p_dry_run_verbose()
 
   local tool_dir = path.join(share_dir, "rg", "14.1.1-abcd1234", "bin")
   unix.makedirs(tool_dir)
-  write_file(path.join(tool_dir, "rg"), "#!/bin/sh\necho rg")
+  cosmo.Barf(path.join(tool_dir, "rg"), "#!/bin/sh\necho rg")
 
   local stdout = mock_writer()
   local stderr = mock_writer()
@@ -1034,8 +1029,8 @@ function test_cmd_3p_nvim_site_symlink()
   local nvim_site_dir = path.join(nvim_dir, "share", "nvim", "site")
   unix.makedirs(nvim_bin_dir)
   unix.makedirs(nvim_site_dir)
-  write_file(path.join(nvim_bin_dir, "nvim"), "#!/bin/sh\necho nvim")
-  write_file(path.join(nvim_site_dir, "marker"), "site")
+  cosmo.Barf(path.join(nvim_bin_dir, "nvim"), "#!/bin/sh\necho nvim")
+  cosmo.Barf(path.join(nvim_site_dir, "marker"), "site")
 
   local stdout = mock_writer()
   local stderr = mock_writer()
@@ -1111,7 +1106,7 @@ function test_scan_for_latest_version_path_format()
   local tool_bin_dir = path.join(tool_dir, "bin")
   unix.makedirs(tool_bin_dir)
   local bin_path = path.join(tool_bin_dir, "rg")
-  write_file(bin_path, "#!/bin/sh\necho rg")
+  cosmo.Barf(bin_path, "#!/bin/sh\necho rg")
 
   local result = home.scan_for_latest_version("rg", share_dir)
   lu.assertNotNil(result)
@@ -1133,7 +1128,7 @@ function test_scan_for_latest_version_rejects_invalid_paths()
   -- Create directory with invalid version format (e.g., 0.0.0-)
   local bad_dir = path.join(share_dir, "rg", "0.0.0-")
   unix.makedirs(bad_dir)
-  write_file(path.join(bad_dir, "rg"), "#!/bin/sh\necho rg")
+  cosmo.Barf(path.join(bad_dir, "rg"), "#!/bin/sh\necho rg")
 
   -- Should not find this as a valid version
   local result = home.scan_for_latest_version("rg", share_dir)
