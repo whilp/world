@@ -18,12 +18,14 @@ end
 
 local output_dir = path.dirname(output)
 unix.makedirs(output_dir)
+-- setup TEST_TMPDIR for tests to use
+TEST_TMPDIR = unix.mkdtemp("/tmp/test_XXXXXX")
 unix.unveil(test_file, "r")
 unix.unveil(output_dir, "rwc")
 unix.unveil("o", "rx")
 unix.unveil("lib", "r")
 unix.unveil("3p", "r")
-unix.unveil("/tmp", "rwc")
+unix.unveil(TEST_TMPDIR, "rwc")
 unix.unveil("/dev/null", "rw")
 unix.unveil("/proc", "r")
 unix.unveil("/usr", "rx")
@@ -40,9 +42,6 @@ if home then
     end
   end
 end
--- setup TEST_TMPDIR for tests to use
-TEST_TMPDIR = unix.mkdtemp("/tmp/test_XXXXXX")
-unix.unveil(TEST_TMPDIR, "rwc")
 -- Unveil additional paths passed as arguments (available to test via TEST_ARGS)
 for _, p in ipairs(TEST_ARGS) do
   unix.unveil(p, "r")
