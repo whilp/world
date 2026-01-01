@@ -1,7 +1,5 @@
 #!/usr/bin/env lua
 
-local lu = require("luaunit")
-
 require("work.test_command_blocked")
 require("work.test_blockers")
 require("work.test_blocked_on_display")
