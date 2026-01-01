@@ -1,6 +1,5 @@
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
-local spawn = require('spawn').spawn
 
 local function trim(s)
   return s:match('^%s*(.-)%s*$')
@@ -74,19 +73,9 @@ local function string_to_emoji(str)
 end
 
 local function get_short_hostname()
-  -- try /etc/hostname first (works without /usr unveil)
-  local hostname = read_file('/etc/hostname')
+  local hostname = unix.gethostname()
   if hostname then
     return hostname:match('([^.%s]+)')
-  end
-  -- fallback to hostname command
-  local ok, output = spawn({'hostname', '-s'}):read()
-  if ok and output then
-    return trim(output):match('([^.%s]+)')
-  end
-  ok, output = spawn({'hostname'}):read()
-  if ok and output then
-    return trim(output):match('([^.%s]+)')
   end
   return nil
 end
