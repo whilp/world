@@ -55,30 +55,24 @@ jobs:
             done
           done
 
-          # For linux-x86_64, use shell commands to avoid APE lua issues
-          # The APE lua has issues with unix.open on the same platform
+          # For linux-x86_64, use make but manually copy files at the end
+          # The APE lua crashes when opening files for writing on the same platform
+          make o/linux-x86_64/cosmos/.extracted
+
+          # Get version string
           version=$(o/any/lua/bin/lua -e 'local s = dofile("3p/cosmos/version.lua"); local p = s.platforms["*"] or s.platforms; print(s.version .. "-" .. p.sha:sub(1,8))')
           echo "Cosmos version: $version"
 
+          # Copy files with shell cp and create symlinks
+          target_dir="o/linux-x86_64/cosmos/$version/bin"
+          mkdir -p "$target_dir"
           for b in lua zip unzip; do
-            target_dir="o/linux-x86_64/cosmos/$version/bin"
-            mkdir -p "$target_dir"
-
-            # Fetch
-            o/any/lua/bin/lua lib/build/fetch.lua 3p/cosmos/version.lua linux-x86_64 o/linux-x86_64/cosmos/archive.zip
-
-            # Extract
-            o/any/lua/bin/lua lib/build/extract.lua 3p/cosmos/version.lua linux-x86_64 o/linux-x86_64/cosmos/archive.zip o/linux-x86_64/cosmos/staging
-
-            # Copy with shell cp instead of install.lua
             cp -p "o/linux-x86_64/cosmos/staging/$b" "$target_dir/$b"
-
-            # Create symlink
-            ln -sfn "$version/bin" o/linux-x86_64/cosmos/bin
-
-            # Cleanup
-            rm -rf o/linux-x86_64/cosmos/archive.zip o/linux-x86_64/cosmos/staging
           done
+          ln -sfn "$version/bin" o/linux-x86_64/cosmos/bin
+
+          # Cleanup
+          rm -rf o/linux-x86_64/cosmos/.extracted o/linux-x86_64/cosmos/archive.zip o/linux-x86_64/cosmos/staging
 
       - name: Build home binaries for all platforms
         run: make home-all -j$(nproc)
