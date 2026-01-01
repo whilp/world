@@ -2,7 +2,7 @@ bins += o/%/lua/bin/lua.dist
 tests += o/%/lua/test.ok
 tests += o/%/lua/test_release.ok
 
-o/%/lua/bin/lua.ape: o/%/cosmos/bin/lua $(lib_libs) $(libs)
+o/%/lua/bin/lua.ape: o/%/cosmos/bin/lua $(lib_libs) $(libs) $(luaunit)
 	rm -rf o/$*/lua/staging
 	mkdir -p o/$*/lua/staging/.lua o/$*/lua/staging/.lua/bin $(@D)
 	$(foreach d,$(3p_lib_dirs),cp -r $(subst %,$*,$(d))/* o/$*/lua/staging/.lua/;)
