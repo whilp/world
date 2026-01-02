@@ -26,7 +26,7 @@ function test_lua_binary_has_bundled_modules()
     "luacheck",
     "luaunit",
     "lfs",
-    "spawn",
+    "cosmic.spawn",
     "version",
     "platform",
   }

@@ -57,7 +57,7 @@ export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;$(lib_paths)$(3p
 script_deps := $(cosmic_lib)/cosmic/spawn.lua $(cosmic_lib)/cosmic/walk.lua
 
 lua_files := $(shell git ls-files '*.lua' | grep -vE '^(\.config/(hammerspoon|nvim|voyager)|\.local/bin)/' ; git ls-files | grep -v '\.lua$$' | grep -v '^o/' | grep -vE '^(\.config/(hammerspoon|nvim|voyager)|\.local/bin)/' | xargs -r grep -l '^#!/.*lua' 2>/dev/null || true)
-test_files := $(shell git ls-files '*test.lua' 'test_*.lua' | grep -vE '(latest|luatest)\.lua$$')
+test_files := $(shell git ls-files '*test.lua' '**/test_*.lua' | grep -vE '(latest|luatest)\.lua$$')
 version_files := $(shell git ls-files '**/version.lua' | grep -v '^lib/version\.lua$$')
 luatest_files := $(patsubst %,$(luatest_o)/%.ok,$(test_files))
 luacheck_files := $(patsubst %,$(luacheck_o)/%.ok,$(lua_files))

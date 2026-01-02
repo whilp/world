@@ -1,3 +1,16 @@
+local lu = require("luaunit")
+
+-- skip if posix not available (work module requires luaposix)
+local has_posix = pcall(require, "posix")
+if not has_posix then
+  function test_work_lib_skipped()
+    lu.skip("requires luaposix")
+  end
+  return setmetatable({}, {
+    __call = function() end
+  })
+end
+
 local data = require("work.data")
 local store = require("work.store")
 
