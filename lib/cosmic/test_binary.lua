@@ -56,5 +56,3 @@ function TestCosmicBinary:test_lfs_bundled()
   lu.assertTrue(ok, "cosmic exited with error")
   lu.assertStrContains(out, "ok")
 end
-
-os.exit(lu.LuaUnit.run())
