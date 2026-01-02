@@ -1,6 +1,4 @@
-local M = {}
-
-function M.parse(action_string)
+local function parse(action_string)
 	if not action_string or action_string == "" then
 		return nil, "empty action string"
 	end
@@ -37,25 +35,34 @@ function M.parse(action_string)
 	return result
 end
 
-function M.parse_workflow_file(file_path)
-	local file, err = io.open(file_path, "r")
-	if not file then
-		return nil, err
-	end
-
+local function parse_workflow(workflow_content)
 	local actions = {}
-	for line in file:lines() do
+	for line in workflow_content:gmatch("[^\r\n]+") do
 		local uses = line:match("uses:%s*(.+)")
 		if uses then
-			local action, parse_err = M.parse(uses)
+			local action = parse(uses)
 			if action then
 				table.insert(actions, action)
 			end
 		end
 	end
-
-	file:close()
 	return actions
 end
 
-return M
+local function parse_workflow_file(file_path)
+	local file, err = io.open(file_path, "r")
+	if not file then
+		return nil, err
+	end
+
+	local content = file:read("*a")
+	file:close()
+
+	return parse_workflow(content)
+end
+
+return {
+	parse = parse,
+	parse_workflow = parse_workflow,
+	parse_workflow_file = parse_workflow_file,
+}

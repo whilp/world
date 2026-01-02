@@ -84,6 +84,51 @@ function TestActionParse:test_parse_missing_slash()
 	lu.assertEquals(err, "invalid owner/repo format")
 end
 
+TestWorkflow = {}
+
+function TestWorkflow:test_parse_workflow_string()
+	local workflow = [[
+name: Test
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4 # v4.3.0
+      - uses: actions/setup-node@v3
+]]
+	local actions = action.parse_workflow(workflow)
+	lu.assertNotNil(actions)
+	lu.assertEquals(#actions, 2)
+
+	lu.assertEquals(actions[1].owner, "actions")
+	lu.assertEquals(actions[1].repo, "checkout")
+	lu.assertEquals(actions[1].ref, "v4")
+	lu.assertEquals(actions[1].version, "v4.3.0")
+
+	lu.assertEquals(actions[2].owner, "actions")
+	lu.assertEquals(actions[2].repo, "setup-node")
+	lu.assertEquals(actions[2].ref, "v3")
+	lu.assertNil(actions[2].version)
+end
+
+function TestWorkflow:test_parse_workflow_empty_string()
+	local actions = action.parse_workflow("")
+	lu.assertNotNil(actions)
+	lu.assertEquals(#actions, 0)
+end
+
+function TestWorkflow:test_parse_workflow_no_actions()
+	local workflow = [[
+name: Test
+jobs:
+  test:
+    runs-on: ubuntu-latest
+]]
+	local actions = action.parse_workflow(workflow)
+	lu.assertNotNil(actions)
+	lu.assertEquals(#actions, 0)
+end
+
 TestWorkflowFile = {}
 
 function TestWorkflowFile:test_parse_workflow_file()
