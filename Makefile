@@ -9,7 +9,7 @@ else ifeq ($(uname_s),Linux)
   current_platform := linux-$(subst aarch64,arm64,$(uname_m))
 endif
 
-export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;$(CURDIR)/o/any/luaunit/lib/?.lua;/zip/.lua/?.lua;/zip/.lua/?/init.lua
+export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;$(CURDIR)/o/any/spawn/lib/?.lua;$(CURDIR)/o/any/spawn/lib/?/init.lua;$(CURDIR)/o/any/walk/lib/?.lua;$(CURDIR)/o/any/walk/lib/?/init.lua;$(CURDIR)/o/any/luaunit/lib/?.lua;/zip/.lua/?.lua;/zip/.lua/?/init.lua
 export PATH := $(CURDIR)/o/$(current_platform)/cosmos/bin:$(CURDIR)/o/any/lua/bin:$(PATH)
 export RIPGREP_CONFIG_PATH := $(CURDIR)/.config/ripgrep/rg.conf
 
@@ -59,7 +59,7 @@ luatest-report: $(luatest_files) o/any/walk/lib/walk/init.lua ## Run tests and s
 
 luacheck: $(luacheck_files) ## Run luacheck incrementally on changed files
 
-o/any/%.luacheck.ok: % .luacheckrc $(luacheck_script) $(luacheck_bin)
+o/any/%.luacheck.ok: % .luacheckrc $(luacheck_script) $(luacheck_bin) o/any/spawn/lib/spawn/init.lua o/any/walk/lib/walk/init.lua
 	$(luacheck_runner) $< $@ $(luacheck_bin)
 
 luacheck-report: $(luacheck_files) ## Run luacheck and show summary report
@@ -69,7 +69,7 @@ ast_grep_files := $(patsubst %,o/any/%.ast-grep.ok,$(lua_files))
 
 ast-grep: $(ast_grep_files) ## Run ast-grep incrementally on changed files
 
-o/any/%.ast-grep.ok: % sgconfig.yml $(ast_grep_script) $(ast_grep)
+o/any/%.ast-grep.ok: % sgconfig.yml $(ast_grep_script) $(ast_grep) o/any/spawn/lib/spawn/init.lua o/any/walk/lib/walk/init.lua
 	$(ast_grep_runner) $< $@ $(ast_grep)
 
 ast-grep-report: $(ast_grep_files) ## Run ast-grep and show summary report
@@ -79,7 +79,7 @@ teal_files := $(patsubst %,o/any/%.teal.ok,$(lua_files))
 
 teal: $(teal_files) ## Run teal incrementally on changed files
 
-o/any/%.teal.ok: % $(teal_script) $(tl_bin) $(lua_dist)
+o/any/%.teal.ok: % $(teal_script) $(tl_bin) $(lua_dist) o/any/spawn/lib/spawn/init.lua o/any/walk/lib/walk/init.lua
 	$(teal_runner) $< $@ $(tl_bin) $(lua_dist) || true
 
 teal-report: $(teal_files) ## Run teal and show summary report
