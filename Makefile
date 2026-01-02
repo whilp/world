@@ -52,45 +52,45 @@ $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script): | $(scri
 
 lua_files := $(shell git ls-files '*.lua' | grep -vE '^(\.config/(hammerspoon|nvim|voyager)|\.local/bin)/' ; git ls-files | grep -v '\.lua$$' | grep -v '^o/' | grep -vE '^(\.config/(hammerspoon|nvim|voyager)|\.local/bin)/' | xargs -r grep -l '^#!/.*lua' 2>/dev/null || true)
 test_files := $(shell git ls-files '*test.lua' 'test_*.lua' | grep -vE '(latest|luatest)\.lua$$')
-luatest_files := $(patsubst %,o/any/%.luatest.ok,$(test_files))
-luacheck_files := $(patsubst %,o/any/%.luacheck.ok,$(lua_files))
+luatest_files := $(patsubst %,o/luatest/%.ok,$(test_files))
+luacheck_files := $(patsubst %,o/luacheck/%.ok,$(lua_files))
 
 luatest: $(luatest_files) ## Run tests incrementally on changed files
 
-o/any/%.luatest.ok: % $(luatest_script) $(luaunit) $(script_deps)
+o/luatest/%.ok: % $(luatest_script) $(luaunit) $(script_deps)
 	$(TEST_ENV) $(luatest_runner) $< $@ $(TEST_ARGS)
 
 luatest-report: $(luatest_files) $(script_deps) ## Run tests and show summary report
-	@$(luatest_runner) report o/any
+	@$(luatest_runner) report o/luatest
 
 luacheck: $(luacheck_files) ## Run luacheck incrementally on changed files
 
-o/any/%.luacheck.ok: % .luacheckrc $(luacheck_script) $(luacheck_bin) $(script_deps)
+o/luacheck/%.ok: % .luacheckrc $(luacheck_script) $(luacheck_bin) $(script_deps)
 	$(luacheck_runner) $< $@ $(luacheck_bin)
 
 luacheck-report: $(luacheck_files) ## Run luacheck and show summary report
-	@$(luacheck_runner) report o/any
+	@$(luacheck_runner) report o/luacheck
 
-ast_grep_files := $(patsubst %,o/any/%.ast-grep.ok,$(lua_files))
+ast_grep_files := $(patsubst %,o/ast-grep/%.ok,$(lua_files))
 
 ast-grep: $(ast_grep_files) ## Run ast-grep incrementally on changed files
 
-o/any/%.ast-grep.ok: % sgconfig.yml $(ast_grep_script) $(astgrep_bin) $(script_deps)
+o/ast-grep/%.ok: % sgconfig.yml $(ast_grep_script) $(astgrep_bin) $(script_deps)
 	$(ast_grep_runner) $< $@ $(astgrep_bin)
 
 ast-grep-report: $(ast_grep_files) ## Run ast-grep and show summary report
-	@$(ast_grep_runner) report o/any
+	@$(ast_grep_runner) report o/ast-grep
 
-teal_files := $(patsubst %,o/any/%.teal.ok,$(lua_files))
+teal_files := $(patsubst %,o/teal/%.ok,$(lua_files))
 
 teal: $(teal_files) ## Run teal incrementally on changed files
 
-o/any/%.teal.ok: % $(teal_script) $(tl_bin) $(lua_dist) $(script_deps)
+o/teal/%.ok: % $(teal_script) $(tl_bin) $(lua_dist) $(script_deps)
 	$(teal_runner) $< $@ $(tl_bin) $(lua_dist) || true
 
 teal-report: $(teal_files) ## Run teal and show summary report
 	# TODO: remove || true once all files pass
-	@$(teal_runner) report o/any || true
+	@$(teal_runner) report o/teal || true
 
 bootstrap: $(lua_bin)
 	@[ -n "$$CLAUDE_ENV_FILE" ] && echo "PATH=$(dir $(lua_bin)):\$$PATH" >> "$$CLAUDE_ENV_FILE"; true
@@ -104,12 +104,12 @@ cosmos: o/$(current_platform)/cosmos/bin/lua
 lua: o/$(current_platform)/lua/bin/lua.dist
 
 check: $(ast_grep_files) $(luacheck_files) $(teal_files) ## Run ast-grep, luacheck, and teal
-	@$(ast_grep_runner) report o/any
+	@$(ast_grep_runner) report o/ast-grep
 	@echo ""
-	@$(luacheck_runner) report o/any
+	@$(luacheck_runner) report o/luacheck
 	@echo ""
 	# TODO: remove || true once all files pass teal
-	@$(teal_runner) report o/any || true
+	@$(teal_runner) report o/teal || true
 
 test: $(luatest_files)
 	@echo "All tests passed"

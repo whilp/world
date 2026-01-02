@@ -3,12 +3,12 @@ astgrep_rules := $(wildcard .ast-grep/rules/*.yml)
 astgrep_bin := o/$(current_platform)/ast-grep/bin/ast-grep
 bins += o/%/ast-grep/bin/ast-grep
 
-o/any/3p/ast-grep/test.lua.luatest.ok: o/$(current_platform)/ast-grep/bin/ast-grep
-o/any/3p/ast-grep/test.lua.luatest.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/ast-grep
+o/luatest/3p/ast-grep/test.lua.ok: o/$(current_platform)/ast-grep/bin/ast-grep
+o/luatest/3p/ast-grep/test.lua.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/ast-grep
 
-o/any/3p/ast-grep/test_rules.lua.luatest.ok: o/$(current_platform)/ast-grep/bin/ast-grep sgconfig.yml $(astgrep_rules)
-o/any/3p/ast-grep/test_rules.lua.luatest.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/ast-grep
-o/any/3p/ast-grep/test_rules.lua.luatest.ok: TEST_ARGS = $(CURDIR)/sgconfig.yml $(CURDIR)/.ast-grep/rules
+o/luatest/3p/ast-grep/test_rules.lua.ok: o/$(current_platform)/ast-grep/bin/ast-grep sgconfig.yml $(astgrep_rules)
+o/luatest/3p/ast-grep/test_rules.lua.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/ast-grep
+o/luatest/3p/ast-grep/test_rules.lua.ok: TEST_ARGS = $(CURDIR)/sgconfig.yml $(CURDIR)/.ast-grep/rules
 
 o/%/ast-grep/archive.zip: $(astgrep_version) $(fetch)
 	$(fetch) $(astgrep_version) $* $@

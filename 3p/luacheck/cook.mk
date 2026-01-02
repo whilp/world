@@ -10,8 +10,8 @@ luacheck_deps := \
 	o/%/cosmos/bin/lua \
 	3p/luacheck/luacheck
 
-o/any/3p/luacheck/test.lua.luatest.ok: o/$(current_platform)/luacheck/bin/luacheck
-o/any/3p/luacheck/test.lua.luatest.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/luacheck
+o/luatest/3p/luacheck/test.lua.ok: o/$(current_platform)/luacheck/bin/luacheck
+o/luatest/3p/luacheck/test.lua.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/luacheck
 
 o/%/luacheck/archive.tar.gz: $(luacheck_version) $(fetch)
 	$(fetch) $(luacheck_version) $* $@

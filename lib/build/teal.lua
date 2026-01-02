@@ -83,7 +83,7 @@ local function report(output_dir)
   local total_issues = 0
   local by_severity = {}
 
-  for _, filepath in ipairs(walk.collect(output_dir, "%.teal%.ok$")) do
+  for _, filepath in ipairs(walk.collect(output_dir, "%.ok$")) do
     local chunk = loadfile(filepath)
     if chunk then
       local result = chunk()

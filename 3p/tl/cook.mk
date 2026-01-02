@@ -8,8 +8,8 @@ tl_deps := \
 	o/%/argparse/lib/argparse.lua \
 	o/%/cosmos/bin/lua
 
-o/any/3p/tl/test.lua.luatest.ok: o/$(current_platform)/tl/bin/tl
-o/any/3p/tl/test.lua.luatest.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/tl
+o/luatest/3p/tl/test.lua.ok: o/$(current_platform)/tl/bin/tl
+o/luatest/3p/tl/test.lua.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/tl
 
 o/%/tl/archive.tar.gz: $(tl_version) $(fetch)
 	$(fetch) $(tl_version) $* $@
