@@ -203,47 +203,42 @@ end
 TestCheckFunction = {}
 
 function TestCheckFunction:test_non_github_url_gets_todo()
-  local version_file = path.join(TEST_TMPDIR, "version.lua")
-  local output_file = path.join(TEST_TMPDIR, "version.latest.ok")
-
-  local config = [[
+  local content = [[
 return {
   version = "1.0",
   url = "https://example.com/file.zip",
   platforms = {["*"] = {sha = "abc123"}},
 }
 ]]
-  cosmo.Barf(version_file, config)
 
   local opts = {stderr = {write = function() end}}
-  local ok, err = latest.check(version_file, output_file, opts)
+  local result_str, err = latest.check(content, opts)
 
-  lu.assertTrue(ok)
-  lu.assertTrue(unix.stat(output_file) ~= nil)
+  lu.assertNotNil(result_str, "check should return result string")
+  lu.assertNil(err)
 
-  local result = dofile(output_file)
+  local result = load(result_str)()
   lu.assertTrue(result._todo)
   lu.assertEquals(result.version, "1.0")
 end
 
-function TestCheckFunction:test_creates_output_directory()
-  local version_file = path.join(TEST_TMPDIR, "version.lua")
-  local output_file = path.join(TEST_TMPDIR, "nested/dir/version.latest.ok")
-
-  local config = [[
+function TestCheckFunction:test_github_url_with_version()
+  local content = [[
 return {
-  version = "1.0",
-  url = "https://example.com/file.zip",
+  version = "1.0.0",
+  url = "https://github.com/owner/repo/releases/download/{version}/file.tar.gz",
   platforms = {["*"] = {sha = "abc123"}},
 }
 ]]
-  cosmo.Barf(version_file, config)
 
   local opts = {stderr = {write = function() end}}
-  local ok, err = latest.check(version_file, output_file, opts)
+  local result_str, err = latest.check(content, opts)
 
-  lu.assertTrue(ok)
-  lu.assertTrue(unix.stat(output_file) ~= nil)
+  lu.assertNotNil(result_str, "check should return result string")
+
+  local result = load(result_str)()
+  lu.assertNotNil(result.version)
+  lu.assertNotNil(result.platforms)
 end
 
 TestReportFunction = {}
@@ -325,25 +320,23 @@ end
 
 TestEdgeCases = {}
 
-function TestEdgeCases:test_version_tag_stripping()
-  local version = "v1.2.3"
-  local clean = version:gsub("^v", "")
-  lu.assertEquals(clean, "1.2.3")
+function TestEdgeCases:test_parse_empty_sha256sums()
+  local text = ""
+  local result = latest.parse_sha256sums(text)
+  lu.assertEquals(next(result), nil, "should return empty table")
 end
 
-function TestEdgeCases:test_version_tag_no_v()
-  local version = "2.0.0"
-  local clean = version:gsub("^v", "")
-  lu.assertEquals(clean, "2.0.0")
+function TestEdgeCases:test_parse_malformed_sha256sums()
+  local text = "not a valid checksum line\n"
+  local result = latest.parse_sha256sums(text)
+  lu.assertEquals(next(result), nil, "should return empty table for malformed input")
 end
 
-function TestEdgeCases:test_wildcard_platform()
-  local config = {
-    url = "https://github.com/org/repo/releases/download/{version}/file.zip",
-    platforms = {["*"] = {sha = "abc"}},
-  }
-
-  lu.assertNotNil(config.platforms["*"])
+function TestEdgeCases:test_interpolate_missing_variable()
+  local template = "https://example.com/{missing}/file.tar.gz"
+  local vars = {version = "1.0"}
+  local result = latest.interpolate(template, vars)
+  lu.assertStrContains(result, "{missing}", "should preserve unmatched variables")
 end
 
 TestUnsupportedCases = {}
@@ -368,24 +361,3 @@ function TestUnsupportedCases:test_missing_platform_assets()
   lu.fail("Test implementation needed when feature is supported")
 end
 
-TestHelperExposure = {}
-
-function TestHelperExposure:test_extract_github_repo_exposed()
-  lu.assertNotNil(latest.extract_github_repo)
-  lu.assertIsFunction(latest.extract_github_repo)
-end
-
-function TestHelperExposure:test_parse_sha256sums_exposed()
-  lu.assertNotNil(latest.parse_sha256sums)
-  lu.assertIsFunction(latest.parse_sha256sums)
-end
-
-function TestHelperExposure:test_interpolate_exposed()
-  lu.assertNotNil(latest.interpolate)
-  lu.assertIsFunction(latest.interpolate)
-end
-
-function TestHelperExposure:test_infer_asset_name_exposed()
-  lu.assertNotNil(latest.infer_asset_name)
-  lu.assertIsFunction(latest.infer_asset_name)
-end

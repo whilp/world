@@ -198,20 +198,25 @@ local function fetch_latest_github(config, opts)
   return result
 end
 
-local function check(version_file, output_file, opts)
+local function check(content, opts)
   opts = opts or {}
   local stderr = opts.stderr or io.stderr
 
-  local ok, config = pcall(dofile, version_file)
+  local chunk, err = load(content, "version.lua")
+  if not chunk then
+    return nil, "failed to parse content: " .. tostring(err)
+  end
+
+  local ok, config = pcall(chunk)
   if not ok then
-    return nil, "failed to load " .. version_file .. ": " .. tostring(config)
+    return nil, "failed to load content: " .. tostring(config)
   end
 
   local latest
   local is_github = config.url and config.url:match("github%.com")
 
   if is_github then
-    stderr:write("checking latest version for " .. version_file .. "...\n")
+    stderr:write("checking latest version...\n")
     local fetch_err
     latest, fetch_err = fetch_latest_github(config, opts)
     if not latest then
@@ -221,22 +226,12 @@ local function check(version_file, output_file, opts)
       latest._todo = true
     end
   else
-    stderr:write("no GitHub URL found, using current version for " .. version_file .. "...\n")
+    stderr:write("no GitHub URL found, using current version...\n")
     latest = config
     latest._todo = true
   end
 
-  local content = "return " .. cosmo.EncodeLua(latest, {pretty = true})
-
-  local output_dir = path.dirname(output_file)
-  unix.makedirs(output_dir)
-
-  if not cosmo.Barf(output_file, content) then
-    return nil, "failed to write " .. output_file
-  end
-
-  stderr:write("wrote " .. output_file .. "\n")
-  return true
+  return "return " .. cosmo.EncodeLua(latest, {pretty = true})
 end
 
 local function report(output_dir)
@@ -311,11 +306,29 @@ if not pcall(debug.getlocal, 4, 1) then
       os.exit(1)
     end
 
-    local ok, err = check(version_file, output_file)
-    if not ok then
+    io.stderr:write("checking latest version for " .. version_file .. "...\n")
+
+    local content, read_err = cosmo.Slurp(version_file)
+    if not content then
+      io.stderr:write("error: failed to read " .. version_file .. ": " .. tostring(read_err) .. "\n")
+      os.exit(1)
+    end
+
+    local result, err = check(content)
+    if not result then
       io.stderr:write("error: " .. err .. "\n")
       os.exit(1)
     end
+
+    local output_dir = path.dirname(output_file)
+    unix.makedirs(output_dir)
+
+    if not cosmo.Barf(output_file, result) then
+      io.stderr:write("error: failed to write " .. output_file .. "\n")
+      os.exit(1)
+    end
+
+    io.stderr:write("wrote " .. output_file .. "\n")
   end
 end
 
