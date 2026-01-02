@@ -3,19 +3,6 @@ local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 
-local test_bin_dir = os.getenv("TEST_BIN_DIR")
-if not test_bin_dir then
-  local Makefile = io.open("Makefile"):read("*a")
-  local current_platform = Makefile:match('current_platform := ([^\n]+)')
-  if current_platform:match('%%') then
-    current_platform = "linux-x86_64"
-  end
-  test_bin_dir = "o/" .. current_platform .. "/tl"
-end
-
-local lua_dist_dir = test_bin_dir:gsub("/tl$", "/lua")
-local lua_dist = path.join(lua_dist_dir, "bin", "lua.dist")
-local tl_bin = path.join(test_bin_dir, "bin", "tl")
 local teal_script = "lib/build/teal.lua"
 
 local teal_module = dofile(teal_script)
