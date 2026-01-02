@@ -44,7 +44,11 @@ release ?= latest
 include lib/cook.mk
 include 3p/cook.mk
 
-lua_files := $(shell git ls-files '*.lua' | grep -vE '^(\.config/(hammerspoon|nvim|voyager)|\.local/bin)/' ; git ls-files | grep -v '\.lua$$' | grep -v '^o/' | grep -vE '^(\.config/(hammerspoon|nvim|voyager)|\.local/bin)/' | xargs -r grep -l '^#!/.*lua' 2>/dev/null || true)
+excluded_dirs := '^(\.config/(hammerspoon|nvim|voyager)|\.local/bin|o)/'
+lua_files := $(shell git ls-files '*.lua' | grep -vE $(excluded_dirs); \
+	git ls-files | grep -v '\.lua$$' | while read f; do \
+		head -n1 "$$f" 2>/dev/null | grep -q '^#!/.*lua' && echo "$$f"; \
+	done | grep -vE $(excluded_dirs))
 test_files := $(shell git ls-files '*test.lua' 'test_*.lua' | grep -vE '(latest|luatest)\.lua$$')
 luatest_files := $(patsubst %,o/any/%.luatest.ok,$(test_files))
 luacheck_files := $(patsubst %,o/any/%.luacheck.ok,$(lua_files))
