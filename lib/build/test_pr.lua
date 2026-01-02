@@ -153,12 +153,49 @@ function TestUpdatePr:test_api_error()
   lu.assertStrContains(err, "Forbidden")
 end
 
+TestGetPrNumberFromEnv = {}
+
+function TestGetPrNumberFromEnv:test_falls_back_to_git_branch()
+  local mock_fetch = function()
+    return 200, {}, cosmo.EncodeJson({{number = 207}})
+  end
+
+  local mock_env = {
+    GITHUB_TOKEN = "test-token",
+    GITHUB_REPOSITORY = "owner/repo",
+  }
+  local mock_getenv = function(key) return mock_env[key] end
+
+  local pr_num, err = pr.get_pr_number_from_env({
+    fetch = mock_fetch,
+    getenv = mock_getenv,
+  })
+
+  if pr_num then
+    lu.assertEquals(pr_num, 207)
+  else
+    lu.assertStrContains(err, "branch")
+  end
+end
+
 TestMain = {}
 
 function TestMain:test_not_in_github_actions_prints_help()
   local code, msg = pr.main()
   lu.assertEquals(code, 0)
   lu.assertNil(msg)
+end
+
+function TestMain:test_missing_token_returns_error()
+  local mock_getenv = function() return nil end
+  local mock_env = {GITHUB_ACTIONS = "true"}
+  local getenv_with_actions = function(key)
+    if key == "GITHUB_ACTIONS" then return mock_env[key] end
+    return mock_getenv(key)
+  end
+  local code, msg = pr.main({getenv = getenv_with_actions})
+  lu.assertEquals(code, 1)
+  lu.assertStrContains(msg, "GITHUB_TOKEN")
 end
 
 TestIsGithubActions = {}
