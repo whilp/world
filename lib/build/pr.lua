@@ -181,7 +181,44 @@ local function main(opts)
   return 0
 end
 
+local help = [[
+usage: pr.lua [-h]
+
+Updates PR title and description from .github/pr.md
+
+The pr.md format:
+
+    # component: verb explanation
+
+    Brief description of changes.
+
+    - file1.lua - what it does
+    - file2.lua - what it does
+
+    ## Validation
+
+    - [x] tests pass
+    - [x] linter passes
+
+Guidelines:
+
+  1. Write PR description in .github/pr.md
+  2. Follow repo conventions: `# component: verb explanation` title
+  3. Keep content concise but include key decisions, tradeoffs, examples
+  4. Update the file as the PR evolves
+  5. Push to trigger the workflow and update the PR
+
+Environment variables (set automatically in GitHub Actions):
+  GITHUB_TOKEN       - required for API authentication
+  GITHUB_REPOSITORY  - owner/repo format
+  GITHUB_HEAD_REF    - PR source branch name
+]]
+
 if not pcall(debug.getlocal, 4, 1) then
+  if arg[1] == "-h" or arg[1] == "--help" then
+    print(help)
+    os.exit(0)
+  end
   local _, msg = main()
   if msg then
     log(msg)
