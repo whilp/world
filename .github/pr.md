@@ -1,16 +1,17 @@
-# Add GitHub Action to update PR title and description from file
+# build: add pr.lua script to update PR title and description
 
-This PR adds a workflow that automatically updates PR titles and descriptions based on a `.github/pr.md` file.
+Add a GitHub Action workflow that updates PR titles and descriptions from a `.github/pr.md` file.
 
-## Changes
-
-- `lib/build/pr.lua` - script to parse pr.md and update PR via GitHub API
+- `lib/build/pr.lua` - parses pr.md and updates PR via GitHub API
 - `.github/workflows/pr-update.yml` - workflow triggered on PR events
 - `lib/build/cook.mk` - adds `make update-pr` target
+- `lib/build/test_pr.lua` - tests for parsing and API functions
 
-## Features
+Uses dependency injection for fetch to enable testing without network calls.
+Always exits 0 to never block builds.
 
-- Parses markdown format: `# title` followed by description body
-- Uses dependency injection for testability (mock fetch in tests)
-- Always exits 0 to never block builds
-- Only runs when `.github/pr.md` exists
+## Validation
+
+- [x] `make luatest` passes (15 tests)
+- [x] `make luacheck` passes
+- [x] Tested in CI via this PR
