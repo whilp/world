@@ -155,8 +155,14 @@ end
 
 TestMain = {}
 
-function TestMain:test_missing_token_returns_error()
+function TestMain:test_not_in_github_actions_prints_help()
   local code, msg = pr.main()
-  lu.assertEquals(code, 1)
-  lu.assertStrContains(msg, "GITHUB_TOKEN")
+  lu.assertEquals(code, 0)
+  lu.assertNil(msg)
+end
+
+TestIsGithubActions = {}
+
+function TestIsGithubActions:test_returns_false_when_not_set()
+  lu.assertFalse(pr.is_github_actions())
 end
