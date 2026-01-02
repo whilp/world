@@ -1,6 +1,6 @@
 nvim_version := 3p/nvim/version.lua
 nvim_pack_lock := .config/nvim/nvim-pack-lock.json
-nvim_plugins := $(shell $(lua_bin) 3p/nvim/list-plugins.lua)
+nvim_plugins := conform.nvim mini.nvim nvim-lspconfig nvim-treesitter
 nvim_fetch_plugin := 3p/nvim/fetch-plugin.lua
 nvim_bundle := 3p/nvim/bundle.lua
 bins += o/%/nvim/bin/nvim
