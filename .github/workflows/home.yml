@@ -17,14 +17,14 @@ jobs:
       - name: Bootstrap lua
         run: make bootstrap
 
-      - name: Build home and lua binaries
-        run: make home-all lua-all -j4
-
       - name: Run checks
         run: make check
 
       - name: Run tests
         run: make test -j4
+
+      - name: Build home and lua binaries
+        run: make home-all lua-all -j4
 
       - name: Upload home artifacts
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
