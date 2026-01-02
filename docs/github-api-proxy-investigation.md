@@ -16,10 +16,10 @@ cosmo.Fetch automatically uses this proxy for outbound HTTPS requests. The proxy
 
 | Operation | Status | Notes |
 |-----------|--------|-------|
-| Public GET endpoints | ✅ works | Full read access |
-| Protected GET endpoints | ❌ 401/403 | Logs, secrets, collaborators |
-| POST (comments) | ❌ 401 | Requires authentication |
-| PATCH (update PR) | ❌ 401 | Requires authentication |
+| REST public GET | ✅ works | Full read access |
+| REST protected GET | ❌ 401/403 | Logs, secrets, collaborators |
+| REST POST/PATCH | ❌ 401 | Requires authentication |
+| GraphQL API | ❌ 403 | Requires authentication for all requests |
 
 ## Public endpoints (read-only)
 
@@ -109,6 +109,44 @@ cosmo.Fetch(url, {
   body = cosmo.EncodeJson({ title = "new title" }),
 })
 ```
+
+## GraphQL API (blocked)
+
+GitHub's GraphQL API requires authentication for all requests, unlike REST which allows unauthenticated reads:
+
+```lua
+local query = [[
+{
+  repository(owner: "whilp", name: "world") {
+    name
+    description
+  }
+}
+]]
+
+-- Returns 403 - no unauthenticated access
+cosmo.Fetch("https://api.github.com/graphql", {
+  method = "POST",
+  headers = headers,
+  body = cosmo.EncodeJson({ query = query }),
+})
+```
+
+## Rate limits
+
+Unauthenticated access has limited quotas:
+
+```lua
+local status, _, body = cosmo.Fetch("https://api.github.com/rate_limit")
+local data = cosmo.DecodeJson(body)
+-- REST core: 60/hour (unauthenticated)
+-- GraphQL:   0 (no unauthenticated access)
+```
+
+| Resource | Limit | Notes |
+|----------|-------|-------|
+| REST core | 60/hour | Shared across IP |
+| GraphQL | 0 | Requires token |
 
 ## Example: reading PR review comments
 
