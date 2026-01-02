@@ -8,6 +8,8 @@ local function run_tests(test_file, output, extra_args)
   _G.arg = {}
   TEST_ARGS = extra_args or {}
   TEST_TMPDIR = nil
+  TEST_INTEGRATION = os.getenv("TEST_INTEGRATION")
+  TEST_UNSUPPORTED = os.getenv("TEST_UNSUPPORTED")
 
   local output_dir = path.dirname(output)
   unix.makedirs(output_dir)

@@ -5,9 +5,6 @@ local cosmo = require("cosmo")
 
 local latest = dofile("lib/build/latest.lua")
 
-TEST_INTEGRATION = os.getenv("TEST_INTEGRATION")
-TEST_UNSUPPORTED = os.getenv("TEST_UNSUPPORTED")
-
 TestExtractGithubRepo = {}
 
 function TestExtractGithubRepo:test_standard_releases_url()
@@ -159,18 +156,21 @@ end
 TestIsGithubUrl = {}
 
 function TestIsGithubUrl:test_github_releases()
-  local config = {url = "https://github.com/owner/repo/releases/download/{version}/file.tar.gz"}
-  lu.assertTrue(config.url:match("github%.com") ~= nil)
+  local url = "https://github.com/owner/repo/releases/download/{version}/file.tar.gz"
+  local repo = latest.extract_github_repo(url)
+  lu.assertEquals(repo, "owner/repo")
 end
 
 function TestIsGithubUrl:test_non_github()
-  local config = {url = "https://storage.googleapis.com/bucket/file.zip"}
-  lu.assertNil(config.url:match("github%.com"))
+  local url = "https://storage.googleapis.com/bucket/file.zip"
+  local repo = latest.extract_github_repo(url)
+  lu.assertNil(repo)
 end
 
 function TestIsGithubUrl:test_raw_github()
-  local config = {url = "https://raw.githubusercontent.com/user/repo/main/file.lua"}
-  lu.assertTrue(config.url:match("github") ~= nil)
+  local url = "https://raw.githubusercontent.com/user/repo/main/file.lua"
+  local repo = latest.extract_github_repo(url)
+  lu.assertNil(repo)
 end
 
 TestConfigPreservation = {}
