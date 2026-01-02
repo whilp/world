@@ -1,8 +1,11 @@
 #!/usr/bin/env lua
+
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local cosmo = require("cosmo")
+
 local spawn = require("spawn").spawn
+
 local walk = require("walk")
 
 local function parse_json_stream(stdout)
@@ -32,12 +35,14 @@ local function check(source_file, output, ast_grep_bin)
 
   print("# ast-grep " .. source_file)
 
-  local handle = spawn({
+  local cmd = {
     ast_grep_bin,
     "scan",
     "--json=stream",
     source_file,
-  })
+  }
+
+  local handle = spawn(cmd)
 
   local _, stdout, exit_code = handle:read()
 
@@ -76,7 +81,7 @@ local function report(output_dir)
   local total_issues = 0
   local by_rule = {}
 
-  for _, filepath in ipairs(walk.collect(output_dir, "%.ast%-grep%.ok$")) do
+  for _, filepath in ipairs(walk.collect(output_dir, "%.ok$")) do
     local chunk = loadfile(filepath)
     if chunk then
       local result = chunk()
