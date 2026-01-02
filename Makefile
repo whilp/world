@@ -30,6 +30,7 @@ fetch = $(lua_bin) $(fetch_script)
 extract = $(lua_bin) $(extract_script)
 install = $(lua_bin) $(install_script)
 latest = $(lua_bin) $(latest_script)
+latest_runner = $(lua_bin) $(latest_script)
 runner = $(lua_bin) $(luatest_script)
 luatest_runner = $(lua_bin) $(luatest_script)
 luacheck_bin = o/$(current_platform)/luacheck/bin/luacheck
@@ -95,6 +96,9 @@ latest: $(latest_files) ## Check for latest versions incrementally on changed fi
 o/any/%.latest.ok: % $(latest_script)
 	$(latest) $< $@
 
+latest-report: $(latest_files) ## Check latest versions and show summary report
+	@$(latest_runner) report o/any
+
 bootstrap: $(lua_bin)
 	@[ -n "$$CLAUDE_ENV_FILE" ] && echo "PATH=$(dir $(lua_bin)):\$$PATH" >> "$$CLAUDE_ENV_FILE"; true
 
@@ -125,4 +129,4 @@ test: $(filter o/any/lib/%,$(luatest_files)) $(subst %,$(current_platform),$(tes
 clean:
 	rm -rf o
 
-.PHONY: bootstrap clean cosmos lua check luacheck luacheck-report ast-grep ast-grep-report teal teal-report latest test home
+.PHONY: bootstrap clean cosmos lua check luacheck luacheck-report ast-grep ast-grep-report teal teal-report latest latest-report test home

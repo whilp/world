@@ -247,18 +247,83 @@ function M.check(version_file, output_file, opts)
   return true
 end
 
-if not pcall(debug.getlocal, 4, 1) then
-  local version_file = arg[1]
-  local output_file = arg[2]
-  if not version_file or not output_file then
-    io.stderr:write("usage: latest.lua <version_file> <output_file>\n")
-    os.exit(1)
+function M.report(output_dir)
+  local walk = require("walk")
+
+  local up_to_date = {}
+  local todo = {}
+  local errors = {}
+
+  for _, filepath in ipairs(walk.collect(output_dir, "%.latest%.ok$")) do
+    local chunk, load_err = loadfile(filepath)
+    if chunk then
+      local ok, result = pcall(chunk)
+      if ok and result then
+        if result._todo then
+          table.insert(todo, filepath)
+        else
+          table.insert(up_to_date, filepath)
+        end
+      else
+        table.insert(errors, {file = filepath, error = tostring(result)})
+      end
+    else
+      table.insert(errors, {file = filepath, error = tostring(load_err)})
+    end
   end
 
-  local ok, err = M.check(version_file, output_file)
-  if not ok then
-    io.stderr:write("error: " .. err .. "\n")
-    os.exit(1)
+  local total = #up_to_date + #todo + #errors
+
+  print(string.format("Latest version check summary:"))
+  print(string.format("  %d total version files", total))
+  print(string.format("  %d up-to-date (with strategies)", #up_to_date))
+  print(string.format("  %d need work (_todo flag)", #todo))
+
+  if #errors > 0 then
+    print(string.format("  %d errors", #errors))
+    for _, err_info in ipairs(errors) do
+      print(string.format("    %s: %s", err_info.file, err_info.error))
+    end
+  end
+
+  if #todo > 0 then
+    print("\nFiles needing strategies:")
+    table.sort(todo)
+    for _, file in ipairs(todo) do
+      local short_name = file:gsub("^o/any/", ""):gsub("%.latest%.ok$", "")
+      print(string.format("  - %s", short_name))
+    end
+  end
+
+  return #errors == 0
+end
+
+if not pcall(debug.getlocal, 4, 1) then
+  local command = arg[1]
+
+  if command == "report" then
+    local output_dir = arg[2]
+    if not output_dir then
+      io.stderr:write("usage: latest.lua report <output_dir>\n")
+      os.exit(1)
+    end
+
+    local ok = M.report(output_dir)
+    os.exit(ok and 0 or 1)
+  else
+    local version_file = arg[1]
+    local output_file = arg[2]
+    if not version_file or not output_file then
+      io.stderr:write("usage: latest.lua <version_file> <output_file>\n")
+      io.stderr:write("       latest.lua report <output_dir>\n")
+      os.exit(1)
+    end
+
+    local ok, err = M.check(version_file, output_file)
+    if not ok then
+      io.stderr:write("error: " .. err .. "\n")
+      os.exit(1)
+    end
   end
 end
 
