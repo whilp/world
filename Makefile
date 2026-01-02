@@ -9,7 +9,7 @@ else ifeq ($(uname_s),Linux)
   current_platform := linux-$(subst aarch64,arm64,$(uname_m))
 endif
 
-export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;$(CURDIR)/o/any/spawn/lib/?.lua;$(CURDIR)/o/any/spawn/lib/?/init.lua;$(CURDIR)/o/any/walk/lib/?.lua;$(CURDIR)/o/any/walk/lib/?/init.lua;$(CURDIR)/o/any/luaunit/lib/?.lua;/zip/.lua/?.lua;/zip/.lua/?/init.lua
+# LUA_PATH will be built after includes populate lib_dirs
 export PATH := $(CURDIR)/o/$(current_platform)/cosmos/bin:$(CURDIR)/o/any/lua/bin:$(PATH)
 export RIPGREP_CONFIG_PATH := $(CURDIR)/.config/ripgrep/rg.conf
 
@@ -42,6 +42,13 @@ release ?= latest
 
 include lib/cook.mk
 include 3p/cook.mk
+
+# Build LUA_PATH from lib_dirs and 3p_lib_dirs
+null :=
+space := $(null) $(null)
+lib_paths := $(subst $(space),,$(foreach dir,$(lib_dirs),$(CURDIR)/$(dir)/?.lua;$(CURDIR)/$(dir)/?/init.lua;))
+3p_lib_paths := $(subst $(space),,$(foreach dir,$(subst %,$(current_platform),$(3p_lib_dirs)),$(CURDIR)/$(dir)/?.lua;$(CURDIR)/$(dir)/?/init.lua;))
+export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;$(lib_paths)$(3p_lib_paths)/zip/.lua/?.lua;/zip/.lua/?/init.lua
 
 # Assemble script dependencies from individual library modules
 script_deps := $(spawn_lib) $(walk_lib)
