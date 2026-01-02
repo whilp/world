@@ -1,0 +1,19 @@
+id: use-cosmo-is-main
+language: lua
+severity: error
+message: |
+  Use cosmo.is_main() instead of pcall(debug.getlocal, ...) pattern.
+
+  The debug.getlocal hack is fragile and non-obvious.
+
+    Bad:  if not pcall(debug.getlocal, 4, 1) then
+    Good: if cosmo.is_main() then
+note: |
+  cosmo.is_main() is a built-in function that correctly detects
+  if the script is being run directly vs required as a module.
+  Ensure you have `local cosmo = require("cosmo")` at the top.
+
+rule:
+  any:
+    - pattern: pcall(debug.getlocal, $$$)
+    - pattern: debug.getlocal($$$)

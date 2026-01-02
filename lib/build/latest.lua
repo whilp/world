@@ -287,7 +287,7 @@ local function report(output_dir, opts)
   return #errors == 0
 end
 
-if not pcall(debug.getlocal, 4, 1) then
+if cosmo.is_main() then
   local command = arg[1]
 
   if command == "report" then
