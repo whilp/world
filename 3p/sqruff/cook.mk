@@ -2,7 +2,7 @@ sqruff_version := 3p/sqruff/version.lua
 bins += o/%/sqruff/bin/sqruff
 
 $(luatest_o)/3p/sqruff/test.lua.ok: o/$(current_platform)/sqruff/bin/sqruff
-$(luatest_o)/3p/sqruff/test.lua.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/sqruff
+$(luatest_o)/3p/sqruff/test.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/sqruff
 
 o/%/sqruff/archive.tar.gz: $(sqruff_version) $(fetch)
 	$(fetch) $(sqruff_version) $* $@

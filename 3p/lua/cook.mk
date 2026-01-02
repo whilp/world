@@ -1,11 +1,11 @@
-lua_dist := o/$(current_platform)/lua/bin/lua.dist
+lua_dist := $(o_platform)/lua/bin/lua.dist
 bins += o/%/lua/bin/lua.dist
 
-$(luatest_o)/3p/lua/test.lua.ok: o/$(current_platform)/lua/bin/lua.dist
-$(luatest_o)/3p/lua/test.lua.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/lua
+$(luatest_o)/3p/lua/test.lua.ok: $(lua_dist)
+$(luatest_o)/3p/lua/test.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/lua
 
-$(luatest_o)/3p/lua/test_release.lua.ok: o/$(current_platform)/lua/bin/lua.dist
-$(luatest_o)/3p/lua/test_release.lua.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/lua
+$(luatest_o)/3p/lua/test_release.lua.ok: $(lua_dist)
+$(luatest_o)/3p/lua/test_release.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/lua
 
 o/%/lua/bin/lua.ape: o/%/cosmos/bin/lua $(lib_libs) $(libs) $(luaunit)
 	rm -rf o/$*/lua/staging

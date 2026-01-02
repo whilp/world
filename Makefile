@@ -9,9 +9,13 @@ else ifeq ($(uname_s),Linux)
   current_platform := linux-$(subst aarch64,arm64,$(uname_m))
 endif
 
-export PATH := $(CURDIR)/o/$(current_platform)/cosmos/bin:$(CURDIR)/o/any/lua/bin:$(PATH)
+o := o
+o_platform := $(o)/$(current_platform)
+o_any := $(o)/any
 
-lua_bin := o/any/lua/bin/lua
+export PATH := $(CURDIR)/$(o_platform)/cosmos/bin:$(CURDIR)/$(o_any)/lua/bin:$(PATH)
+
+lua_bin := $(o_any)/lua/bin/lua
 
 # Script paths (for dependencies)
 fetch_script := lib/build/fetch.lua
@@ -31,8 +35,6 @@ luatest_runner = $(lua_bin) $(luatest_script)
 luacheck_runner = $(lua_bin) $(luacheck_script)
 ast_grep_runner = $(lua_bin) $(ast_grep_script)
 teal_runner = $(lua_bin) $(teal_script)
-
-luaunit := o/any/luaunit/lib/luaunit.lua
 
 $(fetch_script) $(extract_script) $(install_script) $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script): | $(lua_bin)
 cosmo := whilp/cosmopolitan

@@ -2,7 +2,7 @@ uv_version := 3p/uv/version.lua
 bins += o/%/uv/bin/uv
 
 $(luatest_o)/3p/uv/test.lua.ok: o/$(current_platform)/uv/bin/uv
-$(luatest_o)/3p/uv/test.lua.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/uv
+$(luatest_o)/3p/uv/test.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/uv
 
 o/%/uv/archive.tar.gz: $(uv_version) $(fetch)
 	$(fetch) $(uv_version) $* $@

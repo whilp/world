@@ -8,4 +8,4 @@ $(spawn_lib): lib/spawn/init.lua
 	cp $< $@
 
 $(luatest_o)/lib/spawn/test_spawn.lua.ok: $(spawn_lib) o/$(current_platform)/cosmos/bin/lua
-$(luatest_o)/lib/spawn/test_spawn.lua.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/cosmos
+$(luatest_o)/lib/spawn/test_spawn.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/cosmos
