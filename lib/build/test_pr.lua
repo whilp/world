@@ -78,3 +78,77 @@ function TestParsePrMd:test_title_with_special_chars()
   lu.assertEquals(result.title, "feat(api): add endpoint for /users")
   lu.assertEquals(result.body, "Details here.")
 end
+
+local cosmo = require("cosmo")
+
+TestGithubRequest = {}
+
+function TestGithubRequest:test_successful_get()
+  local mock_fetch = function(url, opts)
+    lu.assertStrContains(url, "/repos/owner/repo/pulls")
+    lu.assertEquals(opts.method, "GET")
+    lu.assertStrContains(opts.headers["Authorization"], "Bearer ")
+    return 200, {}, cosmo.EncodeJson({number = 123})
+  end
+
+  local status, data = pr.github_request("GET", "/repos/owner/repo/pulls", "token", nil, {fetch = mock_fetch})
+  lu.assertEquals(status, 200)
+  lu.assertEquals(data.number, 123)
+end
+
+function TestGithubRequest:test_fetch_failure()
+  local mock_fetch = function()
+    return nil, "connection refused"
+  end
+
+  local status, err = pr.github_request("GET", "/test", "token", nil, {fetch = mock_fetch})
+  lu.assertNil(status)
+  lu.assertStrContains(err, "fetch failed")
+end
+
+TestFindPrNumber = {}
+
+function TestFindPrNumber:test_finds_pr()
+  local mock_fetch = function()
+    return 200, {}, cosmo.EncodeJson({{number = 42, title = "Test PR"}})
+  end
+
+  local pr_num = pr.find_pr_number("owner", "repo", "branch", "token", {fetch = mock_fetch})
+  lu.assertEquals(pr_num, 42)
+end
+
+function TestFindPrNumber:test_no_pr_found()
+  local mock_fetch = function()
+    return 200, {}, cosmo.EncodeJson({})
+  end
+
+  local pr_num, err = pr.find_pr_number("owner", "repo", "branch", "token", {fetch = mock_fetch})
+  lu.assertNil(pr_num)
+  lu.assertStrContains(err, "no open PR found")
+end
+
+TestUpdatePr = {}
+
+function TestUpdatePr:test_successful_update()
+  local captured_body
+  local mock_fetch = function(_url, opts)
+    captured_body = opts.body
+    return 200, {}, cosmo.EncodeJson({number = 42, title = "New Title"})
+  end
+
+  local ok = pr.update_pr("owner", "repo", 42, "New Title", "New body", "token", {fetch = mock_fetch})
+  lu.assertTrue(ok)
+  lu.assertStrContains(captured_body, "New Title")
+  lu.assertStrContains(captured_body, "New body")
+end
+
+function TestUpdatePr:test_api_error()
+  local mock_fetch = function()
+    return 403, {}, cosmo.EncodeJson({message = "Forbidden"})
+  end
+
+  local ok, err = pr.update_pr("owner", "repo", 42, "Title", "Body", "token", {fetch = mock_fetch})
+  lu.assertNil(ok)
+  lu.assertStrContains(err, "403")
+  lu.assertStrContains(err, "Forbidden")
+end

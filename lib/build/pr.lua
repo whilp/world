@@ -1,4 +1,3 @@
-#!/usr/bin/env lua
 --[[
 Updates a GitHub PR title and description from .github/pr.md
 
@@ -12,11 +11,6 @@ Environment variables:
   GITHUB_REPOSITORY - owner/repo format
   GITHUB_REF_NAME - branch name (used to find PR)
   GITHUB_API_URL - optional, defaults to https://api.github.com
-
-Security notes:
-  - File content is used only as PR title/body text (no execution)
-  - Token scope should be limited to PR write access
-  - Uses unveil to restrict file system access
 ]]
 
 local cosmo = require("cosmo")
@@ -46,12 +40,19 @@ local function parse_pr_md(content)
   return {title = title, body = body}
 end
 
-local function github_request(method, endpoint, token, body)
+local function default_fetch(url, opts)
+  return cosmo.Fetch(url, opts)
+end
+
+local function github_request(method, endpoint, token, body, opts)
+  opts = opts or {}
+  local fetch = opts.fetch or default_fetch
+
   local env = environ.new(unix.environ())
   local api_url = env.GITHUB_API_URL or "https://api.github.com"
   local url = api_url .. endpoint
 
-  local opts = {
+  local fetch_opts = {
     method = method,
     headers = {
       ["Authorization"] = "Bearer " .. token,
@@ -62,11 +63,11 @@ local function github_request(method, endpoint, token, body)
   }
 
   if body then
-    opts.body = cosmo.EncodeJson(body)
-    opts.headers["Content-Type"] = "application/json"
+    fetch_opts.body = cosmo.EncodeJson(body)
+    fetch_opts.headers["Content-Type"] = "application/json"
   end
 
-  local status, headers, response_body = cosmo.Fetch(url, opts)
+  local status, headers, response_body = fetch(url, fetch_opts)
   if not status then
     return nil, "fetch failed: " .. tostring(headers)
   end
@@ -79,11 +80,11 @@ local function github_request(method, endpoint, token, body)
   return status, decoded
 end
 
-local function find_pr_number(owner, repo, branch, token)
+local function find_pr_number(owner, repo, branch, token, opts)
   local endpoint = string.format("/repos/%s/%s/pulls?head=%s:%s&state=open",
     owner, repo, owner, branch)
 
-  local status, data = github_request("GET", endpoint, token)
+  local status, data = github_request("GET", endpoint, token, nil, opts)
   if not status then
     return nil, data
   end
@@ -99,13 +100,13 @@ local function find_pr_number(owner, repo, branch, token)
   return data[1].number
 end
 
-local function update_pr(owner, repo, pr_number, title, body, token)
+local function update_pr(owner, repo, pr_number, title, body, token, opts)
   local endpoint = string.format("/repos/%s/%s/pulls/%d", owner, repo, pr_number)
 
   local status, data = github_request("PATCH", endpoint, token, {
     title = title,
     body = body,
-  })
+  }, opts)
 
   if not status then
     return nil, data
@@ -119,77 +120,80 @@ local function update_pr(owner, repo, pr_number, title, body, token)
   return true
 end
 
-local function main()
+local function main(opts)
+  opts = opts or {}
   local env = environ.new(unix.environ())
 
   local pr_file = ".github/pr.md"
-  local full_path = path.join(unix.getcwd(), pr_file)
+  local full_path = path.realpath(pr_file)
 
   local token = env.GITHUB_TOKEN
   if not token or token == "" then
-    log("GITHUB_TOKEN not set, skipping")
-    return true
+    return 1, "GITHUB_TOKEN not set, skipping"
   end
 
   local repo = env.GITHUB_REPOSITORY
   if not repo then
-    log("GITHUB_REPOSITORY not set, skipping")
-    return true
+    return 1, "GITHUB_REPOSITORY not set, skipping"
   end
 
   local branch = env.GITHUB_HEAD_REF or env.GITHUB_REF_NAME
   if not branch then
-    log("GITHUB_HEAD_REF/GITHUB_REF_NAME not set, skipping")
-    return true
+    return 1, "GITHUB_HEAD_REF/GITHUB_REF_NAME not set, skipping"
   end
 
   local owner, repo_name = repo:match("^([^/]+)/(.+)$")
   if not owner then
-    log("invalid GITHUB_REPOSITORY format: " .. repo)
-    return true
+    return 1, "invalid GITHUB_REPOSITORY format: " .. repo
+  end
+
+  if not full_path then
+    return 1, pr_file .. " not found, skipping"
   end
 
   local stat = unix.stat(full_path)
   if not stat then
-    log(pr_file .. " not found, skipping")
-    return true
+    return 1, pr_file .. " not found, skipping"
   end
 
   local content = cosmo.Slurp(full_path)
   if not content then
-    log("failed to read " .. pr_file)
-    return true
+    return 1, "failed to read " .. pr_file
   end
 
   local pr, err = parse_pr_md(content)
   if not pr then
-    log("failed to parse " .. pr_file .. ": " .. err)
-    return true
+    return 1, "failed to parse " .. pr_file .. ": " .. err
   end
 
   local pr_number
-  pr_number, err = find_pr_number(owner, repo_name, branch, token)
+  pr_number, err = find_pr_number(owner, repo_name, branch, token, opts)
   if not pr_number then
-    log("could not find PR: " .. err)
-    return true
+    return 1, "could not find PR: " .. err
   end
 
   local ok
-  ok, err = update_pr(owner, repo_name, pr_number, pr.title, pr.body, token)
+  ok, err = update_pr(owner, repo_name, pr_number, pr.title, pr.body, token, opts)
   if not ok then
-    log("failed to update PR: " .. err)
-    return true
+    return 1, "failed to update PR: " .. err
   end
 
   log("updated PR #" .. pr_number .. ": " .. pr.title)
-  return true
+  return 0
 end
 
 if not pcall(debug.getlocal, 4, 1) then
-  main()
+  local _, msg = main()
+  if msg then
+    log(msg)
+  end
   os.exit(0)
 end
 
 return {
   parse_pr_md = parse_pr_md,
+  github_request = github_request,
+  find_pr_number = find_pr_number,
+  update_pr = update_pr,
+  main = main,
 }
