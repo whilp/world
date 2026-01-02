@@ -1,7 +1,19 @@
 #!/usr/bin/env lua
 local cosmo = require("cosmo")
 
-local function fetch_json(url)
+local function parse_link_header(link_header)
+  if not link_header then
+    return nil
+  end
+  for url, rel in link_header:gmatch('<([^>]+)>; rel="([^"]+)"') do
+    if rel == "next" then
+      return url
+    end
+  end
+  return nil
+end
+
+local function fetch_json_page(url)
   local status, headers, body = cosmo.Fetch(url, {
     headers = {
       ["User-Agent"] = "curl/8.0",
@@ -10,15 +22,39 @@ local function fetch_json(url)
   })
 
   if status ~= 200 then
-    return nil, string.format("HTTP %d: %s", status, body)
+    return nil, nil, string.format("HTTP %d: %s", status, body)
   end
 
   local ok, data = pcall(cosmo.DecodeJson, body)
   if not ok then
-    return nil, "failed to parse JSON: " .. tostring(data)
+    return nil, nil, "failed to parse JSON: " .. tostring(data)
   end
 
-  return data
+  local next_url = parse_link_header(headers["link"])
+  return data, next_url
+end
+
+local function fetch_json(url)
+  local all_results = {}
+
+  while url do
+    local data, next_url, err = fetch_json_page(url .. (url:find("?") and "&" or "?") .. "per_page=100")
+    if not data then
+      return nil, err
+    end
+
+    if type(data) == "table" and #data > 0 then
+      for _, item in ipairs(data) do
+        table.insert(all_results, item)
+      end
+    else
+      return data
+    end
+
+    url = next_url
+  end
+
+  return all_results
 end
 
 local function extract_pr_info(url_or_num, repo)
@@ -205,6 +241,7 @@ if not pcall(debug.getlocal, 4, 1) then
 end
 
 return {
+  parse_link_header = parse_link_header,
   extract_pr_info = extract_pr_info,
   fetch_reviews = fetch_reviews,
   fetch_review_comments = fetch_review_comments,
