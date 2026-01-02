@@ -3,8 +3,6 @@ local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 
-local M = {}
-
 local function fetch_json(url)
   local status, _, body = cosmo.Fetch(url, {
     headers = {["User-Agent"] = "curl/8.0", ["Accept"] = "application/vnd.github+json"},
@@ -102,7 +100,7 @@ local function infer_asset_name(url_template, platform_config, platform_key, ver
   return asset_name, filename
 end
 
-function M.fetch_latest_github(config, opts)
+local function fetch_latest_github(config, opts)
   opts = opts or {}
   local stderr = opts.stderr or io.stderr
 
@@ -197,7 +195,7 @@ function M.fetch_latest_github(config, opts)
   return result
 end
 
-function M.check(version_file, output_file, opts)
+local function check(version_file, output_file, opts)
   opts = opts or {}
   local stderr = opts.stderr or io.stderr
 
@@ -212,7 +210,7 @@ function M.check(version_file, output_file, opts)
   if is_github then
     stderr:write("checking latest version for " .. version_file .. "...\n")
     local fetch_err
-    latest, fetch_err = M.fetch_latest_github(config, opts)
+    latest, fetch_err = fetch_latest_github(config, opts)
     if not latest then
       stderr:write("warning: " .. fetch_err .. "\n")
       stderr:write("falling back to current version\n")
@@ -238,7 +236,7 @@ function M.check(version_file, output_file, opts)
   return true
 end
 
-function M.report(output_dir)
+local function report(output_dir)
   local walk = require("walk")
 
   local up_to_date = {}
@@ -299,7 +297,7 @@ if not pcall(debug.getlocal, 4, 1) then
       os.exit(1)
     end
 
-    local ok = M.report(output_dir)
+    local ok = report(output_dir)
     os.exit(ok and 0 or 1)
   else
     local version_file = arg[1]
@@ -310,7 +308,7 @@ if not pcall(debug.getlocal, 4, 1) then
       os.exit(1)
     end
 
-    local ok, err = M.check(version_file, output_file)
+    local ok, err = check(version_file, output_file)
     if not ok then
       io.stderr:write("error: " .. err .. "\n")
       os.exit(1)
@@ -318,9 +316,12 @@ if not pcall(debug.getlocal, 4, 1) then
   end
 end
 
-M.extract_github_repo = extract_github_repo
-M.parse_sha256sums = parse_sha256sums
-M.interpolate = interpolate
-M.infer_asset_name = infer_asset_name
-
-return M
+return {
+  extract_github_repo = extract_github_repo,
+  parse_sha256sums = parse_sha256sums,
+  interpolate = interpolate,
+  infer_asset_name = infer_asset_name,
+  fetch_latest_github = fetch_latest_github,
+  check = check,
+  report = report,
+}
