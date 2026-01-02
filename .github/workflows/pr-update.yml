@@ -1,0 +1,35 @@
+name: Update PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+
+      - name: Check for pr.md
+        id: check
+        run: |
+          if [ -f .github/pr.md ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bootstrap lua
+        if: steps.check.outputs.exists == 'true'
+        run: make bootstrap
+
+      - name: Update PR
+        if: steps.check.outputs.exists == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: o/any/lua/bin/lua lib/build/pr.lua
