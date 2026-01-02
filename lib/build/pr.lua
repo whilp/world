@@ -152,63 +152,6 @@ local function get_pr_number_from_env(opts)
   return find_pr_number(owner, repo_name, branch, token, opts)
 end
 
-local function main(opts)
-  opts = opts or {}
-  local env = environ.new(unix.environ())
-
-  local token = env.GITHUB_TOKEN
-  if not token or token == "" then
-    return 1, "GITHUB_TOKEN not set, skipping"
-  end
-
-  local repo = env.GITHUB_REPOSITORY
-  if not repo then
-    return 1, "GITHUB_REPOSITORY not set, skipping"
-  end
-
-  local owner, repo_name = repo:match("^([^/]+)/(.+)$")
-  if not owner then
-    return 1, "invalid GITHUB_REPOSITORY format: " .. repo
-  end
-
-  local pr_number, err = get_pr_number_from_env(opts)
-  if not pr_number then
-    return 1, "could not determine PR number: " .. err
-  end
-
-  local pr_file = string.format(".github/pr/%d.md", pr_number)
-  local full_path = unix.realpath(pr_file)
-
-  if not full_path then
-    return 1, pr_file .. " not found, skipping"
-  end
-
-  local stat = unix.stat(full_path)
-  if not stat then
-    return 1, pr_file .. " not found, skipping"
-  end
-
-  local content = cosmo.Slurp(full_path)
-  if not content then
-    return 1, "failed to read " .. pr_file
-  end
-
-  local pr
-  pr, err = parse_pr_md(content)
-  if not pr then
-    return 1, "failed to parse " .. pr_file .. ": " .. err
-  end
-
-  local ok
-  ok, err = update_pr(owner, repo_name, pr_number, pr.title, pr.body, token, opts)
-  if not ok then
-    return 1, "failed to update PR: " .. err
-  end
-
-  log("updated PR #" .. pr_number .. ": " .. pr.title)
-  return 0
-end
-
 local function print_help()
   local pr_number, _ = get_pr_number_from_env()
   local pr_file = pr_number and string.format(".github/pr/%d.md", pr_number) or ".github/pr/<number>.md"
@@ -254,7 +197,66 @@ Environment variables (set automatically in GitHub Actions):
   print(help)
 end
 
-if not pcall(debug.getlocal, 4, 1) then
+local function main(opts)
+  opts = opts or {}
+  local env = environ.new(unix.environ())
+
+  local token = env.GITHUB_TOKEN
+  if not token or token == "" then
+    print_help()
+    return 0
+  end
+
+  local repo = env.GITHUB_REPOSITORY
+  if not repo then
+    print_help()
+    return 0
+  end
+
+  local owner, repo_name = repo:match("^([^/]+)/(.+)$")
+  if not owner then
+    return 1, "invalid GITHUB_REPOSITORY format: " .. repo
+  end
+
+  local pr_number, err = get_pr_number_from_env(opts)
+  if not pr_number then
+    return 1, "could not determine PR number: " .. err
+  end
+
+  local pr_file = string.format(".github/pr/%d.md", pr_number)
+  local full_path = unix.realpath(pr_file)
+
+  if not full_path then
+    return 1, pr_file .. " not found, skipping"
+  end
+
+  local stat = unix.stat(full_path)
+  if not stat then
+    return 1, pr_file .. " not found, skipping"
+  end
+
+  local content = cosmo.Slurp(full_path)
+  if not content then
+    return 1, "failed to read " .. pr_file
+  end
+
+  local pr
+  pr, err = parse_pr_md(content)
+  if not pr then
+    return 1, "failed to parse " .. pr_file .. ": " .. err
+  end
+
+  local ok
+  ok, err = update_pr(owner, repo_name, pr_number, pr.title, pr.body, token, opts)
+  if not ok then
+    return 1, "failed to update PR: " .. err
+  end
+
+  log("updated PR #" .. pr_number .. ": " .. pr.title)
+  return 0
+end
+
+if cosmo.is_main() then
   if arg[1] == "-h" or arg[1] == "--help" then
     print_help()
     os.exit(0)
