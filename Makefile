@@ -115,7 +115,7 @@ latest-report: $(latest_files) ## Check latest versions and show summary report
 bootstrap: $(lua_bin)
 	@[ -n "$$CLAUDE_ENV_FILE" ] && echo "PATH=$(dir $(lua_bin)):\$$PATH" >> "$$CLAUDE_ENV_FILE"; true
 
-$(lua_bin):
+$(lua_bin): $(cosmos_version)
 	@mkdir -p $(@D)
 	curl -sL -o $@ "https://github.com/$(cosmo)/releases/$(release)/download/lua"
 	@chmod +x $@
