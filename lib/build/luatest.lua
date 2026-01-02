@@ -8,6 +8,8 @@ local function run_tests(test_file, output, extra_args)
   _G.arg = {}
   TEST_ARGS = extra_args or {}
   TEST_TMPDIR = nil
+  TEST_INTEGRATION = os.getenv("TEST_INTEGRATION")
+  TEST_UNSUPPORTED = os.getenv("TEST_UNSUPPORTED")
 
   local start_sec, start_nsec = unix.clock_gettime(0)
 

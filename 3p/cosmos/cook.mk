@@ -24,8 +24,3 @@ o/%/cosmos/bin/unzip: $(cosmos_version) $(install) o/%/cosmos/.extracted
 
 o/%/cosmos/bin/make: $(cosmos_version) $(install) o/%/cosmos/.extracted
 	$(install) $(cosmos_version) $* o/$*/cosmos bin o/$*/cosmos/staging/make
-
-cosmos-latest: | $(lua_bin)
-	3p/cosmos/latest.lua > $(cosmos_version)
-
-.PHONY: cosmos-latest

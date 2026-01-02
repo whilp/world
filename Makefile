@@ -21,6 +21,7 @@ lua_bin := $(o_any)/lua/bin/lua
 fetch_script := lib/build/fetch.lua
 extract_script := lib/build/extract.lua
 install_script := lib/build/install.lua
+latest_script := lib/build/latest.lua
 luatest_script := lib/build/luatest.lua
 luacheck_script := lib/build/luacheck.lua
 ast_grep_script := lib/build/ast-grep.lua
@@ -30,13 +31,15 @@ teal_script := lib/build/teal.lua
 fetch = $(lua_bin) $(fetch_script)
 extract = $(lua_bin) $(extract_script)
 install = $(lua_bin) $(install_script)
+latest = $(lua_bin) $(latest_script)
+latest_runner = $(lua_bin) $(latest_script)
 runner = $(lua_bin) $(luatest_script)
 luatest_runner = $(lua_bin) $(luatest_script)
 luacheck_runner = $(lua_bin) $(luacheck_script)
 ast_grep_runner = $(lua_bin) $(ast_grep_script)
 teal_runner = $(lua_bin) $(teal_script)
 
-$(fetch_script) $(extract_script) $(install_script) $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script): | $(lua_bin)
+$(fetch_script) $(extract_script) $(install_script) $(latest_script) $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script): | $(lua_bin)
 cosmo := whilp/cosmopolitan
 release ?= latest
 
@@ -59,8 +62,10 @@ $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script): | $(scri
 
 lua_files := $(shell git ls-files '*.lua' | grep -vE '^(\.config/(hammerspoon|nvim|voyager)|\.local/bin)/' ; git ls-files | grep -v '\.lua$$' | grep -v '^o/' | grep -vE '^(\.config/(hammerspoon|nvim|voyager)|\.local/bin)/' | xargs -r grep -l '^#!/.*lua' 2>/dev/null || true)
 test_files := $(shell git ls-files '*test.lua' 'test_*.lua' | grep -vE '(latest|luatest)\.lua$$')
+version_files := $(shell git ls-files '**/version.lua' | grep -v '^lib/version\.lua$$')
 luatest_files := $(patsubst %,$(luatest_o)/%.ok,$(test_files))
 luacheck_files := $(patsubst %,$(luacheck_o)/%.ok,$(lua_files))
+latest_files := $(patsubst %,o/any/%.latest.ok,$(version_files))
 
 luatest: $(luatest_files) ## Run tests incrementally on changed files
 
@@ -99,6 +104,14 @@ teal-report: $(teal_files) ## Run teal and show summary report
 	# TODO: remove || true once all files pass
 	@$(teal_runner) report $(tl_o) || true
 
+latest: $(latest_files) ## Check for latest versions incrementally on changed files
+
+o/any/%.latest.ok: % $(latest_script)
+	$(latest) $< $@
+
+latest-report: $(latest_files) ## Check latest versions and show summary report
+	@$(latest_runner) report o/any
+
 bootstrap: $(lua_bin)
 	@[ -n "$$CLAUDE_ENV_FILE" ] && echo "PATH=$(dir $(lua_bin)):\$$PATH" >> "$$CLAUDE_ENV_FILE"; true
 
@@ -124,4 +137,4 @@ test: $(luatest_files)
 clean:
 	rm -rf o
 
-.PHONY: bootstrap clean cosmos lua check luacheck luacheck-report ast-grep ast-grep-report teal teal-report test home
+.PHONY: bootstrap clean cosmos lua check luacheck luacheck-report ast-grep ast-grep-report teal teal-report latest latest-report test home
