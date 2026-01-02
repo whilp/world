@@ -1,7 +1,7 @@
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
-local spawn = require("spawn").spawn
+local spawn = require("cosmic.spawn")
 
 -- Platform normalization table
 local PLATFORMS = {

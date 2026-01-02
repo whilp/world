@@ -1,3 +1,4 @@
+-- cosmic.walk: directory tree walking utilities
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 

@@ -172,7 +172,7 @@ local function load_zsh_environment()
     return env
   end
 
-  local spawn = require("spawn").spawn
+  local spawn = require("cosmic.spawn")
   local ok, output = spawn({zsh_path, "-l", "-c", "env -0"}):read()
   if not ok or not output then
     return env

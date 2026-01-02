@@ -1,5 +1,5 @@
 local luaunit = require("luaunit")
-local spawn = require("spawn").spawn
+local spawn = require("cosmic.spawn")
 local path = require("cosmo.path")
 
 local lua_dist = path.join(os.getenv("TEST_BIN_DIR"):gsub("/tl$", "/lua"), "bin", "lua.dist")

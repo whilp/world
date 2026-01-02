@@ -1,6 +1,6 @@
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
-local walk = require("walk")
+local walk = require("cosmic.walk")
 
 local function cmd_help()
   io.stderr:write("usage: gen-manifest <directory> [version]\n")

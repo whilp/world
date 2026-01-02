@@ -3,7 +3,7 @@ local lu = require("luaunit")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local zip = require("cosmo.zip")
-local spawn = require("spawn").spawn
+local spawn = require("cosmic.spawn")
 
 local lua_dist = path.join(os.getenv("TEST_BIN_DIR"), "bin", "lua.dist")
 
@@ -35,9 +35,10 @@ local expected_modules = {
   -- lib modules
   "aerosnap/init.lua",
   "claude/main.lua",
+  "cosmic/spawn.lua",
+  "cosmic/walk.lua",
   "daemonize/init.lua",
   "environ/init.lua",
-  "spawn/init.lua",
   "whereami/init.lua",
   "work/api.lua",
   "home/main.lua",
@@ -104,7 +105,8 @@ function test_lua_dist_can_require_modules()
     "luaunit",
     "luacheck",
     "lfs",
-    "spawn",
+    "cosmic.spawn",
+    "cosmic.walk",
     "environ",
   }
 

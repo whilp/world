@@ -16,7 +16,7 @@ Environment variables:
 
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
-local spawn = require("spawn").spawn
+local spawn = require("cosmic.spawn")
 
 local function log(msg)
   io.stderr:write("pr: " .. msg .. "\n")
