@@ -49,7 +49,7 @@ local function find_lua_files(opts)
   local excluded_patterns = opts.excluded_patterns or default_excluded
   local files = {}
 
-  local handle = spawn({"git", "ls-files", "*.lua"})
+  local handle = spawn({"git", "ls-files"})
   local ok, stdout, exit_code = handle:read()
 
   if not ok then
@@ -59,24 +59,13 @@ local function find_lua_files(opts)
   if exit_code == 0 and stdout then
     for line in stdout:gmatch("[^\r\n]+") do
       if not is_excluded(line, excluded_patterns) then
-        table.insert(files, line)
-      end
-    end
-  end
-
-  handle = spawn({"git", "ls-files"})
-  ok, stdout, exit_code = handle:read()
-
-  if not ok then
-    return nil, "git ls-files failed"
-  end
-
-  if exit_code == 0 and stdout then
-    for line in stdout:gmatch("[^\r\n]+") do
-      if not line:match("%.lua$") and not is_excluded(line, excluded_patterns) then
-        local first_line = read_first_line(line)
-        if first_line and has_lua_shebang(first_line) then
+        if line:match("%.lua$") then
           table.insert(files, line)
+        else
+          local first_line = read_first_line(line)
+          if first_line and has_lua_shebang(first_line) then
+            table.insert(files, line)
+          end
         end
       end
     end
