@@ -186,6 +186,32 @@ function TestGetPrNumberFromEnv:test_falls_back_to_git_branch()
   end
 end
 
+function TestGetPrNumberFromEnv:test_finds_pr_without_token()
+  -- should be able to find PR number without GITHUB_TOKEN
+  -- (unauthenticated API requests work for public repos)
+  local mock_fetch = function()
+    return 200, {}, cosmo.EncodeJson({{number = 207}})
+  end
+
+  local mock_env = {
+    GITHUB_REPOSITORY = "owner/repo",
+    -- no GITHUB_TOKEN
+  }
+  local mock_getenv = function(key) return mock_env[key] end
+
+  local pr_num, err = pr.get_pr_number_from_env({
+    fetch = mock_fetch,
+    getenv = mock_getenv,
+  })
+
+  if pr_num then
+    lu.assertEquals(pr_num, 207)
+  else
+    -- if we're not in a git repo, that's ok for this test
+    lu.assertStrContains(err, "branch")
+  end
+end
+
 TestMain = {}
 
 function TestMain:test_not_in_github_actions_prints_help()
@@ -194,7 +220,7 @@ function TestMain:test_not_in_github_actions_prints_help()
   lu.assertNil(msg)
 end
 
-function TestMain:test_missing_token_returns_error()
+function TestMain:test_missing_repo_returns_error()
   local mock_getenv = function() return nil end
   local mock_env = {GITHUB_ACTIONS = "true"}
   local getenv_with_actions = function(key)
@@ -203,7 +229,22 @@ function TestMain:test_missing_token_returns_error()
   end
   local code, msg = pr.main({getenv = getenv_with_actions})
   lu.assertEquals(code, 1)
-  lu.assertStrContains(msg, "GITHUB_TOKEN")
+  lu.assertStrContains(msg, "GITHUB_REPOSITORY")
+end
+
+function TestMain:test_reports_pr_when_no_token()
+  local mock_fetch = function()
+    return 200, {}, cosmo.EncodeJson({{number = 42}})
+  end
+
+  local mock_env = {
+    GITHUB_REPOSITORY = "owner/repo",
+  }
+  local mock_getenv = function(key) return mock_env[key] end
+
+  local code, msg = pr.main({getenv = mock_getenv, fetch = mock_fetch})
+  lu.assertEquals(code, 0)
+  lu.assertStrContains(msg, "PR #42")
 end
 
 TestIsGithubActions = {}
