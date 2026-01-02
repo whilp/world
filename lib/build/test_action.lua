@@ -129,12 +129,19 @@ jobs:
 	lu.assertEquals(#actions, 0)
 end
 
-TestWorkflowFile = {}
-
-function TestWorkflowFile:test_parse_workflow_file()
-	local actions = action.parse_workflow_file(".github/workflows/home.yml")
+function TestWorkflow:test_parse_workflow_with_sha_and_version()
+	local workflow = [[
+name: Build
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+]]
+	local actions = action.parse_workflow(workflow)
 	lu.assertNotNil(actions)
-	lu.assertTrue(#actions > 0)
+	lu.assertEquals(#actions, 1)
 
 	lu.assertEquals(actions[1].owner, "actions")
 	lu.assertEquals(actions[1].repo, "checkout")
@@ -143,9 +150,20 @@ function TestWorkflowFile:test_parse_workflow_file()
 	lu.assertEquals(actions[1].version, "v4.3.0")
 end
 
-function TestWorkflowFile:test_parse_workflow_finds_all_actions()
-	local actions = action.parse_workflow_file(".github/workflows/home.yml")
+function TestWorkflow:test_parse_workflow_multiple_actions()
+	local workflow = [[
+name: Build
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+      - uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+]]
+	local actions = action.parse_workflow(workflow)
 	lu.assertNotNil(actions)
+	lu.assertEquals(#actions, 3)
 
 	local action_names = {}
 	for _, act in ipairs(actions) do
@@ -153,10 +171,12 @@ function TestWorkflowFile:test_parse_workflow_finds_all_actions()
 		action_names[full_name] = (action_names[full_name] or 0) + 1
 	end
 
-	lu.assertTrue(action_names["actions/checkout"] > 0)
-	lu.assertTrue(action_names["actions/upload-artifact"] > 0)
-	lu.assertTrue(action_names["actions/download-artifact"] > 0)
+	lu.assertEquals(action_names["actions/checkout"], 1)
+	lu.assertEquals(action_names["actions/upload-artifact"], 1)
+	lu.assertEquals(action_names["actions/download-artifact"], 1)
 end
+
+TestWorkflowFile = {}
 
 function TestWorkflowFile:test_parse_nonexistent_file()
 	local actions, err = action.parse_workflow_file("nonexistent.yml")
