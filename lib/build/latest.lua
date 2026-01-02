@@ -199,48 +199,63 @@ function M.infer_tool_name(version_file)
   elseif version_file:match("claude") then
     return "claude"
   end
-  return nil, "could not infer tool name from: " .. version_file
+  return nil
 end
 
-function M.check(version_file, opts)
+function M.check(version_file, output_file, opts)
   opts = opts or {}
   local stderr = opts.stderr or io.stderr
 
-  local tool_name, err = M.infer_tool_name(version_file)
-  if not tool_name then
-    return nil, err
+  local tool_name = M.infer_tool_name(version_file)
+  local strategy = tool_name and strategies[tool_name]
+
+  local latest
+  if strategy then
+    stderr:write("checking " .. tool_name .. " version...\n")
+    local fetch_err
+    latest, fetch_err = strategy.fetch_latest(opts)
+    if not latest then
+      stderr:write("warning: " .. fetch_err .. "\n")
+      stderr:write("falling back to current version\n")
+      local ok, current = pcall(dofile, version_file)
+      if not ok then
+        return nil, "failed to load " .. version_file .. ": " .. tostring(current)
+      end
+      latest = current
+      latest._todo = true
+    end
+  else
+    stderr:write("loading current version from " .. version_file .. "...\n")
+    local ok, current = pcall(dofile, version_file)
+    if not ok then
+      return nil, "failed to load " .. version_file .. ": " .. tostring(current)
+    end
+    latest = current
+    latest._todo = true
   end
 
-  local strategy = strategies[tool_name]
-  if not strategy then
-    return nil, "no strategy for tool: " .. tool_name
-  end
-
-  stderr:write("checking " .. tool_name .. " version...\n")
-  local latest, fetch_err = strategy.fetch_latest(opts)
-  if not latest then
-    return nil, fetch_err
-  end
-
-  local ok_file = version_file:gsub("%.lua$", ".latest.ok")
   local content = "return " .. cosmo.EncodeLua(latest, {pretty = true})
 
-  if not cosmo.Barf(ok_file, content) then
-    return nil, "failed to write " .. ok_file
+  local output_dir = path.dirname(output_file)
+  unix.makedirs(output_dir)
+
+  if not cosmo.Barf(output_file, content) then
+    return nil, "failed to write " .. output_file
   end
 
-  stderr:write("wrote " .. ok_file .. "\n")
+  stderr:write("wrote " .. output_file .. "\n")
   return true
 end
 
 if not pcall(debug.getlocal, 4, 1) then
   local version_file = arg[1]
-  if not version_file then
-    io.stderr:write("usage: latest.lua <version_file>\n")
+  local output_file = arg[2]
+  if not version_file or not output_file then
+    io.stderr:write("usage: latest.lua <version_file> <output_file>\n")
     os.exit(1)
   end
 
-  local ok, err = M.check(version_file)
+  local ok, err = M.check(version_file, output_file)
   if not ok then
     io.stderr:write("error: " .. err .. "\n")
     os.exit(1)

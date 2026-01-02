@@ -48,8 +48,10 @@ include 3p/cook.mk
 
 lua_files := $(shell rg --files -g '*.lua'; rg --no-ignore -l '^#!/.*lua' -g '!*.lua' -g '!o/' 2>/dev/null)
 test_files := $(shell rg --files -g '*test.lua' -g 'test_*.lua' | grep -vE '(latest|luatest)\.lua$$')
+version_files := $(shell rg --files -g 'version.lua' | grep -v '^o/' | grep -v '^lib/version\.lua')
 luatest_files := $(patsubst %,o/any/%.luatest.ok,$(test_files))
 luacheck_files := $(patsubst %,o/any/%.luacheck.ok,$(lua_files))
+latest_files := $(patsubst %,o/any/%.latest.ok,$(version_files))
 
 luatest: $(luatest_files) ## Run tests incrementally on changed files
 
@@ -88,16 +90,10 @@ teal-report: $(teal_files) ## Run teal and show summary report
 	# TODO: remove || true once all files pass
 	@$(teal_runner) report o/any || true
 
-%.latest.ok: %.lua $(latest_script)
-	$(latest) $<
+latest: $(latest_files) ## Check for latest versions incrementally on changed files
 
-nvim-latest: 3p/nvim/version.latest.ok ## Check for latest nvim version
-
-cosmos-latest: 3p/cosmos/version.latest.ok ## Check for latest cosmos version
-
-claude-latest: lib/claude/version.latest.ok ## Check for latest claude version
-
-.PHONY: nvim-latest cosmos-latest claude-latest
+o/any/%.latest.ok: % $(latest_script)
+	$(latest) $< $@
 
 bootstrap: $(lua_bin)
 	@[ -n "$$CLAUDE_ENV_FILE" ] && echo "PATH=$(dir $(lua_bin)):\$$PATH" >> "$$CLAUDE_ENV_FILE"; true
@@ -129,4 +125,4 @@ test: $(filter o/any/lib/%,$(luatest_files)) $(subst %,$(current_platform),$(tes
 clean:
 	rm -rf o
 
-.PHONY: bootstrap clean cosmos lua check luacheck luacheck-report ast-grep ast-grep-report teal teal-report test home
+.PHONY: bootstrap clean cosmos lua check luacheck luacheck-report ast-grep ast-grep-report teal teal-report latest test home
