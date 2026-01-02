@@ -26,7 +26,6 @@ include 3p/lua/cook.mk
 
 define platform_target
 3p-$(1): $(subst %,$(1),$(bins) $(libs))
-test-$(1): $(subst %,$(1),$(tests))
 endef
 $(foreach p,$(platforms),$(eval $(call platform_target,$(p))))
 

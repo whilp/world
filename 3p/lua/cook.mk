@@ -1,6 +1,10 @@
 bins += o/%/lua/bin/lua.dist
-tests += o/%/lua/test.ok
-tests += o/%/lua/test_release.ok
+
+o/any/3p/lua/test.lua.luatest.ok: o/$(current_platform)/lua/bin/lua.dist
+o/any/3p/lua/test.lua.luatest.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/lua
+
+o/any/3p/lua/test_release.lua.luatest.ok: o/$(current_platform)/lua/bin/lua.dist
+o/any/3p/lua/test_release.lua.luatest.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/lua
 
 o/%/lua/bin/lua.ape: o/%/cosmos/bin/lua $(lib_libs) $(libs) $(luaunit)
 	rm -rf o/$*/lua/staging
@@ -13,12 +17,6 @@ o/%/lua/bin/lua.ape: o/%/cosmos/bin/lua $(lib_libs) $(libs) $(luaunit)
 
 o/%/lua/bin/lua.dist: o/%/lua/bin/lua.ape
 	cp $< $@
-
-o/%/lua/test.ok: 3p/lua/test.lua o/%/lua/bin/lua.dist $(runner)
-	TEST_BIN_DIR=o/$*/lua $(runner) $< $@
-
-o/%/lua/test_release.ok: 3p/lua/test_release.lua o/%/lua/bin/lua.dist $(runner)
-	TEST_BIN_DIR=o/$*/lua $(runner) $< $@
 
 lua-all: $(foreach p,$(platforms),o/$(p)/lua/bin/lua.dist) ## Build lua.dist for all platforms
 

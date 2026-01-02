@@ -19,28 +19,43 @@ lua_bin := o/any/lua/bin/lua
 fetch_script := lib/build/fetch.lua
 extract_script := lib/build/extract.lua
 install_script := lib/build/install.lua
-runner_script := lib/build/test.lua
+luatest_script := lib/build/luatest.lua
 luacheck_script := lib/build/luacheck.lua
+ast_grep_script := lib/build/ast-grep.lua
+teal_script := lib/build/teal.lua
 
 # Commands (invoke lua explicitly to avoid APE "Text file busy" errors)
 fetch = $(lua_bin) $(fetch_script)
 extract = $(lua_bin) $(extract_script)
 install = $(lua_bin) $(install_script)
-runner = $(lua_bin) $(runner_script)
+runner = $(lua_bin) $(luatest_script)
+luatest_runner = $(lua_bin) $(luatest_script)
 luacheck_bin = o/$(current_platform)/luacheck/bin/luacheck
 luacheck_runner = $(lua_bin) $(luacheck_script)
+ast_grep_runner = $(lua_bin) $(ast_grep_script)
+teal_runner = $(lua_bin) $(teal_script)
 
 luaunit := o/any/luaunit/lib/luaunit.lua
 
-$(fetch_script) $(extract_script) $(install_script) $(runner_script) $(luacheck_script): | $(lua_bin)
+$(fetch_script) $(extract_script) $(install_script) $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script): | $(lua_bin)
 cosmo := whilp/cosmopolitan
 release ?= latest
 
 include lib/cook.mk
 include 3p/cook.mk
 
-lua_files := $(shell rg --files -g '*.lua'; rg --no-ignore -l '^#!/.*lua' -g '!*.lua' -g '!o/' 2>/dev/null)
+lua_files := $(shell git ls-files '*.lua' | grep -vE '^(\.config/(hammerspoon|nvim|voyager)|\.local/bin)/' ; git ls-files | grep -v '\.lua$$' | grep -v '^o/' | grep -vE '^(\.config/(hammerspoon|nvim|voyager)|\.local/bin)/' | xargs -r grep -l '^#!/.*lua' 2>/dev/null || true)
+test_files := $(shell git ls-files '*test.lua' 'test_*.lua' | grep -vE '(latest|luatest)\.lua$$')
+luatest_files := $(patsubst %,o/any/%.luatest.ok,$(test_files))
 luacheck_files := $(patsubst %,o/any/%.luacheck.ok,$(lua_files))
+
+luatest: $(luatest_files) ## Run tests incrementally on changed files
+
+o/any/%.luatest.ok: % $(luatest_script) $(luaunit) o/any/walk/lib/walk/init.lua
+	$(TEST_ENV) $(luatest_runner) $< $@ $(TEST_ARGS)
+
+luatest-report: $(luatest_files) o/any/walk/lib/walk/init.lua ## Run tests and show summary report
+	@$(luatest_runner) report o/any
 
 luacheck: $(luacheck_files) ## Run luacheck incrementally on changed files
 
@@ -48,8 +63,28 @@ o/any/%.luacheck.ok: % .luacheckrc $(luacheck_script) $(luacheck_bin)
 	$(luacheck_runner) $< $@ $(luacheck_bin)
 
 luacheck-report: $(luacheck_files) ## Run luacheck and show summary report
+	@$(luacheck_runner) report o/any
+
+ast_grep_files := $(patsubst %,o/any/%.ast-grep.ok,$(lua_files))
+
+ast-grep: $(ast_grep_files) ## Run ast-grep incrementally on changed files
+
+o/any/%.ast-grep.ok: % sgconfig.yml $(ast_grep_script) $(ast_grep)
+	$(ast_grep_runner) $< $@ $(ast_grep)
+
+ast-grep-report: $(ast_grep_files) ## Run ast-grep and show summary report
+	@$(ast_grep_runner) report o/any
+
+teal_files := $(patsubst %,o/any/%.teal.ok,$(lua_files))
+
+teal: $(teal_files) ## Run teal incrementally on changed files
+
+o/any/%.teal.ok: % $(teal_script) $(tl_bin) $(lua_dist)
+	$(teal_runner) $< $@ $(tl_bin) $(lua_dist) || true
+
+teal-report: $(teal_files) ## Run teal and show summary report
 	# TODO: remove || true once all files pass
-	@$(luacheck_runner) report o/any || true
+	@$(teal_runner) report o/any || true
 
 bootstrap: $(lua_bin)
 	@[ -n "$$CLAUDE_ENV_FILE" ] && echo "PATH=$(dir $(lua_bin)):\$$PATH" >> "$$CLAUDE_ENV_FILE"; true
@@ -67,20 +102,18 @@ lua_dist := o/$(current_platform)/lua/bin/lua.dist
 
 tl_bin := o/$(current_platform)/tl/bin/tl
 
-check: $(ast_grep) $(tl_bin) $(luacheck_files) ## Run ast-grep, luacheck, and teal
-	@echo "Running ast-grep..."
-	$(ast_grep) scan --color always
+check: $(ast_grep_files) $(luacheck_files) $(teal_files) ## Run ast-grep, luacheck, and teal
+	@$(ast_grep_runner) report o/any
 	@echo ""
-	@$(luacheck_runner) report o/any || true
+	@$(luacheck_runner) report o/any
 	@echo ""
-	@echo "Running teal type checker (lax mode)..."
-	# TODO: add .d.tl declarations for cosmo to reduce noise
-	-@$(lua_dist) $(tl_bin) check lib/*.lua lib/**/*.lua 3p/*/*.lua 2>&1
+	# TODO: remove || true once all files pass teal
+	@$(teal_runner) report o/any || true
 
-test: lib-test $(subst %,$(current_platform),$(tests))
+test: $(luatest_files)
 	@echo "All tests passed"
 
 clean:
 	rm -rf o
 
-.PHONY: bootstrap clean cosmos lua check luacheck luacheck-report test home
+.PHONY: bootstrap clean cosmos lua check luacheck luacheck-report ast-grep ast-grep-report teal teal-report test home

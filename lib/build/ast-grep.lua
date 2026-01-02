@@ -5,56 +5,60 @@ local cosmo = require("cosmo")
 local spawn = require("spawn").spawn
 local walk = require("walk")
 
-local function parse_plain(stdout)
+local function parse_json_stream(stdout)
   local issues = {}
   for line in (stdout or ""):gmatch("[^\n]+") do
-    -- plain format: file:line:col-endcol: (CODE) message
-    local _, ln, col, endcol, code, msg = line:match("^(.+):(%d+):(%d+)-(%d+): %(([WE]%d+)%) (.+)$")
-    if not ln then
-      -- without ranges: file:line:col: (CODE) message
-      _, ln, col, code, msg = line:match("^(.+):(%d+):(%d+): %(([WE]%d+)%) (.+)$")
-    end
-    if ln then
+    local ok, obj = pcall(cosmo.DecodeJson, line)
+    if ok and obj and obj.ruleId then
       table.insert(issues, {
-        line = tonumber(ln),
-        column = tonumber(col),
-        end_column = endcol and tonumber(endcol),
-        code = code,
-        message = msg,
+        line = (obj.range and obj.range.start and obj.range.start.line or 0) + 1,
+        column = (obj.range and obj.range.start and obj.range.start.column or 0) + 1,
+        end_line = (obj.range and obj.range["end"] and obj.range["end"].line or 0) + 1,
+        end_column = (obj.range and obj.range["end"] and obj.range["end"].column or 0) + 1,
+        rule_id = obj.ruleId,
+        severity = obj.severity,
+        message = obj.message,
+        note = obj.note,
+        text = obj.text,
       })
     end
   end
   return issues
 end
 
-local function check(source_file, output, luacheck_bin)
+local function check(source_file, output, ast_grep_bin)
   local output_dir = path.dirname(output)
   unix.makedirs(output_dir)
 
-  print("# luacheck " .. source_file)
+  print("# ast-grep " .. source_file)
 
-  local source = cosmo.Slurp(source_file)
   local handle = spawn({
-    luacheck_bin,
-    "--formatter", "plain",
-    "--codes",
-    "--ranges",
-    "--filename", source_file,
-    "-",
-  }, { stdin = source })
+    ast_grep_bin,
+    "scan",
+    "--json=stream",
+    source_file,
+  })
 
   local _, stdout, exit_code = handle:read()
 
-  if stdout and #stdout > 0 then
-    io.write(stdout)
+  local issues = parse_json_stream(stdout)
+
+  if #issues > 0 then
+    for _, issue in ipairs(issues) do
+      io.write(string.format("%s:%d:%d: [%s] %s\n",
+        source_file,
+        issue.line,
+        issue.column,
+        issue.rule_id,
+        issue.note or issue.message:match("^[^\n]+")))
+    end
   end
 
-  local issues = parse_plain(stdout)
   local passed = (exit_code == 0)
 
   local result = {
     file = source_file,
-    checker = "luacheck",
+    checker = "ast-grep",
     passed = passed,
     exit_code = exit_code,
     issues = issues,
@@ -70,9 +74,9 @@ local function report(output_dir)
   local passed = 0
   local failed = 0
   local total_issues = 0
-  local by_code = {}
+  local by_rule = {}
 
-  for _, filepath in ipairs(walk.collect(output_dir, "%.luacheck%.ok$")) do
+  for _, filepath in ipairs(walk.collect(output_dir, "%.ast%-grep%.ok$")) do
     local chunk = loadfile(filepath)
     if chunk then
       local result = chunk()
@@ -85,7 +89,7 @@ local function report(output_dir)
         end
         for _, issue in ipairs(result.issues or {}) do
           total_issues = total_issues + 1
-          by_code[issue.code] = (by_code[issue.code] or 0) + 1
+          by_rule[issue.rule_id] = (by_rule[issue.rule_id] or 0) + 1
         end
       end
     end
@@ -93,7 +97,7 @@ local function report(output_dir)
 
   local total = passed + failed
 
-  print("luacheck report")
+  print("ast-grep report")
   print("───────────────────────────────")
   print(string.format("  files checked:  %d", total))
   print(string.format("  passed:         %d", passed))
@@ -102,12 +106,12 @@ local function report(output_dir)
   print("")
 
   if total_issues > 0 then
-    print("issues by code:")
-    local codes = {}
-    for code in pairs(by_code) do table.insert(codes, code) end
-    table.sort(codes, function(a, b) return by_code[b] < by_code[a] end)
-    for _, code in ipairs(codes) do
-      print(string.format("  %s: %d", code, by_code[code]))
+    print("issues by rule:")
+    local rules = {}
+    for rule in pairs(by_rule) do table.insert(rules, rule) end
+    table.sort(rules, function(a, b) return by_rule[b] < by_rule[a] end)
+    for _, rule in ipairs(rules) do
+      print(string.format("  %s: %d", rule, by_rule[rule]))
     end
     print("")
   end
@@ -133,14 +137,14 @@ local function main(args)
     return report(output_dir) and 0 or 1
   end
 
-  local source_file, output, luacheck_bin = args[1], args[2], args[3]
-  if not source_file or not output or not luacheck_bin then
-    io.stderr:write("usage: luacheck.lua <source_file> <output> <luacheck_bin>\n")
-    io.stderr:write("       luacheck.lua report [output_dir]\n")
+  local source_file, output, ast_grep_bin = args[1], args[2], args[3]
+  if not source_file or not output or not ast_grep_bin then
+    io.stderr:write("usage: ast-grep.lua <source_file> <output> <ast_grep_bin>\n")
+    io.stderr:write("       ast-grep.lua report [output_dir]\n")
     return 1
   end
 
-  local passed = check(source_file, output, luacheck_bin)
+  local passed = check(source_file, output, ast_grep_bin)
   return passed and 0 or 1
 end
 
@@ -148,7 +152,7 @@ if ... then
   os.exit(main({ ... }))
 else
   return {
-    parse_plain = parse_plain,
+    parse_json_stream = parse_json_stream,
     check = check,
     report = report,
     main = main,

@@ -19,9 +19,6 @@ include lib/environ/cook.mk
 include lib/spawn/cook.mk
 include lib/home/cook.mk
 include lib/nvim/cook.mk
+include lib/walk/cook.mk
 include lib/whereami/cook.mk
 include lib/work/cook.mk
-
-lib-test: $(luaunit) $(lib_tests) ## Run lib module tests
-
-.PHONY: lib-test
