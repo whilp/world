@@ -54,7 +54,7 @@ local function check(source_file, output, ast_grep_bin)
     end
   end
 
-  local passed = (#issues == 0)
+  local passed = (exit_code == 0)
 
   local result = {
     file = source_file,
