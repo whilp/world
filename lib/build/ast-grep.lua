@@ -41,14 +41,25 @@ local function check(source_file, output, ast_grep_bin)
 
   print("# ast-grep " .. source_file)
 
-  local handle = spawn({
+  io.stderr:write("DEBUG: ast_grep_bin=" .. ast_grep_bin .. "\n")
+  io.stderr:write("DEBUG: checking if binary exists\n")
+  local stat = unix.stat(ast_grep_bin)
+  io.stderr:write("DEBUG: stat result=" .. (stat and "exists" or "nil") .. "\n")
+
+  local cmd = {
     ast_grep_bin,
     "scan",
     "--json=stream",
     source_file,
-  })
+  }
+  io.stderr:write("DEBUG: spawning command: " .. table.concat(cmd, " ") .. "\n")
+
+  local handle = spawn(cmd)
+  io.stderr:write("DEBUG: spawn returned, calling read()\n")
 
   local _, stdout, exit_code = handle:read()
+  io.stderr:write("DEBUG: read() returned, exit_code=" .. tostring(exit_code) .. "\n")
+  io.stderr:write("DEBUG: stdout length=" .. (stdout and #stdout or 0) .. "\n")
 
   local issues = parse_json_stream(stdout)
 
@@ -73,7 +84,9 @@ local function check(source_file, output, ast_grep_bin)
     issues = issues,
   }
 
+  io.stderr:write("DEBUG: writing result to " .. output .. "\n")
   cosmo.Barf(output, "return " .. cosmo.EncodeLua(result) .. "\n")
+  io.stderr:write("DEBUG: check() returning passed=" .. tostring(passed) .. "\n")
 
   return passed
 end
@@ -139,9 +152,15 @@ local function report(output_dir)
 end
 
 local function main(args)
+  io.stderr:write("DEBUG main: received " .. #args .. " arguments\n")
+  for i, arg in ipairs(args) do
+    io.stderr:write("DEBUG main: args[" .. i .. "]=" .. arg .. "\n")
+  end
+
   local cmd = args[1]
 
   if cmd == "report" then
+    io.stderr:write("DEBUG main: entering report mode\n")
     local output_dir = args[2] or "o/any"
     return report(output_dir) and 0 or 1
   end
@@ -153,7 +172,9 @@ local function main(args)
     return 1
   end
 
+  io.stderr:write("DEBUG main: calling check()\n")
   local passed = check(source_file, output, ast_grep_bin)
+  io.stderr:write("DEBUG main: check() returned, passed=" .. tostring(passed) .. "\n")
   return passed and 0 or 1
 end
 
