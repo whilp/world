@@ -17,33 +17,53 @@ Environment variables:
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local environ = require("environ")
-local spawn = require("spawn").spawn
 
 local function log(msg)
   io.stderr:write("pr: " .. msg .. "\n")
 end
 
+local function get_git_branch()
+  local head = cosmo.Slurp(".git/HEAD")
+  if not head then
+    return nil
+  end
+
+  local ref = head:match("ref:%s*refs/heads/(.+)")
+  if not ref then
+    return nil
+  end
+
+  return ref:match("^%s*(.-)%s*$")
+end
+
+local function get_git_remote_url()
+  local config = cosmo.Slurp(".git/config")
+  if not config then
+    return nil
+  end
+
+  local url = config:match('%[remote%s+"origin"%].-\n%s*url%s*=%s*([^\n]+)')
+  if not url then
+    return nil
+  end
+
+  return url:match("^%s*(.-)%s*$")
+end
+
 local function get_git_info()
-  local ok, remote_url = spawn({"git", "remote", "get-url", "origin"}):read()
-  if not ok or not remote_url then
+  local remote_url = get_git_remote_url()
+  local branch = get_git_branch()
+
+  if not remote_url or not branch then
     return nil
   end
-
-  local branch
-  ok, branch = spawn({"git", "branch", "--show-current"}):read()
-  if not ok or not branch then
-    return nil
-  end
-
-  remote_url = remote_url:match("^%s*(.-)%s*$")
-  branch = branch:match("^%s*(.-)%s*$")
 
   local owner, repo = remote_url:match("github%.com[:/]([^/]+)/([^/%.]+)")
   if not owner or not repo then
     owner, repo = remote_url:match("/git/([^/]+)/([^/%.]+)")
   end
 
-  if not owner or not repo or not branch then
+  if not owner or not repo then
     return nil
   end
 
