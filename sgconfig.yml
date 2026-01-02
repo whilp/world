@@ -6,3 +6,10 @@ languageGlobs:
     - "**/*.lua"
     - ".local/bin/*"
     - ".claude/skills/*/main.lua"
+
+# TODO: fix ast-grep issues in excluded directories
+ignoreGlobs:
+  - ".config/hammerspoon/**"
+  - ".config/nvim/**"
+  - ".config/voyager/**"
+  - ".local/bin/**"

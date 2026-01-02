@@ -1,6 +1,8 @@
 delta_version := 3p/delta/version.lua
 bins += o/%/delta/bin/delta
-tests += o/%/delta/test.ok
+
+$(luatest_o)/3p/delta/test.lua.ok: o/$(current_platform)/delta/bin/delta
+$(luatest_o)/3p/delta/test.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/delta
 
 o/%/delta/archive.tar.gz: $(delta_version) $(fetch)
 	$(fetch) $(delta_version) $* $@
@@ -10,6 +12,3 @@ o/%/delta/staging/delta: $(delta_version) $(extract) o/%/delta/archive.tar.gz
 
 o/%/delta/bin/delta: $(delta_version) $(install) o/%/delta/staging/delta
 	$(install) $(delta_version) $* o/$*/delta bin o/$*/delta/staging/delta
-
-o/%/delta/test.ok: 3p/delta/test.lua o/%/delta/bin/delta $(runner)
-	TEST_BIN_DIR=o/$*/delta $(runner) $< $@

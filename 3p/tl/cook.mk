@@ -2,11 +2,15 @@ tl_version := 3p/tl/version.lua
 lua_libs += tl
 3p_lib_dirs += o/%/tl/lib
 libs += o/%/tl/lib/tl.lua
+tl_bin := $(o_platform)/tl/bin/tl
+tl_o := $(o)/teal
 bins += o/%/tl/bin/tl
-tests += o/%/tl/test.ok
 tl_deps := \
 	o/%/argparse/lib/argparse.lua \
 	o/%/cosmos/bin/lua
+
+$(luatest_o)/3p/tl/test.lua.ok: $(tl_bin)
+$(luatest_o)/3p/tl/test.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/tl
 
 o/%/tl/archive.tar.gz: $(tl_version) $(fetch)
 	$(fetch) $(tl_version) $* $@
@@ -21,6 +25,3 @@ o/%/tl/bin/tl: $(tl_version) $(install) o/%/tl/staging/tl.lua $(tl_deps)
 	$(install) $(tl_version) $* o/$*/tl bin o/$*/tl/staging/tl
 	cp o/$*/tl/staging/tl.lua o/$*/tl/bin/tl.lua
 	chmod +x o/$*/tl/bin/tl
-
-o/%/tl/test.ok: 3p/tl/test.lua o/%/tl/bin/tl $(runner)
-	TEST_BIN_DIR=o/$*/tl $(runner) $< $@

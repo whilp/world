@@ -1,6 +1,8 @@
 gh_version := 3p/gh/version.lua
 bins += o/%/gh/bin/gh
-tests += o/%/gh/test.ok
+
+$(luatest_o)/3p/gh/test.lua.ok: o/$(current_platform)/gh/bin/gh
+$(luatest_o)/3p/gh/test.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/gh
 
 o/%/gh/archive: $(gh_version) $(fetch)
 	$(fetch) $(gh_version) $* $@
@@ -10,6 +12,3 @@ o/%/gh/staging/bin/gh: $(gh_version) $(extract) o/%/gh/archive
 
 o/%/gh/bin/gh: $(gh_version) $(install) o/%/gh/staging/bin/gh
 	$(install) $(gh_version) $* o/$*/gh bin o/$*/gh/staging/bin/gh
-
-o/%/gh/test.ok: 3p/gh/test.lua o/%/gh/bin/gh $(runner)
-	TEST_BIN_DIR=o/$*/gh $(runner) $< $@

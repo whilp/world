@@ -156,3 +156,24 @@ function TestExitCode:test_main_report_returns_1_when_any_fail()
   local exit_code = ast_grep_module.main({ "report", test_dir })
   lu.assertEquals(exit_code, 1)
 end
+
+function TestExitCode:test_check_fails_on_nonzero_exit_code()
+  local unix = require("cosmo.unix")
+  local test_file = path.join(TEST_TMPDIR, "exit_code_test.lua")
+  local output_file = path.join(TEST_TMPDIR, "exit_code_test.lua.ast-grep.ok")
+  local fake_ast_grep = path.join(TEST_TMPDIR, "fake-ast-grep.sh")
+
+  cosmo.Barf(test_file, 'local x = 1\n')
+  cosmo.Barf(fake_ast_grep, '#!/bin/sh\nexit 127\n')
+  unix.chmod(fake_ast_grep, tonumber("755", 8))
+
+  local exit_code = ast_grep_module.main({ test_file, output_file, fake_ast_grep })
+
+  lu.assertEquals(exit_code, 1)
+
+  local chunk = loadfile(output_file)
+  lu.assertNotNil(chunk)
+  local result = chunk()
+  lu.assertEquals(result.exit_code, 127)
+  lu.assertFalse(result.passed)
+end

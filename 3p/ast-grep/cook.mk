@@ -1,8 +1,16 @@
 astgrep_version := 3p/ast-grep/version.lua
+astgrep_config := sgconfig.yml
 astgrep_rules := $(wildcard .ast-grep/rules/*.yml)
+astgrep_bin := $(o_platform)/ast-grep/bin/ast-grep
+astgrep_o := $(o)/ast-grep
 bins += o/%/ast-grep/bin/ast-grep
-tests += o/%/ast-grep/test.ok
-tests += o/%/ast-grep/test_rules.ok
+
+$(luatest_o)/3p/ast-grep/test.lua.ok: $(astgrep_bin)
+$(luatest_o)/3p/ast-grep/test.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/ast-grep
+
+$(luatest_o)/3p/ast-grep/test_rules.lua.ok: $(astgrep_bin) $(astgrep_config) $(astgrep_rules)
+$(luatest_o)/3p/ast-grep/test_rules.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/ast-grep
+$(luatest_o)/3p/ast-grep/test_rules.lua.ok: TEST_ARGS = $(CURDIR)/$(astgrep_config) $(CURDIR)/.ast-grep/rules
 
 o/%/ast-grep/archive.zip: $(astgrep_version) $(fetch)
 	$(fetch) $(astgrep_version) $* $@
@@ -12,9 +20,3 @@ o/%/ast-grep/staging/ast-grep: $(astgrep_version) $(extract) o/%/ast-grep/archiv
 
 o/%/ast-grep/bin/ast-grep: $(astgrep_version) $(install) o/%/ast-grep/staging/ast-grep
 	$(install) $(astgrep_version) $* o/$*/ast-grep bin o/$*/ast-grep/staging/ast-grep
-
-o/%/ast-grep/test.ok: 3p/ast-grep/test.lua o/%/ast-grep/bin/ast-grep $(runner)
-	TEST_BIN_DIR=o/$*/ast-grep $(runner) $< $@
-
-o/%/ast-grep/test_rules.ok: 3p/ast-grep/test_rules.lua o/%/ast-grep/bin/ast-grep sgconfig.yml $(astgrep_rules) $(runner)
-	TEST_BIN_DIR=o/$*/ast-grep $(runner) $< $@ $(CURDIR)/sgconfig.yml $(CURDIR)/.ast-grep/rules

@@ -1,6 +1,8 @@
 ruff_version := 3p/ruff/version.lua
 bins += o/%/ruff/bin/ruff
-tests += o/%/ruff/test.ok
+
+$(luatest_o)/3p/ruff/test.lua.ok: o/$(current_platform)/ruff/bin/ruff
+$(luatest_o)/3p/ruff/test.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/ruff
 
 o/%/ruff/archive.tar.gz: $(ruff_version) $(fetch)
 	$(fetch) $(ruff_version) $* $@
@@ -10,6 +12,3 @@ o/%/ruff/staging/ruff: $(ruff_version) $(extract) o/%/ruff/archive.tar.gz
 
 o/%/ruff/bin/ruff: $(ruff_version) $(install) o/%/ruff/staging/ruff
 	$(install) $(ruff_version) $* o/$*/ruff bin o/$*/ruff/staging/ruff
-
-o/%/ruff/test.ok: 3p/ruff/test.lua o/%/ruff/bin/ruff $(runner)
-	TEST_BIN_DIR=o/$*/ruff $(runner) $< $@

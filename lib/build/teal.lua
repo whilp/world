@@ -1,8 +1,12 @@
 #!/usr/bin/env lua
+-- Debug: print LUA_PATH
+
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local cosmo = require("cosmo")
+
 local spawn = require("spawn").spawn
+
 local walk = require("walk")
 
 local function parse_output(stdout)
@@ -63,6 +67,8 @@ local function check(source_file, output, tl_bin, lua_dist)
   }
 
   cosmo.Barf(output, "return " .. cosmo.EncodeLua(result) .. "\n")
+
+  return passed
 end
 
 local function report(output_dir)
@@ -72,7 +78,7 @@ local function report(output_dir)
   local total_issues = 0
   local by_severity = {}
 
-  for _, filepath in ipairs(walk.collect(output_dir, "%.teal%.ok$")) do
+  for _, filepath in ipairs(walk.collect(output_dir, "%.ok$")) do
     local chunk = loadfile(filepath)
     if chunk then
       local result = chunk()
@@ -140,8 +146,8 @@ local function main(args)
     return 1
   end
 
-  check(source_file, output, tl_bin, lua_dist)
-  return 0
+  local passed = check(source_file, output, tl_bin, lua_dist)
+  return passed and 0 or 1
 end
 
 if ... then
