@@ -153,6 +153,14 @@ function TestUpdatePr:test_api_error()
   lu.assertStrContains(err, "Forbidden")
 end
 
+TestGetCurrentBranch = {}
+
+function TestGetCurrentBranch:test_returns_branch_name()
+  local branch = pr.get_current_branch()
+  lu.assertNotNil(branch)
+  lu.assertTrue(#branch > 0)
+end
+
 TestGetPrNumberFromEnv = {}
 
 function TestGetPrNumberFromEnv:test_falls_back_to_git_branch()

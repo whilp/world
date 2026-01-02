@@ -22,6 +22,19 @@ local function log(msg)
   io.stderr:write("pr: " .. msg .. "\n")
 end
 
+local function get_current_branch()
+  local handle = spawn({"git", "rev-parse", "--abbrev-ref", "HEAD"})
+  local ok, out = handle:read()
+  if not ok then
+    return nil
+  end
+  local branch = out:match("^%s*(.-)%s*$")
+  if branch == "" then
+    return nil
+  end
+  return branch
+end
+
 local function get_git_info()
   local ok, remote_url = spawn({"git", "remote", "get-url", "origin"}):read()
   if not ok or not remote_url then
@@ -191,7 +204,10 @@ local function get_pr_number_from_env(opts)
 
   local branch = getenv("GITHUB_HEAD_REF") or getenv("GITHUB_REF_NAME")
   if not branch then
-    return nil, "GITHUB_HEAD_REF/GITHUB_REF_NAME not set"
+    branch = get_current_branch()
+  end
+  if not branch then
+    return nil, "could not determine branch"
   end
 
   local owner, repo_name = repo:match("^([^/]+)/(.+)$")
@@ -335,6 +351,7 @@ return {
   github_request = github_request,
   find_pr_number = find_pr_number,
   update_pr = update_pr,
+  get_current_branch = get_current_branch,
   get_pr_number_from_env = get_pr_number_from_env,
   get_git_info = get_git_info,
   find_pr_for_branch = find_pr_for_branch,
