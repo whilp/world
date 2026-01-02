@@ -36,7 +36,6 @@ ast_grep_runner = $(lua_bin) $(ast_grep_script)
 teal_runner = $(lua_bin) $(teal_script)
 
 luaunit := o/any/luaunit/lib/luaunit.lua
-script_deps := o/any/spawn/lib/spawn/init.lua o/any/walk/lib/walk/init.lua
 
 $(fetch_script) $(extract_script) $(install_script) $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script): | $(lua_bin)
 cosmo := whilp/cosmopolitan
@@ -44,6 +43,9 @@ release ?= latest
 
 include lib/cook.mk
 include 3p/cook.mk
+
+# Assemble script dependencies from individual library modules
+script_deps := $(spawn_lib) $(walk_lib)
 
 lua_files := $(shell git ls-files '*.lua' | grep -vE '^(\.config/(hammerspoon|nvim|voyager)|\.local/bin)/' ; git ls-files | grep -v '\.lua$$' | grep -v '^o/' | grep -vE '^(\.config/(hammerspoon|nvim|voyager)|\.local/bin)/' | xargs -r grep -l '^#!/.*lua' 2>/dev/null || true)
 test_files := $(shell git ls-files '*test.lua' 'test_*.lua' | grep -vE '(latest|luatest)\.lua$$')
