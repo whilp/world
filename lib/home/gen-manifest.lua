@@ -1,6 +1,6 @@
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
-local walk_lib = require("walk")
+local walk = require("walk")
 
 local function cmd_help()
   io.stderr:write("usage: gen-manifest <directory> [version]\n")
@@ -24,7 +24,7 @@ local function main(args)
     return 1
   end
 
-  local files = walk_lib.collect_all(dir)
+  local files = walk.collect_all(dir)
   local manifest = {
     version = version,
     files = files,

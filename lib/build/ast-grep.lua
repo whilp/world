@@ -3,7 +3,7 @@ local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local cosmo = require("cosmo")
 local spawn = require("spawn").spawn
-local walk_lib = require("walk")
+local walk = require("walk")
 
 local function parse_json_stream(stdout)
   local issues = {}
@@ -74,7 +74,7 @@ local function report(output_dir)
   local total_issues = 0
   local by_rule = {}
 
-  for _, filepath in ipairs(walk_lib.collect(output_dir, "%.ast%-grep%.ok$")) do
+  for _, filepath in ipairs(walk.collect(output_dir, "%.ast%-grep%.ok$")) do
     local chunk = loadfile(filepath)
     if chunk then
       local result = chunk()
