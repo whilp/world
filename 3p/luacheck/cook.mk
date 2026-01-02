@@ -2,6 +2,7 @@ luacheck_version := 3p/luacheck/version.lua
 lua_libs += luacheck
 3p_lib_dirs += o/%/luacheck/lib
 libs += o/%/luacheck/lib/luacheck/main.lua
+luacheck_bin := o/$(current_platform)/luacheck/bin/luacheck
 bins += o/%/luacheck/bin/luacheck
 luacheck_deps := \
 	o/%/argparse/lib/argparse.lua \

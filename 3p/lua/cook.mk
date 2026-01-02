@@ -1,3 +1,4 @@
+lua_dist := o/$(current_platform)/lua/bin/lua.dist
 bins += o/%/lua/bin/lua.dist
 
 o/any/3p/lua/test.lua.luatest.ok: o/$(current_platform)/lua/bin/lua.dist

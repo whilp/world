@@ -1,5 +1,6 @@
 astgrep_version := 3p/ast-grep/version.lua
 astgrep_rules := $(wildcard .ast-grep/rules/*.yml)
+astgrep_bin := o/$(current_platform)/ast-grep/bin/ast-grep
 bins += o/%/ast-grep/bin/ast-grep
 
 o/any/3p/ast-grep/test.lua.luatest.ok: o/$(current_platform)/ast-grep/bin/ast-grep

@@ -2,6 +2,7 @@ tl_version := 3p/tl/version.lua
 lua_libs += tl
 3p_lib_dirs += o/%/tl/lib
 libs += o/%/tl/lib/tl.lua
+tl_bin := o/$(current_platform)/tl/bin/tl
 bins += o/%/tl/bin/tl
 tl_deps := \
 	o/%/argparse/lib/argparse.lua \

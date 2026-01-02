@@ -30,7 +30,6 @@ extract = $(lua_bin) $(extract_script)
 install = $(lua_bin) $(install_script)
 runner = $(lua_bin) $(luatest_script)
 luatest_runner = $(lua_bin) $(luatest_script)
-luacheck_bin = o/$(current_platform)/luacheck/bin/luacheck
 luacheck_runner = $(lua_bin) $(luacheck_script)
 ast_grep_runner = $(lua_bin) $(ast_grep_script)
 teal_runner = $(lua_bin) $(teal_script)
@@ -46,11 +45,6 @@ include 3p/cook.mk
 
 # Assemble script dependencies from individual library modules
 script_deps := $(spawn_lib) $(walk_lib)
-
-# Tool binaries for checkers
-ast_grep := o/$(current_platform)/ast-grep/bin/ast-grep
-lua_dist := o/$(current_platform)/lua/bin/lua.dist
-tl_bin := o/$(current_platform)/tl/bin/tl
 
 # Build scripts that require runtime dependencies
 $(extract_script): | $(spawn_lib)
@@ -81,8 +75,8 @@ ast_grep_files := $(patsubst %,o/any/%.ast-grep.ok,$(lua_files))
 
 ast-grep: $(ast_grep_files) ## Run ast-grep incrementally on changed files
 
-o/any/%.ast-grep.ok: % sgconfig.yml $(ast_grep_script) $(ast_grep) $(script_deps)
-	$(ast_grep_runner) $< $@ $(ast_grep)
+o/any/%.ast-grep.ok: % sgconfig.yml $(ast_grep_script) $(astgrep_bin) $(script_deps)
+	$(ast_grep_runner) $< $@ $(astgrep_bin)
 
 ast-grep-report: $(ast_grep_files) ## Run ast-grep and show summary report
 	@$(ast_grep_runner) report o/any
