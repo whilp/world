@@ -203,12 +203,8 @@ end
 TestCheckFunction = {}
 
 function TestCheckFunction:test_non_github_url_gets_todo()
-  local tmpdir = os.getenv("TEST_TMPDIR") or "/tmp/test_latest"
-  unix.rmrf(tmpdir)
-  unix.makedirs(tmpdir)
-
-  local version_file = path.join(tmpdir, "version.lua")
-  local output_file = path.join(tmpdir, "version.latest.ok")
+  local version_file = path.join(TEST_TMPDIR, "version.lua")
+  local output_file = path.join(TEST_TMPDIR, "version.latest.ok")
 
   local config = [[
 return {
@@ -231,12 +227,8 @@ return {
 end
 
 function TestCheckFunction:test_creates_output_directory()
-  local tmpdir = os.getenv("TEST_TMPDIR") or "/tmp/test_latest"
-  unix.rmrf(tmpdir)
-  unix.makedirs(tmpdir)
-
-  local version_file = path.join(tmpdir, "version.lua")
-  local output_file = path.join(tmpdir, "nested/dir/version.latest.ok")
+  local version_file = path.join(TEST_TMPDIR, "version.lua")
+  local output_file = path.join(TEST_TMPDIR, "nested/dir/version.latest.ok")
 
   local config = [[
 return {
@@ -257,28 +249,24 @@ end
 TestReportFunction = {}
 
 function TestReportFunction:test_counts_todo_and_up_to_date()
-  local tmpdir = os.getenv("TEST_TMPDIR") or "/tmp/test_latest_report"
-  unix.rmrf(tmpdir)
-  unix.makedirs(tmpdir)
+  unix.makedirs(path.join(TEST_TMPDIR, "3p/tool1"))
+  unix.makedirs(path.join(TEST_TMPDIR, "3p/tool2"))
+  unix.makedirs(path.join(TEST_TMPDIR, "lib/tool3"))
 
-  unix.makedirs(path.join(tmpdir, "3p/tool1"))
-  unix.makedirs(path.join(tmpdir, "3p/tool2"))
-  unix.makedirs(path.join(tmpdir, "lib/tool3"))
-
-  cosmo.Barf(path.join(tmpdir, "3p/tool1/version.lua.latest.ok"),
+  cosmo.Barf(path.join(TEST_TMPDIR, "3p/tool1/version.lua.latest.ok"),
     "return {version='1.0', _todo=true, platforms={['*']={sha='abc'}}}")
 
-  cosmo.Barf(path.join(tmpdir, "3p/tool2/version.lua.latest.ok"),
+  cosmo.Barf(path.join(TEST_TMPDIR, "3p/tool2/version.lua.latest.ok"),
     "return {version='2.0', platforms={['*']={sha='def'}}}")
 
-  cosmo.Barf(path.join(tmpdir, "lib/tool3/version.lua.latest.ok"),
+  cosmo.Barf(path.join(TEST_TMPDIR, "lib/tool3/version.lua.latest.ok"),
     "return {version='3.0', platforms={['*']={sha='ghi'}}}")
 
   local old_print = print
   local output = {}
   print = function(s) table.insert(output, s) end
 
-  local ok = latest.report(tmpdir)
+  local ok = latest.report(TEST_TMPDIR)
 
   print = old_print
 
