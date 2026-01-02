@@ -5,7 +5,7 @@ local cosmo = require("cosmo")
 local walk = require("walk")
 
 local function run_tests(test_file, output, extra_args)
-  arg = {}
+  _G.arg = {}
   TEST_ARGS = extra_args or {}
   TEST_TMPDIR = nil
 

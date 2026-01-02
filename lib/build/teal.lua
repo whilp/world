@@ -14,9 +14,7 @@ local function parse_output(stdout)
       current_severity = "warning"
     elseif line:match("^%d+ errors?:$") then
       current_severity = "error"
-    elseif line:match("^=+$") or line:match("^%-+$") then
-      -- separator lines, skip
-    elseif current_severity then
+    elseif current_severity and not (line:match("^=+$") or line:match("^%-+$")) then
       local file, ln, col, msg = line:match("^(.+):(%d+):(%d+): (.+)$")
       if ln then
         table.insert(issues, {

@@ -363,7 +363,7 @@ function TestTimestampPreservationGz:setUp()
   unix.close(fd)
 
   local handle = spawn({"gzip", "-c", src_file})
-  local ok, output, exit_code = handle:read()
+  local _, output, exit_code = handle:read()
   lu.assertEquals(exit_code, 0, "failed to create test gz")
 
   fd = unix.open(self.archive, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("644", 8))

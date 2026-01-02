@@ -63,8 +63,7 @@ o/any/%.luacheck.ok: % .luacheckrc $(luacheck_script) $(luacheck_bin)
 	$(luacheck_runner) $< $@ $(luacheck_bin)
 
 luacheck-report: $(luacheck_files) ## Run luacheck and show summary report
-	# TODO: remove || true once all files pass
-	@$(luacheck_runner) report o/any || true
+	@$(luacheck_runner) report o/any
 
 ast_grep_files := $(patsubst %,o/any/%.ast-grep.ok,$(lua_files))
 
@@ -74,7 +73,7 @@ o/any/%.ast-grep.ok: % sgconfig.yml $(ast_grep_script) $(ast_grep)
 	$(ast_grep_runner) $< $@ $(ast_grep)
 
 ast-grep-report: $(ast_grep_files) ## Run ast-grep and show summary report
-	@$(ast_grep_runner) report o/any || true
+	@$(ast_grep_runner) report o/any
 
 teal_files := $(patsubst %,o/any/%.teal.ok,$(lua_files))
 
@@ -104,10 +103,11 @@ lua_dist := o/$(current_platform)/lua/bin/lua.dist
 tl_bin := o/$(current_platform)/tl/bin/tl
 
 check: $(ast_grep_files) $(luacheck_files) $(teal_files) ## Run ast-grep, luacheck, and teal
-	@$(ast_grep_runner) report o/any || true
+	@$(ast_grep_runner) report o/any
 	@echo ""
-	@$(luacheck_runner) report o/any || true
+	@$(luacheck_runner) report o/any
 	@echo ""
+	# TODO: remove || true once all files pass teal
 	@$(teal_runner) report o/any || true
 
 test: $(filter o/any/lib/%,$(luatest_files)) $(subst %,$(current_platform),$(tests))
