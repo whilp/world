@@ -197,5 +197,3 @@ function TestMain:test_missing_token_returns_error()
   lu.assertEquals(code, 1)
   lu.assertStrContains(msg, "GITHUB_TOKEN")
 end
-
-os.exit(lu.LuaUnit.run())
