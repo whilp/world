@@ -102,7 +102,7 @@ local function report(output_dir)
   local total_skipped = 0
   local total_duration_ms = 0
 
-  for _, filepath in ipairs(walk.collect(output_dir, "%.luatest%.ok$")) do
+  for _, filepath in ipairs(walk.collect(output_dir, "%.ok$")) do
     local chunk = loadfile(filepath)
     if chunk then
       local result = chunk()

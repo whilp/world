@@ -1,8 +1,8 @@
 gh_version := 3p/gh/version.lua
 bins += o/%/gh/bin/gh
 
-o/any/3p/gh/test.lua.luatest.ok: o/$(current_platform)/gh/bin/gh
-o/any/3p/gh/test.lua.luatest.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/gh
+$(luatest_o)/3p/gh/test.lua.ok: o/$(current_platform)/gh/bin/gh
+$(luatest_o)/3p/gh/test.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/gh
 
 o/%/gh/archive: $(gh_version) $(fetch)
 	$(fetch) $(gh_version) $* $@

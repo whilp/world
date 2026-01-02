@@ -6,8 +6,8 @@ nvim_bundle := 3p/nvim/bundle.lua
 bins += o/%/nvim/bin/nvim
 
 # Test uses generic luatest pattern with target-specific prereqs
-o/any/3p/nvim/test.lua.luatest.ok: o/$(current_platform)/nvim/bin/nvim
-o/any/3p/nvim/test.lua.luatest.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/nvim
+$(luatest_o)/3p/nvim/test.lua.ok: o/$(current_platform)/nvim/bin/nvim
+$(luatest_o)/3p/nvim/test.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/nvim
 
 o/%/nvim/archive.tar.gz: $(nvim_version) $(fetch)
 	$(fetch) $(nvim_version) $* $@
