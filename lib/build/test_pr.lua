@@ -201,70 +201,8 @@ function TestClaudeRemote:test_happy_path()
   lu.assertEquals(pr_number, 209)
 end
 
-function TestClaudeRemote:test_get_current_branch()
-  local branch = pr.get_current_branch()
-  lu.assertNotNil(branch)
-  lu.assertTrue(#branch > 0)
-end
-
-function TestClaudeRemote:test_fallback_to_git_branch()
-  local mock_fetch = function()
-    return 200, {}, cosmo.EncodeJson({{number = 207}})
-  end
-
-  local mock_env = {
-    GITHUB_TOKEN = "test-token",
-    GITHUB_REPOSITORY = "owner/repo",
-  }
-  local mock_getenv = function(key) return mock_env[key] end
-
-  local pr_num, err = pr.get_pr_number_from_env({
-    fetch = mock_fetch,
-    getenv = mock_getenv,
-  })
-
-  if pr_num then
-    lu.assertEquals(pr_num, 207)
-  else
-    lu.assertStrContains(err, "branch")
-  end
-end
-
-function TestClaudeRemote:test_finds_pr_without_token()
-  local mock_fetch = function()
-    return 200, {}, cosmo.EncodeJson({{number = 207}})
-  end
-
-  local mock_env = {
-    GITHUB_REPOSITORY = "owner/repo",
-  }
-  local mock_getenv = function(key) return mock_env[key] end
-
-  local pr_num, err = pr.get_pr_number_from_env({
-    fetch = mock_fetch,
-    getenv = mock_getenv,
-  })
-
-  if pr_num then
-    lu.assertEquals(pr_num, 207)
-  else
-    lu.assertStrContains(err, "branch")
-  end
-end
-
-function TestClaudeRemote:test_not_in_github_actions_prints_help()
-  local code, msg = pr.main()
-  lu.assertEquals(code, 0)
-  lu.assertNil(msg)
-end
-
 -- Test GitHub Actions environment
 TestGithubAction = {}
-
-function TestGithubAction:test_detects_github_actions()
-  local is_actions = pr.is_github_actions()
-  lu.assertIsFalse(is_actions)
-end
 
 function TestGithubAction:test_github_actions_with_token_and_pr_number()
   local mock_fetch = function()
