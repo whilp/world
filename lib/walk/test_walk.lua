@@ -53,7 +53,7 @@ end
 function TestWalk:test_walk_with_visitor()
   local ctx = { count = 0, dirs = 0 }
 
-  walk.walk(self.test_dir, function(full_path, entry, stat, c)
+  walk.walk(self.test_dir, function(_full_path, _entry, stat, c)
     c.count = c.count + 1
     if unix.S_ISDIR(stat:mode()) then
       c.dirs = c.dirs + 1
