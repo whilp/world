@@ -165,15 +165,10 @@ jobs:
 	lu.assertNotNil(actions)
 	lu.assertEquals(#actions, 3)
 
-	local action_names = {}
-	for _, act in ipairs(actions) do
-		local full_name = act.owner .. "/" .. act.repo
-		action_names[full_name] = (action_names[full_name] or 0) + 1
-	end
-
-	lu.assertEquals(action_names["actions/checkout"], 1)
-	lu.assertEquals(action_names["actions/upload-artifact"], 1)
-	lu.assertEquals(action_names["actions/download-artifact"], 1)
+	lu.assertEquals(actions[1].owner, "actions")
+	lu.assertEquals(actions[1].repo, "checkout")
+	lu.assertEquals(actions[2].owner, "actions")
+	lu.assertEquals(actions[2].repo, "upload-artifact")
+	lu.assertEquals(actions[3].owner, "actions")
+	lu.assertEquals(actions[3].repo, "download-artifact")
 end
-
-os.exit(lu.LuaUnit.run())
