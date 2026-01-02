@@ -44,8 +44,8 @@ release ?= latest
 include lib/cook.mk
 include 3p/cook.mk
 
-lua_files := $(shell rg --files -g '*.lua'; rg --no-ignore -l '^#!/.*lua' -g '!*.lua' -g '!o/' 2>/dev/null)
-test_files := $(shell rg --files -g '*test.lua' -g 'test_*.lua' | grep -vE '(latest|luatest)\.lua$$')
+lua_files := $(shell git ls-files '*.lua'; git ls-files | grep -v '\.lua$$' | grep -v '^o/' | xargs -r grep -l '^#!/.*lua' 2>/dev/null || true)
+test_files := $(shell git ls-files '*test.lua' 'test_*.lua' | grep -vE '(latest|luatest)\.lua$$')
 luatest_files := $(patsubst %,o/any/%.luatest.ok,$(test_files))
 luacheck_files := $(patsubst %,o/any/%.luacheck.ok,$(lua_files))
 
