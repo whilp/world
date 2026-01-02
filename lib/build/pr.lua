@@ -1,5 +1,5 @@
 --[[
-Updates a GitHub PR title and description from .github/pr.md
+Updates a GitHub PR title and description from .github/pr/<number>.md
 
 The pr.md format:
   # <title>
@@ -9,7 +9,8 @@ The pr.md format:
 Environment variables:
   GITHUB_TOKEN - required for API authentication
   GITHUB_REPOSITORY - owner/repo format
-  GITHUB_REF_NAME - branch name (used to find PR)
+  GITHUB_PR_NUMBER - PR number (set by workflow)
+  GITHUB_HEAD_REF - branch name (fallback to find PR)
   GITHUB_API_URL - optional, defaults to https://api.github.com
 ]]
 
@@ -119,12 +120,41 @@ local function update_pr(owner, repo, pr_number, title, body, token, opts)
   return true
 end
 
-local function main(opts)
+local function get_pr_number_from_env(opts)
   opts = opts or {}
   local env = environ.new(unix.environ())
 
-  local pr_file = ".github/pr.md"
-  local full_path = unix.realpath(pr_file)
+  local pr_number = env.GITHUB_PR_NUMBER
+  if pr_number and pr_number ~= "" then
+    return tonumber(pr_number)
+  end
+
+  local token = env.GITHUB_TOKEN
+  if not token or token == "" then
+    return nil, "GITHUB_TOKEN not set"
+  end
+
+  local repo = env.GITHUB_REPOSITORY
+  if not repo then
+    return nil, "GITHUB_REPOSITORY not set"
+  end
+
+  local branch = env.GITHUB_HEAD_REF or env.GITHUB_REF_NAME
+  if not branch then
+    return nil, "GITHUB_HEAD_REF/GITHUB_REF_NAME not set"
+  end
+
+  local owner, repo_name = repo:match("^([^/]+)/(.+)$")
+  if not owner then
+    return nil, "invalid GITHUB_REPOSITORY format"
+  end
+
+  return find_pr_number(owner, repo_name, branch, token, opts)
+end
+
+local function main(opts)
+  opts = opts or {}
+  local env = environ.new(unix.environ())
 
   local token = env.GITHUB_TOKEN
   if not token or token == "" then
@@ -136,15 +166,18 @@ local function main(opts)
     return 1, "GITHUB_REPOSITORY not set, skipping"
   end
 
-  local branch = env.GITHUB_HEAD_REF or env.GITHUB_REF_NAME
-  if not branch then
-    return 1, "GITHUB_HEAD_REF/GITHUB_REF_NAME not set, skipping"
-  end
-
   local owner, repo_name = repo:match("^([^/]+)/(.+)$")
   if not owner then
     return 1, "invalid GITHUB_REPOSITORY format: " .. repo
   end
+
+  local pr_number, err = get_pr_number_from_env(opts)
+  if not pr_number then
+    return 1, "could not determine PR number: " .. err
+  end
+
+  local pr_file = string.format(".github/pr/%d.md", pr_number)
+  local full_path = unix.realpath(pr_file)
 
   if not full_path then
     return 1, pr_file .. " not found, skipping"
@@ -160,15 +193,10 @@ local function main(opts)
     return 1, "failed to read " .. pr_file
   end
 
-  local pr, err = parse_pr_md(content)
+  local pr
+  pr, err = parse_pr_md(content)
   if not pr then
     return 1, "failed to parse " .. pr_file .. ": " .. err
-  end
-
-  local pr_number
-  pr_number, err = find_pr_number(owner, repo_name, branch, token, opts)
-  if not pr_number then
-    return 1, "could not find PR: " .. err
   end
 
   local ok
@@ -181,12 +209,16 @@ local function main(opts)
   return 0
 end
 
-local help = [[
+local function print_help()
+  local pr_number, _ = get_pr_number_from_env()
+  local pr_file = pr_number and string.format(".github/pr/%d.md", pr_number) or ".github/pr/<number>.md"
+
+  local help = string.format([[
 usage: pr.lua [-h]
 
-Updates PR title and description from .github/pr.md
+Updates PR title and description from %s
 
-The pr.md format:
+The file format:
 
     # component: verb explanation
 
@@ -202,7 +234,7 @@ The pr.md format:
 
 Guidelines:
 
-  1. Write PR description in .github/pr.md
+  1. Write PR description in %s
   2. Follow repo conventions: `# component: verb explanation` title
   3. Keep content concise but include key decisions, tradeoffs, examples
   4. Update the file as the PR evolves
@@ -211,12 +243,20 @@ Guidelines:
 Environment variables (set automatically in GitHub Actions):
   GITHUB_TOKEN       - required for API authentication
   GITHUB_REPOSITORY  - owner/repo format
-  GITHUB_HEAD_REF    - PR source branch name
-]]
+  GITHUB_PR_NUMBER   - PR number
+  GITHUB_HEAD_REF    - PR source branch name (fallback)
+]], pr_file, pr_file)
+
+  if pr_number then
+    help = help .. string.format("\nDetected PR: #%d\n", pr_number)
+  end
+
+  print(help)
+end
 
 if not pcall(debug.getlocal, 4, 1) then
   if arg[1] == "-h" or arg[1] == "--help" then
-    print(help)
+    print_help()
     os.exit(0)
   end
   local _, msg = main()
@@ -231,5 +271,6 @@ return {
   github_request = github_request,
   find_pr_number = find_pr_number,
   update_pr = update_pr,
+  get_pr_number_from_env = get_pr_number_from_env,
   main = main,
 }

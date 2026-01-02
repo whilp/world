@@ -17,4 +17,5 @@ jobs:
       - name: Update PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_PR_NUMBER: ${{ github.event.number }}
         run: make update-pr
