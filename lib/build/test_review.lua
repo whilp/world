@@ -1,6 +1,5 @@
 local lu = require("luaunit")
-
-local review = dofile("lib/build/review.lua")
+local review = require("build.review")
 
 TestExtractPrInfoFromUrl = {}
 

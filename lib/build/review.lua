@@ -160,9 +160,7 @@ local function get_review_data(url_or_num, repo, opts)
   }
 end
 
-local function main(args)
-  if #args == 0 or args[1] == "--help" or args[1] == "-h" then
-    io.stderr:write([[
+local help = [[
 usage: gh-review.lua <pr-url-or-number> [repo]
 
 Fetch GitHub PR review comments.
@@ -175,9 +173,12 @@ examples:
   gh-review.lua https://github.com/owner/repo/pull/123
   gh-review.lua https://github.com/owner/repo/pull/123#pullrequestreview-456
   gh-review.lua 123 owner/repo
+]]
 
-]])
-    return 1
+local function main(args)
+  if #args == 0 or args[1] == "--help" or args[1] == "-h" then
+    io.stderr:write(help)
+    return help, 1
   end
 
   local pr_input = args[1]
@@ -186,26 +187,27 @@ examples:
   local info, err = extract_pr_info(pr_input, repo)
   if not info then
     io.stderr:write("error: " .. err .. "\n")
-    return 1
+    return err, 1
   end
 
   local ok, err = print_review_comments(info)
   if not ok then
     io.stderr:write("error: " .. err .. "\n")
-    return 1
+    return err, 1
   end
 
-  return 0
+  return nil, 0
 end
 
-if ... then
-  os.exit(main({ ... }))
-else
-  return {
-    extract_pr_info = extract_pr_info,
-    fetch_reviews = fetch_reviews,
-    fetch_review_comments = fetch_review_comments,
-    print_review_comments = print_review_comments,
-    get_review_data = get_review_data,
-  }
+if not pcall(debug.getlocal, 4, 1) then
+  local _, code = main({ ... })
+  os.exit(code)
 end
+
+return {
+  extract_pr_info = extract_pr_info,
+  fetch_reviews = fetch_reviews,
+  fetch_review_comments = fetch_review_comments,
+  print_review_comments = print_review_comments,
+  get_review_data = get_review_data,
+}
