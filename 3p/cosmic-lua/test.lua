@@ -2,7 +2,7 @@
 -- run with: TEST_BIN_DIR=o/<platform>/cosmic-lua make o/any/3p/cosmic-lua/test.lua.luatest.ok
 
 local lu = require("luaunit")
-local spawn = require("spawn")
+local spawn = require("cosmic.spawn")
 
 local bin_dir = os.getenv("TEST_BIN_DIR")
 if not bin_dir then

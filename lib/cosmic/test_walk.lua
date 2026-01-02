@@ -1,5 +1,5 @@
 local lu = require("luaunit")
-local walk = require("walk")
+local walk = require("cosmic.walk")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 
@@ -83,3 +83,5 @@ function TestWalk:test_walk_empty_directory()
   lu.assertEquals(#files, 0)
   unix.rmrf(empty_dir)
 end
+
+os.exit(lu.LuaUnit.run())

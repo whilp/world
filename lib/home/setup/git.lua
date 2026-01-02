@@ -1,6 +1,6 @@
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
-local spawn = require("spawn").spawn
+local spawn = require("cosmic.spawn").spawn
 local util = require("setup.util")
 
 local function run(env)

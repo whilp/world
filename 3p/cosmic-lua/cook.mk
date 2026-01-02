@@ -3,13 +3,10 @@
 bins += o/%/cosmic-lua/bin/cosmic-lua
 
 # libs to bundle in cosmic-lua
-cosmic_lua_lib_dirs := o/any/lib o/any/spawn/lib o/any/walk/lib o/any/cosmic/lib
-cosmic_lua_3p_dirs := o/any/luaunit/lib o/%/argparse/lib o/%/lfs/lib
+cosmic_lua_lib_dirs := o/any/lib o/any/cosmic/lib
 
 # all lib files needed for cosmic-lua
 cosmic_lua_libs := $(lib_libs)
-cosmic_lua_libs += o/any/spawn/lib/spawn/init.lua
-cosmic_lua_libs += o/any/walk/lib/walk/init.lua
 cosmic_lua_libs += o/any/cosmic/lib/cosmic/init.lua
 cosmic_lua_libs += o/any/cosmic/lib/cosmic/spawn.lua
 cosmic_lua_libs += o/any/cosmic/lib/cosmic/walk.lua

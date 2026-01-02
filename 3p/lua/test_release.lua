@@ -1,7 +1,7 @@
 -- test release artifact requirements
 local lu = require("luaunit")
 local unix = require("cosmo.unix")
-local spawn = require("spawn").spawn
+local spawn = require("cosmic.spawn").spawn
 local path = require("cosmo.path")
 
 local lua_bin = path.join(os.getenv("TEST_BIN_DIR"), "bin", "lua.dist")

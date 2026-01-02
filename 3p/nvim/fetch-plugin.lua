@@ -5,7 +5,7 @@
 
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
-local spawn = require("spawn").spawn
+local spawn = require("cosmic.spawn").spawn
 
 local PACK_LOCK = ".config/nvim/nvim-pack-lock.json"
 

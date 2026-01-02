@@ -1,4 +1,4 @@
-local spawn = require("spawn").spawn
+local spawn = require("cosmic.spawn").spawn
 
 local M = {}
 

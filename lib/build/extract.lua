@@ -1,7 +1,7 @@
 #!/usr/bin/env lua
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
-local spawn = require("spawn").spawn
+local spawn = require("cosmic.spawn").spawn
 
 local function move_contents(source_dir, dest_dir)
   local dir = unix.opendir(source_dir)
