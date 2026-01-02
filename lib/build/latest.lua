@@ -234,7 +234,9 @@ local function check(content, opts)
   return "return " .. cosmo.EncodeLua(latest, {pretty = true})
 end
 
-local function report(output_dir)
+local function report(output_dir, opts)
+  opts = opts or {}
+  local writer = opts.writer or print
   local walk = require("walk")
 
   local up_to_date = {}
@@ -261,24 +263,24 @@ local function report(output_dir)
 
   local total = #up_to_date + #todo + #errors
 
-  print(string.format("Latest version check summary:"))
-  print(string.format("  %d total version files", total))
-  print(string.format("  %d up-to-date (with strategies)", #up_to_date))
-  print(string.format("  %d need work (_todo flag)", #todo))
+  writer(string.format("Latest version check summary:"))
+  writer(string.format("  %d total version files", total))
+  writer(string.format("  %d up-to-date (with strategies)", #up_to_date))
+  writer(string.format("  %d need work (_todo flag)", #todo))
 
   if #errors > 0 then
-    print(string.format("  %d errors", #errors))
+    writer(string.format("  %d errors", #errors))
     for _, err_info in ipairs(errors) do
-      print(string.format("    %s: %s", err_info.file, err_info.error))
+      writer(string.format("    %s: %s", err_info.file, err_info.error))
     end
   end
 
   if #todo > 0 then
-    print("\nFiles needing strategies:")
+    writer("\nFiles needing strategies:")
     table.sort(todo)
     for _, file in ipairs(todo) do
       local short_name = file:gsub("^o/any/", ""):gsub("%.latest%.ok$", "")
-      print(string.format("  - %s", short_name))
+      writer(string.format("  - %s", short_name))
     end
   end
 

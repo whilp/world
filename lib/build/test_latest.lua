@@ -3,7 +3,7 @@ local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local cosmo = require("cosmo")
 
-local latest = dofile("lib/build/latest.lua")
+local latest = require("latest")
 
 TestExtractGithubRepo = {}
 
@@ -173,33 +173,6 @@ function TestIsGithubUrl:test_raw_github()
   lu.assertNil(repo)
 end
 
-TestConfigPreservation = {}
-
-function TestConfigPreservation:test_preserves_format()
-  local original = {
-    version = "1.0",
-    format = "tar.gz",
-    strip_components = 1,
-    url = "https://github.com/org/repo/releases/download/{version}/file.tar.gz",
-    platforms = {["*"] = {sha = "abc"}},
-  }
-
-  local result = {
-    version = "2.0",
-    tag = "v2.0",
-  }
-
-  for k, v in pairs(original) do
-    if k ~= "version" and k ~= "platforms" and k ~= "tag" and k ~= "sha" and type(v) ~= "table" then
-      result[k] = v
-    end
-  end
-
-  lu.assertEquals(result.format, "tar.gz")
-  lu.assertEquals(result.strip_components, 1)
-  lu.assertEquals(result.url, original.url)
-end
-
 TestCheckFunction = {}
 
 function TestCheckFunction:test_non_github_url_gets_todo()
@@ -257,13 +230,10 @@ function TestReportFunction:test_counts_todo_and_up_to_date()
   cosmo.Barf(path.join(TEST_TMPDIR, "lib/tool3/version.lua.latest.ok"),
     "return {version='3.0', platforms={['*']={sha='ghi'}}}")
 
-  local old_print = print
   local output = {}
-  print = function(s) table.insert(output, s) end
+  local writer = function(s) table.insert(output, s) end
 
-  local ok = latest.report(TEST_TMPDIR)
-
-  print = old_print
+  local ok = latest.report(TEST_TMPDIR, {writer = writer})
 
   lu.assertTrue(ok)
   local summary = table.concat(output, "\n")
