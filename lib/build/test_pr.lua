@@ -152,3 +152,11 @@ function TestUpdatePr:test_api_error()
   lu.assertStrContains(err, "403")
   lu.assertStrContains(err, "Forbidden")
 end
+
+TestMain = {}
+
+function TestMain:test_missing_token_returns_error()
+  local code, msg = pr.main()
+  lu.assertEquals(code, 1)
+  lu.assertStrContains(msg, "GITHUB_TOKEN")
+end
