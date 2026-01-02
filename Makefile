@@ -22,6 +22,7 @@ install_script := lib/build/install.lua
 runner_script := lib/build/test.lua
 luacheck_script := lib/build/luacheck.lua
 ast_grep_script := lib/build/ast-grep.lua
+teal_script := lib/build/teal.lua
 
 # Commands (invoke lua explicitly to avoid APE "Text file busy" errors)
 fetch = $(lua_bin) $(fetch_script)
@@ -31,10 +32,11 @@ runner = $(lua_bin) $(runner_script)
 luacheck_bin = o/$(current_platform)/luacheck/bin/luacheck
 luacheck_runner = $(lua_bin) $(luacheck_script)
 ast_grep_runner = $(lua_bin) $(ast_grep_script)
+teal_runner = $(lua_bin) $(teal_script)
 
 luaunit := o/any/luaunit/lib/luaunit.lua
 
-$(fetch_script) $(extract_script) $(install_script) $(runner_script) $(luacheck_script) $(ast_grep_script): | $(lua_bin)
+$(fetch_script) $(extract_script) $(install_script) $(runner_script) $(luacheck_script) $(ast_grep_script) $(teal_script): | $(lua_bin)
 cosmo := whilp/cosmopolitan
 release ?= latest
 
@@ -63,6 +65,17 @@ o/any/%.ast-grep.ok: % sgconfig.yml $(ast_grep_script) $(ast_grep)
 ast-grep-report: $(ast_grep_files) ## Run ast-grep and show summary report
 	@$(ast_grep_runner) report o/any || true
 
+teal_files := $(patsubst %,o/any/%.teal.ok,$(lua_files))
+
+teal: $(teal_files) ## Run teal incrementally on changed files
+
+o/any/%.teal.ok: % $(teal_script) $(tl_bin) $(lua_dist)
+	$(teal_runner) $< $@ $(tl_bin) $(lua_dist)
+
+teal-report: $(teal_files) ## Run teal and show summary report
+	# TODO: remove || true once all files pass
+	@$(teal_runner) report o/any || true
+
 bootstrap: $(lua_bin)
 	@[ -n "$$CLAUDE_ENV_FILE" ] && echo "PATH=$(dir $(lua_bin)):\$$PATH" >> "$$CLAUDE_ENV_FILE"; true
 
@@ -79,14 +92,12 @@ lua_dist := o/$(current_platform)/lua/bin/lua.dist
 
 tl_bin := o/$(current_platform)/tl/bin/tl
 
-check: $(ast_grep_files) $(luacheck_files) $(tl_bin) ## Run ast-grep, luacheck, and teal
+check: $(ast_grep_files) $(luacheck_files) $(teal_files) ## Run ast-grep, luacheck, and teal
 	@$(ast_grep_runner) report o/any || true
 	@echo ""
 	@$(luacheck_runner) report o/any || true
 	@echo ""
-	@echo "Running teal type checker (lax mode)..."
-	# TODO: add .d.tl declarations for cosmo to reduce noise
-	-@$(lua_dist) $(tl_bin) check lib/*.lua lib/**/*.lua 3p/*/*.lua 2>&1
+	@$(teal_runner) report o/any || true
 
 test: lib-test $(subst %,$(current_platform),$(tests))
 	@echo "All tests passed"
@@ -94,4 +105,4 @@ test: lib-test $(subst %,$(current_platform),$(tests))
 clean:
 	rm -rf o
 
-.PHONY: bootstrap clean cosmos lua check luacheck luacheck-report ast-grep ast-grep-report test home
+.PHONY: bootstrap clean cosmos lua check luacheck luacheck-report ast-grep ast-grep-report teal teal-report test home
