@@ -7,7 +7,6 @@ exclude_files = {
   ".config/nvim/",
   ".config/voyager/",
   ".local/bin/",
-  "3p/",
 }
 
 -- Fennel-inspired strictness

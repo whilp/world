@@ -13,4 +13,3 @@ ignoreGlobs:
   - ".config/nvim/**"
   - ".config/voyager/**"
   - ".local/bin/**"
-  - "3p/**"
