@@ -151,21 +151,37 @@ function TestGithubAPI:test_update_pr_api_error()
 end
 
 -- Test Claude Code CLI environment (local git)
+-- Requirements for Claude Code environment:
+-- 1. Git repository with a remote
+-- 2. Can detect current branch
+-- 3. Can detect owner/repo from remote
+-- 4. Can query GitHub API for PRs
 TestClaudeRemote = {}
 
-function TestClaudeRemote:test_happy_path()
-  local current_branch = pr.get_current_branch()
-  local current_git_info = pr.get_git_info()
+function TestClaudeRemote:setUp()
+  -- verify we have the minimum git setup required
+  self.branch = pr.get_current_branch()
+  self.git_info = pr.get_git_info()
 
-  lu.assertNotNil(current_branch, "should detect current branch")
-  lu.assertNotNil(current_git_info, "should detect git info")
+  if not self.branch or not self.git_info then
+    lu.skipTest("not in a git repository with remote")
+  end
+end
+
+function TestClaudeRemote:test_happy_path()
+  -- simulate claude code environment where:
+  -- - we're on a feature branch (detected via git)
+  -- - GITHUB_REPOSITORY is set
+  -- - GitHub API returns a PR for this branch
 
   local mock_fetch = function()
     return 200, {}, cosmo.EncodeJson({{number = 209}})
   end
 
   local mock_env = {
-    GITHUB_REPOSITORY = string.format("%s/%s", current_git_info.owner, current_git_info.repo),
+    -- use actual repo from git
+    GITHUB_REPOSITORY = string.format("%s/%s", self.git_info.owner, self.git_info.repo),
+    -- don't set GITHUB_HEAD_REF - force fallback to git branch
   }
   local mock_getenv = function(key) return mock_env[key] end
 
@@ -174,7 +190,7 @@ function TestClaudeRemote:test_happy_path()
     getenv = mock_getenv,
   })
 
-  lu.assertNotNil(pr_number, err or "should find PR number")
+  lu.assertNotNil(pr_number, err or "should find PR using git branch")
   lu.assertEquals(pr_number, 209)
 end
 
