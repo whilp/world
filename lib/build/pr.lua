@@ -68,12 +68,16 @@ local function github_request(method, endpoint, token, body, opts)
   local fetch_opts = {
     method = method,
     headers = {
-      ["Authorization"] = "Bearer " .. token,
       ["Accept"] = "application/vnd.github+json",
       ["X-GitHub-Api-Version"] = "2022-11-28",
       ["User-Agent"] = "pr.lua/1.0",
     },
   }
+
+  -- only add auth header if token provided
+  if token and token ~= "" then
+    fetch_opts.headers["Authorization"] = "Bearer " .. token
+  end
 
   if body then
     fetch_opts.body = cosmo.EncodeJson(body)
@@ -142,9 +146,10 @@ local function get_pr_number_from_env(opts)
     return tonumber(pr_number)
   end
 
-  local token = getenv("GITHUB_TOKEN")
-  if not token or token == "" then
-    return nil, "GITHUB_TOKEN not set"
+  -- determine branch early so we can include it in error messages
+  local branch = getenv("GITHUB_HEAD_REF") or getenv("GITHUB_REF_NAME")
+  if not branch then
+    branch = get_current_branch()
   end
 
   local repo = getenv("GITHUB_REPOSITORY")
@@ -152,10 +157,6 @@ local function get_pr_number_from_env(opts)
     return nil, "GITHUB_REPOSITORY not set"
   end
 
-  local branch = getenv("GITHUB_HEAD_REF") or getenv("GITHUB_REF_NAME")
-  if not branch then
-    branch = get_current_branch()
-  end
   if not branch then
     return nil, "could not determine branch"
   end
@@ -165,6 +166,9 @@ local function get_pr_number_from_env(opts)
     return nil, "invalid GITHUB_REPOSITORY format"
   end
 
+  -- token is optional - unauthenticated requests work for public repos
+  local token = getenv("GITHUB_TOKEN")
+
   return find_pr_number(owner, repo_name, branch, token, opts)
 end
 
@@ -172,9 +176,15 @@ local function main(opts)
   opts = opts or {}
   local getenv = opts.getenv or os.getenv
 
+  -- get PR number first - this provides better error messages with branch info
+  local pr_number, err = get_pr_number_from_env(opts)
+  if not pr_number then
+    return 1, err .. ", skipping"
+  end
+
   local token = getenv("GITHUB_TOKEN")
   if not token or token == "" then
-    return 1, "GITHUB_TOKEN not set, skipping"
+    return 0, string.format("PR #%d (set GITHUB_TOKEN to update)", pr_number)
   end
 
   local repo = getenv("GITHUB_REPOSITORY")
@@ -185,11 +195,6 @@ local function main(opts)
   local owner, repo_name = repo:match("^([^/]+)/(.+)$")
   if not owner then
     return 1, "invalid GITHUB_REPOSITORY format: " .. repo
-  end
-
-  local pr_number, err = get_pr_number_from_env(opts)
-  if not pr_number then
-    return 1, "could not determine PR number: " .. err
   end
 
   local pr_file = string.format(".github/pr/%d.md", pr_number)
