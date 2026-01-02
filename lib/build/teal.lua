@@ -63,6 +63,8 @@ local function check(source_file, output, tl_bin, lua_dist)
   }
 
   cosmo.Barf(output, "return " .. cosmo.EncodeLua(result) .. "\n")
+
+  return passed
 end
 
 local function report(output_dir)
@@ -140,8 +142,8 @@ local function main(args)
     return 1
   end
 
-  check(source_file, output, tl_bin, lua_dist)
-  return 0
+  local passed = check(source_file, output, tl_bin, lua_dist)
+  return passed and 0 or 1
 end
 
 if ... then
