@@ -22,37 +22,34 @@ local function log(msg)
   io.stderr:write("pr: " .. msg .. "\n")
 end
 
-local function get_git_branch()
-  local head = cosmo.Slurp(".git/HEAD")
-  if not head then
+local function exec_capture(prog, args)
+  local r, w = unix.pipe()
+  if not r then
     return nil
   end
 
-  local ref = head:match("ref:%s*refs/heads/(.+)")
-  if not ref then
+  local pid = unix.fork()
+  if pid == 0 then
+    unix.close(r)
+    unix.dup(w, 1)
+    unix.close(w)
+    unix.execvp(prog, args)
+    unix.exit(1)
+  else
+    unix.close(w)
+    local output = unix.read(r)
+    unix.close(r)
+    unix.wait()
+    if output then
+      return output:match("^%s*(.-)%s*$")
+    end
     return nil
   end
-
-  return ref:match("^%s*(.-)%s*$")
-end
-
-local function get_git_remote_url()
-  local config = cosmo.Slurp(".git/config")
-  if not config then
-    return nil
-  end
-
-  local url = config:match('%[remote%s+"origin"%].-\n%s*url%s*=%s*([^\n]+)')
-  if not url then
-    return nil
-  end
-
-  return url:match("^%s*(.-)%s*$")
 end
 
 local function get_git_info()
-  local remote_url = get_git_remote_url()
-  local branch = get_git_branch()
+  local remote_url = exec_capture("git", {"git", "remote", "get-url", "origin"})
+  local branch = exec_capture("git", {"git", "branch", "--show-current"})
 
   if not remote_url or not branch then
     return nil
