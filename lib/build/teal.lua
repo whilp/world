@@ -5,64 +5,66 @@ local cosmo = require("cosmo")
 local spawn = require("spawn").spawn
 local walk = require("walk")
 
-local function parse_plain(stdout)
+local function parse_output(stdout)
   local issues = {}
+  local current_severity = nil
+
   for line in (stdout or ""):gmatch("[^\n]+") do
-    -- plain format: file:line:col-endcol: (CODE) message
-    local _, ln, col, endcol, code, msg = line:match("^(.+):(%d+):(%d+)-(%d+): %(([WE]%d+)%) (.+)$")
-    if not ln then
-      -- without ranges: file:line:col: (CODE) message
-      _, ln, col, code, msg = line:match("^(.+):(%d+):(%d+): %(([WE]%d+)%) (.+)$")
-    end
-    if ln then
-      table.insert(issues, {
-        line = tonumber(ln),
-        column = tonumber(col),
-        end_column = endcol and tonumber(endcol),
-        code = code,
-        message = msg,
-      })
+    if line:match("^%d+ warnings?:$") then
+      current_severity = "warning"
+    elseif line:match("^%d+ errors?:$") then
+      current_severity = "error"
+    elseif line:match("^=+$") or line:match("^%-+$") then
+      -- separator lines, skip
+    elseif current_severity then
+      local file, ln, col, msg = line:match("^(.+):(%d+):(%d+): (.+)$")
+      if ln then
+        table.insert(issues, {
+          file = file,
+          line = tonumber(ln),
+          column = tonumber(col),
+          severity = current_severity,
+          message = msg,
+        })
+      end
     end
   end
   return issues
 end
 
-local function check(source_file, output, luacheck_bin)
+local function check(source_file, output, tl_bin, lua_dist)
   local output_dir = path.dirname(output)
   unix.makedirs(output_dir)
 
-  print("# luacheck " .. source_file)
+  print("# teal " .. source_file)
 
-  local source = cosmo.Slurp(source_file)
   local handle = spawn({
-    luacheck_bin,
-    "--formatter", "plain",
-    "--codes",
-    "--ranges",
-    "--filename", source_file,
-    "-",
-  }, { stdin = source })
+    lua_dist,
+    tl_bin,
+    "check",
+    source_file,
+  })
 
-  local _, stdout, exit_code = handle:read()
+  if handle.stdin then handle.stdin:close() end
+  local stderr_output = handle.stderr:read()
+  local exit_code = handle:wait()
 
-  if stdout and #stdout > 0 then
-    io.write(stdout)
+  if stderr_output and #stderr_output > 0 then
+    io.write(stderr_output)
   end
 
-  local issues = parse_plain(stdout)
+  local issues = parse_output(stderr_output)
   local passed = (exit_code == 0)
 
   local result = {
     file = source_file,
-    checker = "luacheck",
+    checker = "teal",
     passed = passed,
     exit_code = exit_code,
     issues = issues,
   }
 
   cosmo.Barf(output, "return " .. cosmo.EncodeLua(result) .. "\n")
-
-  -- TODO: fail build once all files pass
 end
 
 local function report(output_dir)
@@ -70,9 +72,9 @@ local function report(output_dir)
   local passed = 0
   local failed = 0
   local total_issues = 0
-  local by_code = {}
+  local by_severity = {}
 
-  for _, filepath in ipairs(walk.collect(output_dir, "%.luacheck%.ok$")) do
+  for _, filepath in ipairs(walk.collect(output_dir, "%.teal%.ok$")) do
     local chunk = loadfile(filepath)
     if chunk then
       local result = chunk()
@@ -85,7 +87,7 @@ local function report(output_dir)
         end
         for _, issue in ipairs(result.issues or {}) do
           total_issues = total_issues + 1
-          by_code[issue.code] = (by_code[issue.code] or 0) + 1
+          by_severity[issue.severity] = (by_severity[issue.severity] or 0) + 1
         end
       end
     end
@@ -93,7 +95,7 @@ local function report(output_dir)
 
   local total = passed + failed
 
-  print("luacheck report")
+  print("teal report")
   print("───────────────────────────────")
   print(string.format("  files checked:  %d", total))
   print(string.format("  passed:         %d", passed))
@@ -102,12 +104,12 @@ local function report(output_dir)
   print("")
 
   if total_issues > 0 then
-    print("issues by code:")
-    local codes = {}
-    for code in pairs(by_code) do table.insert(codes, code) end
-    table.sort(codes, function(a, b) return by_code[b] < by_code[a] end)
-    for _, code in ipairs(codes) do
-      print(string.format("  %s: %d", code, by_code[code]))
+    print("issues by severity:")
+    local severities = {}
+    for severity in pairs(by_severity) do table.insert(severities, severity) end
+    table.sort(severities, function(a, b) return by_severity[b] < by_severity[a] end)
+    for _, severity in ipairs(severities) do
+      print(string.format("  %s: %d", severity, by_severity[severity]))
     end
     print("")
   end
@@ -133,14 +135,14 @@ local function main(args)
     return report(output_dir) and 0 or 1
   end
 
-  local source_file, output, luacheck_bin = args[1], args[2], args[3]
-  if not source_file or not output or not luacheck_bin then
-    io.stderr:write("usage: luacheck.lua <source_file> <output> <luacheck_bin>\n")
-    io.stderr:write("       luacheck.lua report [output_dir]\n")
+  local source_file, output, tl_bin, lua_dist = args[1], args[2], args[3], args[4]
+  if not source_file or not output or not tl_bin or not lua_dist then
+    io.stderr:write("usage: teal.lua <source_file> <output> <tl_bin> <lua_dist>\n")
+    io.stderr:write("       teal.lua report [output_dir]\n")
     return 1
   end
 
-  check(source_file, output, luacheck_bin)
+  check(source_file, output, tl_bin, lua_dist)
   return 0
 end
 
@@ -148,7 +150,7 @@ if ... then
   os.exit(main({ ... }))
 else
   return {
-    parse_plain = parse_plain,
+    parse_output = parse_output,
     check = check,
     report = report,
     main = main,

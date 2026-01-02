@@ -2,30 +2,7 @@
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local cosmo = require("cosmo")
-
-local function walk(dir, pattern, results)
-  results = results or {}
-  local handle = unix.opendir(dir)
-  if not handle then return results end
-
-  while true do
-    local entry = handle:read()
-    if not entry then break end
-    if entry ~= "." and entry ~= ".." then
-      local full_path = path.join(dir, entry)
-      local stat = unix.stat(full_path)
-      if stat then
-        if unix.S_ISDIR(stat:mode()) then
-          walk(full_path, pattern, results)
-        elseif entry:match(pattern) then
-          table.insert(results, full_path)
-        end
-      end
-    end
-  end
-  handle:close()
-  return results
-end
+local walk = require("walk")
 
 local function run_tests(test_file, output, extra_args)
   arg = {}
@@ -112,7 +89,7 @@ local function report(output_dir)
   local total_errors = 0
   local total_skipped = 0
 
-  for _, filepath in ipairs(walk(output_dir, "%.luatest%.ok$")) do
+  for _, filepath in ipairs(walk.collect(output_dir, "%.luatest%.ok$")) do
     local chunk = loadfile(filepath)
     if chunk then
       local result = chunk()
@@ -180,7 +157,6 @@ if ... then
   os.exit(main({ ... }))
 else
   return {
-    walk = walk,
     run_tests = run_tests,
     report = report,
     main = main,
