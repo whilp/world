@@ -2,8 +2,8 @@ cosmos_version := 3p/cosmos/version.lua
 cosmos_bins := o/%/cosmos/bin/lua o/%/cosmos/bin/zip o/%/cosmos/bin/unzip o/%/cosmos/bin/make
 bins += $(cosmos_bins)
 
-o/any/3p/cosmos/test.lua.luatest.ok: $(subst %,$(current_platform),$(cosmos_bins))
-o/any/3p/cosmos/test.lua.luatest.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/cosmos
+$(luatest_o)/3p/cosmos/test.lua.ok: $(subst %,$(current_platform),$(cosmos_bins))
+$(luatest_o)/3p/cosmos/test.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/cosmos
 
 o/%/cosmos/archive.zip: $(cosmos_version) $(fetch)
 	$(fetch) $(cosmos_version) $* $@
@@ -24,8 +24,3 @@ o/%/cosmos/bin/unzip: $(cosmos_version) $(install) o/%/cosmos/.extracted
 
 o/%/cosmos/bin/make: $(cosmos_version) $(install) o/%/cosmos/.extracted
 	$(install) $(cosmos_version) $* o/$*/cosmos bin o/$*/cosmos/staging/make
-
-cosmos-latest: | $(lua_bin)
-	3p/cosmos/latest.lua > $(cosmos_version)
-
-.PHONY: cosmos-latest
