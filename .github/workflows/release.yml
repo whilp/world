@@ -15,8 +15,8 @@ jobs:
       - name: Bootstrap lua
         run: make bootstrap
 
-      - name: Build home and lua binaries
-        run: make home-all lua-all -j4
+      - name: Build home, lua, and cosmic binaries
+        run: make home-all lua-all cosmic -j4
 
       - name: Run checks
         run: make check
@@ -35,6 +35,7 @@ jobs:
             o/linux-arm64/lua/bin/lua.dist
             o/linux-x86_64/home/bin/home
             o/linux-x86_64/lua/bin/lua.dist
+            o/any/cosmic/bin/cosmic
 
   test:
     runs-on: ${{ matrix.os }}
@@ -91,6 +92,7 @@ jobs:
           cp o/linux-x86_64/home/bin/home release/home-linux-x86_64
           cp o/linux-x86_64/home/bin/home release/home
           cp o/linux-x86_64/lua/bin/lua.dist release/lua
+          cp o/any/cosmic/bin/cosmic release/cosmic-lua
           chmod +x release/*
 
       - name: Get version
