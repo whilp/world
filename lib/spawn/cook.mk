@@ -7,5 +7,5 @@ $(spawn_lib): lib/spawn/init.lua
 	mkdir -p $(@D)
 	cp $< $@
 
-o/luatest/lib/spawn/test_spawn.lua.ok: $(spawn_lib) o/$(current_platform)/cosmos/bin/lua
-o/luatest/lib/spawn/test_spawn.lua.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/cosmos
+$(luatest_o)/lib/spawn/test_spawn.lua.ok: $(spawn_lib) o/$(current_platform)/cosmos/bin/lua
+$(luatest_o)/lib/spawn/test_spawn.lua.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/cosmos

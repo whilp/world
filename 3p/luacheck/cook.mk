@@ -1,8 +1,10 @@
 luacheck_version := 3p/luacheck/version.lua
+luacheck_config := .luacheckrc
 lua_libs += luacheck
 3p_lib_dirs += o/%/luacheck/lib
 libs += o/%/luacheck/lib/luacheck/main.lua
 luacheck_bin := o/$(current_platform)/luacheck/bin/luacheck
+luacheck_o := o/luacheck
 bins += o/%/luacheck/bin/luacheck
 luacheck_deps := \
 	o/%/argparse/lib/argparse.lua \
@@ -10,8 +12,8 @@ luacheck_deps := \
 	o/%/cosmos/bin/lua \
 	3p/luacheck/luacheck
 
-o/luatest/3p/luacheck/test.lua.ok: o/$(current_platform)/luacheck/bin/luacheck
-o/luatest/3p/luacheck/test.lua.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/luacheck
+$(luatest_o)/3p/luacheck/test.lua.ok: o/$(current_platform)/luacheck/bin/luacheck
+$(luatest_o)/3p/luacheck/test.lua.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/luacheck
 
 o/%/luacheck/archive.tar.gz: $(luacheck_version) $(fetch)
 	$(fetch) $(luacheck_version) $* $@

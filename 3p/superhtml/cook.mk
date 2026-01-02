@@ -1,8 +1,8 @@
 superhtml_version := 3p/superhtml/version.lua
 bins += o/%/superhtml/bin/superhtml
 
-o/luatest/3p/superhtml/test.lua.ok: o/$(current_platform)/superhtml/bin/superhtml
-o/luatest/3p/superhtml/test.lua.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/superhtml
+$(luatest_o)/3p/superhtml/test.lua.ok: o/$(current_platform)/superhtml/bin/superhtml
+$(luatest_o)/3p/superhtml/test.lua.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/superhtml
 
 o/%/superhtml/archive.tar.gz: $(superhtml_version) $(fetch)
 	$(fetch) $(superhtml_version) $* $@

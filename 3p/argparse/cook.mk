@@ -3,7 +3,7 @@ lua_libs += argparse
 3p_lib_dirs += o/%/argparse/lib
 libs += o/%/argparse/lib/argparse.lua
 
-o/luatest/3p/argparse/test.lua.ok: o/$(current_platform)/argparse/lib/argparse.lua
+$(luatest_o)/3p/argparse/test.lua.ok: o/$(current_platform)/argparse/lib/argparse.lua
 
 o/%/argparse/archive.tar.gz: $(argparse_version) $(fetch)
 	$(fetch) $(argparse_version) $* $@
