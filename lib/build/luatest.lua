@@ -9,6 +9,8 @@ local function run_tests(test_file, output, extra_args)
   TEST_ARGS = extra_args or {}
   TEST_TMPDIR = nil
 
+  local start_sec, start_nsec = unix.clock_gettime(0)
+
   local output_dir = path.dirname(output)
   unix.makedirs(output_dir)
   TEST_TMPDIR = unix.mkdtemp("/tmp/test_XXXXXX")
@@ -67,6 +69,15 @@ local function run_tests(test_file, output, extra_args)
     os.exit(1)
   end
 
+  local end_sec, end_nsec = unix.clock_gettime(0)
+  local duration_sec = end_sec - start_sec
+  local duration_nsec = end_nsec - start_nsec
+  if duration_nsec < 0 then
+    duration_sec = duration_sec - 1
+    duration_nsec = duration_nsec + 1000000000
+  end
+  local duration_ms = duration_sec * 1000 + duration_nsec / 1000000
+
   local result = {
     file = test_file,
     tests = runner.result.runCount,
@@ -74,6 +85,7 @@ local function run_tests(test_file, output, extra_args)
     failed = runner.result.failureCount,
     errors = runner.result.errorCount,
     skipped = runner.result.skippedCount,
+    duration_ms = duration_ms,
   }
 
   cosmo.Barf(output, "return " .. cosmo.EncodeLua(result) .. "\n")
@@ -88,6 +100,7 @@ local function report(output_dir)
   local total_failed = 0
   local total_errors = 0
   local total_skipped = 0
+  local total_duration_ms = 0
 
   for _, filepath in ipairs(walk.collect(output_dir, "%.luatest%.ok$")) do
     local chunk = loadfile(filepath)
@@ -100,6 +113,7 @@ local function report(output_dir)
         total_failed = total_failed + result.failed
         total_errors = total_errors + result.errors
         total_skipped = total_skipped + result.skipped
+        total_duration_ms = total_duration_ms + (result.duration_ms or 0)
       end
     end
   end
@@ -114,6 +128,7 @@ local function report(output_dir)
   print(string.format("  failed:         %d", total_failed))
   print(string.format("  errors:         %d", total_errors))
   print(string.format("  skipped:        %d", total_skipped))
+  print(string.format("  duration:       %.2fms", total_duration_ms))
   print("")
 
   if total_failed > 0 or total_errors > 0 then
@@ -121,8 +136,20 @@ local function report(output_dir)
     table.sort(files, function(a, b) return a.file < b.file end)
     for _, f in ipairs(files) do
       if f.failed > 0 or f.errors > 0 then
-        print(string.format("  %s (failed: %d, errors: %d)", f.file, f.failed, f.errors))
+        print(string.format("  %s (failed: %d, errors: %d, %.2fms)", f.file, f.failed, f.errors, f.duration_ms or 0))
       end
+    end
+  end
+
+  if file_count > 1 then
+    print("slowest test files:")
+    table.sort(files, function(a, b)
+      return (a.duration_ms or 0) > (b.duration_ms or 0)
+    end)
+    local show_count = math.min(5, file_count)
+    for i = 1, show_count do
+      local f = files[i]
+      print(string.format("  %s (%.2fms, %d tests)", f.file, f.duration_ms or 0, f.tests))
     end
   end
 
