@@ -90,3 +90,69 @@ return x
   lu.assertNotNil(result.exit_code)
   lu.assertIsTable(result.issues)
 end
+
+local ast_grep_module = dofile(ast_grep_script)
+
+TestExitCode = {}
+
+function TestExitCode:test_main_returns_0_on_pass()
+  local test_file = path.join(TEST_TMPDIR, "pass.lua")
+  local output_file = path.join(TEST_TMPDIR, "pass.lua.ast-grep.ok")
+  cosmo.Barf(test_file, 'local spawn = require("spawn").spawn\nspawn({"ls"}):wait()\n')
+
+  local exit_code = ast_grep_module.main({ test_file, output_file, ast_grep_bin })
+  lu.assertEquals(exit_code, 0)
+end
+
+function TestExitCode:test_main_returns_1_on_fail()
+  local test_file = path.join(TEST_TMPDIR, "fail.lua")
+  local output_file = path.join(TEST_TMPDIR, "fail.lua.ast-grep.ok")
+  cosmo.Barf(test_file, 'os.execute("ls")\n')
+
+  local exit_code = ast_grep_module.main({ test_file, output_file, ast_grep_bin })
+  lu.assertEquals(exit_code, 1)
+end
+
+function TestExitCode:test_main_report_returns_0_when_all_pass()
+  local unix = require("cosmo.unix")
+  local test_dir = path.join(TEST_TMPDIR, "report_pass")
+  unix.makedirs(test_dir)
+
+  local result = {
+    file = "test.lua",
+    checker = "ast-grep",
+    passed = true,
+    exit_code = 0,
+    issues = {}
+  }
+  cosmo.Barf(path.join(test_dir, "test.ast-grep.ok"), "return " .. cosmo.EncodeLua(result) .. "\n")
+
+  local exit_code = ast_grep_module.main({ "report", test_dir })
+  lu.assertEquals(exit_code, 0)
+end
+
+function TestExitCode:test_main_report_returns_1_when_any_fail()
+  local unix = require("cosmo.unix")
+  local test_dir = path.join(TEST_TMPDIR, "report_fail")
+  unix.makedirs(test_dir)
+
+  local result = {
+    file = "test.lua",
+    checker = "ast-grep",
+    passed = false,
+    exit_code = 0,
+    issues = {
+      {
+        line = 1,
+        column = 1,
+        rule_id = "avoid-os-execute",
+        severity = "error",
+        message = "Avoid os.execute"
+      }
+    }
+  }
+  cosmo.Barf(path.join(test_dir, "test.ast-grep.ok"), "return " .. cosmo.EncodeLua(result) .. "\n")
+
+  local exit_code = ast_grep_module.main({ "report", test_dir })
+  lu.assertEquals(exit_code, 1)
+end
