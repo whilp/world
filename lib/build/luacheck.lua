@@ -1,18 +1,13 @@
 #!/usr/bin/env lua
 -- Debug: print LUA_PATH
-io.stderr:write("DEBUG luacheck.lua: LUA_PATH=" .. (os.getenv("LUA_PATH") or "nil") .. "\n")
-io.stderr:write("DEBUG luacheck.lua: package.path=" .. package.path .. "\n")
 
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local cosmo = require("cosmo")
 
-io.stderr:write("DEBUG luacheck.lua: about to require spawn\n")
 local spawn = require("spawn").spawn
-io.stderr:write("DEBUG luacheck.lua: spawn loaded successfully\n")
 
 local walk = require("walk")
-io.stderr:write("DEBUG luacheck.lua: walk loaded successfully\n")
 
 local function parse_plain(stdout)
   local issues = {}
