@@ -110,7 +110,7 @@ check: $(ast_grep_files) $(luacheck_files) $(teal_files) ## Run ast-grep, luache
 	# TODO: remove || true once all files pass teal
 	@$(teal_runner) report o/any || true
 
-test: $(filter o/any/lib/%,$(luatest_files)) $(subst %,$(current_platform),$(tests))
+test: $(filter o/any/lib/% o/any/3p/nvim/%,$(luatest_files)) $(subst %,$(current_platform),$(tests))
 	@echo "All tests passed"
 
 clean:

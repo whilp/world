@@ -4,7 +4,10 @@ nvim_plugins := conform.nvim mini.nvim nvim-lspconfig nvim-treesitter
 nvim_fetch_plugin := 3p/nvim/fetch-plugin.lua
 nvim_bundle := 3p/nvim/bundle.lua
 bins += o/%/nvim/bin/nvim
-tests += o/%/nvim/test.ok
+
+# Test uses generic luatest pattern with target-specific prereqs
+o/any/3p/nvim/test.lua.luatest.ok: o/$(current_platform)/nvim/bin/nvim
+o/any/3p/nvim/test.lua.luatest.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/nvim
 
 o/%/nvim/archive.tar.gz: $(nvim_version) $(fetch)
 	$(fetch) $(nvim_version) $* $@
@@ -28,9 +31,6 @@ o/%/nvim/bin/nvim: $(nvim_version) $(install) o/%/nvim/staging/bin/nvim o/any/nv
 	$(install) $(nvim_version) $* o/$*/nvim bin o/$*/nvim/staging/bin/nvim
 	$(install) $(nvim_version) $* o/$*/nvim share o/$*/nvim/staging/share
 	$(nvim_bundle) $* o/$*/nvim o/any/nvim/plugins
-
-o/%/nvim/test.ok: 3p/nvim/test.lua o/%/nvim/bin/nvim $(runner)
-	TEST_BIN_DIR=o/$*/nvim $(runner) $< $@
 
 nvim-latest: | $(lua_bin)
 	3p/nvim/latest.lua > 3p/nvim/version.lua
