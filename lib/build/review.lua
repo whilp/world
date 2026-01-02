@@ -123,20 +123,24 @@ local function print_review_comments(info, opts)
       return nil, err
     end
 
-    -- find the review to get its summary/body
-    local review_body
+    -- find the review to get its metadata
+    local review_data
     for _, r in ipairs(reviews) do
       if tostring(r.id) == info.review then
-        review_body = r.body
+        review_data = r
         break
       end
     end
 
     writer(string.format("Review #%s:", info.review))
-    if review_body and #review_body > 0 then
-      writer("")
-      writer("Summary:")
-      writer(string.format("  %s", review_body))
+    if review_data then
+      writer(string.format("  User: %s", review_data.user and review_data.user.login or "unknown"))
+      writer(string.format("  State: %s", review_data.state or "unknown"))
+      if review_data.body and #review_data.body > 0 then
+        writer("")
+        writer("Summary:")
+        writer(string.format("  %s", review_data.body))
+      end
     end
     writer("")
 
@@ -196,11 +200,11 @@ local function get_review_data(url_or_num, repo, opts)
       return nil, err
     end
 
-    -- find the review to get its summary/body
-    local review_body
+    -- find the review to get its metadata
+    local review_data
     for _, r in ipairs(reviews) do
       if tostring(r.id) == info.review then
-        review_body = r.body
+        review_data = r
         break
       end
     end
@@ -211,7 +215,9 @@ local function get_review_data(url_or_num, repo, opts)
       owner = info.owner,
       repo = info.repo,
       review_id = info.review,
-      body = review_body,
+      user = review_data and review_data.user and review_data.user.login,
+      state = review_data and review_data.state,
+      body = review_data and review_data.body,
       comments = comments,
     }
   end
@@ -226,7 +232,7 @@ local function get_review_data(url_or_num, repo, opts)
 end
 
 local help = [[
-usage: gh-review.lua <pr-url-or-number> [repo]
+usage: review.lua <pr-url-or-number> [repo]
 
 Fetch GitHub PR review comments.
 
@@ -235,14 +241,13 @@ arguments:
   repo               Repository in owner/repo format (required when using PR number)
 
 examples:
-  gh-review.lua https://github.com/owner/repo/pull/123
-  gh-review.lua https://github.com/owner/repo/pull/123#pullrequestreview-456
-  gh-review.lua 123 owner/repo
+  review.lua https://github.com/owner/repo/pull/123
+  review.lua https://github.com/owner/repo/pull/123#pullrequestreview-456
+  review.lua 123 owner/repo
 ]]
 
 local function main(args)
   if #args == 0 or args[1] == "--help" or args[1] == "-h" then
-    io.stderr:write(help)
     return help, 1
   end
 
@@ -251,21 +256,22 @@ local function main(args)
 
   local info, err = extract_pr_info(pr_input, repo)
   if not info then
-    io.stderr:write("error: " .. err .. "\n")
-    return err, 1
+    return "error: " .. err .. "\n", 1
   end
 
   local ok, err = print_review_comments(info)
   if not ok then
-    io.stderr:write("error: " .. err .. "\n")
-    return err, 1
+    return "error: " .. err .. "\n", 1
   end
 
   return nil, 0
 end
 
-if not pcall(debug.getlocal, 4, 1) then
-  local _, code = main({ ... })
+if arg and arg[0] and arg[0]:match("review%.lua$") then
+  local err, code = main({ ... })
+  if err then
+    io.stderr:write(err)
+  end
   os.exit(code)
 end
 

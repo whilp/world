@@ -14,17 +14,8 @@ o/any/build/lib/build/%.lua: lib/build/%.lua
 	mkdir -p $(@D)
 	cp $< $@
 
-o/any/build/test_install.ok: lib/build/test_install.lua o/any/build/lib/build/install.lua $(runner)
-	$(runner) $< $@
-
-o/any/build/test_fetch.ok: lib/build/test_fetch.lua o/any/build/lib/build/fetch.lua $(runner)
-	$(runner) $< $@
-
-o/any/build/test_extract.ok: lib/build/test_extract.lua lib/build/extract.lua $(runner)
+o/any/build/test_%.ok: lib/build/test_%.lua $(lib_libs) $(runner)
 	$(runner) $< $@
 
 o/any/build/test_luacheck.ok: lib/build/test_luacheck.lua lib/build/luacheck.lua $(luacheck_bin) $(runner)
 	TEST_BIN_DIR=o/$(current_platform)/luacheck $(runner) $< $@ $(CURDIR)/.luacheckrc
-
-o/any/build/test_review.ok: lib/build/test_review.lua o/any/build/lib/build/review.lua $(runner)
-	$(runner) $< $@
