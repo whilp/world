@@ -3,30 +3,7 @@ local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local cosmo = require("cosmo")
 local spawn = require("spawn").spawn
-
-local function walk(dir, pattern, results)
-  results = results or {}
-  local handle = unix.opendir(dir)
-  if not handle then return results end
-
-  while true do
-    local entry = handle:read()
-    if not entry then break end
-    if entry ~= "." and entry ~= ".." then
-      local full_path = path.join(dir, entry)
-      local stat = unix.stat(full_path)
-      if stat then
-        if unix.S_ISDIR(stat:mode()) then
-          walk(full_path, pattern, results)
-        elseif entry:match(pattern) then
-          table.insert(results, full_path)
-        end
-      end
-    end
-  end
-  handle:close()
-  return results
-end
+local walk_lib = require("walk")
 
 local function parse_plain(stdout)
   local issues = {}
@@ -95,7 +72,7 @@ local function report(output_dir)
   local total_issues = 0
   local by_code = {}
 
-  for _, filepath in ipairs(walk(output_dir, "%.luacheck%.ok$")) do
+  for _, filepath in ipairs(walk_lib.collect(output_dir, "%.luacheck%.ok$")) do
     local chunk = loadfile(filepath)
     if chunk then
       local result = chunk()
@@ -171,7 +148,6 @@ if ... then
   os.exit(main({ ... }))
 else
   return {
-    walk = walk,
     parse_plain = parse_plain,
     check = check,
     report = report,

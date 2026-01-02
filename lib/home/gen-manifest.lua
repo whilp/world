@@ -1,30 +1,6 @@
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
-local path = require("cosmo.path")
-
-local function walk_dir(dir, base, files)
-  files = files or {}
-  base = base or ""
-
-  for name in unix.opendir(dir) do
-    if name ~= "." and name ~= ".." then
-      local full_path = path.join(dir, name)
-      local rel_path = base == "" and name or path.join(base, name)
-      local st = unix.stat(full_path)
-
-      if st then
-        if unix.S_ISDIR(st:mode()) then
-          walk_dir(full_path, rel_path, files)
-        elseif unix.S_ISREG(st:mode()) or unix.S_ISLNK(st:mode()) then
-          local mode = st:mode() & 0x1ff
-          files[rel_path] = { mode = mode }
-        end
-      end
-    end
-  end
-
-  return files
-end
+local walk_lib = require("walk")
 
 local function cmd_help()
   io.stderr:write("usage: gen-manifest <directory> [version]\n")
@@ -48,7 +24,7 @@ local function main(args)
     return 1
   end
 
-  local files = walk_dir(dir)
+  local files = walk_lib.collect_all(dir)
   local manifest = {
     version = version,
     files = files,
@@ -58,7 +34,6 @@ local function main(args)
 end
 
 local M = {
-  walk_dir = walk_dir,
   main = main,
 }
 
