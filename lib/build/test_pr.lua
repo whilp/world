@@ -153,8 +153,6 @@ function TestUpdatePr:test_api_error()
   lu.assertStrContains(err, "Forbidden")
 end
 
-local environ = require("environ")
-
 TestGetCurrentBranch = {}
 
 function TestGetCurrentBranch:test_returns_branch_name()
@@ -172,15 +170,15 @@ function TestGetPrNumberFromEnv:test_falls_back_to_git_branch()
     return 200, {}, cosmo.EncodeJson({{number = 207}})
   end
 
-  -- create env object with required vars but no branch vars
-  local env = environ.new({
-    "GITHUB_TOKEN=test-token",
-    "GITHUB_REPOSITORY=owner/repo",
-  })
+  local mock_env = {
+    GITHUB_TOKEN = "test-token",
+    GITHUB_REPOSITORY = "owner/repo",
+  }
+  local mock_getenv = function(key) return mock_env[key] end
 
   local pr_num, err = pr.get_pr_number_from_env({
     fetch = mock_fetch,
-    env = env,
+    getenv = mock_getenv,
   })
 
   if pr_num then
@@ -194,8 +192,8 @@ end
 TestMain = {}
 
 function TestMain:test_missing_token_returns_error()
-  local empty_env = environ.new({})
-  local code, msg = pr.main({env = empty_env})
+  local mock_getenv = function() return nil end
+  local code, msg = pr.main({getenv = mock_getenv})
   lu.assertEquals(code, 1)
   lu.assertStrContains(msg, "GITHUB_TOKEN")
 end

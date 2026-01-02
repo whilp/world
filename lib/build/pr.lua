@@ -16,7 +16,6 @@ Environment variables:
 
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
-local environ = require("environ")
 local spawn = require("cosmic.spawn")
 
 local function log(msg)
@@ -61,9 +60,9 @@ end
 local function github_request(method, endpoint, token, body, opts)
   opts = opts or {}
   local fetch = opts.fetch or default_fetch
+  local getenv = opts.getenv or os.getenv
 
-  local env = environ.new(unix.environ())
-  local api_url = env.GITHUB_API_URL or "https://api.github.com"
+  local api_url = getenv("GITHUB_API_URL") or "https://api.github.com"
   local url = api_url .. endpoint
 
   local fetch_opts = {
@@ -136,24 +135,24 @@ end
 
 local function get_pr_number_from_env(opts)
   opts = opts or {}
-  local env = opts.env or environ.new(unix.environ())
+  local getenv = opts.getenv or os.getenv
 
-  local pr_number = env.GITHUB_PR_NUMBER
+  local pr_number = getenv("GITHUB_PR_NUMBER")
   if pr_number and pr_number ~= "" then
     return tonumber(pr_number)
   end
 
-  local token = env.GITHUB_TOKEN
+  local token = getenv("GITHUB_TOKEN")
   if not token or token == "" then
     return nil, "GITHUB_TOKEN not set"
   end
 
-  local repo = env.GITHUB_REPOSITORY
+  local repo = getenv("GITHUB_REPOSITORY")
   if not repo then
     return nil, "GITHUB_REPOSITORY not set"
   end
 
-  local branch = env.GITHUB_HEAD_REF or env.GITHUB_REF_NAME
+  local branch = getenv("GITHUB_HEAD_REF") or getenv("GITHUB_REF_NAME")
   if not branch then
     branch = get_current_branch()
   end
@@ -171,14 +170,14 @@ end
 
 local function main(opts)
   opts = opts or {}
-  local env = opts.env or environ.new(unix.environ())
+  local getenv = opts.getenv or os.getenv
 
-  local token = env.GITHUB_TOKEN
+  local token = getenv("GITHUB_TOKEN")
   if not token or token == "" then
     return 1, "GITHUB_TOKEN not set, skipping"
   end
 
-  local repo = env.GITHUB_REPOSITORY
+  local repo = getenv("GITHUB_REPOSITORY")
   if not repo then
     return 1, "GITHUB_REPOSITORY not set, skipping"
   end
