@@ -318,4 +318,9 @@ if not pcall(debug.getlocal, 4, 1) then
   end
 end
 
+M.extract_github_repo = extract_github_repo
+M.parse_sha256sums = parse_sha256sums
+M.interpolate = interpolate
+M.infer_asset_name = infer_asset_name
+
 return M
