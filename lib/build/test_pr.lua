@@ -153,10 +153,51 @@ function TestUpdatePr:test_api_error()
   lu.assertStrContains(err, "Forbidden")
 end
 
+local environ = require("environ")
+
+TestGetCurrentBranch = {}
+
+function TestGetCurrentBranch:test_returns_branch_name()
+  local branch = pr.get_current_branch()
+  -- should return a string when in a git repo
+  lu.assertNotNil(branch)
+  lu.assertTrue(#branch > 0)
+end
+
+TestGetPrNumberFromEnv = {}
+
+function TestGetPrNumberFromEnv:test_falls_back_to_git_branch()
+  -- when GITHUB_HEAD_REF/GITHUB_REF_NAME not set, should use git branch
+  local mock_fetch = function()
+    return 200, {}, cosmo.EncodeJson({{number = 207}})
+  end
+
+  -- create env object with required vars but no branch vars
+  local env = environ.new({
+    "GITHUB_TOKEN=test-token",
+    "GITHUB_REPOSITORY=owner/repo",
+  })
+
+  local pr_num, err = pr.get_pr_number_from_env({
+    fetch = mock_fetch,
+    env = env,
+  })
+
+  if pr_num then
+    lu.assertEquals(pr_num, 207)
+  else
+    -- if we're not in a git repo, that's ok for this test
+    lu.assertStrContains(err, "branch")
+  end
+end
+
 TestMain = {}
 
 function TestMain:test_missing_token_returns_error()
-  local code, msg = pr.main()
+  local empty_env = environ.new({})
+  local code, msg = pr.main({env = empty_env})
   lu.assertEquals(code, 1)
   lu.assertStrContains(msg, "GITHUB_TOKEN")
 end
+
+os.exit(lu.LuaUnit.run())

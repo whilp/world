@@ -17,9 +17,23 @@ Environment variables:
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local environ = require("environ")
+local spawn = require("cosmic.spawn")
 
 local function log(msg)
   io.stderr:write("pr: " .. msg .. "\n")
+end
+
+local function get_current_branch()
+  local handle = spawn({"git", "rev-parse", "--abbrev-ref", "HEAD"})
+  local ok, out = handle:read()
+  if not ok then
+    return nil
+  end
+  local branch = out:match("^%s*(.-)%s*$")
+  if branch == "" then
+    return nil
+  end
+  return branch
 end
 
 local function parse_pr_md(content)
@@ -122,7 +136,7 @@ end
 
 local function get_pr_number_from_env(opts)
   opts = opts or {}
-  local env = environ.new(unix.environ())
+  local env = opts.env or environ.new(unix.environ())
 
   local pr_number = env.GITHUB_PR_NUMBER
   if pr_number and pr_number ~= "" then
@@ -141,7 +155,10 @@ local function get_pr_number_from_env(opts)
 
   local branch = env.GITHUB_HEAD_REF or env.GITHUB_REF_NAME
   if not branch then
-    return nil, "GITHUB_HEAD_REF/GITHUB_REF_NAME not set"
+    branch = get_current_branch()
+  end
+  if not branch then
+    return nil, "could not determine branch"
   end
 
   local owner, repo_name = repo:match("^([^/]+)/(.+)$")
@@ -154,7 +171,7 @@ end
 
 local function main(opts)
   opts = opts or {}
-  local env = environ.new(unix.environ())
+  local env = opts.env or environ.new(unix.environ())
 
   local token = env.GITHUB_TOKEN
   if not token or token == "" then
@@ -271,6 +288,7 @@ return {
   github_request = github_request,
   find_pr_number = find_pr_number,
   update_pr = update_pr,
+  get_current_branch = get_current_branch,
   get_pr_number_from_env = get_pr_number_from_env,
   main = main,
 }
