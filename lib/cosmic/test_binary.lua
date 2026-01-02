@@ -4,16 +4,12 @@ local lu = require("luaunit")
 local spawn = require("cosmic.spawn")
 
 local bin_dir = os.getenv("TEST_BIN_DIR")
-if not bin_dir then
-  print("TEST_BIN_DIR not set, skipping cosmic-lua binary tests")
-  os.exit(0)
-end
-
-local cosmic_lua = bin_dir .. "/bin/cosmic-lua"
+local cosmic_lua = bin_dir and (bin_dir .. "/bin/cosmic-lua")
 
 TestCosmicLuaBinary = {}
 
 function TestCosmicLuaBinary:test_cosmic_spawn()
+  if not cosmic_lua then lu.skip("TEST_BIN_DIR not set") return end
   local handle = spawn.spawn({cosmic_lua, "-e", "local s = require('cosmic.spawn'); print(s and 'ok' or 'fail')"})
   local ok, out = handle:read()
   lu.assertTrue(ok, "cosmic-lua exited with error")
@@ -21,6 +17,7 @@ function TestCosmicLuaBinary:test_cosmic_spawn()
 end
 
 function TestCosmicLuaBinary:test_cosmic_walk()
+  if not cosmic_lua then lu.skip("TEST_BIN_DIR not set") return end
   local handle = spawn.spawn({cosmic_lua, "-e", "local w = require('cosmic.walk'); print(w and 'ok' or 'fail')"})
   local ok, out = handle:read()
   lu.assertTrue(ok, "cosmic-lua exited with error")
@@ -28,6 +25,7 @@ function TestCosmicLuaBinary:test_cosmic_walk()
 end
 
 function TestCosmicLuaBinary:test_cosmic_help()
+  if not cosmic_lua then lu.skip("TEST_BIN_DIR not set") return end
   local handle = spawn.spawn({cosmic_lua, "-e", "require('cosmic.help')"})
   local ok, out = handle:read()
   lu.assertTrue(ok, "cosmic-lua exited with error")
@@ -36,6 +34,7 @@ function TestCosmicLuaBinary:test_cosmic_help()
 end
 
 function TestCosmicLuaBinary:test_luaunit_bundled()
+  if not cosmic_lua then lu.skip("TEST_BIN_DIR not set") return end
   local handle = spawn.spawn({cosmic_lua, "-e", "local lu = require('luaunit'); print(lu and 'ok' or 'fail')"})
   local ok, out = handle:read()
   lu.assertTrue(ok, "cosmic-lua exited with error")
@@ -43,6 +42,7 @@ function TestCosmicLuaBinary:test_luaunit_bundled()
 end
 
 function TestCosmicLuaBinary:test_argparse_bundled()
+  if not cosmic_lua then lu.skip("TEST_BIN_DIR not set") return end
   local handle = spawn.spawn({cosmic_lua, "-e", "local ap = require('argparse'); print(ap and 'ok' or 'fail')"})
   local ok, out = handle:read()
   lu.assertTrue(ok, "cosmic-lua exited with error")
@@ -50,10 +50,9 @@ function TestCosmicLuaBinary:test_argparse_bundled()
 end
 
 function TestCosmicLuaBinary:test_lfs_bundled()
+  if not cosmic_lua then lu.skip("TEST_BIN_DIR not set") return end
   local handle = spawn.spawn({cosmic_lua, "-e", "local lfs = require('lfs'); print(lfs and 'ok' or 'fail')"})
   local ok, out = handle:read()
   lu.assertTrue(ok, "cosmic-lua exited with error")
   lu.assertStrContains(out, "ok")
 end
-
-os.exit(lu.LuaUnit.run())

@@ -83,5 +83,3 @@ function TestWalk:test_walk_empty_directory()
   lu.assertEquals(#files, 0)
   unix.rmrf(empty_dir)
 end
-
-os.exit(lu.LuaUnit.run())

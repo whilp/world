@@ -53,5 +53,3 @@ function TestCosmic:test_walk_basic()
   lu.assertNotNil(files)
   lu.assertTrue(#files >= 1)
 end
-
-os.exit(lu.LuaUnit.run())
