@@ -240,3 +240,59 @@ function TestReport:test_report_empty_directory()
   local success = luacheck_module.report(test_dir)
   lu.assertTrue(success)
 end
+
+TestExitCode = {}
+
+function TestExitCode:test_main_returns_0_on_pass()
+  local test_file = path.join(TEST_TMPDIR, "pass.lua")
+  local output_file = path.join(TEST_TMPDIR, "pass.lua.luacheck.ok")
+  cosmo.Barf(test_file, "local x = 10\nreturn x\n")
+
+  local exit_code = luacheck_module.main({ test_file, output_file, luacheck_bin })
+  lu.assertEquals(exit_code, 0)
+end
+
+function TestExitCode:test_main_returns_1_on_fail()
+  local test_file = path.join(TEST_TMPDIR, "fail.lua")
+  local output_file = path.join(TEST_TMPDIR, "fail.lua.luacheck.ok")
+  cosmo.Barf(test_file, "local unused = 10\nreturn 5\n")
+
+  local exit_code = luacheck_module.main({ test_file, output_file, luacheck_bin })
+  lu.assertEquals(exit_code, 1)
+end
+
+function TestExitCode:test_main_report_returns_0_when_all_pass()
+  local test_dir = path.join(TEST_TMPDIR, "exit_pass")
+  unix.makedirs(test_dir)
+
+  local result = {
+    file = "test.lua",
+    checker = "luacheck",
+    passed = true,
+    exit_code = 0,
+    issues = {}
+  }
+  cosmo.Barf(path.join(test_dir, "test.luacheck.ok"), "return " .. cosmo.EncodeLua(result) .. "\n")
+
+  local exit_code = luacheck_module.main({ "report", test_dir })
+  lu.assertEquals(exit_code, 0)
+end
+
+function TestExitCode:test_main_report_returns_1_when_any_fail()
+  local test_dir = path.join(TEST_TMPDIR, "exit_fail")
+  unix.makedirs(test_dir)
+
+  local result = {
+    file = "test.lua",
+    checker = "luacheck",
+    passed = false,
+    exit_code = 1,
+    issues = {
+      { line = 1, column = 1, code = "W211", message = "unused" }
+    }
+  }
+  cosmo.Barf(path.join(test_dir, "test.luacheck.ok"), "return " .. cosmo.EncodeLua(result) .. "\n")
+
+  local exit_code = luacheck_module.main({ "report", test_dir })
+  lu.assertEquals(exit_code, 1)
+end

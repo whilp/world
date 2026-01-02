@@ -90,3 +90,25 @@ return x
   lu.assertNotNil(result.exit_code)
   lu.assertIsTable(result.issues)
 end
+
+local ast_grep_module = dofile(ast_grep_script)
+
+TestExitCode = {}
+
+function TestExitCode:test_main_returns_0_on_pass()
+  local test_file = path.join(TEST_TMPDIR, "pass.lua")
+  local output_file = path.join(TEST_TMPDIR, "pass.lua.ast-grep.ok")
+  cosmo.Barf(test_file, 'local spawn = require("spawn").spawn\nspawn({"ls"}):wait()\n')
+
+  local exit_code = ast_grep_module.main({ test_file, output_file, ast_grep_bin })
+  lu.assertEquals(exit_code, 0)
+end
+
+function TestExitCode:test_main_returns_1_on_fail()
+  local test_file = path.join(TEST_TMPDIR, "fail.lua")
+  local output_file = path.join(TEST_TMPDIR, "fail.lua.ast-grep.ok")
+  cosmo.Barf(test_file, 'os.execute("ls")\n')
+
+  local exit_code = ast_grep_module.main({ test_file, output_file, ast_grep_bin })
+  lu.assertEquals(exit_code, 1)
+end
