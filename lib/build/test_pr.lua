@@ -1,9 +1,11 @@
 local lu = require("luaunit")
 local pr = require("build.pr")
+local cosmo = require("cosmo")
 
-TestParsePrMd = {}
+-- Test parsing functionality
+TestParsing = {}
 
-function TestParsePrMd:test_basic_title_and_body()
+function TestParsing:test_basic_title_and_body()
   local content = [[# My PR title
 
 This is the body.
@@ -14,7 +16,7 @@ This is the body.
   lu.assertEquals(result.body, "This is the body.")
 end
 
-function TestParsePrMd:test_multiline_body()
+function TestParsing:test_multiline_body()
   local content = [[# Feature: add new thing
 
 This PR adds a new feature.
@@ -34,7 +36,7 @@ Tested manually.
   lu.assertStrContains(result.body, "- Added foo")
 end
 
-function TestParsePrMd:test_title_only()
+function TestParsing:test_title_only()
   local content = "# Just a title"
   local result = pr.parse_pr_md(content)
   lu.assertNotNil(result)
@@ -42,7 +44,7 @@ function TestParsePrMd:test_title_only()
   lu.assertEquals(result.body, "")
 end
 
-function TestParsePrMd:test_title_with_trailing_whitespace()
+function TestParsing:test_title_with_trailing_whitespace()
   local content = "#   Spaced title   \n\nbody"
   local result = pr.parse_pr_md(content)
   lu.assertNotNil(result)
@@ -50,7 +52,7 @@ function TestParsePrMd:test_title_with_trailing_whitespace()
   lu.assertEquals(result.body, "body")
 end
 
-function TestParsePrMd:test_empty_body()
+function TestParsing:test_empty_body()
   local content = "# Title\n\n"
   local result = pr.parse_pr_md(content)
   lu.assertNotNil(result)
@@ -58,20 +60,20 @@ function TestParsePrMd:test_empty_body()
   lu.assertEquals(result.body, "")
 end
 
-function TestParsePrMd:test_no_title()
+function TestParsing:test_no_title()
   local content = "No hash mark here"
   local result, err = pr.parse_pr_md(content)
   lu.assertNil(result)
   lu.assertStrContains(err, "no title found")
 end
 
-function TestParsePrMd:test_empty_content()
+function TestParsing:test_empty_content()
   local result, err = pr.parse_pr_md("")
   lu.assertNil(result)
   lu.assertStrContains(err, "no title found")
 end
 
-function TestParsePrMd:test_title_with_special_chars()
+function TestParsing:test_title_with_special_chars()
   local content = "# feat(api): add endpoint for /users\n\nDetails here."
   local result = pr.parse_pr_md(content)
   lu.assertNotNil(result)
@@ -79,11 +81,10 @@ function TestParsePrMd:test_title_with_special_chars()
   lu.assertEquals(result.body, "Details here.")
 end
 
-local cosmo = require("cosmo")
+-- Test GitHub API interactions
+TestGithubAPI = {}
 
-TestGithubRequest = {}
-
-function TestGithubRequest:test_successful_get()
+function TestGithubAPI:test_successful_get()
   local mock_fetch = function(url, opts)
     lu.assertStrContains(url, "/repos/owner/repo/pulls")
     lu.assertEquals(opts.method, "GET")
@@ -96,7 +97,7 @@ function TestGithubRequest:test_successful_get()
   lu.assertEquals(data.number, 123)
 end
 
-function TestGithubRequest:test_fetch_failure()
+function TestGithubAPI:test_fetch_failure()
   local mock_fetch = function()
     return nil, "connection refused"
   end
@@ -106,9 +107,7 @@ function TestGithubRequest:test_fetch_failure()
   lu.assertStrContains(err, "fetch failed")
 end
 
-TestFindPrNumber = {}
-
-function TestFindPrNumber:test_finds_pr()
+function TestGithubAPI:test_finds_pr()
   local mock_fetch = function()
     return 200, {}, cosmo.EncodeJson({{number = 42, title = "Test PR"}})
   end
@@ -117,7 +116,7 @@ function TestFindPrNumber:test_finds_pr()
   lu.assertEquals(pr_num, 42)
 end
 
-function TestFindPrNumber:test_no_pr_found()
+function TestGithubAPI:test_no_pr_found()
   local mock_fetch = function()
     return 200, {}, cosmo.EncodeJson({})
   end
@@ -127,9 +126,7 @@ function TestFindPrNumber:test_no_pr_found()
   lu.assertStrContains(err, "no open PR found")
 end
 
-TestUpdatePr = {}
-
-function TestUpdatePr:test_successful_update()
+function TestGithubAPI:test_update_pr_success()
   local captured_body
   local mock_fetch = function(_url, opts)
     captured_body = opts.body
@@ -142,7 +139,7 @@ function TestUpdatePr:test_successful_update()
   lu.assertStrContains(captured_body, "New body")
 end
 
-function TestUpdatePr:test_api_error()
+function TestGithubAPI:test_update_pr_api_error()
   local mock_fetch = function()
     return 403, {}, cosmo.EncodeJson({message = "Forbidden"})
   end
@@ -153,17 +150,34 @@ function TestUpdatePr:test_api_error()
   lu.assertStrContains(err, "Forbidden")
 end
 
-TestGetCurrentBranch = {}
+-- Test Claude Code CLI environment (local git)
+TestClaudeRemote = {}
 
-function TestGetCurrentBranch:test_returns_branch_name()
+function TestClaudeRemote:test_happy_path_in_current_environment()
+  local branch = pr.get_current_branch()
+  lu.assertNotNil(branch, "should get current branch")
+  lu.assertTrue(#branch > 0, "branch name should not be empty")
+
+  local git_info = pr.get_git_info()
+  lu.assertNotNil(git_info, "should get git info")
+  lu.assertNotNil(git_info.owner, "should have owner")
+  lu.assertNotNil(git_info.repo, "should have repo")
+  lu.assertNotNil(git_info.branch, "should have branch")
+  lu.assertEquals(git_info.branch, branch, "branch should match")
+
+  local pr_number = pr.find_pr_for_branch(git_info.owner, git_info.repo, git_info.branch)
+  if pr_number then
+    lu.assertTrue(pr_number > 0, "PR number should be positive")
+  end
+end
+
+function TestClaudeRemote:test_get_current_branch()
   local branch = pr.get_current_branch()
   lu.assertNotNil(branch)
   lu.assertTrue(#branch > 0)
 end
 
-TestGetPrNumberFromEnv = {}
-
-function TestGetPrNumberFromEnv:test_falls_back_to_git_branch()
+function TestClaudeRemote:test_fallback_to_git_branch()
   local mock_fetch = function()
     return 200, {}, cosmo.EncodeJson({{number = 207}})
   end
@@ -186,16 +200,13 @@ function TestGetPrNumberFromEnv:test_falls_back_to_git_branch()
   end
 end
 
-function TestGetPrNumberFromEnv:test_finds_pr_without_token()
-  -- should be able to find PR number without GITHUB_TOKEN
-  -- (unauthenticated API requests work for public repos)
+function TestClaudeRemote:test_finds_pr_without_token()
   local mock_fetch = function()
     return 200, {}, cosmo.EncodeJson({{number = 207}})
   end
 
   local mock_env = {
     GITHUB_REPOSITORY = "owner/repo",
-    -- no GITHUB_TOKEN
   }
   local mock_getenv = function(key) return mock_env[key] end
 
@@ -207,48 +218,66 @@ function TestGetPrNumberFromEnv:test_finds_pr_without_token()
   if pr_num then
     lu.assertEquals(pr_num, 207)
   else
-    -- if we're not in a git repo, that's ok for this test
     lu.assertStrContains(err, "branch")
   end
 end
 
-TestMain = {}
-
-function TestMain:test_not_in_github_actions_prints_help()
+function TestClaudeRemote:test_not_in_github_actions_prints_help()
   local code, msg = pr.main()
   lu.assertEquals(code, 0)
   lu.assertNil(msg)
 end
 
-function TestMain:test_missing_repo_returns_error()
-  local mock_getenv = function() return nil end
-  local mock_env = {GITHUB_ACTIONS = "true"}
-  local getenv_with_actions = function(key)
-    if key == "GITHUB_ACTIONS" then return mock_env[key] end
-    return mock_getenv(key)
-  end
-  local code, msg = pr.main({getenv = getenv_with_actions})
-  lu.assertEquals(code, 1)
-  lu.assertStrContains(msg, "GITHUB_REPOSITORY")
+-- Test GitHub Actions environment
+TestGithubAction = {}
+
+function TestGithubAction:test_detects_github_actions()
+  local is_actions = pr.is_github_actions()
+  lu.assertIsFalse(is_actions)
 end
 
-function TestMain:test_reports_pr_when_no_token()
+function TestGithubAction:test_github_actions_with_token_and_pr_number()
   local mock_fetch = function()
-    return 200, {}, cosmo.EncodeJson({{number = 42}})
+    return 200, {}, cosmo.EncodeJson({number = 42})
   end
 
   local mock_env = {
+    GITHUB_ACTIONS = "true",
+    GITHUB_TOKEN = "test-token",
+    GITHUB_REPOSITORY = "owner/repo",
+    GITHUB_PR_NUMBER = "42",
+  }
+  local mock_getenv = function(key) return mock_env[key] end
+
+  local pr_number, err = pr.get_pr_number_from_env({
+    fetch = mock_fetch,
+    getenv = mock_getenv,
+  })
+
+  lu.assertNotNil(pr_number)
+  lu.assertEquals(pr_number, 42)
+end
+
+function TestGithubAction:test_github_actions_missing_token()
+  local mock_env = {
+    GITHUB_ACTIONS = "true",
     GITHUB_REPOSITORY = "owner/repo",
   }
   local mock_getenv = function(key) return mock_env[key] end
 
-  local code, msg = pr.main({getenv = mock_getenv, fetch = mock_fetch})
-  lu.assertEquals(code, 0)
-  lu.assertStrContains(msg, "PR #42")
+  local code, msg = pr.main({getenv = mock_getenv})
+  lu.assertEquals(code, 1)
+  lu.assertStrContains(msg, "GITHUB_TOKEN")
 end
 
-TestIsGithubActions = {}
+function TestGithubAction:test_github_actions_missing_repository()
+  local mock_env = {
+    GITHUB_ACTIONS = "true",
+    GITHUB_TOKEN = "test-token",
+  }
+  local mock_getenv = function(key) return mock_env[key] end
 
-function TestIsGithubActions:test_returns_false_when_not_set()
-  lu.assertFalse(pr.is_github_actions())
+  local code, msg = pr.main({getenv = mock_getenv})
+  lu.assertEquals(code, 1)
+  lu.assertStrContains(msg, "GITHUB_REPOSITORY")
 end

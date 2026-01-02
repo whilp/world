@@ -309,18 +309,20 @@ end
 
 local function main(opts)
   opts = opts or {}
+  local getenv = opts.getenv or os.getenv
 
-  if not is_github_actions() then
+  local is_actions = getenv("GITHUB_ACTIONS") == "true"
+  if not is_actions then
     print_help()
     return 0
   end
 
-  local token = os.getenv("GITHUB_TOKEN")
+  local token = getenv("GITHUB_TOKEN")
   if not token or token == "" then
     return 1, "GITHUB_TOKEN not set"
   end
 
-  local repo = os.getenv("GITHUB_REPOSITORY")
+  local repo = getenv("GITHUB_REPOSITORY")
   if not repo then
     return 1, "GITHUB_REPOSITORY not set"
   end
