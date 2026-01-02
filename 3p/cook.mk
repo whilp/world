@@ -23,7 +23,6 @@ include 3p/tl/cook.mk
 include 3p/tree-sitter/cook.mk
 include 3p/uv/cook.mk
 include 3p/lua/cook.mk
-include 3p/cosmic-lua/cook.mk
 
 define platform_target
 3p-$(1): $(subst %,$(1),$(bins) $(libs))

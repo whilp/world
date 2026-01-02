@@ -1,5 +1,4 @@
 -- test cosmic-lua bundled binary
--- run with: TEST_BIN_DIR=o/<platform>/cosmic-lua make o/any/3p/cosmic-lua/test.lua.luatest.ok
 
 local lu = require("luaunit")
 local spawn = require("cosmic.spawn")
