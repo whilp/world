@@ -35,9 +35,10 @@ local expected_modules = {
   -- lib modules
   "aerosnap/init.lua",
   "claude/main.lua",
+  "cosmic/spawn.lua",
+  "cosmic/walk.lua",
   "daemonize/init.lua",
   "environ/init.lua",
-  "spawn/init.lua",
   "whereami/init.lua",
   "work/api.lua",
   "home/main.lua",
@@ -104,7 +105,8 @@ function test_lua_dist_can_require_modules()
     "luaunit",
     "luacheck",
     "lfs",
-    "spawn",
+    "cosmic.spawn",
+    "cosmic.walk",
     "environ",
   }
 
