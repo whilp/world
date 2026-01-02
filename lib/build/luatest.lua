@@ -2,7 +2,7 @@
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local cosmo = require("cosmo")
-local walk = require("walk")
+local walk = require("cosmic.walk")
 
 local function run_tests(test_file, output, extra_args)
   _G.arg = {}

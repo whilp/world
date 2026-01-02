@@ -3,10 +3,8 @@
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local cosmo = require("cosmo")
-
-local spawn = require("spawn").spawn
-
-local walk = require("walk")
+local spawn = require("cosmic.spawn")
+local walk = require("cosmic.walk")
 
 local function parse_json_stream(stdout)
   local issues = {}

@@ -1,4 +1,4 @@
-local spawn = require("spawn").spawn
+local spawn = require("cosmic.spawn")
 
 local function copy_tree(src, dst)
 	local status = spawn({"cp", "-ra", src, dst}):wait()

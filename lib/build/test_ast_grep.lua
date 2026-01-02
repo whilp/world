@@ -1,7 +1,7 @@
 local lu = require("luaunit")
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
-local spawn = require("spawn").spawn
+local spawn = require("cosmic.spawn")
 
 local ast_grep_bin = path.join(os.getenv("TEST_BIN_DIR"), "bin", "ast-grep")
 local ast_grep_script = "lib/build/ast-grep.lua"
@@ -26,7 +26,7 @@ TestAstGrepCheck = {}
 
 function TestAstGrepCheck:test_clean_code_passes()
   local result = run_check([[
-local spawn = require("spawn").spawn
+local spawn = require("cosmic.spawn")
 spawn({"ls"}):wait()
 ]], "clean.lua")
   lu.assertNotNil(result)
@@ -98,7 +98,7 @@ TestExitCode = {}
 function TestExitCode:test_main_returns_0_on_pass()
   local test_file = path.join(TEST_TMPDIR, "pass.lua")
   local output_file = path.join(TEST_TMPDIR, "pass.lua.ast-grep.ok")
-  cosmo.Barf(test_file, 'local spawn = require("spawn").spawn\nspawn({"ls"}):wait()\n')
+  cosmo.Barf(test_file, 'local spawn = require("cosmic.spawn")\nspawn({"ls"}):wait()\n')
 
   local exit_code = ast_grep_module.main({ test_file, output_file, ast_grep_bin })
   lu.assertEquals(exit_code, 0)

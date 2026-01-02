@@ -1,3 +1,4 @@
+-- cosmic.spawn: process spawning utilities
 local unix = require("cosmo.unix")
 
 local function make_pipe(fd)

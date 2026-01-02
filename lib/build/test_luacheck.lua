@@ -2,7 +2,7 @@ local lu = require("luaunit")
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
-local spawn = require("spawn").spawn
+local spawn = require("cosmic.spawn")
 
 local luacheck_bin = path.join(os.getenv("TEST_BIN_DIR"), "bin", "luacheck")
 local luacheck_script = "lib/build/luacheck.lua"
