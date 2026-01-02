@@ -62,21 +62,6 @@ local function parse_sha256sums(text)
   return sums
 end
 
-local function try_fetch_sha256sums(repo, version_or_tag)
-  local possible_names = {"SHA256SUMS", "sha256sums.txt", "checksums.txt", "SHASUMS256.txt"}
-
-  for _, name in ipairs(possible_names) do
-    local url = string.format("https://github.com/%s/releases/download/%s/%s",
-      repo, version_or_tag, name)
-    local body = fetch_text(url)
-    if body then
-      return parse_sha256sums(body)
-    end
-  end
-
-  return nil
-end
-
 local function infer_asset_name(url_template, platform_config, platform_key, version_info)
   local vars = {}
 
@@ -124,7 +109,25 @@ local function fetch_latest_github(config, opts)
     tag = version,
   }
 
-  local sha256sums = try_fetch_sha256sums(repo, version)
+  local sha256sums = nil
+  if release.assets then
+    local checksum_patterns = {"SHA256SUMS", "sha256sums%.txt", "checksums%.txt", "SHASUMS256%.txt"}
+    for _, asset in ipairs(release.assets) do
+      for _, pattern in ipairs(checksum_patterns) do
+        if asset.name:match(pattern) then
+          stderr:write("found checksum file: " .. asset.name .. "\n")
+          local body = fetch_text(asset.browser_download_url)
+          if body then
+            sha256sums = parse_sha256sums(body)
+            break
+          end
+        end
+      end
+      if sha256sums then
+        break
+      end
+    end
+  end
 
   local platforms = {}
   for platform_key, platform_config in pairs(config.platforms) do
