@@ -19,7 +19,7 @@ lua_bin := o/any/lua/bin/lua
 fetch_script := lib/build/fetch.lua
 extract_script := lib/build/extract.lua
 install_script := lib/build/install.lua
-runner_script := lib/build/test.lua
+luatest_script := lib/build/luatest.lua
 luacheck_script := lib/build/luacheck.lua
 ast_grep_script := lib/build/ast-grep.lua
 teal_script := lib/build/teal.lua
@@ -28,7 +28,8 @@ teal_script := lib/build/teal.lua
 fetch = $(lua_bin) $(fetch_script)
 extract = $(lua_bin) $(extract_script)
 install = $(lua_bin) $(install_script)
-runner = $(lua_bin) $(runner_script)
+runner = $(lua_bin) $(luatest_script)
+luatest_runner = $(lua_bin) $(luatest_script)
 luacheck_bin = o/$(current_platform)/luacheck/bin/luacheck
 luacheck_runner = $(lua_bin) $(luacheck_script)
 ast_grep_runner = $(lua_bin) $(ast_grep_script)
@@ -36,7 +37,7 @@ teal_runner = $(lua_bin) $(teal_script)
 
 luaunit := o/any/luaunit/lib/luaunit.lua
 
-$(fetch_script) $(extract_script) $(install_script) $(runner_script) $(luacheck_script) $(ast_grep_script) $(teal_script): | $(lua_bin)
+$(fetch_script) $(extract_script) $(install_script) $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script): | $(lua_bin)
 cosmo := whilp/cosmopolitan
 release ?= latest
 
@@ -44,7 +45,17 @@ include lib/cook.mk
 include 3p/cook.mk
 
 lua_files := $(shell rg --files -g '*.lua'; rg --no-ignore -l '^#!/.*lua' -g '!*.lua' -g '!o/' 2>/dev/null)
+test_files := $(shell rg --files -g '*test.lua' -g 'test_*.lua' | grep -vE '(latest|luatest)\.lua$$')
+luatest_files := $(patsubst %,o/any/%.luatest.ok,$(test_files))
 luacheck_files := $(patsubst %,o/any/%.luacheck.ok,$(lua_files))
+
+luatest: $(luatest_files) ## Run tests incrementally on changed files
+
+o/any/%.luatest.ok: % $(luatest_script) $(luaunit) o/any/walk/lib/walk/init.lua
+	$(TEST_ENV) $(luatest_runner) $< $@ $(TEST_ARGS)
+
+luatest-report: $(luatest_files) o/any/walk/lib/walk/init.lua ## Run tests and show summary report
+	@$(luatest_runner) report o/any
 
 luacheck: $(luacheck_files) ## Run luacheck incrementally on changed files
 
@@ -99,7 +110,7 @@ check: $(ast_grep_files) $(luacheck_files) $(teal_files) ## Run ast-grep, luache
 	@echo ""
 	@$(teal_runner) report o/any || true
 
-test: lib-test $(subst %,$(current_platform),$(tests))
+test: $(filter o/any/lib/%,$(luatest_files)) $(subst %,$(current_platform),$(tests))
 	@echo "All tests passed"
 
 clean:

@@ -3,11 +3,6 @@
 lib_dirs += o/any/build/lib
 lib_libs += o/any/build/lib/build/install.lua
 lib_libs += o/any/build/lib/build/fetch.lua
-lib_tests += o/any/build/test_install.ok
-lib_tests += o/any/build/test_fetch.ok
-lib_tests += o/any/build/test_extract.ok
-lib_tests += o/any/build/test_luacheck.ok
-lib_tests += o/any/build/test_ast_grep.ok
 
 o/any/build/lib/build/install.lua: lib/build/install.lua
 	mkdir -p $(@D)
@@ -17,17 +12,10 @@ o/any/build/lib/build/fetch.lua: lib/build/fetch.lua
 	mkdir -p $(@D)
 	cp $< $@
 
-o/any/build/test_install.ok: lib/build/test_install.lua o/any/build/lib/build/install.lua $(runner)
-	$(runner) $< $@
+o/any/lib/build/test_luacheck.lua.luatest.ok: lib/build/luacheck.lua $(luacheck_bin)
+o/any/lib/build/test_luacheck.lua.luatest.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/luacheck
+o/any/lib/build/test_luacheck.lua.luatest.ok: TEST_ARGS = $(CURDIR)/.luacheckrc
 
-o/any/build/test_fetch.ok: lib/build/test_fetch.lua o/any/build/lib/build/fetch.lua $(runner)
-	$(runner) $< $@
-
-o/any/build/test_extract.ok: lib/build/test_extract.lua lib/build/extract.lua $(runner)
-	$(runner) $< $@
-
-o/any/build/test_luacheck.ok: lib/build/test_luacheck.lua lib/build/luacheck.lua $(luacheck_bin) $(runner)
-	TEST_BIN_DIR=o/$(current_platform)/luacheck $(runner) $< $@ $(CURDIR)/.luacheckrc
-
-o/any/build/test_ast_grep.ok: lib/build/test_ast_grep.lua lib/build/ast-grep.lua $(ast_grep) $(runner)
-	TEST_BIN_DIR=o/$(current_platform)/ast-grep $(runner) $< $@ $(CURDIR)/sgconfig.yml $(CURDIR)/.ast-grep
+o/any/lib/build/test_ast_grep.lua.luatest.ok: lib/build/ast-grep.lua $(ast_grep)
+o/any/lib/build/test_ast_grep.lua.luatest.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/ast-grep
+o/any/lib/build/test_ast_grep.lua.luatest.ok: TEST_ARGS = $(CURDIR)/sgconfig.yml $(CURDIR)/.ast-grep
