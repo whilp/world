@@ -1,5 +1,5 @@
 local lu = require("luaunit")
-local spawn = require("cosmic.spawn").spawn
+local spawn = require("cosmic.spawn")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 

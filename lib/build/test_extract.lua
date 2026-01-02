@@ -1,7 +1,7 @@
 local lu = require("luaunit")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
-local spawn = require("cosmic.spawn").spawn
+local spawn = require("cosmic.spawn")
 local cosmo = require("cosmo")
 
 local extract = dofile("lib/build/extract.lua")

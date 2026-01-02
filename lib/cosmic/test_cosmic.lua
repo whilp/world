@@ -40,7 +40,7 @@ end
 
 function TestCosmic:test_spawn_basic()
   local spawn = require("cosmic.spawn")
-  local handle = spawn.spawn({"echo", "hello"})
+  local handle = spawn({"echo", "hello"})
   lu.assertNotNil(handle)
   local ok, out = handle:read()
   lu.assertTrue(ok)

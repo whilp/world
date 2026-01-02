@@ -1,5 +1,5 @@
 local lu = require("luaunit")
-local spawn = require("cosmic.spawn").spawn
+local spawn = require("cosmic.spawn")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 
@@ -45,7 +45,7 @@ end
 
 function TestAstGrepRules:test_avoid_io_popen_negative()
   local code = [[
-local spawn = require("cosmic.spawn").spawn
+local spawn = require("cosmic.spawn")
 local handle = spawn({"ls", "-la"})
 local ok, output = handle:read()
 ]]
@@ -119,7 +119,7 @@ function TestAstGrepRules:test_avoid_os_execute_negative()
   local code = [[
 local unix = require("cosmo.unix")
 unix.makedirs(dir)
-local spawn = require("cosmic.spawn").spawn
+local spawn = require("cosmic.spawn")
 spawn({"ls"}):wait()
 ]]
   local filepath = write_test_file("test_os_execute_good.lua", code)

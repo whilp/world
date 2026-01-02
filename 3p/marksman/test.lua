@@ -1,6 +1,6 @@
 local lu = require("luaunit")
 local unix = require("cosmo.unix")
-local spawn = require("cosmic.spawn").spawn
+local spawn = require("cosmic.spawn")
 local path = require("cosmo.path")
 
 local bin = path.join(os.getenv("TEST_BIN_DIR"), "bin", "marksman")

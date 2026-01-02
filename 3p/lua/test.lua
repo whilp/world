@@ -3,7 +3,7 @@ local lu = require("luaunit")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local zip = require("cosmo.zip")
-local spawn = require("cosmic.spawn").spawn
+local spawn = require("cosmic.spawn")
 
 local lua_dist = path.join(os.getenv("TEST_BIN_DIR"), "bin", "lua.dist")
 
