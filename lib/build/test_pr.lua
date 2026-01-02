@@ -160,58 +160,41 @@ end
 -- 5. Unauthenticated API calls succeed via proxy
 --
 -- Code flow in this environment:
--- - get_current_branch() -> uses git (works)
--- - get_git_info() -> parses /git/owner/repo pattern (works)
+-- - get_current_branch() -> uses git (mocked)
+-- - get_git_info() -> parses /git/owner/repo pattern (mocked)
 -- - find_pr_for_branch() -> makes unauthenticated API call (proxy adds auth)
 TestClaudeRemote = {}
 
-function TestClaudeRemote:setUp()
-  -- verify we have the minimum git setup required
-  self.branch = pr.get_current_branch()
-  self.git_info = pr.get_git_info()
-
-  if not self.branch or not self.git_info then
-    lu.skipTest("not in a git repository with remote")
-  end
-end
-
 function TestClaudeRemote:test_happy_path()
+  -- mock git state for claude code environment
+  local mock_owner = "whilp"
+  local mock_repo = "world"
+  local mock_branch = "claude/extract-prla-fixes-Xch0u"
+
   -- simulate claude code environment:
-  -- - no GITHUB_* env vars (empty env)
-  -- - git operations work (real git from setUp)
-  -- - unauthenticated API call succeeds (simulating proxy behavior)
+  -- - no GITHUB_* env vars
+  -- - git operations return mock values
+  -- - unauthenticated API call succeeds (proxy adds auth)
 
-  local mock_getenv = function(_key)
-    -- no environment variables set in claude code CLI
-    return nil
-  end
-
-  -- simulate proxy adding auth to unauthenticated request
-  -- cosmo.Fetch is called by find_pr_for_branch without auth
-  -- proxy intercepts and returns successful response
+  -- mock cosmo.Fetch to simulate proxy behavior
   local original_fetch = cosmo.Fetch
   cosmo.Fetch = function(url, opts)
-    -- verify this is an unauthenticated request
+    -- verify this is an unauthenticated request (no auth header)
     lu.assertNil(opts.headers["Authorization"], "should be unauthenticated")
 
-    -- verify it's requesting GitHub API
+    -- verify correct GitHub API URL
     lu.assertStrContains(url, "https://api.github.com")
-    lu.assertStrContains(url, self.git_info.owner)
-    lu.assertStrContains(url, self.git_info.repo)
-    lu.assertStrContains(url, self.branch)
+    lu.assertStrContains(url, "/repos/" .. mock_owner .. "/" .. mock_repo .. "/pulls")
+    lu.assertStrContains(url, "head=" .. mock_owner .. ":" .. mock_branch)
 
     -- simulate proxy authenticating and returning successful response
     return 200, {}, cosmo.EncodeJson({{number = 209}})
   end
 
-  -- this simulates the help flow: get_git_info() + find_pr_for_branch()
-  local pr_number = pr.find_pr_for_branch(
-    self.git_info.owner,
-    self.git_info.repo,
-    self.git_info.branch
-  )
+  -- test the code flow: find_pr_for_branch with mocked git state
+  local pr_number = pr.find_pr_for_branch(mock_owner, mock_repo, mock_branch)
 
-  -- restore original fetch
+  -- restore
   cosmo.Fetch = original_fetch
 
   lu.assertNotNil(pr_number, "should find PR via unauthenticated API call")
