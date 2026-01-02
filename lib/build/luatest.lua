@@ -8,6 +8,8 @@ local function run_tests(test_file, output, extra_args)
   _G.arg = {}
   TEST_ARGS = extra_args or {}
   TEST_TMPDIR = nil
+  TEST_INTEGRATION = os.getenv("TEST_INTEGRATION")
+  TEST_UNSUPPORTED = os.getenv("TEST_UNSUPPORTED")
 
   local start_sec, start_nsec = unix.clock_gettime(0)
 
@@ -102,7 +104,7 @@ local function report(output_dir)
   local total_skipped = 0
   local total_duration_ms = 0
 
-  for _, filepath in ipairs(walk.collect(output_dir, "%.luatest%.ok$")) do
+  for _, filepath in ipairs(walk.collect(output_dir, "%.ok$")) do
     local chunk = loadfile(filepath)
     if chunk then
       local result = chunk()

@@ -7,6 +7,10 @@ lib_libs += o/any/cosmic/lib/cosmic/spawn.lua
 lib_libs += o/any/cosmic/lib/cosmic/walk.lua
 lib_libs += o/any/cosmic/lib/cosmic/help.lua
 
+# for compatibility with scripts that reference spawn_lib/walk_lib
+spawn_lib := o/any/cosmic/lib/cosmic/spawn.lua
+walk_lib := o/any/cosmic/lib/cosmic/walk.lua
+
 o/any/cosmic/lib/cosmic/%.lua: lib/cosmic/%.lua
 	mkdir -p $(@D)
 	cp $< $@

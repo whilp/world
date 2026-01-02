@@ -29,9 +29,3 @@ define platform_target
 3p-$(1): $(subst %,$(1),$(bins) $(libs))
 endef
 $(foreach p,$(platforms),$(eval $(call platform_target,$(p))))
-
-# Add 3p libs to global LUA_PATH
-null :=
-space := $(null) $(null)
-LUA_PATH_3P := $(subst $(space),,$(foreach lib,$(lua_libs),o/$(current_platform)/$(lib)/lib/?.lua;o/$(current_platform)/$(lib)/lib/?/init.lua;))
-export LUA_PATH := $(LUA_PATH);$(LUA_PATH_3P)

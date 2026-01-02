@@ -6,8 +6,8 @@ nvim_bundle := 3p/nvim/bundle.lua
 bins += o/%/nvim/bin/nvim
 
 # Test uses generic luatest pattern with target-specific prereqs
-o/any/3p/nvim/test.lua.luatest.ok: o/$(current_platform)/nvim/bin/nvim
-o/any/3p/nvim/test.lua.luatest.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/nvim
+$(luatest_o)/3p/nvim/test.lua.ok: o/$(current_platform)/nvim/bin/nvim
+$(luatest_o)/3p/nvim/test.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/nvim
 
 o/%/nvim/archive.tar.gz: $(nvim_version) $(fetch)
 	$(fetch) $(nvim_version) $* $@
@@ -31,8 +31,3 @@ o/%/nvim/bin/nvim: $(nvim_version) $(install) o/%/nvim/staging/bin/nvim o/any/nv
 	$(install) $(nvim_version) $* o/$*/nvim bin o/$*/nvim/staging/bin/nvim
 	$(install) $(nvim_version) $* o/$*/nvim share o/$*/nvim/staging/share
 	$(nvim_bundle) $* o/$*/nvim o/any/nvim/plugins
-
-nvim-latest: | $(lua_bin)
-	3p/nvim/latest.lua > 3p/nvim/version.lua
-
-.PHONY: nvim-latest
