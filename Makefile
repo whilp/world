@@ -52,7 +52,7 @@ luacheck_files := $(patsubst %,o/any/%.luacheck.ok,$(lua_files))
 luatest: $(luatest_files) ## Run tests incrementally on changed files
 
 o/any/%.luatest.ok: % $(luatest_script) $(luaunit) o/any/walk/lib/walk/init.lua
-	$(luatest_runner) $< $@
+	$(TEST_ENV) $(luatest_runner) $< $@ $(TEST_ARGS)
 
 luatest-report: $(luatest_files) o/any/walk/lib/walk/init.lua ## Run tests and show summary report
 	@$(luatest_runner) report o/any

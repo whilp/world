@@ -12,8 +12,10 @@ o/any/build/lib/build/fetch.lua: lib/build/fetch.lua
 	mkdir -p $(@D)
 	cp $< $@
 
-o/any/lib/build/test_luacheck.luatest.ok: lib/build/test_luacheck.lua lib/build/luacheck.lua $(luacheck_bin) $(luatest_script) $(luaunit)
-	TEST_BIN_DIR=o/$(current_platform)/luacheck $(luatest_runner) $< $@ $(CURDIR)/.luacheckrc
+o/any/lib/build/test_luacheck.lua.luatest.ok: lib/build/luacheck.lua $(luacheck_bin)
+o/any/lib/build/test_luacheck.lua.luatest.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/luacheck
+o/any/lib/build/test_luacheck.lua.luatest.ok: TEST_ARGS = $(CURDIR)/.luacheckrc
 
-o/any/lib/build/test_ast_grep.luatest.ok: lib/build/test_ast_grep.lua lib/build/ast-grep.lua $(ast_grep) $(luatest_script) $(luaunit)
-	TEST_BIN_DIR=o/$(current_platform)/ast-grep $(luatest_runner) $< $@ $(CURDIR)/sgconfig.yml $(CURDIR)/.ast-grep
+o/any/lib/build/test_ast_grep.lua.luatest.ok: lib/build/ast-grep.lua $(ast_grep)
+o/any/lib/build/test_ast_grep.lua.luatest.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/ast-grep
+o/any/lib/build/test_ast_grep.lua.luatest.ok: TEST_ARGS = $(CURDIR)/sgconfig.yml $(CURDIR)/.ast-grep
