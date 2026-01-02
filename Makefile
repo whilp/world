@@ -23,6 +23,7 @@ luatest_script := lib/build/luatest.lua
 luacheck_script := lib/build/luacheck.lua
 ast_grep_script := lib/build/ast-grep.lua
 teal_script := lib/build/teal.lua
+manifest_script := lib/build/manifest.lua
 
 # Commands (invoke lua explicitly to avoid APE "Text file busy" errors)
 fetch = $(lua_bin) $(fetch_script)
@@ -37,18 +38,14 @@ teal_runner = $(lua_bin) $(teal_script)
 
 luaunit := o/any/luaunit/lib/luaunit.lua
 
-$(fetch_script) $(extract_script) $(install_script) $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script): | $(lua_bin)
+$(fetch_script) $(extract_script) $(install_script) $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script) $(manifest_script): | $(lua_bin)
 cosmo := whilp/cosmopolitan
 release ?= latest
 
 include lib/cook.mk
 include 3p/cook.mk
 
-excluded_dirs := '^(\.config/(hammerspoon|nvim|voyager)|\.local/bin|o)/'
-lua_files := $(shell git ls-files '*.lua' | grep -vE $(excluded_dirs); \
-	git ls-files | grep -v '\.lua$$' | while read f; do \
-		head -n1 "$$f" 2>/dev/null | grep -q '^#!/.*lua' && echo "$$f"; \
-	done | grep -vE $(excluded_dirs))
+lua_files := $(shell LUA_PATH='$(LUA_PATH)' $(lua_bin) $(manifest_script))
 test_files := $(shell git ls-files '*test.lua' 'test_*.lua' | grep -vE '(latest|luatest)\.lua$$')
 luatest_files := $(patsubst %,o/any/%.luatest.ok,$(test_files))
 luacheck_files := $(patsubst %,o/any/%.luacheck.ok,$(lua_files))
