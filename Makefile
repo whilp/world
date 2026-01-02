@@ -53,12 +53,8 @@ lib_paths := $(subst $(space),,$(foreach dir,$(lib_dirs),$(CURDIR)/$(dir)/?.lua;
 3p_lib_paths := $(subst $(space),,$(foreach dir,$(subst %,$(current_platform),$(3p_lib_dirs)),$(CURDIR)/$(dir)/?.lua;$(CURDIR)/$(dir)/?/init.lua;))
 export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;$(lib_paths)$(3p_lib_paths)/zip/.lua/?.lua;/zip/.lua/?/init.lua
 
-# Assemble script dependencies from individual library modules
-script_deps := $(spawn_lib) $(walk_lib)
-
-# Build scripts that require runtime dependencies
-$(extract_script): | $(spawn_lib)
-$(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script): | $(script_deps)
+# Script dependencies from cosmic module
+script_deps := $(o_any)/cosmic/lib/cosmic/spawn.lua $(o_any)/cosmic/lib/cosmic/walk.lua
 
 lua_files := $(shell git ls-files '*.lua' | grep -vE '^(\.config/(hammerspoon|nvim|voyager)|\.local/bin)/' ; git ls-files | grep -v '\.lua$$' | grep -v '^o/' | grep -vE '^(\.config/(hammerspoon|nvim|voyager)|\.local/bin)/' | xargs -r grep -l '^#!/.*lua' 2>/dev/null || true)
 test_files := $(shell git ls-files '*test.lua' 'test_*.lua' | grep -vE '(latest|luatest)\.lua$$')
@@ -115,9 +111,11 @@ latest-report: $(latest_files) ## Check latest versions and show summary report
 bootstrap: $(lua_bin)
 	@[ -n "$$CLAUDE_ENV_FILE" ] && echo "PATH=$(dir $(lua_bin)):\$$PATH" >> "$$CLAUDE_ENV_FILE"; true
 
-$(lua_bin): $(cosmos_version)
+cosmic_release := home-2026-01-02-75caba6
+
+$(lua_bin):
 	@mkdir -p $(@D)
-	curl -sL -o $@ "https://github.com/$(cosmo)/releases/$(release)/download/lua"
+	curl -sL -o $@ "https://github.com/whilp/world/releases/download/$(cosmic_release)/cosmic-lua"
 	@chmod +x $@
 
 cosmos: o/$(current_platform)/cosmos/bin/lua
