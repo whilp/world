@@ -184,8 +184,8 @@ function TestClaudeRemote:test_happy_path()
 
     -- verify correct GitHub API URL
     lu.assertStrContains(url, "https://api.github.com")
-    lu.assertStrContains(url, "/repos/" .. mock_owner .. "/" .. mock_repo .. "/pulls")
-    lu.assertStrContains(url, "head=" .. mock_owner .. ":" .. mock_branch)
+    lu.assertStrContains(url, string.format("/repos/%s/%s/pulls", mock_owner, mock_repo))
+    lu.assertStrContains(url, string.format("head=%s:%s", mock_owner, mock_branch))
 
     -- simulate proxy authenticating and returning successful response
     return 200, {}, cosmo.EncodeJson({{number = 209}})
@@ -217,7 +217,7 @@ function TestGithubAction:test_github_actions_with_token_and_pr_number()
   }
   local mock_getenv = function(key) return mock_env[key] end
 
-  local pr_number, err = pr.get_pr_number_from_env({
+  local pr_number = pr.get_pr_number_from_env({
     fetch = mock_fetch,
     getenv = mock_getenv,
   })
