@@ -123,17 +123,35 @@ local function print_review_comments(info, opts)
       return nil, err
     end
 
-    writer(string.format("Review #%s comments:", info.review))
+    -- find the review to get its summary/body
+    local review_body
+    for _, r in ipairs(reviews) do
+      if tostring(r.id) == info.review then
+        review_body = r.body
+        break
+      end
+    end
+
+    writer(string.format("Review #%s:", info.review))
+    if review_body and #review_body > 0 then
+      writer("")
+      writer("Summary:")
+      writer(string.format("  %s", review_body))
+    end
     writer("")
 
-    for i, comment in ipairs(comments) do
-      writer(string.format("Comment %d:", i))
-      writer(string.format("  File: %s", comment.path or "N/A"))
-      if comment.line or comment.original_line then
-        writer(string.format("  Line: %s", comment.line or comment.original_line))
-      end
-      writer(string.format("  %s", comment.body))
+    if #comments > 0 then
+      writer("Inline comments:")
       writer("")
+      for i, comment in ipairs(comments) do
+        writer(string.format("Comment %d:", i))
+        writer(string.format("  File: %s", comment.path or "N/A"))
+        if comment.line or comment.original_line then
+          writer(string.format("  Line: %s", comment.line or comment.original_line))
+        end
+        writer(string.format("  %s", comment.body))
+        writer("")
+      end
     end
 
     return true
@@ -167,24 +185,35 @@ local function get_review_data(url_or_num, repo, opts)
     return nil, err
   end
 
+  local reviews, err = get_reviews(info)
+  if not reviews then
+    return nil, err
+  end
+
   if info.review then
     local comments, err = get_comments(info, info.review)
     if not comments then
       return nil, err
     end
+
+    -- find the review to get its summary/body
+    local review_body
+    for _, r in ipairs(reviews) do
+      if tostring(r.id) == info.review then
+        review_body = r.body
+        break
+      end
+    end
+
     return {
       type = "review_comments",
       pr = info.pr,
       owner = info.owner,
       repo = info.repo,
       review_id = info.review,
+      body = review_body,
       comments = comments,
     }
-  end
-
-  local reviews, err = get_reviews(info)
-  if not reviews then
-    return nil, err
   end
 
   return {

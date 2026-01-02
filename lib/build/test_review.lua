@@ -154,6 +154,9 @@ function TestPrintReviewComments:test_formats_specific_review_comments()
     table.insert(output, line)
   end
 
+  local mock_reviews = {
+    { id = 12345, body = "Please fix these issues", user = { login = "reviewer" }, state = "CHANGES_REQUESTED" },
+  }
   local mock_comments = {
     {
       path = "src/main.lua",
@@ -176,7 +179,7 @@ function TestPrintReviewComments:test_formats_specific_review_comments()
   local ok, err = review.print_review_comments(info, {
     writer = capture,
     fetch_reviews = function()
-      return {}
+      return mock_reviews
     end,
     fetch_review_comments = function()
       return mock_comments
@@ -186,7 +189,10 @@ function TestPrintReviewComments:test_formats_specific_review_comments()
   lu.assertTrue(ok, "should succeed: " .. tostring(err))
 
   local full_output = table.concat(output, "\n")
-  lu.assertStrContains(full_output, "Review #12345 comments:")
+  lu.assertStrContains(full_output, "Review #12345:")
+  lu.assertStrContains(full_output, "Summary:")
+  lu.assertStrContains(full_output, "Please fix these issues")
+  lu.assertStrContains(full_output, "Inline comments:")
   lu.assertStrContains(full_output, "File: src/main.lua")
   lu.assertStrContains(full_output, "Line: 42")
   lu.assertStrContains(full_output, "Consider using a constant here")
@@ -269,6 +275,9 @@ function TestGetReviewData:test_returns_reviews_for_pr_url()
 end
 
 function TestGetReviewData:test_returns_comments_for_review_url()
+  local mock_reviews = {
+    { id = 555, body = "Please address these issues", user = { login = "reviewer" }, state = "CHANGES_REQUESTED" },
+  }
   local mock_comments = {
     { path = "main.lua", line = 10, body = "Fix this" },
     { path = "util.lua", line = 20, body = "Add test" },
@@ -278,6 +287,9 @@ function TestGetReviewData:test_returns_comments_for_review_url()
     "https://github.com/owner/repo/pull/99#pullrequestreview-555",
     nil,
     {
+      fetch_reviews = function()
+        return mock_reviews
+      end,
       fetch_review_comments = function()
         return mock_comments
       end,
@@ -290,6 +302,7 @@ function TestGetReviewData:test_returns_comments_for_review_url()
   lu.assertEquals(data.repo, "repo")
   lu.assertEquals(data.pr, "99")
   lu.assertEquals(data.review_id, "555")
+  lu.assertEquals(data.body, "Please address these issues")
   lu.assertEquals(#data.comments, 2)
   lu.assertEquals(data.comments[1].path, "main.lua")
   lu.assertEquals(data.comments[2].body, "Add test")
