@@ -153,22 +153,29 @@ end
 -- Test Claude Code CLI environment (local git)
 TestClaudeRemote = {}
 
-function TestClaudeRemote:test_happy_path_in_current_environment()
-  local branch = pr.get_current_branch()
-  lu.assertNotNil(branch, "should get current branch")
-  lu.assertTrue(#branch > 0, "branch name should not be empty")
+function TestClaudeRemote:test_happy_path()
+  local current_branch = pr.get_current_branch()
+  local current_git_info = pr.get_git_info()
 
-  local git_info = pr.get_git_info()
-  lu.assertNotNil(git_info, "should get git info")
-  lu.assertNotNil(git_info.owner, "should have owner")
-  lu.assertNotNil(git_info.repo, "should have repo")
-  lu.assertNotNil(git_info.branch, "should have branch")
-  lu.assertEquals(git_info.branch, branch, "branch should match")
+  lu.assertNotNil(current_branch, "should detect current branch")
+  lu.assertNotNil(current_git_info, "should detect git info")
 
-  local pr_number = pr.find_pr_for_branch(git_info.owner, git_info.repo, git_info.branch)
-  if pr_number then
-    lu.assertTrue(pr_number > 0, "PR number should be positive")
+  local mock_fetch = function()
+    return 200, {}, cosmo.EncodeJson({{number = 209}})
   end
+
+  local mock_env = {
+    GITHUB_REPOSITORY = string.format("%s/%s", current_git_info.owner, current_git_info.repo),
+  }
+  local mock_getenv = function(key) return mock_env[key] end
+
+  local pr_number, err = pr.get_pr_number_from_env({
+    fetch = mock_fetch,
+    getenv = mock_getenv,
+  })
+
+  lu.assertNotNil(pr_number, err or "should find PR number")
+  lu.assertEquals(pr_number, 209)
 end
 
 function TestClaudeRemote:test_get_current_branch()
