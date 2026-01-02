@@ -25,10 +25,3 @@ o/%/cosmos/bin/make: $(cosmos_version) $(install) o/%/cosmos/.extracted
 
 o/%/cosmos/test.ok: 3p/cosmos/test.lua $(cosmos_bins) $(runner)
 	TEST_BIN_DIR=o/$*/cosmos $(runner) $< $@
-
-3p/cosmos/version.latest.ok: $(latest) $(cosmos_version)
-	$(latest) $(cosmos_version)
-
-cosmos-latest: 3p/cosmos/version.latest.ok
-
-.PHONY: cosmos-latest

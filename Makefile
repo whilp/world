@@ -88,6 +88,17 @@ teal-report: $(teal_files) ## Run teal and show summary report
 	# TODO: remove || true once all files pass
 	@$(teal_runner) report o/any || true
 
+%.latest.ok: %.lua $(latest_script)
+	$(latest) $<
+
+nvim-latest: 3p/nvim/version.latest.ok ## Check for latest nvim version
+
+cosmos-latest: 3p/cosmos/version.latest.ok ## Check for latest cosmos version
+
+claude-latest: lib/claude/version.latest.ok ## Check for latest claude version
+
+.PHONY: nvim-latest cosmos-latest claude-latest
+
 bootstrap: $(lua_bin)
 	@[ -n "$$CLAUDE_ENV_FILE" ] && echo "PATH=$(dir $(lua_bin)):\$$PATH" >> "$$CLAUDE_ENV_FILE"; true
 
