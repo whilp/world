@@ -31,8 +31,3 @@ o/%/nvim/bin/nvim: $(nvim_version) $(install) o/%/nvim/staging/bin/nvim o/any/nv
 	$(install) $(nvim_version) $* o/$*/nvim bin o/$*/nvim/staging/bin/nvim
 	$(install) $(nvim_version) $* o/$*/nvim share o/$*/nvim/staging/share
 	$(nvim_bundle) $* o/$*/nvim o/any/nvim/plugins
-
-nvim-latest: | $(lua_bin)
-	3p/nvim/latest.lua > 3p/nvim/version.lua
-
-.PHONY: nvim-latest
