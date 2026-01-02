@@ -117,7 +117,7 @@ function TestInferAssetName:test_platform_remap()
   local platform_key = "darwin-arm64"
   local version_info = {version = "1.0", tag = "v1.0"}
 
-  local asset_name, full_url = latest.infer_asset_name(
+  local asset_name, _ = latest.infer_asset_name(
     url_template, platform_config, platform_key, version_info)
 
   lu.assertEquals(asset_name, "tool-macos-arm64.tar.gz")
@@ -134,7 +134,7 @@ function TestInferAssetName:test_multiple_variables()
   local platform_key = "linux-x86_64"
   local version_info = {version = "2.0", tag = "v2.0"}
 
-  local asset_name, full_url = latest.infer_asset_name(
+  local asset_name, _ = latest.infer_asset_name(
     url_template, platform_config, platform_key, version_info)
 
   lu.assertEquals(asset_name, "tool_2.0_linux_amd64.tar.gz")
@@ -185,10 +185,10 @@ return {
 ]]
 
   local opts = {stderr = {write = function() end}}
-  local result_str, err = latest.check(content, opts)
+  local result_str, check_err = latest.check(content, opts)
 
   lu.assertNotNil(result_str, "check should return result string")
-  lu.assertNil(err)
+  lu.assertNil(check_err)
 
   local result = load(result_str)()
   lu.assertTrue(result._todo)
@@ -205,7 +205,7 @@ return {
 ]]
 
   local opts = {stderr = {write = function() end}}
-  local result_str, err = latest.check(content, opts)
+  local result_str, _ = latest.check(content, opts)
 
   lu.assertNotNil(result_str, "check should return result string")
 

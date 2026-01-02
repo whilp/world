@@ -46,7 +46,7 @@ end
 local function extract_github_repo(url)
   local owner, repo = url:match("github%.com/([^/]+)/([^/]+)")
   if owner and repo then
-    return owner .. "/" .. repo
+    return string.format("%s/%s", owner, repo)
   end
   return nil
 end
