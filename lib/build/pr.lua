@@ -17,9 +17,60 @@ Environment variables:
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local environ = require("environ")
+local spawn = require("spawn").spawn
 
 local function log(msg)
   io.stderr:write("pr: " .. msg .. "\n")
+end
+
+local function get_git_info()
+  local ok, remote_url = spawn({"git", "remote", "get-url", "origin"}):read()
+  if not ok or not remote_url then
+    return nil
+  end
+
+  local branch
+  ok, branch = spawn({"git", "branch", "--show-current"}):read()
+  if not ok or not branch then
+    return nil
+  end
+
+  remote_url = remote_url:match("^%s*(.-)%s*$")
+  branch = branch:match("^%s*(.-)%s*$")
+
+  local owner, repo = remote_url:match("github%.com[:/]([^/]+)/([^/%.]+)")
+  if not owner or not repo then
+    owner, repo = remote_url:match("/git/([^/]+)/([^/%.]+)")
+  end
+
+  if not owner or not repo or not branch then
+    return nil
+  end
+
+  return {owner = owner, repo = repo, branch = branch}
+end
+
+local function find_pr_for_branch(owner, repo, branch)
+  local url = string.format("https://api.github.com/repos/%s/%s/pulls?head=%s:%s&state=open",
+    owner, repo, owner, branch)
+
+  local status, headers, body = cosmo.Fetch(url, {
+    headers = {
+      ["User-Agent"] = "pr.lua/1.0",
+      ["Accept"] = "application/vnd.github+json",
+    },
+  })
+
+  if status ~= 200 then
+    return nil
+  end
+
+  local ok, data = pcall(cosmo.DecodeJson, body)
+  if not ok or type(data) ~= "table" or #data == 0 then
+    return nil
+  end
+
+  return data[1].number
 end
 
 local function parse_pr_md(content)
@@ -153,7 +204,17 @@ local function get_pr_number_from_env(opts)
 end
 
 local function print_help()
-  local pr_number, _ = get_pr_number_from_env()
+  local pr_number
+
+  pr_number, _ = get_pr_number_from_env()
+
+  if not pr_number then
+    local git_info = get_git_info()
+    if git_info then
+      pr_number = find_pr_for_branch(git_info.owner, git_info.repo, git_info.branch)
+    end
+  end
+
   local pr_file = pr_number and string.format(".github/pr/%d.md", pr_number) or ".github/pr/<number>.md"
 
   local help = string.format([[
