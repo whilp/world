@@ -118,7 +118,8 @@ local function print_review_comments(info, opts)
   end
 
   if info.review then
-    local comments, err = get_comments(info, info.review)
+    local comments
+    comments, err = get_comments(info, info.review)
     if not comments then
       return nil, err
     end
@@ -189,13 +190,15 @@ local function get_review_data(url_or_num, repo, opts)
     return nil, err
   end
 
-  local reviews, err = get_reviews(info)
+  local reviews
+  reviews, err = get_reviews(info)
   if not reviews then
     return nil, err
   end
 
   if info.review then
-    local comments, err = get_comments(info, info.review)
+    local comments
+    comments, err = get_comments(info, info.review)
     if not comments then
       return nil, err
     end
@@ -259,7 +262,8 @@ local function main(args)
     return "error: " .. err .. "\n", 1
   end
 
-  local ok, err = print_review_comments(info)
+  local ok
+  ok, err = print_review_comments(info)
   if not ok then
     return "error: " .. err .. "\n", 1
   end
