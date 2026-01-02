@@ -20,3 +20,8 @@ $(luatest_o)/lib/build/test_luacheck.lua.ok: TEST_ARGS = $(CURDIR)/$(luacheck_co
 $(luatest_o)/lib/build/test_ast_grep.lua.ok: lib/build/ast-grep.lua $(astgrep_bin)
 $(luatest_o)/lib/build/test_ast_grep.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/ast-grep
 $(luatest_o)/lib/build/test_ast_grep.lua.ok: TEST_ARGS = $(CURDIR)/$(astgrep_config) $(CURDIR)/.ast-grep
+
+update-pr: $(lua_bin) ## Update PR title/description from .github/pr.md
+	@test -f .github/pr.md && $(lua_bin) lib/build/pr.lua || true
+
+.PHONY: update-pr
