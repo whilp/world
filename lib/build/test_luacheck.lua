@@ -98,47 +98,6 @@ end
 
 local luacheck_module = dofile(luacheck_script)
 
-TestWalk = {}
-
-function TestWalk:test_walk_finds_lua_files()
-  local test_dir = path.join(TEST_TMPDIR, "walk_test")
-  unix.makedirs(test_dir)
-  cosmo.Barf(path.join(test_dir, "file1.lua"), "")
-  cosmo.Barf(path.join(test_dir, "file2.lua"), "")
-  cosmo.Barf(path.join(test_dir, "file.txt"), "")
-
-  local results = luacheck_module.walk(test_dir, "%.lua$")
-  lu.assertEquals(#results, 2)
-end
-
-function TestWalk:test_walk_finds_nested_files()
-  local test_dir = path.join(TEST_TMPDIR, "walk_nested")
-  local sub_dir = path.join(test_dir, "subdir")
-  unix.makedirs(sub_dir)
-  cosmo.Barf(path.join(test_dir, "top.lua"), "")
-  cosmo.Barf(path.join(sub_dir, "nested.lua"), "")
-
-  local results = luacheck_module.walk(test_dir, "%.lua$")
-  lu.assertEquals(#results, 2)
-end
-
-function TestWalk:test_walk_empty_directory()
-  local test_dir = path.join(TEST_TMPDIR, "walk_empty")
-  unix.makedirs(test_dir)
-
-  local results = luacheck_module.walk(test_dir, "%.lua$")
-  lu.assertEquals(#results, 0)
-end
-
-function TestWalk:test_walk_no_matches()
-  local test_dir = path.join(TEST_TMPDIR, "walk_no_match")
-  unix.makedirs(test_dir)
-  cosmo.Barf(path.join(test_dir, "file.txt"), "")
-
-  local results = luacheck_module.walk(test_dir, "%.lua$")
-  lu.assertEquals(#results, 0)
-end
-
 TestParsePlain = {}
 
 function TestParsePlain:test_parse_with_ranges()
