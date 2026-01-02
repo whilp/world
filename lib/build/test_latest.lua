@@ -5,6 +5,9 @@ local cosmo = require("cosmo")
 
 local latest = dofile("lib/build/latest.lua")
 
+TEST_INTEGRATION = os.getenv("TEST_INTEGRATION")
+TEST_UNSUPPORTED = os.getenv("TEST_UNSUPPORTED")
+
 TestExtractGithubRepo = {}
 
 function TestExtractGithubRepo:test_standard_releases_url()
@@ -288,8 +291,8 @@ end
 
 TestIntegration = {}
 
-function TestIntegration:skip_test_cosmos_real_fetch()
-  lu.skip("Integration test - requires network")
+function TestIntegration:test_cosmos_real_fetch()
+  lu.skipIf(not TEST_INTEGRATION, "Integration test - set TEST_INTEGRATION=1 to run")
 
   local config = {
     version = "2025.12.31-b0b834275",
@@ -299,19 +302,16 @@ function TestIntegration:skip_test_cosmos_real_fetch()
   }
 
   local result, err = latest.fetch_latest_github(config, {stderr = io.stderr})
+  lu.assertNotNil(result, "Failed to fetch: " .. tostring(err))
 
-  if result then
-    lu.assertNotNil(result.version)
-    lu.assertNotNil(result.platforms["*"])
-    lu.assertNotNil(result.platforms["*"].sha)
-    lu.assertEquals(#result.platforms["*"].sha, 64)
-  else
-    lu.skip("Could not fetch from GitHub: " .. tostring(err))
-  end
+  lu.assertNotNil(result.version)
+  lu.assertNotNil(result.platforms["*"])
+  lu.assertNotNil(result.platforms["*"].sha)
+  lu.assertEquals(#result.platforms["*"].sha, 64)
 end
 
-function TestIntegration:skip_test_nvim_real_fetch()
-  lu.skip("Integration test - requires network")
+function TestIntegration:test_nvim_real_fetch()
+  lu.skipIf(not TEST_INTEGRATION, "Integration test - set TEST_INTEGRATION=1 to run")
 
   local config = {
     version = "0.12.0-dev",
@@ -325,17 +325,14 @@ function TestIntegration:skip_test_nvim_real_fetch()
   }
 
   local result, err = latest.fetch_latest_github(config, {stderr = io.stderr})
+  lu.assertNotNil(result, "Failed to fetch: " .. tostring(err))
 
-  if result then
-    lu.assertNotNil(result.version)
-    lu.assertNotNil(result.tag)
-    lu.assertNotNil(result.platforms["darwin-arm64"])
-    lu.assertNotNil(result.platforms["linux-x86_64"])
-    lu.assertEquals(result.platforms["darwin-arm64"].platform, "macos-arm64")
-    lu.assertEquals(#result.platforms["darwin-arm64"].sha, 64)
-  else
-    lu.skip("Could not fetch from GitHub: " .. tostring(err))
-  end
+  lu.assertNotNil(result.version)
+  lu.assertNotNil(result.tag)
+  lu.assertNotNil(result.platforms["darwin-arm64"])
+  lu.assertNotNil(result.platforms["linux-x86_64"])
+  lu.assertEquals(result.platforms["darwin-arm64"].platform, "macos-arm64")
+  lu.assertEquals(#result.platforms["darwin-arm64"].sha, 64)
 end
 
 TestEdgeCases = {}
@@ -363,20 +360,24 @@ end
 
 TestUnsupportedCases = {}
 
-function TestUnsupportedCases:skip_test_url_encoded_tags()
-  lu.skip("URL-encoded tags not yet supported (e.g., cli%2Fv1.0)")
+function TestUnsupportedCases:test_url_encoded_tags()
+  lu.skipIf(not TEST_UNSUPPORTED, "URL-encoded tags not yet supported (e.g., cli%%2Fv1.0)")
+  lu.fail("Test implementation needed when feature is supported")
 end
 
-function TestUnsupportedCases:skip_test_non_github_storage()
-  lu.skip("Non-GitHub storage (e.g., storage.googleapis.com) not yet supported")
+function TestUnsupportedCases:test_non_github_storage()
+  lu.skipIf(not TEST_UNSUPPORTED, "Non-GitHub storage (e.g., storage.googleapis.com) not yet supported")
+  lu.fail("Test implementation needed when feature is supported")
 end
 
-function TestUnsupportedCases:skip_test_raw_githubusercontent()
-  lu.skip("raw.githubusercontent.com (non-release) not yet supported")
+function TestUnsupportedCases:test_raw_githubusercontent()
+  lu.skipIf(not TEST_UNSUPPORTED, "raw.githubusercontent.com (non-release) not yet supported")
+  lu.fail("Test implementation needed when feature is supported")
 end
 
-function TestUnsupportedCases:skip_test_missing_platform_assets()
-  lu.skip("Handling missing platform assets (404) - falls back to _todo")
+function TestUnsupportedCases:test_missing_platform_assets()
+  lu.skipIf(not TEST_UNSUPPORTED, "Handling missing platform assets (404) - falls back to _todo")
+  lu.fail("Test implementation needed when feature is supported")
 end
 
 TestHelperExposure = {}
