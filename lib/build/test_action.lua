@@ -176,12 +176,4 @@ jobs:
 	lu.assertEquals(action_names["actions/download-artifact"], 1)
 end
 
-TestWorkflowFile = {}
-
-function TestWorkflowFile:test_parse_nonexistent_file()
-	local actions, err = action.parse_workflow_file("nonexistent.yml")
-	lu.assertNil(actions)
-	lu.assertNotNil(err)
-end
-
 os.exit(lu.LuaUnit.run())

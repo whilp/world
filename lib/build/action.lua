@@ -49,20 +49,7 @@ local function parse_workflow(workflow_content)
 	return actions
 end
 
-local function parse_workflow_file(file_path)
-	local file, err = io.open(file_path, "r")
-	if not file then
-		return nil, err
-	end
-
-	local content = file:read("*a")
-	file:close()
-
-	return parse_workflow(content)
-end
-
 return {
 	parse = parse,
 	parse_workflow = parse_workflow,
-	parse_workflow_file = parse_workflow_file,
 }
