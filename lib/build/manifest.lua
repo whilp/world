@@ -19,25 +19,29 @@ local function is_excluded(file, excluded_patterns)
   return false
 end
 
-local function has_lua_shebang(filepath)
+local function has_lua_shebang(line)
+  if not line or line == "" then
+    return false
+  end
+
+  local first_line = line:match("^([^\r\n]+)")
+  if not first_line then
+    return false
+  end
+
+  return first_line:match("^#!%s*/.*lua") ~= nil
+end
+
+local function read_first_line(filepath)
   local fd = unix.open(filepath, unix.O_RDONLY)
   if not fd then
-    return false
+    return nil
   end
 
-  local first_line = unix.read(fd, 256)
+  local chunk = unix.read(fd, 256)
   unix.close(fd)
 
-  if not first_line or first_line == "" then
-    return false
-  end
-
-  local line = first_line:match("^([^\r\n]+)")
-  if not line then
-    return false
-  end
-
-  return line:match("^#!%s*/.*lua") ~= nil
+  return chunk
 end
 
 local function find_lua_files(opts)
@@ -70,7 +74,8 @@ local function find_lua_files(opts)
   if exit_code == 0 and stdout then
     for line in stdout:gmatch("[^\r\n]+") do
       if not line:match("%.lua$") and not is_excluded(line, excluded_patterns) then
-        if has_lua_shebang(line) then
+        local first_line = read_first_line(line)
+        if first_line and has_lua_shebang(first_line) then
           table.insert(files, line)
         end
       end

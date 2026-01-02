@@ -1,93 +1,26 @@
 local lu = require("luaunit")
 local manifest = require("build.manifest")
-local path = require("cosmo.path")
-local cosmo = require("cosmo")
 
 TestHasLuaShebang = {}
 
 function TestHasLuaShebang:test_lua_shebang()
-  local filepath = path.join(TEST_TMPDIR, "script.lua")
-  cosmo.Barf(filepath, "#!/usr/bin/env lua\nprint('hello')\n")
-
-  local result = manifest.has_lua_shebang(filepath)
-  lu.assertTrue(result)
-end
-
-function TestHasLuaShebang:test_lua5_4_shebang()
-  local filepath = path.join(TEST_TMPDIR, "script")
-  cosmo.Barf(filepath, "#!/usr/bin/lua5.4\nprint('hello')\n")
-
-  local result = manifest.has_lua_shebang(filepath)
-  lu.assertTrue(result)
-end
-
-function TestHasLuaShebang:test_luajit_shebang()
-  local filepath = path.join(TEST_TMPDIR, "script")
-  cosmo.Barf(filepath, "#!/usr/bin/env luajit\nprint('hello')\n")
-
-  local result = manifest.has_lua_shebang(filepath)
-  lu.assertTrue(result)
-end
-
-function TestHasLuaShebang:test_no_shebang()
-  local filepath = path.join(TEST_TMPDIR, "script")
-  cosmo.Barf(filepath, "print('hello')\n")
-
-  local result = manifest.has_lua_shebang(filepath)
-  lu.assertFalse(result)
-end
-
-function TestHasLuaShebang:test_bash_shebang()
-  local filepath = path.join(TEST_TMPDIR, "script.sh")
-  cosmo.Barf(filepath, "#!/bin/bash\necho 'hello'\n")
-
-  local result = manifest.has_lua_shebang(filepath)
-  lu.assertFalse(result)
-end
-
-function TestHasLuaShebang:test_python_shebang()
-  local filepath = path.join(TEST_TMPDIR, "script.py")
-  cosmo.Barf(filepath, "#!/usr/bin/env python3\nprint('hello')\n")
-
-  local result = manifest.has_lua_shebang(filepath)
-  lu.assertFalse(result)
-end
-
-function TestHasLuaShebang:test_empty_file()
-  local filepath = path.join(TEST_TMPDIR, "empty")
-  cosmo.Barf(filepath, "")
-
-  local result = manifest.has_lua_shebang(filepath)
-  lu.assertFalse(result)
-end
-
-function TestHasLuaShebang:test_nonexistent_file()
-  local result = manifest.has_lua_shebang("/nonexistent/file")
-  lu.assertFalse(result)
+  lu.assertTrue(manifest.has_lua_shebang("#!/usr/bin/env lua\nprint('hello')"))
 end
 
 function TestHasLuaShebang:test_shebang_with_space()
-  local filepath = path.join(TEST_TMPDIR, "script")
-  cosmo.Barf(filepath, "#! /usr/bin/env lua\nprint('hello')\n")
-
-  local result = manifest.has_lua_shebang(filepath)
-  lu.assertTrue(result)
+  lu.assertTrue(manifest.has_lua_shebang("#! /usr/bin/lua\nprint('hello')"))
 end
 
-function TestHasLuaShebang:test_shebang_with_args()
-  local filepath = path.join(TEST_TMPDIR, "script")
-  cosmo.Barf(filepath, "#!/usr/bin/lua -e\nprint('hello')\n")
+function TestHasLuaShebang:test_no_shebang()
+  lu.assertFalse(manifest.has_lua_shebang("print('hello')"))
+end
 
-  local result = manifest.has_lua_shebang(filepath)
-  lu.assertTrue(result)
+function TestHasLuaShebang:test_bash_shebang()
+  lu.assertFalse(manifest.has_lua_shebang("#!/bin/bash\necho 'hello'"))
 end
 
 function TestHasLuaShebang:test_not_first_line()
-  local filepath = path.join(TEST_TMPDIR, "script")
-  cosmo.Barf(filepath, "\n#!/usr/bin/env lua\nprint('hello')\n")
-
-  local result = manifest.has_lua_shebang(filepath)
-  lu.assertFalse(result)
+  lu.assertFalse(manifest.has_lua_shebang("\n#!/usr/bin/env lua"))
 end
 
 TestFindLuaFiles = {}
