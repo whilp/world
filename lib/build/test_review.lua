@@ -226,21 +226,19 @@ end
 TestParseLinkHeader = {}
 
 function TestParseLinkHeader:test_extracts_next_url()
-  local review = require("build.review")
-  local link = '<https://api.github.com/repos/o/r/pulls/1/reviews?page=2>; rel="next", <https://api.github.com/repos/o/r/pulls/1/reviews?page=5>; rel="last"'
+  local link = '<https://api.github.com/repos/o/r/pulls/1/reviews?page=2>; rel="next", ' ..
+               '<https://api.github.com/repos/o/r/pulls/1/reviews?page=5>; rel="last"'
   local next_url = review.parse_link_header(link)
   lu.assertEquals(next_url, "https://api.github.com/repos/o/r/pulls/1/reviews?page=2")
 end
 
 function TestParseLinkHeader:test_returns_nil_when_no_next()
-  local review = require("build.review")
   local link = '<https://api.github.com/repos/o/r/pulls/1/reviews?page=1>; rel="first"'
   local next_url = review.parse_link_header(link)
   lu.assertNil(next_url)
 end
 
 function TestParseLinkHeader:test_handles_nil_header()
-  local review = require("build.review")
   local next_url = review.parse_link_header(nil)
   lu.assertNil(next_url)
 end
