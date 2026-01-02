@@ -47,6 +47,15 @@ include 3p/cook.mk
 # Assemble script dependencies from individual library modules
 script_deps := $(spawn_lib) $(walk_lib)
 
+# Tool binaries for checkers
+ast_grep := o/$(current_platform)/ast-grep/bin/ast-grep
+lua_dist := o/$(current_platform)/lua/bin/lua.dist
+tl_bin := o/$(current_platform)/tl/bin/tl
+
+# Build scripts that require runtime dependencies
+$(extract_script): | $(spawn_lib)
+$(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script): | $(script_deps)
+
 lua_files := $(shell git ls-files '*.lua' | grep -vE '^(\.config/(hammerspoon|nvim|voyager)|\.local/bin)/' ; git ls-files | grep -v '\.lua$$' | grep -v '^o/' | grep -vE '^(\.config/(hammerspoon|nvim|voyager)|\.local/bin)/' | xargs -r grep -l '^#!/.*lua' 2>/dev/null || true)
 test_files := $(shell git ls-files '*test.lua' 'test_*.lua' | grep -vE '(latest|luatest)\.lua$$')
 luatest_files := $(patsubst %,o/any/%.luatest.ok,$(test_files))
@@ -99,11 +108,6 @@ $(lua_bin):
 
 cosmos: o/$(current_platform)/cosmos/bin/lua
 lua: o/$(current_platform)/lua/bin/lua.dist
-
-ast_grep := o/$(current_platform)/ast-grep/bin/ast-grep
-lua_dist := o/$(current_platform)/lua/bin/lua.dist
-
-tl_bin := o/$(current_platform)/tl/bin/tl
 
 check: $(ast_grep_files) $(luacheck_files) $(teal_files) ## Run ast-grep, luacheck, and teal
 	@$(ast_grep_runner) report o/any
