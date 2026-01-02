@@ -14,7 +14,6 @@ Environment variables:
 ]]
 
 local cosmo = require("cosmo")
-local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 local environ = require("environ")
 
@@ -125,7 +124,7 @@ local function main(opts)
   local env = environ.new(unix.environ())
 
   local pr_file = ".github/pr.md"
-  local full_path = path.realpath(pr_file)
+  local full_path = unix.realpath(pr_file)
 
   local token = env.GITHUB_TOKEN
   if not token or token == "" then
