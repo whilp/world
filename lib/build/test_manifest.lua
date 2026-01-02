@@ -1,6 +1,5 @@
 local lu = require("luaunit")
 local manifest = require("build.manifest")
-local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local cosmo = require("cosmo")
 
