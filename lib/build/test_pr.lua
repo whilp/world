@@ -150,12 +150,19 @@ function TestGithubAPI:test_update_pr_api_error()
   lu.assertStrContains(err, "Forbidden")
 end
 
--- Test Claude Code CLI environment (local git)
--- Requirements for Claude Code environment:
--- 1. Git repository with a remote
--- 2. Can detect current branch
--- 3. Can detect owner/repo from remote
--- 4. Can query GitHub API for PRs
+-- Test Claude Code CLI environment
+--
+-- Claude Code environment characteristics:
+-- 1. Git repository with proxied remote (http://local_proxy@127.0.0.1/git/owner/repo)
+-- 2. No GITHUB_* environment variables set
+-- 3. HTTP/HTTPS proxy with JWT authentication
+-- 4. Proxy intercepts GitHub API requests and adds auth automatically
+-- 5. Unauthenticated API calls succeed via proxy
+--
+-- Code flow in this environment:
+-- - get_current_branch() -> uses git (works)
+-- - get_git_info() -> parses /git/owner/repo pattern (works)
+-- - find_pr_for_branch() -> makes unauthenticated API call (proxy adds auth)
 TestClaudeRemote = {}
 
 function TestClaudeRemote:setUp()
@@ -169,28 +176,45 @@ function TestClaudeRemote:setUp()
 end
 
 function TestClaudeRemote:test_happy_path()
-  -- simulate claude code environment where:
-  -- - we're on a feature branch (detected via git)
-  -- - GITHUB_REPOSITORY is set
-  -- - GitHub API returns a PR for this branch
+  -- simulate claude code environment:
+  -- - no GITHUB_* env vars (empty env)
+  -- - git operations work (real git from setUp)
+  -- - unauthenticated API call succeeds (simulating proxy behavior)
 
-  local mock_fetch = function()
+  local mock_getenv = function(_key)
+    -- no environment variables set in claude code CLI
+    return nil
+  end
+
+  -- simulate proxy adding auth to unauthenticated request
+  -- cosmo.Fetch is called by find_pr_for_branch without auth
+  -- proxy intercepts and returns successful response
+  local original_fetch = cosmo.Fetch
+  cosmo.Fetch = function(url, opts)
+    -- verify this is an unauthenticated request
+    lu.assertNil(opts.headers["Authorization"], "should be unauthenticated")
+
+    -- verify it's requesting GitHub API
+    lu.assertStrContains(url, "https://api.github.com")
+    lu.assertStrContains(url, self.git_info.owner)
+    lu.assertStrContains(url, self.git_info.repo)
+    lu.assertStrContains(url, self.branch)
+
+    -- simulate proxy authenticating and returning successful response
     return 200, {}, cosmo.EncodeJson({{number = 209}})
   end
 
-  local mock_env = {
-    -- use actual repo from git
-    GITHUB_REPOSITORY = string.format("%s/%s", self.git_info.owner, self.git_info.repo),
-    -- don't set GITHUB_HEAD_REF - force fallback to git branch
-  }
-  local mock_getenv = function(key) return mock_env[key] end
+  -- this simulates the help flow: get_git_info() + find_pr_for_branch()
+  local pr_number = pr.find_pr_for_branch(
+    self.git_info.owner,
+    self.git_info.repo,
+    self.git_info.branch
+  )
 
-  local pr_number, err = pr.get_pr_number_from_env({
-    fetch = mock_fetch,
-    getenv = mock_getenv,
-  })
+  -- restore original fetch
+  cosmo.Fetch = original_fetch
 
-  lu.assertNotNil(pr_number, err or "should find PR using git branch")
+  lu.assertNotNil(pr_number, "should find PR via unauthenticated API call")
   lu.assertEquals(pr_number, 209)
 end
 
