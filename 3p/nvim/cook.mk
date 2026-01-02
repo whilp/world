@@ -32,7 +32,9 @@ o/%/nvim/bin/nvim: $(nvim_version) $(install) o/%/nvim/staging/bin/nvim o/any/nv
 o/%/nvim/test.ok: 3p/nvim/test.lua o/%/nvim/bin/nvim $(runner)
 	TEST_BIN_DIR=o/$*/nvim $(runner) $< $@
 
-nvim-latest: | $(lua_bin)
-	3p/nvim/latest.lua > 3p/nvim/version.lua
+3p/nvim/version.latest.ok: $(latest) 3p/nvim/version.lua
+	$(latest) 3p/nvim/version.lua
+
+nvim-latest: 3p/nvim/version.latest.ok
 
 .PHONY: nvim-latest

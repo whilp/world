@@ -19,6 +19,7 @@ lua_bin := o/any/lua/bin/lua
 fetch_script := lib/build/fetch.lua
 extract_script := lib/build/extract.lua
 install_script := lib/build/install.lua
+latest_script := lib/build/latest.lua
 luatest_script := lib/build/luatest.lua
 luacheck_script := lib/build/luacheck.lua
 ast_grep_script := lib/build/ast-grep.lua
@@ -28,6 +29,7 @@ teal_script := lib/build/teal.lua
 fetch = $(lua_bin) $(fetch_script)
 extract = $(lua_bin) $(extract_script)
 install = $(lua_bin) $(install_script)
+latest = $(lua_bin) $(latest_script)
 runner = $(lua_bin) $(luatest_script)
 luatest_runner = $(lua_bin) $(luatest_script)
 luacheck_bin = o/$(current_platform)/luacheck/bin/luacheck
@@ -37,7 +39,7 @@ teal_runner = $(lua_bin) $(teal_script)
 
 luaunit := o/any/luaunit/lib/luaunit.lua
 
-$(fetch_script) $(extract_script) $(install_script) $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script): | $(lua_bin)
+$(fetch_script) $(extract_script) $(install_script) $(latest_script) $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script): | $(lua_bin)
 cosmo := whilp/cosmopolitan
 release ?= latest
 
