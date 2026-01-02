@@ -3,15 +3,11 @@ lib_dirs += o/any/home/lib
 home_src := $(filter-out lib/home/test%.lua,$(wildcard lib/home/*.lua))
 home_lib := $(patsubst lib/%,o/any/home/lib/%,$(home_src))
 lib_libs += $(home_lib)
-lib_tests += o/any/home/test_main.ok
 bins += o/%/home/bin/home
 
 o/any/home/lib/home/%.lua: lib/home/%.lua
 	mkdir -p $(@D)
 	cp $< $@
-
-o/any/home/test_main.ok: lib/home/test_main.lua $(home_lib) $(runner)
-	$(runner) $< $@
 
 # home binary build
 home_exclude_pattern := ^(3p/|o/|results/|Makefile|\.git)
