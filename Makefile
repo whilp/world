@@ -36,6 +36,7 @@ ast_grep_runner = $(lua_bin) $(ast_grep_script)
 teal_runner = $(lua_bin) $(teal_script)
 
 luaunit := o/any/luaunit/lib/luaunit.lua
+script_deps := o/any/spawn/lib/spawn/init.lua o/any/walk/lib/walk/init.lua
 
 $(fetch_script) $(extract_script) $(install_script) $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script): | $(lua_bin)
 cosmo := whilp/cosmopolitan
@@ -51,15 +52,15 @@ luacheck_files := $(patsubst %,o/any/%.luacheck.ok,$(lua_files))
 
 luatest: $(luatest_files) ## Run tests incrementally on changed files
 
-o/any/%.luatest.ok: % $(luatest_script) $(luaunit) o/any/walk/lib/walk/init.lua
+o/any/%.luatest.ok: % $(luatest_script) $(luaunit) $(script_deps)
 	$(TEST_ENV) $(luatest_runner) $< $@ $(TEST_ARGS)
 
-luatest-report: $(luatest_files) o/any/walk/lib/walk/init.lua ## Run tests and show summary report
+luatest-report: $(luatest_files) $(script_deps) ## Run tests and show summary report
 	@$(luatest_runner) report o/any
 
 luacheck: $(luacheck_files) ## Run luacheck incrementally on changed files
 
-o/any/%.luacheck.ok: % .luacheckrc $(luacheck_script) $(luacheck_bin) o/any/spawn/lib/spawn/init.lua o/any/walk/lib/walk/init.lua
+o/any/%.luacheck.ok: % .luacheckrc $(luacheck_script) $(luacheck_bin) $(script_deps)
 	$(luacheck_runner) $< $@ $(luacheck_bin)
 
 luacheck-report: $(luacheck_files) ## Run luacheck and show summary report
@@ -69,7 +70,7 @@ ast_grep_files := $(patsubst %,o/any/%.ast-grep.ok,$(lua_files))
 
 ast-grep: $(ast_grep_files) ## Run ast-grep incrementally on changed files
 
-o/any/%.ast-grep.ok: % sgconfig.yml $(ast_grep_script) $(ast_grep) o/any/spawn/lib/spawn/init.lua o/any/walk/lib/walk/init.lua
+o/any/%.ast-grep.ok: % sgconfig.yml $(ast_grep_script) $(ast_grep) $(script_deps)
 	$(ast_grep_runner) $< $@ $(ast_grep)
 
 ast-grep-report: $(ast_grep_files) ## Run ast-grep and show summary report
@@ -79,7 +80,7 @@ teal_files := $(patsubst %,o/any/%.teal.ok,$(lua_files))
 
 teal: $(teal_files) ## Run teal incrementally on changed files
 
-o/any/%.teal.ok: % $(teal_script) $(tl_bin) $(lua_dist) o/any/spawn/lib/spawn/init.lua o/any/walk/lib/walk/init.lua
+o/any/%.teal.ok: % $(teal_script) $(tl_bin) $(lua_dist) $(script_deps)
 	$(teal_runner) $< $@ $(tl_bin) $(lua_dist) || true
 
 teal-report: $(teal_files) ## Run teal and show summary report
