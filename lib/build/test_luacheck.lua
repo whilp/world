@@ -296,3 +296,23 @@ function TestExitCode:test_main_report_returns_1_when_any_fail()
   local exit_code = luacheck_module.main({ "report", test_dir })
   lu.assertEquals(exit_code, 1)
 end
+
+function TestExitCode:test_check_fails_on_nonzero_exit_code()
+  local test_file = path.join(TEST_TMPDIR, "exit_code_test.lua")
+  local output_file = path.join(TEST_TMPDIR, "exit_code_test.lua.luacheck.ok")
+  local fake_luacheck = path.join(TEST_TMPDIR, "fake-luacheck.sh")
+
+  cosmo.Barf(test_file, 'local x = 1\n')
+  cosmo.Barf(fake_luacheck, '#!/bin/sh\nexit 127\n')
+  unix.chmod(fake_luacheck, tonumber("755", 8))
+
+  local exit_code = luacheck_module.main({ test_file, output_file, fake_luacheck })
+
+  lu.assertEquals(exit_code, 1)
+
+  local chunk = loadfile(output_file)
+  lu.assertNotNil(chunk)
+  local result = chunk()
+  lu.assertEquals(result.exit_code, 127)
+  lu.assertFalse(result.passed)
+end
