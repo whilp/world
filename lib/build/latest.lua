@@ -39,83 +39,79 @@ local function fetch_text(url)
   return body
 end
 
-local nvim_strategy = {}
-
-function nvim_strategy.fetch_latest(opts)
-  opts = opts or {}
-  local stderr = opts.stderr or io.stderr
-  local repo = "whilp/neovim"
-  local api_url = "https://api.github.com/repos/" .. repo .. "/releases/latest"
-
-  stderr:write("fetching release info...\n")
-  local release, err = fetch_json(api_url)
-  if not release then
-    return nil, err
-  end
-
-  local tag = release.tag_name
-  local date, short_sha = tag:match("^(%d+%.%d+%.%d+)%-([0-9a-f]+)$")
-  if not date or not short_sha then
-    return nil, "could not parse tag: " .. tag
-  end
-
-  local platform_map = {
-    ["nvim-macos-arm64.tar.gz"] = "darwin-arm64",
-    ["nvim-linux-arm64.tar.gz"] = "linux-arm64",
-    ["nvim-linux-x86_64.tar.gz"] = "linux-x86_64",
-  }
-
-  local assets = {}
-  for _, asset in ipairs(release.assets) do
-    local platform = platform_map[asset.name]
-    if platform then
-      assets[platform] = asset.browser_download_url
-    end
-  end
-
-  stderr:write("fetching commit info...\n")
-  local commit_url = "https://api.github.com/repos/" .. repo .. "/commits/" .. short_sha
-  local commit, commit_err = fetch_json(commit_url)
-  if not commit then
-    return nil, commit_err
-  end
-  local full_sha = commit.sha
-  local version = "0.12.0-dev-" .. full_sha:sub(1, 10)
-
-  local platforms = {}
-  for platform, url in pairs(assets) do
-    stderr:write("fetching sha256 for " .. platform .. "...\n")
-    local sha, fetch_err = fetch_sha256(url)
-    if not sha then
-      return nil, fetch_err
-    end
-    local plat = {sha = sha}
-    if platform == "darwin-arm64" then
-      plat.platform = "macos-arm64"
-    else
-      plat.platform = platform
-    end
-    platforms[platform] = plat
-  end
-
-  return {
-    version = version,
-    date = date,
-    tag = tag,
-    format = "tar.gz",
-    strip_components = 1,
-    url = "https://github.com/" .. repo .. "/releases/download/{tag}/nvim-{platform}.tar.gz",
-    platforms = platforms,
-  }
+local function interpolate(template, vars)
+  return template:gsub("{([%w_]+)}", function(key)
+    return tostring(vars[key] or "{" .. key .. "}")
+  end)
 end
 
-local cosmos_strategy = {}
+local function extract_github_repo(url)
+  local owner, repo = url:match("github%.com/([^/]+)/([^/]+)")
+  if owner and repo then
+    return owner .. "/" .. repo
+  end
+  return nil
+end
 
-function cosmos_strategy.fetch_latest(opts)
+local function parse_sha256sums(text)
+  local sums = {}
+  for line in text:gmatch("[^\n]+") do
+    local sha, name = line:match("^(%x+)%s+(.+)$")
+    if sha and name then
+      sums[name] = sha:lower()
+    end
+  end
+  return sums
+end
+
+local function try_fetch_sha256sums(repo, version_or_tag)
+  local possible_names = {"SHA256SUMS", "sha256sums.txt", "checksums.txt", "SHASUMS256.txt"}
+
+  for _, name in ipairs(possible_names) do
+    local url = string.format("https://github.com/%s/releases/download/%s/%s",
+      repo, version_or_tag, name)
+    local body = fetch_text(url)
+    if body then
+      return parse_sha256sums(body)
+    end
+  end
+
+  return nil
+end
+
+local function infer_asset_name(url_template, platform_config, platform_key, version_info)
+  local vars = {}
+
+  for k, v in pairs(version_info) do
+    if type(v) ~= "table" then
+      vars[k] = v
+    end
+  end
+
+  for k, v in pairs(platform_config) do
+    if type(v) ~= "table" then
+      vars[k] = v
+    end
+  end
+
+  vars.platform = platform_config.platform or platform_key
+
+  local filename = interpolate(url_template, vars)
+  local asset_name = filename:match("[^/]+$")
+
+  return asset_name, filename
+end
+
+function M.fetch_latest_github(config, opts)
   opts = opts or {}
   local stderr = opts.stderr or io.stderr
-  local repo = "whilp/cosmopolitan"
 
+  local repo = extract_github_repo(config.url)
+  if not repo then
+    return nil, "could not extract GitHub repo from URL: " .. config.url
+  end
+
+  stderr:write("fetching latest release from " .. repo .. "...\n")
   local api_url = "https://api.github.com/repos/" .. repo .. "/releases/latest"
   local release, err = fetch_json(api_url)
   if not release then
@@ -123,114 +119,109 @@ function cosmos_strategy.fetch_latest(opts)
   end
 
   local version = release.tag_name
+  local version_clean = version:gsub("^v", "")
 
-  stderr:write("fetching sha256sums for " .. version .. "...\n")
-  local sums_url = string.format("https://github.com/%s/releases/download/%s/SHA256SUMS", repo, version)
-  local body, sums_err = fetch_text(sums_url)
-  if not body then
-    return nil, sums_err
-  end
+  local version_info = {
+    version = version_clean,
+    tag = version,
+  }
 
-  local sums = {}
-  for line in body:gmatch("[^\n]+") do
-    local sha, name = line:match("^(%x+)%s+(.+)$")
-    if sha and name then
-      sums[name] = sha:lower()
+  local sha256sums = try_fetch_sha256sums(repo, version)
+
+  local platforms = {}
+  for platform_key, platform_config in pairs(config.platforms) do
+    if platform_key == "*" then
+      local asset_name = config.url:match("([^/]+)$"):gsub("{version}", version_clean)
+
+      local sha
+      if sha256sums then
+        sha = sha256sums[asset_name]
+      end
+
+      if not sha then
+        stderr:write("downloading and hashing " .. asset_name .. "...\n")
+        local asset_url = interpolate(config.url, {version = version_clean, tag = version})
+        sha, err = fetch_sha256(asset_url)
+        if not sha then
+          return nil, err
+        end
+      end
+
+      platforms["*"] = {sha = sha}
+    else
+      local asset_name, full_url = infer_asset_name(config.url, platform_config, platform_key, version_info)
+
+      local sha
+      if sha256sums then
+        for name, hash in pairs(sha256sums) do
+          if name:find(asset_name, 1, true) or asset_name:find(name, 1, true) then
+            sha = hash
+            break
+          end
+        end
+      end
+
+      if not sha then
+        stderr:write("downloading and hashing " .. asset_name .. " for " .. platform_key .. "...\n")
+        sha, err = fetch_sha256(full_url)
+        if not sha then
+          return nil, "failed to fetch " .. platform_key .. ": " .. err
+        end
+      else
+        stderr:write("found hash for " .. asset_name .. " in SHA256SUMS\n")
+      end
+
+      local plat = {sha = sha}
+      for k, v in pairs(platform_config) do
+        if k ~= "sha" and type(v) ~= "table" then
+          plat[k] = v
+        end
+      end
+      platforms[platform_key] = plat
     end
   end
 
-  local sha = sums["cosmos.zip"]
-  if not sha then
-    return nil, "no sha256 for cosmos.zip"
-  end
-
-  return {
-    version = version,
-    format = "zip",
-    url = "https://github.com/" .. repo .. "/releases/download/{version}/cosmos.zip",
-    platforms = {["*"] = {sha = sha}},
+  local result = {
+    version = version_clean,
+    tag = version,
   }
-end
 
-local claude_strategy = {}
-
-function claude_strategy.fetch_latest(opts)
-  opts = opts or {}
-  local stderr = opts.stderr or io.stderr
-  local base_url = "https://storage.googleapis.com/claude-code-dist-86c565f3-f756-42ad-8dfa-d59b1c096819"
-
-  local api_url = "https://api.github.com/repos/anthropics/claude-code/releases/latest"
-  local release, err = fetch_json(api_url)
-  if not release then
-    return nil, err
+  for k, v in pairs(config) do
+    if k ~= "version" and k ~= "platforms" and k ~= "tag" and k ~= "sha" and type(v) ~= "table" then
+      result[k] = v
+    end
   end
 
-  local version = release.tag_name:match("^v?(.+)$")
+  result.platforms = platforms
 
-  local url = string.format("%s/claude-code-releases/%s/linux-x64/claude", base_url, version)
-
-  stderr:write("fetching sha256 for linux-x64...\n")
-  local sha256, sha_err = fetch_sha256(url)
-  if not sha256 then
-    return nil, sha_err
-  end
-
-  return {
-    version = version,
-    base_url = base_url,
-    url = "{base_url}/claude-code-releases/{version}/{platform}/claude",
-    platforms = {
-      ["linux-x64"] = {sha = sha256},
-    },
-  }
-end
-
-local strategies = {
-  nvim = nvim_strategy,
-  cosmos = cosmos_strategy,
-  claude = claude_strategy,
-}
-
-function M.infer_tool_name(version_file)
-  if version_file:match("nvim") then
-    return "nvim"
-  elseif version_file:match("cosmos") then
-    return "cosmos"
-  elseif version_file:match("claude") then
-    return "claude"
-  end
-  return nil
+  return result
 end
 
 function M.check(version_file, output_file, opts)
   opts = opts or {}
   local stderr = opts.stderr or io.stderr
 
-  local tool_name = M.infer_tool_name(version_file)
-  local strategy = tool_name and strategies[tool_name]
+  local ok, config = pcall(dofile, version_file)
+  if not ok then
+    return nil, "failed to load " .. version_file .. ": " .. tostring(config)
+  end
 
   local latest
-  if strategy then
-    stderr:write("checking " .. tool_name .. " version...\n")
+  local is_github = config.url and config.url:match("github%.com")
+
+  if is_github then
+    stderr:write("checking latest version for " .. version_file .. "...\n")
     local fetch_err
-    latest, fetch_err = strategy.fetch_latest(opts)
+    latest, fetch_err = M.fetch_latest_github(config, opts)
     if not latest then
       stderr:write("warning: " .. fetch_err .. "\n")
       stderr:write("falling back to current version\n")
-      local ok, current = pcall(dofile, version_file)
-      if not ok then
-        return nil, "failed to load " .. version_file .. ": " .. tostring(current)
-      end
-      latest = current
+      latest = config
       latest._todo = true
     end
   else
-    stderr:write("loading current version from " .. version_file .. "...\n")
-    local ok, current = pcall(dofile, version_file)
-    if not ok then
-      return nil, "failed to load " .. version_file .. ": " .. tostring(current)
-    end
-    latest = current
+    stderr:write("no GitHub URL found, using current version for " .. version_file .. "...\n")
+    latest = config
     latest._todo = true
   end
 
