@@ -14,11 +14,10 @@ o/any/lib/%.lua: lib/%.lua
 include lib/aerosnap/cook.mk
 include lib/build/cook.mk
 include lib/claude/cook.mk
+include lib/cosmic/cook.mk
 include lib/daemonize/cook.mk
 include lib/environ/cook.mk
-include lib/spawn/cook.mk
 include lib/home/cook.mk
 include lib/nvim/cook.mk
-include lib/walk/cook.mk
 include lib/whereami/cook.mk
 include lib/work/cook.mk

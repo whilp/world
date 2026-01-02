@@ -1,5 +1,5 @@
 #!/usr/bin/env lua
-local spawn = require("spawn").spawn
+local spawn = require("cosmic.spawn").spawn
 local unix = require("cosmo.unix")
 
 local default_excluded = {

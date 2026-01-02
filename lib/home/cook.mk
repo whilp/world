@@ -22,13 +22,14 @@ o/any/home/dotfiles.zip: o/$(current_platform)/cosmos/bin/zip
 	mkdir -p $(@D)
 	git ls-files -z | grep -zZvE '$(home_exclude_pattern)' | xargs -0 $< -q $@
 
-o/%/home/bin/home: o/%/cosmos/bin/lua o/%/cosmos/bin/zip o/%/cosmos/bin/unzip o/any/home/dotfiles.zip $(lib_libs) lib/home/main.lua lib/home/.args lib/home/gen-manifest.lua $(foreach t,$(home_3p_tools),o/%/$(t)/bin/$(t))
+o/%/home/bin/home: o/%/cosmos/bin/lua o/%/cosmos/bin/zip o/%/cosmos/bin/unzip $(cosmic) o/any/home/dotfiles.zip $(lib_libs) lib/home/main.lua lib/home/.args lib/home/gen-manifest.lua $(foreach t,$(home_3p_tools),o/%/$(t)/bin/$(t))
 	@echo "Building home binary for $*..."
 	rm -rf o/$*/home/staging
 	mkdir -p o/$*/home/staging/home/.local/bin o/$*/home/staging/.lua $(@D)
 	o/$*/cosmos/bin/unzip -q o/any/home/dotfiles.zip -d o/$*/home/staging/home
 	cp -p o/$*/cosmos/bin/lua o/$*/home/staging/home/.local/bin/lua
 	cp -p o/$*/cosmos/bin/unzip o/$*/home/staging/home/.local/bin/unzip
+	cp -p $(cosmic) o/$*/home/staging/home/.local/bin/cosmic-lua
 	@for tool in $(home_3p_tools); do \
 		mkdir -p o/$*/home/staging/home/.local/share/$$tool && \
 		cp -r o/$*/$$tool/*-*/ o/$*/home/staging/home/.local/share/$$tool/; \
@@ -37,7 +38,7 @@ o/%/home/bin/home: o/%/cosmos/bin/lua o/%/cosmos/bin/zip o/%/cosmos/bin/unzip o/
 	cp o/$*/cosmos/bin/lua $@
 	cd o/$*/home/staging && find home manifest.lua -type f | $(CURDIR)/o/$*/cosmos/bin/zip -q $(CURDIR)/$@ -@
 	o/$*/cosmos/bin/zip -qj $@ lib/home/main.lua lib/home/.args
-	cp -r lib/spawn lib/version.lua lib/claude $(home_setup_dir) $(home_mac_dir) o/$*/home/staging/.lua/
+	cp -r lib/cosmic lib/version.lua lib/claude $(home_setup_dir) $(home_mac_dir) o/$*/home/staging/.lua/
 	cd o/$*/home/staging && $(CURDIR)/o/$*/cosmos/bin/zip -qr $(CURDIR)/$@ .lua
 	rm -rf o/$*/home/staging
 	@echo "Built $@"
