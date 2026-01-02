@@ -1,58 +1,60 @@
--- test cosmic-lua bundled binary
+-- test cosmic bundled binary
 
 local lu = require("luaunit")
 local spawn = require("cosmic.spawn")
 
 local bin_dir = os.getenv("TEST_BIN_DIR")
-local cosmic_lua = bin_dir and (bin_dir .. "/bin/cosmic-lua")
+local cosmic = bin_dir and (bin_dir .. "/bin/cosmic")
 
-TestCosmicLuaBinary = {}
+TestCosmicBinary = {}
 
-function TestCosmicLuaBinary:test_cosmic_spawn()
-  if not cosmic_lua then lu.skip("TEST_BIN_DIR not set") return end
-  local handle = spawn.spawn({cosmic_lua, "-e", "local s = require('cosmic.spawn'); print(s and 'ok' or 'fail')"})
+function TestCosmicBinary:test_cosmic_spawn()
+  if not cosmic then lu.skip("TEST_BIN_DIR not set") return end
+  local handle = spawn.spawn({cosmic, "-e", "local s = require('cosmic.spawn'); print(s and 'ok' or 'fail')"})
   local ok, out = handle:read()
-  lu.assertTrue(ok, "cosmic-lua exited with error")
+  lu.assertTrue(ok, "cosmic exited with error")
   lu.assertStrContains(out, "ok")
 end
 
-function TestCosmicLuaBinary:test_cosmic_walk()
-  if not cosmic_lua then lu.skip("TEST_BIN_DIR not set") return end
-  local handle = spawn.spawn({cosmic_lua, "-e", "local w = require('cosmic.walk'); print(w and 'ok' or 'fail')"})
+function TestCosmicBinary:test_cosmic_walk()
+  if not cosmic then lu.skip("TEST_BIN_DIR not set") return end
+  local handle = spawn.spawn({cosmic, "-e", "local w = require('cosmic.walk'); print(w and 'ok' or 'fail')"})
   local ok, out = handle:read()
-  lu.assertTrue(ok, "cosmic-lua exited with error")
+  lu.assertTrue(ok, "cosmic exited with error")
   lu.assertStrContains(out, "ok")
 end
 
-function TestCosmicLuaBinary:test_cosmic_help()
-  if not cosmic_lua then lu.skip("TEST_BIN_DIR not set") return end
-  local handle = spawn.spawn({cosmic_lua, "-e", "require('cosmic.help')"})
+function TestCosmicBinary:test_cosmic_help()
+  if not cosmic then lu.skip("TEST_BIN_DIR not set") return end
+  local handle = spawn.spawn({cosmic, "-e", "require('cosmic.help')"})
   local ok, out = handle:read()
-  lu.assertTrue(ok, "cosmic-lua exited with error")
-  lu.assertStrContains(out, "cosmic-lua")
+  lu.assertTrue(ok, "cosmic exited with error")
+  lu.assertStrContains(out, "cosmic")
   lu.assertStrContains(out, "cosmic.spawn")
 end
 
-function TestCosmicLuaBinary:test_luaunit_bundled()
-  if not cosmic_lua then lu.skip("TEST_BIN_DIR not set") return end
-  local handle = spawn.spawn({cosmic_lua, "-e", "local lu = require('luaunit'); print(lu and 'ok' or 'fail')"})
+function TestCosmicBinary:test_luaunit_bundled()
+  if not cosmic then lu.skip("TEST_BIN_DIR not set") return end
+  local handle = spawn.spawn({cosmic, "-e", "local lu = require('luaunit'); print(lu and 'ok' or 'fail')"})
   local ok, out = handle:read()
-  lu.assertTrue(ok, "cosmic-lua exited with error")
+  lu.assertTrue(ok, "cosmic exited with error")
   lu.assertStrContains(out, "ok")
 end
 
-function TestCosmicLuaBinary:test_argparse_bundled()
-  if not cosmic_lua then lu.skip("TEST_BIN_DIR not set") return end
-  local handle = spawn.spawn({cosmic_lua, "-e", "local ap = require('argparse'); print(ap and 'ok' or 'fail')"})
+function TestCosmicBinary:test_argparse_bundled()
+  if not cosmic then lu.skip("TEST_BIN_DIR not set") return end
+  local handle = spawn.spawn({cosmic, "-e", "local ap = require('argparse'); print(ap and 'ok' or 'fail')"})
   local ok, out = handle:read()
-  lu.assertTrue(ok, "cosmic-lua exited with error")
+  lu.assertTrue(ok, "cosmic exited with error")
   lu.assertStrContains(out, "ok")
 end
 
-function TestCosmicLuaBinary:test_lfs_bundled()
-  if not cosmic_lua then lu.skip("TEST_BIN_DIR not set") return end
-  local handle = spawn.spawn({cosmic_lua, "-e", "local lfs = require('lfs'); print(lfs and 'ok' or 'fail')"})
+function TestCosmicBinary:test_lfs_bundled()
+  if not cosmic then lu.skip("TEST_BIN_DIR not set") return end
+  local handle = spawn.spawn({cosmic, "-e", "local lfs = require('lfs'); print(lfs and 'ok' or 'fail')"})
   local ok, out = handle:read()
-  lu.assertTrue(ok, "cosmic-lua exited with error")
+  lu.assertTrue(ok, "cosmic exited with error")
   lu.assertStrContains(out, "ok")
 end
+
+os.exit(lu.LuaUnit.run())

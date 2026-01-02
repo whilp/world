@@ -26,32 +26,32 @@ $(luatest_o)/lib/cosmic/test_spawn.lua.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_p
 
 $(luatest_o)/lib/cosmic/test_walk.lua.ok: o/any/cosmic/lib/cosmic/walk.lua
 
-$(luatest_o)/lib/cosmic/test_binary.lua.ok: o/$(current_platform)/cosmic-lua/bin/cosmic-lua
-$(luatest_o)/lib/cosmic/test_binary.lua.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/cosmic-lua
+$(luatest_o)/lib/cosmic/test_binary.lua.ok: o/$(current_platform)/cosmic/bin/cosmic
+$(luatest_o)/lib/cosmic/test_binary.lua.ok: TEST_ENV = TEST_BIN_DIR=o/$(current_platform)/cosmic
 
-# cosmic-lua binary build
-bins += o/%/cosmic-lua/bin/cosmic-lua
+# cosmic binary build
+bins += o/%/cosmic/bin/cosmic
 
-cosmic_lua_lib_dirs := o/any/lib o/any/cosmic/lib
-cosmic_lua_libs := $(lib_libs)
-cosmic_lua_libs += o/any/cosmic/lib/cosmic/init.lua
-cosmic_lua_libs += o/any/cosmic/lib/cosmic/spawn.lua
-cosmic_lua_libs += o/any/cosmic/lib/cosmic/walk.lua
-cosmic_lua_libs += o/any/cosmic/lib/cosmic/help.lua
+cosmic_lib_dirs := o/any/lib o/any/cosmic/lib
+cosmic_libs := $(lib_libs)
+cosmic_libs += o/any/cosmic/lib/cosmic/init.lua
+cosmic_libs += o/any/cosmic/lib/cosmic/spawn.lua
+cosmic_libs += o/any/cosmic/lib/cosmic/walk.lua
+cosmic_libs += o/any/cosmic/lib/cosmic/help.lua
 
-o/%/cosmic-lua/bin/cosmic-lua: o/%/cosmos/bin/lua o/%/cosmos/bin/zip $(cosmic_lua_libs) $(luaunit) o/%/argparse/lib/argparse.lua o/%/lfs/lib/lfs.lua
-	rm -rf o/$*/cosmic-lua/staging
-	mkdir -p o/$*/cosmic-lua/staging/.lua $(@D)
-	$(foreach d,$(cosmic_lua_lib_dirs),cp -r $(d)/* o/$*/cosmic-lua/staging/.lua/;)
-	cp -r o/any/luaunit/lib/* o/$*/cosmic-lua/staging/.lua/
-	cp -r o/$*/argparse/lib/* o/$*/cosmic-lua/staging/.lua/
-	cp -r o/$*/lfs/lib/* o/$*/cosmic-lua/staging/.lua/
+o/%/cosmic/bin/cosmic: o/%/cosmos/bin/lua o/%/cosmos/bin/zip $(cosmic_libs) $(luaunit) o/%/argparse/lib/argparse.lua o/%/lfs/lib/lfs.lua
+	rm -rf o/$*/cosmic/staging
+	mkdir -p o/$*/cosmic/staging/.lua $(@D)
+	$(foreach d,$(cosmic_lib_dirs),cp -r $(d)/* o/$*/cosmic/staging/.lua/;)
+	cp -r o/any/luaunit/lib/* o/$*/cosmic/staging/.lua/
+	cp -r o/$*/argparse/lib/* o/$*/cosmic/staging/.lua/
+	cp -r o/$*/lfs/lib/* o/$*/cosmic/staging/.lua/
 	cp o/$*/cosmos/bin/lua $@
 	chmod +x $@
-	cd o/$*/cosmic-lua/staging && $(CURDIR)/o/$*/cosmos/bin/zip -qr $(CURDIR)/$@ .lua
+	cd o/$*/cosmic/staging && $(CURDIR)/o/$*/cosmos/bin/zip -qr $(CURDIR)/$@ .lua
 
-cosmic-lua: o/$(current_platform)/cosmic-lua/bin/cosmic-lua ## Build cosmic-lua for current platform
+cosmic: o/$(current_platform)/cosmic/bin/cosmic ## Build cosmic for current platform
 
-cosmic-lua-all: $(foreach p,$(platforms),o/$(p)/cosmic-lua/bin/cosmic-lua) ## Build cosmic-lua for all platforms
+cosmic-all: $(foreach p,$(platforms),o/$(p)/cosmic/bin/cosmic) ## Build cosmic for all platforms
 
-.PHONY: cosmic-lua cosmic-lua-all
+.PHONY: cosmic cosmic-all

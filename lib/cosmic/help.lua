@@ -6,7 +6,7 @@ local modules = {
 }
 
 local function print_help()
-  print("cosmic-lua: cosmopolitan lua with batteries included")
+  print("cosmic: cosmopolitan lua with batteries included")
   print("")
   print("available modules:")
   for _, m in ipairs(modules) do
