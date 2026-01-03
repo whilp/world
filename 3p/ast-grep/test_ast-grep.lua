@@ -3,19 +3,16 @@ local lu = require("luaunit")
 local spawn = require("cosmic.spawn")
 local path = require("cosmo.path")
 
--- find ast-grep binary in staged deps
-local function find_binary()
+local function find_staged(pattern)
   for _, dep in ipairs(TEST_DEPS or {}) do
-    if dep:match("/ast%-grep$") or dep:match("/sg$") then
+    if dep:match(pattern) and dep:match("%.staged$") then
       return dep
     end
   end
-  -- fallback to staged path
-  local staged = path.join(os.getenv("TEST_O"), "3p/ast-grep/version.lua.staged")
-  return path.join(staged, "sg")
 end
 
-local bin = find_binary()
+local staged = find_staged("ast%-grep")
+local bin = path.join(staged, "sg")
 
 TestAstGrep = {}
 
