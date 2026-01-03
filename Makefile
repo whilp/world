@@ -104,6 +104,7 @@ $(o)/%/.staged: $(o)/%/.fetched
 all_tests := $(foreach x,$(modules),$($(x)_tests))
 all_tested := $(patsubst %,o/%.tested,$(all_tests))
 test: $(all_tested)
+	@$(test_reporter) $(o)
 
 $(o)/test-results.txt: $(all_tested)
 	@for f in $^; do echo "$${f%.tested}: $$(cat $$f)"; done > $@
