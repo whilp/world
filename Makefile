@@ -38,12 +38,15 @@ $(o)/bin/%.lua: %.lua
 # files are produced in o/
 all_files += $(foreach x,$(modules),$($(x)_files))
 
-# default deps for all modules
+# infrastructure modules (no automatic deps)
+infra_modules := bootstrap build test
+
+# default deps for regular modules
 default_deps := bootstrap test
 
-# expand module deps: M_files depends on default + own deps' _files (excluding self and bootstrap)
-$(foreach m,$(filter-out bootstrap,$(modules)),\
-  $(foreach d,$(filter-out $(m),$(default_deps) $($(m)_deps)),\
+# expand module deps: M_files depends on own explicit deps' _files (not default_deps)
+$(foreach m,$(filter-out $(infra_modules),$(modules)),\
+  $(foreach d,$($(m)_deps),\
     $(eval $($(m)_files): $($(d)_files))))
 
 all_versions := $(foreach x,$(modules),$($(x)_version))
@@ -75,7 +78,7 @@ test: $(all_tested)
 export TEST_O := $(o)
 export TEST_PLATFORM := $(platform)
 
-$(o)/%.tested: % $(test_files)
+$(o)/%.tested: % $(test_files) | $(bootstrap_files)
 	@$< $@ $(TEST_DEPS)
 
 # expand test deps: M's tests depend on own _files/_staged plus deps' _staged
