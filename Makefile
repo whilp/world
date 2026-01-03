@@ -143,10 +143,9 @@ $(o)/%.astgrep.checked: $(o)/% $(ast-grep_files) | $(bootstrap_files) $(ast-grep
 clean:
 	@rm -rf $(o)
 
-# TODO: implement static analysis (luacheck, ast-grep, etc)
 .PHONY: check
-check:
-	@echo "check: ok"
+check: $(all_astgreps)
+	@$(astgrep_reporter) $(o)
 
 # TODO: implement PR update from .github/pr/<number>.md
 .PHONY: update-pr
