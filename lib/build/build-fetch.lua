@@ -57,7 +57,7 @@ local function main(version_file, platform, output)
   end
 
   local output_dir = path.dirname(output)
-  local archive_base = "o/archive"
+  local archive_base = "o/fetched"
   unix.makedirs(output_dir)
   unix.makedirs(archive_base)
   unix.unveil(version_file, "r")
@@ -89,9 +89,9 @@ local function main(version_file, platform, output)
     return nil, err
   end
 
-  -- build archive path: o/archive/<version>-<sha>/<basename from url>
+  -- build archive path: o/fetched/<version>-<sha>/<basename from url>
   local archive_name = url:match("([^/]+)$")
-  local archive_dir = path.join("o", "archive", spec.version .. "-" .. plat.sha)
+  local archive_dir = path.join("o", "fetched", spec.version .. "-" .. plat.sha)
   local archive_path = path.join(archive_dir, archive_name)
 
   unix.makedirs(archive_dir)
@@ -106,7 +106,7 @@ local function main(version_file, platform, output)
   unix.unlink(output)
   local depth = select(2, output_dir:gsub("/", ""))
   local up = string.rep("../", depth)
-  local rel_path = up .. "archive/" .. spec.version .. "-" .. plat.sha .. "/" .. archive_name
+  local rel_path = up .. "fetched/" .. spec.version .. "-" .. plat.sha .. "/" .. archive_name
   local link_ok, link_err = unix.symlink(rel_path, output)
   if not link_ok then
     return nil, "failed to symlink: " .. tostring(link_err)
