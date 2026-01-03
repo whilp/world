@@ -167,6 +167,51 @@ local function find_pr_number(owner, repo, branch, token, opts)
   return data[1].number
 end
 
+local function get_pr(owner, repo, pr_number, token, opts)
+  local endpoint = string.format("/repos/%s/%s/pulls/%d", owner, repo, pr_number)
+
+  local status, data = github_request("GET", endpoint, token, nil, opts)
+  if not status then
+    return nil, data
+  end
+
+  if status ~= 200 then
+    local msg = data and data.message or "unknown error"
+    return nil, "api error " .. tostring(status) .. ": " .. msg
+  end
+
+  return data
+end
+
+local function append_timestamp_details(body)
+  local timestamp = os.date("!%Y-%m-%dT%H:%M:%SZ")
+  local entry = string.format("- Updated: %s", timestamp)
+
+  local details_marker = "<!-- pr-update-history -->"
+  local details_block = details_marker .. "\n" ..
+                       "<details><summary>Update history</summary>\n\n" ..
+                       entry .. "\n</details>"
+
+  -- check if details section already exists
+  local marker_pos = body:find(details_marker, 1, true)
+  if marker_pos then
+    -- find the end of the details section
+    local details_close = body:find("</details>", marker_pos, true)
+    if details_close then
+      -- replace the entire details block
+      local before = body:sub(1, marker_pos - 1)
+      local after = body:sub(details_close + #"</details>")
+      -- trim trailing newline from before if present
+      before = before:match("^(.-)%s*$")
+      return before .. "\n\n" .. details_block .. after
+    end
+  end
+
+  -- no existing details section, append new one
+  local separator = body:match("\n$") and "" or "\n"
+  return body .. separator .. "\n" .. details_block
+end
+
 local function update_pr(owner, repo, pr_number, title, body, token, opts)
   local endpoint = string.format("/repos/%s/%s/pulls/%d", owner, repo, pr_number)
 
@@ -297,8 +342,25 @@ local function do_update(owner, repo_name, pr_number, token, opts)
     return 1, "failed to parse " .. pr_file .. ": " .. err
   end
 
+  -- get current PR state to check if we're making changes
+  local current_pr
+  current_pr, err = get_pr(owner, repo_name, pr_number, token, opts)
+  if not current_pr then
+    return 1, "failed to get current PR: " .. err
+  end
+
+  -- check if title or body has changed
+  local title_changed = current_pr.title ~= pr.title
+  local body_changed = current_pr.body ~= pr.body
+
+  local body_to_update = pr.body
+  if title_changed or body_changed then
+    -- append timestamp details when making actual changes
+    body_to_update = append_timestamp_details(pr.body)
+  end
+
   local ok
-  ok, err = update_pr(owner, repo_name, pr_number, pr.title, pr.body, token, opts)
+  ok, err = update_pr(owner, repo_name, pr_number, pr.title, body_to_update, token, opts)
   if not ok then
     return 1, "failed to update PR: " .. err
   end
@@ -356,6 +418,8 @@ return {
   parse_pr_md = parse_pr_md,
   github_request = github_request,
   find_pr_number = find_pr_number,
+  get_pr = get_pr,
+  append_timestamp_details = append_timestamp_details,
   update_pr = update_pr,
   get_current_branch = get_current_branch,
   get_pr_number_from_env = get_pr_number_from_env,
