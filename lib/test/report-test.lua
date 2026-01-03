@@ -35,9 +35,11 @@ local function main(test_dir)
     skip = {},
     ignore = {},
   }
+  local all_results = {}
 
   -- find all .tested files
   local tested_files = walk.collect(test_dir, "%.tested$")
+  table.sort(tested_files)
   for _, file in ipairs(tested_files) do
     local content = cosmo.Slurp(file)
     if content then
@@ -46,6 +48,7 @@ local function main(test_dir)
         local test_name = file:gsub("^o/", ""):gsub("%.tested$", "")
         result.name = test_name
         result.file = file
+        table.insert(all_results, result)
 
         local status = result.status
         if status == "pass" then
@@ -59,6 +62,13 @@ local function main(test_dir)
         end
       end
     end
+  end
+
+  -- print each test result with padded status
+  for _, result in ipairs(all_results) do
+    local status = string.upper(result.status)
+    local padded = string.format("%-6s", status)
+    print(padded .. " " .. result.name)
   end
 
   -- print summary

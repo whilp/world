@@ -85,7 +85,6 @@ local function main(test, out)
   local result, message
   if ok then
     result = "pass"
-    io.stderr:write("PASS " .. test .. "\n")
   else
     local err_str = tostring(err)
     -- check for SKIP in error message
@@ -93,13 +92,10 @@ local function main(test, out)
     if skip_reason then
       result = "skip"
       message = skip_reason
-      io.stderr:write("SKIP " .. test .. " (" .. skip_reason .. ")\n")
     else
       result = "fail"
       -- strip path prefix to show just filename:line: message
       message = err_str:gsub("^.-/([^/]+:%d+:)", "%1")
-      io.stderr:write("FAIL " .. test .. "\n")
-      io.stderr:write("     " .. message .. "\n")
       cosmo.Barf(out, format_output(result, message, stdout, stderr))
       return 1
     end
