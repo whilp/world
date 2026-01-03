@@ -96,6 +96,18 @@ local function format_output(status, message, stdout, stderr)
   return table.concat(lines, "\n")
 end
 
+local function strip_prefix(filepath)
+  local prefix = os.getenv("TEST_O")
+  if not prefix then
+    return filepath
+  end
+  local prefix_len = #prefix
+  if filepath:sub(1, prefix_len) == prefix and filepath:sub(prefix_len + 1, prefix_len + 1) == "/" then
+    return filepath:sub(prefix_len + 2)
+  end
+  return filepath
+end
+
 local function main(source, out)
   if not source or not out then
     return 1, "usage: run-astgrep.lua <source> <out>"
@@ -103,17 +115,18 @@ local function main(source, out)
 
   unix.makedirs(path.dirname(out))
 
+  local display = strip_prefix(source)
   local has_shebang, skip_reason = check_first_lines(source)
 
   if not has_supported_extension(source) and not has_shebang then
     cosmo.Barf(out, format_output("ignore", "unsupported file type", "", ""))
-    io.stderr:write(string.format("%-6s %s (ast-grep)\n", "IGNORE", source))
+    io.stderr:write(string.format("%-6s %s (ast-grep)\n", "IGNORE", display))
     return 0
   end
 
   if skip_reason then
     cosmo.Barf(out, format_output("skip", skip_reason, "", ""))
-    io.stderr:write(string.format("%-6s %s (ast-grep: %s)\n", "SKIP", source, skip_reason))
+    io.stderr:write(string.format("%-6s %s (ast-grep: %s)\n", "SKIP", display, skip_reason))
     return 0
   end
 
@@ -127,12 +140,12 @@ local function main(source, out)
   if #issues > 0 then
     local issue_text = format_issues(issues, source)
     cosmo.Barf(out, format_output("fail", #issues .. " issues", "", issue_text))
-    io.stderr:write(string.format("%-6s %s (ast-grep: %d issues)\n", "FAIL", source, #issues))
+    io.stderr:write(string.format("%-6s %s (ast-grep: %d issues)\n", "FAIL", display, #issues))
     return 1
   end
 
   cosmo.Barf(out, format_output("pass", nil, "", ""))
-  io.stderr:write(string.format("%-6s %s (ast-grep)\n", "PASS", source))
+  io.stderr:write(string.format("%-6s %s (ast-grep)\n", "PASS", display))
   return 0
 end
 
