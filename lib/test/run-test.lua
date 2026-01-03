@@ -14,6 +14,15 @@ local function main(test, out, ...)
   TEST_TMPDIR = unix.mkdtemp("/tmp/test_XXXXXX")
   TEST_DEPS = {...}
 
+  -- set TEST_DIR to the staged dir matching the test's directory
+  local test_dir = path.dirname(test)
+  for _, dep in ipairs(TEST_DEPS) do
+    if dep:match("%.staged$") and dep:find(test_dir, 1, true) then
+      TEST_DIR = dep
+      break
+    end
+  end
+
   local ok, err = pcall(dofile, test)
   if not ok then
     unix.rmrf(TEST_TMPDIR)
