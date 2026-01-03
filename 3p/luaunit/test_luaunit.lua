@@ -1,4 +1,7 @@
 #!/usr/bin/env run.lua
 
-package.path = "o/3p/luaunit/version.lua.staged/?.lua;" .. package.path
+local staged = os.getenv("STAGED_DIR")
+if staged then
+  package.path = staged .. "/?.lua;" .. package.path
+end
 assert(require("luaunit"))
