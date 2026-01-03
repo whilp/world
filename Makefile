@@ -41,6 +41,7 @@ include 3p/duckdb/cook.mk
 include 3p/nvim/cook.mk
 include 3p/tree-sitter/cook.mk
 include 3p/luacheck/cook.mk
+include 3p/tl/cook.mk
 include lib/skill/cook.mk
 include lib/cosmic/cook.mk
 include lib/home/cook.mk
@@ -57,7 +58,7 @@ $(o)/%: %
 	@$(cp) $< $@
 
 # bin scripts: o/bin/X.lua from lib/*/X.lua and 3p/*/X.lua
-vpath %.lua lib/build lib/test 3p/ast-grep
+vpath %.lua lib/build lib/test 3p/ast-grep 3p/luacheck 3p/tl
 $(o)/bin/%.lua: %.lua
 	@mkdir -p $(@D)
 	@$(cp) $< $@
@@ -144,13 +145,30 @@ astgrep: $(all_astgreps)
 $(o)/%.astgrep.checked: $(o)/% $(ast-grep_files) | $(bootstrap_files) $(ast-grep_staged)
 	@ASTGREP_BIN=$(ast-grep_staged) $(astgrep_runner) $< $@
 
+.PHONY: luacheck
+all_luachecks := $(patsubst %,%.luacheck.checked,$(all_built_files))
+luacheck: $(all_luachecks)
+	@$(luacheck_reporter) $(o)
+
+$(o)/%.luacheck.checked: $(o)/% $(luacheck_files) | $(bootstrap_files) $(luacheck_staged)
+	@LUACHECK_BIN=$(luacheck_staged) $(luacheck_runner) $< $@
+
+.PHONY: teal
+all_teals := $(patsubst %,%.teal.checked,$(all_built_files))
+teal: $(all_teals)
+	@$(teal_reporter) $(o)
+
+$(o)/%.teal.checked: $(o)/% $(tl_files) | $(bootstrap_files) $(tl_staged)
+	@TL_BIN=$(tl_staged) $(teal_runner) $< $@
+
 .PHONY: clean
 clean:
 	@rm -rf $(o)
 
 .PHONY: check
-check: $(all_astgreps)
-	@$(astgrep_reporter) $(o)
+all_checks := $(all_astgreps) $(all_luachecks) $(all_teals)
+check: $(all_checks)
+	@$(check_reporter) $(o)
 
 # Update PR title/description from .github/pr/<number>.md
 .PHONY: update-pr

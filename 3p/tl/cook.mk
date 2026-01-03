@@ -1,27 +1,11 @@
+modules += tl
 tl_version := 3p/tl/version.lua
-lua_libs += tl
-3p_lib_dirs += o/%/tl/lib
-libs += o/%/tl/lib/tl.lua
-tl_bin := $(o_platform)/tl/bin/tl
-tl_o := $(o)/teal
-bins += o/%/tl/bin/tl
-tl_deps := \
-	o/%/argparse/lib/argparse.lua \
-	o/%/cosmos/bin/lua
+tl_run := $(o)/bin/run-teal.lua
+tl_report := $(o)/bin/report-teal.lua
+tl_files := $(o)/bin/tl $(o)/lib/tl.lua $(tl_run) $(tl_report)
+tl_tests := $(wildcard 3p/tl/test_*.lua)
+tl_deps := argparse cosmos
 
-$(luatest_o)/3p/tl/test.lua.ok: $(tl_bin)
-$(luatest_o)/3p/tl/test.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/tl
-
-o/%/tl/archive.tar.gz: $(tl_version) $(fetch)
-	$(fetch) $(tl_version) $* $@
-
-o/%/tl/staging/tl.lua: $(tl_version) $(extract) o/%/tl/archive.tar.gz
-	$(extract) $(tl_version) $* o/$*/tl/archive.tar.gz o/$*/tl/staging
-
-o/%/tl/lib/tl.lua: $(tl_version) $(install) o/%/tl/staging/tl.lua
-	$(install) $(tl_version) $* o/$*/tl lib o/$*/tl/staging/tl.lua
-
-o/%/tl/bin/tl: $(tl_version) $(install) o/%/tl/staging/tl.lua $(tl_deps)
-	$(install) $(tl_version) $* o/$*/tl bin o/$*/tl/staging/tl
-	cp o/$*/tl/staging/tl.lua o/$*/tl/bin/tl.lua
-	chmod +x o/$*/tl/bin/tl
+.PRECIOUS: $(tl_files)
+teal_runner := $(bootstrap_cosmic) $(tl_run)
+teal_reporter := $(bootstrap_cosmic) $(tl_report)

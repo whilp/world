@@ -40,7 +40,7 @@ local function check_first_lines(file)
         has_shebang = true
       end
     end
-    local reason = line:match("ast%-grep%s+ignore%s*:?%s*(.*)")
+    local reason = line:match("luacheck%s+ignore%s*:?%s*(.*)")
     if reason then
       f:close()
       return has_shebang, reason ~= "" and reason or "directive"
@@ -50,17 +50,20 @@ local function check_first_lines(file)
   return has_shebang, nil
 end
 
-local function parse_json_stream(stdout)
+local function parse_plain(stdout)
   local issues = {}
   for line in (stdout or ""):gmatch("[^\n]+") do
-    local ok, obj = pcall(cosmo.DecodeJson, line)
-    if ok and obj and obj.ruleId then
+    local _, ln, col, endcol, code, msg = line:match("^(.+):(%d+):(%d+)-(%d+): %(([WE]%d+)%) (.+)$")
+    if not ln then
+      _, ln, col, code, msg = line:match("^(.+):(%d+):(%d+): %(([WE]%d+)%) (.+)$")
+    end
+    if ln then
       table.insert(issues, {
-        line = (obj.range and obj.range.start and obj.range.start.line or 0) + 1,
-        column = (obj.range and obj.range.start and obj.range.start.column or 0) + 1,
-        rule_id = obj.ruleId,
-        message = obj.message,
-        note = obj.note,
+        line = tonumber(ln),
+        column = tonumber(col),
+        end_column = endcol and tonumber(endcol),
+        code = code,
+        message = msg,
       })
     end
   end
@@ -70,12 +73,12 @@ end
 local function format_issues(issues, source)
   local lines = {}
   for _, issue in ipairs(issues) do
-    table.insert(lines, string.format("%s:%d:%d: [%s] %s",
+    table.insert(lines, string.format("%s:%d:%d: (%s) %s",
       source,
       issue.line,
       issue.column,
-      issue.rule_id,
-      issue.note or issue.message or ""))
+      issue.code,
+      issue.message or ""))
   end
   return table.concat(lines, "\n")
 end
@@ -99,7 +102,7 @@ end
 
 local function main(source, out)
   if not source or not out then
-    return 1, "usage: run-astgrep.lua <source> <out>"
+    return 1, "usage: run-luacheck.lua <source> <out>"
   end
 
   unix.makedirs(path.dirname(out))
@@ -116,12 +119,21 @@ local function main(source, out)
     return 0
   end
 
-  local sg = path.join(os.getenv("ASTGREP_BIN"), "sg")
+  local luacheck_bin = path.join(os.getenv("LUACHECK_BIN"), "luacheck")
 
-  local handle = spawn({ sg, "scan", "--json=stream", source })
+  local source_content = cosmo.Slurp(source)
+  local handle = spawn({
+    luacheck_bin,
+    "--formatter", "plain",
+    "--codes",
+    "--ranges",
+    "--filename", source,
+    "-",
+  }, { stdin = source_content })
+
   local _, stdout, _ = handle:read()
 
-  local issues = parse_json_stream(stdout)
+  local issues = parse_plain(stdout)
 
   if #issues > 0 then
     local issue_text = format_issues(issues, source)

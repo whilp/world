@@ -40,7 +40,7 @@ local function check_first_lines(file)
         has_shebang = true
       end
     end
-    local reason = line:match("ast%-grep%s+ignore%s*:?%s*(.*)")
+    local reason = line:match("teal%s+ignore%s*:?%s*(.*)")
     if reason then
       f:close()
       return has_shebang, reason ~= "" and reason or "directive"
@@ -50,18 +50,27 @@ local function check_first_lines(file)
   return has_shebang, nil
 end
 
-local function parse_json_stream(stdout)
+local function parse_output(stderr)
   local issues = {}
-  for line in (stdout or ""):gmatch("[^\n]+") do
-    local ok, obj = pcall(cosmo.DecodeJson, line)
-    if ok and obj and obj.ruleId then
-      table.insert(issues, {
-        line = (obj.range and obj.range.start and obj.range.start.line or 0) + 1,
-        column = (obj.range and obj.range.start and obj.range.start.column or 0) + 1,
-        rule_id = obj.ruleId,
-        message = obj.message,
-        note = obj.note,
-      })
+  local current_severity = nil
+
+  for line in (stderr or ""):gmatch("[^\n]+") do
+    if line:match("^%d+ warnings?:$") then
+      current_severity = "warning"
+    elseif line:match("^%d+ errors?:$") then
+      current_severity = "error"
+    elseif line:match("^=+$") or line:match("^%-+$") then
+      -- separator lines, skip
+    elseif current_severity then
+      local file, ln, col, msg = line:match("^(.+):(%d+):(%d+): (.+)$")
+      if ln then
+        table.insert(issues, {
+          line = tonumber(ln),
+          column = tonumber(col),
+          severity = current_severity,
+          message = msg,
+        })
+      end
     end
   end
   return issues
@@ -74,8 +83,8 @@ local function format_issues(issues, source)
       source,
       issue.line,
       issue.column,
-      issue.rule_id,
-      issue.note or issue.message or ""))
+      issue.severity,
+      issue.message or ""))
   end
   return table.concat(lines, "\n")
 end
@@ -99,7 +108,7 @@ end
 
 local function main(source, out)
   if not source or not out then
-    return 1, "usage: run-astgrep.lua <source> <out>"
+    return 1, "usage: run-teal.lua <source> <out>"
   end
 
   unix.makedirs(path.dirname(out))
@@ -116,12 +125,16 @@ local function main(source, out)
     return 0
   end
 
-  local sg = path.join(os.getenv("ASTGREP_BIN"), "sg")
+  local tl_bin = path.join(os.getenv("TL_BIN"), "tl")
 
-  local handle = spawn({ sg, "scan", "--json=stream", source })
-  local _, stdout, _ = handle:read()
+  local handle = spawn({ tl_bin, "check", source })
+  if handle.stdin then
+    handle.stdin:close()
+  end
+  local stderr = handle.stderr and handle.stderr:read() or ""
+  local exit_code = handle:wait()
 
-  local issues = parse_json_stream(stdout)
+  local issues = parse_output(stderr)
 
   if #issues > 0 then
     local issue_text = format_issues(issues, source)

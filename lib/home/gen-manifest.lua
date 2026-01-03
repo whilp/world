@@ -1,3 +1,4 @@
+-- teal ignore: type annotations needed
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local walk = require("cosmic.walk")

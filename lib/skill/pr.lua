@@ -1,3 +1,4 @@
+-- teal ignore: type annotations needed
 --[[
 Updates a GitHub PR title and description from .github/pr/<number>.md
 

@@ -1,6 +1,7 @@
 -- cosmic: cosmopolitan lua utilities
 -- require individual modules via require("cosmic.spawn"), require("cosmic.walk"), etc.
 
+-- teal ignore: type annotations needed
 local cosmo = require("cosmo")
 
 local function main(fn)

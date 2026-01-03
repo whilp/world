@@ -45,14 +45,14 @@ local function main(check_dir)
   }
   local all_results = {}
 
-  local checked_files = walk.collect(check_dir, "%.astgrep%.checked$")
+  local checked_files = walk.collect(check_dir, "%.teal%.checked$")
   table.sort(checked_files)
   for _, file in ipairs(checked_files) do
     local content = cosmo.Slurp(file)
     if content then
       local result = parse_result(content)
       if result then
-        local name = strip_prefix(file):gsub("%.astgrep%.checked$", "")
+        local name = strip_prefix(file):gsub("%.teal%.checked$", "")
         result.name = name
         result.file = file
         table.insert(all_results, result)
@@ -78,9 +78,9 @@ local function main(check_dir)
     local line = icon .. " " .. padded .. " " .. result.name
     if result.status ~= "pass" then
       if result.message then
-        line = line .. " (ast-grep: " .. result.message .. ")"
+        line = line .. " (teal: " .. result.message .. ")"
       else
-        line = line .. " (ast-grep)"
+        line = line .. " (teal)"
       end
     end
     print(line)
@@ -88,7 +88,7 @@ local function main(check_dir)
 
   local total = #results.pass + #results.fail + #results.skip + #results.ignore
   print(string.format(
-    "ast-grep: %d checks: %d passed, %d failed, %d skipped, %d ignored",
+    "teal: %d checks: %d passed, %d failed, %d skipped, %d ignored",
     total,
     #results.pass,
     #results.fail,
