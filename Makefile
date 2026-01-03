@@ -9,10 +9,11 @@ platforms := darwin-arm64 linux-arm64 linux-x86_64
 platform := $(os)-$(arch)
 
 include bootstrap/cook.mk
-include 3p/luaunit/cook.mk
-#include lib/cosmic/cook.mk
 include build/cook.mk
 include test/cook.mk
+include 3p/luaunit/cook.mk
+#include lib/cosmic/cook.mk
+include home/cook.mk
 
 include cook.mk
 
@@ -24,7 +25,6 @@ cp := cp -p
 $(o)/%: %
 	@mkdir -p $(@D)
 	@$(cp) $< $@
-
 
 # files are produced in o/
 all_files += $(foreach x,$(modules),$($(x)_files))
@@ -44,14 +44,19 @@ all_versions := $(foreach x,$(modules),$($(x)_version))
 all_fetched := $(patsubst %,o/%.fetched,$(all_versions))
 fetched: $(all_fetched)
 $(o)/%.fetched: % $(build_files) | $(bootstrap_cosmic)
-	$(build_fetch) $< $(platform) $@
+	@$(build_fetch) $< $(platform) $@
 
 # ...and then versions get staged (to extract)
 .PHONY: staged
+
+# derive _staged from _version
+$(foreach m,$(modules),\
+  $(if $($(m)_version),\
+    $(eval $(m)_staged := $(o)/$($(m)_version).staged)))
 all_staged := $(patsubst %,o/%.staged,$(all_versions))
 staged: $(all_staged)
 $(o)/%.staged: $(o)/%.fetched
-	$(build_stage) $* $< $@
+	@$(build_stage) $* $< $@
 
 .PHONY: test
 all_tests := $(foreach x,$(modules),$($(x)_tests))
@@ -71,7 +76,7 @@ $(foreach m,$(filter-out bootstrap,$(modules)),\
 
 .PHONY: clean
 clean:
-	rm -rf $(o)
+	@rm -rf $(o)
 
 debug-modules:
 	@echo $(modules)
