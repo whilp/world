@@ -1,3 +1,4 @@
+--check:false
 local M = {}
 
 package.path = os.getenv("HOME") .. "/lib/?.lua;" .. package.path

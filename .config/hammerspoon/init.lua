@@ -1,3 +1,4 @@
+--check:false
 local HyperKey = require("hyper-key")
 local notchClock = require("notch-clock")
 

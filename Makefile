@@ -26,6 +26,7 @@ luatest_script := lib/build/luatest.lua
 luacheck_script := lib/build/luacheck.lua
 ast_grep_script := lib/build/ast-grep.lua
 teal_script := lib/build/teal.lua
+manifest_script := lib/build/manifest.lua
 
 # Commands (invoke lua explicitly to avoid APE "Text file busy" errors)
 fetch = $(lua_bin) $(fetch_script)
@@ -39,7 +40,7 @@ luacheck_runner = $(lua_bin) $(luacheck_script)
 ast_grep_runner = $(lua_bin) $(ast_grep_script)
 teal_runner = $(lua_bin) $(teal_script)
 
-$(fetch_script) $(extract_script) $(install_script) $(latest_script) $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script): | $(lua_bin)
+$(fetch_script) $(extract_script) $(install_script) $(latest_script) $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script) $(manifest_script): | $(lua_bin)
 cosmo := whilp/cosmopolitan
 release ?= latest
 
@@ -56,8 +57,12 @@ export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;$(lib_paths)$(3p
 # Script dependencies from cosmic module
 script_deps := $(cosmic_lib)/cosmic/spawn.lua $(cosmic_lib)/cosmic/walk.lua
 
-lua_files := $(shell git ls-files '*.lua' | grep -vE '^(\.config/(hammerspoon|nvim|voyager)|\.local/bin)/' ; git ls-files | grep -v '\.lua$$' | grep -v '^o/' | grep -vE '^(\.config/(hammerspoon|nvim|voyager)|\.local/bin)/' | xargs -r grep -l '^#!/.*lua' 2>/dev/null || true)
-test_files := $(shell git ls-files '*test.lua' 'test_*.lua' | grep -vE '(latest|luatest)\.lua$$')
+# Build scripts that require runtime dependencies
+$(extract_script): | $(cosmic_lib)/cosmic/spawn.lua
+$(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script) $(manifest_script): | $(script_deps)
+
+lua_files := $(shell $(lua_bin) $(manifest_script) find_lua_files)
+test_files := $(shell $(lua_bin) $(manifest_script) find_lua_tests)
 version_files := $(shell git ls-files '**/version.lua' | grep -v '^lib/version\.lua$$')
 luatest_files := $(patsubst %,$(luatest_o)/%.ok,$(test_files))
 luacheck_files := $(patsubst %,$(luacheck_o)/%.ok,$(lua_files))
