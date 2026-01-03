@@ -103,6 +103,10 @@ $(o)/%/.staged: $(o)/%/.fetched
 
 .PHONY: test
 all_tests := $(foreach x,$(modules),$($(x)_tests))
+ifdef TEST
+  # filter tests by pattern (substring match)
+  all_tests := $(foreach t,$(all_tests),$(if $(findstring $(TEST),$(t)),$(t)))
+endif
 all_tested := $(patsubst %,o/%.tested,$(all_tests))
 test: $(all_tested)
 	@$(test_reporter) $(o)
