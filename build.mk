@@ -42,22 +42,6 @@ $(luatest_script): | $(script_deps)
 
 luatest: $(luatest_files) ## Run tests incrementally on changed files
 
-# lib/build test dependencies (here because they reference build.mk variables)
-$(luatest_o)/lib/build/test_review.lua.ok: $(o_any)/build/lib/build/review.lua
-
-$(luatest_o)/lib/build/test_luacheck.lua.ok: lib/build/luacheck.lua $(luacheck_bin)
-$(luatest_o)/lib/build/test_luacheck.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/luacheck
-$(luatest_o)/lib/build/test_luacheck.lua.ok: TEST_ARGS = $(CURDIR)/$(luacheck_config)
-
-$(luatest_o)/lib/build/test_ast_grep.lua.ok: lib/build/ast-grep.lua $(astgrep_bin)
-$(luatest_o)/lib/build/test_ast_grep.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/ast-grep
-$(luatest_o)/lib/build/test_ast_grep.lua.ok: TEST_ARGS = $(CURDIR)/$(astgrep_config) $(CURDIR)/.ast-grep
-
-$(luatest_o)/lib/build/test_pr.lua.ok: lib/build/pr.lua
-
-$(luatest_o)/lib/build/test_luafiles.lua.ok: $(manifest_git) $(manifest_luafiles) $(manifest_luatests)
-$(luatest_o)/lib/build/test_luafiles.lua.ok: TEST_ARGS = $(manifest_git) $(manifest_luafiles) $(manifest_luatests)
-
 $(luatest_o)/%.ok: % $(luatest_script) $(luaunit) $(script_deps)
 	$(TEST_ENV) $(luatest_runner) $< $@ $(TEST_ARGS)
 

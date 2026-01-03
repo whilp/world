@@ -23,6 +23,12 @@ lua_bin := $(o_any)/lua/bin/lua
 
 export PATH := $(CURDIR)/$(o_platform)/cosmos/bin:$(CURDIR)/$(o_any)/lua/bin:$(PATH)
 
+# manifest infrastructure (defined early so cook.mk files can reference them)
+manifest_o := $(o)/manifest
+manifest_git := $(manifest_o)/git.txt
+manifest_luafiles := $(manifest_o)/lua-files.txt
+manifest_luatests := $(manifest_o)/lua-tests.txt
+
 # include project modules
 include lib/cook.mk
 include 3p/cook.mk
@@ -62,5 +68,21 @@ test: $(luatest_files) ## Run all tests
 
 clean: ## Remove all build outputs
 	rm -rf o
+
+# lib/build test dependencies (after includes so variables are available)
+$(luatest_o)/lib/build/test_review.lua.ok: $(o_any)/build/lib/build/review.lua
+
+$(luatest_o)/lib/build/test_luacheck.lua.ok: lib/build/luacheck.lua $(luacheck_bin)
+$(luatest_o)/lib/build/test_luacheck.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/luacheck
+$(luatest_o)/lib/build/test_luacheck.lua.ok: TEST_ARGS = $(CURDIR)/$(luacheck_config)
+
+$(luatest_o)/lib/build/test_ast_grep.lua.ok: lib/build/ast-grep.lua $(astgrep_bin)
+$(luatest_o)/lib/build/test_ast_grep.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/ast-grep
+$(luatest_o)/lib/build/test_ast_grep.lua.ok: TEST_ARGS = $(CURDIR)/$(astgrep_config) $(CURDIR)/.ast-grep
+
+$(luatest_o)/lib/build/test_pr.lua.ok: lib/build/pr.lua
+
+$(luatest_o)/lib/build/test_luafiles.lua.ok: $(manifest_git) $(manifest_luafiles) $(manifest_luatests)
+$(luatest_o)/lib/build/test_luafiles.lua.ok: TEST_ARGS = $(manifest_git) $(manifest_luafiles) $(manifest_luatests)
 
 .PHONY: bootstrap clean cosmos lua check luacheck luacheck-report ast-grep ast-grep-report teal teal-report latest latest-report test home
