@@ -103,7 +103,12 @@ local function main(version_file, platform, output)
   local archive_dir = path.join(fetch_o, module_name, version_sha)
   local archive_path = path.join(archive_dir, archive_name)
 
-  io.stderr:write("FETCH " .. url .. "\n")
+  -- format: FETCH  module @ version (host/path)
+  local short_url = url:match("//([^/]+/.+)") or url
+  if #short_url > 60 then
+    short_url = short_url:sub(1, 57) .. "..."
+  end
+  io.stderr:write(string.format("FETCH  %s @ %s (%s)\n", module_name, spec.version, short_url))
 
   unix.makedirs(archive_dir)
 
