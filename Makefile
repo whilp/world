@@ -21,6 +21,17 @@ all_files += $(foreach x,$(modules),$(addprefix $(o)/$(x)/,$($(x)_srcs)))
 all_tests := $(foreach x,$(modules),$($(x)_tests))
 all_versions := $(foreach x,$(modules),$($(x)_version))
 
+# expand module deps: M_files depends on each dep's _files
+$(foreach m,$(modules),\
+  $(foreach d,$($(m)_deps),\
+    $(eval $($(m)_files): $($(d)_files))))
+
+# expand test deps: M's tested targets depend on each dep's _staged, get STAGED_DIR
+$(foreach m,$(modules),\
+  $(foreach d,$($(m)_test_deps),\
+    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): STAGED_DIR := $($(d)_staged))\
+    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(d)_staged))))
+
 cp := cp -p
 
 $(o)/%: %
@@ -49,6 +60,9 @@ $(o)/%.tested: % $(test_files) $(test_deps)
 .PHONY: clean
 clean:
 	rm -rf $(o)
+
+debug-modules:
+	@echo $(modules)
 
 # o := o
 # o_platform := $(o)/$(current_platform)
