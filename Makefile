@@ -16,10 +16,18 @@ include test/cook.mk
 
 include cook.mk
 
-all_files := $(foreach x,$(modules),$($(x)_files))
-all_files += $(foreach x,$(modules),$(addprefix $(o)/$(x)/,$($(x)_srcs)))
-all_tests := $(foreach x,$(modules),$($(x)_tests))
-all_versions := $(foreach x,$(modules),$($(x)_version))
+# srcs are copied to o/
+all_files := $(foreach x,$(modules),$(addprefix $(o)/$(x)/,$($(x)_srcs)))
+
+cp := cp -p
+
+$(o)/%: %
+	@mkdir -p $(@D)
+	@$(cp) $< $@
+
+
+# files are produced in o/
+all_files += $(foreach x,$(modules),$($(x)_files))
 
 # default deps for all modules
 default_deps := bootstrap test
@@ -29,27 +37,16 @@ $(foreach m,$(filter-out bootstrap,$(modules)),\
   $(foreach d,$(filter-out $(m),$(default_deps) $($(m)_deps)),\
     $(eval $($(m)_files): $($(d)_files))))
 
-# expand test deps: M's tested targets depend on own _staged plus deps' _staged
-$(foreach m,$(filter-out bootstrap,$(modules)),\
-  $(if $($(m)_staged),\
-    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): STAGED_DIR := $($(m)_staged))\
-    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(m)_staged)))\
-  $(foreach d,$(filter-out $(m),$(default_deps) $($(m)_deps)),\
-    $(if $($(d)_staged),\
-      $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(d)_staged)))))
+all_versions := $(foreach x,$(modules),$($(x)_version))
 
-cp := cp -p
-
-$(o)/%: %
-	@mkdir -p $(@D)
-	@$(cp) $< $@
-
+# versions get fetched...
 .PHONY: fetched
 all_fetched := $(patsubst %,o/%.fetched,$(all_versions))
 fetched: $(all_fetched)
 $(o)/%.fetched: % $(build_files) | $(bootstrap_cosmic)
 	$(build_fetch) $< $(platform) $@
 
+# ...and then versions get staged (to extract)
 .PHONY: staged
 all_staged := $(patsubst %,o/%.staged,$(all_versions))
 staged: $(all_staged)
@@ -62,6 +59,15 @@ all_tested := $(patsubst %,o/%.tested,$(all_tests))
 test: $(all_tested)
 $(o)/%.tested: % $(test_files) $(test_deps)
 	@STAGED_DIR="$(STAGED_DIR)" $< $@
+
+# expand test deps: M's tested targets depend on own _staged plus deps' _staged
+$(foreach m,$(filter-out bootstrap,$(modules)),\
+  $(if $($(m)_staged),\
+    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): STAGED_DIR := $($(m)_staged))\
+    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(m)_staged)))\
+  $(foreach d,$(filter-out $(m),$(default_deps) $($(m)_deps)),\
+    $(if $($(d)_staged),\
+      $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(d)_staged)))))
 
 .PHONY: clean
 clean:
