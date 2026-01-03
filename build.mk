@@ -42,7 +42,7 @@ $(luatest_script): | $(script_deps)
 
 luatest: $(luatest_files) ## Run tests incrementally on changed files
 
-# test-specific dependencies and arguments
+# lib/build test dependencies (here because they reference build.mk variables)
 $(luatest_o)/lib/build/test_review.lua.ok: $(o_any)/build/lib/build/review.lua
 
 $(luatest_o)/lib/build/test_luacheck.lua.ok: lib/build/luacheck.lua $(luacheck_bin)
