@@ -206,7 +206,7 @@ local function main(version_file, platform, input, output)
 
   -- format: STAGE  module @ version-sha_prefix
   local sha_prefix = plat.sha:sub(1, 7)
-  io.stderr:write(string.format("◼ STAGE  %s @ %s-%s\n", module_name, spec.version, sha_prefix))
+  io.stderr:write(string.format("□ STAGE  %s @ %s-%s\n", module_name, spec.version, sha_prefix))
 
   -- create symlink: output -> staged/<module>/<version-sha>
   -- output is o/<module>/.staged, staged is o/staged/<module>/<ver>-<sha>
