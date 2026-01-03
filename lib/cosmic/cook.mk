@@ -1,9 +1,10 @@
 modules += cosmic
 cosmic_bin := $(o)/bin/cosmic
 cosmic_real := $(o)/bin/cosmic-real
-cosmic_libs := $(addprefix $(o)/lib/cosmic/,init.lua spawn.lua walk.lua help.lua)
+cosmic_srcs := $(wildcard lib/cosmic/*.lua)
+cosmic_tests := $(filter lib/cosmic/test_%.lua,$(cosmic_srcs))
+cosmic_libs := $(addprefix $(o)/,$(filter-out $(cosmic_tests),$(cosmic_srcs)))
 cosmic_files := $(cosmic_bin) $(cosmic_real) $(cosmic_libs)
-cosmic_tests := $(wildcard lib/cosmic/test_*.lua)
 cosmic_deps := cosmos luaunit argparse
 
 # TODO: build cosmic properly
