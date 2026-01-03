@@ -86,6 +86,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "${{ steps.version.outputs.tag }}" \
+            --prerelease \
             --title "home ${{ steps.version.outputs.tag }}" \
             --notes "## Home binaries
           Platform-specific dotfiles and bundled tools.
