@@ -62,7 +62,7 @@ $(extract_script): | $(cosmic_lib)/cosmic/spawn.lua
 $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script) $(manifest_script): | $(script_deps)
 
 lua_files := $(shell LUA_PATH='$(LUA_PATH)' $(lua_bin) $(manifest_script))
-test_files := $(shell git ls-files '*test.lua' 'test_*.lua' | grep -vE '(latest|luatest)\.lua$$')
+test_files := $(shell LUA_PATH='$(LUA_PATH)' $(lua_bin) $(manifest_script) test | grep -vE '(latest|luatest)\.lua$$')
 version_files := $(shell git ls-files '**/version.lua' | grep -v '^lib/version\.lua$$')
 luatest_files := $(patsubst %,$(luatest_o)/%.ok,$(test_files))
 luacheck_files := $(patsubst %,$(luacheck_o)/%.ok,$(lua_files))
