@@ -5,6 +5,39 @@ local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local spawn = require("cosmic.spawn")
 
+local supported_extensions = {
+  [".lua"] = true,
+}
+
+local function is_supported(file)
+  for ext in pairs(supported_extensions) do
+    if file:sub(-#ext) == ext then
+      return true
+    end
+  end
+  return false
+end
+
+local function check_skip_directive(file)
+  local f = io.open(file, "r")
+  if not f then
+    return nil
+  end
+  for i = 1, 10 do
+    local line = f:read("*l")
+    if not line then
+      break
+    end
+    local reason = line:match("ast%-grep%s+ignore%s*(.*)")
+    if reason then
+      f:close()
+      return reason ~= "" and reason or "directive"
+    end
+  end
+  f:close()
+  return nil
+end
+
 local function parse_json_stream(stdout)
   local issues = {}
   for line in (stdout or ""):gmatch("[^\n]+") do
@@ -28,6 +61,18 @@ local function main(source, out)
   end
 
   unix.makedirs(path.dirname(out))
+
+  if not is_supported(source) then
+    cosmo.Barf(out, "ignore: unsupported file type\n")
+    return 0
+  end
+
+  local skip_reason = check_skip_directive(source)
+  if skip_reason then
+    cosmo.Barf(out, "skip: " .. skip_reason .. "\n")
+    io.stderr:write("SKIP " .. source .. " (" .. skip_reason .. ")\n")
+    return 0
+  end
 
   local sg = path.join(os.getenv("TEST_BIN"), "sg")
 

@@ -126,8 +126,8 @@ $(foreach m,$(filter-out bootstrap,$(modules)),\
       $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DEPS += $($(d)_staged)))))
 
 .PHONY: astgrep
-all_lua_files := $(filter %.lua,$(foreach x,$(modules),$($(x)_files)))
-all_astgreps := $(patsubst %,%.astgrep.checked,$(all_lua_files))
+all_built_files := $(foreach x,$(modules),$($(x)_files))
+all_astgreps := $(patsubst %,%.astgrep.checked,$(all_built_files))
 astgrep: $(all_astgreps)
 
 $(o)/%.astgrep.checked: $(o)/% $(test_files) | $(bootstrap_files) $(ast-grep_staged)
