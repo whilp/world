@@ -92,6 +92,14 @@ luatest: $(luatest_files) ## Run tests incrementally on changed files
 $(luatest_o)/%.ok: % $(luatest_script) $(luaunit) $(script_deps)
 	$(TEST_ENV) $(luatest_runner) $< $@ $(TEST_ARGS)
 
+# Pattern rules for 3p test dependencies
+define 3p_test_rule
+$(luatest_o)/3p/$(1)/test.lua.ok: o/$$(current_platform)/$(1)/bin/$(1)
+$(luatest_o)/3p/$(1)/test.lua.ok: TEST_ENV = TEST_BIN_DIR=$$(o_platform)/$(1)
+endef
+
+$(foreach mod,duckdb ruff gh superhtml delta biome comrak nvim uv tree-sitter stylua sqruff marksman rg shfmt,$(eval $(call 3p_test_rule,$(mod))))
+
 luatest-report: $(luatest_files) $(script_deps) ## Run tests and show summary report
 	@$(luatest_runner) report $(luatest_o)
 

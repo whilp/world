@@ -1,8 +1,6 @@
 tree_sitter_version := 3p/tree-sitter/version.lua
 bins += o/%/tree-sitter/bin/tree-sitter
 
-$(luatest_o)/3p/tree-sitter/test.lua.ok: o/$(current_platform)/tree-sitter/bin/tree-sitter
-$(luatest_o)/3p/tree-sitter/test.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/tree-sitter
 
 o/%/tree-sitter/archive.gz: $(tree_sitter_version) $(fetch)
 	$(fetch) $(tree_sitter_version) $* $@
