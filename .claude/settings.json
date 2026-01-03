@@ -13,7 +13,8 @@
     ]
   },
   "env": {
-    "DISABLE_AUTOUPDATER": "1"
+    "DISABLE_AUTOUPDATER": "1",
+    "PATH": "$CLAUDE_PROJECT_DIR/bin:$PATH"
   },
   "includeCoAuthoredBy": false,
   "permissions": {
