@@ -27,7 +27,7 @@ if is_skill then
   _G.arg = new_arg
 
   if subcommand == "update-pr" then
-    local pr = require("build.pr")
+    local pr = require("skill.pr")
     local code, msg = pr.main()
     if msg then
       io.stderr:write(msg .. "\n")

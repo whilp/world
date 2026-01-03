@@ -9,13 +9,12 @@ cosmic_deps := cosmos luaunit argparse skill
 
 cosmic_built := $(o)/cosmic/.built
 
-$(cosmic_bin): $(cosmic_libs) $(cosmic_lfs) $(skill_libs) $(o)/lib/build/pr.lua
+$(cosmic_bin): $(cosmic_libs) $(cosmic_lfs) $(skill_libs)
 	@rm -rf $(cosmic_built)
-	@mkdir -p $(cosmic_built)/.lua/cosmic $(cosmic_built)/.lua/skill $(cosmic_built)/.lua/build $(@D)
+	@mkdir -p $(cosmic_built)/.lua/cosmic $(cosmic_built)/.lua/skill $(@D)
 	@$(cp) $(cosmic_libs) $(cosmic_built)/.lua/cosmic/
 	@$(cp) $(cosmic_lfs) $(cosmic_built)/.lua/
 	@$(cp) $(skill_libs) $(cosmic_built)/.lua/skill/
-	@$(cp) $(o)/lib/build/pr.lua $(cosmic_built)/.lua/build/
 	@$(cp) $(luaunit_dir)/*.lua $(cosmic_built)/.lua/
 	@$(cp) $(argparse_dir)/*.lua $(cosmic_built)/.lua/
 	@$(cp) $(cosmos_lua) $@

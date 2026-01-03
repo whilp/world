@@ -62,11 +62,6 @@ $(o)/bin/%.lua: %.lua
 	@mkdir -p $(@D)
 	@$(cp) $< $@
 
-# build files: o/lib/build/X.lua from lib/build/X.lua
-$(o)/lib/build/%.lua: lib/build/%.lua
-	@mkdir -p $(@D)
-	@$(cp) $< $@
-
 # files are produced in o/
 all_files += $(foreach x,$(modules),$($(x)_files))
 
@@ -151,7 +146,7 @@ update-pr: $(cosmic_bin) | $(bootstrap_cosmic)
 	@if [ -f $(cosmic_bin) ]; then \
 		$(cosmic_bin) -l skill update-pr || true; \
 	else \
-		$(bootstrap_cosmic) lib/build/pr.lua || true; \
+		$(bootstrap_cosmic) lib/skill/pr.lua || true; \
 	fi
 
 debug-modules:
