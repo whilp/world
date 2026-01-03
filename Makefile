@@ -21,7 +21,20 @@ include 3p/cosmos/cook.mk
 include 3p/argparse/cook.mk
 include 3p/rg/cook.mk
 include 3p/gh/cook.mk
+include 3p/uv/cook.mk
+include 3p/shfmt/cook.mk
+include 3p/stylua/cook.mk
+include 3p/biome/cook.mk
+include 3p/comrak/cook.mk
+include 3p/delta/cook.mk
+include 3p/ruff/cook.mk
 include 3p/sqruff/cook.mk
+include 3p/superhtml/cook.mk
+include 3p/marksman/cook.mk
+include 3p/duckdb/cook.mk
+include 3p/nvim/cook.mk
+include 3p/tree-sitter/cook.mk
+include 3p/luacheck/cook.mk
 include lib/cosmic/cook.mk
 #include lib/home/cook.mk
 
