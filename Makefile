@@ -38,14 +38,11 @@ $(o)/bin/%.lua: %.lua
 # files are produced in o/
 all_files += $(foreach x,$(modules),$($(x)_files))
 
-# infrastructure modules (no automatic deps)
-infra_modules := bootstrap build test
-
-# default deps for regular modules
+# default deps for regular modules (also excluded from file dep expansion)
 default_deps := bootstrap test
 
-# expand module deps: M_files depends on own explicit deps' _files (not default_deps)
-$(foreach m,$(filter-out $(infra_modules),$(modules)),\
+# expand module deps: M_files depends on own explicit deps' _files
+$(foreach m,$(filter-out $(default_deps),$(modules)),\
   $(foreach d,$($(m)_deps),\
     $(eval $($(m)_files): $($(d)_files))))
 
