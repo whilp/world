@@ -6,6 +6,10 @@
         "hooks": [
           {
             "type": "command",
+            "command": "echo \"export PATH=\\\"$CLAUDE_PROJECT_DIR/bin:$PATH\\\"\" >> \"$CLAUDE_ENV_FILE\""
+          },
+          {
+            "type": "command",
             "command": "make --no-print-directory -C \"$CLAUDE_PROJECT_DIR\" bootstrap"
           }
         ]
