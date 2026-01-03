@@ -2,9 +2,9 @@ local lu = require("luaunit")
 local cosmo = require("cosmo")
 local manifest = require("build.manifest")
 
-local luafiles_path = TEST_ARGS[1]
-local luatests_path = TEST_ARGS[2]
-local git_path = TEST_ARGS[3]
+local git_path = TEST_ARGS[1]
+local luafiles_path = TEST_ARGS[2]
+local luatests_path = TEST_ARGS[3]
 
 local function parse_null_separated(content)
   local files = {}
