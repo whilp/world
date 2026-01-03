@@ -27,6 +27,7 @@ luacheck_script := lib/build/luacheck.lua
 ast_grep_script := lib/build/ast-grep.lua
 teal_script := lib/build/teal.lua
 manifest_script := lib/build/manifest.lua
+manifest_lua_files_script := lib/build/manifest-lua-files.lua
 
 # Commands (invoke lua explicitly to avoid APE "Text file busy" errors)
 fetch = $(lua_bin) $(fetch_script)
@@ -40,7 +41,7 @@ luacheck_runner = $(lua_bin) $(luacheck_script)
 ast_grep_runner = $(lua_bin) $(ast_grep_script)
 teal_runner = $(lua_bin) $(teal_script)
 
-$(fetch_script) $(extract_script) $(install_script) $(latest_script) $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script) $(manifest_script): | $(lua_bin)
+$(fetch_script) $(extract_script) $(install_script) $(latest_script) $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script) $(manifest_script) $(manifest_lua_files_script): | $(lua_bin)
 cosmo := whilp/cosmopolitan
 release ?= latest
 
@@ -59,10 +60,28 @@ script_deps := $(cosmic_lib)/cosmic/spawn.lua $(cosmic_lib)/cosmic/walk.lua
 
 # Build scripts that require runtime dependencies
 $(extract_script): | $(cosmic_lib)/cosmic/spawn.lua
-$(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script) $(manifest_script): | $(script_deps)
+$(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script) $(manifest_script) $(manifest_lua_files_script): | $(script_deps)
 
-lua_files := $(shell $(lua_bin) $(manifest_script) find_lua_files)
-test_files := $(shell $(lua_bin) $(manifest_script) find_lua_tests)
+# Manifest files
+manifest_o := $(o)/manifest
+lua_files_txt := $(manifest_o)/lua-files.txt
+lua_tests_txt := $(manifest_o)/lua-tests.txt
+
+$(lua_files_txt): $(manifest_script) $(script_deps) | $(lua_bin)
+	@mkdir -p $(@D)
+	$(lua_bin) $(manifest_script) find_lua_files > $@
+
+$(lua_tests_txt): $(manifest_script) $(script_deps) | $(lua_bin)
+	@mkdir -p $(@D)
+	$(lua_bin) $(manifest_script) find_lua_tests > $@
+
+$(manifest_o)/lua-files.ok: $(lua_files_txt) $(manifest_lua_files_script) $(script_deps) | $(lua_bin)
+	$(lua_bin) $(manifest_lua_files_script) $< $@
+
+manifest: $(lua_files_txt) $(lua_tests_txt) $(manifest_o)/lua-files.ok ## Generate and validate manifest files
+
+lua_files := $(shell cat $(lua_files_txt) 2>/dev/null)
+test_files := $(shell cat $(lua_tests_txt) 2>/dev/null)
 version_files := $(shell git ls-files '**/version.lua' | grep -v '^lib/version\.lua$$')
 luatest_files := $(patsubst %,$(luatest_o)/%.ok,$(test_files))
 luacheck_files := $(patsubst %,$(luacheck_o)/%.ok,$(lua_files))
@@ -140,4 +159,4 @@ test: $(luatest_files)
 clean:
 	rm -rf o
 
-.PHONY: bootstrap clean cosmos lua check luacheck luacheck-report ast-grep ast-grep-report teal teal-report latest latest-report test home
+.PHONY: bootstrap clean cosmos lua check luacheck luacheck-report ast-grep ast-grep-report teal teal-report latest latest-report test manifest home
