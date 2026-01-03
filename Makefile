@@ -21,6 +21,7 @@ include 3p/cosmos/cook.mk
 include 3p/argparse/cook.mk
 include 3p/rg/cook.mk
 include 3p/gh/cook.mk
+include 3p/sqruff/cook.mk
 include lib/cosmic/cook.mk
 #include lib/home/cook.mk
 
