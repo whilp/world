@@ -46,15 +46,6 @@ test: $(all_tested)
 $(o)/%.tested: % $(test_files) $(test_deps)
 	@STAGED_DIR="$(STAGED_DIR)" $< $@
 
-# auto-generate test deps for modules with version files
-define module_test_rules
-$(if $($(1)_version),\
-$(patsubst %,$(o)/%.tested,$($(1)_tests)): STAGED_DIR := $(o)/$($(1)_version).staged
-$(patsubst %,$(o)/%.tested,$($(1)_tests)): $(o)/$($(1)_version).staged
-)
-endef
-$(foreach m,$(modules),$(eval $(call module_test_rules,$(m))))
-
 .PHONY: clean
 clean:
 	rm -rf $(o)
