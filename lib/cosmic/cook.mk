@@ -19,3 +19,7 @@ $(cosmic_bin): $(cosmic_libs) $(cosmic_lfs)
 	@$(cp) $(cosmos_lua) $@
 	@chmod +x $@
 	@cd $(cosmic_built) && $(CURDIR)/$(cosmos_zip) -qr $(CURDIR)/$@ .lua
+
+cosmic: $(cosmic_bin)
+
+.PHONY: cosmic

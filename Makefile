@@ -1,5 +1,9 @@
 .SECONDEXPANSION:
 
+# auto-parallelize based on available CPUs
+nproc := $(shell nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
+MAKEFLAGS += -j$(nproc)
+
 modules :=
 o := o
 
