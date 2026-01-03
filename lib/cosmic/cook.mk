@@ -4,16 +4,12 @@ cosmic_tests := $(filter lib/cosmic/test_%.lua,$(cosmic_srcs))
 cosmic_libs := $(addprefix $(o)/,$(filter-out $(cosmic_tests) lib/cosmic/lfs.lua,$(cosmic_srcs)))
 cosmic_lfs := $(o)/lib/cosmic/lfs.lua
 cosmic_bin := $(o)/bin/cosmic
-cosmic_real := $(o)/bin/cosmic-real
-cosmic_files := $(cosmic_bin) $(cosmic_real) $(cosmic_libs) $(cosmic_lfs)
+cosmic_files := $(cosmic_bin) $(cosmic_libs) $(cosmic_lfs)
 cosmic_deps := cosmos luaunit argparse
 
 cosmic_built := $(o)/cosmic/.built
 
-$(cosmic_bin): $(cosmic_real)
-	@$(cp) $< $@
-
-$(cosmic_real): $(cosmic_libs) $(cosmic_lfs)
+$(cosmic_bin): $(cosmic_libs) $(cosmic_lfs)
 	@rm -rf $(cosmic_built)
 	@mkdir -p $(cosmic_built)/.lua/cosmic $(@D)
 	@$(cp) $(cosmic_libs) $(cosmic_built)/.lua/cosmic/
