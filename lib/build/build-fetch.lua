@@ -89,16 +89,9 @@ local function main(version_file, platform, output)
     return nil, err
   end
 
-  -- derive module name from version file path (e.g., 3p/ast-grep/version.lua -> ast-grep)
-  local module = version_file:match("([^/]+)/version%.lua$")
-  if not module then
-    return nil, "cannot derive module from " .. version_file
-  end
-
-  -- build archive path: o/archive/<module>/<version>-<sha prefix>/archive.<format>
-  local sha_prefix = plat.sha:sub(1, 8)
-  local archive_dir = path.join("o", "archive", module, spec.version .. "-" .. sha_prefix)
-  local archive_name = "archive." .. (spec.format or "bin")
+  -- build archive path: o/archive/<version>-<sha>/<basename from url>
+  local archive_name = url:match("([^/]+)$")
+  local archive_dir = path.join("o", "archive", spec.version .. "-" .. plat.sha)
   local archive_path = path.join(archive_dir, archive_name)
 
   unix.makedirs(archive_dir)
@@ -108,8 +101,12 @@ local function main(version_file, platform, output)
   end
 
   -- remove old symlink/file if exists, create relative symlink
+  -- output is o/<prefix>/version.lua.fetched, archive is o/archive/...
+  -- count path components to determine depth
   unix.unlink(output)
-  local rel_path = path.join("..", "..", "archive", module, spec.version .. "-" .. sha_prefix, archive_name)
+  local depth = select(2, output_dir:gsub("/", ""))
+  local up = string.rep("../", depth)
+  local rel_path = up .. "archive/" .. spec.version .. "-" .. plat.sha .. "/" .. archive_name
   local link_ok, link_err = unix.symlink(rel_path, output)
   if not link_ok then
     return nil, "failed to symlink: " .. tostring(link_err)
