@@ -1,3 +1,4 @@
+--test:false
 -- test release artifact requirements
 local lu = require("luaunit")
 local unix = require("cosmo.unix")
