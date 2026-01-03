@@ -112,9 +112,6 @@ end
 
 local function files(opts)
   opts = opts or {}
-  local excluded = opts.excluded_patterns or default_excluded
-  local filter_type = opts.type
-  local filter_test = opts.is_test
   local detect_type_fn = opts._detect_type or detect_type
 
   local stdout = opts._git_output
@@ -130,32 +127,15 @@ local function files(opts)
   local iter = git_files_iter(stdout)
 
   return function()
-    while true do
-      local path = iter()
-      if not path then
-        return nil
-      end
-      if not is_excluded(path, excluded) then
-        local file_type = detect_type_fn(path)
-        local test = is_test_file(path)
-
-        local matches = true
-        if filter_type and file_type ~= filter_type then
-          matches = false
-        end
-        if filter_test ~= nil and test ~= filter_test then
-          matches = false
-        end
-
-        if matches then
-          return {
-            path = path,
-            type = file_type,
-            is_test = test,
-          }
-        end
-      end
+    local path = iter()
+    if not path then
+      return nil
     end
+    return {
+      path = path,
+      type = detect_type_fn(path),
+      is_test = is_test_file(path),
+    }
   end
 end
 
@@ -170,39 +150,47 @@ end
 
 local function find_lua_files(opts)
   opts = opts or {}
-  opts.type = "lua"
-  local results = collect(files(opts))
+  local excluded = opts.excluded_patterns or default_excluded
   local paths = {}
-  for _, item in ipairs(results) do
-    table.insert(paths, item.path)
+  for f in files(opts) do
+    if f.type == "lua" and not is_excluded(f.path, excluded) then
+      table.insert(paths, f.path)
+    end
   end
+  table.sort(paths)
   return paths
 end
 
-local function find_test_files(opts)
+local function find_lua_tests(opts)
   opts = opts or {}
-  opts.type = "lua"
-  opts.is_test = true
-  local results = collect(files(opts))
+  local excluded = opts.excluded_patterns or default_excluded
   local paths = {}
-  for _, item in ipairs(results) do
-    table.insert(paths, item.path)
+  for f in files(opts) do
+    if f.type == "lua" and f.is_test and not is_excluded(f.path, excluded) then
+      table.insert(paths, f.path)
+    end
   end
+  table.sort(paths)
   return paths
 end
+
+local filters = {
+  find_lua_files = find_lua_files,
+  find_lua_tests = find_lua_tests,
+}
 
 local function main(...)
   local args = {...}
-  local mode = args[1] or "lua"
+  local filter_name = args[1] or "find_lua_files"
 
-  local results
-  if mode == "test" or mode == "tests" then
-    results = find_test_files()
-  else
-    results = find_lua_files()
+  local filter = filters[filter_name]
+  if not filter then
+    io.stderr:write("unknown filter: " .. filter_name .. "\n")
+    io.stderr:write("available: find_lua_files, find_lua_tests\n")
+    return 1
   end
 
-  for _, path in ipairs(results) do
+  for _, path in ipairs(filter()) do
     print(path)
   end
 
@@ -217,8 +205,10 @@ return {
   files = files,
   collect = collect,
   find_lua_files = find_lua_files,
-  find_test_files = find_test_files,
+  find_lua_tests = find_lua_tests,
   detect_type = detect_type,
   is_test_file = is_test_file,
+  is_excluded = is_excluded,
+  default_excluded = default_excluded,
   git_files_iter = git_files_iter,
 }

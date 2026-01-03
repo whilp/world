@@ -69,6 +69,24 @@ function TestIsTestFile:test_not_test()
   lu.assertFalse(manifest.is_test_file("lib/testing/init.lua"))
 end
 
+TestIsExcluded = {}
+
+function TestIsExcluded:test_hammerspoon_excluded()
+  lu.assertTrue(manifest.is_excluded(".config/hammerspoon/init.lua", manifest.default_excluded))
+end
+
+function TestIsExcluded:test_nvim_excluded()
+  lu.assertTrue(manifest.is_excluded(".config/nvim/init.lua", manifest.default_excluded))
+end
+
+function TestIsExcluded:test_output_dir_excluded()
+  lu.assertTrue(manifest.is_excluded("o/any/test.lua", manifest.default_excluded))
+end
+
+function TestIsExcluded:test_lib_not_excluded()
+  lu.assertFalse(manifest.is_excluded("lib/build/manifest.lua", manifest.default_excluded))
+end
+
 TestGitFilesIter = {}
 
 function TestGitFilesIter:test_parses_null_delimited()
@@ -92,121 +110,102 @@ end
 
 TestFilesIterator = {}
 
-function TestFilesIterator:test_returns_iterator()
+function TestFilesIterator:test_returns_all_files()
   local iter = manifest.files({
     _git_output = mock_git_output,
     _detect_type = mock_detect_type,
   })
-  lu.assertNotNil(iter)
-  local first = iter()
-  lu.assertNotNil(first)
-  lu.assertNotNil(first.path)
+  local count = 0
+  for _ in iter do
+    count = count + 1
+  end
+  lu.assertEquals(count, 10)
 end
 
 function TestFilesIterator:test_file_has_attributes()
   local iter = manifest.files({
-    type = "lua",
     _git_output = mock_git_output,
     _detect_type = mock_detect_type,
   })
   local file = iter()
   lu.assertNotNil(file.path)
-  lu.assertEquals(file.type, "lua")
+  lu.assertNotNil(file.type)
   lu.assertNotNil(file.is_test)
 end
 
-function TestFilesIterator:test_filter_by_type()
-  local iter = manifest.files({
-    type = "lua",
+function TestFilesIterator:test_caller_can_filter_by_type()
+  local count = 0
+  for f in manifest.files({_git_output = mock_git_output, _detect_type = mock_detect_type}) do
+    if f.type == "lua" then
+      count = count + 1
+    end
+  end
+  lu.assertEquals(count, 8)
+end
+
+function TestFilesIterator:test_caller_can_filter_by_test()
+  local count = 0
+  for f in manifest.files({_git_output = mock_git_output, _detect_type = mock_detect_type}) do
+    if f.is_test then
+      count = count + 1
+    end
+  end
+  lu.assertEquals(count, 4)
+end
+
+function TestFilesIterator:test_caller_can_filter_excluded()
+  local count = 0
+  for f in manifest.files({_git_output = mock_git_output, _detect_type = mock_detect_type}) do
+    if not manifest.is_excluded(f.path, manifest.default_excluded) then
+      count = count + 1
+    end
+  end
+  lu.assertEquals(count, 7)
+end
+
+TestFindLuaFiles = {}
+
+function TestFindLuaFiles:test_finds_lua_excludes_config()
+  local paths = manifest.find_lua_files({
     _git_output = mock_git_output,
     _detect_type = mock_detect_type,
   })
-  for file in iter do
-    lu.assertEquals(file.type, "lua", "should only return lua files: " .. file.path)
+  lu.assertEquals(#paths, 5)
+  for _, p in ipairs(paths) do
+    lu.assertNil(p:match("^%.config/"), "should exclude .config: " .. p)
+    lu.assertNil(p:match("^o/"), "should exclude o/: " .. p)
   end
 end
 
-function TestFilesIterator:test_filter_by_test()
-  local iter = manifest.files({
-    type = "lua",
-    is_test = true,
+function TestFindLuaFiles:test_sorted()
+  local paths = manifest.find_lua_files({
     _git_output = mock_git_output,
     _detect_type = mock_detect_type,
   })
-  for file in iter do
-    lu.assertTrue(file.is_test, "should only return test files: " .. file.path)
+  for i = 2, #paths do
+    lu.assertTrue(paths[i-1] <= paths[i], "should be sorted")
   end
 end
 
-function TestFilesIterator:test_excludes_hammerspoon()
-  local iter = manifest.files({
+TestFindLuaTests = {}
+
+function TestFindLuaTests:test_finds_tests_excludes_config()
+  local paths = manifest.find_lua_tests({
     _git_output = mock_git_output,
     _detect_type = mock_detect_type,
   })
-  for file in iter do
-    lu.assertNil(file.path:match("^%.config/hammerspoon/"), "should exclude .config/hammerspoon: " .. file.path)
+  lu.assertEquals(#paths, 3)
+  for _, p in ipairs(paths) do
+    lu.assertTrue(manifest.is_test_file(p), "should be test: " .. p)
   end
 end
 
-function TestFilesIterator:test_excludes_nvim()
-  local iter = manifest.files({
+function TestFindLuaTests:test_sorted()
+  local paths = manifest.find_lua_tests({
     _git_output = mock_git_output,
     _detect_type = mock_detect_type,
   })
-  for file in iter do
-    lu.assertNil(file.path:match("^%.config/nvim/"), "should exclude .config/nvim: " .. file.path)
+  for i = 2, #paths do
+    lu.assertTrue(paths[i-1] <= paths[i], "should be sorted")
   end
-end
-
-function TestFilesIterator:test_excludes_output_dir()
-  local iter = manifest.files({
-    _git_output = mock_git_output,
-    _detect_type = mock_detect_type,
-  })
-  for file in iter do
-    lu.assertNil(file.path:match("^o/"), "should exclude o/ directory: " .. file.path)
-  end
-end
-
-function TestFilesIterator:test_collect()
-  local results = manifest.collect(manifest.files({
-    type = "lua",
-    is_test = true,
-    _git_output = mock_git_output,
-    _detect_type = mock_detect_type,
-  }))
-  lu.assertTrue(#results > 0)
-  for i = 2, #results do
-    lu.assertTrue(results[i-1].path <= results[i].path, "should be sorted")
-  end
-end
-
-function TestFilesIterator:test_finds_test_files()
-  local results = manifest.collect(manifest.files({
-    type = "lua",
-    is_test = true,
-    _git_output = mock_git_output,
-    _detect_type = mock_detect_type,
-  }))
-  local paths = {}
-  for _, r in ipairs(results) do
-    paths[r.path] = true
-  end
-  lu.assertTrue(paths["lib/build/test_manifest.lua"], "should find test_manifest.lua")
-  lu.assertTrue(paths["lib/aerosnap/test.lua"], "should find test.lua")
-  lu.assertTrue(paths["3p/argparse/test.lua"], "should find 3p test.lua")
-end
-
-function TestFilesIterator:test_finds_lua_files()
-  local results = manifest.collect(manifest.files({
-    type = "lua",
-    _git_output = mock_git_output,
-    _detect_type = mock_detect_type,
-  }))
-  local paths = {}
-  for _, r in ipairs(results) do
-    paths[r.path] = true
-  end
-  lu.assertTrue(paths["lib/build/manifest.lua"], "should find manifest.lua")
-  lu.assertTrue(paths["lib/aerosnap/init.lua"], "should find init.lua")
 end
