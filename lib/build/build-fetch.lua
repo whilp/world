@@ -92,9 +92,13 @@ local function main(version_file, platform, output)
     return nil, err
   end
 
-  -- build archive path: $FETCH_O/<version>-<sha>/<basename from url>
+  -- derive module name from output path: o/<module>/.fetched
+  local module_name = path.basename(output_dir)
+
+  -- build archive path: $FETCH_O/<module>/<version>-<sha>/<basename from url>
   local archive_name = url:match("([^/]+)$")
-  local archive_dir = path.join(fetch_o, spec.version .. "-" .. plat.sha)
+  local version_sha = spec.version .. "-" .. plat.sha
+  local archive_dir = path.join(fetch_o, module_name, version_sha)
   local archive_path = path.join(archive_dir, archive_name)
 
   io.stderr:write("FETCH " .. url .. "\n")
@@ -106,13 +110,10 @@ local function main(version_file, platform, output)
   end
 
   -- remove old symlink/file if exists, create relative symlink
-  -- output is o/<prefix>/version.lua.fetched, archive is o/archive/...
-  -- count path components to determine depth
+  -- output is o/<module>/.fetched -> o/fetched/<module>/<ver>-<sha>/
   unix.unlink(output)
-  local depth = select(2, output_dir:gsub("/", ""))
-  local up = string.rep("../", depth)
   local fetch_o_basename = fetch_o:match("([^/]+)$")
-  local rel_path = up .. fetch_o_basename .. "/" .. spec.version .. "-" .. plat.sha .. "/" .. archive_name
+  local rel_path = "../" .. fetch_o_basename .. "/" .. module_name .. "/" .. version_sha
   local link_ok, link_err = unix.symlink(rel_path, output)
   if not link_ok then
     return nil, "failed to symlink: " .. tostring(link_err)

@@ -4,24 +4,15 @@ local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 
-local function main(test, out, ...)
+local function main(test, out)
   if not test or not out then
-    return 1, "usage: run-test.lua <test> <out.ok> [deps...]"
+    return 1, "usage: run-test.lua <test> <out.ok>"
   end
 
   unix.makedirs(path.dirname(out))
 
   TEST_TMPDIR = unix.mkdtemp("/tmp/test_XXXXXX")
-  TEST_DEPS = {...}
-
-  -- set TEST_DIR to the staged dir matching the test's directory
-  local test_dir = path.dirname(test)
-  for _, dep in ipairs(TEST_DEPS) do
-    if dep:match("%.staged$") and dep:find(test_dir, 1, true) then
-      TEST_DIR = dep
-      break
-    end
-  end
+  TEST_DIR = os.getenv("TEST_DIR")
 
   local ok, err = pcall(dofile, test)
   if not ok then

@@ -2,6 +2,8 @@ modules :=
 o := o
 
 export PATH := $(CURDIR)/$(o)/bin:$(PATH)
+export STAGE_O := $(CURDIR)/$(o)/staged
+export FETCH_O := $(CURDIR)/$(o)/fetched
 
 uname_s := $(shell uname -s)
 uname_m := $(shell uname -m)
@@ -52,25 +54,27 @@ $(foreach m,$(filter-out $(default_deps),$(modules)),\
 
 all_versions := $(foreach x,$(modules),$($(x)_version))
 
-# versions get fetched...
+# versioned modules: o/module/.versioned -> version.lua
+$(foreach m,$(modules),$(if $($(m)_version),\
+  $(eval $(o)/$(m)/.versioned: $($(m)_version) ; @mkdir -p $$(@D) && ln -sfn $(CURDIR)/$$< $$@)))
+all_versioned := $(foreach m,$(modules),$(if $($(m)_version),$(o)/$(m)/.versioned))
+
+# versions get fetched: o/module/.fetched -> o/fetched/module/<ver>-<sha>/<archive>
 .PHONY: fetched
-all_fetched := $(patsubst %,o/%.fetched,$(all_versions))
+all_fetched := $(patsubst %/.versioned,%/.fetched,$(all_versioned))
 fetched: $(all_fetched)
-$(o)/%.fetched: % $(build_files) | $(bootstrap_cosmic)
-	@FETCH_O=$(o)/fetched $(build_fetch) $< $(platform) $@
+$(o)/%/.fetched: $(o)/%/.versioned $(build_files) | $(bootstrap_cosmic)
+	@$(build_fetch) $$(readlink $<) $(platform) $@
 
-# ...and then versions get staged (to extract)
+# versions get staged: o/module/.staged -> o/staged/module/<ver>-<sha>
 .PHONY: staged
-
-# derive _staged and _dir from _version
-$(foreach m,$(modules),\
-  $(if $($(m)_version),\
-    $(eval $(m)_staged := $(o)/$($(m)_version).staged)\
-    $(eval $(m)_dir := $($(m)_staged))))
-all_staged := $(patsubst %,o/%.staged,$(all_versions))
+$(foreach m,$(modules),$(if $($(m)_version),\
+  $(eval $(m)_staged := $(o)/$(m)/.staged)\
+  $(eval $(m)_dir := $(o)/$(m)/.staged)))
+all_staged := $(patsubst %/.fetched,%/.staged,$(all_fetched))
 staged: $(all_staged)
-$(o)/%.staged: $(o)/%.fetched
-	@STAGE_O=$(o)/staged $(build_stage) $* $(platform) $< $@
+$(o)/%/.staged: $(o)/%/.fetched
+	@$(build_stage) $$(readlink $(o)/$*/.versioned) $(platform) $< $@
 
 .PHONY: test
 all_tests := $(foreach x,$(modules),$($(x)_tests))
@@ -82,7 +86,7 @@ export TEST_PLATFORM := $(platform)
 export TEST_BIN := $(o)/bin
 
 $(o)/%.tested: % $(test_files) | $(bootstrap_files)
-	@$< $@ $(TEST_DEPS)
+	@TEST_DIR=$(TEST_DIR) $< $@
 
 # expand test deps: M's tests depend on own _files/_staged plus deps' _staged
 $(foreach m,$(filter-out bootstrap,$(modules)),\
@@ -90,7 +94,8 @@ $(foreach m,$(filter-out bootstrap,$(modules)),\
   $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DEPS += $($(m)_files))\
   $(if $($(m)_staged),\
     $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(m)_staged))\
-    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DEPS += $($(m)_staged)))\
+    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DEPS += $($(m)_staged))\
+    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DIR := $($(m)_staged)))\
   $(foreach d,$(filter-out $(m),$(default_deps) $($(m)_deps)),\
     $(if $($(d)_staged),\
       $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(d)_staged))\

@@ -12,18 +12,18 @@ $(cosmic_bin): $(bootstrap_cosmic)
 	@mkdir -p $(@D)
 	@$(cp) $< $@
 
-cosmic_staging := $(o)/cosmic-staging
+cosmic_built := $(o)/cosmic/.built
 
 $(cosmic_real): $(cosmic_libs)
-	@rm -rf $(cosmic_staging)
-	@mkdir -p $(cosmic_staging)/.lua/cosmic $(@D)
-	@cp $(o)/lib/cosmic/*.lua $(cosmic_staging)/.lua/cosmic/
-	@cp $(luaunit_dir)/luaunit.lua $(cosmic_staging)/.lua/
-	@cp $(argparse_dir)/src/argparse.lua $(cosmic_staging)/.lua/
-	@cp 3p/lua/lfs_stub.lua $(cosmic_staging)/.lua/lfs.lua
-	@cp $(cosmos_dir)/lua $@
+	@rm -rf $(cosmic_built)
+	@mkdir -p $(cosmic_built)/.lua/cosmic $(@D)
+	@$(cp) $(cosmic_libs) $(cosmic_built)/.lua/cosmic/
+	@$(cp) $(luaunit_dir)/*.lua $(cosmic_built)/.lua/
+	@$(cp) $(argparse_dir)/*.lua $(cosmic_built)/.lua/
+	@$(cp) 3p/lua/lfs_stub.lua $(cosmic_built)/.lua/lfs.lua
+	@$(cp) $(cosmos_dir)/lua $@
 	@chmod +x $@
-	@cd $(cosmic_staging) && $(CURDIR)/$(cosmos_dir)/zip -qr $(CURDIR)/$@ .lua
+	@cd $(cosmic_built) && $(CURDIR)/$(cosmos_dir)/zip -qr $(CURDIR)/$@ .lua
 
 # cosmic binary
 

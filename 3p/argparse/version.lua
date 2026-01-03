@@ -2,6 +2,7 @@ return {
   version = "0.7.1",
   format = "tar.gz",
   strip_components = 1,
+  strip_prefix = "src",
   url = "https://github.com/luarocks/argparse/archive/refs/tags/{version}.tar.gz",
   platforms = {
     ["*"] = {

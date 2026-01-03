@@ -93,35 +93,28 @@ local function copy_binary(archive, dest_dir)
   return true
 end
 
-local function install_files(source_dir, dest_dir, install)
-  if not install then
-    return move_contents(source_dir, dest_dir)
+local function install_files(source_dir, dest_dir, strip_prefix)
+  local src = source_dir
+  if strip_prefix then
+    src = path.join(source_dir, strip_prefix)
   end
-  if type(install) == "string" then
-    install = {install}
+  return move_contents(src, dest_dir)
+end
+
+local function find_archive(fetch_dir, format)
+  local ext = format == "zip" and ".zip" or format == "tar.gz" and ".tar.gz" or nil
+  local dir = unix.opendir(fetch_dir)
+  if not dir then
+    return nil, "failed to open " .. fetch_dir
   end
-  for _, file in ipairs(install) do
-    local src = path.join(source_dir, file)
-    local dst = path.join(dest_dir, file)
-    unix.makedirs(path.dirname(dst))
-    local ok, err = unix.rename(src, dst)
-    if not ok then
-      -- try copy if rename fails (cross-device)
-      local content = io.open(src, "rb")
-      if not content then
-        return nil, "failed to read " .. src
+  for name in dir do
+    if name ~= "." and name ~= ".." then
+      if not ext or name:sub(-#ext) == ext then
+        return path.join(fetch_dir, name)
       end
-      local data = content:read("*a")
-      content:close()
-      local fd = unix.open(dst, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("644", 8))
-      if not fd then
-        return nil, "failed to create " .. dst
-      end
-      unix.write(fd, data)
-      unix.close(fd)
     end
   end
-  return true
+  return nil, "no archive found in " .. fetch_dir
 end
 
 local function main(version_file, platform, input, output)
@@ -147,28 +140,37 @@ local function main(version_file, platform, input, output)
   local format = spec.format or "binary"
   local strip = spec.strip_components or 1
 
+  -- derive module name from output path: o/<module>/.staged
+  local output_dir = path.dirname(output)
+  local module_name = path.basename(output_dir)
+
+  -- input is now a directory; find the archive inside
+  local archive, err = find_archive(input, format)
+  if not archive then
+    return nil, err
+  end
+
   local version_sha = spec.version .. "-" .. plat.sha
 
-  local stage_dir = path.join(stage_o, version_sha)
+  local stage_dir = path.join(stage_o, module_name, version_sha)
   unix.makedirs(stage_dir)
 
-  local err
   if format == "zip" then
     local temp_dir = unix.mkdtemp(path.join(path.dirname(stage_dir), ".stage_XXXXXX"))
-    ok, err = extract_zip(input, temp_dir, strip)
+    ok, err = extract_zip(archive, temp_dir, strip)
     if ok then
-      ok, err = install_files(temp_dir, stage_dir, spec.install)
+      ok, err = install_files(temp_dir, stage_dir, spec.strip_prefix)
     end
     unix.rmrf(temp_dir)
   elseif format == "tar.gz" then
     local temp_dir = unix.mkdtemp(path.join(path.dirname(stage_dir), ".stage_XXXXXX"))
-    ok, err = extract_targz(input, temp_dir, strip)
+    ok, err = extract_targz(archive, temp_dir, strip)
     if ok then
-      ok, err = install_files(temp_dir, stage_dir, spec.install)
+      ok, err = install_files(temp_dir, stage_dir, spec.strip_prefix)
     end
     unix.rmrf(temp_dir)
   elseif format == "binary" then
-    ok, err = copy_binary(input, stage_dir)
+    ok, err = copy_binary(archive, stage_dir)
   else
     return nil, "unknown format: " .. format
   end
@@ -179,15 +181,12 @@ local function main(version_file, platform, input, output)
 
   io.stderr:write("STAGE " .. stage_dir .. "\n")
 
-  -- create symlink: output -> staged/<version-sha>
-  -- remove any existing file/directory/symlink at output
+  -- create symlink: output -> staged/<module>/<version-sha>
+  -- output is o/<module>/.staged, staged is o/staged/<module>/<ver>-<sha>
   unix.rmrf(output)
-  local output_dir = path.dirname(output)
   unix.makedirs(output_dir)
-  local depth = select(2, output_dir:gsub("/", ""))
-  local up = string.rep("../", depth)
   local stage_o_basename = stage_o:match("([^/]+)$")
-  local rel_path = up .. stage_o_basename .. "/" .. version_sha
+  local rel_path = "../" .. stage_o_basename .. "/" .. module_name .. "/" .. version_sha
   local link_ok, link_err = unix.symlink(rel_path, output)
   if not link_ok then
     return nil, "failed to symlink: " .. tostring(link_err)
