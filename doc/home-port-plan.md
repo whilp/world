@@ -145,12 +145,12 @@ Start with Option A (single platform). Multi-platform can be added later if need
 - [x] Port luacheck
 
 ### Phase 2
-- [ ] Convert home to modules pattern
-- [ ] Update dependency references
-- [ ] Update build recipe
-- [ ] Test home binary builds
-- [ ] Test home binary works
+- [x] Convert home to modules pattern
+- [x] Update dependency references
+- [x] Update build recipe
+- [x] Test home binary builds
+- [x] Test home binary works
 
 ### Phase 3
-- [ ] Decide on platform approach
-- [ ] Implement if needed
+- [x] Decide on platform approach (single platform for now)
+- [ ] Implement multi-platform if needed
