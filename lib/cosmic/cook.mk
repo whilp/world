@@ -10,9 +10,7 @@ cosmic_deps := cosmos luaunit argparse
 
 cosmic_built := $(o)/cosmic/.built
 
-# TODO: build cosmic properly from cosmic_libs
-$(cosmic_bin): $(bootstrap_cosmic)
-	@mkdir -p $(@D)
+$(cosmic_bin): $(cosmic_real)
 	@$(cp) $< $@
 
 $(cosmic_real): $(cosmic_libs) $(cosmic_lfs)
