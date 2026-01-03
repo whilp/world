@@ -12,8 +12,8 @@ include bootstrap/cook.mk
 include build/cook.mk
 include test/cook.mk
 include 3p/luaunit/cook.mk
-#include lib/cosmic/cook.mk
-include home/cook.mk
+include lib/cosmic/cook.mk
+#include lib/home/cook.mk
 
 include cook.mk
 
