@@ -21,17 +21,20 @@ all_files += $(foreach x,$(modules),$(addprefix $(o)/$(x)/,$($(x)_srcs)))
 all_tests := $(foreach x,$(modules),$($(x)_tests))
 all_versions := $(foreach x,$(modules),$($(x)_version))
 
-# expand module deps: M_files depends on each dep's _files
-$(foreach m,$(modules),\
-  $(foreach d,$($(m)_deps),\
+# default deps for all modules
+default_deps := bootstrap test
+
+# expand module deps: M_files depends on default + own deps' _files (excluding self and bootstrap)
+$(foreach m,$(filter-out bootstrap,$(modules)),\
+  $(foreach d,$(filter-out $(m),$(default_deps) $($(m)_deps)),\
     $(eval $($(m)_files): $($(d)_files))))
 
-# expand test deps: M's tested targets depend on own _staged plus each dep's _staged
-$(foreach m,$(modules),\
+# expand test deps: M's tested targets depend on own _staged plus deps' _staged
+$(foreach m,$(filter-out bootstrap,$(modules)),\
   $(if $($(m)_staged),\
     $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): STAGED_DIR := $($(m)_staged))\
     $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(m)_staged)))\
-  $(foreach d,$($(m)_deps),\
+  $(foreach d,$(filter-out $(m),$(default_deps) $($(m)_deps)),\
     $(if $($(d)_staged),\
       $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(d)_staged)))))
 
