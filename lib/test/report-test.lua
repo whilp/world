@@ -65,10 +65,17 @@ local function main(test_dir)
   end
 
   -- print each test result with padded status
+  local status_icons = {
+    pass = "✓",
+    fail = "✗",
+    skip = "→",
+    ignore = "○",
+  }
   for _, result in ipairs(all_results) do
     local status = string.upper(result.status)
+    local icon = status_icons[result.status] or " "
     local padded = string.format("%-6s", status)
-    local line = padded .. " " .. result.name
+    local line = icon .. " " .. padded .. " " .. result.name
     if result.status == "skip" and result.message then
       line = line .. " (" .. result.message .. ")"
     end

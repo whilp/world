@@ -103,7 +103,7 @@ local function main(version_file, platform, output)
   local archive_dir = path.join(fetch_o, module_name, version_sha)
   local archive_path = path.join(archive_dir, archive_name)
 
-  io.stderr:write(string.format("FETCH  %s\n", url))
+  io.stderr:write(string.format("↓ FETCH  %s\n", url))
 
   unix.makedirs(archive_dir)
 
