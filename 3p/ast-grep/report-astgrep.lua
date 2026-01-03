@@ -65,10 +65,10 @@ local function main(check_dir)
   end
 
   local status_icons = {
-    pass = "✔",
-    fail = "✖",
-    skip = "⇒",
-    ignore = "●",
+    pass = "✓",
+    fail = "✗",
+    skip = "→",
+    ignore = "○",
   }
   for _, result in ipairs(all_results) do
     local status = string.upper(result.status)
@@ -76,9 +76,7 @@ local function main(check_dir)
     local padded = string.format("%-6s", status)
     local line = icon .. " " .. padded .. " " .. result.name
     if result.message then
-      line = line .. " (ast-grep: " .. result.message .. ")"
-    else
-      line = line .. " (ast-grep)"
+      line = line .. " (" .. result.message .. ")"
     end
     print(line)
   end
