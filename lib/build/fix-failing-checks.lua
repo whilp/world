@@ -67,14 +67,19 @@ local function main()
   output = run_and_capture({"make", "-k", "check"})
 
   local check_failures = {}
-  for file in output:gmatch("o/luacheck/([^%s]+%.lua)%.ok%]") do
-    check_failures[file] = true
-  end
-  for file in output:gmatch("o/ast%-grep/([^%s]+%.lua)%.ok%]") do
-    check_failures[file] = true
-  end
-  for file in output:gmatch("o/teal/([^%s]+%.lua)%.ok%]") do
-    check_failures[file] = true
+  -- parse ast-grep "files with issues:" section
+  local in_issues = false
+  for line in output:gmatch("[^\n]+") do
+    if line:match("^files with issues:") then
+      in_issues = true
+    elseif in_issues then
+      local file = line:match("^%s+([^%s]+%.lua)")
+      if file then
+        check_failures[file] = true
+      elseif not line:match("^%s") then
+        in_issues = false
+      end
+    end
   end
 
   print("\nFailing check files:")

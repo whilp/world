@@ -162,7 +162,7 @@ local function find_lua_files(opts)
   opts = opts or {}
   local paths = {}
   for f in files(opts) do
-    if f.type == "lua" then
+    if f.type == "lua" and f.is_check then
       table.insert(paths, f.path)
     end
   end
