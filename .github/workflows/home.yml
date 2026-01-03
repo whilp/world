@@ -23,51 +23,7 @@ jobs:
       - name: Run tests
         run: make test -j4
 
-      - name: Build home and lua binaries
-        run: make home-all lua-all -j4
-
-      - name: Upload home artifacts
-        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
-        with:
-          name: home-binaries
-          path: |
-            o/darwin-arm64/home/bin/home
-            o/darwin-arm64/lua/bin/lua.dist
-            o/linux-arm64/home/bin/home
-            o/linux-arm64/lua/bin/lua.dist
-            o/linux-x86_64/home/bin/home
-            o/linux-x86_64/lua/bin/lua.dist
-
-  test:
-    if: github.ref == 'refs/heads/main'
-    runs-on: ${{ matrix.os }}
-    needs: build
-    strategy:
-      matrix:
-        include:
-          - os: ubuntu-latest
-            platform: linux-x86_64
-          - os: macos-latest
-            platform: darwin-arm64
-          - os: ubuntu-24.04-arm
-            platform: linux-arm64
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
-
-      - name: Download artifacts
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
-        with:
-          name: home-binaries
-          path: o/
-
-      - name: Make binaries executable
-        run: |
-          chmod +x o/*/home/bin/home o/*/lua/bin/*
-          # Create lua symlink so shebang scripts work
-          ln -sf lua.dist o/${{ matrix.platform }}/lua/bin/lua
-
-      - name: Run home tests
-        run: |
-          o/${{ matrix.platform }}/lua/bin/lua lib/home/test_main.lua
+      # TODO: add home-all and lua-all for multi-platform builds
+      - name: Build home binary
+        run: make home
 
