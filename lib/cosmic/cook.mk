@@ -1,10 +1,8 @@
 modules += cosmic
 cosmic_bin := $(o)/bin/cosmic
 cosmic_real := $(o)/bin/cosmic-real
-cosmic_files := \
-                $(cosmic_bin) \
-                $(cosmic_real) \
-                $(addprefix $(o)/lib/cosmic/,init.lua spawn.lua walk.lua help.lua)
+cosmic_libs := $(addprefix $(o)/lib/cosmic/,init.lua spawn.lua walk.lua help.lua)
+cosmic_files := $(cosmic_bin) $(cosmic_real) $(cosmic_libs)
 cosmic_tests := $(wildcard lib/cosmic/test_*.lua)
 cosmic_deps := cosmos luaunit argparse
 
@@ -15,7 +13,7 @@ $(cosmic_bin): $(bootstrap_cosmic)
 
 cosmic_staging := $(o)/cosmic-staging
 
-$(cosmic_real): $(addprefix $(o)/lib/cosmic/,init.lua spawn.lua walk.lua help.lua)
+$(cosmic_real): $(cosmic_libs)
 	@rm -rf $(cosmic_staging)
 	@mkdir -p $(cosmic_staging)/.lua/cosmic $(@D)
 	@cp $(o)/lib/cosmic/*.lua $(cosmic_staging)/.lua/cosmic/
