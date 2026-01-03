@@ -39,6 +39,17 @@ staged: $(all_staged)
 $(o)/%.staged: $(o)/%.fetched
 	$(build_stage) $* $< $@
 
+.PHONY: test
+all_tests := $(foreach x,$(modules),$($(x)_tests))
+all_tested := $(patsubst %,o/%.tested,$(all_tests))
+test: $(all_tested)
+$(o)/%.tested: $(o)/% $(test_files)
+	@$< $@
+
+.PHONY: clean
+clean:
+	rm -rf $(o)
+
 # o := o
 # o_platform := $(o)/$(current_platform)
 # o_any := $(o)/any
