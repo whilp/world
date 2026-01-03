@@ -1,3 +1,4 @@
+#!/usr/bin/env run-test.lua
 -- test skill module integration with cosmic binary
 
 local lu = require("luaunit")
@@ -5,7 +6,7 @@ local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local spawn = require("cosmic.spawn")
 
-local cosmic = path.join(os.getenv("TEST_BIN_DIR"), "bin", "cosmic")
+local cosmic = path.join(os.getenv("TEST_BIN"), "cosmic")
 
 TestSkill = {}
 
