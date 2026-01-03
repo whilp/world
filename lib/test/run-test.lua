@@ -4,14 +4,15 @@ local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 
-local function main(test, out)
+local function main(test, out, ...)
   if not test or not out then
-    return 1, "usage: test/run.lua <test> <out.ok>"
+    return 1, "usage: run-test.lua <test> <out.ok> [deps...]"
   end
 
   unix.makedirs(path.dirname(out))
 
   TEST_TMPDIR = unix.mkdtemp("/tmp/test_XXXXXX")
+  TEST_DEPS = {...}
 
   local ok, err = pcall(dofile, test)
   if not ok then

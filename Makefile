@@ -70,17 +70,24 @@ $(o)/%.staged: $(o)/%.fetched
 all_tests := $(foreach x,$(modules),$($(x)_tests))
 all_tested := $(patsubst %,o/%.tested,$(all_tests))
 test: $(all_tested)
-$(o)/%.tested: % $(test_files) $(test_deps)
-	@STAGED_DIR="$(STAGED_DIR)" $< $@
 
-# expand test deps: M's tested targets depend on own _staged plus deps' _staged
+export TEST_O := $(o)
+export TEST_PLATFORM := $(platform)
+
+$(o)/%.tested: % $(test_files)
+	@$< $@ $(TEST_DEPS)
+
+# expand test deps: M's tests depend on own _files/_staged plus deps' _staged
 $(foreach m,$(filter-out bootstrap,$(modules)),\
+  $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(m)_files))\
+  $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DEPS += $($(m)_files))\
   $(if $($(m)_staged),\
-    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): STAGED_DIR := $($(m)_staged))\
-    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(m)_staged)))\
+    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(m)_staged))\
+    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DEPS += $($(m)_staged)))\
   $(foreach d,$(filter-out $(m),$(default_deps) $($(m)_deps)),\
     $(if $($(d)_staged),\
-      $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(d)_staged)))))
+      $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(d)_staged))\
+      $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DEPS += $($(d)_staged)))))
 
 .PHONY: clean
 clean:

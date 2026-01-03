@@ -1,7 +1,29 @@
 #!/usr/bin/env run-test.lua
 local lu = require("luaunit")
+local unix = require("cosmo.unix")
+local path = require("cosmo.path")
 
 TestCosmic = {}
+
+function TestCosmic:test_deps_passed()
+  lu.assertNotNil(TEST_DEPS)
+  lu.assertTrue(#TEST_DEPS > 0, "expected deps to be passed")
+end
+
+function TestCosmic:test_env_vars()
+  lu.assertNotNil(os.getenv("TEST_O"))
+  lu.assertNotNil(os.getenv("TEST_PLATFORM"))
+end
+
+function TestCosmic:test_lib_files_exist()
+  local test_o = os.getenv("TEST_O")
+  for _, dep in ipairs(TEST_DEPS) do
+    if dep:match("%.lua$") then
+      local stat = unix.stat(dep)
+      lu.assertNotNil(stat, "expected " .. dep .. " to exist")
+    end
+  end
+end
 
 function TestCosmic:test_require_cosmic()
   local cosmic = require("cosmic")
