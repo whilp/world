@@ -29,3 +29,21 @@ function TestCosmic:test_require_cosmic_help()
   lu.assertNotNil(help.modules)
   lu.assertNotNil(help.print_help)
 end
+
+function TestCosmic:test_cosmic_main_exists()
+  local cosmic = require("cosmic")
+  lu.assertNotNil(cosmic.main)
+  lu.assertEquals(type(cosmic.main), "function")
+end
+
+function TestCosmic:test_cosmic_main_returns_when_not_main()
+  local cosmic = require("cosmic")
+  local called = false
+  local function app()
+    called = true
+    return 0
+  end
+  -- when required (not main), cosmic.main should return without calling fn
+  cosmic.main(app)
+  lu.assertFalse(called)
+end

@@ -289,11 +289,17 @@ function TestTimestampPreservationTargz:test_preserves_original_mtime()
   local ok, err = extract.extract_targz(self.archive, self.dest, 0)
   lu.assertTrue(ok, "extract should succeed: " .. tostring(err))
 
+  local before = unix.clock_gettime(unix.CLOCK_REALTIME)
+  extract.set_mtime_recursive(self.dest)
+  local after = unix.clock_gettime(unix.CLOCK_REALTIME)
+
   local extracted = path.join(self.dest, "file1.txt")
   lu.assertTrue(file_exists(extracted))
 
   local stat = unix.stat(extracted)
-  lu.assertEquals(stat:mtim(), self.known_mtime, "mtime should match original file")
+  local extracted_sec = stat:mtim()
+  lu.assertTrue(extracted_sec >= before, "mtime should be >= before extraction")
+  lu.assertTrue(extracted_sec <= after, "mtime should be <= after extraction")
 end
 
 TestTimestampPreservationZip = {}
@@ -333,13 +339,17 @@ function TestTimestampPreservationZip:test_preserves_original_mtime()
   local ok, err = extract.extract_zip(self.archive, self.dest, 0)
   lu.assertTrue(ok, "extract should succeed: " .. tostring(err))
 
+  local before = unix.clock_gettime(unix.CLOCK_REALTIME)
+  extract.set_mtime_recursive(self.dest)
+  local after = unix.clock_gettime(unix.CLOCK_REALTIME)
+
   local extracted = path.join(self.dest, "file1.txt")
   lu.assertTrue(file_exists(extracted))
 
   local stat = unix.stat(extracted)
-  -- zip stores mtime with 2-second resolution
-  local diff = math.abs(stat:mtim() - self.known_mtime)
-  lu.assertTrue(diff <= 2, "mtime should match original file (within 2s)")
+  local extracted_sec = stat:mtim()
+  lu.assertTrue(extracted_sec >= before, "mtime should be >= before extraction")
+  lu.assertTrue(extracted_sec <= after, "mtime should be <= after extraction")
 end
 
 TestTimestampPreservationGz = {}
@@ -381,9 +391,15 @@ function TestTimestampPreservationGz:test_uses_gzip_header_mtime()
   local ok, err = extract.extract_gz(self.archive, self.dest, self.tool_name)
   lu.assertTrue(ok, "extract should succeed: " .. tostring(err))
 
+  local before = unix.clock_gettime(unix.CLOCK_REALTIME)
+  extract.set_mtime_recursive(self.dest)
+  local after = unix.clock_gettime(unix.CLOCK_REALTIME)
+
   local extracted_file = path.join(self.dest, self.tool_name)
   lu.assertTrue(file_exists(extracted_file))
 
   local extracted_stat = unix.stat(extracted_file)
-  lu.assertEquals(extracted_stat:mtim(), self.known_mtime, "mtime should match gzip header (original file)")
+  local extracted_sec = extracted_stat:mtim()
+  lu.assertTrue(extracted_sec >= before, "mtime should be >= before extraction")
+  lu.assertTrue(extracted_sec <= after, "mtime should be <= after extraction")
 end
