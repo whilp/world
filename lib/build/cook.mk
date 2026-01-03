@@ -27,6 +27,6 @@ $(luatest_o)/lib/build/test_luafiles.lua.ok: $(manifest_git) $(manifest_luafiles
 $(luatest_o)/lib/build/test_luafiles.lua.ok: TEST_ARGS = $(manifest_git) $(manifest_luafiles) $(manifest_luatests)
 
 update-pr: $(cosmic) ## Update PR title/description from .github/pr/<number>.md
-	@$(cosmic) -l skill.pr update || true
+	@$(cosmic) -l skill update-pr || true
 
 .PHONY: update-pr
