@@ -1,3 +1,4 @@
+#!/usr/bin/env run-test.lua
 local lu = require("luaunit")
 local walk = require("cosmic.walk")
 local unix = require("cosmo.unix")

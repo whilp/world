@@ -57,9 +57,15 @@ local function main(version_file, platform, output)
   end
 
   local output_dir = path.dirname(output)
+  local fetch_o = os.getenv("FETCH_O")
+  if not fetch_o then
+    return nil, "FETCH_O env var required"
+  end
   unix.makedirs(output_dir)
+  unix.makedirs(fetch_o)
   unix.unveil(version_file, "r")
   unix.unveil(output_dir, "rwc")
+  unix.unveil(fetch_o, "rwc")
   unix.unveil("/etc/resolv.conf", "r")
   unix.unveil("/etc/ssl", "r")
   unix.unveil(nil, nil)
@@ -86,8 +92,33 @@ local function main(version_file, platform, output)
     return nil, err
   end
 
-  if not cosmo.Barf(output, body, tonumber("755", 8)) then
-    return nil, "failed to write " .. output
+  -- derive module name from output path: o/<module>/.fetched
+  local module_name = path.basename(output_dir)
+
+  -- build archive path: $FETCH_O/<module>/<version>-<sha>/<archive>
+  -- for binary/gz format, use fixed name "binary" so staging knows what to look for
+  local format = spec.format or plat.format or "tar.gz"
+  local archive_name = (format == "binary" or format == "gz") and "binary" or url:match("([^/]+)$")
+  local version_sha = spec.version .. "-" .. plat.sha
+  local archive_dir = path.join(fetch_o, module_name, version_sha)
+  local archive_path = path.join(archive_dir, archive_name)
+
+  io.stderr:write("FETCH " .. url .. "\n")
+
+  unix.makedirs(archive_dir)
+
+  if not cosmo.Barf(archive_path, body, tonumber("644", 8)) then
+    return nil, "failed to write " .. archive_path
+  end
+
+  -- remove old symlink/file if exists, create relative symlink
+  -- output is o/<module>/.fetched -> o/fetched/<module>/<ver>-<sha>/
+  unix.unlink(output)
+  local fetch_o_basename = fetch_o:match("([^/]+)$")
+  local rel_path = "../" .. fetch_o_basename .. "/" .. module_name .. "/" .. version_sha
+  local link_ok, link_err = unix.symlink(rel_path, output)
+  if not link_ok then
+    return nil, "failed to symlink: " .. tostring(link_err)
   end
 
   return true
