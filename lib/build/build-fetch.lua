@@ -95,8 +95,10 @@ local function main(version_file, platform, output)
   -- derive module name from output path: o/<module>/.fetched
   local module_name = path.basename(output_dir)
 
-  -- build archive path: $FETCH_O/<module>/<version>-<sha>/<basename from url>
-  local archive_name = url:match("([^/]+)$")
+  -- build archive path: $FETCH_O/<module>/<version>-<sha>/<archive>
+  -- for binary/gz format, use fixed name "binary" so staging knows what to look for
+  local format = spec.format or plat.format or "tar.gz"
+  local archive_name = (format == "binary" or format == "gz") and "binary" or url:match("([^/]+)$")
   local version_sha = spec.version .. "-" .. plat.sha
   local archive_dir = path.join(fetch_o, module_name, version_sha)
   local archive_path = path.join(archive_dir, archive_name)

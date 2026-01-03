@@ -81,9 +81,25 @@ local function extract_targz(archive, dest_dir, strip)
   return ok, err
 end
 
-local function copy_binary(archive, dest_dir)
-  local dest = path.join(dest_dir, path.basename(archive):gsub("%.fetched$", ""))
+local function copy_binary(archive, dest_dir, module_name)
+  local dest = path.join(dest_dir, module_name)
   local content = io.open(archive, "rb"):read("*a")
+  local fd = unix.open(dest, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("755", 8))
+  if not fd then
+    return nil, "failed to create " .. dest
+  end
+  unix.write(fd, content)
+  unix.close(fd)
+  return true
+end
+
+local function extract_gz(archive, dest_dir, module_name)
+  local dest = path.join(dest_dir, module_name)
+  local handle = spawn({"gunzip", "-c", archive})
+  local exit_code, content = handle:read()
+  if not exit_code then
+    return nil, "gunzip failed: " .. tostring(content)
+  end
   local fd = unix.open(dest, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("755", 8))
   if not fd then
     return nil, "failed to create " .. dest
@@ -102,6 +118,9 @@ local function install_files(source_dir, dest_dir, strip_prefix)
 end
 
 local function find_archive(fetch_dir, format)
+  if format == "binary" or format == "gz" then
+    return path.join(fetch_dir, "binary")
+  end
   local ext = format == "zip" and ".zip" or format == "tar.gz" and ".tar.gz" or nil
   local dir = unix.opendir(fetch_dir)
   if not dir then
@@ -153,7 +172,10 @@ local function main(version_file, platform, input, output)
   local version_sha = spec.version .. "-" .. plat.sha
 
   local stage_dir = path.join(stage_o, module_name, version_sha)
-  unix.makedirs(stage_dir)
+  local ok_mk, err_mk = unix.makedirs(stage_dir)
+  if not ok_mk then
+    return nil, "makedirs failed for " .. stage_dir .. ": " .. tostring(err_mk)
+  end
 
   if format == "zip" then
     local temp_dir = unix.mkdtemp(path.join(path.dirname(stage_dir), ".stage_XXXXXX"))
@@ -170,7 +192,9 @@ local function main(version_file, platform, input, output)
     end
     unix.rmrf(temp_dir)
   elseif format == "binary" then
-    ok, err = copy_binary(archive, stage_dir)
+    ok, err = copy_binary(archive, stage_dir, module_name)
+  elseif format == "gz" then
+    ok, err = extract_gz(archive, stage_dir, module_name)
   else
     return nil, "unknown format: " .. format
   end
