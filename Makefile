@@ -43,7 +43,7 @@ $(o)/%.staged: $(o)/%.fetched
 all_tests := $(foreach x,$(modules),$($(x)_tests))
 all_tested := $(patsubst %,o/%.tested,$(all_tests))
 test: $(all_tested)
-$(o)/%.tested: $(o)/% $(test_files)
+$(o)/%.tested: % $(test_files) $(test_deps)
 	@$< $@
 
 .PHONY: clean
