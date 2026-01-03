@@ -57,18 +57,37 @@ local function detect_type(path)
   return detect_shebang_type(first_line)
 end
 
+local function read_head(filepath)
+  local fd = unix.open(filepath, unix.O_RDONLY)
+  if not fd then
+    return nil
+  end
+  local chunk = unix.read(fd, 512)
+  unix.close(fd)
+  return chunk
+end
+
+local function has_tag(path, tag, value)
+  local head = read_head(path)
+  if not head then
+    return false
+  end
+  local pattern = "%-%-" .. tag .. ":" .. value
+  return head:match(pattern) ~= nil
+end
+
 local function is_test_file(path)
+  if has_tag(path, "test", "false") then
+    return false
+  end
+  if has_tag(path, "test", "true") then
+    return true
+  end
   local basename = path:match("([^/]+)$")
   if not basename then
     return false
   end
-  if basename:match("^test_") then
-    return true
-  end
-  if basename:match("test%.lua$") then
-    return true
-  end
-  return false
+  return basename:match("^test_") ~= nil or basename:match("test%.lua$") ~= nil
 end
 
 local function git_files_iter(stdout)

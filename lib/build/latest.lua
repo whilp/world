@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+--test:false
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
