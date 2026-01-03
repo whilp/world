@@ -1,13 +1,30 @@
 modules += cosmic
 cosmic_bin := $(o)/bin/cosmic
-cosmic_files := $(cosmic_bin) $(addprefix $(o)/lib/cosmic/,init.lua spawn.lua walk.lua help.lua)
+cosmic_real := $(o)/bin/cosmic-real
+cosmic_files := \
+                $(cosmic_bin) \
+                $(cosmic_real) \
+                $(addprefix $(o)/lib/cosmic/,init.lua spawn.lua walk.lua help.lua)
 cosmic_tests := $(wildcard lib/cosmic/test_*.lua)
-cosmic_deps := argparse
+cosmic_deps := cosmos luaunit argparse
 
 # TODO: build cosmic properly
 $(cosmic_bin): $(bootstrap_cosmic)
 	@mkdir -p $(@D)
 	@$(cp) $< $@
+
+cosmic_staging := $(o)/cosmic-staging
+
+$(cosmic_real): $(cosmos_staged) $(luaunit_staged) $(argparse_staged) $(addprefix $(o)/lib/cosmic/,init.lua spawn.lua walk.lua help.lua)
+	@rm -rf $(cosmic_staging)
+	@mkdir -p $(cosmic_staging)/.lua/cosmic $(@D)
+	@cp $(o)/lib/cosmic/*.lua $(cosmic_staging)/.lua/cosmic/
+	@cp $(luaunit_dir)/luaunit.lua $(cosmic_staging)/.lua/
+	@cp $(argparse_dir)/src/argparse.lua $(cosmic_staging)/.lua/
+	@cp 3p/lua/lfs_stub.lua $(cosmic_staging)/.lua/lfs.lua
+	@cp $(cosmos_dir)/lua $@
+	@chmod +x $@
+	@cd $(cosmic_staging) && $(CURDIR)/$(cosmos_dir)/zip -qr $(CURDIR)/$@ .lua
 
 # cosmic binary
 

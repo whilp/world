@@ -60,10 +60,11 @@ $(o)/%.fetched: % $(build_files) | $(bootstrap_cosmic)
 # ...and then versions get staged (to extract)
 .PHONY: staged
 
-# derive _staged from _version
+# derive _staged and _dir from _version
 $(foreach m,$(modules),\
   $(if $($(m)_version),\
-    $(eval $(m)_staged := $(o)/$($(m)_version).staged)))
+    $(eval $(m)_staged := $(o)/$($(m)_version).staged)\
+    $(eval $(m)_dir := $($(m)_staged))))
 all_staged := $(patsubst %,o/%.staged,$(all_versions))
 staged: $(all_staged)
 $(o)/%.staged: $(o)/%.fetched
