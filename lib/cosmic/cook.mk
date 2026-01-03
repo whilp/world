@@ -25,14 +25,16 @@ $(luatest_o)/lib/cosmic/test_walk.lua.ok: $(cosmic_lib)/cosmic/walk.lua
 $(luatest_o)/lib/cosmic/test_binary.lua.ok: $(cosmic)
 $(luatest_o)/lib/cosmic/test_binary.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_any)/cosmic
 
+$(luatest_o)/lib/cosmic/test_skill_pr.lua.ok: $(cosmic)
+$(luatest_o)/lib/cosmic/test_skill_pr.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_any)/cosmic
+
 # cosmic binary build
-cosmic_lib_dirs := $(o_any)/lib $(cosmic_lib)
 cosmic_libs := $(lib_libs)
 
 $(cosmic): $(o_platform)/cosmos/bin/lua $(o_platform)/cosmos/bin/zip $(cosmic_libs) $(luaunit) $(o_platform)/argparse/lib/argparse.lua $(o_platform)/lfs/lib/lfs.lua
 	rm -rf $(o_any)/cosmic/staging
 	mkdir -p $(o_any)/cosmic/staging/.lua $(@D)
-	$(foreach d,$(cosmic_lib_dirs),cp -r $(d)/* $(o_any)/cosmic/staging/.lua/;)
+	$(foreach d,$(lib_dirs),test -d $(d) && cp -r $(d)/* $(o_any)/cosmic/staging/.lua/ || true;)
 	cp -r $(o_any)/luaunit/lib/* $(o_any)/cosmic/staging/.lua/
 	cp -r $(o_platform)/argparse/lib/* $(o_any)/cosmic/staging/.lua/
 	cp -r $(o_platform)/lfs/lib/* $(o_any)/cosmic/staging/.lua/
