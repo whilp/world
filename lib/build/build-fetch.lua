@@ -86,8 +86,19 @@ local function main(version_file, platform, output)
     return nil, err
   end
 
-  if not cosmo.Barf(output, body, tonumber("755", 8)) then
-    return nil, "failed to write " .. output
+  -- write archive with its real name, symlink .fetched to it
+  local archive_name = url:match("([^/]+)$")
+  local archive_path = path.join(output_dir, archive_name)
+
+  if not cosmo.Barf(archive_path, body, tonumber("644", 8)) then
+    return nil, "failed to write " .. archive_path
+  end
+
+  -- remove old symlink/file if exists, create symlink
+  unix.unlink(output)
+  local link_ok, link_err = unix.symlink(archive_name, output)
+  if not link_ok then
+    return nil, "failed to symlink: " .. tostring(link_err)
   end
 
   return true
