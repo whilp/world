@@ -107,13 +107,13 @@ local function main(source, out)
 
   if not has_supported_extension(source) and not has_shebang then
     cosmo.Barf(out, format_output("ignore", "unsupported file type", "", ""))
-    io.stderr:write("IGNORE " .. source .. "\n")
+    io.stderr:write(string.format("%-6s %s\n", "IGNORE", source))
     return 0
   end
 
   if skip_reason then
     cosmo.Barf(out, format_output("skip", skip_reason, "", ""))
-    io.stderr:write("SKIP " .. source .. " (" .. skip_reason .. ")\n")
+    io.stderr:write(string.format("%-6s %s (%s)\n", "SKIP", source, skip_reason))
     return 0
   end
 
@@ -127,12 +127,12 @@ local function main(source, out)
   if #issues > 0 then
     local issue_text = format_issues(issues, source)
     cosmo.Barf(out, format_output("fail", #issues .. " issues", "", issue_text))
-    io.stderr:write("FAIL " .. source .. " (" .. #issues .. " issues)\n")
+    io.stderr:write(string.format("%-6s %s (%d issues)\n", "FAIL", source, #issues))
     return 1
   end
 
   cosmo.Barf(out, format_output("pass", nil, "", ""))
-  io.stderr:write("PASS " .. source .. "\n")
+  io.stderr:write(string.format("%-6s %s\n", "PASS", source))
   return 0
 end
 
