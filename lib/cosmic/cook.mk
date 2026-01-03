@@ -15,7 +15,7 @@ $(cosmic_bin): $(bootstrap_cosmic)
 
 cosmic_staging := $(o)/cosmic-staging
 
-$(cosmic_real): $(cosmos_staged) $(luaunit_staged) $(argparse_staged) $(addprefix $(o)/lib/cosmic/,init.lua spawn.lua walk.lua help.lua)
+$(cosmic_real): $(addprefix $(o)/lib/cosmic/,init.lua spawn.lua walk.lua help.lua)
 	@rm -rf $(cosmic_staging)
 	@mkdir -p $(cosmic_staging)/.lua/cosmic $(@D)
 	@cp $(o)/lib/cosmic/*.lua $(cosmic_staging)/.lua/cosmic/

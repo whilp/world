@@ -43,10 +43,12 @@ all_files += $(foreach x,$(modules),$($(x)_files))
 # default deps for regular modules (also excluded from file dep expansion)
 default_deps := bootstrap test
 
-# expand module deps: M_files depends on own explicit deps' _files
+# expand module deps: M_files depends on deps' _files and _staged
 $(foreach m,$(filter-out $(default_deps),$(modules)),\
   $(foreach d,$($(m)_deps),\
-    $(eval $($(m)_files): $($(d)_files))))
+    $(eval $($(m)_files): $($(d)_files))\
+    $(if $($(d)_staged),\
+      $(eval $($(m)_files): $($(d)_staged)))))
 
 all_versions := $(foreach x,$(modules),$($(x)_version))
 
