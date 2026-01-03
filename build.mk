@@ -1,49 +1,18 @@
 # build.mk - testing and linting infrastructure
 
-# output directories
+# shared infrastructure
 manifest_o := $(o)/manifest
-luatest_o := $(o)/luatest
-luacheck_o := $(o)/luacheck
-astgrep_o := $(o)/ast-grep
-tl_o := $(o)/teal
-
-# manifest files
 manifest_git := $(manifest_o)/git.txt
 manifest_luafiles := $(manifest_o)/lua-files.txt
 manifest_luatests := $(manifest_o)/lua-tests.txt
 
-# script paths
-fetch_script := lib/build/fetch.lua
-extract_script := lib/build/extract.lua
-install_script := lib/build/install.lua
-latest_script := lib/build/latest.lua
-luatest_script := lib/build/luatest.lua
-luacheck_script := lib/build/luacheck.lua
-ast_grep_script := lib/build/ast-grep.lua
-teal_script := lib/build/teal.lua
 manifest_script := lib/build/manifest.lua
-
-# script commands
-fetch = $(lua_bin) $(fetch_script)
-extract = $(lua_bin) $(extract_script)
-install = $(lua_bin) $(install_script)
-latest = $(lua_bin) $(latest_script)
-latest_runner = $(lua_bin) $(latest_script)
-runner = $(lua_bin) $(luatest_script)
-luatest_runner = $(lua_bin) $(luatest_script)
-luacheck_runner = $(lua_bin) $(luacheck_script)
-ast_grep_runner = $(lua_bin) $(ast_grep_script)
-teal_runner = $(lua_bin) $(teal_script)
-
-# script dependencies
-$(fetch_script) $(extract_script) $(install_script) $(latest_script) $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script) $(manifest_script): | $(lua_bin)
-
 script_deps := $(cosmic_lib)/cosmic/spawn.lua $(cosmic_lib)/cosmic/walk.lua
 
-$(extract_script): | $(cosmic_lib)/cosmic/spawn.lua
-$(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script) $(manifest_script): | $(script_deps)
+$(manifest_script): | $(lua_bin)
 
-# manifest generation
+$(manifest_script): | $(script_deps)
+
 $(manifest_git): .git/index
 	@mkdir -p $(@D)
 	git ls-files -z > $@
@@ -56,21 +25,21 @@ $(manifest_luatests): $(manifest_git) $(manifest_script) $(script_deps) | $(lua_
 	@mkdir -p $(@D)
 	$(lua_bin) $(manifest_script) find_lua_tests > $@
 
-# file lists from manifests
 lua_files := $(shell cat $(manifest_luafiles) 2>/dev/null)
 lua_files += lib/build/test_luafiles.lua
 test_files := $(shell cat $(manifest_luatests) 2>/dev/null)
 test_files += lib/build/test_luafiles.lua
 version_files := $(shell git ls-files '**/version.lua' | grep -v '^lib/version\.lua$$')
 
-# stamp files for incremental builds
+# luatest - test runner
+luatest_o := $(o)/luatest
+luatest_script := lib/build/luatest.lua
+luatest_runner = $(lua_bin) $(luatest_script)
 luatest_files := $(patsubst %,$(luatest_o)/%.ok,$(test_files))
-luacheck_files := $(patsubst %,$(luacheck_o)/%.ok,$(lua_files))
-ast_grep_files := $(patsubst %,$(astgrep_o)/%.ok,$(lua_files))
-teal_files := $(patsubst %,$(tl_o)/%.ok,$(lua_files))
-latest_files := $(patsubst %,o/any/%.latest.ok,$(version_files))
 
-# luatest targets
+$(luatest_script): | $(lua_bin)
+$(luatest_script): | $(script_deps)
+
 luatest: $(luatest_files) ## Run tests incrementally on changed files
 
 # test-specific dependencies and arguments
@@ -89,14 +58,21 @@ $(luatest_o)/lib/build/test_pr.lua.ok: lib/build/pr.lua
 $(luatest_o)/lib/build/test_luafiles.lua.ok: $(manifest_git) $(manifest_luafiles) $(manifest_luatests)
 $(luatest_o)/lib/build/test_luafiles.lua.ok: TEST_ARGS = $(manifest_git) $(manifest_luafiles) $(manifest_luatests)
 
-# generic test rule
 $(luatest_o)/%.ok: % $(luatest_script) $(luaunit) $(script_deps)
 	$(TEST_ENV) $(luatest_runner) $< $@ $(TEST_ARGS)
 
 luatest-report: $(luatest_files) $(script_deps) ## Run tests and show summary report
 	@$(luatest_runner) report $(luatest_o)
 
-# luacheck targets
+# luacheck - lua linter
+luacheck_o := $(o)/luacheck
+luacheck_script := lib/build/luacheck.lua
+luacheck_runner = $(lua_bin) $(luacheck_script)
+luacheck_files := $(patsubst %,$(luacheck_o)/%.ok,$(lua_files))
+
+$(luacheck_script): | $(lua_bin)
+$(luacheck_script): | $(script_deps)
+
 luacheck: $(luacheck_files) ## Run luacheck incrementally on changed files
 
 $(luacheck_o)/%.ok: % $(luacheck_config) $(luacheck_script) $(luacheck_bin) $(script_deps)
@@ -105,7 +81,15 @@ $(luacheck_o)/%.ok: % $(luacheck_config) $(luacheck_script) $(luacheck_bin) $(sc
 luacheck-report: $(luacheck_files) ## Run luacheck and show summary report
 	@$(luacheck_runner) report $(luacheck_o)
 
-# ast-grep targets
+# ast-grep - structural code search
+astgrep_o := $(o)/ast-grep
+ast_grep_script := lib/build/ast-grep.lua
+ast_grep_runner = $(lua_bin) $(ast_grep_script)
+ast_grep_files := $(patsubst %,$(astgrep_o)/%.ok,$(lua_files))
+
+$(ast_grep_script): | $(lua_bin)
+$(ast_grep_script): | $(script_deps)
+
 ast-grep: $(ast_grep_files) ## Run ast-grep incrementally on changed files
 
 $(astgrep_o)/%.ok: % $(astgrep_config) $(ast_grep_script) $(astgrep_bin) $(script_deps)
@@ -114,7 +98,15 @@ $(astgrep_o)/%.ok: % $(astgrep_config) $(ast_grep_script) $(astgrep_bin) $(scrip
 ast-grep-report: $(ast_grep_files) ## Run ast-grep and show summary report
 	@$(ast_grep_runner) report $(astgrep_o)
 
-# teal targets
+# teal - gradual type checker
+tl_o := $(o)/teal
+teal_script := lib/build/teal.lua
+teal_runner = $(lua_bin) $(teal_script)
+teal_files := $(patsubst %,$(tl_o)/%.ok,$(lua_files))
+
+$(teal_script): | $(lua_bin)
+$(teal_script): | $(script_deps)
+
 teal: $(teal_files) ## Run teal incrementally on changed files
 
 $(tl_o)/%.ok: % $(teal_script) $(tl_bin) $(lua_dist) $(script_deps)
@@ -124,7 +116,14 @@ teal-report: $(teal_files) ## Run teal and show summary report
 	# TODO: remove || true once all files pass
 	@$(teal_runner) report $(tl_o) || true
 
-# latest version checking
+# latest - version checker
+latest_script := lib/build/latest.lua
+latest = $(lua_bin) $(latest_script)
+latest_runner = $(lua_bin) $(latest_script)
+latest_files := $(patsubst %,o/any/%.latest.ok,$(version_files))
+
+$(latest_script): | $(lua_bin)
+
 latest: $(latest_files) ## Check for latest versions incrementally on changed files
 
 o/any/%.latest.ok: % $(latest_script)
@@ -132,3 +131,15 @@ o/any/%.latest.ok: % $(latest_script)
 
 latest-report: $(latest_files) ## Check latest versions and show summary report
 	@$(latest_runner) report o/any
+
+# build scripts - shared utilities
+fetch_script := lib/build/fetch.lua
+extract_script := lib/build/extract.lua
+install_script := lib/build/install.lua
+
+fetch = $(lua_bin) $(fetch_script)
+extract = $(lua_bin) $(extract_script)
+install = $(lua_bin) $(install_script)
+
+$(fetch_script) $(extract_script) $(install_script): | $(lua_bin)
+$(extract_script): | $(cosmic_lib)/cosmic/spawn.lua
