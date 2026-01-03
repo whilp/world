@@ -9,7 +9,11 @@ local supported_extensions = {
   [".lua"] = true,
 }
 
-local function is_supported(file)
+local supported_shebangs = {
+  ["lua"] = true,
+}
+
+local function has_supported_extension(file)
   for ext in pairs(supported_extensions) do
     if file:sub(-#ext) == ext then
       return true
@@ -18,24 +22,31 @@ local function is_supported(file)
   return false
 end
 
-local function check_skip_directive(file)
+local function check_first_lines(file)
   local f = io.open(file, "r")
   if not f then
-    return nil
+    return nil, nil
   end
+  local has_shebang = false
   for i = 1, 10 do
     local line = f:read("*l")
     if not line then
       break
     end
+    if i == 1 then
+      local interp = line:match("^#!.-/([%w_-]+)%s*$") or line:match("^#!/usr/bin/env%s+([%w_-]+)")
+      if interp and supported_shebangs[interp] then
+        has_shebang = true
+      end
+    end
     local reason = line:match("ast%-grep%s+ignore%s*(.*)")
     if reason then
       f:close()
-      return reason ~= "" and reason or "directive"
+      return has_shebang, reason ~= "" and reason or "directive"
     end
   end
   f:close()
-  return nil
+  return has_shebang, nil
 end
 
 local function parse_json_stream(stdout)
@@ -62,12 +73,13 @@ local function main(source, out)
 
   unix.makedirs(path.dirname(out))
 
-  if not is_supported(source) then
+  local has_shebang, skip_reason = check_first_lines(source)
+
+  if not has_supported_extension(source) and not has_shebang then
     cosmo.Barf(out, "ignore: unsupported file type\n")
     return 0
   end
 
-  local skip_reason = check_skip_directive(source)
   if skip_reason then
     cosmo.Barf(out, "skip: " .. skip_reason .. "\n")
     io.stderr:write("SKIP " .. source .. " (" .. skip_reason .. ")\n")

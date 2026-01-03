@@ -51,8 +51,8 @@ $(o)/%: %
 	@mkdir -p $(@D)
 	@$(cp) $< $@
 
-# bin scripts: o/bin/X.lua from lib/*/X.lua
-vpath %.lua lib/build lib/test
+# bin scripts: o/bin/X.lua from lib/*/X.lua and 3p/*/X.lua
+vpath %.lua lib/build lib/test 3p/ast-grep
 $(o)/bin/%.lua: %.lua
 	@mkdir -p $(@D)
 	@$(cp) $< $@
@@ -130,7 +130,7 @@ all_built_files := $(foreach x,$(modules),$($(x)_files))
 all_astgreps := $(patsubst %,%.astgrep.checked,$(all_built_files))
 astgrep: $(all_astgreps)
 
-$(o)/%.astgrep.checked: $(o)/% $(test_files) | $(bootstrap_files) $(ast-grep_staged)
+$(o)/%.astgrep.checked: $(o)/% $(ast-grep_files) | $(bootstrap_files) $(ast-grep_staged)
 	@$(astgrep_runner) $< $@
 
 .PHONY: clean
