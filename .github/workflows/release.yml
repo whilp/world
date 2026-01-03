@@ -28,10 +28,10 @@ jobs:
         run: make check
 
       - name: Run tests
-        run: make test -j4
+        run: make test
 
       - name: Build home and cosmic binaries
-        run: make home cosmic -j4
+        run: make home cosmic
 
       - name: Upload home binary
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0

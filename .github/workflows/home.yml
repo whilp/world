@@ -21,7 +21,7 @@ jobs:
         run: make check
 
       - name: Run tests
-        run: make test -j4
+        run: make test
 
       - name: Build home binary
         run: make home
