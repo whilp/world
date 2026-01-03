@@ -98,11 +98,12 @@ local function clear_dir(dir)
   end
 end
 
-local function set_mtime_recursive(dir, mtime_sec, mtime_nsec)
+local function set_mtime_recursive(dir)
+  local now_sec, now_nsec = unix.clock_gettime(unix.CLOCK_REALTIME)
   walk.walk(dir, function(file_path)
     local fd = unix.open(file_path, unix.O_RDONLY)
     if fd then
-      unix.futimens(fd, mtime_sec, mtime_nsec, mtime_sec, mtime_nsec)
+      unix.futimens(fd, now_sec, now_nsec, now_sec, now_nsec)
       unix.close(fd)
     end
   end)
@@ -205,11 +206,7 @@ local function main(version_file, platform, input, dest_dir)
     return nil, err
   end
 
-  local archive_stat = unix.stat(input)
-  if archive_stat then
-    local archive_mtime_sec, archive_mtime_nsec = archive_stat:mtim()
-    set_mtime_recursive(dest_dir, archive_mtime_sec, archive_mtime_nsec)
-  end
+  set_mtime_recursive(dest_dir)
 
   return true
 end
