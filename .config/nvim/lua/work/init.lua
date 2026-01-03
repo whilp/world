@@ -1,3 +1,4 @@
+--check:false
 -- work.nvim - minimal configuration for work system
 local M = {}
 
