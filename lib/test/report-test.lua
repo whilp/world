@@ -66,10 +66,10 @@ local function main(test_dir)
 
   -- print each test result with padded status
   local status_icons = {
-    pass = "✔",
-    fail = "✖",
-    skip = "⇒",
-    ignore = "●",
+    pass = "✓",
+    fail = "✗",
+    skip = "→",
+    ignore = "○",
   }
   for _, result in ipairs(all_results) do
     local status = string.upper(result.status)
