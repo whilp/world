@@ -39,7 +39,7 @@ local function check_first_lines(file)
         has_shebang = true
       end
     end
-    local reason = line:match("ast%-grep%s+ignore%s*(.*)")
+    local reason = line:match("ast%-grep%s+ignore%s*:?%s*(.*)")
     if reason then
       f:close()
       return has_shebang, reason ~= "" and reason or "directive"
