@@ -1,8 +1,6 @@
 -- teal ignore: type annotations needed
 
-local M = {}
-
-function M.format_output(status, message, stdout, stderr)
+local function format_output(status, message, stdout, stderr)
   local lines = {}
   if message and message ~= "" then
     table.insert(lines, status .. ": " .. message)
@@ -19,7 +17,7 @@ function M.format_output(status, message, stdout, stderr)
   return table.concat(lines, "\n")
 end
 
-function M.parse_result(content)
+local function parse_result(content)
   local result = {}
 
   local first_line = content:match("^([^\n]+)")
@@ -37,7 +35,7 @@ function M.parse_result(content)
   return result
 end
 
-function M.strip_prefix(filepath)
+local function strip_prefix(filepath)
   local prefix = os.getenv("TEST_O")
   if not prefix then
     return filepath
@@ -49,7 +47,7 @@ function M.strip_prefix(filepath)
   return filepath
 end
 
-function M.status_icons()
+local function status_icons()
   return {
     pass = "✓",
     fail = "✗",
@@ -58,7 +56,7 @@ function M.status_icons()
   }
 end
 
-function M.has_extension(file, extensions)
+local function has_extension(file, extensions)
   for ext in pairs(extensions) do
     if file:sub(-#ext) == ext then
       return true
@@ -67,7 +65,7 @@ function M.has_extension(file, extensions)
   return false
 end
 
-function M.check_first_lines(file, patterns)
+local function check_first_lines(file, patterns)
   local f = io.open(file, "r")
   if not f then
     return nil, nil
@@ -103,7 +101,7 @@ function M.check_first_lines(file, patterns)
   return has_shebang, nil
 end
 
-function M.print_results(all_results, icons)
+local function print_results(all_results, icons)
   for _, result in ipairs(all_results) do
     local status = string.upper(result.status)
     local icon = icons[result.status] or " "
@@ -124,7 +122,7 @@ function M.print_results(all_results, icons)
   end
 end
 
-function M.print_summary(checker_name, results)
+local function print_summary(checker_name, results)
   local total = #results.pass + #results.fail + #results.skip + #results.ignore
   if total == 0 then
     return
@@ -141,7 +139,7 @@ function M.print_summary(checker_name, results)
   ))
 end
 
-function M.print_failures(all_results)
+local function print_failures(all_results)
   local has_failures = false
   for _, result in ipairs(all_results) do
     if result.status == "fail" then
@@ -177,7 +175,7 @@ function M.print_failures(all_results)
   return true
 end
 
-function M.categorize_results(results_list)
+local function categorize_results(results_list)
   local results = {
     pass = {},
     fail = {},
@@ -195,4 +193,15 @@ function M.categorize_results(results_list)
   return results
 end
 
-return M
+return {
+  format_output = format_output,
+  parse_result = parse_result,
+  strip_prefix = strip_prefix,
+  status_icons = status_icons,
+  has_extension = has_extension,
+  check_first_lines = check_first_lines,
+  print_results = print_results,
+  print_summary = print_summary,
+  print_failures = print_failures,
+  categorize_results = categorize_results,
+}
