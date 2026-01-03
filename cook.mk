@@ -1,8 +1,5 @@
 modules += dot
-dot_tests :=
-dot_deps :=
-dot_archives := 
-dot_files := \
+dot_srcs := \
 	.aerospace.toml \
 	.editorconfig \
 	.gitconfig \

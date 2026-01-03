@@ -1,4 +1,5 @@
 modules :=
+o := o
 
 uname_s := $(shell uname -s)
 uname_m := $(shell uname -m)
@@ -10,30 +11,33 @@ platform := $(os)-$(arch)
 include bootstrap/cook.mk
 include 3p/luaunit/cook.mk
 #include lib/cosmic/cook.mk
+include build/cook.mk
 include test/cook.mk
 
 include cook.mk
 
 all_files := $(foreach x,$(modules),$($(x)_files))
+all_files += $(foreach x,$(modules),$(addprefix $(o)/$(x)/,$($(x)_srcs)))
 all_tests := $(foreach x,$(modules),$($(x)_tests))
-
-.PHONY: versions
 all_versions := $(foreach x,$(modules),$($(x)_version))
-versions: $(all_versions)
+
+cp := cp -p
+
+$(o)/%: %
+	@mkdir -p $(@D)
+	@$(cp) $< $@
 
 .PHONY: fetched
 all_fetched := $(patsubst %,o/%.fetched,$(all_versions))
 fetched: $(all_fetched)
-o/%.fetched: % | $(bootstrap_cosmic)
-	@mkdir -p $(@D)
-	lua lib/build/fetch.lua $< any $@
+$(o)/%.fetched: % $(build_files) | $(bootstrap_cosmic)
+	$(build_fetch) $< $(platform) $@
 
 .PHONY: staged
 all_staged := $(patsubst %,o/%.staged,$(all_versions))
 staged: $(all_staged)
-o/%.staged: o/%.fetched
-	@mkdir -p $(@D)
-	cp $< $@
+$(o)/%.staged: $(o)/%.fetched
+	$(build_stage) $* $< $@
 
 # o := o
 # o_platform := $(o)/$(current_platform)

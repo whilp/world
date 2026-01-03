@@ -1,10 +1,11 @@
 return {
-  version = "3.4",
-  format = "binary",
-  url = "https://raw.githubusercontent.com/bluebird75/luaunit/LUAUNIT_V3_4/luaunit.lua",
+  version = "0e0d3dd",
+  format = "zip",
+  url = "https://github.com/bluebird75/luaunit/archive/0e0d3dd06fe1955a01f0e6763bc8dc6847ee3e8d.zip",
+  install = {"luaunit.lua"},
   platforms = {
     ["*"] = {
-      sha = "bf3e3fb25b77739fa1ebc324582776d26486e32e49c150628bc21b9b9e6ce645",
+      sha = "a7965073b737aa1f312b39aa0a02a8d3be3ddaceed13bf4b1bd0b0b0135186be",
     },
   },
 }

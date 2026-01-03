@@ -1,12 +1,6 @@
 modules += bootstrap
-bootstrap_bin := o/bootstrap/bin
-bootstrap_cosmic := $(bootstrap_bin)/cosmic
+bootstrap_cosmic := $(o)/bootstrap/cosmic
 bootstrap_files := $(bootstrap_cosmic)
-bootstrap_tests :=
-bootstrap_deps :=
-bootstrap_archives :=
-
-export PATH := $(CURDIR)/$(bootstrap_bin):$(PATH)
 
 $(bootstrap_cosmic):
 	@mkdir -p $(@D)
