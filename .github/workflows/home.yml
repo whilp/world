@@ -21,9 +21,8 @@ jobs:
         run: make check
 
       - name: Run tests
-        run: make test -j4
+        run: make test
 
-      # TODO: add home-all and lua-all for multi-platform builds
       - name: Build home binary
         run: make home
 

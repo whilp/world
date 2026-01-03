@@ -1,5 +1,9 @@
 .SECONDEXPANSION:
 
+# auto-parallelize based on available CPUs
+nproc := $(shell nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
+MAKEFLAGS += -j$(nproc)
+
 modules :=
 o := o
 
@@ -100,6 +104,7 @@ $(o)/%/.staged: $(o)/%/.fetched
 all_tests := $(foreach x,$(modules),$($(x)_tests))
 all_tested := $(patsubst %,o/%.tested,$(all_tests))
 test: $(all_tested)
+	@$(test_reporter) $(o)
 
 $(o)/test-results.txt: $(all_tested)
 	@for f in $^; do echo "$${f%.tested}: $$(cat $$f)"; done > $@
