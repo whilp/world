@@ -23,12 +23,12 @@ HOME_VERSION ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown"
 
 home_built := $(o)/home/.built
 
-$(o)/home/dotfiles.zip: $(cosmos_staged)
+$(o)/home/dotfiles.zip: $$(cosmos_staged)
 	@mkdir -p $(@D)
 	git ls-files -z | grep -zZvE '$(home_exclude_pattern)' | xargs -0 $(cosmos_zip) -q $@
 
 # Home binary bundles: dotfiles, cosmos binaries, cosmic, 3p tools, lua libs
-$(home_bin): $(home_libs) $(o)/home/dotfiles.zip $(cosmos_staged) $(cosmic_bin) $(foreach t,$(home_3p_tools),$($(t)_staged))
+$(home_bin): $(home_libs) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin) $$(foreach t,$(home_3p_tools),$$($$(t)_staged))
 	@echo "Building home binary..."
 	@rm -rf $(home_built)
 	@mkdir -p $(home_built)/home/.local/bin $(home_built)/home/.local/share $(home_built)/.lua $(@D)

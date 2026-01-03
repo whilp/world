@@ -1,3 +1,5 @@
+.SECONDEXPANSION:
+
 modules :=
 o := o
 
@@ -58,6 +60,11 @@ $(o)/bin/%.lua: %.lua
 # files are produced in o/
 all_files += $(foreach x,$(modules),$($(x)_files))
 
+# define *_staged and *_dir for versioned modules (must be before dep expansion)
+$(foreach m,$(modules),$(if $($(m)_version),\
+  $(eval $(m)_staged := $(o)/$(m)/.staged)\
+  $(eval $(m)_dir := $(o)/$(m)/.staged)))
+
 # default deps for regular modules (also excluded from file dep expansion)
 default_deps := bootstrap test
 
@@ -84,9 +91,6 @@ $(o)/%/.fetched: $(o)/%/.versioned $(build_files) | $(bootstrap_cosmic)
 
 # versions get staged: o/module/.staged -> o/staged/module/<ver>-<sha>
 .PHONY: staged
-$(foreach m,$(modules),$(if $($(m)_version),\
-  $(eval $(m)_staged := $(o)/$(m)/.staged)\
-  $(eval $(m)_dir := $(o)/$(m)/.staged)))
 all_staged := $(patsubst %/.fetched,%/.staged,$(all_fetched))
 staged: $(all_staged)
 $(o)/%/.staged: $(o)/%/.fetched
