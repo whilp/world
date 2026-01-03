@@ -1,14 +1,9 @@
-## Scripts
+## Build workflow
 
-- Store scripts in `.local/bin`
-
-## Terminal
-
-- Ghostty config is located at `.config/ghostty/config`
-
-## Make
-
-- run `make help` to see available targets
-- makefile fragments are named `cook.mk`
-- use self-documenting help targets with `## description` comments
-- group targets by workflow in help output
+```bash
+make test              # run tests (incremental)
+make clean test        # full rebuild and test
+make test; make test   # verify incremental builds work (second should be instant)
+make staged            # fetch and extract dependencies
+make fetched           # fetch dependencies only
+```
