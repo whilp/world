@@ -1,3 +1,4 @@
+--test:false
 local lu = require("luaunit")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")

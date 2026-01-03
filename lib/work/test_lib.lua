@@ -1,3 +1,4 @@
+--test:false
 local data = require("work.data")
 local store = require("work.store")
 

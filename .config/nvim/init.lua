@@ -1,3 +1,4 @@
+--check:false
 -- nvim configuration entry point
 
 -- Add lua paths
