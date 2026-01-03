@@ -143,7 +143,8 @@ function TestFindLuaFiles:test_finds_all_lua()
     _git_output = mock_git_output,
     _detect_type = mock_detect_type,
   })
-  lu.assertEquals(#paths, 8)
+  -- 8 lua files minus 2 with --check:false (.config/hammerspoon/init.lua, .config/nvim/init.lua)
+  lu.assertEquals(#paths, 6)
 end
 
 function TestFindLuaFiles:test_sorted()
