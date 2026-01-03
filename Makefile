@@ -56,8 +56,8 @@ $(o)/%: %
 	@mkdir -p $(@D)
 	@$(cp) $< $@
 
-# bin scripts: o/bin/X.lua from lib/*/X.lua
-vpath %.lua lib/build lib/test
+# bin scripts: o/bin/X.lua from lib/*/X.lua and 3p/*/X.lua
+vpath %.lua lib/build lib/test 3p/ast-grep
 $(o)/bin/%.lua: %.lua
 	@mkdir -p $(@D)
 	@$(cp) $< $@
@@ -131,14 +131,22 @@ $(foreach m,$(filter-out bootstrap,$(modules)),\
       $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(d)_staged))\
       $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DEPS += $($(d)_staged)))))
 
+.PHONY: astgrep
+all_built_files := $(foreach x,$(modules),$($(x)_files))
+all_astgreps := $(patsubst %,%.astgrep.checked,$(all_built_files))
+astgrep: $(all_astgreps)
+	@$(astgrep_reporter) $(o)
+
+$(o)/%.astgrep.checked: $(o)/% $(ast-grep_files) | $(bootstrap_files) $(ast-grep_staged)
+	@ASTGREP_BIN=$(ast-grep_staged) $(astgrep_runner) $< $@
+
 .PHONY: clean
 clean:
 	@rm -rf $(o)
 
-# TODO: implement static analysis (luacheck, ast-grep, etc)
 .PHONY: check
-check:
-	@echo "check: ok"
+check: $(all_astgreps)
+	@$(astgrep_reporter) $(o)
 
 # Update PR title/description from .github/pr/<number>.md
 .PHONY: update-pr
