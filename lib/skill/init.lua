@@ -1,21 +1,25 @@
 -- skill - dispatcher for cosmic skill commands
 -- usage: cosmic-lua -l skill <subcommand> [args...]
 
-local function is_skill_invocation()
-  if not arg then return false end
+local cosmo = require("cosmo")
+
+local function find_subcommand()
+  if not arg then return nil end
 
   for i = -1, #arg do
     if arg[i] == "update-pr" then
-      return true, i, "update-pr"
+      return "update-pr", i
     end
   end
 
-  return false
+  return nil
 end
 
-local is_skill, cmd_idx, subcommand = is_skill_invocation()
+-- Only dispatch if we're being invoked (have a subcommand in args)
+-- This allows the module to be safely required without side effects
+local subcommand, cmd_idx = find_subcommand()
 
-if is_skill then
+if subcommand then
   -- rebuild arg table with subcommand args only
   local new_arg = {}
   if cmd_idx then
