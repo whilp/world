@@ -26,8 +26,11 @@ $(foreach m,$(modules),\
   $(foreach d,$($(m)_deps),\
     $(eval $($(m)_files): $($(d)_files))))
 
-# expand test deps: M's tested targets depend on each dep's _staged, get STAGED_DIR
+# expand test deps: M's tested targets depend on own _staged plus each dep's _staged
 $(foreach m,$(modules),\
+  $(if $($(m)_staged),\
+    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): STAGED_DIR := $($(m)_staged))\
+    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(m)_staged)))\
   $(foreach d,$($(m)_test_deps),\
     $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): STAGED_DIR := $($(d)_staged))\
     $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(d)_staged))))
