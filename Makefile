@@ -79,6 +79,7 @@ $(manifest_luatests): $(manifest_git) $(manifest_script) $(script_deps) | $(lua_
 	$(lua_bin) $(manifest_script) find_lua_tests > $@
 
 lua_files := $(shell cat $(manifest_luafiles) 2>/dev/null)
+lua_files += lib/build/test_luafiles.lua
 test_files := $(shell cat $(manifest_luatests) 2>/dev/null)
 test_files += lib/build/test_luafiles.lua
 version_files := $(shell git ls-files '**/version.lua' | grep -v '^lib/version\.lua$$')
