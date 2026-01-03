@@ -21,8 +21,20 @@ local function parse_result(content)
   return result
 end
 
+local function strip_prefix(filepath)
+  local prefix = os.getenv("TEST_O")
+  if not prefix then
+    return filepath
+  end
+  local prefix_len = #prefix
+  if filepath:sub(1, prefix_len) == prefix and filepath:sub(prefix_len + 1, prefix_len + 1) == "/" then
+    return filepath:sub(prefix_len + 2)
+  end
+  return filepath
+end
+
 local function main(check_dir)
-  check_dir = check_dir or "o"
+  check_dir = check_dir or os.getenv("TEST_O") or "o"
 
   local results = {
     pass = {},
@@ -39,7 +51,7 @@ local function main(check_dir)
     if content then
       local result = parse_result(content)
       if result then
-        local name = file:gsub("^o/", ""):gsub("%.astgrep%.checked$", "")
+        local name = strip_prefix(file):gsub("%.astgrep%.checked$", "")
         result.name = name
         result.file = file
         table.insert(all_results, result)
@@ -52,18 +64,27 @@ local function main(check_dir)
     end
   end
 
+  local status_icons = {
+    pass = "✔",
+    fail = "✖",
+    skip = "⇒",
+    ignore = "●",
+  }
   for _, result in ipairs(all_results) do
-    if result.status ~= "ignore" then
-      local status = string.upper(result.status)
-      local padded = string.format("%-6s", status)
-      print(padded .. " " .. result.name)
+    local status = string.upper(result.status)
+    local icon = status_icons[result.status] or " "
+    local padded = string.format("%-6s", status)
+    local line = icon .. " " .. padded .. " " .. result.name
+    if result.status == "skip" and result.message then
+      line = line .. " (" .. result.message .. ")"
     end
+    print(line)
   end
 
-  local total = #results.pass + #results.fail + #results.skip
+  local total = #results.pass + #results.fail + #results.skip + #results.ignore
   print(string.format(
-    "ast-grep checks: %d files: %d passed, %d failed, %d skipped, %d ignored",
-    total + #results.ignore,
+    "ast-grep: %d checks: %d passed, %d failed, %d skipped, %d ignored",
+    total,
     #results.pass,
     #results.fail,
     #results.skip,
