@@ -26,7 +26,11 @@ $(luatest_o)/lib/build/test_pr.lua.ok: lib/build/pr.lua
 $(luatest_o)/lib/build/test_luafiles.lua.ok: $(manifest_git) $(manifest_luafiles) $(manifest_luatests)
 $(luatest_o)/lib/build/test_luafiles.lua.ok: TEST_ARGS = $(manifest_git) $(manifest_luafiles) $(manifest_luatests)
 
-update-pr: $(cosmic) ## Update PR title/description from .github/pr/<number>.md
-	@$(cosmic) -l skill update-pr || true
+update-pr: $(lua_bin) ## Update PR title/description from .github/pr/<number>.md
+	@if [ -f $(cosmic) ]; then \
+		$(cosmic) -l skill update-pr || true; \
+	else \
+		$(lua_bin) lib/build/pr.lua || true; \
+	fi
 
 .PHONY: update-pr
