@@ -19,6 +19,7 @@ include 3p/luaunit/cook.mk
 include 3p/ast-grep/cook.mk
 include 3p/cosmos/cook.mk
 include 3p/argparse/cook.mk
+include 3p/rg/cook.mk
 include lib/cosmic/cook.mk
 #include lib/home/cook.mk
 
