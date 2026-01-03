@@ -5,50 +5,18 @@ local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local spawn = require("cosmic.spawn")
+local common = require("checker.common")
 
 local supported_extensions = {
   [".lua"] = true,
 }
 
-local supported_shebangs = {
-  ["lua"] = true,
+local supported_patterns = {
+  shebangs = {
+    ["lua"] = true,
+  },
+  ignore = "teal%s+ignore%s*:?%s*(.*)",
 }
-
-local function has_supported_extension(file)
-  for ext in pairs(supported_extensions) do
-    if file:sub(-#ext) == ext then
-      return true
-    end
-  end
-  return false
-end
-
-local function check_first_lines(file)
-  local f = io.open(file, "r")
-  if not f then
-    return nil, nil
-  end
-  local has_shebang = false
-  for i = 1, 10 do
-    local line = f:read("*l")
-    if not line then
-      break
-    end
-    if i == 1 then
-      local interp = line:match("^#!.-/([%w_-]+)%s*$") or line:match("^#!/usr/bin/env%s+([%w_-]+)")
-      if interp and supported_shebangs[interp] then
-        has_shebang = true
-      end
-    end
-    local reason = line:match("teal%s+ignore%s*:?%s*(.*)")
-    if reason then
-      f:close()
-      return has_shebang, reason ~= "" and reason or "directive"
-    end
-  end
-  f:close()
-  return has_shebang, nil
-end
 
 local function parse_output(stderr)
   local issues = {}
@@ -89,22 +57,6 @@ local function format_issues(issues, source)
   return table.concat(lines, "\n")
 end
 
-local function format_output(status, message, stdout, stderr)
-  local lines = {}
-  if message and message ~= "" then
-    table.insert(lines, status .. ": " .. message)
-  else
-    table.insert(lines, status)
-  end
-  table.insert(lines, "")
-  table.insert(lines, "## stdout")
-  table.insert(lines, "")
-  table.insert(lines, stdout or "")
-  table.insert(lines, "## stderr")
-  table.insert(lines, "")
-  table.insert(lines, stderr or "")
-  return table.concat(lines, "\n")
-end
 
 local function main(source, out)
   if not source or not out then
@@ -113,15 +65,15 @@ local function main(source, out)
 
   unix.makedirs(path.dirname(out))
 
-  local has_shebang, skip_reason = check_first_lines(source)
+  local has_shebang, skip_reason = common.check_first_lines(source, supported_patterns)
 
-  if not has_supported_extension(source) and not has_shebang then
-    cosmo.Barf(out, format_output("ignore", "unsupported file type", "", ""))
+  if not common.has_extension(source, supported_extensions) and not has_shebang then
+    cosmo.Barf(out, common.format_output("ignore", "unsupported file type", "", ""))
     return 0
   end
 
   if skip_reason then
-    cosmo.Barf(out, format_output("skip", skip_reason, "", ""))
+    cosmo.Barf(out, common.format_output("skip", skip_reason, "", ""))
     return 0
   end
 
@@ -138,9 +90,9 @@ local function main(source, out)
 
   if #issues > 0 then
     local issue_text = format_issues(issues, source)
-    cosmo.Barf(out, format_output("fail", #issues .. " issues", "", issue_text))
+    cosmo.Barf(out, common.format_output("fail", #issues .. " issues", "", issue_text))
   else
-    cosmo.Barf(out, format_output("pass", nil, "", ""))
+    cosmo.Barf(out, common.format_output("pass", nil, "", ""))
   end
 
   return 0
