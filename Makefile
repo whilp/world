@@ -97,6 +97,9 @@ all_tests := $(foreach x,$(modules),$($(x)_tests))
 all_tested := $(patsubst %,o/%.tested,$(all_tests))
 test: $(all_tested)
 
+$(o)/test-results.txt: $(all_tested)
+	@for f in $^; do echo "$${f%.tested}: $$(cat $$f)"; done > $@
+
 export TEST_O := $(o)
 export TEST_PLATFORM := $(platform)
 export TEST_BIN := $(o)/bin
