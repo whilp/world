@@ -2,6 +2,7 @@
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 local spawn = require("cosmic.spawn")
+local walk = require("cosmic.walk")
 
 local function move_contents(source_dir, dest_dir)
   local dir = unix.opendir(source_dir)
@@ -97,6 +98,17 @@ local function clear_dir(dir)
   end
 end
 
+local function set_mtime_recursive(dir)
+  local now_sec, now_nsec = unix.clock_gettime(unix.CLOCK_REALTIME)
+  walk.walk(dir, function(file_path)
+    local fd = unix.open(file_path, unix.O_RDONLY)
+    if fd then
+      unix.futimens(fd, now_sec, now_nsec, now_sec, now_nsec)
+      unix.close(fd)
+    end
+  end)
+end
+
 local function extract_zip(archive, dest_dir, strip)
   strip = strip or 0
   -- temp_dir must be on same filesystem as dest_dir for rename to work
@@ -141,20 +153,7 @@ local function extract_targz(archive, dest_dir, strip)
   return true
 end
 
-local function read_gz_mtime(archive)
-  local fd = unix.open(archive, unix.O_RDONLY)
-  if not fd then return nil end
-  local header = unix.read(fd, 8)
-  unix.close(fd)
-  if not header or #header < 8 then return nil end
-  -- mtime is bytes 4-7 (0-indexed) as little-endian uint32
-  local b1, b2, b3, b4 = header:byte(5, 8)
-  return b1 + b2 * 256 + b3 * 65536 + b4 * 16777216
-end
-
 local function extract_gz(archive, dest_dir, tool_name)
-  local mtime = read_gz_mtime(archive)
-
   local dest = path.join(dest_dir, tool_name)
   local handle = spawn({"gunzip", "-c", archive})
   local ok, output, exit_code = handle:read()
@@ -166,9 +165,6 @@ local function extract_gz(archive, dest_dir, tool_name)
     return nil, "failed to create " .. dest
   end
   unix.write(fd, output)
-  if mtime and mtime > 0 then
-    unix.futimens(fd, mtime, 0, mtime, 0)
-  end
   unix.close(fd)
   return true
 end
@@ -210,6 +206,8 @@ local function main(version_file, platform, input, dest_dir)
     return nil, err
   end
 
+  set_mtime_recursive(dest_dir)
+
   return true
 end
 
@@ -226,4 +224,5 @@ return {
   extract_targz = extract_targz,
   extract_gz = extract_gz,
   strip_components = strip_components,
+  set_mtime_recursive = set_mtime_recursive,
 }

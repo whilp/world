@@ -23,6 +23,9 @@ $(luatest_o)/lib/build/test_ast_grep.lua.ok: TEST_ARGS = $(CURDIR)/$(astgrep_con
 
 $(luatest_o)/lib/build/test_pr.lua.ok: lib/build/pr.lua
 
+$(luatest_o)/lib/build/test_luafiles.lua.ok: $(manifest_git) $(manifest_luafiles) $(manifest_luatests)
+$(luatest_o)/lib/build/test_luafiles.lua.ok: TEST_ARGS = $(manifest_git) $(manifest_luafiles) $(manifest_luatests)
+
 update-pr: $(lua_bin) ## Update PR title/description from .github/pr/<number>.md
 	@$(lua_bin) lib/build/pr.lua || true
 
