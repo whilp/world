@@ -5,7 +5,7 @@ local lu = require("luaunit")
 local path = require("cosmo.path")
 local spawn = require("cosmic.spawn")
 
-local cosmic = path.join(os.getenv("TEST_BIN_DIR"), "bin", "cosmic")
+local cosmic = path.join(os.getenv("TEST_BIN"), "cosmic")
 
 TestCosmicBinary = {}
 

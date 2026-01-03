@@ -74,6 +74,7 @@ test: $(all_tested)
 
 export TEST_O := $(o)
 export TEST_PLATFORM := $(platform)
+export TEST_BIN := $(o)/bin
 
 $(o)/%.tested: % $(test_files) | $(bootstrap_files)
 	@$< $@ $(TEST_DEPS)
