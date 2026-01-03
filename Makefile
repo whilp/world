@@ -137,7 +137,7 @@ astgrep: $(all_astgreps)
 	@$(astgrep_reporter) $(o)
 
 $(o)/%.astgrep.checked: $(o)/% $(ast-grep_files) | $(bootstrap_files) $(ast-grep_staged)
-	@$(astgrep_runner) $< $@
+	@ASTGREP_BIN=$(ast-grep_staged) $(astgrep_runner) $< $@
 
 .PHONY: clean
 clean:

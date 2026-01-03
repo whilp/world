@@ -117,7 +117,7 @@ local function main(source, out)
     return 0
   end
 
-  local sg = path.join(os.getenv("TEST_BIN"), "sg")
+  local sg = path.join(os.getenv("ASTGREP_BIN"), "sg")
 
   local handle = spawn({ sg, "scan", "--json=stream", source })
   local _, stdout, _ = handle:read()
