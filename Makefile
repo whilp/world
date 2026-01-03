@@ -31,9 +31,9 @@ $(foreach m,$(modules),\
   $(if $($(m)_staged),\
     $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): STAGED_DIR := $($(m)_staged))\
     $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(m)_staged)))\
-  $(foreach d,$($(m)_test_deps),\
-    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): STAGED_DIR := $($(d)_staged))\
-    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(d)_staged))))
+  $(foreach d,$($(m)_deps),\
+    $(if $($(d)_staged),\
+      $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(d)_staged)))))
 
 cp := cp -p
 
