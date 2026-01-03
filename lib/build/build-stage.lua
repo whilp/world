@@ -1,5 +1,6 @@
 #!/usr/bin/env lua
 -- ast-grep ignore: builds relative symlink paths
+-- teal ignore: type annotations needed
 -- stage.lua: extract fetched archives based on version.lua format
 
 local path = require("cosmo.path")

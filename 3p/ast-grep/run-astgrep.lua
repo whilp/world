@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+-- teal ignore: type annotations needed
 
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")

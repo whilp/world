@@ -1,6 +1,7 @@
 -- skill - dispatcher for cosmic skill commands
 -- usage: cosmic-lua -l skill <subcommand> [args...]
 
+-- teal ignore: type annotations needed
 local cosmo = require("cosmo")
 
 local function find_subcommand()
