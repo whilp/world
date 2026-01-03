@@ -137,7 +137,7 @@ local function main(version_file, platform, input, output)
     return nil, "unknown platform: " .. platform
   end
 
-  local format = spec.format or "binary"
+  local format = spec.format or plat.format or "binary"
   local strip = spec.strip_components or 1
 
   -- derive module name from output path: o/<module>/.staged
