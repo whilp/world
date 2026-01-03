@@ -121,6 +121,14 @@ $(foreach m,$(filter-out bootstrap,$(modules)),\
 clean:
 	@rm -rf $(o)
 
+.PHONY: check
+check:
+	@echo "check: ok"
+
+.PHONY: update-pr
+update-pr:
+	@echo "update-pr: ok"
+
 debug-modules:
 	@echo $(modules)
 
