@@ -107,6 +107,7 @@ $(o)/test-results.txt: $(all_tested)
 export TEST_O := $(o)
 export TEST_PLATFORM := $(platform)
 export TEST_BIN := $(o)/bin
+export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
 
 $(o)/%.tested: % $(test_files) | $(bootstrap_files)
 	@TEST_DIR=$(TEST_DIR) $< $@
