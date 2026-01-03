@@ -41,6 +41,7 @@ include 3p/duckdb/cook.mk
 include 3p/nvim/cook.mk
 include 3p/tree-sitter/cook.mk
 include 3p/luacheck/cook.mk
+include lib/skill/cook.mk
 include lib/cosmic/cook.mk
 include lib/home/cook.mk
 
@@ -147,10 +148,14 @@ clean:
 check: $(all_astgreps)
 	@$(astgrep_reporter) $(o)
 
-# TODO: implement PR update from .github/pr/<number>.md
+# Update PR title/description from .github/pr/<number>.md
 .PHONY: update-pr
-update-pr:
-	@echo "update-pr: ok"
+update-pr: $(cosmic_bin) | $(bootstrap_cosmic)
+	@if [ -f $(cosmic_bin) ]; then \
+		$(cosmic_bin) -l skill update-pr || true; \
+	else \
+		$(bootstrap_cosmic) lib/skill/pr.lua || true; \
+	fi
 
 debug-modules:
 	@echo $(modules)
