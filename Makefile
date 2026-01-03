@@ -134,6 +134,7 @@ $(foreach m,$(filter-out bootstrap,$(modules)),\
 all_built_files := $(foreach x,$(modules),$($(x)_files))
 all_astgreps := $(patsubst %,%.astgrep.checked,$(all_built_files))
 astgrep: $(all_astgreps)
+	@$(astgrep_reporter) $(o)
 
 $(o)/%.astgrep.checked: $(o)/% $(ast-grep_files) | $(bootstrap_files) $(ast-grep_staged)
 	@$(astgrep_runner) $< $@

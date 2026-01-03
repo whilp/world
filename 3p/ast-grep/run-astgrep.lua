@@ -66,9 +66,39 @@ local function parse_json_stream(stdout)
   return issues
 end
 
+local function format_issues(issues, source)
+  local lines = {}
+  for _, issue in ipairs(issues) do
+    table.insert(lines, string.format("%s:%d:%d: [%s] %s",
+      source,
+      issue.line,
+      issue.column,
+      issue.rule_id,
+      issue.note or issue.message or ""))
+  end
+  return table.concat(lines, "\n")
+end
+
+local function format_output(status, message, stdout, stderr)
+  local lines = {}
+  if message and message ~= "" then
+    table.insert(lines, status .. ": " .. message)
+  else
+    table.insert(lines, status)
+  end
+  table.insert(lines, "")
+  table.insert(lines, "## stdout")
+  table.insert(lines, "")
+  table.insert(lines, stdout or "")
+  table.insert(lines, "## stderr")
+  table.insert(lines, "")
+  table.insert(lines, stderr or "")
+  return table.concat(lines, "\n")
+end
+
 local function main(source, out)
   if not source or not out then
-    return 1, "usage: run-astgrep.lua <source> <out.astgrep.checked>"
+    return 1, "usage: run-astgrep.lua <source> <out>"
   end
 
   unix.makedirs(path.dirname(out))
@@ -76,39 +106,29 @@ local function main(source, out)
   local has_shebang, skip_reason = check_first_lines(source)
 
   if not has_supported_extension(source) and not has_shebang then
-    cosmo.Barf(out, "ignore: unsupported file type\n")
+    cosmo.Barf(out, format_output("ignore", "unsupported file type", "", ""))
     return 0
   end
 
   if skip_reason then
-    cosmo.Barf(out, "skip: " .. skip_reason .. "\n")
-    io.stderr:write("SKIP " .. source .. " (" .. skip_reason .. ")\n")
+    cosmo.Barf(out, format_output("skip", skip_reason, "", ""))
     return 0
   end
 
   local sg = path.join(os.getenv("TEST_BIN"), "sg")
 
   local handle = spawn({ sg, "scan", "--json=stream", source })
-  local _, stdout, exit_code = handle:read()
+  local _, stdout, _ = handle:read()
 
   local issues = parse_json_stream(stdout)
 
   if #issues > 0 then
-    for _, issue in ipairs(issues) do
-      io.stderr:write(string.format("%s:%d:%d: [%s] %s\n",
-        source,
-        issue.line,
-        issue.column,
-        issue.rule_id,
-        issue.note or issue.message or ""))
-    end
-    cosmo.Barf(out, "fail\n")
-    io.stderr:write("FAIL " .. source .. "\n")
+    local issue_text = format_issues(issues, source)
+    cosmo.Barf(out, format_output("fail", #issues .. " issues", "", issue_text))
     return 1
   end
 
-  cosmo.Barf(out, "ok\n")
-  io.stderr:write("PASS " .. source .. "\n")
+  cosmo.Barf(out, format_output("pass", nil, "", ""))
   return 0
 end
 
