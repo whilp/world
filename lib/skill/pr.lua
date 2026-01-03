@@ -188,8 +188,9 @@ local function append_timestamp_details(body)
   local entry = string.format("- Updated: %s", timestamp)
 
   local details_marker = "<!-- pr-update-history -->"
-  local details_start = "<details><summary>Update history</summary>\n\n"
-  local details_end = "\n</details>"
+  local details_block = details_marker .. "\n" ..
+                       "<details><summary>Update history</summary>\n\n" ..
+                       entry .. "\n</details>"
 
   -- check if details section already exists
   local marker_pos = body:find(details_marker, 1, true)
@@ -197,17 +198,18 @@ local function append_timestamp_details(body)
     -- find the end of the details section
     local details_close = body:find("</details>", marker_pos, true)
     if details_close then
-      -- insert the new entry before </details>
-      local before = body:sub(1, details_close - 1)
-      local after = body:sub(details_close)
-      return before .. entry .. "\n" .. after
+      -- replace the entire details block
+      local before = body:sub(1, marker_pos - 1)
+      local after = body:sub(details_close + #"</details>")
+      -- trim trailing newline from before if present
+      before = before:match("^(.-)%s*$")
+      return before .. "\n\n" .. details_block .. after
     end
   end
 
   -- no existing details section, append new one
   local separator = body:match("\n$") and "" or "\n"
-  return body .. separator .. "\n" .. details_marker .. "\n" ..
-         details_start .. entry .. details_end
+  return body .. separator .. "\n" .. details_block
 end
 
 local function update_pr(owner, repo, pr_number, title, body, token, opts)

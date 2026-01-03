@@ -18,7 +18,7 @@ local function test_append_timestamp_to_new_body()
 end
 test_append_timestamp_to_new_body()
 
-local function test_append_timestamp_to_existing_details()
+local function test_replace_existing_details()
   local body = [[This is the PR description.
 
 <!-- pr-update-history -->
@@ -29,12 +29,13 @@ local function test_append_timestamp_to_existing_details()
 
   local result = pr.append_timestamp_details(body)
 
-  -- should have two update entries
+  -- should have only one timestamp entry (replaced)
   local _, count = result:gsub("Updated: %d%d%d%d%-%d%d%-%d%dT%d%d:%d%d:%d%dZ", "")
-  assert(count == 2, "expected two timestamp entries, got " .. count)
-  assert(result:match("2026%-01%-01T12:00:00Z"), "expected old timestamp")
+  assert(count == 1, "expected one timestamp entry, got " .. count)
+  assert(not result:match("2026%-01%-01T12:00:00Z"), "expected old timestamp to be replaced")
+  assert(result:match("This is the PR description"), "expected original body content")
 end
-test_append_timestamp_to_existing_details()
+test_replace_existing_details()
 
 local function test_get_pr_success()
   local mock_fetch = function(url, opts)
