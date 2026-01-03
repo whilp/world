@@ -32,40 +32,43 @@ local function read_first_line(filepath)
   return chunk:match("^([^\r\n]+)")
 end
 
+local shebang_patterns = {
+  {"lua", "lua"},
+  {"bash", "shell"},
+  {"sh", "shell"},
+  {"python", "python"},
+}
+
 local function detect_shebang_type(first_line)
   if not first_line then
     return nil
   end
-  if first_line:match("^#!%s*/.*lua") then
-    return "lua"
-  end
-  if first_line:match("^#!%s*/.*bash") or first_line:match("^#!%s*/.*sh") then
-    return "shell"
-  end
-  if first_line:match("^#!%s*/.*python") then
-    return "python"
+  for _, entry in ipairs(shebang_patterns) do
+    if first_line:match("^#!%s*/.*" .. entry[1]) then
+      return entry[2]
+    end
   end
   return nil
 end
 
+local ext_types = {
+  lua = "lua",
+  sh = "shell",
+  bash = "shell",
+  py = "python",
+  mk = "make",
+  md = "markdown",
+  yml = "yaml",
+  yaml = "yaml",
+  json = "json",
+  toml = "toml",
+}
+
 local function detect_type(path)
   local ext = path:match("%.([^.]+)$")
-  if ext == "lua" then
-    return "lua"
-  elseif ext == "sh" or ext == "bash" then
-    return "shell"
-  elseif ext == "py" then
-    return "python"
-  elseif ext == "mk" then
-    return "make"
-  elseif ext == "md" then
-    return "markdown"
-  elseif ext == "yml" or ext == "yaml" then
-    return "yaml"
-  elseif ext == "json" then
-    return "json"
-  elseif ext == "toml" then
-    return "toml"
+  local file_type = ext_types[ext]
+  if file_type then
+    return file_type
   end
   local first_line = read_first_line(path)
   return detect_shebang_type(first_line)
