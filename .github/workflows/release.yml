@@ -7,39 +7,6 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
-
-      - name: Bootstrap lua
-        run: make bootstrap
-
-      - name: Build home, lua, and cosmic binaries
-        run: make home-all lua-all cosmic -j4
-
-      - name: Run checks
-        run: make check
-
-      - name: Run tests
-        run: make test -j4
-
-      - name: Upload home artifacts
-        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
-        with:
-          name: home-binaries
-          path: |
-            o/darwin-arm64/home/bin/home
-            o/darwin-arm64/lua/bin/lua.dist
-            o/linux-arm64/home/bin/home
-            o/linux-arm64/lua/bin/lua.dist
-            o/linux-x86_64/home/bin/home
-            o/linux-x86_64/lua/bin/lua.dist
-            o/any/cosmic/bin/cosmic
-
-  test:
-    runs-on: ${{ matrix.os }}
-    needs: build
     strategy:
       matrix:
         include:
@@ -49,50 +16,58 @@ jobs:
             platform: darwin-arm64
           - os: ubuntu-24.04-arm
             platform: linux-arm64
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
 
-      - name: Download artifacts
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+      - name: Bootstrap lua
+        run: make bootstrap
+
+      - name: Run checks
+        run: make check
+
+      - name: Run tests
+        run: make test
+
+      - name: Build home and cosmic binaries
+        run: make home cosmic
+
+      - name: Upload home binary
+        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
         with:
-          name: home-binaries
-          path: o/
+          name: home-${{ matrix.platform }}
+          path: o/bin/home
 
-      - name: Make binaries executable
-        run: |
-          chmod +x o/*/home/bin/home o/*/lua/bin/*
-          # Create lua symlink so shebang scripts work
-          ln -sf lua.dist o/${{ matrix.platform }}/lua/bin/lua
-
-      - name: Run home tests
-        run: |
-          o/${{ matrix.platform }}/lua/bin/lua lib/home/test_main.lua
+      - name: Upload cosmic binary
+        if: matrix.platform == 'linux-x86_64'
+        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
+        with:
+          name: cosmic
+          path: o/bin/cosmic
 
   release:
     runs-on: ubuntu-latest
-    needs: test
+    needs: build
     permissions:
       contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
 
-      - name: Download home artifacts
+      - name: Download all artifacts
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
-          name: home-binaries
-          path: o/
+          path: artifacts/
 
       - name: Prepare release binaries
         run: |
           mkdir -p release
-          cp o/darwin-arm64/home/bin/home release/home-darwin-arm64
-          cp o/linux-arm64/home/bin/home release/home-linux-arm64
-          cp o/linux-x86_64/home/bin/home release/home-linux-x86_64
-          cp o/linux-x86_64/home/bin/home release/home
-          cp o/linux-x86_64/lua/bin/lua.dist release/lua
-          cp o/any/cosmic/bin/cosmic release/cosmic-lua
+          cp artifacts/home-darwin-arm64/home release/home-darwin-arm64
+          cp artifacts/home-linux-arm64/home release/home-linux-arm64
+          cp artifacts/home-linux-x86_64/home release/home-linux-x86_64
+          cp artifacts/home-linux-x86_64/home release/home
+          cp artifacts/cosmic/cosmic release/cosmic-lua
           chmod +x release/*
 
       - name: Get version
@@ -111,6 +86,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "${{ steps.version.outputs.tag }}" \
+            --prerelease \
             --title "home ${{ steps.version.outputs.tag }}" \
             --notes "## Home binaries
           Platform-specific dotfiles and bundled tools.
