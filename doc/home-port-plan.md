@@ -127,22 +127,22 @@ Start with Option A (single platform). Multi-platform can be added later if need
 ## Checklist
 
 ### Phase 1
-- [ ] Port rg
-- [ ] Port gh
-- [ ] Port uv
-- [ ] Port shfmt
-- [ ] Port stylua
-- [ ] Port biome
-- [ ] Port comrak
-- [ ] Port delta
-- [ ] Port ruff
-- [ ] Port sqruff
-- [ ] Port superhtml
-- [ ] Port marksman
-- [ ] Port duckdb
-- [ ] Port nvim
-- [ ] Port tree-sitter
-- [ ] Port luacheck
+- [x] Port rg
+- [x] Port gh
+- [x] Port uv
+- [x] Port shfmt
+- [x] Port stylua
+- [x] Port biome
+- [x] Port comrak
+- [x] Port delta
+- [x] Port ruff
+- [x] Port sqruff
+- [x] Port superhtml
+- [x] Port marksman
+- [x] Port duckdb
+- [x] Port nvim
+- [x] Port tree-sitter
+- [x] Port luacheck
 
 ### Phase 2
 - [ ] Convert home to modules pattern
