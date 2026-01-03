@@ -68,7 +68,7 @@ $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script) $(manifes
 # Manifest files
 $(manifest_git): .git/index
 	@mkdir -p $(@D)
-	git ls-files > $@
+	git ls-files -z > $@
 
 $(manifest_luafiles): $(manifest_git) $(manifest_script) $(script_deps) | $(lua_bin)
 	@mkdir -p $(@D)
