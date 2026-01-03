@@ -12,6 +12,10 @@ endif
 o := o
 o_platform := $(o)/$(current_platform)
 o_any := $(o)/any
+manifest_o := $(o)/manifest
+manifest_git := $(manifest_o)/git.txt
+manifest_luafiles := $(manifest_o)/lua-files.txt
+manifest_luatests := $(manifest_o)/lua-tests.txt
 
 export PATH := $(CURDIR)/$(o_platform)/cosmos/bin:$(CURDIR)/$(o_any)/lua/bin:$(PATH)
 
@@ -61,8 +65,23 @@ script_deps := $(cosmic_lib)/cosmic/spawn.lua $(cosmic_lib)/cosmic/walk.lua
 $(extract_script): | $(cosmic_lib)/cosmic/spawn.lua
 $(luatest_script) $(luacheck_script) $(ast_grep_script) $(teal_script) $(manifest_script): | $(script_deps)
 
-lua_files := $(shell $(lua_bin) $(manifest_script) find_lua_files)
-test_files := $(shell $(lua_bin) $(manifest_script) find_lua_tests)
+# Manifest files
+$(manifest_git): .git/index
+	@mkdir -p $(@D)
+	git ls-files -z > $@
+
+$(manifest_luafiles): $(manifest_git) $(manifest_script) $(script_deps) | $(lua_bin)
+	@mkdir -p $(@D)
+	$(lua_bin) $(manifest_script) find_lua_files > $@
+
+$(manifest_luatests): $(manifest_git) $(manifest_script) $(script_deps) | $(lua_bin)
+	@mkdir -p $(@D)
+	$(lua_bin) $(manifest_script) find_lua_tests > $@
+
+lua_files := $(shell cat $(manifest_luafiles) 2>/dev/null)
+lua_files += lib/build/test_luafiles.lua
+test_files := $(shell cat $(manifest_luatests) 2>/dev/null)
+test_files += lib/build/test_luafiles.lua
 version_files := $(shell git ls-files '**/version.lua' | grep -v '^lib/version\.lua$$')
 luatest_files := $(patsubst %,$(luatest_o)/%.ok,$(test_files))
 luacheck_files := $(patsubst %,$(luacheck_o)/%.ok,$(lua_files))
