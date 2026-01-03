@@ -7,7 +7,7 @@ local bin = path.join(TEST_DIR, "comrak")
 
 local function test_version()
   local ok, got = spawn({ bin, "--version" }):read()
-  if not ok then skip("binary not executable on this platform") end
+  assert(ok, "SKIP comrak not executable on this platform")
   local want = "comrak"
   assert(got:find(want, 1, true), "checking comrak, want: " .. want .. " got: " .. got)
 end

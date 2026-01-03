@@ -7,7 +7,7 @@ local bin = path.join(TEST_DIR, "biome")
 
 local function test_version()
   local ok, got = spawn({ bin, "--version" }):read()
-  if not ok then skip("binary not executable on this platform") end
+  assert(ok, "SKIP biome not executable on this platform")
   assert(got:match("Version:") or got:match("%d+%.%d+%.%d+"), "checking biome version, got: " .. got)
 end
 test_version()
