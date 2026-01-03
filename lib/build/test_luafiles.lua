@@ -2,6 +2,9 @@ local lu = require("luaunit")
 local cosmo = require("cosmo")
 local manifest = require("build.manifest")
 
+local luafiles_path = TEST_ARGS[1]
+local git_path = TEST_ARGS[2]
+
 local function read_lines(filepath)
   local content = cosmo.Slurp(filepath)
   if not content then
@@ -19,11 +22,11 @@ end
 TestLuaFilesTxt = {}
 
 function TestLuaFilesTxt:test_matches_manifest_git()
-  local txt_lines = read_lines("o/manifest/lua-files.txt")
-  lu.assertNotNil(txt_lines, "o/manifest/lua-files.txt should exist")
+  local txt_lines = read_lines(luafiles_path)
+  lu.assertNotNil(txt_lines, luafiles_path .. " should exist")
 
-  local git_content = cosmo.Slurp("o/manifest/git.txt")
-  lu.assertNotNil(git_content, "o/manifest/git.txt should exist")
+  local git_content = cosmo.Slurp(git_path)
+  lu.assertNotNil(git_content, git_path .. " should exist")
 
   local expected = manifest.find_lua_files({ _git_output = git_content })
   lu.assertEquals(#txt_lines, #expected, "file count mismatch")
