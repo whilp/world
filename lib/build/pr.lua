@@ -22,6 +22,19 @@ local function log(msg)
   io.stderr:write("pr: " .. msg .. "\n")
 end
 
+local function get_current_branch()
+  local handle = spawn({"git", "rev-parse", "--abbrev-ref", "HEAD"})
+  local ok, out = handle:read()
+  if not ok then
+    return nil
+  end
+  local branch = out:match("^%s*(.-)%s*$")
+  if branch == "" then
+    return nil
+  end
+  return branch
+end
+
 local function get_git_info()
   local ok, remote_url = spawn({"git", "remote", "get-url", "origin"}):read()
   if not ok or not remote_url then
@@ -97,19 +110,24 @@ end
 local function github_request(method, endpoint, token, body, opts)
   opts = opts or {}
   local fetch = opts.fetch or default_fetch
+  local getenv = opts.getenv or os.getenv
 
-  local api_url = os.getenv("GITHUB_API_URL") or "https://api.github.com"
+  local api_url = getenv("GITHUB_API_URL") or "https://api.github.com"
   local url = api_url .. endpoint
 
   local fetch_opts = {
     method = method,
     headers = {
-      ["Authorization"] = "Bearer " .. token,
       ["Accept"] = "application/vnd.github+json",
       ["X-GitHub-Api-Version"] = "2022-11-28",
       ["User-Agent"] = "pr.lua/1.0",
     },
   }
+
+  -- only add auth header if token provided
+  if token and token ~= "" then
+    fetch_opts.headers["Authorization"] = "Bearer " .. token
+  end
 
   if body then
     fetch_opts.body = cosmo.EncodeJson(body)
@@ -171,31 +189,35 @@ end
 
 local function get_pr_number_from_env(opts)
   opts = opts or {}
+  local getenv = opts.getenv or os.getenv
 
-  local pr_number = os.getenv("GITHUB_PR_NUMBER")
+  local pr_number = getenv("GITHUB_PR_NUMBER")
   if pr_number and pr_number ~= "" then
     return tonumber(pr_number)
   end
 
-  local token = os.getenv("GITHUB_TOKEN")
-  if not token or token == "" then
-    return nil, "GITHUB_TOKEN not set"
+  -- determine branch early so we can include it in error messages
+  local branch = getenv("GITHUB_HEAD_REF") or getenv("GITHUB_REF_NAME")
+  if not branch then
+    branch = get_current_branch()
   end
 
-  local repo = os.getenv("GITHUB_REPOSITORY")
+  local repo = getenv("GITHUB_REPOSITORY")
   if not repo then
     return nil, "GITHUB_REPOSITORY not set"
   end
 
-  local branch = os.getenv("GITHUB_HEAD_REF") or os.getenv("GITHUB_REF_NAME")
   if not branch then
-    return nil, "GITHUB_HEAD_REF/GITHUB_REF_NAME not set"
+    return nil, "could not determine branch"
   end
 
   local owner, repo_name = repo:match("^([^/]+)/(.+)$")
   if not owner then
     return nil, "invalid GITHUB_REPOSITORY format"
   end
+
+  -- token is optional - unauthenticated requests work for public repos
+  local token = getenv("GITHUB_TOKEN")
 
   return find_pr_number(owner, repo_name, branch, token, opts)
 end
@@ -287,18 +309,20 @@ end
 
 local function main(opts)
   opts = opts or {}
+  local getenv = opts.getenv or os.getenv
 
-  if not is_github_actions() then
+  local is_actions = getenv("GITHUB_ACTIONS") == "true"
+  if not is_actions then
     print_help()
     return 0
   end
 
-  local token = os.getenv("GITHUB_TOKEN")
+  local token = getenv("GITHUB_TOKEN")
   if not token or token == "" then
     return 1, "GITHUB_TOKEN not set"
   end
 
-  local repo = os.getenv("GITHUB_REPOSITORY")
+  local repo = getenv("GITHUB_REPOSITORY")
   if not repo then
     return 1, "GITHUB_REPOSITORY not set"
   end
@@ -333,6 +357,7 @@ return {
   github_request = github_request,
   find_pr_number = find_pr_number,
   update_pr = update_pr,
+  get_current_branch = get_current_branch,
   get_pr_number_from_env = get_pr_number_from_env,
   get_git_info = get_git_info,
   find_pr_for_branch = find_pr_for_branch,
