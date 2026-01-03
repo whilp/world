@@ -152,20 +152,7 @@ local function extract_targz(archive, dest_dir, strip)
   return true
 end
 
-local function read_gz_mtime(archive)
-  local fd = unix.open(archive, unix.O_RDONLY)
-  if not fd then return nil end
-  local header = unix.read(fd, 8)
-  unix.close(fd)
-  if not header or #header < 8 then return nil end
-  -- mtime is bytes 4-7 (0-indexed) as little-endian uint32
-  local b1, b2, b3, b4 = header:byte(5, 8)
-  return b1 + b2 * 256 + b3 * 65536 + b4 * 16777216
-end
-
 local function extract_gz(archive, dest_dir, tool_name)
-  local mtime = read_gz_mtime(archive)
-
   local dest = path.join(dest_dir, tool_name)
   local handle = spawn({"gunzip", "-c", archive})
   local ok, output, exit_code = handle:read()
@@ -177,9 +164,6 @@ local function extract_gz(archive, dest_dir, tool_name)
     return nil, "failed to create " .. dest
   end
   unix.write(fd, output)
-  if mtime and mtime > 0 then
-    unix.futimens(fd, mtime, 0, mtime, 0)
-  end
   unix.close(fd)
   return true
 end
@@ -221,12 +205,10 @@ local function main(version_file, platform, input, dest_dir)
     return nil, err
   end
 
-  if format == "zip" or format == "tar.gz" then
-    local archive_stat = unix.stat(input)
-    if archive_stat then
-      local archive_mtime_sec, archive_mtime_nsec = archive_stat:mtim()
-      set_mtime_recursive(dest_dir, archive_mtime_sec, archive_mtime_nsec)
-    end
+  local archive_stat = unix.stat(input)
+  if archive_stat then
+    local archive_mtime_sec, archive_mtime_nsec = archive_stat:mtim()
+    set_mtime_recursive(dest_dir, archive_mtime_sec, archive_mtime_nsec)
   end
 
   return true

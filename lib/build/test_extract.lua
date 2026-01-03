@@ -390,6 +390,10 @@ function TestTimestampPreservationGz:test_uses_gzip_header_mtime()
   local extracted_file = path.join(self.dest, self.tool_name)
   lu.assertTrue(file_exists(extracted_file))
 
+  local archive_stat = unix.stat(self.archive)
   local extracted_stat = unix.stat(extracted_file)
-  lu.assertEquals(extracted_stat:mtim(), self.known_mtime, "mtime should match gzip header (original file)")
+  local archive_sec, archive_nsec = archive_stat:mtim()
+  local extracted_sec, extracted_nsec = extracted_stat:mtim()
+  lu.assertEquals(extracted_sec, archive_sec, "mtime seconds should match archive file")
+  lu.assertEquals(extracted_nsec, archive_nsec, "mtime nanoseconds should match archive file")
 end
