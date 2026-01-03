@@ -57,12 +57,15 @@ local function main(version_file, platform, output)
   end
 
   local output_dir = path.dirname(output)
-  local archive_base = "o/fetched"
+  local fetch_o = os.getenv("FETCH_O")
+  if not fetch_o then
+    return nil, "FETCH_O env var required"
+  end
   unix.makedirs(output_dir)
-  unix.makedirs(archive_base)
+  unix.makedirs(fetch_o)
   unix.unveil(version_file, "r")
   unix.unveil(output_dir, "rwc")
-  unix.unveil(archive_base, "rwc")
+  unix.unveil(fetch_o, "rwc")
   unix.unveil("/etc/resolv.conf", "r")
   unix.unveil("/etc/ssl", "r")
   unix.unveil(nil, nil)
@@ -89,10 +92,12 @@ local function main(version_file, platform, output)
     return nil, err
   end
 
-  -- build archive path: o/fetched/<version>-<sha>/<basename from url>
+  -- build archive path: $FETCH_O/<version>-<sha>/<basename from url>
   local archive_name = url:match("([^/]+)$")
-  local archive_dir = path.join("o", "fetched", spec.version .. "-" .. plat.sha)
+  local archive_dir = path.join(fetch_o, spec.version .. "-" .. plat.sha)
   local archive_path = path.join(archive_dir, archive_name)
+
+  io.stderr:write(archive_path .. ": " .. url .. "\n")
 
   unix.makedirs(archive_dir)
 
@@ -106,7 +111,8 @@ local function main(version_file, platform, output)
   unix.unlink(output)
   local depth = select(2, output_dir:gsub("/", ""))
   local up = string.rep("../", depth)
-  local rel_path = up .. "fetched/" .. spec.version .. "-" .. plat.sha .. "/" .. archive_name
+  local fetch_o_basename = fetch_o:match("([^/]+)$")
+  local rel_path = up .. fetch_o_basename .. "/" .. spec.version .. "-" .. plat.sha .. "/" .. archive_name
   local link_ok, link_err = unix.symlink(rel_path, output)
   if not link_ok then
     return nil, "failed to symlink: " .. tostring(link_err)
