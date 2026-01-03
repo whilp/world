@@ -292,8 +292,12 @@ function TestTimestampPreservationTargz:test_preserves_original_mtime()
   local extracted = path.join(self.dest, "file1.txt")
   lu.assertTrue(file_exists(extracted))
 
+  local archive_stat = unix.stat(self.archive)
   local stat = unix.stat(extracted)
-  lu.assertEquals(stat:mtim(), self.known_mtime, "mtime should match original file")
+  local archive_sec, archive_nsec = archive_stat:mtim()
+  local extracted_sec, extracted_nsec = stat:mtim()
+  lu.assertEquals(extracted_sec, archive_sec, "mtime seconds should match archive file")
+  lu.assertEquals(extracted_nsec, archive_nsec, "mtime nanoseconds should match archive file")
 end
 
 TestTimestampPreservationZip = {}
@@ -336,10 +340,12 @@ function TestTimestampPreservationZip:test_preserves_original_mtime()
   local extracted = path.join(self.dest, "file1.txt")
   lu.assertTrue(file_exists(extracted))
 
+  local archive_stat = unix.stat(self.archive)
   local stat = unix.stat(extracted)
-  -- zip stores mtime with 2-second resolution
-  local diff = math.abs(stat:mtim() - self.known_mtime)
-  lu.assertTrue(diff <= 2, "mtime should match original file (within 2s)")
+  local archive_sec, archive_nsec = archive_stat:mtim()
+  local extracted_sec, extracted_nsec = stat:mtim()
+  lu.assertEquals(extracted_sec, archive_sec, "mtime seconds should match archive file")
+  lu.assertEquals(extracted_nsec, archive_nsec, "mtime nanoseconds should match archive file")
 end
 
 TestTimestampPreservationGz = {}

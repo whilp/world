@@ -97,8 +97,35 @@ local function clear_dir(dir)
   end
 end
 
+local function set_mtime_recursive(dir, mtime_sec, mtime_nsec)
+  local handle = unix.opendir(dir)
+  if not handle then return end
+  for name in handle do
+    if name ~= "." and name ~= ".." then
+      local file_path = path.join(dir, name)
+      local stat = unix.stat(file_path)
+      if stat then
+        local fd = unix.open(file_path, unix.O_RDONLY)
+        if fd then
+          unix.futimens(fd, mtime_sec, mtime_nsec, mtime_sec, mtime_nsec)
+          unix.close(fd)
+        end
+        if unix.S_ISDIR(stat:mode()) then
+          set_mtime_recursive(file_path, mtime_sec, mtime_nsec)
+        end
+      end
+    end
+  end
+end
+
 local function extract_zip(archive, dest_dir, strip)
   strip = strip or 0
+  local archive_stat = unix.stat(archive)
+  if not archive_stat then
+    return nil, "failed to stat archive: " .. archive
+  end
+  local archive_mtime_sec, archive_mtime_nsec = archive_stat:mtim()
+
   -- temp_dir must be on same filesystem as dest_dir for rename to work
   local temp_dir = unix.mkdtemp(path.join(path.dirname(dest_dir), ".extract_XXXXXX"))
   clear_dir(dest_dir)
@@ -117,11 +144,19 @@ local function extract_zip(archive, dest_dir, strip)
   if not ok then
     return nil, err
   end
+
+  set_mtime_recursive(dest_dir, archive_mtime_sec, archive_mtime_nsec)
   return true
 end
 
 local function extract_targz(archive, dest_dir, strip)
   strip = strip or 0
+  local archive_stat = unix.stat(archive)
+  if not archive_stat then
+    return nil, "failed to stat archive: " .. archive
+  end
+  local archive_mtime_sec, archive_mtime_nsec = archive_stat:mtim()
+
   -- temp_dir must be on same filesystem as dest_dir for rename to work
   local temp_dir = unix.mkdtemp(path.join(path.dirname(dest_dir), ".extract_XXXXXX"))
   clear_dir(dest_dir)
@@ -138,6 +173,8 @@ local function extract_targz(archive, dest_dir, strip)
   if not ok then
     return nil, err
   end
+
+  set_mtime_recursive(dest_dir, archive_mtime_sec, archive_mtime_nsec)
   return true
 end
 
