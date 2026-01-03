@@ -1,12 +1,3 @@
-tree_sitter_version := 3p/tree-sitter/version.lua
-bins += o/%/tree-sitter/bin/tree-sitter
-
-
-o/%/tree-sitter/archive.gz: $(tree_sitter_version) $(fetch)
-	$(fetch) $(tree_sitter_version) $* $@
-
-o/%/tree-sitter/staging/tree-sitter: $(tree_sitter_version) $(extract) o/%/tree-sitter/archive.gz
-	$(extract) $(tree_sitter_version) $* o/$*/tree-sitter/archive.gz o/$*/tree-sitter/staging
-
-o/%/tree-sitter/bin/tree-sitter: $(tree_sitter_version) $(install) o/%/tree-sitter/staging/tree-sitter
-	$(install) $(tree_sitter_version) $* o/$*/tree-sitter bin o/$*/tree-sitter/staging/tree-sitter
+modules += tree-sitter
+tree-sitter_version := 3p/tree-sitter/version.lua
+tree-sitter_tests := 3p/tree-sitter/test_tree-sitter.lua
