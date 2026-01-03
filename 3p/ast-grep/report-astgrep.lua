@@ -75,8 +75,10 @@ local function main(check_dir)
     local icon = status_icons[result.status] or " "
     local padded = string.format("%-6s", status)
     local line = icon .. " " .. padded .. " " .. result.name
-    if result.status == "skip" and result.message then
-      line = line .. " (" .. result.message .. ")"
+    if result.message then
+      line = line .. " (ast-grep: " .. result.message .. ")"
+    else
+      line = line .. " (ast-grep)"
     end
     print(line)
   end
