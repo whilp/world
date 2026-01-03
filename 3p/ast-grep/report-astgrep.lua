@@ -62,7 +62,7 @@ local function main(check_dir)
 
   local total = #results.pass + #results.fail + #results.skip
   print(string.format(
-    "%d files: %d passed, %d failed, %d skipped, %d ignored",
+    "ast-grep checks: %d files: %d passed, %d failed, %d skipped, %d ignored",
     total + #results.ignore,
     #results.pass,
     #results.fail,
