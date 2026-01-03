@@ -82,6 +82,16 @@ local function main(test_dir)
     #results.ignore
   ))
 
+  -- print skipped tests with reasons
+  if #results.skip > 0 then
+    print("")
+    print("SKIPPED:")
+    for _, result in ipairs(results.skip) do
+      local reason = result.message or "no reason given"
+      print(string.format("  %s: %s", result.name, reason))
+    end
+  end
+
   -- print failed tests with output
   if #results.fail > 0 then
     print("")
