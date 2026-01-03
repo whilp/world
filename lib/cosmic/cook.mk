@@ -2,6 +2,7 @@ modules += cosmic
 cosmic_bin := $(o)/bin/cosmic
 cosmic_files := $(cosmic_bin) $(addprefix $(o)/lib/cosmic/,init.lua spawn.lua walk.lua help.lua)
 cosmic_tests := $(wildcard lib/cosmic/test_*.lua)
+cosmic_deps := argparse
 
 # TODO: build cosmic properly
 $(cosmic_bin): $(bootstrap_cosmic)
