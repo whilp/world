@@ -1,14 +1,5 @@
-# lib/skill - cosmic skill modules
-
-skill_lib := $(o_any)/skill/lib
-
-lib_lua_modules += skill
-lib_dirs += $(skill_lib)
-lib_libs += $(skill_lib)/skill/init.lua
-
-$(skill_lib)/skill/%.lua: lib/skill/%.lua
-	mkdir -p $(@D)
-	cp $< $@
-
-# skill module depends on build.pr
-$(skill_lib)/skill/init.lua: $(o_any)/build/lib/build/pr.lua
+modules += skill
+skill_srcs := $(wildcard lib/skill/*.lua)
+skill_tests := $(filter lib/skill/test_%.lua,$(skill_srcs))
+skill_libs := $(addprefix $(o)/,$(filter-out $(skill_tests),$(skill_srcs)))
+skill_files := $(skill_libs)

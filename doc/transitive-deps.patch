@@ -1,0 +1,46 @@
+diff --git a/Makefile b/Makefile
+index abc123..def456 100644
+--- a/Makefile
++++ b/Makefile
+@@ -92,6 +92,18 @@ luatest: $(luatest_files) ## Run tests incrementally on changed files
+ $(luatest_o)/%.ok: % $(luatest_script) $(luaunit) $(script_deps)
+ 	$(TEST_ENV) $(luatest_runner) $< $@ $(TEST_ARGS)
+
++# convention: tests depend on all lua files in same module directory
++# this handles intra-module dependencies automatically
++define lib_test_deps_rule
++$(luatest_o)/lib/$(1)/test_%.lua.ok: lib/$(1)/*.lua
++endef
++
++# apply to all lib modules
++lib_modules := build cosmic
++$(foreach mod,$(lib_modules),$(eval $(call lib_test_deps_rule,$(mod))))
++
++# cross-module: lib/build tests use lib/cosmic
++$(luatest_o)/lib/build/test_%.lua.ok: lib/cosmic/*.lua
++
+ # Pattern rules for 3p test dependencies
+ define 3p_test_rule
+ $(luatest_o)/3p/$(1)/test.lua.ok: o/$$(current_platform)/$(1)/bin/$(1)
+
+---
+
+this patch adds:
+
+1. same-module dependency convention
+   - lib/build/test_foo.lua.ok depends on lib/build/*.lua
+   - lib/cosmic/test_foo.lua.ok depends on lib/cosmic/*.lua
+
+2. cross-module dependency
+   - lib/build tests depend on lib/cosmic/*.lua
+   - (because many lib/build tests use cosmic.spawn)
+
+benefits:
+- tests rebuild when their dependencies change
+- automatic for same-module deps
+- minimal maintenance (just list lib_modules)
+
+to apply:
+$ patch -p1 < doc/transitive-deps.patch
+
+or manually add the lines to Makefile

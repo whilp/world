@@ -1,10 +1,10 @@
+#!/usr/bin/env run-test.lua
 local lu = require("luaunit")
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local spawn = require("cosmic.spawn")
 
--- use cosmos lua instead of system commands to avoid /usr unveil
-local lua_bin = path.join(os.getenv("TEST_BIN_DIR"), "bin", "lua")
+local lua_bin = path.join(os.getenv("TEST_BIN"), "cosmic")
 
 TestSpawn = {}
 

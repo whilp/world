@@ -1,47 +1,27 @@
-# lib/cosmic - cosmopolitan lua utilities namespace
+modules += cosmic
+cosmic_srcs := $(wildcard lib/cosmic/*.lua)
+cosmic_tests := $(filter lib/cosmic/test_%.lua,$(cosmic_srcs))
+cosmic_libs := $(addprefix $(o)/,$(filter-out $(cosmic_tests) lib/cosmic/lfs.lua,$(cosmic_srcs)))
+cosmic_lfs := $(o)/lib/cosmic/lfs.lua
+cosmic_bin := $(o)/bin/cosmic
+cosmic_files := $(cosmic_bin) $(cosmic_libs) $(cosmic_lfs)
+cosmic_deps := cosmos luaunit argparse skill
 
-cosmic_lib := $(o_any)/cosmic/lib
-cosmic := $(o_any)/cosmic/bin/cosmic
+cosmic_built := $(o)/cosmic/.built
 
-lib_lua_modules += cosmic
-lib_dirs += $(cosmic_lib)
-lib_libs += $(cosmic_lib)/cosmic/init.lua
-lib_libs += $(cosmic_lib)/cosmic/spawn.lua
-lib_libs += $(cosmic_lib)/cosmic/walk.lua
-lib_libs += $(cosmic_lib)/cosmic/help.lua
+$(cosmic_bin): $(cosmic_libs) $(cosmic_lfs) $(skill_libs) $(o)/lib/build.orig/pr.lua
+	@rm -rf $(cosmic_built)
+	@mkdir -p $(cosmic_built)/.lua/cosmic $(cosmic_built)/.lua/skill $(cosmic_built)/.lua/build $(@D)
+	@$(cp) $(cosmic_libs) $(cosmic_built)/.lua/cosmic/
+	@$(cp) $(cosmic_lfs) $(cosmic_built)/.lua/
+	@$(cp) $(skill_libs) $(cosmic_built)/.lua/skill/
+	@$(cp) $(o)/lib/build.orig/pr.lua $(cosmic_built)/.lua/build/
+	@$(cp) $(luaunit_dir)/*.lua $(cosmic_built)/.lua/
+	@$(cp) $(argparse_dir)/*.lua $(cosmic_built)/.lua/
+	@$(cp) $(cosmos_lua) $@
+	@chmod +x $@
+	@cd $(cosmic_built) && $(CURDIR)/$(cosmos_zip) -qr $(CURDIR)/$@ .lua
 
-$(cosmic_lib)/cosmic/%.lua: lib/cosmic/%.lua
-	mkdir -p $(@D)
-	cp $< $@
-
-# test dependencies
-$(luatest_o)/lib/cosmic/test_cosmic.lua.ok: $(lib_libs)
-
-$(luatest_o)/lib/cosmic/test_spawn.lua.ok: $(cosmic_lib)/cosmic/spawn.lua
-$(luatest_o)/lib/cosmic/test_spawn.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/cosmos
-
-$(luatest_o)/lib/cosmic/test_walk.lua.ok: $(cosmic_lib)/cosmic/walk.lua
-
-$(luatest_o)/lib/cosmic/test_binary.lua.ok: $(cosmic)
-$(luatest_o)/lib/cosmic/test_binary.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_any)/cosmic
-
-$(luatest_o)/lib/cosmic/test_skill_pr.lua.ok: $(cosmic)
-$(luatest_o)/lib/cosmic/test_skill_pr.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_any)/cosmic
-
-# cosmic binary build
-cosmic_libs := $(lib_libs)
-
-$(cosmic): $(o_platform)/cosmos/bin/lua $(o_platform)/cosmos/bin/zip $(cosmic_libs) $(luaunit) $(o_platform)/argparse/lib/argparse.lua $(o_platform)/lfs/lib/lfs.lua
-	rm -rf $(o_any)/cosmic/staging
-	mkdir -p $(o_any)/cosmic/staging/.lua $(@D)
-	$(foreach d,$(lib_dirs),test -d $(d) && cp -r $(d)/* $(o_any)/cosmic/staging/.lua/ || true;)
-	cp -r $(o_any)/luaunit/lib/* $(o_any)/cosmic/staging/.lua/
-	cp -r $(o_platform)/argparse/lib/* $(o_any)/cosmic/staging/.lua/
-	cp -r $(o_platform)/lfs/lib/* $(o_any)/cosmic/staging/.lua/
-	cp $(o_platform)/cosmos/bin/lua $@
-	chmod +x $@
-	cd $(o_any)/cosmic/staging && $(CURDIR)/$(o_platform)/cosmos/bin/zip -qr $(CURDIR)/$@ .lua
-
-cosmic: $(cosmic) ## Build cosmic for current platform
+cosmic: $(cosmic_bin)
 
 .PHONY: cosmic

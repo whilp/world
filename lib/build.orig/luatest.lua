@@ -183,12 +183,8 @@ local function main(args)
   return 0
 end
 
-if ... then
-  os.exit(main({ ... }))
-else
-  return {
-    run_tests = run_tests,
-    report = report,
-    main = main,
-  }
-end
+return {
+  run_tests = run_tests,
+  report = report,
+  main = main,
+}
