@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+-- ast-grep ignore: builds relative symlink paths
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
