@@ -113,6 +113,7 @@ function TestFilesIterator:test_file_has_attributes()
   lu.assertNotNil(file.path)
   lu.assertNotNil(file.type)
   lu.assertNotNil(file.is_test)
+  lu.assertNotNil(file.is_check)
 end
 
 function TestFilesIterator:test_caller_can_filter_by_type()

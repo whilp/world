@@ -90,6 +90,13 @@ local function is_test_file(path)
   return basename:match("^test_") ~= nil or basename:match("test%.lua$") ~= nil
 end
 
+local function is_check_enabled(path)
+  if has_tag(path, "check", "false") then
+    return false
+  end
+  return true
+end
+
 local function git_files_iter(stdout)
   local pos = 1
   local len = #stdout
@@ -137,6 +144,7 @@ local function files(opts)
       path = path,
       type = detect_type_fn(path),
       is_test = is_test_file(path),
+      is_check = is_check_enabled(path),
     }
   end
 end
@@ -166,7 +174,7 @@ local function find_lua_tests(opts)
   opts = opts or {}
   local paths = {}
   for f in files(opts) do
-    if f.type == "lua" and f.is_test then
+    if f.type == "lua" and f.is_test and f.is_check then
       table.insert(paths, f.path)
     end
   end
