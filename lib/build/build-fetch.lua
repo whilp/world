@@ -57,9 +57,12 @@ local function main(version_file, platform, output)
   end
 
   local output_dir = path.dirname(output)
+  local archive_base = "o/archive"
   unix.makedirs(output_dir)
+  unix.makedirs(archive_base)
   unix.unveil(version_file, "r")
   unix.unveil(output_dir, "rwc")
+  unix.unveil(archive_base, "rwc")
   unix.unveil("/etc/resolv.conf", "r")
   unix.unveil("/etc/ssl", "r")
   unix.unveil(nil, nil)
@@ -86,17 +89,28 @@ local function main(version_file, platform, output)
     return nil, err
   end
 
-  -- write archive with its real name, symlink .fetched to it
-  local archive_name = url:match("([^/]+)$")
-  local archive_path = path.join(output_dir, archive_name)
+  -- derive module name from version file path (e.g., 3p/ast-grep/version.lua -> ast-grep)
+  local module = version_file:match("([^/]+)/version%.lua$")
+  if not module then
+    return nil, "cannot derive module from " .. version_file
+  end
+
+  -- build archive path: o/archive/<module>/<version>-<sha prefix>/archive.<format>
+  local sha_prefix = plat.sha:sub(1, 8)
+  local archive_dir = path.join("o", "archive", module, spec.version .. "-" .. sha_prefix)
+  local archive_name = "archive." .. (spec.format or "bin")
+  local archive_path = path.join(archive_dir, archive_name)
+
+  unix.makedirs(archive_dir)
 
   if not cosmo.Barf(archive_path, body, tonumber("644", 8)) then
     return nil, "failed to write " .. archive_path
   end
 
-  -- remove old symlink/file if exists, create symlink
+  -- remove old symlink/file if exists, create relative symlink
   unix.unlink(output)
-  local link_ok, link_err = unix.symlink(archive_name, output)
+  local rel_path = path.join("..", "..", "archive", module, spec.version .. "-" .. sha_prefix, archive_name)
+  local link_ok, link_err = unix.symlink(rel_path, output)
   if not link_ok then
     return nil, "failed to symlink: " .. tostring(link_err)
   end
