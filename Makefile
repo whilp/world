@@ -53,7 +53,7 @@ all_versions := $(foreach x,$(modules),$($(x)_version))
 all_fetched := $(patsubst %,o/%.fetched,$(all_versions))
 fetched: $(all_fetched)
 $(o)/%.fetched: % $(build_files) | $(bootstrap_cosmic)
-	@$(build_fetch) $< $(platform) $@
+	@FETCH_O=$(o)/fetched $(build_fetch) $< $(platform) $@
 
 # ...and then versions get staged (to extract)
 .PHONY: staged
@@ -65,7 +65,7 @@ $(foreach m,$(modules),\
 all_staged := $(patsubst %,o/%.staged,$(all_versions))
 staged: $(all_staged)
 $(o)/%.staged: $(o)/%.fetched
-	@$(build_stage) $* $< $@
+	@STAGE_O=$(o)/staged $(build_stage) $* $(platform) $< $@
 
 .PHONY: test
 all_tests := $(foreach x,$(modules),$($(x)_tests))

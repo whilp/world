@@ -124,9 +124,14 @@ local function install_files(source_dir, dest_dir, install)
   return true
 end
 
-local function main(version_file, input, output)
-  if not version_file or not input or not output then
-    return nil, "usage: stage.lua <version_file> <input.fetched> <output.staged>"
+local function main(version_file, platform, input, output)
+  if not version_file or not platform or not input or not output then
+    return nil, "usage: stage.lua <version_file> <platform> <input.fetched> <output.staged>"
+  end
+
+  local stage_o = os.getenv("STAGE_O")
+  if not stage_o then
+    return nil, "STAGE_O env var required"
   end
 
   local ok, spec = pcall(dofile, version_file)
@@ -134,33 +139,61 @@ local function main(version_file, input, output)
     return nil, "failed to load " .. version_file .. ": " .. tostring(spec)
   end
 
+  local plat = spec.platforms[platform] or spec.platforms["*"]
+  if not plat then
+    return nil, "unknown platform: " .. platform
+  end
+
   local format = spec.format or "binary"
   local strip = spec.strip_components or 1
 
-  unix.makedirs(output)
+  local version_sha = spec.version .. "-" .. plat.sha
+
+  local stage_dir = path.join(stage_o, version_sha)
+  unix.makedirs(stage_dir)
 
   local err
   if format == "zip" then
-    local temp_dir = unix.mkdtemp(path.join(path.dirname(output), ".stage_XXXXXX"))
+    local temp_dir = unix.mkdtemp(path.join(path.dirname(stage_dir), ".stage_XXXXXX"))
     ok, err = extract_zip(input, temp_dir, strip)
     if ok then
-      ok, err = install_files(temp_dir, output, spec.install)
+      ok, err = install_files(temp_dir, stage_dir, spec.install)
     end
     unix.rmrf(temp_dir)
   elseif format == "tar.gz" then
-    local temp_dir = unix.mkdtemp(path.join(path.dirname(output), ".stage_XXXXXX"))
+    local temp_dir = unix.mkdtemp(path.join(path.dirname(stage_dir), ".stage_XXXXXX"))
     ok, err = extract_targz(input, temp_dir, strip)
     if ok then
-      ok, err = install_files(temp_dir, output, spec.install)
+      ok, err = install_files(temp_dir, stage_dir, spec.install)
     end
     unix.rmrf(temp_dir)
   elseif format == "binary" then
-    ok, err = copy_binary(input, output)
+    ok, err = copy_binary(input, stage_dir)
   else
     return nil, "unknown format: " .. format
   end
 
-  return ok, err
+  if not ok then
+    return nil, err
+  end
+
+  io.stderr:write("STAGE " .. stage_dir .. "\n")
+
+  -- create symlink: output -> staged/<version-sha>
+  -- remove any existing file/directory/symlink at output
+  unix.rmrf(output)
+  local output_dir = path.dirname(output)
+  unix.makedirs(output_dir)
+  local depth = select(2, output_dir:gsub("/", ""))
+  local up = string.rep("../", depth)
+  local stage_o_basename = stage_o:match("([^/]+)$")
+  local rel_path = up .. stage_o_basename .. "/" .. version_sha
+  local link_ok, link_err = unix.symlink(rel_path, output)
+  if not link_ok then
+    return nil, "failed to symlink: " .. tostring(link_err)
+  end
+
+  return true
 end
 
 if not pcall(debug.getlocal, 4, 1) then
