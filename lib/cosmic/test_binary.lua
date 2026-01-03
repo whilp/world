@@ -1,3 +1,4 @@
+#!/usr/bin/env run-test.lua
 -- test cosmic bundled binary
 
 local lu = require("luaunit")

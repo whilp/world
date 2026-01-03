@@ -1,4 +1,4 @@
-#!/usr/bin/env run.lua
+#!/usr/bin/env run-test.lua
 
 local staged = os.getenv("STAGED_DIR")
 if staged then

@@ -1,4 +1,4 @@
-#!/usr/bin/env run-luatest
+#!/usr/bin/env run-test.lua
 local lu = require("luaunit")
 
 TestCosmic = {}

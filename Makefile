@@ -1,6 +1,8 @@
 modules :=
 o := o
 
+export PATH := $(CURDIR)/$(o)/bin:$(PATH)
+
 uname_s := $(shell uname -s)
 uname_m := $(shell uname -m)
 os := $(if $(filter Darwin,$(uname_s)),darwin,linux)
@@ -23,6 +25,12 @@ all_files := $(foreach x,$(modules),$(addprefix $(o)/$(x)/,$($(x)_srcs)))
 cp := cp -p
 
 $(o)/%: %
+	@mkdir -p $(@D)
+	@$(cp) $< $@
+
+# bin scripts: o/bin/X.lua from lib/*/X.lua
+vpath %.lua lib/build lib/test
+$(o)/bin/%.lua: %.lua
 	@mkdir -p $(@D)
 	@$(cp) $< $@
 
