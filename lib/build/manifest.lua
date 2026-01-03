@@ -2,23 +2,6 @@
 local spawn = require("cosmic.spawn")
 local unix = require("cosmo.unix")
 
-local default_excluded = {
-  "^%.config/hammerspoon/",
-  "^%.config/nvim/",
-  "^%.config/voyager/",
-  "^%.local/bin/",
-  "^o/",
-}
-
-local function is_excluded(path, patterns)
-  for _, pattern in ipairs(patterns) do
-    if path:match(pattern) then
-      return true
-    end
-  end
-  return false
-end
-
 local function read_first_line(filepath)
   local fd = unix.open(filepath, unix.O_RDONLY)
   if not fd then
@@ -150,10 +133,9 @@ end
 
 local function find_lua_files(opts)
   opts = opts or {}
-  local excluded = opts.excluded_patterns or default_excluded
   local paths = {}
   for f in files(opts) do
-    if f.type == "lua" and not is_excluded(f.path, excluded) then
+    if f.type == "lua" then
       table.insert(paths, f.path)
     end
   end
@@ -163,10 +145,9 @@ end
 
 local function find_lua_tests(opts)
   opts = opts or {}
-  local excluded = opts.excluded_patterns or default_excluded
   local paths = {}
   for f in files(opts) do
-    if f.type == "lua" and f.is_test and not is_excluded(f.path, excluded) then
+    if f.type == "lua" and f.is_test then
       table.insert(paths, f.path)
     end
   end
@@ -208,7 +189,5 @@ return {
   find_lua_tests = find_lua_tests,
   detect_type = detect_type,
   is_test_file = is_test_file,
-  is_excluded = is_excluded,
-  default_excluded = default_excluded,
   git_files_iter = git_files_iter,
 }

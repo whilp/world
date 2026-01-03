@@ -69,24 +69,6 @@ function TestIsTestFile:test_not_test()
   lu.assertFalse(manifest.is_test_file("lib/testing/init.lua"))
 end
 
-TestIsExcluded = {}
-
-function TestIsExcluded:test_hammerspoon_excluded()
-  lu.assertTrue(manifest.is_excluded(".config/hammerspoon/init.lua", manifest.default_excluded))
-end
-
-function TestIsExcluded:test_nvim_excluded()
-  lu.assertTrue(manifest.is_excluded(".config/nvim/init.lua", manifest.default_excluded))
-end
-
-function TestIsExcluded:test_output_dir_excluded()
-  lu.assertTrue(manifest.is_excluded("o/any/test.lua", manifest.default_excluded))
-end
-
-function TestIsExcluded:test_lib_not_excluded()
-  lu.assertFalse(manifest.is_excluded("lib/build/manifest.lua", manifest.default_excluded))
-end
-
 TestGitFilesIter = {}
 
 function TestGitFilesIter:test_parses_null_delimited()
@@ -153,28 +135,14 @@ function TestFilesIterator:test_caller_can_filter_by_test()
   lu.assertEquals(count, 4)
 end
 
-function TestFilesIterator:test_caller_can_filter_excluded()
-  local count = 0
-  for f in manifest.files({_git_output = mock_git_output, _detect_type = mock_detect_type}) do
-    if not manifest.is_excluded(f.path, manifest.default_excluded) then
-      count = count + 1
-    end
-  end
-  lu.assertEquals(count, 7)
-end
-
 TestFindLuaFiles = {}
 
-function TestFindLuaFiles:test_finds_lua_excludes_config()
+function TestFindLuaFiles:test_finds_all_lua()
   local paths = manifest.find_lua_files({
     _git_output = mock_git_output,
     _detect_type = mock_detect_type,
   })
-  lu.assertEquals(#paths, 5)
-  for _, p in ipairs(paths) do
-    lu.assertNil(p:match("^%.config/"), "should exclude .config: " .. p)
-    lu.assertNil(p:match("^o/"), "should exclude o/: " .. p)
-  end
+  lu.assertEquals(#paths, 8)
 end
 
 function TestFindLuaFiles:test_sorted()
@@ -189,12 +157,12 @@ end
 
 TestFindLuaTests = {}
 
-function TestFindLuaTests:test_finds_tests_excludes_config()
+function TestFindLuaTests:test_finds_all_tests()
   local paths = manifest.find_lua_tests({
     _git_output = mock_git_output,
     _detect_type = mock_detect_type,
   })
-  lu.assertEquals(#paths, 3)
+  lu.assertEquals(#paths, 4)
   for _, p in ipairs(paths) do
     lu.assertTrue(manifest.is_test_file(p), "should be test: " .. p)
   end
