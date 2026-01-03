@@ -224,4 +224,5 @@ return {
   extract_targz = extract_targz,
   extract_gz = extract_gz,
   strip_components = strip_components,
+  set_mtime_recursive = set_mtime_recursive,
 }

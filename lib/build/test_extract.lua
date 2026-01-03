@@ -286,9 +286,11 @@ function TestTimestampPreservationTargz:tearDown()
 end
 
 function TestTimestampPreservationTargz:test_preserves_original_mtime()
-  local before = unix.clock_gettime(unix.CLOCK_REALTIME)
   local ok, err = extract.extract_targz(self.archive, self.dest, 0)
   lu.assertTrue(ok, "extract should succeed: " .. tostring(err))
+
+  local before = unix.clock_gettime(unix.CLOCK_REALTIME)
+  extract.set_mtime_recursive(self.dest)
   local after = unix.clock_gettime(unix.CLOCK_REALTIME)
 
   local extracted = path.join(self.dest, "file1.txt")
@@ -334,9 +336,11 @@ function TestTimestampPreservationZip:tearDown()
 end
 
 function TestTimestampPreservationZip:test_preserves_original_mtime()
-  local before = unix.clock_gettime(unix.CLOCK_REALTIME)
   local ok, err = extract.extract_zip(self.archive, self.dest, 0)
   lu.assertTrue(ok, "extract should succeed: " .. tostring(err))
+
+  local before = unix.clock_gettime(unix.CLOCK_REALTIME)
+  extract.set_mtime_recursive(self.dest)
   local after = unix.clock_gettime(unix.CLOCK_REALTIME)
 
   local extracted = path.join(self.dest, "file1.txt")
@@ -384,9 +388,11 @@ function TestTimestampPreservationGz:tearDown()
 end
 
 function TestTimestampPreservationGz:test_uses_gzip_header_mtime()
-  local before = unix.clock_gettime(unix.CLOCK_REALTIME)
   local ok, err = extract.extract_gz(self.archive, self.dest, self.tool_name)
   lu.assertTrue(ok, "extract should succeed: " .. tostring(err))
+
+  local before = unix.clock_gettime(unix.CLOCK_REALTIME)
+  extract.set_mtime_recursive(self.dest)
   local after = unix.clock_gettime(unix.CLOCK_REALTIME)
 
   local extracted_file = path.join(self.dest, self.tool_name)
