@@ -36,7 +36,7 @@ include 3p/nvim/cook.mk
 include 3p/tree-sitter/cook.mk
 include 3p/luacheck/cook.mk
 include lib/cosmic/cook.mk
-#include lib/home/cook.mk
+include lib/home/cook.mk
 
 include cook.mk
 
