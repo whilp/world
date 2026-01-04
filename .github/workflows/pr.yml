@@ -35,4 +35,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_PR_NUMBER: ${{ github.event.number }}
-        run: ./bin/cosmic --skill update-pr
+        run: ./bin/cosmic -l skill update-pr

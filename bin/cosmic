@@ -3,7 +3,6 @@ set -e
 
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-PROJECT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 COSMIC_LUA="${SCRIPT_DIR}/cosmic-lua"
 RELEASE_URL="https://github.com/whilp/world/releases/download/home-2026-01-04-7a278f2/cosmic-lua"
 
@@ -21,9 +20,6 @@ if [ "${BOOTSTRAP}" = "1" ]; then
     fi
     exit 0
 fi
-
-# Set LUA_PATH to include project's lib directory
-export LUA_PATH="${PROJECT_DIR}/lib/?.lua;${PROJECT_DIR}/lib/?/init.lua;./?.lua;./?/init.lua;;"
 
 # Execute cosmic-lua with all arguments
 exec "${COSMIC_LUA}" "$@"
