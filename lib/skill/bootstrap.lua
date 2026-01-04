@@ -1,6 +1,6 @@
 -- bootstrap validation for cosmic development environments
 -- checks if SessionStart hook properly configures lua/cosmic-lua
--- usage: cosmic-lua -l skill check-bootstrap
+-- usage: cosmic-lua -l skill bootstrap
 
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
