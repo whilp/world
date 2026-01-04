@@ -5,52 +5,54 @@ Use `x-cosmic-pr-name` git trailer to identify PR files instead of PR number loo
 ## Changes
 
 - **lib/skill/pr.lua**:
-  - Add `get_pr_name_from_trailer()` to extract trailer
-    - Scans last 20 commits (HEAD~20..HEAD) for trailers
-    - Takes the most recent (last) trailer found
-    - Works with merge commits (scans all commits in range)
-  - Add `is_pr_updates_enabled()` to check for opt-out
-    - Returns false if `x-cosmic-pr-enable: false` trailer found
-  - Add `get_commit_sha()` for debug output
-  - Update `main()` to require trailer and use `GITHUB_PR_NUMBER` from env
-  - Update `do_update()` to accept `pr_name` parameter
-  - Remove API lookup functions: `find_pr_number`, `find_pr_for_branch`, `get_pr_number_from_env`, `get_git_info` (~140 lines)
-  - Update help text to document trailer workflow
-  - Improve error messages: show all 20 commits checked and their trailers
+  - Combine `get_pr_name_from_trailer()` and `is_pr_updates_enabled()` into single function
+  - Scan last 20 commits for trailers, process chronologically
+  - `x-cosmic-pr-enable: false` disables until new `x-cosmic-pr-name` is set
+  - Remove ~140 lines of API lookup code
+  - Improve error messages with debug info
 
-- **lib/skill/test_pr_*.lua**: Update tests for trailer-based approach
+- **lib/skill/test_pr.lua**: Consolidated tests using isolated git repos
 
 ## Workflow
 
-1. Create `.github/pr/<descriptive-name>.md`
-2. Add trailer to commit: `x-cosmic-pr-name: <descriptive-name>.md`
+1. Create `.github/pr/YYYY-MM-DD-<slug>.md` (e.g., `2026-01-04-add-auth.md`)
+2. Add trailer to commit: `x-cosmic-pr-name: 2026-01-04-add-auth.md`
 3. Push - GitHub Actions reads trailer to find PR file
 
-**Rename PR file:** Add new commit with different trailer:
-```
-x-cosmic-pr-name: new-name.md
+**Rename PR file:** Add new trailer in later commit.
+
+**Disable PR updates:** Add `x-cosmic-pr-enable: false` trailer.
+
+## Workflow configuration
+
+```yaml
+update:
+  if: github.event_name == 'pull_request'
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha }}
+        fetch-depth: 20
+
+    - run: make update-pr
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_PR_NUMBER: ${{ github.event.number }}
 ```
 
-**Disable PR updates:** Add trailer to any commit:
-```
-x-cosmic-pr-enable: false
-```
+The `ref` and `fetch-depth` settings are required - default checkout uses a shallow merge commit without access to branch commits with trailers.
 
 ## Benefits
 
 - **No API calls** - scans git log locally
 - **Deterministic filename** - choose before PR exists
-- **Intuitive names** - `feature-auth.md` instead of `239.md`
+- **Intuitive names** - date prefix keeps PRs organized
 - **Renaming support** - add new trailer in later commit
 - **Opt-out option** - disable via `x-cosmic-pr-enable: false`
-- **Simpler code** - removed ~140 lines of lookup logic
-- **Better debugging** - shows all commits and trailers checked
 
 ## Validation
 
 - [x] All tests pass
-- [x] Help text updated
-- [x] Handles merge commits (scans commit range)
-- [x] Supports renaming (takes most recent trailer)
-- [x] Supports disable (x-cosmic-pr-enable: false)
-- [x] Debug output shows all commits and trailers
+- [x] Workflow checkout configured correctly
+- [x] Supports trailer scanning and disable
