@@ -1,11 +1,14 @@
 #!/usr/bin/env lua
 
 local cosmo = require("cosmo")
-local walk = require("cosmic.walk")
 local common = require("checker.common")
 
-local function main(output_dir)
-  output_dir = output_dir or "o"
+local function main(...)
+  local files = {...}
+  if #files == 0 then
+    io.stderr:write("usage: report-update.lua <file.updated> ...\n")
+    return 1
+  end
 
   local results = {
     pass = {},
@@ -15,10 +18,9 @@ local function main(output_dir)
   }
   local all_results = {}
 
-  local updated_files = walk.collect(output_dir, "%.updated$")
-  table.sort(updated_files)
+  table.sort(files)
 
-  for _, file in ipairs(updated_files) do
+  for _, file in ipairs(files) do
     local content = cosmo.Slurp(file)
     if content then
       local result = common.parse_result(content)
@@ -63,7 +65,7 @@ local function main(output_dir)
     updates_available
   ))
 
-  return 0
+  return #results.fail > 0 and 1 or 0
 end
 
 if cosmo.is_main() then

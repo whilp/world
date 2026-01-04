@@ -201,7 +201,7 @@ $(o)/check-summary.txt: $(all_checks)
 update: $(o)/update-summary.txt
 
 $(o)/update-summary.txt: $(all_updated)
-	@$(update_reporter) $(o) | tee $@
+	@$(update_reporter) $(all_updated) | tee $@
 
 $(o)/%.updated: % $(build_check_update) | $(bootstrap_files)
 	@$(update_runner) $< $@

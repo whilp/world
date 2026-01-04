@@ -54,6 +54,17 @@ local function main(version_file, output_file)
     return 1
   end
 
+  local _, skip_reason = common.check_first_lines(version_file, {
+    shebangs = {},
+    ignore = "^%-%-%s*update%s+ignore:%s*(.*)",
+  })
+
+  if skip_reason then
+    unix.makedirs(path.dirname(output_file))
+    cosmo.Barf(output_file, common.format_output("skip", skip_reason, "", ""))
+    return 0
+  end
+
   local chunk, err = load(content, version_file)
   if not chunk then
     unix.makedirs(path.dirname(output_file))
@@ -79,7 +90,7 @@ local function main(version_file, output_file)
 
   local status, message, stdout, stderr
   if not latest_version then
-    status = "ignore"
+    status = "fail"
     message = check_err or "could not check"
     stdout = ""
     stderr = ""
