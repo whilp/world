@@ -3,36 +3,7 @@
 
 local cosmo = require("cosmo")
 local walk = require("cosmic.walk")
-
-local function parse_result(content)
-  local result = {}
-
-  local first_line = content:match("^([^\n]+)")
-  if not first_line then
-    return nil
-  end
-
-  local status, message = first_line:match("^(%w+):?%s*(.*)")
-  result.status = status or first_line
-  result.message = message ~= "" and message or nil
-
-  result.stdout = content:match("## stdout\n\n(.-)\n## stderr") or ""
-  result.stderr = content:match("## stderr\n\n(.*)$") or ""
-
-  return result
-end
-
-local function strip_prefix(filepath)
-  local prefix = os.getenv("TEST_O")
-  if not prefix then
-    return filepath
-  end
-  local prefix_len = #prefix
-  if filepath:sub(1, prefix_len) == prefix and filepath:sub(prefix_len + 1, prefix_len + 1) == "/" then
-    return filepath:sub(prefix_len + 2)
-  end
-  return filepath
-end
+local common = require("checker.common")
 
 local function main(check_dir)
   check_dir = check_dir or os.getenv("TEST_O") or "o"
@@ -50,9 +21,9 @@ local function main(check_dir)
   for _, file in ipairs(checked_files) do
     local content = cosmo.Slurp(file)
     if content then
-      local result = parse_result(content)
+      local result = common.parse_result(content)
       if result then
-        local name = strip_prefix(file):gsub("%.teal%.checked$", "")
+        local name = common.strip_prefix(file):gsub("%.teal%.checked$", "")
         result.name = name
         result.file = file
         table.insert(all_results, result)
@@ -65,12 +36,7 @@ local function main(check_dir)
     end
   end
 
-  local status_icons = {
-    pass = "✓",
-    fail = "✗",
-    skip = "→",
-    ignore = "○",
-  }
+  local status_icons = common.status_icons()
   for _, result in ipairs(all_results) do
     local status = string.upper(result.status)
     local icon = status_icons[result.status] or " "

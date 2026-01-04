@@ -4,28 +4,7 @@
 local cosmo = require("cosmo")
 local walk = require("cosmic.walk")
 local path = require("cosmo.path")
-
-local function parse_test_result(content)
-  local result = {}
-
-  -- first line is result: optional message
-  local first_line = content:match("^([^\n]+)")
-  if not first_line then
-    return nil
-  end
-
-  local status, message = first_line:match("^(%w+):?%s*(.*)")
-  result.status = status or first_line
-  result.message = message ~= "" and message or nil
-
-  -- extract stdout section
-  result.stdout = content:match("## stdout\n\n(.-)\n## stderr") or ""
-
-  -- extract stderr section
-  result.stderr = content:match("## stderr\n\n(.*)$") or ""
-
-  return result
-end
+local common = require("checker.common")
 
 local function main(test_dir)
   test_dir = test_dir or "o"
@@ -44,7 +23,7 @@ local function main(test_dir)
   for _, file in ipairs(tested_files) do
     local content = cosmo.Slurp(file)
     if content then
-      local result = parse_test_result(content)
+      local result = common.parse_result(content)
       if result then
         local test_name = file:gsub("^o/", ""):gsub("%.tested$", "")
         result.name = test_name
@@ -66,12 +45,7 @@ local function main(test_dir)
   end
 
   -- print each test result with padded status
-  local status_icons = {
-    pass = "✓",
-    fail = "✗",
-    skip = "→",
-    ignore = "○",
-  }
+  local status_icons = common.status_icons()
   for _, result in ipairs(all_results) do
     local status = string.upper(result.status)
     local icon = status_icons[result.status] or " "
