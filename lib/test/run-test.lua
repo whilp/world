@@ -88,11 +88,15 @@ local function main(test, out)
     result = "pass"
   else
     local err_str = tostring(err)
-    -- check for SKIP in error message
-    local skip_reason = err_str:match("SKIP%s+(.+)")
+    -- check for SKIP or IGNORE in error message
+    local skip_reason = err_str:match("SKIP%s*:?%s*(.+)")
+    local ignore_reason = err_str:match("IGNORE%s*:?%s*(.+)")
     if skip_reason then
       result = "skip"
       message = skip_reason
+    elseif ignore_reason then
+      result = "ignore"
+      message = ignore_reason
     else
       result = "fail"
       -- strip path prefix to show just filename:line: message
