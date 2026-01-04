@@ -162,6 +162,12 @@ teal: $(all_teals)
 $(o)/%.teal.checked: $(o)/% $(tl_files) | $(bootstrap_files) $(tl_staged)
 	@TL_BIN=$(tl_staged) $(teal_runner) $< $@
 
+.PHONY: bootstrap
+bootstrap: $(bootstrap_files)
+	@if [ -n "$$CLAUDE_ENV_FILE" ]; then \
+		echo "export PATH=\"$(CURDIR)/bin:$$PATH\"" >> "$$CLAUDE_ENV_FILE"; \
+	fi
+
 .PHONY: clean
 clean:
 	@rm -rf $(o)
