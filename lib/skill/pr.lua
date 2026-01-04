@@ -53,16 +53,32 @@ local function get_commit_sha()
 end
 
 local function get_pr_name_from_trailer()
+  -- Check HEAD first
   local handle = spawn({"git", "log", "-1", "--format=%(trailers:key=x-cosmic-pr-name,valueonly)"})
   local ok, out = handle:read()
-  if not ok or not out then
-    return nil
+  if ok and out then
+    local name = out:match("^%s*(.-)%s*$")
+    if name and name ~= "" then
+      return name
+    end
   end
-  local name = out:match("^%s*(.-)%s*$")
-  if name == "" then
-    return nil
+
+  -- If HEAD is a merge commit (common in GitHub Actions), check first parent
+  local is_merge_handle = spawn({"git", "rev-parse", "--verify", "HEAD^2"})
+  local is_merge_ok = is_merge_handle:read()
+  if is_merge_ok then
+    -- This is a merge commit, check first parent (the PR branch)
+    local first_parent_handle = spawn({"git", "log", "-1", "HEAD^1", "--format=%(trailers:key=x-cosmic-pr-name,valueonly)"})
+    local fp_ok, fp_out = first_parent_handle:read()
+    if fp_ok and fp_out then
+      local name = fp_out:match("^%s*(.-)%s*$")
+      if name and name ~= "" then
+        return name
+      end
+    end
   end
-  return name
+
+  return nil
 end
 
 
