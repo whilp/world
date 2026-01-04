@@ -9,6 +9,7 @@ nvim-parsers_dir := $(nvim-parsers_parsers)
 nvim-parsers_config := $(o)/.config/nvim/parsers.lua
 
 $(nvim-parsers_parsers): $$(nvim_staged) $$(nvim-treesitter_staged) $$(tree-sitter_staged) $(nvim-parsers_config)
+	@echo "nvim-parsers: building $@ from $(nvim_staged)"
 	@rm -rf $(nvim-parsers_out)
 	@mkdir -p $(nvim-parsers_out)
 	@3p/nvim-parsers/install.lua $(nvim_staged) $(nvim-treesitter_staged) $(nvim-parsers_out) $(nvim-parsers_config)
