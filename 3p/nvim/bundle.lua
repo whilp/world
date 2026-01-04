@@ -143,7 +143,7 @@ local function bundle_plugins(nvim_dir, plugins_dir, plugins, pack_lock_data)
   return true
 end
 
-local function install_treesitter_parsers(nvim_dir)
+local function install_treesitter_parsers(nvim_dir, site_dir)
   io.write("installing treesitter parsers\n")
   local nvim_bin = path.join(nvim_dir, "bin/nvim")
 
@@ -154,22 +154,57 @@ local function install_treesitter_parsers(nvim_dir)
   end
 
   local cwd = unix.getcwd()
-  local config_home = path.join(cwd, ".config")
-  local data_home = path.join(nvim_dir, "share")
+  local cache_dir = path.join(cwd, "o/any/nvim/cache")
+  execute("mkdir", {"mkdir", "-p", cache_dir})
 
   local parsers = dofile(path.join(cwd, ".config/nvim/parsers.lua"))
-  for _, parser in ipairs(parsers) do
-    io.write(string.format("  installing %s\n", parser))
-    local cmd = string.format("TSUpdateSync %s", parser)
-    local ok = execute("env", {
-      "env",
-      "XDG_CONFIG_HOME=" .. config_home,
-      "XDG_DATA_HOME=" .. data_home,
-      nvim_bin, "--headless", "+" .. cmd, "+qa"
-    }, { allow_failure = true })
-    if not ok then
-      io.write(string.format("    %s failed, continuing\n", parser))
+  local parser_list = '"' .. table.concat(parsers, '","') .. '"'
+
+  -- use absolute paths (nvim may run from different cwd)
+  local abs_site_dir = path.join(cwd, site_dir)
+
+  -- write lua script to temp file (avoids shell escaping issues)
+  local lua_script = string.format([[
+vim.opt.packpath:prepend("%s")
+vim.cmd("packadd nvim-treesitter")
+local ts = require("nvim-treesitter")
+ts.setup({ install_dir = "%s" })
+local ok = ts.install({%s}):wait()
+if ok then vim.cmd("qall!") else vim.cmd("cquit 1") end
+]], abs_site_dir, abs_site_dir, parser_list)
+
+  local script_path = path.join(cache_dir, "install_parsers.lua")
+  local fd, err = unix.open(script_path, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("0644", 8))
+  if not fd or fd < 0 then
+    io.write(string.format("  failed to write install script at %s: %s\n", script_path, tostring(err)))
+    return true
+  end
+  unix.write(fd, lua_script)
+  unix.close(fd)
+
+  io.write(string.format("  installing: %s\n", table.concat(parsers, ", ")))
+  local cmd = { nvim_bin, "--headless", "-u", "NONE", "-l", script_path }
+  local abs_nvim_dir = path.join(cwd, nvim_dir)
+  local nvim_runtime = path.join(abs_nvim_dir, "share/nvim/runtime")
+  local env = unix.environ()
+  env.XDG_CACHE_HOME = cache_dir
+  env.VIMRUNTIME = nvim_runtime
+  env.VIM = path.join(abs_nvim_dir, "share/nvim")
+  local handle = spawn(cmd, { env = env })
+  local stderr_content = handle.stderr:read()
+  local ok, output, exit_code = handle:read()
+  if output and output ~= "" then
+    for line in output:gmatch("[^\n]+") do
+      io.write("  " .. line .. "\n")
     end
+  end
+  if not ok then
+    if stderr_content and stderr_content ~= "" then
+      for line in stderr_content:gmatch("[^\n]+") do
+        io.write("  stderr: " .. line .. "\n")
+      end
+    end
+    io.write(string.format("  parser installation failed (exit %s)\n", tostring(exit_code)))
   end
 
   return true
@@ -212,14 +247,25 @@ local function bundle(platform, nvim_dir, plugins_dir)
 
   unix.makedirs(plugins_dir)
 
-  unix.unveil(PACK_LOCK, "r")
-  unix.unveil(".config/nvim", "r")
-  unix.unveil(plugins_dir, "rwc")
-  unix.unveil(nvim_dir, "rwcx")
-  unix.unveil("/etc/resolv.conf", "r")
-  unix.unveil("/etc/ssl", "r")
-  unix.unveil("/usr", "rx")
-  unix.unveil(nil, nil)
+  local cwd = unix.getcwd()
+  local cache_dir = path.join(cwd, "o/any/nvim/cache")
+  unix.makedirs(cache_dir)
+
+  -- TODO: re-enable unveil sandbox once treesitter parser installation works
+  -- The sandbox blocks tree-sitter CLI and compiler access needed for parser builds
+  -- local home = os.getenv("HOME") or "/tmp"
+  -- unix.unveil(PACK_LOCK, "r")
+  -- unix.unveil(".config/nvim", "r")
+  -- unix.unveil(plugins_dir, "rwc")
+  -- unix.unveil(nvim_dir, "rwcx")
+  -- unix.unveil(cache_dir, "rwc")
+  -- unix.unveil(cwd, "rwc")
+  -- unix.unveil("/tmp", "rwc")
+  -- unix.unveil("/etc/resolv.conf", "r")
+  -- unix.unveil("/etc/ssl", "r")
+  -- unix.unveil("/usr", "rx")
+  -- unix.unveil(path.join(home, ".local/share"), "rx")
+  -- unix.unveil(nil, nil)
 
   local content, err = read_file(PACK_LOCK)
   if not content then
@@ -243,7 +289,8 @@ local function bundle(platform, nvim_dir, plugins_dir)
     return nil, err
   end
 
-  install_treesitter_parsers(nvim_dir)
+  local site_dir = path.join(nvim_dir, "share/nvim/site")
+  install_treesitter_parsers(nvim_dir, site_dir)
 
   ok, err = verify_plugins(nvim_dir, plugins)
   if not ok then
