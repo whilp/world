@@ -196,6 +196,14 @@ update-pr: $(cosmic_bin) | $(bootstrap_cosmic)
 		$(bootstrap_cosmic) lib/skill/pr.lua || true; \
 	fi
 
+.PHONY: cosmic
+cosmic: $(cosmic_bin) | $(bootstrap_cosmic)
+	@if [ -f $(cosmic_bin) ]; then \
+		$(cosmic_bin) -l skill cosmic || true; \
+	else \
+		$(bootstrap_cosmic) lib/skill/cosmic.lua || true; \
+	fi
+
 debug-modules:
 	@echo $(modules)
 
