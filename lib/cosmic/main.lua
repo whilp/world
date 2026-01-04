@@ -3,7 +3,7 @@
 
 local getopt = require("cosmo.getopt")
 
--- Parse arguments using cosmo.getopt
+-- Parse arguments using cosmo.getopt iterator API
 local function parse_args()
   local opts = {
     execute = {},
@@ -17,58 +17,49 @@ local function parse_args()
     script_args = {},
   }
 
-  -- Use getopt with long options support
   local longopts = {
     { "help", "optional", "h" },
     { "skill", "required", "s" },
   }
 
-  local parsed, rest = getopt.parse(arg, "e:l:ivEWh::s:", longopts)
+  local parser = getopt.new(arg, "e:l:ivEWh::s:", longopts)
 
-  -- Handle --help (supports both --help and --help=module)
-  if parsed.help then
-    if type(parsed.help) == "string" then
-      opts.help = parsed.help
-    elseif #rest > 0 and not rest[1]:match("^%-") then
-      opts.help = rest[1]
-      table.remove(rest, 1)
-    else
-      opts.help = true
+  -- Iterate through all options
+  while true do
+    local opt, optarg = parser:next()
+    if not opt then
+      break
     end
-    return opts
-  end
 
-  -- Handle --skill (all remaining args go to skill)
-  if parsed.skill then
-    opts.skill = parsed.skill
-    opts.script_args = rest
-    return opts
-  end
-
-  -- Collect all -e and -l options (getopt only returns last one)
-  local i = 1
-  while i <= #arg do
-    if arg[i] == "-e" and i + 1 <= #arg then
-      opts.execute[#opts.execute + 1] = arg[i + 1]
-      i = i + 2
-    elseif arg[i] == "-l" and i + 1 <= #arg then
-      opts.load[#opts.load + 1] = arg[i + 1]
-      i = i + 2
-    elseif arg[i] == "--" then
-      break
-    elseif not arg[i]:match("^%-") then
-      break
-    else
-      i = i + 1
+    if opt == "e" then
+      opts.execute[#opts.execute + 1] = optarg
+    elseif opt == "l" then
+      opts.load[#opts.load + 1] = optarg
+    elseif opt == "i" then
+      opts.interactive = true
+    elseif opt == "v" then
+      opts.version = true
+    elseif opt == "E" then
+      -- Ignore environment variables (already handled by lua)
+    elseif opt == "W" then
+      opts.warnings = true
+    elseif opt == "h" or opt == "help" then
+      if optarg then
+        opts.help = optarg
+      else
+        opts.help = true
+      end
+      return opts
+    elseif opt == "s" or opt == "skill" then
+      opts.skill = optarg
+      -- Remaining args go to skill
+      opts.script_args = parser:remaining()
+      return opts
     end
   end
-
-  -- Get other flags from getopt
-  opts.interactive = parsed.i or false
-  opts.version = parsed.v or false
-  opts.warnings = parsed.W or false
 
   -- Handle remaining arguments (script and script args)
+  local rest = parser:remaining()
   if rest and #rest > 0 then
     opts.script = rest[1]
     for j = 1, #rest do
