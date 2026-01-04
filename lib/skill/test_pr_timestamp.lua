@@ -99,7 +99,7 @@ local function test_do_update_with_changes()
   local path = require("cosmo.path")
   local original_exists = path.exists
   path.exists = function(p)
-    if p:match("%.github/pr/%d+%.md") then
+    if p:match("%.github/pr/test%-pr%.md") then
       return true
     end
     return original_exists(p)
@@ -107,13 +107,13 @@ local function test_do_update_with_changes()
 
   local original_slurp = cosmo.Slurp
   cosmo.Slurp = function(p)
-    if p:match("%.github/pr/%d+%.md") then
+    if p:match("%.github/pr/test%-pr%.md") then
       return "# New Title\n\nNew body content"
     end
     return original_slurp(p)
   end
 
-  local code, err = pr.do_update("owner", "repo", 42, "token", {fetch = mock_fetch})
+  local code, err = pr.do_update("owner", "repo", 42, "test-pr.md", "token", {fetch = mock_fetch})
 
   path.exists = original_exists
   cosmo.Slurp = original_slurp
@@ -151,7 +151,7 @@ local function test_do_update_without_changes()
   local path = require("cosmo.path")
   local original_exists = path.exists
   path.exists = function(p)
-    if p:match("%.github/pr/%d+%.md") then
+    if p:match("%.github/pr/test%-pr%.md") then
       return true
     end
     return original_exists(p)
@@ -159,13 +159,13 @@ local function test_do_update_without_changes()
 
   local original_slurp = cosmo.Slurp
   cosmo.Slurp = function(p)
-    if p:match("%.github/pr/%d+%.md") then
+    if p:match("%.github/pr/test%-pr%.md") then
       return "# Same Title\n\nSame body content"
     end
     return original_slurp(p)
   end
 
-  local code, err = pr.do_update("owner", "repo", 42, "token", {fetch = mock_fetch})
+  local code, err = pr.do_update("owner", "repo", 42, "test-pr.md", "token", {fetch = mock_fetch})
 
   path.exists = original_exists
   cosmo.Slurp = original_slurp

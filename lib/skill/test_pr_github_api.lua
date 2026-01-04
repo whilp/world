@@ -29,26 +29,6 @@ local function test_fetch_failure()
 end
 test_fetch_failure()
 
-local function test_finds_pr()
-  local mock_fetch = function()
-    return 200, {}, cosmo.EncodeJson({{number = 42, title = "Test PR"}})
-  end
-
-  local pr_num = pr.find_pr_number("owner", "repo", "branch", "token", {fetch = mock_fetch})
-  assert(pr_num == 42, "expected PR number 42")
-end
-test_finds_pr()
-
-local function test_no_pr_found()
-  local mock_fetch = function()
-    return 200, {}, cosmo.EncodeJson({})
-  end
-
-  local pr_num, err = pr.find_pr_number("owner", "repo", "branch", "token", {fetch = mock_fetch})
-  assert(not pr_num, "expected no PR number")
-  assert(err and err:match("no open PR found"), "expected no open PR error")
-end
-test_no_pr_found()
 
 local function test_update_pr_success()
   local captured_body
