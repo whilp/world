@@ -7,13 +7,14 @@ local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 local spawn = require("cosmic.spawn")
 
-local function install(nvim_staged, treesitter_staged, output_dir, parsers_config)
+local function install(nvim_staged, treesitter_staged, output_dir, parsers_config, tree_sitter_staged)
   local nvim_bin = path.join(nvim_staged, "bin/nvim")
 
   io.stderr:write(string.format("nvim-parsers: nvim_bin=%s\n", nvim_bin))
   io.stderr:write(string.format("nvim-parsers: treesitter_staged=%s\n", treesitter_staged))
   io.stderr:write(string.format("nvim-parsers: output_dir=%s\n", output_dir))
   io.stderr:write(string.format("nvim-parsers: parsers_config=%s\n", parsers_config))
+  io.stderr:write(string.format("nvim-parsers: tree_sitter_staged=%s\n", tree_sitter_staged))
 
   -- check nvim is executable
   local handle = spawn({nvim_bin, "--version"})
@@ -51,6 +52,14 @@ end
   env.VIMRUNTIME = path.join(cwd, nvim_staged, "share/nvim/runtime")
   env.VIM = path.join(cwd, nvim_staged, "share/nvim")
   env.CC = env.CC or "cc"
+  -- add tree-sitter CLI to PATH
+  if tree_sitter_staged then
+    local ts_bin = path.join(cwd, tree_sitter_staged)
+    env.PATH = ts_bin .. ":" .. (env.PATH or "")
+    io.stderr:write(string.format("nvim-parsers: tree-sitter added to PATH: %s\n", ts_bin))
+  else
+    io.stderr:write("nvim-parsers: WARNING: tree_sitter_staged not provided\n")
+  end
 
   io.stderr:write("nvim-parsers: running nvim to install parsers\n")
   handle = spawn({nvim_bin, "--headless", "-u", "NONE", "-l", script_path}, {env = env})
@@ -79,7 +88,7 @@ end
 end
 
 if cosmo.is_main() then
-  local ok = install(arg[1], arg[2], arg[3], arg[4])
+  local ok = install(arg[1], arg[2], arg[3], arg[4], arg[5])
   if not ok then os.exit(1) end
 end
 
