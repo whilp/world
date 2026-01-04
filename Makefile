@@ -103,15 +103,17 @@ staged: $(all_staged)
 $(o)/%/.staged: $(o)/%/.fetched
 	@$(build_stage) $$(readlink $(o)/$*/.versioned) $(platform) $< $@
 
-.PHONY: test
 all_tests := $(foreach x,$(modules),$($(x)_tests))
 ifdef TEST
   # filter tests by pattern (substring match)
   all_tests := $(foreach t,$(all_tests),$(if $(findstring $(TEST),$(t)),$(t)))
 endif
 all_tested := $(patsubst %,o/%.tested,$(all_tests))
-test: $(all_tested)
-	@$(test_reporter) $(o)
+
+test: $(o)/test-summary.txt
+
+$(o)/test-summary.txt: $(all_tested)
+	@$(test_reporter) $(o) | tee $@
 
 $(o)/test-results.txt: $(all_tested)
 	@for f in $^; do echo "$${f%.tested}: $$(cat $$f)"; done > $@
@@ -137,27 +139,33 @@ $(foreach m,$(filter-out bootstrap,$(modules)),\
       $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(d)_staged))\
       $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DEPS += $($(d)_staged)))))
 
-.PHONY: astgrep
 all_built_files := $(foreach x,$(modules),$($(x)_files))
 all_astgreps := $(patsubst %,%.astgrep.checked,$(all_built_files))
-astgrep: $(all_astgreps)
-	@$(astgrep_reporter) $(o)
+
+astgrep: $(o)/astgrep-summary.txt
+
+$(o)/astgrep-summary.txt: $(all_astgreps)
+	@$(astgrep_reporter) $(o) | tee $@
 
 $(o)/%.astgrep.checked: $(o)/% $(ast-grep_files) | $(bootstrap_files) $(ast-grep_staged)
 	@ASTGREP_BIN=$(ast-grep_staged) $(astgrep_runner) $< $@
 
-.PHONY: luacheck
 all_luachecks := $(patsubst %,%.luacheck.checked,$(all_built_files))
-luacheck: $(all_luachecks)
-	@$(luacheck_reporter) $(o)
+
+luacheck: $(o)/luacheck-summary.txt
+
+$(o)/luacheck-summary.txt: $(all_luachecks)
+	@$(luacheck_reporter) $(o) | tee $@
 
 $(o)/%.luacheck.checked: $(o)/% $(luacheck_files) | $(bootstrap_files) $(luacheck_staged)
 	@LUACHECK_BIN=$(luacheck_staged) $(luacheck_runner) $< $@
 
-.PHONY: teal
 all_teals := $(patsubst %,%.teal.checked,$(all_built_files))
-teal: $(all_teals)
-	@$(teal_reporter) $(o)
+
+teal: $(o)/teal-summary.txt
+
+$(o)/teal-summary.txt: $(all_teals)
+	@$(teal_reporter) $(o) | tee $@
 
 $(o)/%.teal.checked: $(o)/% $(tl_files) | $(bootstrap_files) $(tl_staged)
 	@TL_BIN=$(tl_staged) $(teal_runner) $< $@
@@ -172,10 +180,12 @@ bootstrap: $(bootstrap_files)
 clean:
 	@rm -rf $(o)
 
-.PHONY: check
 all_checks := $(all_astgreps) $(all_luachecks) $(all_teals)
-check: $(all_checks)
-	@$(check_reporter) $(o)
+
+check: $(o)/check-summary.txt
+
+$(o)/check-summary.txt: $(all_checks)
+	@$(check_reporter) $(o) | tee $@
 
 # Update PR title/description from .github/pr/<number>.md
 .PHONY: update-pr
