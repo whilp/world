@@ -53,32 +53,47 @@ local function get_commit_sha()
 end
 
 local function get_pr_name_from_trailer()
-  -- Check HEAD first
-  local handle = spawn({"git", "log", "-1", "--format=%(trailers:key=x-cosmic-pr-name,valueonly)"})
+  -- Get all x-cosmic-pr-name trailers from commits in reverse order (newest first)
+  -- This handles merge commits and allows renaming by adding new trailer
+  local handle = spawn({
+    "git", "log",
+    "--format=%(trailers:key=x-cosmic-pr-name,valueonly)",
+    "--reverse",  -- oldest first, we'll take the last non-empty one
+    "HEAD~20..HEAD"  -- check last 20 commits
+  })
+  local ok, out = handle:read()
+  if not ok or not out then
+    return nil
+  end
+
+  -- Find the last non-empty trailer (most recent)
+  local last_name = nil
+  for line in out:gmatch("[^\n]+") do
+    local name = line:match("^%s*(.-)%s*$")
+    if name and name ~= "" then
+      last_name = name
+    end
+  end
+
+  return last_name
+end
+
+local function is_pr_updates_enabled()
+  -- Check if PR updates are explicitly disabled
+  local handle = spawn({
+    "git", "log",
+    "--format=%(trailers:key=x-cosmic-pr-enable,valueonly)",
+    "-1",
+    "HEAD~20..HEAD"
+  })
   local ok, out = handle:read()
   if ok and out then
-    local name = out:match("^%s*(.-)%s*$")
-    if name and name ~= "" then
-      return name
+    local value = out:match("^%s*(.-)%s*$")
+    if value == "false" then
+      return false
     end
   end
-
-  -- If HEAD is a merge commit (common in GitHub Actions), check first parent
-  local is_merge_handle = spawn({"git", "rev-parse", "--verify", "HEAD^2"})
-  local is_merge_ok = is_merge_handle:read()
-  if is_merge_ok then
-    -- This is a merge commit, check first parent (the PR branch)
-    local first_parent_handle = spawn({"git", "log", "-1", "HEAD^1", "--format=%(trailers:key=x-cosmic-pr-name,valueonly)"})
-    local fp_ok, fp_out = first_parent_handle:read()
-    if fp_ok and fp_out then
-      local name = fp_out:match("^%s*(.-)%s*$")
-      if name and name ~= "" then
-        return name
-      end
-    end
-  end
-
-  return nil
+  return true
 end
 
 
@@ -348,19 +363,29 @@ local function main(opts)
     return 1, "invalid GITHUB_PR_NUMBER"
   end
 
+  -- Check if PR updates are disabled
+  if not is_pr_updates_enabled() then
+    log("PR updates disabled via x-cosmic-pr-enable: false")
+    return 0
+  end
+
   local pr_name = get_pr_name_from_trailer()
   if not pr_name then
     local sha = get_commit_sha()
-    local msg_handle = spawn({"git", "log", "-1", "--format=%B", sha})
-    local _, commit_msg = msg_handle:read()
-    local trailers_handle = spawn({"git", "log", "-1", "--format=%(trailers)", sha})
-    local _, trailers = trailers_handle:read()
+
+    -- Show what commits were checked
+    local commits_handle = spawn({"git", "log", "--oneline", "-20", "HEAD~20..HEAD"})
+    local _, commits = commits_handle:read()
+
+    -- Show trailers from all checked commits
+    local all_trailers_handle = spawn({"git", "log", "--format=%H %(trailers)", "-20", "HEAD~20..HEAD"})
+    local _, all_trailers = all_trailers_handle:read()
 
     local debug_info = string.format(
-      "no x-cosmic-pr-name trailer found in commit %s\nCommit message:\n%s\nTrailers:\n%s",
+      "no x-cosmic-pr-name trailer found in last 20 commits (HEAD = %s)\n\nCommits checked:\n%s\n\nTrailers found:\n%s",
       sha:sub(1, 8),
-      commit_msg or "(unable to read)",
-      trailers and trailers ~= "" and trailers or "(none)"
+      commits or "(unable to read)",
+      all_trailers and all_trailers ~= "" and all_trailers or "(none)"
     )
     return 1, debug_info
   end
@@ -389,6 +414,7 @@ return {
   get_current_branch = get_current_branch,
   get_commit_sha = get_commit_sha,
   get_pr_name_from_trailer = get_pr_name_from_trailer,
+  is_pr_updates_enabled = is_pr_updates_enabled,
   is_github_actions = is_github_actions,
   do_update = do_update,
   main = main,
