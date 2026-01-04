@@ -14,7 +14,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
 
+      - name: Check if PR file exists
+        id: check-pr-file
+        run: |
+          [ -f ".github/pr/${{ github.event.number }}.md" ] && \
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+
       - name: Update PR
+        if: steps.check-pr-file.outputs.exists == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_PR_NUMBER: ${{ github.event.number }}
