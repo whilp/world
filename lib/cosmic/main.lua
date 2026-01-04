@@ -1,7 +1,9 @@
 -- cosmic-lua dispatcher
 -- entry point for cosmic binary that handles special args and dispatches to features
 
--- Simple argument parser
+local getopt = require("cosmo.getopt")
+
+-- Parse arguments using cosmo.getopt iterator API
 local function parse_args()
   local opts = {
     execute = {},
@@ -15,66 +17,55 @@ local function parse_args()
     script_args = {},
   }
 
-  local i = 1
-  while i <= #arg do
-    local a = arg[i]
+  local longopts = {
+    { "help", "optional", "h" },
+    { "skill", "required", "s" },
+  }
 
-    if a == "-e" then
-      i = i + 1
-      if i <= #arg then
-        opts.execute[#opts.execute + 1] = arg[i]
-      end
-    elseif a == "-l" then
-      i = i + 1
-      if i <= #arg then
-        opts.load[#opts.load + 1] = arg[i]
-      end
-    elseif a == "-i" then
-      opts.interactive = true
-    elseif a == "-v" then
-      opts.version = true
-    elseif a == "-E" then
-      -- Ignore environment variables (already handled by lua)
-    elseif a == "-W" then
-      opts.warnings = true
-    elseif a == "--skill" then
-      i = i + 1
-      if i <= #arg then
-        opts.skill = arg[i]
-        -- Remaining args go to skill
-        i = i + 1
-        while i <= #arg do
-          opts.script_args[#opts.script_args + 1] = arg[i]
-          i = i + 1
-        end
-      end
+  local parser = getopt.new(arg, "e:l:ivEWh::s:", longopts)
+
+  -- Iterate through all options
+  while true do
+    local opt, optarg = parser:next()
+    if not opt then
       break
-    elseif a == "--help" then
-      i = i + 1
-      if i <= #arg and not arg[i]:match("^%-") then
-        opts.help = arg[i]
-      else
-        opts.help = true
-        i = i - 1
-      end
-      break
-    elseif a == "--" then
-      i = i + 1
-      break
-    elseif not a:match("^%-") then
-      -- Script file
-      opts.script = a
-      for j = i, #arg do
-        opts.script_args[j - i] = arg[j]
-      end
-      opts.script_args[-1] = arg[-1]
-      break
-    else
-      io.stderr:write("cosmic-lua: unknown option: " .. a .. "\n")
-      os.exit(1)
     end
 
-    i = i + 1
+    if opt == "e" then
+      opts.execute[#opts.execute + 1] = optarg
+    elseif opt == "l" then
+      opts.load[#opts.load + 1] = optarg
+    elseif opt == "i" then
+      opts.interactive = true
+    elseif opt == "v" then
+      opts.version = true
+    elseif opt == "E" then
+      -- Ignore environment variables (already handled by lua)
+    elseif opt == "W" then
+      opts.warnings = true
+    elseif opt == "h" or opt == "help" then
+      if optarg then
+        opts.help = optarg
+      else
+        opts.help = true
+      end
+      return opts
+    elseif opt == "s" or opt == "skill" then
+      opts.skill = optarg
+      -- Remaining args go to skill
+      opts.script_args = parser:remaining()
+      return opts
+    end
+  end
+
+  -- Handle remaining arguments (script and script args)
+  local rest = parser:remaining()
+  if rest and #rest > 0 then
+    opts.script = rest[1]
+    for j = 1, #rest do
+      opts.script_args[j - 1] = rest[j]
+    end
+    opts.script_args[-1] = arg[-1]
   end
 
   return opts
