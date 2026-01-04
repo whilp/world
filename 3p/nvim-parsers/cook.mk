@@ -11,10 +11,5 @@ nvim-parsers_config := $(o)/.config/nvim/parsers.lua
 $(nvim-parsers_parsers): $$(nvim_staged) $$(nvim-treesitter_staged) $$(tree-sitter_staged) $(nvim-parsers_config)
 	@rm -rf $(nvim-parsers_out)
 	@mkdir -p $(nvim-parsers_out)
-	@count=$$(3p/nvim-parsers/install.lua $(nvim_staged) $(nvim-treesitter_staged) $(nvim-parsers_out) $(nvim-parsers_config) $(tree-sitter_staged)); \
-	if [ $$? -eq 0 ]; then \
-		echo "✓ BUILD  $@ (nvim-parsers: $$count parsers built)"; \
-	else \
-		exit 1; \
-	fi
+	@3p/nvim-parsers/install.lua $(nvim_staged) $(nvim-treesitter_staged) $(nvim-parsers_out) $(nvim-parsers_config) $(tree-sitter_staged) $@
 	@touch $@

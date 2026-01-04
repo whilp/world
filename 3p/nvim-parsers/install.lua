@@ -7,7 +7,7 @@ local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 local spawn = require("cosmic.spawn")
 
-local function install(nvim_staged, treesitter_staged, output_dir, parsers_config, tree_sitter_staged)
+local function install(nvim_staged, treesitter_staged, output_dir, parsers_config, tree_sitter_staged, target)
   local nvim_bin = path.join(nvim_staged, "bin/nvim")
 
   -- Collect verbose output, only print on error
@@ -131,14 +131,16 @@ end
     log_write(string.format("nvim-parsers: parser_dir MISSING: %s\n", parser_dir))
   end
 
-  -- Count parsers built
+  -- Print success message
   local parser_count = #parsers
-  io.stdout:write(string.format("%d\n", parser_count))
+  if target then
+    io.stderr:write(string.format("✓ BUILD  %s (nvim-parsers: %d parsers built)\n", target, parser_count))
+  end
   return true
 end
 
 if cosmo.is_main() then
-  local ok = install(arg[1], arg[2], arg[3], arg[4], arg[5])
+  local ok = install(arg[1], arg[2], arg[3], arg[4], arg[5], arg[6])
   if not ok then os.exit(1) end
 end
 
