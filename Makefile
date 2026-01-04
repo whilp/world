@@ -103,15 +103,17 @@ staged: $(all_staged)
 $(o)/%/.staged: $(o)/%/.fetched
 	@$(build_stage) $$(readlink $(o)/$*/.versioned) $(platform) $< $@
 
-.PHONY: test
 all_tests := $(foreach x,$(modules),$($(x)_tests))
 ifdef TEST
   # filter tests by pattern (substring match)
   all_tests := $(foreach t,$(all_tests),$(if $(findstring $(TEST),$(t)),$(t)))
 endif
 all_tested := $(patsubst %,o/%.tested,$(all_tests))
-test: $(all_tested)
-	@$(test_reporter) $(o)
+
+test: $(o)/test-summary.txt
+
+$(o)/test-summary.txt: $(all_tested)
+	@$(test_reporter) $(o) | tee $@
 
 $(o)/test-results.txt: $(all_tested)
 	@for f in $^; do echo "$${f%.tested}: $$(cat $$f)"; done > $@
