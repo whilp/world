@@ -200,6 +200,14 @@ update-pr: $(cosmic_bin) | $(bootstrap_cosmic)
 		$(bootstrap_cosmic) lib/skill/pr.lua || true; \
 	fi
 
+.PHONY: check-logs
+check-logs: $(cosmic_bin) | $(bootstrap_cosmic)
+	@if [ -f $(cosmic_bin) ]; then \
+		$(cosmic_bin) -l skill check-logs || true; \
+	else \
+		$(bootstrap_cosmic) lib/skill/check-logs.lua || true; \
+	fi
+
 debug-modules:
 	@echo $(modules)
 

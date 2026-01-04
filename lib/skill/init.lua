@@ -10,6 +10,8 @@ local function find_subcommand()
   for i = -1, #arg do
     if arg[i] == "update-pr" then
       return "update-pr", i
+    elseif arg[i] == "check-logs" then
+      return "check-logs", i
     end
   end
 
@@ -34,6 +36,13 @@ if subcommand then
   if subcommand == "update-pr" then
     local pr = require("skill.pr")
     local code, msg = pr.main()
+    if msg then
+      io.stderr:write(msg .. "\n")
+    end
+    os.exit(code or 0)
+  elseif subcommand == "check-logs" then
+    local check_logs = require("skill.check-logs")
+    local code, msg = check_logs.main()
     if msg then
       io.stderr:write(msg .. "\n")
     end
