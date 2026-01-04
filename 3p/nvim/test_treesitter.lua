@@ -4,9 +4,6 @@
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 
--- debug: show TEST_DIR value
-io.stderr:write(string.format("test_treesitter: TEST_DIR=%s\n", tostring(TEST_DIR)))
-
 local site_dir = path.join(TEST_DIR, "share", "nvim", "site")
 local pack_dir = path.join(site_dir, "pack", "core", "opt")
 
