@@ -10,11 +10,6 @@ home_3p_tools := ast-grep biome comrak delta duckdb gh luacheck marksman nvim rg
 
 home_deps := cosmos cosmic $(home_3p_tools)
 
-# Copy lib sources to output
-$(o)/lib/home/%.lua: lib/home/%.lua
-	@mkdir -p $(@D)
-	@$(cp) $< $@
-
 # Build configuration
 home_exclude_pattern := ^(3p/|o/|results/|Makefile|\.git)
 home_setup_dir := lib/home/setup
