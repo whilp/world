@@ -14,8 +14,7 @@ local function install(nvim_staged, treesitter_staged, output_dir, parsers_confi
   local handle = spawn({nvim_bin, "--version"})
   local ok = handle:read()
   if not ok then
-    io.write("nvim-parsers: skipped (nvim not executable)\n")
-    return true
+    return true -- skip silently if nvim not executable on this platform
   end
 
   local cwd = unix.getcwd()
@@ -24,30 +23,38 @@ local function install(nvim_staged, treesitter_staged, output_dir, parsers_confi
   unix.makedirs(cache_dir)
 
   local script = string.format([[
-vim.opt.packpath:prepend("%s")
-vim.cmd("packadd nvim-treesitter")
+vim.opt.runtimepath:prepend("%s")
 local ts = require("nvim-treesitter")
 ts.setup({ install_dir = "%s" })
-local ok = ts.install({"%s"}):wait()
-if ok then vim.cmd("qall!") else vim.cmd("cquit 1") end
+local task = ts.install({"%s"})
+local ok, err = task:pwait(300000)
+if ok then
+  vim.cmd("qall!")
+else
+  io.stderr:write("pwait failed: " .. tostring(err) .. "\n")
+  vim.cmd("cquit 1")
+end
 ]], treesitter_staged, path.join(cwd, output_dir), table.concat(parsers, '","'))
 
   local script_path = path.join(cache_dir, "install.lua")
   cosmo.Barf(script_path, script)
 
-  io.write(string.format("nvim-parsers: installing %s\n", table.concat(parsers, ", ")))
-
   local env = unix.environ()
   env.XDG_CACHE_HOME = cache_dir
   env.VIMRUNTIME = path.join(cwd, nvim_staged, "share/nvim/runtime")
   env.VIM = path.join(cwd, nvim_staged, "share/nvim")
+  env.CC = env.CC or "cc"
 
   handle = spawn({nvim_bin, "--headless", "-u", "NONE", "-l", script_path}, {env = env})
-  ok = handle:read()
-  if not ok then
-    local stderr = handle.stderr:read()
+  -- read stderr before wait() since wait() drains and closes it
+  local stderr = handle.stderr:read()
+  local exit_code = handle:wait()
+  if exit_code ~= 0 then
+    io.stderr:write("nvim-parsers: installation failed\n")
+    io.stderr:write(string.format("  script: %s\n", script_path))
+    io.stderr:write(string.format("  exit: %d\n", exit_code or -1))
     if stderr and stderr ~= "" then
-      io.write("  " .. stderr:gsub("\n", "\n  ") .. "\n")
+      io.stderr:write("  output:\n    " .. stderr:gsub("\n", "\n    ") .. "\n")
     end
     return nil, "parser installation failed"
   end
@@ -55,11 +62,8 @@ if ok then vim.cmd("qall!") else vim.cmd("cquit 1") end
 end
 
 if cosmo.is_main() then
-  local ok, err = install(arg[1], arg[2], arg[3], arg[4])
-  if not ok then
-    io.stderr:write("error: " .. tostring(err) .. "\n")
-    os.exit(1)
-  end
+  local ok = install(arg[1], arg[2], arg[3], arg[4])
+  if not ok then os.exit(1) end
 end
 
 return { install = install }
