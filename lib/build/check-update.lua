@@ -41,16 +41,15 @@ local function check_latest_version(config)
   return version_clean
 end
 
-local function main(version_file, output_file)
-  if not version_file or not output_file then
-    io.stderr:write("usage: check-update.lua <version_file> <output_file>\n")
+local function main(version_file)
+  if not version_file then
+    io.stderr:write("usage: check-update.lua <version_file>\n")
     return 1
   end
 
   local content = cosmo.Slurp(version_file)
   if not content then
-    unix.makedirs(path.dirname(output_file))
-    cosmo.Barf(output_file, common.format_output("fail", "could not read file", "", ""))
+    io.write(common.format_output("fail", "could not read file", "", ""))
     return 1
   end
 
@@ -60,29 +59,25 @@ local function main(version_file, output_file)
   })
 
   if skip_reason then
-    unix.makedirs(path.dirname(output_file))
-    cosmo.Barf(output_file, common.format_output("skip", skip_reason, "", ""))
+    io.write(common.format_output("skip", skip_reason, "", ""))
     return 0
   end
 
   local chunk, err = load(content, version_file)
   if not chunk then
-    unix.makedirs(path.dirname(output_file))
-    cosmo.Barf(output_file, common.format_output("fail", "could not parse: " .. tostring(err), "", ""))
+    io.write(common.format_output("fail", "could not parse: " .. tostring(err), "", ""))
     return 1
   end
 
   local ok, config = pcall(chunk)
   if not ok then
-    unix.makedirs(path.dirname(output_file))
-    cosmo.Barf(output_file, common.format_output("fail", "could not load: " .. tostring(config), "", ""))
+    io.write(common.format_output("fail", "could not load: " .. tostring(config), "", ""))
     return 1
   end
 
   local current_version = config.version
   if not current_version then
-    unix.makedirs(path.dirname(output_file))
-    cosmo.Barf(output_file, common.format_output("fail", "no version field", "", ""))
+    io.write(common.format_output("fail", "no version field", "", ""))
     return 1
   end
 
@@ -106,8 +101,7 @@ local function main(version_file, output_file)
     stderr = ""
   end
 
-  unix.makedirs(path.dirname(output_file))
-  cosmo.Barf(output_file, common.format_output(status, message, stdout, stderr))
+  io.write(common.format_output(status, message, stdout, stderr))
 
   return 0
 end
