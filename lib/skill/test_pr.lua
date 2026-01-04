@@ -4,35 +4,15 @@
 local pr = require("skill.pr")
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
-local unix = require("cosmo.unix")
-local spawn = require("cosmic.spawn")
 
-local TEST_TMPDIR = os.getenv("TEST_TMPDIR") or "/tmp"
-
--- helper: run git command
-local function git(args)
-  local handle = spawn(args)
-  local code = handle:wait()
-  assert(code == 0, "git failed: " .. table.concat(args, " "))
-end
-
--- helper: create isolated git repo
-local function make_test_repo()
-  local repo = path.join(TEST_TMPDIR, "test-repo-" .. tostring(os.time()))
-  unix.makedirs(repo)
-  git({"git", "init", repo})
-  git({"git", "-C", repo, "config", "user.email", "test@test.com"})
-  git({"git", "-C", repo, "config", "user.name", "Test"})
-  return repo
-end
-
--- helper: commit with message in test repo
-local function commit(repo, msg)
-  local f = io.open(path.join(repo, "file.txt"), "a")
-  f:write(msg .. "\n")
-  f:close()
-  git({"git", "-C", repo, "add", "."})
-  git({"git", "-C", repo, "commit", "-m", msg})
+-- helper: mock spawn that returns predetermined output
+local function mock_spawn(output)
+  return function()
+    return {
+      read = function() return true, output end,
+      wait = function() return 0 end,
+    }
+  end
 end
 
 --------------------------------------------------------------------------------
@@ -186,51 +166,50 @@ end
 test_remote_missing_pr_number()
 
 --------------------------------------------------------------------------------
--- trailer extraction with git repo
+-- trailer extraction (mocked git output)
 --------------------------------------------------------------------------------
 
 local function test_trailer_not_found()
-  local repo = make_test_repo()
-  commit(repo, "Initial commit")
-
-  local result = pr.get_pr_name_from_trailer(repo)
+  local output = "abc123\ndef456\n"  -- commits with no trailers
+  local result = pr.get_pr_name_from_trailer({spawn = mock_spawn(output)})
   assert(result == nil, "expected no trailer")
-  unix.rmrf(repo)
 end
 test_trailer_not_found()
 
 local function test_trailer_found()
-  local repo = make_test_repo()
-  commit(repo, "feat: add feature\n\nx-cosmic-pr-name: 2026-01-04-feature.md")
-
-  local result = pr.get_pr_name_from_trailer(repo)
+  local output = "abc123 2026-01-04-feature.md\n"
+  local result = pr.get_pr_name_from_trailer({spawn = mock_spawn(output)})
   assert(result == "2026-01-04-feature.md", "expected trailer value, got: " .. tostring(result))
-  unix.rmrf(repo)
 end
 test_trailer_found()
 
 local function test_trailer_disabled()
-  local repo = make_test_repo()
-  commit(repo, "feat: add feature\n\nx-cosmic-pr-name: feature.md")
-  commit(repo, "chore: disable updates\n\nx-cosmic-pr-enable: false")
-
-  local result = pr.get_pr_name_from_trailer(repo)
+  -- first commit has name, second disables
+  local output = "abc123 feature.md\ndef456 false\n"
+  local result = pr.get_pr_name_from_trailer({spawn = mock_spawn(output)})
   assert(result == nil, "expected disabled, got: " .. tostring(result))
-  unix.rmrf(repo)
 end
 test_trailer_disabled()
 
 local function test_trailer_reenabled()
-  local repo = make_test_repo()
-  commit(repo, "feat: add feature\n\nx-cosmic-pr-name: old.md")
-  commit(repo, "chore: disable\n\nx-cosmic-pr-enable: false")
-  commit(repo, "feat: new feature\n\nx-cosmic-pr-name: 2026-01-04-new.md")
-
-  local result = pr.get_pr_name_from_trailer(repo)
+  -- name -> disable -> new name
+  local output = "abc123 old.md\ndef456 false\nghi789 2026-01-04-new.md\n"
+  local result = pr.get_pr_name_from_trailer({spawn = mock_spawn(output)})
   assert(result == "2026-01-04-new.md", "expected re-enabled with new name, got: " .. tostring(result))
-  unix.rmrf(repo)
 end
 test_trailer_reenabled()
+
+local function test_trailer_info_returned()
+  local output = "abc123\ndef456 feature.md\nghi789\n"
+  local result, info = pr.get_pr_name_from_trailer({spawn = mock_spawn(output)})
+  assert(result == "feature.md", "expected trailer")
+  assert(info.commit_count == 3, "expected 3 commits")
+  assert(info.first_sha == "abc123", "expected first sha")
+  assert(info.last_sha == "ghi789", "expected last sha")
+  assert(info.winning_sha == "def456", "expected winning sha")
+  assert(info.winning_trailer == "x-cosmic-pr-name: feature.md", "expected winning trailer")
+end
+test_trailer_info_returned()
 
 --------------------------------------------------------------------------------
 -- do_update integration
