@@ -16,10 +16,10 @@ jobs:
     steps:
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
 
-      - id: make bootstrap
+      - id: make-bootstrap
         run: make bootstrap
 
-      - id: make check test build
+      - id: make-check-test-build
         run: make check test build
 
   update:
@@ -28,10 +28,10 @@ jobs:
     steps:
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
 
-      - id: make bootstrap
+      - id: make-bootstrap
         run: make bootstrap
 
-      - id: make update-pr
+      - id: make-update-pr
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_PR_NUMBER: ${{ github.event.number }}
