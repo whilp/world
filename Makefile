@@ -89,7 +89,7 @@ $(foreach m,$(filter-out $(default_deps),$(modules)),\
       $(eval $($(m)_files): $($(d)_staged)))))
 
 all_versions := $(foreach x,$(modules),$($(x)_version))
-all_updated := $(patsubst %,$(o)/%.updated,$(all_versions))
+all_updated := $(patsubst %,$(o)/%.update.ok,$(all_versions))
 
 # versioned modules: o/module/.versioned -> version.lua
 $(foreach m,$(modules),$(if $($(m)_version),\
@@ -115,70 +115,70 @@ ifdef TEST
   # filter tests by pattern (substring match)
   all_tests := $(foreach t,$(all_tests),$(if $(findstring $(TEST),$(t)),$(t)))
 endif
-all_tested := $(patsubst %,o/%.tested,$(all_tests))
+all_tested := $(patsubst %,o/%.test.ok,$(all_tests))
 
 test: $(o)/test-summary.txt
 
 $(o)/test-summary.txt: $(all_tested)
-	@$(test_reporter) $(o) | tee $@
+	@$(reporter) --dir $(o) test $^ | tee $@
 
 $(o)/test-results.txt: $(all_tested)
-	@for f in $^; do echo "$${f%.tested}: $$(cat $$f)"; done > $@
+	@for f in $^; do echo "$${f%.test.ok}: $$(cat $$f)"; done > $@
 
 export TEST_O := $(o)
 export TEST_PLATFORM := $(platform)
 export TEST_BIN := $(o)/bin
 export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
 
-$(o)/%.tested: % $(test_files) | $(bootstrap_files)
-	@TEST_DIR=$(TEST_DIR) $< $@
+$(o)/%.test.ok: % $(test_files) | $(bootstrap_files)
+	@TEST_DIR=$(TEST_DIR) $(test_runner) $< $@
 
 # expand test deps: M's tests depend on own _files/_dir plus deps' _dir
 $(foreach m,$(filter-out bootstrap,$(modules)),\
-  $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(m)_files))\
-  $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DEPS += $($(m)_files))\
+  $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): $($(m)_files))\
+  $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): TEST_DEPS += $($(m)_files))\
   $(if $($(m)_dir),\
-    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(m)_dir))\
-    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DEPS += $($(m)_dir))\
-    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DIR := $($(m)_dir)))\
+    $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): $($(m)_dir))\
+    $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): TEST_DEPS += $($(m)_dir))\
+    $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): TEST_DIR := $($(m)_dir)))\
   $(foreach d,$(filter-out $(m),$(default_deps) $($(m)_deps)),\
     $(if $($(d)_dir),\
-      $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(d)_dir))\
-      $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DEPS += $($(d)_dir)))))
+      $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): $($(d)_dir))\
+      $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): TEST_DEPS += $($(d)_dir)))))
 
 all_built_files := $(foreach x,$(modules),$($(x)_files))
 all_test_files := $(foreach x,$(modules),$($(x)_tests))
 all_version_files := $(filter-out ,$(foreach x,$(modules),$($(x)_version)))
 all_checkable_files := $(all_built_files) $(addprefix $(o)/,$(all_test_files) $(all_version_files))
 .PRECIOUS: $(all_checkable_files)
-all_astgreps := $(patsubst %,%.astgrep.checked,$(all_checkable_files))
+all_astgreps := $(patsubst %,%.ast-grep.ok,$(all_checkable_files))
 
 astgrep: $(o)/astgrep-summary.txt
 
 $(o)/astgrep-summary.txt: $(all_astgreps)
-	@$(astgrep_reporter) $(o) | tee $@
+	@$(reporter) --dir $(o) ast-grep $^ | tee $@
 
-$(o)/%.astgrep.checked: $(o)/% $(ast-grep_files) | $(bootstrap_files) $(ast-grep_staged)
+$(o)/%.ast-grep.ok: $(o)/% $(ast-grep_files) | $(bootstrap_files) $(ast-grep_staged)
 	@ASTGREP_BIN=$(ast-grep_staged) $(astgrep_runner) $< $@
 
-all_luachecks := $(patsubst %,%.luacheck.checked,$(all_checkable_files))
+all_luachecks := $(patsubst %,%.luacheck.ok,$(all_checkable_files))
 
 luacheck: $(o)/luacheck-summary.txt
 
 $(o)/luacheck-summary.txt: $(all_luachecks)
-	@$(luacheck_reporter) $(o) | tee $@
+	@$(reporter) --dir $(o) luacheck $^ | tee $@
 
-$(o)/%.luacheck.checked: $(o)/% $(luacheck_files) | $(bootstrap_files) $(luacheck_staged)
+$(o)/%.luacheck.ok: $(o)/% $(luacheck_files) | $(bootstrap_files) $(luacheck_staged)
 	@LUACHECK_BIN=$(luacheck_staged) $(luacheck_runner) $< $@
 
-all_teals := $(patsubst %,%.teal.checked,$(all_checkable_files))
+all_teals := $(patsubst %,%.teal.ok,$(all_checkable_files))
 
 teal: $(o)/teal-summary.txt
 
 $(o)/teal-summary.txt: $(all_teals)
-	@$(teal_reporter) $(o) | tee $@
+	@$(reporter) --dir $(o) teal $^ | tee $@
 
-$(o)/%.teal.checked: $(o)/% $(tl_files) | $(bootstrap_files) $(tl_staged)
+$(o)/%.teal.ok: $(o)/% $(tl_files) | $(bootstrap_files) $(tl_staged)
 	@TL_BIN=$(tl_staged) $(teal_runner) $< $@
 
 .PHONY: bootstrap
@@ -201,9 +201,9 @@ $(o)/check-summary.txt: $(all_checks)
 update: $(o)/update-summary.txt
 
 $(o)/update-summary.txt: $(all_updated)
-	@$(update_reporter) $(all_updated) | tee $@
+	@$(reporter) --dir $(o) update $^ | tee $@
 
-$(o)/%.updated: % $(build_check_update) | $(bootstrap_files)
+$(o)/%.update.ok: % $(build_check_update) | $(bootstrap_files)
 	@$(update_runner) $< $@
 
 # Update PR title/description from .github/pr/<number>.md
