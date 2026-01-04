@@ -59,3 +59,36 @@ function TestCosmicBinary:test_lfs_bundled()
   lu.assertTrue(ok, "cosmic exited with error")
   lu.assertStrContains(out, "ok")
 end
+
+function TestCosmicBinary:test_warnings_flag()
+  -- -W should convert warnings to errors
+  local ok, out, code = spawn({cosmic, "-W", "-e", "warn('test warning')"}, {env = clean_env()}):read()
+  lu.assertFalse(ok, "cosmic should fail with -W when warning is issued")
+  lu.assertStrContains(out, "warning: test warning")
+  lu.assertEquals(code, 1)
+end
+
+function TestCosmicBinary:test_warnings_without_flag()
+  -- without -W, warnings should not cause errors
+  local ok, out = spawn({cosmic, "-e", "warn('test warning'); print('ok')"}, {env = clean_env()}):read()
+  lu.assertTrue(ok, "cosmic should succeed without -W")
+  lu.assertStrContains(out, "ok")
+end
+
+function TestCosmicBinary:test_interactive_mode()
+  -- -i should enter interactive mode (REPL)
+  local proc = spawn({cosmic, "-i"}, {env = clean_env(), stdin = "print('hello')\ncont\n"})
+  local ok, out = proc:read()
+  lu.assertTrue(ok, "cosmic -i should succeed")
+  lu.assertStrContains(out, "Lua 5.4")
+  lu.assertStrContains(out, "hello")
+end
+
+function TestCosmicBinary:test_repl_no_args()
+  -- no args should enter REPL
+  local proc = spawn({cosmic}, {env = clean_env(), stdin = "print('repl test')\ncont\n"})
+  local ok, out = proc:read()
+  lu.assertTrue(ok, "cosmic with no args should enter REPL")
+  lu.assertStrContains(out, "Lua 5.4")
+  lu.assertStrContains(out, "repl test")
+end
