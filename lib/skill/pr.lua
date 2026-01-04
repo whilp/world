@@ -43,6 +43,15 @@ local function get_current_branch()
   return branch
 end
 
+local function get_commit_sha()
+  local handle = spawn({"git", "rev-parse", "HEAD"})
+  local ok, out = handle:read()
+  if not ok or not out then
+    return "unknown"
+  end
+  return out:match("^%s*(.-)%s*$") or "unknown"
+end
+
 local function get_pr_name_from_trailer()
   local handle = spawn({"git", "log", "-1", "--format=%(trailers:key=x-cosmic-pr-name,valueonly)"})
   local ok, out = handle:read()
@@ -325,7 +334,19 @@ local function main(opts)
 
   local pr_name = get_pr_name_from_trailer()
   if not pr_name then
-    return 1, "no x-cosmic-pr-name trailer found in HEAD commit"
+    local sha = get_commit_sha()
+    local msg_handle = spawn({"git", "log", "-1", "--format=%B", sha})
+    local _, commit_msg = msg_handle:read()
+    local trailers_handle = spawn({"git", "log", "-1", "--format=%(trailers)", sha})
+    local _, trailers = trailers_handle:read()
+
+    local debug_info = string.format(
+      "no x-cosmic-pr-name trailer found in commit %s\nCommit message:\n%s\nTrailers:\n%s",
+      sha:sub(1, 8),
+      commit_msg or "(unable to read)",
+      trailers and trailers ~= "" and trailers or "(none)"
+    )
+    return 1, debug_info
   end
 
   return do_update(owner, repo_name, pr_number, pr_name, token, opts)
@@ -350,6 +371,7 @@ return {
   append_timestamp_details = append_timestamp_details,
   update_pr = update_pr,
   get_current_branch = get_current_branch,
+  get_commit_sha = get_commit_sha,
   get_pr_name_from_trailer = get_pr_name_from_trailer,
   is_github_actions = is_github_actions,
   do_update = do_update,
