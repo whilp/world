@@ -219,9 +219,9 @@ release:
 	LUA_PATH="lib/home/?.lua;;" ./release/cosmic-lua lib/home/gen-platforms.lua \
 		release/platforms "$$base_url" "$$tag" \
 		release/home-darwin-arm64 release/home-linux-arm64 release/home-linux-x86_64; \
-	cd release/platforms && ../../artifacts/cosmos-zip/zip -j ../home platforms.lua; \
-	cd release/platforms && ../../artifacts/cosmos-zip/zip -r ../home manifests; \
-	cd release && sha256sum home home-* cosmic-lua > SHA256SUMS && cat SHA256SUMS; \
+	(cd release/platforms && ../../artifacts/cosmos-zip/zip -j ../home platforms.lua); \
+	(cd release/platforms && ../../artifacts/cosmos-zip/zip -r ../home manifests); \
+	(cd release && sha256sum home home-* cosmic-lua > SHA256SUMS && cat SHA256SUMS); \
 	gh release create "$$tag" \
 		$${PRERELEASE_FLAG} \
 		--title "home $$tag" \
