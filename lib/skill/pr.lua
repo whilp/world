@@ -53,12 +53,12 @@ local function get_commit_sha()
 end
 
 local function get_pr_name_from_trailer()
-  -- Get all x-cosmic-pr-name trailers from commits in reverse order (newest first)
-  -- This handles merge commits and allows renaming by adding new trailer
+  -- Get all x-cosmic-pr-name and x-cosmic-pr-enable trailers from last 20 commits
+  -- Process in chronological order (oldest first) to find the final state
   local handle = spawn({
     "git", "log",
-    "--format=%(trailers:key=x-cosmic-pr-name,valueonly)",
-    "--reverse",  -- oldest first, we'll take the last non-empty one
+    "--format=%H %(trailers:key=x-cosmic-pr-name,valueonly)%(trailers:key=x-cosmic-pr-enable,valueonly)",
+    "--reverse",  -- oldest first
     "-20"  -- check last 20 commits
   })
   local ok, out = handle:read()
@@ -66,34 +66,31 @@ local function get_pr_name_from_trailer()
     return nil
   end
 
-  -- Find the last non-empty trailer (most recent)
-  local last_name = nil
+  -- Track the final state by processing commits in order
+  local pr_name = nil
+  local enabled = true
+
   for line in out:gmatch("[^\n]+") do
-    local name = line:match("^%s*(.-)%s*$")
-    if name and name ~= "" then
-      last_name = name
+    local sha, rest = line:match("^(%S+)%s*(.*)$")
+    if sha and rest then
+      -- Check if this line has x-cosmic-pr-name or x-cosmic-pr-enable
+      local name = rest:match("^%s*(.-)%s*$")
+      if name and name ~= "" then
+        -- Could be either pr-name or pr-enable value
+        if name == "false" then
+          -- This is x-cosmic-pr-enable: false
+          enabled = false
+          pr_name = nil  -- disable clears the name
+        else
+          -- This is x-cosmic-pr-name: something.md
+          pr_name = name
+          enabled = true  -- setting a name re-enables
+        end
+      end
     end
   end
 
-  return last_name
-end
-
-local function is_pr_updates_enabled()
-  -- Check if PR updates are explicitly disabled
-  local handle = spawn({
-    "git", "log",
-    "--format=%(trailers:key=x-cosmic-pr-enable,valueonly)",
-    "-1",
-    "-20"
-  })
-  local ok, out = handle:read()
-  if ok and out then
-    local value = out:match("^%s*(.-)%s*$")
-    if value == "false" then
-      return false
-    end
-  end
-  return true
+  return enabled and pr_name or nil
 end
 
 
@@ -363,12 +360,6 @@ local function main(opts)
     return 1, "invalid GITHUB_PR_NUMBER"
   end
 
-  -- Check if PR updates are disabled
-  if not is_pr_updates_enabled() then
-    log("PR updates disabled via x-cosmic-pr-enable: false")
-    return 0
-  end
-
   local pr_name = get_pr_name_from_trailer()
   if not pr_name then
     local sha = get_commit_sha()
@@ -382,7 +373,7 @@ local function main(opts)
     local _, all_trailers = all_trailers_handle:read()
 
     local debug_info = string.format(
-      "no x-cosmic-pr-name trailer found in last 20 commits (HEAD = %s)\n\nCommits checked:\n%s\n\nTrailers found:\n%s",
+      "no x-cosmic-pr-name trailer found (or disabled) in last 20 commits (HEAD = %s)\n\nCommits checked:\n%s\n\nTrailers found:\n%s\n\nNote: x-cosmic-pr-enable: false disables updates until a new x-cosmic-pr-name is set",
       sha:sub(1, 8),
       commits or "(unable to read)",
       all_trailers and all_trailers ~= "" and all_trailers or "(none)"
@@ -414,7 +405,6 @@ return {
   get_current_branch = get_current_branch,
   get_commit_sha = get_commit_sha,
   get_pr_name_from_trailer = get_pr_name_from_trailer,
-  is_pr_updates_enabled = is_pr_updates_enabled,
   is_github_actions = is_github_actions,
   do_update = do_update,
   main = main,
