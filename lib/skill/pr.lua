@@ -1,6 +1,14 @@
 -- teal ignore: type annotations needed
 --[[
-Updates a GitHub PR title and description from .github/pr/<number>.md
+Updates a GitHub PR title and description from .github/pr/<name>.md
+
+The PR file is identified by the x-cosmic-pr-name trailer in the commit message:
+
+  cosmic: add feature
+
+  Description of changes.
+
+  x-cosmic-pr-name: feature-name.md
 
 The pr.md format:
   # <title>
@@ -11,7 +19,6 @@ Environment variables:
   GITHUB_TOKEN - required for API authentication
   GITHUB_REPOSITORY - owner/repo format
   GITHUB_PR_NUMBER - PR number (set by workflow)
-  GITHUB_HEAD_REF - branch name (fallback to find PR)
   GITHUB_API_URL - optional, defaults to https://api.github.com
 ]]
 
@@ -36,55 +43,77 @@ local function get_current_branch()
   return branch
 end
 
-local function get_git_info()
-  local ok, remote_url = spawn({"git", "remote", "get-url", "origin"}):read()
-  if not ok or not remote_url then
-    return nil
+local function get_commit_sha()
+  local handle = spawn({"git", "rev-parse", "HEAD"})
+  local ok, out = handle:read()
+  if not ok or not out then
+    return "unknown"
   end
-
-  local branch
-  ok, branch = spawn({"git", "branch", "--show-current"}):read()
-  if not ok or not branch then
-    return nil
-  end
-
-  remote_url = remote_url:match("^%s*(.-)%s*$")
-  branch = branch:match("^%s*(.-)%s*$")
-
-  local owner, repo = remote_url:match("github%.com[:/]([^/]+)/([^/%.]+)")
-  if not owner or not repo then
-    owner, repo = remote_url:match("/git/([^/]+)/([^/%.]+)")
-  end
-
-  if not owner or not repo or not branch then
-    return nil
-  end
-
-  return {owner = owner, repo = repo, branch = branch}
+  return out:match("^%s*(.-)%s*$") or "unknown"
 end
 
-local function find_pr_for_branch(owner, repo, branch)
-  local url = string.format("https://api.github.com/repos/%s/%s/pulls?head=%s:%s&state=open",
-    owner, repo, owner, branch)
+local function get_pr_name_from_trailer(opts)
+  opts = opts or {}
+  local do_spawn = opts.spawn or spawn
 
-  local status, _, body = cosmo.Fetch(url, {
-    headers = {
-      ["User-Agent"] = "pr.lua/1.0",
-      ["Accept"] = "application/vnd.github+json",
-    },
-  })
-
-  if status ~= 200 then
+  -- Get all x-cosmic-pr-name and x-cosmic-pr-enable trailers from last 20 commits
+  -- Process in chronological order (oldest first) to find the final state
+  local cmd = {"git"}
+  if opts.repo then
+    table.insert(cmd, "-C")
+    table.insert(cmd, opts.repo)
+  end
+  table.insert(cmd, "log")
+  table.insert(cmd, "--format=%H %(trailers:key=x-cosmic-pr-name,valueonly)%(trailers:key=x-cosmic-pr-enable,valueonly)")
+  table.insert(cmd, "--reverse")
+  table.insert(cmd, "-20")
+  local handle = do_spawn(cmd)
+  local ok, out = handle:read()
+  if not ok or not out then
     return nil
   end
 
-  local ok, data = pcall(cosmo.DecodeJson, body)
-  if not ok or type(data) ~= "table" or #data == 0 then
-    return nil
+  -- Track the final state by processing commits in order
+  local pr_name = nil
+  local enabled = true
+  local first_sha, last_sha, winning_sha, winning_trailer
+  local commit_count = 0
+
+  for line in out:gmatch("[^\n]+") do
+    local sha, rest = line:match("^(%S+)%s*(.*)$")
+    if sha then
+      commit_count = commit_count + 1
+      if not first_sha then first_sha = sha end
+      last_sha = sha
+
+      local name = rest and rest:match("^%s*(.-)%s*$")
+      if name and name ~= "" then
+        if name == "false" then
+          enabled = false
+          pr_name = nil
+          winning_sha = sha
+          winning_trailer = "x-cosmic-pr-enable: false"
+        else
+          pr_name = name
+          enabled = true
+          winning_sha = sha
+          winning_trailer = "x-cosmic-pr-name: " .. name
+        end
+      end
+    end
   end
 
-  return data[1].number
+  local info = {
+    commit_count = commit_count,
+    first_sha = first_sha,
+    last_sha = last_sha,
+    winning_sha = winning_sha,
+    winning_trailer = winning_trailer,
+  }
+
+  return enabled and pr_name or nil, info
 end
+
 
 local function parse_pr_md(content)
   local title = content:match("^#%s*([^\n]+)")
@@ -148,25 +177,6 @@ local function github_request(method, endpoint, token, body, opts)
   return status, decoded
 end
 
-local function find_pr_number(owner, repo, branch, token, opts)
-  local endpoint = string.format("/repos/%s/%s/pulls?head=%s:%s&state=open",
-    owner, repo, owner, branch)
-
-  local status, data = github_request("GET", endpoint, token, nil, opts)
-  if not status then
-    return nil, data
-  end
-
-  if status ~= 200 then
-    return nil, "api error: " .. tostring(status)
-  end
-
-  if type(data) ~= "table" or #data == 0 then
-    return nil, "no open PR found for branch: " .. branch
-  end
-
-  return data[1].number
-end
 
 local function get_pr(owner, repo, pr_number, token, opts)
   local endpoint = string.format("/repos/%s/%s/pulls/%d", owner, repo, pr_number)
@@ -233,57 +243,23 @@ local function update_pr(owner, repo, pr_number, title, body, token, opts)
   return true
 end
 
-local function get_pr_number_from_env(opts)
-  opts = opts or {}
-  local getenv = opts.getenv or os.getenv
-
-  local pr_number = getenv("GITHUB_PR_NUMBER")
-  if pr_number and pr_number ~= "" then
-    return tonumber(pr_number)
-  end
-
-  -- determine branch early so we can include it in error messages
-  local branch = getenv("GITHUB_HEAD_REF") or getenv("GITHUB_REF_NAME")
-  if not branch then
-    branch = get_current_branch()
-  end
-
-  local repo = getenv("GITHUB_REPOSITORY")
-  if not repo then
-    return nil, "GITHUB_REPOSITORY not set"
-  end
-
-  if not branch then
-    return nil, "could not determine branch"
-  end
-
-  local owner, repo_name = repo:match("^([^/]+)/(.+)$")
-  if not owner then
-    return nil, "invalid GITHUB_REPOSITORY format"
-  end
-
-  -- token is optional - unauthenticated requests work for public repos
-  local token = getenv("GITHUB_TOKEN")
-
-  return find_pr_number(owner, repo_name, branch, token, opts)
-end
 
 local function print_help()
-  local pr_number = get_pr_number_from_env()
-
-  if not pr_number then
-    local git_info = get_git_info()
-    if git_info then
-      pr_number = find_pr_for_branch(git_info.owner, git_info.repo, git_info.branch)
-    end
-  end
-
-  local pr_file = pr_number and string.format(".github/pr/%d.md", pr_number) or ".github/pr/<number>.md"
+  local pr_name = get_pr_name_from_trailer()
+  local pr_file = pr_name and path.join(".github/pr", pr_name) or ".github/pr/<name>.md"
 
   local help = string.format([[
 usage: pr.lua [-h]
 
 Updates PR title and description from %s
+
+The PR file is identified by the x-cosmic-pr-name trailer in your commit message:
+
+    cosmic: add feature
+
+    Description of changes.
+
+    x-cosmic-pr-name: feature-name.md
 
 The file format:
 
@@ -301,21 +277,22 @@ The file format:
 
 Guidelines:
 
-  1. Write PR description in %s
-  2. Follow repo conventions: `# component: verb explanation` title
-  3. Keep content concise but include key decisions, tradeoffs, examples
-  4. Update the file as the PR evolves
-  5. Push to trigger the workflow and update the PR
+  1. Choose a descriptive name for your PR file (e.g., feature-name.md)
+  2. Create %s
+  3. Add x-cosmic-pr-name: <name>.md trailer to your commit message
+  4. Follow repo conventions: `# component: verb explanation` title
+  5. Keep content concise but include key decisions, tradeoffs, examples
+  6. Update the file as the PR evolves
+  7. Push to trigger the workflow and update the PR
 
 Environment variables (set automatically in GitHub Actions):
   GITHUB_TOKEN       - required for API authentication
   GITHUB_REPOSITORY  - owner/repo format
   GITHUB_PR_NUMBER   - PR number
-  GITHUB_HEAD_REF    - PR source branch name (fallback)
 ]], pr_file, pr_file)
 
-  if pr_number then
-    help = help .. string.format("\nDetected PR: #%d\n", pr_number)
+  if pr_name then
+    help = help .. string.format("\nDetected PR file: %s\n", pr_file)
   end
 
   print(help)
@@ -325,8 +302,20 @@ local function is_github_actions()
   return os.getenv("GITHUB_ACTIONS") == "true"
 end
 
-local function do_update(owner, repo_name, pr_number, token, opts)
-  local pr_file = string.format(".github/pr/%d.md", pr_number)
+local function do_update(owner, repo_name, pr_number, pr_name, trailer_info, token, opts)
+  -- log commit range and winning trailer
+  if trailer_info and trailer_info.first_sha then
+    local range = string.format("%s..%s (%d commits)",
+      trailer_info.first_sha:sub(1, 8),
+      trailer_info.last_sha:sub(1, 8),
+      trailer_info.commit_count)
+    log("checked " .. range)
+  end
+  if trailer_info and trailer_info.winning_sha then
+    log("using " .. trailer_info.winning_sha:sub(1, 8) .. " " .. trailer_info.winning_trailer)
+  end
+
+  local pr_file = path.join(".github/pr", pr_name)
 
   if not path.exists(pr_file) then
     log(pr_file .. " not found, skipping")
@@ -395,12 +384,37 @@ local function main(opts)
     return 1, "invalid GITHUB_REPOSITORY format: " .. repo
   end
 
-  local pr_number, err = get_pr_number_from_env(opts)
+  local pr_number = getenv("GITHUB_PR_NUMBER")
+  if not pr_number or pr_number == "" then
+    return 1, "GITHUB_PR_NUMBER not set"
+  end
+  pr_number = tonumber(pr_number)
   if not pr_number then
-    return 1, "could not determine PR number: " .. err
+    return 1, "invalid GITHUB_PR_NUMBER"
   end
 
-  return do_update(owner, repo_name, pr_number, token, opts)
+  local pr_name, trailer_info = get_pr_name_from_trailer()
+  if not pr_name then
+    local sha = get_commit_sha()
+
+    -- Show what commits were checked
+    local commits_handle = spawn({"git", "log", "--oneline", "-20"})
+    local _, commits = commits_handle:read()
+
+    -- Show trailers from all checked commits
+    local all_trailers_handle = spawn({"git", "log", "--format=%H %(trailers)", "-20"})
+    local _, all_trailers = all_trailers_handle:read()
+
+    local debug_info = string.format(
+      "no x-cosmic-pr-name trailer found (or disabled) in last 20 commits (HEAD = %s)\n\nCommits checked:\n%s\n\nTrailers found:\n%s\n\nNote: x-cosmic-pr-enable: false disables updates until a new x-cosmic-pr-name is set",
+      sha:sub(1, 8),
+      commits or "(unable to read)",
+      all_trailers and all_trailers ~= "" and all_trailers or "(none)"
+    )
+    return 1, debug_info
+  end
+
+  return do_update(owner, repo_name, pr_number, pr_name, trailer_info, token, opts)
 end
 
 if cosmo.is_main() then
@@ -418,14 +432,12 @@ end
 return {
   parse_pr_md = parse_pr_md,
   github_request = github_request,
-  find_pr_number = find_pr_number,
   get_pr = get_pr,
   append_timestamp_details = append_timestamp_details,
   update_pr = update_pr,
   get_current_branch = get_current_branch,
-  get_pr_number_from_env = get_pr_number_from_env,
-  get_git_info = get_git_info,
-  find_pr_for_branch = find_pr_for_branch,
+  get_commit_sha = get_commit_sha,
+  get_pr_name_from_trailer = get_pr_name_from_trailer,
   is_github_actions = is_github_actions,
   do_update = do_update,
   main = main,
