@@ -1,3 +1,4 @@
 modules += checker
-checker_files := $(o)/lib/checker/common.lua
-checker_tests := lib/checker/test_common.lua
+checker_srcs := $(wildcard lib/checker/*.lua)
+checker_tests := $(filter lib/checker/test_%.lua,$(checker_srcs))
+checker_files := $(addprefix $(o)/,$(filter-out $(checker_tests),$(checker_srcs)))
