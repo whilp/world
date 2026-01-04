@@ -1,0 +1,46 @@
+id: environ-array-not-table
+language: lua
+severity: error
+message: |
+  unix.environ() returns an array of "KEY=VALUE" strings, not a key-value table.
+  Do not treat it as a table with direct field or index assignment.
+
+  Example:
+    Bad:  local env = unix.environ()
+          env.PATH = "/new/path"          -- WRONG: adds table key, not array entry
+          env["CC"] = "clang"              -- WRONG: same issue
+
+    Good: local env = unix.environ()
+          local env_helper = require("cosmic.env")
+          env_helper.set(env, "PATH", "/new/path")
+          env_helper.set(env, "CC", "clang")
+
+    Also OK (direct array append):
+          env[#env + 1] = "PATH=/new/path"  -- manually append to array
+
+note: Use cosmic.env helpers (get/set/prepend_path) or manual array manipulation. Never use table field assignment.
+
+rule:
+  any:
+    # Pattern 1: env.VARNAME = value (common mistake)
+    - kind: assignment_statement
+      has:
+        kind: dot_index_expression
+        has:
+          kind: identifier
+          regex: "^env$"
+      stopBy: end
+    # Pattern 2: env["VARNAME"] = value (another common mistake)
+    - kind: assignment_statement
+      has:
+        kind: bracket_index_expression
+        has:
+          kind: identifier
+          regex: "^env$"
+        stopBy: end
+      not:
+        # Allow env[#env + 1] = ... (array append pattern)
+        has:
+          kind: unary_expression
+          has:
+            kind: length_expression
