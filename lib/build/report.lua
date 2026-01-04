@@ -4,7 +4,7 @@ local cosmo = require("cosmo")
 local walk = require("cosmic.walk")
 local common = require("checker.common")
 
-local function report(config)
+local function collect_results(config)
   local check_dir = config.check_dir or os.getenv("TEST_O") or "o"
   local pattern = config.pattern
   local checker_name = config.checker
@@ -16,7 +16,6 @@ local function report(config)
     skip = {},
     ignore = {},
   }
-  local all_results = {}
 
   local result_files
   if config.files then
@@ -41,12 +40,26 @@ local function report(config)
         if checker_name then
           result.checker = checker_name
         end
-        table.insert(all_results, result)
 
         local status = result.status
         if results[status] then
           table.insert(results[status], result)
         end
+      end
+    end
+  end
+
+  return results
+end
+
+local function report(config)
+  local results = collect_results(config)
+
+  local all_results = {}
+  for status, items in pairs(results) do
+    if type(items) == "table" then
+      for _, item in ipairs(items) do
+        table.insert(all_results, item)
       end
     end
   end
@@ -58,7 +71,7 @@ local function report(config)
   if config.summary_format then
     summary = config.summary_format(results)
   else
-    summary = common.format_summary(checker_name, results)
+    summary = common.format_summary(config.checker, results)
   end
 
   if summary and summary ~= "" then
@@ -75,4 +88,5 @@ end
 
 return {
   report = report,
+  collect_results = collect_results,
 }

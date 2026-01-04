@@ -201,7 +201,7 @@ all_checks := $(all_astgreps) $(all_luachecks) $(all_teals)
 check: $(o)/check-summary.txt
 
 $(o)/check-summary.txt: $(all_checks)
-	@$(check_reporter) $(o) | tee $@
+	@$(reporter) --dir $(o) check $^ | tee $@
 
 update: $(o)/update-summary.txt
 

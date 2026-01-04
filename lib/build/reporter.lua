@@ -64,7 +64,107 @@ local function main(...)
     end,
   }
 
-  if name == "test" then
+  if name == "check" then
+    -- Multi-checker mode: detect checker type from filename
+    local checkers = {"ast-grep", "luacheck", "teal"}
+    local checker_files = {}
+    local checker_results = {}
+    local all_results = {}
+
+    -- Group files by checker type
+    for _, file in ipairs(files) do
+      for _, checker in ipairs(checkers) do
+        local pattern = "%." .. checker:gsub("%-", "%%-") .. "%.ok$"
+        if file:match(pattern) then
+          if not checker_files[checker] then
+            checker_files[checker] = {}
+          end
+          table.insert(checker_files[checker], file)
+          break
+        end
+      end
+    end
+
+    -- Process each checker's files
+    for _, checker in ipairs(checkers) do
+      if checker_files[checker] then
+        local checker_config = {
+          files = checker_files[checker],
+          strip_suffix = "%." .. checker:gsub("%-", "%%-") .. "%.ok$",
+          checker = checker,
+          name_transform = config.name_transform,
+        }
+
+        local results = report_lib.collect_results(checker_config)
+        checker_results[checker] = results
+
+        -- Add to all_results for combined output
+        for status, items in pairs(results) do
+          if type(items) == "table" then
+            for _, item in ipairs(items) do
+              table.insert(all_results, item)
+            end
+          end
+        end
+      end
+    end
+
+    -- Sort all results by name, then checker
+    table.sort(all_results, function(a, b)
+      if a.name ~= b.name then
+        return a.name < b.name
+      end
+      return (a.checker or "") < (b.checker or "")
+    end)
+
+    -- Print results with report_lib formatting
+    local common = require("checker.common")
+    local status_icons = common.status_icons()
+    print(common.format_results(all_results, status_icons))
+
+    -- Print per-checker summaries
+    local total_checks = 0
+    local total_passed = 0
+    local total_failed = 0
+    local total_skipped = 0
+    local total_ignored = 0
+
+    for _, checker in ipairs(checkers) do
+      local results = checker_results[checker]
+      if results then
+        local summary = common.format_summary(checker, results)
+        if summary ~= "" then
+          print(summary)
+          total_checks = total_checks + #results.pass + #results.fail + #results.skip + #results.ignore
+          total_passed = total_passed + #results.pass
+          total_failed = total_failed + #results.fail
+          total_skipped = total_skipped + #results.skip
+          total_ignored = total_ignored + #results.ignore
+        end
+      end
+    end
+
+    -- Print total summary
+    if total_checks > 0 then
+      print("")
+      print(string.format(
+        "total: %d checks: %d passed, %d failed, %d skipped, %d ignored",
+        total_checks,
+        total_passed,
+        total_failed,
+        total_skipped,
+        total_ignored
+      ))
+    end
+
+    -- Print failures
+    local failures = common.format_failures(all_results)
+    if failures then
+      print(failures)
+    end
+
+    return total_failed > 0 and 1 or 0
+  elseif name == "test" then
     config.summary_format = function(results)
       local total = #results.pass + #results.fail + #results.skip + #results.ignore
       return string.format(
