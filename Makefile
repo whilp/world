@@ -38,8 +38,13 @@ include 3p/sqruff/cook.mk
 include 3p/superhtml/cook.mk
 include 3p/marksman/cook.mk
 include 3p/duckdb/cook.mk
-include 3p/nvim/cook.mk
 include 3p/tree-sitter/cook.mk
+include 3p/nvim-conform/cook.mk
+include 3p/nvim-mini/cook.mk
+include 3p/nvim-lspconfig/cook.mk
+include 3p/nvim-treesitter/cook.mk
+include 3p/nvim-parsers/cook.mk
+include 3p/nvim/cook.mk
 include 3p/luacheck/cook.mk
 include 3p/tl/cook.mk
 include lib/skill/cook.mk
