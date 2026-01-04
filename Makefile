@@ -1,4 +1,5 @@
 .SECONDEXPANSION:
+SHELL := /bin/bash
 
 # auto-parallelize based on available CPUs
 nproc := $(shell nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
