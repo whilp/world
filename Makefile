@@ -182,12 +182,6 @@ $(o)/teal-summary.txt: $(all_teals)
 $(o)/%.teal.checked: $(o)/% $(tl_files) | $(bootstrap_files) $(tl_staged)
 	@TL_BIN=$(tl_staged) $(teal_runner) $< $@
 
-.PHONY: bootstrap
-bootstrap: $(bootstrap_files)
-	@if [ -n "$$CLAUDE_ENV_FILE" ]; then \
-		echo "export PATH=\"$(CURDIR)/bin:$$PATH\"" >> "$$CLAUDE_ENV_FILE"; \
-	fi
-
 .PHONY: clean
 clean:
 	@rm -rf $(o)
@@ -206,15 +200,6 @@ $(o)/update-summary.txt: $(all_updated)
 
 $(o)/%.updated: % $(build_check_update) | $(bootstrap_files)
 	@$(update_runner) $< $@
-
-# Update PR title/description from .github/pr/<number>.md
-.PHONY: update-pr
-update-pr: $(cosmic_bin) | $(bootstrap_cosmic)
-	@if [ -f $(cosmic_bin) ]; then \
-		$(cosmic_bin) -l skill update-pr || true; \
-	else \
-		$(bootstrap_cosmic) lib/skill/pr.lua || true; \
-	fi
 
 .PHONY: build
 build: home cosmic
