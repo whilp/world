@@ -9,7 +9,7 @@ on:
         description: 'Mark release as pre-release'
         required: false
         type: boolean
-        default: true
+        default: false
 
 env:
   PRERELEASE: true  # Set to false to create stable releases
