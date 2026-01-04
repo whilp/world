@@ -73,7 +73,8 @@ assert(output:find("platforms%.lua"), "platforms.lua not found in binary")
 assert(output:find("manifests/"), "manifests/ not found in binary")
 
 -- Verify --with-platform works (dry-run)
-ok, output = spawn({ test_home, "unpack", "--with-platform", "--dry-run", TEST_TMPDIR }):read()
+-- Use --platform to override detection since we only embedded linux-x86_64 metadata
+ok, output = spawn({ test_home, "unpack", "--with-platform", "--platform", "linux-x86_64", "--dry-run", TEST_TMPDIR }):read()
 assert(ok, "--with-platform failed: " .. tostring(output))
 
 -- Verify original binary without platform metadata fails
