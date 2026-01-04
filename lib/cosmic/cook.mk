@@ -20,6 +20,7 @@ $(cosmic_bin): $(cosmic_libs) $(cosmic_lfs) $(skill_libs)
 	@$(cp) $(cosmos_lua) $@
 	@chmod +x $@
 	@cd $(cosmic_built) && $(CURDIR)/$(cosmos_zip) -qr $(CURDIR)/$@ .lua
+	@$(cosmos_zip) -qj $@ lib/cosmic/main.lua lib/cosmic/.args
 
 cosmic: $(cosmic_bin)
 
