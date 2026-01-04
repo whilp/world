@@ -130,6 +130,7 @@ export TEST_BIN := $(o)/bin
 export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
 
 $(o)/%.tested: % $(test_files) | $(bootstrap_files)
+	@echo "test: $< -> $@ (TEST_DIR=$(TEST_DIR))"
 	@TEST_DIR=$(TEST_DIR) $< $@
 
 # expand test deps: M's tests depend on own _files/_dir plus deps' _dir
