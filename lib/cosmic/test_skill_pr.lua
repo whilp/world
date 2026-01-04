@@ -9,17 +9,29 @@ local spawn = require("cosmic.spawn")
 
 local cosmic = path.join(os.getenv("TEST_BIN"), "cosmic")
 
+-- helper to create clean environment without LUA_PATH
+-- this ensures we test the bundled libraries, not the repo
+local function clean_env()
+  local env = {}
+  for _, line in ipairs(unix.environ()) do
+    if not line:match("^LUA_PATH=") and not line:match("^LUA_CPATH=") then
+      env[#env + 1] = line
+    end
+  end
+  return env
+end
+
 TestSkill = {}
 
 function TestSkill:test_skill_loads()
-  local ok, out = spawn({cosmic, "-l", "skill", "-e", "print('loaded')"}):read()
+  local ok, out = spawn({cosmic, "-l", "skill", "-e", "print('loaded')"}, {env = clean_env()}):read()
   lu.assertTrue(ok, "cosmic -l skill failed to load")
   lu.assertStrContains(out, "loaded")
 end
 
 function TestSkill:test_skill_update_pr_outside_actions()
   -- when not in GitHub Actions, should show help
-  local env = unix.environ()
+  local env = clean_env()
   env[#env + 1] = "GITHUB_ACTIONS=false"
 
   local ok, out = spawn({cosmic, "-l", "skill", "update-pr"}, { env = env }):read()
@@ -29,7 +41,7 @@ end
 
 function TestSkill:test_skill_update_pr_requires_token()
   -- in GitHub Actions without token, should fail
-  local env = unix.environ()
+  local env = clean_env()
   env[#env + 1] = "GITHUB_ACTIONS=true"
   env[#env + 1] = "GITHUB_REPOSITORY=owner/repo"
   env[#env + 1] = "GITHUB_PR_NUMBER=123"
