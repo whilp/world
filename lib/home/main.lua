@@ -769,7 +769,7 @@ local home = {
   main = main,
 }
 
-if not pcall(debug.getlocal, 4, 1) then
+if arg and arg[0] and arg[0]:match("main%.lua$") then
   os.exit(main(arg) or 0)
 end
 
