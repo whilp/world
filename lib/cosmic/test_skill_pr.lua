@@ -6,6 +6,7 @@ local lu = require("luaunit")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local spawn = require("cosmic.spawn")
+local env_helper = require("cosmic.env")
 
 local cosmic = path.join(os.getenv("TEST_BIN"), "cosmic")
 
@@ -20,7 +21,7 @@ end
 function TestSkill:test_skill_update_pr_outside_actions()
   -- when not in GitHub Actions, should show help
   local env = unix.environ()
-  env[#env + 1] = "GITHUB_ACTIONS=false"
+  env_helper.set(env, "GITHUB_ACTIONS", "false")
 
   local ok, out = spawn({cosmic, "-l", "skill", "update-pr"}, { env = env }):read()
   lu.assertTrue(ok, "skill update-pr should not error outside GitHub Actions")
@@ -30,15 +31,11 @@ end
 function TestSkill:test_skill_update_pr_requires_token()
   -- in GitHub Actions without token, should fail
   local env = unix.environ()
-  env[#env + 1] = "GITHUB_ACTIONS=true"
-  env[#env + 1] = "GITHUB_REPOSITORY=owner/repo"
-  env[#env + 1] = "GITHUB_PR_NUMBER=123"
+  env_helper.set(env, "GITHUB_ACTIONS", "true")
+  env_helper.set(env, "GITHUB_REPOSITORY", "owner/repo")
+  env_helper.set(env, "GITHUB_PR_NUMBER", "123")
   -- explicitly unset GITHUB_TOKEN if it exists
-  for i = #env, 1, -1 do
-    if env[i]:match("^GITHUB_TOKEN=") then
-      table.remove(env, i)
-    end
-  end
+  env_helper.unset(env, "GITHUB_TOKEN")
 
   local ok, out, exit_code = spawn({cosmic, "-l", "skill", "update-pr"}, { env = env }):read()
   lu.assertFalse(ok, "skill update-pr should fail without GITHUB_TOKEN")

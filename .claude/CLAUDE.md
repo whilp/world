@@ -51,6 +51,29 @@
 - NEVER use `io.popen()` - use spawn module instead
 - example: `local spawn = require("spawn").spawn; spawn({"cmd", "arg1", "arg2"}):wait()`
 
+### Environment variables
+- `unix.environ()` returns `{"PATH=/...", "HOME=/...", ...}` (array of strings, NOT a table)
+- NEVER do `env.PATH = ...` or `env["PATH"] = ...` - this adds a table key, not an array entry
+- ALWAYS use `cosmic.env` helpers:
+  ```lua
+  local env_helper = require("cosmic.env")
+  local env = unix.environ()
+
+  -- get variable
+  local path = env_helper.get(env, "PATH")
+
+  -- set variable (updates existing or appends new)
+  env_helper.set(env, "CC", "clang")
+
+  -- modify PATH
+  env_helper.prepend_path(env, "/usr/local/bin")
+  env_helper.append_path(env, "/opt/bin")
+
+  -- remove variable
+  env_helper.unset(env, "TMPVAR")
+  ```
+- Direct array append is also acceptable: `env[#env + 1] = "KEY=VALUE"`
+
 ### File system operations
 - use `unix.*` functions: `unix.makedirs()`, `unix.rmrf()`, `unix.stat()`, `unix.opendir()`
 - NEVER use string concatenation for paths - use `path.join()` instead

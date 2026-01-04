@@ -6,6 +6,7 @@ local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 local spawn = require("cosmic.spawn")
+local env_helper = require("cosmic.env")
 
 local function install(nvim_staged, treesitter_staged, output_dir, parsers_config, tree_sitter_staged)
   local nvim_bin = path.join(nvim_staged, "bin/nvim")
@@ -16,6 +17,13 @@ local function install(nvim_staged, treesitter_staged, output_dir, parsers_confi
   io.stderr:write(string.format("nvim-parsers: parsers_config=%s\n", parsers_config))
   io.stderr:write(string.format("nvim-parsers: tree_sitter_staged=%s\n", tree_sitter_staged))
 
+  -- verify nvim binary exists
+  local nvim_stat = unix.stat(nvim_bin)
+  if not nvim_stat then
+    io.stderr:write(string.format("nvim-parsers: nvim binary not found at %s\n", nvim_bin))
+    return nil, "nvim binary not found"
+  end
+
   -- check nvim is executable
   local handle = spawn({nvim_bin, "--version"})
   local ok = handle:read()
@@ -24,6 +32,18 @@ local function install(nvim_staged, treesitter_staged, output_dir, parsers_confi
     return true
   end
   io.stderr:write("nvim-parsers: nvim is executable\n")
+
+  -- verify tree-sitter binary exists if path provided
+  if tree_sitter_staged then
+    local ts_bin = path.join(tree_sitter_staged, "tree-sitter")
+    local ts_stat = unix.stat(ts_bin)
+    if not ts_stat then
+      io.stderr:write(string.format("nvim-parsers: WARNING: tree-sitter binary not found at %s\n", ts_bin))
+      io.stderr:write("nvim-parsers: parser compilation may fail\n")
+    else
+      io.stderr:write("nvim-parsers: tree-sitter binary verified\n")
+    end
+  end
 
   local cwd = unix.getcwd()
   local parsers = dofile(parsers_config)
@@ -58,42 +78,18 @@ end
   local script_path = path.join(cache_dir, "install.lua")
   cosmo.Barf(script_path, script)
 
-  -- unix.environ() returns array of "KEY=VALUE" strings
-  -- helper to set or update an env var in the array
-  local function set_env(env, key, value)
-    local prefix = key .. "="
-    for i, entry in ipairs(env) do
-      if entry:sub(1, #prefix) == prefix then
-        env[i] = prefix .. value
-        return
-      end
-    end
-    table.insert(env, prefix .. value)
-  end
-
-  local function get_env(env, key)
-    local prefix = key .. "="
-    for _, entry in ipairs(env) do
-      if entry:sub(1, #prefix) == prefix then
-        return entry:sub(#prefix + 1)
-      end
-    end
-    return nil
-  end
-
   local env = unix.environ()
-  set_env(env, "XDG_CACHE_HOME", cache_dir)
-  set_env(env, "VIMRUNTIME", path.join(cwd, nvim_staged, "share/nvim/runtime"))
-  set_env(env, "VIM", path.join(cwd, nvim_staged, "share/nvim"))
-  if not get_env(env, "CC") then
-    set_env(env, "CC", "cc")
+  env_helper.set(env, "XDG_CACHE_HOME", cache_dir)
+  env_helper.set(env, "VIMRUNTIME", path.join(cwd, nvim_staged, "share/nvim/runtime"))
+  env_helper.set(env, "VIM", path.join(cwd, nvim_staged, "share/nvim"))
+  if not env_helper.get(env, "CC") then
+    env_helper.set(env, "CC", "cc")
   end
 
   -- add tree-sitter CLI to PATH
   if tree_sitter_staged then
     local ts_bin = path.join(cwd, tree_sitter_staged)
-    local current_path = get_env(env, "PATH") or ""
-    set_env(env, "PATH", ts_bin .. ":" .. current_path)
+    env_helper.prepend_path(env, ts_bin)
     io.stderr:write(string.format("nvim-parsers: tree-sitter added to PATH: %s\n", ts_bin))
   else
     io.stderr:write("nvim-parsers: WARNING: tree_sitter_staged not provided\n")
