@@ -1,4 +1,17 @@
 {
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "BOOTSTRAP=1 \"$CLAUDE_PROJECT_DIR/bin/cosmic\""
+          }
+        ]
+      }
+    ]
+  },
   "env": {
     "DISABLE_AUTOUPDATER": "1"
   },
