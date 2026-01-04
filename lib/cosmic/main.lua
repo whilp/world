@@ -17,28 +17,33 @@ local function parse_args()
     script_args = {},
   }
 
-  -- Pre-scan for --help and --skill which need special handling
-  for i = 1, #arg do
-    if arg[i] == "--help" then
-      if i + 1 <= #arg and not arg[i + 1]:match("^%-") then
-        opts.help = arg[i + 1]
-      else
-        opts.help = true
-      end
-      return opts
-    elseif arg[i] == "--skill" then
-      if i + 1 <= #arg then
-        opts.skill = arg[i + 1]
-        for j = i + 2, #arg do
-          opts.script_args[#opts.script_args + 1] = arg[j]
-        end
-      end
-      return opts
+  -- Use getopt with long options support
+  local longopts = {
+    { "help", "optional", "h" },
+    { "skill", "required", "s" },
+  }
+
+  local parsed, rest = getopt.parse(arg, "e:l:ivEWh::s:", longopts)
+
+  -- Handle --help (supports both --help and --help=module)
+  if parsed.help then
+    if type(parsed.help) == "string" then
+      opts.help = parsed.help
+    elseif #rest > 0 and not rest[1]:match("^%-") then
+      opts.help = rest[1]
+      table.remove(rest, 1)
+    else
+      opts.help = true
     end
+    return opts
   end
 
-  -- Use getopt for standard options
-  local parsed, rest = getopt.parse(arg, "e:l:ivEW")
+  -- Handle --skill (all remaining args go to skill)
+  if parsed.skill then
+    opts.skill = parsed.skill
+    opts.script_args = rest
+    return opts
+  end
 
   -- Collect all -e and -l options (getopt only returns last one)
   local i = 1
