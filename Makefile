@@ -110,6 +110,7 @@ all_staged := $(patsubst %/.fetched,%/.staged,$(all_fetched))
 staged: $(all_staged)
 $(o)/%/.staged: $(o)/%/.fetched
 	@$(build_stage) $$(readlink $(o)/$*/.versioned) $(platform) $< $@
+	@chmod -R +x $$(readlink $@)/* 2>/dev/null || true
 
 all_tests := $(foreach x,$(modules),$($(x)_tests))
 ifdef TEST
