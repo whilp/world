@@ -30,32 +30,70 @@ local function install(nvim_staged, treesitter_staged, output_dir, parsers_confi
   local cache_dir = path.join(cwd, output_dir, "cache")
   unix.makedirs(cache_dir)
 
+  local abs_treesitter = path.join(cwd, treesitter_staged)
+  local abs_output = path.join(cwd, output_dir)
   local script = string.format([[
+io.stderr:write("nvim-parsers-inner: starting\n")
+io.stderr:write("nvim-parsers-inner: PATH=" .. (vim.env.PATH or "nil"):sub(1, 200) .. "\n")
 vim.opt.runtimepath:prepend("%s")
+io.stderr:write("nvim-parsers-inner: rtp set\n")
 local ts = require("nvim-treesitter")
+io.stderr:write("nvim-parsers-inner: ts loaded\n")
 ts.setup({ install_dir = "%s" })
+io.stderr:write("nvim-parsers-inner: ts setup done\n")
 local task = ts.install({"%s"})
+io.stderr:write("nvim-parsers-inner: install called, waiting...\n")
 local ok, err = task:pwait(300000)
+io.stderr:write("nvim-parsers-inner: pwait returned ok=" .. tostring(ok) .. " err=" .. tostring(err) .. "\n")
 if ok then
   vim.cmd("qall!")
 else
   io.stderr:write("pwait failed: " .. tostring(err) .. "\n")
   vim.cmd("cquit 1")
 end
-]], treesitter_staged, path.join(cwd, output_dir), table.concat(parsers, '","'))
+]], abs_treesitter, abs_output, table.concat(parsers, '","'))
+  io.stderr:write(string.format("nvim-parsers: abs_treesitter=%s\n", abs_treesitter))
+  io.stderr:write(string.format("nvim-parsers: abs_output=%s\n", abs_output))
 
   local script_path = path.join(cache_dir, "install.lua")
   cosmo.Barf(script_path, script)
 
+  -- unix.environ() returns array of "KEY=VALUE" strings
+  -- helper to set or update an env var in the array
+  local function set_env(env, key, value)
+    local prefix = key .. "="
+    for i, entry in ipairs(env) do
+      if entry:sub(1, #prefix) == prefix then
+        env[i] = prefix .. value
+        return
+      end
+    end
+    table.insert(env, prefix .. value)
+  end
+
+  local function get_env(env, key)
+    local prefix = key .. "="
+    for _, entry in ipairs(env) do
+      if entry:sub(1, #prefix) == prefix then
+        return entry:sub(#prefix + 1)
+      end
+    end
+    return nil
+  end
+
   local env = unix.environ()
-  env.XDG_CACHE_HOME = cache_dir
-  env.VIMRUNTIME = path.join(cwd, nvim_staged, "share/nvim/runtime")
-  env.VIM = path.join(cwd, nvim_staged, "share/nvim")
-  env.CC = env.CC or "cc"
+  set_env(env, "XDG_CACHE_HOME", cache_dir)
+  set_env(env, "VIMRUNTIME", path.join(cwd, nvim_staged, "share/nvim/runtime"))
+  set_env(env, "VIM", path.join(cwd, nvim_staged, "share/nvim"))
+  if not get_env(env, "CC") then
+    set_env(env, "CC", "cc")
+  end
+
   -- add tree-sitter CLI to PATH
   if tree_sitter_staged then
     local ts_bin = path.join(cwd, tree_sitter_staged)
-    env.PATH = ts_bin .. ":" .. (env.PATH or "")
+    local current_path = get_env(env, "PATH") or ""
+    set_env(env, "PATH", ts_bin .. ":" .. current_path)
     io.stderr:write(string.format("nvim-parsers: tree-sitter added to PATH: %s\n", ts_bin))
   else
     io.stderr:write("nvim-parsers: WARNING: tree_sitter_staged not provided\n")
