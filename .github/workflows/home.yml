@@ -20,6 +20,9 @@ jobs:
       - name: Run checks
         run: make check
 
+      - name: Debug treesitter
+        run: make debug-treesitter
+
       - name: Run tests
         run: make test
 
