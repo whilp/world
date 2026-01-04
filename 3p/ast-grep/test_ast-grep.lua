@@ -15,15 +15,21 @@ local function test_version()
 end
 test_version()
 
-local function test_rule_debug_getlocal()
-  local rule = ".ast-grep/rules/avoid-debug-getlocal-main-guard.yml"
+local function test_rule_main_guard()
+  local rule = ".ast-grep/rules/use-cosmo-is-main.yml"
 
-  -- bad code should trigger
-  local bad = path.join(TEST_TMPDIR, "bad.lua")
-  cosmo.Barf(bad, 'if not pcall(debug.getlocal, 4, 1) then main() end')
-  local ok, out = spawn({ bin, "scan", "--rule", rule, bad }):read()
-  assert(not ok, "rule should trigger on bad code")
-  assert(out:find("avoid%-debug%-getlocal%-main%-guard"), "should report rule id")
+  -- debug.getlocal pattern should trigger
+  local bad1 = path.join(TEST_TMPDIR, "bad1.lua")
+  cosmo.Barf(bad1, 'if not pcall(debug.getlocal, 4, 1) then main() end')
+  local ok, out = spawn({ bin, "scan", "--rule", rule, bad1 }):read()
+  assert(not ok, "rule should trigger on debug.getlocal pattern")
+  assert(out:find("use%-cosmo%-is%-main"), "should report rule id")
+
+  -- arg[0]:match pattern should trigger
+  local bad2 = path.join(TEST_TMPDIR, "bad2.lua")
+  cosmo.Barf(bad2, 'if arg[0]:match("main.lua$") then main() end')
+  ok, out = spawn({ bin, "scan", "--rule", rule, bad2 }):read()
+  assert(not ok, "rule should trigger on arg[0]:match pattern")
 
   -- good code should not trigger
   local good = path.join(TEST_TMPDIR, "good.lua")
@@ -31,4 +37,4 @@ local function test_rule_debug_getlocal()
   ok, out = spawn({ bin, "scan", "--rule", rule, good }):read()
   assert(ok, "rule should not trigger on good code: " .. tostring(out))
 end
-test_rule_debug_getlocal()
+test_rule_main_guard()
