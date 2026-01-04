@@ -1,6 +1,6 @@
 modules += nvim
 nvim_version := 3p/nvim/version.lua
-nvim_tests := 3p/nvim/test_nvim.lua 3p/nvim/test_treesitter.lua
+nvim_tests := 3p/nvim/test_nvim.lua 3p/nvim/test_treesitter.lua 3p/nvim/test_packpath.lua
 nvim_deps := nvim-conform nvim-mini nvim-lspconfig nvim-treesitter nvim-parsers
 
 # Override _dir: bundle staged nvim + plugins + parsers
