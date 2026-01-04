@@ -1,3 +1,4 @@
+-- update ignore: custom fork
 return {
   version = "0.12.0-dev-49450c182c",
   date = "2025.12.28",

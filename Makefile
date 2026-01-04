@@ -18,7 +18,7 @@ arch := $(subst aarch64,arm64,$(uname_m))
 platforms := darwin-arm64 linux-arm64 linux-x86_64
 platform := $(os)-$(arch)
 
-include bootstrap/cook.mk
+include bootstrap.mk
 include lib/build/cook.mk
 include lib/test/cook.mk
 include 3p/luaunit/cook.mk
@@ -89,6 +89,7 @@ $(foreach m,$(filter-out $(default_deps),$(modules)),\
       $(eval $($(m)_files): $($(d)_staged)))))
 
 all_versions := $(foreach x,$(modules),$($(x)_version))
+all_updated := $(patsubst %,$(o)/%.updated,$(all_versions))
 
 # versioned modules: o/module/.versioned -> version.lua
 $(foreach m,$(modules),$(if $($(m)_version),\
@@ -196,6 +197,14 @@ check: $(o)/check-summary.txt
 
 $(o)/check-summary.txt: $(all_checks)
 	@$(check_reporter) $(o) | tee $@
+
+update: $(o)/update-summary.txt
+
+$(o)/update-summary.txt: $(all_updated)
+	@$(update_reporter) $(all_updated) | tee $@
+
+$(o)/%.updated: % $(build_check_update) | $(bootstrap_files)
+	@$(update_runner) $< $@
 
 # Update PR title/description from .github/pr/<number>.md
 .PHONY: update-pr
