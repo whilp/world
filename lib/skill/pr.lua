@@ -395,23 +395,15 @@ local function main(opts)
 
   local pr_name, trailer_info = get_pr_name_from_trailer()
   if not pr_name then
-    local sha = get_commit_sha()
+    local first = trailer_info and trailer_info.first_sha and trailer_info.first_sha:sub(1, 8) or "unknown"
+    local last = trailer_info and trailer_info.last_sha and trailer_info.last_sha:sub(1, 8) or "unknown"
 
-    -- Show what commits were checked
-    local commits_handle = spawn({"git", "log", "--oneline", "-20"})
-    local _, commits = commits_handle:read()
-
-    -- Show trailers from all checked commits
-    local all_trailers_handle = spawn({"git", "log", "--format=%H %(trailers)", "-20"})
-    local _, all_trailers = all_trailers_handle:read()
-
-    local debug_info = string.format(
-      "no x-cosmic-pr-name trailer found (or disabled) in last 20 commits (HEAD = %s)\n\nCommits checked:\n%s\n\nTrailers found:\n%s\n\nNote: x-cosmic-pr-enable: false disables updates until a new x-cosmic-pr-name is set",
-      sha:sub(1, 8),
-      commits or "(unable to read)",
-      all_trailers and all_trailers ~= "" and all_trailers or "(none)"
+    local msg = string.format(
+      "no x-cosmic-pr-name trailer found (or disabled) in last 20 commits (%s .. %s)\n\nNote: x-cosmic-pr-enable: false disables updates until a new x-cosmic-pr-name is set",
+      first,
+      last
     )
-    return 1, debug_info
+    return 0, msg
   end
 
   return do_update(owner, repo_name, pr_number, pr_name, trailer_info, token, opts)
