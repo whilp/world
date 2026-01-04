@@ -769,7 +769,7 @@ local home = {
   main = main,
 }
 
-if not pcall(debug.getlocal, 4, 1) then
+if cosmo.is_main() then
   os.exit(main(arg) or 0)
 end
 

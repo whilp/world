@@ -3,6 +3,7 @@
 -- teal ignore: type annotations needed
 -- stage.lua: extract fetched archives based on version.lua format
 
+local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 local spawn = require("cosmic.spawn")
@@ -223,7 +224,7 @@ local function main(version_file, platform, input, output)
   return true
 end
 
-if not pcall(debug.getlocal, 4, 1) then
+if cosmo.is_main() then
   local ok, err = main(...)
   if not ok then
     io.stderr:write("error: " .. tostring(err) .. "\n")
