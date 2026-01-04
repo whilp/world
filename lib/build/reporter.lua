@@ -283,7 +283,7 @@ local function main(...)
 end
 
 if cosmo.is_main() then
-  local code, err = main(...)
+  local code, err = main(table.unpack(arg))
   if err then
     io.stderr:write(err .. "\n")
   end
