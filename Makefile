@@ -130,6 +130,7 @@ export TEST_BIN := $(o)/bin
 export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
 
 $(o)/%.tested: % $(test_files) | $(bootstrap_files)
+	@echo "test: $< -> $@ (TEST_DIR=$(TEST_DIR))"
 	@TEST_DIR=$(TEST_DIR) $< $@
 
 # expand test deps: M's tests depend on own _files/_dir plus deps' _dir
@@ -208,4 +209,23 @@ update-pr: $(cosmic_bin) | $(bootstrap_cosmic)
 
 debug-modules:
 	@echo $(modules)
+
+# debug target for CI failure investigation
+.PHONY: debug-treesitter
+debug-treesitter: $(nvim_dir)
+	@echo "=== debug-treesitter ==="
+	@echo "nvim_dir: $(nvim_dir)"
+	@echo "nvim_staged: $(nvim_staged)"
+	@echo "nvim-parsers_parsers: $(nvim-parsers_parsers)"
+	@echo "PATH: $$PATH" | head -c 200
+	@echo ""
+	@echo "which lua: $$(which lua)"
+	@echo "which run-test.lua: $$(which run-test.lua)"
+	@ls -la $(nvim_dir) || echo "nvim_dir not found"
+	@ls -la $(nvim_dir)/share/nvim/site/parser/ 2>&1 | head -10 || echo "parser dir not found"
+	@ls -la $(nvim_dir)/share/nvim/site/pack/core/opt/ 2>&1 || echo "pack dir not found"
+	@echo "=== running test directly ==="
+	@TEST_DIR=$(nvim_dir) 3p/nvim/test_treesitter.lua o/debug-treesitter.out 2>&1; echo "exit: $$?"
+	@echo "=== test output ==="
+	@cat o/debug-treesitter.out 2>&1 || echo "no output file"
 
