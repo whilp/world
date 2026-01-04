@@ -110,7 +110,6 @@ all_staged := $(patsubst %/.fetched,%/.staged,$(all_fetched))
 staged: $(all_staged)
 $(o)/%/.staged: $(o)/%/.fetched
 	@$(build_stage) $$(readlink $(o)/$*/.versioned) $(platform) $< $@
-	@chmod -R +x $$(readlink $@)/* 2>/dev/null || true
 
 all_tests := $(foreach x,$(modules),$($(x)_tests))
 ifdef TEST
@@ -133,6 +132,7 @@ export TEST_BIN := $(o)/bin
 export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
 
 $(o)/%.tested: % $(test_files) | $(bootstrap_files)
+	@[ -x $< ] || chmod a+x $<
 	@TEST_DIR=$(TEST_DIR) $< $@
 
 # expand test deps: M's tests depend on own _files/_dir plus deps' _dir
