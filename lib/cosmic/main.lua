@@ -1,7 +1,9 @@
 -- cosmic-lua dispatcher
 -- entry point for cosmic binary that handles special args and dispatches to features
 
--- Simple argument parser
+local getopt = require("cosmo.getopt")
+
+-- Parse arguments using cosmo.getopt
 local function parse_args()
   local opts = {
     execute = {},
@@ -15,66 +17,59 @@ local function parse_args()
     script_args = {},
   }
 
-  local i = 1
-  while i <= #arg do
-    local a = arg[i]
-
-    if a == "-e" then
-      i = i + 1
-      if i <= #arg then
-        opts.execute[#opts.execute + 1] = arg[i]
-      end
-    elseif a == "-l" then
-      i = i + 1
-      if i <= #arg then
-        opts.load[#opts.load + 1] = arg[i]
-      end
-    elseif a == "-i" then
-      opts.interactive = true
-    elseif a == "-v" then
-      opts.version = true
-    elseif a == "-E" then
-      -- Ignore environment variables (already handled by lua)
-    elseif a == "-W" then
-      opts.warnings = true
-    elseif a == "--skill" then
-      i = i + 1
-      if i <= #arg then
-        opts.skill = arg[i]
-        -- Remaining args go to skill
-        i = i + 1
-        while i <= #arg do
-          opts.script_args[#opts.script_args + 1] = arg[i]
-          i = i + 1
-        end
-      end
-      break
-    elseif a == "--help" then
-      i = i + 1
-      if i <= #arg and not arg[i]:match("^%-") then
-        opts.help = arg[i]
+  -- Pre-scan for --help and --skill which need special handling
+  for i = 1, #arg do
+    if arg[i] == "--help" then
+      if i + 1 <= #arg and not arg[i + 1]:match("^%-") then
+        opts.help = arg[i + 1]
       else
         opts.help = true
-        i = i - 1
       end
-      break
-    elseif a == "--" then
-      i = i + 1
-      break
-    elseif not a:match("^%-") then
-      -- Script file
-      opts.script = a
-      for j = i, #arg do
-        opts.script_args[j - i] = arg[j]
+      return opts
+    elseif arg[i] == "--skill" then
+      if i + 1 <= #arg then
+        opts.skill = arg[i + 1]
+        for j = i + 2, #arg do
+          opts.script_args[#opts.script_args + 1] = arg[j]
+        end
       end
-      opts.script_args[-1] = arg[-1]
+      return opts
+    end
+  end
+
+  -- Use getopt for standard options
+  local parsed, rest = getopt.parse(arg, "e:l:ivEW")
+
+  -- Collect all -e and -l options (getopt only returns last one)
+  local i = 1
+  while i <= #arg do
+    if arg[i] == "-e" and i + 1 <= #arg then
+      opts.execute[#opts.execute + 1] = arg[i + 1]
+      i = i + 2
+    elseif arg[i] == "-l" and i + 1 <= #arg then
+      opts.load[#opts.load + 1] = arg[i + 1]
+      i = i + 2
+    elseif arg[i] == "--" then
+      break
+    elseif not arg[i]:match("^%-") then
       break
     else
-      io.stderr:write("cosmic-lua: unknown option: " .. a .. "\n")
-      os.exit(1)
+      i = i + 1
     end
+  end
 
-    i = i + 1
+  -- Get other flags from getopt
+  opts.interactive = parsed.i or false
+  opts.version = parsed.v or false
+  opts.warnings = parsed.W or false
+
+  -- Handle remaining arguments (script and script args)
+  if rest and #rest > 0 then
+    opts.script = rest[1]
+    for j = 1, #rest do
+      opts.script_args[j - 1] = rest[j]
+    end
+    opts.script_args[-1] = arg[-1]
   end
 
   return opts
