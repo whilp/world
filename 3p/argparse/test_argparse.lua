@@ -1,4 +1,6 @@
 #!/usr/bin/env run-test.lua
+-- teal ignore: test file
+-- ast-grep ignore: test file needs package.path manipulation
 
 local path = require("cosmo.path")
 

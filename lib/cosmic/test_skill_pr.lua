@@ -1,4 +1,5 @@
 #!/usr/bin/env run-test.lua
+-- teal ignore: test file
 -- test skill module integration with cosmic binary
 
 local lu = require("luaunit")
