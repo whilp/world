@@ -8,6 +8,7 @@ local function parse_args()
     load = {},
     interactive = false,
     version = false,
+    warnings = false,
     skill = nil,
     help = nil,
     script = nil,
@@ -32,8 +33,10 @@ local function parse_args()
       opts.interactive = true
     elseif a == "-v" then
       opts.version = true
-    elseif a == "-E" or a == "-W" then
-      -- Ignore these for now
+    elseif a == "-E" then
+      -- Ignore environment variables (already handled by lua)
+    elseif a == "-W" then
+      opts.warnings = true
     elseif a == "--skill" then
       i = i + 1
       if i <= #arg then
@@ -75,6 +78,12 @@ local function parse_args()
   end
 
   return opts
+end
+
+-- Simple REPL using debug.debug
+local function run_repl()
+  io.write(_VERSION .. "  Copyright (C) 1994-2024 Lua.org, PUC-Rio\n")
+  debug.debug()
 end
 
 local opts = parse_args()
@@ -143,6 +152,15 @@ if opts.skill then
   end
 end
 
+-- Handle -W warnings: convert warnings to errors
+if opts.warnings then
+  local old_warn = warn
+  warn = function(...)
+    local msg = table.concat({...}, " ")
+    error("warning: " .. msg, 2)
+  end
+end
+
 -- Load libraries
 for _, name in ipairs(opts.load) do
   require(name)
@@ -166,15 +184,13 @@ if opts.script then
   os.exit(0)
 end
 
--- Interactive mode
-if opts.interactive then
-  io.stderr:write("cosmic-lua: interactive mode not yet implemented\n")
-  os.exit(1)
+-- Interactive mode or REPL
+if opts.interactive or (#opts.execute == 0 and #opts.load == 0 and #arg == 0) then
+  run_repl()
+  os.exit(0)
 end
 
 -- If we have -e or -l but no script, exit normally
 if #opts.execute > 0 or #opts.load > 0 then
   os.exit(0)
 end
-
--- No args - exit (lua would normally enter REPL here)
