@@ -2,8 +2,5 @@
 -- teal ignore: test file
 -- ast-grep ignore: test file needs package.path manipulation
 
-local staged = os.getenv("STAGED_DIR")
-if staged then
-  package.path = staged .. "/?.lua;" .. package.path
-end
+package.path = TEST_DIR .. "/?.lua;" .. package.path
 assert(require("luaunit"))
