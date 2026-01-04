@@ -101,7 +101,8 @@ local function check_first_lines(file, patterns)
   return has_shebang, nil
 end
 
-local function print_results(all_results, icons)
+local function format_results(all_results, icons)
+  local lines = {}
   for _, result in ipairs(all_results) do
     local status = string.upper(result.status)
     local icon = icons[result.status] or " "
@@ -118,17 +119,18 @@ local function print_results(all_results, icons)
         line = line .. " (" .. result.checker .. ")"
       end
     end
-    print(line)
+    table.insert(lines, line)
   end
+  return table.concat(lines, "\n")
 end
 
-local function print_summary(checker_name, results)
+local function format_summary(checker_name, results)
   local total = #results.pass + #results.fail + #results.skip + #results.ignore
   if total == 0 then
-    return
+    return ""
   end
 
-  print(string.format(
+  return string.format(
     "%s: %d checks: %d passed, %d failed, %d skipped, %d ignored",
     checker_name,
     total,
@@ -136,10 +138,10 @@ local function print_summary(checker_name, results)
     #results.fail,
     #results.skip,
     #results.ignore
-  ))
+  )
 end
 
-local function print_failures(all_results)
+local function format_failures(all_results)
   local has_failures = false
   for _, result in ipairs(all_results) do
     if result.status == "fail" then
@@ -149,30 +151,29 @@ local function print_failures(all_results)
   end
 
   if not has_failures then
-    return false
+    return nil
   end
 
-  print("")
-  print("FAILURES:")
+  local lines = {"", "FAILURES:"}
   for _, result in ipairs(all_results) do
     if result.status == "fail" then
-      print("")
+      table.insert(lines, "")
       if result.checker then
-        print(string.format("--- %s (%s) ---", result.name, result.checker))
+        table.insert(lines, string.format("--- %s (%s) ---", result.name, result.checker))
       else
-        print(string.format("--- %s ---", result.name))
+        table.insert(lines, string.format("--- %s ---", result.name))
       end
       if result.message then
-        print(result.message)
+        table.insert(lines, result.message)
       end
       if result.stderr and result.stderr ~= "" then
-        print("")
-        print(result.stderr)
+        table.insert(lines, "")
+        table.insert(lines, result.stderr)
       end
     end
   end
 
-  return true
+  return table.concat(lines, "\n")
 end
 
 local function categorize_results(results_list)
@@ -200,8 +201,8 @@ return {
   status_icons = status_icons,
   has_extension = has_extension,
   check_first_lines = check_first_lines,
-  print_results = print_results,
-  print_summary = print_summary,
-  print_failures = print_failures,
+  format_results = format_results,
+  format_summary = format_summary,
+  format_failures = format_failures,
   categorize_results = categorize_results,
 }

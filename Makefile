@@ -45,6 +45,7 @@ include 3p/tl/cook.mk
 include lib/skill/cook.mk
 include lib/cosmic/cook.mk
 include lib/home/cook.mk
+include lib/checker/cook.mk
 
 include cook.mk
 

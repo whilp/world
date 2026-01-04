@@ -1,8 +1,8 @@
+#!/usr/bin/env run-test.lua
 -- teal ignore: type annotations needed
 
 local common = require("checker.common")
 local path = require("cosmo.path")
-local unix = require("cosmo.unix")
 local cosmo = require("cosmo")
 
 local TEST_TMPDIR = os.getenv("TEST_TMPDIR")
@@ -17,6 +17,7 @@ local function test_format_output()
   assert(output2:match("^fail: 3 issues"), "should format status with message")
   assert(output2:match("## stderr\n\nerror details"), "should include stderr content")
 end
+test_format_output()
 
 local function test_parse_result()
   local content = [[pass
@@ -46,15 +47,15 @@ file.lua:10:5: error message]]
   assert(result2.message == "2 issues", "should parse message")
   assert(result2.stderr:match("error message"), "should parse stderr")
 end
+test_parse_result()
 
 local function test_strip_prefix()
-  local old_test_o = os.getenv("TEST_O")
+  local real_getenv = os.getenv
 
+  -- test with "o" prefix
   os.getenv = function(name)
-    if name == "TEST_O" then
-      return "o"
-    end
-    return old_test_o
+    if name == "TEST_O" then return "o" end
+    return real_getenv(name)
   end
 
   local result = common.strip_prefix("o/lib/test.lua")
@@ -63,19 +64,30 @@ local function test_strip_prefix()
   local result2 = common.strip_prefix("lib/test.lua")
   assert(result2 == "lib/test.lua", "should not strip if no prefix match")
 
+  -- test with custom prefix to confirm no hardcoded o/
   os.getenv = function(name)
-    if name == "TEST_O" then
-      return nil
-    end
+    if name == "TEST_O" then return "custom_output" end
+    return real_getenv(name)
+  end
+
+  local result4 = common.strip_prefix("custom_output/lib/test.lua")
+  assert(result4 == "lib/test.lua", "should strip custom_output/ prefix")
+
+  local result5 = common.strip_prefix("o/lib/test.lua")
+  assert(result5 == "o/lib/test.lua", "should not strip o/ when TEST_O is custom_output")
+
+  -- test with nil TEST_O
+  os.getenv = function(name)
+    if name == "TEST_O" then return nil end
+    return real_getenv(name)
   end
 
   local result3 = common.strip_prefix("o/lib/test.lua")
   assert(result3 == "o/lib/test.lua", "should not strip if TEST_O not set")
 
-  os.getenv = function(name)
-    return old_test_o
-  end
+  os.getenv = real_getenv
 end
+test_strip_prefix()
 
 local function test_status_icons()
   local icons = common.status_icons()
@@ -84,6 +96,7 @@ local function test_status_icons()
   assert(icons.skip == "→", "should have skip icon")
   assert(icons.ignore == "○", "should have ignore icon")
 end
+test_status_icons()
 
 local function test_has_extension()
   local extensions = { [".lua"] = true, [".tl"] = true }
@@ -92,6 +105,7 @@ local function test_has_extension()
   assert(not common.has_extension("test.py", extensions), "should not match .py extension")
   assert(not common.has_extension("test", extensions), "should not match no extension")
 end
+test_has_extension()
 
 local function test_check_first_lines()
   local test_file = path.join(TEST_TMPDIR, "test.lua")
@@ -134,6 +148,7 @@ local x = 1
   assert(has_shebang3 == true, "should detect shebang")
   assert(skip_reason3 == "directive", "should use default skip reason")
 end
+test_check_first_lines()
 
 local function test_categorize_results()
   local results_list = {
@@ -150,11 +165,56 @@ local function test_categorize_results()
   assert(#results.skip == 1, "should categorize skip results")
   assert(#results.ignore == 1, "should categorize ignore results")
 end
-
-test_format_output()
-test_parse_result()
-test_strip_prefix()
-test_status_icons()
-test_has_extension()
-test_check_first_lines()
 test_categorize_results()
+
+local function test_format_results()
+  local icons = common.status_icons()
+  local results = {
+    { status = "pass", name = "test1" },
+    { status = "fail", name = "test2", message = "error", checker = "luacheck" },
+  }
+
+  local output = common.format_results(results, icons)
+  assert(output:match("✓%s+PASS%s+test1"), "should format pass result")
+  assert(output:match("✗%s+FAIL%s+test2 %(luacheck: error%)"), "should format fail result with checker")
+end
+test_format_results()
+
+local function test_format_summary()
+  local results = {
+    pass = { {}, {} },
+    fail = { {} },
+    skip = {},
+    ignore = { {} },
+  }
+
+  local output = common.format_summary("test-checker", results)
+  assert(output:match("test%-checker: 4 checks"), "should include checker name and total")
+  assert(output:match("2 passed"), "should include pass count")
+  assert(output:match("1 failed"), "should include fail count")
+  assert(output:match("0 skipped"), "should include skip count")
+  assert(output:match("1 ignored"), "should include ignore count")
+
+  local empty_output = common.format_summary("empty", { pass = {}, fail = {}, skip = {}, ignore = {} })
+  assert(empty_output == "", "should return empty string for no results")
+end
+test_format_summary()
+
+local function test_format_failures()
+  local results = {
+    { status = "pass", name = "test1" },
+    { status = "fail", name = "test2", message = "error msg", stderr = "details" },
+    { status = "fail", name = "test3", checker = "teal", message = "type error" },
+  }
+
+  local output = common.format_failures(results)
+  assert(output:match("FAILURES:"), "should include failures header")
+  assert(output:match("test2"), "should include failed test name")
+  assert(output:match("error msg"), "should include message")
+  assert(output:match("details"), "should include stderr")
+  assert(output:match("test3 %(teal%)"), "should include checker name")
+
+  local no_failures = common.format_failures({ { status = "pass", name = "test1" } })
+  assert(no_failures == nil, "should return nil for no failures")
+end
+test_format_failures()
