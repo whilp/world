@@ -1,7 +1,7 @@
 #!/usr/bin/env lua
 
 local cosmo = require("cosmo")
-local reporter = require("reporter.report")
+local reporter = require("build.report")
 
 local function main(...)
   local files = {...}

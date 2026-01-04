@@ -2,7 +2,7 @@
 -- teal ignore: type annotations needed
 
 local cosmo = require("cosmo")
-local reporter = require("reporter.report")
+local reporter = require("build.report")
 
 local function main(check_dir)
   return reporter.report({
