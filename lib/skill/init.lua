@@ -10,6 +10,8 @@ local function find_subcommand()
   for i = -1, #arg do
     if arg[i] == "update-pr" then
       return "update-pr", i
+    elseif arg[i] == "check-bootstrap" then
+      return "check-bootstrap", i
     end
   end
 
@@ -37,6 +39,10 @@ if subcommand then
     if msg then
       io.stderr:write(msg .. "\n")
     end
+    os.exit(code or 0)
+  elseif subcommand == "check-bootstrap" then
+    local bootstrap = require("skill.bootstrap")
+    local code = bootstrap.main()
     os.exit(code or 0)
   else
     io.stderr:write("skill: unknown subcommand: " .. subcommand .. "\n")
