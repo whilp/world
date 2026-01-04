@@ -146,7 +146,11 @@ $(foreach m,$(filter-out bootstrap,$(modules)),\
       $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DEPS += $($(d)_dir)))))
 
 all_built_files := $(foreach x,$(modules),$($(x)_files))
-all_astgreps := $(patsubst %,%.astgrep.checked,$(all_built_files))
+all_test_files := $(foreach x,$(modules),$($(x)_tests))
+all_version_files := $(filter-out ,$(foreach x,$(modules),$($(x)_version)))
+all_checkable_files := $(all_built_files) $(addprefix $(o)/,$(all_test_files) $(all_version_files))
+.PRECIOUS: $(all_checkable_files)
+all_astgreps := $(patsubst %,%.astgrep.checked,$(all_checkable_files))
 
 astgrep: $(o)/astgrep-summary.txt
 
@@ -156,7 +160,7 @@ $(o)/astgrep-summary.txt: $(all_astgreps)
 $(o)/%.astgrep.checked: $(o)/% $(ast-grep_files) | $(bootstrap_files) $(ast-grep_staged)
 	@ASTGREP_BIN=$(ast-grep_staged) $(astgrep_runner) $< $@
 
-all_luachecks := $(patsubst %,%.luacheck.checked,$(all_built_files))
+all_luachecks := $(patsubst %,%.luacheck.checked,$(all_checkable_files))
 
 luacheck: $(o)/luacheck-summary.txt
 
@@ -166,7 +170,7 @@ $(o)/luacheck-summary.txt: $(all_luachecks)
 $(o)/%.luacheck.checked: $(o)/% $(luacheck_files) | $(bootstrap_files) $(luacheck_staged)
 	@LUACHECK_BIN=$(luacheck_staged) $(luacheck_runner) $< $@
 
-all_teals := $(patsubst %,%.teal.checked,$(all_built_files))
+all_teals := $(patsubst %,%.teal.checked,$(all_checkable_files))
 
 teal: $(o)/teal-summary.txt
 

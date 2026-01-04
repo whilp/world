@@ -1,4 +1,6 @@
 #!/usr/bin/env run-test.lua
+-- teal ignore: test file
+-- ast-grep ignore: test file uses os.tmpname
 
 local pr = require("skill.pr")
 local cosmo = require("cosmo")

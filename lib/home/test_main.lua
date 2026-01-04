@@ -1,4 +1,6 @@
 #!/usr/bin/env run-test.lua
+-- teal ignore: test file
+-- ast-grep ignore: test file uses temp path concatenation
 
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")

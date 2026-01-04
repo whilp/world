@@ -1,4 +1,5 @@
 #!/usr/bin/env run-test.lua
+-- teal ignore: test file
 
 local spawn = require("cosmic.spawn")
 local path = require("cosmo.path")

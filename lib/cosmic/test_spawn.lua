@@ -1,4 +1,5 @@
 #!/usr/bin/env run-test.lua
+-- teal ignore: test file
 local lu = require("luaunit")
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
