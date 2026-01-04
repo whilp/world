@@ -23,10 +23,10 @@ local cosmo = require("cosmo")
 local pr = require("skill.pr")
 
 local function log(msg)
-  io.stderr:write("cosmic: " .. msg .. "\n")
+  io.stderr:write("check-logs: " .. msg .. "\n")
 end
 
-local COMMENT_MARKER = "<!-- cosmic-check-logs -->"
+local COMMENT_MARKER = "<!-- check-logs -->"
 
 local function get_check_runs(owner, repo, ref, token, opts)
   local endpoint = string.format("/repos/%s/%s/commits/%s/check-runs", owner, repo, ref)
@@ -60,7 +60,7 @@ local function get_check_run_logs(owner, repo, run_id, token, opts)
     headers = {
       ["Accept"] = "application/vnd.github+json",
       ["X-GitHub-Api-Version"] = "2022-11-28",
-      ["User-Agent"] = "cosmic.lua/1.0",
+      ["User-Agent"] = "check-logs.lua/1.0",
     },
   }
 
@@ -247,7 +247,7 @@ local function do_local_mode(owner, repo_name, pr_number, token, opts)
 
   local existing_comment = find_cosmic_comment(comments)
   if not existing_comment then
-    return 1, "no cosmic check logs comment found on PR #" .. pr_number
+    return 1, "no check logs comment found on PR #" .. pr_number
   end
 
   local logs = extract_logs_from_comment(existing_comment.body)

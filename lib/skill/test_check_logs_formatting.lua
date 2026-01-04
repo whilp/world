@@ -1,6 +1,6 @@
 #!/usr/bin/env run-test.lua
 
-local cosmic = require("skill.cosmic")
+local check_logs = require("skill.check-logs")
 
 local function test_format_check_logs_with_failures()
   local check_runs = {
@@ -20,7 +20,7 @@ local function test_format_check_logs_with_failures()
     return nil
   end
 
-  local formatted = cosmic.format_check_logs(check_runs, "owner", "repo", "token", {get_logs = mock_get_logs})
+  local formatted = check_logs.format_check_logs(check_runs, "owner", "repo", "token", {get_logs = mock_get_logs})
 
   assert(formatted, "expected formatted logs")
   assert(formatted:match("lint"), "expected lint check")
@@ -38,7 +38,7 @@ local function test_format_check_logs_all_success()
     {id = 2, name = "lint", status = "completed", conclusion = "success"},
   }
 
-  local formatted = cosmic.format_check_logs(check_runs, "owner", "repo", "token", {})
+  local formatted = check_logs.format_check_logs(check_runs, "owner", "repo", "token", {})
   assert(not formatted, "expected no formatted logs for all successes")
 end
 test_format_check_logs_all_success()
@@ -52,7 +52,7 @@ local function test_format_check_logs_no_logs_available()
     return nil
   end
 
-  local formatted = cosmic.format_check_logs(check_runs, "owner", "repo", "token", {get_logs = mock_get_logs})
+  local formatted = check_logs.format_check_logs(check_runs, "owner", "repo", "token", {get_logs = mock_get_logs})
 
   assert(formatted, "expected formatted output even without logs")
   assert(formatted:match("no logs available"), "expected 'no logs available' message")
@@ -71,7 +71,7 @@ local function test_format_check_logs_in_progress()
     return "some logs"
   end
 
-  local formatted = cosmic.format_check_logs(check_runs, "owner", "repo", "token", {get_logs = mock_get_logs})
+  local formatted = check_logs.format_check_logs(check_runs, "owner", "repo", "token", {get_logs = mock_get_logs})
 
   assert(formatted, "expected formatted logs")
   assert(not formatted:match("in_progress"), "expected in_progress check to be skipped")
