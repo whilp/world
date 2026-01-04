@@ -120,8 +120,8 @@ all_tested := $(patsubst %,o/%.test.ok,$(all_tests))
 
 test: $(o)/test-summary.txt
 
-$(o)/test-summary.txt: $(all_tested)
-	@$(reporter) --dir $(o) test $^ | tee $@
+$(o)/test-summary.txt: $(all_tested) $(build_reporter)
+	@$(reporter) --dir $(o) test $(filter-out $(build_reporter),$^) | tee $@
 
 $(o)/test-results.txt: $(all_tested)
 	@for f in $^; do echo "$${f%.test.ok}: $$(cat $$f)"; done > $@
@@ -157,8 +157,8 @@ all_astgreps := $(patsubst %,%.ast-grep.ok,$(all_checkable_files))
 
 astgrep: $(o)/astgrep-summary.txt
 
-$(o)/astgrep-summary.txt: $(all_astgreps)
-	@$(reporter) --dir $(o) ast-grep $^ | tee $@
+$(o)/astgrep-summary.txt: $(all_astgreps) $(build_reporter)
+	@$(reporter) --dir $(o) ast-grep $(filter-out $(build_reporter),$^) | tee $@
 
 $(o)/%.ast-grep.ok: $(o)/% $(ast-grep_files) | $(bootstrap_files) $(ast-grep_staged)
 	@mkdir -p $(@D)
@@ -168,8 +168,8 @@ all_luachecks := $(patsubst %,%.luacheck.ok,$(all_checkable_files))
 
 luacheck: $(o)/luacheck-summary.txt
 
-$(o)/luacheck-summary.txt: $(all_luachecks)
-	@$(reporter) --dir $(o) luacheck $^ | tee $@
+$(o)/luacheck-summary.txt: $(all_luachecks) $(build_reporter)
+	@$(reporter) --dir $(o) luacheck $(filter-out $(build_reporter),$^) | tee $@
 
 $(o)/%.luacheck.ok: $(o)/% $(luacheck_files) | $(bootstrap_files) $(luacheck_staged)
 	@mkdir -p $(@D)
@@ -179,8 +179,8 @@ all_teals := $(patsubst %,%.teal.ok,$(all_checkable_files))
 
 teal: $(o)/teal-summary.txt
 
-$(o)/teal-summary.txt: $(all_teals)
-	@$(reporter) --dir $(o) teal $^ | tee $@
+$(o)/teal-summary.txt: $(all_teals) $(build_reporter)
+	@$(reporter) --dir $(o) teal $(filter-out $(build_reporter),$^) | tee $@
 
 $(o)/%.teal.ok: $(o)/% $(tl_files) | $(bootstrap_files) $(tl_staged)
 	@mkdir -p $(@D)
@@ -200,13 +200,13 @@ all_checks := $(all_astgreps) $(all_luachecks) $(all_teals)
 
 check: $(o)/check-summary.txt
 
-$(o)/check-summary.txt: $(all_checks)
-	@$(reporter) --dir $(o) check $^ | tee $@
+$(o)/check-summary.txt: $(all_checks) $(build_reporter)
+	@$(reporter) --dir $(o) check $(filter-out $(build_reporter),$^) | tee $@
 
 update: $(o)/update-summary.txt
 
-$(o)/update-summary.txt: $(all_updated)
-	@$(reporter) --dir $(o) update $^ | tee $@
+$(o)/update-summary.txt: $(all_updated) $(build_reporter)
+	@$(reporter) --dir $(o) update $(filter-out $(build_reporter),$^) | tee $@
 
 $(o)/%.update.ok: % $(build_check_update) | $(bootstrap_files)
 	@mkdir -p $(@D)
