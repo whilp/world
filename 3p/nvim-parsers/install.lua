@@ -10,11 +10,17 @@ local spawn = require("cosmic.spawn")
 local function install(nvim_staged, treesitter_staged, output_dir, parsers_config, tree_sitter_staged)
   local nvim_bin = path.join(nvim_staged, "bin/nvim")
 
-  io.stderr:write(string.format("nvim-parsers: nvim_bin=%s\n", nvim_bin))
-  io.stderr:write(string.format("nvim-parsers: treesitter_staged=%s\n", treesitter_staged))
-  io.stderr:write(string.format("nvim-parsers: output_dir=%s\n", output_dir))
-  io.stderr:write(string.format("nvim-parsers: parsers_config=%s\n", parsers_config))
-  io.stderr:write(string.format("nvim-parsers: tree_sitter_staged=%s\n", tree_sitter_staged))
+  -- Collect verbose output, only print on error
+  local log = {}
+  local function log_write(msg)
+    table.insert(log, msg)
+  end
+
+  log_write(string.format("nvim-parsers: nvim_bin=%s\n", nvim_bin))
+  log_write(string.format("nvim-parsers: treesitter_staged=%s\n", treesitter_staged))
+  log_write(string.format("nvim-parsers: output_dir=%s\n", output_dir))
+  log_write(string.format("nvim-parsers: parsers_config=%s\n", parsers_config))
+  log_write(string.format("nvim-parsers: tree_sitter_staged=%s\n", tree_sitter_staged))
 
   -- check nvim is executable
   local handle = spawn({nvim_bin, "--version"})
@@ -23,7 +29,7 @@ local function install(nvim_staged, treesitter_staged, output_dir, parsers_confi
     io.stderr:write("nvim-parsers: skipped (nvim not executable on this platform)\n")
     return true
   end
-  io.stderr:write("nvim-parsers: nvim is executable\n")
+  log_write("nvim-parsers: nvim is executable\n")
 
   local cwd = unix.getcwd()
   local parsers = dofile(parsers_config)
@@ -52,8 +58,8 @@ else
   vim.cmd("cquit 1")
 end
 ]], abs_treesitter, abs_output, table.concat(parsers, '","'))
-  io.stderr:write(string.format("nvim-parsers: abs_treesitter=%s\n", abs_treesitter))
-  io.stderr:write(string.format("nvim-parsers: abs_output=%s\n", abs_output))
+  log_write(string.format("nvim-parsers: abs_treesitter=%s\n", abs_treesitter))
+  log_write(string.format("nvim-parsers: abs_output=%s\n", abs_output))
 
   local script_path = path.join(cache_dir, "install.lua")
   cosmo.Barf(script_path, script)
@@ -94,21 +100,23 @@ end
     local ts_bin = path.join(cwd, tree_sitter_staged)
     local current_path = get_env(env, "PATH") or ""
     set_env(env, "PATH", ts_bin .. ":" .. current_path)
-    io.stderr:write(string.format("nvim-parsers: tree-sitter added to PATH: %s\n", ts_bin))
+    log_write(string.format("nvim-parsers: tree-sitter added to PATH: %s\n", ts_bin))
   else
-    io.stderr:write("nvim-parsers: WARNING: tree_sitter_staged not provided\n")
+    log_write("nvim-parsers: WARNING: tree_sitter_staged not provided\n")
   end
 
-  io.stderr:write("nvim-parsers: running nvim to install parsers\n")
+  log_write("nvim-parsers: running nvim to install parsers\n")
   handle = spawn({nvim_bin, "--headless", "-u", "NONE", "-l", script_path}, {env = env})
   -- read stderr before wait() since wait() drains and closes it
   local stderr = handle.stderr:read()
   local exit_code = handle:wait()
-  io.stderr:write(string.format("nvim-parsers: nvim exit_code=%s\n", tostring(exit_code)))
+  log_write(string.format("nvim-parsers: nvim exit_code=%s\n", tostring(exit_code)))
   if stderr and stderr ~= "" then
-    io.stderr:write("nvim-parsers: nvim stderr:\n  " .. stderr:gsub("\n", "\n  ") .. "\n")
+    log_write("nvim-parsers: nvim stderr:\n  " .. stderr:gsub("\n", "\n  ") .. "\n")
   end
   if exit_code ~= 0 then
+    -- dump log on error
+    io.stderr:write(table.concat(log))
     io.stderr:write("nvim-parsers: installation failed\n")
     io.stderr:write(string.format("  script: %s\n", script_path))
     io.stderr:write(string.format("  exit: %d\n", exit_code or -1))
@@ -118,10 +126,14 @@ end
   local parser_dir = path.join(cwd, output_dir, "parser")
   local st = unix.stat(parser_dir)
   if st then
-    io.stderr:write(string.format("nvim-parsers: parser_dir exists: %s\n", parser_dir))
+    log_write(string.format("nvim-parsers: parser_dir exists: %s\n", parser_dir))
   else
-    io.stderr:write(string.format("nvim-parsers: parser_dir MISSING: %s\n", parser_dir))
+    log_write(string.format("nvim-parsers: parser_dir MISSING: %s\n", parser_dir))
   end
+
+  -- Count parsers built
+  local parser_count = #parsers
+  io.stdout:write(string.format("%d\n", parser_count))
   return true
 end
 
