@@ -166,8 +166,16 @@ local function format_failures(all_results)
       if result.message then
         table.insert(lines, result.message)
       end
+      if result.stdout and result.stdout ~= "" then
+        table.insert(lines, "")
+        table.insert(lines, "stdout:")
+        table.insert(lines, result.stdout)
+      end
       if result.stderr and result.stderr ~= "" then
         table.insert(lines, "")
+        if result.stdout and result.stdout ~= "" then
+          table.insert(lines, "stderr:")
+        end
         table.insert(lines, result.stderr)
       end
     end
