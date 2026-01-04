@@ -52,15 +52,19 @@ local function get_commit_sha()
   return out:match("^%s*(.-)%s*$") or "unknown"
 end
 
-local function get_pr_name_from_trailer()
+local function get_pr_name_from_trailer(repo)
   -- Get all x-cosmic-pr-name and x-cosmic-pr-enable trailers from last 20 commits
   -- Process in chronological order (oldest first) to find the final state
-  local handle = spawn({
-    "git", "log",
-    "--format=%H %(trailers:key=x-cosmic-pr-name,valueonly)%(trailers:key=x-cosmic-pr-enable,valueonly)",
-    "--reverse",  -- oldest first
-    "-20"  -- check last 20 commits
-  })
+  local cmd = {"git"}
+  if repo then
+    table.insert(cmd, "-C")
+    table.insert(cmd, repo)
+  end
+  table.insert(cmd, "log")
+  table.insert(cmd, "--format=%H %(trailers:key=x-cosmic-pr-name,valueonly)%(trailers:key=x-cosmic-pr-enable,valueonly)")
+  table.insert(cmd, "--reverse")
+  table.insert(cmd, "-20")
+  local handle = spawn(cmd)
   local ok, out = handle:read()
   if not ok or not out then
     return nil

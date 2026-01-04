@@ -9,13 +9,20 @@ local spawn = require("cosmic.spawn")
 
 local TEST_TMPDIR = os.getenv("TEST_TMPDIR") or "/tmp"
 
+-- helper: run git command
+local function git(args)
+  local handle = spawn(args)
+  local code = handle:wait()
+  assert(code == 0, "git failed: " .. table.concat(args, " "))
+end
+
 -- helper: create isolated git repo
 local function make_test_repo()
   local repo = path.join(TEST_TMPDIR, "test-repo-" .. tostring(os.time()))
   unix.makedirs(repo)
-  spawn({"git", "init", repo}):wait()
-  spawn({"git", "-C", repo, "config", "user.email", "test@test.com"}):wait()
-  spawn({"git", "-C", repo, "config", "user.name", "Test"}):wait()
+  git({"git", "init", repo})
+  git({"git", "-C", repo, "config", "user.email", "test@test.com"})
+  git({"git", "-C", repo, "config", "user.name", "Test"})
   return repo
 end
 
@@ -24,8 +31,8 @@ local function commit(repo, msg)
   local f = io.open(path.join(repo, "file.txt"), "a")
   f:write(msg .. "\n")
   f:close()
-  spawn({"git", "-C", repo, "add", "."}):wait()
-  spawn({"git", "-C", repo, "commit", "-m", msg}):wait()
+  git({"git", "-C", repo, "add", "."})
+  git({"git", "-C", repo, "commit", "-m", msg})
 end
 
 --------------------------------------------------------------------------------
@@ -186,35 +193,8 @@ local function test_trailer_not_found()
   local repo = make_test_repo()
   commit(repo, "Initial commit")
 
-  -- run git log from test repo
-  local handle = spawn({
-    "git", "-C", repo, "log",
-    "--format=%H %(trailers:key=x-cosmic-pr-name,valueonly)%(trailers:key=x-cosmic-pr-enable,valueonly)",
-    "--reverse", "-20"
-  })
-  local ok, out = handle:read()
-  assert(ok, "expected git log to succeed")
-
-  -- parse same way as pr.lua
-  local pr_name = nil
-  local enabled = true
-  for line in out:gmatch("[^\n]+") do
-    local sha, rest = line:match("^(%S+)%s*(.*)$")
-    if sha and rest then
-      local name = rest:match("^%s*(.-)%s*$")
-      if name and name ~= "" then
-        if name == "false" then
-          enabled = false
-          pr_name = nil
-        else
-          pr_name = name
-          enabled = true
-        end
-      end
-    end
-  end
-
-  assert(pr_name == nil, "expected no trailer")
+  local result = pr.get_pr_name_from_trailer(repo)
+  assert(result == nil, "expected no trailer")
   unix.rmrf(repo)
 end
 test_trailer_not_found()
@@ -223,33 +203,8 @@ local function test_trailer_found()
   local repo = make_test_repo()
   commit(repo, "feat: add feature\n\nx-cosmic-pr-name: 2026-01-04-feature.md")
 
-  local handle = spawn({
-    "git", "-C", repo, "log",
-    "--format=%H %(trailers:key=x-cosmic-pr-name,valueonly)%(trailers:key=x-cosmic-pr-enable,valueonly)",
-    "--reverse", "-20"
-  })
-  local ok, out = handle:read()
-  assert(ok, "expected git log to succeed")
-
-  local pr_name = nil
-  local enabled = true
-  for line in out:gmatch("[^\n]+") do
-    local sha, rest = line:match("^(%S+)%s*(.*)$")
-    if sha and rest then
-      local name = rest:match("^%s*(.-)%s*$")
-      if name and name ~= "" then
-        if name == "false" then
-          enabled = false
-          pr_name = nil
-        else
-          pr_name = name
-          enabled = true
-        end
-      end
-    end
-  end
-
-  assert(pr_name == "2026-01-04-feature.md", "expected trailer value, got: " .. tostring(pr_name))
+  local result = pr.get_pr_name_from_trailer(repo)
+  assert(result == "2026-01-04-feature.md", "expected trailer value, got: " .. tostring(result))
   unix.rmrf(repo)
 end
 test_trailer_found()
@@ -259,33 +214,7 @@ local function test_trailer_disabled()
   commit(repo, "feat: add feature\n\nx-cosmic-pr-name: feature.md")
   commit(repo, "chore: disable updates\n\nx-cosmic-pr-enable: false")
 
-  local handle = spawn({
-    "git", "-C", repo, "log",
-    "--format=%H %(trailers:key=x-cosmic-pr-name,valueonly)%(trailers:key=x-cosmic-pr-enable,valueonly)",
-    "--reverse", "-20"
-  })
-  local ok, out = handle:read()
-  assert(ok, "expected git log to succeed")
-
-  local pr_name = nil
-  local enabled = true
-  for line in out:gmatch("[^\n]+") do
-    local sha, rest = line:match("^(%S+)%s*(.*)$")
-    if sha and rest then
-      local name = rest:match("^%s*(.-)%s*$")
-      if name and name ~= "" then
-        if name == "false" then
-          enabled = false
-          pr_name = nil
-        else
-          pr_name = name
-          enabled = true
-        end
-      end
-    end
-  end
-
-  local result = enabled and pr_name or nil
+  local result = pr.get_pr_name_from_trailer(repo)
   assert(result == nil, "expected disabled, got: " .. tostring(result))
   unix.rmrf(repo)
 end
@@ -297,33 +226,7 @@ local function test_trailer_reenabled()
   commit(repo, "chore: disable\n\nx-cosmic-pr-enable: false")
   commit(repo, "feat: new feature\n\nx-cosmic-pr-name: 2026-01-04-new.md")
 
-  local handle = spawn({
-    "git", "-C", repo, "log",
-    "--format=%H %(trailers:key=x-cosmic-pr-name,valueonly)%(trailers:key=x-cosmic-pr-enable,valueonly)",
-    "--reverse", "-20"
-  })
-  local ok, out = handle:read()
-  assert(ok, "expected git log to succeed")
-
-  local pr_name = nil
-  local enabled = true
-  for line in out:gmatch("[^\n]+") do
-    local sha, rest = line:match("^(%S+)%s*(.*)$")
-    if sha and rest then
-      local name = rest:match("^%s*(.-)%s*$")
-      if name and name ~= "" then
-        if name == "false" then
-          enabled = false
-          pr_name = nil
-        else
-          pr_name = name
-          enabled = true
-        end
-      end
-    end
-  end
-
-  local result = enabled and pr_name or nil
+  local result = pr.get_pr_name_from_trailer(repo)
   assert(result == "2026-01-04-new.md", "expected re-enabled with new name, got: " .. tostring(result))
   unix.rmrf(repo)
 end
