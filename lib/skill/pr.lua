@@ -59,7 +59,7 @@ local function get_pr_name_from_trailer()
     "git", "log",
     "--format=%(trailers:key=x-cosmic-pr-name,valueonly)",
     "--reverse",  -- oldest first, we'll take the last non-empty one
-    "HEAD~20..HEAD"  -- check last 20 commits
+    "-20"  -- check last 20 commits
   })
   local ok, out = handle:read()
   if not ok or not out then
@@ -84,7 +84,7 @@ local function is_pr_updates_enabled()
     "git", "log",
     "--format=%(trailers:key=x-cosmic-pr-enable,valueonly)",
     "-1",
-    "HEAD~20..HEAD"
+    "-20"
   })
   local ok, out = handle:read()
   if ok and out then
@@ -374,11 +374,11 @@ local function main(opts)
     local sha = get_commit_sha()
 
     -- Show what commits were checked
-    local commits_handle = spawn({"git", "log", "--oneline", "-20", "HEAD~20..HEAD"})
+    local commits_handle = spawn({"git", "log", "--oneline", "-20"})
     local _, commits = commits_handle:read()
 
     -- Show trailers from all checked commits
-    local all_trailers_handle = spawn({"git", "log", "--format=%H %(trailers)", "-20", "HEAD~20..HEAD"})
+    local all_trailers_handle = spawn({"git", "log", "--format=%H %(trailers)", "-20"})
     local _, all_trailers = all_trailers_handle:read()
 
     local debug_info = string.format(
