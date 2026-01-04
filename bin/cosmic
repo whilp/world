@@ -13,13 +13,5 @@ if [ ! -f "${COSMIC_LUA}" ]; then
     chmod +x "${COSMIC_LUA}"
 fi
 
-# Handle bootstrap mode: just ensure binary exists and update PATH
-if [ "${BOOTSTRAP}" = "1" ]; then
-    if [ -n "${CLAUDE_ENV_FILE}" ]; then
-        echo "export PATH=\"${SCRIPT_DIR}:\$PATH\"" >> "${CLAUDE_ENV_FILE}"
-    fi
-    exit 0
-fi
-
 # Execute cosmic-lua with all arguments
 exec "${COSMIC_LUA}" "$@"
