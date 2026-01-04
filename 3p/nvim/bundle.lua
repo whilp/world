@@ -2,6 +2,10 @@
 -- Bundles pre-fetched plugins into an nvim directory
 -- Usage: bundle.lua <platform> <nvim_dir> <plugins_dir>
 
+-- TODO: re-enable unveil sandbox once treesitter parser installation is stable
+-- The sandbox blocks tree-sitter CLI and compiler access needed for parser builds
+
+local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 local spawn = require("cosmic.spawn")
@@ -81,6 +85,8 @@ local function install_parsers(nvim_dir)
   local cwd = unix.getcwd()
   local parsers = dofile(path.join(cwd, ".config/nvim/parsers.lua"))
   local site_dir = path.join(cwd, nvim_dir, "share/nvim/site")
+  local cache_dir = path.join(nvim_dir, "cache")
+  unix.makedirs(cache_dir)
 
   local script = string.format([[
 vim.opt.packpath:prepend("%s")
@@ -91,18 +97,13 @@ local ok = ts.install({"%s"}):wait()
 if ok then vim.cmd("qall!") else vim.cmd("cquit 1") end
 ]], site_dir, site_dir, table.concat(parsers, '","'))
 
-  local script_path = path.join(cwd, "o/nvim/install_parsers.lua")
-  local fd = unix.open(script_path, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("644", 8))
-  if not fd then
-    return nil, "failed to write install script"
-  end
-  unix.write(fd, script)
-  unix.close(fd)
+  local script_path = path.join(cache_dir, "install_parsers.lua")
+  cosmo.Barf(script_path, script)
 
   io.write(string.format("  installing: %s\n", table.concat(parsers, ", ")))
 
   local env = unix.environ()
-  env.XDG_CACHE_HOME = path.join(cwd, "o/nvim/cache")
+  env.XDG_CACHE_HOME = path.join(cwd, cache_dir)
   env.VIMRUNTIME = path.join(cwd, nvim_dir, "share/nvim/runtime")
   env.VIM = path.join(cwd, nvim_dir, "share/nvim")
 
