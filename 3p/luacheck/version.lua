@@ -1,3 +1,4 @@
+-- update ignore: archived project
 return {
   version = "1.2.0",
   format = "tar.gz",
