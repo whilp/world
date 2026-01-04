@@ -1,13 +1,13 @@
 #!/usr/bin/env lua
 -- Installs treesitter parsers
--- Usage: install.lua <nvim_staged> <treesitter_staged> <output_dir>
+-- Usage: install.lua <nvim_staged> <treesitter_staged> <output_dir> <parsers_config>
 
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 local spawn = require("cosmic.spawn")
 
-local function install(nvim_staged, treesitter_staged, output_dir)
+local function install(nvim_staged, treesitter_staged, output_dir, parsers_config)
   local nvim_bin = path.join(nvim_staged, "bin/nvim")
 
   -- check nvim is executable
@@ -19,7 +19,7 @@ local function install(nvim_staged, treesitter_staged, output_dir)
   end
 
   local cwd = unix.getcwd()
-  local parsers = dofile(path.join(cwd, ".config/nvim/parsers.lua"))
+  local parsers = dofile(parsers_config)
   local cache_dir = path.join(cwd, output_dir, "cache")
   unix.makedirs(cache_dir)
 
@@ -54,8 +54,8 @@ if ok then vim.cmd("qall!") else vim.cmd("cquit 1") end
   return true
 end
 
-if not pcall(debug.getlocal, 4, 1) then
-  local ok, err = install(arg[1], arg[2], arg[3])
+if cosmo.is_main() then
+  local ok, err = install(arg[1], arg[2], arg[3], arg[4])
   if not ok then
     io.stderr:write("error: " .. tostring(err) .. "\n")
     os.exit(1)
