@@ -256,7 +256,7 @@ local function test_do_update_with_changes()
     return original_slurp(p)
   end
 
-  local code = pr.do_update("owner", "repo", 42, "test.md", "token", {fetch = mock_fetch})
+  local code = pr.do_update("owner", "repo", 42, "test.md", nil, "token", {fetch = mock_fetch})
 
   path.exists = original_exists
   cosmo.Slurp = original_slurp

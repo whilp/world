@@ -73,28 +73,42 @@ local function get_pr_name_from_trailer(repo)
   -- Track the final state by processing commits in order
   local pr_name = nil
   local enabled = true
+  local first_sha, last_sha, winning_sha, winning_trailer
+  local commit_count = 0
 
   for line in out:gmatch("[^\n]+") do
     local sha, rest = line:match("^(%S+)%s*(.*)$")
-    if sha and rest then
-      -- Check if this line has x-cosmic-pr-name or x-cosmic-pr-enable
-      local name = rest:match("^%s*(.-)%s*$")
+    if sha then
+      commit_count = commit_count + 1
+      if not first_sha then first_sha = sha end
+      last_sha = sha
+
+      local name = rest and rest:match("^%s*(.-)%s*$")
       if name and name ~= "" then
-        -- Could be either pr-name or pr-enable value
         if name == "false" then
-          -- This is x-cosmic-pr-enable: false
           enabled = false
-          pr_name = nil  -- disable clears the name
+          pr_name = nil
+          winning_sha = sha
+          winning_trailer = "x-cosmic-pr-enable: false"
         else
-          -- This is x-cosmic-pr-name: something.md
           pr_name = name
-          enabled = true  -- setting a name re-enables
+          enabled = true
+          winning_sha = sha
+          winning_trailer = "x-cosmic-pr-name: " .. name
         end
       end
     end
   end
 
-  return enabled and pr_name or nil
+  local info = {
+    commit_count = commit_count,
+    first_sha = first_sha,
+    last_sha = last_sha,
+    winning_sha = winning_sha,
+    winning_trailer = winning_trailer,
+  }
+
+  return enabled and pr_name or nil, info
 end
 
 
@@ -285,7 +299,19 @@ local function is_github_actions()
   return os.getenv("GITHUB_ACTIONS") == "true"
 end
 
-local function do_update(owner, repo_name, pr_number, pr_name, token, opts)
+local function do_update(owner, repo_name, pr_number, pr_name, trailer_info, token, opts)
+  -- log commit range and winning trailer
+  if trailer_info and trailer_info.first_sha then
+    local range = string.format("%s..%s (%d commits)",
+      trailer_info.first_sha:sub(1, 8),
+      trailer_info.last_sha:sub(1, 8),
+      trailer_info.commit_count)
+    log("checked " .. range)
+  end
+  if trailer_info and trailer_info.winning_sha then
+    log("using " .. trailer_info.winning_sha:sub(1, 8) .. " " .. trailer_info.winning_trailer)
+  end
+
   local pr_file = path.join(".github/pr", pr_name)
 
   if not path.exists(pr_file) then
@@ -364,7 +390,7 @@ local function main(opts)
     return 1, "invalid GITHUB_PR_NUMBER"
   end
 
-  local pr_name = get_pr_name_from_trailer()
+  local pr_name, trailer_info = get_pr_name_from_trailer()
   if not pr_name then
     local sha = get_commit_sha()
 
@@ -385,7 +411,7 @@ local function main(opts)
     return 1, debug_info
   end
 
-  return do_update(owner, repo_name, pr_number, pr_name, token, opts)
+  return do_update(owner, repo_name, pr_number, pr_name, trailer_info, token, opts)
 end
 
 if cosmo.is_main() then
