@@ -3,14 +3,11 @@
 
 local cosmo = require("cosmo")
 local getopt = require("cosmo.getopt")
-local walk = require("cosmic.walk")
 local common = require("checker.common")
 
 local function collect_results(config)
-  local check_dir = config.check_dir or os.getenv("TEST_O") or "o"
-  local pattern = config.pattern
   local checker_name = config.checker
-  local strip_suffix = config.strip_suffix or pattern
+  local strip_suffix = config.strip_suffix
 
   local results = {
     pass = {},
@@ -19,14 +16,8 @@ local function collect_results(config)
     ignore = {},
   }
 
-  local result_files
-  if config.files then
-    result_files = config.files
-    table.sort(result_files)
-  else
-    result_files = walk.collect(check_dir, pattern)
-    table.sort(result_files)
-  end
+  local result_files = config.files
+  table.sort(result_files)
 
   for _, file in ipairs(result_files) do
     local content = cosmo.Slurp(file)
@@ -66,8 +57,9 @@ local function report(config)
     end
   end
 
+  local output = {}
   local status_icons = common.status_icons()
-  print(common.format_results(all_results, status_icons))
+  table.insert(output, common.format_results(all_results, status_icons))
 
   local summary
   if config.summary_format then
@@ -77,15 +69,16 @@ local function report(config)
   end
 
   if summary and summary ~= "" then
-    print(summary)
+    table.insert(output, summary)
   end
 
   local failures = common.format_failures(all_results)
   if failures then
-    print(failures)
+    table.insert(output, failures)
   end
 
-  return #results.fail > 0 and 1 or 0
+  local ok = #results.fail == 0
+  return ok, table.concat(output, "\n")
 end
 
 local function main(...)
@@ -107,16 +100,14 @@ local function main(...)
     if opt == "dir" then
       dir = optarg
     elseif opt == "?" then
-      io.stderr:write("usage: reporter.lua [--dir DIR] NAME FILES...\n")
-      return 1
+      return 1, "usage: reporter.lua [--dir DIR] NAME FILES..."
     end
   end
 
   local remaining = parser:remaining()
 
   if not remaining or #remaining < 1 then
-    io.stderr:write("usage: reporter.lua [--dir DIR] NAME FILES...\n")
-    return 1
+    return 1, "usage: reporter.lua [--dir DIR] NAME FILES..."
   end
 
   local name = remaining[1]
@@ -126,12 +117,13 @@ local function main(...)
   end
 
   if #files == 0 then
-    io.stderr:write("error: no files specified\n")
-    io.stderr:write("usage: reporter.lua [--dir DIR] NAME FILES...\n")
-    return 1
+    return 1, "error: no files specified"
   end
 
-  dir = dir or os.getenv("TEST_O") or "o"
+  if not dir then
+    return 1, "error: --dir is required"
+  end
+
   local suffix_pattern = "%." .. name:gsub("%-", "%%-") .. "%.ok$"
 
   local config = {
@@ -146,6 +138,8 @@ local function main(...)
       return stripped
     end,
   }
+
+  local ok, output
 
   if name == "check" then
     -- Multi-checker mode: detect checker type from filename
@@ -200,11 +194,12 @@ local function main(...)
       return (a.checker or "") < (b.checker or "")
     end)
 
-    -- Print results
+    -- Build output
+    local parts = {}
     local status_icons = common.status_icons()
-    print(common.format_results(all_results, status_icons))
+    table.insert(parts, common.format_results(all_results, status_icons))
 
-    -- Print per-checker summaries
+    -- Per-checker summaries
     local total_checks = 0
     local total_passed = 0
     local total_failed = 0
@@ -216,7 +211,7 @@ local function main(...)
       if results then
         local summary = common.format_summary(checker, results)
         if summary ~= "" then
-          print(summary)
+          table.insert(parts, summary)
           total_checks = total_checks + #results.pass + #results.fail + #results.skip + #results.ignore
           total_passed = total_passed + #results.pass
           total_failed = total_failed + #results.fail
@@ -226,10 +221,10 @@ local function main(...)
       end
     end
 
-    -- Print total summary
+    -- Total summary
     if total_checks > 0 then
-      print("")
-      print(string.format(
+      table.insert(parts, "")
+      table.insert(parts, string.format(
         "total: %d checks: %d passed, %d failed, %d skipped, %d ignored",
         total_checks,
         total_passed,
@@ -239,41 +234,52 @@ local function main(...)
       ))
     end
 
-    -- Print failures
+    -- Failures
     local failures = common.format_failures(all_results)
     if failures then
-      print(failures)
+      table.insert(parts, failures)
     end
 
-    return total_failed > 0 and 1 or 0
-  elseif name == "test" then
-    config.summary_format = function(results)
-      local total = #results.pass + #results.fail + #results.skip + #results.ignore
-      return string.format(
-        "%d tests: %d passed, %d failed, %d skipped, %d ignored",
-        total,
-        #results.pass,
-        #results.fail,
-        #results.skip,
-        #results.ignore
-      )
+    ok = total_failed == 0
+    output = table.concat(parts, "\n")
+  else
+    -- Single checker mode (test, update, ast-grep, luacheck, teal)
+    if name == "test" then
+      config.summary_format = function(results)
+        local total = #results.pass + #results.fail + #results.skip + #results.ignore
+        return string.format(
+          "%d tests: %d passed, %d failed, %d skipped, %d ignored",
+          total,
+          #results.pass,
+          #results.fail,
+          #results.skip,
+          #results.ignore
+        )
+      end
+    elseif name == "update" then
+      config.checker = nil
+      config.summary_format = function(results)
+        local total = #results.pass + #results.skip + #results.ignore + #results.fail
+        local updates_available = #results.skip
+        return string.format(
+          "%d checked, %d updates available",
+          total,
+          updates_available
+        )
+      end
     end
-  elseif name == "update" then
-    config.checker = nil
-    config.summary_format = function(results)
-      local total = #results.pass + #results.skip + #results.ignore + #results.fail
-      local updates_available = #results.skip
-      return string.format(
-        "%d checked, %d updates available",
-        total,
-        updates_available
-      )
-    end
+
+    ok, output = report(config)
   end
 
-  return report(config)
+  print(output)
+  return ok and 0 or 1, nil
 end
 
 if cosmo.is_main() then
-  os.exit(main(...))
+  local code, err = main(...)
+  if err then
+    io.stderr:write(err .. "\n")
+  end
+  os.exit(code)
 end
