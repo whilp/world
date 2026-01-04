@@ -1,5 +1,4 @@
 -- bootstrap - setup environment for Claude Code web
--- usage: BOOTSTRAP=1 cosmic-lua
 
 local unix = require("cosmo.unix")
 
