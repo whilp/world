@@ -1,136 +1,97 @@
 -- cosmic-lua dispatcher
 -- entry point for cosmic binary that handles special args and dispatches to features
 
-local unix = require("cosmo.unix")
+-- Simple argument parser
+local function parse_args()
+  local opts = {
+    execute = {},
+    load = {},
+    interactive = false,
+    version = false,
+    skill = nil,
+    help = nil,
+    script = nil,
+    script_args = {},
+  }
 
-local function find_arg(name)
-  if not arg then return nil, nil end
-  for i = 1, #arg do
-    if arg[i] == name then
-      return true, i
-    end
-  end
-  return false, nil
-end
-
-local function has_prefix(str, prefix)
-  return str and str:sub(1, #prefix) == prefix
-end
-
--- Check if we have lua-specific flags that need lua's native processing
-local function has_lua_flags()
-  if not arg or #arg == 0 then
-    return false
-  end
-  local lua_flags = {"-e", "-l", "-i", "-v", "-E", "-W"}
-  for _, flag in ipairs(lua_flags) do
-    if find_arg(flag) then
-      return true
-    end
-  end
-  -- Also check if first arg is a script file (doesn't start with -)
-  if arg[1] and not has_prefix(arg[1], "-") then
-    return true
-  end
-  return false
-end
-
--- If we have lua-specific flags, process them ourselves since .args prevents lua from handling them
-if has_lua_flags() then
-  -- Process lua flags manually
   local i = 1
   while i <= #arg do
-    local flag = arg[i]
+    local a = arg[i]
 
-    if flag == "-e" then
-      -- Execute string
+    if a == "-e" then
       i = i + 1
       if i <= #arg then
-        local chunk, err = load(arg[i], "=(command line)")
-        if chunk then
-          chunk()
-        else
-          io.stderr:write("cosmic-lua: " .. (err or "error loading command") .. "\n")
-          os.exit(1)
+        opts.execute[#opts.execute + 1] = arg[i]
+      end
+    elseif a == "-l" then
+      i = i + 1
+      if i <= #arg then
+        opts.load[#opts.load + 1] = arg[i]
+      end
+    elseif a == "-i" then
+      opts.interactive = true
+    elseif a == "-v" then
+      opts.version = true
+    elseif a == "-E" or a == "-W" then
+      -- Ignore these for now
+    elseif a == "--skill" then
+      i = i + 1
+      if i <= #arg then
+        opts.skill = arg[i]
+        -- Remaining args go to skill
+        i = i + 1
+        while i <= #arg do
+          opts.script_args[#opts.script_args + 1] = arg[i]
+          i = i + 1
         end
       end
-    elseif flag == "-l" then
-      -- Load library
-      i = i + 1
-      if i <= #arg then
-        require(arg[i])
-      end
-    elseif flag == "-i" then
-      -- Interactive mode (TODO: implement REPL)
-      io.stderr:write("cosmic-lua: interactive mode not yet implemented\n")
-      os.exit(1)
-    elseif flag == "-v" then
-      -- Version
-      io.write(_VERSION .. "\n")
-      os.exit(0)
-    elseif flag == "-E" then
-      -- Ignore environment variables (already handled by lua)
-      -- Skip
-    elseif flag == "-W" then
-      -- Turn warnings into errors (TODO: implement)
-      -- Skip for now
-    elseif flag == "--" then
-      -- End of options
       break
-    elseif not has_prefix(flag, "-") then
-      -- Script file
-      local script_arg = {}
-      for j = i, #arg do
-        script_arg[j - i] = arg[j]
+    elseif a == "--help" then
+      i = i + 1
+      if i <= #arg and not arg[i]:match("^%-") then
+        opts.help = arg[i]
+      else
+        opts.help = true
+        i = i - 1
       end
-      script_arg[-1] = arg[-1]
-      _G.arg = script_arg
-      dofile(flag)
-      os.exit(0)
+      break
+    elseif a == "--" then
+      i = i + 1
+      break
+    elseif not a:match("^%-") then
+      -- Script file
+      opts.script = a
+      for j = i, #arg do
+        opts.script_args[j - i] = arg[j]
+      end
+      opts.script_args[-1] = arg[-1]
+      break
+    else
+      io.stderr:write("cosmic-lua: unknown option: " .. a .. "\n")
+      os.exit(1)
     end
 
     i = i + 1
   end
 
-  -- If we processed flags but didn't exit, just exit normally
+  return opts
+end
+
+local opts = parse_args()
+
+-- Handle -v
+if opts.version then
+  io.write(_VERSION .. "\n")
   os.exit(0)
 end
 
--- Check for --skill arg
-local has_skill, skill_idx = find_arg("--skill")
-if has_skill and arg[skill_idx + 1] then
-  -- rebuild arg table for skill dispatcher
-  local skill_name = arg[skill_idx + 1]
-  local new_arg = {skill_name}
-  for i = skill_idx + 2, #arg do
-    new_arg[#new_arg + 1] = arg[i]
-  end
-  _G.arg = new_arg
-
-  -- load and dispatch to skill
-  local skill = require("skill." .. skill_name)
-  if skill.main then
-    local code, msg = skill.main()
-    if msg then
-      io.stderr:write(msg .. "\n")
-    end
-    os.exit(code or 0)
-  else
-    io.stderr:write("error: skill '" .. skill_name .. "' has no main function\n")
-    os.exit(1)
-  end
-end
-
--- Check for --help with optional module arg
-local has_help, help_idx = find_arg("--help")
-if has_help then
-  local module_name = arg[help_idx + 1]
-
-  if module_name and not has_prefix(module_name, "-") then
-    -- help for specific module
-    local ok, mod = pcall(require, module_name)
+-- Handle --help
+if opts.help then
+  if type(opts.help) == "string" then
+    -- Help for specific module
+    local ok, mod = pcall(require, opts.help)
     if ok and type(mod) == "table" then
-      io.write("Module: " .. module_name .. "\n")
+      io.write("Module: " .. opts.help .. "\n")
       if mod._VERSION then
         io.write("Version: " .. mod._VERSION .. "\n")
       end
@@ -142,11 +103,11 @@ if has_help then
       end
       os.exit(0)
     else
-      io.stderr:write("error: module '" .. module_name .. "' not found\n")
+      io.stderr:write("error: module '" .. opts.help .. "' not found\n")
       os.exit(1)
     end
   else
-    -- general cosmic help - wrap lua's help with cosmic info
+    -- General cosmic help
     io.write("cosmic-lua: cosmopolitan lua with bundled libraries\n")
     io.write("\n")
     io.write("Usage: cosmic-lua [options] [script [args]]\n")
@@ -156,10 +117,64 @@ if has_help then
     io.write("  --help [module]          show help for cosmic or a module\n")
     io.write("\n")
     io.write("Standard lua options:\n")
-    io.write("  (use 'cosmic-lua' without args for lua interactive mode)\n")
+    io.write("  -e <stat>                execute string 'stat'\n")
+    io.write("  -l <name>                require library 'name'\n")
+    io.write("  -i                       enter interactive mode\n")
+    io.write("  -v                       show version information\n")
+    io.write("  -E                       ignore environment variables\n")
+    io.write("  -W                       turn warnings into errors\n")
     os.exit(0)
   end
 end
 
--- No special args - let lua proceed normally
--- The lua interpreter will handle standard args like -e, -l, etc.
+-- Handle --skill
+if opts.skill then
+  _G.arg = opts.script_args
+  local skill = require("skill." .. opts.skill)
+  if skill.main then
+    local code, msg = skill.main()
+    if msg then
+      io.stderr:write(msg .. "\n")
+    end
+    os.exit(code or 0)
+  else
+    io.stderr:write("error: skill '" .. opts.skill .. "' has no main function\n")
+    os.exit(1)
+  end
+end
+
+-- Load libraries
+for _, name in ipairs(opts.load) do
+  require(name)
+end
+
+-- Execute strings
+for _, code in ipairs(opts.execute) do
+  local chunk, err = load(code, "=(command line)")
+  if chunk then
+    chunk()
+  else
+    io.stderr:write("cosmic-lua: " .. (err or "error loading command") .. "\n")
+    os.exit(1)
+  end
+end
+
+-- Execute script file
+if opts.script then
+  _G.arg = opts.script_args
+  dofile(opts.script)
+  os.exit(0)
+end
+
+-- Interactive mode
+if opts.interactive then
+  io.stderr:write("cosmic-lua: interactive mode not yet implemented\n")
+  os.exit(1)
+end
+
+-- If we have -e or -l but no script, exit normally
+if #opts.execute > 0 or #opts.load > 0 then
+  os.exit(0)
+end
+
+-- No args - exit (lua would normally enter REPL here)
