@@ -38,7 +38,7 @@ local M = {
   main = main,
 }
 
-if arg and arg[0] and arg[0]:match("gen%-manifest%.lua$") then
+if cosmo.is_main() then
   os.exit(main(arg) or 0)
 end
 

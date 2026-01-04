@@ -1,4 +1,5 @@
 -- teal ignore: type annotations needed
+local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 
@@ -129,7 +130,7 @@ local M = {
   main = main,
 }
 
-if arg and arg[0] and arg[0]:match("gen%-platforms%.lua$") then
+if cosmo.is_main() then
   os.exit(main(arg) or 0)
 end
 
