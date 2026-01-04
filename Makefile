@@ -236,6 +236,8 @@ release:
 		release/home-darwin-arm64 release/home-linux-arm64 release/home-linux-x86_64; \
 	cd release/platforms && ../../artifacts/cosmos-zip/zip -j ../home platforms.lua; \
 	cd release/platforms && ../../artifacts/cosmos-zip/zip -r ../home manifests; \
+	./release/home unpack --with-platform --dry-run /tmp/verify-release >/dev/null || \
+		{ echo "error: platform metadata verification failed" >&2; exit 1; }; \
 	cd release && sha256sum home home-* cosmic-lua > SHA256SUMS && cat SHA256SUMS; \
 	gh release create "$$tag" \
 		$${PRERELEASE_FLAG} \
