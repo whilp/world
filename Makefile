@@ -206,6 +206,26 @@ update-pr: $(cosmic_bin) | $(bootstrap_cosmic)
 		$(bootstrap_cosmic) lib/skill/pr.lua || true; \
 	fi
 
+.PHONY: build
+build: home cosmic
+
+.PHONY: release
+release:
+	@mkdir -p release
+	@cp artifacts/home-darwin-arm64/home release/home-darwin-arm64
+	@cp artifacts/home-linux-arm64/home release/home-linux-arm64
+	@cp artifacts/home-linux-x86_64/home release/home-linux-x86_64
+	@cp artifacts/home-linux-x86_64/home release/home
+	@cp artifacts/cosmic/cosmic release/cosmic-lua
+	@chmod +x release/*
+	@cd release && sha256sum * > SHA256SUMS && cat SHA256SUMS
+	@tag="home-$$(date -u +%Y-%m-%d)-$${GITHUB_SHA::7}"; \
+	gh release create "$$tag" \
+		$${PRERELEASE_FLAG} \
+		--title "home $$tag" \
+		--notes "## Home binaries\nPlatform-specific dotfiles and bundled tools.\n\n### Quick setup\n\`\`\`bash\ncurl -fsSL https://github.com/$${GITHUB_REPOSITORY}/releases/latest/download/home | sh\n\`\`\`" \
+		release/*
+
 debug-modules:
 	@echo $(modules)
 
