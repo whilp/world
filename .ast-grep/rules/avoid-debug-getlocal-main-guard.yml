@@ -1,0 +1,15 @@
+id: avoid-debug-getlocal-main-guard
+language: lua
+severity: error
+message: |
+  Avoid debug.getlocal for main guard. Use cosmo.is_main() instead.
+
+  Example:
+    Bad:  if not pcall(debug.getlocal, 4, 1) then main() end
+    Good: if cosmo.is_main() then main() end
+
+  The debug.getlocal pattern breaks with cosmic's dofile() dispatcher.
+note: cosmo.is_main() is a C function that reliably detects main script in both cosmos and cosmic.
+
+rule:
+  pattern: pcall(debug.getlocal, $$$)

@@ -126,7 +126,7 @@ local function main(version_file, platform, output)
   return true
 end
 
-if arg and arg[0] and arg[0]:match("build%-fetch%.lua$") then
+if cosmo.is_main() then
   local ok, err = main(...)
   if not ok then
     io.stderr:write("error: " .. err .. "\n")

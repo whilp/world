@@ -21,7 +21,8 @@ local function dependencies()
 end
 
 -- export for test runner
-if not pcall(debug.getlocal, 4, 1) then
+local cosmo = require("cosmo")
+if cosmo.is_main() then
   -- normal test execution
 else
   return {dependencies = dependencies}
