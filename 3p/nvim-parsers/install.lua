@@ -14,7 +14,8 @@ local function install(nvim_staged, treesitter_staged, output_dir, parsers_confi
   local handle = spawn({nvim_bin, "--version"})
   local ok = handle:read()
   if not ok then
-    return true -- skip silently if nvim not executable on this platform
+    io.stderr:write("nvim-parsers: skipped (nvim not executable on this platform)\n")
+    return true
   end
 
   local cwd = unix.getcwd()
