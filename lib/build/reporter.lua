@@ -5,6 +5,12 @@ local cosmo = require("cosmo")
 local getopt = require("cosmo.getopt")
 local common = require("checker.common")
 
+local function extract_checker(filename)
+  -- Extract checker from pattern: *.CHECKER.ok
+  local checker = filename:match("%.([^%.]+)%.ok$")
+  return checker
+end
+
 local function collect_results(config)
   local checker_name = config.checker
   local strip_suffix = config.strip_suffix
@@ -124,127 +130,44 @@ local function main(...)
     return 1, "error: --dir is required"
   end
 
-  local suffix_pattern = "%." .. name:gsub("%-", "%%-") .. "%.ok$"
-
-  local config = {
-    files = files,
-    strip_suffix = suffix_pattern,
-    checker = name,
-    name_transform = function(file_name)
-      local stripped = file_name
-      if stripped:sub(1, #dir) == dir and stripped:sub(#dir + 1, #dir + 1) == "/" then
-        stripped = stripped:sub(#dir + 2)
-      end
-      return stripped
-    end,
-  }
-
-  local ok, output
-
-  if name == "check" then
-    -- Multi-checker mode: detect checker type from filename
-    local checkers = {"ast-grep", "luacheck", "teal"}
-    local checker_files = {}
-    local checker_results = {}
-    local all_results = {}
-
-    -- Group files by checker type
-    for _, file in ipairs(files) do
-      for _, checker in ipairs(checkers) do
-        local pattern = "%." .. checker:gsub("%-", "%%-") .. "%.ok$"
-        if file:match(pattern) then
-          if not checker_files[checker] then
-            checker_files[checker] = {}
-          end
-          table.insert(checker_files[checker], file)
-          break
-        end
-      end
+  local name_transform = function(file_name)
+    local stripped = file_name
+    if stripped:sub(1, #dir) == dir and stripped:sub(#dir + 1, #dir + 1) == "/" then
+      stripped = stripped:sub(#dir + 2)
     end
+    return stripped
+  end
 
-    -- Process each checker's files
-    for _, checker in ipairs(checkers) do
-      if checker_files[checker] then
-        local checker_config = {
-          files = checker_files[checker],
-          strip_suffix = "%." .. checker:gsub("%-", "%%-") .. "%.ok$",
-          checker = checker,
-          name_transform = config.name_transform,
-        }
-
-        local results = collect_results(checker_config)
-        checker_results[checker] = results
-
-        -- Add to all_results for combined output
-        for status, items in pairs(results) do
-          if type(items) == "table" then
-            for _, item in ipairs(items) do
-              table.insert(all_results, item)
-            end
-          end
-        end
+  -- Group files by checker type
+  local checker_files = {}
+  for _, file in ipairs(files) do
+    local checker = extract_checker(file)
+    if checker then
+      if not checker_files[checker] then
+        checker_files[checker] = {}
       end
+      table.insert(checker_files[checker], file)
     end
+  end
 
-    -- Sort all results by name, then checker
-    table.sort(all_results, function(a, b)
-      if a.name ~= b.name then
-        return a.name < b.name
-      end
-      return (a.checker or "") < (b.checker or "")
-    end)
+  -- Get sorted list of checkers
+  local checkers = {}
+  for checker, _ in pairs(checker_files) do
+    table.insert(checkers, checker)
+  end
+  table.sort(checkers)
 
-    -- Build output
-    local parts = {}
-    local status_icons = common.status_icons()
-    table.insert(parts, common.format_results(all_results, status_icons))
+  -- Helper to create checker config with custom summary formats
+  local function make_checker_config(checker)
+    local config = {
+      files = checker_files[checker],
+      strip_suffix = "%." .. checker:gsub("%-", "%%-") .. "%.ok$",
+      checker = checker,
+      name_transform = name_transform,
+    }
 
-    -- Per-checker summaries
-    local total_checks = 0
-    local total_passed = 0
-    local total_failed = 0
-    local total_skipped = 0
-    local total_ignored = 0
-
-    for _, checker in ipairs(checkers) do
-      local results = checker_results[checker]
-      if results then
-        local summary = common.format_summary(checker, results)
-        if summary ~= "" then
-          table.insert(parts, summary)
-          total_checks = total_checks + #results.pass + #results.fail + #results.skip + #results.ignore
-          total_passed = total_passed + #results.pass
-          total_failed = total_failed + #results.fail
-          total_skipped = total_skipped + #results.skip
-          total_ignored = total_ignored + #results.ignore
-        end
-      end
-    end
-
-    -- Total summary
-    if total_checks > 0 then
-      table.insert(parts, "")
-      table.insert(parts, string.format(
-        "total: %d checks: %d passed, %d failed, %d skipped, %d ignored",
-        total_checks,
-        total_passed,
-        total_failed,
-        total_skipped,
-        total_ignored
-      ))
-    end
-
-    -- Failures
-    local failures = common.format_failures(all_results)
-    if failures then
-      table.insert(parts, failures)
-    end
-
-    ok = total_failed == 0
-    output = table.concat(parts, "\n")
-  else
-    -- Single checker mode (test, update, ast-grep, luacheck, teal)
-    if name == "test" then
+    -- Custom summary format for specific checkers
+    if checker == "test" then
       config.summary_format = function(results)
         local total = #results.pass + #results.fail + #results.skip + #results.ignore
         return string.format(
@@ -256,7 +179,7 @@ local function main(...)
           #results.ignore
         )
       end
-    elseif name == "update" then
+    elseif checker == "update" then
       config.checker = nil
       config.summary_format = function(results)
         local total = #results.pass + #results.skip + #results.ignore + #results.fail
@@ -269,8 +192,91 @@ local function main(...)
       end
     end
 
-    ok, output = report(config)
+    return config
   end
+
+  -- Process each checker's files
+  local checker_results = {}
+  local all_results = {}
+
+  for _, checker in ipairs(checkers) do
+    local results = collect_results(make_checker_config(checker))
+    checker_results[checker] = results
+
+    -- Add to all_results for combined output
+    for status, items in pairs(results) do
+      if type(items) == "table" then
+        for _, item in ipairs(items) do
+          table.insert(all_results, item)
+        end
+      end
+    end
+  end
+
+  -- Single checker mode: just return the report
+  if #checkers == 1 then
+    local ok, output = report(make_checker_config(checkers[1]))
+    print(output)
+    return ok and 0 or 1, nil
+  end
+
+  -- Multi-checker mode: combine all checkers
+  -- Sort all results by name, then checker
+  table.sort(all_results, function(a, b)
+    if a.name ~= b.name then
+      return a.name < b.name
+    end
+    return (a.checker or "") < (b.checker or "")
+  end)
+
+  -- Build output
+  local parts = {}
+  local status_icons = common.status_icons()
+  table.insert(parts, common.format_results(all_results, status_icons))
+
+  -- Per-checker summaries
+  local total_checks = 0
+  local total_passed = 0
+  local total_failed = 0
+  local total_skipped = 0
+  local total_ignored = 0
+
+  for _, checker in ipairs(checkers) do
+    local results = checker_results[checker]
+    if results then
+      local summary = common.format_summary(checker, results)
+      if summary ~= "" then
+        table.insert(parts, summary)
+        total_checks = total_checks + #results.pass + #results.fail + #results.skip + #results.ignore
+        total_passed = total_passed + #results.pass
+        total_failed = total_failed + #results.fail
+        total_skipped = total_skipped + #results.skip
+        total_ignored = total_ignored + #results.ignore
+      end
+    end
+  end
+
+  -- Total summary
+  if total_checks > 0 then
+    table.insert(parts, "")
+    table.insert(parts, string.format(
+      "total: %d checks: %d passed, %d failed, %d skipped, %d ignored",
+      total_checks,
+      total_passed,
+      total_failed,
+      total_skipped,
+      total_ignored
+    ))
+  end
+
+  -- Failures
+  local failures = common.format_failures(all_results)
+  if failures then
+    table.insert(parts, failures)
+  end
+
+  local ok = total_failed == 0
+  local output = table.concat(parts, "\n")
 
   print(output)
   return ok and 0 or 1, nil
