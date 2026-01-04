@@ -31,11 +31,8 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 20
 
-      - id: make-bootstrap
-        run: make bootstrap
-
-      - id: make-update-pr
+      - id: update-pr
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_PR_NUMBER: ${{ github.event.number }}
-        run: make update-pr
+        run: ./bin/cosmic --skill pr
