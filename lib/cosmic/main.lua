@@ -171,7 +171,18 @@ end
 -- Execute script file
 if opts.script then
   _G.arg = opts.script_args
-  dofile(opts.script)
+  local chunk, err = loadfile(opts.script)
+  if not chunk then
+    io.stderr:write("cosmic-lua: " .. err .. "\n")
+    os.exit(1)
+  end
+  -- Call chunk with script args as varargs (matching standard lua behavior)
+  -- Standard lua passes arg[1], arg[2], ... as varargs to the script
+  local script_varargs = {}
+  for i = 1, #opts.script_args do
+    script_varargs[i] = opts.script_args[i]
+  end
+  chunk(table.unpack(script_varargs))
   os.exit(0)
 end
 
