@@ -72,11 +72,11 @@ $(o)/bin/%.lua: %.lua
 # files are produced in o/
 all_files += $(foreach x,$(modules),$($(x)_files))
 
-# define *_staged, *_bundled, *_dir for versioned modules (must be before dep expansion)
+# define *_staged, *_dir for versioned modules (must be before dep expansion)
+# modules can override *_dir for post-processing (e.g., nvim bundles plugins)
 $(foreach m,$(modules),$(if $($(m)_version),\
   $(eval $(m)_staged := $(o)/$(m)/.staged)\
-  $(eval $(m)_bundled := $(o)/$(m)/.bundled)\
-  $(eval $(m)_dir := $(o)/$(m)/.bundled)))
+  $(if $($(m)_dir),,$(eval $(m)_dir := $(o)/$(m)/.staged))))
 
 # default deps for regular modules (also excluded from file dep expansion)
 default_deps := bootstrap test
@@ -109,14 +109,6 @@ staged: $(all_staged)
 $(o)/%/.staged: $(o)/%/.fetched
 	@$(build_stage) $$(readlink $(o)/$*/.versioned) $(platform) $< $@
 
-# bundled: post-stage step for modules that need extra processing
-# default: symlink to staged; modules can override with custom recipes
-.PHONY: bundled
-all_bundled := $(patsubst %/.staged,%/.bundled,$(all_staged))
-bundled: $(all_bundled)
-$(o)/%/.bundled: $(o)/%/.staged
-	@ln -sfn $$(readlink $<) $@
-
 .PHONY: test
 all_tests := $(foreach x,$(modules),$($(x)_tests))
 ifdef TEST
@@ -138,18 +130,18 @@ export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
 $(o)/%.tested: % $(test_files) | $(bootstrap_files)
 	@TEST_DIR=$(TEST_DIR) $< $@
 
-# expand test deps: M's tests depend on own _files/_bundled plus deps' _bundled
+# expand test deps: M's tests depend on own _files/_dir plus deps' _dir
 $(foreach m,$(filter-out bootstrap,$(modules)),\
   $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(m)_files))\
   $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DEPS += $($(m)_files))\
-  $(if $($(m)_bundled),\
-    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(m)_bundled))\
-    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DEPS += $($(m)_bundled))\
-    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DIR := $($(m)_bundled)))\
+  $(if $($(m)_dir),\
+    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(m)_dir))\
+    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DEPS += $($(m)_dir))\
+    $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DIR := $($(m)_dir)))\
   $(foreach d,$(filter-out $(m),$(default_deps) $($(m)_deps)),\
-    $(if $($(d)_bundled),\
-      $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(d)_bundled))\
-      $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DEPS += $($(d)_bundled)))))
+    $(if $($(d)_dir),\
+      $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): $($(d)_dir))\
+      $(eval $(patsubst %,$(o)/%.tested,$($(m)_tests)): TEST_DEPS += $($(d)_dir)))))
 
 .PHONY: astgrep
 all_built_files := $(foreach x,$(modules),$($(x)_files))
