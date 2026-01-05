@@ -58,22 +58,20 @@ local function format_issues(issues, source)
 end
 
 
-local function main(source, out)
-  if not source or not out then
-    return 1, "usage: run-teal.lua <source> <out>"
+local function main(source)
+  if not source then
+    return 1, "usage: run-teal.lua <source>"
   end
-
-  unix.makedirs(path.dirname(out))
 
   local has_shebang, skip_reason = common.check_first_lines(source, supported_patterns)
 
   if not common.has_extension(source, supported_extensions) and not has_shebang then
-    cosmo.Barf(out, common.format_output("ignore", "unsupported file type", "", ""))
+    io.write(common.format_output("ignore", "unsupported file type", "", ""))
     return 0
   end
 
   if skip_reason then
-    cosmo.Barf(out, common.format_output("skip", skip_reason, "", ""))
+    io.write(common.format_output("skip", skip_reason, "", ""))
     return 0
   end
 
@@ -90,9 +88,9 @@ local function main(source, out)
 
   if #issues > 0 then
     local issue_text = format_issues(issues, source)
-    cosmo.Barf(out, common.format_output("fail", #issues .. " issues", "", issue_text))
+    io.write(common.format_output("fail", #issues .. " issues", "", issue_text))
   else
-    cosmo.Barf(out, common.format_output("pass", nil, "", ""))
+    io.write(common.format_output("pass", nil, "", ""))
   end
 
   return 0
