@@ -112,23 +112,18 @@ local function check_first_lines(file, patterns)
   return has_shebang, nil
 end
 
+local CHECKER_WIDTH = 8  -- width of longest checker name (ast-grep)
+
 local function format_results(all_results, icons)
   local lines = {}
   for _, result in ipairs(all_results) do
     local status = string.upper(result.status)
     local icon = icons[result.status] or " "
-    local padded = string.format("%-6s", status)
-    local line = icon .. " " .. padded .. " " .. result.name
-    if result.status ~= "pass" then
-      if result.message then
-        if result.checker then
-          line = line .. " (" .. result.checker .. ": " .. result.message .. ")"
-        else
-          line = line .. " (" .. result.message .. ")"
-        end
-      elseif result.checker then
-        line = line .. " (" .. result.checker .. ")"
-      end
+    local checker = result.checker or ""
+    local line = string.format("%s %-6s %-" .. CHECKER_WIDTH .. "s %s",
+      icon, status, checker, result.name)
+    if result.status ~= "pass" and result.message then
+      line = line .. " (" .. result.message .. ")"
     end
     table.insert(lines, line)
   end
