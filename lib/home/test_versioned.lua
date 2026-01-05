@@ -1,0 +1,146 @@
+#!/usr/bin/env run-test.lua
+-- teal ignore: test file
+-- ast-grep ignore: test file
+
+local unix = require("cosmo.unix")
+local path = require("cosmo.path")
+local spawn = require("cosmic.spawn")
+local version = require("version")
+
+local home_bin = path.join(os.getenv("TEST_BIN"), "home")
+
+-- Test 1: Built binary contains versioned directories for 3p tools
+local ok, list_output = spawn({home_bin, "list"}):read()
+assert(ok, "home list failed")
+
+-- Check gh has versioned directory
+local gh_versioned = list_output:match("%.local/share/gh/([%d%.%-]+%-%x+)/")
+assert(gh_versioned, "gh should have versioned directory in home binary")
+assert(gh_versioned:match("^%d+%.%d+%.%d+%-%x+$"), "gh version format: " .. gh_versioned)
+
+-- Check nvim has versioned directory
+local nvim_versioned = list_output:match("%.local/share/nvim/([^/]+)/")
+assert(nvim_versioned, "nvim should have versioned directory in home binary")
+assert(nvim_versioned:match("%-%x+$"), "nvim has sha suffix: " .. nvim_versioned)
+
+-- Check delta has versioned directory
+local delta_versioned = list_output:match("%.local/share/delta/([%d%.%-]+%-%x+)/")
+assert(delta_versioned, "delta should have versioned directory in home binary")
+
+-- Test 2: Unpack preserves versioned directory structure
+local test_home = path.join(TEST_TMPDIR, "versioned_test")
+unix.makedirs(test_home)
+
+ok = spawn({home_bin, "unpack", test_home}):wait()
+assert(ok, "home unpack failed")
+
+-- Verify gh versioned directory exists
+local gh_share = path.join(test_home, ".local", "share", "gh")
+local gh_dir = unix.opendir(gh_share)
+assert(gh_dir, "gh share directory should exist")
+
+local gh_versions = {}
+for entry in gh_dir do
+  if entry ~= "." and entry ~= ".." then
+    table.insert(gh_versions, entry)
+  end
+end
+assert(#gh_versions == 1, "should have exactly one gh version, got " .. #gh_versions)
+assert(gh_versions[1]:match("^%d+%.%d+%.%d+%-%x+$"), "gh version dir format: " .. gh_versions[1])
+
+-- Verify gh binary exists in versioned directory
+local gh_bin = path.join(gh_share, gh_versions[1], "bin", "gh")
+local gh_stat = unix.stat(gh_bin)
+assert(gh_stat, "gh binary should exist at: " .. gh_bin)
+assert(not unix.S_ISDIR(gh_stat:mode()), "gh binary should be a file")
+
+-- Verify nvim versioned directory exists
+local nvim_share = path.join(test_home, ".local", "share", "nvim")
+local nvim_dir_obj = unix.opendir(nvim_share)
+assert(nvim_dir_obj, "nvim share directory should exist")
+
+local nvim_versions = {}
+for entry in nvim_dir_obj do
+  if entry ~= "." and entry ~= ".." then
+    table.insert(nvim_versions, entry)
+  end
+end
+assert(#nvim_versions == 1, "should have exactly one nvim version, got " .. #nvim_versions)
+assert(nvim_versions[1]:match("%-%x+$"), "nvim version has sha: " .. nvim_versions[1])
+
+-- Verify nvim binary exists in versioned directory
+local nvim_bin = path.join(nvim_share, nvim_versions[1], "bin", "nvim")
+local nvim_stat = unix.stat(nvim_bin)
+assert(nvim_stat, "nvim binary should exist at: " .. nvim_bin)
+assert(not unix.S_ISDIR(nvim_stat:mode()), "nvim binary should be a file")
+
+-- Test 3: version.find_latest() works with unpacked structure
+local nvim_latest = version.find_latest("nvim", path.join(test_home, ".local", "share"))
+assert(nvim_latest, "version.find_latest should find nvim")
+assert(nvim_latest.version, "nvim latest should have version")
+assert(nvim_latest.sha, "nvim latest should have sha")
+assert(nvim_latest.path, "nvim latest should have path")
+assert(nvim_latest.dir, "nvim latest should have dir")
+assert(nvim_latest.path == nvim_bin, "nvim path should match: " .. nvim_latest.path .. " vs " .. nvim_bin)
+
+-- Test 4: version.scan_versions() returns versioned info
+local nvim_all = version.scan_versions("nvim", path.join(test_home, ".local", "share"))
+assert(#nvim_all == 1, "should find one nvim version, got " .. #nvim_all)
+assert(nvim_all[1].version, "scanned version has version field")
+assert(nvim_all[1].sha, "scanned version has sha field")
+assert(nvim_all[1].path, "scanned version has path field")
+assert(nvim_all[1].dir, "scanned version has dir field")
+
+-- Test 5: Verify all bundled tools have versioned directories
+local tools = {
+  "ast-grep", "biome", "comrak", "delta", "duckdb", "gh",
+  "luacheck", "marksman", "rg", "ruff", "shfmt", "sqruff",
+  "stylua", "superhtml", "tree-sitter", "uv"
+}
+
+for _, tool in ipairs(tools) do
+  local tool_share = path.join(test_home, ".local", "share", tool)
+  local tool_dir = unix.opendir(tool_share)
+  assert(tool_dir, tool .. " share directory should exist")
+
+  local tool_versions = {}
+  for entry in tool_dir do
+    if entry ~= "." and entry ~= ".." then
+      table.insert(tool_versions, entry)
+    end
+  end
+
+  assert(#tool_versions == 1, tool .. " should have exactly one version, got " .. #tool_versions)
+  assert(tool_versions[1]:match("%-%x+$"), tool .. " version has sha: " .. tool_versions[1])
+end
+
+-- Test 6: Multiple versions side-by-side (simulate)
+local multi_home = path.join(TEST_TMPDIR, "multi_version_test")
+unix.makedirs(path.join(multi_home, ".local", "share", "test-tool"))
+
+-- Create two fake versions
+local v1_dir = path.join(multi_home, ".local", "share", "test-tool", "1.0.0-abc123")
+local v2_dir = path.join(multi_home, ".local", "share", "test-tool", "2.0.0-def456")
+unix.makedirs(path.join(v1_dir, "bin"))
+unix.makedirs(path.join(v2_dir, "bin"))
+
+-- Create fake binaries
+local v1_bin = path.join(v1_dir, "bin", "test-tool")
+local v2_bin = path.join(v2_dir, "bin", "test-tool")
+local fd = unix.open(v1_bin, unix.O_WRONLY | unix.O_CREAT, tonumber("755", 8))
+unix.close(fd)
+fd = unix.open(v2_bin, unix.O_WRONLY | unix.O_CREAT, tonumber("755", 8))
+unix.close(fd)
+
+-- Scan should find both versions
+local all_versions = version.scan_versions("test-tool", path.join(multi_home, ".local", "share"))
+assert(#all_versions == 2, "should find two versions, got " .. #all_versions)
+
+-- Should be sorted with latest first
+assert(all_versions[1].version == "2.0.0", "latest version first: " .. all_versions[1].version)
+assert(all_versions[2].version == "1.0.0", "older version second: " .. all_versions[2].version)
+
+-- find_latest should return newest
+local latest = version.find_latest("test-tool", path.join(multi_home, ".local", "share"))
+assert(latest.version == "2.0.0", "find_latest returns newest: " .. latest.version)
+assert(latest.path == v2_bin, "latest path correct")

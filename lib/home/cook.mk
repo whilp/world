@@ -3,7 +3,7 @@ home_srcs := $(filter-out lib/home/test%.lua,$(wildcard lib/home/*.lua))
 home_libs := $(addprefix $(o)/,$(home_srcs))
 home_bin := $(o)/bin/home
 home_files := $(home_bin) $(home_libs)
-home_tests := lib/home/test_main.lua
+home_tests := lib/home/test_main.lua lib/home/test_versioned.lua
 home_release_test := lib/home/test_release.lua
 
 # 3p tools to bundle (nvim handled specially for bundled version)
