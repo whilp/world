@@ -149,8 +149,13 @@ $(foreach m,$(filter-out bootstrap,$(modules)),\
 all_built_files := $(foreach x,$(modules),$($(x)_files))
 all_test_files := $(foreach x,$(modules),$($(x)_tests))
 all_version_files := $(filter-out ,$(foreach x,$(modules),$($(x)_version)))
-all_checkable_files := $(all_built_files) $(addprefix $(o)/,$(all_test_files) $(all_version_files))
-.PRECIOUS: $(all_checkable_files)
+all_src_files := $(foreach x,$(modules),$($(x)_srcs))
+all_source_files := $(all_test_files) $(all_version_files) $(all_src_files)
+all_checkable_files := $(addprefix $(o)/,$(all_source_files))
+
+.PHONY: files
+files: $(all_built_files)
+
 all_astgreps := $(patsubst %,%.ast-grep.ok,$(all_checkable_files))
 
 astgrep: $(o)/astgrep-summary.txt

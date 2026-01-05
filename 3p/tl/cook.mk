@@ -1,5 +1,6 @@
 modules += tl
 tl_version := 3p/tl/version.lua
+tl_srcs := $(wildcard 3p/tl/*.lua)
 tl_run := $(o)/bin/run-teal.lua
 tl_files := $(tl_run)
 tl_tests := $(wildcard 3p/tl/test_*.lua)
