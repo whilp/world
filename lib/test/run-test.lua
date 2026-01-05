@@ -74,12 +74,10 @@ local function format_output(result, message, stdout, stderr)
   return table.concat(lines, "\n")
 end
 
-local function main(test, out)
-  if not test or not out then
-    return 1, "usage: run-test.lua <test> <out>"
+local function main(test)
+  if not test then
+    return 1, "usage: run-test.lua <test>"
   end
-
-  unix.makedirs(path.dirname(out))
 
   local ok, err, stdout, stderr = run_test(test)
 
@@ -89,8 +87,8 @@ local function main(test, out)
   else
     local err_str = tostring(err)
     -- check for SKIP or IGNORE in error message
-    local skip_reason = err_str:match("SKIP%s*:?%s*(.+)")
-    local ignore_reason = err_str:match("IGNORE%s*:?%s*(.+)")
+    local skip_reason = err_str:match("SKIP%s+(.+)")
+    local ignore_reason = err_str:match("IGNORE%s+(.+)")
     if skip_reason then
       result = "skip"
       message = skip_reason
@@ -101,13 +99,11 @@ local function main(test, out)
       result = "fail"
       -- strip path prefix to show just filename:line: message
       message = err_str:gsub("^.-/([^/]+:%d+:)", "%1")
-      cosmo.Barf(out, format_output(result, message, stdout, stderr))
-      return 1
     end
   end
 
-  cosmo.Barf(out, format_output(result, message, stdout, stderr))
-  return 0
+  io.write(format_output(result, message, stdout, stderr))
+  return result == "fail" and 1 or 0
 end
 
 if cosmo.is_main() then
