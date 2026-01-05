@@ -6,6 +6,7 @@ RELEASE_URL="https://github.com/whilp/world/releases/download/home-2026-01-05-a6
 # Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 COSMIC_LUA="${SCRIPT_DIR}/cosmic-lua"
+RELEASE_URL="https://github.com/whilp/world/releases/download/home-2026-01-05-a64eed2/cosmic-lua"
 
 # Download cosmic-lua if it doesn't exist
 if [ ! -f "${COSMIC_LUA}" ]; then
