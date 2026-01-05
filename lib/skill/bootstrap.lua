@@ -5,36 +5,40 @@ local unix = require("cosmo.unix")
 local CONTEXT = [[
 # cosmic: cosmopolitan lua runtime
 
-cosmic is a portable lua distribution with bundled libraries for HTTP, JSON, crypto, compression, and system programming.
-
-## Getting help
-
-- `cosmic --help` - show available options
-- `cosmic --help <module>` - get help for a specific module (if available)
-- Read lib/ source code for implementation details
+Portable lua with HTTP, JSON, crypto, compression, and POSIX APIs.
 
 ## Key modules
 
-**cosmo** - core functions: Fetch (HTTP), EncodeJson/DecodeJson, crypto (Sha256, Md5), compression (Deflate, Inflate), and encoding utilities
-
-**cosmo.path** - path operations: join, basename, dirname, exists, isdir, isfile, islink
-
-**cosmo.unix** - comprehensive POSIX API with all unix syscalls, constants, and file operations
-
-**cosmic.spawn** - process spawning: `spawn({"cmd", "arg"}):wait()` (NEVER use os.execute or io.popen)
+- **cosmo** - Fetch (HTTP), EncodeJson/DecodeJson, crypto, compression
+- **cosmo.path** - join, basename, dirname, exists, isdir, isfile
+- **cosmo.unix** - POSIX syscalls and file operations
+- **cosmic.spawn** - `spawn({"cmd", "arg"}):wait()` (NEVER use os.execute/io.popen)
 
 ## Skills
 
-Use `cosmic --skill <name>` to run skill modules:
+`cosmic --skill pr` - manage PRs from .github/pr/<name>.md files. Add `x-cosmic-pr-name: <file>.md` trailer to commits.
 
-**pr** - manages GitHub PRs from .github/pr/<name>.md files. Add `x-cosmic-pr-name: <file>.md` trailer to commits, then run `cosmic --skill pr` to update PR title/description. See `cosmic --skill pr --help` for details.
+## Updating cosmic
+
+To adopt cosmic in a project:
+
+1. **bin/cosmic** - wrapper script that downloads cosmic-lua from release URL:
+   ```sh
+   RELEASE_URL="https://github.com/whilp/world/releases/download/<tag>/cosmic-lua"
+   ```
+   Update the URL, delete old `bin/cosmic-lua` to trigger re-download.
+
+2. **.claude/settings.json** - SessionStart hook to provide context:
+   ```json
+   {"hooks":{"SessionStart":[{"matcher":"startup","hooks":[
+     {"type":"command","command":"\"$CLAUDE_PROJECT_DIR/bin/cosmic\" --skill bootstrap"}
+   ]}]}}
+   ```
 
 ## Constraints
 
-- NEVER use string concatenation for paths - use `path.join()`
-- NEVER use `os.execute()` or `io.popen()` - use `spawn` module
-- File permissions: use `tonumber("644", 8)` not `0644` (no octal in lua)
-- NEVER manipulate `package.path`
+- Use `path.join()` for paths (not string concatenation)
+- Use `tonumber("644", 8)` for permissions (no octal in lua)
 ]]
 
 local function main()
