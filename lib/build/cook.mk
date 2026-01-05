@@ -10,5 +10,5 @@ build_tests := $(wildcard lib/build/test_*.lua)
 reporter := $(bootstrap_cosmic) -- $(build_reporter)
 update_runner := $(bootstrap_cosmic) -- $(build_check_update)
 
-# test_reporter needs cosmic binary
-$(o)/lib/build/test_reporter.lua.test.ok: $(cosmic_bin)
+# test_reporter needs cosmic binary and checker module
+$(o)/lib/build/test_reporter.lua.test.ok: $$(cosmic_bin) $$(checker_files)
