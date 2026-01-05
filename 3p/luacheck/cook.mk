@@ -6,4 +6,4 @@ luacheck_tests := 3p/luacheck/test_luacheck.lua
 luacheck_deps := argparse
 
 .PRECIOUS: $(luacheck_files)
-luacheck_runner := $(bootstrap_cosmic) $(luacheck_run)
+luacheck_runner := $(bootstrap_cosmic) -- $(luacheck_run)

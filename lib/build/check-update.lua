@@ -49,8 +49,7 @@ local function main(version_file)
 
   local content = cosmo.Slurp(version_file)
   if not content then
-    io.write(common.format_output("fail", "could not read file", "", ""))
-    return 1
+    return common.write_result("fail", "could not read file", "", "")
   end
 
   local _, skip_reason = common.check_first_lines(version_file, {
@@ -59,51 +58,33 @@ local function main(version_file)
   })
 
   if skip_reason then
-    io.write(common.format_output("skip", skip_reason, "", ""))
-    return 0
+    return common.write_result("skip", skip_reason, "", "")
   end
 
   local chunk, err = load(content, version_file)
   if not chunk then
-    io.write(common.format_output("fail", "could not parse: " .. tostring(err), "", ""))
-    return 1
+    return common.write_result("fail", "could not parse: " .. tostring(err), "", "")
   end
 
   local ok, config = pcall(chunk)
   if not ok then
-    io.write(common.format_output("fail", "could not load: " .. tostring(config), "", ""))
-    return 1
+    return common.write_result("fail", "could not load: " .. tostring(config), "", "")
   end
 
   local current_version = config.version
   if not current_version then
-    io.write(common.format_output("fail", "no version field", "", ""))
-    return 1
+    return common.write_result("fail", "no version field", "", "")
   end
 
   local latest_version, check_err = check_latest_version(config)
 
-  local status, message, stdout, stderr
   if not latest_version then
-    status = "fail"
-    message = check_err or "could not check"
-    stdout = ""
-    stderr = ""
+    return common.write_result("fail", check_err or "could not check", "", "")
   elseif latest_version == current_version then
-    status = "pass"
-    message = current_version
-    stdout = ""
-    stderr = ""
+    return common.write_result("pass", current_version, "", "")
   else
-    status = "skip"
-    message = current_version .. " -> " .. latest_version
-    stdout = ""
-    stderr = ""
+    return common.write_result("skip", current_version .. " -> " .. latest_version, "", "")
   end
-
-  io.write(common.format_output(status, message, stdout, stderr))
-
-  return 0
 end
 
 if cosmo.is_main() then

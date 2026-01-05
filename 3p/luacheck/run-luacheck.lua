@@ -60,13 +60,11 @@ local function main(source)
   local has_shebang, skip_reason = common.check_first_lines(source, supported_patterns)
 
   if not common.has_extension(source, supported_extensions) and not has_shebang then
-    io.write(common.format_output("ignore", "unsupported file type", "", ""))
-    return 0
+    return common.write_result("ignore", "unsupported file type", "", "")
   end
 
   if skip_reason then
-    io.write(common.format_output("skip", skip_reason, "", ""))
-    return 0
+    return common.write_result("skip", skip_reason, "", "")
   end
 
   local luacheck_bin = path.join(os.getenv("LUACHECK_BIN"), "luacheck")
@@ -87,12 +85,9 @@ local function main(source)
 
   if #issues > 0 then
     local issue_text = format_issues(issues, source)
-    io.write(common.format_output("fail", #issues .. " issues", "", issue_text))
-  else
-    io.write(common.format_output("pass", nil, "", ""))
+    return common.write_result("fail", #issues .. " issues", "", issue_text)
   end
-
-  return 0
+  return common.write_result("pass", nil, "", "")
 end
 
 if cosmo.is_main() then

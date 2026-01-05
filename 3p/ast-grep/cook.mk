@@ -5,4 +5,4 @@ ast-grep_files := $(ast-grep_run)
 ast-grep_tests := $(wildcard 3p/ast-grep/test_*.lua)
 
 .PRECIOUS: $(ast-grep_files)
-astgrep_runner := $(bootstrap_cosmic) $(ast-grep_run)
+astgrep_runner := $(bootstrap_cosmic) -- $(ast-grep_run)

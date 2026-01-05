@@ -17,6 +17,17 @@ local function format_output(status, message, stdout, stderr)
   return table.concat(lines, "\n")
 end
 
+local function write_result(status, message, stdout, stderr)
+  local output = format_output(status, message, stdout, stderr)
+  if status == "fail" then
+    io.stderr:write(output)
+    return 1
+  else
+    io.write(output)
+    return 0
+  end
+end
+
 local function parse_result(content)
   local result = {}
 
@@ -204,6 +215,7 @@ end
 
 return {
   format_output = format_output,
+  write_result = write_result,
   parse_result = parse_result,
   strip_prefix = strip_prefix,
   status_icons = status_icons,

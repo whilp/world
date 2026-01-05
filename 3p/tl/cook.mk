@@ -6,4 +6,4 @@ tl_tests := $(wildcard 3p/tl/test_*.lua)
 tl_deps := argparse cosmos
 
 .PRECIOUS: $(tl_files)
-teal_runner := $(bootstrap_cosmic) $(tl_run)
+teal_runner := $(bootstrap_cosmic) -- $(tl_run)

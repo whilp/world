@@ -131,7 +131,7 @@ export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
 $(o)/%.test.ok: % $(test_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
 	@[ -x $< ] || chmod a+x $<
-	@TEST_DIR=$(TEST_DIR) $(test_runner) $< > $@ || (cat $@; exit 1)
+	@TEST_DIR=$(TEST_DIR) $(test_runner) $< > $@
 
 # expand test deps: M's tests depend on own _files/_dir plus deps' _dir
 $(foreach m,$(filter-out bootstrap,$(modules)),\
@@ -160,7 +160,7 @@ $(o)/astgrep-summary.txt: $(all_astgreps) | $(build_reporter)
 
 $(o)/%.ast-grep.ok: $(o)/% $(ast-grep_files) | $(bootstrap_files) $(ast-grep_staged)
 	@mkdir -p $(@D)
-	@ASTGREP_BIN=$(ast-grep_staged) $(astgrep_runner) $< > $@ || (cat $@; exit 1)
+	@ASTGREP_BIN=$(ast-grep_staged) $(astgrep_runner) $< > $@
 
 all_luachecks := $(patsubst %,%.luacheck.ok,$(all_checkable_files))
 
@@ -171,7 +171,7 @@ $(o)/luacheck-summary.txt: $(all_luachecks) | $(build_reporter)
 
 $(o)/%.luacheck.ok: $(o)/% $(luacheck_files) | $(bootstrap_files) $(luacheck_staged)
 	@mkdir -p $(@D)
-	@LUACHECK_BIN=$(luacheck_staged) $(luacheck_runner) $< > $@ || (cat $@; exit 1)
+	@LUACHECK_BIN=$(luacheck_staged) $(luacheck_runner) $< > $@
 
 all_teals := $(patsubst %,%.teal.ok,$(all_checkable_files))
 
@@ -182,7 +182,7 @@ $(o)/teal-summary.txt: $(all_teals) | $(build_reporter)
 
 $(o)/%.teal.ok: $(o)/% $(tl_files) | $(bootstrap_files) $(tl_staged)
 	@mkdir -p $(@D)
-	@TL_BIN=$(tl_staged) $(teal_runner) $< > $@ || (cat $@; exit 1)
+	@TL_BIN=$(tl_staged) $(teal_runner) $< > $@
 
 .PHONY: clean
 clean:
@@ -202,7 +202,7 @@ $(o)/update-summary.txt: $(all_updated) | $(build_reporter)
 
 $(o)/%.update.ok: % $(build_check_update) | $(bootstrap_files)
 	@mkdir -p $(@D)
-	@$(update_runner) $< > $@ || (cat $@; exit 1)
+	@$(update_runner) $< > $@
 
 .PHONY: build
 build: home cosmic
