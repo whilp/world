@@ -4,8 +4,11 @@ bootstrap_files := $(bootstrap_cosmic)
 
 export PATH := $(o)/bootstrap:$(PATH)
 
-$(bootstrap_cosmic):
+bin/cosmic-lua: bin/cosmic
+	@bin/cosmic --version >/dev/null 2>&1 || true
+
+$(bootstrap_cosmic): bin/cosmic-lua
 	@mkdir -p $(@D)
-	@curl -ssLo $@ https://github.com/whilp/world/releases/download/home-2026-01-02-75caba6/cosmic-lua
+	@cp bin/cosmic-lua $@
 	@chmod +x $@
 	@ln -sf cosmic $(@D)/lua
