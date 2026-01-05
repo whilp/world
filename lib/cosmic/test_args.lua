@@ -8,11 +8,10 @@ local spawn = require("cosmic.spawn")
 local cosmo = require("cosmo")
 
 local cosmic = path.join(os.getenv("TEST_BIN"), "cosmic")
-local tmpdir = os.getenv("TEST_TMPDIR")
 
 -- Test script that uses only varargs (...)
 local function test_varargs_only()
-  local script = path.join(tmpdir, "varargs.lua")
+  local script = path.join(TEST_TMPDIR, "varargs.lua")
   cosmo.Barf(script, [[
 local args = {...}
 print("varargs_count=" .. #args)
@@ -32,7 +31,7 @@ test_varargs_only()
 
 -- Test script that uses only global arg table
 local function test_arg_table_only()
-  local script = path.join(tmpdir, "argtable.lua")
+  local script = path.join(TEST_TMPDIR, "argtable.lua")
   cosmo.Barf(script, [[
 print("arg_count=" .. #arg)
 print("arg[0]=" .. tostring(arg[0]))
@@ -52,7 +51,7 @@ test_arg_table_only()
 
 -- Test that both varargs and arg table work together and match
 local function test_varargs_and_arg_table()
-  local script = path.join(tmpdir, "both.lua")
+  local script = path.join(TEST_TMPDIR, "both.lua")
   cosmo.Barf(script, [[
 local varargs = {...}
 print("varargs_count=" .. #varargs)
@@ -76,7 +75,7 @@ test_varargs_and_arg_table()
 
 -- Test the common pattern: function main(...) os.exit(main(...))
 local function test_main_function_with_varargs()
-  local script = path.join(tmpdir, "main_varargs.lua")
+  local script = path.join(TEST_TMPDIR, "main_varargs.lua")
   cosmo.Barf(script, [[
 local function main(...)
   local args = {...}
@@ -100,7 +99,7 @@ test_main_function_with_varargs()
 
 -- Test function main(param) with single optional parameter
 local function test_main_function_with_single_param()
-  local script = path.join(tmpdir, "main_param.lua")
+  local script = path.join(TEST_TMPDIR, "main_param.lua")
   cosmo.Barf(script, [[
 local function main(dir)
   dir = dir or "default"
@@ -125,7 +124,7 @@ test_main_function_with_single_param()
 
 -- Test script with no arguments
 local function test_no_arguments()
-  local script = path.join(tmpdir, "noargs.lua")
+  local script = path.join(TEST_TMPDIR, "noargs.lua")
   cosmo.Barf(script, [[
 local args = {...}
 print("varargs_count=" .. #args)
@@ -143,7 +142,7 @@ test_no_arguments()
 
 -- Test arguments containing spaces
 local function test_arguments_with_spaces()
-  local script = path.join(tmpdir, "spaces.lua")
+  local script = path.join(TEST_TMPDIR, "spaces.lua")
   cosmo.Barf(script, [[
 local args = {...}
 for i, v in ipairs(args) do
@@ -160,7 +159,7 @@ test_arguments_with_spaces()
 
 -- Test arguments with special characters (use -- to separate from cosmic options)
 local function test_arguments_with_special_chars()
-  local script = path.join(tmpdir, "special.lua")
+  local script = path.join(TEST_TMPDIR, "special.lua")
   cosmo.Barf(script, [[
 local args = {...}
 for i, v in ipairs(args) do
@@ -178,7 +177,7 @@ test_arguments_with_special_chars()
 
 -- Test that cosmo.is_main() still works with new varargs approach
 local function test_cosmo_is_main_compatibility()
-  local script = path.join(tmpdir, "is_main.lua")
+  local script = path.join(TEST_TMPDIR, "is_main.lua")
   cosmo.Barf(script, [[
 local cosmo = require("cosmo")
 
