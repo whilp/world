@@ -88,11 +88,15 @@ local function main(test, out)
     result = "pass"
   else
     local err_str = tostring(err)
-    -- check for SKIP in error message
-    local skip_reason = err_str:match("SKIP%s+(.+)")
+    -- check for SKIP or IGNORE in error message
+    local skip_reason = err_str:match("SKIP%s*:?%s*(.+)")
+    local ignore_reason = err_str:match("IGNORE%s*:?%s*(.+)")
     if skip_reason then
       result = "skip"
       message = skip_reason
+    elseif ignore_reason then
+      result = "ignore"
+      message = ignore_reason
     else
       result = "fail"
       -- strip path prefix to show just filename:line: message
@@ -107,7 +111,8 @@ local function main(test, out)
 end
 
 if cosmo.is_main() then
-  local code, err = main(...)
+  -- TODO: use varargs once bootstrap cosmic is updated
+  local code, err = main(arg[1], arg[2])
   if err then
     io.stderr:write(err .. "\n")
   end

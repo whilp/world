@@ -1,4 +1,4 @@
-name: Nightly release
+name: release
 
 on:
   schedule:
@@ -27,33 +27,33 @@ jobs:
             platform: linux-arm64
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
 
-      - name: Bootstrap lua
-        run: make bootstrap
+      - id: make-check-test-build
+        run: make check test build
 
-      - name: Run checks
-        run: make check
+      - id: make-test-release
+        run: make test-release
 
-      - name: Run tests
-        run: make test
-
-      - name: Build home and cosmic binaries
-        run: make home cosmic
-
-      - name: Upload home binary
+      - id: upload-home
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
         with:
           name: home-${{ matrix.platform }}
           path: o/bin/home
 
-      - name: Upload cosmic binary
+      - id: upload-cosmic
         if: matrix.platform == 'linux-x86_64'
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
         with:
           name: cosmic
           path: o/bin/cosmic
+
+      - id: upload-cosmos-zip
+        if: matrix.platform == 'linux-x86_64'
+        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
+        with:
+          name: cosmos-zip
+          path: o/cosmos/.staged/zip
 
   release:
     runs-on: ubuntu-latest
@@ -61,48 +61,17 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
 
-      - name: Download all artifacts
+      - id: download-artifacts
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
           path: artifacts/
 
-      - name: Prepare release binaries
-        run: |
-          mkdir -p release
-          cp artifacts/home-darwin-arm64/home release/home-darwin-arm64
-          cp artifacts/home-linux-arm64/home release/home-linux-arm64
-          cp artifacts/home-linux-x86_64/home release/home-linux-x86_64
-          cp artifacts/home-linux-x86_64/home release/home
-          cp artifacts/cosmic/cosmic release/cosmic-lua
-          chmod +x release/*
-
-      - name: Get version
-        id: version
-        run: |
-          echo "tag=home-$(date -u +%Y-%m-%d)-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
-
-      - name: Create checksums
-        run: |
-          cd release
-          sha256sum * > SHA256SUMS
-          cat SHA256SUMS
-
-      - name: Create release
+      - id: make-release
         env:
           GH_TOKEN: ${{ github.token }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
           PRERELEASE_FLAG: ${{ (github.event.inputs.prerelease == 'true' || (github.event.inputs.prerelease == '' && env.PRERELEASE == 'true')) && '--prerelease' || '' }}
-        run: |
-          gh release create "${{ steps.version.outputs.tag }}" \
-            $PRERELEASE_FLAG \
-            --title "home ${{ steps.version.outputs.tag }}" \
-            --notes "## Home binaries
-          Platform-specific dotfiles and bundled tools.
-
-          ### Quick setup
-          \`\`\`bash
-          curl -fsSL https://github.com/${{ github.repository }}/releases/latest/download/home | sh
-          \`\`\`" \
-            release/*
+        run: make release

@@ -179,3 +179,4 @@ o/
 results/
 .ape*
 bin/
+!bin/cosmic

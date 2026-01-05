@@ -1,4 +1,5 @@
 .SECONDEXPANSION:
+SHELL := /bin/bash
 
 # auto-parallelize based on available CPUs
 nproc := $(shell nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
@@ -18,7 +19,7 @@ arch := $(subst aarch64,arm64,$(uname_m))
 platforms := darwin-arm64 linux-arm64 linux-x86_64
 platform := $(os)-$(arch)
 
-include bootstrap/cook.mk
+include bootstrap.mk
 include lib/build/cook.mk
 include lib/test/cook.mk
 include 3p/luaunit/cook.mk
@@ -89,6 +90,7 @@ $(foreach m,$(filter-out $(default_deps),$(modules)),\
       $(eval $($(m)_files): $($(d)_staged)))))
 
 all_versions := $(foreach x,$(modules),$($(x)_version))
+all_updated := $(patsubst %,$(o)/%.updated,$(all_versions))
 
 # versioned modules: o/module/.versioned -> version.lua
 $(foreach m,$(modules),$(if $($(m)_version),\
@@ -130,7 +132,7 @@ export TEST_BIN := $(o)/bin
 export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
 
 $(o)/%.tested: % $(test_files) | $(bootstrap_files)
-	@echo "test: $< -> $@ (TEST_DIR=$(TEST_DIR))"
+	@[ -x $< ] || chmod a+x $<
 	@TEST_DIR=$(TEST_DIR) $< $@
 
 # expand test deps: M's tests depend on own _files/_dir plus deps' _dir
@@ -181,12 +183,6 @@ $(o)/teal-summary.txt: $(all_teals)
 $(o)/%.teal.checked: $(o)/% $(tl_files) | $(bootstrap_files) $(tl_staged)
 	@TL_BIN=$(tl_staged) $(teal_runner) $< $@
 
-.PHONY: bootstrap
-bootstrap: $(bootstrap_files)
-	@if [ -n "$$CLAUDE_ENV_FILE" ]; then \
-		echo "export PATH=\"$(CURDIR)/bin:$$PATH\"" >> "$$CLAUDE_ENV_FILE"; \
-	fi
-
 .PHONY: clean
 clean:
 	@rm -rf $(o)
@@ -198,39 +194,41 @@ check: $(o)/check-summary.txt
 $(o)/check-summary.txt: $(all_checks)
 	@$(check_reporter) $(o) | tee $@
 
-# Update PR title/description from .github/pr/<number>.md
-.PHONY: update-pr
-update-pr: $(cosmic_bin) | $(bootstrap_cosmic)
-	@if [ -f $(cosmic_bin) ]; then \
-		$(cosmic_bin) -l skill update-pr || true; \
-	else \
-		$(bootstrap_cosmic) lib/skill/pr.lua || true; \
-	fi
+update: $(o)/update-summary.txt
+
+$(o)/update-summary.txt: $(all_updated)
+	@$(update_reporter) $(all_updated) | tee $@
+
+$(o)/%.updated: % $(build_check_update) | $(bootstrap_files)
+	@$(update_runner) $< $@
+
+.PHONY: build
+build: home cosmic
+
+.PHONY: release
+release:
+	@mkdir -p release
+	@cp artifacts/home-darwin-arm64/home release/home-darwin-arm64
+	@cp artifacts/home-linux-arm64/home release/home-linux-arm64
+	@cp artifacts/home-linux-x86_64/home release/home-linux-x86_64
+	@cp artifacts/home-linux-x86_64/home release/home
+	@cp artifacts/cosmic/cosmic release/cosmic-lua
+	@chmod +x release/*
+	@chmod +x artifacts/cosmos-zip/zip
+	@tag="home-$$(date -u +%Y-%m-%d)-$${GITHUB_SHA::7}"; \
+	base_url="https://github.com/$${GITHUB_REPOSITORY}/releases/download/$$tag"; \
+	LUA_PATH="lib/home/?.lua;;" ./release/cosmic-lua lib/home/gen-platforms.lua \
+		release/platforms "$$base_url" "$$tag" \
+		release/home-darwin-arm64 release/home-linux-arm64 release/home-linux-x86_64; \
+	(cd release/platforms && ../../artifacts/cosmos-zip/zip -j ../home platforms.lua); \
+	(cd release/platforms && ../../artifacts/cosmos-zip/zip -r ../home manifests); \
+	(cd release && sha256sum home home-* cosmic-lua > SHA256SUMS && cat SHA256SUMS); \
+	gh release create "$$tag" \
+		$${PRERELEASE_FLAG} \
+		--title "home $$tag" \
+		--notes "## Home binaries\nPlatform-specific dotfiles and bundled tools.\n\n### Quick setup\n\`\`\`bash\ncurl -fsSL https://github.com/$${GITHUB_REPOSITORY}/releases/latest/download/home | sh\n\`\`\`" \
+		release/home release/home-* release/cosmic-lua release/SHA256SUMS
 
 debug-modules:
 	@echo $(modules)
-
-# debug target for CI failure investigation
-.PHONY: debug-treesitter
-debug-treesitter: $(nvim_dir)
-	@echo "=== debug-treesitter ==="
-	@echo "nvim_dir: $(nvim_dir)"
-	@echo "nvim_staged: $(nvim_staged)"
-	@echo "nvim-parsers_parsers: $(nvim-parsers_parsers)"
-	@echo "=== nvim-parsers output dir ==="
-	@ls -la $(o)/nvim-parsers/ 2>&1 || echo "nvim-parsers dir not found"
-	@ls -la $(o)/nvim-parsers/parser/ 2>&1 | head -10 || echo "parser subdir not found"
-	@echo "=== bundled nvim parser dir ==="
-	@ls -la $(nvim_dir)/share/nvim/site/parser/ 2>&1 | head -10 || echo "parser dir not found"
-	@echo "=== nvim-parsers install script ==="
-	@cat $(o)/nvim-parsers/cache/install.lua 2>&1 | head -20 || echo "install script not found"
-	@echo "=== check nvim executable ==="
-	@$(nvim_staged)/bin/nvim --version 2>&1 | head -5 || echo "nvim not executable"
-	@echo "=== check cc compiler ==="
-	@which cc 2>&1 || echo "no cc"
-	@cc --version 2>&1 | head -2 || echo "cc failed"
-	@echo "=== running test directly ==="
-	@TEST_DIR=$(nvim_dir) 3p/nvim/test_treesitter.lua o/debug-treesitter.out 2>&1; echo "exit: $$?"
-	@echo "=== test output ==="
-	@cat o/debug-treesitter.out 2>&1 || echo "no output file"
 

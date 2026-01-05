@@ -4,6 +4,7 @@ home_libs := $(addprefix $(o)/,$(home_srcs))
 home_bin := $(o)/bin/home
 home_files := $(home_bin) $(home_libs)
 home_tests := lib/home/test_main.lua
+home_release_test := lib/home/test_release.lua
 
 # 3p tools to bundle (nvim handled specially for bundled version)
 home_3p_tools := ast-grep biome comrak delta duckdb gh luacheck marksman rg ruff shfmt sqruff stylua superhtml tree-sitter uv
@@ -48,3 +49,10 @@ $(home_bin): $(home_libs) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin)
 home: $(home_bin)
 
 .PHONY: home
+
+# Release test verifies platform metadata can be embedded and used
+.PHONY: test-release
+test-release: $(o)/$(home_release_test).tested
+
+$(o)/$(home_release_test).tested: $(home_release_test) $(home_bin) $(cosmic_bin) $$(cosmos_staged) | $(bootstrap_files)
+	@TEST_RELEASE=1 TEST_DIR=$(home_bin) $< $@

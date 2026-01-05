@@ -1,3 +1,4 @@
+-- update ignore: commit-based versioning
 return {
   version = "36fcb4a4",
   format = "tar.gz",
