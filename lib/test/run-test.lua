@@ -111,7 +111,8 @@ local function main(test, out)
 end
 
 if cosmo.is_main() then
-  local code, err = main(...)
+  -- TODO: use varargs once bootstrap cosmic is updated
+  local code, err = main(arg[1], arg[2])
   if err then
     io.stderr:write(err .. "\n")
   end
