@@ -21,6 +21,10 @@ jobs:
           set +e
           failed=0
 
+          echo "::group::stage"
+          make staged || failed=1
+          echo "::endgroup::"
+
           echo "::group::luacheck"
           make --keep-going luacheck || failed=1
           echo "::endgroup::"
