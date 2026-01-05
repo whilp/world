@@ -32,11 +32,14 @@ $(home_bin): $(home_libs) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin)
 	@$(cp) $(cosmos_dir)/unzip $(home_built)/home/.local/bin/unzip
 	@$(cp) $(cosmic_bin) $(home_built)/home/.local/bin/cosmic-lua
 	@for tool in $(home_3p_tools); do \
+		versioned_dir=$$(readlink -f $(o)/$$tool/.staged); \
+		versioned_name=$$(basename $$versioned_dir); \
 		mkdir -p $(home_built)/home/.local/share/$$tool && \
-		cp -r $(o)/$$tool/.staged/* $(home_built)/home/.local/share/$$tool/; \
+		cp -r $$versioned_dir $(home_built)/home/.local/share/$$tool/$$versioned_name; \
 	done
-	@mkdir -p $(home_built)/home/.local/share/nvim
-	@cp -r $(nvim_dir)/* $(home_built)/home/.local/share/nvim/
+	@nvim_versioned_name=$$(basename $$(readlink -f $(nvim_staged))); \
+		mkdir -p $(home_built)/home/.local/share/nvim && \
+		cp -rL $(nvim_dir) $(home_built)/home/.local/share/nvim/$$nvim_versioned_name
 	@$(cosmic_bin) lib/home/gen-manifest.lua $(home_built)/home $(HOME_VERSION) > $(home_built)/manifest.lua
 	@$(cp) $(cosmos_dir)/lua $@
 	@chmod +x $@
