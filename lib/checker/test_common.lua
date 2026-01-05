@@ -5,6 +5,8 @@ local common = require("checker.common")
 local path = require("cosmo.path")
 local cosmo = require("cosmo")
 
+local TEST_TMPDIR = os.getenv("TEST_TMPDIR")
+
 local function test_format_output()
   local output = common.format_output("pass", nil, "", "")
   assert(output:match("^pass\n"), "should format status without message")
