@@ -158,7 +158,7 @@ end
 end
 test_arguments_with_spaces()
 
--- Test arguments with special characters
+-- Test arguments with special characters (use -- to separate from cosmic options)
 local function test_arguments_with_special_chars()
   local script = path.join(tmpdir, "special.lua")
   cosmo.Barf(script, [[
@@ -168,7 +168,7 @@ for i, v in ipairs(args) do
 end
 ]])
 
-  local ok, out = spawn({cosmic, script, "--flag", "-x", "value=123"}):read()
+  local ok, out = spawn({cosmic, script, "--", "--flag", "-x", "value=123"}):read()
   assert(ok, "cosmic should succeed")
   assert(out:find("arg%[1%]=%-%-flag"), "should handle --flag")
   assert(out:find("arg%[2%]=%-x"), "should handle -x")
