@@ -1,0 +1,87 @@
+↓ FETCH  https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz
+↓ FETCH  https://github.com/kristoff-it/superhtml/releases/download/v0.5.3/x86_64-linux-musl.tar.gz
+↓ FETCH  https://github.com/bluebird75/luaunit/archive/0e0d3dd06fe1955a01f0e6763bc8dc6847ee3e8d.zip
+↓ FETCH  https://github.com/mvdan/sh/releases/download/v3.10.0/shfmt_v3.10.0_linux_amd64
+↓ FETCH  https://github.com/JohnnyMorganz/StyLua/releases/download/v2.0.1/stylua-linux-x86_64.zip
+↓ FETCH  https://github.com/luarocks/argparse/archive/refs/tags/0.7.1.tar.gz
+↓ FETCH  https://github.com/kivikakk/comrak/releases/download/v0.41.0/comrak-0.41.0-x86_64-unknown-linux-gnu
+↓ FETCH  https://github.com/whilp/cosmopolitan/releases/download/2026.01.04-bc03f9aa8/cosmos.zip
+↓ FETCH  https://github.com/dandavison/delta/releases/download/0.18.2/delta-0.18.2-x86_64-unknown-linux-musl.tar.gz
+□ STAGE  luaunit @ 0e0d3dd-a796507
+↓ FETCH  https://github.com/neovim/nvim-lspconfig/archive/41d32cc.tar.gz
+↓ FETCH  https://github.com/stevearc/conform.nvim/archive/3543d00.tar.gz
+□ STAGE  argparse @ 0.7.1-d344e49
+□ STAGE  cosmos @ 2026.01.04-bc03f9aa8-7ab7118
+↓ FETCH  https://github.com/lunarmodules/luacheck/archive/refs/tags/v1.2.0.tar.gz
+□ STAGE  rg @ 14.1.1-4cf9f27
+□ STAGE  shfmt @ 3.10.0-1f57a38
+□ STAGE  comrak @ 0.41.0-d3ffc8f
+□ STAGE  stylua @ 2.0.1-9087e42
+□ STAGE  superhtml @ 0.5.3-c9fabbb
+□ STAGE  delta @ 0.18.2-b7ea845
+□ STAGE  nvim-conform @ 3543d00-9ffc41c
+↓ FETCH  https://github.com/nvim-treesitter/nvim-treesitter/archive/36fcb4a4.tar.gz
+□ STAGE  luacheck @ 1.2.0-8efe62a
+↓ FETCH  https://github.com/nvim-mini/mini.nvim/archive/6e885e4.tar.gz
+↓ FETCH  https://github.com/quarylabs/sqruff/releases/download/v0.21.2/sqruff-linux-x86_64-musl.tar.gz
+□ STAGE  nvim-lspconfig @ 41d32cc-585c549
+↓ FETCH  https://github.com/tree-sitter/tree-sitter/releases/download/v0.25.8/tree-sitter-linux-x64.gz
+□ STAGE  sqruff @ 0.21.2-ae09dfc
+↓ FETCH  https://github.com/ast-grep/ast-grep/releases/download/0.28.0/app-x86_64-unknown-linux-gnu.zip
+□ STAGE  tree-sitter @ 0.25.8-c9d4669
+↓ FETCH  https://github.com/astral-sh/ruff/releases/download/0.8.4/ruff-x86_64-unknown-linux-gnu.tar.gz
+□ STAGE  nvim-treesitter @ 36fcb4a4-f220e3d
+□ STAGE  ast-grep @ 0.28.0-d28be59
+□ STAGE  ruff @ 0.8.4-c4e6591
+↓ FETCH  https://github.com/cli/cli/releases/download/v2.79.0/gh_2.79.0_linux_amd64.tar.gz
+□ STAGE  nvim-mini @ 6e885e4-8449a38
+↓ FETCH  https://github.com/whilp/neovim/releases/download/2025.12.28-49450c1/nvim-linux-x86_64.tar.gz
+↓ FETCH  https://github.com/astral-sh/uv/releases/download/0.5.7/uv-x86_64-unknown-linux-gnu.tar.gz
+□ STAGE  gh @ 2.79.0-e7af0c7
+□ STAGE  uv @ 0.5.7-8a0a3e8
+□ STAGE  nvim @ 0.12.0-dev-49450c182c-91a8b83
+↓ FETCH  https://github.com/artempyanykh/marksman/releases/download/2024-12-18/marksman-linux-x64
+↓ FETCH  https://github.com/duckdb/duckdb/releases/download/v1.4.2/duckdb_cli-linux-amd64.zip
+□ STAGE  marksman @ 2024-12-18-b9cb666
+□ STAGE  duckdb @ 1.4.2-fae3ba9
+↓ FETCH  https://github.com/biomejs/biome/releases/download/cli%2Fv1.9.4/biome-linux-x64
+□ STAGE  biome @ 1.9.4-ce247fb
+✓ BUILD  o/nvim-parsers/.parsers (nvim-parsers: 10 parsers built)
+generating helptags
+✓ PASS   3p/argparse/test_argparse.lua
+✓ PASS   3p/ast-grep/test_ast-grep.lua
+✓ PASS   3p/biome/test_biome.lua
+→ SKIP   3p/comrak/test_comrak.lua (comrak not executable on this platform)
+✓ PASS   3p/cosmos/test_cosmos.lua
+✓ PASS   3p/delta/test_delta.lua
+✓ PASS   3p/duckdb/test_duckdb.lua
+✓ PASS   3p/gh/test_gh.lua
+✓ PASS   3p/luacheck/test_luacheck.lua
+✓ PASS   3p/luaunit/test_luaunit.lua
+✓ PASS   3p/marksman/test_marksman.lua
+✓ PASS   3p/nvim/test_nvim.lua
+✓ PASS   3p/nvim/test_packpath.lua
+✓ PASS   3p/nvim/test_treesitter.lua
+✓ PASS   3p/rg/test_rg.lua
+✓ PASS   3p/ruff/test_ruff.lua
+✓ PASS   3p/shfmt/test_shfmt.lua
+✓ PASS   3p/sqruff/test_sqruff.lua
+✓ PASS   3p/stylua/test_stylua.lua
+✓ PASS   3p/superhtml/test_superhtml.lua
+✓ PASS   3p/tree-sitter/test_tree-sitter.lua
+✓ PASS   3p/uv/test_uv.lua
+✓ PASS   lib/checker/test_common.lua
+✓ PASS   lib/cosmic/test_args.lua
+✓ PASS   lib/cosmic/test_binary.lua
+✓ PASS   lib/cosmic/test_cosmic.lua
+✓ PASS   lib/cosmic/test_skill_pr.lua
+✓ PASS   lib/cosmic/test_spawn.lua
+✓ PASS   lib/cosmic/test_walk.lua
+✓ PASS   lib/home/test_main.lua
+✓ PASS   lib/skill/test_pr.lua
+✓ PASS   lib/test/test_test.lua
+32 tests: 31 passed, 0 failed, 1 skipped, 0 ignored
+make: *** [Makefile:136: o/3p/nvim/test_treesitter.lua.tested] Error 1
+make: *** Waiting for unfinished jobs....
+make: *** [Makefile:136: o/3p/nvim/test_nvim.lua.tested] Error 1
+make: *** [Makefile:136: o/3p/nvim/test_packpath.lua.tested] Error 1
