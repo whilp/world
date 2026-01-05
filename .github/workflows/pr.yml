@@ -17,7 +17,31 @@ jobs:
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
 
       - id: make-check-test-build
-        run: make check test build
+        run: |
+          set +e
+          failed=0
+
+          echo "::group::luacheck"
+          make --keep-going luacheck || failed=1
+          echo "::endgroup::"
+
+          echo "::group::astgrep"
+          make --keep-going astgrep || failed=1
+          echo "::endgroup::"
+
+          echo "::group::teal"
+          make --keep-going teal || failed=1
+          echo "::endgroup::"
+
+          echo "::group::test"
+          make --keep-going test || failed=1
+          echo "::endgroup::"
+
+          echo "::group::build"
+          make --keep-going build || failed=1
+          echo "::endgroup::"
+
+          exit $failed
 
   update:
     if: github.event_name == 'pull_request'
