@@ -41,7 +41,7 @@ assert(gh_dir, "gh share directory should exist")
 
 local gh_versions = {}
 for entry in gh_dir do
-  if entry ~= "." and entry ~= ".." then
+  if entry ~= "." and entry ~= ".." and entry:match("%-%x+$") then
     table.insert(gh_versions, entry)
   end
 end
@@ -61,7 +61,7 @@ assert(nvim_dir_obj, "nvim share directory should exist")
 
 local nvim_versions = {}
 for entry in nvim_dir_obj do
-  if entry ~= "." and entry ~= ".." then
+  if entry ~= "." and entry ~= ".." and entry:match("%-%x+$") then
     table.insert(nvim_versions, entry)
   end
 end
@@ -73,6 +73,26 @@ local nvim_bin = path.join(nvim_share, nvim_versions[1], "bin", "nvim")
 local nvim_stat = unix.stat(nvim_bin)
 assert(nvim_stat, "nvim binary should exist at: " .. nvim_bin)
 assert(not unix.S_ISDIR(nvim_stat:mode()), "nvim binary should be a file")
+
+-- Verify symlinks to versioned directories
+local gh_bin_link = path.join(gh_share, "bin")
+local gh_link_stat = unix.lstat(gh_bin_link)
+assert(gh_link_stat, "gh bin symlink should exist")
+assert(unix.S_ISLNK(gh_link_stat:mode()), "gh bin should be a symlink")
+local gh_link_target = unix.readlink(gh_bin_link)
+assert(gh_link_target == gh_versions[1] .. "/bin", "gh bin symlink target: " .. gh_link_target)
+
+local nvim_bin_link = path.join(nvim_share, "bin")
+local nvim_link_stat = unix.lstat(nvim_bin_link)
+assert(nvim_link_stat, "nvim bin symlink should exist")
+assert(unix.S_ISLNK(nvim_link_stat:mode()), "nvim bin should be a symlink")
+local nvim_link_target = unix.readlink(nvim_bin_link)
+assert(nvim_link_target == nvim_versions[1] .. "/bin", "nvim bin symlink target: " .. nvim_link_target)
+
+local nvim_share_link = path.join(nvim_share, "share")
+local nvim_share_stat = unix.lstat(nvim_share_link)
+assert(nvim_share_stat, "nvim share symlink should exist")
+assert(unix.S_ISLNK(nvim_share_stat:mode()), "nvim share should be a symlink")
 
 -- Test 3: version.find_latest() works with unpacked structure
 local nvim_latest = version.find_latest("nvim", path.join(test_home, ".local", "share"))
@@ -105,13 +125,21 @@ for _, tool in ipairs(tools) do
 
   local tool_versions = {}
   for entry in tool_dir do
-    if entry ~= "." and entry ~= ".." then
+    if entry ~= "." and entry ~= ".." and entry:match("%-%x+$") then
       table.insert(tool_versions, entry)
     end
   end
 
   assert(#tool_versions == 1, tool .. " should have exactly one version, got " .. #tool_versions)
   assert(tool_versions[1]:match("%-%x+$"), tool .. " version has sha: " .. tool_versions[1])
+
+  -- Verify bin symlink exists
+  local bin_link = path.join(tool_share, "bin")
+  local bin_stat = unix.lstat(bin_link)
+  assert(bin_stat, tool .. " bin symlink should exist")
+  assert(unix.S_ISLNK(bin_stat:mode()), tool .. " bin should be a symlink")
+  local bin_target = unix.readlink(bin_link)
+  assert(bin_target == tool_versions[1] .. "/bin", tool .. " bin symlink target: " .. bin_target)
 end
 
 -- Test 6: Multiple versions side-by-side (simulate)

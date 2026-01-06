@@ -456,6 +456,58 @@ local function cmd_unpack(dest, force, opts)
     ::continue::
   end
 
+  -- Create symlinks from tool root to versioned subdirectories
+  if not dry_run then
+    local share_dir = path.join(dest, ".local", "share")
+    local share_stat = unix.stat(share_dir)
+    if share_stat and unix.S_ISDIR(share_stat:mode()) then
+      local tools_dir = unix.opendir(share_dir)
+      if tools_dir then
+        for tool_name in tools_dir do
+          if tool_name ~= "." and tool_name ~= ".." then
+            local tool_path = path.join(share_dir, tool_name)
+            local tool_stat = unix.stat(tool_path)
+            if tool_stat and unix.S_ISDIR(tool_stat:mode()) then
+              -- Find versioned directory (contains version-sha pattern)
+              local versioned_dir = nil
+              local entries_dir = unix.opendir(tool_path)
+              if entries_dir then
+                for entry in entries_dir do
+                  if entry ~= "." and entry ~= ".." and entry:match("%-%x+$") then
+                    versioned_dir = entry
+                    break
+                  end
+                end
+              end
+
+              -- Create symlinks from tool root to versioned subdirectories
+              if versioned_dir then
+                local versioned_path = path.join(tool_path, versioned_dir)
+                local versioned_entries = unix.opendir(versioned_path)
+                if versioned_entries then
+                  for item in versioned_entries do
+                    if item ~= "." and item ~= ".." then
+                      local link_target = path.join(versioned_dir, item)
+                      local link_path = path.join(tool_path, item)
+                      -- Only create symlink if it doesn't already exist
+                      local link_stat = unix.stat(link_path, unix.AT_SYMLINK_NOFOLLOW)
+                      if not link_stat then
+                        local ok = unix.symlink(link_target, link_path)
+                        if not ok and verbose then
+                          stderr:write("warning: failed to create symlink " .. link_path .. "\n")
+                        end
+                      end
+                    end
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+
   if with_platform then
     local platforms = load_platforms()
     if not platforms then
