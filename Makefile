@@ -149,10 +149,9 @@ $(foreach m,$(filter-out bootstrap,$(modules)),\
       $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): TEST_DEPS += $($(d)_dir)))))
 
 all_built_files := $(foreach x,$(modules),$($(x)_files))
-all_test_files := $(foreach x,$(modules),$($(x)_tests))
-all_version_files := $(filter-out ,$(foreach x,$(modules),$($(x)_version)))
-all_src_files := $(foreach x,$(modules),$($(x)_srcs))
-all_source_files := $(all_test_files) $(all_version_files) $(all_src_files)
+all_source_files := $(foreach x,$(modules),$($(x)_tests))
+all_source_files += $(filter-out ,$(foreach x,$(modules),$($(x)_version)))
+all_source_files += $(foreach x,$(modules),$($(x)_srcs))
 all_checkable_files := $(addprefix $(o)/,$(all_source_files))
 
 .PHONY: files
