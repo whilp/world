@@ -458,6 +458,7 @@ local function cmd_unpack(dest, force, opts)
 
   -- Create symlinks from tool root to versioned subdirectories
   if not dry_run then
+    local version_mod = require("version")
     local share_dir = path.join(dest, ".local", "share")
     local share_stat = unix.stat(share_dir)
     if share_stat and unix.S_ISDIR(share_stat:mode()) then
@@ -473,7 +474,7 @@ local function cmd_unpack(dest, force, opts)
               local entries_dir = unix.opendir(tool_path)
               if entries_dir then
                 for entry in entries_dir do
-                  if entry ~= "." and entry ~= ".." and entry:match("%-%x+$") then
+                  if entry ~= "." and entry ~= ".." and version_mod.is_version_dir(entry) then
                     versioned_dir = entry
                     break
                   end
