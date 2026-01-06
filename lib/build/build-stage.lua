@@ -210,42 +210,6 @@ local function main(version_file, platform, input, output)
     return nil, err
   end
 
-  -- Ensure executables are in bin/ subdirectory
-  local bin_dir = path.join(stage_dir, "bin")
-  local bin_exists = unix.stat(bin_dir)
-  if not bin_exists or not unix.S_ISDIR(bin_exists:mode()) then
-    -- No bin/ directory - look for executables at root and move them
-    local dir = unix.opendir(stage_dir)
-    if dir then
-      local executables = {}
-      for name in dir do
-        if name ~= "." and name ~= ".." then
-          local file_path = path.join(stage_dir, name)
-          local st = unix.stat(file_path)
-          if st and not unix.S_ISDIR(st:mode()) then
-            local mode = st:mode()
-            -- Check if executable (owner, group, or other has execute bit)
-            if (mode & tonumber("111", 8)) ~= 0 then
-              table.insert(executables, name)
-            end
-          end
-        end
-      end
-
-      if #executables > 0 then
-        unix.makedirs(bin_dir)
-        for _, name in ipairs(executables) do
-          local src = path.join(stage_dir, name)
-          local dst = path.join(bin_dir, name)
-          local rename_ok, rename_err = unix.rename(src, dst)
-          if not rename_ok then
-            return nil, "failed to move " .. name .. " to bin/: " .. tostring(rename_err)
-          end
-        end
-      end
-    end
-  end
-
   -- format: STAGE  module @ version-sha_prefix
   local sha_prefix = plat.sha:sub(1, 7)
   io.stderr:write(string.format("□ STAGE  %s @ %s-%s\n", module_name, spec.version, sha_prefix))
