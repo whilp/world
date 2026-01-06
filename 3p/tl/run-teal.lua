@@ -75,7 +75,11 @@ local function main(source)
 
   local tl_bin = path.join(os.getenv("TL_BIN"), "tl")
 
-  local handle = spawn({ tl_bin, "check", source })
+  -- build env with NO_COLOR to disable colored output
+  local env = unix.environ()
+  env.NO_COLOR = "1"
+
+  local handle = spawn({ tl_bin, "check", source }, { env = env })
   if handle.stdin then
     handle.stdin:close()
   end
@@ -86,9 +90,9 @@ local function main(source)
 
   if #issues > 0 then
     local issue_text = format_issues(issues, source)
-    return common.write_result("fail", #issues .. " issues", "", issue_text)
+    return common.write_result("fail", #issues .. " issues", "", issue_text, source)
   end
-  return common.write_result("pass", nil, "", "")
+  return common.write_result("pass", nil, "", "", source)
 end
 
 if cosmo.is_main() then

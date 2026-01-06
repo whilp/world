@@ -85,9 +85,9 @@ local function main(source)
 
   if #issues > 0 then
     local issue_text = format_issues(issues, source)
-    return common.write_result("fail", #issues .. " issues", "", issue_text)
+    return common.write_result("fail", #issues .. " issues", "", issue_text, source)
   end
-  return common.write_result("pass", nil, "", "")
+  return common.write_result("pass", nil, "", "", source)
 end
 
 if cosmo.is_main() then

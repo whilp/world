@@ -37,16 +37,11 @@ local function format_output(status, message, stdout, stderr, truncate)
   return table.concat(lines, "\n")
 end
 
-local function write_result(status, message, stdout, stderr)
-  if status == "fail" then
-    local output = format_output(status, message, stdout, stderr, true)
-    io.stderr:write(output)
-    return 1
-  else
-    local output = format_output(status, message, stdout, stderr, false)
-    io.write(output)
-    return 0
-  end
+local function write_result(status, message, stdout, stderr, source)
+  -- write full output to stdout for capture
+  local output = format_output(status, message, stdout, stderr, false)
+  io.write(output)
+  return status == "fail" and 1 or 0
 end
 
 local function parse_result(content)

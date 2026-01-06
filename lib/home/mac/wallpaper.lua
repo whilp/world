@@ -1,4 +1,5 @@
 local mac = require("mac")
+-- teal ignore: type annotations needed
 
 local function run()
 	local script = [[

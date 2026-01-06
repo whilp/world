@@ -50,7 +50,7 @@ local function main(version_file)
 
   local content = cosmo.Slurp(version_file)
   if not content then
-    return common.write_result("fail", "could not read file", "", "")
+    return common.write_result("fail", "could not read file", "", "", version_file)
   end
 
   local _, skip_reason = common.check_first_lines(version_file, {
@@ -59,32 +59,32 @@ local function main(version_file)
   })
 
   if skip_reason then
-    return common.write_result("skip", skip_reason, "", "")
+    return common.write_result("skip", skip_reason, "", "", version_file)
   end
 
   local chunk, err = load(content, version_file)
   if not chunk then
-    return common.write_result("fail", "could not parse: " .. tostring(err), "", "")
+    return common.write_result("fail", "could not parse: " .. tostring(err), "", "", version_file)
   end
 
   local ok, config = pcall(chunk)
   if not ok then
-    return common.write_result("fail", "could not load: " .. tostring(config), "", "")
+    return common.write_result("fail", "could not load: " .. tostring(config), "", "", version_file)
   end
 
   local current_version = config.version
   if not current_version then
-    return common.write_result("fail", "no version field", "", "")
+    return common.write_result("fail", "no version field", "", "", version_file)
   end
 
   local latest_version, check_err = check_latest_version(config)
 
   if not latest_version then
-    return common.write_result("fail", check_err or "could not check", "", "")
+    return common.write_result("fail", check_err or "could not check", "", "", version_file)
   elseif latest_version == current_version then
-    return common.write_result("pass", current_version, "", "")
+    return common.write_result("pass", current_version, "", "", version_file)
   else
-    return common.write_result("skip", current_version .. " -> " .. latest_version, "", "")
+    return common.write_result("skip", current_version .. " -> " .. latest_version, "", "", version_file)
   end
 end
 

@@ -1,4 +1,5 @@
 local unix = require("cosmo.unix")
+-- teal ignore: type annotations needed
 
 local env_module = require("setup.env")
 local backup = require("setup.backup")
