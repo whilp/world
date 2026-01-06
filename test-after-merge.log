@@ -1,0 +1,32 @@
+/bin/bash: line 1: o/bin/build-fetch.lua: No such file or directory
+make: *** [Makefile:101: o/cosmos/.fetched] Error 127
+make: *** Waiting for unfinished jobs....
+/bin/bash: line 1: o/bin/build-fetch.lua: No such file or directory
+make: *** [Makefile:101: o/luaunit/.fetched] Error 127
+/bin/bash: line 1: o/bin/build-fetch.lua: No such file or directory
+make: *** [Makefile:101: o/argparse/.fetched] Error 127
+rm: cannot remove 'o': Directory not empty
+make: *** [Makefile:190: clean] Error 1
+↓ FETCH  https://github.com/dandavison/delta/releases/download/0.18.2/delta-0.18.2-x86_64-unknown-linux-musl.tar.gz
+↓ FETCH  https://github.com/lunarmodules/luacheck/archive/refs/tags/v1.2.0.tar.gz
+↓ FETCH  https://github.com/kristoff-it/superhtml/releases/download/v0.5.3/x86_64-linux-musl.tar.gz
+↓ FETCH  https://github.com/kivikakk/comrak/releases/download/v0.41.0/comrak-0.41.0-x86_64-unknown-linux-gnu
+↓ FETCH  https://github.com/JohnnyMorganz/StyLua/releases/download/v2.0.1/stylua-linux-x86_64.zip
+/bin/bash: line 1: o/bin/build-stage.lua: No such file or directory
+make: *** [Makefile:108: o/comrak/.staged] Error 127
+make: *** Waiting for unfinished jobs....
+↓ FETCH  https://github.com/mvdan/sh/releases/download/v3.10.0/shfmt_v3.10.0_linux_amd64
+↓ FETCH  https://github.com/BurntSushi/ripgrep/releases/download/14.1.1/ripgrep-14.1.1-x86_64-unknown-linux-musl.tar.gz
+↓ FETCH  https://github.com/quarylabs/sqruff/releases/download/v0.21.2/sqruff-linux-x86_64-musl.tar.gz
+↓ FETCH  https://github.com/bluebird75/luaunit/archive/0e0d3dd06fe1955a01f0e6763bc8dc6847ee3e8d.zip
+↓ FETCH  https://github.com/luarocks/argparse/archive/refs/tags/0.7.1.tar.gz
+↓ FETCH  https://github.com/tree-sitter/tree-sitter/releases/download/v0.25.8/tree-sitter-linux-x64.gz
+↓ FETCH  https://github.com/whilp/cosmopolitan/releases/download/2026.01.04-bc03f9aa8/cosmos.zip
+↓ FETCH  https://github.com/whilp/neovim/releases/download/2025.12.28-49450c1/nvim-linux-x86_64.tar.gz
+↓ FETCH  https://github.com/astral-sh/ruff/releases/download/0.8.4/ruff-x86_64-unknown-linux-gnu.tar.gz
+↓ FETCH  https://github.com/ast-grep/ast-grep/releases/download/0.28.0/app-x86_64-unknown-linux-gnu.zip
+↓ FETCH  https://github.com/artempyanykh/marksman/releases/download/2024-12-18/marksman-linux-x64
+↓ FETCH  https://github.com/astral-sh/uv/releases/download/0.5.7/uv-x86_64-unknown-linux-gnu.tar.gz
+↓ FETCH  https://github.com/cli/cli/releases/download/v2.79.0/gh_2.79.0_linux_amd64.tar.gz
+↓ FETCH  https://github.com/duckdb/duckdb/releases/download/v1.4.2/duckdb_cli-linux-amd64.zip
+↓ FETCH  https://github.com/biomejs/biome/releases/download/cli%2Fv1.9.4/biome-linux-x64
