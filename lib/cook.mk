@@ -1,7 +1,8 @@
+modules += lib
 lib_lua_modules :=
 lib_dirs :=
 lib_libs :=
-lib_tests :=
+lib_tests := lib/test_version.lua
 
 # standalone lib files
 lib_dirs += o/any/lib

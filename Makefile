@@ -20,6 +20,7 @@ platforms := darwin-arm64 linux-arm64 linux-x86_64
 platform := $(os)-$(arch)
 
 include bootstrap.mk
+include lib/cook.mk
 include lib/build/cook.mk
 include lib/test/cook.mk
 include 3p/luaunit/cook.mk

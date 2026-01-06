@@ -290,11 +290,19 @@ local HOME = os.getenv("HOME")
 local DEFAULT_SHARE_DIR = path.join(HOME, ".local", "share")
 
 function M.parse_version_dir(name)
-  local version, sha = name:match("^(.+)%-(%x+)$")
-  if version and sha then
+  -- Match pattern: <version>-<sha>
+  -- Where version is non-empty and sha is hex characters (min 6 chars for truncated shas)
+  local version, sha = name:match("^(.+)%-(%x%x%x%x%x%x+)$")
+  if version and sha and version ~= "" then
     return version, sha
   end
   return nil, nil
+end
+
+-- Returns true if name matches versioned directory pattern
+function M.is_version_dir(name)
+  local version, sha = M.parse_version_dir(name)
+  return version ~= nil and sha ~= nil
 end
 
 function M.compare_versions(a, b)
