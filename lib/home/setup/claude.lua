@@ -1,4 +1,5 @@
 local cosmo = require("cosmo")
+-- teal ignore: type annotations needed
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 

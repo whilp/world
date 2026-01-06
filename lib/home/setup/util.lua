@@ -1,3 +1,4 @@
+-- teal ignore: type annotations needed
 local spawn = require("cosmic.spawn")
 
 local function copy_tree(src, dst)

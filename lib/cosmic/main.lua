@@ -1,4 +1,5 @@
 -- cosmic-lua dispatcher
+-- teal ignore: type annotations needed
 -- entry point for cosmic binary that handles special args and dispatches to features
 
 local getopt = require("cosmo.getopt")

@@ -85,7 +85,9 @@ local function extract_targz(archive, dest_dir, strip)
 end
 
 local function copy_binary(archive, dest_dir, module_name)
-  local dest = path.join(dest_dir, module_name)
+  local bin_dir = path.join(dest_dir, "bin")
+  unix.makedirs(bin_dir)
+  local dest = path.join(bin_dir, module_name)
   local content = io.open(archive, "rb"):read("*a")
   local fd = unix.open(dest, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("755", 8))
   if not fd then
@@ -97,7 +99,9 @@ local function copy_binary(archive, dest_dir, module_name)
 end
 
 local function extract_gz(archive, dest_dir, module_name)
-  local dest = path.join(dest_dir, module_name)
+  local bin_dir = path.join(dest_dir, "bin")
+  unix.makedirs(bin_dir)
+  local dest = path.join(bin_dir, module_name)
   local handle = spawn({"gunzip", "-c", archive})
   local exit_code, content = handle:read()
   if not exit_code then

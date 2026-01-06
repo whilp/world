@@ -1,4 +1,5 @@
 local spawn = require("cosmic.spawn")
+-- teal ignore: type annotations needed
 
 local M = {}
 

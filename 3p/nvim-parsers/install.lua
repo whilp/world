@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+-- teal ignore: type annotations needed
 -- Installs treesitter parsers
 -- Usage: install.lua <nvim_staged> <treesitter_staged> <output_dir> <parsers_config>
 
@@ -97,7 +98,7 @@ end
 
   -- add tree-sitter CLI to PATH
   if tree_sitter_staged then
-    local ts_bin = path.join(cwd, tree_sitter_staged)
+    local ts_bin = path.join(cwd, tree_sitter_staged, "bin")
     local current_path = get_env(env, "PATH") or ""
     set_env(env, "PATH", ts_bin .. ":" .. current_path)
     log_write(string.format("nvim-parsers: tree-sitter added to PATH: %s\n", ts_bin))

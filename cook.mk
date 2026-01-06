@@ -1,5 +1,5 @@
 modules += dot
-dot_srcs := \
+dot_dotfiles := \
 	.aerospace.toml \
 	.editorconfig \
 	.gitconfig \

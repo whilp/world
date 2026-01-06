@@ -1,3 +1,4 @@
+-- teal ignore: type annotations needed
 require("cosmo") -- luacheck: ignore
 
 local function main()
