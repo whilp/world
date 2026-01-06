@@ -22,8 +22,6 @@ platform := $(os)-$(arch)
 
 include bootstrap.mk
 include lib/cook.mk
-include lib/build/cook.mk
-include lib/test/cook.mk
 include 3p/luaunit/cook.mk
 include 3p/ast-grep/cook.mk
 include 3p/cosmos/cook.mk
@@ -50,10 +48,6 @@ include 3p/nvim-parsers/cook.mk
 include 3p/nvim/cook.mk
 include 3p/luacheck/cook.mk
 include 3p/tl/cook.mk
-include lib/skill/cook.mk
-include lib/cosmic/cook.mk
-include lib/home/cook.mk
-include lib/checker/cook.mk
 
 include cook.mk
 
