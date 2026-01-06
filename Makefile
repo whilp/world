@@ -236,6 +236,17 @@ release:
 		--notes "## Home binaries\nPlatform-specific dotfiles and bundled tools.\n\n### Quick setup\n\`\`\`bash\ncurl -fsSL https://github.com/$${GITHUB_REPOSITORY}/releases/latest/download/home | sh\n\`\`\`" \
 		release/home release/home-* release/cosmic-lua release/SHA256SUMS
 
+ci_stages := luacheck astgrep teal test build
+
+.PHONY: ci
+ci:
+	@rm -f $(o)/failed
+	@$(foreach s,$(ci_stages),\
+		echo "::group::$(s)"; \
+		$(MAKE) --keep-going $(s) || echo $(s) >> $(o)/failed; \
+		echo "::endgroup::";)
+	@if [ -f $(o)/failed ]; then echo "failed:"; cat $(o)/failed; exit 1; fi
+
 debug-modules:
 	@echo $(modules)
 
