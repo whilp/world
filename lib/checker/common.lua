@@ -1,6 +1,26 @@
 -- teal ignore: type annotations needed
 
-local function format_output(status, message, stdout, stderr)
+local MAX_CONSOLE_LINES = 10
+
+local function truncate_lines(text, max_lines)
+  if not text or text == "" then
+    return text
+  end
+  local lines = {}
+  local count = 0
+  for line in text:gmatch("[^\n]*") do
+    count = count + 1
+    if count <= max_lines then
+      table.insert(lines, line)
+    end
+  end
+  if count > max_lines then
+    table.insert(lines, string.format("... (%d more lines)", count - max_lines))
+  end
+  return table.concat(lines, "\n")
+end
+
+local function format_output(status, message, stdout, stderr, truncate)
   local lines = {}
   if message and message ~= "" then
     table.insert(lines, status .. ": " .. message)
@@ -10,11 +30,18 @@ local function format_output(status, message, stdout, stderr)
   table.insert(lines, "")
   table.insert(lines, "## stdout")
   table.insert(lines, "")
-  table.insert(lines, stdout or "")
+  table.insert(lines, truncate and truncate_lines(stdout, MAX_CONSOLE_LINES) or (stdout or ""))
   table.insert(lines, "## stderr")
   table.insert(lines, "")
-  table.insert(lines, stderr or "")
+  table.insert(lines, truncate and truncate_lines(stderr, MAX_CONSOLE_LINES) or (stderr or ""))
   return table.concat(lines, "\n")
+end
+
+local function write_result(status, message, stdout, stderr, source)
+  -- write full output to stdout for capture
+  local output = format_output(status, message, stdout, stderr, false)
+  io.write(output)
+  return status == "fail" and 1 or 0
 end
 
 local function parse_result(content)
@@ -101,23 +128,18 @@ local function check_first_lines(file, patterns)
   return has_shebang, nil
 end
 
+local CHECKER_WIDTH = 8  -- width of longest checker name (ast-grep)
+
 local function format_results(all_results, icons)
   local lines = {}
   for _, result in ipairs(all_results) do
     local status = string.upper(result.status)
     local icon = icons[result.status] or " "
-    local padded = string.format("%-6s", status)
-    local line = icon .. " " .. padded .. " " .. result.name
-    if result.status ~= "pass" then
-      if result.message then
-        if result.checker then
-          line = line .. " (" .. result.checker .. ": " .. result.message .. ")"
-        else
-          line = line .. " (" .. result.message .. ")"
-        end
-      elseif result.checker then
-        line = line .. " (" .. result.checker .. ")"
-      end
+    local checker = result.checker or ""
+    local line = string.format("%s %-6s %-" .. CHECKER_WIDTH .. "s %s",
+      icon, status, checker, result.name)
+    if result.status ~= "pass" and result.message then
+      line = line .. " (" .. result.message .. ")"
     end
     table.insert(lines, line)
   end
@@ -166,9 +188,17 @@ local function format_failures(all_results)
       if result.message then
         table.insert(lines, result.message)
       end
+      if result.stdout and result.stdout ~= "" then
+        table.insert(lines, "")
+        table.insert(lines, "stdout:")
+        table.insert(lines, truncate_lines(result.stdout, MAX_CONSOLE_LINES))
+      end
       if result.stderr and result.stderr ~= "" then
         table.insert(lines, "")
-        table.insert(lines, result.stderr)
+        if result.stdout and result.stdout ~= "" then
+          table.insert(lines, "stderr:")
+        end
+        table.insert(lines, truncate_lines(result.stderr, MAX_CONSOLE_LINES))
       end
     end
   end
@@ -196,6 +226,7 @@ end
 
 return {
   format_output = format_output,
+  write_result = write_result,
   parse_result = parse_result,
   strip_prefix = strip_prefix,
   status_icons = status_icons,

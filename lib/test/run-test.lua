@@ -1,5 +1,6 @@
 #!/usr/bin/env lua
 -- teal ignore: type annotations needed
+-- ast-grep ignore: test runner creates TEST_TMPDIR
 
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
@@ -58,12 +59,12 @@ local function run_test(test)
   return ok, err, stdout, stderr
 end
 
-local function format_output(result, message, stdout, stderr)
+local function write_result(status, message, stdout, stderr)
   local lines = {}
   if message and message ~= "" then
-    table.insert(lines, result .. ": " .. message)
+    table.insert(lines, status .. ": " .. message)
   else
-    table.insert(lines, result)
+    table.insert(lines, status)
   end
   table.insert(lines, "")
   table.insert(lines, "## stdout")
@@ -72,43 +73,41 @@ local function format_output(result, message, stdout, stderr)
   table.insert(lines, "## stderr")
   table.insert(lines, "")
   table.insert(lines, stderr)
-  return table.concat(lines, "\n")
+  local output = table.concat(lines, "\n")
+  -- write all output to stdout for capture by make
+  io.write(output)
+  return status == "fail" and 1 or 0
 end
 
-local function main(test, out)
-  if not test or not out then
-    return 1, "usage: run-test.lua <test> <out>"
+local function main(test)
+  if not test then
+    return 1, "usage: run-test.lua <test>"
   end
-
-  unix.makedirs(path.dirname(out))
 
   local ok, err, stdout, stderr = run_test(test)
 
-  local result, message
+  local status, message
   if ok then
-    result = "pass"
+    status = "pass"
   else
     local err_str = tostring(err)
     -- check for SKIP or IGNORE in error message
-    local skip_reason = err_str:match("SKIP%s*:?%s*(.+)")
-    local ignore_reason = err_str:match("IGNORE%s*:?%s*(.+)")
+    local skip_reason = err_str:match("SKIP%s+(.+)")
+    local ignore_reason = err_str:match("IGNORE%s+(.+)")
     if skip_reason then
-      result = "skip"
+      status = "skip"
       message = skip_reason
     elseif ignore_reason then
-      result = "ignore"
+      status = "ignore"
       message = ignore_reason
     else
-      result = "fail"
+      status = "fail"
       -- strip path prefix to show just filename:line: message
       message = err_str:gsub("^.-/([^/]+:%d+:)", "%1")
-      cosmo.Barf(out, format_output(result, message, stdout, stderr))
-      return 1
     end
   end
 
-  cosmo.Barf(out, format_output(result, message, stdout, stderr))
-  return 0
+  return write_result(status, message, stdout, stderr)
 end
 
 if cosmo.is_main() then

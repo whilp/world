@@ -1,4 +1,5 @@
 -- bootstrap - setup environment for Claude Code web
+-- teal ignore: type annotations needed
 
 local unix = require("cosmo.unix")
 

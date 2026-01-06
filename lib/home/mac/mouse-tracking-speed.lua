@@ -1,4 +1,5 @@
 local mac = require("mac")
+-- teal ignore: type annotations needed
 
 local function run()
 	mac.defaults("write", "NSGlobalDomain", "com.apple.mouse.scaling", "-float", "0.5")

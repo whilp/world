@@ -1,4 +1,5 @@
 local lu = require("luaunit")
+-- teal ignore: type annotations needed
 local spawn = require("cosmic.spawn")
 local path = require("cosmo.path")
 

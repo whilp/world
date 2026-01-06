@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+-- teal ignore: type annotations needed
 
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
@@ -41,17 +42,15 @@ local function check_latest_version(config)
   return version_clean
 end
 
-local function main(version_file, output_file)
-  if not version_file or not output_file then
-    io.stderr:write("usage: check-update.lua <version_file> <output_file>\n")
+local function main(version_file)
+  if not version_file then
+    io.stderr:write("usage: check-update.lua <version_file>\n")
     return 1
   end
 
   local content = cosmo.Slurp(version_file)
   if not content then
-    unix.makedirs(path.dirname(output_file))
-    cosmo.Barf(output_file, common.format_output("fail", "could not read file", "", ""))
-    return 1
+    return common.write_result("fail", "could not read file", "", "", version_file)
   end
 
   local _, skip_reason = common.check_first_lines(version_file, {
@@ -60,56 +59,33 @@ local function main(version_file, output_file)
   })
 
   if skip_reason then
-    unix.makedirs(path.dirname(output_file))
-    cosmo.Barf(output_file, common.format_output("skip", skip_reason, "", ""))
-    return 0
+    return common.write_result("skip", skip_reason, "", "", version_file)
   end
 
   local chunk, err = load(content, version_file)
   if not chunk then
-    unix.makedirs(path.dirname(output_file))
-    cosmo.Barf(output_file, common.format_output("fail", "could not parse: " .. tostring(err), "", ""))
-    return 1
+    return common.write_result("fail", "could not parse: " .. tostring(err), "", "", version_file)
   end
 
   local ok, config = pcall(chunk)
   if not ok then
-    unix.makedirs(path.dirname(output_file))
-    cosmo.Barf(output_file, common.format_output("fail", "could not load: " .. tostring(config), "", ""))
-    return 1
+    return common.write_result("fail", "could not load: " .. tostring(config), "", "", version_file)
   end
 
   local current_version = config.version
   if not current_version then
-    unix.makedirs(path.dirname(output_file))
-    cosmo.Barf(output_file, common.format_output("fail", "no version field", "", ""))
-    return 1
+    return common.write_result("fail", "no version field", "", "", version_file)
   end
 
   local latest_version, check_err = check_latest_version(config)
 
-  local status, message, stdout, stderr
   if not latest_version then
-    status = "fail"
-    message = check_err or "could not check"
-    stdout = ""
-    stderr = ""
+    return common.write_result("fail", check_err or "could not check", "", "", version_file)
   elseif latest_version == current_version then
-    status = "pass"
-    message = current_version
-    stdout = ""
-    stderr = ""
+    return common.write_result("pass", current_version, "", "", version_file)
   else
-    status = "skip"
-    message = current_version .. " -> " .. latest_version
-    stdout = ""
-    stderr = ""
+    return common.write_result("skip", current_version .. " -> " .. latest_version, "", "", version_file)
   end
-
-  unix.makedirs(path.dirname(output_file))
-  cosmo.Barf(output_file, common.format_output(status, message, stdout, stderr))
-
-  return 0
 end
 
 if cosmo.is_main() then

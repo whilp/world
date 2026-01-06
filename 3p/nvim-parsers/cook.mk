@@ -1,4 +1,5 @@
 modules += nvim-parsers
+nvim-parsers_srcs := $(wildcard 3p/nvim-parsers/*.lua)
 nvim-parsers_deps := nvim nvim-treesitter tree-sitter
 
 # Parsers are compiled .so files - platform specific, no version.lua

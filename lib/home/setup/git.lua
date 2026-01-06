@@ -1,4 +1,5 @@
 local unix = require("cosmo.unix")
+-- teal ignore: type annotations needed
 local path = require("cosmo.path")
 local spawn = require("cosmic.spawn")
 local util = require("setup.util")

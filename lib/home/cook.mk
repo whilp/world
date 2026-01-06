@@ -1,6 +1,7 @@
 modules += home
-home_srcs := $(filter-out lib/home/test%.lua,$(wildcard lib/home/*.lua))
-home_libs := $(addprefix $(o)/,$(home_srcs))
+home_srcs := $(wildcard lib/home/*.lua) $(wildcard lib/home/*/*.lua)
+home_lib_srcs := $(filter-out lib/home/test%.lua,$(wildcard lib/home/*.lua))
+home_libs := $(addprefix $(o)/,$(home_lib_srcs))
 home_bin := $(o)/bin/home
 home_files := $(home_bin) $(home_libs)
 home_tests := lib/home/test_main.lua lib/home/test_versioned.lua

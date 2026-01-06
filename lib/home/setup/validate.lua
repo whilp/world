@@ -1,4 +1,5 @@
 require("cosmo") -- luacheck: ignore
+-- teal ignore: type annotations needed
 
 local function main()
 	print("validating setup scripts...")
