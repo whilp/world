@@ -4,8 +4,8 @@
 
 local path = require("cosmo.path")
 
--- add staged src to package.path
-package.path = path.join(TEST_DIR, "src", "?.lua") .. ";" .. package.path
+-- add staged dir to package.path
+package.path = path.join(TEST_DIR, "?.lua") .. ";" .. package.path
 
 local argparse = require("argparse")
 

@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+-- teal ignore: type annotations needed
 -- Installs treesitter parsers
 -- Usage: install.lua <nvim_staged> <treesitter_staged> <output_dir> <parsers_config>
 

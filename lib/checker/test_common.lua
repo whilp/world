@@ -176,7 +176,7 @@ local function test_format_results()
 
   local output = common.format_results(results, icons)
   assert(output:match("✓%s+PASS%s+test1"), "should format pass result")
-  assert(output:match("✗%s+FAIL%s+test2 %(luacheck: error%)"), "should format fail result with checker")
+  assert(output:match("✗%s+FAIL%s+luacheck%s+test2 %(error%)"), "should format fail result with checker")
 end
 test_format_results()
 
