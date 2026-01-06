@@ -1,7 +1,8 @@
+modules += lib
 lib_lua_modules :=
 lib_dirs :=
 lib_libs :=
-lib_tests :=
+lib_tests := lib/test_version.lua
 
 # standalone lib files
 lib_dirs += o/any/lib
@@ -13,6 +14,7 @@ o/any/lib/%.lua: lib/%.lua
 
 include lib/aerosnap/cook.mk
 include lib/build/cook.mk
+include lib/checker/cook.mk
 include lib/claude/cook.mk
 include lib/cosmic/cook.mk
 include lib/daemonize/cook.mk
@@ -20,5 +22,6 @@ include lib/environ/cook.mk
 include lib/home/cook.mk
 include lib/nvim/cook.mk
 include lib/skill/cook.mk
+include lib/test/cook.mk
 include lib/whereami/cook.mk
 include lib/work/cook.mk

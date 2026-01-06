@@ -5,7 +5,7 @@ local cosmo = require("cosmo")
 local spawn = require("cosmic.spawn")
 local path = require("cosmo.path")
 
-local bin = path.join(TEST_DIR, "sg")
+local bin = path.join(TEST_DIR, "bin", "sg")
 
 local function test_version()
   local ok, got = spawn({ bin, "--version" }):read()
