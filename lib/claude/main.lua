@@ -41,11 +41,16 @@ local function build_argv(append_prompts, mcp_config, user_args)
 end
 
 local function scan_for_claude_deploy()
-  local prefixes = {"/opt", "/usr", "/home"}
-  for _, prefix in ipairs(prefixes) do
-    local bin_path = path.join(prefix, "deploy", "claude-wrapper-hosts", "current", "bin", "claude")
-    if unix.stat(bin_path) then
-      return bin_path
+  -- TODO: use glob("/*/deploy/...") when cosmic-lua has glob support
+  local dir = unix.opendir("/")
+  if not dir then return nil end
+
+  for name in dir do
+    if name ~= "." and name ~= ".." then
+      local bin_path = path.join("/", name, "deploy", "claude-wrapper-hosts", "current", "bin", "claude")
+      if unix.stat(bin_path) then
+        return bin_path
+      end
     end
   end
   return nil
