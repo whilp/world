@@ -8,6 +8,7 @@ local path = require("cosmo.path")
 
 local function run_test(test)
   TEST_TMPDIR = unix.mkdtemp("/tmp/test_XXXXXX")
+  unix.setenv("TEST_TMPDIR", TEST_TMPDIR)
   TEST_DIR = os.getenv("TEST_DIR")
 
   -- create temp files for capturing output
