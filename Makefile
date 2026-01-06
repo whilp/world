@@ -1,4 +1,5 @@
 .SECONDEXPANSION:
+.SECONDARY:
 SHELL := /bin/bash
 
 # auto-parallelize based on available CPUs
