@@ -1,6 +1,26 @@
 -- teal ignore: type annotations needed
 
-local function format_output(status, message, stdout, stderr)
+local MAX_CONSOLE_LINES = 10
+
+local function truncate_lines(text, max_lines)
+  if not text or text == "" then
+    return text
+  end
+  local lines = {}
+  local count = 0
+  for line in text:gmatch("[^\n]*") do
+    count = count + 1
+    if count <= max_lines then
+      table.insert(lines, line)
+    end
+  end
+  if count > max_lines then
+    table.insert(lines, string.format("... (%d more lines)", count - max_lines))
+  end
+  return table.concat(lines, "\n")
+end
+
+local function format_output(status, message, stdout, stderr, truncate)
   local lines = {}
   if message and message ~= "" then
     table.insert(lines, status .. ": " .. message)
@@ -10,19 +30,20 @@ local function format_output(status, message, stdout, stderr)
   table.insert(lines, "")
   table.insert(lines, "## stdout")
   table.insert(lines, "")
-  table.insert(lines, stdout or "")
+  table.insert(lines, truncate and truncate_lines(stdout, MAX_CONSOLE_LINES) or (stdout or ""))
   table.insert(lines, "## stderr")
   table.insert(lines, "")
-  table.insert(lines, stderr or "")
+  table.insert(lines, truncate and truncate_lines(stderr, MAX_CONSOLE_LINES) or (stderr or ""))
   return table.concat(lines, "\n")
 end
 
 local function write_result(status, message, stdout, stderr)
-  local output = format_output(status, message, stdout, stderr)
   if status == "fail" then
+    local output = format_output(status, message, stdout, stderr, true)
     io.stderr:write(output)
     return 1
   else
+    local output = format_output(status, message, stdout, stderr, false)
     io.write(output)
     return 0
   end
@@ -175,14 +196,14 @@ local function format_failures(all_results)
       if result.stdout and result.stdout ~= "" then
         table.insert(lines, "")
         table.insert(lines, "stdout:")
-        table.insert(lines, result.stdout)
+        table.insert(lines, truncate_lines(result.stdout, MAX_CONSOLE_LINES))
       end
       if result.stderr and result.stderr ~= "" then
         table.insert(lines, "")
         if result.stdout and result.stdout ~= "" then
           table.insert(lines, "stderr:")
         end
-        table.insert(lines, result.stderr)
+        table.insert(lines, truncate_lines(result.stderr, MAX_CONSOLE_LINES))
       end
     end
   end
