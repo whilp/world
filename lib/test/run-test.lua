@@ -1,5 +1,6 @@
 #!/usr/bin/env lua
 -- teal ignore: type annotations needed
+-- ast-grep ignore: test runner creates TEST_TMPDIR
 
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
