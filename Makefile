@@ -128,6 +128,7 @@ export TEST_O := $(o)
 export TEST_PLATFORM := $(platform)
 export TEST_BIN := $(o)/bin
 export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
+export NO_COLOR := 1
 
 $(o)/%.test.ok: % $(test_files) | $(bootstrap_files)
 	@mkdir -p $(@D)

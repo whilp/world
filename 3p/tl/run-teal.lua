@@ -75,11 +75,7 @@ local function main(source)
 
   local tl_bin = path.join(os.getenv("TL_BIN"), "tl")
 
-  -- build env with NO_COLOR to disable colored output
-  local env = unix.environ()
-  env.NO_COLOR = "1"
-
-  local handle = spawn({ tl_bin, "check", source }, { env = env })
+  local handle = spawn({ tl_bin, "check", source })
   if handle.stdin then
     handle.stdin:close()
   end

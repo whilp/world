@@ -73,13 +73,9 @@ local function write_result(status, message, stdout, stderr)
   table.insert(lines, "")
   table.insert(lines, stderr)
   local output = table.concat(lines, "\n")
-  if status == "fail" then
-    io.stderr:write(output)
-    return 1
-  else
-    io.write(output)
-    return 0
-  end
+  -- write all output to stdout for capture by make
+  io.write(output)
+  return status == "fail" and 1 or 0
 end
 
 local function main(test)
