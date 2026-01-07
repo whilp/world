@@ -86,6 +86,9 @@ $(foreach m,$(filter-out $(default_deps),$(modules)),\
       $(eval $($(m)_files): $($(d)_staged)))))
 
 all_versions := $(foreach x,$(modules),$($(x)_version))
+ifdef MODULE
+  all_versions := $(foreach v,$(all_versions),$(if $(findstring $(MODULE),$(v)),$(v)))
+endif
 all_updated := $(patsubst %,$(o)/%.update.ok,$(all_versions))
 
 # versioned modules: o/module/.versioned -> version.lua
@@ -204,6 +207,15 @@ $(o)/update-summary.txt: $(all_updated) | $(build_reporter)
 $(o)/%.update.ok: % $(build_check_update) | $(bootstrap_files)
 	@mkdir -p $(@D)
 	@$(update_runner) $< > $@
+
+# bump: check for updates and apply them
+# e.g., make bump MODULE=gh
+.PHONY: bump
+bump: $(all_updated)
+	@for ok in $^; do \
+	  ver=$${ok#$(o)/}; ver=$${ver%.update.ok}; \
+	  $(update_runner) --apply "$$ok" "$$ver"; \
+	done
 
 .PHONY: build
 build: home cosmic

@@ -1,5 +1,5 @@
 return {
-  version = "2.79.0",
+  version = "2.83.2",
   strip_components = 1,
   url = "https://github.com/cli/cli/releases/download/v{version}/gh_{version}_{os}_{arch}.{ext}",
   platforms = {
@@ -8,21 +8,21 @@ return {
       arch = "arm64",
       ext = "zip",
       format = "zip",
-      sha = "5454f9509e3dbb8f321310e9e344877d9a01ebb8f8703886b1afb0936d60ffaa",
+      sha = "ba3e0396ebbc8da17256144ddda503e4e79c8b502166335569f8390d6b75fa8d",
     },
     ["linux-arm64"] = {
       os = "linux",
       arch = "arm64",
       ext = "tar.gz",
       format = "tar.gz",
-      sha = "1b91e546b30181a8ee6d8c72bbf59eaadbb0600bab014dfbcc199676c83ea102",
+      sha = "b1a0c0a0fcf18524e36996caddc92a062355ed014defc836203fe20fba75a38e",
     },
     ["linux-x86_64"] = {
       os = "linux",
       arch = "amd64",
       ext = "tar.gz",
       format = "tar.gz",
-      sha = "e7af0c72a607c0528fda1989f7c8e3be85e67d321889002af0e2938ad9c8fb68",
+      sha = "ca6e7641214fbd0e21429cec4b64a7ba626fd946d8f9d6d191467545b092015e",
     },
   },
 }
