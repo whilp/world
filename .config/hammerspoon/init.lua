@@ -1,3 +1,5 @@
+-- luacheck ignore: hammerspoon runtime
+-- ast-grep ignore: hammerspoon runtime
 --check:false
 local HyperKey = require("hyper-key")
 local notchClock = require("notch-clock")

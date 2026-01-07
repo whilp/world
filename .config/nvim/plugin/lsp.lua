@@ -1,3 +1,4 @@
+-- luacheck ignore: neovim runtime
 local ok, conform = pcall(require, "conform")
 if ok then
   conform.setup({

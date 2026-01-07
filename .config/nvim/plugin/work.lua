@@ -1,3 +1,4 @@
+-- luacheck ignore: neovim runtime
 -- work.nvim - plugin entry point
 -- keybindings and commands for work todo system
 

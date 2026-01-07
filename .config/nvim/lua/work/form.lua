@@ -1,3 +1,4 @@
+-- luacheck ignore: neovim runtime
 -- work.form - native implementation
 local work = require("work")
 local api = work.api

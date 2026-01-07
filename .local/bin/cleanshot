@@ -1,3 +1,4 @@
 #!/usr/bin/env lua
+-- luacheck ignore: script runtime
 local cleanshot = require("cleanshot")
 os.exit(cleanshot.main(arg) or 0)

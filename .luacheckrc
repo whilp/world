@@ -1,13 +1,6 @@
 std = "lua54"
 max_line_length = 120
 
--- TODO: fix luacheck issues in excluded directories
-exclude_files = {
-  ".config/hammerspoon/",
-  ".config/nvim/",
-  ".config/voyager/",
-  ".local/bin/",
-}
 
 -- Fennel-inspired strictness
 --

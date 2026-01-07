@@ -1,3 +1,4 @@
+-- luacheck ignore: hammerspoon runtime
 local WindowManagement = {}
 
 -- grid configuration

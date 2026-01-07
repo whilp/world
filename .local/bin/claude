@@ -1,3 +1,4 @@
 #!/usr/bin/env lua
+-- luacheck ignore: script runtime
 local claude = require("claude.main")
 os.exit(claude.main(arg) or 0)

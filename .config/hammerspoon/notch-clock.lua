@@ -1,3 +1,4 @@
+-- luacheck ignore: hammerspoon runtime
 local NotchClock = {}
 
 local clock = nil

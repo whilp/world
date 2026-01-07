@@ -1,3 +1,4 @@
+-- luacheck ignore: hammerspoon runtime
 return Leader("h", "Hammerspoon", {
   Bind("r", "Reload config", { fn = function() hs.reload() end }),
   Bind("c", "Console", { fn = function() hs.openConsole() end }),
