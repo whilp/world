@@ -225,6 +225,15 @@ $(o)/%.update.ok: % $(build_check_update) | $(bootstrap_files)
 	@mkdir -p $(@D)
 	@$(update_runner) $< > $@
 
+# bump: check for updates and apply them
+# e.g., make bump MODULE=gh
+.PHONY: bump
+bump: $(all_updated)
+	@for ok in $^; do \
+	  ver=$${ok#$(o)/}; ver=$${ver%.update.ok}; \
+	  $(update_runner) --apply "$$ok" "$$ver"; \
+	done
+
 .PHONY: build
 ## Build home and cosmic binaries
 build: home cosmic
