@@ -1,3 +1,4 @@
+-- luacheck ignore: neovim runtime
 local M = {}
 
 local util = require("work.util")

@@ -1,3 +1,4 @@
+-- luacheck ignore: neovim runtime
 local opt = vim.opt
 
 -- Grep configuration

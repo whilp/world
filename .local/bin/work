@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+-- luacheck ignore: script runtime
 
 local api = require("work.api").init()
 local render = require("work.render")

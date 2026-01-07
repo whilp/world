@@ -1,3 +1,4 @@
 #!/usr/bin/env lua
+-- luacheck ignore: script runtime
 local nvim = require("nvim.main")
 os.exit(nvim.main(arg) or 0)

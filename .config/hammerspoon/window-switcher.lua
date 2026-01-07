@@ -1,3 +1,4 @@
+-- luacheck ignore: hammerspoon runtime
 local WindowSwitcher = {}
 
 local fuzzy = require("fuzzy")

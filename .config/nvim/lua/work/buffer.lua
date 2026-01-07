@@ -1,3 +1,4 @@
+-- luacheck ignore: neovim runtime
 -- work.nvim - buffer management for work items
 local M = {}
 

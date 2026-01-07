@@ -1,3 +1,4 @@
+-- luacheck ignore: neovim runtime
 local opt = vim.opt
 local map = vim.keymap.set
 

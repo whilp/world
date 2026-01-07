@@ -1,3 +1,5 @@
+-- luacheck ignore: neovim runtime
+-- ast-grep ignore: neovim runtime
 --check:false
 -- work.nvim - minimal configuration for work system
 local M = {}

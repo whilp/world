@@ -1,3 +1,4 @@
+-- luacheck ignore: hammerspoon runtime
 -- Native switcher using aerospace directly with MRU tracking
 local M = {}
 

@@ -1,3 +1,4 @@
+-- luacheck ignore: neovim runtime
 return {
   "python",
   "markdown",
