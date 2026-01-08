@@ -76,4 +76,4 @@ jobs:
           GITHUB_SHA: ${{ github.sha }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           PRERELEASE_FLAG: ${{ (github.event.inputs.prerelease == 'true' || (github.event.inputs.prerelease == '' && env.PRERELEASE == 'true')) && '--prerelease' || '' }}
-        run: bin/make release
+        run: bin/make -j release
