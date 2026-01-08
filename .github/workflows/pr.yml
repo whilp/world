@@ -17,6 +17,7 @@ jobs:
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
 
       - name: make ci
+        shell: bash -x {0}
         run: bin/make -j ci
 
   update:

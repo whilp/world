@@ -4,6 +4,9 @@ SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
 MAKEFLAGS += --no-print-directory
+MAKEFLAGS += --no-builtin-rules
+MAKEFLAGS += --no-builtin-variables
+MAKEFLAGS += --output-sync
 
 modules :=
 o := o
@@ -153,7 +156,8 @@ $(o)/%.test.ok: % $(test_files) | $(bootstrap_files)
 	@TEST_DIR=$(TEST_DIR) $(test_runner) $< > $@
 
 # Snapshot test pattern: compare expected vs actual
-$(o)/%.snap.test.ok: %.snap $(o)/%.snap $(build_snap)
+$(o)/%.snap.test.ok: .EXTRA_PREREQS = $(build_snap)
+$(o)/%.snap.test.ok: %.snap $(o)/%.snap
 	@mkdir -p $(@D)
 	@$(bootstrap_cosmic) $(build_snap) $< $(word 2,$^) > $@
 
