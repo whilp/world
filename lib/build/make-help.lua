@@ -1,6 +1,7 @@
 #!/usr/bin/env cosmic
 -- Parse Makefile targets and extract documentation comments
 
+local cosmo = require("cosmo")
 local path = require("cosmo.path")
 
 -- Parse a makefile and extract documented targets and options
@@ -107,20 +108,15 @@ end
 local function main(args)
   local makefile = args[1] or "Makefile"
 
-  local file = io.open(makefile, "r")
-  if not file then
-    return 1, "Failed to open " .. makefile
+  local content, err = cosmo.Slurp(makefile)
+  if not content then
+    return 1, err or ("Failed to read " .. makefile)
   end
-
-  local content = file:read("*all")
-  file:close()
 
   local targets = parse_makefile(content)
   print(format_help(targets))
   return 0
 end
-
-local cosmo = require("cosmo")
 
 if cosmo.is_main() then
   local exit_code, err = main(arg)
