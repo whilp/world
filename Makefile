@@ -51,8 +51,11 @@ include 3p/tl/cook.mk
 
 include cook.mk
 
+# filter targets by pattern (make test only='skill')
+filter-only = $(if $(only),$(foreach f,$1,$(if $(findstring $(only),$(f)),$(f))),$1)
+
 # srcs are copied to o/
-all_files := $(foreach x,$(modules),$(addprefix $(o)/$(x)/,$($(x)_srcs)))
+all_files := $(call filter-only,$(foreach x,$(modules),$(addprefix $(o)/$(x)/,$($(x)_srcs))))
 
 cp := cp -p
 
@@ -67,7 +70,7 @@ $(o)/bin/%.lua: %.lua
 	@$(cp) $< $@
 
 # files are produced in o/
-all_files += $(foreach x,$(modules),$($(x)_files))
+all_files += $(call filter-only,$(foreach x,$(modules),$($(x)_files)))
 
 # define *_staged, *_dir for versioned modules (must be before dep expansion)
 # modules can override *_dir for post-processing (e.g., nvim bundles plugins)
@@ -85,13 +88,13 @@ $(foreach m,$(filter-out $(default_deps),$(modules)),\
     $(if $($(d)_staged),\
       $(eval $($(m)_files): $($(d)_staged)))))
 
-all_versions := $(foreach x,$(modules),$($(x)_version))
+all_versions := $(call filter-only,$(foreach x,$(modules),$($(x)_version)))
 all_updated := $(patsubst %,$(o)/%.update.ok,$(all_versions))
 
 # versioned modules: o/module/.versioned -> version.lua
 $(foreach m,$(modules),$(if $($(m)_version),\
   $(eval $(o)/$(m)/.versioned: $($(m)_version) ; @mkdir -p $$(@D) && ln -sfn $(CURDIR)/$$< $$@)))
-all_versioned := $(foreach m,$(modules),$(if $($(m)_version),$(o)/$(m)/.versioned))
+all_versioned := $(call filter-only,$(foreach m,$(modules),$(if $($(m)_version),$(o)/$(m)/.versioned)))
 
 # versions get fetched: o/module/.fetched -> o/fetched/module/<ver>-<sha>/<archive>
 .PHONY: fetched
@@ -107,11 +110,7 @@ staged: $(all_staged)
 $(o)/%/.staged: $(o)/%/.fetched
 	@$(build_stage) $$(readlink $(o)/$*/.versioned) $(platform) $< $@
 
-all_tests := $(foreach x,$(modules),$($(x)_tests))
-ifdef TEST
-  # filter tests by pattern (substring match)
-  all_tests := $(foreach t,$(all_tests),$(if $(findstring $(TEST),$(t)),$(t)))
-endif
+all_tests := $(call filter-only,$(foreach x,$(modules),$($(x)_tests)))
 all_tested := $(patsubst %,o/%.test.ok,$(all_tests))
 
 test: $(o)/test-summary.txt
@@ -143,10 +142,10 @@ $(foreach m,$(filter-out bootstrap,$(modules)),\
       $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): $($(d)_dir))\
       $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): TEST_DEPS += $($(d)_dir)))))
 
-all_built_files := $(foreach x,$(modules),$($(x)_files))
-all_source_files := $(foreach x,$(modules),$($(x)_tests))
-all_source_files += $(filter-out ,$(foreach x,$(modules),$($(x)_version)))
-all_source_files += $(foreach x,$(modules),$($(x)_srcs))
+all_built_files := $(call filter-only,$(foreach x,$(modules),$($(x)_files)))
+all_source_files := $(call filter-only,$(foreach x,$(modules),$($(x)_tests)))
+all_source_files += $(call filter-only,$(filter-out ,$(foreach x,$(modules),$($(x)_version))))
+all_source_files += $(call filter-only,$(foreach x,$(modules),$($(x)_srcs)))
 all_checkable_files := $(addprefix $(o)/,$(all_source_files))
 
 .PHONY: files
