@@ -2,7 +2,7 @@
 -- Snapshot testing: compare expected vs actual output
 
 local cosmo = require("cosmo")
-local spawn = require("cosmic.spawn").spawn
+local spawn = require("cosmic.spawn")
 local unix = require("cosmo.unix")
 
 local function run_diff(expected, actual)
