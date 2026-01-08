@@ -10,4 +10,4 @@ if [ $# -eq 0 ]; then
   exit 1
 fi
 
-exec make TEST="$1" test
+exec make only="$1" test
