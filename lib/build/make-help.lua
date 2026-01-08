@@ -97,9 +97,9 @@ if cosmo.is_main() then
     io.stderr:write(err .. "\n")
   end
   os.exit(exit_code)
-else
-  return {
-    parse_makefile = parse_makefile,
-    format_help = format_help,
-  }
 end
+
+return {
+  parse_makefile = parse_makefile,
+  format_help = format_help,
+}
