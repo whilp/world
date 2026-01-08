@@ -228,7 +228,7 @@ local function main(version_file, platform, input, output)
   return true
 end
 
-if cosmo.is_main() or SANDBOX_MAIN then
+if cosmo.is_main() then
   local ok, err = main(...)
   if not ok then
     io.stderr:write("error: " .. tostring(err) .. "\n")

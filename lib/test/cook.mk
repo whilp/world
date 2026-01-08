@@ -5,6 +5,5 @@ test_files := $(test_run)
 test_tests := $(wildcard lib/test/test_*.lua)
 
 .PRECIOUS: $(test_files)
-# sandboxed test runner
-test_runner := $(bootstrap_cosmic) $(build_sandbox) test $(test_run)
+test_runner := $(bootstrap_cosmic) $(test_run)
 

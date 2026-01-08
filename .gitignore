@@ -181,3 +181,4 @@ results/
 bin/
 !bin/cosmic
 !bin/run-test
+!bin/make

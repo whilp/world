@@ -47,7 +47,6 @@ include 3p/nvim-parsers/cook.mk
 include 3p/nvim/cook.mk
 include 3p/luacheck/cook.mk
 include 3p/tl/cook.mk
-include 3p/landlock-make/cook.mk
 
 include cook.mk
 

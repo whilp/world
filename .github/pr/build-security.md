@@ -1,21 +1,12 @@
-# build: add unveil/pledge constraints for build security
+# build: add landlock-make with .PLEDGE/.UNVEIL constraints
 
-Constrain filesystem access during fetch, stage, and test phases using two complementary approaches:
-
-1. **sandbox.lua** - Lua-level wrapper that applies `unix.unveil()` before running scripts. Works with regular GNU make.
-
-2. **landlock-make** - Makefile-level constraints using `.PLEDGE`/`.UNVEIL` variables. Only effective when using landlock-make binary.
+Bootstrap landlock-make from whilp/cosmopolitan and add sandbox constraints
+directly in Makefile rules using `.PLEDGE` and `.UNVEIL` variables.
 
 ## Changes
 
-- lib/build/sandbox.lua - centralized unveil profiles for fetch/stage/test
-- lib/build/cook.mk - wire up sandbox wrapper for build commands
-- lib/test/cook.mk - wire up sandbox wrapper for test runner
-- lib/build/build-fetch.lua - add SANDBOX_MAIN check
-- lib/build/build-stage.lua - add SANDBOX_MAIN check
-- lib/test/run-test.lua - delegate unveil/tmpdir to sandbox
-- Makefile - add .PLEDGE/.UNVEIL for landlock-make compatibility
-- 3p/landlock-make/ - fetch landlock-make binary
+- bin/make - bootstrap script that downloads landlock-make
+- Makefile - add .PLEDGE/.UNVEIL constraints for fetch/stage/test rules
 
 ## Constraints
 
@@ -28,16 +19,15 @@ Constrain filesystem access during fetch, stage, and test phases using two compl
 ## Usage
 
 ```bash
-# Regular make (uses sandbox.lua)
-make test
+# Use landlock-make for sandboxed builds
+bin/make test
 
-# With landlock-make (additional enforcement)
-make staged
-./o/staged/landlock-make/*/bin/landlock-make test
+# Or with GNU make (constraints ignored)
+make test
 ```
 
 ## Validation
 
-- [x] make clean test passes
+- [x] bin/make test passes
 - [x] incremental builds work
-- [x] fetch/stage/test all respect constraints
+- [x] constraints enforced by landlock-make

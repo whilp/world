@@ -7,8 +7,9 @@ local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 
 local function run_test(test)
-  -- TEST_TMPDIR and TEST_DIR are set by sandbox.lua before we're called
-  -- sandbox also handles unveil constraints
+  TEST_TMPDIR = unix.mkdtemp("/tmp/test_XXXXXX")
+  unix.setenv("TEST_TMPDIR", TEST_TMPDIR)
+  TEST_DIR = os.getenv("TEST_DIR")
 
   -- create temp files for capturing output
   local stdout_file = path.join(TEST_TMPDIR, "stdout")
@@ -109,7 +110,7 @@ local function main(test)
   return write_result(status, message, stdout, stderr)
 end
 
-if cosmo.is_main() or SANDBOX_MAIN then
+if cosmo.is_main() then
   -- TODO: use varargs once bootstrap cosmic is updated
   local code, err = main(arg[1], arg[2])
   if err then
