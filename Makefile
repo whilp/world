@@ -113,7 +113,7 @@ $(o)/%/.fetched: $(o)/%/.versioned $(build_files) | $(bootstrap_cosmic)
 all_staged := $(patsubst %/.fetched,%/.staged,$(all_fetched))
 ## Fetch and extract all dependencies
 staged: $(all_staged)
-$(o)/%/.staged: $(o)/%/.fetched
+$(o)/%/.staged: $(o)/%/.fetched $(build_files)
 	@$(build_stage) $$(readlink $(o)/$*/.versioned) $(platform) $< $@
 
 all_tests := $(call filter-only,$(foreach x,$(modules),$($(x)_tests)))

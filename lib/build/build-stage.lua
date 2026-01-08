@@ -153,16 +153,6 @@ local function main(version_file, platform, input, output)
     return nil, "STAGE_O env var required"
   end
 
-  local output_dir = path.dirname(output)
-  unix.makedirs(output_dir)
-  unix.makedirs(stage_o)
-  unix.unveil(version_file, "r")
-  unix.unveil(input, "r")
-  unix.unveil(output_dir, "rwc")
-  unix.unveil(stage_o, "rwc")
-  unix.unveil("/usr/bin", "rx")
-  unix.unveil(nil, nil)
-
   local ok, spec = pcall(dofile, version_file)
   if not ok then
     return nil, "failed to load " .. version_file .. ": " .. tostring(spec)
@@ -238,7 +228,7 @@ local function main(version_file, platform, input, output)
   return true
 end
 
-if cosmo.is_main() then
+if cosmo.is_main() or SANDBOX_MAIN then
   local ok, err = main(...)
   if not ok then
     io.stderr:write("error: " .. tostring(err) .. "\n")

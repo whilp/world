@@ -63,14 +63,6 @@ local function main(version_file, platform, output)
   if not fetch_o then
     return nil, "FETCH_O env var required"
   end
-  unix.makedirs(output_dir)
-  unix.makedirs(fetch_o)
-  unix.unveil(version_file, "r")
-  unix.unveil(output_dir, "rwc")
-  unix.unveil(fetch_o, "rwc")
-  unix.unveil("/etc/resolv.conf", "r")
-  unix.unveil("/etc/ssl", "r")
-  unix.unveil(nil, nil)
 
   local ok, spec = pcall(dofile, version_file)
   if not ok then
@@ -126,7 +118,7 @@ local function main(version_file, platform, output)
   return true
 end
 
-if cosmo.is_main() then
+if cosmo.is_main() or SANDBOX_MAIN then
   local ok, err = main(...)
   if not ok then
     io.stderr:write("error: " .. err .. "\n")
