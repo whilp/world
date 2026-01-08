@@ -7,7 +7,7 @@ build_reporter := $(o)/bin/reporter.lua
 build_help := $(o)/bin/make-help.lua
 build_files := $(build_fetch) $(build_stage) $(build_check_update) $(build_reporter) $(build_help)
 build_tests := $(wildcard lib/build/test_*.lua)
-build_snapshots := lib/build/make-help.snapshot
+build_snaps := $(wildcard lib/build/*.snap)
 
 .PRECIOUS: $(build_files)
 reporter := $(bootstrap_cosmic) -- $(build_reporter)
@@ -16,15 +16,15 @@ update_runner := $(bootstrap_cosmic) -- $(build_check_update)
 # test_reporter needs cosmic binary and checker module
 $(o)/lib/build/test_reporter.lua.test.ok: $$(cosmic_bin) $$(checker_files)
 
-# Generate actual help output
-$(o)/lib/build/make-help.snapshot: Makefile $(build_help)
+# make-help snapshot: generate actual help output
+$(o)/lib/build/make-help.snap: Makefile $(build_help)
 	@mkdir -p $(@D)
 	@$(bootstrap_cosmic) $(build_help) Makefile > $@
 
-# Compare snapshot against expected
-$(o)/lib/build/make-help.snapshot.test.ok: lib/build/make-help.snapshot $(o)/lib/build/make-help.snapshot
+# Snapshot test pattern: compare actual vs expected
+$(o)/lib/build/%.snap.test.ok: lib/build/%.snap $(o)/lib/build/%.snap
 	@mkdir -p $(@D)
-	@if diff -u lib/build/make-help.snapshot $(o)/lib/build/make-help.snapshot > $(o)/lib/build/make-help.snapshot.diff 2>&1; then \
+	@if diff -u $< $(word 2,$^) > $@.diff 2>&1; then \
 		echo "pass" > $@; \
 		echo "" >> $@; \
 		echo "## stdout" >> $@; \
@@ -36,9 +36,9 @@ $(o)/lib/build/make-help.snapshot.test.ok: lib/build/make-help.snapshot $(o)/lib
 		echo "## stdout" >> $@; \
 		echo "" >> $@; \
 		echo "## stderr" >> $@; \
-		cat $(o)/lib/build/make-help.snapshot.diff >> $@; \
+		cat $@.diff >> $@; \
 		exit 1; \
 	fi
 
-# Add snapshot test to build tests
-build_tests += lib/build/make-help.snapshot
+# Add snapshot tests to build tests
+build_tests += $(build_snaps)
