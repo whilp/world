@@ -54,43 +54,26 @@ local function parse_makefile(filepath)
   return targets
 end
 
--- Format help output with colors
+-- Format help output
 local function format_help(targets, options)
   options = options or {}
   local width = options.width or 20
-  local use_color = options.color ~= false
-
-  -- ANSI colors
-  local cyan = use_color and "\27[36m" or ""
-  local bold = use_color and "\27[1m" or ""
-  local reset = use_color and "\27[0m" or ""
-  local dim = use_color and "\27[2m" or ""
 
   local output = {}
 
-  table.insert(output, bold .. "Usage:" .. reset .. " make [target] [options]")
+  table.insert(output, "Usage: make [target] [options]")
   table.insert(output, "")
-  table.insert(output, bold .. "Targets:" .. reset)
+  table.insert(output, "Targets:")
 
   for _, item in ipairs(targets) do
     local padding = string.rep(" ", math.max(0, width - #item.name))
-    table.insert(output, "  " .. cyan .. item.name .. reset .. padding .. dim .. item.description .. reset)
+    table.insert(output, "  " .. item.name .. padding .. item.description)
   end
 
   -- Add options section
   table.insert(output, "")
-  table.insert(output, bold .. "Options:" .. reset)
-  table.insert(
-    output,
-    "  "
-      .. cyan
-      .. "only=PATTERN"
-      .. reset
-      .. "      "
-      .. dim
-      .. "Filter targets by pattern (e.g., make test only=skill)"
-      .. reset
-  )
+  table.insert(output, "Options:")
+  table.insert(output, "  only=PATTERN      Filter targets by pattern (e.g., make test only=skill)")
 
   return table.concat(output, "\n")
 end
