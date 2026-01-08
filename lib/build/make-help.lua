@@ -127,7 +127,22 @@ if cosmo.is_main() then
   os.exit(exit_code)
 end
 
+-- Extract all .PHONY targets from makefile content
+local function parse_phony_targets(content)
+  local targets = {}
+  for line in content:gmatch("[^\r\n]+") do
+    local phony = line:match("^%.PHONY:%s*(.+)$")
+    if phony then
+      for target in phony:gmatch("%S+") do
+        targets[target] = true
+      end
+    end
+  end
+  return targets
+end
+
 return {
   parse_makefile = parse_makefile,
   format_help = format_help,
+  parse_phony_targets = parse_phony_targets,
 }
