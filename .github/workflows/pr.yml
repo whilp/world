@@ -18,7 +18,7 @@ jobs:
 
       - name: make ci
         shell: bash -x {0}
-        run: make -j$(nproc) ci
+        run: bin/make -j ci
 
   update:
     if: github.event_name == 'pull_request'

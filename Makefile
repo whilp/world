@@ -53,6 +53,14 @@ include 3p/tl/cook.mk
 
 include cook.mk
 
+# landlock-make sandbox constraints (only effective when using landlock-make)
+# global defaults: read-only access, no network, basic stdio
+.PLEDGE = stdio rpath
+.UNVEIL = \
+	rx:$(o)/bootstrap \
+	r:lib \
+	r:3p
+
 .PHONY: help
 ## Show this help message
 help: $(build_files)
@@ -108,6 +116,8 @@ all_versioned := $(call filter-only,$(foreach m,$(modules),$(if $($(m)_version),
 all_fetched := $(patsubst %/.versioned,%/.fetched,$(all_versioned))
 ## Fetch all dependencies only
 fetched: $(all_fetched)
+$(o)/%/.fetched: .PLEDGE = stdio rpath wpath cpath inet dns
+$(o)/%/.fetched: .UNVEIL = rx:$(o)/bootstrap r:3p rwc:$(o) r:/etc/resolv.conf r:/etc/ssl
 $(o)/%/.fetched: $(o)/%/.versioned $(build_files) | $(bootstrap_cosmic)
 	@$(build_fetch) $$(readlink $<) $(platform) $@
 
@@ -116,7 +126,9 @@ $(o)/%/.fetched: $(o)/%/.versioned $(build_files) | $(bootstrap_cosmic)
 all_staged := $(patsubst %/.fetched,%/.staged,$(all_fetched))
 ## Fetch and extract all dependencies
 staged: $(all_staged)
-$(o)/%/.staged: $(o)/%/.fetched
+$(o)/%/.staged: .PLEDGE = stdio rpath wpath cpath proc exec
+$(o)/%/.staged: .UNVEIL = rx:$(o)/bootstrap r:3p rwc:$(o) rx:/usr/bin
+$(o)/%/.staged: $(o)/%/.fetched $(build_files)
 	@$(build_stage) $$(readlink $(o)/$*/.versioned) $(platform) $< $@
 
 all_tests := $(call filter-only,$(foreach x,$(modules),$($(x)_tests)))
@@ -136,6 +148,8 @@ export TEST_BIN := $(o)/bin
 export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
 export NO_COLOR := 1
 
+$(o)/%.test.ok: .PLEDGE = stdio rpath wpath cpath proc exec
+$(o)/%.test.ok: .UNVEIL = rx:$(o)/bootstrap r:lib r:3p rwc:$(o) rwc:/tmp rx:/usr rx:/proc r:/etc r:/dev/null
 $(o)/%.test.ok: % $(test_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
 	@[ -x $< ] || chmod a+x $<

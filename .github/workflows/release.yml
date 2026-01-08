@@ -31,11 +31,11 @@ jobs:
 
       - id: make-check-test-build
         shell: bash -x {0}
-        run: make -j$(nproc) check test build
+        run: bin/make -j check test build
 
       - id: make-test-release
         shell: bash -x {0}
-        run: make -j$(nproc) test-release
+        run: bin/make -j test-release
 
       - id: upload-home
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
@@ -76,4 +76,4 @@ jobs:
           GITHUB_SHA: ${{ github.sha }}
           GITHUB_REPOSITORY: ${{ github.repository }}
           PRERELEASE_FLAG: ${{ (github.event.inputs.prerelease == 'true' || (github.event.inputs.prerelease == '' && env.PRERELEASE == 'true')) && '--prerelease' || '' }}
-        run: make release
+        run: bin/make -j release
