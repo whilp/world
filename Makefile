@@ -1,6 +1,7 @@
 .SECONDEXPANSION:
 .SECONDARY:
 SHELL := /bin/bash
+.DEFAULT_GOAL := help
 
 # auto-parallelize based on available CPUs
 nproc := $(shell nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
@@ -51,6 +52,16 @@ include 3p/tl/cook.mk
 
 include cook.mk
 
+## @ Common targets
+
+.PHONY: help
+help: $(make_files) $(bootstrap_files) ## Show this help message
+	@$(bootstrap_cosmic) $(o)/bin/make-help.lua help $(MAKEFILE_LIST)
+
+.PHONY: help-check
+help-check: $(make_files) $(bootstrap_files) ## Validate help documentation is accurate
+	@$(bootstrap_cosmic) $(o)/bin/make-check-help.lua $(MAKEFILE_LIST)
+
 # filter targets by pattern (make test only='skill')
 filter-only = $(if $(only),$(foreach f,$1,$(if $(findstring $(only),$(f)),$(f))),$1)
 
@@ -99,21 +110,21 @@ all_versioned := $(call filter-only,$(foreach m,$(modules),$(if $($(m)_version),
 # versions get fetched: o/module/.fetched -> o/fetched/module/<ver>-<sha>/<archive>
 .PHONY: fetched
 all_fetched := $(patsubst %/.versioned,%/.fetched,$(all_versioned))
-fetched: $(all_fetched)
+fetched: $(all_fetched) ## Fetch all dependencies only
 $(o)/%/.fetched: $(o)/%/.versioned $(build_files) | $(bootstrap_cosmic)
 	@$(build_fetch) $$(readlink $<) $(platform) $@
 
 # versions get staged: o/module/.staged -> o/staged/module/<ver>-<sha>
 .PHONY: staged
 all_staged := $(patsubst %/.fetched,%/.staged,$(all_fetched))
-staged: $(all_staged)
+staged: $(all_staged) ## Fetch and extract all dependencies
 $(o)/%/.staged: $(o)/%/.fetched
 	@$(build_stage) $$(readlink $(o)/$*/.versioned) $(platform) $< $@
 
 all_tests := $(call filter-only,$(foreach x,$(modules),$($(x)_tests)))
 all_tested := $(patsubst %,o/%.test.ok,$(all_tests))
 
-test: $(o)/test-summary.txt
+test: $(o)/test-summary.txt ## Run all tests (incremental)
 
 $(o)/test-summary.txt: $(all_tested) | $(build_reporter)
 	@$(reporter) --dir $(o) $^ | tee $@
@@ -149,11 +160,11 @@ all_source_files += $(call filter-only,$(foreach x,$(modules),$($(x)_srcs)))
 all_checkable_files := $(addprefix $(o)/,$(all_source_files))
 
 .PHONY: files
-files: $(all_built_files)
+files: $(all_built_files) ## Build all module files
 
 all_astgreps := $(patsubst %,%.ast-grep.ok,$(all_checkable_files))
 
-astgrep: $(o)/astgrep-summary.txt
+astgrep: $(o)/astgrep-summary.txt ## Run ast-grep linter on all files
 
 $(o)/astgrep-summary.txt: $(all_astgreps) | $(build_reporter)
 	@$(reporter) --dir $(o) $^ | tee $@
@@ -164,7 +175,7 @@ $(o)/%.ast-grep.ok: $(o)/% $(ast-grep_files) | $(bootstrap_files) $(ast-grep_sta
 
 all_luachecks := $(patsubst %,%.luacheck.ok,$(all_checkable_files))
 
-luacheck: $(o)/luacheck-summary.txt
+luacheck: $(o)/luacheck-summary.txt ## Run luacheck linter on all files
 
 $(o)/luacheck-summary.txt: $(all_luachecks) | $(build_reporter)
 	@$(reporter) --dir $(o) $^ | tee $@
@@ -175,7 +186,7 @@ $(o)/%.luacheck.ok: $(o)/% $(luacheck_files) | $(bootstrap_files) $(luacheck_sta
 
 all_teals := $(patsubst %,%.teal.ok,$(all_checkable_files))
 
-teal: $(o)/teal-summary.txt
+teal: $(o)/teal-summary.txt ## Run teal type checker on all files
 
 $(o)/teal-summary.txt: $(all_teals) | $(build_reporter)
 	@$(reporter) --dir $(o) $^ | tee $@
@@ -185,17 +196,17 @@ $(o)/%.teal.ok: $(o)/% $(tl_files) | $(bootstrap_files) $(tl_staged)
 	@TL_BIN=$(tl_staged) $(teal_runner) $< > $@
 
 .PHONY: clean
-clean:
+clean: ## Remove all build artifacts
 	@rm -rf $(o)
 
 all_checks := $(all_astgreps) $(all_luachecks) $(all_teals)
 
-check: $(o)/check-summary.txt
+check: $(o)/check-summary.txt ## Run all linters (astgrep, luacheck, teal)
 
 $(o)/check-summary.txt: $(all_checks) | $(build_reporter)
 	@$(reporter) --dir $(o) $^ | tee $@
 
-update: $(o)/update-summary.txt
+update: $(o)/update-summary.txt ## Check for dependency updates
 
 $(o)/update-summary.txt: $(all_updated) | $(build_reporter)
 	@$(reporter) --dir $(o) $^ | tee $@
@@ -205,10 +216,10 @@ $(o)/%.update.ok: % $(build_check_update) | $(bootstrap_files)
 	@$(update_runner) $< > $@
 
 .PHONY: build
-build: home cosmic
+build: home cosmic ## Build home and cosmic binaries
 
 .PHONY: release
-release:
+release: ## Create release artifacts (CI only)
 	@mkdir -p release
 	@cp artifacts/home-darwin-arm64/home release/home-darwin-arm64
 	@cp artifacts/home-linux-arm64/home release/home-linux-arm64
@@ -234,7 +245,7 @@ release:
 ci_stages := luacheck astgrep teal test build
 
 .PHONY: ci
-ci:
+ci: ## Run full CI pipeline (luacheck, astgrep, teal, test, build)
 	@rm -f $(o)/failed
 	@$(foreach s,$(ci_stages),\
 		echo "::group::$(s)"; \
