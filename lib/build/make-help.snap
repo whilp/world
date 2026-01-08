@@ -1,0 +1,20 @@
+Usage: make [target] [options]
+
+Targets:
+  help                Show this help message
+  fetched             Fetch all dependencies only
+  staged              Fetch and extract all dependencies
+  test                Run all tests (incremental)
+  files               Build all module files
+  astgrep             Run ast-grep linter on all files
+  luacheck            Run luacheck linter on all files
+  teal                Run teal type checker on all files
+  clean               Remove all build artifacts
+  check               Run all linters (astgrep, luacheck, teal)
+  update              Check for dependency updates
+  build               Build home and cosmic binaries
+  release             Create release artifacts (CI only)
+  ci                  Run full CI pipeline (luacheck, astgrep, teal, test, build)
+
+Options:
+  filter-only         Filter targets by pattern (make test only='skill')

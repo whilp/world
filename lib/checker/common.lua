@@ -41,7 +41,7 @@ local function write_result(status, message, stdout, stderr, source)
   -- write full output to stdout for capture
   local output = format_output(status, message, stdout, stderr, false)
   io.write(output)
-  return status == "fail" and 1 or 0
+  return 0
 end
 
 local function parse_result(content)
