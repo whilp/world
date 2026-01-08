@@ -225,8 +225,7 @@ $(o)/%.update.ok: % $(build_check_update) | $(bootstrap_files)
 	@mkdir -p $(@D)
 	@$(update_runner) $< > $@
 
-# bump: check for updates and apply them
-# e.g., make bump MODULE=gh
+## Apply dependency updates (use with only=<module>)
 .PHONY: bump
 bump: $(all_updated)
 	@for ok in $^; do \
