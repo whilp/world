@@ -21,11 +21,3 @@ $(o)/lib/build/test_reporter.lua.test.ok: $$(cosmic_bin) $$(checker_files)
 $(o)/lib/build/make-help.snap: Makefile $(build_help)
 	@mkdir -p $(@D)
 	@$(bootstrap_cosmic) $(build_help) Makefile > $@
-
-# Snapshot test pattern: compare actual vs expected
-$(o)/lib/build/%.snap.test.ok: lib/build/%.snap $(o)/lib/build/%.snap $(build_snap)
-	@mkdir -p $(@D)
-	@$(bootstrap_cosmic) $(build_snap) $< $(word 2,$^) > $@
-
-# Add snapshot tests to build tests
-build_tests += $(build_snaps)

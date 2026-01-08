@@ -120,11 +120,13 @@ $(o)/%/.staged: $(o)/%/.fetched
 
 all_tests := $(call filter-only,$(foreach x,$(modules),$($(x)_tests)))
 all_tested := $(patsubst %,o/%.test.ok,$(all_tests))
+all_snaps := $(foreach x,$(modules),$($(x)_snaps))
+all_snapped := $(patsubst %,$(o)/%.test.ok,$(all_snaps))
 
 ## Run all tests (incremental)
 test: $(o)/test-summary.txt
 
-$(o)/test-summary.txt: $(all_tested) | $(build_reporter)
+$(o)/test-summary.txt: $(all_tested) $(all_snapped) | $(build_reporter)
 	@$(reporter) --dir $(o) $^ | tee $@
 
 export TEST_O := $(o)
@@ -137,6 +139,11 @@ $(o)/%.test.ok: % $(test_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
 	@[ -x $< ] || chmod a+x $<
 	@TEST_DIR=$(TEST_DIR) $(test_runner) $< > $@
+
+# Snapshot test pattern: compare expected vs actual
+$(o)/%.snap.test.ok: %.snap $(o)/%.snap $(build_snap)
+	@mkdir -p $(@D)
+	@$(bootstrap_cosmic) $(build_snap) $< $(word 2,$^) > $@
 
 # expand test deps: M's tests depend on own _files/_dir plus deps' _dir
 $(foreach m,$(filter-out bootstrap,$(modules)),\
