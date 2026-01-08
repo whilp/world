@@ -30,9 +30,11 @@ jobs:
       - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
 
       - id: make-check-test-build
+        shell: bash -x {0}
         run: make -j$(nproc) check test build
 
       - id: make-test-release
+        shell: bash -x {0}
         run: make -j$(nproc) test-release
 
       - id: upload-home
