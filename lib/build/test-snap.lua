@@ -1,4 +1,5 @@
 #!/usr/bin/env cosmic
+-- teal ignore: type annotations needed
 -- Snapshot testing: compare expected vs actual output
 
 local cosmo = require("cosmo")

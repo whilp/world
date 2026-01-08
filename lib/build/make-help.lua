@@ -1,4 +1,5 @@
 #!/usr/bin/env cosmic
+-- teal ignore: type annotations needed
 -- Parse Makefile targets and extract documentation comments
 
 local cosmo = require("cosmo")

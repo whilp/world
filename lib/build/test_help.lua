@@ -1,4 +1,5 @@
 #!/usr/bin/env run-test.lua
+-- teal ignore: type annotations needed
 -- Test the Makefile help system
 
 local help = require("build.make-help")
