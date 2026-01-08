@@ -3,9 +3,7 @@
 SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
-# auto-parallelize based on available CPUs
-nproc := $(shell nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
-MAKEFLAGS += -j$(nproc) --no-print-directory
+MAKEFLAGS += --no-print-directory
 
 modules :=
 o := o
