@@ -120,7 +120,7 @@ $(o)/%/.staged: $(o)/%/.fetched
 
 all_tests := $(call filter-only,$(foreach x,$(modules),$($(x)_tests)))
 all_tested := $(patsubst %,o/%.test.ok,$(all_tests))
-all_snaps := $(foreach x,$(modules),$($(x)_snaps))
+all_snaps := $(call filter-only,$(foreach x,$(modules),$($(x)_snaps)))
 all_snapped := $(patsubst %,$(o)/%.test.ok,$(all_snaps))
 
 ## Run all tests (incremental)
