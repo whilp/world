@@ -5,16 +5,11 @@ local path = require("cosmo.path")
 
 -- Parse a makefile and extract documented targets
 -- Supports: ## description (line before target)
-local function parse_makefile(filepath)
-  local file = io.open(filepath, "r")
-  if not file then
-    return {}
-  end
-
+local function parse_makefile(content)
   local targets = {}
   local pending_comment = nil
 
-  for line in file:lines() do
+  for line in content:gmatch("[^\r\n]+") do
     local trimmed = line:match("^%s*(.-)%s*$")
 
     -- Comment line: ## description
@@ -50,7 +45,6 @@ local function parse_makefile(filepath)
     ::continue::
   end
 
-  file:close()
   return targets
 end
 
@@ -80,27 +74,32 @@ end
 
 -- Main execution
 local function main(args)
-  local command = args[1] or "help"
-  local makefile = args[2] or "Makefile"
+  local makefile = args[1] or "Makefile"
 
-  if command == "help" or command == "--help" then
-    local targets = parse_makefile(makefile)
-    print(format_help(targets))
-    return 0
-  elseif command == "list" then
-    -- List targets only (for completion, etc)
-    local targets = parse_makefile(makefile)
-    for _, item in ipairs(targets) do
-      print(item.name)
-    end
-    return 0
-  else
-    io.stderr:write("Unknown command: " .. command .. "\n")
-    io.stderr:write("Usage: help.lua [help|list] [Makefile]\n")
-    return 1
+  local file = io.open(makefile, "r")
+  if not file then
+    return 1, "Failed to open " .. makefile
   end
+
+  local content = file:read("*all")
+  file:close()
+
+  local targets = parse_makefile(content)
+  print(format_help(targets))
+  return 0
 end
 
-if arg then
-  os.exit(main(arg))
+local cosmo = require("cosmo")
+
+if cosmo.is_main() then
+  local exit_code, err = main(arg)
+  if err then
+    io.stderr:write(err .. "\n")
+  end
+  os.exit(exit_code)
+else
+  return {
+    parse_makefile = parse_makefile,
+    format_help = format_help,
+  }
 end

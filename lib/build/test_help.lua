@@ -1,37 +1,10 @@
 #!/usr/bin/env run-test.lua
 -- Test the Makefile help system
 
-local path = require("cosmo.path")
-local unix = require("cosmo.unix")
-local spawn = require("cosmic.spawn").spawn
-
-local tmpdir = TEST_TMPDIR
-local test_bin = os.getenv("TEST_BIN")
-
--- helper: create temporary test makefile
-local function create_test_makefile(content, name)
-  name = name or "test.mk"
-  local testfile = path.join(tmpdir, name)
-  local f = assert(io.open(testfile, "w"))
-  f:write(content)
-  f:close()
-  return testfile
-end
-
--- helper: run help command
-local function run_help(makefile, command)
-  command = command or "help"
-  local cosmic = path.join(test_bin, "cosmic")
-  local help_script = path.join(test_bin, "make-help.lua")
-
-  local handle = spawn({ cosmic, help_script, command, makefile })
-  local stderr = handle.stderr and handle.stderr:read() or ""
-  local ok, stdout = handle:read()
-  return stdout or "", stderr
-end
+local help = require("build.make-help")
 
 local function test_parse_multiline_comment()
-  local makefile = create_test_makefile([[
+  local content = [[
 ## Run all tests
 .PHONY: test
 test:
@@ -41,30 +14,35 @@ test:
 .PHONY: clean
 clean:
 	@rm -rf o
-]], "multiline.mk")
+]]
 
-  local stdout, stderr = run_help(makefile, "list")
-  assert(stdout:find("test"), "expected test target")
-  assert(stdout:find("clean"), "expected clean target")
+  local targets = help.parse_makefile(content)
+  assert(#targets == 2, "expected 2 targets")
+  assert(targets[1].name == "test", "expected test target")
+  assert(targets[1].description == "Run all tests", "expected test description")
+  assert(targets[2].name == "clean", "expected clean target")
+  assert(targets[2].description == "Remove build artifacts", "expected clean description")
 end
 test_parse_multiline_comment()
 
 local function test_parse_multiline_continued()
-  local makefile = create_test_makefile([[
+  local content = [[
 ## Run all tests
 ## with coverage enabled
 .PHONY: test
 test:
 	@echo "testing"
-]], "multiline-continued.mk")
+]]
 
-  local stdout, stderr = run_help(makefile, "list")
-  assert(stdout:find("test"), "expected test target")
+  local targets = help.parse_makefile(content)
+  assert(#targets == 1, "expected 1 target")
+  assert(targets[1].name == "test", "expected test target")
+  assert(targets[1].description == "Run all tests with coverage enabled", "expected combined description")
 end
 test_parse_multiline_continued()
 
 local function test_undocumented_targets_ignored()
-  local makefile = create_test_makefile([[
+  local content = [[
 ## This target is documented
 .PHONY: documented
 documented:
@@ -73,10 +51,25 @@ documented:
 .PHONY: undocumented
 undocumented:
 	@echo "undocumented"
-]], "undocumented.mk")
+]]
 
-  local stdout, stderr = run_help(makefile, "list")
-  assert(stdout:find("documented"), "expected documented target")
-  assert(not stdout:find("undocumented"), "should not include undocumented target")
+  local targets = help.parse_makefile(content)
+  assert(#targets == 1, "expected 1 target")
+  assert(targets[1].name == "documented", "expected documented target")
 end
 test_undocumented_targets_ignored()
+
+local function test_format_help()
+  local targets = {
+    { name = "test", description = "Run all tests" },
+    { name = "clean", description = "Remove build artifacts" },
+  }
+
+  local output = help.format_help(targets)
+  assert(output:find("Usage:"), "expected usage line")
+  assert(output:find("Targets:"), "expected targets header")
+  assert(output:find("test"), "expected test target")
+  assert(output:find("clean"), "expected clean target")
+  assert(output:find("only=PATTERN"), "expected options section")
+end
+test_format_help()

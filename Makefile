@@ -55,9 +55,9 @@ include cook.mk
 .PHONY: help
 ## Show this help message
 help: $(build_files)
-	@$(bootstrap_cosmic) $(o)/bin/make-help.lua help $(MAKEFILE_LIST)
+	@$(bootstrap_cosmic) $(o)/bin/make-help.lua $(MAKEFILE_LIST)
 
-# filter targets by pattern (make test only='skill')
+## Filter targets by pattern (make test only='skill')
 filter-only = $(if $(only),$(foreach f,$1,$(if $(findstring $(only),$(f)),$(f))),$1)
 
 # srcs are copied to o/
