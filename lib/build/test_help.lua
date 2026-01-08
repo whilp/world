@@ -98,3 +98,38 @@ local function test_format_help()
   assert(output:find("only"), "expected only option")
 end
 test_format_help()
+
+local function test_makefile_snapshot()
+  local cosmo = require("cosmo")
+
+  -- Read actual Makefile
+  local content = assert(cosmo.Slurp("Makefile"), "failed to read Makefile")
+
+  local items = help.parse_makefile(content)
+  local output = help.format_help(items)
+
+  -- Expected snapshot of help output
+  local expected = [[Usage: make [target] [options]
+
+Targets:
+  help                Show this help message
+  fetched             Fetch all dependencies only
+  staged              Fetch and extract all dependencies
+  test                Run all tests (incremental)
+  files               Build all module files
+  astgrep             Run ast-grep linter on all files
+  luacheck            Run luacheck linter on all files
+  teal                Run teal type checker on all files
+  clean               Remove all build artifacts
+  check               Run all linters (astgrep, luacheck, teal)
+  update              Check for dependency updates
+  build               Build home and cosmic binaries
+  release             Create release artifacts (CI only)
+  ci                  Run full CI pipeline (luacheck, astgrep, teal, test, build)
+
+Options:
+  filter-only         Filter targets by pattern (make test only='skill')]]
+
+  assert(output == expected, "help output does not match snapshot\nExpected:\n" .. expected .. "\n\nGot:\n" .. output)
+end
+test_makefile_snapshot()
