@@ -16,12 +16,14 @@ clean:
 	@rm -rf o
 ]]
 
-  local targets = help.parse_makefile(content)
-  assert(#targets == 2, "expected 2 targets")
-  assert(targets[1].name == "test", "expected test target")
-  assert(targets[1].description == "Run all tests", "expected test description")
-  assert(targets[2].name == "clean", "expected clean target")
-  assert(targets[2].description == "Remove build artifacts", "expected clean description")
+  local items = help.parse_makefile(content)
+  assert(#items == 2, "expected 2 items")
+  assert(items[1].type == "target", "expected target type")
+  assert(items[1].name == "test", "expected test target")
+  assert(items[1].description == "Run all tests", "expected test description")
+  assert(items[2].type == "target", "expected target type")
+  assert(items[2].name == "clean", "expected clean target")
+  assert(items[2].description == "Remove build artifacts", "expected clean description")
 end
 test_parse_multiline_comment()
 
@@ -34,10 +36,11 @@ test:
 	@echo "testing"
 ]]
 
-  local targets = help.parse_makefile(content)
-  assert(#targets == 1, "expected 1 target")
-  assert(targets[1].name == "test", "expected test target")
-  assert(targets[1].description == "Run all tests with coverage enabled", "expected combined description")
+  local items = help.parse_makefile(content)
+  assert(#items == 1, "expected 1 item")
+  assert(items[1].type == "target", "expected target type")
+  assert(items[1].name == "test", "expected test target")
+  assert(items[1].description == "Run all tests with coverage enabled", "expected combined description")
 end
 test_parse_multiline_continued()
 
@@ -53,23 +56,45 @@ undocumented:
 	@echo "undocumented"
 ]]
 
-  local targets = help.parse_makefile(content)
-  assert(#targets == 1, "expected 1 target")
-  assert(targets[1].name == "documented", "expected documented target")
+  local items = help.parse_makefile(content)
+  assert(#items == 1, "expected 1 item")
+  assert(items[1].type == "target", "expected target type")
+  assert(items[1].name == "documented", "expected documented target")
 end
 test_undocumented_targets_ignored()
 
+local function test_parse_variables()
+  local content = [[
+## Filter targets by pattern
+filter-only = $(if $(only),$(foreach f,$1,$(if $(findstring $(only),$(f)),$(f))),$1)
+
+## Set output directory
+o := output
+]]
+
+  local items = help.parse_makefile(content)
+  assert(#items == 2, "expected 2 items")
+  assert(items[1].type == "option", "expected option type")
+  assert(items[1].name == "filter-only", "expected filter-only option")
+  assert(items[1].description == "Filter targets by pattern", "expected filter description")
+  assert(items[2].type == "option", "expected option type")
+  assert(items[2].name == "o", "expected o option")
+end
+test_parse_variables()
+
 local function test_format_help()
-  local targets = {
-    { name = "test", description = "Run all tests" },
-    { name = "clean", description = "Remove build artifacts" },
+  local items = {
+    { type = "target", name = "test", description = "Run all tests" },
+    { type = "target", name = "clean", description = "Remove build artifacts" },
+    { type = "option", name = "only", description = "Filter by pattern" },
   }
 
-  local output = help.format_help(targets)
+  local output = help.format_help(items)
   assert(output:find("Usage:"), "expected usage line")
   assert(output:find("Targets:"), "expected targets header")
   assert(output:find("test"), "expected test target")
   assert(output:find("clean"), "expected clean target")
-  assert(output:find("only=PATTERN"), "expected options section")
+  assert(output:find("Options:"), "expected options header")
+  assert(output:find("only"), "expected only option")
 end
 test_format_help()
