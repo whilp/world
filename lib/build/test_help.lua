@@ -99,3 +99,51 @@ local function test_format_help()
   assert(output:find("only"), "expected only option")
 end
 test_format_help()
+
+local function test_parse_phony_targets()
+  local content = [[
+.PHONY: test clean
+test:
+	@echo "testing"
+
+.PHONY: build
+build:
+	@echo "building"
+]]
+
+  local targets = help.parse_phony_targets(content)
+  assert(targets["test"], "expected test target")
+  assert(targets["clean"], "expected clean target")
+  assert(targets["build"], "expected build target")
+  assert(not targets["foo"], "unexpected foo target")
+end
+test_parse_phony_targets()
+
+local function test_all_phony_targets_documented()
+  local cosmo = require("cosmo")
+  local content, err = cosmo.Slurp("Makefile")
+  assert(content, err or "failed to read Makefile")
+
+  local phony = help.parse_phony_targets(content)
+  local items = help.parse_makefile(content)
+
+  local documented = {}
+  for _, item in ipairs(items) do
+    if item.type == "target" then
+      documented[item.name] = true
+    end
+  end
+
+  local missing = {}
+  for target in pairs(phony) do
+    if not documented[target] then
+      table.insert(missing, target)
+    end
+  end
+
+  if #missing > 0 then
+    table.sort(missing)
+    error("phony targets missing documentation: " .. table.concat(missing, ", "))
+  end
+end
+test_all_phony_targets_documented()
