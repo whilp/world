@@ -7,9 +7,34 @@ local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 
 local function run_test(test)
+  -- create temp dir before unveil (must be /tmp due to cosmopolitan readlink limitation)
   TEST_TMPDIR = unix.mkdtemp("/tmp/test_XXXXXX")
   unix.setenv("TEST_TMPDIR", TEST_TMPDIR)
   TEST_DIR = os.getenv("TEST_DIR")
+
+  -- constrain filesystem access
+  unix.unveil(test, "r")
+  unix.unveil(TEST_TMPDIR, "rwc")
+  unix.unveil("o", "rx")
+  unix.unveil("lib", "r")
+  unix.unveil("3p", "r")
+  unix.unveil("/dev/null", "rw")
+  unix.unveil("/proc", "r")
+  unix.unveil("/usr", "rx")
+  unix.unveil("/etc", "r")
+  -- ape loaders for cosmopolitan binaries
+  local home = os.getenv("HOME")
+  if home then
+    local dir = unix.opendir(home)
+    if dir then
+      for name in dir do
+        if name:match("^%.ape%-") then
+          unix.unveil(path.join(home, name), "rx")
+        end
+      end
+    end
+  end
+  unix.unveil(nil, nil)
 
   -- create temp files for capturing output
   local stdout_file = path.join(TEST_TMPDIR, "stdout")
