@@ -4,10 +4,7 @@
 local path = require("cosmo.path")
 
 -- Parse a makefile and extract documented targets
--- Supports:
--- 1. Inline: target: deps ## description
--- 2. Block: ## description (line before target)
--- 3. Headers: ## @ Section Name (no target following)
+-- Supports: ## description (line before target)
 local function parse_makefile(filepath)
   local file = io.open(filepath, "r")
   if not file then
@@ -16,20 +13,9 @@ local function parse_makefile(filepath)
 
   local targets = {}
   local pending_comment = nil
-  local current_section = nil
 
   for line in file:lines() do
-    -- Strip leading/trailing whitespace
     local trimmed = line:match("^%s*(.-)%s*$")
-
-    -- Section header: ## @ Section Name
-    local section = trimmed:match("^##%s*@%s*(.+)$")
-    if section then
-      current_section = section
-      table.insert(targets, { type = "section", name = section })
-      pending_comment = nil
-      goto continue
-    end
 
     -- Comment line: ## description
     local comment = trimmed:match("^##%s*(.*)$")
@@ -45,22 +31,12 @@ local function parse_makefile(filepath)
     -- Target line: target: deps
     local target_match = trimmed:match("^([a-zA-Z_][a-zA-Z0-9_-]*):%s*(.*)$")
     if target_match then
-      local target_name = target_match
-      local rest = trimmed:match("^[^:]+:%s*(.*)$")
-
-      -- Check for inline comment: ## description
-      local inline_desc = rest:match("##%s*(.+)$")
-      local description = inline_desc or pending_comment
-
-      if description then
+      if pending_comment then
         table.insert(targets, {
-          type = "target",
-          name = target_name,
-          description = description,
-          section = current_section,
+          name = target_match,
+          description = pending_comment,
         })
       end
-
       pending_comment = nil
       goto continue
     end
@@ -92,54 +68,31 @@ local function format_help(targets, options)
 
   local output = {}
 
-  -- Header
   table.insert(output, bold .. "Usage:" .. reset .. " make [target] [options]")
   table.insert(output, "")
+  table.insert(output, bold .. "Targets:" .. reset)
 
-  local current_section = nil
   for _, item in ipairs(targets) do
-    if item.type == "section" then
-      current_section = item.name
-      table.insert(output, "")
-      table.insert(output, bold .. item.name .. ":" .. reset)
-    elseif item.type == "target" then
-      -- If no section yet, use "Targets:"
-      if not current_section and #output == 2 then
-        table.insert(output, bold .. "Targets:" .. reset)
-      end
-
-      local padding = string.rep(" ", math.max(0, width - #item.name))
-      table.insert(
-        output,
-        "  " .. cyan .. item.name .. reset .. padding .. dim .. item.description .. reset
-      )
-    end
+    local padding = string.rep(" ", math.max(0, width - #item.name))
+    table.insert(output, "  " .. cyan .. item.name .. reset .. padding .. dim .. item.description .. reset)
   end
 
   -- Add options section
   table.insert(output, "")
   table.insert(output, bold .. "Options:" .. reset)
-  table.insert(output, "  " .. cyan .. "only=PATTERN" .. reset .. "      " .. dim .. "Filter targets by pattern (e.g., make test only=skill)" .. reset)
+  table.insert(
+    output,
+    "  "
+      .. cyan
+      .. "only=PATTERN"
+      .. reset
+      .. "      "
+      .. dim
+      .. "Filter targets by pattern (e.g., make test only=skill)"
+      .. reset
+  )
 
   return table.concat(output, "\n")
-end
-
--- Validate documented targets exist in make
-local function validate_targets(targets)
-  local errors = {}
-
-  for _, item in ipairs(targets) do
-    if item.type == "target" then
-      -- Try to run make -n <target> to see if it exists
-      local cmd = string.format("make -n %s >/dev/null 2>&1", item.name)
-      local ok = os.execute(cmd)
-      if not ok then
-        table.insert(errors, string.format("Target '%s' is documented but may not exist", item.name))
-      end
-    end
-  end
-
-  return errors
 end
 
 -- Main execution
@@ -151,32 +104,16 @@ local function main(args)
     local targets = parse_makefile(makefile)
     print(format_help(targets))
     return 0
-  elseif command == "validate" then
-    local targets = parse_makefile(makefile)
-    local errors = validate_targets(targets)
-
-    if #errors > 0 then
-      io.stderr:write("Validation errors:\n")
-      for _, err in ipairs(errors) do
-        io.stderr:write("  • " .. err .. "\n")
-      end
-      return 1
-    else
-      print("✓ All documented targets are valid")
-      return 0
-    end
   elseif command == "list" then
     -- List targets only (for completion, etc)
     local targets = parse_makefile(makefile)
     for _, item in ipairs(targets) do
-      if item.type == "target" then
-        print(item.name)
-      end
+      print(item.name)
     end
     return 0
   else
     io.stderr:write("Unknown command: " .. command .. "\n")
-    io.stderr:write("Usage: help.lua [help|validate|list] [Makefile]\n")
+    io.stderr:write("Usage: help.lua [help|list] [Makefile]\n")
     return 1
   end
 end

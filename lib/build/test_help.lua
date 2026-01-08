@@ -30,75 +30,44 @@ local function run_help(makefile, command)
   return stdout or "", stderr
 end
 
--- helper: run help-check command
-local function run_help_check(makefile)
-  local cosmic = path.join(test_bin, "cosmic")
-  local check_script = path.join(test_bin, "make-check-help.lua")
-
-  local handle = spawn({ cosmic, check_script, makefile })
-  local stderr = handle.stderr and handle.stderr:read() or ""
-  local ok, stdout, exit_code = handle:read()
-  return exit_code, stdout or "", stderr
-end
-
-local function test_parse_inline_comment()
+local function test_parse_multiline_comment()
   local makefile = create_test_makefile([[
+## Run all tests
 .PHONY: test
-test: ## Run all tests
+test:
 	@echo "testing"
 
+## Remove build artifacts
 .PHONY: clean
-clean: ## Remove build artifacts
+clean:
 	@rm -rf o
-]], "inline.mk")
+]], "multiline.mk")
 
   local stdout, stderr = run_help(makefile, "list")
-  assert(stdout:find("test"), "expected 'test' in output")
-  assert(stdout:find("clean"), "expected 'clean' in output")
-end
-test_parse_inline_comment()
-
-local function test_parse_section_headers()
-  local makefile = create_test_makefile([[
-## @ Build targets
-
-.PHONY: build
-build: ## Build the project
-	@echo "building"
-
-## @ Test targets
-
-.PHONY: test
-test: ## Run tests
-	@echo "testing"
-]], "sections.mk")
-
-  local stdout, stderr = run_help(makefile, "help")
-  assert(stdout:find("Build targets"), "expected Build targets section")
-  assert(stdout:find("Test targets"), "expected Test targets section")
-  assert(stdout:find("build"), "expected build target")
   assert(stdout:find("test"), "expected test target")
+  assert(stdout:find("clean"), "expected clean target")
 end
-test_parse_section_headers()
+test_parse_multiline_comment()
 
-local function test_parse_multiline_comment()
+local function test_parse_multiline_continued()
   local makefile = create_test_makefile([[
 ## Run all tests
 ## with coverage enabled
 .PHONY: test
 test:
 	@echo "testing"
-]], "multiline.mk")
+]], "multiline-continued.mk")
 
   local stdout, stderr = run_help(makefile, "list")
   assert(stdout:find("test"), "expected test target")
 end
-test_parse_multiline_comment()
+test_parse_multiline_continued()
 
 local function test_undocumented_targets_ignored()
   local makefile = create_test_makefile([[
+## This target is documented
 .PHONY: documented
-documented: ## This target is documented
+documented:
 	@echo "documented"
 
 .PHONY: undocumented
@@ -111,15 +80,3 @@ undocumented:
   assert(not stdout:find("undocumented"), "should not include undocumented target")
 end
 test_undocumented_targets_ignored()
-
-local function test_validation_passes()
-  local makefile = create_test_makefile([[
-.PHONY: test
-test: ## Run tests
-	@echo "testing"
-]], "valid.mk")
-
-  local exit_code, stdout, stderr = run_help_check(makefile)
-  assert(exit_code == 0, "expected validation to pass")
-end
-test_validation_passes()
