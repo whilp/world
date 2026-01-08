@@ -5,7 +5,7 @@ SHELL := /bin/bash
 
 # auto-parallelize based on available CPUs
 nproc := $(shell nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
-MAKEFLAGS += -j$(nproc)
+MAKEFLAGS += -j$(nproc) --no-print-directory
 
 modules :=
 o := o
