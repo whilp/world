@@ -66,7 +66,8 @@ local function parse_makefile(filepath)
     end
 
     -- Non-comment, non-target line resets pending comment
-    if trimmed ~= "" and not trimmed:match("^#") then
+    -- But allow common Makefile directives like .PHONY, .PRECIOUS, etc
+    if trimmed ~= "" and not trimmed:match("^#") and not trimmed:match("^%.") then
       pending_comment = nil
     end
 

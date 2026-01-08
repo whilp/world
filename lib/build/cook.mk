@@ -4,7 +4,9 @@ build_fetch := $(o)/bin/build-fetch.lua
 build_stage := $(o)/bin/build-stage.lua
 build_check_update := $(o)/bin/check-update.lua
 build_reporter := $(o)/bin/reporter.lua
-build_files := $(build_fetch) $(build_stage) $(build_check_update) $(build_reporter)
+build_help := $(o)/bin/make-help.lua
+build_check_help := $(o)/bin/make-check-help.lua
+build_files := $(build_fetch) $(build_stage) $(build_check_update) $(build_reporter) $(build_help) $(build_check_help)
 build_tests := $(wildcard lib/build/test_*.lua)
 
 .PRECIOUS: $(build_files)

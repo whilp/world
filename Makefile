@@ -55,11 +55,11 @@ include cook.mk
 ## @ Common targets
 
 .PHONY: help
-help: $(make_files) $(bootstrap_files) ## Show this help message
+help: $(build_files) ## Show this help message
 	@$(bootstrap_cosmic) $(o)/bin/make-help.lua help $(MAKEFILE_LIST)
 
 .PHONY: help-check
-help-check: $(make_files) $(bootstrap_files) ## Validate help documentation is accurate
+help-check: $(build_files) ## Validate help documentation is accurate
 	@$(bootstrap_cosmic) $(o)/bin/make-check-help.lua $(MAKEFILE_LIST)
 
 # filter targets by pattern (make test only='skill')

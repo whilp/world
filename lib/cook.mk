@@ -20,7 +20,6 @@ include lib/cosmic/cook.mk
 include lib/daemonize/cook.mk
 include lib/environ/cook.mk
 include lib/home/cook.mk
-include lib/make/cook.mk
 include lib/nvim/cook.mk
 include lib/skill/cook.mk
 include lib/test/cook.mk
