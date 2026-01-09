@@ -7,11 +7,78 @@ local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 
 -- list of handlers, each decides whether to handle based on input
--- handler signature: function(input) -> output_table|nil, error_string|nil
+-- handler signature: function(input, config) -> output_table|nil, error_string|nil
 local handlers = {}
 
-local function register(handler)
+-- handler registry with names for config lookup
+local handler_registry = {}
+
+local function register(handler, name)
   handlers[#handlers + 1] = handler
+  if name then
+    handler_registry[name] = handler
+  end
+end
+
+-- load hooks configuration
+local function load_hooks_config()
+  local cwd = unix.getcwd()
+  if not cwd then
+    return {}
+  end
+
+  local config_path = path.join(cwd, ".claude", "hooks.lua")
+  if not path.exists(config_path) then
+    -- return config with all handlers enabled by default
+    return {
+      session_start_bootstrap = true,
+      session_start_make_help = true,
+      post_commit_pr_reminder = true,
+      stop_check_pr_file = true,
+    }
+  end
+
+  local chunk, err = loadfile(config_path)
+  if not chunk then
+    io.stderr:write("hook: failed to load config: " .. tostring(err) .. "\n")
+    return {}
+  end
+
+  local ok, result = pcall(chunk)
+  if not ok then
+    io.stderr:write("hook: failed to execute config: " .. tostring(result) .. "\n")
+    return {}
+  end
+
+  if type(result) ~= "table" then
+    return {}
+  end
+
+  return result
+end
+
+-- check if handler is enabled in config
+local function is_handler_enabled(config, name)
+  local entry = config[name]
+  if entry == nil then
+    return false
+  end
+  if type(entry) == "boolean" then
+    return entry
+  end
+  if type(entry) == "table" then
+    return entry.enabled ~= false
+  end
+  return false
+end
+
+-- get handler config options
+local function get_handler_config(config, name)
+  local entry = config[name]
+  if type(entry) == "table" then
+    return entry
+  end
+  return {}
 end
 
 local function read_input(stdin)
@@ -34,15 +101,20 @@ local function write_output(output, stdout)
   end
 end
 
-local function dispatch(input)
+local function dispatch(input, config)
+  config = config or {}
   local outputs = {}
-  for _, handler in ipairs(handlers) do
-    local output, err = handler(input)
-    if err then
-      return nil, err
-    end
-    if output then
-      outputs[#outputs + 1] = output
+
+  for name, handler in pairs(handler_registry) do
+    if is_handler_enabled(config, name) then
+      local handler_config = get_handler_config(config, name)
+      local output, err = handler(input, handler_config)
+      if err then
+        return nil, err
+      end
+      if output then
+        outputs[#outputs + 1] = output
+      end
     end
   end
 
@@ -67,8 +139,10 @@ local function run(opts)
     return 0
   end
 
+  local config = opts.config or load_hooks_config()
+
   local output
-  output, err = dispatch(input)
+  output, err = dispatch(input, config)
   if err then
     io.stderr:write("hook: " .. err .. "\n")
     return 2, err
@@ -96,7 +170,7 @@ local function spawn_capture(cmd)
   return out and out:match("^%s*(.-)%s*$")
 end
 
-local function session_start_bootstrap(input)
+local function session_start_bootstrap(input, handler_config)
   if input.hook_event_name ~= "SessionStart" then
     return nil
   end
@@ -131,9 +205,9 @@ local function session_start_bootstrap(input)
 
   return nil
 end
-register(session_start_bootstrap)
+register(session_start_bootstrap, "session_start_bootstrap")
 
-local function session_start_make_help(input)
+local function session_start_make_help(input, handler_config)
   if input.hook_event_name ~= "SessionStart" then
     return nil
   end
@@ -149,9 +223,9 @@ local function session_start_make_help(input)
   io.stdout:write(help .. "\n")
   return nil
 end
-register(session_start_make_help)
+register(session_start_make_help, "session_start_make_help")
 
-local function post_commit_pr_reminder(input)
+local function post_commit_pr_reminder(input, handler_config)
   if input.hook_event_name ~= "PostToolUse" then
     return nil
   end
@@ -188,9 +262,9 @@ local function post_commit_pr_reminder(input)
     }
   }
 end
-register(post_commit_pr_reminder)
+register(post_commit_pr_reminder, "post_commit_pr_reminder")
 
-local function stop_check_pr_file(input)
+local function stop_check_pr_file(input, handler_config)
   if input.hook_event_name ~= "Stop" then
     return nil
   end
@@ -213,7 +287,11 @@ local function stop_check_pr_file(input)
     }
   end
 
-  -- check if PR file is older than latest commit
+  -- check if PR file is older than latest commit (unless strict=false)
+  if handler_config.strict == false then
+    return nil
+  end
+
   local pr_stat = unix.stat(pr_file)
   local commit_time = spawn_capture({"git", "log", "-1", "--format=%ct"})
   if pr_stat and commit_time then
@@ -229,7 +307,7 @@ local function stop_check_pr_file(input)
 
   return nil
 end
-register(stop_check_pr_file)
+register(stop_check_pr_file, "stop_check_pr_file")
 
 --------------------------------------------------------------------------------
 -- module
@@ -244,4 +322,8 @@ return {
   dispatch = dispatch,
   run = run,
   main = main,
+  load_hooks_config = load_hooks_config,
+  is_handler_enabled = is_handler_enabled,
+  get_handler_config = get_handler_config,
+  handler_registry = handler_registry,
 }

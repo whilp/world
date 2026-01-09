@@ -4,12 +4,16 @@
 -- teal ignore: type annotations needed
 local cosmo = require("cosmo")
 
+local subcommands = {"update-pr", "hooks"}
+
 local function find_subcommand()
   if not arg then return nil end
 
   for i = -1, #arg do
-    if arg[i] == "update-pr" then
-      return "update-pr", i
+    for _, cmd in ipairs(subcommands) do
+      if arg[i] == cmd then
+        return cmd, i
+      end
     end
   end
 
@@ -34,6 +38,13 @@ if subcommand then
   if subcommand == "update-pr" then
     local pr = require("skill.pr")
     local code, msg = pr.main()
+    if msg then
+      io.stderr:write(msg .. "\n")
+    end
+    os.exit(code or 0)
+  elseif subcommand == "hooks" then
+    local hooks = require("skill.hooks")
+    local code, msg = hooks.main()
     if msg then
       io.stderr:write(msg .. "\n")
     end

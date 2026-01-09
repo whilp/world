@@ -1,0 +1,21 @@
+#!/bin/sh
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+
+export LUA_PATH="$PROJECT_DIR/lib/?.lua;$PROJECT_DIR/lib/?/init.lua;;"
+
+# Pass all arguments via _G.arg
+args=""
+for arg in "$@"; do
+  # Escape single quotes in arguments
+  escaped=$(printf '%s' "$arg" | sed "s/'/\\\\'/g")
+  if [ -z "$args" ]; then
+    args="'$escaped'"
+  else
+    args="$args, '$escaped'"
+  fi
+done
+
+exec "$SCRIPT_DIR/cosmic" -e "_G.arg = {$args}; require('skill.hooks').main()"
