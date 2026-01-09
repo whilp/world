@@ -141,6 +141,11 @@ local function session_start_make_help(input)
     return nil
   end
 
+  -- bootstrap first (creates o/bootstrap/cosmic if needed)
+  local spawn = require("cosmic.spawn").spawn
+  local bootstrap = spawn({"make", "o/bootstrap/cosmic"})
+  bootstrap:wait()
+
   local help = spawn_capture({"make", "help"})
   if not help or help == "" then
     return nil
