@@ -88,16 +88,12 @@ test_write_output_nil()
 -- register and dispatch tests
 --------------------------------------------------------------------------------
 
-local function test_dispatch_no_handlers()
-  local input = {hook_event_name = "UnknownEvent"}
-  local result = hook.dispatch(input)
-  assert(result == nil, "expected nil for unknown event")
-end
-test_dispatch_no_handlers()
-
 local function test_dispatch_custom_handler()
-  -- register a custom handler
-  hook.register("TestEvent", function(input)
+  -- register a handler that only handles TestEvent
+  hook.register(function(input)
+    if input.hook_event_name ~= "TestEvent" then
+      return nil
+    end
     return {custom = "response", received = input.data}
   end)
 
@@ -110,11 +106,17 @@ end
 test_dispatch_custom_handler()
 
 local function test_dispatch_multiple_handlers()
-  -- register multiple handlers for same event
-  hook.register("MultiEvent", function()
+  -- register handlers that produce output for any event
+  hook.register(function(input)
+    if input.hook_event_name ~= "MultiEvent" then
+      return nil
+    end
     return {first = true}
   end)
-  hook.register("MultiEvent", function()
+  hook.register(function(input)
+    if input.hook_event_name ~= "MultiEvent" then
+      return nil
+    end
     return {second = true}
   end)
 

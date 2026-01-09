@@ -11,14 +11,13 @@ local M = {
   _DESCRIPTION = "Claude Code hook dispatcher",
 }
 
--- registry of handlers by event type
--- each handler is: function(input) -> output_table, error_string
+-- list of handlers, each decides whether to handle based on input
+-- handler signature: function(input) -> output_table|nil, error_string|nil
 local handlers = {}
 
--- register a handler for a hook event
-function M.register(event, handler)
-  handlers[event] = handlers[event] or {}
-  handlers[event][#handlers[event] + 1] = handler
+-- register a handler
+function M.register(handler)
+  handlers[#handlers + 1] = handler
 end
 
 -- parse hook input from stdin
@@ -43,20 +42,10 @@ function M.write_output(output, stdout)
   end
 end
 
--- dispatch to registered handlers
+-- dispatch to all handlers, each decides whether to act
 function M.dispatch(input)
-  local event = input.hook_event_name
-  if not event then
-    return nil, "missing hook_event_name"
-  end
-
-  local event_handlers = handlers[event]
-  if not event_handlers or #event_handlers == 0 then
-    return nil
-  end
-
   local outputs = {}
-  for _, handler in ipairs(event_handlers) do
+  for _, handler in ipairs(handlers) do
     local output, err = handler(input)
     if err then
       return nil, err
@@ -66,11 +55,11 @@ function M.dispatch(input)
     end
   end
 
-  -- merge outputs (last handler wins for conflicts)
   if #outputs == 0 then
     return nil
   end
 
+  -- merge outputs (last handler wins for conflicts)
   local merged = {}
   for _, out in ipairs(outputs) do
     for k, v in pairs(out) do
@@ -106,6 +95,9 @@ end
 
 -- SessionStart: append bin/ to PATH via CLAUDE_ENV_FILE
 local function session_start_bootstrap(input)
+  if input.hook_event_name ~= "SessionStart" then
+    return nil
+  end
   -- only run on startup, not resume/clear/compact
   if input.source and input.source ~= "startup" then
     return nil
@@ -140,7 +132,7 @@ local function session_start_bootstrap(input)
 end
 
 -- register built-in handlers
-M.register("SessionStart", session_start_bootstrap)
+M.register(session_start_bootstrap)
 
 --------------------------------------------------------------------------------
 -- main entry point
