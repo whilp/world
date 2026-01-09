@@ -145,9 +145,9 @@ local function session_start_make_help(input)
   local cwd = input.cwd or unix.getcwd()
   local make = path.join(cwd, "bin/make")
 
-  -- bootstrap first (creates o/bootstrap/cosmic if needed)
+  -- bootstrap first
   local spawn = require("cosmic.spawn").spawn
-  local bootstrap = spawn({make, "o/bootstrap/cosmic"})
+  local bootstrap = spawn({make, "bootstrap"})
   bootstrap:wait()
 
   local help = spawn_capture({make, "help"})

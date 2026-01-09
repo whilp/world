@@ -225,6 +225,10 @@ $(o)/%.teal.ok: $(o)/% $(tl_files) | $(bootstrap_files) $(tl_staged)
 clean:
 	@rm -rf $(o)
 
+.PHONY: bootstrap
+## Bootstrap build environment
+bootstrap: $(bootstrap_files)
+
 all_checks := $(all_astgreps) $(all_luachecks) $(all_teals)
 
 ## Run all linters (astgrep, luacheck, teal)
