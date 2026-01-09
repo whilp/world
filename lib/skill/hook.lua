@@ -131,6 +131,7 @@ local function session_start_bootstrap(input)
 
   return nil
 end
+register(session_start_bootstrap)
 
 local function session_start_make_help(input)
   if input.hook_event_name ~= "SessionStart" then
@@ -148,6 +149,7 @@ local function session_start_make_help(input)
   io.stdout:write(help .. "\n")
   return nil
 end
+register(session_start_make_help)
 
 local function post_commit_pr_reminder(input)
   if input.hook_event_name ~= "PostToolUse" then
@@ -186,6 +188,7 @@ local function post_commit_pr_reminder(input)
     }
   }
 end
+register(post_commit_pr_reminder)
 
 local function stop_check_pr_file(input)
   if input.hook_event_name ~= "Stop" then
@@ -226,10 +229,6 @@ local function stop_check_pr_file(input)
 
   return nil
 end
-
-register(session_start_bootstrap)
-register(session_start_make_help)
-register(post_commit_pr_reminder)
 register(stop_check_pr_file)
 
 --------------------------------------------------------------------------------
