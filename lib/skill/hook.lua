@@ -240,6 +240,22 @@ local function stop_check_pr_file(input)
 end
 register(stop_check_pr_file)
 
+local function stop_check_reminder(input)
+  if input.hook_event_name ~= "Stop" then
+    return nil
+  end
+
+  local branch = spawn_capture({"git", "rev-parse", "--abbrev-ref", "HEAD"})
+  if not branch or branch == "main" or branch == "master" then
+    return nil
+  end
+
+  return {
+    reason = "Remember to run checks on feature branches (see `make help`)"
+  }
+end
+register(stop_check_reminder)
+
 --------------------------------------------------------------------------------
 -- module
 --------------------------------------------------------------------------------
