@@ -1,27 +1,30 @@
 # skill/hook: add claude code hook dispatcher library
 
-Adds a centralized hook dispatcher for Claude Code hooks. Instead of separate scripts for each hook type, this provides a single entry point that receives JSON via stdin and dispatches to registered handlers.
+Centralized hook dispatcher for Claude Code hooks. Single entry point receives JSON via stdin and dispatches to registered handlers.
 
 Changes:
-- lib/skill/hook/init.lua - hook dispatcher with registration system and built-in SessionStart handler
-- lib/skill/hook/test_hook.lua - comprehensive tests for parsing, dispatch, and bootstrap behavior
-- lib/skill/cook.mk - include hook subdirectory in skill module
-- lib/cosmic/cook.mk - bundle hook into cosmic binary
-- bin/hook - wrapper script for development (runs from lib/ source)
-- .claude/settings.json - use bin/hook for SessionStart
+- lib/skill/hook.lua - hook dispatcher with registration system
+- lib/skill/test_hook.lua - tests for parsing, dispatch, and handlers
+- bin/hook - wrapper for development (loads from lib/ via LUA_PATH)
+- .claude/settings.json - dispatch SessionStart, PostToolUse, Stop to bin/hook
 
-Features:
-- `hook.register(event, handler)` - register handlers for any hook event type
-- `hook.read_input()` - parse JSON from stdin
-- `hook.dispatch(input)` - route to registered handlers, merge outputs
-- `hook.run()` - main entry point for skill invocation
-- Built-in SessionStart handler appends bin/ to PATH via CLAUDE_ENV_FILE
+Built-in handlers:
+- **session_start_bootstrap** - appends bin/ to PATH via CLAUDE_ENV_FILE
+- **session_start_make_help** - outputs `make help` on startup
+- **post_commit_pr_reminder** - reminds to maintain .github/pr/<name>.md after commits
+- **stop_check_pr_file** - blocks stop if PR file missing or stale
 
-The library is extensible - register custom handlers for PreToolUse, PostToolUse, Stop, etc. Development uses bin/hook which loads from lib/ via LUA_PATH for fast iteration without rebuilding cosmic.
+API:
+- `hook.register(handler)` - register handler, receives input, returns output or nil
+- `hook.dispatch(input)` - call all handlers, merge outputs
+- `hook.run()` - read stdin, dispatch, write stdout
+
+Handlers self-select by checking `input.hook_event_name`. This allows handlers to respond to multiple event types or apply cross-cutting logic.
 
 ## Validation
 
-- [x] tests pass (lib/skill/hook/test_hook.lua)
-- [x] `cosmic --skill hook` works with compiled binary
+- [x] tests pass
 - [x] `bin/hook` works with source files
-- [x] SessionStart bootstrap appends PATH correctly
+- [x] SessionStart outputs make help
+- [x] PostToolUse reminds about PR file after commits
+- [x] Stop blocks if PR file is stale

@@ -187,9 +187,50 @@ local function post_commit_pr_reminder(input)
   }
 end
 
+local function stop_check_pr_file(input)
+  if input.hook_event_name ~= "Stop" then
+    return nil
+  end
+
+  local branch = spawn_capture({"git", "rev-parse", "--abbrev-ref", "HEAD"})
+  if not branch or branch == "main" or branch == "master" then
+    return nil
+  end
+
+  local trailer = spawn_capture({"git", "log", "-1", "--format=%(trailers:key=x-cosmic-pr-name,valueonly)"})
+  if not trailer or trailer == "" then
+    return nil
+  end
+
+  local pr_file = path.join(".github/pr", trailer)
+  if not path.exists(pr_file) then
+    return {
+      decision = "block",
+      reason = string.format("PR file %s not found - create it before finishing", pr_file),
+    }
+  end
+
+  -- check if PR file is older than latest commit
+  local pr_stat = unix.stat(pr_file)
+  local commit_time = spawn_capture({"git", "log", "-1", "--format=%ct"})
+  if pr_stat and commit_time then
+    local pr_mtime = pr_stat.mtime or 0
+    local commit_ts = tonumber(commit_time) or 0
+    if commit_ts > pr_mtime then
+      return {
+        decision = "block",
+        reason = string.format("PR file %s is older than latest commit - update it", pr_file),
+      }
+    end
+  end
+
+  return nil
+end
+
 register(session_start_bootstrap)
 register(session_start_make_help)
 register(post_commit_pr_reminder)
+register(stop_check_pr_file)
 
 --------------------------------------------------------------------------------
 -- module
