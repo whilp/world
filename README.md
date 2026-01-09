@@ -1,10 +1,10 @@
 # 🏡 world
 
-extreme dotfiles, all reproducible everything, a model home.
+dotfiles extrêmes, tout reproductible, une maison modèle.
 
-![model home](https://brianlauritzen.files.wordpress.com/2013/05/house_fall.gif)
+![maison modèle](https://brianlauritzen.files.wordpress.com/2013/05/house_fall.gif)
 
-a monorepo containing dotfiles, tools, and things for reproducible computering since 2005.
+un monorepo contenant dotfiles, outils et trucs pour une informatique reproductible depuis 2005.
 
     $ git rev-list --max-parents=0 --pretty HEAD
     commit 165210edc61ec09e133b8e0af26d98e1e46de2ea
@@ -14,11 +14,11 @@ a monorepo containing dotfiles, tools, and things for reproducible computering s
         [project @ 2005-06-11 16:26:33 by will]
         initial import into CVS
 
-## releases
+## versions
 
-you (i) get a universal executable-archive that works on mac (arm64) and linux (arm64, x86_64 -- including the gvisor thingy that claude.ai/code lives in) with dotfiles and tools (`home`). and *that* knows how to fetch platform-specific archives with the rest (handy tools).
+vous (moi) obtenez une archive-exécutable universelle qui fonctionne sur mac (arm64) et linux (arm64, x86_64 -- y compris le truc gvisor où vit claude.ai/code) avec dotfiles et outils (`home`). et *ça* sait récupérer des archives spécifiques à la plateforme avec le reste (outils pratiques).
 
-latest release is at https://github.com/whilp/world/releases/latest
+la dernière version est à https://github.com/whilp/world/releases/latest
 
 ### yolo
 
@@ -26,9 +26,9 @@ latest release is at https://github.com/whilp/world/releases/latest
 curl -fsSL https://github.com/whilp/world/releases/latest/download/home | sh
 ```
 
-### try lua
+### essayer lua
 
-lua is available from [whilp/cosmopolitan](https://github.com/whilp/cosmopolitan/releases/latest):
+lua est disponible depuis [whilp/cosmopolitan](https://github.com/whilp/cosmopolitan/releases/latest) :
 
 ```console
 $ curl -fsSLO https://github.com/whilp/cosmopolitan/releases/latest/download/lua && chmod +x lua
@@ -67,13 +67,13 @@ Returns:
 
 ## forks
 
-- [neovim](https://github.com/whilp/neovim) (fork of [neovim](https://neovim.io))
-  - mostly to pin a snapshot
-  - the build in this repo bundles neovim with the plugins i use (at buildtime)
-- [cosmopolitan](https://github.com/whilp/cosmopolitan) (fork of [cosmopolitan](https://justine.lol/cosmopolitan/)) - builds actually portable executables:
-  - `lua` with all the goodies from [`redbean`](https://redbean.dev) (`unix`, `path`, `re`, `sqlite3`, `argon2`, `json`, `cosmo`) plus enhancements for `Fetch` (authenticating proxy support). pure lua modules get zipped inside the binary.
-  - `make`, `zip`, `unzip` for bootstrapping
+- [neovim](https://github.com/whilp/neovim) (fork de [neovim](https://neovim.io))
+  - principalement pour figer une version
+  - le build dans ce repo embarque neovim avec les plugins que j'utilise (au moment du build)
+- [cosmopolitan](https://github.com/whilp/cosmopolitan) (fork de [cosmopolitan](https://justine.lol/cosmopolitan/)) - construit des exécutables vraiment portables :
+  - `lua` avec toutes les bonnes choses de [`redbean`](https://redbean.dev) (`unix`, `path`, `re`, `sqlite3`, `argon2`, `json`, `cosmo`) plus des améliorations pour `Fetch` (support de proxy authentifiant). les modules lua purs sont zippés dans le binaire.
+  - `make`, `zip`, `unzip` pour le bootstrapping
 
-## license
+## licence
 
-This repository is licensed under the MIT License. You are welcome to borrow, use, or adapt any code here for your own projects. See the [LICENSE](LICENSE) file for details.
+Ce dépôt est sous licence MIT. Vous êtes libre d'emprunter, utiliser ou adapter tout code ici pour vos propres projets. Voir le fichier [LICENSE](LICENSE) pour les détails.
