@@ -16,7 +16,6 @@ include lib/aerosnap/cook.mk
 include lib/build/cook.mk
 include lib/checker/cook.mk
 include lib/claude/cook.mk
-include lib/hook/cook.mk
 include lib/cosmic/cook.mk
 include lib/daemonize/cook.mk
 include lib/environ/cook.mk

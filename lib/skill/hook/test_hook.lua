@@ -1,7 +1,7 @@
 #!/usr/bin/env run-test.lua
 -- teal ignore: test file
 
-local hook = require("hook")
+local hook = require("skill.hook")
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
