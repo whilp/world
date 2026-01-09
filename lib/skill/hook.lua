@@ -86,6 +86,16 @@ end
 -- built-in handlers
 --------------------------------------------------------------------------------
 
+local function spawn_capture(cmd)
+  local spawn = require("cosmic.spawn").spawn
+  local handle = spawn(cmd)
+  local ok, out = handle:read()
+  if not ok then
+    return nil
+  end
+  return out and out:match("^%s*(.-)%s*$")
+end
+
 local function session_start_bootstrap(input)
   if input.hook_event_name ~= "SessionStart" then
     return nil
@@ -122,7 +132,64 @@ local function session_start_bootstrap(input)
   return nil
 end
 
+local function session_start_make_help(input)
+  if input.hook_event_name ~= "SessionStart" then
+    return nil
+  end
+  if input.source and input.source ~= "startup" then
+    return nil
+  end
+
+  local help = spawn_capture({"make", "help"})
+  if not help or help == "" then
+    return nil
+  end
+
+  io.stdout:write(help .. "\n")
+  return nil
+end
+
+local function post_commit_pr_reminder(input)
+  if input.hook_event_name ~= "PostToolUse" then
+    return nil
+  end
+  if input.tool_name ~= "Bash" then
+    return nil
+  end
+
+  local tool_input = input.tool_input or {}
+  local command = tool_input.command or ""
+  if not command:match("git commit") then
+    return nil
+  end
+
+  local branch = spawn_capture({"git", "rev-parse", "--abbrev-ref", "HEAD"})
+  if not branch or branch == "main" or branch == "master" then
+    return nil
+  end
+
+  local has_trailer = spawn_capture({"git", "log", "-1", "--format=%(trailers:key=x-cosmic-pr-name,valueonly)"})
+  local pr_file = has_trailer and has_trailer ~= "" and path.join(".github/pr", has_trailer) or nil
+
+  local msg
+  if pr_file and path.exists(pr_file) then
+    msg = string.format("PR file: %s - update if needed", pr_file)
+  elseif has_trailer and has_trailer ~= "" then
+    msg = string.format("PR file %s not found - create it", pr_file)
+  else
+    msg = "Consider adding x-cosmic-pr-name trailer and .github/pr/<name>.md"
+  end
+
+  return {
+    hookSpecificOutput = {
+      postToolUse = { additionalContext = msg }
+    }
+  }
+end
+
 register(session_start_bootstrap)
+register(session_start_make_help)
+register(post_commit_pr_reminder)
 
 --------------------------------------------------------------------------------
 -- module
