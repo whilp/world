@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+
+export LUA_PATH="$PROJECT_DIR/lib/?.lua;$PROJECT_DIR/lib/?/init.lua;;"
+
+exec "$SCRIPT_DIR/cosmic" -e "require('skill.hook').main()"
