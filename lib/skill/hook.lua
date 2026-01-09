@@ -214,7 +214,7 @@ local function stop_check_pr_file(input)
   local pr_stat = unix.stat(pr_file)
   local commit_time = spawn_capture({"git", "log", "-1", "--format=%ct"})
   if pr_stat and commit_time then
-    local pr_mtime = pr_stat.mtime or 0
+    local pr_mtime = pr_stat:mtim()
     local commit_ts = tonumber(commit_time) or 0
     if commit_ts > pr_mtime then
       return {
