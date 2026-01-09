@@ -141,12 +141,16 @@ local function session_start_make_help(input)
     return nil
   end
 
+  -- use bin/make to ensure cosmo-make is available
+  local cwd = input.cwd or unix.getcwd()
+  local make = path.join(cwd, "bin/make")
+
   -- bootstrap first (creates o/bootstrap/cosmic if needed)
   local spawn = require("cosmic.spawn").spawn
-  local bootstrap = spawn({"make", "o/bootstrap/cosmic"})
+  local bootstrap = spawn({make, "o/bootstrap/cosmic"})
   bootstrap:wait()
 
-  local help = spawn_capture({"make", "help"})
+  local help = spawn_capture({make, "help"})
   if not help or help == "" then
     return nil
   end
