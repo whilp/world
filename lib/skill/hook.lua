@@ -6,22 +6,15 @@ local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 
-local M = {
-  _VERSION = "0.1.0",
-  _DESCRIPTION = "Claude Code hook dispatcher",
-}
-
 -- list of handlers, each decides whether to handle based on input
 -- handler signature: function(input) -> output_table|nil, error_string|nil
 local handlers = {}
 
--- register a handler
-function M.register(handler)
+local function register(handler)
   handlers[#handlers + 1] = handler
 end
 
--- parse hook input from stdin
-function M.read_input(stdin)
+local function read_input(stdin)
   stdin = stdin or io.stdin
   local raw = stdin:read("*a")
   if not raw or raw == "" then
@@ -34,16 +27,14 @@ function M.read_input(stdin)
   return input
 end
 
--- write hook output to stdout
-function M.write_output(output, stdout)
+local function write_output(output, stdout)
   stdout = stdout or io.stdout
   if output then
     stdout:write(cosmo.EncodeJson(output))
   end
 end
 
--- dispatch to all handlers, each decides whether to act
-function M.dispatch(input)
+local function dispatch(input)
   local outputs = {}
   for _, handler in ipairs(handlers) do
     local output, err = handler(input)
@@ -69,36 +60,36 @@ function M.dispatch(input)
   return merged
 end
 
--- run the hook dispatcher
-function M.run(opts)
+local function run(opts)
   opts = opts or {}
-  local input, err = M.read_input(opts.stdin)
+  local input, err = read_input(opts.stdin)
   if not input then
-    -- no input is ok for some hooks
     return 0
   end
 
   local output
-  output, err = M.dispatch(input)
+  output, err = dispatch(input)
   if err then
     io.stderr:write("hook: " .. err .. "\n")
     return 2, err
   end
 
-  M.write_output(output, opts.stdout)
+  write_output(output, opts.stdout)
   return 0
+end
+
+local function main()
+  return run()
 end
 
 --------------------------------------------------------------------------------
 -- built-in handlers
 --------------------------------------------------------------------------------
 
--- SessionStart: append bin/ to PATH via CLAUDE_ENV_FILE
 local function session_start_bootstrap(input)
   if input.hook_event_name ~= "SessionStart" then
     return nil
   end
-  -- only run on startup, not resume/clear/compact
   if input.source and input.source ~= "startup" then
     return nil
   end
@@ -131,15 +122,19 @@ local function session_start_bootstrap(input)
   return nil
 end
 
--- register built-in handlers
-M.register(session_start_bootstrap)
+register(session_start_bootstrap)
 
 --------------------------------------------------------------------------------
--- main entry point
+-- module
 --------------------------------------------------------------------------------
 
-function M.main()
-  return M.run()
-end
-
-return M
+return {
+  _VERSION = "0.1.0",
+  _DESCRIPTION = "Claude Code hook dispatcher",
+  register = register,
+  read_input = read_input,
+  write_output = write_output,
+  dispatch = dispatch,
+  run = run,
+  main = main,
+}
