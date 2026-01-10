@@ -9,6 +9,7 @@ local common = require("checker.common")
 
 local supported_extensions = {
   [".lua"] = true,
+  [".tl"] = true,
 }
 
 local supported_patterns = {
@@ -74,8 +75,9 @@ local function main(source)
   end
 
   local tl_bin = path.join(os.getenv("TL_BIN"), "tl")
+  local include_dir = os.getenv("TL_INCLUDE_DIR") or "lib/types"
 
-  local handle = spawn({ tl_bin, "check", source })
+  local handle = spawn({ tl_bin, "check", "-I", include_dir, source })
   if handle.stdin then
     handle.stdin:close()
   end

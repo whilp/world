@@ -15,8 +15,8 @@ This document outlines the incremental migration from Lua to Teal for comprehens
 - Teal 0.24.8 installed as 3p dependency
 - `make teal` target exists (runs `tl check` on each file)
 - Checker infrastructure already supports `.tl` extension
-- No `.tl` or `.d.tl` files exist yet
-- No `tlconfig.lua` configuration
+- Type declarations in `lib/types/` for external deps
+- `tlconfig.lua` at repo root
 
 ## Migration phases
 
@@ -24,29 +24,24 @@ This document outlines the incremental migration from Lua to Teal for comprehens
 
 Create the type infrastructure needed for migration.
 
-#### PR 1.1: Add tlconfig.lua and type declarations for external deps
+#### PR 1.1: Add tlconfig.lua and type declarations for external deps ✓
 
-1. Create `tlconfig.lua` at repo root:
-   ```lua
-   return {
-     gen_target = "5.1",
-     gen_compat = "off",
-     include_dir = { "types" },
-     source_dir = ".",
-     build_dir = "o/teal",
-   }
-   ```
+**Status: DONE**
 
-2. Create `types/` directory for type declarations
+1. Created `tlconfig.lua` at repo root with `include_dir = { "lib/types" }`
 
-3. Add type declarations for external dependencies:
-   - `types/cosmo.d.tl` - cosmo module (Fetch, is_main, EncodeJson, etc.)
-   - `types/cosmo/unix.d.tl` - unix functions (fork, pipe, exec, etc.)
-   - `types/cosmo/path.d.tl` - path functions (join, basename, dirname, etc.)
-   - `types/luaunit.d.tl` - luaunit testing framework
-   - `types/argparse.d.tl` - argparse library
+2. Created `lib/types/` directory with type declarations:
+   - `lib/types/cosmo.d.tl` - cosmo module (Fetch, is_main, EncodeJson, etc.)
+   - `lib/types/cosmo/unix.d.tl` - unix functions (fork, pipe, exec, etc.)
+   - `lib/types/cosmo/path.d.tl` - path functions (join, basename, dirname, etc.)
+   - `lib/types/cosmo/getopt.d.tl` - getopt argument parser
+   - `lib/types/luaunit.d.tl` - luaunit testing framework
+   - `lib/types/argparse.d.tl` - argparse library
+   - `lib/types/cosmic/init.d.tl` - cosmic main wrapper
+   - `lib/types/cosmic/spawn.d.tl` - process spawning
+   - `lib/types/cosmic/walk.d.tl` - directory walking
 
-4. Update `make teal` to use tlconfig.lua
+3. Updated `run-teal.lua` to pass `-I lib/types` to tl check
 
 #### PR 1.2: Build system support for .tl files
 
