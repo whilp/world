@@ -61,10 +61,11 @@ Migrate foundational modules that other code depends on.
 - Good test of the migration workflow
 
 Steps:
-1. Rename `lib/checker/common.lua` → `lib/checker/common.tl`
-2. Add type annotations
-3. Update cook.mk to compile it
-4. Verify tests pass
+1. Remove `-- teal ignore` comment
+2. Rename `lib/checker/common.lua` → `lib/checker/common.tl`
+3. Add type annotations
+4. Update cook.mk to compile it
+5. Verify tests pass
 
 #### PR 2.2: Migrate standalone library files
 
@@ -188,11 +189,7 @@ Recommendation: Start with option 3 (type-check but keep as lua) to get value wi
 
 ### Phase 7: Cleanup
 
-#### PR 7.1: Remove teal ignore comments
-
-Once all files are migrated or properly typed, remove the `-- teal ignore` comments.
-
-#### PR 7.2: Update documentation
+#### PR 7.1: Update documentation
 
 - Update CLAUDE.md with teal patterns
 - Add type annotation guidelines
@@ -262,11 +259,13 @@ run-test test_foo      # run specific test (includes type check)
 
 ### Converting an existing file
 
-1. Rename `foo.lua` → `foo.tl`
-2. Add type annotations
-3. Remove `-- teal ignore` comment
+1. Remove `-- teal ignore` comment (enables type checking immediately)
+2. Rename `foo.lua` → `foo.tl`
+3. Add type annotations
 4. Run `make teal` to verify
 5. Run tests
+
+Note: Remove the `-- teal ignore` directive as part of each file migration, not as a separate cleanup phase. This ensures type checking is enabled immediately for migrated files.
 
 ## Metrics
 
