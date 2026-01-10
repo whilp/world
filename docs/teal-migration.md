@@ -231,15 +231,19 @@ Use Teal's strict mode where possible, but allow `any` types at module boundarie
 
 ### Makefile updates needed
 
-1. Add pattern rule for `.tl` → `.lua` compilation:
+1. Define type declaration files:
    ```makefile
-   $(o)/%.lua: %.tl | $(tl_staged)
-       @mkdir -p $(@D)
-       @$(tl_gen) $< -o $@
+   types_files := $(wildcard lib/types/*.d.tl lib/types/**/*.d.tl)
    ```
 
-2. Update vpath to find `.tl` sources
-3. Ensure type declarations are available during compilation
+2. Add pattern rule for `.tl` → `.lua` compilation:
+   ```makefile
+   $(o)/%.lua: %.tl $(types_files) | $(tl_staged)
+       @mkdir -p $(@D)
+       @$(tl_gen) -I lib/types $< -o $@
+   ```
+
+3. Update vpath to find `.tl` sources
 
 ## Development workflow
 
