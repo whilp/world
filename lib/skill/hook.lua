@@ -213,6 +213,9 @@ local function stop_check_commit_trailer(input)
   if input.hook_event_name ~= "Stop" then
     return nil
   end
+  if input.stop_hook_active then
+    return nil
+  end
 
   local branch = spawn_capture({"git", "rev-parse", "--abbrev-ref", "HEAD"})
   if not branch or branch == "main" or branch == "master" then
@@ -243,6 +246,9 @@ register(stop_check_commit_trailer)
 
 local function stop_check_reminder(input)
   if input.hook_event_name ~= "Stop" then
+    return nil
+  end
+  if input.stop_hook_active then
     return nil
   end
 
