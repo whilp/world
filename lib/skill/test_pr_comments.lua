@@ -1,6 +1,4 @@
-local unix = require("cosmo.unix")
-local path = require("cosmo.path")
-local cosmo = require("cosmo")
+-- teal ignore: test file
 
 local function test_format_review_comment()
   package.loaded["lib.skill.pr_comments"] = nil

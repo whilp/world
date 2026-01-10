@@ -1,3 +1,4 @@
+-- teal ignore: type annotations needed
 -- Fetches review comments on a GitHub PR using cosmo.Fetch
 --
 -- GitHub API endpoints:
