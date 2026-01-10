@@ -1,14 +1,19 @@
 -- skill - dispatcher for cosmic skill commands
--- usage: cosmic-lua -l skill <subcommand> [args...]
+-- usage: cosmic --skill <subcommand> [args...]
 
 -- teal ignore: type annotations needed
 local cosmo = require("cosmo")
+
+local subcommands = {
+  ["update-pr"] = "skill.pr",
+  ["pr-comments"] = "skill.pr_comments",
+}
 
 local function find_subcommand()
   if not arg then return nil end
 
   for i = -1, #arg do
-    if arg[i] == "update-pr" or arg[i] == "pr-comments" then
+    if subcommands[arg[i]] then
       return arg[i], i
     end
   end
@@ -31,20 +36,13 @@ if subcommand then
 
   _G.arg = new_arg
 
-  if subcommand == "update-pr" then
-    local pr = require("skill.pr")
-    local code, msg = pr.main()
-    if msg then
-      io.stderr:write(msg .. "\n")
-    end
-    os.exit(code or 0)
-  elseif subcommand == "pr-comments" then
-    local pr_comments = require("skill.pr_comments")
-    os.exit(pr_comments.main(table.unpack(new_arg)))
-  else
-    io.stderr:write("skill: unknown subcommand: " .. subcommand .. "\n")
-    os.exit(1)
+  local module_name = subcommands[subcommand]
+  local mod = require(module_name)
+  local code, msg = mod.main(table.unpack(new_arg))
+  if msg then
+    io.stderr:write(msg .. "\n")
   end
+  os.exit(code or 0)
 end
 
 return {

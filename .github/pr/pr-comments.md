@@ -16,12 +16,11 @@ Features:
 Usage:
 ```bash
 # markdown output
-cosmic -l skill pr-comments whilp world 283
-cosmic -l skill pr-comments https://github.com/whilp/world/pull/283
+cosmic --skill pr_comments whilp world 283
+cosmic --skill pr_comments https://github.com/whilp/world/pull/283
 
 # json output
-cosmic -l skill pr-comments whilp world 283 json
-OUTPUT=json cosmic -l skill pr-comments whilp world 283
+cosmic --skill pr_comments whilp world 283 json
 ```
 
 ## Validation

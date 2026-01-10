@@ -7,20 +7,36 @@
 --   /repos/{owner}/{repo}/pulls/{number}/reviews - reviews with their comments
 --
 -- Usage:
---   pr-comments.lua <owner> <repo> <pr_number> [json]
---   pr-comments.lua https://github.com/owner/repo/pull/123 [json]
---   OUTPUT=json pr-comments.lua ...
---
--- Examples:
---   pr-comments.lua whilp world 283
---   pr-comments.lua https://github.com/whilp/world/pull/283 json
---   OUTPUT=json pr-comments.lua whilp world 283
+--   cosmic --skill pr_comments <owner> <repo> <pr_number> [json]
+--   cosmic --skill pr_comments <github_pr_url> [json]
+--   OUTPUT=json cosmic --skill pr_comments ...
 
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 
-local function github_request(endpoint, opts)
-  opts = opts or {}
+local function fetch_with_retry(url, opts, max_attempts)
+  max_attempts = max_attempts or 4
+  local status, headers, body
+  local last_err
+
+  for attempt = 1, max_attempts do
+    status, headers, body = cosmo.Fetch(url, opts)
+    if not status then
+      last_err = "fetch failed: " .. tostring(headers)
+    elseif status >= 500 then
+      last_err = "server error: " .. tostring(status)
+    else
+      return status, headers, body
+    end
+    if attempt < max_attempts then
+      unix.nanosleep(2 ^ attempt, 0)
+    end
+  end
+
+  return nil, last_err
+end
+
+local function github_request(endpoint)
   local api_url = os.getenv("GITHUB_API_URL") or "https://api.github.com"
   local url = api_url .. endpoint
 
@@ -33,35 +49,14 @@ local function github_request(endpoint, opts)
     },
   }
 
-  -- add auth header if token provided (proxy may handle this)
   local token = os.getenv("GITHUB_TOKEN")
   if token and token ~= "" then
     fetch_opts.headers["Authorization"] = "Bearer " .. token
   end
 
-  -- retry with exponential backoff for transient errors
-  local status, headers, body
-  local last_err
-  for attempt = 1, 4 do
-    status, headers, body = cosmo.Fetch(url, fetch_opts)
-    if not status then
-      last_err = "fetch failed: " .. tostring(headers)
-    elseif status >= 500 then
-      last_err = "server error: " .. tostring(status)
-    else
-      break
-    end
-    if attempt < 4 then
-      unix.nanosleep(2 ^ attempt, 0)
-    end
-  end
-
+  local status, headers, body = fetch_with_retry(url, fetch_opts)
   if not status then
-    return nil, last_err
-  end
-
-  if status >= 500 then
-    return nil, last_err
+    return nil, headers
   end
 
   local ok, decoded = pcall(cosmo.DecodeJson, body)
@@ -69,7 +64,6 @@ local function github_request(endpoint, opts)
     return nil, "json decode failed: " .. tostring(decoded)
   end
 
-  -- check for api errors (rate limit, not found, etc)
   if status ~= 200 then
     local msg = decoded and decoded.message or "unknown error"
     return nil, string.format("api error %d: %s", status, msg)
@@ -78,19 +72,16 @@ local function github_request(endpoint, opts)
   return status, decoded
 end
 
--- get line-level review comments (comments on specific lines of code)
 local function get_review_comments(owner, repo, pr_number)
   local endpoint = string.format("/repos/%s/%s/pulls/%d/comments", owner, repo, pr_number)
   return github_request(endpoint)
 end
 
--- get general pr/issue comments (not attached to specific lines)
 local function get_issue_comments(owner, repo, pr_number)
   local endpoint = string.format("/repos/%s/%s/issues/%d/comments", owner, repo, pr_number)
   return github_request(endpoint)
 end
 
--- get reviews (approval/request changes with optional body)
 local function get_reviews(owner, repo, pr_number)
   local endpoint = string.format("/repos/%s/%s/pulls/%d/reviews", owner, repo, pr_number)
   return github_request(endpoint)
@@ -99,6 +90,7 @@ end
 local function format_review_comment(c)
   local lines = {}
   table.insert(lines, string.format("## Review comment by %s", c.user and c.user.login or "unknown"))
+  table.insert(lines, string.format("ID: %s", c.id or "?"))
   table.insert(lines, string.format("File: %s (line %s)", c.path or "?", c.line or c.original_line or "?"))
   table.insert(lines, string.format("Created: %s", c.created_at or "?"))
   if c.in_reply_to_id then
@@ -133,7 +125,6 @@ local function format_review(r)
   return table.concat(lines, "\n")
 end
 
--- parse github pr url: https://github.com/owner/repo/pull/123
 local function parse_pr_url(url)
   local owner, repo, pr_number = url:match("github%.com/([^/]+)/([^/]+)/pull/(%d+)")
   if owner and repo and pr_number then
@@ -142,66 +133,66 @@ local function parse_pr_url(url)
   return nil
 end
 
+local function parse_args(args)
+  local opts = {
+    json = os.getenv("OUTPUT") == "json",
+    owner = nil,
+    repo = nil,
+    pr_number = nil,
+  }
+
+  local positional = {}
+  for _, v in ipairs(args) do
+    if v == "json" then
+      opts.json = true
+    else
+      table.insert(positional, v)
+    end
+  end
+
+  if #positional == 1 then
+    opts.owner, opts.repo, opts.pr_number = parse_pr_url(positional[1])
+  elseif #positional == 3 then
+    opts.owner = positional[1]
+    opts.repo = positional[2]
+    opts.pr_number = tonumber(positional[3])
+  end
+
+  return opts
+end
+
 local function print_help()
   io.stderr:write([[
-usage: pr-comments.lua <owner> <repo> <pr_number> [json]
-       pr-comments.lua <github_pr_url> [json]
-       OUTPUT=json pr-comments.lua ...
+usage: cosmic --skill pr_comments <owner> <repo> <pr_number> [json]
+       cosmic --skill pr_comments <github_pr_url> [json]
+       OUTPUT=json cosmic --skill pr_comments ...
 
 examples:
-  pr-comments.lua whilp world 283
-  pr-comments.lua https://github.com/whilp/world/pull/283
-  pr-comments.lua whilp world 283 json
-  OUTPUT=json pr-comments.lua whilp world 283
+  cosmic --skill pr_comments whilp world 283
+  cosmic --skill pr_comments https://github.com/whilp/world/pull/283
+  cosmic --skill pr_comments whilp world 283 json
 ]])
 end
 
 local function main(...)
-  local args = {...}
-  local owner, repo, pr_number
-  local json_output = os.getenv("OUTPUT") == "json"
+  local opts = parse_args({...})
 
-  -- check for json flag (without dash to avoid cosmic-lua eating it)
-  for i, v in ipairs(args) do
-    if v == "json" then
-      json_output = true
-      table.remove(args, i)
-      break
-    end
-  end
-
-  -- parse arguments: either URL or owner repo pr_number
-  if #args == 1 then
-    owner, repo, pr_number = parse_pr_url(args[1])
-    if not owner then
-      io.stderr:write("error: invalid github pr url\n")
-      print_help()
-      return 1
-    end
-  elseif #args == 3 then
-    owner, repo = args[1], args[2]
-    pr_number = tonumber(args[3])
-    if not pr_number then
-      io.stderr:write("error: pr_number must be a number\n")
-      return 1
-    end
-  else
+  if not opts.owner or not opts.repo or not opts.pr_number then
+    io.stderr:write("error: invalid arguments\n")
     print_help()
     return 1
   end
 
-  -- fetch all comment types
-  local status, review_comments = get_review_comments(owner, repo, pr_number)
+  local status, review_comments = get_review_comments(opts.owner, opts.repo, opts.pr_number)
   if not status then
     io.stderr:write("error fetching review comments: " .. tostring(review_comments) .. "\n")
     return 1
   end
 
-  local _, issue_comments = get_issue_comments(owner, repo, pr_number)
-  local _, reviews = get_reviews(owner, repo, pr_number)
+  local _, issue_comments = get_issue_comments(opts.owner, opts.repo, opts.pr_number)
+  local _, reviews = get_reviews(opts.owner, opts.repo, opts.pr_number)
 
-  -- json output
-  if json_output then
+  if opts.json then
     local result = {
       reviews = reviews or {},
       issue_comments = issue_comments or {},
@@ -211,7 +202,6 @@ local function main(...)
     return 0
   end
 
-  -- markdown output
   if reviews and #reviews > 0 then
     print("# Reviews\n")
     for _, r in ipairs(reviews) do
@@ -236,7 +226,7 @@ local function main(...)
   if (not reviews or #reviews == 0) and
      (not issue_comments or #issue_comments == 0) and
      (not review_comments or #review_comments == 0) then
-    print("No comments found on PR #" .. pr_number)
+    print("No comments found on PR #" .. opts.pr_number)
   end
 
   return 0
@@ -247,6 +237,7 @@ if cosmo.is_main() then
 end
 
 return {
+  fetch_with_retry = fetch_with_retry,
   github_request = github_request,
   get_review_comments = get_review_comments,
   get_issue_comments = get_issue_comments,
@@ -255,5 +246,6 @@ return {
   format_issue_comment = format_issue_comment,
   format_review = format_review,
   parse_pr_url = parse_pr_url,
+  parse_args = parse_args,
   main = main,
 }
