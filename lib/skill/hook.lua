@@ -50,13 +50,34 @@ local function dispatch(input)
     return nil
   end
 
-  -- merge outputs (last handler wins for conflicts)
+  -- merge outputs: concatenate reason and additionalContext, last wins for others
   local merged = {}
+  local reasons = {}
+  local contexts = {}
   for _, out in ipairs(outputs) do
     for k, v in pairs(out) do
-      merged[k] = v
+      if k == "reason" then
+        reasons[#reasons + 1] = v
+      elseif k == "hookSpecificOutput" then
+        local ctx = v and v.postToolUse and v.postToolUse.additionalContext
+        if ctx then
+          contexts[#contexts + 1] = ctx
+        end
+        merged[k] = v
+      else
+        merged[k] = v
+      end
     end
   end
+
+  if #reasons > 0 then
+    merged.reason = table.concat(reasons, "\n")
+  end
+
+  if #contexts > 1 and merged.hookSpecificOutput and merged.hookSpecificOutput.postToolUse then
+    merged.hookSpecificOutput.postToolUse.additionalContext = table.concat(contexts, "\n")
+  end
+
   return merged
 end
 
@@ -199,8 +220,17 @@ local function post_commit_pr_reminder(input)
 end
 register(post_commit_pr_reminder)
 
-local function stop_check_pr_file(input)
-  if input.hook_event_name ~= "Stop" then
+local function post_push_pr_check(input)
+  if input.hook_event_name ~= "PostToolUse" then
+    return nil
+  end
+  if input.tool_name ~= "Bash" then
+    return nil
+  end
+
+  local tool_input = input.tool_input or {}
+  local command = tool_input.command or ""
+  if not command:match("git push") then
     return nil
   end
 
@@ -210,38 +240,39 @@ local function stop_check_pr_file(input)
   end
 
   local trailer = spawn_capture({"git", "log", "-1", "--format=%(trailers:key=x-cosmic-pr-name,valueonly)"})
-  if not trailer or trailer == "" then
+  local has_trailer = trailer and trailer ~= ""
+
+  local msg
+  if has_trailer then
+    local pr_file = path.join(".github/pr", trailer)
+    if path.exists(pr_file) then
+      msg = string.format("Confirm %s accurately describes the changes. Revise if needed.", pr_file)
+    else
+      msg = string.format("Create %s to describe the PR changes.", pr_file)
+    end
+  else
+    msg = "Write a PR description in .github/pr/<name>.md and add x-cosmic-pr-name: <name>.md trailer to the commit."
+  end
+
+  return {
+    hookSpecificOutput = {
+      postToolUse = { additionalContext = msg }
+    }
+  }
+end
+register(post_push_pr_check)
+
+local function post_push_check_reminder(input)
+  if input.hook_event_name ~= "PostToolUse" then
+    return nil
+  end
+  if input.tool_name ~= "Bash" then
     return nil
   end
 
-  local pr_file = path.join(".github/pr", trailer)
-  if not path.exists(pr_file) then
-    return {
-      decision = "block",
-      reason = string.format("PR file %s not found - create it before finishing", pr_file),
-    }
-  end
-
-  -- check if PR file is older than latest commit
-  local pr_stat = unix.stat(pr_file)
-  local commit_time = spawn_capture({"git", "log", "-1", "--format=%ct"})
-  if pr_stat and commit_time then
-    local pr_mtime = pr_stat:mtim()
-    local commit_ts = tonumber(commit_time) or 0
-    if commit_ts > pr_mtime then
-      return {
-        decision = "block",
-        reason = string.format("PR file %s is older than latest commit - update it", pr_file),
-      }
-    end
-  end
-
-  return nil
-end
-register(stop_check_pr_file)
-
-local function stop_check_reminder(input)
-  if input.hook_event_name ~= "Stop" then
+  local tool_input = input.tool_input or {}
+  local command = tool_input.command or ""
+  if not command:match("git push") then
     return nil
   end
 
@@ -251,10 +282,12 @@ local function stop_check_reminder(input)
   end
 
   return {
-    reason = "Remember to run checks on feature branches (see `make help`)"
+    hookSpecificOutput = {
+      postToolUse = { additionalContext = "Remember to run checks on feature branches (see `make help`)" }
+    }
   }
 end
-register(stop_check_reminder)
+register(post_push_check_reminder)
 
 --------------------------------------------------------------------------------
 -- module

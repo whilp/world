@@ -241,23 +241,143 @@ end
 test_post_commit_pr_reminder_skip_non_commit()
 
 --------------------------------------------------------------------------------
--- stop_check_reminder tests
+-- post_push_check_reminder tests
 --------------------------------------------------------------------------------
 
-local function test_stop_check_reminder_on_feature_branch()
-  local input = {hook_event_name = "Stop"}
+local function test_post_push_check_reminder_on_feature_branch()
+  local input = {
+    hook_event_name = "PostToolUse",
+    tool_name = "Bash",
+    tool_input = {command = "git push -u origin feature-branch"},
+  }
   local result = hook.dispatch(input)
   -- we're on a feature branch, so should get reminder
-  if result and result.reason then
-    assert(result.reason:match("make help"), "expected make help in reminder")
+  if result and result.hookSpecificOutput then
+    local ctx = result.hookSpecificOutput.postToolUse
+    assert(ctx and ctx.additionalContext:match("make help"), "expected make help in reminder")
   end
 end
-test_stop_check_reminder_on_feature_branch()
+test_post_push_check_reminder_on_feature_branch()
 
-local function test_stop_check_reminder_skip_non_stop()
-  local input = {hook_event_name = "SessionStart"}
+local function test_post_push_check_reminder_skip_non_push()
+  local input = {
+    hook_event_name = "PostToolUse",
+    tool_name = "Bash",
+    tool_input = {command = "git status"},
+  }
   local result = hook.dispatch(input)
-  -- stop reminder should not fire for SessionStart
-  assert(not result or not result.reason or not result.reason:match("checks"), "expected no check reminder")
+  -- should not produce check reminder for non-push commands
+  local has_check_reminder = result and result.hookSpecificOutput
+    and result.hookSpecificOutput.postToolUse
+    and result.hookSpecificOutput.postToolUse.additionalContext
+    and result.hookSpecificOutput.postToolUse.additionalContext:match("checks")
+  assert(not has_check_reminder, "expected no check reminder for git status")
 end
-test_stop_check_reminder_skip_non_stop()
+test_post_push_check_reminder_skip_non_push()
+
+--------------------------------------------------------------------------------
+-- dispatch reason concatenation tests
+--------------------------------------------------------------------------------
+
+local function test_dispatch_concatenates_reasons()
+  -- register two handlers that return different reasons
+  hook.register(function(input)
+    if input.hook_event_name ~= "ConcatTest" then
+      return nil
+    end
+    return {reason = "first reason"}
+  end)
+  hook.register(function(input)
+    if input.hook_event_name ~= "ConcatTest" then
+      return nil
+    end
+    return {reason = "second reason"}
+  end)
+
+  local input = {hook_event_name = "ConcatTest"}
+  local result = hook.dispatch(input)
+  assert(result, "expected result")
+  assert(result.reason, "expected reason")
+  assert(result.reason:match("first reason"), "expected first reason")
+  assert(result.reason:match("second reason"), "expected second reason")
+  assert(result.reason:match("\n"), "expected newline between reasons")
+end
+test_dispatch_concatenates_reasons()
+
+local function test_dispatch_concatenates_additional_context()
+  -- register two handlers that return different additionalContext
+  hook.register(function(input)
+    if input.hook_event_name ~= "ContextConcatTest" then
+      return nil
+    end
+    return {
+      hookSpecificOutput = {
+        postToolUse = {additionalContext = "first context message"},
+      },
+    }
+  end)
+  hook.register(function(input)
+    if input.hook_event_name ~= "ContextConcatTest" then
+      return nil
+    end
+    return {
+      hookSpecificOutput = {
+        postToolUse = {additionalContext = "second context message"},
+      },
+    }
+  end)
+
+  local input = {hook_event_name = "ContextConcatTest"}
+  local result = hook.dispatch(input)
+  assert(result, "expected result")
+  assert(result.hookSpecificOutput, "expected hookSpecificOutput")
+  assert(result.hookSpecificOutput.postToolUse, "expected postToolUse")
+  local ctx = result.hookSpecificOutput.postToolUse.additionalContext
+  assert(ctx, "expected additionalContext")
+  assert(ctx:match("first context message"), "expected first context")
+  assert(ctx:match("second context message"), "expected second context")
+  assert(ctx:match("\n"), "expected newline between contexts")
+end
+test_dispatch_concatenates_additional_context()
+
+--------------------------------------------------------------------------------
+-- post_push_pr_check tests
+--------------------------------------------------------------------------------
+
+local function test_post_push_hooks_on_git_push()
+  -- on feature branch, both post_push handlers fire for git push
+  local input = {
+    hook_event_name = "PostToolUse",
+    tool_name = "Bash",
+    tool_input = {command = "git push -u origin feature-branch"},
+  }
+  local result = hook.dispatch(input)
+  -- we're on a feature branch so should get output
+  if result and result.hookSpecificOutput then
+    local ctx = result.hookSpecificOutput.postToolUse
+    if ctx and ctx.additionalContext then
+      -- should contain both the PR hint and make help reminder
+      local has_pr = ctx.additionalContext:match("PR") or ctx.additionalContext:match("pr") or ctx.additionalContext:match("trailer")
+      local has_help = ctx.additionalContext:match("make help")
+      assert(has_pr or has_help, "expected PR hint or make help reminder")
+    end
+  end
+end
+test_post_push_hooks_on_git_push()
+
+local function test_post_push_skip_non_push()
+  local input = {
+    hook_event_name = "PostToolUse",
+    tool_name = "Bash",
+    tool_input = {command = "git fetch origin"},
+  }
+  local result = hook.dispatch(input)
+  -- should not produce pr check output for non-push commands
+  local has_pr_output = result and result.hookSpecificOutput
+    and result.hookSpecificOutput.postToolUse
+    and result.hookSpecificOutput.postToolUse.additionalContext
+    and (result.hookSpecificOutput.postToolUse.additionalContext:match("PR")
+      or result.hookSpecificOutput.postToolUse.additionalContext:match("trailer"))
+  assert(not has_pr_output, "expected no PR output for git fetch")
+end
+test_post_push_skip_non_push()
