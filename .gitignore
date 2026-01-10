@@ -181,5 +181,6 @@ results/
 bin/
 !bin/cosmic
 !bin/hook
+!bin/hooks
 !bin/run-test
 !bin/make

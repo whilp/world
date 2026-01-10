@@ -89,21 +89,40 @@ test_write_output_nil()
 --------------------------------------------------------------------------------
 
 local function test_dispatch_custom_handler()
-  -- register a handler that only handles TestEvent
+  -- register a named handler
   hook.register(function(input)
     if input.hook_event_name ~= "TestEvent" then
       return nil
     end
     return {custom = "response", received = input.data}
-  end)
+  end, "test_handler")
 
+  -- dispatch with config that enables the handler
   local input = {hook_event_name = "TestEvent", data = "test"}
-  local result = hook.dispatch(input)
+  local config = {test_handler = true}
+  local result = hook.dispatch(input, config)
   assert(result, "expected result")
   assert(result.custom == "response", "expected custom response")
   assert(result.received == "test", "expected received data")
 end
 test_dispatch_custom_handler()
+
+local function test_dispatch_handler_disabled()
+  -- register a named handler
+  hook.register(function(input)
+    if input.hook_event_name ~= "DisabledEvent" then
+      return nil
+    end
+    return {should_not_appear = true}
+  end, "disabled_test_handler")
+
+  -- dispatch with config that disables the handler
+  local input = {hook_event_name = "DisabledEvent"}
+  local config = {disabled_test_handler = false}
+  local result = hook.dispatch(input, config)
+  assert(not result, "expected no result when handler disabled")
+end
+test_dispatch_handler_disabled()
 
 local function test_dispatch_multiple_handlers()
   -- register handlers that produce output for any event
@@ -112,16 +131,17 @@ local function test_dispatch_multiple_handlers()
       return nil
     end
     return {first = true}
-  end)
+  end, "multi_first")
   hook.register(function(input)
     if input.hook_event_name ~= "MultiEvent" then
       return nil
     end
     return {second = true}
-  end)
+  end, "multi_second")
 
   local input = {hook_event_name = "MultiEvent"}
-  local result = hook.dispatch(input)
+  local config = {multi_first = true, multi_second = true}
+  local result = hook.dispatch(input, config)
   assert(result, "expected result")
   assert(result.first == true, "expected first handler output")
   assert(result.second == true, "expected second handler output")
@@ -140,13 +160,14 @@ local function test_session_start_bootstrap()
   local orig_env_file = os.getenv("CLAUDE_ENV_FILE")
   unix.setenv("CLAUDE_ENV_FILE", env_file)
 
-  -- dispatch session start
+  -- dispatch session start with config enabling the handler
   local input = {
     hook_event_name = "SessionStart",
     source = "startup",
     cwd = "/home/user/project",
   }
-  local result, err = hook.dispatch(input)
+  local config = {session_start_bootstrap = true}
+  local result, err = hook.dispatch(input, config)
   assert(not err, "expected no error, got: " .. tostring(err))
 
   -- check file was written
@@ -181,7 +202,8 @@ local function test_session_start_skip_on_resume()
     source = "resume",
     cwd = "/home/user/project",
   }
-  local result, err = hook.dispatch(input)
+  local config = {session_start_bootstrap = true}
+  local result, err = hook.dispatch(input, config)
   assert(not err, "expected no error")
 
   -- check file was NOT written
@@ -211,10 +233,63 @@ local function test_run_integration()
   local stdin = mock_stdin(cosmo.EncodeJson(input))
   local stdout = mock_stdout()
 
-  local code = hook.run({stdin = stdin, stdout = stdout})
+  -- pass explicit empty config to avoid loading from disk
+  local code = hook.run({stdin = stdin, stdout = stdout, config = {}})
   assert(code == 0, "expected success")
 end
 test_run_integration()
+
+local function test_run_with_config()
+  -- register a test handler
+  hook.register(function(input)
+    if input.hook_event_name ~= "ConfigTestEvent" then
+      return nil
+    end
+    return {config_test = true}
+  end, "config_test_handler")
+
+  local input = {hook_event_name = "ConfigTestEvent"}
+  local stdin = mock_stdin(cosmo.EncodeJson(input))
+  local stdout = mock_stdout()
+
+  -- run with config enabling the handler
+  local code = hook.run({stdin = stdin, stdout = stdout, config = {config_test_handler = true}})
+  assert(code == 0, "expected success")
+  local data = stdout.data()
+  assert(data:match("config_test"), "expected config_test in output")
+end
+test_run_with_config()
+
+--------------------------------------------------------------------------------
+-- config helper tests
+--------------------------------------------------------------------------------
+
+local function test_is_handler_enabled()
+  -- test boolean true
+  assert(hook.is_handler_enabled({foo = true}, "foo"), "true should enable")
+  -- test boolean false
+  assert(not hook.is_handler_enabled({foo = false}, "foo"), "false should disable")
+  -- test table with enabled = true
+  assert(hook.is_handler_enabled({foo = {enabled = true}}, "foo"), "table with enabled=true should enable")
+  -- test table with enabled = false
+  assert(not hook.is_handler_enabled({foo = {enabled = false}}, "foo"), "table with enabled=false should disable")
+  -- test table without enabled (defaults to true)
+  assert(hook.is_handler_enabled({foo = {option = "value"}}, "foo"), "table without enabled should default enable")
+  -- test missing handler
+  assert(not hook.is_handler_enabled({}, "foo"), "missing should disable")
+end
+test_is_handler_enabled()
+
+local function test_get_handler_config()
+  -- test table config
+  local cfg = hook.get_handler_config({foo = {strict = true, timeout = 30}}, "foo")
+  assert(cfg.strict == true, "expected strict option")
+  assert(cfg.timeout == 30, "expected timeout option")
+  -- test boolean config returns empty table
+  cfg = hook.get_handler_config({foo = true}, "foo")
+  assert(next(cfg) == nil, "boolean config should return empty table")
+end
+test_get_handler_config()
 
 --------------------------------------------------------------------------------
 -- post_commit_pr_reminder tests
@@ -222,7 +297,8 @@ test_run_integration()
 
 local function test_post_commit_pr_reminder_skip_non_bash()
   local input = {hook_event_name = "PostToolUse", tool_name = "Edit"}
-  local result = hook.dispatch(input)
+  local config = {post_commit_pr_reminder = true}
+  local result = hook.dispatch(input, config)
   -- should not produce pr reminder output for non-Bash tools
   assert(not result or not result.hookSpecificOutput, "expected no output for Edit tool")
 end
@@ -234,7 +310,8 @@ local function test_post_commit_pr_reminder_skip_non_commit()
     tool_name = "Bash",
     tool_input = {command = "ls -la"},
   }
-  local result = hook.dispatch(input)
+  local config = {post_commit_pr_reminder = true}
+  local result = hook.dispatch(input, config)
   -- should not produce pr reminder for non-commit commands
   assert(not result or not result.hookSpecificOutput, "expected no output for ls command")
 end
@@ -246,7 +323,8 @@ test_post_commit_pr_reminder_skip_non_commit()
 
 local function test_stop_check_reminder_on_feature_branch()
   local input = {hook_event_name = "Stop"}
-  local result = hook.dispatch(input)
+  local config = {stop_check_reminder = true}
+  local result = hook.dispatch(input, config)
   -- we're on a feature branch, so should get reminder
   if result and result.reason then
     assert(result.reason:match("make help"), "expected make help in reminder")
@@ -256,7 +334,8 @@ test_stop_check_reminder_on_feature_branch()
 
 local function test_stop_check_reminder_skip_non_stop()
   local input = {hook_event_name = "SessionStart"}
-  local result = hook.dispatch(input)
+  local config = {stop_check_reminder = true}
+  local result = hook.dispatch(input, config)
   -- stop reminder should not fire for SessionStart
   assert(not result or not result.reason or not result.reason:match("checks"), "expected no check reminder")
 end
