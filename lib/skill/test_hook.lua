@@ -261,3 +261,48 @@ local function test_stop_check_reminder_skip_non_stop()
   assert(not result or not result.reason or not result.reason:match("checks"), "expected no check reminder")
 end
 test_stop_check_reminder_skip_non_stop()
+
+--------------------------------------------------------------------------------
+-- dispatch reason concatenation tests
+--------------------------------------------------------------------------------
+
+local function test_dispatch_concatenates_reasons()
+  -- register two handlers that return different reasons
+  hook.register(function(input)
+    if input.hook_event_name ~= "ConcatTest" then
+      return nil
+    end
+    return {reason = "first reason"}
+  end)
+  hook.register(function(input)
+    if input.hook_event_name ~= "ConcatTest" then
+      return nil
+    end
+    return {reason = "second reason"}
+  end)
+
+  local input = {hook_event_name = "ConcatTest"}
+  local result = hook.dispatch(input)
+  assert(result, "expected result")
+  assert(result.reason, "expected reason")
+  assert(result.reason:match("first reason"), "expected first reason")
+  assert(result.reason:match("second reason"), "expected second reason")
+  assert(result.reason:match("\n"), "expected newline between reasons")
+end
+test_dispatch_concatenates_reasons()
+
+--------------------------------------------------------------------------------
+-- stop_check_commit_trailer tests
+--------------------------------------------------------------------------------
+
+local function test_stop_hooks_combine_reasons()
+  -- on feature branch, both stop_check_commit_trailer and stop_check_reminder fire
+  local input = {hook_event_name = "Stop"}
+  local result = hook.dispatch(input)
+  assert(result, "expected result")
+  assert(result.reason, "expected reason")
+  -- should contain both the PR hint and make help reminder
+  assert(result.reason:match("PR") or result.reason:match("pr") or result.reason:match("trailer"), "expected PR/trailer hint")
+  assert(result.reason:match("make help"), "expected make help reminder")
+end
+test_stop_hooks_combine_reasons()

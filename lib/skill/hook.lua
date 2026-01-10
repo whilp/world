@@ -50,13 +50,23 @@ local function dispatch(input)
     return nil
   end
 
-  -- merge outputs (last handler wins for conflicts)
+  -- merge outputs (last handler wins for conflicts, except reason which concatenates)
   local merged = {}
+  local reasons = {}
   for _, out in ipairs(outputs) do
     for k, v in pairs(out) do
-      merged[k] = v
+      if k == "reason" then
+        reasons[#reasons + 1] = v
+      else
+        merged[k] = v
+      end
     end
   end
+
+  if #reasons > 0 then
+    merged.reason = table.concat(reasons, "\n")
+  end
+
   return merged
 end
 
@@ -199,7 +209,7 @@ local function post_commit_pr_reminder(input)
 end
 register(post_commit_pr_reminder)
 
-local function stop_check_pr_file(input)
+local function stop_check_commit_trailer(input)
   if input.hook_event_name ~= "Stop" then
     return nil
   end
@@ -210,35 +220,26 @@ local function stop_check_pr_file(input)
   end
 
   local trailer = spawn_capture({"git", "log", "-1", "--format=%(trailers:key=x-cosmic-pr-name,valueonly)"})
-  if not trailer or trailer == "" then
-    return nil
-  end
+  local has_trailer = trailer and trailer ~= ""
 
-  local pr_file = path.join(".github/pr", trailer)
-  if not path.exists(pr_file) then
-    return {
-      decision = "block",
-      reason = string.format("PR file %s not found - create it before finishing", pr_file),
-    }
-  end
-
-  -- check if PR file is older than latest commit
-  local pr_stat = unix.stat(pr_file)
-  local commit_time = spawn_capture({"git", "log", "-1", "--format=%ct"})
-  if pr_stat and commit_time then
-    local pr_mtime = pr_stat:mtim()
-    local commit_ts = tonumber(commit_time) or 0
-    if commit_ts > pr_mtime then
+  if has_trailer then
+    local pr_file = path.join(".github/pr", trailer)
+    if path.exists(pr_file) then
       return {
-        decision = "block",
-        reason = string.format("PR file %s is older than latest commit - update it", pr_file),
+        reason = string.format("Confirm %s accurately describes the changes. Revise if needed.", pr_file),
+      }
+    else
+      return {
+        reason = string.format("Create %s to describe the PR changes.", pr_file),
       }
     end
   end
 
-  return nil
+  return {
+    reason = "Write a PR description in .github/pr/<name>.md and add x-cosmic-pr-name: <name>.md trailer to the commit.",
+  }
 end
-register(stop_check_pr_file)
+register(stop_check_commit_trailer)
 
 local function stop_check_reminder(input)
   if input.hook_event_name ~= "Stop" then
