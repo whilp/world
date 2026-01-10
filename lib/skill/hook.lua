@@ -50,13 +50,20 @@ local function dispatch(input)
     return nil
   end
 
-  -- merge outputs (last handler wins for conflicts, except reason which concatenates)
+  -- merge outputs: concatenate reason and additionalContext, last wins for others
   local merged = {}
   local reasons = {}
+  local contexts = {}
   for _, out in ipairs(outputs) do
     for k, v in pairs(out) do
       if k == "reason" then
         reasons[#reasons + 1] = v
+      elseif k == "hookSpecificOutput" then
+        local ctx = v and v.postToolUse and v.postToolUse.additionalContext
+        if ctx then
+          contexts[#contexts + 1] = ctx
+        end
+        merged[k] = v
       else
         merged[k] = v
       end
@@ -65,6 +72,10 @@ local function dispatch(input)
 
   if #reasons > 0 then
     merged.reason = table.concat(reasons, "\n")
+  end
+
+  if #contexts > 1 and merged.hookSpecificOutput and merged.hookSpecificOutput.postToolUse then
+    merged.hookSpecificOutput.postToolUse.additionalContext = table.concat(contexts, "\n")
   end
 
   return merged

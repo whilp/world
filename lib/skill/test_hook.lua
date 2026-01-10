@@ -304,6 +304,42 @@ local function test_dispatch_concatenates_reasons()
 end
 test_dispatch_concatenates_reasons()
 
+local function test_dispatch_concatenates_additional_context()
+  -- register two handlers that return different additionalContext
+  hook.register(function(input)
+    if input.hook_event_name ~= "ContextConcatTest" then
+      return nil
+    end
+    return {
+      hookSpecificOutput = {
+        postToolUse = {additionalContext = "first context message"},
+      },
+    }
+  end)
+  hook.register(function(input)
+    if input.hook_event_name ~= "ContextConcatTest" then
+      return nil
+    end
+    return {
+      hookSpecificOutput = {
+        postToolUse = {additionalContext = "second context message"},
+      },
+    }
+  end)
+
+  local input = {hook_event_name = "ContextConcatTest"}
+  local result = hook.dispatch(input)
+  assert(result, "expected result")
+  assert(result.hookSpecificOutput, "expected hookSpecificOutput")
+  assert(result.hookSpecificOutput.postToolUse, "expected postToolUse")
+  local ctx = result.hookSpecificOutput.postToolUse.additionalContext
+  assert(ctx, "expected additionalContext")
+  assert(ctx:match("first context message"), "expected first context")
+  assert(ctx:match("second context message"), "expected second context")
+  assert(ctx:match("\n"), "expected newline between contexts")
+end
+test_dispatch_concatenates_additional_context()
+
 --------------------------------------------------------------------------------
 -- post_push_pr_check tests
 --------------------------------------------------------------------------------
