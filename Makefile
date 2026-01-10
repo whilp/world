@@ -48,6 +48,7 @@ include 3p/nvim-lspconfig/cook.mk
 include 3p/nvim-treesitter/cook.mk
 include 3p/nvim-parsers/cook.mk
 include 3p/nvim/cook.mk
+include 3p/nvim-bundle/cook.mk
 include 3p/luacheck/cook.mk
 include 3p/tl/cook.mk
 

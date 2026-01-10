@@ -10,7 +10,7 @@ home_release_test := lib/home/test_release.lua
 # 3p tools to bundle (nvim handled specially for bundled version)
 home_3p_tools := ast-grep biome comrak delta duckdb gh luacheck marksman rg ruff shfmt sqruff stylua superhtml tree-sitter uv
 
-home_deps := cosmos cosmic nvim $(home_3p_tools)
+home_deps := cosmos cosmic nvim-bundle $(home_3p_tools)
 
 # Build configuration
 home_exclude_pattern := ^(3p/|o/|results/|Makefile|\.git)
@@ -38,7 +38,7 @@ $(home_bin): $(home_libs) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin)
 		mkdir -p $(home_built)/home/.local/share/$$tool && \
 		cp -r $$versioned_dir $(home_built)/home/.local/share/$$tool/$$versioned_name; \
 	done
-	@nvim_versioned_name=$$(basename $$(readlink -f $(nvim_staged))); \
+	@nvim_versioned_name=$$(basename $$(readlink -f $(nvim-bundle_staged))); \
 		mkdir -p $(home_built)/home/.local/share/nvim && \
 		cp -rL $(nvim_dir) $(home_built)/home/.local/share/nvim/$$nvim_versioned_name
 	@$(cosmic_bin) lib/home/gen-manifest.lua $(home_built)/home $(HOME_VERSION) > $(home_built)/manifest.lua
