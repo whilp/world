@@ -35,6 +35,7 @@ local function load_hooks_config()
       session_start_make_help = true,
       post_commit_pr_reminder = true,
       stop_check_pr_file = true,
+      stop_check_reminder = true,
     }
   end
 
@@ -215,7 +216,16 @@ local function session_start_make_help(input, handler_config)
     return nil
   end
 
-  local help = spawn_capture({"make", "help"})
+  -- use bin/make to ensure cosmo-make is available
+  local cwd = input.cwd or unix.getcwd()
+  local make = path.join(cwd, "bin/make")
+
+  -- bootstrap first
+  local spawn = require("cosmic.spawn").spawn
+  local bootstrap = spawn({make, "bootstrap"})
+  bootstrap:wait()
+
+  local help = spawn_capture({make, "help"})
   if not help or help == "" then
     return nil
   end
@@ -308,6 +318,22 @@ local function stop_check_pr_file(input, handler_config)
   return nil
 end
 register(stop_check_pr_file, "stop_check_pr_file")
+
+local function stop_check_reminder(input, handler_config)
+  if input.hook_event_name ~= "Stop" then
+    return nil
+  end
+
+  local branch = spawn_capture({"git", "rev-parse", "--abbrev-ref", "HEAD"})
+  if not branch or branch == "main" or branch == "master" then
+    return nil
+  end
+
+  return {
+    reason = "Remember to run checks on feature branches (see `make help`)"
+  }
+end
+register(stop_check_reminder, "stop_check_reminder")
 
 --------------------------------------------------------------------------------
 -- module

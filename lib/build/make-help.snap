@@ -10,6 +10,7 @@ Targets:
   luacheck            Run luacheck linter on all files
   teal                Run teal type checker on all files
   clean               Remove all build artifacts
+  bootstrap           Bootstrap build environment
   check               Run all linters (astgrep, luacheck, teal)
   update              Check for dependency updates
   bump                Apply dependency updates (use with only=<module>)

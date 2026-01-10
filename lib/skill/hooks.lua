@@ -25,6 +25,10 @@ M.available_handlers = {
     description = "Block stop unless PR file exists and is up-to-date",
     event = "Stop",
   },
+  stop_check_reminder = {
+    description = "Remind to run checks on feature branches",
+    event = "Stop",
+  },
 }
 
 local function log(msg)

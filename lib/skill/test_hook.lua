@@ -290,3 +290,53 @@ local function test_get_handler_config()
   assert(next(cfg) == nil, "boolean config should return empty table")
 end
 test_get_handler_config()
+
+--------------------------------------------------------------------------------
+-- post_commit_pr_reminder tests
+--------------------------------------------------------------------------------
+
+local function test_post_commit_pr_reminder_skip_non_bash()
+  local input = {hook_event_name = "PostToolUse", tool_name = "Edit"}
+  local config = {post_commit_pr_reminder = true}
+  local result = hook.dispatch(input, config)
+  -- should not produce pr reminder output for non-Bash tools
+  assert(not result or not result.hookSpecificOutput, "expected no output for Edit tool")
+end
+test_post_commit_pr_reminder_skip_non_bash()
+
+local function test_post_commit_pr_reminder_skip_non_commit()
+  local input = {
+    hook_event_name = "PostToolUse",
+    tool_name = "Bash",
+    tool_input = {command = "ls -la"},
+  }
+  local config = {post_commit_pr_reminder = true}
+  local result = hook.dispatch(input, config)
+  -- should not produce pr reminder for non-commit commands
+  assert(not result or not result.hookSpecificOutput, "expected no output for ls command")
+end
+test_post_commit_pr_reminder_skip_non_commit()
+
+--------------------------------------------------------------------------------
+-- stop_check_reminder tests
+--------------------------------------------------------------------------------
+
+local function test_stop_check_reminder_on_feature_branch()
+  local input = {hook_event_name = "Stop"}
+  local config = {stop_check_reminder = true}
+  local result = hook.dispatch(input, config)
+  -- we're on a feature branch, so should get reminder
+  if result and result.reason then
+    assert(result.reason:match("make help"), "expected make help in reminder")
+  end
+end
+test_stop_check_reminder_on_feature_branch()
+
+local function test_stop_check_reminder_skip_non_stop()
+  local input = {hook_event_name = "SessionStart"}
+  local config = {stop_check_reminder = true}
+  local result = hook.dispatch(input, config)
+  -- stop reminder should not fire for SessionStart
+  assert(not result or not result.reason or not result.reason:match("checks"), "expected no check reminder")
+end
+test_stop_check_reminder_skip_non_stop()

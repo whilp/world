@@ -8,4 +8,5 @@ return {
   session_start_bootstrap = true,
   session_start_make_help = true,
   stop_check_pr_file = true,
+  stop_check_reminder = true,
 }
