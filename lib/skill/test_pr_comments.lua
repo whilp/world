@@ -3,8 +3,8 @@ local path = require("cosmo.path")
 local cosmo = require("cosmo")
 
 local function test_format_review_comment()
-  package.loaded["lib.skill.pr-comments"] = nil
-  local pr_comments = dofile("lib/skill/pr-comments.lua")
+  package.loaded["lib.skill.pr_comments"] = nil
+  local pr_comments = dofile("lib/skill/pr_comments.lua")
 
   local comment = {
     user = {login = "testuser"},
@@ -22,8 +22,8 @@ local function test_format_review_comment()
 end
 
 local function test_format_issue_comment()
-  package.loaded["lib.skill.pr-comments"] = nil
-  local pr_comments = dofile("lib/skill/pr-comments.lua")
+  package.loaded["lib.skill.pr_comments"] = nil
+  local pr_comments = dofile("lib/skill/pr_comments.lua")
 
   local comment = {
     user = {login = "reviewer"},
@@ -37,8 +37,8 @@ local function test_format_issue_comment()
 end
 
 local function test_format_review()
-  package.loaded["lib.skill.pr-comments"] = nil
-  local pr_comments = dofile("lib/skill/pr-comments.lua")
+  package.loaded["lib.skill.pr_comments"] = nil
+  local pr_comments = dofile("lib/skill/pr_comments.lua")
 
   local review = {
     user = {login = "approver"},
@@ -54,8 +54,8 @@ local function test_format_review()
 end
 
 local function test_format_review_without_body()
-  package.loaded["lib.skill.pr-comments"] = nil
-  local pr_comments = dofile("lib/skill/pr-comments.lua")
+  package.loaded["lib.skill.pr_comments"] = nil
+  local pr_comments = dofile("lib/skill/pr_comments.lua")
 
   local review = {
     user = {login = "commenter"},
@@ -70,8 +70,8 @@ local function test_format_review_without_body()
 end
 
 local function test_reply_to_id()
-  package.loaded["lib.skill.pr-comments"] = nil
-  local pr_comments = dofile("lib/skill/pr-comments.lua")
+  package.loaded["lib.skill.pr_comments"] = nil
+  local pr_comments = dofile("lib/skill/pr_comments.lua")
 
   local comment = {
     user = {login = "replier"},
@@ -87,8 +87,8 @@ local function test_reply_to_id()
 end
 
 local function test_parse_pr_url()
-  package.loaded["lib.skill.pr-comments"] = nil
-  local pr_comments = dofile("lib/skill/pr-comments.lua")
+  package.loaded["lib.skill.pr_comments"] = nil
+  local pr_comments = dofile("lib/skill/pr_comments.lua")
 
   local owner, repo, pr_num = pr_comments.parse_pr_url("https://github.com/whilp/world/pull/283")
   assert(owner == "whilp", "owner should be whilp")
