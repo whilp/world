@@ -209,8 +209,17 @@ local function post_commit_pr_reminder(input)
 end
 register(post_commit_pr_reminder)
 
-local function stop_check_commit_trailer(input)
-  if input.hook_event_name ~= "Stop" then
+local function post_push_pr_check(input)
+  if input.hook_event_name ~= "PostToolUse" then
+    return nil
+  end
+  if input.tool_name ~= "Bash" then
+    return nil
+  end
+
+  local tool_input = input.tool_input or {}
+  local command = tool_input.command or ""
+  if not command:match("git push") then
     return nil
   end
 
@@ -222,27 +231,37 @@ local function stop_check_commit_trailer(input)
   local trailer = spawn_capture({"git", "log", "-1", "--format=%(trailers:key=x-cosmic-pr-name,valueonly)"})
   local has_trailer = trailer and trailer ~= ""
 
+  local msg
   if has_trailer then
     local pr_file = path.join(".github/pr", trailer)
     if path.exists(pr_file) then
-      return {
-        reason = string.format("Confirm %s accurately describes the changes. Revise if needed.", pr_file),
-      }
+      msg = string.format("Confirm %s accurately describes the changes. Revise if needed.", pr_file)
     else
-      return {
-        reason = string.format("Create %s to describe the PR changes.", pr_file),
-      }
+      msg = string.format("Create %s to describe the PR changes.", pr_file)
     end
+  else
+    msg = "Write a PR description in .github/pr/<name>.md and add x-cosmic-pr-name: <name>.md trailer to the commit."
   end
 
   return {
-    reason = "Write a PR description in .github/pr/<name>.md and add x-cosmic-pr-name: <name>.md trailer to the commit.",
+    hookSpecificOutput = {
+      postToolUse = { additionalContext = msg }
+    }
   }
 end
-register(stop_check_commit_trailer)
+register(post_push_pr_check)
 
-local function stop_check_reminder(input)
-  if input.hook_event_name ~= "Stop" then
+local function post_push_check_reminder(input)
+  if input.hook_event_name ~= "PostToolUse" then
+    return nil
+  end
+  if input.tool_name ~= "Bash" then
+    return nil
+  end
+
+  local tool_input = input.tool_input or {}
+  local command = tool_input.command or ""
+  if not command:match("git push") then
     return nil
   end
 
@@ -252,10 +271,12 @@ local function stop_check_reminder(input)
   end
 
   return {
-    reason = "Remember to run checks on feature branches (see `make help`)"
+    hookSpecificOutput = {
+      postToolUse = { additionalContext = "Remember to run checks on feature branches (see `make help`)" }
+    }
   }
 end
-register(stop_check_reminder)
+register(post_push_check_reminder)
 
 --------------------------------------------------------------------------------
 -- module
