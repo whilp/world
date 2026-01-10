@@ -63,7 +63,7 @@ include cook.mk
 
 .PHONY: help
 ## Show this help message
-help: $(build_files)
+help: $(build_files) | $(bootstrap_cosmic)
 	@$(bootstrap_cosmic) $(o)/bin/make-help.lua $(MAKEFILE_LIST)
 
 ## Filter targets by pattern (make test only='skill')
@@ -157,7 +157,7 @@ $(o)/%.test.ok: % $(test_files) | $(bootstrap_files)
 
 # Snapshot test pattern: compare expected vs actual
 $(o)/%.snap.test.ok: .EXTRA_PREREQS = $(build_snap)
-$(o)/%.snap.test.ok: %.snap $(o)/%.snap
+$(o)/%.snap.test.ok: %.snap $(o)/%.snap | $(bootstrap_cosmic)
 	@mkdir -p $(@D)
 	@$(bootstrap_cosmic) $(build_snap) $< $(word 2,$^) > $@
 
