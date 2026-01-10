@@ -181,6 +181,39 @@ local function session_start_make_help(input)
 end
 register(session_start_make_help)
 
+local function session_start_pr_reminder(input)
+  if input.hook_event_name ~= "SessionStart" then
+    return nil
+  end
+  if input.source and input.source ~= "startup" then
+    return nil
+  end
+
+  local branch = spawn_capture({"git", "rev-parse", "--abbrev-ref", "HEAD"})
+  if not branch or branch == "main" or branch == "master" then
+    return nil
+  end
+
+  local trailer = spawn_capture({"git", "log", "-1", "--format=%(trailers:key=x-cosmic-pr-name,valueonly)"})
+  local has_trailer = trailer and trailer ~= ""
+
+  local msg
+  if has_trailer then
+    local pr_file = path.join(".github/pr", trailer)
+    if path.exists(pr_file) then
+      msg = string.format("PR file: %s - update if changes diverge from description", pr_file)
+    else
+      msg = string.format("Create PR file: %s", pr_file)
+    end
+  else
+    msg = "On feature branch without PR file - add x-cosmic-pr-name trailer and .github/pr/<name>.md when ready"
+  end
+
+  io.stdout:write(msg .. "\n")
+  return nil
+end
+register(session_start_pr_reminder)
+
 local function post_commit_pr_reminder(input)
   if input.hook_event_name ~= "PostToolUse" then
     return nil

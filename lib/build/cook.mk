@@ -18,6 +18,6 @@ update_runner := $(bootstrap_cosmic) -- $(build_check_update)
 $(o)/lib/build/test_reporter.lua.test.ok: $$(cosmic_bin) $$(checker_files)
 
 # make-help snapshot: generate actual help output
-$(o)/lib/build/make-help.snap: Makefile $(build_help)
+$(o)/lib/build/make-help.snap: Makefile $(build_help) | $(bootstrap_cosmic)
 	@mkdir -p $(@D)
 	@$(bootstrap_cosmic) $(build_help) Makefile > $@
