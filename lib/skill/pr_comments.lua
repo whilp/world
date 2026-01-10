@@ -7,12 +7,12 @@
 --   /repos/{owner}/{repo}/pulls/{number}/reviews - reviews with their comments
 --
 -- Usage:
---   cosmic --skill pr_comments <owner> <repo> <pr_number> [json]
---   cosmic --skill pr_comments <github_pr_url> [json]
---   OUTPUT=json cosmic --skill pr_comments ...
+--   cosmic --skill pr_comments --owner <owner> --repo <repo> --pr <number> [--json]
+--   cosmic --skill pr_comments --url <github_pr_url> [--json]
 
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
+local getopt = require("cosmo.getopt")
 
 local function fetch_with_retry(url, opts, max_attempts)
   max_attempts = max_attempts or 4
@@ -141,21 +141,34 @@ local function parse_args(args)
     pr_number = nil,
   }
 
-  local positional = {}
-  for _, v in ipairs(args) do
-    if v == "json" then
-      opts.json = true
-    else
-      table.insert(positional, v)
-    end
-  end
+  local longopts = {
+    {"owner", "required", "o"},
+    {"repo", "required", "r"},
+    {"pr", "required", "p"},
+    {"url", "required", "u"},
+    {"json", "none", "j"},
+    {"help", "none", "h"},
+  }
 
-  if #positional == 1 then
-    opts.owner, opts.repo, opts.pr_number = parse_pr_url(positional[1])
-  elseif #positional == 3 then
-    opts.owner = positional[1]
-    opts.repo = positional[2]
-    opts.pr_number = tonumber(positional[3])
+  local parser = getopt.new(args, "o:r:p:u:jh", longopts)
+
+  while true do
+    local opt, optarg = parser:next()
+    if not opt then break end
+
+    if opt == "o" or opt == "owner" then
+      opts.owner = optarg
+    elseif opt == "r" or opt == "repo" then
+      opts.repo = optarg
+    elseif opt == "p" or opt == "pr" then
+      opts.pr_number = tonumber(optarg)
+    elseif opt == "u" or opt == "url" then
+      opts.owner, opts.repo, opts.pr_number = parse_pr_url(optarg)
+    elseif opt == "j" or opt == "json" then
+      opts.json = true
+    elseif opt == "h" or opt == "help" then
+      opts.help = true
+    end
   end
 
   return opts
@@ -163,22 +176,34 @@ end
 
 local function print_help()
   io.stderr:write([[
-usage: cosmic --skill pr_comments <owner> <repo> <pr_number> [json]
-       cosmic --skill pr_comments <github_pr_url> [json]
-       OUTPUT=json cosmic --skill pr_comments ...
+usage: cosmic --skill pr_comments --owner <owner> --repo <repo> --pr <number> [--json]
+       cosmic --skill pr_comments --url <github_pr_url> [--json]
+
+options:
+  -o, --owner <owner>   repository owner
+  -r, --repo <repo>     repository name
+  -p, --pr <number>     pull request number
+  -u, --url <url>       github pull request url
+  -j, --json            output as json
+  -h, --help            show this help
 
 examples:
-  cosmic --skill pr_comments whilp world 283
-  cosmic --skill pr_comments https://github.com/whilp/world/pull/283
-  cosmic --skill pr_comments whilp world 283 json
+  cosmic --skill pr_comments --owner whilp --repo world --pr 283
+  cosmic --skill pr_comments --url https://github.com/whilp/world/pull/283
+  cosmic --skill pr_comments -o whilp -r world -p 283 --json
 ]])
 end
 
-local function main(...)
-  local opts = parse_args({...})
+local function main()
+  local opts = parse_args(arg)
+
+  if opts.help then
+    print_help()
+    return 0
+  end
 
   if not opts.owner or not opts.repo or not opts.pr_number then
-    io.stderr:write("error: invalid arguments\n")
+    io.stderr:write("error: missing required options\n")
     print_help()
     return 1
   end
@@ -233,7 +258,7 @@ local function main(...)
 end
 
 if cosmo.is_main() then
-  os.exit(main(table.unpack(arg)))
+  os.exit(main())
 end
 
 return {

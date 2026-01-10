@@ -96,16 +96,17 @@ end
 test_parse_pr_url()
 
 local function test_parse_args()
-  local opts = pr_comments.parse_args({"whilp", "world", "283"})
+  local opts = pr_comments.parse_args({"--owner", "whilp", "--repo", "world", "--pr", "283"})
   assert(opts.owner == "whilp", "owner should be whilp")
   assert(opts.repo == "world", "repo should be world")
   assert(opts.pr_number == 283, "pr_number should be 283")
   assert(opts.json == false, "json should be false")
 
-  opts = pr_comments.parse_args({"whilp", "world", "283", "json"})
+  opts = pr_comments.parse_args({"-o", "whilp", "-r", "world", "-p", "283", "--json"})
+  assert(opts.owner == "whilp", "owner should be whilp")
   assert(opts.json == true, "json should be true")
 
-  opts = pr_comments.parse_args({"https://github.com/foo/bar/pull/42"})
+  opts = pr_comments.parse_args({"--url", "https://github.com/foo/bar/pull/42"})
   assert(opts.owner == "foo", "owner should be foo")
   assert(opts.repo == "bar", "repo should be bar")
   assert(opts.pr_number == 42, "pr_number should be 42")
