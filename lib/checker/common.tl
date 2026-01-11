@@ -1,12 +1,38 @@
--- teal ignore: type annotations needed
-
 local MAX_CONSOLE_LINES = 10
 
-local function truncate_lines(text, max_lines)
+local record CheckResult
+  status: string
+  message: string
+  name: string
+  checker: string
+  stdout: string
+  stderr: string
+end
+
+local record CheckPatterns
+  shebangs: {string: boolean}
+  ignore: string
+end
+
+local record CategorizedResults
+  pass: {CheckResult}
+  fail: {CheckResult}
+  skip: {CheckResult}
+  ignore: {CheckResult}
+end
+
+local record StatusIcons
+  pass: string
+  fail: string
+  skip: string
+  ignore: string
+end
+
+local function truncate_lines(text: string, max_lines: integer): string
   if not text or text == "" then
     return text
   end
-  local lines = {}
+  local lines: {string} = {}
   local count = 0
   for line in text:gmatch("[^\n]*") do
     count = count + 1
@@ -20,8 +46,8 @@ local function truncate_lines(text, max_lines)
   return table.concat(lines, "\n")
 end
 
-local function format_output(status, message, stdout, stderr, truncate)
-  local lines = {}
+local function format_output(status: string, message: string, stdout: string, stderr: string, truncate: boolean): string
+  local lines: {string} = {}
   if message and message ~= "" then
     table.insert(lines, status .. ": " .. message)
   else
@@ -37,15 +63,15 @@ local function format_output(status, message, stdout, stderr, truncate)
   return table.concat(lines, "\n")
 end
 
-local function write_result(status, message, stdout, stderr, source)
+local function write_result(status: string, message: string, stdout: string, stderr: string, _source: string): integer
   -- write full output to stdout for capture
   local output = format_output(status, message, stdout, stderr, false)
   io.write(output)
   return 0
 end
 
-local function parse_result(content)
-  local result = {}
+local function parse_result(content: string): CheckResult
+  local result: CheckResult = {}
 
   local first_line = content:match("^([^\n]+)")
   if not first_line then
@@ -62,7 +88,7 @@ local function parse_result(content)
   return result
 end
 
-local function strip_prefix(filepath)
+local function strip_prefix(filepath: string): string
   local prefix = os.getenv("TEST_O")
   if not prefix then
     return filepath
@@ -74,7 +100,7 @@ local function strip_prefix(filepath)
   return filepath
 end
 
-local function status_icons()
+local function status_icons(): StatusIcons
   return {
     pass = "✓",
     fail = "✗",
@@ -83,7 +109,7 @@ local function status_icons()
   }
 end
 
-local function has_extension(file, extensions)
+local function has_extension(file: string, extensions: {string: boolean}): boolean
   for ext in pairs(extensions) do
     if file:sub(-#ext) == ext then
       return true
@@ -92,7 +118,7 @@ local function has_extension(file, extensions)
   return false
 end
 
-local function check_first_lines(file, patterns)
+local function check_first_lines(file: string, patterns: CheckPatterns): boolean, string
   local f = io.open(file, "r")
   if not f then
     return nil, nil
@@ -130,11 +156,11 @@ end
 
 local CHECKER_WIDTH = 8  -- width of longest checker name (ast-grep)
 
-local function format_results(all_results, icons)
-  local lines = {}
+local function format_results(all_results: {CheckResult}, icons: StatusIcons): string
+  local lines: {string} = {}
   for _, result in ipairs(all_results) do
     local status = string.upper(result.status)
-    local icon = icons[result.status] or " "
+    local icon = (icons as {string: string})[result.status] or " "
     local checker = result.checker or ""
     local line = string.format("%s %-6s %-" .. CHECKER_WIDTH .. "s %s",
       icon, status, checker, result.name)
@@ -146,7 +172,7 @@ local function format_results(all_results, icons)
   return table.concat(lines, "\n")
 end
 
-local function format_summary(checker_name, results)
+local function format_summary(checker_name: string, results: CategorizedResults): string
   local total = #results.pass + #results.fail + #results.skip + #results.ignore
   if total == 0 then
     return ""
@@ -163,7 +189,7 @@ local function format_summary(checker_name, results)
   )
 end
 
-local function format_failures(all_results)
+local function format_failures(all_results: {CheckResult}): string
   local has_failures = false
   for _, result in ipairs(all_results) do
     if result.status == "fail" then
@@ -176,7 +202,7 @@ local function format_failures(all_results)
     return nil
   end
 
-  local lines = {"", "FAILURES:"}
+  local lines: {string} = {"", "FAILURES:"}
   for _, result in ipairs(all_results) do
     if result.status == "fail" then
       table.insert(lines, "")
@@ -206,8 +232,8 @@ local function format_failures(all_results)
   return table.concat(lines, "\n")
 end
 
-local function categorize_results(results_list)
-  local results = {
+local function categorize_results(results_list: {CheckResult}): CategorizedResults
+  local results: CategorizedResults = {
     pass = {},
     fail = {},
     skip = {},
@@ -216,8 +242,8 @@ local function categorize_results(results_list)
 
   for _, result in ipairs(results_list) do
     local status = result.status
-    if results[status] then
-      table.insert(results[status], result)
+    if (results as {string: {CheckResult}})[status] then
+      table.insert((results as {string: {CheckResult}})[status], result)
     end
   end
 

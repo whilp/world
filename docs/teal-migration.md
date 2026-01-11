@@ -43,29 +43,37 @@ Create the type infrastructure needed for migration.
 
 3. Updated `run-teal.lua` to pass `-I lib/types` to tl check
 
-#### PR 1.2: Build system support for .tl files
+#### PR 1.2: Build system support for .tl files ✓
 
-1. Add `tl gen` compilation step to build pipeline
-2. Update module cook.mk pattern to handle both `.lua` and `.tl` sources
-3. Ensure `.tl` files compile to `.lua` in `o/` directory
-4. Update release target to use compiled lua
+**Status: DONE** (completed as part of PR 2.1)
+
+1. Added `tl gen` compilation step via pattern rule `o/teal/lib/%.lua: lib/%.tl`
+2. Updated module cook.mk patterns to handle both `.lua` and `.tl` sources
+3. `.tl` files compile to `o/teal/lib/` directory via `tl gen -o`
+4. Added `o/teal/lib` to `LUA_PATH` for runtime module resolution
+
+#### PR 1.3: Add ast-grep support for .tl files
+
+Currently ast-grep ignores `.tl` files as "unsupported file type". Since teal syntax is lua with type annotations, ast-grep's lua parser should work for most lint rules.
+
+1. Update `run-astgrep.lua` to recognize `.tl` extension
+2. Test that existing lua rules work on teal files
+3. Add any teal-specific rules if needed (e.g., flag `any` type usage)
 
 ### Phase 2: Core modules
 
 Migrate foundational modules that other code depends on.
 
-#### PR 2.1: Migrate lib/checker/common.lua
+#### PR 2.1: Migrate lib/checker/common.lua ✓
 
-- Small, well-defined module (239 lines)
-- Used by all checker scripts
-- Good test of the migration workflow
+**Status: DONE**
 
-Steps:
-1. Remove `-- teal ignore` comment
-2. Rename `lib/checker/common.lua` → `lib/checker/common.tl`
-3. Add type annotations
-4. Update cook.mk to compile it
-5. Verify tests pass
+- Converted `lib/checker/common.lua` to `lib/checker/common.tl` with full type annotations
+- Defined record types: `CheckResult`, `CheckPatterns`, `CategorizedResults`, `StatusIcons`
+- Updated `lib/checker/cook.mk` to compile `.tl` files to `o/teal/lib/`
+- Added `o/teal/lib` to `LUA_PATH` in Makefile for compiled module resolution
+- Added `checker_files` as dependency to teal checker rule
+- Added pattern rule for `o/teal/lib/%.lua` compilation via `tl gen -o`
 
 #### PR 2.2: Migrate standalone library files
 
