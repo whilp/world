@@ -1,19 +1,89 @@
 local path = require("cosmo.path")
 
-local M = {
+-- Record type for work item metadata
+local record WorkItemMeta
+  source: string
+  kind: string
+end
+
+-- Record type for work items
+local record WorkItem
+  id: string
+  title: string
+  created: string
+  blocks: {string}
+  completed: string
+  started: string
+  description: string
+  due: string
+  priority: number
+  log: {string:string}
+  _meta: WorkItemMeta
+end
+
+-- Record type for the work store
+local record WorkStore
+  items: {string:WorkItem}
+end
+
+-- Record type for dangerous pattern checks
+local record DangerousPattern
+  pattern: string
+  desc: string
+end
+
+-- Record type for render options
+local record RenderOpts
+  format: string
+  exclude: {string}
+  indent: string
+end
+
+-- Callback type for work item handlers
+local type WorkCallback = function(item: WorkItem)
+
+-- Record type for kind callbacks
+local type WorkKinds = {string:WorkCallback}
+
+local record M
+  _lock_handle: number
+  _lock_path: string
+
+  validate_string_content: function(str: string, field_name: string): boolean, string
+  validate: function(item: WorkItem): boolean, string
+  load_file: function(file_path: string, store: WorkStore, kinds?: WorkKinds): boolean, string
+  clean: function(item: WorkItem): WorkItem
+  render: function(data: {string:any}, opts?: RenderOpts): string
+  write: function(item: WorkItem, callback_name?: string): string
+  get: function(store: WorkStore, id: string): WorkItem
+  get_all: function(store: WorkStore): {WorkItem}
+  get_by_file: function(store: WorkStore, source: string): {WorkItem}
+  acquire_lock: function(dir: string): boolean, string
+  release_lock: function(): boolean, string
+  load_all: function(store: WorkStore, dir: string): boolean, string
+  save: function(item: WorkItem, dir: string): boolean, string
+  list_backups: function(dir: string): {string}
+  restore_backup: function(backup_path: string): boolean, string
+  delete: function(item: WorkItem, dir?: string): boolean, string
+  generate_id: function(): string
+  resolve_id: function(store: WorkStore, short_id: string): string, string
+  add_log: function(item: WorkItem, message: string, timestamp?: string): WorkItem
+  mark_done: function(item: WorkItem, timestamp?: string): WorkItem
+  mark_started: function(item: WorkItem, timestamp?: string): WorkItem
+end
+
+local data: M = {
   _lock_handle = nil,
   _lock_path = nil,
 }
 
 -- Validate string content for dangerous lua patterns
--- Returns: ok, err
-M.validate_string_content = function(str, field_name)
+data.validate_string_content = function(str: string, field_name: string): boolean, string
   if type(str) ~= "string" then
     return nil, string.format("field '%s' must be string, got %s", field_name, type(str))
   end
 
-  -- Check for patterns that could break lua serialization
-  local dangerous_patterns = {
+  local dangerous_patterns: {DangerousPattern} = {
     { pattern = "]]", desc = "breaks long string delimiters" },
     { pattern = "%-%-%[%[", desc = "creates multiline comment" },
     { pattern = "%-%-%[=", desc = "creates multiline comment with level" },
@@ -37,9 +107,8 @@ M.validate_string_content = function(str, field_name)
 end
 
 -- Validate item schema
--- Returns: ok, err
-M.validate = function(item)
-  local function type_check(value, expected_type, field_name)
+data.validate = function(item: WorkItem): boolean, string
+  local function type_check(value: any, expected_type: string, field_name: string): boolean, string
     local actual_type = type(value)
     if actual_type ~= expected_type then
       return nil, string.format("field '%s' must be %s, got %s", field_name, expected_type, actual_type)
@@ -58,7 +127,7 @@ M.validate = function(item)
   end
   ok, err = type_check(item.title, "string", "title")
   if not ok then return nil, err end
-  ok, err = M.validate_string_content(item.title, "title")
+  ok, err = data.validate_string_content(item.title, "title")
   if not ok then return nil, err end
 
   if item.created then
@@ -88,7 +157,7 @@ M.validate = function(item)
     if type(item.description) ~= "string" then
       return nil, string.format("field 'description' must be string, got %s", type(item.description))
     end
-    ok, err = M.validate_string_content(item.description, "description")
+    ok, err = data.validate_string_content(item.description, "description")
     if not ok then return nil, err end
   end
 
@@ -110,7 +179,7 @@ M.validate = function(item)
       if type(message) ~= "string" then
         return nil, string.format("log['%s'] must be string, got %s", timestamp, type(message))
       end
-      ok, err = M.validate_string_content(message, string.format("log['%s']", timestamp))
+      ok, err = data.validate_string_content(message, string.format("log['%s']", timestamp))
       if not ok then return nil, err end
     end
   end
@@ -119,11 +188,11 @@ M.validate = function(item)
 end
 
 -- Create default Work{} callback that adds items to a specific items table
-local function make_work_callback(items_table)
-  return function(item)
+local function make_work_callback(items_table: {string:WorkItem}): WorkCallback
+  return function(item: WorkItem)
     local source = item._meta and item._meta.source or "unknown"
 
-    local ok, err = M.validate(item)
+    local ok, err = data.validate(item)
     if not ok then
       error("item validation failed in " .. source .. ": " .. err)
     end
@@ -139,20 +208,18 @@ local function make_work_callback(items_table)
 end
 
 -- Load and execute lua file with Work{} callbacks
--- Signature: M.load_file(file_path, store, kinds)
--- Returns: ok, err
-M.load_file = function(file_path, store, kinds)
-  local env = kinds or {}
+data.load_file = function(file_path: string, store: WorkStore, kinds?: WorkKinds): boolean, string
+  local env: WorkKinds = kinds or {}
 
   if not env.Work then
     env.Work = make_work_callback(store.items)
   end
 
-  local wrapped_env = {}
+  local wrapped_env: {string:WorkCallback} = {}
   for kind_name, callback in pairs(env) do
-    wrapped_env[kind_name] = function(item)
+    wrapped_env[kind_name] = function(item: WorkItem)
       if not item._meta then
-        item._meta = {}
+        item._meta = {} as WorkItemMeta
       end
       item._meta.source = debug.getinfo(2, "S").source:sub(2)
       item._meta.kind = kind_name
@@ -160,37 +227,35 @@ M.load_file = function(file_path, store, kinds)
     end
   end
 
-  local loader, err = loadfile(file_path, "t", wrapped_env)
+  local loader, err = loadfile(file_path, "t", wrapped_env as {string:any})
   if not loader then
     return false, err
   end
 
   local ok, load_err = pcall(loader)
 
-  return ok, load_err
+  return ok, load_err as string
 end
 
 -- Clean internal fields (_meta, _computed)
--- Returns: clean_item
-M.clean = function(item)
-  local clean = {}
-  for k, v in pairs(item) do
+data.clean = function(item: WorkItem): WorkItem
+  local clean: WorkItem = {} as WorkItem
+  for k, v in pairs(item as {string:any}) do
     if not k:match("^_") then
-      clean[k] = v
+      (clean as {string:any})[k] = v
     end
   end
   return clean
 end
 
 -- Render data structure to lua format
--- Returns: string
-M.render = function(data, opts)
-  opts = opts or {}
+data.render = function(input_data: {string:any}, opts?: RenderOpts): string
+  opts = opts or {} as RenderOpts
   local format = opts.format or "serpent"
   local exclude = opts.exclude or {}
 
-  local filtered = {}
-  for k, v in pairs(data) do
+  local filtered: {string:any} = {}
+  for k, v in pairs(input_data) do
     local skip = false
     for _, excl in ipairs(exclude) do
       if k == excl then
@@ -216,42 +281,35 @@ M.render = function(data, opts)
 end
 
 -- Serialize item to Work{} format
--- Returns: string
-M.write = function(item, callback_name)
+data.write = function(item: WorkItem, callback_name?: string): string
   callback_name = callback_name or (item._meta and item._meta.kind) or "Work"
 
-  local clean = M.clean(item)
-  local rendered = M.render(clean)
+  local clean = data.clean(item)
+  local rendered = data.render(clean as {string:any})
   rendered = rendered:gsub("^return ", callback_name)
   return rendered
 end
 
 -- Get item by full ID
--- Signature: M.get(store, id)
--- Returns: item or nil
-M.get = function(store, id)
+data.get = function(store: WorkStore, id: string): WorkItem
   return store.items[id]
 end
 
 -- Get all items sorted by created date
--- Signature: M.get_all(store)
--- Returns: array of items
-M.get_all = function(store)
-  local all = {}
+data.get_all = function(store: WorkStore): {WorkItem}
+  local all: {WorkItem} = {}
   for _, item in pairs(store.items) do
     table.insert(all, item)
   end
-  table.sort(all, function(a, b)
+  table.sort(all, function(a: WorkItem, b: WorkItem): boolean
     return (a.created or "") < (b.created or "")
   end)
   return all
 end
 
 -- Get items from specific file
--- Signature: M.get_by_file(store, source)
--- Returns: array of items
-M.get_by_file = function(store, source)
-  local items = {}
+data.get_by_file = function(store: WorkStore, source: string): {WorkItem}
+  local items: {WorkItem} = {}
   for _, item in pairs(store.items) do
     if item._meta and item._meta.source == source then
       table.insert(items, item)
@@ -261,7 +319,7 @@ M.get_by_file = function(store, source)
 end
 
 -- Ensure data directory exists
-local function ensure_data_dir(dir)
+local function ensure_data_dir(dir: string): boolean, string
   local posix = require("posix")
   local _, err = posix.mkdir(dir)
   if err and not err:match("File exists") then
@@ -271,8 +329,7 @@ local function ensure_data_dir(dir)
 end
 
 -- Acquire exclusive lock on data directory
--- Returns: ok, err
-M.acquire_lock = function(dir)
+data.acquire_lock = function(dir: string): boolean, string
   local ok, err = ensure_data_dir(dir)
   if not ok then
     return nil, err
@@ -282,7 +339,7 @@ M.acquire_lock = function(dir)
   local lock_path = path.join(dir, ".work.lock")
 
   -- Open or create lock file
-  local fd
+  local fd: number
   fd, err = fcntl.open(lock_path, fcntl.O_CREAT + fcntl.O_RDWR, tonumber("0600", 8))
   if not fd then
     return nil, "failed to open lock file: " .. tostring(err)
@@ -304,33 +361,30 @@ M.acquire_lock = function(dir)
   end
 
   -- Store lock handle and path for cleanup
-  M._lock_handle = fd
-  M._lock_path = lock_path
+  data._lock_handle = fd
+  data._lock_path = lock_path
 
   return true
 end
 
 -- Release lock
--- Returns: ok, err
-M.release_lock = function()
-  if not M._lock_handle then
+data.release_lock = function(): boolean, string
+  if not data._lock_handle then
     return true
   end
 
   local unistd = require("posix.unistd")
 
   -- Release lock by closing file descriptor
-  unistd.close(M._lock_handle)
-  M._lock_handle = nil
-  M._lock_path = nil
+  unistd.close(data._lock_handle)
+  data._lock_handle = nil
+  data._lock_path = nil
 
   return true
 end
 
 -- Load all work items from directory
--- Signature: M.load_all(store, dir)
--- Returns: ok, err
-M.load_all = function(store, dir)
+data.load_all = function(store: WorkStore, dir: string): boolean, string
   local ok, err = ensure_data_dir(dir)
   if not ok then
     return nil, err
@@ -345,7 +399,7 @@ M.load_all = function(store, dir)
   end
 
   for _, file in ipairs(files) do
-    ok, err = M.load_file(file, store)
+    ok, err = data.load_file(file, store)
     if not ok then
       return nil, "failed to load " .. file .. ": " .. tostring(err)
     end
@@ -355,7 +409,7 @@ end
 
 -- Signal handling for cleanup
 local signal = require("posix.signal")
-local cleanup_registry = {}
+local cleanup_registry: {string} = {}
 
 local function cleanup_temp_files()
   for _, temp_path in ipairs(cleanup_registry) do
@@ -366,9 +420,9 @@ local function cleanup_temp_files()
 end
 
 local function setup_signal_handlers()
-  local handler = function(signum)
+  local handler = function(signum: number)
     cleanup_temp_files()
-    os.exit(128 + signum)
+    os.exit(128 + signum as integer)
   end
   signal.signal(signal.SIGINT, handler)
   signal.signal(signal.SIGTERM, handler)
@@ -377,23 +431,22 @@ end
 setup_signal_handlers()
 
 -- Save item (validates, atomic write)
--- Returns: ok, err
-M.save = function(item, dir)
+data.save = function(item: WorkItem, dir: string): boolean, string
   -- Acquire lock
-  local ok, err = M.acquire_lock(dir)
+  local ok, err = data.acquire_lock(dir)
   if not ok then
     return nil, err
   end
 
   ok, err = ensure_data_dir(dir)
   if not ok then
-    M.release_lock()
+    data.release_lock()
     return nil, err
   end
 
-  ok, err = M.validate(item)
+  ok, err = data.validate(item)
   if not ok then
-    M.release_lock()
+    data.release_lock()
     return nil, err
   end
 
@@ -411,7 +464,7 @@ M.save = function(item, dir)
 
     local backup_file = io.open(backup_path, "w")
     if not backup_file then
-      M.release_lock()
+      data.release_lock()
       return nil, "failed to create backup file: " .. backup_path
     end
     backup_file:write(content)
@@ -421,9 +474,11 @@ M.save = function(item, dir)
   -- Atomic write pattern: temp file in same directory for atomic rename
   local unistd = require("posix.unistd")
   local stdlib = require("posix.stdlib")
-  local fd, temp = stdlib.mkstemp(source .. ".tmp.XXXXXX")
+  local fd: number
+  local temp: string
+  fd, temp = stdlib.mkstemp(source .. ".tmp.XXXXXX")
   if not fd then
-    M.release_lock()
+    data.release_lock()
     return nil, "failed to create temp file: " .. tostring(temp)
   end
   unistd.close(fd)  -- close fd, reopen with io.open for simpler API
@@ -434,17 +489,17 @@ M.save = function(item, dir)
   local f = io.open(temp, "w")
   if not f then
     cleanup_registry[#cleanup_registry] = nil  -- remove from registry
-    M.release_lock()
+    data.release_lock()
     return nil, "failed to open temp file for writing: " .. temp
   end
-  f:write(M.write(item))
+  f:write(data.write(item))
   f:close()
 
   ok, err = os.rename(temp, source)
   if not ok then
     os.remove(temp)  -- cleanup on failure
     cleanup_registry[#cleanup_registry] = nil  -- remove from registry
-    M.release_lock()
+    data.release_lock()
     return nil, "failed to rename temp file: " .. tostring(err)
   end
 
@@ -457,13 +512,12 @@ M.save = function(item, dir)
   end
 
   -- Release lock
-  M.release_lock()
+  data.release_lock()
   return true
 end
 
 -- List all backup files in directory
--- Returns: array of backup file paths
-M.list_backups = function(dir)
+data.list_backups = function(dir: string): {string}
   local glob = require("posix.glob")
   local pattern = path.join(dir, "*.lua.bak")
   local files = glob.glob(pattern, 0)
@@ -471,8 +525,7 @@ M.list_backups = function(dir)
 end
 
 -- Restore backup file to original
--- Returns: ok, err
-M.restore_backup = function(backup_path)
+data.restore_backup = function(backup_path: string): boolean, string
   if not backup_path:match("%.bak$") then
     return nil, "backup path must end with .bak"
   end
@@ -488,8 +541,7 @@ M.restore_backup = function(backup_path)
 end
 
 -- Delete item file
--- Returns: ok, err
-M.delete = function(item, dir)
+data.delete = function(item: WorkItem, dir?: string): boolean, string
   local source = item._meta and item._meta.source
   if not source then
     return true
@@ -503,32 +555,29 @@ M.delete = function(item, dir)
   end
 
   -- Acquire lock
-  local ok, err = M.acquire_lock(dir)
+  local ok, err = data.acquire_lock(dir)
   if not ok then
     return nil, err
   end
 
   ok = os.remove(source)
   if not ok then
-    M.release_lock()
+    data.release_lock()
     return nil, "failed to remove file: " .. source
   end
 
-  M.release_lock()
+  data.release_lock()
   return true
 end
 
 -- Generate new ULID
--- Returns: id
-M.generate_id = function()
+data.generate_id = function(): string
   local ulid = require("ulid")
   return ulid.generate()
 end
 
 -- Resolve short ID to full ID
--- Signature: M.resolve_id(store, short_id)
--- Returns: full_id, err
-M.resolve_id = function(store, short_id)
+data.resolve_id = function(store: WorkStore, short_id: string): string, string
   -- Validate input
   if not short_id or short_id == "" then
     return nil, "id cannot be empty"
@@ -543,7 +592,7 @@ M.resolve_id = function(store, short_id)
   end
 
   -- Find all items that match the prefix or suffix
-  local matches = {}
+  local matches: {string} = {}
   for id, _ in pairs(store.items) do
     if id:sub(1, #normalized) == normalized or id:sub(-#normalized) == normalized then
       table.insert(matches, id)
@@ -560,28 +609,25 @@ M.resolve_id = function(store, short_id)
 end
 
 -- Add log entry to item with timestamp
--- Returns: item (mutated)
-M.add_log = function(item, message, timestamp)
-  timestamp = timestamp or os.date("%Y-%m-%dT%H:%M:%S")
+data.add_log = function(item: WorkItem, message: string, timestamp?: string): WorkItem
+  timestamp = timestamp or os.date("%Y-%m-%dT%H:%M:%S") as string
   item.log = item.log or {}
   item.log[timestamp] = message
   return item
 end
 
 -- Mark item as complete with timestamp
--- Returns: item (mutated)
-M.mark_done = function(item, timestamp)
-  timestamp = timestamp or os.date("!%Y-%m-%dT%H:%M:%S")
+data.mark_done = function(item: WorkItem, timestamp?: string): WorkItem
+  timestamp = timestamp or os.date("!%Y-%m-%dT%H:%M:%S") as string
   item.completed = timestamp
   return item
 end
 
 -- Mark item as started with timestamp
--- Returns: item (mutated)
-M.mark_started = function(item, timestamp)
-  timestamp = timestamp or os.date("!%Y-%m-%dT%H:%M:%S")
+data.mark_started = function(item: WorkItem, timestamp?: string): WorkItem
+  timestamp = timestamp or os.date("!%Y-%m-%dT%H:%M:%S") as string
   item.started = timestamp
   return item
 end
 
-return M
+return data

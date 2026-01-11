@@ -1,7 +1,32 @@
 -- Configuration and path discovery for work system
-local M = {}
 
-M.defaults = {
+local posix_glob = require("posix.glob")
+
+-- Record type for configuration defaults
+local record Defaults
+  search_patterns: {string}
+end
+
+-- Record type for configuration
+local record Config
+  data_dir: string
+end
+
+-- Record type for configuration overrides
+local record ConfigOverrides
+  data_dir: string
+  search_patterns: {string}
+end
+
+local record M
+  defaults: Defaults
+  find_data_dir: function(patterns?: {string}): string, string
+  get: function(overrides?: ConfigOverrides): Config
+end
+
+local config: M = {}
+
+config.defaults = {
   search_patterns = {
     "~/*/*/work",      -- matches ~/foo/progress/work
     "~/progress/work", -- direct path fallback
@@ -10,10 +35,9 @@ M.defaults = {
 
 -- Find work data directory using glob patterns
 -- Returns: path, err
-M.find_data_dir = function(patterns)
-  patterns = patterns or M.defaults.search_patterns
+config.find_data_dir = function(patterns?: {string}): string, string
+  patterns = patterns or config.defaults.search_patterns
 
-  local posix_glob = require("posix.glob")
   local home = os.getenv("HOME")
 
   for _, pattern in ipairs(patterns) do
@@ -28,7 +52,7 @@ M.find_data_dir = function(patterns)
   end
 
   -- If nothing found, return error with attempted patterns
-  local tried = {}
+  local tried: {string} = {}
   for _, pattern in ipairs(patterns) do
     table.insert(tried, pattern)
   end
@@ -37,23 +61,23 @@ end
 
 -- Get configuration with optional overrides
 -- Returns: config table
-M.get = function(overrides)
-  overrides = overrides or {}
+config.get = function(overrides?: ConfigOverrides): Config
+  overrides = overrides or {} as ConfigOverrides
 
-  local config = {}
+  local cfg: Config = {} as Config
 
   -- Use explicit data_dir if provided
   if overrides.data_dir then
-    config.data_dir = overrides.data_dir
+    cfg.data_dir = overrides.data_dir
   else
-    local dir, err = M.find_data_dir(overrides.search_patterns)
+    local dir, err = config.find_data_dir(overrides.search_patterns)
     if not dir then
       error(err)
     end
-    config.data_dir = dir
+    cfg.data_dir = dir
   end
 
-  return config
+  return cfg
 end
 
-return M
+return config

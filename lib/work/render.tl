@@ -1,17 +1,74 @@
-local M = {}
-
--- Helper: get work library for date functions
 local work = require("work.process")
+
+-- Computed fields added to enriched items
+local record ComputedFields
+  short_id: string
+  resolved_due: string
+  relative_due: string
+  is_blocked: boolean
+  unresolved_blocks: {string}
+  dependent_count: number
+end
+
+-- Work item with computed fields for rendering
+local record EnrichedItem
+  id: string
+  title: string
+  created: string
+  blocks: {string}
+  completed: string
+  started: string
+  description: string
+  due: string
+  priority: number
+  log: {string:string}
+  _computed: ComputedFields
+end
+
+-- Tree structure for hierarchical rendering
+local record TreeData
+  roots: {EnrichedItem}
+  children: {string:{EnrichedItem}}
+end
+
+-- Options for render_items_list helper
+local record RenderItemsListOpts
+  empty_message: string
+  show_priority: boolean
+  show_blocks: boolean
+  status_override: string
+end
+
+-- Options for list/tree/detail functions
+local record RenderOpts
+  -- Reserved for future use
+end
+
+local record M
+  status_mark: function(item: EnrichedItem): string
+  short_id: function(item: EnrichedItem): string
+  due_display: function(item: EnrichedItem): string
+  priority_badge: function(item: EnrichedItem): string
+  blocks_info: function(item: EnrichedItem): string
+  list: function(items: {EnrichedItem}, opts?: RenderOpts): string
+  tree: function(tree_data: TreeData, opts?: RenderOpts): string
+  detail: function(item: EnrichedItem, opts?: RenderOpts): string
+  json: function(data: {string:any}): string
+  ready: function(items: {EnrichedItem}, opts?: RenderOpts): string
+  blocked: function(items: {EnrichedItem}, opts?: RenderOpts): string
+end
+
+local M: M = {}
 
 -- Component functions (building blocks)
 
 -- Returns: "○" for incomplete, "◉" for completed
-M.status_mark = function(item)
+M.status_mark = function(item: EnrichedItem): string
   return item.completed and "◉" or "○"
 end
 
 -- Returns: last 6 chars from item._computed.short_id or item.id (lowercase)
-M.short_id = function(item)
+M.short_id = function(item: EnrichedItem): string
   if item._computed and item._computed.short_id then
     return item._computed.short_id:lower()
   end
@@ -19,7 +76,7 @@ M.short_id = function(item)
 end
 
 -- Returns: 5-char string like "+3w ", " +3d ", "  ?  ", or "     "
-M.due_display = function(item)
+M.due_display = function(item: EnrichedItem): string
   -- Use pre-computed resolved_due from enriched item
   local resolved_due = item._computed and item._computed.resolved_due
   if resolved_due then
@@ -37,7 +94,7 @@ M.due_display = function(item)
 end
 
 -- Returns: " [p1]" or ""
-M.priority_badge = function(item)
+M.priority_badge = function(item: EnrichedItem): string
   if item.priority and item.priority ~= 0 then
     return string.format(" [p%d]", item.priority)
   end
@@ -45,11 +102,11 @@ M.priority_badge = function(item)
 end
 
 -- Returns: " (blocks: X, Y)" or ""
-M.blocks_info = function(item)
+M.blocks_info = function(item: EnrichedItem): string
   if not item.blocks or #item.blocks == 0 then
     return ""
   end
-  local short_blocks = {}
+  local short_blocks: {string} = {}
   for _, block_id in ipairs(item.blocks) do
     table.insert(short_blocks, block_id:sub(-6):lower())
   end
@@ -62,12 +119,12 @@ end
 -- Example:
 -- ○ 2F2J: title (blocks: X, Y)
 -- ◉ 3K4M: completed task
-M.list = function(items, _opts)
+M.list = function(items: {EnrichedItem}, _opts: RenderOpts): string
   if #items == 0 then
     return "no work items"
   end
 
-  local lines = {}
+  local lines: {string} = {}
   for _, item in ipairs(items) do
     local line = string.format("%s %s: %s%s",
       M.status_mark(item),
@@ -87,7 +144,7 @@ end
 -- ◉ 6M7P      completed root
 --
 -- tree_data format: {roots = array, children = map}
-M.tree = function(tree_data, _opts)
+M.tree = function(tree_data: TreeData, _opts: RenderOpts): string
   local roots = tree_data.roots or {}
   local children = tree_data.children or {}
 
@@ -95,9 +152,9 @@ M.tree = function(tree_data, _opts)
     return "no work items"
   end
 
-  local lines = {}
+  local lines: {string} = {}
 
-  local function print_tree(item, indent)
+  local function print_tree(item: EnrichedItem, indent: string)
     local line = string.format("%s%s %s %s%s",
       indent,
       M.status_mark(item),
@@ -134,8 +191,8 @@ end
 -- log:
 --   2025-11-30T10:00:00: message 1
 --   2025-11-30T14:00:00: message 2
-M.detail = function(item, _opts)
-  local lines = {}
+M.detail = function(item: EnrichedItem, _opts: RenderOpts): string
+  local lines: {string} = {}
 
   table.insert(lines, "id: " .. item.id:lower())
   table.insert(lines, "title: " .. item.title)
@@ -180,7 +237,7 @@ M.detail = function(item, _opts)
   end
 
   if item.blocks and #item.blocks > 0 then
-    local lowercase_blocks = {}
+    local lowercase_blocks: {string} = {}
     for _, block_id in ipairs(item.blocks) do
       table.insert(lowercase_blocks, block_id:lower())
     end
@@ -189,7 +246,7 @@ M.detail = function(item, _opts)
 
   if item.log then
     table.insert(lines, "log:")
-    local timestamps = {}
+    local timestamps: {string} = {}
     for ts in pairs(item.log) do
       table.insert(timestamps, ts)
     end
@@ -204,7 +261,7 @@ end
 
 -- Returns: JSON string
 -- Input should already be cleaned (no _meta, no _computed)
-M.json = function(data)
+M.json = function(data: {string:any}): string
   local cosmo = require("cosmo")
   return cosmo.EncodeJson(data, { pretty = true })
 end
@@ -215,18 +272,18 @@ end
 --   show_priority: show priority badge
 --   show_blocks: show blocking dependencies
 --   status_override: override status mark (e.g., "⊗" for blocked)
-local function render_items_list(items, opts)
-  opts = opts or {}
+local function render_items_list(items: {EnrichedItem}, opts: RenderItemsListOpts): string
+  opts = opts or {} as RenderItemsListOpts
 
   if #items == 0 then
     return opts.empty_message or "no items"
   end
 
-  local lines = {}
+  local lines: {string} = {}
   for _, item in ipairs(items) do
     local status = opts.status_override or M.status_mark(item)
 
-    local blockers
+    local blockers: string
     if opts.show_blocks and item._computed and item._computed.unresolved_blocks then
       local block_count = #item._computed.unresolved_blocks
       blockers = string.format("%2d↓ ", block_count)
@@ -257,12 +314,12 @@ end
 -- ○ 4K5N      task with no due
 --
 -- Note: Uses ○ to indicate ready/unblocked status
-M.ready = function(items, _opts)
+M.ready = function(items: {EnrichedItem}, _opts: RenderOpts): string
   return render_items_list(items, {
     empty_message = "no ready items",
     show_priority = true,
     show_blocks = false,
-  })
+  } as RenderItemsListOpts)
 end
 
 -- Returns: multi-line string in blocked format
@@ -271,13 +328,13 @@ end
 --
 -- Note: Uses ⊗ to indicate blocked status, N↓ shows blocker count
 -- Expects enriched items with _computed.unresolved_blocks
-M.blocked = function(items, _opts)
+M.blocked = function(items: {EnrichedItem}, _opts: RenderOpts): string
   return render_items_list(items, {
     empty_message = "no blocked items",
     show_priority = false,
     show_blocks = true,
     status_override = "⊗",
-  })
+  } as RenderItemsListOpts)
 end
 
 return M
