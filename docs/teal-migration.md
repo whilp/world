@@ -299,21 +299,50 @@ Updated Makefile with vpath for .tl files and pattern rule for compiling to o/bi
 
 ### Phase 6: Tests
 
-#### PR 6.1: Decide on test migration strategy
+#### PR 6.1: Migrate test files to teal
 
+Migrate all test files to teal for full type coverage:
+- `lib/*/test_*.lua` files
+- `3p/*/test_*.lua` files
+
+This provides:
+- Type checking of test assertions
+- Catch type mismatches between tests and implementations
+- Documentation of expected types
+
+#### PR 6.2: Migrate test utilities
+
+- `lib/test/run-test.lua` - test runner
+- `3p/tl/test.lua` - teal test helper
+- `3p/luacheck/test.lua` - luacheck test helper
+
+### Phase 7: Bootstrap and cleanup
+
+#### PR 7.1: Migrate lib/build bootstrap files to teal
+
+The 6 lib/build/ .lua files are kept for bootstrap but have corresponding .tl files.
 Options:
-1. Keep tests as lua (faster iteration)
-2. Migrate tests to teal (full type coverage)
-3. Hybrid: type-check tests but keep as lua
+1. Keep both - .lua for bootstrap, .tl for type checking (current state)
+2. Remove .lua files and compile .tl at bootstrap time (requires staged tl)
+3. Pre-compile .tl to .lua and commit the generated files
 
-Recommendation: Start with option 3 (type-check but keep as lua) to get value without churn.
+Recommendation: Option 1 until we have a better bootstrap solution.
 
-### Phase 7: Cleanup
+#### PR 7.2: Remove redundant type declarations
 
-#### PR 7.1: Update documentation
+Once modules have .tl source files, their .d.tl stubs may be redundant:
+- `lib/types/cosmic/*.d.tl` - lib/cosmic/ has .tl files
+- `lib/types/daemonize.d.tl` - lib/daemonize/init.tl exists
+- `lib/types/whereami.d.tl` - lib/whereami/init.tl exists
+- `lib/types/ulid.d.tl` - lib/ulid.tl exists
+
+Test by removing and running `make teal` to verify types resolve correctly.
+
+#### PR 7.3: Update documentation
 
 - Update CLAUDE.md with teal patterns
 - Add type annotation guidelines
+- Document the .tl migration workflow
 
 ## Special considerations
 
