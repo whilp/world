@@ -1,25 +1,31 @@
 #!/usr/bin/env lua
--- teal ignore: type annotations needed
 
 local cosmo = require("cosmo")
-local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local spawn = require("cosmic.spawn")
 local common = require("checker.common")
 
-local supported_extensions = {
+local record Issue
+  line: integer
+  column: integer
+  end_column: integer
+  code: string
+  message: string
+end
+
+local supported_extensions: {string: boolean} = {
   [".lua"] = true,
 }
 
-local supported_patterns = {
+local supported_patterns: common.CheckPatterns = {
   shebangs = {
     ["lua"] = true,
   },
   ignore = "luacheck%s+ignore%s*:?%s*(.*)",
 }
 
-local function parse_plain(stdout)
-  local issues = {}
+local function parse_plain(stdout: string): {Issue}
+  local issues: {Issue} = {}
   for line in (stdout or ""):gmatch("[^\n]+") do
     local _, ln, col, endcol, code, msg = line:match("^(.+):(%d+):(%d+)-(%d+): %(([WE]%d+)%) (.+)$")
     if not ln then
@@ -27,9 +33,9 @@ local function parse_plain(stdout)
     end
     if ln then
       table.insert(issues, {
-        line = tonumber(ln),
-        column = tonumber(col),
-        end_column = endcol and tonumber(endcol),
+        line = tonumber(ln) as integer,
+        column = tonumber(col) as integer,
+        end_column = endcol and tonumber(endcol) as integer,
         code = code,
         message = msg,
       })
@@ -38,8 +44,8 @@ local function parse_plain(stdout)
   return issues
 end
 
-local function format_issues(issues, source)
-  local lines = {}
+local function format_issues(issues: {Issue}, source: string): string
+  local lines: {string} = {}
   for _, issue in ipairs(issues) do
     table.insert(lines, string.format("%s:%d:%d: (%s) %s",
       source,
@@ -52,7 +58,7 @@ local function format_issues(issues, source)
 end
 
 
-local function main(source)
+local function main(source: string): integer, string
   if not source then
     return 1, "usage: run-luacheck.lua <source>"
   end
@@ -67,7 +73,7 @@ local function main(source)
     return common.write_result("skip", skip_reason, "", "")
   end
 
-  local luacheck_bin = path.join(os.getenv("LUACHECK_BIN"), "luacheck")
+  local luacheck_bin = path.join(os.getenv("LUACHECK_BIN") as string, "luacheck")
 
   local source_content = cosmo.Slurp(source)
   local handle = spawn({
@@ -81,7 +87,7 @@ local function main(source)
 
   local _, stdout, _ = handle:read()
 
-  local issues = parse_plain(stdout)
+  local issues = parse_plain(stdout as string)
 
   if #issues > 0 then
     local issue_text = format_issues(issues, source)

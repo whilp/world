@@ -1,27 +1,37 @@
 #!/usr/bin/env lua
--- teal ignore: type annotations needed
 
 local cosmo = require("cosmo")
-local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local spawn = require("cosmic.spawn")
 local common = require("checker.common")
 
-local supported_extensions = {
+local record Issue
+  line: integer
+  column: integer
+  severity: string
+  message: string
+end
+
+local record CheckPatterns
+  shebangs: {string: boolean}
+  ignore: string
+end
+
+local supported_extensions: {string: boolean} = {
   [".lua"] = true,
   [".tl"] = true,
 }
 
-local supported_patterns = {
+local supported_patterns: CheckPatterns = {
   shebangs = {
     ["lua"] = true,
   },
   ignore = "teal%s+ignore%s*:?%s*(.*)",
 }
 
-local function parse_output(stderr)
-  local issues = {}
-  local current_severity = nil
+local function parse_output(stderr: string): {Issue}
+  local issues: {Issue} = {}
+  local current_severity: string = nil
 
   for line in (stderr or ""):gmatch("[^\n]+") do
     if line:match("^%d+ warnings?:$") then
@@ -34,8 +44,8 @@ local function parse_output(stderr)
       local file, ln, col, msg = line:match("^(.+):(%d+):(%d+): (.+)$")
       if ln then
         table.insert(issues, {
-          line = tonumber(ln),
-          column = tonumber(col),
+          line = tonumber(ln) as integer,
+          column = tonumber(col) as integer,
           severity = current_severity,
           message = msg,
         })
@@ -45,8 +55,8 @@ local function parse_output(stderr)
   return issues
 end
 
-local function format_issues(issues, source)
-  local lines = {}
+local function format_issues(issues: {Issue}, source: string): string
+  local lines: {string} = {}
   for _, issue in ipairs(issues) do
     table.insert(lines, string.format("%s:%d:%d: [%s] %s",
       source,
@@ -59,7 +69,7 @@ local function format_issues(issues, source)
 end
 
 
-local function main(source)
+local function main(source: string): integer, string
   if not source then
     return 1, "usage: run-teal.lua <source>"
   end
