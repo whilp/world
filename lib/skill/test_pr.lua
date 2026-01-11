@@ -281,3 +281,123 @@ local function test_do_update_finds_file_without_extension()
   assert(patch_called, "expected PR to be updated (PATCH called)")
 end
 test_do_update_finds_file_without_extension()
+
+--------------------------------------------------------------------------------
+-- get_pr_files_from_branch tests
+--------------------------------------------------------------------------------
+
+local function test_pr_files_from_branch_none()
+  local result = pr.get_pr_files_from_branch({spawn = mock_spawn("")})
+  assert(#result == 0, "expected no files")
+end
+test_pr_files_from_branch_none()
+
+local function test_pr_files_from_branch_one()
+  local result = pr.get_pr_files_from_branch({spawn = mock_spawn(".github/pr/feature.md\n")})
+  assert(#result == 1, "expected one file")
+  assert(result[1] == ".github/pr/feature.md", "expected file path")
+end
+test_pr_files_from_branch_one()
+
+local function test_pr_files_from_branch_multiple()
+  local result = pr.get_pr_files_from_branch({spawn = mock_spawn(".github/pr/a.md\n.github/pr/b.md\n")})
+  assert(#result == 2, "expected two files")
+end
+test_pr_files_from_branch_multiple()
+
+--------------------------------------------------------------------------------
+-- main() fallback to branch file detection
+--------------------------------------------------------------------------------
+
+local function test_main_fallback_to_branch_file()
+  local patch_called = false
+  local mock_fetch = function(url, opts)
+    if opts.method == "GET" then
+      return 200, {}, cosmo.EncodeJson({number = 42, title = "Old", body = "Old body"})
+    else
+      patch_called = true
+      return 200, {}, cosmo.EncodeJson({number = 42})
+    end
+  end
+
+  local original_exists = path.exists
+  local original_slurp = cosmo.Slurp
+  path.exists = function(p)
+    if p:match("auto%-feature%.md$") then return true end
+    return false
+  end
+  cosmo.Slurp = function(p)
+    if p:match("auto%-feature%.md$") then return "# Auto Feature\n\nBody" end
+    return nil
+  end
+
+  local mock_env = {
+    GITHUB_ACTIONS = "true",
+    GITHUB_TOKEN = "token",
+    GITHUB_REPOSITORY = "owner/repo",
+    GITHUB_PR_NUMBER = "42",
+  }
+
+  -- mock spawn to return no trailer but one branch file
+  local spawn_calls = {}
+  local mock_spawn_fn = function(cmd)
+    table.insert(spawn_calls, cmd)
+    -- first call is trailer check, second is branch file check
+    if cmd[#cmd] == ".github/pr/*.md" then
+      return {
+        read = function() return true, ".github/pr/auto-feature.md\n" end,
+        wait = function() return 0 end,
+      }
+    else
+      return {
+        read = function() return true, "abc123\ndef456\n" end,  -- no trailers
+        wait = function() return 0 end,
+      }
+    end
+  end
+
+  local code = pr.main({
+    getenv = function(k) return mock_env[k] end,
+    spawn = mock_spawn_fn,
+    fetch = mock_fetch,
+  })
+
+  path.exists = original_exists
+  cosmo.Slurp = original_slurp
+
+  assert(code == 0, "expected success")
+  assert(patch_called, "expected PR to be updated via fallback")
+end
+test_main_fallback_to_branch_file()
+
+local function test_main_no_fallback_when_multiple_files()
+  local mock_env = {
+    GITHUB_ACTIONS = "true",
+    GITHUB_TOKEN = "token",
+    GITHUB_REPOSITORY = "owner/repo",
+    GITHUB_PR_NUMBER = "42",
+  }
+
+  local mock_spawn_fn = function(cmd)
+    if cmd[#cmd] == ".github/pr/*.md" then
+      return {
+        read = function() return true, ".github/pr/a.md\n.github/pr/b.md\n" end,
+        wait = function() return 0 end,
+      }
+    else
+      return {
+        read = function() return true, "abc123\n" end,  -- no trailers
+        wait = function() return 0 end,
+      }
+    end
+  end
+
+  local code, msg = pr.main({
+    getenv = function(k) return mock_env[k] end,
+    spawn = mock_spawn_fn,
+  })
+
+  assert(code == 0, "expected success (skipped)")
+  assert(msg:match("no x%-cosmic%-pr%-name"), "expected no trailer message")
+end
+test_main_no_fallback_when_multiple_files()

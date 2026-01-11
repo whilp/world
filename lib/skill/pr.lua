@@ -60,6 +60,40 @@ local function normalize_pr_name(name)
   return name
 end
 
+local function get_pr_files_from_branch(opts)
+  opts = opts or {}
+  local do_spawn = opts.spawn or spawn
+
+  -- Find files added on this branch matching .github/pr/*.md
+  -- Compare against origin/HEAD (default branch)
+  local cmd = {"git"}
+  if opts.repo then
+    table.insert(cmd, "-C")
+    table.insert(cmd, opts.repo)
+  end
+  table.insert(cmd, "diff")
+  table.insert(cmd, "--name-only")
+  table.insert(cmd, "--diff-filter=A")
+  table.insert(cmd, "origin/HEAD...HEAD")
+  table.insert(cmd, "--")
+  table.insert(cmd, ".github/pr/*.md")
+
+  local handle = do_spawn(cmd)
+  local ok, out = handle:read()
+  if not ok or not out then
+    return {}
+  end
+
+  local files = {}
+  for line in out:gmatch("[^\n]+") do
+    local name = line:match("^%s*(.-)%s*$")
+    if name and name ~= "" then
+      table.insert(files, name)
+    end
+  end
+  return files
+end
+
 local function get_pr_name_from_trailer(opts)
   opts = opts or {}
   local do_spawn = opts.spawn or spawn
@@ -401,7 +435,20 @@ local function main(opts)
     return 1, "invalid GITHUB_PR_NUMBER"
   end
 
-  local pr_name, trailer_info = get_pr_name_from_trailer()
+  local pr_name, trailer_info = get_pr_name_from_trailer(opts)
+  if not pr_name then
+    -- fallback: check if branch introduces exactly one .github/pr/*.md file
+    local pr_files = get_pr_files_from_branch(opts)
+    if #pr_files == 1 then
+      -- extract just the filename from .github/pr/<name>.md
+      local basename = pr_files[1]:match("%.github/pr/(.+)$")
+      if basename then
+        log("auto-detected PR file from branch: " .. pr_files[1])
+        pr_name = basename
+      end
+    end
+  end
+
   if not pr_name then
     local first = trailer_info and trailer_info.first_sha and trailer_info.first_sha:sub(1, 8) or "unknown"
     local last = trailer_info and trailer_info.last_sha and trailer_info.last_sha:sub(1, 8) or "unknown"
@@ -438,6 +485,7 @@ return {
   get_current_branch = get_current_branch,
   get_commit_sha = get_commit_sha,
   get_pr_name_from_trailer = get_pr_name_from_trailer,
+  get_pr_files_from_branch = get_pr_files_from_branch,
   is_github_actions = is_github_actions,
   do_update = do_update,
   main = main,
