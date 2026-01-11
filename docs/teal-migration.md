@@ -11,8 +11,8 @@ This document outlines the incremental migration from Lua to Teal for comprehens
 
 ## Current state
 
-- 87 lua files with `-- teal ignore` comments (down from 107)
-- 20 `.tl` files migrated:
+- 76 lua files with `-- teal ignore` comments (down from 107)
+- 31 `.tl` files migrated:
   - `lib/checker/common.tl`
   - `lib/ulid.tl`
   - `lib/utils.tl`
@@ -33,6 +33,17 @@ This document outlines the incremental migration from Lua to Teal for comprehens
   - `lib/build/reporter.tl`
   - `lib/build/make-help.tl`
   - `lib/build/test-snap.tl`
+  - `lib/aerosnap/init.tl`
+  - `lib/cleanshot/init.tl`
+  - `lib/claude/main.tl`
+  - `lib/nvim/main.tl`
+  - `lib/work/data.tl`
+  - `lib/work/process.tl`
+  - `lib/work/api.tl`
+  - `lib/work/render.tl`
+  - `lib/work/config.tl`
+  - `lib/work/validate.tl`
+  - `lib/work/store.tl`
 - Teal 0.24.8 installed as 3p dependency
 - `make teal` target exists (runs `tl check` on each file)
 - Checker infrastructure already supports `.tl` extension
@@ -191,15 +202,44 @@ Migrated files:
 
 ### Phase 4: Application modules
 
-#### PR 4.1: Migrate lib/work
+#### PR 4.1: Migrate independent app modules ✓
+
+**Status: DONE** (migrated in parallel using agent strategy)
+
+Independent application modules:
+- `lib/aerosnap/init.tl` - window management with SQLite types
+- `lib/cleanshot/init.tl` - screenshot utility with Flags record
+- `lib/claude/main.tl` - Claude binary launcher
+- `lib/nvim/main.tl` - Neovim wrapper with daemon support
+
+Added type declarations:
+- `lib/types/cosmo/lsqlite3.d.tl` - SQLite3 bindings
+- `lib/types/daemonize.d.tl` - daemon utilities
+- `lib/types/whereami.d.tl` - executable path discovery
+
+#### PR 4.2: Migrate lib/work ✓
+
+**Status: DONE** (migrated in parallel using agent strategy)
 
 Work item management (largest module):
-- `data.lua` (587 lines)
-- `process.lua` (548 lines)
-- `api.lua` (479 lines)
-- `render.lua` (283 lines)
+- `lib/work/data.tl` - core data types (WorkItem, WorkStore records)
+- `lib/work/process.tl` - work item processing
+- `lib/work/api.tl` - API layer
+- `lib/work/render.tl` - output rendering
+- `lib/work/config.tl` - configuration
+- `lib/work/validate.tl` - validation
+- `lib/work/store.tl` - storage layer
 
-#### PR 4.2: Migrate lib/skill
+Added type declarations:
+- `lib/types/serpent.d.tl` - serialization
+- `lib/types/ulid.d.tl` - ULID types
+- `lib/types/posix/fcntl.d.tl` - file control
+- `lib/types/posix/glob.d.tl` - glob patterns
+- `lib/types/posix/stdlib.d.tl` - stdlib functions
+- `lib/types/posix/signal.d.tl` - signals
+- `lib/types/posix/init.d.tl` - posix init
+
+#### PR 4.3: Migrate lib/skill
 
 Skill modules:
 - `hook.lua`
@@ -207,11 +247,7 @@ Skill modules:
 - `pr_comments.lua`
 - `bootstrap.lua`
 
-#### PR 4.3: Migrate lib/aerosnap
-
-Window management (296 lines)
-
-#### PR 4.4: Migrate lib/cleanshot
+#### PR 4.4: Migrate lib/home
 
 Screenshot utilities (316 lines)
 
@@ -386,15 +422,20 @@ Batch 3.3 - Build utilities ✓ (completed with 6 parallel agents):
 
 **Phase 4: Application modules** (can run some in parallel)
 
-Batch 4.1 - Independent app modules (4 agents):
-- `lib/aerosnap/init.lua`
-- `lib/cleanshot/init.lua`
-- `lib/claude/init.lua`
-- `lib/nvim/init.lua` + `lib/nvim/main.lua`
+Batch 4.1 - Independent app modules ✓ (completed with 4 parallel agents):
+- `lib/aerosnap/init.tl`
+- `lib/cleanshot/init.tl`
+- `lib/claude/main.tl`
+- `lib/nvim/main.tl`
 
-Batch 4.2 - Work module (4 agents, internal dependencies):
-- `lib/work/data.lua` (first - others depend on it)
-- Then parallel: `lib/work/process.lua`, `lib/work/api.lua`, `lib/work/render.lua`
+Batch 4.2 - Work module ✓ (completed with 7 parallel agents):
+- `lib/work/data.tl` (core types)
+- `lib/work/process.tl`
+- `lib/work/api.tl`
+- `lib/work/render.tl`
+- `lib/work/config.tl`
+- `lib/work/validate.tl`
+- `lib/work/store.tl`
 
 Batch 4.3 - Skill module (4 agents):
 - `lib/skill/hook.lua`
