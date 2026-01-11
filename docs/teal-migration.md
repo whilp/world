@@ -555,3 +555,184 @@ Order can be adjusted based on priorities. Focus first on:
 1. High-churn files (more bugs prevented)
 2. Core modules (dependencies of many others)
 3. Complex logic (where types help most)
+
+## Merge plan
+
+This section outlines how to merge the large teal migration PR (#309) into main as discrete PRs. Each PR must pass CI independently.
+
+### Baseline
+
+Main already contains (as of commit `17509425`):
+- Phases 1, 2, 3.1, 3.2 (type infrastructure, core modules, cosmic)
+- Cosmic binary with bundled teal compiler (`#310`)
+
+### PR sequence
+
+#### PR A: Build system fixes for parallel builds
+
+**Must merge first** - fixes race conditions that affect all subsequent PRs.
+
+Files from commits:
+- `bf533eba` tl-gen: fix race condition in parallel builds
+  - `3p/tl/tl-gen.lua` - use mkdtemp, absolute paths, run via cosmic
+- `4496de29` home: fix race condition in nvim tl compilation
+  - `lib/home/cook.mk` - secondary expansion for tl_files
+- `cfa69ace` build: fix LUA_PATH and module dependencies
+  - `Makefile` - dynamic LUA_PATH from lib_dirs
+  - `lib/nvim/cook.mk` - add cosmic/daemonize/whereami deps
+  - `lib/whereami/cook.mk` - declare as module, secondary expansion
+
+Cherry-pick commands:
+```bash
+git cherry-pick bf533eba  # tl-gen fixes
+git cherry-pick 4496de29  # home cook.mk fix
+git cherry-pick cfa69ace  # LUA_PATH and deps
+```
+
+#### PR B: Phase 3.3 - Build module to teal
+
+Files from `197d8b27`:
+- `lib/build/*.tl` (6 files: build-fetch, build-stage, check-update, reporter, make-help, test-snap)
+- `lib/build/cook.mk` updates
+- Type declarations in `lib/types/`
+
+Note: Build module keeps both `.lua` and `.tl` files due to bootstrap dependency.
+
+#### PR C: Phase 4.1 - Independent app modules
+
+Files from `b3df6371`:
+- `lib/aerosnap/init.tl`
+- `lib/cleanshot/init.tl`
+- `lib/claude/main.tl`
+- `lib/nvim/main.tl`
+- Type declarations: `lib/types/cosmo/lsqlite3.d.tl`
+
+#### PR D: Phase 4.2 - Work module
+
+Files from `98716c5a`:
+- `lib/work/*.tl` (7 files: data, process, api, render, config, validate, store)
+- `lib/work/cook.mk` updates
+- Type declarations: `lib/types/serpent.d.tl`, `lib/types/posix/*.d.tl`
+
+#### PR E: Phase 4.3 - Skill module
+
+Files from `ea17082c`:
+- `lib/skill/*.tl` (5 files: init, hook, pr, pr_comments, bootstrap)
+- `lib/skill/cook.mk` updates
+
+#### PR F: Phase 4.4 - Home module
+
+Files from `79b3c791`:
+- `lib/home/main.tl`
+- `lib/home/gen-manifest.tl`
+- `lib/home/gen-platforms.tl`
+- `lib/home/setup/*.tl` (13 files)
+- `lib/home/mac/*.tl` (30 files)
+
+#### PR G: Phase 5 - 3p checker runners
+
+Files from `b562e792`:
+- `3p/tl/run-teal.tl`
+- `3p/luacheck/run-luacheck.tl`
+- `3p/ast-grep/run-astgrep.tl`
+- Cook.mk updates for each
+
+#### PR H: Phase 6.1 - Test files to teal
+
+Files from `c9cbf369`:
+- `3p/*/test_*.tl` (23 files)
+- `lib/*/test_*.tl` (26 files)
+
+#### PR I: Phase 6.2 - Test utilities
+
+Files from `ac0ccedc`:
+- `lib/test/run-test.tl`
+- `3p/tl/test.tl`
+- `3p/luacheck/test.tl`
+- `3p/nvim-parsers/install.tl`
+
+#### PR J: Phase 7.1 - Nvim teal configs
+
+Files from multiple commits:
+- `582b445d` nvim: convert all configs to teal
+  - `.config/nvim/**/*.tl` (35+ files)
+- `1814843a` home: compile nvim .tl configs at build time
+  - `lib/home/cook.mk` - add nvim tl compilation rules
+
+#### PR K: Phase 7.2 - Cleanup and docs
+
+Files from multiple commits:
+- `bf25a6a8` cleanup: remove redundant .d.tl type declarations
+- `f944a8f2` docs: add teal patterns to CLAUDE.md files
+- `d8b19cec` docs: update teal migration status
+
+#### PR L: Teal-types dependency
+
+Files from:
+- `5f52214e` teal: add teal-types dependency and bundle in cosmic
+  - `3p/teal-types/` - new 3p module
+  - cosmic bundling updates
+
+### Merge order dependencies
+
+```
+PR A (build fixes) ──┬── PR B (build module)
+                     │
+                     ├── PR C (app modules) ─┬── PR G (3p runners)
+                     │                       │
+                     ├── PR D (work) ────────┤
+                     │                       │
+                     ├── PR E (skill) ───────┤
+                     │                       │
+                     └── PR F (home) ────────┴── PR H (tests) ── PR I (test utils)
+                                                      │
+                                                      └── PR J (nvim configs)
+                                                              │
+                                                              └── PR K (cleanup) ── PR L (teal-types)
+```
+
+### Creating each PR
+
+For each PR, create a new branch from latest main:
+
+```bash
+# Example for PR B
+git checkout main
+git pull
+git checkout -b teal-phase-3.3-build
+
+# Cherry-pick relevant commits or manually apply changes
+# Then test:
+make clean test
+make teal
+
+git push -u origin teal-phase-3.3-build
+gh pr create --title "lib: migrate phase 3.3 build module to teal"
+```
+
+### Validation checklist for each PR
+
+Before merging each PR:
+1. `make clean test` passes
+2. `make teal` passes (0 errors)
+3. Parallel builds work: `make clean && make -j test`
+4. No regressions in CI
+
+### Estimated effort
+
+| PR | Files | Complexity | Notes |
+|----|-------|------------|-------|
+| A  | 4     | Medium     | Critical path - must merge first |
+| B  | 8     | Low        | Bootstrap files kept |
+| C  | 5     | Low        | Independent modules |
+| D  | 10    | Medium     | Largest module |
+| E  | 6     | Low        | |
+| F  | 46    | Medium     | Many small files |
+| G  | 4     | Low        | |
+| H  | 49    | Low        | Mechanical conversion |
+| I  | 5     | Low        | |
+| J  | 37    | Medium     | Nvim config changes |
+| K  | 8     | Low        | Cleanup only |
+| L  | 3     | Low        | New dependency |
+
+Total: 12 PRs, ~185 files
