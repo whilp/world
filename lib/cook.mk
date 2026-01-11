@@ -19,7 +19,7 @@ o/any/lib/%.lua: lib/%.lua
 # compile .tl files to .lua (for o/any/lib, used by standalone modules)
 o/any/lib/%.lua: lib/%.tl $(types_files) | $(tl_staged)
 	mkdir -p $(@D)
-	$(tl_gen) $< $@
+	$(tl_gen) -o $@ $<
 
 # compile .tl files to .lua (for o/teal/lib via tl gen -o)
 # uses secondary expansion so $(tl_staged) is evaluated after all includes
