@@ -1,7 +1,8 @@
 modules += build
 build_lua_srcs := $(wildcard lib/build/*.lua)
-build_tl_srcs := $(wildcard lib/build/*.tl)
-build_srcs := $(build_lua_srcs) $(build_tl_srcs)
+# tl sources exist alongside lua (for reference) but aren't used during build
+# because bootstrap needs lua before tl is staged
+build_srcs := $(build_lua_srcs)
 build_fetch := $(o)/bin/build-fetch.lua
 build_stage := $(o)/bin/build-stage.lua
 build_check_update := $(o)/bin/check-update.lua
