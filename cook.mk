@@ -13,3 +13,6 @@ dot_dotfiles := \
 	$(wildcard .claude/*) \
 	$(wildcard .config/**) \
 	$(wildcard .local/bin/*)
+
+# nvim config teal files for type checking
+dot_srcs := $(shell find .config/nvim -name '*.tl' 2>/dev/null)

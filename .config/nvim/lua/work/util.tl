@@ -1,5 +1,4 @@
 -- luacheck ignore: neovim runtime
---check:false
 local M = {}
 
 -- ID regex pattern constant
