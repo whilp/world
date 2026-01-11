@@ -11,8 +11,8 @@ This document outlines the incremental migration from Lua to Teal for comprehens
 
 ## Current state
 
-- 25 lua files with `-- teal ignore` comments (down from 107)
-- 82 `.tl` files migrated:
+- 22 lua files with `-- teal ignore` comments (down from 107)
+- 85 `.tl` files migrated:
   - `lib/checker/common.tl`
   - `lib/ulid.tl`
   - `lib/utils.tl`
@@ -54,6 +54,9 @@ This document outlines the incremental migration from Lua to Teal for comprehens
   - `lib/home/gen-platforms.tl`
   - `lib/home/setup/*.tl` (13 files)
   - `lib/home/mac/*.tl` (30 files)
+  - `3p/tl/run-teal.tl`
+  - `3p/luacheck/run-luacheck.tl`
+  - `3p/ast-grep/run-astgrep.tl`
 - Teal 0.24.8 installed as 3p dependency
 - `make teal` target exists (runs `tl check` on each file)
 - Checker infrastructure already supports `.tl` extension
@@ -284,11 +287,15 @@ Key type definitions:
 
 ### Phase 5: Third-party runners
 
-#### PR 5.1: Migrate 3p checker runners
+#### PR 5.1: Migrate 3p checker runners ✓
 
-- `3p/tl/run-teal.lua`
-- `3p/luacheck/run-luacheck.lua`
-- `3p/ast-grep/run-astgrep.lua`
+**Status: DONE** (migrated in parallel using agent strategy)
+
+- `3p/tl/run-teal.tl` - teal checker runner with Issue record type
+- `3p/luacheck/run-luacheck.tl` - luacheck runner with Issue record type
+- `3p/ast-grep/run-astgrep.tl` - ast-grep runner with AstGrepResult, Issue types
+
+Updated Makefile with vpath for .tl files and pattern rule for compiling to o/bin/.
 
 ### Phase 6: Tests
 
@@ -464,10 +471,10 @@ Batch 4.4 - Home module ✓ (completed with 4 parallel agents):
 - `lib/home/mac/*.tl` (30 files)
 - `lib/home/gen-*.tl` (2 files)
 
-**Phase 5: 3p runners** (3 agents):
-- `3p/tl/run-teal.lua`
-- `3p/luacheck/run-luacheck.lua`
-- `3p/ast-grep/run-astgrep.lua`
+**Phase 5: 3p runners** ✓ (completed with 3 parallel agents):
+- `3p/tl/run-teal.tl`
+- `3p/luacheck/run-luacheck.tl`
+- `3p/ast-grep/run-astgrep.tl`
 
 ### Best practices for agent prompts
 
