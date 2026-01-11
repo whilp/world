@@ -101,3 +101,16 @@ local bin = path.join(TEST_DIR, "sg")
 -- lib module: find binary in TEST_BIN
 local cosmic = path.join(os.getenv("TEST_BIN"), "cosmic")
 ```
+
+## Teal type checking
+
+Run `make teal` to type-check all `.tl` files:
+
+```bash
+make teal              # type check incrementally
+make clean teal        # full rebuild and check
+```
+
+Source files use `.tl` extension with Teal type annotations. The build compiles `.tl` to `.lua` in the output directory.
+
+Type declarations for external modules live in `lib/types/`.

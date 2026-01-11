@@ -350,11 +350,17 @@ Removed 6 redundant .d.tl files since the source .tl files now exist:
 
 All 187 teal checks still pass after removal.
 
-#### PR 7.3: Update documentation
+#### PR 7.3: Update documentation ✓
 
-- Update CLAUDE.md with teal patterns
-- Add type annotation guidelines
-- Document the .tl migration workflow
+**Status: DONE**
+
+Updated documentation with teal patterns:
+- Added Teal section to `CLAUDE.md` with build commands
+- Added detailed Teal section to `.claude/CLAUDE.md` with:
+  - Type annotation syntax
+  - Records vs type aliases
+  - Common patterns for tests and modules
+  - Running the teal checker
 
 ## Special considerations
 
