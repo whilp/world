@@ -237,9 +237,21 @@ Options:
 
 Recommendation: Start with option 3 (type-check but keep as lua) to get value without churn.
 
-### Phase 7: Cleanup
+### Phase 7: Bootstrap and cleanup
 
-#### PR 7.1: Update documentation
+#### PR 7.1: Bundle teal compiler in cosmic ✓
+
+**Status: DONE**
+
+Enable self-hosted teal compilation by bundling the teal compiler into cosmic:
+- Bundle `tl.lua` into cosmic binary
+- Add `tl-gen.lua` script using bundled teal for transpilation
+- Uses lex + parse_program + generate (no type checking, just transpilation)
+- Usage: `cosmic -- /zip/tl-gen.lua input.tl -o output.lua`
+
+Impact: Once this version of cosmic is released, we can remove the `lib/build/*.lua` bootstrap files that were needed during the migration, since cosmic will be able to compile its own `.tl` source files.
+
+#### PR 7.2: Update documentation
 
 - Update CLAUDE.md with teal patterns
 - Add type annotation guidelines
