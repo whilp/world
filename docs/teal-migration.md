@@ -43,12 +43,22 @@ Create the type infrastructure needed for migration.
 
 3. Updated `run-teal.lua` to pass `-I lib/types` to tl check
 
-#### PR 1.2: Build system support for .tl files
+#### PR 1.2: Build system support for .tl files ✓
 
-1. Add `tl gen` compilation step to build pipeline
-2. Update module cook.mk pattern to handle both `.lua` and `.tl` sources
-3. Ensure `.tl` files compile to `.lua` in `o/` directory
-4. Update release target to use compiled lua
+**Status: DONE** (completed as part of PR 2.1)
+
+1. Added `tl gen` compilation step via pattern rule `o/teal/lib/%.lua: lib/%.tl`
+2. Updated module cook.mk patterns to handle both `.lua` and `.tl` sources
+3. `.tl` files compile to `o/teal/lib/` directory via `tl gen -o`
+4. Added `o/teal/lib` to `LUA_PATH` for runtime module resolution
+
+#### PR 1.3: Add ast-grep support for .tl files
+
+Currently ast-grep ignores `.tl` files as "unsupported file type". Since teal syntax is lua with type annotations, ast-grep's lua parser should work for most lint rules.
+
+1. Update `run-astgrep.lua` to recognize `.tl` extension
+2. Test that existing lua rules work on teal files
+3. Add any teal-specific rules if needed (e.g., flag `any` type usage)
 
 ### Phase 2: Core modules
 
