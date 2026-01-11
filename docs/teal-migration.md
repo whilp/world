@@ -568,26 +568,16 @@ Main already contains (as of commit `17509425`):
 
 ### PR sequence
 
-#### PR A: Build system fixes for parallel builds
+#### PR A: tl-gen race condition fix
 
-**Must merge first** - fixes race conditions that affect all subsequent PRs.
+**Status: PR #312** - https://github.com/whilp/world/pull/312
 
-Files from commits:
-- `bf533eba` tl-gen: fix race condition in parallel builds
-  - `3p/tl/tl-gen.lua` - use mkdtemp, absolute paths, run via cosmic
-- `4496de29` home: fix race condition in nvim tl compilation
-  - `lib/home/cook.mk` - secondary expansion for tl_files
-- `cfa69ace` build: fix LUA_PATH and module dependencies
-  - `Makefile` - dynamic LUA_PATH from lib_dirs
-  - `lib/nvim/cook.mk` - add cosmic/daemonize/whereami deps
-  - `lib/whereami/cook.mk` - declare as module, secondary expansion
+Fix race condition in `tl-gen.lua` for parallel builds.
 
-Cherry-pick commands:
-```bash
-git cherry-pick bf533eba  # tl-gen fixes
-git cherry-pick 4496de29  # home cook.mk fix
-git cherry-pick cfa69ace  # LUA_PATH and deps
-```
+Files:
+- `3p/tl/tl-gen.lua` - use mkdtemp, absolute paths, run via cosmic
+
+Note: Other build fixes originally planned for PR A (home cook.mk secondary expansion, LUA_PATH lib_dirs, whereami module) depend on code added in later PRs and will be included with those PRs instead.
 
 #### PR B: Phase 3.3 - Build module to teal
 
