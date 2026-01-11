@@ -150,7 +150,7 @@ $(o)/test-summary.txt: $(all_tested) $(all_snapped) | $(build_reporter)
 export TEST_O := $(o)
 export TEST_PLATFORM := $(platform)
 export TEST_BIN := $(o)/bin
-export LUA_PATH := $(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
+export LUA_PATH := $(CURDIR)/o/teal/lib/?.lua;$(CURDIR)/o/teal/lib/?/init.lua;$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
 export NO_COLOR := 1
 
 $(o)/%.test.ok: .PLEDGE = stdio rpath wpath cpath proc exec
@@ -221,7 +221,7 @@ teal: $(o)/teal-summary.txt
 $(o)/teal-summary.txt: $(all_teals) | $(build_reporter)
 	@$(reporter) --dir $(o) $^ | tee $@
 
-$(o)/%.teal.ok: $(o)/% $(tl_files) | $(bootstrap_files) $(tl_staged)
+$(o)/%.teal.ok: $(o)/% $(tl_files) | $(bootstrap_files) $(tl_staged) $(checker_files)
 	@mkdir -p $(@D)
 	@TL_BIN=$(tl_staged) $(teal_runner) $< > $@
 

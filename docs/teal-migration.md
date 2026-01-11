@@ -54,18 +54,16 @@ Create the type infrastructure needed for migration.
 
 Migrate foundational modules that other code depends on.
 
-#### PR 2.1: Migrate lib/checker/common.lua
+#### PR 2.1: Migrate lib/checker/common.lua ✓
 
-- Small, well-defined module (239 lines)
-- Used by all checker scripts
-- Good test of the migration workflow
+**Status: DONE**
 
-Steps:
-1. Remove `-- teal ignore` comment
-2. Rename `lib/checker/common.lua` → `lib/checker/common.tl`
-3. Add type annotations
-4. Update cook.mk to compile it
-5. Verify tests pass
+- Converted `lib/checker/common.lua` to `lib/checker/common.tl` with full type annotations
+- Defined record types: `CheckResult`, `CheckPatterns`, `CategorizedResults`, `StatusIcons`
+- Updated `lib/checker/cook.mk` to compile `.tl` files to `o/teal/lib/`
+- Added `o/teal/lib` to `LUA_PATH` in Makefile for compiled module resolution
+- Added `checker_files` as dependency to teal checker rule
+- Added pattern rule for `o/teal/lib/%.lua` compilation via `tl gen -o`
 
 #### PR 2.2: Migrate standalone library files
 

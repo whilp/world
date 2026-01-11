@@ -15,10 +15,15 @@ o/any/lib/%.lua: lib/%.lua
 	mkdir -p $(@D)
 	cp $< $@
 
-# compile .tl files to .lua
+# compile .tl files to .lua (for o/any/lib, used by standalone modules)
 o/any/lib/%.lua: lib/%.tl $(types_files) | $(tl_staged)
 	mkdir -p $(@D)
 	$(tl_gen) $< -o $@
+
+# compile .tl files to .lua (for o/teal/lib via tl gen -o)
+o/teal/lib/%.lua: lib/%.tl $(types_files) | $(tl_staged)
+	@mkdir -p $(@D)
+	@$(tl_staged)/tl -- gen -o $@ $<
 
 include lib/aerosnap/cook.mk
 include lib/build/cook.mk
