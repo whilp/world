@@ -13,11 +13,13 @@
 **Build system:**
 - Update `lib/checker/cook.mk` to compile `.tl` files to `o/teal/lib/`
 - Add `o/teal/lib` to `LUA_PATH` in Makefile for compiled module resolution
-- Add `checker_files` dependency to teal checker rule
+- Add `checker_files` and `tl_staged` dependencies to linter rules
 - Add pattern rule `o/teal/lib/%.lua: lib/%.tl` for compilation via `tl gen -o`
+- Use `.SECONDEXPANSION` for deferred `$(tl_staged)` evaluation (fixes parallel builds)
 
 ## Test plan
 
 - [x] `make teal` passes (29 passed, 0 failed)
 - [x] `make test` passes for checker tests
 - [x] `make check` passes for all linters
+- [x] `make -j4 ci` passes (parallel build)
