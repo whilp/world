@@ -11,8 +11,8 @@ This document outlines the incremental migration from Lua to Teal for comprehens
 
 ## Current state
 
-- 6 files still skipped in teal check (need type annotations)
-- 157 `.tl` files migrated (including 49 test files)
+- 0 files skipped in teal check (all pass)
+- 162 `.tl` files migrated (including 49 test files, 5 utilities)
 - All major modules converted:
   - `lib/checker/common.tl`
   - `lib/ulid.tl`
@@ -313,11 +313,18 @@ Build fixes required:
 - Added work module to modules list for teal checking
 - Excluded test_lib.lua from work_tests (helper module)
 
-#### PR 6.2: Migrate test utilities
+#### PR 6.2: Migrate test utilities ✓
 
-- `lib/test/run-test.lua` - test runner
-- `3p/tl/test.lua` - teal test helper
-- `3p/luacheck/test.lua` - luacheck test helper
+**Status: DONE**
+
+Migrated test utilities and remaining skipped files:
+- `lib/test/run-test.tl` - test runner with typed fd manipulation
+- `3p/tl/test.tl` - teal test helper
+- `3p/tl/tl-gen.tl` - tl gen wrapper with typed getopt
+- `3p/luacheck/test.tl` - luacheck test helper
+- `3p/nvim-parsers/install.tl` - treesitter parser installer
+
+All 187 teal checks now pass with 0 skipped.
 
 ### Phase 7: Bootstrap and cleanup
 
