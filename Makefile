@@ -86,7 +86,7 @@ $(o)/%.lua: %.tl $(types_files) $(tl_files) $(bootstrap_files) | $(tl_staged)
 
 # bin scripts: o/bin/X.lua from lib/*/X.lua and 3p/*/X.lua
 vpath %.lua lib/build lib/test 3p/ast-grep 3p/luacheck 3p/tl
-vpath %.tl 3p/ast-grep 3p/luacheck 3p/tl
+vpath %.tl lib/build 3p/ast-grep 3p/luacheck 3p/tl
 $(o)/bin/%.lua: %.lua
 	@mkdir -p $(@D)
 	@$(cp) $< $@
@@ -157,15 +157,22 @@ $(o)/test-summary.txt: $(all_tested) $(all_snapped) | $(build_reporter)
 export TEST_O := $(o)
 export TEST_PLATFORM := $(platform)
 export TEST_BIN := $(o)/bin
-export LUA_PATH := $(CURDIR)/o/teal/lib/?.lua;$(CURDIR)/o/teal/lib/?/init.lua;$(CURDIR)/o/lib/?.lua;$(CURDIR)/o/lib/?/init.lua;$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
+export LUA_PATH := $(CURDIR)/o/bin/?.lua;$(CURDIR)/o/teal/lib/?.lua;$(CURDIR)/o/teal/lib/?/init.lua;$(CURDIR)/o/lib/?.lua;$(CURDIR)/o/lib/?/init.lua;$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
 export NO_COLOR := 1
 
 $(o)/%.test.ok: .PLEDGE = stdio rpath wpath cpath proc exec
 $(o)/%.test.ok: .UNVEIL = rx:$(o)/bootstrap r:lib r:3p rwc:$(o) rwc:/tmp rx:/usr rx:/proc r:/etc r:/dev/null
 $(o)/%.test.ok: % $(test_files) $(checker_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
-	@[ -x $< ] || chmod a+x $<
-	@TEST_DIR=$(TEST_DIR) $(test_runner) $< > $@
+	@if [ "$(suffix $<)" = ".tl" ]; then \
+		compiled="$(o)/$(basename $<).lua"; \
+		$(MAKE) --no-print-directory "$$compiled"; \
+		[ -x "$$compiled" ] || chmod a+x "$$compiled"; \
+		TEST_DIR=$(TEST_DIR) $(test_runner) "$$compiled" > $@; \
+	else \
+		[ -x $< ] || chmod a+x $<; \
+		TEST_DIR=$(TEST_DIR) $(test_runner) $< > $@; \
+	fi
 
 # Snapshot test pattern: compare expected vs actual
 $(o)/%.snap.test.ok: .EXTRA_PREREQS = $(build_snap)
