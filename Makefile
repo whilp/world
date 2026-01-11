@@ -79,7 +79,8 @@ $(o)/%: %
 	@$(cp) $< $@
 
 # compile .tl files to .lua (extension changes)
-$(o)/%.lua: %.tl $(types_files) $(tl_files) $(bootstrap_files) | $(tl_staged)
+# tl_staged must be regular prereq (not order-only) for parallel builds
+$(o)/%.lua: %.tl $(types_files) $(tl_files) $(bootstrap_files) $(tl_staged)
 	@mkdir -p $(@D)
 	@$(tl_gen) $< -o $@
 
@@ -209,7 +210,7 @@ luacheck: $(o)/luacheck-summary.txt
 $(o)/luacheck-summary.txt: $(all_luachecks) | $(build_reporter)
 	@$(reporter) --dir $(o) $^ | tee $@
 
-$(o)/%.luacheck.ok: $(o)/% $(luacheck_files) $(checker_files) $(tl_staged) | $(bootstrap_files) $(luacheck_staged)
+$(o)/%.luacheck.ok: $(o)/% $(luacheck_files) $(checker_files) $(tl_staged) $(cosmos_staged) | $(bootstrap_files) $(luacheck_staged)
 	@mkdir -p $(@D)
 	@LUACHECK_BIN=$(luacheck_staged) $(luacheck_runner) $< > $@
 
