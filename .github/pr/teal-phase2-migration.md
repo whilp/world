@@ -16,14 +16,19 @@ Migrate 4 core library files to Teal as part of PR 2.3 and PR 2.4 from the teal 
 - `lib/types/posix/dirent.d.tl` - dir, files
 - `lib/types/posix/unistd.d.tl` - readlink, rmdir, etc.
 
-## Build fix
+## Build fixes
 
-Fixed parallel build race condition in Makefile for `.tl` compilation:
-- Added `$(tl_files) $(bootstrap_files)` as prerequisites to the pattern rule
-- `make clean && make -j4 test` now works reliably
+1. Fixed parallel build race condition in Makefile for `.tl` compilation:
+   - Added `$(tl_files) $(bootstrap_files)` as prerequisites to the pattern rule
+   - `make clean && make -j4 test` now works reliably
+
+2. Fixed home binary to bundle compiled teal files:
+   - Added `$(cosmic_tl_libs)` as prerequisite and copy step
+   - Home binary now includes compiled spawn.lua from spawn.tl
 
 ## Validation
 
 - [x] `make teal` passes
 - [x] `make test` passes
 - [x] `make clean && make -j4 test` passes
+- [x] `make clean && make ci` passes
