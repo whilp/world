@@ -1,9 +1,15 @@
 modules += cosmic
-cosmic_srcs := $(wildcard lib/cosmic/*.lua)
-cosmic_tests := $(filter lib/cosmic/test_%.lua,$(cosmic_srcs))
+cosmic_lua_srcs := $(wildcard lib/cosmic/*.lua)
+cosmic_tl_srcs := $(wildcard lib/cosmic/*.tl)
+cosmic_srcs := $(cosmic_lua_srcs) $(cosmic_tl_srcs)
+cosmic_tests := $(filter lib/cosmic/test_%.lua,$(cosmic_lua_srcs))
 cosmic_main := lib/cosmic/main.lua
 cosmic_args := lib/cosmic/.args
-cosmic_libs := $(addprefix $(o)/,$(filter-out $(cosmic_tests) lib/cosmic/lfs.lua $(cosmic_main),$(cosmic_srcs)))
+# lua sources: filter out tests, lfs, and main, then add o/ prefix
+cosmic_lua_libs := $(addprefix $(o)/,$(filter-out $(cosmic_tests) lib/cosmic/lfs.lua $(cosmic_main),$(cosmic_lua_srcs)))
+# tl sources: compile to .lua in o/
+cosmic_tl_libs := $(patsubst %.tl,$(o)/%.lua,$(cosmic_tl_srcs))
+cosmic_libs := $(cosmic_lua_libs) $(cosmic_tl_libs)
 cosmic_lfs := $(o)/lib/cosmic/lfs.lua
 cosmic_bin := $(o)/bin/cosmic
 cosmic_files := $(cosmic_bin) $(cosmic_libs) $(cosmic_lfs)

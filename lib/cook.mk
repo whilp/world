@@ -4,6 +4,9 @@ lib_dirs :=
 lib_libs :=
 lib_tests := lib/test_version.lua
 
+# type declaration files for teal compilation
+types_files := $(wildcard lib/types/*.d.tl lib/types/*/*.d.tl)
+
 # standalone lib files
 lib_dirs += o/any/lib
 lib_libs += o/any/lib/version.lua o/any/lib/platform.lua o/any/lib/utils.lua o/any/lib/ulid.lua o/any/lib/file.lua
@@ -11,6 +14,11 @@ lib_libs += o/any/lib/version.lua o/any/lib/platform.lua o/any/lib/utils.lua o/a
 o/any/lib/%.lua: lib/%.lua
 	mkdir -p $(@D)
 	cp $< $@
+
+# compile .tl files to .lua
+o/any/lib/%.lua: lib/%.tl $(types_files) | $(tl_staged)
+	mkdir -p $(@D)
+	$(tl_gen) $< -o $@
 
 include lib/aerosnap/cook.mk
 include lib/build/cook.mk
