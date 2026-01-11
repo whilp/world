@@ -197,7 +197,7 @@ astgrep: $(o)/astgrep-summary.txt
 $(o)/astgrep-summary.txt: $(all_astgreps) | $(build_reporter)
 	@$(reporter) --dir $(o) $^ | tee $@
 
-$(o)/%.ast-grep.ok: $(o)/% $(ast-grep_files) | $(bootstrap_files) $(ast-grep_staged)
+$(o)/%.ast-grep.ok: $(o)/% $(ast-grep_files) $(checker_files) $(tl_staged) | $(bootstrap_files) $(ast-grep_staged)
 	@mkdir -p $(@D)
 	@ASTGREP_BIN=$(ast-grep_staged) $(astgrep_runner) $< > $@
 
@@ -209,7 +209,7 @@ luacheck: $(o)/luacheck-summary.txt
 $(o)/luacheck-summary.txt: $(all_luachecks) | $(build_reporter)
 	@$(reporter) --dir $(o) $^ | tee $@
 
-$(o)/%.luacheck.ok: $(o)/% $(luacheck_files) | $(bootstrap_files) $(luacheck_staged)
+$(o)/%.luacheck.ok: $(o)/% $(luacheck_files) $(checker_files) $(tl_staged) | $(bootstrap_files) $(luacheck_staged)
 	@mkdir -p $(@D)
 	@LUACHECK_BIN=$(luacheck_staged) $(luacheck_runner) $< > $@
 
@@ -221,7 +221,7 @@ teal: $(o)/teal-summary.txt
 $(o)/teal-summary.txt: $(all_teals) | $(build_reporter)
 	@$(reporter) --dir $(o) $^ | tee $@
 
-$(o)/%.teal.ok: $(o)/% $(tl_files) | $(bootstrap_files) $(tl_staged) $(checker_files)
+$(o)/%.teal.ok: $(o)/% $(tl_files) $(checker_files) $(tl_staged) | $(bootstrap_files)
 	@mkdir -p $(@D)
 	@TL_BIN=$(tl_staged) $(teal_runner) $< > $@
 
