@@ -248,7 +248,7 @@ update: $(o)/update-summary.txt
 $(o)/update-summary.txt: $(all_updated) | $(build_reporter)
 	@$(reporter) --dir $(o) $^ | tee $@
 
-$(o)/%.update.ok: % $(build_check_update) | $(bootstrap_files)
+$(o)/%.update.ok: % $(build_check_update) $(checker_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
 	@$(update_runner) $< > $@
 
