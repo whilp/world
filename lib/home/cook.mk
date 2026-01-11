@@ -25,6 +25,15 @@ home_built := $(o)/home/.built
 # Teal-compiled scripts
 home_tl_compiled := $(o)/lib/home/main.lua $(o)/lib/home/gen-manifest.lua $(o)/lib/home/gen-platforms.lua
 
+# Nvim config teal files (compiled at build time, shipped as .lua)
+home_nvim_tl_srcs := $(shell find .config/nvim -name '*.tl' 2>/dev/null)
+home_nvim_tl_compiled := $(patsubst %.tl,$(o)/%.lua,$(home_nvim_tl_srcs))
+
+# Compile nvim .tl configs to .lua
+$(o)/.config/nvim/%.lua: .config/nvim/%.tl $(tl_files) $(bootstrap_files) | $(tl_staged)
+	@mkdir -p $(@D)
+	@$(tl_gen) $< -o $@
+
 # Which nvim to bundle: raw binary for dev, full bundle for release
 HOME_NVIM_DIR ?= $(nvim_staged)
 
@@ -34,10 +43,18 @@ $(o)/home/dotfiles.zip: $$(cosmos_staged)
 
 # Home binary bundles: dotfiles, cosmos binaries, cosmic, 3p tools, lua libs
 # Dev build uses raw nvim; release build uses bundled nvim (set via HOME_NVIM_DIR)
-$(home_bin): $(home_libs) $(home_tl_compiled) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin) $(cosmic_tl_libs) $$(nvim_staged) $$(foreach t,$(home_3p_tools),$$($$(t)_staged))
+$(home_bin): $(home_libs) $(home_tl_compiled) $(home_nvim_tl_compiled) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin) $(cosmic_tl_libs) $$(nvim_staged) $$(foreach t,$(home_3p_tools),$$($$(t)_staged))
 	@rm -rf $(home_built)
 	@mkdir -p $(home_built)/home/.local/bin $(home_built)/home/.local/share $(home_built)/.lua $(@D)
 	@cd $(home_built) && unzip -q $(CURDIR)/$(o)/home/dotfiles.zip -d home
+	@if [ -n "$(home_nvim_tl_compiled)" ]; then \
+		for f in $(home_nvim_tl_compiled); do \
+			target=$${f#$(o)/}; \
+			mkdir -p $(home_built)/home/$$(dirname $$target); \
+			cp $$f $(home_built)/home/$$target; \
+		done; \
+		find $(home_built)/home/.config/nvim -name '*.tl' -delete 2>/dev/null || true; \
+	fi
 	@$(cp) $(cosmos_dir)/lua $(home_built)/home/.local/bin/lua
 	@$(cp) $(cosmos_dir)/unzip $(home_built)/home/.local/bin/unzip
 	@$(cp) $(cosmic_bin) $(home_built)/home/.local/bin/cosmic-lua
