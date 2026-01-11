@@ -5,10 +5,14 @@
 -- tl gen has a bug where the -o option doesn't work reliably.
 -- this wrapper runs tl gen (which creates output next to input),
 -- then moves the generated file to the desired output location.
+--
+-- to avoid race conditions in parallel builds, we use mkdtemp to create
+-- a unique temp directory per invocation.
 
 local cosmo = require("cosmo")
 local getopt = require("cosmo.getopt")
 local path = require("cosmo.path")
+local unix = require("cosmo.unix")
 local spawn = require("cosmic.spawn")
 
 local function main(...)
@@ -37,11 +41,49 @@ local function main(...)
     return 1
   end
 
-  local tl_bin = path.join(os.getenv("TL_BIN"), "tl")
+  -- resolve all paths before chdir (they may be relative)
+  local orig_cwd = unix.getcwd()
+  local tl_dir = os.getenv("TL_BIN")
+  if not tl_dir:match("^/") then
+    tl_dir = path.join(orig_cwd, tl_dir)
+  end
+  local tl_script = path.join(tl_dir, "tl")
+  local cosmic_bin = unix.commandv("cosmic")
+  if cosmic_bin and not cosmic_bin:match("^/") then
+    cosmic_bin = path.join(orig_cwd, cosmic_bin)
+  end
 
-  -- run tl gen from the repo root (where tlconfig.lua is)
-  -- tl gen creates the output file in cwd with just the basename
-  local handle = spawn({ tl_bin, "gen", input_file })
+  -- make output path absolute
+  if not output_file:match("^/") then
+    output_file = path.join(orig_cwd, output_file)
+  end
+
+  -- create unique temp dir next to output to avoid race conditions in parallel
+  -- builds (multiple main.tl files would all generate main.lua in cwd)
+  -- placing it next to output ensures rename works (same filesystem)
+  local output_dir = path.dirname(output_file)
+  local tmpdir = unix.mkdtemp(path.join(output_dir, ".tl-gen-XXXXXX"))
+
+  -- make input path absolute before chdir
+  local abs_input = input_file
+  if not input_file:match("^/") then
+    abs_input = path.join(orig_cwd, input_file)
+  end
+
+  -- chdir to temp dir so tl gen outputs there
+  unix.chdir(tmpdir)
+
+  -- run tl via cosmic (not directly) because tl's shebang uses /usr/bin/env lua
+  -- which may find wrong lua; set LUA_PATH so tl.lua module is found
+  local lua_path = tl_dir .. "/?.lua;;"
+  local env = {}
+  for _, entry in ipairs(unix.environ()) do
+    if not entry:match("^LUA_PATH=") then
+      table.insert(env, entry)
+    end
+  end
+  table.insert(env, "LUA_PATH=" .. lua_path)
+  local handle = spawn({ cosmic_bin, tl_script, "gen", abs_input }, { env = env })
   if handle.stdin then
     handle.stdin:close()
   end
@@ -49,43 +91,29 @@ local function main(...)
   local stderr = handle.stderr and handle.stderr:read() or ""
   local exit_code = handle:wait()
 
+  -- restore original cwd
+  unix.chdir(orig_cwd)
+
   if exit_code ~= 0 then
     io.stderr:write(stderr)
+    unix.rmrf(tmpdir)
     return exit_code
   end
 
-  -- tl gen creates output in cwd with just the basename
+  -- tl gen creates output in cwd (tmpdir) with just the basename
   local input_basename = path.basename(input_file)
-  local generated_file = input_basename:gsub("%.tl$", ".lua")
-  if generated_file == output_file then
-    -- already in the right place
-    io.write(stdout)
-    return 0
-  end
+  local generated_name = input_basename:gsub("%.tl$", ".lua")
+  local generated_file = path.join(tmpdir, generated_name)
 
-  -- move the generated file to the output location
+  -- rename to final location (same filesystem, so this always works)
   local ok, err = os.rename(generated_file, output_file)
   if not ok then
-    -- rename failed (maybe cross-device), try copy + remove
-    local src = io.open(generated_file, "rb")
-    if not src then
-      io.stderr:write("failed to open generated file: " .. generated_file .. "\n")
-      return 1
-    end
-    local content = src:read("*a")
-    src:close()
-
-    local dst = io.open(output_file, "wb")
-    if not dst then
-      io.stderr:write("failed to create output file: " .. output_file .. "\n")
-      return 1
-    end
-    dst:write(content)
-    dst:close()
-
-    os.remove(generated_file)
+    io.stderr:write("failed to rename " .. generated_file .. " to " .. output_file .. ": " .. tostring(err) .. "\n")
+    unix.rmrf(tmpdir)
+    return 1
   end
 
+  unix.rmrf(tmpdir)
   io.write(stdout)
   return 0
 end
