@@ -581,10 +581,10 @@ Note: Other build fixes originally planned for PR A (home cook.mk secondary expa
 
 #### PR B: Phase 3.3 - Build module to teal
 
-Files from `197d8b27`:
+**Status: PR #313** - https://github.com/whilp/world/pull/313
+
+Files:
 - `lib/build/*.tl` (6 files: build-fetch, build-stage, check-update, reporter, make-help, test-snap)
-- `lib/build/cook.mk` updates
-- Type declarations in `lib/types/`
 
 Note: Build module keeps both `.lua` and `.tl` files due to bootstrap dependency.
 
