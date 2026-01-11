@@ -150,7 +150,7 @@ $(o)/test-summary.txt: $(all_tested) $(all_snapped) | $(build_reporter)
 export TEST_O := $(o)
 export TEST_PLATFORM := $(platform)
 export TEST_BIN := $(o)/bin
-export LUA_PATH := $(CURDIR)/o/teal/lib/?.lua;$(CURDIR)/o/teal/lib/?/init.lua;$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
+export LUA_PATH := $(CURDIR)/o/teal/lib/?.lua;$(CURDIR)/o/teal/lib/?/init.lua;$(CURDIR)/o/lib/?.lua;$(CURDIR)/o/lib/?/init.lua;$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
 export NO_COLOR := 1
 
 $(o)/%.test.ok: .PLEDGE = stdio rpath wpath cpath proc exec

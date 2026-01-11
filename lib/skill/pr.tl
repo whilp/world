@@ -1,4 +1,3 @@
--- teal ignore: type annotations needed
 --[[
 Updates a GitHub PR title and description from .github/pr/<name>.md
 
@@ -24,35 +23,81 @@ Environment variables:
 
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
-local spawn = require("cosmic.spawn")
+local spawn_mod = require("cosmic.spawn")
 
-local function log(msg)
+local type SpawnHandle = require("cosmic.spawn").SpawnHandle
+
+local record FetchOpts
+  method: string
+  headers: {string:string}
+  body: string
+end
+
+local type FetchFn = function(url: string, opts?: FetchOpts): number, {string:string} | string, string
+
+local record SpawnOpts
+  spawn: function({string}): SpawnHandle
+  repo: string
+end
+
+local record RequestOpts
+  fetch: FetchFn
+  getenv: function(string): string
+end
+
+local record MainOpts
+  spawn: function({string}): SpawnHandle
+  repo: string
+  getenv: function(string): string
+  fetch: FetchFn
+end
+
+local record TrailerInfo
+  commit_count: number
+  first_sha: string
+  last_sha: string
+  winning_sha: string
+  winning_trailer: string
+end
+
+local record ParsedPr
+  title: string
+  body: string
+end
+
+local record GitHubPr
+  title: string
+  body: string
+  message: string
+end
+
+local function log(msg: string)
   io.stderr:write("pr: " .. msg .. "\n")
 end
 
-local function get_current_branch()
-  local handle = spawn({"git", "rev-parse", "--abbrev-ref", "HEAD"})
+local function get_current_branch(): string
+  local handle = spawn_mod({"git", "rev-parse", "--abbrev-ref", "HEAD"})
   local ok, out = handle:read()
   if not ok then
     return nil
   end
-  local branch = out:match("^%s*(.-)%s*$")
+  local branch = (out as string):match("^%s*(.-)%s*$")
   if branch == "" then
     return nil
   end
   return branch
 end
 
-local function get_commit_sha()
-  local handle = spawn({"git", "rev-parse", "HEAD"})
+local function get_commit_sha(): string
+  local handle = spawn_mod({"git", "rev-parse", "HEAD"})
   local ok, out = handle:read()
   if not ok or not out then
     return "unknown"
   end
-  return out:match("^%s*(.-)%s*$") or "unknown"
+  return (out as string):match("^%s*(.-)%s*$") or "unknown"
 end
 
-local function normalize_pr_name(name)
+local function normalize_pr_name(name: string): string
   if not name then return nil end
   if not name:match("%.md$") then
     return name .. ".md"
@@ -60,13 +105,13 @@ local function normalize_pr_name(name)
   return name
 end
 
-local function get_pr_files_from_branch(opts)
+local function get_pr_files_from_branch(opts?: SpawnOpts): {string}
   opts = opts or {}
-  local do_spawn = opts.spawn or spawn
+  local do_spawn = opts.spawn or spawn_mod
 
   -- Find files added on this branch matching .github/pr/*.md
   -- Compare against origin/HEAD (default branch)
-  local cmd = {"git"}
+  local cmd: {string} = {"git"}
   if opts.repo then
     table.insert(cmd, "-C")
     table.insert(cmd, opts.repo)
@@ -84,8 +129,8 @@ local function get_pr_files_from_branch(opts)
     return {}
   end
 
-  local files = {}
-  for line in out:gmatch("[^\n]+") do
+  local files: {string} = {}
+  for line in (out as string):gmatch("[^\n]+") do
     local name = line:match("^%s*(.-)%s*$")
     if name and name ~= "" then
       table.insert(files, name)
@@ -94,13 +139,13 @@ local function get_pr_files_from_branch(opts)
   return files
 end
 
-local function get_pr_name_from_trailer(opts)
+local function get_pr_name_from_trailer(opts?: SpawnOpts): string, TrailerInfo
   opts = opts or {}
-  local do_spawn = opts.spawn or spawn
+  local do_spawn = opts.spawn or spawn_mod
 
   -- Get all x-cosmic-pr-name and x-cosmic-pr-enable trailers from last 20 commits
   -- Process in chronological order (oldest first) to find the final state
-  local cmd = {"git"}
+  local cmd: {string} = {"git"}
   if opts.repo then
     table.insert(cmd, "-C")
     table.insert(cmd, opts.repo)
@@ -112,16 +157,19 @@ local function get_pr_name_from_trailer(opts)
   local handle = do_spawn(cmd)
   local ok, out = handle:read()
   if not ok or not out then
-    return nil
+    return nil, nil
   end
 
   -- Track the final state by processing commits in order
-  local pr_name = nil
+  local pr_name: string = nil
   local enabled = true
-  local first_sha, last_sha, winning_sha, winning_trailer
+  local first_sha: string
+  local last_sha: string
+  local winning_sha: string
+  local winning_trailer: string
   local commit_count = 0
 
-  for line in out:gmatch("[^\n]+") do
+  for line in (out as string):gmatch("[^\n]+") do
     local sha, rest = line:match("^(%S+)%s*(.*)$")
     if sha then
       commit_count = commit_count + 1
@@ -145,7 +193,7 @@ local function get_pr_name_from_trailer(opts)
     end
   end
 
-  local info = {
+  local info: TrailerInfo = {
     commit_count = commit_count,
     first_sha = first_sha,
     last_sha = last_sha,
@@ -153,11 +201,14 @@ local function get_pr_name_from_trailer(opts)
     winning_trailer = winning_trailer,
   }
 
-  return enabled and pr_name or nil, info
+  if enabled and pr_name then
+    return pr_name, info
+  end
+  return nil, info
 end
 
 
-local function parse_pr_md(content)
+local function parse_pr_md(content: string): ParsedPr, string
   local title = content:match("^#%s*([^\n]+)")
   if not title then
     return nil, "no title found (expected '# <title>' on first line)"
@@ -175,11 +226,11 @@ local function parse_pr_md(content)
   return {title = title, body = body}
 end
 
-local function default_fetch(url, opts)
-  return cosmo.Fetch(url, opts)
+local function default_fetch(url: string, opts?: FetchOpts): number, {string:string} | string, string
+  return cosmo.Fetch(url, opts as {string:any})
 end
 
-local function github_request(method, endpoint, token, body, opts)
+local function github_request(method: string, endpoint: string, token: string, body: {string:string}, opts?: RequestOpts): number, GitHubPr | string
   opts = opts or {}
   local fetch = opts.fetch or default_fetch
   local getenv = opts.getenv or os.getenv
@@ -187,7 +238,7 @@ local function github_request(method, endpoint, token, body, opts)
   local api_url = getenv("GITHUB_API_URL") or "https://api.github.com"
   local url = api_url .. endpoint
 
-  local fetch_opts = {
+  local fetch_opts: FetchOpts = {
     method = method,
     headers = {
       ["Accept"] = "application/vnd.github+json",
@@ -211,32 +262,33 @@ local function github_request(method, endpoint, token, body, opts)
     return nil, "fetch failed: " .. tostring(headers)
   end
 
-  local ok, decoded = pcall(cosmo.DecodeJson, response_body)
-  if not ok then
+  local decoded_ok, decoded = pcall(cosmo.DecodeJson, response_body as string)
+  if not decoded_ok then
     return nil, "json decode failed: " .. tostring(decoded)
   end
 
-  return status, decoded
+  return status, decoded as GitHubPr
 end
 
 
-local function get_pr(owner, repo, pr_number, token, opts)
+local function get_pr(owner: string, repo: string, pr_number: number, token: string, opts?: RequestOpts): GitHubPr, string
   local endpoint = string.format("/repos/%s/%s/pulls/%d", owner, repo, pr_number)
 
   local status, data = github_request("GET", endpoint, token, nil, opts)
   if not status then
-    return nil, data
+    return nil, data as string
   end
 
   if status ~= 200 then
-    local msg = data and data.message or "unknown error"
+    local pr_data = data as GitHubPr
+    local msg = pr_data and pr_data.message or "unknown error"
     return nil, "api error " .. tostring(status) .. ": " .. msg
   end
 
-  return data
+  return data as GitHubPr
 end
 
-local function append_timestamp_details(body)
+local function append_timestamp_details(body: string): string
   local timestamp = os.date("!%Y-%m-%dT%H:%M:%SZ")
   local entry = string.format("- Updated: %s", timestamp)
 
@@ -265,7 +317,7 @@ local function append_timestamp_details(body)
   return body .. separator .. "\n" .. details_block
 end
 
-local function update_pr(owner, repo, pr_number, title, body, token, opts)
+local function update_pr(owner: string, repo: string, pr_number: number, title: string, body: string, token: string, opts?: RequestOpts): boolean, string
   local endpoint = string.format("/repos/%s/%s/pulls/%d", owner, repo, pr_number)
 
   local status, data = github_request("PATCH", endpoint, token, {
@@ -274,11 +326,12 @@ local function update_pr(owner, repo, pr_number, title, body, token, opts)
   }, opts)
 
   if not status then
-    return nil, data
+    return nil, data as string
   end
 
   if status ~= 200 then
-    local msg = data and data.message or "unknown error"
+    local pr_data = data as GitHubPr
+    local msg = pr_data and pr_data.message or "unknown error"
     return nil, "api error " .. tostring(status) .. ": " .. msg
   end
 
@@ -288,7 +341,12 @@ end
 
 local function print_help()
   local pr_name = get_pr_name_from_trailer()
-  local pr_file = pr_name and path.join(".github/pr", normalize_pr_name(pr_name)) or ".github/pr/<name>.md"
+  local pr_file: string
+  if pr_name then
+    pr_file = path.join(".github/pr", normalize_pr_name(pr_name))
+  else
+    pr_file = ".github/pr/<name>.md"
+  end
 
   local help = string.format([[
 usage: pr.lua [-h]
@@ -340,11 +398,11 @@ Environment variables (set automatically in GitHub Actions):
   print(help)
 end
 
-local function is_github_actions()
+local function is_github_actions(): boolean
   return os.getenv("GITHUB_ACTIONS") == "true"
 end
 
-local function do_update(owner, repo_name, pr_number, pr_name, trailer_info, token, opts)
+local function do_update(owner: string, repo_name: string, pr_number: number, pr_name: string, trailer_info: TrailerInfo, token: string, opts?: RequestOpts): number, string
   -- log commit range and winning trailer
   if trailer_info and trailer_info.first_sha then
     local range = string.format("%s..%s (%d commits)",
@@ -375,7 +433,7 @@ local function do_update(owner, repo_name, pr_number, pr_name, trailer_info, tok
   end
 
   -- get current PR state to check if we're making changes
-  local current_pr
+  local current_pr: GitHubPr
   current_pr, err = get_pr(owner, repo_name, pr_number, token, opts)
   if not current_pr then
     return 1, "failed to get current PR: " .. err
@@ -391,7 +449,7 @@ local function do_update(owner, repo_name, pr_number, pr_name, trailer_info, tok
     body_to_update = append_timestamp_details(pr.body)
   end
 
-  local ok
+  local ok: boolean
   ok, err = update_pr(owner, repo_name, pr_number, pr.title, body_to_update, token, opts)
   if not ok then
     return 1, "failed to update PR: " .. err
@@ -401,7 +459,7 @@ local function do_update(owner, repo_name, pr_number, pr_name, trailer_info, tok
   return 0
 end
 
-local function main(opts)
+local function main(opts?: MainOpts): number, string
   opts = opts or {}
   local getenv = opts.getenv or os.getenv
 
@@ -426,19 +484,20 @@ local function main(opts)
     return 1, "invalid GITHUB_REPOSITORY format: " .. repo
   end
 
-  local pr_number = getenv("GITHUB_PR_NUMBER")
-  if not pr_number or pr_number == "" then
+  local pr_number_str = getenv("GITHUB_PR_NUMBER")
+  if not pr_number_str or pr_number_str == "" then
     return 1, "GITHUB_PR_NUMBER not set"
   end
-  pr_number = tonumber(pr_number)
+  local pr_number = tonumber(pr_number_str)
   if not pr_number then
     return 1, "invalid GITHUB_PR_NUMBER"
   end
 
-  local pr_name, trailer_info = get_pr_name_from_trailer(opts)
+  local spawn_opts: SpawnOpts = {spawn = opts.spawn, repo = opts.repo}
+  local pr_name, trailer_info = get_pr_name_from_trailer(spawn_opts)
   if not pr_name then
     -- fallback: check if branch introduces exactly one .github/pr/*.md file
-    local pr_files = get_pr_files_from_branch(opts)
+    local pr_files = get_pr_files_from_branch(spawn_opts)
     if #pr_files == 1 then
       -- extract just the filename from .github/pr/<name>.md
       local basename = pr_files[1]:match("%.github/pr/(.+)$")
@@ -461,7 +520,8 @@ local function main(opts)
     return 0, msg
   end
 
-  return do_update(owner, repo_name, pr_number, pr_name, trailer_info, token, opts)
+  local request_opts: RequestOpts = {fetch = opts.fetch, getenv = opts.getenv}
+  return do_update(owner, repo_name, pr_number, pr_name, trailer_info, token, request_opts)
 end
 
 if cosmo.is_main() then
@@ -474,6 +534,21 @@ if cosmo.is_main() then
     log(msg)
   end
   os.exit(0)
+end
+
+local record PrModule
+  parse_pr_md: function(content: string): ParsedPr, string
+  github_request: function(method: string, endpoint: string, token: string, body: {string:string}, opts?: RequestOpts): number, GitHubPr
+  get_pr: function(owner: string, repo: string, pr_number: number, token: string, opts?: RequestOpts): GitHubPr, string
+  append_timestamp_details: function(body: string): string
+  update_pr: function(owner: string, repo: string, pr_number: number, title: string, body: string, token: string, opts?: RequestOpts): boolean, string
+  get_current_branch: function(): string
+  get_commit_sha: function(): string
+  get_pr_name_from_trailer: function(opts?: SpawnOpts): string, TrailerInfo
+  get_pr_files_from_branch: function(opts?: SpawnOpts): {string}
+  is_github_actions: function(): boolean
+  do_update: function(owner: string, repo_name: string, pr_number: number, pr_name: string, trailer_info: TrailerInfo, token: string, opts?: RequestOpts): number, string
+  main: function(opts?: MainOpts): number, string
 end
 
 return {
@@ -489,4 +564,4 @@ return {
   is_github_actions = is_github_actions,
   do_update = do_update,
   main = main,
-}
+} as PrModule

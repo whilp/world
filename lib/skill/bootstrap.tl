@@ -1,5 +1,4 @@
 -- bootstrap - setup environment for Claude Code web
--- teal ignore: type annotations needed
 
 local unix = require("cosmo.unix")
 
@@ -42,7 +41,13 @@ To adopt cosmic in a project:
 - Use `tonumber("644", 8)` for permissions (no octal in lua)
 ]]
 
-local function main()
+local record M
+  main: function(): number, string
+  _VERSION: string
+  _DESCRIPTION: string
+end
+
+local function main(): number, string
   print(CONTEXT)
 
   local env_file = os.getenv("CLAUDE_ENV_FILE")
@@ -67,14 +72,16 @@ local function main()
   f:close()
 
   if not ok then
-    return 1, string.format("bootstrap: failed to write to %s: %s", env_file, write_err)
+    return 1, string.format("bootstrap: failed to write to %s: %s", env_file, write_err as string)
   end
 
   return 0
 end
 
-return {
+local bootstrap: M = {
   main = main,
   _VERSION = "0.2.0",
   _DESCRIPTION = "Bootstrap environment for Claude Code web",
 }
+
+return bootstrap
