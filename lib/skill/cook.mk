@@ -1,5 +1,9 @@
 modules += skill
-skill_srcs := $(wildcard lib/skill/*.lua)
-skill_tests := $(filter lib/skill/test_%.lua,$(skill_srcs))
-skill_libs := $(addprefix $(o)/,$(filter-out $(skill_tests),$(skill_srcs)))
+skill_lua_srcs := $(wildcard lib/skill/*.lua)
+skill_tl_srcs := $(wildcard lib/skill/*.tl)
+skill_srcs := $(skill_lua_srcs) $(skill_tl_srcs)
+skill_tests := $(filter lib/skill/test_%.lua,$(skill_lua_srcs))
+skill_lua_libs := $(addprefix $(o)/,$(filter-out $(skill_tests),$(skill_lua_srcs)))
+skill_tl_libs := $(patsubst %.tl,$(o)/%.lua,$(skill_tl_srcs))
+skill_libs := $(skill_lua_libs) $(skill_tl_libs)
 skill_files := $(skill_libs)

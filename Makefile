@@ -78,6 +78,11 @@ $(o)/%: %
 	@mkdir -p $(@D)
 	@$(cp) $< $@
 
+# compile .tl files to .lua (extension changes)
+$(o)/%.lua: %.tl $(types_files) | $(tl_staged)
+	@mkdir -p $(@D)
+	@$(tl_gen) $< -o $@
+
 # bin scripts: o/bin/X.lua from lib/*/X.lua and 3p/*/X.lua
 vpath %.lua lib/build lib/test 3p/ast-grep 3p/luacheck 3p/tl
 $(o)/bin/%.lua: %.lua

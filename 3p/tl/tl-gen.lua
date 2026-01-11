@@ -1,0 +1,76 @@
+#!/usr/bin/env lua
+-- teal ignore: type annotations needed
+-- wrapper for tl gen that handles output directory
+--
+-- tl gen has a bug where the -o option doesn't work reliably.
+-- this wrapper runs tl gen (which creates output next to input),
+-- then moves the generated file to the desired output location.
+
+local cosmo = require("cosmo")
+local unix = require("cosmo.unix")
+local path = require("cosmo.path")
+local spawn = require("cosmic.spawn")
+
+local function main(input_file, output_file)
+  if not input_file or not output_file then
+    io.stderr:write("usage: tl-gen.lua <input.tl> <output.lua>\n")
+    return 1
+  end
+
+  local tl_bin = path.join(os.getenv("TL_BIN"), "tl")
+
+  -- run tl gen from the repo root (where tlconfig.lua is)
+  -- tl gen creates the output file in cwd with just the basename
+  local handle = spawn({ tl_bin, "gen", input_file })
+  if handle.stdin then
+    handle.stdin:close()
+  end
+  local stdout = handle.stdout and handle.stdout:read() or ""
+  local stderr = handle.stderr and handle.stderr:read() or ""
+  local exit_code = handle:wait()
+
+  if exit_code ~= 0 then
+    io.stderr:write(stderr)
+    return exit_code
+  end
+
+  -- tl gen creates output in cwd with just the basename
+  local input_basename = path.basename(input_file)
+  local generated_file = input_basename:gsub("%.tl$", ".lua")
+  if generated_file == output_file then
+    -- already in the right place
+    io.write(stdout)
+    return 0
+  end
+
+  -- move the generated file to the output location
+  local ok, err = os.rename(generated_file, output_file)
+  if not ok then
+    -- rename failed (maybe cross-device), try copy + remove
+    local src = io.open(generated_file, "rb")
+    if not src then
+      io.stderr:write("failed to open generated file: " .. generated_file .. "\n")
+      return 1
+    end
+    local content = src:read("*a")
+    src:close()
+
+    local dst = io.open(output_file, "wb")
+    if not dst then
+      io.stderr:write("failed to create output file: " .. output_file .. "\n")
+      return 1
+    end
+    dst:write(content)
+    dst:close()
+
+    os.remove(generated_file)
+  end
+
+  io.write(stdout)
+  return 0
+end
+
+if cosmo.is_main() then
+  local code = main(...)
+  os.exit(code)
+end
