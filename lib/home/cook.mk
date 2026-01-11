@@ -6,8 +6,8 @@ home_bin := $(o)/bin/home
 # only include home_bin in home_files; home_libs are explicit prereqs of home_bin
 # but shouldn't inherit home_deps (which would require staging 20+ tools for linting)
 home_files := $(home_bin)
-home_tests := lib/home/test_main.lua lib/home/test_versioned.lua
-home_release_test := lib/home/test_release.lua
+home_tests := lib/home/test_main.tl lib/home/test_versioned.tl
+home_release_test := lib/home/test_release.tl
 
 # 3p tools to bundle (nvim handled specially for bundled version)
 home_3p_tools := ast-grep biome comrak delta duckdb gh luacheck marksman rg ruff shfmt sqruff stylua superhtml tree-sitter uv

@@ -1,6 +1,6 @@
 modules += duckdb
 duckdb_version := 3p/duckdb/version.lua
-duckdb_tests := 3p/duckdb/test_duckdb.lua
+duckdb_tests := 3p/duckdb/test_duckdb.tl
 
 # Override staging to move binary to bin/ subdirectory
 $(o)/duckdb/.staged: $(o)/duckdb/.fetched

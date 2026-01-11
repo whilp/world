@@ -3,10 +3,10 @@ nvim_version := 3p/nvim/version.lua
 nvim_deps := nvim-conform nvim-mini nvim-lspconfig nvim-treesitter nvim-parsers
 
 # Basic test only needs raw binary (nvim_dir defaults to nvim_staged)
-nvim_tests := 3p/nvim/test_nvim.lua
+nvim_tests := 3p/nvim/test_nvim.tl
 
 # Bundle tests run during release (need full bundle)
-nvim_release_tests := 3p/nvim/test_packpath.lua 3p/nvim/test_treesitter.lua
+nvim_release_tests := 3p/nvim/test_packpath.tl 3p/nvim/test_treesitter.tl
 nvim_release_tested := $(patsubst %,$(o)/%.release.ok,$(nvim_release_tests))
 
 # Bundle output - used by home binary and release tests
