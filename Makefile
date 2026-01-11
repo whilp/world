@@ -163,19 +163,13 @@ lib_dirs_lua_path := $(subst ; ,;,$(foreach d,$(lib_dirs),$(CURDIR)/$(d)/?.lua;$
 export LUA_PATH := $(CURDIR)/o/bin/?.lua;$(CURDIR)/o/teal/lib/?.lua;$(CURDIR)/o/teal/lib/?/init.lua;$(CURDIR)/o/lib/?.lua;$(CURDIR)/o/lib/?/init.lua;$(lib_dirs_lua_path)$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
 export NO_COLOR := 1
 
-$(o)/%.test.ok: .PLEDGE = stdio rpath wpath cpath proc exec
-$(o)/%.test.ok: .UNVEIL = rx:$(o)/bootstrap r:lib r:3p rwc:$(o) rwc:/tmp rx:/usr rx:/proc r:/etc r:/dev/null
-$(o)/%.test.ok: % $(test_files) $(checker_files) | $(bootstrap_files)
+# Test rule: .tl tests depend on compiled .lua (Make handles compilation)
+$(o)/%.tl.test.ok: .PLEDGE = stdio rpath wpath cpath proc exec
+$(o)/%.tl.test.ok: .UNVEIL = rx:$(o)/bootstrap r:lib r:3p rwc:$(o) rwc:/tmp rx:/usr rx:/proc r:/etc r:/dev/null
+$(o)/%.tl.test.ok: $(o)/%.lua $(test_files) $(checker_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
-	@if [ "$(suffix $<)" = ".tl" ]; then \
-		compiled="$(o)/$(basename $<).lua"; \
-		$(MAKE) --no-print-directory "$$compiled" && \
-		{ [ -x "$$compiled" ] || chmod a+x "$$compiled"; } && \
-		TEST_DIR=$(TEST_DIR) $(test_runner) "$$compiled" > $@; \
-	else \
-		[ -x $< ] || chmod a+x $<; \
-		TEST_DIR=$(TEST_DIR) $(test_runner) $< > $@; \
-	fi
+	@[ -x $< ] || chmod a+x $<
+	@TEST_DIR=$(TEST_DIR) $(test_runner) $< > $@
 
 # Snapshot test pattern: compare expected vs actual
 $(o)/%.snap.test.ok: .EXTRA_PREREQS = $(build_snap)
