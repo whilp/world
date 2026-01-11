@@ -10,5 +10,5 @@ lib_lua_modules += nvim
 lib_dirs += o/any/nvim/lib
 
 o/any/nvim/lib/nvim/main.lua: $(o)/lib/nvim/main.lua
-	mkdir -p $(@D)
-	cp $< $@
+	@mkdir -p $(@D)
+	@cp $< $@

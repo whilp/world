@@ -6,8 +6,8 @@ lib_dirs += o/any/claude/lib
 lib_libs += o/any/claude/lib/claude/main.lua
 
 o/any/claude/lib/claude/main.lua: lib/claude/main.tl $(types_files) | $(tl_staged)
-	mkdir -p $(@D)
-	$(tl_gen) -o $@ $<
+	@mkdir -p $(@D)
+	@$(tl_gen) -o $@ $<
 
 # test depends on module being compiled
 $(o)/lib/claude/test.tl.test.ok: o/any/claude/lib/claude/main.lua
