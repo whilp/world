@@ -20,12 +20,16 @@ HOME_VERSION ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown"
 
 home_built := $(o)/home/.built
 
+# Which nvim to bundle: raw binary for dev, full bundle for release
+HOME_NVIM_DIR ?= $(nvim_staged)
+
 $(o)/home/dotfiles.zip: $$(cosmos_staged)
 	@mkdir -p $(@D)
 	@git ls-files -z | grep -zZvE '$(home_exclude_pattern)' | xargs -0 $(cosmos_zip) -q $@
 
 # Home binary bundles: dotfiles, cosmos binaries, cosmic, 3p tools, lua libs
-$(home_bin): $(home_libs) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin) $$(nvim_dir) $$(foreach t,$(home_3p_tools),$$($$(t)_staged))
+# Dev build uses raw nvim; release build uses bundled nvim (set via HOME_NVIM_DIR)
+$(home_bin): $(home_libs) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin) $$(nvim_staged) $$(foreach t,$(home_3p_tools),$$($$(t)_staged))
 	@rm -rf $(home_built)
 	@mkdir -p $(home_built)/home/.local/bin $(home_built)/home/.local/share $(home_built)/.lua $(@D)
 	@cd $(home_built) && unzip -q $(CURDIR)/$(o)/home/dotfiles.zip -d home
@@ -40,7 +44,7 @@ $(home_bin): $(home_libs) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin)
 	done
 	@nvim_versioned_name=$$(basename $$(readlink -f $(nvim_staged))); \
 		mkdir -p $(home_built)/home/.local/share/nvim && \
-		cp -rL $(nvim_dir) $(home_built)/home/.local/share/nvim/$$nvim_versioned_name
+		cp -rL $(HOME_NVIM_DIR) $(home_built)/home/.local/share/nvim/$$nvim_versioned_name
 	@$(cosmic_bin) lib/home/gen-manifest.lua $(home_built)/home $(HOME_VERSION) > $(home_built)/manifest.lua
 	@$(cp) $(cosmos_dir)/lua $@
 	@chmod +x $@
@@ -54,9 +58,15 @@ home: $(home_bin)
 
 .PHONY: home
 
-# Release test verifies platform metadata can be embedded and used
+# home-release: rebuild home with nvim bundle (used by test-release)
+.PHONY: home-release
+home-release: $(nvim_bundle)
+	@rm -f $(home_bin)
+	@$(MAKE) $(home_bin) HOME_NVIM_DIR=$(nvim_bundle_out)
+
+# Release tests: platform metadata and nvim bundle tests (nvim tests defined in 3p/nvim/cook.mk)
 .PHONY: test-release
-test-release: $(o)/$(home_release_test).tested
+test-release: home-release nvim-release-tests $(o)/$(home_release_test).tested
 
 $(o)/$(home_release_test).tested: $(home_release_test) $(home_bin) $(cosmic_bin) $$(cosmos_staged) | $(bootstrap_files)
 	@TEST_RELEASE=1 TEST_DIR=$(home_bin) $< $@
