@@ -4,6 +4,7 @@ ruleDirs:
 languageGlobs:
   lua:
     - "**/*.lua"
+    - "**/*.tl"
     - ".local/bin/*"
     - ".claude/skills/*/main.lua"
 

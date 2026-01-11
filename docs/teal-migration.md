@@ -11,7 +11,8 @@ This document outlines the incremental migration from Lua to Teal for comprehens
 
 ## Current state
 
-- 107 lua files with `-- teal ignore` comments
+- 105 lua files with `-- teal ignore` comments (down from 107)
+- 2 `.tl` files migrated: `lib/checker/common.tl`, `lib/ulid.tl`
 - Teal 0.24.8 installed as 3p dependency
 - `make teal` target exists (runs `tl check` on each file)
 - Checker infrastructure already supports `.tl` extension
@@ -52,13 +53,13 @@ Create the type infrastructure needed for migration.
 3. `.tl` files compile to `o/teal/lib/` directory via `tl gen -o`
 4. Added `o/teal/lib` to `LUA_PATH` for runtime module resolution
 
-#### PR 1.3: Add ast-grep support for .tl files
+#### PR 1.3: Add ast-grep support for .tl files ✓
 
-Currently ast-grep ignores `.tl` files as "unsupported file type". Since teal syntax is lua with type annotations, ast-grep's lua parser should work for most lint rules.
+**Status: DONE**
 
-1. Update `run-astgrep.lua` to recognize `.tl` extension
-2. Test that existing lua rules work on teal files
-3. Add any teal-specific rules if needed (e.g., flag `any` type usage)
+- Added `.tl` to `supported_extensions` in `run-astgrep.lua`
+- Added `**/*.tl` to `languageGlobs.lua` in `sgconfig.yml`
+- Existing lua rules work correctly on teal files (tested with `lib/checker/common.tl`)
 
 ### Phase 2: Core modules
 
@@ -75,15 +76,23 @@ Migrate foundational modules that other code depends on.
 - Added `checker_files` as dependency to teal checker rule
 - Added pattern rule for `o/teal/lib/%.lua` compilation via `tl gen -o`
 
-#### PR 2.2: Migrate standalone library files
+#### PR 2.2: Migrate lib/ulid.lua ✓
+
+**Status: DONE**
+
+- Converted `lib/ulid.lua` to `lib/ulid.tl` with full type annotations
+- Defined `DecodedUlid` record type for decode() return value
+- Added `lib_srcs` to `lib/cook.mk` to include standalone lib files in teal checking
+- Updated `tl-gen.lua` to use getopt for argument parsing (-o flag)
+
+#### PR 2.3: Migrate remaining standalone library files
 
 Convert simple, standalone files:
 - `lib/file.lua` (file operations)
-- `lib/ulid.lua` (ULID generation)
 - `lib/utils.lua` (utility functions)
 - `lib/platform.lua` (platform detection)
 
-#### PR 2.3: Migrate lib/cosmic/spawn.lua
+#### PR 2.4: Migrate lib/cosmic/spawn.lua
 
 - Critical module for process spawning
 - Well-contained (171 lines)
