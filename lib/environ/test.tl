@@ -80,7 +80,7 @@ function test_toarray_preserves_values()
   local arr = env:toarray()
   lu.assertEquals(#arr, 3)
 
-  local found = {}
+  local found: {string:boolean} = {}
   for _, entry in ipairs(arr) do
     found[entry] = true
   end
@@ -138,4 +138,3 @@ function test_roundtrip()
   lu.assertEquals(env2.BAZ, "qux")
   lu.assertEquals(env2.NUM, "123")
 end
-

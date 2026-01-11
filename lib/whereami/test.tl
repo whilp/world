@@ -20,9 +20,8 @@ function test_whereami_get_with_emoji()
 end
 
 function test_whereami_codespaces_format()
-  local env = { CODESPACES = 'true', GITHUB_REPOSITORY = 'owner/repo' }
-  local result = whereami.get_with_emoji(function(k) return env[k] end)
+  local env: {string:string} = { CODESPACES = 'true', GITHUB_REPOSITORY = 'owner/repo' }
+  local result = whereami.get_with_emoji(function(k: string): string return env[k] end)
   -- In codespaces mode, result should be "repo | hostname emoji"
   lu.assertStrMatches(result, '^repo | .+')
 end
-
