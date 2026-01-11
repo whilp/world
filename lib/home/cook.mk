@@ -30,7 +30,9 @@ home_nvim_tl_srcs := $(shell find .config/nvim -name '*.tl' 2>/dev/null)
 home_nvim_tl_compiled := $(patsubst %.tl,$(o)/%.lua,$(home_nvim_tl_srcs))
 
 # Compile nvim .tl configs to .lua
-$(o)/.config/nvim/%.lua: .config/nvim/%.tl $(tl_files) $(bootstrap_files) | $(tl_staged)
+# Uses secondary expansion so $(tl_files) is evaluated after all includes
+.SECONDEXPANSION:
+$(o)/.config/nvim/%.lua: .config/nvim/%.tl $$(tl_files) $$(bootstrap_files) | $$(tl_staged)
 	@mkdir -p $(@D)
 	@$(tl_gen) $< -o $@
 
