@@ -1,4 +1,5 @@
 -- luacheck ignore: neovim runtime
+--check:false
 local lang = dofile(vim.fn.stdpath("config") .. "/parsers.lua")
 
 local ok, ts = pcall(require, "nvim-treesitter")
