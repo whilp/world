@@ -11,8 +11,8 @@ This document outlines the incremental migration from Lua to Teal for comprehens
 
 ## Current state
 
-- 71 lua files with `-- teal ignore` comments (down from 107)
-- 36 `.tl` files migrated:
+- 25 lua files with `-- teal ignore` comments (down from 107)
+- 82 `.tl` files migrated:
   - `lib/checker/common.tl`
   - `lib/ulid.tl`
   - `lib/utils.tl`
@@ -49,6 +49,11 @@ This document outlines the incremental migration from Lua to Teal for comprehens
   - `lib/skill/pr.tl`
   - `lib/skill/pr_comments.tl`
   - `lib/skill/bootstrap.tl`
+  - `lib/home/main.tl`
+  - `lib/home/gen-manifest.tl`
+  - `lib/home/gen-platforms.tl`
+  - `lib/home/setup/*.tl` (13 files)
+  - `lib/home/mac/*.tl` (30 files)
 - Teal 0.24.8 installed as 3p dependency
 - `make teal` target exists (runs `tl check` on each file)
 - Checker infrastructure already supports `.tl` extension
@@ -260,26 +265,22 @@ Fixed issues:
 - Made HookInput/HookOutput flexible with `{string:any}` to support arbitrary fields
 - Fixed github_request to return string errors instead of tables
 
-#### PR 4.4: Migrate lib/home
+#### PR 4.4: Migrate lib/home ✓
 
-Screenshot utilities (316 lines)
+**Status: DONE** (migrated in parallel using agent strategy)
 
-#### PR 4.5: Migrate lib/nvim
+Home binary (largest module with 46 files):
+- `lib/home/main.tl` - main home binary with type-annotated options and commands
+- `lib/home/gen-manifest.tl` - manifest generation
+- `lib/home/gen-platforms.tl` - platform generation
+- `lib/home/setup/*.tl` (13 files) - setup modules (env, shell, git, nvim, claude, ai, backup, extras, codespace, validate, verify, util, setup)
+- `lib/home/mac/*.tl` (30 files) - macOS defaults modules
 
-Neovim integration:
-- `main.lua` (489 lines)
-- `init.lua`
-
-#### PR 4.6: Migrate lib/home
-
-Home binary (largest):
-- `main.lua` (829 lines)
-- `setup/*.lua` (multiple setup modules)
-- `mac/*.lua` (macOS defaults)
-
-#### PR 4.7: Migrate lib/claude
-
-Claude API integration
+Key type definitions:
+- `ArchMap`, `PlatformMap` type aliases for manifest handling
+- `ParsedArgs`, `SetupOpts`, `MacOpts` records for options
+- `SetupModule`, `MacModule` records for dynamic module loading
+- `Env` record for environment configuration
 
 ### Phase 5: Third-party runners
 
@@ -457,9 +458,11 @@ Batch 4.3 - Skill module ✓ (completed with 5 parallel agents):
 - `lib/skill/pr_comments.tl`
 - `lib/skill/bootstrap.tl`
 
-Batch 4.4 - Home module (needs sequencing):
-- `lib/home/main.lua` first
-- Then parallel: `lib/home/setup/*.lua`, `lib/home/mac/*.lua`
+Batch 4.4 - Home module ✓ (completed with 4 parallel agents):
+- `lib/home/main.tl`
+- `lib/home/setup/*.tl` (13 files)
+- `lib/home/mac/*.tl` (30 files)
+- `lib/home/gen-*.tl` (2 files)
 
 **Phase 5: 3p runners** (3 agents):
 - `3p/tl/run-teal.lua`

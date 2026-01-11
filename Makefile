@@ -266,7 +266,7 @@ build: home cosmic
 
 .PHONY: release
 ## Create release artifacts (CI only)
-release:
+release: $(o)/lib/home/gen-platforms.lua
 	@mkdir -p release
 	@cp artifacts/home-darwin-arm64/home release/home-darwin-arm64
 	@cp artifacts/home-linux-arm64/home release/home-linux-arm64
@@ -277,7 +277,7 @@ release:
 	@chmod +x artifacts/cosmos-zip/zip
 	@tag="home-$$(date -u +%Y-%m-%d)-$${GITHUB_SHA::7}"; \
 	base_url="https://github.com/$${GITHUB_REPOSITORY}/releases/download/$$tag"; \
-	LUA_PATH="lib/home/?.lua;;" ./release/cosmic-lua lib/home/gen-platforms.lua \
+	LUA_PATH="lib/home/?.lua;;" ./release/cosmic-lua $(o)/lib/home/gen-platforms.lua \
 		release/platforms "$$base_url" "$$tag" \
 		release/home-darwin-arm64 release/home-linux-arm64 release/home-linux-x86_64; \
 	(cd release/platforms && ../../artifacts/cosmos-zip/zip -j ../home platforms.lua); \
