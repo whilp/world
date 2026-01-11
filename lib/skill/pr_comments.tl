@@ -1,4 +1,3 @@
--- teal ignore: type annotations needed
 -- Fetches review comments on a GitHub PR using cosmo.Fetch
 --
 -- GitHub API endpoints:
@@ -14,13 +13,66 @@ local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local getopt = require("cosmo.getopt")
 
-local function fetch_with_retry(url, opts, max_attempts)
+local record FetchOpts
+  method: string
+  headers: {string:string}
+end
+
+local record User
+  login: string
+end
+
+local record ReviewComment
+  id: number
+  user: User
+  path: string
+  line: number
+  original_line: number
+  created_at: string
+  in_reply_to_id: number
+  body: string
+end
+
+local record IssueComment
+  user: User
+  created_at: string
+  body: string
+end
+
+local record Review
+  user: User
+  state: string
+  submitted_at: string
+  body: string
+end
+
+local record ApiError
+  message: string
+end
+
+local record ParsedOpts
+  json: boolean
+  owner: string
+  repo: string
+  pr_number: number
+  help: boolean
+end
+
+local record JsonResult
+  reviews: {Review}
+  issue_comments: {IssueComment}
+  review_comments: {ReviewComment}
+end
+
+local function fetch_with_retry(url: string, opts: FetchOpts, max_attempts: number): number, {string:string}, string
   max_attempts = max_attempts or 4
-  local status, headers, body
-  local last_err
+  local status: number
+  local headers: {string:string}
+  local body: string
+  local last_err: string
 
   for attempt = 1, max_attempts do
-    status, headers, body = cosmo.Fetch(url, opts)
+    status, headers, body = cosmo.Fetch(url, opts as {string:any})
     if not status then
       last_err = "fetch failed: " .. tostring(headers)
     elseif status >= 500 then
@@ -33,14 +85,14 @@ local function fetch_with_retry(url, opts, max_attempts)
     end
   end
 
-  return nil, last_err
+  return nil, nil, last_err
 end
 
-local function github_request(endpoint)
+local function github_request(endpoint: string): number, any
   local api_url = os.getenv("GITHUB_API_URL") or "https://api.github.com"
   local url = api_url .. endpoint
 
-  local fetch_opts = {
+  local fetch_opts: FetchOpts = {
     method = "GET",
     headers = {
       ["Accept"] = "application/vnd.github+json",
@@ -54,9 +106,9 @@ local function github_request(endpoint)
     fetch_opts.headers["Authorization"] = "Bearer " .. token
   end
 
-  local status, headers, body = fetch_with_retry(url, fetch_opts)
+  local status, _, body = fetch_with_retry(url, fetch_opts, nil)
   if not status then
-    return nil, headers
+    return nil, body
   end
 
   local ok, decoded = pcall(cosmo.DecodeJson, body)
@@ -65,30 +117,31 @@ local function github_request(endpoint)
   end
 
   if status ~= 200 then
-    local msg = decoded and decoded.message or "unknown error"
+    local api_err = decoded as ApiError
+    local msg = api_err and api_err.message or "unknown error"
     return nil, string.format("api error %d: %s", status, msg)
   end
 
   return status, decoded
 end
 
-local function get_review_comments(owner, repo, pr_number)
+local function get_review_comments(owner: string, repo: string, pr_number: number): number, {ReviewComment}
   local endpoint = string.format("/repos/%s/%s/pulls/%d/comments", owner, repo, pr_number)
-  return github_request(endpoint)
+  return github_request(endpoint) as (number, {ReviewComment})
 end
 
-local function get_issue_comments(owner, repo, pr_number)
+local function get_issue_comments(owner: string, repo: string, pr_number: number): number, {IssueComment}
   local endpoint = string.format("/repos/%s/%s/issues/%d/comments", owner, repo, pr_number)
-  return github_request(endpoint)
+  return github_request(endpoint) as (number, {IssueComment})
 end
 
-local function get_reviews(owner, repo, pr_number)
+local function get_reviews(owner: string, repo: string, pr_number: number): number, {Review}
   local endpoint = string.format("/repos/%s/%s/pulls/%d/reviews", owner, repo, pr_number)
-  return github_request(endpoint)
+  return github_request(endpoint) as (number, {Review})
 end
 
-local function format_review_comment(c)
-  local lines = {}
+local function format_review_comment(c: ReviewComment): string
+  local lines: {string} = {}
   table.insert(lines, string.format("## Review comment by %s", c.user and c.user.login or "unknown"))
   table.insert(lines, string.format("ID: %s", c.id or "?"))
   table.insert(lines, string.format("File: %s (line %s)", c.path or "?", c.line or c.original_line or "?"))
@@ -102,8 +155,8 @@ local function format_review_comment(c)
   return table.concat(lines, "\n")
 end
 
-local function format_issue_comment(c)
-  local lines = {}
+local function format_issue_comment(c: IssueComment): string
+  local lines: {string} = {}
   table.insert(lines, string.format("## Comment by %s", c.user and c.user.login or "unknown"))
   table.insert(lines, string.format("Created: %s", c.created_at or "?"))
   table.insert(lines, "")
@@ -112,8 +165,8 @@ local function format_issue_comment(c)
   return table.concat(lines, "\n")
 end
 
-local function format_review(r)
-  local lines = {}
+local function format_review(r: Review): string
+  local lines: {string} = {}
   local state = r.state or "UNKNOWN"
   table.insert(lines, string.format("## Review by %s [%s]", r.user and r.user.login or "unknown", state))
   table.insert(lines, string.format("Submitted: %s", r.submitted_at or "?"))
@@ -125,23 +178,23 @@ local function format_review(r)
   return table.concat(lines, "\n")
 end
 
-local function parse_pr_url(url)
+local function parse_pr_url(url: string): string, string, number
   local owner, repo, pr_number = url:match("github%.com/([^/]+)/([^/]+)/pull/(%d+)")
   if owner and repo and pr_number then
     return owner, repo, tonumber(pr_number)
   end
-  return nil
+  return nil, nil, nil
 end
 
-local function parse_args(args)
-  local opts = {
+local function parse_args(args: {string}): ParsedOpts
+  local opts: ParsedOpts = {
     json = os.getenv("OUTPUT") == "json",
     owner = nil,
     repo = nil,
     pr_number = nil,
   }
 
-  local longopts = {
+  local longopts: {getopt.LongOpt} = {
     {"owner", "required", "o"},
     {"repo", "required", "r"},
     {"pr", "required", "p"},
@@ -194,7 +247,7 @@ examples:
 ]])
 end
 
-local function main()
+local function main(): number
   local opts = parse_args(arg)
 
   if opts.help then
@@ -218,7 +271,7 @@ local function main()
   local _, reviews = get_reviews(opts.owner, opts.repo, opts.pr_number)
 
   if opts.json then
-    local result = {
+    local result: JsonResult = {
       reviews = reviews or {},
       issue_comments = issue_comments or {},
       review_comments = review_comments or {},
@@ -261,6 +314,20 @@ if cosmo.is_main() then
   os.exit(main())
 end
 
+local record Module
+  fetch_with_retry: function(url: string, opts: FetchOpts, max_attempts: number): number, {string:string}, string
+  github_request: function(endpoint: string): number, any
+  get_review_comments: function(owner: string, repo: string, pr_number: number): number, {ReviewComment}
+  get_issue_comments: function(owner: string, repo: string, pr_number: number): number, {IssueComment}
+  get_reviews: function(owner: string, repo: string, pr_number: number): number, {Review}
+  format_review_comment: function(c: ReviewComment): string
+  format_issue_comment: function(c: IssueComment): string
+  format_review: function(r: Review): string
+  parse_pr_url: function(url: string): string, string, number
+  parse_args: function(args: {string}): ParsedOpts
+  main: function(): number
+end
+
 return {
   fetch_with_retry = fetch_with_retry,
   github_request = github_request,
@@ -273,4 +340,4 @@ return {
   parse_pr_url = parse_pr_url,
   parse_args = parse_args,
   main = main,
-}
+} as Module

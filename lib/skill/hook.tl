@@ -6,36 +6,47 @@ local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 
+-- HookInput and HookOutput can have arbitrary fields for extensibility
+local type HookInput = {string:any}
+local type HookOutput = {string:any}
+
+local type Handler = function(input: HookInput): HookOutput, string
+
+local record RunOpts
+  stdin: FILE
+  stdout: FILE
+end
+
 -- list of handlers, each decides whether to handle based on input
 -- handler signature: function(input) -> output_table|nil, error_string|nil
-local handlers = {}
+local handlers: {Handler} = {}
 
-local function register(handler)
+local function register(handler: Handler)
   handlers[#handlers + 1] = handler
 end
 
-local function read_input(stdin)
+local function read_input(stdin: FILE): HookInput, string
   stdin = stdin or io.stdin
   local raw = stdin:read("*a")
   if not raw or raw == "" then
     return nil, "no input"
   end
-  local input = cosmo.DecodeJson(raw)
+  local input = cosmo.DecodeJson(raw) as HookInput
   if not input then
     return nil, "invalid json"
   end
   return input
 end
 
-local function write_output(output, stdout)
+local function write_output(output: HookOutput, stdout: FILE)
   stdout = stdout or io.stdout
   if output then
     stdout:write(cosmo.EncodeJson(output))
   end
 end
 
-local function dispatch(input)
-  local outputs = {}
+local function dispatch(input: HookInput): HookOutput, string
+  local outputs: {HookOutput} = {}
   for _, handler in ipairs(handlers) do
     local output, err = handler(input)
     if err then
@@ -51,17 +62,21 @@ local function dispatch(input)
   end
 
   -- merge outputs: concatenate reason and additionalContext, last wins for others
-  local merged = {}
-  local reasons = {}
-  local contexts = {}
+  local merged: HookOutput = {}
+  local reasons: {string} = {}
+  local contexts: {string} = {}
   for _, out in ipairs(outputs) do
-    for k, v in pairs(out) do
+    -- copy all fields from output (last wins for duplicate keys)
+    for k, v in pairs(out as {string:any}) do
       if k == "reason" then
-        reasons[#reasons + 1] = v
+        reasons[#reasons + 1] = v as string
       elseif k == "hookSpecificOutput" then
-        local ctx = v and v.postToolUse and v.postToolUse.additionalContext
-        if ctx then
-          contexts[#contexts + 1] = ctx
+        local hso = v as {string:any}
+        if hso and hso.postToolUse then
+          local ptu = hso.postToolUse as {string:any}
+          if ptu and ptu.additionalContext then
+            contexts[#contexts + 1] = ptu.additionalContext as string
+          end
         end
         merged[k] = v
       else
@@ -74,21 +89,27 @@ local function dispatch(input)
     merged.reason = table.concat(reasons, "\n")
   end
 
-  if #contexts > 1 and merged.hookSpecificOutput and merged.hookSpecificOutput.postToolUse then
-    merged.hookSpecificOutput.postToolUse.additionalContext = table.concat(contexts, "\n")
+  if #contexts > 1 and merged.hookSpecificOutput then
+    local hso = merged.hookSpecificOutput as {string:any}
+    if hso and hso.postToolUse then
+      local ptu = hso.postToolUse as {string:any}
+      if ptu then
+        ptu.additionalContext = table.concat(contexts, "\n")
+      end
+    end
   end
 
   return merged
 end
 
-local function run(opts)
+local function run(opts?: RunOpts): number, string
   opts = opts or {}
   local input, err = read_input(opts.stdin)
   if not input then
     return 0
   end
 
-  local output
+  local output: HookOutput
   output, err = dispatch(input)
   if err then
     io.stderr:write("hook: " .. err .. "\n")
@@ -99,7 +120,7 @@ local function run(opts)
   return 0
 end
 
-local function main()
+local function main(): number
   return run()
 end
 
@@ -107,17 +128,17 @@ end
 -- built-in handlers
 --------------------------------------------------------------------------------
 
-local function spawn_capture(cmd)
+local function spawn_capture(cmd: {string}): string
   local spawn = require("cosmic.spawn").spawn
   local handle = spawn(cmd)
   local ok, out = handle:read()
   if not ok then
     return nil
   end
-  return out and out:match("^%s*(.-)%s*$")
+  return out and (out as string):match("^%s*(.-)%s*$")
 end
 
-local function session_start_bootstrap(input)
+local function session_start_bootstrap(input: HookInput): HookOutput, string
   if input.hook_event_name ~= "SessionStart" then
     return nil
   end
@@ -154,7 +175,7 @@ local function session_start_bootstrap(input)
 end
 register(session_start_bootstrap)
 
-local function session_start_make_help(input)
+local function session_start_make_help(input: HookInput): HookOutput, string
   if input.hook_event_name ~= "SessionStart" then
     return nil
   end
@@ -181,7 +202,7 @@ local function session_start_make_help(input)
 end
 register(session_start_make_help)
 
-local function session_start_pr_reminder(input)
+local function session_start_pr_reminder(input: HookInput): HookOutput, string
   if input.hook_event_name ~= "SessionStart" then
     return nil
   end
@@ -197,7 +218,7 @@ local function session_start_pr_reminder(input)
   local trailer = spawn_capture({"git", "log", "-1", "--format=%(trailers:key=x-cosmic-pr-name,valueonly)"})
   local has_trailer = trailer and trailer ~= ""
 
-  local msg
+  local msg: string
   if has_trailer then
     local pr_file = path.join(".github/pr", trailer)
     if path.exists(pr_file) then
@@ -214,7 +235,7 @@ local function session_start_pr_reminder(input)
 end
 register(session_start_pr_reminder)
 
-local function post_commit_pr_reminder(input)
+local function post_commit_pr_reminder(input: HookInput): HookOutput, string
   if input.hook_event_name ~= "PostToolUse" then
     return nil
   end
@@ -222,7 +243,7 @@ local function post_commit_pr_reminder(input)
     return nil
   end
 
-  local tool_input = input.tool_input or {}
+  local tool_input = input.tool_input or {} as ToolInput
   local command = tool_input.command or ""
   if not command:match("git commit") then
     return nil
@@ -236,7 +257,7 @@ local function post_commit_pr_reminder(input)
   local has_trailer = spawn_capture({"git", "log", "-1", "--format=%(trailers:key=x-cosmic-pr-name,valueonly)"})
   local pr_file = has_trailer and has_trailer ~= "" and path.join(".github/pr", has_trailer) or nil
 
-  local msg
+  local msg: string
   if pr_file and path.exists(pr_file) then
     msg = string.format("PR file: %s - update if needed", pr_file)
   elseif has_trailer and has_trailer ~= "" then
@@ -253,7 +274,7 @@ local function post_commit_pr_reminder(input)
 end
 register(post_commit_pr_reminder)
 
-local function post_push_pr_check(input)
+local function post_push_pr_check(input: HookInput): HookOutput, string
   if input.hook_event_name ~= "PostToolUse" then
     return nil
   end
@@ -261,7 +282,7 @@ local function post_push_pr_check(input)
     return nil
   end
 
-  local tool_input = input.tool_input or {}
+  local tool_input = input.tool_input or {} as ToolInput
   local command = tool_input.command or ""
   if not command:match("git push") then
     return nil
@@ -275,7 +296,7 @@ local function post_push_pr_check(input)
   local trailer = spawn_capture({"git", "log", "-1", "--format=%(trailers:key=x-cosmic-pr-name,valueonly)"})
   local has_trailer = trailer and trailer ~= ""
 
-  local msg
+  local msg: string
   if has_trailer then
     local pr_file = path.join(".github/pr", trailer)
     if path.exists(pr_file) then
@@ -295,7 +316,7 @@ local function post_push_pr_check(input)
 end
 register(post_push_pr_check)
 
-local function post_push_check_reminder(input)
+local function post_push_check_reminder(input: HookInput): HookOutput, string
   if input.hook_event_name ~= "PostToolUse" then
     return nil
   end
@@ -303,7 +324,7 @@ local function post_push_check_reminder(input)
     return nil
   end
 
-  local tool_input = input.tool_input or {}
+  local tool_input = input.tool_input or {} as ToolInput
   local command = tool_input.command or ""
   if not command:match("git push") then
     return nil
