@@ -68,5 +68,6 @@ home-release: $(nvim_bundle)
 .PHONY: test-release
 test-release: home-release nvim-release-tests $(o)/$(home_release_test).tested
 
-$(o)/$(home_release_test).tested: $(home_release_test) $(home_bin) $(cosmic_bin) $$(cosmos_staged) | $(bootstrap_files)
-	@TEST_RELEASE=1 TEST_DIR=$(home_bin) $< $@
+# Depend on home-release (not home_bin directly) to avoid parallel build race
+$(o)/$(home_release_test).tested: home-release $(home_release_test) $(cosmic_bin) $$(cosmos_staged) | $(bootstrap_files)
+	@TEST_RELEASE=1 TEST_DIR=$(home_bin) $(home_release_test) $@
