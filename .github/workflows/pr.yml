@@ -29,11 +29,8 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 20
 
-      - name: build
-        run: bin/make build
-
       - id: update-pr
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_PR_NUMBER: ${{ github.event.number }}
-        run: o/bin/cosmic --skill pr
+        run: ./bin/cosmic --skill pr
