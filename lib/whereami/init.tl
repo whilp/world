@@ -1,11 +1,11 @@
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 
-local function trim(s)
+local function trim(s: string): string
   return s:match('^%s*(.-)%s*$')
 end
 
-local function read_file(filepath)
+local function read_file(filepath: string): string
   local content = cosmo.Slurp(filepath)
   if not content then
     return nil
@@ -14,15 +14,19 @@ local function read_file(filepath)
   return first_line and trim(first_line) or nil
 end
 
-local function file_exists(path)
+local function file_exists(path: string): boolean
   return unix.access(path, unix.F_OK)
 end
 
-local cached_conf_dir = nil
+-- can be nil (not yet cached), false (cached as not found), or string (cached path)
+local cached_conf_dir: boolean | string = nil
 
-local function find_conf_dir()
+local function find_conf_dir(): string
   if cached_conf_dir ~= nil then
-    return cached_conf_dir
+    if cached_conf_dir is string then
+      return cached_conf_dir
+    end
+    return nil
   end
 
   local dir = unix.opendir('/')
@@ -51,7 +55,7 @@ local function find_conf_dir()
   return nil
 end
 
-local function string_to_emoji(str)
+local function string_to_emoji(str: string): string
   local emojis = {
     '🍇', '🍈', '🍉', '🍊', '🍋', '🍌', '🍍', '🍎', '🍐', '🍑',
     '🍒', '🍓', '🥝', '🍅', '🥑', '🍆', '🥔', '🥕', '🌽', '🌶',
@@ -72,7 +76,7 @@ local function string_to_emoji(str)
   return emojis[index]
 end
 
-local function get_short_hostname()
+local function get_short_hostname(): string
   local hostname = unix.gethostname()
   if hostname then
     return hostname:match('([^.%s]+)')
@@ -80,7 +84,7 @@ local function get_short_hostname()
   return nil
 end
 
-local function get()
+local function get(): string
   local identifier = ''
 
   local conf_dir = find_conf_dir()
@@ -103,10 +107,12 @@ local function get()
   return identifier
 end
 
-local function get_with_emoji(env)
+local type EnvFunc = function(string): string
+
+local function get_with_emoji(env: EnvFunc): string
   env = env or os.getenv
   local identifier = get()
-  local emoji = ''
+  local emoji: string = ''
 
   local conf_dir = find_conf_dir()
   if conf_dir then

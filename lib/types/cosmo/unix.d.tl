@@ -24,7 +24,7 @@ local record unix
 
   -- pipes
   pipe: function(): number, number
-  dup: function(fd: number): number
+  dup: function(fd: number, newfd?: number): number
 
   -- file operations
   open: function(path: string, flags: number, mode?: number): number
@@ -71,7 +71,7 @@ local record unix
   sigaction: function(signal: number, handler: function())
 
   -- file locking
-  fcntl: function(fd: number, cmd: number, arg: number): number
+  fcntl: function(fd: number, cmd: number, lock_type: number, whence?: number, start?: number, len?: number): number
 
   -- file flags
   O_RDONLY: number

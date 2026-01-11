@@ -14,30 +14,32 @@ Example:
   unix.execve(path, args, env:toarray())
 ]]
 
-local M = {}
+local record Environ
+  _vars: {string:string}
+  toarray: function(Environ): {string}
+end
 
-local Environ = {}
-Environ.__index = function(self, key)
-  if Environ[key] then
-    return Environ[key]
+local Environ_mt: metatable<Environ> = {}
+
+Environ_mt.__index = function(self: Environ, key: string): any
+  if key == "toarray" then
+    return function(s: Environ): {string}
+      local result: {string} = {}
+      for k, v in pairs(s._vars) do
+        table.insert(result, k .. "=" .. v)
+      end
+      return result
+    end
   end
   return rawget(self, "_vars")[key]
 end
 
-Environ.__newindex = function(self, key, value)
+Environ_mt.__newindex = function(self: Environ, key: string, value: string)
   rawget(self, "_vars")[key] = value
 end
 
-function Environ:toarray()
-  local result = {}
-  for k, v in pairs(self._vars) do
-    table.insert(result, k .. "=" .. v)
-  end
-  return result
-end
-
-function M.new(arr)
-  local vars = {}
+local function new(arr: {string}): Environ
+  local vars: {string:string} = {}
 
   if arr then
     for _, entry in ipairs(arr) do
@@ -50,9 +52,11 @@ function M.new(arr)
     end
   end
 
-  local obj = {_vars = vars}
-  setmetatable(obj, Environ)
+  local obj: Environ = {_vars = vars}
+  setmetatable(obj, Environ_mt)
   return obj
 end
 
-return M
+return {
+  new = new,
+}

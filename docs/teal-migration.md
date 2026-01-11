@@ -11,14 +11,17 @@ This document outlines the incremental migration from Lua to Teal for comprehens
 
 ## Current state
 
-- 101 lua files with `-- teal ignore` comments (down from 107)
-- 6 `.tl` files migrated:
+- 98 lua files with `-- teal ignore` comments (down from 107)
+- 9 `.tl` files migrated:
   - `lib/checker/common.tl`
   - `lib/ulid.tl`
   - `lib/utils.tl`
   - `lib/platform.tl`
   - `lib/file.tl`
   - `lib/cosmic/spawn.tl`
+  - `lib/environ/init.tl`
+  - `lib/daemonize/init.tl`
+  - `lib/whereami/init.tl`
 - Teal 0.24.8 installed as 3p dependency
 - `make teal` target exists (runs `tl check` on each file)
 - Checker infrastructure already supports `.tl` extension
@@ -116,20 +119,17 @@ Migrate foundational modules that other code depends on.
 
 Migrate lib modules in dependency order.
 
-#### PR 3.1: Migrate lib/environ
+#### PR 3.1: Migrate small standalone modules ✓
 
-- Small module for environment variable handling
-- No external dependencies beyond cosmo
+**Status: DONE** (migrated in parallel using agent strategy)
 
-#### PR 3.2: Migrate lib/daemonize
-
-- Process daemonization utilities
-- Depends on cosmo.unix
-
-#### PR 3.3: Migrate lib/whereami
-
-- Location detection utilities
-- Simple, self-contained
+- Converted `lib/environ/init.lua` to `lib/environ/init.tl`
+  - Added `Environ` record type with metamethods for env var access
+- Converted `lib/daemonize/init.lua` to `lib/daemonize/init.tl`
+  - Added types for pidfile, lock, and output redirection functions
+  - Extended `lib/types/cosmo/unix.d.tl` with dup2 and fcntl signatures
+- Converted `lib/whereami/init.lua` to `lib/whereami/init.tl`
+  - Added `EnvFunc` type alias and union types for cached state
 
 #### PR 3.4: Migrate lib/cosmic
 
@@ -330,10 +330,10 @@ Independent files can be migrated concurrently using parallel agents. This appro
 
 **Phase 3: Library modules** (6 parallel batches possible)
 
-Batch 3.1 - Small standalone modules (3 agents):
-- `lib/environ/init.lua`
-- `lib/daemonize/init.lua`
-- `lib/whereami/init.lua`
+Batch 3.1 - Small standalone modules ✓ (completed with 3 parallel agents):
+- `lib/environ/init.tl`
+- `lib/daemonize/init.tl`
+- `lib/whereami/init.tl`
 
 Batch 3.2 - Cosmic module (5 agents):
 - `lib/cosmic/init.lua`
