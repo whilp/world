@@ -1,13 +1,31 @@
--- teal ignore: bootstrap script
 -- tl gen implementation using bundled tl.lua
 -- Usage: cosmic -- tl-gen.lua INPUT -o OUTPUT
 
 local tl = require("tl")
 
-local function main(...)
+-- Type definitions for tl module
+local record TlError
+  y: number
+  x: number
+  msg: string
+end
+
+local record TlToken
+end
+
+local record TlNode
+end
+
+local record TlModule
+  lex: function(string): {TlToken}
+  parse_program: function({TlToken}, {string:any}, string): TlNode, {TlError}
+  generate: function(TlNode, {string:any}): string
+end
+
+local function main(...: string): number
   local args = {...}
-  local input_file = nil
-  local output_file = nil
+  local input_file: string = nil
+  local output_file: string = nil
 
   -- Parse args: INPUT -o OUTPUT
   local i = 1
@@ -36,17 +54,18 @@ local function main(...)
   f:close()
 
   -- Lex the input
-  local tokens = tl.lex(input)
+  local tl_mod = tl as TlModule
+  local tokens = tl_mod.lex(input)
   if not tokens then
     io.stderr:write("error: lexing failed for " .. input_file .. "\n")
     return 1
   end
 
   -- Parse the program
-  local ast, errs = tl.parse_program(tokens, {}, input_file)
+  local ast, errs = tl_mod.parse_program(tokens, {}, input_file)
 
   -- Only report errors that have actual error messages
-  local real_errors = {}
+  local real_errors: {TlError} = {}
   if errs then
     for _, e in ipairs(errs) do
       if e.msg then
@@ -68,7 +87,7 @@ local function main(...)
   end
 
   -- Generate lua code (no type checking - just transpile)
-  local lua_code = tl.generate(ast, {})
+  local lua_code = tl_mod.generate(ast, {})
 
   -- Write output
   local out, write_err = io.open(output_file, "w")

@@ -5,11 +5,12 @@ cosmic_srcs := $(cosmic_lua_srcs) $(cosmic_tl_srcs)
 cosmic_tests := $(filter lib/cosmic/test_%.lua,$(cosmic_lua_srcs))
 cosmic_main := $(o)/lib/cosmic/main.lua
 cosmic_args := lib/cosmic/.args
-cosmic_tl_gen := lib/cosmic/tl-gen.lua
-# lua sources: filter out tests, lfs, main, and tl-gen, then add o/ prefix
-cosmic_lua_libs := $(addprefix $(o)/,$(filter-out $(cosmic_tests) lib/cosmic/lfs.lua $(cosmic_main) $(cosmic_tl_gen),$(cosmic_lua_srcs)))
-# tl sources: compile to .lua in o/ (excluding main which is bundled separately)
-cosmic_tl_libs := $(filter-out $(cosmic_main),$(patsubst %.tl,$(o)/%.lua,$(cosmic_tl_srcs)))
+# tl-gen.tl is compiled and bundled at root level (not in .lua/cosmic/)
+cosmic_tl_gen := $(o)/lib/cosmic/tl-gen.lua
+# lua sources: filter out tests, lfs, main, then add o/ prefix
+cosmic_lua_libs := $(addprefix $(o)/,$(filter-out $(cosmic_tests) lib/cosmic/lfs.lua $(cosmic_main),$(cosmic_lua_srcs)))
+# tl sources: compile to .lua in o/ (excluding main and tl-gen which are bundled separately)
+cosmic_tl_libs := $(filter-out $(cosmic_main) $(cosmic_tl_gen),$(patsubst %.tl,$(o)/%.lua,$(cosmic_tl_srcs)))
 cosmic_libs := $(cosmic_lua_libs) $(cosmic_tl_libs)
 cosmic_lfs := $(o)/lib/cosmic/lfs.lua
 cosmic_bin := $(o)/bin/cosmic
