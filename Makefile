@@ -169,8 +169,8 @@ $(o)/%.test.ok: % $(test_files) $(checker_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
 	@if [ "$(suffix $<)" = ".tl" ]; then \
 		compiled="$(o)/$(basename $<).lua"; \
-		$(MAKE) --no-print-directory "$$compiled"; \
-		[ -x "$$compiled" ] || chmod a+x "$$compiled"; \
+		$(MAKE) --no-print-directory "$$compiled" && \
+		{ [ -x "$$compiled" ] || chmod a+x "$$compiled"; } && \
 		TEST_DIR=$(TEST_DIR) $(test_runner) "$$compiled" > $@; \
 	else \
 		[ -x $< ] || chmod a+x $<; \
