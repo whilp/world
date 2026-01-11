@@ -1,83 +1,146 @@
-local M = {}
+local record ComputedFields
+  short_id: string
+  resolved_due: string
+  relative_due: string
+  is_blocked: boolean
+  unresolved_blocks: {string}
+  dependent_count: integer
+end
+
+local record WorkItemMeta
+  source: string
+  kind: string
+end
+
+local record WorkItem
+  id: string
+  title: string
+  created: string
+  blocks: {string}
+  completed: string
+  started: string
+  description: string
+  due: string
+  priority: number
+  log: {string:string}
+  _meta: WorkItemMeta
+  _computed: ComputedFields
+end
+
+local record WorkStore
+  items: {string:WorkItem}
+end
+
+local record TreeResult
+  roots: {WorkItem}
+  children: {string:{WorkItem}}
+end
+
+local record M
+  parse_date: function(date_str: string): integer, integer, integer, string
+  date_to_days: function(year: integer, month: integer, day: integer): number
+  days_to_date: function(days: number): string
+  add_days_to_date: function(date_str: string, offset: integer): string, string
+  parse_relative_date: function(rel_str: string): integer, string
+  date_relative_to_today: function(date_str: string): string
+  get_transitive_dependencies: function(store: WorkStore, item_id: string): {WorkItem}
+  get_transitive_dependents: function(store: WorkStore, item_id: string): {WorkItem}
+  validate_blocks: function(store: WorkStore, item_id: string, new_blocks: {string}): boolean, string
+  resolve_due_date: function(store: WorkStore, item: WorkItem): string, string
+  get_unresolved_blocks: function(store: WorkStore, item: WorkItem): {string}
+  is_item_blocked: function(store: WorkStore, item: WorkItem): boolean
+  get_blocked_items: function(store: WorkStore): {WorkItem}
+  get_incomplete_items: function(store: WorkStore): {WorkItem}
+  get_ready_items: function(store: WorkStore): {WorkItem}
+  sort_by_schedule: function(items: {WorkItem}): {WorkItem}
+  build_tree: function(items: {WorkItem}): TreeResult
+  enrich: function(store: WorkStore, item: WorkItem): WorkItem
+  enrich_all: function(store: WorkStore, items: {WorkItem}): {WorkItem}
+  find_items_blocking_on: function(store: WorkStore, target_id: string): {WorkItem}
+end
+
+local process: M = {}
 
 -- Parse date string YYYY-MM-DD into year, month, day
 -- Returns: year, month, day or nil, err
-M.parse_date = function(date_str)
+process.parse_date = function(date_str: string): integer, integer, integer, string
   local year, month, day = date_str:match("^(%d%d%d%d)-(%d%d)-(%d%d)$")
   if not year then
-    return nil, "invalid date format, expected YYYY-MM-DD"
+    return nil, nil, nil, "invalid date format, expected YYYY-MM-DD"
   end
-  return tonumber(year), tonumber(month), tonumber(day)
+  return tonumber(year) as integer, tonumber(month) as integer, tonumber(day) as integer, nil
 end
 
 -- Convert date components to days since epoch
 -- Returns: days since epoch
-M.date_to_days = function(year, month, day)
+process.date_to_days = function(year: integer, month: integer, day: integer): number
   return os.time({year=year, month=month, day=day}) / 86400
 end
 
 -- Convert days since epoch to date string
 -- Returns: date string YYYY-MM-DD
-M.days_to_date = function(days)
+process.days_to_date = function(days: number): string
   local timestamp = days * 86400
-  return os.date("%Y-%m-%d", timestamp)
+  return os.date("%Y-%m-%d", timestamp) as string
 end
 
 -- Add offset to a date string
 -- offset can be negative (e.g., -7 for 7 days before)
 -- Returns: new date string or nil, err
-M.add_days_to_date = function(date_str, offset)
-  local year, month, day = M.parse_date(date_str)
+process.add_days_to_date = function(date_str: string, offset: integer): string, string
+  local year, month, day, err = process.parse_date(date_str)
   if not year then
-    return nil, "invalid date format"
+    return nil, err or "invalid date format"
   end
-  local days = M.date_to_days(year, month, day)
-  return M.days_to_date(days + offset)
+  local days = process.date_to_days(year, month, day)
+  return process.days_to_date(days + offset), nil
 end
 
 -- Parse relative date like "-1d" or "-4w"
 -- Returns: offset in days (negative for before) or nil, err
-M.parse_relative_date = function(rel_str)
+process.parse_relative_date = function(rel_str: string): integer, string
   local sign, num, unit = rel_str:match("^([+-]?)(%d+)([dw])$")
   if not num then
     return nil, "invalid relative date format, expected -Xd or -Xw"
   end
 
-  num = tonumber(num)
+  local num_val = tonumber(num) as integer
   if unit == "w" then
-    num = num * 7
+    num_val = num_val * 7
   end
 
   if sign == "+" then
-    return num
+    return num_val, nil
   else
-    return -num
+    return -num_val, nil
   end
 end
 
 -- Calculate relative time from today to a date
 -- Returns string like "+3w", "-2d", "today"
-M.date_relative_to_today = function(date_str)
+process.date_relative_to_today = function(date_str: string): string
   if not date_str then
     return nil
   end
 
-  local year, month, day = M.parse_date(date_str)
+  local year, month, day = process.parse_date(date_str)
   if not year then
     return nil
   end
 
-  local target_days = M.date_to_days(year, month, day)
-  local today = os.date("*t")
-  local today_days = M.date_to_days(today.year, today.month, today.day)
+  local target_days = process.date_to_days(year, month, day)
+  local today = os.date("*t") as {string:integer}
+  local today_days = process.date_to_days(today.year, today.month, today.day)
 
   local diff_days = target_days - today_days
 
   local abs_days = math.abs(diff_days)
-  local sign = diff_days > 0 and "+" or ""
-  if diff_days < 0 then
+  local sign: string
+  if diff_days > 0 then
+    sign = "+"
+  elseif diff_days < 0 then
     sign = "-"
-  elseif diff_days == 0 then
+  else
     sign = " "
   end
 
@@ -86,7 +149,7 @@ M.date_relative_to_today = function(date_str)
     local weeks = math.ceil(abs_days / 7)
     return sign .. tostring(weeks) .. "w"
   else
-    return sign .. tostring(abs_days) .. "d"
+    return sign .. tostring(math.floor(abs_days)) .. "d"
   end
 end
 
@@ -94,11 +157,11 @@ end
 -- (items this blocks on, and items those block on, etc.)
 -- Signature: M.get_transitive_dependencies(store, item_id)
 -- Returns: array of items
-M.get_transitive_dependencies = function(store, item_id)
-  local visited = {}
-  local dependencies = {}
+process.get_transitive_dependencies = function(store: WorkStore, item_id: string): {WorkItem}
+  local visited: {string:boolean} = {}
+  local dependencies: {WorkItem} = {}
 
-  local function visit(id)
+  local function visit(id: string)
     if visited[id] then
       return
     end
@@ -126,11 +189,11 @@ end
 -- (items that block on this item, and items that block on those, etc.)
 -- Signature: M.get_transitive_dependents(store, item_id)
 -- Returns: array of items
-M.get_transitive_dependents = function(store, item_id)
-  local visited = {}
-  local dependents = {}
+process.get_transitive_dependents = function(store: WorkStore, item_id: string): {WorkItem}
+  local visited: {string:boolean} = {}
+  local dependents: {WorkItem} = {}
 
-  local function visit(id)
+  local function visit(id: string)
     if visited[id] then
       return
     end
@@ -157,9 +220,9 @@ end
 -- Validate that adding blocks doesn't create a cycle
 -- Signature: M.validate_blocks(store, item_id, new_blocks)
 -- Returns: ok, err
-M.validate_blocks = function(store, item_id, new_blocks)
+process.validate_blocks = function(store: WorkStore, item_id: string, new_blocks: {string}): boolean, string
   if not new_blocks or #new_blocks == 0 then
-    return true
+    return true, nil
   end
 
   -- Check for self-blocking
@@ -176,7 +239,7 @@ M.validate_blocks = function(store, item_id, new_blocks)
 
   -- Check if this would create a cycle
   -- An item can't block on something that transitively blocks on it
-  local dependents = M.get_transitive_dependents(store, item_id)
+  local dependents = process.get_transitive_dependents(store, item_id)
 
   for _, dependent in ipairs(dependents) do
     for _, block_id in ipairs(new_blocks) do
@@ -187,7 +250,7 @@ M.validate_blocks = function(store, item_id, new_blocks)
     end
   end
 
-  return true
+  return true, nil
 end
 
 -- Resolve due date for an item
@@ -195,7 +258,7 @@ end
 -- resolved_date is nil if it couldn't be resolved
 -- visiting is a table tracking items currently being resolved (for cycle detection)
 -- items_table is the items collection to use
-local function resolve_due_date_impl(item, visiting, items_table)
+local function resolve_due_date_impl(item: WorkItem, visiting: {string:boolean}, items_table: {string:WorkItem}): string, string
   -- Cycle detection
   if visiting[item.id] then
     return nil, "circular dependency detected"
@@ -203,7 +266,7 @@ local function resolve_due_date_impl(item, visiting, items_table)
   visiting[item.id] = true
 
   -- If no explicit due date, infer -1d from items this blocks on (if any)
-  local offset
+  local offset: integer
   if not item.due then
     if item.blocks and #item.blocks > 0 then
       -- Infer -1d relative to what this blocks on
@@ -215,12 +278,13 @@ local function resolve_due_date_impl(item, visiting, items_table)
     end
   else
     -- Check if it's a relative date
-    offset = M.parse_relative_date(item.due)
-    if not offset then
+    local parsed_offset = process.parse_relative_date(item.due)
+    if not parsed_offset then
       -- It's an absolute date, return as-is
       visiting[item.id] = nil
       return item.due, nil
     end
+    offset = parsed_offset
 
     -- It's a relative date, compute based on items this blocks on (transitively)
     if not item.blocks or #item.blocks == 0 then
@@ -231,11 +295,11 @@ local function resolve_due_date_impl(item, visiting, items_table)
 
   -- Find earliest due date among all transitive blocking items
   -- (items this blocks on, items those block on, etc.)
-  local earliest_date = nil
-  local earliest_days = nil
+  local earliest_date: string = nil
+  local earliest_days: number = nil
   local has_any_due = false
 
-  local function collect_blocking_dates(id, seen)
+  local function collect_blocking_dates(id: string, seen: {string:boolean})
     if seen[id] then
       return
     end
@@ -251,9 +315,9 @@ local function resolve_due_date_impl(item, visiting, items_table)
     local block_date, _ = resolve_due_date_impl(blocking_item, visiting, items_table)
     if block_date then
       has_any_due = true
-      local year, month, day = M.parse_date(block_date)
+      local year, month, day = process.parse_date(block_date)
       if year then
-        local days = M.date_to_days(year, month, day)
+        local days = process.date_to_days(year, month, day)
         if not earliest_days or days < earliest_days then
           earliest_days = days
           earliest_date = block_date
@@ -270,7 +334,7 @@ local function resolve_due_date_impl(item, visiting, items_table)
   end
 
   -- Collect dates from all transitive blocking items
-  local seen = {}
+  local seen: {string:boolean} = {}
   for _, block_id in ipairs(item.blocks) do
     collect_blocking_dates(block_id, seen)
   end
@@ -286,14 +350,14 @@ local function resolve_due_date_impl(item, visiting, items_table)
   end
 
   -- Apply offset to earliest date
-  local resolved = M.add_days_to_date(earliest_date, offset)
+  local resolved = process.add_days_to_date(earliest_date, offset)
   return resolved, nil
 end
 
 -- Resolve due date for an item
 -- Signature: M.resolve_due_date(store, item)
 -- Returns: resolved_date, warning_message
-M.resolve_due_date = function(store, item)
+process.resolve_due_date = function(store: WorkStore, item: WorkItem): string, string
   return resolve_due_date_impl(item, {}, store.items)
 end
 
@@ -301,8 +365,8 @@ end
 -- Returns items that are blocking this item (items that have this item in their blocks field and are not completed)
 -- Signature: M.get_unresolved_blocks(store, item)
 -- Returns: array of IDs
-M.get_unresolved_blocks = function(store, item)
-  local unresolved = {}
+process.get_unresolved_blocks = function(store: WorkStore, item: WorkItem): {string}
+  local unresolved: {string} = {}
   -- Find all incomplete items that block on this item
   for _, other in pairs(store.items) do
     if not other.completed and other.blocks then
@@ -320,7 +384,7 @@ end
 -- Check if an item is blocked
 -- Signature: M.is_item_blocked(store, item)
 -- Returns: boolean
-M.is_item_blocked = function(store, item)
+process.is_item_blocked = function(store: WorkStore, item: WorkItem): boolean
   -- An item is blocked if any other incomplete item blocks on this item
   -- (meaning this item must wait for those items to complete first)
   for _, other in pairs(store.items) do
@@ -338,11 +402,11 @@ end
 -- Get blocked items (items that are blocked by other incomplete items)
 -- Signature: M.get_blocked_items(store)
 -- Returns: array of blocked items
-M.get_blocked_items = function(store)
-  local blocked = {}
+process.get_blocked_items = function(store: WorkStore): {WorkItem}
+  local blocked: {WorkItem} = {}
   for _, item in pairs(store.items) do
     if not item.completed then
-      if M.is_item_blocked(store, item) then
+      if process.is_item_blocked(store, item) then
         table.insert(blocked, item)
       end
     end
@@ -353,8 +417,8 @@ end
 -- Get all incomplete items
 -- Signature: M.get_incomplete_items(store)
 -- Returns items that are not completed
-M.get_incomplete_items = function(store)
-  local incomplete = {}
+process.get_incomplete_items = function(store: WorkStore): {WorkItem}
+  local incomplete: {WorkItem} = {}
   for _, item in pairs(store.items) do
     if not item.completed then
       table.insert(incomplete, item)
@@ -366,12 +430,12 @@ end
 -- Get ready (unblocked) items
 -- Signature: M.get_ready_items(store)
 -- Returns items that are not completed and have no incomplete blockers
-M.get_ready_items = function(store)
-  local ready = {}
+process.get_ready_items = function(store: WorkStore): {WorkItem}
+  local ready: {WorkItem} = {}
   for _, item in pairs(store.items) do
     -- Skip completed items
     if not item.completed then
-      if not M.is_item_blocked(store, item) then
+      if not process.is_item_blocked(store, item) then
         table.insert(ready, item)
       end
     end
@@ -381,11 +445,11 @@ end
 
 -- Sort items by due date (ascending), priority (descending), created (ascending), id (ascending)
 -- Returns: sorted items (in-place)
-M.sort_by_schedule = function(items)
-  table.sort(items, function(a, b)
+process.sort_by_schedule = function(items: {WorkItem}): {WorkItem}
+  table.sort(items, function(a: WorkItem, b: WorkItem): boolean
     -- Use pre-computed due date if available (from enrich), otherwise nil
-    local a_due = (a._computed and a._computed.resolved_due) or nil
-    local b_due = (b._computed and b._computed.resolved_due) or nil
+    local a_due: string = (a._computed and a._computed.resolved_due) or nil
+    local b_due: string = (b._computed and b._computed.resolved_due) or nil
 
     -- Items with due dates come before items without
     if a_due and not b_due then
@@ -396,11 +460,11 @@ M.sort_by_schedule = function(items)
       -- Both have due dates - compare them (ascending: earliest first)
       if a_due ~= b_due then
         -- Convert to days for proper numeric comparison
-        local a_year, a_month, a_day = M.parse_date(a_due)
-        local b_year, b_month, b_day = M.parse_date(b_due)
+        local a_year, a_month, a_day = process.parse_date(a_due)
+        local b_year, b_month, b_day = process.parse_date(b_due)
         if a_year and b_year then
-          local a_days = M.date_to_days(a_year, a_month, a_day)
-          local b_days = M.date_to_days(b_year, b_month, b_day)
+          local a_days = process.date_to_days(a_year, a_month, a_day)
+          local b_days = process.date_to_days(b_year, b_month, b_day)
           return a_days < b_days
         end
         -- Fallback to string comparison if parsing fails
@@ -429,10 +493,10 @@ end
 
 -- Build a tree structure from items
 -- Returns: {roots = array, children = map}
-M.build_tree = function(items)
-  local children = {}
-  local is_child = {}
-  local item_set = {}
+process.build_tree = function(items: {WorkItem}): TreeResult
+  local children: {string:{WorkItem}} = {}
+  local is_child: {string:boolean} = {}
+  local item_set: {string:boolean} = {}
 
   -- Build set of items for quick lookup
   for _, item in ipairs(items) do
@@ -456,7 +520,7 @@ M.build_tree = function(items)
   end
 
   -- Find roots (items that are not children in this filtered set)
-  local roots = {}
+  local roots: {WorkItem} = {}
   for _, item in ipairs(items) do
     if not is_child[item.id] then
       table.insert(roots, item)
@@ -472,7 +536,7 @@ end
 -- Enrich an item with computed fields
 -- Signature: M.enrich(store, item)
 -- Returns: item with _computed field
-M.enrich = function(store, item)
+process.enrich = function(store: WorkStore, item: WorkItem): WorkItem
   -- Don't re-enrich
   if item._computed then
     return item
@@ -482,14 +546,14 @@ M.enrich = function(store, item)
   local short_id = item.id:sub(-6)
 
   -- Resolve due date
-  local resolved_due, _ = M.resolve_due_date(store, item)
-  local relative_due = M.date_relative_to_today(resolved_due)
+  local resolved_due, _ = process.resolve_due_date(store, item)
+  local relative_due = process.date_relative_to_today(resolved_due)
 
   -- Check if blocked
-  local is_blocked = M.is_item_blocked(store, item)
+  local is_blocked = process.is_item_blocked(store, item)
 
   -- Get unresolved blocks
-  local unresolved_blocks = M.get_unresolved_blocks(store, item)
+  local unresolved_blocks = process.get_unresolved_blocks(store, item)
 
   -- Count dependents (items that block on this one)
   local dependent_count = 0
@@ -519,10 +583,10 @@ end
 -- Enrich all items with computed fields
 -- Signature: M.enrich_all(store, items)
 -- Returns: array of enriched items
-M.enrich_all = function(store, items)
-  local enriched = {}
+process.enrich_all = function(store: WorkStore, items: {WorkItem}): {WorkItem}
+  local enriched: {WorkItem} = {}
   for _, item in ipairs(items) do
-    table.insert(enriched, M.enrich(store, item))
+    table.insert(enriched, process.enrich(store, item))
   end
   return enriched
 end
@@ -530,8 +594,8 @@ end
 -- Find items that have the given ID in their blocks field
 -- Signature: M.find_items_blocking_on(store, target_id)
 -- Returns: array of items that reference this ID
-M.find_items_blocking_on = function(store, target_id)
-  local referencing_items = {}
+process.find_items_blocking_on = function(store: WorkStore, target_id: string): {WorkItem}
+  local referencing_items: {WorkItem} = {}
   for _, item in pairs(store.items) do
     if item.blocks then
       for _, block_id in ipairs(item.blocks) do
@@ -545,4 +609,4 @@ M.find_items_blocking_on = function(store, target_id)
   return referencing_items
 end
 
-return M
+return process

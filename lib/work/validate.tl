@@ -1,11 +1,13 @@
 -- Centralized validation for work system
--- Extracted from CLI and consolidated
 
-local M = {}
+local record M
+  field_update: function(item: any, key: string, value: string): boolean, string
+  due_date: function(value: string): boolean, string
+  parse_blocks: function(blocks_str: string, resolve_fn: function(string): string, string): {string}, string
+end
 
 -- Validate field update
--- Returns: ok, err
-M.field_update = function(_item, key, value)
+M.field_update = function(_item: any, key: string, value: string): boolean, string
   if key == "id" or key == "created" then
     return nil, "cannot update field: " .. key
   end
@@ -35,8 +37,7 @@ M.field_update = function(_item, key, value)
 end
 
 -- Validate due date format
--- Returns: ok, err
-M.due_date = function(value)
+M.due_date = function(value: string): boolean, string
   if not value or value == "" then
     return true
   end
@@ -54,13 +55,12 @@ end
 
 -- Parse blocks argument string (comma-separated IDs)
 -- resolve_fn should be a function that takes a short_id and returns full_id, err
--- Returns: blocks array, err
-M.parse_blocks = function(blocks_str, resolve_fn)
+M.parse_blocks = function(blocks_str: string, resolve_fn: function(string): string, string): {string}, string
   if not blocks_str or blocks_str == "" then
     return {}, nil
   end
 
-  local blocks = {}
+  local blocks: {string} = {}
   for short_id in blocks_str:gmatch("[^,]+") do
     -- Trim whitespace
     short_id = short_id:match("^%s*(.-)%s*$")
