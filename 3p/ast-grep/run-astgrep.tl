@@ -1,43 +1,74 @@
 #!/usr/bin/env lua
--- teal ignore: type annotations needed
 
 local cosmo = require("cosmo")
-local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local spawn = require("cosmic.spawn")
 local common = require("checker.common")
 
-local supported_extensions = {
+local record Issue
+  line: integer
+  column: integer
+  rule_id: string
+  message: string
+  note: string
+end
+
+local record AstGrepRange
+  start: AstGrepPosition
+end
+
+local record AstGrepPosition
+  line: integer
+  column: integer
+end
+
+local record AstGrepResult
+  ruleId: string
+  range: AstGrepRange
+  message: string
+  note: string
+end
+
+local supported_extensions: {string: boolean} = {
   [".lua"] = true,
   [".tl"] = true,
 }
 
-local supported_patterns = {
+local record CheckPatterns
+  shebangs: {string: boolean}
+  ignore: string
+end
+
+local supported_patterns: CheckPatterns = {
   shebangs = {
     ["lua"] = true,
   },
   ignore = "ast%-grep%s+ignore%s*:?%s*(.*)",
 }
 
-local function parse_json_stream(stdout)
-  local issues = {}
+local function parse_json_stream(stdout: string): {Issue}
+  local issues: {Issue} = {}
   for line in (stdout or ""):gmatch("[^\n]+") do
     local ok, obj = pcall(cosmo.DecodeJson, line)
-    if ok and obj and obj.ruleId then
-      table.insert(issues, {
-        line = (obj.range and obj.range.start and obj.range.start.line or 0) + 1,
-        column = (obj.range and obj.range.start and obj.range.start.column or 0) + 1,
-        rule_id = obj.ruleId,
-        message = obj.message,
-        note = obj.note,
-      })
+    if ok and obj then
+      local result = obj as AstGrepResult
+      if result.ruleId then
+        local issue: Issue = {
+          line = (result.range and result.range.start and result.range.start.line or 0) + 1,
+          column = (result.range and result.range.start and result.range.start.column or 0) + 1,
+          rule_id = result.ruleId,
+          message = result.message,
+          note = result.note,
+        }
+        table.insert(issues, issue)
+      end
     end
   end
   return issues
 end
 
-local function format_issues(issues, source)
-  local lines = {}
+local function format_issues(issues: {Issue}, source: string): string
+  local lines: {string} = {}
   for _, issue in ipairs(issues) do
     table.insert(lines, string.format("%s:%d:%d: [%s] %s",
       source,
@@ -50,7 +81,7 @@ local function format_issues(issues, source)
 end
 
 
-local function main(source)
+local function main(source: string): integer, string
   if not source then
     return 1, "usage: run-astgrep.lua <source>"
   end
@@ -70,7 +101,7 @@ local function main(source)
   local handle = spawn({ sg, "scan", "--json=stream", source })
   local _, stdout, _ = handle:read()
 
-  local issues = parse_json_stream(stdout)
+  local issues = parse_json_stream(stdout as string)
 
   if #issues > 0 then
     local issue_text = format_issues(issues, source)

@@ -86,9 +86,15 @@ $(o)/%.lua: %.tl $(types_files) $(tl_files) $(bootstrap_files) $$(tl_staged)
 
 # bin scripts: o/bin/X.lua from lib/*/X.lua and 3p/*/X.lua
 vpath %.lua lib/build lib/test 3p/ast-grep 3p/luacheck 3p/tl
+vpath %.tl 3p/ast-grep 3p/luacheck 3p/tl
 $(o)/bin/%.lua: %.lua
 	@mkdir -p $(@D)
 	@$(cp) $< $@
+
+# bin scripts from teal: o/bin/X.lua from 3p/*/X.tl (vpath finds X.tl)
+$(o)/bin/%.lua: %.tl $(types_files) $(tl_files) $(bootstrap_files) | $(tl_staged)
+	@mkdir -p $(@D)
+	@$(tl_gen) $< -o $@
 
 # files are produced in o/
 all_files += $(call filter-only,$(foreach x,$(modules),$($(x)_files)))
