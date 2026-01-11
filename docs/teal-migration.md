@@ -585,8 +585,11 @@ Note: Other build fixes originally planned for PR A (home cook.mk secondary expa
 
 Files:
 - `lib/build/*.tl` (6 files: build-fetch, build-stage, check-update, reporter, make-help, test-snap)
+- `lib/build/cook.mk` - exclude .tl from build_srcs (avoid teal rule precedence)
+- `Makefile` - fix tl_staged race (regular prereq), add cosmos_staged to luacheck
+- `lib/cook.mk` - fix tl_staged race (regular prereq)
 
-Note: Build module keeps both `.lua` and `.tl` files due to bootstrap dependency.
+Note: Build module keeps both `.lua` and `.tl` files due to bootstrap dependency. The .tl files are excluded from build_srcs to prevent make from choosing the teal compilation rule (which needs tl_staged) over the copy rule.
 
 #### PR C: Phase 4.1 - Independent app modules
 
