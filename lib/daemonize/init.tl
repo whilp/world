@@ -1,8 +1,13 @@
+-- daemonize: process daemonization utilities
 local unix = require("cosmo.unix")
 
-local M = {}
+local record M
+  write_pidfile: function(path: string): boolean, string
+  acquire_lock: function(path: string): number, string
+  redirect_output: function(stdout_path: string, stderr_path: string, append: boolean): boolean, string
+end
 
-M.write_pidfile = function(path)
+function M.write_pidfile(path: string): boolean, string
   if not path or path == "" then
     return nil, "pid file path required"
   end
@@ -18,12 +23,12 @@ M.write_pidfile = function(path)
   return true
 end
 
-M.acquire_lock = function(path)
+function M.acquire_lock(path: string): number, string
   if not path or path == "" then
     return nil, "lock file path required"
   end
 
-  local fd, err = unix.open(path, unix.O_CREAT + unix.O_RDWR, tonumber("0600", 8))
+  local fd, err = unix.open(path, unix.O_CREAT + unix.O_RDWR, tonumber("0600", 8) as number)
   if not fd then
     return nil, "failed to open lock file: " .. tostring(err)
   end
@@ -53,7 +58,7 @@ M.acquire_lock = function(path)
   return fd
 end
 
-M.redirect_output = function(stdout_path, stderr_path, append)
+function M.redirect_output(stdout_path: string, stderr_path: string, append: boolean): boolean, string
   local flags = unix.O_CREAT + unix.O_WRONLY
   if append then
     flags = flags + unix.O_APPEND
@@ -62,7 +67,7 @@ M.redirect_output = function(stdout_path, stderr_path, append)
   end
 
   if stdout_path and stderr_path and stdout_path == stderr_path then
-    local fd = unix.open(stdout_path, flags, tonumber("0644", 8))
+    local fd = unix.open(stdout_path, flags, tonumber("0644", 8) as number)
     if not fd then
       return nil, "failed to open output file: " .. stdout_path
     end
@@ -73,7 +78,7 @@ M.redirect_output = function(stdout_path, stderr_path, append)
     end
   else
     if stdout_path then
-      local fd = unix.open(stdout_path, flags, tonumber("0644", 8))
+      local fd = unix.open(stdout_path, flags, tonumber("0644", 8) as number)
       if not fd then
         return nil, "failed to open stdout file: " .. stdout_path
       end
@@ -84,7 +89,7 @@ M.redirect_output = function(stdout_path, stderr_path, append)
     end
 
     if stderr_path then
-      local fd = unix.open(stderr_path, flags, tonumber("0644", 8))
+      local fd = unix.open(stderr_path, flags, tonumber("0644", 8) as number)
       if not fd then
         return nil, "failed to open stderr file: " .. stderr_path
       end
