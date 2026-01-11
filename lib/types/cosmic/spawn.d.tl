@@ -20,7 +20,7 @@ local record SpawnOpts
   stdin: string | number
   stdout: number
   stderr: number
-  env: {string:string}
+  env: {string}
 end
 
 local record spawn

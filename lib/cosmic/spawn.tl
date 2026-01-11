@@ -21,7 +21,7 @@ local record SpawnOpts
   stdin: string | number
   stdout: number
   stderr: number
-  env: {string:string}
+  env: {string}
 end
 
 local function make_pipe(fd: number): Pipe
@@ -193,8 +193,8 @@ local M: SpawnModule = {
 }
 
 setmetatable(M, {
-  __call = function(_: SpawnModule, ...: any): SpawnHandle, string
-    return spawn(...)
+  __call = function(_: SpawnModule, argv: {string}, opts?: SpawnOpts): SpawnHandle, string
+    return spawn(argv, opts)
   end,
 })
 
