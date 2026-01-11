@@ -155,7 +155,7 @@ export NO_COLOR := 1
 
 $(o)/%.test.ok: .PLEDGE = stdio rpath wpath cpath proc exec
 $(o)/%.test.ok: .UNVEIL = rx:$(o)/bootstrap r:lib r:3p rwc:$(o) rwc:/tmp rx:/usr rx:/proc r:/etc r:/dev/null
-$(o)/%.test.ok: % $(test_files) | $(bootstrap_files)
+$(o)/%.test.ok: % $(test_files) $(checker_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
 	@[ -x $< ] || chmod a+x $<
 	@TEST_DIR=$(TEST_DIR) $(test_runner) $< > $@
@@ -248,7 +248,7 @@ update: $(o)/update-summary.txt
 $(o)/update-summary.txt: $(all_updated) | $(build_reporter)
 	@$(reporter) --dir $(o) $^ | tee $@
 
-$(o)/%.update.ok: % $(build_check_update) | $(bootstrap_files)
+$(o)/%.update.ok: % $(build_check_update) $(checker_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
 	@$(update_runner) $< > $@
 
