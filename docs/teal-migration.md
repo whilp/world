@@ -338,15 +338,17 @@ Options:
 
 Recommendation: Option 1 until we have a better bootstrap solution.
 
-#### PR 7.2: Remove redundant type declarations
+#### PR 7.2: Remove redundant type declarations ✓
 
-Once modules have .tl source files, their .d.tl stubs may be redundant:
-- `lib/types/cosmic/*.d.tl` - lib/cosmic/ has .tl files
+**Status: DONE**
+
+Removed 6 redundant .d.tl files since the source .tl files now exist:
+- `lib/types/cosmic/*.d.tl` (init, spawn, walk) - lib/cosmic/ has .tl sources
 - `lib/types/daemonize.d.tl` - lib/daemonize/init.tl exists
 - `lib/types/whereami.d.tl` - lib/whereami/init.tl exists
 - `lib/types/ulid.d.tl` - lib/ulid.tl exists
 
-Test by removing and running `make teal` to verify types resolve correctly.
+All 187 teal checks still pass after removal.
 
 #### PR 7.3: Update documentation
 
