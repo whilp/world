@@ -2,6 +2,6 @@ lib_lua_modules += claude
 lib_dirs += o/any/claude/lib
 lib_libs += o/any/claude/lib/claude/main.lua
 
-o/any/claude/lib/claude/main.lua: lib/claude/main.lua
+o/any/claude/lib/claude/main.lua: lib/claude/main.tl $(types_files) | $(tl_staged)
 	mkdir -p $(@D)
-	cp $< $@
+	$(tl_gen) -o $@ $<

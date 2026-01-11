@@ -19,6 +19,7 @@ local record unistd
   execp: function(file: string, args: {string}): nil, string
   fork: function(): number, string
   _exit: function(status: number)
+  close: function(fd: number): boolean, string
 end
 
 return unistd

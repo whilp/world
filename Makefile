@@ -85,9 +85,15 @@ $(o)/%.lua: %.tl $(types_files) $(tl_files) $(bootstrap_files) | $(tl_staged)
 
 # bin scripts: o/bin/X.lua from lib/*/X.lua and 3p/*/X.lua
 vpath %.lua lib/build lib/test 3p/ast-grep 3p/luacheck 3p/tl
+vpath %.tl 3p/ast-grep 3p/luacheck 3p/tl
 $(o)/bin/%.lua: %.lua
 	@mkdir -p $(@D)
 	@$(cp) $< $@
+
+# bin scripts from teal: o/bin/X.lua from 3p/*/X.tl (vpath finds X.tl)
+$(o)/bin/%.lua: %.tl $(types_files) $(tl_files) $(bootstrap_files) | $(tl_staged)
+	@mkdir -p $(@D)
+	@$(tl_gen) $< -o $@
 
 # files are produced in o/
 all_files += $(call filter-only,$(foreach x,$(modules),$($(x)_files)))
@@ -150,7 +156,7 @@ $(o)/test-summary.txt: $(all_tested) $(all_snapped) | $(build_reporter)
 export TEST_O := $(o)
 export TEST_PLATFORM := $(platform)
 export TEST_BIN := $(o)/bin
-export LUA_PATH := $(CURDIR)/o/teal/lib/?.lua;$(CURDIR)/o/teal/lib/?/init.lua;$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
+export LUA_PATH := $(CURDIR)/o/teal/lib/?.lua;$(CURDIR)/o/teal/lib/?/init.lua;$(CURDIR)/o/lib/?.lua;$(CURDIR)/o/lib/?/init.lua;$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
 export NO_COLOR := 1
 
 $(o)/%.test.ok: .PLEDGE = stdio rpath wpath cpath proc exec
@@ -266,7 +272,7 @@ build: home cosmic
 
 .PHONY: release
 ## Create release artifacts (CI only)
-release:
+release: $(o)/lib/home/gen-platforms.lua
 	@mkdir -p release
 	@cp artifacts/home-darwin-arm64/home release/home-darwin-arm64
 	@cp artifacts/home-linux-arm64/home release/home-linux-arm64
@@ -277,7 +283,7 @@ release:
 	@chmod +x artifacts/cosmos-zip/zip
 	@tag="home-$$(date -u +%Y-%m-%d)-$${GITHUB_SHA::7}"; \
 	base_url="https://github.com/$${GITHUB_REPOSITORY}/releases/download/$$tag"; \
-	LUA_PATH="lib/home/?.lua;;" ./release/cosmic-lua lib/home/gen-platforms.lua \
+	LUA_PATH="lib/home/?.lua;;" ./release/cosmic-lua $(o)/lib/home/gen-platforms.lua \
 		release/platforms "$$base_url" "$$tag" \
 		release/home-darwin-arm64 release/home-linux-arm64 release/home-linux-x86_64; \
 	(cd release/platforms && ../../artifacts/cosmos-zip/zip -j ../home platforms.lua); \

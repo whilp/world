@@ -1,5 +1,5 @@
 modules += home
-home_srcs := $(wildcard lib/home/*.lua) $(wildcard lib/home/*/*.lua)
+home_srcs := $(wildcard lib/home/*.lua) $(wildcard lib/home/*.tl) $(wildcard lib/home/*/*.lua) $(wildcard lib/home/*/*.tl)
 home_lib_srcs := $(filter-out lib/home/test%.lua,$(wildcard lib/home/*.lua))
 home_libs := $(addprefix $(o)/,$(home_lib_srcs))
 home_bin := $(o)/bin/home
@@ -22,6 +22,9 @@ HOME_VERSION ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown"
 
 home_built := $(o)/home/.built
 
+# Teal-compiled scripts
+home_tl_compiled := $(o)/lib/home/main.lua $(o)/lib/home/gen-manifest.lua $(o)/lib/home/gen-platforms.lua
+
 # Which nvim to bundle: raw binary for dev, full bundle for release
 HOME_NVIM_DIR ?= $(nvim_staged)
 
@@ -31,7 +34,7 @@ $(o)/home/dotfiles.zip: $$(cosmos_staged)
 
 # Home binary bundles: dotfiles, cosmos binaries, cosmic, 3p tools, lua libs
 # Dev build uses raw nvim; release build uses bundled nvim (set via HOME_NVIM_DIR)
-$(home_bin): $(home_libs) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin) $(cosmic_tl_libs) $$(nvim_staged) $$(foreach t,$(home_3p_tools),$$($$(t)_staged))
+$(home_bin): $(home_libs) $(home_tl_compiled) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin) $(cosmic_tl_libs) $$(nvim_staged) $$(foreach t,$(home_3p_tools),$$($$(t)_staged))
 	@rm -rf $(home_built)
 	@mkdir -p $(home_built)/home/.local/bin $(home_built)/home/.local/share $(home_built)/.lua $(@D)
 	@cd $(home_built) && unzip -q $(CURDIR)/$(o)/home/dotfiles.zip -d home
@@ -47,11 +50,11 @@ $(home_bin): $(home_libs) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin)
 	@nvim_versioned_name=$$(basename $$(readlink -f $(nvim_staged))); \
 		mkdir -p $(home_built)/home/.local/share/nvim && \
 		cp -rL $(HOME_NVIM_DIR) $(home_built)/home/.local/share/nvim/$$nvim_versioned_name
-	@$(cosmic_bin) lib/home/gen-manifest.lua $(home_built)/home $(HOME_VERSION) > $(home_built)/manifest.lua
+	@$(cosmic_bin) $(o)/lib/home/gen-manifest.lua $(home_built)/home $(HOME_VERSION) > $(home_built)/manifest.lua
 	@$(cp) $(cosmos_dir)/lua $@
 	@chmod +x $@
 	@cd $(home_built) && find home manifest.lua -type f | $(CURDIR)/$(cosmos_zip) -q $(CURDIR)/$@ -@
-	@$(cosmos_zip) -qj $@ lib/home/main.lua lib/home/.args
+	@$(cosmos_zip) -qj $@ $(o)/lib/home/main.lua lib/home/.args
 	@cp -r lib/cosmic lib/version.lua lib/claude $(home_setup_dir) $(home_mac_dir) $(home_built)/.lua/
 	@cp -f $(cosmic_tl_libs) $(home_built)/.lua/cosmic/
 	@cd $(home_built) && $(CURDIR)/$(cosmos_zip) -qr $(CURDIR)/$@ .lua

@@ -14,9 +14,9 @@ end
 local record unix
   -- process control
   fork: function(): number
-  execve: function(path: string, argv: {string}, env: {string:string})
-  execvpe: function(cmd: string, argv: {string}, env: {string:string})
-  wait: function(pid: number): number, number
+  execve: function(path: string, argv: {string}, env: {string})
+  execvpe: function(cmd: string, argv: {string}, env: {string})
+  wait: function(pid?: number): number, number
   exit: function(code: number)
   kill: function(pid: number, signal: number): boolean
   getpid: function(): number
@@ -27,7 +27,7 @@ local record unix
   dup: function(fd: number, newfd?: number): number
 
   -- file operations
-  open: function(path: string, flags: number, mode?: number): number
+  open: function(path: string, flags: number, mode?: number): number, string
   close: function(fd: number): boolean
   read: function(fd: number, size: number): string
   write: function(fd: number, data: string): number
@@ -37,7 +37,7 @@ local record unix
   -- directory operations
   opendir: function(path: string): DirHandle
   mkdir: function(path: string, mode: number): boolean
-  makedirs: function(path: string): boolean
+  makedirs: function(path: string, mode?: number): boolean, string
   mkdtemp: function(template: string): string
   rmrf: function(path: string): boolean
   rename: function(src: string, dst: string): boolean
@@ -54,7 +54,7 @@ local record unix
   stat: function(path: string, flags?: number): Stat
 
   -- environment
-  environ: function(): {string:string}
+  environ: function(): {string}
   setenv: function(name: string, value: string): boolean
   unsetenv: function(name: string): boolean
   commandv: function(cmd: string): string
@@ -102,8 +102,8 @@ local record unix
   F_WRLCK: number
 
   -- signals
-  SIGINT: number
-  SIGTERM: number
+  SIGINT: integer
+  SIGTERM: integer
 
   -- network constants
   AF_UNIX: number

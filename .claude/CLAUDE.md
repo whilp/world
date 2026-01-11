@@ -66,3 +66,37 @@
 - library modules go in `lib/<name>/init.lua` or `lib/<name>/*.lua`
 - binaries in `.local/bin` are simple wrappers that require the lib module
 - tests go in `test_*.lua` files
+
+## Teal
+
+Teal is a typed dialect of Lua. Most source files use `.tl` extension.
+
+### Type annotations
+- add types to function parameters and return values: `function foo(x: number): string`
+- use `local record Foo` for structured data types
+- use `local type Foo = {string:any}` for flexible map types
+- use `as` for type assertions when needed: `require("foo") as FooModule`
+
+### Records vs types
+```teal
+-- record: named fields, strict structure
+local record Config
+  name: string
+  count: number
+end
+
+-- type alias: flexible, for maps or unions
+local type Options = {string:any}
+local type Result = string | nil
+```
+
+### Common patterns
+- define record types for module interfaces when importing
+- use `global` for test classes: `global TestFoo: {string:function()}`
+- external modules need .d.tl type stubs in `lib/types/`
+
+### Running teal check
+```bash
+make teal              # type check all .tl files
+make clean teal        # full rebuild and check
+```

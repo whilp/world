@@ -11,8 +11,9 @@ This document outlines the incremental migration from Lua to Teal for comprehens
 
 ## Current state
 
-- 93 lua files with `-- teal ignore` comments (down from 107)
-- 14 `.tl` files migrated:
+- 0 files skipped in teal check (all pass)
+- 162 `.tl` files migrated (including 49 test files, 5 utilities)
+- All major modules converted:
   - `lib/checker/common.tl`
   - `lib/ulid.tl`
   - `lib/utils.tl`
@@ -27,6 +28,36 @@ This document outlines the incremental migration from Lua to Teal for comprehens
   - `lib/environ/init.tl`
   - `lib/daemonize/init.tl`
   - `lib/whereami/init.tl`
+  - `lib/build/build-fetch.tl`
+  - `lib/build/build-stage.tl`
+  - `lib/build/check-update.tl`
+  - `lib/build/reporter.tl`
+  - `lib/build/make-help.tl`
+  - `lib/build/test-snap.tl`
+  - `lib/aerosnap/init.tl`
+  - `lib/cleanshot/init.tl`
+  - `lib/claude/main.tl`
+  - `lib/nvim/main.tl`
+  - `lib/work/data.tl`
+  - `lib/work/process.tl`
+  - `lib/work/api.tl`
+  - `lib/work/render.tl`
+  - `lib/work/config.tl`
+  - `lib/work/validate.tl`
+  - `lib/work/store.tl`
+  - `lib/skill/init.tl`
+  - `lib/skill/hook.tl`
+  - `lib/skill/pr.tl`
+  - `lib/skill/pr_comments.tl`
+  - `lib/skill/bootstrap.tl`
+  - `lib/home/main.tl`
+  - `lib/home/gen-manifest.tl`
+  - `lib/home/gen-platforms.tl`
+  - `lib/home/setup/*.tl` (13 files)
+  - `lib/home/mac/*.tl` (30 files)
+  - `3p/tl/run-teal.tl`
+  - `3p/luacheck/run-luacheck.tl`
+  - `3p/ast-grep/run-astgrep.tl`
 - Teal 0.24.8 installed as 3p dependency
 - `make teal` target exists (runs `tl check` on each file)
 - Checker infrastructure already supports `.tl` extension
@@ -165,84 +196,171 @@ Complete checker module:
 - Already have `common.tl` from PR 2.1
 - Migrate test utilities
 
-#### PR 3.6: Migrate lib/build
+#### PR 3.6: Migrate lib/build ✓
 
-Build system utilities:
-- `build-fetch.lua`
-- `build-stage.lua`
-- `check-update.lua`
-- `reporter.lua`
-- `make-help.lua`
-- `test-snap.lua`
+**Status: DONE** (migrated in parallel using agent strategy)
+
+Build system utilities - special handling required:
+- Build module has bootstrap dependency (needs itself to fetch/stage teal)
+- Solution: keep both `.lua` and `.tl` files for bootstrap-critical modules
+- `.lua` files used for bootstrap (copied to o/bin/)
+- `.tl` files used for type checking via `make teal`
+
+Migrated files:
+- `lib/build/build-fetch.tl` - fetch archive downloads
+- `lib/build/build-stage.tl` - archive extraction and staging
+- `lib/build/check-update.tl` - GitHub release version checking
+- `lib/build/reporter.tl` - test/check result reporting
+- `lib/build/make-help.tl` - Makefile help generation
+- `lib/build/test-snap.tl` - snapshot testing utility
 
 ### Phase 4: Application modules
 
-#### PR 4.1: Migrate lib/work
+#### PR 4.1: Migrate independent app modules ✓
+
+**Status: DONE** (migrated in parallel using agent strategy)
+
+Independent application modules:
+- `lib/aerosnap/init.tl` - window management with SQLite types
+- `lib/cleanshot/init.tl` - screenshot utility with Flags record
+- `lib/claude/main.tl` - Claude binary launcher
+- `lib/nvim/main.tl` - Neovim wrapper with daemon support
+
+Added type declarations:
+- `lib/types/cosmo/lsqlite3.d.tl` - SQLite3 bindings
+- `lib/types/daemonize.d.tl` - daemon utilities
+- `lib/types/whereami.d.tl` - executable path discovery
+
+#### PR 4.2: Migrate lib/work ✓
+
+**Status: DONE** (migrated in parallel using agent strategy)
 
 Work item management (largest module):
-- `data.lua` (587 lines)
-- `process.lua` (548 lines)
-- `api.lua` (479 lines)
-- `render.lua` (283 lines)
+- `lib/work/data.tl` - core data types (WorkItem, WorkStore records)
+- `lib/work/process.tl` - work item processing
+- `lib/work/api.tl` - API layer
+- `lib/work/render.tl` - output rendering
+- `lib/work/config.tl` - configuration
+- `lib/work/validate.tl` - validation
+- `lib/work/store.tl` - storage layer
 
-#### PR 4.2: Migrate lib/skill
+Added type declarations:
+- `lib/types/serpent.d.tl` - serialization
+- `lib/types/ulid.d.tl` - ULID types
+- `lib/types/posix/fcntl.d.tl` - file control
+- `lib/types/posix/glob.d.tl` - glob patterns
+- `lib/types/posix/stdlib.d.tl` - stdlib functions
+- `lib/types/posix/signal.d.tl` - signals
+- `lib/types/posix/init.d.tl` - posix init
+
+#### PR 4.3: Migrate lib/skill ✓
+
+**Status: DONE** (migrated in parallel using agent strategy)
 
 Skill modules:
-- `hook.lua`
-- `pr.lua`
-- `pr_comments.lua`
-- `bootstrap.lua`
+- `lib/skill/init.tl` - module metadata
+- `lib/skill/hook.tl` - hook dispatcher with flexible input/output types
+- `lib/skill/pr.tl` - GitHub PR operations
+- `lib/skill/pr_comments.tl` - PR comment handling
+- `lib/skill/bootstrap.tl` - environment bootstrap
 
-#### PR 4.3: Migrate lib/aerosnap
+Fixed issues:
+- Updated LUA_PATH to include both `o/teal/lib/` and `o/lib/` for module resolution
+- Made HookInput/HookOutput flexible with `{string:any}` to support arbitrary fields
+- Fixed github_request to return string errors instead of tables
 
-Window management (296 lines)
+#### PR 4.4: Migrate lib/home ✓
 
-#### PR 4.4: Migrate lib/cleanshot
+**Status: DONE** (migrated in parallel using agent strategy)
 
-Screenshot utilities (316 lines)
+Home binary (largest module with 46 files):
+- `lib/home/main.tl` - main home binary with type-annotated options and commands
+- `lib/home/gen-manifest.tl` - manifest generation
+- `lib/home/gen-platforms.tl` - platform generation
+- `lib/home/setup/*.tl` (13 files) - setup modules (env, shell, git, nvim, claude, ai, backup, extras, codespace, validate, verify, util, setup)
+- `lib/home/mac/*.tl` (30 files) - macOS defaults modules
 
-#### PR 4.5: Migrate lib/nvim
-
-Neovim integration:
-- `main.lua` (489 lines)
-- `init.lua`
-
-#### PR 4.6: Migrate lib/home
-
-Home binary (largest):
-- `main.lua` (829 lines)
-- `setup/*.lua` (multiple setup modules)
-- `mac/*.lua` (macOS defaults)
-
-#### PR 4.7: Migrate lib/claude
-
-Claude API integration
+Key type definitions:
+- `ArchMap`, `PlatformMap` type aliases for manifest handling
+- `ParsedArgs`, `SetupOpts`, `MacOpts` records for options
+- `SetupModule`, `MacModule` records for dynamic module loading
+- `Env` record for environment configuration
 
 ### Phase 5: Third-party runners
 
-#### PR 5.1: Migrate 3p checker runners
+#### PR 5.1: Migrate 3p checker runners ✓
 
-- `3p/tl/run-teal.lua`
-- `3p/luacheck/run-luacheck.lua`
-- `3p/ast-grep/run-astgrep.lua`
+**Status: DONE** (migrated in parallel using agent strategy)
+
+- `3p/tl/run-teal.tl` - teal checker runner with Issue record type
+- `3p/luacheck/run-luacheck.tl` - luacheck runner with Issue record type
+- `3p/ast-grep/run-astgrep.tl` - ast-grep runner with AstGrepResult, Issue types
+
+Updated Makefile with vpath for .tl files and pattern rule for compiling to o/bin/.
 
 ### Phase 6: Tests
 
-#### PR 6.1: Decide on test migration strategy
+#### PR 6.1: Migrate test files to teal ✓
 
+**Status: DONE** (migrated 49 test files using parallel agents)
+
+Migrated all test files to teal for full type coverage:
+- `3p/*/test_*.tl` (23 files)
+- `lib/*/test_*.tl` (26 files)
+
+Build fixes required:
+- Added 3p/ast-grep to vpath for .tl files
+- Added work module to modules list for teal checking
+- Excluded test_lib.lua from work_tests (helper module)
+
+#### PR 6.2: Migrate test utilities ✓
+
+**Status: DONE**
+
+Migrated test utilities and remaining skipped files:
+- `lib/test/run-test.tl` - test runner with typed fd manipulation
+- `3p/tl/test.tl` - teal test helper
+- `3p/tl/tl-gen.tl` - tl gen wrapper with typed getopt
+- `3p/luacheck/test.tl` - luacheck test helper
+- `3p/nvim-parsers/install.tl` - treesitter parser installer
+
+All 187 teal checks now pass with 0 skipped.
+
+### Phase 7: Bootstrap and cleanup
+
+#### PR 7.1: Migrate lib/build bootstrap files to teal
+
+The 6 lib/build/ .lua files are kept for bootstrap but have corresponding .tl files.
 Options:
-1. Keep tests as lua (faster iteration)
-2. Migrate tests to teal (full type coverage)
-3. Hybrid: type-check tests but keep as lua
+1. Keep both - .lua for bootstrap, .tl for type checking (current state)
+2. Remove .lua files and compile .tl at bootstrap time (requires staged tl)
+3. Pre-compile .tl to .lua and commit the generated files
 
-Recommendation: Start with option 3 (type-check but keep as lua) to get value without churn.
+Recommendation: Option 1 until we have a better bootstrap solution.
 
-### Phase 7: Cleanup
+#### PR 7.2: Remove redundant type declarations ✓
 
-#### PR 7.1: Update documentation
+**Status: DONE**
 
-- Update CLAUDE.md with teal patterns
-- Add type annotation guidelines
+Removed 6 redundant .d.tl files since the source .tl files now exist:
+- `lib/types/cosmic/*.d.tl` (init, spawn, walk) - lib/cosmic/ has .tl sources
+- `lib/types/daemonize.d.tl` - lib/daemonize/init.tl exists
+- `lib/types/whereami.d.tl` - lib/whereami/init.tl exists
+- `lib/types/ulid.d.tl` - lib/ulid.tl exists
+
+All 187 teal checks still pass after removal.
+
+#### PR 7.3: Update documentation ✓
+
+**Status: DONE**
+
+Updated documentation with teal patterns:
+- Added Teal section to `CLAUDE.md` with build commands
+- Added detailed Teal section to `.claude/CLAUDE.md` with:
+  - Type annotation syntax
+  - Records vs type aliases
+  - Common patterns for tests and modules
+  - Running the teal checker
 
 ## Special considerations
 
@@ -361,40 +479,49 @@ Batch 3.2 - Cosmic module ✓ (completed with 5 parallel agents):
 - `lib/cosmic/main.tl`
 - `lib/cosmic/lfs.tl`
 
-Batch 3.3 - Build utilities (6 agents):
-- `lib/build/build-fetch.lua`
-- `lib/build/build-stage.lua`
-- `lib/build/check-update.lua`
-- `lib/build/reporter.lua`
-- `lib/build/make-help.lua`
-- `lib/build/test-snap.lua`
+Batch 3.3 - Build utilities ✓ (completed with 6 parallel agents):
+- `lib/build/build-fetch.tl`
+- `lib/build/build-stage.tl`
+- `lib/build/check-update.tl`
+- `lib/build/reporter.tl`
+- `lib/build/make-help.tl`
+- `lib/build/test-snap.tl`
+- Note: Build module keeps both .lua and .tl due to bootstrap dependency
 
 **Phase 4: Application modules** (can run some in parallel)
 
-Batch 4.1 - Independent app modules (4 agents):
-- `lib/aerosnap/init.lua`
-- `lib/cleanshot/init.lua`
-- `lib/claude/init.lua`
-- `lib/nvim/init.lua` + `lib/nvim/main.lua`
+Batch 4.1 - Independent app modules ✓ (completed with 4 parallel agents):
+- `lib/aerosnap/init.tl`
+- `lib/cleanshot/init.tl`
+- `lib/claude/main.tl`
+- `lib/nvim/main.tl`
 
-Batch 4.2 - Work module (4 agents, internal dependencies):
-- `lib/work/data.lua` (first - others depend on it)
-- Then parallel: `lib/work/process.lua`, `lib/work/api.lua`, `lib/work/render.lua`
+Batch 4.2 - Work module ✓ (completed with 7 parallel agents):
+- `lib/work/data.tl` (core types)
+- `lib/work/process.tl`
+- `lib/work/api.tl`
+- `lib/work/render.tl`
+- `lib/work/config.tl`
+- `lib/work/validate.tl`
+- `lib/work/store.tl`
 
-Batch 4.3 - Skill module (4 agents):
-- `lib/skill/hook.lua`
-- `lib/skill/pr.lua`
-- `lib/skill/pr_comments.lua`
-- `lib/skill/bootstrap.lua`
+Batch 4.3 - Skill module ✓ (completed with 5 parallel agents):
+- `lib/skill/init.tl`
+- `lib/skill/hook.tl`
+- `lib/skill/pr.tl`
+- `lib/skill/pr_comments.tl`
+- `lib/skill/bootstrap.tl`
 
-Batch 4.4 - Home module (needs sequencing):
-- `lib/home/main.lua` first
-- Then parallel: `lib/home/setup/*.lua`, `lib/home/mac/*.lua`
+Batch 4.4 - Home module ✓ (completed with 4 parallel agents):
+- `lib/home/main.tl`
+- `lib/home/setup/*.tl` (13 files)
+- `lib/home/mac/*.tl` (30 files)
+- `lib/home/gen-*.tl` (2 files)
 
-**Phase 5: 3p runners** (3 agents):
-- `3p/tl/run-teal.lua`
-- `3p/luacheck/run-luacheck.lua`
-- `3p/ast-grep/run-astgrep.lua`
+**Phase 5: 3p runners** ✓ (completed with 3 parallel agents):
+- `3p/tl/run-teal.tl`
+- `3p/luacheck/run-luacheck.tl`
+- `3p/ast-grep/run-astgrep.tl`
 
 ### Best practices for agent prompts
 

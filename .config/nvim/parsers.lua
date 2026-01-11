@@ -4,6 +4,7 @@ return {
   "markdown",
   "bash",
   "lua",
+  "teal",
   "yaml",
   "javascript",
   "json",

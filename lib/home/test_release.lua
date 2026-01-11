@@ -27,8 +27,8 @@ assert(ok, "failed to copy home binary: " .. tostring(err))
 ok, err = spawn({ "cp", home_bin, test_asset }):wait()
 assert(ok, "failed to copy home asset: " .. tostring(err))
 
--- Generate platform metadata
-local gen_platforms = "lib/home/gen-platforms.lua"
+-- Generate platform metadata (compiled from Teal)
+local gen_platforms = path.join(os.getenv("TEST_O"), "lib/home/gen-platforms.lua")
 
 -- Build env with LUA_PATH prepended (unix.environ returns array of "K=V" strings)
 local env = { "LUA_PATH=lib/home/?.lua;;" }
