@@ -2,6 +2,7 @@ modules += lib
 lib_lua_modules :=
 lib_dirs :=
 lib_libs :=
+lib_srcs := lib/file.lua lib/platform.lua lib/ulid.tl lib/utils.lua lib/version.lua
 lib_tests := lib/test_version.lua
 
 # type declaration files for teal compilation
@@ -18,7 +19,7 @@ o/any/lib/%.lua: lib/%.lua
 # compile .tl files to .lua (for o/any/lib, used by standalone modules)
 o/any/lib/%.lua: lib/%.tl $(types_files) | $(tl_staged)
 	mkdir -p $(@D)
-	$(tl_gen) $< -o $@
+	$(tl_gen) $< $@
 
 # compile .tl files to .lua (for o/teal/lib via tl gen -o)
 # uses secondary expansion so $(tl_staged) is evaluated after all includes

@@ -1,16 +1,19 @@
-local M = {}
-
 local cosmo = require("cosmo")
 
-local ENCODING = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
+local ENCODING <const> = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"
+local ENCODING_LEN <const> = 32
+local TIME_LEN <const> = 10
+local RANDOM_LEN <const> = 16
+local TOTAL_LEN <const> = TIME_LEN + RANDOM_LEN
 
-local ENCODING_LEN = 32
-local TIME_LEN = 10
-local RANDOM_LEN = 16
-local TOTAL_LEN = TIME_LEN + RANDOM_LEN
+local record DecodedUlid
+  timestamp: number
+  time: string
+  random: string
+end
 
-local function encode_time(timestamp, len)
-  local result = {}
+local function encode_time(timestamp: number, len: integer): string
+  local result: {string} = {}
   for i = len, 1, -1 do
     local mod = timestamp % ENCODING_LEN
     result[i] = ENCODING:sub(mod + 1, mod + 1)
@@ -19,8 +22,8 @@ local function encode_time(timestamp, len)
   return table.concat(result)
 end
 
-local function encode_random(len)
-  local result = {}
+local function encode_random(len: integer): string
+  local result: {string} = {}
   local bytes = cosmo.GetRandomBytes(len)
   for i = 1, len do
     local byte = bytes:byte(i)
@@ -29,35 +32,33 @@ local function encode_random(len)
   return table.concat(result)
 end
 
-M.generate = function()
+local function generate(): string
   local timestamp = math.floor(os.time() * 1000)
-
   local time_str = encode_time(timestamp, TIME_LEN)
   local random_str = encode_random(RANDOM_LEN)
-
   return time_str .. random_str
 end
 
-M.timestamp = function(ulid)
+local function timestamp(ulid: string): number, string
   if type(ulid) ~= "string" or #ulid ~= TOTAL_LEN then
     return nil, "invalid ulid"
   end
 
-  local timestamp = 0
+  local ts = 0
   for i = 1, TIME_LEN do
     local char = ulid:sub(i, i)
     local pos = ENCODING:find(char, 1, true)
     if not pos then
       return nil, "invalid character in ulid"
     end
-    timestamp = timestamp * ENCODING_LEN + (pos - 1)
+    ts = ts * ENCODING_LEN + (pos - 1)
   end
 
-  return timestamp
+  return ts
 end
 
-M.decode = function(ulid)
-  local ts, err = M.timestamp(ulid)
+local function decode(ulid: string): DecodedUlid, string
+  local ts, err = timestamp(ulid)
   if not ts then
     return nil, err
   end
@@ -69,4 +70,8 @@ M.decode = function(ulid)
   }
 end
 
-return M
+return {
+  generate = generate,
+  timestamp = timestamp,
+  decode = decode,
+}
