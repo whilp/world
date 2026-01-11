@@ -18,7 +18,9 @@ o/any/lib/%.lua: lib/%.lua
 
 # compile .tl files to .lua (for o/any/lib, used by standalone modules)
 # tl_staged must be regular prereq (not order-only) for parallel builds
-o/any/lib/%.lua: lib/%.tl $(types_files) $(tl_staged)
+# uses secondary expansion so $(tl_files) is evaluated after 3p/tl/cook.mk
+.SECONDEXPANSION:
+o/any/lib/%.lua: lib/%.tl $(types_files) $$(tl_files) | $$(tl_staged)
 	mkdir -p $(@D)
 	$(tl_gen) -o $@ $<
 
