@@ -1,5 +1,4 @@
 -- luacheck ignore: neovim runtime
---check:false
 local opt = vim.opt
 
 -- File handling

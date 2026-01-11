@@ -1,6 +1,6 @@
 modules += delta
 delta_version := 3p/delta/version.lua
-delta_tests := 3p/delta/test_delta.lua
+delta_tests := 3p/delta/test_delta.tl
 
 # Override staging to move binary to bin/ subdirectory
 $(o)/delta/.staged: $(o)/delta/.fetched

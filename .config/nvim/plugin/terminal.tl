@@ -1,5 +1,4 @@
 -- luacheck ignore: neovim runtime
---check:false
 local map = vim.keymap.set
 
 -- Terminal mode keybindings

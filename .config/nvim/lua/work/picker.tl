@@ -1,5 +1,4 @@
 -- luacheck ignore: neovim runtime
---check:false
 -- work.nvim - mini.pick integration for work items
 local M = {}
 

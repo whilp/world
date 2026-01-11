@@ -1,5 +1,4 @@
 -- luacheck ignore: neovim runtime
---check:false
 -- work.nvim - user-facing actions
 local M = {}
 
