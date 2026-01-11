@@ -79,7 +79,7 @@ $(o)/%: %
 	@$(cp) $< $@
 
 # compile .tl files to .lua (extension changes)
-$(o)/%.lua: %.tl $(types_files) | $(tl_staged)
+$(o)/%.lua: %.tl $(types_files) $(tl_files) $(bootstrap_files) | $(tl_staged)
 	@mkdir -p $(@D)
 	@$(tl_gen) $< -o $@
 

@@ -11,8 +11,14 @@ This document outlines the incremental migration from Lua to Teal for comprehens
 
 ## Current state
 
-- 105 lua files with `-- teal ignore` comments (down from 107)
-- 2 `.tl` files migrated: `lib/checker/common.tl`, `lib/ulid.tl`
+- 101 lua files with `-- teal ignore` comments (down from 107)
+- 6 `.tl` files migrated:
+  - `lib/checker/common.tl`
+  - `lib/ulid.tl`
+  - `lib/utils.tl`
+  - `lib/platform.tl`
+  - `lib/file.tl`
+  - `lib/cosmic/spawn.tl`
 - Teal 0.24.8 installed as 3p dependency
 - `make teal` target exists (runs `tl check` on each file)
 - Checker infrastructure already supports `.tl` extension
@@ -85,18 +91,26 @@ Migrate foundational modules that other code depends on.
 - Added `lib_srcs` to `lib/cook.mk` to include standalone lib files in teal checking
 - Updated `tl-gen.lua` to use getopt for argument parsing (-o flag)
 
-#### PR 2.3: Migrate remaining standalone library files
+#### PR 2.3: Migrate remaining standalone library files ✓
 
-Convert simple, standalone files:
-- `lib/file.lua` (file operations)
-- `lib/utils.lua` (utility functions)
-- `lib/platform.lua` (platform detection)
+**Status: DONE** (migrated in parallel with PR 2.4 using agent strategy)
 
-#### PR 2.4: Migrate lib/cosmic/spawn.lua
+- Converted `lib/utils.lua` to `lib/utils.tl` with generic type annotations
+- Converted `lib/platform.lua` to `lib/platform.tl` with const maps
+- Converted `lib/file.lua` to `lib/file.tl` with posix type declarations
+- Added type declarations:
+  - `lib/types/version.d.tl`
+  - `lib/types/posix/sys/stat.d.tl`
+  - `lib/types/posix/dirent.d.tl`
+  - `lib/types/posix/unistd.d.tl`
 
-- Critical module for process spawning
-- Well-contained (171 lines)
-- Good example of complex types (pipe handles, spawn options)
+#### PR 2.4: Migrate lib/cosmic/spawn.lua ✓
+
+**Status: DONE** (migrated in parallel with PR 2.3 using agent strategy)
+
+- Converted `lib/cosmic/spawn.lua` to `lib/cosmic/spawn.tl`
+- Defined record types: `Pipe`, `SpawnHandle`, `SpawnOpts`, `SpawnModule`
+- Complex types for pipe handles with read/write/close methods
 
 ### Phase 3: Library modules
 
@@ -246,21 +260,22 @@ Use Teal's strict mode where possible, but allow `any` types at module boundarie
 .lua files → copy to o/ → bundle into binary
 ```
 
-### Makefile updates needed
+### Makefile updates (done)
 
 1. Define type declaration files:
    ```makefile
    types_files := $(wildcard lib/types/*.d.tl lib/types/**/*.d.tl)
    ```
 
-2. Add pattern rule for `.tl` → `.lua` compilation:
+2. Pattern rule for `.tl` → `.lua` compilation:
    ```makefile
-   $(o)/%.lua: %.tl $(types_files) | $(tl_staged)
+   $(o)/%.lua: %.tl $(types_files) $(tl_files) $(bootstrap_files) | $(tl_staged)
        @mkdir -p $(@D)
-       @$(tl_gen) -I lib/types $< -o $@
+       @$(tl_gen) $< -o $@
    ```
+   Note: `$(tl_files)` and `$(bootstrap_files)` are required for parallel builds (`make -j4`)
 
-3. Update vpath to find `.tl` sources
+3. vpath updated to find `.tl` sources
 
 ## Development workflow
 
@@ -295,7 +310,93 @@ Track migration progress:
 - `.tl` files created: 0 → ~100
 - Type errors found and fixed during migration
 
-## Timeline notes
+## Parallel agent strategy
+
+Independent files can be migrated concurrently using parallel agents. This approach was validated in PR 2.3/2.4 where 4 files were migrated simultaneously.
+
+### How it works
+
+1. Identify files with no dependencies on each other
+2. Spawn one agent per file with migration instructions
+3. Each agent:
+   - Reads the source file and reference `.tl` files (e.g., `lib/ulid.tl`)
+   - Creates any needed type declarations in `lib/types/`
+   - Converts the file to `.tl` with proper annotations
+   - Updates `cook.mk` if needed
+   - Runs `make teal` to verify
+4. After all agents complete, run `make test` to validate
+
+### Agent opportunities by phase
+
+**Phase 3: Library modules** (6 parallel batches possible)
+
+Batch 3.1 - Small standalone modules (3 agents):
+- `lib/environ/init.lua`
+- `lib/daemonize/init.lua`
+- `lib/whereami/init.lua`
+
+Batch 3.2 - Cosmic module (5 agents):
+- `lib/cosmic/init.lua`
+- `lib/cosmic/walk.lua`
+- `lib/cosmic/help.lua`
+- `lib/cosmic/main.lua`
+- `lib/cosmic/lfs.lua`
+
+Batch 3.3 - Build utilities (6 agents):
+- `lib/build/build-fetch.lua`
+- `lib/build/build-stage.lua`
+- `lib/build/check-update.lua`
+- `lib/build/reporter.lua`
+- `lib/build/make-help.lua`
+- `lib/build/test-snap.lua`
+
+**Phase 4: Application modules** (can run some in parallel)
+
+Batch 4.1 - Independent app modules (4 agents):
+- `lib/aerosnap/init.lua`
+- `lib/cleanshot/init.lua`
+- `lib/claude/init.lua`
+- `lib/nvim/init.lua` + `lib/nvim/main.lua`
+
+Batch 4.2 - Work module (4 agents, internal dependencies):
+- `lib/work/data.lua` (first - others depend on it)
+- Then parallel: `lib/work/process.lua`, `lib/work/api.lua`, `lib/work/render.lua`
+
+Batch 4.3 - Skill module (4 agents):
+- `lib/skill/hook.lua`
+- `lib/skill/pr.lua`
+- `lib/skill/pr_comments.lua`
+- `lib/skill/bootstrap.lua`
+
+Batch 4.4 - Home module (needs sequencing):
+- `lib/home/main.lua` first
+- Then parallel: `lib/home/setup/*.lua`, `lib/home/mac/*.lua`
+
+**Phase 5: 3p runners** (3 agents):
+- `3p/tl/run-teal.lua`
+- `3p/luacheck/run-luacheck.lua`
+- `3p/ast-grep/run-astgrep.lua`
+
+### Best practices for agent prompts
+
+Each agent prompt should include:
+1. The specific file(s) to migrate
+2. Reference to existing `.tl` files for syntax patterns
+3. Which type declarations may need to be created
+4. Instructions to run `make teal` to verify
+5. Note about updating `cook.mk` if needed
+
+### Estimated parallelization
+
+| Phase | Files | Max parallel | Batches |
+|-------|-------|--------------|---------|
+| 3     | 14    | 6            | 3       |
+| 4     | 20+   | 4-6          | 4-5     |
+| 5     | 3     | 3            | 1       |
+
+Total: ~37 files across 8-9 batches instead of 37 sequential PRs.
+
+## Execution notes
 
 This plan is designed for incremental adoption. Each PR should:
 - Be self-contained and reviewable
