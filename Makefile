@@ -289,7 +289,7 @@ release: $(o)/lib/home/gen-platforms.lua
 	@cp artifacts/cosmic/cosmic release/cosmic-lua
 	@chmod +x release/*
 	@chmod +x artifacts/cosmos-zip/zip
-	@tag="home-$$(date -u +%Y-%m-%d)-$${GITHUB_SHA::7}"; \
+	@tag="$$(date -u +%Y-%m-%d)-$${GITHUB_SHA::7}"; \
 	base_url="https://github.com/$${GITHUB_REPOSITORY}/releases/download/$$tag"; \
 	LUA_PATH="lib/home/?.lua;;" ./release/cosmic-lua $(o)/lib/home/gen-platforms.lua \
 		release/platforms "$$base_url" "$$tag" \
@@ -299,8 +299,7 @@ release: $(o)/lib/home/gen-platforms.lua
 	(cd release && sha256sum home home-* cosmic-lua > SHA256SUMS && cat SHA256SUMS); \
 	gh release create "$$tag" \
 		$${PRERELEASE_FLAG} \
-		--title "home $$tag" \
-		--notes "## Home binaries\nPlatform-specific dotfiles and bundled tools.\n\n### Quick setup\n\`\`\`bash\ncurl -fsSL https://github.com/$${GITHUB_REPOSITORY}/releases/latest/download/home | sh\n\`\`\`" \
+		--title "$$tag" \
 		release/home release/home-* release/cosmic-lua release/SHA256SUMS
 
 ci_stages := luacheck astgrep teal test build

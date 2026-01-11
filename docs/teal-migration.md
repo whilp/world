@@ -328,15 +328,17 @@ All 187 teal checks now pass with 0 skipped.
 
 ### Phase 7: Bootstrap and cleanup
 
-#### PR 7.1: Migrate lib/build bootstrap files to teal
+#### PR 7.1: Bundle teal compiler in cosmic ✓
 
-The 6 lib/build/ .lua files are kept for bootstrap but have corresponding .tl files.
-Options:
-1. Keep both - .lua for bootstrap, .tl for type checking (current state)
-2. Remove .lua files and compile .tl at bootstrap time (requires staged tl)
-3. Pre-compile .tl to .lua and commit the generated files
+**Status: DONE**
 
-Recommendation: Option 1 until we have a better bootstrap solution.
+Enable self-hosted teal compilation by bundling the teal compiler into cosmic:
+- Bundle `tl.lua` into cosmic binary
+- Add `tl-gen.lua` script using bundled teal for transpilation
+- Uses lex + parse_program + generate (no type checking, just transpilation)
+- Usage: `cosmic -- /zip/tl-gen.lua input.tl -o output.lua`
+
+Impact: Once this version of cosmic is released, we can remove the `lib/build/*.lua` bootstrap files that were needed during the migration, since cosmic will be able to compile its own `.tl` source files.
 
 #### PR 7.2: Remove redundant type declarations ✓
 
