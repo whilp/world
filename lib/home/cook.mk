@@ -3,7 +3,9 @@ home_srcs := $(wildcard lib/home/*.lua) $(wildcard lib/home/*/*.lua)
 home_lib_srcs := $(filter-out lib/home/test%.lua,$(wildcard lib/home/*.lua))
 home_libs := $(addprefix $(o)/,$(home_lib_srcs))
 home_bin := $(o)/bin/home
-home_files := $(home_bin) $(home_libs)
+# only include home_bin in home_files; home_libs are explicit prereqs of home_bin
+# but shouldn't inherit home_deps (which would require staging 20+ tools for linting)
+home_files := $(home_bin)
 home_tests := lib/home/test_main.lua lib/home/test_versioned.lua
 home_release_test := lib/home/test_release.lua
 
