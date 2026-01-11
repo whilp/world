@@ -1,5 +1,8 @@
+modules += work
 lib_lua_modules += work
 lib_dirs += o/any/work/lib
+work_srcs := $(wildcard lib/work/*.lua) $(wildcard lib/work/*.tl)
+work_tests := $(filter-out lib/work/test_lib.lua,$(wildcard lib/work/test_*.lua))
 
 work_all_lua := $(wildcard lib/work/*.lua)
 work_tl_srcs := $(wildcard lib/work/*.tl)
