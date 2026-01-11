@@ -2,7 +2,7 @@
 -- Test the Makefile help system
 
 local cosmo = require("cosmo")
-local help = require("build.make-help")
+local help = require("make-help")
 
 local record HelpItem
   type: string
