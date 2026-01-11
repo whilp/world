@@ -9,6 +9,7 @@ local common = require("checker.common")
 
 local supported_extensions = {
   [".lua"] = true,
+  [".tl"] = true,
 }
 
 local supported_patterns = {
