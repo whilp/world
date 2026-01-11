@@ -50,6 +50,7 @@ include 3p/nvim-parsers/cook.mk
 include 3p/nvim/cook.mk
 include 3p/luacheck/cook.mk
 include 3p/tl/cook.mk
+include 3p/teal-types/cook.mk
 
 include cook.mk
 
@@ -230,9 +231,9 @@ teal: $(o)/teal-summary.txt
 $(o)/teal-summary.txt: $(all_teals) | $(build_reporter)
 	@$(reporter) --dir $(o) $^ | tee $@
 
-$(o)/%.teal.ok: $(o)/% $(tl_files) $(checker_files) $(tl_staged) | $(bootstrap_files)
+$(o)/%.teal.ok: $(o)/% $(tl_files) $(checker_files) $(tl_staged) $$(teal-types_staged) | $(bootstrap_files)
 	@mkdir -p $(@D)
-	@TL_BIN=$(tl_staged) $(teal_runner) $< > $@
+	@TL_BIN=$(tl_staged) TL_INCLUDE_DIR="lib/types:$(teal-types_dir)/types" $(teal_runner) $< > $@
 
 .PHONY: clean
 ## Remove all build artifacts

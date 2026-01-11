@@ -14,11 +14,11 @@ cosmic_libs := $(cosmic_lua_libs) $(cosmic_tl_libs)
 cosmic_lfs := $(o)/lib/cosmic/lfs.lua
 cosmic_bin := $(o)/bin/cosmic
 cosmic_files := $(cosmic_bin) $(cosmic_libs) $(cosmic_lfs)
-cosmic_deps := cosmos luaunit argparse skill tl
+cosmic_deps := cosmos luaunit argparse skill tl teal-types
 
 cosmic_built := $(o)/cosmic/.built
 
-$(cosmic_bin): $(cosmic_libs) $(cosmic_lfs) $(skill_libs) $(cosmic_main) $(cosmic_args) $(cosmic_tl_gen) $$(tl_staged)
+$(cosmic_bin): $(cosmic_libs) $(cosmic_lfs) $(skill_libs) $(cosmic_main) $(cosmic_args) $(cosmic_tl_gen) $$(tl_staged) $$(teal-types_staged)
 	@rm -rf $(cosmic_built)
 	@mkdir -p $(cosmic_built)/.lua/cosmic $(cosmic_built)/.lua/skill $(@D)
 	@$(cp) $(cosmic_libs) $(cosmic_built)/.lua/cosmic/
@@ -27,6 +27,7 @@ $(cosmic_bin): $(cosmic_libs) $(cosmic_lfs) $(skill_libs) $(cosmic_main) $(cosmi
 	@$(cp) $(luaunit_dir)/*.lua $(cosmic_built)/.lua/
 	@$(cp) $(argparse_dir)/*.lua $(cosmic_built)/.lua/
 	@$(cp) $(tl_dir)/tl.lua $(cosmic_built)/.lua/
+	@cp -r $(teal-types_dir)/types $(cosmic_built)/.lua/teal-types
 	@$(cp) $(cosmos_lua) $@
 	@chmod +x $@
 	@cd $(cosmic_built) && $(CURDIR)/$(cosmos_zip) -qr $(CURDIR)/$@ .lua
