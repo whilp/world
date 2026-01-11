@@ -1,5 +1,3 @@
--- teal ignore: test file
-
 local pr_comments = require("skill.pr_comments")
 
 local record User
