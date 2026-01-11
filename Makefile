@@ -85,7 +85,7 @@ $(o)/%.lua: %.tl $(types_files) $(tl_files) $(bootstrap_files) | $(tl_staged)
 
 # bin scripts: o/bin/X.lua from lib/*/X.lua and 3p/*/X.lua
 vpath %.lua lib/build lib/test 3p/ast-grep 3p/luacheck 3p/tl
-vpath %.tl 3p/luacheck 3p/tl
+vpath %.tl 3p/ast-grep 3p/luacheck 3p/tl
 $(o)/bin/%.lua: %.lua
 	@mkdir -p $(@D)
 	@$(cp) $< $@
