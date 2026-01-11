@@ -11,8 +11,8 @@ This document outlines the incremental migration from Lua to Teal for comprehens
 
 ## Current state
 
-- 76 lua files with `-- teal ignore` comments (down from 107)
-- 31 `.tl` files migrated:
+- 71 lua files with `-- teal ignore` comments (down from 107)
+- 36 `.tl` files migrated:
   - `lib/checker/common.tl`
   - `lib/ulid.tl`
   - `lib/utils.tl`
@@ -44,6 +44,11 @@ This document outlines the incremental migration from Lua to Teal for comprehens
   - `lib/work/config.tl`
   - `lib/work/validate.tl`
   - `lib/work/store.tl`
+  - `lib/skill/init.tl`
+  - `lib/skill/hook.tl`
+  - `lib/skill/pr.tl`
+  - `lib/skill/pr_comments.tl`
+  - `lib/skill/bootstrap.tl`
 - Teal 0.24.8 installed as 3p dependency
 - `make teal` target exists (runs `tl check` on each file)
 - Checker infrastructure already supports `.tl` extension
@@ -239,13 +244,21 @@ Added type declarations:
 - `lib/types/posix/signal.d.tl` - signals
 - `lib/types/posix/init.d.tl` - posix init
 
-#### PR 4.3: Migrate lib/skill
+#### PR 4.3: Migrate lib/skill ✓
+
+**Status: DONE** (migrated in parallel using agent strategy)
 
 Skill modules:
-- `hook.lua`
-- `pr.lua`
-- `pr_comments.lua`
-- `bootstrap.lua`
+- `lib/skill/init.tl` - module metadata
+- `lib/skill/hook.tl` - hook dispatcher with flexible input/output types
+- `lib/skill/pr.tl` - GitHub PR operations
+- `lib/skill/pr_comments.tl` - PR comment handling
+- `lib/skill/bootstrap.tl` - environment bootstrap
+
+Fixed issues:
+- Updated LUA_PATH to include both `o/teal/lib/` and `o/lib/` for module resolution
+- Made HookInput/HookOutput flexible with `{string:any}` to support arbitrary fields
+- Fixed github_request to return string errors instead of tables
 
 #### PR 4.4: Migrate lib/home
 
@@ -449,11 +462,12 @@ Batch 4.2 - Work module ✓ (completed with 7 parallel agents):
 - `lib/work/validate.tl`
 - `lib/work/store.tl`
 
-Batch 4.3 - Skill module (4 agents):
-- `lib/skill/hook.lua`
-- `lib/skill/pr.lua`
-- `lib/skill/pr_comments.lua`
-- `lib/skill/bootstrap.lua`
+Batch 4.3 - Skill module ✓ (completed with 5 parallel agents):
+- `lib/skill/init.tl`
+- `lib/skill/hook.tl`
+- `lib/skill/pr.tl`
+- `lib/skill/pr_comments.tl`
+- `lib/skill/bootstrap.tl`
 
 Batch 4.4 - Home module (needs sequencing):
 - `lib/home/main.lua` first
