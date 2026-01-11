@@ -52,6 +52,14 @@ local function get_commit_sha()
   return out:match("^%s*(.-)%s*$") or "unknown"
 end
 
+local function normalize_pr_name(name)
+  if not name then return nil end
+  if not name:match("%.md$") then
+    return name .. ".md"
+  end
+  return name
+end
+
 local function get_pr_name_from_trailer(opts)
   opts = opts or {}
   local do_spawn = opts.spawn or spawn
@@ -246,7 +254,7 @@ end
 
 local function print_help()
   local pr_name = get_pr_name_from_trailer()
-  local pr_file = pr_name and path.join(".github/pr", pr_name) or ".github/pr/<name>.md"
+  local pr_file = pr_name and path.join(".github/pr", normalize_pr_name(pr_name)) or ".github/pr/<name>.md"
 
   local help = string.format([[
 usage: pr.lua [-h]
@@ -315,7 +323,7 @@ local function do_update(owner, repo_name, pr_number, pr_name, trailer_info, tok
     log("using " .. trailer_info.winning_sha:sub(1, 8) .. " " .. trailer_info.winning_trailer)
   end
 
-  local pr_file = path.join(".github/pr", pr_name)
+  local pr_file = path.join(".github/pr", normalize_pr_name(pr_name))
 
   if not path.exists(pr_file) then
     log(pr_file .. " not found, skipping")
