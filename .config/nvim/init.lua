@@ -7,6 +7,9 @@
 local home = vim.fn.expand("~")
 package.path = home .. "/lib/?.lua;" .. home .. "/lib/3p/?.lua;" .. package.path
 
+-- Enable teal loader (compiles .tl on require)
+require("teal-loader").setup()
+
 -- Add bundled site directory (relative to nvim binary) to packpath
 local version_dir = vim.fn.fnamemodify(vim.v.progpath, ":h:h")
 local bundled_site = version_dir .. "/share/nvim/site"
