@@ -34,6 +34,10 @@ local function make_pipe(fd: number): Pipe
     return unix.write(self.fd, data)
   end
 
+  -- TODO: refactor into explicit read_all() and read_bytes(size) functions
+  -- the current :read(size?) API is confusing since it doesn't support Lua's
+  -- file read modes like "*a" - callers accidentally use :read("*a") expecting
+  -- it to work like file:read("*a")
   function pipe:read(size?: number): string
     if size then
       return unix.read(self.fd, size)

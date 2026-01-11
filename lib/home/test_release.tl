@@ -52,8 +52,8 @@ local proc = spawn({
   platforms_dir, "https://example.com/releases/test", "test-tag",
   test_asset,
 }, { env = env }) as SpawnHandle
-local stdout = proc.stdout:read("*a")
-local stderr = proc.stderr:read("*a")
+local stdout = proc.stdout:read()
+local stderr = proc.stderr:read()
 local exit_code = proc:wait()
 ok = exit_code == 0
 assert(ok, "gen-platforms failed (exit " .. tostring(exit_code) .. "): " .. tostring(stderr))
@@ -69,8 +69,8 @@ assert(read_ok, "failed to embed platforms.lua: " .. tostring(output))
 
 -- Embed manifests directory (need to cd first since zip stores relative paths)
 proc = spawn({ "sh", "-c", "cd " .. platforms_dir .. " && " .. cosmos_zip .. " -r " .. test_home .. " manifests" }) as SpawnHandle
-stdout = proc.stdout:read("*a")
-stderr = proc.stderr:read("*a")
+stdout = proc.stdout:read()
+stderr = proc.stderr:read()
 exit_code = proc:wait()
 ok = exit_code == 0
 assert(ok, "failed to embed manifests (exit " .. tostring(exit_code) .. "): " .. tostring(stderr) .. " | " .. tostring(stdout))

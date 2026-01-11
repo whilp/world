@@ -46,7 +46,7 @@ local function run_reporter(...: string): integer, string, string
   unix.setenv("LUA_PATH", new_lua_path, true)
 
   local handle = spawn(args) as SpawnHandle
-  local stderr_content = handle.stderr and handle.stderr:read("*a") or ""
+  local stderr_content = handle.stderr and handle.stderr:read() or ""
   local ok, stdout, exit_code = handle:read()
   return exit_code, stdout or "", stderr_content
 end
