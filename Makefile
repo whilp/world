@@ -79,8 +79,8 @@ $(o)/%: %
 	@$(cp) $< $@
 
 # compile .tl files to .lua (extension changes)
-# tl_staged must be regular prereq (not order-only) for parallel builds
-$(o)/%.lua: %.tl $(types_files) $(tl_files) $(bootstrap_files) $(tl_staged)
+# Use $$(tl_staged) for secondary expansion - variable is set after includes
+$(o)/%.lua: %.tl $(types_files) $(tl_files) $(bootstrap_files) $$(tl_staged)
 	@mkdir -p $(@D)
 	@$(tl_gen) $< -o $@
 
@@ -151,7 +151,9 @@ $(o)/test-summary.txt: $(all_tested) $(all_snapped) | $(build_reporter)
 export TEST_O := $(o)
 export TEST_PLATFORM := $(platform)
 export TEST_BIN := $(o)/bin
-export LUA_PATH := $(CURDIR)/o/teal/lib/?.lua;$(CURDIR)/o/teal/lib/?/init.lua;$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
+# Build LUA_PATH from lib_dirs (populated by cook.mk includes)
+lib_dirs_lua_path := $(subst ; ,;,$(foreach d,$(lib_dirs),$(CURDIR)/$(d)/?.lua;$(CURDIR)/$(d)/?/init.lua;))
+export LUA_PATH := $(CURDIR)/o/bin/?.lua;$(CURDIR)/o/teal/lib/?.lua;$(CURDIR)/o/teal/lib/?/init.lua;$(CURDIR)/o/lib/?.lua;$(CURDIR)/o/lib/?/init.lua;$(lib_dirs_lua_path)$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;;
 export NO_COLOR := 1
 
 $(o)/%.test.ok: .PLEDGE = stdio rpath wpath cpath proc exec
