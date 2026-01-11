@@ -11,14 +11,19 @@ This document outlines the incremental migration from Lua to Teal for comprehens
 
 ## Current state
 
-- 98 lua files with `-- teal ignore` comments (down from 107)
-- 9 `.tl` files migrated:
+- 93 lua files with `-- teal ignore` comments (down from 107)
+- 14 `.tl` files migrated:
   - `lib/checker/common.tl`
   - `lib/ulid.tl`
   - `lib/utils.tl`
   - `lib/platform.tl`
   - `lib/file.tl`
   - `lib/cosmic/spawn.tl`
+  - `lib/cosmic/init.tl`
+  - `lib/cosmic/walk.tl`
+  - `lib/cosmic/help.tl`
+  - `lib/cosmic/main.tl`
+  - `lib/cosmic/lfs.tl`
   - `lib/environ/init.tl`
   - `lib/daemonize/init.tl`
   - `lib/whereami/init.tl`
@@ -131,14 +136,28 @@ Migrate lib modules in dependency order.
 - Converted `lib/whereami/init.lua` to `lib/whereami/init.tl`
   - Added `EnvFunc` type alias and union types for cached state
 
-#### PR 3.4: Migrate lib/cosmic
+#### PR 3.2: Migrate lib/cosmic ✓
+
+**Status: DONE** (migrated in parallel using agent strategy)
 
 Full cosmic module migration:
-- `lib/cosmic/init.lua`
-- `lib/cosmic/walk.lua`
-- `lib/cosmic/help.lua`
-- `lib/cosmic/main.lua`
-- `lib/cosmic/lfs.lua`
+- Converted `lib/cosmic/init.lua` to `lib/cosmic/init.tl`
+  - Added `Env` record type with stdout/stderr FILE handles
+  - Added `MainFn` type alias and `cosmic` record type
+- Converted `lib/cosmic/walk.lua` to `lib/cosmic/walk.tl`
+  - Added `Stat`, `DirHandle`, `FileInfo` record types
+  - Added `Visitor` type alias for walk callbacks
+  - Generic type `walk<T>` for context accumulator
+- Converted `lib/cosmic/help.lua` to `lib/cosmic/help.tl`
+  - Added `ModuleInfo` and `HelpModule` record types
+- Converted `lib/cosmic/main.lua` to `lib/cosmic/main.tl`
+  - Added `Opts` record with union types for help and stdin
+  - Added `LongOpt` type alias, `SkillModule` record
+  - Updated `cosmic/cook.mk` to reference compiled output
+- Converted `lib/cosmic/lfs.lua` to `lib/cosmic/lfs.tl`
+  - Added `Attrs` record for file attributes
+  - Added `lfs` record with function type declarations
+- Changed `tlconfig.lua` gen_target from "5.1" to "5.4" for native bitwise operators
 
 #### PR 3.5: Migrate lib/checker
 
@@ -335,12 +354,12 @@ Batch 3.1 - Small standalone modules ✓ (completed with 3 parallel agents):
 - `lib/daemonize/init.tl`
 - `lib/whereami/init.tl`
 
-Batch 3.2 - Cosmic module (5 agents):
-- `lib/cosmic/init.lua`
-- `lib/cosmic/walk.lua`
-- `lib/cosmic/help.lua`
-- `lib/cosmic/main.lua`
-- `lib/cosmic/lfs.lua`
+Batch 3.2 - Cosmic module ✓ (completed with 5 parallel agents):
+- `lib/cosmic/init.tl`
+- `lib/cosmic/walk.tl`
+- `lib/cosmic/help.tl`
+- `lib/cosmic/main.tl`
+- `lib/cosmic/lfs.tl`
 
 Batch 3.3 - Build utilities (6 agents):
 - `lib/build/build-fetch.lua`

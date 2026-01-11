@@ -1,12 +1,27 @@
 -- cosmic-lua dispatcher
--- teal ignore: type annotations needed
 -- entry point for cosmic binary that handles special args and dispatches to features
 
 local getopt = require("cosmo.getopt")
 
+-- Long option definition: {name, arg_requirement, short_alias}
+local type LongOpt = {string, string, string}
+
+-- Parsed options record
+local record Opts
+  execute: {string}
+  load: {string}
+  interactive: boolean
+  version: boolean
+  warnings: boolean
+  skill: string
+  help: boolean | string
+  script: string
+  script_args: {integer:string}
+end
+
 -- Parse arguments using cosmo.getopt iterator API
-local function parse_args()
-  local opts = {
+local function parse_args(): Opts
+  local opts: Opts = {
     execute = {},
     load = {},
     interactive = false,
@@ -18,7 +33,7 @@ local function parse_args()
     script_args = {},
   }
 
-  local longopts = {
+  local longopts: {LongOpt} = {
     { "help", "optional", "h" },
     { "skill", "required", "s" },
   }
@@ -54,7 +69,7 @@ local function parse_args()
     elseif opt == "s" or opt == "skill" then
       opts.skill = optarg
       -- Remaining args go to skill
-      opts.script_args = parser:remaining()
+      opts.script_args = parser:remaining() as {integer:string}
       return opts
     end
   end
@@ -90,21 +105,22 @@ end
 if opts.help then
   if type(opts.help) == "string" then
     -- Help for specific module
-    local ok, mod = pcall(require, opts.help)
+    local ok, mod = pcall(require, opts.help as string)
     if ok and type(mod) == "table" then
-      io.write("Module: " .. opts.help .. "\n")
-      if mod._VERSION then
-        io.write("Version: " .. mod._VERSION .. "\n")
+      io.write("Module: " .. (opts.help as string) .. "\n")
+      local modtbl = mod as {string:string}
+      if modtbl._VERSION then
+        io.write("Version: " .. modtbl._VERSION .. "\n")
       end
-      if mod._DESCRIPTION then
-        io.write("\n" .. mod._DESCRIPTION .. "\n")
+      if modtbl._DESCRIPTION then
+        io.write("\n" .. modtbl._DESCRIPTION .. "\n")
       end
-      if mod._USAGE then
-        io.write("\nUsage:\n" .. mod._USAGE .. "\n")
+      if modtbl._USAGE then
+        io.write("\nUsage:\n" .. modtbl._USAGE .. "\n")
       end
       os.exit(0)
     else
-      io.stderr:write("error: module '" .. opts.help .. "' not found\n")
+      io.stderr:write("error: module '" .. (opts.help as string) .. "' not found\n")
       os.exit(1)
     end
   else
@@ -128,10 +144,15 @@ if opts.help then
   end
 end
 
+-- Skill module interface
+local record SkillModule
+  main: function(): integer, string
+end
+
 -- Handle --skill
 if opts.skill then
-  _G.arg = opts.script_args
-  local skill = require("skill." .. opts.skill)
+  _G.arg = opts.script_args as {string}
+  local skill = require("skill." .. opts.skill) as SkillModule
   if skill.main then
     local code, msg = skill.main()
     if msg then
@@ -146,8 +167,7 @@ end
 
 -- Handle -W warnings: convert warnings to errors
 if opts.warnings then
-  local old_warn = warn
-  warn = function(...)
+  warn = function(...: string)
     local msg = table.concat({...}, " ")
     error("warning: " .. msg, 2)
   end
@@ -171,7 +191,7 @@ end
 
 -- Execute script file
 if opts.script then
-  _G.arg = opts.script_args
+  _G.arg = opts.script_args as {string}
   local chunk, err = loadfile(opts.script)
   if not chunk then
     io.stderr:write("cosmic-lua: " .. err .. "\n")
@@ -180,7 +200,11 @@ if opts.script then
   -- Call chunk with script args as varargs (matching standard lua behavior)
   -- Standard lua passes arg[1], arg[2], ... as varargs to the script
   -- Note: table.unpack has a limit of ~250 args, but this is not a practical concern
-  chunk(table.unpack(opts.script_args, 1, #opts.script_args))
+  local args: {string} = {}
+  for i = 1, #opts.script_args do
+    args[i] = opts.script_args[i]
+  end
+  chunk(table.unpack(args))
   os.exit(0)
 end
 

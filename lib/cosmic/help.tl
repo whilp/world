@@ -1,6 +1,11 @@
 -- cosmic.help: show available modules and usage
 
-local modules = {
+local record ModuleInfo
+  name: string
+  desc: string
+end
+
+local modules: {ModuleInfo} = {
   { name = "cosmic.spawn", desc = "process spawning with stdin/stdout/stderr capture" },
   { name = "cosmic.walk", desc = "directory tree walking and file collection" },
 }
@@ -30,7 +35,14 @@ end
 
 print_help()
 
-return {
+local record HelpModule
+  modules: {ModuleInfo}
+  print_help: function()
+end
+
+local M: HelpModule = {
   modules = modules,
   print_help = print_help,
 }
+
+return M
