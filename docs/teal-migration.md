@@ -11,8 +11,8 @@ This document outlines the incremental migration from Lua to Teal for comprehens
 
 ## Current state
 
-- 93 lua files with `-- teal ignore` comments (down from 107)
-- 14 `.tl` files migrated:
+- 87 lua files with `-- teal ignore` comments (down from 107)
+- 20 `.tl` files migrated:
   - `lib/checker/common.tl`
   - `lib/ulid.tl`
   - `lib/utils.tl`
@@ -27,6 +27,12 @@ This document outlines the incremental migration from Lua to Teal for comprehens
   - `lib/environ/init.tl`
   - `lib/daemonize/init.tl`
   - `lib/whereami/init.tl`
+  - `lib/build/build-fetch.tl`
+  - `lib/build/build-stage.tl`
+  - `lib/build/check-update.tl`
+  - `lib/build/reporter.tl`
+  - `lib/build/make-help.tl`
+  - `lib/build/test-snap.tl`
 - Teal 0.24.8 installed as 3p dependency
 - `make teal` target exists (runs `tl check` on each file)
 - Checker infrastructure already supports `.tl` extension
@@ -165,15 +171,23 @@ Complete checker module:
 - Already have `common.tl` from PR 2.1
 - Migrate test utilities
 
-#### PR 3.6: Migrate lib/build
+#### PR 3.6: Migrate lib/build ✓
 
-Build system utilities:
-- `build-fetch.lua`
-- `build-stage.lua`
-- `check-update.lua`
-- `reporter.lua`
-- `make-help.lua`
-- `test-snap.lua`
+**Status: DONE** (migrated in parallel using agent strategy)
+
+Build system utilities - special handling required:
+- Build module has bootstrap dependency (needs itself to fetch/stage teal)
+- Solution: keep both `.lua` and `.tl` files for bootstrap-critical modules
+- `.lua` files used for bootstrap (copied to o/bin/)
+- `.tl` files used for type checking via `make teal`
+
+Migrated files:
+- `lib/build/build-fetch.tl` - fetch archive downloads
+- `lib/build/build-stage.tl` - archive extraction and staging
+- `lib/build/check-update.tl` - GitHub release version checking
+- `lib/build/reporter.tl` - test/check result reporting
+- `lib/build/make-help.tl` - Makefile help generation
+- `lib/build/test-snap.tl` - snapshot testing utility
 
 ### Phase 4: Application modules
 
@@ -361,13 +375,14 @@ Batch 3.2 - Cosmic module ✓ (completed with 5 parallel agents):
 - `lib/cosmic/main.tl`
 - `lib/cosmic/lfs.tl`
 
-Batch 3.3 - Build utilities (6 agents):
-- `lib/build/build-fetch.lua`
-- `lib/build/build-stage.lua`
-- `lib/build/check-update.lua`
-- `lib/build/reporter.lua`
-- `lib/build/make-help.lua`
-- `lib/build/test-snap.lua`
+Batch 3.3 - Build utilities ✓ (completed with 6 parallel agents):
+- `lib/build/build-fetch.tl`
+- `lib/build/build-stage.tl`
+- `lib/build/check-update.tl`
+- `lib/build/reporter.tl`
+- `lib/build/make-help.tl`
+- `lib/build/test-snap.tl`
+- Note: Build module keeps both .lua and .tl due to bootstrap dependency
 
 **Phase 4: Application modules** (can run some in parallel)
 
