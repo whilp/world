@@ -85,9 +85,16 @@ local function main(source: string): integer, string
   end
 
   local tl_bin = path.join(os.getenv("TL_BIN"), "tl")
-  local include_dir = os.getenv("TL_INCLUDE_DIR") or "lib/types"
+  local include_dirs = os.getenv("TL_INCLUDE_DIR") or "lib/types"
 
-  local handle = spawn({ tl_bin, "check", "-I", include_dir, source })
+  local cmd: {string} = { tl_bin, "check" }
+  for dir in include_dirs:gmatch("[^:]+") do
+    table.insert(cmd, "-I")
+    table.insert(cmd, dir)
+  end
+  table.insert(cmd, source)
+
+  local handle = spawn(cmd)
   if handle.stdin then
     handle.stdin:close()
   end
