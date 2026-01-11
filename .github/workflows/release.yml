@@ -12,7 +12,7 @@ on:
         default: false
 
 env:
-  PRERELEASE: true  # Set to false to create stable releases
+  PRERELEASE: false
 
 jobs:
   build:
