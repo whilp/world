@@ -243,3 +243,41 @@ local function test_do_update_with_changes()
   assert(code == 0, "expected success")
 end
 test_do_update_with_changes()
+
+--------------------------------------------------------------------------------
+-- trailer without .md extension should still find file
+--------------------------------------------------------------------------------
+
+local function test_do_update_finds_file_without_extension()
+  local patch_called = false
+  local mock_fetch = function(url, opts)
+    if opts.method == "GET" then
+      return 200, {}, cosmo.EncodeJson({number = 42, title = "Old", body = "Old body"})
+    else
+      patch_called = true
+      return 200, {}, cosmo.EncodeJson({number = 42})
+    end
+  end
+
+  local original_exists = path.exists
+  local original_slurp = cosmo.Slurp
+  -- only the .md version exists
+  path.exists = function(p)
+    if p:match("feature%-name%.md$") then return true end
+    return false
+  end
+  cosmo.Slurp = function(p)
+    if p:match("feature%-name%.md$") then return "# New\n\nNew body" end
+    return nil
+  end
+
+  -- trailer value omits the .md extension
+  local code = pr.do_update("owner", "repo", 42, "feature-name", nil, "token", {fetch = mock_fetch})
+
+  path.exists = original_exists
+  cosmo.Slurp = original_slurp
+
+  assert(code == 0, "expected success when extension omitted")
+  assert(patch_called, "expected PR to be updated (PATCH called)")
+end
+test_do_update_finds_file_without_extension()
