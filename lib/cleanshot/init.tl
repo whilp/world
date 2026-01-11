@@ -1,7 +1,7 @@
 local unix = require("cosmo.unix")
 local cpath = require("cosmo.path")
 
-local VALID_COMMANDS = {
+local VALID_COMMANDS: {string:boolean} = {
   ["all-in-one"] = true,
   ["capture-area"] = true,
   ["capture-fullscreen"] = true,
@@ -23,13 +23,13 @@ local VALID_COMMANDS = {
   ["open-settings"] = true,
 }
 
-local BOOLEAN_FLAGS = {
+local BOOLEAN_FLAGS: {string:boolean} = {
   start = true,
   autoscroll = true,
   linebreaks = true,
 }
 
-local CAPTURE_COMMANDS = {
+local CAPTURE_COMMANDS: {string:boolean} = {
   ["capture-area"] = true,
   ["capture-fullscreen"] = true,
   ["capture-window"] = true,
@@ -38,28 +38,32 @@ local CAPTURE_COMMANDS = {
   ["scrolling-capture"] = true,
 }
 
-local function url_encode(str)
-  return str:gsub("([^%w%-%.%_%~])", function(c)
+local record Flags
+  {string:string}
+end
+
+local function url_encode(str: string): string
+  return str:gsub("([^%w%-%.%_%~])", function(c: string): string
     return string.format("%%%02X", string.byte(c))
   end)
 end
 
-local function expand_path(path)
-  if path:sub(1, 1) == "~" then
+local function expand_path(p: string): string
+  if p:sub(1, 1) == "~" then
     local home = os.getenv("HOME")
-    return home .. path:sub(2)
+    return home .. p:sub(2)
   end
-  return path
+  return p
 end
 
-local function parse_flags(args)
-  local flags = {}
+local function parse_flags(args: {string}): Flags, string
+  local flags: Flags = {}
   local i = 1
 
   while i <= #args do
-    local arg = args[i]
-    if arg:match("^%-") then
-      local key = arg:match("^%-(.+)$")
+    local a = args[i]
+    if a:match("^%-") then
+      local key = a:match("^%-(.+)$")
 
       if BOOLEAN_FLAGS[key] then
         flags[key] = "true"
@@ -80,11 +84,11 @@ local function parse_flags(args)
   return flags
 end
 
-local function build_url(subcommand, flags)
+local function build_url(subcommand: string, flags: Flags): string
   local url = "cleanshot://" .. subcommand
-  local params = {}
+  local params: {string} = {}
 
-  for key, value in pairs(flags) do
+  for key, value in pairs(flags as {string:string}) do
     if key ~= "path" then
       if key == "filepath" then
         table.insert(params, key .. "=" .. url_encode(value))
@@ -101,26 +105,26 @@ local function build_url(subcommand, flags)
   return url
 end
 
-local function get_screenshot_dir(flags)
-  if flags.path then
-    return expand_path(flags.path)
+local function get_screenshot_dir(flags: Flags): string
+  if (flags as {string:string}).path then
+    return expand_path((flags as {string:string}).path)
   end
   return expand_path("~/Downloads/screens")
 end
 
-local function get_latest_file(dir)
-  local latest_time = 0
-  local latest_file = nil
+local function get_latest_file(dir: string): string, number
+  local latest_time: number = 0
+  local latest_file: string = nil
 
   for name in unix.opendir(dir) do
     if name ~= "." and name ~= ".." then
-      local path = cpath.join(dir, name)
-      local st = unix.stat(path)
+      local p = cpath.join(dir, name)
+      local st = unix.stat(p)
       if st and unix.S_ISREG(st:mode()) then
         local mtime = st:mtim()
         if mtime > latest_time then
           latest_time = mtime
-          latest_file = path
+          latest_file = p
         end
       end
     end
@@ -129,15 +133,15 @@ local function get_latest_file(dir)
   return latest_file, latest_time
 end
 
-local function spawn(program, args)
-  local path = unix.commandv(program)
-  if not path then
+local function spawn(program: string, args: {string}): number, string
+  local p = unix.commandv(program)
+  if not p then
     return nil, "command not found: " .. program
   end
 
   local pid = unix.fork()
   if pid == 0 then
-    unix.execve(path, args, unix.environ())
+    unix.execve(p, args, unix.environ())
     unix.exit(1)
   elseif pid > 0 then
     local _, status = unix.wait()
@@ -150,7 +154,7 @@ local function spawn(program, args)
   end
 end
 
-local function wait_for_new_screenshot(dir, baseline_time, timeout)
+local function wait_for_new_screenshot(dir: string, baseline_time: number, timeout: number): string
   local start_time = os.time()
 
   while os.time() - start_time < timeout do
@@ -164,14 +168,15 @@ local function wait_for_new_screenshot(dir, baseline_time, timeout)
   return nil
 end
 
-local function should_wait_for_file(subcommand, flags)
-  if not flags.action or flags.action ~= "save" then
+local function should_wait_for_file(subcommand: string, flags: Flags): boolean
+  local f = flags as {string:string}
+  if not f.action or f.action ~= "save" then
     return false
   end
   return CAPTURE_COMMANDS[subcommand] == true
 end
 
-local function cmd_help()
+local function cmd_help(): number
   io.write([[usage: cleanshot <command> [flags]
 
 commands:
@@ -223,7 +228,7 @@ examples:
   return 0
 end
 
-local function cmd_latest(args)
+local function cmd_latest(args: {string}): number
   local flags, err = parse_flags(args)
   if not flags then
     io.stderr:write("error: " .. err .. "\n")
@@ -242,20 +247,20 @@ local function cmd_latest(args)
   end
 end
 
-local function cmd_capture(subcommand, args)
+local function cmd_capture(subcommand: string, args: {string}): number
   local flags, err = parse_flags(args)
   if not flags then
     io.stderr:write("error: " .. err .. "\n")
     return 1
   end
 
-  local baseline_time
-  local dir
+  local baseline_time: number
+  local dir: string
 
   if should_wait_for_file(subcommand, flags) then
     dir = get_screenshot_dir(flags)
     unix.makedirs(dir)
-    local _
+    local _: string
     _, baseline_time = get_latest_file(dir)
     baseline_time = baseline_time or 0
   end
@@ -272,9 +277,9 @@ local function cmd_capture(subcommand, args)
   end
 
   if baseline_time then
-    local path = wait_for_new_screenshot(dir, baseline_time, 10)
-    if path then
-      io.write(path .. "\n")
+    local p = wait_for_new_screenshot(dir, baseline_time, 10)
+    if p then
+      io.write(p .. "\n")
     else
       io.stderr:write("warning: screenshot not detected within timeout\n")
     end
@@ -283,13 +288,13 @@ local function cmd_capture(subcommand, args)
   return 0
 end
 
-local function cmd_unknown(command)
+local function cmd_unknown(command: string): number
   io.stderr:write("unknown command: " .. command .. "\n")
   io.stderr:write("run 'cleanshot help' for usage\n")
   return 1
 end
 
-local function main(args)
+local function main(args: {string}): number
   if #args == 0 or args[1] == "help" or args[1] == "-h" or args[1] == "--help" then
     return cmd_help()
   end

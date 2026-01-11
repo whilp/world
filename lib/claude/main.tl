@@ -1,13 +1,24 @@
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 
-local function debug_log(msg)
+local record Stat
+  mode: function(self): number
+  size: function(self): number
+  mtim: function(self): number
+end
+
+local record DirHandle
+  read: function(self): string
+  close: function(self)
+end
+
+local function debug_log(msg: string)
   if os.getenv("CLAUDE_WRAPPER_DEBUG") then
     io.stderr:write("claude wrapper: " .. msg .. "\n")
   end
 end
 
-local function find_claude_binary(paths)
+local function find_claude_binary(paths: {string}): string
   for i = 1, #paths do
     local p = paths[i]
     if p and unix.stat(p) then
@@ -17,8 +28,8 @@ local function find_claude_binary(paths)
   return nil
 end
 
-local function build_argv(append_prompts, mcp_config, user_args)
-  local argv = {
+local function build_argv(append_prompts: {string}, mcp_config: string, user_args: {string}): {string}
+  local argv: {string} = {
     "--dangerously-skip-permissions",
     "--strict-mcp-config",
   }
@@ -40,35 +51,41 @@ local function build_argv(append_prompts, mcp_config, user_args)
   return argv
 end
 
-local function scan_for_claude_deploy()
+local function scan_for_claude_deploy(): string
   -- TODO: use glob("/*/deploy/...") when cosmic-lua has glob support
-  local dir = unix.opendir("/")
-  if not dir then return nil end
+  local handle = unix.opendir("/") as DirHandle
+  if not handle then return nil end
 
-  for name in dir do
+  while true do
+    local name = handle:read()
+    if not name then break end
     if name ~= "." and name ~= ".." then
       local bin_path = path.join("/", name, "deploy", "claude-wrapper-hosts", "current", "bin", "claude")
       if unix.stat(bin_path) then
+        handle:close()
         return bin_path
       end
     end
   end
+  handle:close()
   return nil
 end
 
-local function scan_for_atomic_install()
+local function scan_for_atomic_install(): string
   local HOME = os.getenv("HOME")
   local share_dir = path.join(HOME, ".local", "share", "claude")
 
-  local dir = unix.opendir(share_dir)
-  if not dir then
+  local handle = unix.opendir(share_dir) as DirHandle
+  if not handle then
     return nil
   end
 
-  local latest_path = nil
-  local latest_version = nil
+  local latest_path: string = nil
+  local latest_version: string = nil
 
-  for name in dir do
+  while true do
+    local name = handle:read()
+    if not name then break end
     if name ~= "." and name ~= ".." then
       local version = name:match("^([%d%.]+)%-")
       if version then
@@ -82,14 +99,15 @@ local function scan_for_atomic_install()
       end
     end
   end
+  handle:close()
 
   return latest_path
 end
 
-local function main(args)
+local function main(args: {string})
   local HOME = os.getenv("HOME")
 
-  local claude_paths = {
+  local claude_paths: {string} = {
     scan_for_claude_deploy(),
     scan_for_atomic_install(),
     path.join(HOME, ".local", "share", "claude", "bin", "claude"),
@@ -104,7 +122,7 @@ local function main(args)
 
   debug_log("using binary at " .. claude_bin)
 
-  local append_prompts = {}
+  local append_prompts: {string} = {}
   local env_append = os.getenv("CLAUDE_APPEND_SYSTEM_PROMPT")
   if env_append then
     table.insert(append_prompts, env_append)
@@ -113,7 +131,7 @@ local function main(args)
   local extras_mcp = path.join(HOME, "extras", "mcp.json")
   local argv = build_argv(append_prompts, extras_mcp, args)
 
-  local execve_argv = {claude_bin}
+  local execve_argv: {string} = {claude_bin}
   for i = 1, #argv do
     table.insert(execve_argv, argv[i])
   end
@@ -127,7 +145,15 @@ local function main(args)
   os.exit(1)
 end
 
-local claude = {
+local record claude
+  find_claude_binary: function(paths: {string}): string
+  build_argv: function(append_prompts: {string}, mcp_config: string, user_args: {string}): {string}
+  scan_for_claude_deploy: function(): string
+  scan_for_atomic_install: function(): string
+  main: function(args: {string})
+end
+
+local M: claude = {
   find_claude_binary = find_claude_binary,
   build_argv = build_argv,
   scan_for_claude_deploy = scan_for_claude_deploy,
@@ -135,4 +161,4 @@ local claude = {
   main = main,
 }
 
-return claude
+return M

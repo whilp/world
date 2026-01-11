@@ -3,12 +3,35 @@ local path = require("cosmo.path")
 local sqlite3 = require("cosmo.lsqlite3")
 local spawn = require("cosmic.spawn")
 
-local DB_DIR = path.join(os.getenv("HOME"), ".cache", "aerospace")
-local DB_FILE = path.join(DB_DIR, "window-mappings.db")
+local DB_DIR <const> = path.join(os.getenv("HOME"), ".cache", "aerospace")
+local DB_FILE <const> = path.join(DB_DIR, "window-mappings.db")
 
-local function open_db()
+local record Database
+  exec: function(self: Database, sql: string): number
+  prepare: function(self: Database, sql: string): Statement
+  nrows: function(self: Database, sql: string): function(): {string:any}
+  close: function(self: Database)
+end
+
+local record Statement
+  bind_values: function(self: Statement, ...: any)
+  step: function(self: Statement): number
+  nrows: function(self: Statement): function(): {string:any}
+  finalize: function(self: Statement)
+  reset: function(self: Statement)
+end
+
+local record Window
+  ["window-id"]: number
+  ["app-name"]: string
+  ["app-bundle-id"]: string
+  ["workspace"]: string
+  ["window-title"]: string
+end
+
+local function open_db(): Database
   unix.makedirs(DB_DIR)
-  local db = sqlite3.open(DB_FILE)
+  local db = sqlite3.open(DB_FILE) as Database
   db:exec([[
     create table if not exists window_mappings (
       id integer primary key autoincrement,
@@ -25,7 +48,7 @@ local function open_db()
   return db
 end
 
-local function get_focused_window()
+local function get_focused_window(): Window, string
   local handle = spawn({
     "aerospace", "list-windows", "--focused",
     "--format", "%{window-id}\t%{app-bundle-id}\t%{app-name}\t%{workspace}\t%{window-title}"
@@ -37,7 +60,7 @@ local function get_focused_window()
   end
 
   local pat = "^(%d+)\t([^\t]*)\t([^\t]*)\t([^\t]*)\t([^\n]*)"
-  local window_id, bundle_id, app_name, workspace, title = output:match(pat)
+  local window_id, bundle_id, app_name, workspace, title = (output as string):match(pat)
   if window_id then
     return {
       ["window-id"] = tonumber(window_id),
@@ -50,7 +73,7 @@ local function get_focused_window()
   return nil, "failed to parse focused window"
 end
 
-local function get_all_windows()
+local function get_all_windows(): {Window}, string
   local handle = spawn({
     "aerospace", "list-windows", "--all",
     "--format", "%{window-id}\t%{app-bundle-id}\t%{app-name}\t%{workspace}\t%{window-title}"
@@ -61,8 +84,8 @@ local function get_all_windows()
     return nil, "failed to get windows"
   end
 
-  local windows = {}
-  for line in output:gmatch("[^\n]+") do
+  local windows: {Window} = {}
+  for line in (output as string):gmatch("[^\n]+") do
     local window_id, bundle_id, app_name, workspace, title = line:match("^(%d+)\t([^\t]*)\t([^\t]*)\t([^\t]*)\t(.*)")
     if window_id then
       table.insert(windows, {
@@ -77,9 +100,9 @@ local function get_all_windows()
   return windows
 end
 
-local function lookup_workspace(db, bundle_id, window_title)
-  local target_workspace = nil
-  local match_type = nil
+local function lookup_workspace(db: Database, bundle_id: string, window_title: string): string, string
+  local target_workspace: string = nil
+  local match_type: string = nil
 
   local stmt = db:prepare([[
     select workspace, window_title from window_mappings
@@ -91,7 +114,7 @@ local function lookup_workspace(db, bundle_id, window_title)
   ]])
   stmt:bind_values(bundle_id, window_title or "")
   for row in stmt:nrows() do
-    target_workspace = row.workspace
+    target_workspace = row.workspace as string
     if row.window_title == (window_title or "") then
       match_type = "exact"
     else
@@ -103,7 +126,7 @@ local function lookup_workspace(db, bundle_id, window_title)
   return target_workspace, match_type
 end
 
-local function cmd_record(_args)
+local function cmd_record(_args: {string}): number
   local win, err = get_focused_window()
   if not win then
     io.stderr:write("error: " .. err .. "\n")
@@ -141,7 +164,7 @@ local function cmd_record(_args)
   return 0
 end
 
-local function cmd_load(_args)
+local function cmd_load(_args: {string}): number
   local db = open_db()
   local current_windows, err = get_all_windows()
   if not current_windows then
@@ -174,7 +197,7 @@ local function cmd_load(_args)
   return 0
 end
 
-local function cmd_show(_args)
+local function cmd_show(_args: {string}): number
   local db = open_db()
   io.write("window mappings:\n")
   io.write(string.format("%-30s %-40s %s\n", "app", "title", "workspace"))
@@ -184,9 +207,9 @@ local function cmd_show(_args)
     from window_mappings
     order by workspace, app_name, window_title
   ]]) do
-    local app = row.app_name
+    local app = row.app_name as string
     if #app > 28 then app = app:sub(1, 28) .. ".." end
-    local title = row.window_title
+    local title = row.window_title as string
     if #title > 38 then title = title:sub(1, 38) .. ".." end
     io.write(string.format("%-30s %-40s %s\n", app, title, row.workspace))
   end
@@ -194,7 +217,7 @@ local function cmd_show(_args)
   return 0
 end
 
-local function cmd_seed(_args)
+local function cmd_seed(_args: {string}): number
   local windows, err = get_all_windows()
   if not windows then
     io.stderr:write("error: " .. err .. "\n")
@@ -232,7 +255,7 @@ local function cmd_seed(_args)
   return 0
 end
 
-local function cmd_clear(_args)
+local function cmd_clear(_args: {string}): number
   local db = open_db()
   db:exec("delete from window_mappings")
   db:close()
@@ -240,7 +263,7 @@ local function cmd_clear(_args)
   return 0
 end
 
-local function cmd_help()
+local function cmd_help(): number
   io.write("aerosnap - record and restore window-to-workspace mappings\n")
   io.write("\n")
   io.write("usage: aerosnap <command>\n")
@@ -257,13 +280,15 @@ local function cmd_help()
   return 0
 end
 
-local function cmd_unknown(command)
+local function cmd_unknown(command: string): number
   io.stderr:write("unknown command: " .. command .. "\n")
   io.stderr:write("run 'aerosnap help' for usage\n")
   return 1
 end
 
-local commands = {
+local type CommandFn = function({string}): number
+
+local commands: {string:CommandFn} = {
   record = cmd_record,
   seed = cmd_seed,
   load = cmd_load,
@@ -272,7 +297,7 @@ local commands = {
   help = cmd_help,
 }
 
-local function main(args)
+local function main(args: {string}): number
   if #args == 0 then
     return cmd_help()
   end
@@ -288,9 +313,16 @@ local function main(args)
   end
 end
 
+local record aerosnap
+  main: function(args: {string}): number
+  get_all_windows: function(): {Window}, string
+  get_focused_window: function(): Window, string
+  lookup_workspace: function(db: Database, bundle_id: string, window_title: string): string, string
+end
+
 return {
   main = main,
   get_all_windows = get_all_windows,
   get_focused_window = get_focused_window,
   lookup_workspace = lookup_workspace,
-}
+} as aerosnap
