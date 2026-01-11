@@ -42,6 +42,7 @@ local function main(...)
   end
 
   -- resolve all paths before chdir (they may be relative)
+  -- TODO: use path.is_absolute() or similar instead of match("^/")
   local orig_cwd = unix.getcwd()
   local tl_dir = os.getenv("TL_BIN")
   if not tl_dir:match("^/") then
