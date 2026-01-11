@@ -11,8 +11,9 @@ This document outlines the incremental migration from Lua to Teal for comprehens
 
 ## Current state
 
-- 22 lua files with `-- teal ignore` comments (down from 107)
-- 85 `.tl` files migrated:
+- 6 files still skipped in teal check (need type annotations)
+- 157 `.tl` files migrated (including 49 test files)
+- All major modules converted:
   - `lib/checker/common.tl`
   - `lib/ulid.tl`
   - `lib/utils.tl`
@@ -299,16 +300,18 @@ Updated Makefile with vpath for .tl files and pattern rule for compiling to o/bi
 
 ### Phase 6: Tests
 
-#### PR 6.1: Migrate test files to teal
+#### PR 6.1: Migrate test files to teal ✓
 
-Migrate all test files to teal for full type coverage:
-- `lib/*/test_*.lua` files
-- `3p/*/test_*.lua` files
+**Status: DONE** (migrated 49 test files using parallel agents)
 
-This provides:
-- Type checking of test assertions
-- Catch type mismatches between tests and implementations
-- Documentation of expected types
+Migrated all test files to teal for full type coverage:
+- `3p/*/test_*.tl` (23 files)
+- `lib/*/test_*.tl` (26 files)
+
+Build fixes required:
+- Added 3p/ast-grep to vpath for .tl files
+- Added work module to modules list for teal checking
+- Excluded test_lib.lua from work_tests (helper module)
 
 #### PR 6.2: Migrate test utilities
 
