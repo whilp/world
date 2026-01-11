@@ -4,6 +4,8 @@ local path = require("cosmo.path")
 
 local daemonize = require('daemonize')
 
+global TEST_TMPDIR: string
+
 function test_acquire_lock()
   local lock_path = path.join(TEST_TMPDIR, "lock")
 
@@ -28,7 +30,7 @@ function test_write_pidfile()
   local content = f:read("*a")
   f:close()
 
-  local pid = tonumber(content:match("^(%d+)"))
+  local pid = tonumber((content:match("^(%d+)")))
   lu.assertNotNil(pid, "pidfile should contain a number")
   lu.assertEquals(pid, unix.getpid(), "pidfile should contain current process pid")
 
@@ -48,4 +50,3 @@ function test_acquire_lock_requires_path()
   lu.assertNotNil(err, "acquire_lock should return error message")
   lu.assertStrContains(err, "required", "error should mention path is required")
 end
-

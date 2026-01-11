@@ -21,7 +21,7 @@ function test_setup_nvim_environment_sets_server_mode()
   local env = nvim.setup_nvim_environment(bin)
 
   local found = false
-  for _, entry in ipairs(env) do
+  for _, entry in ipairs(env as {string}) do
     if entry == "NVIM_SERVER_MODE=1" then
       found = true
       break
@@ -37,7 +37,7 @@ function test_setup_nvim_environment_preserves_loaded_env()
   local env = nvim.setup_nvim_environment(bin)
 
   local has_server_mode = false
-  for _, entry in ipairs(env) do
+  for _, entry in ipairs(env as {string}) do
     lu.assertTrue(type(entry) == "string", "env entries should be strings")
     lu.assertTrue(entry:match("^[^=]+=.*$") ~= nil, "env entries should be in KEY=value format")
     if entry:match("^NVIM_SERVER_MODE=") then
@@ -63,7 +63,7 @@ function test_setup_nvim_environment_sets_vimruntime()
   local env = nvim.setup_nvim_environment(bin)
 
   local found = false
-  for _, entry in ipairs(env) do
+  for _, entry in ipairs(env as {string}) do
     if entry:match("^VIMRUNTIME=") then
       found = true
       break
@@ -92,4 +92,3 @@ function test_resolve_nvim_bin_returns_error_when_missing()
     lu.assertTrue(err:match("not found") ~= nil, "error should mention 'not found'")
   end
 end
-

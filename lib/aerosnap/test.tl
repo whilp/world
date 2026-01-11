@@ -3,6 +3,7 @@ local sqlite3 = require("cosmo.lsqlite3")
 
 local aerosnap = require("aerosnap")
 
+global TestLookupWorkspace: {string:any}
 TestLookupWorkspace = {}
 
 function TestLookupWorkspace:setUp()
@@ -70,4 +71,3 @@ function TestLookupWorkspace:test_returns_nil_for_unknown_bundle()
   lu.assertNil(workspace, "should return nil for unknown bundle")
   lu.assertNil(match_type, "match_type should be nil")
 end
-

@@ -3,11 +3,15 @@ local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local claude = require("claude.main")
 
+global TEST_TMPDIR: string
+
 function test_find_claude_binary_finds_existing()
   local tmpfile = path.join(TEST_TMPDIR, "testfile")
   local f = io.open(tmpfile, "w")
-  f:write("test")
-  f:close()
+  if f then
+    f:write("test")
+    f:close()
+  end
 
   local paths = {"/nonexistent", tmpfile, "/also/nonexistent"}
   local result = claude.find_claude_binary(paths)
@@ -26,10 +30,12 @@ end
 function test_find_claude_binary_handles_nil_in_paths()
   local tmpfile = path.join(TEST_TMPDIR, "testfile2")
   local f = io.open(tmpfile, "w")
-  f:write("test")
-  f:close()
+  if f then
+    f:write("test")
+    f:close()
+  end
 
-  local paths = {nil, tmpfile, "/also/nonexistent"}
+  local paths: {string} = {nil as string, tmpfile, "/also/nonexistent"}
   local result = claude.find_claude_binary(paths)
 
   lu.assertEquals(result, tmpfile, "should find existing file even when nil is first element")
@@ -62,8 +68,10 @@ end
 function test_build_argv_with_mcp_config()
   local tmpfile = path.join(TEST_TMPDIR, "mcp.json")
   local f = io.open(tmpfile, "w")
-  f:write("{}")
-  f:close()
+  if f then
+    f:write("{}")
+    f:close()
+  end
 
   local argv = claude.build_argv({}, tmpfile, {})
 
@@ -88,4 +96,3 @@ function test_scan_for_atomic_install()
   local result = claude.scan_for_atomic_install()
   lu.assertTrue(result == nil or type(result) == "string", "should return nil or string")
 end
-
