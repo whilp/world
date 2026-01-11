@@ -7,13 +7,33 @@
 -- then moves the generated file to the desired output location.
 
 local cosmo = require("cosmo")
-local unix = require("cosmo.unix")
+local getopt = require("cosmo.getopt")
 local path = require("cosmo.path")
 local spawn = require("cosmic.spawn")
 
-local function main(input_file, output_file)
+local function main(...)
+  local args = {...}
+  local output_file = nil
+
+  local longopts = {{"output", "required"}}
+  local parser = getopt.new(args, "o:", longopts)
+
+  while true do
+    local opt, optarg = parser:next()
+    if not opt then break end
+    if opt == "o" or opt == "output" then
+      output_file = optarg
+    elseif opt == "?" then
+      io.stderr:write("usage: tl-gen.lua -o OUTPUT INPUT\n")
+      return 1
+    end
+  end
+
+  local remaining = parser:remaining()
+  local input_file = remaining and remaining[1]
+
   if not input_file or not output_file then
-    io.stderr:write("usage: tl-gen.lua <input.tl> <output.lua>\n")
+    io.stderr:write("usage: tl-gen.lua -o OUTPUT INPUT\n")
     return 1
   end
 
