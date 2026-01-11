@@ -260,21 +260,22 @@ Use Teal's strict mode where possible, but allow `any` types at module boundarie
 .lua files → copy to o/ → bundle into binary
 ```
 
-### Makefile updates needed
+### Makefile updates (done)
 
 1. Define type declaration files:
    ```makefile
    types_files := $(wildcard lib/types/*.d.tl lib/types/**/*.d.tl)
    ```
 
-2. Add pattern rule for `.tl` → `.lua` compilation:
+2. Pattern rule for `.tl` → `.lua` compilation:
    ```makefile
-   $(o)/%.lua: %.tl $(types_files) | $(tl_staged)
+   $(o)/%.lua: %.tl $(types_files) $(tl_files) $(bootstrap_files) | $(tl_staged)
        @mkdir -p $(@D)
-       @$(tl_gen) -I lib/types $< -o $@
+       @$(tl_gen) $< -o $@
    ```
+   Note: `$(tl_files)` and `$(bootstrap_files)` are required for parallel builds (`make -j4`)
 
-3. Update vpath to find `.tl` sources
+3. vpath updated to find `.tl` sources
 
 ## Development workflow
 
