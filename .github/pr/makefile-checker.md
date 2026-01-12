@@ -1,32 +1,28 @@
-# checker: add makefile static analysis test
+# build: add makefile validation test
 
-Tests GNU make's built-in checking capabilities for Makefile validation.
+Tests the actual repo Makefile using GNU make's built-in validation features.
 
 ## Changes
 
-- `lib/checker/fixtures/make/*.mk` - test Makefile fixtures
-- `lib/checker/cook.mk` - rules to generate make outputs at build time
-- `lib/checker/test_makefile.tl` - test reads pre-generated outputs
+- `lib/build/test_makefile.tl` - tests real repo makefiles at runtime
 
 ## Approach
 
-Fixtures are checked at build time, not test runtime:
-1. `cook.mk` runs `make -n`, `--warn-undefined-variables`, `-p` on each fixture
-2. Output + exit code captured to `o/lib/checker/fixtures/make/*.out`
-3. Test reads these files via `TEST_DIR`
+Tests run make commands against the actual repo Makefile:
+- `make -n <target>` - dry run validates syntax and prerequisites
+- `make -p -n -q` - database dump validates variables and rules are defined
 
 ## Checks tested
 
-| Fixture | Validates |
-|---------|-----------|
-| `valid.mk` | Clean makefile passes |
-| `syntax-error.mk` | `make -n` catches syntax errors |
-| `undefined-var.mk` | `--warn-undefined-variables` detects usage |
-| `defined-var.mk` | Defined vars don't warn |
-| `missing-prereq.mk` | Missing dependencies detected |
-| `circular-dep.mk` | Circular dependency warnings |
-| `database.mk` | `make -p` dumps variables/rules |
+| Test | Validates |
+|------|-----------|
+| `test_dry_run_succeeds` | `make -n files` passes |
+| `test_help_dry_run` | `make -n help` passes |
+| `test_test_dry_run` | `make -n test` passes |
+| `test_check_dry_run` | `make -n check` passes |
+| `test_print_database` | `make -p` outputs expected variables |
+| `test_all_major_targets` | All major targets can be dry-run |
 
 ## Validation
 
-- [x] `make o/lib/checker/test_makefile.tl.test.ok` passes
+- [x] `make o/lib/build/test_makefile.tl.test.ok` passes
