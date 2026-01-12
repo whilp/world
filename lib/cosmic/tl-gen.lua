@@ -79,9 +79,6 @@ local function main(...)
   out:write(lua_code)
   out:close()
 
-  -- Report success
-  local basename = output_file:match("([^/]+)$") or output_file
-  io.stdout:write("Wrote: " .. basename .. "\n")
   return 0
 end
 

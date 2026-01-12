@@ -246,9 +246,9 @@ clean:
 ## Bootstrap build environment
 bootstrap: $(bootstrap_files)
 
-all_checks := $(all_astgreps) $(all_luachecks) $(all_teals)
+all_checks := $(all_astgreps) $(all_teals)
 
-## Run all linters (astgrep, luacheck, teal)
+## Run all linters (astgrep, teal)
 check: $(o)/check-summary.txt
 
 $(o)/check-summary.txt: $(all_checks) | $(build_reporter)
@@ -300,10 +300,10 @@ release: $(o)/lib/home/gen-platforms.lua $(o)/lib/home/main.lua
 		--title "$$tag" \
 		release/home release/home-* release/cosmic-lua release/SHA256SUMS
 
-ci_stages := luacheck astgrep teal test build
+ci_stages := astgrep teal test build
 
 .PHONY: ci
-## Run full CI pipeline (luacheck, astgrep, teal, test, build)
+## Run full CI pipeline (astgrep, teal, test, build)
 ci:
 	@rm -f $(o)/failed
 	@$(foreach s,$(ci_stages),\

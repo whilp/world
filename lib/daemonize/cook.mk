@@ -9,5 +9,5 @@ lib_lua_modules += daemonize
 lib_dirs += o/any/daemonize/lib
 
 o/any/daemonize/lib/daemonize/init.lua: $(o)/teal/lib/daemonize/init.lua
-	mkdir -p $(@D)
-	cp $< $@
+	@mkdir -p $(@D)
+	@cp $< $@

@@ -13,16 +13,16 @@ lib_dirs += o/any/lib
 lib_libs += o/any/lib/version.lua o/any/lib/platform.lua o/any/lib/utils.lua o/any/lib/ulid.lua o/any/lib/file.lua
 
 o/any/lib/%.lua: lib/%.lua
-	mkdir -p $(@D)
-	cp $< $@
+	@mkdir -p $(@D)
+	@cp $< $@
 
 # compile .tl files to .lua (for o/any/lib, used by standalone modules)
 # tl_staged must be regular prereq (not order-only) for parallel builds
 # uses secondary expansion so $(tl_files) is evaluated after 3p/tl/cook.mk
 .SECONDEXPANSION:
 o/any/lib/%.lua: lib/%.tl $(types_files) $$(tl_files) | $$(tl_staged)
-	mkdir -p $(@D)
-	$(tl_gen) -o $@ $<
+	@mkdir -p $(@D)
+	@$(tl_gen) -o $@ $<
 
 # compile .tl files to .lua (for o/teal/lib via tl gen -o)
 # uses secondary expansion so $(tl_staged) is evaluated after all includes
