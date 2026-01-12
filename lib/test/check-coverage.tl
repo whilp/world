@@ -1,5 +1,5 @@
 #!/usr/bin/env lua
--- check-coverage: verify all test files are declared in cook.mk
+-- check-coverage: verify all test files are declared in module _tests variables
 
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
@@ -39,91 +39,6 @@ local function find_test_files(dir: string, files?: {string}): {string}
   return files
 end
 
--- recursive helper for find_cookfiles
-local function find_cookfiles_in(dir: string, files: {string}): {string}
-  local handle = unix.opendir(dir) as DirHandle
-  if not handle then return files end
-
-  while true do
-    local entry = handle:read()
-    if not entry then break end
-    if entry ~= "." and entry ~= ".." then
-      local full_path = path.join(dir, entry)
-      local stat = unix.stat(full_path) as Stat
-      if stat then
-        if unix.S_ISDIR(stat:mode()) then
-          find_cookfiles_in(full_path, files)
-        elseif entry == "cook.mk" then
-          table.insert(files, full_path)
-        end
-      end
-    end
-  end
-  handle:close()
-  return files
-end
-
--- find all cook.mk files
-local function find_cookfiles(): {string}
-  local files: {string} = {}
-  local dirs = {"lib", "3p"}
-  for _, dir in ipairs(dirs) do
-    find_cookfiles_in(dir, files)
-  end
-  if unix.stat("cook.mk") then
-    table.insert(files, "cook.mk")
-  end
-  return files
-end
-
--- track both explicit files and wildcard-covered directories
-local record DeclaredTests
-  files: {string:boolean}
-  wildcard_dirs: {string:boolean}
-end
-
--- parse cook.mk files and extract all *_tests declarations
-local function find_declared_tests(cookfiles: {string}): DeclaredTests
-  local declared: DeclaredTests = {
-    files = {},
-    wildcard_dirs = {},
-  }
-
-  for _, cookfile in ipairs(cookfiles) do
-    local content = cosmo.Slurp(cookfile)
-    if content then
-      for line in content:gmatch("[^\n]+") do
-        -- match both _tests and _release_test(s) patterns
-        local tests = line:match("_tests?%s*:=%s*(.+)") or line:match("_release_tests?%s*:=%s*(.+)")
-        if tests then
-          -- handle $(wildcard dir/test_*.tl) patterns
-          for wildcard_path in tests:gmatch("%$%(wildcard%s+([^)]+)%)") do
-            local dir = path.dirname(wildcard_path)
-            if dir and dir ~= "" then
-              declared.wildcard_dirs[dir] = true
-            end
-          end
-          -- handle $(filter dir/test_%.tl,...) patterns
-          for filter_path in tests:gmatch("%$%(filter%s+([^,]+),") do
-            local dir = path.dirname(filter_path)
-            if dir and dir ~= "" then
-              declared.wildcard_dirs[dir] = true
-            end
-          end
-          -- handle explicit file paths (e.g., lib/foo/test_bar.tl)
-          -- but exclude wildcard patterns (test_*.tl, test_%.tl)
-          for test in tests:gmatch("([%w_/%-]+%.tl)") do
-            if not test:match("[*%%]") then
-              declared.files[test] = true
-            end
-          end
-        end
-      end
-    end
-  end
-  return declared
-end
-
 -- check if a test file has --test:false marker
 local function is_test_disabled(filepath: string): boolean
   local content = cosmo.Slurp(filepath)
@@ -140,7 +55,13 @@ local function is_test_disabled(filepath: string): boolean
   return false
 end
 
-local function main(): number
+local function main(declared_tests: {string}): number
+  -- build set of declared tests from arguments
+  local declared: {string:boolean} = {}
+  for _, test in ipairs(declared_tests) do
+    declared[test] = true
+  end
+
   -- find all test files
   local test_files: {string} = {}
   for _, dir in ipairs({"lib", "3p"}) do
@@ -148,28 +69,20 @@ local function main(): number
   end
   table.sort(test_files)
 
-  -- find declared tests from cook.mk files
-  local cookfiles = find_cookfiles()
-  local declared = find_declared_tests(cookfiles)
-
   -- check for undeclared tests
   local missing: {string} = {}
   for _, test in ipairs(test_files) do
     -- skip files with --test:false marker
     if is_test_disabled(test) then
       -- intentionally disabled, skip
-    else
-      local test_dir = path.dirname(test)
-      -- check explicit declaration or wildcard coverage
-      if not declared.files[test] and not declared.wildcard_dirs[test_dir] then
-        table.insert(missing, test)
-      end
+    elseif not declared[test] then
+      table.insert(missing, test)
     end
   end
 
   -- report results
   if #missing > 0 then
-    io.write("fail: " .. #missing .. " test file(s) not declared in any cook.mk\n\n")
+    io.write("fail: " .. #missing .. " test file(s) not declared in any module's _tests\n\n")
     for _, test in ipairs(missing) do
       io.write("  " .. test .. "\n")
     end
@@ -182,5 +95,5 @@ local function main(): number
 end
 
 if cosmo.is_main() then
-  os.exit(main())
+  os.exit(main(arg))
 end
