@@ -148,6 +148,8 @@ $(o)/%/.staged: $(o)/%/.fetched $(build_files)
 	@$(build_stage) $$(readlink $(o)/$*/.versioned) $(platform) $< $@
 
 all_tests := $(call filter-only,$(foreach x,$(modules),$($(x)_tests)))
+all_release_tests := $(call filter-only,$(foreach x,$(modules),$($(x)_release_test) $($(x)_release_tests)))
+all_declared_tests := $(all_tests) $(all_release_tests)
 all_tested := $(patsubst %,o/%.test.ok,$(all_tests))
 all_snaps := $(call filter-only,$(foreach x,$(modules),$($(x)_snaps)))
 all_snapped := $(patsubst %,$(o)/%.test.ok,$(all_snaps))
@@ -254,7 +256,7 @@ $(o)/check-summary.txt: $(all_checks) | $(build_reporter)
 ## Verify all test files are declared in cook.mk
 .PHONY: check-test-coverage
 check-test-coverage: $(test_check_coverage) | $(bootstrap_files)
-	@$(coverage_checker)
+	@$(coverage_checker) $(all_declared_tests)
 
 ## Check for dependency updates
 update: $(o)/update-summary.txt
