@@ -2,17 +2,15 @@
 local spawn = require("cosmic.spawn")
 local path = require("cosmo.path")
 
-local record SpawnHandle
-  wait: function(self: SpawnHandle): number
-end
+global TEST_DIR: string
 
-global TEST_BIN_DIR: string
-
-local lua_dist = path.join((os.getenv("TEST_BIN_DIR") as string):gsub("/tl$", "/lua"), "bin", "lua.dist")
-local tl_bin = path.join(os.getenv("TEST_BIN_DIR") as string, "bin", "tl")
+local cosmic = path.join(os.getenv("TEST_BIN"), "cosmic")
+local tl_script = path.join(TEST_DIR, "tl")
 
 local function test_version()
-  local handle = spawn({ lua_dist, tl_bin, "--version" }) as SpawnHandle
+  -- use "--" to separate cosmic args from tl args
+  local handle = spawn({ cosmic, "--", tl_script, "--version" })
+  assert(handle ~= nil, "spawn should succeed")
   local exit_code = handle:wait()
   assert(exit_code == 0, "expected exit code 0, got " .. tostring(exit_code))
 end
