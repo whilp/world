@@ -22,6 +22,8 @@ lua_path=(
   "$HOME/lib/?.lua"
   "$HOME/lib/?/init.lua"
   "$HOME/lib/3p/?.lua"
+  "$HOME/.local/lib/?.lua"
+  "$HOME/.local/lib/?/init.lua"
 )
 
 LUA_PATH="${LUA_PATH};;"
