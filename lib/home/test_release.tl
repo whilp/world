@@ -39,7 +39,9 @@ assert(ok == 0, "failed to copy home asset: " .. tostring(err))
 local gen_platforms = path.join(os.getenv("TEST_O") or "", "lib/home/gen-platforms.lua")
 
 -- Build env with LUA_PATH prepended (unix.environ returns array of "K=V" strings)
-local env: {string} = { "LUA_PATH=lib/home/?.lua;;" }
+-- Use TEST_O for compiled lua files (main.lua is compiled from main.tl)
+local test_o = os.getenv("TEST_O") or "o"
+local env: {string} = { "LUA_PATH=" .. test_o .. "/lib/home/?.lua;;" }
 for _, entry in ipairs(unix.environ() as {string}) do
   if not entry:match("^LUA_PATH=") then
     table.insert(env, entry)
@@ -52,8 +54,8 @@ local proc = spawn({
   platforms_dir, "https://example.com/releases/test", "test-tag",
   test_asset,
 }, { env = env }) as SpawnHandle
-local stdout = proc.stdout:read("*a")
-local stderr = proc.stderr:read("*a")
+local stdout = proc.stdout:read()
+local stderr = proc.stderr:read()
 local exit_code = proc:wait()
 ok = exit_code == 0
 assert(ok, "gen-platforms failed (exit " .. tostring(exit_code) .. "): " .. tostring(stderr))
@@ -69,8 +71,8 @@ assert(read_ok, "failed to embed platforms.lua: " .. tostring(output))
 
 -- Embed manifests directory (need to cd first since zip stores relative paths)
 proc = spawn({ "sh", "-c", "cd " .. platforms_dir .. " && " .. cosmos_zip .. " -r " .. test_home .. " manifests" }) as SpawnHandle
-stdout = proc.stdout:read("*a")
-stderr = proc.stderr:read("*a")
+stdout = proc.stdout:read()
+stderr = proc.stderr:read()
 exit_code = proc:wait()
 ok = exit_code == 0
 assert(ok, "failed to embed manifests (exit " .. tostring(exit_code) .. "): " .. tostring(stderr) .. " | " .. tostring(stdout))
