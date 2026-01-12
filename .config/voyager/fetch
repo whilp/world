@@ -1,40 +1,99 @@
 #!/usr/bin/env lua
 
-local posix = require('posix')
-local unistd = require('posix.unistd')
+local cosmo = require("cosmo")
+local path = require("cosmo.path")
+local unix = require("cosmo.unix")
+local spawn = require("cosmic.spawn")
 
 local url = "https://oryx.zsa.io/source/ZPeDwo"
-local output_dir = posix.getenv("HOME") .. "/.config/voyager"
-local temp_dir = posix.mkdtemp("/tmp/voyager_layout.XXXXXX")
+local home = os.getenv("HOME")
+if not home then
+  io.stderr:write("HOME environment variable not set\n")
+  os.exit(1)
+end
+local output_dir = path.join(home, ".config", "voyager")
+
+local temp_dir = unix.mkdtemp("/tmp/voyager_layout_XXXXXX")
 if not temp_dir then
   io.stderr:write("Failed to create temp directory\n")
   os.exit(1)
 end
-local temp_zip = temp_dir .. "/layout.zip"
+local temp_zip = path.join(temp_dir, "layout.zip")
 
-posix.mkdir(output_dir)
+unix.makedirs(output_dir)
 
-local curl_cmd = string.format("curl -L -o %s %s", temp_zip, url)
-local ret = os.execute(curl_cmd)
-if ret ~= 0 then
+-- download the layout
+local status, _, body = cosmo.Fetch(url, {maxresponse = 10 * 1024 * 1024})
+if not status or status ~= 200 then
   io.stderr:write("Failed to download layout\n")
+  unix.rmrf(temp_dir)
   os.exit(1)
 end
 
-local unzip_cmd = string.format("unzip -o %s '*_source/*' -d %s", temp_zip, temp_dir)
-ret = os.execute(unzip_cmd)
-if ret ~= 0 then
+if not cosmo.Barf(temp_zip, body, tonumber("644", 8)) then
+  io.stderr:write("Failed to write zip file\n")
+  unix.rmrf(temp_dir)
+  os.exit(1)
+end
+
+-- unzip the layout (extract only *_source/* files)
+local handle = spawn({"/usr/bin/unzip", "-o", "-q", "-d", temp_dir, temp_zip, "*_source/*"})
+local exit_code = handle:wait()
+if exit_code ~= 0 then
   io.stderr:write("Failed to unzip layout\n")
+  unix.rmrf(temp_dir)
   os.exit(1)
 end
 
-local move_cmd = string.format("mv %s/*_source/* %s/", temp_dir, output_dir)
-ret = os.execute(move_cmd)
-if ret ~= 0 then
-  io.stderr:write("Failed to move source files\n")
+-- find and move the source directory contents to output_dir
+local dir = unix.opendir(temp_dir)
+if not dir then
+  io.stderr:write("Failed to open temp directory\n")
+  unix.rmrf(temp_dir)
   os.exit(1)
 end
 
-os.execute(string.format("rm -rf %s", temp_dir))
+local source_dir
+while true do
+  local name = dir:read()
+  if not name then break end
+  if name:match("_source$") then
+    source_dir = path.join(temp_dir, name)
+    break
+  end
+end
+dir:close()
+
+if not source_dir then
+  io.stderr:write("Failed to find source directory\n")
+  unix.rmrf(temp_dir)
+  os.exit(1)
+end
+
+-- move contents from source_dir to output_dir
+local src_dir = unix.opendir(source_dir)
+if not src_dir then
+  io.stderr:write("Failed to open source directory\n")
+  unix.rmrf(temp_dir)
+  os.exit(1)
+end
+
+while true do
+  local name = src_dir:read()
+  if not name then break end
+  if name ~= "." and name ~= ".." then
+    local src = path.join(source_dir, name)
+    local dst = path.join(output_dir, name)
+    -- remove existing file first if it exists
+    unix.unlink(dst)
+    local ok, err = unix.rename(src, dst)
+    if not ok then
+      io.stderr:write("Failed to move " .. name .. ": " .. tostring(err) .. "\n")
+    end
+  end
+end
+src_dir:close()
+
+unix.rmrf(temp_dir)
 
 print("Layout downloaded and extracted to " .. output_dir)
