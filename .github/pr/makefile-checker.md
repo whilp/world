@@ -4,30 +4,28 @@ Tests GNU make's built-in checking capabilities for Makefile validation.
 
 ## Changes
 
-- `lib/checker/test_makefile.tl` - test suite for make-based static analysis
+- `lib/checker/fixtures/make/*.mk` - test Makefile fixtures
+- `lib/checker/cook.mk` - rules to generate make outputs at build time
+- `lib/checker/test_makefile.tl` - test reads pre-generated outputs
+
+## Approach
+
+Fixtures are checked at build time, not test runtime:
+1. `cook.mk` runs `make -n`, `--warn-undefined-variables`, `-p` on each fixture
+2. Output + exit code captured to `o/lib/checker/fixtures/make/*.out`
+3. Test reads these files via `TEST_DIR`
 
 ## Checks tested
 
-| Check | Command | Detects |
-|-------|---------|---------|
-| Syntax errors | `make -n` | Invalid makefile syntax |
-| Undefined variables | `make --warn-undefined-variables` | `$(UNDEFINED_VAR)` usage |
-| Missing prerequisites | `make -n` | Dependencies without rules |
-| Circular dependencies | `make -n` | `a: b` / `b: a` cycles |
-| Database dump | `make -p -n` | All variables and rules |
-
-## Helper function
-
-Includes `check_makefile(dir, target)` that aggregates results:
-
-```lua
-local result = check_makefile(dir)
--- result.syntax_ok        -- boolean
--- result.undefined_vars   -- {string}
--- result.missing_prereqs  -- {string}
--- result.has_circular_deps -- boolean
--- result.errors           -- {string}
-```
+| Fixture | Validates |
+|---------|-----------|
+| `valid.mk` | Clean makefile passes |
+| `syntax-error.mk` | `make -n` catches syntax errors |
+| `undefined-var.mk` | `--warn-undefined-variables` detects usage |
+| `defined-var.mk` | Defined vars don't warn |
+| `missing-prereq.mk` | Missing dependencies detected |
+| `circular-dep.mk` | Circular dependency warnings |
+| `database.mk` | `make -p` dumps variables/rules |
 
 ## Validation
 
