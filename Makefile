@@ -180,10 +180,12 @@ $(o)/%.snap.test.ok: %.snap $(o)/%.snap | $(bootstrap_cosmic)
 	@mkdir -p $(@D)
 	@$(bootstrap_cosmic) $(build_snap) $< $(word 2,$^) > $@
 
-# expand test deps: M's tests depend on own _files/_tl_files plus deps' _dir
-# derive compiled .lua from _tl_files
+# expand test deps: M's tests depend on own _files/_tl_files plus deps' _dir/_files/_tl_lua
+# derive compiled .lua from _tl_files (first pass: compute all _tl_lua)
 $(foreach m,$(filter-out bootstrap,$(modules)),\
-  $(eval $(m)_tl_lua := $(patsubst %.tl,$(o)/%.lua,$($(m)_tl_files)))\
+  $(eval $(m)_tl_lua := $(patsubst %.tl,$(o)/%.lua,$($(m)_tl_files))))
+# second pass: set up test dependencies
+$(foreach m,$(filter-out bootstrap,$(modules)),\
   $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): $($(m)_files) $($(m)_tl_lua))\
   $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): TEST_DEPS += $($(m)_files) $($(m)_tl_lua))\
   $(if $($(m)_dir),\
@@ -193,7 +195,8 @@ $(foreach m,$(filter-out bootstrap,$(modules)),\
   $(foreach d,$(filter-out $(m),$(default_deps) $($(m)_deps)),\
     $(if $($(d)_dir),\
       $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): $($(d)_dir))\
-      $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): TEST_DEPS += $($(d)_dir)))))
+      $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): TEST_DEPS += $($(d)_dir)))\
+    $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): $($(d)_files) $($(d)_tl_lua))))
 
 all_built_files := $(call filter-only,$(foreach x,$(modules),$($(x)_files)))
 all_built_files += $(all_tl_lua)
