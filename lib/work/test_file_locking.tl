@@ -1,12 +1,9 @@
-local lu = require("luaunit")
+#!/usr/bin/env run-test.lua
 
 -- skip if posix not available (work module requires luaposix)
 local has_posix = pcall(require, "posix")
 if not has_posix then
-  global function test_file_locking_skipped()
-    lu.skip("requires luaposix")
-  end
-  return
+  error("SKIP requires luaposix")
 end
 
 local record WorkItemMeta
@@ -56,52 +53,52 @@ local store = require("work.store") as StoreModule
 local Work = require("work.test_lib") as WorkModule
 local test_store = Work.store
 
-local test_dir: string
+local test_dir = os.getenv("TEST_TMPDIR") as string
 
-global TestFileLocking: {string:any} = {}
-
-function TestFileLocking:setUp()
-  store.reset(test_store)
-  test_dir = os.getenv("TEST_TMPDIR") as string
-end
-
-function TestFileLocking:tearDown()
+local function teardown()
   data.release_lock()
   data._lock_handle = nil
   data._lock_path = nil
 end
 
-function TestFileLocking:test_acquire_and_release_lock()
+local function test_acquire_and_release_lock()
+  store.reset(test_store)
   local ok, err = data.acquire_lock(test_dir)
-  lu.assertTrue(ok, "should acquire lock successfully: " .. tostring(err))
-  lu.assertNotNil(data._lock_handle, "lock handle should be set")
-  lu.assertEquals(data._lock_path, test_dir .. "/.work.lock")
+  assert(ok, "should acquire lock successfully: " .. tostring(err))
+  assert(data._lock_handle ~= nil, "lock handle should be set")
+  assert(data._lock_path == test_dir .. "/.work.lock", "expected lock path to match")
 
   ok = data.release_lock()
-  lu.assertTrue(ok, "should release lock successfully")
-  lu.assertNil(data._lock_handle, "lock handle should be cleared")
-  lu.assertNil(data._lock_path, "lock path should be cleared")
+  assert(ok, "should release lock successfully")
+  assert(data._lock_handle == nil, "lock handle should be cleared")
+  assert(data._lock_path == nil, "lock path should be cleared")
+  teardown()
 end
+test_acquire_and_release_lock()
 
-function TestFileLocking:test_lock_creates_lock_file()
+local function test_lock_creates_lock_file()
+  store.reset(test_store)
   local ok = data.acquire_lock(test_dir)
-  lu.assertTrue(ok, "first lock should succeed")
+  assert(ok, "first lock should succeed")
 
   -- Verify lock file exists
   local lock_path = test_dir .. "/.work.lock"
   local f = io.open(lock_path, "r")
-  lu.assertNotNil(f, "lock file should exist")
+  assert(f ~= nil, "lock file should exist")
   f:close()
 
   data.release_lock()
 
   -- Lock file should still exist after release (but unlocked)
   f = io.open(lock_path, "r")
-  lu.assertNotNil(f, "lock file should still exist after release")
+  assert(f ~= nil, "lock file should still exist after release")
   f:close()
+  teardown()
 end
+test_lock_creates_lock_file()
 
-function TestFileLocking:test_save_with_locking()
+local function test_save_with_locking()
+  store.reset(test_store)
   local item: WorkItem = {
     id = "01TEST0000000000000000001",
     title = "test item",
@@ -109,19 +106,22 @@ function TestFileLocking:test_save_with_locking()
   }
 
   local ok, err = data.save(item, test_dir)
-  lu.assertTrue(ok, "save should succeed: " .. tostring(err))
+  assert(ok, "save should succeed: " .. tostring(err))
 
   -- Verify lock is released after save
-  lu.assertNil(data._lock_handle, "lock should be released after save")
+  assert(data._lock_handle == nil, "lock should be released after save")
 
   -- Verify file was created
   local file_path = test_dir .. "/01TEST0000000000000000001.lua"
   local f = io.open(file_path, "r")
-  lu.assertNotNil(f, "work item file should exist")
+  assert(f ~= nil, "work item file should exist")
   f:close()
+  teardown()
 end
+test_save_with_locking()
 
-function TestFileLocking:test_save_releases_lock_on_error()
+local function test_save_releases_lock_on_error()
+  store.reset(test_store)
   local item: WorkItem = {
     id = "01TEST0000000000000000001",
     title = 123 as any as string,  -- invalid type
@@ -129,14 +129,17 @@ function TestFileLocking:test_save_releases_lock_on_error()
   }
 
   local ok, err = data.save(item, test_dir)
-  lu.assertNil(ok, "save should fail due to validation error")
-  lu.assertNotNil(err, "should return error message")
+  assert(ok == nil, "save should fail due to validation error")
+  assert(err ~= nil, "should return error message")
 
   -- Verify lock is released even on error
-  lu.assertNil(data._lock_handle, "lock should be released after error")
+  assert(data._lock_handle == nil, "lock should be released after error")
+  teardown()
 end
+test_save_releases_lock_on_error()
 
-function TestFileLocking:test_delete_with_locking()
+local function test_delete_with_locking()
+  store.reset(test_store)
   local item: WorkItem = {
     id = "01TEST0000000000000000002",
     title = "test delete",
@@ -145,23 +148,25 @@ function TestFileLocking:test_delete_with_locking()
 
   -- Save the item first
   local ok, err = data.save(item, test_dir)
-  lu.assertTrue(ok, "save should succeed: " .. tostring(err))
+  assert(ok, "save should succeed: " .. tostring(err))
 
   -- Load it to get the _meta.source
   store.reset(test_store)
   data.load_all(test_store, test_dir)
   local loaded_item = data.get(test_store, "01TEST0000000000000000002")
-  lu.assertNotNil(loaded_item, "item should be loaded")
+  assert(loaded_item ~= nil, "item should be loaded")
 
   -- Delete it
   ok, err = data.delete(loaded_item, test_dir)
-  lu.assertTrue(ok, "delete should succeed: " .. tostring(err))
+  assert(ok, "delete should succeed: " .. tostring(err))
 
   -- Verify lock is released after delete
-  lu.assertNil(data._lock_handle, "lock should be released after delete")
+  assert(data._lock_handle == nil, "lock should be released after delete")
 
   -- Verify file is gone
   local file_path = test_dir .. "/01TEST0000000000000000002.lua"
   local f = io.open(file_path, "r")
-  lu.assertNil(f, "work item file should not exist after delete")
+  assert(f == nil, "work item file should not exist after delete")
+  teardown()
 end
+test_delete_with_locking()

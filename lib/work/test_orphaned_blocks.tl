@@ -1,12 +1,9 @@
-local lu = require("luaunit")
+#!/usr/bin/env run-test.lua
 
 -- skip if posix not available (work module requires luaposix)
 local has_posix = pcall(require, "posix")
 if not has_posix then
-  global function test_orphaned_blocks_skipped()
-    lu.skip("requires luaposix")
-  end
-  return
+  error("SKIP requires luaposix")
 end
 
 local record WorkItemMeta
@@ -66,13 +63,8 @@ local function add_work(item: WorkItem)
   store.add(test_store, item)
 end
 
-global TestOrphanedBlocks: {string:any} = {}
-
-function TestOrphanedBlocks:setUp()
+local function test_find_items_blocking_on()
   store.reset(test_store)
-end
-
-function TestOrphanedBlocks:test_find_items_blocking_on()
   add_work{
     id = "01TEST0000000000000000001",
     title = "deploy to prod",
@@ -94,7 +86,7 @@ function TestOrphanedBlocks:test_find_items_blocking_on()
   }
 
   local referencing = process.find_items_blocking_on(test_store, "01TEST0000000000000000001")
-  lu.assertEquals(#referencing, 2)
+  assert(#referencing == 2, "expected 2 referencing items, got " .. #referencing)
 
   local ids: {string} = {}
   for _, item in ipairs(referencing) do
@@ -102,11 +94,13 @@ function TestOrphanedBlocks:test_find_items_blocking_on()
   end
   table.sort(ids)
 
-  lu.assertEquals(ids[1], "01TEST0000000000000000002")
-  lu.assertEquals(ids[2], "01TEST0000000000000000003")
+  assert(ids[1] == "01TEST0000000000000000002", "expected first id to match")
+  assert(ids[2] == "01TEST0000000000000000003", "expected second id to match")
 end
+test_find_items_blocking_on()
 
-function TestOrphanedBlocks:test_find_items_blocking_on_no_references()
+local function test_find_items_blocking_on_no_references()
+  store.reset(test_store)
   add_work{
     id = "01TEST0000000000000000001",
     title = "deploy to prod",
@@ -120,10 +114,12 @@ function TestOrphanedBlocks:test_find_items_blocking_on_no_references()
   }
 
   local referencing = process.find_items_blocking_on(test_store, "01TEST0000000000000000001")
-  lu.assertEquals(#referencing, 0)
+  assert(#referencing == 0, "expected 0 referencing items, got " .. #referencing)
 end
+test_find_items_blocking_on_no_references()
 
-function TestOrphanedBlocks:test_find_items_blocking_on_nonexistent()
+local function test_find_items_blocking_on_nonexistent()
+  store.reset(test_store)
   add_work{
     id = "01TEST0000000000000000001",
     title = "deploy to prod",
@@ -131,10 +127,12 @@ function TestOrphanedBlocks:test_find_items_blocking_on_nonexistent()
   }
 
   local referencing = process.find_items_blocking_on(test_store, "01TEST9999999999999999999")
-  lu.assertEquals(#referencing, 0)
+  assert(#referencing == 0, "expected 0 referencing items, got " .. #referencing)
 end
+test_find_items_blocking_on_nonexistent()
 
-function TestOrphanedBlocks:test_find_items_blocking_on_multiple_blocks()
+local function test_find_items_blocking_on_multiple_blocks()
+  store.reset(test_store)
   add_work{
     id = "01TEST0000000000000000001",
     title = "feature A",
@@ -155,10 +153,11 @@ function TestOrphanedBlocks:test_find_items_blocking_on_multiple_blocks()
   }
 
   local referencing_a = process.find_items_blocking_on(test_store, "01TEST0000000000000000001")
-  lu.assertEquals(#referencing_a, 1)
-  lu.assertEquals(referencing_a[1].id, "01TEST0000000000000000003")
+  assert(#referencing_a == 1, "expected 1 referencing item for A, got " .. #referencing_a)
+  assert(referencing_a[1].id == "01TEST0000000000000000003", "expected referencing item id to match")
 
   local referencing_b = process.find_items_blocking_on(test_store, "01TEST0000000000000000002")
-  lu.assertEquals(#referencing_b, 1)
-  lu.assertEquals(referencing_b[1].id, "01TEST0000000000000000003")
+  assert(#referencing_b == 1, "expected 1 referencing item for B, got " .. #referencing_b)
+  assert(referencing_b[1].id == "01TEST0000000000000000003", "expected referencing item id to match")
 end
+test_find_items_blocking_on_multiple_blocks()
