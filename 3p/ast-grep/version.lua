@@ -2,6 +2,13 @@ return {
   version = "0.40.5",
   format = "zip",
   strip_components = 0,
+  install = {
+    ["ast-grep"] = "bin/ast-grep",
+  },
+  remove = { "sg" },
+  links = {
+    ["bin/sg"] = "ast-grep",
+  },
   url = "https://github.com/ast-grep/ast-grep/releases/download/{version}/app-{arch}.zip",
   platforms = {
     ["darwin-arm64"] = {
