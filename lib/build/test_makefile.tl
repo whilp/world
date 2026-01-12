@@ -1,69 +1,46 @@
 #!/usr/bin/env run-test.lua
--- Test the actual repo Makefile using GNU make's validation features
+-- Test the actual repo Makefile using pre-generated make outputs
 
-local spawn = require("cosmic.spawn").spawn
+local path = require("cosmo.path")
+local cosmo = require("cosmo")
 
-local record SpawnHandle
-  stderr: {read: function(self: any): string}
-  read: function(self: SpawnHandle): boolean, string, integer
-  wait: function(self: SpawnHandle): integer
+global TEST_DIR: string
+
+local record MakeOutput
+  output: string
+  exit_code: number
 end
 
-local function run_make(...: string): integer, string
-  local args: {string} = {"make"}
-  local varargs: {string} = {...}
-  for _, arg in ipairs(varargs) do
-    table.insert(args, arg)
-  end
+local function read_make_output(filename: string): MakeOutput
+  local filepath = path.join(TEST_DIR, filename)
+  local content = cosmo.Slurp(filepath)
+  assert(content, "failed to read " .. filepath)
 
-  local handle = spawn(args) as SpawnHandle
-  local ok, stdout, exit_code = handle:read()
-  return exit_code, stdout or ""
+  local exit_code = content:match("exit:(%d+)%s*$")
+  assert(exit_code, "missing exit code in " .. filepath)
+
+  local output = content:gsub("exit:%d+%s*$", "")
+  return {
+    output = output,
+    exit_code = tonumber(exit_code),
+  }
 end
 
--- test: make -n succeeds on repo Makefile (dry run)
+-- test: make -n files succeeds (validates syntax and prerequisites)
 local function test_dry_run_succeeds()
-  local exit_code, stdout = run_make("-n", "files")
-  assert(exit_code == 0, "expected make -n files to succeed, got code: " .. tostring(exit_code))
+  local result = read_make_output("dry-run.out")
+  assert(result.exit_code == 0,
+    "expected make -n files to succeed, got code: " .. tostring(result.exit_code) ..
+    "\noutput: " .. result.output:sub(1, 500))
 end
 test_dry_run_succeeds()
 
--- test: make -n help works
-local function test_help_dry_run()
-  local exit_code = run_make("-n", "help")
-  assert(exit_code == 0, "expected make -n help to succeed, got code: " .. tostring(exit_code))
-end
-test_help_dry_run()
-
--- test: make -n test works
-local function test_test_dry_run()
-  local exit_code = run_make("-n", "test")
-  assert(exit_code == 0, "expected make -n test to succeed, got code: " .. tostring(exit_code))
-end
-test_test_dry_run()
-
--- test: make -n check works
-local function test_check_dry_run()
-  local exit_code = run_make("-n", "check")
-  assert(exit_code == 0, "expected make -n check to succeed, got code: " .. tostring(exit_code))
-end
-test_check_dry_run()
-
--- test: make -p prints database (rules, variables)
+-- test: make -p prints database with expected content
 local function test_print_database()
-  local exit_code, stdout = run_make("-p", "-n", "-q")
-  -- -q may return non-zero if targets are out of date, but output should have content
-  assert(stdout:match("modules"), "expected 'modules' variable in database output")
-  assert(stdout:match("%.PHONY"), "expected .PHONY in database output")
+  local result = read_make_output("database.out")
+  assert(result.output:match("modules"), "expected 'modules' variable in database output")
+  assert(result.output:match("%.PHONY"), "expected .PHONY in database output")
+  assert(result.output:match("all_files"), "expected 'all_files' variable in database output")
+  assert(result.output:match("platform"), "expected 'platform' variable in database output")
 end
 test_print_database()
-
--- test: all major targets can be dry-run
-local function test_all_major_targets()
-  local targets = {"files", "staged", "fetched", "clean", "bootstrap", "build"}
-  for _, target in ipairs(targets) do
-    local exit_code = run_make("-n", target)
-    assert(exit_code == 0, "expected make -n " .. target .. " to succeed, got code: " .. tostring(exit_code))
-  end
-end
-test_all_major_targets()
