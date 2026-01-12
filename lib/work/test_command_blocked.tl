@@ -1,12 +1,9 @@
-local lu = require("luaunit")
+#!/usr/bin/env run-test.lua
 
 -- skip if posix not available (work module requires luaposix)
 local has_posix = pcall(require, "posix")
 if not has_posix then
-  global function test_command_blocked_skipped()
-    lu.skip("requires luaposix")
-  end
-  return
+  error("SKIP requires luaposix")
 end
 
 local record WorkItemMeta
@@ -67,13 +64,8 @@ local function add_work(item: WorkItem)
   store.add(test_store, item)
 end
 
-global TestCommandBlocked: {string:any} = {}
-
-function TestCommandBlocked:setUp()
+local function test_blocked_items_list()
   store.reset(test_store)
-end
-
-function TestCommandBlocked:test_blocked_items_list()
   add_work{
     id = "01TEST0000000000000000001",
     title = "deploy to prod",
@@ -90,6 +82,7 @@ function TestCommandBlocked:test_blocked_items_list()
   local item1 = data.get(test_store, "01TEST0000000000000000001")
 
   local blocked_items = process.get_blocked_items(test_store)
-  lu.assertEquals(#blocked_items, 1)
-  lu.assertEquals(blocked_items[1].id, item1.id)
+  assert(#blocked_items == 1, "expected 1 blocked item, got " .. #blocked_items)
+  assert(blocked_items[1].id == item1.id, "expected blocked item id to match")
 end
+test_blocked_items_list()

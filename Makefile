@@ -25,10 +25,8 @@ platform := $(os)-$(arch)
 
 include bootstrap.mk
 include lib/cook.mk
-include 3p/luaunit/cook.mk
 include 3p/ast-grep/cook.mk
 include 3p/cosmos/cook.mk
-include 3p/argparse/cook.mk
 include 3p/rg/cook.mk
 include 3p/gh/cook.mk
 include 3p/uv/cook.mk
@@ -49,7 +47,6 @@ include 3p/nvim-lspconfig/cook.mk
 include 3p/nvim-treesitter/cook.mk
 include 3p/nvim-parsers/cook.mk
 include 3p/nvim/cook.mk
-include 3p/luacheck/cook.mk
 include 3p/tl/cook.mk
 include 3p/teal-types/cook.mk
 
@@ -87,8 +84,8 @@ $(o)/%.lua: %.tl $(types_files) $(tl_files) $(bootstrap_files) $$(tl_staged)
 	@$(tl_gen) $< -o $@
 
 # bin scripts: o/bin/X.lua from lib/*/X.lua and 3p/*/X.lua
-vpath %.lua lib/build lib/test 3p/ast-grep 3p/luacheck 3p/tl
-vpath %.tl lib/build 3p/ast-grep 3p/luacheck 3p/tl
+vpath %.lua lib/build lib/test 3p/ast-grep 3p/tl
+vpath %.tl lib/build 3p/ast-grep 3p/tl
 $(o)/bin/%.lua: %.lua
 	@mkdir -p $(@D)
 	@$(cp) $< $@
@@ -100,6 +97,11 @@ $(o)/bin/%.lua: %.tl $(types_files) $(tl_files) $(bootstrap_files) | $(tl_staged
 
 # files are produced in o/
 all_files += $(call filter-only,$(foreach x,$(modules),$($(x)_files)))
+
+# tl files: modules declare _tl_files, derive compiled .lua outputs
+all_tl_files := $(call filter-only,$(foreach x,$(modules),$($(x)_tl_files)))
+all_tl_lua := $(patsubst %.tl,$(o)/%.lua,$(all_tl_files))
+all_files += $(all_tl_lua)
 
 # define *_staged, *_dir for versioned modules (must be before dep expansion)
 # modules can override *_dir for post-processing (e.g., nvim bundles plugins)
@@ -178,10 +180,14 @@ $(o)/%.snap.test.ok: %.snap $(o)/%.snap | $(bootstrap_cosmic)
 	@mkdir -p $(@D)
 	@$(bootstrap_cosmic) $(build_snap) $< $(word 2,$^) > $@
 
-# expand test deps: M's tests depend on own _files/_dir plus deps' _dir
+# expand test deps: M's tests depend on own _files/_tl_files plus deps' _dir/_files/_tl_lua
+# derive compiled .lua from _tl_files (first pass: compute all _tl_lua)
 $(foreach m,$(filter-out bootstrap,$(modules)),\
-  $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): $($(m)_files))\
-  $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): TEST_DEPS += $($(m)_files))\
+  $(eval $(m)_tl_lua := $(patsubst %.tl,$(o)/%.lua,$($(m)_tl_files))))
+# second pass: set up test dependencies
+$(foreach m,$(filter-out bootstrap,$(modules)),\
+  $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): $($(m)_files) $($(m)_tl_lua))\
+  $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): TEST_DEPS += $($(m)_files) $($(m)_tl_lua))\
   $(if $($(m)_dir),\
     $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): $($(m)_dir))\
     $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): TEST_DEPS += $($(m)_dir))\
@@ -189,12 +195,15 @@ $(foreach m,$(filter-out bootstrap,$(modules)),\
   $(foreach d,$(filter-out $(m),$(default_deps) $($(m)_deps)),\
     $(if $($(d)_dir),\
       $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): $($(d)_dir))\
-      $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): TEST_DEPS += $($(d)_dir)))))
+      $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): TEST_DEPS += $($(d)_dir)))\
+    $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): $($(d)_files) $($(d)_tl_lua))))
 
 all_built_files := $(call filter-only,$(foreach x,$(modules),$($(x)_files)))
+all_built_files += $(all_tl_lua)
 all_source_files := $(call filter-only,$(foreach x,$(modules),$($(x)_tests)))
 all_source_files += $(call filter-only,$(filter-out ,$(foreach x,$(modules),$($(x)_version))))
 all_source_files += $(call filter-only,$(foreach x,$(modules),$($(x)_srcs)))
+all_source_files += $(all_tl_files)
 all_checkable_files := $(addprefix $(o)/,$(all_source_files))
 
 .PHONY: files
@@ -212,18 +221,6 @@ $(o)/astgrep-summary.txt: $(all_astgreps) | $(build_reporter)
 $(o)/%.ast-grep.ok: $(o)/% $(ast-grep_files) $(checker_files) $(tl_staged) | $(bootstrap_files) $(ast-grep_staged)
 	@mkdir -p $(@D)
 	@ASTGREP_BIN=$(ast-grep_staged) $(astgrep_runner) $< > $@
-
-all_luachecks := $(patsubst %,%.luacheck.ok,$(all_checkable_files))
-
-## Run luacheck linter on all files
-luacheck: $(o)/luacheck-summary.txt
-
-$(o)/luacheck-summary.txt: $(all_luachecks) | $(build_reporter)
-	@$(reporter) --dir $(o) $^ | tee $@
-
-$(o)/%.luacheck.ok: $(o)/% $(luacheck_files) $(checker_files) $(tl_staged) $(cosmos_staged) | $(bootstrap_files) $(luacheck_staged)
-	@mkdir -p $(@D)
-	@LUACHECK_BIN=$(luacheck_staged) $(luacheck_runner) $< > $@
 
 all_teals := $(patsubst %,%.teal.ok,$(all_checkable_files))
 
@@ -246,9 +243,9 @@ clean:
 ## Bootstrap build environment
 bootstrap: $(bootstrap_files)
 
-all_checks := $(all_astgreps) $(all_luachecks) $(all_teals)
+all_checks := $(all_astgreps) $(all_teals)
 
-## Run all linters (astgrep, luacheck, teal)
+## Run all linters (astgrep, teal)
 check: $(o)/check-summary.txt
 
 $(o)/check-summary.txt: $(all_checks) | $(build_reporter)
@@ -300,10 +297,10 @@ release: $(o)/lib/home/gen-platforms.lua $(o)/lib/home/main.lua
 		--title "$$tag" \
 		release/home release/home-* release/cosmic-lua release/SHA256SUMS
 
-ci_stages := luacheck astgrep teal test build
+ci_stages := astgrep teal test build
 
 .PHONY: ci
-## Run full CI pipeline (luacheck, astgrep, teal, test, build)
+## Run full CI pipeline (astgrep, teal, test, build)
 ci:
 	@rm -f $(o)/failed
 	@$(foreach s,$(ci_stages),\

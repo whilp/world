@@ -1,12 +1,9 @@
-local lu = require("luaunit")
+#!/usr/bin/env run-test.lua
 
 -- skip if posix not available (work module requires luaposix)
 local has_posix = pcall(require, "posix")
 if not has_posix then
-  global function test_string_sanitization_skipped()
-    lu.skip("requires luaposix")
-  end
-  return
+  error("SKIP requires luaposix")
 end
 
 local record WorkItemMeta
@@ -62,65 +59,74 @@ local function add_work(item: WorkItem)
   store.add(test_store, item)
 end
 
-global TestStringSanitization: {string:any} = {}
-
-function TestStringSanitization:setUp()
+local function test_validate_string_content_accepts_valid_strings()
   store.reset(test_store)
-end
-
-function TestStringSanitization:test_validate_string_content_accepts_valid_strings()
   local ok, err = data.validate_string_content("this is a valid string", "test")
-  lu.assertTrue(ok)
-  lu.assertNil(err)
+  assert(ok, "expected ok to be true")
+  assert(err == nil, "expected err to be nil")
 end
+test_validate_string_content_accepts_valid_strings()
 
-function TestStringSanitization:test_validate_string_content_rejects_double_bracket_close()
+local function test_validate_string_content_rejects_double_bracket_close()
+  store.reset(test_store)
   local ok, err = data.validate_string_content("string with ]] in it", "test")
-  lu.assertNil(ok)
-  lu.assertNotNil(err)
-  lu.assertStrContains(err, "dangerous pattern")
-  lu.assertStrContains(err, "]]")
+  assert(ok == nil, "expected ok to be nil")
+  assert(err ~= nil, "expected err to be non-nil")
+  assert(err:find("dangerous pattern", 1, true), "expected err to contain 'dangerous pattern'")
+  assert(err:find("]]", 1, true), "expected err to contain ']]'")
 end
+test_validate_string_content_rejects_double_bracket_close()
 
-function TestStringSanitization:test_validate_string_content_rejects_multiline_comment()
+local function test_validate_string_content_rejects_multiline_comment()
+  store.reset(test_store)
   local ok, err = data.validate_string_content("string with --[[ in it", "test")
-  lu.assertNil(ok)
-  lu.assertNotNil(err)
-  lu.assertStrContains(err, "dangerous pattern")
+  assert(ok == nil, "expected ok to be nil")
+  assert(err ~= nil, "expected err to be non-nil")
+  assert(err:find("dangerous pattern", 1, true), "expected err to contain 'dangerous pattern'")
 end
+test_validate_string_content_rejects_multiline_comment()
 
-function TestStringSanitization:test_validate_string_content_rejects_multiline_comment_with_level()
+local function test_validate_string_content_rejects_multiline_comment_with_level()
+  store.reset(test_store)
   local ok, err = data.validate_string_content("string with --[= in it", "test")
-  lu.assertNil(ok)
-  lu.assertNotNil(err)
-  lu.assertStrContains(err, "dangerous pattern")
+  assert(ok == nil, "expected ok to be nil")
+  assert(err ~= nil, "expected err to be non-nil")
+  assert(err:find("dangerous pattern", 1, true), "expected err to contain 'dangerous pattern'")
 end
+test_validate_string_content_rejects_multiline_comment_with_level()
 
-function TestStringSanitization:test_validate_string_content_rejects_nested_long_string()
+local function test_validate_string_content_rejects_nested_long_string()
+  store.reset(test_store)
   local ok, err = data.validate_string_content("string with [=[ in it", "test")
-  lu.assertNil(ok)
-  lu.assertNotNil(err)
-  lu.assertStrContains(err, "dangerous pattern")
+  assert(ok == nil, "expected ok to be nil")
+  assert(err ~= nil, "expected err to be non-nil")
+  assert(err:find("dangerous pattern", 1, true), "expected err to contain 'dangerous pattern'")
 end
+test_validate_string_content_rejects_nested_long_string()
 
-function TestStringSanitization:test_validate_string_content_rejects_null_byte()
+local function test_validate_string_content_rejects_null_byte()
+  store.reset(test_store)
   local ok, err = data.validate_string_content("string with \0 null byte", "test")
-  lu.assertNil(ok)
-  lu.assertNotNil(err)
-  lu.assertStrContains(err, "dangerous pattern")
+  assert(ok == nil, "expected ok to be nil")
+  assert(err ~= nil, "expected err to be non-nil")
+  assert(err:find("dangerous pattern", 1, true), "expected err to contain 'dangerous pattern'")
 end
+test_validate_string_content_rejects_null_byte()
 
-function TestStringSanitization:test_title_with_dangerous_pattern()
+local function test_title_with_dangerous_pattern()
+  store.reset(test_store)
   local result = pcall(add_work, {
     id = "01TEST0000000000000000001",
     title = "task with ]] dangerous pattern",
     created = "2025-12-03",
   })
 
-  lu.assertFalse(result)
+  assert(not result, "expected result to be false")
 end
+test_title_with_dangerous_pattern()
 
-function TestStringSanitization:test_description_with_dangerous_pattern()
+local function test_description_with_dangerous_pattern()
+  store.reset(test_store)
   local result = pcall(add_work, {
     id = "01TEST0000000000000000002",
     title = "safe title",
@@ -128,10 +134,12 @@ function TestStringSanitization:test_description_with_dangerous_pattern()
     created = "2025-12-03",
   })
 
-  lu.assertFalse(result)
+  assert(not result, "expected result to be false")
 end
+test_description_with_dangerous_pattern()
 
-function TestStringSanitization:test_log_message_with_dangerous_pattern()
+local function test_log_message_with_dangerous_pattern()
+  store.reset(test_store)
   local result = pcall(add_work, {
     id = "01TEST0000000000000000003",
     title = "safe title",
@@ -141,10 +149,12 @@ function TestStringSanitization:test_log_message_with_dangerous_pattern()
     },
   })
 
-  lu.assertFalse(result)
+  assert(not result, "expected result to be false")
 end
+test_log_message_with_dangerous_pattern()
 
-function TestStringSanitization:test_valid_item_with_all_string_fields()
+local function test_valid_item_with_all_string_fields()
+  store.reset(test_store)
   add_work{
     id = "01TEST0000000000000000004",
     title = "safe title with special chars !@#$%^&*()",
@@ -156,17 +166,20 @@ function TestStringSanitization:test_valid_item_with_all_string_fields()
     },
   }
 
-  lu.assertNotNil(test_store.items["01TEST0000000000000000004"])
+  assert(test_store.items["01TEST0000000000000000004"] ~= nil, "expected item to exist")
 end
+test_valid_item_with_all_string_fields()
 
-function TestStringSanitization:test_error_message_includes_field_name()
+local function test_error_message_includes_field_name()
+  store.reset(test_store)
   local ok, err = data.validate({
     id = "01TEST0000000000000000005",
     title = "title with ]] bad pattern",
     created = "2025-12-03",
   })
 
-  lu.assertNil(ok)
-  lu.assertNotNil(err)
-  lu.assertStrContains(err, "title")
+  assert(ok == nil, "expected ok to be nil")
+  assert(err ~= nil, "expected err to be non-nil")
+  assert(err:find("title", 1, true), "expected err to contain 'title'")
 end
+test_error_message_includes_field_name()

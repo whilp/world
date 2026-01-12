@@ -70,7 +70,6 @@ local function main(...: string): number
   local generated_file = input_basename:gsub("%.tl$", ".lua")
   if generated_file == output_file then
     -- already in the right place
-    io.write(stdout as string)
     return 0
   end
 
@@ -97,7 +96,6 @@ local function main(...: string): number
     os.remove(generated_file)
   end
 
-  io.write(stdout as string)
   return 0
 end
 

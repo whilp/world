@@ -1,12 +1,9 @@
-local lu = require("luaunit")
+#!/usr/bin/env run-test.lua
 
 -- skip if posix not available (work module requires luaposix)
 local has_posix = pcall(require, "posix")
 if not has_posix then
-  global function test_backup_skipped()
-    lu.skip("requires luaposix")
-  end
-  return
+  error("SKIP requires luaposix")
 end
 
 local record WorkItemMeta
@@ -56,22 +53,16 @@ local store = require("work.store") as StoreModule
 local Work = require("work.test_lib") as WorkModule
 local test_store = Work.store
 
-local test_dir: string
+local test_dir = os.getenv("TEST_TMPDIR") as string
 
-global TestBackup: {string:any} = {}
-
-function TestBackup:setUp()
-  store.reset(test_store)
-  test_dir = os.getenv("TEST_TMPDIR") as string
-end
-
-function TestBackup:tearDown()
+local function teardown()
   data.release_lock()
   data._lock_handle = nil
   data._lock_path = nil
 end
 
-function TestBackup:test_backup_created_on_update()
+local function test_backup_created_on_update()
+  store.reset(test_store)
   local item: WorkItem = {
     id = "01BACKUP00000000000000001",
     title = "original title",
@@ -80,27 +71,30 @@ function TestBackup:test_backup_created_on_update()
 
   -- Save original
   local ok, err = data.save(item, test_dir)
-  lu.assertTrue(ok, "first save should succeed: " .. tostring(err))
+  assert(ok, "first save should succeed: " .. tostring(err))
 
   -- Update item
   item.title = "updated title"
   ok, err = data.save(item, test_dir)
-  lu.assertTrue(ok, "second save should succeed: " .. tostring(err))
+  assert(ok, "second save should succeed: " .. tostring(err))
 
   -- Verify backup was removed after successful save
   local backup_path = test_dir .. "/01BACKUP00000000000000001.lua.bak"
   local f = io.open(backup_path, "r")
-  lu.assertNil(f, "backup should be removed after successful save")
+  assert(f == nil, "backup should be removed after successful save")
 
   -- Verify updated content
   local file_path = test_dir .. "/01BACKUP00000000000000001.lua"
   f = io.open(file_path, "r")
   local content = f:read("*a")
   f:close()
-  lu.assertStrContains(content, "updated title")
+  assert(content:find("updated title", 1, true), "expected content to contain 'updated title'")
+  teardown()
 end
+test_backup_created_on_update()
 
-function TestBackup:test_backup_preserved_on_save_failure()
+local function test_backup_preserved_on_save_failure()
+  store.reset(test_store)
   local item: WorkItem = {
     id = "01BACKUP00000000000000002",
     title = "original title",
@@ -109,14 +103,17 @@ function TestBackup:test_backup_preserved_on_save_failure()
 
   -- Save original
   local ok, err = data.save(item, test_dir)
-  lu.assertTrue(ok, "first save should succeed: " .. tostring(err))
+  assert(ok, "first save should succeed: " .. tostring(err))
 
   -- Force save failure by making directory read-only after creating backup
   -- This test is conceptual since we can't easily force os.rename to fail
   -- Instead we'll verify the backup is created before atomic write
+  teardown()
 end
+test_backup_preserved_on_save_failure()
 
-function TestBackup:test_no_backup_for_new_file()
+local function test_no_backup_for_new_file()
+  store.reset(test_store)
   local item: WorkItem = {
     id = "01BACKUP00000000000000003",
     title = "new item",
@@ -125,21 +122,24 @@ function TestBackup:test_no_backup_for_new_file()
 
   -- Save new item
   local ok, err = data.save(item, test_dir)
-  lu.assertTrue(ok, "save should succeed: " .. tostring(err))
+  assert(ok, "save should succeed: " .. tostring(err))
 
   -- Verify no backup was created
   local backup_path = test_dir .. "/01BACKUP00000000000000003.lua.bak"
   local f = io.open(backup_path, "r")
-  lu.assertNil(f, "no backup should be created for new file")
+  assert(f == nil, "no backup should be created for new file")
 
   -- Verify file exists
   local file_path = test_dir .. "/01BACKUP00000000000000003.lua"
   f = io.open(file_path, "r")
-  lu.assertNotNil(f, "file should exist")
+  assert(f ~= nil, "file should exist")
   f:close()
+  teardown()
 end
+test_no_backup_for_new_file()
 
-function TestBackup:test_list_backups()
+local function test_list_backups()
+  store.reset(test_store)
   -- Create some backup files manually
   local backup1 = test_dir .. "/01BACKUP00000000000000001.lua.bak"
   local backup2 = test_dir .. "/01BACKUP00000000000000002.lua.bak"
@@ -154,7 +154,7 @@ function TestBackup:test_list_backups()
 
   -- List backups
   local backups = data.list_backups(test_dir)
-  lu.assertEquals(#backups, 2, "should find 2 backup files")
+  assert(#backups == 2, "should find 2 backup files, got " .. #backups)
 
   -- Verify paths
   local found_backup1 = false
@@ -163,16 +163,22 @@ function TestBackup:test_list_backups()
     if backup_path == backup1 then found_backup1 = true end
     if backup_path == backup2 then found_backup2 = true end
   end
-  lu.assertTrue(found_backup1, "should find backup1")
-  lu.assertTrue(found_backup2, "should find backup2")
+  assert(found_backup1, "should find backup1")
+  assert(found_backup2, "should find backup2")
+  teardown()
 end
+test_list_backups()
 
-function TestBackup:test_list_backups_empty()
+local function test_list_backups_empty()
+  store.reset(test_store)
   local backups = data.list_backups(test_dir)
-  lu.assertEquals(#backups, 0, "should find no backups in empty directory")
+  assert(#backups == 0, "should find no backups in empty directory, got " .. #backups)
+  teardown()
 end
+test_list_backups_empty()
 
-function TestBackup:test_restore_backup()
+local function test_restore_backup()
+  store.reset(test_store)
   -- Create a backup file
   local backup_path = test_dir .. "/01BACKUP00000000000000004.lua.bak"
   local original_path = test_dir .. "/01BACKUP00000000000000004.lua"
@@ -183,35 +189,44 @@ function TestBackup:test_restore_backup()
 
   -- Restore backup
   local ok, err = data.restore_backup(backup_path)
-  lu.assertTrue(ok, "restore should succeed: " .. tostring(err))
+  assert(ok, "restore should succeed: " .. tostring(err))
 
   -- Verify backup is gone
   f = io.open(backup_path, "r")
-  lu.assertNil(f, "backup file should be removed after restore")
+  assert(f == nil, "backup file should be removed after restore")
 
   -- Verify original exists
   f = io.open(original_path, "r")
-  lu.assertNotNil(f, "original file should exist after restore")
+  assert(f ~= nil, "original file should exist after restore")
   local content = f:read("*a")
   f:close()
-  lu.assertStrContains(content, "restored")
+  assert(content:find("restored", 1, true), "expected content to contain 'restored'")
+  teardown()
 end
+test_restore_backup()
 
-function TestBackup:test_restore_backup_invalid_path()
+local function test_restore_backup_invalid_path()
+  store.reset(test_store)
   local ok, err = data.restore_backup(test_dir .. "/somefile.lua")
-  lu.assertNil(ok, "restore should fail for non-backup path")
-  lu.assertNotNil(err, "should return error message")
-  lu.assertStrContains(err, "must end with .bak")
+  assert(ok == nil, "restore should fail for non-backup path")
+  assert(err ~= nil, "should return error message")
+  assert(err:find("must end with .bak", 1, true), "expected err to contain 'must end with .bak'")
+  teardown()
 end
+test_restore_backup_invalid_path()
 
-function TestBackup:test_restore_backup_missing_file()
+local function test_restore_backup_missing_file()
+  store.reset(test_store)
   local backup_path = test_dir .. "/nonexistent.lua.bak"
   local ok, err = data.restore_backup(backup_path)
-  lu.assertNil(ok, "restore should fail for missing file")
-  lu.assertNotNil(err, "should return error message")
+  assert(ok == nil, "restore should fail for missing file")
+  assert(err ~= nil, "should return error message")
+  teardown()
 end
+test_restore_backup_missing_file()
 
-function TestBackup:test_backup_content_matches_original()
+local function test_backup_content_matches_original()
+  store.reset(test_store)
   local item: WorkItem = {
     id = "01BACKUP00000000000000005",
     title = "original content",
@@ -221,7 +236,7 @@ function TestBackup:test_backup_content_matches_original()
 
   -- Save original
   local ok, err = data.save(item, test_dir)
-  lu.assertTrue(ok, "first save should succeed: " .. tostring(err))
+  assert(ok, "first save should succeed: " .. tostring(err))
 
   -- Read original content
   local original_path = test_dir .. "/01BACKUP00000000000000005.lua"
@@ -244,7 +259,9 @@ function TestBackup:test_backup_content_matches_original()
   f:close()
 
   -- Verify backup matches original
-  lu.assertEquals(backup_content, original_content, "backup content should match original")
-  lu.assertStrContains(backup_content, "original content")
-  lu.assertNotStrContains(backup_content, "updated content")
+  assert(backup_content == original_content, "backup content should match original")
+  assert(backup_content:find("original content", 1, true), "expected backup to contain 'original content'")
+  assert(not backup_content:find("updated content", 1, true), "expected backup to not contain 'updated content'")
+  teardown()
 end
+test_backup_content_matches_original()

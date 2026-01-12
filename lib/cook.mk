@@ -2,29 +2,22 @@ modules += lib
 lib_lua_modules :=
 lib_dirs :=
 lib_libs :=
-lib_srcs := lib/file.tl lib/platform.tl lib/ulid.tl lib/utils.tl lib/version.lua
 lib_tests := lib/test_version.tl
 
 # type declaration files for teal compilation
 types_files := $(wildcard lib/types/*.d.tl lib/types/*/*.d.tl lib/types/*/*/*.d.tl)
 
-# standalone lib files
-lib_dirs += o/any/lib
-lib_libs += o/any/lib/version.lua o/any/lib/platform.lua o/any/lib/utils.lua o/any/lib/ulid.lua o/any/lib/file.lua
+# standalone lib files (use _tl_files mechanism)
+lib_dirs += o/lib
+lib_tl_files := lib/file.tl lib/platform.tl lib/ulid.tl lib/utils.tl
+lib_libs += o/lib/version.lua
 
-o/any/lib/%.lua: lib/%.lua
+# copy .lua files to o/lib/
+o/lib/%.lua: lib/%.lua
 	@mkdir -p $(@D)
 	@cp $< $@
 
-# compile .tl files to .lua (for o/any/lib, used by standalone modules)
-# uses secondary expansion so $(tl_files) is evaluated after 3p/tl/cook.mk
-.SECONDEXPANSION:
-o/any/lib/%.lua: lib/%.tl $(types_files) $$(tl_files) | $$(tl_staged)
-	@mkdir -p $(@D)
-	@$(tl_gen) -o $@ $<
-
 # compile .tl files to .lua (for o/teal/lib via tl gen -o)
-# uses secondary expansion so $(tl_staged) is evaluated after all includes
 .SECONDEXPANSION:
 o/teal/lib/%.lua: lib/%.tl $(types_files) $$(tl_staged)
 	@mkdir -p $(@D)
@@ -43,3 +36,6 @@ include lib/skill/cook.mk
 include lib/test/cook.mk
 include lib/whereami/cook.mk
 include lib/work/cook.mk
+
+# After includes: derive lib_libs from lib module _tl_files
+lib_libs += $(patsubst %.tl,$(o)/%.lua,$(foreach m,$(lib_lua_modules),$($(m)_tl_files)))
