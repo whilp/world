@@ -1,7 +1,7 @@
 .SECONDEXPANSION:
 .SECONDARY:
 SHELL := /bin/bash
-.SHELLFLAGS := -ec
+.SHELLFLAGS := -o pipefail -ec
 .DEFAULT_GOAL := help
 
 MAKEFLAGS += --no-print-directory
@@ -172,7 +172,7 @@ $(o)/%.tl.test.ok: .UNVEIL = rx:$(o)/bootstrap r:lib r:3p rwc:$(o) rwc:/tmp rx:/
 $(o)/%.tl.test.ok: $(o)/%.lua $(test_files) $(checker_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
 	@[ -x $< ] || chmod a+x $<
-	@TEST_DIR=$(TEST_DIR) $(test_runner) $< > $@
+	-@TEST_DIR=$(TEST_DIR) $(test_runner) $< > $@
 
 # Snapshot test pattern: compare expected vs actual
 $(o)/%.snap.test.ok: .EXTRA_PREREQS = $(build_snap)
