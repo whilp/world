@@ -36,8 +36,8 @@ $(nvim_bundle): $$(nvim_staged) $$(nvim-conform_staged) $$(nvim-mini_staged) $$(
 .PHONY: nvim-release-tests
 nvim-release-tests: $(nvim_release_tested)
 
-$(nvim_release_tested): $(nvim_bundle) | $(bootstrap_files)
+# Release tests: depend on compiled .lua (Make handles compilation)
+$(o)/3p/nvim/%.tl.release.ok: $(o)/3p/nvim/%.lua $(nvim_bundle) | $(bootstrap_files)
 	@mkdir -p $(@D)
-	@t=$$(echo $@ | sed 's|^$(o)/||; s|\.release\.ok$$||'); \
-		[ -x $$t ] || chmod a+x $$t; \
-		TEST_DIR=$(nvim_bundle_out) $(test_runner) $$t > $@
+	@[ -x $< ] || chmod a+x $<
+	@TEST_DIR=$(nvim_bundle_out) $(test_runner) $< > $@
