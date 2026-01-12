@@ -19,6 +19,7 @@ home_exclude_pattern := ^(3p/|o/|results/|Makefile|\.git)
 home_setup_dir := lib/home/setup
 home_mac_dir := lib/home/mac
 HOME_VERSION ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
+HOME_DATE ?= $(shell git show -s --format=%cd --date=format:%Y%m%d HEAD 2>/dev/null || echo "19700101")
 
 home_built := $(o)/home/.built
 
@@ -81,8 +82,8 @@ $(home_bin): $(home_libs) $(home_tl_compiled) $(home_bin_libs) $(home_nvim_tl_co
 	@cp -r lib/cosmic lib/version.lua lib/claude $(home_setup_dir) $(home_mac_dir) $(home_built)/.lua/
 	@cp -f $(cosmic_tl_libs) $(home_built)/.lua/cosmic/
 	@for m in $(home_bin_lib_modules); do \
-		mkdir -p $(home_built)/home/.local/lib/$$m/1-$(HOME_VERSION) && \
-		cp $(o)/lib/$$m/init.lua $(home_built)/home/.local/lib/$$m/1-$(HOME_VERSION)/; \
+		mkdir -p $(home_built)/home/.local/lib/$$m/$(HOME_DATE)-$(HOME_VERSION) && \
+		cp $(o)/lib/$$m/init.lua $(home_built)/home/.local/lib/$$m/$(HOME_DATE)-$(HOME_VERSION)/; \
 	done
 	@cd $(home_built) && find home/.local/lib -type f | $(CURDIR)/$(cosmos_zip) -q $(CURDIR)/$@ -@
 	@cd $(home_built) && $(CURDIR)/$(cosmos_zip) -qr $(CURDIR)/$@ .lua
