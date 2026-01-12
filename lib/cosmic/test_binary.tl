@@ -43,24 +43,6 @@ function TestCosmicBinary.test_cosmic_help()
   lu.assertStrContains(out as string, "cosmic.spawn")
 end
 
-function TestCosmicBinary.test_luaunit_bundled()
-  local ok, out = spawn({cosmic, "-e", "local lu = require('luaunit'); print(lu and 'ok' or 'fail')"}, {env = clean_env()}):read()
-  lu.assertTrue(ok, "cosmic exited with error")
-  lu.assertStrContains(out as string, "ok")
-end
-
-function TestCosmicBinary.test_argparse_bundled()
-  local ok, out = spawn({cosmic, "-e", "local ap = require('argparse'); print(ap and 'ok' or 'fail')"}, {env = clean_env()}):read()
-  lu.assertTrue(ok, "cosmic exited with error")
-  lu.assertStrContains(out as string, "ok")
-end
-
-function TestCosmicBinary.test_lfs_bundled()
-  local ok, out = spawn({cosmic, "-e", "local lfs = require('lfs'); print(lfs and 'ok' or 'fail')"}, {env = clean_env()}):read()
-  lu.assertTrue(ok, "cosmic exited with error")
-  lu.assertStrContains(out as string, "ok")
-end
-
 function TestCosmicBinary.test_warnings_flag()
   -- -W should convert warnings to errors
   local ok, out, code = spawn({cosmic, "-W", "-e", "warn('test warning')"}, {env = clean_env()}):read()

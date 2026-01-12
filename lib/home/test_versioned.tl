@@ -131,7 +131,7 @@ assert(nvim_all[1].dir, "scanned version has dir field")
 -- Test 5: Verify all bundled tools have versioned directories
 local tools: {string} = {
   "ast-grep", "biome", "comrak", "delta", "duckdb", "gh",
-  "luacheck", "marksman", "rg", "ruff", "shfmt", "sqruff",
+  "marksman", "rg", "ruff", "shfmt", "sqruff",
   "stylua", "superhtml", "tree-sitter", "uv"
 }
 

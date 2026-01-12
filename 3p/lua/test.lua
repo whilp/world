@@ -19,12 +19,6 @@ end
 
 -- expected lua modules that should be in .lua/
 local expected_modules = {
-  -- 3p libs
-  "argparse.lua",
-  "lfs.lua",
-  "luaunit.lua",
-  "luacheck/init.lua",
-
   -- standalone lib files
   "version.lua",
   "platform.lua",
@@ -101,10 +95,6 @@ end
 function test_lua_dist_can_require_modules()
   -- test that key modules can be required
   local test_requires = {
-    "argparse",
-    "luaunit",
-    "luacheck",
-    "lfs",
     "cosmic.spawn",
     "cosmic.walk",
     "environ",

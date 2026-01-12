@@ -7,7 +7,7 @@ $(luatest_o)/3p/lua/test.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/lua
 $(luatest_o)/3p/lua/test_release.lua.ok: $(lua_dist)
 $(luatest_o)/3p/lua/test_release.lua.ok: TEST_ENV = TEST_BIN_DIR=$(o_platform)/lua
 
-o/%/lua/bin/lua.ape: o/%/cosmos/bin/lua $(lib_libs) $(libs) $(luaunit)
+o/%/lua/bin/lua.ape: o/%/cosmos/bin/lua $(lib_libs) $(libs)
 	@rm -rf o/$*/lua/staging
 	@mkdir -p o/$*/lua/staging/.lua $(@D)
 	@$(foreach d,$(3p_lib_dirs),cp -r $(subst %,$*,$(d))/* o/$*/lua/staging/.lua/;)
