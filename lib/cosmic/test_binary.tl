@@ -41,27 +41,6 @@ local function test_cosmic_help()
 end
 test_cosmic_help()
 
-local function test_luaunit_bundled()
-  local ok, out = spawn({cosmic, "-e", "local lu = require('luaunit'); print(lu and 'ok' or 'fail')"}, {env = clean_env()}):read()
-  assert(ok, "cosmic exited with error")
-  assert((out as string):find("ok", 1, true), "expected output to contain 'ok'")
-end
-test_luaunit_bundled()
-
-local function test_argparse_bundled()
-  local ok, out = spawn({cosmic, "-e", "local ap = require('argparse'); print(ap and 'ok' or 'fail')"}, {env = clean_env()}):read()
-  assert(ok, "cosmic exited with error")
-  assert((out as string):find("ok", 1, true), "expected output to contain 'ok'")
-end
-test_argparse_bundled()
-
-local function test_lfs_bundled()
-  local ok, out = spawn({cosmic, "-e", "local lfs = require('lfs'); print(lfs and 'ok' or 'fail')"}, {env = clean_env()}):read()
-  assert(ok, "cosmic exited with error")
-  assert((out as string):find("ok", 1, true), "expected output to contain 'ok'")
-end
-test_lfs_bundled()
-
 local function test_warnings_flag()
   -- -W should convert warnings to errors
   -- stderr = 1 merges stderr into stdout so we can capture the warning message

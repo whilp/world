@@ -7,7 +7,6 @@ Targets:
   test                Run all tests (incremental)
   files               Build all module files
   astgrep             Run ast-grep linter on all files
-  luacheck            Run luacheck linter on all files
   teal                Run teal type checker on all files
   clean               Remove all build artifacts
   bootstrap           Bootstrap build environment

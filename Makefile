@@ -25,10 +25,8 @@ platform := $(os)-$(arch)
 
 include bootstrap.mk
 include lib/cook.mk
-include 3p/luaunit/cook.mk
 include 3p/ast-grep/cook.mk
 include 3p/cosmos/cook.mk
-include 3p/argparse/cook.mk
 include 3p/rg/cook.mk
 include 3p/gh/cook.mk
 include 3p/uv/cook.mk
@@ -49,7 +47,6 @@ include 3p/nvim-lspconfig/cook.mk
 include 3p/nvim-treesitter/cook.mk
 include 3p/nvim-parsers/cook.mk
 include 3p/nvim/cook.mk
-include 3p/luacheck/cook.mk
 include 3p/tl/cook.mk
 include 3p/teal-types/cook.mk
 
@@ -87,8 +84,8 @@ $(o)/%.lua: %.tl $(types_files) $(tl_files) $(bootstrap_files) $$(tl_staged)
 	@$(tl_gen) $< -o $@
 
 # bin scripts: o/bin/X.lua from lib/*/X.lua and 3p/*/X.lua
-vpath %.lua lib/build lib/test 3p/ast-grep 3p/luacheck 3p/tl
-vpath %.tl lib/build 3p/ast-grep 3p/luacheck 3p/tl
+vpath %.lua lib/build lib/test 3p/ast-grep 3p/tl
+vpath %.tl lib/build 3p/ast-grep 3p/tl
 $(o)/bin/%.lua: %.lua
 	@mkdir -p $(@D)
 	@$(cp) $< $@
@@ -224,18 +221,6 @@ $(o)/astgrep-summary.txt: $(all_astgreps) | $(build_reporter)
 $(o)/%.ast-grep.ok: $(o)/% $(ast-grep_files) $(checker_files) $(tl_staged) | $(bootstrap_files) $(ast-grep_staged)
 	@mkdir -p $(@D)
 	@ASTGREP_BIN=$(ast-grep_staged) $(astgrep_runner) $< > $@
-
-all_luachecks := $(patsubst %,%.luacheck.ok,$(all_checkable_files))
-
-## Run luacheck linter on all files
-luacheck: $(o)/luacheck-summary.txt
-
-$(o)/luacheck-summary.txt: $(all_luachecks) | $(build_reporter)
-	@$(reporter) --dir $(o) $^ | tee $@
-
-$(o)/%.luacheck.ok: $(o)/% $(luacheck_files) $(checker_files) $(tl_staged) $(cosmos_staged) | $(bootstrap_files) $(luacheck_staged)
-	@mkdir -p $(@D)
-	@LUACHECK_BIN=$(luacheck_staged) $(luacheck_runner) $< > $@
 
 all_teals := $(patsubst %,%.teal.ok,$(all_checkable_files))
 

@@ -10,7 +10,7 @@ home_tests := lib/home/test_main.tl lib/home/test_versioned.tl
 home_release_test := lib/home/test_release.tl
 
 # 3p tools to bundle (nvim handled specially for bundled version)
-home_3p_tools := ast-grep biome comrak delta duckdb gh luacheck marksman rg ruff shfmt sqruff stylua superhtml tree-sitter uv
+home_3p_tools := ast-grep biome comrak delta duckdb gh marksman rg ruff shfmt sqruff stylua superhtml tree-sitter uv
 
 home_deps := cosmos cosmic nvim $(home_3p_tools)
 

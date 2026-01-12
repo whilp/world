@@ -27,10 +27,6 @@ local function test_lua_binary_has_bundled_modules()
   -- test that key modules can be required
   -- the test runner unveils things so LUA_PATH from env won't interfere
   local test_modules: {string} = {
-    "argparse",
-    "luacheck",
-    "luaunit",
-    "lfs",
     "spawn",
     "version",
     "platform",
