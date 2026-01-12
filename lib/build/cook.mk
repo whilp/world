@@ -33,3 +33,19 @@ $(o)/lib/build/test_reporter.tl.test.ok: $$(cosmic_bin) $$(checker_files)
 $(o)/lib/build/make-help.snap: Makefile $(build_help) | $(bootstrap_cosmic)
 	@mkdir -p $(@D)
 	@$(bootstrap_cosmic) $(build_help) Makefile > $@
+
+# makefile validation outputs
+build_make_out := $(o)/lib/build/make
+
+$(build_make_out)/dry-run.out: Makefile $(wildcard */*.mk) $(wildcard */*/*.mk)
+	@mkdir -p $(@D)
+	@code=0; $(MAKE) -n files >$@.tmp 2>&1 || code=$$?; echo "exit:$$code" >> $@.tmp; mv $@.tmp $@
+
+$(build_make_out)/database.out: Makefile $(wildcard */*.mk) $(wildcard */*/*.mk)
+	@mkdir -p $(@D)
+	@code=0; $(MAKE) -p -n -q >$@.tmp 2>&1 || code=$$?; echo "exit:$$code" >> $@.tmp; mv $@.tmp $@
+
+build_make_outputs := $(build_make_out)/dry-run.out $(build_make_out)/database.out
+
+$(o)/lib/build/test_makefile.tl.test.ok: $(build_make_outputs)
+$(o)/lib/build/test_makefile.tl.test.ok: TEST_DIR := $(build_make_out)
