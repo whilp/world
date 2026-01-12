@@ -105,12 +105,58 @@ local function normalize_pr_name(name: string): string
   return name
 end
 
+local function get_default_branch(opts?: SpawnOpts): string
+  opts = opts or {}
+  local do_spawn = opts.spawn or spawn_mod
+
+  -- Try to get the remote HEAD branch name
+  local cmd: {string} = {"git"}
+  if opts.repo then
+    table.insert(cmd, "-C")
+    table.insert(cmd, opts.repo)
+  end
+  table.insert(cmd, "remote")
+  table.insert(cmd, "show")
+  table.insert(cmd, "origin")
+
+  local handle = do_spawn(cmd)
+  local ok, out = handle:read()
+  if ok and out then
+    local branch = (out as string):match("HEAD branch: (%S+)")
+    if branch then
+      return "origin/" .. branch
+    end
+  end
+
+  -- Fallback: try common default branches
+  for _, branch in ipairs({"origin/main", "origin/master"}) do
+    cmd = {"git"}
+    if opts.repo then
+      table.insert(cmd, "-C")
+      table.insert(cmd, opts.repo)
+    end
+    table.insert(cmd, "rev-parse")
+    table.insert(cmd, "--verify")
+    table.insert(cmd, branch)
+
+    handle = do_spawn(cmd)
+    ok, _ = handle:read()
+    if ok then
+      return branch
+    end
+  end
+
+  -- Last resort: use origin/HEAD even if it might not exist
+  return "origin/HEAD"
+end
+
 local function get_pr_files_from_branch(opts?: SpawnOpts): {string}
   opts = opts or {}
   local do_spawn = opts.spawn or spawn_mod
 
+  local base_branch = get_default_branch(opts)
+
   -- Find files added on this branch matching .github/pr/*.md
-  -- Compare against origin/HEAD (default branch)
   local cmd: {string} = {"git"}
   if opts.repo then
     table.insert(cmd, "-C")
@@ -119,7 +165,7 @@ local function get_pr_files_from_branch(opts?: SpawnOpts): {string}
   table.insert(cmd, "diff")
   table.insert(cmd, "--name-only")
   table.insert(cmd, "--diff-filter=A")
-  table.insert(cmd, "origin/HEAD...HEAD")
+  table.insert(cmd, base_branch .. "...HEAD")
   table.insert(cmd, "--")
   table.insert(cmd, ".github/pr/*.md")
 
@@ -544,6 +590,7 @@ local record PrModule
   update_pr: function(owner: string, repo: string, pr_number: number, title: string, body: string, token: string, opts?: RequestOpts): boolean, string
   get_current_branch: function(): string
   get_commit_sha: function(): string
+  get_default_branch: function(opts?: SpawnOpts): string
   get_pr_name_from_trailer: function(opts?: SpawnOpts): string, TrailerInfo
   get_pr_files_from_branch: function(opts?: SpawnOpts): {string}
   is_github_actions: function(): boolean
@@ -559,6 +606,7 @@ return {
   update_pr = update_pr,
   get_current_branch = get_current_branch,
   get_commit_sha = get_commit_sha,
+  get_default_branch = get_default_branch,
   get_pr_name_from_trailer = get_pr_name_from_trailer,
   get_pr_files_from_branch = get_pr_files_from_branch,
   is_github_actions = is_github_actions,

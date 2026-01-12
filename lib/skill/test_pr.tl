@@ -458,3 +458,106 @@ local function test_main_no_fallback_when_multiple_files()
   assert(msg:match("no x%-cosmic%-pr%-name"), "expected no trailer message")
 end
 test_main_no_fallback_when_multiple_files()
+
+--------------------------------------------------------------------------------
+-- get_default_branch tests
+--------------------------------------------------------------------------------
+
+local function test_default_branch_from_remote_show()
+  local call_count = 0
+  local mock_spawn_fn = function(cmd: {string}): SpawnHandle
+    call_count = call_count + 1
+    if call_count == 1 and cmd[1] == "git" and cmd[#cmd-1] == "show" then
+      return {
+        read = function(_: SpawnHandle): boolean, string
+          return true, "* remote origin\n  HEAD branch: main\n"
+        end,
+        wait = function(_: SpawnHandle): integer return 0 end,
+      }
+    end
+    return {
+      read = function(_: SpawnHandle): boolean, string return false, nil end,
+      wait = function(_: SpawnHandle): integer return 1 end,
+    }
+  end
+
+  local result = pr.get_default_branch({spawn = mock_spawn_fn} as SpawnOpts)
+  assert(result == "origin/main", "expected origin/main from remote show, got: " .. tostring(result))
+end
+test_default_branch_from_remote_show()
+
+local function test_default_branch_fallback_to_main()
+  local call_count = 0
+  local mock_spawn_fn = function(cmd: {string}): SpawnHandle
+    call_count = call_count + 1
+    if call_count == 1 then
+      -- remote show fails
+      return {
+        read = function(_: SpawnHandle): boolean, string return false, nil end,
+        wait = function(_: SpawnHandle): integer return 1 end,
+      }
+    elseif call_count == 2 and cmd[#cmd] == "origin/main" then
+      -- origin/main exists
+      return {
+        read = function(_: SpawnHandle): boolean, string return true, "abc123\n" end,
+        wait = function(_: SpawnHandle): integer return 0 end,
+      }
+    end
+    return {
+      read = function(_: SpawnHandle): boolean, string return false, nil end,
+      wait = function(_: SpawnHandle): integer return 1 end,
+    }
+  end
+
+  local result = pr.get_default_branch({spawn = mock_spawn_fn} as SpawnOpts)
+  assert(result == "origin/main", "expected origin/main fallback, got: " .. tostring(result))
+end
+test_default_branch_fallback_to_main()
+
+local function test_default_branch_fallback_to_master()
+  local call_count = 0
+  local mock_spawn_fn = function(cmd: {string}): SpawnHandle
+    call_count = call_count + 1
+    if call_count == 1 then
+      -- remote show fails
+      return {
+        read = function(_: SpawnHandle): boolean, string return false, nil end,
+        wait = function(_: SpawnHandle): integer return 1 end,
+      }
+    elseif call_count == 2 and cmd[#cmd] == "origin/main" then
+      -- origin/main doesn't exist
+      return {
+        read = function(_: SpawnHandle): boolean, string return false, nil end,
+        wait = function(_: SpawnHandle): integer return 1 end,
+      }
+    elseif call_count == 3 and cmd[#cmd] == "origin/master" then
+      -- origin/master exists
+      return {
+        read = function(_: SpawnHandle): boolean, string return true, "def456\n" end,
+        wait = function(_: SpawnHandle): integer return 0 end,
+      }
+    end
+    return {
+      read = function(_: SpawnHandle): boolean, string return false, nil end,
+      wait = function(_: SpawnHandle): integer return 1 end,
+    }
+  end
+
+  local result = pr.get_default_branch({spawn = mock_spawn_fn} as SpawnOpts)
+  assert(result == "origin/master", "expected origin/master fallback, got: " .. tostring(result))
+end
+test_default_branch_fallback_to_master()
+
+local function test_default_branch_ultimate_fallback()
+  local mock_spawn_fn = function(_: {string}): SpawnHandle
+    -- all commands fail
+    return {
+      read = function(_: SpawnHandle): boolean, string return false, nil end,
+      wait = function(_: SpawnHandle): integer return 1 end,
+    }
+  end
+
+  local result = pr.get_default_branch({spawn = mock_spawn_fn} as SpawnOpts)
+  assert(result == "origin/HEAD", "expected origin/HEAD ultimate fallback, got: " .. tostring(result))
+end
+test_default_branch_ultimate_fallback()
