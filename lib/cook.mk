@@ -9,7 +9,7 @@ types_files := $(wildcard lib/types/*.d.tl lib/types/*/*.d.tl lib/types/*/*/*.d.
 
 # standalone lib files (use _tl_files mechanism)
 lib_dirs += o/lib
-lib_tl_files := lib/file.tl lib/platform.tl lib/ulid.tl lib/utils.tl
+lib_tl_files := lib/platform.tl lib/ulid.tl lib/utils.tl
 lib_libs += o/lib/version.lua
 
 # copy .lua files to o/lib/
@@ -35,7 +35,6 @@ include lib/nvim/cook.mk
 include lib/skill/cook.mk
 include lib/test/cook.mk
 include lib/whereami/cook.mk
-include lib/work/cook.mk
 
 # After includes: derive lib_libs from lib module _tl_files
 lib_libs += $(patsubst %.tl,$(o)/%.lua,$(foreach m,$(lib_lua_modules),$($(m)_tl_files)))

@@ -17,7 +17,6 @@ This document outlines the incremental migration from Lua to Teal for comprehens
   - `lib/ulid.tl`
   - `lib/utils.tl`
   - `lib/platform.tl`
-  - `lib/file.tl`
   - `lib/cosmic/spawn.tl`
   - `lib/cosmic/init.tl`
   - `lib/cosmic/walk.tl`
@@ -37,13 +36,6 @@ This document outlines the incremental migration from Lua to Teal for comprehens
   - `lib/cleanshot/init.tl`
   - `lib/claude/main.tl`
   - `lib/nvim/main.tl`
-  - `lib/work/data.tl`
-  - `lib/work/process.tl`
-  - `lib/work/api.tl`
-  - `lib/work/render.tl`
-  - `lib/work/config.tl`
-  - `lib/work/validate.tl`
-  - `lib/work/store.tl`
   - `lib/skill/init.tl`
   - `lib/skill/hook.tl`
   - `lib/skill/pr.tl`
@@ -135,12 +127,8 @@ Migrate foundational modules that other code depends on.
 
 - Converted `lib/utils.lua` to `lib/utils.tl` with generic type annotations
 - Converted `lib/platform.lua` to `lib/platform.tl` with const maps
-- Converted `lib/file.lua` to `lib/file.tl` with posix type declarations
 - Added type declarations:
   - `lib/types/version.d.tl`
-  - `lib/types/posix/sys/stat.d.tl`
-  - `lib/types/posix/dirent.d.tl`
-  - `lib/types/posix/unistd.d.tl`
 
 #### PR 2.4: Migrate lib/cosmic/spawn.lua ✓
 
@@ -230,29 +218,7 @@ Added type declarations:
 - `lib/types/daemonize.d.tl` - daemon utilities
 - `lib/types/whereami.d.tl` - executable path discovery
 
-#### PR 4.2: Migrate lib/work ✓
-
-**Status: DONE** (migrated in parallel using agent strategy)
-
-Work item management (largest module):
-- `lib/work/data.tl` - core data types (WorkItem, WorkStore records)
-- `lib/work/process.tl` - work item processing
-- `lib/work/api.tl` - API layer
-- `lib/work/render.tl` - output rendering
-- `lib/work/config.tl` - configuration
-- `lib/work/validate.tl` - validation
-- `lib/work/store.tl` - storage layer
-
-Added type declarations:
-- `lib/types/serpent.d.tl` - serialization
-- `lib/types/ulid.d.tl` - ULID types
-- `lib/types/posix/fcntl.d.tl` - file control
-- `lib/types/posix/glob.d.tl` - glob patterns
-- `lib/types/posix/stdlib.d.tl` - stdlib functions
-- `lib/types/posix/signal.d.tl` - signals
-- `lib/types/posix/init.d.tl` - posix init
-
-#### PR 4.3: Migrate lib/skill ✓
+#### PR 4.2: Migrate lib/skill ✓
 
 **Status: DONE** (migrated in parallel using agent strategy)
 
@@ -268,7 +234,7 @@ Fixed issues:
 - Made HookInput/HookOutput flexible with `{string:any}` to support arbitrary fields
 - Fixed github_request to return string errors instead of tables
 
-#### PR 4.4: Migrate lib/home ✓
+#### PR 4.3: Migrate lib/home ✓
 
 **Status: DONE** (migrated in parallel using agent strategy)
 
@@ -461,23 +427,14 @@ Batch 4.1 - Independent app modules ✓ (completed with 4 parallel agents):
 - `lib/claude/main.tl`
 - `lib/nvim/main.tl`
 
-Batch 4.2 - Work module ✓ (completed with 7 parallel agents):
-- `lib/work/data.tl` (core types)
-- `lib/work/process.tl`
-- `lib/work/api.tl`
-- `lib/work/render.tl`
-- `lib/work/config.tl`
-- `lib/work/validate.tl`
-- `lib/work/store.tl`
-
-Batch 4.3 - Skill module ✓ (completed with 5 parallel agents):
+Batch 4.2 - Skill module ✓ (completed with 5 parallel agents):
 - `lib/skill/init.tl`
 - `lib/skill/hook.tl`
 - `lib/skill/pr.tl`
 - `lib/skill/pr_comments.tl`
 - `lib/skill/bootstrap.tl`
 
-Batch 4.4 - Home module ✓ (completed with 4 parallel agents):
+Batch 4.3 - Home module ✓ (completed with 4 parallel agents):
 - `lib/home/main.tl`
 - `lib/home/setup/*.tl` (13 files)
 - `lib/home/mac/*.tl` (30 files)

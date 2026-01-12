@@ -40,12 +40,3 @@ lib/environ/test.lua
 lib/home/test_main.lua
 lib/nvim/test.lua
 lib/whereami/test.lua
-lib/work/test.lua
-lib/work/test_backup.lua
-lib/work/test_blocked_on_display.lua
-lib/work/test_blockers.lua
-lib/work/test_command_blocked.lua
-lib/work/test_file_locking.lua
-lib/work/test_orphaned_blocks.lua
-lib/work/test_string_sanitization.lua
-lib/work/test_validate_blocks.lua
