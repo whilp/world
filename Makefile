@@ -1,7 +1,7 @@
 .SECONDEXPANSION:
 .SECONDARY:
 SHELL := /bin/bash
-.SHELLFLAGS := -ec
+.SHELLFLAGS := -o pipefail -ec
 .DEFAULT_GOAL := help
 
 MAKEFLAGS += --no-print-directory
@@ -170,14 +170,6 @@ export NO_COLOR := 1
 $(o)/%.tl.test.ok: .PLEDGE = stdio rpath wpath cpath proc exec
 $(o)/%.tl.test.ok: .UNVEIL = rx:$(o)/bootstrap r:lib r:3p rwc:$(o) rwc:/tmp rx:/usr rx:/proc r:/etc r:/dev/null
 $(o)/%.tl.test.ok: $(o)/%.lua $(test_files) $(checker_files) | $(bootstrap_files)
-	@mkdir -p $(@D)
-	@[ -x $< ] || chmod a+x $<
-	-@TEST_DIR=$(TEST_DIR) $(test_runner) $< > $@
-
-# Test rule: .lua tests run directly
-$(o)/%.lua.test.ok: .PLEDGE = stdio rpath wpath cpath proc exec
-$(o)/%.lua.test.ok: .UNVEIL = rx:$(o)/bootstrap r:lib r:3p rwc:$(o) rwc:/tmp rx:/usr rx:/proc r:/etc r:/dev/null
-$(o)/%.lua.test.ok: %.lua $(test_files) $(checker_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
 	@[ -x $< ] || chmod a+x $<
 	-@TEST_DIR=$(TEST_DIR) $(test_runner) $< > $@
