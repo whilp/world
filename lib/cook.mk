@@ -21,7 +21,7 @@ o/lib/%.lua: lib/%.lua
 .SECONDEXPANSION:
 o/teal/lib/%.lua: lib/%.tl $(types_files) $$(tl_staged)
 	@mkdir -p $(@D)
-	@$(tl_staged)/tl -- gen -o $@ $<
+	@$(tl_staged)/tl -- gen -o $@ $< >/dev/null
 
 include lib/aerosnap/cook.mk
 include lib/build/cook.mk

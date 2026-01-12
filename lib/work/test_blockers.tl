@@ -1,12 +1,9 @@
-local lu = require("luaunit")
+#!/usr/bin/env run-test.lua
 
 -- skip if posix not available (work module requires luaposix)
 local has_posix = pcall(require, "posix")
 if not has_posix then
-  global function test_blockers_skipped()
-    lu.skip("requires luaposix")
-  end
-  return
+  error("SKIP requires luaposix")
 end
 
 local record WorkItemMeta
@@ -67,13 +64,8 @@ local function add_work(item: WorkItem)
   store.add(test_store, item)
 end
 
-global TestBlockers: {string:any} = {}
-
-function TestBlockers:setUp()
+local function test_item_blocking_relationship()
   store.reset(test_store)
-end
-
-function TestBlockers:test_item_blocking_relationship()
   add_work{
     id = "01TEST0000000000000000001",
     title = "deploy to prod",
@@ -90,7 +82,8 @@ function TestBlockers:test_item_blocking_relationship()
   local blocked = data.get(test_store, "01TEST0000000000000000001")
   local blocker = data.get(test_store, "01TEST0000000000000000002")
 
-  lu.assertEquals(blocker.blocks[1], blocked.id)
-  lu.assertTrue(process.is_item_blocked(test_store, blocked))
-  lu.assertFalse(process.is_item_blocked(test_store, blocker))
+  assert(blocker.blocks[1] == blocked.id, "expected blocker.blocks[1] to equal blocked.id")
+  assert(process.is_item_blocked(test_store, blocked), "expected blocked item to be blocked")
+  assert(not process.is_item_blocked(test_store, blocker), "expected blocker item to not be blocked")
 end
+test_item_blocking_relationship()

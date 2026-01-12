@@ -5,7 +5,7 @@ tl_run := $(o)/bin/run-teal.lua
 tl_gen_script := $(o)/bin/tl-gen.lua
 tl_files := $(tl_run) $(tl_gen_script)
 tl_tests := $(wildcard 3p/tl/test_*.tl)
-tl_deps := argparse cosmos
+tl_deps := cosmos
 
 .PRECIOUS: $(tl_files)
 teal_runner := $(bootstrap_cosmic) -- $(tl_run)

@@ -1,12 +1,9 @@
-local lu = require("luaunit")
+#!/usr/bin/env run-test.lua
 
 -- skip if posix not available (work module requires luaposix)
 local has_posix = pcall(require, "posix")
 if not has_posix then
-  global function test_validate_blocks_skipped()
-    lu.skip("requires luaposix")
-  end
-  return
+  error("SKIP requires luaposix")
 end
 
 local record WorkItemMeta
@@ -66,13 +63,8 @@ local function add_work(item: WorkItem)
   store.add(test_store, item)
 end
 
-global TestValidateBlocks: {string:any} = {}
-
-function TestValidateBlocks:setUp()
+local function test_validate_blocks_with_nonexistent_id()
   store.reset(test_store)
-end
-
-function TestValidateBlocks:test_validate_blocks_with_nonexistent_id()
   add_work{
     id = "01TEST0000000000000000001",
     title = "existing item",
@@ -85,14 +77,16 @@ function TestValidateBlocks:test_validate_blocks_with_nonexistent_id()
 
   local ok, err = process.validate_blocks(test_store, item_id, blocks)
 
-  lu.assertNil(ok)
-  lu.assertNotNil(err)
-  lu.assertStrContains(err, "block reference")
-  lu.assertStrContains(err, nonexistent_id)
-  lu.assertStrContains(err, "does not exist")
+  assert(ok == nil, "expected ok to be nil")
+  assert(err ~= nil, "expected err to be non-nil")
+  assert(err:find("block reference", 1, true), "expected err to contain 'block reference'")
+  assert(err:find(nonexistent_id, 1, true), "expected err to contain nonexistent_id")
+  assert(err:find("does not exist", 1, true), "expected err to contain 'does not exist'")
 end
+test_validate_blocks_with_nonexistent_id()
 
-function TestValidateBlocks:test_validate_blocks_with_existing_id()
+local function test_validate_blocks_with_existing_id()
+  store.reset(test_store)
   add_work{
     id = "01TEST0000000000000000001",
     title = "item to block on",
@@ -104,11 +98,13 @@ function TestValidateBlocks:test_validate_blocks_with_existing_id()
 
   local ok, err = process.validate_blocks(test_store, item_id, blocks)
 
-  lu.assertTrue(ok)
-  lu.assertNil(err)
+  assert(ok, "expected ok to be true")
+  assert(err == nil, "expected err to be nil")
 end
+test_validate_blocks_with_existing_id()
 
-function TestValidateBlocks:test_validate_blocks_with_multiple_nonexistent()
+local function test_validate_blocks_with_multiple_nonexistent()
+  store.reset(test_store)
   add_work{
     id = "01TEST0000000000000000001",
     title = "existing item",
@@ -120,22 +116,26 @@ function TestValidateBlocks:test_validate_blocks_with_multiple_nonexistent()
 
   local ok, err = process.validate_blocks(test_store, item_id, blocks)
 
-  lu.assertNil(ok)
-  lu.assertStrContains(err, "01TEST0000000000000000999")
-  lu.assertStrContains(err, "does not exist")
+  assert(ok == nil, "expected ok to be nil")
+  assert(err:find("01TEST0000000000000000999", 1, true), "expected err to contain nonexistent id")
+  assert(err:find("does not exist", 1, true), "expected err to contain 'does not exist'")
 end
+test_validate_blocks_with_multiple_nonexistent()
 
-function TestValidateBlocks:test_validate_blocks_empty_list()
+local function test_validate_blocks_empty_list()
+  store.reset(test_store)
   local item_id = "01TEST0000000000000000001"
   local blocks: {string} = {}
 
   local ok, err = process.validate_blocks(test_store, item_id, blocks)
 
-  lu.assertTrue(ok)
-  lu.assertNil(err)
+  assert(ok, "expected ok to be true")
+  assert(err == nil, "expected err to be nil")
 end
+test_validate_blocks_empty_list()
 
-function TestValidateBlocks:test_validate_blocks_self_reference()
+local function test_validate_blocks_self_reference()
+  store.reset(test_store)
   add_work{
     id = "01TEST0000000000000000001",
     title = "item",
@@ -147,6 +147,7 @@ function TestValidateBlocks:test_validate_blocks_self_reference()
 
   local ok, err = process.validate_blocks(test_store, item_id, blocks)
 
-  lu.assertNil(ok)
-  lu.assertStrContains(err, "cannot block on itself")
+  assert(ok == nil, "expected ok to be nil")
+  assert(err:find("cannot block on itself", 1, true), "expected err to contain 'cannot block on itself'")
 end
+test_validate_blocks_self_reference()

@@ -114,7 +114,6 @@ local function main(...)
   end
 
   unix.rmrf(tmpdir)
-  io.write(stdout)
   return 0
 end
 
