@@ -85,7 +85,7 @@ $(o)/%.lua: %.tl $(types_files) $(tl_files) $(bootstrap_files) $$(tl_staged)
 
 # bin scripts: o/bin/X.lua from lib/*/X.lua and 3p/*/X.lua
 vpath %.lua lib/build lib/test 3p/ast-grep 3p/tl
-vpath %.tl lib/build 3p/ast-grep 3p/tl
+vpath %.tl lib/build lib/test 3p/ast-grep 3p/tl
 $(o)/bin/%.lua: %.lua
 	@mkdir -p $(@D)
 	@$(cp) $< $@
@@ -250,6 +250,11 @@ check: $(o)/check-summary.txt
 
 $(o)/check-summary.txt: $(all_checks) | $(build_reporter)
 	@$(reporter) --dir $(o) $^ | tee $@
+
+## Verify all test files are declared in cook.mk
+.PHONY: check-test-coverage
+check-test-coverage: $(test_check_coverage) | $(bootstrap_files)
+	@$(coverage_checker)
 
 ## Check for dependency updates
 update: $(o)/update-summary.txt
