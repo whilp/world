@@ -393,6 +393,60 @@ local record ExtractOpts
   dry_run: boolean
 end
 
+local function create_versioned_symlinks(base_dir: string, verbose: boolean, stderr: FILE)
+  local version_mod = require("version")
+  local base_stat = unix.stat(base_dir)
+  if not base_stat or not unix.S_ISDIR(base_stat:mode()) then
+    return
+  end
+
+  local entries = unix.opendir(base_dir)
+  if not entries then
+    return
+  end
+
+  for entry_name in entries do
+    if entry_name ~= "." and entry_name ~= ".." then
+      local entry_path = path.join(base_dir, entry_name)
+      local entry_stat = unix.stat(entry_path)
+      if entry_stat and unix.S_ISDIR(entry_stat:mode()) then
+        -- Find versioned directory (contains version-sha pattern)
+        local versioned_dir: string = nil
+        local sub_entries = unix.opendir(entry_path)
+        if sub_entries then
+          for sub_entry in sub_entries do
+            if sub_entry ~= "." and sub_entry ~= ".." and version_mod.is_version_dir(sub_entry) then
+              versioned_dir = sub_entry
+              break
+            end
+          end
+        end
+
+        -- Create symlinks from entry root to versioned subdirectory contents
+        if versioned_dir then
+          local versioned_path = path.join(entry_path, versioned_dir)
+          local versioned_entries = unix.opendir(versioned_path)
+          if versioned_entries then
+            for item in versioned_entries do
+              if item ~= "." and item ~= ".." then
+                local link_target = path.join(versioned_dir, item)
+                local link_path = path.join(entry_path, item)
+                local link_stat = unix.stat(link_path, unix.AT_SYMLINK_NOFOLLOW)
+                if not link_stat then
+                  local ok = unix.symlink(link_target, link_path)
+                  if not ok and verbose then
+                    stderr:write("warning: failed to create symlink " .. link_path .. "\n")
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
 local function extract_platform_asset(asset_path: string, dest: string, force: boolean, filter: {string:boolean}, opts: ExtractOpts): boolean
   opts = opts or {} as ExtractOpts
   local stdout = opts.stdout or io.stdout
@@ -528,57 +582,10 @@ local function cmd_unpack(dest: string, force: boolean, opts: UnpackOpts): integ
     ::continue::
   end
 
-  -- Create symlinks from tool root to versioned subdirectories
+  -- Create symlinks from versioned subdirectories in .local/share and .local/lib
   if not dry_run then
-    local version_mod = require("version")
-    local share_dir = path.join(dest, ".local", "share")
-    local share_stat = unix.stat(share_dir)
-    if share_stat and unix.S_ISDIR(share_stat:mode()) then
-      local tools_dir = unix.opendir(share_dir)
-      if tools_dir then
-        for tool_name in tools_dir do
-          if tool_name ~= "." and tool_name ~= ".." then
-            local tool_path = path.join(share_dir, tool_name)
-            local tool_stat = unix.stat(tool_path)
-            if tool_stat and unix.S_ISDIR(tool_stat:mode()) then
-              -- Find versioned directory (contains version-sha pattern)
-              local versioned_dir: string = nil
-              local entries_dir = unix.opendir(tool_path)
-              if entries_dir then
-                for entry in entries_dir do
-                  if entry ~= "." and entry ~= ".." and version_mod.is_version_dir(entry) then
-                    versioned_dir = entry
-                    break
-                  end
-                end
-              end
-
-              -- Create symlinks from tool root to versioned subdirectories
-              if versioned_dir then
-                local versioned_path = path.join(tool_path, versioned_dir)
-                local versioned_entries = unix.opendir(versioned_path)
-                if versioned_entries then
-                  for item in versioned_entries do
-                    if item ~= "." and item ~= ".." then
-                      local link_target = path.join(versioned_dir, item)
-                      local link_path = path.join(tool_path, item)
-                      -- Only create symlink if it doesn't already exist
-                      local link_stat = unix.stat(link_path, unix.AT_SYMLINK_NOFOLLOW)
-                      if not link_stat then
-                        local ok = unix.symlink(link_target, link_path)
-                        if not ok and verbose then
-                          stderr:write("warning: failed to create symlink " .. link_path .. "\n")
-                        end
-                      end
-                    end
-                  end
-                end
-              end
-            end
-          end
-        end
-      end
-    end
+    create_versioned_symlinks(path.join(dest, ".local", "share"), verbose, stderr)
+    create_versioned_symlinks(path.join(dest, ".local", "lib"), verbose, stderr)
   end
 
   if with_platform then

@@ -81,8 +81,8 @@ $(home_bin): $(home_libs) $(home_tl_compiled) $(home_bin_libs) $(home_nvim_tl_co
 	@cp -r lib/cosmic lib/version.lua lib/claude $(home_setup_dir) $(home_mac_dir) $(home_built)/.lua/
 	@cp -f $(cosmic_tl_libs) $(home_built)/.lua/cosmic/
 	@for m in $(home_bin_lib_modules); do \
-		mkdir -p $(home_built)/home/.local/lib/$$m && \
-		cp $(o)/lib/$$m/init.lua $(home_built)/home/.local/lib/$$m/; \
+		mkdir -p $(home_built)/home/.local/lib/$$m/1-$(HOME_VERSION) && \
+		cp $(o)/lib/$$m/init.lua $(home_built)/home/.local/lib/$$m/1-$(HOME_VERSION)/; \
 	done
 	@cd $(home_built) && find home/.local/lib -type f | $(CURDIR)/$(cosmos_zip) -q $(CURDIR)/$@ -@
 	@cd $(home_built) && $(CURDIR)/$(cosmos_zip) -qr $(CURDIR)/$@ .lua
