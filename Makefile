@@ -101,6 +101,11 @@ $(o)/bin/%.lua: %.tl $(types_files) $(tl_files) $(bootstrap_files) | $(tl_staged
 # files are produced in o/
 all_files += $(call filter-only,$(foreach x,$(modules),$($(x)_files)))
 
+# tl files: modules declare _tl_files, derive compiled .lua outputs
+all_tl_files := $(call filter-only,$(foreach x,$(modules),$($(x)_tl_files)))
+all_tl_lua := $(patsubst %.tl,$(o)/%.lua,$(all_tl_files))
+all_files += $(all_tl_lua)
+
 # define *_staged, *_dir for versioned modules (must be before dep expansion)
 # modules can override *_dir for post-processing (e.g., nvim bundles plugins)
 $(foreach m,$(modules),$(if $($(m)_version),\
@@ -178,10 +183,12 @@ $(o)/%.snap.test.ok: %.snap $(o)/%.snap | $(bootstrap_cosmic)
 	@mkdir -p $(@D)
 	@$(bootstrap_cosmic) $(build_snap) $< $(word 2,$^) > $@
 
-# expand test deps: M's tests depend on own _files/_dir plus deps' _dir
+# expand test deps: M's tests depend on own _files/_tl_files plus deps' _dir
+# derive compiled .lua from _tl_files
 $(foreach m,$(filter-out bootstrap,$(modules)),\
-  $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): $($(m)_files))\
-  $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): TEST_DEPS += $($(m)_files))\
+  $(eval $(m)_tl_lua := $(patsubst %.tl,$(o)/%.lua,$($(m)_tl_files)))\
+  $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): $($(m)_files) $($(m)_tl_lua))\
+  $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): TEST_DEPS += $($(m)_files) $($(m)_tl_lua))\
   $(if $($(m)_dir),\
     $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): $($(m)_dir))\
     $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): TEST_DEPS += $($(m)_dir))\
@@ -192,9 +199,11 @@ $(foreach m,$(filter-out bootstrap,$(modules)),\
       $(eval $(patsubst %,$(o)/%.test.ok,$($(m)_tests)): TEST_DEPS += $($(d)_dir)))))
 
 all_built_files := $(call filter-only,$(foreach x,$(modules),$($(x)_files)))
+all_built_files += $(all_tl_lua)
 all_source_files := $(call filter-only,$(foreach x,$(modules),$($(x)_tests)))
 all_source_files += $(call filter-only,$(filter-out ,$(foreach x,$(modules),$($(x)_version))))
 all_source_files += $(call filter-only,$(foreach x,$(modules),$($(x)_srcs)))
+all_source_files += $(all_tl_files)
 all_checkable_files := $(addprefix $(o)/,$(all_source_files))
 
 .PHONY: files
