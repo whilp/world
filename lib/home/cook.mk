@@ -94,5 +94,8 @@ home-release: $(nvim_bundle)
 test-release: home-release nvim-release-tests $(o)/$(home_release_test).tested
 
 # Depend on home-release (not home_bin directly) to avoid parallel build race
-$(o)/$(home_release_test).tested: home-release $(home_release_test) $(cosmic_bin) $$(cosmos_staged) | $(bootstrap_files)
-	@TEST_RELEASE=1 TEST_DIR=$(home_bin) $(home_release_test) $@
+# Run compiled .lua (derived from home_release_test path)
+home_release_test_lua := $(o)/$(basename $(home_release_test)).lua
+$(o)/$(home_release_test).tested: home-release $(home_release_test_lua) $(cosmic_bin) $$(cosmos_staged) | $(bootstrap_files)
+	@[ -x $(home_release_test_lua) ] || chmod a+x $(home_release_test_lua)
+	@TEST_RELEASE=1 TEST_DIR=$(home_bin) $(test_runner) $(home_release_test_lua) > $@
