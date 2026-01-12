@@ -38,9 +38,7 @@ local CAPTURE_COMMANDS: {string:boolean} = {
   ["scrolling-capture"] = true,
 }
 
-local record Flags
-  {string:string}
-end
+local type Flags = {string:string}
 
 local function url_encode(str: string): string
   return str:gsub("([^%w%-%.%_%~])", function(c: string): string
@@ -88,7 +86,7 @@ local function build_url(subcommand: string, flags: Flags): string
   local url = "cleanshot://" .. subcommand
   local params: {string} = {}
 
-  for key, value in pairs(flags as {string:string}) do
+  for key, value in pairs(flags) do
     if key ~= "path" then
       if key == "filepath" then
         table.insert(params, key .. "=" .. url_encode(value))
@@ -106,8 +104,8 @@ local function build_url(subcommand: string, flags: Flags): string
 end
 
 local function get_screenshot_dir(flags: Flags): string
-  if (flags as {string:string}).path then
-    return expand_path((flags as {string:string}).path)
+  if (flags).path then
+    return expand_path((flags).path)
   end
   return expand_path("~/Downloads/screens")
 end
@@ -169,7 +167,7 @@ local function wait_for_new_screenshot(dir: string, baseline_time: number, timeo
 end
 
 local function should_wait_for_file(subcommand: string, flags: Flags): boolean
-  local f = flags as {string:string}
+  local f = flags
   if not f.action or f.action ~= "save" then
     return false
   end

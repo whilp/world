@@ -25,6 +25,10 @@ home_built := $(o)/home/.built
 # Teal-compiled scripts
 home_tl_compiled := $(o)/lib/home/main.lua $(o)/lib/home/gen-manifest.lua $(o)/lib/home/gen-platforms.lua
 
+# Lib modules to bundle for .local/bin scripts
+home_bin_lib_modules := aerosnap cleanshot whereami
+home_bin_libs := $(foreach m,$(home_bin_lib_modules),$(o)/lib/$(m)/init.lua)
+
 # Nvim config teal files (compiled at build time, shipped as .lua)
 home_nvim_tl_srcs := $(shell find .config/nvim -name '*.tl' 2>/dev/null)
 home_nvim_tl_compiled := $(patsubst %.tl,$(o)/%.lua,$(home_nvim_tl_srcs))
@@ -45,7 +49,7 @@ $(o)/home/dotfiles.zip: $$(cosmos_staged)
 
 # Home binary bundles: dotfiles, cosmos binaries, cosmic, 3p tools, lua libs
 # Dev build uses raw nvim; release build uses bundled nvim (set via HOME_NVIM_DIR)
-$(home_bin): $(home_libs) $(home_tl_compiled) $(home_nvim_tl_compiled) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin) $(cosmic_tl_libs) $$(nvim_staged) $$(foreach t,$(home_3p_tools),$$($$(t)_staged))
+$(home_bin): $(home_libs) $(home_tl_compiled) $(home_bin_libs) $(home_nvim_tl_compiled) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin) $(cosmic_tl_libs) $$(nvim_staged) $$(foreach t,$(home_3p_tools),$$($$(t)_staged))
 	@rm -rf $(home_built)
 	@mkdir -p $(home_built)/home/.local/bin $(home_built)/home/.local/share $(home_built)/.lua $(@D)
 	@cd $(home_built) && unzip -q $(CURDIR)/$(o)/home/dotfiles.zip -d home
@@ -76,6 +80,11 @@ $(home_bin): $(home_libs) $(home_tl_compiled) $(home_nvim_tl_compiled) $(o)/home
 	@$(cosmos_zip) -qj $@ $(o)/lib/home/main.lua lib/home/.args
 	@cp -r lib/cosmic lib/version.lua lib/claude $(home_setup_dir) $(home_mac_dir) $(home_built)/.lua/
 	@cp -f $(cosmic_tl_libs) $(home_built)/.lua/cosmic/
+	@for m in $(home_bin_lib_modules); do \
+		mkdir -p $(home_built)/home/.local/lib/$$m && \
+		cp $(o)/lib/$$m/init.lua $(home_built)/home/.local/lib/$$m/; \
+	done
+	@cd $(home_built) && find home/.local/lib -type f | $(CURDIR)/$(cosmos_zip) -q $(CURDIR)/$@ -@
 	@cd $(home_built) && $(CURDIR)/$(cosmos_zip) -qr $(CURDIR)/$@ .lua
 	@rm -rf $(home_built)
 

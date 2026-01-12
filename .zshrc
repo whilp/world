@@ -1,5 +1,6 @@
 export STRIPE_DO_NOT_MANAGE=1
 
+export LUA_PATH="$HOME/.local/lib/?.lua;$HOME/.local/lib/?/init.lua;;"
 export PS1='%# '
 set -o vi
 
