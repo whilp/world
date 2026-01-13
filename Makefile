@@ -33,6 +33,8 @@ include 3p/uv/cook.mk
 include 3p/shfmt/cook.mk
 include 3p/stylua/cook.mk
 include 3p/biome/cook.mk
+include 3p/bun/cook.mk
+include 3p/clasp/cook.mk
 include 3p/comrak/cook.mk
 include 3p/delta/cook.mk
 include 3p/ruff/cook.mk

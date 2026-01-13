@@ -2,6 +2,8 @@
 
 include 3p/ast-grep/cook.mk
 include 3p/biome/cook.mk
+include 3p/bun/cook.mk
+include 3p/clasp/cook.mk
 include 3p/comrak/cook.mk
 include 3p/cosmos/cook.mk
 include 3p/delta/cook.mk
