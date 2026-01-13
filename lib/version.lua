@@ -144,11 +144,6 @@ local function default_version_callback(config)
 end
 
 M.load_file = function(path, kinds)
-  local loader, err = loadfile(path)
-  if not loader then
-    return false, err
-  end
-
   local env = kinds or {}
 
   if not env.Version then
@@ -167,7 +162,11 @@ M.load_file = function(path, kinds)
     end
   end
 
-  setfenv(loader, wrapped_env)
+  local loader, err = loadfile(path, "t", wrapped_env)
+  if not loader then
+    return false, err
+  end
+
   local ok, load_err = pcall(loader)
 
   return ok, load_err
@@ -284,19 +283,26 @@ function M.render(data, opts)
   end
 end
 
-local cosmo = require("cosmo")
-local unix = cosmo.unix
-local path = cosmo.path
+local unix = require("cosmo.unix")
+local path = require("cosmo.path")
 
 local HOME = os.getenv("HOME")
 local DEFAULT_SHARE_DIR = path.join(HOME, ".local", "share")
 
 function M.parse_version_dir(name)
-  local version, sha = name:match("^(.+)%-(%x+)$")
-  if version and sha then
+  -- Match pattern: <version>-<sha>
+  -- Where version is non-empty and sha is hex characters (min 6 chars for truncated shas)
+  local version, sha = name:match("^(.+)%-(%x%x%x%x%x%x+)$")
+  if version and sha and version ~= "" then
     return version, sha
   end
   return nil, nil
+end
+
+-- Returns true if name matches versioned directory pattern
+function M.is_version_dir(name)
+  local version, sha = M.parse_version_dir(name)
+  return version ~= nil and sha ~= nil
 end
 
 function M.compare_versions(a, b)

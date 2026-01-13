@@ -1,3 +1,4 @@
+-- luacheck ignore: hammerspoon runtime
 local HyperKey = {}
 HyperKey.__index = HyperKey
 

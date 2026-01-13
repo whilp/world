@@ -2,7 +2,7 @@
 
 install_home() {
   local url tmpdir
-  url="https://github.com/whilp/dotfiles/releases/latest/download/home"
+  url="https://github.com/whilp/world/releases/latest/download/home"
   tmpdir=$(mktemp -d)
 
   echo "downloading home..." >&2
@@ -18,8 +18,8 @@ install_home() {
 
 main() {
   home_bin=$(install_home) || return 1
-  "${home_bin}" unpack --force --with-platform "$HOME"
-  "${home_bin}" setup "$HOME"
+  "${home_bin}" unpack --force --with-platform --verbose "$HOME"
+  "${home_bin}" setup --verbose "$HOME"
   rm -rf "$(dirname "${home_bin}")"
 }
 

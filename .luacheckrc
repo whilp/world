@@ -1,6 +1,7 @@
 std = "lua54"
 max_line_length = 120
 
+
 -- Fennel-inspired strictness
 --
 -- Fennel addresses several Lua language issues through stricter defaults:
@@ -32,44 +33,21 @@ max_line_length = 120
 -- See: https://github.com/bakpakin/Fennel/blob/main/rationale.md
 
 ignore = {
-  "111/test_.*",
-  "111/Test.*",
-  "112/Test.*",
-  "113/Test.*",
-  "131/test_.*",
-  "131/Test.*",
-  "212/self",
+  "111/Test.*",   -- setting test class globals
+  "111/test_.*",  -- setting test function globals
+  "112/Test.*",   -- mutating test class globals
+  "111/TEST_.*",  -- setting test runner globals (TEST_ARGS, TEST_TMPDIR, etc)
+  "112/TEST_.*",  -- mutating test runner globals
+  "113/TEST_.*",  -- accessing test runner globals
+  "212/self",     -- unused self in test methods
 }
 
-read_globals = {
-  "jit",
-  "setfenv",
+files = {
+  ["lib/build/test.lua"] = {
+    globals = { "arg" },
+  },
+  ["lib/claude/version.lua"] = {
+    -- Generated file with long URLs
+    max_line_length = false,
+  },
 }
-
-globals = {
-  "lu",
-}
-
--- Test file suppressions
--- 211: unused variable is acceptable in tests
--- 411: redefining locals is common in test setup/teardown
--- 421-423: shadowing is acceptable in test contexts
-files["lib/claude/test.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/environ/test.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/home/test_main.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/nvim/test.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/spawn/test_spawn.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/test_daemonize.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/test_whereami.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/work/test.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/work/test_backup.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/work/test_blocked_on_display.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/work/test_blockers.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/work/test_command_blocked.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/work/test_file_locking.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/work/test_orphaned_blocks.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/work/test_string_sanitization.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-files["lib/work/test_validate_blocks.lua"] = { ignore = { "211", "411", "421", "422", "423" } }
-
--- lib/run-test.lua uses setfenv which triggers 122 (setting read-only global)
-files["lib/run-test.lua"] = { ignore = { "122" } }

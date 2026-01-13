@@ -1,15 +1,4 @@
 #!/usr/bin/env lua
-
-local cosmo = require("cosmo")
-local unix = cosmo.unix
-
-local script_dir = cosmo.path.dirname(cosmo.path.dirname(cosmo.path.dirname(debug.getinfo(1, "S").source:sub(2))))
-package.path = script_dir .. "/src/?.lua;" .. package.path
-
+-- luacheck ignore: script runtime
 local claude = require("claude.main")
-
-if not pcall(debug.getlocal, 4, 1) then
-  claude.main(arg)
-end
-
-return claude
+os.exit(claude.main(arg) or 0)

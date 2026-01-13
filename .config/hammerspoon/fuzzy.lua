@@ -1,3 +1,4 @@
+-- luacheck ignore: hammerspoon runtime
 local Fuzzy = {}
 
 local TYPE_PRIORITY = {

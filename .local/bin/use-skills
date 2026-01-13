@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+-- luacheck ignore: script runtime
 
 local cosmo = require("cosmo")
 

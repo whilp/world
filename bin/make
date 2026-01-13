@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+MAKE_BIN="${SCRIPT_DIR}/cosmo-make"
+RELEASE_URL="https://github.com/whilp/cosmopolitan/releases/download/2026.01.04-bc03f9aa8/make"
+
+# Download make if it doesn't exist
+if [ ! -f "${MAKE_BIN}" ]; then
+    echo "Downloading landlock-make..." >&2
+    curl -fsSL -o "${MAKE_BIN}" "${RELEASE_URL}"
+    chmod +x "${MAKE_BIN}"
+fi
+
+# Execute make with all arguments
+exec "${MAKE_BIN}" "$@"

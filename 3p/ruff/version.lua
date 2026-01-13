@@ -2,6 +2,9 @@ return {
   version = "0.8.4",
   format = "tar.gz",
   strip_components = 1,
+  install = {
+    ["ruff"] = "bin/ruff",
+  },
   url = "https://github.com/astral-sh/ruff/releases/download/{version}/ruff-{arch}.tar.gz",
   platforms = {
     ["darwin-arm64"] = {

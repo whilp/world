@@ -1,3 +1,4 @@
+-- luacheck ignore: hammerspoon runtime
 local M = {}
 
 M.apply = function(chooser)
@@ -13,6 +14,8 @@ M.apply = function(chooser)
   chooser:width(widthPercent)
   chooser:rows(15)
   chooser:searchSubText(true)
+  chooser:showImages(false)
+  chooser:showShortcuts(false)
 end
 
 return M

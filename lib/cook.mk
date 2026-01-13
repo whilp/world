@@ -1,23 +1,40 @@
-test-lib-whereami: private .UNVEIL = r:lib rx:$(lua_bin) r:$(test_runner) r:$(CURDIR) rw:/dev/null
-test-lib-whereami: private .PLEDGE = stdio rpath proc exec
-test-lib-whereami: private .CPU = 30
-test-lib-whereami: lua
-	cd lib && HOME=$(CURDIR) LUA_PATH="$(CURDIR)/lib/?.lua;;" \
-		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test_whereami.lua
+modules += lib
+lib_lua_modules :=
+lib_dirs :=
+lib_libs :=
+lib_tests := lib/test_version.tl
 
-test-lib-daemonize: private .UNVEIL = r:lib rx:$(lua_bin) r:$(test_runner) r:$(CURDIR) rwc:/tmp rw:/dev/null
-test-lib-daemonize: private .PLEDGE = stdio rpath wpath cpath proc exec
-test-lib-daemonize: private .CPU = 30
-test-lib-daemonize: lua
-	cd lib && HOME=$(CURDIR) LUA_PATH="$(CURDIR)/lib/?.lua;;" \
-		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) test_daemonize.lua
+# type declaration files for teal compilation
+types_files := $(wildcard lib/types/*.d.tl lib/types/*/*.d.tl lib/types/*/*/*.d.tl)
 
-test-work: private .UNVEIL = r:lib r:/home/codespace/.local/bootstrap/lib rx:$(lua_bin) r:$(test_runner) r:$(CURDIR) rwc:lib/test/work rw:/dev/null
-test-work: private .PLEDGE = stdio rpath wpath cpath proc exec
-test-work: private .CPU = 60
-test-work: lua
-	cd lib/test/work && HOME=$(CURDIR) \
-		LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/test/work/?.lua;;" \
-		$(CURDIR)/$(lua_bin) $(CURDIR)/$(test_runner) run.lua
+# standalone lib files (use _tl_files mechanism)
+lib_dirs += o/lib
+lib_tl_files := lib/platform.tl lib/ulid.tl lib/utils.tl
+lib_libs += o/lib/version.lua
 
-.PHONY: test-lib-whereami test-lib-daemonize test-work
+# copy .lua files to o/lib/
+o/lib/%.lua: lib/%.lua
+	@mkdir -p $(@D)
+	@cp $< $@
+
+# compile .tl files to .lua (for o/teal/lib via tl gen -o)
+.SECONDEXPANSION:
+o/teal/lib/%.lua: lib/%.tl $(types_files) $$(tl_staged)
+	@mkdir -p $(@D)
+	@$(tl_staged)/tl -- gen -o $@ $< >/dev/null
+
+include lib/aerosnap/cook.mk
+include lib/build/cook.mk
+include lib/checker/cook.mk
+include lib/claude/cook.mk
+include lib/cosmic/cook.mk
+include lib/daemonize/cook.mk
+include lib/environ/cook.mk
+include lib/home/cook.mk
+include lib/nvim/cook.mk
+include lib/skill/cook.mk
+include lib/test/cook.mk
+include lib/whereami/cook.mk
+
+# After includes: derive lib_libs from lib module _tl_files
+lib_libs += $(patsubst %.tl,$(o)/%.lua,$(foreach m,$(lib_lua_modules),$($(m)_tl_files)))

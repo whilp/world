@@ -1,3 +1,4 @@
+-- luacheck ignore: hammerspoon runtime
 return Leader("s", "System", {
   Bind("s", "Settings", { shell = 'open "x-apple.systempreferences:"' }),
   Bind("a", "Accessibility", { shell = 'open "x-apple.systempreferences:com.apple.Accessibility-Settings.extension"' }),
