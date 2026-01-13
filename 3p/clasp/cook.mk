@@ -1,10 +1,11 @@
 modules += clasp
-clasp_srcs := 3p/clasp/clasp.ts
+clasp_version := 3p/clasp/version.lua
 clasp_bin := $(o)/bin/clasp
 clasp_files := $(clasp_bin)
 clasp_tests := 3p/clasp/test_clasp.tl
 clasp_deps := bun
 
-$(clasp_bin): $(clasp_srcs) $$(bun_staged)
+$(clasp_bin): $$(clasp_staged) $$(bun_staged)
 	@mkdir -p $(@D)
-	@$(bun_dir)/bin/bun build --compile $(clasp_srcs) --outfile $@
+	@cd $(clasp_dir) && $(CURDIR)/$(bun_dir)/bin/bun install
+	@cd $(clasp_dir) && $(CURDIR)/$(bun_dir)/bin/bun build --compile src/index.ts --outfile $(CURDIR)/$@
