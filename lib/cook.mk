@@ -32,6 +32,7 @@ include lib/daemonize/cook.mk
 include lib/environ/cook.mk
 include lib/home/cook.mk
 include lib/nvim/cook.mk
+include lib/gas/cook.mk
 include lib/skill/cook.mk
 include lib/test/cook.mk
 include lib/whereami/cook.mk
