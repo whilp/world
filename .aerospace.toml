@@ -9,7 +9,7 @@ start-at-login = true
 after-startup-command = ['exec-and-forget aerosnap load']
 
 # Track window focus for MRU (calls into Hammerspoon via IPC)
-on-focus-changed = ['exec-and-forget hs -c "aeroSwitcher.recordFocus(\'$AEROSPACE_WINDOW_ID\')"']
+on-focus-changed = ["exec-and-forget hs -c \"aeroSwitcher.recordFocus('$AEROSPACE_WINDOW_ID')\""]
 
 # Normalizations (keeps layout tree sensible)
 enable-normalization-flatten-containers = true
@@ -56,10 +56,10 @@ alt-shift-k = 'move up'
 alt-shift-l = 'move right'
 
 # Join windows (nest under common parent)
-cmd-shift-h = 'join-with left'
-cmd-shift-j = 'join-with down'
-cmd-shift-k = 'join-with up'
-cmd-shift-l = 'join-with right'
+ctrl-shift-h = 'join-with left'
+ctrl-shift-j = 'join-with down'
+ctrl-shift-k = 'join-with up'
+ctrl-shift-l = 'join-with right'
 
 # Focus monitors
 alt-comma = 'focus-monitor left'
