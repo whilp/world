@@ -12,7 +12,7 @@ home_release_test := lib/home/test_release.tl
 # 3p tools to bundle (nvim handled specially for bundled version)
 home_3p_tools := ast-grep biome comrak delta duckdb gh marksman rg ruff shfmt sqruff stylua superhtml tree-sitter uv
 
-home_deps := cosmos cosmic nvim $(home_3p_tools)
+home_deps := cosmos cosmic nvim clasp $(home_3p_tools)
 
 # Build configuration
 home_exclude_pattern := ^(3p/|o/|results/|Makefile|\.git)
@@ -45,7 +45,7 @@ $(o)/home/dotfiles.zip: $$(cosmos_staged)
 
 # Home binary bundles: dotfiles, cosmos binaries, cosmic, 3p tools, lua libs
 # Dev build uses raw nvim; release build uses bundled nvim (set via HOME_NVIM_DIR)
-$(home_bin): $(home_libs) $(home_tl_compiled) $(home_nvim_tl_compiled) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin) $(cosmic_tl_libs) $$(nvim_staged) $$(foreach t,$(home_3p_tools),$$($$(t)_staged))
+$(home_bin): $(home_libs) $(home_tl_compiled) $(home_nvim_tl_compiled) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin) $(clasp_bin) $(cosmic_tl_libs) $$(nvim_staged) $$(foreach t,$(home_3p_tools),$$($$(t)_staged))
 	@rm -rf $(home_built)
 	@mkdir -p $(home_built)/home/.local/bin $(home_built)/home/.local/share $(home_built)/.lua $(@D)
 	@cd $(home_built) && unzip -q $(CURDIR)/$(o)/home/dotfiles.zip -d home
@@ -60,6 +60,7 @@ $(home_bin): $(home_libs) $(home_tl_compiled) $(home_nvim_tl_compiled) $(o)/home
 	@$(cp) $(cosmos_dir)/lua $(home_built)/home/.local/bin/lua
 	@$(cp) $(cosmos_dir)/unzip $(home_built)/home/.local/bin/unzip
 	@$(cp) $(cosmic_bin) $(home_built)/home/.local/bin/cosmic-lua
+	@$(cp) $(clasp_bin) $(home_built)/home/.local/bin/clasp
 	@for tool in $(home_3p_tools); do \
 		versioned_dir=$$(readlink -f $(o)/$$tool/.staged); \
 		versioned_name=$$(basename $$versioned_dir); \

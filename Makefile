@@ -49,6 +49,8 @@ include 3p/nvim-parsers/cook.mk
 include 3p/nvim/cook.mk
 include 3p/tl/cook.mk
 include 3p/teal-types/cook.mk
+include 3p/bun/cook.mk
+include 3p/clasp/cook.mk
 
 include cook.mk
 
@@ -282,6 +284,7 @@ release: $(o)/lib/home/gen-platforms.lua $(o)/lib/home/main.lua
 	@cp artifacts/home-linux-x86_64/home release/home-linux-x86_64
 	@cp artifacts/home-linux-x86_64/home release/home
 	@cp artifacts/cosmic/cosmic release/cosmic-lua
+	@cp artifacts/clasp-linux-x86_64/clasp release/clasp
 	@chmod +x release/*
 	@chmod +x artifacts/cosmos-zip/zip
 	@tag="$$(date -u +%Y-%m-%d)-$${GITHUB_SHA::7}"; \
@@ -291,11 +294,11 @@ release: $(o)/lib/home/gen-platforms.lua $(o)/lib/home/main.lua
 		release/home-darwin-arm64 release/home-linux-arm64 release/home-linux-x86_64; \
 	(cd release/platforms && ../../artifacts/cosmos-zip/zip -j ../home platforms.lua); \
 	(cd release/platforms && ../../artifacts/cosmos-zip/zip -r ../home manifests); \
-	(cd release && sha256sum home home-* cosmic-lua > SHA256SUMS && cat SHA256SUMS); \
+	(cd release && sha256sum home home-* cosmic-lua clasp > SHA256SUMS && cat SHA256SUMS); \
 	gh release create "$$tag" \
 		$${PRERELEASE_FLAG} \
 		--title "$$tag" \
-		release/home release/home-* release/cosmic-lua release/SHA256SUMS
+		release/home release/home-* release/cosmic-lua release/clasp release/SHA256SUMS
 
 ci_stages := astgrep teal test build
 
