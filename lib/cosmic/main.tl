@@ -40,7 +40,56 @@ local function parse_args(): Opts
     { "skill", "required", "s" },
   }
 
-  local parser = getopt.new(arg, "e:l:ivEWh::s:", longopts)
+  -- Pre-scan to find script name (first non-option arg)
+  -- This allows us to stop parsing options at the script boundary
+  local script_index: integer = nil
+  local i = 1
+  while i <= #arg do
+    local a = arg[i]
+    -- Check for -- separator (end of options marker)
+    if a == "--" then
+      -- Everything after -- is positional args (script name + script args)
+      script_index = i + 1
+      break
+    -- Check if this is an option
+    elseif a:sub(1, 1) == "-" then
+      -- It's an option, check if it takes an argument
+      if a == "-e" or a == "-l" or a == "-h" or a == "-s" or a == "--help" or a == "--skill" then
+        -- Option takes an argument, skip next arg
+        i = i + 2
+      elseif a:match("^%-[^-]") and #a > 2 then
+        -- Short option(s), might have bundled options like -ilv
+        -- For simplicity, just move to next
+        i = i + 1
+      else
+        i = i + 1
+      end
+    else
+      -- Found first non-option argument (script name)
+      script_index = i
+      break
+    end
+  end
+
+  -- Only parse args up to (but not including) the script name or -- separator
+  local parse_args_list: {string} = {}
+  if script_index then
+    -- Parse args before script name, excluding -- if present
+    local limit = script_index - 1
+    if limit > 0 and arg[limit] == "--" then
+      limit = limit - 1
+    end
+    for j = 1, limit do
+      parse_args_list[#parse_args_list + 1] = arg[j]
+    end
+  else
+    -- No script found, parse all args
+    for j = 1, #arg do
+      parse_args_list[#parse_args_list + 1] = arg[j]
+    end
+  end
+
+  local parser = getopt.new(parse_args_list, "e:l:ivEWh::s:", longopts)
 
   -- Iterate through all options
   while true do
@@ -49,7 +98,11 @@ local function parse_args(): Opts
       break
     end
 
-    if opt == "e" then
+    if opt == "?" then
+      -- Unknown option encountered during parsing
+      io.stderr:write("cosmic-lua: unknown option '" .. optarg .. "'\n")
+      os.exit(1)
+    elseif opt == "e" then
       opts.execute[#opts.execute + 1] = optarg
     elseif opt == "l" then
       opts.load[#opts.load + 1] = optarg
@@ -76,14 +129,32 @@ local function parse_args(): Opts
     end
   end
 
-  -- Handle remaining arguments (script and script args)
-  local rest = parser:remaining()
-  if rest and #rest > 0 then
-    opts.script = rest[1]
-    for j = 1, #rest do
-      opts.script_args[j - 1] = rest[j]
+  -- Handle script and script args (if found during pre-scan)
+  if script_index then
+    opts.script = arg[script_index]
+    opts.script_args[0] = arg[script_index]
+    -- Add all args after script name as script args, skipping -- separator if present
+    local arg_num = 1
+    for j = script_index + 1, #arg do
+      -- Skip -- separator
+      if arg[j] == "--" then
+        -- Skip it
+      else
+        opts.script_args[arg_num] = arg[j]
+        arg_num = arg_num + 1
+      end
     end
     opts.script_args[-1] = arg[-1]
+  else
+    -- No script found, check if getopt has remaining args
+    local rest = parser:remaining()
+    if rest and #rest > 0 then
+      opts.script = rest[1]
+      for j = 1, #rest do
+        opts.script_args[j - 1] = rest[j]
+      end
+      opts.script_args[-1] = arg[-1]
+    end
   end
 
   return opts
