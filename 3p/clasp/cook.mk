@@ -7,5 +7,6 @@ clasp_deps := bun
 
 $(clasp_bin): $$(clasp_staged) $$(bun_staged)
 	@mkdir -p $(@D)
+	@rm -f $(clasp_dir)/package-lock.json
 	@cd $(clasp_dir) && $(CURDIR)/$(bun_dir)/bin/bun install
 	@cd $(clasp_dir) && $(CURDIR)/$(bun_dir)/bin/bun build --compile src/index.ts --outfile $(CURDIR)/$@
