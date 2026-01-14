@@ -15,10 +15,10 @@ map({ "n", "i", "v", "t" }, "<D-k>", "<cmd>wincmd k<cr>", { desc = "Move up" })
 map({ "n", "i", "v", "t" }, "<D-l>", "<cmd>wincmd l<cr>", { desc = "Move right" })
 
 -- Split and move
-map({ "n", "i", "v", "t" }, "<D-S-h>", "<cmd>leftabove vsplit<cr>", { desc = "Split left and move" })
-map({ "n", "i", "v", "t" }, "<D-S-j>", "<cmd>belowright split<cr>", { desc = "Split down and move" })
-map({ "n", "i", "v", "t" }, "<D-S-k>", "<cmd>leftabove split<cr>", { desc = "Split up and move" })
-map({ "n", "i", "v", "t" }, "<D-S-l>", "<cmd>belowright vsplit<cr>", { desc = "Split right and move" })
+map({ "n", "i", "v", "t" }, "<D-S-h>", "<cmd>leftabove vnew<cr>", { desc = "Split left and move" })
+map({ "n", "i", "v", "t" }, "<D-S-j>", "<cmd>belowright new<cr>", { desc = "Split down and move" })
+map({ "n", "i", "v", "t" }, "<D-S-k>", "<cmd>leftabove new<cr>", { desc = "Split up and move" })
+map({ "n", "i", "v", "t" }, "<D-S-l>", "<cmd>belowright vnew<cr>", { desc = "Split right and move" })
 
 -- Buffer management
 map("n", "<D-q>", "<cmd>enew|bd #<cr>", { noremap = true, silent = true, desc = "Close current buffer" })
