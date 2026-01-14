@@ -1,6 +1,8 @@
 -- cosmic-lua dispatcher
 -- entry point for cosmic binary that handles special args and dispatches to features
 
+require("tl").loader()
+
 local getopt = require("cosmo.getopt")
 
 -- Long option definition: {name, arg_requirement, short_alias}
