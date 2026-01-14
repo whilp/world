@@ -2,6 +2,7 @@
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
+local getopt = require("cosmo.getopt")
 
 local function read_file(filepath: string): string, string
   local f, err = io.open(filepath, "rb")
@@ -205,24 +206,54 @@ local function parse_args(args: {string}): ParsedArgs
     dest = nil,
   }
 
-  local i = 2
-  while i <= #args do
-    if args[i] == "--force" or args[i] == "-f" then
+  if #args < 2 then
+    return result
+  end
+
+  local cmd_args: {string} = {}
+  for i = 2, #args do
+    table.insert(cmd_args, args[i])
+  end
+
+  local longopts = {
+    {"force", "none"},
+    {"verbose", "none"},
+    {"dry-run", "none"},
+    {"only", "none"},
+    {"null", "none"},
+  }
+  local parser = getopt.new(cmd_args, "fvn0", longopts)
+
+  while true do
+    local opt, _ = parser:next()
+    if not opt then break end
+
+    if opt == "f" or opt == "force" then
       result.force = true
-    elseif args[i] == "--verbose" or args[i] == "-v" then
+    elseif opt == "v" or opt == "verbose" then
       result.verbose = true
-    elseif args[i] == "--dry-run" or args[i] == "-n" then
+    elseif opt == "n" or opt == "dry-run" then
       result.dry_run = true
-    elseif args[i] == "--only" then
+    elseif opt == "only" then
       result.only = true
-    elseif args[i] == "--null" or args[i] == "-0" then
+    elseif opt == "0" or opt == "null" then
       result.null = true
-    elseif result.cmd == "mac" and not result.subcmd and not args[i]:match("^%-") then
-      result.subcmd = args[i]
-    elseif not result.dest then
-      result.dest = args[i]
+    elseif opt == "?" then
+      io.stderr:write("error: invalid option\n")
+      os.exit(1)
     end
-    i = i + 1
+  end
+
+  local remaining = parser:remaining()
+  if remaining and #remaining > 0 then
+    if result.cmd == "mac" and not remaining[1]:match("^%-") then
+      result.subcmd = remaining[1]
+      if #remaining > 1 then
+        result.dest = remaining[2]
+      end
+    else
+      result.dest = remaining[1]
+    end
   end
 
   return result

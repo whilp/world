@@ -53,7 +53,7 @@ install_home() {
 
 main() {
   home_bin=$(install_home) || return 1
-  "${home_bin}" unpack --force --with-platform --verbose "$HOME"
+  "${home_bin}" unpack --force --verbose "$HOME"
   "${home_bin}" setup --verbose "$HOME"
   rm -rf "$(dirname "${home_bin}")"
 }

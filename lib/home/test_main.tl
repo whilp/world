@@ -189,3 +189,12 @@ ret = home.cmd_list({
   stdout = out.stdout_obj,
 })
 assert(ret == 0, "cmd_list valid manifest should return 0")
+
+-- Test unknown flags are rejected
+local handle = spawn({home_bin, "unpack", "--with-platform", TEST_TMPDIR})
+local exit_code = handle:wait()
+assert(exit_code ~= 0, "unknown flag --with-platform should fail, got exit code: " .. tostring(exit_code))
+
+handle = spawn({home_bin, "unpack", "--unknown-flag", TEST_TMPDIR})
+exit_code = handle:wait()
+assert(exit_code ~= 0, "unknown flag --unknown-flag should fail")
