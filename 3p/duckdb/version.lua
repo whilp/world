@@ -2,6 +2,9 @@ return {
   version = "1.4.2",
   format = "zip",
   strip_components = 0,
+  install = {
+    ["duckdb"] = "bin/duckdb",
+  },
   url = "https://github.com/duckdb/duckdb/releases/download/v{version}/duckdb_cli-{os}-{arch}.zip",
   platforms = {
     ["darwin-arm64"] = {

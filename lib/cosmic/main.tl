@@ -1,6 +1,8 @@
 -- cosmic-lua dispatcher
 -- entry point for cosmic binary that handles special args and dispatches to features
 
+require("tl").loader()
+
 local getopt = require("cosmo.getopt")
 
 -- Long option definition: {name, arg_requirement, short_alias}
@@ -33,12 +35,81 @@ local function parse_args(): Opts
     script_args = {},
   }
 
+  local shortopts = "e:l:ivEWh::s:"
   local longopts: {LongOpt} = {
     { "help", "optional", "h" },
     { "skill", "required", "s" },
   }
 
-  local parser = getopt.new(arg, "e:l:ivEWh::s:", longopts)
+  -- Parse shortopts to build set of options that require arguments
+  local short_needs_arg: {string:boolean} = {}
+  local j = 1
+  while j <= #shortopts do
+    local c = shortopts:sub(j, j)
+    if c ~= ":" then
+      -- Check if followed by : (required arg) but not :: (optional arg)
+      if j < #shortopts and shortopts:sub(j+1, j+1) == ":" and
+         (j+1 >= #shortopts or shortopts:sub(j+2, j+2) ~= ":") then
+        short_needs_arg[c] = true
+      end
+    end
+    j = j + 1
+  end
+
+  -- Parse longopts to build set of options that require arguments
+  local long_needs_arg: {string:boolean} = {}
+  for _, opt in ipairs(longopts) do
+    if opt[2] == "required" then
+      long_needs_arg[opt[1]] = true
+    end
+  end
+
+  -- Find first non-option argument (script name) to know where to stop parsing
+  local script_idx: integer = nil
+  local i = 1
+  while i <= #arg do
+    local a = arg[i]
+    if a == "--" then
+      -- Explicit end of options
+      script_idx = i + 1
+      break
+    elseif a:sub(1, 2) == "--" then
+      -- Long option
+      local opt_name = a:sub(3)
+      if not opt_name:find("=") and long_needs_arg[opt_name] then
+        -- Takes next arg
+        i = i + 2
+      else
+        i = i + 1
+      end
+    elseif a:sub(1, 1) == "-" and #a > 1 then
+      -- Short option
+      if #a == 2 and short_needs_arg[a:sub(2, 2)] then
+        -- Single short option that takes arg
+        i = i + 2
+      else
+        i = i + 1
+      end
+    else
+      -- First non-option is the script name
+      script_idx = i
+      break
+    end
+  end
+
+  -- Only parse cosmic options (before script name)
+  local cosmic_args: {string} = {}
+  if script_idx then
+    for i = 1, script_idx - 1 do
+      if arg[i] ~= "--" then  -- Exclude -- separator
+        cosmic_args[#cosmic_args + 1] = arg[i]
+      end
+    end
+  else
+    cosmic_args = arg
+  end
+
+  local parser = getopt.new(cosmic_args, shortopts, longopts)
 
   -- Iterate through all options
   while true do
@@ -47,7 +118,11 @@ local function parse_args(): Opts
       break
     end
 
-    if opt == "e" then
+    if opt == "?" then
+      -- Unknown cosmic option
+      io.stderr:write("cosmic-lua: unknown option '" .. optarg .. "'\n")
+      os.exit(1)
+    elseif opt == "e" then
       opts.execute[#opts.execute + 1] = optarg
     elseif opt == "l" then
       opts.load[#opts.load + 1] = optarg
@@ -74,12 +149,17 @@ local function parse_args(): Opts
     end
   end
 
-  -- Handle remaining arguments (script and script args)
-  local rest = parser:remaining()
-  if rest and #rest > 0 then
-    opts.script = rest[1]
-    for j = 1, #rest do
-      opts.script_args[j - 1] = rest[j]
+  -- Handle script and script args (from original arg, starting at script_idx)
+  if script_idx then
+    opts.script = arg[script_idx]
+    opts.script_args[0] = arg[script_idx]
+    local arg_num = 1
+    for i = script_idx + 1, #arg do
+      -- Skip -- separator
+      if arg[i] ~= "--" then
+        opts.script_args[arg_num] = arg[i]
+        arg_num = arg_num + 1
+      end
     end
     opts.script_args[-1] = arg[-1]
   end

@@ -26,6 +26,9 @@ local record VersionSpec
   format: string
   strip_components: number
   strip_prefix: string
+  install: {string:string}
+  remove: {string}
+  links: {string:string}
   platforms: {string:PlatformSpec}
 end
 
@@ -154,6 +157,40 @@ local function install_files(source_dir: string, dest_dir: string, strip_prefix:
   return move_contents(src, dest_dir)
 end
 
+local function apply_install(stage_dir: string, install: {string:string}): boolean, string
+  for src, dst in pairs(install) do
+    local src_path = path.join(stage_dir, src)
+    local dst_path = path.join(stage_dir, dst)
+    unix.makedirs(path.dirname(dst_path))
+    local ok, err = unix.rename(src_path, dst_path)
+    if not ok then
+      return nil, string.format("install %s -> %s: %s", src, dst, tostring(err))
+    end
+  end
+  return true
+end
+
+local function apply_remove(stage_dir: string, remove: {string}): boolean, string
+  for _, file in ipairs(remove) do
+    local file_path = path.join(stage_dir, file)
+    unix.rmrf(file_path)
+  end
+  return true
+end
+
+local function apply_links(stage_dir: string, links: {string:string}): boolean, string
+  for link, target in pairs(links) do
+    local link_path = path.join(stage_dir, link)
+    unix.makedirs(path.dirname(link_path))
+    unix.rmrf(link_path)
+    local ok, err = unix.symlink(target, link_path)
+    if not ok then
+      return nil, string.format("link %s -> %s: %s", link, target, tostring(err))
+    end
+  end
+  return true
+end
+
 local function find_archive(fetch_dir: string, format: string): string, string
   if format == "binary" or format == "gz" then
     return path.join(fetch_dir, "binary")
@@ -246,6 +283,20 @@ local function main(version_file: string, platform: string, input: string, outpu
 
   if not ok then
     return nil, err
+  end
+
+  -- apply post-extraction transforms from version.lua
+  if spec.remove then
+    ok, err = apply_remove(stage_dir, spec.remove)
+    if not ok then return nil, err end
+  end
+  if spec.install then
+    ok, err = apply_install(stage_dir, spec.install)
+    if not ok then return nil, err end
+  end
+  if spec.links then
+    ok, err = apply_links(stage_dir, spec.links)
+    if not ok then return nil, err end
   end
 
   -- format: STAGE  module @ version-sha_prefix
