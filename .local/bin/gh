@@ -25,29 +25,7 @@ if handler then
   handler(env)
 end
 
-local function find_gh_binary()
-  local home = os.getenv("HOME")
-  local gh_dir = path.join(home, ".local", "share", "gh")
-
-  local dir = unix.opendir(gh_dir)
-  local versions = {}
-
-  for entry in dir do
-    if entry ~= "." and entry ~= ".." then
-      table.insert(versions, entry)
-    end
-  end
-
-  table.sort(versions)
-  local latest = versions[#versions]
-
-  if latest then
-    return path.join(gh_dir, latest, "bin", "gh")
-  end
-
-  error("could not find gh binary in ~/.local/share/gh")
-end
-
-local gh_bin = find_gh_binary()
-local args = {"gh", ...}
+local home = os.getenv("HOME")
+local gh_bin = path.join(home, ".local", "share", "gh", "bin", "gh")
+local args = {"gh", table.unpack(arg)}
 unix.execve(gh_bin, args, env:toarray())
