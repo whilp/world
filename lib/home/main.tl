@@ -1,32 +1,7 @@
--- home binary: manages dotfiles extraction and platform assets
+-- home binary: manages dotfiles extraction
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
-local spawn = require("cosmic.spawn")
-
--- Platform architecture mapping
-local type ArchMap = {string:string}
-
--- System to platform mapping
-local type PlatformMap = {string:ArchMap}
-
--- Platform normalization table
-local PLATFORMS: PlatformMap = {
-  ["Darwin"] = {
-    ["arm64"] = "darwin-arm64",
-    ["aarch64"] = "darwin-arm64",
-  },
-  -- cosmo.GetHostOs() returns "XNU" on macOS (the kernel name)
-  ["Xnu"] = {
-    ["arm64"] = "darwin-arm64",
-    ["aarch64"] = "darwin-arm64",
-  },
-  ["Linux"] = {
-    ["x86_64"] = "linux-x86_64",
-    ["aarch64"] = "linux-arm64",
-    ["arm64"] = "linux-arm64",
-  },
-}
 
 local function read_file(filepath: string): string, string
   local f, err = io.open(filepath, "rb")
@@ -114,26 +89,6 @@ local function serialize_table(tbl: {any:any}): string
   return "return " .. serialize_value(tbl) .. "\n"
 end
 
-local function detect_platform(): string, string
-  -- cosmo returns uppercase (LINUX, DARWIN, X86_64, AARCH64)
-  -- normalize to match PLATFORMS table keys
-  local host_os = cosmo.GetHostOs()
-  local sysname = host_os:sub(1, 1) .. host_os:sub(2):lower()
-  local machine = cosmo.GetHostIsa():lower()
-
-  local sys_platforms = PLATFORMS[sysname]
-  if not sys_platforms then
-    return nil, "unsupported system: " .. sysname
-  end
-
-  local platform = sys_platforms[machine]
-  if not platform then
-    return nil, "unsupported machine: " .. machine
-  end
-
-  return platform
-end
-
 -- Manifest file info
 local record FileInfo
   mode: number
@@ -145,110 +100,12 @@ local record Manifest
   files: {string:FileInfo}
 end
 
--- Platform asset info
-local record PlatformAsset
-  asset: string
-  sha256: string
-end
-
--- Platforms metadata
-local record Platforms
-  base_url: string
-  tag: string
-  platforms: {string:PlatformAsset}
-end
-
 local function load_manifest(): Manifest
   local ok, manifest = pcall(dofile, "/zip/manifest.lua")
   if ok then
     return manifest as Manifest
   end
   return nil
-end
-
-local function load_platforms(): Platforms
-  local ok, platforms = pcall(dofile, "/zip/platforms.lua")
-  if ok then
-    return platforms as Platforms
-  end
-  return nil
-end
-
-local function load_platform_manifest(platform: string): Manifest
-  local ok, manifest = pcall(dofile, "/zip/manifests/" .. platform .. ".lua")
-  if ok then
-    return manifest as Manifest
-  end
-  return nil
-end
-
-local function is_platform_mode(): boolean
-  local ok, _ = pcall(dofile, "/zip/platforms.lua")
-  return not ok
-end
-
-local function interpolate(template: string, context: {string:string}): string
-  if type(template) ~= "string" then
-    return template
-  end
-  return template:gsub("{([%w_]+)}", function(key: string): string
-    return tostring(context[key] or "")
-  end)
-end
-
-local function sha256_file(filepath: string): string, string
-  local shasum = unix.commandv("shasum")
-  local cmd_args: {string}
-  if shasum then
-    cmd_args = {"shasum", "-a", "256", filepath}
-  elseif unix.commandv("sha256sum") then
-    cmd_args = {"sha256sum", filepath}
-  else
-    return nil, "neither shasum nor sha256sum found"
-  end
-
-  local ok, output = spawn(cmd_args):read()
-  if not ok then
-    return nil, "failed to compute sha256"
-  end
-
-  local sha = (output as string):match("^(%x+)")
-  if not sha or #sha ~= 64 then
-    return nil, "invalid sha256 output"
-  end
-  return sha
-end
-
-local function download_file(url: string, dest_path: string): boolean, string
-  local status, _, body = cosmo.Fetch(url, {maxresponse = 300 * 1024 * 1024})
-  if not status then
-    return nil, "fetch failed: " .. tostring(body or "unknown error")
-  end
-  if status ~= 200 then
-    return nil, "fetch failed with status " .. tostring(status)
-  end
-
-  local fd = unix.open(dest_path, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("0644", 8))
-  if not fd or fd < 0 then
-    return nil, "failed to open destination file"
-  end
-  local bytes_written = unix.write(fd, body)
-  unix.close(fd)
-  if bytes_written ~= #body then
-    return nil, "failed to write data"
-  end
-  return true
-end
-
-local function verify_sha256(filepath: string, expected_sha: string): boolean, string
-  local actual, err = sha256_file(filepath)
-  if not actual then
-    return nil, err
-  end
-  if actual ~= expected_sha then
-    return nil, string.format("sha256 mismatch: expected %s, got %s", expected_sha, actual)
-  end
-  return true
 end
 
 local function copy_file(src: string, dst: string, mode: number, overwrite: boolean): boolean, string
@@ -333,9 +190,6 @@ local record ParsedArgs
   dry_run: boolean
   only: boolean
   null: boolean
-  with_platform: boolean
-  platform_url: string
-  platform: string
   dest: string
 end
 
@@ -348,9 +202,6 @@ local function parse_args(args: {string}): ParsedArgs
     dry_run = false,
     only = false,
     null = false,
-    with_platform = false,
-    platform_url = nil,
-    platform = nil,
     dest = nil,
   }
 
@@ -366,14 +217,6 @@ local function parse_args(args: {string}): ParsedArgs
       result.only = true
     elseif args[i] == "--null" or args[i] == "-0" then
       result.null = true
-    elseif args[i] == "--with-platform" then
-      result.with_platform = true
-    elseif args[i] == "--platform-url" then
-      i = i + 1
-      result.platform_url = args[i]
-    elseif args[i] == "--platform" then
-      i = i + 1
-      result.platform = args[i]
     elseif result.cmd == "mac" and not result.subcmd and not args[i]:match("^%-") then
       result.subcmd = args[i]
     elseif not result.dest then
@@ -385,51 +228,6 @@ local function parse_args(args: {string}): ParsedArgs
   return result
 end
 
--- Options for extract_platform_asset
-local record ExtractOpts
-  stdout: FILE
-  stderr: FILE
-  verbose: boolean
-  dry_run: boolean
-end
-
-local function extract_platform_asset(asset_path: string, dest: string, force: boolean, filter: {string:boolean}, opts: ExtractOpts): boolean
-  opts = opts or {} as ExtractOpts
-  local stdout = opts.stdout or io.stdout
-  local verbose = opts.verbose or false
-  local dry_run = opts.dry_run or false
-
-  local cmd_args: {string} = { asset_path, "unpack" }
-  if force then
-    table.insert(cmd_args, "--force")
-  end
-  if verbose then
-    table.insert(cmd_args, "--verbose")
-  end
-  if dry_run then
-    table.insert(cmd_args, "--dry-run")
-  end
-  if filter then
-    table.insert(cmd_args, "--only")
-  end
-  table.insert(cmd_args, dest)
-
-  local stdin_data: string = nil
-  if filter then
-    local filter_lines: {string} = {}
-    for p in pairs(filter) do
-      table.insert(filter_lines, p)
-    end
-    stdin_data = table.concat(filter_lines, "\n")
-  end
-
-  local ok, output = spawn(cmd_args, {stdin = stdin_data}):read()
-  if output and output ~= "" then
-    stdout:write(output as string)
-  end
-  return ok as boolean
-end
-
 -- Options for cmd_unpack
 local record UnpackOpts
   stderr: FILE
@@ -438,9 +236,6 @@ local record UnpackOpts
   dry_run: boolean
   only: boolean
   null: boolean
-  with_platform: boolean
-  platform_url: string
-  platform: string
   zip_root: string
   filter_input: string
   manifest: Manifest
@@ -453,14 +248,11 @@ local function cmd_unpack(dest: string, force: boolean, opts: UnpackOpts): integ
   local verbose = opts.verbose or false
   local dry_run = opts.dry_run or false
   local only = opts.only or false
-  local with_platform = opts.with_platform or false
-  local platform_url = opts.platform_url
-  local platform_override = opts.platform
   local zip_root = opts.zip_root or "/zip/home/"
 
   if not dest then
     stderr:write("error: destination path required\n")
-    stderr:write("usage: home unpack [--force] [--with-platform] <destination>\n")
+    stderr:write("usage: home unpack [--force] <destination>\n")
     return 1
   end
 
@@ -581,97 +373,6 @@ local function cmd_unpack(dest: string, force: boolean, opts: UnpackOpts): integ
     end
   end
 
-  if with_platform then
-    local platforms = load_platforms()
-    if not platforms then
-      stderr:write("error: no platform metadata available\n")
-      return 1
-    end
-
-    local current: string
-    local err: string
-    if platform_override then
-      current = platform_override
-    else
-      current, err = detect_platform()
-      if not current then
-        stderr:write("error: " .. (err or "failed to detect platform") .. "\n")
-        return 1
-      end
-    end
-
-    local plat_info = platforms.platforms and platforms.platforms[current]
-    if not plat_info then
-      stderr:write("error: no platform asset available for " .. current .. "\n")
-      return 1
-    end
-
-    local plat_manifest = load_platform_manifest(current)
-    local base_url = interpolate(platforms.base_url, { tag = platforms.tag })
-    local url = platform_url or string.format("%s/%s", base_url, plat_info.asset)
-    local tmp_path = path.join(dest, ".home-platform-download")
-
-    if not dry_run then
-      if verbose then
-        stdout:write("downloading " .. plat_info.asset .. "...\n")
-      end
-
-      local ok: boolean
-      ok, err = download_file(url, tmp_path)
-      if not ok then
-        stderr:write("error: download failed: " .. (err or "unknown") .. "\n")
-        return 1
-      end
-
-      ok, err = verify_sha256(tmp_path, plat_info.sha256)
-      if not ok then
-        stderr:write("error: " .. (err or "checksum failed") .. "\n")
-        unix.unlink(tmp_path)
-        return 1
-      end
-
-      unix.chmod(tmp_path, tonumber("0755", 8))
-
-      local bin_filter: {string:boolean} = nil
-      if filter and plat_manifest and plat_manifest.files then
-        bin_filter = {}
-        for p in pairs(plat_manifest.files) do
-          if filter[p] then
-            bin_filter[p] = true
-          end
-        end
-      end
-
-      ok = extract_platform_asset(tmp_path, dest, force, bin_filter, {
-        stderr = stderr,
-        stdout = stdout,
-        verbose = verbose,
-        dry_run = dry_run,
-      } as ExtractOpts)
-
-      unix.unlink(tmp_path)
-
-      if not ok then
-        stderr:write("error: failed to extract platform asset\n")
-        return 1
-      end
-    elseif verbose then
-      stdout:write("would download " .. plat_info.asset .. "\n")
-      if plat_manifest and plat_manifest.files then
-        local bin_paths: {string} = {}
-        for p in pairs(plat_manifest.files) do
-          if not filter or filter[p] then
-            table.insert(bin_paths, p)
-          end
-        end
-        table.sort(bin_paths)
-        for _, p in ipairs(bin_paths) do
-          stdout:write(p .. "\n")
-        end
-      end
-    end
-  end
-
   return 0
 end
 
@@ -688,7 +389,6 @@ end
 local record PathEntry
   path: string
   mode: number
-  source: string
 end
 
 local function cmd_list(opts: ListOpts): integer
@@ -708,19 +408,7 @@ local function cmd_list(opts: ListOpts): integer
   local all_paths: {PathEntry} = {}
 
   for p, info in pairs(manifest.files) do
-    table.insert(all_paths, { path = p, mode = info.mode, source = "dotfiles" })
-  end
-
-  if not is_platform_mode() then
-    local current = detect_platform()
-    if current then
-      local plat_manifest = load_platform_manifest(current)
-      if plat_manifest and plat_manifest.files then
-        for p, info in pairs(plat_manifest.files) do
-          table.insert(all_paths, { path = p, mode = info.mode, source = "platform" })
-        end
-      end
-    end
+    table.insert(all_paths, { path = p, mode = info.mode })
   end
 
   table.sort(all_paths, function(a: PathEntry, b: PathEntry): boolean
@@ -838,16 +526,13 @@ end
 local function cmd_help(opts: HelpOpts): integer
   opts = opts or {} as HelpOpts
   local stderr = opts.stderr or io.stderr
-  local platform_mode = is_platform_mode()
 
   stderr:write("usage: home <command> [options]\n")
   stderr:write("\ncommands:\n")
   stderr:write("  list [options]           list embedded files\n")
   stderr:write("  unpack [options] <dest>  extract files to destination\n")
-  if not platform_mode then
-    stderr:write("  setup <dest>             run setup scripts\n")
-    stderr:write("  mac [script]             run macOS defaults scripts\n")
-  end
+  stderr:write("  setup <dest>             run setup scripts\n")
+  stderr:write("  mac [script]             run macOS defaults scripts\n")
   stderr:write("  version                  show build version\n")
   stderr:write("\nlist options:\n")
   stderr:write("  --verbose, -v            show permissions\n")
@@ -856,19 +541,12 @@ local function cmd_help(opts: HelpOpts): integer
   stderr:write("  --force, -f              overwrite existing files\n")
   stderr:write("  --verbose, -v            show files as extracted\n")
   stderr:write("  --dry-run, -n            show what would be extracted\n")
-  if not platform_mode then
-    stderr:write("  --with-platform          download and extract platform binaries\n")
-    stderr:write("  --platform <name>        override platform detection\n")
-    stderr:write("  --platform-url <url>     override platform asset download url\n")
-  end
   stderr:write("  --only                   only extract files listed on stdin\n")
   stderr:write("  --null, -0               read null-delimited paths (with --only)\n")
-  if not platform_mode then
-    stderr:write("\nmac subcommands:\n")
-    stderr:write("  mac                      run all macOS defaults scripts\n")
-    stderr:write("  mac list                 list available scripts\n")
-    stderr:write("  mac <script>             run a specific script\n")
-  end
+  stderr:write("\nmac subcommands:\n")
+  stderr:write("  mac                      run all macOS defaults scripts\n")
+  stderr:write("  mac list                 list available scripts\n")
+  stderr:write("  mac <script>             run a specific script\n")
   return 0
 end
 
@@ -894,9 +572,6 @@ local function main(args: {string}, opts: MainOpts): integer
     unpack_opts.dry_run = parsed.dry_run
     unpack_opts.only = parsed.only
     unpack_opts.null = parsed.null
-    unpack_opts.with_platform = parsed.with_platform
-    unpack_opts.platform_url = parsed.platform_url
-    unpack_opts.platform = parsed.platform
 
     return cmd_unpack(parsed.dest, parsed.force, unpack_opts)
   elseif parsed.cmd == "list" then
@@ -928,24 +603,12 @@ local function main(args: {string}, opts: MainOpts): integer
   end
 end
 
--- Export type for spawn module
-local type SpawnModule = function(argv: {string}, opts?: {string:any}): any
-
 -- Module record
 local record Home
-  PLATFORMS: PlatformMap
   read_file: function(filepath: string): string, string
-  spawn: SpawnModule
   serialize_value: function(val: any, indent: string): string
   serialize_table: function(tbl: {any:any}): string
-  detect_platform: function(): string, string
   load_manifest: function(): Manifest
-  load_platforms: function(): Platforms
-  load_platform_manifest: function(platform: string): Manifest
-  is_platform_mode: function(): boolean
-  sha256_file: function(filepath: string): string, string
-  download_file: function(url: string, dest_path: string): boolean, string
-  verify_sha256: function(filepath: string, expected_sha: string): boolean, string
   copy_file: function(src: string, dst: string, mode: number, overwrite: boolean): boolean, string
   format_mode: function(mode: number, is_dir: boolean): string
   parse_args: function(args: {string}): ParsedArgs
@@ -959,19 +622,10 @@ local record Home
 end
 
 local home: Home = {
-  PLATFORMS = PLATFORMS,
   read_file = read_file,
-  spawn = spawn as SpawnModule,
   serialize_value = serialize_value,
   serialize_table = serialize_table,
-  detect_platform = detect_platform,
   load_manifest = load_manifest,
-  load_platforms = load_platforms,
-  load_platform_manifest = load_platform_manifest,
-  is_platform_mode = is_platform_mode,
-  sha256_file = sha256_file,
-  download_file = download_file,
-  verify_sha256 = verify_sha256,
   copy_file = copy_file,
   format_mode = format_mode,
   parse_args = parse_args,
