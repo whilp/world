@@ -57,10 +57,10 @@ $(home_bin): $(home_libs) $(home_tl_compiled) $(home_nvim_tl_compiled) $(o)/home
 		done; \
 		find $(home_built)/home/.config/nvim -name '*.tl' -delete 2>/dev/null || true; \
 	fi
-	@$(cp) $(cosmos_dir)/lua $(home_built)/home/.local/bin/lua
 	@$(cp) $(cosmos_dir)/unzip $(home_built)/home/.local/bin/unzip
 	@$(cp) $(cosmic_bin) $(home_built)/home/.local/bin/cosmic-lua
 	@$(cp) $(clasp_bin) $(home_built)/home/.local/bin/clasp
+	@ln -sf cosmic-lua $(home_built)/home/.local/bin/lua
 	@for tool in $(home_3p_tools); do \
 		versioned_dir=$$(readlink -f $(o)/$$tool/.staged); \
 		versioned_name=$$(basename $$versioned_dir); \
