@@ -6,7 +6,7 @@
 
 **CRITICAL: You MUST create and maintain a PR description file for every branch.**
 
-This file describes what's happening on the branch and MUST be kept up to date before every push.
+This file describes what's happening on the branch. Update it before every push.
 
 1. Create `.github/pr/<slug>.md` with a descriptive slug (e.g., `add-auth-logging.md`, `fix-parser-edge-case.md`)
 2. Use this format:
@@ -20,31 +20,13 @@ Brief description of what this change does and why.
 
 - `path/to/file.lua` - what it does
 - `path/to/other.lua` - what it does
-
-## Validation
-
-- [x] tests pass
-- [x] linter passes
 ```
-
-3. Add the trailer `x-cosmic-pr-name: <slug>.md` to your commit message:
-
-```
-component: brief description
-
-Longer explanation if needed.
-
-x-cosmic-pr-name: <slug>.md
-```
-
-The PR skill (`cosmic --skill pr`) reads this file and updates the GitHub PR title and description automatically when pushed.
 
 **Guidelines:**
 - Choose a descriptive, kebab-case slug
 - Title format: `component: verb explanation` (sentence case)
 - Keep descriptions concise but include key decisions and tradeoffs
 - **Update the file before every push** to reflect the current state of the branch
-- The `.md` extension in the trailer is optional
 
 ## Writing
 
