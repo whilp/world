@@ -4,9 +4,9 @@
 
 ## Pull request descriptions
 
-**CRITICAL: You MUST create a PR description file for every change.**
+**CRITICAL: You MUST create and maintain a PR description file for every branch.**
 
-Before committing any change:
+This file describes what's happening on the branch and MUST be kept up to date before every push.
 
 1. Create `.github/pr/<slug>.md` with a descriptive slug (e.g., `add-auth-logging.md`, `fix-parser-edge-case.md`)
 2. Use this format:
@@ -43,7 +43,7 @@ The PR skill (`cosmic --skill pr`) reads this file and updates the GitHub PR tit
 - Choose a descriptive, kebab-case slug
 - Title format: `component: verb explanation` (sentence case)
 - Keep descriptions concise but include key decisions and tradeoffs
-- Update the file as the PR evolves
+- **Update the file before every push** to reflect the current state of the branch
 - The `.md` extension in the trailer is optional
 
 ## Writing
