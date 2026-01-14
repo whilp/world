@@ -351,6 +351,52 @@ local function cmd_unpack(dest: string, force: boolean, opts: UnpackOpts): integ
     ::continue::
   end
 
+  -- Extract module zips from /zip/zips/ to .local/share
+  if not dry_run then
+    local zips_dir = "/zip/zips"
+    local zips_stat = unix.stat(zips_dir)
+    if zips_stat and unix.S_ISDIR(zips_stat:mode()) then
+      local zips_list = unix.opendir(zips_dir)
+      if zips_list then
+        for zip_file in zips_list do
+          if zip_file ~= "." and zip_file ~= ".." and zip_file:match("%.zip$") then
+            local zip_path = path.join(zips_dir, zip_file)
+            local share_dest = path.join(dest, ".local", "share")
+            unix.makedirs(share_dest)
+
+            -- Read zip from /zip filesystem to temp file
+            local zip_data = read_file(zip_path)
+            if zip_data then
+              local temp_zip = unix.mkstemp("/tmp/module_XXXXXX.zip")
+              if temp_zip then
+                local temp_fd, temp_path = temp_zip as (number, string)
+                unix.write(temp_fd, zip_data)
+                unix.close(temp_fd)
+
+                -- Extract the temp zip file
+                local spawn = require("cosmic.spawn")
+                local unzip_bin = path.join(dest, ".local", "bin", "unzip")
+                -- Fall back to system unzip if not available yet
+                if not unix.stat(unzip_bin) then
+                  unzip_bin = "/usr/bin/unzip"
+                end
+                local handle = spawn({unzip_bin, "-o", "-q", "-d", share_dest, temp_path})
+                local exit_code = handle:wait()
+
+                -- Clean up temp file
+                unix.unlink(temp_path)
+
+                if exit_code ~= 0 and verbose then
+                  stderr:write("warning: failed to extract " .. zip_file .. "\n")
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+
   -- Create symlinks from tool root to versioned subdirectories
   if not dry_run then
     local version_mod = require("version")

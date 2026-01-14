@@ -43,11 +43,15 @@ $(o)/home/dotfiles.zip: $$(cosmos_staged)
 # Compiled .lua from home_tl_files (Makefile compiles these automatically)
 home_tl_lua := $(patsubst %.tl,$(o)/%.lua,$(home_tl_files))
 
-# Home binary bundles: dotfiles, cosmos binaries, cosmic, 3p tools, lua libs
+# Module .zip files for bundling
+home_3p_zips := $(foreach t,$(home_3p_tools),$(o)/$(t)/.zip)
+home_nvim_zip := $(o)/nvim/.zip
+
+# Home binary bundles: dotfiles, cosmos binaries, cosmic, 3p module zips, lua libs
 # Dev build uses raw nvim; release build uses bundled nvim (set via HOME_NVIM_DIR)
-$(home_bin): $(home_libs) $(home_tl_lua) $(home_nvim_tl_compiled) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin) $(cosmic_tl_libs) $$(nvim_staged) $$(foreach t,$(home_3p_tools),$$($$(t)_staged))
+$(home_bin): $(home_libs) $(home_tl_lua) $(home_nvim_tl_compiled) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin) $(cosmic_tl_libs) $(home_nvim_zip) $(home_3p_zips)
 	@rm -rf $(home_built)
-	@mkdir -p $(home_built)/home/.local/bin $(home_built)/home/.local/share $(home_built)/.lua $(@D)
+	@mkdir -p $(home_built)/home/.local/bin $(home_built)/home/.local/share $(home_built)/zips $(home_built)/.lua $(@D)
 	@cd $(home_built) && unzip -q $(CURDIR)/$(o)/home/dotfiles.zip -d home
 	@if [ -n "$(home_nvim_tl_compiled)" ]; then \
 		for f in $(home_nvim_tl_compiled); do \
@@ -60,19 +64,13 @@ $(home_bin): $(home_libs) $(home_tl_lua) $(home_nvim_tl_compiled) $(o)/home/dotf
 	@$(cp) $(cosmos_dir)/unzip $(home_built)/home/.local/bin/unzip
 	@$(cp) $(cosmic_bin) $(home_built)/home/.local/bin/cosmic-lua
 	@ln -sf cosmic-lua $(home_built)/home/.local/bin/lua
-	@for tool in $(home_3p_tools); do \
-		versioned_dir=$$(readlink -f $(o)/$$tool/.staged); \
-		versioned_name=$$(basename $$versioned_dir); \
-		mkdir -p $(home_built)/home/.local/share/$$tool && \
-		cp -r $$versioned_dir $(home_built)/home/.local/share/$$tool/$$versioned_name; \
+	@for zip in $(home_3p_zips) $(home_nvim_zip); do \
+		cp $$zip $(home_built)/zips/$$(basename $$(dirname $$zip)).zip; \
 	done
-	@nvim_versioned_name=$$(basename $$(readlink -f $(nvim_staged))); \
-		mkdir -p $(home_built)/home/.local/share/nvim && \
-		cp -rL $(HOME_NVIM_DIR) $(home_built)/home/.local/share/nvim/$$nvim_versioned_name
 	@$(cosmic_bin) $(o)/lib/home/gen-manifest.lua $(home_built)/home $(HOME_VERSION) > $(home_built)/manifest.lua
 	@$(cp) $(cosmos_dir)/lua $@
 	@chmod +x $@
-	@cd $(home_built) && find home manifest.lua -type f | $(CURDIR)/$(cosmos_zip) -q $(CURDIR)/$@ -@
+	@cd $(home_built) && find home manifest.lua zips -type f | $(CURDIR)/$(cosmos_zip) -q $(CURDIR)/$@ -@
 	@$(cosmos_zip) -qj $@ $(o)/lib/home/main.lua lib/home/.args
 	@cp -r lib/cosmic lib/version.lua lib/claude $(home_built)/.lua/
 	@mkdir -p $(home_built)/.lua/setup $(home_built)/.lua/mac

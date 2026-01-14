@@ -5,11 +5,12 @@ build_lua_srcs := $(wildcard lib/build/*.lua)
 build_srcs := $(build_lua_srcs)
 build_fetch := $(o)/bin/build-fetch.lua
 build_stage := $(o)/bin/build-stage.lua
+build_zip := $(o)/bin/build-zip.lua
 build_check_update := $(o)/bin/check-update.lua
 build_reporter := $(o)/bin/reporter.lua
 build_help := $(o)/bin/make-help.lua
 build_snap := $(o)/bin/test-snap.lua
-build_files := $(build_fetch) $(build_stage) $(build_check_update) $(build_reporter) $(build_help) $(build_snap)
+build_files := $(build_fetch) $(build_stage) $(build_zip) $(build_check_update) $(build_reporter) $(build_help) $(build_snap)
 # Test files - .tl source, compiled .lua run by test rule
 build_tests := $(wildcard lib/build/test_*.tl)
 build_snaps := $(wildcard lib/build/*.snap)

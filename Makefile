@@ -147,6 +147,16 @@ $(o)/%/.staged: .UNVEIL = rx:$(o)/bootstrap r:3p rwc:$(o) rx:/usr/bin
 $(o)/%/.staged: $(o)/%/.fetched $(build_files)
 	@$(build_stage) $$(readlink $(o)/$*/.versioned) $(platform) $< $@
 
+# versions get zipped: o/module/.zip
+.PHONY: zipped
+all_zipped := $(patsubst %/.staged,%/.zip,$(all_staged))
+## Create .zip artifacts for all 3p modules
+zipped: $(all_zipped)
+$(o)/%/.zip: .PLEDGE = stdio rpath wpath cpath proc exec
+$(o)/%/.zip: .UNVEIL = rx:$(o)/bootstrap r:3p rwc:$(o) rwc:/tmp rx:/usr/bin
+$(o)/%/.zip: $(o)/%/.staged $(build_files)
+	@$(build_zip) $$(readlink $(o)/$*/.versioned) $(platform) $< $@
+
 all_tests := $(call filter-only,$(foreach x,$(modules),$($(x)_tests)))
 all_tested := $(patsubst %,o/%.test.ok,$(all_tests))
 all_snaps := $(call filter-only,$(foreach x,$(modules),$($(x)_snaps)))
