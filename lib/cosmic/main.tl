@@ -40,56 +40,34 @@ local function parse_args(): Opts
     { "skill", "required", "s" },
   }
 
-  -- Pre-scan to find script name (first non-option arg)
-  -- This allows us to stop parsing options at the script boundary
-  local script_index: integer = nil
-  local i = 1
-  while i <= #arg do
+  -- Find first non-option argument (script name) to know where to stop parsing
+  local script_idx: integer = nil
+  for i = 1, #arg do
     local a = arg[i]
-    -- Check for -- separator (end of options marker)
     if a == "--" then
-      -- Everything after -- is positional args (script name + script args)
-      script_index = i + 1
+      -- Explicit end of options
+      script_idx = i + 1
       break
-    -- Check if this is an option
-    elseif a:sub(1, 1) == "-" then
-      -- It's an option, check if it takes an argument
-      if a == "-e" or a == "-l" or a == "-h" or a == "-s" or a == "--help" or a == "--skill" then
-        -- Option takes an argument, skip next arg
-        i = i + 2
-      elseif a:match("^%-[^-]") and #a > 2 then
-        -- Short option(s), might have bundled options like -ilv
-        -- For simplicity, just move to next
-        i = i + 1
-      else
-        i = i + 1
-      end
-    else
-      -- Found first non-option argument (script name)
-      script_index = i
+    elseif not a:match("^%-") then
+      -- First non-option is the script name
+      script_idx = i
       break
     end
   end
 
-  -- Only parse args up to (but not including) the script name or -- separator
-  local parse_args_list: {string} = {}
-  if script_index then
-    -- Parse args before script name, excluding -- if present
-    local limit = script_index - 1
-    if limit > 0 and arg[limit] == "--" then
-      limit = limit - 1
-    end
-    for j = 1, limit do
-      parse_args_list[#parse_args_list + 1] = arg[j]
+  -- Only parse cosmic options (before script name)
+  local cosmic_args: {string} = {}
+  if script_idx then
+    for i = 1, script_idx - 1 do
+      if arg[i] ~= "--" then  -- Exclude -- separator
+        cosmic_args[#cosmic_args + 1] = arg[i]
+      end
     end
   else
-    -- No script found, parse all args
-    for j = 1, #arg do
-      parse_args_list[#parse_args_list + 1] = arg[j]
-    end
+    cosmic_args = arg
   end
 
-  local parser = getopt.new(parse_args_list, "e:l:ivEWh::s:", longopts)
+  local parser = getopt.new(cosmic_args, "e:l:ivEWh::s:", longopts)
 
   -- Iterate through all options
   while true do
@@ -99,7 +77,7 @@ local function parse_args(): Opts
     end
 
     if opt == "?" then
-      -- Unknown option encountered during parsing
+      -- Unknown cosmic option
       io.stderr:write("cosmic-lua: unknown option '" .. optarg .. "'\n")
       os.exit(1)
     elseif opt == "e" then
@@ -129,32 +107,19 @@ local function parse_args(): Opts
     end
   end
 
-  -- Handle script and script args (if found during pre-scan)
-  if script_index then
-    opts.script = arg[script_index]
-    opts.script_args[0] = arg[script_index]
-    -- Add all args after script name as script args, skipping -- separator if present
+  -- Handle script and script args (from original arg, starting at script_idx)
+  if script_idx then
+    opts.script = arg[script_idx]
+    opts.script_args[0] = arg[script_idx]
     local arg_num = 1
-    for j = script_index + 1, #arg do
+    for i = script_idx + 1, #arg do
       -- Skip -- separator
-      if arg[j] == "--" then
-        -- Skip it
-      else
-        opts.script_args[arg_num] = arg[j]
+      if arg[i] ~= "--" then
+        opts.script_args[arg_num] = arg[i]
         arg_num = arg_num + 1
       end
     end
     opts.script_args[-1] = arg[-1]
-  else
-    -- No script found, check if getopt has remaining args
-    local rest = parser:remaining()
-    if rest and #rest > 0 then
-      opts.script = rest[1]
-      for j = 1, #rest do
-        opts.script_args[j - 1] = rest[j]
-      end
-      opts.script_args[-1] = arg[-1]
-    end
   end
 
   return opts
