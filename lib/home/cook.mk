@@ -7,7 +7,6 @@ home_bin := $(o)/bin/home
 # but shouldn't inherit home_deps (which would require staging 20+ tools for linting)
 home_files := $(home_bin)
 home_tests := lib/home/test_main.tl lib/home/test_versioned.tl
-home_release_test := lib/home/test_release.tl
 
 # 3p tools to bundle (nvim handled specially for bundled version)
 home_3p_tools := ast-grep biome comrak delta duckdb gh marksman rg ruff shfmt sqruff stylua superhtml tree-sitter uv
@@ -23,7 +22,7 @@ HOME_VERSION ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown"
 home_built := $(o)/home/.built
 
 # Teal-compiled scripts
-home_tl_compiled := $(o)/lib/home/main.lua $(o)/lib/home/gen-manifest.lua $(o)/lib/home/gen-platforms.lua
+home_tl_compiled := $(o)/lib/home/main.lua $(o)/lib/home/gen-manifest.lua
 
 # Nvim config teal files (compiled at build time, shipped as .lua)
 home_nvim_tl_srcs := $(shell find .config/nvim -name '*.tl' 2>/dev/null)
@@ -89,13 +88,6 @@ home-release: $(nvim_bundle)
 	@rm -f $(home_bin)
 	@$(MAKE) $(home_bin) HOME_NVIM_DIR=$(nvim_bundle_out)
 
-# Release tests: platform metadata and nvim bundle tests (nvim tests defined in 3p/nvim/cook.mk)
+# Release tests: nvim bundle tests (nvim tests defined in 3p/nvim/cook.mk)
 .PHONY: test-release
-test-release: home-release nvim-release-tests $(o)/$(home_release_test).tested
-
-# Depend on home-release (not home_bin directly) to avoid parallel build race
-# Run compiled .lua (derived from home_release_test path)
-home_release_test_lua := $(o)/$(basename $(home_release_test)).lua
-$(o)/$(home_release_test).tested: home-release $(home_release_test_lua) $(cosmic_bin) $$(cosmos_staged) | $(bootstrap_files)
-	@[ -x $(home_release_test_lua) ] || chmod a+x $(home_release_test_lua)
-	@TEST_RELEASE=1 TEST_DIR=$(home_bin) $(test_runner) $(home_release_test_lua) > $@
+test-release: home-release nvim-release-tests

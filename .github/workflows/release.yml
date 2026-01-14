@@ -50,13 +50,6 @@ jobs:
           name: cosmic
           path: o/bin/cosmic
 
-      - id: upload-cosmos-zip
-        if: matrix.platform == 'linux-x86_64'
-        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
-        with:
-          name: cosmos-zip
-          path: o/cosmos/.staged/zip
-
   release:
     runs-on: ubuntu-latest
     needs: build
