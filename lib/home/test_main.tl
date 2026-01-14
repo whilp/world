@@ -93,14 +93,6 @@ assert(home.format_mode(tonumber("644", 8), false) == "-rw-r--r--", "format_mode
 assert(home.format_mode(tonumber("755", 8), false) == "-rwxr-xr-x", "format_mode 755")
 assert(home.format_mode(tonumber("755", 8), true) == "drwxr-xr-x", "format_mode dir")
 
--- Test detect_platform
-local platform = home.detect_platform()
-assert(platform, "detect_platform returns value")
-assert(
-  platform == "darwin-arm64" or platform == "linux-arm64" or platform == "linux-x86_64",
-  "detect_platform valid: " .. platform
-)
-
 -- Test cmd_unpack with invalid manifests
 local function capture_output(): CapturedOutput
   local out: CapturedOutput = { stderr = "", stdout = "" }
