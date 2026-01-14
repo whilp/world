@@ -74,6 +74,7 @@ alt-shift-space = 'layout floating tiling'  # Toggle float/tile
 alt-f = 'fullscreen'                         # Toggle fullscreen
 alt-a = 'layout accordion tiles'             # Toggle accordion/tiles if needed
 alt-shift-o = 'layout horizontal vertical'   # Toggle orientation
+alt-shift-f = 'flatten-workspace-tree'       # Flatten nested containers
 
 # Resize mode
 alt-r = 'mode resize'
