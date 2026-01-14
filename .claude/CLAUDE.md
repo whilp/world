@@ -2,6 +2,50 @@
 
 - ALWAYS consider available skills. Almost every session will involve one or more skills, and the most relevant skills should be evident early in the session.
 
+## Pull request descriptions
+
+**CRITICAL: You MUST create a PR description file for every change.**
+
+Before committing any change:
+
+1. Create `.github/pr/<slug>.md` with a descriptive slug (e.g., `add-auth-logging.md`, `fix-parser-edge-case.md`)
+2. Use this format:
+
+```markdown
+# component: verb explanation
+
+Brief description of what this change does and why.
+
+## Changes
+
+- `path/to/file.lua` - what it does
+- `path/to/other.lua` - what it does
+
+## Validation
+
+- [x] tests pass
+- [x] linter passes
+```
+
+3. Add the trailer `x-cosmic-pr-name: <slug>.md` to your commit message:
+
+```
+component: brief description
+
+Longer explanation if needed.
+
+x-cosmic-pr-name: <slug>.md
+```
+
+The PR skill (`cosmic --skill pr`) reads this file and updates the GitHub PR title and description automatically when pushed.
+
+**Guidelines:**
+- Choose a descriptive, kebab-case slug
+- Title format: `component: verb explanation` (sentence case)
+- Keep descriptions concise but include key decisions and tradeoffs
+- Update the file as the PR evolves
+- The `.md` extension in the trailer is optional
+
 ## Writing
 
 - Always use sentence case
