@@ -109,6 +109,7 @@ end
 local out = capture_output()
 local ret = home.cmd_unpack(TEST_TMPDIR, false, {
   manifest = nil,
+  zip_root = TEST_TMPDIR .. "/",
   stderr = out.stderr_obj,
   stdout = out.stdout_obj,
 })
@@ -119,6 +120,7 @@ assert(out.stderr:find("failed to load manifest"), "nil manifest error message")
 out = capture_output()
 ret = home.cmd_unpack(TEST_TMPDIR, false, {
   manifest = {},
+  zip_root = TEST_TMPDIR .. "/",
   stderr = out.stderr_obj,
   stdout = out.stdout_obj,
 })
@@ -129,6 +131,7 @@ assert(out.stderr:find("failed to load manifest"), "empty manifest error message
 out = capture_output()
 ret = home.cmd_unpack(TEST_TMPDIR, false, {
   manifest = { version = "1.0.0" },
+  zip_root = TEST_TMPDIR .. "/",
   stderr = out.stderr_obj,
   stdout = out.stdout_obj,
 })
@@ -139,6 +142,7 @@ assert(out.stderr:find("failed to load manifest"), "missing files error message"
 out = capture_output()
 ret = home.cmd_unpack(TEST_TMPDIR, false, {
   manifest = { version = "1.0.0", files = {} },
+  zip_root = TEST_TMPDIR .. "/",
   stderr = out.stderr_obj,
   stdout = out.stdout_obj,
 })

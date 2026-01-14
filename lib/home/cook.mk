@@ -36,30 +36,34 @@ $(o)/.config/nvim/%.lua: .config/nvim/%.tl $$(tl_files) $$(bootstrap_files) | $$
 # Which nvim to bundle: raw binary for dev, full bundle for release
 HOME_NVIM_DIR ?= $(nvim_staged)
 
-$(o)/home/dotfiles.zip: $$(cosmos_staged)
-	@mkdir -p $(@D)
-	@git ls-files -z | grep -zZvE '$(home_exclude_pattern)' | xargs -0 $(cosmos_zip) -q $@
+$(o)/home/dotfiles.zip: $$(cosmos_staged) $(cosmic_bin)
+	@rm -rf $(o)/home/.dotfiles-staging
+	@mkdir -p $(@D) $(o)/home/.dotfiles-staging
+	@git archive --format=tar HEAD | tar -x -C $(o)/home/.dotfiles-staging
+	@find $(o)/home/.dotfiles-staging -type f -o -type d | grep -E '$(home_exclude_pattern)' | xargs rm -rf 2>/dev/null || true
+	@mkdir -p $(o)/home/.dotfiles-staging/.local/bin
+	@$(cp) $(cosmic_bin) $(o)/home/.dotfiles-staging/.local/bin/cosmic-lua
+	@ln -sf cosmic-lua $(o)/home/.dotfiles-staging/.local/bin/lua
+	@cd $(o)/home/.dotfiles-staging && $(CURDIR)/$(cosmos_zip) -qry $(CURDIR)/$@ .
 
 # Compiled .lua from home_tl_files (Makefile compiles these automatically)
 home_tl_lua := $(patsubst %.tl,$(o)/%.lua,$(home_tl_files))
 
-# Home binary bundles: dotfiles, cosmos binaries, cosmic, 3p tools, lua libs
+# Home binary bundles: dotfiles.zip, cosmos binaries, 3p tools, lua libs
 # Dev build uses raw nvim; release build uses bundled nvim (set via HOME_NVIM_DIR)
 $(home_bin): $(home_libs) $(home_tl_lua) $(home_nvim_tl_compiled) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin) $(cosmic_tl_libs) $$(nvim_staged) $$(foreach t,$(home_3p_tools),$$($$(t)_staged))
 	@rm -rf $(home_built)
 	@mkdir -p $(home_built)/home/.local/bin $(home_built)/home/.local/share $(home_built)/.lua $(@D)
-	@cd $(home_built) && unzip -q $(CURDIR)/$(o)/home/dotfiles.zip -d home
+	@cp $(o)/home/dotfiles.zip $(home_built)/dotfiles.zip
 	@if [ -n "$(home_nvim_tl_compiled)" ]; then \
+		mkdir -p $(home_built)/nvim-tl-compiled; \
 		for f in $(home_nvim_tl_compiled); do \
 			target=$${f#$(o)/}; \
-			mkdir -p $(home_built)/home/$$(dirname $$target); \
-			cp $$f $(home_built)/home/$$target; \
+			mkdir -p $(home_built)/nvim-tl-compiled/$$(dirname $$target); \
+			cp $$f $(home_built)/nvim-tl-compiled/$$target; \
 		done; \
-		find $(home_built)/home/.config/nvim -name '*.tl' -delete 2>/dev/null || true; \
 	fi
 	@$(cp) $(cosmos_dir)/unzip $(home_built)/home/.local/bin/unzip
-	@$(cp) $(cosmic_bin) $(home_built)/home/.local/bin/cosmic-lua
-	@ln -sf cosmic-lua $(home_built)/home/.local/bin/lua
 	@for tool in $(home_3p_tools); do \
 		versioned_dir=$$(readlink -f $(o)/$$tool/.staged); \
 		versioned_name=$$(basename $$versioned_dir); \
@@ -72,8 +76,11 @@ $(home_bin): $(home_libs) $(home_tl_lua) $(home_nvim_tl_compiled) $(o)/home/dotf
 	@$(cosmic_bin) $(o)/lib/home/gen-manifest.lua $(home_built)/home $(HOME_VERSION) > $(home_built)/manifest.lua
 	@$(cp) $(cosmos_dir)/lua $@
 	@chmod +x $@
-	@cd $(home_built) && find home manifest.lua -type f | $(CURDIR)/$(cosmos_zip) -q $(CURDIR)/$@ -@
-	@$(cosmos_zip) -qj $@ $(o)/lib/home/main.lua lib/home/.args
+	@$(cosmos_zip) -qj $@ $(home_built)/dotfiles.zip $(home_built)/manifest.lua $(o)/lib/home/main.lua lib/home/.args
+	@if [ -n "$(home_nvim_tl_compiled)" ]; then \
+		cd $(home_built)/nvim-tl-compiled && find . -type f | $(CURDIR)/$(cosmos_zip) -q $(CURDIR)/$@ -@; \
+	fi
+	@cd $(home_built) && find home -type f -o -type l | $(CURDIR)/$(cosmos_zip) -qy $(CURDIR)/$@ -@
 	@cp -r lib/cosmic lib/version.lua lib/claude $(home_built)/.lua/
 	@mkdir -p $(home_built)/.lua/setup $(home_built)/.lua/mac
 	@cp $(o)/$(home_setup_dir)/*.lua $(home_built)/.lua/setup/

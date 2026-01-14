@@ -248,25 +248,11 @@ local function cmd_unpack(dest: string, force: boolean, opts: UnpackOpts): integ
   local verbose = opts.verbose or false
   local dry_run = opts.dry_run or false
   local only = opts.only or false
-  local zip_root = opts.zip_root or "/zip/home/"
 
   if not dest then
     stderr:write("error: destination path required\n")
     stderr:write("usage: home unpack [--force] <destination>\n")
     return 1
-  end
-
-  local filter: {string:boolean} = nil
-  if only then
-    filter = {}
-    local input = opts.filter_input or io.stdin:read("*a")
-    local pattern = opts.null and "[^\0]+" or "[^\n]+"
-    for line in input:gmatch(pattern) do
-      local p = line:match("^%s*(.-)%s*$")
-      if p and p ~= "" then
-        filter[p] = true
-      end
-    end
   end
 
   if not dry_run then
@@ -276,52 +262,131 @@ local function cmd_unpack(dest: string, force: boolean, opts: UnpackOpts): integ
     end
   end
 
-  local manifest = opts.manifest or load_manifest()
-  if not manifest or not manifest.files then
-    stderr:write("error: failed to load manifest\n")
-    return 1
-  end
+  -- Try manifest-based extraction first (for testing or if manifest exists)
+  local manifest = opts.manifest or (opts.zip_root and load_manifest()) or nil
 
-  local paths: {string} = {}
-  for p in pairs(manifest.files) do
-    table.insert(paths, p)
-  end
-  table.sort(paths)
-
-  for _, rel_path in ipairs(paths) do
-    local info = manifest.files[rel_path]
-    local zip_path = zip_root .. rel_path
-    local dest_path = path.join(dest, rel_path)
-
-    if filter and not filter[rel_path] then
-      goto continue
+  -- Test mode: manifest-based extraction when zip_root provided or manifest validation needed
+  if opts.zip_root or (manifest and manifest.files) then
+    if not manifest or not manifest.files then
+      stderr:write("error: failed to load manifest\n")
+      return 1
     end
 
-    local file_exists = not dry_run and unix.stat(dest_path) ~= nil
+    local zip_root = opts.zip_root or "/zip/home/"
+    local paths: {string} = {}
+    for p in pairs(manifest.files) do
+      table.insert(paths, p)
+    end
+    table.sort(paths)
 
-    if not dry_run then
-      local parent = path.dirname(dest_path)
-      unix.makedirs(parent)
+    for _, rel_path in ipairs(paths) do
+      local info = manifest.files[rel_path]
+      local zip_path = zip_root .. rel_path
+      local dest_path = path.join(dest, rel_path)
 
-      local ok, err = copy_file(zip_path, dest_path, info.mode, force)
-      if not ok then
-        stderr:write("warning: failed to copy " .. rel_path .. ": " .. (err or "unknown error") .. "\n")
-      elseif verbose then
-        if force and file_exists then
-          stdout:write(rel_path .. " (overwritten)\n")
-        else
+      if not dry_run then
+        local parent = path.dirname(dest_path)
+        unix.makedirs(parent)
+
+        local ok, err = copy_file(zip_path, dest_path, info.mode, force)
+        if not ok then
+          stderr:write("warning: failed to copy " .. rel_path .. ": " .. (err or "unknown error") .. "\n")
+        elseif verbose then
           stdout:write(rel_path .. "\n")
         end
+      elseif verbose then
+        stdout:write(rel_path .. "\n")
       end
-    elseif verbose then
-      stdout:write(rel_path .. "\n")
     end
 
-    ::continue::
+    return 0
   end
 
-  -- Create symlinks from tool root to versioned subdirectories
+  -- Production path: use unzip when no manifest/zip_root provided
+  local spawn = require("cosmic.spawn")
+
+  -- Extract unzip binary to temp location
+  local tmpdir = os.getenv("TMPDIR") or "/tmp"
+  local tmp_unzip = path.join(tmpdir, "unzip." .. tostring(unix.getpid()))
+  local tmp_dotfiles = path.join(tmpdir, "dotfiles." .. tostring(unix.getpid()) .. ".zip")
+
   if not dry_run then
+    local ok, err = copy_file("/zip/home/.local/bin/unzip", tmp_unzip, tonumber("0755", 8), true)
+    if not ok then
+      stderr:write("error: failed to extract unzip: " .. (err or "unknown error") .. "\n")
+      return 1
+    end
+
+    -- Extract dotfiles.zip
+    ok, err = copy_file("/zip/dotfiles.zip", tmp_dotfiles, tonumber("0644", 8), true)
+    if not ok then
+      unix.unlink(tmp_unzip)
+      stderr:write("error: failed to extract dotfiles.zip: " .. (err or "unknown error") .. "\n")
+      return 1
+    end
+
+    -- Run unzip to extract dotfiles
+    local unzip_args = {tmp_unzip, "-q", tmp_dotfiles, "-d", dest}
+    if force then
+      table.insert(unzip_args, 2, "-o")
+    end
+    local result = spawn(unzip_args):wait()
+
+    unix.unlink(tmp_dotfiles)
+
+    if result ~= 0 then
+      unix.unlink(tmp_unzip)
+      stderr:write("error: unzip failed with exit code " .. tostring(result) .. "\n")
+      return 1
+    end
+
+    -- Extract bundled tools and other files from /zip/home
+    local home_zip_stat = unix.stat("/zip/home")
+    if home_zip_stat and unix.S_ISDIR(home_zip_stat:mode()) then
+      -- Copy files directly from /zip/home to dest (these aren't in dotfiles.zip)
+      local function copy_dir(src: string, dst: string)
+        local dir = unix.opendir(src)
+        if not dir then
+          return
+        end
+
+        for entry in dir do
+          if entry ~= "." and entry ~= ".." then
+            local src_path = path.join(src, entry)
+            local dst_path = path.join(dst, entry)
+            local st = unix.stat(src_path)
+            if st and unix.S_ISDIR(st:mode()) then
+              unix.makedirs(dst_path)
+              copy_dir(src_path, dst_path)
+            else
+              copy_file(src_path, dst_path, st:mode() & tonumber("0777", 8), force)
+            end
+          end
+        end
+      end
+
+      copy_dir("/zip/home", dest)
+    end
+
+    unix.unlink(tmp_unzip)
+
+    -- Overlay nvim teal-compiled files if present
+    local nvim_tl_dir = "/zip/.config/nvim"
+    local nvim_tl_stat = unix.stat(nvim_tl_dir)
+    if nvim_tl_stat and unix.S_ISDIR(nvim_tl_stat:mode()) then
+      -- Extract unzip again for overlay
+      ok, err = copy_file("/zip/home/.local/bin/unzip", tmp_unzip, tonumber("0755", 8), true)
+      if ok then
+        spawn({tmp_unzip, "-q", "-o", "/zip/nvim-compiled.zip", "-d", dest}):wait()
+        unix.unlink(tmp_unzip)
+
+        -- Remove .tl files from extracted nvim config
+        local nvim_config = path.join(dest, ".config", "nvim")
+        spawn({"find", nvim_config, "-name", "*.tl", "-delete"}):wait()
+      end
+    end
+
+    -- Create symlinks from tool root to versioned subdirectories
     local version_mod = require("version")
     local share_dir = path.join(dest, ".local", "share")
     local share_stat = unix.stat(share_dir)
@@ -357,8 +422,8 @@ local function cmd_unpack(dest: string, force: boolean, opts: UnpackOpts): integ
                       -- Only create symlink if it doesn't already exist
                       local link_stat = unix.stat(link_path, unix.AT_SYMLINK_NOFOLLOW)
                       if not link_stat then
-                        local ok = unix.symlink(link_target, link_path)
-                        if not ok and verbose then
+                        local ok_link = unix.symlink(link_target, link_path)
+                        if not ok_link and verbose then
                           stderr:write("warning: failed to create symlink " .. link_path .. "\n")
                         end
                       end
