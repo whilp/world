@@ -199,3 +199,142 @@ end
   assert((out as string):find("args_count=2"), "main should receive 2 args")
 end
 test_cosmo_is_main_compatibility()
+
+-- Test that --version after script name is passed to script (not consumed by cosmic)
+local function test_version_flag_after_script()
+  local script = path.join(tmpdir, "version_arg.lua")
+  cosmo.Barf(script, [[
+local args = {...}
+print("args_count=" .. #arg)
+for i, v in ipairs(args) do
+  print("arg[" .. i .. "]=" .. v)
+end
+]])
+
+  local ok, out = spawn({cosmic, script, "--version"}):read()
+  assert(ok, "cosmic should succeed")
+  assert((out as string):find("args_count=1"), "should have 1 arg")
+  assert((out as string):find("arg%[1%]=%-%-version"), "arg[1] should be --version")
+end
+test_version_flag_after_script()
+
+-- Test that --help after script name is passed to script (not consumed by cosmic)
+local function test_help_flag_after_script()
+  local script = path.join(tmpdir, "help_arg.lua")
+  cosmo.Barf(script, [[
+local args = {...}
+print("args_count=" .. #arg)
+for i, v in ipairs(args) do
+  print("arg[" .. i .. "]=" .. v)
+end
+]])
+
+  local ok, out = spawn({cosmic, script, "--help"}):read()
+  assert(ok, "cosmic should succeed")
+  assert((out as string):find("args_count=1"), "should have 1 arg")
+  assert((out as string):find("arg%[1%]=%-%-help"), "arg[1] should be --help")
+end
+test_help_flag_after_script()
+
+-- Test that -v after script name is passed to script (not consumed by cosmic)
+local function test_v_flag_after_script()
+  local script = path.join(tmpdir, "v_arg.lua")
+  cosmo.Barf(script, [[
+local args = {...}
+print("args_count=" .. #arg)
+for i, v in ipairs(args) do
+  print("arg[" .. i .. "]=" .. v)
+end
+]])
+
+  local ok, out = spawn({cosmic, script, "-v"}):read()
+  assert(ok, "cosmic should succeed")
+  assert((out as string):find("args_count=1"), "should have 1 arg")
+  assert((out as string):find("arg%[1%]=%-v"), "arg[1] should be -v")
+end
+test_v_flag_after_script()
+
+-- Test cosmic options before script and script options after
+local function test_mixed_cosmic_and_script_options()
+  local script = path.join(tmpdir, "mixed.lua")
+  cosmo.Barf(script, [[
+local args = {...}
+print("args_count=" .. #arg)
+for i, v in ipairs(args) do
+  print("arg[" .. i .. "]=" .. v)
+end
+]])
+
+  -- cosmic -e before script, then script gets --version
+  local ok, out = spawn({cosmic, "-e", "print('cosmic executed')", script, "--version", "arg2"}):read()
+  assert(ok, "cosmic should succeed")
+  assert((out as string):find("cosmic executed"), "cosmic -e should execute")
+  assert((out as string):find("args_count=2"), "script should have 2 args")
+  assert((out as string):find("arg%[1%]=%-%-version"), "arg[1] should be --version")
+  assert((out as string):find("arg%[2%]=arg2"), "arg[2] should be arg2")
+end
+test_mixed_cosmic_and_script_options()
+
+-- Test multiple option-like arguments after script name
+local function test_multiple_option_like_args()
+  local script = path.join(tmpdir, "multi_opts.lua")
+  cosmo.Barf(script, [[
+local args = {...}
+print("args_count=" .. #arg)
+for i, v in ipairs(args) do
+  print("arg[" .. i .. "]=" .. v)
+end
+]])
+
+  local ok, out = spawn({cosmic, script, "--version", "--help", "-v", "-i", "--unknown"}):read()
+  assert(ok, "cosmic should succeed")
+  assert((out as string):find("args_count=5"), "should have 5 args")
+  assert((out as string):find("arg%[1%]=%-%-version"), "arg[1] should be --version")
+  assert((out as string):find("arg%[2%]=%-%-help"), "arg[2] should be --help")
+  assert((out as string):find("arg%[3%]=%-v"), "arg[3] should be -v")
+  assert((out as string):find("arg%[4%]=%-i"), "arg[4] should be -i")
+  assert((out as string):find("arg%[5%]=%-%-unknown"), "arg[5] should be --unknown")
+end
+test_multiple_option_like_args()
+
+-- Test that -- separator works without script options after it
+local function test_separator_with_no_following_options()
+  local script = path.join(tmpdir, "separator_simple.lua")
+  cosmo.Barf(script, [[
+local args = {...}
+print("args_count=" .. #arg)
+for i, v in ipairs(args) do
+  print("arg[" .. i .. "]=" .. v)
+end
+]])
+
+  local ok, out = spawn({cosmic, script, "--", "arg1", "arg2"}):read()
+  assert(ok, "cosmic should succeed")
+  assert((out as string):find("args_count=2"), "should have 2 args")
+  assert((out as string):find("arg%[1%]=arg1"), "arg[1] should be arg1")
+  assert((out as string):find("arg%[2%]=arg2"), "arg[2] should be arg2")
+  -- Ensure -- separator is not included in script args
+  assert(not (out as string):find("arg%[%d+%]=%-%-$"), "-- should not be in script args")
+end
+test_separator_with_no_following_options()
+
+-- Test real-world nvim-like case: script.lua --version
+local function test_nvim_version_pattern()
+  local script = path.join(tmpdir, "nvim_like.lua")
+  cosmo.Barf(script, [[
+-- Simulate nvim-like wrapper that checks for --version
+for i = 1, #arg do
+  if arg[i] == "--version" then
+    print("NVIM v0.12.0-dev")
+    os.exit(0)
+  end
+end
+print("No --version flag found")
+]])
+
+  local ok, out = spawn({cosmic, script, "--version"}):read()
+  assert(ok, "cosmic should succeed")
+  assert((out as string):find("NVIM v0%.12%.0%-dev"), "script should handle --version")
+  assert(not (out as string):find("No %-%-version flag found"), "should not print fallback message")
+end
+test_nvim_version_pattern()
