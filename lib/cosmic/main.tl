@@ -35,20 +35,62 @@ local function parse_args(): Opts
     script_args = {},
   }
 
+  local shortopts = "e:l:ivEWh::s:"
   local longopts: {LongOpt} = {
     { "help", "optional", "h" },
     { "skill", "required", "s" },
   }
 
+  -- Parse shortopts to build set of options that require arguments
+  local short_needs_arg: {string:boolean} = {}
+  local j = 1
+  while j <= #shortopts do
+    local c = shortopts:sub(j, j)
+    if c ~= ":" then
+      -- Check if followed by : (required arg) but not :: (optional arg)
+      if j < #shortopts and shortopts:sub(j+1, j+1) == ":" and
+         (j+1 >= #shortopts or shortopts:sub(j+2, j+2) ~= ":") then
+        short_needs_arg[c] = true
+      end
+    end
+    j = j + 1
+  end
+
+  -- Parse longopts to build set of options that require arguments
+  local long_needs_arg: {string:boolean} = {}
+  for _, opt in ipairs(longopts) do
+    if opt[2] == "required" then
+      long_needs_arg[opt[1]] = true
+    end
+  end
+
   -- Find first non-option argument (script name) to know where to stop parsing
   local script_idx: integer = nil
-  for i = 1, #arg do
+  local i = 1
+  while i <= #arg do
     local a = arg[i]
     if a == "--" then
       -- Explicit end of options
       script_idx = i + 1
       break
-    elseif not a:match("^%-") then
+    elseif a:sub(1, 2) == "--" then
+      -- Long option
+      local opt_name = a:sub(3)
+      if not opt_name:find("=") and long_needs_arg[opt_name] then
+        -- Takes next arg
+        i = i + 2
+      else
+        i = i + 1
+      end
+    elseif a:sub(1, 1) == "-" and #a > 1 then
+      -- Short option
+      if #a == 2 and short_needs_arg[a:sub(2, 2)] then
+        -- Single short option that takes arg
+        i = i + 2
+      else
+        i = i + 1
+      end
+    else
       -- First non-option is the script name
       script_idx = i
       break
@@ -67,7 +109,7 @@ local function parse_args(): Opts
     cosmic_args = arg
   end
 
-  local parser = getopt.new(cosmic_args, "e:l:ivEWh::s:", longopts)
+  local parser = getopt.new(cosmic_args, shortopts, longopts)
 
   -- Iterate through all options
   while true do
