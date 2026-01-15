@@ -29,7 +29,7 @@ inner.horizontal = 0
 inner.vertical = 0
 outer.left = 0
 outer.bottom = 0
-outer.top = 30
+outer.top = [{ monitor."Built-in Retina Display" = 1 }, 24]
 outer.right = 0
 
 # Key mapping (use qwerty, dvorak, or colemak)
@@ -74,6 +74,7 @@ alt-shift-space = 'layout floating tiling'  # Toggle float/tile
 alt-f = 'fullscreen'                         # Toggle fullscreen
 alt-a = 'layout accordion tiles'             # Toggle accordion/tiles if needed
 alt-shift-o = 'layout horizontal vertical'   # Toggle orientation
+alt-shift-f = 'flatten-workspace-tree'       # Flatten nested containers
 
 # Resize mode
 alt-r = 'mode resize'
@@ -114,43 +115,3 @@ l = 'resize smart +50'
 enter = 'mode main'
 esc = 'mode main'
 
-# Workspace 1: personal
-[[on-window-detected]]
-if.app-name-regex-substring = 'Messages'
-run = 'move-node-to-workspace 1'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'Reader'
-run = 'move-node-to-workspace 1'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'iPhone Mirroring'
-run = 'move-node-to-workspace 1'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'Google Chrome'
-if.window-title-regex-substring = 'Will \(gmail\)'
-run = 'move-node-to-workspace 1'
-
-# Workspace 3: work comms
-[[on-window-detected]]
-if.app-name-regex-substring = 'Slack'
-run = 'move-node-to-workspace 3'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'Google Calendar'
-run = 'move-node-to-workspace 3'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'Gmail'
-run = 'move-node-to-workspace 3'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'Google Gemini'
-run = 'move-node-to-workspace 3'
-
-# Workspace 4: work browser
-[[on-window-detected]]
-if.app-name-regex-substring = 'Google Chrome'
-if.window-title-regex-substring = 'wcm \(stripe\)'
-run = 'move-node-to-workspace 4'
