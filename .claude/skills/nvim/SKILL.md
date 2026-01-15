@@ -101,15 +101,15 @@ The nvim wrapper at `~/.local/bin/nvim` provides automatic server management wit
 
 ### Socket configuration
 - Default socket: `~/.config/nvim/nvim.sock`
-- Specify via CLI: `nvim --socket /path/to/socket.sock`
+- Specify via CLI: `nvim --server /path/to/socket.sock` (uses nvim's native flag)
 - Specify via environment: `NVIM_SOCKET=/path/to/socket.sock nvim`
-- Priority: CLI flag > env var > default
+- Priority: `--server` flag > `NVIM_SOCKET` env var > default
 
 ### Client mode (nvim)
 Automatically starts a daemon server if not running, then connects:
 ```bash
 nvim file.txt                                    # uses default socket, auto-starts if needed
-nvim --socket /tmp/project.sock file.txt        # uses custom socket
+nvim --server /tmp/project.sock file.txt        # uses custom socket
 nvim --remote-expr "execute('echo 42')"          # remote commands work too
 ```
 
@@ -117,11 +117,9 @@ nvim --remote-expr "execute('echo 42')"          # remote commands work too
 Explicit daemon control commands:
 ```bash
 nvimd start                                      # start server at default socket
-nvimd --socket /tmp/project.sock start           # start at custom socket
+nvimd --server /tmp/project.sock start           # start at custom socket
 nvimd stop                                       # stop server
 nvimd status                                     # check if running
-nvimd restart                                    # restart server
-nvimd cleanup                                    # remove stale socket file
 ```
 
 ### Multiple servers
@@ -137,7 +135,7 @@ To reload nvim configuration after making changes:
 ```bash
 nvim --remote-expr "execute('source ~/.config/nvim/init.lua')"
 # or with custom socket:
-nvim --socket /tmp/project.sock --remote-expr "execute('source ~/.config/nvim/init.lua')"
+nvim --server /tmp/project.sock --remote-expr "execute('source ~/.config/nvim/init.lua')"
 ```
 
 This sources the configuration in running nvim instances without restarting them.
