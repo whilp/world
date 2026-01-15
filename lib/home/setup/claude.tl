@@ -54,12 +54,13 @@ local function run(env: env_module.Env): number
 
 		local short_sha = CLAUDE_SHA256:sub(1, 8)
 		local version_dir = path.join(env.DST, ".local", "share", "claude", string.format("%s-%s", CLAUDE_VERSION, short_sha))
-		local claude_bin = path.join(version_dir, "claude")
+		local bin_dir = path.join(version_dir, "bin")
+		local claude_bin = path.join(bin_dir, "claude")
 
 		if unix.stat(claude_bin) then
 			io.stderr:write("claude " .. CLAUDE_VERSION .. " already installed\n")
 		else
-			unix.makedirs(version_dir)
+			unix.makedirs(bin_dir)
 
 			local status, _, body = cosmo.Fetch(CLAUDE_URL, {maxresponse = 300 * 1024 * 1024})
 			if not status or status ~= 200 then
