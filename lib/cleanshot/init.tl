@@ -1,5 +1,6 @@
 local unix = require("cosmo.unix")
 local cpath = require("cosmo.path")
+local getopt = require("cosmo.getopt")
 
 local VALID_COMMANDS: {string:boolean} = {
   ["all-in-one"] = true,
@@ -57,27 +58,34 @@ local function expand_path(p: string): string
 end
 
 local function parse_flags(args: {string}): Flags, string
+  local longopts = {
+    {"x", "required"},
+    {"y", "required"},
+    {"width", "required"},
+    {"height", "required"},
+    {"display", "required"},
+    {"action", "required"},
+    {"filepath", "required"},
+    {"tab", "required"},
+    {"path", "required"},
+    {"start", "none"},
+    {"autoscroll", "none"},
+    {"linebreaks", "none"},
+  }
+  local parser = getopt.new(args, "", longopts)
+
   local flags: Flags = {}
-  local i = 1
 
-  while i <= #args do
-    local a = args[i]
-    if a:match("^%-") then
-      local key = a:match("^%-(.+)$")
+  while true do
+    local opt, optarg = parser:next()
+    if not opt then break end
 
-      if BOOLEAN_FLAGS[key] then
-        flags[key] = "true"
-        i = i + 1
-      else
-        if i + 1 <= #args then
-          flags[key] = args[i + 1]
-          i = i + 2
-        else
-          return nil, "flag -" .. key .. " requires a value"
-        end
-      end
+    if opt == "?" then
+      return nil, "invalid option"
+    elseif BOOLEAN_FLAGS[opt] then
+      flags[opt] = "true"
     else
-      i = i + 1
+      flags[opt] = optarg
     end
   end
 

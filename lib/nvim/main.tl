@@ -1,5 +1,6 @@
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
+local getopt = require("cosmo.getopt")
 local version = require("version")
 local whereami = require("whereami")
 local daemonize = require("daemonize")
@@ -70,21 +71,26 @@ local function derive_paths(sock: string): Paths
 end
 
 local function parse_socket_option(args: {string}): string, {string}
-  local socket_path: string = nil
-  local new_args: {string} = {}
-  local i = 1
+  local longopts = {
+    {"socket", "required"},
+  }
+  local parser = getopt.new(args, "", longopts)
 
-  while i <= #args do
-    if args[i] == "--socket" and i < #args then
-      socket_path = args[i + 1]
-      i = i + 2
-    else
-      table.insert(new_args, args[i])
-      i = i + 1
+  local socket_path: string = nil
+
+  while true do
+    local opt, optarg = parser:next()
+    if not opt then break end
+
+    if opt == "?" then
+      io.stderr:write("error: invalid option\n")
+      os.exit(1)
+    elseif opt == "socket" then
+      socket_path = optarg
     end
   end
 
-  return socket_path, new_args
+  return socket_path, parser:remaining()
 end
 
 local function expand_tilde(file_path: string): string

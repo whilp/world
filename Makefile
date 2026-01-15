@@ -275,27 +275,19 @@ build: home cosmic
 
 .PHONY: release
 ## Create release artifacts (CI only)
-release: $(o)/lib/home/gen-platforms.lua $(o)/lib/home/main.lua
+release:
 	@mkdir -p release
 	@cp artifacts/home-darwin-arm64/home release/home-darwin-arm64
 	@cp artifacts/home-linux-arm64/home release/home-linux-arm64
 	@cp artifacts/home-linux-x86_64/home release/home-linux-x86_64
-	@cp artifacts/home-linux-x86_64/home release/home
 	@cp artifacts/cosmic/cosmic release/cosmic-lua
 	@chmod +x release/*
-	@chmod +x artifacts/cosmos-zip/zip
 	@tag="$$(date -u +%Y-%m-%d)-$${GITHUB_SHA::7}"; \
-	base_url="https://github.com/$${GITHUB_REPOSITORY}/releases/download/$$tag"; \
-	LUA_PATH="$(o)/lib/home/?.lua;;" ./release/cosmic-lua $(o)/lib/home/gen-platforms.lua \
-		release/platforms "$$base_url" "$$tag" \
-		release/home-darwin-arm64 release/home-linux-arm64 release/home-linux-x86_64; \
-	(cd release/platforms && ../../artifacts/cosmos-zip/zip -j ../home platforms.lua); \
-	(cd release/platforms && ../../artifacts/cosmos-zip/zip -r ../home manifests); \
-	(cd release && sha256sum home home-* cosmic-lua > SHA256SUMS && cat SHA256SUMS); \
+	(cd release && sha256sum home-* cosmic-lua > SHA256SUMS && cat SHA256SUMS); \
 	gh release create "$$tag" \
 		$${PRERELEASE_FLAG} \
 		--title "$$tag" \
-		release/home release/home-* release/cosmic-lua release/SHA256SUMS
+		release/home-* release/cosmic-lua release/SHA256SUMS
 
 ci_stages := astgrep teal test build
 
