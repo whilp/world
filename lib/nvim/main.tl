@@ -1,6 +1,5 @@
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
-local getopt = require("cosmo.getopt")
 local version = require("version")
 local whereami = require("whereami")
 local daemonize = require("daemonize")
@@ -30,31 +29,10 @@ local function resolve_nvim_bin(): string, string
   return nil, "nvim binary not found. Run 'make nvim' to install."
 end
 
-local function derive_vimruntime(nvim_bin: string): string
-  local bin_dir = path.dirname(nvim_bin)
-  local version_dir = path.dirname(bin_dir)
-  return path.join(version_dir, "share", "nvim", "runtime")
-end
-
-local function set_vimruntime(env: {string:string}, nvim_bin: string)
-  local vimruntime = derive_vimruntime(nvim_bin)
-  if unix.stat(vimruntime) then
-    env["VIMRUNTIME"] = vimruntime
-  end
-end
-
-local function env_with_vimruntime(nvim_bin: string): {string}
-  local env: {string:string} = {}
-  for _, entry in ipairs(unix.environ()) do
-    local key, value = (entry as string):match("^([^=]+)=(.*)$")
-    if key then
-      env[key] = value
-    end
-  end
-  set_vimruntime(env, nvim_bin)
+local function current_environ(): {string}
   local result: {string} = {}
-  for k, v in pairs(env) do
-    table.insert(result, k .. "=" .. v)
+  for _, entry in ipairs(unix.environ()) do
+    table.insert(result, entry as string)
   end
   return result
 end
@@ -70,27 +48,13 @@ local function derive_paths(sock: string): Paths
   }
 end
 
-local function parse_socket_option(args: {string}): string, {string}
-  local longopts = {
-    {"socket", "required"},
-  }
-  local parser = getopt.new(args, "", longopts)
-
-  local socket_path: string = nil
-
-  while true do
-    local opt, optarg = parser:next()
-    if not opt then break end
-
-    if opt == "?" then
-      io.stderr:write("error: invalid option\n")
-      os.exit(1)
-    elseif opt == "socket" then
-      socket_path = optarg
+local function extract_server_socket(args: {string}): string
+  for i = 1, #args do
+    if args[i] == "--server" and i < #args then
+      return args[i + 1]
     end
   end
-
-  return socket_path, parser:remaining()
+  return nil
 end
 
 local function expand_tilde(file_path: string): string
@@ -102,9 +66,10 @@ local function expand_tilde(file_path: string): string
   return file_path
 end
 
-local function get_socket_path(cli_socket: string): string
-  if cli_socket then
-    return expand_tilde(cli_socket)
+local function get_socket_path(args: {string}): string
+  local server_socket = extract_server_socket(args)
+  if server_socket then
+    return expand_tilde(server_socket)
   end
 
   local env_socket = os.getenv("NVIM_SOCKET")
@@ -178,42 +143,16 @@ local function wait_for_socket(socket_path: string, timeout?: number): boolean
   return false
 end
 
-local function load_zsh_environment(): {string:string}
-  local env: {string:string} = {}
-
-  local zsh_path = unix.commandv("zsh")
-  if not zsh_path then
-    return env
-  end
-
-  local spawn = require("cosmic.spawn")
-  local ok, output = spawn({zsh_path, "-l", "-c", "env -0"}):read()
-  if not ok or not output then
-    return env
-  end
-
-  local i = 1
-  while i <= #(output as string) do
-    local next_null = (output as string):find("\0", i, true)
-    if not next_null then
-      break
-    end
-    local line = (output as string):sub(i, next_null - 1)
-    local key, value = line:match("^([^=]+)=(.*)$")
-    if key then
-      env[key] = value
-    end
-    i = next_null + 1
-  end
-
-  return env
-end
-
 local function setup_nvim_environment(nvim_bin: string): {string}
-  local env_table = load_zsh_environment()
+  local env_table: {string:string} = {}
+  for _, entry in ipairs(unix.environ()) do
+    local key, value = (entry as string):match("^([^=]+)=(.*)$")
+    if key then
+      env_table[key] = value
+    end
+  end
   env_table["NVIM_SERVER_MODE"] = "1"
   env_table["WHEREAMI"] = whereami.get_with_emoji()
-  set_vimruntime(env_table, nvim_bin)
   local env: {string} = {}
   for k, v in pairs(env_table) do
     table.insert(env, k .. "=" .. v)
@@ -337,42 +276,35 @@ local function cmd_status(paths: Paths): number
   end
 end
 
-local function cmd_restart(paths: Paths, nvim_bin: string): number
-  cmd_stop(paths)
-  unix.nanosleep(1, 0)
-  return cmd_start(paths, nvim_bin)
-end
-
-local function cmd_cleanup(paths: Paths): number
-  os.remove(paths.sock)
-  return 0
-end
-
 local commands: {string:CommandFn} = {
   start = cmd_start,
   stop = cmd_stop,
   status = cmd_status,
-  restart = cmd_restart,
-  cleanup = cmd_cleanup,
 }
 
 local function daemon_mode(args: {string}, nvim_bin: string): number
-  local cli_socket, remaining_args = parse_socket_option(args)
-  local socket_path = get_socket_path(cli_socket)
+  local socket_path = get_socket_path(args)
   local paths = derive_paths(socket_path)
 
-  local command = remaining_args[1] or ""
+  local command = args[1] or ""
+  for _, arg in ipairs(args) do
+    if arg ~= "--server" and not arg:match("^/") and not arg:match("^~") then
+      command = arg
+      break
+    end
+  end
+
   local cmd_fn = commands[command]
 
   if cmd_fn then
-    if command == "start" or command == "restart" then
+    if command == "start" then
       return cmd_fn(paths, nvim_bin)
     else
       return cmd_fn(paths)
     end
   else
     io.stderr:write("nvimd: unknown command: " .. command .. "\n")
-    io.stderr:write("usage: nvimd [--socket PATH] {start|stop|status|restart|cleanup}\n")
+    io.stderr:write("usage: nvimd [--server PATH] {start|stop|status}\n")
     return 1
   end
 end
@@ -386,23 +318,16 @@ local function has_remote_flag(args: {string}): boolean
   return false
 end
 
-local function is_socket_connectable(socket_path: string): boolean
-  if not file_exists(socket_path) then
-    return false
+local function build_nvim_args(args: {string}): {string}
+  local new_args: {string} = {"nvim"}
+  for _, arg in ipairs(args) do
+    table.insert(new_args, arg)
   end
-
-  local fd = unix.socket(unix.AF_UNIX, unix.SOCK_STREAM)
-  if not fd or fd < 0 then
-    return false
-  end
-
-  local ok = unix.connect(fd, socket_path)
-  unix.close(fd)
-  return ok
+  return new_args
 end
 
 local function ensure_server_running(paths: Paths, nvim_bin: string)
-  if not is_socket_connectable(paths.sock) then
+  if not file_exists(paths.sock) then
     cmd_start(paths, nvim_bin)
   end
 end
@@ -410,62 +335,35 @@ end
 local function client_mode(args: {string}, nvim_bin: string)
   local nvim_invim = os.getenv("NVIM_INVIM")
   local nvim_server_mode = os.getenv("NVIM_SERVER_MODE")
-  local env = env_with_vimruntime(nvim_bin)
+  local env = current_environ()
 
   if nvim_invim or nvim_server_mode then
-    local new_args: {string} = {"nvim"}
-    for _, arg in ipairs(args) do
-      table.insert(new_args, arg)
-    end
-    unix.execve(nvim_bin, new_args, env)
+    unix.execve(nvim_bin, build_nvim_args(args), env)
     return
   end
 
-  local cli_socket, remaining_args = parse_socket_option(args)
-  local use_remote = has_remote_flag(remaining_args)
+  local use_remote = has_remote_flag(args)
 
   if use_remote then
-    local socket_path = get_socket_path(cli_socket)
+    local socket_path = get_socket_path(args)
     local paths = derive_paths(socket_path)
 
     ensure_server_running(paths, nvim_bin)
 
-    local new_args: {string} = {"nvim"}
-    local has_server_arg = false
-    for _, arg in ipairs(remaining_args) do
-      if arg == "--server" then
-        has_server_arg = true
-      end
-    end
+    local has_server_arg = extract_server_socket(args) ~= nil
 
     if not has_server_arg then
-      table.insert(new_args, "--server")
-      table.insert(new_args, paths.sock)
+      local new_args: {string} = {"nvim", "--server", paths.sock}
+      for _, arg in ipairs(args) do
+        table.insert(new_args, arg)
+      end
+      unix.execve(nvim_bin, new_args, env)
+    else
+      unix.execve(nvim_bin, build_nvim_args(args), env)
     end
-
-    for _, arg in ipairs(remaining_args) do
-      table.insert(new_args, arg)
-    end
-
-    unix.execve(nvim_bin, new_args, env)
   else
-    local new_args: {string} = {"nvim"}
-    for _, arg in ipairs(remaining_args) do
-      table.insert(new_args, arg)
-    end
-    unix.execve(nvim_bin, new_args, env)
+    unix.execve(nvim_bin, build_nvim_args(args), env)
   end
-end
-
-local function cleanup_and_exit(signum: integer, paths: Paths)
-  os.remove(paths.sock)
-  if file_exists(paths.pid) then
-    local pid = get_running_pid(paths.pid)
-    if not pid then
-      os.remove(paths.pid)
-    end
-  end
-  os.exit(128 + signum)
 end
 
 local type Args = {number: string}
@@ -483,13 +381,6 @@ local function main(args: Args): number
     cmd_args[i] = args[i]
   end
 
-  local cli_socket, _ = parse_socket_option(cmd_args)
-  local socket_path = get_socket_path(cli_socket)
-  local paths = derive_paths(socket_path)
-
-  unix.sigaction(unix.SIGINT, function() cleanup_and_exit(unix.SIGINT, paths) end)
-  unix.sigaction(unix.SIGTERM, function() cleanup_and_exit(unix.SIGTERM, paths) end)
-
   if program_name == "nvimd" or program_name == "nvimd.lua" then
     return daemon_mode(cmd_args, nvim_bin)
   else
@@ -499,7 +390,6 @@ end
 
 return {
   main = main,
-  load_zsh_environment = load_zsh_environment,
   setup_nvim_environment = setup_nvim_environment,
   resolve_nvim_bin = resolve_nvim_bin,
 }
