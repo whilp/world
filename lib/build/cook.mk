@@ -9,7 +9,8 @@ build_check_update := $(o)/bin/check-update.lua
 build_reporter := $(o)/bin/reporter.lua
 build_help := $(o)/bin/make-help.lua
 build_snap := $(o)/bin/test-snap.lua
-build_files := $(build_fetch) $(build_stage) $(build_check_update) $(build_reporter) $(build_help) $(build_snap)
+gen_bootstrap_shas := $(o)/bin/gen-bootstrap-shas.lua
+build_files := $(build_fetch) $(build_stage) $(build_check_update) $(build_reporter) $(build_help) $(build_snap) $(gen_bootstrap_shas)
 # Test files - .tl source, compiled .lua run by test rule
 build_tests := $(wildcard lib/build/test_*.tl)
 build_snaps := $(wildcard lib/build/*.snap)

@@ -275,7 +275,7 @@ build: home cosmic
 
 .PHONY: release
 ## Create release artifacts (CI only)
-release:
+release: release/bootstrap-home
 	@mkdir -p release
 	@cp artifacts/home-darwin-arm64/home release/home-darwin-arm64
 	@cp artifacts/home-linux-arm64/home release/home-linux-arm64
@@ -283,11 +283,28 @@ release:
 	@cp artifacts/cosmic/cosmic release/cosmic-lua
 	@chmod +x release/*
 	@tag="$$(date -u +%Y-%m-%d)-$${GITHUB_SHA::7}"; \
-	(cd release && sha256sum home-* cosmic-lua > SHA256SUMS && cat SHA256SUMS); \
+	(cd release && sha256sum home-* cosmic-lua bootstrap-home > SHA256SUMS && cat SHA256SUMS); \
 	gh release create "$$tag" \
 		$${PRERELEASE_FLAG} \
 		--title "$$tag" \
-		release/home-* release/cosmic-lua release/SHA256SUMS
+		release/home-* release/cosmic-lua release/bootstrap-home release/SHA256SUMS
+
+# Bootstrap-home binary: bundled lua executable with platform SHAs
+release/bootstrap-home: $(gen_bootstrap_shas) $(o)/lib/bootstrap-home/init.lua $$(cosmos_staged)
+	@mkdir -p release $(o)/bootstrap-home/.built/.lua/bootstrap-home
+	@# Generate shas.lua from artifacts
+	@$(bootstrap_cosmic) $(gen_bootstrap_shas) artifacts o/lib/bootstrap-home/shas.lua
+	@# Bundle bootstrap-home module
+	@$(cp) $(o)/lib/bootstrap-home/init.lua $(o)/bootstrap-home/.built/.lua/bootstrap-home/
+	@$(cp) o/lib/bootstrap-home/shas.lua $(o)/bootstrap-home/.built/.lua/bootstrap-home/
+	@# Start with cosmos executable
+	@$(cp) $(cosmos_lua) $@
+	@chmod +x $@
+	@# Zip in the bundled modules
+	@cd $(o)/bootstrap-home/.built && $(CURDIR)/$(cosmos_zip) -qr $(CURDIR)/$@ .lua
+	@# Zip in a minimal main.lua that calls bootstrap-home
+	@echo 'local bootstrap = require("bootstrap-home"); os.exit(bootstrap.main(arg))' > $(o)/bootstrap-home/main.lua
+	@$(cosmos_zip) -qj $@ $(o)/bootstrap-home/main.lua
 
 ci_stages := astgrep teal test build
 
