@@ -29,8 +29,11 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 20
 
+      - name: fetch base branch
+        run: git fetch origin $GITHUB_BASE_REF --depth=1
+
       - id: update-pr
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_PR_NUMBER: ${{ github.event.number }}
-        run: ./bin/cosmic --skill pr
+        run: ./bin/cosmic -e 'require("lib.skill.pr").main()'
