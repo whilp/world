@@ -104,6 +104,21 @@ local function scan_for_atomic_install(): string
   return latest_path
 end
 
+local function search_path_for_claude(): string
+  local HOME = os.getenv("HOME")
+  local wrapper_path = path.join(HOME, ".local", "bin", "claude")
+  local PATH = os.getenv("PATH")
+  if not PATH then return nil end
+
+  for dir in PATH:gmatch("[^:]+") do
+    local bin_path = path.join(dir, "claude")
+    if bin_path ~= wrapper_path and unix.stat(bin_path) then
+      return bin_path
+    end
+  end
+  return nil
+end
+
 local function main(args: {string})
   local HOME = os.getenv("HOME")
 
@@ -111,7 +126,8 @@ local function main(args: {string})
     scan_for_claude_deploy(),
     scan_for_atomic_install(),
     path.join(HOME, ".local", "share", "claude", "bin", "claude"),
-    "/usr/local/bin/claude",
+    "/.sprite/bin/claude",
+    search_path_for_claude(),
   }
 
   local claude_bin = find_claude_binary(claude_paths)
@@ -150,6 +166,7 @@ local record claude
   build_argv: function(append_prompts: {string}, mcp_config: string, user_args: {string}): {string}
   scan_for_claude_deploy: function(): string
   scan_for_atomic_install: function(): string
+  search_path_for_claude: function(): string
   main: function(args: {string})
 end
 
@@ -158,6 +175,7 @@ local M: claude = {
   build_argv = build_argv,
   scan_for_claude_deploy = scan_for_claude_deploy,
   scan_for_atomic_install = scan_for_atomic_install,
+  search_path_for_claude = search_path_for_claude,
   main = main,
 }
 
