@@ -38,6 +38,7 @@ local type FetchFn = function(url: string, opts?: FetchOpts): number, {string:st
 local record SpawnOpts
   spawn: function({string}): SpawnHandle
   repo: string
+  getenv: function(string): string
 end
 
 local record RequestOpts
@@ -107,47 +108,17 @@ end
 
 local function get_default_branch(opts?: SpawnOpts): string
   opts = opts or {}
-  local do_spawn = opts.spawn or spawn_mod
+  local getenv = opts.getenv or os.getenv
 
-  -- Try to get the remote HEAD branch name
-  local cmd: {string} = {"git"}
-  if opts.repo then
-    table.insert(cmd, "-C")
-    table.insert(cmd, opts.repo)
-  end
-  table.insert(cmd, "remote")
-  table.insert(cmd, "show")
-  table.insert(cmd, "origin")
-
-  local handle = do_spawn(cmd)
-  local ok, out = handle:read()
-  if ok and out then
-    local branch = (out as string):match("HEAD branch: (%S+)")
-    if branch then
-      return "origin/" .. branch
-    end
+  -- In GitHub Actions PR context, GITHUB_BASE_REF is always set
+  local base_ref = getenv("GITHUB_BASE_REF")
+  if base_ref and base_ref ~= "" then
+    log("GITHUB_BASE_REF=" .. base_ref)
+    return "origin/" .. base_ref
   end
 
-  -- Fallback: try common default branches
-  for _, branch in ipairs({"origin/main", "origin/master"}) do
-    cmd = {"git"}
-    if opts.repo then
-      table.insert(cmd, "-C")
-      table.insert(cmd, opts.repo)
-    end
-    table.insert(cmd, "rev-parse")
-    table.insert(cmd, "--verify")
-    table.insert(cmd, branch)
-
-    handle = do_spawn(cmd)
-    ok, _ = handle:read()
-    if ok then
-      return branch
-    end
-  end
-
-  -- Last resort: use origin/HEAD even if it might not exist
-  return "origin/HEAD"
+  log("GITHUB_BASE_REF not set, falling back to origin/main")
+  return "origin/main"
 end
 
 local function get_pr_files_from_branch(opts?: SpawnOpts): {string}
@@ -182,6 +153,7 @@ local function get_pr_files_from_branch(opts?: SpawnOpts): {string}
       table.insert(files, name)
     end
   end
+  log("found " .. #files .. " pr files: " .. table.concat(files, ", "))
   return files
 end
 
