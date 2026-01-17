@@ -272,6 +272,90 @@ local record UnpackOpts
   manifest: Manifest
 end
 
+-- Helper to recursively copy a directory
+local function copy_dir(src: string, dst: string, force: boolean, verbose: boolean, stderr: FILE, stdout: FILE)
+  local dir = unix.opendir(src)
+  if not dir then
+    return
+  end
+
+  for entry in dir do
+    if entry ~= "." and entry ~= ".." then
+      local src_path = path.join(src, entry)
+      local dst_path = path.join(dst, entry)
+      local st = unix.stat(src_path)
+      if st and unix.S_ISDIR(st:mode()) then
+        unix.makedirs(dst_path)
+        copy_dir(src_path, dst_path, force, verbose, stderr, stdout)
+      elseif st then
+        local ok, err = copy_file(src_path, dst_path, st:mode() & tonumber("0777", 8), force)
+        if not ok and verbose then
+          stderr:write("warning: failed to copy " .. src_path .. ": " .. (err or "unknown") .. "\n")
+        elseif ok and verbose then
+          stdout:write(dst_path .. "\n")
+        end
+      end
+    end
+  end
+end
+
+-- Helper to create symlinks for versioned tools in .local/share
+local function create_tool_symlinks(dest: string, verbose: boolean, stderr: FILE)
+  local version_mod = require("version")
+  local share_dir = path.join(dest, ".local", "share")
+  local share_stat = unix.stat(share_dir)
+  if not share_stat or not unix.S_ISDIR(share_stat:mode()) then
+    return
+  end
+
+  local tools_dir = unix.opendir(share_dir)
+  if not tools_dir then
+    return
+  end
+
+  for tool_name in tools_dir do
+    if tool_name ~= "." and tool_name ~= ".." then
+      local tool_path = path.join(share_dir, tool_name)
+      local tool_stat = unix.stat(tool_path)
+      if tool_stat and unix.S_ISDIR(tool_stat:mode()) then
+        -- Find versioned directory (contains version-sha pattern)
+        local versioned_dir: string = nil
+        local entries_dir = unix.opendir(tool_path)
+        if entries_dir then
+          for entry in entries_dir do
+            if entry ~= "." and entry ~= ".." and version_mod.is_version_dir(entry) then
+              versioned_dir = entry
+              break
+            end
+          end
+        end
+
+        -- Create symlinks from tool root to versioned subdirectories
+        if versioned_dir then
+          local versioned_path = path.join(tool_path, versioned_dir)
+          local versioned_entries = unix.opendir(versioned_path)
+          if versioned_entries then
+            for item in versioned_entries do
+              if item ~= "." and item ~= ".." then
+                local link_target = path.join(versioned_dir, item)
+                local link_path = path.join(tool_path, item)
+                -- Only create symlink if it doesn't already exist
+                local link_stat = unix.stat(link_path, unix.AT_SYMLINK_NOFOLLOW)
+                if not link_stat then
+                  local ok = unix.symlink(link_target, link_path)
+                  if not ok and verbose then
+                    stderr:write("warning: failed to create symlink " .. link_path .. "\n")
+                  end
+                end
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
 local function cmd_unpack(dest: string, force: boolean, opts: UnpackOpts): integer
   opts = opts or {} as UnpackOpts
   local stderr = opts.stderr or io.stderr
@@ -279,7 +363,6 @@ local function cmd_unpack(dest: string, force: boolean, opts: UnpackOpts): integ
   local verbose = opts.verbose or false
   local dry_run = opts.dry_run or false
   local only = opts.only or false
-  local zip_root = opts.zip_root or "/zip/home/"
 
   if not dest then
     stderr:write("error: destination path required\n")
@@ -307,102 +390,125 @@ local function cmd_unpack(dest: string, force: boolean, opts: UnpackOpts): integ
     end
   end
 
-  local manifest = opts.manifest or load_manifest()
-  if not manifest or not manifest.files then
-    stderr:write("error: failed to load manifest\n")
+  -- Test mode: when zip_root is provided or manifest is passed, use copy_file approach
+  local manifest = opts.manifest
+  if opts.zip_root or manifest then
+    manifest = manifest or load_manifest()
+    if not manifest or not manifest.files then
+      stderr:write("error: failed to load manifest\n")
+      return 1
+    end
+
+    local zip_root = opts.zip_root or "/zip/home/"
+    local paths: {string} = {}
+    for p in pairs(manifest.files) do
+      table.insert(paths, p)
+    end
+    table.sort(paths)
+
+    for _, rel_path in ipairs(paths) do
+      local info = manifest.files[rel_path]
+      local zip_path = zip_root .. rel_path
+      local dest_path = path.join(dest, rel_path)
+
+      if filter and not filter[rel_path] then
+        goto continue
+      end
+
+      local file_exists = not dry_run and unix.stat(dest_path) ~= nil
+
+      if not dry_run then
+        local parent = path.dirname(dest_path)
+        unix.makedirs(parent)
+
+        local ok, err = copy_file(zip_path, dest_path, info.mode, force)
+        if not ok then
+          stderr:write("warning: failed to copy " .. rel_path .. ": " .. (err or "unknown error") .. "\n")
+        elseif verbose then
+          if force and file_exists then
+            stdout:write(rel_path .. " (overwritten)\n")
+          else
+            stdout:write(rel_path .. "\n")
+          end
+        end
+      elseif verbose then
+        stdout:write(rel_path .. "\n")
+      end
+
+      ::continue::
+    end
+
+    return 0
+  end
+
+  -- Production mode: use unzip to extract dotfiles.zip (preserves symlinks)
+  if dry_run then
+    -- For dry-run, just list what would be extracted
+    local test_manifest = load_manifest()
+    if test_manifest and test_manifest.files then
+      local paths: {string} = {}
+      for p in pairs(test_manifest.files) do
+        table.insert(paths, p)
+      end
+      table.sort(paths)
+      for _, p in ipairs(paths) do
+        if verbose then
+          stdout:write(p .. "\n")
+        end
+      end
+    end
+    stdout:write("(dotfiles from dotfiles.zip)\n")
+    return 0
+  end
+
+  local spawn = require("cosmic.spawn")
+
+  -- Extract unzip binary to temp location
+  local tmpdir = os.getenv("TMPDIR") or "/tmp"
+  local pid = unix.getpid() or 0
+  local tmp_unzip = path.join(tmpdir, "unzip." .. tostring(pid))
+  local tmp_dotfiles = path.join(tmpdir, "dotfiles." .. tostring(pid) .. ".zip")
+
+  -- Extract unzip from the bundled binary
+  local ok, err = copy_file("/zip/home/.local/bin/unzip", tmp_unzip, tonumber("0755", 8), true)
+  if not ok then
+    stderr:write("error: failed to extract unzip: " .. (err or "unknown error") .. "\n")
     return 1
   end
 
-  local paths: {string} = {}
-  for p in pairs(manifest.files) do
-    table.insert(paths, p)
-  end
-  table.sort(paths)
-
-  for _, rel_path in ipairs(paths) do
-    local info = manifest.files[rel_path]
-    local zip_path = zip_root .. rel_path
-    local dest_path = path.join(dest, rel_path)
-
-    if filter and not filter[rel_path] then
-      goto continue
-    end
-
-    local file_exists = not dry_run and unix.stat(dest_path) ~= nil
-
-    if not dry_run then
-      local parent = path.dirname(dest_path)
-      unix.makedirs(parent)
-
-      local ok, err = copy_file(zip_path, dest_path, info.mode, force)
-      if not ok then
-        stderr:write("warning: failed to copy " .. rel_path .. ": " .. (err or "unknown error") .. "\n")
-      elseif verbose then
-        if force and file_exists then
-          stdout:write(rel_path .. " (overwritten)\n")
-        else
-          stdout:write(rel_path .. "\n")
-        end
-      end
-    elseif verbose then
-      stdout:write(rel_path .. "\n")
-    end
-
-    ::continue::
+  -- Extract dotfiles.zip
+  ok, err = copy_file("/zip/dotfiles.zip", tmp_dotfiles, tonumber("0644", 8), true)
+  if not ok then
+    unix.unlink(tmp_unzip)
+    stderr:write("error: failed to extract dotfiles.zip: " .. (err or "unknown error") .. "\n")
+    return 1
   end
 
-  -- Create symlinks from tool root to versioned subdirectories
-  if not dry_run then
-    local version_mod = require("version")
-    local share_dir = path.join(dest, ".local", "share")
-    local share_stat = unix.stat(share_dir)
-    if share_stat and unix.S_ISDIR(share_stat:mode()) then
-      local tools_dir = unix.opendir(share_dir)
-      if tools_dir then
-        for tool_name in tools_dir do
-          if tool_name ~= "." and tool_name ~= ".." then
-            local tool_path = path.join(share_dir, tool_name)
-            local tool_stat = unix.stat(tool_path)
-            if tool_stat and unix.S_ISDIR(tool_stat:mode()) then
-              -- Find versioned directory (contains version-sha pattern)
-              local versioned_dir: string = nil
-              local entries_dir = unix.opendir(tool_path)
-              if entries_dir then
-                for entry in entries_dir do
-                  if entry ~= "." and entry ~= ".." and version_mod.is_version_dir(entry) then
-                    versioned_dir = entry
-                    break
-                  end
-                end
-              end
-
-              -- Create symlinks from tool root to versioned subdirectories
-              if versioned_dir then
-                local versioned_path = path.join(tool_path, versioned_dir)
-                local versioned_entries = unix.opendir(versioned_path)
-                if versioned_entries then
-                  for item in versioned_entries do
-                    if item ~= "." and item ~= ".." then
-                      local link_target = path.join(versioned_dir, item)
-                      local link_path = path.join(tool_path, item)
-                      -- Only create symlink if it doesn't already exist
-                      local link_stat = unix.stat(link_path, unix.AT_SYMLINK_NOFOLLOW)
-                      if not link_stat then
-                        local ok = unix.symlink(link_target, link_path)
-                        if not ok and verbose then
-                          stderr:write("warning: failed to create symlink " .. link_path .. "\n")
-                        end
-                      end
-                    end
-                  end
-                end
-              end
-            end
-          end
-        end
-      end
-    end
+  -- Run unzip to extract dotfiles (preserves symlinks)
+  local unzip_args: {string} = {tmp_unzip, "-q", tmp_dotfiles, "-d", dest}
+  if force then
+    table.insert(unzip_args, 2, "-o")
   end
+  local result = spawn(unzip_args):wait()
+
+  unix.unlink(tmp_dotfiles)
+
+  if result ~= 0 then
+    unix.unlink(tmp_unzip)
+    stderr:write("error: unzip failed with exit code " .. tostring(result) .. "\n")
+    return 1
+  end
+
+  -- Copy 3p tools from /zip/home/.local/share to dest
+  local home_zip_stat = unix.stat("/zip/home")
+  if home_zip_stat and unix.S_ISDIR(home_zip_stat:mode()) then
+    copy_dir("/zip/home", dest, force, verbose, stderr, stdout)
+  end
+
+  unix.unlink(tmp_unzip)
+
+  -- Create symlinks for versioned tools
+  create_tool_symlinks(dest, verbose, stderr)
 
   return 0
 end
