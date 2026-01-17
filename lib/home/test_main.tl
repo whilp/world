@@ -25,7 +25,7 @@ local record CapturedOutput
 end
 
 local record Manifest
-  files: {string:any}
+  tools: {string}
   version: string
 end
 
@@ -54,8 +54,8 @@ local chunk, err = load(manifest_content)
 assert(chunk, "manifest.lua is not valid lua: " .. tostring(err))
 local manifest = chunk() as Manifest
 assert(type(manifest) == "table", "manifest.lua does not return a table")
-assert(manifest.files, "manifest.lua missing files key")
-assert(next(manifest.files), "manifest.lua has empty files")
+assert(manifest.tools, "manifest.lua missing tools key")
+assert(#manifest.tools > 0, "manifest.lua has empty tools")
 
 -- Test built binary has dotfiles.zip
 ok, _ = (spawn({"unzip", "-p", home_bin, "dotfiles.zip"}) as SpawnHandle):read()
@@ -105,10 +105,6 @@ assert(data == "hello world", "read_file content")
 data, err = home.read_file("/nonexistent/path")
 assert(not data, "read_file nonexistent should fail")
 
--- Test format_mode
-assert(home.format_mode(tonumber("644", 8), false) == "-rw-r--r--", "format_mode 644")
-assert(home.format_mode(tonumber("755", 8), false) == "-rwxr-xr-x", "format_mode 755")
-assert(home.format_mode(tonumber("755", 8), true) == "drwxr-xr-x", "format_mode dir")
 
 -- Find system unzip
 local unzip_bin = "/usr/bin/unzip"
@@ -171,16 +167,6 @@ assert(unix.S_ISLNK(link_stat:mode()), "link-to-binary should be a symlink")
 -- Verify symlink target
 local link_target = unix.readlink(link_path, 256)
 assert(link_target == "real-binary", "symlink target should be 'real-binary', got: " .. tostring(link_target))
-
--- Test cmd_list with manifest from built binary
-out = capture_output()
-ret = home.cmd_list({
-  manifest = manifest,
-  stderr = out.stderr_obj,
-  stdout = out.stdout_obj,
-})
-assert(ret == 0, "cmd_list with valid manifest should return 0")
-assert(#out.stdout > 0, "cmd_list should produce output")
 
 -- Test unknown flags are rejected
 local handle = spawn({home_bin, "unpack", "--with-platform", TEST_TMPDIR})

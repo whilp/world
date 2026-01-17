@@ -1,38 +1,37 @@
-# home: preserve symlinks in extraction
+# home: preserve symlinks with per-tool zips
 
-Refactor the home binary build and extraction to preserve symlinks (like `lua -> cosmic-lua`).
+Refactor the home binary to use per-tool zip files that preserve symlinks.
 
 ## Changes
 
-- `lib/home/cook.mk` - restructure build to bundle dotfiles.zip separately from 3p tools; replace `git ls-files` with explicit wildcards for Make dependency tracking
-- `lib/home/main.tl` - use unzip at runtime to extract dotfiles (preserves symlinks)
-- `lib/home/test_main.tl` - update tests to use real zip files for symlink verification; add coverage test comparing dotfiles.zip against git
+- `Makefile` - add `_zip` target for versioned modules; creates `.local/share/<tool>/<version>/` with symlinks
+- `lib/home/cook.mk` - bundle per-tool zips instead of raw directories; simplified build
+- `lib/home/main.tl` - extract tool zips at runtime with unzip (preserves symlinks); remove `cmd_list` and `format_mode`
+- `lib/home/test_main.tl` - update for new manifest format (`tools` instead of `files`); remove list tests
+- `lib/home/test_versioned.tl` - simplify to check tool zips exist and symlinks work after unpack
 
 ## How it works
 
 **Build time:**
-1. Create `dotfiles.zip` containing git-tracked files, compiled nvim configs, cosmic-lua binary, and lua symlink
-2. Bundle 3p tools separately under `home/.local/share/`
-3. Generate manifest from 3p tools only
-4. Bundle `dotfiles.zip` + 3p tools + unzip binary into home binary
+1. Each 3p module gets a `.zip` target that creates `o/<tool>/.zip`
+2. The zip contains `.local/share/<tool>/<version-sha>/` + symlinks at `.local/share/<tool>/`
+3. Home binary bundles: `dotfiles.zip`, `tools/*.zip`, `unzip`, `manifest.lua`
 
 **Runtime:**
-1. Extract bundled unzip to temp location
-2. Use unzip to extract `dotfiles.zip` to destination (preserves symlinks)
-3. Copy 3p tools from `/zip/home/` using copy_file
-4. Create symlinks for versioned tools in `.local/share/`
+1. Extract bundled unzip to temp
+2. Extract `dotfiles.zip` to destination
+3. Extract each `tools/*.zip` to destination (symlinks preserved by unzip)
 
 ## Structure
 
 The home binary now contains:
 - `/zip/dotfiles.zip` - user config files with symlinks
-- `/zip/home/.local/bin/unzip` - extraction tool
-- `/zip/home/.local/share/*/` - 3p tools
-- `/zip/manifest.lua` - manifest for 3p tools
+- `/zip/tools/*.zip` - per-tool zips (gh.zip, nvim.zip, etc.)
+- `/zip/unzip` - extraction tool
+- `/zip/manifest.lua` - `{ version, tools = {...} }`
 
 ## Validation
 
-- [x] `make test` passes (42 tests)
-- [x] `make check` passes (298 checks)
-- [x] lua symlink preserved in dotfiles.zip
-- [x] Symlink extraction verified with unzip -Z
+- [x] `make test` passes (40 tests)
+- [x] Symlinks preserved in tool zips (verified with `unzip -Z`)
+- [x] Symlinks extracted correctly at runtime

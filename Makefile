@@ -109,6 +109,11 @@ $(foreach m,$(modules),$(if $($(m)_version),\
   $(eval $(m)_staged := $(o)/$(m)/.staged)\
   $(if $($(m)_dir),,$(eval $(m)_dir := $(o)/$(m)/.staged))))
 
+# define *_zip for tool modules (excludes cosmos, tl, bootstrap infrastructure)
+zip_excluded := cosmos tl bootstrap
+$(foreach m,$(filter-out $(zip_excluded),$(modules)),$(if $($(m)_version),\
+  $(eval $(m)_zip := $(o)/$(m)/.zip)))
+
 # default deps for regular modules (also excluded from file dep expansion)
 default_deps := bootstrap test
 
@@ -146,6 +151,19 @@ $(o)/%/.staged: .PLEDGE = stdio rpath wpath cpath proc exec
 $(o)/%/.staged: .UNVEIL = rx:$(o)/bootstrap r:3p rwc:$(o) rx:/usr/bin
 $(o)/%/.staged: $(o)/%/.fetched $(build_files)
 	@$(build_stage) $$(readlink $(o)/$*/.versioned) $(platform) $< $@
+
+# tool zips: o/module/.zip contains versioned dir + symlinks (for home binary)
+# structure: .local/share/<tool>/<ver-sha>/* + symlinks at .local/share/<tool>/*
+$(o)/%/.zip: $(o)/%/.staged $$(cosmos_staged)
+	@rm -rf $(@D)/.zip-staging
+	@mkdir -p $(@D)/.zip-staging/.local/share/$*
+	@versioned_name=$$(basename $$(readlink -f $<)) && \
+		cp -r $$(readlink -f $<) $(@D)/.zip-staging/.local/share/$*/$$versioned_name && \
+		for item in $(@D)/.zip-staging/.local/share/$*/$$versioned_name/*; do \
+			ln -sf $$versioned_name/$$(basename $$item) $(@D)/.zip-staging/.local/share/$*/$$(basename $$item); \
+		done && \
+		cd $(@D)/.zip-staging && $(CURDIR)/$(cosmos_zip) -qry $(CURDIR)/$@ .
+	@rm -rf $(@D)/.zip-staging
 
 all_tests := $(call filter-only,$(foreach x,$(modules),$($(x)_tests)))
 all_release_tests := $(call filter-only,$(foreach x,$(modules),$($(x)_release_test) $($(x)_release_tests)))
