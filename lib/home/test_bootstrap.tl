@@ -16,12 +16,11 @@ local function test_detect_platform()
   -- platform should be os-arch format (arch may contain underscore like x86_64)
   assert(platform:match("^%w+%-[%w_]+$"), "expected os-arch format, got: " .. platform)
 
-  -- should be one of the known platforms
+  -- should be one of the release platforms
   local known = {
     ["linux-x86_64"] = true,
     ["linux-arm64"] = true,
     ["darwin-arm64"] = true,
-    ["darwin-x86_64"] = true,
   }
   assert(known[platform], "unexpected platform: " .. platform)
 
