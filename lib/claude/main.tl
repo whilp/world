@@ -12,6 +12,24 @@ local record DirHandle
   close: function(self)
 end
 
+local record BoxEnvClaude
+  token: string
+end
+
+local record BoxEnv
+  claude: BoxEnvClaude
+end
+
+local function load_box_env(): BoxEnv
+  local HOME = os.getenv("HOME")
+  local env_path = path.join(HOME, ".config", "box", "env.lua")
+  local ok, env = pcall(dofile, env_path) as (boolean, BoxEnv)
+  if ok then
+    return env
+  end
+  return nil
+end
+
 local function debug_log(msg: string)
   if os.getenv("CLAUDE_WRAPPER_DEBUG") then
     io.stderr:write("claude wrapper: " .. msg .. "\n")
@@ -154,6 +172,14 @@ local function main(args: {string})
 
   debug_log("execve argv[0]: " .. execve_argv[1])
   debug_log("execve argv[1..]: " .. table.concat(argv, " "))
+
+  if unix.stat("/.sprite") then
+    local box_env = load_box_env()
+    if box_env and box_env.claude and box_env.claude.token then
+      unix.setenv("CLAUDE_CODE_OAUTH_TOKEN", box_env.claude.token)
+      debug_log("set CLAUDE_CODE_OAUTH_TOKEN from box env")
+    end
+  end
 
   local _, err = unix.execve(claude_bin, execve_argv, unix.environ())
 
