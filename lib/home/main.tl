@@ -90,15 +90,10 @@ local function serialize_table(tbl: {any:any}): string
   return "return " .. serialize_value(tbl) .. "\n"
 end
 
--- Manifest file info
-local record FileInfo
-  mode: number
-end
-
--- Main manifest structure
+-- Main manifest structure (new format: lists tools, not individual files)
 local record Manifest
   version: string
-  files: {string:FileInfo}
+  tools: {string}
 end
 
 local function load_manifest(): Manifest
@@ -163,24 +158,6 @@ local function copy_file(src: string, dst: string, mode: number, overwrite: bool
   return true
 end
 
-local function format_mode(mode: number, is_dir: boolean): string
-  if not mode then
-    return "----------"
-  end
-
-  local result: {string} = {}
-  table.insert(result, is_dir and "d" or "-")
-
-  for i = 2, 0, -1 do
-    local shift = i * 3
-    local perms = (mode >> shift) & 7
-    table.insert(result, (perms & 4) ~= 0 and "r" or "-")
-    table.insert(result, (perms & 2) ~= 0 and "w" or "-")
-    table.insert(result, (perms & 1) ~= 0 and "x" or "-")
-  end
-
-  return table.concat(result)
-end
 
 -- Parsed command line arguments
 local record ParsedArgs
@@ -267,9 +244,11 @@ local record UnpackOpts
   dry_run: boolean
   only: boolean
   null: boolean
-  zip_root: string
   filter_input: string
-  manifest: Manifest
+  -- For testing: override default paths
+  unzip_bin: string
+  dotfiles_zip: string
+  tools_dir: string  -- directory containing per-tool zips
 end
 
 local function cmd_unpack(dest: string, force: boolean, opts: UnpackOpts): integer
@@ -278,8 +257,6 @@ local function cmd_unpack(dest: string, force: boolean, opts: UnpackOpts): integ
   local stdout = opts.stdout or io.stdout
   local verbose = opts.verbose or false
   local dry_run = opts.dry_run or false
-  local only = opts.only or false
-  local zip_root = opts.zip_root or "/zip/home/"
 
   if not dest then
     stderr:write("error: destination path required\n")
@@ -287,176 +264,124 @@ local function cmd_unpack(dest: string, force: boolean, opts: UnpackOpts): integ
     return 1
   end
 
-  local filter: {string:boolean} = nil
-  if only then
-    filter = {}
-    local input = opts.filter_input or io.stdin:read("*a")
-    local pattern = opts.null and "[^\0]+" or "[^\n]+"
-    for line in input:gmatch(pattern) do
-      local p = line:match("^%s*(.-)%s*$")
-      if p and p ~= "" then
-        filter[p] = true
-      end
-    end
+  -- Paths (can be overridden for testing)
+  local unzip_src = opts.unzip_bin or "/zip/unzip"
+  local dotfiles_src = opts.dotfiles_zip or "/zip/dotfiles.zip"
+  local tools_src = opts.tools_dir or "/zip/tools"
+
+  if dry_run then
+    stdout:write("would extract dotfiles and tools to " .. dest .. "\n")
+    return 0
   end
 
-  if not dry_run then
-    if not unix.makedirs(dest) then
-      stderr:write("error: failed to create destination directory\n")
-      return 1
-    end
-  end
-
-  local manifest = opts.manifest or load_manifest()
-  if not manifest or not manifest.files then
-    stderr:write("error: failed to load manifest\n")
+  if not unix.makedirs(dest) then
+    stderr:write("error: failed to create destination directory\n")
     return 1
   end
 
-  local paths: {string} = {}
-  for p in pairs(manifest.files) do
-    table.insert(paths, p)
+  local spawn = require("cosmic.spawn")
+
+  -- Extract unzip binary to temp location
+  local tmpdir = os.getenv("TMPDIR") or "/tmp"
+  local pid = unix.getpid() or 0
+  local tmp_unzip = path.join(tmpdir, "unzip." .. tostring(pid))
+
+  -- Copy unzip to temp (may already be a real path for testing)
+  local unzip_stat = unix.stat(unzip_src)
+  if not unzip_stat then
+    stderr:write("error: unzip not found at " .. unzip_src .. "\n")
+    return 1
   end
-  table.sort(paths)
 
-  for _, rel_path in ipairs(paths) do
-    local info = manifest.files[rel_path]
-    local zip_path = zip_root .. rel_path
-    local dest_path = path.join(dest, rel_path)
-
-    if filter and not filter[rel_path] then
-      goto continue
+  local ok: boolean
+  local err: string
+  if unzip_src:match("^/zip/") then
+    ok, err = copy_file(unzip_src, tmp_unzip, tonumber("0755", 8), true)
+    if not ok then
+      stderr:write("error: failed to extract unzip: " .. (err or "unknown error") .. "\n")
+      return 1
     end
+  else
+    tmp_unzip = unzip_src  -- Use provided path directly
+  end
 
-    local file_exists = not dry_run and unix.stat(dest_path) ~= nil
+  -- Helper to extract a zip file
+  local function extract_zip(zip_src: string, zip_name: string, required: boolean): boolean
+    local tmp_zip = path.join(tmpdir, zip_name .. "." .. tostring(pid) .. ".zip")
 
-    if not dry_run then
-      local parent = path.dirname(dest_path)
-      unix.makedirs(parent)
-
-      local ok, err = copy_file(zip_path, dest_path, info.mode, force)
-      if not ok then
-        stderr:write("warning: failed to copy " .. rel_path .. ": " .. (err or "unknown error") .. "\n")
-      elseif verbose then
-        if force and file_exists then
-          stdout:write(rel_path .. " (overwritten)\n")
-        else
-          stdout:write(rel_path .. "\n")
-        end
+    local zip_stat = unix.stat(zip_src)
+    if not zip_stat then
+      if required then
+        stderr:write("error: " .. zip_name .. " not found at " .. zip_src .. "\n")
+        return false
       end
-    elseif verbose then
-      stdout:write(rel_path .. "\n")
+      if verbose then
+        stderr:write("warning: " .. zip_name .. " not found at " .. zip_src .. "\n")
+      end
+      return true  -- Not an error, just skip
     end
 
-    ::continue::
+    -- Copy zip to temp if from /zip/
+    local actual_zip = zip_src
+    if zip_src:match("^/zip/") then
+      local copy_ok, copy_err = copy_file(zip_src, tmp_zip, tonumber("0644", 8), true)
+      if not copy_ok then
+        stderr:write("error: failed to extract " .. zip_name .. ": " .. (copy_err or "unknown error") .. "\n")
+        return false
+      end
+      actual_zip = tmp_zip
+    end
+
+    -- Run unzip
+    local unzip_args: {string} = {tmp_unzip, "-q", actual_zip, "-d", dest}
+    if force then
+      table.insert(unzip_args, 2, "-o")
+    end
+    local result = spawn(unzip_args):wait()
+
+    -- Cleanup temp zip
+    if zip_src:match("^/zip/") then unix.unlink(tmp_zip) end
+
+    if result ~= 0 then
+      stderr:write("error: unzip " .. zip_name .. " failed with exit code " .. tostring(result) .. "\n")
+      return false
+    end
+
+    return true
   end
 
-  -- Create symlinks from tool root to versioned subdirectories
-  if not dry_run then
-    local version_mod = require("version")
-    local share_dir = path.join(dest, ".local", "share")
-    local share_stat = unix.stat(share_dir)
-    if share_stat and unix.S_ISDIR(share_stat:mode()) then
-      local tools_dir = unix.opendir(share_dir)
-      if tools_dir then
-        for tool_name in tools_dir do
-          if tool_name ~= "." and tool_name ~= ".." then
-            local tool_path = path.join(share_dir, tool_name)
-            local tool_stat = unix.stat(tool_path)
-            if tool_stat and unix.S_ISDIR(tool_stat:mode()) then
-              -- Find versioned directory (contains version-sha pattern)
-              local versioned_dir: string = nil
-              local entries_dir = unix.opendir(tool_path)
-              if entries_dir then
-                for entry in entries_dir do
-                  if entry ~= "." and entry ~= ".." and version_mod.is_version_dir(entry) then
-                    versioned_dir = entry
-                    break
-                  end
-                end
-              end
+  -- Extract dotfiles.zip (required)
+  if not extract_zip(dotfiles_src, "dotfiles", true) then
+    if unzip_src:match("^/zip/") then unix.unlink(tmp_unzip) end
+    return 1
+  end
 
-              -- Create symlinks from tool root to versioned subdirectories
-              if versioned_dir then
-                local versioned_path = path.join(tool_path, versioned_dir)
-                local versioned_entries = unix.opendir(versioned_path)
-                if versioned_entries then
-                  for item in versioned_entries do
-                    if item ~= "." and item ~= ".." then
-                      local link_target = path.join(versioned_dir, item)
-                      local link_path = path.join(tool_path, item)
-                      -- Only create symlink if it doesn't already exist
-                      local link_stat = unix.stat(link_path, unix.AT_SYMLINK_NOFOLLOW)
-                      if not link_stat then
-                        local ok = unix.symlink(link_target, link_path)
-                        if not ok and verbose then
-                          stderr:write("warning: failed to create symlink " .. link_path .. "\n")
-                        end
-                      end
-                    end
-                  end
-                end
-              end
-            end
+  -- Extract each tool zip from tools_dir
+  local tools_stat = unix.stat(tools_src)
+  if tools_stat and unix.S_ISDIR(tools_stat:mode()) then
+    local tools_dir_iter = unix.opendir(tools_src)
+    if tools_dir_iter then
+      for entry in tools_dir_iter do
+        if entry ~= "." and entry ~= ".." and entry:match("%.zip$") then
+          local tool_name = entry:gsub("%.zip$", "")
+          local tool_zip = path.join(tools_src, entry)
+          if not extract_zip(tool_zip, tool_name, false) then
+            if unzip_src:match("^/zip/") then unix.unlink(tmp_unzip) end
+            return 1
+          end
+          if verbose then
+            stdout:write("extracted " .. tool_name .. "\n")
           end
         end
       end
     end
   end
 
-  return 0
-end
-
--- Options for cmd_list
-local record ListOpts
-  stdout: FILE
-  stderr: FILE
-  verbose: boolean
-  null: boolean
-  manifest: Manifest
-end
-
--- Path entry for list output
-local record PathEntry
-  path: string
-  mode: number
-end
-
-local function cmd_list(opts: ListOpts): integer
-  opts = opts or {} as ListOpts
-  local stdout = opts.stdout or io.stdout
-  local stderr = opts.stderr or io.stderr
-  local verbose = opts.verbose or false
-  local null = opts.null or false
-
-  local manifest = opts.manifest or load_manifest()
-  if not manifest or not manifest.files then
-    stderr:write("error: failed to load manifest\n")
-    return 1
-  end
-
-  local delimiter = null and string.char(0) or "\n"
-  local all_paths: {PathEntry} = {}
-
-  for p, info in pairs(manifest.files) do
-    table.insert(all_paths, { path = p, mode = info.mode })
-  end
-
-  table.sort(all_paths, function(a: PathEntry, b: PathEntry): boolean
-    return a.path < b.path
-  end)
-
-  for _, entry in ipairs(all_paths) do
-    if verbose then
-      local mode_str = format_mode(entry.mode, false)
-      stdout:write(mode_str .. " " .. entry.path .. delimiter)
-    else
-      stdout:write(entry.path .. delimiter)
-    end
-  end
+  if unzip_src:match("^/zip/") then unix.unlink(tmp_unzip) end
 
   return 0
 end
+
 
 -- Options for cmd_version
 local record VersionOpts
@@ -560,20 +485,14 @@ local function cmd_help(opts: HelpOpts): integer
 
   stderr:write("usage: home <command> [options]\n")
   stderr:write("\ncommands:\n")
-  stderr:write("  list [options]           list embedded files\n")
   stderr:write("  unpack [options] <dest>  extract files to destination\n")
   stderr:write("  setup <dest>             run setup scripts\n")
   stderr:write("  mac [script]             run macOS defaults scripts\n")
   stderr:write("  version                  show build version\n")
-  stderr:write("\nlist options:\n")
-  stderr:write("  --verbose, -v            show permissions\n")
-  stderr:write("  --null, -0               use null delimiter\n")
   stderr:write("\nunpack options:\n")
   stderr:write("  --force, -f              overwrite existing files\n")
   stderr:write("  --verbose, -v            show files as extracted\n")
   stderr:write("  --dry-run, -n            show what would be extracted\n")
-  stderr:write("  --only                   only extract files listed on stdin\n")
-  stderr:write("  --null, -0               read null-delimited paths (with --only)\n")
   stderr:write("\nmac subcommands:\n")
   stderr:write("  mac                      run all macOS defaults scripts\n")
   stderr:write("  mac list                 list available scripts\n")
@@ -605,15 +524,6 @@ local function main(args: {string}, opts: MainOpts): integer
     unpack_opts.null = parsed.null
 
     return cmd_unpack(parsed.dest, parsed.force, unpack_opts)
-  elseif parsed.cmd == "list" then
-    local list_opts: ListOpts = {} as ListOpts
-    for k, v in pairs(opts as {string:any}) do
-      (list_opts as {string:any})[k] = v
-    end
-    list_opts.verbose = parsed.verbose
-    list_opts.null = parsed.null
-
-    return cmd_list(list_opts)
   elseif parsed.cmd == "setup" then
     return cmd_setup(parsed.dest, opts as SetupOpts)
   elseif parsed.cmd == "mac" then
@@ -641,10 +551,8 @@ local record Home
   serialize_table: function(tbl: {any:any}): string
   load_manifest: function(): Manifest
   copy_file: function(src: string, dst: string, mode: number, overwrite: boolean): boolean, string
-  format_mode: function(mode: number, is_dir: boolean): string
   parse_args: function(args: {string}): ParsedArgs
   cmd_unpack: function(dest: string, force: boolean, opts: UnpackOpts): integer
-  cmd_list: function(opts: ListOpts): integer
   cmd_setup: function(dest: string, opts: SetupOpts): integer
   cmd_mac: function(args: {string}, opts: MacOpts): integer
   cmd_version: function(opts: VersionOpts): integer
@@ -658,10 +566,8 @@ local home: Home = {
   serialize_table = serialize_table,
   load_manifest = load_manifest,
   copy_file = copy_file,
-  format_mode = format_mode,
   parse_args = parse_args,
   cmd_unpack = cmd_unpack,
-  cmd_list = cmd_list,
   cmd_setup = cmd_setup,
   cmd_mac = cmd_mac,
   cmd_version = cmd_version,

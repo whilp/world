@@ -26,23 +26,12 @@ end
 
 local home_bin = path.join(os.getenv("TEST_BIN") or "", "home")
 
--- Test 1: Built binary contains versioned directories for 3p tools
-local ok, list_output = (spawn({home_bin, "list"}) as SpawnHandle):read()
-assert(ok, "home list failed")
-
--- Check gh has versioned directory
-local gh_versioned = list_output:match("%.local/share/gh/([%d%.%-]+%-%x+)/")
-assert(gh_versioned, "gh should have versioned directory in home binary")
-assert(gh_versioned:match("^%d+%.%d+%.%d+%-%x+$"), "gh version format: " .. gh_versioned)
-
--- Check nvim has versioned directory
-local nvim_versioned = list_output:match("%.local/share/nvim/([^/]+)/")
-assert(nvim_versioned, "nvim should have versioned directory in home binary")
-assert(nvim_versioned:match("%-%x+$"), "nvim has sha suffix: " .. nvim_versioned)
-
--- Check delta has versioned directory
-local delta_versioned = list_output:match("%.local/share/delta/([%d%.%-]+%-%x+)/")
-assert(delta_versioned, "delta should have versioned directory in home binary")
+-- Test 1: Built binary contains tool zips
+local ok, zip_list = (spawn({"unzip", "-l", home_bin}) as SpawnHandle):read()
+assert(ok, "failed to list home binary contents")
+assert(zip_list:match("tools/gh%.zip"), "home binary should contain tools/gh.zip")
+assert(zip_list:match("tools/nvim%.zip"), "home binary should contain tools/nvim.zip")
+assert(zip_list:match("tools/delta%.zip"), "home binary should contain tools/delta.zip")
 
 -- Test 2: Unpack preserves versioned directory structure
 local test_home = path.join(TEST_TMPDIR, "versioned_test")
