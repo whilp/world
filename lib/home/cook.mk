@@ -41,8 +41,9 @@ dots_config := $(wildcard .config/delta/*) $(wildcard .config/fish/*) \
     $(wildcard .config/ripgrep/*) $(wildcard .config/ssh/*) \
     $(wildcard .config/voyager/*) $(wildcard .config/hammerspoon/*)
 # .config/nvim (nested structure)
-dots_nvim := $(wildcard .config/nvim/*.lua) $(wildcard .config/nvim/*.tl) \
-    $(wildcard .config/nvim/plugin/*.lua) $(wildcard .config/nvim/plugin/*.tl) \
+# Source .tl files are compiled to .lua at build time; only ship .lua
+dots_nvim_tl := $(wildcard .config/nvim/*.tl) $(wildcard .config/nvim/plugin/*.tl)
+dots_nvim := $(wildcard .config/nvim/*.lua) $(wildcard .config/nvim/plugin/*.lua) \
     $(wildcard .config/nvim/queries/*/*.scm)
 # .local/bin scripts
 dots_local_bin := $(wildcard .local/bin/*)
@@ -60,8 +61,7 @@ dots_lib := lib/cook.mk $(wildcard lib/*.lua) $(wildcard lib/*.tl) \
 home_built := $(o)/home/.built
 
 # Nvim config teal files (compiled at build time, shipped as .lua)
-home_nvim_tl_srcs := $(filter %.tl,$(dots_nvim))
-home_nvim_tl_compiled := $(patsubst %.tl,$(o)/%.lua,$(home_nvim_tl_srcs))
+home_nvim_tl_compiled := $(patsubst %.tl,$(o)/%.lua,$(dots_nvim_tl))
 
 # Aggregate all dotfiles
 home_dotfiles := $(dots_shell) $(dots_editor) $(dots_tools) $(dots_claude) \
@@ -87,14 +87,11 @@ $(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin) $(home_
 		mkdir -p $(o)/home/.dotfiles-staging/$$(dirname "$$f") && \
 		cp -a "$$f" $(o)/home/.dotfiles-staging/"$$f"; \
 	done
-	@if [ -n "$(home_nvim_tl_compiled)" ]; then \
-		for f in $(home_nvim_tl_compiled); do \
-			target=$${f#$(o)/}; \
-			mkdir -p $(o)/home/.dotfiles-staging/$$(dirname $$target); \
-			cp $$f $(o)/home/.dotfiles-staging/$$target; \
-		done; \
-		find $(o)/home/.dotfiles-staging/.config/nvim -name '*.tl' -delete 2>/dev/null || true; \
-	fi
+	@for f in $(home_nvim_tl_compiled); do \
+		target=$${f#$(o)/}; \
+		mkdir -p $(o)/home/.dotfiles-staging/$$(dirname $$target); \
+		cp $$f $(o)/home/.dotfiles-staging/$$target; \
+	done
 	@mkdir -p $(o)/home/.dotfiles-staging/.local/bin
 	@$(cp) $(cosmic_bin) $(o)/home/.dotfiles-staging/.local/bin/cosmic-lua
 	@ln -sf cosmic-lua $(o)/home/.dotfiles-staging/.local/bin/lua
