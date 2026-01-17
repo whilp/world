@@ -190,3 +190,65 @@ assert(exit_code ~= 0, "unknown flag --with-platform should fail, got exit code:
 handle = spawn({home_bin, "unpack", "--unknown-flag", TEST_TMPDIR})
 exit_code = handle:wait()
 assert(exit_code ~= 0, "unknown flag --unknown-flag should fail")
+
+-- Test dotfiles.zip coverage: all git-tracked files should be in the zip
+-- Get git files (excluding build artifacts)
+local git_ok, git_output = (spawn({"git", "ls-files"}) as SpawnHandle):read()
+assert(git_ok, "failed to run git ls-files")
+
+local git_files: {string:boolean} = {}
+for line in (git_output or ""):gmatch("[^\n]+") do
+  -- Exclude 3p/, o/, results/, Makefile, .git, world/ (submodule)
+  if not line:match("^3p/") and not line:match("^o/") and not line:match("^results/")
+     and not line:match("^Makefile") and not line:match("^%.git")
+     and not line:match("^world/") then
+    git_files[line] = true
+  end
+end
+
+-- Get zip files
+local zip_ok, zip_output = (spawn({"unzip", "-Z1", home_bin, "dotfiles.zip"}) as SpawnHandle):read()
+-- Extract dotfiles.zip to temp and list its contents
+local dotfiles_tmp = path.join(TEST_TMPDIR, "dotfiles_coverage")
+unix.makedirs(dotfiles_tmp)
+local unzip_result = (spawn({"unzip", "-q", "-o", home_bin, "dotfiles.zip", "-d", dotfiles_tmp}) as SpawnHandle):wait()
+assert(unzip_result == 0, "failed to extract dotfiles.zip from home binary")
+
+local list_ok, list_output = (spawn({"unzip", "-Z1", path.join(dotfiles_tmp, "dotfiles.zip")}) as SpawnHandle):read()
+assert(list_ok, "failed to list dotfiles.zip contents")
+
+local zip_files: {string:boolean} = {}
+for line in (list_output or ""):gmatch("[^\n]+") do
+  if not line:match("/$") then  -- Skip directories
+    zip_files[line] = true
+  end
+end
+
+-- Check coverage: every git file should be in zip (with some exceptions)
+local missing: {string} = {}
+for f in pairs(git_files) do
+  local in_zip = zip_files[f]
+  -- .tl files in .config/nvim are compiled to .lua
+  if not in_zip and f:match("^%.config/nvim/.*%.tl$") then
+    local lua_version = f:gsub("%.tl$", ".lua")
+    in_zip = zip_files[lua_version]
+  end
+  if not in_zip then
+    table.insert(missing, f)
+  end
+end
+
+unix.rmrf(dotfiles_tmp)
+
+if #missing > 0 then
+  table.sort(missing)
+  local msg = "dotfiles.zip missing " .. #missing .. " git-tracked files:\n"
+  for i = 1, math.min(20, #missing) do
+    msg = msg .. "  " .. missing[i] .. "\n"
+  end
+  if #missing > 20 then
+    msg = msg .. "  ... and " .. (#missing - 20) .. " more\n"
+  end
+  msg = msg .. "Add wildcards to dots_* in lib/home/cook.mk"
+  assert(false, msg)
+end

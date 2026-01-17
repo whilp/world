@@ -15,16 +15,58 @@ home_3p_tools := ast-grep biome comrak delta duckdb gh marksman rg ruff shfmt sq
 home_deps := cosmos cosmic nvim $(home_3p_tools)
 
 # Build configuration
-home_exclude_pattern := ^(3p/|o/|results/|Makefile|\.git)
 home_setup_dir := lib/home/setup
 home_mac_dir := lib/home/mac
 HOME_VERSION ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 
+# Dotfiles sources (explicit wildcards for Make dependency tracking)
+# Shell configs
+dots_shell := .zshrc .zshenv .zprofile
+# Editor/linter configs
+dots_editor := .editorconfig .stylua.toml .luacheckrc tlconfig.lua biome.json sgconfig.yml
+# Tool configs
+dots_tools := .aerospace.toml .watchmanconfig
+# Claude config
+dots_claude := .claude/.ignore .claude/settings.json \
+    $(wildcard .claude/*.md) $(wildcard .claude/commands/*.md) \
+    $(wildcard .claude/skills/*/*.md)
+# AST-grep rules
+dots_ast_grep := $(wildcard .ast-grep/rules/*.yml)
+# Hammerspoon symlink (files are in .config/hammerspoon via dots_config)
+dots_hammerspoon := .hammerspoon
+# .config/* (flat subdirs)
+dots_config := $(wildcard .config/delta/*) $(wildcard .config/fish/*) \
+    $(wildcard .config/gh/*) $(wildcard .config/ghostty/*) \
+    $(wildcard .config/git/*) $(wildcard .config/karabiner/*) \
+    $(wildcard .config/ripgrep/*) $(wildcard .config/ssh/*) \
+    $(wildcard .config/voyager/*) $(wildcard .config/hammerspoon/*)
+# .config/nvim (nested structure)
+dots_nvim := $(wildcard .config/nvim/*.lua) $(wildcard .config/nvim/*.tl) \
+    $(wildcard .config/nvim/plugin/*.lua) $(wildcard .config/nvim/plugin/*.tl) \
+    $(wildcard .config/nvim/queries/*/*.scm)
+# .local/bin scripts
+dots_local_bin := $(wildcard .local/bin/*)
+# Root files
+dots_root := CLAUDE.md LICENSE README.md bootstrap.mk cook.mk setup.sh
+# bin/ scripts
+dots_bin := $(wildcard bin/*)
+# lib/ sources (comprehensive wildcards)
+dots_lib := lib/cook.mk $(wildcard lib/*.lua) $(wildcard lib/*.tl) \
+    $(wildcard lib/*/cook.mk) $(wildcard lib/*/*.lua) $(wildcard lib/*/*.tl) \
+    $(wildcard lib/*/*.snap) $(wildcard lib/*/*/*.lua) $(wildcard lib/*/*/*.tl) \
+    $(wildcard lib/types/*.d.tl) $(wildcard lib/types/*/*.d.tl) \
+    $(wildcard lib/*/.args) $(wildcard lib/*/MANIFEST.txt)
+
 home_built := $(o)/home/.built
 
 # Nvim config teal files (compiled at build time, shipped as .lua)
-home_nvim_tl_srcs := $(shell find .config/nvim -name '*.tl' 2>/dev/null)
+home_nvim_tl_srcs := $(filter %.tl,$(dots_nvim))
 home_nvim_tl_compiled := $(patsubst %.tl,$(o)/%.lua,$(home_nvim_tl_srcs))
+
+# Aggregate all dotfiles
+home_dotfiles := $(dots_shell) $(dots_editor) $(dots_tools) $(dots_claude) \
+    $(dots_ast_grep) $(dots_hammerspoon) $(dots_config) $(dots_nvim) \
+    $(dots_local_bin) $(dots_root) $(dots_bin) $(dots_lib)
 
 # Compile nvim .tl configs to .lua
 # Uses secondary expansion so $(tl_files) is evaluated after all includes
@@ -37,12 +79,14 @@ $(o)/.config/nvim/%.lua: .config/nvim/%.tl $$(tl_files) $$(bootstrap_files) | $$
 HOME_NVIM_DIR ?= $(nvim_staged)
 
 # Create dotfiles.zip with symlinks preserved
-# Includes: git-tracked files, compiled nvim configs, cosmic-lua binary, lua symlink
-$(o)/home/dotfiles.zip: $$(cosmos_staged) $(cosmic_bin) $(home_nvim_tl_compiled)
+# Includes: dotfiles, compiled nvim configs, cosmic-lua binary, lua symlink
+$(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin) $(home_nvim_tl_compiled)
 	@rm -rf $(o)/home/.dotfiles-staging
 	@mkdir -p $(@D) $(o)/home/.dotfiles-staging
-	@git ls-files -z | grep -zZvE '$(home_exclude_pattern)' | xargs -0 -I{} cp --parents -a {} $(o)/home/.dotfiles-staging/ 2>/dev/null || \
-		git ls-files | grep -vE '$(home_exclude_pattern)' | while read f; do mkdir -p $(o)/home/.dotfiles-staging/$$(dirname "$$f") && cp -a "$$f" $(o)/home/.dotfiles-staging/"$$f"; done
+	@for f in $(home_dotfiles); do \
+		mkdir -p $(o)/home/.dotfiles-staging/$$(dirname "$$f") && \
+		cp -a "$$f" $(o)/home/.dotfiles-staging/"$$f"; \
+	done
 	@if [ -n "$(home_nvim_tl_compiled)" ]; then \
 		for f in $(home_nvim_tl_compiled); do \
 			target=$${f#$(o)/}; \
