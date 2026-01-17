@@ -6,8 +6,8 @@ home_bin := $(o)/bin/home
 # only include home_bin in home_files; home_libs are explicit prereqs of home_bin
 # but shouldn't inherit home_deps (which would require staging 20+ tools for linting)
 home_files := $(home_bin)
-home_tests := lib/home/test_main.tl lib/home/test_versioned.tl
-home_tl_files := lib/home/main.tl lib/home/gen-manifest.tl $(wildcard lib/home/setup/*.tl) $(wildcard lib/home/mac/*.tl)
+home_tests := $(wildcard lib/home/test_*.tl)
+home_tl_files := lib/home/main.tl lib/home/gen-manifest.tl lib/home/bootstrap.tl $(wildcard lib/home/setup/*.tl) $(wildcard lib/home/mac/*.tl)
 
 # 3p tools to bundle (nvim handled specially for bundled version)
 home_3p_tools := ast-grep biome comrak delta duckdb gh marksman rg ruff shfmt sqruff stylua superhtml tree-sitter uv
@@ -128,6 +128,29 @@ $(home_bin): $(home_libs) $(home_tl_lua) $(o)/home/dotfiles.zip $$(cosmos_staged
 home: $(home_bin)
 
 .PHONY: home
+
+# Bootstrap binary: lightweight binary for sprite bootstrap
+bootstrap_bin := $(o)/bin/bootstrap
+bootstrap_built := $(o)/bootstrap/.built
+bootstrap_main := $(o)/lib/home/bootstrap.lua
+bootstrap_spawn := $(o)/lib/cosmic/spawn.lua
+
+$(bootstrap_bin): $(bootstrap_main) $(bootstrap_spawn) $$(cosmos_staged)
+	@rm -rf $(bootstrap_built)
+	@mkdir -p $(bootstrap_built)/.lua/cosmic $(@D)
+	@$(cp) $(bootstrap_spawn) $(bootstrap_built)/.lua/cosmic/
+	@$(cp) $(cosmos_lua) $@
+	@chmod +x $@
+	@cd $(bootstrap_built) && $(CURDIR)/$(cosmos_zip) -qr $(CURDIR)/$@ .lua
+	@$(cosmos_zip) -qj $@ $(bootstrap_main)
+	@rm -rf $(bootstrap_built)
+
+bootstrap: $(bootstrap_bin)
+
+.PHONY: bootstrap
+
+# bootstrap test depends on the bootstrap binary
+$(o)/lib/home/test_bootstrap.tl.test.ok: $(bootstrap_bin)
 
 # home-release: rebuild home with nvim bundle (used by test-release)
 .PHONY: home-release

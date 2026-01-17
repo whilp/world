@@ -43,12 +43,14 @@ jobs:
           name: home-${{ matrix.platform }}
           path: o/bin/home
 
-      - id: upload-cosmic
+      - id: upload-cosmopolitan
         if: matrix.platform == 'linux-x86_64'
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
         with:
-          name: cosmic
-          path: o/bin/cosmic
+          name: cosmopolitan
+          path: |
+            o/bin/cosmic
+            o/bin/bootstrap
 
   release:
     runs-on: ubuntu-latest
