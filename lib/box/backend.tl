@@ -16,7 +16,7 @@ local record Backend
 end
 
 local record Env
-  github: {string: string}
+  github: {string: any}
   claude: {string: any}
 end
 

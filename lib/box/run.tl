@@ -10,6 +10,8 @@ local spawn = require("cosmic.spawn")
 
 local backend = require("box.backend")
 
+local ENV_PATH <const> = "/zip/env.lua"
+
 local function write_file(filepath: string, content: string, mode: number): boolean, string
   local dir = path.dirname(filepath)
   if not unix.makedirs(dir) then
@@ -42,11 +44,9 @@ local function configure_gh(env: backend.Env): boolean, string
   for host, token in pairs(env.github) do
     io.stderr:write("configuring gh auth for " .. host .. "...\n")
 
-    -- gh auth login -h <host> --with-token
     local args: {string} = {gh_bin, "auth", "login", "-h", host, "--with-token"}
     local handle = spawn(args)
 
-    -- Write token to stdin
     if handle.stdin then
       handle.stdin:write(token .. "\n")
       handle.stdin:close()
@@ -55,7 +55,6 @@ local function configure_gh(env: backend.Env): boolean, string
     local exit_code = handle:wait()
     if exit_code ~= 0 then
       io.stderr:write("warning: gh auth login failed for " .. host .. " (exit " .. tostring(exit_code) .. ")\n")
-      -- Continue with other hosts
     end
   end
 
@@ -88,38 +87,18 @@ local function configure_claude(env: backend.Env): boolean, string
     end
   end
 
-  -- Write oauth token to ~/.env for shell access
-  local token = env.claude["token"]
-  if token then
-    local env_file = path.join(home, ".env")
-    local existing = ""
-    local f = io.open(env_file, "r")
-    if f then
-      existing = f:read("*a") or ""
-      f:close()
-    end
-
-    if not existing:find("CLAUDE_CODE_OAUTH_TOKEN") then
-      local line = "CLAUDE_CODE_OAUTH_TOKEN=" .. token .. "\n"
-      local ok, err = write_file(env_file, existing .. line, tonumber("0600", 8))
-      if not ok then
-        return false, "failed to write ~/.env: " .. (err or "unknown")
-      end
-    end
-  end
-
-  -- Write settings to skip onboarding (like setup/claude.tl)
-  local config_file = path.join(home, ".claude.json")
-  if not unix.stat(config_file) then
-    local settings = [[{
-  "numStartups": 1,
-  "installMethod": "unknown",
-  "autoUpdates": false,
-  "theme": "dark-daltonized",
-  "hasCompletedOnboarding": true,
-  "bypassPermissionsModeAccepted": true
-}]]
-    local ok, err = write_file(config_file, settings, tonumber("0644", 8))
+  -- Write settings to skip onboarding
+  local settings_file = path.join(claude_dir, "settings.json")
+  if not unix.stat(settings_file) then
+    local settings = {
+      numStartups = 1,
+      installMethod = "unknown",
+      autoUpdates = false,
+      theme = "dark-daltonized",
+      hasCompletedOnboarding = true,
+      bypassPermissionsModeAccepted = true,
+    }
+    local ok, err = write_file(settings_file, cosmo.EncodeJson(settings), tonumber("0644", 8))
     if not ok then
       return false, "failed to write settings: " .. (err or "unknown")
     end
@@ -129,8 +108,7 @@ local function configure_claude(env: backend.Env): boolean, string
 end
 
 local function run_bootstrap(): boolean, string
-  -- Use the existing bootstrap module
-  local bootstrap = require("home.bootstrap")
+  local bootstrap = require("box.bootstrap")
   local code, err = bootstrap.main()
   if code ~= 0 then
     return false, err or "bootstrap failed"
@@ -144,13 +122,10 @@ local function write_env(): boolean, string
     return false, "HOME not set"
   end
 
-  -- Copy /zip/env.lua to ~/.config/box/env.lua
-  local src = io.open("/zip/env.lua", "rb")
-  if not src then
+  local content = cosmo.Slurp(ENV_PATH)
+  if not content then
     return true -- no env.lua in zip, skip
   end
-  local content = src:read("*a")
-  src:close()
 
   local env_path = path.join(home, ".config", "box", "env.lua")
   local ok, err = write_file(env_path, content, tonumber("0600", 8))
@@ -161,7 +136,7 @@ local function write_env(): boolean, string
   return true
 end
 
-local function bootstrap(env: backend.Env): integer
+local function bootstrap(env: backend.Env): integer, string
   io.stderr:write("==> running bootstrap\n")
 
   -- Step 0: Write env.lua to ~/.config/box/env.lua
@@ -173,22 +148,19 @@ local function bootstrap(env: backend.Env): integer
   -- Step 1: Download and unpack home
   ok, err = run_bootstrap()
   if not ok then
-    io.stderr:write("error: " .. (err or "bootstrap failed") .. "\n")
-    return 1
+    return 1, err or "bootstrap failed"
   end
 
   -- Step 2: Configure gh auth for each github host
   ok, err = configure_gh(env)
   if not ok then
-    io.stderr:write("error: " .. (err or "gh config failed") .. "\n")
-    return 1
+    return 1, err or "gh config failed"
   end
 
   -- Step 3: Configure claude credentials
   ok, err = configure_claude(env)
   if not ok then
-    io.stderr:write("error: " .. (err or "claude config failed") .. "\n")
-    return 1
+    return 1, err or "claude config failed"
   end
 
   io.stderr:write("==> bootstrap complete\n")

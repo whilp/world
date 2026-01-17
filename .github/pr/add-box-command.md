@@ -58,10 +58,11 @@ end
 ## Changes
 
 - `lib/box/backend.tl` - type definitions (Result, Backend, Env)
+- `lib/box/bootstrap.tl` - downloads and unpacks home from releases
 - `lib/box/init.tl` - main CLI entry point, self-modifying zip logic
 - `lib/box/run.tl` - bootstrap logic (runs on remote)
 - `lib/box/sprite.tl` - sprites.dev backend
-- `lib/box/mac.tl` - local mac backend for testing
+- `lib/box/mac.tl` - local mac backend (placeholder)
 - `lib/box/cook.mk` - build rules (bundles cosmos zip/unzip)
 - `lib/cook.mk` - include box module
 

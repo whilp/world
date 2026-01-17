@@ -14,13 +14,6 @@ local function err(msg: string): backend.Result
 end
 
 local function new(name: string, ...: string): backend.Result
-  -- destroy if exists (ignore errors)
-  local destroy_handle = spawn({"sprite", "destroy", "-s", name, "-force"})
-  if destroy_handle then
-    destroy_handle:wait()
-  end
-
-  -- create new sprite
   local handle = spawn({"sprite", "create", name})
   if not handle then
     return err("sprite binary not found")

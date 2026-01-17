@@ -7,15 +7,7 @@ local spawn = require("cosmic.spawn")
 
 local backend_mod = require("box.backend")
 
-local record Backend
-  name: string
-  new: function(name: string, ...: string): backend_mod.Result
-  ssh: function(name: string, ...: string): backend_mod.Result
-  exec: function(name: string, cmd: string): backend_mod.Result
-  upload: function(name: string, src: string, dst: string): backend_mod.Result
-  destroy: function(name: string): backend_mod.Result
-  list: function(): backend_mod.Result
-end
+local ENV_PATH <const> = "/zip/env.lua"
 
 local record ParsedArgs
   backend_type: string  -- "sprite", "mac", or path to backend file
@@ -24,11 +16,6 @@ local record ParsedArgs
   env_path: string      -- path to env.lua
   local_run: boolean    -- running remotely after upload
   extra_args: {string}  -- extra args to pass to ssh
-end
-
-local function die(msg: string)
-  io.stderr:write("error: " .. msg .. "\n")
-  os.exit(1)
 end
 
 local function usage()
@@ -98,7 +85,7 @@ local function parse_args(args: {string}): ParsedArgs
       usage()
       os.exit(0)
     elseif opt == "?" then
-      die("invalid option")
+      return nil, "invalid option"
     end
   end
 
@@ -106,7 +93,6 @@ local function parse_args(args: {string}): ParsedArgs
   if remaining then
     for i, v in ipairs(remaining) do
       if i == 1 then
-        -- First remaining arg is name or command
         if v == "list" then
           result.cmd = "list"
         else
@@ -123,112 +109,97 @@ local function parse_args(args: {string}): ParsedArgs
   return result
 end
 
-local function load_backend(backend_type: string): Backend
+local function load_teal_backend(filepath: string): backend_mod.Backend, string
+  local tl = require("tl")
+  local result = tl.process(filepath)
+  if result.syntax_errors and #result.syntax_errors > 0 then
+    return nil, "teal syntax error in " .. filepath
+  end
+  if result.type_errors and #result.type_errors > 0 then
+    for _, err in ipairs(result.type_errors) do
+      io.stderr:write(filepath .. ":" .. err.y .. ": " .. err.msg .. "\n")
+    end
+    return nil, "teal type errors in " .. filepath
+  end
+  local chunk, err = load(tl.pretty_print_ast(result.ast), "@" .. filepath)
+  if not chunk then
+    return nil, "failed to load compiled teal: " .. (err or "unknown error")
+  end
+  return chunk() as backend_mod.Backend
+end
+
+local function load_lua_backend(filepath: string): backend_mod.Backend, string
+  local chunk, err = loadfile(filepath)
+  if not chunk then
+    return nil, "failed to load backend: " .. (err or "unknown error")
+  end
+  return chunk() as backend_mod.Backend
+end
+
+local function load_backend(backend_type: string): backend_mod.Backend, string
   if backend_type == "sprite" then
-    return require("box.sprite") as Backend
+    return require("box.sprite") as backend_mod.Backend
   elseif backend_type == "mac" then
-    return require("box.mac") as Backend
+    return require("box.mac") as backend_mod.Backend
   elseif backend_type then
-    -- Custom backend file
     local ext = backend_type:match("%.([^.]+)$")
     if ext == "tl" then
-      -- Compile teal to lua first
-      local tl = require("tl")
-      local result = tl.process(backend_type)
-      if result.syntax_errors and #result.syntax_errors > 0 then
-        die("teal syntax error in " .. backend_type)
-      end
-      if result.type_errors and #result.type_errors > 0 then
-        for _, err in ipairs(result.type_errors) do
-          io.stderr:write(backend_type .. ":" .. err.y .. ": " .. err.msg .. "\n")
-        end
-        die("teal type errors in " .. backend_type)
-      end
-      local chunk, err = load(tl.pretty_print_ast(result.ast), "@" .. backend_type)
-      if not chunk then
-        die("failed to load compiled teal: " .. (err or "unknown error"))
-      end
-      return chunk() as Backend
+      return load_teal_backend(backend_type)
     else
-      local chunk, err = loadfile(backend_type)
-      if not chunk then
-        die("failed to load backend: " .. (err or "unknown error"))
-      end
-      return chunk() as Backend
+      return load_lua_backend(backend_type)
     end
   else
-    die("no backend specified (use --sprite, --mac, or --backend)")
-    return nil
+    return nil, "no backend specified (use --sprite, --mac, or --backend)"
   end
 end
 
-local function load_env(env_path: string, name: string): backend_mod.Env
-  local st = unix.stat(env_path)
-  if not st then
-    die("env file not found: " .. env_path)
+local function load_env(env_path: string, name: string): backend_mod.Env, string
+  local content = cosmo.Slurp(env_path)
+  if not content then
+    return nil, "env file not found: " .. env_path
   end
 
-  local chunk, err = loadfile(env_path)
+  local chunk, err = load(content, "@" .. env_path)
   if not chunk then
-    die("failed to load env: " .. (err or "unknown error"))
+    return nil, "failed to load env: " .. (err or "unknown error")
   end
 
   local ok, env = pcall(chunk)
   if not ok then
-    die("failed to execute env: " .. tostring(env))
+    return nil, "failed to execute env: " .. tostring(env)
   end
 
   -- env.lua can be a function(name) or a table
   if type(env) == "function" then
     ok, env = pcall(env as function(string): backend_mod.Env, name)
     if not ok then
-      die("failed to call env function: " .. tostring(env))
+      return nil, "failed to call env function: " .. tostring(env)
     end
   end
 
   return env as backend_mod.Env
 end
 
-local function cmd_new(be: Backend, name: string): boolean
+local function cmd_new(be: backend_mod.Backend, name: string): boolean, string
   io.stderr:write("==> creating " .. name .. "\n")
+
+  -- Destroy existing box first (ignore errors)
+  be.destroy(name)
+
   local result = be.new(name)
   if not result.ok then
-    io.stderr:write("error: " .. (result.err or "unknown error") .. "\n")
-    return false
+    return false, result.err or "unknown error"
   end
   return true
 end
 
-local function copy_file(src: string, dst: string, mode: number): boolean, string
-  local src_f, err = io.open(src, "rb")
-  if not src_f then
-    return false, "failed to open source: " .. (err or "unknown")
-  end
-  local data = src_f:read("*a")
-  src_f:close()
-
-  local dst_f: FILE
-  dst_f, err = io.open(dst, "wb")
-  if not dst_f then
-    return false, "failed to open destination: " .. (err or "unknown")
-  end
-  dst_f:write(data)
-  dst_f:close()
-
-  if mode then
-    unix.chmod(dst, mode)
-  end
-  return true
-end
-
-local function cmd_run(be: Backend, name: string, env_path: string): boolean
+local function cmd_run(be: backend_mod.Backend, name: string, env_path: string): boolean, string
   io.stderr:write("==> bootstrapping " .. name .. "\n")
 
   -- Get path to self (the box binary)
-  -- In cosmopolitan lua, arg[-1] is the executable path
   local self_path = arg[-1]
   if not self_path then
-    die("cannot determine path to self")
+    return false, "cannot determine path to self"
   end
 
   -- Resolve to absolute path
@@ -238,122 +209,114 @@ local function cmd_run(be: Backend, name: string, env_path: string): boolean
   end
 
   -- Check if file exists
-  local st = unix.stat(self_path)
-  if not st then
-    die("cannot find self at: " .. self_path)
+  local self_data = cosmo.Slurp(self_path)
+  if not self_data then
+    return false, "cannot find self at: " .. self_path
   end
 
   -- Verify env.lua exists
-  local env_src = io.open(env_path, "rb")
-  if not env_src then
-    die("failed to open env: " .. env_path)
+  local env_data = cosmo.Slurp(env_path)
+  if not env_data then
+    return false, "failed to open env: " .. env_path
   end
-  env_src:close()
 
-  local tmpdir = os.getenv("TMPDIR") or "/tmp"
-  local pid = tostring(unix.getpid())
+  -- Create temp directory for work
+  local tmpdir = unix.mkdtemp("/tmp/box.XXXXXX")
+  if not tmpdir then
+    return false, "failed to create temp directory"
+  end
+
+  local function cleanup()
+    unix.rmrf(tmpdir)
+  end
 
   -- Extract bundled zip tool to temp
-  local tmp_zip = path.join(tmpdir, "box-zip." .. pid)
-  local ok, err = copy_file("/zip/zip", tmp_zip, tonumber("755", 8))
-  if not ok then
-    die("failed to extract zip tool: " .. (err or "unknown"))
+  local zip_data = cosmo.Slurp("/zip/zip")
+  if not zip_data then
+    cleanup()
+    return false, "failed to read bundled zip tool"
+  end
+  local tmp_zip = path.join(tmpdir, "zip")
+  if not cosmo.Barf(tmp_zip, zip_data, tonumber("755", 8)) then
+    cleanup()
+    return false, "failed to extract zip tool"
   end
 
   -- Copy box binary to temp
-  local tmp_box = path.join(tmpdir, "box." .. pid)
-  ok, err = copy_file(self_path, tmp_box, tonumber("755", 8))
-  if not ok then
-    unix.unlink(tmp_zip)
-    die("failed to copy box: " .. (err or "unknown"))
+  local tmp_box = path.join(tmpdir, "box")
+  if not cosmo.Barf(tmp_box, self_data, tonumber("755", 8)) then
+    cleanup()
+    return false, "failed to copy box"
   end
 
-  -- Create temp dir for env.lua with correct name
-  local env_dir = path.join(tmpdir, "box-env." .. pid)
-  unix.makedirs(env_dir)
-  local env_in_dir = path.join(env_dir, "env.lua")
-  ok, err = copy_file(env_path, env_in_dir, tonumber("600", 8))
-  if not ok then
-    unix.unlink(tmp_zip)
-    unix.unlink(tmp_box)
-    unix.rmrf(env_dir)
-    die("failed to copy env: " .. (err or "unknown"))
+  -- Write env.lua to temp dir
+  local env_in_dir = path.join(tmpdir, "env.lua")
+  if not cosmo.Barf(env_in_dir, env_data, tonumber("600", 8)) then
+    cleanup()
+    return false, "failed to copy env"
   end
 
   -- Zip env.lua into the box binary copy
   local handle = spawn({tmp_zip, "-qj", tmp_box, env_in_dir})
   if not handle then
-    unix.unlink(tmp_zip)
-    unix.unlink(tmp_box)
-    unix.rmrf(env_dir)
-    die("failed to run zip")
+    cleanup()
+    return false, "failed to run zip"
   end
   local exit_code = handle:wait()
   if exit_code ~= 0 then
-    unix.unlink(tmp_zip)
-    unix.unlink(tmp_box)
-    unix.rmrf(env_dir)
-    die("zip failed: exit " .. tostring(exit_code))
+    cleanup()
+    return false, "zip failed: exit " .. tostring(exit_code)
   end
-
-  -- Cleanup temp files (keep tmp_box for upload)
-  unix.unlink(tmp_zip)
-  unix.rmrf(env_dir)
 
   -- Upload modified box binary to remote
   local result = be.upload(name, tmp_box, "/tmp/box")
-  unix.unlink(tmp_box)
   if not result.ok then
-    io.stderr:write("error: upload failed: " .. (result.err or "unknown") .. "\n")
-    return false
+    cleanup()
+    return false, "upload failed: " .. (result.err or "unknown")
   end
 
   -- Run bootstrap on remote (pass name for env.lua function support)
   result = be.exec(name, "chmod +x /tmp/box && /tmp/box --local-run " .. name)
+  cleanup()
   if not result.ok then
-    io.stderr:write("error: bootstrap failed: " .. (result.err or "unknown") .. "\n")
-    return false
+    return false, "bootstrap failed: " .. (result.err or "unknown")
   end
 
   return true
 end
 
-local function cmd_ssh(be: Backend, name: string, extra_args: {string}): boolean
+local function cmd_ssh(be: backend_mod.Backend, name: string, extra_args: {string}): boolean, string
   io.stderr:write("==> connecting to " .. name .. "\n")
   local result = be.ssh(name, table.unpack(extra_args))
   if not result.ok then
-    io.stderr:write("error: " .. (result.err or "unknown error") .. "\n")
-    return false
+    return false, result.err or "unknown error"
   end
   return true
 end
 
-local function cmd_zap(be: Backend, name: string): boolean
+local function cmd_zap(be: backend_mod.Backend, name: string): boolean, string
   io.stderr:write("==> destroying " .. name .. "\n")
   local result = be.destroy(name)
   if not result.ok then
-    io.stderr:write("error: " .. (result.err or "unknown error") .. "\n")
-    return false
+    return false, result.err or "unknown error"
   end
   return true
 end
 
-local function cmd_list(be: Backend): boolean
+local function cmd_list(be: backend_mod.Backend): boolean, string
   local result = be.list()
   if not result.ok then
-    io.stderr:write("error: " .. (result.err or "unknown error") .. "\n")
-    return false
+    return false, result.err or "unknown error"
   end
   return true
 end
 
-local function cmd_local_run(name: string): integer
+local function cmd_local_run(name: string): integer, string
   -- Running on remote after upload
   -- Load env from /zip/env.lua (zipped into self before upload)
-  local ok, env_chunk = pcall(dofile, "/zip/env.lua")
+  local ok, env_chunk = pcall(dofile, ENV_PATH)
   if not ok then
-    io.stderr:write("error: failed to load /zip/env.lua: " .. tostring(env_chunk) .. "\n")
-    return 1
+    return 1, "failed to load " .. ENV_PATH .. ": " .. tostring(env_chunk)
   end
 
   -- env.lua can be a function(name) or a table
@@ -361,8 +324,7 @@ local function cmd_local_run(name: string): integer
   if type(env_chunk) == "function" then
     ok, env = pcall(env_chunk as function(string): backend_mod.Env, name)
     if not ok then
-      io.stderr:write("error: failed to call env function: " .. tostring(env) .. "\n")
-      return 1
+      return 1, "failed to call env function: " .. tostring(env)
     end
   else
     env = env_chunk as backend_mod.Env
@@ -372,8 +334,11 @@ local function cmd_local_run(name: string): integer
   return run.bootstrap(env)
 end
 
-local function main(args: {string}): integer
-  local parsed = parse_args(args)
+local function main(args: {string}): integer, string
+  local parsed, err = parse_args(args)
+  if not parsed then
+    return 1, err
+  end
 
   -- Handle local-run mode (running on remote)
   if parsed.local_run then
@@ -386,11 +351,20 @@ local function main(args: {string}): integer
     return 1
   end
 
-  local be = load_backend(parsed.backend_type)
+  local be: backend_mod.Backend
+  be, err = load_backend(parsed.backend_type)
+  if not be then
+    return 1, err
+  end
 
   -- Handle list command (doesn't need name)
   if parsed.cmd == "list" then
-    return cmd_list(be) and 0 or 1
+    local ok: boolean
+    ok, err = cmd_list(be)
+    if not ok then
+      return 1, err
+    end
+    return 0
   end
 
   -- All other commands need a name
@@ -400,30 +374,45 @@ local function main(args: {string}): integer
   end
 
   -- Run specific command or all-in-one
+  local ok: boolean
   if parsed.cmd == "new" then
-    return cmd_new(be, parsed.name) and 0 or 1
+    ok, err = cmd_new(be, parsed.name)
+    if not ok then return 1, err end
+    return 0
   elseif parsed.cmd == "run" then
-    return cmd_run(be, parsed.name, parsed.env_path) and 0 or 1
+    ok, err = cmd_run(be, parsed.name, parsed.env_path)
+    if not ok then return 1, err end
+    return 0
   elseif parsed.cmd == "ssh" then
-    return cmd_ssh(be, parsed.name, parsed.extra_args) and 0 or 1
+    ok, err = cmd_ssh(be, parsed.name, parsed.extra_args)
+    if not ok then return 1, err end
+    return 0
   elseif parsed.cmd == "zap" then
-    return cmd_zap(be, parsed.name) and 0 or 1
+    ok, err = cmd_zap(be, parsed.name)
+    if not ok then return 1, err end
+    return 0
   elseif parsed.cmd == nil then
     -- All-in-one: new + run + ssh (skip ssh if no tty)
-    if not cmd_new(be, parsed.name) then return 1 end
-    if not cmd_run(be, parsed.name, parsed.env_path) then return 1 end
+    ok, err = cmd_new(be, parsed.name)
+    if not ok then return 1, err end
+    ok, err = cmd_run(be, parsed.name, parsed.env_path)
+    if not ok then return 1, err end
     if unix.isatty(0) then
-      if not cmd_ssh(be, parsed.name, parsed.extra_args) then return 1 end
+      ok, err = cmd_ssh(be, parsed.name, parsed.extra_args)
+      if not ok then return 1, err end
     end
     return 0
   else
-    die("unknown command: " .. parsed.cmd)
-    return 1
+    return 1, "unknown command: " .. parsed.cmd
   end
 end
 
 if cosmo.is_main() then
-  os.exit(main(arg) or 0)
+  local code, err = main(arg)
+  if err then
+    io.stderr:write("error: " .. err .. "\n")
+  end
+  os.exit(code)
 end
 
 return {
