@@ -277,8 +277,8 @@ bump: $(all_updated)
 	done
 
 .PHONY: build
-## Build home and cosmic binaries
-build: home cosmic
+## Build home, cosmic, and bootstrap binaries
+build: home cosmic bootstrap
 
 .PHONY: release
 ## Create release artifacts (CI only)
@@ -287,8 +287,8 @@ release:
 	@cp artifacts/home-darwin-arm64/home release/home-darwin-arm64
 	@cp artifacts/home-linux-arm64/home release/home-linux-arm64
 	@cp artifacts/home-linux-x86_64/home release/home-linux-x86_64
-	@cp artifacts/cosmic/cosmic release/cosmic-lua
-	@cp artifacts/bootstrap/bootstrap release/bootstrap
+	@cp artifacts/cosmopolitan/cosmic release/cosmic-lua
+	@cp artifacts/cosmopolitan/bootstrap release/bootstrap
 	@chmod +x release/*
 	@tag="$$(date -u +%Y-%m-%d)-$${GITHUB_SHA::7}"; \
 	(cd release && sha256sum home-* cosmic-lua bootstrap > SHA256SUMS && cat SHA256SUMS); \

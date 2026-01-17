@@ -6,7 +6,7 @@ home_bin := $(o)/bin/home
 # only include home_bin in home_files; home_libs are explicit prereqs of home_bin
 # but shouldn't inherit home_deps (which would require staging 20+ tools for linting)
 home_files := $(home_bin)
-home_tests := lib/home/test_main.tl lib/home/test_versioned.tl lib/home/test_bootstrap.tl
+home_tests := $(wildcard lib/home/test_*.tl)
 home_tl_files := lib/home/main.tl lib/home/gen-manifest.tl lib/home/bootstrap.tl $(wildcard lib/home/setup/*.tl) $(wildcard lib/home/mac/*.tl)
 
 # 3p tools to bundle (nvim handled specially for bundled version)

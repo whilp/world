@@ -3,7 +3,6 @@
 -- Detects platform, downloads home-<platform>, verifies SHA256, runs unpack.
 
 local cosmo = require("cosmo")
-local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local spawn = require("cosmic.spawn")
 
@@ -77,13 +76,13 @@ local function fetch_binary(url: string): string, string
   return body
 end
 
-local function get_latest_release(): Release, string
-  local url = API_URL .. "/repos/" .. REPO .. "/releases/latest"
-  local data, err = fetch_json(url)
-  if not data then
-    return nil, err
+local function find_asset(release: Release, name: string): ReleaseAsset
+  for _, asset in ipairs(release.assets) do
+    if asset.name == name then
+      return asset
+    end
   end
-  return data as Release
+  return nil
 end
 
 local function parse_sha256sums(content: string): {string:string}
@@ -97,113 +96,120 @@ local function parse_sha256sums(content: string): {string:string}
   return sums
 end
 
-local function find_asset(release: Release, name: string): ReleaseAsset
-  for _, asset in ipairs(release.assets) do
-    if asset.name == name then
-      return asset
-    end
+local function get_release(): Release, string
+  io.stderr:write("fetching latest release...\n")
+  local url = API_URL .. "/repos/" .. REPO .. "/releases/latest"
+  local data, err = fetch_json(url)
+  if not data then
+    return nil, err
   end
-  return nil
+  local release = data as Release
+  io.stderr:write("release: " .. release.tag_name .. "\n")
+  return release
 end
 
-local function main(): number
-  local home_dir = os.getenv("HOME")
-  if not home_dir then
-    io.stderr:write("error: HOME not set\n")
-    return 1
-  end
-
-  -- detect platform
-  local platform, err = detect_platform()
-  if not platform then
-    io.stderr:write("error: " .. err .. "\n")
-    return 1
-  end
-  io.stderr:write("platform: " .. platform .. "\n")
-
-  -- get latest release
-  io.stderr:write("fetching latest release...\n")
-  local release: Release
-  release, err = get_latest_release()
-  if not release then
-    io.stderr:write("error: " .. err .. "\n")
-    return 1
-  end
-  io.stderr:write("release: " .. release.tag_name .. "\n")
-
-  -- download SHA256SUMS
+local function get_checksums(release: Release): {string:string}, string
   local sums_asset = find_asset(release, "SHA256SUMS")
   if not sums_asset then
-    io.stderr:write("error: SHA256SUMS not found in release\n")
-    return 1
+    return nil, "SHA256SUMS not found in release"
   end
 
   io.stderr:write("fetching SHA256SUMS...\n")
-  local sums_content: string
-  sums_content, err = fetch_text(sums_asset.browser_download_url)
-  if not sums_content then
-    io.stderr:write("error: " .. err .. "\n")
-    return 1
+  local content, err = fetch_text(sums_asset.browser_download_url)
+  if not content then
+    return nil, err
   end
 
-  local sums = parse_sha256sums(sums_content)
+  return parse_sha256sums(content)
+end
 
-  -- find home asset for platform
+local function download_home(release: Release, platform: string, expected_sha: string): string, string
   local asset_name = "home-" .. platform
-  local expected_sha = sums[asset_name]
-  if not expected_sha then
-    io.stderr:write("error: no SHA256 for " .. asset_name .. "\n")
-    io.stderr:write("available assets:\n")
-    for name, _ in pairs(sums) do
-      io.stderr:write("  " .. name .. "\n")
-    end
-    return 1
+  local asset = find_asset(release, asset_name)
+  if not asset then
+    return nil, asset_name .. " not found in release"
   end
 
-  local home_asset = find_asset(release, asset_name)
-  if not home_asset then
-    io.stderr:write("error: " .. asset_name .. " not found in release\n")
-    return 1
-  end
-
-  -- download home binary
   io.stderr:write("downloading " .. asset_name .. "...\n")
-  local body: string
-  body, err = fetch_binary(home_asset.browser_download_url)
+  local body, err = fetch_binary(asset.browser_download_url)
   if not body then
-    io.stderr:write("error: " .. err .. "\n")
-    return 1
+    return nil, err
   end
   io.stderr:write("downloaded " .. tostring(#body) .. " bytes\n")
 
-  -- verify SHA256
   local actual_sha = cosmo.EncodeHex(cosmo.Sha256(body)):lower()
   if actual_sha ~= expected_sha then
-    io.stderr:write("error: SHA256 mismatch\n")
-    io.stderr:write("  expected: " .. expected_sha .. "\n")
-    io.stderr:write("  actual:   " .. actual_sha .. "\n")
-    return 1
+    return nil, "SHA256 mismatch: expected " .. expected_sha .. ", got " .. actual_sha
   end
   io.stderr:write("SHA256 verified\n")
 
-  -- write to temp file
-  local tmp_dir = os.getenv("TMPDIR") or "/tmp"
-  local home_bin = path.join(tmp_dir, "home-" .. release.tag_name)
+  return body
+end
 
-  local fd = unix.open(home_bin, unix.O_WRONLY | unix.O_CREAT | unix.O_TRUNC, tonumber("0755", 8))
-  if not fd or fd < 0 then
-    io.stderr:write("error: failed to create " .. home_bin .. "\n")
-    return 1
+local function write_binary(data: string, dest: string): boolean, string
+  if not cosmo.Barf(dest, data, tonumber("0755", 8)) then
+    return false, "failed to write " .. dest
   end
-  unix.write(fd, body)
-  unix.close(fd)
+  return true
+end
 
-  -- run unpack
+local function run_unpack(home_bin: string, home_dir: string): boolean, string
   io.stderr:write("unpacking to " .. home_dir .. "...\n")
   local exit_code = spawn({home_bin, "unpack", "--force", home_dir}):wait()
   if exit_code ~= 0 then
-    io.stderr:write("error: unpack failed with exit code " .. tostring(exit_code) .. "\n")
-    return 1
+    return false, "unpack failed with exit code " .. tostring(exit_code)
+  end
+  return true
+end
+
+local function main(): number, string
+  local home_dir = os.getenv("HOME")
+  if not home_dir then
+    return 1, "HOME not set"
+  end
+
+  local platform, err = detect_platform()
+  if not platform then
+    return 1, err
+  end
+  io.stderr:write("platform: " .. platform .. "\n")
+
+  local release: Release
+  release, err = get_release()
+  if not release then
+    return 1, err
+  end
+
+  local sums: {string:string}
+  sums, err = get_checksums(release)
+  if not sums then
+    return 1, err
+  end
+
+  local asset_name = "home-" .. platform
+  local expected_sha = sums[asset_name]
+  if not expected_sha then
+    return 1, "no SHA256 for " .. asset_name
+  end
+
+  local body: string
+  body, err = download_home(release, platform, expected_sha)
+  if not body then
+    return 1, err
+  end
+
+  local tmp_dir = os.getenv("TMPDIR") or "/tmp"
+  local home_bin = path.join(tmp_dir, "home-" .. release.tag_name)
+
+  local ok: boolean
+  ok, err = write_binary(body, home_bin)
+  if not ok then
+    return 1, err
+  end
+
+  ok, err = run_unpack(home_bin, home_dir)
+  if not ok then
+    return 1, err
   end
 
   io.stderr:write("bootstrap complete\n")
@@ -211,7 +217,11 @@ local function main(): number
 end
 
 if cosmo.is_main() then
-  os.exit(main())
+  local code, err = main()
+  if err then
+    io.stderr:write("error: " .. err .. "\n")
+  end
+  os.exit(code)
 end
 
 return {
