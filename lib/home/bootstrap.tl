@@ -27,9 +27,9 @@ local function detect_platform(): string, string
     return nil, "unable to detect platform"
   end
 
-  -- normalize os: LINUX -> linux, OSX -> darwin
+  -- normalize os: LINUX -> linux, XNU/OSX -> darwin
   os_name = os_name:lower()
-  if os_name == "osx" then
+  if os_name == "xnu" or os_name == "osx" then
     os_name = "darwin"
   end
 
