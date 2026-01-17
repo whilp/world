@@ -143,6 +143,8 @@ $(bootstrap_bin): $(bootstrap_main) $(bootstrap_spawn) $$(cosmos_staged)
 	@chmod +x $@
 	@cd $(bootstrap_built) && $(CURDIR)/$(cosmos_zip) -qr $(CURDIR)/$@ .lua
 	@$(cosmos_zip) -qj $@ $(bootstrap_main)
+	@echo '/zip/bootstrap.lua' > $(bootstrap_built)/.args
+	@cd $(bootstrap_built) && $(CURDIR)/$(cosmos_zip) -qj $(CURDIR)/$@ .args
 	@rm -rf $(bootstrap_built)
 
 bootstrap: $(bootstrap_bin)
