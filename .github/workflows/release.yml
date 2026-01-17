@@ -31,7 +31,7 @@ jobs:
 
       - id: make-check-test-build
         shell: bash -x {0}
-        run: bin/make -j check test build
+        run: bin/make -j check test build bootstrap
 
       - id: make-test-release
         shell: bash -x {0}
@@ -49,6 +49,13 @@ jobs:
         with:
           name: cosmic
           path: o/bin/cosmic
+
+      - id: upload-bootstrap
+        if: matrix.platform == 'linux-x86_64'
+        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
+        with:
+          name: bootstrap
+          path: o/bin/bootstrap
 
   release:
     runs-on: ubuntu-latest
