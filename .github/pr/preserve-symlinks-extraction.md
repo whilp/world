@@ -4,9 +4,9 @@ Refactor the home binary build and extraction to preserve symlinks (like `lua ->
 
 ## Changes
 
-- `lib/home/cook.mk` - restructure build to bundle dotfiles.zip separately from 3p tools
+- `lib/home/cook.mk` - restructure build to bundle dotfiles.zip separately from 3p tools; replace `git ls-files` with explicit wildcards for Make dependency tracking
 - `lib/home/main.tl` - use unzip at runtime to extract dotfiles (preserves symlinks)
-- `lib/home/test_main.tl` - update tests to use real zip files for symlink verification
+- `lib/home/test_main.tl` - update tests to use real zip files for symlink verification; add coverage test comparing dotfiles.zip against git
 
 ## How it works
 
