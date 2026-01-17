@@ -6,7 +6,7 @@ Refactor the home binary build and extraction to preserve symlinks (like `lua ->
 
 - `lib/home/cook.mk` - restructure build to bundle dotfiles.zip separately from 3p tools
 - `lib/home/main.tl` - use unzip at runtime to extract dotfiles (preserves symlinks)
-- `lib/home/test_main.tl` - update tests to explicitly use test mode with zip_root
+- `lib/home/test_main.tl` - update tests to use real zip files for symlink verification
 
 ## How it works
 

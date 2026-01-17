@@ -267,9 +267,11 @@ local record UnpackOpts
   dry_run: boolean
   only: boolean
   null: boolean
-  zip_root: string
   filter_input: string
-  manifest: Manifest
+  -- For testing: override default paths
+  unzip_bin: string
+  dotfiles_zip: string
+  tools_dir: string
 end
 
 -- Helper to recursively copy a directory
@@ -362,7 +364,6 @@ local function cmd_unpack(dest: string, force: boolean, opts: UnpackOpts): integ
   local stdout = opts.stdout or io.stdout
   local verbose = opts.verbose or false
   local dry_run = opts.dry_run or false
-  local only = opts.only or false
 
   if not dest then
     stderr:write("error: destination path required\n")
@@ -370,95 +371,19 @@ local function cmd_unpack(dest: string, force: boolean, opts: UnpackOpts): integ
     return 1
   end
 
-  local filter: {string:boolean} = nil
-  if only then
-    filter = {}
-    local input = opts.filter_input or io.stdin:read("*a")
-    local pattern = opts.null and "[^\0]+" or "[^\n]+"
-    for line in input:gmatch(pattern) do
-      local p = line:match("^%s*(.-)%s*$")
-      if p and p ~= "" then
-        filter[p] = true
-      end
-    end
-  end
+  -- Paths (can be overridden for testing)
+  local unzip_src = opts.unzip_bin or "/zip/home/.local/bin/unzip"
+  local dotfiles_src = opts.dotfiles_zip or "/zip/dotfiles.zip"
+  local tools_src = opts.tools_dir or "/zip/home"
 
-  if not dry_run then
-    if not unix.makedirs(dest) then
-      stderr:write("error: failed to create destination directory\n")
-      return 1
-    end
-  end
-
-  -- Test mode: when zip_root is provided or manifest is passed, use copy_file approach
-  local manifest = opts.manifest
-  if opts.zip_root or manifest then
-    manifest = manifest or load_manifest()
-    if not manifest or not manifest.files then
-      stderr:write("error: failed to load manifest\n")
-      return 1
-    end
-
-    local zip_root = opts.zip_root or "/zip/home/"
-    local paths: {string} = {}
-    for p in pairs(manifest.files) do
-      table.insert(paths, p)
-    end
-    table.sort(paths)
-
-    for _, rel_path in ipairs(paths) do
-      local info = manifest.files[rel_path]
-      local zip_path = zip_root .. rel_path
-      local dest_path = path.join(dest, rel_path)
-
-      if filter and not filter[rel_path] then
-        goto continue
-      end
-
-      local file_exists = not dry_run and unix.stat(dest_path) ~= nil
-
-      if not dry_run then
-        local parent = path.dirname(dest_path)
-        unix.makedirs(parent)
-
-        local ok, err = copy_file(zip_path, dest_path, info.mode, force)
-        if not ok then
-          stderr:write("warning: failed to copy " .. rel_path .. ": " .. (err or "unknown error") .. "\n")
-        elseif verbose then
-          if force and file_exists then
-            stdout:write(rel_path .. " (overwritten)\n")
-          else
-            stdout:write(rel_path .. "\n")
-          end
-        end
-      elseif verbose then
-        stdout:write(rel_path .. "\n")
-      end
-
-      ::continue::
-    end
-
-    return 0
-  end
-
-  -- Production mode: use unzip to extract dotfiles.zip (preserves symlinks)
   if dry_run then
-    -- For dry-run, just list what would be extracted
-    local test_manifest = load_manifest()
-    if test_manifest and test_manifest.files then
-      local paths: {string} = {}
-      for p in pairs(test_manifest.files) do
-        table.insert(paths, p)
-      end
-      table.sort(paths)
-      for _, p in ipairs(paths) do
-        if verbose then
-          stdout:write(p .. "\n")
-        end
-      end
-    end
-    stdout:write("(dotfiles from dotfiles.zip)\n")
+    stdout:write("would extract dotfiles and tools to " .. dest .. "\n")
     return 0
+  end
+
+  if not unix.makedirs(dest) then
+    stderr:write("error: failed to create destination directory\n")
+    return 1
   end
 
   local spawn = require("cosmic.spawn")
@@ -469,19 +394,42 @@ local function cmd_unpack(dest: string, force: boolean, opts: UnpackOpts): integ
   local tmp_unzip = path.join(tmpdir, "unzip." .. tostring(pid))
   local tmp_dotfiles = path.join(tmpdir, "dotfiles." .. tostring(pid) .. ".zip")
 
-  -- Extract unzip from the bundled binary
-  local ok, err = copy_file("/zip/home/.local/bin/unzip", tmp_unzip, tonumber("0755", 8), true)
-  if not ok then
-    stderr:write("error: failed to extract unzip: " .. (err or "unknown error") .. "\n")
+  -- Copy unzip to temp (may already be a real path for testing)
+  local unzip_stat = unix.stat(unzip_src)
+  if not unzip_stat then
+    stderr:write("error: unzip not found at " .. unzip_src .. "\n")
     return 1
   end
 
-  -- Extract dotfiles.zip
-  ok, err = copy_file("/zip/dotfiles.zip", tmp_dotfiles, tonumber("0644", 8), true)
-  if not ok then
-    unix.unlink(tmp_unzip)
-    stderr:write("error: failed to extract dotfiles.zip: " .. (err or "unknown error") .. "\n")
+  local ok: boolean
+  local err: string
+  if unzip_src:match("^/zip/") then
+    ok, err = copy_file(unzip_src, tmp_unzip, tonumber("0755", 8), true)
+    if not ok then
+      stderr:write("error: failed to extract unzip: " .. (err or "unknown error") .. "\n")
+      return 1
+    end
+  else
+    tmp_unzip = unzip_src  -- Use provided path directly
+  end
+
+  -- Copy dotfiles.zip to temp (may already be a real path for testing)
+  local dotfiles_stat = unix.stat(dotfiles_src)
+  if not dotfiles_stat then
+    stderr:write("error: dotfiles.zip not found at " .. dotfiles_src .. "\n")
+    if unzip_src:match("^/zip/") then unix.unlink(tmp_unzip) end
     return 1
+  end
+
+  if dotfiles_src:match("^/zip/") then
+    ok, err = copy_file(dotfiles_src, tmp_dotfiles, tonumber("0644", 8), true)
+    if not ok then
+      if unzip_src:match("^/zip/") then unix.unlink(tmp_unzip) end
+      stderr:write("error: failed to extract dotfiles.zip: " .. (err or "unknown error") .. "\n")
+      return 1
+    end
+  else
+    tmp_dotfiles = dotfiles_src  -- Use provided path directly
   end
 
   -- Run unzip to extract dotfiles (preserves symlinks)
@@ -491,21 +439,22 @@ local function cmd_unpack(dest: string, force: boolean, opts: UnpackOpts): integ
   end
   local result = spawn(unzip_args):wait()
 
-  unix.unlink(tmp_dotfiles)
+  -- Cleanup temp files (only if we created them)
+  if dotfiles_src:match("^/zip/") then unix.unlink(tmp_dotfiles) end
 
   if result ~= 0 then
-    unix.unlink(tmp_unzip)
+    if unzip_src:match("^/zip/") then unix.unlink(tmp_unzip) end
     stderr:write("error: unzip failed with exit code " .. tostring(result) .. "\n")
     return 1
   end
 
-  -- Copy 3p tools from /zip/home/.local/share to dest
-  local home_zip_stat = unix.stat("/zip/home")
-  if home_zip_stat and unix.S_ISDIR(home_zip_stat:mode()) then
-    copy_dir("/zip/home", dest, force, verbose, stderr, stdout)
+  -- Copy 3p tools from tools_dir to dest
+  local tools_stat = unix.stat(tools_src)
+  if tools_stat and unix.S_ISDIR(tools_stat:mode()) then
+    copy_dir(tools_src, dest, force, verbose, stderr, stdout)
   end
 
-  unix.unlink(tmp_unzip)
+  if unzip_src:match("^/zip/") then unix.unlink(tmp_unzip) end
 
   -- Create symlinks for versioned tools
   create_tool_symlinks(dest, verbose, stderr)
