@@ -38,6 +38,10 @@ keybind = cmd+h=unbind
 keybind = cmd+t=unbind
 keybind = cmd+shift+right_bracket=unbind
 keybind = cmd+shift+left_bracket=unbind
+keybind = cmd+shift+h=unbind
+keybind = cmd+shift+j=unbind
+keybind = cmd+shift+k=unbind
+keybind = cmd+shift+l=unbind
 
 keybind = cmd+digit_1=unbind
 keybind = cmd+digit_2=unbind
