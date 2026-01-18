@@ -1,5 +1,5 @@
 ---
-name: cleanshot
+name: screenshot
 description: Take screenshots, screen recordings, scrolling captures, and OCR text recognition using CleanShot X. Use when user requests screenshots, captures, screen recording, OCR, text extraction, or image annotation.
 allowed-tools: [Bash]
 ---
