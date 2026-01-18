@@ -15,13 +15,20 @@ local record Backend
   list: function(): Result
 end
 
+local record Git
+  name: string
+  email: string
+end
+
 local record Env
   github: {string: any}
+  git: Git
   claude: {string: any}
 end
 
 return {
   Result = Result,
   Backend = Backend,
+  Git = Git,
   Env = Env,
 }
