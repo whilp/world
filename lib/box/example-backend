@@ -14,7 +14,7 @@
 # Exit code 0 indicates success, non-zero indicates failure.
 # Error messages should be written to stderr.
 
-set -euo pipefail
+set -u
 
 cmd="${1:-}"
 shift || true
