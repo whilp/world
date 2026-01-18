@@ -6,7 +6,7 @@ nvim_deps := nvim-conform nvim-mini nvim-lspconfig nvim-treesitter nvim-parsers
 nvim_tests := 3p/nvim/test_nvim.tl
 
 # Bundle tests run during release (need full bundle)
-nvim_release_tests := 3p/nvim/test_packpath.tl 3p/nvim/test_treesitter.tl
+nvim_release_tests := $(filter-out $(nvim_tests),$(wildcard 3p/nvim/test_*.tl))
 nvim_release_tested := $(patsubst %,$(o)/%.release.ok,$(nvim_release_tests))
 
 # Bundle output - used by home binary and release tests
@@ -37,7 +37,7 @@ $(nvim_bundle): $$(nvim_staged) $$(nvim-conform_staged) $$(nvim-mini_staged) $$(
 nvim-release-tests: $(nvim_release_tested)
 
 # Release tests: depend on compiled .lua (Make handles compilation)
-$(o)/3p/nvim/%.tl.release.ok: $(o)/3p/nvim/%.lua $(nvim_bundle) | $(bootstrap_files)
+$(o)/3p/nvim/%.tl.release.ok: $(o)/3p/nvim/%.lua $(nvim_bundle) $$(tl_staged) | $(bootstrap_files)
 	@mkdir -p $(@D)
 	@[ -x $< ] || chmod a+x $<
-	@TEST_DIR=$(nvim_bundle_out) $(test_runner) $< > $@
+	@TEST_DIR=$(nvim_bundle_out) TL_DIR=$(tl_dir) $(test_runner) $< > $@

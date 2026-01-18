@@ -2,9 +2,7 @@
 -- ast-grep ignore: neovim runtime
 -- nvim configuration entry point
 
--- Add lua paths
 local home = vim.fn.expand("~")
-package.path = home .. "/lib/?.lua;" .. home .. "/lib/3p/?.lua;" .. package.path
 
 -- Add bundled site directory (relative to nvim binary) to packpath
 local version_dir = vim.fn.fnamemodify(vim.v.progpath, ":h:h")
