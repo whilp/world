@@ -11,6 +11,7 @@ local record Backend
   ssh: function(name: string, ...: string): Result
   exec: function(name: string, cmd: string): Result
   upload: function(name: string, src: string, dst: string): Result
+  download: function(name: string, src: string, dst: string): Result
   destroy: function(name: string): Result
   list: function(): Result
 end

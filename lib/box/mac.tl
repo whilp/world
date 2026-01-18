@@ -14,6 +14,7 @@ return {
   ssh = function(_: string, ...: string): backend.Result return not_implemented() end,
   exec = function(_: string, _: string): backend.Result return not_implemented() end,
   upload = function(_: string, _: string, _: string): backend.Result return not_implemented() end,
+  download = function(_: string, _: string, _: string): backend.Result return not_implemented() end,
   destroy = function(_: string): backend.Result return not_implemented() end,
   list = function(): backend.Result return not_implemented() end,
 } as backend.Backend
