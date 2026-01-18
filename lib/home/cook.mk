@@ -10,9 +10,9 @@ home_tests := $(wildcard lib/home/test_*.tl)
 home_tl_files := lib/home/main.tl lib/home/gen-manifest.tl lib/home/bootstrap.tl $(wildcard lib/home/setup/*.tl) $(wildcard lib/home/mac/*.tl)
 
 # 3p tools to bundle (nvim handled specially for bundled version)
-home_3p_tools := ast-grep biome comrak delta duckdb gh marksman rg ruff shfmt sqruff stylua superhtml tree-sitter uv
+home_3p_tools := ast-grep biome bun comrak delta duckdb gh marksman rg ruff shfmt sqruff stylua superhtml tree-sitter uv
 
-home_deps := cosmos cosmic nvim $(home_3p_tools)
+home_deps := cosmos cosmic nvim clasp $(home_3p_tools)
 
 # Build configuration
 home_setup_dir := lib/home/setup
@@ -79,8 +79,8 @@ $(o)/.config/nvim/%.lua: .config/nvim/%.tl $$(tl_files) $$(bootstrap_files) | $$
 HOME_NVIM_DIR ?= $(nvim_staged)
 
 # Create dotfiles.zip with symlinks preserved
-# Includes: dotfiles, compiled nvim configs, cosmic-lua binary, lua symlink
-$(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin) $(home_nvim_tl_compiled)
+# Includes: dotfiles, compiled nvim configs, cosmic-lua binary, clasp binary, lua symlink
+$(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin) $$(clasp_bin) $(home_nvim_tl_compiled)
 	@rm -rf $(o)/home/.dotfiles-staging
 	@mkdir -p $(@D) $(o)/home/.dotfiles-staging
 	@for f in $(home_dotfiles); do \
@@ -94,6 +94,7 @@ $(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin) $(home_
 	done
 	@mkdir -p $(o)/home/.dotfiles-staging/.local/bin
 	@$(cp) $(cosmic_bin) $(o)/home/.dotfiles-staging/.local/bin/cosmic-lua
+	@$(cp) $(clasp_bin) $(o)/home/.dotfiles-staging/.local/bin/clasp
 	@ln -sf cosmic-lua $(o)/home/.dotfiles-staging/.local/bin/lua
 	@cd $(o)/home/.dotfiles-staging && $(CURDIR)/$(cosmos_zip) -qry $(CURDIR)/$@ .
 	@rm -rf $(o)/home/.dotfiles-staging
