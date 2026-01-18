@@ -49,6 +49,8 @@ include 3p/nvim-parsers/cook.mk
 include 3p/nvim/cook.mk
 include 3p/tl/cook.mk
 include 3p/teal-types/cook.mk
+include 3p/bun/cook.mk
+include 3p/clasp/cook.mk
 
 include cook.mk
 
