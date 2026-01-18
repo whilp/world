@@ -5,7 +5,7 @@ local path = require("cosmo.path")
 local getopt = require("cosmo.getopt")
 local spawn = require("cosmic.spawn")
 
-local backend_mod = require("box.backend")
+local backend = require("box.backend")
 
 local ENV_PATH <const> = "/zip/env.lua"
 
@@ -117,11 +117,11 @@ local function parse_args(args: {string}): ParsedArgs
   return result
 end
 
-local function load_backend(backend_type: string): backend_mod.Backend, string
+local function load_backend(backend_type: string): backend.Backend, string
   if backend_type == "sprite" then
-    return require("box.sprite") as backend_mod.Backend
+    return require("box.sprite") as backend.Backend
   elseif backend_type == "mac" then
-    return require("box.mac") as backend_mod.Backend
+    return require("box.mac") as backend.Backend
   elseif backend_type then
     -- All other backends are executables
     local generic = require("box.generic")
@@ -131,7 +131,7 @@ local function load_backend(backend_type: string): backend_mod.Backend, string
   end
 end
 
-local function load_env(env_path: string, name: string): backend_mod.Env, string
+local function load_env(env_path: string, name: string): backend.Env, string
   local content = cosmo.Slurp(env_path)
   if not content then
     return nil, "env file not found: " .. env_path
@@ -149,16 +149,16 @@ local function load_env(env_path: string, name: string): backend_mod.Env, string
 
   -- env.lua can be a function(name) or a table
   if type(env) == "function" then
-    ok, env = pcall(env as function(string): backend_mod.Env, name)
+    ok, env = pcall(env as function(string): backend.Env, name)
     if not ok then
       return nil, "failed to call env function: " .. tostring(env)
     end
   end
 
-  return env as backend_mod.Env
+  return env as backend.Env
 end
 
-local function cmd_new(be: backend_mod.Backend, name: string): boolean, string
+local function cmd_new(be: backend.Backend, name: string): boolean, string
   io.stderr:write("==> creating " .. name .. "\n")
 
   -- Destroy existing box first (ignore errors)
@@ -171,7 +171,7 @@ local function cmd_new(be: backend_mod.Backend, name: string): boolean, string
   return true
 end
 
-local function cmd_run(be: backend_mod.Backend, name: string, env_path: string): boolean, string
+local function cmd_run(be: backend.Backend, name: string, env_path: string): boolean, string
   io.stderr:write("==> bootstrapping " .. name .. "\n")
 
   -- Get path to self (the box binary)
@@ -263,7 +263,7 @@ local function cmd_run(be: backend_mod.Backend, name: string, env_path: string):
   return true
 end
 
-local function cmd_ssh(be: backend_mod.Backend, name: string, extra_args: {string}): boolean, string
+local function cmd_ssh(be: backend.Backend, name: string, extra_args: {string}): boolean, string
   io.stderr:write("==> connecting to " .. name .. "\n")
   local result = be.ssh(name, table.unpack(extra_args))
   if not result.ok then
@@ -272,7 +272,7 @@ local function cmd_ssh(be: backend_mod.Backend, name: string, extra_args: {strin
   return true
 end
 
-local function cmd_zap(be: backend_mod.Backend, name: string): boolean, string
+local function cmd_zap(be: backend.Backend, name: string): boolean, string
   io.stderr:write("==> destroying " .. name .. "\n")
   local result = be.destroy(name)
   if not result.ok then
@@ -281,7 +281,7 @@ local function cmd_zap(be: backend_mod.Backend, name: string): boolean, string
   return true
 end
 
-local function cmd_list(be: backend_mod.Backend): boolean, string
+local function cmd_list(be: backend.Backend): boolean, string
   local result = be.list()
   if not result.ok then
     return false, result.err or "unknown error"
@@ -289,7 +289,7 @@ local function cmd_list(be: backend_mod.Backend): boolean, string
   return true
 end
 
-local function cmd_scp(be: backend_mod.Backend, name: string, src: string, dst: string): boolean, string
+local function cmd_scp(be: backend.Backend, name: string, src: string, dst: string): boolean, string
   if not src or not dst then
     return false, "scp requires source and destination arguments"
   end
@@ -304,7 +304,7 @@ local function cmd_scp(be: backend_mod.Backend, name: string, src: string, dst: 
     return false, "one of source or destination must be remote (prefix with :)"
   end
 
-  local result: backend_mod.Result
+  local result: backend.Result
   if src_remote then
     -- download: remote -> local
     local remote_path = src:sub(2)
@@ -341,14 +341,14 @@ local function cmd_local_run(name: string, kind: string): integer, string
   end
 
   -- env.lua can be a function(name) or a table
-  local env: backend_mod.Env
+  local env: backend.Env
   if type(env_chunk) == "function" then
-    ok, env = pcall(env_chunk as function(string): backend_mod.Env, name)
+    ok, env = pcall(env_chunk as function(string): backend.Env, name)
     if not ok then
       return 1, "failed to call env function: " .. tostring(env)
     end
   else
-    env = env_chunk as backend_mod.Env
+    env = env_chunk as backend.Env
   end
 
   local run = require("box.run")
@@ -372,7 +372,7 @@ local function main(args: {string}): integer, string
     return 1
   end
 
-  local be: backend_mod.Backend
+  local be: backend.Backend
   be, err = load_backend(parsed.backend_type)
   if not be then
     return 1, err

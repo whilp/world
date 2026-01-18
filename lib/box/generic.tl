@@ -6,13 +6,13 @@ local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local spawn = require("cosmic.spawn")
 
-local backend_mod = require("box.backend")
+local backend = require("box.backend")
 
 local record Generic
   exe: string
 end
 
-local function exec_backend(exe: string, subcommand: string, args: {string}, passthrough: boolean): backend_mod.Result
+local function exec_backend(exe: string, subcommand: string, args: {string}, passthrough: boolean): backend.Result
   local cmd = {exe, subcommand}
 
   -- Append additional arguments
@@ -50,7 +50,7 @@ local function exec_backend(exe: string, subcommand: string, args: {string}, pas
   return {ok = false, err = error_msg}
 end
 
-local function new(self: Generic, name: string, ...: string): backend_mod.Result
+local function new(self: Generic, name: string, ...: string): backend.Result
   local args = {name}
   local extra = {...}
   for i = 1, #extra do
@@ -59,7 +59,7 @@ local function new(self: Generic, name: string, ...: string): backend_mod.Result
   return exec_backend(self.exe, "new", args, false)
 end
 
-local function ssh(self: Generic, name: string, ...: string): backend_mod.Result
+local function ssh(self: Generic, name: string, ...: string): backend.Result
   local cmd = {self.exe, "ssh", name}
   local extra = {...}
   for i = 1, #extra do
@@ -71,27 +71,27 @@ local function ssh(self: Generic, name: string, ...: string): backend_mod.Result
   return {ok = false, err = "execvp failed"}
 end
 
-local function exec_cmd(self: Generic, name: string, cmd: string): backend_mod.Result
+local function exec_cmd(self: Generic, name: string, cmd: string): backend.Result
   return exec_backend(self.exe, "exec", {name, cmd}, true)
 end
 
-local function upload(self: Generic, name: string, src: string, dst: string): backend_mod.Result
+local function upload(self: Generic, name: string, src: string, dst: string): backend.Result
   return exec_backend(self.exe, "upload", {name, src, dst}, false)
 end
 
-local function download(self: Generic, name: string, src: string, dst: string): backend_mod.Result
+local function download(self: Generic, name: string, src: string, dst: string): backend.Result
   return exec_backend(self.exe, "download", {name, src, dst}, false)
 end
 
-local function destroy(self: Generic, name: string): backend_mod.Result
+local function destroy(self: Generic, name: string): backend.Result
   return exec_backend(self.exe, "destroy", {name}, false)
 end
 
-local function list(self: Generic): backend_mod.Result
+local function list(self: Generic): backend.Result
   return exec_backend(self.exe, "list", {}, true)
 end
 
-local function load(exe_path: string): backend_mod.Backend, string
+local function load(exe_path: string): backend.Backend, string
   local resolved_path = exe_path
 
   -- If path contains '/', treat as file path (absolute or relative)
@@ -122,14 +122,14 @@ local function load(exe_path: string): backend_mod.Backend, string
 
   return {
     name = "generic:" .. path.basename(resolved_path),
-    new = function(...: string): backend_mod.Result return new(g, ...) end,
-    ssh = function(...: string): backend_mod.Result return ssh(g, ...) end,
-    exec = function(...: string): backend_mod.Result return exec_cmd(g, ...) end,
-    upload = function(...: string): backend_mod.Result return upload(g, ...) end,
-    download = function(...: string): backend_mod.Result return download(g, ...) end,
-    destroy = function(...: string): backend_mod.Result return destroy(g, ...) end,
-    list = function(): backend_mod.Result return list(g) end,
-  } as backend_mod.Backend, nil
+    new = function(...: string): backend.Result return new(g, ...) end,
+    ssh = function(...: string): backend.Result return ssh(g, ...) end,
+    exec = function(...: string): backend.Result return exec_cmd(g, ...) end,
+    upload = function(...: string): backend.Result return upload(g, ...) end,
+    download = function(...: string): backend.Result return download(g, ...) end,
+    destroy = function(...: string): backend.Result return destroy(g, ...) end,
+    list = function(): backend.Result return list(g) end,
+  } as backend.Backend, nil
 end
 
 return {
