@@ -57,7 +57,7 @@ dots_lib := lib/cook.mk $(wildcard lib/*.lua) $(wildcard lib/*.tl) \
     $(wildcard lib/*/*.js) $(wildcard lib/*/*.gs) $(wildcard lib/*/*.json) \
     $(wildcard lib/*/*.snap) $(wildcard lib/*/*/*.lua) $(wildcard lib/*/*/*.tl) \
     $(wildcard lib/types/*.d.tl) $(wildcard lib/types/*/*.d.tl) \
-    $(wildcard lib/*/.args) $(wildcard lib/*/.claspignore) $(wildcard lib/*/MANIFEST.txt) \
+    $(wildcard lib/*/.args) $(wildcard lib/*/.clasp.json) $(wildcard lib/*/.claspignore) $(wildcard lib/*/MANIFEST.txt) \
     $(wildcard lib/box/*-backend)
 
 home_built := $(o)/home/.built
