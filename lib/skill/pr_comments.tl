@@ -14,6 +14,8 @@ local unix = require("cosmo.unix")
 local getopt = require("cosmo.getopt")
 local fetch = require("cosmic.fetch")
 
+local type FetchResult = require("cosmic.fetch").Result
+
 local record FetchOpts
   method: string
   headers: {string:string}
@@ -67,7 +69,7 @@ end
 
 local function fetch_with_retry(url: string, opts: FetchOpts, max_attempts: number): number, {string:string}, string
   max_attempts = max_attempts or 4
-  local result: require("cosmic.fetch").Result
+  local result: FetchResult
   local last_err: string
 
   for attempt = 1, max_attempts do

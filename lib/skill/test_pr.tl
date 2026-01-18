@@ -38,7 +38,15 @@ local record FetchOpts
   body: string
 end
 
-local type FetchFn = function(url: string, opts?: FetchOpts): number, {string:string}, string
+local record FetchResult
+  ok: boolean
+  status: number
+  headers: {string:string}
+  body: string
+  error: string
+end
+
+local type FetchFn = function(url: string, opts?: FetchOpts): FetchResult
 
 local record ParsedPr
   title: string
@@ -136,9 +144,9 @@ test_timestamp_replace_existing()
 --------------------------------------------------------------------------------
 
 local function test_github_request_success()
-  local mock_fetch: FetchFn = function(_: string, opts: FetchOpts): number, {string:string}, string
+  local mock_fetch: FetchFn = function(_: string, opts: FetchOpts): FetchResult
     assert(opts.headers["Authorization"]:match("Bearer"), "expected bearer")
-    return 200, {}, cosmo.EncodeJson({number = 42})
+    return {ok = true, status = 200, headers = {}, body = cosmo.EncodeJson({number = 42})}
   end
   local status, data = pr.github_request("GET", "/test", "token", nil, {fetch = mock_fetch})
   assert(status == 200, "expected 200")
@@ -148,7 +156,9 @@ end
 test_github_request_success()
 
 local function test_github_request_failure()
-  local mock_fetch: FetchFn = function(_: string, _opts: FetchOpts): number, {string:string}, string return nil, nil, "connection refused" end
+  local mock_fetch: FetchFn = function(_: string, _opts: FetchOpts): FetchResult
+    return {ok = false, error = "connection refused"}
+  end
   local status, err = pr.github_request("GET", "/test", "token", nil, {fetch = mock_fetch})
   assert(not status, "expected no status")
   assert((err as string):match("fetch failed"), "expected error")
@@ -156,8 +166,8 @@ end
 test_github_request_failure()
 
 local function test_get_pr()
-  local mock_fetch: FetchFn = function(_: string, _opts: FetchOpts): number, {string:string}, string
-    return 200, {}, cosmo.EncodeJson({number = 42, title = "Test", body = "Body"})
+  local mock_fetch: FetchFn = function(_: string, _opts: FetchOpts): FetchResult
+    return {ok = true, status = 200, headers = {}, body = cosmo.EncodeJson({number = 42, title = "Test", body = "Body"})}
   end
   local data = pr.get_pr("owner", "repo", 42, "token", {fetch = mock_fetch}) as GitHubPr
   assert(data.number == 42, "expected pr number")
@@ -166,9 +176,9 @@ test_get_pr()
 
 local function test_update_pr()
   local captured: {string:string}
-  local mock_fetch: FetchFn = function(_: string, opts: FetchOpts): number, {string:string}, string
+  local mock_fetch: FetchFn = function(_: string, opts: FetchOpts): FetchResult
     captured = cosmo.DecodeJson(opts.body) as {string:string}
-    return 200, {}, cosmo.EncodeJson({number = 42})
+    return {ok = true, status = 200, headers = {}, body = cosmo.EncodeJson({number = 42})}
   end
   local ok = pr.update_pr("owner", "repo", 42, "Title", "Body", "token", {fetch = mock_fetch})
   assert(ok, "expected success")
@@ -242,11 +252,11 @@ test_pr_file_from_branch_multiple()
 --------------------------------------------------------------------------------
 
 local function test_do_update_with_changes()
-  local mock_fetch: FetchFn = function(_: string, opts: FetchOpts): number, {string:string}, string
+  local mock_fetch: FetchFn = function(_: string, opts: FetchOpts): FetchResult
     if opts.method == "GET" then
-      return 200, {}, cosmo.EncodeJson({number = 42, title = "Old", body = "Old body"})
+      return {ok = true, status = 200, headers = {}, body = cosmo.EncodeJson({number = 42, title = "Old", body = "Old body"})}
     else
-      return 200, {}, cosmo.EncodeJson({number = 42})
+      return {ok = true, status = 200, headers = {}, body = cosmo.EncodeJson({number = 42})}
     end
   end
 
@@ -276,12 +286,12 @@ test_do_update_with_changes()
 
 local function test_main_with_single_file()
   local patch_called = false
-  local mock_fetch: FetchFn = function(_: string, opts: FetchOpts): number, {string:string}, string
+  local mock_fetch: FetchFn = function(_: string, opts: FetchOpts): FetchResult
     if opts.method == "GET" then
-      return 200, {}, cosmo.EncodeJson({number = 42, title = "Old", body = "Old body"})
+      return {ok = true, status = 200, headers = {}, body = cosmo.EncodeJson({number = 42, title = "Old", body = "Old body"})}
     else
       patch_called = true
-      return 200, {}, cosmo.EncodeJson({number = 42})
+      return {ok = true, status = 200, headers = {}, body = cosmo.EncodeJson({number = 42})}
     end
   end
 
