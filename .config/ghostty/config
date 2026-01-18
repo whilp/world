@@ -14,8 +14,9 @@ window-save-state = "default"
 #maximize = true
 #shell-integration = "zsh"
 mouse-hide-while-typing = true
-window-padding-x = 8
+window-padding-x = 2
 window-padding-y = 8
+window-padding-balance = true
 window-padding-color = extend
 clipboard-write = allow
 #adjust-cell-width = 0%
@@ -27,8 +28,10 @@ theme = "GitHub Dark Colorblind"
 
 keybind = global:ctrl+`=toggle_quick_terminal
 keybind = cmd+shift+w=quit
+keybind = cmd+w=text:\x17
 keybind = cmd+v=paste_from_clipboard
 keybind = cmd+c=copy_to_clipboard
+keybind = cmd+c=text:\x03
 keybind = shift+enter=text:\x1b\r
 
 keybind = cmd+h=unbind

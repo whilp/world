@@ -1,0 +1,20 @@
+id: manual-temp-dir
+language: lua
+severity: error
+message: |
+  Potential manual temp directory construction detected. Consider using unix.mkdtemp() instead.
+
+  Example:
+    Bad:  local tmp = "/tmp/myapp_test"
+          unix.makedirs(tmp)
+    Good: local tmp = unix.mkdtemp("/tmp/myapp_XXXXXX")
+
+    Bad:  unix.makedirs("/tmp/test_dir")
+    Good: local tmp = unix.mkdtemp("/tmp/test_XXXXXX")
+note: Manually constructing temp directory paths is unsafe and can lead to race conditions or collisions. Use unix.mkdtemp() for secure temp directory creation.
+
+rule:
+  pattern: unix.makedirs($PATH)
+constraints:
+  PATH:
+    regex: '/tmp/'

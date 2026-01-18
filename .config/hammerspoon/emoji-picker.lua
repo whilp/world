@@ -1,3 +1,6 @@
+-- luacheck ignore: hammerspoon runtime
+-- ast-grep ignore: hammerspoon runtime
+--check:false
 local M = {}
 
 package.path = os.getenv("HOME") .. "/lib/?.lua;" .. package.path

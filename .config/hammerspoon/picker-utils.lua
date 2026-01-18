@@ -1,3 +1,4 @@
+-- luacheck ignore: hammerspoon runtime
 local M = {}
 
 -- Creates a cached picker from a data module

@@ -1,20 +1,27 @@
 return {
-  version = "0.28.0",
+  version = "0.40.5",
   format = "zip",
   strip_components = 0,
+  install = {
+    ["ast-grep"] = "bin/ast-grep",
+  },
+  remove = { "sg" },
+  links = {
+    ["bin/sg"] = "ast-grep",
+  },
   url = "https://github.com/ast-grep/ast-grep/releases/download/{version}/app-{arch}.zip",
   platforms = {
     ["darwin-arm64"] = {
       arch = "aarch64-apple-darwin",
-      sha = "c9a9e690d94cd9696d2552690fe0abdd2c303e48a3ee5cf9d38728eda054f147",
+      sha = "55c3a471a483daab49b6413972c3655087f2ce47335ab019067ed1fbf6672107",
     },
     ["linux-arm64"] = {
       arch = "aarch64-unknown-linux-gnu",
-      sha = "62e9e79148be33d27fde24f4dcda83eab207a297ce50fb4a0becfbb29c8f218b",
+      sha = "9596c2abfdf450203e5653e185d805133d5499f8c2cbb00b1aab54754ca70e13",
     },
     ["linux-x86_64"] = {
       arch = "x86_64-unknown-linux-gnu",
-      sha = "d28be5970afb3e8022210fb9427de0875f1d64f4e4b91ed28b3a3abfebb1d934",
+      sha = "9715cb5933a4d7fe9e4d8c2be870a9a82840c3f2ec4a57bdff7f15d0912cc676",
     },
   },
 }

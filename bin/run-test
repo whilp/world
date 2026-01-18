@@ -1,0 +1,13 @@
+#!/bin/bash
+# run-test - run specific tests by pattern
+#
+# Usage:
+#   run-test test_pr_timestamp        # partial match
+#   run-test lib/skill/test_pr_*      # glob pattern
+
+if [ $# -eq 0 ]; then
+  echo "usage: run-test <pattern>" >&2
+  exit 1
+fi
+
+exec make only="$1" test

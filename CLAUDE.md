@@ -1,38 +1,103 @@
-## Skills
+## Build workflow
 
-- ALWAYS consider available skills. Almost every session will involve one or more skills, and the most relevant skills should be evident early in the session.
+```bash
+make test              # run tests (incremental)
+make clean test        # full rebuild and test
+make test; make test   # verify incremental builds work (second should be instant)
+make staged            # fetch and extract dependencies
+make fetched           # fetch dependencies only
+```
 
-## Writing
+## Running specific tests
 
-- Always use sentence case
+Use `run-test` to run specific tests by pattern:
 
-## SQL
+```bash
+run-test test_pr_timestamp        # partial match
+run-test lib/skill/test_pr_*      # glob pattern
+run-test timestamp                # matches any test containing "timestamp"
+```
 
-- always write sql in lowercase style for trino
+Benefits:
+- Leverages make's dependency resolution (builds deps if stale)
+- No duplicate work if already tested
+- Fast iteration on specific test files
 
-## Searching
+## Output structure
 
-- ALWAYS use `rg` (ripgrep) to explore files
-- NEVER use `find`
-- NEVER use `grep`
-- to find files with `rg`: `rg --files -g '*.<extension>' <path>`; if this doesn't work, consider whether it is appropriate to ignore gitignore and then try again with `-uuu`
+Each module gets a directory under `o/`:
 
-## Python
+```
+o/<module>/
+  .versioned  -> 3p/<module>/version.lua
+  .fetched    -> ../fetched/<module>/<ver>-<sha>/
+  .staged     -> ../staged/<module>/<ver>-<sha>/
+  .built/     (lib modules only, for build staging)
+```
 
-- ALWAYS invoke `python3`
-- NEVER invoke plain `python`
+Actual files live in:
+- `o/fetched/<module>/<ver>-<sha>/` - downloaded archives
+- `o/staged/<module>/<ver>-<sha>/` - extracted files
 
-## Docs
+## Module patterns
 
-- ALWAYS fetch the .md version of docs; for <https://docs.anthropic.com/en/docs/claude-code/hooks> -\> <https://docs.anthropic.com/en/docs/claude-code/hooks.md>
+Modules define in cook.mk:
+- `module_version` - path to version.lua (3p modules)
+- `module_files` - output files to build
+- `module_tests` - test files
+- `module_deps` - other modules this depends on
 
-## Gists
+Auto-derived for modules with `_version`:
+- `module_staged` - symlink `o/<module>/.staged`
+- `module_dir` - same as `_staged`, resolves to extracted files
 
-- to create a gist, do `gh create <file> --desc "<description>"`
+```makefile
+# 3p module cook.mk
+modules += foo
+foo_version := 3p/foo/version.lua
+foo_srcs := foo.lua         # optional: document staged files
+foo_tests := 3p/foo/test_foo.lua
 
-## Git
+# lib module cook.mk
+modules += bar
+bar_files := $(o)/bin/bar $(o)/lib/bar/init.lua
+bar_tests := lib/bar/test_bar.lua
+bar_deps := foo  # depends on foo_staged
+```
 
-- always use atomic commits
-- write commit messages like '<component>: <action>'; eg 'comrak-fmt: rewrite in lua'
-- git is usually configured with `status.showUntrackedFiles`; check `.gitconfig` when in doubt
-- never invoke git -A; always add specific files
+Reference staged files using `_dir`:
+```makefile
+$(my_target): $(foo_staged)
+	cp $(foo_dir)/*.lua $@
+```
+
+## version.lua options
+
+```lua
+return {
+  version = "1.0.0",
+  format = "tar.gz",           -- or "zip", "binary"
+  strip_components = 1,        -- strip N levels from archive
+  strip_prefix = "src",        -- optional: flatten subdirectory
+  url = "https://example.com/{version}.tar.gz",
+  platforms = {
+    ["*"] = { sha = "..." },   -- or per-platform
+    ["linux-x86_64"] = { sha = "..." },
+  },
+}
+```
+
+## Test patterns
+
+Tests have access to:
+- `TEST_DIR` - module's staged directory (set by Makefile)
+- `TEST_BIN` - path to o/bin for binaries (cosmic, etc.)
+- `TEST_TMPDIR` - temporary directory, cleaned after test
+
+```lua
+-- 3p module: find binary in staged dir
+local bin = path.join(TEST_DIR, "sg")
+
+-- lib module: find binary in TEST_BIN
+local cosmic = path.join(os.getenv("TEST_BIN"), "cosmic")
+```

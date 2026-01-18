@@ -1,3 +1,4 @@
+-- luacheck ignore: hammerspoon runtime
 return Leader("c", "CleanShot", {
   Bind("a", "All-in-one capture", { url = "cleanshot://all-in-one" }),
   Bind("c", "Capture area", { url = "cleanshot://capture-area" }),

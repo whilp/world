@@ -1,20 +1,20 @@
 return {
-  version = "14.1.1",
+  version = "15.1.0",
   format = "tar.gz",
   strip_components = 1,
   url = "https://github.com/BurntSushi/ripgrep/releases/download/{version}/ripgrep-{version}-{arch}.tar.gz",
   platforms = {
     ["darwin-arm64"] = {
       arch = "aarch64-apple-darwin",
-      sha = "24ad76777745fbff131c8fbc466742b011f925bfa4fffa2ded6def23b5b937be",
+      sha = "378e973289176ca0c6054054ee7f631a065874a352bf43f0fa60ef079b6ba715",
     },
     ["linux-arm64"] = {
       arch = "aarch64-unknown-linux-gnu",
-      sha = "c827481c4ff4ea10c9dc7a4022c8de5db34a5737cb74484d62eb94a95841ab2f",
+      sha = "2b661c6ef508e902f388e9098d9c4c5aca72c87b55922d94abdba830b4dc885e",
     },
     ["linux-x86_64"] = {
       arch = "x86_64-unknown-linux-musl",
-      sha = "4cf9f2741e6c465ffdb7c26f38056a59e2a2544b51f7cc128ef28337eeae4d8e",
+      sha = "1c9297be4a084eea7ecaedf93eb03d058d6faae29bbc57ecdaf5063921491599",
     },
   },
 }

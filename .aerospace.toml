@@ -8,6 +8,8 @@ start-at-login = true
 # Load window snapshot on startup
 after-startup-command = ['exec-and-forget aerosnap load']
 
+# Track window focus for MRU (calls into Hammerspoon via IPC)
+on-focus-changed = ["exec-and-forget hs -c \"aeroSwitcher.recordFocus('$AEROSPACE_WINDOW_ID')\""]
 
 # Normalizations (keeps layout tree sensible)
 enable-normalization-flatten-containers = true
@@ -15,10 +17,6 @@ enable-normalization-opposite-orientation-for-nested-containers = true
 
 # Accordion padding (shows edge of stacked windows)
 accordion-padding = 0
-
-# Default layout (accordion for stacked windows)
-default-root-container-layout = 'accordion'
-default-root-container-orientation = 'horizontal'
 
 # Exec environment
 [exec.env-vars]
@@ -31,7 +29,7 @@ inner.horizontal = 0
 inner.vertical = 0
 outer.left = 0
 outer.bottom = 0
-outer.top = 0
+outer.top = [{ monitor."Built-in Retina Display" = 1 }, 24]
 outer.right = 0
 
 # Key mapping (use qwerty, dvorak, or colemak)
@@ -58,10 +56,10 @@ alt-shift-k = 'move up'
 alt-shift-l = 'move right'
 
 # Join windows (nest under common parent)
-alt-ctrl-h = 'join-with left'
-alt-ctrl-j = 'join-with down'
-alt-ctrl-k = 'join-with up'
-alt-ctrl-l = 'join-with right'
+ctrl-shift-h = 'join-with left'
+ctrl-shift-j = 'join-with down'
+ctrl-shift-k = 'join-with up'
+ctrl-shift-l = 'join-with right'
 
 # Focus monitors
 alt-comma = 'focus-monitor left'
@@ -76,6 +74,7 @@ alt-shift-space = 'layout floating tiling'  # Toggle float/tile
 alt-f = 'fullscreen'                         # Toggle fullscreen
 alt-a = 'layout accordion tiles'             # Toggle accordion/tiles if needed
 alt-shift-o = 'layout horizontal vertical'   # Toggle orientation
+alt-shift-f = 'flatten-workspace-tree'       # Flatten nested containers
 
 # Resize mode
 alt-r = 'mode resize'
@@ -116,48 +115,3 @@ l = 'resize smart +50'
 enter = 'mode main'
 esc = 'mode main'
 
-# Auto-apply accordion layout to all windows
-[[on-window-detected]]
-if.during-aerospace-startup = false
-run = 'layout accordion'
-
-# Workspace 1: personal
-[[on-window-detected]]
-if.app-name-regex-substring = 'Messages'
-run = 'move-node-to-workspace 1'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'Reader'
-run = 'move-node-to-workspace 1'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'iPhone Mirroring'
-run = 'move-node-to-workspace 1'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'Google Chrome'
-if.window-title-regex-substring = 'Will \(gmail\)'
-run = 'move-node-to-workspace 1'
-
-# Workspace 3: work comms
-[[on-window-detected]]
-if.app-name-regex-substring = 'Slack'
-run = 'move-node-to-workspace 3'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'Google Calendar'
-run = 'move-node-to-workspace 3'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'Gmail'
-run = 'move-node-to-workspace 3'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'Google Gemini'
-run = 'move-node-to-workspace 3'
-
-# Workspace 4: work browser
-[[on-window-detected]]
-if.app-name-regex-substring = 'Google Chrome'
-if.window-title-regex-substring = 'wcm \(stripe\)'
-run = 'move-node-to-workspace 4'

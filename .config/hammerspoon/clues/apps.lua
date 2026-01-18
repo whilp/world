@@ -1,3 +1,4 @@
+-- luacheck ignore: hammerspoon runtime
 local function focusChromeProfile(profileName)
   return function()
     local chrome = hs.application.get("Google Chrome")

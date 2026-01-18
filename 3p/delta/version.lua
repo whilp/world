@@ -2,6 +2,9 @@ return {
   version = "0.18.2",
   format = "tar.gz",
   strip_components = 1,
+  install = {
+    ["delta"] = "bin/delta",
+  },
   url = "https://github.com/dandavison/delta/releases/download/{version}/delta-{version}-{arch}.tar.gz",
   platforms = {
     ["darwin-arm64"] = {

@@ -1,112 +1,166 @@
-include lib/spawn/cook.mk
+modules += home
+home_srcs := $(wildcard lib/home/*.lua) $(wildcard lib/home/*.tl) $(wildcard lib/home/*/*.lua) $(wildcard lib/home/*/*.tl)
+home_lib_srcs := $(filter-out lib/home/test%.lua,$(wildcard lib/home/*.lua))
+home_libs := $(addprefix $(o)/,$(home_lib_srcs))
+home_bin := $(o)/bin/home
+# only include home_bin in home_files; home_libs are explicit prereqs of home_bin
+# but shouldn't inherit home_deps (which would require staging 20+ tools for linting)
+home_files := $(home_bin)
+home_tests := $(wildcard lib/home/test_*.tl)
+home_tl_files := lib/home/main.tl lib/home/gen-manifest.tl lib/home/bootstrap.tl $(wildcard lib/home/setup/*.tl) $(wildcard lib/home/mac/*.tl)
 
-version_file = lib/version.lua
-home_exclude_pattern = ^(3p/|o/|results/|Makefile|lib/home/|\.git)
-home_lua = LUA_PATH="$(CURDIR)/lib/?.lua;$(CURDIR)/lib/?/init.lua;$(CURDIR)/lib/home/?.lua;;" $(CURDIR)/$(lua_bin)
-home_setup_dir = lib/home/setup
-home_mac_dir = lib/home/mac
-home_setup_sources = $(wildcard $(home_setup_dir)/*.lua)
-home_mac_sources = $(wildcard $(home_mac_dir)/*.lua)
+# 3p tools to bundle (nvim handled specially for bundled version)
+home_3p_tools := ast-grep biome bun comrak delta duckdb gh marksman rg ruff shfmt sqruff stylua superhtml tree-sitter uv
 
-results/dotfiles.zip: private .UNVEIL = r:$(CURDIR) rx:$(cosmos_zip_bin) rwc:results rw:/dev/null
-results/dotfiles.zip: private .PLEDGE = stdio rpath wpath cpath fattr exec proc
-results/dotfiles.zip: $(cosmos_zip_bin) | results
-	git ls-files -z | grep -zZvE '$(home_exclude_pattern)' | \
-		xargs -0 $(cosmos_zip_bin) -q -r $@
+home_deps := cosmos cosmic nvim clasp $(home_3p_tools)
 
-define build_platform_asset
-	@echo "Building platform asset $(1) for $(2)..."
-	@rm -rf results/platform-$(2)
-	@mkdir -p results/platform-$(2)/home/.local/share
-	@echo "Extracting and organizing binaries..."
-	@mkdir -p results/platform-$(2)/temp-binaries
-	@unzip -q results/binaries-$(2).zip -d results/platform-$(2)/temp-binaries
-	@cd results/platform-$(2)/temp-binaries && \
-		for tool in $(TOOLS); do \
-			if [ -d "$$tool/$(2)" ]; then \
-				version=$$(cat "$$tool/$(2)/VERSION" 2>/dev/null || echo "0.0.0"); \
-				version=$${version:-0.0.0}; \
-				sha=$$(cat "$$tool/$(2)/SHA" 2>/dev/null || echo ""); \
-				sha=$$(echo "$$sha" | head -c 8); \
-				sha=$${sha:-00000000}; \
-				install_dir="$(CURDIR)/results/platform-$(2)/home/.local/share/$$tool/$${version}-$${sha}"; \
-				echo "  Installing $$tool $${version}-$${sha}..."; \
-				mkdir -p "$$install_dir"; \
-				if [ "$$tool" = "nvim" ] || [ "$$tool" = "gh" ]; then \
-					cp -r $$tool/$(2)/bin $$tool/$(2)/lib $$tool/$(2)/share "$$install_dir/" 2>/dev/null || true; \
-					cp -r $$tool/$(2)/libexec "$$install_dir/" 2>/dev/null || true; \
-				else \
-					if [ -d "$$tool/$(2)/bin" ]; then \
-						exe=$$(find "$$tool/$(2)/bin" -maxdepth 1 -type f -name "$$tool" 2>/dev/null | head -1); \
-						if [ -n "$$exe" ]; then cp -p "$$exe" "$$install_dir/$$tool"; fi; \
-					else \
-						exe=$$(find "$$tool/$(2)" -maxdepth 1 -type f -name "$$tool" 2>/dev/null | head -1); \
-						if [ -n "$$exe" ]; then cp -p "$$exe" "$$install_dir/$$tool"; fi; \
-					fi; \
-				fi; \
-			fi; \
-		done
-	@rm -rf results/platform-$(2)/temp-binaries
-	@echo "Generating manifest..."
-	@$(home_lua) lib/home/gen-manifest.lua results/platform-$(2)/home $(HOME_VERSION) > results/platform-$(2)/manifest.lua
-	@echo "Creating platform asset..."
-	@cp $(lua_bin) $(1)
-	@cd results/platform-$(2) && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$(1) -@
-	@$(cosmos_zip_bin) -qj $(1) lib/home/main.lua
-	@mkdir -p results/platform-$(2)/.lua && cp -r $(spawn_dir) results/platform-$(2)/.lua/ && cp $(version_file) results/platform-$(2)/.lua/
-	@cd results/platform-$(2) && $(cosmos_zip_bin) -qr $(CURDIR)/$(1) .lua
-	@echo -n '/zip/main.lua' > results/platform-$(2)/.args
-	@$(cosmos_zip_bin) -qj $(1) results/platform-$(2)/.args
-	@rm -rf results/platform-$(2)
-endef
-
-# generate platform asset rules
-define platform_home_rule
-results/bin/home-$(1): private .PLEDGE = stdio rpath wpath cpath fattr exec proc
-results/bin/home-$(1): private .CPU = 120
-results/bin/home-$(1): $$(lua_bin) results/binaries-$(1).zip lib/home/main.lua lib/home/gen-manifest.lua $$(spawn_sources) $$(version_file) | results/bin
-	$$(call build_platform_asset,$$@,$(1))
-endef
-
-$(foreach p,$(PLATFORMS),$(eval $(call platform_home_rule,$(p))))
-
-platform-assets: $(foreach p,$(PLATFORMS),results/bin/home-$(p))
-
-# universal home binary with dotfiles + platform metadata
+# Build configuration
+home_setup_dir := lib/home/setup
+home_mac_dir := lib/home/mac
 HOME_VERSION ?= $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
-HOME_BASE_URL ?= https://github.com/whilp/dotfiles/releases/download/{tag}
-HOME_TAG ?= home-$(shell date -u +%Y-%m-%d)-$(HOME_VERSION)
 
-home_platform_deps := $(foreach p,$(PLATFORMS),results/bin/home-$(p))
+# Dotfiles sources (explicit wildcards for Make dependency tracking)
+# Shell configs
+dots_shell := .zshrc .zshenv .zprofile
+# Editor/linter configs
+dots_editor := .editorconfig .stylua.toml .luacheckrc tlconfig.lua biome.json sgconfig.yml
+# Tool configs
+dots_tools := .aerospace.toml .watchmanconfig
+# Claude config
+dots_claude := .claude/.ignore .claude/settings.json \
+    $(wildcard .claude/*.md) $(wildcard .claude/commands/*.md) \
+    $(wildcard .claude/skills/*/*.md)
+# AST-grep rules
+dots_ast_grep := $(wildcard .ast-grep/rules/*.yml)
+# Hammerspoon symlink (files are in .config/hammerspoon via dots_config)
+dots_hammerspoon := .hammerspoon
+# .config/* (flat subdirs)
+dots_config := $(wildcard .config/delta/*) $(wildcard .config/fish/*) \
+    $(wildcard .config/gh/*) $(wildcard .config/ghostty/*) \
+    $(wildcard .config/git/*) $(wildcard .config/karabiner/*) \
+    $(wildcard .config/ripgrep/*) $(wildcard .config/ssh/*) \
+    $(wildcard .config/voyager/*) $(wildcard .config/hammerspoon/*)
+# .config/nvim (nested structure)
+# Source .tl files are compiled to .lua at build time; only ship .lua
+dots_nvim_tl := $(wildcard .config/nvim/*.tl) $(wildcard .config/nvim/plugin/*.tl)
+dots_nvim := $(wildcard .config/nvim/*.lua) $(wildcard .config/nvim/plugin/*.lua) \
+    $(wildcard .config/nvim/queries/*/*.scm)
+# .local/bin scripts
+dots_local_bin := $(wildcard .local/bin/*)
+# Root files
+dots_root := CLAUDE.md LICENSE README.md bootstrap.mk cook.mk setup.sh
+# bin/ scripts
+dots_bin := $(wildcard bin/*)
+# lib/ sources (comprehensive wildcards)
+dots_lib := lib/cook.mk $(wildcard lib/*.lua) $(wildcard lib/*.tl) \
+    $(wildcard lib/*/cook.mk) $(wildcard lib/*/*.lua) $(wildcard lib/*/*.tl) \
+    $(wildcard lib/*/*.snap) $(wildcard lib/*/*/*.lua) $(wildcard lib/*/*/*.tl) \
+    $(wildcard lib/types/*.d.tl) $(wildcard lib/types/*/*.d.tl) \
+    $(wildcard lib/*/.args) $(wildcard lib/*/MANIFEST.txt)
 
-results/bin/home: private .PLEDGE = stdio rpath wpath cpath fattr exec proc
-results/bin/home: private .CPU = 180
-results/bin/home: $(lua_bin) results/dotfiles.zip $(home_platform_deps) lib/home/main.lua lib/home/.args lib/home/gen-manifest.lua lib/home/gen-platforms.lua $(spawn_sources) $(version_file) $(home_setup_sources) $(home_mac_sources) | results/bin
-	@echo "Building universal home binary..."
-	@rm -rf results/home-universal
-	@mkdir -p results/home-universal/home/.local/bin
-	@echo "Extracting dotfiles..."
-	@unzip -q results/dotfiles.zip -d results/home-universal/home
-	@cp -p $(lua_bin) results/home-universal/home/.local/bin/lua
-	@cp -p o/3p/cosmos/bin/unzip results/home-universal/home/.local/bin/unzip
-	@echo "Generating manifest..."
-	@$(home_lua) lib/home/gen-manifest.lua results/home-universal/home $(HOME_VERSION) > results/home-universal/manifest.lua
-	@echo "Generating platforms metadata..."
-	@$(home_lua) lib/home/gen-platforms.lua results/home-universal "$(HOME_BASE_URL)" "$(HOME_TAG)" $(home_platform_deps)
-	@echo "Creating home binary..."
-	@cp $(lua_bin) $@
-	@cd results/home-universal && find . -type f -o -type l | $(cosmos_zip_bin) -q $(CURDIR)/$@ -@
-	@cd lib/home && $(cosmos_zip_bin) -qr $(CURDIR)/$@ main.lua .args
-	@mkdir -p results/home-universal/.lua && cp -r $(spawn_dir) $(home_setup_dir) $(home_mac_dir) results/home-universal/.lua/ && cp $(version_file) results/home-universal/.lua/
-	@cd results/home-universal && $(cosmos_zip_bin) -qr $(CURDIR)/$@ .lua
-	@rm -rf results/home-universal
+home_built := $(o)/home/.built
 
-home: results/bin/home
+# Nvim config teal files (compiled at build time, shipped as .lua)
+home_nvim_tl_compiled := $(patsubst %.tl,$(o)/%.lua,$(dots_nvim_tl))
 
-test-home: private .UNVEIL = r:lib/home r:lib rx:$(lua_bin) r:$(test_runner) rwc:lib/home/o rw:/dev/null
-test-home: private .PLEDGE = stdio rpath wpath cpath proc exec
-test-home: private .CPU = 60
-test-home: lua
-	cd lib/home && $(home_lua) $(CURDIR)/$(test_runner) test_main.lua
+# Aggregate all dotfiles
+home_dotfiles := $(dots_shell) $(dots_editor) $(dots_tools) $(dots_claude) \
+    $(dots_ast_grep) $(dots_hammerspoon) $(dots_config) $(dots_nvim) \
+    $(dots_local_bin) $(dots_root) $(dots_bin) $(dots_lib)
 
-.PHONY: home platform-assets test-home
+# Compile nvim .tl configs to .lua
+# Uses secondary expansion so $(tl_files) is evaluated after all includes
+.SECONDEXPANSION:
+$(o)/.config/nvim/%.lua: .config/nvim/%.tl $$(tl_files) $$(bootstrap_files) | $$(tl_staged)
+	@mkdir -p $(@D)
+	@$(tl_gen) $< -o $@
+
+# Which nvim to bundle: raw binary for dev, full bundle for release
+HOME_NVIM_DIR ?= $(nvim_staged)
+
+# Create dotfiles.zip with symlinks preserved
+# Includes: dotfiles, compiled nvim configs, cosmic-lua binary, clasp binary, lua symlink
+$(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin) $$(clasp_bin) $(home_nvim_tl_compiled)
+	@rm -rf $(o)/home/.dotfiles-staging
+	@mkdir -p $(@D) $(o)/home/.dotfiles-staging
+	@for f in $(home_dotfiles); do \
+		mkdir -p $(o)/home/.dotfiles-staging/$$(dirname "$$f") && \
+		cp -a "$$f" $(o)/home/.dotfiles-staging/"$$f"; \
+	done
+	@for f in $(home_nvim_tl_compiled); do \
+		target=$${f#$(o)/}; \
+		mkdir -p $(o)/home/.dotfiles-staging/$$(dirname $$target); \
+		cp $$f $(o)/home/.dotfiles-staging/$$target; \
+	done
+	@mkdir -p $(o)/home/.dotfiles-staging/.local/bin
+	@$(cp) $(cosmic_bin) $(o)/home/.dotfiles-staging/.local/bin/cosmic-lua
+	@$(cp) $(clasp_bin) $(o)/home/.dotfiles-staging/.local/bin/clasp
+	@ln -sf cosmic-lua $(o)/home/.dotfiles-staging/.local/bin/lua
+	@cd $(o)/home/.dotfiles-staging && $(CURDIR)/$(cosmos_zip) -qry $(CURDIR)/$@ .
+	@rm -rf $(o)/home/.dotfiles-staging
+
+# Compiled .lua from home_tl_files (Makefile compiles these automatically)
+home_tl_lua := $(patsubst %.tl,$(o)/%.lua,$(home_tl_files))
+
+# Home binary bundles: dotfiles.zip, per-tool zips (extracted at runtime), lua libs
+# Dev build uses raw nvim; release build uses bundled nvim (set via HOME_NVIM_DIR)
+# Tool zips use secondary expansion to defer $(x_zip) evaluation
+$(home_bin): $(home_libs) $(home_tl_lua) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin) $(cosmic_tl_libs) $$(foreach t,$(home_3p_tools) nvim,$$($$(t)_zip))
+	@rm -rf $(home_built)
+	@mkdir -p $(home_built)/tools $(home_built)/.lua $(@D)
+	@$(cp) $(o)/home/dotfiles.zip $(home_built)/dotfiles.zip
+	@$(cp) $(cosmos_dir)/unzip $(home_built)/unzip
+	@for tool in $(home_3p_tools) nvim; do \
+		$(cp) $(o)/$$tool/.zip $(home_built)/tools/$$tool.zip; \
+	done
+	@echo 'return { version = "$(HOME_VERSION)", tools = { $(foreach t,$(home_3p_tools) nvim,"$(t)", ) } }' > $(home_built)/manifest.lua
+	@$(cp) $(cosmos_dir)/lua $@
+	@chmod +x $@
+	@cd $(home_built) && find tools unzip dotfiles.zip manifest.lua -type f | $(CURDIR)/$(cosmos_zip) -qy $(CURDIR)/$@ -@
+	@$(cosmos_zip) -qj $@ $(o)/lib/home/main.lua lib/home/.args
+	@cp -r lib/cosmic lib/version.lua lib/claude $(home_built)/.lua/
+	@mkdir -p $(home_built)/.lua/setup $(home_built)/.lua/mac
+	@cp $(o)/$(home_setup_dir)/*.lua $(home_built)/.lua/setup/
+	@cp $(o)/$(home_mac_dir)/*.lua $(home_built)/.lua/mac/
+	@cp -f $(cosmic_tl_libs) $(home_built)/.lua/cosmic/
+	@cd $(home_built) && $(CURDIR)/$(cosmos_zip) -qr $(CURDIR)/$@ .lua
+	@rm -rf $(home_built)
+
+home: $(home_bin)
+
+.PHONY: home
+
+# Bootstrap binary: lightweight binary for sprite bootstrap
+bootstrap_bin := $(o)/bin/bootstrap
+bootstrap_built := $(o)/bootstrap/.built
+bootstrap_main := $(o)/lib/home/bootstrap.lua
+bootstrap_spawn := $(o)/lib/cosmic/spawn.lua
+
+$(bootstrap_bin): $(bootstrap_main) $(bootstrap_spawn) $$(cosmos_staged)
+	@rm -rf $(bootstrap_built)
+	@mkdir -p $(bootstrap_built)/.lua/cosmic $(@D)
+	@$(cp) $(bootstrap_spawn) $(bootstrap_built)/.lua/cosmic/
+	@$(cp) $(cosmos_lua) $@
+	@chmod +x $@
+	@cd $(bootstrap_built) && $(CURDIR)/$(cosmos_zip) -qr $(CURDIR)/$@ .lua
+	@$(cosmos_zip) -qj $@ $(bootstrap_main)
+	@echo '/zip/bootstrap.lua' > $(bootstrap_built)/.args
+	@cd $(bootstrap_built) && $(CURDIR)/$(cosmos_zip) -qj $(CURDIR)/$@ .args
+	@rm -rf $(bootstrap_built)
+
+bootstrap: $(bootstrap_bin)
+
+.PHONY: bootstrap
+
+# bootstrap test depends on the bootstrap binary
+$(o)/lib/home/test_bootstrap.tl.test.ok: $(bootstrap_bin)
+
+# home-release: rebuild home with nvim bundle (used by test-release)
+.PHONY: home-release
+home-release: $(nvim_bundle)
+	@rm -f $(home_bin)
+	@$(MAKE) $(home_bin) HOME_NVIM_DIR=$(nvim_bundle_out)
+
+# Release tests: nvim bundle tests (nvim tests defined in 3p/nvim/cook.mk)
+.PHONY: test-release
+test-release: home-release nvim-release-tests

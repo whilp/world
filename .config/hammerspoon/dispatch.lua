@@ -1,3 +1,6 @@
+-- luacheck ignore: hammerspoon runtime
+-- ast-grep ignore: hammerspoon runtime
+--check:false
 local M = {}
 
 local leaderDsl = require("leader-dsl")

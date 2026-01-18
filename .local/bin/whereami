@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+-- luacheck ignore: script runtime
 -- Get hostname or box-name/host_env identifier
 
 local whereami = require('whereami')
