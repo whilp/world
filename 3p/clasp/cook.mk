@@ -19,5 +19,5 @@ $(clasp_bin): $$(clasp_staged) $$(bun_staged) $(clasp_lock)
 	@mkdir -p $(@D)
 	@rm -f $(clasp_dir)/package-lock.json
 	@cp $(clasp_lock) $(clasp_dir)/bun.lock
-	@cd $(clasp_dir) && $(CURDIR)/$(bun_dir)/bin/bun install --ignore-scripts --frozen-lockfile
-	@cd $(clasp_dir) && $(CURDIR)/$(bun_dir)/bin/bun build --compile src/index.ts --outfile $(CURDIR)/$@
+	@cd $(clasp_dir) && $(CURDIR)/$(bun_dir)/bin/bun install --ignore-scripts --frozen-lockfile >/dev/null
+	@cd $(clasp_dir) && $(CURDIR)/$(bun_dir)/bin/bun build --compile src/index.ts --outfile $(CURDIR)/$@ >/dev/null
