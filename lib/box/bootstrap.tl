@@ -66,12 +66,15 @@ local function fetch_text(url: string): string, string
 end
 
 local function fetch_binary(url: string): string, string
-  local status, _, body = cosmo.Fetch(url, {
+  local status, headers_or_err, body = cosmo.Fetch(url, {
     headers = {["User-Agent"] = "curl/8.0"},
-    maxresponse = 200 * 1024 * 1024,
+    maxresponse = 250 * 1024 * 1024,
   })
-  if not status or status ~= 200 then
-    return nil, "fetch failed: " .. tostring(status)
+  if not status then
+    return nil, "fetch failed: " .. tostring(headers_or_err or "unknown error")
+  end
+  if status ~= 200 then
+    return nil, "fetch failed: HTTP " .. tostring(status)
   end
   return body
 end
@@ -130,7 +133,7 @@ local function download_home(release: Release, platform: string, expected_sha: s
     return nil, asset_name .. " not found in release"
   end
 
-  io.stderr:write("downloading " .. asset_name .. "...\n")
+  io.stderr:write("downloading " .. asset_name .. " from " .. asset.browser_download_url .. "\n")
   local body, err = fetch_binary(asset.browser_download_url)
   if not body then
     return nil, err

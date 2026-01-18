@@ -1,6 +1,6 @@
 export STRIPE_DO_NOT_MANAGE=1
 
-export PS1='%# '
+export PS1='${WHEREAMI##* } '
 set -o vi
 
 # Set terminal title
