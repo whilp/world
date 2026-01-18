@@ -13,14 +13,14 @@
 
 local cosmo = require("cosmo")
 
-local record FetchOpts
+local record Opts
   method: string
   headers: {string:string}
   body: string
   maxresponse: number
 end
 
-local record FetchResult
+local record Result
   ok: boolean
   status: number
   headers: {string:string}
@@ -31,7 +31,7 @@ end
 -- Fetch wraps cosmo.Fetch to return a structured result table.
 -- On success: ok=true, status=200, headers={...}, body="..."
 -- On failure: ok=false, error="error message"
-local function Fetch(url: string, opts?: FetchOpts): FetchResult
+local function Fetch(url: string, opts?: Opts): Result
   local status: number
   local headers_or_err: {string:string} | string
   local body: string
@@ -57,9 +57,9 @@ local function Fetch(url: string, opts?: FetchOpts): FetchResult
 end
 
 local record fetch
-  Fetch: function(url: string, opts?: FetchOpts): FetchResult
-  FetchOpts: FetchOpts
-  FetchResult: FetchResult
+  Fetch: function(url: string, opts?: Opts): Result
+  Opts: Opts
+  Result: Result
 end
 
 local M: fetch = {
