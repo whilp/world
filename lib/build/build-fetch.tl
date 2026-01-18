@@ -3,6 +3,7 @@
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
+local fetch = require("cosmic.fetch")
 
 local record PlatformSpec
   sha: string
@@ -14,11 +15,6 @@ local record VersionSpec
   url: string
   format: string
   platforms: {string:PlatformSpec}
-end
-
-local record FetchOpts
-  headers: {string:string}
-  maxresponse: number
 end
 
 local function interpolate(template: string, vars: {string:string}): string
@@ -47,22 +43,15 @@ local function build_url(spec: VersionSpec, platform: string): string, string
 end
 
 local function download(url: string): string, string
-  local status: number
-  local headers: {string:string}
-  local body: string
-  local last_err: string
-  local opts: FetchOpts = {headers = {["User-Agent"] = "curl/8.0"}, maxresponse = 100 * 1024 * 1024}
+  local result = fetch.Fetch(url, {
+    headers = {["User-Agent"] = "curl/8.0"},
+    maxresponse = 100 * 1024 * 1024,
+    max_attempts = 8,
+  })
 
-  for attempt = 1, 8 do
-    status, headers, body = cosmo.Fetch(url, opts as {string:any})
-    if status then break end
-    last_err = tostring(headers or "unknown")
-    if attempt < 8 then unix.nanosleep(math.min(30, 2 ^ attempt), 0) end
-  end
-
-  if not status then return nil, "fetch failed: " .. last_err end
-  if status ~= 200 then return nil, "fetch status " .. tostring(status) end
-  return body
+  if not result.ok then return nil, "fetch failed: " .. result.error end
+  if result.status ~= 200 then return nil, "fetch status " .. tostring(result.status) end
+  return result.body
 end
 
 local function verify_sha256(content: string, expected: string): boolean, string

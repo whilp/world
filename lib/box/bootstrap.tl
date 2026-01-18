@@ -5,6 +5,7 @@
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local spawn = require("cosmic.spawn")
+local fetch = require("cosmic.fetch")
 
 local REPO <const> = "whilp/world"
 local API_URL <const> = "https://api.github.com"
@@ -43,40 +44,46 @@ local function detect_platform(): string, string
 end
 
 local function fetch_json(url: string): any, string
-  local status, _, body = cosmo.Fetch(url, {
+  local result = fetch.Fetch(url, {
     headers = {
       ["User-Agent"] = "curl/8.0",
       ["Accept"] = "application/vnd.github+json",
     },
   })
-  if not status or status ~= 200 then
-    return nil, "fetch failed: " .. tostring(status)
+  if not result.ok then
+    return nil, "fetch failed: " .. result.error
   end
-  return cosmo.DecodeJson(body)
+  if result.status ~= 200 then
+    return nil, "fetch failed: HTTP " .. tostring(result.status)
+  end
+  return cosmo.DecodeJson(result.body)
 end
 
 local function fetch_text(url: string): string, string
-  local status, _, body = cosmo.Fetch(url, {
+  local result = fetch.Fetch(url, {
     headers = {["User-Agent"] = "curl/8.0"},
   })
-  if not status or status ~= 200 then
-    return nil, "fetch failed: " .. tostring(status)
+  if not result.ok then
+    return nil, "fetch failed: " .. result.error
   end
-  return body
+  if result.status ~= 200 then
+    return nil, "fetch failed: HTTP " .. tostring(result.status)
+  end
+  return result.body
 end
 
 local function fetch_binary(url: string): string, string
-  local status, headers_or_err, body = cosmo.Fetch(url, {
+  local result = fetch.Fetch(url, {
     headers = {["User-Agent"] = "curl/8.0"},
     maxresponse = 250 * 1024 * 1024,
   })
-  if not status then
-    return nil, "fetch failed: " .. tostring(headers_or_err or "unknown error")
+  if not result.ok then
+    return nil, "fetch failed: " .. result.error
   end
-  if status ~= 200 then
-    return nil, "fetch failed: HTTP " .. tostring(status)
+  if result.status ~= 200 then
+    return nil, "fetch failed: HTTP " .. tostring(result.status)
   end
-  return body
+  return result.body
 end
 
 local function find_asset(release: Release, name: string): ReleaseAsset

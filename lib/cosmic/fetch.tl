@@ -10,15 +10,13 @@
 --     return nil, result.error
 --   end
 --   -- use result.status, result.headers, result.body
+--
+-- With retry:
+--   local result = fetch.Fetch(url, {max_attempts = 4})
+--   local result = fetch.Fetch(url, {should_retry = function(r) return r.status >= 500 end})
 
 local cosmo = require("cosmo")
-
-local record Opts
-  method: string
-  headers: {string:string}
-  body: string
-  maxresponse: number
-end
+local unix = require("cosmo.unix")
 
 local record Result
   ok: boolean
@@ -28,10 +26,17 @@ local record Result
   error: string
 end
 
--- Fetch wraps cosmo.Fetch to return a structured result table.
--- On success: ok=true, status=200, headers={...}, body="..."
--- On failure: ok=false, error="error message"
-local function Fetch(url: string, opts?: Opts): Result
+local record Opts
+  method: string
+  headers: {string:string}
+  body: string
+  maxresponse: number
+  max_attempts: number
+  max_delay: number
+  should_retry: function(Result): boolean
+end
+
+local function do_fetch(url: string, opts?: Opts): Result
   local status: number
   local headers_or_err: {string:string} | string
   local body: string
@@ -39,21 +44,39 @@ local function Fetch(url: string, opts?: Opts): Result
   status, headers_or_err, body = cosmo.Fetch(url, opts as {string:any})
 
   if not status then
-    -- Fetch failed: headers_or_err contains error message
-    return {
-      ok = false,
-      error = tostring(headers_or_err or "unknown error"),
-    }
+    return {ok = false, error = tostring(headers_or_err or "unknown error")}
   end
 
-  -- Fetch succeeded: headers_or_err is the headers table
   return {
     ok = true,
     status = status,
     headers = headers_or_err as {string:string},
     body = body,
-    error = nil,
   }
+end
+
+-- Fetch wraps cosmo.Fetch with structured results and optional retry.
+-- Set max_attempts > 1 for retry with exponential backoff.
+-- Set should_retry to control which results trigger retry.
+local function Fetch(url: string, opts?: Opts): Result
+  local max_attempts = (opts and opts.max_attempts) or 1
+  local max_delay = (opts and opts.max_delay) or 30
+  local should_retry = opts and opts.should_retry
+
+  local result: Result
+  for attempt = 1, max_attempts do
+    result = do_fetch(url, opts)
+
+    if not result.ok or not should_retry or not should_retry(result) then
+      return result
+    end
+
+    if attempt < max_attempts then
+      unix.nanosleep(math.min(max_delay, 2 ^ attempt), 0)
+    end
+  end
+
+  return result
 end
 
 local record fetch

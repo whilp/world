@@ -1,4 +1,4 @@
--- Fetches review comments on a GitHub PR using cosmo.Fetch
+-- Fetches review comments on a GitHub PR using cosmic.fetch
 --
 -- GitHub API endpoints:
 --   /repos/{owner}/{repo}/pulls/{number}/comments - line-level review comments
@@ -10,13 +10,8 @@
 --   cosmic --skill pr_comments --url <github_pr_url> [--json]
 
 local cosmo = require("cosmo")
-local unix = require("cosmo.unix")
 local getopt = require("cosmo.getopt")
-
-local record FetchOpts
-  method: string
-  headers: {string:string}
-end
+local fetch = require("cosmic.fetch")
 
 local record User
   login: string
@@ -64,65 +59,43 @@ local record JsonResult
   review_comments: {ReviewComment}
 end
 
-local function fetch_with_retry(url: string, opts: FetchOpts, max_attempts: number): number, {string:string}, string
-  max_attempts = max_attempts or 4
-  local status: number
-  local headers: {string:string}
-  local body: string
-  local last_err: string
-
-  for attempt = 1, max_attempts do
-    status, headers, body = cosmo.Fetch(url, opts as {string:any})
-    if not status then
-      last_err = "fetch failed: " .. tostring(headers)
-    elseif status >= 500 then
-      last_err = "server error: " .. tostring(status)
-    else
-      return status, headers, body
-    end
-    if attempt < max_attempts then
-      unix.nanosleep(2 ^ attempt, 0)
-    end
-  end
-
-  return nil, nil, last_err
-end
-
 local function github_request(endpoint: string): number, any
   local api_url = os.getenv("GITHUB_API_URL") or "https://api.github.com"
   local url = api_url .. endpoint
 
-  local fetch_opts: FetchOpts = {
+  local opts: fetch.Opts = {
     method = "GET",
     headers = {
       ["Accept"] = "application/vnd.github+json",
       ["X-GitHub-Api-Version"] = "2022-11-28",
       ["User-Agent"] = "pr-comments.lua/1.0",
     },
+    max_attempts = 4,
+    should_retry = function(r: fetch.Result): boolean return r.status >= 500 end,
   }
 
   local token = os.getenv("GITHUB_TOKEN")
   if token and token ~= "" then
-    fetch_opts.headers["Authorization"] = "Bearer " .. token
+    opts.headers["Authorization"] = "Bearer " .. token
   end
 
-  local status, _, body = fetch_with_retry(url, fetch_opts, nil)
-  if not status then
-    return nil, body
+  local result = fetch.Fetch(url, opts)
+  if not result.ok then
+    return nil, result.error
   end
 
-  local ok, decoded = pcall(cosmo.DecodeJson, body)
+  local ok, decoded = pcall(cosmo.DecodeJson, result.body)
   if not ok then
     return nil, "json decode failed: " .. tostring(decoded)
   end
 
-  if status ~= 200 then
+  if result.status ~= 200 then
     local api_err = decoded as ApiError
     local msg = api_err and api_err.message or "unknown error"
-    return nil, string.format("api error %d: %s", status, msg)
+    return nil, string.format("api error %d: %s", result.status, msg)
   end
 
-  return status, decoded
+  return result.status, decoded
 end
 
 local function get_review_comments(owner: string, repo: string, pr_number: number): number, {ReviewComment}

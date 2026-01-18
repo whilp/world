@@ -32,8 +32,11 @@ jobs:
       - name: fetch base branch
         run: git fetch origin $GITHUB_BASE_REF --depth=1
 
+      - name: build cosmic
+        run: bin/make o/bin/cosmic
+
       - id: update-pr
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_PR_NUMBER: ${{ github.event.number }}
-        run: ./bin/cosmic -e 'require("lib.skill.pr").main()'
+        run: ./o/bin/cosmic -e 'require("lib.skill.pr").main()'
