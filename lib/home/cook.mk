@@ -10,7 +10,7 @@ home_tests := $(wildcard lib/home/test_*.tl)
 home_tl_files := lib/home/main.tl lib/home/gen-manifest.tl lib/home/bootstrap.tl $(wildcard lib/home/setup/*.tl) $(wildcard lib/home/mac/*.tl)
 
 # 3p tools to bundle (nvim handled specially for bundled version)
-home_3p_tools := ast-grep biome comrak delta duckdb gh marksman rg ruff shfmt sqruff stylua superhtml tree-sitter uv
+home_3p_tools := ast-grep biome bun comrak delta duckdb gh marksman rg ruff shfmt sqruff stylua superhtml tree-sitter uv
 
 home_deps := cosmos cosmic nvim clasp $(home_3p_tools)
 

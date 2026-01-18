@@ -2,7 +2,8 @@
 
 Add bun runtime and Google Apps Script CLI (clasp) to the home binary.
 
-Clasp enables build-time tests and runtime interaction with Apps Script projects.
+- bun enables JavaScript/TypeScript tooling and package management
+- clasp enables build-time tests and runtime interaction with Apps Script projects
 
 ## Changes
 
@@ -14,7 +15,7 @@ Clasp enables build-time tests and runtime interaction with Apps Script projects
 - `3p/clasp/bun.lock` - lockfile for reproducible builds
 - `3p/clasp/test_clasp.tl` - tests clasp CLI
 - `Makefile` - includes bun/clasp modules
-- `lib/home/cook.mk` - bundles clasp in home dotfiles
+- `lib/home/cook.mk` - bundles bun and clasp in home
 
 ## Validation
 
