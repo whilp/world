@@ -10,8 +10,9 @@ Add bun runtime and Google Apps Script CLI (clasp) to the release artifacts.
 - 3p/clasp/test_clasp.tl - tests clasp CLI
 - Makefile - includes bun/clasp modules, adds clasp to release
 - lib/home/cook.mk - bundles clasp in home asset
+- .github/workflows/release.yml - uploads clasp artifact for release
 
 ## Validation
 
 - [x] bun tests pass
-- [ ] clasp tests pass (requires npm registry access)
+- [x] clasp tests pass

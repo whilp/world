@@ -52,6 +52,13 @@ jobs:
             o/bin/cosmic
             o/bin/bootstrap
 
+      - id: upload-clasp
+        if: matrix.platform == 'linux-x86_64'
+        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
+        with:
+          name: clasp-${{ matrix.platform }}
+          path: o/bin/clasp
+
   release:
     runs-on: ubuntu-latest
     needs: build
