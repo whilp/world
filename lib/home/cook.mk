@@ -80,7 +80,7 @@ HOME_NVIM_DIR ?= $(nvim_staged)
 
 # Create dotfiles.zip with symlinks preserved
 # Includes: dotfiles, compiled nvim configs, cosmic-lua binary, clasp binary, lua symlink
-$(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin) $(clasp_bin) $(home_nvim_tl_compiled)
+$(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin) $$(clasp_bin) $(home_nvim_tl_compiled)
 	@rm -rf $(o)/home/.dotfiles-staging
 	@mkdir -p $(@D) $(o)/home/.dotfiles-staging
 	@for f in $(home_dotfiles); do \
