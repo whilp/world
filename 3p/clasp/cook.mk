@@ -20,4 +20,6 @@ $(clasp_bin): $$(clasp_staged) $$(bun_staged) $(clasp_lock)
 	@rm -f $(clasp_dir)/package-lock.json
 	@cp $(clasp_lock) $(clasp_dir)/bun.lock
 	@cd $(clasp_dir) && $(CURDIR)/$(bun_dir)/bin/bun install --ignore-scripts --frozen-lockfile >/dev/null
+	@sed -i 's/var msgId = messageDescriptor.id/var msgId = messageDescriptor.id || "auto"/' $(clasp_dir)/node_modules/@formatjs/intl/src/message.js
+	@sed -i 's/var msgId = messageDescriptor.id/var msgId = messageDescriptor.id || "auto"/' $(clasp_dir)/node_modules/@formatjs/intl/lib/src/message.js
 	@cd $(clasp_dir) && $(CURDIR)/$(bun_dir)/bin/bun build --compile src/index.ts --outfile $(CURDIR)/$@ >/dev/null

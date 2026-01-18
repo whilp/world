@@ -178,6 +178,8 @@ all_declared_tests := $(all_tests) $(all_release_tests)
 all_tested := $(patsubst %,o/%.test.ok,$(all_tests))
 all_snaps := $(call filter-only,$(foreach x,$(modules),$($(x)_snaps)))
 all_snapped := $(patsubst %,$(o)/%.test.ok,$(all_snaps))
+all_buns := $(call filter-only,$(foreach x,$(modules),$($(x)_buns)))
+all_bunned := $(patsubst %,$(o)/%.bun.ok,$(all_buns))
 
 ## Run all tests (incremental)
 test: $(o)/test-summary.txt
@@ -261,6 +263,12 @@ $(o)/%.teal.ok: $(o)/% $(tl_files) $(checker_files) $(tl_staged) $$(teal-types_s
 	@mkdir -p $(@D)
 	@TL_BIN=$(tl_staged) TL_INCLUDE_DIR="lib/types:$(teal-types_dir)/types" $(teal_runner) $< > $@
 
+## Run bun syntax checker on .gs/.js files
+bun: $(o)/bun-summary.txt
+
+$(o)/bun-summary.txt: $(all_bunned) | $(build_reporter)
+	@$(reporter) --dir $(o) $^ | tee $@
+
 .PHONY: clean
 ## Remove all build artifacts
 clean:
@@ -270,9 +278,9 @@ clean:
 ## Bootstrap build environment
 bootstrap: $(bootstrap_files)
 
-all_checks := $(all_astgreps) $(all_teals)
+all_checks := $(all_astgreps) $(all_teals) $(all_bunned)
 
-## Run all linters (astgrep, teal)
+## Run all linters (astgrep, teal, bun)
 check: $(o)/check-summary.txt
 
 $(o)/check-summary.txt: $(all_checks) | $(build_reporter)
