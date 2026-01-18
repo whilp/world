@@ -49,7 +49,10 @@ local function ssh(name: string, ...: string): backend.Result
 end
 
 local function exec(name: string, cmd: string): backend.Result
-  local handle = spawn({"sprite", "exec", "-s", name, "--", "bash", "-c", cmd})
+  local handle = spawn({"sprite", "exec", "-s", name, "--", "bash", "-c", cmd}, {
+    stdout = 1,  -- pass through to terminal
+    stderr = 2,
+  })
   if not handle then
     return err("sprite binary not found")
   end

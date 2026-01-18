@@ -16,6 +16,10 @@ export PATH := $(CURDIR)/$(o)/bin:$(PATH)
 export STAGE_O := $(CURDIR)/$(o)/staged
 export FETCH_O := $(CURDIR)/$(o)/fetched
 
+## TMP: temp directory for tests (default: /tmp, use TMP=~/tmp for more space)
+TMP ?= /tmp
+export TMPDIR := $(TMP)
+
 uname_s := $(shell uname -s)
 uname_m := $(shell uname -m)
 os := $(if $(filter Darwin,$(uname_s)),darwin,linux)
@@ -191,7 +195,7 @@ export NO_COLOR := 1
 
 # Test rule: .tl tests depend on compiled .lua (Make handles compilation)
 $(o)/%.tl.test.ok: .PLEDGE = stdio rpath wpath cpath proc exec
-$(o)/%.tl.test.ok: .UNVEIL = rx:$(o)/bootstrap r:lib r:3p rwc:$(o) rwc:/tmp rx:/usr rx:/proc r:/etc r:/dev/null
+$(o)/%.tl.test.ok: .UNVEIL = rx:$(o)/bootstrap r:lib r:3p rwc:$(o) rwc:$(TMP) rx:/usr rx:/proc r:/etc r:/dev/null
 $(o)/%.tl.test.ok: $(o)/%.lua $(test_files) $(checker_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
 	@[ -x $< ] || chmod a+x $<
