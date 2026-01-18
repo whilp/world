@@ -9,7 +9,8 @@ global TEST_TMPDIR: string
 global TEST_DIR: string
 
 local function run_test(test: string): boolean, string, string, string
-  TEST_TMPDIR = unix.mkdtemp("/tmp/test_XXXXXX")
+  local tmpbase = os.getenv("TMPDIR") or "/tmp"
+  TEST_TMPDIR = unix.mkdtemp(path.join(tmpbase, "test_XXXXXX"))
   unix.setenv("TEST_TMPDIR", TEST_TMPDIR)
   TEST_DIR = os.getenv("TEST_DIR")
 
