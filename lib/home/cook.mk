@@ -78,10 +78,11 @@ $(o)/.config/nvim/%.lua: .config/nvim/%.tl $$(tl_files) $$(bootstrap_files) | $$
 
 # Always use bundled nvim (with plugins)
 # Override generic zip rule for nvim to use bundle instead of raw staged
-$(o)/nvim/.zip: $(nvim_bundle) $$(cosmos_staged)
+# Use secondary expansion for nvim_bundle since 3p/nvim/cook.mk is included after this file
+$(o)/nvim/.zip: $$(nvim_bundle) $$(cosmos_staged)
 	@rm -rf $(@D)/.zip-staging
 	@mkdir -p $(@D)/.zip-staging/.local/share/nvim
-	@versioned_name=$$(basename $$(readlink -f $(nvim_staged)))-bundled && \
+	@versioned_name=$$(basename $$(readlink -f $(nvim_staged))) && \
 		cp -r $(nvim_bundle_out) $(@D)/.zip-staging/.local/share/nvim/$$versioned_name && \
 		for item in $(@D)/.zip-staging/.local/share/nvim/$$versioned_name/*; do \
 			ln -sf $$versioned_name/$$(basename $$item) $(@D)/.zip-staging/.local/share/nvim/$$(basename $$item); \
