@@ -90,3 +90,51 @@ local function test_read_captures_output()
   assert(out == "line1\nline2\n", "expected 'line1\\nline2\\n', got '" .. tostring(out) .. "'")
 end
 test_read_captures_output()
+
+local function test_fd_passthrough_stdout()
+  -- passing stdout=1 means "inherit parent's stdout, don't capture"
+  -- this tests the fix for close(1); dup(1) which fails when fd equals target
+  local tmp_file = path.join(TEST_TMPDIR, "passthrough_test")
+  local script = string.format([[
+    local f = io.open(%q, "w")
+    f:write("written")
+    f:close()
+    io.write("to stdout")
+  ]], tmp_file)
+
+  local handle = spawn({lua_bin, "-e", script}, {stdout = 1})
+  assert(handle ~= nil, "handle should not be nil")
+  local exit_code = handle:wait()
+  assert(exit_code == 0, "expected exit code 0, got " .. tostring(exit_code))
+
+  -- verify the script actually ran by checking the file it wrote
+  local f = io.open(tmp_file, "r")
+  assert(f ~= nil, "script should have created file")
+  local content = f:read("*a")
+  f:close()
+  assert(content == "written", "expected 'written', got '" .. tostring(content) .. "'")
+end
+test_fd_passthrough_stdout()
+
+local function test_fd_passthrough_stderr()
+  -- passing stderr=2 means "inherit parent's stderr, don't capture"
+  local tmp_file = path.join(TEST_TMPDIR, "passthrough_stderr_test")
+  local script = string.format([[
+    local f = io.open(%q, "w")
+    f:write("written")
+    f:close()
+    io.stderr:write("to stderr")
+  ]], tmp_file)
+
+  local handle = spawn({lua_bin, "-e", script}, {stderr = 2})
+  assert(handle ~= nil, "handle should not be nil")
+  local exit_code = handle:wait()
+  assert(exit_code == 0, "expected exit code 0, got " .. tostring(exit_code))
+
+  local f = io.open(tmp_file, "r")
+  assert(f ~= nil, "script should have created file")
+  local content = f:read("*a")
+  f:close()
+  assert(content == "written", "expected 'written', got '" .. tostring(content) .. "'")
+end
+test_fd_passthrough_stderr()

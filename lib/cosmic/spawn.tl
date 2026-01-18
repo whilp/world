@@ -92,28 +92,40 @@ local function spawn(argv: {string}, opts?: SpawnOpts): SpawnHandle, string
 
   local pid = unix.fork()
   if pid == 0 then
-    unix.close(0)
+    -- stdin (fd 0)
     if stdin_is_fd then
-      unix.dup(opts.stdin as number)
+      if opts.stdin ~= 0 then
+        unix.close(0)
+        unix.dup(opts.stdin as number)
+      end
     else
+      unix.close(0)
       unix.close(stdin_w)
       unix.dup(stdin_r)
       unix.close(stdin_r)
     end
 
-    unix.close(1)
+    -- stdout (fd 1)
     if stdout_is_fd then
-      unix.dup(opts.stdout as number)
+      if opts.stdout ~= 1 then
+        unix.close(1)
+        unix.dup(opts.stdout as number)
+      end
     else
+      unix.close(1)
       unix.close(stdout_r)
       unix.dup(stdout_w)
       unix.close(stdout_w)
     end
 
-    unix.close(2)
+    -- stderr (fd 2)
     if stderr_is_fd then
-      unix.dup(opts.stderr as number)
+      if opts.stderr ~= 2 then
+        unix.close(2)
+        unix.dup(opts.stderr as number)
+      end
     else
+      unix.close(2)
       unix.close(stderr_r)
       unix.dup(stderr_w)
       unix.close(stderr_w)

@@ -10,9 +10,9 @@ home_tests := $(wildcard lib/home/test_*.tl)
 home_tl_files := lib/home/main.tl lib/home/gen-manifest.tl lib/home/bootstrap.tl $(wildcard lib/home/setup/*.tl) $(wildcard lib/home/mac/*.tl)
 
 # 3p tools to bundle (nvim handled specially for bundled version)
-home_3p_tools := ast-grep biome bun comrak delta duckdb gh marksman rg ruff shfmt sqruff stylua superhtml tree-sitter uv
+home_3p_tools := ast-grep biome comrak delta duckdb gh marksman rg ruff shfmt sqruff stylua superhtml tree-sitter uv
 
-home_deps := cosmos cosmic nvim clasp $(home_3p_tools)
+home_deps := cosmos cosmic nvim $(home_3p_tools)
 
 # Build configuration
 home_setup_dir := lib/home/setup
@@ -76,12 +76,23 @@ $(o)/.config/nvim/%.lua: .config/nvim/%.tl $$(tl_files) $$(bootstrap_files) | $$
 	@mkdir -p $(@D)
 	@$(tl_gen) $< -o $@
 
-# Which nvim to bundle: raw binary for dev, full bundle for release
-HOME_NVIM_DIR ?= $(nvim_staged)
+# Always use bundled nvim (with plugins)
+# Override generic zip rule for nvim to use bundle instead of raw staged
+# Use secondary expansion for nvim_bundle since 3p/nvim/cook.mk is included after this file
+$(o)/nvim/.zip: $$(nvim_bundle) $$(cosmos_staged)
+	@rm -rf $(@D)/.zip-staging
+	@mkdir -p $(@D)/.zip-staging/.local/share/nvim
+	@versioned_name=$$(basename $$(readlink -f $(nvim_staged))) && \
+		cp -r $(nvim_bundle_out) $(@D)/.zip-staging/.local/share/nvim/$$versioned_name && \
+		for item in $(@D)/.zip-staging/.local/share/nvim/$$versioned_name/*; do \
+			ln -sf $$versioned_name/$$(basename $$item) $(@D)/.zip-staging/.local/share/nvim/$$(basename $$item); \
+		done && \
+		cd $(@D)/.zip-staging && $(CURDIR)/$(cosmos_zip) -qry $(CURDIR)/$@ .
+	@rm -rf $(@D)/.zip-staging
 
 # Create dotfiles.zip with symlinks preserved
-# Includes: dotfiles, compiled nvim configs, cosmic-lua binary, clasp binary, lua symlink
-$(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin) $$(clasp_bin) $(home_nvim_tl_compiled)
+# Includes: dotfiles, compiled nvim configs, cosmic-lua binary, lua symlink
+$(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin) $(home_nvim_tl_compiled)
 	@rm -rf $(o)/home/.dotfiles-staging
 	@mkdir -p $(@D) $(o)/home/.dotfiles-staging
 	@for f in $(home_dotfiles); do \
@@ -95,7 +106,6 @@ $(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin) $$(clas
 	done
 	@mkdir -p $(o)/home/.dotfiles-staging/.local/bin
 	@$(cp) $(cosmic_bin) $(o)/home/.dotfiles-staging/.local/bin/cosmic-lua
-	@$(cp) $(clasp_bin) $(o)/home/.dotfiles-staging/.local/bin/clasp
 	@ln -sf cosmic-lua $(o)/home/.dotfiles-staging/.local/bin/lua
 	@cd $(o)/home/.dotfiles-staging && $(CURDIR)/$(cosmos_zip) -qry $(CURDIR)/$@ .
 	@rm -rf $(o)/home/.dotfiles-staging
@@ -104,7 +114,6 @@ $(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin) $$(clas
 home_tl_lua := $(patsubst %.tl,$(o)/%.lua,$(home_tl_files))
 
 # Home binary bundles: dotfiles.zip, per-tool zips (extracted at runtime), lua libs
-# Dev build uses raw nvim; release build uses bundled nvim (set via HOME_NVIM_DIR)
 # Tool zips use secondary expansion to defer $(x_zip) evaluation
 $(home_bin): $(home_libs) $(home_tl_lua) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin) $(cosmic_tl_libs) $$(foreach t,$(home_3p_tools) nvim,$$($$(t)_zip))
 	@rm -rf $(home_built)
@@ -156,12 +165,7 @@ bootstrap: $(bootstrap_bin)
 # bootstrap test depends on the bootstrap binary
 $(o)/lib/home/test_bootstrap.tl.test.ok: $(bootstrap_bin)
 
-# home-release: rebuild home with nvim bundle (used by test-release)
-.PHONY: home-release
-home-release: $(nvim_bundle)
-	@rm -f $(home_bin)
-	@$(MAKE) $(home_bin) HOME_NVIM_DIR=$(nvim_bundle_out)
-
 # Release tests: nvim bundle tests (nvim tests defined in 3p/nvim/cook.mk)
+# Note: home always includes bundled nvim now, so no separate home-release needed
 .PHONY: test-release
-test-release: home-release nvim-release-tests
+test-release: $(home_bin) nvim-release-tests

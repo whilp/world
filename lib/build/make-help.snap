@@ -19,4 +19,5 @@ Targets:
   ci                  Run full CI pipeline (astgrep, teal, test, build)
 
 Options:
+  TMP                 TMP: temp directory for tests (default: /tmp, use TMP=~/tmp for more space)
   filter-only         Filter targets by pattern (make test only='skill')
