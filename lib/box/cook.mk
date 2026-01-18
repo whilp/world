@@ -13,12 +13,13 @@ box_built := $(o)/box/.built
 box_tl_lua := $(patsubst lib/%.tl,$(o)/lib/%.lua,$(box_tl_files))
 
 # Box binary: self-bootstrapping remote environment manager
-# Bundles: box lua modules, cosmic/spawn, zip/unzip tools
-$(box_bin): $(box_tl_lua) $$(cosmos_staged) $$(cosmic_bin) $$(cosmic_tl_libs)
+# Bundles: box lua modules, cosmic/spawn, zip/unzip tools, claude version
+$(box_bin): $(box_tl_lua) $$(cosmos_staged) $$(cosmic_bin) $$(cosmic_tl_libs) lib/claude/version.lua
 	@rm -rf $(box_built)
-	@mkdir -p $(box_built)/.lua/box $(box_built)/.lua/cosmic $(@D)
+	@mkdir -p $(box_built)/.lua/box $(box_built)/.lua/cosmic $(box_built)/.lua/claude $(@D)
 	@$(cp) $(o)/lib/box/*.lua $(box_built)/.lua/box/
 	@$(cp) $(cosmic_tl_libs) $(box_built)/.lua/cosmic/
+	@$(cp) lib/claude/version.lua $(box_built)/.lua/claude/
 	@$(cp) $(cosmos_dir)/zip $(box_built)/zip
 	@$(cp) $(cosmos_dir)/unzip $(box_built)/unzip
 	@$(cp) $(cosmos_lua) $@
