@@ -254,4 +254,4 @@ function setup() {
 }
 
 // For testing
-const EXPORTS = { RULES, isGroup, getEventType };
+return { RULES, isGroup, getEventType };

@@ -303,4 +303,4 @@ function setupBusyFill() {
 }
 
 // For testing
-const EXPORTS = { getWorkingHours, isWorkingDay, getWeekStart, roundUpToSlot, roundDownToSlot, findGaps };
+return { getWorkingHours, isWorkingDay, getWeekStart, roundUpToSlot, roundDownToSlot, findGaps };

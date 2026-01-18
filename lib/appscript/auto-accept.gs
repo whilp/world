@@ -89,4 +89,4 @@ function setupAutoAccept() {
 }
 
 // For testing
-const EXPORTS = { getOtherCalendar, setOtherCalendar };
+return { getOtherCalendar, setOtherCalendar };
