@@ -106,34 +106,13 @@ local function parse_sha256sums(content: string): {string:string}
   return sums
 end
 
-local function parse_release_url(url_or_tag: string): string
-  -- Handle various URL formats:
-  -- 1. GitHub release page: https://github.com/owner/repo/releases/tag/v1.2.3
-  -- 2. GitHub API URL: https://api.github.com/repos/owner/repo/releases/tags/v1.2.3
-  -- 3. Just a tag: v1.2.3
-
-  -- If it's a GitHub release page URL, extract the tag
-  local tag = url_or_tag:match("github%.com/[^/]+/[^/]+/releases/tag/([^/]+)$")
-  if tag then
-    return API_URL .. "/repos/" .. REPO .. "/releases/tags/" .. tag
-  end
-
-  -- If it's already a GitHub API URL, use it as-is
-  if url_or_tag:match("^https?://api%.github%.com/") then
-    return url_or_tag
-  end
-
-  -- Otherwise, treat it as a tag name
-  return API_URL .. "/repos/" .. REPO .. "/releases/tags/" .. url_or_tag
-end
-
 local function get_release(): Release, string
   local custom_url = os.getenv("BOX_RELEASE_URL")
   local url: string
 
   if custom_url and custom_url ~= "" then
-    io.stderr:write("using custom release: " .. custom_url .. "\n")
-    url = parse_release_url(custom_url)
+    io.stderr:write("using custom release url\n")
+    url = custom_url
   else
     io.stderr:write("fetching latest release...\n")
     url = API_URL .. "/repos/" .. REPO .. "/releases/latest"
