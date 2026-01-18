@@ -309,14 +309,13 @@ release:
 	@cp artifacts/home-linux-x86_64/home release/home-linux-x86_64
 	@cp artifacts/cosmopolitan/cosmic release/cosmic-lua
 	@cp artifacts/cosmopolitan/bootstrap release/bootstrap
-	@cp artifacts/clasp-linux-x86_64/clasp release/clasp
 	@chmod +x release/*
 	@tag="$$(date -u +%Y-%m-%d)-$${GITHUB_SHA::7}"; \
-	(cd release && sha256sum home-* cosmic-lua bootstrap clasp > SHA256SUMS && cat SHA256SUMS); \
+	(cd release && sha256sum home-* cosmic-lua bootstrap > SHA256SUMS && cat SHA256SUMS); \
 	gh release create "$$tag" \
 		$${PRERELEASE_FLAG} \
 		--title "$$tag" \
-		release/home-* release/cosmic-lua release/bootstrap release/clasp release/SHA256SUMS
+		release/home-* release/cosmic-lua release/bootstrap release/SHA256SUMS
 
 ci_stages := astgrep teal test build
 
