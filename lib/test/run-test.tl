@@ -12,6 +12,8 @@ local function run_test(test: string): boolean, string, string, string
   local tmpbase = os.getenv("TMPDIR") or "/tmp"
   TEST_TMPDIR = unix.mkdtemp(path.join(tmpbase, "test_XXXXXX"))
   unix.setenv("TEST_TMPDIR", TEST_TMPDIR)
+  -- Ensure spawned processes use the test's temp directory
+  unix.setenv("TMPDIR", TEST_TMPDIR)
   TEST_DIR = os.getenv("TEST_DIR")
 
   -- create temp files for capturing output
