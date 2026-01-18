@@ -1,10 +1,7 @@
 -- box/generic.tl: generic executable backend for box
 --
 -- Supports external executables that implement the backend interface.
--- For each method, tries exe-method first, then exe method.
--- For example: my-backend-new or my-backend new
 
-local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local spawn = require("cosmic.spawn")
@@ -26,7 +23,9 @@ local function exec_backend(exe: string, subcommand: string, args: {string}, pas
   local opts = passthrough and {
     stdout = 1,
     stderr = 2,
-  } or {}
+  } or {
+    stderr = -1,  -- capture stderr for error messages
+  }
 
   local handle = spawn(cmd, opts)
   if not handle then
@@ -81,29 +80,7 @@ local function upload(self: Generic, name: string, src: string, dst: string): ba
 end
 
 local function download(self: Generic, name: string, src: string, dst: string): backend_mod.Result
-  local cmd = {self.exe, "download", name, src, dst}
-
-  local handle = spawn(cmd, {stderr = -1})
-  if not handle then
-    return {ok = false, err = "failed to spawn: " .. cmd[1]}
-  end
-
-  local exit_code = handle:wait()
-
-  if exit_code == 0 then
-    return {ok = true}
-  end
-
-  -- Capture stderr for error message
-  local error_msg = "download failed with exit code " .. tostring(exit_code)
-  if handle.stderr then
-    local ok, stderr_content = handle.stderr:read()
-    if ok and stderr_content and #(stderr_content as string) > 0 then
-      error_msg = (stderr_content as string):gsub("%s+$", "")
-    end
-  end
-
-  return {ok = false, err = error_msg}
+  return exec_backend(self.exe, "download", {name, src, dst}, false)
 end
 
 local function destroy(self: Generic, name: string): backend_mod.Result
