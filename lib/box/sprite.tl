@@ -1,5 +1,6 @@
 -- box/sprite.tl: sprites.dev backend for box
 
+local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local spawn = require("cosmic.spawn")
 
@@ -76,6 +77,25 @@ local function upload(name: string, src: string, dst: string): backend.Result
   return ok()
 end
 
+local function download(name: string, src: string, dst: string): backend.Result
+  local handle = spawn({"sprite", "exec", "-s", name, "--", "cat", src})
+  if not handle then
+    return err("sprite binary not found")
+  end
+  local read_ok, content = handle:read()
+  local exit_code = handle:wait()
+  if exit_code ~= 0 then
+    return err("download failed: exit " .. tostring(exit_code))
+  end
+  if not read_ok or not content then
+    return err("failed to read remote file")
+  end
+  if not cosmo.Barf(dst, content as string) then
+    return err("failed to write local file: " .. dst)
+  end
+  return ok()
+end
+
 local function destroy(name: string): backend.Result
   local handle = spawn({"sprite", "destroy", "-s", name, "-force"})
   if not handle then
@@ -99,6 +119,7 @@ return {
   ssh = ssh,
   exec = exec,
   upload = upload,
+  download = download,
   destroy = destroy,
   list = list,
 } as backend.Backend

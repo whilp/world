@@ -34,6 +34,7 @@ commands:
   new                   create box only
   run                   bootstrap only
   ssh                   connect only
+  scp <src> <dst>       copy files (: prefix = remote)
   zap                   destroy box
   list                  list boxes
 
@@ -43,6 +44,8 @@ examples:
   box --sprite dev           # create, bootstrap, and ssh to sprite
   box --sprite dev new       # create sprite only
   box --sprite dev zap       # destroy sprite
+  box --sprite dev scp file.txt :/tmp/file.txt   # upload
+  box --sprite dev scp :/tmp/file.txt file.txt   # download
   box --backend pay.lua dev  # use custom backend
 ]])
 end
@@ -316,6 +319,40 @@ local function cmd_list(be: backend_mod.Backend): boolean, string
   return true
 end
 
+local function cmd_scp(be: backend_mod.Backend, name: string, src: string, dst: string): boolean, string
+  if not src or not dst then
+    return false, "scp requires source and destination arguments"
+  end
+
+  local src_remote = src:sub(1, 1) == ":"
+  local dst_remote = dst:sub(1, 1) == ":"
+
+  if src_remote and dst_remote then
+    return false, "cannot copy between two remote paths"
+  end
+  if not src_remote and not dst_remote then
+    return false, "one of source or destination must be remote (prefix with :)"
+  end
+
+  local result: backend_mod.Result
+  if src_remote then
+    -- download: remote -> local
+    local remote_path = src:sub(2)
+    io.stderr:write("==> downloading " .. remote_path .. " from " .. name .. "\n")
+    result = be.download(name, remote_path, dst)
+  else
+    -- upload: local -> remote
+    local remote_path = dst:sub(2)
+    io.stderr:write("==> uploading " .. src .. " to " .. name .. "\n")
+    result = be.upload(name, src, remote_path)
+  end
+
+  if not result.ok then
+    return false, result.err or "unknown error"
+  end
+  return true
+end
+
 local function cmd_local_run(name: string, kind: string): integer, string
   -- Running on remote after upload
   -- Load env from /zip/env.lua (zipped into self before upload)
@@ -394,6 +431,12 @@ local function main(args: {string}): integer, string
     return 0
   elseif parsed.cmd == "zap" then
     ok, err = cmd_zap(be, parsed.name)
+    if not ok then return 1, err end
+    return 0
+  elseif parsed.cmd == "scp" then
+    local src = parsed.extra_args[1]
+    local dst = parsed.extra_args[2]
+    ok, err = cmd_scp(be, parsed.name, src, dst)
     if not ok then return 1, err end
     return 0
   elseif parsed.cmd == nil then
