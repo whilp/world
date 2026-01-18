@@ -107,7 +107,7 @@ local function scan_for_atomic_install(): string
     if name ~= "." and name ~= ".." then
       local version = name:match("^([%d%.]+)%-")
       if version then
-        local bin_path = path.join(share_dir, name, "claude")
+        local bin_path = path.join(share_dir, name, "bin", "claude")
         if unix.stat(bin_path) then
           if not latest_version or version > latest_version then
             latest_version = version
