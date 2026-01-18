@@ -70,6 +70,8 @@ local function github_request(endpoint: string): number, any
       ["X-GitHub-Api-Version"] = "2022-11-28",
       ["User-Agent"] = "pr-comments.lua/1.0",
     },
+    max_attempts = 4,
+    should_retry = function(r: fetch.Result): boolean return r.status >= 500 end,
   }
 
   local token = os.getenv("GITHUB_TOKEN")
@@ -77,9 +79,7 @@ local function github_request(endpoint: string): number, any
     opts.headers["Authorization"] = "Bearer " .. token
   end
 
-  local result = fetch.FetchWithRetry(url, opts, {
-    retry_on_status = function(status: number): boolean return status >= 500 end,
-  })
+  local result = fetch.Fetch(url, opts)
   if not result.ok then
     return nil, result.error
   end

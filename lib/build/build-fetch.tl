@@ -43,10 +43,11 @@ local function build_url(spec: VersionSpec, platform: string): string, string
 end
 
 local function download(url: string): string, string
-  local result = fetch.FetchWithRetry(url, {
+  local result = fetch.Fetch(url, {
     headers = {["User-Agent"] = "curl/8.0"},
     maxresponse = 100 * 1024 * 1024,
-  }, {max_attempts = 8})
+    max_attempts = 8,
+  })
 
   if not result.ok then return nil, "fetch failed: " .. result.error end
   if result.status ~= 200 then return nil, "fetch status " .. tostring(result.status) end
