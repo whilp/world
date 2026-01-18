@@ -41,9 +41,9 @@ dots_config := $(wildcard .config/delta/*) $(wildcard .config/fish/*) \
     $(wildcard .config/ripgrep/*) $(wildcard .config/ssh/*) \
     $(wildcard .config/voyager/*) $(wildcard .config/hammerspoon/*)
 # .config/nvim (nested structure)
-# Source .tl files are compiled to .lua at build time; only ship .lua
-dots_nvim_tl := $(wildcard .config/nvim/*.tl) $(wildcard .config/nvim/plugin/*.tl)
-dots_nvim := $(wildcard .config/nvim/*.lua) $(wildcard .config/nvim/plugin/*.lua) \
+# Ship .tl source files; nvim loads them directly via teal loader
+dots_nvim := $(wildcard .config/nvim/*.lua) $(wildcard .config/nvim/*.tl) \
+    $(wildcard .config/nvim/plugin/*.tl) \
     $(wildcard .config/nvim/queries/*/*.scm)
 # .local/bin scripts
 dots_local_bin := $(wildcard .local/bin/*)
@@ -61,20 +61,10 @@ dots_lib := lib/cook.mk $(wildcard lib/*.lua) $(wildcard lib/*.tl) \
 
 home_built := $(o)/home/.built
 
-# Nvim config teal files (compiled at build time, shipped as .lua)
-home_nvim_tl_compiled := $(patsubst %.tl,$(o)/%.lua,$(dots_nvim_tl))
-
 # Aggregate all dotfiles
 home_dotfiles := $(dots_shell) $(dots_editor) $(dots_tools) $(dots_claude) \
     $(dots_ast_grep) $(dots_hammerspoon) $(dots_config) $(dots_nvim) \
     $(dots_local_bin) $(dots_root) $(dots_bin) $(dots_lib)
-
-# Compile nvim .tl configs to .lua
-# Uses secondary expansion so $(tl_files) is evaluated after all includes
-.SECONDEXPANSION:
-$(o)/.config/nvim/%.lua: .config/nvim/%.tl $$(tl_files) $$(bootstrap_files) | $$(tl_staged)
-	@mkdir -p $(@D)
-	@$(tl_gen) $< -o $@
 
 # Always use bundled nvim (with plugins)
 # Override generic zip rule for nvim to use bundle instead of raw staged
@@ -91,20 +81,16 @@ $(o)/nvim/.zip: $$(nvim_bundle) $$(cosmos_staged)
 	@rm -rf $(@D)/.zip-staging
 
 # Create dotfiles.zip with symlinks preserved
-# Includes: dotfiles, compiled nvim configs, cosmic-lua binary, lua symlink
-$(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin) $(home_nvim_tl_compiled)
+# Includes: dotfiles, cosmic-lua binary, lua symlink, teal loader
+$(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin) $$(tl_staged)
 	@rm -rf $(o)/home/.dotfiles-staging
 	@mkdir -p $(@D) $(o)/home/.dotfiles-staging
 	@for f in $(home_dotfiles); do \
 		mkdir -p $(o)/home/.dotfiles-staging/$$(dirname "$$f") && \
 		cp -a "$$f" $(o)/home/.dotfiles-staging/"$$f"; \
 	done
-	@for f in $(home_nvim_tl_compiled); do \
-		target=$${f#$(o)/}; \
-		mkdir -p $(o)/home/.dotfiles-staging/$$(dirname $$target); \
-		cp $$f $(o)/home/.dotfiles-staging/$$target; \
-	done
-	@mkdir -p $(o)/home/.dotfiles-staging/.local/bin
+	@mkdir -p $(o)/home/.dotfiles-staging/.local/bin $(o)/home/.dotfiles-staging/lib/3p
+	@$(cp) $(tl_dir)/tl.lua $(o)/home/.dotfiles-staging/lib/3p/tl.lua
 	@$(cp) $(cosmic_bin) $(o)/home/.dotfiles-staging/.local/bin/cosmic-lua
 	@ln -sf cosmic-lua $(o)/home/.dotfiles-staging/.local/bin/lua
 	@cd $(o)/home/.dotfiles-staging && $(CURDIR)/$(cosmos_zip) -qry $(CURDIR)/$@ .
