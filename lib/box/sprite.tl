@@ -102,8 +102,7 @@ local function download(name: string, src: string, dst: string): backend.Result
   if not handle then
     return err("sprite binary not found")
   end
-  local read_ok, content = handle:read()
-  local exit_code = handle:wait()
+  local read_ok, content, exit_code = handle:read()  -- read() calls wait() internally
   if exit_code ~= 0 then
     return err("download failed: exit " .. tostring(exit_code))
   end
