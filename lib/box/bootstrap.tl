@@ -107,15 +107,17 @@ local function parse_sha256sums(content: string): {string:string}
 end
 
 local function get_release(): Release, string
-  local custom_url = os.getenv("BOX_RELEASE_URL")
+  local custom_repo = os.getenv("BOX_REPO")
+  local custom_release = os.getenv("BOX_RELEASE")
+  local repo = custom_repo or REPO
   local url: string
 
-  if custom_url and custom_url ~= "" then
-    io.stderr:write("using custom release url\n")
-    url = custom_url
+  if custom_release and custom_release ~= "" then
+    io.stderr:write("fetching release " .. custom_release .. " from " .. repo .. "...\n")
+    url = API_URL .. "/repos/" .. repo .. "/releases/tags/" .. custom_release
   else
-    io.stderr:write("fetching latest release...\n")
-    url = API_URL .. "/repos/" .. REPO .. "/releases/latest"
+    io.stderr:write("fetching latest release from " .. repo .. "...\n")
+    url = API_URL .. "/repos/" .. repo .. "/releases/latest"
   end
 
   local data, err = fetch_json(url)
