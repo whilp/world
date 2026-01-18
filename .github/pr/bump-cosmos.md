@@ -1,7 +1,7 @@
-# cosmos: bump to 2026.01.14-dff272e74
+# cosmos: bump to 2026.01.18
 
-Update cosmos dependency to the latest release from 2026.01.08-e226a5d6a.
+Updates cosmos to latest release.
 
 ## Changes
 
-- `3p/cosmos/version.lua` - update version and SHA256 hash for latest release
+- `3p/cosmos/version.lua` - bump version and sha
