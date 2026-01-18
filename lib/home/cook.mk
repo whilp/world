@@ -54,9 +54,10 @@ dots_bin := $(wildcard bin/*)
 # lib/ sources (comprehensive wildcards)
 dots_lib := lib/cook.mk $(wildcard lib/*.lua) $(wildcard lib/*.tl) \
     $(wildcard lib/*/cook.mk) $(wildcard lib/*/*.lua) $(wildcard lib/*/*.tl) \
+    $(wildcard lib/*/*.js) $(wildcard lib/*/*.json) \
     $(wildcard lib/*/*.snap) $(wildcard lib/*/*/*.lua) $(wildcard lib/*/*/*.tl) \
     $(wildcard lib/types/*.d.tl) $(wildcard lib/types/*/*.d.tl) \
-    $(wildcard lib/*/.args) $(wildcard lib/*/MANIFEST.txt)
+    $(wildcard lib/*/.args) $(wildcard lib/*/.claspignore) $(wildcard lib/*/MANIFEST.txt)
 
 home_built := $(o)/home/.built
 
