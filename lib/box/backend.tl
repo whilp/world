@@ -21,15 +21,22 @@ local record Git
   email: string
 end
 
+local record Bootstrap
+  repo: string
+  release: string
+end
+
 local record Env
   github: {string: any}
   git: Git
   claude: {string: any}
+  bootstrap: Bootstrap
 end
 
 return {
   Result = Result,
   Backend = Backend,
   Git = Git,
+  Bootstrap = Bootstrap,
   Env = Env,
 }

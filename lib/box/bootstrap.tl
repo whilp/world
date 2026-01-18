@@ -106,9 +106,33 @@ local function parse_sha256sums(content: string): {string:string}
   return sums
 end
 
+local record BootstrapConfig
+  repo: string
+  release: string
+end
+
+local function load_bootstrap_config(): BootstrapConfig
+  local ok, env = pcall(dofile, "/zip/env.lua")
+  if ok and env and type(env) == "table" and env.bootstrap then
+    return env.bootstrap as BootstrapConfig
+  end
+  return {}
+end
+
 local function get_release(): Release, string
-  io.stderr:write("fetching latest release...\n")
-  local url = API_URL .. "/repos/" .. REPO .. "/releases/latest"
+  local config = load_bootstrap_config()
+  local repo = config.repo or REPO
+  local release_tag = config.release
+  local url: string
+
+  if release_tag and release_tag ~= "" then
+    io.stderr:write("fetching release " .. release_tag .. " from " .. repo .. "...\n")
+    url = API_URL .. "/repos/" .. repo .. "/releases/tags/" .. release_tag
+  else
+    io.stderr:write("fetching latest release from " .. repo .. "...\n")
+    url = API_URL .. "/repos/" .. repo .. "/releases/latest"
+  end
+
   local data, err = fetch_json(url)
   if not data then
     return nil, err

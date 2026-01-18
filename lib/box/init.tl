@@ -16,6 +16,8 @@ local record ParsedArgs
   cmd: string           -- "new", "run", "ssh", "zap", "list", or nil for all-in-one
   env_path: string      -- path to env.lua
   local_run: boolean    -- running remotely after upload
+  repo: string          -- github repo (owner/name)
+  release: string       -- release tag
   extra_args: {string}  -- extra args to pass to ssh
 end
 
@@ -29,6 +31,8 @@ backends (pick one):
 
 options:
   --env <path>          credentials file (default: ~/.config/box/env.lua)
+  --repo <owner/name>   github repo (default: whilp/world)
+  --release <tag>       release tag (default: latest)
 
 commands:
   new                   create box only
@@ -47,6 +51,7 @@ examples:
   box --sprite dev scp file.txt :/tmp/file.txt   # upload
   box --sprite dev scp :/tmp/file.txt file.txt   # download
   box --backend my-backend dev   # use executable backend
+  box --sprite --release 2026.01.16 dev
 ]])
 end
 
@@ -57,6 +62,8 @@ local function parse_args(args: {string}): ParsedArgs
     cmd = nil,
     env_path = path.join(os.getenv("HOME") or "", ".config", "box", "env.lua"),
     local_run = false,
+    repo = nil,
+    release = nil,
     extra_args = {},
   }
 
@@ -65,6 +72,8 @@ local function parse_args(args: {string}): ParsedArgs
     {"mac", "none"},
     {"backend", "required"},
     {"env", "required"},
+    {"repo", "required"},
+    {"release", "required"},
     {"local-run", "none"},
     {"help", "none"},
   }
@@ -83,6 +92,10 @@ local function parse_args(args: {string}): ParsedArgs
       result.backend_type = optarg
     elseif opt == "env" then
       result.env_path = optarg
+    elseif opt == "repo" then
+      result.repo = optarg
+    elseif opt == "release" then
+      result.release = optarg
     elseif opt == "local-run" then
       result.local_run = true
     elseif opt == "h" or opt == "help" then
@@ -171,7 +184,7 @@ local function cmd_new(be: backend.Backend, name: string): boolean, string
   return true
 end
 
-local function cmd_run(be: backend.Backend, name: string, env_path: string): boolean, string
+local function cmd_run(be: backend.Backend, name: string, env_path: string, repo: string, release: string): boolean, string
   io.stderr:write("==> bootstrapping " .. name .. "\n")
 
   -- Get path to self (the box binary)
@@ -192,11 +205,16 @@ local function cmd_run(be: backend.Backend, name: string, env_path: string): boo
     return false, "cannot find self at: " .. self_path
   end
 
-  -- Verify env.lua exists
-  local env_data = cosmo.Slurp(env_path)
-  if not env_data then
-    return false, "failed to open env: " .. env_path
+  -- Load env.lua and add bootstrap config
+  local env, err = load_env(env_path, name)
+  if not env then
+    return false, err
   end
+  env.bootstrap = {
+    repo = repo,
+    release = release,
+  }
+  local env_data = "return " .. cosmo.EncodeLua(env)
 
   -- Create temp directory for work
   local tmpdir = unix.mkdtemp("/tmp/box.XXXXXX")
@@ -253,8 +271,9 @@ local function cmd_run(be: backend.Backend, name: string, env_path: string): boo
     return false, "upload failed: " .. (result.err or "unknown")
   end
 
-  -- Run bootstrap on remote (pass name and kind for env.lua function support)
-  result = be.exec(name, "chmod +x /tmp/box && /tmp/box --local-run " .. name .. " " .. be.name)
+  -- Run bootstrap on remote
+  local cmd = "chmod +x /tmp/box && /tmp/box --local-run " .. name .. " " .. be.name
+  result = be.exec(name, cmd)
   cleanup()
   if not result.ok then
     return false, "bootstrap failed: " .. (result.err or "unknown")
@@ -401,7 +420,7 @@ local function main(args: {string}): integer, string
     if not ok then return 1, err end
     return 0
   elseif parsed.cmd == "run" then
-    ok, err = cmd_run(be, parsed.name, parsed.env_path)
+    ok, err = cmd_run(be, parsed.name, parsed.env_path, parsed.repo, parsed.release)
     if not ok then return 1, err end
     return 0
   elseif parsed.cmd == "ssh" then
@@ -422,7 +441,7 @@ local function main(args: {string}): integer, string
     -- All-in-one: new + run + ssh (skip ssh if no tty)
     ok, err = cmd_new(be, parsed.name)
     if not ok then return 1, err end
-    ok, err = cmd_run(be, parsed.name, parsed.env_path)
+    ok, err = cmd_run(be, parsed.name, parsed.env_path, parsed.repo, parsed.release)
     if not ok then return 1, err end
     if unix.isatty(0) then
       ok, err = cmd_ssh(be, parsed.name, parsed.extra_args)
