@@ -1,20 +1,58 @@
 ---
-name: review-feedback
-description: Address GitHub PR review comments and reply to reviewers. Use when handling review feedback, responding to code review comments, or checking pending review items on a pull request.
+name: dev
+description: Development workflow for this repository. Run `make help` to see available targets.
 ---
 
-# review-feedback
+# dev
+
+Development workflow utilities for branching, PR management, and review feedback.
+
+## Creating branches
+
+Create a new branch off the latest default branch commit.
+
+### Workflow
+
+1. Fetch latest from remote
+2. Detect default branch (main or master)
+3. Create branch with descriptive name based on task
+4. Switch to new branch
+
+### Branch naming
+
+Generate a short, kebab-case name from the task:
+- `add-user-auth` not `add-user-authentication-feature`
+- `fix-login-bug` not `fix-the-bug-in-the-login-flow`
+- `refactor-api` not `refactor-api-endpoints-for-better-performance`
+
+Use a prefix if the repo convention requires one (check existing branches).
+
+```bash
+# Fetch and get default branch
+git fetch origin
+git remote show origin | sed -n '/HEAD branch/s/.*: //p'
+
+# Create branch from latest default branch
+git checkout -b <branch-name> origin/main
+
+# See existing branch naming patterns
+git branch -r | head -20
+```
+
+If branches use prefixes like `feature/`, `fix/`, or username prefixes like `wcm/`, follow that pattern.
+
+## Review feedback
 
 Address GitHub PR review comments and reply to reviewers.
 
-## Workflow
+### Workflow
 
 1. **Get pending review comments** - fetch unresolved comments
 2. **Address each comment** - make code changes to resolve feedback
 3. **Commit with clear message** - reference what feedback was addressed
 4. **Reply to reviewer** - concise reply with commit SHA and explanation
 
-## Getting review comments
+### Getting review comments
 
 ```bash
 # All comments on a PR (includes replies)
@@ -23,22 +61,11 @@ gh pr view <pr-number> --comments --json comments
 # Review comments (code-level feedback)
 gh api repos/{owner}/{repo}/pulls/{pr}/comments --jq '.[] | {id, path, line, body, user: .user.login, in_reply_to_id}'
 
-# Comments from a specific review
-gh api repos/{owner}/{repo}/pulls/{pr}/reviews/{review-id}/comments --jq '.[] | {id, path, body}'
-
 # Pending/unresolved comments (no replies yet)
 gh api repos/{owner}/{repo}/pulls/{pr}/comments --jq '[.[] | select(.in_reply_to_id == null)] | .[] | {id, path, body: .body[0:100]}'
 ```
 
-## Addressing feedback
-
-For each comment:
-1. Read the feedback carefully
-2. Make the requested change (or explain why not)
-3. Commit with a descriptive message
-4. Reply referencing the commit
-
-## Replying to comments
+### Replying to comments
 
 ```bash
 # Reply to a review comment
@@ -48,7 +75,7 @@ gh api repos/{owner}/{repo}/pulls/{pr}/comments \
   -F in_reply_to=<comment-id>
 ```
 
-## Good reply format
+### Good reply format
 
 Replies should be:
 - **Concise** - one sentence is often enough
@@ -60,7 +87,7 @@ Examples:
 - `Addressed in def5678 - now uses a single rule in cook.mk`
 - `Good catch, fixed in 789abcd - removed the duplicate import`
 
-## Complete example
+### Complete example
 
 ```bash
 # 1. Get pending comments on PR #269
@@ -82,7 +109,7 @@ gh api repos/whilp/world/pulls/269/comments \
   -F in_reply_to=2702089939
 ```
 
-## Batch processing
+### Batch processing
 
 For multiple comments:
 
