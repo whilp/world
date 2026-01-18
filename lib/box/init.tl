@@ -205,11 +205,16 @@ local function cmd_run(be: backend.Backend, name: string, env_path: string, repo
     return false, "cannot find self at: " .. self_path
   end
 
-  -- Verify env.lua exists
-  local env_data = cosmo.Slurp(env_path)
-  if not env_data then
-    return false, "failed to open env: " .. env_path
+  -- Load env.lua and add bootstrap config
+  local env, err = load_env(env_path, name)
+  if not env then
+    return false, err
   end
+  env.bootstrap = {
+    repo = repo,
+    release = release,
+  }
+  local env_data = "return " .. cosmo.EncodeLua(env)
 
   -- Create temp directory for work
   local tmpdir = unix.mkdtemp("/tmp/box.XXXXXX")
@@ -266,19 +271,8 @@ local function cmd_run(be: backend.Backend, name: string, env_path: string, repo
     return false, "upload failed: " .. (result.err or "unknown")
   end
 
-  -- Run bootstrap on remote (pass name and kind for env.lua function support)
-  local cmd = "chmod +x /tmp/box"
-  if repo and repo ~= "" then
-    -- Escape single quotes for shell: ' -> '\''
-    local escaped_repo = repo:gsub("'", "'\\''")
-    cmd = cmd .. " && BOX_REPO='" .. escaped_repo .. "'"
-  end
-  if release and release ~= "" then
-    -- Escape single quotes for shell: ' -> '\''
-    local escaped_release = release:gsub("'", "'\\''")
-    cmd = cmd .. " && BOX_RELEASE='" .. escaped_release .. "'"
-  end
-  cmd = cmd .. " /tmp/box --local-run " .. name .. " " .. be.name
+  -- Run bootstrap on remote
+  local cmd = "chmod +x /tmp/box && /tmp/box --local-run " .. name .. " " .. be.name
   result = be.exec(name, cmd)
   cleanup()
   if not result.ok then
