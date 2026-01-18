@@ -10,7 +10,7 @@ local backend_mod = require("box.backend")
 local ENV_PATH <const> = "/zip/env.lua"
 
 local record ParsedArgs
-  backend_type: string  -- "sprite", "mac", or path to backend file
+  backend_type: string  -- "sprite", "mac", or path to executable backend
   name: string          -- box name
   kind: string          -- backend kind (for local-run mode)
   cmd: string           -- "new", "run", "ssh", "zap", "list", or nil for all-in-one
@@ -25,7 +25,7 @@ local function usage()
 backends (pick one):
   --sprite              sprites.dev backend (bundled)
   --mac                 local mac backend (bundled)
-  --backend <file>      custom backend (.tl or .lua)
+  --backend <path>      executable backend
 
 options:
   --env <path>          credentials file (default: ~/.config/box/env.lua)
@@ -46,7 +46,7 @@ examples:
   box --sprite dev zap       # destroy sprite
   box --sprite dev scp file.txt :/tmp/file.txt   # upload
   box --sprite dev scp :/tmp/file.txt file.txt   # download
-  box --backend pay.lua dev  # use custom backend
+  box --backend my-backend dev   # use executable backend
 ]])
 end
 
@@ -117,45 +117,15 @@ local function parse_args(args: {string}): ParsedArgs
   return result
 end
 
-local function load_teal_backend(filepath: string): backend_mod.Backend, string
-  local tl = require("tl")
-  local result = tl.process(filepath)
-  if result.syntax_errors and #result.syntax_errors > 0 then
-    return nil, "teal syntax error in " .. filepath
-  end
-  if result.type_errors and #result.type_errors > 0 then
-    for _, err in ipairs(result.type_errors) do
-      io.stderr:write(filepath .. ":" .. err.y .. ": " .. err.msg .. "\n")
-    end
-    return nil, "teal type errors in " .. filepath
-  end
-  local chunk, err = load(tl.pretty_print_ast(result.ast), "@" .. filepath)
-  if not chunk then
-    return nil, "failed to load compiled teal: " .. (err or "unknown error")
-  end
-  return chunk() as backend_mod.Backend
-end
-
-local function load_lua_backend(filepath: string): backend_mod.Backend, string
-  local chunk, err = loadfile(filepath)
-  if not chunk then
-    return nil, "failed to load backend: " .. (err or "unknown error")
-  end
-  return chunk() as backend_mod.Backend
-end
-
 local function load_backend(backend_type: string): backend_mod.Backend, string
   if backend_type == "sprite" then
     return require("box.sprite") as backend_mod.Backend
   elseif backend_type == "mac" then
     return require("box.mac") as backend_mod.Backend
   elseif backend_type then
-    local ext = backend_type:match("%.([^.]+)$")
-    if ext == "tl" then
-      return load_teal_backend(backend_type)
-    else
-      return load_lua_backend(backend_type)
-    end
+    -- All other backends are executables
+    local generic = require("box.generic")
+    return generic.load(backend_type)
   else
     return nil, "no backend specified (use --sprite, --mac, or --backend)"
   end
