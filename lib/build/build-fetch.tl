@@ -17,11 +17,6 @@ local record VersionSpec
   platforms: {string:PlatformSpec}
 end
 
-local record FetchOpts
-  headers: {string:string}
-  maxresponse: number
-end
-
 local function interpolate(template: string, vars: {string:string}): string
   return template:gsub("{([%w_]+)}", function(key: string): string
     return vars[key] or ""
@@ -48,18 +43,12 @@ local function build_url(spec: VersionSpec, platform: string): string, string
 end
 
 local function download(url: string): string, string
-  local result: require("cosmic.fetch").Result
-  local last_err: string
-  local opts: FetchOpts = {headers = {["User-Agent"] = "curl/8.0"}, maxresponse = 100 * 1024 * 1024}
+  local result = fetch.FetchWithRetry(url, {
+    headers = {["User-Agent"] = "curl/8.0"},
+    maxresponse = 100 * 1024 * 1024,
+  }, {max_attempts = 8})
 
-  for attempt = 1, 8 do
-    result = fetch.Fetch(url, opts as {string:any})
-    if result.ok then break end
-    last_err = result.error
-    if attempt < 8 then unix.nanosleep(math.min(30, 2 ^ attempt), 0) end
-  end
-
-  if not result.ok then return nil, "fetch failed: " .. last_err end
+  if not result.ok then return nil, "fetch failed: " .. result.error end
   if result.status ~= 200 then return nil, "fetch status " .. tostring(result.status) end
   return result.body
 end

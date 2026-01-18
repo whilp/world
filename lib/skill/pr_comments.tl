@@ -10,16 +10,8 @@
 --   cosmic --skill pr_comments --url <github_pr_url> [--json]
 
 local cosmo = require("cosmo")
-local unix = require("cosmo.unix")
 local getopt = require("cosmo.getopt")
 local fetch = require("cosmic.fetch")
-
-local type FetchResult = require("cosmic.fetch").Result
-
-local record FetchOpts
-  method: string
-  headers: {string:string}
-end
 
 local record User
   login: string
@@ -67,33 +59,11 @@ local record JsonResult
   review_comments: {ReviewComment}
 end
 
-local function fetch_with_retry(url: string, opts: FetchOpts, max_attempts: number): number, {string:string}, string
-  max_attempts = max_attempts or 4
-  local result: FetchResult
-  local last_err: string
-
-  for attempt = 1, max_attempts do
-    result = fetch.Fetch(url, opts as {string:any})
-    if not result.ok then
-      last_err = "fetch failed: " .. result.error
-    elseif result.status >= 500 then
-      last_err = "server error: " .. tostring(result.status)
-    else
-      return result.status, result.headers, result.body
-    end
-    if attempt < max_attempts then
-      unix.nanosleep(2 ^ attempt, 0)
-    end
-  end
-
-  return nil, nil, last_err
-end
-
 local function github_request(endpoint: string): number, any
   local api_url = os.getenv("GITHUB_API_URL") or "https://api.github.com"
   local url = api_url .. endpoint
 
-  local fetch_opts: FetchOpts = {
+  local opts: fetch.Opts = {
     method = "GET",
     headers = {
       ["Accept"] = "application/vnd.github+json",
@@ -104,26 +74,28 @@ local function github_request(endpoint: string): number, any
 
   local token = os.getenv("GITHUB_TOKEN")
   if token and token ~= "" then
-    fetch_opts.headers["Authorization"] = "Bearer " .. token
+    opts.headers["Authorization"] = "Bearer " .. token
   end
 
-  local status, _, body = fetch_with_retry(url, fetch_opts, nil)
-  if not status then
-    return nil, body
+  local result = fetch.FetchWithRetry(url, opts, {
+    retry_on_status = function(status: number): boolean return status >= 500 end,
+  })
+  if not result.ok then
+    return nil, result.error
   end
 
-  local ok, decoded = pcall(cosmo.DecodeJson, body)
+  local ok, decoded = pcall(cosmo.DecodeJson, result.body)
   if not ok then
     return nil, "json decode failed: " .. tostring(decoded)
   end
 
-  if status ~= 200 then
+  if result.status ~= 200 then
     local api_err = decoded as ApiError
     local msg = api_err and api_err.message or "unknown error"
-    return nil, string.format("api error %d: %s", status, msg)
+    return nil, string.format("api error %d: %s", result.status, msg)
   end
 
-  return status, decoded
+  return result.status, decoded
 end
 
 local function get_review_comments(owner: string, repo: string, pr_number: number): number, {ReviewComment}
