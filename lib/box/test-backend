@@ -14,9 +14,19 @@ if [[ -z "$backend" ]]; then
   exit 1
 fi
 
-if [[ ! -x "$backend" ]]; then
-  echo "error: backend not executable: $backend" >&2
-  exit 1
+# Validate backend is executable
+# If it contains '/', it's a file path - check directly
+# Otherwise, it's a command name - use 'which' to find it
+if [[ "$backend" == */* ]]; then
+  if [[ ! -x "$backend" ]]; then
+    echo "error: backend not executable: $backend" >&2
+    exit 1
+  fi
+else
+  if ! which "$backend" >/dev/null 2>&1; then
+    echo "error: backend not found in PATH: $backend" >&2
+    exit 1
+  fi
 fi
 
 # Test configuration

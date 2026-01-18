@@ -15,33 +15,8 @@ local record Generic
   exe: string
 end
 
--- Try exe-subcommand first, then exe subcommand
-local function find_command(exe: string, subcommand: string): {string}, string
-  -- Try hyphenated version first (exe-subcommand)
-  local hyphenated = exe .. "-" .. subcommand
-  if unix.stat(hyphenated) then
-    return {hyphenated}, nil
-  end
-
-  -- Check if it's in PATH
-  local handle = spawn({"which", hyphenated}, {stdout = -1})
-  if handle then
-    local ok, out = handle:read()
-    local exit_code = handle:wait()
-    if exit_code == 0 and ok and out then
-      return {hyphenated}, nil
-    end
-  end
-
-  -- Fall back to exe subcommand
-  return {exe, subcommand}, nil
-end
-
 local function exec_backend(exe: string, subcommand: string, args: {string}, passthrough: boolean): backend_mod.Result
-  local cmd, err = find_command(exe, subcommand)
-  if err then
-    return {ok = false, err = err}
-  end
+  local cmd = {exe, subcommand}
 
   -- Append additional arguments
   for i = 1, #args do
@@ -86,23 +61,13 @@ local function new(self: Generic, name: string, ...: string): backend_mod.Result
 end
 
 local function ssh(self: Generic, name: string, ...: string): backend_mod.Result
-  local args = {name}
+  local cmd = {self.exe, "ssh", name}
   local extra = {...}
   for i = 1, #extra do
-    args[#args + 1] = extra[i]
+    cmd[#cmd + 1] = extra[i]
   end
 
-  -- ssh is interactive, find command and use execvp for full passthrough
-  local cmd, err = find_command(self.exe, "ssh")
-  if err then
-    return {ok = false, err = err}
-  end
-
-  -- Append args
-  for i = 1, #args do
-    cmd[#cmd + 1] = args[i]
-  end
-
+  -- ssh is interactive, use execvp for full passthrough
   unix.execvp(cmd[1], cmd)
   return {ok = false, err = "execvp failed"}
 end
@@ -116,15 +81,7 @@ local function upload(self: Generic, name: string, src: string, dst: string): ba
 end
 
 local function download(self: Generic, name: string, src: string, dst: string): backend_mod.Result
-  -- For download, we need to capture stdout and write to file
-  local cmd, err = find_command(self.exe, "download")
-  if err then
-    return {ok = false, err = err}
-  end
-
-  cmd[#cmd + 1] = name
-  cmd[#cmd + 1] = src
-  cmd[#cmd + 1] = dst
+  local cmd = {self.exe, "download", name, src, dst}
 
   local handle = spawn(cmd, {stderr = -1})
   if not handle then
@@ -158,38 +115,31 @@ local function list(self: Generic): backend_mod.Result
 end
 
 local function load(exe_path: string): backend_mod.Backend, string
-  -- Resolve to absolute path if relative
   local resolved_path = exe_path
-  if not exe_path:match("^/") then
-    -- Check if it's in PATH
-    local handle = spawn({"which", exe_path}, {stdout = -1})
-    if handle then
-      local ok, out = handle:read()
-      local exit_code = handle:wait()
-      if exit_code == 0 and ok and out then
-        resolved_path = (out as string):gsub("%s+$", "")
-      else
-        -- Try relative to cwd
-        local cwd = unix.getcwd()
-        if cwd then
-          resolved_path = path.join(cwd, exe_path)
-        end
+
+  -- If path contains '/', treat as file path (absolute or relative)
+  if exe_path:match("/") then
+    -- Resolve relative paths to absolute
+    if not exe_path:match("^/") then
+      local cwd = unix.getcwd()
+      if cwd then
+        resolved_path = path.join(cwd, exe_path)
       end
     end
-  end
 
-  -- Validate executable exists
-  local stat = unix.stat(resolved_path)
-  if not stat then
-    return nil, "executable not found: " .. exe_path
-  end
+    -- Validate file exists and is executable
+    local stat = unix.stat(resolved_path)
+    if not stat then
+      return nil, "executable not found: " .. exe_path
+    end
 
-  -- Check if executable bit is set
-  local mode = stat:mode()
-  local is_executable = (mode & tonumber("111", 8)) ~= 0
-  if not is_executable then
-    return nil, "file is not executable: " .. resolved_path
+    local mode = stat:mode()
+    local is_executable = (mode & tonumber("111", 8)) ~= 0
+    if not is_executable then
+      return nil, "file is not executable: " .. resolved_path
+    end
   end
+  -- Otherwise, treat as command name - spawn/execvp will handle PATH lookup
 
   local g: Generic = {exe = resolved_path}
 
