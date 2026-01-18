@@ -30,8 +30,9 @@ integration and automated testing using clasp.
 - `lib/cook.mk` - Include appscript module
 
 ### Testing
-- `lib/appscript/test_appscript.tl` - Tests:
-  - JavaScript syntax validation using bun
-  - appsscript.json structure validation
-  - Required function existence checks
-  - clasp binary verification
+- `lib/appscript/run-tests.js` - JavaScript test runner with mocked Google APIs
+- `lib/appscript/test_appscript.tl` - Teal wrapper that invokes the JS tests
+- Tests cover:
+  - busy.gs: working hours, day detection, slot rounding, gap finding
+  - colorize.gs: all color rules, event type detection, attendee analysis
+  - auto-accept.gs: calendar property storage
