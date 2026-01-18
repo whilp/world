@@ -62,6 +62,32 @@ local function configure_gh(env: backend.Env): boolean, string
   return true
 end
 
+local function configure_git(env: backend.Env): boolean, string
+  if not env.git then
+    return true -- no git config
+  end
+
+  if env.git.name then
+    io.stderr:write("configuring git user.name...\n")
+    local handle = spawn({"git", "config", "--global", "user.name", env.git.name})
+    local exit_code = handle:wait()
+    if exit_code ~= 0 then
+      io.stderr:write("warning: git config user.name failed (exit " .. tostring(exit_code) .. ")\n")
+    end
+  end
+
+  if env.git.email then
+    io.stderr:write("configuring git user.email...\n")
+    local handle = spawn({"git", "config", "--global", "user.email", env.git.email})
+    local exit_code = handle:wait()
+    if exit_code ~= 0 then
+      io.stderr:write("warning: git config user.email failed (exit " .. tostring(exit_code) .. ")\n")
+    end
+  end
+
+  return true
+end
+
 local function configure_claude(env: backend.Env): boolean, string
   if not env.claude then
     return true -- no claude config
@@ -164,7 +190,13 @@ local function bootstrap(env: backend.Env): integer, string
     return 1, err or "gh config failed"
   end
 
-  -- Step 4: Configure claude credentials
+  -- Step 4: Configure git identity
+  ok, err = configure_git(env)
+  if not ok then
+    return 1, err or "git config failed"
+  end
+
+  -- Step 5: Configure claude credentials
   ok, err = configure_claude(env)
   if not ok then
     return 1, err or "claude config failed"
@@ -177,5 +209,6 @@ end
 return {
   bootstrap = bootstrap,
   configure_gh = configure_gh,
+  configure_git = configure_git,
   configure_claude = configure_claude,
 }
