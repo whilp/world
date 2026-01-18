@@ -1,3 +1,6 @@
+local unix = require('cosmo.unix')
+local path = require('cosmo.path')
+local cosmo = require('cosmo')
 local whereami = require('whereami')
 
 local function test_whereami_get()
@@ -27,3 +30,37 @@ local function test_whereami_codespaces_format()
   assert(result:match('^repo | .+'), "codespaces result should match 'repo | ...' pattern")
 end
 test_whereami_codespaces_format()
+
+local function test_whereami_box_name_kind()
+  local tmpdir = os.getenv("TEST_TMPDIR")
+  if not tmpdir then
+    print("skipping test_whereami_box_name_kind (no TEST_TMPDIR)")
+    return
+  end
+
+  -- Create fake home with .config/box/{name,kind}
+  local fake_home = path.join(tmpdir, "home")
+  local box_dir = path.join(fake_home, ".config", "box")
+  unix.makedirs(box_dir)
+  cosmo.Barf(path.join(box_dir, "name"), "mybox\n")
+  cosmo.Barf(path.join(box_dir, "kind"), "sprite\n")
+
+  -- Swap HOME, reload module, test, restore
+  local orig_home = os.getenv("HOME")
+  unix.setenv("HOME", fake_home)
+
+  -- Clear cached module to pick up new HOME
+  package.loaded["whereami"] = nil
+  local fresh_whereami = require("whereami")
+
+  local result = fresh_whereami.get()
+  assert(result == "mybox.sprite", "expected 'mybox.sprite', got '" .. result .. "'")
+
+  local with_emoji = fresh_whereami.get_with_emoji()
+  assert(with_emoji:match("^mybox%.sprite ."), "expected 'mybox.sprite <emoji>', got '" .. with_emoji .. "'")
+
+  -- Restore
+  unix.setenv("HOME", orig_home)
+  package.loaded["whereami"] = nil
+end
+test_whereami_box_name_kind()
