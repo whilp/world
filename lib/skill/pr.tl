@@ -19,6 +19,7 @@ Environment variables:
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local spawn_mod = require("cosmic.spawn")
+local fetch_mod = require("cosmic.fetch")
 
 local type SpawnHandle = require("cosmic.spawn").SpawnHandle
 
@@ -28,7 +29,8 @@ local record FetchOpts
   body: string
 end
 
-local type FetchFn = function(url: string, opts?: FetchOpts): number, {string:string} | string, string
+local type FetchResult = require("cosmic.fetch").Result
+local type FetchFn = function(url: string, opts?: FetchOpts): FetchResult
 
 local record SpawnOpts
   spawn: function({string}): SpawnHandle
@@ -142,8 +144,8 @@ local function parse_pr_md(content: string): ParsedPr, string
   return {title = title, body = body}
 end
 
-local function default_fetch(url: string, opts?: FetchOpts): number, {string:string} | string, string
-  return cosmo.Fetch(url, opts as {string:any})
+local function default_fetch(url: string, opts?: FetchOpts): FetchResult
+  return fetch_mod.Fetch(url, opts as {string:any})
 end
 
 local function github_request(method: string, endpoint: string, token: string, body: {string:string}, opts?: RequestOpts): number, GitHubPr | string
@@ -173,17 +175,17 @@ local function github_request(method: string, endpoint: string, token: string, b
     fetch_opts.headers["Content-Type"] = "application/json"
   end
 
-  local status, headers, response_body = fetch(url, fetch_opts)
-  if not status then
-    return nil, "fetch failed: " .. tostring(headers)
+  local result = fetch(url, fetch_opts)
+  if not result.ok then
+    return nil, "fetch failed: " .. result.error
   end
 
-  local decoded_ok, decoded = pcall(cosmo.DecodeJson, response_body as string)
+  local decoded_ok, decoded = pcall(cosmo.DecodeJson, result.body)
   if not decoded_ok then
     return nil, "json decode failed: " .. tostring(decoded)
   end
 
-  return status, decoded as GitHubPr
+  return result.status, decoded as GitHubPr
 end
 
 

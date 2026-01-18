@@ -1,4 +1,4 @@
--- Fetches review comments on a GitHub PR using cosmo.Fetch
+-- Fetches review comments on a GitHub PR using cosmic.fetch
 --
 -- GitHub API endpoints:
 --   /repos/{owner}/{repo}/pulls/{number}/comments - line-level review comments
@@ -12,6 +12,7 @@
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local getopt = require("cosmo.getopt")
+local fetch = require("cosmic.fetch")
 
 local record FetchOpts
   method: string
@@ -66,19 +67,17 @@ end
 
 local function fetch_with_retry(url: string, opts: FetchOpts, max_attempts: number): number, {string:string}, string
   max_attempts = max_attempts or 4
-  local status: number
-  local headers: {string:string}
-  local body: string
+  local result: require("cosmic.fetch").Result
   local last_err: string
 
   for attempt = 1, max_attempts do
-    status, headers, body = cosmo.Fetch(url, opts as {string:any})
-    if not status then
-      last_err = "fetch failed: " .. tostring(headers)
-    elseif status >= 500 then
-      last_err = "server error: " .. tostring(status)
+    result = fetch.Fetch(url, opts as {string:any})
+    if not result.ok then
+      last_err = "fetch failed: " .. result.error
+    elseif result.status >= 500 then
+      last_err = "server error: " .. tostring(result.status)
     else
-      return status, headers, body
+      return result.status, result.headers, result.body
     end
     if attempt < max_attempts then
       unix.nanosleep(2 ^ attempt, 0)

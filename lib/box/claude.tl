@@ -2,6 +2,7 @@
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
+local fetch = require("cosmic.fetch")
 
 local record ClaudeVersionPlatform
   sha: string
@@ -63,20 +64,23 @@ local function install(): boolean, string
 
   io.stderr:write("installing claude " .. version_info.version .. "...\n")
 
-  local status, _, body = cosmo.Fetch(url, {maxresponse = 300 * 1024 * 1024})
-  if not status or status ~= 200 then
-    return false, "failed to download claude"
+  local result = fetch.Fetch(url, {maxresponse = 300 * 1024 * 1024})
+  if not result.ok then
+    return false, "failed to download claude: " .. result.error
+  end
+  if result.status ~= 200 then
+    return false, "failed to download claude: HTTP " .. tostring(result.status)
   end
 
   -- Verify SHA256
-  local actual_sha = cosmo.EncodeHex(cosmo.Sha256(body)):lower()
+  local actual_sha = cosmo.EncodeHex(cosmo.Sha256(result.body)):lower()
   if actual_sha ~= platform_info.sha then
     return false, "claude checksum mismatch"
   end
 
   -- Write binary
   unix.makedirs(bin_dir)
-  if not cosmo.Barf(claude_bin, body, tonumber("0755", 8)) then
+  if not cosmo.Barf(claude_bin, result.body, tonumber("0755", 8)) then
     return false, "failed to write claude binary"
   end
 
