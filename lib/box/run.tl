@@ -143,9 +143,17 @@ local function run_bootstrap(): boolean, string
   return true
 end
 
-local function write_env(): boolean, string
+local function get_box_dir(): string
   local home = os.getenv("HOME")
   if not home then
+    return nil
+  end
+  return path.join(home, ".config", "box")
+end
+
+local function write_env(): boolean, string
+  local box_dir = get_box_dir()
+  if not box_dir then
     return false, "HOME not set"
   end
 
@@ -154,8 +162,7 @@ local function write_env(): boolean, string
     return true -- no env.lua in zip, skip
   end
 
-  local env_path = path.join(home, ".config", "box", "env.lua")
-  local ok, err = write_file(env_path, content, tonumber("0600", 8))
+  local ok, err = write_file(path.join(box_dir, "env.lua"), content, tonumber("0600", 8))
   if not ok then
     return false, "failed to write env.lua: " .. (err or "unknown")
   end
@@ -163,13 +170,42 @@ local function write_env(): boolean, string
   return true
 end
 
-local function bootstrap(env: backend.Env): integer, string
+local function write_box_info(name: string, kind: string): boolean, string
+  local box_dir = get_box_dir()
+  if not box_dir then
+    return false, "HOME not set"
+  end
+
+  if name and name ~= "" then
+    local ok, err = write_file(path.join(box_dir, "name"), name .. "\n", tonumber("0644", 8))
+    if not ok then
+      return false, "failed to write name: " .. (err or "unknown")
+    end
+  end
+
+  if kind and kind ~= "" then
+    local ok, err = write_file(path.join(box_dir, "kind"), kind .. "\n", tonumber("0644", 8))
+    if not ok then
+      return false, "failed to write kind: " .. (err or "unknown")
+    end
+  end
+
+  return true
+end
+
+local function bootstrap(env: backend.Env, name: string, kind: string): integer, string
   io.stderr:write("==> running bootstrap\n")
 
   -- Step 0: Write env.lua to ~/.config/box/env.lua
   local ok, err = write_env()
   if not ok then
     io.stderr:write("warning: " .. (err or "failed to write env") .. "\n")
+  end
+
+  -- Step 0.5: Write box name and kind
+  ok, err = write_box_info(name, kind)
+  if not ok then
+    io.stderr:write("warning: " .. (err or "failed to write box info") .. "\n")
   end
 
   -- Step 1: Download and unpack home

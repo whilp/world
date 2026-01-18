@@ -12,6 +12,7 @@ local ENV_PATH <const> = "/zip/env.lua"
 local record ParsedArgs
   backend_type: string  -- "sprite", "mac", or path to backend file
   name: string          -- box name
+  kind: string          -- backend kind (for local-run mode)
   cmd: string           -- "new", "run", "ssh", "zap", "list", or nil for all-in-one
   env_path: string      -- path to env.lua
   local_run: boolean    -- running remotely after upload
@@ -99,7 +100,11 @@ local function parse_args(args: {string}): ParsedArgs
           result.name = v
         end
       elseif i == 2 then
-        result.cmd = v
+        if result.local_run then
+          result.kind = v
+        else
+          result.cmd = v
+        end
       else
         table.insert(result.extra_args, v)
       end
@@ -275,8 +280,8 @@ local function cmd_run(be: backend_mod.Backend, name: string, env_path: string):
     return false, "upload failed: " .. (result.err or "unknown")
   end
 
-  -- Run bootstrap on remote (pass name for env.lua function support)
-  result = be.exec(name, "chmod +x /tmp/box && /tmp/box --local-run " .. name)
+  -- Run bootstrap on remote (pass name and kind for env.lua function support)
+  result = be.exec(name, "chmod +x /tmp/box && /tmp/box --local-run " .. name .. " " .. be.name)
   cleanup()
   if not result.ok then
     return false, "bootstrap failed: " .. (result.err or "unknown")
@@ -311,7 +316,7 @@ local function cmd_list(be: backend_mod.Backend): boolean, string
   return true
 end
 
-local function cmd_local_run(name: string): integer, string
+local function cmd_local_run(name: string, kind: string): integer, string
   -- Running on remote after upload
   -- Load env from /zip/env.lua (zipped into self before upload)
   local ok, env_chunk = pcall(dofile, ENV_PATH)
@@ -331,7 +336,7 @@ local function cmd_local_run(name: string): integer, string
   end
 
   local run = require("box.run")
-  return run.bootstrap(env)
+  return run.bootstrap(env, name, kind)
 end
 
 local function main(args: {string}): integer, string
@@ -342,7 +347,7 @@ local function main(args: {string}): integer, string
 
   -- Handle local-run mode (running on remote)
   if parsed.local_run then
-    return cmd_local_run(parsed.name or "")
+    return cmd_local_run(parsed.name or "", parsed.kind or "")
   end
 
   -- Validate args
