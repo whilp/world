@@ -1,0 +1,10 @@
+# Config files
+.clasp.json
+.clasp.json.example
+.claspignore
+
+# Build files
+*.md
+cook.mk
+test_*.tl
+test_*.lua
