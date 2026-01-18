@@ -25,7 +25,6 @@ integration and automated testing using clasp.
 ### Build integration
 - `lib/appscript/cook.mk` - Build module for appscript
 - `lib/appscript/appsscript.json` - Apps Script manifest with People and Calendar APIs
-- `lib/appscript/.clasp.json.example` - Template for clasp project config
 - `lib/appscript/.claspignore` - Files to exclude from push
 - `lib/cook.mk` - Include appscript module
 
