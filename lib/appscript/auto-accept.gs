@@ -87,3 +87,6 @@ function setupAutoAccept() {
   createAutoAcceptCalendarTrigger();
   autoAcceptOtherCalendarInvites();
 }
+
+// For testing
+const EXPORTS = { getOtherCalendar, setOtherCalendar };

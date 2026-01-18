@@ -301,3 +301,6 @@ function setupBusyFill() {
   createBusyFillTrigger();
   fillBusyEvents();
 }
+
+// For testing
+const EXPORTS = { getWorkingHours, isWorkingDay, getWeekStart, roundUpToSlot, roundDownToSlot, findGaps };

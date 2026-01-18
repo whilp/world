@@ -252,3 +252,6 @@ function setup() {
   createTrigger();
   colorize();
 }
+
+// For testing
+const EXPORTS = { RULES, isGroup, getEventType };
