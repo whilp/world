@@ -37,6 +37,7 @@ include 3p/comrak/cook.mk
 include 3p/delta/cook.mk
 include 3p/ruff/cook.mk
 include 3p/sqruff/cook.mk
+include 3p/sprite/cook.mk
 include 3p/superhtml/cook.mk
 include 3p/marksman/cook.mk
 include 3p/duckdb/cook.mk
