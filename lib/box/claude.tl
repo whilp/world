@@ -99,6 +99,8 @@ local function install(): boolean, string
       lastOnboardingVersion = version_info.version,
       bypassPermissionsModeAccepted = true,
       lastReleaseNotesSeen = version_info.version,
+      officialMarketplaceAutoInstallAttempted = true,
+      officialMarketplaceAutoInstalled = true,
     }
     cosmo.Barf(claude_json, cosmo.EncodeJson(default_config) .. "\n", tonumber("0644", 8))
   end
