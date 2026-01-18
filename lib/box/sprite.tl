@@ -65,6 +65,26 @@ local function exec(name: string, cmd: string): backend.Result
 end
 
 local function upload(name: string, src: string, dst: string): backend.Result
+  -- sprite -file doesn't handle relative paths correctly, resolve to absolute
+  if not dst:match("^/") then
+    local home_handle = spawn({"sprite", "exec", "-s", name, "--", "bash", "-c", "echo $HOME"})
+    if not home_handle then
+      return err("sprite binary not found")
+    end
+    local read_ok, home = home_handle:read()  -- read() calls wait() internally
+    if not read_ok or not home then
+      return err("failed to get remote home directory")
+    end
+    home = (home as string):gsub("%s+$", "")
+    if dst == "." or dst == "./" then
+      dst = home
+    elseif dst:sub(1, 2) == "./" then
+      dst = home .. dst:sub(2)
+    else
+      dst = home .. "/" .. dst
+    end
+  end
+
   local file_arg = src .. ":" .. dst
   local handle = spawn({"sprite", "exec", "-s", name, "-file", file_arg, "--", "true"})
   if not handle then

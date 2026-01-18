@@ -343,6 +343,15 @@ local function cmd_scp(be: backend_mod.Backend, name: string, src: string, dst: 
   else
     -- upload: local -> remote
     local remote_path = dst:sub(2)
+    -- if dest is a directory (. or ends with /), append source basename
+    if remote_path == "." or remote_path == "" or remote_path:sub(-1) == "/" then
+      local basename = path.basename(src)
+      if remote_path == "" then
+        remote_path = basename
+      else
+        remote_path = path.join(remote_path, basename)
+      end
+    end
     io.stderr:write("==> uploading " .. src .. " to " .. name .. "\n")
     result = be.upload(name, src, remote_path)
   end
