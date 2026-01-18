@@ -33,3 +33,6 @@ $(box_bin): $(box_tl_lua) $$(cosmos_staged) $$(cosmic_bin) $$(cosmic_tl_libs) li
 box: $(box_bin)
 
 .PHONY: box
+
+# backend test depends on example-backend
+$(o)/lib/box/test_backend.tl.test.ok: lib/box/example-backend
