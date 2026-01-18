@@ -80,6 +80,29 @@ local function install(): boolean, string
     return false, "failed to write claude binary"
   end
 
+  -- Create bin -> {version}-{sha}/bin symlink for stable path
+  local share_dir = path.join(home, ".local", "share", "claude")
+  local bin_link = path.join(share_dir, "bin")
+  local link_target = version_info.version .. "-" .. short_sha .. "/bin"
+  unix.unlink(bin_link)
+  unix.symlink(link_target, bin_link)
+
+  -- Create default ~/.claude.json if it doesn't exist
+  local claude_json = path.join(home, ".claude.json")
+  if not unix.stat(claude_json) then
+    local default_config = {
+      numStartups = 4,
+      installMethod = "unknown",
+      autoUpdates = true,
+      theme = "dark-daltonized",
+      hasCompletedOnboarding = true,
+      lastOnboardingVersion = version_info.version,
+      bypassPermissionsModeAccepted = true,
+      lastReleaseNotesSeen = version_info.version,
+    }
+    cosmo.Barf(claude_json, cosmo.EncodeJson(default_config) .. "\n", tonumber("0644", 8))
+  end
+
   io.stderr:write("claude " .. version_info.version .. " installed\n")
   return true
 end
