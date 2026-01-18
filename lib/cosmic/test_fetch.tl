@@ -14,11 +14,6 @@ local function test_result_structure()
   local result = fetch.Fetch("invalid://this-will-definitely-fail")
 
   assert(result ~= nil, "result should not be nil")
-  -- Debug: print result structure
-  if result.ok then
-    io.stderr:write("DEBUG: Expected failure but got ok=true, status=" .. tostring(result.status) .. "\n")
-  end
-
   assert(result.ok == false, "result.ok should be false for failed fetch, got: " .. tostring(result.ok))
   assert(result.status == nil, "result.status should be nil on error")
   assert(result.headers == nil, "result.headers should be nil on error")
@@ -61,3 +56,23 @@ local function test_error_preservation()
   assert(result.error ~= "nil", "error should not be 'nil' string")
 end
 test_error_preservation()
+
+-- Test that HTTP error statuses (4xx, 5xx) still return ok=true
+-- because the HTTP request itself succeeded
+local function test_http_error_status()
+  -- Use httpbin's 404 endpoint - skip if network unavailable
+  local result = fetch.Fetch("https://httpbin.org/status/404")
+
+  if not result.ok then
+    -- Network failure - skip this test
+    io.stderr:write("SKIP: test_http_error_status (network unavailable)\n")
+    return
+  end
+
+  -- HTTP 404 is still a successful HTTP request
+  assert(result.ok == true, "ok should be true for HTTP error status")
+  assert(result.status == 404, "status should be 404, got: " .. tostring(result.status))
+  assert(result.headers ~= nil, "headers should be present")
+  assert(result.error == nil, "error should be nil on HTTP success")
+end
+test_http_error_status()

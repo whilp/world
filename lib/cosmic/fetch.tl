@@ -42,9 +42,6 @@ local function Fetch(url: string, opts?: FetchOpts): FetchResult
     -- Fetch failed: headers_or_err contains error message
     return {
       ok = false,
-      status = nil,
-      headers = nil,
-      body = nil,
       error = tostring(headers_or_err or "unknown error"),
     }
   end
@@ -61,6 +58,7 @@ end
 
 local record fetch
   Fetch: function(url: string, opts?: FetchOpts): FetchResult
+  FetchOpts: FetchOpts
   FetchResult: FetchResult
 end
 
