@@ -1,5 +1,6 @@
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
+local path = require("cosmo.path")
 
 local function trim(s: string): string
   return s:match('^%s*(.-)%s*$')
@@ -84,8 +85,39 @@ local function get_short_hostname(): string
   return nil
 end
 
+local function get_box_dir(): string
+  local home = os.getenv("HOME")
+  if not home then
+    return nil
+  end
+  return path.join(home, ".config", "box")
+end
+
+local function get_box_name(): string
+  local box_dir = get_box_dir()
+  if not box_dir then
+    return nil
+  end
+  return read_file(path.join(box_dir, "name"))
+end
+
+local function get_box_kind(): string
+  local box_dir = get_box_dir()
+  if not box_dir then
+    return nil
+  end
+  return read_file(path.join(box_dir, "kind"))
+end
+
 local function get(): string
   local identifier = ''
+
+  -- Check for box name and kind first (stored during box bootstrap)
+  local box_name = get_box_name()
+  local box_kind = get_box_kind()
+  if box_name and box_name ~= '' and box_kind and box_kind ~= '' then
+    return box_name .. "." .. box_kind
+  end
 
   local conf_dir = find_conf_dir()
   if conf_dir then
