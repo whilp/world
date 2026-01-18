@@ -3,22 +3,34 @@
 -- Usage: cosmic -- tl-gen.lua INPUT -o OUTPUT
 
 local tl = require("tl")
+local getopt = require("cosmo.getopt")
 
 local function main(...)
   local args = {...}
+
+  local longopts = {
+    {"output", "required", "o"},
+  }
+  local parser = getopt.new(args, "o:", longopts)
+
   local input_file = nil
   local output_file = nil
 
-  -- Parse args: INPUT -o OUTPUT
-  local i = 1
-  while i <= #args do
-    if args[i] == "-o" or args[i] == "--output" then
-      i = i + 1
-      output_file = args[i]
-    elseif not input_file then
-      input_file = args[i]
+  while true do
+    local opt, optarg = parser:next()
+    if not opt then break end
+
+    if opt == "?" then
+      io.stderr:write("error: invalid option\n")
+      return 1
+    elseif opt == "o" or opt == "output" then
+      output_file = optarg
     end
-    i = i + 1
+  end
+
+  local remaining = parser:remaining()
+  if remaining and #remaining > 0 then
+    input_file = remaining[1]
   end
 
   if not input_file or not output_file then

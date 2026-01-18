@@ -1,13 +1,8 @@
 --[[
 Updates a GitHub PR title and description from .github/pr/<name>.md
 
-The PR file is identified by the x-cosmic-pr-name trailer in the commit message:
-
-  cosmic: add feature
-
-  Description of changes.
-
-  x-cosmic-pr-name: feature-name.md
+The PR file is auto-detected: if the branch adds exactly one .github/pr/*.md
+file, that file is used to update the PR title and description.
 
 The pr.md format:
   # <title>
@@ -38,6 +33,7 @@ local type FetchFn = function(url: string, opts?: FetchOpts): number, {string:st
 local record SpawnOpts
   spawn: function({string}): SpawnHandle
   repo: string
+  getenv: function(string): string
 end
 
 local record RequestOpts
@@ -50,14 +46,6 @@ local record MainOpts
   repo: string
   getenv: function(string): string
   fetch: FetchFn
-end
-
-local record TrailerInfo
-  commit_count: number
-  first_sha: string
-  last_sha: string
-  winning_sha: string
-  winning_trailer: string
 end
 
 local record ParsedPr
@@ -75,82 +63,20 @@ local function log(msg: string)
   io.stderr:write("pr: " .. msg .. "\n")
 end
 
-local function get_current_branch(): string
-  local handle = spawn_mod({"git", "rev-parse", "--abbrev-ref", "HEAD"})
-  local ok, out = handle:read()
-  if not ok then
-    return nil
-  end
-  local branch = (out as string):match("^%s*(.-)%s*$")
-  if branch == "" then
-    return nil
-  end
-  return branch
-end
-
-local function get_commit_sha(): string
-  local handle = spawn_mod({"git", "rev-parse", "HEAD"})
-  local ok, out = handle:read()
-  if not ok or not out then
-    return "unknown"
-  end
-  return (out as string):match("^%s*(.-)%s*$") or "unknown"
-end
-
-local function normalize_pr_name(name: string): string
-  if not name then return nil end
-  if not name:match("%.md$") then
-    return name .. ".md"
-  end
-  return name
-end
-
 local function get_default_branch(opts?: SpawnOpts): string
   opts = opts or {}
-  local do_spawn = opts.spawn or spawn_mod
+  local getenv = opts.getenv or os.getenv
 
-  -- Try to get the remote HEAD branch name
-  local cmd: {string} = {"git"}
-  if opts.repo then
-    table.insert(cmd, "-C")
-    table.insert(cmd, opts.repo)
-  end
-  table.insert(cmd, "remote")
-  table.insert(cmd, "show")
-  table.insert(cmd, "origin")
-
-  local handle = do_spawn(cmd)
-  local ok, out = handle:read()
-  if ok and out then
-    local branch = (out as string):match("HEAD branch: (%S+)")
-    if branch then
-      return "origin/" .. branch
-    end
+  -- In GitHub Actions PR context, GITHUB_BASE_REF is always set
+  local base_ref = getenv("GITHUB_BASE_REF")
+  if base_ref and base_ref ~= "" then
+    return "origin/" .. base_ref
   end
 
-  -- Fallback: try common default branches
-  for _, branch in ipairs({"origin/main", "origin/master"}) do
-    cmd = {"git"}
-    if opts.repo then
-      table.insert(cmd, "-C")
-      table.insert(cmd, opts.repo)
-    end
-    table.insert(cmd, "rev-parse")
-    table.insert(cmd, "--verify")
-    table.insert(cmd, branch)
-
-    handle = do_spawn(cmd)
-    ok, _ = handle:read()
-    if ok then
-      return branch
-    end
-  end
-
-  -- Last resort: use origin/HEAD even if it might not exist
-  return "origin/HEAD"
+  return "origin/main"
 end
 
-local function get_pr_files_from_branch(opts?: SpawnOpts): {string}
+local function get_pr_file_from_branch(opts?: SpawnOpts): string
   opts = opts or {}
   local do_spawn = opts.spawn or spawn_mod
 
@@ -172,7 +98,7 @@ local function get_pr_files_from_branch(opts?: SpawnOpts): {string}
   local handle = do_spawn(cmd)
   local ok, out = handle:read()
   if not ok or not out then
-    return {}
+    return nil
   end
 
   local files: {string} = {}
@@ -182,75 +108,19 @@ local function get_pr_files_from_branch(opts?: SpawnOpts): {string}
       table.insert(files, name)
     end
   end
-  return files
-end
 
-local function get_pr_name_from_trailer(opts?: SpawnOpts): string, TrailerInfo
-  opts = opts or {}
-  local do_spawn = opts.spawn or spawn_mod
-
-  -- Get all x-cosmic-pr-name and x-cosmic-pr-enable trailers from last 20 commits
-  -- Process in chronological order (oldest first) to find the final state
-  local cmd: {string} = {"git"}
-  if opts.repo then
-    table.insert(cmd, "-C")
-    table.insert(cmd, opts.repo)
-  end
-  table.insert(cmd, "log")
-  table.insert(cmd, "--format=%H %(trailers:key=x-cosmic-pr-name,valueonly)%(trailers:key=x-cosmic-pr-enable,valueonly)")
-  table.insert(cmd, "--reverse")
-  table.insert(cmd, "-20")
-  local handle = do_spawn(cmd)
-  local ok, out = handle:read()
-  if not ok or not out then
-    return nil, nil
+  if #files == 0 then
+    log("no .github/pr/*.md files added on this branch")
+    return nil
   end
 
-  -- Track the final state by processing commits in order
-  local pr_name: string = nil
-  local enabled = true
-  local first_sha: string
-  local last_sha: string
-  local winning_sha: string
-  local winning_trailer: string
-  local commit_count = 0
-
-  for line in (out as string):gmatch("[^\n]+") do
-    local sha, rest = line:match("^(%S+)%s*(.*)$")
-    if sha then
-      commit_count = commit_count + 1
-      if not first_sha then first_sha = sha end
-      last_sha = sha
-
-      local name = rest and rest:match("^%s*(.-)%s*$")
-      if name and name ~= "" then
-        if name == "false" then
-          enabled = false
-          pr_name = nil
-          winning_sha = sha
-          winning_trailer = "x-cosmic-pr-enable: false"
-        else
-          pr_name = name
-          enabled = true
-          winning_sha = sha
-          winning_trailer = "x-cosmic-pr-name: " .. name
-        end
-      end
-    end
+  if #files > 1 then
+    log("multiple .github/pr/*.md files found: " .. table.concat(files, ", "))
+    return nil
   end
 
-  local info: TrailerInfo = {
-    commit_count = commit_count,
-    first_sha = first_sha,
-    last_sha = last_sha,
-    winning_sha = winning_sha,
-    winning_trailer = winning_trailer,
-  }
-
-  if enabled and pr_name then
-    return pr_name, info
-  end
-  return nil, info
+  log("using " .. files[1])
+  return files[1]
 end
 
 
@@ -386,26 +256,13 @@ end
 
 
 local function print_help()
-  local pr_name = get_pr_name_from_trailer()
-  local pr_file: string
-  if pr_name then
-    pr_file = path.join(".github/pr", normalize_pr_name(pr_name))
-  else
-    pr_file = ".github/pr/<name>.md"
-  end
-
-  local help = string.format([[
+  local help = [[
 usage: pr.lua [-h]
 
-Updates PR title and description from %s
+Updates PR title and description from .github/pr/<name>.md
 
-The PR file is identified by the x-cosmic-pr-name trailer in your commit message:
-
-    cosmic: add feature
-
-    Description of changes.
-
-    x-cosmic-pr-name: feature-name.md
+The PR file is auto-detected: if the branch adds exactly one .github/pr/*.md
+file, that file is used.
 
 The file format:
 
@@ -413,34 +270,24 @@ The file format:
 
     Brief description of changes.
 
+    ## Changes
+
     - file1.lua - what it does
     - file2.lua - what it does
 
-    ## Validation
-
-    - [x] tests pass
-    - [x] linter passes
-
 Guidelines:
 
-  1. Choose a descriptive name for your PR file (e.g., feature-name.md)
-  2. Create %s
-  3. Add x-cosmic-pr-name: <name>.md trailer to your commit message
-  4. Follow repo conventions: `# component: verb explanation` title
-  5. Keep content concise but include key decisions, tradeoffs, examples
-  6. Update the file as the PR evolves
-  7. Push to trigger the workflow and update the PR
+  1. Create .github/pr/<descriptive-name>.md on your branch
+  2. Use `# component: verb explanation` as the title
+  3. Keep content concise but include key decisions and tradeoffs
+  4. Update the file as the PR evolves
+  5. Push to trigger the workflow and update the PR
 
 Environment variables (set automatically in GitHub Actions):
   GITHUB_TOKEN       - required for API authentication
   GITHUB_REPOSITORY  - owner/repo format
   GITHUB_PR_NUMBER   - PR number
-]], pr_file, pr_file)
-
-  if pr_name then
-    help = help .. string.format("\nDetected PR file: %s\n", pr_file)
-  end
-
+]]
   print(help)
 end
 
@@ -448,21 +295,7 @@ local function is_github_actions(): boolean
   return os.getenv("GITHUB_ACTIONS") == "true"
 end
 
-local function do_update(owner: string, repo_name: string, pr_number: number, pr_name: string, trailer_info: TrailerInfo, token: string, opts?: RequestOpts): number, string
-  -- log commit range and winning trailer
-  if trailer_info and trailer_info.first_sha then
-    local range = string.format("%s..%s (%d commits)",
-      trailer_info.first_sha:sub(1, 8),
-      trailer_info.last_sha:sub(1, 8),
-      trailer_info.commit_count)
-    log("checked " .. range)
-  end
-  if trailer_info and trailer_info.winning_sha then
-    log("using " .. trailer_info.winning_sha:sub(1, 8) .. " " .. trailer_info.winning_trailer)
-  end
-
-  local pr_file = path.join(".github/pr", normalize_pr_name(pr_name))
-
+local function do_update(owner: string, repo_name: string, pr_number: number, pr_file: string, token: string, opts?: RequestOpts): number, string
   if not path.exists(pr_file) then
     log(pr_file .. " not found, skipping")
     return 0
@@ -539,35 +372,14 @@ local function main(opts?: MainOpts): number, string
     return 1, "invalid GITHUB_PR_NUMBER"
   end
 
-  local spawn_opts: SpawnOpts = {spawn = opts.spawn, repo = opts.repo}
-  local pr_name, trailer_info = get_pr_name_from_trailer(spawn_opts)
-  if not pr_name then
-    -- fallback: check if branch introduces exactly one .github/pr/*.md file
-    local pr_files = get_pr_files_from_branch(spawn_opts)
-    if #pr_files == 1 then
-      -- extract just the filename from .github/pr/<name>.md
-      local basename = pr_files[1]:match("%.github/pr/(.+)$")
-      if basename then
-        log("auto-detected PR file from branch: " .. pr_files[1])
-        pr_name = basename
-      end
-    end
-  end
-
-  if not pr_name then
-    local first = trailer_info and trailer_info.first_sha and trailer_info.first_sha:sub(1, 8) or "unknown"
-    local last = trailer_info and trailer_info.last_sha and trailer_info.last_sha:sub(1, 8) or "unknown"
-
-    local msg = string.format(
-      "no x-cosmic-pr-name trailer found (or disabled) in last 20 commits (%s .. %s)\n\nNote: x-cosmic-pr-enable: false disables updates until a new x-cosmic-pr-name is set",
-      first,
-      last
-    )
-    return 0, msg
+  local spawn_opts: SpawnOpts = {spawn = opts.spawn, repo = opts.repo, getenv = opts.getenv}
+  local pr_file = get_pr_file_from_branch(spawn_opts)
+  if not pr_file then
+    return 0
   end
 
   local request_opts: RequestOpts = {fetch = opts.fetch, getenv = opts.getenv}
-  return do_update(owner, repo_name, pr_number, pr_name, trailer_info, token, request_opts)
+  return do_update(owner, repo_name, pr_number, pr_file, token, request_opts)
 end
 
 if cosmo.is_main() then
@@ -588,13 +400,10 @@ local record PrModule
   get_pr: function(owner: string, repo: string, pr_number: number, token: string, opts?: RequestOpts): GitHubPr, string
   append_timestamp_details: function(body: string): string
   update_pr: function(owner: string, repo: string, pr_number: number, title: string, body: string, token: string, opts?: RequestOpts): boolean, string
-  get_current_branch: function(): string
-  get_commit_sha: function(): string
   get_default_branch: function(opts?: SpawnOpts): string
-  get_pr_name_from_trailer: function(opts?: SpawnOpts): string, TrailerInfo
-  get_pr_files_from_branch: function(opts?: SpawnOpts): {string}
+  get_pr_file_from_branch: function(opts?: SpawnOpts): string
   is_github_actions: function(): boolean
-  do_update: function(owner: string, repo_name: string, pr_number: number, pr_name: string, trailer_info: TrailerInfo, token: string, opts?: RequestOpts): number, string
+  do_update: function(owner: string, repo_name: string, pr_number: number, pr_file: string, token: string, opts?: RequestOpts): number, string
   main: function(opts?: MainOpts): number, string
 end
 
@@ -604,11 +413,8 @@ return {
   get_pr = get_pr,
   append_timestamp_details = append_timestamp_details,
   update_pr = update_pr,
-  get_current_branch = get_current_branch,
-  get_commit_sha = get_commit_sha,
   get_default_branch = get_default_branch,
-  get_pr_name_from_trailer = get_pr_name_from_trailer,
-  get_pr_files_from_branch = get_pr_files_from_branch,
+  get_pr_file_from_branch = get_pr_file_from_branch,
   is_github_actions = is_github_actions,
   do_update = do_update,
   main = main,

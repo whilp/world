@@ -12,6 +12,24 @@ local record DirHandle
   close: function(self)
 end
 
+local record BoxEnvClaude
+  token: string
+end
+
+local record BoxEnv
+  claude: BoxEnvClaude
+end
+
+local function load_box_env(): BoxEnv
+  local HOME = os.getenv("HOME")
+  local env_path = path.join(HOME, ".config", "box", "env.lua")
+  local ok, env = pcall(dofile, env_path) as (boolean, BoxEnv)
+  if ok then
+    return env
+  end
+  return nil
+end
+
 local function debug_log(msg: string)
   if os.getenv("CLAUDE_WRAPPER_DEBUG") then
     io.stderr:write("claude wrapper: " .. msg .. "\n")
@@ -89,7 +107,7 @@ local function scan_for_atomic_install(): string
     if name ~= "." and name ~= ".." then
       local version = name:match("^([%d%.]+)%-")
       if version then
-        local bin_path = path.join(share_dir, name, "claude")
+        local bin_path = path.join(share_dir, name, "bin", "claude")
         if unix.stat(bin_path) then
           if not latest_version or version > latest_version then
             latest_version = version
@@ -104,6 +122,21 @@ local function scan_for_atomic_install(): string
   return latest_path
 end
 
+local function search_path_for_claude(): string
+  local HOME = os.getenv("HOME")
+  local wrapper_path = path.join(HOME, ".local", "bin", "claude")
+  local PATH = os.getenv("PATH")
+  if not PATH then return nil end
+
+  for dir in PATH:gmatch("[^:]+") do
+    local bin_path = path.join(dir, "claude")
+    if bin_path ~= wrapper_path and unix.stat(bin_path) then
+      return bin_path
+    end
+  end
+  return nil
+end
+
 local function main(args: {string})
   local HOME = os.getenv("HOME")
 
@@ -111,7 +144,8 @@ local function main(args: {string})
     scan_for_claude_deploy(),
     scan_for_atomic_install(),
     path.join(HOME, ".local", "share", "claude", "bin", "claude"),
-    "/usr/local/bin/claude",
+    "/.sprite/bin/claude",
+    search_path_for_claude(),
   }
 
   local claude_bin = find_claude_binary(claude_paths)
@@ -139,6 +173,14 @@ local function main(args: {string})
   debug_log("execve argv[0]: " .. execve_argv[1])
   debug_log("execve argv[1..]: " .. table.concat(argv, " "))
 
+  if unix.stat("/.sprite") then
+    local box_env = load_box_env()
+    if box_env and box_env.claude and box_env.claude.token then
+      unix.setenv("CLAUDE_CODE_OAUTH_TOKEN", box_env.claude.token)
+      debug_log("set CLAUDE_CODE_OAUTH_TOKEN from box env")
+    end
+  end
+
   local _, err = unix.execve(claude_bin, execve_argv, unix.environ())
 
   io.stderr:write("claude wrapper: failed to exec claude: " .. tostring(err) .. "\n")
@@ -150,6 +192,7 @@ local record claude
   build_argv: function(append_prompts: {string}, mcp_config: string, user_args: {string}): {string}
   scan_for_claude_deploy: function(): string
   scan_for_atomic_install: function(): string
+  search_path_for_claude: function(): string
   main: function(args: {string})
 end
 
@@ -158,6 +201,7 @@ local M: claude = {
   build_argv = build_argv,
   scan_for_claude_deploy = scan_for_claude_deploy,
   scan_for_atomic_install = scan_for_atomic_install,
+  search_path_for_claude = search_path_for_claude,
   main = main,
 }
 

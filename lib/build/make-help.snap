@@ -11,9 +11,10 @@ Targets:
   clean               Remove all build artifacts
   bootstrap           Bootstrap build environment
   check               Run all linters (astgrep, teal)
+  check-test-coverage Verify all test files are declared in cook.mk
   update              Check for dependency updates
   bump                Apply dependency updates (use with only=<module>)
-  build               Build home and cosmic binaries
+  build               Build home, cosmic, and bootstrap binaries
   release             Create release artifacts (CI only)
   ci                  Run full CI pipeline (astgrep, teal, test, build)
 

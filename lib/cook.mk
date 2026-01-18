@@ -18,12 +18,13 @@ o/lib/%.lua: lib/%.lua
 	@cp $< $@
 
 # compile .tl files to .lua (for o/teal/lib via tl gen -o)
-.SECONDEXPANSION:
-o/teal/lib/%.lua: lib/%.tl $(types_files) $$(tl_staged)
+# use lib/cosmic/tl-gen.lua which uses tl.lua as library (no argparse needed)
+o/teal/lib/%.lua: lib/%.tl $(types_files) lib/cosmic/tl-gen.lua | $(bootstrap_files)
 	@mkdir -p $(@D)
-	@$(tl_staged)/tl -- gen -o $@ $< >/dev/null
+	@$(bootstrap_cosmic) lib/cosmic/tl-gen.lua -- $< -o $@
 
 include lib/aerosnap/cook.mk
+include lib/box/cook.mk
 include lib/build/cook.mk
 include lib/checker/cook.mk
 include lib/claude/cook.mk

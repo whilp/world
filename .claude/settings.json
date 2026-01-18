@@ -1,28 +1,4 @@
 {
-  "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "startup",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR/bin/hook\""
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR/bin/hook\""
-          }
-        ]
-      }
-    ]
-  },
   "env": {
     "DISABLE_AUTOUPDATER": "1"
   },

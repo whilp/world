@@ -15,6 +15,7 @@ end
 
 local record SpawnOpts
   spawn: function({string}): SpawnHandle
+  getenv: function(string): string
 end
 
 local record MockEnv
@@ -22,6 +23,7 @@ local record MockEnv
   GITHUB_TOKEN: string
   GITHUB_REPOSITORY: string
   GITHUB_PR_NUMBER: string
+  GITHUB_BASE_REF: string
 end
 
 local record MainOpts
@@ -41,14 +43,6 @@ local type FetchFn = function(url: string, opts?: FetchOpts): number, {string:st
 local record ParsedPr
   title: string
   body: string
-end
-
-local record TrailerInfo
-  commit_count: number
-  first_sha: string
-  last_sha: string
-  winning_sha: string
-  winning_trailer: string
 end
 
 local record GitHubPr
@@ -222,51 +216,26 @@ end
 test_remote_missing_pr_number()
 
 --------------------------------------------------------------------------------
--- trailer extraction (mocked git output)
+-- get_pr_file_from_branch tests
 --------------------------------------------------------------------------------
 
-local function test_trailer_not_found()
-  local output = "abc123\ndef456\n"  -- commits with no trailers
-  local result = pr.get_pr_name_from_trailer({spawn = mock_spawn(output)} as SpawnOpts)
-  assert(result == nil, "expected no trailer")
+local function test_pr_file_from_branch_none()
+  local result = pr.get_pr_file_from_branch({spawn = mock_spawn("")} as SpawnOpts)
+  assert(result == nil, "expected nil when no files")
 end
-test_trailer_not_found()
+test_pr_file_from_branch_none()
 
-local function test_trailer_found()
-  local output = "abc123 2026-01-04-feature.md\n"
-  local result = pr.get_pr_name_from_trailer({spawn = mock_spawn(output)} as SpawnOpts)
-  assert(result == "2026-01-04-feature.md", "expected trailer value, got: " .. tostring(result))
+local function test_pr_file_from_branch_one()
+  local result = pr.get_pr_file_from_branch({spawn = mock_spawn(".github/pr/feature.md\n")} as SpawnOpts)
+  assert(result == ".github/pr/feature.md", "expected file path")
 end
-test_trailer_found()
+test_pr_file_from_branch_one()
 
-local function test_trailer_disabled()
-  -- first commit has name, second disables
-  local output = "abc123 feature.md\ndef456 false\n"
-  local result = pr.get_pr_name_from_trailer({spawn = mock_spawn(output)} as SpawnOpts)
-  assert(result == nil, "expected disabled, got: " .. tostring(result))
+local function test_pr_file_from_branch_multiple()
+  local result = pr.get_pr_file_from_branch({spawn = mock_spawn(".github/pr/a.md\n.github/pr/b.md\n")} as SpawnOpts)
+  assert(result == nil, "expected nil when multiple files")
 end
-test_trailer_disabled()
-
-local function test_trailer_reenabled()
-  -- name -> disable -> new name
-  local output = "abc123 old.md\ndef456 false\nghi789 2026-01-04-new.md\n"
-  local result = pr.get_pr_name_from_trailer({spawn = mock_spawn(output)} as SpawnOpts)
-  assert(result == "2026-01-04-new.md", "expected re-enabled with new name, got: " .. tostring(result))
-end
-test_trailer_reenabled()
-
-local function test_trailer_info_returned()
-  local output = "abc123\ndef456 feature.md\nghi789\n"
-  local result, info = pr.get_pr_name_from_trailer({spawn = mock_spawn(output)} as SpawnOpts)
-  local trailer_info = info as TrailerInfo
-  assert(result == "feature.md", "expected trailer")
-  assert(trailer_info.commit_count == 3, "expected 3 commits")
-  assert(trailer_info.first_sha == "abc123", "expected first sha")
-  assert(trailer_info.last_sha == "ghi789", "expected last sha")
-  assert(trailer_info.winning_sha == "def456", "expected winning sha")
-  assert(trailer_info.winning_trailer == "x-cosmic-pr-name: feature.md", "expected winning trailer")
-end
-test_trailer_info_returned()
+test_pr_file_from_branch_multiple()
 
 --------------------------------------------------------------------------------
 -- do_update integration
@@ -292,7 +261,7 @@ local function test_do_update_with_changes()
     return original_slurp(p)
   end
 
-  local code = pr.do_update("owner", "repo", 42, "test.md", nil, "token", {fetch = mock_fetch})
+  local code = pr.do_update("owner", "repo", 42, ".github/pr/test.md", "token", {fetch = mock_fetch})
 
   path.exists = original_exists
   cosmo.Slurp = original_slurp
@@ -302,71 +271,10 @@ end
 test_do_update_with_changes()
 
 --------------------------------------------------------------------------------
--- trailer without .md extension should still find file
+-- main() with file detection
 --------------------------------------------------------------------------------
 
-local function test_do_update_finds_file_without_extension()
-  local patch_called = false
-  local mock_fetch: FetchFn = function(_: string, opts: FetchOpts): number, {string:string}, string
-    if opts.method == "GET" then
-      return 200, {}, cosmo.EncodeJson({number = 42, title = "Old", body = "Old body"})
-    else
-      patch_called = true
-      return 200, {}, cosmo.EncodeJson({number = 42})
-    end
-  end
-
-  local original_exists = path.exists
-  local original_slurp = cosmo.Slurp
-  -- only the .md version exists
-  path.exists = function(p: string): boolean
-    if p:match("feature%-name%.md$") then return true end
-    return false
-  end
-  cosmo.Slurp = function(p: string): string
-    if p:match("feature%-name%.md$") then return "# New\n\nNew body" end
-    return nil
-  end
-
-  -- trailer value omits the .md extension
-  local code = pr.do_update("owner", "repo", 42, "feature-name", nil, "token", {fetch = mock_fetch})
-
-  path.exists = original_exists
-  cosmo.Slurp = original_slurp
-
-  assert(code == 0, "expected success when extension omitted")
-  assert(patch_called, "expected PR to be updated (PATCH called)")
-end
-test_do_update_finds_file_without_extension()
-
---------------------------------------------------------------------------------
--- get_pr_files_from_branch tests
---------------------------------------------------------------------------------
-
-local function test_pr_files_from_branch_none()
-  local result = pr.get_pr_files_from_branch({spawn = mock_spawn("")} as SpawnOpts)
-  assert(#result == 0, "expected no files")
-end
-test_pr_files_from_branch_none()
-
-local function test_pr_files_from_branch_one()
-  local result = pr.get_pr_files_from_branch({spawn = mock_spawn(".github/pr/feature.md\n")} as SpawnOpts)
-  assert(#result == 1, "expected one file")
-  assert(result[1] == ".github/pr/feature.md", "expected file path")
-end
-test_pr_files_from_branch_one()
-
-local function test_pr_files_from_branch_multiple()
-  local result = pr.get_pr_files_from_branch({spawn = mock_spawn(".github/pr/a.md\n.github/pr/b.md\n")} as SpawnOpts)
-  assert(#result == 2, "expected two files")
-end
-test_pr_files_from_branch_multiple()
-
---------------------------------------------------------------------------------
--- main() fallback to branch file detection
---------------------------------------------------------------------------------
-
-local function test_main_fallback_to_branch_file()
+local function test_main_with_single_file()
   local patch_called = false
   local mock_fetch: FetchFn = function(_: string, opts: FetchOpts): number, {string:string}, string
     if opts.method == "GET" then
@@ -393,29 +301,12 @@ local function test_main_fallback_to_branch_file()
     GITHUB_TOKEN = "token",
     GITHUB_REPOSITORY = "owner/repo",
     GITHUB_PR_NUMBER = "42",
+    GITHUB_BASE_REF = "main",
   }
-
-  -- mock spawn to return no trailer but one branch file
-  local spawn_calls: {{string}} = {}
-  local mock_spawn_fn = function(cmd: {string}): SpawnHandle
-    table.insert(spawn_calls, cmd)
-    -- first call is trailer check, second is branch file check
-    if cmd[#cmd] == ".github/pr/*.md" then
-      return {
-        read = function(_: SpawnHandle): boolean, string return true, ".github/pr/auto-feature.md\n" end,
-        wait = function(_: SpawnHandle): integer return 0 end,
-      }
-    else
-      return {
-        read = function(_: SpawnHandle): boolean, string return true, "abc123\ndef456\n" end,  -- no trailers
-        wait = function(_: SpawnHandle): integer return 0 end,
-      }
-    end
-  end
 
   local code = pr.main({
     getenv = function(k: string): string return (mock_env as {string:string})[k] end,
-    spawn = mock_spawn_fn,
+    spawn = mock_spawn(".github/pr/auto-feature.md\n"),
     fetch = mock_fetch,
   } as MainOpts)
 
@@ -423,141 +314,67 @@ local function test_main_fallback_to_branch_file()
   cosmo.Slurp = original_slurp
 
   assert(code == 0, "expected success")
-  assert(patch_called, "expected PR to be updated via fallback")
+  assert(patch_called, "expected PR to be updated")
 end
-test_main_fallback_to_branch_file()
+test_main_with_single_file()
 
-local function test_main_no_fallback_when_multiple_files()
+local function test_main_no_files()
   local mock_env: MockEnv = {
     GITHUB_ACTIONS = "true",
     GITHUB_TOKEN = "token",
     GITHUB_REPOSITORY = "owner/repo",
     GITHUB_PR_NUMBER = "42",
+    GITHUB_BASE_REF = "main",
   }
 
-  local mock_spawn_fn = function(cmd: {string}): SpawnHandle
-    if cmd[#cmd] == ".github/pr/*.md" then
-      return {
-        read = function(_: SpawnHandle): boolean, string return true, ".github/pr/a.md\n.github/pr/b.md\n" end,
-        wait = function(_: SpawnHandle): integer return 0 end,
-      }
-    else
-      return {
-        read = function(_: SpawnHandle): boolean, string return true, "abc123\n" end,  -- no trailers
-        wait = function(_: SpawnHandle): integer return 0 end,
-      }
-    end
-  end
-
-  local code, msg = pr.main({
+  local code = pr.main({
     getenv = function(k: string): string return (mock_env as {string:string})[k] end,
-    spawn = mock_spawn_fn,
+    spawn = mock_spawn(""),  -- no files
   } as MainOpts)
 
   assert(code == 0, "expected success (skipped)")
-  assert(msg:match("no x%-cosmic%-pr%-name"), "expected no trailer message")
 end
-test_main_no_fallback_when_multiple_files()
+test_main_no_files()
+
+local function test_main_multiple_files()
+  local mock_env: MockEnv = {
+    GITHUB_ACTIONS = "true",
+    GITHUB_TOKEN = "token",
+    GITHUB_REPOSITORY = "owner/repo",
+    GITHUB_PR_NUMBER = "42",
+    GITHUB_BASE_REF = "main",
+  }
+
+  local code = pr.main({
+    getenv = function(k: string): string return (mock_env as {string:string})[k] end,
+    spawn = mock_spawn(".github/pr/a.md\n.github/pr/b.md\n"),
+  } as MainOpts)
+
+  assert(code == 0, "expected success (skipped)")
+end
+test_main_multiple_files()
 
 --------------------------------------------------------------------------------
 -- get_default_branch tests
 --------------------------------------------------------------------------------
 
-local function test_default_branch_from_remote_show()
-  local call_count = 0
-  local mock_spawn_fn = function(cmd: {string}): SpawnHandle
-    call_count = call_count + 1
-    if call_count == 1 and cmd[1] == "git" and cmd[#cmd-1] == "show" then
-      return {
-        read = function(_: SpawnHandle): boolean, string
-          return true, "* remote origin\n  HEAD branch: main\n"
-        end,
-        wait = function(_: SpawnHandle): integer return 0 end,
-      }
-    end
-    return {
-      read = function(_: SpawnHandle): boolean, string return false, nil end,
-      wait = function(_: SpawnHandle): integer return 1 end,
-    }
+local function test_default_branch_from_github_base_ref()
+  local mock_getenv = function(name: string): string
+    if name == "GITHUB_BASE_REF" then return "develop" end
+    return nil
   end
 
-  local result = pr.get_default_branch({spawn = mock_spawn_fn} as SpawnOpts)
-  assert(result == "origin/main", "expected origin/main from remote show, got: " .. tostring(result))
+  local result = pr.get_default_branch({getenv = mock_getenv} as SpawnOpts)
+  assert(result == "origin/develop", "expected origin/develop from GITHUB_BASE_REF, got: " .. tostring(result))
 end
-test_default_branch_from_remote_show()
+test_default_branch_from_github_base_ref()
 
-local function test_default_branch_fallback_to_main()
-  local call_count = 0
-  local mock_spawn_fn = function(cmd: {string}): SpawnHandle
-    call_count = call_count + 1
-    if call_count == 1 then
-      -- remote show fails
-      return {
-        read = function(_: SpawnHandle): boolean, string return false, nil end,
-        wait = function(_: SpawnHandle): integer return 1 end,
-      }
-    elseif call_count == 2 and cmd[#cmd] == "origin/main" then
-      -- origin/main exists
-      return {
-        read = function(_: SpawnHandle): boolean, string return true, "abc123\n" end,
-        wait = function(_: SpawnHandle): integer return 0 end,
-      }
-    end
-    return {
-      read = function(_: SpawnHandle): boolean, string return false, nil end,
-      wait = function(_: SpawnHandle): integer return 1 end,
-    }
+local function test_default_branch_fallback_without_env()
+  local mock_getenv = function(_: string): string
+    return nil
   end
 
-  local result = pr.get_default_branch({spawn = mock_spawn_fn} as SpawnOpts)
+  local result = pr.get_default_branch({getenv = mock_getenv} as SpawnOpts)
   assert(result == "origin/main", "expected origin/main fallback, got: " .. tostring(result))
 end
-test_default_branch_fallback_to_main()
-
-local function test_default_branch_fallback_to_master()
-  local call_count = 0
-  local mock_spawn_fn = function(cmd: {string}): SpawnHandle
-    call_count = call_count + 1
-    if call_count == 1 then
-      -- remote show fails
-      return {
-        read = function(_: SpawnHandle): boolean, string return false, nil end,
-        wait = function(_: SpawnHandle): integer return 1 end,
-      }
-    elseif call_count == 2 and cmd[#cmd] == "origin/main" then
-      -- origin/main doesn't exist
-      return {
-        read = function(_: SpawnHandle): boolean, string return false, nil end,
-        wait = function(_: SpawnHandle): integer return 1 end,
-      }
-    elseif call_count == 3 and cmd[#cmd] == "origin/master" then
-      -- origin/master exists
-      return {
-        read = function(_: SpawnHandle): boolean, string return true, "def456\n" end,
-        wait = function(_: SpawnHandle): integer return 0 end,
-      }
-    end
-    return {
-      read = function(_: SpawnHandle): boolean, string return false, nil end,
-      wait = function(_: SpawnHandle): integer return 1 end,
-    }
-  end
-
-  local result = pr.get_default_branch({spawn = mock_spawn_fn} as SpawnOpts)
-  assert(result == "origin/master", "expected origin/master fallback, got: " .. tostring(result))
-end
-test_default_branch_fallback_to_master()
-
-local function test_default_branch_ultimate_fallback()
-  local mock_spawn_fn = function(_: {string}): SpawnHandle
-    -- all commands fail
-    return {
-      read = function(_: SpawnHandle): boolean, string return false, nil end,
-      wait = function(_: SpawnHandle): integer return 1 end,
-    }
-  end
-
-  local result = pr.get_default_branch({spawn = mock_spawn_fn} as SpawnOpts)
-  assert(result == "origin/HEAD", "expected origin/HEAD ultimate fallback, got: " .. tostring(result))
-end
-test_default_branch_ultimate_fallback()
+test_default_branch_fallback_without_env()

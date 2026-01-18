@@ -5,7 +5,6 @@ local backup = require("setup.backup")
 local git = require("setup.git")
 local shell = require("setup.shell")
 local codespace = require("setup.codespace")
-local claude = require("setup.claude")
 local nvim = require("setup.nvim")
 local extras = require("setup.extras")
 local ai = require("setup.ai")
@@ -21,14 +20,6 @@ local function main(): number
 	local pids: {number} = {}
 
 	local pid = unix.fork()
-	if pid == 0 then
-		claude.run(env)
-		os.exit(0)
-	else
-		table.insert(pids, pid)
-	end
-
-	pid = unix.fork()
 	if pid == 0 then
 		nvim.run(env)
 		os.exit(0)

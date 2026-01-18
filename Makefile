@@ -87,7 +87,7 @@ $(o)/%.lua: %.tl $(types_files) $(tl_files) $(bootstrap_files) $$(tl_staged)
 
 # bin scripts: o/bin/X.lua from lib/*/X.lua and 3p/*/X.lua
 vpath %.lua lib/build lib/test 3p/ast-grep 3p/tl
-vpath %.tl lib/build 3p/ast-grep 3p/tl
+vpath %.tl lib/build lib/test 3p/ast-grep 3p/tl
 $(o)/bin/%.lua: %.lua
 	@mkdir -p $(@D)
 	@$(cp) $< $@
@@ -110,6 +110,11 @@ all_files += $(all_tl_lua)
 $(foreach m,$(modules),$(if $($(m)_version),\
   $(eval $(m)_staged := $(o)/$(m)/.staged)\
   $(if $($(m)_dir),,$(eval $(m)_dir := $(o)/$(m)/.staged))))
+
+# define *_zip for tool modules (excludes cosmos, tl, bootstrap infrastructure)
+zip_excluded := cosmos tl bootstrap
+$(foreach m,$(filter-out $(zip_excluded),$(modules)),$(if $($(m)_version),\
+  $(eval $(m)_zip := $(o)/$(m)/.zip)))
 
 # default deps for regular modules (also excluded from file dep expansion)
 default_deps := bootstrap test
@@ -149,7 +154,22 @@ $(o)/%/.staged: .UNVEIL = rx:$(o)/bootstrap r:3p rwc:$(o) rx:/usr/bin
 $(o)/%/.staged: $(o)/%/.fetched $(build_files)
 	@$(build_stage) $$(readlink $(o)/$*/.versioned) $(platform) $< $@
 
+# tool zips: o/module/.zip contains versioned dir + symlinks (for home binary)
+# structure: .local/share/<tool>/<ver-sha>/* + symlinks at .local/share/<tool>/*
+$(o)/%/.zip: $(o)/%/.staged $$(cosmos_staged)
+	@rm -rf $(@D)/.zip-staging
+	@mkdir -p $(@D)/.zip-staging/.local/share/$*
+	@versioned_name=$$(basename $$(readlink -f $<)) && \
+		cp -r $$(readlink -f $<) $(@D)/.zip-staging/.local/share/$*/$$versioned_name && \
+		for item in $(@D)/.zip-staging/.local/share/$*/$$versioned_name/*; do \
+			ln -sf $$versioned_name/$$(basename $$item) $(@D)/.zip-staging/.local/share/$*/$$(basename $$item); \
+		done && \
+		cd $(@D)/.zip-staging && $(CURDIR)/$(cosmos_zip) -qry $(CURDIR)/$@ .
+	@rm -rf $(@D)/.zip-staging
+
 all_tests := $(call filter-only,$(foreach x,$(modules),$($(x)_tests)))
+all_release_tests := $(call filter-only,$(foreach x,$(modules),$($(x)_release_test) $($(x)_release_tests)))
+all_declared_tests := $(all_tests) $(all_release_tests)
 all_tested := $(patsubst %,o/%.test.ok,$(all_tests))
 all_snaps := $(call filter-only,$(foreach x,$(modules),$($(x)_snaps)))
 all_snapped := $(patsubst %,$(o)/%.test.ok,$(all_snaps))
@@ -253,6 +273,11 @@ check: $(o)/check-summary.txt
 $(o)/check-summary.txt: $(all_checks) | $(build_reporter)
 	@$(reporter) --dir $(o) $^ | tee $@
 
+## Verify all test files are declared in cook.mk
+.PHONY: check-test-coverage
+check-test-coverage: $(test_check_coverage) | $(bootstrap_files)
+	@$(coverage_checker) $(all_declared_tests)
+
 ## Check for dependency updates
 update: $(o)/update-summary.txt
 
@@ -272,33 +297,26 @@ bump: $(all_updated)
 	done
 
 .PHONY: build
-## Build home and cosmic binaries
-build: home cosmic
+## Build home, cosmic, and bootstrap binaries
+build: home cosmic bootstrap
 
 .PHONY: release
 ## Create release artifacts (CI only)
-release: $(o)/lib/home/gen-platforms.lua $(o)/lib/home/main.lua
+release:
 	@mkdir -p release
 	@cp artifacts/home-darwin-arm64/home release/home-darwin-arm64
 	@cp artifacts/home-linux-arm64/home release/home-linux-arm64
 	@cp artifacts/home-linux-x86_64/home release/home-linux-x86_64
-	@cp artifacts/home-linux-x86_64/home release/home
-	@cp artifacts/cosmic/cosmic release/cosmic-lua
+	@cp artifacts/cosmopolitan/cosmic release/cosmic-lua
+	@cp artifacts/cosmopolitan/bootstrap release/bootstrap
 	@cp artifacts/clasp-linux-x86_64/clasp release/clasp
 	@chmod +x release/*
-	@chmod +x artifacts/cosmos-zip/zip
 	@tag="$$(date -u +%Y-%m-%d)-$${GITHUB_SHA::7}"; \
-	base_url="https://github.com/$${GITHUB_REPOSITORY}/releases/download/$$tag"; \
-	LUA_PATH="$(o)/lib/home/?.lua;;" ./release/cosmic-lua $(o)/lib/home/gen-platforms.lua \
-		release/platforms "$$base_url" "$$tag" \
-		release/home-darwin-arm64 release/home-linux-arm64 release/home-linux-x86_64; \
-	(cd release/platforms && ../../artifacts/cosmos-zip/zip -j ../home platforms.lua); \
-	(cd release/platforms && ../../artifacts/cosmos-zip/zip -r ../home manifests); \
-	(cd release && sha256sum home home-* cosmic-lua clasp > SHA256SUMS && cat SHA256SUMS); \
+	(cd release && sha256sum home-* cosmic-lua bootstrap clasp > SHA256SUMS && cat SHA256SUMS); \
 	gh release create "$$tag" \
 		$${PRERELEASE_FLAG} \
 		--title "$$tag" \
-		release/home release/home-* release/cosmic-lua release/clasp release/SHA256SUMS
+		release/home-* release/cosmic-lua release/bootstrap release/clasp release/SHA256SUMS
 
 ci_stages := astgrep teal test build
 
