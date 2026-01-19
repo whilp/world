@@ -196,7 +196,11 @@ local function cmd_run(be: backend.Backend, name: string, env_dir: string, repo:
   end
 
   -- Create temp directory for work
-  local tmpdir = unix.mkdtemp("/tmp/box.XXXXXX")
+  local home = os.getenv("HOME") or ""
+  local box_dir = path.join(home, ".config", "box")
+  unix.makedirs(box_dir)
+
+  local tmpdir = unix.mkdtemp(path.join(box_dir, "tmp-XXXXXX"))
   if not tmpdir then
     return false, "failed to create temp directory"
   end
@@ -205,9 +209,9 @@ local function cmd_run(be: backend.Backend, name: string, env_dir: string, repo:
     unix.rmrf(tmpdir)
   end
 
-  -- Create temp env.d directory
-  local tmp_env_dir = path.join(tmpdir, "env.d")
-  if not unix.makedirs(tmp_env_dir) then
+  -- Create temp env.d directory using mkdtemp, then rename
+  local tmp_env_dir = unix.mkdtemp(path.join(box_dir, "env-XXXXXX"))
+  if not tmp_env_dir then
     cleanup()
     return false, "failed to create temp env.d directory"
   end
@@ -230,14 +234,25 @@ local function cmd_run(be: backend.Backend, name: string, env_dir: string, repo:
     end
   end
 
-  -- Add bootstrap config as env files
+  -- Add bootstrap config to single source file
+  local source_lines: {string} = {}
   if repo and repo ~= "" then
-    local bootstrap_repo = path.join(tmp_env_dir, "BOOTSTRAP_REPO")
-    cosmo.Barf(bootstrap_repo, "BOOTSTRAP_REPO=" .. repo .. "\n", tonumber("600", 8))
+    table.insert(source_lines, "BOOTSTRAP_REPO=" .. repo)
   end
   if release and release ~= "" then
-    local bootstrap_release = path.join(tmp_env_dir, "BOOTSTRAP_RELEASE")
-    cosmo.Barf(bootstrap_release, "BOOTSTRAP_RELEASE=" .. release .. "\n", tonumber("600", 8))
+    table.insert(source_lines, "BOOTSTRAP_RELEASE=" .. release)
+  end
+  if #source_lines > 0 then
+    local source_file = path.join(tmp_env_dir, "source")
+    cosmo.Barf(source_file, table.concat(source_lines, "\n") .. "\n", tonumber("600", 8))
+  end
+
+  -- Rename temp env dir into tmpdir as env.d for zipping
+  local final_env_dir = path.join(tmpdir, "env.d")
+  if not unix.rename(tmp_env_dir, final_env_dir) then
+    unix.rmrf(tmp_env_dir)
+    cleanup()
+    return false, "failed to rename env directory"
   end
 
   -- Extract bundled zip tool to temp

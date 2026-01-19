@@ -12,34 +12,6 @@ local record DirHandle
   close: function(self)
 end
 
-local record BoxEnvClaude
-  token: string
-end
-
-local record BoxEnv
-  claude: BoxEnvClaude
-end
-
-local function load_box_env(): BoxEnv
-  local HOME = os.getenv("HOME")
-  local env_dir = path.join(HOME, ".config", "box", "env.d")
-
-  local box_env = require("box.env")
-  local env_vars = box_env.load_from_dir(env_dir)
-
-  -- Look for CLAUDE_CODE_OAUTH_TOKEN or CLAUDE_TOKEN
-  local token = env_vars["CLAUDE_CODE_OAUTH_TOKEN"] or env_vars["CLAUDE_TOKEN"]
-  if token then
-    return {
-      claude = {
-        token = token,
-      },
-    }
-  end
-
-  return nil
-end
-
 local function debug_log(msg: string)
   if os.getenv("CLAUDE_WRAPPER_DEBUG") then
     io.stderr:write("claude wrapper: " .. msg .. "\n")
@@ -184,10 +156,10 @@ local function main(args: {string})
   debug_log("execve argv[1..]: " .. table.concat(argv, " "))
 
   if unix.stat("/.sprite") then
-    local box_env = load_box_env()
-    if box_env and box_env.claude and box_env.claude.token then
-      unix.setenv("CLAUDE_CODE_OAUTH_TOKEN", box_env.claude.token)
-      debug_log("set CLAUDE_CODE_OAUTH_TOKEN from box env")
+    local token = os.getenv("CLAUDE_CODE_OAUTH_TOKEN") or os.getenv("CLAUDE_TOKEN")
+    if token then
+      unix.setenv("CLAUDE_CODE_OAUTH_TOKEN", token)
+      debug_log("set CLAUDE_CODE_OAUTH_TOKEN from env")
     end
   end
 

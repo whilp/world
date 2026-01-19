@@ -4,10 +4,9 @@ local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local spawn = require("cosmic.spawn")
 
-local backend = require("box.backend")
-
-local function configure(env: backend.Env): boolean, string
-  if not env.github then
+local function configure(): boolean, string
+  local token = os.getenv("GITHUB_TOKEN")
+  if not token then
     return true -- no github config
   end
 
@@ -23,21 +22,19 @@ local function configure(env: backend.Env): boolean, string
     return true -- not an error, just skip
   end
 
-  for host, token in pairs(env.github) do
-    io.stderr:write("configuring gh auth for " .. host .. "...\n")
+  io.stderr:write("configuring gh auth for github.com...\n")
 
-    local args: {string} = {gh_bin, "auth", "login", "-h", host, "--with-token"}
-    local handle = spawn(args)
+  local args: {string} = {gh_bin, "auth", "login", "-h", "github.com", "--with-token"}
+  local handle = spawn(args)
 
-    if handle.stdin then
-      handle.stdin:write(token .. "\n")
-      handle.stdin:close()
-    end
+  if handle.stdin then
+    handle.stdin:write(token .. "\n")
+    handle.stdin:close()
+  end
 
-    local exit_code = handle:wait()
-    if exit_code ~= 0 then
-      io.stderr:write("warning: gh auth login failed for " .. host .. " (exit " .. tostring(exit_code) .. ")\n")
-    end
+  local exit_code = handle:wait()
+  if exit_code ~= 0 then
+    io.stderr:write("warning: gh auth login failed (exit " .. tostring(exit_code) .. ")\n")
   end
 
   return true

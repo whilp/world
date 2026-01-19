@@ -7,8 +7,6 @@ local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 
-local backend = require("box.backend")
-
 local ENV_DIR <const> = "/zip/env.d"
 
 local function write_file(filepath: string, content: string, mode: number): boolean, string
@@ -52,33 +50,48 @@ local function write_env(): boolean, string
     return true -- no env.d in zip, skip
   end
 
-  -- Create env.d directory in box config
-  local env_dir = path.join(box_dir, "env.d")
-  if not unix.makedirs(env_dir) then
-    return false, "failed to create env.d directory"
+  -- Ensure box_dir exists
+  if not unix.makedirs(box_dir) then
+    return false, "failed to create box config directory"
   end
 
-  -- Copy all files from /zip/env.d to ~/.config/box/env.d
+  -- Create temp dir with mkdtemp for atomic write
+  local tmp_dir = unix.mkdtemp(path.join(box_dir, "env-XXXXXX"))
+  if not tmp_dir then
+    return false, "failed to create temp env directory"
+  end
+
+  -- Copy all files from /zip/env.d to temp dir
   local entries, err = unix.opendir(ENV_DIR)
   if not entries then
+    unix.rmrf(tmp_dir)
     return false, "failed to read env.d: " .. (err or "unknown")
   end
 
   for _, entry in ipairs(entries) do
     if entry ~= "." and entry ~= ".." then
       local src = path.join(ENV_DIR, entry)
-      local dst = path.join(env_dir, entry)
+      local dst = path.join(tmp_dir, entry)
       local src_stat = unix.stat(src)
       if src_stat and src_stat.type == "file" then
         local content = cosmo.Slurp(src)
         if content then
-          local ok, err = write_file(dst, content, tonumber("600", 8))
+          local ok, write_err = write_file(dst, content, tonumber("600", 8))
           if not ok then
-            return false, "failed to write " .. entry .. ": " .. (err or "unknown")
+            unix.rmrf(tmp_dir)
+            return false, "failed to write " .. entry .. ": " .. (write_err or "unknown")
           end
         end
       end
     end
+  end
+
+  -- Atomically rename temp dir to env.d
+  local env_dir = path.join(box_dir, "env.d")
+  unix.rmrf(env_dir)
+  if not unix.rename(tmp_dir, env_dir) then
+    unix.rmrf(tmp_dir)
+    return false, "failed to rename env directory"
   end
 
   return true
