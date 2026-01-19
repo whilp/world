@@ -18,7 +18,7 @@ nvim_pack_dir := $(nvim_bundle_out)/share/nvim/site/pack/core/opt
 .PHONY: nvim-bundle
 nvim-bundle: $(nvim_bundle)
 
-$(nvim_bundle): $$(nvim_staged) $$(nvim-conform_staged) $$(nvim-mini_staged) $$(nvim-lspconfig_staged) $$(nvim-treesitter_staged) $$(nvim-parsers_parsers)
+$(nvim_bundle): $$(nvim_staged) $$(nvim-conform_staged) $$(nvim-mini_staged) $$(nvim-lspconfig_staged) $$(nvim-treesitter_staged) $$(nvim-parsers_parsers) $$(cosmic_bin)
 	@rm -rf $(nvim_bundle_out) $@
 	@mkdir -p $(dir $(nvim_bundle_out))
 	@cp -rL $(nvim_staged) $(nvim_bundle_out)
@@ -28,6 +28,7 @@ $(nvim_bundle): $$(nvim_staged) $$(nvim-conform_staged) $$(nvim-mini_staged) $$(
 	@cp -rL $(nvim-lspconfig_staged) $(nvim_pack_dir)/nvim-lspconfig
 	@cp -rL $(nvim-treesitter_staged) $(nvim_pack_dir)/nvim-treesitter
 	@cp -r $(o)/nvim-parsers/parser $(nvim_bundle_out)/share/nvim/site/
+	@unzip -p $(cosmic_bin) .lua/tl.lua > $(nvim_bundle_out)/share/nvim/runtime/lua/tl.lua
 	@echo "generating helptags"
 	@$(nvim_bundle_out)/bin/nvim --headless "+helptags ALL" "+qa" 2>/dev/null || echo "  skipped"
 	@touch $@
@@ -37,7 +38,7 @@ $(nvim_bundle): $$(nvim_staged) $$(nvim-conform_staged) $$(nvim-mini_staged) $$(
 nvim-release-tests: $(nvim_release_tested)
 
 # Release tests: depend on compiled .lua (Make handles compilation)
-$(o)/3p/nvim/%.tl.release.ok: $(o)/3p/nvim/%.lua $(nvim_bundle) $$(tl_staged) | $(bootstrap_files)
+$(o)/3p/nvim/%.tl.release.ok: $(o)/3p/nvim/%.lua $(nvim_bundle) | $(bootstrap_files)
 	@mkdir -p $(@D)
 	@[ -x $< ] || chmod a+x $<
-	@TEST_DIR=$(nvim_bundle_out) TL_DIR=$(tl_dir) $(test_runner) $< > $@
+	@TEST_DIR=$(nvim_bundle_out) $(test_runner) $< > $@

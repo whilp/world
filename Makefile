@@ -119,8 +119,8 @@ $(foreach m,$(modules),$(if $($(m)_version),\
   $(eval $(m)_staged := $(o)/$(m)/.staged)\
   $(if $($(m)_dir),,$(eval $(m)_dir := $(o)/$(m)/.staged))))
 
-# define *_zip for tool modules (excludes cosmos, tl, bootstrap infrastructure)
-zip_excluded := cosmos tl bootstrap
+# define *_zip for tool modules (excludes cosmos, bootstrap infrastructure)
+zip_excluded := cosmos bootstrap
 $(foreach m,$(filter-out $(zip_excluded),$(modules)),$(if $($(m)_version),\
   $(eval $(m)_zip := $(o)/$(m)/.zip)))
 
