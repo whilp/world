@@ -1,10 +1,14 @@
 -- box/sprite.tl: sprites.dev backend for box
 
-local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local spawn = require("cosmic.spawn")
+local cosmo = require("cosmo")
 
 local backend = require("box.backend")
+local env = require("box.env")
+local claude = require("box.claude")
+local github = require("box.github")
+local git = require("box.git")
 
 local function ok(): backend.Result
   return {ok = true}
@@ -132,6 +136,37 @@ local function list(): backend.Result
   return err("failed to exec sprite list")
 end
 
+local function bootstrap(name: string): backend.Result
+  local cfg = env.load() or {} as backend.Env
+
+  -- Install claude binary
+  io.stderr:write("installing claude...\n")
+  local install_ok, install_err = claude.install()
+  if not install_ok then
+    return err(install_err or "claude install failed")
+  end
+
+  -- Configure gh auth
+  local cfg_ok, cfg_err = github.configure(cfg)
+  if not cfg_ok then
+    return err(cfg_err or "github config failed")
+  end
+
+  -- Configure git identity
+  cfg_ok, cfg_err = git.configure(cfg)
+  if not cfg_ok then
+    return err(cfg_err or "git config failed")
+  end
+
+  -- Configure claude credentials
+  cfg_ok, cfg_err = claude.configure(cfg)
+  if not cfg_ok then
+    return err(cfg_err or "claude config failed")
+  end
+
+  return ok()
+end
+
 return {
   name = "sprite",
   new = new,
@@ -141,4 +176,5 @@ return {
   download = download,
   destroy = destroy,
   list = list,
+  bootstrap = bootstrap,
 } as backend.Backend
