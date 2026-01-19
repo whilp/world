@@ -326,8 +326,22 @@ bump: $(all_updated)
 	done
 
 .PHONY: build
-## Build home, cosmic, and bootstrap binaries
-build: home cosmic bootstrap
+## Build home, cosmic, and box binaries
+build: home cosmic box
+
+# Assimilated (native) binaries for current platform
+assimilate_bins := box cosmic
+assimilated := $(foreach b,$(assimilate_bins),$(o)/assimilated/$(b)-$(platform))
+
+.PHONY: assimilated
+## Build assimilated (native) binaries for current platform
+assimilated: $(assimilated)
+
+$(o)/assimilated/%-$(platform): $(o)/bin/% $$(cosmos_staged)
+	@mkdir -p $(@D)
+	@cp $< $@
+	@$(cosmos_assimilate) $@
+	@rm -f $@.bak
 
 .PHONY: release
 ## Create release artifacts (CI only)
@@ -337,14 +351,17 @@ release:
 	@cp artifacts/home-linux-arm64/home release/home-linux-arm64
 	@cp artifacts/home-linux-x86_64/home release/home-linux-x86_64
 	@cp artifacts/cosmopolitan/cosmic release/cosmic-lua
-	@cp artifacts/cosmopolitan/bootstrap release/bootstrap
+	@for p in darwin-arm64 linux-arm64 linux-x86_64; do \
+		cp artifacts/assimilated-$$p/box-$$p release/; \
+		cp artifacts/assimilated-$$p/cosmic-$$p release/cosmic-lua-$$p; \
+	done
 	@chmod +x release/*
 	@tag="$$(date -u +%Y-%m-%d)-$${GITHUB_SHA::7}"; \
-	(cd release && sha256sum home-* cosmic-lua bootstrap > SHA256SUMS && cat SHA256SUMS); \
+	(cd release && sha256sum home-* box-* cosmic-lua cosmic-lua-* > SHA256SUMS && cat SHA256SUMS); \
 	gh release create "$$tag" \
 		$${PRERELEASE_FLAG} \
 		--title "$$tag" \
-		release/home-* release/cosmic-lua release/bootstrap release/SHA256SUMS
+		release/home-* release/box-* release/cosmic-lua release/cosmic-lua-* release/SHA256SUMS
 
 # TODO: restore teal to ci_stages when cosmic --check supports include paths
 ci_stages := astgrep test build

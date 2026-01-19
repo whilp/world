@@ -7,7 +7,7 @@ home_bin := $(o)/bin/home
 # but shouldn't inherit home_deps (which would require staging 20+ tools for linting)
 home_files := $(home_bin)
 home_tests := $(wildcard lib/home/test_*.tl)
-home_tl_files := lib/home/main.tl lib/home/gen-manifest.tl lib/home/bootstrap.tl $(wildcard lib/home/setup/*.tl) $(wildcard lib/home/mac/*.tl)
+home_tl_files := lib/home/main.tl lib/home/gen-manifest.tl $(wildcard lib/home/setup/*.tl) $(wildcard lib/home/mac/*.tl)
 
 # 3p tools to bundle (nvim handled specially for bundled version)
 home_3p_tools := ast-grep biome comrak delta duckdb gh marksman rg ruff shfmt sqruff stylua superhtml tree-sitter uv
@@ -82,8 +82,8 @@ $(o)/nvim/.zip: $$(nvim_bundle) $$(cosmos_staged)
 	@rm -rf $(@D)/.zip-staging
 
 # Create dotfiles.zip with symlinks preserved
-# Includes: dotfiles, cosmic-lua binary, lua symlink
-$(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin)
+# Includes: dotfiles, cosmic-lua binary, lua symlink, box binary
+$(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin) $(box_bin)
 	@rm -rf $(o)/home/.dotfiles-staging
 	@mkdir -p $(@D) $(o)/home/.dotfiles-staging
 	@for f in $(home_dotfiles); do \
@@ -92,6 +92,7 @@ $(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin)
 	done
 	@mkdir -p $(o)/home/.dotfiles-staging/.local/bin
 	@$(cp) $(cosmic_bin) $(o)/home/.dotfiles-staging/.local/bin/cosmic-lua
+	@$(cp) $(box_bin) $(o)/home/.dotfiles-staging/.local/bin/box
 	@ln -sf cosmic-lua $(o)/home/.dotfiles-staging/.local/bin/lua
 	@cd $(o)/home/.dotfiles-staging && $(CURDIR)/$(cosmos_zip) -qry $(CURDIR)/$@ .
 	@rm -rf $(o)/home/.dotfiles-staging
@@ -124,27 +125,6 @@ $(home_bin): $(home_libs) $(home_tl_lua) $(o)/home/dotfiles.zip $$(cosmos_staged
 home: $(home_bin)
 
 .PHONY: home
-
-# Bootstrap binary: uses prebuilt cosmic which has cosmic.spawn/fetch bundled
-bootstrap_bin := $(o)/bin/bootstrap
-bootstrap_built := $(o)/bootstrap/.built
-bootstrap_main := $(o)/lib/home/bootstrap.lua
-
-$(bootstrap_bin): $(bootstrap_main) $$(cosmic_staged) $$(cosmos_staged)
-	@mkdir -p $(@D) $(bootstrap_built)
-	@$(cp) $(cosmic_dir)/bin/cosmic $@
-	@chmod +x $@
-	@$(cosmos_zip) -qj $@ $(bootstrap_main)
-	@echo '/zip/bootstrap.lua' > $(bootstrap_built)/.args
-	@cd $(bootstrap_built) && $(CURDIR)/$(cosmos_zip) -qj $(CURDIR)/$@ .args
-	@rm -rf $(bootstrap_built)
-
-bootstrap: $(bootstrap_bin)
-
-.PHONY: bootstrap
-
-# bootstrap test depends on the bootstrap binary
-$(o)/lib/home/test_bootstrap.tl.test.ok: $(bootstrap_bin)
 
 # Release tests: nvim bundle tests (nvim tests defined in 3p/nvim/cook.mk)
 # Note: home always includes bundled nvim now, so no separate home-release needed
