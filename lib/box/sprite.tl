@@ -5,6 +5,7 @@ local unix = require("cosmo.unix")
 local spawn = require("cosmic.spawn")
 
 local backend = require("box.backend")
+local claude = require("box.claude")
 
 local function ok(): backend.Result
   return {ok = true}
@@ -132,6 +133,15 @@ local function list(): backend.Result
   return err("failed to exec sprite list")
 end
 
+local function bootstrap(name: string): backend.Result
+  io.stderr:write("installing claude...\n")
+  local install_ok, install_err = claude.install()
+  if not install_ok then
+    return err(install_err or "claude install failed")
+  end
+  return ok()
+end
+
 return {
   name = "sprite",
   new = new,
@@ -141,4 +151,5 @@ return {
   download = download,
   destroy = destroy,
   list = list,
+  bootstrap = bootstrap,
 } as backend.Backend

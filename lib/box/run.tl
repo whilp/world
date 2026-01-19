@@ -9,7 +9,6 @@ local path = require("cosmo.path")
 local spawn = require("cosmic.spawn")
 
 local backend = require("box.backend")
-local claude = require("box.claude")
 
 local ENV_PATH <const> = "/zip/env.lua"
 
@@ -214,25 +213,19 @@ local function bootstrap(env: backend.Env, name: string, kind: string): integer,
     return 1, err or "bootstrap failed"
   end
 
-  -- Step 2: Install Claude binary
-  ok, err = claude.install()
-  if not ok then
-    return 1, err or "claude install failed"
-  end
-
-  -- Step 3: Configure gh auth for each github host
+  -- Step 2: Configure gh auth for each github host
   ok, err = configure_gh(env)
   if not ok then
     return 1, err or "gh config failed"
   end
 
-  -- Step 4: Configure git identity
+  -- Step 3: Configure git identity
   ok, err = configure_git(env)
   if not ok then
     return 1, err or "git config failed"
   end
 
-  -- Step 5: Configure claude credentials
+  -- Step 4: Configure claude credentials
   ok, err = configure_claude(env)
   if not ok then
     return 1, err or "claude config failed"
