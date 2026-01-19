@@ -37,21 +37,22 @@ options:
 commands:
   new                   create box only
   run                   bootstrap only
-  ssh                   connect only
+  ssh                   connect only (default)
   scp <src> <dst>       copy files (: prefix = remote)
   zap                   destroy box
   list                  list boxes
 
-If no command given, does new + run + ssh.
+If no command given, connects via ssh.
 
 examples:
-  box --sprite dev           # create, bootstrap, and ssh to sprite
+  box --sprite dev           # ssh to existing sprite
   box --sprite dev new       # create sprite only
+  box --sprite dev run       # bootstrap sprite only
   box --sprite dev zap       # destroy sprite
   box --sprite dev scp file.txt :/tmp/file.txt   # upload
   box --sprite dev scp :/tmp/file.txt file.txt   # download
   box --backend my-backend dev   # use executable backend
-  box --sprite --release 2026.01.16 dev
+  box --sprite --release 2026.01.16 dev run
 ]])
 end
 
@@ -173,9 +174,6 @@ end
 
 local function cmd_new(be: backend.Backend, name: string): boolean, string
   io.stderr:write("==> creating " .. name .. "\n")
-
-  -- Destroy existing box first (ignore errors)
-  be.destroy(name)
 
   local result = be.new(name)
   if not result.ok then
@@ -447,16 +445,9 @@ local function main(args: {string}): integer, string
     if not ok then return 1, err end
     return 0
   elseif parsed.cmd == nil then
-    -- All-in-one: new + run + ssh (skip ssh if no tty)
-    ok, err = cmd_new(be, parsed.name)
+    -- Default: ssh to existing box
+    ok, err = cmd_ssh(be, parsed.name, parsed.extra_args)
     if not ok then return 1, err end
-    ok, err = cmd_run(be, parsed.name, parsed.env_path, parsed.repo, parsed.release)
-    if not ok then return 1, err end
-    cmd_backend_bootstrap(be, parsed.name)
-    if unix.isatty(0) then
-      ok, err = cmd_ssh(be, parsed.name, parsed.extra_args)
-      if not ok then return 1, err end
-    end
     return 0
   else
     return 1, "unknown command: " .. parsed.cmd
