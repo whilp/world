@@ -85,6 +85,7 @@ $(o)/%: %
 	@$(cp) $< $@
 
 # compile .tl files to .lua (transpile only, no type checking)
+# TODO: replace with cosmic --compile when it supports transpile-only mode
 $(o)/%.lua: %.tl $(types_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
 	@$(bootstrap_cosmic) /zip/tl-gen.lua $< -o $@
@@ -97,6 +98,7 @@ $(o)/bin/%.lua: %.lua
 	@$(cp) $< $@
 
 # bin scripts from teal: o/bin/X.lua from lib/*/X.tl (vpath finds X.tl)
+# TODO: replace with cosmic --compile when it supports transpile-only mode
 $(o)/bin/%.lua: %.tl $(types_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
 	@$(bootstrap_cosmic) /zip/tl-gen.lua $< -o $@

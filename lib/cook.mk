@@ -18,6 +18,7 @@ o/lib/%.lua: lib/%.lua
 	@cp $< $@
 
 # compile .tl files to .lua (for o/teal/lib)
+# TODO: replace with cosmic --compile when it supports transpile-only mode
 o/teal/lib/%.lua: lib/%.tl $(types_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
 	@$(bootstrap_cosmic) /zip/tl-gen.lua $< -o $@
