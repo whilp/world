@@ -17,4 +17,5 @@ return {
   download = function(_: string, _: string, _: string): backend.Result return not_implemented() end,
   destroy = function(_: string): backend.Result return not_implemented() end,
   list = function(): backend.Result return not_implemented() end,
+  exists = function(_: string): boolean return false end,
 } as backend.Backend

@@ -14,6 +14,7 @@ local record Backend
   download: function(name: string, src: string, dst: string): Result
   destroy: function(name: string): Result
   list: function(): Result
+  exists: function(name: string): boolean  -- check if box exists
   bootstrap: function(name: string): Result  -- optional, called after generic bootstrap
 end
 
