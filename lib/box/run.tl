@@ -1,7 +1,7 @@
 -- box/run.tl: bootstrap logic that runs on the remote
 --
 -- Called with --local-run after box uploads itself to the remote.
--- Loads /zip/env.lua (zipped into self) for credentials.
+-- Loads /zip/env.d (zipped into self) for environment variables.
 
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
@@ -9,7 +9,7 @@ local path = require("cosmo.path")
 
 local backend = require("box.backend")
 
-local ENV_PATH <const> = "/zip/env.lua"
+local ENV_DIR <const> = "/zip/env.d"
 
 local function write_file(filepath: string, content: string, mode: number): boolean, string
   local dir = path.dirname(filepath)
@@ -46,14 +46,39 @@ local function write_env(): boolean, string
     return false, "HOME not set"
   end
 
-  local content = cosmo.Slurp(ENV_PATH)
-  if not content then
-    return true -- no env.lua in zip, skip
+  -- Check if env.d exists in zip
+  local stat = unix.stat(ENV_DIR)
+  if not stat then
+    return true -- no env.d in zip, skip
   end
 
-  local ok, err = write_file(path.join(box_dir, "env.lua"), content, tonumber("0600", 8))
-  if not ok then
-    return false, "failed to write env.lua: " .. (err or "unknown")
+  -- Create env.d directory in box config
+  local env_dir = path.join(box_dir, "env.d")
+  if not unix.makedirs(env_dir) then
+    return false, "failed to create env.d directory"
+  end
+
+  -- Copy all files from /zip/env.d to ~/.config/box/env.d
+  local entries, err = unix.opendir(ENV_DIR)
+  if not entries then
+    return false, "failed to read env.d: " .. (err or "unknown")
+  end
+
+  for _, entry in ipairs(entries) do
+    if entry ~= "." and entry ~= ".." then
+      local src = path.join(ENV_DIR, entry)
+      local dst = path.join(env_dir, entry)
+      local src_stat = unix.stat(src)
+      if src_stat and src_stat.type == "file" then
+        local content = cosmo.Slurp(src)
+        if content then
+          local ok, err = write_file(dst, content, tonumber("600", 8))
+          if not ok then
+            return false, "failed to write " .. entry .. ": " .. (err or "unknown")
+          end
+        end
+      end
+    end
   end
 
   return true
@@ -82,10 +107,10 @@ local function write_box_info(name: string, kind: string): boolean, string
   return true
 end
 
-local function bootstrap(env: backend.Env, name: string, kind: string): integer, string
+local function bootstrap(env_vars: {string:string}, name: string, kind: string): integer, string
   io.stderr:write("==> running bootstrap\n")
 
-  -- Step 0: Write env.lua to ~/.config/box/env.lua
+  -- Step 0: Write env.d to ~/.config/box/env.d
   local ok, err = write_env()
   if not ok then
     io.stderr:write("warning: " .. (err or "failed to write env") .. "\n")
@@ -95,6 +120,11 @@ local function bootstrap(env: backend.Env, name: string, kind: string): integer,
   ok, err = write_box_info(name, kind)
   if not ok then
     io.stderr:write("warning: " .. (err or "failed to write box info") .. "\n")
+  end
+
+  -- Step 0.75: Set environment variables from env files
+  for k, v in pairs(env_vars) do
+    unix.setenv(k, v)
   end
 
   -- Step 1: Download and unpack home

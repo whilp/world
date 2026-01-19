@@ -22,11 +22,21 @@ end
 
 local function load_box_env(): BoxEnv
   local HOME = os.getenv("HOME")
-  local env_path = path.join(HOME, ".config", "box", "env.lua")
-  local ok, env = pcall(dofile, env_path) as (boolean, BoxEnv)
-  if ok then
-    return env
+  local env_dir = path.join(HOME, ".config", "box", "env.d")
+
+  local box_env = require("box.env")
+  local env_vars = box_env.load_from_dir(env_dir)
+
+  -- Look for CLAUDE_CODE_OAUTH_TOKEN or CLAUDE_TOKEN
+  local token = env_vars["CLAUDE_CODE_OAUTH_TOKEN"] or env_vars["CLAUDE_TOKEN"]
+  if token then
+    return {
+      claude = {
+        token = token,
+      },
+    }
   end
+
   return nil
 end
 

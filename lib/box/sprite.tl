@@ -136,8 +136,43 @@ local function list(): backend.Result
   return err("failed to exec sprite list")
 end
 
+local function env_vars_to_config(): backend.Env
+  local config: backend.Env = {}
+
+  -- Git configuration from GIT_NAME and GIT_EMAIL
+  local git_name = os.getenv("GIT_NAME")
+  local git_email = os.getenv("GIT_EMAIL")
+  if git_name or git_email then
+    config.git = {
+      name = git_name,
+      email = git_email,
+    }
+  end
+
+  -- GitHub configuration from GITHUB_TOKEN
+  local github_token = os.getenv("GITHUB_TOKEN")
+  if github_token then
+    config.github = {
+      ["github.com"] = github_token,
+    }
+  end
+
+  -- Claude configuration from CLAUDE_CREDENTIALS (JSON)
+  local claude_creds = os.getenv("CLAUDE_CREDENTIALS")
+  if claude_creds then
+    local ok, creds = pcall(cosmo.DecodeJson, claude_creds)
+    if ok then
+      config.claude = {
+        credentials = creds,
+      }
+    end
+  end
+
+  return config
+end
+
 local function bootstrap(name: string): backend.Result
-  local cfg = env.load() or {} as backend.Env
+  local cfg = env_vars_to_config()
 
   -- Install claude binary
   io.stderr:write("installing claude...\n")
