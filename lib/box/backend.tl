@@ -14,6 +14,7 @@ local record Backend
   download: function(name: string, src: string, dst: string): Result
   destroy: function(name: string): Result
   list: function(): Result
+  bootstrap: function(name: string): Result  -- optional, called after generic bootstrap
 end
 
 local record Git

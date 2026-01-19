@@ -308,6 +308,14 @@ local function cmd_list(be: backend.Backend): boolean, string
   return true
 end
 
+local function cmd_backend_bootstrap(be: backend.Backend, name: string)
+  -- Call optional backend-specific bootstrap (ignore errors)
+  if be.bootstrap then
+    io.stderr:write("==> running backend bootstrap\n")
+    be.bootstrap(name)
+  end
+end
+
 local function cmd_scp(be: backend.Backend, name: string, src: string, dst: string): boolean, string
   if not src or not dst then
     return false, "scp requires source and destination arguments"
@@ -422,6 +430,7 @@ local function main(args: {string}): integer, string
   elseif parsed.cmd == "run" then
     ok, err = cmd_run(be, parsed.name, parsed.env_path, parsed.repo, parsed.release)
     if not ok then return 1, err end
+    cmd_backend_bootstrap(be, parsed.name)
     return 0
   elseif parsed.cmd == "ssh" then
     ok, err = cmd_ssh(be, parsed.name, parsed.extra_args)
@@ -443,6 +452,7 @@ local function main(args: {string}): integer, string
     if not ok then return 1, err end
     ok, err = cmd_run(be, parsed.name, parsed.env_path, parsed.repo, parsed.release)
     if not ok then return 1, err end
+    cmd_backend_bootstrap(be, parsed.name)
     if unix.isatty(0) then
       ok, err = cmd_ssh(be, parsed.name, parsed.extra_args)
       if not ok then return 1, err end

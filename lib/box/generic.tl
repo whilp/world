@@ -91,6 +91,10 @@ local function list(self: Generic): backend.Result
   return exec_backend(self.exe, "list", {}, true)
 end
 
+local function bootstrap(self: Generic, name: string): backend.Result
+  return exec_backend(self.exe, "bootstrap", {name}, true)
+end
+
 local function load(exe_path: string): backend.Backend, string
   local resolved_path = exe_path
 
@@ -129,6 +133,7 @@ local function load(exe_path: string): backend.Backend, string
     download = function(...: string): backend.Result return download(g, ...) end,
     destroy = function(...: string): backend.Result return destroy(g, ...) end,
     list = function(): backend.Result return list(g) end,
+    bootstrap = function(name: string): backend.Result return bootstrap(g, name) end,
   } as backend.Backend, nil
 end
 
