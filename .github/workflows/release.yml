@@ -9,10 +9,10 @@ on:
         description: 'Mark release as pre-release'
         required: false
         type: boolean
-        default: false
+        default: true
 
 env:
-  PRERELEASE: false
+  PRERELEASE: true
 
 jobs:
   build:
