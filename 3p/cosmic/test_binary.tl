@@ -1,4 +1,5 @@
 #!/usr/bin/env run-test.lua
+--check:false - test uses dynamic process spawning patterns
 -- test cosmic bundled binary
 
 local unix = require("cosmo.unix")

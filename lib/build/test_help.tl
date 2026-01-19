@@ -1,4 +1,5 @@
 #!/usr/bin/env run-test.lua
+--check:false - module resolution for make-help is dynamic
 -- Test the Makefile help system
 
 local cosmo = require("cosmo")

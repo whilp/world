@@ -1,5 +1,6 @@
 -- luacheck ignore: neovim runtime
 -- ast-grep ignore: neovim runtime
+--check:false
 -- nvim configuration entry point
 
 local home = vim.fn.expand("~")

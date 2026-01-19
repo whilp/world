@@ -55,7 +55,7 @@ local function is_test_disabled(filepath: string): boolean
   return false
 end
 
-local function main(declared_tests: {string}): number
+local function main(declared_tests: {string}): integer
   -- build set of declared tests from arguments
   local declared: {string:boolean} = {}
   for _, test in ipairs(declared_tests) do

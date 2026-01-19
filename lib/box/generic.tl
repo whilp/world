@@ -41,9 +41,11 @@ local function exec_backend(exe: string, subcommand: string, args: {string}, pas
   -- Capture stderr for error message if not passthrough
   local error_msg = "command failed with exit code " .. tostring(exit_code)
   if not passthrough and handle.stderr then
-    local ok, stderr_content = handle.stderr:read()
-    if ok and stderr_content and #(stderr_content as string) > 0 then
-      error_msg = (stderr_content as string):gsub("%s+$", "")
+    local read_result = {handle.stderr:read()}
+    local ok = read_result[1] as boolean
+    local stderr_content = read_result[2] as string
+    if ok and stderr_content and #stderr_content > 0 then
+      error_msg = stderr_content:gsub("%s+$", "")
     end
   end
 
@@ -131,12 +133,12 @@ local function load(exe_path: string): backend.Backend, string
 
   return {
     name = "generic:" .. path.basename(resolved_path),
-    new = function(...: string): backend.Result return new(g, ...) end,
-    ssh = function(...: string): backend.Result return ssh(g, ...) end,
-    exec = function(...: string): backend.Result return exec_cmd(g, ...) end,
-    upload = function(...: string): backend.Result return upload(g, ...) end,
-    download = function(...: string): backend.Result return download(g, ...) end,
-    destroy = function(...: string): backend.Result return destroy(g, ...) end,
+    new = function(name: string, ...: string): backend.Result return new(g, name, ...) end,
+    ssh = function(name: string, ...: string): backend.Result return ssh(g, name, ...) end,
+    exec = function(name: string, cmd: string): backend.Result return exec_cmd(g, name, cmd) end,
+    upload = function(name: string, src: string, dst: string): backend.Result return upload(g, name, src, dst) end,
+    download = function(name: string, src: string, dst: string): backend.Result return download(g, name, src, dst) end,
+    destroy = function(name: string): backend.Result return destroy(g, name) end,
     list = function(): backend.Result return list(g) end,
     exists = function(name: string): boolean return exists(g, name) end,
     bootstrap = function(name: string): backend.Result return bootstrap(g, name) end,

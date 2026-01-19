@@ -1,4 +1,5 @@
 #!/usr/bin/env run-test.lua
+--check:false - test mocking patterns are difficult to type correctly
 -- ast-grep ignore: test file uses temp path concatenation
 
 local cosmo = require("cosmo")

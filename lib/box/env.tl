@@ -26,26 +26,30 @@ end
 local function load_from_dir(dir: string): {string:string}
   local env: {string:string} = {}
 
-  local entries, err = unix.opendir(dir)
-  if not entries then
+  local handle = unix.opendir(dir)
+  if not handle then
     return env
   end
 
+  -- Collect entries for sorting
+  local entries: {string} = {}
+  for entry in handle do
+    if entry ~= "." and entry ~= ".." then
+      table.insert(entries, entry)
+    end
+  end
+
   -- Sort entries alphabetically
-  table.sort(entries, function(a, b): boolean
-    return a < b
-  end)
+  table.sort(entries)
 
   -- Read files in alphabetical order
   for _, entry in ipairs(entries) do
-    if entry ~= "." and entry ~= ".." then
-      local filepath = path.join(dir, entry)
-      local stat = unix.stat(filepath)
-      if stat and stat.type == "file" then
-        local file_env = parse_env_file(filepath)
-        for k, v in pairs(file_env) do
-          env[k] = v
-        end
+    local filepath = path.join(dir, entry)
+    local stat = unix.stat(filepath)
+    if stat and unix.S_ISREG(stat:mode()) then
+      local file_env = parse_env_file(filepath)
+      for k, v in pairs(file_env) do
+        env[k] = v
       end
     end
   end

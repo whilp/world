@@ -1,4 +1,5 @@
 #!/usr/bin/env lua
+--check:false
 -- Installs treesitter parsers
 -- Usage: install.lua <nvim_staged> <treesitter_staged> <output_dir> <parsers_config>
 

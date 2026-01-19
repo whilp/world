@@ -1,4 +1,5 @@
 -- luacheck ignore: neovim runtime
+--check:false
 local ok_clue, clue = pcall(require, "mini.clue")
 if not ok_clue then
   return

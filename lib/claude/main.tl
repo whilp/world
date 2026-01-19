@@ -163,9 +163,15 @@ local function main(args: {string})
     end
   end
 
-  local _, err = unix.execve(claude_bin, execve_argv, unix.environ())
+  -- Convert environ map to array of "KEY=VALUE" strings for execve
+  local env_array: {string} = {}
+  for key, value in pairs(unix.environ()) do
+    table.insert(env_array, key .. "=" .. value)
+  end
+  unix.execve(claude_bin, execve_argv, env_array)
 
-  io.stderr:write("claude wrapper: failed to exec claude: " .. tostring(err) .. "\n")
+  -- If execve returns, it failed
+  io.stderr:write("claude wrapper: failed to exec claude\n")
   os.exit(1)
 end
 
