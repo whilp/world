@@ -16,10 +16,10 @@ build_snaps := $(wildcard lib/build/*.snap)
 
 .PRECIOUS: $(build_files)
 
-# Build scripts use bundled /zip/tl-gen.lua (no circular dependency)
+# Build scripts compiled with tl-gen.lua
 $(build_files): $(o)/bin/%.lua: lib/build/%.tl | $(bootstrap_files)
 	@mkdir -p $(@D)
-	@$(bootstrap_cosmic) /zip/tl-gen.lua -- $< -o $@
+	@$(bootstrap_cosmic) /zip/tl-gen.lua $< -o $@
 	@{ echo '#!/usr/bin/env lua'; cat $@; } > $@.tmp && mv $@.tmp $@
 	@chmod +x $@
 reporter := $(bootstrap_cosmic) -- $(build_reporter)

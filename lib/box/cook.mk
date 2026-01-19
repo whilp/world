@@ -12,16 +12,17 @@ box_built := $(o)/box/.built
 # Compiled .lua from box_tl_files
 box_tl_lua := $(patsubst lib/%.tl,$(o)/lib/%.lua,$(box_tl_files))
 
-# Box binary: uses prebuilt cosmic-bin which has cosmic modules bundled
+# Box binary: uses prebuilt cosmic which has cosmic modules bundled
 # Bundles: box lua modules, zip/unzip tools, claude version
-$(box_bin): $(box_tl_lua) $$(cosmos_staged) $$(cosmic-bin_staged) lib/claude/version.lua
+# TODO: use cosmic --embed when available
+$(box_bin): $(box_tl_lua) $$(cosmos_staged) $$(cosmic_staged) lib/claude/version.lua
 	@rm -rf $(box_built)
 	@mkdir -p $(box_built)/.lua/box $(box_built)/.lua/claude $(@D)
 	@$(cp) $(o)/lib/box/*.lua $(box_built)/.lua/box/
 	@$(cp) lib/claude/version.lua $(box_built)/.lua/claude/
 	@$(cp) $(cosmos_dir)/zip $(box_built)/zip
 	@$(cp) $(cosmos_dir)/unzip $(box_built)/unzip
-	@$(cp) $(cosmic-bin_dir)/bin/cosmic-bin $@
+	@$(cp) $(cosmic_dir)/bin/cosmic $@
 	@chmod +x $@
 	@cd $(box_built) && $(CURDIR)/$(cosmos_zip) -qr $(CURDIR)/$@ .lua zip unzip
 	@$(cosmos_zip) -qj $@ $(o)/lib/box/init.lua

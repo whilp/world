@@ -12,7 +12,7 @@ home_tl_files := lib/home/main.tl lib/home/gen-manifest.tl lib/home/bootstrap.tl
 # 3p tools to bundle (nvim handled specially for bundled version)
 home_3p_tools := ast-grep biome comrak delta duckdb gh marksman rg ruff shfmt sqruff stylua superhtml tree-sitter uv
 
-home_deps := cosmos cosmic-bin nvim $(home_3p_tools)
+home_deps := cosmos cosmic nvim $(home_3p_tools)
 
 # Build configuration
 home_setup_dir := lib/home/setup
@@ -100,8 +100,8 @@ $(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin)
 home_tl_lua := $(patsubst %.tl,$(o)/%.lua,$(home_tl_files))
 
 # Home binary bundles: dotfiles.zip, per-tool zips (extracted at runtime), lua libs
-# Uses cosmic-bin as base which has cosmic modules bundled
-$(home_bin): $(home_libs) $(home_tl_lua) $(o)/home/dotfiles.zip $$(cosmos_staged) $$(cosmic-bin_staged) $$(foreach t,$(home_3p_tools) nvim,$$($$(t)_zip))
+# Uses cosmic as base which has cosmic modules bundled
+$(home_bin): $(home_libs) $(home_tl_lua) $(o)/home/dotfiles.zip $$(cosmos_staged) $$(cosmic_staged) $$(foreach t,$(home_3p_tools) nvim,$$($$(t)_zip))
 	@rm -rf $(home_built)
 	@mkdir -p $(home_built)/tools $(home_built)/.lua $(@D)
 	@$(cp) $(o)/home/dotfiles.zip $(home_built)/dotfiles.zip
@@ -110,7 +110,7 @@ $(home_bin): $(home_libs) $(home_tl_lua) $(o)/home/dotfiles.zip $$(cosmos_staged
 		$(cp) $(o)/$$tool/.zip $(home_built)/tools/$$tool.zip; \
 	done
 	@echo 'return { version = "$(HOME_VERSION)", tools = { $(foreach t,$(home_3p_tools) nvim,"$(t)", ) } }' > $(home_built)/manifest.lua
-	@$(cp) $(cosmic-bin_dir)/bin/cosmic-bin $@
+	@$(cp) $(cosmic_dir)/bin/cosmic $@
 	@chmod +x $@
 	@cd $(home_built) && find tools unzip dotfiles.zip manifest.lua -type f | $(CURDIR)/$(cosmos_zip) -qy $(CURDIR)/$@ -@
 	@$(cosmos_zip) -qj $@ $(o)/lib/home/main.lua lib/home/.args
@@ -125,14 +125,14 @@ home: $(home_bin)
 
 .PHONY: home
 
-# Bootstrap binary: uses prebuilt cosmic-bin which has cosmic.spawn/fetch bundled
+# Bootstrap binary: uses prebuilt cosmic which has cosmic.spawn/fetch bundled
 bootstrap_bin := $(o)/bin/bootstrap
 bootstrap_built := $(o)/bootstrap/.built
 bootstrap_main := $(o)/lib/home/bootstrap.lua
 
-$(bootstrap_bin): $(bootstrap_main) $$(cosmic-bin_staged) $$(cosmos_staged)
+$(bootstrap_bin): $(bootstrap_main) $$(cosmic_staged) $$(cosmos_staged)
 	@mkdir -p $(@D) $(bootstrap_built)
-	@$(cp) $(cosmic-bin_dir)/bin/cosmic-bin $@
+	@$(cp) $(cosmic_dir)/bin/cosmic $@
 	@chmod +x $@
 	@$(cosmos_zip) -qj $@ $(bootstrap_main)
 	@echo '/zip/bootstrap.lua' > $(bootstrap_built)/.args

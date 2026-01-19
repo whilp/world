@@ -17,11 +17,10 @@ o/lib/%.lua: lib/%.lua
 	@mkdir -p $(@D)
 	@cp $< $@
 
-# compile .tl files to .lua (for o/teal/lib via tl gen -o)
-# use bundled /zip/tl-gen.lua for teal compilation
+# compile .tl files to .lua (for o/teal/lib)
 o/teal/lib/%.lua: lib/%.tl $(types_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
-	@$(bootstrap_cosmic) /zip/tl-gen.lua -- $< -o $@
+	@$(bootstrap_cosmic) /zip/tl-gen.lua $< -o $@
 
 include lib/aerosnap/cook.mk
 include lib/appscript/cook.mk
@@ -29,7 +28,6 @@ include lib/box/cook.mk
 include lib/build/cook.mk
 include lib/checker/cook.mk
 include lib/claude/cook.mk
-include lib/cosmic/cook.mk
 include lib/daemonize/cook.mk
 include lib/environ/cook.mk
 include lib/home/cook.mk

@@ -54,9 +54,6 @@ include 3p/nvim-parsers/cook.mk
 include 3p/nvim/cook.mk
 include 3p/cosmic/cook.mk
 
-# tl_gen: compile .tl to .lua using bootstrap cosmic's bundled tl-gen.lua
-# Uses bootstrap_cosmic to avoid circular dependency with cosmic_bin
-tl_gen = $(bootstrap_cosmic) /zip/tl-gen.lua --
 include 3p/bun/cook.mk
 include 3p/clasp/cook.mk
 
@@ -87,10 +84,10 @@ $(o)/%: %
 	@mkdir -p $(@D)
 	@$(cp) $< $@
 
-# compile .tl files to .lua using tl-gen.lua
+# compile .tl files to .lua (transpile only, no type checking)
 $(o)/%.lua: %.tl $(types_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
-	@$(tl_gen) $< -o $@
+	@$(bootstrap_cosmic) /zip/tl-gen.lua $< -o $@
 
 # bin scripts: o/bin/X.lua from lib/*/X.lua and 3p/*/X.lua
 vpath %.lua lib/build lib/test 3p/ast-grep
@@ -102,7 +99,7 @@ $(o)/bin/%.lua: %.lua
 # bin scripts from teal: o/bin/X.lua from lib/*/X.tl (vpath finds X.tl)
 $(o)/bin/%.lua: %.tl $(types_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
-	@$(tl_gen) $< -o $@
+	@$(bootstrap_cosmic) /zip/tl-gen.lua $< -o $@
 
 # files are produced in o/
 all_files += $(call filter-only,$(foreach x,$(modules),$($(x)_files)))
