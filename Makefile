@@ -273,7 +273,7 @@ $(o)/%.teal.ok: $(o)/% $$(cosmic_bin)
 			echo "fail: $$n issues" > $@; \
 			echo "" >> $@; echo "## stdout" >> $@; echo "" >> $@; \
 			echo "## stderr" >> $@; echo "" >> $@; \
-			echo "$$stderr" | sed 's/^/$<:/' >> $@; \
+			echo "$$stderr" | sed 's|^|$<:|' >> $@; \
 		fi; \
 	else \
 		echo "ignore: unsupported file type" > $@; \
