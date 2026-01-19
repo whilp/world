@@ -5,7 +5,6 @@ local spawn = require("cosmic.spawn")
 local cosmo = require("cosmo")
 
 local backend = require("box.backend")
-local env = require("box.env")
 local claude = require("box.claude")
 local github = require("box.github")
 local git = require("box.git")
