@@ -1,6 +1,6 @@
 -- hook - claude code hook dispatcher
 -- receives hook events via stdin JSON, dispatches to registered handlers
--- usage: cosmic --skill hook
+-- usage: cosmic /zip/.lua/skill/hook.lua
 
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
@@ -346,6 +346,10 @@ register(post_push_check_reminder)
 --------------------------------------------------------------------------------
 -- module
 --------------------------------------------------------------------------------
+
+if cosmo.is_main() then
+  os.exit(main())
+end
 
 return {
   _VERSION = "0.1.0",

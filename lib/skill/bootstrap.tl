@@ -1,5 +1,6 @@
 -- bootstrap - setup environment for Claude Code web
 
+local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 
 local CONTEXT = [[
@@ -16,7 +17,7 @@ Portable lua with HTTP, JSON, crypto, compression, and POSIX APIs.
 
 ## Skills
 
-`cosmic --skill pr` - manage PRs from .github/pr/<name>.md files. Add `x-cosmic-pr-name: <file>.md` trailer to commits.
+`cosmic /zip/.lua/skill/pr.lua` - manage PRs from .github/pr/<name>.md files. Add `x-cosmic-pr-name: <file>.md` trailer to commits.
 
 ## Updating cosmic
 
@@ -31,7 +32,7 @@ To adopt cosmic in a project:
 2. **.claude/settings.json** - SessionStart hook to provide context:
    ```json
    {"hooks":{"SessionStart":[{"matcher":"startup","hooks":[
-     {"type":"command","command":"\"$CLAUDE_PROJECT_DIR/bin/cosmic\" --skill bootstrap"}
+     {"type":"command","command":"\"$CLAUDE_PROJECT_DIR/bin/cosmic\" /zip/.lua/skill/bootstrap.lua"}
    ]}]}}
    ```
 
@@ -76,6 +77,14 @@ local function main(): number, string
   end
 
   return 0
+end
+
+if cosmo.is_main() then
+  local code, msg = main()
+  if msg then
+    io.stderr:write(msg .. "\n")
+  end
+  os.exit(code or 0)
 end
 
 local bootstrap: M = {
