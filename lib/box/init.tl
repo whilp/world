@@ -37,15 +37,15 @@ options:
 commands:
   new                   create box only
   run                   bootstrap only
-  ssh                   connect only (default)
+  ssh                   connect only
   scp <src> <dst>       copy files (: prefix = remote)
   zap                   destroy box
   list                  list boxes
 
-If no command given, connects via ssh.
+If no command given, creates box if needed then connects via ssh (default).
 
 examples:
-  box --sprite dev           # ssh to existing sprite
+  box --sprite dev           # ssh to sprite, creating if needed
   box --sprite dev new       # create sprite only
   box --sprite dev run       # bootstrap sprite only
   box --sprite dev zap       # destroy sprite
@@ -456,7 +456,16 @@ local function main(args: {string}): integer, string
     if not ok then return 1, err end
     return 0
   elseif parsed.cmd == nil then
-    -- Default: ssh to existing box
+    -- Default: ssh to box, creating if it doesn't exist
+    if not be.exists(parsed.name) then
+      -- Create and bootstrap
+      ok, err = cmd_new(be, parsed.name)
+      if not ok then return 1, err end
+      ok, err = cmd_run(be, parsed.name, parsed.env_path, parsed.repo, parsed.release)
+      if not ok then return 1, err end
+      cmd_backend_bootstrap(be, parsed.name)
+    end
+    -- SSH to the box
     ok, err = cmd_ssh(be, parsed.name, parsed.extra_args)
     if not ok then return 1, err end
     return 0

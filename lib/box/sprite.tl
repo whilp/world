@@ -130,6 +130,16 @@ local function destroy(name: string): backend.Result
   return ok()
 end
 
+local function exists(name: string): boolean
+  -- Use sprite api to check if sprite exists explicitly
+  local handle = spawn({"sprite", "api", "-s", name, "/"})
+  if not handle then
+    return false
+  end
+  local exit_code = handle:wait()
+  return exit_code == 0
+end
+
 local function list(): backend.Result
   unix.execvp("sprite", {"sprite", "list"})
   return err("failed to exec sprite list")
@@ -173,5 +183,6 @@ return {
   download = download,
   destroy = destroy,
   list = list,
+  exists = exists,
   bootstrap = bootstrap,
 } as backend.Backend
