@@ -16,11 +16,10 @@ build_snaps := $(wildcard lib/build/*.snap)
 
 .PRECIOUS: $(build_files)
 
-# Build scripts use cosmic's bundled teal (no tl_staged dependency)
-# This breaks the circular dependency: build scripts -> fetch -> tl_staged -> build scripts
-$(build_files): $(o)/bin/%.lua: lib/build/%.tl lib/cosmic/tl-gen.lua | $(bootstrap_files)
+# Build scripts use bundled /zip/tl-gen.lua (no circular dependency)
+$(build_files): $(o)/bin/%.lua: lib/build/%.tl | $(bootstrap_files)
 	@mkdir -p $(@D)
-	@$(bootstrap_cosmic) lib/cosmic/tl-gen.lua -- $< -o $@
+	@$(bootstrap_cosmic) /zip/tl-gen.lua -- $< -o $@
 	@{ echo '#!/usr/bin/env lua'; cat $@; } > $@.tmp && mv $@.tmp $@
 	@chmod +x $@
 reporter := $(bootstrap_cosmic) -- $(build_reporter)

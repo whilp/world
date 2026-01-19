@@ -56,11 +56,7 @@ include 3p/cosmic/cook.mk
 
 # tl_gen: compile .tl to .lua using bootstrap cosmic's bundled tl-gen.lua
 # Uses bootstrap_cosmic to avoid circular dependency with cosmic_bin
-tl_gen = $(bootstrap_cosmic) lib/cosmic/tl-gen.lua --
-
-# teal_runner: type check .tl files using run-teal.lua checker
-teal_run := $(o)/bin/run-teal.lua
-teal_runner = $(cosmic_bin) $(teal_run)
+tl_gen = $(bootstrap_cosmic) /zip/tl-gen.lua --
 include 3p/bun/cook.mk
 include 3p/clasp/cook.mk
 
@@ -97,8 +93,8 @@ $(o)/%.lua: %.tl $(types_files) | $(bootstrap_files)
 	@$(tl_gen) $< -o $@
 
 # bin scripts: o/bin/X.lua from lib/*/X.lua and 3p/*/X.lua
-vpath %.lua lib/build lib/test lib/checker 3p/ast-grep
-vpath %.tl lib/build lib/test lib/checker 3p/ast-grep
+vpath %.lua lib/build lib/test 3p/ast-grep
+vpath %.tl lib/build lib/test 3p/ast-grep
 $(o)/bin/%.lua: %.lua
 	@mkdir -p $(@D)
 	@$(cp) $< $@
@@ -265,9 +261,24 @@ teal: $(o)/teal-summary.txt
 $(o)/teal-summary.txt: $(all_teals) | $(build_reporter)
 	@$(reporter) --dir $(o) $^ | tee $@
 
-$(o)/%.teal.ok: $(o)/% $(teal_run) $(checker_files) $$(cosmic_bin)
+# teal checker: run cosmic --check and format output for reporter
+# Skip non-teal files, format errors in checker format
+$(o)/%.teal.ok: $(o)/% $$(cosmic_bin)
 	@mkdir -p $(@D)
-	@COSMIC_BIN=$(cosmic_bin) $(teal_runner) $< > $@
+	@if echo "$<" | grep -qE '\.(tl|lua)$$'; then \
+		stderr=$$($(cosmic_bin) --check $< 2>&1 >/dev/null) || true; \
+		if [ -z "$$stderr" ]; then \
+			echo "pass:" > $@; \
+		else \
+			n=$$(echo "$$stderr" | wc -l); \
+			echo "fail: $$n issues" > $@; \
+			echo "" >> $@; echo "## stdout" >> $@; echo "" >> $@; \
+			echo "## stderr" >> $@; echo "" >> $@; \
+			echo "$$stderr" | sed 's/^/$<:/' >> $@; \
+		fi; \
+	else \
+		echo "ignore: unsupported file type" > $@; \
+	fi
 
 ## Run bun syntax checker on .gs/.js files
 bun: $(o)/bun-summary.txt
