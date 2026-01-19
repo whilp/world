@@ -62,18 +62,18 @@ local function write_env(): boolean, string
   end
 
   -- Copy all files from /zip/env.d to temp dir
-  local entries, err = unix.opendir(ENV_DIR)
-  if not entries then
+  local handle = unix.opendir(ENV_DIR)
+  if not handle then
     unix.rmrf(tmp_dir)
-    return false, "failed to read env.d: " .. (err or "unknown")
+    return false, "failed to read env.d"
   end
 
-  for _, entry in ipairs(entries) do
+  for entry in handle do
     if entry ~= "." and entry ~= ".." then
       local src = path.join(ENV_DIR, entry)
       local dst = path.join(tmp_dir, entry)
       local src_stat = unix.stat(src)
-      if src_stat and src_stat.type == "file" then
+      if src_stat and unix.S_ISREG(src_stat:mode()) then
         local content = cosmo.Slurp(src)
         if content then
           local ok, write_err = write_file(dst, content, tonumber("600", 8))

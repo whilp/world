@@ -80,7 +80,7 @@ end
 
 local function get_pr_file_from_branch(opts?: SpawnOpts): string
   opts = opts or {}
-  local do_spawn = opts.spawn or spawn_mod
+  local do_spawn = opts.spawn or (spawn_mod as function({string}): SpawnHandle)
 
   local base_branch = get_default_branch(opts)
 
@@ -98,7 +98,9 @@ local function get_pr_file_from_branch(opts?: SpawnOpts): string
   table.insert(cmd, ".github/pr/*.md")
 
   local handle = do_spawn(cmd)
-  local ok, out = handle:read()
+  local read_result = {handle:read()}
+  local ok = read_result[1] as boolean
+  local out = read_result[2] as string
   if not ok or not out then
     return nil
   end
@@ -145,7 +147,7 @@ local function parse_pr_md(content: string): ParsedPr, string
 end
 
 local function default_fetch(url: string, opts?: FetchOpts): FetchResult
-  return fetch_mod.Fetch(url, opts as {string:any})
+  return fetch_mod.Fetch(url, opts as fetch_mod.FetchOpts)
 end
 
 local function github_request(method: string, endpoint: string, token: string, body: {string:string}, opts?: RequestOpts): number, GitHubPr | string
@@ -189,7 +191,7 @@ local function github_request(method: string, endpoint: string, token: string, b
 end
 
 
-local function get_pr(owner: string, repo: string, pr_number: number, token: string, opts?: RequestOpts): GitHubPr, string
+local function get_pr(owner: string, repo: string, pr_number: integer, token: string, opts?: RequestOpts): GitHubPr, string
   local endpoint = string.format("/repos/%s/%s/pulls/%d", owner, repo, pr_number)
 
   local status, data = github_request("GET", endpoint, token, nil, opts)
@@ -235,7 +237,7 @@ local function append_timestamp_details(body: string): string
   return body .. separator .. "\n" .. details_block
 end
 
-local function update_pr(owner: string, repo: string, pr_number: number, title: string, body: string, token: string, opts?: RequestOpts): boolean, string
+local function update_pr(owner: string, repo: string, pr_number: integer, title: string, body: string, token: string, opts?: RequestOpts): boolean, string
   local endpoint = string.format("/repos/%s/%s/pulls/%d", owner, repo, pr_number)
 
   local status, data = github_request("PATCH", endpoint, token, {
@@ -297,7 +299,7 @@ local function is_github_actions(): boolean
   return os.getenv("GITHUB_ACTIONS") == "true"
 end
 
-local function do_update(owner: string, repo_name: string, pr_number: number, pr_file: string, token: string, opts?: RequestOpts): number, string
+local function do_update(owner: string, repo_name: string, pr_number: integer, pr_file: string, token: string, opts?: RequestOpts): integer, string
   if not path.exists(pr_file) then
     log(pr_file .. " not found, skipping")
     return 0
@@ -340,7 +342,7 @@ local function do_update(owner: string, repo_name: string, pr_number: number, pr
   return 0
 end
 
-local function main(opts?: MainOpts): number, string
+local function main(opts?: MainOpts): integer, string
   opts = opts or {}
   local getenv = opts.getenv or os.getenv
 
@@ -369,7 +371,7 @@ local function main(opts?: MainOpts): number, string
   if not pr_number_str or pr_number_str == "" then
     return 1, "GITHUB_PR_NUMBER not set"
   end
-  local pr_number = tonumber(pr_number_str)
+  local pr_number = tonumber(pr_number_str) as integer
   if not pr_number then
     return 1, "invalid GITHUB_PR_NUMBER"
   end
@@ -399,14 +401,14 @@ end
 local record PrModule
   parse_pr_md: function(content: string): ParsedPr, string
   github_request: function(method: string, endpoint: string, token: string, body: {string:string}, opts?: RequestOpts): number, GitHubPr
-  get_pr: function(owner: string, repo: string, pr_number: number, token: string, opts?: RequestOpts): GitHubPr, string
+  get_pr: function(owner: string, repo: string, pr_number: integer, token: string, opts?: RequestOpts): GitHubPr, string
   append_timestamp_details: function(body: string): string
-  update_pr: function(owner: string, repo: string, pr_number: number, title: string, body: string, token: string, opts?: RequestOpts): boolean, string
+  update_pr: function(owner: string, repo: string, pr_number: integer, title: string, body: string, token: string, opts?: RequestOpts): boolean, string
   get_default_branch: function(opts?: SpawnOpts): string
   get_pr_file_from_branch: function(opts?: SpawnOpts): string
   is_github_actions: function(): boolean
-  do_update: function(owner: string, repo_name: string, pr_number: number, pr_file: string, token: string, opts?: RequestOpts): number, string
-  main: function(opts?: MainOpts): number, string
+  do_update: function(owner: string, repo_name: string, pr_number: integer, pr_file: string, token: string, opts?: RequestOpts): integer, string
+  main: function(opts?: MainOpts): integer, string
 end
 
 return {

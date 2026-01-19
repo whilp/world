@@ -56,7 +56,7 @@ examples:
 ]])
 end
 
-local function parse_args(args: {string}): ParsedArgs
+local function parse_args(args: {string}): ParsedArgs, string
   local result: ParsedArgs = {
     backend_type = nil,
     name = nil,
@@ -150,7 +150,7 @@ local function load_env(env_dir: string): {string:string}, string
   if not stat then
     return nil, "env directory not found: " .. env_dir
   end
-  if stat.type ~= "directory" then
+  if not unix.S_ISDIR(stat:mode()) then
     return nil, "env path is not a directory: " .. env_dir
   end
 
@@ -217,14 +217,14 @@ local function cmd_run(be: backend.Backend, name: string, env_dir: string, repo:
   end
 
   -- Copy env files from source directory
-  local entries, err = unix.opendir(env_dir)
-  if entries then
-    for _, entry in ipairs(entries) do
+  local handle = unix.opendir(env_dir)
+  if handle then
+    for entry in handle do
       if entry ~= "." and entry ~= ".." then
         local src = path.join(env_dir, entry)
         local dst = path.join(tmp_env_dir, entry)
         local stat = unix.stat(src)
-        if stat and stat.type == "file" then
+        if stat and unix.S_ISREG(stat:mode()) then
           local content = cosmo.Slurp(src)
           if content then
             cosmo.Barf(dst, content, tonumber("600", 8))

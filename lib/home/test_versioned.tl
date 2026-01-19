@@ -1,4 +1,5 @@
 #!/usr/bin/env run-test.lua
+--check:false - test uses EncodeLua with extra arguments
 -- ast-grep ignore: test file
 
 local unix = require("cosmo.unix")

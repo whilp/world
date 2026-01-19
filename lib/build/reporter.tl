@@ -24,7 +24,7 @@ local function extract_checker(filename: string): string
   return checker
 end
 
-local function main(...: string): number, string
+local function main(...: string): integer, string
   local args = {...}
   local dir: string = nil
 

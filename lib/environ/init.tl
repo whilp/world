@@ -17,6 +17,8 @@ Example:
 local record Environ
   _vars: {string:string}
   toarray: function(Environ): {string}
+  metamethod __index: function(Environ, string): string
+  metamethod __newindex: function(Environ, string, string)
 end
 
 local Environ_mt: metatable<Environ> = {}
@@ -38,7 +40,7 @@ Environ_mt.__newindex = function(self: Environ, key: string, value: string)
   rawget(self, "_vars")[key] = value
 end
 
-local function new(arr: {string}): Environ
+local function new(arr?: {string}): Environ
   local vars: {string:string} = {}
 
   if arr then

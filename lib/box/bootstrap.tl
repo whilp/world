@@ -205,7 +205,7 @@ local function run_unpack(home_bin: string, home_dir: string): boolean, string
   return true
 end
 
-local function main(): number, string
+local function main(): integer, string
   local home_dir = os.getenv("HOME")
   if not home_dir then
     return 1, "HOME not set"

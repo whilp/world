@@ -1,4 +1,5 @@
 -- luacheck ignore: neovim runtime
+--check:false
 -- Setup mini.nvim modules individually (don't require 'mini' directly)
 local ok_bufremove, _ = pcall(require, "mini.bufremove")
 if ok_bufremove then

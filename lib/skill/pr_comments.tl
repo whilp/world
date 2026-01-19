@@ -18,13 +18,13 @@ local record User
 end
 
 local record ReviewComment
-  id: number
+  id: integer
   user: User
   path: string
-  line: number
-  original_line: number
+  line: integer
+  original_line: integer
   created_at: string
-  in_reply_to_id: number
+  in_reply_to_id: integer
   body: string
 end
 
@@ -49,7 +49,7 @@ local record ParsedOpts
   json: boolean
   owner: string
   repo: string
-  pr_number: number
+  pr_number: integer
   help: boolean
 end
 
@@ -59,11 +59,18 @@ local record JsonResult
   review_comments: {ReviewComment}
 end
 
-local function github_request(endpoint: string): number, any
+local record FetchOpts
+  method: string
+  headers: {string:string}
+  max_attempts: integer
+  should_retry: function(fetch.Result): boolean
+end
+
+local function github_request(endpoint: string): integer, any
   local api_url = os.getenv("GITHUB_API_URL") or "https://api.github.com"
   local url = api_url .. endpoint
 
-  local opts: fetch.Opts = {
+  local opts: FetchOpts = {
     method = "GET",
     headers = {
       ["Accept"] = "application/vnd.github+json",
@@ -79,7 +86,7 @@ local function github_request(endpoint: string): number, any
     opts.headers["Authorization"] = "Bearer " .. token
   end
 
-  local result = fetch.Fetch(url, opts)
+  local result = fetch.Fetch(url, opts as fetch.FetchOpts)
   if not result.ok then
     return nil, result.error
   end
@@ -92,25 +99,25 @@ local function github_request(endpoint: string): number, any
   if result.status ~= 200 then
     local api_err = decoded as ApiError
     local msg = api_err and api_err.message or "unknown error"
-    return nil, string.format("api error %d: %s", result.status, msg)
+    return nil, string.format("api error %d: %s", result.status as integer, msg)
   end
 
-  return result.status, decoded
+  return result.status as integer, decoded
 end
 
-local function get_review_comments(owner: string, repo: string, pr_number: number): number, {ReviewComment}
+local function get_review_comments(owner: string, repo: string, pr_number: integer): integer, {ReviewComment}
   local endpoint = string.format("/repos/%s/%s/pulls/%d/comments", owner, repo, pr_number)
-  return github_request(endpoint) as (number, {ReviewComment})
+  return github_request(endpoint) as (integer, {ReviewComment})
 end
 
-local function get_issue_comments(owner: string, repo: string, pr_number: number): number, {IssueComment}
+local function get_issue_comments(owner: string, repo: string, pr_number: integer): integer, {IssueComment}
   local endpoint = string.format("/repos/%s/%s/issues/%d/comments", owner, repo, pr_number)
-  return github_request(endpoint) as (number, {IssueComment})
+  return github_request(endpoint) as (integer, {IssueComment})
 end
 
-local function get_reviews(owner: string, repo: string, pr_number: number): number, {Review}
+local function get_reviews(owner: string, repo: string, pr_number: integer): integer, {Review}
   local endpoint = string.format("/repos/%s/%s/pulls/%d/reviews", owner, repo, pr_number)
-  return github_request(endpoint) as (number, {Review})
+  return github_request(endpoint) as (integer, {Review})
 end
 
 local function format_review_comment(c: ReviewComment): string
@@ -151,10 +158,10 @@ local function format_review(r: Review): string
   return table.concat(lines, "\n")
 end
 
-local function parse_pr_url(url: string): string, string, number
+local function parse_pr_url(url: string): string, string, integer
   local owner, repo, pr_number = url:match("github%.com/([^/]+)/([^/]+)/pull/(%d+)")
   if owner and repo and pr_number then
-    return owner, repo, tonumber(pr_number)
+    return owner, repo, tonumber(pr_number) as integer
   end
   return nil, nil, nil
 end
@@ -167,7 +174,7 @@ local function parse_args(args: {string}): ParsedOpts
     pr_number = nil,
   }
 
-  local longopts: {getopt.LongOpt} = {
+  local longopts = {
     {"owner", "required", "o"},
     {"repo", "required", "r"},
     {"pr", "required", "p"},
@@ -187,7 +194,7 @@ local function parse_args(args: {string}): ParsedOpts
     elseif opt == "r" or opt == "repo" then
       opts.repo = optarg
     elseif opt == "p" or opt == "pr" then
-      opts.pr_number = tonumber(optarg)
+      opts.pr_number = tonumber(optarg) as integer
     elseif opt == "u" or opt == "url" then
       opts.owner, opts.repo, opts.pr_number = parse_pr_url(optarg)
     elseif opt == "j" or opt == "json" then
@@ -220,7 +227,7 @@ examples:
 ]])
 end
 
-local function main(): number
+local function main(): integer
   local opts = parse_args(arg)
 
   if opts.help then
@@ -284,25 +291,23 @@ local function main(): number
 end
 
 if cosmo.is_main() then
-  os.exit(main())
+  os.exit(main() as integer)
 end
 
 local record Module
-  fetch_with_retry: function(url: string, opts: FetchOpts, max_attempts: number): number, {string:string}, string
-  github_request: function(endpoint: string): number, any
-  get_review_comments: function(owner: string, repo: string, pr_number: number): number, {ReviewComment}
-  get_issue_comments: function(owner: string, repo: string, pr_number: number): number, {IssueComment}
-  get_reviews: function(owner: string, repo: string, pr_number: number): number, {Review}
+  github_request: function(endpoint: string): integer, any
+  get_review_comments: function(owner: string, repo: string, pr_number: integer): integer, {ReviewComment}
+  get_issue_comments: function(owner: string, repo: string, pr_number: integer): integer, {IssueComment}
+  get_reviews: function(owner: string, repo: string, pr_number: integer): integer, {Review}
   format_review_comment: function(c: ReviewComment): string
   format_issue_comment: function(c: IssueComment): string
   format_review: function(r: Review): string
-  parse_pr_url: function(url: string): string, string, number
+  parse_pr_url: function(url: string): string, string, integer
   parse_args: function(args: {string}): ParsedOpts
-  main: function(): number
+  main: function(): integer
 end
 
 return {
-  fetch_with_retry = fetch_with_retry,
   github_request = github_request,
   get_review_comments = get_review_comments,
   get_issue_comments = get_issue_comments,
