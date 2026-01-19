@@ -37,7 +37,7 @@ local function test_skill_pr_outside_actions()
   local env = clean_env()
   env[#env + 1] = "GITHUB_ACTIONS=false"
 
-  local ok, out = spawn({cosmic, "--skill", "pr"}, { env = env }):read()
+  local ok, out = spawn({cosmic, "/zip/.lua/skill/pr.lua"}, { env = env }):read()
   assert(ok, "skill pr should not error outside GitHub Actions")
   assert((out as string):find("Updates PR title and description", 1, true), "expected help text in output")
 end
@@ -51,7 +51,7 @@ local function test_skill_pr_requires_token()
   env[#env + 1] = "GITHUB_PR_NUMBER=123"
   -- GITHUB_TOKEN is already filtered by clean_env()
 
-  local ok, out, exit_code = spawn({cosmic, "--skill", "pr"}, { env = env }):read()
+  local ok, out, exit_code = spawn({cosmic, "/zip/.lua/skill/pr.lua"}, { env = env }):read()
   assert(not ok, "skill pr should fail without GITHUB_TOKEN")
   assert(exit_code == 1, "expected exit code 1, got " .. tostring(exit_code))
 end

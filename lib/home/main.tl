@@ -138,12 +138,15 @@ local function copy_file(src: string, dst: string, mode: number, overwrite: bool
     end
   end
 
-  local bytes_written = unix.write(fd, data)
-  local success = bytes_written == #data
-
-  if not success then
+  local bytes_written, write_err = unix.write(fd, data)
+  if not bytes_written then
     unix.close(fd)
-    return false, "failed to write data (wrote " .. bytes_written .. " of " .. #data .. " bytes)"
+    return false, "failed to write data: " .. (write_err or "unknown error")
+  end
+
+  if bytes_written ~= #data then
+    unix.close(fd)
+    return false, "failed to write data (wrote " .. tostring(bytes_written) .. " of " .. #data .. " bytes)"
   end
 
   if mode then

@@ -389,11 +389,11 @@ if cosmo.is_main() then
     print_help()
     os.exit(0)
   end
-  local _, msg = main()
+  local code, msg = main()
   if msg then
     log(msg)
   end
-  os.exit(0)
+  os.exit(code or 0)
 end
 
 local record PrModule

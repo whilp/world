@@ -6,8 +6,8 @@
 --   /repos/{owner}/{repo}/pulls/{number}/reviews - reviews with their comments
 --
 -- Usage:
---   cosmic --skill pr_comments --owner <owner> --repo <repo> --pr <number> [--json]
---   cosmic --skill pr_comments --url <github_pr_url> [--json]
+--   cosmic /zip/.lua/skill/pr_comments.lua --owner <owner> --repo <repo> --pr <number> [--json]
+--   cosmic /zip/.lua/skill/pr_comments.lua --url <github_pr_url> [--json]
 
 local cosmo = require("cosmo")
 local getopt = require("cosmo.getopt")
@@ -202,8 +202,8 @@ end
 
 local function print_help()
   io.stderr:write([[
-usage: cosmic --skill pr_comments --owner <owner> --repo <repo> --pr <number> [--json]
-       cosmic --skill pr_comments --url <github_pr_url> [--json]
+usage: cosmic /zip/.lua/skill/pr_comments.lua --owner <owner> --repo <repo> --pr <number> [--json]
+       cosmic /zip/.lua/skill/pr_comments.lua --url <github_pr_url> [--json]
 
 options:
   -o, --owner <owner>   repository owner
@@ -214,9 +214,9 @@ options:
   -h, --help            show this help
 
 examples:
-  cosmic --skill pr_comments --owner whilp --repo world --pr 283
-  cosmic --skill pr_comments --url https://github.com/whilp/world/pull/283
-  cosmic --skill pr_comments -o whilp -r world -p 283 --json
+  cosmic /zip/.lua/skill/pr_comments.lua --owner whilp --repo world --pr 283
+  cosmic /zip/.lua/skill/pr_comments.lua --url https://github.com/whilp/world/pull/283
+  cosmic /zip/.lua/skill/pr_comments.lua -o whilp -r world -p 283 --json
 ]])
 end
 
