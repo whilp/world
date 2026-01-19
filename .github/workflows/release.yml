@@ -37,16 +37,6 @@ jobs:
         shell: bash -x {0}
         run: bin/make -j test-release
 
-      - id: make-assimilated
-        shell: bash -x {0}
-        run: bin/make -j assimilated
-
-      - id: upload-assimilated
-        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
-        with:
-          name: assimilated-${{ matrix.platform }}
-          path: o/assimilated/
-
       - id: upload-home
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
         with:
@@ -58,7 +48,9 @@ jobs:
         uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b # v4.5.0
         with:
           name: cosmopolitan
-          path: o/bin/cosmic
+          path: |
+            o/bin/cosmic
+            o/bin/box
 
   release:
     runs-on: ubuntu-latest

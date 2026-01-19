@@ -344,22 +344,6 @@ bump: $(all_updated)
 ## Build home, cosmic, and box binaries
 build: home cosmic box
 
-# Assimilated (native) binaries for current platform
-assimilate_bins := box cosmic
-assimilated := $(foreach b,$(assimilate_bins),$(o)/assimilated/$(b)-$(platform))
-# darwin-arm64 needs -ae flag to create ARM64 ELF (loaded by ape-m1.c)
-assimilate_flags := $(if $(filter darwin-arm64,$(platform)),-ae,)
-
-.PHONY: assimilated
-## Build assimilated (native) binaries for current platform
-assimilated: $(assimilated)
-
-$(o)/assimilated/%-$(platform): $(o)/bin/% $$(cosmos_staged)
-	@mkdir -p $(@D)
-	@cp $< $@
-	@$(cosmos_assimilate) $(assimilate_flags) $@
-	@rm -f $@.bak
-
 .PHONY: release
 ## Create release artifacts (CI only)
 release:
@@ -368,17 +352,14 @@ release:
 	@cp artifacts/home-linux-arm64/home release/home-linux-arm64
 	@cp artifacts/home-linux-x86_64/home release/home-linux-x86_64
 	@cp artifacts/cosmopolitan/cosmic release/cosmic-lua
-	@for p in darwin-arm64 linux-arm64 linux-x86_64; do \
-		cp artifacts/assimilated-$$p/box-$$p release/; \
-		cp artifacts/assimilated-$$p/cosmic-$$p release/cosmic-lua-$$p; \
-	done
+	@cp artifacts/cosmopolitan/box release/box
 	@chmod +x release/*
 	@tag="$$(date -u +%Y-%m-%d)-$${GITHUB_SHA::7}"; \
-	(cd release && sha256sum home-* box-* cosmic-lua cosmic-lua-* > SHA256SUMS && cat SHA256SUMS); \
+	(cd release && sha256sum home-* cosmic-lua box > SHA256SUMS && cat SHA256SUMS); \
 	gh release create "$$tag" \
 		$${PRERELEASE_FLAG} \
 		--title "$$tag" \
-		release/home-* release/box-* release/cosmic-lua release/cosmic-lua-* release/SHA256SUMS
+		release/home-* release/cosmic-lua release/box release/SHA256SUMS
 
 ci_stages := astgrep teal test build
 
