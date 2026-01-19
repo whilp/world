@@ -272,7 +272,7 @@ local function cmd_run(be: backend.Backend, name: string, env_path: string, repo
   end
 
   -- Run bootstrap on remote
-  local cmd = "chmod +x /tmp/box && /tmp/box --local-run " .. name .. " " .. be.name
+  local cmd = "mkdir -p ~/.config/box && chmod +x /tmp/box && /tmp/box --local-run " .. name .. " " .. be.name .. " > ~/.config/box/bootstrap.log 2>&1"
   result = be.exec(name, cmd)
   cleanup()
   if not result.ok then
