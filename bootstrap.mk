@@ -1,14 +1,12 @@
 modules += bootstrap
 bootstrap_cosmic := $(o)/bootstrap/cosmic
 bootstrap_files := $(bootstrap_cosmic)
+bootstrap_url := https://github.com/whilp/cosmic/releases/download/2026-01-19-f861075/cosmic-lua
 
 export PATH := $(o)/bootstrap:$(PATH)
 
-bin/cosmic-lua: bin/cosmic
-	@bin/cosmic --version >/dev/null 2>&1 || true
-
-$(bootstrap_cosmic): bin/cosmic-lua
+$(bootstrap_cosmic):
 	@mkdir -p $(@D)
-	@cp bin/cosmic-lua $@
+	@curl -fsSL -o $@ $(bootstrap_url)
 	@chmod +x $@
 	@ln -sf cosmic $(@D)/lua

@@ -179,7 +179,6 @@ o/
 results/
 .ape*
 bin/
-!bin/cosmic
 !bin/hook
 !bin/run-test
 !bin/make
