@@ -4,12 +4,12 @@ cosmic-bin_version := 3p/cosmic/version.lua
 modules += cosmic
 cosmic_bin := $(o)/bin/cosmic
 cosmic_files := $(cosmic_bin)
-cosmic_deps := cosmic-bin skill
+cosmic_deps := cosmic-bin cosmos skill
 
 cosmic_built := $(o)/cosmic/.built
 
 # Build cosmic by appending world's skill modules to prebuilt cosmic-lua
-$(cosmic_bin): $(skill_libs) $$(cosmic-bin_staged)
+$(cosmic_bin): $(skill_libs) $$(cosmic-bin_staged) $$(cosmos_staged)
 	@rm -rf $(cosmic_built)
 	@mkdir -p $(cosmic_built)/.lua/skill $(@D)
 	@$(cp) $(skill_libs) $(cosmic_built)/.lua/skill/
