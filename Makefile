@@ -346,7 +346,8 @@ release:
 		--title "$$tag" \
 		release/home-* release/cosmic-lua release/bootstrap release/SHA256SUMS
 
-ci_stages := astgrep teal test build
+# TODO: restore teal to ci_stages when cosmic --check supports include paths
+ci_stages := astgrep test build
 
 .PHONY: ci
 ## Run full CI pipeline (astgrep, teal, test, build)
