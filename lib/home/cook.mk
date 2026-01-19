@@ -82,16 +82,15 @@ $(o)/nvim/.zip: $$(nvim_bundle) $$(cosmos_staged)
 	@rm -rf $(@D)/.zip-staging
 
 # Create dotfiles.zip with symlinks preserved
-# Includes: dotfiles, cosmic-lua binary, lua symlink, teal loader
-$(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin) $$(tl_staged)
+# Includes: dotfiles, cosmic-lua binary, lua symlink
+$(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin)
 	@rm -rf $(o)/home/.dotfiles-staging
 	@mkdir -p $(@D) $(o)/home/.dotfiles-staging
 	@for f in $(home_dotfiles); do \
 		mkdir -p $(o)/home/.dotfiles-staging/$$(dirname "$$f") && \
 		cp -a "$$f" $(o)/home/.dotfiles-staging/"$$f"; \
 	done
-	@mkdir -p $(o)/home/.dotfiles-staging/.local/bin $(o)/home/.dotfiles-staging/lib/3p
-	@$(cp) $(tl_dir)/tl.lua $(o)/home/.dotfiles-staging/lib/3p/tl.lua
+	@mkdir -p $(o)/home/.dotfiles-staging/.local/bin
 	@$(cp) $(cosmic_bin) $(o)/home/.dotfiles-staging/.local/bin/cosmic-lua
 	@ln -sf cosmic-lua $(o)/home/.dotfiles-staging/.local/bin/lua
 	@cd $(o)/home/.dotfiles-staging && $(CURDIR)/$(cosmos_zip) -qry $(CURDIR)/$@ .

@@ -13,18 +13,17 @@ cosmic_tl_libs := $(filter-out $(cosmic_main),$(patsubst %.tl,$(o)/%.lua,$(cosmi
 cosmic_libs := $(cosmic_lua_libs) $(cosmic_tl_libs)
 cosmic_bin := $(o)/bin/cosmic
 cosmic_files := $(cosmic_bin) $(cosmic_libs)
-cosmic_deps := cosmos skill tl teal-types
+cosmic_deps := cosmic-bin skill
 
 cosmic_built := $(o)/cosmic/.built
 
-$(cosmic_bin): $(cosmic_libs) $(skill_libs) $(cosmic_main) $(cosmic_args) $(cosmic_tl_gen) $$(tl_staged) $$(teal-types_staged)
+# Build cosmic by appending world's skill modules and main.lua to prebuilt cosmic-lua
+$(cosmic_bin): $(cosmic_libs) $(skill_libs) $(cosmic_main) $(cosmic_args) $(cosmic_tl_gen) $$(cosmic-bin_staged)
 	@rm -rf $(cosmic_built)
 	@mkdir -p $(cosmic_built)/.lua/cosmic $(cosmic_built)/.lua/skill $(@D)
 	@$(cp) $(cosmic_libs) $(cosmic_built)/.lua/cosmic/
 	@$(cp) $(skill_libs) $(cosmic_built)/.lua/skill/
-	@$(cp) $(tl_dir)/tl.lua $(cosmic_built)/.lua/
-	@cp -r $(teal-types_dir)/types $(cosmic_built)/.lua/teal-types
-	@$(cp) $(cosmos_lua) $@
+	@$(cp) $(cosmic-bin_dir)/bin/cosmic-bin $@
 	@chmod +x $@
 	@cd $(cosmic_built) && $(CURDIR)/$(cosmos_zip) -qr $(CURDIR)/$@ .lua
 	@$(cosmos_zip) -qj $@ $(cosmic_main) $(cosmic_args) $(cosmic_tl_gen)
