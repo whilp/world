@@ -82,16 +82,15 @@ $(o)/nvim/.zip: $$(nvim_bundle) $$(cosmos_staged)
 	@rm -rf $(@D)/.zip-staging
 
 # Create dotfiles.zip with symlinks preserved
-# Includes: dotfiles, cosmic-lua binary, lua symlink, teal loader
-$(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin) $$(tl_staged)
+# Includes: dotfiles, cosmic-lua binary, lua symlink
+$(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin)
 	@rm -rf $(o)/home/.dotfiles-staging
 	@mkdir -p $(@D) $(o)/home/.dotfiles-staging
 	@for f in $(home_dotfiles); do \
 		mkdir -p $(o)/home/.dotfiles-staging/$$(dirname "$$f") && \
 		cp -a "$$f" $(o)/home/.dotfiles-staging/"$$f"; \
 	done
-	@mkdir -p $(o)/home/.dotfiles-staging/.local/bin $(o)/home/.dotfiles-staging/lib/3p
-	@$(cp) $(tl_dir)/tl.lua $(o)/home/.dotfiles-staging/lib/3p/tl.lua
+	@mkdir -p $(o)/home/.dotfiles-staging/.local/bin
 	@$(cp) $(cosmic_bin) $(o)/home/.dotfiles-staging/.local/bin/cosmic-lua
 	@ln -sf cosmic-lua $(o)/home/.dotfiles-staging/.local/bin/lua
 	@cd $(o)/home/.dotfiles-staging && $(CURDIR)/$(cosmos_zip) -qry $(CURDIR)/$@ .
@@ -101,8 +100,8 @@ $(o)/home/dotfiles.zip: $(home_dotfiles) $$(cosmos_staged) $(cosmic_bin) $$(tl_s
 home_tl_lua := $(patsubst %.tl,$(o)/%.lua,$(home_tl_files))
 
 # Home binary bundles: dotfiles.zip, per-tool zips (extracted at runtime), lua libs
-# Tool zips use secondary expansion to defer $(x_zip) evaluation
-$(home_bin): $(home_libs) $(home_tl_lua) $(o)/home/dotfiles.zip $$(cosmos_staged) $(cosmic_bin) $(cosmic_tl_libs) $$(foreach t,$(home_3p_tools) nvim,$$($$(t)_zip))
+# Uses cosmic as base which has cosmic modules bundled
+$(home_bin): $(home_libs) $(home_tl_lua) $(o)/home/dotfiles.zip $$(cosmos_staged) $$(cosmic_staged) $$(foreach t,$(home_3p_tools) nvim,$$($$(t)_zip))
 	@rm -rf $(home_built)
 	@mkdir -p $(home_built)/tools $(home_built)/.lua $(@D)
 	@$(cp) $(o)/home/dotfiles.zip $(home_built)/dotfiles.zip
@@ -111,15 +110,14 @@ $(home_bin): $(home_libs) $(home_tl_lua) $(o)/home/dotfiles.zip $$(cosmos_staged
 		$(cp) $(o)/$$tool/.zip $(home_built)/tools/$$tool.zip; \
 	done
 	@echo 'return { version = "$(HOME_VERSION)", tools = { $(foreach t,$(home_3p_tools) nvim,"$(t)", ) } }' > $(home_built)/manifest.lua
-	@$(cp) $(cosmos_dir)/lua $@
+	@$(cp) $(cosmic_dir)/bin/cosmic $@
 	@chmod +x $@
 	@cd $(home_built) && find tools unzip dotfiles.zip manifest.lua -type f | $(CURDIR)/$(cosmos_zip) -qy $(CURDIR)/$@ -@
 	@$(cosmos_zip) -qj $@ $(o)/lib/home/main.lua lib/home/.args
-	@cp -r lib/cosmic lib/version.lua lib/claude $(home_built)/.lua/
+	@cp -r lib/version.lua lib/claude $(home_built)/.lua/
 	@mkdir -p $(home_built)/.lua/setup $(home_built)/.lua/mac
 	@cp $(o)/$(home_setup_dir)/*.lua $(home_built)/.lua/setup/
 	@cp $(o)/$(home_mac_dir)/*.lua $(home_built)/.lua/mac/
-	@cp -f $(cosmic_tl_libs) $(home_built)/.lua/cosmic/
 	@cd $(home_built) && $(CURDIR)/$(cosmos_zip) -qr $(CURDIR)/$@ .lua
 	@rm -rf $(home_built)
 
@@ -127,19 +125,15 @@ home: $(home_bin)
 
 .PHONY: home
 
-# Bootstrap binary: lightweight binary for sprite bootstrap
+# Bootstrap binary: uses prebuilt cosmic which has cosmic.spawn/fetch bundled
 bootstrap_bin := $(o)/bin/bootstrap
 bootstrap_built := $(o)/bootstrap/.built
 bootstrap_main := $(o)/lib/home/bootstrap.lua
-bootstrap_spawn := $(o)/lib/cosmic/spawn.lua
 
-$(bootstrap_bin): $(bootstrap_main) $(bootstrap_spawn) $$(cosmos_staged)
-	@rm -rf $(bootstrap_built)
-	@mkdir -p $(bootstrap_built)/.lua/cosmic $(@D)
-	@$(cp) $(bootstrap_spawn) $(bootstrap_built)/.lua/cosmic/
-	@$(cp) $(cosmos_lua) $@
+$(bootstrap_bin): $(bootstrap_main) $$(cosmic_staged) $$(cosmos_staged)
+	@mkdir -p $(@D) $(bootstrap_built)
+	@$(cp) $(cosmic_dir)/bin/cosmic $@
 	@chmod +x $@
-	@cd $(bootstrap_built) && $(CURDIR)/$(cosmos_zip) -qr $(CURDIR)/$@ .lua
 	@$(cosmos_zip) -qj $@ $(bootstrap_main)
 	@echo '/zip/bootstrap.lua' > $(bootstrap_built)/.args
 	@cd $(bootstrap_built) && $(CURDIR)/$(cosmos_zip) -qj $(CURDIR)/$@ .args
