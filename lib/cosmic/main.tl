@@ -1,6 +1,45 @@
 -- cosmic-lua dispatcher
 -- entry point for cosmic binary that handles special args and dispatches to features
 
+-- Protect io.stderr to handle pipe failures gracefully
+-- When stderr is a pipe and the reader closes it, writes can fail
+-- This is especially important for teal's debug hooks which write to stderr
+do
+  local original_stderr = io.stderr
+  local safe_stderr = {}
+
+  -- Wrap write to catch and ignore pipe errors
+  function safe_stderr:write(...)
+    local ok, err = pcall(function(...)
+      return original_stderr:write(...)
+    end, ...)
+    if not ok then
+      -- Silently ignore write errors (pipe closed, etc)
+      return nil
+    end
+    return err
+  end
+
+  -- Wrap flush to catch and ignore pipe errors
+  function safe_stderr:flush()
+    local ok = pcall(function()
+      return original_stderr:flush()
+    end)
+    if not ok then
+      -- Silently ignore flush errors
+      return nil
+    end
+    return true
+  end
+
+  -- Forward other methods to original stderr
+  setmetatable(safe_stderr, {
+    __index = original_stderr,
+  })
+
+  io.stderr = safe_stderr as FILE
+end
+
 require("tl").loader()
 
 local getopt = require("cosmo.getopt")
