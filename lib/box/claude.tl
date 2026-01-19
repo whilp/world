@@ -4,8 +4,6 @@ local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local fetch = require("cosmic.fetch")
 
-local backend = require("box.backend")
-
 local record ClaudeVersionPlatform
   sha: string
 end
@@ -127,27 +125,22 @@ local function write_file(filepath: string, content: string, mode: number): bool
   return true
 end
 
-local function configure(env: backend.Env): boolean, string
-  if not env.claude then
-    return true -- no claude config
-  end
+local function configure(): boolean, string
+  local credentials_json = os.getenv("CLAUDE_CREDENTIALS")
 
   local home = os.getenv("HOME")
   if not home then
     return false, "HOME not set"
   end
 
-  io.stderr:write("configuring claude...\n")
-
   local claude_dir = path.join(home, ".claude")
   unix.makedirs(claude_dir)
 
-  -- Write credentials if provided (Lua table -> JSON)
-  local credentials = env.claude["credentials"]
-  if credentials then
+  -- Write credentials if provided (already JSON from env)
+  if credentials_json then
+    io.stderr:write("configuring claude credentials...\n")
     local creds_file = path.join(claude_dir, ".credentials.json")
-    local json = cosmo.EncodeJson(credentials)
-    local ok, err = write_file(creds_file, json, tonumber("0600", 8))
+    local ok, err = write_file(creds_file, credentials_json, tonumber("0600", 8))
     if not ok then
       return false, "failed to write credentials: " .. (err or "unknown")
     end
@@ -156,6 +149,7 @@ local function configure(env: backend.Env): boolean, string
   -- Write settings to skip onboarding
   local settings_file = path.join(claude_dir, "settings.json")
   if not unix.stat(settings_file) then
+    io.stderr:write("configuring claude settings...\n")
     local settings = {
       numStartups = 1,
       installMethod = "unknown",

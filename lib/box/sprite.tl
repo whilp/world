@@ -5,7 +5,6 @@ local spawn = require("cosmic.spawn")
 local cosmo = require("cosmo")
 
 local backend = require("box.backend")
-local env = require("box.env")
 local claude = require("box.claude")
 local github = require("box.github")
 local git = require("box.git")
@@ -137,8 +136,6 @@ local function list(): backend.Result
 end
 
 local function bootstrap(name: string): backend.Result
-  local cfg = env.load() or {} as backend.Env
-
   -- Install claude binary
   io.stderr:write("installing claude...\n")
   local install_ok, install_err = claude.install()
@@ -147,19 +144,19 @@ local function bootstrap(name: string): backend.Result
   end
 
   -- Configure gh auth
-  local cfg_ok, cfg_err = github.configure(cfg)
+  local cfg_ok, cfg_err = github.configure()
   if not cfg_ok then
     return err(cfg_err or "github config failed")
   end
 
   -- Configure git identity
-  cfg_ok, cfg_err = git.configure(cfg)
+  cfg_ok, cfg_err = git.configure()
   if not cfg_ok then
     return err(cfg_err or "git config failed")
   end
 
   -- Configure claude credentials
-  cfg_ok, cfg_err = claude.configure(cfg)
+  cfg_ok, cfg_err = claude.configure()
   if not cfg_ok then
     return err(cfg_err or "claude config failed")
   end

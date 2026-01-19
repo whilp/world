@@ -7,14 +7,14 @@ local spawn = require("cosmic.spawn")
 
 local backend = require("box.backend")
 
-local ENV_PATH <const> = "/zip/env.lua"
+local ENV_DIR <const> = "/zip/env.d"
 
 local record ParsedArgs
   backend_type: string  -- "sprite", "mac", or path to executable backend
   name: string          -- box name
   kind: string          -- backend kind (for local-run mode)
   cmd: string           -- "new", "run", "ssh", "zap", "list", or nil for all-in-one
-  env_path: string      -- path to env.lua
+  env_path: string      -- path to env.d directory
   local_run: boolean    -- running remotely after upload
   repo: string          -- github repo (owner/name)
   release: string       -- release tag
@@ -30,7 +30,7 @@ backends (pick one):
   --backend <path>      executable backend
 
 options:
-  --env <path>          credentials file (default: ~/.config/box/env.lua)
+  --env <path>          env directory (default: ~/.config/box/env.d)
   --repo <owner/name>   github repo (default: whilp/world)
   --release <tag>       release tag (default: latest)
 
@@ -61,7 +61,7 @@ local function parse_args(args: {string}): ParsedArgs
     backend_type = nil,
     name = nil,
     cmd = nil,
-    env_path = path.join(os.getenv("HOME") or "", ".config", "box", "env.lua"),
+    env_path = path.join(os.getenv("HOME") or "", ".config", "box", "env.d"),
     local_run = false,
     repo = nil,
     release = nil,
@@ -145,31 +145,17 @@ local function load_backend(backend_type: string): backend.Backend, string
   end
 end
 
-local function load_env(env_path: string, name: string): backend.Env, string
-  local content = cosmo.Slurp(env_path)
-  if not content then
-    return nil, "env file not found: " .. env_path
+local function load_env(env_dir: string): {string:string}, string
+  local stat = unix.stat(env_dir)
+  if not stat then
+    return nil, "env directory not found: " .. env_dir
+  end
+  if stat.type ~= "directory" then
+    return nil, "env path is not a directory: " .. env_dir
   end
 
-  local chunk, err = load(content, "@" .. env_path)
-  if not chunk then
-    return nil, "failed to load env: " .. (err or "unknown error")
-  end
-
-  local ok, env = pcall(chunk)
-  if not ok then
-    return nil, "failed to execute env: " .. tostring(env)
-  end
-
-  -- env.lua can be a function(name) or a table
-  if type(env) == "function" then
-    ok, env = pcall(env as function(string): backend.Env, name)
-    if not ok then
-      return nil, "failed to call env function: " .. tostring(env)
-    end
-  end
-
-  return env as backend.Env
+  local env = require("box.env")
+  return env.load_from_dir(env_dir)
 end
 
 local function cmd_new(be: backend.Backend, name: string): boolean, string
@@ -182,7 +168,7 @@ local function cmd_new(be: backend.Backend, name: string): boolean, string
   return true
 end
 
-local function cmd_run(be: backend.Backend, name: string, env_path: string, repo: string, release: string): boolean, string
+local function cmd_run(be: backend.Backend, name: string, env_dir: string, repo: string, release: string): boolean, string
   io.stderr:write("==> bootstrapping " .. name .. "\n")
 
   -- Get path to self (the box binary)
@@ -203,25 +189,70 @@ local function cmd_run(be: backend.Backend, name: string, env_path: string, repo
     return false, "cannot find self at: " .. self_path
   end
 
-  -- Load env.lua and add bootstrap config
-  local env, err = load_env(env_path, name)
+  -- Load env from directory
+  local env, err = load_env(env_dir)
   if not env then
     return false, err
   end
-  env.bootstrap = {
-    repo = repo,
-    release = release,
-  }
-  local env_data = "return " .. cosmo.EncodeLua(env)
 
   -- Create temp directory for work
-  local tmpdir = unix.mkdtemp("/tmp/box.XXXXXX")
+  local home = os.getenv("HOME") or ""
+  local box_dir = path.join(home, ".config", "box")
+  unix.makedirs(box_dir)
+
+  local tmpdir = unix.mkdtemp(path.join(box_dir, "tmp-XXXXXX"))
   if not tmpdir then
     return false, "failed to create temp directory"
   end
 
   local function cleanup()
     unix.rmrf(tmpdir)
+  end
+
+  -- Create temp env.d directory using mkdtemp, then rename
+  local tmp_env_dir = unix.mkdtemp(path.join(box_dir, "env-XXXXXX"))
+  if not tmp_env_dir then
+    cleanup()
+    return false, "failed to create temp env.d directory"
+  end
+
+  -- Copy env files from source directory
+  local entries, err = unix.opendir(env_dir)
+  if entries then
+    for _, entry in ipairs(entries) do
+      if entry ~= "." and entry ~= ".." then
+        local src = path.join(env_dir, entry)
+        local dst = path.join(tmp_env_dir, entry)
+        local stat = unix.stat(src)
+        if stat and stat.type == "file" then
+          local content = cosmo.Slurp(src)
+          if content then
+            cosmo.Barf(dst, content, tonumber("600", 8))
+          end
+        end
+      end
+    end
+  end
+
+  -- Add bootstrap config to single source file
+  local source_lines: {string} = {}
+  if repo and repo ~= "" then
+    table.insert(source_lines, "BOOTSTRAP_REPO=" .. repo)
+  end
+  if release and release ~= "" then
+    table.insert(source_lines, "BOOTSTRAP_RELEASE=" .. release)
+  end
+  if #source_lines > 0 then
+    local source_file = path.join(tmp_env_dir, "source")
+    cosmo.Barf(source_file, table.concat(source_lines, "\n") .. "\n", tonumber("600", 8))
+  end
+
+  -- Rename temp env dir into tmpdir as env.d for zipping
+  local final_env_dir = path.join(tmpdir, "env.d")
+  if not unix.rename(tmp_env_dir, final_env_dir) then
+    unix.rmrf(tmp_env_dir)
+    cleanup()
+    return false, "failed to rename env directory"
   end
 
   -- Extract bundled zip tool to temp
@@ -243,15 +274,8 @@ local function cmd_run(be: backend.Backend, name: string, env_path: string, repo
     return false, "failed to copy box"
   end
 
-  -- Write env.lua to temp dir
-  local env_in_dir = path.join(tmpdir, "env.lua")
-  if not cosmo.Barf(env_in_dir, env_data, tonumber("600", 8)) then
-    cleanup()
-    return false, "failed to copy env"
-  end
-
-  -- Zip env.lua into the box binary copy
-  local handle = spawn({tmp_zip, "-qj", tmp_box, env_in_dir})
+  -- Zip env.d directory into the box binary copy
+  local handle = spawn({tmp_zip, "-qr", tmp_box, "env.d"}, {cwd = tmpdir})
   if not handle then
     cleanup()
     return false, "failed to run zip"
@@ -359,25 +383,12 @@ end
 
 local function cmd_local_run(name: string, kind: string): integer, string
   -- Running on remote after upload
-  -- Load env from /zip/env.lua (zipped into self before upload)
-  local ok, env_chunk = pcall(dofile, ENV_PATH)
-  if not ok then
-    return 1, "failed to load " .. ENV_PATH .. ": " .. tostring(env_chunk)
-  end
-
-  -- env.lua can be a function(name) or a table
-  local env: backend.Env
-  if type(env_chunk) == "function" then
-    ok, env = pcall(env_chunk as function(string): backend.Env, name)
-    if not ok then
-      return 1, "failed to call env function: " .. tostring(env)
-    end
-  else
-    env = env_chunk as backend.Env
-  end
+  -- Load env from /zip/env.d (zipped into self before upload)
+  local env = require("box.env")
+  local env_vars = env.load_from_dir(ENV_DIR)
 
   local run = require("box.run")
-  return run.bootstrap(env, name, kind)
+  return run.bootstrap(env_vars, name, kind)
 end
 
 local function main(args: {string}): integer, string

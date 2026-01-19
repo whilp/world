@@ -112,11 +112,20 @@ local record BootstrapConfig
 end
 
 local function load_bootstrap_config(): BootstrapConfig
-  local ok, env = pcall(dofile, "/zip/env.lua")
-  if ok and env and type(env) == "table" and env.bootstrap then
-    return env.bootstrap as BootstrapConfig
+  local config: BootstrapConfig = {}
+
+  -- Read from environment variables (set by box.run)
+  local repo = os.getenv("BOOTSTRAP_REPO")
+  local release = os.getenv("BOOTSTRAP_RELEASE")
+
+  if repo and repo ~= "" then
+    config.repo = repo
   end
-  return {}
+  if release and release ~= "" then
+    config.release = release
+  end
+
+  return config
 end
 
 local function get_release(): Release, string
