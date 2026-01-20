@@ -53,8 +53,10 @@ local function ssh(name: string, ...: string): backend.Result
 end
 
 local function exec(name: string, cmd: string): backend.Result
+  -- stdin required to avoid exit 255 from sprite exec
   local handle = spawn({"sprite", "exec", "-s", name, "--", "bash", "-c", cmd}, {
-    stdout = 1,  -- pass through to terminal
+    stdin = 0,
+    stdout = 1,
     stderr = 2,
   })
   if not handle then

@@ -449,6 +449,10 @@ local function main(args: {string}): integer, string
     if not ok then return 1, err end
     return 0
   elseif parsed.cmd == "run" then
+    if not be.exists(parsed.name) then
+      ok, err = cmd_new(be, parsed.name)
+      if not ok then return 1, err end
+    end
     ok, err = cmd_run(be, parsed.name, parsed.env_path, parsed.repo, parsed.release, parsed.prerelease)
     if not ok then return 1, err end
     return 0
