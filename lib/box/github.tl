@@ -21,24 +21,26 @@ local record GitHubHost
 end
 
 local function discover_hosts(): {GitHubHost}
-  local env = unix.environ()
   local hosts_by_name: {string:GitHubHost} = {}
 
-  for key, value in pairs(env) do
-    local name = key:match("^GH_(.+)_HOSTNAME$")
-    if name then
-      if not hosts_by_name[name] then
-        hosts_by_name[name] = {name = name}
+  for _, entry in ipairs(unix.environ()) do
+    local key, value = entry:match("^([^=]+)=(.*)$")
+    if key then
+      local name = key:match("^GH_(.+)_HOSTNAME$")
+      if name then
+        if not hosts_by_name[name] then
+          hosts_by_name[name] = {name = name}
+        end
+        hosts_by_name[name].hostname = value
       end
-      hosts_by_name[name].hostname = value
-    end
 
-    name = key:match("^GH_(.+)_TOKEN$")
-    if name then
-      if not hosts_by_name[name] then
-        hosts_by_name[name] = {name = name}
+      name = key:match("^GH_(.+)_TOKEN$")
+      if name then
+        if not hosts_by_name[name] then
+          hosts_by_name[name] = {name = name}
+        end
+        hosts_by_name[name].token = value
       end
-      hosts_by_name[name].token = value
     end
   end
 

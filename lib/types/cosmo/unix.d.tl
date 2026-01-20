@@ -57,7 +57,7 @@ local record unix
   stat: function(path: string, flags?: number): Stat
 
   -- environment
-  environ: function(): {string:string}
+  environ: function(): {string}
   setenv: function(name: string, value: string): boolean
   unsetenv: function(name: string): boolean
   commandv: function(cmd: string): string

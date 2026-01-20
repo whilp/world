@@ -163,10 +163,9 @@ local function main(args: {string})
     end
   end
 
-  -- Convert environ map to array of "KEY=VALUE" strings for execve
   local env_array: {string} = {}
-  for key, value in pairs(unix.environ()) do
-    table.insert(env_array, key .. "=" .. value)
+  for _, entry in ipairs(unix.environ()) do
+    table.insert(env_array, entry)
   end
   unix.execve(claude_bin, execve_argv, env_array)
 
