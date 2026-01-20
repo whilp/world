@@ -58,7 +58,8 @@ local function new(self: Generic, name: string, ...: string): backend.Result
   for i = 1, #extra do
     args[#args + 1] = extra[i]
   end
-  return exec_backend(self.exe, "new", args, false)
+  -- passthrough=true so user sees progress and error messages
+  return exec_backend(self.exe, "new", args, true)
 end
 
 local function ssh(self: Generic, name: string, ...: string): backend.Result
