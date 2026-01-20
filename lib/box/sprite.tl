@@ -9,6 +9,10 @@ local claude = require("box.claude")
 local github = require("box.github")
 local git = require("box.git")
 
+local type SpawnHandle = require("cosmic.spawn").SpawnHandle
+
+local CLONE_TIMEOUT_SEC = 300  -- 5 minutes
+
 local function ok(): backend.Result
   return {ok = true}
 end
@@ -154,7 +158,36 @@ local function list(): backend.Result
   return err("failed to exec sprite list")
 end
 
+local record CloneJob
+  handle: SpawnHandle
+  dest: string
+end
+
+local function start_clone(url: string, dest: string): CloneJob
+  io.stderr:write("cloning " .. url .. "...\n")
+  local handle = spawn({"timeout", tostring(CLONE_TIMEOUT_SEC), "git", "clone", url, dest})
+  return {handle = handle, dest = dest}
+end
+
+local function wait_for_clones(jobs: {CloneJob}): boolean, string
+  for _, job in ipairs(jobs) do
+    local exit_code = job.handle:wait()
+    if exit_code == 124 then
+      return false, "clone timed out: " .. job.dest
+    elseif exit_code ~= 0 then
+      return false, "clone failed: " .. job.dest
+    end
+  end
+  return true
+end
+
 local function bootstrap(name: string): backend.Result
+  -- Start repo clones early (runs in parallel with other steps)
+  local home = os.getenv("HOME") or ""
+  local clone_jobs: {CloneJob} = {
+    start_clone("https://github.com/whilp/world", home .. "/world"),
+  }
+
   -- Install claude binary
   io.stderr:write("installing claude...\n")
   local install_ok, install_err = claude.install()
@@ -178,6 +211,13 @@ local function bootstrap(name: string): backend.Result
   cfg_ok, cfg_err = claude.configure()
   if not cfg_ok then
     return err(cfg_err or "claude config failed")
+  end
+
+  -- Wait for repo clones to complete
+  io.stderr:write("waiting for repo clones...\n")
+  local clone_ok, clone_err = wait_for_clones(clone_jobs)
+  if not clone_ok then
+    return err(clone_err or "clone failed")
   end
 
   return ok()
