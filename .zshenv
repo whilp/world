@@ -44,6 +44,9 @@ export WHEREAMI=$(whereami)
 export RIPGREP_CONFIG_PATH=~/.config/ripgrep/rg.conf
 export COLORTERM=truecolor
 
+export TMP=$HOME/stripe/tmp
+mkdir -p "$TMP"
+
 export GIT_AUTHOR_EMAIL="189851+whilp@users.noreply.github.com"
 export GIT_COMMITTER_EMAIL="189851+whilp@users.noreply.github.com"
 
