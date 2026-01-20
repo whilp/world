@@ -154,12 +154,12 @@ local function run_bootstrap_script(): boolean, string
     return false, "failed to create box symlink"
   end
 
-  -- Execute script with modified PATH using env command
+  -- Execute script with modified PATH and interpreter mode flag
   local spawn = require("cosmic.spawn")
   local old_path = os.getenv("PATH") or ""
   local new_path = tmpdir .. ":" .. old_path
 
-  local handle = spawn({"env", "PATH=" .. new_path, script_path}, {
+  local handle = spawn({"env", "PATH=" .. new_path, "BOX_INTERPRETER_MODE=1", script_path}, {
     stdout = 1,
     stderr = 2,
   })
