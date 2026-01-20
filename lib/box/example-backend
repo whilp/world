@@ -10,9 +10,15 @@
 #   download <name> <src> <dst> - Download file from box
 #   destroy <name>           - Destroy box
 #   list                     - List all boxes
+#   bootstrap-remote <name>  - (Optional) Emit bootstrap script for remote execution
 #
 # Exit code 0 indicates success, non-zero indicates failure.
 # Error messages should be written to stderr.
+#
+# The bootstrap-remote subcommand should output a script (to stdout) with a shebang:
+#   - For shell scripts: #!/bin/sh or #!/bin/bash
+#   - For Lua scripts: #!/usr/bin/env lua (gets access to box modules)
+# If not implemented, the backend has no remote bootstrap behavior.
 
 set -u
 
@@ -122,9 +128,64 @@ case "$cmd" in
     exit 0
     ;;
 
+  bootstrap-remote)
+    name="${1:-}"
+    if [[ -z "$name" ]]; then
+      echo "error: bootstrap-remote requires box name" >&2
+      exit 1
+    fi
+    # Emit bootstrap script to stdout
+    # The script can be shell or Lua (shebang determines execution)
+
+    # Example 1: Shell script
+    cat <<'EOF'
+#!/bin/bash
+# Remote bootstrap script for example-backend
+set -euo pipefail
+
+echo "Running example backend bootstrap on remote" >&2
+
+# Example: Install custom tools
+# sudo apt-get update && sudo apt-get install -y custom-tool
+
+# Example: Configure environment
+# mkdir -p ~/.config/myapp
+# echo "config=value" > ~/.config/myapp/config
+
+echo "Bootstrap complete" >&2
+EOF
+
+    # Example 2: Lua script (commented out)
+    # Uncomment to use Lua with access to box modules:
+    # cat <<'EOF'
+# #!/usr/bin/env lua
+# -- Remote bootstrap script using Lua
+#
+# -- Has access to box modules: box.claude, box.github, box.git
+# local claude = require("box.claude")
+# local github = require("box.github")
+#
+# io.stderr:write("Installing claude...\n")
+# local ok, err = claude.install()
+# if not ok then
+#   error("claude install failed: " .. (err or "unknown"))
+# end
+#
+# io.stderr:write("Configuring github...\n")
+# ok, err = github.configure()
+# if not ok then
+#   error("github config failed: " .. (err or "unknown"))
+# end
+#
+# io.stderr:write("Bootstrap complete\n")
+# EOF
+
+    exit 0
+    ;;
+
   *)
     echo "error: unknown command: $cmd" >&2
-    echo "usage: $0 {new|ssh|exec|upload|download|destroy|list}" >&2
+    echo "usage: $0 {new|ssh|exec|upload|download|destroy|list|bootstrap-remote}" >&2
     exit 1
     ;;
 esac

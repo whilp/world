@@ -131,6 +131,57 @@ local function load_backend(kind: string): backend.Backend
   return nil
 end
 
+local function run_bootstrap_script(): boolean, string
+  local script_path = "/zip/bootstrap.sh"
+  local stat = unix.stat(script_path)
+  if not stat then
+    return true -- no script to run
+  end
+
+  -- Read script to detect shebang
+  local script_content = cosmo.Slurp(script_path)
+  if not script_content then
+    return false, "failed to read bootstrap script"
+  end
+
+  -- Check shebang to determine how to execute
+  local shebang = script_content:match("^#!([^\n]+)")
+  if not shebang then
+    return false, "bootstrap script missing shebang"
+  end
+
+  io.stderr:write("==> running generic backend bootstrap\n")
+
+  -- If shebang contains "lua", execute as Lua code
+  if shebang:match("lua") then
+    -- Execute as Lua with access to box modules
+    local chunk, load_err = load(script_content, "@/zip/bootstrap.sh")
+    if not chunk then
+      return false, "failed to load bootstrap script: " .. (load_err or "unknown")
+    end
+    local ok, run_err = pcall(chunk)
+    if not ok then
+      return false, "bootstrap script failed: " .. (run_err or "unknown")
+    end
+  else
+    -- Execute as shell script
+    local spawn = require("cosmic.spawn")
+    local handle = spawn({"/bin/sh", script_path}, {
+      stdout = 1,
+      stderr = 2,
+    })
+    if not handle then
+      return false, "failed to spawn bootstrap script"
+    end
+    local exit_code = handle:wait()
+    if exit_code ~= 0 then
+      return false, "bootstrap script failed with exit code " .. tostring(exit_code)
+    end
+  end
+
+  return true
+end
+
 local function bootstrap(env_vars: {string:string}, name: string, kind: string): integer, string
   io.stderr:write("==> running bootstrap\n")
 
@@ -165,6 +216,12 @@ local function bootstrap(env_vars: {string:string}, name: string, kind: string):
       local result = be.bootstrap(name)
       if not result.ok then
         return 1, result.err or "backend bootstrap failed"
+      end
+    elseif not be then
+      -- Backend couldn't be loaded (generic backend), try bundled script
+      ok, err = run_bootstrap_script()
+      if not ok then
+        return 1, err or "generic bootstrap script failed"
       end
     end
   end

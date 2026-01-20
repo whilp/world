@@ -265,6 +265,23 @@ local function cmd_run(be: backend.Backend, name: string, env_dir: string, repo:
     return false, "failed to rename env directory"
   end
 
+  -- Get bootstrap script from backend if available
+  if be.bootstrap_remote_script then
+    io.stderr:write("==> getting bootstrap script from backend\n")
+    local script, script_err = be.bootstrap_remote_script(name)
+    if script_err then
+      cleanup()
+      return false, "failed to get bootstrap script: " .. script_err
+    end
+    if script and #script > 0 then
+      local bootstrap_file = path.join(tmpdir, "bootstrap.sh")
+      if not cosmo.Barf(bootstrap_file, script, tonumber("755", 8)) then
+        cleanup()
+        return false, "failed to write bootstrap script"
+      end
+    end
+  end
+
   -- Extract bundled zip tool to temp
   local zip_data = cosmo.Slurp("/zip/zip")
   if not zip_data then
@@ -284,14 +301,20 @@ local function cmd_run(be: backend.Backend, name: string, env_dir: string, repo:
     return false, "failed to copy box"
   end
 
-  -- Zip env.d directory into the box binary copy
+  -- Zip env.d directory and bootstrap script (if present) into the box binary copy
   -- Must chdir since spawn doesn't support cwd option
   local orig_dir = unix.getcwd()
   if not unix.chdir(tmpdir) then
     cleanup()
     return false, "failed to chdir to temp directory"
   end
-  local handle = spawn({tmp_zip, "-qr", tmp_box, "env.d"})
+  local zip_args = {tmp_zip, "-qr", tmp_box, "env.d"}
+  -- Add bootstrap.sh to zip if it exists
+  local bootstrap_file = path.join(tmpdir, "bootstrap.sh")
+  if unix.stat(bootstrap_file) then
+    table.insert(zip_args, "bootstrap.sh")
+  end
+  local handle = spawn(zip_args)
   local exit_code: number = -1
   if handle then
     exit_code = handle:wait()

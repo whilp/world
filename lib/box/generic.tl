@@ -107,8 +107,28 @@ local function exists(self: Generic, name: string): boolean
   return result.ok
 end
 
-local function bootstrap(self: Generic, name: string): backend.Result
-  return exec_backend(self.exe, "bootstrap", {name}, true)
+-- Get bootstrap script from backend for remote execution
+-- Returns: script_content, error
+local function get_bootstrap_script(exe: string, name: string): string, string
+  local handle = spawn({exe, "bootstrap-remote", name})
+  if not handle then
+    return nil, "failed to spawn: " .. exe
+  end
+
+  local read_ok, content = handle:read()
+  local exit_code = handle:wait()
+
+  if exit_code ~= 0 then
+    -- Not an error if bootstrap-remote isn't implemented
+    -- Just means this backend doesn't support remote bootstrap
+    return nil, nil
+  end
+
+  if not read_ok or not content then
+    return nil, "failed to read bootstrap script"
+  end
+
+  return content as string, nil
 end
 
 local function load(exe_path: string): backend.Backend, string
@@ -150,7 +170,8 @@ local function load(exe_path: string): backend.Backend, string
     destroy = function(name: string): backend.Result return destroy(g, name) end,
     list = function(): backend.Result return list(g) end,
     exists = function(name: string): boolean return exists(g, name) end,
-    bootstrap = function(name: string): backend.Result return bootstrap(g, name) end,
+    -- Return bootstrap script for remote execution
+    bootstrap_remote_script = function(name: string): string, string return get_bootstrap_script(g.exe, name) end,
   } as backend.Backend, nil
 end
 
