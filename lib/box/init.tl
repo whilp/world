@@ -18,6 +18,7 @@ local record ParsedArgs
   local_run: boolean    -- running remotely after upload
   repo: string          -- github repo (owner/name)
   release: string       -- release tag
+  prerelease: boolean   -- include prereleases when selecting latest
   extra_args: {string}  -- extra args to pass to ssh
 end
 
@@ -33,6 +34,7 @@ options:
   --env <path>          env directory (default: ~/.config/box/env.d)
   --repo <owner/name>   github repo (default: whilp/world)
   --release <tag>       release tag (default: latest)
+  --prerelease          include prereleases when selecting latest
 
 commands:
   new                   create box only
@@ -53,6 +55,7 @@ examples:
   box --sprite dev scp :/tmp/file.txt file.txt   # download
   box --backend my-backend dev   # use executable backend
   box --sprite --release 2026.01.16 dev run
+  box --sprite --prerelease dev run
 ]])
 end
 
@@ -65,6 +68,7 @@ local function parse_args(args: {string}): ParsedArgs, string
     local_run = false,
     repo = nil,
     release = nil,
+    prerelease = false,
     extra_args = {},
   }
 
@@ -75,6 +79,7 @@ local function parse_args(args: {string}): ParsedArgs, string
     {"env", "required"},
     {"repo", "required"},
     {"release", "required"},
+    {"prerelease", "none"},
     {"local-run", "none"},
     {"help", "none"},
   }
@@ -97,6 +102,8 @@ local function parse_args(args: {string}): ParsedArgs, string
       result.repo = optarg
     elseif opt == "release" then
       result.release = optarg
+    elseif opt == "prerelease" then
+      result.prerelease = true
     elseif opt == "local-run" then
       result.local_run = true
     elseif opt == "h" or opt == "help" then
@@ -168,7 +175,7 @@ local function cmd_new(be: backend.Backend, name: string): boolean, string
   return true
 end
 
-local function cmd_run(be: backend.Backend, name: string, env_dir: string, repo: string, release: string): boolean, string
+local function cmd_run(be: backend.Backend, name: string, env_dir: string, repo: string, release: string, prerelease: boolean): boolean, string
   io.stderr:write("==> bootstrapping " .. name .. "\n")
 
   -- Get path to self (the box binary)
@@ -241,6 +248,9 @@ local function cmd_run(be: backend.Backend, name: string, env_dir: string, repo:
   end
   if release and release ~= "" then
     table.insert(source_lines, "BOOTSTRAP_RELEASE=" .. release)
+  end
+  if prerelease then
+    table.insert(source_lines, "BOOTSTRAP_PRERELEASE=true")
   end
   if #source_lines > 0 then
     local source_file = path.join(tmp_env_dir, "source")
@@ -447,7 +457,7 @@ local function main(args: {string}): integer, string
     if not ok then return 1, err end
     return 0
   elseif parsed.cmd == "run" then
-    ok, err = cmd_run(be, parsed.name, parsed.env_path, parsed.repo, parsed.release)
+    ok, err = cmd_run(be, parsed.name, parsed.env_path, parsed.repo, parsed.release, parsed.prerelease)
     if not ok then return 1, err end
     cmd_backend_bootstrap(be, parsed.name)
     return 0
@@ -471,7 +481,7 @@ local function main(args: {string}): integer, string
       -- Create and bootstrap
       ok, err = cmd_new(be, parsed.name)
       if not ok then return 1, err end
-      ok, err = cmd_run(be, parsed.name, parsed.env_path, parsed.repo, parsed.release)
+      ok, err = cmd_run(be, parsed.name, parsed.env_path, parsed.repo, parsed.release, parsed.prerelease)
       if not ok then return 1, err end
       cmd_backend_bootstrap(be, parsed.name)
     end
