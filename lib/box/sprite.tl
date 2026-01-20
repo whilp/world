@@ -136,8 +136,15 @@ local function exists(name: string): boolean
   if not handle then
     return false
   end
-  local exit_code = handle:wait()
-  return exit_code == 0
+  local read_ok, output, exit_code = handle:read()
+  if exit_code ~= 0 or not read_ok or not output then
+    return false
+  end
+  -- sprite api returns exit 0 even for missing sprites, check for error in response
+  if (output as string):find('"error"', 1, true) then
+    return false
+  end
+  return true
 end
 
 local function list(): backend.Result
