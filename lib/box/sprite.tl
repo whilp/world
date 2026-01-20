@@ -160,8 +160,8 @@ local function bootstrap(name: string): backend.Result
     return err(install_err or "claude install failed")
   end
 
-  -- Configure gh auth
-  local cfg_ok, cfg_err = github.configure()
+  -- Configure gh auth (github.com only)
+  local cfg_ok, cfg_err = github.configure({"github.com"})
   if not cfg_ok then
     return err(cfg_err or "github config failed")
   end

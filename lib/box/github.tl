@@ -75,10 +75,25 @@ local function auth_host(gh_bin: string, host: GitHubHost): boolean
   return true
 end
 
-local function configure(): boolean, string
+local function configure(hostnames: {string}): boolean, string
   local hosts = discover_hosts()
+
+  -- Filter to specific hostnames if provided
+  if hostnames then
+    local filtered: {GitHubHost} = {}
+    for _, host in ipairs(hosts) do
+      for _, allowed in ipairs(hostnames) do
+        if host.hostname == allowed then
+          table.insert(filtered, host)
+          break
+        end
+      end
+    end
+    hosts = filtered
+  end
+
   if #hosts == 0 then
-    return true -- no github config
+    return true -- no matching github config
   end
 
   local home = os.getenv("HOME")
