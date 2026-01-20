@@ -64,3 +64,30 @@ local function test_whereami_box_name_kind()
   package.loaded["whereami"] = nil
 end
 test_whereami_box_name_kind()
+
+local function test_whereami_generic_backend()
+  local tmpdir = os.getenv("TEST_TMPDIR")
+  if not tmpdir then
+    print("skipping test_whereami_generic_backend (no TEST_TMPDIR)")
+    return
+  end
+
+  -- Create fake home with .config/box/{name,kind} using generic:backend format
+  local fake_home = path.join(tmpdir, "home2")
+  local box_dir = path.join(fake_home, ".config", "box")
+  unix.makedirs(box_dir)
+  cosmo.Barf(path.join(box_dir, "name"), "alpha\n")
+  cosmo.Barf(path.join(box_dir, "kind"), "generic:devbox\n")
+
+  local orig_home = os.getenv("HOME")
+  unix.setenv("HOME", fake_home)
+  package.loaded["whereami"] = nil
+  local fresh_whereami = require("whereami")
+
+  local result = fresh_whereami.get()
+  assert(result == "alpha.devbox", "expected 'alpha.devbox', got '" .. result .. "'")
+
+  unix.setenv("HOME", orig_home)
+  package.loaded["whereami"] = nil
+end
+test_whereami_generic_backend()

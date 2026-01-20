@@ -116,6 +116,11 @@ local function get(): string
   local box_name = get_box_name()
   local box_kind = get_box_kind()
   if box_name and box_name ~= '' and box_kind and box_kind ~= '' then
+    -- kind may be "generic:backend" - use backend as the kind
+    local backend = box_kind:match(':(.+)$')
+    if backend then
+      box_kind = backend
+    end
     return box_name .. "." .. box_kind
   end
 
