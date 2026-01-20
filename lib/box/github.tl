@@ -112,6 +112,16 @@ local function configure(hostnames: {string}): boolean, string
     auth_host(gh_bin, host)
   end
 
+  -- Configure git to use gh as credential helper
+  io.stderr:write("configuring git credential helper...\n")
+  local setup_handle = spawn({gh_bin, "auth", "setup-git"})
+  if setup_handle then
+    local exit_code = setup_handle:wait()
+    if exit_code ~= 0 then
+      io.stderr:write("warning: gh auth setup-git failed (exit " .. tostring(exit_code) .. ")\n")
+    end
+  end
+
   return true
 end
 
