@@ -131,6 +131,54 @@ local function load_backend(kind: string): backend.Backend
   return nil
 end
 
+local function run_bootstrap_script(): boolean, string
+  local script_path = "/zip/bootstrap"
+  local stat = unix.stat(script_path)
+  if not stat then
+    return true -- no script to run
+  end
+
+  io.stderr:write("==> running generic backend bootstrap\n")
+
+  -- Set up box in PATH so scripts can use #!/usr/bin/env box
+  -- Create temp directory for box symlink
+  local tmpdir = unix.mkdtemp("/tmp/box-bootstrap-XXXXXX")
+  if not tmpdir then
+    return false, "failed to create temp directory for bootstrap"
+  end
+
+  -- Symlink /tmp/box to tmpdir/box
+  local box_link = path.join(tmpdir, "box")
+  if not unix.symlink("/tmp/box", box_link) then
+    unix.rmrf(tmpdir)
+    return false, "failed to create box symlink"
+  end
+
+  -- Execute script with modified PATH and interpreter mode flag
+  local spawn = require("cosmic.spawn")
+  local old_path = os.getenv("PATH") or ""
+  local new_path = tmpdir .. ":" .. old_path
+
+  local handle = spawn({"env", "PATH=" .. new_path, "BOX_INTERPRETER_MODE=1", script_path}, {
+    stdout = 1,
+    stderr = 2,
+  })
+
+  if not handle then
+    unix.rmrf(tmpdir)
+    return false, "failed to spawn bootstrap script"
+  end
+
+  local exit_code = handle:wait()
+  unix.rmrf(tmpdir)
+
+  if exit_code ~= 0 then
+    return false, "bootstrap script failed with exit code " .. tostring(exit_code)
+  end
+
+  return true
+end
+
 local function bootstrap(env_vars: {string:string}, name: string, kind: string): integer, string
   io.stderr:write("==> running bootstrap\n")
 
@@ -165,6 +213,12 @@ local function bootstrap(env_vars: {string:string}, name: string, kind: string):
       local result = be.bootstrap(name)
       if not result.ok then
         return 1, result.err or "backend bootstrap failed"
+      end
+    elseif not be then
+      -- Backend couldn't be loaded (generic backend), try bundled script
+      ok, err = run_bootstrap_script()
+      if not ok then
+        return 1, err or "generic bootstrap script failed"
       end
     end
   end

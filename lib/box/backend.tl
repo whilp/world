@@ -15,7 +15,8 @@ local record Backend
   destroy: function(name: string): Result
   list: function(): Result
   exists: function(name: string): boolean  -- check if box exists
-  bootstrap: function(name: string): Result  -- optional, called after generic bootstrap
+  bootstrap: function(name: string): Result  -- optional, called after generic bootstrap on remote
+  bootstrap_remote_script: function(name: string): string, string  -- optional, returns script to run on remote
 end
 
 local record Git

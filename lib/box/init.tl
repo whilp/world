@@ -265,6 +265,23 @@ local function cmd_run(be: backend.Backend, name: string, env_dir: string, repo:
     return false, "failed to rename env directory"
   end
 
+  -- Get bootstrap script from backend if available
+  if be.bootstrap_remote_script then
+    io.stderr:write("==> getting bootstrap script from backend\n")
+    local script, script_err = be.bootstrap_remote_script(name)
+    if script_err then
+      cleanup()
+      return false, "failed to get bootstrap script: " .. script_err
+    end
+    if script and #script > 0 then
+      local bootstrap_file = path.join(tmpdir, "bootstrap")
+      if not cosmo.Barf(bootstrap_file, script, tonumber("755", 8)) then
+        cleanup()
+        return false, "failed to write bootstrap script"
+      end
+    end
+  end
+
   -- Extract bundled zip tool to temp
   local zip_data = cosmo.Slurp("/zip/zip")
   if not zip_data then
@@ -284,14 +301,20 @@ local function cmd_run(be: backend.Backend, name: string, env_dir: string, repo:
     return false, "failed to copy box"
   end
 
-  -- Zip env.d directory into the box binary copy
+  -- Zip env.d directory and bootstrap script (if present) into the box binary copy
   -- Must chdir since spawn doesn't support cwd option
   local orig_dir = unix.getcwd()
   if not unix.chdir(tmpdir) then
     cleanup()
     return false, "failed to chdir to temp directory"
   end
-  local handle = spawn({tmp_zip, "-qr", tmp_box, "env.d"})
+  local zip_args = {tmp_zip, "-qr", tmp_box, "env.d"}
+  -- Add bootstrap to zip if it exists
+  local bootstrap_file = path.join(tmpdir, "bootstrap")
+  if unix.stat(bootstrap_file) then
+    table.insert(zip_args, "bootstrap")
+  end
+  local handle = spawn(zip_args)
   local exit_code: number = -1
   if handle then
     exit_code = handle:wait()
@@ -404,6 +427,45 @@ local function cmd_local_run(name: string, kind: string): integer, string
 end
 
 local function main(args: {string}): integer, string
+  -- Check if being invoked as interpreter via BOX_INTERPRETER_MODE env var
+  -- This is set when scripts use #!/usr/bin/env box as their shebang
+  if os.getenv("BOX_INTERPRETER_MODE") == "1" then
+    if #args == 0 then
+      return 1, "interpreter mode requires a script path"
+    end
+
+    local script_path = args[1]
+    local script_content = cosmo.Slurp(script_path)
+    if not script_content then
+      return 1, "failed to read script: " .. script_path
+    end
+
+    -- Strip shebang if present
+    if script_content:match("^#!") then
+      script_content = script_content:gsub("^#![^\n]*\n", "")
+    end
+
+    -- Set up arg array for the script (remove script path, keep remaining args)
+    local script_args = {}
+    for i = 2, #args do
+      script_args[i - 1] = args[i]
+    end
+    _G.arg = script_args
+
+    -- Load and execute the script
+    local chunk, load_err = load(script_content, "@" .. script_path)
+    if not chunk then
+      return 1, "failed to load script: " .. (load_err or "unknown")
+    end
+
+    local ok, run_err = pcall(chunk)
+    if not ok then
+      return 1, "script failed: " .. tostring(run_err)
+    end
+
+    return 0
+  end
+
   local parsed, err = parse_args(args)
   if not parsed then
     return 1, err
