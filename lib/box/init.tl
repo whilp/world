@@ -275,12 +275,22 @@ local function cmd_run(be: backend.Backend, name: string, env_dir: string, repo:
   end
 
   -- Zip env.d directory into the box binary copy
-  local handle = spawn({tmp_zip, "-qr", tmp_box, "env.d"}, {cwd = tmpdir})
+  -- Must chdir since spawn doesn't support cwd option
+  local orig_dir = unix.getcwd()
+  if not unix.chdir(tmpdir) then
+    cleanup()
+    return false, "failed to chdir to temp directory"
+  end
+  local handle = spawn({tmp_zip, "-qr", tmp_box, "env.d"})
+  local exit_code: number = -1
+  if handle then
+    exit_code = handle:wait()
+  end
+  unix.chdir(orig_dir)
   if not handle then
     cleanup()
     return false, "failed to run zip"
   end
-  local exit_code = handle:wait()
   if exit_code ~= 0 then
     cleanup()
     return false, "zip failed: exit " .. tostring(exit_code)
