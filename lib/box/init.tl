@@ -427,6 +427,48 @@ local function cmd_local_run(name: string, kind: string): integer, string
 end
 
 local function main(args: {string}): integer, string
+  -- Check if being invoked as interpreter (e.g., #!/usr/bin/env box script.lua)
+  -- This happens when first arg is a file path that exists
+  if #args > 0 then
+    local first_arg = args[1]
+    -- Not a flag and not a known command
+    if not first_arg:match("^%-%-") and first_arg ~= "list" then
+      local stat = unix.stat(first_arg)
+      if stat and unix.S_ISREG(stat:mode()) then
+        -- Execute as Lua script
+        local script_content = cosmo.Slurp(first_arg)
+        if not script_content then
+          return 1, "failed to read script: " .. first_arg
+        end
+
+        -- Strip shebang if present
+        if script_content:match("^#!") then
+          script_content = script_content:gsub("^#![^\n]*\n", "")
+        end
+
+        -- Set up arg array for the script (remove script path, keep remaining args)
+        local script_args = {}
+        for i = 2, #args do
+          script_args[i - 1] = args[i]
+        end
+        _G.arg = script_args
+
+        -- Load and execute the script
+        local chunk, load_err = load(script_content, "@" .. first_arg)
+        if not chunk then
+          return 1, "failed to load script: " .. (load_err or "unknown")
+        end
+
+        local ok, run_err = pcall(chunk)
+        if not ok then
+          return 1, "script failed: " .. tostring(run_err)
+        end
+
+        return 0
+      end
+    end
+  end
+
   local parsed, err = parse_args(args)
   if not parsed then
     return 1, err
