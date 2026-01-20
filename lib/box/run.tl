@@ -120,17 +120,6 @@ local function write_box_info(name: string, kind: string): boolean, string
   return true
 end
 
-local backend = require("box.backend")
-
-local function load_backend(kind: string): backend.Backend
-  if kind == "sprite" then
-    return require("box.sprite") as backend.Backend
-  elseif kind == "mac" then
-    return require("box.mac") as backend.Backend
-  end
-  return nil
-end
-
 local function run_bootstrap_script(): boolean, string
   local script_path = "/zip/bootstrap"
   local stat = unix.stat(script_path)
@@ -138,7 +127,7 @@ local function run_bootstrap_script(): boolean, string
     return true -- no script to run
   end
 
-  io.stderr:write("==> running generic backend bootstrap\n")
+  io.stderr:write("==> running backend bootstrap\n")
 
   -- Set up box in PATH so scripts can use #!/usr/bin/env box
   -- Create temp directory for box symlink
@@ -206,21 +195,10 @@ local function bootstrap(env_vars: {string:string}, name: string, kind: string):
   end
 
   -- Step 2: Run backend-specific bootstrap (installs claude, configures credentials)
-  if kind and kind ~= "" then
-    local be = load_backend(kind)
-    if be and be.bootstrap then
-      io.stderr:write("==> running backend bootstrap\n")
-      local result = be.bootstrap(name)
-      if not result.ok then
-        return 1, result.err or "backend bootstrap failed"
-      end
-    elseif not be then
-      -- Backend couldn't be loaded (generic backend), try bundled script
-      ok, err = run_bootstrap_script()
-      if not ok then
-        return 1, err or "generic bootstrap script failed"
-      end
-    end
+  -- All backends now use the bootstrap script approach
+  ok, err = run_bootstrap_script()
+  if not ok then
+    return 1, err or "bootstrap script failed"
   end
 
   io.stderr:write("==> bootstrap complete\n")

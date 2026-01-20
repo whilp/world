@@ -5,9 +5,6 @@ local spawn = require("cosmic.spawn")
 local cosmo = require("cosmo")
 
 local backend = require("box.backend")
-local claude = require("box.claude")
-local github = require("box.github")
-local git = require("box.git")
 
 local function ok(): backend.Result
   return {ok = true}
@@ -152,33 +149,41 @@ local function list(): backend.Result
   return err("failed to exec sprite list")
 end
 
-local function bootstrap(name: string): backend.Result
-  -- Install claude binary
-  io.stderr:write("installing claude...\n")
-  local install_ok, install_err = claude.install()
-  if not install_ok then
-    return err(install_err or "claude install failed")
-  end
+local function bootstrap_remote_script(name: string): string, string
+  -- Emit Lua script that runs on remote with box module access
+  return [[#!/usr/bin/env box
+-- Sprite backend bootstrap script
+-- Has access to box modules: box.claude, box.github, box.git
 
-  -- Configure gh auth
-  local cfg_ok, cfg_err = github.configure()
-  if not cfg_ok then
-    return err(cfg_err or "github config failed")
-  end
+local claude = require("box.claude")
+local github = require("box.github")
+local git = require("box.git")
 
-  -- Configure git identity
-  cfg_ok, cfg_err = git.configure()
-  if not cfg_ok then
-    return err(cfg_err or "git config failed")
-  end
+-- Install claude binary
+io.stderr:write("installing claude...\n")
+local ok, err = claude.install()
+if not ok then
+  error(err or "claude install failed")
+end
 
-  -- Configure claude credentials
-  cfg_ok, cfg_err = claude.configure()
-  if not cfg_ok then
-    return err(cfg_err or "claude config failed")
-  end
+-- Configure gh auth
+ok, err = github.configure()
+if not ok then
+  error(err or "github config failed")
+end
 
-  return ok()
+-- Configure git identity
+ok, err = git.configure()
+if not ok then
+  error(err or "git config failed")
+end
+
+-- Configure claude credentials
+ok, err = claude.configure()
+if not ok then
+  error(err or "claude config failed")
+end
+]], nil
 end
 
 return {
@@ -191,5 +196,5 @@ return {
   destroy = destroy,
   list = list,
   exists = exists,
-  bootstrap = bootstrap,
+  bootstrap_remote_script = bootstrap_remote_script,
 } as backend.Backend
