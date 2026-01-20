@@ -17,7 +17,7 @@
 #
 # The bootstrap-remote subcommand should output a script (to stdout) with a shebang:
 #   - For shell scripts: #!/bin/sh or #!/bin/bash
-#   - For Lua scripts: #!/usr/bin/env lua (gets access to box modules)
+#   - For Lua scripts with box modules: #!/usr/bin/env box
 # If not implemented, the backend has no remote bootstrap behavior.
 
 set -u
@@ -158,8 +158,8 @@ EOF
     # Example 2: Lua script (commented out)
     # Uncomment to use Lua with access to box modules:
     # cat <<'EOF'
-# #!/usr/bin/env lua
-# -- Remote bootstrap script using Lua
+# #!/usr/bin/env box
+# -- Remote bootstrap script using Lua with box modules
 #
 # -- Has access to box modules: box.claude, box.github, box.git
 # local claude = require("box.claude")

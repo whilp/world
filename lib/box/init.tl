@@ -274,7 +274,7 @@ local function cmd_run(be: backend.Backend, name: string, env_dir: string, repo:
       return false, "failed to get bootstrap script: " .. script_err
     end
     if script and #script > 0 then
-      local bootstrap_file = path.join(tmpdir, "bootstrap.sh")
+      local bootstrap_file = path.join(tmpdir, "bootstrap")
       if not cosmo.Barf(bootstrap_file, script, tonumber("755", 8)) then
         cleanup()
         return false, "failed to write bootstrap script"
@@ -309,10 +309,10 @@ local function cmd_run(be: backend.Backend, name: string, env_dir: string, repo:
     return false, "failed to chdir to temp directory"
   end
   local zip_args = {tmp_zip, "-qr", tmp_box, "env.d"}
-  -- Add bootstrap.sh to zip if it exists
-  local bootstrap_file = path.join(tmpdir, "bootstrap.sh")
+  -- Add bootstrap to zip if it exists
+  local bootstrap_file = path.join(tmpdir, "bootstrap")
   if unix.stat(bootstrap_file) then
-    table.insert(zip_args, "bootstrap.sh")
+    table.insert(zip_args, "bootstrap")
   end
   local handle = spawn(zip_args)
   local exit_code: number = -1
