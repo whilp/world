@@ -31,8 +31,8 @@ end
 
 local function current_environ(): {string}
   local result: {string} = {}
-  for key, value in pairs(unix.environ()) do
-    table.insert(result, key .. "=" .. value)
+  for _, entry in ipairs(unix.environ()) do
+    table.insert(result, entry)
   end
   return result
 end
@@ -145,8 +145,11 @@ end
 
 local function setup_nvim_environment(nvim_bin: string): {string}
   local env_table: {string:string} = {}
-  for key, value in pairs(unix.environ()) do
-    env_table[key] = value
+  for _, entry in ipairs(unix.environ()) do
+    local key, value = entry:match("^([^=]+)=(.*)$")
+    if key then
+      env_table[key] = value
+    end
   end
   env_table["NVIM_SERVER_MODE"] = "1"
   env_table["WHEREAMI"] = whereami.get_with_emoji()
