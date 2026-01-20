@@ -24,12 +24,26 @@ local function exec_backend(exe: string, subcommand: string, args: {string}, pas
     stdout = 1,
     stderr = 2,
   } or {
-    stderr = -1,  -- capture stderr for error messages
+    -- use pipes for both (default) - we'll drain them to avoid blocking
+    -- note: closing fds (-1) breaks some lua/teal programs
   }
 
   local handle = spawn(cmd, opts)
   if not handle then
     return {ok = false, err = "failed to spawn: " .. cmd[1]}
+  end
+
+  -- Drain pipes before wait() to avoid deadlock
+  -- Note: closing fds (-1) breaks some lua/teal programs, so we use pipes
+  local stderr_content: string
+  if not passthrough then
+    if handle.stdout then handle.stdout:read() end
+    if handle.stderr then
+      local read_result = {handle.stderr:read()}
+      if read_result[1] then
+        stderr_content = read_result[2] as string
+      end
+    end
   end
 
   local exit_code = handle:wait()
@@ -38,15 +52,9 @@ local function exec_backend(exe: string, subcommand: string, args: {string}, pas
     return {ok = true}
   end
 
-  -- Capture stderr for error message if not passthrough
   local error_msg = "command failed with exit code " .. tostring(exit_code)
-  if not passthrough and handle.stderr then
-    local read_result = {handle.stderr:read()}
-    local ok = read_result[1] as boolean
-    local stderr_content = read_result[2] as string
-    if ok and stderr_content and #stderr_content > 0 then
-      error_msg = stderr_content:gsub("%s+$", "")
-    end
+  if stderr_content and #stderr_content > 0 then
+    error_msg = stderr_content:gsub("%s+$", "")
   end
 
   return {ok = false, err = error_msg}
