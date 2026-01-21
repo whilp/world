@@ -1,8 +1,8 @@
 return {
-  version = "2026-01-19-f861075",
+  version = "2026-01-21-ce05821",
   format = "binary",
   url = "https://github.com/whilp/cosmic/releases/download/{version}/cosmic-lua",
   platforms = {
-    ["*"] = { sha = "4c881a10a68dc8638fde1deda4400324a5a87fb56c54631e46248fb03b9b8058" },
+    ["*"] = { sha = "d76bc287d176e3f1a3bf7b198a4199979f9529ff071b718759b69a20e7726873" },
   },
 }
