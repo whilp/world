@@ -61,7 +61,7 @@ case "$cmd" in
     # Execute command on box - for demo, just echo
     echo "Executing on $name: $cmd_to_run" >&2
     # In a real backend, you would:
-    # - ssh user@host -- bash -c "$cmd_to_run"
+    # - ssh user@host -- sh -c "$cmd_to_run"
     # - Pass through stdout/stderr
     exit 0
     ;;
