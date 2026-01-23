@@ -43,9 +43,19 @@ end
 
 local function ssh(name: string, ...: string): backend.Result
   local args = {"sprite", "console", "-s", name}
-  for i = 1, select("#", ...) do
-    local a = select(i, ...)
-    table.insert(args, a)
+  local extra_args = {...}
+
+  -- If no command specified, use user's preferred shell from $SHELL
+  if #extra_args == 0 then
+    local shell = os.getenv("SHELL")
+    if shell then
+      table.insert(args, "--")
+      table.insert(args, shell)
+    end
+  else
+    for i = 1, #extra_args do
+      table.insert(args, extra_args[i])
+    end
   end
 
   unix.execvp("sprite", args)
