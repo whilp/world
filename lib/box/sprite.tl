@@ -43,9 +43,13 @@ end
 
 local function ssh(name: string, ...: string): backend.Result
   local args = {"sprite", "console", "-s", name}
-  for i = 1, select("#", ...) do
-    local a = select(i, ...)
-    table.insert(args, a)
+  local extra_args = {...}
+
+  if #extra_args > 0 then
+    table.insert(args, "--")
+    for i = 1, #extra_args do
+      table.insert(args, extra_args[i])
+    end
   end
 
   unix.execvp("sprite", args)
