@@ -73,17 +73,8 @@ end
 local function ssh(self: Generic, name: string, ...: string): backend.Result
   local cmd = {self.exe, "ssh", name}
   local extra = {...}
-
-  -- If no command specified, use user's preferred shell from $SHELL
-  if #extra == 0 then
-    local shell = os.getenv("SHELL")
-    if shell then
-      cmd[#cmd + 1] = shell
-    end
-  else
-    for i = 1, #extra do
-      cmd[#cmd + 1] = extra[i]
-    end
+  for i = 1, #extra do
+    cmd[#cmd + 1] = extra[i]
   end
 
   -- ssh is interactive, use execvp for full passthrough

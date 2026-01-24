@@ -46,8 +46,8 @@ case "$cmd" in
     # Connect to box via SSH - for demo, just echo
     echo "SSHing to box: $name with args: $*" >&2
     # In a real backend, you would:
-    # - If $1 is provided (user's preferred shell), exec ssh user@host "$1"
-    # - Otherwise, exec ssh user@host (uses default shell)
+    # - If $1 is provided (shell from box), exec ssh user@host "$1"
+    # - Otherwise, exec ssh user@host (uses remote default shell)
     # Note: use exec to replace this process with ssh
     exit 0
     ;;
