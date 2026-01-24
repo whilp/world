@@ -58,7 +58,7 @@ end
 
 local function exec(name: string, cmd: string): backend.Result
   -- stdin required to avoid exit 255 from sprite exec
-  local handle = spawn({"sprite", "exec", "-s", name, "--", "sh", "-c", cmd}, {
+  local handle = spawn({"sprite", "exec", "-s", name, "--", "bash", "-c", cmd}, {
     stdin = 0,
     stdout = 1,
     stderr = 2,
@@ -76,7 +76,7 @@ end
 local function upload(name: string, src: string, dst: string): backend.Result
   -- sprite -file doesn't handle relative paths correctly, resolve to absolute
   if not dst:match("^/") then
-    local home_handle = spawn({"sprite", "exec", "-s", name, "--", "sh", "-c", "echo $HOME"})
+    local home_handle = spawn({"sprite", "exec", "-s", name, "--", "bash", "-c", "echo $HOME"})
     if not home_handle then
       return err("sprite binary not found")
     end
