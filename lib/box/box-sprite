@@ -11,9 +11,13 @@ case "$cmd" in
     ;;
 
   ssh)
-    if [[ $# -gt 0 ]]; then
-      exec sprite console -s "$BOX_NAME" -- "$@"
+    # sprite console handles shell selection internally, ignore shell args
+    # but pass through actual commands via exec
+    if [[ $# -gt 0 && "$1" != /* ]]; then
+      # Non-path arg = actual command, use exec
+      exec sprite exec -s "$BOX_NAME" -- "$@"
     else
+      # No args or shell path = interactive, use console
       exec sprite console -s "$BOX_NAME"
     fi
     ;;
