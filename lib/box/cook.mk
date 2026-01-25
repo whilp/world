@@ -40,6 +40,3 @@ $(box_sprite): lib/box/box-sprite
 	@mkdir -p $(@D)
 	@$(cp) $< $@
 	@chmod +x $@
-
-# backend test depends on example-backend
-$(o)/lib/box/test_backend.tl.test.ok: lib/box/example-backend

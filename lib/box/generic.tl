@@ -12,7 +12,25 @@ local record Generic
   exe: string
 end
 
-local function exec_backend(exe: string, subcommand: string, args: {string}, passthrough: boolean): backend.Result
+local record ExecOpts
+  name: string
+  src: string
+  dst: string
+  cmd: string
+end
+
+local function build_env(opts: ExecOpts): {string}
+  local env = unix.environ()
+  if opts then
+    if opts.name then env[#env + 1] = "BOX_NAME=" .. opts.name end
+    if opts.src then env[#env + 1] = "BOX_SRC=" .. opts.src end
+    if opts.dst then env[#env + 1] = "BOX_DST=" .. opts.dst end
+    if opts.cmd then env[#env + 1] = "BOX_CMD=" .. opts.cmd end
+  end
+  return env
+end
+
+local function exec_backend(exe: string, subcommand: string, args: {string}, passthrough: boolean, box_opts: ExecOpts): backend.Result
   local cmd = {exe, subcommand}
 
   -- Append additional arguments
@@ -20,7 +38,7 @@ local function exec_backend(exe: string, subcommand: string, args: {string}, pas
     cmd[#cmd + 1] = args[i]
   end
 
-  local env = unix.environ()
+  local env = build_env(box_opts)
   local opts = passthrough and {
     stdin = 0,
     stdout = 1,
@@ -63,54 +81,99 @@ local function exec_backend(exe: string, subcommand: string, args: {string}, pas
 end
 
 local function new(self: Generic, name: string, ...: string): backend.Result
-  local args = {name}
-  local extra = {...}
-  for i = 1, #extra do
-    args[#args + 1] = extra[i]
-  end
+  local args = {...}
   -- passthrough=true so user sees progress and error messages
-  return exec_backend(self.exe, "new", args, true)
+  return exec_backend(self.exe, "new", args, true, {name = name})
 end
 
 local function ssh(self: Generic, name: string, ...: string): backend.Result
-  local cmd = {self.exe, "ssh", name}
+  local cmd = {self.exe, "ssh"}
   local extra = {...}
   for i = 1, #extra do
     cmd[#cmd + 1] = extra[i]
   end
+
+  -- Set BOX_NAME in environment
+  unix.setenv("BOX_NAME", name)
 
   -- ssh is interactive, use execvp for full passthrough
   unix.execvp(cmd[1], cmd)
   return {ok = false, err = "execvp failed"}
 end
 
-local function exec_cmd(self: Generic, name: string, cmd: string): backend.Result
-  return exec_backend(self.exe, "exec", {name, cmd}, true)
+local function exec_cmd(self: Generic, name: string, cmd_str: string): backend.Result
+  return exec_backend(self.exe, "exec", {}, true, {name = name, cmd = cmd_str})
+end
+
+-- Helper to execute and capture stdout
+local function exec_capture(exe: string, name: string, cmd_str: string): string, string
+  local cmd = {exe, "exec"}
+  local env = build_env({name = name, cmd = cmd_str})
+  local handle = spawn(cmd, {env = env})
+  if not handle then
+    return nil, "failed to spawn"
+  end
+  local stdout_content: string
+  if handle.stdout then
+    local ok, content = handle.stdout:read()
+    if ok and content then
+      stdout_content = (content as string):gsub("%s+$", "")
+    end
+  end
+  if handle.stderr then handle.stderr:read() end
+  local exit_code = handle:wait()
+  if exit_code ~= 0 then
+    return nil, "command failed"
+  end
+  return stdout_content
+end
+
+-- Resolve relative path to absolute using remote $HOME
+local function resolve_remote_path(exe: string, name: string, p: string): string, string
+  if p:sub(1, 1) == "/" then
+    return p  -- already absolute
+  end
+  local home, err = exec_capture(exe, name, "printf %s \"$HOME\"")
+  if not home then
+    return nil, err
+  end
+  if p == "." or p == "./" then
+    return home
+  elseif p:sub(1, 2) == "./" then
+    return path.join(home, p:sub(3))
+  else
+    return path.join(home, p)
+  end
 end
 
 local function upload(self: Generic, name: string, src: string, dst: string): backend.Result
-  return exec_backend(self.exe, "upload", {name, src, dst}, false)
+  -- Resolve relative dst to absolute
+  local resolved_dst, resolve_err = resolve_remote_path(self.exe, name, dst)
+  if not resolved_dst then
+    return {ok = false, err = "failed to resolve destination path: " .. (resolve_err or "unknown")}
+  end
+  return exec_backend(self.exe, "upload", {}, false, {name = name, src = src, dst = resolved_dst})
 end
 
 local function download(self: Generic, name: string, src: string, dst: string): backend.Result
-  return exec_backend(self.exe, "download", {name, src, dst}, false)
+  return exec_backend(self.exe, "download", {}, false, {name = name, src = src, dst = dst})
 end
 
 local function destroy(self: Generic, name: string): backend.Result
-  return exec_backend(self.exe, "destroy", {name}, false)
+  return exec_backend(self.exe, "destroy", {}, false, {name = name})
 end
 
 local function list(self: Generic): backend.Result
-  return exec_backend(self.exe, "list", {}, true)
+  return exec_backend(self.exe, "list", {}, true, nil)
 end
 
 local function exists(self: Generic, name: string): boolean
-  local result = exec_backend(self.exe, "exists", {name}, false)
+  local result = exec_backend(self.exe, "exists", {}, false, {name = name})
   return result.ok
 end
 
 local function bootstrap(self: Generic, name: string): backend.Result
-  return exec_backend(self.exe, "bootstrap", {name}, true)
+  return exec_backend(self.exe, "bootstrap", {}, true, {name = name})
 end
 
 local function load(exe_path: string): backend.Backend, string
