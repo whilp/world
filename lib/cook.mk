@@ -24,7 +24,11 @@ o/teal/lib/%.lua: lib/%.tl $(types_files) | $(bootstrap_files)
 	@$(bootstrap_cosmic) /zip/tl-gen.lua $< -o $@
 
 include lib/aerosnap/cook.mk
+ifdef TEST_BUN
+ifdef TEST_CLASP
 include lib/appscript/cook.mk
+endif
+endif
 include lib/box/cook.mk
 include lib/build/cook.mk
 include lib/checker/cook.mk

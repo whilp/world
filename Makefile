@@ -56,8 +56,13 @@ include 3p/nvim-parsers/cook.mk
 include 3p/nvim/cook.mk
 include 3p/cosmic/cook.mk
 
+ifdef TEST_BUN
 include 3p/bun/cook.mk
+endif
+
+ifdef TEST_CLASP
 include 3p/clasp/cook.mk
+endif
 
 include cook.mk
 
