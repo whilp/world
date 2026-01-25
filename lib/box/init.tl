@@ -316,8 +316,15 @@ local function cmd_run(be: backend.Backend, backend_type: string, name: string, 
 
   cleanup()
 
+  -- Download and unpack home
+  io.stderr:write("==> unpacking home\n")
+  local home_cmd = 'curl -fsSL "https://github.com/whilp/world/releases/latest/download/home-$(uname -s)-$(uname -m)" -o /tmp/home && chmod +x /tmp/home && /tmp/home unpack --force "$HOME"'
+  result = be.exec(name, home_cmd)
+  if not result.ok then
+    return false, "home unpack failed: " .. (result.err or "unknown")
+  end
+
   -- Call backend bootstrap locally with BOX_BACKEND set
-  -- This allows the backend to orchestrate the remote bootstrap
   io.stderr:write("==> running backend bootstrap\n")
   unix.setenv("BOX_BACKEND", backend_type)
   result = be.bootstrap(name)

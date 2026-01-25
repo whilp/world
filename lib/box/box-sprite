@@ -44,9 +44,6 @@ case "$cmd" in
     ;;
 
   bootstrap)
-    echo "==> downloading and unpacking home" >&2
-    box exec "$BOX_NAME" 'curl -fsSL "https://github.com/whilp/world/releases/latest/download/home-$(uname -s)-$(uname -m)" -o /tmp/home && chmod +x /tmp/home && /tmp/home unpack --force "$HOME"'
-
     if [[ -n "${CLAUDE_CREDENTIALS:-}" ]]; then
       echo "==> installing claude" >&2
       box exec "$BOX_NAME" 'npm install -g @anthropic-ai/claude-code || true'
