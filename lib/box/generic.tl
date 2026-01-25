@@ -20,12 +20,13 @@ local function exec_backend(exe: string, subcommand: string, args: {string}, pas
     cmd[#cmd + 1] = args[i]
   end
 
+  local env = unix.environ()
   local opts = passthrough and {
     stdout = 1,
     stderr = 2,
+    env = env,
   } or {
-    -- use pipes for both (default) - we'll drain them to avoid blocking
-    -- note: closing fds (-1) breaks some lua/teal programs
+    env = env,
   }
 
   local handle = spawn(cmd, opts)
