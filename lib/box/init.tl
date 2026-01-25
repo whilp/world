@@ -10,25 +10,24 @@ local backend = require("box.backend")
 local ENV_DIR <const> = "/zip/env.d"
 
 local record ParsedArgs
-  backend_type: string  -- "sprite", "mac", or path to executable backend
+  backend_type: string  -- backend executable name or path
   name: string          -- box name
-  kind: string          -- backend kind (for local-run mode)
-  cmd: string           -- "new", "run", "ssh", "zap", "list", or nil for all-in-one
+  kind: string          -- backend kind (for setup-env mode)
+  cmd: string           -- "new", "run", "ssh", "zap", "list", "exec", or nil for all-in-one
   env_path: string      -- path to env.d directory
-  local_run: boolean    -- running remotely after upload
+  setup_env: boolean    -- running remotely to set up environment
   repo: string          -- github repo (owner/name)
   release: string       -- release tag
   prerelease: boolean   -- include prereleases when selecting latest
-  extra_args: {string}  -- extra args to pass to ssh
+  extra_args: {string}  -- extra args to pass to ssh/exec
 end
 
 local function usage()
   io.stderr:write([[usage: box [options] [name] [command]
 
 backends (pick one):
-  --sprite              sprites.dev backend (bundled)
-  --mac                 local mac backend (bundled)
-  --backend <path>      executable backend
+  --sprite              sprites.dev backend (shorthand for --backend box-sprite)
+  --backend <path>      executable backend (also reads BOX_BACKEND env var)
 
 options:
   --env <path>          env directory (default: ~/.config/box/env.d)
@@ -43,6 +42,7 @@ commands:
   scp <src> <dst>       copy files (: prefix = remote)
   zap                   destroy box
   list                  list boxes
+  exec <cmd>            execute command on box
 
 If no command given, creates box if needed then connects via ssh (default).
 
@@ -53,7 +53,7 @@ examples:
   box --sprite dev zap       # destroy sprite
   box --sprite dev scp file.txt :/tmp/file.txt   # upload
   box --sprite dev scp :/tmp/file.txt file.txt   # download
-  box --backend my-backend dev   # use executable backend
+  box --backend box-mydata dev   # use executable backend
   box --sprite --release 2026.01.16 dev run
   box --sprite --prerelease dev run
 ]])
@@ -61,11 +61,11 @@ end
 
 local function parse_args(args: {string}): ParsedArgs, string
   local result: ParsedArgs = {
-    backend_type = nil,
+    backend_type = os.getenv("BOX_BACKEND"),  -- default from env var
     name = nil,
     cmd = nil,
     env_path = path.join(os.getenv("HOME") or "", ".config", "box", "env.d"),
-    local_run = false,
+    setup_env = false,
     repo = nil,
     release = nil,
     prerelease = false,
@@ -74,13 +74,12 @@ local function parse_args(args: {string}): ParsedArgs, string
 
   local longopts = {
     {"sprite", "none"},
-    {"mac", "none"},
     {"backend", "required"},
     {"env", "required"},
     {"repo", "required"},
     {"release", "required"},
     {"prerelease", "none"},
-    {"local-run", "none"},
+    {"setup-env", "none"},
     {"help", "none"},
   }
 
@@ -91,9 +90,7 @@ local function parse_args(args: {string}): ParsedArgs, string
     if not opt then break end
 
     if opt == "sprite" then
-      result.backend_type = "sprite"
-    elseif opt == "mac" then
-      result.backend_type = "mac"
+      result.backend_type = "box-sprite"
     elseif opt == "backend" then
       result.backend_type = optarg
     elseif opt == "env" then
@@ -104,8 +101,8 @@ local function parse_args(args: {string}): ParsedArgs, string
       result.release = optarg
     elseif opt == "prerelease" then
       result.prerelease = true
-    elseif opt == "local-run" then
-      result.local_run = true
+    elseif opt == "setup-env" then
+      result.setup_env = true
     elseif opt == "h" or opt == "help" then
       usage()
       os.exit(0)
@@ -124,7 +121,7 @@ local function parse_args(args: {string}): ParsedArgs, string
           result.name = v
         end
       elseif i == 2 then
-        if result.local_run then
+        if result.setup_env then
           result.kind = v
         else
           result.cmd = v
@@ -139,16 +136,12 @@ local function parse_args(args: {string}): ParsedArgs, string
 end
 
 local function load_backend(backend_type: string): backend.Backend, string
-  if backend_type == "sprite" then
-    return require("box.sprite") as backend.Backend
-  elseif backend_type == "mac" then
-    return require("box.mac") as backend.Backend
-  elseif backend_type then
-    -- All other backends are executables
+  if backend_type then
+    -- All backends are executables
     local generic = require("box.generic")
     return generic.load(backend_type)
   else
-    return nil, "no backend specified (use --sprite, --mac, or --backend)"
+    return nil, "no backend specified (use --sprite or --backend, or set BOX_BACKEND)"
   end
 end
 
@@ -175,7 +168,7 @@ local function cmd_new(be: backend.Backend, name: string): boolean, string
   return true
 end
 
-local function cmd_run(be: backend.Backend, name: string, env_dir: string, repo: string, release: string, prerelease: boolean): boolean, string
+local function cmd_run(be: backend.Backend, backend_type: string, name: string, env_dir: string, repo: string, release: string, prerelease: boolean): boolean, string
   io.stderr:write("==> bootstrapping " .. name .. "\n")
 
   -- Get path to self (the box binary)
@@ -291,13 +284,13 @@ local function cmd_run(be: backend.Backend, name: string, env_dir: string, repo:
     cleanup()
     return false, "failed to chdir to temp directory"
   end
-  local handle = spawn({tmp_zip, "-qr", tmp_box, "env.d"})
+  local zip_handle = spawn({tmp_zip, "-qr", tmp_box, "env.d"})
   local exit_code: number = -1
-  if handle then
-    exit_code = handle:wait()
+  if zip_handle then
+    exit_code = zip_handle:wait()
   end
   unix.chdir(orig_dir)
-  if not handle then
+  if not zip_handle then
     cleanup()
     return false, "failed to run zip"
   end
@@ -313,12 +306,23 @@ local function cmd_run(be: backend.Backend, name: string, env_dir: string, repo:
     return false, "upload failed: " .. (result.err or "unknown")
   end
 
-  -- Run bootstrap on remote
-  local cmd = "chmod +x /tmp/box && /tmp/box --local-run " .. name .. " " .. be.name
+  -- Run setup-env on remote to extract env.d and set environment
+  local cmd = "chmod +x /tmp/box && /tmp/box --setup-env " .. name .. " " .. be.name
   result = be.exec(name, cmd)
-  cleanup()
   if not result.ok then
-    return false, "bootstrap failed: " .. (result.err or "unknown")
+    cleanup()
+    return false, "setup-env failed: " .. (result.err or "unknown")
+  end
+
+  cleanup()
+
+  -- Call backend bootstrap locally with BOX_BACKEND set
+  -- This allows the backend to orchestrate the remote bootstrap
+  io.stderr:write("==> running backend bootstrap\n")
+  unix.setenv("BOX_BACKEND", backend_type)
+  result = be.bootstrap(name)
+  if not result.ok then
+    return false, "backend bootstrap failed: " .. (result.err or "unknown")
   end
 
   return true
@@ -403,14 +407,19 @@ local function cmd_scp(be: backend.Backend, name: string, src: string, dst: stri
   return true
 end
 
-local function cmd_local_run(name: string, kind: string): integer, string
+local function cmd_setup_env(name: string, kind: string): integer, string
   -- Running on remote after upload
-  -- Load env from /zip/env.d (zipped into self before upload)
-  local env = require("box.env")
-  local env_vars = env.load_from_dir(ENV_DIR)
-
+  -- Extract env.d and set up environment, but don't run full bootstrap
   local run = require("box.run")
-  return run.bootstrap(env_vars, name, kind)
+  return run.setup_env(name, kind)
+end
+
+local function cmd_exec(be: backend.Backend, name: string, cmd: string): boolean, string
+  local result = be.exec(name, cmd)
+  if not result.ok then
+    return false, result.err or "unknown error"
+  end
+  return true
 end
 
 local function main(args: {string}): integer, string
@@ -419,9 +428,9 @@ local function main(args: {string}): integer, string
     return 1, err
   end
 
-  -- Handle local-run mode (running on remote)
-  if parsed.local_run then
-    return cmd_local_run(parsed.name or "", parsed.kind or "")
+  -- Handle setup-env mode (running on remote after upload)
+  if parsed.setup_env then
+    return cmd_setup_env(parsed.name or "", parsed.kind or "")
   end
 
   -- Validate args
@@ -435,6 +444,9 @@ local function main(args: {string}): integer, string
   if not be then
     return 1, err
   end
+
+  -- Set BOX_BACKEND so backend operations can call box exec
+  unix.setenv("BOX_BACKEND", parsed.backend_type)
 
   -- Handle list command (doesn't need name)
   if parsed.cmd == "list" then
@@ -463,11 +475,19 @@ local function main(args: {string}): integer, string
       ok, err = cmd_new(be, parsed.name)
       if not ok then return 1, err end
     end
-    ok, err = cmd_run(be, parsed.name, parsed.env_path, parsed.repo, parsed.release, parsed.prerelease)
+    ok, err = cmd_run(be, parsed.backend_type, parsed.name, parsed.env_path, parsed.repo, parsed.release, parsed.prerelease)
     if not ok then return 1, err end
     return 0
   elseif parsed.cmd == "ssh" then
     ok, err = cmd_ssh(be, parsed.name, parsed.extra_args)
+    if not ok then return 1, err end
+    return 0
+  elseif parsed.cmd == "exec" then
+    local cmd_str = parsed.extra_args[1]
+    if not cmd_str then
+      return 1, "exec requires a command"
+    end
+    ok, err = cmd_exec(be, parsed.name, cmd_str)
     if not ok then return 1, err end
     return 0
   elseif parsed.cmd == "zap" then
@@ -486,7 +506,7 @@ local function main(args: {string}): integer, string
       -- Create and bootstrap
       ok, err = cmd_new(be, parsed.name)
       if not ok then return 1, err end
-      ok, err = cmd_run(be, parsed.name, parsed.env_path, parsed.repo, parsed.release, parsed.prerelease)
+      ok, err = cmd_run(be, parsed.backend_type, parsed.name, parsed.env_path, parsed.repo, parsed.release, parsed.prerelease)
       if not ok then return 1, err end
     end
     -- SSH to the box

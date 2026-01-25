@@ -126,3 +126,27 @@ local function test_destroy()
   assert(code == 0, "destroy with name should succeed")
 end
 test_destroy()
+
+local function test_exists_requires_name()
+  local code = run({"exists"})
+  assert(code ~= 0, "exists without name should fail")
+end
+test_exists_requires_name()
+
+local function test_exists()
+  local code = run({"exists", "test-box"})
+  assert(code == 0, "exists with name should succeed")
+end
+test_exists()
+
+local function test_bootstrap_requires_name()
+  local code = run({"bootstrap"})
+  assert(code ~= 0, "bootstrap without name should fail")
+end
+test_bootstrap_requires_name()
+
+local function test_bootstrap()
+  local code = run({"bootstrap", "test-box"})
+  assert(code == 0, "bootstrap with name should succeed")
+end
+test_bootstrap()

@@ -1,0 +1,148 @@
+#!/usr/bin/env bash
+# box-sprite: sprites.dev backend for box
+#
+# Implements the box backend protocol for sprites.dev instances.
+# All backends should be named box-<backend> and implement:
+#   new, ssh, exec, upload, download, destroy, list, exists, bootstrap
+
+set -euo pipefail
+
+cmd="${1:-}"
+shift || true
+
+case "$cmd" in
+  new)
+    name="${1:-}"
+    if [[ -z "$name" ]]; then
+      echo "error: new requires box name" >&2
+      exit 1
+    fi
+    sprite create "$name"
+    ;;
+
+  ssh)
+    name="${1:-}"
+    if [[ -z "$name" ]]; then
+      echo "error: ssh requires box name" >&2
+      exit 1
+    fi
+    shift || true
+    if [[ $# -gt 0 ]]; then
+      exec sprite console -s "$name" -- "$@"
+    else
+      exec sprite console -s "$name"
+    fi
+    ;;
+
+  exec)
+    name="${1:-}"
+    cmd_to_run="${2:-}"
+    if [[ -z "$name" ]] || [[ -z "$cmd_to_run" ]]; then
+      echo "error: exec requires box name and command" >&2
+      exit 1
+    fi
+    sprite exec -s "$name" -- bash -c "$cmd_to_run"
+    ;;
+
+  upload)
+    name="${1:-}"
+    src="${2:-}"
+    dst="${3:-}"
+    if [[ -z "$name" ]] || [[ -z "$src" ]] || [[ -z "$dst" ]]; then
+      echo "error: upload requires box name, source, and destination" >&2
+      exit 1
+    fi
+    # resolve relative dst to absolute using remote $HOME
+    if [[ "$dst" != /* ]]; then
+      home=$(sprite exec -s "$name" -- bash -c 'echo $HOME')
+      home="${home%$'\n'}"
+      case "$dst" in
+        .|./) dst="$home" ;;
+        ./*) dst="$home${dst:1}" ;;
+        *) dst="$home/$dst" ;;
+      esac
+    fi
+    sprite exec -s "$name" -file "$src:$dst" -- true
+    ;;
+
+  download)
+    name="${1:-}"
+    src="${2:-}"
+    dst="${3:-}"
+    if [[ -z "$name" ]] || [[ -z "$src" ]] || [[ -z "$dst" ]]; then
+      echo "error: download requires box name, source, and destination" >&2
+      exit 1
+    fi
+    sprite exec -s "$name" -- cat "$src" > "$dst"
+    ;;
+
+  destroy)
+    name="${1:-}"
+    if [[ -z "$name" ]]; then
+      echo "error: destroy requires box name" >&2
+      exit 1
+    fi
+    sprite destroy -s "$name" -force
+    ;;
+
+  list)
+    sprite list
+    ;;
+
+  exists)
+    name="${1:-}"
+    if [[ -z "$name" ]]; then
+      echo "error: exists requires box name" >&2
+      exit 1
+    fi
+    output=$(sprite api -s "$name" "/" 2>&1) || true
+    [[ "$output" != *'"error"'* ]]
+    ;;
+
+  bootstrap)
+    name="${1:-}"
+    if [[ -z "$name" ]]; then
+      echo "error: bootstrap requires box name" >&2
+      exit 1
+    fi
+    # Bootstrap runs locally, uses box exec to run remote commands
+    # BOX_BACKEND is set by box, so `box exec` knows which backend to use
+
+    echo "==> downloading and unpacking home" >&2
+    box exec "$name" 'curl -fsSL "https://github.com/whilp/world/releases/latest/download/home-$(uname -s)-$(uname -m)" -o /tmp/home && chmod +x /tmp/home && /tmp/home unpack --force "$HOME"'
+
+    # Install claude (if CLAUDE_CREDENTIALS set)
+    if [[ -n "${CLAUDE_CREDENTIALS:-}" ]]; then
+      echo "==> installing claude" >&2
+      box exec "$name" 'npm install -g @anthropic-ai/claude-code || true'
+      # Write credentials file - escape for bash
+      box exec "$name" "mkdir -p ~/.claude && cat > ~/.claude/credentials.json << 'EOFCREDS'
+$CLAUDE_CREDENTIALS
+EOFCREDS"
+    fi
+
+    # Configure gh auth (if GH_TOKEN set)
+    if [[ -n "${GH_TOKEN:-}" ]]; then
+      echo "==> configuring github auth" >&2
+      box exec "$name" "echo '$GH_TOKEN' | gh auth login --with-token"
+      box exec "$name" 'gh auth setup-git'
+    fi
+
+    # Configure git identity (if GIT_NAME/GIT_EMAIL set)
+    if [[ -n "${GIT_NAME:-}" ]]; then
+      echo "==> configuring git identity" >&2
+      box exec "$name" "git config --global user.name '$GIT_NAME'"
+    fi
+    if [[ -n "${GIT_EMAIL:-}" ]]; then
+      box exec "$name" "git config --global user.email '$GIT_EMAIL'"
+    fi
+
+    echo "==> bootstrap complete" >&2
+    ;;
+
+  *)
+    echo "error: unknown command: $cmd" >&2
+    echo "usage: box-sprite {new|ssh|exec|upload|download|destroy|list|exists|bootstrap} [args...]" >&2
+    exit 1
+    ;;
+esac

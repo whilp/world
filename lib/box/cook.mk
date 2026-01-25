@@ -2,7 +2,8 @@ modules += box
 box_srcs := $(wildcard lib/box/*.tl)
 box_tl_files := $(box_srcs)
 box_bin := $(o)/bin/box
-box_files := $(box_bin)
+box_sprite := $(o)/bin/box-sprite
+box_files := $(box_bin) $(box_sprite)
 box_tests := $(wildcard lib/box/test_*.tl)
 box_deps := cosmos cosmic
 
@@ -33,6 +34,12 @@ $(box_bin): $(box_tl_lua) $$(cosmos_staged) $$(cosmic_staged) lib/claude/version
 box: $(box_bin)
 
 .PHONY: box
+
+# box-sprite backend executable
+$(box_sprite): lib/box/box-sprite
+	@mkdir -p $(@D)
+	@$(cp) $< $@
+	@chmod +x $@
 
 # backend test depends on example-backend
 $(o)/lib/box/test_backend.tl.test.ok: lib/box/example-backend

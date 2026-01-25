@@ -22,6 +22,7 @@ local function exec_backend(exe: string, subcommand: string, args: {string}, pas
 
   local env = unix.environ()
   local opts = passthrough and {
+    stdin = 0,
     stdout = 1,
     stderr = 2,
     env = env,
