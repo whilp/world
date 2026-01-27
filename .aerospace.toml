@@ -21,7 +21,7 @@ accordion-padding = 0
 # Exec environment
 [exec.env-vars]
 PATH = '${HOME}/.local/bin:${PATH}'
-LUA_PATH = '${HOME}/lib/?/init.lua;${LUA_PATH}'
+#LUA_PATH = '${HOME}/lib/?/init.lua;${LUA_PATH}'
 
 # Gaps configuration
 [gaps]
