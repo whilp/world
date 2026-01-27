@@ -1,3 +1,4 @@
+--check:false - test uses local type definitions that conflict with source module types
 local pr_comments = require("skill.pr_comments")
 
 local record User

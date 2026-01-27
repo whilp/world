@@ -18,9 +18,10 @@ local record VersionSpec
 end
 
 local function interpolate(template: string, vars: {string:string}): string
-  return template:gsub("{([%w_]+)}", function(key: string): string
+  local result = template:gsub("{([%w_]+)}", function(key: string): string
     return vars[key] or ""
   end)
+  return result
 end
 
 local function build_url(spec: VersionSpec, platform: string): string, string
@@ -126,16 +127,16 @@ local function main(version_file: string, platform: string, output: string): boo
   unix.unlink(output)
   local fetch_o_basename = fetch_o:match("([^/]+)$")
   local rel_path = "../" .. fetch_o_basename .. "/" .. module_name .. "/" .. version_sha
-  local link_ok, link_err = unix.symlink(rel_path, output)
+  local link_ok = unix.symlink(rel_path, output)
   if not link_ok then
-    return nil, "failed to symlink: " .. tostring(link_err)
+    return nil, "failed to symlink"
   end
 
   return true
 end
 
 if cosmo.is_main() then
-  local result, err = main(...)
+  local result, err = main(arg[1], arg[2], arg[3])
   if not result then
     io.stderr:write("error: " .. err .. "\n")
     os.exit(1)

@@ -1,4 +1,5 @@
 #!/usr/bin/env run-test.lua
+--check:false - test mocking patterns are difficult to type correctly
 -- conformance tests for box executable backends
 
 local spawn = require("cosmic.spawn")

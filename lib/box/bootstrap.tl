@@ -109,14 +109,28 @@ end
 local record BootstrapConfig
   repo: string
   release: string
+  prerelease: boolean
 end
 
 local function load_bootstrap_config(): BootstrapConfig
-  local ok, env = pcall(dofile, "/zip/env.lua")
-  if ok and env and type(env) == "table" and env.bootstrap then
-    return env.bootstrap as BootstrapConfig
+  local config: BootstrapConfig = {}
+
+  -- Read from environment variables (set by box.run)
+  local repo = os.getenv("BOOTSTRAP_REPO")
+  local release = os.getenv("BOOTSTRAP_RELEASE")
+  local prerelease = os.getenv("BOOTSTRAP_PRERELEASE")
+
+  if repo and repo ~= "" then
+    config.repo = repo
   end
-  return {}
+  if release and release ~= "" then
+    config.release = release
+  end
+  if prerelease and prerelease ~= "" then
+    config.prerelease = true
+  end
+
+  return config
 end
 
 local function get_release(): Release, string
@@ -128,18 +142,38 @@ local function get_release(): Release, string
   if release_tag and release_tag ~= "" then
     io.stderr:write("fetching release " .. release_tag .. " from " .. repo .. "...\n")
     url = API_URL .. "/repos/" .. repo .. "/releases/tags/" .. release_tag
+    local data, err = fetch_json(url)
+    if not data then
+      return nil, err
+    end
+    local release = data as Release
+    io.stderr:write("release: " .. release.tag_name .. "\n")
+    return release
+  elseif config.prerelease then
+    io.stderr:write("fetching latest release (including prereleases) from " .. repo .. "...\n")
+    url = API_URL .. "/repos/" .. repo .. "/releases"
+    local data, err = fetch_json(url)
+    if not data then
+      return nil, err
+    end
+    local releases = data as {Release}
+    if not releases or #releases == 0 then
+      return nil, "no releases found"
+    end
+    local release = releases[1]
+    io.stderr:write("release: " .. release.tag_name .. "\n")
+    return release
   else
     io.stderr:write("fetching latest release from " .. repo .. "...\n")
     url = API_URL .. "/repos/" .. repo .. "/releases/latest"
+    local data, err = fetch_json(url)
+    if not data then
+      return nil, err
+    end
+    local release = data as Release
+    io.stderr:write("release: " .. release.tag_name .. "\n")
+    return release
   end
-
-  local data, err = fetch_json(url)
-  if not data then
-    return nil, err
-  end
-  local release = data as Release
-  io.stderr:write("release: " .. release.tag_name .. "\n")
-  return release
 end
 
 local function get_checksums(release: Release): {string:string}, string
@@ -196,7 +230,7 @@ local function run_unpack(home_bin: string, home_dir: string): boolean, string
   return true
 end
 
-local function main(): number, string
+local function main(): integer, string
   local home_dir = os.getenv("HOME")
   if not home_dir then
     return 1, "HOME not set"

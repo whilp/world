@@ -7,15 +7,11 @@ local unix = require("cosmo.unix")
 global TEST_DIR: string
 global TEST_TMPDIR: string
 
--- Test that the teal library is available in the bundle
+-- Test that the teal library is bundled with nvim
 local function test_teal_library_exists()
-  local tl_staged = os.getenv("TL_DIR")
-  assert(tl_staged, "TL_DIR environment variable not set")
-
-  local tl_lib = path.join(tl_staged, "tl.lua")
+  local tl_lib = path.join(TEST_DIR, "share", "nvim", "runtime", "lua", "tl.lua")
   assert(unix.stat(tl_lib), "tl.lua should exist at: " .. tl_lib)
-
-  print("✓ teal library is available")
+  print("✓ teal library is bundled")
 end
 test_teal_library_exists()
 
@@ -23,21 +19,13 @@ test_teal_library_exists()
 local function test_nvim_can_load_teal()
   local nvim = path.join(TEST_DIR, "bin", "nvim")
 
-  -- Create a simple test that loads teal
+  -- Write test script that loads teal and writes result to file
   local test_script = path.join(TEST_TMPDIR, "test.lua")
   local f = io.open(test_script, "w")
   assert(f, "failed to create test script")
 
-  -- Copy tl.lua to a location nvim can find it
-  local tl_staged = os.getenv("TL_DIR")
-  local tl_dest = path.join(TEST_TMPDIR, "tl.lua")
-  local ok = spawn({"cp", path.join(tl_staged, "tl.lua"), tl_dest}):wait()
-  assert(ok, "failed to copy tl.lua")
-
-  -- Write test script that loads teal and writes result to file
   local result_file = path.join(TEST_TMPDIR, "teal-test-result.txt")
   f:write([[
-package.path = "]] .. TEST_TMPDIR .. [[/?.lua;" .. package.path
 local tl = require("tl")
 tl.loader()
 

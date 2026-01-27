@@ -1,4 +1,5 @@
 #!/usr/bin/env run-test.lua
+--check:false - test uses local type definitions that conflict with source module types
 local sqlite3 = require("cosmo.lsqlite3")
 
 local aerosnap = require("aerosnap")

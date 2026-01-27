@@ -12,7 +12,7 @@ local record FileInfo
   mode: number
 end
 
-local function cmd_help(): number
+local function cmd_help(): integer
   io.stderr:write("usage: gen-manifest <directory> [version]\n")
   io.stderr:write("\n")
   io.stderr:write("generates a lua manifest table from directory contents\n")
@@ -25,7 +25,7 @@ local record Manifest
   files: {string:FileInfo}
 end
 
-local function main(args: {string}): number
+local function main(args: {string}): integer
   if #args == 0 or args[1] == "help" or args[1] == "--help" then
     return cmd_help()
   end
@@ -44,12 +44,12 @@ local function main(args: {string}): number
     version = version,
     files = files,
   }
-  io.write("return " .. cosmo.EncodeLua(manifest as any, {pretty = true} as {string:any}) .. "\n")
+  io.write("return " .. cosmo.EncodeLua(manifest as any) .. "\n")
   return 0
 end
 
 local record M
-  main: function(args: {string}): number
+  main: function(args: {string}): integer
 end
 
 local M_impl: M = {
@@ -57,7 +57,7 @@ local M_impl: M = {
 }
 
 if cosmo.is_main() then
-  os.exit(main(arg) or 0)
+  os.exit(main(arg) as integer)
 end
 
 return M_impl

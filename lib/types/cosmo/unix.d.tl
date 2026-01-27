@@ -9,12 +9,15 @@ end
 local record DirHandle
   read: function(self): string
   close: function(self)
+  -- Allow iteration: for entry in handle do
+  metamethod __call: function(self: DirHandle): string
 end
 
 local record unix
   -- process control
   fork: function(): number
   execve: function(path: string, argv: {string}, env: {string})
+  execvp: function(cmd: string, argv: {string})
   execvpe: function(cmd: string, argv: {string}, env: {string})
   wait: function(pid?: number): number, number
   exit: function(code: number)

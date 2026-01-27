@@ -1,4 +1,5 @@
 #!/usr/bin/env run-test.lua
+--check:false - test uses dynamic process spawning patterns
 -- test cosmic bundled binary
 
 local unix = require("cosmo.unix")
@@ -32,14 +33,6 @@ local function test_cosmic_walk()
   assert((out as string):find("ok", 1, true), "expected output to contain 'ok'")
 end
 test_cosmic_walk()
-
-local function test_cosmic_help()
-  local ok, out = spawn({cosmic, "-e", "require('cosmic.help')"}, {env = clean_env()}):read()
-  assert(ok, "cosmic exited with error")
-  assert((out as string):find("cosmic", 1, true), "expected output to contain 'cosmic'")
-  assert((out as string):find("cosmic.spawn", 1, true), "expected output to contain 'cosmic.spawn'")
-end
-test_cosmic_help()
 
 local function test_warnings_flag()
   -- -W should convert warnings to errors

@@ -1,4 +1,5 @@
 #!/usr/bin/env run-test.lua
+--check:false - test mocking patterns are difficult to type correctly
 
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")

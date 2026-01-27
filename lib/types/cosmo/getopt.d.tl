@@ -6,7 +6,7 @@ local record Parser
 end
 
 local record getopt
-  type LongOpt = {string, string}
+  type LongOpt = {string, string, string}
   new: function(args: {string}, shortopts: string, longopts: {LongOpt}): Parser
 end
 

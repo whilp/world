@@ -54,7 +54,7 @@ local function main(source: string): integer, string
   end
 
   if not common.has_extension(source, supported_extensions) then
-    return common.write_result("ignore", "unsupported file type", "", "")
+    return common.write_result("ignore", "unsupported file type", "", "", source)
   end
 
   local bun_bin = path.join(os.getenv("BUN_BIN") or "", "bin", "bun")

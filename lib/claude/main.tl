@@ -12,27 +12,49 @@ local record DirHandle
   close: function(self)
 end
 
-local record BoxEnvClaude
-  token: string
-end
-
-local record BoxEnv
-  claude: BoxEnvClaude
-end
-
-local function load_box_env(): BoxEnv
-  local HOME = os.getenv("HOME")
-  local env_path = path.join(HOME, ".config", "box", "env.lua")
-  local ok, env = pcall(dofile, env_path) as (boolean, BoxEnv)
-  if ok then
-    return env
-  end
-  return nil
-end
-
 local function debug_log(msg: string)
   if os.getenv("CLAUDE_WRAPPER_DEBUG") then
     io.stderr:write("claude wrapper: " .. msg .. "\n")
+  end
+end
+
+local function load_box_env()
+  local HOME = os.getenv("HOME")
+  if not HOME then return end
+
+  local env_dir = path.join(HOME, ".config", "box", "env.d")
+  local handle = unix.opendir(env_dir) as DirHandle
+  if not handle then return end
+
+  -- Collect and sort entries
+  local entries: {string} = {}
+  while true do
+    local name = handle:read()
+    if not name then break end
+    if name ~= "." and name ~= ".." then
+      table.insert(entries, name)
+    end
+  end
+  handle:close()
+  table.sort(entries)
+
+  -- Read each file and set env vars
+  for _, entry in ipairs(entries) do
+    local filepath = path.join(env_dir, entry)
+    local f = io.open(filepath, "r")
+    if f then
+      for line in f:lines() do
+        local trimmed = line:match("^%s*(.-)%s*$")
+        if trimmed ~= "" and not trimmed:match("^#") then
+          local key, value = trimmed:match("^([^=]+)=(.*)$")
+          if key and value then
+            unix.setenv(key, value)
+            debug_log("loaded " .. key .. " from " .. entry)
+          end
+        end
+      end
+      f:close()
+    end
   end
 end
 
@@ -174,16 +196,23 @@ local function main(args: {string})
   debug_log("execve argv[1..]: " .. table.concat(argv, " "))
 
   if unix.stat("/.sprite") then
-    local box_env = load_box_env()
-    if box_env and box_env.claude and box_env.claude.token then
-      unix.setenv("CLAUDE_CODE_OAUTH_TOKEN", box_env.claude.token)
-      debug_log("set CLAUDE_CODE_OAUTH_TOKEN from box env")
+    -- Load env vars from box env.d (contains CLAUDE_CODE_OAUTH_TOKEN etc)
+    load_box_env()
+    local token = os.getenv("CLAUDE_CODE_OAUTH_TOKEN") or os.getenv("CLAUDE_TOKEN")
+    if token then
+      unix.setenv("CLAUDE_CODE_OAUTH_TOKEN", token)
+      debug_log("set CLAUDE_CODE_OAUTH_TOKEN from env")
     end
   end
 
-  local _, err = unix.execve(claude_bin, execve_argv, unix.environ())
+  local env_array: {string} = {}
+  for _, entry in ipairs(unix.environ()) do
+    table.insert(env_array, entry)
+  end
+  unix.execve(claude_bin, execve_argv, env_array)
 
-  io.stderr:write("claude wrapper: failed to exec claude: " .. tostring(err) .. "\n")
+  -- If execve returns, it failed
+  io.stderr:write("claude wrapper: failed to exec claude\n")
   os.exit(1)
 end
 

@@ -20,16 +20,31 @@ local function exec_backend(exe: string, subcommand: string, args: {string}, pas
     cmd[#cmd + 1] = args[i]
   end
 
+  local env = unix.environ()
   local opts = passthrough and {
     stdout = 1,
     stderr = 2,
+    env = env,
   } or {
-    stderr = -1,  -- capture stderr for error messages
+    env = env,
   }
 
   local handle = spawn(cmd, opts)
   if not handle then
     return {ok = false, err = "failed to spawn: " .. cmd[1]}
+  end
+
+  -- Drain pipes before wait() to avoid deadlock
+  -- Note: closing fds (-1) breaks some lua/teal programs, so we use pipes
+  local stderr_content: string
+  if not passthrough then
+    if handle.stdout then handle.stdout:read() end
+    if handle.stderr then
+      local read_result = {handle.stderr:read()}
+      if read_result[1] then
+        stderr_content = read_result[2] as string
+      end
+    end
   end
 
   local exit_code = handle:wait()
@@ -38,13 +53,9 @@ local function exec_backend(exe: string, subcommand: string, args: {string}, pas
     return {ok = true}
   end
 
-  -- Capture stderr for error message if not passthrough
   local error_msg = "command failed with exit code " .. tostring(exit_code)
-  if not passthrough and handle.stderr then
-    local ok, stderr_content = handle.stderr:read()
-    if ok and stderr_content and #(stderr_content as string) > 0 then
-      error_msg = (stderr_content as string):gsub("%s+$", "")
-    end
+  if stderr_content and #stderr_content > 0 then
+    error_msg = stderr_content:gsub("%s+$", "")
   end
 
   return {ok = false, err = error_msg}
@@ -56,7 +67,8 @@ local function new(self: Generic, name: string, ...: string): backend.Result
   for i = 1, #extra do
     args[#args + 1] = extra[i]
   end
-  return exec_backend(self.exe, "new", args, false)
+  -- passthrough=true so user sees progress and error messages
+  return exec_backend(self.exe, "new", args, true)
 end
 
 local function ssh(self: Generic, name: string, ...: string): backend.Result
@@ -91,6 +103,15 @@ local function list(self: Generic): backend.Result
   return exec_backend(self.exe, "list", {}, true)
 end
 
+local function exists(self: Generic, name: string): boolean
+  local result = exec_backend(self.exe, "exists", {name}, false)
+  return result.ok
+end
+
+local function bootstrap(self: Generic, name: string): backend.Result
+  return exec_backend(self.exe, "bootstrap", {name}, true)
+end
+
 local function load(exe_path: string): backend.Backend, string
   local resolved_path = exe_path
 
@@ -122,13 +143,15 @@ local function load(exe_path: string): backend.Backend, string
 
   return {
     name = "generic:" .. path.basename(resolved_path),
-    new = function(...: string): backend.Result return new(g, ...) end,
-    ssh = function(...: string): backend.Result return ssh(g, ...) end,
-    exec = function(...: string): backend.Result return exec_cmd(g, ...) end,
-    upload = function(...: string): backend.Result return upload(g, ...) end,
-    download = function(...: string): backend.Result return download(g, ...) end,
-    destroy = function(...: string): backend.Result return destroy(g, ...) end,
+    new = function(name: string, ...: string): backend.Result return new(g, name, ...) end,
+    ssh = function(name: string, ...: string): backend.Result return ssh(g, name, ...) end,
+    exec = function(name: string, cmd: string): backend.Result return exec_cmd(g, name, cmd) end,
+    upload = function(name: string, src: string, dst: string): backend.Result return upload(g, name, src, dst) end,
+    download = function(name: string, src: string, dst: string): backend.Result return download(g, name, src, dst) end,
+    destroy = function(name: string): backend.Result return destroy(g, name) end,
     list = function(): backend.Result return list(g) end,
+    exists = function(name: string): boolean return exists(g, name) end,
+    bootstrap = function(name: string): backend.Result return bootstrap(g, name) end,
   } as backend.Backend, nil
 end
 

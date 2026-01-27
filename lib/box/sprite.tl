@@ -1,10 +1,13 @@
 -- box/sprite.tl: sprites.dev backend for box
 
-local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local spawn = require("cosmic.spawn")
+local cosmo = require("cosmo")
 
 local backend = require("box.backend")
+local claude = require("box.claude")
+local github = require("box.github")
+local git = require("box.git")
 
 local function ok(): backend.Result
   return {ok = true}
@@ -40,9 +43,13 @@ end
 
 local function ssh(name: string, ...: string): backend.Result
   local args = {"sprite", "console", "-s", name}
-  for i = 1, select("#", ...) do
-    local a = select(i, ...)
-    table.insert(args, a)
+  local extra_args = {...}
+
+  if #extra_args > 0 then
+    table.insert(args, "--")
+    for i = 1, #extra_args do
+      table.insert(args, extra_args[i])
+    end
   end
 
   unix.execvp("sprite", args)
@@ -50,8 +57,10 @@ local function ssh(name: string, ...: string): backend.Result
 end
 
 local function exec(name: string, cmd: string): backend.Result
+  -- stdin required to avoid exit 255 from sprite exec
   local handle = spawn({"sprite", "exec", "-s", name, "--", "bash", "-c", cmd}, {
-    stdout = 1,  -- pass through to terminal
+    stdin = 0,
+    stdout = 1,
     stderr = 2,
   })
   if not handle then
@@ -127,9 +136,55 @@ local function destroy(name: string): backend.Result
   return ok()
 end
 
+local function exists(name: string): boolean
+  -- Use sprite api to check if sprite exists explicitly
+  local handle = spawn({"sprite", "api", "-s", name, "/"})
+  if not handle then
+    return false
+  end
+  local read_ok, output, exit_code = handle:read()
+  if exit_code ~= 0 or not read_ok or not output then
+    return false
+  end
+  -- sprite api returns exit 0 even for missing sprites, check for error in response
+  if (output as string):find('"error"', 1, true) then
+    return false
+  end
+  return true
+end
+
 local function list(): backend.Result
   unix.execvp("sprite", {"sprite", "list"})
   return err("failed to exec sprite list")
+end
+
+local function bootstrap(name: string): backend.Result
+  -- Install claude binary
+  io.stderr:write("installing claude...\n")
+  local install_ok, install_err = claude.install()
+  if not install_ok then
+    return err(install_err or "claude install failed")
+  end
+
+  -- Configure gh auth (github.com only)
+  local cfg_ok, cfg_err = github.configure({"github.com"})
+  if not cfg_ok then
+    return err(cfg_err or "github config failed")
+  end
+
+  -- Configure git identity
+  cfg_ok, cfg_err = git.configure()
+  if not cfg_ok then
+    return err(cfg_err or "git config failed")
+  end
+
+  -- Configure claude credentials
+  cfg_ok, cfg_err = claude.configure()
+  if not cfg_ok then
+    return err(cfg_err or "claude config failed")
+  end
+
+  return ok()
 end
 
 return {
@@ -141,4 +196,6 @@ return {
   download = download,
   destroy = destroy,
   list = list,
+  exists = exists,
+  bootstrap = bootstrap,
 } as backend.Backend

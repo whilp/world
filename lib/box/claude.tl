@@ -1,4 +1,4 @@
--- box/claude.tl: install Claude binary
+-- box/claude.tl: install and configure Claude
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
@@ -113,7 +113,62 @@ local function install(): boolean, string
   return true
 end
 
+local function write_file(filepath: string, content: string, mode: number): boolean, string
+  local dir = path.dirname(filepath)
+  if not unix.makedirs(dir) then
+    return false, "failed to create directory: " .. dir
+  end
+
+  if not cosmo.Barf(filepath, content, mode or tonumber("0600", 8)) then
+    return false, "failed to write: " .. filepath
+  end
+  return true
+end
+
+local function configure(): boolean, string
+  local credentials_json = os.getenv("CLAUDE_CREDENTIALS")
+
+  local home = os.getenv("HOME")
+  if not home then
+    return false, "HOME not set"
+  end
+
+  local claude_dir = path.join(home, ".claude")
+  unix.makedirs(claude_dir)
+
+  -- Write credentials if provided (already JSON from env)
+  if credentials_json then
+    io.stderr:write("configuring claude credentials...\n")
+    local creds_file = path.join(claude_dir, ".credentials.json")
+    local ok, err = write_file(creds_file, credentials_json, tonumber("0600", 8))
+    if not ok then
+      return false, "failed to write credentials: " .. (err or "unknown")
+    end
+  end
+
+  -- Write settings to skip onboarding
+  local settings_file = path.join(claude_dir, "settings.json")
+  if not unix.stat(settings_file) then
+    io.stderr:write("configuring claude settings...\n")
+    local settings = {
+      numStartups = 1,
+      installMethod = "unknown",
+      autoUpdates = false,
+      theme = "dark-daltonized",
+      hasCompletedOnboarding = true,
+      bypassPermissionsModeAccepted = true,
+    }
+    local ok, err = write_file(settings_file, cosmo.EncodeJson(settings), tonumber("0644", 8))
+    if not ok then
+      return false, "failed to write settings: " .. (err or "unknown")
+    end
+  end
+
+  return true
+end
+
 return {
   install = install,
+  configure = configure,
   detect_platform = detect_platform,
 }

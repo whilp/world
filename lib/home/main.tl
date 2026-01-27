@@ -14,12 +14,12 @@ local function read_file(filepath: string): string, string
   return data
 end
 
-local function serialize_value(val: any, indent: string): string
+local function serialize_value(val: any, indent?: string): string
   indent = indent or ""
   local t = type(val)
 
   if t == "string" then
-    return string.format("%q", val)
+    return string.format("%q", val as string)
   elseif t == "number" then
     return tostring(val)
   elseif t == "boolean" then
@@ -32,14 +32,14 @@ local function serialize_value(val: any, indent: string): string
     local next_indent = indent .. "  "
 
     local is_array = true
-    local max_index = 0
+    local max_index: integer = 0
     for k, _ in pairs(tbl) do
       if type(k) ~= "number" or (k as number) < 1 or k ~= math.floor(k as number) then
         is_array = false
         break
       end
-      if (k as number) > max_index then
-        max_index = k as number
+      if (k as integer) > max_index then
+        max_index = k as integer
       end
     end
     local arr = tbl as {any}
@@ -87,7 +87,7 @@ local function serialize_value(val: any, indent: string): string
 end
 
 local function serialize_table(tbl: {any:any}): string
-  return "return " .. serialize_value(tbl) .. "\n"
+  return "return " .. serialize_value(tbl, "") .. "\n"
 end
 
 -- Main manifest structure (new format: lists tools, not individual files)
@@ -139,11 +139,14 @@ local function copy_file(src: string, dst: string, mode: number, overwrite: bool
   end
 
   local bytes_written = unix.write(fd, data)
-  local success = bytes_written == #data
-
-  if not success then
+  if not bytes_written then
     unix.close(fd)
-    return false, "failed to write data (wrote " .. bytes_written .. " of " .. #data .. " bytes)"
+    return false, "failed to write data"
+  end
+
+  if bytes_written ~= #data then
+    unix.close(fd)
+    return false, "failed to write data (wrote " .. tostring(bytes_written) .. " of " .. #data .. " bytes)"
   end
 
   if mode then
@@ -576,7 +579,7 @@ local home: Home = {
 }
 
 if cosmo.is_main() then
-  os.exit(main(arg) or 0)
+  os.exit(main(arg, {} as MainOpts) or 0)
 end
 
 return home

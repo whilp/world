@@ -15,7 +15,7 @@ end
 local function encode_time(timestamp: number, len: integer): string
   local result: {string} = {}
   for i = len, 1, -1 do
-    local mod = timestamp % ENCODING_LEN
+    local mod = math.floor(timestamp % ENCODING_LEN) as integer
     result[i] = ENCODING:sub(mod + 1, mod + 1)
     timestamp = math.floor(timestamp / ENCODING_LEN)
   end

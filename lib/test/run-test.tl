@@ -64,7 +64,7 @@ local function run_test(test: string): boolean, string, string, string
   return ok, err as string, stdout, stderr
 end
 
-local function write_result(status: string, message: string, stdout: string, stderr: string): number
+local function write_result(status: string, message: string, stdout: string, stderr: string): integer
   local lines: {string} = {}
   if message and message ~= "" then
     table.insert(lines, status .. ": " .. message)
@@ -84,7 +84,7 @@ local function write_result(status: string, message: string, stdout: string, std
   return status == "fail" and 1 or 0
 end
 
-local function main(test: string): number, string
+local function main(test: string): integer, string
   if not test then
     return 1, "usage: run-test.lua <test>"
   end

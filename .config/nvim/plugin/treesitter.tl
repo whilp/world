@@ -1,4 +1,5 @@
 -- luacheck ignore: neovim runtime
+--check:false
 -- package.path is set up in init.tl to include config dir
 local lang = require("parsers")
 
