@@ -1,7 +1,7 @@
--- box/run.tl: bootstrap logic that runs on the remote
+-- box/run.tl: remote setup logic for box
 --
--- Called with --local-run after box uploads itself to the remote.
--- Loads /zip/env.d (zipped into self) for environment variables.
+-- Called with --setup-env after box uploads itself to the remote.
+-- Extracts /zip/env.d and sets up environment for backend bootstrap.
 
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
@@ -17,15 +17,6 @@ local function write_file(filepath: string, content: string, mode: number): bool
 
   if not cosmo.Barf(filepath, content, mode or tonumber("0600", 8)) then
     return false, "failed to write: " .. filepath
-  end
-  return true
-end
-
-local function run_bootstrap(): boolean, string
-  local bootstrap = require("box.bootstrap")
-  local code, err = bootstrap.main()
-  if code ~= 0 then
-    return false, err or "bootstrap failed"
   end
   return true
 end
@@ -120,59 +111,41 @@ local function write_box_info(name: string, kind: string): boolean, string
   return true
 end
 
-local backend = require("box.backend")
+local function setup_env(name: string, kind: string): integer, string
+  -- Setup environment on remote for backend bootstrap
+  -- This is called by --setup-env mode after box is uploaded
+  io.stderr:write("==> setting up environment\n")
 
-local function load_backend(kind: string): backend.Backend
-  if kind == "sprite" then
-    return require("box.sprite") as backend.Backend
-  elseif kind == "mac" then
-    return require("box.mac") as backend.Backend
-  end
-  return nil
-end
+  -- Load env vars from /zip/env.d
+  local env_mod = require("box.env")
+  local env_vars = env_mod.load_from_dir(ENV_DIR)
 
-local function bootstrap(env_vars: {string:string}, name: string, kind: string): integer, string
-  io.stderr:write("==> running bootstrap\n")
-
-  -- Step 0: Write env.d to ~/.config/box/env.d
+  -- Step 1: Write env.d to ~/.config/box/env.d
   local ok, err = write_env()
   if not ok then
     io.stderr:write("warning: " .. (err or "failed to write env") .. "\n")
   end
 
-  -- Step 0.5: Write box name and kind
+  -- Step 2: Write box name and kind
   ok, err = write_box_info(name, kind)
   if not ok then
     io.stderr:write("warning: " .. (err or "failed to write box info") .. "\n")
   end
 
-  -- Step 0.75: Set environment variables from env files
-  for k, v in pairs(env_vars) do
-    unix.setenv(k, v)
-  end
-
-  -- Step 1: Download and unpack home
-  ok, err = run_bootstrap()
-  if not ok then
-    return 1, err or "bootstrap failed"
-  end
-
-  -- Step 2: Run backend-specific bootstrap (installs claude, configures credentials)
-  if kind and kind ~= "" then
-    local be = load_backend(kind)
-    if be and be.bootstrap then
-      io.stderr:write("==> running backend bootstrap\n")
-      local result = be.bootstrap(name)
-      if not result.ok then
-        return 1, result.err or "backend bootstrap failed"
-      end
+  -- Step 3: Set environment variables from env files
+  if env_vars then
+    for k, v in pairs(env_vars) do
+      unix.setenv(k, v)
     end
   end
 
-  io.stderr:write("==> bootstrap complete\n")
+  io.stderr:write("==> environment setup complete\n")
   return 0
 end
 
 return {
-  bootstrap = bootstrap,
+  setup_env = setup_env,
+  -- Keep these for potential reuse
+  write_env = write_env,
+  write_box_info = write_box_info,
 }

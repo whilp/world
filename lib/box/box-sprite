@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+# box-sprite: sprites.dev backend for box
+set -euo pipefail
+
+cmd="${1:-}"
+shift || true
+
+case "$cmd" in
+  new)
+    sprite create "$BOX_NAME"
+    ;;
+
+  ssh)
+    # sprite console handles shell selection internally, ignore shell args
+    # but pass through actual commands via exec
+    if [[ $# -gt 0 && "$1" != /* ]]; then
+      # Non-path arg = actual command, use exec
+      exec sprite exec -s "$BOX_NAME" -- "$@"
+    else
+      # No args or shell path = interactive, use console
+      exec sprite console -s "$BOX_NAME"
+    fi
+    ;;
+
+  exec)
+    sprite exec -s "$BOX_NAME" -- sh -c "$BOX_CMD"
+    ;;
+
+  upload)
+    sprite exec -s "$BOX_NAME" -file "$BOX_SRC:$BOX_DST" -- true
+    ;;
+
+  download)
+    sprite exec -s "$BOX_NAME" -- cat "$BOX_SRC" > "$BOX_DST"
+    ;;
+
+  destroy)
+    sprite destroy -s "$BOX_NAME" -force
+    ;;
+
+  list)
+    sprite list
+    ;;
+
+  exists)
+    output=$(sprite api -s "$BOX_NAME" "/" 2>&1) || true
+    [[ "$output" != *'"error"'* ]]
+    ;;
+
+  bootstrap)
+    if [[ -n "${CLAUDE_CREDENTIALS:-}" ]]; then
+      echo "==> installing claude" >&2
+      box exec "$BOX_NAME" 'npm install -g @anthropic-ai/claude-code || true'
+      box exec "$BOX_NAME" "mkdir -p ~/.claude && cat > ~/.claude/credentials.json << 'EOFCREDS'
+$CLAUDE_CREDENTIALS
+EOFCREDS"
+    fi
+
+    if [[ -n "${GH_TOKEN:-}" ]]; then
+      echo "==> configuring github auth" >&2
+      box exec "$BOX_NAME" "echo '$GH_TOKEN' | gh auth login --with-token"
+      box exec "$BOX_NAME" 'gh auth setup-git'
+    fi
+
+    if [[ -n "${GIT_NAME:-}" ]]; then
+      echo "==> configuring git identity" >&2
+      box exec "$BOX_NAME" "git config --global user.name '$GIT_NAME'"
+    fi
+    if [[ -n "${GIT_EMAIL:-}" ]]; then
+      box exec "$BOX_NAME" "git config --global user.email '$GIT_EMAIL'"
+    fi
+
+    echo "==> bootstrap complete" >&2
+    ;;
+
+  *)
+    echo "error: unknown command: $cmd" >&2
+    echo "usage: box-sprite {new|ssh|exec|upload|download|destroy|list|exists|bootstrap}" >&2
+    exit 1
+    ;;
+esac
