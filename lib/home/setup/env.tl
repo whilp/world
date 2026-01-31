@@ -44,7 +44,7 @@ local function get(): Env
 
 	env.SHELLINIT = path.join(env.DST, ".config", "shellinit")
 
-	local ok, output = spawn({"git", "config", "--get", "remote.origin.url"}):read()
+	local ok, output = spawn({"git", "config", "--get", "remote.origin.url"}, {env = unix.environ()}):read()
 	if ok and output then
 		env.REMOTE = (output as string):gsub("%s+$", "")
 	else

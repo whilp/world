@@ -340,7 +340,7 @@ local function cmd_unpack(dest: string, force: boolean, opts: UnpackOpts): integ
     if force then
       table.insert(unzip_args, 2, "-o")
     end
-    local result = spawn(unzip_args):wait()
+    local result = spawn(unzip_args, {env = unix.environ()}):wait()
 
     -- Cleanup temp zip
     if zip_src:match("^/zip/") then unix.unlink(tmp_zip) end

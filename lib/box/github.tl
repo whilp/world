@@ -59,7 +59,7 @@ local function auth_host(gh_bin: string, host: GitHubHost): boolean
   io.stderr:write("configuring gh auth for " .. host.hostname .. "...\n")
 
   local args: {string} = {gh_bin, "auth", "login", "-h", host.hostname, "--with-token"}
-  local handle = spawn(args)
+  local handle = spawn(args, {env = unix.environ()})
 
   if handle.stdin then
     handle.stdin:write(host.token .. "\n")

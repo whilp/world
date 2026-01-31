@@ -1,3 +1,4 @@
+local unix = require("cosmo.unix")
 local spawn = require("cosmic.spawn")
 
 local record M
@@ -11,19 +12,19 @@ local record M
 end
 
 function M.defaults(...: string): boolean
-	return spawn({"defaults", ...}):wait() == 0
+	return spawn({"defaults", ...}, {env = unix.environ()}):wait() == 0
 end
 
 function M.defaults_current_host(...: string): boolean
-	return spawn({"defaults", "-currentHost", ...}):wait() == 0
+	return spawn({"defaults", "-currentHost", ...}, {env = unix.environ()}):wait() == 0
 end
 
 function M.killall(name: string)
-	spawn({"killall", name}):wait()
+	spawn({"killall", name}, {env = unix.environ()}):wait()
 end
 
 function M.osascript(script: string): boolean
-	return spawn({"osascript", "-e", script}):wait() == 0
+	return spawn({"osascript", "-e", script}, {env = unix.environ()}):wait() == 0
 end
 
 local record MacModule
