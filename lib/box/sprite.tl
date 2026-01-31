@@ -17,8 +17,19 @@ local function err(msg: string): backend.Result
   return {ok = false, err = msg}
 end
 
+-- build environment array for spawn (cosmic.spawn requires "KEY=VALUE" format)
+local function sprite_env(): {string}
+  local env: {string} = {}
+  local home = os.getenv("HOME")
+  local path = os.getenv("PATH")
+  if home then table.insert(env, "HOME=" .. home) end
+  if path then table.insert(env, "PATH=" .. path) end
+  return env
+end
+
 local function new(name: string, ...: string): backend.Result
-  local handle = spawn({"sprite", "create", name})
+  local env = sprite_env()
+  local handle = spawn({"sprite", "create", name}, {env = env})
   if not handle then
     return err("sprite binary not found")
   end
@@ -26,7 +37,7 @@ local function new(name: string, ...: string): backend.Result
 
   -- sprites.dev sometimes returns errors but still creates the sprite
   -- check if it exists
-  local list_handle = spawn({"sprite", "list"})
+  local list_handle = spawn({"sprite", "list"}, {env = env})
   if list_handle then
     local list_ok, list_out = list_handle:read()
     if list_ok and list_out and (list_out as string):find(name, 1, true) then
@@ -59,6 +70,7 @@ end
 local function exec(name: string, cmd: string): backend.Result
   -- stdin required to avoid exit 255 from sprite exec
   local handle = spawn({"sprite", "exec", "-s", name, "--", "bash", "-c", cmd}, {
+    env = sprite_env(),
     stdin = 0,
     stdout = 1,
     stderr = 2,
@@ -74,9 +86,10 @@ local function exec(name: string, cmd: string): backend.Result
 end
 
 local function upload(name: string, src: string, dst: string): backend.Result
+  local env = sprite_env()
   -- sprite -file doesn't handle relative paths correctly, resolve to absolute
   if not dst:match("^/") then
-    local home_handle = spawn({"sprite", "exec", "-s", name, "--", "bash", "-c", "echo $HOME"})
+    local home_handle = spawn({"sprite", "exec", "-s", name, "--", "bash", "-c", "echo $HOME"}, {env = env})
     if not home_handle then
       return err("sprite binary not found")
     end
@@ -95,7 +108,7 @@ local function upload(name: string, src: string, dst: string): backend.Result
   end
 
   local file_arg = src .. ":" .. dst
-  local handle = spawn({"sprite", "exec", "-s", name, "-file", file_arg, "--", "true"})
+  local handle = spawn({"sprite", "exec", "-s", name, "-file", file_arg, "--", "true"}, {env = env})
   if not handle then
     return err("sprite binary not found")
   end
@@ -107,7 +120,7 @@ local function upload(name: string, src: string, dst: string): backend.Result
 end
 
 local function download(name: string, src: string, dst: string): backend.Result
-  local handle = spawn({"sprite", "exec", "-s", name, "--", "cat", src})
+  local handle = spawn({"sprite", "exec", "-s", name, "--", "cat", src}, {env = sprite_env()})
   if not handle then
     return err("sprite binary not found")
   end
@@ -125,7 +138,7 @@ local function download(name: string, src: string, dst: string): backend.Result
 end
 
 local function destroy(name: string): backend.Result
-  local handle = spawn({"sprite", "destroy", "-s", name, "-force"})
+  local handle = spawn({"sprite", "destroy", "-s", name, "-force"}, {env = sprite_env()})
   if not handle then
     return err("sprite binary not found")
   end
@@ -138,7 +151,7 @@ end
 
 local function exists(name: string): boolean
   -- Use sprite api to check if sprite exists explicitly
-  local handle = spawn({"sprite", "api", "-s", name, "/"})
+  local handle = spawn({"sprite", "api", "-s", name, "/"}, {env = sprite_env()})
   if not handle then
     return false
   end
