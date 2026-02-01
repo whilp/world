@@ -8,21 +8,6 @@ make staged            # fetch and extract dependencies
 make fetched           # fetch dependencies only
 ```
 
-## Running specific tests
-
-Use `run-test` to run specific tests by pattern:
-
-```bash
-run-test test_pr_timestamp        # partial match
-run-test lib/skill/test_pr_*      # glob pattern
-run-test timestamp                # matches any test containing "timestamp"
-```
-
-Benefits:
-- Leverages make's dependency resolution (builds deps if stale)
-- No duplicate work if already tested
-- Fast iteration on specific test files
-
 ## Output structure
 
 Each module gets a directory under `o/`:
