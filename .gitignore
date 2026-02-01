@@ -180,5 +180,4 @@ results/
 .ape*
 bin/
 !bin/hook
-!bin/run-test
 !bin/make
