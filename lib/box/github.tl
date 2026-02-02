@@ -75,7 +75,7 @@ local function auth_host(gh_bin: string, host: GitHubHost): boolean
   return true
 end
 
-local function configure(hostnames: {string}): boolean, string
+local function configure(hostnames?: {string}): boolean, string
   local hosts = discover_hosts()
 
   -- Filter to specific hostnames if provided
