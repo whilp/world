@@ -121,6 +121,9 @@ local function write_box_info(name: string, kind: string): boolean, string
 end
 
 local backend = require("box.backend")
+local github = require("box.github")
+local git = require("box.git")
+local claude = require("box.claude")
 
 local function load_backend(kind: string): backend.Backend
   if kind == "sprite" then
@@ -155,6 +158,24 @@ local function bootstrap(env_vars: {string:string}, name: string, kind: string):
   ok, err = run_bootstrap()
   if not ok then
     return 1, err or "bootstrap failed"
+  end
+
+  -- Step 1.5: Configure gh auth for all discovered hosts
+  ok, err = github.configure()
+  if not ok then
+    io.stderr:write("warning: " .. (err or "failed to configure github") .. "\n")
+  end
+
+  -- Step 1.6: Configure git identity
+  ok, err = git.configure()
+  if not ok then
+    io.stderr:write("warning: " .. (err or "failed to configure git") .. "\n")
+  end
+
+  -- Step 1.7: Configure claude credentials
+  ok, err = claude.configure()
+  if not ok then
+    io.stderr:write("warning: " .. (err or "failed to configure claude") .. "\n")
   end
 
   -- Step 2: Run backend-specific bootstrap (installs claude, configures credentials)
