@@ -12,22 +12,23 @@ local function run(env: env_module.Env): number
 
 	local extras = path.join(remote_base, "extras")
 	unix.chdir(env.DST)
+	local e = unix.environ()
 
 	if not unix.stat("extras") then
 		local devnull = unix.open("/dev/null", unix.O_RDWR)
-		local status = spawn({"git", "clone", extras, "extras"}, {stdout = devnull, stderr = devnull}):wait()
+		local status = spawn({"git", "clone", extras, "extras"}, {stdout = devnull, stderr = devnull, env = e}):wait()
 		unix.close(devnull)
 		if status == 0 then
 			unix.chdir("extras")
 			if unix.stat("./setup.sh") and unix.access("./setup.sh", unix.X_OK) then
-				spawn({"./setup.sh"}):wait()
+				spawn({"./setup.sh"}, {env = e}):wait()
 			end
 		end
 	else
 		unix.chdir("./extras")
-		spawn({"git", "fetch"}):wait()
+		spawn({"git", "fetch"}, {env = e}):wait()
 		if unix.stat("./setup.sh") and unix.access("./setup.sh", unix.X_OK) then
-			spawn({"./setup.sh"}):wait()
+			spawn({"./setup.sh"}, {env = e}):wait()
 		end
 	end
 

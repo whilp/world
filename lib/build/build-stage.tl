@@ -88,7 +88,7 @@ end
 
 local function extract_zip(archive: string, dest_dir: string, strip: number): boolean, string
   local temp_dir = unix.mkdtemp(path.join(path.dirname(dest_dir), ".stage_XXXXXX"))
-  local handle = spawn({"/usr/bin/unzip", "-o", "-q", "-d", temp_dir, archive})
+  local handle = spawn({"/usr/bin/unzip", "-o", "-q", "-d", temp_dir, archive}, {env = unix.environ()})
   local exit_code = handle:wait()
   if exit_code ~= 0 then
     unix.rmrf(temp_dir)
@@ -101,7 +101,7 @@ end
 
 local function extract_targz(archive: string, dest_dir: string, strip: number): boolean, string
   local temp_dir = unix.mkdtemp(path.join(path.dirname(dest_dir), ".stage_XXXXXX"))
-  local handle = spawn({"tar", "-xzf", archive, "-C", temp_dir})
+  local handle = spawn({"tar", "-xzf", archive, "-C", temp_dir}, {env = unix.environ()})
   local exit_code = handle:wait()
   if exit_code ~= 0 then
     unix.rmrf(temp_dir)
@@ -135,7 +135,7 @@ local function extract_gz(archive: string, dest_dir: string, module_name: string
   local bin_dir = path.join(dest_dir, "bin")
   unix.makedirs(bin_dir)
   local dest = path.join(bin_dir, module_name)
-  local handle = spawn({"gunzip", "-c", archive})
+  local handle = spawn({"gunzip", "-c", archive}, {env = unix.environ()})
   local exit_code, content = handle:read()
   if not exit_code then
     return nil, "gunzip failed: " .. tostring(content)

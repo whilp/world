@@ -327,16 +327,7 @@ end
 local function cmd_ssh(be: backend.Backend, name: string, extra_args: {string}): boolean, string
   io.stderr:write("==> connecting to " .. name .. "\n")
 
-  -- If no command specified, use user's preferred shell from $SHELL
-  local args = extra_args
-  if #extra_args == 0 then
-    local shell = os.getenv("SHELL")
-    if shell then
-      args = {shell}
-    end
-  end
-
-  local result = be.ssh(name, table.unpack(args))
+  local result = be.ssh(name, table.unpack(extra_args))
   if not result.ok then
     return false, result.err or "unknown error"
   end

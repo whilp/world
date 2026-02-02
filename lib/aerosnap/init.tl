@@ -52,7 +52,7 @@ local function get_focused_window(): Window, string
   local handle = spawn({
     "aerospace", "list-windows", "--focused",
     "--format", "%{window-id}\t%{app-bundle-id}\t%{app-name}\t%{workspace}\t%{window-title}"
-  })
+  }, {env = unix.environ()})
   if not handle then return nil, "failed to get focused window" end
   local _, output = handle:read()
   if not output or output == "" then
@@ -77,7 +77,7 @@ local function get_all_windows(): {Window}, string
   local handle = spawn({
     "aerospace", "list-windows", "--all",
     "--format", "%{window-id}\t%{app-bundle-id}\t%{app-name}\t%{workspace}\t%{window-title}"
-  })
+  }, {env = unix.environ()})
   if not handle then return nil, "failed to get windows" end
   local _, output = handle:read()
   if not output or output == "" then
@@ -180,7 +180,7 @@ local function cmd_load(_args: {string}): number
 
     if target_workspace and target_workspace ~= win.workspace then
       spawn({"aerospace", "move-node-to-workspace", target_workspace,
-             "--window-id", tostring(win["window-id"])}):wait()
+             "--window-id", tostring(win["window-id"])}, {env = unix.environ()}):wait()
       moved = moved + 1
       io.write(string.format("moved (%s): %s '%s' -> %s\n",
         match_type,

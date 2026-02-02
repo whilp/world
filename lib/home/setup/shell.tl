@@ -5,7 +5,8 @@ local spawn = require("cosmic.spawn")
 local env_module = require("setup.env")
 
 local function run(env: env_module.Env): number
-	local ok, output = spawn({"id", "-un"}):read()
+	local e = unix.environ()
+	local ok, output = spawn({"id", "-un"}, {env = e}):read()
 	if not ok then
 		return 1
 	end
@@ -13,7 +14,7 @@ local function run(env: env_module.Env): number
 
 	local zsh_path = unix.commandv("zsh")
 	if zsh_path then
-		spawn({"sudo", "chsh", username, "--shell", zsh_path}):wait()
+		spawn({"sudo", "chsh", username, "--shell", zsh_path}, {env = e}):wait()
 	end
 
 	local bashrc = path.join(env.DST, ".bashrc")

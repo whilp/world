@@ -51,18 +51,33 @@ local function new(name: string, ...: string): backend.Result
 end
 
 local function ssh(name: string, ...: string): backend.Result
-  local args = {"sprite", "console", "-s", name}
   local extra_args = {...}
 
-  if #extra_args > 0 then
-    table.insert(args, "--")
-    for i = 1, #extra_args do
-      table.insert(args, extra_args[i])
-    end
+  if #extra_args == 0 then
+    -- Interactive shell - sprite console handles shell detection via $SHELL
+    unix.execvp("sprite", {"sprite", "console", "-s", name})
+    return err("failed to exec sprite console")
   end
 
-  unix.execvp("sprite", args)
-  return err("failed to exec sprite console")
+  -- Run specific command
+  local args = {"sprite", "exec", "-s", name, "--"}
+  for i = 1, #extra_args do
+    table.insert(args, extra_args[i])
+  end
+  local handle = spawn(args, {
+    env = sprite_env(),
+    stdin = 0,
+    stdout = 1,
+    stderr = 2,
+  })
+  if not handle then
+    return err("sprite binary not found")
+  end
+  local exit_code = handle:wait()
+  if exit_code ~= 0 then
+    return err("command failed: exit " .. tostring(exit_code))
+  end
+  return ok()
 end
 
 local function exec(name: string, cmd: string): backend.Result
