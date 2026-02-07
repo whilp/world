@@ -20,7 +20,8 @@ function M.defaults_current_host(...: string): boolean
 end
 
 function M.killall(name: string): number
-	return spawn({"killall", name}, {env = unix.environ()}):wait()
+	local exit_code = spawn({"killall", name}, {env = unix.environ()}):wait()
+	return exit_code
 end
 
 function M.osascript(script: string): boolean

@@ -122,8 +122,8 @@ end
 test_parse_phony_targets()
 
 local function test_all_phony_targets_documented()
-  local content, err = cosmo.Slurp("Makefile")
-  assert(content, err or "failed to read Makefile")
+  local content = cosmo.Slurp("Makefile")
+  assert(content, "failed to read Makefile")
 
   local phony = help.parse_phony_targets(content) as {string:boolean}
   local items = help.parse_makefile(content) as {Item}
