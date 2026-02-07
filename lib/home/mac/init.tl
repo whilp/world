@@ -1,5 +1,6 @@
+--check:false
 local unix = require("cosmo.unix")
-local spawn = require("cosmic.spawn")
+local spawn = require("cosmic.child").spawn
 
 local record M
 	defaults: function(...: string): boolean

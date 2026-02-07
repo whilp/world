@@ -1,25 +1,13 @@
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local sqlite3 = require("cosmo.lsqlite3")
-local spawn = require("cosmic.spawn")
+local spawn = require("cosmic.child").spawn
 
 local DB_DIR <const> = path.join(os.getenv("HOME"), ".cache", "aerospace")
 local DB_FILE <const> = path.join(DB_DIR, "window-mappings.db")
 
-local record Database
-  exec: function(self: Database, sql: string): number
-  prepare: function(self: Database, sql: string): Statement
-  nrows: function(self: Database, sql: string): function(): {string:any}
-  close: function(self: Database)
-end
-
-local record Statement
-  bind_values: function(self: Statement, ...: any)
-  step: function(self: Statement): number
-  nrows: function(self: Statement): function(): {string:any}
-  finalize: function(self: Statement)
-  reset: function(self: Statement)
-end
+local type Database = sqlite3.Database
+local type Statement = sqlite3.Statement
 
 local record Window
   ["window-id"]: number

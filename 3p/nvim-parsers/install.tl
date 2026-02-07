@@ -6,19 +6,11 @@
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
-local spawn = require("cosmic.spawn")
+local child = require("cosmic.child")
+local spawn = child.spawn
 
-local record SpawnHandle
-  stdin: file
-  stdout: file
-  stderr: file
-  wait: function(self: SpawnHandle): number
-  read: function(self: SpawnHandle): boolean | string
-end
-
-local record SpawnOpts
-  env: {string}
-end
+local type Handle = child.Handle
+local type Opts = child.Opts
 
 local record InstallModule
   install: function(nvim_staged: string, treesitter_staged: string, output_dir: string, parsers_config: string, tree_sitter_staged: string, target: string): boolean, string
@@ -40,7 +32,7 @@ local function install(nvim_staged: string, treesitter_staged: string, output_di
   log_write(string.format("nvim-parsers: tree_sitter_staged=%s\n", tree_sitter_staged))
 
   -- check nvim is executable
-  local handle = spawn({nvim_bin, "--version"}) as SpawnHandle
+  local handle = spawn({nvim_bin, "--version"})
   local ok = handle:read()
   if not ok then
     io.stderr:write("nvim-parsers: skipped (nvim not executable on this platform)\n")
@@ -123,7 +115,7 @@ end
   end
 
   log_write("nvim-parsers: running nvim to install parsers\n")
-  handle = spawn({nvim_bin, "--headless", "-u", "NONE", "-l", script_path}, {env = env} as SpawnOpts) as SpawnHandle
+  handle = spawn({nvim_bin, "--headless", "-u", "NONE", "-l", script_path}, {env = env})
   -- read stderr before wait() since wait() drains and closes it
   local stderr = handle.stderr:read()
   local exit_code = handle:wait()
@@ -136,7 +128,7 @@ end
     io.stderr:write(table.concat(log))
     io.stderr:write("nvim-parsers: installation failed\n")
     io.stderr:write(string.format("  script: %s\n", script_path))
-    io.stderr:write(string.format("  exit: %d\n", exit_code or -1))
+    io.stderr:write(string.format("  exit: %d\n", (exit_code or -1) as integer))
     return nil, "parser installation failed"
   end
   -- check what was created

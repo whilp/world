@@ -91,11 +91,15 @@ $(o)/%: %
 	@mkdir -p $(@D)
 	@$(cp) $< $@
 
-# compile .tl files to .lua (transpile only, no type checking)
-# TODO: replace with cosmic --compile when it supports transpile-only mode
+# compile .tl files to .lua
+# if file contains --check:false, use transpile-only mode (no type checking)
 $(o)/%.lua: %.tl $(types_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
-	@$(bootstrap_cosmic) /zip/tl-gen.lua $< -o $@
+	@if head -5 $< | grep -q '^--check:false'; then \
+	  $(bootstrap_cosmic) lib/build/tl-transpile.lua $< > $@; \
+	else \
+	  $(bootstrap_cosmic) --compile $< > $@; \
+	fi
 
 # bin scripts: o/bin/X.lua from lib/*/X.lua and 3p/*/X.lua
 vpath %.lua lib/build lib/test 3p/ast-grep
@@ -105,10 +109,9 @@ $(o)/bin/%.lua: %.lua
 	@$(cp) $< $@
 
 # bin scripts from teal: o/bin/X.lua from lib/*/X.tl (vpath finds X.tl)
-# TODO: replace with cosmic --compile when it supports transpile-only mode
 $(o)/bin/%.lua: %.tl $(types_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
-	@$(bootstrap_cosmic) /zip/tl-gen.lua $< -o $@
+	@$(bootstrap_cosmic) --compile $< > $@
 
 # files are produced in o/
 all_files += $(call filter-only,$(foreach x,$(modules),$($(x)_files)))

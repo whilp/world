@@ -4,7 +4,7 @@
 
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
-local spawn = require("cosmic.spawn")
+local spawn = require("cosmic.child").spawn
 local fetch = require("cosmic.fetch")
 
 local REPO <const> = "whilp/world"

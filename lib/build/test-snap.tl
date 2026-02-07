@@ -2,14 +2,14 @@
 -- Snapshot testing: compare expected vs actual output
 
 local cosmo = require("cosmo")
-local spawn = require("cosmic.spawn")
+local spawn = require("cosmic.child").spawn
 local unix = require("cosmo.unix")
 
-local function run_diff(expected: string, actual: string): number, string
+local function run_diff(expected: string, actual: string): integer, string
   local handle = spawn({"diff", "-u", expected, actual})
   local ok, stdout, exit_code = handle:read()
   -- diff returns 0 if files match, 1 if different, 2 on error
-  return exit_code, stdout or ""
+  return exit_code as integer, stdout or ""
 end
 
 local function main(args: {string}): number, string

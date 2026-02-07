@@ -15,7 +15,7 @@ local record cosmo
   EncodeHex: function(data: string): string
   EncodeJson: function(value: any): string
   DecodeJson: function(json: string): any
-  EncodeLua: function(value: any): string
+  EncodeLua: function(value: any, opts?: {string:any}): string
 
   -- system info
   GetHostOs: function(): string

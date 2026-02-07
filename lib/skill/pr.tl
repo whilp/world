@@ -18,10 +18,10 @@ Environment variables:
 
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
-local spawn_mod = require("cosmic.spawn")
+local spawn_mod = require("cosmic.child")
 local fetch_mod = require("cosmic.fetch")
 
-local type SpawnHandle = require("cosmic.spawn").SpawnHandle
+local type Handle = require("cosmic.child").Handle
 
 local record FetchOpts
   method: string
@@ -33,7 +33,7 @@ local type FetchResult = require("cosmic.fetch").Result
 local type FetchFn = function(url: string, opts?: FetchOpts): FetchResult
 
 local record SpawnOpts
-  spawn: function({string}): SpawnHandle
+  spawn: function({string}): Handle
   repo: string
   getenv: function(string): string
 end
@@ -44,7 +44,7 @@ local record RequestOpts
 end
 
 local record MainOpts
-  spawn: function({string}): SpawnHandle
+  spawn: function({string}): Handle
   repo: string
   getenv: function(string): string
   fetch: FetchFn
@@ -80,7 +80,7 @@ end
 
 local function get_pr_file_from_branch(opts?: SpawnOpts): string
   opts = opts or {}
-  local do_spawn = opts.spawn or (spawn_mod as function({string}): SpawnHandle)
+  local do_spawn = opts.spawn or (spawn_mod as function({string}): Handle)
 
   local base_branch = get_default_branch(opts)
 

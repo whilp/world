@@ -1,3 +1,4 @@
+--check:false
 local mac = require("mac")
 
 local function run(): number

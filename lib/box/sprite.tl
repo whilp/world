@@ -1,7 +1,7 @@
 -- box/sprite.tl: sprites.dev backend for box
 
 local unix = require("cosmo.unix")
-local spawn = require("cosmic.spawn")
+local spawn = require("cosmic.child").spawn
 local cosmo = require("cosmo")
 
 local backend = require("box.backend")

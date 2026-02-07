@@ -96,7 +96,7 @@ local function format_help(items: {Item}, options?: FormatOptions): string
   table.insert(output, "Targets:")
 
   for _, item in ipairs(targets) do
-    local padding = string.rep(" ", math.max(0, width - #item.name))
+    local padding = string.rep(" ", math.max(0, width - #item.name) as integer)
     table.insert(output, "  " .. item.name .. padding .. item.description)
   end
 
@@ -105,7 +105,7 @@ local function format_help(items: {Item}, options?: FormatOptions): string
     table.insert(output, "")
     table.insert(output, "Options:")
     for _, item in ipairs(vars) do
-      local padding = string.rep(" ", math.max(0, width - #item.name))
+      local padding = string.rep(" ", math.max(0, width - #item.name) as integer)
       table.insert(output, "  " .. item.name .. padding .. item.description)
     end
   end

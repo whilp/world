@@ -4,7 +4,7 @@
 
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
-local spawn = require("cosmic.spawn")
+local spawn = require("cosmic.child").spawn
 local version = require("version")
 
 local TEST_TMPDIR = os.getenv("TEST_TMPDIR") or "/tmp"

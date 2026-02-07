@@ -1,7 +1,7 @@
 -- box/git.tl: configure git identity
 
 local unix = require("cosmo.unix")
-local spawn = require("cosmic.spawn")
+local spawn = require("cosmic.child").spawn
 
 local function configure(): boolean, string
   local name = os.getenv("GIT_NAME")

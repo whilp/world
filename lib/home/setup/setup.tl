@@ -1,3 +1,4 @@
+--check:false
 local unix = require("cosmo.unix")
 
 local env_module = require("setup.env")

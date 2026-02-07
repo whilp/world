@@ -2,7 +2,7 @@
 --test:false
 -- test release artifact requirements
 local unix = require("cosmo.unix")
-local spawn = require("cosmic.spawn")
+local spawn = require("cosmic.child").spawn
 local path = require("cosmo.path")
 
 global TEST_BIN_DIR: string
