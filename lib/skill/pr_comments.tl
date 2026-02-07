@@ -295,6 +295,34 @@ if cosmo.is_main() then
 end
 
 local record Module
+  record User
+    login: string
+  end
+
+  record ReviewComment
+    id: integer
+    user: User
+    path: string
+    line: integer
+    original_line: integer
+    created_at: string
+    in_reply_to_id: integer
+    body: string
+  end
+
+  record IssueComment
+    user: User
+    created_at: string
+    body: string
+  end
+
+  record Review
+    user: User
+    state: string
+    submitted_at: string
+    body: string
+  end
+
   github_request: function(endpoint: string): integer, any
   get_review_comments: function(owner: string, repo: string, pr_number: integer): integer, {ReviewComment}
   get_issue_comments: function(owner: string, repo: string, pr_number: integer): integer, {IssueComment}

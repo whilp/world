@@ -1,5 +1,4 @@
 #!/usr/bin/env run-test.lua
---check:false - test uses local type definitions that conflict with source module types
 -- test skill module integration with cosmic binary
 
 local unix = require("cosmo.unix")

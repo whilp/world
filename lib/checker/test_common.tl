@@ -1,5 +1,4 @@
 #!/usr/bin/env run-test.lua
---check:false - test uses local type definitions that conflict with source module types
 
 local common = require("checker.common")
 local path = require("cosmo.path")
@@ -7,26 +6,9 @@ local cosmo = require("cosmo")
 
 local TEST_TMPDIR = os.getenv("TEST_TMPDIR") or "/tmp"
 
-local record CheckResult
-  status: string
-  message: string
-  stdout: string
-  stderr: string
-end
-
-local record StatusIcons
-  pass: string
-  fail: string
-  skip: string
-  ignore: string
-end
-
-local record CategorizedResults
-  pass: {CheckResult}
-  fail: {CheckResult}
-  skip: {CheckResult}
-  ignore: {CheckResult}
-end
+local type CheckResult = common.CheckResult
+local type StatusIcons = common.StatusIcons
+local type CategorizedResults = common.CategorizedResults
 
 local function test_format_output()
   local output = common.format_output("pass", nil, "", "")

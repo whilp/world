@@ -92,14 +92,9 @@ $(o)/%: %
 	@$(cp) $< $@
 
 # compile .tl files to .lua
-# if file contains --check:false, use transpile-only mode (no type checking)
 $(o)/%.lua: %.tl $(types_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
-	@if head -5 $< | grep -q '^--check:false'; then \
-	  $(bootstrap_cosmic) lib/build/tl-transpile.lua $< > $@; \
-	else \
-	  $(bootstrap_cosmic) --compile $< > $@; \
-	fi
+	@LUA_PATH="lib/home/?.lua;lib/home/?/init.lua;$${LUA_PATH:-}" $(bootstrap_cosmic) --compile $< > $@
 
 # bin scripts: o/bin/X.lua from lib/*/X.lua and 3p/*/X.lua
 vpath %.lua lib/build lib/test 3p/ast-grep

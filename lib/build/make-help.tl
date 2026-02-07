@@ -150,12 +150,15 @@ local function parse_phony_targets(content: string): {string:boolean}
 end
 
 local record MakeHelp
+  Item: Item
+
   parse_makefile: function(content: string): {Item}
   format_help: function(items: {Item}, options?: FormatOptions): string
   parse_phony_targets: function(content: string): {string:boolean}
 end
 
 local M: MakeHelp = {
+  Item = Item,
   parse_makefile = parse_makefile,
   format_help = format_help,
   parse_phony_targets = parse_phony_targets,

@@ -166,7 +166,7 @@ assert(link_stat, "symlink should exist at " .. link_path)
 assert(unix.S_ISLNK(link_stat:mode()), "link-to-binary should be a symlink")
 
 -- Verify symlink target
-local link_target = unix.readlink(link_path, 256)
+local link_target = unix.readlink(link_path)
 assert(link_target == "real-binary", "symlink target should be 'real-binary', got: " .. tostring(link_target))
 
 -- Test unknown flags are rejected

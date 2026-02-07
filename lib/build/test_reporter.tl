@@ -1,9 +1,11 @@
 #!/usr/bin/env run-test.lua
---check:false - test mocking patterns are difficult to type correctly
 
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 local cosmo = require("cosmo")
+local child = require("cosmic.child")
+
+local type Handle = child.Handle
 
 local tmpdir = os.getenv("TEST_TMPDIR") or "/tmp"
 
@@ -27,12 +29,7 @@ local function write_result_file(filepath: string, status: string, message: stri
   cosmo.Barf(filepath, content)
 end
 
-local record SpawnHandle
-  stderr: FILE
-  read: function(self: SpawnHandle): boolean, string, integer
-end
-
-local function run_reporter(...: string): integer, string, string
+local function run_reporter(...: string): number, string, string
   local test_bin = os.getenv("TEST_BIN") or ""
   local reporter = path.join(test_bin, "reporter.lua")
   local spawn = require("cosmic.child").spawn
@@ -53,7 +50,7 @@ local function run_reporter(...: string): integer, string, string
     end
   end
 
-  local handle = spawn(args, {env = env}) as SpawnHandle
+  local handle = spawn(args, {env = env}) as Handle
   local stderr_content = handle.stderr and handle.stderr:read() or ""
   local ok, stdout, exit_code = handle:read()
   return exit_code, stdout or "", stderr_content

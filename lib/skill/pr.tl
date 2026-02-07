@@ -80,7 +80,7 @@ end
 
 local function get_pr_file_from_branch(opts?: SpawnOpts): string
   opts = opts or {}
-  local do_spawn = opts.spawn or (spawn_mod as function({string}): Handle)
+  local do_spawn = opts.spawn or spawn_mod.spawn
 
   local base_branch = get_default_branch(opts)
 
@@ -399,6 +399,56 @@ if cosmo.is_main() then
 end
 
 local record PrModule
+  record Handle
+    pid: number
+    read: function(self: Handle): boolean, string
+    wait: function(self: Handle): integer
+  end
+
+  record FetchOpts
+    method: string
+    headers: {string:string}
+    body: string
+  end
+
+  record FetchResult
+    ok: boolean
+    status: number
+    headers: {string:string}
+    body: string
+    error: string
+  end
+
+  record SpawnOpts
+    spawn: function({string}): Handle
+    repo: string
+    getenv: function(string): string
+  end
+
+  record RequestOpts
+    fetch: function(url: string, opts?: FetchOpts): FetchResult
+    getenv: function(string): string
+  end
+
+  record MainOpts
+    spawn: function({string}): Handle
+    repo: string
+    getenv: function(string): string
+    fetch: function(url: string, opts?: FetchOpts): FetchResult
+  end
+
+  record ParsedPr
+    title: string
+    body: string
+  end
+
+  record GitHubPr
+    number: number
+    title: string
+    body: string
+    message: string
+  end
+
   parse_pr_md: function(content: string): ParsedPr, string
   github_request: function(method: string, endpoint: string, token: string, body: {string:string}, opts?: RequestOpts): number, GitHubPr
   get_pr: function(owner: string, repo: string, pr_number: integer, token: string, opts?: RequestOpts): GitHubPr, string

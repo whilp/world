@@ -1,11 +1,10 @@
---check:false
 local unix = require("cosmo.unix")
 local spawn = require("cosmic.child").spawn
 
 local record M
 	defaults: function(...: string): boolean
 	defaults_current_host: function(...: string): boolean
-	killall: function(name: string)
+	killall: function(name: string): number
 	osascript: function(script: string): boolean
 	run_script: function(name: string): number
 	list: function(): {string}
@@ -20,8 +19,8 @@ function M.defaults_current_host(...: string): boolean
 	return spawn({"defaults", "-currentHost", ...}, {env = unix.environ()}):wait() == 0
 end
 
-function M.killall(name: string)
-	spawn({"killall", name}, {env = unix.environ()}):wait()
+function M.killall(name: string): number
+	return spawn({"killall", name}, {env = unix.environ()}):wait()
 end
 
 function M.osascript(script: string): boolean

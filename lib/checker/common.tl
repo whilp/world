@@ -273,6 +273,13 @@ local record common
     ignore: string
   end
 
+  record StatusIcons
+    pass: string
+    fail: string
+    skip: string
+    ignore: string
+  end
+
   format_output: function(status: string, message?: string, stdout?: string, stderr?: string): string
   write_result: function(status: string, message: string, stdout: string, stderr: string, source?: string): integer
   parse_result: function(content: string): CheckResult
@@ -290,6 +297,7 @@ return {
   CheckResult = CheckResult,
   CategorizedResults = CategorizedResults,
   CheckPatterns = CheckPatterns,
+  StatusIcons = StatusIcons,
   format_output = format_output,
   write_result = write_result,
   parse_result = parse_result,

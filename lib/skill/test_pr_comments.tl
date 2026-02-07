@@ -1,39 +1,9 @@
---check:false - test uses local type definitions that conflict with source module types
 local pr_comments = require("skill.pr_comments")
 
-local record User
-  login: string
-end
-
-local record ReviewComment
-  id: number
-  user: User
-  path: string
-  line: number
-  created_at: string
-  body: string
-  in_reply_to_id: number
-end
-
-local record IssueComment
-  user: User
-  created_at: string
-  body: string
-end
-
-local record Review
-  user: User
-  state: string
-  submitted_at: string
-  body: string
-end
-
-local record ParsedOpts
-  owner: string
-  repo: string
-  pr_number: number
-  json: boolean
-end
+local type User = pr_comments.User
+local type ReviewComment = pr_comments.ReviewComment
+local type IssueComment = pr_comments.IssueComment
+local type Review = pr_comments.Review
 
 local function test_format_review_comment()
   local comment: ReviewComment = {
@@ -129,17 +99,17 @@ end
 test_parse_pr_url()
 
 local function test_parse_args()
-  local opts = pr_comments.parse_args({"--owner", "whilp", "--repo", "world", "--pr", "283"}) as ParsedOpts
+  local opts = pr_comments.parse_args({"--owner", "whilp", "--repo", "world", "--pr", "283"})
   assert(opts.owner == "whilp", "owner should be whilp")
   assert(opts.repo == "world", "repo should be world")
   assert(opts.pr_number == 283, "pr_number should be 283")
   assert(opts.json == false, "json should be false")
 
-  opts = pr_comments.parse_args({"-o", "whilp", "-r", "world", "-p", "283", "--json"}) as ParsedOpts
+  opts = pr_comments.parse_args({"-o", "whilp", "-r", "world", "-p", "283", "--json"})
   assert(opts.owner == "whilp", "owner should be whilp")
   assert(opts.json == true, "json should be true")
 
-  opts = pr_comments.parse_args({"--url", "https://github.com/foo/bar/pull/42"}) as ParsedOpts
+  opts = pr_comments.parse_args({"--url", "https://github.com/foo/bar/pull/42"})
   assert(opts.owner == "foo", "owner should be foo")
   assert(opts.repo == "bar", "repo should be bar")
   assert(opts.pr_number == 42, "pr_number should be 42")
