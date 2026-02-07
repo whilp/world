@@ -21,7 +21,9 @@ local path = require("cosmo.path")
 local spawn_mod = require("cosmic.child")
 local fetch_mod = require("cosmic.fetch")
 
-local type Handle = require("cosmic.child").Handle
+local record SpawnHandle
+  read: function(SpawnHandle): boolean, string
+end
 
 local record FetchOpts
   method: string
@@ -29,11 +31,17 @@ local record FetchOpts
   body: string
 end
 
-local type FetchResult = require("cosmic.fetch").Result
+local record FetchResult
+  ok: boolean
+  status: number
+  body: string
+  error: string
+end
+
 local type FetchFn = function(url: string, opts?: FetchOpts): FetchResult
 
 local record SpawnOpts
-  spawn: function({string}): Handle
+  spawn: function({string}): SpawnHandle
   repo: string
   getenv: function(string): string
 end
@@ -44,7 +52,7 @@ local record RequestOpts
 end
 
 local record MainOpts
-  spawn: function({string}): Handle
+  spawn: function({string}): SpawnHandle
   repo: string
   getenv: function(string): string
   fetch: FetchFn
@@ -80,7 +88,7 @@ end
 
 local function get_pr_file_from_branch(opts?: SpawnOpts): string
   opts = opts or {}
-  local do_spawn = opts.spawn or spawn_mod.spawn
+  local do_spawn = opts.spawn or (spawn_mod.spawn as function({string}): SpawnHandle)
 
   local base_branch = get_default_branch(opts)
 
@@ -146,8 +154,10 @@ local function parse_pr_md(content: string): ParsedPr, string
   return {title = title, body = body}
 end
 
+local fetch_fn = fetch_mod.Fetch as function(string, table): FetchResult
+
 local function default_fetch(url: string, opts?: FetchOpts): FetchResult
-  return fetch_mod.Fetch(url, opts as fetch_mod.FetchOpts)
+  return fetch_fn(url, opts as table)
 end
 
 local function github_request(method: string, endpoint: string, token: string, body: {string:string}, opts?: RequestOpts): number, GitHubPr | string

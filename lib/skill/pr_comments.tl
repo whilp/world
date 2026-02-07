@@ -59,12 +59,21 @@ local record JsonResult
   review_comments: {ReviewComment}
 end
 
+local record FetchResult
+  ok: boolean
+  status: number
+  body: string
+  error: string
+end
+
 local record FetchOpts
   method: string
   headers: {string:string}
   max_attempts: integer
-  should_retry: function(fetch.Result): boolean
+  should_retry: function(FetchResult): boolean
 end
+
+local fetch_fn = fetch.Fetch as function(string, table): FetchResult
 
 local function github_request(endpoint: string): integer, any
   local api_url = os.getenv("GITHUB_API_URL") or "https://api.github.com"
@@ -78,7 +87,7 @@ local function github_request(endpoint: string): integer, any
       ["User-Agent"] = "pr-comments.lua/1.0",
     },
     max_attempts = 4,
-    should_retry = function(r: fetch.Result): boolean return r.status >= 500 end,
+    should_retry = function(r: FetchResult): boolean return r.status >= 500 end,
   }
 
   local token = os.getenv("GITHUB_TOKEN")
@@ -86,7 +95,7 @@ local function github_request(endpoint: string): integer, any
     opts.headers["Authorization"] = "Bearer " .. token
   end
 
-  local result = fetch.Fetch(url, opts as fetch.FetchOpts)
+  local result = fetch_fn(url, opts as table)
   if not result.ok then
     return nil, result.error
   end

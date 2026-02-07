@@ -3,9 +3,15 @@
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 local cosmo = require("cosmo")
-local child = require("cosmic.child")
 
-local type Handle = child.Handle
+local record Pipe
+  read: function(Pipe): string
+end
+
+local record SpawnHandle
+  stderr: Pipe
+  read: function(SpawnHandle): boolean, string, number
+end
 
 local tmpdir = os.getenv("TEST_TMPDIR") or "/tmp"
 
@@ -50,7 +56,7 @@ local function run_reporter(...: string): number, string, string
     end
   end
 
-  local handle = spawn(args, {env = env}) as Handle
+  local handle = spawn(args, {env = env}) as SpawnHandle
   local stderr_content = handle.stderr and handle.stderr:read() or ""
   local ok, stdout, exit_code = handle:read()
   return exit_code, stdout or "", stderr_content

@@ -6,11 +6,7 @@
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
-local child = require("cosmic.child")
-local spawn = child.spawn
-
-local type Handle = child.Handle
-local type Opts = child.Opts
+local spawn = require("cosmic.child").spawn
 
 local record InstallModule
   install: function(nvim_staged: string, treesitter_staged: string, output_dir: string, parsers_config: string, tree_sitter_staged: string, target: string): boolean, string
