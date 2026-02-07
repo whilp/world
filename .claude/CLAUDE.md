@@ -41,11 +41,6 @@
 
 ## Lua
 
-### Imports
-- use `require("cosmo.unix")` for unix functions
-- use `require("cosmo.path")` for path functions
-- use `require("cosmo")` for top-level functions (Fetch, EncodeJson, etc)
-
 ### Command execution
 - NEVER use `os.execute()` - use spawn module or unix API instead
 - NEVER use `io.popen()` - use spawn module instead
@@ -59,7 +54,6 @@
 ### Other patterns
 - NEVER manipulate `package.path`
 - avoid magic numbers in comparisons - use named constants or predicates
-- use `cosmo.Fetch` instead of curl for http requests
 - use transaction pattern with `pcall` for error handling
 
 ### Code organization
