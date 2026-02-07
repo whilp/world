@@ -1,6 +1,6 @@
 local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
-local walk = require("cosmic.walk")
+local fs = require("cosmic.fs")
 
 local record Stat
   mode: function(self): number
@@ -39,7 +39,7 @@ local function main(args: {string}): integer
     return 1
   end
 
-  local files = walk.collect_all(dir) as {string:FileInfo}
+  local files = fs.collect_all(dir) as {string:FileInfo}
   local manifest: Manifest = {
     version = version,
     files = files,

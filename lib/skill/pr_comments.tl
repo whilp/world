@@ -59,12 +59,21 @@ local record JsonResult
   review_comments: {ReviewComment}
 end
 
+local record FetchResult
+  ok: boolean
+  status: number
+  body: string
+  error: string
+end
+
 local record FetchOpts
   method: string
   headers: {string:string}
   max_attempts: integer
-  should_retry: function(fetch.Result): boolean
+  should_retry: function(FetchResult): boolean
 end
+
+local fetch_fn = fetch.Fetch as function(string, table): FetchResult
 
 local function github_request(endpoint: string): integer, any
   local api_url = os.getenv("GITHUB_API_URL") or "https://api.github.com"
@@ -78,7 +87,7 @@ local function github_request(endpoint: string): integer, any
       ["User-Agent"] = "pr-comments.lua/1.0",
     },
     max_attempts = 4,
-    should_retry = function(r: fetch.Result): boolean return r.status >= 500 end,
+    should_retry = function(r: FetchResult): boolean return r.status >= 500 end,
   }
 
   local token = os.getenv("GITHUB_TOKEN")
@@ -86,7 +95,7 @@ local function github_request(endpoint: string): integer, any
     opts.headers["Authorization"] = "Bearer " .. token
   end
 
-  local result = fetch.Fetch(url, opts as fetch.FetchOpts)
+  local result = fetch_fn(url, opts as table)
   if not result.ok then
     return nil, result.error
   end
@@ -295,6 +304,34 @@ if cosmo.is_main() then
 end
 
 local record Module
+  record User
+    login: string
+  end
+
+  record ReviewComment
+    id: integer
+    user: User
+    path: string
+    line: integer
+    original_line: integer
+    created_at: string
+    in_reply_to_id: integer
+    body: string
+  end
+
+  record IssueComment
+    user: User
+    created_at: string
+    body: string
+  end
+
+  record Review
+    user: User
+    state: string
+    submitted_at: string
+    body: string
+  end
+
   github_request: function(endpoint: string): integer, any
   get_review_comments: function(owner: string, repo: string, pr_number: integer): integer, {ReviewComment}
   get_issue_comments: function(owner: string, repo: string, pr_number: integer): integer, {IssueComment}

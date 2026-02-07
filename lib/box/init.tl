@@ -3,7 +3,7 @@ local cosmo = require("cosmo")
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local getopt = require("cosmo.getopt")
-local spawn = require("cosmic.spawn")
+local spawn = require("cosmic.child").spawn
 
 local backend = require("box.backend")
 

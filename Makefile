@@ -16,7 +16,7 @@ export PATH := $(CURDIR)/$(o)/bin:$(PATH)
 export STAGE_O := $(CURDIR)/$(o)/staged
 export FETCH_O := $(CURDIR)/$(o)/fetched
 # TL_PATH for teal type checker only (not exported globally - conflicts with cosmic teal loader)
-TL_PATH := $(CURDIR)/lib/types/?.d.tl;$(CURDIR)/lib/types/?/init.d.tl;$(CURDIR)/$(o)/lib/?.tl;$(CURDIR)/$(o)/lib/?/init.tl;$(CURDIR)/$(o)/lib/home/?.tl;$(CURDIR)/$(o)/lib/home/?/init.tl;$(CURDIR)/lib/home/?.tl;$(CURDIR)/lib/home/?/init.tl;$(CURDIR)/lib/?.tl;$(CURDIR)/lib/?/init.tl
+TL_PATH := /zip/.lua/?.tl;/zip/.lua/?/init.tl;$(CURDIR)/lib/types/?.d.tl;$(CURDIR)/lib/types/?/init.d.tl;$(CURDIR)/$(o)/lib/?.tl;$(CURDIR)/$(o)/lib/?/init.tl;$(CURDIR)/$(o)/lib/home/?.tl;$(CURDIR)/$(o)/lib/home/?/init.tl;$(CURDIR)/lib/home/?.tl;$(CURDIR)/lib/home/?/init.tl;$(CURDIR)/lib/?.tl;$(CURDIR)/lib/?/init.tl;$(CURDIR)/lib/build/?.tl
 
 ## TMP: temp directory for tests (default: /tmp, use TMP=~/tmp for more space)
 TMP ?= /tmp
@@ -91,11 +91,10 @@ $(o)/%: %
 	@mkdir -p $(@D)
 	@$(cp) $< $@
 
-# compile .tl files to .lua (transpile only, no type checking)
-# TODO: replace with cosmic --compile when it supports transpile-only mode
+# compile .tl files to .lua
 $(o)/%.lua: %.tl $(types_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
-	@$(bootstrap_cosmic) /zip/tl-gen.lua $< -o $@
+	@LUA_PATH="lib/home/?.lua;lib/home/?/init.lua;$${LUA_PATH:-}" $(bootstrap_cosmic) --compile $< > $@
 
 # bin scripts: o/bin/X.lua from lib/*/X.lua and 3p/*/X.lua
 vpath %.lua lib/build lib/test 3p/ast-grep
@@ -105,10 +104,9 @@ $(o)/bin/%.lua: %.lua
 	@$(cp) $< $@
 
 # bin scripts from teal: o/bin/X.lua from lib/*/X.tl (vpath finds X.tl)
-# TODO: replace with cosmic --compile when it supports transpile-only mode
 $(o)/bin/%.lua: %.tl $(types_files) | $(bootstrap_files)
 	@mkdir -p $(@D)
-	@$(bootstrap_cosmic) /zip/tl-gen.lua $< -o $@
+	@$(bootstrap_cosmic) --compile $< > $@
 
 # files are produced in o/
 all_files += $(call filter-only,$(foreach x,$(modules),$($(x)_files)))
@@ -284,7 +282,7 @@ $(o)/%.teal.ok: $(o)/% $$(cosmic_bin)
 		if head -10 "$$check_file" | grep -q -- '--check:false'; then \
 			echo "ignore: check disabled" > $@; \
 		else \
-			if TL_PATH='$(TL_PATH)' $(cosmic_bin) --check "$$check_file" >/dev/null 2>$@.err; then \
+			if TL_PATH='$(TL_PATH)' $(cosmic_bin) --check-types "$$check_file" >/dev/null 2>$@.err; then \
 				echo "pass:" > $@; \
 			else \
 				n=$$(grep -c ': error:' $@.err 2>/dev/null || echo 0); \

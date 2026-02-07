@@ -5,7 +5,7 @@
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
-local spawn = require("cosmic.spawn")
+local spawn = require("cosmic.child").spawn
 
 local record Stat
   mode: function(Stat): number
@@ -24,7 +24,7 @@ end
 local record VersionSpec
   version: string
   format: string
-  strip_components: number
+  strip_components: integer
   strip_prefix: string
   install: {string:string}
   remove: {string}
@@ -52,7 +52,7 @@ local function move_contents(source_dir: string, dest_dir: string): boolean, str
   return true
 end
 
-local function strip_components(source_dir: string, dest_dir: string, strip: number): boolean, string
+local function strip_components(source_dir: string, dest_dir: string, strip: integer): boolean, string
   if strip == 0 then
     return move_contents(source_dir, dest_dir)
   end
@@ -86,7 +86,7 @@ local function strip_components(source_dir: string, dest_dir: string, strip: num
   end
 end
 
-local function extract_zip(archive: string, dest_dir: string, strip: number): boolean, string
+local function extract_zip(archive: string, dest_dir: string, strip: integer): boolean, string
   local temp_dir = unix.mkdtemp(path.join(path.dirname(dest_dir), ".stage_XXXXXX"))
   local handle = spawn({"/usr/bin/unzip", "-o", "-q", "-d", temp_dir, archive}, {env = unix.environ()})
   local exit_code = handle:wait()
@@ -99,7 +99,7 @@ local function extract_zip(archive: string, dest_dir: string, strip: number): bo
   return ok, err
 end
 
-local function extract_targz(archive: string, dest_dir: string, strip: number): boolean, string
+local function extract_targz(archive: string, dest_dir: string, strip: integer): boolean, string
   local temp_dir = unix.mkdtemp(path.join(path.dirname(dest_dir), ".stage_XXXXXX"))
   local handle = spawn({"tar", "-xzf", archive, "-C", temp_dir}, {env = unix.environ()})
   local exit_code = handle:wait()

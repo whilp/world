@@ -2,7 +2,7 @@
 
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
-local spawn = require("cosmic.spawn")
+local spawn = require("cosmic.child").spawn
 local common = require("checker.common")
 
 local record Issue

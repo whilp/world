@@ -2,7 +2,7 @@
 --check:false - test mocking patterns are difficult to type correctly
 -- conformance tests for box executable backends
 
-local spawn = require("cosmic.spawn")
+local spawn = require("cosmic.child").spawn
 
 global TEST_TMPDIR: string
 

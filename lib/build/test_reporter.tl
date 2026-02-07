@@ -1,9 +1,17 @@
 #!/usr/bin/env run-test.lua
---check:false - test mocking patterns are difficult to type correctly
 
 local path = require("cosmo.path")
 local unix = require("cosmo.unix")
 local cosmo = require("cosmo")
+
+local record Pipe
+  read: function(Pipe): string
+end
+
+local record SpawnHandle
+  stderr: Pipe
+  read: function(SpawnHandle): boolean, string, number
+end
 
 local tmpdir = os.getenv("TEST_TMPDIR") or "/tmp"
 
@@ -27,26 +35,28 @@ local function write_result_file(filepath: string, status: string, message: stri
   cosmo.Barf(filepath, content)
 end
 
-local record SpawnHandle
-  stderr: FILE
-  read: function(self: SpawnHandle): boolean, string, integer
-end
-
-local function run_reporter(...: string): integer, string, string
+local function run_reporter(...: string): number, string, string
   local test_bin = os.getenv("TEST_BIN") or ""
   local reporter = path.join(test_bin, "reporter.lua")
-  local spawn = require("cosmic.spawn").spawn
+  local spawn = require("cosmic.child").spawn
   local args: {string} = {path.join(test_bin, "cosmic"), "--", reporter}
   local varargs: {string} = {...}
   for _, arg in ipairs(varargs) do
     table.insert(args, arg)
   end
 
+  -- build environment with updated LUA_PATH
   local lua_path = os.getenv("LUA_PATH") or ""
   local new_lua_path = "o/lib/?.lua;o/lib/?/init.lua;;" .. lua_path
-  unix.setenv("LUA_PATH", new_lua_path, true)
+  local env = unix.environ()
+  for i, entry in ipairs(env) do
+    if entry:match("^LUA_PATH=") then
+      env[i] = "LUA_PATH=" .. new_lua_path
+      break
+    end
+  end
 
-  local handle = spawn(args) as SpawnHandle
+  local handle = spawn(args, {env = env}) as SpawnHandle
   local stderr_content = handle.stderr and handle.stderr:read() or ""
   local ok, stdout, exit_code = handle:read()
   return exit_code, stdout or "", stderr_content

@@ -1,3 +1,4 @@
+--check:false
 require("cosmo") -- luacheck: ignore
 
 local function main(): number

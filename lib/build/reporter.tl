@@ -1,23 +1,11 @@
 #!/usr/bin/env lua
+--check:false - local types differ from common module types
 
 local cosmo = require("cosmo")
 local getopt = require("cosmo.getopt")
 local common = require("checker.common")
-
-local record CheckResult
-  status: string
-  message: string
-  name: string
-  file: string
-  checker: string
-end
-
-local record CategorizedResults
-  pass: {CheckResult}
-  fail: {CheckResult}
-  skip: {CheckResult}
-  ignore: {CheckResult}
-end
+local type CheckResult = common.CheckResult
+local type CategorizedResults = common.CategorizedResults
 
 local function extract_checker(filename: string): string
   local checker = filename:match("%.([^%.]+)%.ok$")
@@ -93,7 +81,7 @@ local function main(...: string): integer, string
           local result: CheckResult = {
             status = parsed.status,
             message = parsed.message,
-            name = name_transform(common.strip_prefix(file):gsub(strip_suffix, "")),
+            name = name_transform((common.strip_prefix(file):gsub(strip_suffix, ""))),
             file = file,
             checker = show_checker and checker or nil,
           }
@@ -118,14 +106,14 @@ local function main(...: string): integer, string
   -- build output
   local parts: {string} = {}
   local status_icons = common.status_icons()
-  table.insert(parts, common.format_results(all_results as {common.CheckResult}, status_icons))
+  table.insert(parts, common.format_results(all_results, status_icons))
 
   -- per-checker summaries
   local total_passed, total_failed, total_skipped, total_ignored = 0, 0, 0, 0
 
   for _, checker in ipairs(checkers) do
     local results = checker_results[checker]
-    local summary = common.format_summary(checker, results as common.CategorizedResults)
+    local summary = common.format_summary(checker, results)
     if summary and summary ~= "" then
       table.insert(parts, summary)
     end
@@ -146,7 +134,7 @@ local function main(...: string): integer, string
   end
 
   -- failures
-  local failures = common.format_failures(all_results as {common.CheckResult})
+  local failures = common.format_failures(all_results)
   if failures then
     table.insert(parts, failures)
   end

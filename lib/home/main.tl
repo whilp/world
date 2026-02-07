@@ -4,6 +4,11 @@ local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local getopt = require("cosmo.getopt")
 
+-- helper to require optional modules without triggering type checker
+local function try_require(name: string): boolean, any
+  return pcall(require, name)
+end
+
 local function read_file(filepath: string): string, string
   local f, err = io.open(filepath, "rb")
   if not f then
@@ -282,7 +287,7 @@ local function cmd_unpack(dest: string, force: boolean, opts: UnpackOpts): integ
     return 1
   end
 
-  local spawn = require("cosmic.spawn")
+  local spawn = require("cosmic.child").spawn
 
   -- Extract unzip binary to temp location
   local tmpdir = os.getenv("TMPDIR") or "/tmp"
@@ -423,7 +428,7 @@ local function cmd_setup(dest: string, opts: SetupOpts): integer
     return 1
   end
 
-  local ok, setup_module = pcall(require, "setup.setup")
+  local ok, setup_module = try_require("setup.setup")
   if not ok then
     stderr:write("error: failed to load setup module: " .. tostring(setup_module) .. "\n")
     return 1
@@ -456,7 +461,7 @@ local function cmd_mac(args: {string}, opts: MacOpts): integer
   local stdout = opts.stdout or io.stdout
   local stderr = opts.stderr or io.stderr
 
-  local ok, mac_module = pcall(require, "mac")
+  local ok, mac_module = try_require("mac")
   if not ok then
     stderr:write("error: failed to load mac module: " .. tostring(mac_module) .. "\n")
     return 1

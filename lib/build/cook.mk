@@ -16,12 +16,10 @@ build_snaps := $(wildcard lib/build/*.snap)
 
 .PRECIOUS: $(build_files)
 
-# Build scripts compiled with tl-gen.lua
-# TODO: replace with cosmic --compile when it supports transpile-only mode
+# Build scripts compiled with cosmic --compile
 $(build_files): $(o)/bin/%.lua: lib/build/%.tl | $(bootstrap_files)
 	@mkdir -p $(@D)
-	@$(bootstrap_cosmic) /zip/tl-gen.lua $< -o $@
-	@{ echo '#!/usr/bin/env lua'; cat $@; } > $@.tmp && mv $@.tmp $@
+	@$(bootstrap_cosmic) --compile $< > $@
 	@chmod +x $@
 reporter := $(bootstrap_cosmic) -- $(build_reporter)
 update_runner := $(bootstrap_cosmic) -- $(build_check_update)

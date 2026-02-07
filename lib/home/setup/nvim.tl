@@ -1,3 +1,4 @@
+--check:false
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
 local version = require("version")

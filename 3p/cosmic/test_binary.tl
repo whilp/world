@@ -1,10 +1,9 @@
 #!/usr/bin/env run-test.lua
---check:false - test uses dynamic process spawning patterns
 -- test cosmic bundled binary
 
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
-local spawn = require("cosmic.spawn")
+local spawn = require("cosmic.child").spawn
 
 local cosmic = path.join(os.getenv("TEST_BIN"), "cosmic")
 
@@ -20,19 +19,19 @@ local function clean_env(): {string}
   return env
 end
 
-local function test_cosmic_spawn()
-  local ok, out = spawn({cosmic, "-e", "local s = require('cosmic.spawn'); print(s and 'ok' or 'fail')"}, {env = clean_env()}):read()
+local function test_cosmic_child()
+  local ok, out = spawn({cosmic, "-e", "local s = require('cosmic.child'); print(s and 'ok' or 'fail')"}, {env = clean_env()}):read()
   assert(ok, "cosmic exited with error")
   assert((out as string):find("ok", 1, true), "expected output to contain 'ok'")
 end
-test_cosmic_spawn()
+test_cosmic_child()
 
-local function test_cosmic_walk()
-  local ok, out = spawn({cosmic, "-e", "local w = require('cosmic.walk'); print(w and 'ok' or 'fail')"}, {env = clean_env()}):read()
+local function test_cosmic_fs()
+  local ok, out = spawn({cosmic, "-e", "local fs = require('cosmic.fs'); print(fs and 'ok' or 'fail')"}, {env = clean_env()}):read()
   assert(ok, "cosmic exited with error")
   assert((out as string):find("ok", 1, true), "expected output to contain 'ok'")
 end
-test_cosmic_walk()
+test_cosmic_fs()
 
 local function test_warnings_flag()
   -- -W should convert warnings to errors

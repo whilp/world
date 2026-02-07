@@ -12,7 +12,7 @@
 
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
-local spawn = require("cosmic.spawn")
+local spawn = require("cosmic.child").spawn
 
 local record GitHubHost
   name: string

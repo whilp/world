@@ -250,7 +250,54 @@ local function categorize_results(results_list: {CheckResult}): CategorizedResul
   return results
 end
 
+local record common
+  record CheckResult
+    status: string
+    message: string
+    name: string
+    checker: string
+    stdout: string
+    stderr: string
+    file: string
+  end
+
+  record CategorizedResults
+    pass: {CheckResult}
+    fail: {CheckResult}
+    skip: {CheckResult}
+    ignore: {CheckResult}
+  end
+
+  record CheckPatterns
+    shebangs: {string: boolean}
+    ignore: string
+  end
+
+  record StatusIcons
+    pass: string
+    fail: string
+    skip: string
+    ignore: string
+  end
+
+  format_output: function(status: string, message?: string, stdout?: string, stderr?: string): string
+  write_result: function(status: string, message: string, stdout: string, stderr: string, source?: string): integer
+  parse_result: function(content: string): CheckResult
+  strip_prefix: function(filepath: string): string
+  status_icons: function(): StatusIcons
+  has_extension: function(file: string, extensions: {string: boolean}): boolean
+  check_first_lines: function(file: string, patterns: CheckPatterns, max_lines?: integer): boolean, string
+  format_results: function(results: {CheckResult}, icons: StatusIcons): string
+  format_summary: function(checker_name: string, results: CategorizedResults): string
+  format_failures: function(all_results: {CheckResult}): string
+  categorize_results: function(results_list: {CheckResult}): CategorizedResults
+end
+
 return {
+  CheckResult = CheckResult,
+  CategorizedResults = CategorizedResults,
+  CheckPatterns = CheckPatterns,
+  StatusIcons = StatusIcons,
   format_output = format_output,
   write_result = write_result,
   parse_result = parse_result,
@@ -262,4 +309,4 @@ return {
   format_summary = format_summary,
   format_failures = format_failures,
   categorize_results = categorize_results,
-}
+} as common

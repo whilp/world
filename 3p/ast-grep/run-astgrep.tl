@@ -2,7 +2,7 @@
 
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
-local spawn = require("cosmic.spawn")
+local spawn = require("cosmic.child").spawn
 local common = require("checker.common")
 
 local record Issue
@@ -34,10 +34,7 @@ local supported_extensions: {string: boolean} = {
   [".tl"] = true,
 }
 
-local record CheckPatterns
-  shebangs: {string: boolean}
-  ignore: string
-end
+local type CheckPatterns = common.CheckPatterns
 
 local supported_patterns: CheckPatterns = {
   shebangs = {

@@ -1,15 +1,10 @@
 #!/usr/bin/env run-test.lua
---check:false - module resolution for make-help is dynamic
 -- Test the Makefile help system
 
 local cosmo = require("cosmo")
 local help = require("make-help")
 
-local record HelpItem
-  type: string
-  name: string
-  description: string
-end
+local type Item = help.Item
 
 local function test_parse_multiline_comment()
   local content = [[
@@ -24,7 +19,7 @@ clean:
 	@rm -rf o
 ]]
 
-  local items = help.parse_makefile(content) as {HelpItem}
+  local items = help.parse_makefile(content) as {Item}
   assert(#items == 2, "expected 2 items")
   assert(items[1].type == "target", "expected target type")
   assert(items[1].name == "test", "expected test target")
@@ -44,7 +39,7 @@ test:
 	@echo "testing"
 ]]
 
-  local items = help.parse_makefile(content) as {HelpItem}
+  local items = help.parse_makefile(content) as {Item}
   assert(#items == 1, "expected 1 item")
   assert(items[1].type == "target", "expected target type")
   assert(items[1].name == "test", "expected test target")
@@ -64,7 +59,7 @@ undocumented:
 	@echo "undocumented"
 ]]
 
-  local items = help.parse_makefile(content) as {HelpItem}
+  local items = help.parse_makefile(content) as {Item}
   assert(#items == 1, "expected 1 item")
   assert(items[1].type == "target", "expected target type")
   assert(items[1].name == "documented", "expected documented target")
@@ -80,7 +75,7 @@ filter-only = $(if $(only),$(foreach f,$1,$(if $(findstring $(only),$(f)),$(f)))
 o := output
 ]]
 
-  local items = help.parse_makefile(content) as {HelpItem}
+  local items = help.parse_makefile(content) as {Item}
   assert(#items == 2, "expected 2 items")
   assert(items[1].type == "option", "expected option type")
   assert(items[1].name == "filter-only", "expected filter-only option")
@@ -91,7 +86,7 @@ end
 test_parse_variables()
 
 local function test_format_help()
-  local items: {HelpItem} = {
+  local items: {Item} = {
     { type = "target", name = "test", description = "Run all tests" },
     { type = "target", name = "clean", description = "Remove build artifacts" },
     { type = "option", name = "only", description = "Filter by pattern" },
@@ -127,11 +122,11 @@ end
 test_parse_phony_targets()
 
 local function test_all_phony_targets_documented()
-  local content, err = cosmo.Slurp("Makefile")
-  assert(content, err or "failed to read Makefile")
+  local content = cosmo.Slurp("Makefile")
+  assert(content, "failed to read Makefile")
 
   local phony = help.parse_phony_targets(content) as {string:boolean}
-  local items = help.parse_makefile(content) as {HelpItem}
+  local items = help.parse_makefile(content) as {Item}
 
   local documented: {string:boolean} = {}
   for _, item in ipairs(items) do

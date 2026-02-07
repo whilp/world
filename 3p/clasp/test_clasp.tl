@@ -1,6 +1,6 @@
 #!/usr/bin/env run-test.lua
 
-local spawn = require("cosmic.spawn")
+local spawn = require("cosmic.child").spawn
 local path = require("cosmo.path")
 
 global TEST_BIN: string

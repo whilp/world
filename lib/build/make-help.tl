@@ -96,7 +96,7 @@ local function format_help(items: {Item}, options?: FormatOptions): string
   table.insert(output, "Targets:")
 
   for _, item in ipairs(targets) do
-    local padding = string.rep(" ", math.max(0, width - #item.name))
+    local padding = string.rep(" ", math.max(0, width - #item.name) as integer)
     table.insert(output, "  " .. item.name .. padding .. item.description)
   end
 
@@ -105,7 +105,7 @@ local function format_help(items: {Item}, options?: FormatOptions): string
     table.insert(output, "")
     table.insert(output, "Options:")
     for _, item in ipairs(vars) do
-      local padding = string.rep(" ", math.max(0, width - #item.name))
+      local padding = string.rep(" ", math.max(0, width - #item.name) as integer)
       table.insert(output, "  " .. item.name .. padding .. item.description)
     end
   end
@@ -150,12 +150,15 @@ local function parse_phony_targets(content: string): {string:boolean}
 end
 
 local record MakeHelp
+  Item: Item
+
   parse_makefile: function(content: string): {Item}
   format_help: function(items: {Item}, options?: FormatOptions): string
   parse_phony_targets: function(content: string): {string:boolean}
 end
 
 local M: MakeHelp = {
+  Item = Item,
   parse_makefile = parse_makefile,
   format_help = format_help,
   parse_phony_targets = parse_phony_targets,

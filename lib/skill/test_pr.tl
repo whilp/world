@@ -1,23 +1,22 @@
 #!/usr/bin/env run-test.lua
---check:false - test uses local type definitions that conflict with source module types
 
 local pr = require("skill.pr")
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
 
 --------------------------------------------------------------------------------
--- types
+-- types imported from pr module
 --------------------------------------------------------------------------------
 
-local record SpawnHandle
-  read: function(self: SpawnHandle): boolean, string
-  wait: function(self: SpawnHandle): integer
-end
+local type Handle = pr.Handle
+local type SpawnOpts = pr.SpawnOpts
+local type MainOpts = pr.MainOpts
+local type FetchOpts = pr.FetchOpts
+local type FetchResult = pr.FetchResult
+local type ParsedPr = pr.ParsedPr
+local type GitHubPr = pr.GitHubPr
 
-local record SpawnOpts
-  spawn: function({string}): SpawnHandle
-  getenv: function(string): string
-end
+local type FetchFn = function(url: string, opts?: FetchOpts): FetchResult
 
 local record MockEnv
   GITHUB_ACTIONS: string
@@ -27,48 +26,15 @@ local record MockEnv
   GITHUB_BASE_REF: string
 end
 
-local record MainOpts
-  getenv: function(string): string
-  spawn: function({string}): SpawnHandle
-  fetch: FetchFn
-end
-
-local record FetchOpts
-  method: string
-  headers: {string:string}
-  body: string
-end
-
-local record FetchResult
-  ok: boolean
-  status: number
-  headers: {string:string}
-  body: string
-  error: string
-end
-
-local type FetchFn = function(url: string, opts?: FetchOpts): FetchResult
-
-local record ParsedPr
-  title: string
-  body: string
-end
-
-local record GitHubPr
-  number: number
-  title: string
-  body: string
-end
-
 --------------------------------------------------------------------------------
 -- mock helpers
 --------------------------------------------------------------------------------
 
-local function mock_spawn(output: string): function({string}): SpawnHandle
-  return function(_: {string}): SpawnHandle
+local function mock_spawn(output: string): function({string}): Handle
+  return function(_: {string}): Handle
     return {
-      read = function(_: SpawnHandle): boolean, string return true, output end,
-      wait = function(_: SpawnHandle): integer return 0 end,
+      read = function(_: Handle): boolean, string return true, output end,
+      wait = function(_: Handle): integer return 0 end,
     }
   end
 end

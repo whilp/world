@@ -4,7 +4,7 @@
 
 local unix = require("cosmo.unix")
 local path = require("cosmo.path")
-local spawn = require("cosmic.spawn")
+local spawn = require("cosmic.child").spawn
 local version = require("version")
 
 local TEST_TMPDIR = os.getenv("TEST_TMPDIR") or "/tmp"
@@ -86,14 +86,14 @@ local gh_bin_link = path.join(gh_share, "bin")
 local gh_link_stat = unix.stat(gh_bin_link, unix.AT_SYMLINK_NOFOLLOW) as StatResult
 assert(gh_link_stat, "gh bin symlink should exist")
 assert(unix.S_ISLNK(gh_link_stat:mode()), "gh bin should be a symlink")
-local gh_link_target = unix.readlink(gh_bin_link, 1024)
+local gh_link_target = unix.readlink(gh_bin_link)
 assert(gh_link_target == gh_versions[1] .. "/bin", "gh bin symlink target: " .. gh_link_target)
 
 local nvim_bin_link = path.join(nvim_share, "bin")
 local nvim_link_stat = unix.stat(nvim_bin_link, unix.AT_SYMLINK_NOFOLLOW) as StatResult
 assert(nvim_link_stat, "nvim bin symlink should exist")
 assert(unix.S_ISLNK(nvim_link_stat:mode()), "nvim bin should be a symlink")
-local nvim_link_target = unix.readlink(nvim_bin_link, 1024)
+local nvim_link_target = unix.readlink(nvim_bin_link)
 assert(nvim_link_target == nvim_versions[1] .. "/bin", "nvim bin symlink target: " .. nvim_link_target)
 
 local nvim_share_link = path.join(nvim_share, "share")
@@ -163,7 +163,7 @@ for _, tool in ipairs(tools) do
     local bin_stat = unix.stat(bin_link, unix.AT_SYMLINK_NOFOLLOW) as StatResult
     assert(bin_stat, tool .. " bin symlink should exist")
     assert(unix.S_ISLNK(bin_stat:mode()), tool .. " bin should be a symlink")
-    local bin_target = unix.readlink(bin_link, 1024)
+    local bin_target = unix.readlink(bin_link)
     assert(bin_target == tool_versions[1] .. "/bin", tool .. " bin symlink target: " .. bin_target)
   end
 end

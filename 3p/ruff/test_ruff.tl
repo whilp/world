@@ -2,7 +2,7 @@
 
 global TEST_DIR: string
 
-local spawn = require("cosmic.spawn")
+local spawn = require("cosmic.child").spawn
 local path = require("cosmo.path")
 
 local bin: string = path.join(TEST_DIR, "bin", "ruff")

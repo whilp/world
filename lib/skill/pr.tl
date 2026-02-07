@@ -18,10 +18,12 @@ Environment variables:
 
 local cosmo = require("cosmo")
 local path = require("cosmo.path")
-local spawn_mod = require("cosmic.spawn")
+local spawn_mod = require("cosmic.child")
 local fetch_mod = require("cosmic.fetch")
 
-local type SpawnHandle = require("cosmic.spawn").SpawnHandle
+local record SpawnHandle
+  read: function(SpawnHandle): boolean, string
+end
 
 local record FetchOpts
   method: string
@@ -29,7 +31,13 @@ local record FetchOpts
   body: string
 end
 
-local type FetchResult = require("cosmic.fetch").Result
+local record FetchResult
+  ok: boolean
+  status: number
+  body: string
+  error: string
+end
+
 local type FetchFn = function(url: string, opts?: FetchOpts): FetchResult
 
 local record SpawnOpts
@@ -80,7 +88,7 @@ end
 
 local function get_pr_file_from_branch(opts?: SpawnOpts): string
   opts = opts or {}
-  local do_spawn = opts.spawn or (spawn_mod as function({string}): SpawnHandle)
+  local do_spawn = opts.spawn or (spawn_mod.spawn as function({string}): SpawnHandle)
 
   local base_branch = get_default_branch(opts)
 
@@ -146,8 +154,10 @@ local function parse_pr_md(content: string): ParsedPr, string
   return {title = title, body = body}
 end
 
+local fetch_fn = fetch_mod.Fetch as function(string, table): FetchResult
+
 local function default_fetch(url: string, opts?: FetchOpts): FetchResult
-  return fetch_mod.Fetch(url, opts as fetch_mod.FetchOpts)
+  return fetch_fn(url, opts as table)
 end
 
 local function github_request(method: string, endpoint: string, token: string, body: {string:string}, opts?: RequestOpts): number, GitHubPr | string
@@ -399,6 +409,56 @@ if cosmo.is_main() then
 end
 
 local record PrModule
+  record Handle
+    pid: number
+    read: function(self: Handle): boolean, string
+    wait: function(self: Handle): integer
+  end
+
+  record FetchOpts
+    method: string
+    headers: {string:string}
+    body: string
+  end
+
+  record FetchResult
+    ok: boolean
+    status: number
+    headers: {string:string}
+    body: string
+    error: string
+  end
+
+  record SpawnOpts
+    spawn: function({string}): Handle
+    repo: string
+    getenv: function(string): string
+  end
+
+  record RequestOpts
+    fetch: function(url: string, opts?: FetchOpts): FetchResult
+    getenv: function(string): string
+  end
+
+  record MainOpts
+    spawn: function({string}): Handle
+    repo: string
+    getenv: function(string): string
+    fetch: function(url: string, opts?: FetchOpts): FetchResult
+  end
+
+  record ParsedPr
+    title: string
+    body: string
+  end
+
+  record GitHubPr
+    number: number
+    title: string
+    body: string
+    message: string
+  end
+
   parse_pr_md: function(content: string): ParsedPr, string
   github_request: function(method: string, endpoint: string, token: string, body: {string:string}, opts?: RequestOpts): number, GitHubPr
   get_pr: function(owner: string, repo: string, pr_number: integer, token: string, opts?: RequestOpts): GitHubPr, string
