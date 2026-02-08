@@ -20,6 +20,6 @@ Instead of the previous verbose output with full commit and trailer listings.
 
 ## Validation
 
-- [x] tests pass (run-test test_pr)
+- [x] tests pass
 - [x] exit code changed from 1 to 0
 - [x] message format simplified
