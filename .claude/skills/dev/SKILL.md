@@ -71,7 +71,7 @@ gh api repos/{owner}/{repo}/pulls/{pr}/comments --jq '[.[] | select(.in_reply_to
 # Reply to a review comment
 gh api repos/{owner}/{repo}/pulls/{pr}/comments \
   --method POST \
-  -f body="Fixed in abc1234 - renamed to run-test.js" \
+  -f body="Fixed in abc1234 - renamed to helper.js" \
   -F in_reply_to=<comment-id>
 ```
 
@@ -83,7 +83,7 @@ Replies should be:
 - **Explain how** - brief description of the fix
 
 Examples:
-- `Fixed in abc1234 - renamed to run-test.js as suggested`
+- `Fixed in abc1234 - renamed to helper.js as suggested`
 - `Addressed in def5678 - now uses a single rule in cook.mk`
 - `Good catch, fixed in 789abcd - removed the duplicate import`
 
@@ -95,17 +95,17 @@ gh api repos/whilp/world/pulls/269/comments \
   --jq '.[] | select(.in_reply_to_id == null) | {id, path, body}'
 
 # Output:
-# {"id":2702089939,"path":"lib/appscript/run-tests.js","body":"run-tests.js should be run-test.js..."}
+# {"id":2702089939,"path":"lib/appscript/helpers.js","body":"helpers.js should be helper.js..."}
 
 # 2. Make the fix and commit
-git mv lib/appscript/run-tests.js lib/appscript/run-test.js
-git commit -m "appscript: rename run-tests.js to run-test.js"
+git mv lib/appscript/helpers.js lib/appscript/helper.js
+git commit -m "appscript: rename helpers.js to helper.js"
 # Commit SHA: abc1234
 
 # 3. Reply to the comment
 gh api repos/whilp/world/pulls/269/comments \
   --method POST \
-  -f body="Fixed in abc1234 - renamed to run-test.js" \
+  -f body="Fixed in abc1234 - renamed to helper.js" \
   -F in_reply_to=2702089939
 ```
 
