@@ -1,3 +1,5 @@
+export LANG=C.UTF-8
+
 typeset -aU path
 
 path=(
