@@ -1,0 +1,63 @@
+[user]
+	name = "Will Maier"
+
+[fetch]
+	prune = true
+
+[push]
+	default = simple
+	autoSetupRemote = true
+
+# http://stackoverflow.com/questions/18257622/why-is-git-core-preloadindex-default-value-false
+[core]
+	preloadindex = true
+	deltabasecachelimit = 4g
+	editor = cat > /tmp/COMMIT_EDITMSG
+	excludesfile = ~/.config/git/ignore
+	pager = delta
+
+[help]
+	autocorrect = 50
+
+[feature]
+	manyfiles = true
+
+[init]
+	defaultBranch = main
+
+[pull]
+	ff = only
+
+[alias]
+	co = checkout
+	ci = commit
+	st = status
+	br = branch
+	di = diff
+	dc = diff --cached
+	lo = log --oneline
+	ls = log --stat
+	up = pull --rebase
+	rb = rebase
+	rc = rebase --continue
+	ra = rebase --abort
+
+[advice]
+	addIgnoredFile = false
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	features = colorblind-dark
+[merge]
+	conflictStyle = zdiff3
+[include]
+	path = .config/git/config
+	path = .config/git/local
+	path = .config/delta/delta.gitconfig
+[diff]
+	noprefix = true
+[commit]
+	verbose = true
+[status]
+	showUntrackedFiles = no

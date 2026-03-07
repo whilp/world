@@ -125,8 +125,8 @@ local function test_cli_stdout()
   h = spawn.spawn({"tar", "xzf", "-", "-C", dest}, {stdin = tar_data})
   local _, _, code = h:read()
   assert(code == 0, "tar extract failed with code " .. tostring(code))
-  assert(fs.isfile(fs.join(dest, ".config/example/config")),
-    "expected config file after extraction")
+  assert(fs.isfile(fs.join(dest, ".zshrc")),
+    "expected .zshrc after extraction")
 end
 test_cli_stdout()
 
@@ -146,7 +146,7 @@ local function test_cli_output_file()
   h = spawn.spawn({"tar", "xzf", tarpath, "-C", dest})
   local _ok2, _out2, code2 = h:read()
   assert(code2 == 0, "tar extract failed with code " .. tostring(code2))
-  assert(fs.isfile(fs.join(dest, ".config/example/config")),
-    "expected config file after extraction")
+  assert(fs.isfile(fs.join(dest, ".zshrc")),
+    "expected .zshrc after extraction")
 end
 test_cli_output_file()
