@@ -11,6 +11,14 @@ local world = "o/world"
 local main = require("main")
 local embed_root = "embed/"
 
+local function test_usage()
+  local s = main.usage()
+  assert(s:find("--dest"), "expected --dest in usage")
+  assert(s:find("--list"), "expected --list in usage")
+  assert(s:find("--help"), "expected --help in usage")
+end
+test_usage()
+
 local function test_list_returns_sorted_paths()
   local files = main.list(embed_root)
   assert(#files > 0, "expected at least one file")

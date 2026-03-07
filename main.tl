@@ -69,15 +69,16 @@ local function extract(dest: string, root?: string): {ExtractResult}, string
   return results
 end
 
+--- return usage string.
+local function usage(): string
+  return "usage: world [--dest <dir>] [--list]\n"
+  .. "  --dest <dir>   destination directory (default: $HOME)\n"
+  .. "  --list         list embedded files\n"
+  .. "  --help         show this help\n"
+end
+
 if proc.is_main() then
   local getopt = require("cosmic.getopt")
-
-  local function usage()
-    io.stderr:write("usage: world [--dest <dir>] [--list]\n")
-    io.stderr:write("  --dest <dir>   destination directory (default: $HOME)\n")
-    io.stderr:write("  --list         list embedded files\n")
-    io.stderr:write("  --help         show this help\n")
-  end
 
   local parser = getopt.new(arg, "hd:l", {
       {name = "help", has_arg = "none", short = "h"},
@@ -92,7 +93,7 @@ if proc.is_main() then
     local opt, optarg = parser:next()
     if not opt then break end
     if opt == "h" then
-      usage()
+      io.stderr:write(usage())
       os.exit(0)
     elseif opt == "d" then
       dest = optarg
@@ -122,4 +123,5 @@ end
 return {
   list = list,
   extract = extract,
+  usage = usage,
 }
