@@ -1,10 +1,17 @@
 local fs = require("cosmic.fs")
 local cio = require("cosmic.io")
+local getopt = require("cosmic.getopt")
 local proc = require("cosmic.proc")
 
 local record ExtractResult
   rel: string
   target: string
+end
+
+local record Opts
+  dest: string
+  list: boolean
+  help: boolean
 end
 
 local EMBED_ROOT < const > = "/zip/embed/"
@@ -77,39 +84,51 @@ local function usage(): string
   .. "  --help         show this help\n"
 end
 
-if proc.is_main() then
-  local getopt = require("cosmic.getopt")
+--- parse command-line arguments into an Opts record.
+local function parse_args(args: {string}): Opts
+  local opts: Opts = {
+    dest = os.getenv("HOME") or ".",
+    list = false,
+    help = false,
+  }
 
-  local parser = getopt.new(arg, "hd:l", {
+  local parser = getopt.new(args, "hd:l", {
       {name = "help", has_arg = "none", short = "h"},
       {name = "dest", has_arg = "required", short = "d"},
       {name = "list", has_arg = "none", short = "l"},
     })
 
-  local dest: string = os.getenv("HOME") or "."
-  local list_only = false
-
   while true do
     local opt, optarg = parser:next()
     if not opt then break end
     if opt == "h" then
-      io.stderr:write(usage())
-      os.exit(0)
+      opts.help = true
     elseif opt == "d" then
-      dest = optarg
+      opts.dest = optarg
     elseif opt == "l" then
-      list_only = true
+      opts.list = true
     end
   end
 
-  if list_only then
+  return opts
+end
+
+if proc.is_main() then
+  local opts = parse_args(arg)
+
+  if opts.help then
+    io.stderr:write(usage())
+    os.exit(0)
+  end
+
+  if opts.list then
     for _, rel in ipairs(list()) do
       print(rel)
     end
     os.exit(0)
   end
 
-  local results, err = extract(dest)
+  local results, err = extract(opts.dest)
   if not results then
     io.stderr:write("error: " .. (err or "unknown") .. "\n")
     os.exit(1)
@@ -124,4 +143,5 @@ return {
   list = list,
   extract = extract,
   usage = usage,
+  parse_args = parse_args,
 }

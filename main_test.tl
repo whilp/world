@@ -19,6 +19,59 @@ local function test_usage()
 end
 test_usage()
 
+local function test_parse_args_defaults()
+  local opts = main.parse_args({})
+  assert(opts.dest == (os.getenv("HOME") or "."), "expected HOME as default dest")
+  assert(opts.list == false, "expected list false by default")
+  assert(opts.help == false, "expected help false by default")
+end
+test_parse_args_defaults()
+
+local function test_parse_args_dest()
+  local opts = main.parse_args({"--dest", "/tmp/test"})
+  assert(opts.dest == "/tmp/test", "expected dest /tmp/test, got " .. opts.dest)
+end
+test_parse_args_dest()
+
+local function test_parse_args_dest_short()
+  local opts = main.parse_args({"-d", "/tmp/short"})
+  assert(opts.dest == "/tmp/short", "expected dest /tmp/short, got " .. opts.dest)
+end
+test_parse_args_dest_short()
+
+local function test_parse_args_list()
+  local opts = main.parse_args({"--list"})
+  assert(opts.list == true, "expected list true")
+  assert(opts.help == false, "expected help false")
+end
+test_parse_args_list()
+
+local function test_parse_args_list_short()
+  local opts = main.parse_args({"-l"})
+  assert(opts.list == true, "expected list true")
+end
+test_parse_args_list_short()
+
+local function test_parse_args_help()
+  local opts = main.parse_args({"--help"})
+  assert(opts.help == true, "expected help true")
+  assert(opts.list == false, "expected list false")
+end
+test_parse_args_help()
+
+local function test_parse_args_help_short()
+  local opts = main.parse_args({"-h"})
+  assert(opts.help == true, "expected help true")
+end
+test_parse_args_help_short()
+
+local function test_parse_args_combined()
+  local opts = main.parse_args({"-l", "-d", "/tmp/combo"})
+  assert(opts.list == true, "expected list true")
+  assert(opts.dest == "/tmp/combo", "expected dest /tmp/combo, got " .. opts.dest)
+end
+test_parse_args_combined()
+
 local function test_list_returns_sorted_paths()
   local files = main.list(embed_root)
   assert(#files > 0, "expected at least one file")
