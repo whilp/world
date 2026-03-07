@@ -3,7 +3,7 @@ local fs = require("cosmic.fs")
 local cio = require("cosmic.io")
 local hash = require("cosmic.hash")
 local env = require("cosmic.env")
-local fv = require("fetch-verify")
+local fv = require("fetch")
 
 local function test_fetch_and_verify_success()
   local tmpdir = env.get("TEST_TMPDIR")
