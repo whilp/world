@@ -95,7 +95,7 @@ $(bins)/%/zellij:
 embed_files := $(wildcard embed/*) $(wildcard embed/**/*)
 
 # build compressed tarball per platform: embed/ files + platform binaries
-$(o)world-%.tar.gz: $(embed_files) $(bins)/%/glow $(bins)/%/delta $(bins)/%/zellij
+$(o)world-%.tar.gz: $(embed_files) $(bins)/%/glow $(bins)/%/delta $(bins)/%/zellij $(cosmic)
 	@mkdir -p $(@D)
 	@rm -rf $(o)world-tree-$*
 	@mkdir -p $(o)world-tree-$*/.local/bin
@@ -103,6 +103,7 @@ $(o)world-%.tar.gz: $(embed_files) $(bins)/%/glow $(bins)/%/delta $(bins)/%/zell
 	@cp $(bins)/$*/glow $(o)world-tree-$*/.local/bin/
 	@cp $(bins)/$*/delta $(o)world-tree-$*/.local/bin/
 	@cp $(bins)/$*/zellij $(o)world-tree-$*/.local/bin/
+	@cp $(cosmic) $(o)world-tree-$*/.local/bin/cosmic
 	tar czf $@ -C $(o)world-tree-$* .
 	@rm -rf $(o)world-tree-$*
 
