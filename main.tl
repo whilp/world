@@ -28,6 +28,18 @@ local function list(root?: string): {string}
   return result
 end
 
+--- return file mode for extraction: 0755 if source is executable, 0644 otherwise.
+local function extract_mode(path: string): number
+  local st = fs.stat(path)
+  if st then
+    local m = st:mode()
+    if m & 0x49 ~= 0 then -- 0111 = any execute bit
+      return 0x1ED -- 0755
+    end
+  end
+  return 0x1A4 -- 0644
+end
+
 --- extract embedded files to dest. returns list of extracted files.
 local function extract(dest: string, root?: string): {ExtractResult}, string
   root = root or EMBED_ROOT
@@ -56,14 +68,7 @@ local function extract(dest: string, root?: string): {ExtractResult}, string
     end
 
     --- preserve executable bit from embedded file
-    local st = fs.stat(f)
-    local mode = 0x1A4 -- 0644
-    if st then
-      local m = st:mode()
-      if m & 0x49 ~= 0 then -- 0111 = any execute bit
-        mode = 0x1ED -- 0755
-      end
-    end
+    local mode = extract_mode(f)
 
     local write_ok, write_err = cio.barf(target, content, mode)
     if not write_ok then
@@ -142,6 +147,7 @@ end
 return {
   list = list,
   extract = extract,
+  extract_mode = extract_mode,
   usage = usage,
   parse_args = parse_args,
 }

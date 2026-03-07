@@ -72,6 +72,32 @@ local function test_parse_args_combined()
 end
 test_parse_args_combined()
 
+local function test_extract_mode_regular_file()
+  local tmpdir = env.get("TEST_TMPDIR")
+  assert(tmpdir, "TEST_TMPDIR must be set")
+  local path = fs.join(tmpdir, "regular.txt")
+  cio.barf(path, "hello", 0x1A4) -- 0644
+  local mode = main.extract_mode(path)
+  assert(mode == 0x1A4, "expected 0644 for regular file, got " .. tostring(mode))
+end
+test_extract_mode_regular_file()
+
+local function test_extract_mode_executable()
+  local tmpdir = env.get("TEST_TMPDIR")
+  assert(tmpdir, "TEST_TMPDIR must be set")
+  local path = fs.join(tmpdir, "script.sh")
+  cio.barf(path, "#!/bin/sh\n", 0x1ED) -- 0755
+  local mode = main.extract_mode(path)
+  assert(mode == 0x1ED, "expected 0755 for executable, got " .. tostring(mode))
+end
+test_extract_mode_executable()
+
+local function test_extract_mode_nonexistent()
+  local mode = main.extract_mode("/no/such/file")
+  assert(mode == 0x1A4, "expected 0644 for nonexistent file, got " .. tostring(mode))
+end
+test_extract_mode_nonexistent()
+
 local function test_list_returns_sorted_paths()
   local files = main.list(embed_root)
   assert(#files > 0, "expected at least one file")
