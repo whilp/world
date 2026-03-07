@@ -88,24 +88,18 @@ $(o)%.lua: %.tl $(cosmic)
 	$(cosmic) --compile $< > $@
 
 # download, verify, and extract binaries per platform
-$(bins)/%/glow:
-	@mkdir -p $(@D)
-	@curl -fsSLo $(@D)/glow.tar.gz $(glow_url_$*)
-	$(call verify,$(@D)/glow.tar.gz,$(glow_sha_$*))
+$(bins)/%/glow: $(cosmic)
+	$(cosmic) fetch-verify.tl $(glow_url_$*) $(glow_sha_$*) $(@D)/glow.tar.gz
 	@tar xzf $(@D)/glow.tar.gz -C $(@D) --strip-components=1 --wildcards '*/glow'
 	@rm $(@D)/glow.tar.gz
 
-$(bins)/%/delta:
-	@mkdir -p $(@D)
-	@curl -fsSLo $(@D)/delta.tar.gz $(delta_url_$*)
-	$(call verify,$(@D)/delta.tar.gz,$(delta_sha_$*))
+$(bins)/%/delta: $(cosmic)
+	$(cosmic) fetch-verify.tl $(delta_url_$*) $(delta_sha_$*) $(@D)/delta.tar.gz
 	@tar xzf $(@D)/delta.tar.gz -C $(@D) --strip-components=1 --wildcards '*/delta'
 	@rm $(@D)/delta.tar.gz
 
-$(bins)/%/zellij:
-	@mkdir -p $(@D)
-	@curl -fsSLo $(@D)/zellij.tar.gz $(zellij_url_$*)
-	$(call verify,$(@D)/zellij.tar.gz,$(zellij_sha_$*))
+$(bins)/%/zellij: $(cosmic)
+	$(cosmic) fetch-verify.tl $(zellij_url_$*) $(zellij_sha_$*) $(@D)/zellij.tar.gz
 	@tar xzf $(@D)/zellij.tar.gz -C $(@D) zellij
 	@rm $(@D)/zellij.tar.gz
 
