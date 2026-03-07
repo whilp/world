@@ -1,0 +1,65 @@
+# vim: ft=conf
+
+# General settings
+#term = "xterm-256color"
+font-size = 14
+cursor-style = "block"
+window-theme = "dark"
+window-decoration = auto
+background-opacity = 1.0
+macos-titlebar-style = hidden
+macos-option-as-alt = true
+macos-non-native-fullscreen = false
+window-save-state = "default"
+#maximize = true
+#shell-integration = "zsh"
+mouse-hide-while-typing = true
+window-padding-x = 4
+window-padding-y = 8
+window-padding-balance = true
+window-padding-color = extend
+clipboard-write = allow
+#adjust-cell-width = 0%
+
+scrollback-limit = 0
+bell-features="no-audio,no-system,no-attention,no-title,no-border"
+
+theme = "GitHub Dark Colorblind"
+
+keybind = global:ctrl+`=toggle_quick_terminal
+keybind = cmd+shift+w=quit
+keybind = cmd+w=text:\x17
+keybind = cmd+v=paste_from_clipboard
+keybind = cmd+c=copy_to_clipboard
+keybind = cmd+c=text:\x03
+keybind = shift+enter=text:\x1b\r
+
+keybind = cmd+h=unbind
+keybind = cmd+t=unbind
+keybind = cmd+shift+right_bracket=unbind
+keybind = cmd+shift+left_bracket=unbind
+keybind = cmd+shift+h=unbind
+keybind = cmd+shift+j=unbind
+keybind = cmd+shift+k=unbind
+keybind = cmd+shift+l=unbind
+
+keybind = cmd+digit_1=unbind
+keybind = cmd+digit_2=unbind
+keybind = cmd+digit_3=unbind
+keybind = cmd+digit_4=unbind
+keybind = cmd+digit_5=unbind
+keybind = cmd+digit_6=unbind
+keybind = cmd+digit_7=unbind
+keybind = cmd+digit_8=unbind
+keybind = cmd+digit_9=unbind
+keybind = cmd+digit_0=unbind
+keybind = cmd+one=unbind
+keybind = cmd+two=unbind
+keybind = cmd+three=unbind
+keybind = cmd+four=unbind
+keybind = cmd+five=unbind
+keybind = cmd+six=unbind
+keybind = cmd+seven=unbind
+keybind = cmd+eight=unbind
+keybind = cmd+nine=unbind
+keybind = cmd+zero=unbind
