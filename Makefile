@@ -45,7 +45,24 @@ test_results := $(patsubst %.tl,$(o)%.tl.test.got,$(tests))
 check_results := $(patsubst %.tl,$(o)%.tl.check,$(sources))
 format_results := $(patsubst %.tl,$(o)%.tl.format,$(sources))
 
-.PHONY: all world check format test ci clean
+# detect current platform
+uname_s := $(shell uname -s)
+uname_m := $(shell uname -m)
+ifeq ($(uname_s),Linux)
+  ifeq ($(uname_m),x86_64)
+    current_platform := linux-amd64
+  else ifeq ($(uname_m),aarch64)
+    current_platform := linux-arm64
+  endif
+else ifeq ($(uname_s),Darwin)
+  ifeq ($(uname_m),arm64)
+    current_platform := darwin-arm64
+  endif
+endif
+
+dest ?= $(HOME)
+
+.PHONY: all world check format test ci clean install
 all: $(world_bins)
 world: $(world_bins)
 
@@ -103,8 +120,8 @@ $(bins)/%/zellij: $(o)fetch.lua $(cosmic)
 	@tar xzf $(@D)/zellij.tar.gz -C $(@D) zellij
 	@rm $(@D)/zellij.tar.gz
 
-# collect embed files
-embed_files := $(wildcard embed/*) $(wildcard embed/**/*)
+# collect embed files (including dotfiles)
+embed_files := $(shell find embed -type f 2>/dev/null)
 
 # build compressed tarball per platform: embed/ files + platform binaries
 $(o)world-%.tar.gz: $(embed_files) $(bins)/%/glow $(bins)/%/delta $(bins)/%/zellij $(cosmic)
@@ -127,6 +144,9 @@ $(o)world-%: $(o)main.lua $(o)world-%.tar.gz $(cosmic)
 	@cp $(o)world-$*.tar.gz $(o)world-stage-$*/embed/world.tar.gz
 	$(cosmic) --embed $(o)world-stage-$* --output $@
 	@rm -rf $(o)world-stage-$*
+
+install: $(o)world-$(current_platform)
+	$(o)world-$(current_platform) | tar xzf - -C $(dest)
 
 clean:
 	rm -rf $(o)
