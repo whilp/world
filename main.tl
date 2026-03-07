@@ -8,7 +8,7 @@ local record Opts
   help: boolean
 end
 
-local TAR_PATH < const > = "/zip/embed/world.tar"
+local TAR_PATH < const > = "/zip/embed/world.tar.gz"
 
 --- return the embedded tarball contents, or nil + error.
 local function tar(path?: string): string, string
@@ -24,8 +24,8 @@ local function usage(): string
   .. "  -h, --help            show this help\n"
   .. "\n"
   .. "examples:\n"
-  .. "  world | tar xf - -C ~\n"
-  .. "  world -o world.tar && tar xf world.tar -C ~\n"
+  .. "  world | tar xzf - -C ~\n"
+  .. "  world -o world.tar.gz && tar xzf world.tar.gz -C ~\n"
   .. "  world --list\n"
 end
 
@@ -75,7 +75,7 @@ if proc.is_main() then
   end
 
   if opts.list then
-    local h = child.spawn({"tar", "tf", "-"}, {stdin = content})
+    local h = child.spawn({"tar", "tzf", "-"}, {stdin = content})
     local ok, out, code = h:read()
     if ok then
       io.write(out)

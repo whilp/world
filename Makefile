@@ -94,8 +94,8 @@ $(bins)/%/zellij:
 # collect embed files
 embed_files := $(wildcard embed/*) $(wildcard embed/**/*)
 
-# build tarball per platform: embed/ files + platform binaries
-$(o)world-%.tar: $(embed_files) $(bins)/%/glow $(bins)/%/delta $(bins)/%/zellij
+# build compressed tarball per platform: embed/ files + platform binaries
+$(o)world-%.tar.gz: $(embed_files) $(bins)/%/glow $(bins)/%/delta $(bins)/%/zellij
 	@mkdir -p $(@D)
 	@rm -rf $(o)world-tree-$*
 	@mkdir -p $(o)world-tree-$*/.local/bin
@@ -103,15 +103,15 @@ $(o)world-%.tar: $(embed_files) $(bins)/%/glow $(bins)/%/delta $(bins)/%/zellij
 	@cp $(bins)/$*/glow $(o)world-tree-$*/.local/bin/
 	@cp $(bins)/$*/delta $(o)world-tree-$*/.local/bin/
 	@cp $(bins)/$*/zellij $(o)world-tree-$*/.local/bin/
-	tar cf $@ -C $(o)world-tree-$* .
+	tar czf $@ -C $(o)world-tree-$* .
 	@rm -rf $(o)world-tree-$*
 
 # build world executable per platform
-$(o)world-%: $(o)main.lua $(o)world-%.tar $(cosmic)
+$(o)world-%: $(o)main.lua $(o)world-%.tar.gz $(cosmic)
 	@rm -rf $(o)world-stage-$*
 	@mkdir -p $(o)world-stage-$*/embed
 	@cp $(o)main.lua $(o)world-stage-$*/main.lua
-	@cp $(o)world-$*.tar $(o)world-stage-$*/embed/world.tar
+	@cp $(o)world-$*.tar.gz $(o)world-stage-$*/embed/world.tar.gz
 	$(cosmic) --embed $(o)world-stage-$* --output $@
 	@rm -rf $(o)world-stage-$*
 
