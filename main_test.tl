@@ -3,7 +3,7 @@ local fs = require("cosmic.fs")
 local env = require("cosmic.env")
 local spawn = require("cosmic.child")
 
-local world = "o/world"
+local world = "o/world-linux-amd64"
 local main = require("main")
 
 --- unit tests: parse_args
@@ -73,7 +73,13 @@ test_usage()
 --- unit tests: tar
 
 local function test_tar_from_file()
-  local content, err = main.tar("o/world.tar")
+  local tmpdir = env.get("TEST_TMPDIR")
+  assert(tmpdir, "TEST_TMPDIR must be set")
+  local tarpath = fs.join(tmpdir, "test.tar")
+  local h = spawn.spawn({"tar", "cf", tarpath, "-C", "embed", "."})
+  local _, _, code = h:read()
+  assert(code == 0, "tar create failed")
+  local content, err = main.tar(tarpath)
   assert(content, "expected tarball content, got error: " .. tostring(err))
   assert(#content > 0, "expected non-empty tarball")
 end
