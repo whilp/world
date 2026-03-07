@@ -53,12 +53,17 @@ $(o)%.lua: %.tl $(cosmic)
 # collect embed files
 embed_files := $(wildcard embed/*) $(wildcard embed/**/*)
 
+# build tarball from embed/
+$(o)world.tar: $(embed_files)
+	@mkdir -p $(@D)
+	tar cf $@ -C embed .
+
 # build staging dir and embed into executable
-$(world): $(o)main.lua $(embed_files) $(cosmic)
+$(world): $(o)main.lua $(o)world.tar $(cosmic)
 	@rm -rf $(o)world-stage
 	@mkdir -p $(o)world-stage/embed
 	@cp $(o)main.lua $(o)world-stage/main.lua
-	@if [ -d embed ]; then cp -a embed/. $(o)world-stage/embed/; fi
+	@cp $(o)world.tar $(o)world-stage/embed/world.tar
 	$(cosmic) --embed $(o)world-stage --output $@
 	@rm -rf $(o)world-stage
 

@@ -1,105 +1,45 @@
-local fs = require("cosmic.fs")
 local cio = require("cosmic.io")
 local getopt = require("cosmic.getopt")
 local proc = require("cosmic.proc")
 
-local record ExtractResult
-  rel: string
-  target: string
-end
-
 local record Opts
-  dest: string
+  output: string
   list: boolean
   help: boolean
 end
 
-local EMBED_ROOT < const > = "/zip/embed/"
+local TAR_PATH < const > = "/zip/embed/world.tar"
 
---- list embedded files under root, returns relative paths.
-local function list(root?: string): {string}
-  root = root or EMBED_ROOT
-  local files = fs.collect(root, "*")
-  table.sort(files)
-  local result: {string} = {}
-  for _, f in ipairs(files) do
-    table.insert(result, f:sub(#root + 1))
-  end
-  return result
-end
-
---- return file mode for extraction: 0755 if source is executable, 0644 otherwise.
-local function extract_mode(path: string): number
-  local st = fs.stat(path)
-  if st then
-    local m = st:mode()
-    if m & 0x49 ~= 0 then -- 0111 = any execute bit
-      return 0x1ED -- 0755
-    end
-  end
-  return 0x1A4 -- 0644
-end
-
---- extract embedded files to dest. returns list of extracted files.
-local function extract(dest: string, root?: string): {ExtractResult}, string
-  root = root or EMBED_ROOT
-  local files = fs.collect(root, "*")
-  table.sort(files)
-
-  if #files == 0 then
-    return nil, "no embedded files found"
-  end
-
-  local results: {ExtractResult} = {}
-
-  for _, f in ipairs(files) do
-    local rel = f:sub(#root + 1)
-    local target = fs.join(dest, rel)
-
-    local target_dir = fs.dirname(target)
-    local ok, err = fs.makedirs(target_dir)
-    if not ok then
-      return nil, "mkdir " .. target_dir .. ": " .. (err or "unknown")
-    end
-
-    local content, read_err = cio.slurp(f)
-    if not content then
-      return nil, "read " .. f .. ": " .. (read_err or "unknown")
-    end
-
-    --- preserve executable bit from embedded file
-    local mode = extract_mode(f)
-
-    local write_ok, write_err = cio.barf(target, content, mode)
-    if not write_ok then
-      return nil, "write " .. target .. ": " .. (write_err or "unknown")
-    end
-
-    table.insert(results, {rel = rel, target = target})
-  end
-
-  return results
+--- return the embedded tarball contents, or nil + error.
+local function tar(path?: string): string, string
+  path = path or TAR_PATH
+  return cio.slurp(path)
 end
 
 --- return usage string.
 local function usage(): string
-  return "usage: world [--dest <dir>] [--list]\n"
-  .. "  --dest <dir>   destination directory (default: $HOME)\n"
-  .. "  --list         list embedded files\n"
-  .. "  --help         show this help\n"
+  return "usage: world [options]\n"
+  .. "  -o, --output <file>   write tarball to file (default: stdout)\n"
+  .. "  -l, --list            list tarball contents\n"
+  .. "  -h, --help            show this help\n"
+  .. "\n"
+  .. "examples:\n"
+  .. "  world | tar xf - -C ~\n"
+  .. "  world -o world.tar && tar xf world.tar -C ~\n"
+  .. "  world --list\n"
 end
 
 --- parse command-line arguments into an Opts record.
 local function parse_args(args: {string}): Opts
   local opts: Opts = {
-    dest = os.getenv("HOME") or ".",
+    output = "",
     list = false,
     help = false,
   }
 
-  local parser = getopt.new(args, "hd:l", {
+  local parser = getopt.new(args, "ho:l", {
       {name = "help", has_arg = "none", short = "h"},
-      {name = "dest", has_arg = "required", short = "d"},
+      {name = "output", has_arg = "required", short = "o"},
       {name = "list", has_arg = "none", short = "l"},
     })
 
@@ -108,8 +48,8 @@ local function parse_args(args: {string}): Opts
     if not opt then break end
     if opt == "h" then
       opts.help = true
-    elseif opt == "d" then
-      opts.dest = optarg
+    elseif opt == "o" then
+      opts.output = optarg
     elseif opt == "l" then
       opts.list = true
     end
@@ -119,6 +59,8 @@ local function parse_args(args: {string}): Opts
 end
 
 if proc.is_main() then
+  local child = require("cosmic.child")
+
   local opts = parse_args(arg)
 
   if opts.help then
@@ -126,28 +68,34 @@ if proc.is_main() then
     os.exit(0)
   end
 
-  if opts.list then
-    for _, rel in ipairs(list()) do
-      print(rel)
-    end
-    os.exit(0)
-  end
-
-  local results, err = extract(opts.dest)
-  if not results then
-    io.stderr:write("error: " .. (err or "unknown") .. "\n")
+  local content, err = tar()
+  if not content then
+    io.stderr:write("error: " .. (err or "no embedded tarball") .. "\n")
     os.exit(1)
   end
 
-  for _, r in ipairs(results) do
-    print(r.rel .. " -> " .. r.target)
+  if opts.list then
+    local h = child.spawn({"tar", "tf", "-"}, {stdin = content})
+    local ok, out, code = h:read()
+    if ok then
+      io.write(out)
+    end
+    os.exit(code as integer)
+  end
+
+  if opts.output ~= "" then
+    local ok, write_err = cio.barf(opts.output, content)
+    if not ok then
+      io.stderr:write("error: " .. (write_err or "unknown") .. "\n")
+      os.exit(1)
+    end
+  else
+    io.write(content)
   end
 end
 
 return {
-  list = list,
-  extract = extract,
-  extract_mode = extract_mode,
+  tar = tar,
   usage = usage,
   parse_args = parse_args,
 }
