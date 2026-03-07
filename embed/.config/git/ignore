@@ -1,0 +1,13 @@
+**/.claude/settings.local.json
+tmp
+.agent
+.sqruff
+__pycache__
+**/.DS_Store
+.config/nvim/undodir
+.ipynb*
+*.egg-info/
+.venv
+__pycached__
+*.swp
+*.bak
