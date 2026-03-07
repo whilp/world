@@ -25,9 +25,9 @@ delta_bin := delta
 
 # zellij
 zellij_version := 0.43.1
-zellij_url_linux-amd64 := https://github.com/zellij-org/zellij/releases/download/v$(zellij_version)/zellij-x86_64-unknown-linux-musl.tar.gz
-zellij_url_linux-arm64 := https://github.com/zellij-org/zellij/releases/download/v$(zellij_version)/zellij-aarch64-unknown-linux-musl.tar.gz
-zellij_url_darwin-arm64 := https://github.com/zellij-org/zellij/releases/download/v$(zellij_version)/zellij-aarch64-apple-darwin.tar.gz
+zellij_url_linux-amd64 := https://github.com/zellij-org/zellij/releases/download/v$(zellij_version)/zellij-no-web-x86_64-unknown-linux-musl.tar.gz
+zellij_url_linux-arm64 := https://github.com/zellij-org/zellij/releases/download/v$(zellij_version)/zellij-no-web-aarch64-unknown-linux-musl.tar.gz
+zellij_url_darwin-arm64 := https://github.com/zellij-org/zellij/releases/download/v$(zellij_version)/zellij-no-web-aarch64-apple-darwin.tar.gz
 zellij_bin := zellij
 
 # world executables per platform
