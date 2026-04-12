@@ -1,4 +1,0 @@
-#!/usr/bin/env lua
--- luacheck ignore: script runtime
-local aerosnap = require("aerosnap")
-os.exit(aerosnap.main(arg) or 0)
